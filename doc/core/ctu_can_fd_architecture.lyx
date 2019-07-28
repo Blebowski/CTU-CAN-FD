@@ -4000,6 +4000,14 @@ name "tab:test-mode-features"
 
 \end_layout
 
+\begin_layout Section
+ISO vs NON-ISO CAN FD
+\end_layout
+
+\begin_layout Standard
+TODO
+\end_layout
+
 \begin_layout Standard
 \begin_inset Newpage pagebreak
 \end_inset
@@ -5561,6 +5569,13 @@ name "fig:retransmitt-counter-OK"
 
 \begin_layout Subsubsection*
 Reintegration counter
+\begin_inset CommandInset label
+LatexCommand label
+name "subsec:Reintegration-counter"
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
@@ -11693,6 +11708,19 @@ noprefix "false"
  Threshold for Error warning limit detection (EWL) and transition to Error
  Passive (ERP) can be configured from Memory registers when device is in
  Test mode (MODE[TSTM] = '1').
+ Transition from Bus-off to Error Active is performed after Reintegration
+ (Set Error Active is signalled by Protocol Control FSM).
+ Reffer to 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "subsec:Reintegration-counter"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+ for description of Reintegration counter operation.
 \end_layout
 
 \begin_layout Standard
@@ -11988,25 +12016,24 @@ Bit Stuffing
 \end_layout
 
 \begin_layout Standard
-Bit stuffing implements following functionality:
+Bit Stuffing module implements following functionality:
 \end_layout
 
 \begin_layout Itemize
-Insertion of Stuff bits to transmitted bit stream (regular and fixed stuff
- bits).
+Insertion of Stuff Bits to TX bit stream (regular and fixed Stuff Bits).
 \end_layout
 
 \begin_layout Itemize
-Halting CAN Core for one bit time when stuff bit is inserted.
+Halting CAN Core for one bit time when Stuff Bit is inserted.
 \end_layout
 
 \begin_layout Itemize
-Holds counter with number of Stuff bits modulo 8 for transmission of Stuff
- count field.
+Holds counter with number of Stuff Bits modulo 8 for transmission of Stuff
+ Count field.
 \end_layout
 
 \begin_layout Itemize
-Insertion of stuff bit in the beginning of Stuff Count or CRC field of CAN
+Insertion of Stuff Bit in the beginning of Stuff Count or CRC field of CAN
  FD Frame.
 \end_layout
 
@@ -12021,22 +12048,259 @@ filename "entity_docs/bit_stuffing.lyx"
 \end_layout
 
 \begin_layout Standard
-Bit stuffing processes input data in Stuff pipeline stage.
- When Bit stuffing is enabled it inserts bit of opposite polarity after
- it processed sequence of equal consecutive bits with length of Stuff rule.
- Length of Stuff rule is controlled by Protocol control FSM and it is TODO
- when Regular bit Stuffing is used and TODO when fixed bit stuffing is used.
+Bit Stuffing module processes TX Data from Protocol Control in Stuff pipeline
+ stage.
+ Bit Stuffing module operates in two modes as described in 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "tab:bit-stuffing-modes"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+.
+ When Bit Stuffing is enabled, it inserts bit of opposite polarity to TX
+ bit stream based on Bit Stuffing Mode.
+ Data are processed by Bit Stuffing with one clock cycle delay (output is
+ registered).
  When Bit Stuffing is disabled, it propagates data from input to output
- without insertion of stuff bits.
+ without insertion of Stuff bits (but still with one clock cycle delay).
  Input data are processed in Stuff pipeline stage regardless of the fact
- if Bit Stuffing is enabled or disabled.
- Block diagram of Bit Stuffing is shown in Figure TODO.
- Bit Stuffing maintains a counter of equal consecutive bits which is manipulated
- according to pseudo-algorithm described in Table TODO.
- Bit stuffing is enabled only when unit is a transmitter of CAN Frame.
- When unit is Receiver, Bit Stuffing is disabled and only propagates Recessive
- bit values to output.
- A sample sequence where a Stuff bit is inserted is shown in Figure TODO.
+ if Bit Stuffing module is enabled or disabled (Input is not combinatorially
+ bypassed when Bit Stuffing is disabled).
+ Bit Stuffing is enabled only when unit is Transmitter of CAN Frame.
+ When unit is Receiver, Bit Stuffing is disabled and only propagates recessive
+ bit values from input to output.
+ Bit Stuffing counts number of inserted Stuff bits in Regular Bit Stuffing
+ mode in Counter of Stuff Bits (this counter is then used in Stuff Count
+ frame field).
+ A basic sequence of Bit Stuffing module operation is described in Table
+ 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "tab:bit-stuffing-operation"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Standard
+When Bus is Idle and transmission of frame starts, SOF bit is the first
+ bit which is processed by Bit Stuffing module.
+ If unit samples dominant bit during third bit of Intermission, Bus Idle
+ or Suspend Transmission, this bit is considered as SOF bit (see TODO).
+ Such a bit is counted as first dominant bit by Bit Stuffing.
+ Bit Stuffing is disabled when unit reaches CRC Delimiter frame field.
+ Bit Stuffing is not disabled in last bit of CRC sequence so that Stuff
+ Bit can be inserted behind the last bit of CRC sequence.
+ When unit loses arbitration (turns Receiver), Bit Stuffing is disabled.
+ An example of Bit Stuffing operation during whole frame is shown in Figure
+ 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:bit-stuffing-detailed-operation"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+.
+ If an Error is detected (Error frame is requested by Error Detector), Bit
+ Stuffing is disabled.
+ Bit Stuffing is enabled only during fields which shall be coded by Bit-Stuffing
+ as described in TODOREFISO.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float table
+placement H
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\noindent
+\align center
+\begin_inset Tabular
+<lyxtabular version="3" rows="3" columns="3">
+<features tabularvalignment="middle">
+<column alignment="left" valignment="middle" width="10line%">
+<column alignment="left" valignment="middle" width="10line%">
+<column alignment="left" valignment="top" width="71line%">
+<row>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Bit Stuffing Mode
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+cellcolor{gray}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Stuff rule length
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+cellcolor{gray}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Description
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+cellcolor{gray}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Regular
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+5
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+When 5 consecutive bits of equal polarity are processed, bit of opposite
+ polarity is inserted.
+ Inserted Stuff bit counts as first bit of next sequence of 5 equal bits
+ (Bit Stuffing is recursive).
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Fixed
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+4
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+When 4 bits are processed a bit of opposite polarity (with respect to last
+ bit of those 4) is inserted on output of Bit Stuffing.
+\end_layout
+
+\end_inset
+</cell>
+</row>
+</lyxtabular>
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\noindent
+\align center
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Bit stuffing modes
+\begin_inset CommandInset label
+LatexCommand label
+name "tab:bit-stuffing-modes"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
@@ -12050,10 +12314,10 @@ status open
 \noindent
 \align center
 \begin_inset Tabular
-<lyxtabular version="3" rows="12" columns="2">
+<lyxtabular version="3" rows="10" columns="2">
 <features tabularvalignment="middle">
 <column alignment="left" valignment="top" width="5line%">
-<column alignment="left" valignment="top" width="90line%">
+<column alignment="left" valignment="top" width="88.5line%">
 <row>
 <cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
 \begin_inset Text
@@ -12116,9 +12380,9 @@ cellcolor{gray}
 \begin_layout Plain Layout
 Bit Stuffing is disabled, there is no transmission / reception in progress
  by CTU CAN FD.
- Counter of equal consecutive bits is held at 0.
- Bit stuffing only propagates Recessive value to output in Stuff pipeline
- stage.
+ Counter of equal consecutive bits is 1.
+ Bit Stuffing module only propagates Recessive value to output in Stuff
+ pipeline stage.
 \end_layout
 
 \end_inset
@@ -12138,8 +12402,8 @@ Bit Stuffing is disabled, there is no transmission / reception in progress
 \begin_inset Text
 
 \begin_layout Plain Layout
-Transmission starts, Bit Stuffing is enabled.
- Length of Stuff rule is configured to TODO by Protocol Control FSM.
+Transmission starts (unit becomes Transmitter), Bit Stuffing is enabled.
+ Length of Stuff rule is configured to 5 by Protocol Control FSM.
 \end_layout
 
 \end_inset
@@ -12159,10 +12423,11 @@ Transmission starts, Bit Stuffing is enabled.
 \begin_inset Text
 
 \begin_layout Plain Layout
-Bit stuffing processes equal consecutive bits from Protocol Control in Stuff
- pipeline stage.
- Processed bit values are propagated to output with one clock cycle delay.
- Counter of equal consecutive bits is incremented by 1 for each bit.
+Bit Stuffing processes bits from Protocol Control in Stuff pipeline stage.
+ Counter of equal consecutive bits is incremented by 1 for each processed
+ bit of equal polarity (with respect to previous bit).
+ When bit of opposite polarity is processed, Counter of equal consecutive
+ bits is set to 1.
 \end_layout
 
 \end_inset
@@ -12182,9 +12447,13 @@ Bit stuffing processes equal consecutive bits from Protocol Control in Stuff
 \begin_inset Text
 
 \begin_layout Plain Layout
-Bit Stuffing processes a bit of different value before counter of equal
- consecutive bits reached TODO.
- Counter of equal consecutive bits is cleared.
+Counter of equal consecutive bits reaches length of Stuff rule.
+ Instead of propagating processed bit to output, Bit Stuffing inserts bit
+ of opposite polarity on the output.
+ Bit Stuffing signals halting to Protocol Control.
+ Protocol Control remains halted for length of one bit.
+ Number of inserted Stuff Bits (counter of Stuff Bits) is incremented by
+ 1.
 \end_layout
 
 \end_inset
@@ -12204,57 +12473,11 @@ Bit Stuffing processes a bit of different value before counter of equal
 \begin_inset Text
 
 \begin_layout Plain Layout
-Bit stuffing processes equal consecutive bits from Protocol Control in Stuff
- pipeline stage.
- Counter of equal consecutive bits is incremented by 1 for each bit.
-\end_layout
-
-\end_inset
-</cell>
-</row>
-<row>
-<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-6
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-Counter of equal consecutive bits reaches length of Stuff rule.
- Instead of propagating processed bit to output, Bit Stuffing inserts bit
- of opposite polarity on the output.
- Bit Stuffing signals halting to Protocol Control for one Bit time.
- Counter of equal consecutive bits is cleared.
- Number of Stuff Bits (counter of Stuff Bits) is incremented by 1.
-\end_layout
-
-\end_inset
-</cell>
-</row>
-<row>
-<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-7
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-After one bit time for which Protocol control was halted, Bit Stuffing starts
- processing input data stream again.
- After Stuff Bit, counter of equal consecutive bits is incremented to account
- for 
+After one Bit Time for which Protocol Control was halted, it continous in
+ transmission.
+ Bit Stuffing continous in processing input data stream.
+ Counter of equal consecutive bits is incremented after insertion of Stuff
+ Bit to account for 
 \begin_inset Quotes eld
 \end_inset
 
@@ -12269,13 +12492,28 @@ recursive
 </cell>
 </row>
 <row>
-<cell multicolumn="1" alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+<cell multicolumn="1" alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
 
 \emph on
 Applies only for CAN FD frames
+\emph default
+
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+cellcolor{cyan}
+\end_layout
+
+\end_inset
+
+
 \end_layout
 
 \end_inset
@@ -12295,7 +12533,7 @@ Applies only for CAN FD frames
 \begin_inset Text
 
 \begin_layout Plain Layout
-8
+6
 \end_layout
 
 \end_inset
@@ -12304,8 +12542,9 @@ Applies only for CAN FD frames
 \begin_inset Text
 
 \begin_layout Plain Layout
-CAN FD Frame advances to the end of Data field.
- Bit stuffing method is changed to Fixed Bit Stuffing.
+CAN FD Frame advances to last bit of frame field preceding Stuff Count.
+ Bit Stuffing mode is changed to Fixed.
+ Length of Bit Stuffing rule is configured to 4.
 \end_layout
 
 \end_inset
@@ -12316,7 +12555,7 @@ CAN FD Frame advances to the end of Data field.
 \begin_inset Text
 
 \begin_layout Plain Layout
-9
+7
 \end_layout
 
 \end_inset
@@ -12325,9 +12564,8 @@ CAN FD Frame advances to the end of Data field.
 \begin_inset Text
 
 \begin_layout Plain Layout
-Stuff bit is inserted in the first bit which is processed by Fixed Bit Stuffing
- method.
- Length of Bit Stuffing rule is configured to TODO.
+Stuff bit is inserted by Bit Stuffing in the first bit which is processed
+ by Fixed Bit Stuffing method (First bit of Stuff Count).
 \end_layout
 
 \end_inset
@@ -12338,7 +12576,7 @@ Stuff bit is inserted in the first bit which is processed by Fixed Bit Stuffing
 \begin_inset Text
 
 \begin_layout Plain Layout
-10
+8
 \end_layout
 
 \end_inset
@@ -12349,8 +12587,7 @@ Stuff bit is inserted in the first bit which is processed by Fixed Bit Stuffing
 \begin_layout Plain Layout
 Counter of equal consecutive bits is incremented with each processed bit
  regardless of previous processed bit value.
- Stuff bit is inserted after number of bits were processed which is equal
- to length of Stuff rule.
+ Stuff Bit is inserted after each 4 processed bits.
 \end_layout
 
 \end_inset
@@ -12372,7 +12609,51 @@ Counter of equal consecutive bits is incremented with each processed bit
 Bit stuffing operation
 \begin_inset CommandInset label
 LatexCommand label
-name "tab:CAN-control-counter-1-3"
+name "tab:bit-stuffing-operation"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+placement H
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\noindent
+\align center
+\begin_inset Graphics
+	filename ../pics/Visio_generated/CHART_bit_stuffing.pdf
+	lyxscale 20
+	scale 70
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Bit Stuffing detailed operation
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:bit-stuffing-detailed-operation"
 
 \end_inset
 
@@ -12412,8 +12693,8 @@ Bit De-stuffing implements following functionality:
 \end_layout
 
 \begin_layout Itemize
-Discarding of Stuff Bits from Received bit Stream (regular and fixed stuff
- bits).
+Discarding of Stuff Bits from Received bit Stream (regular and fixed Stuff
+ Bits).
 \end_layout
 
 \begin_layout Itemize
@@ -12426,12 +12707,11 @@ Holds counter with number of De-Stuff bits modulo 8 for comparison of Stuff
 \end_layout
 
 \begin_layout Itemize
-Discarding Stuff bit in the beginning of Stuff Count or CRC field of CAN
- FD Frame.
+Discarding first fixed Stuff bit of CAN FD Frame.
 \end_layout
 
 \begin_layout Itemize
-Detection of Stuff Error
+Detection of Stuff Error.
 \end_layout
 
 \begin_layout Standard
@@ -12445,26 +12725,242 @@ filename "entity_docs/bit_destuffing.lyx"
 \end_layout
 
 \begin_layout Standard
-Bit De-stuffing processes input data in Destuff pipeline stage.
- When Bit De-stuffing is enabled it discards a bit after it processed sequence
- of equal consecutive bits with length of Stuff rule when the actually processed
- bit value is opposite than value of previous processed bits.
- Length of Stuff rule is controlled by Protocol control FSM and it is TODO
- when Regular Bit Stuffing is used and TODO when Fixed bit stuffing is used.
- When Bit Stuffing is disabled, it propagates data from input to output
- without discarding stuff bits.
- Bit Destuffing processes input data bits in Destuff pipeline stage regardless
- of the fact that it is enabled or disabled.
- Block diagram of Bit destuffing is shown in Figure TODO.
- Bit de-stuffing detects Stuff error if it processes sequence of equal consecuti
-ve bits one bit longer than length of Stuff Rule when regular Bit Stuffing
- is used.
- Bit Stuffing also detects Stuff error when n-th processed bit is equal
- to previous bit when Fixed bit stuffing method is used.
- Bit Stuffing maintains a counter of equal consecutive bits which is manipulated
- according to pseudo-algorithm described in Table TODO.
- Bit Destuffing is enabled when unit is either Transmitter or Receiver of
- CAN frame.
+Bit Destuffing processes input data (RX data stream) as provided by multiplexor
+ in Figure TODO in Destuff pipeline stage.
+ Bit Destuffing operates in two modes as described in Table 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "tab:bit-destuffing-modes"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+.
+ Bit Destuffing discards Stuff Bits according to current Bit Destuffing
+ mode.
+ Discarded Stuff Bit is signalled to Protocol control and it is ignored
+ by Protocol control.
+ Input data are processed with one clock cycle delay (output is registered).
+ When Bit destuffing is disabled, it only propagates input data to output
+ in Destuff pipeline stage without discarding any bit or detecting Stuff
+ Error.
+ Bit Destuffing is enabled when unit is Transmitter or Receiver since Transmitte
+r also receives its own TX Stream.
+ Bit Destuffing contains counter of discarded Stuff bits in Regular mode.
+ This counter is then used for check of received Stuff Count vs calculated
+ Stuff Count.
+ A basic sequence of operation is shown in Figure 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "tab:bit-destuffing-operation"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Standard
+When Bus is idle, unit is in Suspend transmission or third bit of Intermission,
+ Bit-Destuffing processes dominant bit (which is subsequently evaluated
+ as SOF by Protocol control FSM), then Bit-Destuffing processes this bit
+ as first bit in sequence of equal consecutive bits.
+ Bit Destuffing is disabled when unit reaches CRC Delimiter frame field.
+ Bit Destuffing is not disabled in last bit of CRC sequence so that Stuff
+ Bit can be discarded behind the last bit of CRC sequence.
+ When transmission of Error frame is requested, Bit Destuffing is disabled.
+ Bit Destuffing is enabled only during fields which shall be coded by Bit-Stuffi
+ng as described in TODOREFISO.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float table
+placement H
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\noindent
+\align center
+\begin_inset Tabular
+<lyxtabular version="3" rows="3" columns="3">
+<features tabularvalignment="middle">
+<column alignment="left" valignment="middle" width="10line%">
+<column alignment="left" valignment="middle" width="10line%">
+<column alignment="left" valignment="top" width="71line%">
+<row>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Bit Destuffing Mode
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+cellcolor{gray}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Stuff rule length
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+cellcolor{gray}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Description
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+cellcolor{gray}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Regular
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+5
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+When 5 consecutive bits of equal polarity are processed, next bit is discarded.
+ If discarded bit does not have opposite value as previous bit, Stuff Error
+ is detected.
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Fixed
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+4
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+When 4 bits are processed next bit is discarded, next bit is discarded regardles
+s of values of previous processed bits.
+ If value of discarded bit is not equal to previous bit, Stuff Error is
+ detected.
+\end_layout
+
+\end_inset
+</cell>
+</row>
+</lyxtabular>
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\noindent
+\align center
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Bit Destuffing modes
+\begin_inset CommandInset label
+LatexCommand label
+name "tab:bit-destuffing-modes"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
@@ -12478,10 +12974,10 @@ status open
 \noindent
 \align center
 \begin_inset Tabular
-<lyxtabular version="3" rows="12" columns="2">
+<lyxtabular version="3" rows="10" columns="2">
 <features tabularvalignment="middle">
 <column alignment="left" valignment="top" width="5line%">
-<column alignment="left" valignment="top" width="90line%">
+<column alignment="left" valignment="top" width="88.5line%">
 <row>
 <cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
 \begin_inset Text
@@ -12542,7 +13038,11 @@ cellcolor{gray}
 \begin_inset Text
 
 \begin_layout Plain Layout
-
+Bit Destuffing is disabled, there is no transmission / reception in progress
+ by CTU CAN FD.
+ Counter of equal consecutive bits is 1.
+ Bit Destuffing module only propagates Recessive value to output in Destuff
+ pipeline stage.
 \end_layout
 
 \end_inset
@@ -12562,7 +13062,8 @@ cellcolor{gray}
 \begin_inset Text
 
 \begin_layout Plain Layout
-
+Reception starts (unit becomes Receiver), Bit Destuffing is enabled.
+ Length of Stuff rule is configured to 5 by Protocol Control FSM.
 \end_layout
 
 \end_inset
@@ -12582,7 +13083,11 @@ cellcolor{gray}
 \begin_inset Text
 
 \begin_layout Plain Layout
-
+Bit Destuffing processes input bits in Destuff pipeline stage.
+ Counter of equal consecutive bits is incremented by 1 for each processed
+ bit of equal polarity (with respect to previous bit).
+ When bit of opposite polarity is processed, Counter of equal consecutive
+ bits is set to 1.
 \end_layout
 
 \end_inset
@@ -12602,7 +13107,21 @@ cellcolor{gray}
 \begin_inset Text
 
 \begin_layout Plain Layout
+Counter of equal consecutive bits reaches length of Stuff rule.
+ Following bit is discarded (not processed) and marked to Protocol control
+ FSM as 
+\begin_inset Quotes eld
+\end_inset
 
+Destuffed
+\begin_inset Quotes erd
+\end_inset
+
+.
+ Protocol control ignores such a bit and its processing of RX data stream
+ remains Halted for one Bit time.
+ Number of discarded Stuff Bits (counter of discarded Stuff Bits) is incremented
+ by 1.
 \end_layout
 
 \end_inset
@@ -12622,60 +13141,47 @@ cellcolor{gray}
 \begin_inset Text
 
 \begin_layout Plain Layout
+After one Bit Time for which Protocol Control was halted, Bit Stuffing processes
+ next bit.
+ Next processed bit is also processed by Protocol control.
+ Counter of equal consecutive bits is incremented after discarding Stuff
+ Bit to account for 
+\begin_inset Quotes eld
+\end_inset
 
+recursive
+\begin_inset Quotes erd
+\end_inset
+
+ behaviour of Bit Destuffing.
 \end_layout
 
 \end_inset
 </cell>
 </row>
 <row>
-<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-6
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-
-\end_layout
-
-\end_inset
-</cell>
-</row>
-<row>
-<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-7
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-
-\end_layout
-
-\end_inset
-</cell>
-</row>
-<row>
-<cell multicolumn="1" alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+<cell multicolumn="1" alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
 
 \emph on
 Applies only for CAN FD frames
+\emph default
+
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+cellcolor{cyan}
+\end_layout
+
+\end_inset
+
+
 \end_layout
 
 \end_inset
@@ -12704,7 +13210,9 @@ Applies only for CAN FD frames
 \begin_inset Text
 
 \begin_layout Plain Layout
-
+CAN FD Frame advances to the end of frame field preceding Stuff Count.
+ Bit Destuffing mode is changed to Fixed.
+ Length of Bit Stuffing rule is configured to 4.
 \end_layout
 
 \end_inset
@@ -12724,7 +13232,8 @@ Applies only for CAN FD frames
 \begin_inset Text
 
 \begin_layout Plain Layout
-
+Stuff Bit is discarded by Bit Destuffing in the first bit which is processed
+ by Fixed Bit Stuffing method (First bit of Stuff Count).
 \end_layout
 
 \end_inset
@@ -12744,7 +13253,9 @@ Applies only for CAN FD frames
 \begin_inset Text
 
 \begin_layout Plain Layout
-
+Counter of equal consecutive bits is incremented with each processed bit
+ regardless of previous processed bit value.
+ Stuff Bit is discarded after each 4 processed bits.
 \end_layout
 
 \end_inset
@@ -12766,7 +13277,7 @@ Applies only for CAN FD frames
 Bit de-stuffing operation
 \begin_inset CommandInset label
 LatexCommand label
-name "tab:CAN-control-counter-1-3-1"
+name "tab:bit-destuffing-operation"
 
 \end_inset
 
@@ -12804,7 +13315,65 @@ Calculate CRC sequences according to TODO (for ISO CAN FD) and according
 \end_layout
 
 \begin_layout Itemize
-Choose appropriate bit stream for calculation of CRC sequence.
+Choose appropriate bit stream and trigger for calculation of CRC sequence.
+\end_layout
+
+\begin_layout Standard
+Block diagram of CAN CRC is shown in Figure 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:can-crc-block-diagram"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+placement H
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\noindent
+\align center
+\begin_inset Graphics
+	filename ../pics/Visio_generated/BD_CAN_CRC.pdf
+	lyxscale 20
+	scale 80
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+CAN CRC block diagram
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:can-crc-block-diagram"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
@@ -12818,19 +13387,170 @@ filename "entity_docs/can_crc.lyx"
 \end_layout
 
 \begin_layout Standard
-Block diagram of CAN CRC is shown in Figure TODO.
- CAN CRC contains 3 generic CRC calculation modules (CRC15, CRC17, CRC21).
- CRC 15 is calculated from data without Stuff bits.
- CRC 17, CRC21 are calculated from data with Stuff bits inserted.
- CRC register is cleared / preloaded to Initial value upon enabling of CRC
- calculation.
- Each bit of CAN frame next step of CRC calculation is executed.
- Transmitter calculates data from transmitted data stream.
- Receiver calculates data from received data stream.
- CRC circuits proces input data according to Table TODO.
+CAN CRC contains 3 CRC calculation modules (CRC15, CRC17, CRC21).
+ CRC 15 is calculated from data without Stuff Bits.
+ CRC 17, CRC21 are calculated from data with Stuff Bits inserted.
+ CRC register is preloaded to Initial value upon enabling of CRC calculation
+ (before first bit is processed).
+ Each bit of CAN frame, next step of CRC calculation is executed when according
+ CRC calculation module is enabled.
+ A pseudo-code for CRC calculation is shown in TODOISOREF.
+\end_layout
+
+\begin_layout Standard
+Data stream (TX, RX data stream) which is used as input of CRC calculation
+ is different based on Operational state (Transmitter / Receiver) and part
+ of frame when CRC calculation step is executed.
+ During Arbitration, or when speculative enable is used (during Bus Idle,
+ Intermission, Suspend Transmission), CRC is calculated from RX Data stream
+ as there can be multiple units transmitting on the bus at once and correct
+ value (when bus has settled in Sample point) must be used for calculation.
+ After Arbitration field (when only one unit is Transmitter), Transmitter
+ calculates CRC from TX Data stream and Receivers calculate CRC from RX
+ Data stream.
+ Calculation step from TX Data stream is shown in Figure 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:crc-calculation-transmitter"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+.
+ Calculation step from RX data stream is shown in 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:crc-calculation-receiver"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Standard
+After Arbitration, source of data for CRC calculation changes from TX data
+ stream to RX data stream.
+ Pipeline stage during which next step of CRC calculation is executed differs
+ based on source of input data (if RX data stream is used, input data are
+ not valid before Sample point) as described in Table 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "tab:can-crc-calculation"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+.
+ When CRC17/CRC21 execute CRC calculation step from Stuffed/Destuffed bit,
+ CRC15 remains unchagned (according trigger signal is gated).
  Next step of CRC calculation can be enabled by means of two enable signals:
  Regular enable and Speculative enable.
- Meaning of these two signals is explained in Table TODO.
+ Meaning of these two signals is explained in Table 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "tab:can-crc-enable-signals"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+placement H
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\noindent
+\align center
+\begin_inset Graphics
+	filename /DOKUMENTY/Skola/CVUT-FEL/ctu_can_fd_2/doc/pics/Timing_diagrams/PDFs/crc_transmitter.pdf
+	lyxscale 20
+	scale 70
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+CRC calculation - TX Data stream
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:crc-calculation-transmitter"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+placement H
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\noindent
+\align center
+\begin_inset Graphics
+	filename /DOKUMENTY/Skola/CVUT-FEL/ctu_can_fd_2/doc/pics/Timing_diagrams/PDFs/crc_receiver.pdf
+	lyxscale 20
+	scale 70
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+CRC calculation - RX Data stream
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:crc-calculation-receiver"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
@@ -12846,16 +13566,29 @@ status open
 \begin_inset Tabular
 <lyxtabular version="3" rows="7" columns="4">
 <features tabularvalignment="middle">
-<column alignment="left" valignment="top" width="10line%">
-<column alignment="left" valignment="top" width="10line%">
+<column alignment="left" valignment="middle" width="8.8line%">
+<column alignment="left" valignment="top" width="8line%">
+<column alignment="left" valignment="top" width="42line%">
 <column alignment="left" valignment="top" width="30line%">
-<column alignment="left" valignment="top" width="15line%">
 <row>
 <cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
 CRC module
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+cellcolor{gray}
+\end_layout
+
+\end_inset
+
+
 \end_layout
 
 \end_inset
@@ -12864,7 +13597,20 @@ CRC module
 \begin_inset Text
 
 \begin_layout Plain Layout
-Operational state
+Data stream
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+cellcolor{gray}
+\end_layout
+
+\end_inset
+
+
 \end_layout
 
 \end_inset
@@ -12874,6 +13620,19 @@ Operational state
 
 \begin_layout Plain Layout
 Data input for CRC calculation
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+cellcolor{gray}
+\end_layout
+
+\end_inset
+
+
 \end_layout
 
 \end_inset
@@ -12882,7 +13641,20 @@ Data input for CRC calculation
 \begin_inset Text
 
 \begin_layout Plain Layout
-Pipeline stage where calculation is executed
+Pipeline stage when calculation step is executed
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+cellcolor{gray}
+\end_layout
+
+\end_inset
+
+
 \end_layout
 
 \end_inset
@@ -12902,7 +13674,7 @@ CRC 15
 \begin_inset Text
 
 \begin_layout Plain Layout
-Transmitter
+TX
 \end_layout
 
 \end_inset
@@ -12940,7 +13712,7 @@ Stuff
 \begin_inset Text
 
 \begin_layout Plain Layout
-Receiver
+RX
 \end_layout
 
 \end_inset
@@ -12978,7 +13750,7 @@ CRC 17
 \begin_inset Text
 
 \begin_layout Plain Layout
-Transmitter
+TX
 \end_layout
 
 \end_inset
@@ -13016,7 +13788,7 @@ Stuff + 1 clock cycle
 \begin_inset Text
 
 \begin_layout Plain Layout
-Receiver
+RX
 \end_layout
 
 \end_inset
@@ -13054,7 +13826,7 @@ CRC 21
 \begin_inset Text
 
 \begin_layout Plain Layout
-Transmitter
+TX
 \end_layout
 
 \end_inset
@@ -13088,11 +13860,11 @@ Stuff + 1 clock cycle
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+<cell alignment="left" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
-Receiver
+RX
 \end_layout
 
 \end_inset
@@ -13106,7 +13878,7 @@ Received data on input of Bit Destuffing.
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+<cell alignment="left" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -13132,7 +13904,7 @@ Process
 CAN CRC calculation
 \begin_inset CommandInset label
 LatexCommand label
-name "tab:CAN-control-counter-1-2-1"
+name "tab:can-crc-calculation"
 
 \end_inset
 
@@ -13151,7 +13923,7 @@ name "tab:CAN-control-counter-1-2-1"
 
 \begin_layout Standard
 \begin_inset Float table
-placement h
+placement H
 wide false
 sideways false
 status open
@@ -13162,14 +13934,27 @@ status open
 \begin_inset Tabular
 <lyxtabular version="3" rows="3" columns="2">
 <features tabularvalignment="middle">
-<column alignment="left" valignment="top" width="20line%">
-<column alignment="left" valignment="top" width="60line%">
+<column alignment="left" valignment="top" width="15line%">
+<column alignment="left" valignment="top" width="78.6line%">
 <row>
 <cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
 CAN CRC Enable signal
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+cellcolor{gray}
+\end_layout
+
+\end_inset
+
+
 \end_layout
 
 \end_inset
@@ -13179,6 +13964,19 @@ CAN CRC Enable signal
 
 \begin_layout Plain Layout
 Description
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+cellcolor{gray}
+\end_layout
+
+\end_inset
+
+
 \end_layout
 
 \end_inset
@@ -13201,6 +13999,8 @@ Regular enable
 When CRC module is enabled by regular enable signal, it executes next step
  of calculation in according pipeline stage regardless of input data value
  to be processed.
+ This enable signal is used during CAN frame fields from SOF until end of
+ Data field.
 \end_layout
 
 \end_inset
@@ -13222,7 +14022,7 @@ Speculative enable
 \begin_layout Plain Layout
 When CRC module is enabled by speculative enable signal, it executes next
  step of calculation in according pipeline stage only when input data value
- to be processed is Dominant (logic 0).
+ to be processed is dominant (logic 0).
  Recessive value is ignored.
  Speculative enable is used in Suspend Transmission, Last bit of Intermission
  and Bus Idle when dominant value is sampled and this value is interpreted
@@ -13245,9 +14045,10 @@ When CRC module is enabled by speculative enable signal, it executes next
 \begin_inset Caption Standard
 
 \begin_layout Plain Layout
+CAN CRC enable signals
 \begin_inset CommandInset label
 LatexCommand label
-name "tab:CAN-control-counter-1-2-1-1"
+name "tab:can-crc-enable-signals"
 
 \end_inset
 
@@ -13259,6 +14060,13 @@ name "tab:CAN-control-counter-1-2-1-1"
 
 \end_layout
 
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Newpage pagebreak
 \end_inset
 
 
@@ -13269,7 +14077,399 @@ Trigger multiplexor
 \end_layout
 
 \begin_layout Standard
-TODO!
+Trigger multiplexor implements following functionality:
+\end_layout
+
+\begin_layout Itemize
+Gating of Trigger signals (clock enables for pipeline stages)
+\end_layout
+
+\begin_layout Standard
+\begin_inset CommandInset include
+LatexCommand input
+filename "entity_docs/trigger_mux.lyx"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Trigger multiplexor creates Trigger signals for other blocks within CAN
+ Core from Trigger signals generated by Prescaler as described in Table
+ 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "tab:trigger-signals"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float table
+placement H
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\noindent
+\align center
+\begin_inset Tabular
+<lyxtabular version="3" rows="9" columns="3">
+<features tabularvalignment="middle">
+<column alignment="left" valignment="middle" width="10line%">
+<column alignment="left" valignment="middle" width="10line%">
+<column alignment="left" valignment="top" width="71line%">
+<row>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Trigger Name
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+cellcolor{gray}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Pipeline stage
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+cellcolor{gray}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Description
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+cellcolor{gray}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Protocol control TX Trigger
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Stuff
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Used for shifting TX shift register in Protocol control.
+ Gated when there is Stuff Bit inserted by Bit Stuffing module.
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Protocol control RX Trigger
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Process
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Used for shifting RX shift register in Protocol control, update of Protocol
+ control FSM state, manipulation of Control counter and Retransmitt Counter.
+ Gated when Stuff bit is discarded by Bit Destuffing module.
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Bit Stuffing Trigger
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Stuff
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Used for processing of TX data by Bit Stuffing module.
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Bit Destuffing Trigger
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Destuff
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Used for processing of RX data by Bit Destuffing module.
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+CRC TX WBS Trigger
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Stuff + 1 clock cycle
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Used for CRC calculation step for CRC 17 / CRC 21 when CRC calculation step
+ is executed from TX Data stream.
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+CRC TX NBS Trigger
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Stuff
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Used for CRC calculation step for CRC 15 when CRC calculation step is executed
+ from TX Data stream.
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+CRC RX WBS Trigger
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Process
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Used for CRC calculation step for CRC 17 / CRC 21 when CRC calculation step
+ is executed from RX Data stream.
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+CRC RX NBS Trigger
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Process
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Used for CRC calculation step for CRC 15 when CRC calculation step is executed
+ from RX Data stream.
+\end_layout
+
+\end_inset
+</cell>
+</row>
+</lyxtabular>
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\noindent
+\align center
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Trigger signals 
+\begin_inset CommandInset label
+LatexCommand label
+name "tab:trigger-signals"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
