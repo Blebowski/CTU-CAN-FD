@@ -711,6 +711,10 @@ architecture rtl of protocol_control_fsm is
     
     -- Retransmitt counter clear (internal value)
     signal retr_ctr_clear_i          :  std_logic;
+    -- Increment Retransmitt counter by 1
+    signal retr_ctr_add_i            :  std_logic;
+
+
     
     -- Blocking register for retransmitt counter add signal.
     signal retr_ctr_add_block        :  std_logic;
@@ -2675,7 +2679,7 @@ begin
     --  2. Retransmitt limitation is enabled. Not counting when disabled.
     --  3. Unit is reciever. Only transmitter counts re-transmissions!
     ---------------------------------------------------------------------------
-    retr_ctr_add <= '0' when (retr_ctr_clear_i = '1' or drv_retr_lim_ena = '0'
+    retr_ctr_add_i <= '0' when (retr_ctr_clear_i = '1' or drv_retr_lim_ena = '0'
                               or is_receiver = '1' or retr_ctr_add_block = '1') else
                     '1' when (arbitration_lost_i = '1' and rx_trigger = '1') else
                     '1' when (err_frm_req = '1') else
@@ -2701,7 +2705,7 @@ begin
         if (res_n = G_RESET_POLARITY) then
             retr_ctr_add_block <= '0';
         elsif (rising_edge(clk_sys)) then
-            if (retr_ctr_add = '1') then
+            if (retr_ctr_add_i = '1') then
                 retr_ctr_add_block <= '1';
             elsif (retr_ctr_add_block_clr = '1') then
                 retr_ctr_add_block <= '0';
@@ -2838,6 +2842,7 @@ begin
     crc_spec_enable <= crc_spec_enable_i;
     retr_ctr_clear <= retr_ctr_clear_i;
     arbitration_lost <= arbitration_lost_i;
+    retr_ctr_add <= retr_ctr_add_i;
 
     -----------------------------------------------------------------------
     -- Assertions
