@@ -439,8 +439,13 @@ static void ctucan_err_interrupt(struct net_device *ndev,
 		} else if (state == CAN_STATE_ERROR_WARNING) {
 			netdev_warn(ndev, "    error_warning, but ISR[FCSI] was set! (HW bug?)");
 			goto err_warning;
+		} else if (state == CAN_STATE_ERROR_ACTIVE) {
+			netdev_info(ndev, "    reached error active state");
+			cf->data[1] = CAN_ERR_CRTL_ACTIVE;
+			cf->data[6] = berr.txerr;
+			cf->data[7] = berr.rxerr;
 		} else {
-			netdev_warn(ndev, "    unhandled error state!");
+			netdev_warn(ndev, "    unhandled error state (%d)!", state);
 		}
 	} else if (isr.s.ewli) {
 err_warning:
