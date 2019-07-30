@@ -132,8 +132,8 @@ package can_types is
         s_rxb_idle,
         s_rxb_store_frame_format,
         s_rxb_store_identifier,
-        s_rxb_store_beg_ts_low,
-        s_rxb_store_beg_ts_high,
+        s_rxb_skip_ts_low,
+        s_rxb_skip_ts_high,
         s_rxb_store_end_ts_low,
         s_rxb_store_end_ts_high,
         s_rxb_store_data

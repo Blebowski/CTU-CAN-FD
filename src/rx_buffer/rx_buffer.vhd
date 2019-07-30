@@ -312,7 +312,7 @@ architecture rtl of rx_buffer is
     signal store_extra_ts_end       :       std_logic;
 
     -- Data write selector
-    signal data_selector            :       std_logic_vector(6 downto 0);
+    signal data_selector            :       std_logic_vector(4 downto 0);
 
     -- Signals that write pointer should be stored to extra write pointer
     signal store_extra_wr_ptr       :       std_logic;
@@ -487,13 +487,11 @@ begin
     -- Memory data which are written depend on state of the FSM
     ----------------------------------------------------------------------------
     with data_selector select memory_write_data <=
-        frame_form_w                     when "0000001",
-        "000" & rec_ident                when "0000010",
-        timestamp_capture(31 downto 0)   when "0000100",
-        timestamp_capture(31 downto 0)   when "0001000",
-        timestamp_capture(63 downto 32)  when "0010000",
-        timestamp_capture(63 downto 32)  when "0100000",
-        store_data_word                  when "1000000",
+        frame_form_w                     when "00001",
+        "000" & rec_ident                when "00010",
+        store_data_word                  when "00100",
+        timestamp_capture(31 downto 0)   when "01000",
+        timestamp_capture(63 downto 32)  when "10000",
         (OTHERS => '0')                  when others;
 
 
@@ -695,9 +693,7 @@ begin
 
         elsif (rising_edge(clk_sys)) then
 
-            if (((rec_valid_f = '1' and drv_rtsopt = RTS_BEG) or
-                 (store_extra_ts_end = '1')))
-            then
+            if (store_extra_ts_end = '1') then
                 if (data_overrun_i = '0') then
                     commit_rx_frame         <= '1';
                 else

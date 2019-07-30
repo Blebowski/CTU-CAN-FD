@@ -3593,7 +3593,7 @@ package can_components is
 
         -- Data selector for selection of memory word to be stored in RX Buffer 
         -- RAM (one hot coded)
-        data_selector        :out    std_logic_vector(6 downto 0);
+        data_selector        :out    std_logic_vector(4 downto 0);
 
         -- Load extra write pointer from regular write pointer
         store_extra_wr_ptr   :out    std_logic;

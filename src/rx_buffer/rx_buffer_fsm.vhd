@@ -117,7 +117,7 @@ entity rx_buffer_fsm is
 
         -- Data selector for selection of memory word to be stored in RX Buffer 
         -- RAM (one hot coded)
-        data_selector        :out    std_logic_vector(6 downto 0);
+        data_selector        :out    std_logic_vector(4 downto 0);
 
         -- Load extra write pointer from regular write pointer
         store_extra_wr_ptr   :out    std_logic;
@@ -193,25 +193,25 @@ begin
             if (rec_abort_f = '1') then
                 next_state      <= s_rxb_idle;
             else
-                next_state      <= s_rxb_store_beg_ts_low;
+                next_state      <= s_rxb_skip_ts_low;
             end if;
 
 
         --------------------------------------------------------------------
-        -- Store TIMESTAMP_L_W from beginning of frame.
+        -- Skip through TIMESTAMP_L_W, store only zeroes.
         --------------------------------------------------------------------
-        when s_rxb_store_beg_ts_low =>
+        when s_rxb_skip_ts_low =>
             if (rec_abort_f = '1') then
                 next_state      <= s_rxb_idle;
             else
-                next_state      <= s_rxb_store_beg_ts_high;
+                next_state      <= s_rxb_skip_ts_high;
             end if;
 
 
         --------------------------------------------------------------------
-        -- Store first TIMESTAMP_U_W from beginning of frame.
+        -- Skip through TIMESTAMP_U_W, store only zeroes.
         --------------------------------------------------------------------
-        when s_rxb_store_beg_ts_high =>
+        when s_rxb_skip_ts_high =>
             if (rec_abort_f = '1') then
                 next_state      <= s_rxb_idle;
             else                
@@ -226,23 +226,19 @@ begin
          --------------------------------------------------------------------
         when s_rxb_store_data =>
             if (rec_abort_f = '1') then 
-                next_state          <= s_rxb_idle;
+                next_state      <= s_rxb_idle;
             elsif (rec_valid_f = '1') then
-                if (drv_rtsopt = RTS_END) then
-                    next_state      <= s_rxb_store_end_ts_low;
-                else
-                    next_state      <= s_rxb_idle; 
-                end if;
+                next_state      <= s_rxb_store_end_ts_low;
             end if;
 
         --------------------------------------------------------------------
-        -- Store TIMESTAMP_L_W from end of frame.
+        -- Store TIMESTAMP_L_W.
         --------------------------------------------------------------------
         when s_rxb_store_end_ts_low =>
             next_state      <= s_rxb_store_end_ts_high;
 
         --------------------------------------------------------------------
-        -- Store first TIMESTAMP_U_W from end of frame.
+        -- Store first TIMESTAMP_U_W.
         --------------------------------------------------------------------
         when s_rxb_store_end_ts_high =>
             next_state      <= s_rxb_idle;
@@ -270,7 +266,7 @@ begin
             
         when s_rxb_store_frame_format =>
             write_raw_intent <= '1';
-            data_selector    <= "0000001";
+            data_selector    <= "00001";
             
             -- Storing extra write pointer is done early enough so that there is
             -- enough time to increment it to be pointing to first(higher) 
@@ -279,34 +275,32 @@ begin
             
         when s_rxb_store_identifier =>
             write_raw_intent <= '1';
-            data_selector    <= "0000010";
+            data_selector    <= "00010";
             
             -- Incrementing extra write pointer is done twice so that when lower
             -- timestamp word is beigin stored, extra write pointer is pointing to
             -- lower timestamp word address.
             inc_extra_wr_ptr <= '1';
             
-        when s_rxb_store_beg_ts_low =>
+        when s_rxb_skip_ts_low =>
             write_raw_intent <= '1';
-            data_selector    <= "0000100";
-            
+
             -- Extra write pointer is incremented once more when lower
             -- timestamp word was stored, to point to higher timestamp word.
             inc_extra_wr_ptr <= '1';
             
-        when s_rxb_store_beg_ts_high =>
+        when s_rxb_skip_ts_high =>
             write_raw_intent <= '1';
-            data_selector    <= "0010000";
             
         when s_rxb_store_data =>
-            data_selector    <= "1000000";
+            data_selector    <= "00100";
             
             if (store_data_f = '1') then
                 write_raw_intent      <= '1';
             end if;
             
         when s_rxb_store_end_ts_low =>
-            data_selector    <= "0001000";
+            data_selector    <= "01000";
 
             -- Extra write pointer is incremented once more when lower
             -- timestamp word was stored, to point to higher timestamp word.
@@ -317,6 +311,8 @@ begin
             write_extra_ts   <= '1';
             
         when s_rxb_store_end_ts_high =>
+            data_selector    <= "10000";
+            
             -- Storing of extra timestamp has ended and frame can be committed.
             store_extra_ts_end <= '1';
             
