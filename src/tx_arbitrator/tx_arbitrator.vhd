@@ -550,8 +550,7 @@ begin
   --
   -- psl txt_buf_all_ready_cov : cover
   --    (txtb_ready(0) = '1' and txtb_ready(1) = '1' and
-  --     txtb_ready(2) = '1' and txtb_ready(3) = '1')
-  --    report "All TXT Buffers ready";
+  --     txtb_ready(2) = '1' and txtb_ready(3) = '1');
   --
   -- psl txt_buf_change_cov : cover
   --    (txtb_changed = '1' and txtb_hw_cmd.lock = '1')
