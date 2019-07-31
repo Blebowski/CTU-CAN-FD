@@ -268,26 +268,16 @@ begin
             write_raw_intent <= '1';
             data_selector    <= "00001";
             
-            -- Storing timestamp write pointer is done early enough so that
-            -- there is enough time to increment it to be pointing to first
-            -- (higher) timestamp word
-            store_ts_wr_ptr <= '1';
-            
         when s_rxb_store_identifier =>
             write_raw_intent <= '1';
             data_selector    <= "00010";
-            
-            -- Incrementing timestamp write pointer is done twice so that when lower
-            -- timestamp word is being stored, timestamp write pointer is pointing to
-            -- lower timestamp word address.
-            inc_ts_wr_ptr <= '1';
-            
+
         when s_rxb_skip_ts_low =>
             write_raw_intent <= '1';
 
-            -- Timestamp write pointer is incremented once more when lower
-            -- timestamp word was stored, to point to higher timestamp word.
-            inc_ts_wr_ptr <= '1';
+            -- Here we capture value of Raw write pointer to Timestamp write pointer
+            -- so that it can be later used for Timestamp storing.
+            store_ts_wr_ptr <= '1';
             
         when s_rxb_skip_ts_high =>
             write_raw_intent <= '1';
