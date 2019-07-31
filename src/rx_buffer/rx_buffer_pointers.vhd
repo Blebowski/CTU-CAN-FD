@@ -49,7 +49,7 @@
 --    1. Read pointer
 --    2. Write pointer raw
 --    3. Write pointer (regular, commited)
---    4. Write pointer for storing extra timestamp from end of frame.
+--    4. Write pointer for storing timestamp.
 --  Counters for free memory:
 --    1. RX mem free internal for control of storing and overrun
 --    2. RX mem free available to user.
@@ -108,11 +108,12 @@ entity rx_buffer_pointers is
         -- last stored write_pointer value.
         commit_overrun_abort :in     std_logic;
 
-        -- RX Buffer FSM signals to store write pointer to extra write pointer
-        store_extra_wr_ptr   :in     std_logic;
+        -- RX Buffer FSM signals to store regular write pointer to timestamp 
+        -- write pointer
+        store_ts_wr_ptr      :in     std_logic;
 
-        -- RX Buffer FSM signals to increment extra write pointer
-        inc_extra_wr_ptr     :in     std_logic;
+        -- RX Buffer FSM signals to increment timestamp write pointer
+        inc_ts_wr_ptr        :in     std_logic;
 
         -- RX Buffer RAM is being read by SW
         read_increment       :in     std_logic;
@@ -140,9 +141,8 @@ entity rx_buffer_pointers is
         -- write pointer!
         write_pointer_raw      :out  std_logic_vector(11 downto 0);
 
-        -- Extra write pointer which is used for storing timestamp at the end of
-        -- data frame!
-        write_pointer_extra_ts :out  std_logic_vector(11 downto 0);
+        -- Timestamp write pointer
+        write_pointer_ts       :out  std_logic_vector(11 downto 0);
 
         -- Number of free memory words available for user
         rx_mem_free_i          :out  std_logic_vector(12 downto 0)
@@ -182,9 +182,9 @@ architecture rtl of rx_buffer_pointers is
     signal write_pointer_raw_d   :       unsigned(C_PTR_WIDTH - 1 downto 0);
     signal write_pointer_raw_ce  :       std_logic;
     
-    signal write_pointer_extra_ts_i  :    unsigned(C_PTR_WIDTH - 1 downto 0);
-    signal write_pointer_extra_ts_d  :    unsigned(C_PTR_WIDTH - 1 downto 0);
-    signal write_pointer_extra_ts_ce :    std_logic;
+    signal write_pointer_ts_i    :    unsigned(C_PTR_WIDTH - 1 downto 0);
+    signal write_pointer_ts_d    :    unsigned(C_PTR_WIDTH - 1 downto 0);
+    signal write_pointer_ts_ce   :    std_logic;
     
     signal rx_mem_free_i_i     :       unsigned(C_FREE_MEM_WIDTH - 1 downto 0);
 
@@ -212,7 +212,7 @@ begin
     read_pointer_inc_1      <= std_logic_vector(resize(read_pointer_inc_1_i, 12));
     write_pointer           <= std_logic_vector(resize(write_pointer_i, 12));
     write_pointer_raw       <= std_logic_vector(resize(write_pointer_raw_i, 12));
-    write_pointer_extra_ts  <= std_logic_vector(resize(write_pointer_extra_ts_i, 12));
+    write_pointer_ts        <= std_logic_vector(resize(write_pointer_ts_i, 12));
     rx_mem_free_i           <= std_logic_vector(resize(rx_mem_free_i_i, 13));
 
 
@@ -276,24 +276,23 @@ begin
 
 
     ----------------------------------------------------------------------------
-    -- Extra write pointer for storing value of timestamp from end of frame.
+    -- Timestamp write pointer.
     ----------------------------------------------------------------------------
-    write_pointer_extra_ts_d <= write_pointer_i when (store_extra_wr_ptr = '1')
-                                                else
-                   write_pointer_extra_ts_i + 1;
+    write_pointer_ts_d <= write_pointer_i when (store_ts_wr_ptr = '1') else
+                   write_pointer_ts_i + 1;
 
     -- Tick only when it should be incremented or stored
-    write_pointer_extra_ts_ce <= '1' when (store_extra_wr_ptr = '1') else
-                                 '1' when (inc_extra_wr_ptr = '1') else
-                                 '0';
+    write_pointer_ts_ce <= '1' when (store_ts_wr_ptr = '1') else
+                           '1' when (inc_ts_wr_ptr = '1') else
+                           '0';
 
-    extra_write_ptr_proc : process(clk_sys, rx_buf_res_q)
+    timestamp_write_ptr_proc : process(clk_sys, rx_buf_res_q)
     begin
         if (rx_buf_res_q = G_RESET_POLARITY) then
-            write_pointer_extra_ts_i  <= (OTHERS => '0');
+            write_pointer_ts_i  <= (OTHERS => '0');
         elsif (rising_edge(clk_sys)) then
-            if (write_pointer_extra_ts_ce = '1') then
-                write_pointer_extra_ts_i <= write_pointer_extra_ts_d;
+            if (write_pointer_ts_ce = '1') then
+                write_pointer_ts_i <= write_pointer_ts_d;
             end if;
         end if;
     end process;

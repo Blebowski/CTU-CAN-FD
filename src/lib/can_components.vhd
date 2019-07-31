@@ -3585,21 +3585,21 @@ package can_components is
         -- Intent to write to RX Buffer RAM
         write_raw_intent     :out    std_logic;
 
-        -- Write Extra Timestamp to RX Buffer RAM memory
-        write_extra_ts       :out    std_logic;
+        -- Write Timestamp to RX Buffer RAM memory
+        write_ts             :out    std_logic;
 
-        -- Storing of extra Timestamp from end of frame has ended.
-        store_extra_ts_end   :out    std_logic;
+        -- Storing of Timestamp from end of frame has ended.
+        stored_ts            :out    std_logic;
 
         -- Data selector for selection of memory word to be stored in RX Buffer 
         -- RAM (one hot coded)
         data_selector        :out    std_logic_vector(4 downto 0);
 
-        -- Load extra write pointer from regular write pointer
-        store_extra_wr_ptr   :out    std_logic;
+        -- Load timestamp write pointer from regular write pointer
+        store_ts_wr_ptr      :out    std_logic;
 
-        -- Increment extra write pointer by 1
-        inc_extra_wr_ptr     :out    std_logic;
+        -- Increment timestamp write pointer by 1
+        inc_ts_wr_ptr        :out    std_logic;
 
         -- Reset internal overrun flag
         reset_overrun_flag   :out    std_logic
@@ -3643,11 +3643,11 @@ package can_components is
         -- last stored write_pointer value.
         commit_overrun_abort :in     std_logic;
 
-        -- RX Buffer FSM signals to store write pointer to extra write pointer
-        store_extra_wr_ptr   :in     std_logic;
+        -- RX Buffer FSM signals to store write pointer to timestamp write pointer
+        store_ts_wr_ptr      :in     std_logic;
 
-        -- RX Buffer FSM signals to increment extra write pointer
-        inc_extra_wr_ptr     :in     std_logic;
+        -- RX Buffer FSM signals to increment timestamp write pointer
+        inc_ts_wr_ptr        :in     std_logic;
 
         -- RX Buffer RAM is being read by SW
         read_increment       :in     std_logic;
@@ -3675,9 +3675,8 @@ package can_components is
         -- write pointer!
         write_pointer_raw      :out     std_logic_vector(11 downto 0);
 
-        -- Extra write pointer which is used for storing timestamp at the end of
-        -- data frame!
-        write_pointer_extra_ts :out     std_logic_vector(11 downto 0);
+        -- Timestamp write pointer
+        write_pointer_ts       :out     std_logic_vector(11 downto 0);
 
         -- Number of free memory words available for user
         rx_mem_free_i          :out     std_logic_vector(12 downto 0)

@@ -216,9 +216,9 @@ architecture rtl of rx_buffer is
     -- write pointer!
     signal write_pointer_raw        : std_logic_vector(11 downto 0);
 
-    -- Extra write pointer which is used for storing timestamp at the end of
+    -- Timestamp write pointer which is used for storing timestamp at the end of
     -- data frame!
-    signal write_pointer_extra_ts   : std_logic_vector(11 downto 0);
+    signal write_pointer_ts         : std_logic_vector(11 downto 0);
 
     -- Number of free memory words available to SW after frame was committed.
     signal rx_mem_free_i            : std_logic_vector(12 downto 0);
@@ -304,21 +304,20 @@ architecture rtl of rx_buffer is
     -- word to RX Buffer memory!
     signal write_raw_intent         :       std_logic;
 
-    -- Indicates that FSM is in one of states for writing timestmap from end of
-    -- frame to the memory.
-    signal write_extra_ts           :       std_logic;
+    -- Indicates that FSM is in one of states for writing timestamp
+    signal write_ts                 :       std_logic;
 
-    -- Storing of extra timestamp is at the end.
-    signal store_extra_ts_end       :       std_logic;
+    -- Storing of timestamp is at the end.
+    signal stored_ts                :       std_logic;
 
     -- Data write selector
     signal data_selector            :       std_logic_vector(4 downto 0);
 
-    -- Signals that write pointer should be stored to extra write pointer
-    signal store_extra_wr_ptr       :       std_logic;
+    -- Signals that write pointer should be stored to timestamp write pointer
+    signal store_ts_wr_ptr          :       std_logic;
 
-    -- Increment extra write pointer
-    signal inc_extra_wr_ptr         :       std_logic;
+    -- Increment timestamp write pointer
+    signal inc_ts_wr_ptr            :       std_logic;
 
     -- Restart overrun flag upon start of new frame
     signal reset_overrun_flag       :       std_logic;
@@ -445,11 +444,11 @@ begin
         drv_bus             => drv_bus,             -- IN
         
         write_raw_intent    => write_raw_intent,    -- OUT
-        write_extra_ts      => write_extra_ts,      -- OUT
-        store_extra_ts_end  => store_extra_ts_end,  -- OUT
+        write_ts            => write_ts,            -- OUT
+        stored_ts           => stored_ts,           -- OUT
         data_selector       => data_selector,       -- OUT
-        store_extra_wr_ptr  => store_extra_wr_ptr,  -- OUT
-        inc_extra_wr_ptr    => inc_extra_wr_ptr,    -- OUT
+        store_ts_wr_ptr     => store_ts_wr_ptr,     -- OUT
+        inc_ts_wr_ptr       => inc_ts_wr_ptr,       -- OUT
         reset_overrun_flag  => reset_overrun_flag   -- OUT
     );
 
@@ -469,8 +468,8 @@ begin
         commit_rx_frame         => commit_rx_frame,         -- IN
         write_raw_OK            => write_raw_OK,            -- IN
         commit_overrun_abort    => commit_overrun_abort,    -- IN
-        store_extra_wr_ptr      => store_extra_wr_ptr,      -- IN
-        inc_extra_wr_ptr        => inc_extra_wr_ptr,        -- IN
+        store_ts_wr_ptr         => store_ts_wr_ptr,         -- IN
+        inc_ts_wr_ptr           => inc_ts_wr_ptr,           -- IN
         read_increment          => read_increment,          -- IN
         drv_bus                 => drv_bus,                 -- IN
         
@@ -478,7 +477,7 @@ begin
         read_pointer_inc_1      => read_pointer_inc_1,      -- OUT
         write_pointer           => write_pointer,           -- OUT
         write_pointer_raw       => write_pointer_raw,       -- OUT
-        write_pointer_extra_ts  => write_pointer_extra_ts,  -- OUT
+        write_pointer_ts        => write_pointer_ts,        -- OUT
         rx_mem_free_i           => rx_mem_free_i            -- OUT
     );
 
@@ -527,7 +526,7 @@ begin
     ----------------------------------------------------------------------------
     -- Overrun condition. Following conditions must be met:
     --  1. FSM wants to write to memory either to the position of
-    --      "write_pointer_raw". Note that "write_pointer_extra_ts" writes to
+    --      "write_pointer_raw". Note that "write_pointer_ts" writes to
     --      words which were already written, thus there is no need to watch
     --      for overrun!
     --  2. There is no free word in the memory remaining!
@@ -693,7 +692,7 @@ begin
 
         elsif (rising_edge(clk_sys)) then
 
-            if (store_extra_ts_end = '1') then
+            if (stored_ts = '1') then
                 if (data_overrun_i = '0') then
                     commit_rx_frame         <= '1';
                 else
@@ -790,20 +789,18 @@ begin
         port_b_data_out      => RAM_data_out            -- OUT
     );
 
-    -- Memory written either on regular write or Extra timestamp write
+    -- Memory written either on regular write or timestamp write
     RAM_write  <= '1' when (write_raw_OK = '1' or
-                           (write_extra_ts = '1' and data_overrun_i = '0' and
+                           (write_ts = '1' and data_overrun_i = '0' and
                             overrun_condition = '0'))
                       else
                   '0';
 
     ----------------------------------------------------------------------------
     -- Memory write address is multiplexed between "write_pointer_raw" for
-    -- regular writes and "write_pointer_extra_ts" for writes of timestamp
-    -- in the end of frame!
+    -- regular writes and "write_pointer_ts" for writes of timestamp!
     ----------------------------------------------------------------------------
-    RAM_write_address   <= write_pointer_extra_ts when (write_extra_ts = '1')
-                                                  else
+    RAM_write_address   <= write_pointer_ts when (write_ts = '1') else
                            write_pointer_raw;
 
     ----------------------------------------------------------------------------
@@ -929,8 +926,8 @@ begin
     -- psl rx_buf_overrun_clear_cov :
     --      cover (drv_clr_ovr = '1');
     --
-    -- psl rx_buf_write_extra_ts_cov :
-    --      cover (write_extra_ts = '1');
+    -- psl rx_buf_write_ts_cov :
+    --      cover (write_ts = '1');
     -- 
     -- psl rx_buf_release_receive_buffer_cov :
     --      cover (drv_erase_rx = '1'); 
