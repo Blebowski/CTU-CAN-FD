@@ -1,0 +1,19 @@
+{signal: [
+  {name: 'CAN frame part', 				wave: '===.....=.3.3.3.3.4.4.=..=5..=', 	data: ['Idle', 'SOF', 'Arbitration', 'Control', 'Byte 1', 'Byte 2', 'Byte 3', 'Byte 4', 'Byte 5', 'Byte 6', 'CRC','','Error frame', ''],
+   										node: '..........a.......c...e...g...'},
+  
+  {name: 'Store metadata',				wave: '0.........pl..................', data:[''],
+  										node: '..............................'},
+  
+  {name: 'Store data',					wave: '0.................pl..pl......', data:[''],
+  										node: '..............................'},
+  
+  {name: 'Reception abort',				wave: '0.........................pl..', data:[''],
+  										node: '..........b.......d...f...h...'},
+  
+ ],
+  foot: {text:
+  ['tspan', '                                                                         Metadata + Identifier stored                             Yellow Data word stored     Oragne Data word stored     Raw Write Pointer reverted'],
+},
+  edge:['a-b','c-d', 'e-f', 'g-h'],
+}

@@ -3829,6 +3829,21 @@ name "tab:CAN-frame-metadata"
 \end_layout
 
 \begin_layout Section
+CAN frame format
+\begin_inset CommandInset label
+LatexCommand label
+name "sec:CAN-frame-format"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+TODO - explain all the words - link to Datasheet.
+\end_layout
+
+\begin_layout Section
 Test mode
 \end_layout
 
@@ -14509,7 +14524,7 @@ RX Buffer implements following functionality:
 \end_layout
 
 \begin_layout Itemize
-Storing RX frame to FIFO as CAN frame progresses.
+Storing frame to FIFO memory as CAN frame progresses.
 \end_layout
 
 \begin_layout Itemize
@@ -14521,8 +14536,7 @@ Provide read interface for Memory registers.
 \end_layout
 
 \begin_layout Itemize
-Abort storing of CAN frame in case of an Error frame request or when Overrun
- occurs.
+Abort storing of CAN frame in case of an Error frame request or Overrun.
 \end_layout
 
 \begin_layout Standard
@@ -14594,8 +14608,8 @@ filename "entity_docs/rx_buffer.lyx"
 \end_layout
 
 \begin_layout Standard
-RX Buffer contains FIFO memory (details of this memory are described in
- 
+RX Buffer contains FIFO memory (details of actual RAM memory are described
+ in 
 \begin_inset CommandInset ref
 LatexCommand ref
 reference "sec:Memories"
@@ -14606,8 +14620,26 @@ noprefix "false"
 \end_inset
 
 ).
- Format of CAN FD frame within the memory is described in TODO, and visualized
- in Figure 
+ Size of RX Buffer memory is configurable by 
+\begin_inset Quotes eld
+\end_inset
+
+rx_buffer_size
+\begin_inset Quotes erd
+\end_inset
+
+ generic.
+ Format of CAN FD frame within the memory is described in 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "sec:CAN-frame-format"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+ and visualized in Figure 
 \begin_inset CommandInset ref
 LatexCommand ref
 reference "fig:rx-buffer-memory-format"
@@ -14618,7 +14650,17 @@ noprefix "false"
 \end_inset
 
 .
- RX frame is stored to FIFO by means of RX Buffer Storing Protocol which
+ Size of CAN frame within RX Buffer memory spans from 4 to 20 32-bit memory
+ words.
+ RTR frames and frames with no Data field span 4 memory words (Metadata,
+ Identifier, Timestamp upper, Timestamp lower).
+ Each next 4 bytes of data span one memory word.
+ Longest frame with 64 data bytes spans 20 memory words (Metadata, Identifier,
+ Timestamp upper, Timestamp lower, 16 data words).
+\end_layout
+
+\begin_layout Standard
+RX frame is stored to FIFO by means of RX Buffer Storing Protocol which
  is described in 
 \begin_inset CommandInset ref
 LatexCommand ref
@@ -14630,8 +14672,8 @@ noprefix "false"
 \end_inset
 
 .
- RX Frame is read from FIFO by means of Reading Protocol which is described
- in 
+ RX Frame is read from FIFO by means of RX Buffer Reading Protocol which
+ is described in 
 \begin_inset CommandInset ref
 LatexCommand ref
 reference "subsec:Reading-protocol"
@@ -14642,8 +14684,8 @@ noprefix "false"
 \end_inset
 
 .
- RX Buffer contains several set of pointers to FIFO which are described
- in detail in Table 
+ RX Buffer contains pointers to FIFO which are described in detail in Table
+ 
 \begin_inset CommandInset ref
 LatexCommand ref
 reference "tab:rx-buffer-pointers"
@@ -14657,54 +14699,21 @@ noprefix "false"
  RX Buffer can by flushed by issuing Release Receive Buffer command (writing
  logic 1 to COMMAND[RRB]).
  In such a case, all pointers are reset to zero as well as counter of stored
- frames.
+ frames (see 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "subsec:Reading-protocol"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+).
  If Release Receive Buffer command is issued by SW during storing of CAN
  frame, Overrun flag is set, and upon the end of actual frame this frame
- is discarded, and Raw Write Pointer raw is discared.
-\end_layout
-
-\begin_layout Standard
-\begin_inset Float figure
-placement H
-wide false
-sideways false
-status open
-
-\begin_layout Plain Layout
-\noindent
-\align center
-\begin_inset Graphics
-	filename /DOKUMENTY/Skola/CVUT-FEL/ctu_can_fd_2/doc/pics/Visio_generated/RX_Buffer_layout.pdf
-	lyxscale 20
-	scale 70
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Plain Layout
-\begin_inset Caption Standard
-
-\begin_layout Plain Layout
-RX Buffer memory format
-\begin_inset CommandInset label
-LatexCommand label
-name "fig:rx-buffer-memory-format"
-
-\end_inset
-
-
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
-\end_inset
-
-
+ is discarded, and Raw Write Pointer is reset to value of previous Comited
+ Write Pointer.
 \end_layout
 
 \begin_layout Standard
@@ -14828,7 +14837,7 @@ Raw Write Pointer
 \begin_inset Text
 
 \begin_layout Plain Layout
-When a word is written to RX Buffer RAM ( Metadata, Identifier, Data word
+When a word is written to RX Buffer RAM (Metadata, Identifier, Data word
  or Timestamp)
 \end_layout
 
@@ -14838,8 +14847,8 @@ When a word is written to RX Buffer RAM ( Metadata, Identifier, Data word
 \begin_inset Text
 
 \begin_layout Plain Layout
-When Reception abort command is issued by Protocol control or, Reception
- valid command is issued and Overflow occured before in the frame.
+When Reception abort command is issued or, Reception valid command is issued
+ and Overflow occured before in the frame.
 \end_layout
 
 \end_inset
@@ -14906,7 +14915,7 @@ Timestamp Write Pointer
 \begin_inset Text
 
 \begin_layout Plain Layout
-During storing Timestamp lower word.
+During storing of Timestamp lower word.
 \end_layout
 
 \end_inset
@@ -15002,6 +15011,50 @@ name "tab:rx-buffer-pointers"
 
 \end_layout
 
+\begin_layout Standard
+\begin_inset Float figure
+placement H
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\noindent
+\align center
+\begin_inset Graphics
+	filename /DOKUMENTY/Skola/CVUT-FEL/ctu_can_fd_2/doc/pics/Visio_generated/RX_Buffer_layout.pdf
+	lyxscale 20
+	scale 70
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+RX Buffer memory format
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:rx-buffer-memory-format"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
 \begin_layout Subsection
 Storing protocol
 \begin_inset CommandInset label
@@ -15034,18 +15087,8 @@ noprefix "false"
 \end_inset
 
 .
- RX Buffer FSM forms 
-\begin_inset Quotes eld
-\end_inset
-
-Slave
-\begin_inset Quotes erd
-\end_inset
-
- side of this protocol and it receives commands and reacts upon them.
- State transition diagram of RX Buffer FSM is shown in Figure TODO.
  Commands from Protocol control FSM are filtered by Frame filters before
- the commands are applied on RX Buffer.
+ sending to RX Buffer.
  Commands pass CAN fame filters when RX frame matches CAN frame filters
  as described in 
 \begin_inset CommandInset ref
@@ -15060,12 +15103,22 @@ noprefix "false"
 .
  If RX frame does not match CAN frame filters, commands are gated and does
  not reach RX Buffer within current CAN frame.
+ RX Buffer FSM forms 
+\begin_inset Quotes eld
+\end_inset
+
+Slave
+\begin_inset Quotes erd
+\end_inset
+
+ side of this protocol, it receives commands and reacts upon them.
+ State transition diagram of RX Buffer FSM is shown in Figure TODO.
  Commands are issued by Protocol control FSM continously as reception of
  CAN frame progresses.
  Commands are issued by Protocol control FSM when unit is Receiver of a
  frame, or when Loopback mode (SETTINGS[ILBP] = '1') is enabled.
  When unit is Transmitter and Loopback mode is disabled, commands are not
- issued to RX Buffer (frame is not being stored).
+ issued to RX Buffer (CAN frame is not being stored).
  An example of RX Buffer Storing protocol is shown in Figures 
 \begin_inset CommandInset ref
 LatexCommand ref
@@ -15103,27 +15156,97 @@ noprefix "false"
 \begin_layout Standard
 During storing of CAN frame, this frame can't be read out by SW via Memory
  registers.
- When frame is succesfully received without Error frame or Overrun, it is
- commited to RX Buffer and it becomes available for SW.
- When frame is commited 
-\begin_inset Quotes eld
+ When frame is succesfully received without Error frame or Overrun (last
+ bit of End of frame field), it is commited to RX Buffer and it becomes
+ available for SW.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+placement H
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\noindent
+\align center
+\begin_inset Graphics
+	filename /DOKUMENTY/Skola/CVUT-FEL/ctu_can_fd_2/doc/pics/Timing_diagrams/PDFs/rx_buffer_storing_protocol.pdf
+	lyxscale 20
+	scale 50
+
 \end_inset
 
-Raw Write Pointer
-\begin_inset Quotes erd
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+RX Buffer storing protocol - succesfull reception
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:rx-buffer-storing-ok"
+
 \end_inset
 
- is moved to 
-\begin_inset Quotes eld
+
+\end_layout
+
 \end_inset
 
-Commited Write Pointer
-\begin_inset Quotes erd
+
+\end_layout
+
 \end_inset
 
-.
- Frame is committed when frame reception is valid (in last bit of End of
- Frame field).
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+placement H
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\noindent
+\align center
+\begin_inset Graphics
+	filename /DOKUMENTY/Skola/CVUT-FEL/ctu_can_fd_2/doc/pics/Timing_diagrams/PDFs/rx_buffer_storing_protocol_error.pdf
+	lyxscale 20
+	scale 50
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+RX Buffer storing protocol - Error frame
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:rx-buffer-storing-error"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
@@ -15285,8 +15408,7 @@ Store data
 \begin_inset Text
 
 \begin_layout Plain Layout
-After each multiple of 4 bytes of Data field elapsed and at the end of Data
- field.
+After multiple of 4 bytes of Data field elapsed and at the end of Data field.
 \end_layout
 
 \end_inset
@@ -15295,7 +15417,7 @@ After each multiple of 4 bytes of Data field elapsed and at the end of Data
 \begin_inset Text
 
 \begin_layout Plain Layout
-Store Frame data word (4 bytes)
+Store Frame data word (4 bytes).
 \end_layout
 
 \end_inset
@@ -15333,8 +15455,7 @@ In Sample Point of last bit of End of Frame field.
 \begin_inset Text
 
 \begin_layout Plain Layout
-Timestamp is stored from Timestamp capture register and Frame is commited
- to memory.
+Timestamp is stored and CAN Frame is commited to memory.
 \end_layout
 
 \end_inset
@@ -15363,7 +15484,7 @@ Reception abort
 \begin_inset Text
 
 \begin_layout Plain Layout
-Whenever Error frame is transmitted.
+When Error frame is transmitted.
 \end_layout
 
 \end_inset
@@ -15405,94 +15526,6 @@ RX Buffer commands
 \begin_inset CommandInset label
 LatexCommand label
 name "tab:rx-buffer-commands"
-
-\end_inset
-
-
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Standard
-\begin_inset Float figure
-placement H
-wide false
-sideways false
-status open
-
-\begin_layout Plain Layout
-\noindent
-\align center
-\begin_inset Graphics
-	filename /DOKUMENTY/Skola/CVUT-FEL/ctu_can_fd_2/doc/pics/Timing_diagrams/PDFs/rx_buffer_storing_protocol.pdf
-	lyxscale 20
-	scale 50
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Plain Layout
-\begin_inset Caption Standard
-
-\begin_layout Plain Layout
-RX Buffer storing protocol - successull reception
-\begin_inset CommandInset label
-LatexCommand label
-name "fig:rx-buffer-storing-ok"
-
-\end_inset
-
-
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Standard
-\begin_inset Float figure
-placement H
-wide false
-sideways false
-status open
-
-\begin_layout Plain Layout
-\noindent
-\align center
-\begin_inset Graphics
-	filename /DOKUMENTY/Skola/CVUT-FEL/ctu_can_fd_2/doc/pics/Timing_diagrams/PDFs/rx_buffer_storing_protocol_error.pdf
-	lyxscale 20
-	scale 50
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Plain Layout
-\begin_inset Caption Standard
-
-\begin_layout Plain Layout
-RX Buffer storing protocol - Error frame
-\begin_inset CommandInset label
-LatexCommand label
-name "fig:rx-buffer-storing-error"
 
 \end_inset
 
@@ -15585,7 +15618,7 @@ cellcolor{gray}
 
 \begin_layout Plain Layout
 Reception of CAN frame starts.
- If RX frame is Timestamp is configured to be captured at SOF, it is captured
+ If RX frame Timestamp is configured to be captured at SOF, it is captured
  to Timestamp capture register.
 \end_layout
 
@@ -15669,7 +15702,7 @@ RX Buffer FSM stores Metadata to Frame format word, received CAN Identifier
  Raw Write Pointer is incremented by 1 during each of these cycles.
  When Raw Write Pointer points to Lower Timestamp word, it is captured to
  Timestamp Write Pointer.
- After this step Raw Write Pointer points to first data word.
+ After this step Raw Write Pointer points to first Data word.
 \end_layout
 
 \end_inset
@@ -15761,7 +15794,8 @@ CAN frame progresses to End of Frame field.
 \begin_inset Text
 
 \begin_layout Plain Layout
-Timestamp is stored (by means of Timestamp Write Pointer), to RX Buffer.
+Timestamp is stored from Timestamp capture register (by means of Timestamp
+ Write Pointer), to RX Buffer.
 \end_layout
 
 \end_inset
@@ -15781,9 +15815,13 @@ Timestamp is stored (by means of Timestamp Write Pointer), to RX Buffer.
 \begin_inset Text
 
 \begin_layout Plain Layout
-Frame is commited to memory.
- Raw Write Pointer moves to Commited Write Pointer and number of frames
- in RX Buffer (counter of frames in RX Buffer) is incremented.
+If Overrun condition did not occur during storing of current frame, frame
+ is commited to memory, Raw Write Pointer moves to Commited Write Pointer
+ and number of frames in RX Buffer (Frame counter) is incremented.
+ If Overrun condition or Release Receiver Buffer did occur during storing
+ of current frame, frame is not commited to memory, Raw Write Pointer is
+ reverted to Commited Write Pointer and number of frames in RX Buffer remains
+ unchanged.
 \end_layout
 
 \end_inset
@@ -15857,14 +15895,14 @@ GS[RTSOP]).
  In Sample Point of these bits, Timestamp is captured to capture register
  and stored to RX Bufer memory from capture register at the end of CAN frame
  .
- As position of Timestamp memory words within RX Buffer frame format is
- lower than Data words (see TODO), when RX frame Timestamp is sampled in
- capture register (at latest in Sample point of EOF), Raw Write pointer
- is pointing one memory word behind last word of CAN frame.
+ As position of Timestamp memory words within RX Buffer is lower than Data
+ words, when RX frame Timestamp is sampled in capture register (at latest
+ in Sample point of EOF), Raw Write pointer is pointing one memory word
+ behind last word of CAN frame.
  Due to this reason, Raw Write pointer can't be used to store RX frame Timestamp
  and dedicated Timestamp Write pointer is used.
- This pointer is configured by RX Buffer FSM to point to first Timestamp
- Word in RX Buffer at the end of CAN frame.
+ This pointer is loaded by RX Buffer FSM to point to first Timestamp Word
+ in RX Buffer at the end of CAN frame.
 \end_layout
 
 \begin_layout Subsection
@@ -15879,13 +15917,25 @@ name "subsec:Reading-protocol"
 \end_layout
 
 \begin_layout Standard
-RX Buffer is read out from SW word by word by reading from RX_DATA register.
+RX Buffer is read out from SW word by word by reading from RX_DATA register
+ as described in Table 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "tab:rx-buffer-read-protocol"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+.
  Read pointer is incremented after each word is read.
  RX Buffer supports single reads (Read indication asserted for one clock
  cycle) and also continous burst read (Read indication asserted for several
  consecutive clock cycles).
  Since RX Buffer RAM has one clock cycle delay on data output, RAM read
- address is speculatively multiplexed as shown in Figure TODO.
+ address is speculatively multiplexed between Read Pointer and Read Pointer
+ + 1 as shown in Figure TODO.
  This speculation is executed to support burst read.
 \end_layout
 
@@ -15900,7 +15950,7 @@ status open
 \noindent
 \align center
 \begin_inset Tabular
-<lyxtabular version="3" rows="6" columns="2">
+<lyxtabular version="3" rows="5" columns="2">
 <features tabularvalignment="middle">
 <column alignment="left" valignment="top" width="5line%">
 <column alignment="left" valignment="top" width="88.5line%">
@@ -15964,7 +16014,9 @@ cellcolor{gray}
 \begin_inset Text
 
 \begin_layout Plain Layout
-
+Read pointer points to Metadata word of most recently stored frame in RX
+ Buffer.
+ Output of RX Buffer RAM contain Metadata word.
 \end_layout
 
 \end_inset
@@ -15984,7 +16036,9 @@ cellcolor{gray}
 \begin_inset Text
 
 \begin_layout Plain Layout
-
+SW reads from RX_DATA register (Metadata word).
+ Auxiliarly counter is loaded to value of RWCNT.
+ Read Pointer increments by 1.
 \end_layout
 
 \end_inset
@@ -16004,27 +16058,12 @@ cellcolor{gray}
 \begin_inset Text
 
 \begin_layout Plain Layout
-
-\end_layout
-
-\end_inset
-</cell>
-</row>
-<row>
-<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-4
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-
+SW now knows value of RWCNT (number of remaining words in currently read
+ frame).
+ SW reads from RX_DATA register RWCNT times.
+ Read Pointer is incremented by 1 and auxiliarly counter is decremented
+ by 1 after each of these reads.
+ 
 \end_layout
 
 \end_inset
@@ -16035,7 +16074,7 @@ cellcolor{gray}
 \begin_inset Text
 
 \begin_layout Plain Layout
-5
+4
 \end_layout
 
 \end_inset
@@ -16044,7 +16083,8 @@ cellcolor{gray}
 \begin_inset Text
 
 \begin_layout Plain Layout
-
+During last read (when auxiliarly counter transits from 1 to 0), Frame counter
+ is decremented by 1.
 \end_layout
 
 \end_inset
@@ -16063,10 +16103,10 @@ cellcolor{gray}
 \begin_inset Caption Standard
 
 \begin_layout Plain Layout
-RX Buffer - read pointer speculation
+RX Buffer - read protocol
 \begin_inset CommandInset label
 LatexCommand label
-name "tab:rx-buffer-read-pointer-speculation"
+name "tab:rx-buffer-read-protocol"
 
 \end_inset
 
