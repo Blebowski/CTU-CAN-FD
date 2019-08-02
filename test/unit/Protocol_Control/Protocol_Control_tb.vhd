@@ -126,7 +126,7 @@ context work.ctu_can_test_context;
 architecture Protocol_Control_unit_test of CAN_test is
 
     ----------------------------------------------------------------------------
-    -- Common Signals from/to PC1 and PC2
+    -- Common Signals from/to DUTs
     ----------------------------------------------------------------------------
     signal clk_sys                  :  std_logic := '0';
     signal res_n                    :  std_logic := '0';
@@ -136,340 +136,228 @@ architecture Protocol_Control_unit_test of CAN_test is
                                         (OTHERS => '0');
 
     -- CRC results
-    signal crc15                    :  std_logic_vector(14 downto 0) :=
+    signal crc_15                    :  std_logic_vector(14 downto 0) :=
                                         (OTHERS => '0');
-    signal crc17                    :  std_logic_vector(16 downto 0) :=
+    signal crc_17                    :  std_logic_vector(16 downto 0) :=
                                         (OTHERS => '0');
-    signal crc21                    :  std_logic_vector(20 downto 0) :=
+    signal crc_21                    :  std_logic_vector(20 downto 0) :=
                                         (OTHERS => '0');
-
+                                        
     ----------------------------------------------------------------------------
-    -- Signals from/to PC1
+    -- Protocol Control 1
     ----------------------------------------------------------------------------
+    signal alc_1                     :  std_logic_vector(7 downto 0);
+    signal erc_capture_1             :  std_logic_vector(7 downto 0);
+    signal is_arbitration_1          :  std_logic;
+    signal is_control_1              :  std_logic;
+    signal is_data_1                 :  std_logic;
+    signal is_stuff_count_1          :  std_logic;
+    signal is_crc_1                  :  std_logic;
+    signal is_crc_delim_1            :  std_logic;
+    signal is_ack_field_1            :  std_logic;
+    signal is_ack_delim_1            :  std_logic;
+    signal is_eof_1                  :  std_logic;
+    signal is_intermission_1         :  std_logic;
+    signal is_suspend_1              :  std_logic;
+    signal is_err_frm_1                :  std_logic;
+    signal is_overload_1             :  std_logic;
+    
+    -- TXT Buffers interface
+    signal tran_word_1               :   std_logic_vector(31 downto 0);
+    signal tran_dlc_1                :   std_logic_vector(3 downto 0);
+    signal tran_is_rtr_1             :   std_logic;
+    signal tran_ident_type_1         :   std_logic;
+    signal tran_frame_type_1         :   std_logic;
+    signal tran_brs_1                :   std_logic; 
+    signal tran_frame_valid_1        :   std_logic;
+    signal txtb_hw_cmd_1             :   t_txtb_hw_cmd;
+    signal txtb_ptr_1                :   natural range 0 to 19;
+    signal txtb_changed_1            :   std_logic := '0';
+    
+    -- RX Buffer interface
+    signal rec_ident_1               :  std_logic_vector(28 downto 0);
+    signal rec_dlc_1                 :  std_logic_vector(3 downto 0);
+    signal rec_is_rtr_1              :  std_logic;
+    signal rec_ident_type_1          :  std_logic;
+    signal rec_frame_type_1          :  std_logic;
+    signal rec_brs_1                 :  std_logic;
+    signal rec_esi_1                 :  std_logic;
+    signal store_metadata_1          :  std_logic;
+    signal rec_abort_1               :  std_logic;
+    signal store_data_1              :  std_logic;
+    signal store_data_word_1         :  std_logic_vector(31 downto 0);
+    signal sof_pulse_1               :  std_logic;
 
-    -- TX Metadata
-    signal tran_dlc_1               :  std_logic_vector(3 downto 0) := "0000";
-    signal tran_is_rtr_1            :  std_logic := '0';
-    signal tran_ident_type_1        :  std_logic := '0';
-    signal tran_frame_type_1        :  std_logic := '0';
-    signal tran_brs_1               :  std_logic := '0';
+    -- Operation control FSM Interface
+    signal is_transmitter_1          :  std_logic := '1';
+    signal is_receiver_1             :  std_logic := '0';
+    signal is_idle_1                 :  std_logic := '0';
+    signal arbitration_lost_1        :  std_logic;
+    signal set_transmitter_1         :  std_logic;
+    signal set_receiver_1            :  std_logic;
+    signal set_idle_1                :  std_logic;
+    
+    -- Fault confinement Interface
+    signal is_err_active_1           :  std_logic := '1';
+    signal is_err_passive_1          :  std_logic := '0';
+    signal is_bus_off_1              :  std_logic := '0';
+    signal err_detected_1            :  std_logic;
+    signal primary_err_1           :  std_logic;
+    signal act_err_ovr_flag_1        :  std_logic;
+    signal err_delim_late_1          :  std_logic;
+    signal set_err_active_1          :  std_logic;
+    signal err_ctrs_unchanged_1      :  std_logic;
+    
+    -- TX and RX Trigger signals to Sample and Transmitt Data
+    signal tx_trigger_1              :  std_logic := '0';
+    signal rx_trigger_1              :  std_logic := '0';
 
-    -- TX Buffer interface (Identifier word + data words)
-    signal txt_data_word_1          :  std_logic_vector(31 downto 0) :=
-                                         (OTHERS => '0');
-    signal txt_buf_ptr_1            :  natural range 0 to 19;
+    -- CAN Bus serial data stream
+    signal tx_data_nbs_1             :  std_logic;
 
-    -- HW Command for TXT Buffers
-    signal txt_hw_cmd_1             :  txt_hw_cmd_type := ('0', '0', '0',
-                                                           '0', '0', '0');
+    -- Sampled TX data by TX Trigger (emulation of Bit Stuffing)
+    signal tx_data_nbs_1_q           :  std_logic;
+    signal tx_data_nbs_2_q           :  std_logic;
 
-    -- TXT Buffer source has changed.
-    signal txtb_changed_1           :  std_logic;
+    -- Bit Stuffing Interface
+    signal stuff_enable_1            :  std_logic;
+    signal destuff_enable_1          :  std_logic;
+    signal fixed_stuff_1             :  std_logic;
+    signal stuff_length_1            :  std_logic_vector(2 downto 0);
+    signal dst_ctr_1                 :  std_logic_vector(2 downto 0);
+    signal bst_ctr_1                 :  std_logic_vector(2 downto 0);
+    signal stuff_err_1             :  std_logic := '0';
+    
+    -- Bus Sampling Interface
+    signal bit_err_1               :  std_logic := '0';
+    
+    -- CRC Interface
+    signal crc_enable_1              :  std_logic;
+    signal crc_spec_enable_1         :  std_logic;
+    signal crc_src_1                 :  std_logic_vector(1 downto 0);
+    
+    -- Control signals
+    signal sp_control_1              :  std_logic_vector(1 downto 0);
+    signal sync_control_1            :  std_logic_vector(1 downto 0); 
+    signal no_pos_resync_1           :  std_logic;
+    signal ssp_reset_1               :  std_logic;
+    signal trv_delay_calib_1         :  std_logic;
+    signal tran_valid_1              :  std_logic;
+    signal rec_valid_1               :  std_logic;
 
-    -- Frame on output of TX Arbitrator is valid and can be locked for
-    -- transmission
-    signal tran_frame_valid_in_1    :  std_logic := '0';
-
-    -- RX metadata
-    signal rec_dlc_1                :  std_logic_vector(3 downto 0);
-    signal rec_is_rtr_1             :  std_logic;
-    signal rec_ident_type_1         :  std_logic;
-    signal rec_frame_type_1         :  std_logic;
-    signal rec_brs_1                :  std_logic;
-    signal rec_esi_1                :  std_logic;
-
-    -- RX Buffer storing protocol
-    signal store_metadata_1         :  std_logic;
-    signal rec_abort_1              :  std_logic;
-    signal store_data_1             :  std_logic;
-    signal store_data_word_1        :  std_logic_vector(31 downto 0);
-
-    -- RX Identifier
-    signal rec_ident_1              :  std_logic_vector(28 downto 0);
-
-    -- Recieved CRC value
-    signal rec_crc_1                :  std_logic_vector(20 downto 0);
-
-    -- Operation mode state
-    signal OP_state_1               :  oper_mode_type;
-
-    -- Signal for Operational mode state mahine about loosing arbitration
-    signal arbitration_lost_1       :  std_logic;
-
-    -- Signal to indicate transcieve or recieve finished and bus is idle
-    signal is_idle_1                :  std_logic;
-
-    -- Set OP_State FSM into transciever state (Used at SOF)
-    signal set_transciever_1        :  std_logic;
-
-    -- Set OP_State FSM into reciever state
-    signal set_reciever_1           :  std_logic;
-
-    -- Arbitration lost capture
-    signal alc_1                    :  std_logic_vector(7 downto 0);
-
-    -- Fault confinement state
-    signal error_state_1            :  error_state_type;
-
-    -- Form Error
-    signal form_Error_1             :  std_logic;
-
-    -- CRC Error
-    signal CRC_Error_1              :  std_logic;
-
-    -- Acknowledge error
-    signal ack_Error_1              :  std_logic;
-
-    -- Bit error is valid
-    signal bit_Error_valid_1        :  std_logic;
-
-    -- Stuff error is valid
-    signal stuff_Error_valid_1      :  std_logic;
-
-    -- Increment error counter by 1.
-    signal inc_one_1                :  std_logic;
-
-    -- Increment error counter by 8.
-    signal inc_eight_1              :  std_logic;
-
-    -- Decrement error counter by 1.
-    signal dec_one_1                :  std_logic;
-
-    -- Transmission was finished succesfully!
-    signal tran_valid_1             :  std_logic;
-
-    -- Frame was received succesfully
-    signal rec_valid_1              :  std_logic;
-
-    -- Acknowledge received
-    signal ack_recieved_out_1       :  std_logic;
-
-    -- Bit rate was shifted
-    signal br_shifted_1             :  std_logic;
-
-    -- Transcieved data on CAN Bus
-    signal data_tx_1                :  std_logic;
-
-    -- Bit stuffing enabled
-    signal stuff_enable_1           :  std_logic;
-
-    -- Fixed bit stuffing ('1') / Standard Bit stuffing ('0')
-    signal fixed_stuff_1            :  std_logic;
-
-    -- Length of bit stuffing rule
-    signal stuff_length_1           :  std_logic_vector(2 downto 0);
-
-    -- Enable bit destuffing
-    signal destuff_enable_1         :  std_logic;
-
-    -- Enable stuff error detection
-    signal stuff_error_enable_1     :  std_logic;
-
-    -- Fixed bit de-stuffing ('1') / Standard Bit de-stuffing ('0')
-    signal fixed_destuff_1          :  std_logic;
-
-    -- Length of bit destuffing rule
-    signal destuff_length_1         :  std_logic_vector(2 downto 0);
-
-    -- Bit destuffing counter mod 8
-    signal dst_ctr_1                :  natural range 0 to 7;
-
-    -- Transition from 0 to 1 erases the CRC and operation holds as
-    -- long as "crc_enable = 1"
-    signal crc_enable_1             :  std_logic;
-
-    -- Synchronisation control (NO_SYNC, HARD_SYNC, RE_SYNC)
-    signal sync_control_1           :  std_logic_vector(1 downto 0);
-
-    -- Sample point control (NOMINAL_SAMPLE, DATA_SAMPLE, SECONDARY_SAMPLE)
-    signal sp_control_1             :  std_logic_vector(1 downto 0);
-
-    -- Clear Secondary sampling point shift register (in begining of
-    -- Data phase)
-    signal ssp_reset_1              :  std_logic;
-
-    -- Calibration command for transciever delay compenstation
-    signal trv_delay_calib_1        :  std_logic;
-
-    -- Synchronisation edge validated by prescaler!!!
-    signal hard_sync_edge_1         :  std_logic;
-
-    -- Internal loopBack enabled (for Bus monitoring mode)
-    signal int_loop_back_ena_1      :  std_logic;
-
-    -- Unknown operational state
-    signal unknown_OP_state_1       :  std_logic;
-
-    -- Protocol state output.
-    signal PC_State_out_1           :  protocol_type;
-
-    -- Start of frame pulse
-    signal sof_pulse_1              :  std_logic;
-
-
+    -- Status signals
+    signal ack_received_1            :  std_logic;
+    signal br_shifted_1              :  std_logic;
+    signal form_err_1              :  std_logic;
+    signal ack_err_1               :  std_logic;
+    signal crc_err_1               :  std_logic;
+ 
+ 
     ----------------------------------------------------------------------------
-    -- Signals from/to PC2
+    -- Protocol Control 2
     ----------------------------------------------------------------------------
+    signal alc_2                     :  std_logic_vector(7 downto 0);
+    signal erc_capture_2             :  std_logic_vector(7 downto 0);
+    signal is_arbitration_2          :  std_logic;
+    signal is_control_2              :  std_logic;
+    signal is_data_2                 :  std_logic;
+    signal is_stuff_count_2          :  std_logic;
+    signal is_crc_2                  :  std_logic;
+    signal is_crc_delim_2            :  std_logic;
+    signal is_ack_field_2            :  std_logic;
+    signal is_ack_delim_2            :  std_logic;
+    signal is_eof_2                  :  std_logic;
+    signal is_intermission_2         :  std_logic;
+    signal is_suspend_2              :  std_logic;
+    signal is_err_frm_2                :  std_logic;
+    signal is_overload_2             :  std_logic;
+    
+    -- TXT Buffers interface
+    signal tran_word_2               :   std_logic_vector(31 downto 0);
+    signal tran_dlc_2                :   std_logic_vector(3 downto 0);
+    signal tran_is_rtr_2             :   std_logic;
+    signal tran_ident_type_2         :   std_logic;
+    signal tran_frame_type_2         :   std_logic;
+    signal tran_brs_2                :   std_logic; 
+    signal tran_frame_valid_2        :   std_logic;
+    signal txtb_hw_cmd_2             :  t_txtb_hw_cmd;
+    signal txtb_ptr_2                :  natural range 0 to 19;
+    signal txtb_changed_2            :   std_logic := '0';
+    
+    -- RX Buffer interface
+    signal rec_ident_2               :  std_logic_vector(28 downto 0);
+    signal rec_dlc_2                 :  std_logic_vector(3 downto 0);
+    signal rec_is_rtr_2              :  std_logic;
+    signal rec_ident_type_2          :  std_logic;
+    signal rec_frame_type_2          :  std_logic;
+    signal rec_brs_2                 :  std_logic;
+    signal rec_esi_2                 :  std_logic;
+    signal store_metadata_2          :  std_logic;
+    signal rec_abort_2               :  std_logic;
+    signal store_data_2              :  std_logic;
+    signal store_data_word_2         :  std_logic_vector(31 downto 0);
+    signal sof_pulse_2               :  std_logic;
 
-    -- TX Metadata
-    signal tran_dlc_2               :  std_logic_vector(3 downto 0) := "0000";
-    signal tran_is_rtr_2            :  std_logic := '0';
-    signal tran_ident_type_2        :  std_logic := '0';
-    signal tran_frame_type_2        :  std_logic := '0';
-    signal tran_brs_2               :  std_logic := '0';
+    -- Operation control FSM Interface
+    signal is_transmitter_2          :  std_logic := '0';
+    signal is_receiver_2             :  std_logic := '1';
+    signal is_idle_2                 :  std_logic := '0';
+    signal arbitration_lost_2        :  std_logic;
+    signal set_transmitter_2         :  std_logic;
+    signal set_receiver_2            :  std_logic;
+    signal set_idle_2                :  std_logic;
+    
+    -- Fault confinement Interface
+    signal is_err_active_2           :  std_logic := '1';
+    signal is_err_passive_2          :  std_logic := '0';
+    signal is_bus_off_2              :  std_logic := '0';
+    signal err_detected_2            :  std_logic;
+    signal primary_err_2           :  std_logic;
+    signal act_err_ovr_flag_2        :  std_logic;
+    signal err_delim_late_2          :  std_logic;
+    signal set_err_active_2          :  std_logic;
+    signal err_ctrs_unchanged_2      :  std_logic;
+    
+    -- TX and RX Trigger signals to Sample and Transmitt Data
+    signal tx_trigger_2              :   std_logic := '0';
+    signal rx_trigger_2              :   std_logic := '0';
 
-    -- TX Buffer interface (Identifier word + data words)
-    signal txt_data_word_2          :  std_logic_vector(31 downto 0) :=
-                                            (OTHERS => '0');
-    signal txt_buf_ptr_2            :  natural range 0 to 19;
+    -- CAN Bus serial data stream
+    signal tx_data_nbs_2             :  std_logic;
 
-    -- TXT Buffer source has changed.
-    signal txtb_changed_2           :  std_logic;
+    -- Bit Stuffing Interface
+    signal stuff_enable_2            :  std_logic;
+    signal destuff_enable_2          :  std_logic;
+    signal fixed_stuff_2             :  std_logic;
+    signal stuff_length_2            :  std_logic_vector(2 downto 0);
+    signal dst_ctr_2                 :  std_logic_vector(2 downto 0);
+    signal bst_ctr_2                 :  std_logic_vector(2 downto 0);
+    signal stuff_err_2             :  std_logic := '0';
+    
+    -- Bus Sampling Interface
+    signal bit_err_2               :   std_logic := '0';
+    
+    -- CRC Interface
+    signal crc_enable_2              :  std_logic;
+    signal crc_spec_enable_2         :  std_logic;
+    signal crc_src_2                 :  std_logic_vector(1 downto 0);
+    
+    -- Control signals
+    signal sp_control_2              :  std_logic_vector(1 downto 0);
+    signal sync_control_2            :  std_logic_vector(1 downto 0); 
+    signal no_pos_resync_2           :  std_logic;
+    signal ssp_reset_2               :  std_logic;
+    signal trv_delay_calib_2         :  std_logic;
+    signal tran_valid_2              :  std_logic;
+    signal rec_valid_2               :  std_logic;
 
-    -- HW Command for TXT Buffers
-    signal txt_hw_cmd_2             :  txt_hw_cmd_type := ('0', '0', '0',
-                                                           '0', '0', '0');
-
-    -- Frame on output of TX Arbitrator is valid and can be locked for
-    -- transmission
-    signal tran_frame_valid_in_2    :  std_logic := '0';
-
-    -- RX metadata
-    signal rec_dlc_2                :  std_logic_vector(3 downto 0);
-    signal rec_is_rtr_2             :  std_logic;
-    signal rec_ident_type_2         :  std_logic;
-    signal rec_frame_type_2         :  std_logic;
-    signal rec_brs_2                :  std_logic;
-    signal rec_esi_2                :  std_logic;
-
-    signal store_metadata_2         :  std_logic;
-    signal rec_abort_2              :  std_logic;
-    signal store_data_2             :  std_logic;
-    signal store_data_word_2        :  std_logic_vector(31 downto 0);
-
-    -- RX Identifier
-    signal rec_ident_2              :  std_logic_vector(28 downto 0);
-
-    -- Recieved CRC value
-    signal rec_crc_2                :  std_logic_vector(20 downto 0);
-
-    -- Operation mode state
-    signal OP_state_2               :  oper_mode_type;
-
-    -- Signal for Operational mode state mahine about loosing arbitration
-    signal arbitration_lost_2       :  std_logic;
-
-    -- Signal to indicate transcieve or recieve finished and bus is idle
-    signal is_idle_2                :  std_logic;
-
-    -- Set OP_State FSM into transciever state (Used at SOF)
-    signal set_transciever_2        :  std_logic;
-
-    -- Set OP_State FSM into reciever state
-    signal set_reciever_2           :  std_logic;
-
-    -- Arbitration lost capture
-    signal alc_2                    :  std_logic_vector(7 downto 0);
-
-    -- Fault confinement state
-    signal error_state_2            :  error_state_type;
-
-    -- Form Error
-    signal form_Error_2             :  std_logic;
-
-    -- CRC Error
-    signal CRC_Error_2              :  std_logic;
-
-    -- Acknowledge error
-    signal ack_Error_2              :  std_logic;
-
-    -- Bit error is valid
-    signal bit_Error_valid_2        :  std_logic;
-
-    -- Stuff error is valid
-    signal stuff_Error_valid_2      :  std_logic;
-
-
-    -- Increment error counter by 1.
-    signal inc_one_2                :  std_logic;
-
-    -- Increment error counter by 8.
-    signal inc_eight_2              :  std_logic;
-
-    -- Decrement error counter by 1.
-    signal dec_one_2                :  std_logic;
-
-    -- Transmission was finished succesfully!
-    signal tran_valid_2             :  std_logic;
-
-    -- Frame was received succesfully
-    signal rec_valid_2              :  std_logic;
-
-    -- Acknowledge received
-    signal ack_recieved_out_2       :  std_logic;
-
-    -- Bit rate was shifted
-    signal br_shifted_2             :  std_logic;
-
-    -- Transcieved data on CAN Bus
-    signal data_tx_2                :  std_logic;
-
-    -- Bit stuffing enabled
-    signal stuff_enable_2           :  std_logic;
-
-    -- Fixed bit stuffing ('1') / Standard Bit stuffing ('0')
-    signal fixed_stuff_2            :  std_logic;
-
-    -- Length of bit stuffing rule
-    signal stuff_length_2           :  std_logic_vector(2 downto 0);
-
-    -- Enable bit destuffing
-    signal destuff_enable_2         :  std_logic;
-
-    -- Enable stuff error detection
-    signal stuff_error_enable_2     :  std_logic;
-
-    -- Fixed bit de-stuffing ('1') / Standard Bit de-stuffing ('0')
-    signal fixed_destuff_2          :  std_logic;
-
-    -- Length of bit destuffing rule
-    signal destuff_length_2         :  std_logic_vector(2 downto 0);
-
-    -- Bit destuffing counter mod 8
-    signal dst_ctr_2                :  natural range 0 to 7;
-
-    -- Transition from 0 to 1 erases the CRC and operation holds as
-    -- long as "crc_enable = 1"
-    signal crc_enable_2             :  std_logic;
-
-    -- Synchronisation control (NO_SYNC, HARD_SYNC, RE_SYNC)
-    signal sync_control_2           :  std_logic_vector(1 downto 0);
-
-    -- Sample point control (NOMINAL_SAMPLE, DATA_SAMPLE, SECONDARY_SAMPLE)
-    signal sp_control_2             :  std_logic_vector(1 downto 0);
-
-    -- Clear Secondary sampling point shift register (in begining of
-    -- Data phase)
-    signal ssp_reset_2              :  std_logic;
-
-    -- Calibration command for transciever delay compenstation
-    signal trv_delay_calib_2        :  std_logic;
-
-    -- Synchronisation edge validated by prescaler!!!
-    signal hard_sync_edge_2         :  std_logic;
-
-    -- Internal loopBack enabled (for Bus monitoring mode)
-    signal int_loop_back_ena_2      :  std_logic;
-
-    -- Unknown operational state
-    signal unknown_OP_state_2       :  std_logic;
-
-    -- Protocol state output.
-    signal PC_State_out_2           :  protocol_type;
-
-    -- Start of frame pulse
-    signal sof_pulse_2              :  std_logic;
-
+    -- Status signals
+    signal ack_received_2            :  std_logic;
+    signal br_shifted_2              :  std_logic;
+    signal form_err_2              :  std_logic;
+    signal ack_err_2               :  std_logic;
+    signal crc_err_2               :  std_logic;
+    
 
     ----------------------------------------------------------------------------
     -- Internal testbench signals
@@ -481,18 +369,6 @@ architecture Protocol_Control_unit_test of CAN_test is
     -- Random pool pointer
     signal rnd_ctr_tr               :  natural range 0 to RAND_POOL_SIZE := 0;
 
-    -- Transmitt trigger
-    signal tx_trig                  :  std_logic := '0';
-
-    -- Receive trigger
-    signal rx_trig                  :  std_logic := '0';
-
-    -- Previous value of "bus_level" for sync. edge generation.
-    signal prev_bus                 :  std_logic;
-
-    -- Fault confinement state.
-    signal error_st                 :  error_state_type := error_active;
-
     -- TXT Buffer memory model
     signal txtb_mem                 :  test_mem_type :=
                                         (OTHERS => (OTHERS => '0'));
@@ -502,37 +378,6 @@ architecture Protocol_Control_unit_test of CAN_test is
     signal rxb_mem                  :  test_mem_type :=
                                         (OTHERS => (OTHERS => '0'));
     signal rxb_mem_ptr              :  natural := 0;
-
-    ------------------------
-    -- Driving bus aliases
-    ------------------------
-
-    -- RTR behavior setting
-    signal drv_rtr_pref             :     std_logic;
-
-    -- Whenever FD Frames are supported for reciever
-    signal drv_CAN_fd_ena           :     std_logic;
-
-    -- Bus Monitoring mode enabled
-    signal drv_bus_mon_ena          :     std_logic;
-
-    -- Retransmition limit enabled for errornous frames
-    signal drv_retr_lim_ena         :     std_logic;
-
-    -- Retransmittion treshold
-    signal drv_retr_th              :     std_logic_vector(3 downto 0);
-
-    -- Self Test Mode enabled
-    signal drv_self_test_ena        :     std_logic;
-
-    -- Immediately abort transmittion
-    signal drv_abort_tran           :     std_logic;
-
-    -- Forbidding acknowledge mode
-    signal drv_ack_forb             :     std_logic;
-
-    -- Enabling whole controller
-    signal drv_ena                  :     std_logic;
 
     -- Type of FD Format Frame (ISO,non-ISO)
     signal drv_fd_type              :     std_logic;
@@ -575,13 +420,13 @@ architecture Protocol_Control_unit_test of CAN_test is
     -- SW model of Protocol control
     ----------------------------------------------------------------------------
     procedure gen_sw_CAN(
-        constant   tx_frame       :in   SW_CAN_frame_type;
-        constant   error_st       :in   error_state_type;
-        constant   drv_iso_fd     :in   std_logic;
-        constant   crc15          :in   std_logic_vector(14 downto 0);
-        constant   crc17          :in   std_logic_vector(16 downto 0);
-        constant   crc21          :in   std_logic_vector(20 downto 0);
-        constant   stuff_cnt      :in   natural range 0 to 7;
+        constant   tx_frame         :in   SW_CAN_frame_type;
+        constant   is_err_active    :in   std_logic;
+        constant   drv_iso_fd       :in   std_logic;
+        constant   crc_15           :in   std_logic_vector(14 downto 0);
+        constant   crc_17           :in   std_logic_vector(16 downto 0);
+        constant   crc_21           :in   std_logic_vector(20 downto 0);
+        constant   stuff_cnt        :in   natural range 0 to 7;
 
         -- Generated bit sequence
         variable seq              :out  std_logic_vector(639 downto 0);
@@ -651,7 +496,7 @@ architecture Protocol_Control_unit_test of CAN_test is
             seq(ptr + 2)    := tx_frame.brs;   -- BRS
 
             -- ESI bit
-            if (error_st = error_active) then
+            if (is_err_active = '1') then
                 seq(ptr + 3) := DOMINANT;
             else
                 seq(ptr + 3) := RECESSIVE;
@@ -665,7 +510,7 @@ architecture Protocol_Control_unit_test of CAN_test is
             seq(ptr + 3)    := tx_frame.brs;   -- BRS
 
             -- ESI bit
-            if (error_st = error_active) then
+            if (is_err_active = '1') then
                 seq(ptr + 4) := DOMINANT;
             else
                 seq(ptr + 4) := RECESSIVE;
@@ -706,13 +551,13 @@ architecture Protocol_Control_unit_test of CAN_test is
         -- CRC sequence
         if (tx_frame.frame_format = NORMAL_CAN) then
             crc_length     := 15;
-            tmp_crc        := crc15 & "000000";
+            tmp_crc        := crc_15 & "000000";
         elsif (tx_frame.data_length <= 16) then
             crc_length     := 17;
-            tmp_crc        := crc17 & "0000";
+            tmp_crc        := crc_17 & "0000";
         else
             crc_length     := 21;
-            tmp_crc        := crc21;
+            tmp_crc        := crc_21;
         end if;
 
         for i in 20 downto 20 - crc_length + 1 loop
@@ -795,204 +640,290 @@ architecture Protocol_Control_unit_test of CAN_test is
 
 begin
 
-    protocol_control_1_comp : protocol_control
+    protocol_control_inst_1 : protocol_control
+    generic map(
+        G_RESET_POLARITY        => C_RESET_POLARITY,
+        G_CTRL_CTR_WIDTH        => C_CTRL_CTR_WIDTH,
+        G_RETR_LIM_CTR_WIDTH    => C_RETR_LIM_CTR_WIDTH,
+        G_ERR_VALID_PIPELINE    => C_ERR_VALID_PIPELINE
+    )
     port map(
-        clk_sys               => clk_sys,
-        res_n                 => res_n,
-        drv_bus               => drv_bus,
-        int_loop_back_ena     => int_loop_back_ena_1,
-        PC_State_out          => PC_State_out_1,
-        alc                   => alc_1,
-        tran_data             => txt_data_word_1,
-        tran_dlc              => tran_dlc_1,
-        tran_is_rtr           => tran_is_rtr_1,
-        tran_ident_type       => tran_ident_type_1,
-        tran_frame_type       => tran_frame_type_1,
-        tran_brs              => tran_brs_1,
-        txt_buf_ptr           => txt_buf_ptr_1,
-        tran_frame_valid_in   => tran_frame_valid_in_1,
-        txt_hw_cmd            => txt_hw_cmd_1,
-        txtb_changed          => txtb_changed_1,
-        br_shifted            => br_shifted_1,
-        rec_ident             => rec_ident_1,
-        rec_dlc               => rec_dlc_1,
-        rec_is_rtr            => rec_is_rtr_1,
-        rec_ident_type        => rec_ident_type_1,
-        rec_frame_type        => rec_frame_type_1,
-        rec_brs               => rec_brs_1,
-        rec_crc               => rec_crc_1,
-        rec_esi               => rec_esi_1,
-        store_metadata        => store_metadata_1,
-        rec_abort             => rec_abort_1,
-        store_data            => store_data_1,
-        store_data_word       => store_data_word_1,
-        OP_state              => OP_state_1,
-        arbitration_lost      => arbitration_lost_1,
-        is_idle               => is_idle_1,
-        set_transciever       => set_transciever_1,
-        set_reciever          => set_reciever_1,
-        ack_recieved_out      => ack_recieved_out_1,
-        error_state           => error_state_1,
-        form_Error            => form_Error_1,
-        CRC_Error             => CRC_Error_1,
-        ack_Error             => ack_Error_1,
-        bit_Error_valid       => bit_Error_valid_1,
-        stuff_Error_valid     => stuff_Error_valid_1,
-        unknown_OP_state      => unknown_OP_state_1,
-        inc_one               => inc_one_1,
-        inc_eight             => inc_eight_1,
-        dec_one               => dec_one_1,
-        tran_valid            => tran_valid_1,
-        rec_valid             => rec_valid_1,
-        tran_trig             => tx_trig,
-        rec_trig              => rx_trig,
-        data_tx               => data_tx_1,
-        stuff_enable          => stuff_enable_1,
-        fixed_stuff           => fixed_stuff_1,
-        stuff_length          => stuff_length_1,
-        data_rx               => bus_level,
-        destuff_enable        => destuff_enable_1,
-        stuff_error_enable    => stuff_error_enable_1,
-        fixed_destuff         => fixed_destuff_1,
-        destuff_length        => destuff_length_1,
-        dst_ctr               => dst_ctr_1,
-        crc_enable            => crc_enable_1,
-        crc15                 => crc15,
-        crc17                 => crc17,
-        crc21                 => crc21,
-        sync_control          => sync_control_1,
-        sp_control            => sp_control_1,
-        ssp_reset             => ssp_reset_1,
-        trv_delay_calib       => trv_delay_calib_1,
-        hard_sync_edge        => hard_sync_edge_1,
-        sof_pulse             => sof_pulse_1
-      );
+        clk_sys                 => clk_sys,
+        res_n                   => res_n,
+        
+        -- Memory registers interface
+        drv_bus                 => drv_bus,
+        alc                     => alc_1,
+        erc_capture             => erc_capture_1,
+        is_arbitration          => is_arbitration_1,
+        is_control              => is_control_1,
+        is_data                 => is_data_1,
+        is_stuff_count          => is_stuff_count_1,
+        is_crc                  => is_crc_1,
+        is_crc_delim            => is_crc_delim_1,
+        is_ack_field            => is_ack_field_1,
+        is_ack_delim            => is_ack_delim_1,
+        is_eof                  => is_eof_1,
+        is_intermission         => is_intermission_1,
+        is_suspend              => is_suspend_1,
+        is_err_frm                => is_err_frm_1,
+        is_overload             => is_overload_1,
+        
+        -- TXT Buffers interface
+        tran_word               => tran_word_1,
+        tran_dlc                => tran_dlc_1,
+        tran_is_rtr             => tran_is_rtr_1,
+        tran_ident_type         => tran_ident_type_1,
+        tran_frame_type         => tran_frame_type_1,
+        tran_brs                => tran_brs_1,
+        tran_frame_valid        => tran_frame_valid_1,
+        txtb_hw_cmd             => txtb_hw_cmd_1,
+        txtb_ptr                => txtb_ptr_1,
+        txtb_changed            => txtb_changed_1,
+        
+        -- RX Buffer interface
+        rec_ident               => rec_ident_1,
+        rec_dlc                 => rec_dlc_1,
+        rec_is_rtr              => rec_is_rtr_1,
+        rec_ident_type          => rec_ident_type_1,
+        rec_frame_type          => rec_frame_type_1,
+        rec_brs                 => rec_brs_1,
+        rec_esi                 => rec_esi_1,
+        store_metadata          => store_metadata_1,
+        rec_abort               => rec_abort_1,
+        store_data              => store_data_1,
+        store_data_word         => store_data_word_1,
+        sof_pulse               => sof_pulse_1,
+    
+        -- Operation control FSM Interface
+        is_transmitter          => is_transmitter_1,
+        is_receiver             => is_receiver_1,
+        is_idle                 => is_idle_1,
+        arbitration_lost        => arbitration_lost_1,
+        set_transmitter         => set_transmitter_1,
+        set_receiver            => set_receiver_1,
+        set_idle                => set_idle_1,
+        
+        -- Fault confinement Interface
+        is_err_active           => is_err_active_1,
+        is_err_passive          => is_err_passive_1,
+        is_bus_off              => is_bus_off_1,
+        err_detected            => err_detected_1,
+        primary_err           => primary_err_1,
+        act_err_ovr_flag        => act_err_ovr_flag_1,
+        err_delim_late          => err_delim_late_1,
+        set_err_active          => set_err_active_1,
+        err_ctrs_unchanged      => err_ctrs_unchanged_1,
+        
+        -- TX and RX Trigger signals to Sample and Transmitt Data
+        tx_trigger              => tx_trigger_1,
+        rx_trigger              => rx_trigger_1,
 
+        -- CAN Bus serial data stream
+        tx_data_nbs             => tx_data_nbs_1,
+        tx_data_wbs             => tx_data_nbs_1_q,
+        rx_data_nbs             => bus_level,
 
-    protocol_control_2_comp : protocol_control
+        -- Bit Stuffing Interface
+        stuff_enable            => stuff_enable_1,
+        destuff_enable          => destuff_enable_1,
+        fixed_stuff             => fixed_stuff_1,
+        stuff_length            => stuff_length_1,
+        dst_ctr                 => dst_ctr_1,
+        bst_ctr                 => bst_ctr_1,
+        stuff_err             => stuff_err_1,
+        
+        -- Bus Sampling Interface
+        bit_err               => bit_err_1,
+        
+        -- CRC Interface
+        crc_enable              => crc_enable_1,
+        crc_spec_enable         => crc_spec_enable_1,
+        crc_src                 => crc_src_1,
+        crc_15                  => crc_15,
+        crc_17                  => crc_17,
+        crc_21                  => crc_21,
+        
+        -- Control signals
+        sp_control              => sp_control_1,
+        sync_control            => sync_control_1,
+        no_pos_resync           => no_pos_resync_1,
+        ssp_reset               => ssp_reset_1,
+        trv_delay_calib         => trv_delay_calib_1,
+        tran_valid              => tran_valid_1,
+        rec_valid               => rec_valid_1,
+
+        -- Status signals
+        ack_received            => ack_received_1,
+        br_shifted              => br_shifted_1,
+        form_err              => form_err_1,
+        ack_err               => ack_err_1,
+        crc_err               => crc_err_1
+    );
+    
+    
+    protocol_control_inst_2 : protocol_control
+    generic map(
+        G_RESET_POLARITY        => C_RESET_POLARITY,
+        G_CTRL_CTR_WIDTH        => C_CTRL_CTR_WIDTH,
+        G_RETR_LIM_CTR_WIDTH    => C_RETR_LIM_CTR_WIDTH,
+        G_ERR_VALID_PIPELINE    => C_ERR_VALID_PIPELINE
+    )
     port map(
-        clk_sys               => clk_sys,
-        res_n                 => res_n,
-        drv_bus               => drv_bus,
-        int_loop_back_ena     => int_loop_back_ena_2,
-        PC_State_out          => PC_State_out_2,
-        alc                   => alc_2,
-        tran_data             => txt_data_word_2,
-        tran_dlc              => tran_dlc_2,
-        tran_is_rtr           => tran_is_rtr_2,
-        tran_ident_type       => tran_ident_type_2,
-        tran_frame_type       => tran_frame_type_2,
-        tran_brs              => tran_brs_2,
-        txt_buf_ptr           => txt_buf_ptr_2,
-        tran_frame_valid_in   => tran_frame_valid_in_2,
-        txt_hw_cmd            => txt_hw_cmd_2,
-        txtb_changed          => txtb_changed_2,
-        br_shifted            => br_shifted_2,
-        rec_ident             => rec_ident_2,
-        rec_dlc               => rec_dlc_2,
-        rec_is_rtr            => rec_is_rtr_2,
-        rec_ident_type        => rec_ident_type_2,
-        rec_frame_type        => rec_frame_type_2,
-        rec_brs               => rec_brs_2,
-        rec_crc               => rec_crc_2,
-        rec_esi               => rec_esi_2,
-        store_metadata        => store_metadata_2,
-        rec_abort             => rec_abort_2,
-        store_data            => store_data_2,
-        store_data_word       => store_data_word_2,
-        OP_state              => OP_state_2,
-        arbitration_lost      => arbitration_lost_2,
-        is_idle               => is_idle_2,
-        set_transciever       => set_transciever_2,
-        set_reciever          => set_reciever_2,
-        ack_recieved_out      => ack_recieved_out_2,
-        error_state           => error_state_2,
-        form_Error            => form_Error_2,
-        CRC_Error             => CRC_Error_2,
-        ack_Error             => ack_Error_2,
-        bit_Error_valid       => bit_Error_valid_2,
-        stuff_Error_valid     => stuff_Error_valid_2,
-        unknown_OP_state      => unknown_OP_state_2,
-        inc_one               => inc_one_2,
-        inc_eight             => inc_eight_2,
-        dec_one               => dec_one_2,
-        tran_valid            => tran_valid_2,
-        rec_valid             => rec_valid_2,
-        tran_trig             => tx_trig,
-        rec_trig              => rx_trig,
-        data_tx               => data_tx_2,
-        stuff_enable          => stuff_enable_2,
-        fixed_stuff           => fixed_stuff_2,
-        stuff_length          => stuff_length_2,
-        data_rx               => bus_level,
-        destuff_enable        => destuff_enable_2,
-        stuff_error_enable    => stuff_error_enable_2,
-        fixed_destuff         => fixed_destuff_2,
-        destuff_length        => destuff_length_2,
-        dst_ctr               => dst_ctr_2,
-        crc_enable            => crc_enable_2,
-        crc15                 => crc15,
-        crc17                 => crc17,
-        crc21                 => crc21,
-        sync_control          => sync_control_2,
-        sp_control            => sp_control_2,
-        ssp_reset             => ssp_reset_2,
-        trv_delay_calib       => trv_delay_calib_2,
-        hard_sync_edge        => hard_sync_edge_2,
-        sof_pulse             => sof_pulse_2
-      );
+        clk_sys                 => clk_sys,
+        res_n                   => res_n,
+        
+        -- Memory registers interface
+        drv_bus                 => drv_bus,
+        alc                     => alc_2,
+        erc_capture             => erc_capture_2,
+        is_arbitration          => is_arbitration_2,
+        is_control              => is_control_2,
+        is_data                 => is_data_2,
+        is_stuff_count          => is_stuff_count_2,
+        is_crc                  => is_crc_2,
+        is_crc_delim            => is_crc_delim_2,
+        is_ack_field            => is_ack_field_2,
+        is_ack_delim            => is_ack_delim_2,
+        is_eof                  => is_eof_2,
+        is_intermission         => is_intermission_2,
+        is_suspend              => is_suspend_2,
+        is_err_frm              => is_err_frm_2,
+        is_overload             => is_overload_2,
+        
+        -- TXT Buffers interface
+        tran_word               => tran_word_2,
+        tran_dlc                => tran_dlc_2,
+        tran_is_rtr             => tran_is_rtr_2,
+        tran_ident_type         => tran_ident_type_2,
+        tran_frame_type         => tran_frame_type_2,
+        tran_brs                => tran_brs_2,
+        tran_frame_valid        => tran_frame_valid_2,
+        txtb_hw_cmd             => txtb_hw_cmd_2,
+        txtb_ptr                => txtb_ptr_2,
+        txtb_changed            => txtb_changed_2,
+        
+        -- RX Buffer interface
+        rec_ident               => rec_ident_2,
+        rec_dlc                 => rec_dlc_2,
+        rec_is_rtr              => rec_is_rtr_2,
+        rec_ident_type          => rec_ident_type_2,
+        rec_frame_type          => rec_frame_type_2,
+        rec_brs                 => rec_brs_2,
+        rec_esi                 => rec_esi_2,
+        store_metadata          => store_metadata_2,
+        rec_abort               => rec_abort_2,
+        store_data              => store_data_2,
+        store_data_word         => store_data_word_2,
+        sof_pulse               => sof_pulse_2,
+    
+        -- Operation control FSM Interface
+        is_transmitter          => is_transmitter_2,
+        is_receiver             => is_receiver_2,
+        is_idle                 => is_idle_2,
+        arbitration_lost        => arbitration_lost_2,
+        set_transmitter         => set_transmitter_2,
+        set_receiver            => set_receiver_2,
+        set_idle                => set_idle_2,
+        
+        -- Fault confinement Interface
+        is_err_active           => is_err_active_2,
+        is_err_passive          => is_err_passive_2,
+        is_bus_off              => is_bus_off_2,
+        err_detected            => err_detected_2,
+        primary_err             => primary_err_2,
+        act_err_ovr_flag        => act_err_ovr_flag_2,
+        err_delim_late          => err_delim_late_2,
+        set_err_active          => set_err_active_2,
+        err_ctrs_unchanged      => err_ctrs_unchanged_2,
+        
+        -- TX and RX Trigger signals to Sample and Transmitt Data
+        tx_trigger              => tx_trigger_1,
+        rx_trigger              => rx_trigger_1,
 
+        -- CAN Bus serial data stream
+        tx_data_nbs             => tx_data_nbs_2,
+        tx_data_wbs             => tx_data_nbs_2_q,
+        rx_data_nbs             => bus_level,
+
+        -- Bit Stuffing Interface
+        stuff_enable            => stuff_enable_2,
+        destuff_enable          => destuff_enable_2,
+        fixed_stuff             => fixed_stuff_2,
+        stuff_length            => stuff_length_2,
+        dst_ctr                 => dst_ctr_2,
+        bst_ctr                 => bst_ctr_2,
+        stuff_err               => stuff_err_2,
+        
+        -- Bus Sampling Interface
+        bit_err                 => bit_err_2,
+        
+        -- CRC Interface
+        crc_enable              => crc_enable_2,
+        crc_spec_enable         => crc_spec_enable_2,
+        crc_src                 => crc_src_2,
+        crc_15                  => crc_15,
+        crc_17                  => crc_17,
+        crc_21                  => crc_21,
+        
+        -- Control signals
+        sp_control              => sp_control_2,
+        sync_control            => sync_control_2,
+        no_pos_resync           => no_pos_resync_2,
+        ssp_reset               => ssp_reset_2,
+        trv_delay_calib         => trv_delay_calib_2,
+        tran_valid              => tran_valid_2,
+        rec_valid               => rec_valid_2,
+
+        -- Status signals
+        ack_received            => ack_received_2,
+        br_shifted              => br_shifted_2,
+        form_err                => form_err_2,
+        ack_err                 => ack_err_2,
+        crc_err                 => crc_err_2
+    );
+    
+    ----------------------------------------------------------------------------
+    -- Sampling of TX Data
+    -- emulation of Bit Stuffing
+    ----------------------------------------------------------------------------
+    tx_sample_proc : process(clk_sys, res_n)
+    begin
+        if (res_n = C_RESET_POLARITY) then
+            tx_data_nbs_1_q <= RECESSIVE;
+            tx_data_nbs_2_q <= RECESSIVE;
+        elsif (rising_edge(clk_sys)) then
+            if (tx_trigger_1 = '1') then
+                tx_data_nbs_1_q <= tx_data_nbs_1;
+                tx_data_nbs_2_q <= tx_data_nbs_2;
+            end if;
+        end if;
+    end process;
 
     ----------------------------------------------------------------------------
     -- Creating bus level
     ----------------------------------------------------------------------------
-    bus_level             <= data_tx_2 AND data_tx_1;
+    bus_level             <= tx_data_nbs_1_q AND tx_data_nbs_2_q;
 
 
     ----------------------------------------------------------------------------
     -- Driving bus aliases (equal for both nodes)
     ----------------------------------------------------------------------------
-    drv_bus(DRV_RTR_PREF_INDEX)                       <=  drv_rtr_pref;
-    drv_bus(DRV_CAN_FD_ENA_INDEX)                     <=  drv_CAN_fd_ena;
-    drv_bus(DRV_BUS_MON_ENA_INDEX)                    <=  drv_bus_mon_ena;
-    drv_bus(DRV_RETR_LIM_ENA_INDEX)                   <=  drv_retr_lim_ena;
-    drv_bus(DRV_RETR_TH_HIGH downto DRV_RETR_TH_LOW)  <=  drv_retr_th;
-    drv_bus(DRV_SELF_TEST_ENA_INDEX)                  <=  drv_self_test_ena;
-    drv_bus(DRV_ABORT_TRAN_INDEX)                     <=  drv_abort_tran;
-    drv_bus(DRV_ACK_FORB_INDEX)                       <=  drv_ack_forb;
-    drv_bus(DRV_ENA_INDEX)                            <=  drv_ena;
+    drv_bus(DRV_CAN_FD_ENA_INDEX)                     <=  '1';
+    drv_bus(DRV_BUS_MON_ENA_INDEX)                    <=  '0';
+    drv_bus(DRV_RETR_LIM_ENA_INDEX)                   <=  '0';
+    drv_bus(DRV_RETR_TH_HIGH downto DRV_RETR_TH_LOW)  <=  (OTHERS => '0');
+    drv_bus(DRV_SELF_TEST_ENA_INDEX)                  <=  '0';
+    drv_bus(DRV_ACK_FORB_INDEX)                       <=  '0';
+    drv_bus(DRV_ENA_INDEX)                            <=  '1';
     drv_bus(DRV_FD_TYPE_INDEX)                        <=  drv_fd_type;
 
-    ----------------------------------------------------------------------------
-    -- Some configurations are extra
-    ----------------------------------------------------------------------------
-    drv_rtr_pref                                      <= '0';
-    drv_CAN_fd_ena                                    <= '1';
-    drv_bus_mon_ena                                   <= '0';
-    drv_retr_lim_ena                                  <= '0';
-    drv_retr_th                                       <= (OTHERS => '0');
-    drv_self_test_ena                                 <= '0';
-    drv_abort_tran                                    <= '0';
-    drv_ack_forb                                      <= '0';
-    drv_ena                                           <= '1';
-
-    ----------------------------------------------------------------------------
-    -- Following test the protocol control properly
-    ----------------------------------------------------------------------------
-    OP_state_2                <= reciever;
-    OP_state_1                <= transciever;
-    error_state_2             <= error_active;
-    error_state_1             <= error_active;
-    bit_Error_valid_1         <= '0';
-    bit_Error_valid_2         <= '0';
-    stuff_Error_valid_2       <= '0';
-    stuff_Error_valid_2       <= '0';
 
     -- CRCs are hardcoded, no need to check proper CRC Calculation. Only need
     -- to check that CRC is matching
-    crc15                     <= "101010101010101";
-    crc17                     <= "10101010101010101";
-    crc21                     <= "101010101010101010101";
+    crc_15                     <= "101010101010101";
+    crc_17                     <= "10101010101010101";
+    crc_21                     <= "101010101010101010101";
 
 
     ----------------------------------------------------------------------------
@@ -1018,32 +949,7 @@ begin
         --      are transmitting at the same time!
 
     begin
-        generate_simple_trig(rnd_ctr_tr, tx_trig, rx_trig, clk_sys, min_diff);
-    end process;
-
-
-    ----------------------------------------------------------------------------
-    -- Hard sync edge generation
-    --  emulates the bus_sync
-    ----------------------------------------------------------------------------
-    hs_edge_gen : process(res_n, clk_sys)
-    begin
-        if (res_n = '0') then
-            hard_sync_edge_2 <= '0';
-            hard_sync_edge_1 <= '0';
-            prev_bus         <= RECESSIVE;
-        elsif rising_edge(clk_sys) then
-
-            prev_bus <= bus_level;
-
-            if (prev_bus /= bus_level and bus_level = DOMINANT) then
-                hard_sync_edge_2 <= '1';
-                hard_sync_edge_1 <= '1';
-            else
-                hard_sync_edge_2 <= '0';
-                hard_sync_edge_1 <= '0';
-            end if;
-        end if;
+        generate_simple_trig(rnd_ctr_tr, tx_trigger_1, rx_trigger_1, clk_sys, min_diff);
     end process;
 
 
@@ -1053,7 +959,7 @@ begin
     txtb_emul_proc : process
     begin
         wait until rising_edge(clk_sys);
-        txt_data_word_1 <= txtb_mem(txt_buf_ptr_1);
+        tran_word_1 <= txtb_mem(txtb_ptr_1);
     end process;
 
 
@@ -1064,7 +970,7 @@ begin
     ----------------------------------------------------------------------------
     rxb_emul_proc : process
     begin
-        while (res_n = ACT_RESET) loop
+        while (res_n = C_RESET_POLARITY) loop
             wait until rising_edge(clk_sys);
         end loop;
 
@@ -1147,6 +1053,11 @@ begin
         info("Restarted Protocol control unit test");
         print_test_info(iterations, log_level, error_beh, error_tol);
 
+        info("Wait till Integration is over!");
+        for i in 0 to 10 loop
+            wait until rising_edge(rx_trigger_1);
+        end loop;
+
         -------------------------------
         -- Main loop of the test
         -------------------------------
@@ -1186,31 +1097,34 @@ begin
             --------------------------------------------------------------------
             rand_logic_s(rand_ctr, drv_fd_type, 0.5);
             rand_int_v(rand_ctr, 7, stf_length);
-            dst_ctr_2 <= stf_length;
-            dst_ctr_1 <= stf_length;
+            dst_ctr_2 <= std_logic_vector(to_unsigned(stf_length, 3));
+            dst_ctr_1 <= std_logic_vector(to_unsigned(stf_length, 3));
+            bst_ctr_1 <= std_logic_vector(to_unsigned(stf_length, 3));
+            bst_ctr_2 <= std_logic_vector(to_unsigned(stf_length, 3));
             wait for 0 ns;
 
             --------------------------------------------------------------------
             -- Calculate expected bitstream by SW model of CAN.
             --------------------------------------------------------------------
             info("Calculating expected frame by SW CAN");
-            gen_sw_CAN(tx_frame, error_st, drv_fd_type, CRC15, CRC17, CRC21,
-                        dst_ctr_1, sw_seq, seq_length);
+            gen_sw_CAN(tx_frame, is_err_active_1, drv_fd_type, crc_15, crc_17, crc_21,
+                        to_integer(unsigned(dst_ctr_1)), sw_seq, seq_length);
 
             --------------------------------------------------------------------
             -- Start transmitting by Protocol control 1
             --------------------------------------------------------------------
             info("Starting transmittion and recording on bus");
-            tran_frame_valid_in_1 <= '1';
+            wait until rx_trigger_1 = '1';
+            tran_frame_valid_1 <= '1';
 
             --------------------------------------------------------------------
             -- Record what comes out of Protocol control 1, read frame which
             -- was received!
             --------------------------------------------------------------------
-            record_bit_seq(bus_level, rx_trig, seq_length, rec_seq);
+            record_bit_seq(bus_level, rx_trigger_1, seq_length, rec_seq);
             rx_ptr := 0;
             read_frame_from_test_mem(rx_frame, rxb_mem, rx_ptr);
-            tran_frame_valid_in_1 <= '0';
+            tran_frame_valid_1 <= '0';
 
             -- Compare results
             info("Comparing results");
@@ -1221,16 +1135,16 @@ begin
             info("Generated CAN frame:");
             CAN_print_frame(tx_frame);
 
-            info("Receied CAN frame:");
+            info("Received CAN frame:");
             CAN_print_frame(rx_frame);
 
-            info("Expected bit sequence:");
-            write(msg1, sw_seq(seq_length - 1 downto 0));
-            writeline(output, msg1);
+            info("Sequence length: " & to_string(seq_length));
 
+            info("Expected bit sequence:");
+            info(to_string(sw_seq(seq_length - 1 downto 0)));
+            
             info("Received bit sequence:");
-            write(msg2, rec_seq(seq_length - 1 downto 0));
-            writeline(output, msg2);
+            info(to_string(rec_seq(seq_length - 1 downto 0)));
 
             -- Process possible error in TX/RX Frames or Bit sequences mismatch
             check(out_seq, "Bit sequence is not matching!");

@@ -66,15 +66,12 @@ architecture mess_filt_unit_test of CAN_test is
     -- Input frame type (0-Normal CAN, 1- CAN FD)
     signal frame_type         : std_logic;
 
-    -- Identifier valid (active log 1)
-    signal rec_ident_valid    : std_logic;
-
     signal drv_bus            : std_logic_vector(1023 downto 0);
     signal out_ident_valid    : std_logic;
 
     -- Internal testbench signals
     signal frame_info         : mess_filter_input_type :=
-                        ((OTHERS => '0'), '0', '0', '0');
+                        ((OTHERS => '0'), '0', '0');
 
     signal drv_settings       : mess_filter_drv_type   :=
                         ((OTHERS => '0'), (OTHERS => '0'),(OTHERS => '0'),
@@ -90,7 +87,6 @@ architecture mess_filt_unit_test of CAN_test is
         rand_logic_vect_s (rand_ctr,  frame_info.rec_ident_in     ,0.5);
         rand_logic_s    (rand_ctr,  frame_info.ident_type       ,0.5);
         rand_logic_s    (rand_ctr,  frame_info.frame_type       ,0.5);
-        rand_logic_s    (rand_ctr,  frame_info.rec_ident_valid  ,0.9);
     end procedure;
 
 
@@ -143,17 +139,9 @@ architecture mess_filt_unit_test of CAN_test is
         variable inv_type     :       boolean;
     begin
 
-        -- Filters disabled but result is positive -> error
+        -- Filters disabled -> Output is considered always valid
         if (drv_settings.drv_filters_ena = '0') then
-            
-          check(frame_info.rec_ident_valid = filt_res,
-                "Filters disabled but result positive");
-
-          if (frame_info.rec_ident_valid = filt_res) then
-              return true;
-          else
-              return false;
-          end if;
+          return true;
         end if;
 
         join := frame_info.frame_type & frame_info.ident_type;
@@ -226,8 +214,6 @@ architecture mess_filt_unit_test of CAN_test is
            (ran_type and ran_vals))
           and
            (drv_settings.drv_filters_ena = '1')
-          and
-           (frame_info.rec_ident_valid = '1')
         ) then
         
             check(filt_res = '1', "Valid frame did not pass filters!");
@@ -259,12 +245,18 @@ begin
     PORT map(
         clk_sys            =>  clk_sys,
         res_n              =>  res_n,
-        rec_ident_in       =>  rec_ident_in,
-        ident_type         =>  ident_type,
-        frame_type         =>  frame_type,
-        rec_ident_valid    =>  rec_ident_valid,
+        rec_ident          =>  rec_ident_in,
+        rec_ident_type     =>  ident_type,
+        rec_frame_type     =>  frame_type,
         drv_bus            =>  drv_bus,
-        out_ident_valid    =>  out_ident_valid
+        ident_valid        =>  out_ident_valid,
+        
+        -- Don't test command filtering as this is trivial. Testing is done on
+        -- out ident valid only!
+        store_metadata     =>  '0',
+        store_data         =>  '0',
+        rec_valid          =>  '0',
+        rec_abort          =>  '0'
     );
 
 
@@ -318,7 +310,6 @@ begin
     rec_ident_in       <=  frame_info.rec_ident_in;
     ident_type         <=  frame_info.ident_type;
     frame_type         <=  frame_info.frame_type;
-    rec_ident_valid    <=  frame_info.rec_ident_valid;
 
 
     ----------------------------------------------------------------------------

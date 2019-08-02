@@ -40,11 +40,8 @@
 --------------------------------------------------------------------------------
 
 --------------------------------------------------------------------------------
--- Purpose:
---  General purpose majority decoder with 3 inputs.
---------------------------------------------------------------------------------
--- Revision History:
---    23.11.2018   Created file
+-- Module:
+--  Majority decoder with 3 inputs.
 --------------------------------------------------------------------------------
 
 Library ieee;
@@ -52,8 +49,11 @@ use ieee.std_logic_1164.all;
 
 entity majority_decoder_3 is
     port (
-        signal input                : in    std_logic_vector(2 downto 0);
-        signal output               : out   std_logic
+        -- Input
+        input      : in    std_logic_vector(2 downto 0);
+        
+        -- Output
+        output     : out   std_logic
     );
 end majority_decoder_3;
 

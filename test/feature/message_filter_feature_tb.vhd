@@ -117,15 +117,13 @@ package body message_filter_feature is
         variable ID_2           	:       natural := 2;
         variable CAN_frame          :       SW_CAN_frame_type;
         variable frame_sent         :       boolean := false;
-        variable mode               :       SW_mode := (false, false, false,
-                                                false, true, false, false,
-                                                false, false, true);
+        variable mode               :       SW_mode := SW_mode_rst_val;
         variable rx_state           :       SW_RX_Buffer_info;
         variable mask_filt_config   :       SW_CAN_mask_filter_config :=
                                                 (0, 0, '0', false, false);
         variable range_filt_config  :       SW_CAN_range_filter_config := 
                                                 (0, 0, '0', false, false);
-        variable command            :       SW_command := (false, false, false);
+        variable command            :       SW_command := SW_command_rst_val;
         variable tmp_int            :       natural := 0;
         variable tmp_log_vect       :       std_logic_vector(28 downto 0);
         variable tmp_log            :       std_logic := '0';
@@ -137,8 +135,6 @@ package body message_filter_feature is
         o.outcome := true;
         CAN_generate_frame(rand_ctr, CAN_frame);
         CAN_frame.brs := '0';
-        
-        wait_rand_cycles(rand_ctr, mem_bus(1).clk_sys, 1600, 1601);
 
         ------------------------------------------------------------------------
         -- Part 1 (Message filters disabled)

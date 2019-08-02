@@ -40,14 +40,15 @@
 --------------------------------------------------------------------------------
 
 --------------------------------------------------------------------------------
+-- Module:
+--  Inferred RAM wrapper.
+-- 
 -- Purpose:
---  RAM memory wrapper intended for use with inferred memories in FPGA
---  technologies. Supports RAM inference in Xilinx and Intel FPGAs.
---  Synchronous dual port memory with shared clock. Port A is used for
---  writes. Port B is used for reads!
---------------------------------------------------------------------------------
--- Revision History:
---    27.9.2018   Created file
+--  Dual port Memory wrapper for inferrence of RAM blocks in Intel and Xilinx 
+--  FPGAs. Port A is write only. Port B is read only. Port A interface is
+--  synchronous. Read interface is either combinatorial (asynchronous) or 
+--  registered (synchronous). Clock is shared between the two ports. If used
+--  on ASIC or FPGA without memories, synthesized as DFFs without Set or Reset.
 --------------------------------------------------------------------------------
 
 Library ieee;
@@ -56,64 +57,64 @@ USE IEEE.numeric_std.ALL;
 
 entity inf_ram_wrapper is
     generic(
-
+        -- Reset polarity
+        G_RESET_POLARITY       :     std_logic := '1';
+        
         -- Width of memory word (in bits)
-        constant word_width           :     natural := 32;
+        G_WORD_WIDTH           :     natural := 32;
 
         -- Memory depth (in words)
-        constant depth                :     natural := 32;
+        G_DEPTH                :     natural := 32;
 
         -- Address width (in bits)
-        constant address_width        :     natural := 8;
-
-        -- Polarity of reset
-        constant reset_polarity       :     std_logic := '1';
+        G_ADDRESS_WIDTH        :     natural := 8;
 
         -- RAM content reset upon reset
-        constant simulation_reset     :     boolean := true;
+        G_SIMULATION_RESET     :     boolean := true;
 
         -- Synchronous read
-        constant sync_read            :     boolean := true
+        G_SYNC_READ            :     boolean := true
     );
   port(
         ------------------------------------------------------------------------
-        -- Clock and reset
+        -- Clock and Reset
         ------------------------------------------------------------------------
-        signal clk_sys                :in   std_logic;
-        signal res_n                  :in   std_logic;
+        clk_sys     :in   std_logic;
+        res_n       :in   std_logic;
 
         ------------------------------------------------------------------------
         -- Port A - Data input
         ------------------------------------------------------------------------
-        signal addr_A                 :in   std_logic_vector(address_width -1
-                                                downto 0);
-        signal write                  :in   std_logic;
-        signal data_in                :in   std_logic_vector(word_width - 1
-                                                downto 0);
+        -- Address
+        addr_A      :in   std_logic_vector(G_ADDRESS_WIDTH - 1 downto 0);
+        
+        -- Write signal
+        write       :in   std_logic;
+        
+        -- Data input
+        data_in     :in   std_logic_vector(G_WORD_WIDTH - 1 downto 0);
 
         ------------------------------------------------------------------------   
         -- Port B - Data output
         ------------------------------------------------------------------------
-        signal addr_B                 :in   std_logic_vector(address_width - 1
-                                                downto 0);
-        signal data_out               :out  std_logic_vector(word_width - 1
-                                                downto 0)
+        -- Address
+        addr_B      :in   std_logic_vector(G_ADDRESS_WIDTH - 1 downto 0);
+        
+        -- Data output
+        data_out    :out  std_logic_vector(G_WORD_WIDTH - 1 downto 0)
     );
-             
 end entity;
-
 
 architecture rtl of inf_RAM_wrapper is
 
     ----------------------------------------------------------------------------
     -- Memory definition
     ----------------------------------------------------------------------------
-    type memory_type is array(0 to depth - 1) of
-            std_logic_vector(word_width - 1 downto 0);
-    signal ram_memory                 :     memory_type;
+    type memory_type is array(0 to G_DEPTH - 1) of
+            std_logic_vector(G_WORD_WIDTH - 1 downto 0);
+    signal ram_memory        :     memory_type;
 
-    signal int_read_data              :     std_logic_vector(word_width - 1
-                                                downto 0);
+    signal int_read_data     :     std_logic_vector(G_WORD_WIDTH - 1 downto 0);
 
 begin
 
@@ -122,10 +123,10 @@ begin
     ----------------------------------------------------------------------------
     ram_write_process : process(res_n, clk_sys)
     begin
-        if (res_n = reset_polarity) then
+        if (res_n = G_RESET_POLARITY) then
 
             -- pragma translate_off
-            if (simulation_reset) then
+            if (G_SIMULATION_RESET) then
                 ram_memory <= (OTHERS => (OTHERS => '0'));
             end if;            
             -- pragma translate_on
@@ -147,13 +148,13 @@ begin
     int_read_data <= ram_memory(to_integer(unsigned(addr_B)));
 
     -- Synchronous read
-    sync_read_gen : if (sync_read) generate
+    sync_read_gen : if (G_SYNC_READ) generate
         ram_read_process : process(res_n, clk_sys)
         begin
-            if (res_n = reset_polarity) then
+            if (res_n = G_RESET_POLARITY) then
 
                 -- pragma translate_off
-                if (simulation_reset) then                            
+                if (G_SIMULATION_RESET) then                            
                     data_out <= (OTHERS => '0');
                 end if;
                 -- pragma translate_on
@@ -166,7 +167,7 @@ begin
     end generate;
 
     -- Asynchronous read
-    async_read_gen : if (not sync_read) generate
+    async_read_gen : if (not G_SYNC_READ) generate
         data_out <= int_read_data;
     end generate;
 
@@ -174,11 +175,11 @@ begin
     ----------------------------------------------------------------------------
     -- Assertions on size
     ----------------------------------------------------------------------------
-    assert ((word_width = 8) or
-            (word_width = 16) or
-            (word_width = 32) or
-            (word_width = 64) or
-            (word_width = 128))
+    assert ((G_WORD_WIDTH = 8) or
+            (G_WORD_WIDTH = 16) or
+            (G_WORD_WIDTH = 32) or
+            (G_WORD_WIDTH = 64) or
+            (G_WORD_WIDTH = 128))
     report "Unsupported inferred RAM word width! " &
            "Only 8, 16, 32, 64 and 128 are allowed!"
         severity failure;

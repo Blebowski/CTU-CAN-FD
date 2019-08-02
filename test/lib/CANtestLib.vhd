@@ -83,6 +83,7 @@ use IEEE.std_logic_textio.all;
 USE ieee.math_real.ALL;
 USE work.randomLib.All;
 use work.can_constants.all;
+use work.drv_stat_pkg.all;
 
 use work.CAN_FD_register_map.all;
 use work.CAN_FD_frame_format.all;
@@ -146,24 +147,30 @@ package CANtestLib is
     type SW_mode is record
         reset                   :   boolean;
         listen_only             :   boolean;
+        test                    :   boolean;
         self_test               :   boolean;
         acceptance_filter       :   boolean;
         flexible_data_rate      :   boolean;
         rtr_pref                :   boolean;
-        tripple_sampling        :   boolean;
         acknowledge_forbidden   :   boolean;
         internal_loopback       :   boolean;
         iso_fd_support          :   boolean;
     end record;
-
+    
+    constant SW_mode_rst_val : SW_mode := (false, false, false, false, false,
+        true, false, false, false, false);
 
     -- Controller commands
     type SW_command is record
-        abort_transmission      :   boolean;
         release_rec_buffer      :   boolean;
         clear_data_overrun      :   boolean;
+        err_ctrs_rst            :   boolean;
+        rx_frame_ctr_rst        :   boolean;
+        tx_frame_ctr_rst        :   boolean;
     end record;
 
+    constant SW_command_rst_val : SW_command :=
+        (false, false, false, false, false);
 
     -- Controller status
     type SW_status is record
@@ -184,7 +191,7 @@ package CANtestLib is
         transmitt_int           :   boolean;
         error_warning_int       :   boolean;
         data_overrun_int        :   boolean;
-        error_passive_int       :   boolean;
+        fcs_changed_int         :   boolean;
         arb_lost_int            :   boolean;
         bus_error_int           :   boolean;
         logger_finished_int     :   boolean;
@@ -193,6 +200,10 @@ package CANtestLib is
         rx_buffer_not_empty_int :   boolean;
         tx_buffer_hw_cmd        :   boolean;
     end record;
+    
+    constant SW_interrupts_rst_val : SW_interrupts := (
+        false, false, false, false, false, false, false, false,
+        false, false, false, false);
 
     -- Fault confinement states
     type SW_fault_state is (
@@ -252,14 +263,27 @@ package CANtestLib is
 
     -- SSP (Secondary Sampling Point) configuration options
     type SSP_set_command_type is (
-        ssp_measured,
         ssp_meas_n_offset,
+        ssp_no_ssp,
         ssp_offset
     );
--- Use only TRV_DELAY
--- Use TRV_DELAY + fixed offset given by user
--- Use only offset given by user
 
+    -- Protocol control Debug values
+    type SW_PC_Debug is (
+        pc_deb_none,
+        pc_deb_arbitration,
+        pc_deb_control,
+        pc_deb_data,
+        pc_deb_stuff_count,
+        pc_deb_crc,
+        pc_deb_crc_delim,
+        pc_deb_ack,
+        pc_deb_ack_delim,
+        pc_deb_eof,
+        pc_deb_intermission,
+        pc_deb_suspend,
+        pc_deb_overload
+    );
 
     ----------------------------------------------------------------------------
     -- Message filter types
@@ -270,7 +294,6 @@ package CANtestLib is
         rec_ident_in            :   std_logic_vector(28 downto 0);
         ident_type              :   std_logic;
         frame_type              :   std_logic;
-        rec_ident_valid         :   std_logic;
     end record;
 
     -- Driving bus values on the input off message filter
@@ -343,20 +366,10 @@ package CANtestLib is
         sample_nbt_del_1        :   std_logic;
         sample_dbt_del_1        :   std_logic;
 
-        -- Sample signal delayed by two clock cycle (Nominal and Data)
-        -- (Used for Processing the data by Protocol control)
-        sample_nbt_del_2        :   std_logic;
-        sample_dbt_del_2        :   std_logic;
-
         -- Synchronisation signal
         -- (Used to transmitt data)
         sync_nbt                :   std_logic;
         sync_dbt                :   std_logic;
-
-        -- Synchronisation signal by one clock cycle (Nominal and Data)
-        -- (Used for Bit stuffing)
-        sync_nbt_del_1          :   std_logic;
-        sync_dbt_del_1          :   std_logic;
     end record;
 
 
@@ -878,6 +891,30 @@ package CANtestLib is
         signal    seg1          : in    natural;
         signal    seg2          : in    natural
     );
+    
+    ---------------------------------------------------------------------------
+    -- Force bus level to given value. Applicable in feature tests testbench.
+    --
+    -- Arguments:
+    --  bus_val     Value to be forced
+    --  bl_force    Force bus level signal.
+    --  bl_inject   Force bus level value.
+    ---------------------------------------------------------------------------
+    procedure force_bus_level(
+        constant value           : in    std_logic;
+        signal   bl_force        : out   boolean;
+        signal   bl_inject       : out   std_logic
+    );
+
+    ---------------------------------------------------------------------------
+    -- Release bus level.
+    --
+    -- Arguments:
+    --  bl_force    Bus level force signal
+    ---------------------------------------------------------------------------
+    procedure release_bus_level(
+        signal  bl_force        : out   boolean
+    );
 
 
     ----------------------------------------------------------------------------
@@ -1184,6 +1221,9 @@ package CANtestLib is
     procedure CAN_print_frame(
         constant frame          : in    SW_CAN_frame_type
     );
+    procedure CAN_print_frame_simple(
+        constant frame          : in    SW_CAN_frame_type
+    );
 
 
     ----------------------------------------------------------------------------
@@ -1312,8 +1352,10 @@ package CANtestLib is
 
 
     ----------------------------------------------------------------------------
-    -- Waits until frame starts (unit turns transceiver or receiver),
-    -- and then waits until frame finishes (bus becomes idle).
+    -- Waits until frame starts (arbitration field),
+    -- and then waits until frame finishes (Intermission). Note that this
+    -- does not wait until Idle, because bus does not need to be Idle due to
+    -- two immediately consecutive frames!
     --
     -- Procedure is polling on status of CTU CAN FD Core over Avalon bus!
     --
@@ -1343,7 +1385,7 @@ package CANtestLib is
 
 
     ----------------------------------------------------------------------------
-    -- Waits until CAN bus becomes idle (no frame in progress).
+    -- Waits until CAN bus starts transmitting error frame.
     --
     -- Procedure is polling on status of CTU CAN FD Core over Avalon bus!
     --
@@ -1351,7 +1393,7 @@ package CANtestLib is
     --  ID              Index of CTU CAN FD Core instance
     --  mem_bus         Avalon memory bus to execute the access on.
     ----------------------------------------------------------------------------
-    procedure CAN_wait_error_transmitted(
+    procedure CAN_wait_error_frame(
         constant ID             : in    natural range 0 to 15;
         signal   mem_bus        : inout Avalon_mem_type
     );
@@ -1379,7 +1421,6 @@ package CANtestLib is
     -- Waits until transmission or reception is started by a Node.
     --
     -- Arguments:
-    --  bits            Number of Bit times to wait for
     --  exit_trans      Exit when unit turns transceiver.
     --  exit_rec        Exit when unit turns receiver.
     --  ID              Index of CTU CAN FD Core instance
@@ -1390,6 +1431,21 @@ package CANtestLib is
         constant exit_rec       : in    boolean;
         constant ID             : in    natural range 0 to 15;
         signal   mem_bus        : inout Avalon_mem_type
+    );
+
+    
+    ----------------------------------------------------------------------------
+    -- Wait until a Node is in Error Active state! Actively polls on Fault state
+    -- register. Can be used after enabling CAN node to wait till integration
+    -- field is over!
+    --
+    -- Arguments:
+    --  ID              Index of CTU CAN FD Core instance
+    --  mem_bus         Avalon memory bus to execute the access on.
+    ----------------------------------------------------------------------------
+    procedure CAN_wait_bus_on(
+        constant ID             : in    natural range 0 to 15;
+        signal   mem_bus        : inout Avalon_mem_type        
     );
 
 
@@ -1430,6 +1486,22 @@ package CANtestLib is
     );
 
 
+    ----------------------------------------------------------------------------
+    -- Give command to selected TXT Buffers in one bus access.
+    --
+    -- Arguments:
+    --  cmd             Command to give to TXT Buffer.
+    --  buf_vector      Bit vector with TXT Buffers which should receive 
+    --                  the command (eg. "1001" = command for buffers 1 and 4.)
+    --  ID              Index of CTU CAN FD Core instance.
+    --  mem_bus         Avalon memory bus to execute the access on.
+    ----------------------------------------------------------------------------
+    procedure send_TXT_buf_cmd(
+        constant cmd            : in    SW_TXT_Buffer_command_type;
+        constant buf_vector     : in    std_logic_vector(3 downto 0);  
+        constant ID             : in    natural range 0 to 15;
+        signal   mem_bus        : inout Avalon_mem_type
+    );
     ----------------------------------------------------------------------------
     -- Read state of TXT Buffer.
     --
@@ -1827,6 +1899,91 @@ package CANtestLib is
         variable ssp_offset_val : in   std_logic_vector(6 downto 0);
         constant ID             : in    natural range 0 to 15;
         signal   mem_bus        : inout Avalon_mem_type
+    );
+    
+    ----------------------------------------------------------------------------
+    -- Configure priority of the TXT Buffers in TX Arbitrator. Higher priority 
+    -- value signals that buffer is selected earlier for transmission. 
+    -- 
+    -- Arguments:
+    --  buff_number     Select required buffer.
+    --  priority        Value between 0 and 7, details in datasheet.
+    --  ID              Index of CTU CAN FD Core instance.
+    --  mem_bus         Avalon memory bus to execute the access on.
+    ----------------------------------------------------------------------------
+    procedure CAN_configure_tx_priority(
+        constant buff_number    : in    natural range 1 to 4;
+        constant priority       : in    natural range 0 to 7;   
+        constant ID             : in    natural range 0 to 15;
+        signal   mem_bus        : inout Avalon_mem_type
+    );    
+    
+
+    
+    ----------------------------------------------------------------------------
+    -- Read Debug register to obtain Protocol Control Debug Information.
+    --
+    -- Arguments:
+    --  pc_dbg          Output value.
+    --  ID              Index of CTU CAN FD Core instance.
+    --  mem_bus         Avalon memory bus to execute the access on.
+    ----------------------------------------------------------------------------
+    procedure CAN_read_pc_debug(
+        variable pc_dbg         : out   SW_PC_Debug;   
+        constant ID             : in    natural range 0 to 15;
+        signal   mem_bus        : inout Avalon_mem_type
+    );
+    
+    
+    ----------------------------------------------------------------------------
+    -- Poll on Debug register until Protocol control is in desired state.
+    --
+    -- Arguments:
+    --  pc_dbg          State to poll on.
+    --  ID              Index of CTU CAN FD Core instance.
+    --  mem_bus         Avalon memory bus to execute the access on.
+    ----------------------------------------------------------------------------
+    procedure CAN_wait_pc_state(
+        constant pc_state       : in    SW_PC_Debug;   
+        constant ID             : in    natural range 0 to 15;
+        signal   mem_bus        : inout Avalon_mem_type
+    );
+    
+    
+    ----------------------------------------------------------------------------
+    -- Poll on Debug register until Protocol control is NOT in desired state.
+    --
+    -- Arguments:
+    --  pc_dbg          State to poll on.
+    --  ID              Index of CTU CAN FD Core instance.
+    --  mem_bus         Avalon memory bus to execute the access on.
+    ----------------------------------------------------------------------------
+    procedure CAN_wait_not_pc_state(
+        constant pc_state       : in    SW_PC_Debug;   
+        constant ID             : in    natural range 0 to 15;
+        signal   mem_bus        : inout Avalon_mem_type
+    );
+    
+    ----------------------------------------------------------------------------
+    -- Read Retransmitt counter value (from Status Bus). No latency is inserted
+    -- by this function.
+    --
+    -- Arguments:
+    --  stat_bus        Status bus signal          
+    ----------------------------------------------------------------------------
+    function CAN_spy_retr_ctr(
+        signal   stat_bus         : in    std_logic_vector(511 downto 0)
+    ) return natural;
+
+
+    ----------------------------------------------------------------------------
+    -- Wait until sample point (from Status Bus).
+    --
+    -- Arguments:
+    --  pc_dbg          State to poll on.
+    ----------------------------------------------------------------------------
+    procedure CAN_wait_sample_point(
+        signal   stat_bus         : in    std_logic_vector(511 downto 0) 
     );
 
     ----------------------------------------------------------------------------
@@ -2408,6 +2565,26 @@ package body CANtestLib is
             end case;
         end if;
     end function;
+   
+    
+    procedure force_bus_level(
+        constant value           : in    std_logic;
+        signal   bl_force        : out   boolean;
+        signal   bl_inject       : out   std_logic
+    ) is
+    begin
+        bl_inject <= value;
+        bl_force  <= true;
+    end procedure;
+
+    
+    procedure release_bus_level(
+        signal  bl_force        : out    boolean
+    ) is
+    begin
+        bl_force <= false;
+    end procedure;
+
 
 
     procedure aval_write(
@@ -3051,6 +3228,58 @@ package body CANtestLib is
         constant frame          : in    SW_CAN_frame_type
     )is
         variable data_byte      :       std_logic_vector(7 downto 0);
+        variable str_msg        :       string(1 to 400) := (OTHERS => ' ');
+        variable str_len        :       natural := 0;
+    begin
+
+        info("*************************************************************");
+
+        -- Identifier
+        info("ID : 0x" & 
+            to_hstring(std_logic_vector(to_unsigned(frame.identifier, 32))));
+
+        -- Metadata
+        info("DLC: " & to_hstring(frame.dlc) & ", Data length:" &
+              to_string(frame.data_length));
+
+        if (frame.rtr = RTR_FRAME) then
+            info("RTR Frame");
+        end if;
+
+        if (frame.ident_type = BASE) then
+            info("BASE identifier");
+        else
+            info("EXTENDED identifier");
+        end if;
+
+        if (frame.frame_format = NORMAL_CAN) then
+            info("CAN 2.0 frame");
+        else
+            info("CAN FD frame");
+        end if;
+
+        info("RWCNT (read word count): " &
+            to_string(std_logic_vector(to_unsigned(frame.rwcnt, 10))));
+
+        -- Data words
+        if (frame.rtr = NO_RTR_FRAME and frame.data_length > 0) then
+            str_msg(1 to 6) := "Data: ";
+            str_len := 6 + 5 * frame.data_length;
+            for i in 0 to frame.data_length - 1 loop
+                data_byte := frame.data(i);
+                str_msg(7 + i * 5 to 11 + i * 5) :=
+                    "0x" & to_hstring(frame.data(i)) & " ";
+            end loop;
+            info(str_msg(1 to str_len));
+        end if;
+        
+        info("*************************************************************");
+    end procedure;
+    
+      procedure CAN_print_frame_simple(
+        constant frame          : in    SW_CAN_frame_type
+    )is
+        variable data_byte      :       std_logic_vector(7 downto 0);
         variable str_msg        :       string(1 to 512) := (OTHERS => ' ');
     begin
 
@@ -3061,40 +3290,7 @@ package body CANtestLib is
         str_msg(19 to 26) :=
             to_hstring(std_logic_vector(to_unsigned(frame.identifier, 32)));
 
-        -- Metadata
-        str_msg(27 to 35) := "    DLC: ";
-
-        if (frame.rtr = RTR_FRAME) then
-            str_msg(36 to 48) := "    RTR Frame";
-        else
-            str_msg(36 to 48) := "             ";
-        end if;
-
-        if (frame.ident_type = BASE) then
-            str_msg(49 to 71) := "    BASE identifier    ";
-        else
-            str_msg(49 to 71) := "    EXTENDED identifier";
-        end if;
-
-        if (frame.frame_format = NORMAL_CAN) then
-            str_msg(72 to 88) := "    CAN 2.0 frame";
-        else
-            str_msg(72 to 88) := "    CAN FD frame ";
-        end if;
-
-        str_msg(89 to 117) := "    RWCNT (read word count): ";
-        str_msg(118 to 127) :=
-            to_string(std_logic_vector(to_unsigned(frame.rwcnt, 10)));
-
-        -- Data words
-        if (frame.rtr = NO_RTR_FRAME and frame.data_length > 0) then
-            str_msg(128 to 137) := "    Data: ";
-            for i in 0 to frame.data_length - 1 loop
-                data_byte := frame.data(i);
-                str_msg(138 + i * 5 to 142 + i * 5) :=
-                    "0x" & to_hstring(frame.data(i)) & " ";
-            end loop;
-        end if;
+  
         info(str_msg);
     end procedure;
 
@@ -3482,19 +3678,11 @@ package body CANtestLib is
         variable r_data         :       std_logic_vector(31 downto 0) :=
                                         (OTHERS => '0');
     begin
-
-        -- Wait until unit starts to transmitt or reciesve
-        CAN_read(r_data, STATUS_ADR, ID, mem_bus);
-        while (r_data(RXS_IND) = '0' and r_data(TXS_IND) = '0') loop
-            CAN_read(r_data, STATUS_ADR, ID, mem_bus);
-        end loop;
-
-        -- Wait until bus is idle now
-        CAN_read(r_data, STATUS_ADR, ID, mem_bus);
-        while (r_data(IDLE_IND) = '0') loop
-            CAN_read(r_data, STATUS_ADR, ID, mem_bus);
-        end loop;
-
+        -- Wait until Base ID
+        CAN_wait_pc_state(pc_deb_arbitration, ID, mem_bus);
+        
+        -- Wait until Intermission
+        CAN_wait_pc_state(pc_deb_intermission, ID, mem_bus);
     end procedure;
 
 
@@ -3513,7 +3701,7 @@ package body CANtestLib is
     end procedure;
 
 
-    procedure CAN_wait_error_transmitted(
+    procedure CAN_wait_error_frame(
         constant ID             : in    natural range 0 to 15;
         signal   mem_bus        : inout Avalon_mem_type
     )is
@@ -3523,13 +3711,13 @@ package body CANtestLib is
         -- Wait until unit starts to transmitt or recieve
         CAN_read(r_data, STATUS_ADR, ID, mem_bus);
         while (r_data(RXS_IND) = '0' and r_data(TXS_IND) = '0') loop
-        CAN_read(r_data, STATUS_ADR, ID, mem_bus);
+            CAN_read(r_data, STATUS_ADR, ID, mem_bus);
         end loop;
 
         -- Wait until error frame is not being transmitted
         CAN_read(r_data, STATUS_ADR, ID, mem_bus);
         while (r_data(EFT_IND) = '0') loop
-        CAN_read(r_data, STATUS_ADR, ID, mem_bus);
+            CAN_read(r_data, STATUS_ADR, ID, mem_bus);
         end loop;
     end procedure;
 
@@ -3591,6 +3779,19 @@ package body CANtestLib is
             end if;
         end loop;
 
+    end procedure;
+    
+    
+    procedure CAN_wait_bus_on(
+        constant ID             : in    natural range 0 to 15;
+        signal   mem_bus        : inout Avalon_mem_type        
+    )is
+        variable fault_state    :       SW_fault_state;
+    begin
+        get_fault_state(fault_state, ID, mem_bus);
+        while (fault_state /= fc_error_active) loop
+            get_fault_state(fault_state, ID, mem_bus);    
+        end loop;
     end procedure;
 
 
@@ -3666,6 +3867,50 @@ package body CANtestLib is
         -- Give the command
         CAN_write(data, TX_COMMAND_ADR, ID, mem_bus);
     end procedure;
+    
+    
+    
+    
+    -- constant buf_vector     : in    std_logic_vector(7 downto 0);  No
+    procedure send_TXT_buf_cmd(
+        constant cmd            : in    SW_TXT_Buffer_command_type;
+        constant buf_vector     : in    std_logic_vector(3 downto 0);  
+        constant ID             : in    natural range 0 to 15;
+        signal   mem_bus        : inout Avalon_mem_type
+    )is
+        variable data           :         std_logic_vector(31 downto 0)
+                                            := (OTHERS => '0');
+    begin
+        -- Set active command bit in TX_COMMAND register based on input command
+        data(TXCE_IND) := '0';
+        data(TXCR_IND) := '0';
+        data(TXCA_IND) := '0';
+        if (cmd = buf_set_empty) then
+            data(TXCE_IND) := '1';
+        elsif (cmd = buf_set_ready) then
+            data(TXCR_IND) := '1';
+        elsif (cmd = buf_set_abort) then
+            data(TXCA_IND) := '1';
+        end if;
+
+        
+        -- Set index of Buffer on which the command should be executed.
+        for i in 0 to 3 loop
+        	if(buf_vector(i) = '1') then
+        		data(i + TXB1_IND) := '1';
+        	end if;
+        end loop;  
+
+        -- Give the command
+        CAN_write(data, TX_COMMAND_ADR, ID, mem_bus);
+    end procedure;
+    
+    
+    
+    
+    
+    
+    
 
 
     procedure get_tx_buf_state(
@@ -3791,6 +4036,10 @@ package body CANtestLib is
         if (mode.self_test) then
             data(STM_IND)       := '1';
         end if;
+        
+        if (mode.test) then
+            data(TSTM_IND)      := '1';
+        end if;
 
         if (mode.acceptance_filter) then
             data(AFM_IND)       := '1';
@@ -3800,13 +4049,6 @@ package body CANtestLib is
             data(FDE_IND)       := '1';
         end if;
 
-        if (mode.rtr_pref) then
-            data(RTRP_IND)  := '1';
-        end if;
-
-        if (mode.tripple_sampling) then
-            data(TSM_IND)       := '1';
-        end if;
 
         if (mode.acknowledge_forbidden) then
             data(ACF_IND)       := '1';
@@ -3848,8 +4090,8 @@ package body CANtestLib is
         mode.acceptance_filter          := false;
         mode.flexible_data_rate         := false;
         mode.rtr_pref                   := false;
-        mode.tripple_sampling           := false;
         mode.acknowledge_forbidden      := false;
+        mode.test                       := false;
 
         if (data(RST_IND) = '1') then
             mode.reset                  := true;
@@ -3871,16 +4113,12 @@ package body CANtestLib is
             mode.flexible_data_rate     := true;
         end if;
 
-        if (data(RTRP_IND) = '1') then
-            mode.rtr_pref               := true;
-        end if;
-
-        if (data(TSM_IND) = '1') then
-            mode.tripple_sampling       := true;
-        end if;
-
         if (data(ACF_IND) = '1') then
             mode.acknowledge_forbidden  := true;
+        end if;
+        
+        if (data(TSTM_IND) = '1') then
+            mode.test := true;
         end if;
 
         CAN_read(data, SETTINGS_ADR, ID, mem_bus, BIT_8);
@@ -3924,16 +4162,24 @@ package body CANtestLib is
     begin
         data := (OTHERS => '0');
 
-        if (command.abort_transmission) then
-            data(ABT_IND)        := '1';
-        end if;
-
         if (command.release_rec_buffer) then
             data(RRB_IND)        := '1';
         end if;
 
         if (command.clear_data_overrun) then
             data(CDO_IND)        := '1';
+        end if;
+        
+        if (command.err_ctrs_rst) then
+            data(ERCRST_IND)        := '1';
+        end if;
+        
+        if (command.rx_frame_ctr_rst) then
+            data(RXFCRST_IND)        := '1';
+        end if;
+        
+        if (command.tx_frame_ctr_rst) then
+            data(TXFCRST_IND)        := '1';
         end if;
 
         CAN_write(data, COMMAND_ADR, ID, mem_bus, BIT_32);
@@ -4057,8 +4303,8 @@ package body CANtestLib is
             tmp(DOI_IND)        :=  '1';
         end if;
 
-        if (interrupts.error_passive_int) then
-            tmp(EPI_IND)        :=  '1';
+        if (interrupts.fcs_changed_int) then
+            tmp(FCSI_IND)        :=  '1';
         end if;
 
         if (interrupts.arb_lost_int) then
@@ -4067,10 +4313,6 @@ package body CANtestLib is
 
         if (interrupts.bus_error_int) then
             tmp(BEI_IND)        :=  '1';
-        end if;
-
-        if (interrupts.logger_finished_int) then
-            tmp(LFI_IND)        :=  '1';
         end if;
 
         if (interrupts.rx_buffer_full_int) then
@@ -4117,8 +4359,8 @@ package body CANtestLib is
             tmp.data_overrun_int         :=  true;
         end if;
 
-        if (int_reg(EPI_IND) = '1') then
-            tmp.error_passive_int        :=  true;
+        if (int_reg(FCSI_IND) = '1') then
+            tmp.fcs_changed_int          :=  true;
         end if;
 
         if (int_reg(ALI_IND) = '1') then
@@ -4127,10 +4369,6 @@ package body CANtestLib is
 
         if (int_reg(BEI_IND) = '1') then
             tmp.bus_error_int            :=  true;
-        end if;
-
-        if (int_reg(LFI_IND) = '1') then
-            tmp.logger_finished_int      :=  true;
         end if;
 
         if (int_reg(RXFI_IND) = '1') then
@@ -4459,12 +4697,12 @@ package body CANtestLib is
                                             (OTHERS => '0');
     begin
         case ssp_source is
-            when ssp_measured =>
-               data(SSP_SRC_H downto SSP_SRC_L) := SSP_SRC_MEASURED;    --"00";
             when ssp_meas_n_offset =>
-                data(SSP_SRC_H downto SSP_SRC_L) := SSP_SRC_MEAS_N_OFFSET;  --"01";
+                data(SSP_SRC_H downto SSP_SRC_L) := SSP_SRC_MEAS_N_OFFSET;
+            when ssp_no_ssp =>
+               data(SSP_SRC_H downto SSP_SRC_L) := SSP_SRC_NO_SSP;
             when ssp_offset =>
-                data(SSP_SRC_H downto SSP_SRC_L) := SSP_SRC_OFFSET; --"10";
+                data(SSP_SRC_H downto SSP_SRC_L) := SSP_SRC_OFFSET;
             when others =>
                 error("Unsupported SSP type.");
             end case;
@@ -4473,6 +4711,130 @@ package body CANtestLib is
 
         CAN_write(data, SSP_CFG_ADR, ID, mem_bus, BIT_16);
     end procedure;
+    
+    
+    procedure CAN_read_pc_debug(
+        variable pc_dbg         : out   SW_PC_Debug;   
+        constant ID             : in    natural range 0 to 15;
+        signal   mem_bus        : inout Avalon_mem_type
+    ) is
+        variable data           :       std_logic_vector(31 downto 0) :=
+                                            (OTHERS => '0');
+    begin
+        CAN_read(data, DEBUG_REGISTER_ADR, ID, mem_bus);
+    
+        pc_dbg := pc_deb_none;
+        if (data(PC_ARB_IND) = '1') then
+            pc_dbg := pc_deb_arbitration;
+        elsif (data(PC_CON_IND) = '1') then
+            pc_dbg := pc_deb_control;
+        elsif (data(PC_DAT_IND) = '1') then
+            pc_dbg := pc_deb_data;
+        elsif (data(PC_STC_IND) = '1') then
+            pc_dbg := pc_deb_stuff_count;
+        elsif (data(PC_CRC_IND) = '1') then
+            pc_dbg := pc_deb_crc;
+        elsif (data(PC_CRCD_IND) = '1') then
+            pc_dbg := pc_deb_crc_delim;
+        elsif (data(PC_ACK_IND) = '1') then
+            pc_dbg := pc_deb_ack;
+        elsif (data(PC_ACKD_IND) = '1') then
+            pc_dbg := pc_deb_ack_delim;
+        elsif (data(PC_EOF_IND) = '1') then
+            pc_dbg := pc_deb_eof;
+        elsif (data(PC_INT_IND) = '1') then
+            pc_dbg := pc_deb_intermission;
+        elsif (data(PC_SUSP_IND) = '1') then
+            pc_dbg := pc_deb_suspend;
+        elsif (data(PC_OVR_IND) = '1') then
+            pc_dbg := pc_deb_overload;
+        end if;
+    end procedure;
+
+
+    procedure CAN_wait_pc_state(
+        constant pc_state       : in    SW_PC_Debug;   
+        constant ID             : in    natural range 0 to 15;
+        signal   mem_bus        : inout Avalon_mem_type
+    )is
+        variable read_state     :       SW_PC_Debug;
+    begin
+        CAN_read_pc_debug(read_state, ID, mem_bus);
+        while (read_state /= pc_state) loop
+            wait until rising_edge(mem_bus.clk_sys);
+            CAN_read_pc_debug(read_state, ID, mem_bus);
+        end loop;
+    end procedure;
+    
+    
+    procedure CAN_wait_not_pc_state(
+        constant pc_state       : in    SW_PC_Debug;   
+        constant ID             : in    natural range 0 to 15;
+        signal   mem_bus        : inout Avalon_mem_type
+    )is
+        variable read_state     :       SW_PC_Debug;
+    begin
+        CAN_read_pc_debug(read_state, ID, mem_bus);
+        while (read_state = pc_state) loop
+            wait until rising_edge(mem_bus.clk_sys);
+            CAN_read_pc_debug(read_state, ID, mem_bus);
+        end loop;    
+    end procedure;
+    
+
+    procedure CAN_configure_tx_priority(
+        constant buff_number    : in    natural range 1 to 4;
+        constant priority       : in    natural range 0 to 7;   
+        constant ID             : in    natural range 0 to 15;
+        signal   mem_bus        : inout Avalon_mem_type
+   ) is
+        variable data           :       std_logic_vector(31 downto 0) :=
+                                            (OTHERS => '0');
+        variable address        :       std_logic_vector(11 downto 0) :=
+            (OTHERS => '0');
+    begin   
+        -- Read current register value to variable
+        address := TX_PRIORITY_ADR;
+        CAN_read(data, address, ID, mem_bus, BIT_16);
+        info("Read 'TX_PRIORITY_ADR': 0x" & to_hstring(data) & ".");
+        
+       -- Select buffer and modify appropriate bits in the register
+        case buff_number is
+            when 1 =>
+                data (2 downto 0) := std_logic_vector(to_unsigned(priority, 3));
+            when 2 =>
+                data (6 downto 4) := std_logic_vector(to_unsigned(priority, 3));
+            when 3 =>
+                data (10 downto 8) := std_logic_vector(to_unsigned(priority, 3));
+            when 4 =>
+                data (14 downto 12) := std_logic_vector(to_unsigned(priority, 3));
+            when others =>
+                error("Unsupported TX buffer number.");
+            end case;
+
+        -- Write back new value and exit procedure
+        info("Write 'TX_PRIORITY_ADR': 0x" & to_hstring(data) & ".");
+        address := TX_PRIORITY_ADR;
+        CAN_write(data, address, ID, mem_bus, BIT_16);
+    end procedure;
+    
+    
+    function CAN_spy_retr_ctr(
+        signal   stat_bus         : in    std_logic_vector(511 downto 0)
+    ) return natural is
+    begin
+        return to_integer(unsigned(
+                stat_bus(STAT_RETR_CTR_HIGH downto STAT_RETR_CTR_LOW)));
+    end function;
+    
+    
+    procedure CAN_wait_sample_point(
+        signal   stat_bus         : in    std_logic_vector(511 downto 0) 
+    ) is
+    begin
+        wait until stat_bus(STAT_REC_TRIG) = '1';
+    end procedure;
+
 
 end package body;
 

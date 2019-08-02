@@ -60,28 +60,28 @@ architecture tx_arb_unit_test of CAN_test is
     -- DUT signals
     ------------------------
     signal clk_sys                :  std_logic;
-    signal res_n                  :  std_logic := ACT_RESET;
-    signal txt_buf_in             :  txtb_output_type :=
+    signal res_n                  :  std_logic := C_RESET_POLARITY;
+    signal txtb_port_b_data       :  t_txt_bufs_output :=
                                         (OTHERS => (OTHERS => '0'));
 
-    signal txt_buf_ready          :  std_logic_vector(TXT_BUFFER_COUNT - 1 downto 0)
+    signal txtb_ready          :  std_logic_vector(C_TXT_BUFFER_COUNT - 1 downto 0)
                                         := (OTHERS => '0');
 
-    signal txtb_ptr               :  natural range 0 to 19;
-    signal tran_data_word_out     :  std_logic_vector(31 downto 0);
-    signal tran_dlc_out           :  std_logic_vector(3 downto 0);
+    signal txtb_port_b_address               :  natural range 0 to 19;
+    signal tran_word     :  std_logic_vector(31 downto 0);
+    signal tran_dlc           :  std_logic_vector(3 downto 0);
     signal tran_is_rtr            :  std_logic;
-    signal tran_ident_type_out    :  std_logic;
-    signal tran_frame_type_out    :  std_logic;
-    signal tran_brs_out           :  std_logic;
-    signal tran_frame_valid_out   :  std_logic;
-    signal txt_hw_cmd             :  txt_hw_cmd_type :=
+    signal tran_ident_type    :  std_logic;
+    signal tran_frame_type    :  std_logic;
+    signal tran_brs           :  std_logic;
+    signal tran_frame_valid   :  std_logic;
+    signal txtb_hw_cmd            :  t_txtb_hw_cmd :=
                                         ('0','0','0','0','0','0');
     signal txtb_changed           :  std_logic;
-    signal txt_hw_cmd_buf_index   :  natural range 0 to TXT_BUFFER_COUNT - 1;
-    signal txtb_core_pointer      :  natural range 0 to 19 := 0;
+    signal txtb_hw_cmd_index      :  natural range 0 to C_TXT_BUFFER_COUNT - 1;
+    signal txtb_ptr      :  natural range 0 to 19 := 0;
     signal drv_bus                :  std_logic_vector(1023 downto 0);
-    signal txt_buf_prio           :  txtb_priorities_type :=
+    signal txtb_prorities         :  t_txt_bufs_priorities :=
                                         (OTHERS => (OTHERS => '0'));
     signal timestamp              :  std_logic_vector(63 downto 0) :=
                                         (OTHERS => '0');
@@ -92,7 +92,7 @@ architecture tx_arb_unit_test of CAN_test is
 
     -- Memories as if connected to TXT Buffers
     type txtb_test_mem_type is array (0 to 19) of std_logic_vector(31 downto 0);
-    type txtb_multi_test_type is array (0 to TXT_BUFFER_COUNT - 1) of
+    type txtb_multi_test_type is array (0 to C_TXT_BUFFER_COUNT - 1) of
          txtb_test_mem_type;
     signal shadow_mem             : txtb_multi_test_type :=
                                     (OTHERS => (OTHERS => (OTHERS => '0')));
@@ -104,8 +104,8 @@ architecture tx_arb_unit_test of CAN_test is
     signal rand_ctr_4             : natural range 0 to RAND_POOL_SIZE;
 
     -- Highest priority buffer which is ready
-    signal high_prio_buf_index    : natural range 0 to TXT_BUFFER_COUNT - 1;
-    signal high_prio_buf_index_d  : natural range 0 to TXT_BUFFER_COUNT - 1;
+    signal high_prio_buf_index    : natural range 0 to C_TXT_BUFFER_COUNT - 1;
+    signal high_prio_buf_index_d  : natural range 0 to C_TXT_BUFFER_COUNT - 1;
     signal high_prio_valid        : boolean;
     signal high_prio_valid_d      : boolean;
 
@@ -119,7 +119,7 @@ architecture tx_arb_unit_test of CAN_test is
      -- Committed output of the frame_valid
      signal mod_frame_com         :  std_logic := '0';
 
-     signal mod_buf_index         :  natural range 0 to TXT_BUFFER_COUNT - 1 :=
+     signal mod_buf_index         :  natural range 0 to C_TXT_BUFFER_COUNT - 1 :=
                                      0;
      signal mod_frame_valid_out   :  std_logic := '0';
 
@@ -127,7 +127,7 @@ architecture tx_arb_unit_test of CAN_test is
     signal mod_locked             :  boolean := false;
 
     -- Last locked buffer to detect functionality of txtb_changed
-    signal last_locked_index      : natural range 0 to TXT_BUFFER_COUNT - 1 :=
+    signal last_locked_index      : natural range 0 to C_TXT_BUFFER_COUNT - 1 :=
                                     0;
 
     -- Error counters
@@ -167,13 +167,13 @@ architecture tx_arb_unit_test of CAN_test is
     ----------------------------------------------------------------------------
     procedure set_priorities(
         signal rand_ptr               :inout natural range 0 to RAND_POOL_SIZE;
-        signal txt_buf_prio           :out   txtb_priorities_type
+        signal txtb_prorities           :out   t_txt_bufs_priorities
     )is
         variable tmp                  : std_logic_vector(2 downto 0);
     begin
-        for i in 0 to TXT_BUFFER_COUNT - 1 loop
+        for i in 0 to C_TXT_BUFFER_COUNT - 1 loop
             rand_logic_vect_v(rand_ptr, tmp, 0.5);
-            txt_buf_prio(i)      <= tmp;
+            txtb_prorities(i)      <= tmp;
         end loop;
     end procedure;
 
@@ -185,27 +185,27 @@ begin
     ----------------------------------------------------------------------------
     tx_arbitrator_comp : tx_arbitrator
     generic map(
-        buf_count              => TXT_BUFFER_COUNT
+        G_TXT_BUFFER_COUNT     => C_TXT_BUFFER_COUNT
     )
     port map(
         clk_sys                => clk_sys,
         res_n                  => res_n,
-        txt_buf_in             => txt_buf_in,
-        txt_buf_ready          => txt_buf_ready,
-        txtb_ptr               => txtb_ptr,
-        tran_data_word_out     => tran_data_word_out,
-        tran_dlc_out           => tran_dlc_out,
+        txtb_port_b_data       => txtb_port_b_data,
+        txtb_ready             => txtb_ready,
+        txtb_port_b_address    => txtb_port_b_address,
+        tran_word              => tran_word,
+        tran_dlc               => tran_dlc,
         tran_is_rtr            => tran_is_rtr,
-        tran_ident_type_out    => tran_ident_type_out,
-        tran_frame_type_out    => tran_frame_type_out,
-        tran_brs_out           => tran_brs_out,
-        tran_frame_valid_out   => tran_frame_valid_out,
-        txt_hw_cmd             => txt_hw_cmd,
+        tran_ident_type        => tran_ident_type,
+        tran_frame_type        => tran_frame_type,
+        tran_brs               => tran_brs,
+        tran_frame_valid       => tran_frame_valid,
+        txtb_hw_cmd            => txtb_hw_cmd,
         txtb_changed           => txtb_changed,
-        txt_hw_cmd_buf_index   => txt_hw_cmd_buf_index,
-        txtb_core_pointer      => txtb_core_pointer,
+        txtb_hw_cmd_index      => txtb_hw_cmd_index,
+        txtb_ptr               => txtb_ptr,
         drv_bus                => drv_bus,
-        txt_buf_prio           => txt_buf_prio,
+        txtb_prorities         => txtb_prorities,
         timestamp              => timestamp
     );
 
@@ -227,7 +227,7 @@ begin
         wait for wait_time;
         wait until rising_edge(clk_sys);
 
-        if (res_n = ACT_RESET) then
+        if (res_n = C_RESET_POLARITY) then
             apply_rand_seed(seed, 3, rand_ctr_1);
         end if;
 
@@ -242,13 +242,13 @@ begin
         ------------------------------------------------------------------------
         if ((mod_locked = false or
              mod_buf_index /= integer(buf_index))) and
-            (txt_hw_cmd.lock = '0')
+            (txtb_hw_cmd.lock = '0')
         then
             -- Choose whether buffer will be set to ready or not
             rand_logic_v(rand_ctr_1, ready, 0.1);
 
             -- Set it to the buffer
-            txt_buf_ready(integer(buf_index)) <= ready;
+            txtb_ready(integer(buf_index)) <= ready;
         end if;
 
     end process;
@@ -264,7 +264,7 @@ begin
         variable buf_index      : real;
     begin
 
-        if (res_n = ACT_RESET) then
+        if (res_n = C_RESET_POLARITY) then
             apply_rand_seed(seed, 2, rand_ctr_4);
         end if;
 
@@ -273,7 +273,7 @@ begin
         buf_index := buf_index * 3.0;
 
         -- Wait till it can be accessed
-        while txt_buf_ready(integer(buf_index)) = '1' loop
+        while txtb_ready(integer(buf_index)) = '1' loop
             wait until rising_edge(clk_sys);
         end loop;
 
@@ -311,16 +311,16 @@ begin
     ------------------------------------------------------------------------------
     buf_access_emu_proc : process (res_n, clk_sys)
     begin
-        if (res_n = ACT_RESET) then
-             txt_buf_in(0) <= (OTHERS => '0');
-             txt_buf_in(1) <= (OTHERS => '0');
-             txt_buf_in(2) <= (OTHERS => '0');
-             txt_buf_in(3) <= (OTHERS => '0');
+        if (res_n = C_RESET_POLARITY) then
+             txtb_port_b_data(0) <= (OTHERS => '0');
+             txtb_port_b_data(1) <= (OTHERS => '0');
+             txtb_port_b_data(2) <= (OTHERS => '0');
+             txtb_port_b_data(3) <= (OTHERS => '0');
         elsif (rising_edge(clk_sys)) then
-             txt_buf_in(0) <= shadow_mem(0)(txtb_ptr);
-             txt_buf_in(1) <= shadow_mem(1)(txtb_ptr);
-             txt_buf_in(2) <= shadow_mem(2)(txtb_ptr);
-             txt_buf_in(3) <= shadow_mem(3)(txtb_ptr);
+             txtb_port_b_data(0) <= shadow_mem(0)(txtb_port_b_address);
+             txtb_port_b_data(1) <= shadow_mem(1)(txtb_port_b_address);
+             txtb_port_b_data(2) <= shadow_mem(2)(txtb_port_b_address);
+             txtb_port_b_data(3) <= shadow_mem(3)(txtb_port_b_address);
         end if;
     end process;
 
@@ -329,7 +329,7 @@ begin
     -- Model TX Arbitrator. Choose Highest priority "ready" TXT Buffer.
     -- This should model the "priorityDecoder" entity inside TX Arbitrator.
     ----------------------------------------------------------------------------
-    prio_dec_model_proc : process(txt_buf_ready, txt_buf_prio)
+    prio_dec_model_proc : process(txtb_ready, txtb_prorities)
         variable tmp_index    : natural;
         variable tmp_prio     : natural;
         variable txt_valid    : boolean;
@@ -346,12 +346,12 @@ begin
         txt_valid           := false;
 
         -- Choose highest priority TXT buffer
-        for i in TXT_BUFFER_COUNT - 1 downto 0 loop
-            if ((to_integer(unsigned(txt_buf_prio(i))) >= tmp_prio) and
-                txt_buf_ready(i) = '1')
+        for i in C_TXT_BUFFER_COUNT - 1 downto 0 loop
+            if ((to_integer(unsigned(txtb_prorities(i))) >= tmp_prio) and
+                txtb_ready(i) = '1')
             then
                 tmp_index   := i;
-                tmp_prio    := to_integer(unsigned(txt_buf_prio(i)));
+                tmp_prio    := to_integer(unsigned(txtb_prorities(i)));
                 txt_valid   := true;
             end if;
         end loop;
@@ -404,7 +404,6 @@ begin
 
         -- Selected buffer has changed
         elsif (high_prio_buf_index /= high_prio_buf_index_d) then
-            mod_frame_com <= '0';
             del_counter   <= 1;
             wait until rising_edge(clk_sys);
 
@@ -417,7 +416,7 @@ begin
             wait until rising_edge(clk_sys);
 
         -- HW Command lock came on previously loaded Frame / Buffer
-        elsif (txt_hw_cmd.lock = '1') then
+        elsif (txtb_hw_cmd.lock = '1') then
             del_counter   <= 0;
             wait until rising_edge(clk_sys);
 
@@ -467,13 +466,13 @@ begin
     begin
 
         -- Wait till test start
-        while res_n = ACT_RESET loop
+        while res_n = C_RESET_POLARITY loop
             wait until rising_edge(clk_sys);
             apply_rand_seed(seed, 1, rand_ctr_3);
         end loop;
 
         -- Lock command can be generated only when the output of DUT is valid
-        while tran_frame_valid_out = '0' loop
+        while tran_frame_valid = '0' loop
             wait until rising_edge(clk_sys);
         end loop;
 
@@ -484,12 +483,12 @@ begin
         wait until rising_edge(clk_sys);
 
         -- Frame could have been invalidated by SW since then
-        if (tran_frame_valid_out = '1') then
+        if (tran_frame_valid = '1') then
             -- Lock the Buffer
-            txt_hw_cmd.lock     <= '1';
+            txtb_hw_cmd.lock     <= '1';
             mod_locked          <= true;
             wait until rising_edge(clk_sys);
-            txt_hw_cmd.lock     <= '0';
+            txtb_hw_cmd.lock     <= '0';
 
             last_locked_index   <= mod_buf_index;
 
@@ -505,10 +504,10 @@ begin
             wait until rising_edge(clk_sys);
 
             -- Unlock the Buffer
-            txt_hw_cmd.unlock   <= '1';
+            txtb_hw_cmd.unlock   <= '1';
             wait until rising_edge(clk_sys);
             mod_locked          <= false;
-            txt_hw_cmd.unlock   <= '0';
+            txtb_hw_cmd.unlock   <= '0';
 
             --------------------------------------------------------------------
             -- Before the next possible LOCK command, buffers must be evaluated.
@@ -529,19 +528,19 @@ begin
     ----------------------------------------------------------------------------
     -- Compare DUT outputs with model outputs
     ----------------------------------------------------------------------------
-    frame_valid_mism <= true when (mod_frame_valid_out /= tran_frame_valid_out)
+    frame_valid_mism <= true when (mod_frame_valid_out /= tran_frame_valid)
                              else
                         false;
 
     metadata_mism <= true when 
-                             ((mod_dlc_out            /= tran_dlc_out) or
+                             ((mod_dlc_out            /= tran_dlc) or
                               (mod_is_rtr             /= tran_is_rtr) or
-                              (mod_ident_type_out     /= tran_ident_type_out) or
-                              (mod_frame_type_out     /= tran_frame_type_out))
+                              (mod_ident_type_out     /= tran_ident_type) or
+                              (mod_frame_type_out     /= tran_frame_type))
                           else
                      false;
 
-    hw_cmd_buf_index_mism <= true when (txt_hw_cmd_buf_index /= mod_buf_index)
+    hw_cmd_buf_index_mism <= true when (txtb_hw_cmd_index /= mod_buf_index)
                              else
                         false;
 
@@ -608,7 +607,7 @@ begin
             info("Starting loop nr " & integer'image(loop_ctr));
 
             -- Configure TXT Buffer priorities!
-            set_priorities(rand_ctr_2, txt_buf_prio);
+            set_priorities(rand_ctr_2, txtb_prorities);
 
             wait for 5000 ns;
 

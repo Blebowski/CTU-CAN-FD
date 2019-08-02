@@ -40,13 +40,13 @@
 --------------------------------------------------------------------------------
 
 --------------------------------------------------------------------------------
+-- Module:
+--  Endian swapper
+-- 
 -- Purpose:
---  Generic endian swapper. Selectable word size, group(byte) size.
---  Selectable generic swapping, or swapping by input signal.
---
---  Output is combinational
---------------------------------------------------------------------------------
---    19.1.2018  Created file
+--  Swaps endianity of input vector. Size of byte (group) is configurable. Word
+--  size and selection by generic or input signal is configurable. Output is
+--  combinatorial.
 --------------------------------------------------------------------------------
 
 Library ieee;
@@ -61,7 +61,6 @@ use work.can_components.all;
 use work.can_types.all;
 use work.cmn_lib.all;
 use work.drv_stat_pkg.all;
-use work.endian_swap.all;
 use work.reduce_lib.all;
 
 use work.CAN_FD_register_map.all;
@@ -72,34 +71,35 @@ entity endian_swapper is
         
         -- If true, "swap_in" signal selects between swapping/non-swapping.
         -- If false "swap_gen" generic selects bewtween swapping/non-swapping.
-        constant swap_by_signal        :     boolean := false;
+        G_SWAP_BY_SIGNAL        :     boolean := false;
         
         -- When true, output word is endian swapped as long as "swap_by_signal"
         -- is true. Otherwise it has no meaning.
-        constant swap_gen              :     boolean := false;
+        G_SWAP_GEN              :     boolean := false;
 
         -- Size of word (in groups)
-        constant word_size             :     natural := 4;
+        G_WORD_SIZE             :     natural := 4;
         
         -- Size of group (in bits)
-        constant group_size            :     natural := 8  
+        G_GROUP_SIZE            :     natural := 8  
     );  
     port (
+        -- Data input
+        input   : in  std_logic_vector(G_WORD_SIZE * G_GROUP_SIZE - 1 downto 0);
         
-        -- Data input/output
-        signal input   : in  std_logic_vector(word_size * group_size - 1 downto 0);
-        signal output  : out std_logic_vector(word_size * group_size - 1 downto 0);
+        -- Data output
+        output  : out std_logic_vector(G_WORD_SIZE * G_GROUP_SIZE - 1 downto 0);
         
         -- Swap signal (used only when "swap_by_signal=true")
         -- Swaps endian when '1', keeps otherwise.
-        signal swap_in : in  std_logic
+        swap_in : in  std_logic
     );
 end entity;
 
 architecture rtl of endian_swapper is
     
     -- Endian swapped input word
-    signal swapped         :  std_logic_vector(word_size * group_size - 1 downto 0);
+    signal swapped :  std_logic_vector(G_WORD_SIZE * G_GROUP_SIZE - 1 downto 0);
 
 begin
     
@@ -113,12 +113,12 @@ begin
         variable u_ind_swap  : natural;
         variable i_inv       : natural;
     begin
-        for i in 0 to word_size - 1 loop
-            l_ind_orig := i * group_size;
-            u_ind_orig := (i + 1) * group_size - 1;
-            i_inv := word_size - i - 1;
-            l_ind_swap := i_inv * group_size;
-            u_ind_swap := (i_inv + 1) * group_size - 1;
+        for i in 0 to G_WORD_SIZE - 1 loop
+            l_ind_orig := i * G_GROUP_SIZE;
+            u_ind_orig := (i + 1) * G_GROUP_SIZE - 1;
+            i_inv := G_WORD_SIZE - i - 1;
+            l_ind_swap := i_inv * G_GROUP_SIZE;
+            u_ind_swap := (i_inv + 1) * G_GROUP_SIZE - 1;
             swapped(u_ind_swap downto l_ind_swap) <=
                 input(u_ind_orig downto l_ind_orig);
         end loop;
@@ -127,15 +127,15 @@ begin
     ---------------------------------------------------------------------------
     -- Swapping by generic
     ---------------------------------------------------------------------------
-    swap_by_generic_gen : if (swap_by_signal = false) generate
+    swap_by_generic_gen : if (not G_SWAP_BY_SIGNAL) generate
         
         -- Swap
-        swap_by_generic_true_gen : if (swap_gen) generate
+        swap_by_generic_true_gen : if (G_SWAP_GEN) generate
             output <= swapped;    
         end generate swap_by_generic_true_gen;
         
         -- Don't Swap
-        swap_by_generic_false_gen : if (not swap_gen) generate
+        swap_by_generic_false_gen : if (not G_SWAP_GEN) generate
             output <= input;    
         end generate swap_by_generic_false_gen;
 
@@ -145,7 +145,7 @@ begin
     ---------------------------------------------------------------------------
     -- Swapping by input    
     ---------------------------------------------------------------------------    
-    swap_by_input_gen : if (swap_by_signal = true) generate
+    swap_by_input_gen : if (G_SWAP_BY_SIGNAL) generate
         output <= swapped when (swap_in = '1') else
                   input;
     end generate swap_by_input_gen; 

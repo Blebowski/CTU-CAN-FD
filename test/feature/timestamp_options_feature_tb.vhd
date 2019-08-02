@@ -89,14 +89,6 @@ package body timestamp_options_feature is
         o.outcome := true;
 
         ------------------------------------------------------------------------
-        -- If this is the only test, wait until controller will come out
-        -- of integration phase!
-        ------------------------------------------------------------------------
-        for i in 0 to 1700 loop
-            wait until rising_edge(mem_bus(1).clk_sys);
-        end loop;
-
-        ------------------------------------------------------------------------
         -- Configure timestamp options to the begining of CAN Frame.
         ------------------------------------------------------------------------
         options.rx_time_stamp_options := true;

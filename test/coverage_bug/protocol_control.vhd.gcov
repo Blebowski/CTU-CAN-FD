@@ -1,0 +1,31 @@
+        -:    0:Source:/build/test/coverage_bug/protocol_control.vhd
+        -:    0:Graph:protocol_control.gcno
+        -:    0:Data:protocol_control.gcda
+        -:    0:Runs:1
+        -:    0:Programs:1
+        3:    1:Library ieee;
+        -:    2:use ieee.std_logic_1164.all;
+        -:    3:use ieee.numeric_std.ALL;
+        -:    4:
+       29:    5:entity protocol_control is
+        -:    6:    port(
+        -:    7:        tran_frame_valid    : in  std_logic;
+        -:    8:        drv_bus_mon_ena     : in  std_logic;
+        -:    9:        tx_frame_ready      : out std_logic
+        -:   10:    );
+        -:   11:end entity;
+        -:   12:
+        2:   13:architecture rtl of protocol_control is
+        -:   14:
+        -:   15:begin
+        -:   16:
+        1:   17:    tx_frame_ready_proc : process(tran_frame_valid, drv_bus_mon_ena)
+        -:   18:    begin
+       24:   19:        if (tran_frame_valid = '1' and drv_bus_mon_ena = '0') then
+       11:   20:            tx_frame_ready <= '1';
+        -:   21:        else
+       14:   22:            tx_frame_ready <= '0';
+        -:   23:        end if;
+        -:   24:    end process;
+        -:   25:    
+        -:   26:end architecture;

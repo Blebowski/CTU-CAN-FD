@@ -40,16 +40,14 @@
 --------------------------------------------------------------------------------
 
 --------------------------------------------------------------------------------
+-- Module:
+--  Priority decoder.
+-- 
 -- Purpose:
---  Combinational decoder for TXT buffer priority. Considers priority, bufffer
+--  Combinational decoder for TXT BufferS priority. Considers priority, bufffer
 --  validity. Generic amount of buffers is available (up to 8). Decoder consists
 --  of 3 levels of comparators (4+2+1). If two frames have the same priority,
---  a frame with lower index is selected.
---                                                                                                                                                   
---------------------------------------------------------------------------------
--- Revision History:
---    12.02 2018   Created file
---    12.11.2018   Changed output output_valid to std_logic from boolean.
+--  a frame with lower index is selected.                                                                                                                                               
 --------------------------------------------------------------------------------
 
 Library ieee;
@@ -64,7 +62,6 @@ use work.can_components.all;
 use work.can_types.all;
 use work.cmn_lib.all;
 use work.drv_stat_pkg.all;
-use work.endian_swap.all;
 use work.reduce_lib.all;
 
 use work.CAN_FD_register_map.all;
@@ -72,30 +69,29 @@ use work.CAN_FD_frame_format.all;
 
 entity priority_decoder is
     generic(
-        buf_count               :  natural range 1 to 8
+        -- Number of TXT Buffers
+        G_TXT_BUFFER_COUNT     : natural range 1 to 8
     );
     port( 
-
-        -- No clock, nor reset, decoder is combinational only!
-
         ------------------------------------------------------------------------
-        -- Buffer information
+        -- TXT Buffer information
         ------------------------------------------------------------------------
-        signal prio             : in  txtb_priorities_type;
-        signal prio_valid       : in  std_logic_vector(buf_count - 1 downto 0);
+        -- TXT Buffer priority
+        prio             : in  t_txt_bufs_priorities;
+        
+        -- TXT Buffer is valid for selection
+        prio_valid       : in  std_logic_vector(G_TXT_BUFFER_COUNT - 1 downto 0);
 
         ------------------------------------------------------------------------
         -- Output interface
         ------------------------------------------------------------------------
-
         -- Whether selected buffer is valid 
         -- (at least one of the buffers must be non-empty and allowed)
-        signal output_valid     : out  std_logic;
+        output_valid     : out  std_logic;
 
         -- Index of highest priority buffer which is non-empty and allowed
         -- for transmission
-        signal output_index     : out  natural range 0 to buf_count - 1
-
+        output_index     : out  natural range 0 to G_TXT_BUFFER_COUNT - 1
     );
 end entity;
 
@@ -148,7 +144,7 @@ begin
     ----------------------------------------------------------------------------
     -- Level 0 - aliases
     ----------------------------------------------------------------------------
-    l0_gen : for i in 0 to buf_count - 1 generate
+    l0_gen : for i in 0 to G_TXT_BUFFER_COUNT - 1 generate
 
         -- Since we cover "00" as inactive value, instead of active values 
         -- "01", "10" or "11", rather make sure that input values are defined
@@ -167,9 +163,9 @@ begin
     end generate;
 
   
-    fill_zeroes_gen : if (buf_count < 8) generate
-        l0_prio(7 downto buf_count)  <= (OTHERS => (OTHERS => '0'));
-        l0_valid(7 downto buf_count) <= (OTHERS => '0');
+    fill_zeroes_gen : if (G_TXT_BUFFER_COUNT < 8) generate
+        l0_prio(7 downto G_TXT_BUFFER_COUNT)  <= (OTHERS => (OTHERS => '0'));
+        l0_valid(7 downto G_TXT_BUFFER_COUNT) <= (OTHERS => '0');
     end generate;
     
     
@@ -307,23 +303,23 @@ begin
                 end if;
             else
                 if (l1_winner(1) = LOWER_TREE) then
-                    output_index <= 2 mod buf_count;
+                    output_index <= 2 mod G_TXT_BUFFER_COUNT;
                 else
-                    output_index <= 3 mod buf_count;
+                    output_index <= 3 mod G_TXT_BUFFER_COUNT;
                 end if;
             end if;      
         else
             if (l2_winner(1) = LOWER_TREE) then
                 if (l1_winner(2) = LOWER_TREE) then
-                    output_index <= 4 mod buf_count;
+                    output_index <= 4 mod G_TXT_BUFFER_COUNT;
                 else
-                    output_index <= 5 mod buf_count;
+                    output_index <= 5 mod G_TXT_BUFFER_COUNT;
                 end if;
             else
                 if (l1_winner(3) = LOWER_TREE) then
-                    output_index <= 6 mod buf_count;
+                    output_index <= 6 mod G_TXT_BUFFER_COUNT;
                 else
-                    output_index <= 7 mod buf_count;
+                    output_index <= 7 mod G_TXT_BUFFER_COUNT;
                 end if;
             end if;   
         end if;

@@ -96,7 +96,7 @@ package body rx_status_feature is
         variable number_frms_sent   :       natural range 0 to 1023;
 
         variable buf_info           :       SW_RX_Buffer_info;
-        variable command            :       SW_command := (false, false, false);
+        variable command            :       SW_command := SW_command_rst_val;
         variable status             :       SW_status;
     begin
         o.outcome := true;

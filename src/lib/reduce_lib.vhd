@@ -46,9 +46,6 @@
 --    synthesis tools, thus this workaround is used!
 --
 --------------------------------------------------------------------------------
--- Revision History:
---    31.8.2018   Created file
---------------------------------------------------------------------------------
 
 Library ieee;
 USE IEEE.std_logic_1164.all;

@@ -107,7 +107,7 @@ label{CAN FD frame format
 \end_inset
 \end_layout
 \begin_layout Standard
-CAN Frame format describtion in as it is stored in TXT Buffers and RX Buffer.
+CAN Frame format describtion as it is stored in TXT Buffers and RX Buffer.
 \end_layout
 \begin_layout Standard
 \begin_inset Newpage newpage
@@ -123,7 +123,7 @@ CAN FD Frame format
 \align center
 \begin_inset Tabular
 <lyxtabular columns="5" rows="9" version="3">
-<features tabularvalignment="middle">
+<features islongtable="true" longtabularalignment="center">
 <column alignment="center" valignment="top" width="3cm">
 <column alignment="center" valignment="top" width="3cm">
 <column alignment="center" valignment="top" width="3cm">
@@ -134,7 +134,14 @@ CAN FD Frame format
 \begin_inset Text
 
 \begin_layout Plain Layout
-Bits [31:24]\end_layout
+Bits [31:24]\begin_inset ERT
+status open
+\begin_layout Plain Layout
+\backslash
+cellcolor{gray}
+\end_layout
+\end_inset
+\end_layout
 
 \end_inset
 </cell>
@@ -142,7 +149,14 @@ Bits [31:24]\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-Bits [23:16]\end_layout
+Bits [23:16]\begin_inset ERT
+status open
+\begin_layout Plain Layout
+\backslash
+cellcolor{gray}
+\end_layout
+\end_inset
+\end_layout
 
 \end_inset
 </cell>
@@ -150,7 +164,14 @@ Bits [23:16]\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-Bits [15:8]\end_layout
+Bits [15:8]\begin_inset ERT
+status open
+\begin_layout Plain Layout
+\backslash
+cellcolor{gray}
+\end_layout
+\end_inset
+\end_layout
 
 \end_inset
 </cell>
@@ -158,7 +179,14 @@ Bits [15:8]\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-Bits [7:0]\end_layout
+Bits [7:0]\begin_inset ERT
+status open
+\begin_layout Plain Layout
+\backslash
+cellcolor{gray}
+\end_layout
+\end_inset
+\end_layout
 
 \end_inset
 </cell>
@@ -166,7 +194,14 @@ Bits [7:0]\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-Address offset\end_layout
+Address offset\begin_inset ERT
+status open
+\begin_layout Plain Layout
+\backslash
+cellcolor{gray}
+\end_layout
+\end_inset
+\end_layout
 
 \end_inset
 </cell>
@@ -708,7 +743,7 @@ Frame format word with CAN frame metadata.
 \align center
 \begin_inset Tabular
 <lyxtabular columns="9" rows="3" version="3">
-<features tabularvalignment="middle">
+<features>
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top" width="1.4cm">
 <column alignment="center" valignment="top" width="1.4cm">
@@ -723,7 +758,14 @@ Frame format word with CAN frame metadata.
 \begin_inset Text
 
 \begin_layout Plain Layout
-Bit index\end_layout
+Bit index\begin_inset ERT
+status open
+\begin_layout Plain Layout
+\backslash
+cellcolor{gray}
+\end_layout
+\end_inset
+\end_layout
 
 \end_inset
 </cell>
@@ -731,7 +773,14 @@ Bit index\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-31\end_layout
+31\begin_inset ERT
+status open
+\begin_layout Plain Layout
+\backslash
+cellcolor{gray}
+\end_layout
+\end_inset
+\end_layout
 
 \end_inset
 </cell>
@@ -739,7 +788,14 @@ Bit index\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-30\end_layout
+30\begin_inset ERT
+status open
+\begin_layout Plain Layout
+\backslash
+cellcolor{gray}
+\end_layout
+\end_inset
+\end_layout
 
 \end_inset
 </cell>
@@ -747,7 +803,14 @@ Bit index\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-29\end_layout
+29\begin_inset ERT
+status open
+\begin_layout Plain Layout
+\backslash
+cellcolor{gray}
+\end_layout
+\end_inset
+\end_layout
 
 \end_inset
 </cell>
@@ -755,7 +818,14 @@ Bit index\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-28\end_layout
+28\begin_inset ERT
+status open
+\begin_layout Plain Layout
+\backslash
+cellcolor{gray}
+\end_layout
+\end_inset
+\end_layout
 
 \end_inset
 </cell>
@@ -763,7 +833,14 @@ Bit index\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-27\end_layout
+27\begin_inset ERT
+status open
+\begin_layout Plain Layout
+\backslash
+cellcolor{gray}
+\end_layout
+\end_inset
+\end_layout
 
 \end_inset
 </cell>
@@ -771,7 +848,14 @@ Bit index\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-26\end_layout
+26\begin_inset ERT
+status open
+\begin_layout Plain Layout
+\backslash
+cellcolor{gray}
+\end_layout
+\end_inset
+\end_layout
 
 \end_inset
 </cell>
@@ -779,7 +863,14 @@ Bit index\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-25\end_layout
+25\begin_inset ERT
+status open
+\begin_layout Plain Layout
+\backslash
+cellcolor{gray}
+\end_layout
+\end_inset
+\end_layout
 
 \end_inset
 </cell>
@@ -787,7 +878,14 @@ Bit index\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-24\end_layout
+24\begin_inset ERT
+status open
+\begin_layout Plain Layout
+\backslash
+cellcolor{gray}
+\end_layout
+\end_inset
+\end_layout
 
 \end_inset
 </cell>
@@ -797,7 +895,14 @@ Bit index\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-Field name\end_layout
+Field name\begin_inset ERT
+status open
+\begin_layout Plain Layout
+\backslash
+cellcolor{cyan}
+\end_layout
+\end_inset
+\end_layout
 
 \end_inset
 </cell>
@@ -871,7 +976,14 @@ Reserved\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-Reset value\end_layout
+Reset value\begin_inset ERT
+status open
+\begin_layout Plain Layout
+\backslash
+cellcolor{cyan}
+\end_layout
+\end_inset
+\end_layout
 
 \end_inset
 </cell>
@@ -951,7 +1063,7 @@ Reset value\end_layout
 \align center
 \begin_inset Tabular
 <lyxtabular columns="9" rows="3" version="3">
-<features tabularvalignment="middle">
+<features>
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top" width="1.4cm">
 <column alignment="center" valignment="top" width="1.4cm">
@@ -966,7 +1078,14 @@ Reset value\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-Bit index\end_layout
+Bit index\begin_inset ERT
+status open
+\begin_layout Plain Layout
+\backslash
+cellcolor{gray}
+\end_layout
+\end_inset
+\end_layout
 
 \end_inset
 </cell>
@@ -974,7 +1093,14 @@ Bit index\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-23\end_layout
+23\begin_inset ERT
+status open
+\begin_layout Plain Layout
+\backslash
+cellcolor{gray}
+\end_layout
+\end_inset
+\end_layout
 
 \end_inset
 </cell>
@@ -982,7 +1108,14 @@ Bit index\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-22\end_layout
+22\begin_inset ERT
+status open
+\begin_layout Plain Layout
+\backslash
+cellcolor{gray}
+\end_layout
+\end_inset
+\end_layout
 
 \end_inset
 </cell>
@@ -990,7 +1123,14 @@ Bit index\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-21\end_layout
+21\begin_inset ERT
+status open
+\begin_layout Plain Layout
+\backslash
+cellcolor{gray}
+\end_layout
+\end_inset
+\end_layout
 
 \end_inset
 </cell>
@@ -998,7 +1138,14 @@ Bit index\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-20\end_layout
+20\begin_inset ERT
+status open
+\begin_layout Plain Layout
+\backslash
+cellcolor{gray}
+\end_layout
+\end_inset
+\end_layout
 
 \end_inset
 </cell>
@@ -1006,7 +1153,14 @@ Bit index\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-19\end_layout
+19\begin_inset ERT
+status open
+\begin_layout Plain Layout
+\backslash
+cellcolor{gray}
+\end_layout
+\end_inset
+\end_layout
 
 \end_inset
 </cell>
@@ -1014,7 +1168,14 @@ Bit index\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-18\end_layout
+18\begin_inset ERT
+status open
+\begin_layout Plain Layout
+\backslash
+cellcolor{gray}
+\end_layout
+\end_inset
+\end_layout
 
 \end_inset
 </cell>
@@ -1022,7 +1183,14 @@ Bit index\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-17\end_layout
+17\begin_inset ERT
+status open
+\begin_layout Plain Layout
+\backslash
+cellcolor{gray}
+\end_layout
+\end_inset
+\end_layout
 
 \end_inset
 </cell>
@@ -1030,7 +1198,14 @@ Bit index\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-16\end_layout
+16\begin_inset ERT
+status open
+\begin_layout Plain Layout
+\backslash
+cellcolor{gray}
+\end_layout
+\end_inset
+\end_layout
 
 \end_inset
 </cell>
@@ -1040,7 +1215,14 @@ Bit index\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-Field name\end_layout
+Field name\begin_inset ERT
+status open
+\begin_layout Plain Layout
+\backslash
+cellcolor{cyan}
+\end_layout
+\end_inset
+\end_layout
 
 \end_inset
 </cell>
@@ -1114,7 +1296,14 @@ Reserved\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-Reset value\end_layout
+Reset value\begin_inset ERT
+status open
+\begin_layout Plain Layout
+\backslash
+cellcolor{cyan}
+\end_layout
+\end_inset
+\end_layout
 
 \end_inset
 </cell>
@@ -1194,7 +1383,7 @@ Reset value\end_layout
 \align center
 \begin_inset Tabular
 <lyxtabular columns="9" rows="3" version="3">
-<features tabularvalignment="middle">
+<features>
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top" width="1.4cm">
 <column alignment="center" valignment="top" width="1.4cm">
@@ -1209,7 +1398,14 @@ Reset value\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-Bit index\end_layout
+Bit index\begin_inset ERT
+status open
+\begin_layout Plain Layout
+\backslash
+cellcolor{gray}
+\end_layout
+\end_inset
+\end_layout
 
 \end_inset
 </cell>
@@ -1217,7 +1413,14 @@ Bit index\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-15\end_layout
+15\begin_inset ERT
+status open
+\begin_layout Plain Layout
+\backslash
+cellcolor{gray}
+\end_layout
+\end_inset
+\end_layout
 
 \end_inset
 </cell>
@@ -1225,7 +1428,14 @@ Bit index\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-14\end_layout
+14\begin_inset ERT
+status open
+\begin_layout Plain Layout
+\backslash
+cellcolor{gray}
+\end_layout
+\end_inset
+\end_layout
 
 \end_inset
 </cell>
@@ -1233,7 +1443,14 @@ Bit index\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-13\end_layout
+13\begin_inset ERT
+status open
+\begin_layout Plain Layout
+\backslash
+cellcolor{gray}
+\end_layout
+\end_inset
+\end_layout
 
 \end_inset
 </cell>
@@ -1241,7 +1458,14 @@ Bit index\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-12\end_layout
+12\begin_inset ERT
+status open
+\begin_layout Plain Layout
+\backslash
+cellcolor{gray}
+\end_layout
+\end_inset
+\end_layout
 
 \end_inset
 </cell>
@@ -1249,7 +1473,14 @@ Bit index\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-11\end_layout
+11\begin_inset ERT
+status open
+\begin_layout Plain Layout
+\backslash
+cellcolor{gray}
+\end_layout
+\end_inset
+\end_layout
 
 \end_inset
 </cell>
@@ -1257,7 +1488,14 @@ Bit index\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-10\end_layout
+10\begin_inset ERT
+status open
+\begin_layout Plain Layout
+\backslash
+cellcolor{gray}
+\end_layout
+\end_inset
+\end_layout
 
 \end_inset
 </cell>
@@ -1265,7 +1503,14 @@ Bit index\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-9\end_layout
+9\begin_inset ERT
+status open
+\begin_layout Plain Layout
+\backslash
+cellcolor{gray}
+\end_layout
+\end_inset
+\end_layout
 
 \end_inset
 </cell>
@@ -1273,7 +1518,14 @@ Bit index\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-8\end_layout
+8\begin_inset ERT
+status open
+\begin_layout Plain Layout
+\backslash
+cellcolor{gray}
+\end_layout
+\end_inset
+\end_layout
 
 \end_inset
 </cell>
@@ -1283,7 +1535,14 @@ Bit index\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-Field name\end_layout
+Field name\begin_inset ERT
+status open
+\begin_layout Plain Layout
+\backslash
+cellcolor{cyan}
+\end_layout
+\end_inset
+\end_layout
 
 \end_inset
 </cell>
@@ -1357,7 +1616,14 @@ TBF\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-Reset value\end_layout
+Reset value\begin_inset ERT
+status open
+\begin_layout Plain Layout
+\backslash
+cellcolor{cyan}
+\end_layout
+\end_inset
+\end_layout
 
 \end_inset
 </cell>
@@ -1437,7 +1703,7 @@ X\end_layout
 \align center
 \begin_inset Tabular
 <lyxtabular columns="9" rows="3" version="3">
-<features tabularvalignment="middle">
+<features>
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top" width="1.4cm">
 <column alignment="center" valignment="top" width="1.4cm">
@@ -1452,7 +1718,14 @@ X\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-Bit index\end_layout
+Bit index\begin_inset ERT
+status open
+\begin_layout Plain Layout
+\backslash
+cellcolor{gray}
+\end_layout
+\end_inset
+\end_layout
 
 \end_inset
 </cell>
@@ -1460,7 +1733,14 @@ Bit index\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-7\end_layout
+7\begin_inset ERT
+status open
+\begin_layout Plain Layout
+\backslash
+cellcolor{gray}
+\end_layout
+\end_inset
+\end_layout
 
 \end_inset
 </cell>
@@ -1468,7 +1748,14 @@ Bit index\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-6\end_layout
+6\begin_inset ERT
+status open
+\begin_layout Plain Layout
+\backslash
+cellcolor{gray}
+\end_layout
+\end_inset
+\end_layout
 
 \end_inset
 </cell>
@@ -1476,7 +1763,14 @@ Bit index\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-5\end_layout
+5\begin_inset ERT
+status open
+\begin_layout Plain Layout
+\backslash
+cellcolor{gray}
+\end_layout
+\end_inset
+\end_layout
 
 \end_inset
 </cell>
@@ -1484,7 +1778,14 @@ Bit index\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-4\end_layout
+4\begin_inset ERT
+status open
+\begin_layout Plain Layout
+\backslash
+cellcolor{gray}
+\end_layout
+\end_inset
+\end_layout
 
 \end_inset
 </cell>
@@ -1492,7 +1793,14 @@ Bit index\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-3\end_layout
+3\begin_inset ERT
+status open
+\begin_layout Plain Layout
+\backslash
+cellcolor{gray}
+\end_layout
+\end_inset
+\end_layout
 
 \end_inset
 </cell>
@@ -1500,7 +1808,14 @@ Bit index\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-2\end_layout
+2\begin_inset ERT
+status open
+\begin_layout Plain Layout
+\backslash
+cellcolor{gray}
+\end_layout
+\end_inset
+\end_layout
 
 \end_inset
 </cell>
@@ -1508,7 +1823,14 @@ Bit index\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-1\end_layout
+1\begin_inset ERT
+status open
+\begin_layout Plain Layout
+\backslash
+cellcolor{gray}
+\end_layout
+\end_inset
+\end_layout
 
 \end_inset
 </cell>
@@ -1516,7 +1838,14 @@ Bit index\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-0\end_layout
+0\begin_inset ERT
+status open
+\begin_layout Plain Layout
+\backslash
+cellcolor{gray}
+\end_layout
+\end_inset
+\end_layout
 
 \end_inset
 </cell>
@@ -1526,7 +1855,14 @@ Bit index\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-Field name\end_layout
+Field name\begin_inset ERT
+status open
+\begin_layout Plain Layout
+\backslash
+cellcolor{cyan}
+\end_layout
+\end_inset
+\end_layout
 
 \end_inset
 </cell>
@@ -1600,7 +1936,14 @@ DLC\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-Reset value\end_layout
+Reset value\begin_inset ERT
+status open
+\begin_layout Plain Layout
+\backslash
+cellcolor{cyan}
+\end_layout
+\end_inset
+\end_layout
 
 \end_inset
 </cell>
@@ -1676,40 +2019,40 @@ X\end_layout
 
 \end_layout
 \begin_layout Description
-DLC Data length code as defined in CAN FD Specification.
+DLC Data Length Code as defined in CAN FD Specification.
 \end_layout
 \begin_layout Description
-RTR Remote transmission request flag. Has meaning only for CAN frames. CAN FD does not have RTR frames.\begin_inset Newline newline\end_inset
+RTR Remote Transmission Request flag. Has meaning only for CAN frames. CAN FD does not have RTR frames.\begin_inset Newline newline\end_inset
 		0b0  - NO_RTR_FRAME - CAN frame is not RTR frame.\begin_inset Newline newline\end_inset
 		0b1  - RTR_FRAME - CAN frame is RTR frame.
 \end_layout
 \begin_layout Description
-IDE Extended Identifier type. Distinguishes between Base and Extended Identifiers.\begin_inset Newline newline\end_inset
+IDE Extended Identifier Type. Distinguishes between Base and Extended Identifiers.\begin_inset Newline newline\end_inset
 		0b0  - BASE - Frame Identifier is Basic (11 bits)\begin_inset Newline newline\end_inset
 		0b1  - EXTENDED - Frame Identifier is Extended (11 + 18 bits)
 \end_layout
 \begin_layout Description
-FDF Frame type. Distinguishes between CAN and CAN FD Frames.\begin_inset Newline newline\end_inset
+FDF Flexible Data-rate Format. Distinguishes between CAN 2.0 and CAN FD Frames.\begin_inset Newline newline\end_inset
 		0b0  - NORMAL_CAN - Frame is CAN frame.\begin_inset Newline newline\end_inset
 		0b1  - FD_CAN - Frame is CAN FD frame.
 \end_layout
 \begin_layout Description
-TBF Time base format. Should be always set to 1.\begin_inset Newline newline\end_inset
+TBF Time Base Format. Shall be always set to 1.\begin_inset Newline newline\end_inset
 		0b0  - NOT_TIME_BASED - TIMESTAMP_L and TIMESTAMP_H does not contain valid timestamp for transmission or reception.\begin_inset Newline newline\end_inset
 		0b1  - TIME_BASED - TIMESTAMP_L and TIMESTAMP_H contain valid timestamp for transmission or reception.
 \end_layout
 \begin_layout Description
-BRS Bit rate shift. In case of CAN FD frames indicates whether Bit-rate should be shifted during Data phase. This bit has no meaning for CAN Frames.\begin_inset Newline newline\end_inset
+BRS Bit Rate Shift. In case of CAN FD frames indicates whether Bit-rate is shifted during for Data field of CAN FD frame. This bit has no meaning for CAN Frames.\begin_inset Newline newline\end_inset
 		0b0  - BR_NO_SHIFT - Bit rate should not be shifted if frame is CAN FD frame.\begin_inset Newline newline\end_inset
 		0b1  - BR_SHIFT - Bit rate should be shifted if frame is CAN FD frame.
 \end_layout
 \begin_layout Description
-ESI_RSV Error state indicator bit for received CAN FD frames. Bit has no meaning for CAN frames nor for transmitted CAN FD frames.\begin_inset Newline newline\end_inset
+ESI_RSV Error State Indicator bit for received CAN FD frames. Bit has no meaning for CAN frames nor for transmitted CAN FD frames (in TXT Buffer).\begin_inset Newline newline\end_inset
 		0b0  - ESI_ERR_ACTIVE - Transmitted of received CAN FD frame is error active.\begin_inset Newline newline\end_inset
 		0b1  - ESI_ERR_PASIVE - Transmitted of received CAN FD frame is error passive.
 \end_layout
 \begin_layout Description
-RWCNT Size of the CAN frame in RX Buffer without FRAME_FORMAT WORD.(E.g RTR frame RWCNT=3, 64 Byte FD frame RWCNT=19). In TXT Buffer this field has no meaning.
+RWCNT Size of CAN frame in RX Buffer without FRAME_FORMAT WORD.(E.g RTR frame RWCNT=3, 64 Byte FD frame RWCNT=19). In TXT Buffer this field has no meaning.
 \end_layout
 \begin_layout Standard
 \begin_inset VSpace bigskip
@@ -1735,14 +2078,14 @@ Address: 0x4
 Size: 4 bytes
 \end_layout
 \begin_layout Standard
-CAN Identifier
+CAN Identifier.
 \end_layout
 \begin_layout Standard
 \noindent
 \align center
 \begin_inset Tabular
 <lyxtabular columns="9" rows="3" version="3">
-<features tabularvalignment="middle">
+<features>
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top" width="1.4cm">
 <column alignment="center" valignment="top" width="1.4cm">
@@ -1757,7 +2100,14 @@ CAN Identifier
 \begin_inset Text
 
 \begin_layout Plain Layout
-Bit index\end_layout
+Bit index\begin_inset ERT
+status open
+\begin_layout Plain Layout
+\backslash
+cellcolor{gray}
+\end_layout
+\end_inset
+\end_layout
 
 \end_inset
 </cell>
@@ -1765,7 +2115,14 @@ Bit index\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-31\end_layout
+31\begin_inset ERT
+status open
+\begin_layout Plain Layout
+\backslash
+cellcolor{gray}
+\end_layout
+\end_inset
+\end_layout
 
 \end_inset
 </cell>
@@ -1773,7 +2130,14 @@ Bit index\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-30\end_layout
+30\begin_inset ERT
+status open
+\begin_layout Plain Layout
+\backslash
+cellcolor{gray}
+\end_layout
+\end_inset
+\end_layout
 
 \end_inset
 </cell>
@@ -1781,7 +2145,14 @@ Bit index\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-29\end_layout
+29\begin_inset ERT
+status open
+\begin_layout Plain Layout
+\backslash
+cellcolor{gray}
+\end_layout
+\end_inset
+\end_layout
 
 \end_inset
 </cell>
@@ -1789,7 +2160,14 @@ Bit index\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-28\end_layout
+28\begin_inset ERT
+status open
+\begin_layout Plain Layout
+\backslash
+cellcolor{gray}
+\end_layout
+\end_inset
+\end_layout
 
 \end_inset
 </cell>
@@ -1797,7 +2175,14 @@ Bit index\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-27\end_layout
+27\begin_inset ERT
+status open
+\begin_layout Plain Layout
+\backslash
+cellcolor{gray}
+\end_layout
+\end_inset
+\end_layout
 
 \end_inset
 </cell>
@@ -1805,7 +2190,14 @@ Bit index\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-26\end_layout
+26\begin_inset ERT
+status open
+\begin_layout Plain Layout
+\backslash
+cellcolor{gray}
+\end_layout
+\end_inset
+\end_layout
 
 \end_inset
 </cell>
@@ -1813,7 +2205,14 @@ Bit index\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-25\end_layout
+25\begin_inset ERT
+status open
+\begin_layout Plain Layout
+\backslash
+cellcolor{gray}
+\end_layout
+\end_inset
+\end_layout
 
 \end_inset
 </cell>
@@ -1821,7 +2220,14 @@ Bit index\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-24\end_layout
+24\begin_inset ERT
+status open
+\begin_layout Plain Layout
+\backslash
+cellcolor{gray}
+\end_layout
+\end_inset
+\end_layout
 
 \end_inset
 </cell>
@@ -1831,7 +2237,14 @@ Bit index\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-Field name\end_layout
+Field name\begin_inset ERT
+status open
+\begin_layout Plain Layout
+\backslash
+cellcolor{cyan}
+\end_layout
+\end_inset
+\end_layout
 
 \end_inset
 </cell>
@@ -1905,7 +2318,14 @@ IDENTIFIER_BASE[10:6]\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-Reset value\end_layout
+Reset value\begin_inset ERT
+status open
+\begin_layout Plain Layout
+\backslash
+cellcolor{cyan}
+\end_layout
+\end_inset
+\end_layout
 
 \end_inset
 </cell>
@@ -1985,7 +2405,7 @@ X\end_layout
 \align center
 \begin_inset Tabular
 <lyxtabular columns="9" rows="3" version="3">
-<features tabularvalignment="middle">
+<features>
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top" width="1.4cm">
 <column alignment="center" valignment="top" width="1.4cm">
@@ -2000,7 +2420,14 @@ X\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-Bit index\end_layout
+Bit index\begin_inset ERT
+status open
+\begin_layout Plain Layout
+\backslash
+cellcolor{gray}
+\end_layout
+\end_inset
+\end_layout
 
 \end_inset
 </cell>
@@ -2008,7 +2435,14 @@ Bit index\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-23\end_layout
+23\begin_inset ERT
+status open
+\begin_layout Plain Layout
+\backslash
+cellcolor{gray}
+\end_layout
+\end_inset
+\end_layout
 
 \end_inset
 </cell>
@@ -2016,7 +2450,14 @@ Bit index\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-22\end_layout
+22\begin_inset ERT
+status open
+\begin_layout Plain Layout
+\backslash
+cellcolor{gray}
+\end_layout
+\end_inset
+\end_layout
 
 \end_inset
 </cell>
@@ -2024,7 +2465,14 @@ Bit index\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-21\end_layout
+21\begin_inset ERT
+status open
+\begin_layout Plain Layout
+\backslash
+cellcolor{gray}
+\end_layout
+\end_inset
+\end_layout
 
 \end_inset
 </cell>
@@ -2032,7 +2480,14 @@ Bit index\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-20\end_layout
+20\begin_inset ERT
+status open
+\begin_layout Plain Layout
+\backslash
+cellcolor{gray}
+\end_layout
+\end_inset
+\end_layout
 
 \end_inset
 </cell>
@@ -2040,7 +2495,14 @@ Bit index\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-19\end_layout
+19\begin_inset ERT
+status open
+\begin_layout Plain Layout
+\backslash
+cellcolor{gray}
+\end_layout
+\end_inset
+\end_layout
 
 \end_inset
 </cell>
@@ -2048,7 +2510,14 @@ Bit index\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-18\end_layout
+18\begin_inset ERT
+status open
+\begin_layout Plain Layout
+\backslash
+cellcolor{gray}
+\end_layout
+\end_inset
+\end_layout
 
 \end_inset
 </cell>
@@ -2056,7 +2525,14 @@ Bit index\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-17\end_layout
+17\begin_inset ERT
+status open
+\begin_layout Plain Layout
+\backslash
+cellcolor{gray}
+\end_layout
+\end_inset
+\end_layout
 
 \end_inset
 </cell>
@@ -2064,7 +2540,14 @@ Bit index\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-16\end_layout
+16\begin_inset ERT
+status open
+\begin_layout Plain Layout
+\backslash
+cellcolor{gray}
+\end_layout
+\end_inset
+\end_layout
 
 \end_inset
 </cell>
@@ -2074,7 +2557,14 @@ Bit index\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-Field name\end_layout
+Field name\begin_inset ERT
+status open
+\begin_layout Plain Layout
+\backslash
+cellcolor{cyan}
+\end_layout
+\end_inset
+\end_layout
 
 \end_inset
 </cell>
@@ -2148,7 +2638,14 @@ IDENTIFIER_EXT[17:16]\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-Reset value\end_layout
+Reset value\begin_inset ERT
+status open
+\begin_layout Plain Layout
+\backslash
+cellcolor{cyan}
+\end_layout
+\end_inset
+\end_layout
 
 \end_inset
 </cell>
@@ -2228,7 +2725,7 @@ X\end_layout
 \align center
 \begin_inset Tabular
 <lyxtabular columns="9" rows="3" version="3">
-<features tabularvalignment="middle">
+<features>
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top" width="1.4cm">
 <column alignment="center" valignment="top" width="1.4cm">
@@ -2243,7 +2740,14 @@ X\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-Bit index\end_layout
+Bit index\begin_inset ERT
+status open
+\begin_layout Plain Layout
+\backslash
+cellcolor{gray}
+\end_layout
+\end_inset
+\end_layout
 
 \end_inset
 </cell>
@@ -2251,7 +2755,14 @@ Bit index\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-15\end_layout
+15\begin_inset ERT
+status open
+\begin_layout Plain Layout
+\backslash
+cellcolor{gray}
+\end_layout
+\end_inset
+\end_layout
 
 \end_inset
 </cell>
@@ -2259,7 +2770,14 @@ Bit index\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-14\end_layout
+14\begin_inset ERT
+status open
+\begin_layout Plain Layout
+\backslash
+cellcolor{gray}
+\end_layout
+\end_inset
+\end_layout
 
 \end_inset
 </cell>
@@ -2267,7 +2785,14 @@ Bit index\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-13\end_layout
+13\begin_inset ERT
+status open
+\begin_layout Plain Layout
+\backslash
+cellcolor{gray}
+\end_layout
+\end_inset
+\end_layout
 
 \end_inset
 </cell>
@@ -2275,7 +2800,14 @@ Bit index\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-12\end_layout
+12\begin_inset ERT
+status open
+\begin_layout Plain Layout
+\backslash
+cellcolor{gray}
+\end_layout
+\end_inset
+\end_layout
 
 \end_inset
 </cell>
@@ -2283,7 +2815,14 @@ Bit index\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-11\end_layout
+11\begin_inset ERT
+status open
+\begin_layout Plain Layout
+\backslash
+cellcolor{gray}
+\end_layout
+\end_inset
+\end_layout
 
 \end_inset
 </cell>
@@ -2291,7 +2830,14 @@ Bit index\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-10\end_layout
+10\begin_inset ERT
+status open
+\begin_layout Plain Layout
+\backslash
+cellcolor{gray}
+\end_layout
+\end_inset
+\end_layout
 
 \end_inset
 </cell>
@@ -2299,7 +2845,14 @@ Bit index\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-9\end_layout
+9\begin_inset ERT
+status open
+\begin_layout Plain Layout
+\backslash
+cellcolor{gray}
+\end_layout
+\end_inset
+\end_layout
 
 \end_inset
 </cell>
@@ -2307,7 +2860,14 @@ Bit index\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-8\end_layout
+8\begin_inset ERT
+status open
+\begin_layout Plain Layout
+\backslash
+cellcolor{gray}
+\end_layout
+\end_inset
+\end_layout
 
 \end_inset
 </cell>
@@ -2317,7 +2877,14 @@ Bit index\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-Field name\end_layout
+Field name\begin_inset ERT
+status open
+\begin_layout Plain Layout
+\backslash
+cellcolor{cyan}
+\end_layout
+\end_inset
+\end_layout
 
 \end_inset
 </cell>
@@ -2391,7 +2958,14 @@ IDENTIFIER_EXT[15:8]\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-Reset value\end_layout
+Reset value\begin_inset ERT
+status open
+\begin_layout Plain Layout
+\backslash
+cellcolor{cyan}
+\end_layout
+\end_inset
+\end_layout
 
 \end_inset
 </cell>
@@ -2471,7 +3045,7 @@ X\end_layout
 \align center
 \begin_inset Tabular
 <lyxtabular columns="9" rows="3" version="3">
-<features tabularvalignment="middle">
+<features>
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top" width="1.4cm">
 <column alignment="center" valignment="top" width="1.4cm">
@@ -2486,7 +3060,14 @@ X\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-Bit index\end_layout
+Bit index\begin_inset ERT
+status open
+\begin_layout Plain Layout
+\backslash
+cellcolor{gray}
+\end_layout
+\end_inset
+\end_layout
 
 \end_inset
 </cell>
@@ -2494,7 +3075,14 @@ Bit index\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-7\end_layout
+7\begin_inset ERT
+status open
+\begin_layout Plain Layout
+\backslash
+cellcolor{gray}
+\end_layout
+\end_inset
+\end_layout
 
 \end_inset
 </cell>
@@ -2502,7 +3090,14 @@ Bit index\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-6\end_layout
+6\begin_inset ERT
+status open
+\begin_layout Plain Layout
+\backslash
+cellcolor{gray}
+\end_layout
+\end_inset
+\end_layout
 
 \end_inset
 </cell>
@@ -2510,7 +3105,14 @@ Bit index\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-5\end_layout
+5\begin_inset ERT
+status open
+\begin_layout Plain Layout
+\backslash
+cellcolor{gray}
+\end_layout
+\end_inset
+\end_layout
 
 \end_inset
 </cell>
@@ -2518,7 +3120,14 @@ Bit index\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-4\end_layout
+4\begin_inset ERT
+status open
+\begin_layout Plain Layout
+\backslash
+cellcolor{gray}
+\end_layout
+\end_inset
+\end_layout
 
 \end_inset
 </cell>
@@ -2526,7 +3135,14 @@ Bit index\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-3\end_layout
+3\begin_inset ERT
+status open
+\begin_layout Plain Layout
+\backslash
+cellcolor{gray}
+\end_layout
+\end_inset
+\end_layout
 
 \end_inset
 </cell>
@@ -2534,7 +3150,14 @@ Bit index\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-2\end_layout
+2\begin_inset ERT
+status open
+\begin_layout Plain Layout
+\backslash
+cellcolor{gray}
+\end_layout
+\end_inset
+\end_layout
 
 \end_inset
 </cell>
@@ -2542,7 +3165,14 @@ Bit index\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-1\end_layout
+1\begin_inset ERT
+status open
+\begin_layout Plain Layout
+\backslash
+cellcolor{gray}
+\end_layout
+\end_inset
+\end_layout
 
 \end_inset
 </cell>
@@ -2550,7 +3180,14 @@ Bit index\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-0\end_layout
+0\begin_inset ERT
+status open
+\begin_layout Plain Layout
+\backslash
+cellcolor{gray}
+\end_layout
+\end_inset
+\end_layout
 
 \end_inset
 </cell>
@@ -2560,7 +3197,14 @@ Bit index\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-Field name\end_layout
+Field name\begin_inset ERT
+status open
+\begin_layout Plain Layout
+\backslash
+cellcolor{cyan}
+\end_layout
+\end_inset
+\end_layout
 
 \end_inset
 </cell>
@@ -2634,7 +3278,14 @@ IDENTIFIER_EXT[7:0]\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-Reset value\end_layout
+Reset value\begin_inset ERT
+status open
+\begin_layout Plain Layout
+\backslash
+cellcolor{cyan}
+\end_layout
+\end_inset
+\end_layout
 
 \end_inset
 </cell>
@@ -2710,10 +3361,10 @@ X\end_layout
 
 \end_layout
 \begin_layout Description
-IDENTIFIER_EXT Extended Identifier of CAN frame. Has meaning only if ID_TYPE of FRAME_FORMAT_W is EXTENDED.
+IDENTIFIER_EXT Extended Identifier of CAN frame. Has meaning only if IDE of FRAME_FORMAT_W is EXTENDED.
 \end_layout
 \begin_layout Description
-IDENTIFIER_BASE Base Identifier of CAN frame
+IDENTIFIER_BASE Base Identifier of CAN frame.
 \end_layout
 \begin_layout Standard
 \begin_inset VSpace bigskip
@@ -2746,7 +3397,7 @@ Size: 4 bytes
 \align center
 \begin_inset Tabular
 <lyxtabular columns="9" rows="3" version="3">
-<features tabularvalignment="middle">
+<features>
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top" width="1.4cm">
 <column alignment="center" valignment="top" width="1.4cm">
@@ -2761,7 +3412,14 @@ Size: 4 bytes
 \begin_inset Text
 
 \begin_layout Plain Layout
-Bit index\end_layout
+Bit index\begin_inset ERT
+status open
+\begin_layout Plain Layout
+\backslash
+cellcolor{gray}
+\end_layout
+\end_inset
+\end_layout
 
 \end_inset
 </cell>
@@ -2769,7 +3427,14 @@ Bit index\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-31\end_layout
+31\begin_inset ERT
+status open
+\begin_layout Plain Layout
+\backslash
+cellcolor{gray}
+\end_layout
+\end_inset
+\end_layout
 
 \end_inset
 </cell>
@@ -2777,7 +3442,14 @@ Bit index\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-30\end_layout
+30\begin_inset ERT
+status open
+\begin_layout Plain Layout
+\backslash
+cellcolor{gray}
+\end_layout
+\end_inset
+\end_layout
 
 \end_inset
 </cell>
@@ -2785,7 +3457,14 @@ Bit index\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-29\end_layout
+29\begin_inset ERT
+status open
+\begin_layout Plain Layout
+\backslash
+cellcolor{gray}
+\end_layout
+\end_inset
+\end_layout
 
 \end_inset
 </cell>
@@ -2793,7 +3472,14 @@ Bit index\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-28\end_layout
+28\begin_inset ERT
+status open
+\begin_layout Plain Layout
+\backslash
+cellcolor{gray}
+\end_layout
+\end_inset
+\end_layout
 
 \end_inset
 </cell>
@@ -2801,7 +3487,14 @@ Bit index\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-27\end_layout
+27\begin_inset ERT
+status open
+\begin_layout Plain Layout
+\backslash
+cellcolor{gray}
+\end_layout
+\end_inset
+\end_layout
 
 \end_inset
 </cell>
@@ -2809,7 +3502,14 @@ Bit index\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-26\end_layout
+26\begin_inset ERT
+status open
+\begin_layout Plain Layout
+\backslash
+cellcolor{gray}
+\end_layout
+\end_inset
+\end_layout
 
 \end_inset
 </cell>
@@ -2817,7 +3517,14 @@ Bit index\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-25\end_layout
+25\begin_inset ERT
+status open
+\begin_layout Plain Layout
+\backslash
+cellcolor{gray}
+\end_layout
+\end_inset
+\end_layout
 
 \end_inset
 </cell>
@@ -2825,7 +3532,14 @@ Bit index\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-24\end_layout
+24\begin_inset ERT
+status open
+\begin_layout Plain Layout
+\backslash
+cellcolor{gray}
+\end_layout
+\end_inset
+\end_layout
 
 \end_inset
 </cell>
@@ -2835,7 +3549,14 @@ Bit index\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-Field name\end_layout
+Field name\begin_inset ERT
+status open
+\begin_layout Plain Layout
+\backslash
+cellcolor{cyan}
+\end_layout
+\end_inset
+\end_layout
 
 \end_inset
 </cell>
@@ -2909,7 +3630,14 @@ TIME_STAMP_31_0[31:24]\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-Reset value\end_layout
+Reset value\begin_inset ERT
+status open
+\begin_layout Plain Layout
+\backslash
+cellcolor{cyan}
+\end_layout
+\end_inset
+\end_layout
 
 \end_inset
 </cell>
@@ -2989,7 +3717,7 @@ X\end_layout
 \align center
 \begin_inset Tabular
 <lyxtabular columns="9" rows="3" version="3">
-<features tabularvalignment="middle">
+<features>
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top" width="1.4cm">
 <column alignment="center" valignment="top" width="1.4cm">
@@ -3004,7 +3732,14 @@ X\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-Bit index\end_layout
+Bit index\begin_inset ERT
+status open
+\begin_layout Plain Layout
+\backslash
+cellcolor{gray}
+\end_layout
+\end_inset
+\end_layout
 
 \end_inset
 </cell>
@@ -3012,7 +3747,14 @@ Bit index\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-23\end_layout
+23\begin_inset ERT
+status open
+\begin_layout Plain Layout
+\backslash
+cellcolor{gray}
+\end_layout
+\end_inset
+\end_layout
 
 \end_inset
 </cell>
@@ -3020,7 +3762,14 @@ Bit index\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-22\end_layout
+22\begin_inset ERT
+status open
+\begin_layout Plain Layout
+\backslash
+cellcolor{gray}
+\end_layout
+\end_inset
+\end_layout
 
 \end_inset
 </cell>
@@ -3028,7 +3777,14 @@ Bit index\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-21\end_layout
+21\begin_inset ERT
+status open
+\begin_layout Plain Layout
+\backslash
+cellcolor{gray}
+\end_layout
+\end_inset
+\end_layout
 
 \end_inset
 </cell>
@@ -3036,7 +3792,14 @@ Bit index\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-20\end_layout
+20\begin_inset ERT
+status open
+\begin_layout Plain Layout
+\backslash
+cellcolor{gray}
+\end_layout
+\end_inset
+\end_layout
 
 \end_inset
 </cell>
@@ -3044,7 +3807,14 @@ Bit index\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-19\end_layout
+19\begin_inset ERT
+status open
+\begin_layout Plain Layout
+\backslash
+cellcolor{gray}
+\end_layout
+\end_inset
+\end_layout
 
 \end_inset
 </cell>
@@ -3052,7 +3822,14 @@ Bit index\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-18\end_layout
+18\begin_inset ERT
+status open
+\begin_layout Plain Layout
+\backslash
+cellcolor{gray}
+\end_layout
+\end_inset
+\end_layout
 
 \end_inset
 </cell>
@@ -3060,7 +3837,14 @@ Bit index\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-17\end_layout
+17\begin_inset ERT
+status open
+\begin_layout Plain Layout
+\backslash
+cellcolor{gray}
+\end_layout
+\end_inset
+\end_layout
 
 \end_inset
 </cell>
@@ -3068,7 +3852,14 @@ Bit index\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-16\end_layout
+16\begin_inset ERT
+status open
+\begin_layout Plain Layout
+\backslash
+cellcolor{gray}
+\end_layout
+\end_inset
+\end_layout
 
 \end_inset
 </cell>
@@ -3078,7 +3869,14 @@ Bit index\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-Field name\end_layout
+Field name\begin_inset ERT
+status open
+\begin_layout Plain Layout
+\backslash
+cellcolor{cyan}
+\end_layout
+\end_inset
+\end_layout
 
 \end_inset
 </cell>
@@ -3152,7 +3950,14 @@ TIME_STAMP_31_0[23:16]\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-Reset value\end_layout
+Reset value\begin_inset ERT
+status open
+\begin_layout Plain Layout
+\backslash
+cellcolor{cyan}
+\end_layout
+\end_inset
+\end_layout
 
 \end_inset
 </cell>
@@ -3232,7 +4037,7 @@ X\end_layout
 \align center
 \begin_inset Tabular
 <lyxtabular columns="9" rows="3" version="3">
-<features tabularvalignment="middle">
+<features>
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top" width="1.4cm">
 <column alignment="center" valignment="top" width="1.4cm">
@@ -3247,7 +4052,14 @@ X\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-Bit index\end_layout
+Bit index\begin_inset ERT
+status open
+\begin_layout Plain Layout
+\backslash
+cellcolor{gray}
+\end_layout
+\end_inset
+\end_layout
 
 \end_inset
 </cell>
@@ -3255,7 +4067,14 @@ Bit index\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-15\end_layout
+15\begin_inset ERT
+status open
+\begin_layout Plain Layout
+\backslash
+cellcolor{gray}
+\end_layout
+\end_inset
+\end_layout
 
 \end_inset
 </cell>
@@ -3263,7 +4082,14 @@ Bit index\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-14\end_layout
+14\begin_inset ERT
+status open
+\begin_layout Plain Layout
+\backslash
+cellcolor{gray}
+\end_layout
+\end_inset
+\end_layout
 
 \end_inset
 </cell>
@@ -3271,7 +4097,14 @@ Bit index\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-13\end_layout
+13\begin_inset ERT
+status open
+\begin_layout Plain Layout
+\backslash
+cellcolor{gray}
+\end_layout
+\end_inset
+\end_layout
 
 \end_inset
 </cell>
@@ -3279,7 +4112,14 @@ Bit index\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-12\end_layout
+12\begin_inset ERT
+status open
+\begin_layout Plain Layout
+\backslash
+cellcolor{gray}
+\end_layout
+\end_inset
+\end_layout
 
 \end_inset
 </cell>
@@ -3287,7 +4127,14 @@ Bit index\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-11\end_layout
+11\begin_inset ERT
+status open
+\begin_layout Plain Layout
+\backslash
+cellcolor{gray}
+\end_layout
+\end_inset
+\end_layout
 
 \end_inset
 </cell>
@@ -3295,7 +4142,14 @@ Bit index\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-10\end_layout
+10\begin_inset ERT
+status open
+\begin_layout Plain Layout
+\backslash
+cellcolor{gray}
+\end_layout
+\end_inset
+\end_layout
 
 \end_inset
 </cell>
@@ -3303,7 +4157,14 @@ Bit index\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-9\end_layout
+9\begin_inset ERT
+status open
+\begin_layout Plain Layout
+\backslash
+cellcolor{gray}
+\end_layout
+\end_inset
+\end_layout
 
 \end_inset
 </cell>
@@ -3311,7 +4172,14 @@ Bit index\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-8\end_layout
+8\begin_inset ERT
+status open
+\begin_layout Plain Layout
+\backslash
+cellcolor{gray}
+\end_layout
+\end_inset
+\end_layout
 
 \end_inset
 </cell>
@@ -3321,7 +4189,14 @@ Bit index\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-Field name\end_layout
+Field name\begin_inset ERT
+status open
+\begin_layout Plain Layout
+\backslash
+cellcolor{cyan}
+\end_layout
+\end_inset
+\end_layout
 
 \end_inset
 </cell>
@@ -3395,7 +4270,14 @@ TIME_STAMP_31_0[15:8]\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-Reset value\end_layout
+Reset value\begin_inset ERT
+status open
+\begin_layout Plain Layout
+\backslash
+cellcolor{cyan}
+\end_layout
+\end_inset
+\end_layout
 
 \end_inset
 </cell>
@@ -3475,7 +4357,7 @@ X\end_layout
 \align center
 \begin_inset Tabular
 <lyxtabular columns="9" rows="3" version="3">
-<features tabularvalignment="middle">
+<features>
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top" width="1.4cm">
 <column alignment="center" valignment="top" width="1.4cm">
@@ -3490,7 +4372,14 @@ X\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-Bit index\end_layout
+Bit index\begin_inset ERT
+status open
+\begin_layout Plain Layout
+\backslash
+cellcolor{gray}
+\end_layout
+\end_inset
+\end_layout
 
 \end_inset
 </cell>
@@ -3498,7 +4387,14 @@ Bit index\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-7\end_layout
+7\begin_inset ERT
+status open
+\begin_layout Plain Layout
+\backslash
+cellcolor{gray}
+\end_layout
+\end_inset
+\end_layout
 
 \end_inset
 </cell>
@@ -3506,7 +4402,14 @@ Bit index\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-6\end_layout
+6\begin_inset ERT
+status open
+\begin_layout Plain Layout
+\backslash
+cellcolor{gray}
+\end_layout
+\end_inset
+\end_layout
 
 \end_inset
 </cell>
@@ -3514,7 +4417,14 @@ Bit index\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-5\end_layout
+5\begin_inset ERT
+status open
+\begin_layout Plain Layout
+\backslash
+cellcolor{gray}
+\end_layout
+\end_inset
+\end_layout
 
 \end_inset
 </cell>
@@ -3522,7 +4432,14 @@ Bit index\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-4\end_layout
+4\begin_inset ERT
+status open
+\begin_layout Plain Layout
+\backslash
+cellcolor{gray}
+\end_layout
+\end_inset
+\end_layout
 
 \end_inset
 </cell>
@@ -3530,7 +4447,14 @@ Bit index\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-3\end_layout
+3\begin_inset ERT
+status open
+\begin_layout Plain Layout
+\backslash
+cellcolor{gray}
+\end_layout
+\end_inset
+\end_layout
 
 \end_inset
 </cell>
@@ -3538,7 +4462,14 @@ Bit index\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-2\end_layout
+2\begin_inset ERT
+status open
+\begin_layout Plain Layout
+\backslash
+cellcolor{gray}
+\end_layout
+\end_inset
+\end_layout
 
 \end_inset
 </cell>
@@ -3546,7 +4477,14 @@ Bit index\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-1\end_layout
+1\begin_inset ERT
+status open
+\begin_layout Plain Layout
+\backslash
+cellcolor{gray}
+\end_layout
+\end_inset
+\end_layout
 
 \end_inset
 </cell>
@@ -3554,7 +4492,14 @@ Bit index\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-0\end_layout
+0\begin_inset ERT
+status open
+\begin_layout Plain Layout
+\backslash
+cellcolor{gray}
+\end_layout
+\end_inset
+\end_layout
 
 \end_inset
 </cell>
@@ -3564,7 +4509,14 @@ Bit index\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-Field name\end_layout
+Field name\begin_inset ERT
+status open
+\begin_layout Plain Layout
+\backslash
+cellcolor{cyan}
+\end_layout
+\end_inset
+\end_layout
 
 \end_inset
 </cell>
@@ -3638,7 +4590,14 @@ TIME_STAMP_31_0[7:0]\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-Reset value\end_layout
+Reset value\begin_inset ERT
+status open
+\begin_layout Plain Layout
+\backslash
+cellcolor{cyan}
+\end_layout
+\end_inset
+\end_layout
 
 \end_inset
 </cell>
@@ -3747,7 +4706,7 @@ Size: 4 bytes
 \align center
 \begin_inset Tabular
 <lyxtabular columns="9" rows="3" version="3">
-<features tabularvalignment="middle">
+<features>
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top" width="1.4cm">
 <column alignment="center" valignment="top" width="1.4cm">
@@ -3762,7 +4721,14 @@ Size: 4 bytes
 \begin_inset Text
 
 \begin_layout Plain Layout
-Bit index\end_layout
+Bit index\begin_inset ERT
+status open
+\begin_layout Plain Layout
+\backslash
+cellcolor{gray}
+\end_layout
+\end_inset
+\end_layout
 
 \end_inset
 </cell>
@@ -3770,7 +4736,14 @@ Bit index\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-31\end_layout
+31\begin_inset ERT
+status open
+\begin_layout Plain Layout
+\backslash
+cellcolor{gray}
+\end_layout
+\end_inset
+\end_layout
 
 \end_inset
 </cell>
@@ -3778,7 +4751,14 @@ Bit index\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-30\end_layout
+30\begin_inset ERT
+status open
+\begin_layout Plain Layout
+\backslash
+cellcolor{gray}
+\end_layout
+\end_inset
+\end_layout
 
 \end_inset
 </cell>
@@ -3786,7 +4766,14 @@ Bit index\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-29\end_layout
+29\begin_inset ERT
+status open
+\begin_layout Plain Layout
+\backslash
+cellcolor{gray}
+\end_layout
+\end_inset
+\end_layout
 
 \end_inset
 </cell>
@@ -3794,7 +4781,14 @@ Bit index\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-28\end_layout
+28\begin_inset ERT
+status open
+\begin_layout Plain Layout
+\backslash
+cellcolor{gray}
+\end_layout
+\end_inset
+\end_layout
 
 \end_inset
 </cell>
@@ -3802,7 +4796,14 @@ Bit index\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-27\end_layout
+27\begin_inset ERT
+status open
+\begin_layout Plain Layout
+\backslash
+cellcolor{gray}
+\end_layout
+\end_inset
+\end_layout
 
 \end_inset
 </cell>
@@ -3810,7 +4811,14 @@ Bit index\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-26\end_layout
+26\begin_inset ERT
+status open
+\begin_layout Plain Layout
+\backslash
+cellcolor{gray}
+\end_layout
+\end_inset
+\end_layout
 
 \end_inset
 </cell>
@@ -3818,7 +4826,14 @@ Bit index\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-25\end_layout
+25\begin_inset ERT
+status open
+\begin_layout Plain Layout
+\backslash
+cellcolor{gray}
+\end_layout
+\end_inset
+\end_layout
 
 \end_inset
 </cell>
@@ -3826,7 +4841,14 @@ Bit index\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-24\end_layout
+24\begin_inset ERT
+status open
+\begin_layout Plain Layout
+\backslash
+cellcolor{gray}
+\end_layout
+\end_inset
+\end_layout
 
 \end_inset
 </cell>
@@ -3836,7 +4858,14 @@ Bit index\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-Field name\end_layout
+Field name\begin_inset ERT
+status open
+\begin_layout Plain Layout
+\backslash
+cellcolor{cyan}
+\end_layout
+\end_inset
+\end_layout
 
 \end_inset
 </cell>
@@ -3910,7 +4939,14 @@ TIMESTAMP_L_W[31:24]\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-Reset value\end_layout
+Reset value\begin_inset ERT
+status open
+\begin_layout Plain Layout
+\backslash
+cellcolor{cyan}
+\end_layout
+\end_inset
+\end_layout
 
 \end_inset
 </cell>
@@ -3990,7 +5026,7 @@ X\end_layout
 \align center
 \begin_inset Tabular
 <lyxtabular columns="9" rows="3" version="3">
-<features tabularvalignment="middle">
+<features>
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top" width="1.4cm">
 <column alignment="center" valignment="top" width="1.4cm">
@@ -4005,7 +5041,14 @@ X\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-Bit index\end_layout
+Bit index\begin_inset ERT
+status open
+\begin_layout Plain Layout
+\backslash
+cellcolor{gray}
+\end_layout
+\end_inset
+\end_layout
 
 \end_inset
 </cell>
@@ -4013,7 +5056,14 @@ Bit index\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-23\end_layout
+23\begin_inset ERT
+status open
+\begin_layout Plain Layout
+\backslash
+cellcolor{gray}
+\end_layout
+\end_inset
+\end_layout
 
 \end_inset
 </cell>
@@ -4021,7 +5071,14 @@ Bit index\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-22\end_layout
+22\begin_inset ERT
+status open
+\begin_layout Plain Layout
+\backslash
+cellcolor{gray}
+\end_layout
+\end_inset
+\end_layout
 
 \end_inset
 </cell>
@@ -4029,7 +5086,14 @@ Bit index\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-21\end_layout
+21\begin_inset ERT
+status open
+\begin_layout Plain Layout
+\backslash
+cellcolor{gray}
+\end_layout
+\end_inset
+\end_layout
 
 \end_inset
 </cell>
@@ -4037,7 +5101,14 @@ Bit index\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-20\end_layout
+20\begin_inset ERT
+status open
+\begin_layout Plain Layout
+\backslash
+cellcolor{gray}
+\end_layout
+\end_inset
+\end_layout
 
 \end_inset
 </cell>
@@ -4045,7 +5116,14 @@ Bit index\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-19\end_layout
+19\begin_inset ERT
+status open
+\begin_layout Plain Layout
+\backslash
+cellcolor{gray}
+\end_layout
+\end_inset
+\end_layout
 
 \end_inset
 </cell>
@@ -4053,7 +5131,14 @@ Bit index\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-18\end_layout
+18\begin_inset ERT
+status open
+\begin_layout Plain Layout
+\backslash
+cellcolor{gray}
+\end_layout
+\end_inset
+\end_layout
 
 \end_inset
 </cell>
@@ -4061,7 +5146,14 @@ Bit index\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-17\end_layout
+17\begin_inset ERT
+status open
+\begin_layout Plain Layout
+\backslash
+cellcolor{gray}
+\end_layout
+\end_inset
+\end_layout
 
 \end_inset
 </cell>
@@ -4069,7 +5161,14 @@ Bit index\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-16\end_layout
+16\begin_inset ERT
+status open
+\begin_layout Plain Layout
+\backslash
+cellcolor{gray}
+\end_layout
+\end_inset
+\end_layout
 
 \end_inset
 </cell>
@@ -4079,7 +5178,14 @@ Bit index\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-Field name\end_layout
+Field name\begin_inset ERT
+status open
+\begin_layout Plain Layout
+\backslash
+cellcolor{cyan}
+\end_layout
+\end_inset
+\end_layout
 
 \end_inset
 </cell>
@@ -4153,7 +5259,14 @@ TIMESTAMP_L_W[23:16]\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-Reset value\end_layout
+Reset value\begin_inset ERT
+status open
+\begin_layout Plain Layout
+\backslash
+cellcolor{cyan}
+\end_layout
+\end_inset
+\end_layout
 
 \end_inset
 </cell>
@@ -4233,7 +5346,7 @@ X\end_layout
 \align center
 \begin_inset Tabular
 <lyxtabular columns="9" rows="3" version="3">
-<features tabularvalignment="middle">
+<features>
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top" width="1.4cm">
 <column alignment="center" valignment="top" width="1.4cm">
@@ -4248,7 +5361,14 @@ X\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-Bit index\end_layout
+Bit index\begin_inset ERT
+status open
+\begin_layout Plain Layout
+\backslash
+cellcolor{gray}
+\end_layout
+\end_inset
+\end_layout
 
 \end_inset
 </cell>
@@ -4256,7 +5376,14 @@ Bit index\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-15\end_layout
+15\begin_inset ERT
+status open
+\begin_layout Plain Layout
+\backslash
+cellcolor{gray}
+\end_layout
+\end_inset
+\end_layout
 
 \end_inset
 </cell>
@@ -4264,7 +5391,14 @@ Bit index\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-14\end_layout
+14\begin_inset ERT
+status open
+\begin_layout Plain Layout
+\backslash
+cellcolor{gray}
+\end_layout
+\end_inset
+\end_layout
 
 \end_inset
 </cell>
@@ -4272,7 +5406,14 @@ Bit index\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-13\end_layout
+13\begin_inset ERT
+status open
+\begin_layout Plain Layout
+\backslash
+cellcolor{gray}
+\end_layout
+\end_inset
+\end_layout
 
 \end_inset
 </cell>
@@ -4280,7 +5421,14 @@ Bit index\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-12\end_layout
+12\begin_inset ERT
+status open
+\begin_layout Plain Layout
+\backslash
+cellcolor{gray}
+\end_layout
+\end_inset
+\end_layout
 
 \end_inset
 </cell>
@@ -4288,7 +5436,14 @@ Bit index\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-11\end_layout
+11\begin_inset ERT
+status open
+\begin_layout Plain Layout
+\backslash
+cellcolor{gray}
+\end_layout
+\end_inset
+\end_layout
 
 \end_inset
 </cell>
@@ -4296,7 +5451,14 @@ Bit index\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-10\end_layout
+10\begin_inset ERT
+status open
+\begin_layout Plain Layout
+\backslash
+cellcolor{gray}
+\end_layout
+\end_inset
+\end_layout
 
 \end_inset
 </cell>
@@ -4304,7 +5466,14 @@ Bit index\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-9\end_layout
+9\begin_inset ERT
+status open
+\begin_layout Plain Layout
+\backslash
+cellcolor{gray}
+\end_layout
+\end_inset
+\end_layout
 
 \end_inset
 </cell>
@@ -4312,7 +5481,14 @@ Bit index\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-8\end_layout
+8\begin_inset ERT
+status open
+\begin_layout Plain Layout
+\backslash
+cellcolor{gray}
+\end_layout
+\end_inset
+\end_layout
 
 \end_inset
 </cell>
@@ -4322,7 +5498,14 @@ Bit index\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-Field name\end_layout
+Field name\begin_inset ERT
+status open
+\begin_layout Plain Layout
+\backslash
+cellcolor{cyan}
+\end_layout
+\end_inset
+\end_layout
 
 \end_inset
 </cell>
@@ -4396,7 +5579,14 @@ TIMESTAMP_L_W[15:8]\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-Reset value\end_layout
+Reset value\begin_inset ERT
+status open
+\begin_layout Plain Layout
+\backslash
+cellcolor{cyan}
+\end_layout
+\end_inset
+\end_layout
 
 \end_inset
 </cell>
@@ -4476,7 +5666,7 @@ X\end_layout
 \align center
 \begin_inset Tabular
 <lyxtabular columns="9" rows="3" version="3">
-<features tabularvalignment="middle">
+<features>
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top" width="1.4cm">
 <column alignment="center" valignment="top" width="1.4cm">
@@ -4491,7 +5681,14 @@ X\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-Bit index\end_layout
+Bit index\begin_inset ERT
+status open
+\begin_layout Plain Layout
+\backslash
+cellcolor{gray}
+\end_layout
+\end_inset
+\end_layout
 
 \end_inset
 </cell>
@@ -4499,7 +5696,14 @@ Bit index\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-7\end_layout
+7\begin_inset ERT
+status open
+\begin_layout Plain Layout
+\backslash
+cellcolor{gray}
+\end_layout
+\end_inset
+\end_layout
 
 \end_inset
 </cell>
@@ -4507,7 +5711,14 @@ Bit index\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-6\end_layout
+6\begin_inset ERT
+status open
+\begin_layout Plain Layout
+\backslash
+cellcolor{gray}
+\end_layout
+\end_inset
+\end_layout
 
 \end_inset
 </cell>
@@ -4515,7 +5726,14 @@ Bit index\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-5\end_layout
+5\begin_inset ERT
+status open
+\begin_layout Plain Layout
+\backslash
+cellcolor{gray}
+\end_layout
+\end_inset
+\end_layout
 
 \end_inset
 </cell>
@@ -4523,7 +5741,14 @@ Bit index\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-4\end_layout
+4\begin_inset ERT
+status open
+\begin_layout Plain Layout
+\backslash
+cellcolor{gray}
+\end_layout
+\end_inset
+\end_layout
 
 \end_inset
 </cell>
@@ -4531,7 +5756,14 @@ Bit index\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-3\end_layout
+3\begin_inset ERT
+status open
+\begin_layout Plain Layout
+\backslash
+cellcolor{gray}
+\end_layout
+\end_inset
+\end_layout
 
 \end_inset
 </cell>
@@ -4539,7 +5771,14 @@ Bit index\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-2\end_layout
+2\begin_inset ERT
+status open
+\begin_layout Plain Layout
+\backslash
+cellcolor{gray}
+\end_layout
+\end_inset
+\end_layout
 
 \end_inset
 </cell>
@@ -4547,7 +5786,14 @@ Bit index\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-1\end_layout
+1\begin_inset ERT
+status open
+\begin_layout Plain Layout
+\backslash
+cellcolor{gray}
+\end_layout
+\end_inset
+\end_layout
 
 \end_inset
 </cell>
@@ -4555,7 +5801,14 @@ Bit index\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-0\end_layout
+0\begin_inset ERT
+status open
+\begin_layout Plain Layout
+\backslash
+cellcolor{gray}
+\end_layout
+\end_inset
+\end_layout
 
 \end_inset
 </cell>
@@ -4565,7 +5818,14 @@ Bit index\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-Field name\end_layout
+Field name\begin_inset ERT
+status open
+\begin_layout Plain Layout
+\backslash
+cellcolor{cyan}
+\end_layout
+\end_inset
+\end_layout
 
 \end_inset
 </cell>
@@ -4639,7 +5899,14 @@ TIMESTAMP_L_W[7:0]\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-Reset value\end_layout
+Reset value\begin_inset ERT
+status open
+\begin_layout Plain Layout
+\backslash
+cellcolor{cyan}
+\end_layout
+\end_inset
+\end_layout
 
 \end_inset
 </cell>
@@ -4748,7 +6015,7 @@ Size: 4 bytes
 \align center
 \begin_inset Tabular
 <lyxtabular columns="9" rows="3" version="3">
-<features tabularvalignment="middle">
+<features>
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top" width="1.4cm">
 <column alignment="center" valignment="top" width="1.4cm">
@@ -4763,7 +6030,14 @@ Size: 4 bytes
 \begin_inset Text
 
 \begin_layout Plain Layout
-Bit index\end_layout
+Bit index\begin_inset ERT
+status open
+\begin_layout Plain Layout
+\backslash
+cellcolor{gray}
+\end_layout
+\end_inset
+\end_layout
 
 \end_inset
 </cell>
@@ -4771,7 +6045,14 @@ Bit index\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-31\end_layout
+31\begin_inset ERT
+status open
+\begin_layout Plain Layout
+\backslash
+cellcolor{gray}
+\end_layout
+\end_inset
+\end_layout
 
 \end_inset
 </cell>
@@ -4779,7 +6060,14 @@ Bit index\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-30\end_layout
+30\begin_inset ERT
+status open
+\begin_layout Plain Layout
+\backslash
+cellcolor{gray}
+\end_layout
+\end_inset
+\end_layout
 
 \end_inset
 </cell>
@@ -4787,7 +6075,14 @@ Bit index\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-29\end_layout
+29\begin_inset ERT
+status open
+\begin_layout Plain Layout
+\backslash
+cellcolor{gray}
+\end_layout
+\end_inset
+\end_layout
 
 \end_inset
 </cell>
@@ -4795,7 +6090,14 @@ Bit index\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-28\end_layout
+28\begin_inset ERT
+status open
+\begin_layout Plain Layout
+\backslash
+cellcolor{gray}
+\end_layout
+\end_inset
+\end_layout
 
 \end_inset
 </cell>
@@ -4803,7 +6105,14 @@ Bit index\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-27\end_layout
+27\begin_inset ERT
+status open
+\begin_layout Plain Layout
+\backslash
+cellcolor{gray}
+\end_layout
+\end_inset
+\end_layout
 
 \end_inset
 </cell>
@@ -4811,7 +6120,14 @@ Bit index\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-26\end_layout
+26\begin_inset ERT
+status open
+\begin_layout Plain Layout
+\backslash
+cellcolor{gray}
+\end_layout
+\end_inset
+\end_layout
 
 \end_inset
 </cell>
@@ -4819,7 +6135,14 @@ Bit index\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-25\end_layout
+25\begin_inset ERT
+status open
+\begin_layout Plain Layout
+\backslash
+cellcolor{gray}
+\end_layout
+\end_inset
+\end_layout
 
 \end_inset
 </cell>
@@ -4827,7 +6150,14 @@ Bit index\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-24\end_layout
+24\begin_inset ERT
+status open
+\begin_layout Plain Layout
+\backslash
+cellcolor{gray}
+\end_layout
+\end_inset
+\end_layout
 
 \end_inset
 </cell>
@@ -4837,7 +6167,14 @@ Bit index\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-Field name\end_layout
+Field name\begin_inset ERT
+status open
+\begin_layout Plain Layout
+\backslash
+cellcolor{cyan}
+\end_layout
+\end_inset
+\end_layout
 
 \end_inset
 </cell>
@@ -4911,7 +6248,14 @@ DATA_4\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-Reset value\end_layout
+Reset value\begin_inset ERT
+status open
+\begin_layout Plain Layout
+\backslash
+cellcolor{cyan}
+\end_layout
+\end_inset
+\end_layout
 
 \end_inset
 </cell>
@@ -4991,7 +6335,7 @@ X\end_layout
 \align center
 \begin_inset Tabular
 <lyxtabular columns="9" rows="3" version="3">
-<features tabularvalignment="middle">
+<features>
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top" width="1.4cm">
 <column alignment="center" valignment="top" width="1.4cm">
@@ -5006,7 +6350,14 @@ X\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-Bit index\end_layout
+Bit index\begin_inset ERT
+status open
+\begin_layout Plain Layout
+\backslash
+cellcolor{gray}
+\end_layout
+\end_inset
+\end_layout
 
 \end_inset
 </cell>
@@ -5014,7 +6365,14 @@ Bit index\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-23\end_layout
+23\begin_inset ERT
+status open
+\begin_layout Plain Layout
+\backslash
+cellcolor{gray}
+\end_layout
+\end_inset
+\end_layout
 
 \end_inset
 </cell>
@@ -5022,7 +6380,14 @@ Bit index\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-22\end_layout
+22\begin_inset ERT
+status open
+\begin_layout Plain Layout
+\backslash
+cellcolor{gray}
+\end_layout
+\end_inset
+\end_layout
 
 \end_inset
 </cell>
@@ -5030,7 +6395,14 @@ Bit index\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-21\end_layout
+21\begin_inset ERT
+status open
+\begin_layout Plain Layout
+\backslash
+cellcolor{gray}
+\end_layout
+\end_inset
+\end_layout
 
 \end_inset
 </cell>
@@ -5038,7 +6410,14 @@ Bit index\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-20\end_layout
+20\begin_inset ERT
+status open
+\begin_layout Plain Layout
+\backslash
+cellcolor{gray}
+\end_layout
+\end_inset
+\end_layout
 
 \end_inset
 </cell>
@@ -5046,7 +6425,14 @@ Bit index\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-19\end_layout
+19\begin_inset ERT
+status open
+\begin_layout Plain Layout
+\backslash
+cellcolor{gray}
+\end_layout
+\end_inset
+\end_layout
 
 \end_inset
 </cell>
@@ -5054,7 +6440,14 @@ Bit index\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-18\end_layout
+18\begin_inset ERT
+status open
+\begin_layout Plain Layout
+\backslash
+cellcolor{gray}
+\end_layout
+\end_inset
+\end_layout
 
 \end_inset
 </cell>
@@ -5062,7 +6455,14 @@ Bit index\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-17\end_layout
+17\begin_inset ERT
+status open
+\begin_layout Plain Layout
+\backslash
+cellcolor{gray}
+\end_layout
+\end_inset
+\end_layout
 
 \end_inset
 </cell>
@@ -5070,7 +6470,14 @@ Bit index\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-16\end_layout
+16\begin_inset ERT
+status open
+\begin_layout Plain Layout
+\backslash
+cellcolor{gray}
+\end_layout
+\end_inset
+\end_layout
 
 \end_inset
 </cell>
@@ -5080,7 +6487,14 @@ Bit index\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-Field name\end_layout
+Field name\begin_inset ERT
+status open
+\begin_layout Plain Layout
+\backslash
+cellcolor{cyan}
+\end_layout
+\end_inset
+\end_layout
 
 \end_inset
 </cell>
@@ -5154,7 +6568,14 @@ DATA_3\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-Reset value\end_layout
+Reset value\begin_inset ERT
+status open
+\begin_layout Plain Layout
+\backslash
+cellcolor{cyan}
+\end_layout
+\end_inset
+\end_layout
 
 \end_inset
 </cell>
@@ -5234,7 +6655,7 @@ X\end_layout
 \align center
 \begin_inset Tabular
 <lyxtabular columns="9" rows="3" version="3">
-<features tabularvalignment="middle">
+<features>
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top" width="1.4cm">
 <column alignment="center" valignment="top" width="1.4cm">
@@ -5249,7 +6670,14 @@ X\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-Bit index\end_layout
+Bit index\begin_inset ERT
+status open
+\begin_layout Plain Layout
+\backslash
+cellcolor{gray}
+\end_layout
+\end_inset
+\end_layout
 
 \end_inset
 </cell>
@@ -5257,7 +6685,14 @@ Bit index\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-15\end_layout
+15\begin_inset ERT
+status open
+\begin_layout Plain Layout
+\backslash
+cellcolor{gray}
+\end_layout
+\end_inset
+\end_layout
 
 \end_inset
 </cell>
@@ -5265,7 +6700,14 @@ Bit index\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-14\end_layout
+14\begin_inset ERT
+status open
+\begin_layout Plain Layout
+\backslash
+cellcolor{gray}
+\end_layout
+\end_inset
+\end_layout
 
 \end_inset
 </cell>
@@ -5273,7 +6715,14 @@ Bit index\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-13\end_layout
+13\begin_inset ERT
+status open
+\begin_layout Plain Layout
+\backslash
+cellcolor{gray}
+\end_layout
+\end_inset
+\end_layout
 
 \end_inset
 </cell>
@@ -5281,7 +6730,14 @@ Bit index\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-12\end_layout
+12\begin_inset ERT
+status open
+\begin_layout Plain Layout
+\backslash
+cellcolor{gray}
+\end_layout
+\end_inset
+\end_layout
 
 \end_inset
 </cell>
@@ -5289,7 +6745,14 @@ Bit index\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-11\end_layout
+11\begin_inset ERT
+status open
+\begin_layout Plain Layout
+\backslash
+cellcolor{gray}
+\end_layout
+\end_inset
+\end_layout
 
 \end_inset
 </cell>
@@ -5297,7 +6760,14 @@ Bit index\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-10\end_layout
+10\begin_inset ERT
+status open
+\begin_layout Plain Layout
+\backslash
+cellcolor{gray}
+\end_layout
+\end_inset
+\end_layout
 
 \end_inset
 </cell>
@@ -5305,7 +6775,14 @@ Bit index\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-9\end_layout
+9\begin_inset ERT
+status open
+\begin_layout Plain Layout
+\backslash
+cellcolor{gray}
+\end_layout
+\end_inset
+\end_layout
 
 \end_inset
 </cell>
@@ -5313,7 +6790,14 @@ Bit index\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-8\end_layout
+8\begin_inset ERT
+status open
+\begin_layout Plain Layout
+\backslash
+cellcolor{gray}
+\end_layout
+\end_inset
+\end_layout
 
 \end_inset
 </cell>
@@ -5323,7 +6807,14 @@ Bit index\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-Field name\end_layout
+Field name\begin_inset ERT
+status open
+\begin_layout Plain Layout
+\backslash
+cellcolor{cyan}
+\end_layout
+\end_inset
+\end_layout
 
 \end_inset
 </cell>
@@ -5397,7 +6888,14 @@ DATA_2\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-Reset value\end_layout
+Reset value\begin_inset ERT
+status open
+\begin_layout Plain Layout
+\backslash
+cellcolor{cyan}
+\end_layout
+\end_inset
+\end_layout
 
 \end_inset
 </cell>
@@ -5477,7 +6975,7 @@ X\end_layout
 \align center
 \begin_inset Tabular
 <lyxtabular columns="9" rows="3" version="3">
-<features tabularvalignment="middle">
+<features>
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top" width="1.4cm">
 <column alignment="center" valignment="top" width="1.4cm">
@@ -5492,7 +6990,14 @@ X\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-Bit index\end_layout
+Bit index\begin_inset ERT
+status open
+\begin_layout Plain Layout
+\backslash
+cellcolor{gray}
+\end_layout
+\end_inset
+\end_layout
 
 \end_inset
 </cell>
@@ -5500,7 +7005,14 @@ Bit index\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-7\end_layout
+7\begin_inset ERT
+status open
+\begin_layout Plain Layout
+\backslash
+cellcolor{gray}
+\end_layout
+\end_inset
+\end_layout
 
 \end_inset
 </cell>
@@ -5508,7 +7020,14 @@ Bit index\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-6\end_layout
+6\begin_inset ERT
+status open
+\begin_layout Plain Layout
+\backslash
+cellcolor{gray}
+\end_layout
+\end_inset
+\end_layout
 
 \end_inset
 </cell>
@@ -5516,7 +7035,14 @@ Bit index\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-5\end_layout
+5\begin_inset ERT
+status open
+\begin_layout Plain Layout
+\backslash
+cellcolor{gray}
+\end_layout
+\end_inset
+\end_layout
 
 \end_inset
 </cell>
@@ -5524,7 +7050,14 @@ Bit index\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-4\end_layout
+4\begin_inset ERT
+status open
+\begin_layout Plain Layout
+\backslash
+cellcolor{gray}
+\end_layout
+\end_inset
+\end_layout
 
 \end_inset
 </cell>
@@ -5532,7 +7065,14 @@ Bit index\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-3\end_layout
+3\begin_inset ERT
+status open
+\begin_layout Plain Layout
+\backslash
+cellcolor{gray}
+\end_layout
+\end_inset
+\end_layout
 
 \end_inset
 </cell>
@@ -5540,7 +7080,14 @@ Bit index\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-2\end_layout
+2\begin_inset ERT
+status open
+\begin_layout Plain Layout
+\backslash
+cellcolor{gray}
+\end_layout
+\end_inset
+\end_layout
 
 \end_inset
 </cell>
@@ -5548,7 +7095,14 @@ Bit index\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-1\end_layout
+1\begin_inset ERT
+status open
+\begin_layout Plain Layout
+\backslash
+cellcolor{gray}
+\end_layout
+\end_inset
+\end_layout
 
 \end_inset
 </cell>
@@ -5556,7 +7110,14 @@ Bit index\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-0\end_layout
+0\begin_inset ERT
+status open
+\begin_layout Plain Layout
+\backslash
+cellcolor{gray}
+\end_layout
+\end_inset
+\end_layout
 
 \end_inset
 </cell>
@@ -5566,7 +7127,14 @@ Bit index\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-Field name\end_layout
+Field name\begin_inset ERT
+status open
+\begin_layout Plain Layout
+\backslash
+cellcolor{cyan}
+\end_layout
+\end_inset
+\end_layout
 
 \end_inset
 </cell>
@@ -5640,7 +7208,14 @@ DATA_1\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-Reset value\end_layout
+Reset value\begin_inset ERT
+status open
+\begin_layout Plain Layout
+\backslash
+cellcolor{cyan}
+\end_layout
+\end_inset
+\end_layout
 
 \end_inset
 </cell>
@@ -5758,7 +7333,7 @@ Size: 4 bytes
 \align center
 \begin_inset Tabular
 <lyxtabular columns="9" rows="3" version="3">
-<features tabularvalignment="middle">
+<features>
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top" width="1.4cm">
 <column alignment="center" valignment="top" width="1.4cm">
@@ -5773,7 +7348,14 @@ Size: 4 bytes
 \begin_inset Text
 
 \begin_layout Plain Layout
-Bit index\end_layout
+Bit index\begin_inset ERT
+status open
+\begin_layout Plain Layout
+\backslash
+cellcolor{gray}
+\end_layout
+\end_inset
+\end_layout
 
 \end_inset
 </cell>
@@ -5781,7 +7363,14 @@ Bit index\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-31\end_layout
+31\begin_inset ERT
+status open
+\begin_layout Plain Layout
+\backslash
+cellcolor{gray}
+\end_layout
+\end_inset
+\end_layout
 
 \end_inset
 </cell>
@@ -5789,7 +7378,14 @@ Bit index\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-30\end_layout
+30\begin_inset ERT
+status open
+\begin_layout Plain Layout
+\backslash
+cellcolor{gray}
+\end_layout
+\end_inset
+\end_layout
 
 \end_inset
 </cell>
@@ -5797,7 +7393,14 @@ Bit index\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-29\end_layout
+29\begin_inset ERT
+status open
+\begin_layout Plain Layout
+\backslash
+cellcolor{gray}
+\end_layout
+\end_inset
+\end_layout
 
 \end_inset
 </cell>
@@ -5805,7 +7408,14 @@ Bit index\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-28\end_layout
+28\begin_inset ERT
+status open
+\begin_layout Plain Layout
+\backslash
+cellcolor{gray}
+\end_layout
+\end_inset
+\end_layout
 
 \end_inset
 </cell>
@@ -5813,7 +7423,14 @@ Bit index\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-27\end_layout
+27\begin_inset ERT
+status open
+\begin_layout Plain Layout
+\backslash
+cellcolor{gray}
+\end_layout
+\end_inset
+\end_layout
 
 \end_inset
 </cell>
@@ -5821,7 +7438,14 @@ Bit index\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-26\end_layout
+26\begin_inset ERT
+status open
+\begin_layout Plain Layout
+\backslash
+cellcolor{gray}
+\end_layout
+\end_inset
+\end_layout
 
 \end_inset
 </cell>
@@ -5829,7 +7453,14 @@ Bit index\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-25\end_layout
+25\begin_inset ERT
+status open
+\begin_layout Plain Layout
+\backslash
+cellcolor{gray}
+\end_layout
+\end_inset
+\end_layout
 
 \end_inset
 </cell>
@@ -5837,7 +7468,14 @@ Bit index\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-24\end_layout
+24\begin_inset ERT
+status open
+\begin_layout Plain Layout
+\backslash
+cellcolor{gray}
+\end_layout
+\end_inset
+\end_layout
 
 \end_inset
 </cell>
@@ -5847,7 +7485,14 @@ Bit index\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-Field name\end_layout
+Field name\begin_inset ERT
+status open
+\begin_layout Plain Layout
+\backslash
+cellcolor{cyan}
+\end_layout
+\end_inset
+\end_layout
 
 \end_inset
 </cell>
@@ -5921,7 +7566,14 @@ DATA_8\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-Reset value\end_layout
+Reset value\begin_inset ERT
+status open
+\begin_layout Plain Layout
+\backslash
+cellcolor{cyan}
+\end_layout
+\end_inset
+\end_layout
 
 \end_inset
 </cell>
@@ -6001,7 +7653,7 @@ X\end_layout
 \align center
 \begin_inset Tabular
 <lyxtabular columns="9" rows="3" version="3">
-<features tabularvalignment="middle">
+<features>
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top" width="1.4cm">
 <column alignment="center" valignment="top" width="1.4cm">
@@ -6016,7 +7668,14 @@ X\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-Bit index\end_layout
+Bit index\begin_inset ERT
+status open
+\begin_layout Plain Layout
+\backslash
+cellcolor{gray}
+\end_layout
+\end_inset
+\end_layout
 
 \end_inset
 </cell>
@@ -6024,7 +7683,14 @@ Bit index\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-23\end_layout
+23\begin_inset ERT
+status open
+\begin_layout Plain Layout
+\backslash
+cellcolor{gray}
+\end_layout
+\end_inset
+\end_layout
 
 \end_inset
 </cell>
@@ -6032,7 +7698,14 @@ Bit index\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-22\end_layout
+22\begin_inset ERT
+status open
+\begin_layout Plain Layout
+\backslash
+cellcolor{gray}
+\end_layout
+\end_inset
+\end_layout
 
 \end_inset
 </cell>
@@ -6040,7 +7713,14 @@ Bit index\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-21\end_layout
+21\begin_inset ERT
+status open
+\begin_layout Plain Layout
+\backslash
+cellcolor{gray}
+\end_layout
+\end_inset
+\end_layout
 
 \end_inset
 </cell>
@@ -6048,7 +7728,14 @@ Bit index\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-20\end_layout
+20\begin_inset ERT
+status open
+\begin_layout Plain Layout
+\backslash
+cellcolor{gray}
+\end_layout
+\end_inset
+\end_layout
 
 \end_inset
 </cell>
@@ -6056,7 +7743,14 @@ Bit index\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-19\end_layout
+19\begin_inset ERT
+status open
+\begin_layout Plain Layout
+\backslash
+cellcolor{gray}
+\end_layout
+\end_inset
+\end_layout
 
 \end_inset
 </cell>
@@ -6064,7 +7758,14 @@ Bit index\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-18\end_layout
+18\begin_inset ERT
+status open
+\begin_layout Plain Layout
+\backslash
+cellcolor{gray}
+\end_layout
+\end_inset
+\end_layout
 
 \end_inset
 </cell>
@@ -6072,7 +7773,14 @@ Bit index\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-17\end_layout
+17\begin_inset ERT
+status open
+\begin_layout Plain Layout
+\backslash
+cellcolor{gray}
+\end_layout
+\end_inset
+\end_layout
 
 \end_inset
 </cell>
@@ -6080,7 +7788,14 @@ Bit index\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-16\end_layout
+16\begin_inset ERT
+status open
+\begin_layout Plain Layout
+\backslash
+cellcolor{gray}
+\end_layout
+\end_inset
+\end_layout
 
 \end_inset
 </cell>
@@ -6090,7 +7805,14 @@ Bit index\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-Field name\end_layout
+Field name\begin_inset ERT
+status open
+\begin_layout Plain Layout
+\backslash
+cellcolor{cyan}
+\end_layout
+\end_inset
+\end_layout
 
 \end_inset
 </cell>
@@ -6164,7 +7886,14 @@ DATA_7\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-Reset value\end_layout
+Reset value\begin_inset ERT
+status open
+\begin_layout Plain Layout
+\backslash
+cellcolor{cyan}
+\end_layout
+\end_inset
+\end_layout
 
 \end_inset
 </cell>
@@ -6244,7 +7973,7 @@ X\end_layout
 \align center
 \begin_inset Tabular
 <lyxtabular columns="9" rows="3" version="3">
-<features tabularvalignment="middle">
+<features>
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top" width="1.4cm">
 <column alignment="center" valignment="top" width="1.4cm">
@@ -6259,7 +7988,14 @@ X\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-Bit index\end_layout
+Bit index\begin_inset ERT
+status open
+\begin_layout Plain Layout
+\backslash
+cellcolor{gray}
+\end_layout
+\end_inset
+\end_layout
 
 \end_inset
 </cell>
@@ -6267,7 +8003,14 @@ Bit index\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-15\end_layout
+15\begin_inset ERT
+status open
+\begin_layout Plain Layout
+\backslash
+cellcolor{gray}
+\end_layout
+\end_inset
+\end_layout
 
 \end_inset
 </cell>
@@ -6275,7 +8018,14 @@ Bit index\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-14\end_layout
+14\begin_inset ERT
+status open
+\begin_layout Plain Layout
+\backslash
+cellcolor{gray}
+\end_layout
+\end_inset
+\end_layout
 
 \end_inset
 </cell>
@@ -6283,7 +8033,14 @@ Bit index\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-13\end_layout
+13\begin_inset ERT
+status open
+\begin_layout Plain Layout
+\backslash
+cellcolor{gray}
+\end_layout
+\end_inset
+\end_layout
 
 \end_inset
 </cell>
@@ -6291,7 +8048,14 @@ Bit index\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-12\end_layout
+12\begin_inset ERT
+status open
+\begin_layout Plain Layout
+\backslash
+cellcolor{gray}
+\end_layout
+\end_inset
+\end_layout
 
 \end_inset
 </cell>
@@ -6299,7 +8063,14 @@ Bit index\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-11\end_layout
+11\begin_inset ERT
+status open
+\begin_layout Plain Layout
+\backslash
+cellcolor{gray}
+\end_layout
+\end_inset
+\end_layout
 
 \end_inset
 </cell>
@@ -6307,7 +8078,14 @@ Bit index\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-10\end_layout
+10\begin_inset ERT
+status open
+\begin_layout Plain Layout
+\backslash
+cellcolor{gray}
+\end_layout
+\end_inset
+\end_layout
 
 \end_inset
 </cell>
@@ -6315,7 +8093,14 @@ Bit index\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-9\end_layout
+9\begin_inset ERT
+status open
+\begin_layout Plain Layout
+\backslash
+cellcolor{gray}
+\end_layout
+\end_inset
+\end_layout
 
 \end_inset
 </cell>
@@ -6323,7 +8108,14 @@ Bit index\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-8\end_layout
+8\begin_inset ERT
+status open
+\begin_layout Plain Layout
+\backslash
+cellcolor{gray}
+\end_layout
+\end_inset
+\end_layout
 
 \end_inset
 </cell>
@@ -6333,7 +8125,14 @@ Bit index\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-Field name\end_layout
+Field name\begin_inset ERT
+status open
+\begin_layout Plain Layout
+\backslash
+cellcolor{cyan}
+\end_layout
+\end_inset
+\end_layout
 
 \end_inset
 </cell>
@@ -6407,7 +8206,14 @@ DATA_6\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-Reset value\end_layout
+Reset value\begin_inset ERT
+status open
+\begin_layout Plain Layout
+\backslash
+cellcolor{cyan}
+\end_layout
+\end_inset
+\end_layout
 
 \end_inset
 </cell>
@@ -6487,7 +8293,7 @@ X\end_layout
 \align center
 \begin_inset Tabular
 <lyxtabular columns="9" rows="3" version="3">
-<features tabularvalignment="middle">
+<features>
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top" width="1.4cm">
 <column alignment="center" valignment="top" width="1.4cm">
@@ -6502,7 +8308,14 @@ X\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-Bit index\end_layout
+Bit index\begin_inset ERT
+status open
+\begin_layout Plain Layout
+\backslash
+cellcolor{gray}
+\end_layout
+\end_inset
+\end_layout
 
 \end_inset
 </cell>
@@ -6510,7 +8323,14 @@ Bit index\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-7\end_layout
+7\begin_inset ERT
+status open
+\begin_layout Plain Layout
+\backslash
+cellcolor{gray}
+\end_layout
+\end_inset
+\end_layout
 
 \end_inset
 </cell>
@@ -6518,7 +8338,14 @@ Bit index\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-6\end_layout
+6\begin_inset ERT
+status open
+\begin_layout Plain Layout
+\backslash
+cellcolor{gray}
+\end_layout
+\end_inset
+\end_layout
 
 \end_inset
 </cell>
@@ -6526,7 +8353,14 @@ Bit index\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-5\end_layout
+5\begin_inset ERT
+status open
+\begin_layout Plain Layout
+\backslash
+cellcolor{gray}
+\end_layout
+\end_inset
+\end_layout
 
 \end_inset
 </cell>
@@ -6534,7 +8368,14 @@ Bit index\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-4\end_layout
+4\begin_inset ERT
+status open
+\begin_layout Plain Layout
+\backslash
+cellcolor{gray}
+\end_layout
+\end_inset
+\end_layout
 
 \end_inset
 </cell>
@@ -6542,7 +8383,14 @@ Bit index\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-3\end_layout
+3\begin_inset ERT
+status open
+\begin_layout Plain Layout
+\backslash
+cellcolor{gray}
+\end_layout
+\end_inset
+\end_layout
 
 \end_inset
 </cell>
@@ -6550,7 +8398,14 @@ Bit index\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-2\end_layout
+2\begin_inset ERT
+status open
+\begin_layout Plain Layout
+\backslash
+cellcolor{gray}
+\end_layout
+\end_inset
+\end_layout
 
 \end_inset
 </cell>
@@ -6558,7 +8413,14 @@ Bit index\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-1\end_layout
+1\begin_inset ERT
+status open
+\begin_layout Plain Layout
+\backslash
+cellcolor{gray}
+\end_layout
+\end_inset
+\end_layout
 
 \end_inset
 </cell>
@@ -6566,7 +8428,14 @@ Bit index\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-0\end_layout
+0\begin_inset ERT
+status open
+\begin_layout Plain Layout
+\backslash
+cellcolor{gray}
+\end_layout
+\end_inset
+\end_layout
 
 \end_inset
 </cell>
@@ -6576,7 +8445,14 @@ Bit index\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-Field name\end_layout
+Field name\begin_inset ERT
+status open
+\begin_layout Plain Layout
+\backslash
+cellcolor{cyan}
+\end_layout
+\end_inset
+\end_layout
 
 \end_inset
 </cell>
@@ -6650,7 +8526,14 @@ DATA_5\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-Reset value\end_layout
+Reset value\begin_inset ERT
+status open
+\begin_layout Plain Layout
+\backslash
+cellcolor{cyan}
+\end_layout
+\end_inset
+\end_layout
 
 \end_inset
 </cell>
@@ -6768,7 +8651,7 @@ Size: 4 bytes
 \align center
 \begin_inset Tabular
 <lyxtabular columns="9" rows="3" version="3">
-<features tabularvalignment="middle">
+<features>
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top" width="1.4cm">
 <column alignment="center" valignment="top" width="1.4cm">
@@ -6783,7 +8666,14 @@ Size: 4 bytes
 \begin_inset Text
 
 \begin_layout Plain Layout
-Bit index\end_layout
+Bit index\begin_inset ERT
+status open
+\begin_layout Plain Layout
+\backslash
+cellcolor{gray}
+\end_layout
+\end_inset
+\end_layout
 
 \end_inset
 </cell>
@@ -6791,7 +8681,14 @@ Bit index\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-31\end_layout
+31\begin_inset ERT
+status open
+\begin_layout Plain Layout
+\backslash
+cellcolor{gray}
+\end_layout
+\end_inset
+\end_layout
 
 \end_inset
 </cell>
@@ -6799,7 +8696,14 @@ Bit index\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-30\end_layout
+30\begin_inset ERT
+status open
+\begin_layout Plain Layout
+\backslash
+cellcolor{gray}
+\end_layout
+\end_inset
+\end_layout
 
 \end_inset
 </cell>
@@ -6807,7 +8711,14 @@ Bit index\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-29\end_layout
+29\begin_inset ERT
+status open
+\begin_layout Plain Layout
+\backslash
+cellcolor{gray}
+\end_layout
+\end_inset
+\end_layout
 
 \end_inset
 </cell>
@@ -6815,7 +8726,14 @@ Bit index\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-28\end_layout
+28\begin_inset ERT
+status open
+\begin_layout Plain Layout
+\backslash
+cellcolor{gray}
+\end_layout
+\end_inset
+\end_layout
 
 \end_inset
 </cell>
@@ -6823,7 +8741,14 @@ Bit index\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-27\end_layout
+27\begin_inset ERT
+status open
+\begin_layout Plain Layout
+\backslash
+cellcolor{gray}
+\end_layout
+\end_inset
+\end_layout
 
 \end_inset
 </cell>
@@ -6831,7 +8756,14 @@ Bit index\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-26\end_layout
+26\begin_inset ERT
+status open
+\begin_layout Plain Layout
+\backslash
+cellcolor{gray}
+\end_layout
+\end_inset
+\end_layout
 
 \end_inset
 </cell>
@@ -6839,7 +8771,14 @@ Bit index\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-25\end_layout
+25\begin_inset ERT
+status open
+\begin_layout Plain Layout
+\backslash
+cellcolor{gray}
+\end_layout
+\end_inset
+\end_layout
 
 \end_inset
 </cell>
@@ -6847,7 +8786,14 @@ Bit index\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-24\end_layout
+24\begin_inset ERT
+status open
+\begin_layout Plain Layout
+\backslash
+cellcolor{gray}
+\end_layout
+\end_inset
+\end_layout
 
 \end_inset
 </cell>
@@ -6857,7 +8803,14 @@ Bit index\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-Field name\end_layout
+Field name\begin_inset ERT
+status open
+\begin_layout Plain Layout
+\backslash
+cellcolor{cyan}
+\end_layout
+\end_inset
+\end_layout
 
 \end_inset
 </cell>
@@ -6931,7 +8884,14 @@ DATA_64\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-Reset value\end_layout
+Reset value\begin_inset ERT
+status open
+\begin_layout Plain Layout
+\backslash
+cellcolor{cyan}
+\end_layout
+\end_inset
+\end_layout
 
 \end_inset
 </cell>
@@ -7011,7 +8971,7 @@ X\end_layout
 \align center
 \begin_inset Tabular
 <lyxtabular columns="9" rows="3" version="3">
-<features tabularvalignment="middle">
+<features>
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top" width="1.4cm">
 <column alignment="center" valignment="top" width="1.4cm">
@@ -7026,7 +8986,14 @@ X\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-Bit index\end_layout
+Bit index\begin_inset ERT
+status open
+\begin_layout Plain Layout
+\backslash
+cellcolor{gray}
+\end_layout
+\end_inset
+\end_layout
 
 \end_inset
 </cell>
@@ -7034,7 +9001,14 @@ Bit index\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-23\end_layout
+23\begin_inset ERT
+status open
+\begin_layout Plain Layout
+\backslash
+cellcolor{gray}
+\end_layout
+\end_inset
+\end_layout
 
 \end_inset
 </cell>
@@ -7042,7 +9016,14 @@ Bit index\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-22\end_layout
+22\begin_inset ERT
+status open
+\begin_layout Plain Layout
+\backslash
+cellcolor{gray}
+\end_layout
+\end_inset
+\end_layout
 
 \end_inset
 </cell>
@@ -7050,7 +9031,14 @@ Bit index\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-21\end_layout
+21\begin_inset ERT
+status open
+\begin_layout Plain Layout
+\backslash
+cellcolor{gray}
+\end_layout
+\end_inset
+\end_layout
 
 \end_inset
 </cell>
@@ -7058,7 +9046,14 @@ Bit index\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-20\end_layout
+20\begin_inset ERT
+status open
+\begin_layout Plain Layout
+\backslash
+cellcolor{gray}
+\end_layout
+\end_inset
+\end_layout
 
 \end_inset
 </cell>
@@ -7066,7 +9061,14 @@ Bit index\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-19\end_layout
+19\begin_inset ERT
+status open
+\begin_layout Plain Layout
+\backslash
+cellcolor{gray}
+\end_layout
+\end_inset
+\end_layout
 
 \end_inset
 </cell>
@@ -7074,7 +9076,14 @@ Bit index\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-18\end_layout
+18\begin_inset ERT
+status open
+\begin_layout Plain Layout
+\backslash
+cellcolor{gray}
+\end_layout
+\end_inset
+\end_layout
 
 \end_inset
 </cell>
@@ -7082,7 +9091,14 @@ Bit index\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-17\end_layout
+17\begin_inset ERT
+status open
+\begin_layout Plain Layout
+\backslash
+cellcolor{gray}
+\end_layout
+\end_inset
+\end_layout
 
 \end_inset
 </cell>
@@ -7090,7 +9106,14 @@ Bit index\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-16\end_layout
+16\begin_inset ERT
+status open
+\begin_layout Plain Layout
+\backslash
+cellcolor{gray}
+\end_layout
+\end_inset
+\end_layout
 
 \end_inset
 </cell>
@@ -7100,7 +9123,14 @@ Bit index\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-Field name\end_layout
+Field name\begin_inset ERT
+status open
+\begin_layout Plain Layout
+\backslash
+cellcolor{cyan}
+\end_layout
+\end_inset
+\end_layout
 
 \end_inset
 </cell>
@@ -7174,7 +9204,14 @@ DATA_63\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-Reset value\end_layout
+Reset value\begin_inset ERT
+status open
+\begin_layout Plain Layout
+\backslash
+cellcolor{cyan}
+\end_layout
+\end_inset
+\end_layout
 
 \end_inset
 </cell>
@@ -7254,7 +9291,7 @@ X\end_layout
 \align center
 \begin_inset Tabular
 <lyxtabular columns="9" rows="3" version="3">
-<features tabularvalignment="middle">
+<features>
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top" width="1.4cm">
 <column alignment="center" valignment="top" width="1.4cm">
@@ -7269,7 +9306,14 @@ X\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-Bit index\end_layout
+Bit index\begin_inset ERT
+status open
+\begin_layout Plain Layout
+\backslash
+cellcolor{gray}
+\end_layout
+\end_inset
+\end_layout
 
 \end_inset
 </cell>
@@ -7277,7 +9321,14 @@ Bit index\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-15\end_layout
+15\begin_inset ERT
+status open
+\begin_layout Plain Layout
+\backslash
+cellcolor{gray}
+\end_layout
+\end_inset
+\end_layout
 
 \end_inset
 </cell>
@@ -7285,7 +9336,14 @@ Bit index\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-14\end_layout
+14\begin_inset ERT
+status open
+\begin_layout Plain Layout
+\backslash
+cellcolor{gray}
+\end_layout
+\end_inset
+\end_layout
 
 \end_inset
 </cell>
@@ -7293,7 +9351,14 @@ Bit index\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-13\end_layout
+13\begin_inset ERT
+status open
+\begin_layout Plain Layout
+\backslash
+cellcolor{gray}
+\end_layout
+\end_inset
+\end_layout
 
 \end_inset
 </cell>
@@ -7301,7 +9366,14 @@ Bit index\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-12\end_layout
+12\begin_inset ERT
+status open
+\begin_layout Plain Layout
+\backslash
+cellcolor{gray}
+\end_layout
+\end_inset
+\end_layout
 
 \end_inset
 </cell>
@@ -7309,7 +9381,14 @@ Bit index\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-11\end_layout
+11\begin_inset ERT
+status open
+\begin_layout Plain Layout
+\backslash
+cellcolor{gray}
+\end_layout
+\end_inset
+\end_layout
 
 \end_inset
 </cell>
@@ -7317,7 +9396,14 @@ Bit index\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-10\end_layout
+10\begin_inset ERT
+status open
+\begin_layout Plain Layout
+\backslash
+cellcolor{gray}
+\end_layout
+\end_inset
+\end_layout
 
 \end_inset
 </cell>
@@ -7325,7 +9411,14 @@ Bit index\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-9\end_layout
+9\begin_inset ERT
+status open
+\begin_layout Plain Layout
+\backslash
+cellcolor{gray}
+\end_layout
+\end_inset
+\end_layout
 
 \end_inset
 </cell>
@@ -7333,7 +9426,14 @@ Bit index\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-8\end_layout
+8\begin_inset ERT
+status open
+\begin_layout Plain Layout
+\backslash
+cellcolor{gray}
+\end_layout
+\end_inset
+\end_layout
 
 \end_inset
 </cell>
@@ -7343,7 +9443,14 @@ Bit index\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-Field name\end_layout
+Field name\begin_inset ERT
+status open
+\begin_layout Plain Layout
+\backslash
+cellcolor{cyan}
+\end_layout
+\end_inset
+\end_layout
 
 \end_inset
 </cell>
@@ -7417,7 +9524,14 @@ DATA_62\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-Reset value\end_layout
+Reset value\begin_inset ERT
+status open
+\begin_layout Plain Layout
+\backslash
+cellcolor{cyan}
+\end_layout
+\end_inset
+\end_layout
 
 \end_inset
 </cell>
@@ -7497,7 +9611,7 @@ X\end_layout
 \align center
 \begin_inset Tabular
 <lyxtabular columns="9" rows="3" version="3">
-<features tabularvalignment="middle">
+<features>
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top" width="1.4cm">
 <column alignment="center" valignment="top" width="1.4cm">
@@ -7512,7 +9626,14 @@ X\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-Bit index\end_layout
+Bit index\begin_inset ERT
+status open
+\begin_layout Plain Layout
+\backslash
+cellcolor{gray}
+\end_layout
+\end_inset
+\end_layout
 
 \end_inset
 </cell>
@@ -7520,7 +9641,14 @@ Bit index\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-7\end_layout
+7\begin_inset ERT
+status open
+\begin_layout Plain Layout
+\backslash
+cellcolor{gray}
+\end_layout
+\end_inset
+\end_layout
 
 \end_inset
 </cell>
@@ -7528,7 +9656,14 @@ Bit index\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-6\end_layout
+6\begin_inset ERT
+status open
+\begin_layout Plain Layout
+\backslash
+cellcolor{gray}
+\end_layout
+\end_inset
+\end_layout
 
 \end_inset
 </cell>
@@ -7536,7 +9671,14 @@ Bit index\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-5\end_layout
+5\begin_inset ERT
+status open
+\begin_layout Plain Layout
+\backslash
+cellcolor{gray}
+\end_layout
+\end_inset
+\end_layout
 
 \end_inset
 </cell>
@@ -7544,7 +9686,14 @@ Bit index\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-4\end_layout
+4\begin_inset ERT
+status open
+\begin_layout Plain Layout
+\backslash
+cellcolor{gray}
+\end_layout
+\end_inset
+\end_layout
 
 \end_inset
 </cell>
@@ -7552,7 +9701,14 @@ Bit index\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-3\end_layout
+3\begin_inset ERT
+status open
+\begin_layout Plain Layout
+\backslash
+cellcolor{gray}
+\end_layout
+\end_inset
+\end_layout
 
 \end_inset
 </cell>
@@ -7560,7 +9716,14 @@ Bit index\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-2\end_layout
+2\begin_inset ERT
+status open
+\begin_layout Plain Layout
+\backslash
+cellcolor{gray}
+\end_layout
+\end_inset
+\end_layout
 
 \end_inset
 </cell>
@@ -7568,7 +9731,14 @@ Bit index\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-1\end_layout
+1\begin_inset ERT
+status open
+\begin_layout Plain Layout
+\backslash
+cellcolor{gray}
+\end_layout
+\end_inset
+\end_layout
 
 \end_inset
 </cell>
@@ -7576,7 +9746,14 @@ Bit index\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-0\end_layout
+0\begin_inset ERT
+status open
+\begin_layout Plain Layout
+\backslash
+cellcolor{gray}
+\end_layout
+\end_inset
+\end_layout
 
 \end_inset
 </cell>
@@ -7586,7 +9763,14 @@ Bit index\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-Field name\end_layout
+Field name\begin_inset ERT
+status open
+\begin_layout Plain Layout
+\backslash
+cellcolor{cyan}
+\end_layout
+\end_inset
+\end_layout
 
 \end_inset
 </cell>
@@ -7660,7 +9844,14 @@ DATA_61\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-Reset value\end_layout
+Reset value\begin_inset ERT
+status open
+\begin_layout Plain Layout
+\backslash
+cellcolor{cyan}
+\end_layout
+\end_inset
+\end_layout
 
 \end_inset
 </cell>

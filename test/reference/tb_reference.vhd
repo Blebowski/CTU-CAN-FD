@@ -61,11 +61,10 @@ architecture CAN_reference_test of CAN_test is
     -- CAN Core interface
     ----------------------------------------------------------------------------    
     signal clk_sys          : std_logic := '0';
-    signal res_n            : std_logic := ACT_RESET;
+    signal res_n            : std_logic := C_RESET_POLARITY;
     signal int              : std_logic;
     signal CAN_tx           : std_logic;
     signal CAN_rx           : std_logic := RECESSIVE;
-    signal time_quanta_clk  : std_logic;
     signal timestamp        : std_logic_vector(63 downto 0) := (OTHERS => '0');
     signal data_in          : std_logic_vector(31 downto 0) := (OTHERS => '0');
     signal data_out         : std_logic_vector(31 downto 0);
@@ -274,11 +273,8 @@ begin
     ----------------------------------------------------------------------------
     CAN_inst : CAN_top_level
         generic map(
-            use_logger        => true,
             rx_buffer_size    => 64,
-            use_sync          => true,
-            ID                => 0,
-            logger_size       => 16
+            ID                => 0
         )
         port map(
             clk_sys           => clk_sys,
@@ -293,7 +289,6 @@ begin
             int               => int,
             CAN_tx            => CAN_tx,
             CAN_rx            => CAN_rx,
-            time_quanta_clk   => time_quanta_clk,
             timestamp         => timestamp,
             drv_bus_o         => drv_bus,
             stat_bus_o        => stat_bus

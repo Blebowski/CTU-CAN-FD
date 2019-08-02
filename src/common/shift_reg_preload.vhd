@@ -40,11 +40,8 @@
 --------------------------------------------------------------------------------
 
 --------------------------------------------------------------------------------
--- Purpose:
---  Generic shift register.
---------------------------------------------------------------------------------
--- Revision History:
---    23.11.2018   Created file
+-- Module:
+--  Shift register with asynchronous reset and synchronous pre-load.
 --------------------------------------------------------------------------------
 
 Library ieee;
@@ -52,74 +49,82 @@ use ieee.std_logic_1164.all;
 
 entity shift_reg_preload is
     generic (
-        constant reset_polarity     :       std_logic;
-        constant reset_value        :       std_logic_vector;
-        constant width              :       natural;
+        -- Reset polarity
+        G_RESET_POLARITY     :       std_logic;
+        
+        -- Reset value
+        G_RESET_VALUE        :       std_logic_vector;
+        
+        -- Shift register width
+        G_WIDTH              :       natural;
 
-        -- When 'true', values are shifted from highest index and output taken
-        -- from lowest index. When 'false' value are shifter from lowest index
-        -- and output taken from highest index.
-        constant shift_down         :       boolean
+        -- True - Shift from Highest index, False - Shift from lowest Index
+        G_SHIFT_DOWN         :       boolean
     );
     port (
-
         -----------------------------------------------------------------------
         -- Clock and reset
         -----------------------------------------------------------------------
-        signal clk                  : in    std_logic;
-        signal res_n                : in    std_logic;
+        clk                  : in    std_logic;
+        res_n                : in    std_logic;
 
-        -- Input to a shift register        
-        signal input                : in    std_logic;
+        -----------------------------------------------------------------------
+        -- Control signals
+        -----------------------------------------------------------------------
+        -- Pre-load shift register
+        preload              : in    std_logic;
 
-        -- Preload signal
-        signal preload              : in    std_logic;
-
-        -- Value to be preloaded to the shift register
-        signal preload_val          : in    std_logic_vector(width - 1 downto 0);
+        -- Value to be pre-load to the shift register
+        preload_val          : in    std_logic_vector(G_WIDTH - 1 downto 0);
 
         -- Enable for shift register. When enabled, shifted each clock, when
         -- disabled, register keeps its state.
-        signal enable               : in    std_logic;
+        enable               : in    std_logic;
 
-        -- Register parallel output
-        signal reg_stat             : out   std_logic_vector(width - 1 downto 0);
+        -- Input to a shift register 
+        input                : in    std_logic;
+        
+        -----------------------------------------------------------------------
+        -- Status signals
+        -----------------------------------------------------------------------
+        -- Shift register value
+        reg_stat             : out   std_logic_vector(G_WIDTH - 1 downto 0);
 
-        -- Register output
-        signal output               : out   std_logic
+        -- Shift register output
+        output               : out   std_logic
     );
 end shift_reg_preload;
 
 architecture rtl of shift_reg_preload is
 
     -- Internal shift register DFFs
-    signal shift_regs               :       std_logic_vector(width - 1 downto 0);
+    signal shift_regs               :  std_logic_vector(G_WIDTH - 1 downto 0);
 
     -- Combinational next value of shift register
-    signal next_shift_reg_val       :       std_logic_vector(width - 1 downto 0);
+    signal next_shift_reg_val       :  std_logic_vector(G_WIDTH - 1 downto 0);
 begin
 
     ---------------------------------------------------------------------------
     -- Calculation of next shift register value
     ---------------------------------------------------------------------------
-    shift_down_gen : if (shift_down) generate
-        next_shift_reg_val  <= input & shift_regs(width - 1 downto 1);
+    shift_down_gen : if (G_SHIFT_DOWN) generate
+        next_shift_reg_val  <= input & shift_regs(G_WIDTH - 1 downto 1);
         output              <= shift_regs(0);
     end generate shift_down_gen;
 
-    shift_up_gen : if (not shift_down) generate
-        next_shift_reg_val  <= shift_regs(width - 2 downto 0) & input;
-        output              <= shift_regs(width - 1);
+    shift_up_gen : if (not G_SHIFT_DOWN) generate
+        next_shift_reg_val  <= shift_regs(G_WIDTH - 2 downto 0) & input;
+        output              <= shift_regs(G_WIDTH - 1);
     end generate shift_up_gen;
 
 
     ---------------------------------------------------------------------------
     -- Implementation of a shift register
     ---------------------------------------------------------------------------
-    shift_down_proc : process (clk)
+    shift_down_proc : process (res_n, clk)
     begin
-        if (res_n = reset_polarity) then
-            shift_regs <= reset_value;
+        if (res_n = G_RESET_POLARITY) then
+            shift_regs <= G_RESET_VALUE;
 
         elsif (rising_edge(clk)) then
             if (preload = '1') then
@@ -139,7 +144,7 @@ begin
     ---------------------------------------------------------------------------
     -- Assertion for correct length of reset value
     ---------------------------------------------------------------------------
-    assert (reset_value'length = width) report "Invalid length of shift " &
+    assert (G_RESET_VALUE'length = G_WIDTH) report "Invalid length of shift " &
          "register reset value" severity error;
 
 end rtl;

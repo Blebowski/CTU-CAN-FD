@@ -1,0 +1,13 @@
+{signal: [
+  {name: 'System clock', 				wave: '0...p.........', 	data: [''],
+   										node: '..............'},
+  {name: 'External reset', 				wave: '101...........', 	data: [''], phase: -0.1,
+   										node: '.ac...........'},
+  {name: 'Soft reset', 					wave: '0.........10..', 	data: [''],
+   										node: '..........eg..'},
+  {name: 'System reset', 				wave: '01...0.....10.', 	data: [''], phase: -0.1,
+   										node: '.b...d.....fh.'},
+  {name: '', 					 		node: '..............'},
+ ],
+  edge:['a->b Assert', 'c~>d De-assert', 'e~>f Assert', 'g~>h De-assert'],
+}

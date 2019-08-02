@@ -40,11 +40,11 @@
 --------------------------------------------------------------------------------
 
 --------------------------------------------------------------------------------
+-- Package:
+--  Driving Bus, Status Bus Package.
+-- 
 -- Purpose:
---  Package with Constants for Driving Bus and Status Bus.
---------------------------------------------------------------------------------
--- Revision History:
---    28.12.2018  Created file, separated from "can_constants".
+--  Package with indices for Driving Bus and Status Bus.
 --------------------------------------------------------------------------------
 
 Library ieee;
@@ -149,11 +149,9 @@ package drv_stat_pkg is
     constant DRV_CLR_OVR_INDEX    : natural := 353;
 
     -- TXT Buffer
-    constant DRV_ERASE_TXT2_INDEX : natural := 356;
     constant DRV_TXT1_WR          : natural := 357;
 
     -- TX Buffer
-    constant DRV_ERASE_TXT1_INDEX : natural := 366;
     constant DRV_TXT2_WR          : natural := 367;
 
 
@@ -172,9 +170,6 @@ package drv_stat_pkg is
 
     constant DRV_INT_MASK_CLR_HIGH   : natural := 875;
     constant DRV_INT_MASK_CLR_LOW    : natural := 864;
-
-    -- Bus sampling indices
-    constant DRV_SAM_INDEX : natural := 372;
 
     constant DRV_SSP_DELAY_SELECT_HIGH : natural := 374;
     constant DRV_SSP_DELAY_SELECT_LOW : natural := 373;
@@ -206,7 +201,6 @@ package drv_stat_pkg is
 
     -- Operation control FSM
     constant DRV_CAN_FD_ENA_INDEX    : natural := 460;
-    constant DRV_RTR_PREF_INDEX      : natural := 461;
     constant DRV_BUS_MON_ENA_INDEX   : natural := 470;
     constant DRV_SELF_TEST_ENA_INDEX : natural := 471;
 
@@ -214,8 +208,6 @@ package drv_stat_pkg is
 
     constant DRV_RETR_TH_LOW  : natural := 466;
     constant DRV_RETR_TH_HIGH : natural := 469;
-
-    constant DRV_ABORT_TRAN_INDEX : natural := 472;
 
     constant DRV_CLR_RX_CTR_INDEX : natural := 473;
     constant DRV_CLR_TX_CTR_INDEX : natural := 474;
@@ -225,59 +217,6 @@ package drv_stat_pkg is
 
     constant DRV_ENA_INDEX     : natural := 509;
     constant DRV_FD_TYPE_INDEX : natural := 510;
-
-    ----------------------------------------------------------------------------
-    -- Event logger
-    ----------------------------------------------------------------------------
-    constant DRV_TRIG_CONFIG_DATA_HIGH : natural := 551;
-    constant DRV_TRIG_CONFIG_DATA_LOW  : natural := 520;
-
-    constant DRV_TRIG_SOF_INDEX         : natural := 552;
-    constant DRV_TRIG_ARB_LOST_INDEX    : natural := 553;
-    constant DRV_TRIG_REC_VALID_INDEX   : natural := 554;
-    constant DRV_TRIG_TRAN_VALID_INDEX  : natural := 555;
-    constant DRV_TRIG_OVL_INDEX         : natural := 556;
-    constant DRV_TRIG_ERROR_INDEX       : natural := 557;
-    constant DRV_TRIG_BRS_INDEX         : natural := 558;
-    constant DRV_TRIG_USER_WRITE_INDEX  : natural := 559;
-    constant DRV_TRIG_ARB_START_INDEX   : natural := 560;
-    constant DRV_TRIG_CONTR_START_INDEX : natural := 561;
-    constant DRV_TRIG_DATA_START_INDEX  : natural := 562;
-    constant DRV_TRIG_CRC_START_INDEX   : natural := 563;
-    constant DRV_TRIG_ACK_REC_INDEX     : natural := 564;
-    constant DRV_TRIG_ACK_N_REC_INDEX   : natural := 565;
-    constant DRV_TRIG_EWL_REACHED_INDEX : natural := 566;
-    constant DRV_TRIG_ERP_CHANGED_INDEX : natural := 567;
-    constant DRV_TRIG_TRAN_START_INDEX  : natural := 568;
-    constant DRV_TRIG_REC_START_INDEX   : natural := 569;
-
-    constant DRV_CAP_SOF_INDEX         : natural := 580;
-    constant DRV_CAP_ARB_LOST_INDEX    : natural := 581;
-    constant DRV_CAP_REC_VALID_INDEX   : natural := 582;
-    constant DRV_CAP_TRAN_VALID_INDEX  : natural := 583;
-    constant DRV_CAP_OVL_INDEX         : natural := 584;
-    constant DRV_CAP_ERROR_INDEX       : natural := 585;
-    constant DRV_CAP_BRS_INDEX         : natural := 586;
-    constant DRV_CAP_ARB_START_INDEX   : natural := 587;
-    constant DRV_CAP_CONTR_START_INDEX : natural := 588;
-    constant DRV_CAP_DATA_START_INDEX  : natural := 589;
-    constant DRV_CAP_CRC_START_INDEX   : natural := 590;
-    constant DRV_CAP_ACK_REC_INDEX     : natural := 591;
-    constant DRV_CAP_ACK_N_REC_INDEX   : natural := 592;
-    constant DRC_CAP_EWL_REACHED_INDEX : natural := 593;
-    constant DRV_CAP_ERP_CHANGED_INDEX : natural := 594;
-    constant DRV_CAP_TRAN_START_INDEX  : natural := 595;
-    constant DRV_CAP_REC_START_INDEX   : natural := 596;
-    constant DRV_CAP_SYNC_EDGE_INDEX   : natural := 597;
-    constant DRV_CAP_STUFFED_INDEX     : natural := 598;
-    constant DRV_CAP_DESTUFFED_INDEX   : natural := 599;
-    constant DRV_CAP_OVR_INDEX         : natural := 600;
-
-    constant DRV_LOG_CMD_STR_INDEX  : natural := 610;
-    constant DRV_LOG_CMD_ABT_INDEX  : natural := 611;
-    constant DRV_LOG_CMD_UP_INDEX   : natural := 612;
-    constant DRV_LOG_CMD_DOWN_INDEX : natural := 613;
-
 
     ----------------------------------------------------------------------------
     -- RX, TX and TXT Buffer frame format signal indexes
@@ -314,11 +253,11 @@ package drv_stat_pkg is
     ----------------------------------------------------------------------------
     -- Status bus Indices
     ----------------------------------------------------------------------------
-    constant STAT_OP_STATE_LOW  : natural := 0;
-    constant STAT_OP_STATE_HIGH : natural := 1;
+    constant STAT_IS_TRANSMITTER_INDEX    : natural := 0;
+    constant STAT_IS_RECEIVER_INDEX       : natural := 1;
 
-    constant STAT_PC_STATE_LOW  : natural := 2;
-    constant STAT_PC_STATE_HIGH : natural := 5;
+    constant STAT_RETR_CTR_HIGH  : natural := 5;
+    constant STAT_RETR_CTR_LOW   : natural := 2;
 
     constant STAT_ARB_LOST_INDEX : natural := 6;
 
@@ -343,10 +282,9 @@ package drv_stat_pkg is
     constant STAT_BS_LENGTH_LOW     : natural := 21;
 
     -- Error indices
-    constant STAT_STUFF_ERROR_INDEX      : natural := 24;
+    constant STAT_STUFF_ERR_INDEX        : natural := 24;
     constant STAT_DESTUFFED_INDEX        : natural := 25;
     constant STAT_BDS_ENA_INDEX          : natural := 26;
-    constant STAT_STUFF_ERRROR_ENA_INDEX : natural := 27;
     constant STAT_FIXED_DESTUFF_INDEX    : natural := 28;
     constant STAT_BDS_LENGTH_HIGH        : natural := 31;
     constant STAT_BDS_LENGTH_LOW         : natural := 29;
@@ -370,10 +308,10 @@ package drv_stat_pkg is
     constant STAT_TX_COUNTER_LOW          : natural := 71;
     constant STAT_RX_COUNTER_HIGH         : natural := 89;
     constant STAT_RX_COUNTER_LOW          : natural := 81;
-    constant STAT_ERROR_COUNTER_NORM_HIGH : natural := 272;
-    constant STAT_ERROR_COUNTER_NORM_LOW  : natural := 257;
-    constant STAT_ERROR_COUNTER_FD_HIGH   : natural := 288;
-    constant STAT_ERROR_COUNTER_FD_LOW    : natural := 273;
+    constant STAT_ERR_COUNTER_NORM_HIGH   : natural := 272;
+    constant STAT_ERR_COUNTER_NORM_LOW    : natural := 257;
+    constant STAT_ERR_COUNTER_FD_HIGH     : natural := 288;
+    constant STAT_ERR_COUNTER_FD_LOW      : natural := 273;
 
     constant STAT_BR_SHIFTED              : natural := 80;
 
@@ -383,21 +321,17 @@ package drv_stat_pkg is
     constant STAT_ERC_ERR_TYPE_LOW        : natural := 105;
     constant STAT_ERC_ERR_TYPE_HIGH       : natural := 107;
 
-    constant STAT_ERROR_STATE_HIGH : natural := 109;
-    constant STAT_ERROR_STATE_LOW  : natural := 108;
+    constant STAT_IS_ERR_ACTIVE_INDEX     : natural := 109;
+    constant STAT_IS_ERR_PASSIVE_INDEX    : natural := 108;
+    constant STAT_IS_BUS_OFF_INDEX        : natural := 99;
 
     -- Error signals
-    constant STAT_FORM_ERROR_INDEX          : natural := 110;
-    constant STAT_CRC_ERROR_INDEX           : natural := 111;
-    constant STAT_ACK_ERROR_INDEX           : natural := 112;
-    constant STAT_UNKNOWN_STATE_ERROR_INDEX : natural := 113;
-    constant STAT_BIT_STUFF_ERROR_INDEX     : natural := 114;
-    constant STAT_FIRST_BIT_AFTER_INDEX     : natural := 115;
-    constant STAT_REC_VALID_INDEX           : natural := 116;
-    constant STAT_TRAN_VALID_INDEX          : natural := 117;
-    constant STAT_CONST7_INDEX              : natural := 118;
-    constant STAT_CONST14_INDEX             : natural := 119;
-    constant STAT_TRANSM_ERROR_INDEX        : natural := 120;
+    constant STAT_FORM_ERR_INDEX          : natural := 110;
+    constant STAT_CRC_ERR_INDEX           : natural := 111;
+    constant STAT_ACK_ERR_INDEX           : natural := 112;
+    constant STAT_BIT_STUFF_ERR_INDEX     : natural := 114;
+    constant STAT_REC_VALID_INDEX         : natural := 116;
+    constant STAT_TRAN_VALID_INDEX        : natural := 117;
 
     -- Recieved data interface
     constant STAT_REC_IDENT_HIGH       : natural := 149;
@@ -408,15 +342,12 @@ package drv_stat_pkg is
     constant STAT_REC_IDENT_TYPE_INDEX : natural := 155;
     constant STAT_REC_FRAME_TYPE_INDEX : natural := 156;
     constant STAT_REC_BRS_INDEX        : natural := 157;
-    constant STAT_REC_CRC_HIGH         : natural := 178;
-    constant STAT_REC_CRC_LOW          : natural := 158;
     constant STAT_REC_ESI_INDEX        : natural := 179;
     constant STAT_CRC_ENA_INDEX        : natural := 180;
     constant STAT_TRAN_TRIG            : natural := 181;
     constant STAT_REC_TRIG             : natural := 182;
-    constant STAT_SAMPLE_NBT_DEL_1     : natural := 183;
-    constant STAT_SAMPLE_DBT_DEL_1     : natural := 184;
-    constant STAT_SAMPLE_SEC_DEL_1     : natural := 185;
+    constant STAT_SAMPLE_INDEX         : natural := 184;
+    constant STAT_SAMPLE_SEC           : natural := 185;
 
     -- Arbitration lost capture
     constant STAT_ALC_ID_FIELD_HIGH  : natural := 296;
@@ -432,13 +363,13 @@ package drv_stat_pkg is
     constant STAT_TX_CTR_HIGH : natural := 251;
     constant STAT_TX_CTR_LOW  : natural := 220;
 
-    constant STAT_ERP_CHANGED_INDEX : natural := 252;
+    constant STAT_FCS_CHANGED_INDEX : natural := 252;
     constant STAT_EWL_REACHED_INDEX : natural := 253;
-    constant STAT_ERROR_VALID_INDEX : natural := 254;
+    constant STAT_ERR_VALID_INDEX : natural := 254;
 
     constant STAT_ACK_RECIEVED_OUT_INDEX : natural := 255;
 
-    constant STAT_BIT_ERROR_VALID_INDEX : natural := 256;
+    constant STAT_BIT_ERR_VALID_INDEX : natural := 256;
 
     constant STAT_BS_CTR_HIGH : natural := 302;
     constant STAT_BS_CTR_LOW  : natural := 300;
@@ -448,5 +379,20 @@ package drv_stat_pkg is
 
     constant STAT_TS_HIGH : natural := 369;
     constant STAT_TS_LOW  : natural := 306;
+    
+    constant STAT_PC_IS_ARBITRATION_INDEX   : natural := 370;
+    constant STAT_PC_IS_CONTROL_INDEX       : natural := 371;
+    constant STAT_PC_IS_DATA_INDEX          : natural := 372;
+    constant STAT_PC_IS_STUFF_COUNT_INDEX   : natural := 373;
+    constant STAT_PC_IS_CRC_INDEX           : natural := 374;
+    constant STAT_PC_IS_CRC_DELIM_INDEX     : natural := 375;
+    constant STAT_PC_IS_ACK_FIELD_INDEX     : natural := 376;
+    constant STAT_PC_IS_ACK_DELIM_INDEX     : natural := 377;
+    constant STAT_PC_IS_EOF_INDEX           : natural := 378;
+    constant STAT_PC_IS_INTERMISSION_INDEX  : natural := 379;
+    constant STAT_PC_IS_SUSPEND_INDEX       : natural := 380;
+    constant STAT_PC_IS_ERR_INDEX           : natural := 381;
+    constant STAT_PC_IS_OVERLOAD_INDEX      : natural := 382;
+    constant STAT_SOF_PULSE_INDEX           : natural := 383;
 
 end package;

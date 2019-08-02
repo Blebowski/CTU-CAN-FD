@@ -195,9 +195,6 @@ architecture behavioral of sanity_test is
     signal CAN_rx_v             : std_logic_vector(1 to NODE_COUNT) :=
                                     (OTHERS => RECESSIVE);
 
-    signal time_quanta_clk_v    : std_logic_vector(1 to NODE_COUNT) :=
-                                    (OTHERS => '0');
-
     -- Timestamp signals
     type timestamp_arr_type is
         array (1 to NODE_COUNT) of std_logic_vector(63 downto 0);
@@ -256,8 +253,10 @@ architecture behavioral of sanity_test is
     signal do_config            : control_bool_array_type := (OTHERS => false);
     signal do_traffic           : control_bool_array_type := (OTHERS => false);
     signal do_erase_mems        : control_bool_array_type := (OTHERS => false);
+    signal do_wait_integ_end    : control_bool_array_type := (OTHERS => false);
     signal do_read_errors       : control_bool_array_type := (OTHERS => false);
     signal config_done          : control_bool_array_type := (OTHERS => false);
+    signal integ_done           : control_bool_array_type := (OTHERS => false);
     signal do_restart_mem_if    : control_bool_array_type := (OTHERS => true);
     signal do_noise             : boolean := false;
 
@@ -458,13 +457,10 @@ begin
     -- CAN Nodes instances
     ----------------------------------------------------------------------------
     comp_gen : for i in 1 to NODE_COUNT generate
-        node_1_comp : CAN_top_level
+        can_inst : CAN_top_level
         generic map(
-             use_logger       => true,
              rx_buffer_size   => 64,
-             use_sync         => true,
-             ID               => i,
-             logger_size      => 16
+             ID               => i
         )
         port map(
              res_n            => res_n_v(i),
@@ -479,7 +475,6 @@ begin
              int              => int_v(i),
              CAN_tx           => CAN_tx_v(i),
              CAN_rx           => CAN_rx_v(i),
-             time_quanta_clk  => time_quanta_clk_v(i),
              timestamp        => timestamp_v(i)
         );
 
@@ -684,6 +679,13 @@ begin
 
             elsif (do_wait(i)) then
                 wait until rising_edge(mb_arr(i).clk_sys);
+                
+            elsif (do_wait_integ_end(i)) then
+                get_fault_state(fault_state, n_index, mb_arr(i));
+                while (fault_state /= fc_error_active) loop
+                    get_fault_state(fault_state, n_index, mb_arr(i));
+                end loop;
+                integ_done(i) <= true;
 
             elsif (do_erase_mems(i)) then
                 tx_mems(i)          <= (OTHERS => (OTHERS => '0'));
@@ -698,9 +700,9 @@ begin
                     config_done (i) <= false;
 
                     -- Perform the configuration of the node
-                    CAN_turn_controller(true, n_index, mb_arr(i));
                     CAN_configure_timing(timing_config, n_index, mb_arr(i));
-
+                    CAN_turn_controller(true, n_index, mb_arr(i));
+                    
                     -- Signal back to main process config finished
                     config_done(i)  <= true;
                     wait for 100 ns;
@@ -872,7 +874,12 @@ begin
             do_read_errors(i) <= true;
         end loop;
         info("Configuration applied");
-
+        
+        -- Wait until integration phase is over on all nodes!
+        do_wait_integ_end <= (OTHERS => true);
+        wait until integ_done = (true, true, true, true);
+        do_wait_integ_end <= (OTHERS => false);
+        
         ------------------------------------------------------------------------
         -- Main loop of the test
         ------------------------------------------------------------------------

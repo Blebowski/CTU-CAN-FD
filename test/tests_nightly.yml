@@ -17,13 +17,8 @@ unit:
             wave: unit/Bit_Stuffing/bsdt_unit.tcl
         apb:
             iterations: 1
-        bus_sync:
-            wave: unit/Bus_Sampling/bsnc_unit.tcl
-            iterations: 100
         crc:
             wave: unit/CRC/crct_unit.tcl
-        fault_confinement:
-            wave: unit/Fault_confinement/fault_conf_unit.tcl
         int_man:
             wave: unit/Int_Manager/intm_unit.tcl
             iterations: 5000
@@ -39,8 +34,6 @@ unit:
             wave: unit/TX_Arbitrator/txar_unit.tcl
         tx_buf:
             wave: unit/TX_Buffer/txbf_unit.tcl
-        event_logger:
-            wave: unit/Evnt_Logger/evlg_unit.tcl
 reference:
     default:
         <<: *default
@@ -77,14 +70,21 @@ feature:
         timeout: 100 ms
         wave: feature/feature_env_setup.tcl
     tests:
-        abort_transmittion:
         arbitration:
         fault_confinement:
         forbid_fd:
         interrupt:
+        int_rx:
+        int_tx:
+        int_ewl:
+        int_do:
+        int_fcs:
         invalid_configs:
         overload:
         retr_limit:
+        retr_limit_2:
+        retr_limit_3:
+        one_shot:
         rx_status:
         spec_mode:
         traf_meas:
@@ -92,7 +92,6 @@ feature:
         tx_arb_time_tran:
         timestamp_options:
         byte_enable:
-        rtr_pref:
         data_length_code:
         bus_start:
         data_overrun_clear:
@@ -104,6 +103,8 @@ feature:
         timestamp_registers:
         txt_buffer_hazard:
             iterations: 1
+        txt_buffer_priority:
+            iterations: 5
 sanity:
     default:
         <<: *default

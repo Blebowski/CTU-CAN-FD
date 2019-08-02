@@ -1,0 +1,28 @@
+{signal: [
+  {name: 'System clock', 				wave: '1010101010|l101010101',
+   										node: '....a.....|...c......'},
+  
+  {name: 'CAN Bus field', 				wave: '5.........|...4......', 	data: ['End of frame                                                  ', 'Active Error Flag'],
+   										node: '..........|..........'},
+  
+  {name: 'Pipeline stage', 				wave: 'x.3.4.5.x.|.3.x......', 	data: ['Destuff', 'Process', 'Process + 1', 'Stuff'],
+   										node: '..........|..........'},
+ 
+  {name: 'Form Error', 					wave: '0...1.0...|..........',
+   										node: '..........|..........'},
+  
+  {name: 'Error frame request',			wave: '0.....1.0.|..........',  data: ['0', '1','127'], phase: -0.0,
+   										node: '..........|..........'},
+  
+  {name: 'Protocol control FSM',		wave: '=.......=.|..........', data:['End of Frame', 'Active Error Flag']},
+  
+  {name: 'RX Data',						wave: '0.........|..........', data:['']},
+  {name: 'TX Data',						wave: '1.........|...0......', data:[''],
+   										node: '....b.........d......'},	
+  
+ ],
+  foot: {text:
+  ['tspan', 'Sample point                                                                             Start of next bit                           '],
+},
+  edge:['a-b','c-d'],
+}

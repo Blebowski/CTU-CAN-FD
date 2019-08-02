@@ -144,7 +144,7 @@ package can_fd_register_map is
     (address   => MODE_ADR,
      size      => 16,
      reg_type  => reg_read_write,
-     reset_val => "00000000000000000000000000110000"),
+     reset_val => "00000000000000000000000000010000"),
     (address   => SETTINGS_ADR,
      size      => 16,
      reg_type  => reg_read_write,
@@ -304,7 +304,7 @@ package can_fd_register_map is
     (address   => SSP_CFG_ADR,
      size      => 16,
      reg_type  => reg_read_write,
-     reset_val => "00000000000000000000000000000000"),
+     reset_val => "00000000000001000000000000000000"),
     (address   => RX_COUNTER_ADR,
      size      => 32,
      reg_type  => reg_read_only,
@@ -464,63 +464,10 @@ package can_fd_register_map is
   );
 
   ------------------------------------------------------------------------------
-  ------------------------------------------------------------------------------
-  -- Address block: Event_Logger
-  ------------------------------------------------------------------------------
-  ------------------------------------------------------------------------------
-  constant EVENT_LOGGER_BLOCK           : std_logic_vector(3 downto 0) := x"5";
-
-  constant LOG_TRIG_CONFIG_ADR       : std_logic_vector(11 downto 0) := x"500";
-  constant LOG_CAPT_CONFIG_ADR       : std_logic_vector(11 downto 0) := x"504";
-  constant LOG_STATUS_ADR            : std_logic_vector(11 downto 0) := x"508";
-  constant LOG_POINTERS_ADR          : std_logic_vector(11 downto 0) := x"50A";
-  constant LOG_COMMAND_ADR           : std_logic_vector(11 downto 0) := x"50C";
-  constant LOG_CAPT_EVENT_1_ADR      : std_logic_vector(11 downto 0) := x"510";
-  constant LOG_CAPT_EVENT_2_ADR      : std_logic_vector(11 downto 0) := x"514";
-
-  ------------------------------------------------------------------------------
-  -- Register list
-  ------------------------------------------------------------------------------
-
-  type t_Event_Logger_list is array (0 to 6) of t_reg;
-
-  constant Event_Logger_list : t_Event_Logger_list :=(
-
-    (address   => LOG_TRIG_CONFIG_ADR,
-     size      => 32,
-     reg_type  => reg_read_write,
-     reset_val => "00000000000000000000000000000000"),
-    (address   => LOG_CAPT_CONFIG_ADR,
-     size      => 32,
-     reg_type  => reg_read_write,
-     reset_val => "00000000000000000000000000000000"),
-    (address   => LOG_STATUS_ADR,
-     size      => 16,
-     reg_type  => reg_read_only,
-     reset_val => "00000000000000000000000000000001"),
-    (address   => LOG_POINTERS_ADR,
-     size      => 16,
-     reg_type  => reg_read_only,
-     reset_val => "00000000000000000000000000000000"),
-    (address   => LOG_COMMAND_ADR,
-     size      => 8,
-     reg_type  => reg_write_only,
-     reset_val => "00000000000000000000000000000000"),
-    (address   => LOG_CAPT_EVENT_1_ADR,
-     size      => 32,
-     reg_type  => reg_read_only,
-     reset_val => "00000000000000000000000000000000"),
-    (address   => LOG_CAPT_EVENT_2_ADR,
-     size      => 32,
-     reg_type  => reg_read_only,
-     reset_val => "00000000000000000000000000000000")
-  );
-
-  ------------------------------------------------------------------------------
   -- DEVICE_ID register
   --
-  -- Register contains the identifer of CTU CAN FD IP Core. It can be used to de
-  -- termine if CTU CAN FD IP Core is mapped correctly on its base address.
+  -- Identifer of CTU CAN FD IP Core. Can be used to check if CTU CAN FD IP Core
+  --  is accessible correctly on its base address.
   ------------------------------------------------------------------------------
   constant DEVICE_ID_L            : natural := 0;
   constant DEVICE_ID_H           : natural := 15;
@@ -534,7 +481,7 @@ package can_fd_register_map is
   ------------------------------------------------------------------------------
   -- VERSION register
   --
-  -- Version register with IP Core version.
+  -- Version register. Returns version of CTU CAN FD.
   ------------------------------------------------------------------------------
   constant VER_MINOR_L           : natural := 16;
   constant VER_MINOR_H           : natural := 23;
@@ -546,28 +493,19 @@ package can_fd_register_map is
   ------------------------------------------------------------------------------
   -- MODE register
   --
-  -- MODE register controls operating modes.
+  -- Controls operating CTU CAN FD operating modes.
   ------------------------------------------------------------------------------
   constant RST_IND                : natural := 0;
   constant LOM_IND                : natural := 1;
   constant STM_IND                : natural := 2;
   constant AFM_IND                : natural := 3;
   constant FDE_IND                : natural := 4;
-  constant RTRP_IND               : natural := 5;
-  constant TSM_IND                : natural := 6;
   constant ACF_IND                : natural := 7;
+  constant TSTM_IND               : natural := 8;
 
   -- "FDE" field enumerated values
   constant FDE_DISABLE        : std_logic := '0';
   constant FDE_ENABLE         : std_logic := '1';
-
-  -- "TSM" field enumerated values
-  constant TSM_DISABLE        : std_logic := '0';
-  constant TSM_ENABLE         : std_logic := '1';
-
-  -- "RTRP" field enumerated values
-  constant RTR_EXTRA          : std_logic := '0';
-  constant RTR_STANDARD       : std_logic := '1';
 
   -- "ACF" field enumerated values
   constant ACF_DISABLED       : std_logic := '0';
@@ -588,18 +526,16 @@ package can_fd_register_map is
   -- MODE register reset values
   constant RST_RSTVAL         : std_logic := '0';
   constant FDE_RSTVAL         : std_logic := '1';
-  constant TSM_RSTVAL         : std_logic := '0';
-  constant RTRP_RSTVAL        : std_logic := '1';
   constant ACF_RSTVAL         : std_logic := '0';
   constant LOM_RSTVAL         : std_logic := '0';
   constant STM_RSTVAL         : std_logic := '0';
   constant AFM_RSTVAL         : std_logic := '0';
+  constant TSTM_RSTVAL        : std_logic := '0';
 
   ------------------------------------------------------------------------------
   -- SETTINGS register
   --
-  -- This register enables the whole CAN FD Core, configures FD Type, Internal l
-  -- oopback and retransmission options.
+  -- Settings of CTU CAN FD.
   ------------------------------------------------------------------------------
   constant RTRLE_IND             : natural := 16;
   constant RTRTH_L               : natural := 17;
@@ -634,8 +570,8 @@ package can_fd_register_map is
   ------------------------------------------------------------------------------
   -- STATUS register
   --
-  -- Register signals various states of CTU CAN FD IP Core. Logic 1 signals acti
-  -- ve status/flag.
+  -- Status register contains state of CTU CAN FD. Logic 1 signals active status
+  -- /flag.
   ------------------------------------------------------------------------------
   constant RXNE_IND               : natural := 0;
   constant DOR_IND                : natural := 1;
@@ -659,10 +595,10 @@ package can_fd_register_map is
   ------------------------------------------------------------------------------
   -- COMMAND register
   --
-  -- Writing logic 1 into each bit gives different command to the IP Core. After
-  --  writing logic 1, logic 0 does not have to be written.
+  -- Issuing commands to CTU CAN FD. Writing logic 1 into each bit gives a comma
+  -- nd to CTU CAN FD. After writing logic 1, logic 0 does not need to be writte
+  -- n.
   ------------------------------------------------------------------------------
-  constant ABT_IND                : natural := 1;
   constant RRB_IND                : natural := 2;
   constant CDO_IND                : natural := 3;
   constant ERCRST_IND             : natural := 4;
@@ -670,7 +606,6 @@ package can_fd_register_map is
   constant TXFCRST_IND            : natural := 6;
 
   -- COMMAND register reset values
-  constant ABT_RSTVAL         : std_logic := '0';
   constant RRB_RSTVAL         : std_logic := '0';
   constant CDO_RSTVAL         : std_logic := '0';
   constant ERCRST_RSTVAL      : std_logic := '0';
@@ -680,18 +615,18 @@ package can_fd_register_map is
   ------------------------------------------------------------------------------
   -- INT_STAT register
   --
-  -- Reading this register returns logic 1 for each interrupt which was captured
-  --  (interrupt vector). Writing logic 1 to any bit clears according bit of cap
-  -- tured interrupt. Writing logic 0 has no effect.
+  -- Interrupt Status register. Reading this register returns logic 1 for each i
+  -- nterrupt which was captured (interrupt vector). Writing logic 1 to any bit 
+  -- clears according bit in interrupt vector. Writing logic 0 has no effect.
   ------------------------------------------------------------------------------
   constant RXI_IND                : natural := 0;
   constant TXI_IND                : natural := 1;
   constant EWLI_IND               : natural := 2;
   constant DOI_IND                : natural := 3;
-  constant EPI_IND                : natural := 4;
+  constant FCSI_IND               : natural := 4;
   constant ALI_IND                : natural := 5;
   constant BEI_IND                : natural := 6;
-  constant LFI_IND                : natural := 7;
+  constant OFI_IND                : natural := 7;
   constant RXFI_IND               : natural := 8;
   constant BSI_IND                : natural := 9;
   constant RBNEI_IND             : natural := 10;
@@ -702,23 +637,23 @@ package can_fd_register_map is
   constant TXI_RSTVAL         : std_logic := '0';
   constant EWLI_RSTVAL        : std_logic := '0';
   constant DOI_RSTVAL         : std_logic := '0';
-  constant EPI_RSTVAL         : std_logic := '0';
+  constant FCSI_RSTVAL        : std_logic := '0';
   constant ALI_RSTVAL         : std_logic := '0';
   constant BEI_RSTVAL         : std_logic := '0';
-  constant LFI_RSTVAL         : std_logic := '0';
   constant RXFI_RSTVAL        : std_logic := '0';
   constant BSI_RSTVAL         : std_logic := '0';
   constant RBNEI_RSTVAL       : std_logic := '0';
+  constant OFI_RSTVAL         : std_logic := '0';
   constant TXBHCI_RSTVAL      : std_logic := '0';
 
   ------------------------------------------------------------------------------
   -- INT_ENA_SET register
   --
-  -- Writing logic 1 to a bit enables according interrupt. Writing logic 0 has n
-  -- o effect. Reading this register returns logic 1 for each enabled interrupt.
-  --  If interrupt is captured in INT_STAT, enabled interrupt will cause "int" o
-  -- utput to be asserted. Interrupts are level-based. To capture interrupt to I
-  -- NT_STAT register, interrupt must be unmasked.
+  -- Interrupt Enable Set. Writing logic 1 to a bit enables according interrupt.
+  --  Writing logic 0 has no effect. Reading this register returns logic 1 for e
+  -- ach enabled interrupt. If interrupt is captured in INT_STAT, enabled interr
+  -- upt will cause "int" output to be asserted. Interrupts are level-based. To 
+  -- capture interrupt to INT_STAT register, interrupt must be unmasked.
   ------------------------------------------------------------------------------
   constant INT_ENA_SET_L          : natural := 0;
   constant INT_ENA_SET_H         : natural := 11;
@@ -729,9 +664,10 @@ package can_fd_register_map is
   ------------------------------------------------------------------------------
   -- INT_ENA_CLR register
   --
-  -- Writing logic 1 disables according interrupt. Writing logic 0 has no effect
-  -- . Reading this register has no effect. Disabled interrupt wil not affect "i
-  -- nt" output of CAN Core event if it is captured in INT_STAT register.
+  -- Interrupt Enable Clear register. Writing logic 1 disables according interru
+  -- pt. Writing logic 0 has no effect. Reading this register has no effect. Dis
+  -- abled interrupt wil not affect "int" output of CAN Core event if it is capt
+  -- ured in Interrupt vector and can be read out from INT_STAT register.
   ------------------------------------------------------------------------------
   constant INT_ENA_CLR_L          : natural := 0;
   constant INT_ENA_CLR_H         : natural := 11;
@@ -742,11 +678,11 @@ package can_fd_register_map is
   ------------------------------------------------------------------------------
   -- INT_MASK_SET register
   --
-  -- Writing logic 1 masks according interrupt. Writing logic 0 has no effect. R
-  -- eading this register returns logic 1 for each masked interrupt. If particul
-  -- ar interrupt is masked, it won't be captured in INT_STAT register when inte
-  -- rnal conditions for this interrupt are met (e.g RX Buffer is not empty for 
-  -- RXNEI).
+  -- Interrupt Mask set. Writing logic 1 masks according interrupt. Writing logi
+  -- c 0 has no effect. Reading this register returns logic 1 for each masked in
+  -- terrupt. If particular interrupt is masked, it won't be captured in INT_STA
+  -- T register when internal conditions for this interrupt are met (e.g RX Buff
+  -- er is not empty for RXNEI).
   ------------------------------------------------------------------------------
   constant INT_MASK_SET_L         : natural := 0;
   constant INT_MASK_SET_H        : natural := 11;
@@ -757,10 +693,11 @@ package can_fd_register_map is
   ------------------------------------------------------------------------------
   -- INT_MASK_CLR register
   --
-  -- Writing logic 1 un-masks according interrupt. Writing logic 0 has no effect
-  -- . Reading this register has no effect. If particular interrupt is un-masked
-  -- , it will be captured in INT_STAT register when internal conditions for thi
-  -- s interrupt are met (e.g RX Buffer is not empty for RXNEI).
+  -- Interrupt Mask clear register. Writing logic 1 un-masks according interrupt
+  -- . Writing logic 0 has no effect. Reading this register has no effect. If pa
+  -- rticular interrupt is un-masked, it will be captured in INT_STAT register w
+  -- hen internal conditions for this interrupt are met (e.g RX Buffer is not em
+  -- pty for RXNEI).
   ------------------------------------------------------------------------------
   constant INT_MASK_CLR_L         : natural := 0;
   constant INT_MASK_CLR_H        : natural := 11;
@@ -771,7 +708,7 @@ package can_fd_register_map is
   ------------------------------------------------------------------------------
   -- BTR register
   --
-  -- Bit timing register for nominal bit-rate. This register should be modified 
+  -- Bit Timing Register for Nominal Bit-Rate. This register should be modified 
   -- only when SETTINGS[ENA]=0.
   ------------------------------------------------------------------------------
   constant PROP_L                 : natural := 0;
@@ -795,7 +732,7 @@ package can_fd_register_map is
   ------------------------------------------------------------------------------
   -- BTR_FD register
   --
-  -- Bit timing register for data bit-rate. This register should be modified onl
+  -- Bit Timing Register for Data Bit-Rate. This register should be modified onl
   -- y when SETTINGS[ENA]=0.
   ------------------------------------------------------------------------------
   constant PROP_FD_L              : natural := 0;
@@ -819,7 +756,7 @@ package can_fd_register_map is
   ------------------------------------------------------------------------------
   -- EWL register
   --
-  -- Error warning limit register. This register should be modified only when SE
+  -- Error Warning Limit register. This register should be modified only when SE
   -- TTINGS[ENA]=0.
   ------------------------------------------------------------------------------
   constant EW_LIMIT_L             : natural := 0;
@@ -831,7 +768,7 @@ package can_fd_register_map is
   ------------------------------------------------------------------------------
   -- ERP register
   --
-  -- Error passive limit register. This register should be modified only when SE
+  -- Error Passive Limit register. This register should be modified only when SE
   -- TTINGS[ENA]=0.
   ------------------------------------------------------------------------------
   constant ERP_LIMIT_L            : natural := 8;
@@ -843,9 +780,7 @@ package can_fd_register_map is
   ------------------------------------------------------------------------------
   -- FAULT_STATE register
   --
-  -- Fault confinement state of the node. This state can be manipulated by write
-  -- s to CTR_PRES register. When these counters are set Fault confinement state
-  --  changes automatically.
+  -- Fault Confinement state of the CTU CAN FD.
   ------------------------------------------------------------------------------
   constant ERA_IND               : natural := 16;
   constant ERP_IND               : natural := 17;
@@ -859,7 +794,6 @@ package can_fd_register_map is
   ------------------------------------------------------------------------------
   -- RXC register
   --
-  -- Counter for received frames.
   ------------------------------------------------------------------------------
   constant RXC_VAL_L              : natural := 0;
   constant RXC_VAL_H             : natural := 15;
@@ -870,7 +804,6 @@ package can_fd_register_map is
   ------------------------------------------------------------------------------
   -- TXC register
   --
-  -- Counter for transcieved frames.
   ------------------------------------------------------------------------------
   constant TXC_VAL_L             : natural := 16;
   constant TXC_VAL_H             : natural := 31;
@@ -901,7 +834,7 @@ package can_fd_register_map is
   ------------------------------------------------------------------------------
   -- CTR_PRES register
   --
-  -- Register for manipulation with error counters.
+  -- Counter Preset Register. Enables manipulation with error counters.
   ------------------------------------------------------------------------------
   constant CTPV_L                 : natural := 0;
   constant CTPV_H                 : natural := 8;
@@ -920,12 +853,10 @@ package can_fd_register_map is
   ------------------------------------------------------------------------------
   -- FILTER_A_MASK register
   --
-  -- Bit mask for acceptance filter A. The identifier format is the same as tran
-  -- smitted and received identifier format. BASE Identifier is  in bits 28 : 18
-  --  and Identifier extension are bits 17 : 0. Note that filter support is avai
-  -- lable by default but it can be left out from synthesis (to save logic) by s
-  -- etting "sup_filtA=false". If the particular filter is not supported, writes
-  --  to this register have no effect and read will return all zeroes.
+  -- Filter A Bit mask. The identifier format is the same as transmitted and rec
+  -- eived Identifier. BASE Identifier is 11 LSB and Identifier extension are bi
+  -- ts 28-12. If filter A is not present, writes to this register have no effec
+  -- t and read will return all zeroes.
   ------------------------------------------------------------------------------
   constant BIT_MASK_A_VAL_L       : natural := 0;
   constant BIT_MASK_A_VAL_H      : natural := 28;
@@ -937,13 +868,10 @@ package can_fd_register_map is
   ------------------------------------------------------------------------------
   -- FILTER_A_VAL register
   --
-  -- Bit value for acceptance filters. Filters A, B, C are available. The identi
-  -- fier format is the same as transmitted and received identifier format. BASE
-  --  Identifier is 11 LSB and Identifier extension are bits 28-12! Note that fi
-  -- lter support is available by default but it can be left out from synthesis 
-  -- (to save logic) by setting "sup_filtX=false";. If the particular filter is 
-  -- not supported, writes to this register have no effect and read will return 
-  -- all zeroes.
+  -- Filter A Bit value. The identifier format is the same as transmitted and re
+  -- ceived Identifier. BASE Identifier is 11 LSB and Identifier extension are b
+  -- its 28-12. If filter A is not present, writes to this register have no effe
+  -- ct and read will return all zeroes.
   ------------------------------------------------------------------------------
   constant BIT_VAL_A_VAL_L        : natural := 0;
   constant BIT_VAL_A_VAL_H       : natural := 28;
@@ -955,12 +883,10 @@ package can_fd_register_map is
   ------------------------------------------------------------------------------
   -- FILTER_B_MASK register
   --
-  -- Bit mask for acceptance filter B. The identifier format is the same as tran
-  -- smitted and received identifier format. BASE Identifier is  in bits 28 : 18
-  --  and Identifier extension are bits 17 : 0. Note that filter support is avai
-  -- lable by default but it can be left out from synthesis (to save logic) by s
-  -- etting "sup_filtB=false". If the particular filter is not supported, writes
-  --  to this register have no effect and read will return all zeroes.
+  -- Filter B Bit mask. The identifier format is the same as transmitted and rec
+  -- eived Identifier. BASE Identifier is 11 LSB and Identifier extension are bi
+  -- ts 28-12. If filter B is not present, writes to this register have no effec
+  -- t and read will return all zeroes.
   ------------------------------------------------------------------------------
   constant BIT_MASK_B_VAL_L       : natural := 0;
   constant BIT_MASK_B_VAL_H      : natural := 28;
@@ -972,12 +898,10 @@ package can_fd_register_map is
   ------------------------------------------------------------------------------
   -- FILTER_B_VAL register
   --
-  -- Bit value for acceptance filter B. The identifier format is the same as tra
-  -- nsmitted and received identifier format. BASE Identifier is in bits 28 : 18
-  --  and Identifier extension are bits 17 : 0. Note that filter support is avai
-  -- lable by default but it can be left out from synthesis (to save logic) by s
-  -- etting "sup_filtB=false". If the particular filter is not supported, writes
-  --  to this register have no effect and read will return all zeroes.
+  -- Filter B Bit value. The identifier format is the same as transmitted and re
+  -- ceived Identifier. BASE Identifier is 11 LSB and Identifier extension are b
+  -- its 28-12. If filter B is not present, writes to this register have no effe
+  -- ct and read will return all zeroes.
   ------------------------------------------------------------------------------
   constant BIT_VAL_B_VAL_L        : natural := 0;
   constant BIT_VAL_B_VAL_H       : natural := 28;
@@ -989,12 +913,10 @@ package can_fd_register_map is
   ------------------------------------------------------------------------------
   -- FILTER_C_MASK register
   --
-  -- Bit mask for acceptance filter C. The identifier format is the same as tran
-  -- smitted and received identifier format. BASE Identifier is  in bits 28 : 18
-  --  and Identifier extension are bits 17 : 0. Note that filter support is avai
-  -- lable by default but it can be left out from synthesis (to save logic) by s
-  -- etting "sup_filtC=false". If the particular filter is not supported, writes
-  --  to this register have no effect and read will return all zeroes.
+  -- Filter C Bit mask. The identifier format is the same as transmitted and rec
+  -- eived Identifier. BASE Identifier is 11 LSB and Identifier extension are bi
+  -- ts 28-12. If filter C is not present, writes to this register have no effec
+  -- t and read will return all zeroes.
   ------------------------------------------------------------------------------
   constant BIT_MASK_C_VAL_L       : natural := 0;
   constant BIT_MASK_C_VAL_H      : natural := 28;
@@ -1006,12 +928,10 @@ package can_fd_register_map is
   ------------------------------------------------------------------------------
   -- FILTER_C_VAL register
   --
-  -- Bit value for acceptance filter C. The identifier format is the same as tra
-  -- nsmitted and received identifier format. BASE Identifier is  in bits 28 : 1
-  -- 8 and Identifier extension are bits 17 : 0. Note that filter support is ava
-  -- ilable by default but it can be left out from synthesis (to save logic) by 
-  -- setting "sup_filtC=false". If the particular filter is not supported, write
-  -- s to this register have no effect and read will return all zeroes.
+  -- Filter C Bit value. The identifier format is the same as transmitted and re
+  -- ceived Identifier. BASE Identifier is 11 LSB and Identifier extension are b
+  -- its 28-12. If filter C is not present, writes to this register have no effe
+  -- ct and read will return all zeroes.
   ------------------------------------------------------------------------------
   constant BIT_VAL_C_VAL_L        : natural := 0;
   constant BIT_VAL_C_VAL_H       : natural := 28;
@@ -1023,12 +943,10 @@ package can_fd_register_map is
   ------------------------------------------------------------------------------
   -- FILTER_RAN_LOW register
   --
-  -- Low Identifier threshold for range filter. The identifier format is the sam
-  -- e as transmitted and received identifier format. BASE Identifier is in bits
-  --  28 : 18 and Identifier extension are bits 17 : 0. Note that filter support
-  --  is available by default but it can be left out from synthesis (to save log
-  -- ic) by setting "sup_range=false". If the particular filter is not supported
-  -- , writes to this register have no effect and read will return all zeroes.
+  -- Filter Range Low threshold. The identifier format is the same as transmitte
+  -- d and received identifier format. BASE Identifier is in bits 28 : 18 and Id
+  -- entifier extension are bits 17 : 0. If Range filter is not supported, write
+  -- s to this register have no effect and read will return all zeroes.
   ------------------------------------------------------------------------------
   constant BIT_RAN_LOW_VAL_L      : natural := 0;
   constant BIT_RAN_LOW_VAL_H     : natural := 28;
@@ -1040,12 +958,10 @@ package can_fd_register_map is
   ------------------------------------------------------------------------------
   -- FILTER_RAN_HIGH register
   --
-  -- High Identifier threshold for range filter. The identifier format is the sa
-  -- me as transmitted and received identifier format. BASE Identifier is in bit
-  -- s 28 : 18 and Identifier extension are bits 17 : 0. Note that filter suppor
-  -- t is available by default but it can be left out from synthesis (to save lo
-  -- gic) by setting "sup_range=false". If the particular filter is not supporte
-  -- d, writes to this register have no effect and read will return all zeroes.
+  -- Filter Range High threshold. The identifier format is the same as transmitt
+  -- ed and received identifier format. BASE Identifier is in bits 28 : 18 and I
+  -- dentifier extension are bits 17 : 0. If Range filter is not supported, writ
+  -- es to this register have no effect and read will return all zeroes.
   ------------------------------------------------------------------------------
   constant BIT_RAN_HIGH_VAL_L     : natural := 0;
   constant BIT_RAN_HIGH_VAL_H    : natural := 28;
@@ -1057,8 +973,8 @@ package can_fd_register_map is
   ------------------------------------------------------------------------------
   -- FILTER_CONTROL register
   --
-  -- Every filter can be configured to accept only selected frame types. Every b
-  -- it is active in logic 1.
+  -- Filter control register. Configures RX Frame filters to accept only selecte
+  -- d frame types. Every bit is active in logic 1.
   ------------------------------------------------------------------------------
   constant FANB_IND               : natural := 0;
   constant FANE_IND               : natural := 1;
@@ -1098,8 +1014,7 @@ package can_fd_register_map is
   ------------------------------------------------------------------------------
   -- FILTER_STATUS register
   --
-  -- This register provides information if the Core is synthesized with fillter 
-  -- support.
+  -- Filter Status indicates in RX Frame filters are available.
   ------------------------------------------------------------------------------
   constant SFA_IND               : natural := 16;
   constant SFB_IND               : natural := 17;
@@ -1111,7 +1026,7 @@ package can_fd_register_map is
   ------------------------------------------------------------------------------
   -- RX_MEM_INFO register
   --
-  -- Information register about FIFO memory of RX Buffer.
+  -- RX Buffer FIFO memory information register.
   ------------------------------------------------------------------------------
   constant RX_BUFF_SIZE_L         : natural := 0;
   constant RX_BUFF_SIZE_H        : natural := 12;
@@ -1123,8 +1038,7 @@ package can_fd_register_map is
   ------------------------------------------------------------------------------
   -- RX_POINTERS register
   --
-  -- Pointers in the RX FIFO buffer for read (by SW) and write (by Protocol cont
-  -- rol FSM).
+  -- Pointers in RX Buffer FIFO.
   ------------------------------------------------------------------------------
   constant RX_WPP_L               : natural := 0;
   constant RX_WPP_H              : natural := 11;
@@ -1138,7 +1052,7 @@ package can_fd_register_map is
   ------------------------------------------------------------------------------
   -- RX_STATUS register
   --
-  -- Information register one about FIFO Receive buffer.
+  -- Status register of RX Buffer FIFO.
   ------------------------------------------------------------------------------
   constant RXE_IND                : natural := 0;
   constant RXF_IND                : natural := 1;
@@ -1153,7 +1067,7 @@ package can_fd_register_map is
   ------------------------------------------------------------------------------
   -- RX_SETTINGS register
   --
-  -- Settings register for FIFO RX Buffer.
+  -- Settings of RX Buffer FIFO.
   ------------------------------------------------------------------------------
   constant RTSOP_IND             : natural := 16;
 
@@ -1167,7 +1081,7 @@ package can_fd_register_map is
   ------------------------------------------------------------------------------
   -- RX_DATA register
   --
-  -- Read data word from RX Buffer.
+  -- Read data from RX Buffer.
   ------------------------------------------------------------------------------
   constant RX_DATA_L              : natural := 0;
   constant RX_DATA_H             : natural := 31;
@@ -1207,14 +1121,14 @@ package can_fd_register_map is
   ------------------------------------------------------------------------------
   -- TX_COMMAND register
   --
-  -- Command register for TXT Buffers. Command is activated by setting TXC(E,R,A
-  -- ) bit to logic 1. Buffer that receives the command is selected by setting b
-  -- it TXBI(1..4) to logic 1. Command and index must be set by single access. R
-  -- egister is automatically erased upon the command completion and 0 does not 
-  -- need to be written. Reffer to description of TXT Buffer circuit for TXT buf
-  -- fer State machine.   If TXCE and TXCR are applied simultaneously, only TXCE
-  --  command is applied. If multiple commands are applied, only those which hav
-  -- e effect in immediate state of the buffer are applied on a buffer.
+  -- Command register for TXT Buffers. Command is activated by writing logic 1 t
+  -- o TXC(E,R,A) bit. TXT Buffer that receives the command is selected by setti
+  -- ng bit TXBI(1..4) to logic 1. Command and index must be set by single acces
+  -- s. Register is automatically erased upon the command completion. Reffer to 
+  -- description of TXT Buffer and TXT Buffer State machine. If TXCE and TXCR ar
+  -- e applied simultaneously, only TXCE command is applied. If multiple command
+  -- s are applied at once, only those which have effect in immediate state of T
+  -- XT Buffer are applied on the buffer.
   ------------------------------------------------------------------------------
   constant TXCE_IND               : natural := 0;
   constant TXCR_IND               : natural := 1;
@@ -1236,9 +1150,9 @@ package can_fd_register_map is
   ------------------------------------------------------------------------------
   -- TX_PRIORITY register
   --
-  -- Priority of the TXT Buffers in TX Arbitrator. Higher priority value signals
-  --  that buffer is selected earlier for transmission. If two buffers have equa
-  -- l priorities, the one with lower index is selected.
+  -- Priority of TXT Buffers in TX Arbitrator. Always highest priority TXT Buffe
+  -- r is selected for transmission. If two TXT Buffers have equal priorities, T
+  -- XT Buffer with lower index is selected.
   ------------------------------------------------------------------------------
   constant TXT1P_L                : natural := 0;
   constant TXT1P_H                : natural := 2;
@@ -1258,7 +1172,8 @@ package can_fd_register_map is
   ------------------------------------------------------------------------------
   -- ERR_CAPT register
   --
-  -- Last error frame capture.
+  -- Error code Capture register. Determines position within CAN frame where las
+  -- t error was detected.
   ------------------------------------------------------------------------------
   constant ERR_POS_L              : natural := 0;
   constant ERR_POS_H              : natural := 4;
@@ -1291,8 +1206,8 @@ package can_fd_register_map is
   ------------------------------------------------------------------------------
   -- ALC register
   --
-  -- Arbitration lost capture register. Determines bit position of last arbitrat
-  -- ion lost.
+  -- Arbitration Lost Capture register. Determines bit position of last arbitrat
+  -- ion loss. 
   ------------------------------------------------------------------------------
   constant ALC_BIT_L             : natural := 16;
   constant ALC_BIT_H             : natural := 20;
@@ -1300,11 +1215,12 @@ package can_fd_register_map is
   constant ALC_ID_FIELD_H        : natural := 23;
 
   -- "ALC_ID_FIELD" field enumerated values
-  constant ALC_BASE_ID : std_logic_vector(2 downto 0) := "000";
-  constant ALC_SRR_RTR : std_logic_vector(2 downto 0) := "001";
-  constant ALC_IDE : std_logic_vector(2 downto 0) := "010";
-  constant ALC_EXTENSION : std_logic_vector(2 downto 0) := "011";
-  constant ALC_RTR : std_logic_vector(2 downto 0) := "100";
+  constant ALC_RSVD : std_logic_vector(2 downto 0) := "000";
+  constant ALC_BASE_ID : std_logic_vector(2 downto 0) := "001";
+  constant ALC_SRR_RTR : std_logic_vector(2 downto 0) := "010";
+  constant ALC_IDE : std_logic_vector(2 downto 0) := "011";
+  constant ALC_EXTENSION : std_logic_vector(2 downto 0) := "100";
+  constant ALC_RTR : std_logic_vector(2 downto 0) := "101";
 
   -- ALC register reset values
   constant ALC_BIT_RSTVAL : std_logic_vector(4 downto 0) := "00000";
@@ -1313,6 +1229,11 @@ package can_fd_register_map is
   ------------------------------------------------------------------------------
   -- TRV_DELAY register
   --
+  -- Transceiver Delay register. When transmitting CAN FD Frame with Bit-rate sh
+  -- ift, transceiver delay is measured. After the measurement (after EDL bit), 
+  -- it can be read out from this register. The value in this register is valid 
+  -- since first transmission of CAN FD frame with bit rate shift. After each ne
+  -- xt measurement the value is updated.
   ------------------------------------------------------------------------------
   constant TRV_DELAY_VALUE_L      : natural := 0;
   constant TRV_DELAY_VALUE_H     : natural := 15;
@@ -1323,8 +1244,9 @@ package can_fd_register_map is
   ------------------------------------------------------------------------------
   -- SSP_CFG register
   --
-  -- Configuration of Secondary sampling point which is used for Transmitter in 
-  -- Data Bit-Rate. This register should be modified only when SETTINGS[ENA]=0.
+  -- Secondary Sampling Point configuration register. Used by Transmitter in Dat
+  -- a Bit-Rate for calculation of Secondary Sampling Point. This register shoul
+  -- d be modified only when SETTINGS[ENA]=0.
   ------------------------------------------------------------------------------
   constant SSP_OFFSET_L          : natural := 16;
   constant SSP_OFFSET_H          : natural := 22;
@@ -1332,18 +1254,18 @@ package can_fd_register_map is
   constant SSP_SRC_H             : natural := 25;
 
   -- "SSP_SRC" field enumerated values
-  constant SSP_SRC_MEASURED : std_logic_vector(1 downto 0) := "00";
-  constant SSP_SRC_MEAS_N_OFFSET : std_logic_vector(1 downto 0) := "01";
+  constant SSP_SRC_MEAS_N_OFFSET : std_logic_vector(1 downto 0) := "00";
+  constant SSP_SRC_NO_SSP : std_logic_vector(1 downto 0) := "01";
   constant SSP_SRC_OFFSET : std_logic_vector(1 downto 0) := "10";
 
   -- SSP_CFG register reset values
-  constant SSP_OFFSET_RSTVAL : std_logic_vector(6 downto 0) := "0000000";
+  constant SSP_OFFSET_RSTVAL : std_logic_vector(6 downto 0) := "0000100";
   constant SSP_SRC_RSTVAL : std_logic_vector(1 downto 0) := "00";
 
   ------------------------------------------------------------------------------
   -- RX_COUNTER register
   --
-  -- Counter for received frames to enable bus traffic measurement
+  -- Bus traffic RX counter.
   ------------------------------------------------------------------------------
   constant RX_COUNTER_VAL_L       : natural := 0;
   constant RX_COUNTER_VAL_H      : natural := 31;
@@ -1355,7 +1277,7 @@ package can_fd_register_map is
   ------------------------------------------------------------------------------
   -- TX_COUNTER register
   --
-  -- Counter for transmitted frames to enable bus traffic measurement.
+  -- Bus traffic TX counter.
   ------------------------------------------------------------------------------
   constant TX_COUNTER_VAL_L       : natural := 0;
   constant TX_COUNTER_VAL_H      : natural := 31;
@@ -1377,19 +1299,29 @@ package can_fd_register_map is
   constant PC_ARB_IND             : natural := 6;
   constant PC_CON_IND             : natural := 7;
   constant PC_DAT_IND             : natural := 8;
-  constant PC_CRC_IND             : natural := 9;
-  constant PC_EOF_IND            : natural := 10;
-  constant PC_OVR_IND            : natural := 11;
-  constant PC_INT_IND            : natural := 12;
+  constant PC_STC_IND             : natural := 9;
+  constant PC_CRC_IND            : natural := 10;
+  constant PC_CRCD_IND           : natural := 11;
+  constant PC_ACK_IND            : natural := 12;
+  constant PC_ACKD_IND           : natural := 13;
+  constant PC_EOF_IND            : natural := 14;
+  constant PC_INT_IND            : natural := 15;
+  constant PC_SUSP_IND           : natural := 16;
+  constant PC_OVR_IND            : natural := 17;
 
   -- DEBUG_REGISTER register reset values
   constant STUFF_COUNT_RSTVAL : std_logic_vector(2 downto 0) := "000";
   constant DESTUFF_COUNT_RSTVAL : std_logic_vector(2 downto 0) := "000";
   constant PC_ARB_RSTVAL      : std_logic := '0';
+  constant PC_ACKD_RSTVAL     : std_logic := '0';
+  constant PC_ACK_RSTVAL      : std_logic := '0';
+  constant PC_CRCD_RSTVAL     : std_logic := '0';
+  constant PC_STC_RSTVAL      : std_logic := '0';
   constant PC_CON_RSTVAL      : std_logic := '0';
   constant PC_DAT_RSTVAL      : std_logic := '0';
   constant PC_CRC_RSTVAL      : std_logic := '0';
   constant PC_EOF_RSTVAL      : std_logic := '0';
+  constant PC_SUSP_RSTVAL     : std_logic := '0';
   constant PC_OVR_RSTVAL      : std_logic := '0';
   constant PC_INT_RSTVAL      : std_logic := '0';
 
@@ -1554,231 +1486,5 @@ package can_fd_register_map is
   constant TXTB4_DATA_20_H       : natural := 31;
 
   -- TXTB4_DATA_20 register reset values
-
-  ------------------------------------------------------------------------------
-  -- LOG_TRIG_CONFIG register
-  --
-  -- Register for configuration of event logging triggering conditions. If Event
-  --  logger is in Ready state and any of triggering conditions appear it starts
-  --  recording the events on the bus (moves to Running state). Logic 1 in each 
-  -- bit means this triggering condition is valid.
-  ------------------------------------------------------------------------------
-  constant T_SOF_IND              : natural := 0;
-  constant T_ARBL_IND             : natural := 1;
-  constant T_REV_IND              : natural := 2;
-  constant T_TRV_IND              : natural := 3;
-  constant T_OVL_IND              : natural := 4;
-  constant T_ERR_IND              : natural := 5;
-  constant T_BRS_IND              : natural := 6;
-  constant T_USRW_IND             : natural := 7;
-  constant T_ARBS_IND             : natural := 8;
-  constant T_CTRS_IND             : natural := 9;
-  constant T_DATS_IND            : natural := 10;
-  constant T_CRCS_IND            : natural := 11;
-  constant T_ACKR_IND            : natural := 12;
-  constant T_ACKNR_IND           : natural := 13;
-  constant T_EWLR_IND            : natural := 14;
-  constant T_ERPC_IND            : natural := 15;
-  constant T_TRS_IND             : natural := 16;
-  constant T_RES_IND             : natural := 17;
-
-  -- LOG_TRIG_CONFIG register reset values
-  constant T_SOF_RSTVAL       : std_logic := '0';
-  constant T_ARBL_RSTVAL      : std_logic := '0';
-  constant T_REV_RSTVAL       : std_logic := '0';
-  constant T_TRV_RSTVAL       : std_logic := '0';
-  constant T_OVL_RSTVAL       : std_logic := '0';
-  constant T_RES_RSTVAL       : std_logic := '0';
-  constant T_ERR_RSTVAL       : std_logic := '0';
-  constant T_BRS_RSTVAL       : std_logic := '0';
-  constant T_USRW_RSTVAL      : std_logic := '0';
-  constant T_ARBS_RSTVAL      : std_logic := '0';
-  constant T_CTRS_RSTVAL      : std_logic := '0';
-  constant T_ACKNR_RSTVAL     : std_logic := '0';
-  constant T_EWLR_RSTVAL      : std_logic := '0';
-  constant T_ERPC_RSTVAL      : std_logic := '0';
-  constant T_DATS_RSTVAL      : std_logic := '0';
-  constant T_ACKR_RSTVAL      : std_logic := '0';
-  constant T_TRS_RSTVAL       : std_logic := '0';
-  constant T_CRCS_RSTVAL      : std_logic := '0';
-
-  ------------------------------------------------------------------------------
-  -- LOG_CAPT_CONFIG register
-  --
-  -- Register for configuring which events to capture by event logger into the l
-  -- ogger FIFO memory when event logger is running.
-  ------------------------------------------------------------------------------
-  constant C_SOF_IND              : natural := 0;
-  constant C_ARBL_IND             : natural := 1;
-  constant C_REV_IND              : natural := 2;
-  constant C_TRV_IND              : natural := 3;
-  constant C_OVL_IND              : natural := 4;
-  constant C_ERR_IND              : natural := 5;
-  constant C_BRS_IND              : natural := 6;
-  constant C_ARBS_IND             : natural := 7;
-  constant C_CTRS_IND             : natural := 8;
-  constant C_DATS_IND             : natural := 9;
-  constant C_CRCS_IND            : natural := 10;
-  constant C_ACKR_IND            : natural := 11;
-  constant C_ACKNR_IND           : natural := 12;
-  constant C_EWLR_IND            : natural := 13;
-  constant C_ERC_IND             : natural := 14;
-  constant C_TRS_IND             : natural := 15;
-  constant C_RES_IND             : natural := 16;
-  constant C_SYNE_IND            : natural := 17;
-  constant C_STUFF_IND           : natural := 18;
-  constant C_DESTUFF_IND         : natural := 19;
-  constant C_OVR_IND             : natural := 20;
-
-  -- LOG_CAPT_CONFIG register reset values
-  constant C_SOF_RSTVAL       : std_logic := '0';
-  constant C_ARBL_RSTVAL      : std_logic := '0';
-  constant C_REV_RSTVAL       : std_logic := '0';
-  constant C_TRV_RSTVAL       : std_logic := '0';
-  constant C_OVL_RSTVAL       : std_logic := '0';
-  constant C_ERR_RSTVAL       : std_logic := '0';
-  constant C_BRS_RSTVAL       : std_logic := '0';
-  constant C_ARBS_RSTVAL      : std_logic := '0';
-  constant C_SYNE_RSTVAL      : std_logic := '0';
-  constant C_STUFF_RSTVAL     : std_logic := '0';
-  constant C_CTRS_RSTVAL      : std_logic := '0';
-  constant C_DESTUFF_RSTVAL   : std_logic := '0';
-  constant C_DATS_RSTVAL      : std_logic := '0';
-  constant C_TRS_RSTVAL       : std_logic := '0';
-  constant C_RES_RSTVAL       : std_logic := '0';
-  constant C_OVR_RSTVAL       : std_logic := '0';
-  constant C_CRCS_RSTVAL      : std_logic := '0';
-  constant C_ACKR_RSTVAL      : std_logic := '0';
-  constant C_ACKNR_RSTVAL     : std_logic := '0';
-  constant C_EWLR_RSTVAL      : std_logic := '0';
-  constant C_ERC_RSTVAL       : std_logic := '0';
-
-  ------------------------------------------------------------------------------
-  -- LOG_STATUS register
-  --
-  -- Status  register for Event logger.
-  ------------------------------------------------------------------------------
-  constant LOG_CFG_IND            : natural := 0;
-  constant LOG_RDY_IND            : natural := 1;
-  constant LOG_RUN_IND            : natural := 2;
-  constant LOG_EXIST_IND          : natural := 7;
-  constant LOG_SIZE_L             : natural := 8;
-  constant LOG_SIZE_H            : natural := 15;
-
-  -- LOG_STATUS register reset values
-  constant LOG_CFG_RSTVAL     : std_logic := '1';
-  constant LOG_RDY_RSTVAL     : std_logic := '0';
-  constant LOG_RUN_RSTVAL     : std_logic := '0';
-
-  ------------------------------------------------------------------------------
-  -- LOG_POINTERS register
-  --
-  -- Pointers to Logger RAM memory.
-  ------------------------------------------------------------------------------
-  constant LOG_WPP_L             : natural := 16;
-  constant LOG_WPP_H             : natural := 23;
-  constant LOG_RPP_L             : natural := 24;
-  constant LOG_RPP_H             : natural := 31;
-
-  -- LOG_POINTERS register reset values
-  constant LOG_WPP_RSTVAL : std_logic_vector(7 downto 0) := x"00";
-  constant LOG_RPP_RSTVAL : std_logic_vector(7 downto 0) := x"00";
-
-  ------------------------------------------------------------------------------
-  -- LOG_COMMAND register
-  --
-  -- Register for controlling the state machine of Event logger and read pointer
-  --  position. Every bit is active in logic 1.
-  ------------------------------------------------------------------------------
-  constant LOG_STR_IND            : natural := 0;
-  constant LOG_ABT_IND            : natural := 1;
-  constant LOG_UP_IND             : natural := 2;
-  constant LOG_DOWN_IND           : natural := 3;
-
-  -- LOG_COMMAND register reset values
-  constant LOG_STR_RSTVAL     : std_logic := '0';
-  constant LOG_ABT_RSTVAL     : std_logic := '0';
-  constant LOG_UP_RSTVAL      : std_logic := '0';
-  constant LOG_DOWN_RSTVAL    : std_logic := '0';
-
-  ------------------------------------------------------------------------------
-  -- LOG_CAPT_EVENT_1 register
-  --
-  -- First word of the captured event at read pointer position.
-  ------------------------------------------------------------------------------
-  constant EVENT_TS_48_16_L       : natural := 0;
-  constant EVENT_TS_48_16_H      : natural := 31;
-
-  -- LOG_CAPT_EVENT_1 register reset values
-  constant EVENT_TS_48_16_RSTVAL
-                 : std_logic_vector(31 downto 0) := x"00000000";
-
-  ------------------------------------------------------------------------------
-  -- LOG_CAPT_EVENT_2 register
-  --
-  -- Second word of the captured event at read pointer position.
-  ------------------------------------------------------------------------------
-  constant EVNT_TYPE_L            : natural := 0;
-  constant EVNT_TYPE_H            : natural := 4;
-  constant EVNT_DEN_L             : natural := 5;
-  constant EVNT_DEN_H             : natural := 7;
-  constant EVNT_DET_L             : natural := 8;
-  constant EVNT_DET_H            : natural := 12;
-  constant EVNT_DEA_L            : natural := 13;
-  constant EVNT_DEA_H            : natural := 15;
-  constant EVENT_TS_15_0_L       : natural := 16;
-  constant EVENT_TS_15_0_H       : natural := 31;
-
-  -- "EVNT_TYPE" field enumerated values
-  constant SOF_EVNT : std_logic_vector(4 downto 0) := "00001";
-  constant ARBL_EVNT : std_logic_vector(4 downto 0) := "00010";
-  constant FREC_EVNT : std_logic_vector(4 downto 0) := "00011";
-  constant TRANV_EVNT : std_logic_vector(4 downto 0) := "00100";
-  constant OVRL_EVNT : std_logic_vector(4 downto 0) := "00101";
-  constant ERR_EVNT : std_logic_vector(4 downto 0) := "00110";
-  constant BRS_EVNT : std_logic_vector(4 downto 0) := "00111";
-  constant ARBS_EVNT : std_logic_vector(4 downto 0) := "01000";
-  constant CONS_EVNT : std_logic_vector(4 downto 0) := "01001";
-  constant DATS_EVNT : std_logic_vector(4 downto 0) := "01010";
-  constant CRCS_EVNT : std_logic_vector(4 downto 0) := "01011";
-  constant ACKR_EVNT : std_logic_vector(4 downto 0) := "01100";
-  constant ACKN_EVNT : std_logic_vector(4 downto 0) := "01101";
-  constant EWLR_EVNT : std_logic_vector(4 downto 0) := "01110";
-  constant FCSC_EVNT : std_logic_vector(4 downto 0) := "01111";
-  constant TS_EVNT : std_logic_vector(4 downto 0) := "10000";
-  constant RS_EVNT : std_logic_vector(4 downto 0) := "10001";
-  constant SE_EVNT : std_logic_vector(4 downto 0) := "10010";
-  constant STF_EVNT : std_logic_vector(4 downto 0) := "10011";
-  constant DSTF_EVNT : std_logic_vector(4 downto 0) := "10100";
-  constant DOR_EVNT : std_logic_vector(4 downto 0) := "10101";
-
-  -- "EVNT_DET" field enumerated values
-  constant ISN_FDSTF : std_logic_vector(4 downto 0) := "00000";
-  constant ISN_FSTF : std_logic_vector(4 downto 0) := "00000";
-  constant BIT_ERR : std_logic_vector(4 downto 0) := "00001";
-  constant S_UP : std_logic_vector(4 downto 0) := "00001";
-  constant IS_SYNC : std_logic_vector(4 downto 0) := "00001";
-  constant IS_FDSTF : std_logic_vector(4 downto 0) := "00001";
-  constant IS_FSTF : std_logic_vector(4 downto 0) := "00001";
-  constant ST_ERR : std_logic_vector(4 downto 0) := "00010";
-  constant S_DOWN : std_logic_vector(4 downto 0) := "00010";
-  constant IS_PROP : std_logic_vector(4 downto 0) := "00010";
-  constant CRC_ERR : std_logic_vector(4 downto 0) := "00100";
-  constant IS_PH1 : std_logic_vector(4 downto 0) := "00100";
-  constant ACK_ERR : std_logic_vector(4 downto 0) := "01000";
-  constant IS_PH2 : std_logic_vector(4 downto 0) := "01000";
-  constant FRM_ERR : std_logic_vector(4 downto 0) := "10000";
-
-  -- "EVNT_DEA" field enumerated values
-  constant NO_SNC : std_logic_vector(2 downto 0) := "000";
-  constant HA_SNC : std_logic_vector(2 downto 0) := "001";
-  constant RE_SNC : std_logic_vector(2 downto 0) := "010";
-
-  -- LOG_CAPT_EVENT_2 register reset values
-  constant EVNT_TYPE_RSTVAL : std_logic_vector(4 downto 0) := "00000";
-  constant EVNT_DEN_RSTVAL : std_logic_vector(2 downto 0) := "000";
-  constant EVNT_DET_RSTVAL : std_logic_vector(4 downto 0) := "00000";
-  constant EVNT_DEA_RSTVAL : std_logic_vector(2 downto 0) := "000";
-  constant EVENT_TS_15_0_RSTVAL : std_logic_vector(15 downto 0) := x"0000";
 
 end package;

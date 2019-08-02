@@ -40,30 +40,25 @@
 --------------------------------------------------------------------------------
 
 --------------------------------------------------------------------------------
+-- Module:
+--  Frame filters for CAN RX frame.
+-- 
 -- Purpose:
---  Message filter for recieved data. Combinational circuit with valid data re-
---  gister at output of circuit. Filter identifier type, frame type are contro-
---  lled by drv_bus from registers. 13 bit and 29 bit filters can be compared.
---  If 13 bit filters are compared then MSB 16 bits in rec_ident_in has to be 
---  zeros. Also mask for the filter in case of 13-bit filter HAS to have 16 
---  uppest bits equal to zero! It is set by drv_bus signals from control regis-
---  ters. Filters  A,B,C,D are present. If input identifier matches at least one
+--  Filters out commands for RX Buffer based on value of received CAN Identifier.
+--  Filter identifier type, frame type are controlled by Driving Bus.
+--  11 bit and 29 bit filters can be compared. If 13 bit filters are compared,
+--  then MSB 18 bits in Received Identifier has to be zeros. Also mask for the 
+--  filter in case of 16-bit filter HAS to have 16 uppest bits equal to zero!
+--  Filters  A,B,C and Range are present. If input identifier matches at least one
 --  it is considered as valid. Frame type (CAN Basic, CAN Extended, CAN FD Basic)
---  are also selectable for filtering.
---------------------------------------------------------------------------------
--- Revision History:
---    July 2015   Created file
---    17.1.2016   Added ID change from register value to decimal value for range
---                filter comparison
---    1.6.2016    Fixed wrong enable decoding from driving bus signals! Filters
---                were disabled but
---                frame was anyway propagated to the output!
+--  are also selectable for filtering. Filters can be optionally left out from
+--  synthesis or disabled in runtime. If filters are disabled, no frame is
+--  filtered out.
 --------------------------------------------------------------------------------
 
 Library ieee;
 use ieee.std_logic_1164.all;
 use ieee.numeric_std.ALL;
-use ieee.math_real.ALL;
 
 Library work;
 use work.id_transfer.all;
@@ -72,7 +67,6 @@ use work.can_components.all;
 use work.can_types.all;
 use work.cmn_lib.all;
 use work.drv_stat_pkg.all;
-use work.endian_swap.all;
 use work.reduce_lib.all;
 
 use work.CAN_FD_register_map.all;
@@ -80,45 +74,78 @@ use work.CAN_FD_frame_format.all;
 
 entity frame_filters is
     generic(
-        -- Optional synthesis of received message filters
-        -- By default the behaviour is as if all the filters are present
-        constant sup_filtA          : boolean := true;
-        constant sup_filtB          : boolean := true;
-        constant sup_filtC          : boolean := true;
-        constant sup_range          : boolean := true
+        -- Reset polarity
+        G_RESET_POLARITY     : std_logic := '0';
+        
+        -- Support filter A
+        G_SUP_FILTA          : boolean := true;
+        
+        -- Support filter B
+        G_SUP_FILTB          : boolean := true;
+        
+        -- Support filter C
+        G_SUP_FILTC          : boolean := true;
+        
+        -- Support range filter
+        G_SUP_RANGE          : boolean := true
     );
     port(
         ------------------------------------------------------------------------
-        -- Clock an reset signals
+        -- Clock an Asynchronous reset
         ------------------------------------------------------------------------
-        signal clk_sys              : in std_logic; 	--System clock
-        signal res_n                : in std_logic;  --Async reset
-
-
-        ------------------------------------------------------------------------
-        -- Driving signals from CAN Core
-        ------------------------------------------------------------------------
-
-        -- Receieved identifier
-        signal rec_ident_in         : in  std_logic_vector(28 downto 0); 
-
-        -- Input message identifier type
-        -- (0-BASE Format, 1-Extended Format);
-        signal ident_type           : in  std_logic;
-
-        -- Input frame type (0-Normal CAN, 1- CAN FD) 
-        signal frame_type           : in  std_logic;
-
-        -- Identifier valid (active log 1)
-        signal rec_ident_valid      : in  std_logic;
-
-        -- Driving bus from registers
-        signal drv_bus              : in  std_logic_vector(1023 downto 0);
+        -- System clock
+        clk_sys              : in std_logic;
+        
+        -- Asynchronous reset
+        res_n                : in std_logic;
 
         ------------------------------------------------------------------------
-        -- Signal whenever identifier matches the filter identifiers
+        -- Memory registers interface
         ------------------------------------------------------------------------
-        signal out_ident_valid      : out   std_logic
+        -- Driving Bus
+        drv_bus              : in  std_logic_vector(1023 downto 0);
+
+        ------------------------------------------------------------------------
+        -- CAN Core interface
+        ------------------------------------------------------------------------
+        -- Receieved CAN ID
+        rec_ident            : in  std_logic_vector(28 downto 0); 
+
+        -- Received CAN ID type (0-Base Format, 1-Extended Format);
+        rec_ident_type       : in  std_logic;
+
+        -- Input frame type (0-CAN 2.0, 1- CAN FD) 
+        rec_frame_type       : in  std_logic;
+
+        -- Store Metadata in RX Buffer
+        store_metadata       : in  std_logic;
+
+        -- Command to store word of CAN Data
+        store_data           : in  std_logic;
+        
+        -- Received frame valid
+        rec_valid            : in  std_logic;
+        
+        -- Command to abort storing of RX frame (due to Error frame)
+        rec_abort            : in  std_logic;
+
+        ------------------------------------------------------------------------
+        -- Frame filters output
+        ------------------------------------------------------------------------
+        -- CAN ID passes the filters
+        ident_valid          : out   std_logic;
+        
+        -- Store Metadata in RX Buffer - Filtered
+        store_metadata_f     : out   std_logic;
+
+        -- Command to store word of CAN Data - Filtered
+        store_data_f         : out   std_logic;
+        
+        -- Received frame valid - Filtered
+        rec_valid_f          : out   std_logic;
+        
+        -- Command to abort storing of RX frame (due to Error frame) - Filtered
+        rec_abort_f          : out   std_logic
     );
 end entity;
   
@@ -200,12 +227,9 @@ architecture rtl of frame_filters is
     -- At least one filter output is valid
     signal min_one_filt_valid       :       std_logic;
 
-    ----------------------------------------------------------------------------
-    -- REGISTERS
-    ----------------------------------------------------------------------------
-
-    -- Register for valid output value
-    signal valid_reg                :       std_logic;  
+    -- Valid output value
+    signal ident_valid_d            :       std_logic;  
+    signal ident_valid_q            :       std_logic;  
  
 begin
 
@@ -244,7 +268,7 @@ begin
     ---------------------------------------------------------------------------
 
     -- Input frame type internal signal
-    int_data_ctrl               <= frame_type & ident_type;
+    int_data_ctrl               <= rec_frame_type & rec_ident_type;
     
     -- Decoder frame_type&ident_type to one-hot 
     with int_data_ctrl select int_data_type <=
@@ -272,74 +296,77 @@ begin
     ---------------------------------------------------------------------------
     -- Filter instances
     ---------------------------------------------------------------------------
-    bit_filter_A_comp : bit_filter
+    bit_filter_A_inst : bit_filter
     generic map(
-        width           => 29,
-        is_present      => sup_filtA
+        G_WIDTH           => 29,
+        G_IS_PRESENT      => G_SUP_FILTA
     )
     port map(
-        filter_mask     => drv_filter_A_mask,
-        filter_value    => drv_filter_A_bits,
-        filter_input    => rec_ident_in,
-        enable          => filter_A_enable,
-        valid           => int_filter_A_valid
+        filter_mask     => drv_filter_A_mask,       -- IN
+        filter_value    => drv_filter_A_bits,       -- IN
+        filter_input    => rec_ident,               -- IN
+        enable          => filter_A_enable,         -- IN
+        
+        valid           => int_filter_A_valid       -- OUT
     );
 
-    bit_filter_B_comp : bit_filter
+    bit_filter_B_inst : bit_filter
     generic map(
-        width           => 29,
-        is_present      => sup_filtB
+        G_WIDTH           => 29,
+        G_IS_PRESENT      => G_SUP_FILTB
     )
     port map(
-        filter_mask     => drv_filter_B_mask,
-        filter_value    => drv_filter_B_bits,
-        filter_input    => rec_ident_in,
-        enable          => filter_B_enable,
-        valid           => int_filter_B_valid
+        filter_mask     => drv_filter_B_mask,       -- IN
+        filter_value    => drv_filter_B_bits,       -- IN
+        filter_input    => rec_ident,               -- IN
+        enable          => filter_B_enable,         -- IN
+        
+        valid           => int_filter_B_valid       -- OUT
     );
 
-    bit_filter_C_comp : bit_filter
+    bit_filter_C_inst : bit_filter
     generic map(
-        width           => 29,
-        is_present      => sup_filtC
+        G_WIDTH           => 29,
+        G_IS_PRESENT      => G_SUP_FILTC
     )
     port map(
-        filter_mask     => drv_filter_C_mask,
-        filter_value    => drv_filter_C_bits,
-        filter_input    => rec_ident_in,
-        enable          => filter_C_enable,
-        valid           => int_filter_C_valid
+        filter_mask     => drv_filter_C_mask,       -- IN
+        filter_value    => drv_filter_C_bits,       -- IN
+        filter_input    => rec_ident,               -- IN
+        enable          => filter_C_enable,         -- IN
+        
+        valid           => int_filter_C_valid       -- OUT
     );
    
                  
-    range_filter_comp : range_filter
+    range_filter_inst : range_filter
     generic map(
-        width           => 29,
-        is_present      => sup_range
+        G_WIDTH           => 29,
+        G_IS_PRESENT      => G_SUP_RANGE
     )
     port map(
-        filter_upp_th   => drv_filter_ran_hi_th,
-        filter_low_th   => drv_filter_ran_lo_th,
-        filter_input    => rec_ident_in,
-        enable          => filter_range_enable,
-        valid           => int_filter_ran_valid
+        filter_upp_th   => drv_filter_ran_hi_th,    -- IN
+        filter_low_th   => drv_filter_ran_lo_th,    -- IN
+        filter_input    => rec_ident,               -- IN
+        enable          => filter_range_enable,     -- IN
+        
+        valid           => int_filter_ran_valid     -- OUT
     );
 
  
     ---------------------------------------------------------------------------
-    -- If no filter is supported then output should be determined just by
-    -- input, regardless of 'drv_filters_ena'! If Core is not synthesized, 
-    -- turning filters on should not affect the acceptance! Everyhting should
-    -- be affected!
+    -- If no filter is supported then Identifier is always valid, regardless
+    -- of 'drv_filters_ena'! If Core is not synthesized,  turning filters on
+    -- should not affect the acceptance! Everyhting should be affected!
     ---------------------------------------------------------------------------
-    filt_sup_gen_false : if (sup_filtA = false and sup_filtB = false and
-                             sup_filtC = false and sup_range = false) generate
-        valid_reg           <= rec_ident_valid;
+    filt_sup_gen_false : if (G_SUP_FILTA = false and G_SUP_FILTB = false and
+                             G_SUP_FILTC = false and G_SUP_RANGE = false) generate
+        ident_valid_d <= '1';
     end generate;
 
 
-    filt_sup_gen_true : if (sup_filtA = true or sup_filtB = true or
-                            sup_filtC = true or sup_range = true) generate
+    filt_sup_gen_true : if (G_SUP_FILTA = true or G_SUP_FILTB = true or
+                            G_SUP_FILTC = true or G_SUP_RANGE = true) generate
 
         min_one_filt_valid <= int_filter_A_valid   OR
                               int_filter_B_valid   OR
@@ -348,9 +375,9 @@ begin
 
         -- If received message is valid and at least one of the filters is  
         -- matching the message passed the filter.
-        valid_reg             <=  (rec_ident_valid AND min_one_filt_valid)
-                                  when (drv_filters_ena = '1')
-                                  else rec_ident_valid;
+        ident_valid_d <=  min_one_filt_valid when (drv_filters_ena = '1')
+                                             else
+                                         '1';
     end generate;
 
 
@@ -360,12 +387,32 @@ begin
     ----------------------------------------------------------------------------
     valid_reg_proc : process(res_n, clk_sys)
     begin
-        if (res_n = ACT_RESET) then
-            out_ident_valid   <= '0';
+        if (res_n = G_RESET_POLARITY) then
+            ident_valid_q <= '0';
         elsif rising_edge(clk_sys) then
-            out_ident_valid   <= valid_reg;
+            ident_valid_q   <= ident_valid_d;
         end if;
     end process valid_reg_proc;
+    
+    ---------------------------------------------------------------------------
+    -- Filtering RX Buffer commands
+    ---------------------------------------------------------------------------
+    store_metadata_f <= '1' when (store_metadata = '1' and ident_valid_q = '1')
+                            else
+                        '0';
 
-  
+    store_data_f <= '1' when (store_data = '1' and ident_valid_q = '1')
+                        else
+                    '0';
+
+    rec_valid_f <= '1' when (rec_valid = '1' and ident_valid_q = '1')
+                       else
+                   '0';
+
+    rec_abort_f <= '1' when (rec_abort = '1' and ident_valid_q = '1')
+                       else
+                   '0';
+                   
+    ident_valid <= ident_valid_q;
+
 end architecture;

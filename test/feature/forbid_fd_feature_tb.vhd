@@ -98,9 +98,7 @@ package body forbid_fd_feature is
         variable ID_1               :       natural := 1;
         variable ID_2               :       natural := 2;
 
-        variable mode               :       SW_mode := (false, false, false,
-                                             false, false, false, false, false,
-                                             false, false);
+        variable mode               :       SW_mode := SW_mode_rst_val;
         variable err_counters_1     :       SW_error_counters;
         variable err_counters_2     :       SW_error_counters;
     begin
@@ -126,7 +124,7 @@ package body forbid_fd_feature is
         CAN_generate_frame(rand_ctr, CAN_frame);
         CAN_frame.frame_format := FD_CAN;
         CAN_send_frame(CAN_frame, 1, ID_2, mem_bus(2), frame_sent);
-        CAN_wait_error_transmitted(ID_2, mem_bus(2));
+        CAN_wait_error_frame(ID_2, mem_bus(2));
         CAN_wait_bus_idle(ID_2, mem_bus(2));
 
         ------------------------------------------------------------------------
@@ -196,6 +194,7 @@ package body forbid_fd_feature is
             set_error_counters(err_counters_2, ID_1, mem_bus(1));
             set_error_counters(err_counters_2, ID_2, mem_bus(2));
         end if;
+
   end procedure;
 
 end package body;

@@ -34,74 +34,67 @@
 
 /* CAN_Registers memory map */
 enum ctu_can_fd_can_registers {
-	CTU_CAN_FD_DEVICE_ID              = 0x0,
-	CTU_CAN_FD_VERSION                = 0x2,
-	CTU_CAN_FD_MODE                   = 0x4,
-	CTU_CAN_FD_SETTINGS               = 0x6,
-	CTU_CAN_FD_STATUS                 = 0x8,
-	CTU_CAN_FD_COMMAND                = 0xc,
-	CTU_CAN_FD_INT_STAT              = 0x10,
-	CTU_CAN_FD_INT_ENA_SET           = 0x14,
-	CTU_CAN_FD_INT_ENA_CLR           = 0x18,
-	CTU_CAN_FD_INT_MASK_SET          = 0x1c,
-	CTU_CAN_FD_INT_MASK_CLR          = 0x20,
-	CTU_CAN_FD_BTR                   = 0x24,
-	CTU_CAN_FD_BTR_FD                = 0x28,
-	CTU_CAN_FD_EWL                   = 0x2c,
-	CTU_CAN_FD_ERP                   = 0x2d,
-	CTU_CAN_FD_FAULT_STATE           = 0x2e,
-	CTU_CAN_FD_RXC                   = 0x30,
-	CTU_CAN_FD_TXC                   = 0x32,
-	CTU_CAN_FD_ERR_NORM              = 0x34,
-	CTU_CAN_FD_ERR_FD                = 0x36,
-	CTU_CAN_FD_CTR_PRES              = 0x38,
-	CTU_CAN_FD_FILTER_A_MASK         = 0x3c,
-	CTU_CAN_FD_FILTER_A_VAL          = 0x40,
-	CTU_CAN_FD_FILTER_B_MASK         = 0x44,
-	CTU_CAN_FD_FILTER_B_VAL          = 0x48,
-	CTU_CAN_FD_FILTER_C_MASK         = 0x4c,
-	CTU_CAN_FD_FILTER_C_VAL          = 0x50,
-	CTU_CAN_FD_FILTER_RAN_LOW        = 0x54,
-	CTU_CAN_FD_FILTER_RAN_HIGH       = 0x58,
-	CTU_CAN_FD_FILTER_CONTROL        = 0x5c,
-	CTU_CAN_FD_FILTER_STATUS         = 0x5e,
-	CTU_CAN_FD_RX_MEM_INFO           = 0x60,
-	CTU_CAN_FD_RX_POINTERS           = 0x64,
-	CTU_CAN_FD_RX_STATUS             = 0x68,
-	CTU_CAN_FD_RX_SETTINGS           = 0x6a,
-	CTU_CAN_FD_RX_DATA               = 0x6c,
-	CTU_CAN_FD_TX_STATUS             = 0x70,
-	CTU_CAN_FD_TX_COMMAND            = 0x74,
-	CTU_CAN_FD_TX_PRIORITY           = 0x78,
-	CTU_CAN_FD_ERR_CAPT              = 0x7c,
-	CTU_CAN_FD_ALC                   = 0x7e,
-	CTU_CAN_FD_TRV_DELAY             = 0x80,
-	CTU_CAN_FD_SSP_CFG               = 0x82,
-	CTU_CAN_FD_RX_COUNTER            = 0x84,
-	CTU_CAN_FD_TX_COUNTER            = 0x88,
-	CTU_CAN_FD_DEBUG_REGISTER        = 0x8c,
-	CTU_CAN_FD_YOLO_REG              = 0x90,
-	CTU_CAN_FD_TIMESTAMP_LOW         = 0x94,
-	CTU_CAN_FD_TIMESTAMP_HIGH        = 0x98,
-	CTU_CAN_FD_TXTB1_DATA_1         = 0x100,
-	CTU_CAN_FD_TXTB1_DATA_2         = 0x104,
-	CTU_CAN_FD_TXTB1_DATA_20        = 0x14c,
-	CTU_CAN_FD_TXTB2_DATA_1         = 0x200,
-	CTU_CAN_FD_TXTB2_DATA_2         = 0x204,
-	CTU_CAN_FD_TXTB2_DATA_20        = 0x24c,
-	CTU_CAN_FD_TXTB3_DATA_1         = 0x300,
-	CTU_CAN_FD_TXTB3_DATA_2         = 0x304,
-	CTU_CAN_FD_TXTB3_DATA_20        = 0x34c,
-	CTU_CAN_FD_TXTB4_DATA_1         = 0x400,
-	CTU_CAN_FD_TXTB4_DATA_2         = 0x404,
-	CTU_CAN_FD_TXTB4_DATA_20        = 0x44c,
-	CTU_CAN_FD_LOG_TRIG_CONFIG      = 0x500,
-	CTU_CAN_FD_LOG_CAPT_CONFIG      = 0x504,
-	CTU_CAN_FD_LOG_STATUS           = 0x508,
-	CTU_CAN_FD_LOG_POINTERS         = 0x50a,
-	CTU_CAN_FD_LOG_COMMAND          = 0x50c,
-	CTU_CAN_FD_LOG_CAPT_EVENT_1     = 0x510,
-	CTU_CAN_FD_LOG_CAPT_EVENT_2     = 0x514,
+	CTU_CAN_FD_DEVICE_ID             = 0x0,
+	CTU_CAN_FD_VERSION               = 0x2,
+	CTU_CAN_FD_MODE                  = 0x4,
+	CTU_CAN_FD_SETTINGS              = 0x6,
+	CTU_CAN_FD_STATUS                = 0x8,
+	CTU_CAN_FD_COMMAND               = 0xc,
+	CTU_CAN_FD_INT_STAT             = 0x10,
+	CTU_CAN_FD_INT_ENA_SET          = 0x14,
+	CTU_CAN_FD_INT_ENA_CLR          = 0x18,
+	CTU_CAN_FD_INT_MASK_SET         = 0x1c,
+	CTU_CAN_FD_INT_MASK_CLR         = 0x20,
+	CTU_CAN_FD_BTR                  = 0x24,
+	CTU_CAN_FD_BTR_FD               = 0x28,
+	CTU_CAN_FD_EWL                  = 0x2c,
+	CTU_CAN_FD_ERP                  = 0x2d,
+	CTU_CAN_FD_FAULT_STATE          = 0x2e,
+	CTU_CAN_FD_RXC                  = 0x30,
+	CTU_CAN_FD_TXC                  = 0x32,
+	CTU_CAN_FD_ERR_NORM             = 0x34,
+	CTU_CAN_FD_ERR_FD               = 0x36,
+	CTU_CAN_FD_CTR_PRES             = 0x38,
+	CTU_CAN_FD_FILTER_A_MASK        = 0x3c,
+	CTU_CAN_FD_FILTER_A_VAL         = 0x40,
+	CTU_CAN_FD_FILTER_B_MASK        = 0x44,
+	CTU_CAN_FD_FILTER_B_VAL         = 0x48,
+	CTU_CAN_FD_FILTER_C_MASK        = 0x4c,
+	CTU_CAN_FD_FILTER_C_VAL         = 0x50,
+	CTU_CAN_FD_FILTER_RAN_LOW       = 0x54,
+	CTU_CAN_FD_FILTER_RAN_HIGH      = 0x58,
+	CTU_CAN_FD_FILTER_CONTROL       = 0x5c,
+	CTU_CAN_FD_FILTER_STATUS        = 0x5e,
+	CTU_CAN_FD_RX_MEM_INFO          = 0x60,
+	CTU_CAN_FD_RX_POINTERS          = 0x64,
+	CTU_CAN_FD_RX_STATUS            = 0x68,
+	CTU_CAN_FD_RX_SETTINGS          = 0x6a,
+	CTU_CAN_FD_RX_DATA              = 0x6c,
+	CTU_CAN_FD_TX_STATUS            = 0x70,
+	CTU_CAN_FD_TX_COMMAND           = 0x74,
+	CTU_CAN_FD_TX_PRIORITY          = 0x78,
+	CTU_CAN_FD_ERR_CAPT             = 0x7c,
+	CTU_CAN_FD_ALC                  = 0x7e,
+	CTU_CAN_FD_TRV_DELAY            = 0x80,
+	CTU_CAN_FD_SSP_CFG              = 0x82,
+	CTU_CAN_FD_RX_COUNTER           = 0x84,
+	CTU_CAN_FD_TX_COUNTER           = 0x88,
+	CTU_CAN_FD_DEBUG_REGISTER       = 0x8c,
+	CTU_CAN_FD_YOLO_REG             = 0x90,
+	CTU_CAN_FD_TIMESTAMP_LOW        = 0x94,
+	CTU_CAN_FD_TIMESTAMP_HIGH       = 0x98,
+	CTU_CAN_FD_TXTB1_DATA_1        = 0x100,
+	CTU_CAN_FD_TXTB1_DATA_2        = 0x104,
+	CTU_CAN_FD_TXTB1_DATA_20       = 0x14c,
+	CTU_CAN_FD_TXTB2_DATA_1        = 0x200,
+	CTU_CAN_FD_TXTB2_DATA_2        = 0x204,
+	CTU_CAN_FD_TXTB2_DATA_20       = 0x24c,
+	CTU_CAN_FD_TXTB3_DATA_1        = 0x300,
+	CTU_CAN_FD_TXTB3_DATA_2        = 0x304,
+	CTU_CAN_FD_TXTB3_DATA_20       = 0x34c,
+	CTU_CAN_FD_TXTB4_DATA_1        = 0x400,
+	CTU_CAN_FD_TXTB4_DATA_2        = 0x404,
+	CTU_CAN_FD_TXTB4_DATA_20       = 0x44c,
 };
 
 
@@ -137,10 +130,10 @@ union ctu_can_fd_mode_settings {
 		uint32_t stm                     : 1;
 		uint32_t afm                     : 1;
 		uint32_t fde                     : 1;
-		uint32_t rtrp                    : 1;
-		uint32_t tsm                     : 1;
+		uint32_t reserved_6_5            : 2;
 		uint32_t acf                     : 1;
-		uint32_t reserved_15_8           : 8;
+		uint32_t tstm                    : 1;
+		uint32_t reserved_15_9           : 7;
   /* SETTINGS */
 		uint32_t rtrle                   : 1;
 		uint32_t rtrth                   : 4;
@@ -155,10 +148,10 @@ union ctu_can_fd_mode_settings {
 		uint32_t ilbp                    : 1;
 		uint32_t rtrth                   : 4;
 		uint32_t rtrle                   : 1;
-		uint32_t reserved_15_8           : 8;
+		uint32_t reserved_15_9           : 7;
+		uint32_t tstm                    : 1;
 		uint32_t acf                     : 1;
-		uint32_t tsm                     : 1;
-		uint32_t rtrp                    : 1;
+		uint32_t reserved_6_5            : 2;
 		uint32_t fde                     : 1;
 		uint32_t afm                     : 1;
 		uint32_t stm                     : 1;
@@ -186,16 +179,6 @@ enum ctu_can_fd_mode_afm {
 enum ctu_can_fd_mode_fde {
 	FDE_DISABLE       = 0x0,
 	FDE_ENABLE        = 0x1,
-};
-
-enum ctu_can_fd_mode_rtrp {
-	RTR_EXTRA          = 0x0,
-	RTR_STANDARD       = 0x1,
-};
-
-enum ctu_can_fd_mode_tsm {
-	TSM_DISABLE       = 0x0,
-	TSM_ENABLE        = 0x1,
 };
 
 enum ctu_can_fd_mode_acf {
@@ -255,9 +238,8 @@ union ctu_can_fd_command {
 	uint32_t u32;
 	struct ctu_can_fd_command_s {
 #ifdef __LITTLE_ENDIAN_BITFIELD
-		uint32_t reserved_0              : 1;
+		uint32_t reserved_1_0            : 2;
   /* COMMAND */
-		uint32_t abt                     : 1;
 		uint32_t rrb                     : 1;
 		uint32_t cdo                     : 1;
 		uint32_t ercrst                  : 1;
@@ -271,8 +253,7 @@ union ctu_can_fd_command {
 		uint32_t ercrst                  : 1;
 		uint32_t cdo                     : 1;
 		uint32_t rrb                     : 1;
-		uint32_t abt                     : 1;
-		uint32_t reserved_0              : 1;
+		uint32_t reserved_1_0            : 2;
 #endif
 	} s;
 };
@@ -286,10 +267,10 @@ union ctu_can_fd_int_stat {
 		uint32_t txi                     : 1;
 		uint32_t ewli                    : 1;
 		uint32_t doi                     : 1;
-		uint32_t epi                     : 1;
+		uint32_t fcsi                    : 1;
 		uint32_t ali                     : 1;
 		uint32_t bei                     : 1;
-		uint32_t lfi                     : 1;
+		uint32_t ofi                     : 1;
 		uint32_t rxfi                    : 1;
 		uint32_t bsi                     : 1;
 		uint32_t rbnei                   : 1;
@@ -301,10 +282,10 @@ union ctu_can_fd_int_stat {
 		uint32_t rbnei                   : 1;
 		uint32_t bsi                     : 1;
 		uint32_t rxfi                    : 1;
-		uint32_t lfi                     : 1;
+		uint32_t ofi                     : 1;
 		uint32_t bei                     : 1;
 		uint32_t ali                     : 1;
-		uint32_t epi                     : 1;
+		uint32_t fcsi                    : 1;
 		uint32_t doi                     : 1;
 		uint32_t ewli                    : 1;
 		uint32_t txi                     : 1;
@@ -859,11 +840,12 @@ enum ctu_can_fd_err_capt_err_type {
 };
 
 enum ctu_can_fd_alc_alc_id_field {
-	ALC_BASE_ID         = 0x0,
-	ALC_SRR_RTR         = 0x1,
-	ALC_IDE             = 0x2,
-	ALC_EXTENSION       = 0x3,
-	ALC_RTR             = 0x4,
+	ALC_RSVD            = 0x0,
+	ALC_BASE_ID         = 0x1,
+	ALC_SRR_RTR         = 0x2,
+	ALC_IDE             = 0x3,
+	ALC_EXTENSION       = 0x4,
+	ALC_RTR             = 0x5,
 };
 
 union ctu_can_fd_trv_delay_ssp_cfg {
@@ -888,8 +870,8 @@ union ctu_can_fd_trv_delay_ssp_cfg {
 };
 
 enum ctu_can_fd_ssp_cfg_ssp_src {
-	SSP_SRC_MEASURED            = 0x0,
-	SSP_SRC_MEAS_N_OFFSET       = 0x1,
+	SSP_SRC_MEAS_N_OFFSET       = 0x0,
+	SSP_SRC_NO_SSP              = 0x1,
 	SSP_SRC_OFFSET              = 0x2,
 };
 
@@ -919,17 +901,27 @@ union ctu_can_fd_debug_register {
 		uint32_t pc_arb                  : 1;
 		uint32_t pc_con                  : 1;
 		uint32_t pc_dat                  : 1;
+		uint32_t pc_stc                  : 1;
 		uint32_t pc_crc                  : 1;
+		uint32_t pc_crcd                 : 1;
+		uint32_t pc_ack                  : 1;
+		uint32_t pc_ackd                 : 1;
 		uint32_t pc_eof                  : 1;
-		uint32_t pc_ovr                  : 1;
 		uint32_t pc_int                  : 1;
-		uint32_t reserved_31_13         : 19;
+		uint32_t pc_susp                 : 1;
+		uint32_t pc_ovr                  : 1;
+		uint32_t reserved_31_18         : 14;
 #else
-		uint32_t reserved_31_13         : 19;
-		uint32_t pc_int                  : 1;
+		uint32_t reserved_31_18         : 14;
 		uint32_t pc_ovr                  : 1;
+		uint32_t pc_susp                 : 1;
+		uint32_t pc_int                  : 1;
 		uint32_t pc_eof                  : 1;
+		uint32_t pc_ackd                 : 1;
+		uint32_t pc_ack                  : 1;
+		uint32_t pc_crcd                 : 1;
 		uint32_t pc_crc                  : 1;
+		uint32_t pc_stc                  : 1;
 		uint32_t pc_dat                  : 1;
 		uint32_t pc_con                  : 1;
 		uint32_t pc_arb                  : 1;
@@ -961,231 +953,6 @@ union ctu_can_fd_timestamp_high {
   /* TIMESTAMP_HIGH */
 		uint32_t timestamp_high         : 32;
 	} s;
-};
-
-union ctu_can_fd_log_trig_config {
-	uint32_t u32;
-	struct ctu_can_fd_log_trig_config_s {
-#ifdef __LITTLE_ENDIAN_BITFIELD
-  /* LOG_TRIG_CONFIG */
-		uint32_t t_sof                   : 1;
-		uint32_t t_arbl                  : 1;
-		uint32_t t_rev                   : 1;
-		uint32_t t_trv                   : 1;
-		uint32_t t_ovl                   : 1;
-		uint32_t t_err                   : 1;
-		uint32_t t_brs                   : 1;
-		uint32_t t_usrw                  : 1;
-		uint32_t t_arbs                  : 1;
-		uint32_t t_ctrs                  : 1;
-		uint32_t t_dats                  : 1;
-		uint32_t t_crcs                  : 1;
-		uint32_t t_ackr                  : 1;
-		uint32_t t_acknr                 : 1;
-		uint32_t t_ewlr                  : 1;
-		uint32_t t_erpc                  : 1;
-		uint32_t t_trs                   : 1;
-		uint32_t t_res                   : 1;
-		uint32_t reserved_31_18         : 14;
-#else
-		uint32_t reserved_31_18         : 14;
-		uint32_t t_res                   : 1;
-		uint32_t t_trs                   : 1;
-		uint32_t t_erpc                  : 1;
-		uint32_t t_ewlr                  : 1;
-		uint32_t t_acknr                 : 1;
-		uint32_t t_ackr                  : 1;
-		uint32_t t_crcs                  : 1;
-		uint32_t t_dats                  : 1;
-		uint32_t t_ctrs                  : 1;
-		uint32_t t_arbs                  : 1;
-		uint32_t t_usrw                  : 1;
-		uint32_t t_brs                   : 1;
-		uint32_t t_err                   : 1;
-		uint32_t t_ovl                   : 1;
-		uint32_t t_trv                   : 1;
-		uint32_t t_rev                   : 1;
-		uint32_t t_arbl                  : 1;
-		uint32_t t_sof                   : 1;
-#endif
-	} s;
-};
-
-union ctu_can_fd_log_capt_config {
-	uint32_t u32;
-	struct ctu_can_fd_log_capt_config_s {
-#ifdef __LITTLE_ENDIAN_BITFIELD
-  /* LOG_CAPT_CONFIG */
-		uint32_t c_sof                   : 1;
-		uint32_t c_arbl                  : 1;
-		uint32_t c_rev                   : 1;
-		uint32_t c_trv                   : 1;
-		uint32_t c_ovl                   : 1;
-		uint32_t c_err                   : 1;
-		uint32_t c_brs                   : 1;
-		uint32_t c_arbs                  : 1;
-		uint32_t c_ctrs                  : 1;
-		uint32_t c_dats                  : 1;
-		uint32_t c_crcs                  : 1;
-		uint32_t c_ackr                  : 1;
-		uint32_t c_acknr                 : 1;
-		uint32_t c_ewlr                  : 1;
-		uint32_t c_erc                   : 1;
-		uint32_t c_trs                   : 1;
-		uint32_t c_res                   : 1;
-		uint32_t c_syne                  : 1;
-		uint32_t c_stuff                 : 1;
-		uint32_t c_destuff               : 1;
-		uint32_t c_ovr                   : 1;
-		uint32_t reserved_31_21         : 11;
-#else
-		uint32_t reserved_31_21         : 11;
-		uint32_t c_ovr                   : 1;
-		uint32_t c_destuff               : 1;
-		uint32_t c_stuff                 : 1;
-		uint32_t c_syne                  : 1;
-		uint32_t c_res                   : 1;
-		uint32_t c_trs                   : 1;
-		uint32_t c_erc                   : 1;
-		uint32_t c_ewlr                  : 1;
-		uint32_t c_acknr                 : 1;
-		uint32_t c_ackr                  : 1;
-		uint32_t c_crcs                  : 1;
-		uint32_t c_dats                  : 1;
-		uint32_t c_ctrs                  : 1;
-		uint32_t c_arbs                  : 1;
-		uint32_t c_brs                   : 1;
-		uint32_t c_err                   : 1;
-		uint32_t c_ovl                   : 1;
-		uint32_t c_trv                   : 1;
-		uint32_t c_rev                   : 1;
-		uint32_t c_arbl                  : 1;
-		uint32_t c_sof                   : 1;
-#endif
-	} s;
-};
-
-union ctu_can_fd_log_status_log_pointers {
-	uint32_t u32;
-	struct ctu_can_fd_log_status_log_pointers_s {
-#ifdef __LITTLE_ENDIAN_BITFIELD
-  /* LOG_STATUS */
-		uint32_t log_cfg                 : 1;
-		uint32_t log_rdy                 : 1;
-		uint32_t log_run                 : 1;
-		uint32_t reserved_6_3            : 4;
-		uint32_t log_exist               : 1;
-		uint32_t log_size                : 8;
-  /* LOG_POINTERS */
-		uint32_t log_wpp                 : 8;
-		uint32_t log_rpp                 : 8;
-#else
-		uint32_t log_rpp                 : 8;
-		uint32_t log_wpp                 : 8;
-		uint32_t log_size                : 8;
-		uint32_t log_exist               : 1;
-		uint32_t reserved_6_3            : 4;
-		uint32_t log_run                 : 1;
-		uint32_t log_rdy                 : 1;
-		uint32_t log_cfg                 : 1;
-#endif
-	} s;
-};
-
-union ctu_can_fd_log_command {
-	uint32_t u32;
-	struct ctu_can_fd_log_command_s {
-#ifdef __LITTLE_ENDIAN_BITFIELD
-  /* LOG_COMMAND */
-		uint32_t log_str                 : 1;
-		uint32_t log_abt                 : 1;
-		uint32_t log_up                  : 1;
-		uint32_t log_down                : 1;
-		uint32_t reserved_31_4          : 28;
-#else
-		uint32_t reserved_31_4          : 28;
-		uint32_t log_down                : 1;
-		uint32_t log_up                  : 1;
-		uint32_t log_abt                 : 1;
-		uint32_t log_str                 : 1;
-#endif
-	} s;
-};
-
-union ctu_can_fd_log_capt_event_1 {
-	uint32_t u32;
-	struct ctu_can_fd_log_capt_event_1_s {
-  /* LOG_CAPT_EVENT_1 */
-		uint32_t event_ts_48_16         : 32;
-	} s;
-};
-
-union ctu_can_fd_log_capt_event_2 {
-	uint32_t u32;
-	struct ctu_can_fd_log_capt_event_2_s {
-#ifdef __LITTLE_ENDIAN_BITFIELD
-  /* LOG_CAPT_EVENT_2 */
-		uint32_t evnt_type               : 5;
-		uint32_t evnt_den                : 3;
-		uint32_t evnt_det                : 5;
-		uint32_t evnt_dea                : 3;
-		uint32_t event_ts_15_0          : 16;
-#else
-		uint32_t event_ts_15_0          : 16;
-		uint32_t evnt_dea                : 3;
-		uint32_t evnt_det                : 5;
-		uint32_t evnt_den                : 3;
-		uint32_t evnt_type               : 5;
-#endif
-	} s;
-};
-
-enum ctu_can_fd_log_capt_event_2_evnt_type {
-	SOF_EVNT         = 0x1,
-	ARBL_EVNT        = 0x2,
-	FREC_EVNT        = 0x3,
-	TRANV_EVNT       = 0x4,
-	OVRL_EVNT        = 0x5,
-	ERR_EVNT         = 0x6,
-	BRS_EVNT         = 0x7,
-	ARBS_EVNT        = 0x8,
-	CONS_EVNT        = 0x9,
-	DATS_EVNT        = 0xa,
-	CRCS_EVNT        = 0xb,
-	ACKR_EVNT        = 0xc,
-	ACKN_EVNT        = 0xd,
-	EWLR_EVNT        = 0xe,
-	FCSC_EVNT        = 0xf,
-	TS_EVNT         = 0x10,
-	RS_EVNT         = 0x11,
-	SE_EVNT         = 0x12,
-	STF_EVNT        = 0x13,
-	DSTF_EVNT       = 0x14,
-	DOR_EVNT        = 0x15,
-};
-
-enum ctu_can_fd_log_capt_event_2_evnt_det {
-	ISN_FDSTF       = 0x0,
-	ISN_FSTF        = 0x0,
-	BIT_ERR         = 0x1,
-	S_UP            = 0x1,
-	IS_SYNC         = 0x1,
-	IS_FDSTF        = 0x1,
-	IS_FSTF         = 0x1,
-	ST_ERR          = 0x2,
-	S_DOWN          = 0x2,
-	IS_PROP         = 0x2,
-	CRC_ERR         = 0x4,
-	IS_PH1          = 0x4,
-	ACK_ERR         = 0x8,
-	IS_PH2          = 0x8,
-	FRM_ERR        = 0x10,
-};
-
-enum ctu_can_fd_log_capt_event_2_evnt_dea {
-	NO_SNC       = 0x0,
-	HA_SNC       = 0x1,
-	RE_SNC       = 0x2,
 };
 
 #endif

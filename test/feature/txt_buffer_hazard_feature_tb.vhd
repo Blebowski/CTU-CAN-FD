@@ -100,18 +100,13 @@ package body txt_buffer_hazard_feature is
         variable wt                 :       time;
         variable bus_config         :       bit_time_config_type;
         variable still_tx           :       boolean := false;
-        variable PC_State           :       protocol_type;
         variable err_counters       :       SW_error_counters;
-        variable command            :       SW_command := (false, false, false);
+        variable command            :       SW_command := SW_command_rst_val;
         variable status             :       SW_status;
 	    variable txt_buf_state	    :	    SW_TXT_Buffer_state_type;	
   begin
         o.outcome := true;
 
-    -- Wait till Integration phase is over
-    for i in 0 to 3000 loop
-        wait until rising_edge(mem_bus(1).clk_sys);
-    end loop;
 
     -- Generate CAN frame
     CAN_generate_frame(rand_ctr, CAN_frame);

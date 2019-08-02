@@ -40,19 +40,16 @@
 --------------------------------------------------------------------------------
 
 --------------------------------------------------------------------------------
+-- Module:
+--  Bus traffic counters.
+--
 -- Purpose:
---  Counters for TX and RX frames. Two 32-bit counters are held. Single adder
---  is used and muxed between these two registers since these counters are
---  never supposed to be incremented simultaneously!
---------------------------------------------------------------------------------
--- Revision History:
---    24.12.2018  Created file
+--  Counts number of transmitted and received frames on CAN Bus.
 --------------------------------------------------------------------------------
 
 Library ieee;
 use ieee.std_logic_1164.all;
 use ieee.numeric_std.ALL;
-use ieee.math_real.ALL;
 
 Library work;
 use work.id_transfer.all;
@@ -61,77 +58,147 @@ use work.can_components.all;
 use work.can_types.all;
 use work.cmn_lib.all;
 use work.drv_stat_pkg.all;
-use work.endian_swap.all;
 use work.reduce_lib.all;
 
 use work.CAN_FD_register_map.all;
 use work.CAN_FD_frame_format.all;
 
 entity bus_traffic_counters is
+    generic(
+        -- Reset polarity
+        G_RESET_POLARITY       : std_logic := '0'
+    );
     port(
         ------------------------------------------------------------------------
-        -- System clock and Reset
+        -- System clock and Asynchronous Reset
         ------------------------------------------------------------------------
-        signal clk_sys                :in   std_logic;
-        signal res_n                  :in   std_logic;
+        -- System clock
+        clk_sys                :in   std_logic;
+        
+        -- Asynchronous Reset
+        res_n                  :in   std_logic;
 
-        -- Clear signals (used as async. reset, not preload to lower resource
-        -- usage)
-        signal clear_rx_ctr           :in   std_logic;
-        signal clear_tx_ctr           :in   std_logic;
+        ------------------------------------------------------------------------
+        -- Control signals
+        ------------------------------------------------------------------------
+        -- Clear RX Traffic counter (Glitch free)
+        clear_rx_ctr           :in   std_logic;
+        
+        -- Clear TX Traffic counter (Glitch free)
+        clear_tx_ctr           :in   std_logic;
 
-        -- Increment signals (upon sucesfull transmission or reception of frame)
-        signal inc_tx_ctr             :in   std_logic;
-        signal inc_rx_ctr             :in   std_logic;
+        -- Increment TX Traffic Counter
+        inc_tx_ctr             :in   std_logic;
+        
+        -- Increment RX Traffic Counter
+        inc_rx_ctr             :in   std_logic;
 
+        ------------------------------------------------------------------------
         -- Counter outputs
-        signal tx_ctr                 :out  std_logic_vector(31 downto 0);
-        signal rx_ctr                 :out  std_logic_vector(31 downto 0)
+        ------------------------------------------------------------------------
+        -- TX Traffic counter
+        tx_ctr                 :out  std_logic_vector(31 downto 0);
+        
+        -- RX Traffic counter
+        rx_ctr                 :out  std_logic_vector(31 downto 0)
     );
 end entity;
 
 architecture rtl of bus_traffic_counters is
 
-    signal tx_ctr_int                :     std_logic_vector(31 downto 0);
-    signal rx_ctr_int                :     std_logic_vector(31 downto 0);
+    signal tx_ctr_i          :     std_logic_vector(31 downto 0);
+    signal rx_ctr_i          :     std_logic_vector(31 downto 0);
 
     -- Input selector
-    signal sel                        :     std_logic;   
+    signal sel                 :     std_logic;   
 
     -- Selected value to increment
-    signal sel_value                  :     std_logic_vector(31 downto 0);
+    signal sel_value           :     unsigned(31 downto 0);
 
     -- Incremented value by 1
-    signal inc_value                  :     std_logic_vector(31 downto 0);
+    signal inc_value           :     unsigned(31 downto 0);
+    
+    -- Reset signals for counters (registered, to avoid glitches)
+    signal tx_ctr_rst_d        :     std_logic;
+    signal tx_ctr_rst_q        :     std_logic;
+    
+    signal rx_ctr_rst_d        :     std_logic;
+    signal rx_ctr_rst_q        :     std_logic;
 
 begin
 
-    tx_ctr <= tx_ctr_int;
-    rx_ctr <= rx_ctr_int;
+    tx_ctr <= tx_ctr_i;
+    rx_ctr <= rx_ctr_i;
 
     -- Input selector
     sel <= '1' when (inc_tx_ctr = '1') else
            '0';
 
     -- Multiplexor between TX and RX value to increment
-    sel_value <= tx_ctr_int when (sel = '1') else
-                 rx_ctr_int;
+    sel_value <= unsigned(tx_ctr_i) when (sel = '1') else
+                 unsigned(rx_ctr_i);
 
     -- Incremented value of either TX or RX counter
-    inc_value <= std_logic_vector(to_unsigned(
-                    to_integer(unsigned(sel_value)) + 1, sel_value'length));
+    inc_value <= sel_value + 1;
+    
+    ----------------------------------------------------------------------------
+    -- Reset registers
+    ----------------------------------------------------------------------------
+    tx_ctr_rst_d <= G_RESET_POLARITY when (res_n = G_RESET_POLARITY) else
+                    G_RESET_POLARITY when (clear_tx_ctr = '1') else
+                    (not G_RESET_POLARITY);
+    
+    rx_ctr_rst_d <= G_RESET_POLARITY when (res_n = G_RESET_POLARITY) else
+                    G_RESET_POLARITY when (clear_rx_ctr = '1') else
+                    (not G_RESET_POLARITY);                
+    
+    tx_ctr_res_inst : dff_arst
+    generic map(
+        G_RESET_POLARITY   => G_RESET_POLARITY,
+        G_RST_VAL          => '1'
+    )
+    port map(
+        -- Keep without reset! We can't use res_n to avoid reset recovery!
+        -- This does not mind, since stable value will be here one clock cycle
+        -- after reset by res_n.
+        arst               => '1',                  -- IN
+        clk                => clk_sys,              -- IN
+
+        input              => tx_ctr_rst_d,         -- IN
+        ce                 => '1',                  -- IN
+        
+        output             => tx_ctr_rst_q          -- OUT
+    );
+    
+    rx_ctr_res_inst : dff_arst
+    generic map(
+        G_RESET_POLARITY   => G_RESET_POLARITY,
+        G_RST_VAL          => '1'
+    )
+    port map(
+        -- Keep without reset! We can't use res_n to avoid reset recovery!
+        -- This does not mind, since stable value will be here one clock cycle
+        -- after reset by res_n.
+        arst               => '1',                  -- IN
+        clk                => clk_sys,              -- IN
+
+        input              => rx_ctr_rst_d,         -- IN
+        ce                 => '1',                  -- IN
+        
+        output             => rx_ctr_rst_q          -- OUT
+    );
 
     ----------------------------------------------------------------------------
     -- TX Counter register
     ----------------------------------------------------------------------------
-    tx_ctr_proc : process(clk_sys, res_n)
+    tx_ctr_proc : process(clk_sys, tx_ctr_rst_q)
     begin
-        if (res_n = ACT_RESET or clear_tx_ctr = '1') then
-            tx_ctr_int        <= (OTHERS => '0');
+        if (tx_ctr_rst_q = G_RESET_POLARITY) then
+            tx_ctr_i        <= (OTHERS => '0');
 
         elsif rising_edge(clk_sys) then
             if (inc_tx_ctr = '1') then
-                tx_ctr_int <= inc_value;
+                tx_ctr_i <= std_logic_vector(inc_value);
             end if;
         end if;
     end process;
@@ -140,24 +207,26 @@ begin
     ----------------------------------------------------------------------------
     -- RX Counter register
     ----------------------------------------------------------------------------
-    rx_ctr_proc : process(clk_sys, res_n)
+    rx_ctr_proc : process(clk_sys, rx_ctr_rst_q)
     begin
-        if (res_n = ACT_RESET or clear_rx_ctr = '1') then
-            rx_ctr_int        <= (OTHERS => '0');
+        if (rx_ctr_rst_q = G_RESET_POLARITY) then
+            rx_ctr_i        <= (OTHERS => '0');
 
         elsif rising_edge(clk_sys) then
             if (inc_rx_ctr = '1') then
-                rx_ctr_int <= inc_value;
+                rx_ctr_i <= std_logic_vector(inc_value);
             end if;
         end if;
     end process;
 
     ---------------------------------------------------------------------------
-    -- Assertion that both inputs are not active at the same time since only
-    -- single adder is used. This would corrupt counter values.
+    -- Assertions
     ---------------------------------------------------------------------------
-    assert not (inc_tx_ctr = '1' and inc_rx_ctr = '1') report
-        "RX frame counter and TX frame counter can't be incremented at once"
-        severity error;
+    -- psl default clock is rising_edge(clk_sys);
+    
+    -- psl no_simul_inc_tx_rx_asrt : assert never
+    -- (inc_tx_ctr = '1' and inc_rx_ctr = '1')
+    -- report "Simultaneous increment of TX and RX error traffic counter"
+    -- severity error;
 
 end architecture;

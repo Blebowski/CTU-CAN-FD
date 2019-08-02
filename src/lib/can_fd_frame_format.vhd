@@ -166,7 +166,7 @@ package can_fd_frame_format is
   ------------------------------------------------------------------------------
   -- IDENTIFIER_W register
   --
-  -- CAN Identifier
+  -- CAN Identifier.
   ------------------------------------------------------------------------------
   constant IDENTIFIER_EXT_L       : natural := 0;
   constant IDENTIFIER_EXT_H      : natural := 17;

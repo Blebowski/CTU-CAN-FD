@@ -98,9 +98,7 @@ package body bus_start_feature is
         variable ID_2           	:       natural := 2;
         variable CAN_frame          :       SW_CAN_frame_type;
         variable frame_sent         :       boolean := false;
-        variable mode               :       SW_mode := (false, false, false,
-                                                false, true, false, false,
-                                                false, false, false);
+        variable mode               :       SW_mode := SW_mode_rst_val;
         variable rx_state           :       SW_RX_Buffer_info;
     begin
         o.outcome := true;
@@ -129,12 +127,7 @@ package body bus_start_feature is
         ------------------------------------------------------------------------
         info("Turning ON Node 1.");
         CAN_turn_controller(true, ID_1, mem_bus(1));
-        while (protocol_type'VAL(to_integer(unsigned(
-                iout(1).stat_bus(STAT_PC_STATE_HIGH downto STAT_PC_STATE_LOW))))
-                /= sof)
-        loop
-            wait until rising_edge(mem_bus(1).clk_sys);
-        end loop;
+        CAN_wait_pc_state(pc_deb_arbitration, ID_1, mem_bus(1));
 
         ------------------------------------------------------------------------
         -- Modify frame to have ID 513, and insert it to Node 2 for transmission.
@@ -150,17 +143,10 @@ package body bus_start_feature is
         -- Generate ACK for Node 1, so that there will be for sure only 11
         -- consecutive recessive bits.
         ------------------------------------------------------------------------
-        while (protocol_type'VAL(to_integer(unsigned(
-                iout(1).stat_bus(STAT_PC_STATE_HIGH downto STAT_PC_STATE_LOW))))
-                /= delim_ack)
-        loop
-            wait until rising_edge(mem_bus(1).clk_sys);
-        end loop;
-
-        -- Assuming default timing configuration -> 200 cycles per Bit
-        -- Wait through CRC Delimiter + little bit
-        info("Started delim_ack");
-        wait_rand_cycles(rand_ctr, mem_bus(1).clk_sys, 209, 210);
+        CAN_wait_pc_state(pc_deb_ack, ID_1, mem_bus(1));
+        
+        -- Pull ACK low
+        info("Started ACK");
         info("Forcing ACK");
         so.bl_inject <= DOMINANT;
         so.bl_force  <= true;

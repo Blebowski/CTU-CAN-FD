@@ -191,7 +191,6 @@ timespec_sub (struct timespec *diff, const struct timespec *left,
     }
 }
 
-
 int main(int argc, char *argv[])
 {
     uintptr_t addr_base = 0;
@@ -201,6 +200,7 @@ int main(int argc, char *argv[])
     int gap = 1000;
     int bitrate = 1000000;
     int dbitrate = 0;
+    int tx_can_id = 0x1ff;
     bool do_periodic_transmit = false;
     bool transmit_fdf = false;
     bool loopback_mode = false;
@@ -211,7 +211,7 @@ int main(int argc, char *argv[])
     int c;
     char *e;
     const char *progname = argv[0];
-    while ((c = getopt(argc, argv, "i:a:g:b:B:fltThpr")) != -1) {
+    while ((c = getopt(argc, argv, "i:a:g:b:B:I:fltThpr")) != -1) {
         switch (c) {
             case 'i':
                 ifc = strtoul(optarg, &e, 0);
@@ -241,6 +241,12 @@ int main(int argc, char *argv[])
                 dbitrate = strtoul(optarg, &e, 0);
                 if (*e != '\0')
                     err(1, "-B expects a number");
+            break;
+
+            case 'I':
+                tx_can_id = strtoul(optarg, &e, 0);
+                if (*e != '\0')
+                    err(1, "-I expects a number");
             break;
 
             case 'l': loopback_mode = true; break;
@@ -402,7 +408,7 @@ int main(int argc, char *argv[])
 
     if (do_transmit) {
         struct canfd_frame txf;
-        txf.can_id = 0x1FF;
+        txf.can_id = tx_can_id;
         txf.flags = 0;
         //u8 d[] = {0xde, 0xad, 0xbe, 0xef};
         u8 d[] = {0xDE, 0xAD, 0xBE, 0xEF};
@@ -421,11 +427,16 @@ int main(int argc, char *argv[])
         union ctu_can_fd_rx_mem_info reg;
         reg.u32 = ctu_can_fd_read32(priv, CTU_CAN_FD_RX_MEM_INFO);
         u32 rxsz = reg.s.rx_buff_size - reg.s.rx_mem_free;
+        union ctu_can_fd_status status = ctu_can_get_status(priv);
+        union ctu_can_fd_err_capt_alc err_capt_alc;
+        union ctu_can_fd_int_stat int_stat = ctu_can_fd_int_sts(priv);
+        ctu_can_fd_int_clr(priv, int_stat);
+
 
         printf("%u RX frames, %u words", nrxf, rxsz);
-        printf(", status 0x%08hhx", ctu_can_fd_read32(priv, CTU_CAN_FD_STATUS));
+        printf(", status 0x%08hx", status.u32);
         printf(", settings 0x%04hhx", ctu_can_fd_read16(priv, CTU_CAN_FD_SETTINGS));
-        printf(", INT_STAT 0x%04hhx", ctu_can_fd_read16(priv, CTU_CAN_FD_INT_STAT));
+        printf(", INT_STAT 0x%04hx", int_stat.u32);
         printf(", INT_ENA_SET 0x%04hx", priv->read_reg(priv, CTU_CAN_FD_INT_ENA_SET));
         printf(", INT_MASK_SET 0x%04hx", priv->read_reg(priv, CTU_CAN_FD_INT_MASK_SET));
         printf(", TX_STATUS 0x%04hx", priv->read_reg(priv, CTU_CAN_FD_TX_STATUS));
@@ -433,6 +444,14 @@ int main(int argc, char *argv[])
         printf(", TRV_DELAY 0x%0hx", priv->read_reg(priv, CTU_CAN_FD_TRV_DELAY));
 
         printf("\n");
+
+        if (status.s.ewl) {
+            err_capt_alc = ctu_can_fd_read_err_capt_alc(priv);
+            printf("ERROR type %u pos %u ALC id_field %u bit %u\n",
+                err_capt_alc.s.err_type, err_capt_alc.s.err_pos,
+                err_capt_alc.s.alc_id_field, err_capt_alc.s.alc_bit);
+	}
+
         /*
         while (rxsz--) {
             u32 data = priv->read_reg(priv, CTU_CAN_FD_RX_DATA);
@@ -454,13 +473,12 @@ int main(int argc, char *argv[])
         if (do_periodic_transmit && (loop_cycle & 1)) {
 	    struct canfd_frame txf;
 	    memset(&txf, 0, sizeof(txf));
-            txf.can_id = 0x1FF;
+            txf.can_id = tx_can_id;
             txf.flags = 0;
 
             if (transmit_fdf) {
                 txf.flags |= CANFD_BRS;
                 u8 dfd[] = {0x11, 0x22, 0x33, 0x44, 0x55, 0x66, 0x77, 0x88, 0x99, 0xaa, 0xbb, 0xcc, 0xdd, 0xee};
-                txf.can_id = 0x123;
                 memcpy(txf.data, dfd, sizeof(dfd));
                 txf.len = sizeof(dfd);
 	    } else {

@@ -40,17 +40,18 @@
 --------------------------------------------------------------------------------
 
 --------------------------------------------------------------------------------
+-- Package:
+--  CAN types
+-- 
 -- Purpose:
 --  Package with type definitions for CTU CAN FD.
---------------------------------------------------------------------------------
--- Revision History:
---   28.12.2018   Created file, separated from "can_constants" package.
 --------------------------------------------------------------------------------
 
 Library ieee;
 use ieee.std_logic_1164.all;
 
 use work.can_constants.all;
+use work.can_config.all;
 
 package can_types is
 
@@ -58,74 +59,65 @@ package can_types is
     -- State Machine types
     ----------------------------------------------------------------------------
 
-    -- Error state of node
-    type error_state_type is (
-        error_active,
-        error_passive,
-        bus_off
+    -- Fault confinement state of node
+    type t_fault_conf_state is (
+        s_fc_err_active,
+        s_fc_err_passive,
+        s_fc_bus_off
     );
 
     -- Operation mode of the Node
-    type oper_mode_type is (
-        integrating,
-        idle,
-        transciever,
-        reciever
+    type t_operation_control_state is (
+        s_oc_off,
+        s_oc_idle,
+        s_oc_transmitter,
+        s_oc_receiver
     );
 
     -- Protocol control FSM
-    type protocol_type is (
-        sof,
-        arbitration,
-        control,
-        data,
-        crc,
-        delim_ack,
-        eof,
-        interframe,
-        overload,
-        error,
-        off
+    type t_protocol_control_state is (
+        s_pc_off,
+        s_pc_integrating,
+        s_pc_idle,
+        s_pc_sof,
+        s_pc_base_id,
+        s_pc_rtr_srr_r1,
+        s_pc_ide,
+        s_pc_ext_id,
+        s_pc_rtr_r1,
+        s_pc_edl_r1,
+        s_pc_r0_ext,
+        s_pc_r0_fd,
+        s_pc_edl_r0,
+        s_pc_brs,
+        s_pc_esi,
+        s_pc_dlc,
+        s_pc_data,
+        s_pc_stuff_count,
+        s_pc_crc,
+        s_pc_crc_delim,
+        s_pc_crc_delim_sec,
+        s_pc_ack,
+        s_pc_ack_sec,
+        s_pc_ack_delim,
+        s_pc_eof,
+        s_pc_intermission,
+        s_pc_suspend,
+        s_pc_reintegrating_wait,
+        s_pc_reintegrating,
+        s_pc_act_err_flag,
+        s_pc_pas_err_flag,
+        s_pc_err_delim_wait,
+        s_pc_err_delim,
+        s_pc_ovr_flag,
+        s_pc_ovr_delim_wait,
+        s_pc_ovr_delim
     );
 
-    -- Note: two bits are two bits between Base and Extended identifier
-    -- Note: one bit is the last remaining bit after the identifier extension
-    type arb_type is (
-        base_id,
-        two_bits,
-        ext_id,
-        one_bit
-    );
-
-    -- Within ISO CAN FD new field stuff count is needed!
-    type crc_type is(
-        stuff_count,
-        real_crc
-    );
-
-    -- Intermission field sub-State
-    type interm_spc_type is (
-        intermission,
-        suspend,
-        interm_idle
-    );
-
-    -- Error frame subtype
-    type err_frame_type is (
-        err_flg_sup,
-        err_delim
-    );
-
-    -- Overload frame subtype
-    type ovr_frame_type is (
-        ovr_flg_sup,
-        ovr_delim
-    );
-
-    type bit_time_type is (
-        tseg1,
-        tseg2,
-        reset
+    type t_bit_time is (
+        s_bt_tseg1,
+        s_bt_tseg2,
+        s_bt_reset
     );
 
     -- Logger state machine type 
@@ -136,34 +128,34 @@ package can_types is
     );
 
     -- RX Buffer loader type
-    type rx_buf_fsm_type is (
-        rxb_idle,
-        rxb_store_frame_format,
-        rxb_store_identifier,
-        rxb_store_beg_ts_low,
-        rxb_store_beg_ts_high,
-        rxb_store_end_ts_low,
-        rxb_store_end_ts_high,
-        rxb_store_data
+    type t_rx_buf_state is (
+        s_rxb_idle,
+        s_rxb_store_frame_format,
+        s_rxb_store_identifier,
+        s_rxb_skip_ts_low,
+        s_rxb_skip_ts_high,
+        s_rxb_store_end_ts_low,
+        s_rxb_store_end_ts_high,
+        s_rxb_store_data
     );
 
     -- TX arbitrator state type
-    type tx_arb_state_type is (
-        arb_sel_low_ts,
-        arb_sel_upp_ts,
-        arb_sel_ffw,
-        arb_locked
+    type t_tx_arb_state is (
+        s_arb_sel_low_ts,
+        s_arb_sel_upp_ts,
+        s_arb_sel_ffw,
+        s_arb_locked
     );
   
     -- TXT buffer state type
-    type txt_fsm_type is (
-        txt_empty,
-        txt_ready,
-        txt_tx_prog,
-        txt_ab_prog,
-        txt_ok,
-        txt_error,
-        txt_aborted
+    type t_txt_buf_state is (
+        s_txt_empty,
+        s_txt_ready,
+        s_txt_tx_prog,
+        s_txt_ab_prog,
+        s_txt_ok,
+        s_txt_error,
+        s_txt_aborted
     );
 
     ----------------------------------------------------------------------------
@@ -171,26 +163,26 @@ package can_types is
     ----------------------------------------------------------------------------
 
     -- Priorities of TXT Buffers
-    type txtb_priorities_type is array (0 to TXT_BUFFER_COUNT - 1) of
+    type t_txt_bufs_priorities is array (0 to C_TXT_BUFFER_COUNT - 1) of
         std_logic_vector(2 downto 0);
 
-    -- Memory outputs of TXT Buffer
-    type txtb_output_type is array (0 to TXT_BUFFER_COUNT - 1) of
+    -- Memory outputs of TXT Buffers
+    type t_txt_bufs_output is array (0 to C_TXT_BUFFER_COUNT - 1) of
         std_logic_vector(31 downto 0);
 
-    -- States of Buffer
-    type txtb_state_type is array (0 to TXT_BUFFER_COUNT - 1) of
+    -- States of Buffers
+    type t_txt_bufs_state is array (0 to C_TXT_BUFFER_COUNT - 1) of
         std_logic_vector(3 downto 0);
 
     -- SW commands
-    type txt_sw_cmd_type is record
+    type t_txtb_sw_cmd is record
         set_rdy   : std_logic;
         set_ety   : std_logic;
         set_abt   : std_logic;
     end record;
 
     -- HW commands
-    type txt_hw_cmd_type is record
+    type t_txtb_hw_cmd is record
         lock      : std_logic;
         unlock    : std_logic;
         valid     : std_logic;

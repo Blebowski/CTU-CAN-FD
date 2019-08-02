@@ -40,18 +40,18 @@
 --------------------------------------------------------------------------------
 
 --------------------------------------------------------------------------------
+-- Module:
+--  Range Filter for CAN identifiers.
+-- 
 -- Purpose:
---  Range Filter for CAN identifiers. Interprets input value as decimal value
---  and compares if it is in range given by upper and lower threshold.
---------------------------------------------------------------------------------
--- Revision History:
---    14.11.2018   Created file
+--  Filters out CAN identifier based on its decimal value. A CAN Identifier
+--  passes the filter when decimal value of Identifier is Higher or Equal than
+--  Lower thresholds and Lower or Equal than Higher threshold.
 --------------------------------------------------------------------------------
 
 Library ieee;
 use ieee.std_logic_1164.all;
 use ieee.numeric_std.ALL;
-use ieee.math_real.ALL;
 
 Library work;
 use work.id_transfer.all;
@@ -60,7 +60,6 @@ use work.can_components.all;
 use work.can_types.all;
 use work.cmn_lib.all;
 use work.drv_stat_pkg.all;
-use work.endian_swap.all;
 use work.reduce_lib.all;
 
 use work.CAN_FD_register_map.all;
@@ -69,37 +68,37 @@ use work.CAN_FD_frame_format.all;
 entity range_filter is
     generic(
         -- Filter width
-        constant width              :   natural;
+        G_WIDTH              :   natural;
 
         -- Filter presence
-        constant is_present         :   boolean        
+        G_IS_PRESENT         :   boolean        
     );
     port(
         -- Upper threshold of a filter
-        signal filter_upp_th        : in    std_logic_vector(width - 1 downto 0);
+        filter_upp_th      : in    std_logic_vector(G_WIDTH - 1 downto 0);
 
         -- Lower threshold of a filter
-        signal filter_low_th        : in    std_logic_vector(width - 1 downto 0);
+        filter_low_th      : in    std_logic_vector(G_WIDTH - 1 downto 0);
 
         -- Filter input
-        signal filter_input         : in    std_logic_vector(width - 1 downto 0);
+        filter_input       : in    std_logic_vector(G_WIDTH - 1 downto 0);
 
         -- Filter enable (output is stuck at zero when disabled)
-        signal enable               : in    std_logic;
+        enable             : in    std_logic;
 
         -- Filter output
-        signal valid                : out   std_logic
+        valid              : out   std_logic
     );
 end entity;
   
 architecture rtl of range_filter is
 
     -- Upper and lower threshold converted to unsigned values
-    signal upper_th_dec             :   natural range 0 to (2 ** width - 1);
-    signal lower_th_dec             :   natural range 0 to (2 ** width - 1);
+    signal upper_th_dec             :   natural range 0 to (2 ** G_WIDTH - 1);
+    signal lower_th_dec             :   natural range 0 to (2 ** G_WIDTH - 1);
 
     -- Filter input converted to unsigned value
-    signal value_dec                :   natural range 0 to (2 ** width - 1);
+    signal value_dec                :   natural range 0 to (2 ** G_WIDTH - 1);
 
 begin
 
@@ -110,16 +109,15 @@ begin
     ID_reg_to_decimal(filter_low_th, lower_th_dec);
 
     -- Filter implementation
-    gen_filt_pos : if (is_present = true) generate
+    gen_filt_pos : if (G_IS_PRESENT = true) generate
         valid  <= '1' when ((value_dec <= upper_th_dec) and
                             (value_dec >= lower_th_dec) and
                             (enable = '1'))
                       else
                   '0';
     end generate;
-
   
-    gen_filtRan_neg : if (is_present = false) generate
+    gen_filtRan_neg : if (G_IS_PRESENT = false) generate
         valid <= '0';
     end generate;
 

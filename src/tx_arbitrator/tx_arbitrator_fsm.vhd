@@ -40,16 +40,16 @@
 --------------------------------------------------------------------------------
 
 --------------------------------------------------------------------------------
+-- Module:
+--  TX arbitrator FSM.
+-- 
 -- Purpose:
---  TX Arbitrator FSM. Reacts on change of selected TXT Buffer, drives loading
---  Timestamp (Timestamp words), metadata (Frame format word) from TXT Buffer.
---  Reacts on LOCK command from CAN Core which locks TXT Buffer for
---  transmission.
+--  Controls selection of CAN frame, comparison of its timestamp and Loading
+--  CAN frame metadata to output. When selected TXT Buffer is changed, selection
+--  process is restarted.  When LOCK command from CAN Core is issued, locks TXT
+--  Buffer for transmission.
 --  Each FSM state lasts two clock cycles (wait state is inserted), to give
 --  time to TXT Buffer RAM for data read.
---------------------------------------------------------------------------------
--- Revision History:
---    10.11.2018   Created file
 --------------------------------------------------------------------------------
 
 Library ieee;
@@ -64,201 +64,215 @@ use work.can_components.all;
 use work.can_types.all;
 use work.cmn_lib.all;
 use work.drv_stat_pkg.all;
-use work.endian_swap.all;
 use work.reduce_lib.all;
 
 use work.CAN_FD_register_map.all;
 use work.CAN_FD_frame_format.all;
 
 entity tx_arbitrator_fsm is
-  port( 
-    ------------------------
-    -- Clock and reset    
-    ------------------------
-    signal clk_sys                :in  std_logic;
-    signal res_n                  :in  std_logic;
-    
-    -------------------------------
-    -- Priority decoder interface
-    -------------------------------
-
-    -- TXT Buffer is valid and selected for transmission
-    signal select_buf_avail       :in  std_logic;
-
-    -- Priority decoder output has changed. TXT Arbitrator FSM has to restart
-    -- selection process.
-    signal select_index_changed   :in  std_logic;
-
-    -----------------------------------
-    -- Timestamp comparison interface
-    -----------------------------------
-    signal timestamp_valid        :in  std_logic;
-
-    -------------------------------
-    -- CAN Core Interface
-    -------------------------------
-
-    -- Commands from CAN Core for manipulation of TXT Buffers
-    signal txt_hw_cmd             :in txt_hw_cmd_type;  
-
-    ---------------------------------------------------------------------------
-    -- TX Arbitrator FSM outputs
-    ---------------------------------------------------------------------------
-
-    -- Load Timestamp lower word to metadata pointer
-    signal load_ts_lw_addr        :out std_logic;
-
-    -- Load Timestamp upper word to metadata pointer
-    signal load_ts_uw_addr        :out std_logic;
-
-    -- Load Frame format word to metadata pointer
-    signal load_ffmt_w_addr       :out std_logic;
-
-    -- Store timestamp lower word
-    signal store_ts_l_w           :out std_logic;
-
-    -- Store metadata (Frame format word) on the output of TX Arbitrator
-    signal store_md_w             :out std_logic;
-
-    -- Signals that TX Arbitrator is locked (CAN Core is transmitting from TXT
-    -- Buffer)
-    signal tx_arb_locked          :out std_logic;
-
-    -- Store last locked TXT Buffer index
-    signal store_last_txtb_index  :out std_logic;
-
-    -- Set valid selected buffer on TX Arbitrator output.
-    signal frame_valid_com_set    :out std_logic;    
-
-    -- Clear valid selected buffer on TX Arbitrator output.
-    signal frame_valid_com_clear  :out std_logic 
+    generic(
+        -- Reset polarity
+        G_RESET_POLARITY       :in  std_logic := '0'
+    );
+    port( 
+        -----------------------------------------------------------------------
+        -- Clock and Asynchronous reset
+        -----------------------------------------------------------------------
+        -- System clock
+        clk_sys                :in  std_logic;
+        
+        -- Asynchronous reset
+        res_n                  :in  std_logic;
+        
+        -----------------------------------------------------------------------
+        -- Priority decoder interface
+        -----------------------------------------------------------------------
+        -- TXT Buffer is valid and selected for transmission
+        select_buf_avail       :in  std_logic;
+        
+        -- Priority decoder output has changed. TXT Arbitrator FSM has to restart
+        -- selection process.
+        select_index_changed   :in  std_logic;
+        
+        -----------------------------------------------------------------------
+        -- Timestamp comparison interface
+        -----------------------------------------------------------------------
+        timestamp_valid        :in  std_logic;
+        
+        -----------------------------------------------------------------------
+        -- CAN Core Interface
+        -----------------------------------------------------------------------
+        -- HW Commands from CAN Core for manipulation with TXT Buffers 
+        txtb_hw_cmd             :in t_txtb_hw_cmd;  
+        
+        ---------------------------------------------------------------------------
+        -- TX Arbitrator FSM outputs
+        ---------------------------------------------------------------------------
+        -- Load Timestamp lower word to metadata pointer
+        load_ts_lw_addr        :out std_logic;
+        
+        -- Load Timestamp upper word to metadata pointer
+        load_ts_uw_addr        :out std_logic;
+        
+        -- Load Frame format word to metadata pointer
+        load_ffmt_w_addr       :out std_logic;
+        
+        -- Store timestamp lower word
+        store_ts_l_w           :out std_logic;
+        
+        -- Store metadata (Frame format word) on the output of TX Arbitrator
+        store_md_w             :out std_logic;
+        
+        -- Signals that TX Arbitrator is locked (CAN Core is transmitting from TXT
+        -- Buffer)
+        tx_arb_locked          :out std_logic;
+        
+        -- Store last locked TXT Buffer index
+        store_last_txtb_index  :out std_logic;
+        
+        -- Set valid selected buffer on TX Arbitrator output.
+        frame_valid_com_set    :out std_logic;    
+        
+        -- Clear valid selected buffer on TX Arbitrator output.
+        frame_valid_com_clear  :out std_logic 
   );
-    
 end entity;
 
 architecture rtl of tx_arbitrator_fsm is
 
   -- TX Arbitrator FSM state
-  signal tx_arb_fsm               : tx_arb_state_type;  
+  signal curr_state               : t_tx_arb_state;
+  signal next_state               : t_tx_arb_state;
+  signal tx_arb_fsm_ce            : std_logic;
  
-  signal fsm_wait_state           : boolean;
+  -- Wait state DFF
+  signal fsm_wait_state_d         : std_logic;
+  signal fsm_wait_state_q         : std_logic;
 
 begin
   
-  ------------------------------------------------------------------------------
-  -- State machine driving selection of highest priority buffer and load of the
-  -- metadata and identifier words on parallel outputs.
-  ------------------------------------------------------------------------------
-  tx_arb_fsm_proc : process(clk_sys, res_n)
-  begin
-    if (res_n = ACT_RESET) then
-        tx_arb_fsm            <= arb_sel_low_ts;
-      
-        fsm_wait_state        <= true;
-        
-    elsif rising_edge(clk_sys) then
-      
+    ----------------------------------------------------------------------------
+    -- State machine driving selection of highest priority buffer and load of 
+    -- the metadata and identifier words on parallel outputs.
+    ----------------------------------------------------------------------------
+    tx_arb_fsm_proc : process(curr_state, txtb_hw_cmd, select_buf_avail, 
+        select_index_changed, timestamp_valid, fsm_wait_state_q)
+    begin
         -- Keeping signals values to avoid latch inference
-        tx_arb_fsm                <= tx_arb_fsm;
-        fsm_wait_state            <= fsm_wait_state;
-
-        ------------------------------------------------------------------------
-        -- Finishing the transmission = unlocking the buffer
-        ------------------------------------------------------------------------      
-        if (tx_arb_fsm = arb_locked) then
-            if (txt_hw_cmd.unlock = '1') then
-                tx_arb_fsm            <= arb_sel_low_ts;
-                fsm_wait_state        <= true;
-            end if;
-
-        ------------------------------------------------------------------------
-        -- Locking the buffer
-        ------------------------------------------------------------------------
-        elsif (txt_hw_cmd.lock     = '1') then
-            tx_arb_fsm              <= arb_locked;
-            
-        ------------------------------------------------------------------------
-        -- Keep the arbitrator in selection of the lowest word as
-        -- long as there is no buffer with valid frame.
-        -- If Selected buffer changes, restart the selection.
-        ------------------------------------------------------------------------
-        elsif ((select_buf_avail = '0')) then
-            tx_arb_fsm              <= arb_sel_low_ts;
-            fsm_wait_state          <= true;
-            
-        ------------------------------------------------------------------------
-        -- Selected buffer index on the output of priority decoder has changed
-        -- during selection. Restart the selection!
-        ------------------------------------------------------------------------
-        elsif (select_index_changed = '1') then
-            tx_arb_fsm              <= arb_sel_low_ts;
-            fsm_wait_state          <= true;
-
-        else
-      
-            -------------------------------------------------------------------
-            -- Clear the wait state if set.
-            -------------------------------------------------------------------
-            if (fsm_wait_state) then
-                fsm_wait_state <= false;
-            end if;
-
-            case tx_arb_fsm is   
-
-            --------------------------------------------------------------------
-            -- Polling on Low timestamp of the highest prority TXT buffer
-            --------------------------------------------------------------------
-            when arb_sel_low_ts =>
-                if (not fsm_wait_state) then
-                    tx_arb_fsm         <= arb_sel_upp_ts;
-                    fsm_wait_state     <= true;
-                end if;        
-
-            --------------------------------------------------------------------
-            -- Compare the timestamps,
-            -- now output of TXT Buffers give the upper timestamp
-            -- Lower timestamp is stored from previous state.
-            --------------------------------------------------------------------  
-            when arb_sel_upp_ts =>
-                if (not fsm_wait_state) then
-                    if (timestamp_valid = '1') then
-                        tx_arb_fsm         <= arb_sel_ffw;
-                        fsm_wait_state     <= true;
-                    end if;
-                end if;
-
-            --------------------------------------------------------------------
-            -- Store the Frame format info to the output. We can do this
-            -- directly, since it is all done in one clock cycle!
-            -- Buffer input did not change during the whole selection, we 
-            -- can store its index to the output and us it for access from 
-            -- CAN Core.
-            --------------------------------------------------------------------  
-            when arb_sel_ffw =>
-                if (not fsm_wait_state) then
-                    tx_arb_fsm               <= arb_sel_low_ts;
-                    fsm_wait_state           <= true;
-                end if;
-
-            --------------------------------------------------------------------
-            -- By default only arb_locked is here, but it is checked before
-            -- next state decoder!
-            --------------------------------------------------------------------  
-            when others =>
-            end case;
+        next_state                <= curr_state;
         
-      end if;
-      
-    end if;
-  end process;
+        case curr_state is   
 
+        --------------------------------------------------------------------
+        -- Polling on Low timestamp of the highest prority TXT buffer.
+        --------------------------------------------------------------------
+        when s_arb_sel_low_ts =>
+            if (txtb_hw_cmd.lock = '1') then
+                next_state         <= s_arb_locked;
+            elsif ((select_buf_avail = '0') or 
+                   (select_index_changed = '1'))
+            then
+                next_state         <= s_arb_sel_low_ts; 
+            elsif (fsm_wait_state_q = '0') then
+                next_state         <= s_arb_sel_upp_ts;
+            end if;        
+
+        --------------------------------------------------------------------
+        -- Compare the timestamps,
+        -- now output of TXT Buffers give the upper timestamp
+        -- Lower timestamp is stored from previous state.
+        --------------------------------------------------------------------  
+        when s_arb_sel_upp_ts =>
+             if (txtb_hw_cmd.lock = '1') then
+                next_state         <= s_arb_locked;
+            elsif ((select_buf_avail = '0') or 
+                   (select_index_changed = '1'))
+            then
+                next_state         <= s_arb_sel_low_ts; 
+            elsif (fsm_wait_state_q = '0') then
+                if (timestamp_valid = '1') then
+                    next_state     <= s_arb_sel_ffw;
+                end if;
+            end if;
+
+        --------------------------------------------------------------------
+        -- Store the Frame format info to the output. We can do this
+        -- directly, since it is all done in one clock cycle!
+        -- Buffer input did not change during the whole selection, we 
+        -- can store its index to the output and us it for access from 
+        -- CAN Core.
+        --------------------------------------------------------------------  
+        when s_arb_sel_ffw =>
+             if (txtb_hw_cmd.lock = '1') then
+                next_state         <= s_arb_locked;
+            elsif ((select_buf_avail = '0') or 
+                   (select_index_changed = '1'))
+            then
+                next_state         <= s_arb_sel_low_ts; 
+            elsif (fsm_wait_state_q = '0') then
+                next_state         <= s_arb_sel_low_ts;
+            end if;
+
+        --------------------------------------------------------------------
+        -- Finishing the transmission = unlocking the buffer 
+        --------------------------------------------------------------------  
+        when s_arb_locked =>
+            if (txtb_hw_cmd.unlock = '1') then
+                next_state         <= s_arb_sel_low_ts;
+            end if;
+        end case;
+    end process;
+    
+    ---------------------------------------------------------------------------
+    -- State register
+    ---------------------------------------------------------------------------
+    tx_arb_fsm_state_reg : process(clk_sys, res_n)
+    begin
+        if (res_n = G_RESET_POLARITY) then
+            curr_state <= s_arb_sel_low_ts;
+        elsif (rising_edge(clk_sys)) then
+            if (tx_arb_fsm_ce = '1') then
+                curr_state <= next_state;
+            end if;
+        end if;
+    end process;
+    
+    -- State transition enable
+    tx_arb_fsm_ce <= '1' when (curr_state /= next_state) else
+                     '0';
+
+    ---------------------------------------------------------------------------
+    -- Wait state DFF. Insert wait state after each State change. This will halt
+    -- operation until data are properly loaded from RAM when loading Timestamp
+    -- words from TXT Buffer. Insert wait state when we are selecting low
+    -- timestamp word and selected buffer changes. We must also wait, since
+    -- there might be other buffer selected and thus other lower timestamp
+    -- loaded!
+    ---------------------------------------------------------------------------
+    fsm_wait_state_d <= '1' when (curr_state /= next_state)
+                            else
+                        '1' when ((select_buf_avail = '0') or 
+                                  (select_index_changed = '1')) and
+                                  (curr_state = s_arb_sel_low_ts)
+                            else
+                        '0';
+    
+    fsm_wait_state_proc : process(clk_sys, res_n)
+    begin
+        if (res_n = G_RESET_POLARITY) then
+            fsm_wait_state_q <= '1';
+        elsif (rising_edge(clk_sys)) then
+            fsm_wait_state_q <= fsm_wait_state_d;
+        end if;
+    end process;
+    
 
   ------------------------------------------------------------------------------
   -- TX Arbitrator FSM outputs
   ------------------------------------------------------------------------------
-  tx_arb_fsm_out_proc : process(tx_arb_fsm, fsm_wait_state, timestamp_valid,
+  tx_arb_fsm_out_proc : process(curr_state, fsm_wait_state_q, timestamp_valid,
                                 select_index_changed, select_buf_avail,
-                                txt_hw_cmd)
+                                txtb_hw_cmd)
   begin
     
     -- By default all outputs are inactive
@@ -277,8 +291,8 @@ begin
     -- Finishing the transmission = unlocking the Buffer -> Signal
     -- start of new buffer selection, first Timestamp Low word is loaded.
     ------------------------------------------------------------------------      
-    if (tx_arb_fsm = arb_locked) then
-        if (txt_hw_cmd.unlock = '1') then
+    if (curr_state = s_arb_locked) then
+        if (txtb_hw_cmd.unlock = '1') then
             load_ts_lw_addr <= '1';
         else
             tx_arb_locked   <= '1';
@@ -287,7 +301,7 @@ begin
     ------------------------------------------------------------------------
     -- Locking the buffer, only store the last TXT Buffer index!
     ------------------------------------------------------------------------      
-    elsif (txt_hw_cmd.lock = '1') then
+    elsif (txtb_hw_cmd.lock = '1') then
         store_last_txtb_index   <= '1';
 
     ------------------------------------------------------------------------
@@ -297,17 +311,31 @@ begin
     ------------------------------------------------------------------------
     elsif (select_buf_avail = '0' or select_index_changed = '1') then
         load_ts_lw_addr         <= '1';
-        frame_valid_com_clear   <= '1';
-
+        
+        -----------------------------------------------------------------------
+        -- Clear the buffer only when it is not available! Keep output valid
+        -- when buffer changes! Core will either lock old buffer (when 
+        -- loading does not finish in time, or it loads new buffer. This will
+        -- avoid a situation where Buffer A is ready, Buffer B with higher
+        -- priority will be marked as valid, and "frame ready for transmission"
+        -- will drop low for few clock cycles until new buffer metadata are
+        -- loaded for transmission! Possibly just chaning a buffer would cause
+        -- that no frame is selected for transmission even if two buffers
+        -- are marked as ready!
+        -- This option makes sure that either old or new buffer is selected.
+        -----------------------------------------------------------------------
+        if (select_buf_avail = '0') then
+            frame_valid_com_clear   <= '1';
+        end if;
     else
   
-        case tx_arb_fsm is   
+        case curr_state is   
 
         --------------------------------------------------------------------
         -- Polling on Low timestamp of the highest prority TXT buffer
         --------------------------------------------------------------------
-        when arb_sel_low_ts =>
-            if (fsm_wait_state = false) then
+        when s_arb_sel_low_ts =>
+            if (fsm_wait_state_q = '0') then
                 load_ts_uw_addr    <= '1';
                 store_ts_l_w       <= '1';
             end if;        
@@ -317,8 +345,8 @@ begin
         -- now output of TXT Buffers give the upper timestamp
         -- Lower timestamp is stored from previous state.
         --------------------------------------------------------------------  
-        when arb_sel_upp_ts =>
-            if (fsm_wait_state = false) then
+        when s_arb_sel_upp_ts =>
+            if (fsm_wait_state_q = '0') then
                 if (timestamp_valid = '1') then
                     load_ffmt_w_addr   <= '1';
                 end if;
@@ -331,8 +359,8 @@ begin
         -- can store its index to the output and us it for access from 
         -- CAN Core.
         --------------------------------------------------------------------  
-        when arb_sel_ffw =>
-            if (fsm_wait_state = false) then
+        when s_arb_sel_ffw =>
+            if (fsm_wait_state_q = '0') then
                 load_ts_lw_addr        <= '1';
                 frame_valid_com_set    <= '1';
                 store_md_w             <= '1';
@@ -349,12 +377,18 @@ begin
   end process;
 
   ------------------------------------------------------------------------------
-  -- Functional coverage
+  -- Assertions
   ------------------------------------------------------------------------------
   -- psl default clock is rising_edge(clk_sys);
   --
+
+
+  ------------------------------------------------------------------------------
+  -- Functional coverage
+  ------------------------------------------------------------------------------
+  --
   -- psl txt_buf_wait_till_timestamp_cov : cover
-  --    (tx_arb_fsm = arb_sel_upp_ts and fsm_wait_state = false and
+  --    (curr_state = s_arb_sel_upp_ts and fsm_wait_state_q = '0' and
   --     timestamp_valid = '0')
   --    report "TXT Buffer waiting for Timestamp to reach TX Time";
 

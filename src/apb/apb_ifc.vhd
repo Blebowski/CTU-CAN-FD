@@ -40,22 +40,20 @@
 --------------------------------------------------------------------------------
 
 --------------------------------------------------------------------------------
+-- Module:
+--  ABP Interface
+--
 -- Purpose:
---    Adaptor from APB4 to internal bus.
---    NOTE: This is not strictly APB conformant as the read data stays only
---          for the next cycle; after that they are zeroed.
---------------------------------------------------------------------------------
--- Revision History:
---    May 2018   First Implementation - Martin Jerabek
---    31.08.2018 Ensure that reg_rden_o is always asserted for only one cycle.
---               This is important for reads with side effects, such as
---               reading from FIFO.
+--  Adaptor from APB4 to internal bus of CTU CAN FD.
+--
+-- Note: 
+--  This is not strictly APB conformant as the read data stays only for the
+--  next cycle; after that they are zeroed.
 --------------------------------------------------------------------------------
 
 Library ieee;
 use ieee.std_logic_1164.all;
 use ieee.numeric_std.ALL;
-use ieee.math_real.ALL;
 
 Library work;
 use work.id_transfer.all;
@@ -64,7 +62,6 @@ use work.can_components.all;
 use work.can_types.all;
 use work.cmn_lib.all;
 use work.drv_stat_pkg.all;
-use work.endian_swap.all;
 use work.reduce_lib.all;
 
 use work.CAN_FD_register_map.all;
@@ -79,6 +76,9 @@ entity apb_ifc is
         aclk             : in  std_logic;
         arstn            : in  std_logic;
 
+        -----------------------------------------------------------------------
+        -- CTU CAN FD Interface
+        -----------------------------------------------------------------------
         reg_data_in_o    : out std_logic_vector(31 downto 0);
         reg_data_out_i   : in  std_logic_vector(31 downto 0);
         reg_addr_o       : out std_logic_vector(15 downto 0);
@@ -86,6 +86,9 @@ entity apb_ifc is
         reg_rden_o       : out std_logic;
         reg_wren_o       : out std_logic;
 
+        -----------------------------------------------------------------------
+        -- APB interface 
+        -----------------------------------------------------------------------
         s_apb_paddr      : in  std_logic_vector(31 downto 0);
         s_apb_penable    : in  std_logic;
         s_apb_pprot      : in  std_logic_vector(2 downto 0);
@@ -113,9 +116,7 @@ architecture rtl of apb_ifc is
         end if;
     end function to_std_logic;
 begin
-    -- psl default clock is rising_edge (aclk);
-    -- psl assert_onecycle_rden: assert always reg_rden_o = '1' -> next reg_rden_o = '0';
-
+    
     reg_data_in_o <= s_apb_pwdata;
     s_apb_prdata  <= reg_data_out_i;
 
@@ -161,4 +162,21 @@ begin
     next_apb_pready <= '1' when rst_countdown_reg = 0 else '0';
     s_apb_pready <= next_apb_pready;
     s_apb_pslverr <= '0';
+    
+    
+    -- ASRT_START
+    ---------------------------------------------------------------------------
+    ---------------------------------------------------------------------------
+    -- Assertions
+    ---------------------------------------------------------------------------
+    ---------------------------------------------------------------------------
+    
+    -- psl default clock is rising_edge (aclk);
+    
+    -- psl onecycle_rden_asrt : assert always reg_rden_o = '1' -> next reg_rden_o = '0'
+    --  report "Read enable shall be active only for one clock cycle"
+    --  severity error;
+      
+    -- ASRT_END
+    
 end architecture rtl;

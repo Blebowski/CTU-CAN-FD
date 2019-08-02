@@ -106,8 +106,8 @@
 // RX Buffer data overrun interrupt
 #define CTU_CAN_FD_OVERRUN_INT(int_stat) (!!(int_stat).s.doi)
 
-// Core turned error passive interrupt
-#define CTU_CAN_FD_ERR_PASSIVE_INT(int_stat) (!!(int_stat).s.epi)
+// Fault confinement changed interrupt
+#define CTU_CAN_FD_FAULT_STATE_CHANGED_INT(int_stat) (!!(int_stat).s.fcsi)
 
 // Error frame transmission started interrupt
 #define CTU_CAN_FD_BUS_ERROR_INT(int_stat) (!!(int_stat).s.bei)
@@ -129,7 +129,7 @@
 
 static inline bool CTU_CAN_FD_INT_ERROR(union ctu_can_fd_int_stat i)
 {
-	return i.s.ewli || i.s.doi || i.s.epi || i.s.ali;
+	return i.s.ewli || i.s.doi || i.s.fcsi || i.s.ali;
 }
 
 struct ctucanfd_priv;
@@ -371,6 +371,32 @@ void ctu_can_fd_int_ena(struct ctucanfd_priv *priv,
 			union ctu_can_fd_int_stat val);
 
 /*
+ * Mask interrupts of CTU CAN FD Core.
+ *
+ * Arguments:
+ *	priv	Private info
+ *	mask	Mask of interrupts which should be masked.
+ */
+static inline void ctu_can_fd_int_mask_set(struct ctucanfd_priv *priv,
+					   union ctu_can_fd_int_stat mask)
+{
+	priv->write_reg(priv, CTU_CAN_FD_INT_MASK_SET, mask.u32);
+}
+
+/*
+ * Unmask interrupts of CTU CAN FD Core.
+ *
+ * Arguments:
+ *	priv	Private info
+ *	mask	Mask of interrupts which should be unmasked.
+ */
+static inline void ctu_can_fd_int_mask_clr(struct ctucanfd_priv *priv,
+					   union ctu_can_fd_int_stat mask)
+{
+	priv->write_reg(priv, CTU_CAN_FD_INT_MASK_CLR, mask.u32);
+}
+
+/*
  * Mask/Unmask interrupts of CTU CAN FD Core.
  *
  * Arguments:
@@ -539,6 +565,22 @@ enum can_state ctu_can_fd_read_error_state(struct ctucanfd_priv *priv);
  */
 void ctu_can_fd_set_err_ctrs(struct ctucanfd_priv *priv,
 			     const struct can_berr_counter *ctr);
+
+/*
+ * Read core captured last error or arbitration lost reason.
+ *
+ * Arguments:
+ *	priv	Private info
+ * Returns:
+ *	Error state of the CTU CAN FD.
+ */
+static inline union ctu_can_fd_err_capt_alc
+        ctu_can_fd_read_err_capt_alc(struct ctucanfd_priv *priv)
+{
+	union ctu_can_fd_err_capt_alc res;
+	res.u32 = priv->read_reg(priv, CTU_CAN_FD_ERR_CAPT);
+	return res;
+}
 
 /*
  * Check Mask filters support of given filter.

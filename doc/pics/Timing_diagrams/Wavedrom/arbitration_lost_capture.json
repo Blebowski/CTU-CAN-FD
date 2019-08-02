@@ -1,0 +1,9 @@
+{signal: [
+  {name: 'CAN frame field', 			wave: '53..........45', 	data: ['SOF', 'Base Identifier', 'SRR', 'IDE'], 			node: '.......'},
+  {name: 'Control counter value', 		wave: 'x===========x.', 	data: ['10', '9','8','7','6','5','4','3','2','1','0'],		node: '.......'},
+  {name: 'Arbitration lost', 			wave: '0....10.......', 	data: [''],													node: '.......'},
+  {name: 'ALC[ALC_BIT]', 				wave: 'x....=........', 	data: ['6'],												node: '.......'},
+  {name: 'ALC[ALC_ID_FIELD]', 			wave: 'x....=........', 	data: ['00'],												node: '.......'},
+ ],
+  //edge:['a<->b', 'c<->d', 'e~>f Destuff', 'f~>g Process', 'g~>i Stuff'],
+}

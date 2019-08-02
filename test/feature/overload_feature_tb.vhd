@@ -88,17 +88,10 @@ package body overload_feature is
         variable retr_th            :        natural;
         variable mode_backup        :        std_logic_vector(31 downto 0) :=
                                                  (OTHERS => '0');
+        variable pc_state           :       SW_PC_Debug;
     begin
         o.outcome := true;
 
-        ------------------------------------------------------------------------
-        -- Wait until unit comes out of integration. This is to make sure
-        -- that first frame will be transmitted and not that transition to
-        -- "interframe" will be from "off", directly after integration! This
-        -- transition goes directly to "interm_idle" and bit is correctly
-        -- interpreted as SOF and not Overload flag!
-        ------------------------------------------------------------------------
-        wait_rand_cycles(rand_ctr, mem_bus(1).clk_sys, 2500, 3000);
 
         ------------------------------------------------------------------------
         -- Generate CAN Frame and start transmission
@@ -111,10 +104,8 @@ package body overload_feature is
             --------------------------------------------------------------------
             -- Wait until intermission field starts
             --------------------------------------------------------------------
-            wait until protocol_type'VAL(to_integer(unsigned(
-                iout(1).stat_bus(STAT_PC_STATE_HIGH downto STAT_PC_STATE_LOW)))) =
-                        interframe;
-
+            CAN_wait_pc_state(pc_deb_intermission, ID_1, mem_bus(1));
+            
             --------------------------------------------------------------------
             -- Inject dominant bit during the intermission
             --------------------------------------------------------------------
@@ -124,16 +115,13 @@ package body overload_feature is
             --------------------------------------------------------------------
             -- Wait for change on protocol state
             --------------------------------------------------------------------
-            wait until protocol_type'VAL(to_integer(unsigned(
-                   iout(1).stat_bus(STAT_PC_STATE_HIGH downto STAT_PC_STATE_LOW)))) /=
-                        interframe;
+            CAN_wait_not_pc_state(pc_deb_intermission, ID_1, mem_bus(1));
 
             --------------------------------------------------------------------
-            -- Check if overload started
+            -- Check if overload frame started
             --------------------------------------------------------------------
-            check(protocol_type'VAL(to_integer(unsigned(
-                  iout(1).stat_bus(STAT_PC_STATE_HIGH downto STAT_PC_STATE_LOW)))) =
-                  overload, "Overload Frame did not start");
+            CAN_read_pc_debug(pc_state, ID_2, mem_bus(2));
+            check(pc_state = pc_deb_overload, "Overload Frame did not start");
 
             so.bl_inject <= RECESSIVE;
             so.bl_force <= false;

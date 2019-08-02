@@ -109,19 +109,4 @@ package can_registers_pkg is
      timestamp_high              : std_logic_vector(31 downto 0);
   end record;
 
-
-  type Event_Logger_out_t is record
-     log_trig_config             : std_logic_vector(31 downto 0);
-     log_capt_config             : std_logic_vector(31 downto 0);
-     log_command                 : std_logic_vector(7 downto 0);
-  end record;
-
-
-  type Event_Logger_in_t is record
-     log_status                  : std_logic_vector(15 downto 0);
-     log_pointers                : std_logic_vector(15 downto 0);
-     log_capt_event_1            : std_logic_vector(31 downto 0);
-     log_capt_event_2            : std_logic_vector(31 downto 0);
-  end record;
-
 end package;

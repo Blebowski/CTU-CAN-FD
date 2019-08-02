@@ -40,25 +40,19 @@
 --------------------------------------------------------------------------------
 
 --------------------------------------------------------------------------------
--- Purpose:
+-- Module:
 --  Bit time FSM.
 --
---  Bit Time FSM has three states:
---      1. Reset
---      2. TSEG1
---      3. TSEG2
---
---  Output of Bit time FSM are SYNC and SAMPLE requests for SYNC and SAMPLE
---  trigger generator.    
---------------------------------------------------------------------------------
--- Revision History:
---    15.02.2019   Created file
+-- Purpose:
+--  Determines segment of a Bit in which unit actually is (TSEG1, TSEG2). 
+--  Generates trigger requests:
+--   TX Trigger request - Last cycle of TSEG2 (end of bit time).
+--   RX Trigger request - Last cycle of TSEG1 (sample point).
 --------------------------------------------------------------------------------
 
 Library ieee;
 use ieee.std_logic_1164.all;
 use ieee.numeric_std.ALL;
-use ieee.math_real.ALL;
 
 Library work;
 use work.id_transfer.all;
@@ -67,7 +61,6 @@ use work.can_components.all;
 use work.can_types.all;
 use work.cmn_lib.all;
 use work.drv_stat_pkg.all;
-use work.endian_swap.all;
 use work.reduce_lib.all;
 
 use work.CAN_FD_register_map.all;
@@ -76,51 +69,55 @@ use work.CAN_FD_frame_format.all;
 entity bit_time_fsm is
     generic (
         -- Reset polarity
-        reset_polarity  : std_logic := '0'
+        G_RESET_POLARITY    : std_logic := '0'
     );
     port(
         -----------------------------------------------------------------------
-        -- Clock and reset
+        -- Clock and Asynchronous reset
         -----------------------------------------------------------------------
-        signal clk_sys          : in    std_logic;
-        signal res_n            : in    std_logic;
+        -- System clock
+        clk_sys             : in    std_logic;
+        
+        -- Asynchronous reset
+        res_n               : in    std_logic;
 
         -----------------------------------------------------------------------
         -- Control interface 
         -----------------------------------------------------------------------
-        -- Signalling segment end (either due to re-sync, or reaching expected
-        -- length of segment)
-        signal segm_end         : in    std_logic;
-        signal h_sync_valid     : in    std_logic;
+        -- Segment end (either due to re-sync, or reaching expected length)
+        segm_end            : in    std_logic;
+        
+        -- Hard synchronisation is valid
+        h_sync_valid        : in    std_logic;
 
-        -- Core is enabled
-        signal drv_ena          : in    std_logic;
+        -- CTU CAN FD is enabled
+        drv_ena             : in    std_logic;
         
         -----------------------------------------------------------------------
         -- Status signals 
         -----------------------------------------------------------------------
-        -- Bit time is in TSEG1
-        signal is_tseg1         : out   std_logic;
+        -- Bit time FSM is in TSEG1
+        is_tseg1            : out   std_logic;
         
-        -- Bit time is in TSEG2
-        signal is_tseg2         : out   std_logic;
+        -- Bit time FSM is in TSEG2
+        is_tseg2            : out   std_logic;
         
-        -- Sample point request (to sample point generator)
-        signal sample_req       : out   std_logic;
+        -- Sample signal request (to sample point generator)
+        rx_trig_req         : out   std_logic;
         
         -- Sync signal request
-        signal sync_req         : out   std_logic;
+        tx_trig_req         : out   std_logic;
         
-        -- Bit time FSM output
-        signal bt_FSM_out       : out   bit_time_type
+        -- Bit Tim FSM Output
+        bt_fsm              : out   t_bit_time 
     );
 end entity;
 
 architecture rtl of bit_time_fsm is
 
     -- Bit time FSM
-    signal current_state    : bit_time_type;
-    signal next_state       : bit_time_type;
+    signal current_state    : t_bit_time;
+    signal next_state       : t_bit_time;
 
     -- Bit time FSM clock enable
     signal bt_fsm_ce        : std_logic;
@@ -135,55 +132,52 @@ begin
         next_state <= current_state;
     
         if (drv_ena = CTU_CAN_DISABLED) then
-            next_state <= reset;
+            next_state <= s_bt_reset;
         elsif (h_sync_valid = '1') then
-            next_state <= tseg1;
+            next_state <= s_bt_tseg1;
         else
             case current_state is
-            when tseg1 =>
+            when s_bt_tseg1 =>
                 if (segm_end = '1') then
-                    next_state <= tseg2;
+                    next_state <= s_bt_tseg2;
                 end if;
-            when tseg2 =>
+            when s_bt_tseg2 =>
                 if (segm_end = '1') then
-                    next_state <= tseg1;
+                    next_state <= s_bt_tseg1;
                 end if;
-            when reset =>
-                next_state <= tseg1;
+            when s_bt_reset =>
+                next_state <= s_bt_tseg1;
             end case;
         end if;
     end process;
     
-    -- State register to output propagation
-    bt_FSM_out <= current_state;
-    
     ----------------------------------------------------------------------------
     -- Current state process (combinational)
     ----------------------------------------------------------------------------
-    curr_state_proc : process(current_state, segm_end)
+    curr_state_proc : process(current_state, segm_end, drv_ena)
     begin
         -- Default values
         is_tseg1       <= '0';
         is_tseg2       <= '0';
-        sample_req     <= '0';
-        sync_req       <= '0';
+        rx_trig_req    <= '0';
+        tx_trig_req    <= '0';
         
         case current_state is
-        when reset =>
+        when s_bt_reset =>
             if (drv_ena = CTU_CAN_ENABLED) then
-                sync_req <= '1';    
+                tx_trig_req <= '1';    
             end if;
             
-        when tseg1 =>
+        when s_bt_tseg1 =>
             is_tseg1 <= '1';
             if (segm_end = '1') then
-                sample_req <= '1';
+                rx_trig_req <= '1';
             end if;
             
-        when tseg2 =>
+        when s_bt_tseg2 =>
             is_tseg2 <= '1';
             if (segm_end = '1') then
-                sync_req <= '1';
+                tx_trig_req <= '1';
             end if;
             
         end case;
@@ -194,8 +188,8 @@ begin
     ----------------------------------------------------------------------------
     state_reg_proc : process(clk_sys, res_n)
     begin
-        if (res_n = reset_polarity) then
-            current_state <= reset;
+        if (res_n = G_RESET_POLARITY) then
+            current_state <= s_bt_reset;
         elsif (rising_edge(clk_sys)) then
             if (bt_fsm_ce = '1') then
                 current_state <= next_state;
@@ -205,5 +199,7 @@ begin
     
     bt_fsm_ce <= '1' when (next_state /= current_state) else
                  '0'; 
+                 
+    bt_fsm <= current_state;
 
 end architecture rtl;

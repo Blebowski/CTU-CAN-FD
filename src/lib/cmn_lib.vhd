@@ -40,12 +40,11 @@
 --------------------------------------------------------------------------------
 
 --------------------------------------------------------------------------------
+-- Package:
+--  Common Library.
+-- 
 -- Purpose:
---  Library with component declarations for common design entities.
---------------------------------------------------------------------------------
--- Revision History:
---    10.12.2018   Created file
---    20.1.2019    Added endian swapper
+--  Package with component declarations for common design entities.
 --------------------------------------------------------------------------------
 
 Library ieee;
@@ -53,141 +52,308 @@ use ieee.std_logic_1164.all;
 
 package cmn_lib is
 
-    ----------------------------------------------------------------------------
-    -- Reset synchronizer
-    ----------------------------------------------------------------------------
-    component rst_sync is
-        generic (
-            constant reset_polarity     :       std_logic
-        );    
-        port (
-            signal clk                  : in    std_logic;
-            signal arst                 : in    std_logic;
-            signal rst                  : out   std_logic
-        );
-    end component rst_sync;
-
-
-    ----------------------------------------------------------------------------
-    -- Signal synchroniser - synchronisation chain
-    ----------------------------------------------------------------------------
-    component sig_sync is
-        generic (
-            constant timing_check       :       boolean := true
-        );
-        port (
-            signal clk                  : in    std_logic;
-            signal async                : in    std_logic;
-            signal sync                 : out   std_logic
-        );
-    end component sig_sync;
-
-
-    ----------------------------------------------------------------------------
-    -- Shift register with preload
-    ----------------------------------------------------------------------------
-    component shift_reg_preload is
-        generic (
-            constant reset_polarity     :       std_logic;
-            constant reset_value        :       std_logic_vector;
-            constant width              :       natural;
-            constant shift_down         :       boolean
-        );
-        port (
-            signal clk                  : in    std_logic;
-            signal res_n                : in    std_logic;
-            signal input                : in    std_logic;
-            signal preload              : in    std_logic;
-            signal preload_val          : in    std_logic_vector(width - 1 downto 0);
-            signal enable               : in    std_logic;
-            signal reg_stat             : out   std_logic_vector(width - 1 downto 0);
-            signal output               : out   std_logic
-        );
-    end component shift_reg_preload;
-
-
-    ----------------------------------------------------------------------------
-    -- Shift register
-    ----------------------------------------------------------------------------
-    component shift_reg is
-        generic (
-            constant reset_polarity     :       std_logic;
-            constant reset_value        :       std_logic_vector;
-            constant width              :       natural;
-            constant shift_down         :       boolean
-        );
-        port (
-            signal clk                  : in    std_logic;
-            signal res_n                : in    std_logic;
-            signal input                : in    std_logic;
-            signal enable               : in    std_logic;
-            signal reg_stat             : out   std_logic_vector(width - 1 downto 0);
-            signal output               : out   std_logic
-        );
-    end component shift_reg;
-
-
-    ----------------------------------------------------------------------------
-    -- Majority out of 3 decoder.
-    ----------------------------------------------------------------------------
-    component majority_decoder_3 is
-        port (
-            signal input                : in    std_logic_vector(2 downto 0);
-            signal output               : out   std_logic
-        );
-    end component majority_decoder_3;
-
-
-    ----------------------------------------------------------------------------
-    -- Simple DFF with configurable width with asynchronous reset.
-    ----------------------------------------------------------------------------
     component dff_arst is
     generic (
-        constant reset_polarity     :       std_logic;
-        constant rst_val            :       std_logic
+        -- Reset polarity
+        G_RESET_POLARITY   :       std_logic;
+        
+        -- Reset value
+        G_RST_VAL          :       std_logic
     );    
     port (
-        signal arst                 : in    std_logic;
-        signal clk                  : in    std_logic;
+        -- Asynchronous reset
+        arst               : in    std_logic;
+        
+        -- Clock
+        clk                : in    std_logic;
 
-        signal input                : in    std_logic;
-        signal load                 : in    std_logic;
-        signal output               : out   std_logic
+        -- Data input (D)
+        input              : in    std_logic;
+        
+        -- Clock enable (CE)
+        ce                 : in    std_logic;
+        
+        -- Data output (Q)
+        output             : out   std_logic
     );
     end component dff_arst;
 
+    component dlc_decoder is
+    port (
+        -- DLC Input (as in CAN Standard)
+        dlc              :   in std_logic_vector(3 downto 0);
+        
+        -- Frame Type (0 - CAN 2.0, 1 - CAN FD)
+        frame_type       :   in std_logic;
 
-    ----------------------------------------------------------------------------
-    -- Endian swapper
-    ----------------------------------------------------------------------------
+        -- Data length (decoded)
+        data_length      :   out std_logic_vector(6 downto 0);
+        
+        -- Validity indication (0 for CAN 2.0 frames with dlc > 0) 
+        is_valid         :   out std_logic
+    );
+    end component dlc_decoder;
+
     component endian_swapper is 
     generic (
-        constant swap_by_signal        :     boolean := false;
-        constant swap_gen              :     boolean := false;
-        constant word_size             :     natural := 4;
-        constant group_size            :     natural := 8  
+        
+        -- If true, "swap_in" signal selects between swapping/non-swapping.
+        -- If false "swap_gen" generic selects bewtween swapping/non-swapping.
+        G_SWAP_BY_SIGNAL        :     boolean := false;
+        
+        -- When true, output word is endian swapped as long as "swap_by_signal"
+        -- is true. Otherwise it has no meaning.
+        G_SWAP_GEN              :     boolean := false;
+
+        -- Size of word (in groups)
+        G_WORD_SIZE             :     natural := 4;
+        
+        -- Size of group (in bits)
+        G_GROUP_SIZE            :     natural := 8  
     );  
     port (
-        signal input   : in  std_logic_vector(word_size * group_size - 1 downto 0);
-        signal output  : out std_logic_vector(word_size * group_size - 1 downto 0);
-        signal swap_in : in  std_logic
-        );
+        -- Data input
+        input   : in  std_logic_vector(G_WORD_SIZE * G_GROUP_SIZE - 1 downto 0);
+        
+        -- Data output
+        output  : out std_logic_vector(G_WORD_SIZE * G_GROUP_SIZE - 1 downto 0);
+        
+        -- Swap signal (used only when "swap_by_signal=true")
+        -- Swaps endian when '1', keeps otherwise.
+        swap_in : in  std_logic
+    );
     end component;
 
+    component g_inf_ram_wrapper is
+    generic(
+        -- Reset polarity
+        G_RESET_POLARITY       :     std_logic := '1';
+        
+        -- Width of memory word (in bits)
+        G_WORD_WIDTH           :     natural := 32;
 
-    ----------------------------------------------------------------------------
-    -- DLC decoder
-    ----------------------------------------------------------------------------
-    component dlc_decoder is
-        port (
-            signal dlc              :   in std_logic_vector(3 downto 0);
-            signal frame_type       :   in std_logic;
-    
-            signal data_length      :   out std_logic_vector(6 downto 0);
-            signal is_valid         :   out std_logic
-        );
+        -- Memory depth (in words)
+        G_DEPTH                :     natural := 32;
+
+        -- Address width (in bits)
+        G_ADDRESS_WIDTH        :     natural := 8;
+
+        -- RAM content reset upon reset
+        G_SIMULATION_RESET     :     boolean := true;
+
+        -- Synchronous read
+        G_SYNC_READ            :     boolean := true
+    );
+    port(
+        ------------------------------------------------------------------------
+        -- Clock and Reset
+        ------------------------------------------------------------------------
+        clk_sys     :in   std_logic;
+        res_n       :in   std_logic;
+
+        ------------------------------------------------------------------------
+        -- Port A - Data input
+        ------------------------------------------------------------------------
+        -- Address
+        addr_A      :in   std_logic_vector(G_ADDRESS_WIDTH - 1 downto 0);
+        
+        -- Write signal
+        write       :in   std_logic;
+        
+        -- Data input
+        data_in     :in   std_logic_vector(G_WORD_WIDTH - 1 downto 0);
+
+        ------------------------------------------------------------------------   
+        -- Port B - Data output
+        ------------------------------------------------------------------------
+        -- Address
+        addr_B      :in   std_logic_vector(G_ADDRESS_WIDTH - 1 downto 0);
+        
+        -- Data output
+        data_out    :out  std_logic_vector(G_WORD_WIDTH - 1 downto 0)
+    );
     end component;
 
+    component majority_decoder_3 is
+    port (
+        -- Input
+        input      : in    std_logic_vector(2 downto 0);
+        
+        -- Output
+        output     : out   std_logic
+    );
+    end component majority_decoder_3;
+
+    component rst_sync is
+    generic (
+        -- Reset polarity
+        G_RESET_POLARITY    :       std_logic
+    );    
+    port (
+        -- Clock
+        clk                 : in    std_logic;
+        
+        -- Asynchronous reset
+        arst                : in    std_logic;
+        
+        -- Synchronous reset
+        rst                 : out   std_logic
+    );
+    end component rst_sync;
+
+    component shift_reg_byte is
+    generic (
+        -- Reset polarity
+        G_RESET_POLARITY     :       std_logic;
+        
+        -- Reset value
+        G_RESET_VALUE        :       std_logic_vector;
+        
+        -- Shift register width
+        G_NUM_BYTES          :       natural
+    );
+    port (
+        -----------------------------------------------------------------------
+        -- Clock and Asyncrhonous reset
+        -----------------------------------------------------------------------
+        -- Clock
+        clk             : in    std_logic;
+
+        -- Asynchronous reset
+        res_n           : in    std_logic;
+
+        -----------------------------------------------------------------------
+        -- Control signals
+        -----------------------------------------------------------------------
+        -- Shift register input        
+        input           : in    std_logic;
+
+        -- Clock enable for shifting each byte of the shift register.
+        byte_clock_ena  : in    std_logic_vector(G_NUM_BYTES - 1 downto 0);
+
+        -- Input source selector for each byte
+        -- (0-Previous byte output, 1- Shift reg input)
+        byte_input_sel  : in    std_logic_vector(G_NUM_BYTES - 1 downto 0);
+
+        -----------------------------------------------------------------------
+        -- Status signals
+        -----------------------------------------------------------------------
+        -- Shift register status
+        reg_stat        : out   std_logic_vector(8 * G_NUM_BYTES - 1 downto 0)
+    );
+    end component shift_reg_byte;
+
+    component shift_reg_preload is
+    generic (
+        -- Reset polarity
+        G_RESET_POLARITY     :       std_logic;
+        
+        -- Reset value
+        G_RESET_VALUE        :       std_logic_vector;
+        
+        -- Shift register width
+        G_WIDTH              :       natural;
+
+        -- True - Shift from Highest index, False - Shift from lowest Index
+        G_SHIFT_DOWN         :       boolean
+    );
+    port (
+        -----------------------------------------------------------------------
+        -- Clock and reset
+        -----------------------------------------------------------------------
+        clk                  : in    std_logic;
+        res_n                : in    std_logic;
+
+        -----------------------------------------------------------------------
+        -- Control signals
+        -----------------------------------------------------------------------
+        -- Pre-load shift register
+        preload              : in    std_logic;
+
+        -- Value to be pre-load to the shift register
+        preload_val          : in    std_logic_vector(G_WIDTH - 1 downto 0);
+
+        -- Enable for shift register. When enabled, shifted each clock, when
+        -- disabled, register keeps its state.
+        enable               : in    std_logic;
+
+        -- Input to a shift register 
+        input                : in    std_logic;
+        
+        -----------------------------------------------------------------------
+        -- Status signals
+        -----------------------------------------------------------------------
+        -- Shift register value
+        reg_stat             : out   std_logic_vector(G_WIDTH - 1 downto 0);
+
+        -- Shift register output
+        output               : out   std_logic
+    );
+    end component shift_reg_preload;
+
+    component shift_reg is
+    generic (
+        -- Reset polarity
+        G_RESET_POLARITY     :       std_logic;
+
+        -- Reset value
+        G_RESET_VALUE        :       std_logic_vector;
+
+        -- Shift register width
+        G_WIDTH              :       natural;
+
+        -- True - Shift from Highest index, False - Shift from lowest Index
+        G_SHIFT_DOWN         :       boolean
+    );
+    port (
+        -----------------------------------------------------------------------
+        -- Clock and reset
+        -----------------------------------------------------------------------
+        clk                  : in    std_logic;
+        res_n                : in    std_logic;
+
+        -----------------------------------------------------------------------
+        -- Control signals
+        -----------------------------------------------------------------------
+        -- Shift register input        
+        input                : in    std_logic;
+
+        -- Enable for shift register. When enabled, shifted each clock, when
+        -- disabled, register keeps its state.
+        enable               : in    std_logic;
+
+        -----------------------------------------------------------------------
+        -- Status signals
+        -----------------------------------------------------------------------
+        -- Shift register value
+        reg_stat             : out   std_logic_vector(G_WIDTH - 1 downto 0);
+
+        -- Register output
+        output               : out   std_logic
+    );
+    end component shift_reg;
+
+    component sig_sync is
+    generic(
+        -- Reset polarity
+        G_RESET_POLARITY     : std_logic := '0';
+        
+        -- Reset value
+        G_RESET_VALUE        : std_logic := '1'
+    );
+    port (
+        -- Reset
+        res_n                : in    std_logic;
+        
+        -- Clock
+        clk                  : in    std_logic;
+        
+        -- Asychronous signal
+        async                : in    std_logic;
+        
+        -- Synchronous signal
+        sync                 : out   std_logic
+    );
+    end component sig_sync;
 
 end package cmn_lib;
-

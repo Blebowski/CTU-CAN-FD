@@ -73,6 +73,7 @@ port (
     signal read                  :in std_logic;
     signal write                 :in std_logic;
     signal be                    :in std_logic_vector(data_width / 8 - 1 downto 0);
+    signal lock                  :in std_logic;
     signal control_registers_out :out Control_registers_out_t;
     signal control_registers_in  :in Control_registers_in_t
 );
@@ -116,10 +117,11 @@ begin
     mode_reg_comp : memory_reg
     generic map(
         data_width                      => 16 ,
-        data_mask                       => "0000000011111111" ,
+        data_mask                       => "0000000110011111" ,
         reset_polarity                  => RESET_POLARITY ,
-        reset_value                     => "0000000000110000" ,
-        auto_clear                      => "0000000000000001" 
+        reset_value                     => "0000000000010000" ,
+        auto_clear                      => "0000000000000001" ,
+        is_lockable                     => '0' 
     )
     port map(
         clk_sys                         => clk_sys ,-- in
@@ -128,6 +130,7 @@ begin
         write                           => write ,-- in
         cs                              => reg_sel(1) ,-- in
         w_be                            => be(1 downto 0) ,-- in
+        lock                            => lock ,-- in
         reg_value                       => control_registers_out_i.mode -- out
     );
 
@@ -141,7 +144,8 @@ begin
         data_mask                       => "0000000011111111" ,
         reset_polarity                  => RESET_POLARITY ,
         reset_value                     => "0000000000000000" ,
-        auto_clear                      => "0000000000000000" 
+        auto_clear                      => "0000000000000000" ,
+        is_lockable                     => '0' 
     )
     port map(
         clk_sys                         => clk_sys ,-- in
@@ -150,6 +154,7 @@ begin
         write                           => write ,-- in
         cs                              => reg_sel(1) ,-- in
         w_be                            => be(3 downto 2) ,-- in
+        lock                            => lock ,-- in
         reg_value                       => control_registers_out_i.settings -- out
     );
 
@@ -160,10 +165,11 @@ begin
     command_reg_comp : memory_reg
     generic map(
         data_width                      => 32 ,
-        data_mask                       => "00000000000000000000000001111110" ,
+        data_mask                       => "00000000000000000000000001111100" ,
         reset_polarity                  => RESET_POLARITY ,
         reset_value                     => "00000000000000000000000000000000" ,
-        auto_clear                      => "00000000000000000000000001111110" 
+        auto_clear                      => "00000000000000000000000001111100" ,
+        is_lockable                     => '0' 
     )
     port map(
         clk_sys                         => clk_sys ,-- in
@@ -172,6 +178,7 @@ begin
         write                           => write ,-- in
         cs                              => reg_sel(3) ,-- in
         w_be                            => be(3 downto 0) ,-- in
+        lock                            => lock ,-- in
         reg_value                       => control_registers_out_i.command -- out
     );
 
@@ -185,7 +192,8 @@ begin
         data_mask                       => "0000111111111111" ,
         reset_polarity                  => RESET_POLARITY ,
         reset_value                     => "0000000000000000" ,
-        auto_clear                      => "0000111111111111" 
+        auto_clear                      => "0000111111111111" ,
+        is_lockable                     => '0' 
     )
     port map(
         clk_sys                         => clk_sys ,-- in
@@ -194,6 +202,7 @@ begin
         write                           => write ,-- in
         cs                              => reg_sel(4) ,-- in
         w_be                            => be(1 downto 0) ,-- in
+        lock                            => lock ,-- in
         reg_value                       => control_registers_out_i.int_stat -- out
     );
 
@@ -207,7 +216,8 @@ begin
         data_mask                       => "0000111111111111" ,
         reset_polarity                  => RESET_POLARITY ,
         reset_value                     => "0000000000000000" ,
-        auto_clear                      => "0000011111111111" 
+        auto_clear                      => "0000111111111111" ,
+        is_lockable                     => '0' 
     )
     port map(
         clk_sys                         => clk_sys ,-- in
@@ -216,6 +226,7 @@ begin
         write                           => write ,-- in
         cs                              => reg_sel(5) ,-- in
         w_be                            => be(1 downto 0) ,-- in
+        lock                            => lock ,-- in
         reg_value                       => control_registers_out_i.int_ena_set -- out
     );
 
@@ -229,7 +240,8 @@ begin
         data_mask                       => "0000111111111111" ,
         reset_polarity                  => RESET_POLARITY ,
         reset_value                     => "0000000000000000" ,
-        auto_clear                      => "0000011111111111" 
+        auto_clear                      => "0000111111111111" ,
+        is_lockable                     => '0' 
     )
     port map(
         clk_sys                         => clk_sys ,-- in
@@ -238,6 +250,7 @@ begin
         write                           => write ,-- in
         cs                              => reg_sel(6) ,-- in
         w_be                            => be(1 downto 0) ,-- in
+        lock                            => lock ,-- in
         reg_value                       => control_registers_out_i.int_ena_clr -- out
     );
 
@@ -251,7 +264,8 @@ begin
         data_mask                       => "0000111111111111" ,
         reset_polarity                  => RESET_POLARITY ,
         reset_value                     => "0000000000000000" ,
-        auto_clear                      => "0000011111111111" 
+        auto_clear                      => "0000111111111111" ,
+        is_lockable                     => '0' 
     )
     port map(
         clk_sys                         => clk_sys ,-- in
@@ -260,6 +274,7 @@ begin
         write                           => write ,-- in
         cs                              => reg_sel(7) ,-- in
         w_be                            => be(1 downto 0) ,-- in
+        lock                            => lock ,-- in
         reg_value                       => control_registers_out_i.int_mask_set -- out
     );
 
@@ -273,7 +288,8 @@ begin
         data_mask                       => "0000111111111111" ,
         reset_polarity                  => RESET_POLARITY ,
         reset_value                     => "0000000000000000" ,
-        auto_clear                      => "0000011111111111" 
+        auto_clear                      => "0000111111111111" ,
+        is_lockable                     => '0' 
     )
     port map(
         clk_sys                         => clk_sys ,-- in
@@ -282,6 +298,7 @@ begin
         write                           => write ,-- in
         cs                              => reg_sel(8) ,-- in
         w_be                            => be(1 downto 0) ,-- in
+        lock                            => lock ,-- in
         reg_value                       => control_registers_out_i.int_mask_clr -- out
     );
 
@@ -295,7 +312,8 @@ begin
         data_mask                       => "11111111111111111111111111111111" ,
         reset_polarity                  => RESET_POLARITY ,
         reset_value                     => "00010000010100001010000110000101" ,
-        auto_clear                      => "00000000000000000000000000000000" 
+        auto_clear                      => "00000000000000000000000000000000" ,
+        is_lockable                     => '0' 
     )
     port map(
         clk_sys                         => clk_sys ,-- in
@@ -304,6 +322,7 @@ begin
         write                           => write ,-- in
         cs                              => reg_sel(9) ,-- in
         w_be                            => be(3 downto 0) ,-- in
+        lock                            => lock ,-- in
         reg_value                       => control_registers_out_i.btr -- out
     );
 
@@ -317,7 +336,8 @@ begin
         data_mask                       => "11111111111110111110111110111111" ,
         reset_polarity                  => RESET_POLARITY ,
         reset_value                     => "00010000001000000110000110000011" ,
-        auto_clear                      => "00000000000000000000000000000000" 
+        auto_clear                      => "00000000000000000000000000000000" ,
+        is_lockable                     => '0' 
     )
     port map(
         clk_sys                         => clk_sys ,-- in
@@ -326,6 +346,7 @@ begin
         write                           => write ,-- in
         cs                              => reg_sel(10) ,-- in
         w_be                            => be(3 downto 0) ,-- in
+        lock                            => lock ,-- in
         reg_value                       => control_registers_out_i.btr_fd -- out
     );
 
@@ -339,7 +360,8 @@ begin
         data_mask                       => "11111111" ,
         reset_polarity                  => RESET_POLARITY ,
         reset_value                     => "01100000" ,
-        auto_clear                      => "00000000" 
+        auto_clear                      => "00000000" ,
+        is_lockable                     => '1' 
     )
     port map(
         clk_sys                         => clk_sys ,-- in
@@ -348,6 +370,7 @@ begin
         write                           => write ,-- in
         cs                              => reg_sel(11) ,-- in
         w_be                            => be(0 downto 0) ,-- in
+        lock                            => lock ,-- in
         reg_value                       => control_registers_out_i.ewl -- out
     );
 
@@ -361,7 +384,8 @@ begin
         data_mask                       => "11111111" ,
         reset_polarity                  => RESET_POLARITY ,
         reset_value                     => "10000000" ,
-        auto_clear                      => "00000000" 
+        auto_clear                      => "00000000" ,
+        is_lockable                     => '1' 
     )
     port map(
         clk_sys                         => clk_sys ,-- in
@@ -370,6 +394,7 @@ begin
         write                           => write ,-- in
         cs                              => reg_sel(11) ,-- in
         w_be                            => be(1 downto 1) ,-- in
+        lock                            => lock ,-- in
         reg_value                       => control_registers_out_i.erp -- out
     );
 
@@ -383,7 +408,8 @@ begin
         data_mask                       => "00000000000000000001111111111111" ,
         reset_polarity                  => RESET_POLARITY ,
         reset_value                     => "00000000000000000000000000000000" ,
-        auto_clear                      => "00000000000000000001111011111111" 
+        auto_clear                      => "00000000000000000001111111111111" ,
+        is_lockable                     => '1' 
     )
     port map(
         clk_sys                         => clk_sys ,-- in
@@ -392,6 +418,7 @@ begin
         write                           => write ,-- in
         cs                              => reg_sel(14) ,-- in
         w_be                            => be(3 downto 0) ,-- in
+        lock                            => lock ,-- in
         reg_value                       => control_registers_out_i.ctr_pres -- out
     );
 
@@ -406,7 +433,8 @@ begin
         data_mask                       => "00011111111111111111111111111111" ,
         reset_polarity                  => RESET_POLARITY ,
         reset_value                     => "00000000000000000000000000000000" ,
-        auto_clear                      => "00000000000000000000000000000000" 
+        auto_clear                      => "00000000000000000000000000000000" ,
+        is_lockable                     => '0' 
     )
     port map(
         clk_sys                         => clk_sys ,-- in
@@ -415,13 +443,14 @@ begin
         write                           => write ,-- in
         cs                              => reg_sel(15) ,-- in
         w_be                            => be(3 downto 0) ,-- in
+        lock                            => lock ,-- in
         reg_value                       => control_registers_out_i.filter_a_mask -- out
     );
 
     end generate FILTER_A_MASK_present_gen_t;
 
     FILTER_A_MASK_present_gen_f : if (SUP_FILT_A = false) generate
-        control_registers_out.filter_a_mask <= "00000000000000000000000000000000";
+        control_registers_out_i.filter_a_mask <= "00000000000000000000000000000000";
     end generate FILTER_A_MASK_present_gen_f;
 
     ----------------------------------------------------------------------------
@@ -435,7 +464,8 @@ begin
         data_mask                       => "00011111111111111111111111111111" ,
         reset_polarity                  => RESET_POLARITY ,
         reset_value                     => "00000000000000000000000000000000" ,
-        auto_clear                      => "00000000000000000000000000000000" 
+        auto_clear                      => "00000000000000000000000000000000" ,
+        is_lockable                     => '0' 
     )
     port map(
         clk_sys                         => clk_sys ,-- in
@@ -444,13 +474,14 @@ begin
         write                           => write ,-- in
         cs                              => reg_sel(16) ,-- in
         w_be                            => be(3 downto 0) ,-- in
+        lock                            => lock ,-- in
         reg_value                       => control_registers_out_i.filter_a_val -- out
     );
 
     end generate FILTER_A_VAL_present_gen_t;
 
     FILTER_A_VAL_present_gen_f : if (SUP_FILT_A = false) generate
-        control_registers_out.filter_a_val <= "00000000000000000000000000000000";
+        control_registers_out_i.filter_a_val <= "00000000000000000000000000000000";
     end generate FILTER_A_VAL_present_gen_f;
 
     ----------------------------------------------------------------------------
@@ -464,7 +495,8 @@ begin
         data_mask                       => "00011111111111111111111111111111" ,
         reset_polarity                  => RESET_POLARITY ,
         reset_value                     => "00000000000000000000000000000000" ,
-        auto_clear                      => "00000000000000000000000000000000" 
+        auto_clear                      => "00000000000000000000000000000000" ,
+        is_lockable                     => '0' 
     )
     port map(
         clk_sys                         => clk_sys ,-- in
@@ -473,13 +505,14 @@ begin
         write                           => write ,-- in
         cs                              => reg_sel(17) ,-- in
         w_be                            => be(3 downto 0) ,-- in
+        lock                            => lock ,-- in
         reg_value                       => control_registers_out_i.filter_b_mask -- out
     );
 
     end generate FILTER_B_MASK_present_gen_t;
 
     FILTER_B_MASK_present_gen_f : if (SUP_FILT_B = false) generate
-        control_registers_out.filter_b_mask <= "00000000000000000000000000000000";
+        control_registers_out_i.filter_b_mask <= "00000000000000000000000000000000";
     end generate FILTER_B_MASK_present_gen_f;
 
     ----------------------------------------------------------------------------
@@ -493,7 +526,8 @@ begin
         data_mask                       => "00011111111111111111111111111111" ,
         reset_polarity                  => RESET_POLARITY ,
         reset_value                     => "00000000000000000000000000000000" ,
-        auto_clear                      => "00000000000000000000000000000000" 
+        auto_clear                      => "00000000000000000000000000000000" ,
+        is_lockable                     => '0' 
     )
     port map(
         clk_sys                         => clk_sys ,-- in
@@ -502,13 +536,14 @@ begin
         write                           => write ,-- in
         cs                              => reg_sel(18) ,-- in
         w_be                            => be(3 downto 0) ,-- in
+        lock                            => lock ,-- in
         reg_value                       => control_registers_out_i.filter_b_val -- out
     );
 
     end generate FILTER_B_VAL_present_gen_t;
 
     FILTER_B_VAL_present_gen_f : if (SUP_FILT_B = false) generate
-        control_registers_out.filter_b_val <= "00000000000000000000000000000000";
+        control_registers_out_i.filter_b_val <= "00000000000000000000000000000000";
     end generate FILTER_B_VAL_present_gen_f;
 
     ----------------------------------------------------------------------------
@@ -522,7 +557,8 @@ begin
         data_mask                       => "00011111111111111111111111111111" ,
         reset_polarity                  => RESET_POLARITY ,
         reset_value                     => "00000000000000000000000000000000" ,
-        auto_clear                      => "00000000000000000000000000000000" 
+        auto_clear                      => "00000000000000000000000000000000" ,
+        is_lockable                     => '0' 
     )
     port map(
         clk_sys                         => clk_sys ,-- in
@@ -531,13 +567,14 @@ begin
         write                           => write ,-- in
         cs                              => reg_sel(19) ,-- in
         w_be                            => be(3 downto 0) ,-- in
+        lock                            => lock ,-- in
         reg_value                       => control_registers_out_i.filter_c_mask -- out
     );
 
     end generate FILTER_C_MASK_present_gen_t;
 
     FILTER_C_MASK_present_gen_f : if (SUP_FILT_C = false) generate
-        control_registers_out.filter_c_mask <= "00000000000000000000000000000000";
+        control_registers_out_i.filter_c_mask <= "00000000000000000000000000000000";
     end generate FILTER_C_MASK_present_gen_f;
 
     ----------------------------------------------------------------------------
@@ -551,7 +588,8 @@ begin
         data_mask                       => "00011111111111111111111111111111" ,
         reset_polarity                  => RESET_POLARITY ,
         reset_value                     => "00000000000000000000000000000000" ,
-        auto_clear                      => "00000000000000000000000000000000" 
+        auto_clear                      => "00000000000000000000000000000000" ,
+        is_lockable                     => '0' 
     )
     port map(
         clk_sys                         => clk_sys ,-- in
@@ -560,13 +598,14 @@ begin
         write                           => write ,-- in
         cs                              => reg_sel(20) ,-- in
         w_be                            => be(3 downto 0) ,-- in
+        lock                            => lock ,-- in
         reg_value                       => control_registers_out_i.filter_c_val -- out
     );
 
     end generate FILTER_C_VAL_present_gen_t;
 
     FILTER_C_VAL_present_gen_f : if (SUP_FILT_C = false) generate
-        control_registers_out.filter_c_val <= "00000000000000000000000000000000";
+        control_registers_out_i.filter_c_val <= "00000000000000000000000000000000";
     end generate FILTER_C_VAL_present_gen_f;
 
     ----------------------------------------------------------------------------
@@ -580,7 +619,8 @@ begin
         data_mask                       => "00011111111111111111111111111111" ,
         reset_polarity                  => RESET_POLARITY ,
         reset_value                     => "00000000000000000000000000000000" ,
-        auto_clear                      => "00000000000000000000000000000000" 
+        auto_clear                      => "00000000000000000000000000000000" ,
+        is_lockable                     => '0' 
     )
     port map(
         clk_sys                         => clk_sys ,-- in
@@ -589,13 +629,14 @@ begin
         write                           => write ,-- in
         cs                              => reg_sel(21) ,-- in
         w_be                            => be(3 downto 0) ,-- in
+        lock                            => lock ,-- in
         reg_value                       => control_registers_out_i.filter_ran_low -- out
     );
 
     end generate FILTER_RAN_LOW_present_gen_t;
 
     FILTER_RAN_LOW_present_gen_f : if (SUP_RANGE = false) generate
-        control_registers_out.filter_ran_low <= "00000000000000000000000000000000";
+        control_registers_out_i.filter_ran_low <= "00000000000000000000000000000000";
     end generate FILTER_RAN_LOW_present_gen_f;
 
     ----------------------------------------------------------------------------
@@ -609,7 +650,8 @@ begin
         data_mask                       => "00011111111111111111111111111111" ,
         reset_polarity                  => RESET_POLARITY ,
         reset_value                     => "00000000000000000000000000000000" ,
-        auto_clear                      => "00000000000000000000000000000000" 
+        auto_clear                      => "00000000000000000000000000000000" ,
+        is_lockable                     => '0' 
     )
     port map(
         clk_sys                         => clk_sys ,-- in
@@ -618,13 +660,14 @@ begin
         write                           => write ,-- in
         cs                              => reg_sel(22) ,-- in
         w_be                            => be(3 downto 0) ,-- in
+        lock                            => lock ,-- in
         reg_value                       => control_registers_out_i.filter_ran_high -- out
     );
 
     end generate FILTER_RAN_HIGH_present_gen_t;
 
     FILTER_RAN_HIGH_present_gen_f : if (SUP_RANGE = false) generate
-        control_registers_out.filter_ran_high <= "00000000000000000000000000000000";
+        control_registers_out_i.filter_ran_high <= "00000000000000000000000000000000";
     end generate FILTER_RAN_HIGH_present_gen_f;
 
     ----------------------------------------------------------------------------
@@ -637,7 +680,8 @@ begin
         data_mask                       => "1111111111111111" ,
         reset_polarity                  => RESET_POLARITY ,
         reset_value                     => "0000000000001111" ,
-        auto_clear                      => "0000000000000000" 
+        auto_clear                      => "0000000000000000" ,
+        is_lockable                     => '0' 
     )
     port map(
         clk_sys                         => clk_sys ,-- in
@@ -646,6 +690,7 @@ begin
         write                           => write ,-- in
         cs                              => reg_sel(23) ,-- in
         w_be                            => be(1 downto 0) ,-- in
+        lock                            => lock ,-- in
         reg_value                       => control_registers_out_i.filter_control -- out
     );
 
@@ -659,7 +704,8 @@ begin
         data_mask                       => "00000001" ,
         reset_polarity                  => RESET_POLARITY ,
         reset_value                     => "00000000" ,
-        auto_clear                      => "00000000" 
+        auto_clear                      => "00000000" ,
+        is_lockable                     => '0' 
     )
     port map(
         clk_sys                         => clk_sys ,-- in
@@ -668,6 +714,7 @@ begin
         write                           => write ,-- in
         cs                              => reg_sel(26) ,-- in
         w_be                            => be(2 downto 2) ,-- in
+        lock                            => lock ,-- in
         reg_value                       => control_registers_out_i.rx_settings -- out
     );
 
@@ -705,7 +752,8 @@ begin
         data_mask                       => "0000111100000111" ,
         reset_polarity                  => RESET_POLARITY ,
         reset_value                     => "0000000000000000" ,
-        auto_clear                      => "0000111100000111" 
+        auto_clear                      => "0000111100000111" ,
+        is_lockable                     => '0' 
     )
     port map(
         clk_sys                         => clk_sys ,-- in
@@ -714,6 +762,7 @@ begin
         write                           => write ,-- in
         cs                              => reg_sel(29) ,-- in
         w_be                            => be(1 downto 0) ,-- in
+        lock                            => lock ,-- in
         reg_value                       => control_registers_out_i.tx_command -- out
     );
 
@@ -727,7 +776,8 @@ begin
         data_mask                       => "0111011101110111" ,
         reset_polarity                  => RESET_POLARITY ,
         reset_value                     => "0000000000000001" ,
-        auto_clear                      => "0000000000000000" 
+        auto_clear                      => "0000000000000000" ,
+        is_lockable                     => '0' 
     )
     port map(
         clk_sys                         => clk_sys ,-- in
@@ -736,6 +786,7 @@ begin
         write                           => write ,-- in
         cs                              => reg_sel(30) ,-- in
         w_be                            => be(1 downto 0) ,-- in
+        lock                            => lock ,-- in
         reg_value                       => control_registers_out_i.tx_priority -- out
     );
 
@@ -748,8 +799,9 @@ begin
         data_width                      => 16 ,
         data_mask                       => "0000001101111111" ,
         reset_polarity                  => RESET_POLARITY ,
-        reset_value                     => "0000000000000000" ,
-        auto_clear                      => "0000000000000000" 
+        reset_value                     => "0000000000000100" ,
+        auto_clear                      => "0000000000000000" ,
+        is_lockable                     => '0' 
     )
     port map(
         clk_sys                         => clk_sys ,-- in
@@ -758,6 +810,7 @@ begin
         write                           => write ,-- in
         cs                              => reg_sel(32) ,-- in
         w_be                            => be(3 downto 2) ,-- in
+        lock                            => lock ,-- in
         reg_value                       => control_registers_out_i.ssp_cfg -- out
     );
 

@@ -117,9 +117,7 @@ package body txtb_state_feature is
         variable ID_2           	:       natural := 2;
         variable CAN_frame          :       SW_CAN_frame_type;
         variable frame_sent         :       boolean := false;
-        variable mode               :       SW_mode := (false, false, false,
-                                                false, true, false, false,
-                                                false, false, false);
+        variable mode               :       SW_mode := SW_mode_rst_val;
         variable rx_state           :       SW_RX_Buffer_info;
         variable txt_state          :       SW_TXT_Buffer_state_type;
         variable error_counters     :       SW_error_counters := (0, 0, 0, 0);
@@ -137,10 +135,9 @@ package body txtb_state_feature is
         CAN_generate_frame(rand_ctr, CAN_frame);
         CAN_frame.rtr := RTR_FRAME;
         CAN_frame.frame_format := NORMAL_CAN;
-        wait_rand_cycles(rand_ctr, mem_bus(1).clk_sys, 1600, 1601);
         CAN_enable_retr_limit(false, 0, ID_1, mem_bus(1));
 
-        for i in 1 to TXT_BUFFER_COUNT loop
+        for i in 1 to C_TXT_BUFFER_COUNT loop
 
             info("Starting TXT Buffer " & integer'image(i) & " test!");
 
@@ -237,7 +234,7 @@ package body txtb_state_feature is
             -- Insert CAN Frame to Node 1, TXT Buffer i + 1.
             -- Send "set_ready" command.
             --------------------------------------------------------------------
-            nxt_buffer := (i mod TXT_BUFFER_COUNT) + 1;
+            nxt_buffer := (i mod C_TXT_BUFFER_COUNT) + 1;
             CAN_insert_TX_frame(CAN_frame, nxt_buffer, ID_1, mem_bus(1));
             send_TXT_buf_cmd(buf_set_ready, nxt_buffer, ID_1, mem_bus(1));
 

@@ -1,0 +1,9 @@
+{signal: [
+  {name: 'System clock', 			wave: 'p..|...', 			period: 2},
+  {name: 'Port A Address', 			wave: 'x.3.x..|......', 	data: [1]},
+  {name: 'Port A Data (write)', 	wave: 'x.3.x..|......', 	data: ['AA55AA55']},
+  {name: 'Port A Write', 			wave: '0.1.0..|......'},
+  {name: 'Memory content', 			wave: 'x...2..|......', 	data: ['AA55AA55']},
+  {name: 'Port B Address', 			wave: 'x......|5.x...', 	data: [1]},
+  {name: 'Port B Data (read)', 		wave: 'x......|..5.x.', 	data: ['AA55AA55']}
+]}

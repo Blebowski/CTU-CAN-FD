@@ -51,8 +51,8 @@ add_system_waves
 
 #Add circuit specific signals
 add wave -group "Triggering signals" $TCOMP/tx_trig_ack \
-									 $TCOMP/bs_trig \
-									 $TCOMP/bd_trig \
+									 $TCOMP/bst_trigger \
+									 $TCOMP/bds_trigger \
 									 $TCOMP/rx_trig_ack
 
 

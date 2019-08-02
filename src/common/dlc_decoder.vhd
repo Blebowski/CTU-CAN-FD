@@ -40,17 +40,15 @@
 --------------------------------------------------------------------------------
 
 --------------------------------------------------------------------------------
+-- Module:
+--  DLC Decoder
+-- 
 -- Purpose:
 --  Decode DLC to byte length of Data field in CAN Frame. Support both CAN 2.0
---  and CAN FD.
---  Output signal 'is_valid' shows if the DLC value is meaningful for given
---  frame type, ie. values greater than '1000' are also valid for CAN 2.0 but the 
---  value is marked in any case as 8 bytes. Decoder simply returns '0' if frame
---  type is 'CAN_2_0' and DLC is greater than 8.
---
---------------------------------------------------------------------------------
--- Revision History:
---    25.2.2019   Created file
+--  and CAN FD. Output signal 'is_valid' shows if the DLC value is meaningful 
+--  for given frame type, ie. values greater than '1000' are also valid for 
+--  CAN 2.0 but the value is marked in any case as 8 bytes. Decoder simply 
+--  returns '0' if frame type is 'CAN_2_0' and DLC is greater than 8.
 --------------------------------------------------------------------------------
 
 Library ieee;
@@ -60,18 +58,24 @@ use work.CAN_FD_frame_format.all;
 
 entity dlc_decoder is
     port (
-        signal dlc              :   in std_logic_vector(3 downto 0);
-        signal frame_type       :   in std_logic;
+        -- DLC Input (as in CAN Standard)
+        dlc              :   in std_logic_vector(3 downto 0);
+        
+        -- Frame Type (0 - CAN 2.0, 1 - CAN FD)
+        frame_type       :   in std_logic;
 
-        signal data_length      :   out std_logic_vector(6 downto 0);
-        signal is_valid         :   out std_logic
+        -- Data length (decoded)
+        data_length      :   out std_logic_vector(6 downto 0);
+        
+        -- Validity indication (0 for CAN 2.0 frames with dlc > 0) 
+        is_valid         :   out std_logic
     );
 end dlc_decoder;
 
 architecture rtl of dlc_decoder is
 
-    signal data_len_8_to_64     :   std_logic_vector(6 downto 0);
-    signal data_len_8_to_64_int :   natural range 0 to 64;
+    signal data_len_8_to_64         :   std_logic_vector(6 downto 0);
+    signal data_len_8_to_64_integer :   natural range 0 to 64;
     
     -- Data length fot standard CAN 2.0 frame
     signal data_len_can_2_0     :   std_logic_vector(6 downto 0);       
@@ -83,12 +87,11 @@ architecture rtl of dlc_decoder is
 
 begin
     
-    
     -- Typecast to natural
     dlc_int <= to_integer(unsigned(dlc));
 
     -- Decoder for DLCs higher than 8 in CAN FD Frame
-    data_len_8_to_64_int <=
+    data_len_8_to_64_integer <=
         12 when (dlc = "1001") else
         16 when (dlc = "1010") else
         20 when (dlc = "1011") else
@@ -99,7 +102,7 @@ begin
         0;
 
     -- Typecast byte length in CAN FD frame to vector
-    data_len_8_to_64 <= std_logic_vector(to_unsigned(data_len_8_to_64_int, 6));
+    data_len_8_to_64 <= std_logic_vector(to_unsigned(data_len_8_to_64_integer, 7));
 
 
     -- Mux for CAN 2.0 DLC:
@@ -118,18 +121,12 @@ begin
     data_length <= data_len_can_2_0 when (frame_type = NORMAL_CAN) else
                    data_len_can_fd;
                    
-            
+    ---------------------------------------------------------------------------
     -- DLC is valid:
     --  1. in every case for CAN FD
     --  2. only for values <= 8 for CAN 2.0                        
+    ---------------------------------------------------------------------------
     is_valid <= '1' when ((dlc_int <= 8) and (frame_type = NORMAL_CAN)) else
                 '1' when (frame_type = FD_CAN) else  
                 '0';             
 end rtl;
-
-
-
-
-
-
-

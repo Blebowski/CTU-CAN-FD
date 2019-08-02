@@ -40,12 +40,12 @@
 --------------------------------------------------------------------------------
 
 --------------------------------------------------------------------------------
+-- Module:
+--  RX Buffer FSM.
+-- 
 -- Purpose:
---  Receive Buffer FSM. Reacts on commands from CAN Core and controls storing
---  of CAN frame continusly to RX Buffer RAM.
---------------------------------------------------------------------------------
--- Revision History:
---    14.12.2018   Created file
+--  Reacts on commands from CAN Core and controls storing of CAN frame 
+--  continusly to RX Buffer RAM.
 --------------------------------------------------------------------------------
 
 Library ieee;
@@ -60,359 +60,304 @@ use work.can_components.all;
 use work.can_types.all;
 use work.cmn_lib.all;
 use work.drv_stat_pkg.all;
-use work.endian_swap.all;
 use work.reduce_lib.all;
 
 use work.CAN_FD_register_map.all;
 use work.CAN_FD_frame_format.all;
 
 entity rx_buffer_fsm is
+    generic(
+        G_RESET_POLARITY     :       std_logic := '0'
+    );
     port(
         ------------------------------------------------------------------------
         -- Clocks and reset 
         ------------------------------------------------------------------------
-        signal clk_sys              :in     std_logic; --System clock
-        signal res_n                :in     std_logic; --Async. reset
+        -- System clock
+        clk_sys              :in     std_logic;
+        
+        -- Asynchronous reset
+        res_n                :in     std_logic;
 
         ------------------------------------------------------------------------
-        -- Control signals from CAN Core which control storing of CAN Frame.
+        -- Control signals from CAN Core (Filtered by Frame filters)
         ------------------------------------------------------------------------
-
-        -- After control field of CAN frame, metadata are valid and can be stored.
-        -- This command starts the RX FSM for storing.
-        signal store_metadata       :in     std_logic;
+        -- Start Storing of Metadata to RX Buffer (first 4 words of frame)
+        store_metadata_f     :in     std_logic;
        
-        -- Signal that one word of data can be stored (TX_DATA_X_W). This signal
-        -- is active when 4 bytes were received or data reception has finished 
-        -- on 4 byte unaligned number of frames! (Thus allowing to store also
-        -- data which are not 4 byte aligned!
-        signal store_data           :in     std_logic;
+        -- Store Data word to RX Buffer
+        store_data_f         :in     std_logic;
 
-        -- When frame reception is succesfull, in the end of EOF field, CAN Core
-        -- gives acknowledge by this signal. This means that frame was received
-        -- OK, and Error frame can no longer occur in it.
-        signal rec_message_valid    :in     std_logic;
+        -- Received frame valid
+        rec_valid_f          :in     std_logic;
         
-        -- If error frame occurred, CAN Core activates this signal.
-        -- "write_pointer_raw" will be restarted to last committed value in
-        -- "write_pointer".
-        signal rec_abort            :in     std_logic;
+        -- Abort storing of RX Frame to RX Buffer.
+        rec_abort_f          :in     std_logic;
 
-        -- Signals start of frame. If timestamp on RX frame should be captured
-        -- in the beginning of the frame, this pulse captures the timestamp!
-        signal sof_pulse            :in     std_logic;
+        -- Start of Frame pulse
+        sof_pulse            :in     std_logic;
 
-        ------------------------------------
-        -- User registers interface
-        ------------------------------------
-        
-        -- Driving bus from registers
-        signal drv_bus              :in     std_logic_vector(1023 downto 0);
+        -----------------------------------------------------------------------
+        -- Memory registers interface
+        -----------------------------------------------------------------------
+        -- Driving bus
+        drv_bus              :in     std_logic_vector(1023 downto 0);
 
-        ------------------------------------
+        -----------------------------------------------------------------------
         -- FSM outputs
-        ------------------------------------
-        
+        -----------------------------------------------------------------------
         -- Intent to write to RX Buffer RAM
-        signal write_raw_intent     :out    std_logic;
+        write_raw_intent     :out    std_logic;
 
-        -- Extra Timestamp should be written to RX Buffer RAM memory
-        signal write_extra_ts       :out    std_logic;
+        -- Write Timestamp to RX Buffer RAM memory
+        write_ts             :out    std_logic;
 
-        -- Storing of extra Timestamp from end of frame has ended. In last
-        -- state of storing extra timestamp, used for commiting the frame.
-        -- Normally the frame is commited by rec_mesage_valid, but in case
-        -- of extra timestamp we must wait till also extra timestamp is
-        -- stored.
-        signal store_extra_ts_end   :out    std_logic;
+        -- Storing of Timestamp has ended.
+        stored_ts            :out    std_logic;
 
-        -- One-hot coded data selector for selection of memory word to be stored
-        -- in RX Buffer RAM
-        signal data_selector        :out    std_logic_vector(6 downto 0);
+        -- Data selector for selection of memory word to be stored in RX Buffer 
+        -- RAM (one hot coded)
+        data_selector        :out    std_logic_vector(4 downto 0);
 
-        -- Extra write pointer should be loaded from write pointer
-        signal store_extra_wr_ptr   :out    std_logic;
+        -- Load timestamp write pointer from regular write pointer
+        store_ts_wr_ptr      :out    std_logic;
 
-        -- Increment extra write pointer by 1
-        signal inc_extra_wr_ptr     :out    std_logic;
+        -- Increment timestamp write pointer by 1
+        inc_ts_wr_ptr        :out    std_logic;
 
         -- Reset internal overrun flag
-        signal reset_overrun_flag   :out    std_logic
-
+        reset_overrun_flag   :out    std_logic
     );
 end entity;
-
 
 architecture rtl of rx_buffer_fsm is
 
     ----------------------------------------------------------------------------
-    ----------------------------------------------------------------------------
     -- Driving bus signal aliases
     ----------------------------------------------------------------------------
-    ----------------------------------------------------------------------------
-
-    -- Erase command from driving registers. Resets FIFO pointers!
-    signal drv_erase_rx             :       std_logic;
-
     -- Receive Timestamp options
     signal drv_rtsopt               :       std_logic;
 
-    -- FSM state register
-    signal rx_fsm                   :       rx_buf_fsm_type;
+    -- RX Buffer FSM
+    signal curr_state               :       t_rx_buf_state;
+    signal next_state               :       t_rx_buf_state;
+    
+    -- Clock enable for state register
+    signal rx_fsm_ce                :       std_logic;
 
+    -- Joined commands (for assertions only)
+    signal cmd_join                 :       std_logic_vector(3 downto 0);
 begin
 
     ----------------------------------------------------------------------------
     -- Driving bus aliases
     ----------------------------------------------------------------------------
-    drv_erase_rx          <= drv_bus(DRV_ERASE_RX_INDEX);
     drv_rtsopt            <= drv_bus(DRV_RTSOPT_INDEX);    
 
-
     ----------------------------------------------------------------------------
+    -- Next State process
     ----------------------------------------------------------------------------
-    -- FSM for controlling storing of the frame to RX Buffer FIFO.
-    -- Calculation of next state based on Commands from Protocol Control.
-    ----------------------------------------------------------------------------
-    ----------------------------------------------------------------------------
-    rx_buf_fsm : process(clk_sys, res_n, drv_erase_rx)
-    begin     
-        if (res_n = ACT_RESET) or (drv_erase_rx = '1') then
-            rx_fsm              <= rxb_idle;
-          
-        elsif rising_edge(clk_sys) then
-  
-            case rx_fsm is
-
-            --------------------------------------------------------------------
-            -- Idle, waiting for "store_metada" to start storing first 4 words.
-            --------------------------------------------------------------------
-            when rxb_idle =>
-                if (store_metadata = '1') then
-                    rx_fsm      <= rxb_store_frame_format;
-                end if;
-
-
-            --------------------------------------------------------------------
-            -- Storing FRAME_FORM_W. Proceed execpt if error ocurrs.
-            --------------------------------------------------------------------
-            when rxb_store_frame_format =>
-                if (rec_abort = '1') then
-                    rx_fsm      <= rxb_idle;
-                else
-                    rx_fsm      <= rxb_store_identifier;
-                end if;
-
-
-            --------------------------------------------------------------------
-            -- Storing IDENTIFIER_W.
-            -- Move to storing timestamp words. Note that if SW configured
-            -- timestamp from end of the frame, we dont have it yet! We store
-            -- invalid timestamp and later (if the frame is received OK), we
-            -- repeat the writes with timestamp captured at the end of frame!
-            --------------------------------------------------------------------
-            when rxb_store_identifier =>
-                if (rec_abort = '1') then
-                    rx_fsm      <= rxb_idle;
-                else
-                    rx_fsm      <= rxb_store_beg_ts_low;
-                end if;
-
-
-            --------------------------------------------------------------------
-            -- Store TIMESTAMP_L_W from beginning of frame.
-            --------------------------------------------------------------------
-            when rxb_store_beg_ts_low =>
-                if (rec_abort = '1') then
-                    rx_fsm      <= rxb_idle;
-                else
-                    rx_fsm      <= rxb_store_beg_ts_high;
-                end if;
-
-
-            --------------------------------------------------------------------
-            -- Store first TIMESTAMP_U_W from beginning of frame.
-            --------------------------------------------------------------------
-            when rxb_store_beg_ts_high =>
-                if (rec_abort = '1') then
-                    rx_fsm      <= rxb_idle;
-                else                
-                    rx_fsm      <= rxb_store_data;
-                end if;
-
-            --------------------------------------------------------------------
-            -- Store DATA_W. If error ocurrs, abort the storing. If storing is
-            -- finished, go to idle or again timestamp storing depending on the
-            -- timestamp option configuration. Note that now timestamp storing
-            -- is realized via different states!
-             --------------------------------------------------------------------
-            when rxb_store_data =>
-                if (rec_abort = '1') then 
-                    rx_fsm          <= rxb_idle;
-                elsif (rec_message_valid = '1') then
-                    if (drv_rtsopt = RTS_END) then
-                        rx_fsm      <= rxb_store_end_ts_low;
-                    else
-                        rx_fsm      <= rxb_idle; 
-                    end if;
-                end if;
-
-
-            --------------------------------------------------------------------
-            -- Store TIMESTAMP_L_W from end of frame.
-            --------------------------------------------------------------------
-            when rxb_store_end_ts_low =>
-                rx_fsm      <= rxb_store_end_ts_high;
-
-
-            --------------------------------------------------------------------
-            -- Store first TIMESTAMP_U_W from end of frame.
-            --------------------------------------------------------------------
-            when rxb_store_end_ts_high =>
-                rx_fsm      <= rxb_idle;
-
-            when others =>
-                report "Invalid RX Buffer state" severity error;
-            end case;
-        end if;
-    end process;
-
-
-    ----------------------------------------------------------------------------
-    ----------------------------------------------------------------------------
-    -- FSM outputs
-    ----------------------------------------------------------------------------
-    ----------------------------------------------------------------------------
-
-    ----------------------------------------------------------------------------
-    -- Signalling write data to memory. Timestamp from begining of frame
-    -- and whole frame is stored via this signal.
-    ----------------------------------------------------------------------------
-    write_raw_intent      <= '1' when 
-                              ((rx_fsm = rxb_store_frame_format) or
-                               (rx_fsm = rxb_store_identifier) or
-                               (rx_fsm = rxb_store_beg_ts_low) or
-                               (rx_fsm = rxb_store_beg_ts_high) or
-                               ((rx_fsm = rxb_store_data) and store_data = '1'))
-                                 else
-                             '0';
-
-    ----------------------------------------------------------------------------
-    -- Signalling that extra timestamp is stored to memory. Timestamp from
-    -- end of frame is stored extra.
-    ----------------------------------------------------------------------------
-    write_extra_ts        <= '1' when ((rx_fsm = rxb_store_end_ts_low) or
-                                       (rx_fsm = rxb_store_end_ts_high))
-                                 else
-                             '0';
-
-
-    ----------------------------------------------------------------------------
-    -- Memory data which are written depend on state of the FSM
-    ----------------------------------------------------------------------------
-    with rx_fsm select data_selector <=
-        "0000001"       when rxb_store_frame_format,
-        "0000010"       when rxb_store_identifier,
-        "0000100"       when rxb_store_beg_ts_low,
-        "0001000"       when rxb_store_end_ts_low,
-        "0010000"       when rxb_store_beg_ts_high,
-        "0100000"       when rxb_store_end_ts_high,
-        "1000000"       when rxb_store_data,
-        "0000000"       when others;
-
-
-    ----------------------------------------------------------------------------
-    -- Signalling that storing extra timestamp has ended and frame can
-    -- be committed.
-    ----------------------------------------------------------------------------
-    store_extra_ts_end <= '1' when (rx_fsm = rxb_store_end_ts_high)
-                              else
-                          '0';
-
-    ----------------------------------------------------------------------------
-    -- Storing extra write pointer is done early enough so that there is
-    -- enough time to increment it to be pointing to first(higher) timestamp word
-    ----------------------------------------------------------------------------
-    store_extra_wr_ptr <= '1' when (rx_fsm = rxb_store_frame_format)
-                              else
-                          '0';
-
-    ----------------------------------------------------------------------------
-    -- Incrementing extra write pointer is done twice so that when lower
-    -- timestamp word is beigin stored, extra write pointer is pointing to
-    -- lower timestamp word address.
-    -- Furthermore, Extra write pointer is incremented once more when lower
-    -- timestamp word was stored, to point to higher timestamp word.
-    ----------------------------------------------------------------------------
-    inc_extra_wr_ptr <= '1' when (rx_fsm = rxb_store_identifier) or
-                                 (rx_fsm = rxb_store_beg_ts_low) or
-                                 (rx_fsm = rxb_store_end_ts_low)
-                            else
-                        '0';
-
-    ----------------------------------------------------------------------------
-    -- Internal overrun flag is re-started when 
-    ----------------------------------------------------------------------------
-    reset_overrun_flag  <= '1' when (rx_fsm = rxb_idle)
-                               else
-                           '0';
-
-
-    ----------------------------------------------------------------------------
-    ----------------------------------------------------------------------------
-    -- Assertions
-    ----------------------------------------------------------------------------
-    ----------------------------------------------------------------------------
-
-    ----------------------------------------------------------------------------
-    -- Verification of commands applied on RX Buffer. Following must be always
-    -- kept, otherwise CAN Core would corrupt storing protocol:
-    --  1. "store_metadata" comes during "rx_fsm_idle".
-    --  2. "rec_message_valid" and "rec_data" may come ONLY during "store_data"!
-    --  3. "sof_pulse" should come only during "rx_fsm_idle".
-    --  4. "store_metadata", "store_data", "rec_message_valid", "rec_abort"
-    --      should be mutually exclusive!
-    ----------------------------------------------------------------------------
-    cmd_assert_proc : process(clk_sys)
-        variable cmd_join  : std_logic_vector(3 downto 0);
+    next_state_proc : process(curr_state, store_metadata_f, rec_abort_f, 
+        rec_valid_f, drv_rtsopt)
     begin
-        -- pragma translate_off
-        if (rising_edge(clk_sys) and now /= 0 fs) then
-            if (store_metadata = '1' and rx_fsm /= rxb_idle) then
-            	-- LCOV_EXCL_START
-                report "RX Buffer: Store metadata command did NOT come during " &
-                       "'rx_buf_idle'!"severity error;
-            	-- LCOV_EXCL_STOP
+        next_state <= curr_state;
+        
+        case curr_state is
+
+        --------------------------------------------------------------------
+        -- Idle, waiting for "store_metada" to start storing first 4 words.
+        --------------------------------------------------------------------
+        when s_rxb_idle =>
+            if (store_metadata_f = '1') then
+                next_state      <= s_rxb_store_frame_format;
             end if;
 
-            if ((rec_message_valid = '1' or store_data = '1') and
-                 rx_fsm /= rxb_store_data)
-            then
-            	-- LCOV_EXCL_START
-                report "RX Buffer: Store data or finish storing did NOT come " &
-                        "during 'rec_data'" severity error; 
-            	-- LCOV_EXCL_STOP            
+        --------------------------------------------------------------------
+        -- Storing FRAME_FORM_W. Proceed execpt if error ocurrs.
+        --------------------------------------------------------------------
+        when s_rxb_store_frame_format =>
+            if (rec_abort_f = '1') then
+                next_state      <= s_rxb_idle;
+            else
+                next_state      <= s_rxb_store_identifier;
             end if;
 
-            if (sof_pulse = '1' and rx_fsm /= rxb_idle) then
-                -- LCOV_EXCL_START
-                report "RX Buffer: SOF pulse should come during 'rx_fsm_idle'"
-                severity error;
-            	-- LCOV_EXCL_STOP
+        --------------------------------------------------------------------
+        -- Storing IDENTIFIER_W.
+        -- Move to storing timestamp words. Note that if SW configured
+        -- timestamp from end of the frame, we dont have it yet! We store
+        -- invalid timestamp and later (if the frame is received OK), we
+        -- repeat the writes with timestamp captured at the end of frame!
+        --------------------------------------------------------------------
+        when s_rxb_store_identifier =>
+            if (rec_abort_f = '1') then
+                next_state      <= s_rxb_idle;
+            else
+                next_state      <= s_rxb_skip_ts_low;
             end if;
 
-            cmd_join := store_metadata & store_data & rec_message_valid &
-                        rec_abort; 
-            if (cmd_join /= "0000" and cmd_join /= "0001" and cmd_join /= "0010"
-                and cmd_join /= "0100" and cmd_join /= "1000")
-            then
-                -- LCOV_EXCL_START
-                report "RX Buffer: One-hot coding on RX Buffer commands " &
-                        "corrupted!" severity error;
-                -- LCOV_EXCL_STOP
+
+        --------------------------------------------------------------------
+        -- Skip through TIMESTAMP_L_W, store only zeroes.
+        --------------------------------------------------------------------
+        when s_rxb_skip_ts_low =>
+            if (rec_abort_f = '1') then
+                next_state      <= s_rxb_idle;
+            else
+                next_state      <= s_rxb_skip_ts_high;
+            end if;
+
+
+        --------------------------------------------------------------------
+        -- Skip through TIMESTAMP_U_W, store only zeroes.
+        --------------------------------------------------------------------
+        when s_rxb_skip_ts_high =>
+            if (rec_abort_f = '1') then
+                next_state      <= s_rxb_idle;
+            else                
+                next_state      <= s_rxb_store_data;
+            end if;
+
+        --------------------------------------------------------------------
+        -- Store DATA_W. If error ocurrs, abort the storing. If storing is
+        -- finished, go to idle or again timestamp storing depending on the
+        -- timestamp option configuration. Note that now timestamp storing
+        -- is realized via different states!
+         --------------------------------------------------------------------
+        when s_rxb_store_data =>
+            if (rec_abort_f = '1') then 
+                next_state      <= s_rxb_idle;
+            elsif (rec_valid_f = '1') then
+                next_state      <= s_rxb_store_end_ts_low;
+            end if;
+
+        --------------------------------------------------------------------
+        -- Store TIMESTAMP_L_W.
+        --------------------------------------------------------------------
+        when s_rxb_store_end_ts_low =>
+            next_state      <= s_rxb_store_end_ts_high;
+
+        --------------------------------------------------------------------
+        -- Store first TIMESTAMP_U_W.
+        --------------------------------------------------------------------
+        when s_rxb_store_end_ts_high =>
+            next_state      <= s_rxb_idle;
+            
+        end case;
+    end process;
+
+
+    ----------------------------------------------------------------------------
+    -- Current State process (outputs)
+    ----------------------------------------------------------------------------
+    curr_state_proc : process(curr_state, store_data_f)
+    begin
+        write_raw_intent <= '0';
+        write_ts <= '0'; 
+        data_selector <= (OTHERS => '0');
+        stored_ts <= '0';
+        store_ts_wr_ptr <= '0';
+        inc_ts_wr_ptr <= '0';
+        reset_overrun_flag <= '0';
+        
+        case curr_state is
+        when s_rxb_idle =>
+            reset_overrun_flag <= '1';
+            
+        when s_rxb_store_frame_format =>
+            write_raw_intent <= '1';
+            data_selector    <= "00001";
+            
+        when s_rxb_store_identifier =>
+            write_raw_intent <= '1';
+            data_selector    <= "00010";
+
+        when s_rxb_skip_ts_low =>
+            write_raw_intent <= '1';
+
+            -- Here we capture value of Raw write pointer to Timestamp write pointer
+            -- so that it can be later used for Timestamp storing.
+            store_ts_wr_ptr <= '1';
+            
+        when s_rxb_skip_ts_high =>
+            write_raw_intent <= '1';
+            
+        when s_rxb_store_data =>
+            data_selector    <= "00100";
+            
+            if (store_data_f = '1') then
+                write_raw_intent      <= '1';
+            end if;
+            
+        when s_rxb_store_end_ts_low =>
+            data_selector    <= "01000";
+
+            -- Timestamp write pointer is incremented once more when lower
+            -- timestamp word was stored, to point to higher timestamp word.
+            inc_ts_wr_ptr <= '1';
+            
+            -- Signalling that timestamp is stored to memory.
+            write_ts   <= '1';
+            
+        when s_rxb_store_end_ts_high =>
+            data_selector    <= "10000";
+            
+            -- Storing of timestamp is ending and frame can be committed.
+            stored_ts <= '1';
+            
+            -- Signalling that timestamp is stored to memory.
+            write_ts   <= '1';
+        end case;
+    end process;
+    
+
+    ----------------------------------------------------------------------------
+    -- State register process
+    ----------------------------------------------------------------------------
+    state_reg_proc : process(clk_sys, res_n)
+    begin
+        if (res_n = G_RESET_POLARITY) then
+            curr_state <= s_rxb_idle;
+        elsif (rising_edge(clk_sys)) then
+            if (rx_fsm_ce = '1') then
+                curr_state <= next_state;
             end if;
         end if;
-        -- pragma translate_on
     end process;
+    
+    -- Clock enable for State reg
+    rx_fsm_ce <= '1' when (next_state /= curr_state) else
+                 '0';
+
+    -- Joined commands, for assertions only
+    cmd_join <= store_metadata_f & store_data_f & rec_valid_f & rec_abort_f; 
+
+    ---------------------------------------------------------------------------
+    -- Assertions
+    ---------------------------------------------------------------------------
+    -- psl default clock is rising_edge(clk_sys);
+    
+    -- psl store_metadata_in_idle_asrt : assert never
+    --  (store_metadata_f = '1' and (curr_state /= s_rxb_idle))
+    -- report "RX Buffer: Store metadata command did NOT come when RX buffer " &
+    --        "is idle!"
+    -- severity error;
+    
+    -- psl commit_or_store_data_asrt : assert never
+    --  ((rec_valid_f = '1' or store_data_f = '1') and curr_state /= s_rxb_store_data)
+    -- report "RX Buffer: Store data or frame commit commands did not come " &
+    --        "when RX Buffer is receiving data!"
+    -- severity error;
+
+    -- psl sof_pulse_asrt_asrt : assert never
+    --   (sof_pulse = '1' and (curr_state /= s_rxb_idle))
+    -- report "RX Buffer: SOF pulse should come when RX Buffer is idle!"
+    -- severity error;
+    
+    -- psl rx_buf_cmds_one_hot_asrt : assert always
+    --   (now > 0 ps) -> (cmd_join = "0000" or cmd_join = "0001" or 
+    --    cmd_join = "0010" or cmd_join = "0100" or cmd_join = "1000")
+    -- report "RX Buffer: RX Buffer commands should be one-hot encoded!"
+    -- severity error;
 
 end architecture;

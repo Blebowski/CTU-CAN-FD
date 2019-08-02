@@ -1,0 +1,27 @@
+{signal: [
+  {name: 'System clock', 				wave: '10101010|l1010101',
+   										node: '....a...|...c....'},
+  
+  {name: 'CAN Bus bit', 				wave: '3...4...|...5....', 	data: ['Bit N', '   Bit N + 1                         Bit N + 1', 'Bit N + 2'],
+   										node: '........|........'},
+  
+  {name: 'Pipeline stage', 				wave: 'x.2.2.x.|.2.2.x..', 	data: ['Stuff', 'Stuff + 1', 'Stuff', 'Stuff + 1'],
+   										node: '........|........'},
+   
+  {name: 'Data Halt',					wave: '0.......|.1......', data:['']},
+  
+  {name: 'CRC15',						wave: '3...4...|........', data:['Bit N', 'Bit N + 1']},
+  
+  {name: 'CRC15 trigger',				wave: '0.1.0...|........', data:['']},
+  
+  {name: 'CRC17 / CRC21',				wave: '3.....4.|.....5..', data:['Bit N', 'Bit N + 1', 'Bit N +2']},
+  
+  {name: 'CRC17 / CRC21 trigger',		wave: '0...1.0.|...1.0..', data:[''],
+   										node: '....b.......d....'},	
+  
+ ],
+  foot: {text:
+  ['tspan', 'Start of bit N + 1                                                 Start of bit N + 2 (Stuff bit)  '],
+},
+  edge:['a-b','c-d'],
+}

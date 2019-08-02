@@ -54,14 +54,10 @@ context work.ctu_can_test_context;
 architecture apb_unit_test of CAN_test is
     component CTU_CAN_FD_v1_0 is
         generic(
-            use_logger       : boolean                := true;
-            rx_buffer_size   : natural range 4 to 512 := 128;
-            use_sync         : boolean                := true;
             sup_filtA        : boolean                := true;
             sup_filtB        : boolean                := true;
             sup_filtC        : boolean                := true;
-            sup_range        : boolean                := true;
-            logger_size      : natural range 0 to 512 := 8
+            sup_range        : boolean                := true
         );
         port(
             aclk             : in  std_logic;
@@ -70,7 +66,6 @@ architecture apb_unit_test of CAN_test is
             irq              : out std_logic;
             CAN_tx           : out std_logic;
             CAN_rx           : in  std_logic;
-            time_quanta_clk  : out std_logic;
             timestamp        : in std_logic_vector(63 downto 0);
 
             -- Ports of APB4
@@ -103,8 +98,6 @@ architecture apb_unit_test of CAN_test is
 begin
     can: CTU_CAN_FD_v1_0
         generic map (
-            use_logger  => false,
-            use_sync    => false,
             sup_filtA   => false,
             sup_filtB   => false,
             sup_filtC   => false,
@@ -208,11 +201,11 @@ begin
 
         -- read just after HW reset
         apb_read(DEVICE_ID_ADR);
-        check(s_apb_prdata = x"0201CAFD", "CAN ID reg mismatch (just after HW reset)");
+        check(s_apb_prdata = x"0202CAFD", "CAN ID reg mismatch (just after HW reset)");
 
         apb_write(BTR_ADR, x"FFFFFFFF", b"1111");
         apb_read(DEVICE_ID_ADR);
-        check(s_apb_prdata = x"0201CAFD", "CAN ID reg mismatch");
+        check(s_apb_prdata = x"0202CAFD", "CAN ID reg mismatch");
         apb_read(BTR_ADR);
         check(s_apb_prdata = x"FFFFFFFF", "readback mismatch");
 

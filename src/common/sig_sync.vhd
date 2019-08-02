@@ -43,35 +43,47 @@
 -- Purpose:
 --  Two Flip-flop asynchronous signal synchroniser.
 --------------------------------------------------------------------------------
--- Revision History:
---    16.11.2018   Created file
---------------------------------------------------------------------------------
 
 Library ieee;
 use ieee.std_logic_1164.all;
 
 entity sig_sync is
-    generic (
-        constant timing_check       :       boolean := true
+    generic(
+        -- Reset polarity
+        G_RESET_POLARITY     : std_logic := '0';
+        
+        -- Reset value
+        G_RESET_VALUE        : std_logic := '1'
     );
     port (
-        signal clk                  : in    std_logic;
-        signal async                : in    std_logic;
-        signal sync                 : out   std_logic
+        -- Reset
+        res_n                : in    std_logic;
+        
+        -- Clock
+        clk                  : in    std_logic;
+        
+        -- Asychronous signal
+        async                : in    std_logic;
+        
+        -- Synchronous signal
+        sync                 : out   std_logic
     );
 end sig_sync;
 
 architecture rtl of sig_sync is
 
     -- Synchroniser registers
-    signal rff                      :       std_logic;
+    signal rff               :       std_logic;
 
 begin
 
     -- Signal synchroniser process.
-    sig_sync_proc : process (clk)
+    sig_sync_proc : process (clk, res_n)
     begin
-        if (rising_edge(clk)) then
+        if (res_n = G_RESET_POLARITY) then
+            rff     <= G_RESET_VALUE;
+            sync    <= G_RESET_VALUE;
+        elsif (rising_edge(clk)) then
             rff     <= async;
             sync    <= rff;
         end if;

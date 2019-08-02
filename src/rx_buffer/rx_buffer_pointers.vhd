@@ -40,19 +40,19 @@
 --------------------------------------------------------------------------------
 
 --------------------------------------------------------------------------------
+-- Module:
+--  RX Buffer pointers.
+--
 -- Purpose:
 --  Pointers to RX Buffer RAM in RX Buffer and free memory calculation.
 --  Following pointers are implemented:
 --    1. Read pointer
 --    2. Write pointer raw
 --    3. Write pointer (regular, commited)
---    4. Write pointer for storing extra timestamp from end of frame.
+--    4. Write pointer for storing timestamp.
 --  Counters for free memory:
 --    1. RX mem free internal for control of storing and overrun
 --    2. RX mem free available to user.
---------------------------------------------------------------------------------
--- Revision History:
---    15.12.2018    Created file
 --------------------------------------------------------------------------------
 
 Library ieee;
@@ -67,7 +67,6 @@ use work.can_components.all;
 use work.can_types.all;
 use work.cmn_lib.all;
 use work.drv_stat_pkg.all;
-use work.endian_swap.all;
 use work.reduce_lib.all;
 
 use work.CAN_FD_register_map.all;
@@ -75,221 +74,226 @@ use work.CAN_FD_frame_format.all;
 
 entity rx_buffer_pointers is
     generic(
-
-        -- Only 2^k are allowed as buff_size. Memory adressing is in modular 
-        -- arithmetic, synthesis of modulo by number other than 2^k might not
-        -- play nicely (will consume lot of LUTs)!!
-        buff_size                   :       natural range 32 to 4096 := 32
+        -- Reset polarity
+        G_RESET_POLARITY      :       std_logic := '0';
+        
+        -- RX Buffer size
+        G_RX_BUFF_SIZE        :       natural range 32 to 4096 := 32
     );
     port(
         ------------------------------------------------------------------------
-        -- Clocks and reset 
+        -- Clocks and Asynchronous reset 
         ------------------------------------------------------------------------
-        signal clk_sys              :in     std_logic; --System clock
-        signal res_n                :in     std_logic; --Async. reset
+        -- System clock
+        clk_sys              :in     std_logic;
+        
+        -- RX Buffer Reset (External + Release receive Buffer)
+        rx_buf_res_q         :in     std_logic;
 
         ------------------------------------------------------------------------
         -- Control signals
         ------------------------------------------------------------------------
-               
-        -- If error frame occurred, CAN Core activates this signal.
-        -- "write_pointer_raw" will be restarted to last committed value in
-        -- "write_pointer".
-        signal rec_abort            :in     std_logic;
+        -- Abort storing of frame in RX Buffer. Revert to last frame. Raw RX
+        -- pointer will be reverted to internal RX pointers.
+        rec_abort_f          :in     std_logic;
 
-        -- Frame is commited to RX Buffer FSM, raw write pointer should be moved
-        -- to regular write pointer.
-        signal commit_rx_frame      :in     std_logic;
+        -- Commit RX Frame to RX Buffer. Raw pointer will be stored internal
+        -- RX pointer.
+        commit_rx_frame      :in     std_logic;
 
         -- RX Buffer RAM is being written and there is enough space available.
-        signal write_raw_OK         :in     std_logic;
+        write_raw_OK         :in     std_logic;
 
         -- RX Frame is not commited, write pointer raw should be reverted to
         -- last stored write_pointer value.
-        signal commit_overrun_abort :in     std_logic;
+        commit_overrun_abort :in     std_logic;
 
-        -- RX Buffer FSM signals to store write pointer to extra write pointer
-        signal store_extra_wr_ptr   :in     std_logic;
+        -- RX Buffer FSM signals to store regular write pointer to timestamp 
+        -- write pointer
+        store_ts_wr_ptr      :in     std_logic;
 
-        -- RX Buffer FSM signals to increment extra write pointer
-        signal inc_extra_wr_ptr     :in     std_logic;
+        -- RX Buffer FSM signals to increment timestamp write pointer
+        inc_ts_wr_ptr        :in     std_logic;
 
         -- RX Buffer RAM is being read by SW
-        signal read_increment       :in     std_logic;
+        read_increment       :in     std_logic;
 
+        -----------------------------------------------------------------------
+        -- Memory registers interface
+        -----------------------------------------------------------------------
+        -- Driving bus
+        drv_bus              :in     std_logic_vector(1023 downto 0);
 
-        ------------------------------------
-        -- User registers interface
-        ------------------------------------
-        
-        -- Driving bus from registers
-        signal drv_bus              :in     std_logic_vector(1023 downto 0);
-
-        ------------------------------------
-        -- Pointer outputs
-        ------------------------------------
+        -----------------------------------------------------------------------
+        -- Status outputs
+        -----------------------------------------------------------------------
         -- Read Pointer (access from SW)
-        signal read_pointer         :out     integer range 0 to buff_size - 1;
+        read_pointer           :out  std_logic_vector(11 downto 0);
 
         -- Read pointer incremented by 1 (combinationally)
-        signal read_pointer_inc_1   :out     integer range 0 to buff_size - 1;
+        read_pointer_inc_1     :out  std_logic_vector(11 downto 0);
 
         -- Write pointer (committed, available to SW, after frame was stored)
-        signal write_pointer        :out     integer range 0 to buff_size - 1;
+        write_pointer          :out  std_logic_vector(11 downto 0);
 
         -- Write pointer RAW. Changing during frame, as frame is continously stored
         -- to the buffer. When frame is sucesfully received, it is updated to
         -- write pointer!
-        signal write_pointer_raw    :out     integer range 0 to buff_size - 1;
+        write_pointer_raw      :out  std_logic_vector(11 downto 0);
 
-        -- Extra write pointer which is used for storing timestamp at the end of
-        -- data frame!
-        signal write_pointer_extra_ts :out   integer range 0 to buff_size - 1;
+        -- Timestamp write pointer
+        write_pointer_ts       :out  std_logic_vector(11 downto 0);
 
-        ------------------------------------
-        -- Mem. free outputs
-        ------------------------------------
         -- Number of free memory words available for user
-        signal rx_mem_free_int      :out    integer range 0 to buff_size + 1
-
+        rx_mem_free_i          :out  std_logic_vector(12 downto 0)
     );
 end entity;
 
-
 architecture rtl of rx_buffer_pointers is
 
-    signal read_pointer_int        :       integer range 0 to buff_size - 1;
-    signal read_pointer_inc_1_int  :       integer range 0 to buff_size - 1;
-    signal write_pointer_int       :       integer range 0 to buff_size - 1;
-    signal write_pointer_raw_int   :       integer range 0 to buff_size - 1;
-    signal write_pointer_extra_ts_int :    integer range 0 to buff_size - 1;
-    signal rx_mem_free_int_int     :       integer range 0 to buff_size + 1;
-
     ----------------------------------------------------------------------------
-    ----------------------------------------------------------------------------
-    -- Driving bus signal aliases
-    ----------------------------------------------------------------------------
+    -- Memory pointers
     ----------------------------------------------------------------------------
 
-    -- Erase command from driving registers. Resets FIFO pointers!
-    signal drv_erase_rx             :       std_logic;
+    function Log2( input:integer )
+    return integer is
+        variable temp,log:integer;
+    begin
+        temp := input;
+        log := 0;
+        while (temp > 1) loop
+            temp := temp / 2;
+            log := log + 1;
+        end loop;
+        return log;
+    end function log2;
+    
+    -- Width of memory pointer
+    constant C_PTR_WIDTH         : natural := log2(G_RX_BUFF_SIZE);
 
+    -- Width of free memory
+    constant C_FREE_MEM_WIDTH    : natural := C_PTR_WIDTH + 1;
+
+    signal read_pointer_i        :       unsigned(C_PTR_WIDTH - 1 downto 0);
+    signal read_pointer_inc_1_i  :       unsigned(C_PTR_WIDTH - 1 downto 0);
+    signal write_pointer_i       :       unsigned(C_PTR_WIDTH - 1 downto 0);
+    
+    signal write_pointer_raw_i   :       unsigned(C_PTR_WIDTH - 1 downto 0);
+    signal write_pointer_raw_d   :       unsigned(C_PTR_WIDTH - 1 downto 0);
+    signal write_pointer_raw_ce  :       std_logic;
+    
+    signal write_pointer_ts_i    :    unsigned(C_PTR_WIDTH - 1 downto 0);
+    signal write_pointer_ts_d    :    unsigned(C_PTR_WIDTH - 1 downto 0);
+    signal write_pointer_ts_ce   :    std_logic;
+    
+    signal rx_mem_free_i_i     :       unsigned(C_FREE_MEM_WIDTH - 1 downto 0);
+
+    ----------------------------------------------------------------------------
+    -- Memory free status signals
+    ----------------------------------------------------------------------------
+    
     -- Raw value of number of free memory words.
-    signal rx_mem_free_raw          :       integer range 0 to buff_size + 1;
+    signal rx_mem_free_raw          :  unsigned(C_FREE_MEM_WIDTH - 1 downto 0);
 
     -- Number of free memory words calculated during frame storing before commit
     -- combinationally incremented by 1.
-    signal rx_mem_free_raw_inc_1    :       integer range 0 to buff_size + 2;
+    signal rx_mem_free_raw_inc_1    :  unsigned(C_FREE_MEM_WIDTH - 1 downto 0);
 
     -- Number of free memory words calculated during frame storing before commit
     -- combinationally decremented by 1.
-    signal rx_mem_free_raw_dec_1    :       integer range -1 to buff_size + 1;
+    signal rx_mem_free_raw_dec_1    :  unsigned(C_FREE_MEM_WIDTH - 1 downto 0);
 
     -- Number of free memory words available to SW, combinationally icnremented
     -- by 1.
-    signal rx_mem_free_int_inc_1    :       integer range 0 to buff_size + 2;
+    signal rx_mem_free_i_inc_1      :  unsigned(C_FREE_MEM_WIDTH - 1 downto 0);
 
 begin
-    read_pointer <= read_pointer_int;
-    read_pointer_inc_1 <= read_pointer_inc_1_int;
-    write_pointer <= write_pointer_int;
-    write_pointer_raw <= write_pointer_raw_int;
-    write_pointer_extra_ts <= write_pointer_extra_ts_int;
-    rx_mem_free_int <= rx_mem_free_int_int;
-
-    ----------------------------------------------------------------------------
-    -- Driving bus aliases
-    ----------------------------------------------------------------------------
-    drv_erase_rx          <= drv_bus(DRV_ERASE_RX_INDEX);
+    read_pointer            <= std_logic_vector(resize(read_pointer_i, 12));
+    read_pointer_inc_1      <= std_logic_vector(resize(read_pointer_inc_1_i, 12));
+    write_pointer           <= std_logic_vector(resize(write_pointer_i, 12));
+    write_pointer_raw       <= std_logic_vector(resize(write_pointer_raw_i, 12));
+    write_pointer_ts        <= std_logic_vector(resize(write_pointer_ts_i, 12));
+    rx_mem_free_i           <= std_logic_vector(resize(rx_mem_free_i_i, 13));
 
 
     ----------------------------------------------------------------------------
     -- Read pointer, incremented during read from RX Buffer FIFO.
+    -- Moving to next word by reading (if there is sth to read).
     ----------------------------------------------------------------------------
-    read_pointer_proc : process(clk_sys, res_n, drv_erase_rx)
+    read_pointer_proc : process(clk_sys, rx_buf_res_q)
     begin
-        if (res_n = ACT_RESET or drv_erase_rx = '1') then
-            read_pointer_int         <= 0;
-
+        if (rx_buf_res_q = G_RESET_POLARITY) then
+            read_pointer_i         <= (OTHERS => '0');
         elsif (rising_edge(clk_sys)) then
-
-            --------------------------------------------------------------------
-            -- Moving to next word by reading (if there is sth to read).
-            --------------------------------------------------------------------
             if (read_increment = '1') then
-                read_pointer_int    <= read_pointer_inc_1_int;
+                read_pointer_i    <= read_pointer_inc_1_i;
             end if;
-
         end if;
     end process;
 
-
     ----------------------------------------------------------------------------
-    -- Write pointers manipulation. Following pointers are handled:
-    --   1. Write pointer raw, which is incremented upon each write to RX buffer
-    --      RAM.
-    --   2. Write pointer which is available to user.
+    -- Write pointers available to the user manipulation. Loading 
+    -- "write_pointer_raw_int" to  "write_pointer_int" when frame is committed.
     ----------------------------------------------------------------------------
-    write_pointer_proc : process(clk_sys, res_n, drv_erase_rx)
+    write_pointer_proc : process(clk_sys, rx_buf_res_q)
     begin
-        if (res_n = ACT_RESET or drv_erase_rx = '1') then
-            write_pointer_int       <= 0;
-            write_pointer_raw_int   <= 0;
-
+        if (rx_buf_res_q = G_RESET_POLARITY) then
+            write_pointer_i       <= (OTHERS => '0');
         elsif (rising_edge(clk_sys)) then
-
-            --------------------------------------------------------------------
-            -- Loading "write_pointer_raw_int" to  "write_pointer_int" when frame is
-            -- committed.
-            --------------------------------------------------------------------
             if (commit_rx_frame = '1') then
-                write_pointer_int   <= write_pointer_raw_int;
+                write_pointer_i   <= write_pointer_raw_i;
             end if;
-
-            --------------------------------------------------------------------
-            -- Updating "write_pointer_raw_int":
-            --      1. Increment when word is written to memory.
-            --      2. Reset when "rec_abort" is active (Error frame) or 
-            --         frame finished and overrun occurred meanwhile. Reset to
-            --         value of last commited write pointer.
-            --------------------------------------------------------------------
-            if (write_raw_OK = '1') then
-                write_pointer_raw_int<= (write_pointer_raw_int + 1) mod buff_size;
-                        
-            elsif (rec_abort = '1' or commit_overrun_abort = '1') then
-                write_pointer_raw_int <= write_pointer_int;
-
-            end if;
-
         end if;
     end process;
 
 
     ----------------------------------------------------------------------------
-    -- Extra write pointer for storing value of timestamp from end of frame.
-    ----------------------------------------------------------------------------
-    extra_write_ptr_proc : process(clk_sys, res_n, drv_erase_rx)
+    -- Write pointers raw manipulation:
+    --  1. Increment when word is written to memory.
+    --  2. Reset when "rec_abort_f" is active (Error frame) or frame finished
+    --     and overrun occurred meanwhile. Reset to value of last commited write
+    --     pointer.
+    ----------------------------------------------------------------------------    
+    write_pointer_raw_d <= write_pointer_raw_i + 1 when (write_raw_OK = '1')
+                                                   else
+                                   write_pointer_i;
+    
+    write_pointer_raw_ce <= '1' when (write_raw_OK = '1') else
+                            '1' when (rec_abort_f = '1') else
+                            '1' when (commit_overrun_abort = '1') else
+                            '0';
+    
+    write_pointer_raw_proc : process(clk_sys, rx_buf_res_q)
     begin
-        if (res_n = ACT_RESET or drv_erase_rx = '1') then
-            write_pointer_extra_ts_int  <= 0;
-
+        if (rx_buf_res_q = G_RESET_POLARITY) then
+           write_pointer_raw_i   <= (OTHERS => '0');
         elsif (rising_edge(clk_sys)) then
-
-            --------------------------------------------------------------------
-            -- Setting extra write pointer for write of timestamp from end of
-            -- frame...
-            -- First timestamp word is offset by 3 from committed write pointer.
-            -- Second one is offset by 4.
-            --------------------------------------------------------------------
-            if (store_extra_wr_ptr = '1') then
-                write_pointer_extra_ts_int <= write_pointer_int;
-
-            elsif (inc_extra_wr_ptr = '1') then
-                write_pointer_extra_ts_int <= (write_pointer_extra_ts_int + 1) mod
-                                              buff_size;
-
+            if (write_pointer_raw_ce = '1') then
+                write_pointer_raw_i <= write_pointer_raw_d;
             end if;
+        end if;
+    end process;
 
+
+    ----------------------------------------------------------------------------
+    -- Timestamp write pointer.
+    ----------------------------------------------------------------------------
+    write_pointer_ts_d <= write_pointer_raw_i when (store_ts_wr_ptr = '1') else
+                       write_pointer_ts_i + 1;
+
+    -- Tick only when it should be incremented or stored
+    write_pointer_ts_ce <= '1' when (store_ts_wr_ptr = '1') else
+                           '1' when (inc_ts_wr_ptr = '1') else
+                           '0';
+
+    timestamp_write_ptr_proc : process(clk_sys, rx_buf_res_q)
+    begin
+        if (rx_buf_res_q = G_RESET_POLARITY) then
+            write_pointer_ts_i  <= (OTHERS => '0');
+        elsif (rising_edge(clk_sys)) then
+            if (write_pointer_ts_ce = '1') then
+                write_pointer_ts_i <= write_pointer_ts_d;
+            end if;
         end if;
     end process;
 
@@ -297,11 +301,11 @@ begin
     ----------------------------------------------------------------------------
     -- Calculating amount of free memory.
     ----------------------------------------------------------------------------
-    mem_free_proc : process(clk_sys, res_n, drv_erase_rx)
+    mem_free_proc : process(clk_sys, rx_buf_res_q)
     begin
-        if (res_n = ACT_RESET or drv_erase_rx = '1') then
-            rx_mem_free_int_int     <= buff_size;
-            rx_mem_free_raw         <= buff_size;
+        if (rx_buf_res_q = G_RESET_POLARITY) then
+            rx_mem_free_i_i <= to_unsigned(G_RX_BUFF_SIZE, C_FREE_MEM_WIDTH);
+            rx_mem_free_raw <= to_unsigned(G_RX_BUFF_SIZE, C_FREE_MEM_WIDTH);
 
         elsif (rising_edge(clk_sys)) then
 
@@ -312,8 +316,8 @@ begin
 
                 -- Read of memory word, and abort at the same time. Revert last
                 -- commited value of read pointer incremented by 1.
-                if (rec_abort = '1' or commit_overrun_abort = '1') then
-                    rx_mem_free_raw <= rx_mem_free_int_inc_1;
+                if (rec_abort_f = '1' or commit_overrun_abort = '1') then
+                    rx_mem_free_raw <= rx_mem_free_i_inc_1;
 
                 -- Read of memory word and no write of memory word. Load raw
                 -- value incremented by 1.
@@ -328,8 +332,8 @@ begin
 
                 -- Abort, or abort was previously flaged -> Revert last commited
                 -- value.
-                if (rec_abort = '1' or commit_overrun_abort = '1') then
-                    rx_mem_free_raw <= rx_mem_free_int_int;
+                if (rec_abort_f = '1' or commit_overrun_abort = '1') then
+                    rx_mem_free_raw <= rx_mem_free_i_i;
 
                 -- No read, write only, decrement by 1.
                 elsif (write_raw_OK = '1') then
@@ -344,13 +348,13 @@ begin
             --------------------------------------------------------------------
             if (read_increment = '1') then
                 if (commit_rx_frame = '1') then        
-                    rx_mem_free_int_int <= rx_mem_free_raw_inc_1;
+                    rx_mem_free_i_i <= rx_mem_free_raw_inc_1;
                 else
-                    rx_mem_free_int_int <= rx_mem_free_int_inc_1;
+                    rx_mem_free_i_i <= rx_mem_free_i_inc_1;
                 end if;
     
             elsif (commit_rx_frame = '1') then
-                rx_mem_free_int_int     <= rx_mem_free_raw;
+                rx_mem_free_i_i     <= rx_mem_free_raw;
             end if;
 
         end if;
@@ -360,9 +364,9 @@ begin
     ----------------------------------------------------------------------------
     -- Calculating incremented value of free memory combinationally
     ----------------------------------------------------------------------------
-    mem_free_arith_proc : process(rx_mem_free_int_int, rx_mem_free_raw)
+    mem_free_arith_proc : process(rx_mem_free_i_i, rx_mem_free_raw)
     begin
-        rx_mem_free_int_inc_1   <= rx_mem_free_int_int + 1;
+        rx_mem_free_i_inc_1     <= rx_mem_free_i_i + 1;
         rx_mem_free_raw_inc_1   <= rx_mem_free_raw + 1;
         rx_mem_free_raw_dec_1   <= rx_mem_free_raw - 1;
     end process;
@@ -375,9 +379,9 @@ begin
     --     clock cycle delay on "read_pointer_int" and thus allow bursts on read
     --     from RX_DATA register!
     ----------------------------------------------------------------------------
-    read_pointer_inc_proc : process(read_pointer_int)
+    read_pointer_inc_proc : process(read_pointer_i)
     begin
-        read_pointer_inc_1_int <= (read_pointer_int + 1) mod buff_size;
+        read_pointer_inc_1_i <= read_pointer_i + 1;
     end process;
     
     
@@ -389,22 +393,21 @@ begin
     -- psl default clock is rising_edge(clk_sys);
     --
     -- psl rx_no_raw_mem_free_cov : 
-    --      cover (rx_mem_free_raw = 0);
+    --      cover (to_integer(unsigned(rx_mem_free_raw)) = 0);
     --
     -- psl rx_all_raw_mem_free_cov : 
-    --      cover (rx_mem_free_raw = buff_size);
+    --      cover (to_integer(unsigned(rx_mem_free_raw)) = G_RX_BUFF_SIZE);
     --
     -- psl rx_no_int_mem_free_cov : 
-    --      cover (rx_mem_free_int = 0);
+    --      cover (to_integer(unsigned(rx_mem_free_i)) = 0);
     --
     -- psl rx_all_int_mem_free_cov : 
-    --      cover (rx_mem_free_int = buff_size);
+    --      cover (to_integer(unsigned(rx_mem_free_i)) = G_RX_BUFF_SIZE);
     --
     -- psl rx_write_ptr_higher_than_read_ptr_cov : 
-    --      cover (write_pointer_int > read_pointer_int);
+    --      cover (write_pointer_i > read_pointer_i);
     --
     -- psl rx_read_ptr_higher_than_write_ptr_cov : 
-    --      cover (read_pointer_int > write_pointer_int);    
+    --      cover (read_pointer_i > write_pointer_i);    
     
-
 end architecture;

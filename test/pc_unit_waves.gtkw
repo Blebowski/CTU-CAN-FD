@@ -1,0 +1,207 @@
+[*]
+[*] GTKWave Analyzer v3.3.98 (w)1999-2019 BSI
+[*] Sat May 18 08:03:15 2019
+[*]
+[dumpfile] "/build/test/build/vunit_out/test_output/lib.tb_protocol_control_unit_test.all_048c2aeff6a7452c22eded33f9f1146c7154b043/ghdl/wave.ghw"
+[dumpfile_mtime] "Sat May 18 07:56:44 2019"
+[dumpfile_size] 183360
+[savefile] "/build/test/pc_unit_waves.gtkw"
+[timestart] 13219000000
+[size] 1853 1025
+[pos] -101 -101
+*-30.715149 17920000000 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+[treeopen] top.
+[treeopen] top.tb_protocol_control_unit_test.
+[treeopen] top.tb_protocol_control_unit_test.tb.
+[treeopen] top.tb_protocol_control_unit_test.tb.i_test.
+[treeopen] top.tb_protocol_control_unit_test.tb.i_test.protocol_control_inst_1.control_counter_inst.
+[treeopen] top.tb_protocol_control_unit_test.tb.i_test.protocol_control_inst_1.tx_shift_reg_inst.
+[treeopen] top.tb_protocol_control_unit_test.tb.i_test.protocol_control_inst_2.
+[treeopen] top.tb_protocol_control_unit_test.tb.i_test.protocol_control_inst_2.protocol_control_fsm_inst.
+[sst_width] 384
+[signals_width] 296
+[sst_expanded] 1
+[sst_vpaned_height] 517
+@200
+-PC State
+@420
+top.tb_protocol_control_unit_test.tb.i_test.protocol_control_inst_1.protocol_control_fsm_inst.curr_state
+top.tb_protocol_control_unit_test.tb.i_test.protocol_control_inst_2.protocol_control_fsm_inst.curr_state
+@28
+top.tb_protocol_control_unit_test.tb.i_test.protocol_control_inst_1.tx_trigger
+top.tb_protocol_control_unit_test.tb.i_test.protocol_control_inst_1.rx_trigger
+@200
+-TX Data
+@28
+top.tb_protocol_control_unit_test.tb.i_test.tx_data_nbs_1_q
+top.tb_protocol_control_unit_test.tb.i_test.tx_data_nbs_2_q
+top.tb_protocol_control_unit_test.tb.i_test.bus_level
+top.tb_protocol_control_unit_test.tb.i_test.protocol_control_inst_2.protocol_control_fsm_inst.rx_data
+top.tb_protocol_control_unit_test.tb.i_test.protocol_control_inst_1.protocol_control_fsm_inst.rx_data
+@200
+-TX Frame
+@28
+top.tb_protocol_control_unit_test.tb.i_test.protocol_control_inst_1.tran_brs
+top.tb_protocol_control_unit_test.tb.i_test.protocol_control_inst_1.tran_frame_type
+top.tb_protocol_control_unit_test.tb.i_test.protocol_control_inst_1.tran_ident_type
+top.tb_protocol_control_unit_test.tb.i_test.protocol_control_inst_1.tran_is_rtr
+@22
+#{top.tb_protocol_control_unit_test.tb.i_test.protocol_control_inst_1.tran_dlc[3:0]} top.tb_protocol_control_unit_test.tb.i_test.protocol_control_inst_1.tran_dlc[3] top.tb_protocol_control_unit_test.tb.i_test.protocol_control_inst_1.tran_dlc[2] top.tb_protocol_control_unit_test.tb.i_test.protocol_control_inst_1.tran_dlc[1] top.tb_protocol_control_unit_test.tb.i_test.protocol_control_inst_1.tran_dlc[0]
+@200
+-TX Shift reg
+@28
+top.tb_protocol_control_unit_test.tb.i_test.protocol_control_inst_1.tx_shift_reg_inst.tx_sr_ce
+top.tb_protocol_control_unit_test.tb.i_test.protocol_control_inst_1.tx_shift_reg_inst.tx_sr_pload
+top.tb_protocol_control_unit_test.tb.i_test.protocol_control_inst_1.tx_shift_reg_inst.tx_shift_ena
+top.tb_protocol_control_unit_test.tb.i_test.protocol_control_inst_1.tx_shift_reg_inst.tx_load_crc
+top.tb_protocol_control_unit_test.tb.i_test.protocol_control_inst_1.tx_shift_reg_inst.tx_load_stuff_count
+@22
+#{top.tb_protocol_control_unit_test.tb.i_test.protocol_control_inst_1.tx_shift_reg_inst.stuff_count[3:0]} top.tb_protocol_control_unit_test.tb.i_test.protocol_control_inst_1.tx_shift_reg_inst.stuff_count[3] top.tb_protocol_control_unit_test.tb.i_test.protocol_control_inst_1.tx_shift_reg_inst.stuff_count[2] top.tb_protocol_control_unit_test.tb.i_test.protocol_control_inst_1.tx_shift_reg_inst.stuff_count[1] top.tb_protocol_control_unit_test.tb.i_test.protocol_control_inst_1.tx_shift_reg_inst.stuff_count[0]
+@28
+top.tb_protocol_control_unit_test.tb.i_test.protocol_control_inst_1.tx_shift_reg_inst.tx_load_data_word
+top.tb_protocol_control_unit_test.tb.i_test.protocol_control_inst_1.tx_shift_reg_inst.tx_load_dlc
+top.tb_protocol_control_unit_test.tb.i_test.protocol_control_inst_1.tx_shift_reg_inst.tx_load_ext_id
+top.tb_protocol_control_unit_test.tb.i_test.protocol_control_inst_1.tx_shift_reg_inst.tx_load_base_id
+@22
+#{top.tb_protocol_control_unit_test.tb.i_test.protocol_control_inst_1.tx_shift_reg_inst.tran_word[31:0]} top.tb_protocol_control_unit_test.tb.i_test.protocol_control_inst_1.tx_shift_reg_inst.tran_word[31] top.tb_protocol_control_unit_test.tb.i_test.protocol_control_inst_1.tx_shift_reg_inst.tran_word[30] top.tb_protocol_control_unit_test.tb.i_test.protocol_control_inst_1.tx_shift_reg_inst.tran_word[29] top.tb_protocol_control_unit_test.tb.i_test.protocol_control_inst_1.tx_shift_reg_inst.tran_word[28] top.tb_protocol_control_unit_test.tb.i_test.protocol_control_inst_1.tx_shift_reg_inst.tran_word[27] top.tb_protocol_control_unit_test.tb.i_test.protocol_control_inst_1.tx_shift_reg_inst.tran_word[26] top.tb_protocol_control_unit_test.tb.i_test.protocol_control_inst_1.tx_shift_reg_inst.tran_word[25] top.tb_protocol_control_unit_test.tb.i_test.protocol_control_inst_1.tx_shift_reg_inst.tran_word[24] top.tb_protocol_control_unit_test.tb.i_test.protocol_control_inst_1.tx_shift_reg_inst.tran_word[23] top.tb_protocol_control_unit_test.tb.i_test.protocol_control_inst_1.tx_shift_reg_inst.tran_word[22] top.tb_protocol_control_unit_test.tb.i_test.protocol_control_inst_1.tx_shift_reg_inst.tran_word[21] top.tb_protocol_control_unit_test.tb.i_test.protocol_control_inst_1.tx_shift_reg_inst.tran_word[20] top.tb_protocol_control_unit_test.tb.i_test.protocol_control_inst_1.tx_shift_reg_inst.tran_word[19] top.tb_protocol_control_unit_test.tb.i_test.protocol_control_inst_1.tx_shift_reg_inst.tran_word[18] top.tb_protocol_control_unit_test.tb.i_test.protocol_control_inst_1.tx_shift_reg_inst.tran_word[17] top.tb_protocol_control_unit_test.tb.i_test.protocol_control_inst_1.tx_shift_reg_inst.tran_word[16] top.tb_protocol_control_unit_test.tb.i_test.protocol_control_inst_1.tx_shift_reg_inst.tran_word[15] top.tb_protocol_control_unit_test.tb.i_test.protocol_control_inst_1.tx_shift_reg_inst.tran_word[14] top.tb_protocol_control_unit_test.tb.i_test.protocol_control_inst_1.tx_shift_reg_inst.tran_word[13] top.tb_protocol_control_unit_test.tb.i_test.protocol_control_inst_1.tx_shift_reg_inst.tran_word[12] top.tb_protocol_control_unit_test.tb.i_test.protocol_control_inst_1.tx_shift_reg_inst.tran_word[11] top.tb_protocol_control_unit_test.tb.i_test.protocol_control_inst_1.tx_shift_reg_inst.tran_word[10] top.tb_protocol_control_unit_test.tb.i_test.protocol_control_inst_1.tx_shift_reg_inst.tran_word[9] top.tb_protocol_control_unit_test.tb.i_test.protocol_control_inst_1.tx_shift_reg_inst.tran_word[8] top.tb_protocol_control_unit_test.tb.i_test.protocol_control_inst_1.tx_shift_reg_inst.tran_word[7] top.tb_protocol_control_unit_test.tb.i_test.protocol_control_inst_1.tx_shift_reg_inst.tran_word[6] top.tb_protocol_control_unit_test.tb.i_test.protocol_control_inst_1.tx_shift_reg_inst.tran_word[5] top.tb_protocol_control_unit_test.tb.i_test.protocol_control_inst_1.tx_shift_reg_inst.tran_word[4] top.tb_protocol_control_unit_test.tb.i_test.protocol_control_inst_1.tx_shift_reg_inst.tran_word[3] top.tb_protocol_control_unit_test.tb.i_test.protocol_control_inst_1.tx_shift_reg_inst.tran_word[2] top.tb_protocol_control_unit_test.tb.i_test.protocol_control_inst_1.tx_shift_reg_inst.tran_word[1] top.tb_protocol_control_unit_test.tb.i_test.protocol_control_inst_1.tx_shift_reg_inst.tran_word[0]
+#{top.tb_protocol_control_unit_test.tb.i_test.protocol_control_inst_1.tx_shift_reg_inst.tran_word_swapped[31:0]} top.tb_protocol_control_unit_test.tb.i_test.protocol_control_inst_1.tx_shift_reg_inst.tran_word_swapped[31] top.tb_protocol_control_unit_test.tb.i_test.protocol_control_inst_1.tx_shift_reg_inst.tran_word_swapped[30] top.tb_protocol_control_unit_test.tb.i_test.protocol_control_inst_1.tx_shift_reg_inst.tran_word_swapped[29] top.tb_protocol_control_unit_test.tb.i_test.protocol_control_inst_1.tx_shift_reg_inst.tran_word_swapped[28] top.tb_protocol_control_unit_test.tb.i_test.protocol_control_inst_1.tx_shift_reg_inst.tran_word_swapped[27] top.tb_protocol_control_unit_test.tb.i_test.protocol_control_inst_1.tx_shift_reg_inst.tran_word_swapped[26] top.tb_protocol_control_unit_test.tb.i_test.protocol_control_inst_1.tx_shift_reg_inst.tran_word_swapped[25] top.tb_protocol_control_unit_test.tb.i_test.protocol_control_inst_1.tx_shift_reg_inst.tran_word_swapped[24] top.tb_protocol_control_unit_test.tb.i_test.protocol_control_inst_1.tx_shift_reg_inst.tran_word_swapped[23] top.tb_protocol_control_unit_test.tb.i_test.protocol_control_inst_1.tx_shift_reg_inst.tran_word_swapped[22] top.tb_protocol_control_unit_test.tb.i_test.protocol_control_inst_1.tx_shift_reg_inst.tran_word_swapped[21] top.tb_protocol_control_unit_test.tb.i_test.protocol_control_inst_1.tx_shift_reg_inst.tran_word_swapped[20] top.tb_protocol_control_unit_test.tb.i_test.protocol_control_inst_1.tx_shift_reg_inst.tran_word_swapped[19] top.tb_protocol_control_unit_test.tb.i_test.protocol_control_inst_1.tx_shift_reg_inst.tran_word_swapped[18] top.tb_protocol_control_unit_test.tb.i_test.protocol_control_inst_1.tx_shift_reg_inst.tran_word_swapped[17] top.tb_protocol_control_unit_test.tb.i_test.protocol_control_inst_1.tx_shift_reg_inst.tran_word_swapped[16] top.tb_protocol_control_unit_test.tb.i_test.protocol_control_inst_1.tx_shift_reg_inst.tran_word_swapped[15] top.tb_protocol_control_unit_test.tb.i_test.protocol_control_inst_1.tx_shift_reg_inst.tran_word_swapped[14] top.tb_protocol_control_unit_test.tb.i_test.protocol_control_inst_1.tx_shift_reg_inst.tran_word_swapped[13] top.tb_protocol_control_unit_test.tb.i_test.protocol_control_inst_1.tx_shift_reg_inst.tran_word_swapped[12] top.tb_protocol_control_unit_test.tb.i_test.protocol_control_inst_1.tx_shift_reg_inst.tran_word_swapped[11] top.tb_protocol_control_unit_test.tb.i_test.protocol_control_inst_1.tx_shift_reg_inst.tran_word_swapped[10] top.tb_protocol_control_unit_test.tb.i_test.protocol_control_inst_1.tx_shift_reg_inst.tran_word_swapped[9] top.tb_protocol_control_unit_test.tb.i_test.protocol_control_inst_1.tx_shift_reg_inst.tran_word_swapped[8] top.tb_protocol_control_unit_test.tb.i_test.protocol_control_inst_1.tx_shift_reg_inst.tran_word_swapped[7] top.tb_protocol_control_unit_test.tb.i_test.protocol_control_inst_1.tx_shift_reg_inst.tran_word_swapped[6] top.tb_protocol_control_unit_test.tb.i_test.protocol_control_inst_1.tx_shift_reg_inst.tran_word_swapped[5] top.tb_protocol_control_unit_test.tb.i_test.protocol_control_inst_1.tx_shift_reg_inst.tran_word_swapped[4] top.tb_protocol_control_unit_test.tb.i_test.protocol_control_inst_1.tx_shift_reg_inst.tran_word_swapped[3] top.tb_protocol_control_unit_test.tb.i_test.protocol_control_inst_1.tx_shift_reg_inst.tran_word_swapped[2] top.tb_protocol_control_unit_test.tb.i_test.protocol_control_inst_1.tx_shift_reg_inst.tran_word_swapped[1] top.tb_protocol_control_unit_test.tb.i_test.protocol_control_inst_1.tx_shift_reg_inst.tran_word_swapped[0]
+@c00022
+#{top.tb_protocol_control_unit_test.tb.i_test.protocol_control_inst_1.tx_shift_reg_inst.tx_base_id[10:0]} top.tb_protocol_control_unit_test.tb.i_test.protocol_control_inst_1.tx_shift_reg_inst.tx_base_id[10] top.tb_protocol_control_unit_test.tb.i_test.protocol_control_inst_1.tx_shift_reg_inst.tx_base_id[9] top.tb_protocol_control_unit_test.tb.i_test.protocol_control_inst_1.tx_shift_reg_inst.tx_base_id[8] top.tb_protocol_control_unit_test.tb.i_test.protocol_control_inst_1.tx_shift_reg_inst.tx_base_id[7] top.tb_protocol_control_unit_test.tb.i_test.protocol_control_inst_1.tx_shift_reg_inst.tx_base_id[6] top.tb_protocol_control_unit_test.tb.i_test.protocol_control_inst_1.tx_shift_reg_inst.tx_base_id[5] top.tb_protocol_control_unit_test.tb.i_test.protocol_control_inst_1.tx_shift_reg_inst.tx_base_id[4] top.tb_protocol_control_unit_test.tb.i_test.protocol_control_inst_1.tx_shift_reg_inst.tx_base_id[3] top.tb_protocol_control_unit_test.tb.i_test.protocol_control_inst_1.tx_shift_reg_inst.tx_base_id[2] top.tb_protocol_control_unit_test.tb.i_test.protocol_control_inst_1.tx_shift_reg_inst.tx_base_id[1] top.tb_protocol_control_unit_test.tb.i_test.protocol_control_inst_1.tx_shift_reg_inst.tx_base_id[0]
+@28
+top.tb_protocol_control_unit_test.tb.i_test.protocol_control_inst_1.tx_shift_reg_inst.tx_base_id[10]
+top.tb_protocol_control_unit_test.tb.i_test.protocol_control_inst_1.tx_shift_reg_inst.tx_base_id[9]
+top.tb_protocol_control_unit_test.tb.i_test.protocol_control_inst_1.tx_shift_reg_inst.tx_base_id[8]
+top.tb_protocol_control_unit_test.tb.i_test.protocol_control_inst_1.tx_shift_reg_inst.tx_base_id[7]
+top.tb_protocol_control_unit_test.tb.i_test.protocol_control_inst_1.tx_shift_reg_inst.tx_base_id[6]
+top.tb_protocol_control_unit_test.tb.i_test.protocol_control_inst_1.tx_shift_reg_inst.tx_base_id[5]
+top.tb_protocol_control_unit_test.tb.i_test.protocol_control_inst_1.tx_shift_reg_inst.tx_base_id[4]
+top.tb_protocol_control_unit_test.tb.i_test.protocol_control_inst_1.tx_shift_reg_inst.tx_base_id[3]
+top.tb_protocol_control_unit_test.tb.i_test.protocol_control_inst_1.tx_shift_reg_inst.tx_base_id[2]
+top.tb_protocol_control_unit_test.tb.i_test.protocol_control_inst_1.tx_shift_reg_inst.tx_base_id[1]
+top.tb_protocol_control_unit_test.tb.i_test.protocol_control_inst_1.tx_shift_reg_inst.tx_base_id[0]
+@1401200
+-group_end
+@c00022
+#{top.tb_protocol_control_unit_test.tb.i_test.protocol_control_inst_1.tx_shift_reg_inst.tx_ext_id[17:0]} top.tb_protocol_control_unit_test.tb.i_test.protocol_control_inst_1.tx_shift_reg_inst.tx_ext_id[17] top.tb_protocol_control_unit_test.tb.i_test.protocol_control_inst_1.tx_shift_reg_inst.tx_ext_id[16] top.tb_protocol_control_unit_test.tb.i_test.protocol_control_inst_1.tx_shift_reg_inst.tx_ext_id[15] top.tb_protocol_control_unit_test.tb.i_test.protocol_control_inst_1.tx_shift_reg_inst.tx_ext_id[14] top.tb_protocol_control_unit_test.tb.i_test.protocol_control_inst_1.tx_shift_reg_inst.tx_ext_id[13] top.tb_protocol_control_unit_test.tb.i_test.protocol_control_inst_1.tx_shift_reg_inst.tx_ext_id[12] top.tb_protocol_control_unit_test.tb.i_test.protocol_control_inst_1.tx_shift_reg_inst.tx_ext_id[11] top.tb_protocol_control_unit_test.tb.i_test.protocol_control_inst_1.tx_shift_reg_inst.tx_ext_id[10] top.tb_protocol_control_unit_test.tb.i_test.protocol_control_inst_1.tx_shift_reg_inst.tx_ext_id[9] top.tb_protocol_control_unit_test.tb.i_test.protocol_control_inst_1.tx_shift_reg_inst.tx_ext_id[8] top.tb_protocol_control_unit_test.tb.i_test.protocol_control_inst_1.tx_shift_reg_inst.tx_ext_id[7] top.tb_protocol_control_unit_test.tb.i_test.protocol_control_inst_1.tx_shift_reg_inst.tx_ext_id[6] top.tb_protocol_control_unit_test.tb.i_test.protocol_control_inst_1.tx_shift_reg_inst.tx_ext_id[5] top.tb_protocol_control_unit_test.tb.i_test.protocol_control_inst_1.tx_shift_reg_inst.tx_ext_id[4] top.tb_protocol_control_unit_test.tb.i_test.protocol_control_inst_1.tx_shift_reg_inst.tx_ext_id[3] top.tb_protocol_control_unit_test.tb.i_test.protocol_control_inst_1.tx_shift_reg_inst.tx_ext_id[2] top.tb_protocol_control_unit_test.tb.i_test.protocol_control_inst_1.tx_shift_reg_inst.tx_ext_id[1] top.tb_protocol_control_unit_test.tb.i_test.protocol_control_inst_1.tx_shift_reg_inst.tx_ext_id[0]
+@28
+top.tb_protocol_control_unit_test.tb.i_test.protocol_control_inst_1.tx_shift_reg_inst.tx_ext_id[17]
+top.tb_protocol_control_unit_test.tb.i_test.protocol_control_inst_1.tx_shift_reg_inst.tx_ext_id[16]
+top.tb_protocol_control_unit_test.tb.i_test.protocol_control_inst_1.tx_shift_reg_inst.tx_ext_id[15]
+top.tb_protocol_control_unit_test.tb.i_test.protocol_control_inst_1.tx_shift_reg_inst.tx_ext_id[14]
+top.tb_protocol_control_unit_test.tb.i_test.protocol_control_inst_1.tx_shift_reg_inst.tx_ext_id[13]
+top.tb_protocol_control_unit_test.tb.i_test.protocol_control_inst_1.tx_shift_reg_inst.tx_ext_id[12]
+top.tb_protocol_control_unit_test.tb.i_test.protocol_control_inst_1.tx_shift_reg_inst.tx_ext_id[11]
+top.tb_protocol_control_unit_test.tb.i_test.protocol_control_inst_1.tx_shift_reg_inst.tx_ext_id[10]
+top.tb_protocol_control_unit_test.tb.i_test.protocol_control_inst_1.tx_shift_reg_inst.tx_ext_id[9]
+top.tb_protocol_control_unit_test.tb.i_test.protocol_control_inst_1.tx_shift_reg_inst.tx_ext_id[8]
+top.tb_protocol_control_unit_test.tb.i_test.protocol_control_inst_1.tx_shift_reg_inst.tx_ext_id[7]
+top.tb_protocol_control_unit_test.tb.i_test.protocol_control_inst_1.tx_shift_reg_inst.tx_ext_id[6]
+top.tb_protocol_control_unit_test.tb.i_test.protocol_control_inst_1.tx_shift_reg_inst.tx_ext_id[5]
+top.tb_protocol_control_unit_test.tb.i_test.protocol_control_inst_1.tx_shift_reg_inst.tx_ext_id[4]
+top.tb_protocol_control_unit_test.tb.i_test.protocol_control_inst_1.tx_shift_reg_inst.tx_ext_id[3]
+top.tb_protocol_control_unit_test.tb.i_test.protocol_control_inst_1.tx_shift_reg_inst.tx_ext_id[2]
+top.tb_protocol_control_unit_test.tb.i_test.protocol_control_inst_1.tx_shift_reg_inst.tx_ext_id[1]
+top.tb_protocol_control_unit_test.tb.i_test.protocol_control_inst_1.tx_shift_reg_inst.tx_ext_id[0]
+@1401200
+-group_end
+@420
+top.tb_protocol_control_unit_test.tb.i_test.protocol_control_inst_1.txtb_ptr
+@200
+-Control counter
+@28
+#{top.tb_protocol_control_unit_test.tb.i_test.protocol_control_inst_2.protocol_control_fsm_inst.ctrl_counted_byte_index[1:0]} top.tb_protocol_control_unit_test.tb.i_test.protocol_control_inst_2.protocol_control_fsm_inst.ctrl_counted_byte_index[1] top.tb_protocol_control_unit_test.tb.i_test.protocol_control_inst_2.protocol_control_fsm_inst.ctrl_counted_byte_index[0]
+@29
+top.tb_protocol_control_unit_test.tb.i_test.protocol_control_inst_2.protocol_control_fsm_inst.ctrl_counted_byte
+@28
+top.tb_protocol_control_unit_test.tb.i_test.protocol_control_inst_1.control_counter_inst.ctrl_ctr_ce
+top.tb_protocol_control_unit_test.tb.i_test.protocol_control_inst_1.control_counter_inst.ctrl_counted_byte
+@22
+#{top.tb_protocol_control_unit_test.tb.i_test.protocol_control_inst_1.control_counter_inst.ctrl_ctr_q[8:0]} top.tb_protocol_control_unit_test.tb.i_test.protocol_control_inst_1.control_counter_inst.ctrl_ctr_q[8] top.tb_protocol_control_unit_test.tb.i_test.protocol_control_inst_1.control_counter_inst.ctrl_ctr_q[7] top.tb_protocol_control_unit_test.tb.i_test.protocol_control_inst_1.control_counter_inst.ctrl_ctr_q[6] top.tb_protocol_control_unit_test.tb.i_test.protocol_control_inst_1.control_counter_inst.ctrl_ctr_q[5] top.tb_protocol_control_unit_test.tb.i_test.protocol_control_inst_1.control_counter_inst.ctrl_ctr_q[4] top.tb_protocol_control_unit_test.tb.i_test.protocol_control_inst_1.control_counter_inst.ctrl_ctr_q[3] top.tb_protocol_control_unit_test.tb.i_test.protocol_control_inst_1.control_counter_inst.ctrl_ctr_q[2] top.tb_protocol_control_unit_test.tb.i_test.protocol_control_inst_1.control_counter_inst.ctrl_ctr_q[1] top.tb_protocol_control_unit_test.tb.i_test.protocol_control_inst_1.control_counter_inst.ctrl_ctr_q[0]
+#{top.tb_protocol_control_unit_test.tb.i_test.protocol_control_inst_1.control_counter_inst.ctrl_ctr_mem_index[4:0]} top.tb_protocol_control_unit_test.tb.i_test.protocol_control_inst_1.control_counter_inst.ctrl_ctr_mem_index[4] top.tb_protocol_control_unit_test.tb.i_test.protocol_control_inst_1.control_counter_inst.ctrl_ctr_mem_index[3] top.tb_protocol_control_unit_test.tb.i_test.protocol_control_inst_1.control_counter_inst.ctrl_ctr_mem_index[2] top.tb_protocol_control_unit_test.tb.i_test.protocol_control_inst_1.control_counter_inst.ctrl_ctr_mem_index[1] top.tb_protocol_control_unit_test.tb.i_test.protocol_control_inst_1.control_counter_inst.ctrl_ctr_mem_index[0]
+@200
+-TX FSM
+@420
+top.tb_protocol_control_unit_test.tb.i_test.protocol_control_inst_1.bst_ctr
+@28
+#{top.tb_protocol_control_unit_test.tb.i_test.protocol_control_inst_1.tx_shift_reg_inst.bst_ctr_grey[2:0]} top.tb_protocol_control_unit_test.tb.i_test.protocol_control_inst_1.tx_shift_reg_inst.bst_ctr_grey[2] top.tb_protocol_control_unit_test.tb.i_test.protocol_control_inst_1.tx_shift_reg_inst.bst_ctr_grey[1] top.tb_protocol_control_unit_test.tb.i_test.protocol_control_inst_1.tx_shift_reg_inst.bst_ctr_grey[0]
+top.tb_protocol_control_unit_test.tb.i_test.protocol_control_inst_1.protocol_control_fsm_inst.bit_error_arb
+@200
+-RX Data
+@22
+#{top.tb_protocol_control_unit_test.tb.i_test.protocol_control_inst_2.rec_dlc[3:0]} top.tb_protocol_control_unit_test.tb.i_test.protocol_control_inst_2.rec_dlc[3] top.tb_protocol_control_unit_test.tb.i_test.protocol_control_inst_2.rec_dlc[2] top.tb_protocol_control_unit_test.tb.i_test.protocol_control_inst_2.rec_dlc[1] top.tb_protocol_control_unit_test.tb.i_test.protocol_control_inst_2.rec_dlc[0]
+@28
+top.tb_protocol_control_unit_test.tb.i_test.protocol_control_inst_2.rec_esi
+top.tb_protocol_control_unit_test.tb.i_test.protocol_control_inst_2.rec_brs
+top.tb_protocol_control_unit_test.tb.i_test.protocol_control_inst_2.rec_frame_type
+top.tb_protocol_control_unit_test.tb.i_test.protocol_control_inst_2.rec_ident_type
+top.tb_protocol_control_unit_test.tb.i_test.protocol_control_inst_2.rec_is_rtr
+top.tb_protocol_control_unit_test.tb.i_test.protocol_control_inst_2.rx_shift_reg_inst.rx_store_rtr
+@c00022
+#{top.tb_protocol_control_unit_test.tb.i_test.protocol_control_inst_2.rec_ident[28:0]} top.tb_protocol_control_unit_test.tb.i_test.protocol_control_inst_2.rec_ident[28] top.tb_protocol_control_unit_test.tb.i_test.protocol_control_inst_2.rec_ident[27] top.tb_protocol_control_unit_test.tb.i_test.protocol_control_inst_2.rec_ident[26] top.tb_protocol_control_unit_test.tb.i_test.protocol_control_inst_2.rec_ident[25] top.tb_protocol_control_unit_test.tb.i_test.protocol_control_inst_2.rec_ident[24] top.tb_protocol_control_unit_test.tb.i_test.protocol_control_inst_2.rec_ident[23] top.tb_protocol_control_unit_test.tb.i_test.protocol_control_inst_2.rec_ident[22] top.tb_protocol_control_unit_test.tb.i_test.protocol_control_inst_2.rec_ident[21] top.tb_protocol_control_unit_test.tb.i_test.protocol_control_inst_2.rec_ident[20] top.tb_protocol_control_unit_test.tb.i_test.protocol_control_inst_2.rec_ident[19] top.tb_protocol_control_unit_test.tb.i_test.protocol_control_inst_2.rec_ident[18] top.tb_protocol_control_unit_test.tb.i_test.protocol_control_inst_2.rec_ident[17] top.tb_protocol_control_unit_test.tb.i_test.protocol_control_inst_2.rec_ident[16] top.tb_protocol_control_unit_test.tb.i_test.protocol_control_inst_2.rec_ident[15] top.tb_protocol_control_unit_test.tb.i_test.protocol_control_inst_2.rec_ident[14] top.tb_protocol_control_unit_test.tb.i_test.protocol_control_inst_2.rec_ident[13] top.tb_protocol_control_unit_test.tb.i_test.protocol_control_inst_2.rec_ident[12] top.tb_protocol_control_unit_test.tb.i_test.protocol_control_inst_2.rec_ident[11] top.tb_protocol_control_unit_test.tb.i_test.protocol_control_inst_2.rec_ident[10] top.tb_protocol_control_unit_test.tb.i_test.protocol_control_inst_2.rec_ident[9] top.tb_protocol_control_unit_test.tb.i_test.protocol_control_inst_2.rec_ident[8] top.tb_protocol_control_unit_test.tb.i_test.protocol_control_inst_2.rec_ident[7] top.tb_protocol_control_unit_test.tb.i_test.protocol_control_inst_2.rec_ident[6] top.tb_protocol_control_unit_test.tb.i_test.protocol_control_inst_2.rec_ident[5] top.tb_protocol_control_unit_test.tb.i_test.protocol_control_inst_2.rec_ident[4] top.tb_protocol_control_unit_test.tb.i_test.protocol_control_inst_2.rec_ident[3] top.tb_protocol_control_unit_test.tb.i_test.protocol_control_inst_2.rec_ident[2] top.tb_protocol_control_unit_test.tb.i_test.protocol_control_inst_2.rec_ident[1] top.tb_protocol_control_unit_test.tb.i_test.protocol_control_inst_2.rec_ident[0]
+@28
+top.tb_protocol_control_unit_test.tb.i_test.protocol_control_inst_2.rec_ident[28]
+top.tb_protocol_control_unit_test.tb.i_test.protocol_control_inst_2.rec_ident[27]
+top.tb_protocol_control_unit_test.tb.i_test.protocol_control_inst_2.rec_ident[26]
+top.tb_protocol_control_unit_test.tb.i_test.protocol_control_inst_2.rec_ident[25]
+top.tb_protocol_control_unit_test.tb.i_test.protocol_control_inst_2.rec_ident[24]
+top.tb_protocol_control_unit_test.tb.i_test.protocol_control_inst_2.rec_ident[23]
+top.tb_protocol_control_unit_test.tb.i_test.protocol_control_inst_2.rec_ident[22]
+top.tb_protocol_control_unit_test.tb.i_test.protocol_control_inst_2.rec_ident[21]
+top.tb_protocol_control_unit_test.tb.i_test.protocol_control_inst_2.rec_ident[20]
+top.tb_protocol_control_unit_test.tb.i_test.protocol_control_inst_2.rec_ident[19]
+top.tb_protocol_control_unit_test.tb.i_test.protocol_control_inst_2.rec_ident[18]
+top.tb_protocol_control_unit_test.tb.i_test.protocol_control_inst_2.rec_ident[17]
+top.tb_protocol_control_unit_test.tb.i_test.protocol_control_inst_2.rec_ident[16]
+top.tb_protocol_control_unit_test.tb.i_test.protocol_control_inst_2.rec_ident[15]
+top.tb_protocol_control_unit_test.tb.i_test.protocol_control_inst_2.rec_ident[14]
+top.tb_protocol_control_unit_test.tb.i_test.protocol_control_inst_2.rec_ident[13]
+top.tb_protocol_control_unit_test.tb.i_test.protocol_control_inst_2.rec_ident[12]
+top.tb_protocol_control_unit_test.tb.i_test.protocol_control_inst_2.rec_ident[11]
+top.tb_protocol_control_unit_test.tb.i_test.protocol_control_inst_2.rec_ident[10]
+top.tb_protocol_control_unit_test.tb.i_test.protocol_control_inst_2.rec_ident[9]
+top.tb_protocol_control_unit_test.tb.i_test.protocol_control_inst_2.rec_ident[8]
+top.tb_protocol_control_unit_test.tb.i_test.protocol_control_inst_2.rec_ident[7]
+top.tb_protocol_control_unit_test.tb.i_test.protocol_control_inst_2.rec_ident[6]
+top.tb_protocol_control_unit_test.tb.i_test.protocol_control_inst_2.rec_ident[5]
+top.tb_protocol_control_unit_test.tb.i_test.protocol_control_inst_2.rec_ident[4]
+top.tb_protocol_control_unit_test.tb.i_test.protocol_control_inst_2.rec_ident[3]
+top.tb_protocol_control_unit_test.tb.i_test.protocol_control_inst_2.rec_ident[2]
+top.tb_protocol_control_unit_test.tb.i_test.protocol_control_inst_2.rec_ident[1]
+top.tb_protocol_control_unit_test.tb.i_test.protocol_control_inst_2.rec_ident[0]
+@1401200
+-group_end
+@28
+top.tb_protocol_control_unit_test.tb.i_test.protocol_control_inst_2.error_detector_inst.crc_check
+top.tb_protocol_control_unit_test.tb.i_test.protocol_control_inst_2.protocol_control_fsm_inst.crc_use_17
+top.tb_protocol_control_unit_test.tb.i_test.protocol_control_inst_2.protocol_control_fsm_inst.crc_use_21
+@22
+#{top.tb_protocol_control_unit_test.tb.i_test.protocol_control_inst_2.crc_21[20:0]} top.tb_protocol_control_unit_test.tb.i_test.protocol_control_inst_2.crc_21[20] top.tb_protocol_control_unit_test.tb.i_test.protocol_control_inst_2.crc_21[19] top.tb_protocol_control_unit_test.tb.i_test.protocol_control_inst_2.crc_21[18] top.tb_protocol_control_unit_test.tb.i_test.protocol_control_inst_2.crc_21[17] top.tb_protocol_control_unit_test.tb.i_test.protocol_control_inst_2.crc_21[16] top.tb_protocol_control_unit_test.tb.i_test.protocol_control_inst_2.crc_21[15] top.tb_protocol_control_unit_test.tb.i_test.protocol_control_inst_2.crc_21[14] top.tb_protocol_control_unit_test.tb.i_test.protocol_control_inst_2.crc_21[13] top.tb_protocol_control_unit_test.tb.i_test.protocol_control_inst_2.crc_21[12] top.tb_protocol_control_unit_test.tb.i_test.protocol_control_inst_2.crc_21[11] top.tb_protocol_control_unit_test.tb.i_test.protocol_control_inst_2.crc_21[10] top.tb_protocol_control_unit_test.tb.i_test.protocol_control_inst_2.crc_21[9] top.tb_protocol_control_unit_test.tb.i_test.protocol_control_inst_2.crc_21[8] top.tb_protocol_control_unit_test.tb.i_test.protocol_control_inst_2.crc_21[7] top.tb_protocol_control_unit_test.tb.i_test.protocol_control_inst_2.crc_21[6] top.tb_protocol_control_unit_test.tb.i_test.protocol_control_inst_2.crc_21[5] top.tb_protocol_control_unit_test.tb.i_test.protocol_control_inst_2.crc_21[4] top.tb_protocol_control_unit_test.tb.i_test.protocol_control_inst_2.crc_21[3] top.tb_protocol_control_unit_test.tb.i_test.protocol_control_inst_2.crc_21[2] top.tb_protocol_control_unit_test.tb.i_test.protocol_control_inst_2.crc_21[1] top.tb_protocol_control_unit_test.tb.i_test.protocol_control_inst_2.crc_21[0]
+#{top.tb_protocol_control_unit_test.tb.i_test.protocol_control_inst_2.rx_crc[20:0]} top.tb_protocol_control_unit_test.tb.i_test.protocol_control_inst_2.rx_crc[20] top.tb_protocol_control_unit_test.tb.i_test.protocol_control_inst_2.rx_crc[19] top.tb_protocol_control_unit_test.tb.i_test.protocol_control_inst_2.rx_crc[18] top.tb_protocol_control_unit_test.tb.i_test.protocol_control_inst_2.rx_crc[17] top.tb_protocol_control_unit_test.tb.i_test.protocol_control_inst_2.rx_crc[16] top.tb_protocol_control_unit_test.tb.i_test.protocol_control_inst_2.rx_crc[15] top.tb_protocol_control_unit_test.tb.i_test.protocol_control_inst_2.rx_crc[14] top.tb_protocol_control_unit_test.tb.i_test.protocol_control_inst_2.rx_crc[13] top.tb_protocol_control_unit_test.tb.i_test.protocol_control_inst_2.rx_crc[12] top.tb_protocol_control_unit_test.tb.i_test.protocol_control_inst_2.rx_crc[11] top.tb_protocol_control_unit_test.tb.i_test.protocol_control_inst_2.rx_crc[10] top.tb_protocol_control_unit_test.tb.i_test.protocol_control_inst_2.rx_crc[9] top.tb_protocol_control_unit_test.tb.i_test.protocol_control_inst_2.rx_crc[8] top.tb_protocol_control_unit_test.tb.i_test.protocol_control_inst_2.rx_crc[7] top.tb_protocol_control_unit_test.tb.i_test.protocol_control_inst_2.rx_crc[6] top.tb_protocol_control_unit_test.tb.i_test.protocol_control_inst_2.rx_crc[5] top.tb_protocol_control_unit_test.tb.i_test.protocol_control_inst_2.rx_crc[4] top.tb_protocol_control_unit_test.tb.i_test.protocol_control_inst_2.rx_crc[3] top.tb_protocol_control_unit_test.tb.i_test.protocol_control_inst_2.rx_crc[2] top.tb_protocol_control_unit_test.tb.i_test.protocol_control_inst_2.rx_crc[1] top.tb_protocol_control_unit_test.tb.i_test.protocol_control_inst_2.rx_crc[0]
+@28
+top.tb_protocol_control_unit_test.tb.i_test.protocol_control_inst_2.rx_shift_reg_inst.rx_store_stuff_count
+@c00022
+#{top.tb_protocol_control_unit_test.tb.i_test.protocol_control_inst_2.rx_shift_reg_inst.rx_stuff_count[3:0]} top.tb_protocol_control_unit_test.tb.i_test.protocol_control_inst_2.rx_shift_reg_inst.rx_stuff_count[3] top.tb_protocol_control_unit_test.tb.i_test.protocol_control_inst_2.rx_shift_reg_inst.rx_stuff_count[2] top.tb_protocol_control_unit_test.tb.i_test.protocol_control_inst_2.rx_shift_reg_inst.rx_stuff_count[1] top.tb_protocol_control_unit_test.tb.i_test.protocol_control_inst_2.rx_shift_reg_inst.rx_stuff_count[0]
+@28
+top.tb_protocol_control_unit_test.tb.i_test.protocol_control_inst_2.rx_shift_reg_inst.rx_stuff_count[3]
+top.tb_protocol_control_unit_test.tb.i_test.protocol_control_inst_2.rx_shift_reg_inst.rx_stuff_count[2]
+top.tb_protocol_control_unit_test.tb.i_test.protocol_control_inst_2.rx_shift_reg_inst.rx_stuff_count[1]
+top.tb_protocol_control_unit_test.tb.i_test.protocol_control_inst_2.rx_shift_reg_inst.rx_stuff_count[0]
+@1401200
+-group_end
+@28
+top.tb_protocol_control_unit_test.tb.i_test.protocol_control_inst_2.error_detector_inst.crc_21_ok
+top.tb_protocol_control_unit_test.tb.i_test.protocol_control_inst_2.error_detector_inst.crc_match_d
+top.tb_protocol_control_unit_test.tb.i_test.protocol_control_inst_2.error_detector_inst.crc_match_c
+top.tb_protocol_control_unit_test.tb.i_test.protocol_control_inst_2.protocol_control_fsm_inst.crc_use_17
+top.tb_protocol_control_unit_test.tb.i_test.protocol_control_inst_2.protocol_control_fsm_inst.crc_use_21
+#{top.tb_protocol_control_unit_test.tb.i_test.protocol_control_inst_2.protocol_control_fsm_inst.crc_src[1:0]} top.tb_protocol_control_unit_test.tb.i_test.protocol_control_inst_2.protocol_control_fsm_inst.crc_src[1] top.tb_protocol_control_unit_test.tb.i_test.protocol_control_inst_2.protocol_control_fsm_inst.crc_src[0]
+top.tb_protocol_control_unit_test.tb.i_test.protocol_control_inst_2.error_detector_inst.stuff_count_ok
+top.tb_protocol_control_unit_test.tb.i_test.protocol_control_inst_2.error_detector_inst.stuff_count_check
+#{top.tb_protocol_control_unit_test.tb.i_test.protocol_control_inst_2.error_detector_inst.rx_stuff_count[3:0]} top.tb_protocol_control_unit_test.tb.i_test.protocol_control_inst_2.error_detector_inst.rx_stuff_count[3] top.tb_protocol_control_unit_test.tb.i_test.protocol_control_inst_2.error_detector_inst.rx_stuff_count[2] top.tb_protocol_control_unit_test.tb.i_test.protocol_control_inst_2.error_detector_inst.rx_stuff_count[1] top.tb_protocol_control_unit_test.tb.i_test.protocol_control_inst_2.error_detector_inst.rx_stuff_count[0]
+top.tb_protocol_control_unit_test.tb.i_test.protocol_control_inst_2.error_detector_inst.dst_parity
+#{top.tb_protocol_control_unit_test.tb.i_test.protocol_control_inst_2.error_detector_inst.dst_ctr_grey[2:0]} top.tb_protocol_control_unit_test.tb.i_test.protocol_control_inst_2.error_detector_inst.dst_ctr_grey[2] top.tb_protocol_control_unit_test.tb.i_test.protocol_control_inst_2.error_detector_inst.dst_ctr_grey[1] top.tb_protocol_control_unit_test.tb.i_test.protocol_control_inst_2.error_detector_inst.dst_ctr_grey[0]
+#{top.tb_protocol_control_unit_test.tb.i_test.protocol_control_inst_2.error_detector_inst.dst_ctr_vect[2:0]} top.tb_protocol_control_unit_test.tb.i_test.protocol_control_inst_2.error_detector_inst.dst_ctr_vect[2] top.tb_protocol_control_unit_test.tb.i_test.protocol_control_inst_2.error_detector_inst.dst_ctr_vect[1] top.tb_protocol_control_unit_test.tb.i_test.protocol_control_inst_2.error_detector_inst.dst_ctr_vect[0]
+@420
+top.tb_protocol_control_unit_test.tb.i_test.protocol_control_inst_2.error_detector_inst.dst_ctr
+[pattern_trace] 1
+[pattern_trace] 0

@@ -1,5 +1,5 @@
 _default: &default
-    log_level: info
+    log_level: debug
     psl_coverage: true
     error_tolerance: 0
     # seed: 0 # optional; use to reconstruct results from randomized runs
@@ -9,7 +9,7 @@ _default: &default
 unit:
     default:
         <<: *default
-        log_level: warning
+        log_level: info
         iterations: 50
         timeout: 100 ms
     tests:
@@ -18,12 +18,8 @@ unit:
             wave: unit/Bit_Stuffing/bsdt_unit.tcl
         apb:
             iterations: 1
-        bus_sync:
-            wave: unit/Bus_Sampling/bsnc_unit.tcl
         crc:
             wave: unit/CRC/crct_unit.tcl
-        fault_confinement:
-            wave: unit/Fault_confinement/fault_conf_unit.tcl
         int_man:
             wave: unit/Int_Manager/intm_unit.tcl
         mess_filt:
@@ -32,15 +28,15 @@ unit:
             wave: unit/Prescaler/prsc_unit.tcl
         protocol_control:
             wave: unit/Protocol_Control/pctl_unit.tcl
+            iterations: 100
         rx_buf:
             wave: unit/RX_Buffer/rxbf_unit.tcl
             iterations: 10
         tx_arb:
             wave: unit/TX_Arbitrator/txar_unit.tcl
+            iterations: 1000
         tx_buf:
             wave: unit/TX_Buffer/txbf_unit.tcl
-        event_logger:
-            wave: unit/Evnt_Logger/evlg_unit.tcl
 feature:
     default:
         <<: *default
@@ -48,14 +44,21 @@ feature:
         timeout: 100 ms
         wave: feature/feature_env_setup.tcl
     tests:
-        abort_transmittion:
         arbitration:
         fault_confinement:
         forbid_fd:
         interrupt:
+        int_rx:
+        int_tx:
+        int_ewl:
+        int_do:
+        int_fcs:
         invalid_configs:
         overload:
         retr_limit:
+        retr_limit_2:
+        retr_limit_3:
+        one_shot:
         rx_status:
         spec_mode:
         traf_meas:
@@ -63,7 +66,6 @@ feature:
         tx_arb_time_tran:
         timestamp_options:
         byte_enable:
-        rtr_pref:
         data_length_code:
         bus_start:
         data_overrun_clear:
@@ -75,6 +77,8 @@ feature:
         timestamp_registers:
         txt_buffer_hazard:
             iterations: 1
+        txt_buffer_priority:
+            iterations: 5
 reference:
     default:
         <<: *default
@@ -113,7 +117,7 @@ sanity:
         wave: sanity/sanity_env_setup.tcl
         dump_all_signals: false
     tests:
-        "1Mb/10Mb 20 m Star":
+        "1Mb/5Mb 20 m Star":
             topology: star
             bus_len_v: [10.0, 10.0, 10.0, 10.0, 0.0, 0.0]
             trv_del_v: [10, 10, 10, 10]
@@ -122,4 +126,4 @@ sanity:
             nw_var: 5.0
             ng_mean: 300000.0
             ng_var:  100000.0
-            timing_config: [4, 1, 8, 8, 8, 3, 3, 1, 5, 2]
+            timing_config: [1, 1, 33, 33, 33, 4, 4, 8, 7, 3]

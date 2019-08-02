@@ -83,7 +83,8 @@ entity memory_bus_template is
         signal cs                     :in   std_logic;
         signal read                   :in   std_logic;
         signal write                  :in   std_logic;
-        signal be                     :in   std_logic_vector(data_width / 8 - 1 downto 0)
+        signal be                     :in   std_logic_vector(data_width / 8 - 1 downto 0);
+        signal lock                   :in   std_logic
     );
 
 end entity memory_bus_template;
