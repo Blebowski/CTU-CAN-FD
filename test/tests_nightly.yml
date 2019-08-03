@@ -73,7 +73,7 @@ feature:
         arbitration:
         fault_confinement:
         forbid_fd:
-        interrupt:
+        # interrupt:
         int_rx:
         int_tx:
         int_ewl:
