@@ -3450,8 +3450,8 @@ noprefix "false"
 \end_inset
 
 .
- In TXT Buffers and RX Buffer, metadata are stored in Metadata word as is
- shown in TODO.
+ In TXT Buffers and RX Buffer, metadata are stored in Frame Format word
+ as is shown in TODO.
 \end_layout
 
 \begin_layout Standard
@@ -3829,7 +3829,7 @@ name "tab:CAN-frame-metadata"
 \end_layout
 
 \begin_layout Section
-CAN frame format
+CAN Frame format
 \begin_inset CommandInset label
 LatexCommand label
 name "sec:CAN-frame-format"
@@ -3840,7 +3840,289 @@ name "sec:CAN-frame-format"
 \end_layout
 
 \begin_layout Standard
-TODO - explain all the words - link to Datasheet.
+CAN frame spans multiple 32-bit words within TXT Buffers and within RX Buffer
+ memories.
+ One TXT Buffer always contains single frame.
+ RX Buffer contains multiple frames one after another in a FIFO memory.
+ Format of CAN frame within these memories is the same with exception of
+ ESI bit (in TXT Buffer ESI has no meaning, in RX Buffer ESI has value of
+ received ESI bit on CAN bus).
+ Meaning of memory words within the CAN frame is described in Table 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "tab:CAN-frame-format-memory-words"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+.
+ Meaning of individual bits can be found in TODO.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float table
+placement h
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\noindent
+\align center
+\begin_inset Tabular
+<lyxtabular version="3" rows="6" columns="3">
+<features tabularvalignment="middle">
+<column alignment="left" valignment="top" width="15text%">
+<column alignment="left" valignment="top" width="17text%">
+<column alignment="left" valignment="top" width="60text%">
+<row>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Name of memory word
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+cellcolor{gray}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Name in register map (see TODO)
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+cellcolor{gray}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Description
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+cellcolor{gray}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Frame Format
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+FRAME_FORM_W
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Contains DLC, ESI, Frame Type, Identifier Type, BRS.
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Identifier
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+IDENTIFIER_W
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Contains CAN Identifier Base and Identifier Extension.
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Timestamp Low
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+TIMESTAMP_L_W
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Contains lower 32-bits of CAN frame timestamp (in RX Buffer as sampled during
+ frame reception, in TXT Buffer as inserted by user).
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Timestamp High
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+TIMESTAMP_U_W
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Contains upper 32-bits of CAN frame timestamp (in RX Buffer as sampled during
+ frame reception, in TXT Buffer as inserted by user).
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Data words
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+DATA_X_Y_W
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Contain CAN frame data payload.
+\end_layout
+
+\end_inset
+</cell>
+</row>
+</lyxtabular>
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\noindent
+\align center
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+CAN frame format - memory words
+\begin_inset CommandInset label
+LatexCommand label
+name "tab:CAN-frame-format-memory-words"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Section
@@ -15112,7 +15394,17 @@ Slave
 \end_inset
 
  side of this protocol, it receives commands and reacts upon them.
- State transition diagram of RX Buffer FSM is shown in Figure TODO.
+ State transition diagram of RX Buffer FSM is shown in Figure 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:rx-buffer-fsm"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+.
  Commands are issued by Protocol control FSM continously as reception of
  CAN frame progresses.
  Commands are issued by Protocol control FSM when unit is Receiver of a
@@ -15140,7 +15432,7 @@ noprefix "false"
 \end_inset
 
 .
- In detail, the protocol is described in Table 
+ In detail, Storing protocol is described in Table 
 \begin_inset CommandInset ref
 LatexCommand ref
 reference "tab:rx-buffer-storing-detailed"
@@ -15233,6 +15525,50 @@ RX Buffer storing protocol - Error frame
 \begin_inset CommandInset label
 LatexCommand label
 name "fig:rx-buffer-storing-error"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+placement H
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\noindent
+\align center
+\begin_inset Graphics
+	filename /DOKUMENTY/Skola/CVUT-FEL/ctu_can_fd_2/doc/pics/Visio_generated/FSM_RX_Buffer.pdf
+	lyxscale 20
+	scale 80
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+RX Buffer FSM
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:rx-buffer-fsm"
 
 \end_inset
 
@@ -15935,7 +16271,19 @@ noprefix "false"
  consecutive clock cycles).
  Since RX Buffer RAM has one clock cycle delay on data output, RAM read
  address is speculatively multiplexed between Read Pointer and Read Pointer
- + 1 as shown in Figure TODO.
+ + 1 as shown in Figure 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:rx-buffer-speculation"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+.
+ Due to this speculation RX Buffer read pre-feteches data from next memory
+ word instead of memory word given by Read Pointer.
  This speculation is executed to support burst read.
 \end_layout
 
@@ -16014,9 +16362,9 @@ cellcolor{gray}
 \begin_inset Text
 
 \begin_layout Plain Layout
-Read pointer points to Metadata word of most recently stored frame in RX
- Buffer.
- Output of RX Buffer RAM contain Metadata word.
+Read pointer points to Frame Format word of most recently stored frame in
+ RX Buffer.
+ Output of RX Buffer RAM contain Frame Format.
 \end_layout
 
 \end_inset
@@ -16036,7 +16384,7 @@ Read pointer points to Metadata word of most recently stored frame in RX
 \begin_inset Text
 
 \begin_layout Plain Layout
-SW reads from RX_DATA register (Metadata word).
+SW reads from RX_DATA register (Frame Format word).
  Auxiliarly counter is loaded to value of RWCNT.
  Read Pointer increments by 1.
 \end_layout
@@ -16107,6 +16455,50 @@ RX Buffer - read protocol
 \begin_inset CommandInset label
 LatexCommand label
 name "tab:rx-buffer-read-protocol"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+placement H
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\noindent
+\align center
+\begin_inset Graphics
+	filename /DOKUMENTY/Skola/CVUT-FEL/ctu_can_fd_2/doc/pics/Timing_diagrams/PDFs/rx_buffer_pointer_speculation.pdf
+	lyxscale 20
+	scale 60
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+RX Buffer - Read pointer speculation
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:rx-buffer-speculation"
 
 \end_inset
 
@@ -16262,9 +16654,9 @@ Frame ends and it is commited to RX Buffer, Frame Counter is incremented
 \begin_inset Text
 
 \begin_layout Plain Layout
-Read Pointer points to the first word of CAN frame (Metadata word).
+Read Pointer points to the first word of CAN frame (Frame Format word).
  Memory registers issue a read from RX Buffer.
- RX Buffer RAM output contains Metadata word.
+ RX Buffer RAM output contains Frame Format word.
  RX Buffer loads value of RWCNT (Read word count) to an auxiliarly counter.
  Frame counter remains 1 and Read Pointer increments and points to Identifier
  word.
@@ -16350,7 +16742,7 @@ name "tab:frame-counter-handling"
 
 \end_layout
 
-\begin_layout Subsection
+\begin_layout Section
 Frame Filters
 \begin_inset CommandInset label
 LatexCommand label
@@ -16366,8 +16758,11 @@ Frame filters implement following functionality:
 \end_layout
 
 \begin_layout Itemize
-Filter commands for RX Buffer from Protocol Control FSM based on currently
- received CAN Identifier.
+Filter RX frames before storing to RX Buffer based on CAN Identifier.
+\end_layout
+
+\begin_layout Itemize
+Gate RX Buffer commands when CAN Identifier does not match Frame Filters.
 \end_layout
 
 \begin_layout Standard
@@ -16381,21 +16776,47 @@ filename "entity_docs/frame_filters.lyx"
 \end_layout
 
 \begin_layout Standard
-Frame filters implement two types of Filters: Bit filter and Range filter.
- There are three instances of Bit Filter (A, B, C) and one instance of range
+Frame filters implement two types of filters: Bit filter and Range filter.
+ There are three instances of Bit Filter (A, B, C) and one instance of Range
  filter.
- Filter types are described in Table TODO.
- Frame passes the identifiers if Identifier passes at least one filter (logical
- OR).
- Filters are considered only when Acceptance Filter mode is enabled.
- When Acceptance filter mode is disabled, no received frames are filtered
- out.
- Filters are optionally synthesizable by top level generics (see TODO).
- When no filter is synthesized, no received frames are filtered out.
- Apart from filtering based on CAN Identifier, a frame passes a filter only
- when Accepted Filter Identifier type (Base, Extended) and Accepted Filter
- Frame type (CAN 2.0, CAN FD) are matching Frame / Identifier type of Received
- Frame.
+ Each instance is selectively synthesizable by 
+\begin_inset Quotes eld
+\end_inset
+
+sup_filt_A/B/C
+\begin_inset Quotes erd
+\end_inset
+
+ or 
+\begin_inset Quotes eld
+\end_inset
+
+sup_range
+\begin_inset Quotes erd
+\end_inset
+
+ generics.
+ When no Frame Filter is synthesized, all RX frames are stored to RX Buffer
+ and no frame is filtered out.
+\end_layout
+
+\begin_layout Standard
+Filter types are described in Table 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "tab:frame-filter-types"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+.
+ CAN Frame matches Frame Filters if Identifier passes at least one filter
+ (logical OR).
+ Filters are considered only when Acceptance Filter Mode is enabled (MODE[AFM]
+ = '1').
+ When Acceptance Filter Mode is disabled, no RX frames are filtered out.
 \end_layout
 
 \begin_layout Standard
@@ -16413,7 +16834,7 @@ status open
 <features tabularvalignment="middle">
 <column alignment="left" valignment="top" width="10line%">
 <column alignment="left" valignment="top" width="15line%">
-<column alignment="left" valignment="top" width="40line%">
+<column alignment="left" valignment="top" width="66line%">
 <row>
 <cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
 \begin_inset Text
@@ -16496,7 +16917,15 @@ Bit filter
 \begin_inset Text
 
 \begin_layout Plain Layout
-Bit value, Bit Mask and Accepted Frame/Identifier type.
+Bit value, 
+\begin_inset Newline newline
+\end_inset
+
+Bit Mask and 
+\begin_inset Newline newline
+\end_inset
+
+Accepted Frame/Identifier type.
 \end_layout
 
 \end_inset
@@ -16505,9 +16934,15 @@ Bit value, Bit Mask and Accepted Frame/Identifier type.
 \begin_inset Text
 
 \begin_layout Plain Layout
-Received Frame type = Accepted Filter Frame type and Received Identifier
- type = Accepted Identifier type and Received CAN Identifier & Filter Mask
- = Filter value.
+(Received Frame/Identifier type = Accepted Frame/Identifier type)
+\begin_inset Newline newline
+\end_inset
+
+&&
+\begin_inset Newline newline
+\end_inset
+
+(Received CAN Identifier AND Filter Mask = Filter value)
 \end_layout
 
 \end_inset
@@ -16536,9 +16971,16 @@ Lower threshold, Upper threshold and Frame/Identifier type.
 \begin_inset Text
 
 \begin_layout Plain Layout
-Received Frame type = Accepted Filter Frame type and Received Identifier
- type = Accepted Identifier type and Decimal value of Received CAN Identifier
- is between Lower threshold and Upper threshold ().
+Received Frame/Identifier type = Accepted Frame/Identifier type
+\begin_inset Newline newline
+\end_inset
+
+AND
+\end_layout
+
+\begin_layout Plain Layout
+Decimal value of Received CAN Identifier is between Lower threshold and
+ Upper threshold ().
  Lower and Upper threshold are given in the same format as Identifier.
  When Base Identifier is compared, only Identifier Base is accounted to
  Range comparison.
@@ -16562,10 +17004,10 @@ Received Frame type = Accepted Filter Frame type and Received Identifier
 \begin_inset Caption Standard
 
 \begin_layout Plain Layout
-Frame filters operation
+Frame filter types
 \begin_inset CommandInset label
 LatexCommand label
-name "tab:CAN-ports-common-3-1-2"
+name "tab:frame-filter-types"
 
 \end_inset
 
@@ -16598,11 +17040,15 @@ TXT Buffer implements following functionality:
 \end_layout
 
 \begin_layout Itemize
-Stores single CAN FD frame for transmission in RAM memory.
+Stores single CAN FD frame for transmission in internal RAM memory.
 \end_layout
 
 \begin_layout Itemize
-Reacts on SW and HW commands.
+Manages HW and SW access to this RAM memory.
+\end_layout
+
+\begin_layout Itemize
+Provide status of frame transmission for SW.
 \end_layout
 
 \begin_layout Standard
@@ -16615,22 +17061,120 @@ filename "entity_docs/txt_buffer.lyx"
 
 \end_layout
 
+\begin_layout Standard
+There are 4 TXT Buffers in CTU CAN FD.
+ Each TXT Buffer RAM is accessed by SW via Memory registers (each TXT Buffer
+ is accessed via different memory location).
+ SW stores CAN frame to TXT Buffer.
+ For SW, TXT Buffer RAM is write-only.
+ TXT Buffer RAM is also accessed by Protocol control FSM which reads CAN
+ frame from TXT Buffer and transmitts it on CAN Bus.
+ For Protocol control, TXT Buffer is read-only.
+ TXT Buffer is never accessed from both sides simultaneously to guarantee
+ consistency of data within the buffer.
+ TXT Buffer is managed by Protocol Control FSM which is shown in Figure
+ 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:txt-buffer-fsm"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+.
+ CAN Frame format within TXT Buffer is the same as within RX Buffer and
+ it is described within 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "sec:CAN-frame-format"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+placement H
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\noindent
+\align center
+\begin_inset Graphics
+	filename /DOKUMENTY/Skola/CVUT-FEL/ctu_can_fd_2/doc/pics/Visio_generated/FSM_TXT_Buffer.pdf
+	lyxscale 20
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+TXT Buffer FSM
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:txt-buffer-fsm"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
 \begin_layout Subsection
 TXT Buffer commands
 \end_layout
 
 \begin_layout Standard
-TXT Buffer block diagram is shown in Figure TODO.
- Two types of commands can be issued to TXT Buffer: SW commands and HW commands.
- SW commands are applied from Memory registers by memory access from SW.
- HW commands are applied by Protocol Control FSM in CAN Core.
- TXT Buffer contains a FSM which is manipulated by SW and HW commands.
- Both command types are described in Table TODO.
- State transition diagram of TXT Buffer FSM is shown in Figure TODO.
- If SW and HW commands are applied at the same time, HW command always have
- higher priority.
- If a command is applied in a TXT Buffer FSM, state for which it is not
+Two types of commands can be issued to TXT Buffer: SW commands and HW commands.
+ SW commands are issued from SW by memory access to TX_COMMAND register.
+ HW commands are issued by Protocol Control FSM.
+ Both command types are described in Table 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "tab:txt-buffer-commands"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+.
+ Behaviour of simultaneous SW and HW commands is described in Table 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "tab:txt-buffer-simul-hw-sw-commands"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+.
+ If SW command is applied to TXT Buffer FSM in state for which it is not
  valid, it has no effect.
+ HW command is never applied in TXT Buffer FSM state for which it is not
+ valid.
  
 \end_layout
 
@@ -16648,9 +17192,9 @@ status open
 <lyxtabular version="3" rows="9" columns="4">
 <features tabularvalignment="middle">
 <column alignment="left" valignment="top" width="10line%">
-<column alignment="left" valignment="top" width="10line%">
-<column alignment="left" valignment="top" width="10line%">
-<column alignment="left" valignment="top" width="40line%">
+<column alignment="left" valignment="top" width="8line%">
+<column alignment="left" valignment="top" width="14line%">
+<column alignment="left" valignment="top" width="56.5line%">
 <row>
 <cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
 \begin_inset Text
@@ -16722,7 +17266,7 @@ cellcolor{gray}
 \begin_inset Text
 
 \begin_layout Plain Layout
-When is commands issued
+When is command issued
 \begin_inset ERT
 status open
 
@@ -16764,7 +17308,7 @@ SW
 \begin_inset Text
 
 \begin_layout Plain Layout
-Empty, OK, Aborted, Error
+Empty, TX OK, Aborted, TX Failed
 \end_layout
 
 \end_inset
@@ -16803,7 +17347,7 @@ SW
 \begin_inset Text
 
 \begin_layout Plain Layout
-OK, Aborted, Error
+TX OK, Aborted, TX Failed
 \end_layout
 
 \end_inset
@@ -16846,7 +17390,7 @@ Ready, TX in progress, Abort in Progress
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -16885,7 +17429,7 @@ Ready
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -16923,11 +17467,11 @@ TX in Progress, Abort in Progress
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
-Protocol control FSM successfully transmitts frame from TXT Buffer.
+Protocol control FSM successfully transmitted frame from TXT Buffer.
 \end_layout
 
 \end_inset
@@ -16952,7 +17496,7 @@ HW
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -16961,7 +17505,7 @@ TX in Progress, Abort in Progress
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -16990,7 +17534,7 @@ HW
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -16999,7 +17543,7 @@ TX in Progress, Abort in Progress
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -17028,7 +17572,7 @@ HW
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+<cell alignment="left" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -17037,13 +17581,14 @@ TX in Progress, Abort in Progress
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+<cell alignment="left" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
 A frame was re-transmitted number of times unsucesfully (either Arbitration
- was lost or Error frame occurred) and Retransmitt counter reaches Retransmitt
+ was lost or Error frame occurred) and Retransmitt counter reached Retransmitt
  threshold.
+ Frame transmission will not be attempted anymore.
 \end_layout
 
 \end_inset
@@ -17065,7 +17610,336 @@ A frame was re-transmitted number of times unsucesfully (either Arbitration
 TXT Buffer commands
 \begin_inset CommandInset label
 LatexCommand label
-name "tab:CAN-ports-common-3-1-2-1"
+name "tab:txt-buffer-commands"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float table
+placement H
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\noindent
+\align center
+\begin_inset Tabular
+<lyxtabular version="3" rows="5" columns="4">
+<features tabularvalignment="middle">
+<column alignment="left" valignment="top" width="8line%">
+<column alignment="left" valignment="top" width="8line%">
+<column alignment="left" valignment="top" width="14line%">
+<column alignment="left" valignment="top" width="58.5line%">
+<row>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+HW Command
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+cellcolor{gray}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+SW Command 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+cellcolor{gray}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+TXT Buffer state
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+cellcolor{gray}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Result
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+cellcolor{gray}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Lock
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Set Abort
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Ready
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+TXT Buffer is locked for transmission, Protocol control transmitts from
+ this buffer.
+ TXT Buffer becomes 
+\begin_inset Quotes eld
+\end_inset
+
+Abort in Progress
+\begin_inset Quotes erd
+\end_inset
+
+ and transmission is attempted only once.
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Unlock - Done
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Set Abort
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+TX in Progress
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+TXT Buffer is unlocked and becomes 
+\begin_inset Quotes eld
+\end_inset
+
+TX OK
+\begin_inset Quotes erd
+\end_inset
+
+ since transmission is successfull.
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Unlock - Failed
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Set Abort
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+TX in Progress
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+TXT Buffer is unlocked and becomes 
+\begin_inset Quotes eld
+\end_inset
+
+TX Failed
+\begin_inset Quotes erd
+\end_inset
+
+ since transmission failed.
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="left" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Unlock - Arbitration lost, Error
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Set Abort
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+TX in Progress
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+TXT Buffer is unlocked and becomes 
+\begin_inset Quotes eld
+\end_inset
+
+Aborted
+\begin_inset Quotes erd
+\end_inset
+
+.
+ No more transmissions are attempted from this Buffer.
+ In this special case SW command has priority over HW command to guarantee
+ that SW command will not be lost!
+\end_layout
+
+\end_inset
+</cell>
+</row>
+</lyxtabular>
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\noindent
+\align center
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+TXT Buffer simultaneous HW/SW commands
+\begin_inset CommandInset label
+LatexCommand label
+name "tab:txt-buffer-simul-hw-sw-commands"
 
 \end_inset
 
@@ -17092,7 +17966,17 @@ TXT buffer RAM is written by SW (port A) and read by Protocol Control (port
  With regards to accessibility, TXT Buffer RAM can be in two states: Unlocked
  and Locked.
  TXT Buffer FSM states corresponding to Locked and Unlocked state of TXT
- Buffer are demonstrated in Figure TODO.
+ Buffer are demonstrated in Figure 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:txt-buffer-fsm"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+.
  When TXT Buffer is unlocked, it is not acessed by CAN Core (nor TX Arbitrator)
  as there is no frame transmission from this TXT Buffer and SW can write
  to TXT Buffer via Memory registers.
@@ -17109,13 +17993,8 @@ TXT Buffer - Use cases
 \end_layout
 
 \begin_layout Standard
-An example use case for standard transmission of CAN frame is shown in Table
- TODO.
-\end_layout
-
-\begin_layout Standard
 \begin_inset Float table
-placement h
+placement H
 wide false
 sideways false
 status open
@@ -17127,8 +18006,8 @@ status open
 <lyxtabular version="3" rows="6" columns="3">
 <features tabularvalignment="middle">
 <column alignment="left" valignment="top" width="5line%">
-<column alignment="left" valignment="top" width="30line%">
-<column alignment="left" valignment="top" width="30line%">
+<column alignment="left" valignment="top" width="35line%">
+<column alignment="left" valignment="top" width="51line%">
 <row>
 <cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
 \begin_inset Text
@@ -17174,7 +18053,7 @@ cellcolor{gray}
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -17216,7 +18095,7 @@ SW fills TXT Buffer RAM.
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -17245,7 +18124,7 @@ SW issues Set ready command.
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -17274,13 +18153,15 @@ TXT Buffer moves to Ready state.
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
-TX Arbitrator selects TXT Buffer for transmission.
- Protocol control issues HW lock command and it starts transmission from
- TXT Buffer.
+TX Arbitrator selects TXT Buffer for transmission and indicates this to
+ Protocol control.
+ On third bit of Intermission or when Bus is idle, Protocol control issues
+ HW Lock command, TXT Buffer moves to TX in Progress and Protocol control
+ starts transmission from TXT Buffer.
 \end_layout
 
 \end_inset
@@ -17305,13 +18186,13 @@ TX Arbitrator selects TXT Buffer for transmission.
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
 Frame Transmission ends successfully and Protocol control issues Unlock
  - Done command.
- TXT Buffer moves to OK state.
+ TXT Buffer moves to TX OK state.
 \end_layout
 
 \end_inset
@@ -17331,13 +18212,12 @@ Frame Transmission ends successfully and Protocol control issues Unlock
 \begin_inset Text
 
 \begin_layout Plain Layout
-SW reads state of TXT Buffer and finds out that transmission ended succesfully
- (or an Interrupt can be fired).
+SW reads state of TXT Buffer and finds out that transmission ended succesfully.
 \end_layout
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+<cell alignment="left" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -17360,10 +18240,10 @@ SW reads state of TXT Buffer and finds out that transmission ended succesfully
 \begin_inset Caption Standard
 
 \begin_layout Plain Layout
-TXT Buffer transmission
+TXT Buffer sucessfull transmission
 \begin_inset CommandInset label
 LatexCommand label
-name "tab:CAN-control-counter-1-3-2-1-1"
+name "tab:txt-buffer-ok-transmission"
 
 \end_inset
 
@@ -17382,7 +18262,7 @@ name "tab:CAN-control-counter-1-3-2-1-1"
 
 \begin_layout Standard
 \begin_inset Float table
-placement h
+placement H
 wide false
 sideways false
 status open
@@ -17394,8 +18274,8 @@ status open
 <lyxtabular version="3" rows="8" columns="3">
 <features tabularvalignment="middle">
 <column alignment="left" valignment="top" width="5line%">
-<column alignment="left" valignment="top" width="30line%">
-<column alignment="left" valignment="top" width="30line%">
+<column alignment="left" valignment="top" width="35line%">
+<column alignment="left" valignment="top" width="51line%">
 <row>
 <cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
 \begin_inset Text
@@ -17479,8 +18359,7 @@ cellcolor{gray}
 
 \begin_layout Plain Layout
 SW fills TXT Buffer RAM.
- SW limits number of retransmissions to e.g.
- 5.
+ SW configures retransmitt limit to 5 and enabled retransmitt limitation.
 \end_layout
 
 \end_inset
@@ -17547,9 +18426,11 @@ TXT Buffer moves to Ready state.
 \begin_inset Text
 
 \begin_layout Plain Layout
-TX Arbitrator selects TXT Buffer for transmission.
- Protocol control issues HW lock command since it starts transmission from
- TXT Buffer.
+TX Arbitrator selects TXT Buffer for transmission and indicates available
+ TXT Buffer for transmission to Protocol control.
+ On third bit of Intermission or when Bus is idle, Protocol control issues
+ HW lock command, TXT Buffer moves to TX in Progress and Protocol control
+ starts transmission from TXT Buffer.
 \end_layout
 
 \end_inset
@@ -17579,8 +18460,8 @@ TX Arbitrator selects TXT Buffer for transmission.
 
 \begin_layout Plain Layout
 An error occurs or arbitration is lost, Protocol control issues Unlock -
- Error command.
- TXT Buffer moves to state ready.
+ Error or Unlock - Arbitration lost command.
+ TXT Buffer moves to state Ready.
 \end_layout
 
 \end_inset
@@ -17592,6 +18473,19 @@ An error occurs or arbitration is lost, Protocol control issues Unlock -
 
 \begin_layout Plain Layout
 Steps 3-4 repeat until 5 retransmissions are reached.
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+cellcolor{cyan}
+\end_layout
+
+\end_inset
+
+
 \end_layout
 
 \end_inset
@@ -17640,7 +18534,7 @@ Steps 3-4 repeat until 5 retransmissions are reached.
 \begin_layout Plain Layout
 On 5th retransmission, error occurs.
  Protocol control issues Unlock - Failed command.
- TXT Buffer FSM moves to Error state.
+ TXT Buffer FSM moves to TX Failed state.
 \end_layout
 
 \end_inset
@@ -17656,17 +18550,16 @@ On 5th retransmission, error occurs.
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+<cell alignment="left" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
-SW reads state of TXT Buffer and finds out that transmission failed (or
- an Interrupt can be fired).
+SW reads state of TXT Buffer and finds out that transmission failed.
 \end_layout
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+<cell alignment="left" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -17689,10 +18582,10 @@ SW reads state of TXT Buffer and finds out that transmission failed (or
 \begin_inset Caption Standard
 
 \begin_layout Plain Layout
-TXT Buffer Error
+TXT Buffer transmission failed
 \begin_inset CommandInset label
 LatexCommand label
-name "tab:CAN-control-counter-1-3-2-1-1-1"
+name "tab:txt-buffer-tx-failed"
 
 \end_inset
 
@@ -17711,7 +18604,7 @@ name "tab:CAN-control-counter-1-3-2-1-1-1"
 
 \begin_layout Standard
 \begin_inset Float table
-placement h
+placement H
 wide false
 sideways false
 status open
@@ -17723,8 +18616,8 @@ status open
 <lyxtabular version="3" rows="7" columns="3">
 <features tabularvalignment="middle">
 <column alignment="left" valignment="top" width="5line%">
-<column alignment="left" valignment="top" width="30line%">
-<column alignment="left" valignment="top" width="30line%">
+<column alignment="left" valignment="top" width="35line%">
+<column alignment="left" valignment="top" width="51line%">
 <row>
 <cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
 \begin_inset Text
@@ -17876,8 +18769,9 @@ TXT Buffer moves to Ready state.
 \begin_layout Plain Layout
 TX Arbitrator selects TXT Buffer for transmission and signals to Protocol
  control there is a valid TXT Buffer for transmission.
- Protocol control issues HW lock command since it starts transmission from
- TXT Buffer.
+ On third bit of Intermission or when Bus is idle, Protocol control issues
+ HW lock command, TXT Buffer moves to TX in Progress.
+ Protocol control starts transmission from TXT Buffer.
 \end_layout
 
 \end_inset
@@ -17922,7 +18816,7 @@ TXT Buffer moves to Abort in Progress.
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -17931,7 +18825,7 @@ TXT Buffer moves to Abort in Progress.
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -17953,17 +18847,17 @@ If an Error frame occurs or arbitration is lost, TXT Buffer moves to Aborted
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+<cell alignment="left" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
 SW reads state of TXT Buffer and finds out whether transmission was aborted
- or it ended succesfully (or an Interrupt can be fired).
+ or it ended succesfully.
 \end_layout
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+<cell alignment="left" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -17989,7 +18883,7 @@ SW reads state of TXT Buffer and finds out whether transmission was aborted
 TXT Buffer Abort
 \begin_inset CommandInset label
 LatexCommand label
-name "tab:CAN-control-counter-1-3-2-1-1-1-1"
+name "tab:txt-buffer-abort"
 
 \end_inset
 
@@ -18008,7 +18902,7 @@ name "tab:CAN-control-counter-1-3-2-1-1-1-1"
 
 \begin_layout Standard
 \begin_inset Float table
-placement h
+placement H
 wide false
 sideways false
 status open
@@ -18018,10 +18912,10 @@ status open
 \align center
 \begin_inset Tabular
 <lyxtabular version="3" rows="10" columns="3">
-<features tabularvalignment="middle">
+<features islongtable="true" longtabularalignment="center">
 <column alignment="left" valignment="top" width="5line%">
 <column alignment="left" valignment="top" width="30line%">
-<column alignment="left" valignment="top" width="30line%">
+<column alignment="left" valignment="top" width="56line%">
 <row>
 <cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
 \begin_inset Text
@@ -18174,8 +19068,10 @@ TXT Buffer 1 moves to Ready state.
 \begin_layout Plain Layout
 TX Arbitrator selects TXT Buffer 1 for transmission and signals to Protocol
  control there is a valid TXT Buffer for transmission.
- Protocol control issues HW lock command since it starts transmission from
- TXT Buffer 1.
+ On third bit of Intermission or when Bus is idle, Protocol control issues
+ HW lock command.
+ TXT Buffer 1 moves to TX in Progress and Protocol control starts transmission
+ from TXT Buffer 1.
 \end_layout
 
 \end_inset
@@ -18191,7 +19087,7 @@ TX Arbitrator selects TXT Buffer 1 for transmission and signals to Protocol
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -18200,7 +19096,7 @@ TX Arbitrator selects TXT Buffer 1 for transmission and signals to Protocol
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -18221,7 +19117,7 @@ An Error frame occurs or arbitration is lost, TXT Buffer moves to Ready
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -18231,7 +19127,7 @@ SW fills TXT Buffer RAM 2.
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -18251,7 +19147,7 @@ TXT Buffer 2 moves to Ready state.
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -18260,14 +19156,24 @@ TXT Buffer 2 moves to Ready state.
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
 Now there are two TXT Buffers in Ready state.
- Assume TXT Buffer 2 has higher priority than TXT Buffer 1.
- TX Arbitrator selects TXT Buffer 2 for transmission and signals this to
- protocol control FSM.
+ Assume TXT Buffer 2 has higher priority than TXT Buffer 1 (see 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "sec:TX-Arbitrator"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+).
+ TX Arbitrator selects TXT Buffer 2 for transmission, and signals there
+ is a valid TXT Buffer for transmission to Protocol control.
 \end_layout
 
 \end_inset
@@ -18283,7 +19189,7 @@ Now there are two TXT Buffers in Ready state.
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -18292,16 +19198,17 @@ Now there are two TXT Buffers in Ready state.
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
-Protocol control FSM issues HW Lock command, TXT Buffer 2 moves to TX in
- progress and Protocol control FSM starts transmitting from TXT Buffer 2.
+On third bit of Intermission or when Bus is idle, Protocol control FSM issues
+ HW Lock command, TXT Buffer 2 moves to TX in progress and Protocol control
+ starts transmitting from TXT Buffer 2.
  Retransmitt counter is cleared because TXT Buffer changed between two consecuti
-ve transmissions.
- Logically, counting retransmissions on TXT Buffer 2 shall not include one
- previous failed transmission from TXT Buffer 1.
+ve transmissions (Logically, counting retransmissions on TXT Buffer 2 shall
+ not include one previous failed transmission from TXT Buffer 1, because
+ it is different CAN frame which is being transmitted).
 \end_layout
 
 \end_inset
@@ -18317,7 +19224,7 @@ ve transmissions.
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -18326,11 +19233,20 @@ ve transmissions.
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
 Protocol control transmitts frame from TXT Buffer 2 succesfully.
+ TXT Buffer moves to 
+\begin_inset Quotes eld
+\end_inset
+
+TX OK
+\begin_inset Quotes erd
+\end_inset
+
+.
 \end_layout
 
 \end_inset
@@ -18346,16 +19262,17 @@ Protocol control transmitts frame from TXT Buffer 2 succesfully.
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+<cell alignment="left" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
-SW reads state of buffer or is notified by an Interrupt.
+SW reads state of TXT Buffers and finds out which TXT Buffer was used for
+ transmission.
 \end_layout
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+<cell alignment="left" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -18378,10 +19295,10 @@ SW reads state of buffer or is notified by an Interrupt.
 \begin_inset Caption Standard
 
 \begin_layout Plain Layout
-TXT Buffer change between transmissions
+TXT Buffer changed between transmissions
 \begin_inset CommandInset label
 LatexCommand label
-name "tab:CAN-control-counter-1"
+name "tab:txt-buffer-change"
 
 \end_inset
 
@@ -18407,6 +19324,13 @@ name "tab:CAN-control-counter-1"
 
 \begin_layout Section
 TX Arbitrator
+\begin_inset CommandInset label
+LatexCommand label
+name "sec:TX-Arbitrator"
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
@@ -18768,7 +19692,7 @@ TX Arbitrator notices External Timestamp is now higher than Timestamp of
 \begin_inset Text
 
 \begin_layout Plain Layout
-TX Arbitrator FSM loads TX Frame metadata from TXT Buffer 1 RAM (Metadata
+TX Arbitrator FSM loads TX Frame metadata from TXT Buffer 1 RAM (Frame Format
  word) to capture registers.
 \end_layout
 
@@ -19290,7 +20214,7 @@ TX Arbitrator FSM loads upper Timestamp word from TXT Buffer 2 RAM and executes
 \begin_inset Text
 
 \begin_layout Plain Layout
-TX Arbitrator FSM loads TX Frame metadata from TXT Buffer 2 RAM (Metadata
+TX Arbitrator FSM loads TX Frame metadata from TXT Buffer 2 RAM (Frame Format
  word) to capture registers.
  TX Arbitrator marks that there is valid TX frame for transmission to CAN
  Core.
