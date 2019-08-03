@@ -545,19 +545,19 @@
       </spirit:file>
 
       <spirit:file>
-        <spirit:name>can_core/bit_destuffing/bit_destuffing.vhd</spirit:name>
+        <spirit:name>can_core/bit_destuffing.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
         <spirit:logicalName>xil_defaultlib</spirit:logicalName>
       </spirit:file>
 
       <spirit:file>
-        <spirit:name>can_core/bit_stuffing/bit_stuffing.vhd</spirit:name>
+        <spirit:name>can_core/bit_stuffing.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
         <spirit:logicalName>xil_defaultlib</spirit:logicalName>
       </spirit:file>
 
       <spirit:file>
-        <spirit:name>can_core/bus_traffic_counters/bus_traffic_counters.vhd</spirit:name>
+        <spirit:name>can_core/bus_traffic_counters.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
         <spirit:logicalName>xil_defaultlib</spirit:logicalName>
       </spirit:file>
@@ -569,97 +569,97 @@
       </spirit:file>
 
       <spirit:file>
-        <spirit:name>can_core/crc/can_crc.vhd</spirit:name>
+        <spirit:name>can_core/can_crc.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
         <spirit:logicalName>xil_defaultlib</spirit:logicalName>
       </spirit:file>
 
       <spirit:file>
-        <spirit:name>can_core/crc/crc_calc.vhd</spirit:name>
+        <spirit:name>can_core/control_counter.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
         <spirit:logicalName>xil_defaultlib</spirit:logicalName>
       </spirit:file>
 
       <spirit:file>
-        <spirit:name>can_core/fault_confinement/err_counters.vhd</spirit:name>
+        <spirit:name>can_core/crc_calc.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
         <spirit:logicalName>xil_defaultlib</spirit:logicalName>
       </spirit:file>
 
       <spirit:file>
-        <spirit:name>can_core/fault_confinement/fault_confinement.vhd</spirit:name>
+        <spirit:name>can_core/err_counters.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
         <spirit:logicalName>xil_defaultlib</spirit:logicalName>
       </spirit:file>
 
       <spirit:file>
-        <spirit:name>can_core/fault_confinement/fault_confinement_fsm.vhd</spirit:name>
+        <spirit:name>can_core/err_detector.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
         <spirit:logicalName>xil_defaultlib</spirit:logicalName>
       </spirit:file>
 
       <spirit:file>
-        <spirit:name>can_core/fault_confinement/fault_confinement_rules.vhd</spirit:name>
+        <spirit:name>can_core/fault_confinement.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
         <spirit:logicalName>xil_defaultlib</spirit:logicalName>
       </spirit:file>
 
       <spirit:file>
-        <spirit:name>can_core/operation_control/operation_control.vhd</spirit:name>
+        <spirit:name>can_core/fault_confinement_fsm.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
         <spirit:logicalName>xil_defaultlib</spirit:logicalName>
       </spirit:file>
 
       <spirit:file>
-        <spirit:name>can_core/protocol_control/control_counter.vhd</spirit:name>
+        <spirit:name>can_core/fault_confinement_rules.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
         <spirit:logicalName>xil_defaultlib</spirit:logicalName>
       </spirit:file>
 
       <spirit:file>
-        <spirit:name>can_core/protocol_control/err_detector.vhd</spirit:name>
+        <spirit:name>can_core/operation_control.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
         <spirit:logicalName>xil_defaultlib</spirit:logicalName>
       </spirit:file>
 
       <spirit:file>
-        <spirit:name>can_core/protocol_control/protocol_control.vhd</spirit:name>
+        <spirit:name>can_core/protocol_control.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
         <spirit:logicalName>xil_defaultlib</spirit:logicalName>
       </spirit:file>
 
       <spirit:file>
-        <spirit:name>can_core/protocol_control/protocol_control_fsm.vhd</spirit:name>
+        <spirit:name>can_core/protocol_control_fsm.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
         <spirit:logicalName>xil_defaultlib</spirit:logicalName>
       </spirit:file>
 
       <spirit:file>
-        <spirit:name>can_core/protocol_control/reintegration_counter.vhd</spirit:name>
+        <spirit:name>can_core/reintegration_counter.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
         <spirit:logicalName>xil_defaultlib</spirit:logicalName>
       </spirit:file>
 
       <spirit:file>
-        <spirit:name>can_core/protocol_control/retransmitt_counter.vhd</spirit:name>
+        <spirit:name>can_core/retransmitt_counter.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
         <spirit:logicalName>xil_defaultlib</spirit:logicalName>
       </spirit:file>
 
       <spirit:file>
-        <spirit:name>can_core/protocol_control/rx_shift_reg.vhd</spirit:name>
-        <spirit:fileType>vhdlSource</spirit:fileType>
-        <spirit:logicalName>xil_defaultlib</spirit:logicalName>
-      </spirit:file>
-
-      <spirit:file>
-        <spirit:name>can_core/protocol_control/tx_shift_reg.vhd</spirit:name>
+        <spirit:name>can_core/rx_shift_reg.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
         <spirit:logicalName>xil_defaultlib</spirit:logicalName>
       </spirit:file>
 
       <spirit:file>
         <spirit:name>can_core/trigger_mux.vhd</spirit:name>
+        <spirit:fileType>vhdlSource</spirit:fileType>
+        <spirit:logicalName>xil_defaultlib</spirit:logicalName>
+      </spirit:file>
+
+      <spirit:file>
+        <spirit:name>can_core/tx_shift_reg.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
         <spirit:logicalName>xil_defaultlib</spirit:logicalName>
       </spirit:file>
@@ -1042,21 +1042,21 @@
       </spirit:file>
 
       <spirit:file>
-        <spirit:name>can_core/bit_destuffing/bit_destuffing.vhd</spirit:name>
+        <spirit:name>can_core/bit_destuffing.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
         <spirit:userFileType>USED_IN_ipstatic</spirit:userFileType>
         <spirit:logicalName>xil_defaultlib</spirit:logicalName>
       </spirit:file>
 
       <spirit:file>
-        <spirit:name>can_core/bit_stuffing/bit_stuffing.vhd</spirit:name>
+        <spirit:name>can_core/bit_stuffing.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
         <spirit:userFileType>USED_IN_ipstatic</spirit:userFileType>
         <spirit:logicalName>xil_defaultlib</spirit:logicalName>
       </spirit:file>
 
       <spirit:file>
-        <spirit:name>can_core/bus_traffic_counters/bus_traffic_counters.vhd</spirit:name>
+        <spirit:name>can_core/bus_traffic_counters.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
         <spirit:userFileType>USED_IN_ipstatic</spirit:userFileType>
         <spirit:logicalName>xil_defaultlib</spirit:logicalName>
@@ -1070,105 +1070,98 @@
       </spirit:file>
 
       <spirit:file>
-        <spirit:name>can_core/crc/can_crc.vhd</spirit:name>
+        <spirit:name>can_core/can_crc.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
         <spirit:userFileType>USED_IN_ipstatic</spirit:userFileType>
         <spirit:logicalName>xil_defaultlib</spirit:logicalName>
       </spirit:file>
 
       <spirit:file>
-        <spirit:name>can_core/crc/crc_calc.vhd</spirit:name>
+        <spirit:name>can_core/control_counter.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
         <spirit:userFileType>USED_IN_ipstatic</spirit:userFileType>
         <spirit:logicalName>xil_defaultlib</spirit:logicalName>
       </spirit:file>
 
       <spirit:file>
-        <spirit:name>can_core/fault_confinement/err_counters.vhd</spirit:name>
+        <spirit:name>can_core/crc_calc.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
         <spirit:userFileType>USED_IN_ipstatic</spirit:userFileType>
         <spirit:logicalName>xil_defaultlib</spirit:logicalName>
       </spirit:file>
 
       <spirit:file>
-        <spirit:name>can_core/fault_confinement/fault_confinement.vhd</spirit:name>
+        <spirit:name>can_core/err_counters.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
         <spirit:userFileType>USED_IN_ipstatic</spirit:userFileType>
         <spirit:logicalName>xil_defaultlib</spirit:logicalName>
       </spirit:file>
 
       <spirit:file>
-        <spirit:name>can_core/fault_confinement/fault_confinement_fsm.vhd</spirit:name>
+        <spirit:name>can_core/err_detector.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
         <spirit:userFileType>USED_IN_ipstatic</spirit:userFileType>
         <spirit:logicalName>xil_defaultlib</spirit:logicalName>
       </spirit:file>
 
       <spirit:file>
-        <spirit:name>can_core/fault_confinement/fault_confinement_rules.vhd</spirit:name>
+        <spirit:name>can_core/fault_confinement.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
         <spirit:userFileType>USED_IN_ipstatic</spirit:userFileType>
         <spirit:logicalName>xil_defaultlib</spirit:logicalName>
       </spirit:file>
 
       <spirit:file>
-        <spirit:name>can_core/operation_control/operation_control.vhd</spirit:name>
+        <spirit:name>can_core/fault_confinement_fsm.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
         <spirit:userFileType>USED_IN_ipstatic</spirit:userFileType>
         <spirit:logicalName>xil_defaultlib</spirit:logicalName>
       </spirit:file>
 
       <spirit:file>
-        <spirit:name>can_core/protocol_control/control_counter.vhd</spirit:name>
+        <spirit:name>can_core/fault_confinement_rules.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
         <spirit:userFileType>USED_IN_ipstatic</spirit:userFileType>
         <spirit:logicalName>xil_defaultlib</spirit:logicalName>
       </spirit:file>
 
       <spirit:file>
-        <spirit:name>can_core/protocol_control/err_detector.vhd</spirit:name>
+        <spirit:name>can_core/operation_control.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
         <spirit:userFileType>USED_IN_ipstatic</spirit:userFileType>
         <spirit:logicalName>xil_defaultlib</spirit:logicalName>
       </spirit:file>
 
       <spirit:file>
-        <spirit:name>can_core/protocol_control/protocol_control.vhd</spirit:name>
+        <spirit:name>can_core/protocol_control.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
         <spirit:userFileType>USED_IN_ipstatic</spirit:userFileType>
         <spirit:logicalName>xil_defaultlib</spirit:logicalName>
       </spirit:file>
 
       <spirit:file>
-        <spirit:name>can_core/protocol_control/protocol_control_fsm.vhd</spirit:name>
+        <spirit:name>can_core/protocol_control_fsm.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
         <spirit:userFileType>USED_IN_ipstatic</spirit:userFileType>
         <spirit:logicalName>xil_defaultlib</spirit:logicalName>
       </spirit:file>
 
       <spirit:file>
-        <spirit:name>can_core/protocol_control/reintegration_counter.vhd</spirit:name>
+        <spirit:name>can_core/reintegration_counter.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
         <spirit:userFileType>USED_IN_ipstatic</spirit:userFileType>
         <spirit:logicalName>xil_defaultlib</spirit:logicalName>
       </spirit:file>
 
       <spirit:file>
-        <spirit:name>can_core/protocol_control/retransmitt_counter.vhd</spirit:name>
+        <spirit:name>can_core/retransmitt_counter.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
         <spirit:userFileType>USED_IN_ipstatic</spirit:userFileType>
         <spirit:logicalName>xil_defaultlib</spirit:logicalName>
       </spirit:file>
 
       <spirit:file>
-        <spirit:name>can_core/protocol_control/rx_shift_reg.vhd</spirit:name>
-        <spirit:fileType>vhdlSource</spirit:fileType>
-        <spirit:userFileType>USED_IN_ipstatic</spirit:userFileType>
-        <spirit:logicalName>xil_defaultlib</spirit:logicalName>
-      </spirit:file>
-
-      <spirit:file>
-        <spirit:name>can_core/protocol_control/tx_shift_reg.vhd</spirit:name>
+        <spirit:name>can_core/rx_shift_reg.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
         <spirit:userFileType>USED_IN_ipstatic</spirit:userFileType>
         <spirit:logicalName>xil_defaultlib</spirit:logicalName>
@@ -1176,6 +1169,13 @@
 
       <spirit:file>
         <spirit:name>can_core/trigger_mux.vhd</spirit:name>
+        <spirit:fileType>vhdlSource</spirit:fileType>
+        <spirit:userFileType>USED_IN_ipstatic</spirit:userFileType>
+        <spirit:logicalName>xil_defaultlib</spirit:logicalName>
+      </spirit:file>
+
+      <spirit:file>
+        <spirit:name>can_core/tx_shift_reg.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
         <spirit:userFileType>USED_IN_ipstatic</spirit:userFileType>
         <spirit:logicalName>xil_defaultlib</spirit:logicalName>
