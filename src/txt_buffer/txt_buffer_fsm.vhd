@@ -194,7 +194,11 @@ begin
                     next_state     <= s_txt_ok;
                 elsif (txtb_hw_cmd.err         = '1' or 
                        txtb_hw_cmd.arbl        = '1') then
-                    next_state     <= s_txt_ready;
+                    if (abort_applied = '1') then
+                        next_state     <= s_txt_aborted;
+                    else
+                        next_state     <= s_txt_ready;
+                    end if;
                 end if;
 
             -- Request abort during transmission
