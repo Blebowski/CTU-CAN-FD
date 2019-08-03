@@ -51,15 +51,12 @@ use work.can_components.ALL;
 entity CAN_Wrapper is
   
     generic (
-	  constant use_logger     : boolean := false;              
 	  constant rx_buffer_size : natural := 32;
-     constant  use_sync       : boolean:= true;             
-     constant  ID             : natural:= 1; 
-     constant  sup_filtA      : boolean:= true;              
-     constant  sup_filtB      : boolean:= true;                
-     constant  sup_filtC      : boolean:= true;                
-     constant  sup_range      : boolean:= true;               
-     constant  logger_size    : natural:= 8  
+     constant  ID             : natural:= 1;
+     constant  sup_filtA      : boolean:= true;
+     constant  sup_filtB      : boolean:= true;
+     constant  sup_filtC      : boolean:= true;
+     constant  sup_range      : boolean:= true
     );
 	 port (
      signal clk_sys : in std_logic;
@@ -67,7 +64,7 @@ entity CAN_Wrapper is
 
      signal data_in  : in  std_logic_vector(31 downto 0);
      signal data_out : out std_logic_vector(31 downto 0);
-     signal adress   : in  std_logic_vector(23 downto 0);
+     signal adress   : in  std_logic_vector(15 downto 0);
      signal scs      : in  std_logic;    --Chip select
      signal srd      : in  std_logic;    --Serial read
      signal swr      : in  std_logic;    --Serial write
@@ -200,15 +197,12 @@ begin
 
   CAN_comp:CAN_top_level
   generic map(
-	  use_logger     => use_logger,
      rx_buffer_size => rx_buffer_size,
-     use_sync       => use_sync,
      ID             => ID,
      sup_filtA      => sup_filtA,
      sup_filtB      => sup_filtB,
      sup_filtC      => sup_filtC,
-     sup_range      => sup_range,
-     logger_size    => logger_size
+     sup_range      => sup_range
     )
   port map(
      clk_sys 		  => clk_sys,
@@ -223,7 +217,6 @@ begin
      int            => int,
      CAN_tx         => CAN_tx,
      CAN_rx         => CAN_rx,
-     time_quanta_clk => time_quanta_clk,
      timestamp       => timestamp
     );
   
