@@ -67,11 +67,11 @@ feature:
         timestamp_options:
         byte_enable:
         data_length_code:
-        bus_start:
+        # bus_start:
         data_overrun_clear:
             iterations: 1
-        txtb_state:
-            iterations: 1
+        # txtb_state:
+        #     iterations: 1
         message_filter:
             iterations: 1
         timestamp_registers:
