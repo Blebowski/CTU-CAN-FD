@@ -3959,8 +3959,8 @@ package can_components is
         -- Data words from TXT Buffers RAM memories
         txtb_port_b_data        :in t_txt_bufs_output;
         
-        -- TXT Buffers are ready, can be selected by TX Arbitrator
-        txtb_ready              :in std_logic_vector(G_TXT_BUFFER_COUNT - 1 downto 0);
+        -- TXT Buffers are available, can be selected by TX Arbitrator
+        txtb_available          :in std_logic_vector(G_TXT_BUFFER_COUNT - 1 downto 0);
         
         -- Pointer to TXT Buffer
         txtb_port_b_address     :out natural range 0 to 19;
@@ -4067,8 +4067,8 @@ package can_components is
         -- Buffer status (FSM state) encoded for reading by SW.
         txtb_state             :out  std_logic_vector(3 downto 0);
 
-        -- TXT Buffer is ready to be locked by CAN Core for transmission
-        txtb_ready             :out  std_logic
+        -- TXT Buffer is available to be locked by CAN Core for transmission
+        txtb_available         :out  std_logic
     );             
     end component;
 
@@ -4176,8 +4176,8 @@ package can_components is
         -- Unit just turned bus off.
         is_bus_off             :in   std_logic;
 
-        -- TXT Buffer is ready to be locked by CAN Core for transmission
-        txtb_ready          :out  std_logic
+        -- TXT Buffer is available to be locked by CAN Core for transmission
+        txtb_available         :out  std_logic
     );
     end component;
 

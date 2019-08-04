@@ -330,8 +330,8 @@ architecture rtl of can_top_level is
     -- Index of TXT Buffer for which HW commands is valid          
     signal txtb_hw_cmd_index   :   natural range 0 to C_TXT_BUFFER_COUNT - 1;
     
-    -- TXT Buffers are ready, can be selected by TX Arbitrator
-    signal txtb_ready          :   std_logic_vector(C_TXT_BUFFER_COUNT - 1 downto 0);
+    -- TXT Buffers are available, can be selected by TX Arbitrator
+    signal txtb_available      :   std_logic_vector(C_TXT_BUFFER_COUNT - 1 downto 0);
         
     -- Pointer to TXT Buffer
     signal txtb_ptr            :   natural range 0 to 19;
@@ -619,7 +619,7 @@ begin
             txtb_port_b_data       => txtb_port_b_data(i),  -- OUT
             txtb_port_b_address    => txtb_port_b_address,  -- IN
             is_bus_off             => is_bus_off,           -- IN
-            txtb_ready             => txtb_ready(i)         -- OUT
+            txtb_available         => txtb_available(i)     -- OUT
         );
     end generate;
 
@@ -637,7 +637,7 @@ begin
 
         -- TXT Buffers interface
         txtb_port_b_data        => txtb_port_b_data,    -- IN
-        txtb_ready              => txtb_ready,          -- IN
+        txtb_available          => txtb_available,      -- IN
         txtb_port_b_address     => txtb_port_b_address, -- OUT
 
         -- CAN Core Interface

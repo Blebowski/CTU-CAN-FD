@@ -116,8 +116,8 @@ entity txt_buffer_fsm is
         -- Buffer status (FSM state) encoded for reading by SW.
         txtb_state             :out  std_logic_vector(3 downto 0);
 
-        -- TXT Buffer is ready to be locked by CAN Core for transmission
-        txtb_ready          :out  std_logic
+        -- TXT Buffer is available to be locked by CAN Core for transmission
+        txtb_available         :out  std_logic
     );             
 end entity;
 
@@ -327,10 +327,10 @@ begin
                            else
                         '0';
 
-    -- Buffer is ready for selection by TX Arbitrator only in state "Ready"
+    -- Buffer is available for selection by TX Arbitrator only in state "Ready"
     -- Abort signal must not be active. If not considered, race condition
     -- between HW and SW commands could occur!
-    txtb_ready       <= '1' when ((curr_state = s_txt_ready) and
+    txtb_available   <= '1' when ((curr_state = s_txt_ready) and
                                   (abort_applied = '0'))
                             else
                         '0';
