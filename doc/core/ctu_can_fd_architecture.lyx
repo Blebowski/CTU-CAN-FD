@@ -1416,6 +1416,7 @@ CTU CAN FD logic is implemented from DFFs with Asynchronous Reset.
  All DFFs are active on positive clock edge (to mitigate effects of clock
  duty-cycle).
  CTU CAN FD is Latch-Free.
+ TODO: Note on DFFs which are without Set-Reset.
 \end_layout
 
 \begin_layout Section
@@ -17063,8 +17064,8 @@ filename "entity_docs/txt_buffer.lyx"
 
 \begin_layout Standard
 There are 4 TXT Buffers in CTU CAN FD.
- Each TXT Buffer RAM is accessed by SW via Memory registers (each TXT Buffer
- is accessed via different memory location).
+ Each TXT Buffer RAM is accessed by SW via Memory registers as described
+ in TODO.
  SW stores CAN frame to TXT Buffer.
  For SW, TXT Buffer RAM is write-only.
  TXT Buffer RAM is also accessed by Protocol control FSM which reads CAN
@@ -17096,6 +17097,19 @@ noprefix "false"
 \end_inset
 
 .
+ Each TXT Buffer in CTU CAN FD has its own priority (configured by TX_PRIORITY).
+ Based on priority, TX Arbitratror selects TXT Buffer which will be used
+ for transmission (see 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "sec:TX-Arbitrator"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+).
 \end_layout
 
 \begin_layout Standard
@@ -17915,9 +17929,9 @@ Aborted
 \end_inset
 
 .
- No more transmissions are attempted from this Buffer.
- In this special case SW command has priority over HW command to guarantee
- that SW command will not be lost!
+ No more transmissions are attempted from this TXT Buffer.
+ In this case SW command has priority over HW command to guarantee that
+ SW command will not be lost!
 \end_layout
 
 \end_inset
@@ -17978,14 +17992,67 @@ noprefix "false"
 
 .
  When TXT Buffer is unlocked, it is not acessed by CAN Core (nor TX Arbitrator)
- as there is no frame transmission from this TXT Buffer and SW can write
- to TXT Buffer via Memory registers.
+ as there is no frame transmission/selection from this TXT Buffer and SW
+ can write to TXT Buffer via Memory registers.
  When TXT Buffer is Locked, it was either marked as Ready for transmission,
  or already selected by TX Arbitrator and transmission is in progress from
  the TXT Buffer.
  When TXT buffer is Locked, SW can not write to TXT Buffer RAM and such
  writes have no effect.
  
+\end_layout
+
+\begin_layout Subsection
+TXT Buffer - Transmission availability
+\end_layout
+
+\begin_layout Standard
+When TXT Buffer FSM is in 
+\begin_inset Quotes eld
+\end_inset
+
+Ready
+\begin_inset Quotes erd
+\end_inset
+
+ state, it indicates its availability for transmission to TX Arbitrator.
+ However, if TXT Buffer receives Set Abort command, it signals unavailability
+ for transmission in the same clock cycle as the command is active (
+\begin_inset Quotes eld
+\end_inset
+
+txtb_ready
+\begin_inset Quotes erd
+\end_inset
+
+ drops low).
+ In this clock cycle, TXT Buffer FSM is still in 
+\begin_inset Quotes eld
+\end_inset
+
+Ready
+\begin_inset Quotes erd
+\end_inset
+
+ state and it will move to 
+\begin_inset Quotes eld
+\end_inset
+
+Aborted
+\begin_inset Quotes erd
+\end_inset
+
+ (or 
+\begin_inset Quotes eld
+\end_inset
+
+Abort in Progress
+\begin_inset Quotes erd
+\end_inset
+
+) in following clock cycle.
+ This combinatorial path from Set Abort command to output of TXT Buffer
+ is necessary to avoid hazards on TXT Buffer selection as explained in TODO.
 \end_layout
 
 \begin_layout Subsection
@@ -18006,8 +18073,8 @@ status open
 <lyxtabular version="3" rows="6" columns="3">
 <features tabularvalignment="middle">
 <column alignment="left" valignment="top" width="5line%">
-<column alignment="left" valignment="top" width="35line%">
-<column alignment="left" valignment="top" width="51line%">
+<column alignment="left" valignment="top" width="27line%">
+<column alignment="left" valignment="top" width="59line%">
 <row>
 <cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
 \begin_inset Text
@@ -18240,352 +18307,10 @@ SW reads state of TXT Buffer and finds out that transmission ended succesfully.
 \begin_inset Caption Standard
 
 \begin_layout Plain Layout
-TXT Buffer sucessfull transmission
+TXT Buffer - sucessfull transmission
 \begin_inset CommandInset label
 LatexCommand label
 name "tab:txt-buffer-ok-transmission"
-
-\end_inset
-
-
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Standard
-\begin_inset Float table
-placement H
-wide false
-sideways false
-status open
-
-\begin_layout Plain Layout
-\noindent
-\align center
-\begin_inset Tabular
-<lyxtabular version="3" rows="8" columns="3">
-<features tabularvalignment="middle">
-<column alignment="left" valignment="top" width="5line%">
-<column alignment="left" valignment="top" width="35line%">
-<column alignment="left" valignment="top" width="51line%">
-<row>
-<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-Step 
-\begin_inset ERT
-status open
-
-\begin_layout Plain Layout
-
-
-\backslash
-cellcolor{gray}
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-SW Action
-\begin_inset ERT
-status open
-
-\begin_layout Plain Layout
-
-
-\backslash
-cellcolor{gray}
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-HW Action / State
-\begin_inset ERT
-status open
-
-\begin_layout Plain Layout
-
-
-\backslash
-cellcolor{gray}
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
-\end_inset
-</cell>
-</row>
-<row>
-<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-1
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-SW fills TXT Buffer RAM.
- SW configures retransmitt limit to 5 and enabled retransmitt limitation.
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-TXT Buffer is in Empty state.
-\end_layout
-
-\end_inset
-</cell>
-</row>
-<row>
-<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-2
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-SW issues Set ready command.
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-TXT Buffer moves to Ready state.
-\end_layout
-
-\end_inset
-</cell>
-</row>
-<row>
-<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-3
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-TX Arbitrator selects TXT Buffer for transmission and indicates available
- TXT Buffer for transmission to Protocol control.
- On third bit of Intermission or when Bus is idle, Protocol control issues
- HW lock command, TXT Buffer moves to TX in Progress and Protocol control
- starts transmission from TXT Buffer.
-\end_layout
-
-\end_inset
-</cell>
-</row>
-<row>
-<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-4
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-An error occurs or arbitration is lost, Protocol control issues Unlock -
- Error or Unlock - Arbitration lost command.
- TXT Buffer moves to state Ready.
-\end_layout
-
-\end_inset
-</cell>
-</row>
-<row>
-<cell multicolumn="1" alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-Steps 3-4 repeat until 5 retransmissions are reached.
-\begin_inset ERT
-status open
-
-\begin_layout Plain Layout
-
-
-\backslash
-cellcolor{cyan}
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
-\end_inset
-</cell>
-<cell multicolumn="2" alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-
-\end_layout
-
-\end_inset
-</cell>
-<cell multicolumn="2" alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-
-\end_layout
-
-\end_inset
-</cell>
-</row>
-<row>
-<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-5
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-On 5th retransmission, error occurs.
- Protocol control issues Unlock - Failed command.
- TXT Buffer FSM moves to TX Failed state.
-\end_layout
-
-\end_inset
-</cell>
-</row>
-<row>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-6
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="left" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-SW reads state of TXT Buffer and finds out that transmission failed.
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="left" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-
-\end_layout
-
-\end_inset
-</cell>
-</row>
-</lyxtabular>
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Plain Layout
-\noindent
-\align center
-\begin_inset Caption Standard
-
-\begin_layout Plain Layout
-TXT Buffer transmission failed
-\begin_inset CommandInset label
-LatexCommand label
-name "tab:txt-buffer-tx-failed"
 
 \end_inset
 
@@ -18791,7 +18516,7 @@ TX Arbitrator selects TXT Buffer for transmission and signals to Protocol
 \begin_inset Text
 
 \begin_layout Plain Layout
-During transmission SW issues Set abort command to TXT Buffer.
+During transmission SW issues Set Abort command to TXT Buffer.
 \end_layout
 
 \end_inset
@@ -18831,7 +18556,7 @@ TXT Buffer moves to Abort in Progress.
 \begin_layout Plain Layout
 If an Error frame occurs or arbitration is lost, TXT Buffer moves to Aborted
  state.
- If frame transmission finished succesfully, TXT Buffer moves to OK state.
+ If frame transmission finished succesfully, TXT Buffer moves to TX OK state.
 \end_layout
 
 \end_inset
@@ -18880,7 +18605,7 @@ SW reads state of TXT Buffer and finds out whether transmission was aborted
 \begin_inset Caption Standard
 
 \begin_layout Plain Layout
-TXT Buffer Abort
+TXT Buffer - Abort
 \begin_inset CommandInset label
 LatexCommand label
 name "tab:txt-buffer-abort"
@@ -18911,11 +18636,11 @@ status open
 \noindent
 \align center
 \begin_inset Tabular
-<lyxtabular version="3" rows="10" columns="3">
-<features islongtable="true" longtabularalignment="center">
+<lyxtabular version="3" rows="8" columns="3">
+<features tabularvalignment="middle">
 <column alignment="left" valignment="top" width="5line%">
-<column alignment="left" valignment="top" width="30line%">
-<column alignment="left" valignment="top" width="56line%">
+<column alignment="left" valignment="top" width="35line%">
+<column alignment="left" valignment="top" width="51line%">
 <row>
 <cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
 \begin_inset Text
@@ -18998,8 +18723,8 @@ cellcolor{gray}
 \begin_inset Text
 
 \begin_layout Plain Layout
-SW fills TXT Buffer RAM 1.
- SW enables retransmitt limitation and configures Retransmitt limit to 5.
+SW fills TXT Buffer RAM.
+ SW configures retransmitt limit to 5 and enables retransmitt limitation.
 \end_layout
 
 \end_inset
@@ -19008,7 +18733,7 @@ SW fills TXT Buffer RAM 1.
 \begin_inset Text
 
 \begin_layout Plain Layout
-TXT Buffer 1 is in Empty state.
+TXT Buffer is in Empty state.
 \end_layout
 
 \end_inset
@@ -19028,7 +18753,7 @@ TXT Buffer 1 is in Empty state.
 \begin_inset Text
 
 \begin_layout Plain Layout
-SW issues Set ready command to TXT Buffer 1.
+SW issues Set Ready command.
 \end_layout
 
 \end_inset
@@ -19037,7 +18762,7 @@ SW issues Set ready command to TXT Buffer 1.
 \begin_inset Text
 
 \begin_layout Plain Layout
-TXT Buffer 1 moves to Ready state.
+TXT Buffer moves to Ready state.
 \end_layout
 
 \end_inset
@@ -19066,19 +18791,18 @@ TXT Buffer 1 moves to Ready state.
 \begin_inset Text
 
 \begin_layout Plain Layout
-TX Arbitrator selects TXT Buffer 1 for transmission and signals to Protocol
- control there is a valid TXT Buffer for transmission.
+TX Arbitrator selects TXT Buffer for transmission and indicates available
+ TXT Buffer for transmission to Protocol control.
  On third bit of Intermission or when Bus is idle, Protocol control issues
- HW lock command.
- TXT Buffer 1 moves to TX in Progress and Protocol control starts transmission
- from TXT Buffer 1.
+ HW lock command, TXT Buffer moves to TX in Progress and Protocol control
+ starts transmission from TXT Buffer.
 \end_layout
 
 \end_inset
 </cell>
 </row>
 <row>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -19100,15 +18824,59 @@ TX Arbitrator selects TXT Buffer 1 for transmission and signals to Protocol
 \begin_inset Text
 
 \begin_layout Plain Layout
-An Error frame occurs or arbitration is lost, TXT Buffer moves to Ready
- state and Retransmitt counter is incremented to 1.
+An error occurs or arbitration is lost, Protocol control issues Unlock -
+ Error or Unlock - Arbitration lost command.
+ TXT Buffer moves to state Ready.
+ Retransmitt counter is incremented to 1.
 \end_layout
 
 \end_inset
 </cell>
 </row>
 <row>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+<cell multicolumn="1" alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Steps 3-4 repeat until retransmitt counter reaches 5
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+cellcolor{cyan}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell multicolumn="2" alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell multicolumn="2" alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -19121,36 +18889,6 @@ An Error frame occurs or arbitration is lost, TXT Buffer moves to Ready
 \begin_inset Text
 
 \begin_layout Plain Layout
-SW fills TXT Buffer RAM 2.
- SW Issues Set ready command to TXT Buffer 2.
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-TXT Buffer 2 moves to Ready state.
-\end_layout
-
-\end_inset
-</cell>
-</row>
-<row>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-6
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
 
 \end_layout
 
@@ -19160,93 +18898,9 @@ TXT Buffer 2 moves to Ready state.
 \begin_inset Text
 
 \begin_layout Plain Layout
-Now there are two TXT Buffers in Ready state.
- Assume TXT Buffer 2 has higher priority than TXT Buffer 1 (see 
-\begin_inset CommandInset ref
-LatexCommand ref
-reference "sec:TX-Arbitrator"
-plural "false"
-caps "false"
-noprefix "false"
-
-\end_inset
-
-).
- TX Arbitrator selects TXT Buffer 2 for transmission, and signals there
- is a valid TXT Buffer for transmission to Protocol control.
-\end_layout
-
-\end_inset
-</cell>
-</row>
-<row>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-7
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-On third bit of Intermission or when Bus is idle, Protocol control FSM issues
- HW Lock command, TXT Buffer 2 moves to TX in progress and Protocol control
- starts transmitting from TXT Buffer 2.
- Retransmitt counter is cleared because TXT Buffer changed between two consecuti
-ve transmissions (Logically, counting retransmissions on TXT Buffer 2 shall
- not include one previous failed transmission from TXT Buffer 1, because
- it is different CAN frame which is being transmitted).
-\end_layout
-
-\end_inset
-</cell>
-</row>
-<row>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-7
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-Protocol control transmitts frame from TXT Buffer 2 succesfully.
- TXT Buffer moves to 
-\begin_inset Quotes eld
-\end_inset
-
-TX OK
-\begin_inset Quotes erd
-\end_inset
-
-.
+On 5th retransmission (retransmitt counter = 5), error occurs.
+ Protocol control issues Unlock - Failed command.
+ TXT Buffer FSM moves to TX Failed state.
 \end_layout
 
 \end_inset
@@ -19257,7 +18911,7 @@ TX OK
 \begin_inset Text
 
 \begin_layout Plain Layout
-8
+6
 \end_layout
 
 \end_inset
@@ -19266,8 +18920,7 @@ TX OK
 \begin_inset Text
 
 \begin_layout Plain Layout
-SW reads state of TXT Buffers and finds out which TXT Buffer was used for
- transmission.
+SW reads state of TXT Buffer and finds out that transmission failed.
 \end_layout
 
 \end_inset
@@ -19295,10 +18948,281 @@ SW reads state of TXT Buffers and finds out which TXT Buffer was used for
 \begin_inset Caption Standard
 
 \begin_layout Plain Layout
-TXT Buffer changed between transmissions
+TXT Buffer - transmission failed
 \begin_inset CommandInset label
 LatexCommand label
-name "tab:txt-buffer-change"
+name "tab:txt-buffer-tx-failed"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float table
+placement H
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\noindent
+\align center
+\begin_inset Tabular
+<lyxtabular version="3" rows="6" columns="3">
+<features tabularvalignment="middle">
+<column alignment="left" valignment="top" width="5line%">
+<column alignment="left" valignment="top" width="35line%">
+<column alignment="left" valignment="top" width="51line%">
+<row>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Step 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+cellcolor{gray}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+SW Action
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+cellcolor{gray}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+HW Action / State
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+cellcolor{gray}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+1
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+SW fills TXT Buffer RAM.
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+TXT Buffer is in Empty state.
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+2
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+SW issues Set Ready command.
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+TXT Buffer moves to Ready state.
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+3
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+SW decides to abort transmission of this frame and issues Set Abort command.
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+TX Arbitrator selects TXT Buffer for transmission and indicates available
+ TXT Buffer for transmission to Protocol control.
+ On third bit of Intermission or when Bus is idle, Protocol control issues
+ HW lock command.
+ By coincidence, Set Abort command (SW) and Lock command (HW) are active
+ in the same clock cycle.
+ TXT Buffer moves to Abort in Progress and Protocol control starts transmission
+ from TXT Buffer.
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+4
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+An error occurs or arbitration is lost, Protocol control issues Unlock -
+ Error or Unlock - Arbitration lost command.
+ TXT Buffer moves to state Aborted.
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+6
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+SW reads state of TXT Buffer and finds out that transmission was aborted.
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+</lyxtabular>
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\noindent
+\align center
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+TXT Buffer - Simultaneous Abort and Lock
+\begin_inset CommandInset label
+LatexCommand label
+name "tab:txt-buffer-tx-failed-1"
 
 \end_inset
 
@@ -19338,21 +19262,29 @@ TX Arbitrator implements following functionality:
 \end_layout
 
 \begin_layout Itemize
-Selects TXT Buffer for Transmission based on TXT Buffer priority.
+Select TXT Buffer for transmission based on TXT Buffer priority.
 \end_layout
 
 \begin_layout Itemize
-Loads CAN frame metadata from TXT Buffer to registers to be provided for
- CAN Core during transmission.
+Loads CAN frame metadata from TXT Buffer and provide them for CAN Core during
+ transmission.
 \end_layout
 
 \begin_layout Itemize
-Loads timestamp from TXT Buffer and compares it with actual value of Timestamp
- input.
+Execute comparison o external timestamp with TX frame Timestamp and determine
+ moment of transmission.
 \end_layout
 
 \begin_layout Itemize
 Holds index of TXT Buffer from which CAN Core is actually transmitting.
+\end_layout
+
+\begin_layout Itemize
+Determine change of TXT Buffer between two consecutive transmissions.
+\end_layout
+
+\begin_layout Standard
+TX Arbitrator block diagram is shown in Figure TODO.
 \end_layout
 
 \begin_layout Standard
@@ -19366,9 +19298,11 @@ filename "entity_docs/tx_arbitrator.lyx"
 \end_layout
 
 \begin_layout Standard
-TX Arbitrator block diagram is shown in Figure TODO.
- TX Arbitrator selects Highest priority TXT Buffer for transmission.
- Only TXT Buffers which are in state 
+TX Arbitrator selects Highest priority TXT Buffer for transmission.
+\end_layout
+
+\begin_layout Standard
+Only TXT Buffers which are in state 
 \begin_inset Quotes eld
 \end_inset
 
@@ -19377,10 +19311,19 @@ Ready
 \end_inset
 
  are considered for selection.
- Priority comparison is executed by Priority decoder.
- TX Arbitrator contains a FSM which controls loading of CAN frame metadata
+\end_layout
+
+\begin_layout Standard
+Priority comparison is executed by Priority decoder.
+\end_layout
+
+\begin_layout Standard
+TX Arbitrator contains a FSM which controls loading of CAN frame metadata
  and Timestamp comparison.
- Selection of highest priority TXT Buffer in TX Arbitrator is executed in
+\end_layout
+
+\begin_layout Standard
+Selection of highest priority TXT Buffer in TX Arbitrator is executed in
  single cycle by Priority decoder.
 \end_layout
 
@@ -20270,6 +20213,421 @@ TX Arbitrator - change of TXT Buffer priority during selection
 \begin_inset CommandInset label
 LatexCommand label
 name "tab:CAN-control-counter-1-3-2-1-1-1-1-1-2"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float table
+placement H
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\noindent
+\align center
+\begin_inset Tabular
+<lyxtabular version="3" rows="10" columns="3">
+<features islongtable="true" longtabularalignment="center">
+<column alignment="left" valignment="top" width="5line%">
+<column alignment="left" valignment="top" width="30line%">
+<column alignment="left" valignment="top" width="56line%">
+<row>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Step 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+cellcolor{gray}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+SW Action
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+cellcolor{gray}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+HW Action / State
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+cellcolor{gray}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+1
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+SW fills TXT Buffer 1 RAM.
+ SW enables retransmitt limitation and configures Retransmitt limit to 5.
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+TXT Buffer 1 is in Empty state.
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+2
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+SW issues Set ready command to TXT Buffer 1.
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+TXT Buffer 1 moves to Ready state.
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+3
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+TX Arbitrator selects TXT Buffer 1 for transmission and signals to Protocol
+ control there is a valid TXT Buffer for transmission.
+ On third bit of Intermission or when Bus is idle, Protocol control issues
+ HW lock command.
+ TXT Buffer 1 moves to TX in Progress and Protocol control starts transmission
+ from TXT Buffer 1.
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+4
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+An Error frame occurs or arbitration is lost, TXT Buffer moves to Ready
+ state and Retransmitt counter is incremented to 1.
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+5
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+SW fills TXT Buffer RAM 2.
+ SW Issues Set ready command to TXT Buffer 2.
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+TXT Buffer 2 moves to Ready state.
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+6
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Now there are two TXT Buffers in Ready state.
+ Assume TXT Buffer 2 has higher priority than TXT Buffer 1 (see 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "sec:TX-Arbitrator"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+).
+ TX Arbitrator selects TXT Buffer 2 for transmission, and signals there
+ is a valid TXT Buffer for transmission to Protocol control.
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+7
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+On third bit of Intermission or when Bus is idle, Protocol control FSM issues
+ HW Lock command, TXT Buffer 2 moves to TX in progress and Protocol control
+ starts transmitting from TXT Buffer 2.
+ Retransmitt counter is cleared because TXT Buffer changed between two consecuti
+ve transmissions (Logically, counting retransmissions on TXT Buffer 2 shall
+ not include one previous failed transmission from TXT Buffer 1, because
+ it is different CAN frame which is being transmitted).
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+7
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Protocol control transmitts frame from TXT Buffer 2 succesfully.
+ TXT Buffer moves to 
+\begin_inset Quotes eld
+\end_inset
+
+TX OK
+\begin_inset Quotes erd
+\end_inset
+
+.
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+8
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+SW reads state of TXT Buffers and finds out which TXT Buffer was used for
+ transmission.
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+</lyxtabular>
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\noindent
+\align center
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Selected TXT Buffer changed between transmissions
+\begin_inset CommandInset label
+LatexCommand label
+name "tab:txt-buffer-change"
 
 \end_inset
 
