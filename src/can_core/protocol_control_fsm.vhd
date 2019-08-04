@@ -1584,7 +1584,6 @@ begin
                 
                 if (ide_is_arbitration = '1') then
                     is_arbitration_i <= '1';
-                    bit_err_disable <= '1';
                     
                     if (tx_data_wbs = DOMINANT and rx_data_nbs = RECESSIVE) then
                         bit_err_arb_i <= '1';
