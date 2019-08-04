@@ -135,7 +135,7 @@ entity tx_arbitrator_fsm is
         
         -- Clear valid selected buffer on TX Arbitrator output.
         frame_valid_com_clear  :out std_logic 
-  );
+    );
 end entity;
 
 architecture rtl of tx_arbitrator_fsm is
@@ -149,8 +149,21 @@ architecture rtl of tx_arbitrator_fsm is
   signal fsm_wait_state_d         : std_logic;
   signal fsm_wait_state_q         : std_logic;
 
+  -- Restart TXT Buffer selection
+  signal buf_sel_restart          : std_logic;
+
 begin
-  
+
+
+    ----------------------------------------------------------------------------
+    -- Buffer selection is restarted when selected TXT Buffer changed, or held
+    -- in initial state when there is no Buffer available!
+    ----------------------------------------------------------------------------
+    buf_sel_restart <= '1' when (select_buf_avail = '0' or
+                                 select_index_changed = '1')
+                           else
+                       '0';
+
     ----------------------------------------------------------------------------
     -- State machine driving selection of highest priority buffer and load of 
     -- the metadata and identifier words on parallel outputs.
@@ -169,9 +182,7 @@ begin
         when s_arb_sel_low_ts =>
             if (txtb_hw_cmd.lock = '1') then
                 next_state         <= s_arb_locked;
-            elsif ((select_buf_avail = '0') or 
-                   (select_index_changed = '1'))
-            then
+            elsif (buf_sel_restart = '1') then
                 next_state         <= s_arb_sel_low_ts; 
             elsif (fsm_wait_state_q = '0') then
                 next_state         <= s_arb_sel_upp_ts;
@@ -185,9 +196,7 @@ begin
         when s_arb_sel_upp_ts =>
              if (txtb_hw_cmd.lock = '1') then
                 next_state         <= s_arb_locked;
-            elsif ((select_buf_avail = '0') or 
-                   (select_index_changed = '1'))
-            then
+            elsif (buf_sel_restart = '1') then
                 next_state         <= s_arb_sel_low_ts; 
             elsif (fsm_wait_state_q = '0') then
                 if (timestamp_valid = '1') then
@@ -205,9 +214,7 @@ begin
         when s_arb_sel_ffw =>
              if (txtb_hw_cmd.lock = '1') then
                 next_state         <= s_arb_locked;
-            elsif ((select_buf_avail = '0') or 
-                   (select_index_changed = '1'))
-            then
+            elsif (buf_sel_restart = '1') then
                 next_state         <= s_arb_sel_low_ts; 
             elsif (fsm_wait_state_q = '0') then
                 next_state         <= s_arb_sel_low_ts;
@@ -251,9 +258,8 @@ begin
     ---------------------------------------------------------------------------
     fsm_wait_state_d <= '1' when (curr_state /= next_state)
                             else
-                        '1' when ((select_buf_avail = '0') or 
-                                  (select_index_changed = '1')) and
-                                  (curr_state = s_arb_sel_low_ts)
+                        '1' when (buf_sel_restart = '1') and
+                                 (curr_state = s_arb_sel_low_ts)
                             else
                         '0';
     
@@ -309,7 +315,7 @@ begin
     --  1. Selected Buffer changed.
     --  2. There is not buffer marked as ready -> Hold in not selected!
     ------------------------------------------------------------------------
-    elsif (select_buf_avail = '0' or select_index_changed = '1') then
+    elsif (buf_sel_restart = '1') then
         load_ts_lw_addr         <= '1';
         
         -----------------------------------------------------------------------
