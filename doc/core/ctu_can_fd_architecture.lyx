@@ -14791,6 +14791,14 @@ name "tab:trigger-signals"
 
 \end_layout
 
+\begin_layout Subsection
+Bus traffic counters
+\end_layout
+
+\begin_layout Standard
+TODO: Write documentation or throw Bus traffic counters away.
+\end_layout
+
 \begin_layout Standard
 \begin_inset Newpage pagebreak
 \end_inset
@@ -18004,6 +18012,13 @@ noprefix "false"
 
 \begin_layout Subsection
 TXT Buffer - Transmission availability
+\begin_inset CommandInset label
+LatexCommand label
+name "subsec:TXT-Buffer-tx-avail"
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
@@ -19271,7 +19286,7 @@ Loads CAN frame metadata from TXT Buffer and provide them for CAN Core during
 \end_layout
 
 \begin_layout Itemize
-Execute comparison o external timestamp with TX frame Timestamp and determine
+Execute comparison of external Timestamp with TX frame Timestamp and determine
  moment of transmission.
 \end_layout
 
@@ -19284,7 +19299,68 @@ Determine change of TXT Buffer between two consecutive transmissions.
 \end_layout
 
 \begin_layout Standard
-TX Arbitrator block diagram is shown in Figure TODO.
+TX Arbitrator block diagram is shown in Figure 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:tx-arbitrator-block-diagram"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+placement H
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\noindent
+\align center
+\begin_inset Graphics
+	filename /DOKUMENTY/Skola/CVUT-FEL/ctu_can_fd_2/doc/pics/Visio_generated/BD_TX_Arbitrator.pdf
+	lyxscale 20
+	scale 71
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+TX Arbitrator block diagram
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:tx-arbitrator-block-diagram"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Newpage pagebreak
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
@@ -19295,36 +19371,6 @@ filename "entity_docs/tx_arbitrator.lyx"
 \end_inset
 
 
-\end_layout
-
-\begin_layout Standard
-TX Arbitrator selects Highest priority TXT Buffer for transmission.
-\end_layout
-
-\begin_layout Standard
-Only TXT Buffers which are in state 
-\begin_inset Quotes eld
-\end_inset
-
-Ready
-\begin_inset Quotes erd
-\end_inset
-
- are considered for selection.
-\end_layout
-
-\begin_layout Standard
-Priority comparison is executed by Priority decoder.
-\end_layout
-
-\begin_layout Standard
-TX Arbitrator contains a FSM which controls loading of CAN frame metadata
- and Timestamp comparison.
-\end_layout
-
-\begin_layout Standard
-Selection of highest priority TXT Buffer in TX Arbitrator is executed in
- single cycle by Priority decoder.
 \end_layout
 
 \begin_layout Subsection
@@ -19372,7 +19418,7 @@ TXT Buffer selection process is driven by TX Arbitrator FSM whose state
 
 \begin_layout Standard
 \begin_inset Float table
-placement h
+placement H
 wide false
 sideways false
 status open
@@ -19384,8 +19430,8 @@ status open
 <lyxtabular version="3" rows="12" columns="3">
 <features tabularvalignment="middle">
 <column alignment="left" valignment="top" width="5line%">
-<column alignment="left" valignment="top" width="30line%">
-<column alignment="left" valignment="top" width="30line%">
+<column alignment="left" valignment="top" width="35line%">
+<column alignment="left" valignment="top" width="51line%">
 <row>
 <cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
 \begin_inset Text
@@ -19493,7 +19539,7 @@ No TXT Buffer is ready.
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -19502,7 +19548,7 @@ SW fills TXT Buffer 1 and issues Set Ready command to this Buffer.
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -19775,7 +19821,7 @@ Protocol control transmitts frame from TXT Buffer 1, when it ends transmission
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+<cell alignment="left" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -19785,7 +19831,7 @@ SW reads state of TXT Buffer and finds out whether transmission was aborted
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+<cell alignment="left" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -19830,7 +19876,7 @@ name "tab:CAN-control-counter-1-3-2-1-1-1-1-1"
 
 \begin_layout Standard
 \begin_inset Float table
-placement h
+placement H
 wide false
 sideways false
 status open
@@ -19842,8 +19888,8 @@ status open
 <lyxtabular version="3" rows="10" columns="3">
 <features tabularvalignment="middle">
 <column alignment="left" valignment="top" width="5line%">
-<column alignment="left" valignment="top" width="30line%">
-<column alignment="left" valignment="top" width="30line%">
+<column alignment="left" valignment="top" width="35line%">
+<column alignment="left" valignment="top" width="51line%">
 <row>
 <cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
 \begin_inset Text
@@ -19951,7 +19997,7 @@ No TXT Buffer is ready.
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -19963,7 +20009,7 @@ No TXT Buffer is ready.
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -20243,8 +20289,8 @@ status open
 <lyxtabular version="3" rows="10" columns="3">
 <features islongtable="true" longtabularalignment="center">
 <column alignment="left" valignment="top" width="5line%">
-<column alignment="left" valignment="top" width="30line%">
-<column alignment="left" valignment="top" width="56line%">
+<column alignment="left" valignment="top" width="35line%">
+<column alignment="left" valignment="top" width="51line%">
 <row>
 <cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
 \begin_inset Text
