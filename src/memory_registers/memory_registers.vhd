@@ -419,17 +419,10 @@ begin
     ----------------------------------------------------------------------------
     -- Pipeline on Soft reset register.
     ----------------------------------------------------------------------------
-    soft_res_reg_inst : dff_arst_ce
-    generic map(
-        G_RESET_POLARITY   => G_RESET_POLARITY,
-        G_RST_VAL          => '0'
-    )
+    soft_res_reg_inst : dff
     port map(
-        arst               => '1',                                      -- IN
         clk                => clk_sys,                                  -- IN
-
         input              => control_registers_out.mode(RST_IND),      -- IN
-        ce                 => '1',                                      -- IN
 
         output             => soft_res_q                                -- OUT
     );

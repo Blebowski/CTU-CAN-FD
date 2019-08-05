@@ -197,7 +197,7 @@ begin
     drv_ctr_sel         <=  drv_bus(DRV_CTR_SEL_HIGH downto DRV_CTR_SEL_LOW);
     drv_clr_err_ctrs    <=  drv_bus(DRV_ERR_CTR_CLR);
 
-    dff_arst_ce_inst : dff_arst_ce
+    dff_arst_inst : dff_arst
     generic map(
         G_RESET_POLARITY   => G_RESET_POLARITY,
         G_RST_VAL          => '0'
@@ -205,9 +205,7 @@ begin
     port map(
         arst               => res_n,                -- IN
         clk                => clk_sys,              -- IN
-        
         input              => set_err_active,       -- IN
-        ce                 => '1',                  -- IN
         
         output             => set_err_active_q      -- OUT
     );

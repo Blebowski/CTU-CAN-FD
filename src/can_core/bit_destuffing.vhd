@@ -190,18 +190,17 @@ begin
     ---------------------------------------------------------------------------
     -- Registering previous value of enable input to detect 0->1 transition.
     ---------------------------------------------------------------------------
-    dff_ena_reg : dff_arst_ce
+    dff_ena_reg : dff_arst
     generic map(
         G_RESET_POLARITY   => G_RESET_POLARITY,
         G_RST_VAL          => '0'
     )
     port map(
-        arst               => res_n,
-        clk                => clk_sys,
-
-        input              => destuff_enable,
-        ce                 => '1',
-        output             => enable_prev
+        arst               => res_n,            -- IN
+        clk                => clk_sys,          -- IN
+        input              => destuff_enable,   -- IN
+        
+        output             => enable_prev       -- OUT
     );
 
     ---------------------------------------------------------------------------
@@ -271,12 +270,12 @@ begin
         G_RST_VAL          => '0'
     )
     port map(
-        arst               => res_n,
-        clk                => clk_sys,
-
-        input              => fixed_prev_d,
-        ce                 => destuff_enable,
-        output             => fixed_prev_q
+        arst               => res_n,            -- IN
+        clk                => clk_sys,          -- IN
+        input              => fixed_prev_d,     -- IN
+        ce                 => destuff_enable,   -- IN
+        
+        output             => fixed_prev_q      -- OUT
     );
 
 
@@ -379,18 +378,17 @@ begin
     ---------------------------------------------------------------------------
     -- Destuffed flag - register assignment
     ---------------------------------------------------------------------------
-    dff_destuffed_flag_reg : dff_arst_ce
+    dff_destuffed_flag_reg : dff_arst
     generic map(
         G_RESET_POLARITY   => G_RESET_POLARITY,
         G_RST_VAL          => '0'
     )
     port map(
-        arst               => res_n,
-        clk                => clk_sys,
-
-        input              => destuffed_d,
-        ce                 => '1',
-        output             => destuffed_q
+        arst               => res_n,            -- IN
+        clk                => clk_sys,          -- IN
+        input              => destuffed_d,      -- IN
+        
+        output             => destuffed_q       -- OUT
     );
 
 
@@ -406,18 +404,17 @@ begin
     ---------------------------------------------------------------------------
     -- Error register - register assignment
     ---------------------------------------------------------------------------
-    dff_err_reg : dff_arst_ce
+    dff_err_reg : dff_arst
     generic map(
         G_RESET_POLARITY   => G_RESET_POLARITY,
         G_RST_VAL          => '0'
     )
     port map(
-        arst               => res_n,
-        clk                => clk_sys,
-
-        input              => stuff_err_d,
-        ce                 => '1',
-        output             => stuff_err_q
+        arst               => res_n,            -- IN
+        clk                => clk_sys,          -- IN
+        input              => stuff_err_d,      -- IN
+        
+        output             => stuff_err_q       -- OUT
     );
 
 
@@ -435,18 +432,17 @@ begin
     ---------------------------------------------------------------------------
     -- Previously processed value - register assignment
     ---------------------------------------------------------------------------
-    dff_prev_val_reg : dff_arst_ce
+    dff_prev_val_reg : dff_arst
     generic map(
         G_RESET_POLARITY   => G_RESET_POLARITY,
         G_RST_VAL          => RECESSIVE
     )
     port map(
-        arst               => res_n,
-        clk                => clk_sys,
-
-        input              => prev_val_d,
-        ce                 => '1',
-        output             => prev_val_q
+        arst               => res_n,            -- IN
+        clk                => clk_sys,          -- IN
+        input              => prev_val_d,       -- IN
+        
+        output             => prev_val_q        -- OUT
     );
 
 

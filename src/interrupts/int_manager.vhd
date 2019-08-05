@@ -276,18 +276,17 @@ begin
     -- Output interrupt DFF to make sure that interrupt output will be
     -- glitch free!
     ---------------------------------------------------------------------------
-    dff_int_output_reg : dff_arst_ce
+    dff_int_output_reg : dff_arst
     generic map(
         G_RESET_POLARITY   => G_RESET_POLARITY,
         G_RST_VAL          => '0'
     )
     port map(
-        arst               => res_n,
-        clk                => clk_sys,
+        arst               => res_n,        -- IN
+        clk                => clk_sys,      -- IN
+        input              => int_i,        -- IN
 
-        input              => int_i,
-        ce                 => '1',
-        output             => int
+        output             => int           -- OUT
     );
 
 

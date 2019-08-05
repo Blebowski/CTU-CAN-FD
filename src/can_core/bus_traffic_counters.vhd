@@ -152,38 +152,18 @@ begin
                     G_RESET_POLARITY when (clear_rx_ctr = '1') else
                     (not G_RESET_POLARITY);                
     
-    tx_ctr_res_inst : dff_arst_ce
-    generic map(
-        G_RESET_POLARITY   => G_RESET_POLARITY,
-        G_RST_VAL          => '1'
-    )
+    tx_ctr_res_inst : dff
     port map(
-        -- Keep without reset! We can't use res_n to avoid reset recovery!
-        -- This does not mind, since stable value will be here one clock cycle
-        -- after reset by res_n.
-        arst               => '1',                  -- IN
         clk                => clk_sys,              -- IN
-
         input              => tx_ctr_rst_d,         -- IN
-        ce                 => '1',                  -- IN
-        
+
         output             => tx_ctr_rst_q          -- OUT
     );
     
-    rx_ctr_res_inst : dff_arst_ce
-    generic map(
-        G_RESET_POLARITY   => G_RESET_POLARITY,
-        G_RST_VAL          => '1'
-    )
+    rx_ctr_res_inst : dff
     port map(
-        -- Keep without reset! We can't use res_n to avoid reset recovery!
-        -- This does not mind, since stable value will be here one clock cycle
-        -- after reset by res_n.
-        arst               => '1',                  -- IN
         clk                => clk_sys,              -- IN
-
         input              => rx_ctr_rst_d,         -- IN
-        ce                 => '1',                  -- IN
         
         output             => rx_ctr_rst_q          -- OUT
     );

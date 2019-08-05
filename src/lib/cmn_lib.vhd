@@ -78,6 +78,42 @@ package cmn_lib is
     );
     end component dff_arst_ce;
 
+    component dff_arst is
+    generic (
+        -- Reset polarity
+        G_RESET_POLARITY   :       std_logic;
+        
+        -- Reset value
+        G_RST_VAL          :       std_logic
+    );    
+    port (
+        -- Asynchronous reset
+        arst               : in    std_logic;
+        
+        -- Clock
+        clk                : in    std_logic;
+
+        -- Data input (D)
+        input              : in    std_logic;
+        
+        -- Data output (Q)
+        output             : out   std_logic
+    );
+    end component dff_arst;
+
+    component dff is
+    port (
+        -- Clock
+        clk                : in    std_logic;
+
+        -- Data input (D)
+        input              : in    std_logic;
+        
+        -- Data output (Q)
+        output             : out   std_logic
+    );
+    end component dff;
+
     component dlc_decoder is
     port (
         -- DLC Input (as in CAN Standard)
