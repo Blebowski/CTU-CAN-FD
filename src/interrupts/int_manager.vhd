@@ -276,7 +276,7 @@ begin
     -- Output interrupt DFF to make sure that interrupt output will be
     -- glitch free!
     ---------------------------------------------------------------------------
-    dff_int_output_reg : dff_arst
+    dff_int_output_reg : dff_arst_ce
     generic map(
         G_RESET_POLARITY   => G_RESET_POLARITY,
         G_RST_VAL          => '0'

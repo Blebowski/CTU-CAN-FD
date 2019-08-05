@@ -216,7 +216,7 @@ begin
     --     Fixed stuff bits must be left out! Active in Process pipeline stage.
     --     (see next comment).
     ---------------------------------------------------------------------------
-    crc_trig_tx_wbs_reg : dff_arst
+    crc_trig_tx_wbs_reg : dff_arst_ce
     generic map(
         G_RESET_POLARITY   => G_RESET_POLARITY,
         G_RST_VAL          => '0'
@@ -241,7 +241,7 @@ begin
     -- (Bit Destuffing input) to avoid possible change, and calculate the CRC
     -- with rx_trigger(0) (in Process pipeline stage).
     ---------------------------------------------------------------------------
-    crc_data_rx_wbs_reg : dff_arst
+    crc_data_rx_wbs_reg : dff_arst_ce
     generic map(
         G_RESET_POLARITY   => G_RESET_POLARITY,
         G_RST_VAL          => '0'

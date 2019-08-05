@@ -254,7 +254,7 @@ begin
                                             else
                            not G_RESET_POLARITY; 
     
-    trv_delay_rst_reg_inst : dff_arst
+    trv_delay_rst_reg_inst : dff_arst_ce
     generic map(
         G_RESET_POLARITY   => G_RESET_POLARITY,
         G_RST_VAL          => '1'

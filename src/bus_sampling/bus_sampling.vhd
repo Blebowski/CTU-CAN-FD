@@ -315,7 +315,7 @@ begin
     ----------------------------------------------------------------------------
     -- Pipeline reset for shift registers to avoid glitches!
     ----------------------------------------------------------------------------
-    shift_regs_rst_reg_inst : dff_arst
+    shift_regs_rst_reg_inst : dff_arst_ce
     generic map(
         G_RESET_POLARITY   => G_RESET_POLARITY,
         G_RST_VAL          => '1'
@@ -336,7 +336,7 @@ begin
     ----------------------------------------------------------------------------
     -- Create delayed TX Trigger one clock cycle after Stuff pipeline stage.
     ----------------------------------------------------------------------------
-    tx_trigger_reg_inst : dff_arst
+    tx_trigger_reg_inst : dff_arst_ce
     generic map(
         G_RESET_POLARITY   => G_RESET_POLARITY,
         G_RST_VAL          => '0'

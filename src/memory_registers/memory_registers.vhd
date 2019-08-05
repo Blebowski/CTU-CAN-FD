@@ -419,7 +419,7 @@ begin
     ----------------------------------------------------------------------------
     -- Pipeline on Soft reset register.
     ----------------------------------------------------------------------------
-    soft_res_reg_inst : dff_arst
+    soft_res_reg_inst : dff_arst_ce
     generic map(
         G_RESET_POLARITY   => G_RESET_POLARITY,
         G_RST_VAL          => '0'

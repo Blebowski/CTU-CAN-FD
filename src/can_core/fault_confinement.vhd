@@ -197,7 +197,7 @@ begin
     drv_ctr_sel         <=  drv_bus(DRV_CTR_SEL_HIGH downto DRV_CTR_SEL_LOW);
     drv_clr_err_ctrs    <=  drv_bus(DRV_ERR_CTR_CLR);
 
-    dff_arst_inst : dff_arst
+    dff_arst_ce_inst : dff_arst_ce
     generic map(
         G_RESET_POLARITY   => G_RESET_POLARITY,
         G_RST_VAL          => '0'

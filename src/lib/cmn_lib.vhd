@@ -52,7 +52,7 @@ use ieee.std_logic_1164.all;
 
 package cmn_lib is
 
-    component dff_arst is
+    component dff_arst_ce is
     generic (
         -- Reset polarity
         G_RESET_POLARITY   :       std_logic;
@@ -76,7 +76,7 @@ package cmn_lib is
         -- Data output (Q)
         output             : out   std_logic
     );
-    end component dff_arst;
+    end component dff_arst_ce;
 
     component dlc_decoder is
     port (

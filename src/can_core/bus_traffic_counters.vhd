@@ -152,7 +152,7 @@ begin
                     G_RESET_POLARITY when (clear_rx_ctr = '1') else
                     (not G_RESET_POLARITY);                
     
-    tx_ctr_res_inst : dff_arst
+    tx_ctr_res_inst : dff_arst_ce
     generic map(
         G_RESET_POLARITY   => G_RESET_POLARITY,
         G_RST_VAL          => '1'
@@ -170,7 +170,7 @@ begin
         output             => tx_ctr_rst_q          -- OUT
     );
     
-    rx_ctr_res_inst : dff_arst
+    rx_ctr_res_inst : dff_arst_ce
     generic map(
         G_RESET_POLARITY   => G_RESET_POLARITY,
         G_RST_VAL          => '1'

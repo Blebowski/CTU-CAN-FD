@@ -211,7 +211,7 @@ begin
     ---------------------------------------------------------------------------
     -- Registering previous value of enable input to detect 0->1 transition.
     ---------------------------------------------------------------------------
-    dff_ena_reg : dff_arst
+    dff_ena_reg : dff_arst_ce
     generic map(
         G_RESET_POLARITY   => G_RESET_POLARITY,
         G_RST_VAL          => '0'
@@ -247,7 +247,7 @@ begin
     -- fixed stuff bit and insert stuff bit in the beginning of CRC for CAN FD
     -- automatically!
     ---------------------------------------------------------------------------
-    dff_fixed_stuff_reg : dff_arst
+    dff_fixed_stuff_reg : dff_arst_ce
     generic map(
         G_RESET_POLARITY   => G_RESET_POLARITY,
         G_RST_VAL          => '0'
@@ -402,7 +402,7 @@ begin
     -- trigger, or input data are piped directly to this register when
     -- enable = '0'.
     ---------------------------------------------------------------------------
-    dff_data_out_reg : dff_arst
+    dff_data_out_reg : dff_arst_ce
     generic map(
         G_RESET_POLARITY   => G_RESET_POLARITY,
         G_RST_VAL          => RECESSIVE
@@ -444,7 +444,7 @@ begin
     ---------------------------------------------------------------------------
     -- Halt register instance
     ---------------------------------------------------------------------------
-    dff_halt_reg : dff_arst
+    dff_halt_reg : dff_arst_ce
     generic map(
         G_RESET_POLARITY   => G_RESET_POLARITY,
         G_RST_VAL          => '0'

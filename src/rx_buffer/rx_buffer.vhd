@@ -406,7 +406,7 @@ begin
                     G_RESET_POLARITY when (drv_erase_rx = '1') else
                     (not G_RESET_POLARITY);
 
-    res_reg_inst : dff_arst
+    res_reg_inst : dff_arst_ce
     generic map(
         G_RESET_POLARITY   => G_RESET_POLARITY,
         G_RST_VAL          => '1'

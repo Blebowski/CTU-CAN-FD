@@ -47,7 +47,7 @@
 Library ieee;
 use ieee.std_logic_1164.all;
 
-entity dff_arst is
+entity dff_arst_ce is
     generic (
         -- Reset polarity
         G_RESET_POLARITY   :       std_logic;
@@ -71,9 +71,9 @@ entity dff_arst is
         -- Data output (Q)
         output             : out   std_logic
     );
-end dff_arst;
+end dff_arst_ce;
 
-architecture rtl of dff_arst is
+architecture rtl of dff_arst_ce is
 begin
 
     -- DFF process
