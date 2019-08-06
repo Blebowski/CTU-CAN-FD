@@ -456,9 +456,10 @@ begin
     end if;
   end process;
 
-  txtb_changed  <= '0' when (last_txtb_index = int_txtb_index)
+  txtb_changed  <= '1' when (last_txtb_index /= int_txtb_index and
+                             store_last_txtb_index = '1')
                        else
-                   '1';
+                   '0';
 
 
   ------------------------------------------------------------------------------
