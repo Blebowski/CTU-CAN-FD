@@ -18032,11 +18032,12 @@ Ready
 
  state, it indicates its availability for transmission to TX Arbitrator.
  However, if TXT Buffer receives Set Abort command, it signals unavailability
- for transmission in the same clock cycle as the command is active (
+ for transmission in the same clock cycle as Set Abort command is active
+ (
 \begin_inset Quotes eld
 \end_inset
 
-txtb_ready
+txtb_available
 \begin_inset Quotes erd
 \end_inset
 
@@ -19281,17 +19282,17 @@ Select TXT Buffer for transmission based on TXT Buffer priority.
 \end_layout
 
 \begin_layout Itemize
-Loads CAN frame metadata from TXT Buffer and provide them for CAN Core during
+Load CAN frame metadata from TXT Buffer and provide them for CAN Core during
  transmission.
 \end_layout
 
 \begin_layout Itemize
 Execute comparison of external Timestamp with TX frame Timestamp and determine
- moment of transmission.
+ moment of CAN frame transmission.
 \end_layout
 
 \begin_layout Itemize
-Holds index of TXT Buffer from which CAN Core is actually transmitting.
+Hold index of TXT Buffer from which CAN Core is actually transmitting.
 \end_layout
 
 \begin_layout Itemize
@@ -19378,33 +19379,85 @@ Priority decoder
 \end_layout
 
 \begin_layout Standard
-Priority decoder combinatorially selects index of highest priority TXT Buffer.
- Priority of TXT Buffer is given by SW from Memory registers.
- If TXT Buffer is not in Ready state, it is not considered for selection.
- If two buffers are of equal priority, buffer with lower priority is selected.
- Priority decoder is implemented as comparator tree with 3 levels and it
- is shown in Figure TODO.
- Priority decoder supports 8 input TXT Buffers.
- If number of input TXT Buffers is lower than 8, unused inputs are driven
- to zeroes.
- If no TXT Buffer is in Ready state, priority decoder signals that no TXT
- Buffer is ready and no frame can be transmitted.
-\end_layout
+Priority decoder selects index of highest priority TXT Buffer which is available
+ for transmission (see 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "subsec:TXT-Buffer-tx-avail"
+plural "false"
+caps "false"
+noprefix "false"
 
-\begin_layout Subsection
-TX Arbitrator FSM
+\end_inset
+
+ for TXT Buffer availability).
+ Priority of TXT Buffers is given by SW (TX_PRIORITY register).
+ If no TXT Buffer is available, this is signalled to rest of TX Arbitrator,
+ TXT Buffer selection process is disabled and no frame can be transmitted.
+ If two TXT Buffers have equal priority, TXT Buffer with lower index is
+ selected.
+ Priority decoder is implemented as comparator tree with 3 levels (see Figure
+ 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:priority-decoder-block-diagram"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+).
+ Priority decoder supports 8 input TXT Buffers (currently only 4 are used).
+ Unused inputs are driven to zeroes.
 \end_layout
 
 \begin_layout Standard
-State transition diagram of TX Arbitrator FSM is shown in Figure TODO.
- Each state of TX Arbitrator FSM which loads data from TXT Buffer RAM lasts
- two clock cycles (there is internal wait state) since TXT Buffer RAM is
- synchronous and it takes one clock cycle to read memory word from this
- RAM.
+\begin_inset Float figure
+placement H
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\noindent
+\align center
+\begin_inset Graphics
+	filename /DOKUMENTY/Skola/CVUT-FEL/ctu_can_fd_2/doc/pics/Visio_generated/BD_priority_decoder.pdf
+	lyxscale 20
+	scale 70
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Priority decoder block diagram
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:priority-decoder-block-diagram"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Subsection
-TXT Buffer selection process
+TXT Buffer FSM and TXT Buffer selection process
 \end_layout
 
 \begin_layout Standard
@@ -19586,7 +19639,7 @@ TXT Buffer becomes ready.
 
 \begin_layout Plain Layout
 TX Arbitrator FSM loads lower Timestamp word from TXT Buffer 1 RAM and stores
- it to auxiliarly register.
+ it to capture register.
 \end_layout
 
 \end_inset
