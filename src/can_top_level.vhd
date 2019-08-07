@@ -91,7 +91,10 @@ entity can_top_level is
         sup_filtC      : boolean                := true;
         
         -- Insert Range Filter
-        sup_range      : boolean                := true
+        sup_range      : boolean                := true;
+        
+        -- Insert Traffic counters
+        sup_traffic_ctrs : boolean              := true
     );
     port(
         -----------------------------------------------------------------------
@@ -484,6 +487,7 @@ begin
         G_SUP_FILTB         => sup_filtB,
         G_SUP_FILTC         => sup_filtC,
         G_SUP_RANGE         => sup_range,
+        G_SUP_TRAFFIC_CTRS  => sup_traffic_ctrs,
         G_TXT_BUFFER_COUNT  => C_TXT_BUFFER_COUNT, 
         G_ID                => ID,
         G_INT_COUNT         => C_INT_COUNT,

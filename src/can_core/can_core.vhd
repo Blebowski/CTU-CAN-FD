@@ -95,7 +95,10 @@ entity can_core is
         G_CRC17_POL             :     std_logic_vector(19 downto 0) := x"3685B";
         
         -- CRC 15 polynomial
-        G_CRC21_POL             :     std_logic_vector(23 downto 0) := x"302899"  
+        G_CRC21_POL             :     std_logic_vector(23 downto 0) := x"302899";
+        
+        -- Support traffic counters
+        G_SUP_TRAFFIC_CTRS      :     boolean := true
     );
     port(
         ------------------------------------------------------------------------
@@ -747,25 +750,31 @@ begin
     ---------------------------------------------------------------------------
     -- Bus traffic counters
     ---------------------------------------------------------------------------
-    bus_traffic_counters_inst : bus_traffic_counters
-    generic map(
-        G_RESET_POLARITY    => G_RESET_POLARITY
-    )
-    port map(
-        clk_sys             => clk_sys,                 -- IN
-        res_n               => res_n,                   -- IN
-
-        -- Control signals
-        clear_rx_ctr        => drv_clr_rx_ctr,          -- IN
-        clear_tx_ctr        => drv_clr_tx_ctr,          -- IN
-        inc_tx_ctr          => tran_valid_i,            -- IN
-        inc_rx_ctr          => rec_valid_i,             -- IN
-
-        -- Counter outputs
-        tx_ctr              => tx_ctr,                  -- OUT
-        rx_ctr              => rx_ctr                   -- OUT
-    );
-                         
+    bus_traffic_ctrs_gen : if (G_SUP_TRAFFIC_CTRS = true) generate
+        bus_traffic_counters_inst : bus_traffic_counters
+        generic map(
+            G_RESET_POLARITY    => G_RESET_POLARITY
+        )
+        port map(
+            clk_sys             => clk_sys,                 -- IN
+            res_n               => res_n,                   -- IN
+    
+            -- Control signals
+            clear_rx_ctr        => drv_clr_rx_ctr,          -- IN
+            clear_tx_ctr        => drv_clr_tx_ctr,          -- IN
+            inc_tx_ctr          => tran_valid_i,            -- IN
+            inc_rx_ctr          => rec_valid_i,             -- IN
+    
+            -- Counter outputs
+            tx_ctr              => tx_ctr,                  -- OUT
+            rx_ctr              => rx_ctr                   -- OUT
+        );
+    end generate bus_traffic_ctrs_gen;
+    
+    no_bus_traffic_ctrs_gen : if (G_SUP_TRAFFIC_CTRS = false) generate
+        tx_ctr <= (OTHERS => '0');
+        rx_ctr <= (OTHERS => '0');
+    end generate;
     
     ---------------------------------------------------------------------------
     -- Trigger multiplexor    

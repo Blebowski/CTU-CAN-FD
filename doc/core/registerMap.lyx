@@ -15645,6 +15645,9 @@ Address: 0x30
 \begin_layout Description
 Size: 2 bytes
 \end_layout
+\begin_layout Description
+Note: Register is present only when sup_traffic_ctrs = true. Otherwise this address is reserved.
+\end_layout
 \begin_layout Standard
 
 \end_layout
@@ -16313,6 +16316,9 @@ Address: 0x32
 \end_layout
 \begin_layout Description
 Size: 2 bytes
+\end_layout
+\begin_layout Description
+Note: Register is present only when sup_traffic_ctrs = true. Otherwise this address is reserved.
 \end_layout
 \begin_layout Standard
 

@@ -84,6 +84,9 @@ entity memory_registers is
         
         -- Support Range Filter
         G_SUP_RANGE         : boolean                         := true;
+        
+        -- Support Traffic counters
+        G_SUP_TRAFFIC_CTRS  : boolean                         := true;
 
         -- Number of TXT Buffers
         G_TXT_BUFFER_COUNT  : natural range 0 to 7            := 4;
@@ -394,7 +397,8 @@ begin
         SUP_FILT_A            => G_SUP_FILTA,
         SUP_RANGE             => G_SUP_RANGE,
         SUP_FILT_C            => G_SUP_FILTC,
-        SUP_FILT_B            => G_SUP_FILTB
+        SUP_FILT_B            => G_SUP_FILTB,
+        SUP_TRAFFIC_CTRS      => G_SUP_TRAFFIC_CTRS
     )
     port map(
         clk_sys               => clk_sys,

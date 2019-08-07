@@ -61,7 +61,8 @@ generic (
     constant SUP_FILT_A          : boolean := true;
     constant SUP_RANGE           : boolean := true;
     constant SUP_FILT_C          : boolean := true;
-    constant SUP_FILT_B          : boolean := true
+    constant SUP_FILT_B          : boolean := true;
+    constant SUP_TRAFFIC_CTRS    : boolean := true
 );
 port (
     signal clk_sys               :in std_logic;

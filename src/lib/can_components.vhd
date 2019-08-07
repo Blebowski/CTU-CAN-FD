@@ -2439,7 +2439,10 @@ package can_components is
         G_CRC17_POL             :     std_logic_vector(19 downto 0) := x"3685B";
         
         -- CRC 15 polynomial
-        G_CRC21_POL             :     std_logic_vector(23 downto 0) := x"302899"  
+        G_CRC21_POL             :     std_logic_vector(23 downto 0) := x"302899";
+
+        -- Support traffic counters
+        G_SUP_TRAFFIC_CTRS      :     boolean := true
     );
     port(
         ------------------------------------------------------------------------
@@ -2899,6 +2902,9 @@ package can_components is
         -- Support Range Filter
         G_SUP_RANGE         : boolean                         := true;
 
+        -- Support Traffic counters
+        G_SUP_TRAFFIC_CTRS  : boolean                         := true;
+        
         -- Number of TXT Buffers
         G_TXT_BUFFER_COUNT  : natural range 0 to 7            := 4;
 
@@ -4242,7 +4248,8 @@ package can_components is
         constant SUP_FILT_A          : boolean := true;
         constant SUP_RANGE           : boolean := true;
         constant SUP_FILT_C          : boolean := true;
-        constant SUP_FILT_B          : boolean := true
+        constant SUP_FILT_B          : boolean := true;
+        constant SUP_TRAFFIC_CTRS    : boolean := true
     );
     port (
         signal clk_sys               :in std_logic;
