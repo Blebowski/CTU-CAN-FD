@@ -544,8 +544,9 @@ begin
                              else
                         false;
 
-    sel_buf_mism <= true when (last_locked_index   /= mod_buf_index and
-                               txtb_changed = '0')
+    sel_buf_mism <= true when (last_locked_index /= mod_buf_index and
+                               txtb_changed = '0' and
+                               txtb_hw_cmd.lock = '1')
                          else
                     false;
 
