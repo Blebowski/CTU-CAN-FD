@@ -175,7 +175,9 @@ architecture rtl of tx_arbitrator is
     -- The output of priority decoder (selected TXT Buffer) has changed, pulse
     -- for one clock cycle
     signal select_index_changed       : std_logic;
-
+    
+    -- Signal that there is "Validated" TXT Buffer
+    signal validated_buffer           : std_logic;    
 
     ---------------------------------------------------------------------------
     -- Internal registers
@@ -328,15 +330,18 @@ begin
 
 
   ------------------------------------------------------------------------------
-  -- Invalid state of the buffer must be immediately available to the
-  -- CAN Core, otherwise Core might attempt to lock buffer which was
-  -- already aborted!
+  -- When TXT Buffer which is currently "Validated" suddenly becomes 
+  -- "Unavailable" (e.g. due to Set Abort command), this must be signalled to 
+  -- Protocol control in the same clock cycle!
   -- During transmission, CAN Core is reading metadata from outputs. Since the
   -- frame is valid, it is logical to also have "tran_frame_valid" active!
   ------------------------------------------------------------------------------
-  tran_frame_valid <= '1' when ((select_buf_avail = '1' and 
-                                tran_frame_valid_com = '1') or
-                                (tx_arb_locked = '1'))
+  validated_buffer <= '1' when (txtb_available(int_txtb_index) = '1') and
+                               (tran_frame_valid_com = '1')
+                          else
+                      '0';
+  
+  tran_frame_valid <= '1' when (validated_buffer = '1') or (tx_arb_locked = '1')
                           else
                       '0';
   
