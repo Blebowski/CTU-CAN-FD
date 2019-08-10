@@ -866,12 +866,10 @@ When CTU CAN FD GIT repository is clonned, register map can be generated
 \end_layout
 
 \begin_layout Verbatim
-
 cd scripts
 \end_layout
 
 \begin_layout Verbatim
-
 ./update_reg_map
 \end_layout
 
@@ -884,12 +882,10 @@ Documentation can be exported from VHDL RTL codes by following script:
 \end_layout
 
 \begin_layout Verbatim
-
 cd scripts
 \end_layout
 
 \begin_layout Verbatim
-
 python gen_lyx_tables.py --configPath vhdl_lyx_interface_cfg.yml
 \end_layout
 
@@ -6256,6 +6252,13 @@ name "tab:reintegration-counter"
 
 \begin_layout Subsubsection*
 TX Shift Register
+\begin_inset CommandInset label
+LatexCommand label
+name "subsec:TX-Shift-Register"
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
@@ -6408,7 +6411,7 @@ cellcolor{gray}
 \begin_inset Text
 
 \begin_layout Plain Layout
-SOF bit, Suspend, Intermission, Idle
+SOF, Suspend, Intermission, Idle
 \end_layout
 
 \end_inset
@@ -17079,8 +17082,6 @@ There are 4 TXT Buffers in CTU CAN FD.
  TXT Buffer RAM is also accessed by Protocol control FSM which reads CAN
  frame from TXT Buffer and transmitts it on CAN Bus.
  For Protocol control, TXT Buffer is read-only.
- TXT Buffer is never accessed from both sides simultaneously to guarantee
- consistency of data within the buffer.
  TXT Buffer is managed by Protocol Control FSM which is shown in Figure
  
 \begin_inset CommandInset ref
@@ -17165,6 +17166,13 @@ name "fig:txt-buffer-fsm"
 
 \begin_layout Subsection
 TXT Buffer commands
+\begin_inset CommandInset label
+LatexCommand label
+name "subsec:TXT-Buffer-commands"
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
@@ -18000,11 +18008,18 @@ noprefix "false"
 
 .
  When TXT Buffer is unlocked, it is not acessed by CAN Core (nor TX Arbitrator)
- as there is no frame transmission/selection from this TXT Buffer and SW
+ as there is no frame transmission/validation from this TXT Buffer and SW
  can write to TXT Buffer via Memory registers.
- When TXT Buffer is Locked, it was either marked as Ready for transmission,
- or already selected by TX Arbitrator and transmission is in progress from
- the TXT Buffer.
+ When TXT Buffer is Locked, it was either marked as 
+\begin_inset Quotes eld
+\end_inset
+
+Ready
+\begin_inset Quotes erd
+\end_inset
+
+ for transmission, or validated by TX Arbitrator, or transmission is in
+ progress from this TXT Buffer.
  When TXT buffer is Locked, SW can not write to TXT Buffer RAM and such
  writes have no effect.
  
@@ -18030,8 +18045,23 @@ Ready
 \begin_inset Quotes erd
 \end_inset
 
- state, it indicates its availability for transmission to TX Arbitrator.
- However, if TXT Buffer receives Set Abort command, it signals unavailability
+ state, it is 
+\begin_inset Quotes eld
+\end_inset
+
+Available
+\begin_inset Quotes erd
+\end_inset
+
+ for transmission from TX Arbitrators point of view.
+ However, if TXT Buffer receives Set Abort command, it become 
+\begin_inset Quotes eld
+\end_inset
+
+Unavailable
+\begin_inset Quotes erd
+\end_inset
+
  for transmission in the same clock cycle as Set Abort command is active
  (
 \begin_inset Quotes eld
@@ -19238,7 +19268,7 @@ SW reads state of TXT Buffer and finds out that transmission was aborted.
 TXT Buffer - Simultaneous Abort and Lock
 \begin_inset CommandInset label
 LatexCommand label
-name "tab:txt-buffer-tx-failed-1"
+name "tab:txt-buffer-simul-abort-lock"
 
 \end_inset
 
@@ -19278,7 +19308,7 @@ TX Arbitrator implements following functionality:
 \end_layout
 
 \begin_layout Itemize
-Select TXT Buffer for transmission based on TXT Buffer priority.
+Pick TXT Buffer for transmission.
 \end_layout
 
 \begin_layout Itemize
@@ -19292,11 +19322,16 @@ Execute comparison of external Timestamp with TX frame Timestamp and determine
 \end_layout
 
 \begin_layout Itemize
+Signal to CAN Core that CAN frame was validated and can be locked for transmissi
+on.
+\end_layout
+
+\begin_layout Itemize
 Hold index of TXT Buffer from which CAN Core is actually transmitting.
 \end_layout
 
 \begin_layout Itemize
-Determine change of TXT Buffer between two consecutive transmissions.
+Detect change of TXT Buffer between two consecutive transmissions.
 \end_layout
 
 \begin_layout Standard
@@ -19375,12 +19410,308 @@ filename "entity_docs/tx_arbitrator.lyx"
 \end_layout
 
 \begin_layout Subsection
-Priority decoder
+TXT Buffer validation process
 \end_layout
 
 \begin_layout Standard
-Priority decoder selects index of highest priority TXT Buffer which is available
- for transmission (see 
+With regards to processing by TX Arbitrator, TXT Buffer can be in one of
+ states described in Table 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "tab:tx-arbitrator-buffer-processing"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+.
+ TXT Buffer validation process starts when Priority Decoder picks highest
+ priority 
+\begin_inset Quotes eld
+\end_inset
+
+Available
+\begin_inset Quotes erd
+\end_inset
+
+ TXT Buffer (so called 
+\begin_inset Quotes eld
+\end_inset
+
+Selected
+\begin_inset Quotes erd
+\end_inset
+
+ TXT Buffer) for transmission.
+ Validation process is shown in Figure TODO, and described in 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "tab:tx-arbitrator-operation"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+.
+ An FSM controlling the selection is shown in 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:fsm-tx-arbitrator"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+.
+ Note that every state of TXT Buffer FSM lasts for two clock cycles due
+ to Wait State.
+ Such a wait state is inserted to cover delay of TXT Buffer RAM.
+\end_layout
+
+\begin_layout Standard
+If index of 
+\begin_inset Quotes eld
+\end_inset
+
+Selected
+\begin_inset Quotes erd
+\end_inset
+
+ TXT Buffer changes (due to another higher priority TXT Buffer becoming
+ 
+\begin_inset Quotes eld
+\end_inset
+
+Ready
+\begin_inset Quotes erd
+\end_inset
+
+ or change of TXT Buffer priorities) during validation process or after
+ validation process was finished, TXT Buffer validation process restarts
+ with newly 
+\begin_inset Quotes eld
+\end_inset
+
+Selected
+\begin_inset Quotes erd
+\end_inset
+
+ TXT Buffer.
+ If 
+\begin_inset Quotes eld
+\end_inset
+
+Validated
+\begin_inset Quotes erd
+\end_inset
+
+ TXT Buffer suddenly becomes 
+\begin_inset Quotes eld
+\end_inset
+
+Unavailable
+\begin_inset Quotes erd
+\end_inset
+
+ (due to Set Abort SW command), TX Arbitrator signals immediately (in the
+ same clock cycle) to Protocol Control FSM that there is no 
+\begin_inset Quotes eld
+\end_inset
+
+Validated
+\begin_inset Quotes erd
+\end_inset
+
+ TXT Buffer (this is done to avoid control hazards on TX frame datapath
+ and it is further explained in 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "subsec:TX-Datapath-hazard"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+).
+ These situations are not mutually exclusive, possible cornercases are explained
+ in 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "tab:tx-arbitrator-cornercase-1"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+ and 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "tab:tx-arbitrator-cornercase-2"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Standard
+When there is 
+\begin_inset Quotes eld
+\end_inset
+
+Validated
+\begin_inset Quotes erd
+\end_inset
+
+ TXT Buffer, Protocol control FSM issues HW Lock command during Bus Idle
+ or third bit of Intermission.
+ In such a case TX Arbitrator becomes 
+\begin_inset Quotes eld
+\end_inset
+
+Locked
+\begin_inset Quotes erd
+\end_inset
+
+ and TXT Buffer becomes 
+\begin_inset Quotes eld
+\end_inset
+
+Used
+\begin_inset Quotes erd
+\end_inset
+
+.
+ Protocol control then transmitts frame from this TXT Buffer and upon its
+ end it issues HW Unlock command.
+ TXT Buffer then becomes either 
+\begin_inset Quotes eld
+\end_inset
+
+Available
+\begin_inset Quotes erd
+\end_inset
+
+ or 
+\begin_inset Quotes eld
+\end_inset
+
+Unavailable
+\begin_inset Quotes erd
+\end_inset
+
+ (see 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "subsec:TXT-Buffer-commands"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+)
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float table
+placement h
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\noindent
+\align center
+\begin_inset Tabular
+<lyxtabular version="3" rows="6" columns="2">
+<features tabularvalignment="middle">
+<column alignment="left" valignment="top" width="10line%">
+<column alignment="left" valignment="top" width="83.5line%">
+<row>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Filter name
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+cellcolor{gray}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Description
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+cellcolor{gray}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Unavailable
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+TXT Buffer is 
+\begin_inset Quotes eld
+\end_inset
+
+Unavailable
+\begin_inset Quotes erd
+\end_inset
+
+ when it is not 
+\begin_inset Quotes eld
+\end_inset
+
+Available for transmission
+\begin_inset Quotes erd
+\end_inset
+
+, see 
 \begin_inset CommandInset ref
 LatexCommand ref
 reference "subsec:TXT-Buffer-tx-avail"
@@ -19390,26 +19721,215 @@ noprefix "false"
 
 \end_inset
 
- for TXT Buffer availability).
- Priority of TXT Buffers is given by SW (TX_PRIORITY register).
- If no TXT Buffer is available, this is signalled to rest of TX Arbitrator,
- TXT Buffer selection process is disabled and no frame can be transmitted.
- If two TXT Buffers have equal priority, TXT Buffer with lower index is
- selected.
- Priority decoder is implemented as comparator tree with 3 levels (see Figure
- 
+.
+ Such a TXT Buffer is ignored by TX Arbitrator.
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Available
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+TXT Buffer is 
+\begin_inset Quotes eld
+\end_inset
+
+Available
+\begin_inset Quotes erd
+\end_inset
+
+ when it is 
+\begin_inset Quotes eld
+\end_inset
+
+Available for transmission
+\begin_inset Quotes erd
+\end_inset
+
+, see 
 \begin_inset CommandInset ref
 LatexCommand ref
-reference "fig:priority-decoder-block-diagram"
+reference "subsec:TXT-Buffer-tx-avail"
 plural "false"
 caps "false"
 noprefix "false"
 
 \end_inset
 
-).
- Priority decoder supports 8 input TXT Buffers (currently only 4 are used).
- Unused inputs are driven to zeroes.
+.
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Selected
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+TXT Buffer is 
+\begin_inset Quotes eld
+\end_inset
+
+Selected
+\begin_inset Quotes erd
+\end_inset
+
+ when it is 
+\begin_inset Quotes eld
+\end_inset
+
+Available
+\begin_inset Quotes erd
+\end_inset
+
+ with highest priority out of all 
+\begin_inset Quotes eld
+\end_inset
+
+Available
+\begin_inset Quotes erd
+\end_inset
+
+ TXT Buffers.
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Validated
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+TXT Buffer is 
+\begin_inset Quotes eld
+\end_inset
+
+Validated
+\begin_inset Quotes erd
+\end_inset
+
+ when it is 
+\begin_inset Quotes eld
+\end_inset
+
+Available for transmission
+\begin_inset Quotes erd
+\end_inset
+
+, its Timestamp comparison has been executed and Metadata from TXT Buffer
+ RAM (Frame Format word) have been loaded to capture registers for CAN Core.
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Used
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+TXT Buffer is 
+\begin_inset Quotes eld
+\end_inset
+
+Used
+\begin_inset Quotes erd
+\end_inset
+
+ after CAN Core issues 
+\begin_inset Quotes eld
+\end_inset
+
+HW Lock
+\begin_inset Quotes erd
+\end_inset
+
+ command on 
+\begin_inset Quotes eld
+\end_inset
+
+Validated
+\begin_inset Quotes erd
+\end_inset
+
+ TXT Buffer and is transmitting from this TXT Buffer.
+\end_layout
+
+\end_inset
+</cell>
+</row>
+</lyxtabular>
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\noindent
+\align center
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+TX Arbitrator - TXT Buffer processing
+\begin_inset CommandInset label
+LatexCommand label
+name "tab:tx-arbitrator-buffer-processing"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
@@ -19423,9 +19943,8 @@ status open
 \noindent
 \align center
 \begin_inset Graphics
-	filename /DOKUMENTY/Skola/CVUT-FEL/ctu_can_fd_2/doc/pics/Visio_generated/BD_priority_decoder.pdf
+	filename /DOKUMENTY/Skola/CVUT-FEL/ctu_can_fd_2/doc/pics/Visio_generated/FSM_TX_Arbitrator.pdf
 	lyxscale 20
-	scale 70
 
 \end_inset
 
@@ -19436,10 +19955,10 @@ status open
 \begin_inset Caption Standard
 
 \begin_layout Plain Layout
-Priority decoder block diagram
+TX Arbitrator FSM
 \begin_inset CommandInset label
 LatexCommand label
-name "fig:priority-decoder-block-diagram"
+name "fig:fsm-tx-arbitrator"
 
 \end_inset
 
@@ -19454,19 +19973,6 @@ name "fig:priority-decoder-block-diagram"
 \end_inset
 
 
-\end_layout
-
-\begin_layout Subsection
-TXT Buffer FSM and TXT Buffer selection process
-\end_layout
-
-\begin_layout Standard
-TXT Buffer selection process is driven by TX Arbitrator FSM whose state
- transition diagram is shown in Figure TODO.
- Process of loading TX frame metadata and TX frame timestamp is described
- in Table TODO.
- If a TXT Buffer is already selected and another higher priority TXT Buffer
- becomes ready, TXT Buffer selection process is restarted.
 \end_layout
 
 \begin_layout Standard
@@ -19480,11 +19986,11 @@ status open
 \noindent
 \align center
 \begin_inset Tabular
-<lyxtabular version="3" rows="12" columns="3">
+<lyxtabular version="3" rows="11" columns="3">
 <features tabularvalignment="middle">
 <column alignment="left" valignment="top" width="5line%">
-<column alignment="left" valignment="top" width="35line%">
-<column alignment="left" valignment="top" width="51line%">
+<column alignment="left" valignment="top" width="30line%">
+<column alignment="left" valignment="top" width="56line%">
 <row>
 <cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
 \begin_inset Text
@@ -19576,7 +20082,15 @@ cellcolor{gray}
 \begin_inset Text
 
 \begin_layout Plain Layout
-No TXT Buffer is ready.
+No TXT Buffer is 
+\begin_inset Quotes eld
+\end_inset
+
+Available
+\begin_inset Quotes erd
+\end_inset
+
+.
 \end_layout
 
 \end_inset
@@ -19605,11 +20119,40 @@ SW fills TXT Buffer 1 and issues Set Ready command to this Buffer.
 \begin_inset Text
 
 \begin_layout Plain Layout
-TXT Buffer becomes ready.
- As this is only TXT Buffer which is ready, priority decoder combinatorially
- selects this buffer as highest priority TXT Buffer in Ready state.
- At the moment, TX Arbitrator still does not signal to CAN Core that there
- is valid TXT Buffer for transmission.
+TXT Buffer becomes 
+\begin_inset Quotes eld
+\end_inset
+
+Ready
+\begin_inset Quotes erd
+\end_inset
+
+ and therefore 
+\begin_inset Quotes eld
+\end_inset
+
+Available
+\begin_inset Quotes erd
+\end_inset
+
+ for TX Arbitrator.
+ As this is only TXT Buffer which is 
+\begin_inset Quotes eld
+\end_inset
+
+Available
+\begin_inset Quotes erd
+\end_inset
+
+, Priority decoder selects it as highest priority 
+\begin_inset Quotes eld
+\end_inset
+
+Available
+\begin_inset Quotes erd
+\end_inset
+
+ TXT Buffer.
 \end_layout
 
 \end_inset
@@ -19639,7 +20182,7 @@ TXT Buffer becomes ready.
 
 \begin_layout Plain Layout
 TX Arbitrator FSM loads lower Timestamp word from TXT Buffer 1 RAM and stores
- it to capture register.
+ it to auxiliarly register.
 \end_layout
 
 \end_inset
@@ -19673,7 +20216,7 @@ TX Arbitrator FSM loads upper Timestamp word from TXT Buffer 1 RAM and executes
  1 (Lower word is in auxiliarly register and Upper word is on output of
  TXT Buffer 1 RAM).
  When External Timestamp is lower than Timestamp of CAN frame in TXT Buffer
- 1, TX Arbitrator waits, otherwise it proceeds to step 6.
+ 1, TX Arbitrator waits, otherwise it proceeds to step 5.
 \end_layout
 
 \end_inset
@@ -19693,8 +20236,8 @@ TX Arbitrator FSM loads upper Timestamp word from TXT Buffer 1 RAM and executes
 \begin_inset Text
 
 \begin_layout Plain Layout
-External Timestamp is incrementing and it reaches value of CAN Frame Timestamp
- in Buffer 1.
+External Timestamp is incrementing (as it is counter of running time of
+ a system) and it reaches value of CAN Frame Timestamp in TXT Buffer 1.
 \end_layout
 
 \end_inset
@@ -19705,7 +20248,7 @@ External Timestamp is incrementing and it reaches value of CAN Frame Timestamp
 \begin_layout Plain Layout
 TX Arbitrator notices External Timestamp is now higher than Timestamp of
  a Frame in selected TXT Buffer.
- At this moment TX Arbitrator proceeds.
+ At this moment TX Arbitrator proceeds with frame validation.
 \end_layout
 
 \end_inset
@@ -19736,36 +20279,16 @@ TX Arbitrator notices External Timestamp is now higher than Timestamp of
 \begin_layout Plain Layout
 TX Arbitrator FSM loads TX Frame metadata from TXT Buffer 1 RAM (Frame Format
  word) to capture registers.
-\end_layout
-
+ TXT Buffer 1 becomes 
+\begin_inset Quotes eld
 \end_inset
-</cell>
-</row>
-<row>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
 
-\begin_layout Plain Layout
-7
-\end_layout
-
+Validated
+\begin_inset Quotes erd
 \end_inset
-</cell>
-<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
 
-\begin_layout Plain Layout
-
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-TX Arbitrator signals that there is valid TX frame for transmission to CAN
- Core.
+ and TXT Arbitrator signals that there is a valid TX frame for transmission
+ to CAN Core.
 \end_layout
 
 \end_inset
@@ -19794,9 +20317,18 @@ TX Arbitrator signals that there is valid TX frame for transmission to CAN
 \begin_inset Text
 
 \begin_layout Plain Layout
-When Protocol control FSM is in Sample point during Intermission or Idle,
- it issues Lock command to TXT Buffer 1 (TXT Buffer moves to TX in Progress)
- and TX Arbitrator.
+When Protocol control FSM is in Sample point during third bit of Intermission
+ or Bus Idle, it issues Lock command to TXT Buffer 1 (TXT Buffer becomes
+ 
+\begin_inset Quotes eld
+\end_inset
+
+Used
+\begin_inset Quotes erd
+\end_inset
+
+, TXT Buffer FSM moves to TX in Progress) and TX Arbitrator (TX Arbitrator
+ becomes locked).
 \end_layout
 
 \end_inset
@@ -19826,6 +20358,16 @@ When Protocol control FSM is in Sample point during Intermission or Idle,
 
 \begin_layout Plain Layout
 TX Arbitrator is locked and it is waiting for unlock command.
+ No TXT Buffer validation is in progress.
+ If another higher priority TXT Buffer becomes 
+\begin_inset Quotes eld
+\end_inset
+
+Available
+\begin_inset Quotes erd
+\end_inset
+
+ this has no effect as current frame transmission is already in progress.
 \end_layout
 
 \end_inset
@@ -19854,11 +20396,66 @@ TX Arbitrator is locked and it is waiting for unlock command.
 \begin_inset Text
 
 \begin_layout Plain Layout
-Protocol control transmitts frame from TXT Buffer 1, when it ends transmission
- it Issues Unlock - Done command to TXT Buffer 1 (Buffer moves to OK State),
- TX Arbitrator unlocks and as there is no TXT Buffer in Ready state, it
- signals that there is no valid TX frame available for transmission to CAN
- Core.
+Protocol control transmitts frame from TXT Buffer 1, and issues 
+\begin_inset Quotes eld
+\end_inset
+
+Unlock - Done
+\begin_inset Quotes erd
+\end_inset
+
+ command to TXT Buffer 1 (Buffer becomes 
+\begin_inset Quotes eld
+\end_inset
+
+Unavailable
+\begin_inset Quotes erd
+\end_inset
+
+ and TXT Buffer FSM moves to 
+\begin_inset Quotes eld
+\end_inset
+
+TX OK
+\begin_inset Quotes erd
+\end_inset
+
+).
+ Since TXT Buffer 1 was only TXT Buffer which was 
+\begin_inset Quotes eld
+\end_inset
+
+Available
+\begin_inset Quotes erd
+\end_inset
+
+ before the transmission, now there is no TXT Buffer which is 
+\begin_inset Quotes eld
+\end_inset
+
+Available
+\begin_inset Quotes erd
+\end_inset
+
+.
+ Therefore no TXT Buffer is 
+\begin_inset Quotes eld
+\end_inset
+
+Selected
+\begin_inset Quotes erd
+\end_inset
+
+ and no TXT Buffer validation is in progress.
+ TX Arbitrator signals there is no TXT Buffer 
+\begin_inset Quotes eld
+\end_inset
+
+Validated
+\begin_inset Quotes erd
+\end_inset
+
+ to CAN Core.
 \end_layout
 
 \end_inset
@@ -19910,7 +20507,7 @@ SW reads state of TXT Buffer and finds out whether transmission was aborted
 TX Arbitrator operation
 \begin_inset CommandInset label
 LatexCommand label
-name "tab:CAN-control-counter-1-3-2-1-1-1-1-1"
+name "tab:tx-arbitrator-operation"
 
 \end_inset
 
@@ -19938,7 +20535,439 @@ status open
 \noindent
 \align center
 \begin_inset Tabular
-<lyxtabular version="3" rows="10" columns="3">
+<lyxtabular version="3" rows="7" columns="3">
+<features tabularvalignment="middle">
+<column alignment="left" valignment="top" width="5line%">
+<column alignment="left" valignment="top" width="30line%">
+<column alignment="left" valignment="top" width="56line%">
+<row>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Step 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+cellcolor{gray}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+External action (SW or external components)
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+cellcolor{gray}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+HW Action
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+cellcolor{gray}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+1
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+SW configures priority 1 to TXT Buffer 1 and priority 2 to TXT Buffer 2.
+ SW fills TXT Buffer 1 and TXT Buffer 2 by CAN frame.
+ SW Issues 
+\begin_inset Quotes eld
+\end_inset
+
+Set Ready
+\begin_inset Quotes erd
+\end_inset
+
+ command to TXT Buffer 1.
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+TXT Buffer 1 becomes 
+\begin_inset Quotes eld
+\end_inset
+
+Ready
+\begin_inset Quotes erd
+\end_inset
+
+ and therefore 
+\begin_inset Quotes eld
+\end_inset
+
+Available
+\begin_inset Quotes erd
+\end_inset
+
+.
+ Since this is only 
+\begin_inset Quotes eld
+\end_inset
+
+Available
+\begin_inset Quotes erd
+\end_inset
+
+ TXT Buffer, it becomes 
+\begin_inset Quotes eld
+\end_inset
+
+Selected
+\begin_inset Quotes erd
+\end_inset
+
+.
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+2
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+TX Arbitrator performs validation process (loads Timestamp words, executes
+ Timestamp comparison, loads metadata) and TXT Buffer 1 becomes 
+\begin_inset Quotes eld
+\end_inset
+
+Validated
+\begin_inset Quotes erd
+\end_inset
+
+.
+ TX Arbitrator signals to CAN Core that there is 
+\begin_inset Quotes eld
+\end_inset
+
+Validated
+\begin_inset Quotes erd
+\end_inset
+
+ TXT Buffer for transmission.
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+3
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+SW Issues 
+\begin_inset Quotes eld
+\end_inset
+
+Set Ready
+\begin_inset Quotes erd
+\end_inset
+
+ command to TXT Buffer 2.
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+TXT Buffer 2 becomes 
+\begin_inset Quotes eld
+\end_inset
+
+Ready
+\begin_inset Quotes erd
+\end_inset
+
+ and therefore 
+\begin_inset Quotes eld
+\end_inset
+
+Available
+\begin_inset Quotes erd
+\end_inset
+
+.
+ As this is TXT Buffer has higher priority than TXT Buffer 1, TXT Buffer
+ 2 becomes 
+\begin_inset Quotes eld
+\end_inset
+
+Selected
+\begin_inset Quotes erd
+\end_inset
+
+ by Priority decoder.
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+4
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+TXT Buffer validation process restarts with TXT Buffer 2.
+ TXT Buffer 1 remains 
+\begin_inset Quotes eld
+\end_inset
+
+Validated
+\begin_inset Quotes erd
+\end_inset
+
+ (TXT Buffer 1 is still available for transmission).
+ If during validation process of TXT Buffer 1, Protocol control issued HW
+ Lock command, transmission would be started from TXT Buffer 1.
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+5
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+TX Arbitrator performs validation process (loads Timestamp words, executes
+ Timestamp comparison, loads metadata) of TXT Buffer 2.
+ At the end TXT Buffer 2 becomes 
+\begin_inset Quotes eld
+\end_inset
+
+Validated
+\begin_inset Quotes erd
+\end_inset
+
+ and TXT Buffer 1 (which was 
+\begin_inset Quotes eld
+\end_inset
+
+Validated
+\begin_inset Quotes erd
+\end_inset
+
+ till now) becomes 
+\begin_inset Quotes eld
+\end_inset
+
+Available
+\begin_inset Quotes erd
+\end_inset
+
+.
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="left" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+6
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Protocol control issues HW Lock command and since now TXT Bufer 2 is 
+\begin_inset Quotes eld
+\end_inset
+
+Validated
+\begin_inset Quotes erd
+\end_inset
+
+, transmission starts from TXT Buffer 2.
+ TX Arbitrator becomes Locked.
+\end_layout
+
+\end_inset
+</cell>
+</row>
+</lyxtabular>
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\noindent
+\align center
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+TX Arbitrator - Corner case 1
+\begin_inset CommandInset label
+LatexCommand label
+name "tab:tx-arbitrator-cornercase-1"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float table
+placement h
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\noindent
+\align center
+\begin_inset Tabular
+<lyxtabular version="3" rows="5" columns="3">
 <features tabularvalignment="middle">
 <column alignment="left" valignment="top" width="5line%">
 <column alignment="left" valignment="top" width="35line%">
@@ -20025,7 +21054,17 @@ cellcolor{gray}
 \begin_inset Text
 
 \begin_layout Plain Layout
+SW configures TXT Buffer 1 priority to 1 and TXT Buffer 2 priority to 2.
+ SW fills TXT Buffer 1 and TXT Buffer 2 by CAN frames.
+ SW Issues 
+\begin_inset Quotes eld
+\end_inset
 
+Set Ready
+\begin_inset Quotes erd
+\end_inset
+
+ command to TXT Buffer 1 and TXT Buffer 2.
 \end_layout
 
 \end_inset
@@ -20034,7 +21073,23 @@ cellcolor{gray}
 \begin_inset Text
 
 \begin_layout Plain Layout
-No TXT Buffer is ready.
+TXT Buffer 1 and 2 become 
+\begin_inset Quotes eld
+\end_inset
+
+Available
+\begin_inset Quotes erd
+\end_inset
+
+ and TXT Buffer 2 becomes 
+\begin_inset Quotes eld
+\end_inset
+
+Selected
+\begin_inset Quotes erd
+\end_inset
+
+ because it has higher priority than TXT Buffer 1.
 \end_layout
 
 \end_inset
@@ -20054,10 +21109,7 @@ No TXT Buffer is ready.
 \begin_inset Text
 
 \begin_layout Plain Layout
-No TXT Buffer is ready.
- SW configures priority 1 to TXT Buffer 1 and priority 2 to TXT Buffer 2.
- SW fills TXT Buffer 1 and TXT Buffer 2 by CAN frame.
- SW Issues Set ready command to TXT Buffer 1.
+
 \end_layout
 
 \end_inset
@@ -20066,11 +21118,26 @@ No TXT Buffer is ready.
 \begin_inset Text
 
 \begin_layout Plain Layout
-TXT Buffer 1 becomes ready.
- As this is only TXT Buffer which is Ready, priority decoder combinatorially
- selects this Buffer as highest priority TXT Buffer in Ready state.
- At the moment, TX Arbitrator still does not signal to CAN Core that there
- is valid TXT Buffer for transmission.
+TX Arbitrator performs TXT Buffer 2 validation process (loads Timestamp
+ words, executes Timestamp comparison, loads metadata) and TXT Buffer 2
+ becomes 
+\begin_inset Quotes eld
+\end_inset
+
+Validated
+\begin_inset Quotes erd
+\end_inset
+
+.
+ TX Arbitrator signals to CAN Core that there is 
+\begin_inset Quotes eld
+\end_inset
+
+Validated
+\begin_inset Quotes erd
+\end_inset
+
+ TXT Buffer for transmission.
 \end_layout
 
 \end_inset
@@ -20090,7 +21157,15 @@ TXT Buffer 1 becomes ready.
 \begin_inset Text
 
 \begin_layout Plain Layout
+SW Issues 
+\begin_inset Quotes eld
+\end_inset
 
+Set Abort
+\begin_inset Quotes erd
+\end_inset
+
+ command to TXT Buffer 2.
 \end_layout
 
 \end_inset
@@ -20099,178 +21174,44 @@ TXT Buffer 1 becomes ready.
 \begin_inset Text
 
 \begin_layout Plain Layout
-TX Arbitrator FSM loads lower Timestamp word from TXT Buffer 1 RAM and stores
- it to auxiliarly register.
+TXT Buffer 2 which is now 
+\begin_inset Quotes eld
+\end_inset
+
+Validated
+\begin_inset Quotes erd
+\end_inset
+
+ becomes 
+\begin_inset Quotes eld
+\end_inset
+
+Unavailable
+\begin_inset Quotes erd
+\end_inset
+
+.
+ TX Arbitrator immediately signals to CAN Core that no TXT Buffer is available
+ for transmission (
+\begin_inset Quotes eld
+\end_inset
+
+tran_frame_valid
+\begin_inset Quotes erd
+\end_inset
+
+ drops low).
 \end_layout
 
 \end_inset
 </cell>
 </row>
 <row>
-<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+<cell alignment="left" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
 4
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-TX Arbitrator FSM loads upper Timestamp word from TXT Buffer 1 RAM and executes
- comparison of External Timestamp and Timestamp of CAN Frame in TXT Buffer
- 1 (Lower word is in auxiliarly register and Upper word is on output of
- TXT Buffer 1 RAM).
- When External Timestamp is lower than Timestamp of CAN frame in TXT Buffer
- 1, TX Arbitrator waits.
-\end_layout
-
-\end_inset
-</cell>
-</row>
-<row>
-<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-5
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-SW Issues Set ready command to TXT Buffer 2.
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-TXT Buffer 2 becomes ready.
- As this is buffer has higher priority then TXT Buffer 1, priority decoder
- selects TXT Buffer 2.
-\end_layout
-
-\end_inset
-</cell>
-</row>
-<row>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-6
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-TX Arbitrator FSM loads lower Timestamp word from TXT Buffer 2 RAM and stores
- it to auxiliarly register.
-\end_layout
-
-\end_inset
-</cell>
-</row>
-<row>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-7
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-TX Arbitrator FSM loads upper Timestamp word from TXT Buffer 2 RAM and executes
- comparison of External Timestamp and Timestamp of CAN Frame in TXT Buffer
- 2.
- Assume External Timestamp is lower, TX Arbitrator proceeds.
-\end_layout
-
-\end_inset
-</cell>
-</row>
-<row>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-8
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-TX Arbitrator FSM loads TX Frame metadata from TXT Buffer 2 RAM (Frame Format
- word) to capture registers.
- TX Arbitrator marks that there is valid TX frame for transmission to CAN
- Core.
-\end_layout
-
-\end_inset
-</cell>
-</row>
-<row>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-9
 \end_layout
 
 \end_inset
@@ -20288,8 +21229,36 @@ TX Arbitrator FSM loads TX Frame metadata from TXT Buffer 2 RAM (Frame Format
 \begin_inset Text
 
 \begin_layout Plain Layout
-Protocol control Issues Lock command, transmitts frame and issues Unlock
- command.
+As TXT Buffer 1 is now only 
+\begin_inset Quotes eld
+\end_inset
+
+Available
+\begin_inset Quotes erd
+\end_inset
+
+ TXT Buffer and thus it becomes 
+\begin_inset Quotes eld
+\end_inset
+
+Selected
+\begin_inset Quotes erd
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Plain Layout
+TXT Arbitrator proceeds with validation of TXT Buffer 1 and upon its end
+ when TXT Buffer 1 becomes 
+\begin_inset Quotes eld
+\end_inset
+
+Validated
+\begin_inset Quotes erd
+\end_inset
+
+, it signals that there is available frame for transmission.
 \end_layout
 
 \end_inset
@@ -20308,10 +21277,10 @@ Protocol control Issues Lock command, transmitts frame and issues Unlock
 \begin_inset Caption Standard
 
 \begin_layout Plain Layout
-TX Arbitrator - change of TXT Buffer priority during selection
+TX Arbitrator - Corner case 2
 \begin_inset CommandInset label
 LatexCommand label
-name "tab:CAN-control-counter-1-3-2-1-1-1-1-1-2"
+name "tab:tx-arbitrator-cornercase-2"
 
 \end_inset
 
@@ -20326,6 +21295,223 @@ name "tab:CAN-control-counter-1-3-2-1-1-1-1-1-2"
 \end_inset
 
 
+\end_layout
+
+\begin_layout Subsection
+Priority decoder
+\end_layout
+
+\begin_layout Standard
+Priority decoder selects highest priority TXT Buffer from all 
+\begin_inset Quotes eld
+\end_inset
+
+Available
+\begin_inset Quotes erd
+\end_inset
+
+ TXT Buffers combinatorially in single cycle.
+ Such a TXT Buffer is 
+\begin_inset Quotes eld
+\end_inset
+
+Selected
+\begin_inset Quotes erd
+\end_inset
+
+.
+ Priority of TXT Buffers is given by SW (TX_PRIORITY register).
+ If no TXT Buffer is 
+\begin_inset Quotes eld
+\end_inset
+
+Available
+\begin_inset Quotes erd
+\end_inset
+
+, Priority decoder signals it on its output and no TXT Buffer is 
+\begin_inset Quotes eld
+\end_inset
+
+Selected
+\begin_inset Quotes erd
+\end_inset
+
+.
+ If two 
+\begin_inset Quotes eld
+\end_inset
+
+Available
+\begin_inset Quotes erd
+\end_inset
+
+ TXT Buffers have equal priority, TXT Buffer with lower index is selected.
+ Priority decoder provides index of 
+\begin_inset Quotes eld
+\end_inset
+
+Selected
+\begin_inset Quotes erd
+\end_inset
+
+ TXT Buffer on its output.
+\end_layout
+
+\begin_layout Standard
+Priority decoder is implemented as comparator tree with 3 levels (see Figure
+ 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:priority-decoder-block-diagram"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+).
+ Each level of array contains so called 
+\begin_inset Quotes eld
+\end_inset
+
+Decoder cells
+\begin_inset Quotes erd
+\end_inset
+
+.
+ Decoder cell selects higher priority TXT Buffer from two TXT Buffers.
+ Each decoder cell behaves like so:
+\end_layout
+
+\begin_layout Itemize
+When only one of input TXT Buffers is 
+\begin_inset Quotes eld
+\end_inset
+
+Available
+\begin_inset Quotes erd
+\end_inset
+
+ it is automatically selected, its index is propagated as 
+\begin_inset Quotes eld
+\end_inset
+
+Winner
+\begin_inset Quotes erd
+\end_inset
+
+ of comparison and 
+\begin_inset Quotes eld
+\end_inset
+
+Available
+\begin_inset Quotes erd
+\end_inset
+
+ output is high.
+\end_layout
+
+\begin_layout Itemize
+When no TXT Buffer input is 
+\begin_inset Quotes eld
+\end_inset
+
+Available
+\begin_inset Quotes erd
+\end_inset
+
+, 
+\begin_inset Quotes eld
+\end_inset
+
+Available
+\begin_inset Quotes erd
+\end_inset
+
+ output is low.
+\end_layout
+
+\begin_layout Itemize
+When both TXT Buffer inputs are 
+\begin_inset Quotes eld
+\end_inset
+
+Available
+\begin_inset Quotes erd
+\end_inset
+
+, 
+\begin_inset Quotes eld
+\end_inset
+
+Available
+\begin_inset Quotes erd
+\end_inset
+
+ output is high and index TXT Buffer with higher priority is propagated
+ as 
+\begin_inset Quotes eld
+\end_inset
+
+Winner
+\begin_inset Quotes erd
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Standard
+Priority decoder supports 8 input TXT Buffers (currently only 4 are used).
+ Unused inputs are driven to zeroes.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+placement H
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\noindent
+\align center
+\begin_inset Graphics
+	filename /DOKUMENTY/Skola/CVUT-FEL/ctu_can_fd_2/doc/pics/Visio_generated/BD_priority_decoder.pdf
+	lyxscale 20
+	scale 70
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Priority decoder block diagram
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:priority-decoder-block-diagram"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsection
+TXT Buffer change between transmissions
 \end_layout
 
 \begin_layout Standard
@@ -20340,7 +21526,7 @@ status open
 \align center
 \begin_inset Tabular
 <lyxtabular version="3" rows="10" columns="3">
-<features islongtable="true" longtabularalignment="center">
+<features tabularvalignment="middle">
 <column alignment="left" valignment="top" width="5line%">
 <column alignment="left" valignment="top" width="35line%">
 <column alignment="left" valignment="top" width="51line%">
@@ -20436,7 +21622,15 @@ SW fills TXT Buffer 1 RAM.
 \begin_inset Text
 
 \begin_layout Plain Layout
-TXT Buffer 1 is in Empty state.
+TXT Buffer 1 is in 
+\begin_inset Quotes eld
+\end_inset
+
+Empty
+\begin_inset Quotes erd
+\end_inset
+
+ State.
 \end_layout
 
 \end_inset
@@ -20456,7 +21650,15 @@ TXT Buffer 1 is in Empty state.
 \begin_inset Text
 
 \begin_layout Plain Layout
-SW issues Set ready command to TXT Buffer 1.
+SW issues 
+\begin_inset Quotes eld
+\end_inset
+
+Set Ready
+\begin_inset Quotes erd
+\end_inset
+
+ command to TXT Buffer 1.
 \end_layout
 
 \end_inset
@@ -20465,7 +21667,24 @@ SW issues Set ready command to TXT Buffer 1.
 \begin_inset Text
 
 \begin_layout Plain Layout
-TXT Buffer 1 moves to Ready state.
+TXT Buffer 1 moves to 
+\begin_inset Quotes eld
+\end_inset
+
+Ready
+\begin_inset Quotes erd
+\end_inset
+
+ State.
+ TXT Buffer becomes 
+\begin_inset Quotes eld
+\end_inset
+
+Available
+\begin_inset Quotes erd
+\end_inset
+
+ for transmission.
 \end_layout
 
 \end_inset
@@ -20494,12 +21713,55 @@ TXT Buffer 1 moves to Ready state.
 \begin_inset Text
 
 \begin_layout Plain Layout
-TX Arbitrator selects TXT Buffer 1 for transmission and signals to Protocol
- control there is a valid TXT Buffer for transmission.
- On third bit of Intermission or when Bus is idle, Protocol control issues
- HW lock command.
- TXT Buffer 1 moves to TX in Progress and Protocol control starts transmission
- from TXT Buffer 1.
+TX Arbitrator performs validatation and TXT Buffer 1 becomes 
+\begin_inset Quotes eld
+\end_inset
+
+Validated
+\begin_inset Quotes erd
+\end_inset
+
+, TX Arbitrator signals this to CAN Core.
+ 
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+CAN Core issues HW Lock command and starts transmitting from TXT Buffer
+ 1.
+ TXT Buffer 1 becomes 
+\begin_inset Quotes eld
+\end_inset
+
+Used
+\begin_inset Quotes erd
+\end_inset
+
+.
 \end_layout
 
 \end_inset
@@ -20528,8 +21790,41 @@ TX Arbitrator selects TXT Buffer 1 for transmission and signals to Protocol
 \begin_inset Text
 
 \begin_layout Plain Layout
-An Error frame occurs or arbitration is lost, TXT Buffer moves to Ready
- state and Retransmitt counter is incremented to 1.
+An Error frame occurs or arbitration is lost.
+ Protocol control signals 
+\begin_inset Quotes eld
+\end_inset
+
+HW Unlock - Arbitration lost
+\begin_inset Quotes erd
+\end_inset
+
+ or 
+\begin_inset Quotes eld
+\end_inset
+
+HW Unlock - Error frame
+\begin_inset Quotes erd
+\end_inset
+
+ commands.
+ TXT Buffer 1 becomes 
+\begin_inset Quotes eld
+\end_inset
+
+Unavailable
+\begin_inset Quotes erd
+\end_inset
+
+ , TXT Buffer FSM moves to 
+\begin_inset Quotes eld
+\end_inset
+
+Ready
+\begin_inset Quotes erd
+\end_inset
+
+ and Retransmitt Counter is incremented to 1.
 \end_layout
 
 \end_inset
@@ -20550,7 +21845,15 @@ An Error frame occurs or arbitration is lost, TXT Buffer moves to Ready
 
 \begin_layout Plain Layout
 SW fills TXT Buffer RAM 2.
- SW Issues Set ready command to TXT Buffer 2.
+ SW Issues 
+\begin_inset Quotes eld
+\end_inset
+
+Set Ready
+\begin_inset Quotes erd
+\end_inset
+
+ command to TXT Buffer 2.
 \end_layout
 
 \end_inset
@@ -20560,6 +21863,7 @@ SW fills TXT Buffer RAM 2.
 
 \begin_layout Plain Layout
 TXT Buffer 2 moves to Ready state.
+ Lets assume TXT Buffer 2 has higher priority than TXT Buffer 1.
 \end_layout
 
 \end_inset
@@ -20575,52 +21879,10 @@ TXT Buffer 2 moves to Ready state.
 
 \end_inset
 </cell>
-<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-Now there are two TXT Buffers in Ready state.
- Assume TXT Buffer 2 has higher priority than TXT Buffer 1 (see 
-\begin_inset CommandInset ref
-LatexCommand ref
-reference "sec:TX-Arbitrator"
-plural "false"
-caps "false"
-noprefix "false"
-
-\end_inset
-
-).
- TX Arbitrator selects TXT Buffer 2 for transmission, and signals there
- is a valid TXT Buffer for transmission to Protocol control.
-\end_layout
-
-\end_inset
-</cell>
-</row>
-<row>
 <cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
-7
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
 
 \end_layout
 
@@ -20630,51 +21892,62 @@ noprefix "false"
 \begin_inset Text
 
 \begin_layout Plain Layout
-On third bit of Intermission or when Bus is idle, Protocol control FSM issues
- HW Lock command, TXT Buffer 2 moves to TX in progress and Protocol control
- starts transmitting from TXT Buffer 2.
- Retransmitt counter is cleared because TXT Buffer changed between two consecuti
-ve transmissions (Logically, counting retransmissions on TXT Buffer 2 shall
- not include one previous failed transmission from TXT Buffer 1, because
- it is different CAN frame which is being transmitted).
-\end_layout
-
-\end_inset
-</cell>
-</row>
-<row>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-7
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-Protocol control transmitts frame from TXT Buffer 2 succesfully.
- TXT Buffer moves to 
+Now there are two 
 \begin_inset Quotes eld
 \end_inset
 
-TX OK
+Available
 \begin_inset Quotes erd
 \end_inset
 
-.
+ TXT Buffers (1 and 2).
+ TXT Buffer 2 becomes 
+\begin_inset Quotes eld
+\end_inset
+
+Selected
+\begin_inset Quotes erd
+\end_inset
+
+ by Priority decoder because it has higher priority.
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+7
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+TX Arbitrator performs validation and TXT Buffer 2 becomes 
+\begin_inset Quotes eld
+\end_inset
+
+Validated
+\begin_inset Quotes erd
+\end_inset
+
+, TX Arbitrator signals this to CAN Core.
+ 
 \end_layout
 
 \end_inset
@@ -20690,12 +21963,11 @@ TX OK
 
 \end_inset
 </cell>
-<cell alignment="left" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
-SW reads state of TXT Buffers and finds out which TXT Buffer was used for
- transmission.
+
 \end_layout
 
 \end_inset
@@ -20704,7 +21976,21 @@ SW reads state of TXT Buffers and finds out which TXT Buffer was used for
 \begin_inset Text
 
 \begin_layout Plain Layout
+CAN Core issues HW Lock command, TXT Buffer 2 becomes 
+\begin_inset Quotes eld
+\end_inset
 
+Used
+\begin_inset Quotes erd
+\end_inset
+
+ (Transmission starts by CAN Core).
+ At this moment Retransmitt counter is cleared because TXT Buffer used for
+ current transmission (TXT Buffer 2) is different than the one for previous
+ transmission (TXT Buffer 1).
+ (Logically, counting retransmissions on TXT Buffer 2 shall not include
+ one previous failed transmission from TXT Buffer 1, because it is different
+ CAN frame which is being transmitted).
 \end_layout
 
 \end_inset
@@ -20741,6 +22027,588 @@ name "tab:txt-buffer-change"
 \end_inset
 
 
+\end_layout
+
+\begin_layout Subsection
+TXT Buffer addressing
+\end_layout
+
+\begin_layout Standard
+During transmission when TX Arbitrator is 
+\begin_inset Quotes eld
+\end_inset
+
+Locked
+\begin_inset Quotes erd
+\end_inset
+
+, TX Arbitrator holds index of 
+\begin_inset Quotes eld
+\end_inset
+
+Used
+\begin_inset Quotes erd
+\end_inset
+
+ TXT Buffer.
+ During this time, Protocol Control FSM provides address of memory word
+ from which it reads relevant Data for transmission.
+ By this mechanism, Protocol Control is addressing Identifier memory word
+ and transmitts Base Identifier and Identifier Extension from this word.
+ Data memory words (see 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "sec:CAN-frame-format"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+) are addressed during transmission of Data field and Protocol control transmitt
+s value of 
+\begin_inset Quotes eld
+\end_inset
+
+Data field
+\begin_inset Quotes erd
+\end_inset
+
+ from these memory words.
+ Each next 4 bytes of CAN Data field correspond to one memory word in TXT
+ Buffer RAM.
+ From output of TXT Buffer RAM, this memory word is loaded to TX Shift register
+ and transmitted from there (see 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "subsec:TX-Shift-Register"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+).
+ Therefore Protocol control must address according memory word in previous
+ CAN frame field to cover latency of TXT Buffer RAM as is shown in Table
+ 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "tab:txt-buffer-ram-addressing"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+.
+ Metadata for transmission are available from capture registers in TX Arbitrator
+ which were loaded during TXT Buffer 
+\begin_inset Quotes eld
+\end_inset
+
+Validation
+\begin_inset Quotes erd
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float table
+placement h
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\noindent
+\align center
+\begin_inset Tabular
+<lyxtabular version="3" rows="5" columns="3">
+<features tabularvalignment="middle">
+<column alignment="left" valignment="top" width="20line%">
+<column alignment="left" valignment="top" width="25line%">
+<column alignment="left" valignment="top" width="46line%">
+<row>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+CAN frame field 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+cellcolor{gray}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Memory word in TXT Buffer addressed by Protocol control 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+cellcolor{gray}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Meaning of data loaded to TX Shift register
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+cellcolor{gray}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+SOF, Idle, Suspend, Intermission
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Identifier
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Base Identifier
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+IDE
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Identifier
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Identifier Extension
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+DLC
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Data word 0
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Data bytes 0 ..
+ 3
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="left" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Data Byte N * 4 - 1
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Data word N + 1
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Data bytes (N * 4) to (N + 1) * 4
+\end_layout
+
+\end_inset
+</cell>
+</row>
+</lyxtabular>
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\noindent
+\align center
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+TXT Buffer RAM adressing during transmission
+\begin_inset CommandInset label
+LatexCommand label
+name "tab:txt-buffer-ram-addressing"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsection
+TX Frame Timestamp comparison
+\end_layout
+
+\begin_layout Standard
+Part of TXT Buffer validation process is comparison of external Timestamp
+ with Timestamp of CAN Frame in currently validated TXT Buffer.
+ If External Timestamp is lower than Timestamp of CAN frame, validation
+ process is paused.
+ When External Timestamp is equal to or higher than Timestamp of CAN Frame,
+ TXT Buffer validation proceeds.
+ If during this time index of 
+\begin_inset Quotes eld
+\end_inset
+
+Selected
+\begin_inset Quotes erd
+\end_inset
+
+ TXT Buffer changes, validation process is restarted.
+\end_layout
+
+\begin_layout Standard
+Comparison of Timestamps realizes 
+\begin_inset Quotes eld
+\end_inset
+
+Time Triggered Transmission
+\begin_inset Quotes erd
+\end_inset
+
+ functionality.
+ Only when External Timestamp passes (desired moment of transmission passes),
+ TXT Buffer is admited for transmission to CAN Core.
+ This does not mean that CAN Core will transmit the frame immediately.
+ CAN Core will transmitt such a frame in nearest Bus Idle or when it samples
+ domidnant bit during third bit of Intermission.
+\end_layout
+
+\begin_layout Standard
+Consider having two TX frames with TX Timestamps 10 (in TXT Buffer 1) and
+ 50 (in TXT Buffer 2).
+ Lets assume that TXT Buffer 2 has higher priority and it is therefore 
+\begin_inset Quotes eld
+\end_inset
+
+Selected
+\begin_inset Quotes erd
+\end_inset
+
+ and it is being 
+\begin_inset Quotes eld
+\end_inset
+
+Validated
+\begin_inset Quotes erd
+\end_inset
+
+.
+ It finishes its validation after External Timestamp reaches 50.
+ Although CAN frame in TXT Buffer 1 has lower Timestamp when it should be
+ transmitted, it is transmitted after frame from TXT Buffer 2 because TXT
+ Buffer 2 has higher priority.
+ Therefore TXT Buffer priority is at any moment considered first during
+ TXT Buffer selection and TX frame Timestamp is considered only from 
+\begin_inset Quotes eld
+\end_inset
+
+Selected
+\begin_inset Quotes erd
+\end_inset
+
+ TXT Buffer.
+\end_layout
+
+\begin_layout Subsection
+HW lock and unlock
+\end_layout
+
+\begin_layout Standard
+Protocol control FSM issues HW Lock command in third bit of Intermission
+ (when it samples Dominant bit) or during Bus Idle when there is 
+\begin_inset Quotes eld
+\end_inset
+
+Validated
+\begin_inset Quotes erd
+\end_inset
+
+ TXT Buffer available.
+ In such a case CTU CAN FD becomes Transmitter of following CAN frame.
+ After HW Lock command, TX Arbitrator becomes Locked and signalling of 
+\begin_inset Quotes eld
+\end_inset
+
+Validated
+\begin_inset Quotes erd
+\end_inset
+
+ TXT Buffer remains high during whole frame.
+ If there is no TXT Buffer 
+\begin_inset Quotes eld
+\end_inset
+
+Validated
+\begin_inset Quotes erd
+\end_inset
+
+ so far and TXT Buffer becomes 
+\begin_inset Quotes eld
+\end_inset
+
+Validated
+\begin_inset Quotes erd
+\end_inset
+
+ just slightly after Protocol control samples Dominant bit during third
+ bit of Intermission or Bus Idle, unit becomes Receiver and frame from 
+\begin_inset Quotes eld
+\end_inset
+
+Validated
+\begin_inset Quotes erd
+\end_inset
+
+ TXT Buffer is not transmitted.
+\end_layout
+
+\begin_layout Subsection
+TX Datapath hazard protection
+\begin_inset CommandInset label
+LatexCommand label
+name "subsec:TX-Datapath-hazard"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+TX frame datapath (TX Arbitrator + TXT Buffers) are both manipulated by
+ SW and HW commands simultaneously.
+ This fact opens question of control hazards susceptibility.
+ Such a hazard would occur, when e.g.
+ TXT Buffer ended in 
+\begin_inset Quotes eld
+\end_inset
+
+Aborted
+\begin_inset Quotes erd
+\end_inset
+
+ state after 
+\begin_inset Quotes eld
+\end_inset
+
+Set Abort
+\begin_inset Quotes erd
+\end_inset
+
+ command, but Protocol control FSM still managed to issue HW Lock command.
+ In such case, Protocol control FSM would transmitt from TXT Buffer which
+ is 
+\begin_inset Quotes eld
+\end_inset
+
+Aborted
+\begin_inset Quotes erd
+\end_inset
+
+ (and therefore content of its RAM can be modified by user).
+ Due to combinatorial path between 
+\begin_inset Quotes eld
+\end_inset
+
+Set Abort
+\begin_inset Quotes erd
+\end_inset
+
+ and indication of 
+\begin_inset Quotes eld
+\end_inset
+
+Validated
+\begin_inset Quotes erd
+\end_inset
+
+ TXT Buffer, it never happends that when 
+\begin_inset Quotes eld
+\end_inset
+
+Set Abort
+\begin_inset Quotes erd
+\end_inset
+
+ command is issued to a TXT Buffer, Protocol control FSM would issue HW
+ Lock command, therefore this situation will never occur.
+ The relevant combinatorial path is shown in Figure 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:tx-data-path-hazards"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+placement H
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\noindent
+\align center
+\begin_inset Graphics
+	filename ../pics/Visio_generated/Hazard_prevention_logic.pdf
+	lyxscale 20
+	scale 90
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+TX Datapath hazard protection
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:tx-data-path-hazards"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsection
+TX Abort + Retransmitt clear
+\end_layout
+
+\begin_layout Standard
+TODO: Explain what happends with Retransmitt counter when TXT Buffer is
+ Aborted.
 \end_layout
 
 \begin_layout Standard
