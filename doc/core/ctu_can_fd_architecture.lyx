@@ -866,10 +866,12 @@ When CTU CAN FD GIT repository is clonned, register map can be generated
 \end_layout
 
 \begin_layout Verbatim
+
 cd scripts
 \end_layout
 
 \begin_layout Verbatim
+
 ./update_reg_map
 \end_layout
 
@@ -882,10 +884,12 @@ Documentation can be exported from VHDL RTL codes by following script:
 \end_layout
 
 \begin_layout Verbatim
+
 cd scripts
 \end_layout
 
 \begin_layout Verbatim
+
 python gen_lyx_tables.py --configPath vhdl_lyx_interface_cfg.yml
 \end_layout
 
@@ -5487,10 +5491,8 @@ noprefix "false"
 
 ).
  When multiple Error frames occur in the same frame (e.g.
- due to error during Error Frame), retransmitt counter is incremented only
- once.
- Retransmitt counter is cleared upon succesfull transmission.
- 
+ due to error during Error Frame), retransmitt counter is also incremented
+ only once.
 \end_layout
 
 \begin_layout Standard
@@ -5498,12 +5500,12 @@ When Retransmitt counter reaches Retransmitt limit, it signals this to Protocol
  control FSM.
  In case of next arbitration loss or Error Frame request, Protocol control
  FSM stops transmitting actual frame, signals this to TXT Buffer and TXT
- Buffer moves to TX Error state (see TODO).
+ Buffer moves to TX Failed state (see TODO).
  When unit is a receiver without attempt to transmitt a frame (no frame
- was available during Bus Idle, Intermission or Suspend Transmission), retransmi
-tt counter is not modified during this frame.
+ was available during Bus Idle, Intermission), retransmitt counter is not
+ modified during this frame.
  When unit is Error Passive and transmission of a frame is not succesfull,
- unit becomes receiver of next frame (due to Suspend transmission field)
+ unit becomes Receiver of next frame (due to Suspend transmission field)
  without attempting to transmitt a frame.
  If error occurs during next frame, retransmitt counter is not incremented.
  Possible configurations of Retransmitt limit are shown in Table 
@@ -5520,13 +5522,13 @@ noprefix "false"
 \end_layout
 
 \begin_layout Standard
-Retransmitt counter is cleared when selected TXT Buffer for transmission
- changes between two consecutive transmissions (another TXT Buffer with
- another TX Frame selected by TX Arbitrator), as is described in TODO.
-\end_layout
-
-\begin_layout Standard
-TODO: solve cornercase with possible abort in between!
+Retransmitt counter is cleared when TXT Buffer used for transmission changes
+ between two consecutive transmissions (another TXT Buffer with another
+ TX Frame selected by TX Arbitrator), as is described in TODO.
+ Retransmitt counter is cleared upon succesfull transmission (TXT Buffer
+ goes to TX OK) or when transmission fails (TXT Buffer goes to TX Failed).
+ Retransmitt counter is also cleared when TXT Buffer which is currently
+ used for transmission goes to Aborted state.
 \end_layout
 
 \begin_layout Standard
@@ -20823,7 +20825,7 @@ Validated
 \end_inset
 
  (TXT Buffer 1 is still available for transmission).
- If during validation process of TXT Buffer 1, Protocol control issued HW
+ If during validation process of TXT Buffer 2, Protocol control issued HW
  Lock command, transmission would be started from TXT Buffer 1.
 \end_layout
 
@@ -20853,7 +20855,7 @@ Validated
 \begin_inset Text
 
 \begin_layout Plain Layout
-TX Arbitrator performs validation process (loads Timestamp words, executes
+TX Arbitrator finishes validation process (loads Timestamp words, executes
  Timestamp comparison, loads metadata) of TXT Buffer 2.
  At the end TXT Buffer 2 becomes 
 \begin_inset Quotes eld
@@ -22607,8 +22609,8 @@ TX Abort + Retransmitt clear
 \end_layout
 
 \begin_layout Standard
-TODO: Explain what happends with Retransmitt counter when TXT Buffer is
- Aborted.
+TODO: Premysliet kedy sa bude mazat Retransmitt counter pre TXT Buffer ktory
+ prejde do Aborted.
 \end_layout
 
 \begin_layout Standard
@@ -22634,13 +22636,14 @@ filename "entity_docs/int_manager.lyx"
 
 \begin_layout Standard
 Interrupt manager captures occurence of events within CTU CAN FD to Interrupt
- status register and generates interrupt on output.
- Interrupt is captured to Interrupt status register only when it is unmasked.
+ status register (INT_STAT register) and generates Interrupt.
+ Interrupt is captured to Interrupt status register only when it is unmasked
+ (INT_MASK register).
  Interrupt causes Interrupt pin to go high only when it is captured in Interrupt
- Status Register and it is enabled by according Interrupt Enable register.
- Block diagram of single interrupt processing is shown in Figure TODO.
- Different Interrupt sources have different priority when simultaneous set/clear
- commands occur as is shown in Table TODO.
+ Status Register and it is enabled by according Interrupt Enable (INT_ENA
+ register).
+ Block diagram of single interrupt line is shown in Figure TODO.
+ Available Interrupts are described in TODO.
 \end_layout
 
 \begin_layout Standard
