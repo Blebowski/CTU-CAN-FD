@@ -189,7 +189,7 @@ begin
 
                 -- Retransmitt reached, transmitt OK, or try again...
                 if (txtb_hw_cmd.failed         = '1') then
-                    next_state     <= s_txt_error;
+                    next_state     <= s_txt_failed;
                 elsif (txtb_hw_cmd.valid       = '1') then
                     next_state     <= s_txt_ok;
                 elsif (txtb_hw_cmd.err         = '1' or 
@@ -216,7 +216,7 @@ begin
 
                 -- Retransmitt reached, transmitt OK, or try again... 
                 if (txtb_hw_cmd.failed         = '1') then
-                    next_state     <= s_txt_error;
+                    next_state     <= s_txt_failed;
                 elsif (txtb_hw_cmd.valid       = '1') then
                     next_state     <= s_txt_ok;
                 elsif (txtb_hw_cmd.err         = '1' or 
@@ -228,7 +228,7 @@ begin
         --------------------------------------------------------------------
         -- Transmission from buffer failed. Retransmitt limit was reached.
         --------------------------------------------------------------------
-        when s_txt_error =>
+        when s_txt_failed =>
 
             -- "Set_ready"
             if (txtb_sw_cmd.set_rdy = '1' and sw_cbs = '1') then
@@ -280,7 +280,7 @@ begin
             (curr_state = s_txt_ab_prog) or (curr_state = s_txt_tx_prog) or
             (curr_state = s_txt_ready)))
         then
-            next_state <= s_txt_error;
+            next_state <= s_txt_failed;
         end if;
 
     end process;
@@ -341,7 +341,7 @@ begin
         TXT_TRAN  when s_txt_tx_prog,
         TXT_ABTP  when s_txt_ab_prog,
         TXT_TOK   when s_txt_ok,
-        TXT_ERR   when s_txt_error,
+        TXT_ERR   when s_txt_failed,
         TXT_ABT   when s_txt_aborted,
         TXT_ETY   when s_txt_empty;    
 
@@ -358,7 +358,7 @@ begin
     -- psl txtb_fsm_ready_cov : cover (curr_state = s_txt_ready);
     -- psl txtb_fsm_tx_prog_cov : cover (curr_state = s_txt_tx_prog);
     -- psl txtb_fsm_ab_prog_cov : cover (curr_state = s_txt_ab_prog);
-    -- psl txtb_fsm_error_cov : cover (curr_state = s_txt_error);
+    -- psl txtb_fsm_error_cov : cover (curr_state = s_txt_failed);
     -- psl txtb_fsm_aborted_cov : cover (curr_state = s_txt_aborted);
     -- psl txtb_fsm_tx_ok_cov : cover (curr_state = s_txt_ok);
     

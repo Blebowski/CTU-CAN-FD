@@ -154,7 +154,7 @@ package can_types is
         s_txt_tx_prog,
         s_txt_ab_prog,
         s_txt_ok,
-        s_txt_error,
+        s_txt_failed,
         s_txt_aborted
     );
 
