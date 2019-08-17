@@ -59,10 +59,10 @@ generic (
     constant CLEAR_READ_DATA     : boolean := true;
     constant RESET_POLARITY      : std_logic := '0';
     constant SUP_FILT_A          : boolean := true;
+    constant SUP_TRAFFIC_CTRS    : boolean := true;
     constant SUP_RANGE           : boolean := true;
     constant SUP_FILT_C          : boolean := true;
-    constant SUP_FILT_B          : boolean := true;
-    constant SUP_TRAFFIC_CTRS    : boolean := true
+    constant SUP_FILT_B          : boolean := true
 );
 port (
     signal clk_sys               :in std_logic;
