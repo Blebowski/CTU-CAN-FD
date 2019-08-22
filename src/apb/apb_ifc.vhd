@@ -164,7 +164,7 @@ begin
     s_apb_pslverr <= '0';
     
     
-    -- ASRT_START
+    -- <RELEASE_OFF>
     ---------------------------------------------------------------------------
     ---------------------------------------------------------------------------
     -- Assertions
@@ -177,6 +177,6 @@ begin
     --  report "Read enable shall be active only for one clock cycle"
     --  severity error;
       
-    -- ASRT_END
+    -- <RELEASE_ON>
     
 end architecture rtl;

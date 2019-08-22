@@ -155,6 +155,7 @@ begin
     -- Counter status propagation to output
     retr_ctr <= std_logic_vector(retr_ctr_q);
 
+    -- <RELEASE_OFF>
     ---------------------------------------------------------------------------
     -- Assertions
     ---------------------------------------------------------------------------
@@ -171,4 +172,5 @@ begin
     -- report "Retransmitt counter overflow"
     -- severity error;
     
+    -- <RELEASE_ON>
 end architecture;

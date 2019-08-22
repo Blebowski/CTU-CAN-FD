@@ -474,6 +474,7 @@ begin
     dst_ctr     <= std_logic_vector(dst_ctr_q);
 
 
+    -- <RELEASE_OFF>
     ----------------------------------------------------------------------------
     -- Assertions on input settings
     ----------------------------------------------------------------------------
@@ -483,5 +484,7 @@ begin
     -- psl valid_stuff_length_setting_asrt : assert never
     --   ((destuff_length = "000" or destuff_length = "001") and (destuff_enable = '1'))
     -- report "0 and 1 bit stuffing length is invalid!" severity error;
-    
+
+    -- <RELEASE_ON>
+
 end architecture;

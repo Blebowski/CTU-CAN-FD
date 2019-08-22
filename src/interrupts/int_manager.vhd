@@ -289,7 +289,7 @@ begin
         output             => int           -- OUT
     );
 
-
+    -- <RELEASE_OFF>
     ---------------------------------------------------------------------------
     -- Functional coverage
     ---------------------------------------------------------------------------
@@ -379,4 +379,5 @@ begin
     -- psl ofi_enable_cov : cover
     --  (int_vect_i(OFI_IND) = '1' and int_ena(OFI_IND) = '1');
 
+    -- <RELEASE_ON>
 end architecture;

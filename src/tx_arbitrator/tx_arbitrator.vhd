@@ -511,6 +511,7 @@ begin
     end if;
   end process;
 
+  -- <RELEASE_OFF>
   ------------------------------------------------------------------------------
   -- Functional coverage
   ------------------------------------------------------------------------------
@@ -579,5 +580,6 @@ begin
   --    tran_frame_valid = '0' and txtb_hw_cmd.lock = '1'}
   --   report "NO TXT Buffer ready and lock occurs!" severity error;
   -----------------------------------------------------------------------------
+  -- <RELEASE_ON>
   
 end architecture;

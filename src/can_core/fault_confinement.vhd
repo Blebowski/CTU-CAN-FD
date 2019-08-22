@@ -291,6 +291,7 @@ begin
     tx_err_ctr           <= tx_err_ctr_i;
     rx_err_ctr           <= rx_err_ctr_i;
 
+    -- <RELEASE_OFF>
     ---------------------------------------------------------------------------
     -- Assertions
     ---------------------------------------------------------------------------
@@ -303,4 +304,5 @@ begin
     --   "receiver"
     -- severity error;
 
+    -- <RELEASE_ON>
 end architecture;

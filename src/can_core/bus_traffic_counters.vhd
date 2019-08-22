@@ -199,6 +199,7 @@ begin
         end if;
     end process;
 
+    -- <RELEASE_OFF>
     ---------------------------------------------------------------------------
     -- Assertions
     ---------------------------------------------------------------------------
@@ -209,4 +210,5 @@ begin
     -- report "Simultaneous increment of TX and RX error traffic counter"
     -- severity error;
 
+    -- <RELEASE_ON>
 end architecture;

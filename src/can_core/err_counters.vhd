@@ -323,6 +323,7 @@ begin
    norm_err_ctr <= std_logic_vector(nom_err_ctr_q);
    data_err_ctr <= std_logic_vector(data_err_ctr_q);
 
+   -- <RELEASE_OFF>
    ----------------------------------------------------------------------------
    -- Assertions
    ----------------------------------------------------------------------------
@@ -350,5 +351,6 @@ begin
    --  (tx_err_ctr_q > 262)
    --  report "TX Error counter is bigger than 262, node should be Bus off!"
    --  severity error;
-
+   
+   -- <RELEASE_ON>
 end architecture;

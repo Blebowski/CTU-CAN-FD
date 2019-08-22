@@ -1023,6 +1023,7 @@ begin
     crc_src <= crc_src_i;
     arbitration_lost <= arbitration_lost_i;
 
+    -- <RELEASE_OFF>
     ---------------------------------------------------------------------------
     -- Assertions
     ---------------------------------------------------------------------------
@@ -1054,4 +1055,5 @@ begin
     --  report "Hard synchronisation shall be used in Nominal bit rate only!"
     --  severity error;
 
+    -- <RELEASE_ON>
 end architecture;

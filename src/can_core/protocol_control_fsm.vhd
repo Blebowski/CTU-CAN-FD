@@ -2843,6 +2843,7 @@ begin
     arbitration_lost <= arbitration_lost_i;
     retr_ctr_add <= retr_ctr_add_i;
 
+    -- <RELEASE_OFF>
     -----------------------------------------------------------------------
     -- Assertions
     -----------------------------------------------------------------------
@@ -2860,4 +2861,5 @@ begin
     --  " since they should occur in different pipeline stages!"
     --  severity error;
 
+    -- <RELEASE_ON>
 end architecture;

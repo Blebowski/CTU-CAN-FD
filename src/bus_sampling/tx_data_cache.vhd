@@ -179,7 +179,7 @@ begin
     ----------------------------------------------------------------------------
     data_out <= tx_cache_mem(read_pointer_q);
 
-
+    -- <RELEASE_OFF>
     ----------------------------------------------------------------------------
     -- Assertions on input signals
     ----------------------------------------------------------------------------
@@ -200,5 +200,7 @@ begin
     -- Note: When read pointer is equal to write pointer, FIFO is for sure
     -- empty, because we detect error when it is almost full. So we never get
     -- to situation that read pointer equals write pointer when FIFO is full!
-    
+
+    -- <RELEASE_ON>
+
 end architecture;

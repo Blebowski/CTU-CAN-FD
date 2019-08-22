@@ -384,9 +384,11 @@ begin
     erc_capture <= err_pos_q & err_type_q;
     crc_match <= crc_match_q;
 
+    -- <RELEASE_OFF>
     ---------------------------------------------------------------------------
     -- Assertions
     ---------------------------------------------------------------------------
     -- psl default clock is rising_edge(clk_sys);
 
+    -- <RELEASE_ON>
 end architecture;
