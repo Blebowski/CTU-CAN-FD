@@ -382,6 +382,7 @@ begin
       end if;
   end process;
 
+  -- <RELEASE_OFF>
   ------------------------------------------------------------------------------
   -- Assertions
   ------------------------------------------------------------------------------
@@ -395,4 +396,5 @@ begin
   --    (curr_state = s_arb_sel_upp_ts and fsm_wait_state_q = '0' and
   --     timestamp_valid = '0');
 
+  -- <RELEASE_ON>
 end architecture;

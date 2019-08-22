@@ -469,6 +469,7 @@ begin
         tx_trigger  => tx_trigger       -- OUT
     );
 
+    -- <RELEASE_OFF>
     ---------------------------------------------------------------------------
     ---------------------------------------------------------------------------
     -- Assertions
@@ -477,5 +478,6 @@ begin
     
     -- psl default clock is rising_edge(clk_sys);
     --
-
+    
+    -- <RELEASE_ON>
 end architecture;

@@ -980,6 +980,7 @@ begin
 
     Control_registers_out <= Control_registers_out_i;
 
+    -- <RELEASE_OFF>
     ----------------------------------------------------------------------------
     -- PSL functional coverage
     ----------------------------------------------------------------------------
@@ -1264,5 +1265,6 @@ begin
     --     cs = '1' and read = '1' and reg_sel(38) = '1' and 
     --     (be(0) = '1' or be(1) = '1' or be(2) = '1' or be(3) = '1'));
 
+    -- <RELEASE_ON>
 
 end architecture rtl;

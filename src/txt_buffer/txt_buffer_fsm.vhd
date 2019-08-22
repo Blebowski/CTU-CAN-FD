@@ -345,7 +345,7 @@ begin
         TXT_ABT   when s_txt_aborted,
         TXT_ETY   when s_txt_empty;    
 
-
+    -- <RELEASE_OFF>
     ----------------------------------------------------------------------------
     ----------------------------------------------------------------------------
     -- Functional coverage
@@ -394,4 +394,5 @@ begin
     --  report "LOCK command after ABORT was applied!" severity error;
     ----------------------------------------------------------------------------
 
+    -- <RELEASE_ON>
 end architecture;

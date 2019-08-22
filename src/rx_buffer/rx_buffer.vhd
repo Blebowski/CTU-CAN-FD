@@ -825,6 +825,7 @@ begin
     report "Unsupported RX Buffer size! RX Buffer must be power of 2!"
         severity failure;
 
+    -- <RELEASE_OFF>
 
     ----------------------------------------------------------------------------
     -- Storing sequence is like so:
@@ -875,7 +876,8 @@ begin
         end if;
     end process;
     -- pragma translate_on
-    
+
+
     ----------------------------------------------------------------------------
     -- Assertions
     ----------------------------------------------------------------------------
@@ -980,5 +982,6 @@ begin
     --
     -- psl rx_buf_store_64_byte_frame_cov :
     --      cover (rec_dlc = "1111" and rec_is_rtr = '0' and commit_rx_frame = '1');
-    
+
+    -- <RELEASE_ON>
 end architecture;

@@ -318,6 +318,7 @@ begin
     -- Joined commands, for assertions only
     cmd_join <= store_metadata_f & store_data_f & rec_valid_f & rec_abort_f; 
 
+    -- <RELEASE_OFF>
     ---------------------------------------------------------------------------
     -- Assertions
     ---------------------------------------------------------------------------
@@ -354,4 +355,5 @@ begin
     --  report "RX Buffer abort not supported storing of Identifier and Timestamp"
     --  severity error;
 
+    -- <RELEASE_ON>
 end architecture;

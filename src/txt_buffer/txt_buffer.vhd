@@ -237,7 +237,7 @@ begin
         txtb_available         => txtb_available            -- OUT
     );
 
-    
+    -- <RELEASE_OFF>
     ----------------------------------------------------------------------------
     ----------------------------------------------------------------------------
     -- Functional coverage
@@ -263,4 +263,5 @@ begin
     
     end block;
 
+    -- <RELEASE_ON>
 end architecture;
