@@ -4310,7 +4310,26 @@ ISO vs NON-ISO CAN FD
 \end_layout
 
 \begin_layout Standard
-TODO
+CTU CAN FD supports both types of CAN FD protocol, so called ISO FD (according
+ to TODOSPEC) and also non-ISO FD (according to TODOSPEC).
+ By default ISO FD is selected.
+ Selection between ISO FD and NON-ISO FD is done by SETTINGS[NISOFD] register.
+ This configuration can be changed only when device is disabled (SETTINGS[ENA]
+ = '0').
+ There are following diferences in NON-ISO version of CTU CAN FD:
+\end_layout
+
+\begin_layout Itemize
+Stuff Count and Stuff Parity fields are not transmitted by Transmitter,
+ nor received by Receiver.
+\end_layout
+
+\begin_layout Itemize
+Stuff Count and Stuff Parity is not considered as part of CRC Check.
+\end_layout
+
+\begin_layout Itemize
+Highest bit of CRC17 and CRC21 initialization vectors is 0.
 \end_layout
 
 \begin_layout Standard
@@ -14801,7 +14820,36 @@ Bus traffic counters
 \end_layout
 
 \begin_layout Standard
-TODO: Write documentation or throw Bus traffic counters away.
+Bus traffic counters contains two 32-bit counters (TX Frame counter and
+ RX Frame counter).
+ TX frame counter counts succesfully transmitted frames (without Error Frame)
+ and is incremented by 1 for each such a transmitted frame.
+ RX frame counter counts succesfully received frames (without Error Frame)
+ and is incremented by 1 for each such a frame.
+ If unit is Transmitter in Loop-back mode (it also receives frame transmitted
+ by itself), both counters are incremented upon succesfull Transmission/Receptio
+n.
+ In such case, TX counter is incremented when TX frame is considered valid
+ and RX frame is considered valid (see TODOCANFDSPEC).
+ 
+\end_layout
+
+\begin_layout Standard
+Both counters can be erased by SW via COMMAND[TXFRCRST] and COMMAND[RXFRCRST]
+ register.
+ Value of counters can be read out from TODO and TODO registers.
+ Bus traffic counters are instantiated only when 
+\begin_inset Quotes eld
+\end_inset
+
+sup_traffic_counters=true
+\begin_inset Quotes erd
+\end_inset
+
+.
+ When Bus Traffic counters are not instantiated, access to TODO and TODO
+ is reserved and writes to COMMAND[TXFRCRST] and COMMAND[RXFRCRST] have
+ no effect.
 \end_layout
 
 \begin_layout Standard
@@ -18100,7 +18148,17 @@ Abort in Progress
 
 ) in following clock cycle.
  This combinatorial path from Set Abort command to output of TXT Buffer
- is necessary to avoid hazards on TXT Buffer selection as explained in TODO.
+ is necessary to avoid hazards on TXT Buffer selection as explained in 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "subsec:TX-Datapath-hazard"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+.
 \end_layout
 
 \begin_layout Subsection
@@ -22625,6 +22683,23 @@ Interrupt Manager
 \end_layout
 
 \begin_layout Standard
+Interrupt manager implements following functionality:
+\end_layout
+
+\begin_layout Itemize
+Capture occurence of events/conditions within CTU CAN FD to Interrupt Status
+ register.
+\end_layout
+
+\begin_layout Itemize
+Interrupt Masking and Enabling.
+\end_layout
+
+\begin_layout Itemize
+Generation of Level-based Interrupt output.
+\end_layout
+
+\begin_layout Standard
 \begin_inset CommandInset include
 LatexCommand input
 filename "entity_docs/int_manager.lyx"
@@ -22635,15 +22710,79 @@ filename "entity_docs/int_manager.lyx"
 \end_layout
 
 \begin_layout Standard
-Interrupt manager captures occurence of events within CTU CAN FD to Interrupt
- status register (INT_STAT register) and generates Interrupt.
- Interrupt is captured to Interrupt status register only when it is unmasked
- (INT_MASK register).
- Interrupt causes Interrupt pin to go high only when it is captured in Interrupt
- Status Register and it is enabled by according Interrupt Enable (INT_ENA
- register).
- Block diagram of single interrupt line is shown in Figure TODO.
- Available Interrupts are described in TODO.
+Occurence of events within CTU CAN FD is captured to Interrupt Status register
+ (INT_STAT) register when corresponding interrupt is unmasked.
+ When Interrupt is masked, correponding event is ignored.
+ Interrupt mask is set by writing logic 1 to corresponding bit of INT_MASK_SET
+ register.
+ Interrupt mask is cleared by writing logic 1 to corresponding bit of INT_MASK_C
+LR register.
+ When a bit in Interrupt Status register is set, it causes Interrupt output
+ of CTU CAN FD to go high when this interrupt is enabled.
+ A bit in Interrupt Status register is cleared by writing Logic 1 to correspondi
+ng bit in INT_STAT register.
+ Value of Interrupt output is given by logical OR of all enabled Interrupts
+ which have Interrupt Status equal to logic 1.
+ Interrupt output is registered to be glitch free.
+ Interrupt is enabled by writing logic 1 to corresponding bit of INT_ENA_SET
+ register.
+ Interrupt is disabled by writing logic 1 to corresponding bit of INT_ENA_CLR
+ register.
+ Block diagram of single interrupt datapath is shown in Figure 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:int-single-datapath"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+.
+ Available types of Interrupts are described in TODO.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+placement H
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\noindent
+\align center
+\begin_inset Graphics
+	filename ../pics/Visio_generated/Interrupt_single.pdf
+	lyxscale 20
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Single Interrupt Datapath
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:int-single-datapath"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
@@ -22662,7 +22801,15 @@ Prescaler implements following functionality:
 \end_layout
 
 \begin_layout Itemize
-Measure TSEG1 and TSEG2 segments of bit.
+Time quanta measurement (both Nominal and Data).
+\end_layout
+
+\begin_layout Itemize
+Bit segments measurement (SYNC, PROP, PH1 and PH2).
+\end_layout
+
+\begin_layout Itemize
+Execute Hard synchronisation and Resynchronisation as defined in TODO.
 \end_layout
 
 \begin_layout Itemize
@@ -22671,12 +22818,15 @@ Check if edge is valid for synchronisation (only one edge between two Sample
 \end_layout
 
 \begin_layout Itemize
-Execute Hard synchronisation and Resynchronisation when synchronisation
- edge is signalled by Bus Sampling.
+Generate TX Trigger and RX Triggers for each stage of pipeline.
 \end_layout
 
 \begin_layout Itemize
-Generate TX Trigger and RX Triggers for each stage of pipeline.
+Switch between Nominal and Data bit-rates.
+\end_layout
+
+\begin_layout Standard
+Prescaler block diagram is shown in Figure TODO.
 \end_layout
 
 \begin_layout Standard
@@ -22690,9 +22840,8 @@ filename "entity_docs/prescaler.lyx"
 \end_layout
 
 \begin_layout Standard
-Prescaler block diagram is shown in Figure TODO.
- Prescaler contains separate logic for both Bit-rates (Nominal and Data).
- Stage for single Bit-rate consist of Bit Time Counters module and Resynchronisa
+Prescaler contains separate logic for both Bit-rates (Nominal and Data).
+ Logic for single Bit-rate consist of Bit Time Counters module and Resynchronisa
 tion module.
  Doubled logic for Nominal and Data Bit-rate is implemented to achieve better
  timing performance (shorter combinatorial paths) with slightly higher resource
@@ -22704,27 +22853,29 @@ Bit time counters
 \end_layout
 
 \begin_layout Standard
-Bit time counters module contains two counters: Time quanta counter and
+Bit time counters module contains two counters: Time Quanta counter and
  Segment counter.
- Time quanta counter measures length of Time Quanta and provides Time quanta
- edge signal when Time Quanta has elapsed.
+ Time Quanta counter measures length of Time Quanta and provides information
+ that Time Quanta has elapsed (so called Time Quanta edge).
  Time Quanta edge signal is either active continously (when Prescaler is
  1), or always just for one clock cycle and it is used as clock enable.
  When Prescaler is 1, Time Quanta is equal to system clock and Time Quanta
  counter is not running (in this case Time Quanta edge signal is active
  continously).
  Segment counter measures length of Bit time segment.
- Prescaler distuiguishes two Bit Segments: TSEG1 and TSEG2.
+ Prescaler distuiguishes two Bit Segments: TSEG1 (covers SYNC + PROP + PH1
+ parts of Bit) and TSEG2 (corresponds to PH2 part of Bit).
  Segment counter counts from 0 and it is restarted upon the end of previos
- segment or upon hard - synchronisation.
+ segment or upon Hard synchronisation.
  Segment counter for Nominal(Data) Bit-rate shall never overflow when current
  sampling control is set to Nominal (Data) Bit-rate.
 \end_layout
 
 \begin_layout Standard
-Nominal Bit time counters module is enabled when node is running with Nominal
+Nominal Bit time counters module is enabled when CTU CAN FD is running with
+ Nominal Bit-rate.
+ Data Bit-time counters is enabled when CTU CAN FD is running with Data
  Bit-rate.
- Data Bit-time counters is enabled when node is running with Data Bit-rate.
  During bits of CAN frame where Bit-rate is switched, both Nominal and Data
  Bit-rate counters are enabled.
  When Bit time counter module is disabled, none of its both counters are
@@ -22739,17 +22890,13 @@ Resynchronisation
 \end_layout
 
 \begin_layout Standard
-Resynchronisation module measures length of Bit time segment.
- Block diagram of Resynchronronisation module is shown in Figure TODO.
+Resynchronisation module measures length of Bit Time segment (TSEG1 and
+ TSEG2).
  Resynchronisation module maintains register with Expected Segment Length.
- Expected segment length is loaded according to rules described in Table
- TODO.
- Expected Segment length register is always loaded upon the end of segment,
- or when re-synchronisation occurs.
- Loading default length of next segment to Expected segment length regsiter
- is shown in Figure TODO.
- Loading Expected segment length without end of segment as a result of re-synchr
-onisation is shown in Figure TODO.
+ Expected Segment length is loaded according to rules described in Table
+ TODO and it is always loaded upon the end of segment, or when re-synchronisatio
+n occurs.
+ Loading of Expected segment length is shown in Figures TODO and TODO.
 \end_layout
 
 \begin_layout Standard
@@ -22841,7 +22988,11 @@ cellcolor{gray}
 \begin_inset Text
 
 \begin_layout Plain Layout
-End of Segment TSEG1 due to segment counter reached Expected Segment Length.
+End of Segment TSEG1 due to 
+\end_layout
+
+\begin_layout Plain Layout
+Segment counter equal to Expected Segment Length.
 \end_layout
 
 \end_inset
@@ -23055,7 +23206,7 @@ None
 Expected segment length manipulation
 \begin_inset CommandInset label
 LatexCommand label
-name "tab:CAN-ports-common-3-1-3"
+name "tab:expected-segment-length"
 
 \end_inset
 
@@ -23073,11 +23224,14 @@ name "tab:CAN-ports-common-3-1-3"
 \end_layout
 
 \begin_layout Standard
-Expected segment length requests end of current segment by following means:
+Resynchronisation module compares value of Expected segment length with
+ current value of Segment Counter and issues Segment End request when these
+ two match.
+ Overally, Segment End request can be caused by following means:
 \end_layout
 
 \begin_layout Itemize
-Segment counter reaches value of Expected segment length.
+Segment counter equals Expected Segment length.
  Such a situation is shown in Figure TODO.
 \end_layout
 
@@ -23088,9 +23242,9 @@ Immediate end of segment occurs.
 \begin_layout Standard
 Immediate end of segment is signalled when there is negative resynchronisation
  during TSEG2 and Phase error is smaller than SJW.
- Immediate resynchronisation requests end of segment in the same clock cycle
- when resynchronisation edge occurs without one clock cycle delay of updating
- Expected Segment Length register.
+ Immediate resynchronisation requests Segment End Request in the same clock
+ cycle when Resynchronisation edge occurs without one clock cycle delay
+ of updating Expected Segment Length register.
  Immediate resynchronisation is shown in Figure TODO.
 \end_layout
 
@@ -23099,13 +23253,13 @@ Segment end detector
 \end_layout
 
 \begin_layout Standard
-Segment end detector processes request to end currend Bit time segment as
- is shown in Table TODO.
+Segment end detector processes Segment End Requests from Resynchronisation
+ modules (Nominal and Data) and determines when current segment should be
+ truly ended.
  Segment end detector captures these requests and processes them when Time
- Quanta has elapsed.
+ Quanta has elapsed (Time Quanta edge is active).
  If request arrives in the same clock cycle as Time Quanta has elapsed,
  it is processed immediately.
- Based on these requests, Segment End Detector detects end of segment.
 \end_layout
 
 \begin_layout Subsection
@@ -23113,19 +23267,14 @@ Bit rate switch
 \end_layout
 
 \begin_layout Standard
-Since both Bit time counters (Nominal and Data) are running in bits where
- Bit-rate is switched, length of TSEG2 of these bits is measured by both
- counters and both resynchronisation modules can signal request to end current
- segment.
- Segment end detector only considers requests from the Resynchronisation
- module of which is given by actual Sample control as given by Protocol
+Since both Bit Time counters (Nominal and Data) are running in bits where
+ Bit-rate is switched (BRS and CRC Delimiter), length of TSEG2 of these
+ bits is measured by both counters and both Resynchronisation modules can
+ provide Segment End Request.
+ Segment End Detector only considers requests from Resynchronisation module
+ which is given by actual Sample Control (Nominal, Data) as given by Protocol
  Control FSM.
- This situation is shown in Figure TODO.
- Note that since Protocol control provides Sample control already in Process
- pipeline stage (due to speculative forwarding), there might occur negative
- re-synchronisation which shortens duration of TSEG2 after BRS to just one
- clock cycle.
- In this case following TX Trigger is throttled as mentioned in TODO.
+ Bit-rate switch is shown in Figure TODO.
 \end_layout
 
 \begin_layout Subsection
@@ -23137,7 +23286,7 @@ Prescaler FSM determines in which Bit time segment (TSEG1, TSEG2) Prescaler
  actually is.
  Its state transition diagram is shown in Figure TODO.
  Prescaler FSM issues requests to generate TX Trigger and RX Triggers to
- Trigger generator when end of segment is signalled by Segment end detector.
+ Trigger generator when end of segment is signalled by Segment End Detector.
 \end_layout
 
 \begin_layout Subsection
@@ -23148,7 +23297,7 @@ Trigger generator
 Trigger generator processes requests to generate TX Trigger (used to process
  data in Stuff pipeline stage) and RX Triggers (used to process data in
  Destuff and Process pipeline stages).
- Typical scenarion is shown in Figure TODO.
+ Typical scenario is shown in Figure TODO.
  As there is no lower limit on length of TSEG2 from TODO, resynchronisation
  which shortens length of TSEG2 to just one clock cycle can occur.
  In such a case, RX Trigger for Process pipeline stage and TX trigger pipeline
@@ -23171,7 +23320,7 @@ Synchronisation checker determines if synchronisation edge is Hard synchronisati
 on edge or Re-synchronisation edge.
  Synchronisation checker maintains a flag about valid synchronisation edge.
  Such a flag is set when synchronisation edge occurs and cleared when TSEG1
- ends (sample point).
+ ends (Sample point of bit).
  Based on this flag, synchronisation checker determines if synchronisation
  edge as provided by Bus Sampling is valid Hard synchronisation edge or
  Resynchronisation edge.
@@ -23180,6 +23329,15 @@ on edge or Re-synchronisation edge.
  ignored.
  A situation where two synchronisation edges are detected (and second one
  is filtered out) is shown in Figure TODO.
+\end_layout
+
+\begin_layout Subsection
+Synchronisation type
+\end_layout
+
+\begin_layout Standard
+Type of Synchronisation is controlled by Protocol control FSM based on current
+ part of CAN frame as is shown in Figure TODO.
 \end_layout
 
 \begin_layout Standard
