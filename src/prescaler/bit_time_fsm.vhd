@@ -133,8 +133,6 @@ begin
     
         if (drv_ena = CTU_CAN_DISABLED) then
             next_state <= s_bt_reset;
-        elsif (h_sync_valid = '1') then
-            next_state <= s_bt_tseg1;
         else
             case current_state is
             when s_bt_tseg1 =>
