@@ -893,6 +893,12 @@
       </spirit:file>
 
       <spirit:file>
+        <spirit:name>prescaler/bit_segment_meter.vhd</spirit:name>
+        <spirit:fileType>vhdlSource</spirit:fileType>
+        <spirit:logicalName>xil_defaultlib</spirit:logicalName>
+      </spirit:file>
+
+      <spirit:file>
         <spirit:name>prescaler/bit_time_cfg_capture.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
         <spirit:logicalName>xil_defaultlib</spirit:logicalName>
@@ -912,12 +918,6 @@
 
       <spirit:file>
         <spirit:name>prescaler/prescaler.vhd</spirit:name>
-        <spirit:fileType>vhdlSource</spirit:fileType>
-        <spirit:logicalName>xil_defaultlib</spirit:logicalName>
-      </spirit:file>
-
-      <spirit:file>
-        <spirit:name>prescaler/resynchronisation.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
         <spirit:logicalName>xil_defaultlib</spirit:logicalName>
       </spirit:file>
@@ -1460,6 +1460,13 @@
       </spirit:file>
 
       <spirit:file>
+        <spirit:name>prescaler/bit_segment_meter.vhd</spirit:name>
+        <spirit:fileType>vhdlSource</spirit:fileType>
+        <spirit:userFileType>USED_IN_ipstatic</spirit:userFileType>
+        <spirit:logicalName>xil_defaultlib</spirit:logicalName>
+      </spirit:file>
+
+      <spirit:file>
         <spirit:name>prescaler/bit_time_cfg_capture.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
         <spirit:userFileType>USED_IN_ipstatic</spirit:userFileType>
@@ -1482,13 +1489,6 @@
 
       <spirit:file>
         <spirit:name>prescaler/prescaler.vhd</spirit:name>
-        <spirit:fileType>vhdlSource</spirit:fileType>
-        <spirit:userFileType>USED_IN_ipstatic</spirit:userFileType>
-        <spirit:logicalName>xil_defaultlib</spirit:logicalName>
-      </spirit:file>
-
-      <spirit:file>
-        <spirit:name>prescaler/resynchronisation.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
         <spirit:userFileType>USED_IN_ipstatic</spirit:userFileType>
         <spirit:logicalName>xil_defaultlib</spirit:logicalName>

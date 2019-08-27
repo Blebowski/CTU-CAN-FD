@@ -3317,7 +3317,7 @@ package can_components is
     end component;
 
 
-    component resynchronisation is
+    component bit_segment_meter is
     generic (
         -- Reset polarity
         G_RESET_POLARITY          :       std_logic := '0';
