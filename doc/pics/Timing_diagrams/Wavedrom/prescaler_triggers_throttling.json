@@ -1,0 +1,35 @@
+{signal: [
+  {name: 'System clock', 				wave: 'p.......',
+   										node: '........'},
+  
+  {name: 'Bit time segment', 			wave: '3...43..', 	data: ['TSEG1', ['tspan', {class:'h6'}, 'TSEG2'], 'TSEG1'],
+   										node: '...a....'},
+  
+  {name: 'Pipeline stage', 				wave: 'x..543x.', 	data: [['tspan', {class:'h6'}, 'Destuff'],
+   																		       ['tspan', {class:'h6'}, 'Process'],
+   																		       ['tspan', {class:'h6'}, 'Stuff']],
+   										node: '........'},
+
+  {name: 'Resynchronisation edge', 		wave: '0...10..',
+   										node: '...bk...'},
+  
+  {name: 'Segment end', 				wave: '0..1.0..',
+   										node: '...bl...'},
+  
+  {name: 'Sample request',  			wave: '0..10...',
+   										node: '...c....'},
+  
+  {name: 'RX Trigger 0',  				wave: '0..10...',
+   										node: '...d....'},
+
+  {name: 'RX Trigger 1',  				wave: '0...10..',
+   										node: '....e...'},
+  
+  {name: 'Sync request',  				wave: '0...10..',
+   										node: '....h...'},
+
+  {name: 'TX Trigger',  				wave: '0....10.',
+   										node: '.....i..'},  
+ ],
+  edge:['a->c TSEG 1 ends','c->d Sample request','d->e Next pipeline stage','f->g','g->h Tseg2 ends','h->i TX Trigger Shifted','k->l Resynchronistation','l->h Sync Request'],
+}

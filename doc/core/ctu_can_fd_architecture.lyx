@@ -1105,6 +1105,7 @@ noprefix "false"
 \end_inset
 
  are clocked by System clock.
+ TODO: Add example of joint reset from logic!!!
 \end_layout
 
 \begin_layout Standard
@@ -1402,7 +1403,8 @@ System clock
  of CTU CAN FD must be either turned on or off.
  To reduce dynamic power consumption, majority of registers is written to
  allow inference of Clock Enables (FPGAs) or automated Clock Gating (ASIC).
- There is no explicit clock gating used within the IP Core.
+ There is no explicit clock gating used within the IP Core to achieve easy
+ portability between ASIC and FPGA implementations.
 \end_layout
 
 \begin_layout Section
@@ -1416,7 +1418,17 @@ CTU CAN FD logic is implemented from DFFs with Asynchronous Reset.
  All DFFs are active on positive clock edge (to mitigate effects of clock
  duty-cycle).
  CTU CAN FD is Latch-Free.
- TODO: Note on DFFs which are without Set-Reset.
+ CTU CAN FD also contains several registers without Set and Reset.
+ These are used only to register reset signals for other registers.
+ All registers without Set and Reset are wrapped in dedicated entity 
+\begin_inset Quotes eld
+\end_inset
+
+dff
+\begin_inset Quotes erd
+\end_inset
+
+.
 \end_layout
 
 \begin_layout Section
@@ -2192,8 +2204,8 @@ Pipeline architecture and triggers
 \end_layout
 
 \begin_layout Standard
-CTU CAN FD serial stream processing is pipelined into three stages which
- are described in Table 
+CTU CAN FD serial data stream processing is pipelined into three stages
+ which are described in Table 
 \begin_inset CommandInset ref
 LatexCommand ref
 reference "tab:pipeline-stages-description"
@@ -4314,7 +4326,7 @@ CTU CAN FD supports both types of CAN FD protocol, so called ISO FD (according
  to TODOSPEC) and also non-ISO FD (according to TODOSPEC).
  By default ISO FD is selected.
  Selection between ISO FD and NON-ISO FD is done by SETTINGS[NISOFD] register.
- This configuration can be changed only when device is disabled (SETTINGS[ENA]
+ This configuration shall be changed only when device is disabled (SETTINGS[ENA]
  = '0').
  There are following diferences in NON-ISO version of CTU CAN FD:
 \end_layout
@@ -22809,7 +22821,7 @@ Bit segments measurement (SYNC, PROP, PH1 and PH2).
 \end_layout
 
 \begin_layout Itemize
-Execute Hard synchronisation and Resynchronisation as defined in TODO.
+Hard synchronisation and Resynchronisation as defined in TODO.
 \end_layout
 
 \begin_layout Itemize
@@ -22822,11 +22834,65 @@ Generate TX Trigger and RX Triggers for each stage of pipeline.
 \end_layout
 
 \begin_layout Itemize
-Switch between Nominal and Data bit-rates.
+Switch between Nominal and Data Bit-rates.
 \end_layout
 
 \begin_layout Standard
-Prescaler block diagram is shown in Figure TODO.
+Prescaler block diagram is shown in Figure 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:prescaler-block-diagram"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+placement H
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\noindent
+\align center
+\begin_inset Graphics
+	filename ../pics/Visio_generated/BD_Prescaler.pdf
+	lyxscale 20
+	scale 60
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Prescaler block diagram
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:prescaler-block-diagram"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
@@ -22840,63 +22906,662 @@ filename "entity_docs/prescaler.lyx"
 \end_layout
 
 \begin_layout Standard
+CAN FD standard in TODOISO distuiguishes two Bit-Rates: Nominal and Data.
+ CTU CAN FD implementation distuighushes 3 Bit-Rate types as shown in Table
+ 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "tab:ctu-can-fd-bit-rate-types"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+.
+ Protocol Control FSM configures correct Bit-rate in according parts of
+ CAN frame as explained in TODOISOSPEC.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float table
+placement h
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\noindent
+\align center
+\begin_inset Tabular
+<lyxtabular version="3" rows="4" columns="3">
+<features tabularvalignment="middle">
+<column alignment="left" valignment="top" width="15line%">
+<column alignment="left" valignment="top" width="15line%">
+<column alignment="left" valignment="top" width="61line%">
+<row>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Bit-Rate type
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+cellcolor{gray}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Corresponding TODO Bit-rate
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+cellcolor{gray}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Description
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+cellcolor{gray}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Nominal
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Nominal
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Nominal Bit-Rate for both Transmitter and Receiver.
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Data
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Data
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Data Bit-Rate for Receiver of CAN FD frame.
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="left" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Secondary
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Data
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Data Bit-Rate for Transmitter of CAN FD frame.
+ Secondary Sampling point is used to detect Bit Error.
+\end_layout
+
+\end_inset
+</cell>
+</row>
+</lyxtabular>
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\noindent
+\align center
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Bit-Rate types
+\begin_inset CommandInset label
+LatexCommand label
+name "tab:ctu-can-fd-bit-rate-types"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
 Prescaler contains separate logic for both Bit-rates (Nominal and Data).
- Logic for single Bit-rate consist of Bit Time Counters module and Resynchronisa
-tion module.
+ Logic for 
+\begin_inset Quotes eld
+\end_inset
+
+Secondary
+\begin_inset Quotes erd
+\end_inset
+
+ is the same as for 
+\begin_inset Quotes eld
+\end_inset
+
+Data
+\begin_inset Quotes erd
+\end_inset
+
+.
+ Logic for single Bit-rate consist of Bit Time Counters module and Bit Segment
+ Meter module.
  Doubled logic for Nominal and Data Bit-rate is implemented to achieve better
  timing performance (shorter combinatorial paths) with slightly higher resource
  usage when compared to common logic for Nominal and Data Bit-timing.
+ During bits where Bit-rate is switched, logic for both is functioning simultane
+ously, otherwise only logic for actual Bit-rate is functioning.
 \end_layout
 
 \begin_layout Subsection
-Bit time counters
+Bit-Rate configuration
 \end_layout
 
 \begin_layout Standard
-Bit time counters module contains two counters: Time Quanta counter and
+Bit Rates (Nominal and Data) are configured by SW when CTU CAN FD is disabled
+ (SETTINGS[ENA] = '0') in registers BTR (Nominal) and BTR_FD (Data).
+ Timing parameters for each Bit-Rate are listed in Table 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "tab:ctu-can-fd-bit-rate-config"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float table
+placement h
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\noindent
+\align center
+\begin_inset Tabular
+<lyxtabular version="3" rows="7" columns="3">
+<features tabularvalignment="middle">
+<column alignment="left" valignment="top" width="20line%">
+<column alignment="left" valignment="top" width="15line%">
+<column alignment="left" valignment="top" width="56line%">
+<row>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Parameter name
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+cellcolor{gray}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Abbreviation
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+cellcolor{gray}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Description
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+cellcolor{gray}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Bit-Rate Prescaler
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+BRP
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Time Quanta duration = BRP * System clock period
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Synchronisation segment
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+SYNC
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Length of Synchronisation segment is always 1 Time Quanta.
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Propagation segment
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+PROP
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Configured in multiples of Time Quanta.
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Phase 1 segment
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+PH1
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Configured in multiples of Time Quanta.
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Phase 2 segment
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+PH2
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Configured in multiples of Time Quanta.
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Synchronisation jump width
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+SJW
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Configured in multiples of Time Quanta.
+\end_layout
+
+\end_inset
+</cell>
+</row>
+</lyxtabular>
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\noindent
+\align center
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+CTU CAN FD Bit-Rate configuration
+\begin_inset CommandInset label
+LatexCommand label
+name "tab:ctu-can-fd-bit-rate-config"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsection
+Bit Time Counters
+\end_layout
+
+\begin_layout Standard
+Bit Time Counters module contains two counters: Time Quanta counter and
  Segment counter.
- Time Quanta counter measures length of Time Quanta and provides information
- that Time Quanta has elapsed (so called Time Quanta edge).
- Time Quanta edge signal is either active continously (when Prescaler is
- 1), or always just for one clock cycle and it is used as clock enable.
- When Prescaler is 1, Time Quanta is equal to system clock and Time Quanta
- counter is not running (in this case Time Quanta edge signal is active
- continously).
- Segment counter measures length of Bit time segment.
- Prescaler distuiguishes two Bit Segments: TSEG1 (covers SYNC + PROP + PH1
- parts of Bit) and TSEG2 (corresponds to PH2 part of Bit).
- Segment counter counts from 0 and it is restarted upon the end of previos
- segment or upon Hard synchronisation.
- Segment counter for Nominal(Data) Bit-rate shall never overflow when current
- sampling control is set to Nominal (Data) Bit-rate.
 \end_layout
 
 \begin_layout Standard
-Nominal Bit time counters module is enabled when CTU CAN FD is running with
- Nominal Bit-rate.
- Data Bit-time counters is enabled when CTU CAN FD is running with Data
- Bit-rate.
- During bits of CAN frame where Bit-rate is switched, both Nominal and Data
- Bit-rate counters are enabled.
- When Bit time counter module is disabled, none of its both counters are
+Time Quanta counter measures length of Time Quanta and provides information
+ that Time Quanta has elapsed (so called Time Quanta Edge).
+ Time Quanta has elapsed when Time Quanta counter is equal to Bit-rate Prescaler
+ (therefore dividing the frequency of System clock by Bit-Rate Prescaler).
+ Time Quanta Edge is either active continously (when Bit-Rate Prescaler
+ is 1), or always for one clock cycle at the end of Time Quanta.
+ When Bit-Rate Prescaler is 1, Time Quanta is equal to System clock and
+ Time Quanta counter is not running.
+\end_layout
+
+\begin_layout Standard
+Segment Counter counts number of Time Quanta of actual Bit Segment (counts
+ only when Time Quanta Edge is active).
+ Prescaler distuiguishes two Bit Segments: TSEG1 (SYNC + PROP + PH1 parts
+ of Bit) and TSEG2 (PH2 part of Bit).
+ Segment Counter counts from 0 and it is restarted upon the end of previous
+ segment or upon Hard synchronisation.
+ Segment Counter for Nominal(Data) Bit-rate shall never overflow during
+ Nominal(Data) Bit-Rate.
+ Segment counter for Nominal Bit-rate may overflow during Data Bit-rate
+ and Segment counter for Data Bit-rate may overflow during Nominal Bit-Rate.
+ Current Bit-rate is determined by Protocol control FSM based on current
+ field of CAN frame and its type (see TODO).
+\end_layout
+
+\begin_layout Standard
+Nominal Bit Time Counters module is enabled during Nominal Bit-rate.
+ Data Bit-time Counters module is enabled during Data Bit-rate.
+ During bits of CAN frame where Bit-Rate is switched (BRS and CRC Delimiter),
+ both Nominal and Data Bit Time Counter modules are running.
+ When Bit Time Counters module is disabled, none of its both counters are
  running (to save power).
- Both counters (Segment counter and Time Quanta counter) are restarted when
+ Both counters (Segment Counter and Time Quanta counter) are erased when
  Bit time segment ends to force alignment of Nominal and Data Time Quanta
- in the moment of Bit-rate switch.
+ in the moment of Bit-Rate switch.
 \end_layout
 
 \begin_layout Subsection
-Resynchronisation
+Bit Segment Meter
 \end_layout
 
 \begin_layout Standard
-Resynchronisation module measures length of Bit Time segment (TSEG1 and
+Bit Segment Meter module measures length of Bit Time segments (TSEG1 and
  TSEG2).
- Resynchronisation module maintains register with Expected Segment Length.
- Expected Segment length is loaded according to rules described in Table
- TODO and it is always loaded upon the end of segment, or when re-synchronisatio
-n occurs.
- Loading of Expected segment length is shown in Figures TODO and TODO.
+ Bit Segment Meter module maintains register with Expected Segment Length.
+ Expected Segment Length contains number of Time Quanta that current Bit
+ Segment shall last.
+ When current Bit Segment ends, Expected Segment Length is loaded with length
+ of following Bit Segment.
+ Loading of Expected Segment Length is shown in Figure 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:segm-end-regular"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+ for TSEG1 = 10 Time Quanta, TSEG2 = 5 Time Quanta and BRP = 2.
+ When Positive Resynchronisation occurs (see TODOISO), Expected Segment
+ Length is increased (TSEG1 segment is lengthed) as in Figure 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:positive-resynchronisation"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+.
+ When Negative Resynchronisation occurs (see TODOISO), Expected Segment
+ Length is decreased (TSEG2 is shortened).
+ All rules for loading Expected Segment Length are described in 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "tab:expected-segment-length"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+.
 \end_layout
 
 \begin_layout Standard
@@ -22912,7 +23577,7 @@ status open
 \begin_inset Tabular
 <lyxtabular version="3" rows="8" columns="3">
 <features tabularvalignment="middle">
-<column alignment="left" valignment="top" width="30line%">
+<column alignment="left" valignment="top" width="36line%">
 <column alignment="left" valignment="top" width="30line%">
 <column alignment="left" valignment="top" width="25line%">
 <row>
@@ -22964,7 +23629,7 @@ cellcolor{gray}
 \begin_inset Text
 
 \begin_layout Plain Layout
-Additional action
+Description
 \begin_inset ERT
 status open
 
@@ -22992,7 +23657,7 @@ End of Segment TSEG1 due to
 \end_layout
 
 \begin_layout Plain Layout
-Segment counter equal to Expected Segment Length.
+Segment Counter equal to Expected Segment Length - 1.
 \end_layout
 
 \end_inset
@@ -23001,7 +23666,7 @@ Segment counter equal to Expected Segment Length.
 \begin_inset Text
 
 \begin_layout Plain Layout
-Default lenght of TSEG2.
+PH2
 \end_layout
 
 \end_inset
@@ -23010,7 +23675,7 @@ Default lenght of TSEG2.
 \begin_inset Text
 
 \begin_layout Plain Layout
-None
+
 \end_layout
 
 \end_inset
@@ -23021,7 +23686,8 @@ None
 \begin_inset Text
 
 \begin_layout Plain Layout
-End of Segment TSEG2 due to segment counter reached Expected Segment Length.
+End of Segment TSEG2 due to Segment Counter equal to Expected Segment Length
+ - 1.
 \end_layout
 
 \end_inset
@@ -23030,7 +23696,7 @@ End of Segment TSEG2 due to segment counter reached Expected Segment Length.
 \begin_inset Text
 
 \begin_layout Plain Layout
-Default lenght of TSEG1.
+SYNC + PROP + PH1
 \end_layout
 
 \end_inset
@@ -23039,7 +23705,7 @@ Default lenght of TSEG1.
 \begin_inset Text
 
 \begin_layout Plain Layout
-None
+
 \end_layout
 
 \end_inset
@@ -23050,7 +23716,7 @@ None
 \begin_inset Text
 
 \begin_layout Plain Layout
-Positive resynchronisation with Phase Error smaller than SJW.
+Positive Resynchronisation with Phase Error <= SJW.
 \end_layout
 
 \end_inset
@@ -23059,7 +23725,7 @@ Positive resynchronisation with Phase Error smaller than SJW.
 \begin_inset Text
 
 \begin_layout Plain Layout
-Default lenght of TSEG1 + Phase Error.
+SYNC + PROP + PH1 + Segment Counter
 \end_layout
 
 \end_inset
@@ -23068,7 +23734,7 @@ Default lenght of TSEG1 + Phase Error.
 \begin_inset Text
 
 \begin_layout Plain Layout
-None
+Segment Counter = SJW in this case.
 \end_layout
 
 \end_inset
@@ -23079,7 +23745,7 @@ None
 \begin_inset Text
 
 \begin_layout Plain Layout
-Positive resynchronisation with Phase Error larger than SJW.
+Positive Resynchronisation with Phase Error > SJW.
 \end_layout
 
 \end_inset
@@ -23088,7 +23754,7 @@ Positive resynchronisation with Phase Error larger than SJW.
 \begin_inset Text
 
 \begin_layout Plain Layout
-Default lenght of TSEG1 + SJW.
+SYNC + PROP + PH1 + SJW
 \end_layout
 
 \end_inset
@@ -23097,27 +23763,27 @@ Default lenght of TSEG1 + SJW.
 \begin_inset Text
 
 \begin_layout Plain Layout
-None
+
 \end_layout
 
 \end_inset
 </cell>
 </row>
 <row>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Negative Resynchronisation with Phase Error <= SJW.
+\end_layout
+
+\end_inset
+</cell>
 <cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
-Negative resynchronisation with Phase Error smaller than SJW.
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-Default lenght of TSEG1.
+SYNC + PROP + PH1
 \end_layout
 
 \end_inset
@@ -23127,17 +23793,19 @@ Default lenght of TSEG1.
 
 \begin_layout Plain Layout
 Immediate end of segment.
+ TSEG2 ends, therefore Expected Segment length is preloaded with Expected
+ lenght of TSEG1.
 \end_layout
 
 \end_inset
 </cell>
 </row>
 <row>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
-Negative resynchronisation with Phase Error larger than SJW.
+Negative Resynchronisation with Phase Error > SJW.
 \end_layout
 
 \end_inset
@@ -23146,7 +23814,7 @@ Negative resynchronisation with Phase Error larger than SJW.
 \begin_inset Text
 
 \begin_layout Plain Layout
-Default lenght of TSEG2 - SJW.
+PH2 - SJW
 \end_layout
 
 \end_inset
@@ -23155,18 +23823,18 @@ Default lenght of TSEG2 - SJW.
 \begin_inset Text
 
 \begin_layout Plain Layout
-None
+
 \end_layout
 
 \end_inset
 </cell>
 </row>
 <row>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+<cell alignment="left" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
-Hard synchronisation
+Hard Synchronisation
 \end_layout
 
 \end_inset
@@ -23175,7 +23843,7 @@ Hard synchronisation
 \begin_inset Text
 
 \begin_layout Plain Layout
-Default lenght of TSEG1 - 1
+SYNC + PROP + PH1 - 1
 \end_layout
 
 \end_inset
@@ -23184,7 +23852,8 @@ Default lenght of TSEG1 - 1
 \begin_inset Text
 
 \begin_layout Plain Layout
-None
+TSEG1 length is subtracted by 1 since Hard synchronisation shall restart
+ Bit with SYNC segment completed according to TODOISO.
 \end_layout
 
 \end_inset
@@ -23224,57 +23893,518 @@ name "tab:expected-segment-length"
 \end_layout
 
 \begin_layout Standard
-Resynchronisation module compares value of Expected segment length with
- current value of Segment Counter and issues Segment End request when these
- two match.
- Overally, Segment End request can be caused by following means:
+When Segment Counter is equal to or higher than Expected Segment Length
+ - 1, Bit Segment Meter module issues End of Segment Request.
+ Overally, End of Segment Request from Bit Segment Meter can be caused by
+ following means:
 \end_layout
 
 \begin_layout Itemize
-Segment counter equals Expected Segment length.
- Such a situation is shown in Figure TODO.
+Segment Counter equals Expected Segment Length - 1.
+ Such a situation is shown in Figure 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:segm-end-regular"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+.
 \end_layout
 
 \begin_layout Itemize
-Immediate end of segment occurs.
+Immediate End of Segment occurs.
+ See Figure 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:immediate-segm-end"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+ (SJW = 3).
 \end_layout
 
 \begin_layout Standard
-Immediate end of segment is signalled when there is negative resynchronisation
- during TSEG2 and Phase error is smaller than SJW.
- Immediate resynchronisation requests Segment End Request in the same clock
- cycle when Resynchronisation edge occurs without one clock cycle delay
- of updating Expected Segment Length register.
- Immediate resynchronisation is shown in Figure TODO.
+Immediate End of Segment is signalled when there is negative Resynchronisation
+ during TSEG2 and Phase error <= SJW.
+ Immediate resynchronisation causes Segment End Request in the same clock
+ cycle when Resynchronisation edge occured.
+ In this situation, TSEG2 segment ends immediately, not one clock cycle
+ later when updated Expected Segment Length would be equal to Segment counter!
+ This special case covers negative Resynchronisation with BRP=1 and Phase
+ Error <= SJW.
+ The extra clock cycle needed to update Expected Segment Length is undesirable,
+ therefore immediate End of Segment is introduced.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+placement H
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\noindent
+\align center
+\begin_inset Graphics
+	filename /DOKUMENTY/Skola/CVUT-FEL/ctu_can_fd_2/doc/pics/Timing_diagrams/PDFs/segment_end_regular.pdf
+	lyxscale 20
+	scale 64
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Segment end - regular
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:segm-end-regular"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+placement H
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\noindent
+\align center
+\begin_inset Graphics
+	filename /DOKUMENTY/Skola/CVUT-FEL/ctu_can_fd_2/doc/pics/Timing_diagrams/PDFs/positive_resynchronisation.pdf
+	lyxscale 20
+	scale 55
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Positive resynchronisation
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:positive-resynchronisation"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+placement H
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\noindent
+\align center
+\begin_inset Graphics
+	filename /DOKUMENTY/Skola/CVUT-FEL/ctu_can_fd_2/doc/pics/Timing_diagrams/PDFs/immediate_segm_end.pdf
+	lyxscale 20
+	scale 63
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Immediate Segment End
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:immediate-segm-end"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Subsection
-Segment end detector
+Segment End Detector
 \end_layout
 
 \begin_layout Standard
-Segment end detector processes Segment End Requests from Resynchronisation
- modules (Nominal and Data) and determines when current segment should be
- truly ended.
- Segment end detector captures these requests and processes them when Time
- Quanta has elapsed (Time Quanta edge is active).
+Segment End Detector determines when segment ends based on requests as shown
+ in Table 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "tab:segment-end-causes"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+.
+ Segment End Detector captures these requests and processes them when Time
+ Quanta has elapsed (Time Quanta Edge is active).
  If request arrives in the same clock cycle as Time Quanta has elapsed,
- it is processed immediately.
-\end_layout
-
-\begin_layout Subsection
-Bit rate switch
+ it is processed immediately and not captured.
 \end_layout
 
 \begin_layout Standard
-Since both Bit Time counters (Nominal and Data) are running in bits where
+\begin_inset Float table
+placement h
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\noindent
+\align center
+\begin_inset Tabular
+<lyxtabular version="3" rows="4" columns="3">
+<features tabularvalignment="middle">
+<column alignment="left" valignment="top" width="36line%">
+<column alignment="left" valignment="top" width="30line%">
+<column alignment="left" valignment="top" width="25line%">
+<row>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Request type
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+cellcolor{gray}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Issued by
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+cellcolor{gray}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Description
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+cellcolor{gray}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Segment End Request (Nominal).
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Bit Segment Meter (Nominal)
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Considered only during Nominal Bit-rate.
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Segment End Request (Data).
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Bit Segment Meter (Data)
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Considered only during Data Bit-rate.
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="left" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Hard Synchronisation
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Synchronisation checker.
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Considered only during Nominal Bit-rate.
+ Shall not occur during Data Bit-rate.
+\end_layout
+
+\end_inset
+</cell>
+</row>
+</lyxtabular>
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\noindent
+\align center
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Segment End Causes
+\begin_inset CommandInset label
+LatexCommand label
+name "tab:segment-end-causes"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsection
+Bit-Rate switch
+\end_layout
+
+\begin_layout Standard
+Since both Bit Time Counters (Nominal and Data) are running in bits where
  Bit-rate is switched (BRS and CRC Delimiter), length of TSEG2 of these
- bits is measured by both counters and both Resynchronisation modules can
+ bits is measured by both counters and both Bit Segment Meter modules can
  provide Segment End Request.
  Segment End Detector only considers requests from Resynchronisation module
  which is given by actual Sample Control (Nominal, Data) as given by Protocol
  Control FSM.
- Bit-rate switch is shown in Figure TODO.
+ Bit-Rate switch is shown in Figure 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:bit-rate-switch"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+ (BRP Nominal = 2, BRP Data = 1, TSEG1 Nominal = 10, TSEG1 Data = 7, TSEG2
+ Data = 6,).
+ Note that in this Figure Time Quanta Counter, Time Quanta Edge, Segment
+ Counter and Expected Segment Length are actually different signals for
+ Nominal / Data Bit-Rate but 
+\begin_inset Quotes eld
+\end_inset
+
+Nominal
+\begin_inset Quotes erd
+\end_inset
+
+ version are shown in Nominal Bit-Rate and 
+\begin_inset Quotes eld
+\end_inset
+
+Data
+\begin_inset Quotes erd
+\end_inset
+
+ versions are shown in Data Bit-Rate.
+\end_layout
+
+\begin_layout Standard
+Note that in the moment of Bit-rate switch, Protocol control FSM provides
+ actualized 
+\begin_inset Quotes eld
+\end_inset
+
+Sample control
+\begin_inset Quotes erd
+\end_inset
+
+ (Bit-Rate) already in Process pipeline stage.
+ Sample control is driven by DFF which is bypassed in this moment so that
+ first Time Quanta of TSEG2 after Bit-rate switch is measured with proper
+ Bit-rate selected!
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+placement H
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\noindent
+\align center
+\begin_inset Graphics
+	filename /DOKUMENTY/Skola/CVUT-FEL/ctu_can_fd_2/doc/pics/Timing_diagrams/PDFs/bit_rate_switch.pdf
+	lyxscale 20
+	scale 63
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Bit-rate switch
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:bit-rate-switch"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Subsection
@@ -23282,11 +24412,67 @@ Prescaler FSM
 \end_layout
 
 \begin_layout Standard
-Prescaler FSM determines in which Bit time segment (TSEG1, TSEG2) Prescaler
- actually is.
- Its state transition diagram is shown in Figure TODO.
+Prescaler FSM determines actual Bit time segment (TSEG1, TSEG2).
+ Its state transition diagram is shown in Figure 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:fsm-prescaler"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+.
  Prescaler FSM issues requests to generate TX Trigger and RX Triggers to
- Trigger generator when end of segment is signalled by Segment End Detector.
+ Trigger generator.
+ TX Trigger is requested upon the end of TSEG2 segment (start of new bit,
+ bit value is transmitted).
+ RX Trigger is requested upon the end of TSEG1 segment (Sample point, bit
+ value is sampled).
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+placement H
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\noindent
+\align center
+\begin_inset Graphics
+	filename /DOKUMENTY/Skola/CVUT-FEL/ctu_can_fd_2/doc/pics/Visio_generated/FSM_prescaler.pdf
+	lyxscale 20
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Prescaler FSM
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:fsm-prescaler"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Subsection
@@ -23297,18 +24483,395 @@ Trigger generator
 Trigger generator processes requests to generate TX Trigger (used to process
  data in Stuff pipeline stage) and RX Triggers (used to process data in
  Destuff and Process pipeline stages).
- Typical scenario is shown in Figure TODO.
- As there is no lower limit on length of TSEG2 from TODO, resynchronisation
- which shortens length of TSEG2 to just one clock cycle can occur.
- In such a case, RX Trigger for Process pipeline stage and TX trigger pipeline
- stage would overlap.
- To avoid this situation, TX Trigger is throttled by one clock cycle as
- it is shown in Figure TODO, and TSEG2 lasts only one clock cycle.
- As value of Information Processing Time for CTU CAN FD is 2, this situation
+ Typical scenario is shown in Figure 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:tx-rx-triggers"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+.
+ As there is no lower limit on length of TSEG2 from TODOISO, resynchronisation
+ which shortens length of TSEG2 to just one clock cycle can occur (assuming
+ BRP=1).
+ In such case, RX Trigger for Process pipeline stage and TX trigger for
+ Stuff pipeline stage would overlap.
+ This is not acceptable since Stuff Pipeline stage needs Process pipeline
+ stage to be finished before it can proceed (new TX data must be provided
+ by Protocol control FSM before being 
+\begin_inset Quotes eld
+\end_inset
+
+stuffed
+\begin_inset Quotes erd
+\end_inset
+
+).
+ To avoid this situation, TX Trigger is shifted by one clock cycle as it
+ is shown in Figure 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:tx-trigger-shift"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+.
+ Stuff Pipeline stage is also shifted by one clock cycle (from last clock
+ cycle of TSEG2 to first clock cycle of TSEG1).
+ As value of Information Processing Time of CTU CAN FD is 2, this situation
  corresponds to shortening length of TSEG2 to less than Information Processing
  Time.
  Throttling of TX Trigger corresponds to delaying calculation of following
- bit value after Information Processing Time from Sample Point.
+ bit value after Information Processing Time from Sample Point as defined
+ in TODOISO.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+placement H
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\noindent
+\align center
+\begin_inset Graphics
+	filename /DOKUMENTY/Skola/CVUT-FEL/ctu_can_fd_2/doc/pics/Timing_diagrams/PDFs/prescaler_triggers.pdf
+	lyxscale 20
+	scale 63
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+TX, RX triggers
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:tx-rx-triggers"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+placement H
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\noindent
+\align center
+\begin_inset Graphics
+	filename /DOKUMENTY/Skola/CVUT-FEL/ctu_can_fd_2/doc/pics/Timing_diagrams/PDFs/prescaler_triggers_throttling.pdf
+	lyxscale 20
+	scale 63
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+TX Trigger shift
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:tx-trigger-shift"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsection
+Synchronisation control
+\end_layout
+
+\begin_layout Standard
+Type of Synchronisation is controlled by Protocol control FSM based on current
+ part of CAN frame as is shown in Table 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "tab:synchronisation-control"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float table
+placement h
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\noindent
+\align center
+\begin_inset Tabular
+<lyxtabular version="3" rows="5" columns="3">
+<features tabularvalignment="middle">
+<column alignment="left" valignment="top" width="15line%">
+<column alignment="left" valignment="top" width="25line%">
+<column alignment="left" valignment="top" width="50line%">
+<row>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Synchronisation type
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+cellcolor{gray}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Used during Protocol control FSM state
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+cellcolor{gray}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Description
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+cellcolor{gray}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Hard Synchronisation
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Suspend Transmission, 2nd or 3rd bit of Intermission, Bus Idle, Integration,
+ Reintegration, FDF/res bit edge in CAN FD Frame.
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+TSEG1 is started with SYNC segment complement (Bit Segment Counter = 1).
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+No Synchronisation
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+All other parts
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Transmitter operating in Data Bit-Rate does not synchronise.
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+No Synchronisation for Phase Error > 0
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+All other parts
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Node sending dominant bit does not perform Resynchronisation or Hard Synchronisa
+tion as a result of Positive Phase Error.
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="left" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Resynchronisation
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+All other parts
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+All other Recessive to Dominant edges are used for Resynchronisation.
+\end_layout
+
+\end_inset
+</cell>
+</row>
+</lyxtabular>
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\noindent
+\align center
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Synchronisation control
+\begin_inset CommandInset label
+LatexCommand label
+name "tab:synchronisation-control"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Subsection
@@ -23316,28 +24879,85 @@ Synchronisation checker
 \end_layout
 
 \begin_layout Standard
-Synchronisation checker determines if synchronisation edge is Hard synchronisati
-on edge or Re-synchronisation edge.
- Synchronisation checker maintains a flag about valid synchronisation edge.
- Such a flag is set when synchronisation edge occurs and cleared when TSEG1
- ends (Sample point of bit).
- Based on this flag, synchronisation checker determines if synchronisation
- edge as provided by Bus Sampling is valid Hard synchronisation edge or
- Resynchronisation edge.
- If there are more synchronisation edges between two sample points, only
- first edge is detected as valid synchronisation edge and other edges are
- ignored.
- A situation where two synchronisation edges are detected (and second one
- is filtered out) is shown in Figure TODO.
-\end_layout
+Synchronisation checker determines if Synchronisation edge (detected by
+ Bus Sampling, see TODO) is valid for synchronisation accroding to TODOISO.
+ Synchronisation checker maintains Synchronisation Edge Flag.
+ This flag is set when Synchronisation Edge occurs, and cleared when TSEG1
+ ends (Sample Point of bit).
+ Based on this flag, synchronisation checker determines if Synchronisation
+ edge is valid.
+ If there is more than one Synchronisation edge between two consecutive
+ Sample Points, only first edge is detected as valid edge and other edges
+ are ignored.
+ A situation where two Synchronisation edges are detected (and second one
+ is filtered out) is shown in Figure 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:prescaler-sync-edge-validation."
+plural "false"
+caps "false"
+noprefix "false"
 
-\begin_layout Subsection
-Synchronisation type
+\end_inset
+
+.
+ When Synchronisation edge is valid for synchronisation, it causes Re-synchronis
+ation, Hard Synchronisation or No Synchronisation according to rules in
+ Table 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "tab:synchronisation-control"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+.
 \end_layout
 
 \begin_layout Standard
-Type of Synchronisation is controlled by Protocol control FSM based on current
- part of CAN frame as is shown in Figure TODO.
+\begin_inset Float figure
+placement H
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\noindent
+\align center
+\begin_inset Graphics
+	filename /DOKUMENTY/Skola/CVUT-FEL/ctu_can_fd_2/doc/pics/Timing_diagrams/PDFs/prescaler_synchronisation_validation.pdf
+	lyxscale 20
+	scale 63
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Synchronisation edge filtration
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:prescaler-sync-edge-validation."
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard

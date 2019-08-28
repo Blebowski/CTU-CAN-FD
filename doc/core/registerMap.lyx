@@ -40616,6 +40616,9 @@ Address: 0x84
 \begin_layout Description
 Size: 4 bytes
 \end_layout
+\begin_layout Description
+Note: Register is present only when sup_traffic_ctrs = true. Otherwise this address is reserved.
+\end_layout
 \begin_layout Standard
 Bus traffic RX counter.
 \end_layout
@@ -41924,6 +41927,9 @@ Address: 0x88
 \end_layout
 \begin_layout Description
 Size: 4 bytes
+\end_layout
+\begin_layout Description
+Note: Register is present only when sup_traffic_ctrs = true. Otherwise this address is reserved.
 \end_layout
 \begin_layout Standard
 Bus traffic TX counter.
