@@ -711,7 +711,7 @@ Introduction
 This document describes HW Architecture of CTU CAN FD IP Core along with
  implementation details of CTU CAN FD.
  It describes the most important Interfaces within the core and function
- of each module within CTU CAN FD.
+ of each module.
  This document is not written in specification format (device shall behave
  like so), rather in description format (device behaves like so).
  Nevertheless, this document is supposed to function as reference on how
@@ -952,11 +952,15 @@ Memory Bus
 \end_layout
 
 \begin_layout Subsection
+RAM interface
+\end_layout
+
+\begin_layout Subsection
 APB
 \end_layout
 
 \begin_layout Subsection
-Parallell Bus
+AHB
 \end_layout
 
 \begin_layout Section
@@ -1405,6 +1409,17 @@ System clock
  allow inference of Clock Enables (FPGAs) or automated Clock Gating (ASIC).
  There is no explicit clock gating used within the IP Core to achieve easy
  portability between ASIC and FPGA implementations.
+\end_layout
+
+\begin_layout Standard
+If CTU CAN FD is implemented in SoC system, it is recommended to implement
+ configurable clock gating for whole CTU CAN FD peripheral on system level
+ to save power when CTU CAN FD is not clocked.
+ In such situation, CTU CAN FD ignores traffic on CAN Bus and continously
+ transmitts Recessive bitss to CAN Bus.
+ Due to nature of CAN Bus communication it is impossible to gate clocks
+ for CTU CAN FD when there is no communication on CAN Bus and enable it
+ when frame reception starts.
 \end_layout
 
 \begin_layout Section
@@ -24884,10 +24899,11 @@ Synchronisation checker determines if Synchronisation edge (detected by
  Synchronisation checker maintains Synchronisation Edge Flag.
  This flag is set when Synchronisation Edge occurs, and cleared when TSEG1
  ends (Sample Point of bit).
- Based on this flag, synchronisation checker determines if Synchronisation
- edge is valid.
- If there is more than one Synchronisation edge between two consecutive
- Sample Points, only first edge is detected as valid edge and other edges
+ If this flag is set and another synchronisation edge occurs before the
+ flag is cleared, such an edge is ignored and prescaler does not Synchronize
+ on this edge.
+ Therefore, if there is more than one Synchronisation edge between two consecuti
+ve Sample Points, only first edge is detected as valid edge and other edges
  are ignored.
  A situation where two Synchronisation edges are detected (and second one
  is filtered out) is shown in Figure 
@@ -24979,6 +24995,93 @@ name "sec:Bus-sampling"
 \end_layout
 
 \begin_layout Standard
+Bus sampling module implements following functionality:
+\end_layout
+
+\begin_layout Itemize
+Synchronize CAN RX input to System clock domain.
+\end_layout
+
+\begin_layout Itemize
+Sample Bus in Sample Point (Destuff pipeline stage).
+\end_layout
+
+\begin_layout Itemize
+Detect edges on sampled TX and RX Data.
+ Detect synchronisation edges.
+\end_layout
+
+\begin_layout Itemize
+Measure Transceiver Delay and calculate Secondary Sample Point offset.
+\end_layout
+
+\begin_layout Itemize
+Create Secondary Sample point.
+\end_layout
+
+\begin_layout Itemize
+Detect Bit Error.
+\end_layout
+
+\begin_layout Standard
+Block diagram of Bus Sampling is shown in Figure 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:bus-sampling"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+placement H
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\noindent
+\align center
+\begin_inset Graphics
+	filename /DOKUMENTY/Skola/CVUT-FEL/ctu_can_fd_2/doc/pics/Visio_generated/BD_Bus_sampling.pdf
+	lyxscale 20
+	scale 80
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Bus sampling block diagram
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:bus-sampling"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
 \begin_inset CommandInset include
 LatexCommand input
 filename "entity_docs/bus_sampling.lyx"
@@ -24989,32 +25092,1049 @@ filename "entity_docs/bus_sampling.lyx"
 \end_layout
 
 \begin_layout Standard
-Bus sampling module implements following functionality:
-\end_layout
+Bus Sampling implements 2 FF synchronizer to synchronize asynchronous 
+\begin_inset Quotes eld
+\end_inset
 
-\begin_layout Itemize
-Sample Bus in Sample point and store it to previous bus value register.
-\end_layout
+can_rx
+\begin_inset Quotes erd
+\end_inset
 
-\begin_layout Itemize
-Detect edges on sampled TX and RX Data.
- Check for valid synchronisation edges.
-\end_layout
-
-\begin_layout Itemize
-Measure Transcevier Delay and calculate Secondary Sample Point offset.
-\end_layout
-
-\begin_layout Itemize
-Create Secondary sample point.
-\end_layout
-
-\begin_layout Itemize
-Detect Bit Error.
+ input from physical layer transceiver.
+ Output of this synchronizer is Sampled in Sample Point and stored to Previous
+ Bus-value register.
+ Output of this synchronizer is also connected as data input to Bit Destuffing
+ module (see TODO), therefore bus is sampled in the same moment as input
+ serial data from CAN bus are processed by Bit Destuffing.
+ This synchronizer is clocked with System clock and it is enabled always.
+ 
 \end_layout
 
 \begin_layout Standard
-Block diagram of Bus sampling is shown in Figure TODO.
+Bus Sampling detects edges on CAN RX data (
+\begin_inset Quotes eld
+\end_inset
+
+can_rx
+\begin_inset Quotes erd
+\end_inset
+
+) and CAN TX data (
+\begin_inset Quotes eld
+\end_inset
+
+can_tx
+\begin_inset Quotes erd
+\end_inset
+
+).
+ 
+\color red
+Edges on TX Data are detected with granularity of System clock period.
+ Edges on RX Data are detected with granularity of Time Quanta.
+ This is TODO, so far detected with System clock period, gating by Time
+ Quanta edge needs to be added.
+ When CTU CAN FD is running in Nominal Bit-rate, Nominal Time Quanta is
+ used.
+ When CTU CAN FD is running Data Bit-Rate Data Time Quanta is used.
+
+\color inherit
+ Only Recessive to Dominant edges are detected on RX Data.
+ Furthermore, edge on RX Data is detected only when Bus value (synchronizer
+ output) has opposite value than bus value sampled in previous Sample point
+ (Therefore previous sampled Bus value must be Recessive).
+ Detected edge on RX Data is propagated as Synchronization Edge to Prescaler.
+ TX Data edge is detected regardless of previous Sampled Bus value, but
+ only Recessive to Dominant edges on CAN TX Data are detected.
+ A typical scenario of Edge detection on TX/RX Data is shown in Figure 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:edge-detection"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+ (with BRP=2).
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+placement H
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\noindent
+\align center
+\begin_inset Graphics
+	filename /DOKUMENTY/Skola/CVUT-FEL/ctu_can_fd_2/doc/pics/Timing_diagrams/PDFs/edge_detection_rx.pdf
+	lyxscale 20
+	scale 63
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Edge detection
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:edge-detection"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsection
+Transceiver Delay measurement
+\end_layout
+
+\begin_layout Standard
+Transceiver delay is roundtrip delay from can_tx to can_rx upon transmission
+ of Dominant bit.
+ This delay includes propagation of signal to physical layer transceiver,
+ delay of transceiver and propagation of signal back.
+ Transceiver delay is measured in CAN FD frames on falling edge between
+ EDL (FDF) bit and following r0 bit.
+ In CAN 2.0 frames, Transceiver delay is not measured.
+ Transceiver delay is measured in multiples of System clock (not Time Quanta)
+ and its measurement is controlled by Protocol control FSM.
+ Measurement is described in Table 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "tab:transceiver-delay-measurement"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+ and shown in Figure 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:transceiver-delay-measurement"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Standard
+Measured Transceiver Delay can be read out from TRV_DELAY register via SW.
+ Transceiver delay readable from TRV_DELAY register is shadowed and this
+ shadowed value is changed upon the end of Transceiver Delay measurement.
+ Therefore if SW reads Transceiver Delay during measurement, it will read
+ previous measured value.
+ New value will be read only after the end of current measurement.
+ To read proper value of Transceiver Delay from TRV_DELAY, at least one
+ CAN FD frame must have been transmitted during previous operation, otherwise
+ 0 will be read from TRV_DELAY register.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float table
+placement H
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\noindent
+\align center
+\begin_inset Tabular
+<lyxtabular version="3" rows="7" columns="2">
+<features tabularvalignment="middle">
+<column alignment="left" valignment="top" width="5line%">
+<column alignment="left" valignment="top" width="88.5line%">
+<row>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Step 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+cellcolor{gray}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Action
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+cellcolor{gray}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+1
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Transmitter of CAN FD frame reaches Sample Point of EDL (FDF) bit.
+ It enables measurement of Transceiver Delay.
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+2
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+At start of next bit (Stuff pipeline stage, r0 bit), Protocol control transmits
+ Dominant bit.
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+3
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+An edge on TX is detected by Bus sampling.
+ Transceiver Delay counter is erased.
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+4
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Transceiver Delay counter is incremented by 1 each clock cycle.
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+5
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+The Dominant value which was transmitted in Step 2, propagates to Transceiver
+ and back to CAN RX input of CTU CAN FD.
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+6
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Bus Sampling detects edge on CAN RX.
+ Measurement is finished.
+\end_layout
+
+\end_inset
+</cell>
+</row>
+</lyxtabular>
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\noindent
+\align center
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Transceiver Delay measurement
+\begin_inset CommandInset label
+LatexCommand label
+name "tab:transceiver-delay-measurement"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+placement H
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\noindent
+\align center
+\begin_inset Graphics
+	filename /DOKUMENTY/Skola/CVUT-FEL/ctu_can_fd_2/doc/pics/Timing_diagrams/PDFs/transceiver_delay_measurement.pdf
+	lyxscale 20
+	scale 63
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Transceiver Delay Measurement
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:transceiver-delay-measurement"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsection
+Secondary Sampling Point Offset
+\end_layout
+
+\begin_layout Standard
+Secondary Sampling Point offset is calculated as an offset from start of
+ bit (SYNC field) in multiples of System clock.
+ Secondary Sampling Point offset can be configured by SW from SSP_CFG register
+ according to Table 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "tab:ssp-config"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+.
+ Secondary Sampling Point Offset can have values between 0 and 127.
+ If Secondary Sampling Point Offset is 0, Secondary Sampling Point is active
+ in the same clock cycle as TX Trigger.
+ If Secondary Sampling Point Offset is higher than 127 (e.g.
+ Measured Transceiver Delay + Offset > 127), it is saturated to 127.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float table
+placement h
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\noindent
+\align center
+\begin_inset Tabular
+<lyxtabular version="3" rows="4" columns="2">
+<features tabularvalignment="middle">
+<column alignment="left" valignment="top" width="20line%">
+<column alignment="left" valignment="top" width="73.5line%">
+<row>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Configuraton name
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+cellcolor{gray}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Description
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+cellcolor{gray}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Offset
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Position of Secondary Sampling Point is fixed at SSP_CFG[SSP_OFFSET].
+ Measured Transceiver Delay is not taken into account.
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Offset + Transceiver Delay
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Position of Secondary Sampling Point is given as SSP_CFG[SSP_OFFSET] + Measured
+ Transceiver Delay.
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="left" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+No SSP
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Bit-rate is never changed to Secondary Sampling and Bus is sampled at moment
+ of Data Bit-Rate Sample Point.
+\end_layout
+
+\end_inset
+</cell>
+</row>
+</lyxtabular>
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\noindent
+\align center
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Secondary Sampling Point configuration
+\begin_inset CommandInset label
+LatexCommand label
+name "tab:ssp-config"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsection
+Secondary Sampling Point
+\end_layout
+
+\begin_layout Standard
+Secondary Sampling Point is created by delaying TX Trigger by the amount
+ of Secondary Sampling Point Offset via shift register as is shown in Figure
+ 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:secondary-sampling-point"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+.
+ Secondary Sampling Point Shift register is shifting only when current Bit
+ Rate is configured to Secondary Sample.
+ Note that Secondary Sampling Point is not used for processing off RX Data
+ by Protocol control FSM but only to detect Bit Error by Transmitter of
+ CAN FD Frame.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+placement H
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\noindent
+\align center
+\begin_inset Graphics
+	filename /DOKUMENTY/Skola/CVUT-FEL/ctu_can_fd_2/doc/pics/Timing_diagrams/PDFs/ssp_offset.pdf
+	lyxscale 20
+	scale 63
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Secondary Sampling Point
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:secondary-sampling-point"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsection
+Bit Error detection
+\end_layout
+
+\begin_layout Standard
+Bit Error detection differs for Nominal Bit-Rate, Data Bit-Rate and Secondary
+ Sampling as is shown in Table 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "tab:bit-error-detection"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+.
+ Note that Bit Error is detected by Bus Sampling always when CTU CAN FD
+ is enabled (SETTINGS[ENA] = 1).
+ Bit Error is only ignored by Errror Detected module when it is irrelevant
+ as shown in Table 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "tab:Bit-error-exceptions"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+.
+ Bit Error detection in Nominal Bit-Rate is shown in Figure 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:bit-error-detection"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float table
+placement h
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\noindent
+\align center
+\begin_inset Tabular
+<lyxtabular version="3" rows="4" columns="3">
+<features tabularvalignment="middle">
+<column alignment="left" valignment="top" width="15line%">
+<column alignment="left" valignment="top" width="15line%">
+<column alignment="left" valignment="top" width="60line%">
+<row>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Bit-Rate
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+cellcolor{gray}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Detected when
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+cellcolor{gray}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Description
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+cellcolor{gray}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Nominal Bit-Rate
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+RX Trigger 1 is active (Sample Point)
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Detected when latest CAN TX value (transmitted value in actual bit) is not
+ equal to CAN RX value (sampled bus value).
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Data Bit-Rate
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+RX Trigger is active (Sample Point)
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Detected when latest CAN TX value (transmitted value in actual bit) is not
+ equal to CAN RX value (sampled bus value).
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Secondary Sample
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Secondary Sample Point
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Detected when CAN TX value on the output of TX Data cache is not equal to
+ CAN RX value (sampled bus value).
+\end_layout
+
+\end_inset
+</cell>
+</row>
+</lyxtabular>
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\noindent
+\align center
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Bit Error detectiron
+\begin_inset CommandInset label
+LatexCommand label
+name "tab:bit-error-detection"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+placement H
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\noindent
+\align center
+\begin_inset Graphics
+	filename /DOKUMENTY/Skola/CVUT-FEL/ctu_can_fd_2/doc/pics/Timing_diagrams/PDFs/bit_error_detection.pdf
+	lyxscale 20
+	scale 60
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Bit Error detection
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:bit-error-detection"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsection
+TX Data cache
+\end_layout
+
+\begin_layout Standard
+To detect Bit Error in Secondary Sampling, CTU CAN FD needs to remember
+ CAN TX values of several bits transmitted on CAN Bus (Secondary Sample
+ Point can be so late, that it does not fit within the bit itself, and occurs
+ in following bits, therefore, a transmitted bit value must be rememebered
+ until Secondary Sample Point).
+ This functionality is implemented by TX Data cache.
+ TX Data cache is FIFO memory with each entry containing single bit.
+ CAN TX value is stored to TX Data Cache directly after a bit was transmitted
+ to the bus (SYNC segment, One clock cycle after Stuff Pipeline stage).
+ TX Data cache can store up to 8 bit values (therefore allowing 8 bits on
+ the fly).
+ A value is read from TX Data cache when Secondary Sampling Point is active.
+ TX Data cache operation together with Bit Error detection during Secondary
+ Sample is shown in Figure 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:tx-data-cache-operation"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+placement H
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\noindent
+\align center
+\begin_inset Graphics
+	filename /DOKUMENTY/Skola/CVUT-FEL/ctu_can_fd_2/doc/pics/Timing_diagrams/PDFs/bit_error_ssp.pdf
+	lyxscale 20
+	scale 44
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+TX Data cache operation
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:tx-data-cache-operation"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
@@ -25029,9 +26149,635 @@ Memory registers
 \end_layout
 
 \begin_layout Standard
+Memory registers implement following functionality:
+\end_layout
+
+\begin_layout Itemize
+Configuration and Status registers of CTU CAN FD via SW accessing Memory
+ registers.
+\end_layout
+
+\begin_layout Itemize
+Issue commands to CTU CAN FD by SW.
+\end_layout
+
+\begin_layout Itemize
+Read received CAN frame from RX Buffer FIFO.
+\end_layout
+
+\begin_layout Itemize
+Write CAN frame to be transmitted to TXT Buffer RAMs.
+\end_layout
+
+\begin_layout Standard
+Block diagram of Memory registers is shown in Figure 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:memory-registers-block-diagram"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+placement H
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\noindent
+\align center
+\begin_inset Graphics
+	filename /DOKUMENTY/Skola/CVUT-FEL/ctu_can_fd_2/doc/pics/Visio_generated/BD_memory_registers.pdf
+	lyxscale 20
+	scale 80
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Memory registers block diagram
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:memory-registers-block-diagram"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
 \begin_inset CommandInset include
 LatexCommand input
 filename "entity_docs/memory_registers.lyx"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Memory registers contain 
+\begin_inset Quotes eld
+\end_inset
+
+Control Registers Module
+\begin_inset Quotes erd
+\end_inset
+
+ which is generated by TODOREGMAPTOOL.
+ Control Registers and format of CAN Frame as is stored in TXT Buffers and
+ RX Buffer are described in IP-XACT format with slight modifications as
+ explained in 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "tab:ip-xact-attributes"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+.
+ Memory map is edited via Kactus2 tool.
+\end_layout
+
+\begin_layout Standard
+From one side, Control Registers Module is accessed via simple RAM-like
+ memory interface which is described in TODO.
+ From other side, Control Registers Module is accessible via two records:
+ Output record (signals going from Control Registers to rest of CTU CAN
+ FD) and Input record (signals going from CTU CAN FD to Control Registers).
+ Output from Control Registers is converted to Driving Bus and other control
+ signals.
+ Input to Control Registers is driven by Status Bus and other status signals.
+ Driving and Status Bus are kept from legacy resons, instead of directly
+ bringing Input/Output records to the rest of CTU CAN FD.
+ It has an additional advantage: Synthesis does not mess up the names through
+ the whole design as is common with records.
+\end_layout
+
+\begin_layout Standard
+Memory registers block decodes write accesses to TXT Buffers (via TXT Buffer
+ 1 to TXT Buffer 4 memory locations) and maps these accesses to access TXT
+ Buffer RAMs.
+\end_layout
+
+\begin_layout Subsection
+Register types
+\end_layout
+
+\begin_layout Standard
+Control Registers Module contains following types of registers:
+\end_layout
+
+\begin_layout Subsubsection
+Read/Write register
+\end_layout
+
+\begin_layout Standard
+A DFF is instantiated and connected to output record (write value).
+ When Register is read, value in this DFF is returned.
+\end_layout
+
+\begin_layout Subsubsection
+Read only register
+\end_layout
+
+\begin_layout Standard
+No DFF is instantiated.
+ When Register is read, value from Input Record is returned.
+\end_layout
+
+\begin_layout Subsubsection
+Write only register
+\end_layout
+
+\begin_layout Standard
+A DFF is instantiated and connected to output record (write value).
+ When Register is read, all zeroes are returned.
+\end_layout
+
+\begin_layout Subsubsection
+Read/Write Once register
+\end_layout
+
+\begin_layout Standard
+A DFF is instantiated and connected to output record (write value).
+ When Register is read, value from Input record is used.
+ This type of register is used when write value has different meaning than
+ read value.
+\end_layout
+
+\begin_layout Subsection
+Register attributes
+\begin_inset CommandInset label
+LatexCommand label
+name "subsec:Register-attributes"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Registers within Control Registers Module use additional IP-XACT attributes
+ as is shown in Table 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "tab:ip-xact-attributes"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float table
+placement h
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\noindent
+\align center
+\begin_inset Tabular
+<lyxtabular version="3" rows="5" columns="5">
+<features tabularvalignment="middle">
+<column alignment="left" valignment="top" width="10line%">
+<column alignment="left" valignment="top" width="10line%">
+<column alignment="left" valignment="top" width="10line%">
+<column alignment="left" valignment="top" width="15line%">
+<column alignment="left" valignment="top" width="40line%">
+<row>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+IP XACT Attribute
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+cellcolor{gray}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Attribute Value
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+cellcolor{gray}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Applied on
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+cellcolor{gray}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Used on registers
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+cellcolor{gray}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Description
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+cellcolor{gray}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Modified Write Value
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+clear
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Register field
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+COMMAND, MODE[RST], INT_STAT,
+\end_layout
+
+\begin_layout Plain Layout
+INT_ENA_CLR,
+\end_layout
+
+\begin_layout Plain Layout
+INT_ENA_SET,
+\end_layout
+
+\begin_layout Plain Layout
+INT_MASK_CLR,
+\end_layout
+
+\begin_layout Plain Layout
+INT_MASK_SET,
+\end_layout
+
+\begin_layout Plain Layout
+TX_COMMAND,
+\end_layout
+
+\begin_layout Plain Layout
+CTR_PRES
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+No DFF is instantiated in the register, but written value is only combinatoriall
+y decoded and connected to Output record.
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Is present
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+IP_XACT parameter name
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Register
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+FILTER_*_MASK,
+\end_layout
+
+\begin_layout Plain Layout
+FILTER_*_VAL
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Register is instantiated only when VHDL generic with the same name as IP-XACT
+ parameter is set to 
+\begin_inset Quotes eld
+\end_inset
+
+true
+\begin_inset Quotes erd
+\end_inset
+
+.
+ When generic is 
+\begin_inset Quotes eld
+\end_inset
+
+false
+\begin_inset Quotes erd
+\end_inset
+
+, register is not instantiated and its reset value is returned upon read
+ (if it is readable).
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Read action
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+modify
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Register field
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+RX_DATA
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Quotes eld
+\end_inset
+
+Read Signaller
+\begin_inset Quotes erd
+\end_inset
+
+ module is instantiated.
+ This module combinatorially decodes when register field is being read and
+ provides this information in Output Record.
+ Used to signal to RX Buffer that there is a read from RX_DATA register.
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="left" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Vendor Extension - regLocks/ regLock
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+name= register name
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Register
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+EWL/ ERP/ CTR_PRES
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+If specified, register is writable only when 
+\begin_inset Quotes eld
+\end_inset
+
+lock = 0
+\begin_inset Quotes erd
+\end_inset
+
+.
+ If not specified, 
+\begin_inset Quotes eld
+\end_inset
+
+lock
+\begin_inset Quotes erd
+\end_inset
+
+ input has no effect.
+ This is used to prevent user from writing EWL/ERP/CTR_PRES unless CTU CAN
+ FD is in test mode.
+\end_layout
+
+\end_inset
+</cell>
+</row>
+</lyxtabular>
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\noindent
+\align center
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+IP-XACT register attributes
+\begin_inset CommandInset label
+LatexCommand label
+name "tab:ip-xact-attributes"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
 
 \end_inset
 
