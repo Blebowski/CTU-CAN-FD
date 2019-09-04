@@ -751,7 +751,7 @@ static irqreturn_t ctucan_interrupt(int irq, void *dev_id)
 		/* Ignore RI, TI, LFI, RFI, BSI */
 	} while (irq_loops++ < 10000);
 
-	netdev_err(ndev, "%s: stuck interrupt, stopping\n", __func__);
+	netdev_err(ndev, "%s: stuck interrupt (isr=0x%08x), stopping\n", __func__, isr.u32);
 
 	{
 		union ctu_can_fd_int_stat imask, ival;
