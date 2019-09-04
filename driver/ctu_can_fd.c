@@ -757,8 +757,7 @@ static irqreturn_t ctucan_interrupt(int irq, void *dev_id)
 		union ctu_can_fd_int_stat imask, ival;
 
 		imask.u32 = 0xffffffff;
-		ival.u32 = 0;
-		ctu_can_fd_int_ena_clr(&priv->p, ival);
+		ctu_can_fd_int_ena_clr(&priv->p, imask);
 		ctu_can_fd_int_mask_set(&priv->p, imask);
 	}
 
