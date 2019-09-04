@@ -311,12 +311,13 @@ static int ctucan_start_xmit(struct sk_buff *skb, struct net_device *ndev)
 		return NETDEV_TX_OK; // TODO: what else to return
 	}
 	can_put_echo_skb(skb, ndev, txb_id);
-	ctu_can_fd_txt_set_rdy(&priv->p, txb_id);
 
 	if (!(cf->can_id & CAN_RTR_FLAG))
 		stats->tx_bytes += cf->len;
 
 	spin_lock_irqsave(&priv->tx_lock, flags);
+
+	ctu_can_fd_txt_set_rdy(&priv->p, txb_id);
 
 	priv->txb_head++;
 
