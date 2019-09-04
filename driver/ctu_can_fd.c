@@ -311,12 +311,13 @@ static int ctucan_start_xmit(struct sk_buff *skb, struct net_device *ndev)
 		return NETDEV_TX_OK; // TODO: what else to return
 	}
 	can_put_echo_skb(skb, ndev, txb_id);
-	ctu_can_fd_txt_set_rdy(&priv->p, txb_id);
 
 	if (!(cf->can_id & CAN_RTR_FLAG))
 		stats->tx_bytes += cf->len;
 
 	spin_lock_irqsave(&priv->tx_lock, flags);
+
+	ctu_can_fd_txt_set_rdy(&priv->p, txb_id);
 
 	priv->txb_head++;
 
@@ -751,14 +752,24 @@ static irqreturn_t ctucan_interrupt(int irq, void *dev_id)
 		/* Ignore RI, TI, LFI, RFI, BSI */
 	} while (irq_loops++ < 10000);
 
-	netdev_err(ndev, "%s: stuck interrupt, stopping\n", __func__);
+	netdev_err(ndev, "%s: stuck interrupt (isr=0x%08x), stopping\n", __func__, isr.u32);
+
+	if (isr.s.txbhci) {
+		int i;
+		netdev_err(ndev, "txb_head=0x%08x txb_tail=0x%08x\n",
+			priv->txb_head, priv->txb_tail);
+		for (i = 0; i < 4; i++) {
+			u32 status = ctu_can_fd_get_tx_status(&priv->p, i);
+			netdev_err(ndev, "txb[%d] txb status=0x%08x\n",
+				i, status);
+		}
+	}
 
 	{
-		union ctu_can_fd_int_stat imask, ival;
+		union ctu_can_fd_int_stat imask;
 
 		imask.u32 = 0xffffffff;
-		ival.u32 = 0;
-		ctu_can_fd_int_ena_clr(&priv->p, ival);
+		ctu_can_fd_int_ena_clr(&priv->p, imask);
 		ctu_can_fd_int_mask_set(&priv->p, imask);
 	}
 
