@@ -753,8 +753,19 @@ static irqreturn_t ctucan_interrupt(int irq, void *dev_id)
 
 	netdev_err(ndev, "%s: stuck interrupt (isr=0x%08x), stopping\n", __func__, isr.u32);
 
+	if (isr.s.txbhci) {
+		int i;
+		netdev_err(ndev, "txb_head=0x%08x txb_tail=0x%08x\n",
+			priv->txb_head, priv->txb_tail);
+		for (i = 0; i < 4; i++) {
+			u32 status = ctu_can_fd_get_tx_status(&priv->p, i);
+			netdev_err(ndev, "txb[%d] txb status=0x%08x\n",
+				i, status);
+		}
+	}
+
 	{
-		union ctu_can_fd_int_stat imask, ival;
+		union ctu_can_fd_int_stat imask;
 
 		imask.u32 = 0xffffffff;
 		ctu_can_fd_int_ena_clr(&priv->p, imask);
