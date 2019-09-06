@@ -61,13 +61,14 @@ use work.reduce_lib.all;
 use work.CAN_FD_register_map.all;
 use work.CAN_FD_frame_format.all;
 
-entity CTU_CAN_FD_v1_0 is
+entity can_top_apb is
     generic(
-        rx_buffer_size   : natural range 4 to 512 := 128;
-        sup_filtA        : boolean                := true;
-        sup_filtB        : boolean                := true;
-        sup_filtC        : boolean                := true;
-        sup_range        : boolean                := true
+        rx_buffer_size   : natural range 32 to 4098 := 128;
+        sup_filtA        : boolean                  := true;
+        sup_filtB        : boolean                  := true;
+        sup_filtC        : boolean                  := true;
+        sup_range        : boolean                  := true;
+        sup_traffic_ctrs : boolean                  := true
     );
     port(
         aclk             : in  std_logic;
@@ -90,9 +91,9 @@ entity CTU_CAN_FD_v1_0 is
         s_apb_pwdata     : in  std_logic_vector(31 downto 0);
         s_apb_pwrite     : in  std_logic
   );
-end entity CTU_CAN_FD_v1_0;
+end entity can_top_apb;
 
-architecture rtl of CTU_CAN_FD_v1_0 is
+architecture rtl of can_top_apb is
  
     signal reg_data_in      : std_logic_vector(31 downto 0);
     signal reg_data_out     : std_logic_vector(31 downto 0);
@@ -100,15 +101,17 @@ architecture rtl of CTU_CAN_FD_v1_0 is
     signal reg_be           : std_logic_vector(3 downto 0);
     signal reg_rden         : std_logic;
     signal reg_wren         : std_logic;
+    
 begin
 
-    i_can : CAN_top_level
+    can_inst: CAN_top_level
         generic map (
             rx_buffer_size  => rx_buffer_size,
             sup_filtA       => sup_filtA,
             sup_filtB       => sup_filtB,
             sup_filtC       => sup_filtC,
-            sup_range       => sup_range
+            sup_range       => sup_range,
+            sup_traffic_ctrs=> sup_traffic_ctrs
         )
         port map (
             clk_sys         => aclk,
@@ -130,7 +133,7 @@ begin
             timestamp       => timestamp
         );
 
-    i_apb : apb_ifc
+    apb_inst : apb_ifc
         port map (
             aclk           => aclk,
             arstn          => arstn,
@@ -153,4 +156,5 @@ begin
             s_apb_pwdata   => s_apb_pwdata,
             s_apb_pwrite   => s_apb_pwrite
         );
+        
 end architecture rtl;
