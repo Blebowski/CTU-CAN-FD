@@ -76,7 +76,10 @@ package can_components is
             sup_filtC      : boolean                := true;
             
             -- Insert Range Filter
-            sup_range      : boolean                := true
+            sup_range      : boolean                := true;
+            
+            -- Support traffic counters
+            sup_traffic_ctrs : boolean              := true
         );
         port(
             -----------------------------------------------------------------------
@@ -144,7 +147,40 @@ package can_components is
             timestamp    : in std_logic_vector(63 downto 0)
         );
     end component can_top_level;
-   
+    
+    component ahb_ifc is
+    port (
+        -----------------------------------------------------------------------
+        -- CTU CAN FD Interface
+        -----------------------------------------------------------------------
+        data_in          : out std_logic_vector(31 downto 0);
+        data_out         : in  std_logic_vector(31 downto 0);
+        adress           : out std_logic_vector(15 downto 0);
+        sbe              : out std_logic_vector(3 downto 0);
+        scs              : out std_logic;
+        swr              : out std_logic;
+        srd              : out std_logic;
+
+        -----------------------------------------------------------------------
+        -- AHB interface 
+        -----------------------------------------------------------------------
+        hresetn          : in std_logic;
+        hclk             : in std_logic;
+        haddr            : in std_logic_vector(31 downto 0);
+        hwdata           : in std_logic_vector(31 downto 0);
+        hsel             : in std_logic;
+        hwrite           : in std_logic;
+        hsize            : in std_logic_vector(2 downto 0);
+        hburst           : in std_logic_vector(2 downto 0);
+        hprot            : in std_logic_vector(3 downto 0);
+        htrans           : in std_logic_vector(1 downto 0);
+        hmastlock        : in std_logic;
+        hready           : in std_logic;
+        hreadyout        : out std_logic;
+        hresp            : out std_logic;
+        hrdata           : out std_logic_vector(31 downto 0)
+    );
+    end component;
    
     component bus_sampling is 
         generic(        

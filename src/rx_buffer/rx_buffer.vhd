@@ -984,4 +984,5 @@ begin
     --      cover (rec_dlc = "1111" and rec_is_rtr = '0' and commit_rx_frame = '1');
 
     -- <RELEASE_ON>
+
 end architecture;
