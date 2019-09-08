@@ -282,6 +282,7 @@ architecture rtl of can_core is
     signal drv_clr_rx_ctr          :     std_logic;
     signal drv_clr_tx_ctr          :     std_logic;
     signal drv_bus_mon_ena         :     std_logic;
+    signal drv_ena                 :     std_logic;
    
     ----------------------------------------------------------------------------
     ----------------------------------------------------------------------------
@@ -440,6 +441,7 @@ begin
     drv_clr_rx_ctr        <=  drv_bus(DRV_CLR_RX_CTR_INDEX);
     drv_clr_tx_ctr        <=  drv_bus(DRV_CLR_TX_CTR_INDEX);
     drv_bus_mon_ena       <=  drv_bus(DRV_BUS_MON_ENA_INDEX);
+    drv_ena               <=  drv_bus(DRV_ENA_INDEX);
 
     ----------------------------------------------------------------------------
     -- Protocol control
@@ -858,10 +860,11 @@ begin
                     rx_data_wbs;
 
     ---------------------------------------------------------------------------
-    -- In Bus monitoring mode, transmitted data to the bus are only recessive.
-    -- Otherwise transmitted data are stuffed data!
+    -- In Bus monitoring mode or when core is disabled, transmitted data to the
+    -- bus are only recessive. Otherwise transmitted data are stuffed data!
     ---------------------------------------------------------------------------
-    tx_data_wbs_i <= RECESSIVE when (drv_bus_mon_ena = '1') else
+    tx_data_wbs_i <= RECESSIVE when (drv_ena = CTU_CAN_DISABLED) else
+                     RECESSIVE when (drv_bus_mon_ena = '1') else
                      bst_data_out;
 
 
