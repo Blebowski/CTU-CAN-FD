@@ -581,7 +581,6 @@ static void ctucan_rotate_txb_prio(struct net_device *ndev)
 /**
  * xcan_tx_interrupt - Tx Done Isr
  * @ndev:	net_device pointer
- * @isr:	Interrupt status register value
  */
 static void ctucan_tx_interrupt(struct net_device *ndev)
 {
@@ -1244,6 +1243,7 @@ static void ctucan_pci_set_drvdata(struct device *dev,
 /**
  * ctucan_pci_probe - PCI registration call
  * @pdev:	Handle to the pci device structure
+ * @ent:	Pointer to the entry from ctucan_pci_tbl
  *
  * This function does all the memory allocation and registration for the CAN
  * device.
