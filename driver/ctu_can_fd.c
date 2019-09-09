@@ -446,7 +446,8 @@ static void ctucan_err_interrupt(struct net_device *ndev,
 			cf->data[6] = berr.txerr;
 			cf->data[7] = berr.rxerr;
 		} else {
-			netdev_warn(ndev, "    unhandled error state (%d)!", state);
+			netdev_warn(ndev, "    unhandled error state (%d)!",
+				    state);
 		}
 	} else if (isr.s.ewli) {
 err_warning:
@@ -753,7 +754,8 @@ static irqreturn_t ctucan_interrupt(int irq, void *dev_id)
 		/* Ignore RI, TI, LFI, RFI, BSI */
 	} while (irq_loops++ < 10000);
 
-	netdev_err(ndev, "%s: stuck interrupt (isr=0x%08x), stopping\n", __func__, isr.u32);
+	netdev_err(ndev, "%s: stuck interrupt (isr=0x%08x), stopping\n",
+		   __func__, isr.u32);
 
 	if (isr.s.txbhci) {
 		int i;
