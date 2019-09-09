@@ -186,7 +186,7 @@ architecture rtl of int_manager is
         (false,  -- RXI_IND
          false,  -- TXI_IND
          false,  -- EWLI_IND
-         true,   -- DOI_IND
+         false,  -- DOI_IND
          false,  -- EPI_IND
          false,  -- ALI_IND
          false,  -- BEI_IND

@@ -532,7 +532,7 @@
 					<ipxact:field>
 						<ipxact:name>RXI</ipxact:name>
 						<ipxact:displayName>RXI</ipxact:displayName>
-						<ipxact:description>Frame Received Interrupt. Interrupt set has priority over clear. </ipxact:description>
+						<ipxact:description>Frame Received Interrupt.</ipxact:description>
 						<ipxact:bitOffset>0</ipxact:bitOffset>
 						<ipxact:resets>
 							<ipxact:reset>
@@ -545,7 +545,7 @@
 					<ipxact:field>
 						<ipxact:name>TXI</ipxact:name>
 						<ipxact:displayName>TXI</ipxact:displayName>
-						<ipxact:description>Frame Transmitted Interrupt. Interrupt set has priority over clear.</ipxact:description>
+						<ipxact:description>Frame Transmitted Interrupt. </ipxact:description>
 						<ipxact:bitOffset>1</ipxact:bitOffset>
 						<ipxact:resets>
 							<ipxact:reset>
@@ -558,7 +558,7 @@
 					<ipxact:field>
 						<ipxact:name>EWLI</ipxact:name>
 						<ipxact:displayName>EWLI</ipxact:displayName>
-						<ipxact:description>Error Warning Limit interrupt. When TX Error Counter (TXC) or RX Error Counter (RXC) is equal or higher than EWL, condition for this interrupt is valid. When Interrupt is cleared and RXC, or TXC are still equal to or higher than EWL, Interrupt is set again. Interrupt set has priority over clear.</ipxact:description>
+						<ipxact:description>Error Warning Limit interrupt. When TX Error Counter (TXC) or RX Error Counter (RXC) is equal or higher than EWL, condition for this interrupt is valid. When Interrupt is cleared and RXC, or TXC are still equal to or higher than EWL, Interrupt is set again.</ipxact:description>
 						<ipxact:bitOffset>2</ipxact:bitOffset>
 						<ipxact:resets>
 							<ipxact:reset>
@@ -571,7 +571,7 @@
 					<ipxact:field>
 						<ipxact:name>DOI</ipxact:name>
 						<ipxact:displayName>DOI</ipxact:displayName>
-						<ipxact:description>Data Overrun on RX Buffer Interrupt. Before this interrupt is cleared , STATUS[DOR] must be cleared to avoid setting of this interrupt again. Interrupt clear has priority over set.</ipxact:description>
+						<ipxact:description>Data Overrun on RX Buffer Interrupt. Before this interrupt is cleared , STATUS[DOR] must be cleared to avoid setting of this interrupt again.</ipxact:description>
 						<ipxact:bitOffset>3</ipxact:bitOffset>
 						<ipxact:resets>
 							<ipxact:reset>
@@ -584,7 +584,7 @@
 					<ipxact:field>
 						<ipxact:name>FCSI</ipxact:name>
 						<ipxact:displayName>FCSI</ipxact:displayName>
-						<ipxact:description>Fault confinement state changed Interrupt. Interrupt is set when node turns Error Passive (from Error Active), Bus Off (from Error Passive) or Error Active (from Bus off after reintegration or from Error Passive). Interrupt set has priority over clear.</ipxact:description>
+						<ipxact:description>Fault confinement state changed Interrupt. Interrupt is set when node turns Error Passive (from Error Active), Bus Off (from Error Passive) or Error Active (from Bus off after reintegration or from Error Passive).</ipxact:description>
 						<ipxact:bitOffset>4</ipxact:bitOffset>
 						<ipxact:resets>
 							<ipxact:reset>
@@ -597,7 +597,7 @@
 					<ipxact:field>
 						<ipxact:name>ALI</ipxact:name>
 						<ipxact:displayName>ALI</ipxact:displayName>
-						<ipxact:description>Arbitration Lost Interrupt. Interrupt set has priority over clear.</ipxact:description>
+						<ipxact:description>Arbitration Lost Interrupt.</ipxact:description>
 						<ipxact:bitOffset>5</ipxact:bitOffset>
 						<ipxact:resets>
 							<ipxact:reset>
@@ -610,7 +610,7 @@
 					<ipxact:field>
 						<ipxact:name>BEI</ipxact:name>
 						<ipxact:displayName>BEI</ipxact:displayName>
-						<ipxact:description>Bus Error interrupt. Interrupt set has priority over clear.</ipxact:description>
+						<ipxact:description>Bus Error interrupt.</ipxact:description>
 						<ipxact:bitOffset>6</ipxact:bitOffset>
 						<ipxact:resets>
 							<ipxact:reset>
@@ -623,7 +623,7 @@
 					<ipxact:field>
 						<ipxact:name>RXFI</ipxact:name>
 						<ipxact:displayName>RXFI</ipxact:displayName>
-						<ipxact:description>Receive Buffer Full interrupt. Interrupt set has priority over clear.</ipxact:description>
+						<ipxact:description>Receive Buffer Full interrupt.</ipxact:description>
 						<ipxact:bitOffset>8</ipxact:bitOffset>
 						<ipxact:resets>
 							<ipxact:reset>
@@ -636,7 +636,7 @@
 					<ipxact:field>
 						<ipxact:name>BSI</ipxact:name>
 						<ipxact:displayName>BSI</ipxact:displayName>
-						<ipxact:description>Bit-Rate shifted interrupt. Interrupt set has priority over clear.</ipxact:description>
+						<ipxact:description>Bit-Rate shifted interrupt.</ipxact:description>
 						<ipxact:bitOffset>9</ipxact:bitOffset>
 						<ipxact:resets>
 							<ipxact:reset>
@@ -649,7 +649,7 @@
 					<ipxact:field>
 						<ipxact:name>RBNEI</ipxact:name>
 						<ipxact:displayName>RBNEI</ipxact:displayName>
-						<ipxact:description>Receive Buffer not empty interrupt. Clearing this interrupt and not reading out content of RX Buffer via RX_DATA will re-activate the interrupt. Interrupt set has priority over clear.</ipxact:description>
+						<ipxact:description>Receive Buffer not empty interrupt. Clearing this interrupt and not reading out content of RX Buffer via RX_DATA will re-activate the interrupt.</ipxact:description>
 						<ipxact:bitOffset>10</ipxact:bitOffset>
 						<ipxact:resets>
 							<ipxact:reset>
@@ -661,7 +661,7 @@
 					</ipxact:field>
 					<ipxact:field>
 						<ipxact:name>OFI</ipxact:name>
-						<ipxact:description>Overload frame Interrupt. Interrupt set has priority over clear.</ipxact:description>
+						<ipxact:description>Overload frame Interrupt.</ipxact:description>
 						<ipxact:bitOffset>7</ipxact:bitOffset>
 						<ipxact:resets>
 							<ipxact:reset>
@@ -674,7 +674,7 @@
 					<ipxact:field>
 						<ipxact:name>TXBHCI</ipxact:name>
 						<ipxact:displayName>TXBHCI</ipxact:displayName>
-						<ipxact:description>TX Buffer HW command interrupt. Anytime TX Buffer receives HW command from CAN Core which changes TXT Buffer state to TX Ok, Error or Aborted, this interrupt will be acivated. Interrupt set has priority over clear.</ipxact:description>
+						<ipxact:description>TX Buffer HW command interrupt. Anytime TX Buffer receives HW command from CAN Core which changes TXT Buffer state to TX Ok, Error or Aborted, this interrupt will be acivated.</ipxact:description>
 						<ipxact:bitOffset>11</ipxact:bitOffset>
 						<ipxact:resets>
 							<ipxact:reset>
