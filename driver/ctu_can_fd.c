@@ -665,11 +665,13 @@ clear:
 		spin_unlock_irqrestore(&priv->tx_lock, flags);
 
 		/* If no buffers were processed this time, wa cannot
-		 * clear - that would introduce a race condition. */
+		 * clear - that would introduce a race condition.
+		 */
 		if (some_buffers_processed) {
 			/* Clear the interrupt again as not to receive it again
 			 * for a buffer we already handled (possibly causing
-			 * the bug log) */
+			 * the bug log)
+			 */
 			ctu_can_fd_int_clr(&priv->p, icr);
 		}
 	} while (some_buffers_processed);
@@ -755,6 +757,7 @@ static irqreturn_t ctucan_interrupt(int irq, void *dev_id)
 
 	if (isr.s.txbhci) {
 		int i;
+
 		netdev_err(ndev, "txb_head=0x%08x txb_tail=0x%08x\n",
 			priv->txb_head, priv->txb_tail);
 		for (i = 0; i <= priv->txb_mask; i++) {
@@ -1132,11 +1135,13 @@ static int ctucan_platform_probe(struct platform_device *pdev)
 		goto err;
 	}
 
-	/*
+#if 0
+	/* tntxbufs should be used in future */
 	ret = of_property_read_u32(pdev->dev.of_node, "tntxbufs", &ntxbufs);
 	if (ret < 0)
 		goto err;
-	*/
+#endif
+
 	ntxbufs = 4;
 
 	ret = ctucan_probe_common(dev, addr, irq, ntxbufs, 0,
