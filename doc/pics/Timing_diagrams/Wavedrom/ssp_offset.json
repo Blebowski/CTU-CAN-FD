@@ -1,0 +1,18 @@
+{signal: [
+  {name: 'System clock', 				wave: 'p..................',
+   										node: '........a.......c..'},
+  
+  {name: 'Bit time segment', 			wave: '3...4...3..........', 	data: ['TSEG1', 'TSEG2', 'TSEG1'],
+   										node: '...................'},
+
+  {name: 'TX Trigger', 					wave: '0......10..........',
+   										node: '...................'},
+  
+  {name: 'Secondary Sampling Point', 	wave: '0..............10..',
+   										node: '...................'},
+  
+  {name: '', 							wave: '',
+   										node: '........b.......d..'},
+ ],
+  edge:['a-b','c-d', 'b<->d Secondary Sampling Point Offset'],
+}

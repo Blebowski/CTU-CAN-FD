@@ -1,0 +1,38 @@
+{signal: [
+  {name: 'clk_sys', 					wave: 'p..........', period:2,
+   										node: '.....................'},
+  
+  {name: 'scs', 						wave: '0.1...............0...',
+   										node: '......................'},
+
+  {name: 'swr', 						wave: '0.....................',
+   										node: '......................'},
+  
+  {name: 'srd', 						wave: '0.1...............0...',
+   										node: '......................'},
+
+  {name: 'sbe', 					    wave: '.x3.4.5.3.4.5.3.4.x...', 		data: ['1111','1111','1111', '1111','1111','1111','1111','1111','1111','1111','1111','1111','1111','1111','1111','1111'],
+   										node: '......................'},
+  
+  {name: 'address', 					wave: 'x.3.4.5.3.4.5.3.4.x...', 		data: [['tspan', {class:'h6'}, 'RX_DATA'],
+                                                                                   ['tspan', {class:'h6'}, 'RX_DATA'],
+                                                                                   ['tspan', {class:'h6'}, 'RX_DATA'],
+                                                                                   ['tspan', {class:'h6'}, 'RX_DATA'],
+                                                                                   ['tspan', {class:'h6'}, 'RX_DATA'],
+                                                                                   ['tspan', {class:'h6'}, 'RX_DATA'],
+                                                                                   ['tspan', {class:'h6'}, 'RX_DATA'],
+                                                                                   ['tspan', {class:'h6'}, 'RX_DATA'],],
+   										node: '......................'},
+  
+  {name: 'data_out', 					wave: '...x3.4.5.3.4.5.3.4.x.', 		data: [['tspan', {class:'h6'}, 'Data Word 1'],
+                                                                               ['tspan', {class:'h6'}, 'Data Word 2'],
+                                                                               ['tspan', {class:'h6'}, 'Data Word 3'],
+                                                                               ['tspan', {class:'h6'}, 'Data Word 4'],
+                                                                               ['tspan', {class:'h6'}, 'Data Word 5'],
+                                                                               ['tspan', {class:'h6'}, 'Data Word 6'],
+                                                                               ['tspan', {class:'h6'}, 'Data Word 7'],
+                                                                               ['tspan', {class:'h6'}, 'Data Word 8']],
+   										node: '......................'},
+ ],
+  edge:[''],
+}

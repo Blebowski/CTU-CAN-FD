@@ -1,0 +1,43 @@
+{signal: [
+  {name: 'hclk', 						wave: 'p................',
+   										node: '.................'},
+  
+  {name: 'hsel', 						wave: '01..0.1..0..1..0.',
+   										node: '.................'},
+
+  {name: 'hwrite', 						wave: '01..0.10.........',
+   										node: '.................'},
+  
+  {name: 'hready', 						wave: '1......01........',
+   										node: '.................'},
+  
+  {name: 'hsize', 					    wave: 'x345x.34.x..345x.', 		data: ['000','001','010', '010','010','000','001','010','BE 1','BE 2'],
+   										node: '.................'},
+  
+  {name: 'haddr', 						wave: 'x345x.34.x..345x.', 		data: ['0001','0002','0004', '0000','0004','0001','0002','0004','0004','0008'],
+   										node: '.................'},
+  
+  {name: 'hwdata', 						wave: 'x.345x.3.x.......', 		data: [['tspan', {class:'h6'}, 'Data 1'],
+                                                                               ['tspan', {class:'h6'}, 'Data 2'],
+                                                                               ['tspan', {class:'h6'}, 'Data 4'],
+                                                                               ['tspan', {class:'h6'}, 'Data 0'],
+                                                                               ['tspan', {class:'h6'}, 'Data 1'],
+                                                                               ['tspan', {class:'h6'}, 'Data 2'],
+                                                                               ['tspan', {class:'h6'}, 'Data 4']],
+   										node: '.................'},
+  
+  {name: 'hrdata', 						wave: 'x........4x..345x', 		data: [['tspan', {class:'h6'}, 'Data 4'],
+                                                                               ['tspan', {class:'h6'}, 'Data 1'],
+                                                                               ['tspan', {class:'h6'}, 'Data 2'],
+                                                                               ['tspan', {class:'h6'}, 'Data 4'],
+                                                                               ['tspan', {class:'h6'}, 'Data 4']],
+   										node: '................'},
+  
+ ],
+  edge:[''],
+ 
+ foot: {text:
+  ['tspan', '8/16/32 bit Write access                 Read after Write                            8/16/32 bit Read accesses',]
+}
+
+}
