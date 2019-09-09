@@ -446,7 +446,8 @@ static void ctucan_err_interrupt(struct net_device *ndev,
 			cf->data[6] = berr.txerr;
 			cf->data[7] = berr.rxerr;
 		} else {
-			netdev_warn(ndev, "    unhandled error state (%d)!", state);
+			netdev_warn(ndev, "    unhandled error state (%d)!",
+				    state);
 		}
 	} else if (isr.s.ewli) {
 err_warning:
@@ -581,7 +582,6 @@ static void ctucan_rotate_txb_prio(struct net_device *ndev)
 /**
  * xcan_tx_interrupt - Tx Done Isr
  * @ndev:	net_device pointer
- * @isr:	Interrupt status register value
  */
 static void ctucan_tx_interrupt(struct net_device *ndev)
 {
@@ -666,11 +666,13 @@ clear:
 		spin_unlock_irqrestore(&priv->tx_lock, flags);
 
 		/* If no buffers were processed this time, wa cannot
-		 * clear - that would introduce a race condition. */
+		 * clear - that would introduce a race condition.
+		 */
 		if (some_buffers_processed) {
 			/* Clear the interrupt again as not to receive it again
 			 * for a buffer we already handled (possibly causing
-			 * the bug log) */
+			 * the bug log)
+			 */
 			ctu_can_fd_int_clr(&priv->p, icr);
 		}
 	} while (some_buffers_processed);
@@ -752,14 +754,17 @@ static irqreturn_t ctucan_interrupt(int irq, void *dev_id)
 		/* Ignore RI, TI, LFI, RFI, BSI */
 	} while (irq_loops++ < 10000);
 
-	netdev_err(ndev, "%s: stuck interrupt (isr=0x%08x), stopping\n", __func__, isr.u32);
+	netdev_err(ndev, "%s: stuck interrupt (isr=0x%08x), stopping\n",
+		   __func__, isr.u32);
 
 	if (isr.s.txbhci) {
 		int i;
+
 		netdev_err(ndev, "txb_head=0x%08x txb_tail=0x%08x\n",
 			priv->txb_head, priv->txb_tail);
-		for (i = 0; i < 4; i++) {
+		for (i = 0; i <= priv->txb_mask; i++) {
 			u32 status = ctu_can_fd_get_tx_status(&priv->p, i);
+
 			netdev_err(ndev, "txb[%d] txb status=0x%08x\n",
 				i, status);
 		}
@@ -1132,11 +1137,13 @@ static int ctucan_platform_probe(struct platform_device *pdev)
 		goto err;
 	}
 
-	/*
+#if 0
+	/* tntxbufs should be used in future */
 	ret = of_property_read_u32(pdev->dev.of_node, "tntxbufs", &ntxbufs);
 	if (ret < 0)
 		goto err;
-	*/
+#endif
+
 	ntxbufs = 4;
 
 	ret = ctucan_probe_common(dev, addr, irq, ntxbufs, 0,
@@ -1244,6 +1251,7 @@ static void ctucan_pci_set_drvdata(struct device *dev,
 /**
  * ctucan_pci_probe - PCI registration call
  * @pdev:	Handle to the pci device structure
+ * @ent:	Pointer to the entry from ctucan_pci_tbl
  *
  * This function does all the memory allocation and registration for the CAN
  * device.

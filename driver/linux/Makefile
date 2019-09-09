@@ -21,12 +21,19 @@ MAKEARGS += $(if $(CROSS_COMPILE),CROSS_COMPILE=$(CROSS_COMPILE))
 
 $(warning "$(MAKEARGS)")
 
+.PHONY: default checkpatch clean
+
 default:
 	$(MAKE) $(MAKEARGS) M=$$PWD
 ifneq ($(INSTALL_DIR),)
 	-rm -f $(INSTALL_DIR)/ctucanfd.ko
 	cp ctucanfd.ko $(INSTALL_DIR)/
 endif
+
+CTUCANF_SOURCES = ctu_can_fd.c ctu_can_fd_hw.c ctu_can_fd_frame.h ctu_can_fd_hw.h ctu_can_fd_regs.h
+
+checkpatch:
+	cd $(KDIR) && $(KDIR)/source/scripts/checkpatch.pl -f $(CTUCANF_SOURCES:%=$(PWD)/%)
 
 clean:
 	$(MAKE) $(MAKEARGS) M=$$PWD clean
