@@ -202,8 +202,6 @@ void ctu_can_fd_set_mode_reg(struct ctucanfd_priv *priv,
 	priv->write_reg(priv, CTU_CAN_FD_MODE, reg.u32);
 }
 
-/* TODO: use atomic 16bit accesses instead of read-modify-write */
-
 void ctu_can_fd_rel_rx_buf(struct ctucanfd_priv *priv)
 {
 	union ctu_can_fd_command reg;
@@ -235,9 +233,6 @@ void ctu_can_fd_abort_tx(struct ctucanfd_priv *priv)
 	priv->write_reg(priv, CTU_CAN_FD_COMMAND, reg.u32);
 }
 
-// TODO: rather than set(value, mask) interface, provide
-//       native set(val), clr(val) interface to potentially
-//       avoid unnecessary write
 static void ctu_can_fd_int_conf(struct ctucanfd_priv *priv,
 				enum ctu_can_fd_can_registers sreg,
 				enum ctu_can_fd_can_registers creg,
