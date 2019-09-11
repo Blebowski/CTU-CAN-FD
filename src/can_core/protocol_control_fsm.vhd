@@ -2391,9 +2391,7 @@ begin
                     else
                         ctrl_ctr_pload_val <= C_INTERMISSION_DURATION;
                     end if;
-                end if;
-
-                if (rx_data_nbs = DOMINANT) then
+                elsif (rx_data_nbs = DOMINANT) then
                     form_err_i <= '1';
                 end if;
 
@@ -2441,9 +2439,7 @@ begin
                     else
                         ctrl_ctr_pload_val <= C_INTERMISSION_DURATION;
                     end if;
-                end if;
-                
-                if (rx_data_nbs = DOMINANT) then
+                elsif (rx_data_nbs = DOMINANT) then
                     form_err_i <= '1';
                 end if;
 
