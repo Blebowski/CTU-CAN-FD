@@ -1054,6 +1054,11 @@ begin
     --  (sync_control = HARD_SYNC) -> (sp_control = NOMINAL_SAMPLE)
     --  report "Hard synchronisation shall be used in Nominal bit rate only!"
     --  severity error;
-
+    
+    -- psl no_simul_err_req_asrt : assert never
+    --  (tran_valid = '1' and err_frm_req = '1')
+    -- report "Tranmission OK and Error frame request can't occur at once!"
+    -- severity error;
+    
     -- <RELEASE_ON>
 end architecture;
