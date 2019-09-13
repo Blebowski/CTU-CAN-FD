@@ -44,7 +44,8 @@
 --  RX Buffer RAM
 --
 -- Purpose:
---  Wrapper for dual port RAM on RX Buffer!
+--  Wrapper for dual port RAM on RX Buffer! Port A - write only, Port B - read
+--  only.
 --
 -- Memory parameters:
 --  Depth: G_RX_BUFF_SIZE
