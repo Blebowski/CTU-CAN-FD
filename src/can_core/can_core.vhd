@@ -263,8 +263,8 @@ entity can_core is
         -- Secondary sample point reset
         ssp_reset           :out  std_logic; 
 
-        -- Enable measurement of Transciever delay
-        trv_delay_calib     :out  std_logic;
+        -- Enable measurement of Transmitter delay
+        tran_delay_meas     :out  std_logic;
 
         -- Bit Error detected 
         bit_err             :in   std_logic;
@@ -351,7 +351,7 @@ architecture rtl of can_core is
     signal sp_control_q            :    std_logic_vector(1 downto 0);
     signal sync_control_i          :    std_logic_vector(1 downto 0); 
     signal ssp_reset_i             :    std_logic;
-    signal trv_delay_calib_i       :    std_logic;
+    signal tran_delay_meas_i       :    std_logic;
     signal tran_valid_i            :    std_logic;
     signal rec_valid_i             :    std_logic;
     signal ack_received_i          :    std_logic;
@@ -560,7 +560,7 @@ begin
         sync_control            => sync_control_i,      -- OUT
         no_pos_resync           => no_pos_resync,       -- OUT
         ssp_reset               => ssp_reset_i,         -- OUT
-        trv_delay_calib         => trv_delay_calib_i,   -- OUT
+        tran_delay_meas         => tran_delay_meas_i,   -- OUT
         tran_valid              => tran_valid_i,        -- OUT
         rec_valid               => rec_valid_i,         -- OUT
         
@@ -956,8 +956,8 @@ begin
     stat_bus(STAT_SSP_RESET_INDEX) <=
         ssp_reset_i;
 
-    stat_bus(STAT_TRV_DELAY_CALIB_INDEX) <=
-        trv_delay_calib_i;
+    stat_bus(STAT_TRAN_DELAY_MEAS_INDEX) <=
+        tran_delay_meas_i;
 
     stat_bus(STAT_SYNC_CONTROL_HIGH downto STAT_SYNC_CONTROL_LOW) <= 
         sync_control_i;
@@ -1152,9 +1152,9 @@ begin
     tx_data_wbs <= tx_data_wbs_i;
     sp_control <= sp_control_i;
     ssp_reset <= ssp_reset_i;
-    trv_delay_calib <= trv_delay_calib_i;
+    tran_delay_meas <= tran_delay_meas_i;
     is_bus_off <= is_bus_off_i;
     sof_pulse <= sof_pulse_i;
     is_overload <= is_overload_i;
- 
+    
 end architecture;

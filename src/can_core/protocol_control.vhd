@@ -373,8 +373,8 @@ entity protocol_control is
         -- Clear the Shift register for secondary sampling point.
         ssp_reset               :out  std_logic;
         
-        -- Enable measurement of Transciever delay
-        trv_delay_calib         :out  std_logic;
+        -- Enable measurement of Transmitter delay
+        tran_delay_meas         :out  std_logic;
 
         -- Transmitted frame is valid
         tran_valid              :out  std_logic;
@@ -786,7 +786,7 @@ begin
         sync_control            => sync_control,            -- OUT
         no_pos_resync           => no_pos_resync,           -- OUT
         ssp_reset               => ssp_reset,               -- OUT
-        trv_delay_calib         => trv_delay_calib,         -- OUT
+        tran_delay_meas         => tran_delay_meas,         -- OUT
         tran_valid              => tran_valid,              -- OUT
         ack_received            => ack_received,            -- OUT
         crc_enable              => crc_enable,              -- OUT

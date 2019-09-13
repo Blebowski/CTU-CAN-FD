@@ -148,8 +148,8 @@ entity trv_delay_measurement is
         -- Stop measurement (on RX Edge)
         edge_rx_valid           :in   std_logic;
         
-        -- Measurement enabled (by Protocol control)
-        trv_delay_calib         :in   std_logic;
+        -- Transmitter delay measurement enabled (by Protocol control)
+        tran_delay_meas         :in   std_logic;
 
         ------------------------------------------------------------------------
         -- Memory registers interface
@@ -225,7 +225,7 @@ begin
     --  3. Stop measurement when enabled  and "edge_rx_valid"
     --  4. Keep value otherwise.
     ----------------------------------------------------------------------------
-    trv_meas_progress_d <= '0' when (trv_delay_calib = '0') else
+    trv_meas_progress_d <= '0' when (tran_delay_meas = '0') else
                              '1' when (edge_tx_valid = '1') else
                              '0' when (edge_rx_valid = '1') else
                              trv_meas_progress_q;
@@ -247,7 +247,7 @@ begin
     ----------------------------------------------------------------------------
     -- Reset counter for transceiver delay upon start of measurement.
     ----------------------------------------------------------------------------
-    trv_delay_ctr_rst_d <= G_RESET_POLARITY when (trv_delay_calib = '1' and
+    trv_delay_ctr_rst_d <= G_RESET_POLARITY when (tran_delay_meas = '1' and
                                                   edge_tx_valid = '1')
                                             else
                            G_RESET_POLARITY when (res_n = G_RESET_POLARITY)

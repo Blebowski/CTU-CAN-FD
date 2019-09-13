@@ -437,8 +437,8 @@ architecture rtl of can_top_level is
     -- Secondary sample point reset
     signal ssp_reset            :  std_logic; 
 
-    -- Enable measurement of Transciever delay
-    signal trv_delay_calib      :  std_logic;
+    -- Enable measurement of Transmitter delay
+    signal tran_delay_meas      :  std_logic;
 
     -- Bit Error detected 
     signal bit_err              :  std_logic;
@@ -808,7 +808,7 @@ begin
         -- Others
         timestamp               => timestamp,       -- IN
         ssp_reset               => ssp_reset,       -- OUT
-        trv_delay_calib         => trv_delay_calib, -- OUT
+        tran_delay_meas         => tran_delay_meas, -- OUT
         bit_err                 => bit_err,         -- IN
         sample_sec              => sample_sec       -- IN
     );
@@ -887,7 +887,7 @@ begin
         rx_data_wbs             => rx_data_wbs,     -- OUT
         sp_control              => sp_control,      -- IN
         ssp_reset               => ssp_reset,       -- IN
-        trv_delay_calib         => trv_delay_calib, -- IN
+        tran_delay_meas         => tran_delay_meas, -- IN
         sample_sec              => sample_sec,      -- OUT
         bit_err                 => bit_err          -- OUT
     );

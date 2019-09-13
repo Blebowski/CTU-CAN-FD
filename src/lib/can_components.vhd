@@ -36,7 +36,7 @@
 -- The CAN protocol is developed by Robert Bosch GmbH and protected by patents.
 -- Anybody who wants to implement this IP core on silicon has to obtain a CAN
 -- protocol license from Bosch.
--- 
+-- t
 --------------------------------------------------------------------------------
 
 --------------------------------------------------------------------------------
@@ -254,8 +254,8 @@ package can_components is
             -- Reset for Secondary Sampling point Shift register.
             ssp_reset            :in   std_logic;
     
-            -- Calibration command for transciever delay compenstation
-            trv_delay_calib      :in   std_logic; 
+            -- Enable measurement of transmitter delay
+            tran_delay_meas      :in   std_logic; 
     
             -- Secondary sampling RX trigger
             sample_sec           :out  std_logic;
@@ -432,8 +432,8 @@ package can_components is
         -- Stop measurement (on RX Edge)
         edge_rx_valid       :in   std_logic;
         
-        -- Transceiver Delay Measurement enabled (by Protocol control)
-        trv_delay_calib     :in   std_logic;
+        -- Enable measurement of transmitter delay
+        tran_delay_meas      :in   std_logic; 
 
         ------------------------------------------------------------------------
         -- Memory registers interface
@@ -1790,8 +1790,8 @@ package can_components is
         -- Clear the Shift register for secondary sampling point.
         ssp_reset               :out   std_logic;
 
-        -- Enable measurement of Transciever delay
-        trv_delay_calib         :out   std_logic;
+        -- Enable measurement of transmitter delay
+        tran_delay_meas         :out   std_logic; 
 
         -- Protocol control FSM state output
         pc_state                :out   t_protocol_control_state;
@@ -2126,8 +2126,8 @@ package can_components is
         -- Clear the Shift register for secondary sampling point.
         ssp_reset               :out  std_logic;
         
-        -- Enable measurement of Transciever delay
-        trv_delay_calib         :out  std_logic;
+        -- Enable measurement of transmitter delay
+        tran_delay_meas         :out   std_logic; 
 
         -- Transmitted frame is valid
         tran_valid              :out  std_logic;
@@ -2644,8 +2644,8 @@ package can_components is
         -- Secondary sample point reset
         ssp_reset           :out  std_logic; 
 
-        -- Enable measurement of Transciever delay
-        trv_delay_calib     :out  std_logic;
+        -- Enable measurement of Transmitter delay
+        tran_delay_meas     :out  std_logic;
 
         -- Bit Error detected 
         bit_err             :in   std_logic;

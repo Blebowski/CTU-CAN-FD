@@ -141,8 +141,8 @@ entity bus_sampling is
         -- Reset for Secondary Sampling point Shift register.
         ssp_reset            :in   std_logic;
 
-        -- Calibration command for transciever delay compenstation
-        trv_delay_calib      :in   std_logic; 
+        -- Measure transmitter delay
+        tran_delay_meas      :in   std_logic; 
 
         -- Secondary sampling RX trigger
         sample_sec           :out  std_logic;
@@ -276,7 +276,7 @@ begin
 
         edge_tx_valid          => edge_tx_valid,            -- IN
         edge_rx_valid          => edge_rx_valid,            -- IN
-        trv_delay_calib        => trv_delay_calib,          -- IN
+        tran_delay_meas        => tran_delay_meas,          -- IN
         ssp_offset             => drv_ssp_offset,           -- IN                    
         ssp_delay_select       => drv_ssp_delay_select,     -- IN
         
