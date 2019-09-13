@@ -402,12 +402,19 @@ begin
     --  2. Release Receive Buffer command - drv_erase_rx.
     -- To avoid glitches a DFF is inserted after the reset!
     ----------------------------------------------------------------------------
-    rx_buf_res_d <= G_RESET_POLARITY when (res_n = G_RESET_POLARITY) else
-                    G_RESET_POLARITY when (drv_erase_rx = '1') else
+    rx_buf_res_d <= G_RESET_POLARITY when (drv_erase_rx = '1') else
                     (not G_RESET_POLARITY);
 
-    res_reg_inst : dff
+    res_reg_inst : dff_arst
+    generic map(
+        G_RESET_POLARITY   => G_RESET_POLARITY,
+        
+        -- Reset to the same value as is polarity of reset so that other DFFs
+        -- which are reset by output of this one will be reset too!
+        G_RST_VAL          => G_RESET_POLARITY
+    )
     port map(
+        arst               => res_n,                -- IN
         clk                => clk_sys,              -- IN
         input              => rx_buf_res_d,         -- IN
 

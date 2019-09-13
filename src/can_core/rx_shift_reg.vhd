@@ -196,13 +196,19 @@ architecture rtl of rx_shift_reg is
 begin
 
      -- Internal reset: Async reset + reset by design!
-    res_n_i_d <= G_RESET_POLARITY when (res_n = G_RESET_POLARITY or 
-                                        rx_clear = '1')
-                                  else
+    res_n_i_d <= G_RESET_POLARITY when (rx_clear = '1') else
                  not (G_RESET_POLARITY);
 
-    rx_shift_res_reg_inst : dff
+    rx_shift_res_reg_inst : dff_arst
+    generic map(
+        G_RESET_POLARITY   => G_RESET_POLARITY,
+        
+        -- Reset to the same value as is polarity of reset so that other DFFs
+        -- which are reset by output of this one will be reset too!
+        G_RST_VAL          => G_RESET_POLARITY
+    )
     port map(
+        arst               => res_n,          -- IN
         clk                => clk_sys,        -- IN
         input              => res_n_i_d,      -- IN
 

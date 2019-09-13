@@ -144,16 +144,22 @@ begin
     ----------------------------------------------------------------------------
     -- Reset registers
     ----------------------------------------------------------------------------
-    tx_ctr_rst_d <= G_RESET_POLARITY when (res_n = G_RESET_POLARITY) else
-                    G_RESET_POLARITY when (clear_tx_ctr = '1') else
+    tx_ctr_rst_d <= G_RESET_POLARITY when (clear_tx_ctr = '1') else
                     (not G_RESET_POLARITY);
     
-    rx_ctr_rst_d <= G_RESET_POLARITY when (res_n = G_RESET_POLARITY) else
-                    G_RESET_POLARITY when (clear_rx_ctr = '1') else
+    rx_ctr_rst_d <= G_RESET_POLARITY when (clear_rx_ctr = '1') else
                     (not G_RESET_POLARITY);                
     
-    tx_ctr_res_inst : dff
+    tx_ctr_res_inst : dff_arst
+    generic map(
+        G_RESET_POLARITY   => G_RESET_POLARITY,
+        
+        -- Reset to the same value as is polarity of reset so that other DFFs
+        -- which are reset by output of this one will be reset too!
+        G_RST_VAL          => G_RESET_POLARITY
+    )
     port map(
+        arst               => res_n,                -- IN
         clk                => clk_sys,              -- IN
         input              => tx_ctr_rst_d,         -- IN
 

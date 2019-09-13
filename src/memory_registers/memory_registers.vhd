@@ -280,6 +280,8 @@ architecture rtl of memory_registers is
     signal soft_res_q             :     std_logic;
     signal soft_res_q_n           :     std_logic;
 
+    constant C_NOT_RESET_POLARITY :     std_logic := not G_RESET_POLARITY;
+
     ---------------------------------------------------------------------------
     -- 
     ---------------------------------------------------------------------------
@@ -423,8 +425,21 @@ begin
     ----------------------------------------------------------------------------
     -- Pipeline on Soft reset register.
     ----------------------------------------------------------------------------
-    soft_res_reg_inst : dff
+    soft_res_reg_inst : dff_arst
+    generic map(
+        G_RESET_POLARITY   => G_RESET_POLARITY,
+        
+        -- Reset to oposite value as polarity of soft reset! Since Soft reset
+        -- DFF is ANDed with res_n itself, res_n will cause system reset to be
+        -- low. Additionally, if system reset will be de-asserted, then Soft 
+        -- reset already will be high and System reset will become inactive and 
+        -- will not depend on MODE[RST] value combinatorially decoded from input 
+        -- of CTU CAN FD!
+        G_RST_VAL          => '0'
+    )
     port map(
+        arst               => res_n,                                    -- IN
+    
         clk                => clk_sys,                                  -- IN
         input              => control_registers_out.mode(RST_IND),      -- IN
 
@@ -441,6 +456,7 @@ begin
     end generate;
 
     res_pol_1_gen : if (G_RESET_POLARITY = '1') generate
+        soft_res_q_n <= '0';
         res_out_i <= res_n OR soft_res_q;
     end generate;
     

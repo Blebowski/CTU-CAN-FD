@@ -250,12 +250,18 @@ begin
     trv_delay_ctr_rst_d <= G_RESET_POLARITY when (tran_delay_meas = '1' and
                                                   edge_tx_valid = '1')
                                             else
-                           G_RESET_POLARITY when (res_n = G_RESET_POLARITY)
-                                            else
                            not G_RESET_POLARITY; 
     
-    trv_delay_rst_reg_inst : dff
+    trv_delay_rst_reg_inst : dff_arst
+    generic map(
+        G_RESET_POLARITY   => G_RESET_POLARITY,
+        
+        -- Reset to the same value as is polarity of reset so that other DFFs
+        -- which are reset by output of this one will be reset too!
+        G_RST_VAL          => G_RESET_POLARITY
+    )
     port map(
+        arst               => res_n,                -- IN
         clk                => clk_sys,              -- IN
         input              => trv_delay_ctr_rst_d,  -- IN
 

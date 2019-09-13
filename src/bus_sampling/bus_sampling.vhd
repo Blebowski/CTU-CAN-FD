@@ -307,16 +307,22 @@ begin
     ----------------------------------------------------------------------------
     -- Reset for shift registers for secondary sampling point
     ----------------------------------------------------------------------------
-    shift_regs_res_d <= G_RESET_POLARITY when (res_n = G_RESET_POLARITY) or
-                                              (ssp_reset = '1')
-                                         else
+    shift_regs_res_d <= G_RESET_POLARITY when (ssp_reset = '1') else
                         (not G_RESET_POLARITY);
 
     ----------------------------------------------------------------------------
     -- Pipeline reset for shift registers to avoid glitches!
     ----------------------------------------------------------------------------
-    shift_regs_rst_reg_inst : dff
+    shift_regs_rst_reg_inst : dff_arst
+    generic map(
+        G_RESET_POLARITY   => G_RESET_POLARITY,
+        
+        -- Reset to the same value as is polarity of reset so that other DFFs
+        -- which are reset by output of this one will be reset too!
+        G_RST_VAL          => G_RESET_POLARITY
+    )
     port map(
+        arst               => res_n,                -- IN
         clk                => clk_sys,              -- IN
         input              => shift_regs_res_d,     -- IN
         
