@@ -487,7 +487,7 @@ CTU CAN FD IP Core
 \begin_inset Text
 
 \begin_layout Plain Layout
-
+Version 0.1
 \end_layout
 
 \end_inset
@@ -515,7 +515,7 @@ CTU CAN FD IP Core
 \begin_inset Text
 
 \begin_layout Plain Layout
-Document Version
+Document version
 \end_layout
 
 \end_inset
@@ -571,7 +571,7 @@ Ondrej Ille
 \begin_inset Text
 
 \begin_layout Plain Layout
-09-2019
+13-09-2019
 \end_layout
 
 \end_inset
@@ -580,7 +580,7 @@ Ondrej Ille
 \begin_inset Text
 
 \begin_layout Plain Layout
-Initial version - Separated stand-alone architecture document from Datasheet
+Initial version - separated stand-alone architecture document from Datasheet
  document.
 \end_layout
 
@@ -685,6 +685,12 @@ literal "false"
 \end_inset
 
 .
+\end_layout
+
+\begin_layout Itemize
+Open issues and TODOs are written in blue font like so 
+\color blue
+TODO: not yet implemented.
 \end_layout
 
 \begin_layout Chapter
@@ -1180,7 +1186,7 @@ status open
 \noindent
 \align center
 \begin_inset Tabular
-<lyxtabular version="3" rows="16" columns="3">
+<lyxtabular version="3" rows="6" columns="3">
 <features tabularvalignment="middle">
 <column alignment="left" valignment="middle" width="15.5line%">
 <column alignment="left" valignment="top" width="10line%">
@@ -1370,7 +1376,7 @@ No padding is inserted since full sized frames are supported.
 </cell>
 </row>
 <row>
-<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+<cell alignment="left" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -1379,7 +1385,7 @@ LLC Abort Interface
 
 \end_inset
 </cell>
-<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+<cell alignment="left" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -1388,36 +1394,137 @@ Supported
 
 \end_inset
 </cell>
+<cell alignment="left" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Issuing Set abort command to TXT buffer which is used for transmission is
+ equal to issuing 
+\color red
+LData.Abort_Request
+\color inherit
+ /
+\color red
+ LRemote.Abort_Request
+\color inherit
+ primitive.
+\end_layout
+
+\end_inset
+</cell>
+</row>
+</lyxtabular>
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\noindent
+\align center
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+ISO11989-1 optional features (1)
+\begin_inset CommandInset label
+LatexCommand label
+name "tab:iso-optional-features"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float table
+placement H
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\noindent
+\align center
+\begin_inset Tabular
+<lyxtabular version="3" rows="16" columns="3">
+<features tabularvalignment="middle">
+<column alignment="left" valignment="middle" width="15.5line%">
+<column alignment="left" valignment="top" width="10line%">
+<column alignment="left" valignment="top" width="65line%">
+<row>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Feature Name
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+cellcolor{gray}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Status
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+cellcolor{gray}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
 <cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
-Issuing 
-\begin_inset Quotes eld
+Notes
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+cellcolor{gray}
+\end_layout
+
 \end_inset
 
-Set Abort
-\begin_inset Quotes erd
-\end_inset
 
- command to TXT Buffer which is used for transmission is equal to issuing
- 
-\begin_inset Quotes eld
-\end_inset
-
-LData.Abort_Request
-\begin_inset Quotes erd
-\end_inset
-
-/
-\begin_inset Quotes erd
-\end_inset
-
-LRemote.Abort_Request
-\begin_inset Quotes erd
-\end_inset
-
- primitive.
 \end_layout
 
 \end_inset
@@ -1730,7 +1837,7 @@ Supported via SETTINGS[RTRLE] and SETTINGS[RTRTH] registers.
 </cell>
 </row>
 <row newpage="true">
-<cell alignment="left" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -1739,7 +1846,7 @@ Maximum number of retransmissions
 
 \end_inset
 </cell>
-<cell alignment="left" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -1758,125 +1865,8 @@ Supported
 \end_inset
 </cell>
 </row>
-</lyxtabular>
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Plain Layout
-\noindent
-\align center
-\begin_inset Caption Standard
-
-\begin_layout Plain Layout
-ISO11989-1 optional features (1)
-\begin_inset CommandInset label
-LatexCommand label
-name "tab:iso-optional-features"
-
-\end_inset
-
-
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Standard
-\begin_inset Float table
-placement H
-wide false
-sideways false
-status open
-
-\begin_layout Plain Layout
-\noindent
-\align center
-\begin_inset Tabular
-<lyxtabular version="3" rows="6" columns="3">
-<features tabularvalignment="middle">
-<column alignment="left" valignment="middle" width="15.5line%">
-<column alignment="left" valignment="top" width="10line%">
-<column alignment="left" valignment="top" width="65line%">
 <row>
-<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-Feature Name
-\begin_inset ERT
-status open
-
-\begin_layout Plain Layout
-
-
-\backslash
-cellcolor{gray}
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-Status
-\begin_inset ERT
-status open
-
-\begin_layout Plain Layout
-
-
-\backslash
-cellcolor{gray}
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-Notes
-\begin_inset ERT
-status open
-
-\begin_layout Plain Layout
-
-
-\backslash
-cellcolor{gray}
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
-\end_inset
-</cell>
-</row>
-<row>
-<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -1885,7 +1875,7 @@ Disabling of protocol exception event on res bit detected recessive
 
 \end_inset
 </cell>
-<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -1894,7 +1884,7 @@ Not Supported
 
 \end_inset
 </cell>
-<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+<cell alignment="left" valignment="top" bottomline="true" leftline="true" rightline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -1922,7 +1912,7 @@ protocol exception event
 </cell>
 </row>
 <row>
-<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -1931,7 +1921,7 @@ PCS_Status
 
 \end_inset
 </cell>
-<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -1940,7 +1930,7 @@ Supported
 
 \end_inset
 </cell>
-<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+<cell alignment="left" valignment="top" bottomline="true" leftline="true" rightline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -1959,7 +1949,7 @@ data
 </cell>
 </row>
 <row>
-<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -1968,7 +1958,7 @@ Edge filtering during the bus integration state
 
 \end_inset
 </cell>
-<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -1977,7 +1967,7 @@ Not Supported
 
 \end_inset
 </cell>
-<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+<cell alignment="left" valignment="top" bottomline="true" leftline="true" rightline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -1988,7 +1978,7 @@ Not Supported
 </cell>
 </row>
 <row>
-<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -1997,7 +1987,7 @@ Time resolution for SSP placement
 
 \end_inset
 </cell>
-<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -2006,7 +1996,7 @@ Not Supported
 
 \end_inset
 </cell>
-<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+<cell alignment="left" valignment="top" bottomline="true" leftline="true" rightline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -2025,7 +2015,7 @@ minimum time quanta
 </cell>
 </row>
 <row>
-<cell alignment="left" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -2034,7 +2024,7 @@ FD_T/R message
 
 \end_inset
 </cell>
-<cell alignment="left" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -2043,7 +2033,7 @@ Supported
 
 \end_inset
 </cell>
-<cell alignment="left" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+<cell alignment="left" valignment="top" bottomline="true" leftline="true" rightline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -2066,7 +2056,7 @@ Supported
 \begin_inset Caption Standard
 
 \begin_layout Plain Layout
-ISO11989-1 optional features (2)
+ISO11989-1 optional features (1)
 \begin_inset CommandInset label
 LatexCommand label
 name "tab:iso-optional-features-1"
@@ -2734,7 +2724,7 @@ status open
 \noindent
 \align center
 \begin_inset Graphics
-	filename /DOKUMENTY/Skola/CVUT-FEL/ctu_can_fd_2/doc/pics/Timing_diagrams/PDFs/ram_like.pdf
+	filename ../pics/Timing_diagrams/PDFs/ram_like.pdf
 	lyxscale 20
 	scale 75
 
@@ -2778,7 +2768,7 @@ status open
 \noindent
 \align center
 \begin_inset Graphics
-	filename /DOKUMENTY/Skola/CVUT-FEL/ctu_can_fd_2/doc/pics/Timing_diagrams/PDFs/ram_like_fifo_read.pdf
+	filename ../pics/Timing_diagrams/PDFs/ram_like_fifo_read.pdf
 	lyxscale 20
 	scale 66
 
@@ -3870,7 +3860,7 @@ status open
 \noindent
 \align center
 \begin_inset Graphics
-	filename /DOKUMENTY/Skola/CVUT-FEL/ctu_can_fd_2/doc/pics/Timing_diagrams/PDFs/apb_access.pdf
+	filename ../pics/Timing_diagrams/PDFs/apb_access.pdf
 	lyxscale 20
 	scale 75
 
@@ -4658,7 +4648,7 @@ status open
 \noindent
 \align center
 \begin_inset Graphics
-	filename /DOKUMENTY/Skola/CVUT-FEL/ctu_can_fd_2/doc/pics/Timing_diagrams/PDFs/ahb_access.pdf
+	filename ../pics/Timing_diagrams/PDFs/ahb_access.pdf
 	lyxscale 20
 	scale 75
 
@@ -5995,7 +5985,7 @@ status open
 \noindent
 \align center
 \begin_inset Graphics
-	filename /DOKUMENTY/Skola/CVUT-FEL/ctu_can_fd_2/doc/pics/Timing_diagrams/PDFs/reset_sequence.pdf
+	filename ../pics/Timing_diagrams/PDFs/reset_sequence.pdf
 	lyxscale 20
 	scale 80
 
@@ -6101,17 +6091,8 @@ noprefix "false"
  All DFFs are active on positive clock edge (to mitigate effects of clock
  duty-cycle).
  CTU CAN FD is latch free.
- CTU CAN FD also contains several registers without set and reset.
- These are used only to register reset signals for other registers.
- All registers without set and reset are wrapped in dedicated entity 
-\begin_inset Quotes eld
-\end_inset
-
-dff
-\begin_inset Quotes erd
-\end_inset
-
-.
+ The facts can be used as a sanity check that there should be no DFFs without
+ Set and Reset within CTU CAN FD after synthesis.
 \end_layout
 
 \begin_layout Section
@@ -6371,7 +6352,9 @@ Memories are not initialized, nor reset.
  Each memory is synchronous memory with one clock cycle latency on data
  read and one cycle write access latency.
  Both memories are dual port memories with write-only port A and read-only
- port B.
+ port B and the same clock signal is used to clock both ports.
+ If true dual port memories are used, write data/enable of Port B shall
+ be driven to 0.
  An example of memory access is shown in Figure 
 \begin_inset CommandInset ref
 LatexCommand ref
@@ -6412,7 +6395,7 @@ status open
 <column alignment="left" valignment="top" width="0.8cm">
 <column alignment="left" valignment="top" width="2.4cm">
 <column alignment="left" valignment="top" width="0pt">
-<column alignment="left" valignment="top" width="0pt">
+<column alignment="left" valignment="top" width="6.5line%">
 <column alignment="left" valignment="top" width="1cm">
 <column alignment="left" valignment="top" width="1.1cm">
 <column alignment="left" valignment="top" width="1.1cm">
@@ -6681,10 +6664,11 @@ rx_buffer_ram
 \begin_inset Text
 
 \begin_layout Plain Layout
+32-
+\end_layout
 
-\series bold
-\shape italic
-rx_buffer_size
+\begin_layout Plain Layout
+4096
 \end_layout
 
 \end_inset
@@ -6995,7 +6979,7 @@ status open
 \noindent
 \align center
 \begin_inset Graphics
-	filename /DOKUMENTY/Skola/CVUT-FEL/ctu_can_fd_2/doc/pics/Timing_diagrams/PDFs/pipeline_example.pdf
+	filename ../pics/Timing_diagrams/PDFs/pipeline_example.pdf
 	lyxscale 20
 	scale 80
 
@@ -9343,6 +9327,42 @@ CRC_INIT_VECTOR
  is 0.
 \end_layout
 
+\begin_layout Section
+Integration vs.
+ Reintegration
+\end_layout
+
+\begin_layout Standard
+In this document term 
+\begin_inset Quotes eld
+\end_inset
+
+Integration
+\begin_inset Quotes erd
+\end_inset
+
+ means attempt to detect 11 consecutive 
+\color red
+recessive
+\color inherit
+ bits after logic 1 was written to SETTINGS[ENA] (CTU CAN FD was turned
+ on).
+ Term 
+\begin_inset Quotes eld
+\end_inset
+
+Reintegration
+\begin_inset Quotes erd
+\end_inset
+
+ means attempt to detect 128 ocurrences of 11 consecutive recessive bits
+ after node went 
+\color red
+bus off
+\color inherit
+ and logic 1 was written to COMMAND[ERCRST] (SW Requests to rejoin the bus).
+\end_layout
+
 \begin_layout Standard
 \begin_inset Newpage pagebreak
 \end_inset
@@ -9363,7 +9383,7 @@ Transmission and reception of CAN frame.
 \end_layout
 
 \begin_layout Itemize
-Control of TXT Buffers and RX Buffer.
+Control of TXT buffers and RX buffer.
 \end_layout
 
 \begin_layout Itemize
@@ -9375,17 +9395,13 @@ Bit stuffing
 \color red
 bit destuffing
 \color inherit
-.
-\end_layout
-
-\begin_layout Itemize
-
+,
 \color red
-CRC calculation
+ CRC calculation
 \color inherit
  and 
 \color red
-CRC checking
+CRC check
 \color inherit
 .
 \end_layout
@@ -9393,17 +9409,9 @@ CRC checking
 \begin_layout Itemize
 
 \color red
-Fault confinement
+Fault confinement 
 \color inherit
-.
-\end_layout
-
-\begin_layout Itemize
-Bus traffic counters.
-\end_layout
-
-\begin_layout Itemize
-Operation control (
+and Operation control (
 \color red
 transmitter
 \color inherit
@@ -9419,11 +9427,15 @@ idle
 \end_layout
 
 \begin_layout Itemize
+Bus traffic counters.
+\end_layout
+
+\begin_layout Itemize
 Configuration of 
 \color red
 bit rate
 \color inherit
- and 
+ for Prescaler and 
 \color red
 synchronisation
 \color inherit
@@ -9431,7 +9443,7 @@ synchronisation
 \end_layout
 
 \begin_layout Standard
-CAN Core block diagram is shown in Figure 
+CAN core block diagram is shown in Figure 
 \begin_inset CommandInset ref
 LatexCommand ref
 reference "fig:CAN-Core-Block-diagam-1"
@@ -9442,8 +9454,8 @@ noprefix "false"
 \end_inset
 
 .
- CAN Core is structural entity which only instantiates other modules and
- by itself it implements nearly no logic.
+ CAN core is structural entity which instantiates other modules and by itself
+ it implements nearly no logic.
  An exception to this rule are two multiplexers as shown in Figure 
 \begin_inset CommandInset ref
 LatexCommand ref
@@ -9455,8 +9467,8 @@ noprefix "false"
 \end_inset
 
 .
- Multiplexor on TX datapath (green color) multiplexes between TX data after
- 
+ Multiplexor on TX datapath (green color) multiplexes between transmitted
+ data after 
 \color red
 bit stuffing
 \color inherit
@@ -9474,7 +9486,7 @@ recessive
 bus monitoring mode
 \color inherit
 .
- Multiplexor on RX datapath (red color) multiplexes input data to Bit Destuffing
+ Multiplexor on RX datapath (red color) multiplexes input data to Bit destuffing
  module.
  During normal operation, 
 \series bold
@@ -9508,7 +9520,7 @@ bit stuffing
 can_rx
 \series default
 \shape default
- from input of CAN Core (this corresponds to re-routing transmitted bit
+ from input of CAN core (this corresponds to re-routing transmitted bit
  value internally as defined in 10.14 of 
 \begin_inset CommandInset citation
 LatexCommand cite
@@ -9591,7 +9603,7 @@ Protocol control implements following functionality:
 \end_layout
 
 \begin_layout Itemize
-Transmission and reception of CAN Frames.
+Transmission and reception of CAN frames.
 \end_layout
 
 \begin_layout Itemize
@@ -9635,15 +9647,15 @@ error detection
 \end_layout
 
 \begin_layout Itemize
-Storing of received CAN frame to RX Buffer.
+Storing of received CAN frame to RX buffer.
 \end_layout
 
 \begin_layout Itemize
-Reading of transmitted CAN frame from TXT Buffers.
+Reading of transmitted CAN frame from TXT buffers.
 \end_layout
 
 \begin_layout Itemize
-Control of TXT Buffers and TX Arbitrator via HW Commands.
+Control of TXT buffers and TX arbitrator via HW commands.
 \end_layout
 
 \begin_layout Itemize
@@ -9679,14 +9691,14 @@ Control
 \color red
 bit rate switching
 \color inherit
- (Nominal Sample, Data Sample, Secondary Sample)
+ (Nominal sample, Data sample, Secondary sample)
 \end_layout
 
 \begin_layout Standard
 Protocol control diagram is shown in Figure 
 \begin_inset CommandInset ref
 LatexCommand ref
-reference "fig:Protocol-Control-Block-diagam-1-1"
+reference "fig:Protocol-Control-Block-diagam"
 plural "false"
 caps "false"
 noprefix "false"
@@ -9725,7 +9737,7 @@ status open
 Protocol control - Block diagram
 \begin_inset CommandInset label
 LatexCommand label
-name "fig:Protocol-Control-Block-diagam-1-1"
+name "fig:Protocol-Control-Block-diagam"
 
 \end_inset
 
@@ -10592,7 +10604,7 @@ status open
 \noindent
 \align center
 \begin_inset Graphics
-	filename /DOKUMENTY/Skola/CVUT-FEL/ctu_can_fd_2/doc/pics/Timing_diagrams/PDFs/control_counter.pdf
+	filename ../pics/Timing_diagrams/PDFs/control_counter.pdf
 	lyxscale 20
 	scale 90
 
@@ -10719,7 +10731,7 @@ status open
 \noindent
 \align center
 \begin_inset Graphics
-	filename /DOKUMENTY/Skola/CVUT-FEL/ctu_can_fd_2/doc/pics/Timing_diagrams/PDFs/arbitration_lost_capture.pdf
+	filename ../pics/Timing_diagrams/PDFs/arbitration_lost_capture.pdf
 	lyxscale 20
 	scale 90
 
@@ -11121,7 +11133,7 @@ status open
 \noindent
 \align center
 \begin_inset Graphics
-	filename /DOKUMENTY/Skola/CVUT-FEL/ctu_can_fd_2/doc/pics/Timing_diagrams/PDFs/retransmitt_counter.pdf
+	filename ../pics/Timing_diagrams/PDFs/retransmitt_counter.pdf
 	lyxscale 20
 	scale 63
 
@@ -11165,7 +11177,7 @@ status open
 \noindent
 \align center
 \begin_inset Graphics
-	filename /DOKUMENTY/Skola/CVUT-FEL/ctu_can_fd_2/doc/pics/Timing_diagrams/PDFs/retransmitt_counter_arbitration.pdf
+	filename ../pics/Timing_diagrams/PDFs/retransmitt_counter_arbitration.pdf
 	lyxscale 20
 	scale 61
 
@@ -11209,7 +11221,7 @@ status open
 \noindent
 \align center
 \begin_inset Graphics
-	filename /DOKUMENTY/Skola/CVUT-FEL/ctu_can_fd_2/doc/pics/Timing_diagrams/PDFs/retransmitt_counter_OK.pdf
+	filename ../pics/Timing_diagrams/PDFs/retransmitt_counter_OK.pdf
 	lyxscale 20
 	scale 61
 
@@ -16819,7 +16831,7 @@ status open
 \align center
 \begin_inset Tabular
 <lyxtabular version="3" rows="14" columns="2">
-<features tabularvalignment="middle">
+<features islongtable="true" longtabularalignment="center">
 <column alignment="left" valignment="middle" width="15line%">
 <column alignment="left" valignment="top" width="78.5line%">
 <row>
@@ -17464,7 +17476,7 @@ status open
 \noindent
 \align center
 \begin_inset Graphics
-	filename /DOKUMENTY/Skola/CVUT-FEL/ctu_can_fd_2/doc/pics/Timing_diagrams/PDFs/err_detection_example.pdf
+	filename ../pics/Timing_diagrams/PDFs/err_detection_example.pdf
 	lyxscale 20
 	scale 65
 
@@ -17548,13 +17560,6 @@ name "fig:crc-check"
 
 \end_layout
 
-\end_inset
-
-
-\end_layout
-
-\begin_layout Standard
-\begin_inset Newpage pagebreak
 \end_inset
 
 
@@ -19741,13 +19746,6 @@ name "fig:bit-stuffing-detailed-operation"
 
 \end_layout
 
-\begin_layout Standard
-\begin_inset Newpage pagebreak
-\end_inset
-
-
-\end_layout
-
 \begin_layout Subsection
 Bit destuffing
 \begin_inset CommandInset label
@@ -20842,7 +20840,7 @@ status open
 \noindent
 \align center
 \begin_inset Graphics
-	filename /DOKUMENTY/Skola/CVUT-FEL/ctu_can_fd_2/doc/pics/Timing_diagrams/PDFs/crc_transmitter.pdf
+	filename ../pics/Timing_diagrams/PDFs/crc_transmitter.pdf
 	lyxscale 20
 	scale 70
 
@@ -20886,7 +20884,7 @@ status open
 \noindent
 \align center
 \begin_inset Graphics
-	filename /DOKUMENTY/Skola/CVUT-FEL/ctu_can_fd_2/doc/pics/Timing_diagrams/PDFs/crc_receiver.pdf
+	filename ../pics/Timing_diagrams/PDFs/crc_receiver.pdf
 	lyxscale 20
 	scale 70
 
@@ -21460,13 +21458,6 @@ name "tab:can-crc-enable-signals"
 
 \end_layout
 
-\begin_layout Standard
-\begin_inset Newpage pagebreak
-\end_inset
-
-
-\end_layout
-
 \begin_layout Subsection
 Trigger multiplexor
 \end_layout
@@ -21998,13 +21989,6 @@ true
 XFRCRST] have no effect.
 \end_layout
 
-\begin_layout Standard
-\begin_inset Newpage pagebreak
-\end_inset
-
-
-\end_layout
-
 \begin_layout Section
 RX buffer
 \begin_inset CommandInset label
@@ -22065,9 +22049,9 @@ status open
 \noindent
 \align center
 \begin_inset Graphics
-	filename /DOKUMENTY/Skola/CVUT-FEL/ctu_can_fd_2/doc/pics/Visio_generated/BD_RX_Buffer.pdf
+	filename ../pics/Visio_generated/BD_RX_Buffer.pdf
 	lyxscale 20
-	scale 70
+	scale 60
 
 \end_inset
 
@@ -22535,7 +22519,7 @@ status open
 \noindent
 \align center
 \begin_inset Graphics
-	filename /DOKUMENTY/Skola/CVUT-FEL/ctu_can_fd_2/doc/pics/Visio_generated/RX_Buffer_layout.pdf
+	filename ../pics/Visio_generated/RX_Buffer_layout.pdf
 	lyxscale 20
 	scale 70
 
@@ -22708,7 +22692,7 @@ status open
 \noindent
 \align center
 \begin_inset Graphics
-	filename /DOKUMENTY/Skola/CVUT-FEL/ctu_can_fd_2/doc/pics/Timing_diagrams/PDFs/rx_buffer_storing_protocol.pdf
+	filename ../pics/Timing_diagrams/PDFs/rx_buffer_storing_protocol.pdf
 	lyxscale 20
 	scale 50
 
@@ -22752,7 +22736,7 @@ status open
 \noindent
 \align center
 \begin_inset Graphics
-	filename /DOKUMENTY/Skola/CVUT-FEL/ctu_can_fd_2/doc/pics/Timing_diagrams/PDFs/rx_buffer_storing_protocol_error.pdf
+	filename ../pics/Timing_diagrams/PDFs/rx_buffer_storing_protocol_error.pdf
 	lyxscale 20
 	scale 50
 
@@ -22796,7 +22780,7 @@ status open
 \noindent
 \align center
 \begin_inset Graphics
-	filename /DOKUMENTY/Skola/CVUT-FEL/ctu_can_fd_2/doc/pics/Visio_generated/FSM_RX_Buffer.pdf
+	filename ../pics/Visio_generated/FSM_RX_Buffer.pdf
 	lyxscale 20
 	scale 80
 
@@ -23517,7 +23501,7 @@ name "tab:rx-buffer-storing-detailed"
 \end_layout
 
 \begin_layout Subsection
-Overrun and Error
+Overrun flags
 \end_layout
 
 \begin_layout Standard
@@ -23831,7 +23815,7 @@ status open
 \noindent
 \align center
 \begin_inset Graphics
-	filename /DOKUMENTY/Skola/CVUT-FEL/ctu_can_fd_2/doc/pics/Timing_diagrams/PDFs/rx_buffer_pointer_speculation.pdf
+	filename ../pics/Timing_diagrams/PDFs/rx_buffer_pointer_speculation.pdf
 	lyxscale 20
 	scale 60
 
@@ -24086,6 +24070,13 @@ name "tab:frame-counter-handling"
 
 \end_layout
 
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Newpage pagebreak
 \end_inset
 
 
@@ -24980,15 +24971,8 @@ name "tab:range-filter"
 
 \end_layout
 
-\begin_layout Standard
-\begin_inset Newpage pagebreak
-\end_inset
-
-
-\end_layout
-
 \begin_layout Section
-TXT Buffer
+TXT buffer
 \begin_inset CommandInset label
 LatexCommand label
 name "sec:TXT-Buffer"
@@ -24999,11 +24983,11 @@ name "sec:TXT-Buffer"
 \end_layout
 
 \begin_layout Standard
-TXT Buffer implements following functionality:
+TXT buffer implements following functionality:
 \end_layout
 
 \begin_layout Itemize
-Stores single CAN FD frame for transmission in internal RAM memory.
+Stores single CAN frame for transmission in internal RAM memory.
 \end_layout
 
 \begin_layout Itemize
@@ -25025,8 +25009,8 @@ filename "entity_docs/txt_buffer.lyx"
 \end_layout
 
 \begin_layout Standard
-There are 4 TXT Buffers in CTU CAN FD.
- Each TXT Buffer RAM is accessed by SW via Memory registers as described
+There are 4 TXT buffers in CTU CAN FD.
+ Each TXT buffer RAM is accessed by SW via Memory registers as described
  in 
 \begin_inset CommandInset citation
 LatexCommand cite
@@ -25036,12 +25020,12 @@ literal "false"
 \end_inset
 
 .
- SW stores CAN frame to TXT Buffer.
- For SW, TXT Buffer RAM is write-only.
- TXT Buffer RAM is also accessed by Protocol control FSM which reads CAN
- frame from TXT Buffer and transmitts it on CAN Bus.
- For Protocol control, TXT Buffer is read-only.
- TXT Buffer is managed by Protocol Control FSM which is shown in Figure
+ SW stores CAN frame to TXT buffer.
+ For SW, TXT buffer RAM is write-only.
+ TXT buffer RAM is also accessed by Protocol control FSM and TX arbitrator
+ which read CAN frame from TXT buffer and transmitts it on CAN Bus.
+ For Protocol control and TX arbitrator, TXT buffer is read-only.
+ TXT buffer is managed by Protocol control FSM which is shown in Figure
  
 \begin_inset CommandInset ref
 LatexCommand ref
@@ -25053,7 +25037,7 @@ noprefix "false"
 \end_inset
 
 .
- CAN Frame format within TXT Buffer is the same as within RX Buffer and
+ CAN frame format within TXT buffer is the same as within RX buffer and
  it is described within 
 \begin_inset CommandInset ref
 LatexCommand ref
@@ -25065,8 +25049,9 @@ noprefix "false"
 \end_inset
 
 .
- Each TXT Buffer in CTU CAN FD has its own priority (configured by TX_PRIORITY).
- Based on priority, TX Arbitratror selects TXT Buffer which will be used
+ Each TXT buffer in CTU CAN FD has its own priority (configured by SW in
+ TX_PRIORITY register).
+ Based on priority, TX arbitratror selects TXT buffer which will be used
  for transmission (see 
 \begin_inset CommandInset ref
 LatexCommand ref
@@ -25091,7 +25076,7 @@ status open
 \noindent
 \align center
 \begin_inset Graphics
-	filename /DOKUMENTY/Skola/CVUT-FEL/ctu_can_fd_2/doc/pics/Visio_generated/FSM_TXT_Buffer.pdf
+	filename ../pics/Visio_generated/FSM_TXT_Buffer.pdf
 	lyxscale 20
 
 \end_inset
@@ -25124,7 +25109,7 @@ name "fig:txt-buffer-fsm"
 \end_layout
 
 \begin_layout Subsection
-TXT Buffer commands
+TXT buffer commands
 \begin_inset CommandInset label
 LatexCommand label
 name "subsec:TXT-Buffer-commands"
@@ -25135,9 +25120,9 @@ name "subsec:TXT-Buffer-commands"
 \end_layout
 
 \begin_layout Standard
-Two types of commands can be issued to TXT Buffer: SW commands and HW commands.
- SW commands are issued from SW by memory access to TX_COMMAND register.
- HW commands are issued by Protocol Control FSM.
+Two types of commands can be issued to TXT buffer: SW commands and HW commands.
+ SW commands are issued by SW access to TX_COMMAND register.
+ HW commands are issued by Protocol control FSM.
  Both command types are described in Table 
 \begin_inset CommandInset ref
 LatexCommand ref
@@ -25160,9 +25145,9 @@ noprefix "false"
 \end_inset
 
 .
- If SW command is applied to TXT Buffer FSM in state for which it is not
+ If SW command is applied to TXT buffer FSM in state for which it is not
  valid, it has no effect.
- HW command is never applied in TXT Buffer FSM state for which it is not
+ HW command is never applied in TXT buffer FSM state for which it is not
  valid.
  
 \end_layout
@@ -25233,7 +25218,7 @@ cellcolor{gray}
 \begin_inset Text
 
 \begin_layout Plain Layout
-Valid TXT Buffer States
+Valid TXT buffer States
 \begin_inset ERT
 status open
 
@@ -25279,7 +25264,7 @@ cellcolor{gray}
 \begin_inset Text
 
 \begin_layout Plain Layout
-Set Ready
+Set ready
 \end_layout
 
 \end_inset
@@ -25297,7 +25282,7 @@ SW
 \begin_inset Text
 
 \begin_layout Plain Layout
-Empty, TX OK, Aborted, TX Failed
+Empty, TX OK, Aborted, TX failed
 \end_layout
 
 \end_inset
@@ -25306,7 +25291,7 @@ Empty, TX OK, Aborted, TX Failed
 \begin_inset Text
 
 \begin_layout Plain Layout
-SW has filled TXT Buffer RAM with CAN frame and wants to transmitt this
+SW has filled TXT buffer RAM with CAN frame and wants to transmitt this
  frame.
 \end_layout
 
@@ -25318,7 +25303,7 @@ SW has filled TXT Buffer RAM with CAN frame and wants to transmitt this
 \begin_inset Text
 
 \begin_layout Plain Layout
-Set Empty
+Set empty
 \end_layout
 
 \end_inset
@@ -25336,7 +25321,7 @@ SW
 \begin_inset Text
 
 \begin_layout Plain Layout
-TX OK, Aborted, TX Failed
+TX OK, Aborted, TX failed
 \end_layout
 
 \end_inset
@@ -25345,7 +25330,7 @@ TX OK, Aborted, TX Failed
 \begin_inset Text
 
 \begin_layout Plain Layout
-SW wants to move TXT Buffer to its inital state after reset.
+SW wants to move TXT buffer to its inital state after reset.
 \end_layout
 
 \end_inset
@@ -25356,7 +25341,7 @@ SW wants to move TXT Buffer to its inital state after reset.
 \begin_inset Text
 
 \begin_layout Plain Layout
-Set Abort
+Set abort
 \end_layout
 
 \end_inset
@@ -25374,7 +25359,7 @@ SW
 \begin_inset Text
 
 \begin_layout Plain Layout
-Ready, TX in progress, Abort in Progress
+Ready, TX in progress, Abort in progress
 \end_layout
 
 \end_inset
@@ -25383,8 +25368,8 @@ Ready, TX in progress, Abort in Progress
 \begin_inset Text
 
 \begin_layout Plain Layout
-SW wants to abort a frame which is currently Ready for transmission or being
- transmitted.
+SW wants to abort transmission of a frame whose transmission has been previously
+ requested by Set ready command.
 \end_layout
 
 \end_inset
@@ -25422,7 +25407,7 @@ Ready
 \begin_inset Text
 
 \begin_layout Plain Layout
-Protocol control FSM starts transmitting frame from TXT Buffer.
+Protocol control FSM starts transmitting frame from TXT buffer.
 \end_layout
 
 \end_inset
@@ -25433,7 +25418,7 @@ Protocol control FSM starts transmitting frame from TXT Buffer.
 \begin_inset Text
 
 \begin_layout Plain Layout
-Unlock - Done
+Unlock - done
 \end_layout
 
 \end_inset
@@ -25451,7 +25436,7 @@ HW
 \begin_inset Text
 
 \begin_layout Plain Layout
-TX in Progress, Abort in Progress
+TX in progress, Abort in progress
 \end_layout
 
 \end_inset
@@ -25460,7 +25445,7 @@ TX in Progress, Abort in Progress
 \begin_inset Text
 
 \begin_layout Plain Layout
-Protocol control FSM successfully transmitted frame from TXT Buffer.
+Protocol control FSM successfully transmitted frame from TXT buffer.
 \end_layout
 
 \end_inset
@@ -25471,7 +25456,7 @@ Protocol control FSM successfully transmitted frame from TXT Buffer.
 \begin_inset Text
 
 \begin_layout Plain Layout
-Unlock - Error
+Unlock - error
 \end_layout
 
 \end_inset
@@ -25489,7 +25474,7 @@ HW
 \begin_inset Text
 
 \begin_layout Plain Layout
-TX in Progress, Abort in Progress
+TX in progress, Abort in progress
 \end_layout
 
 \end_inset
@@ -25498,7 +25483,11 @@ TX in Progress, Abort in Progress
 \begin_inset Text
 
 \begin_layout Plain Layout
-Error frame occurred, Protocol control stops transmitting from TXT Buffer.
+
+\color red
+Error frame
+\color inherit
+ occurred, Protocol control stops transmitting from TXT buffer.
 \end_layout
 
 \end_inset
@@ -25509,7 +25498,7 @@ Error frame occurred, Protocol control stops transmitting from TXT Buffer.
 \begin_inset Text
 
 \begin_layout Plain Layout
-Unlock - Arbitration lost
+Unlock - arbitration lost
 \end_layout
 
 \end_inset
@@ -25527,7 +25516,7 @@ HW
 \begin_inset Text
 
 \begin_layout Plain Layout
-TX in Progress, Abort in Progress
+TX in progress, Abort in progress
 \end_layout
 
 \end_inset
@@ -25536,7 +25525,11 @@ TX in Progress, Abort in Progress
 \begin_inset Text
 
 \begin_layout Plain Layout
-Arbitration was lost, Protocol control stops transmitting from TXT Buffer.
+
+\color red
+Arbitration
+\color inherit
+ was lost, Protocol control stops transmitting from TXT buffer.
 \end_layout
 
 \end_inset
@@ -25547,7 +25540,7 @@ Arbitration was lost, Protocol control stops transmitting from TXT Buffer.
 \begin_inset Text
 
 \begin_layout Plain Layout
-Unlock Failed
+Unlock failed
 \end_layout
 
 \end_inset
@@ -25565,7 +25558,7 @@ HW
 \begin_inset Text
 
 \begin_layout Plain Layout
-TX in Progress, Abort in Progress
+TX in Progress, Abort in progress
 \end_layout
 
 \end_inset
@@ -25574,9 +25567,15 @@ TX in Progress, Abort in Progress
 \begin_inset Text
 
 \begin_layout Plain Layout
-A frame was re-transmitted number of times unsucesfully (either Arbitration
- was lost or Error frame occurred) and Retransmitt counter reached Retransmitt
- threshold.
+A frame was re-transmitted number of times unsucesfully (either 
+\color red
+arbitration
+\color inherit
+ was lost or 
+\color red
+error frame
+\color inherit
+ occurred) and Retransmitt counter reached Retransmitt threshold.
  Frame transmission will not be attempted anymore.
 \end_layout
 
@@ -25596,7 +25595,7 @@ A frame was re-transmitted number of times unsucesfully (either Arbitration
 \begin_inset Caption Standard
 
 \begin_layout Plain Layout
-TXT Buffer commands
+TXT buffer commands
 \begin_inset CommandInset label
 LatexCommand label
 name "tab:txt-buffer-commands"
@@ -25737,7 +25736,7 @@ Lock
 \begin_inset Text
 
 \begin_layout Plain Layout
-Set Abort
+Set abort
 \end_layout
 
 \end_inset
@@ -25755,13 +25754,13 @@ Ready
 \begin_inset Text
 
 \begin_layout Plain Layout
-TXT Buffer is locked for transmission, Protocol control transmitts from
+TXT buffer is locked for transmission, Protocol control transmitts from
  this buffer.
- TXT Buffer becomes 
+ TXT buffer becomes 
 \begin_inset Quotes eld
 \end_inset
 
-Abort in Progress
+Abort in progress
 \begin_inset Quotes erd
 \end_inset
 
@@ -25776,7 +25775,7 @@ Abort in Progress
 \begin_inset Text
 
 \begin_layout Plain Layout
-Unlock - Done
+Unlock - done
 \end_layout
 
 \end_inset
@@ -25785,7 +25784,7 @@ Unlock - Done
 \begin_inset Text
 
 \begin_layout Plain Layout
-Set Abort
+Set abort
 \end_layout
 
 \end_inset
@@ -25803,7 +25802,7 @@ TX in Progress
 \begin_inset Text
 
 \begin_layout Plain Layout
-TXT Buffer is unlocked and becomes 
+TXT buffer is unlocked and becomes 
 \begin_inset Quotes eld
 \end_inset
 
@@ -25822,7 +25821,7 @@ TX OK
 \begin_inset Text
 
 \begin_layout Plain Layout
-Unlock - Failed
+Unlock - failed
 \end_layout
 
 \end_inset
@@ -25831,7 +25830,7 @@ Unlock - Failed
 \begin_inset Text
 
 \begin_layout Plain Layout
-Set Abort
+Set abort
 \end_layout
 
 \end_inset
@@ -25849,11 +25848,11 @@ TX in Progress
 \begin_inset Text
 
 \begin_layout Plain Layout
-TXT Buffer is unlocked and becomes 
+TXT buffer is unlocked and becomes 
 \begin_inset Quotes eld
 \end_inset
 
-TX Failed
+TX failed
 \begin_inset Quotes erd
 \end_inset
 
@@ -25868,7 +25867,7 @@ TX Failed
 \begin_inset Text
 
 \begin_layout Plain Layout
-Unlock - Arbitration lost, Error
+Unlock - arbitration lost, error
 \end_layout
 
 \end_inset
@@ -25877,7 +25876,7 @@ Unlock - Arbitration lost, Error
 \begin_inset Text
 
 \begin_layout Plain Layout
-Set Abort
+Set abort
 \end_layout
 
 \end_inset
@@ -25895,7 +25894,7 @@ TX in Progress
 \begin_inset Text
 
 \begin_layout Plain Layout
-TXT Buffer is unlocked and becomes 
+TXT buffer is unlocked and becomes 
 \begin_inset Quotes eld
 \end_inset
 
@@ -25904,7 +25903,7 @@ Aborted
 \end_inset
 
 .
- No more transmissions are attempted from this TXT Buffer.
+ No more transmissions are attempted from this TXT buffer.
  In this case SW command has priority over HW command to guarantee that
  SW command will not be lost!
 \end_layout
@@ -25925,7 +25924,7 @@ Aborted
 \begin_inset Caption Standard
 
 \begin_layout Plain Layout
-TXT Buffer simultaneous HW/SW commands
+TXT buffer simultaneous HW/SW commands
 \begin_inset CommandInset label
 LatexCommand label
 name "tab:txt-buffer-simul-hw-sw-commands"
@@ -25946,16 +25945,16 @@ name "tab:txt-buffer-simul-hw-sw-commands"
 \end_layout
 
 \begin_layout Subsection
-TXT Buffer RAM
+TXT buffer RAM
 \end_layout
 
 \begin_layout Standard
 TXT buffer RAM is written by SW (port A) and read by Protocol Control (port
  B).
- With regards to accessibility, TXT Buffer RAM can be in two states: Unlocked
+ With regards to accessibility, TXT buffer RAM can be in two states: Unlocked
  and Locked.
- TXT Buffer FSM states corresponding to Locked and Unlocked state of TXT
- Buffer are demonstrated in Figure 
+ TXT buffer FSM states corresponding to Locked and Unlocked state of TXT
+ buffer RAM are demonstrated in Figure 
 \begin_inset CommandInset ref
 LatexCommand ref
 reference "fig:txt-buffer-fsm"
@@ -25966,26 +25965,18 @@ noprefix "false"
 \end_inset
 
 .
- When TXT Buffer is unlocked, it is not acessed by CAN Core (nor TX Arbitrator)
- as there is no frame transmission/validation from this TXT Buffer and SW
- can write to TXT Buffer via Memory registers.
- When TXT Buffer is Locked, it was either marked as 
-\begin_inset Quotes eld
-\end_inset
-
-Ready
-\begin_inset Quotes erd
-\end_inset
-
- for transmission, or validated by TX Arbitrator, or transmission is in
- progress from this TXT Buffer.
- When TXT buffer is Locked, SW can not write to TXT Buffer RAM and such
+ When TXT buffer is unlocked, it is not acessed by Protocol control (nor
+ TX arbitrator) as there is no frame transmission/validation from this TXT
+ buffer and SW can write to TXT buffer via Memory registers.
+ When TXT buffer is Locked, it was either marked as Ready, or validated
+ by TX arbitrator, or transmission is in progress from this TXT buffer.
+ When TXT buffer is locked, SW can not write to TXT buffer RAM and such
  writes have no effect.
  
 \end_layout
 
 \begin_layout Subsection
-TXT Buffer - Transmission availability
+TXT buffer - Transmission availability
 \begin_inset CommandInset label
 LatexCommand label
 name "subsec:TXT-Buffer-tx-avail"
@@ -25996,15 +25987,7 @@ name "subsec:TXT-Buffer-tx-avail"
 \end_layout
 
 \begin_layout Standard
-When TXT Buffer FSM is in 
-\begin_inset Quotes eld
-\end_inset
-
-Ready
-\begin_inset Quotes erd
-\end_inset
-
- state, it is 
+When TXT buffer FSM is in Ready state, it is 
 \begin_inset Quotes eld
 \end_inset
 
@@ -26012,8 +25995,8 @@ Available
 \begin_inset Quotes erd
 \end_inset
 
- for transmission from TX Arbitrators point of view.
- However, if TXT Buffer receives Set Abort command, it become 
+ for transmission from TX arbitrators point of view.
+ However, if TXT buffer receives Set abort command, it become 
 \begin_inset Quotes eld
 \end_inset
 
@@ -26021,43 +26004,18 @@ Unavailable
 \begin_inset Quotes erd
 \end_inset
 
- for transmission in the same clock cycle as Set Abort command is active
+ for transmission in the same clock cycle as Set abort command is active
  (
-\begin_inset Quotes eld
-\end_inset
-
+\series bold
+\shape italic
 txtb_available
-\begin_inset Quotes erd
-\end_inset
-
+\series default
+\shape default
  drops low).
- In this clock cycle, TXT Buffer FSM is still in 
-\begin_inset Quotes eld
-\end_inset
-
-Ready
-\begin_inset Quotes erd
-\end_inset
-
- state and it will move to 
-\begin_inset Quotes eld
-\end_inset
-
-Aborted
-\begin_inset Quotes erd
-\end_inset
-
- (or 
-\begin_inset Quotes eld
-\end_inset
-
-Abort in Progress
-\begin_inset Quotes erd
-\end_inset
-
-) in following clock cycle.
- This combinatorial path from Set Abort command to output of TXT Buffer
- is necessary to avoid hazards on TXT Buffer selection as explained in 
+ In this clock cycle, TXT buffer FSM is still in Ready state and it will
+ move to Aborted (or Abort in progress) in following clock cycle.
+ This combinatorial path from Set abort command to output of TXT buffer
+ is necessary to avoid hazards on TXT buffer selection as explained in 
 \begin_inset CommandInset ref
 LatexCommand ref
 reference "subsec:TX-Datapath-hazard"
@@ -26071,7 +26029,7 @@ noprefix "false"
 \end_layout
 
 \begin_layout Subsection
-TXT Buffer - Use cases
+TXT buffer - Use cases
 \end_layout
 
 \begin_layout Standard
@@ -26172,7 +26130,7 @@ cellcolor{gray}
 \begin_inset Text
 
 \begin_layout Plain Layout
-SW fills TXT Buffer RAM.
+SW fills TXT buffer RAM.
 \end_layout
 
 \end_inset
@@ -26181,7 +26139,7 @@ SW fills TXT Buffer RAM.
 \begin_inset Text
 
 \begin_layout Plain Layout
-TXT Buffer is in Empty state.
+TXT buffer is in Empty state.
 \end_layout
 
 \end_inset
@@ -26210,7 +26168,7 @@ SW issues Set ready command.
 \begin_inset Text
 
 \begin_layout Plain Layout
-TXT Buffer moves to Ready state.
+TXT buffer moves to Ready state.
 \end_layout
 
 \end_inset
@@ -26239,11 +26197,18 @@ TXT Buffer moves to Ready state.
 \begin_inset Text
 
 \begin_layout Plain Layout
-TX Arbitrator selects TXT Buffer for transmission and indicates this to
- Protocol control.
- On third bit of Intermission or when Bus is idle, Protocol control issues
- HW Lock command, TXT Buffer moves to TX in Progress and Protocol control
- starts transmission from TXT Buffer.
+TX validates TXT buffer for transmission and indicates this to Protocol
+ control.
+ On third bit of 
+\color red
+intermission
+\color inherit
+ or when bus is 
+\color red
+idle
+\color inherit
+, Protocol control issues Lock command, TXT buffer moves to TX inprogress
+ and Protocol control starts transmission from TXT buffer.
 \end_layout
 
 \end_inset
@@ -26272,9 +26237,9 @@ TX Arbitrator selects TXT Buffer for transmission and indicates this to
 \begin_inset Text
 
 \begin_layout Plain Layout
-Frame Transmission ends successfully and Protocol control issues Unlock
- - Done command.
- TXT Buffer moves to TX OK state.
+Frame transmission ends successfully and Protocol control issues Unlock
+ - done command.
+ TXT buffer moves to TX OK state.
 \end_layout
 
 \end_inset
@@ -26294,7 +26259,7 @@ Frame Transmission ends successfully and Protocol control issues Unlock
 \begin_inset Text
 
 \begin_layout Plain Layout
-SW reads state of TXT Buffer and finds out that transmission ended succesfully.
+SW reads state of TXT buffer and finds out that transmission ended succesfully.
 \end_layout
 
 \end_inset
@@ -26440,7 +26405,7 @@ cellcolor{gray}
 \begin_inset Text
 
 \begin_layout Plain Layout
-SW fills TXT Buffer RAM.
+SW fills TXT buffer RAM.
 \end_layout
 
 \end_inset
@@ -26449,7 +26414,7 @@ SW fills TXT Buffer RAM.
 \begin_inset Text
 
 \begin_layout Plain Layout
-TXT Buffer is in Empty state.
+TXT buffer is in Empty state.
 \end_layout
 
 \end_inset
@@ -26478,7 +26443,7 @@ SW issues Set ready command.
 \begin_inset Text
 
 \begin_layout Plain Layout
-TXT Buffer moves to Ready state.
+TXT buffer moves to Ready state.
 \end_layout
 
 \end_inset
@@ -26507,11 +26472,14 @@ TXT Buffer moves to Ready state.
 \begin_inset Text
 
 \begin_layout Plain Layout
-TX Arbitrator selects TXT Buffer for transmission and signals to Protocol
- control there is a valid TXT Buffer for transmission.
- On third bit of Intermission or when Bus is idle, Protocol control issues
- HW lock command, TXT Buffer moves to TX in Progress.
- Protocol control starts transmission from TXT Buffer.
+TX arbitrator validates TXT buffer for transmission and signals to Protocol
+ control there is a valid TXT buffer for transmission.
+ On third bit of Intermission or when bus is 
+\color red
+idle
+\color inherit
+, Protocol control issues Lock command, TXT buffer moves to TX in progress.
+ Protocol control starts transmission from TXT buffer.
 \end_layout
 
 \end_inset
@@ -26531,7 +26499,7 @@ TX Arbitrator selects TXT Buffer for transmission and signals to Protocol
 \begin_inset Text
 
 \begin_layout Plain Layout
-During transmission SW issues Set Abort command to TXT Buffer.
+During transmission SW issues Set abort command to TXT buffer.
 \end_layout
 
 \end_inset
@@ -26540,7 +26508,7 @@ During transmission SW issues Set Abort command to TXT Buffer.
 \begin_inset Text
 
 \begin_layout Plain Layout
-TXT Buffer moves to Abort in Progress.
+TXT buffer moves to Abort in progress.
 \end_layout
 
 \end_inset
@@ -26569,9 +26537,16 @@ TXT Buffer moves to Abort in Progress.
 \begin_inset Text
 
 \begin_layout Plain Layout
-If an Error frame occurs or arbitration is lost, TXT Buffer moves to Aborted
- state.
- If frame transmission finished succesfully, TXT Buffer moves to TX OK state.
+If 
+\color red
+error frame
+\color inherit
+ occurs or 
+\color red
+arbitration
+\color inherit
+ is lost, TXT buffer moves to Aborted state.
+ If frame transmission finished succesfully, TXT buffer moves to TX OK state.
 \end_layout
 
 \end_inset
@@ -26591,7 +26566,7 @@ If an Error frame occurs or arbitration is lost, TXT Buffer moves to Aborted
 \begin_inset Text
 
 \begin_layout Plain Layout
-SW reads state of TXT Buffer and finds out whether transmission was aborted
+SW reads state of TXT buffer and finds out whether transmission was aborted
  or it ended succesfully.
 \end_layout
 
@@ -26620,7 +26595,7 @@ SW reads state of TXT Buffer and finds out whether transmission was aborted
 \begin_inset Caption Standard
 
 \begin_layout Plain Layout
-TXT Buffer - Abort
+TXT buffer - Abort
 \begin_inset CommandInset label
 LatexCommand label
 name "tab:txt-buffer-abort"
@@ -26738,7 +26713,7 @@ cellcolor{gray}
 \begin_inset Text
 
 \begin_layout Plain Layout
-SW fills TXT Buffer RAM.
+SW fills TXT buffer RAM.
  SW configures retransmitt limit to 5 and enables retransmitt limitation.
 \end_layout
 
@@ -26748,7 +26723,7 @@ SW fills TXT Buffer RAM.
 \begin_inset Text
 
 \begin_layout Plain Layout
-TXT Buffer is in Empty state.
+TXT buffer is in Empty state.
 \end_layout
 
 \end_inset
@@ -26768,7 +26743,7 @@ TXT Buffer is in Empty state.
 \begin_inset Text
 
 \begin_layout Plain Layout
-SW issues Set Ready command.
+SW issues Set ready command.
 \end_layout
 
 \end_inset
@@ -26777,7 +26752,7 @@ SW issues Set Ready command.
 \begin_inset Text
 
 \begin_layout Plain Layout
-TXT Buffer moves to Ready state.
+TXT buffer moves to Ready state.
 \end_layout
 
 \end_inset
@@ -26806,11 +26781,18 @@ TXT Buffer moves to Ready state.
 \begin_inset Text
 
 \begin_layout Plain Layout
-TX Arbitrator selects TXT Buffer for transmission and indicates available
- TXT Buffer for transmission to Protocol control.
- On third bit of Intermission or when Bus is idle, Protocol control issues
- HW lock command, TXT Buffer moves to TX in Progress and Protocol control
- starts transmission from TXT Buffer.
+TX arbitrator validates TXT buffer for transmission and indicates available
+ TXT buffer for transmission to Protocol control.
+ On third bit of 
+\color red
+intermission
+\color inherit
+ or when bus is 
+\color red
+idle
+\color inherit
+, Protocol control issues Lock command, TXT buffer moves to TX in progress
+ and Protocol control starts transmission from TXT buffer.
 \end_layout
 
 \end_inset
@@ -26839,9 +26821,17 @@ TX Arbitrator selects TXT Buffer for transmission and indicates available
 \begin_inset Text
 
 \begin_layout Plain Layout
-An error occurs or arbitration is lost, Protocol control issues Unlock -
- Error or Unlock - Arbitration lost command.
- TXT Buffer moves to state Ready.
+An 
+\color red
+error frame
+\color inherit
+ occurs or 
+\color red
+arbitration
+\color inherit
+ is lost, Protocol control issues Unlock - error or Unlock - arbitration
+ lost command.
+ TXT buffer moves to state Ready.
  Retransmitt counter is incremented to 1.
 \end_layout
 
@@ -26914,8 +26904,8 @@ cellcolor{cyan}
 
 \begin_layout Plain Layout
 On 5th retransmission (retransmitt counter = 5), error occurs.
- Protocol control issues Unlock - Failed command.
- TXT Buffer FSM moves to TX Failed state.
+ Protocol control issues Unlock - failed command.
+ TXT buffer FSM moves to TX failed state.
 \end_layout
 
 \end_inset
@@ -26935,7 +26925,7 @@ On 5th retransmission (retransmitt counter = 5), error occurs.
 \begin_inset Text
 
 \begin_layout Plain Layout
-SW reads state of TXT Buffer and finds out that transmission failed.
+SW reads state of TXT buffer and finds out that transmission failed.
 \end_layout
 
 \end_inset
@@ -26963,7 +26953,7 @@ SW reads state of TXT Buffer and finds out that transmission failed.
 \begin_inset Caption Standard
 
 \begin_layout Plain Layout
-TXT Buffer - transmission failed
+TXT buffer - transmission failed
 \begin_inset CommandInset label
 LatexCommand label
 name "tab:txt-buffer-tx-failed"
@@ -27081,7 +27071,7 @@ cellcolor{gray}
 \begin_inset Text
 
 \begin_layout Plain Layout
-SW fills TXT Buffer RAM.
+SW fills TXT buffer RAM.
 \end_layout
 
 \end_inset
@@ -27090,7 +27080,7 @@ SW fills TXT Buffer RAM.
 \begin_inset Text
 
 \begin_layout Plain Layout
-TXT Buffer is in Empty state.
+TXT buffer is in Empty state.
 \end_layout
 
 \end_inset
@@ -27110,7 +27100,7 @@ TXT Buffer is in Empty state.
 \begin_inset Text
 
 \begin_layout Plain Layout
-SW issues Set Ready command.
+SW issues Set ready command.
 \end_layout
 
 \end_inset
@@ -27119,7 +27109,7 @@ SW issues Set Ready command.
 \begin_inset Text
 
 \begin_layout Plain Layout
-TXT Buffer moves to Ready state.
+TXT buffer moves to Ready state.
 \end_layout
 
 \end_inset
@@ -27139,7 +27129,7 @@ TXT Buffer moves to Ready state.
 \begin_inset Text
 
 \begin_layout Plain Layout
-SW decides to abort transmission of this frame and issues Set Abort command.
+SW decides to abort transmission of this frame and issues Set abort command.
 \end_layout
 
 \end_inset
@@ -27148,14 +27138,21 @@ SW decides to abort transmission of this frame and issues Set Abort command.
 \begin_inset Text
 
 \begin_layout Plain Layout
-TX Arbitrator selects TXT Buffer for transmission and indicates available
- TXT Buffer for transmission to Protocol control.
- On third bit of Intermission or when Bus is idle, Protocol control issues
- HW lock command.
- By coincidence, Set Abort command (SW) and Lock command (HW) are active
+TX arbitrator validates TXT buffer for transmission and indicates available
+ TXT buffer for transmission to Protocol control.
+ On third bit of 
+\color red
+intermission
+\color inherit
+ or when bus is 
+\color red
+idle
+\color inherit
+, Protocol control issues Lock command.
+ By coincidence, Set abort command (SW) and Lock command (HW) are active
  in the same clock cycle.
- TXT Buffer moves to Abort in Progress and Protocol control starts transmission
- from TXT Buffer.
+ TXT buffer moves to Abort in progress and Protocol control starts transmission
+ from TXT buffer.
 \end_layout
 
 \end_inset
@@ -27184,9 +27181,17 @@ TX Arbitrator selects TXT Buffer for transmission and indicates available
 \begin_inset Text
 
 \begin_layout Plain Layout
-An error occurs or arbitration is lost, Protocol control issues Unlock -
- Error or Unlock - Arbitration lost command.
- TXT Buffer moves to state Aborted.
+An 
+\color red
+error frame
+\color inherit
+ occurs or 
+\color red
+arbitration
+\color inherit
+ is lost, Protocol control issues Unlock - error or Unlock - arbitration
+ lost command.
+ TXT buffer moves to state Aborted.
 \end_layout
 
 \end_inset
@@ -27206,7 +27211,7 @@ An error occurs or arbitration is lost, Protocol control issues Unlock -
 \begin_inset Text
 
 \begin_layout Plain Layout
-SW reads state of TXT Buffer and finds out that transmission was aborted.
+SW reads state of TXT buffer and finds out that transmission was aborted.
 \end_layout
 
 \end_inset
@@ -27234,7 +27239,7 @@ SW reads state of TXT Buffer and finds out that transmission was aborted.
 \begin_inset Caption Standard
 
 \begin_layout Plain Layout
-TXT Buffer - Simultaneous Abort and Lock
+TXT buffer - Simultaneous Set abort and Lock
 \begin_inset CommandInset label
 LatexCommand label
 name "tab:txt-buffer-simul-abort-lock"
@@ -27262,7 +27267,7 @@ name "tab:txt-buffer-simul-abort-lock"
 \end_layout
 
 \begin_layout Section
-TX Arbitrator
+TX arbitrator
 \begin_inset CommandInset label
 LatexCommand label
 name "sec:TX-Arbitrator"
@@ -27273,38 +27278,44 @@ name "sec:TX-Arbitrator"
 \end_layout
 
 \begin_layout Standard
-TX Arbitrator implements following functionality:
+TX arbitrator implements following functionality:
 \end_layout
 
 \begin_layout Itemize
-Pick TXT Buffer for transmission.
+Pick TXT buffer for transmission.
 \end_layout
 
 \begin_layout Itemize
-Load CAN frame metadata from TXT Buffer and provide them for CAN Core during
+Load CAN frame metadata from TXT buffer and provide them to CAN core during
  transmission.
 \end_layout
 
 \begin_layout Itemize
-Execute comparison of external Timestamp with TX frame Timestamp and determine
- moment of CAN frame transmission.
+Execute comparison of 
+\series bold
+\shape italic
+timestamp
+\series default
+\shape default
+ input with transmitted frame timestamp and determine moment of CAN frame
+ transmission.
 \end_layout
 
 \begin_layout Itemize
-Signal to CAN Core that CAN frame was validated and can be locked for transmissi
+Signal to CAN core that CAN frame was validated and can be locked for transmissi
 on.
 \end_layout
 
 \begin_layout Itemize
-Hold index of TXT Buffer from which CAN Core is actually transmitting.
+Hold index of TXT buffer from which CAN core is actually transmitting.
 \end_layout
 
 \begin_layout Itemize
-Detect change of TXT Buffer between two consecutive transmissions.
+Detect change of TXT buffer between two consecutive transmissions.
 \end_layout
 
 \begin_layout Standard
-TX Arbitrator block diagram is shown in Figure 
+TX arbitrator block diagram is shown in Figure 
 \begin_inset CommandInset ref
 LatexCommand ref
 reference "fig:tx-arbitrator-block-diagram"
@@ -27328,7 +27339,7 @@ status open
 \noindent
 \align center
 \begin_inset Graphics
-	filename /DOKUMENTY/Skola/CVUT-FEL/ctu_can_fd_2/doc/pics/Visio_generated/BD_TX_Arbitrator.pdf
+	filename ../pics/Visio_generated/BD_TX_Arbitrator.pdf
 	lyxscale 20
 	scale 71
 
@@ -27341,7 +27352,7 @@ status open
 \begin_inset Caption Standard
 
 \begin_layout Plain Layout
-TX Arbitrator block diagram
+TX arbitrator block diagram
 \begin_inset CommandInset label
 LatexCommand label
 name "fig:tx-arbitrator-block-diagram"
@@ -27379,11 +27390,11 @@ filename "entity_docs/tx_arbitrator.lyx"
 \end_layout
 
 \begin_layout Subsection
-TXT Buffer validation process
+TXT buffer validation process
 \end_layout
 
 \begin_layout Standard
-With regards to processing by TX Arbitrator, TXT Buffer can be in one of
+With regards to processing by TX arbitrator, TXT buffer can be in one of
  states described in Table 
 \begin_inset CommandInset ref
 LatexCommand ref
@@ -27395,16 +27406,8 @@ noprefix "false"
 \end_inset
 
 .
- TXT Buffer validation process starts when Priority Decoder picks highest
- priority 
-\begin_inset Quotes eld
-\end_inset
-
-Available
-\begin_inset Quotes erd
-\end_inset
-
- TXT Buffer (so called 
+ TXT buffer validation process starts when Priority decoder picks highest
+ priority Available TXT buffer (such TXT Buffer becomes 
 \begin_inset Quotes eld
 \end_inset
 
@@ -27412,7 +27415,17 @@ Selected
 \begin_inset Quotes erd
 \end_inset
 
- TXT Buffer) for transmission.
+) for transmission (see 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "subsec:Priority-decoder"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+).
  Validation process is described in 
 \begin_inset CommandInset ref
 LatexCommand ref
@@ -27435,67 +27448,21 @@ noprefix "false"
 \end_inset
 
 .
- Note that every state of TXT Buffer FSM lasts for two clock cycles due
- to Wait State.
- Such a wait state is inserted to cover delay of TXT Buffer RAM.
+ Note that every state of TXT buffer FSM lasts for two clock cycles due
+ to wait state.
+ Such wait state is inserted to cover delay of TXT buffer RAM.
 \end_layout
 
 \begin_layout Standard
-If index of 
-\begin_inset Quotes eld
-\end_inset
-
-Selected
-\begin_inset Quotes erd
-\end_inset
-
- TXT Buffer changes (due to another higher priority TXT Buffer becoming
- 
-\begin_inset Quotes eld
-\end_inset
-
-Ready
-\begin_inset Quotes erd
-\end_inset
-
- or change of TXT Buffer priorities) during validation process or after
- validation process was finished, TXT Buffer validation process restarts
- with newly 
-\begin_inset Quotes eld
-\end_inset
-
-Selected
-\begin_inset Quotes erd
-\end_inset
-
- TXT Buffer.
- If 
-\begin_inset Quotes eld
-\end_inset
-
-Validated
-\begin_inset Quotes erd
-\end_inset
-
- TXT Buffer suddenly becomes 
-\begin_inset Quotes eld
-\end_inset
-
-Unavailable
-\begin_inset Quotes erd
-\end_inset
-
- (due to Set Abort SW command), TX Arbitrator signals immediately (in the
- same clock cycle) to Protocol Control FSM that there is no 
-\begin_inset Quotes eld
-\end_inset
-
-Validated
-\begin_inset Quotes erd
-\end_inset
-
- TXT Buffer (this is done to avoid control hazards on TX frame datapath
- and it is further explained in 
+If index of Selected TXT buffer changes (due to another higher priority
+ TXT buffer becoming Ready or change of TXT buffers priorities) during validatio
+n process or after validation process was finished, TXT buffer validation
+ process restarts with newly Selected TXT buffer.
+ If Validated TXT buffer suddenly becomes Unavailable (due to Set abort
+ SW command), TX arbitrator signals immediately (in the same clock cycle)
+ to Protocol control FSM that there is no Validated TXT buffer (this is
+ done to avoid control hazards on TX frame datapath and it is further explained
+ in 
 \begin_inset CommandInset ref
 LatexCommand ref
 reference "subsec:TX-Datapath-hazard"
@@ -27531,52 +27498,22 @@ noprefix "false"
 \end_layout
 
 \begin_layout Standard
-When there is 
-\begin_inset Quotes eld
-\end_inset
-
-Validated
-\begin_inset Quotes erd
-\end_inset
-
- TXT Buffer, Protocol control FSM issues HW Lock command during Bus Idle
- or third bit of Intermission.
- In such a case TX Arbitrator becomes 
-\begin_inset Quotes eld
-\end_inset
-
-Locked
-\begin_inset Quotes erd
-\end_inset
-
- and TXT Buffer becomes 
-\begin_inset Quotes eld
-\end_inset
-
-Used
-\begin_inset Quotes erd
-\end_inset
-
+When there is Validated TXT buffer, Protocol control FSM issues Lock command
+ during bus 
+\color red
+idle
+\color inherit
+ or third bit of 
+\color red
+intermission
+\color inherit
 .
- Protocol control then transmitts frame from this TXT Buffer and upon its
- end it issues HW Unlock command.
- TXT Buffer then becomes either 
-\begin_inset Quotes eld
-\end_inset
-
-Available
-\begin_inset Quotes erd
-\end_inset
-
- or 
-\begin_inset Quotes eld
-\end_inset
-
-Unavailable
-\begin_inset Quotes erd
-\end_inset
-
- (see 
+ In such case TX arbitrator goes to Locked state and TXT buffer becomes
+ Used from TX arbitrators point of view (TXT buffer FSM itself goes to TX
+ in progress).
+ Protocol control then transmitts frame from this TXT buffer and upon its
+ end it issues Unlock command.
+ TXT buffer then becomes either Available or Unavailable (see 
 \begin_inset CommandInset ref
 LatexCommand ref
 reference "subsec:TXT-Buffer-commands"
@@ -27664,23 +27601,8 @@ Unavailable
 \begin_inset Text
 
 \begin_layout Plain Layout
-TXT Buffer is 
-\begin_inset Quotes eld
-\end_inset
-
-Unavailable
-\begin_inset Quotes erd
-\end_inset
-
- when it is not 
-\begin_inset Quotes eld
-\end_inset
-
-Available for transmission
-\begin_inset Quotes erd
-\end_inset
-
-, see 
+TXT buffer is Unavailable when it is not Available for transmission as defined
+ in 
 \begin_inset CommandInset ref
 LatexCommand ref
 reference "subsec:TXT-Buffer-tx-avail"
@@ -27691,7 +27613,7 @@ noprefix "false"
 \end_inset
 
 .
- Such a TXT Buffer is ignored by TX Arbitrator.
+ Such a TXT buffer is ignored by TX arbitrator.
 \end_layout
 
 \end_inset
@@ -27711,23 +27633,8 @@ Available
 \begin_inset Text
 
 \begin_layout Plain Layout
-TXT Buffer is 
-\begin_inset Quotes eld
-\end_inset
-
-Available
-\begin_inset Quotes erd
-\end_inset
-
- when it is 
-\begin_inset Quotes eld
-\end_inset
-
-Available for transmission
-\begin_inset Quotes erd
-\end_inset
-
-, see 
+TXT buffer is Available when it is Available for transmission as defined
+ in 
 \begin_inset CommandInset ref
 LatexCommand ref
 reference "subsec:TXT-Buffer-tx-avail"
@@ -27757,31 +27664,12 @@ Selected
 \begin_inset Text
 
 \begin_layout Plain Layout
-TXT Buffer is 
-\begin_inset Quotes eld
-\end_inset
-
-Selected
+TXT buffer is Selected when it is Available with highest priority out of
+ all Available
 \begin_inset Quotes erd
 \end_inset
 
- when it is 
-\begin_inset Quotes eld
-\end_inset
-
-Available
-\begin_inset Quotes erd
-\end_inset
-
- with highest priority out of all 
-\begin_inset Quotes eld
-\end_inset
-
-Available
-\begin_inset Quotes erd
-\end_inset
-
- TXT Buffers.
+ TXT buffers.
 \end_layout
 
 \end_inset
@@ -27801,24 +27689,9 @@ Validated
 \begin_inset Text
 
 \begin_layout Plain Layout
-TXT Buffer is 
-\begin_inset Quotes eld
-\end_inset
-
-Validated
-\begin_inset Quotes erd
-\end_inset
-
- when it is 
-\begin_inset Quotes eld
-\end_inset
-
-Available for transmission
-\begin_inset Quotes erd
-\end_inset
-
-, its Timestamp comparison has been executed and Metadata from TXT Buffer
- RAM (Frame Format word) have been loaded to capture registers for CAN Core.
+TXT buffer is Validated when it is Available for transmission, its Timestamp
+ comparison has been executed and Metadata from TXT buffer RAM (Frame format
+ word) has been loaded to capture registers for CAN core.
 \end_layout
 
 \end_inset
@@ -27838,31 +27711,8 @@ Used
 \begin_inset Text
 
 \begin_layout Plain Layout
-TXT Buffer is 
-\begin_inset Quotes eld
-\end_inset
-
-Used
-\begin_inset Quotes erd
-\end_inset
-
- after CAN Core issues 
-\begin_inset Quotes eld
-\end_inset
-
-HW Lock
-\begin_inset Quotes erd
-\end_inset
-
- command on 
-\begin_inset Quotes eld
-\end_inset
-
-Validated
-\begin_inset Quotes erd
-\end_inset
-
- TXT Buffer and is transmitting from this TXT Buffer.
+TXT buffer is Used after CAN core issues Lock command on Validated TXT buffer
+ and is transmitting from this TXT buffer.
 \end_layout
 
 \end_inset
@@ -27881,7 +27731,7 @@ Validated
 \begin_inset Caption Standard
 
 \begin_layout Plain Layout
-TX Arbitrator - TXT Buffer processing
+TX arbitrator - TXT buffer processing
 \begin_inset CommandInset label
 LatexCommand label
 name "tab:tx-arbitrator-buffer-processing"
@@ -27912,7 +27762,7 @@ status open
 \noindent
 \align center
 \begin_inset Graphics
-	filename /DOKUMENTY/Skola/CVUT-FEL/ctu_can_fd_2/doc/pics/Visio_generated/FSM_TX_Arbitrator.pdf
+	filename ../pics/Visio_generated/FSM_TX_Arbitrator.pdf
 	lyxscale 20
 
 \end_inset
@@ -27924,7 +27774,7 @@ status open
 \begin_inset Caption Standard
 
 \begin_layout Plain Layout
-TX Arbitrator FSM
+TX arbitrator FSM
 \begin_inset CommandInset label
 LatexCommand label
 name "fig:fsm-tx-arbitrator"
@@ -28009,7 +27859,7 @@ cellcolor{gray}
 \begin_inset Text
 
 \begin_layout Plain Layout
-HW Action
+HW action
 \begin_inset ERT
 status open
 
@@ -28051,15 +27901,7 @@ cellcolor{gray}
 \begin_inset Text
 
 \begin_layout Plain Layout
-No TXT Buffer is 
-\begin_inset Quotes eld
-\end_inset
-
-Available
-\begin_inset Quotes erd
-\end_inset
-
-.
+No TXT buffer is Available.
 \end_layout
 
 \end_inset
@@ -28079,7 +27921,7 @@ Available
 \begin_inset Text
 
 \begin_layout Plain Layout
-SW fills TXT Buffer 1 and issues Set Ready command to this Buffer.
+SW fills TXT buffer 1 and issues Set ready command to this TXT buffer.
 \end_layout
 
 \end_inset
@@ -28088,40 +27930,10 @@ SW fills TXT Buffer 1 and issues Set Ready command to this Buffer.
 \begin_inset Text
 
 \begin_layout Plain Layout
-TXT Buffer becomes 
-\begin_inset Quotes eld
-\end_inset
-
-Ready
-\begin_inset Quotes erd
-\end_inset
-
- and therefore 
-\begin_inset Quotes eld
-\end_inset
-
-Available
-\begin_inset Quotes erd
-\end_inset
-
- for TX Arbitrator.
- As this is only TXT Buffer which is 
-\begin_inset Quotes eld
-\end_inset
-
-Available
-\begin_inset Quotes erd
-\end_inset
-
-, Priority decoder selects it as highest priority 
-\begin_inset Quotes eld
-\end_inset
-
-Available
-\begin_inset Quotes erd
-\end_inset
-
- TXT Buffer.
+TXT buffer 1 FSM goes to Ready state is and therefore Available for TX arbitrato
+r.
+ As this is only TXT buffer which is Available, Priority decoder selects
+ it as highest priority Available TXT buffer.
 \end_layout
 
 \end_inset
@@ -28150,7 +27962,7 @@ Available
 \begin_inset Text
 
 \begin_layout Plain Layout
-TX Arbitrator FSM loads lower Timestamp word from TXT Buffer 1 RAM and stores
+TX arbitrator FSM loads Lower timestamp word from TXT buffer 1 RAM and stores
  it to auxiliarly register.
 \end_layout
 
@@ -28180,12 +27992,23 @@ TX Arbitrator FSM loads lower Timestamp word from TXT Buffer 1 RAM and stores
 \begin_inset Text
 
 \begin_layout Plain Layout
-TX Arbitrator FSM loads upper Timestamp word from TXT Buffer 1 RAM and executes
- comparison of External Timestamp and Timestamp of CAN Frame in TXT Buffer
- 1 (Lower word is in auxiliarly register and Upper word is on output of
- TXT Buffer 1 RAM).
- When External Timestamp is lower than Timestamp of CAN frame in TXT Buffer
- 1, TX Arbitrator waits, otherwise it proceeds to step 5.
+TX arbitrator FSM loads Upper timestamp word from TXT buffer 1 RAM and executes
+ comparison of 
+\series bold
+\shape italic
+timestamp
+\series default
+\shape default
+ input and timestamp of CAN frame in TXT buffer 1 (Lower word is in auxiliarly
+ register and Upper word is on output of TXT buffer 1 RAM).
+ When 
+\series bold
+\shape italic
+timestamp
+\series default
+\shape default
+ is lower than timestamp of CAN frame in TXT buffer 1, TX arbitrator waits,
+ otherwise it proceeds to step 5.
 \end_layout
 
 \end_inset
@@ -28205,8 +28028,14 @@ TX Arbitrator FSM loads upper Timestamp word from TXT Buffer 1 RAM and executes
 \begin_inset Text
 
 \begin_layout Plain Layout
-External Timestamp is incrementing (as it is counter of running time of
- a system) and it reaches value of CAN Frame Timestamp in TXT Buffer 1.
+
+\series bold
+\shape italic
+timestamp
+\series default
+\shape default
+ is incrementing (as it counts running time within a system) and it reaches
+ value of CAN frame timestamp in TXT buffer 1.
 \end_layout
 
 \end_inset
@@ -28215,9 +28044,14 @@ External Timestamp is incrementing (as it is counter of running time of
 \begin_inset Text
 
 \begin_layout Plain Layout
-TX Arbitrator notices External Timestamp is now higher than Timestamp of
- a Frame in selected TXT Buffer.
- At this moment TX Arbitrator proceeds with frame validation.
+TX arbitrator notices 
+\series bold
+\shape italic
+timestamp
+\series default
+\shape default
+ input is now higher than timestamp of CAN frame in selected TXT buffer.
+ At this moment TX arbitrator proceeds with frame validation.
 \end_layout
 
 \end_inset
@@ -28246,18 +28080,18 @@ TX Arbitrator notices External Timestamp is now higher than Timestamp of
 \begin_inset Text
 
 \begin_layout Plain Layout
-TX Arbitrator FSM loads TX Frame metadata from TXT Buffer 1 RAM (Frame Format
+TX arbitrator FSM loads TX frame metadata from TXT buffer 1 RAM (Frame format
  word) to capture registers.
- TXT Buffer 1 becomes 
+ TXT buffer 1 becomes 
 \begin_inset Quotes eld
 \end_inset
 
-Validated
+validated
 \begin_inset Quotes erd
 \end_inset
 
- and TXT Arbitrator signals that there is a valid TX frame for transmission
- to CAN Core.
+ and TXT arbitrator signals that there is a valid TX frame for transmission
+ to CAN core.
 \end_layout
 
 \end_inset
@@ -28286,18 +28120,20 @@ Validated
 \begin_inset Text
 
 \begin_layout Plain Layout
-When Protocol control FSM is in Sample point during third bit of Intermission
- or Bus Idle, it issues Lock command to TXT Buffer 1 (TXT Buffer becomes
- 
-\begin_inset Quotes eld
-\end_inset
-
-Used
-\begin_inset Quotes erd
-\end_inset
-
-, TXT Buffer FSM moves to TX in Progress) and TX Arbitrator (TX Arbitrator
- becomes locked).
+When Protocol control FSM is in 
+\color red
+sample point
+\color inherit
+ of third bit of 
+\color red
+intermission
+\color inherit
+ or bus 
+\color red
+idle
+\color inherit
+, it issues Lock command to TXT buffer 1 (TXT buffer 1 becomes Used, TXT
+ buffer FSM moves to TX in progress state) and TX arbitrator becomes Locked.
 \end_layout
 
 \end_inset
@@ -28326,17 +28162,10 @@ Used
 \begin_inset Text
 
 \begin_layout Plain Layout
-TX Arbitrator is locked and it is waiting for unlock command.
- No TXT Buffer validation is in progress.
- If another higher priority TXT Buffer becomes 
-\begin_inset Quotes eld
-\end_inset
-
-Available
-\begin_inset Quotes erd
-\end_inset
-
- this has no effect as current frame transmission is already in progress.
+TX arbitrator is Locked and it is waiting for Unlock command.
+ No TXT buffer validation is in progress.
+ If another higher priority TXT buffer becomes Available this has no effect
+ as frame transmission is already in progress.
 \end_layout
 
 \end_inset
@@ -28365,66 +28194,14 @@ Available
 \begin_inset Text
 
 \begin_layout Plain Layout
-Protocol control transmitts frame from TXT Buffer 1, and issues 
-\begin_inset Quotes eld
-\end_inset
-
-Unlock - Done
-\begin_inset Quotes erd
-\end_inset
-
- command to TXT Buffer 1 (Buffer becomes 
-\begin_inset Quotes eld
-\end_inset
-
-Unavailable
-\begin_inset Quotes erd
-\end_inset
-
- and TXT Buffer FSM moves to 
-\begin_inset Quotes eld
-\end_inset
-
-TX OK
-\begin_inset Quotes erd
-\end_inset
-
-).
- Since TXT Buffer 1 was only TXT Buffer which was 
-\begin_inset Quotes eld
-\end_inset
-
-Available
-\begin_inset Quotes erd
-\end_inset
-
- before the transmission, now there is no TXT Buffer which is 
-\begin_inset Quotes eld
-\end_inset
-
-Available
-\begin_inset Quotes erd
-\end_inset
-
-.
- Therefore no TXT Buffer is 
-\begin_inset Quotes eld
-\end_inset
-
-Selected
-\begin_inset Quotes erd
-\end_inset
-
- and no TXT Buffer validation is in progress.
- TX Arbitrator signals there is no TXT Buffer 
-\begin_inset Quotes eld
-\end_inset
-
-Validated
-\begin_inset Quotes erd
-\end_inset
-
- to CAN Core.
+Protocol control transmitts frame from TXT buffer 1, and issues Unlock -
+ done command to TXT buffer 1 (TXT buffer 1 becomes Unavailable and TXT
+ buffer FSM moves to TX OK).
+ Since TXT buffer 1 was only TXT buffer which was Available before the transmiss
+ion, now there is no TXT buffer which is Available.
+ Therefore no TXT buffer is Selected and no TXT buffer validation is in
+ progress.
+ TX arbitrator signals there is no Validated TXT buffer to CAN Core.
 \end_layout
 
 \end_inset
@@ -28444,7 +28221,7 @@ Validated
 \begin_inset Text
 
 \begin_layout Plain Layout
-SW reads state of TXT Buffer and finds out whether transmission was aborted
+SW reads state of TXT buffer 1 and finds out whether transmission was aborted
  or it ended succesfully (or an Interrupt can be fired).
 \end_layout
 
@@ -28473,7 +28250,7 @@ SW reads state of TXT Buffer and finds out whether transmission was aborted
 \begin_inset Caption Standard
 
 \begin_layout Plain Layout
-TX Arbitrator operation
+TX arbitrator operation
 \begin_inset CommandInset label
 LatexCommand label
 name "tab:tx-arbitrator-operation"
@@ -28591,17 +28368,9 @@ cellcolor{gray}
 \begin_inset Text
 
 \begin_layout Plain Layout
-SW configures priority 1 to TXT Buffer 1 and priority 2 to TXT Buffer 2.
- SW fills TXT Buffer 1 and TXT Buffer 2 by CAN frame.
- SW Issues 
-\begin_inset Quotes eld
-\end_inset
-
-Set Ready
-\begin_inset Quotes erd
-\end_inset
-
- command to TXT Buffer 1.
+SW configures priority 1 to TXT buffer 1 and priority 2 to TXT buffer 2.
+ SW fills TXT buffer 1 and TXT buffer 2 by CAN frames.
+ SW issues Set ready command to TXT buffer 1.
 \end_layout
 
 \end_inset
@@ -28610,40 +28379,9 @@ Set Ready
 \begin_inset Text
 
 \begin_layout Plain Layout
-TXT Buffer 1 becomes 
-\begin_inset Quotes eld
-\end_inset
-
-Ready
-\begin_inset Quotes erd
-\end_inset
-
- and therefore 
-\begin_inset Quotes eld
-\end_inset
-
-Available
-\begin_inset Quotes erd
-\end_inset
-
-.
- Since this is only 
-\begin_inset Quotes eld
-\end_inset
-
-Available
-\begin_inset Quotes erd
-\end_inset
-
- TXT Buffer, it becomes 
-\begin_inset Quotes eld
-\end_inset
-
-Selected
-\begin_inset Quotes erd
-\end_inset
-
-.
+TXT buffer 1 FSM goes to Ready state and therefore TXT buffer 1 becomes
+ Available from TX arbitrators point of view.
+ Since this is only Available TXT buffer, it becomes Selected.
 \end_layout
 
 \end_inset
@@ -28672,25 +28410,10 @@ Selected
 \begin_inset Text
 
 \begin_layout Plain Layout
-TX Arbitrator performs validation process (loads Timestamp words, executes
- Timestamp comparison, loads metadata) and TXT Buffer 1 becomes 
-\begin_inset Quotes eld
-\end_inset
-
-Validated
-\begin_inset Quotes erd
-\end_inset
-
-.
- TX Arbitrator signals to CAN Core that there is 
-\begin_inset Quotes eld
-\end_inset
-
-Validated
-\begin_inset Quotes erd
-\end_inset
-
- TXT Buffer for transmission.
+TX arbitrator performs validation process (loads timestamp words, executes
+ timestamp comparison, loads metadata) and TXT buffer 1 becomes Validated.
+ TX arbitrator signals to CAN core that there is validated TXT buffer for
+ transmission.
 \end_layout
 
 \end_inset
@@ -28710,15 +28433,7 @@ Validated
 \begin_inset Text
 
 \begin_layout Plain Layout
-SW Issues 
-\begin_inset Quotes eld
-\end_inset
-
-Set Ready
-\begin_inset Quotes erd
-\end_inset
-
- command to TXT Buffer 2.
+SW Issues Set ready command to TXT buffer 2.
 \end_layout
 
 \end_inset
@@ -28727,33 +28442,10 @@ Set Ready
 \begin_inset Text
 
 \begin_layout Plain Layout
-TXT Buffer 2 becomes 
-\begin_inset Quotes eld
-\end_inset
-
-Ready
-\begin_inset Quotes erd
-\end_inset
-
- and therefore 
-\begin_inset Quotes eld
-\end_inset
-
-Available
-\begin_inset Quotes erd
-\end_inset
-
-.
- As this is TXT Buffer has higher priority than TXT Buffer 1, TXT Buffer
- 2 becomes 
-\begin_inset Quotes eld
-\end_inset
-
-Selected
-\begin_inset Quotes erd
-\end_inset
-
- by Priority decoder.
+TXT buffer 2 FSM goes to Ready state and therefore TXT buffer 2 becomes
+ Available from TX arbitrators point of view.
+ As TXT buffer 2 has higher priority than TXT buffer 1, TXT buffer 2 becomes
+ Selected by Priority decoder.
 \end_layout
 
 \end_inset
@@ -28782,18 +28474,14 @@ Selected
 \begin_inset Text
 
 \begin_layout Plain Layout
-TXT Buffer validation process restarts with TXT Buffer 2.
- TXT Buffer 1 remains 
-\begin_inset Quotes eld
-\end_inset
-
-Validated
+TXT buffer 2 validation process restarts with TXT buffer 2.
+ During this time TXT buffer 1 remains Validated
 \begin_inset Quotes erd
 \end_inset
 
- (TXT Buffer 1 is still available for transmission).
- If during validation process of TXT Buffer 2, Protocol control issued HW
- Lock command, transmission would be started from TXT Buffer 1.
+ (TXT buffer 1 is still Available).
+ If during validation process of TXT buffer 2, Protocol control issued HW
+ Lock command, transmission would still be started from TXT buffer 1.
 \end_layout
 
 \end_inset
@@ -28822,33 +28510,10 @@ Validated
 \begin_inset Text
 
 \begin_layout Plain Layout
-TX Arbitrator finishes validation process (loads Timestamp words, executes
- Timestamp comparison, loads metadata) of TXT Buffer 2.
- At the end TXT Buffer 2 becomes 
-\begin_inset Quotes eld
-\end_inset
-
-Validated
-\begin_inset Quotes erd
-\end_inset
-
- and TXT Buffer 1 (which was 
-\begin_inset Quotes eld
-\end_inset
-
-Validated
-\begin_inset Quotes erd
-\end_inset
-
- till now) becomes 
-\begin_inset Quotes eld
-\end_inset
-
-Available
-\begin_inset Quotes erd
-\end_inset
-
-.
+TX arbitrator finishes validation process (loads timestamp words, executes
+ timestamp comparison, loads metadata) of TXT buffer 2.
+ At the end TXT buffer 2 becomes Validated and TXT buffer 1 (which was Validated
+ till now) becomes Available.
 \end_layout
 
 \end_inset
@@ -28877,16 +28542,9 @@ Available
 \begin_inset Text
 
 \begin_layout Plain Layout
-Protocol control issues HW Lock command and since now TXT Bufer 2 is 
-\begin_inset Quotes eld
-\end_inset
-
-Validated
-\begin_inset Quotes erd
-\end_inset
-
-, transmission starts from TXT Buffer 2.
- TX Arbitrator becomes Locked.
+Protocol control issues Lock command and since now TXT bufer 2 is Validated,
+ transmission starts from TXT buffer 2.
+ TX arbitrator becomes Locked.
 \end_layout
 
 \end_inset
@@ -28905,7 +28563,7 @@ Validated
 \begin_inset Caption Standard
 
 \begin_layout Plain Layout
-TX Arbitrator - Corner case 1
+TX arbitrator - corner case 1
 \begin_inset CommandInset label
 LatexCommand label
 name "tab:tx-arbitrator-cornercase-1"
@@ -29023,17 +28681,9 @@ cellcolor{gray}
 \begin_inset Text
 
 \begin_layout Plain Layout
-SW configures TXT Buffer 1 priority to 1 and TXT Buffer 2 priority to 2.
- SW fills TXT Buffer 1 and TXT Buffer 2 by CAN frames.
- SW Issues 
-\begin_inset Quotes eld
-\end_inset
-
-Set Ready
-\begin_inset Quotes erd
-\end_inset
-
- command to TXT Buffer 1 and TXT Buffer 2.
+SW configures TXT buffer 1 priority to 1 and TXT buffer 2 priority to 2.
+ SW fills TXT buffer 1 and TXT buffer 2 RAMs by CAN frames.
+ SW Issues Set ready command to TXT buffer 1 and TXT buffer 2.
 \end_layout
 
 \end_inset
@@ -29042,23 +28692,8 @@ Set Ready
 \begin_inset Text
 
 \begin_layout Plain Layout
-TXT Buffer 1 and 2 become 
-\begin_inset Quotes eld
-\end_inset
-
-Available
-\begin_inset Quotes erd
-\end_inset
-
- and TXT Buffer 2 becomes 
-\begin_inset Quotes eld
-\end_inset
-
-Selected
-\begin_inset Quotes erd
-\end_inset
-
- because it has higher priority than TXT Buffer 1.
+TXT buffers 1 and 2 become Available and TXT buffer 2 becomes Selected because
+ it has higher priority than TXT buffer 1.
 \end_layout
 
 \end_inset
@@ -29087,26 +28722,11 @@ Selected
 \begin_inset Text
 
 \begin_layout Plain Layout
-TX Arbitrator performs TXT Buffer 2 validation process (loads Timestamp
- words, executes Timestamp comparison, loads metadata) and TXT Buffer 2
- becomes 
-\begin_inset Quotes eld
-\end_inset
-
-Validated
-\begin_inset Quotes erd
-\end_inset
-
-.
- TX Arbitrator signals to CAN Core that there is 
-\begin_inset Quotes eld
-\end_inset
-
-Validated
-\begin_inset Quotes erd
-\end_inset
-
- TXT Buffer for transmission.
+TX arbitrator performs TXT buffer 2 validation process (loads timestamp
+ words, executes timestamp comparison, loads metadata) and TXT buffer 2
+ becomes Validated.
+ TX arbitrator signals to CAN core that there is Validated TXT buffer for
+ transmission.
 \end_layout
 
 \end_inset
@@ -29126,15 +28746,7 @@ Validated
 \begin_inset Text
 
 \begin_layout Plain Layout
-SW Issues 
-\begin_inset Quotes eld
-\end_inset
-
-Set Abort
-\begin_inset Quotes erd
-\end_inset
-
- command to TXT Buffer 2.
+SW Issues Set abort command to TXT buffer 2.
 \end_layout
 
 \end_inset
@@ -29143,32 +28755,14 @@ Set Abort
 \begin_inset Text
 
 \begin_layout Plain Layout
-TXT Buffer 2 which is now 
-\begin_inset Quotes eld
-\end_inset
-
-Validated
-\begin_inset Quotes erd
-\end_inset
-
- becomes 
-\begin_inset Quotes eld
-\end_inset
-
-Unavailable
-\begin_inset Quotes erd
-\end_inset
-
-.
- TX Arbitrator immediately signals to CAN Core that no TXT Buffer is available
+TXT buffer 2 which is now Validated becomes Unavailable.
+ TX arbitrator immediately signals to CAN core that no TXT buffer is available
  for transmission (
-\begin_inset Quotes eld
-\end_inset
-
+\series bold
+\shape italic
 tran_frame_valid
-\begin_inset Quotes erd
-\end_inset
-
+\series default
+\shape default
  drops low).
 \end_layout
 
@@ -29198,36 +28792,13 @@ tran_frame_valid
 \begin_inset Text
 
 \begin_layout Plain Layout
-As TXT Buffer 1 is now only 
-\begin_inset Quotes eld
-\end_inset
-
-Available
-\begin_inset Quotes erd
-\end_inset
-
- TXT Buffer and thus it becomes 
-\begin_inset Quotes eld
-\end_inset
-
-Selected
-\begin_inset Quotes erd
-\end_inset
-
-.
+As TXT buffer 1 is now only Available TXT buffer and thus it becomes Selected.
 \end_layout
 
 \begin_layout Plain Layout
-TXT Arbitrator proceeds with validation of TXT Buffer 1 and upon its end
- when TXT Buffer 1 becomes 
-\begin_inset Quotes eld
-\end_inset
-
-Validated
-\begin_inset Quotes erd
-\end_inset
-
-, it signals that there is available frame for transmission.
+TX arbitrator proceeds with validation of TXT buffer 1 and upon its end
+ when TXT buffer 1 becomes Validated, it signals that there is available
+ frame for transmission.
 \end_layout
 
 \end_inset
@@ -29246,7 +28817,7 @@ Validated
 \begin_inset Caption Standard
 
 \begin_layout Plain Layout
-TX Arbitrator - Corner case 2
+TX arbitrator - corner case 2
 \begin_inset CommandInset label
 LatexCommand label
 name "tab:tx-arbitrator-cornercase-2"
@@ -29268,63 +28839,25 @@ name "tab:tx-arbitrator-cornercase-2"
 
 \begin_layout Subsection
 Priority decoder
+\begin_inset CommandInset label
+LatexCommand label
+name "subsec:Priority-decoder"
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
-Priority decoder selects highest priority TXT Buffer from all 
-\begin_inset Quotes eld
-\end_inset
-
-Available
-\begin_inset Quotes erd
-\end_inset
-
- TXT Buffers combinatorially in single cycle.
- Such a TXT Buffer is 
-\begin_inset Quotes eld
-\end_inset
-
-Selected
-\begin_inset Quotes erd
-\end_inset
-
-.
- Priority of TXT Buffers is given by SW (TX_PRIORITY register).
- If no TXT Buffer is 
-\begin_inset Quotes eld
-\end_inset
-
-Available
-\begin_inset Quotes erd
-\end_inset
-
-, Priority decoder signals it on its output and no TXT Buffer is 
-\begin_inset Quotes eld
-\end_inset
-
-Selected
-\begin_inset Quotes erd
-\end_inset
-
-.
- If two 
-\begin_inset Quotes eld
-\end_inset
-
-Available
-\begin_inset Quotes erd
-\end_inset
-
- TXT Buffers have equal priority, TXT Buffer with lower index is selected.
- Priority decoder provides index of 
-\begin_inset Quotes eld
-\end_inset
-
-Selected
-\begin_inset Quotes erd
-\end_inset
-
- TXT Buffer on its output.
+Priority decoder selects highest priority TXT buffer from all Available
+ TXT buffers combinatorially in single cycle.
+ Such TXT buffer becomes Selected.
+ Priority of TXT buffers is given by SW (TX_PRIORITY register).
+ If no TXT buffer is Available, Priority decoder signals it on its output
+ and no TXT buffer is Selected (and TXT buffer validation will not be started).
+ If two Available TXT buffers have equal priority, TXT buffer with lower
+ index is selected.
+ Priority decoder provides index of Selected TXT buffer on its output.
 \end_layout
 
 \begin_layout Standard
@@ -29340,21 +28873,22 @@ noprefix "false"
 \end_inset
 
 ).
- Each level of array contains so called 
+ Each level contains so called 
 \begin_inset Quotes eld
 \end_inset
 
-Decoder cells
+decoder cells
 \begin_inset Quotes erd
 \end_inset
 
 .
- Decoder cell selects higher priority TXT Buffer from two TXT Buffers.
+ Decoder cell selects higher priority TXT buffer from two TXT buffers.
  Each decoder cell behaves like so:
 \end_layout
 
 \begin_layout Itemize
-When only one of input TXT Buffers is 
+When only one of the two TXT buffers is Available it is automatically selected,
+ its index is propagated as winner of comparison and 
 \begin_inset Quotes eld
 \end_inset
 
@@ -29362,35 +28896,11 @@ Available
 \begin_inset Quotes erd
 \end_inset
 
- it is automatically selected, its index is propagated as 
-\begin_inset Quotes eld
-\end_inset
-
-Winner
-\begin_inset Quotes erd
-\end_inset
-
- of comparison and 
-\begin_inset Quotes eld
-\end_inset
-
-Available
-\begin_inset Quotes erd
-\end_inset
-
- output is high.
+ output of this decoder cell is high.
 \end_layout
 
 \begin_layout Itemize
-When no TXT Buffer input is 
-\begin_inset Quotes eld
-\end_inset
-
-Available
-\begin_inset Quotes erd
-\end_inset
-
-, 
+When no TXT buffer input is Available, 
 \begin_inset Quotes eld
 \end_inset
 
@@ -29402,15 +28912,7 @@ Available
 \end_layout
 
 \begin_layout Itemize
-When both TXT Buffer inputs are 
-\begin_inset Quotes eld
-\end_inset
-
-Available
-\begin_inset Quotes erd
-\end_inset
-
-, 
+When both TXT buffer inputs are Available, 
 \begin_inset Quotes eld
 \end_inset
 
@@ -29419,19 +28921,11 @@ Available
 \end_inset
 
  output is high and index TXT Buffer with higher priority is propagated
- as 
-\begin_inset Quotes eld
-\end_inset
-
-Winner
-\begin_inset Quotes erd
-\end_inset
-
-.
+ as winner.
 \end_layout
 
 \begin_layout Standard
-Priority decoder supports 8 input TXT Buffers (currently only 4 are used).
+Priority decoder supports 8 input TXT buffers (currently only 4 are used).
  Unused inputs are driven to zeroes.
 \end_layout
 
@@ -29446,7 +28940,7 @@ status open
 \noindent
 \align center
 \begin_inset Graphics
-	filename /DOKUMENTY/Skola/CVUT-FEL/ctu_can_fd_2/doc/pics/Visio_generated/BD_priority_decoder.pdf
+	filename ../pics/Visio_generated/BD_priority_decoder.pdf
 	lyxscale 20
 	scale 70
 
@@ -29480,7 +28974,7 @@ name "fig:priority-decoder-block-diagram"
 \end_layout
 
 \begin_layout Subsection
-TXT Buffer change between transmissions
+TXT buffer change between transmissions
 \end_layout
 
 \begin_layout Standard
@@ -29526,7 +29020,7 @@ cellcolor{gray}
 \begin_inset Text
 
 \begin_layout Plain Layout
-SW Action
+SW action
 \begin_inset ERT
 status open
 
@@ -29548,7 +29042,7 @@ cellcolor{gray}
 \begin_inset Text
 
 \begin_layout Plain Layout
-HW Action / State
+HW action / State
 \begin_inset ERT
 status open
 
@@ -29581,7 +29075,7 @@ cellcolor{gray}
 \begin_inset Text
 
 \begin_layout Plain Layout
-SW fills TXT Buffer 1 RAM.
+SW fills TXT buffer 1 RAM.
  SW enables retransmitt limitation and configures Retransmitt limit to 5.
 \end_layout
 
@@ -29591,15 +29085,7 @@ SW fills TXT Buffer 1 RAM.
 \begin_inset Text
 
 \begin_layout Plain Layout
-TXT Buffer 1 is in 
-\begin_inset Quotes eld
-\end_inset
-
-Empty
-\begin_inset Quotes erd
-\end_inset
-
- State.
+TXT buffer 1 FSM is in Empty State.
 \end_layout
 
 \end_inset
@@ -29619,15 +29105,7 @@ Empty
 \begin_inset Text
 
 \begin_layout Plain Layout
-SW issues 
-\begin_inset Quotes eld
-\end_inset
-
-Set Ready
-\begin_inset Quotes erd
-\end_inset
-
- command to TXT Buffer 1.
+SW issues Set ready command to TXT buffer 1.
 \end_layout
 
 \end_inset
@@ -29636,24 +29114,8 @@ Set Ready
 \begin_inset Text
 
 \begin_layout Plain Layout
-TXT Buffer 1 moves to 
-\begin_inset Quotes eld
-\end_inset
-
-Ready
-\begin_inset Quotes erd
-\end_inset
-
- State.
- TXT Buffer becomes 
-\begin_inset Quotes eld
-\end_inset
-
-Available
-\begin_inset Quotes erd
-\end_inset
-
- for transmission.
+TXT buffer 1 FSM moves to Ready state.
+ TXT buffer 1 becomes Available from TX arbitrators point of view.
 \end_layout
 
 \end_inset
@@ -29682,16 +29144,8 @@ Available
 \begin_inset Text
 
 \begin_layout Plain Layout
-TX Arbitrator performs validatation and TXT Buffer 1 becomes 
-\begin_inset Quotes eld
-\end_inset
-
-Validated
-\begin_inset Quotes erd
-\end_inset
-
-, TX Arbitrator signals this to CAN Core.
- 
+TX arbitrator performs validatation and TXT buffer 1 becomes Validated,
+ TX arbitrator signals this to CAN core.
 \end_layout
 
 \end_inset
@@ -29720,17 +29174,8 @@ Validated
 \begin_inset Text
 
 \begin_layout Plain Layout
-CAN Core issues HW Lock command and starts transmitting from TXT Buffer
- 1.
- TXT Buffer 1 becomes 
-\begin_inset Quotes eld
-\end_inset
-
-Used
-\begin_inset Quotes erd
-\end_inset
-
-.
+CAN core issues Lock command and starts transmitting from TXT buffer 1.
+ TXT buffer 1 becomes Used and TXT buffer 1 FSM goes to TX in progress state
 \end_layout
 
 \end_inset
@@ -29759,41 +29204,26 @@ Used
 \begin_inset Text
 
 \begin_layout Plain Layout
-An Error frame occurs or arbitration is lost.
- Protocol control signals 
-\begin_inset Quotes eld
-\end_inset
-
-HW Unlock - Arbitration lost
-\begin_inset Quotes erd
-\end_inset
-
- or 
-\begin_inset Quotes eld
-\end_inset
-
-HW Unlock - Error frame
+An 
+\color red
+error frame
+\color inherit
+ occurs or 
+\color red
+arbitration
+\color inherit
+ is lost.
+ Protocol control signals Unlock - 
+\color red
+arbitration
+\color inherit
+ lost or Unlock - error frame
 \begin_inset Quotes erd
 \end_inset
 
  commands.
- TXT Buffer 1 becomes 
-\begin_inset Quotes eld
-\end_inset
-
-Unavailable
-\begin_inset Quotes erd
-\end_inset
-
- , TXT Buffer FSM moves to 
-\begin_inset Quotes eld
-\end_inset
-
-Ready
-\begin_inset Quotes erd
-\end_inset
-
- and Retransmitt Counter is incremented to 1.
+ TXT buffer 1 becomes Unavailable , TXT buffer 1 FSM moves to Ready and
+ Retransmitt counter is incremented to 1.
 \end_layout
 
 \end_inset
@@ -29813,16 +29243,8 @@ Ready
 \begin_inset Text
 
 \begin_layout Plain Layout
-SW fills TXT Buffer RAM 2.
- SW Issues 
-\begin_inset Quotes eld
-\end_inset
-
-Set Ready
-\begin_inset Quotes erd
-\end_inset
-
- command to TXT Buffer 2.
+SW fills TXT buffer RAM 2.
+ SW Issues Set ready command to TXT Buffer 2.
 \end_layout
 
 \end_inset
@@ -29831,8 +29253,8 @@ Set Ready
 \begin_inset Text
 
 \begin_layout Plain Layout
-TXT Buffer 2 moves to Ready state.
- Lets assume TXT Buffer 2 has higher priority than TXT Buffer 1.
+TXT buffer 2 moves to Ready state.
+ Lets assume TXT buffer 2 has higher priority than TXT buffer 1.
 \end_layout
 
 \end_inset
@@ -29861,24 +29283,9 @@ TXT Buffer 2 moves to Ready state.
 \begin_inset Text
 
 \begin_layout Plain Layout
-Now there are two 
-\begin_inset Quotes eld
-\end_inset
-
-Available
-\begin_inset Quotes erd
-\end_inset
-
- TXT Buffers (1 and 2).
- TXT Buffer 2 becomes 
-\begin_inset Quotes eld
-\end_inset
-
-Selected
-\begin_inset Quotes erd
-\end_inset
-
- by Priority decoder because it has higher priority.
+Now there are two Available TXT buffers (1 and 2).
+ TXT buffer 2 becomes Selected by Priority decoder because it has higher
+ priority.
 \end_layout
 
 \end_inset
@@ -29907,15 +29314,8 @@ Selected
 \begin_inset Text
 
 \begin_layout Plain Layout
-TX Arbitrator performs validation and TXT Buffer 2 becomes 
-\begin_inset Quotes eld
-\end_inset
-
-Validated
-\begin_inset Quotes erd
-\end_inset
-
-, TX Arbitrator signals this to CAN Core.
+TX arbitrator performs validation and TXT buffer 2 becomes Validated, TX
+ arbitrator signals this to CAN core.
  
 \end_layout
 
@@ -29945,20 +29345,13 @@ Validated
 \begin_inset Text
 
 \begin_layout Plain Layout
-CAN Core issues HW Lock command, TXT Buffer 2 becomes 
-\begin_inset Quotes eld
-\end_inset
-
-Used
-\begin_inset Quotes erd
-\end_inset
-
- (Transmission starts by CAN Core).
- At this moment Retransmitt counter is cleared because TXT Buffer used for
- current transmission (TXT Buffer 2) is different than the one for previous
- transmission (TXT Buffer 1).
- (Logically, counting retransmissions on TXT Buffer 2 shall not include
- one previous failed transmission from TXT Buffer 1, because it is different
+CAN core issues Lock command, TXT buffer 2 becomes Used (transmission starts
+ by CAN core).
+ At this moment Retransmitt counter is cleared because TXT buffer used for
+ current transmission (TXT buffer 2) is different from the one for previous
+ transmission (TXT buffer 1).
+ (Logically, counting retransmissions on TXT buffer 2 shall not include
+ one previous failed transmission from TXT buffer 1, because it is different
  CAN frame which is being transmitted).
 \end_layout
 
@@ -29978,7 +29371,7 @@ Used
 \begin_inset Caption Standard
 
 \begin_layout Plain Layout
-Selected TXT Buffer changed between transmissions
+Selected TXT buffer changed between transmissions
 \begin_inset CommandInset label
 LatexCommand label
 name "tab:txt-buffer-change"
@@ -29999,31 +29392,23 @@ name "tab:txt-buffer-change"
 \end_layout
 
 \begin_layout Subsection
-TXT Buffer addressing
+TXT buffer addressing
 \end_layout
 
 \begin_layout Standard
-During transmission when TX Arbitrator is 
-\begin_inset Quotes eld
-\end_inset
-
-Locked
-\begin_inset Quotes erd
-\end_inset
-
-, TX Arbitrator holds index of 
-\begin_inset Quotes eld
-\end_inset
-
-Used
-\begin_inset Quotes erd
-\end_inset
-
- TXT Buffer.
- During this time, Protocol Control FSM provides address of memory word
- from which it reads relevant Data for transmission.
- By this mechanism, Protocol Control is addressing Identifier memory word
- and transmitts Base Identifier and Identifier Extension from this word.
+During transmission when TX arbitrator is Locked, TX arbitrator holds index
+ of Used TXT buffer.
+ During this time, Protocol control FSM provides address of memory word
+ from which it reads relevant word for transmission.
+ Protocol Control is addressing Identifier memory word and transmitts 
+\color red
+base identifier
+\color inherit
+ and 
+\color red
+identifier extension
+\color inherit
+ from this word.
  Data memory words (see 
 \begin_inset CommandInset ref
 LatexCommand ref
@@ -30034,19 +29419,21 @@ noprefix "false"
 
 \end_inset
 
-) are addressed during transmission of Data field and Protocol control transmitt
-s value of 
-\begin_inset Quotes eld
-\end_inset
-
-Data field
-\begin_inset Quotes erd
-\end_inset
-
+) are addressed during transmission of 
+\color red
+data field
+\color inherit
+ and Protocol control transmitts value of
+\color red
+ data field
+\color inherit
  from these memory words.
- Each next 4 bytes of CAN Data field correspond to one memory word in TXT
- Buffer RAM.
- From output of TXT Buffer RAM, this memory word is loaded to TX Shift register
+ Each next 4 bytes of 
+\color red
+data field
+\color inherit
+ correspond to one memory word in TXT buffer RAM.
+ From output of TXT buffer RAM, this memory word is loaded to TX shift register
  and transmitted from there (see 
 \begin_inset CommandInset ref
 LatexCommand ref
@@ -30059,7 +29446,7 @@ noprefix "false"
 
 ).
  Therefore Protocol control must address according memory word in previous
- CAN frame field to cover latency of TXT Buffer RAM as is shown in Table
+ CAN frame field to cover latency of TXT buffer RAM as is shown in Table
  
 \begin_inset CommandInset ref
 LatexCommand ref
@@ -30071,16 +29458,10 @@ noprefix "false"
 \end_inset
 
 .
- Metadata for transmission are available from capture registers in TX Arbitrator
- which were loaded during TXT Buffer 
-\begin_inset Quotes eld
-\end_inset
-
-Validation
-\begin_inset Quotes erd
-\end_inset
-
-.
+ Metadata for transmission are available from capture registers in TX arbitrator
+ which were loaded during TXT buffer validation process.
+ It is assumed to be smarter to have metadata available permanently since
+ these are used in many states of Protocol control FSM.
 \end_layout
 
 \begin_layout Standard
@@ -30126,7 +29507,7 @@ cellcolor{gray}
 \begin_inset Text
 
 \begin_layout Plain Layout
-Memory word in TXT Buffer addressed by Protocol control 
+Memory word in TXT buffer addressed by Protocol control 
 \begin_inset ERT
 status open
 
@@ -30148,7 +29529,7 @@ cellcolor{gray}
 \begin_inset Text
 
 \begin_layout Plain Layout
-Meaning of data loaded to TX Shift register
+Meaning of data loaded to TX shift register
 \begin_inset ERT
 status open
 
@@ -30172,7 +29553,21 @@ cellcolor{gray}
 \begin_inset Text
 
 \begin_layout Plain Layout
-SOF, Idle, Suspend, Intermission
+
+\color red
+SOF
+\color inherit
+, 
+\color red
+idle
+\color inherit
+, 
+\color red
+suspend transmission
+\color inherit
+, 
+\color red
+intermission
 \end_layout
 
 \end_inset
@@ -30190,7 +29585,9 @@ Identifier
 \begin_inset Text
 
 \begin_layout Plain Layout
-Base Identifier
+
+\color red
+base identifier
 \end_layout
 
 \end_inset
@@ -30201,6 +29598,8 @@ Base Identifier
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\color red
 IDE
 \end_layout
 
@@ -30219,7 +29618,9 @@ Identifier
 \begin_inset Text
 
 \begin_layout Plain Layout
-Identifier Extension
+
+\color red
+identifier extension
 \end_layout
 
 \end_inset
@@ -30230,6 +29631,8 @@ Identifier Extension
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\color red
 DLC
 \end_layout
 
@@ -30248,7 +29651,11 @@ Data word 0
 \begin_inset Text
 
 \begin_layout Plain Layout
-Data bytes 0 ..
+
+\color red
+data field
+\color inherit
+ bytes 0 ..
  3
 \end_layout
 
@@ -30260,7 +29667,11 @@ Data bytes 0 ..
 \begin_inset Text
 
 \begin_layout Plain Layout
-Data Byte N * 4 - 1
+
+\color red
+data field
+\color inherit
+ byte N * 4 - 1
 \end_layout
 
 \end_inset
@@ -30278,7 +29689,11 @@ Data word N + 1
 \begin_inset Text
 
 \begin_layout Plain Layout
-Data bytes (N * 4) to (N + 1) * 4
+
+\color red
+data field
+\color inherit
+ bytes (N * 4) to (N + 1) * 4
 \end_layout
 
 \end_inset
@@ -30297,7 +29712,7 @@ Data bytes (N * 4) to (N + 1) * 4
 \begin_inset Caption Standard
 
 \begin_layout Plain Layout
-TXT Buffer RAM adressing during transmission
+TXT buffer RAM adressing during transmission
 \begin_inset CommandInset label
 LatexCommand label
 name "tab:txt-buffer-ram-addressing"
@@ -30318,139 +29733,269 @@ name "tab:txt-buffer-ram-addressing"
 \end_layout
 
 \begin_layout Subsection
-TX Frame Timestamp comparison
+TXT buffer RAM access
 \end_layout
 
 \begin_layout Standard
-Part of TXT Buffer validation process is comparison of external Timestamp
- with Timestamp of CAN Frame in currently validated TXT Buffer.
- If External Timestamp is lower than Timestamp of CAN frame, validation
- process is paused.
- When External Timestamp is equal to or higher than Timestamp of CAN Frame,
- TXT Buffer validation proceeds.
- If during this time index of 
+
+\color blue
+TODO: Think here how to create CS/CE signals when RAMs will be fully extended
+ by proper DP SRAM interface.
+ Interface which constantly loads output data by pointer has the memory
+ clocked each cycle.
+ This might be 
 \begin_inset Quotes eld
 \end_inset
 
-Selected
+power suicide
 \begin_inset Quotes erd
 \end_inset
 
- TXT Buffer changes, validation process is restarted.
+ when either hard RAM would be used or memory would be synthesized out of
+ DFFs!
+\end_layout
+
+\begin_layout Subsection
+TX frame timestamp comparison
 \end_layout
 
 \begin_layout Standard
-Comparison of Timestamps realizes 
-\begin_inset Quotes eld
-\end_inset
-
-Time Triggered Transmission
-\begin_inset Quotes erd
-\end_inset
-
- functionality.
- Only when External Timestamp passes (desired moment of transmission passes),
- TXT Buffer is admited for transmission to CAN Core.
- This does not mean that CAN Core will transmit the frame immediately! CAN
- Core will transmitt such a frame in nearest Bus Idle or when it samples
- dominant bit during third bit of Intermission.
- Since TXT Buffer validation process takes 6 clock cycles, external Timestamp
- must reach TX frame timestamp at latest 6 clock cycles before Sample point
- of a bit to be considered for transmission from following bit.
- See Figures TODO and TODO explaining Time Triggered operation.
+Part of TXT buffer validation process is comparison of 
+\series bold
+\shape italic
+\color black
+timestamp
+\series default
+\shape default
+\color inherit
+ input with timestamp of CAN frame in TXT buffer which is currently being
+ validated.
+ If 
+\series bold
+\shape italic
+\color black
+timestamp
+\series default
+\shape default
+\color inherit
+ input is lower than timestamp of CAN frame in currently validated TXT buffer,
+ validation process is paused.
+ When 
+\series bold
+\shape italic
+\color black
+timestamp
+\series default
+\shape default
+\color inherit
+ input is equal to or higher than timestamp of CAN frame in currently validated
+ TXT buffer, TXT buffer validation proceeds.
+ If during this time index of Selected TXT buffer changes, validation process
+ is restarted.
 \end_layout
 
 \begin_layout Standard
-Consider having two TX frames with TX Timestamps 10 (in TXT Buffer 1) and
- 50 (in TXT Buffer 2).
- Lets assume that TXT Buffer 2 has higher priority and it is therefore 
-\begin_inset Quotes eld
-\end_inset
+Comparison of timestamps realizes Time triggered transmission functionality
+ as is described in 9.2 of 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "key-1"
+literal "false"
 
-Selected
-\begin_inset Quotes erd
-\end_inset
-
- and it is being 
-\begin_inset Quotes eld
-\end_inset
-
-Validated
-\begin_inset Quotes erd
 \end_inset
 
 .
- It finishes its validation after External Timestamp reaches 50.
- Although CAN frame in TXT Buffer 1 has lower Timestamp when it should be
- transmitted, it is transmitted after frame from TXT Buffer 2 because TXT
- Buffer 2 has higher priority.
- Therefore TXT Buffer priority is at any moment considered first during
- TXT Buffer selection and TX frame Timestamp is considered only from 
-\begin_inset Quotes eld
+ Only when 
+\series bold
+\shape italic
+\color black
+timestamp
+\series default
+\shape default
+\color inherit
+ input passes (desired moment of transmission passes), TXT buffer is admited
+ for transmission to CAN core.
+ This does not mean that CAN core will transmit the frame immediately! CAN
+ core will transmitt such frame in nearest 
+\color red
+bus idle
+\color inherit
+ or when it samples dominant bit during third bit of 
+\color red
+intermission
+\color inherit
+.
+ Since TXT buffer validation process takes 6 clock cycles, 
+\series bold
+\shape italic
+\color black
+timestamp
+\series default
+\shape default
+\color inherit
+ input must reach TX frame timestamp at latest 6 clock cycles of System
+ clock before 
+\color red
+sample point
+\color inherit
+ of a bit to be considered for transmission from following bit.
+ Mismatch between the time when frame validation finishes due to transmitted
+ frame timestamp passing and 
+\color red
+sample point
+\color inherit
+ of 
+\color red
+SOF
+\color inherit
+ bit can be up to two bit times as is demonstrated in Figure 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:time-triggered-transmission"
+plural "false"
+caps "false"
+noprefix "false"
+
 \end_inset
 
-Selected
-\begin_inset Quotes erd
-\end_inset
-
- TXT Buffer.
-\end_layout
-
-\begin_layout Subsection
-HW lock and unlock
+.
+ This situation can be avoided if change of time is synchronized in a system
+ with sufficiently large period of counting on 
+\series bold
+\shape italic
+\color black
+timestamp
+\series default
+\shape default
+\color inherit
+ input (close to Bit time period).
 \end_layout
 
 \begin_layout Standard
-Protocol control FSM issues HW Lock command in third bit of Intermission
- (when it samples Dominant bit) or during Bus Idle when there is 
-\begin_inset Quotes eld
+\begin_inset Float figure
+placement H
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\noindent
+\align center
+\begin_inset Graphics
+	filename ../pics/Timing_diagrams/PDFs/time_triggered_transmission.pdf
+	lyxscale 20
+	scale 48
+
 \end_inset
 
-Validated
-\begin_inset Quotes erd
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Time triggered transmission
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:time-triggered-transmission"
+
 \end_inset
 
- TXT Buffer available.
- In such a case CTU CAN FD becomes Transmitter of following CAN frame.
- After HW Lock command, TX Arbitrator becomes Locked and signalling of 
-\begin_inset Quotes eld
+
+\end_layout
+
 \end_inset
 
-Validated
-\begin_inset Quotes erd
+
+\end_layout
+
 \end_inset
 
- TXT Buffer remains high during whole frame.
- If there is no TXT Buffer 
-\begin_inset Quotes eld
-\end_inset
 
-Validated
-\begin_inset Quotes erd
-\end_inset
+\end_layout
 
- so far and TXT Buffer becomes 
-\begin_inset Quotes eld
-\end_inset
-
-Validated
-\begin_inset Quotes erd
-\end_inset
-
- just slightly after Protocol control samples Dominant bit during third
- bit of Intermission or Bus Idle, unit becomes Receiver and frame from 
-\begin_inset Quotes eld
-\end_inset
-
-Validated
-\begin_inset Quotes erd
-\end_inset
-
- TXT Buffer is not transmitted.
+\begin_layout Standard
+Consider having two TX frames with timestamps 10 (in TXT buffer 1) and 50
+ (in TXT buffer 2).
+ Lets assume that TXT buffer 2 has higher priority and it is therefore Selected
+ and validation process is in progress.
+ It finishes its validation wehn 
+\series bold
+\shape italic
+\color black
+timestamp
+\series default
+\shape default
+\color inherit
+ input reaches 50.
+ Although CAN frame in TXT buffer 1 has lower timestamp, it is transmitted
+ after frame from TXT buffer 2 because TXT buffer 2 has higher priority!
+ Therefore TXT buffer priority is at any moment considered first during
+ TXT buffer selection and CAN frame timestamp is considered only from Selected
+ TXT buffer.
 \end_layout
 
 \begin_layout Subsection
-TX Datapath hazard protection
+Lock and Unlock commands
+\end_layout
+
+\begin_layout Standard
+Protocol control FSM issues Lock command in third bit of 
+\color red
+intermission
+\color inherit
+ (when it samples 
+\color red
+dominant
+\color inherit
+ bit) or during 
+\color red
+bus idle
+\color inherit
+ when there is Validated TXT buffer available.
+ In such case CTU CAN FD becomes 
+\color red
+transmitter
+\color inherit
+ of following CAN frame.
+ After Lock command, TX arbitrator becomes Locked and signalling of Validated
+ TXT buffer remains high during whole frame.
+ If there is no TXT buffer Validated so far and TXT buffer becomes Validated
+ just slightly after Protocol control samples 
+\color red
+dominant
+\color inherit
+ bit during third bit of 
+\color red
+intermission
+\color inherit
+ or 
+\color red
+bus idle
+\color inherit
+, unit becomes 
+\color red
+receiver
+\color inherit
+ and frame from Validated TXT buffer is not transmitted.
+ If 
+\color red
+suspend transmission
+\color inherit
+ field is transmitted and Protocol control samples 
+\color red
+dominant
+\color inherit
+ bit, it does not issue Lock command and becomes 
+\color red
+receiver
+\color inherit
+ of following frame.
+\end_layout
+
+\begin_layout Subsection
+TX datapath hazard protection
 \begin_inset CommandInset label
 LatexCommand label
 name "subsec:TX-Datapath-hazard"
@@ -30461,63 +30006,19 @@ name "subsec:TX-Datapath-hazard"
 \end_layout
 
 \begin_layout Standard
-TX frame datapath (TX Arbitrator + TXT Buffers) are both manipulated by
+TX frame datapath (TX arbitrator + TXT buffers) are both manipulated by
  SW and HW commands simultaneously.
  This fact opens question of control hazards susceptibility.
  Such a hazard would occur, when e.g.
- TXT Buffer ended in 
-\begin_inset Quotes eld
-\end_inset
-
-Aborted
-\begin_inset Quotes erd
-\end_inset
-
- state after 
-\begin_inset Quotes eld
-\end_inset
-
-Set Abort
-\begin_inset Quotes erd
-\end_inset
-
- command, but Protocol control FSM still managed to issue HW Lock command.
- In such case, Protocol control FSM would transmitt from TXT Buffer which
- is 
-\begin_inset Quotes eld
-\end_inset
-
-Aborted
-\begin_inset Quotes erd
-\end_inset
-
- (and therefore content of its RAM can be modified by user).
- Due to combinatorial path between 
-\begin_inset Quotes eld
-\end_inset
-
-Set Abort
-\begin_inset Quotes erd
-\end_inset
-
- and indication of 
-\begin_inset Quotes eld
-\end_inset
-
-Validated
-\begin_inset Quotes erd
-\end_inset
-
- TXT Buffer, it never happends that when 
-\begin_inset Quotes eld
-\end_inset
-
-Set Abort
-\begin_inset Quotes erd
-\end_inset
-
- command is issued to a TXT Buffer, Protocol control FSM would issue HW
- Lock command, therefore this situation will never occur.
+ TXT buffer FSM moved to Aborted state after Set abort command, but Protocol
+ control FSM still managed to issue Lock command and start transmission
+ from this TXT buffer.
+ In such case, Protocol control FSM would transmitt from TXT buffer which
+ is Aborted (and therefore content of its RAM can be modified by SW).
+ Due to combinatorial path between Set abort and indication of Validated
+ TXT buffer, it never happends that when Set abort command is issued to
+ a TXT buffer, Protocol control FSM would issue Lock command, therefore
+ this situation will never occur.
  The relevant combinatorial path is shown in Figure 
 \begin_inset CommandInset ref
 LatexCommand ref
@@ -30555,7 +30056,7 @@ status open
 \begin_inset Caption Standard
 
 \begin_layout Plain Layout
-TX Datapath hazard protection
+TX datapath hazard protection
 \begin_inset CommandInset label
 LatexCommand label
 name "fig:tx-data-path-hazards"
@@ -30580,15 +30081,32 @@ TX Abort + Retransmitt clear
 \end_layout
 
 \begin_layout Standard
-TODO: Premysliet kedy sa bude mazat Retransmitt counter pre TXT Buffer ktory
- prejde do Aborted.
-\end_layout
 
-\begin_layout Standard
-\begin_inset Newpage pagebreak
+\color blue
+TODO: This feature is not yet designed! If TXT Buffer which is currently
+ Validated or Used becomes 
+\begin_inset Quotes eld
 \end_inset
 
+Aborted
+\begin_inset Quotes erd
+\end_inset
 
+, then retransmitt counter should be also cleared.
+ It can happen that user will abort buffer, replace CAN frame within this
+ buffer and put ready again.
+ In such a case, retransmitt counter should count only retransmissions of
+ new frame! This would become epecially important if we went for generic
+ amount of TXT buffers! If config with only 1 TXT buffer was used, then
+ any abort in actual implementation leaves retransmitt counter untouched
+ and any new frame would start with this value of retransmitt counter...
+ This could be implemented like so: If TXT Buffer FSM moves to Aborted,
+ it gives a signal.
+ If last TXT Buffer that was used for transmission (not Selected one because
+ when abort is applied on TXT buffer, it will not be Selected!), is equal
+ to index of TXT Buffer that just moved to Abort, then retransmitt counter
+ will be cleared.
+ This still needs to be evaluated.
 \end_layout
 
 \begin_layout Section
@@ -30600,16 +30118,16 @@ Interrupt manager implements following functionality:
 \end_layout
 
 \begin_layout Itemize
-Capture occurence of events/conditions within CTU CAN FD to Interrupt Status
+Capture occurence of events/conditions within CTU CAN FD to Interrupt status
  register.
 \end_layout
 
 \begin_layout Itemize
-Interrupt Masking and Enabling.
+Interrupt masking and enabling.
 \end_layout
 
 \begin_layout Itemize
-Generation of Level-based Interrupt output.
+Generation of level-based Interrupt output.
 \end_layout
 
 \begin_layout Standard
@@ -30623,24 +30141,38 @@ filename "entity_docs/int_manager.lyx"
 \end_layout
 
 \begin_layout Standard
-Occurence of events within CTU CAN FD is captured to Interrupt Status register
+Occurence of events within CTU CAN FD is captured to Interrupt status register
  (INT_STAT) register when corresponding interrupt is unmasked.
  When Interrupt is masked, correponding event is ignored.
  Interrupt mask is set by writing logic 1 to corresponding bit of INT_MASK_SET
  register.
  Interrupt mask is cleared by writing logic 1 to corresponding bit of INT_MASK_C
 LR register.
- When a bit in Interrupt Status register is set, it causes Interrupt output
- of CTU CAN FD to go high when this interrupt is enabled.
- A bit in Interrupt Status register is cleared by writing Logic 1 to correspondi
+ When a bit in Interrupt status register is set, it causes 
+\series bold
+\shape italic
+int
+\series default
+\shape default
+ output of CTU CAN FD to go high when this interrupt is enabled.
+ A bit in Interrupt status register is cleared by writing logic 1 to correspondi
 ng bit in INT_STAT register.
- Value of Interrupt output is given by logical OR of all enabled Interrupts
- which have Interrupt Status equal to logic 1.
+ Value of 
+\series bold
+\shape italic
+int
+\series default
+\shape default
+ output is given by logical OR of all enabled interrupts which have Interrupt
+ status equal to logic 1.
  Interrupt output is registered to be glitch free.
  Interrupt is enabled by writing logic 1 to corresponding bit of INT_ENA_SET
  register.
  Interrupt is disabled by writing logic 1 to corresponding bit of INT_ENA_CLR
  register.
+ When Interrupt status shall be set at the same clock cycle by an internal
+ event of CTU CAN FD and cleared by write to INT_STAT register, Interrupt
+ will be set (set has priority over clear).
  Block diagram of single interrupt datapath is shown in Figure 
 \begin_inset CommandInset ref
 LatexCommand ref
@@ -30686,7 +30218,7 @@ status open
 \begin_inset Caption Standard
 
 \begin_layout Plain Layout
-Single Interrupt Datapath
+Single interrupt datapath
 \begin_inset CommandInset label
 LatexCommand label
 name "fig:int-single-datapath"
@@ -30722,15 +30254,55 @@ Prescaler implements following functionality:
 \end_layout
 
 \begin_layout Itemize
-Time quanta measurement (both Nominal and Data).
+
+\color red
+Time quanta
+\color inherit
+ measurement (for both 
+\color red
+nominal
+\color inherit
+ and 
+\color red
+data
+\color inherit
+ 
+\color red
+bit rates
+\color inherit
+).
 \end_layout
 
 \begin_layout Itemize
-Bit segments measurement (SYNC, PROP, PH1 and PH2).
+Bit segments measurement (
+\color red
+Sync_Seg
+\color inherit
+, 
+\color red
+Prop_Seg
+\color inherit
+, 
+\color red
+Phase_Seg1
+\color inherit
+ and 
+\color red
+Phase_Seg2
+\color inherit
+).
 \end_layout
 
 \begin_layout Itemize
-Hard synchronisation and Resynchronisation as defined in 
+
+\color red
+Hard synchronisation
+\color inherit
+ and 
+\color red
+resynchronisation
+\color inherit
+ as defined in 
 \begin_inset CommandInset citation
 LatexCommand cite
 key "key-1"
@@ -30742,16 +30314,35 @@ literal "false"
 \end_layout
 
 \begin_layout Itemize
-Check if edge is valid for synchronisation (only one edge between two Sample
- points).
+Check if edge is valid for 
+\color red
+synchronisation
+\color inherit
+ (only one edge between two 
+\color red
+sample points
+\color inherit
+).
 \end_layout
 
 \begin_layout Itemize
-Generate TX Trigger and RX Triggers for each stage of pipeline.
+Generate TX trigger and RX triggers for each stage of pipeline.
 \end_layout
 
 \begin_layout Itemize
-Switch between Nominal and Data Bit-rates.
+Switch between 
+\color red
+nominal
+\color inherit
+ and 
+\color red
+data
+\color inherit
+ 
+\color red
+bit rates
+\color inherit
+.
 \end_layout
 
 \begin_layout Standard
@@ -30823,7 +30414,7 @@ filename "entity_docs/prescaler.lyx"
 \end_layout
 
 \begin_layout Standard
-CAN FD standard in 
+CAN FD standard (
 \begin_inset CommandInset citation
 LatexCommand cite
 key "key-1"
@@ -30831,9 +30422,24 @@ literal "false"
 
 \end_inset
 
- distuiguishes two Bit-Rates: Nominal and Data.
- CTU CAN FD implementation distuighushes 3 Bit-Rate types as shown in Table
- 
+) distuiguishes two 
+\color red
+bit rates
+\color inherit
+: 
+\color red
+nominal
+\color inherit
+ and 
+\color red
+data
+\color inherit
+.
+ CTU CAN FD implementation distuighushes 3 
+\color red
+bit rate
+\color inherit
+ types as shown in Table 
 \begin_inset CommandInset ref
 LatexCommand ref
 reference "tab:ctu-can-fd-bit-rate-types"
@@ -30844,8 +30450,11 @@ noprefix "false"
 \end_inset
 
 .
- Protocol Control FSM configures correct Bit-rate in according parts of
- CAN frame as explained in 
+ Protocol Control FSM configures correct 
+\color red
+bit rate
+\color inherit
+ in according parts of CAN frame as explained in 
 \begin_inset CommandInset citation
 LatexCommand cite
 key "key-1"
@@ -30877,7 +30486,7 @@ status open
 \begin_inset Text
 
 \begin_layout Plain Layout
-Bit-Rate type
+Bit rate type
 \begin_inset ERT
 status open
 
@@ -30907,7 +30516,11 @@ literal "false"
 
 \end_inset
 
- Bit-rate
+ 
+\color red
+bit rate
+\color inherit
+
 \begin_inset ERT
 status open
 
@@ -30962,6 +30575,8 @@ Nominal
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\color red
 Nominal
 \end_layout
 
@@ -30971,7 +30586,19 @@ Nominal
 \begin_inset Text
 
 \begin_layout Plain Layout
-Nominal Bit-Rate for both Transmitter and Receiver.
+
+\color red
+Nominal bit rate
+\color inherit
+ for both 
+\color red
+transmitter
+\color inherit
+ and 
+\color red
+receiver
+\color inherit
+.
 \end_layout
 
 \end_inset
@@ -30991,6 +30618,8 @@ Data
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\color red
 Data
 \end_layout
 
@@ -31000,7 +30629,15 @@ Data
 \begin_inset Text
 
 \begin_layout Plain Layout
-Data Bit-Rate for Receiver of CAN FD frame.
+
+\color red
+Data bit rate
+\color inherit
+ for 
+\color red
+receiver
+\color inherit
+ of CAN FD frame.
 \end_layout
 
 \end_inset
@@ -31020,6 +30657,8 @@ Secondary
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\color red
 Data
 \end_layout
 
@@ -31029,8 +30668,24 @@ Data
 \begin_inset Text
 
 \begin_layout Plain Layout
-Data Bit-Rate for Transmitter of CAN FD frame.
- Secondary Sampling point is used to detect Bit Error.
+Data 
+\color red
+bit rate
+\color inherit
+ for 
+\color red
+transmitter
+\color inherit
+ of CAN FD frame.
+ 
+\color red
+Secondary sampling point
+\color inherit
+ is used to detect 
+\color red
+bit error
+\color inherit
+.
 \end_layout
 
 \end_inset
@@ -31070,35 +30725,67 @@ name "tab:ctu-can-fd-bit-rate-types"
 \end_layout
 
 \begin_layout Standard
-Prescaler contains separate logic for both Bit-rates (Nominal and Data).
- Logic for 
-\begin_inset Quotes eld
-\end_inset
-
-Secondary
-\begin_inset Quotes erd
-\end_inset
-
- is the same as for 
-\begin_inset Quotes eld
-\end_inset
-
-Data
-\begin_inset Quotes erd
-\end_inset
-
+Prescaler contains separate logic for both 
+\color red
+bit
+\color inherit
+ 
+\color red
+rates
+\color inherit
+ (
+\color red
+nominal
+\color inherit
+ and 
+\color red
+data
+\color inherit
+).
+ Logic for Secondary is the same as for Data.
+ Logic for single bit rate consist of Bit time counters module and Bit segment
+ meter module.
+ Doubled logic for 
+\color red
+nominal
+\color inherit
+ and 
+\color red
+data
+\color inherit
+ 
+\color red
+bit rates
+\color inherit
+ is implemented to achieve better timing performance (shorter combinatorial
+ paths) with slightly higher resource usage when compared to common logic
+ for 
+\color red
+nominal
+\color inherit
+ and 
+\color red
+data
+\color inherit
+ 
+\color red
+bit rates
+\color inherit
 .
- Logic for single Bit-rate consist of Bit Time Counters module and Bit Segment
- Meter module.
- Doubled logic for Nominal and Data Bit-rate is implemented to achieve better
- timing performance (shorter combinatorial paths) with slightly higher resource
- usage when compared to common logic for Nominal and Data Bit-timing.
- During bits where Bit-rate is switched, logic for both is functioning simultane
-ously, otherwise only logic for actual Bit-rate is functioning.
+ During bits where 
+\color red
+bit rate
+\color inherit
+ is switched, logic for both is functioning simultaneously, otherwise only
+ logic for actual 
+\color red
+bit rate
+\color inherit
+ is functioning.
 \end_layout
 
 \begin_layout Subsection
-Bit-Rate configuration
+Bit rate configuration
 \begin_inset CommandInset label
 LatexCommand label
 name "subsec:Bit-Rate-configuration"
@@ -31109,9 +30796,30 @@ name "subsec:Bit-Rate-configuration"
 \end_layout
 
 \begin_layout Standard
-Bit Rates (Nominal and Data) are configured by SW when CTU CAN FD is disabled
- (SETTINGS[ENA] = '0') in registers BTR (Nominal) and BTR_FD (Data).
- Timing parameters for each Bit-Rate are listed in Table 
+Bit rates (
+\color red
+nominal and data
+\color inherit
+) are configured by SW when CTU CAN FD is disabled (SETTINGS[ENA] = '0')
+ in registers BTR (
+\color red
+nominal
+\color inherit
+) and BTR_FD (
+\color red
+data
+\color inherit
+).
+ BTR and BTR_FD registers are writable only when SETTINGS[ENA]='0', otherwise
+ write access to these registers has no effect (
+\color blue
+This is TODO, right now they are writable always!
+\color inherit
+) Timing parameters for each
+\color red
+ bit rate
+\color inherit
+ are listed in Table 
 \begin_inset CommandInset ref
 LatexCommand ref
 reference "tab:ctu-can-fd-bit-rate-config"
@@ -31213,7 +30921,7 @@ cellcolor{gray}
 \begin_inset Text
 
 \begin_layout Plain Layout
-Bit-Rate Prescaler
+Bit rate prescaler
 \end_layout
 
 \end_inset
@@ -31231,7 +30939,11 @@ BRP
 \begin_inset Text
 
 \begin_layout Plain Layout
-Time Quanta duration = BRP * System clock period
+
+\color red
+Time quanta
+\color inherit
+ = Bit rate prescaler * System clock period
 \end_layout
 
 \end_inset
@@ -31242,7 +30954,7 @@ Time Quanta duration = BRP * System clock period
 \begin_inset Text
 
 \begin_layout Plain Layout
-Synchronisation segment
+Synchronisation segment length
 \end_layout
 
 \end_inset
@@ -31260,7 +30972,11 @@ SYNC
 \begin_inset Text
 
 \begin_layout Plain Layout
-Length of Synchronisation segment is always 1 Time Quanta.
+Length of Synchronisation segment is always 1 
+\color red
+time quanta
+\color inherit
+.
 \end_layout
 
 \end_inset
@@ -31271,7 +30987,7 @@ Length of Synchronisation segment is always 1 Time Quanta.
 \begin_inset Text
 
 \begin_layout Plain Layout
-Propagation segment
+Propagation segment length
 \end_layout
 
 \end_inset
@@ -31289,7 +31005,11 @@ PROP
 \begin_inset Text
 
 \begin_layout Plain Layout
-Configured in multiples of Time Quanta.
+Configured in multiples of 
+\color red
+time quanta
+\color inherit
+.
 \end_layout
 
 \end_inset
@@ -31300,7 +31020,7 @@ Configured in multiples of Time Quanta.
 \begin_inset Text
 
 \begin_layout Plain Layout
-Phase 1 segment
+Phase 1 segment length
 \end_layout
 
 \end_inset
@@ -31318,7 +31038,11 @@ PH1
 \begin_inset Text
 
 \begin_layout Plain Layout
-Configured in multiples of Time Quanta.
+Configured in multiples of 
+\color red
+time quanta
+\color inherit
+.
 \end_layout
 
 \end_inset
@@ -31329,7 +31053,7 @@ Configured in multiples of Time Quanta.
 \begin_inset Text
 
 \begin_layout Plain Layout
-Phase 2 segment
+Phase 2 segment length
 \end_layout
 
 \end_inset
@@ -31347,7 +31071,11 @@ PH2
 \begin_inset Text
 
 \begin_layout Plain Layout
-Configured in multiples of Time Quanta.
+Configured in multiples of 
+\color red
+time quanta
+\color inherit
+.
 \end_layout
 
 \end_inset
@@ -31376,7 +31104,11 @@ SJW
 \begin_inset Text
 
 \begin_layout Plain Layout
-Configured in multiples of Time Quanta.
+Configured in multiples of 
+\color red
+time quanta
+\color inherit
+.
 \end_layout
 
 \end_inset
@@ -31395,7 +31127,7 @@ Configured in multiples of Time Quanta.
 \begin_inset Caption Standard
 
 \begin_layout Plain Layout
-CTU CAN FD Bit-Rate configuration
+CTU CAN FD bit rate configuration
 \begin_inset CommandInset label
 LatexCommand label
 name "tab:ctu-can-fd-bit-rate-config"
@@ -31416,38 +31148,180 @@ name "tab:ctu-can-fd-bit-rate-config"
 \end_layout
 
 \begin_layout Subsection
-Bit Time Counters
+Bit time counters
 \end_layout
 
 \begin_layout Standard
-Bit Time Counters module contains two counters: Time Quanta counter and
+Bit time counters module contains two counters: Time quanta counter and
  Segment counter.
+ There are two intstances of Bit time counters module, 
+\color red
+nominal
+\color inherit
+ (NBTCM) and 
+\color red
+data
+\color inherit
+ (DBTCM).
 \end_layout
 
 \begin_layout Standard
-Time Quanta counter measures length of Time Quanta and provides information
- that Time Quanta has elapsed (so called Time Quanta Edge).
- Time Quanta has elapsed when Time Quanta counter is equal to Bit-rate Prescaler
- (therefore dividing the frequency of System clock by Bit-Rate Prescaler).
- Time Quanta Edge is either active continously (when Bit-Rate Prescaler
- is 1), or always for one clock cycle at the end of Time Quanta.
- When Bit-Rate Prescaler is 1, Time Quanta is equal to System clock and
- Time Quanta counter is not running.
+Time quanta counter measures length of 
+\color red
+time quanta
+\color inherit
+ and provides information that 
+\color red
+time quanta
+\color inherit
+ has elapsed (
+\series bold
+\shape italic
+tq_edge
+\color black
+_nbt
+\series default
+\shape default
+\color inherit
+/
+\series bold
+\shape italic
+\color black
+dbt
+\series default
+\shape default
+\color inherit
+=1).
+ 
+\color red
+Time quanta
+\color inherit
+ has elapsed when Time quanta counter is equal to Bit rate prescaler (therefore
+ dividing the frequency of System clock by Bit rate prescaler).
+ 
+\series bold
+\shape italic
+tq_edge
+\color black
+_nbt
+\series default
+\shape default
+\color inherit
+/
+\series bold
+\shape italic
+\color black
+dbt
+\series default
+\shape default
+\color inherit
+ is either active continously (when Bit rate prescaler is 1), or always
+ for one clock cycle at the end of 
+\color red
+time quanta
+\color inherit
+.
+ When Bit rate prescaler is 1, 
+\color red
+time quanta
+\color inherit
+ is equal to System clock period and Time quanta counter is not running.
 \end_layout
 
 \begin_layout Standard
-Segment Counter counts number of Time Quanta of actual Bit Segment (counts
- only when Time Quanta Edge is active).
- Prescaler distuiguishes two Bit Segments: TSEG1 (SYNC + PROP + PH1 parts
- of Bit) and TSEG2 (PH2 part of Bit).
- Segment Counter counts from 0 and it is restarted upon the end of previous
- segment or upon Hard synchronisation.
- Segment Counter for Nominal(Data) Bit-rate shall never overflow during
- Nominal(Data) Bit-Rate.
- Segment counter for Nominal Bit-rate may overflow during Data Bit-rate
- and Segment counter for Data Bit-rate may overflow during Nominal Bit-Rate.
- Current Bit-rate is determined by Protocol control FSM based on current
- field of CAN frame and its type (see 
+Segment counter counts number of
+\color red
+ time quanta
+\color inherit
+ of actual bit segment (counts only when 
+\series bold
+\shape italic
+tq_edge
+\color black
+_nbt
+\series default
+\shape default
+\color inherit
+/
+\series bold
+\shape italic
+\color black
+dbt
+\series default
+\shape default
+\color inherit
+=1).
+ Prescaler distuiguishes two bit segments: TSEG1 (
+\color red
+Sync_Seg
+\color inherit
+ + 
+\color red
+Prop_Seg
+\color inherit
+ + 
+\color red
+Phase_Seg1
+\color inherit
+ parts of bit) and TSEG2 (
+\color red
+Phase_Seg2
+\color inherit
+ part of bit).
+ Segment counter counts from 0 and it is restarted upon the end of previous
+ segment or upon 
+\color red
+hard synchronisation
+\color inherit
+.
+ Segment counter for 
+\color red
+nominal
+\color inherit
+(
+\color red
+data
+\color inherit
+) 
+\color red
+bit rate
+\color inherit
+ shall never overflow during 
+\color red
+nominal
+\color inherit
+(
+\color red
+data
+\color inherit
+) 
+\color red
+bit rate
+\color inherit
+.
+ Segment counter for 
+\color red
+nominal bit rate
+\color inherit
+ may overflow during 
+\color red
+data bit rate
+\color inherit
+ and Segment counter for 
+\color red
+data bit rate
+\color inherit
+ may overflow during 
+\color red
+nominal bit rate
+\color inherit
+.
+ Current 
+\color red
+bit rate 
+\color inherit
+is determined by Protocol control FSM based on current field of CAN frame
+ and its type (see 
 \begin_inset CommandInset citation
 LatexCommand cite
 key "key-1"
@@ -31459,30 +31333,67 @@ literal "false"
 \end_layout
 
 \begin_layout Standard
-Nominal Bit Time Counters module is enabled during Nominal Bit-rate.
- Data Bit-time Counters module is enabled during Data Bit-rate.
- During bits of CAN frame where Bit-Rate is switched (BRS and CRC Delimiter),
- both Nominal and Data Bit Time Counter modules are running.
- When Bit Time Counters module is disabled, none of its both counters are
- running (to save power).
- Both counters (Segment Counter and Time Quanta counter) are erased when
- Bit time segment ends to force alignment of Nominal and Data Time Quanta
- in the moment of Bit-Rate switch.
+NBTCM is enabled during 
+\color red
+nominal bit rate
+\color inherit
+.
+ DBTCM is enabled during 
+\color red
+data bit rate
+\color inherit
+.
+ During bits of CAN frame where 
+\color red
+bit rate
+\color inherit
+ is switched (
+\color red
+BRS
+\color inherit
+ and CRC delimiter), both NBTCM and DBTCM are running.
+ When NBTCM or DBTCM are disabled, none of its both counters are running
+ (to save power).
+ Both counters are erased when bit time segment ends to force alignment
+ of 
+\color red
+nominal
+\color inherit
+ and 
+\color red
+data
+\color inherit
+ 
+\color red
+time
+\color inherit
+ 
+\color red
+quanta
+\color inherit
+ in the moment of 
+\color red
+bit rate
+\color inherit
+ switch.
 \end_layout
 
 \begin_layout Subsection
-Bit Segment Meter
+Bit segment meter
 \end_layout
 
 \begin_layout Standard
-Bit Segment Meter module measures length of Bit Time segments (TSEG1 and
+Bit segment meter module measures length of bit time segments (TSEG1 and
  TSEG2).
- Bit Segment Meter module maintains register with Expected Segment Length.
- Expected Segment Length contains number of Time Quanta that current Bit
- Segment shall last.
- When current Bit Segment ends, Expected Segment Length is loaded with length
- of following Bit Segment.
- Loading of Expected Segment Length is shown in Figure 
+ Bit segment meter module maintains Expected segment length register.
+ Expected segment length register contains number of 
+\color red
+time quanta
+\color inherit
+ that current bit segment shall last.
+ When current bit segment ends, Expected segment length register is loaded
+ with length of following bit segment.
+ Loading of Expected segment length register is shown in Figure 
 \begin_inset CommandInset ref
 LatexCommand ref
 reference "fig:segm-end-regular"
@@ -31492,8 +31403,20 @@ noprefix "false"
 
 \end_inset
 
- for TSEG1 = 10 Time Quanta, TSEG2 = 5 Time Quanta and BRP = 2.
- When Positive Resynchronisation occurs (see 
+ for TSEG1 = 10 
+\color red
+time quanta
+\color inherit
+, TSEG2 = 5 
+\color red
+time quanta
+\color inherit
+ and BRP = 2.
+ When 
+\color red
+positive resynchronisation
+\color inherit
+ occurs (see 
 \begin_inset CommandInset citation
 LatexCommand cite
 key "key-1"
@@ -31501,8 +31424,8 @@ literal "false"
 
 \end_inset
 
-), Expected Segment Length is increased (TSEG1 segment is lengthed) as in
- Figure 
+), Expected segment length register is increased (TSEG1 segment is lengthed)
+ as in Figure 
 \begin_inset CommandInset ref
 LatexCommand ref
 reference "fig:positive-resynchronisation"
@@ -31513,7 +31436,11 @@ noprefix "false"
 \end_inset
 
 .
- When Negative Resynchronisation occurs (see 
+ When 
+\color red
+negative resynchronisation
+\color inherit
+ occurs (see 
 \begin_inset CommandInset citation
 LatexCommand cite
 key "key-1"
@@ -31521,8 +31448,9 @@ literal "false"
 
 \end_inset
 
-), Expected Segment Length is decreased (TSEG2 is shortened).
- All rules for loading Expected Segment Length are described in 
+), Expected segment length register is decreased (TSEG2 is shortened).
+ All rules for loading Expected segment length registre are described in
+ 
 \begin_inset CommandInset ref
 LatexCommand ref
 reference "tab:expected-segment-length"
@@ -31624,11 +31552,11 @@ cellcolor{gray}
 \begin_inset Text
 
 \begin_layout Plain Layout
-End of Segment TSEG1 due to 
+End of segment TSEG1 due to 
 \end_layout
 
 \begin_layout Plain Layout
-Segment Counter equal to Expected Segment Length - 1.
+Segment counter equal to Expected segment length register - 1.
 \end_layout
 
 \end_inset
@@ -31657,8 +31585,8 @@ PH2
 \begin_inset Text
 
 \begin_layout Plain Layout
-End of Segment TSEG2 due to Segment Counter equal to Expected Segment Length
- - 1.
+End of segment TSEG2 due to Segment counter equal to Expected segment length
+ register - 1.
 \end_layout
 
 \end_inset
@@ -31687,7 +31615,15 @@ SYNC + PROP + PH1
 \begin_inset Text
 
 \begin_layout Plain Layout
-Positive Resynchronisation with Phase Error <= SJW.
+
+\color red
+Positive resynchronisation
+\color inherit
+ with 
+\color red
+phase error
+\color inherit
+ <= SJW.
 \end_layout
 
 \end_inset
@@ -31696,7 +31632,7 @@ Positive Resynchronisation with Phase Error <= SJW.
 \begin_inset Text
 
 \begin_layout Plain Layout
-SYNC + PROP + PH1 + Segment Counter
+SYNC + PROP + PH1 + Segment counter
 \end_layout
 
 \end_inset
@@ -31705,7 +31641,11 @@ SYNC + PROP + PH1 + Segment Counter
 \begin_inset Text
 
 \begin_layout Plain Layout
-Segment Counter = SJW in this case.
+Segment counter = 
+\color red
+phase error
+\color inherit
+ in this case.
 \end_layout
 
 \end_inset
@@ -31716,7 +31656,15 @@ Segment Counter = SJW in this case.
 \begin_inset Text
 
 \begin_layout Plain Layout
-Positive Resynchronisation with Phase Error > SJW.
+
+\color red
+Positive resynchronisation
+\color inherit
+ with 
+\color red
+phase error
+\color inherit
+ > SJW.
 \end_layout
 
 \end_inset
@@ -31745,7 +31693,15 @@ SYNC + PROP + PH1 + SJW
 \begin_inset Text
 
 \begin_layout Plain Layout
-Negative Resynchronisation with Phase Error <= SJW.
+
+\color red
+Negative resynchronisation
+\color inherit
+ with 
+\color red
+phase error
+\color inherit
+ <= SJW.
 \end_layout
 
 \end_inset
@@ -31764,8 +31720,8 @@ SYNC + PROP + PH1
 
 \begin_layout Plain Layout
 Immediate end of segment.
- TSEG2 ends, therefore Expected Segment length is preloaded with Expected
- lenght of TSEG1.
+ TSEG2 ends, therefore Expected segment length register is preloaded with
+ length of TSEG1.
 \end_layout
 
 \end_inset
@@ -31776,7 +31732,15 @@ Immediate end of segment.
 \begin_inset Text
 
 \begin_layout Plain Layout
-Negative Resynchronisation with Phase Error > SJW.
+
+\color red
+Negative resynchronisation
+\color inherit
+ with 
+\color red
+phase error
+\color inherit
+ > SJW.
 \end_layout
 
 \end_inset
@@ -31805,7 +31769,9 @@ PH2 - SJW
 \begin_inset Text
 
 \begin_layout Plain Layout
-Hard Synchronisation
+
+\color red
+Hard synchronisation
 \end_layout
 
 \end_inset
@@ -31823,8 +31789,11 @@ SYNC + PROP + PH1 - 1
 \begin_inset Text
 
 \begin_layout Plain Layout
-TSEG1 length is subtracted by 1 since Hard synchronisation shall restart
- Bit with SYNC segment completed according to 
+TSEG1 length is subtracted by 1 since 
+\color red
+hard synchronisation
+\color inherit
+ shall restart Bit with SYNC segment completed according to 11.3.2.3 of 
 \begin_inset CommandInset citation
 LatexCommand cite
 key "key-1"
@@ -31851,7 +31820,7 @@ literal "false"
 \begin_inset Caption Standard
 
 \begin_layout Plain Layout
-Expected segment length manipulation
+Expected segment length register
 \begin_inset CommandInset label
 LatexCommand label
 name "tab:expected-segment-length"
@@ -31872,14 +31841,14 @@ name "tab:expected-segment-length"
 \end_layout
 
 \begin_layout Standard
-When Segment Counter is equal to or higher than Expected Segment Length
- - 1, Bit Segment Meter module issues End of Segment Request.
- Overally, End of Segment Request from Bit Segment Meter can be caused by
+When Segment counter is equal to or higher than Expected segment length
+ register - 1, Bit segment meter module issues End of segment request.
+ Overally, End of segment request from Bit segment meter can be caused by
  following means:
 \end_layout
 
 \begin_layout Itemize
-Segment Counter equals Expected Segment Length - 1.
+Segment counter equals Expected segment length - 1.
  Such a situation is shown in Figure 
 \begin_inset CommandInset ref
 LatexCommand ref
@@ -31894,7 +31863,7 @@ noprefix "false"
 \end_layout
 
 \begin_layout Itemize
-Immediate End of Segment occurs.
+Immediate end of segment occurs.
  See Figure 
 \begin_inset CommandInset ref
 LatexCommand ref
@@ -31909,16 +31878,28 @@ noprefix "false"
 \end_layout
 
 \begin_layout Standard
-Immediate End of Segment is signalled when there is negative Resynchronisation
- during TSEG2 and Phase error <= SJW.
- Immediate resynchronisation causes Segment End Request in the same clock
- cycle when Resynchronisation edge occured.
+Immediate end of segment is signalled when there is negative resynchronisation
+ during TSEG2 and 
+\color red
+phase error
+\color inherit
+ <= SJW.
+ Immediate resynchronisation causes Segment end request in the same clock
+ cycle when 
+\color red
+resynchronisation
+\color inherit
+ edge occured.
  In this situation, TSEG2 segment ends immediately, not one clock cycle
- later when updated Expected Segment Length would be equal to Segment counter!
- This special case covers negative Resynchronisation with BRP=1 and Phase
- Error <= SJW.
- The extra clock cycle needed to update Expected Segment Length is undesirable,
- therefore immediate End of Segment is introduced.
+ later when updated Expected segment length register would be equal to Segment
+ counter + 1! This special case covers negative resynchronisation with BRP=1
+ and 
+\color red
+phase error
+\color inherit
+ <= SJW.
+ The extra clock cycle needed to update Expected segment length register
+ is undesirable, therefore immediate end of segment was introduced.
 \end_layout
 
 \begin_layout Standard
@@ -31932,7 +31913,7 @@ status open
 \noindent
 \align center
 \begin_inset Graphics
-	filename /DOKUMENTY/Skola/CVUT-FEL/ctu_can_fd_2/doc/pics/Timing_diagrams/PDFs/segment_end_regular.pdf
+	filename ../pics/Timing_diagrams/PDFs/segment_end_regular.pdf
 	lyxscale 20
 	scale 64
 
@@ -31976,7 +31957,7 @@ status open
 \noindent
 \align center
 \begin_inset Graphics
-	filename /DOKUMENTY/Skola/CVUT-FEL/ctu_can_fd_2/doc/pics/Timing_diagrams/PDFs/positive_resynchronisation.pdf
+	filename ../pics/Timing_diagrams/PDFs/positive_resynchronisation.pdf
 	lyxscale 20
 	scale 55
 
@@ -31989,7 +31970,11 @@ status open
 \begin_inset Caption Standard
 
 \begin_layout Plain Layout
+
+\color red
 Positive resynchronisation
+\color inherit
+
 \begin_inset CommandInset label
 LatexCommand label
 name "fig:positive-resynchronisation"
@@ -32020,7 +32005,7 @@ status open
 \noindent
 \align center
 \begin_inset Graphics
-	filename /DOKUMENTY/Skola/CVUT-FEL/ctu_can_fd_2/doc/pics/Timing_diagrams/PDFs/immediate_segm_end.pdf
+	filename ../pics/Timing_diagrams/PDFs/immediate_segm_end.pdf
 	lyxscale 20
 	scale 63
 
@@ -32033,7 +32018,7 @@ status open
 \begin_inset Caption Standard
 
 \begin_layout Plain Layout
-Immediate Segment End
+Immediate segment end
 \begin_inset CommandInset label
 LatexCommand label
 name "fig:immediate-segm-end"
@@ -32054,11 +32039,11 @@ name "fig:immediate-segm-end"
 \end_layout
 
 \begin_layout Subsection
-Segment End Detector
+Segment end detector
 \end_layout
 
 \begin_layout Standard
-Segment End Detector determines when segment ends based on requests as shown
+Segment end detector determines when segment ends based on requests as shown
  in Table 
 \begin_inset CommandInset ref
 LatexCommand ref
@@ -32070,10 +32055,33 @@ noprefix "false"
 \end_inset
 
 .
- Segment End Detector captures these requests and processes them when Time
- Quanta has elapsed (Time Quanta Edge is active).
- If request arrives in the same clock cycle as Time Quanta has elapsed,
- it is processed immediately and not captured.
+ Segment end detector captures these requests and processes them when 
+\color red
+time quanta
+\color inherit
+ has elapsed (
+\series bold
+\shape italic
+tq_edge
+\color black
+_nbt
+\series default
+\shape default
+\color inherit
+/
+\series bold
+\shape italic
+\color black
+dbt
+\series default
+\shape default
+\color inherit
+=1).
+ If request arrives in the same clock cycle as 
+\color red
+time quanta
+\color inherit
+ has elapsed, it is processed immediately and not captured.
 \end_layout
 
 \begin_layout Standard
@@ -32165,7 +32173,7 @@ cellcolor{gray}
 \begin_inset Text
 
 \begin_layout Plain Layout
-Segment End Request (Nominal).
+Segment end request (Nominal).
 \end_layout
 
 \end_inset
@@ -32174,7 +32182,7 @@ Segment End Request (Nominal).
 \begin_inset Text
 
 \begin_layout Plain Layout
-Bit Segment Meter (Nominal)
+Bit segment meter (Nominal)
 \end_layout
 
 \end_inset
@@ -32183,7 +32191,11 @@ Bit Segment Meter (Nominal)
 \begin_inset Text
 
 \begin_layout Plain Layout
-Considered only during Nominal Bit-rate.
+Considered only during 
+\color red
+nominal bit rate
+\color inherit
+.
 \end_layout
 
 \end_inset
@@ -32194,7 +32206,7 @@ Considered only during Nominal Bit-rate.
 \begin_inset Text
 
 \begin_layout Plain Layout
-Segment End Request (Data).
+Segment end request (Data).
 \end_layout
 
 \end_inset
@@ -32203,7 +32215,7 @@ Segment End Request (Data).
 \begin_inset Text
 
 \begin_layout Plain Layout
-Bit Segment Meter (Data)
+Bit segment meter (Data)
 \end_layout
 
 \end_inset
@@ -32212,7 +32224,11 @@ Bit Segment Meter (Data)
 \begin_inset Text
 
 \begin_layout Plain Layout
-Considered only during Data Bit-rate.
+Considered only during 
+\color red
+data bit rate
+\color inherit
+.
 \end_layout
 
 \end_inset
@@ -32223,7 +32239,9 @@ Considered only during Data Bit-rate.
 \begin_inset Text
 
 \begin_layout Plain Layout
-Hard Synchronisation
+
+\color red
+Hard synchronisation
 \end_layout
 
 \end_inset
@@ -32241,8 +32259,16 @@ Synchronisation checker.
 \begin_inset Text
 
 \begin_layout Plain Layout
-Considered only during Nominal Bit-rate.
- Shall not occur during Data Bit-rate.
+Considered only during 
+\color red
+nominal bit rate
+\color inherit
+.
+ Shall not occur during 
+\color red
+data bit rate
+\color inherit
+.
 \end_layout
 
 \end_inset
@@ -32261,7 +32287,7 @@ Considered only during Nominal Bit-rate.
 \begin_inset Caption Standard
 
 \begin_layout Plain Layout
-Segment End Causes
+Segment end causes
 \begin_inset CommandInset label
 LatexCommand label
 name "tab:segment-end-causes"
@@ -32282,18 +32308,46 @@ name "tab:segment-end-causes"
 \end_layout
 
 \begin_layout Subsection
-Bit-Rate switch
+Bit rate switch
 \end_layout
 
 \begin_layout Standard
-Since both Bit Time Counters (Nominal and Data) are running in bits where
- Bit-rate is switched (BRS and CRC Delimiter), length of TSEG2 of these
- bits is measured by both counters and both Bit Segment Meter modules can
- provide Segment End Request.
- Segment End Detector only considers requests from Resynchronisation module
- which is given by actual Sample Control (Nominal, Data) as given by Protocol
- Control FSM.
- Bit-Rate switch is shown in Figure 
+Since both Bit time counters (
+\color red
+nominal
+\color inherit
+ and 
+\color red
+data
+\color inherit
+) are running in bits where 
+\color red
+bit rate
+\color inherit
+ is switched (
+\color red
+BRS
+\color inherit
+ and 
+\color red
+CRC Delimiter
+\color inherit
+), length of TSEG2 of these bits is measured by both counters and both Bit
+ segment meter modules can provide Segment end request.
+ Segment end detector only considers requests from 
+\color red
+resynchronisation
+\color inherit
+ module of actual bit rate as given by Protocol control FSM (
+\series bold
+sp_control
+\series default
+ signal).
+
+\color red
+ Bit rate
+\color inherit
+ switch is shown in Figure 
 \begin_inset CommandInset ref
 LatexCommand ref
 reference "fig:bit-rate-switch"
@@ -32303,11 +32357,23 @@ noprefix "false"
 
 \end_inset
 
- (BRP Nominal = 2, BRP Data = 1, TSEG1 Nominal = 10, TSEG1 Data = 7, TSEG2
- Data = 6,).
- Note that in this Figure Time Quanta Counter, Time Quanta Edge, Segment
- Counter and Expected Segment Length are actually different signals for
- Nominal / Data Bit-Rate but 
+ (BRP nominal = 2, BRP data = 1, TSEG1 nominal = 10, TSEG1 data = 7, TSEG2
+ data = 6).
+ Note that in this Figure Time quanta counter, Time quanta edge, Segment
+ counter and Expected segment length register are different signals for
+ 
+\color red
+nominal
+\color inherit
+ / 
+\color red
+data
+\color inherit
+ 
+\color red
+bit rate
+\color inherit
+ but 
 \begin_inset Quotes eld
 \end_inset
 
@@ -32315,7 +32381,11 @@ Nominal
 \begin_inset Quotes erd
 \end_inset
 
- version are shown in Nominal Bit-Rate and 
+ version are shown in 
+\color red
+nominal bit rate
+\color inherit
+ and 
 \begin_inset Quotes eld
 \end_inset
 
@@ -32323,23 +32393,37 @@ Data
 \begin_inset Quotes erd
 \end_inset
 
- versions are shown in Data Bit-Rate.
+ versions are shown in 
+\color red
+data bit rate
+\color inherit
+.
 \end_layout
 
 \begin_layout Standard
-Note that in the moment of Bit-rate switch, Protocol control FSM provides
- actualized 
-\begin_inset Quotes eld
-\end_inset
-
-Sample control
-\begin_inset Quotes erd
-\end_inset
-
- (Bit-Rate) already in Process pipeline stage.
+Note that in the moment of 
+\color red
+bit rate
+\color inherit
+ switch, Protocol control FSM provides actualized 
+\series bold
+sp_control
+\series default
+ (bit rate) already in Process pipeline stage.
  Sample control is driven by DFF which is bypassed in this moment so that
- first Time Quanta of TSEG2 after Bit-rate switch is measured with proper
- Bit-rate selected!
+ first 
+\color red
+time quanta 
+\color inherit
+of TSEG2 after 
+\color red
+bit rate
+\color inherit
+ switch is measured with proper 
+\color red
+bit rate
+\color inherit
+ selected!
 \end_layout
 
 \begin_layout Standard
@@ -32353,7 +32437,7 @@ status open
 \noindent
 \align center
 \begin_inset Graphics
-	filename /DOKUMENTY/Skola/CVUT-FEL/ctu_can_fd_2/doc/pics/Timing_diagrams/PDFs/bit_rate_switch.pdf
+	filename ../pics/Timing_diagrams/PDFs/bit_rate_switch.pdf
 	lyxscale 20
 	scale 63
 
@@ -32366,7 +32450,11 @@ status open
 \begin_inset Caption Standard
 
 \begin_layout Plain Layout
-Bit-rate switch
+
+\color red
+Bit rate
+\color inherit
+ switch
 \begin_inset CommandInset label
 LatexCommand label
 name "fig:bit-rate-switch"
@@ -32391,7 +32479,7 @@ Prescaler FSM
 \end_layout
 
 \begin_layout Standard
-Prescaler FSM determines actual Bit time segment (TSEG1, TSEG2).
+Prescaler FSM determines actual bit time segment (TSEG1, TSEG2).
  Its state transition diagram is shown in Figure 
 \begin_inset CommandInset ref
 LatexCommand ref
@@ -32403,17 +32491,19 @@ noprefix "false"
 \end_inset
 
 .
- Prescaler FSM issues requests to generate TX Trigger and RX Triggers to
+ Prescaler FSM issues requests to generate TX trigger and RX triggers to
  Trigger generator.
- TX Trigger is requested upon the end of TSEG2 segment (start of new bit,
+ TX trigger is requested upon the end of TSEG2 segment (start of new bit,
  bit value is transmitted).
- RX Trigger is requested upon the end of TSEG1 segment (Sample point, bit
- value is sampled).
+ RX trigger is requested upon the end of TSEG1 segment (
+\color red
+sample point
+\color inherit
+, bit value is sampled).
 \end_layout
 
 \begin_layout Standard
 \begin_inset Float figure
-placement H
 wide false
 sideways false
 status open
@@ -32422,7 +32512,7 @@ status open
 \noindent
 \align center
 \begin_inset Graphics
-	filename /DOKUMENTY/Skola/CVUT-FEL/ctu_can_fd_2/doc/pics/Visio_generated/FSM_prescaler.pdf
+	filename ../pics/Visio_generated/FSM_prescaler.pdf
 	lyxscale 20
 
 \end_inset
@@ -32466,8 +32556,8 @@ name "subsec:Trigger-generator"
 \end_layout
 
 \begin_layout Standard
-Trigger generator processes requests to generate TX Trigger (used to process
- data in Stuff pipeline stage) and RX Triggers (used to process data in
+Trigger generator processes requests to generate TX trigger (used to process
+ data in Stuff pipeline stage) and RX triggers (used to process data in
  Destuff and Process pipeline stages).
  Typical scenario is shown in Figure 
 \begin_inset CommandInset ref
@@ -32490,11 +32580,11 @@ literal "false"
 
 , resynchronisation which shortens length of TSEG2 to just one clock cycle
  can occur (assuming BRP=1).
- In such case, RX Trigger for Process pipeline stage and TX trigger for
+ In such case, RX trigger for Process pipeline stage and TX trigger for
  Stuff pipeline stage would overlap.
- This is not acceptable since Stuff Pipeline stage needs Process pipeline
- stage to be finished before it can proceed (new TX data must be provided
- by Protocol control FSM before being 
+ This is not acceptable since Stuff pipeline stage needs Process pipeline
+ stage to be finished before it can proceed (new transmitted data must be
+ provided by Protocol control FSM before being 
 \begin_inset Quotes eld
 \end_inset
 
@@ -32503,7 +32593,7 @@ stuffed
 \end_inset
 
 ).
- To avoid this situation, TX Trigger is shifted by one clock cycle as it
+ To avoid this situation, TX trigger is shifted by one clock cycle as it
  is shown in Figure 
 \begin_inset CommandInset ref
 LatexCommand ref
@@ -32515,14 +32605,24 @@ noprefix "false"
 \end_inset
 
 .
- Stuff Pipeline stage is also shifted by one clock cycle (from last clock
+ Stuff pipeline stage is also shifted by one clock cycle (from last clock
  cycle of TSEG2 to first clock cycle of TSEG1).
- As value of Information Processing Time of CTU CAN FD is 2, this situation
- corresponds to shortening length of TSEG2 to less than Information Processing
- Time.
- Throttling of TX Trigger corresponds to delaying calculation of following
- bit value after Information Processing Time from Sample Point as defined
- in 11.3.2.4 of 
+ As value of 
+\color red
+information processing time
+\color inherit
+ of CTU CAN FD is 2, this situation corresponds to shortening length of
+ TSEG2 to less than information processing time.
+ Shifting of TX trigger corresponds to delaying calculation of following
+ bit value after 
+\color red
+information processing time
+\color inherit
+ from 
+\color red
+sample point
+\color inherit
+ as defined in 11.3.2.4 of 
 \begin_inset CommandInset citation
 LatexCommand cite
 key "key-1"
@@ -32544,7 +32644,7 @@ status open
 \noindent
 \align center
 \begin_inset Graphics
-	filename /DOKUMENTY/Skola/CVUT-FEL/ctu_can_fd_2/doc/pics/Timing_diagrams/PDFs/prescaler_triggers.pdf
+	filename ../pics/Timing_diagrams/PDFs/prescaler_triggers.pdf
 	lyxscale 20
 	scale 63
 
@@ -32588,7 +32688,7 @@ status open
 \noindent
 \align center
 \begin_inset Graphics
-	filename /DOKUMENTY/Skola/CVUT-FEL/ctu_can_fd_2/doc/pics/Timing_diagrams/PDFs/prescaler_triggers_throttling.pdf
+	filename ../pics/Timing_diagrams/PDFs/prescaler_triggers_throttling.pdf
 	lyxscale 20
 	scale 63
 
@@ -32601,7 +32701,7 @@ status open
 \begin_inset Caption Standard
 
 \begin_layout Plain Layout
-TX Trigger shift
+TX trigger shift
 \begin_inset CommandInset label
 LatexCommand label
 name "fig:tx-trigger-shift"
@@ -32626,8 +32726,12 @@ Synchronisation control
 \end_layout
 
 \begin_layout Standard
-Type of Synchronisation is controlled by Protocol control FSM based on current
- part of CAN frame as is shown in Table 
+Type of 
+\color red
+synchronisation
+\color inherit
+ is controlled by Protocol control FSM based on current part of CAN frame
+ as is shown in Table 
 \begin_inset CommandInset ref
 LatexCommand ref
 reference "tab:synchronisation-control"
@@ -32729,7 +32833,9 @@ cellcolor{gray}
 \begin_inset Text
 
 \begin_layout Plain Layout
-Hard Synchronisation
+
+\color red
+Hard synchronisation
 \end_layout
 
 \end_inset
@@ -32738,8 +32844,35 @@ Hard Synchronisation
 \begin_inset Text
 
 \begin_layout Plain Layout
-Suspend Transmission, 2nd or 3rd bit of Intermission, Bus Idle, Integration,
- Reintegration, FDF/res bit edge in CAN FD Frame.
+
+\color red
+Suspend transmission
+\color inherit
+, 2nd or 3rd bit of 
+\color red
+intermission
+\color inherit
+, 
+\color red
+bus idle
+\color inherit
+, 
+\color red
+integration
+\color inherit
+, 
+\color red
+reintegration
+\color inherit
+, 
+\color red
+FDF
+\color inherit
+/
+\color red
+res
+\color inherit
+ bit edge in CAN FD Frame.
 \end_layout
 
 \end_inset
@@ -32748,7 +32881,7 @@ Suspend Transmission, 2nd or 3rd bit of Intermission, Bus Idle, Integration,
 \begin_inset Text
 
 \begin_layout Plain Layout
-TSEG1 is started with SYNC segment complement (Bit Segment Counter = 1).
+TSEG1 is started with SYNC segment complement.
 \end_layout
 
 \end_inset
@@ -32759,7 +32892,9 @@ TSEG1 is started with SYNC segment complement (Bit Segment Counter = 1).
 \begin_inset Text
 
 \begin_layout Plain Layout
-No Synchronisation
+No 
+\color red
+synchronisation
 \end_layout
 
 \end_inset
@@ -32777,7 +32912,15 @@ All other parts
 \begin_inset Text
 
 \begin_layout Plain Layout
-Transmitter operating in Data Bit-Rate does not synchronise.
+
+\color red
+Transmitter
+\color inherit
+ operating in 
+\color red
+data bit rate
+\color inherit
+ does not synchronise.
 \end_layout
 
 \end_inset
@@ -32788,7 +32931,15 @@ Transmitter operating in Data Bit-Rate does not synchronise.
 \begin_inset Text
 
 \begin_layout Plain Layout
-No Synchronisation for Phase Error > 0
+No 
+\color red
+synchronisation
+\color inherit
+ for 
+\color red
+phase error
+\color inherit
+ > 0
 \end_layout
 
 \end_inset
@@ -32806,8 +32957,23 @@ All other parts
 \begin_inset Text
 
 \begin_layout Plain Layout
-Node sending dominant bit does not perform Resynchronisation or Hard Synchronisa
-tion as a result of Positive Phase Error.
+Node sending 
+\color red
+dominant
+\color inherit
+ bit does not perform 
+\color red
+resynchronisation
+\color inherit
+ or 
+\color red
+hard synchronisation
+\color inherit
+ as a result of 
+\color red
+positive phase error
+\color inherit
+.
 \end_layout
 
 \end_inset
@@ -32818,6 +32984,8 @@ tion as a result of Positive Phase Error.
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\color red
 Resynchronisation
 \end_layout
 
@@ -32836,7 +33004,19 @@ All other parts
 \begin_inset Text
 
 \begin_layout Plain Layout
-All other Recessive to Dominant edges are used for Resynchronisation.
+All other 
+\color red
+recessive
+\color inherit
+ to 
+\color red
+dominant
+\color inherit
+ edges are used for 
+\color red
+resynchronisation
+\color inherit
+.
 \end_layout
 
 \end_inset
@@ -32880,8 +33060,11 @@ Synchronisation checker
 \end_layout
 
 \begin_layout Standard
-Synchronisation checker determines if Synchronisation edge (detected by
- Bus Sampling, see 
+Synchronisation checker determines if 
+\color red
+synchronisation
+\color inherit
+ edge (detected by Bus sampling, see 
 \begin_inset CommandInset ref
 LatexCommand ref
 reference "sec:Bus-sampling"
@@ -32900,17 +33083,34 @@ literal "false"
 \end_inset
 
 .
- Synchronisation checker maintains Synchronisation Edge Flag.
- This flag is set when Synchronisation Edge occurs, and cleared when TSEG1
- ends (Sample Point of bit).
- If this flag is set and another synchronisation edge occurs before the
- flag is cleared, such an edge is ignored and prescaler does not Synchronize
- on this edge.
- Therefore, if there is more than one Synchronisation edge between two consecuti
-ve Sample Points, only first edge is detected as valid edge and other edges
- are ignored.
- A situation where two Synchronisation edges are detected (and second one
- is filtered out) is shown in Figure 
+ Synchronisation checker maintains Synchronisation edge flag.
+ This flag is set when 
+\color red
+synchronisation
+\color inherit
+ edge occurs, and cleared when TSEG1 ends (
+\color red
+sample point
+\color inherit
+ of bit).
+ If this flag is set and another 
+\color red
+synchronisation
+\color inherit
+ edge occurs before the flag is cleared, such an edge is ignored and prescaler
+ does not synchronize on this edge.
+ Therefore, if there is more than one synchronisation edge between two consecuti
+ve 
+\color red
+sample points
+\color inherit
+, only first edge is detected as valid edge and other edges are ignored.
+ A situation where two 
+\color red
+synchronisation
+\color inherit
+ edges are detected (and second one is filtered out) is shown in Figure
+ 
 \begin_inset CommandInset ref
 LatexCommand ref
 reference "fig:prescaler-sync-edge-validation."
@@ -32921,9 +33121,27 @@ noprefix "false"
 \end_inset
 
 .
- When Synchronisation edge is valid for synchronisation, it causes Re-synchronis
-ation, Hard Synchronisation or No Synchronisation according to rules in
- Table 
+ When 
+\color red
+synchronisation
+\color inherit
+ edge is valid for 
+\color red
+synchronisation
+\color inherit
+, it causes 
+\color red
+resynchronisation
+\color inherit
+, 
+\color red
+hard synchronisation
+\color inherit
+ or no 
+\color red
+synchronisation
+\color inherit
+ according to rules in Table 
 \begin_inset CommandInset ref
 LatexCommand ref
 reference "tab:synchronisation-control"
@@ -32947,7 +33165,7 @@ status open
 \noindent
 \align center
 \begin_inset Graphics
-	filename /DOKUMENTY/Skola/CVUT-FEL/ctu_can_fd_2/doc/pics/Timing_diagrams/PDFs/prescaler_synchronisation_validation.pdf
+	filename ../pics/Timing_diagrams/PDFs/prescaler_synchronisation_validation.pdf
 	lyxscale 20
 	scale 63
 
@@ -33003,32 +33221,68 @@ Bus sampling module implements following functionality:
 \end_layout
 
 \begin_layout Itemize
-Synchronize CAN RX input to System clock domain.
+Synchronize 
+\series bold
+can_rx
+\series default
+ input to System clock domain.
 \end_layout
 
 \begin_layout Itemize
-Sample Bus in Sample Point (Destuff pipeline stage).
+Sample bus in 
+\color red
+sample point 
+\color inherit
+(Destuff pipeline stage).
 \end_layout
 
 \begin_layout Itemize
-Detect edges on sampled TX and RX Data.
- Detect synchronisation edges.
+Detect edges on sampled 
+\series bold
+can_rx
+\series default
+ and 
+\series bold
+can_tx
+\series default
+.
+ Detect 
+\color red
+synchronisation
+\color inherit
+ edges.
 \end_layout
 
 \begin_layout Itemize
-Measure Transceiver Delay and calculate Secondary Sample Point offset.
+Measure 
+\color red
+transmitter delay
+\color inherit
+ and calculate 
+\color red
+secondary sample point
+\color inherit
+ offset.
 \end_layout
 
 \begin_layout Itemize
-Create Secondary Sample point.
+Create 
+\color red
+secondary sample point
+\color inherit
+ (SSP).
 \end_layout
 
 \begin_layout Itemize
-Detect Bit Error.
+Detect 
+\color red
+bit error
+\color inherit
+.
 \end_layout
 
 \begin_layout Standard
-Block diagram of Bus Sampling is shown in Figure 
+Block diagram of Bus sampling is shown in Figure 
 \begin_inset CommandInset ref
 LatexCommand ref
 reference "fig:bus-sampling"
@@ -33052,7 +33306,7 @@ status open
 \noindent
 \align center
 \begin_inset Graphics
-	filename /DOKUMENTY/Skola/CVUT-FEL/ctu_can_fd_2/doc/pics/Visio_generated/BD_Bus_sampling.pdf
+	filename ../pics/Visio_generated/BD_Bus_sampling.pdf
 	lyxscale 20
 	scale 80
 
@@ -33096,61 +33350,128 @@ filename "entity_docs/bus_sampling.lyx"
 \end_layout
 
 \begin_layout Standard
-Bus Sampling implements 2 FF synchronizer to synchronize asynchronous 
-\begin_inset Quotes eld
-\end_inset
-
+Bus sampling implements 2 DFF synchronizer to synchronize asynchronous 
+\series bold
 can_rx
-\begin_inset Quotes erd
-\end_inset
-
- input from physical layer transceiver.
- Output of this synchronizer is Sampled in Sample Point and stored to Previous
- Bus-value register.
- Output of this synchronizer is also connected as data input to Bit Destuffing
+\series default
+ input.
+ Output of this synchronizer is sampled in 
+\color red
+sample point
+\color inherit
+ and stored to Previous bus value register.
+ Output of this synchronizer is also connected as data input to Bit destuffing
  module, therefore bus is sampled in the same moment as input serial data
- from CAN bus are processed by Bit Destuffing.
+ from CAN bus are processed by Bit destuffing.
  This synchronizer is clocked with System clock and it is enabled always.
  
 \end_layout
 
 \begin_layout Standard
-Bus Sampling detects edges on CAN RX data (
-\begin_inset Quotes eld
-\end_inset
-
+Bus sampling detects edges on 
+\series bold
 can_rx
-\begin_inset Quotes erd
-\end_inset
-
-) and CAN TX data (
-\begin_inset Quotes eld
-\end_inset
-
+\series default
+ and 
+\series bold
 can_tx
-\begin_inset Quotes erd
-\end_inset
-
+\series default
+.
+ 
+\color black
+Edges on 
+\series bold
+can_tx
+\series default
+ are detected with granularity of System clock period.
+ Edges on 
+\series bold
+can_rx
+\series default
+ are detected with granularity of 
+\color red
+time quanta (
+\color blue
+This is TODO, so far detected with System clock period, gating by tq_edge
+ needs to be added
+\color red
 ).
  
+\color black
+When CTU CAN FD is running in 
 \color red
-Edges on TX Data are detected with granularity of System clock period.
- Edges on RX Data are detected with granularity of Time Quanta.
- This is TODO, so far detected with System clock period, gating by Time
- Quanta edge needs to be added.
- When CTU CAN FD is running in Nominal Bit-rate, Nominal Time Quanta is
- used.
- When CTU CAN FD is running Data Bit-Rate Data Time Quanta is used.
+nominal bit rate
+\color black
+, 
+\color red
+nominal time quanta
+\color black
+ is used.
+ When CTU CAN FD
+\color red
+ 
+\color black
+is running in 
+\color red
+data bit rate data time quanta
+\color black
+ is used.
 
 \color inherit
- Only Recessive to Dominant edges are detected on RX Data.
- Furthermore, edge on RX Data is detected only when Bus value (synchronizer
- output) has opposite value than bus value sampled in previous Sample point
- (Therefore previous sampled Bus value must be Recessive).
- Detected edge on RX Data is propagated as Synchronization Edge to Prescaler.
- TX Data edge is detected regardless of previous Sampled Bus value, but
- only Recessive to Dominant edges on CAN TX Data are detected.
- A typical scenario of Edge detection on TX/RX Data is shown in Figure 
+ Only 
+\color red
+recessive
+\color inherit
+ to 
+\color red
+dominant
+\color inherit
+ edges are detected on 
+\series bold
+can_rx
+\series default
+.
+ Furthermore, edge on 
+\series bold
+can_rx
+\series default
+ is detected only when bus value (synchronizer output) has opposite value
+ than bus value sampled in previous 
+\color red
+sample point
+\color inherit
+ (Therefore previous sampled bus value must be 
+\color red
+recessive
+\color inherit
+).
+ Detected edge on 
+\series bold
+can_rx
+\series default
+ is propagated as 
+\color red
+synchronization
+\color inherit
+ edge to Prescaler.
+ Edge on 
+\series bold
+can_tx
+\series default
+ is detected regardless of previous sampled bus value, but only 
+\color red
+recessive
+\color inherit
+ to 
+\color red
+dominant
+\color inherit
+ edges are detected.
+ A typical scenario of edge detection on 
+\series bold
+can_tx/can_rx
+\series default
+ is shown in Figure 
 \begin_inset CommandInset ref
 LatexCommand ref
 reference "fig:edge-detection"
@@ -33174,7 +33495,7 @@ status open
 \noindent
 \align center
 \begin_inset Graphics
-	filename /DOKUMENTY/Skola/CVUT-FEL/ctu_can_fd_2/doc/pics/Timing_diagrams/PDFs/edge_detection_rx.pdf
+	filename ../pics/Timing_diagrams/PDFs/edge_detection_rx.pdf
 	lyxscale 20
 	scale 63
 
@@ -33208,19 +33529,56 @@ name "fig:edge-detection"
 \end_layout
 
 \begin_layout Subsection
-Transceiver Delay measurement
+Transmitter delay measurement
 \end_layout
 
 \begin_layout Standard
-Transceiver delay is roundtrip delay from can_tx to can_rx upon transmission
- of Dominant bit.
+
+\color red
+Transmitter delay
+\color inherit
+ is roundtrip delay from 
+\series bold
+can_tx
+\series default
+ to 
+\series bold
+can_rx
+\series default
+ upon transmission of 
+\color red
+dominant
+\color inherit
+ bit.
  This delay includes propagation of signal to physical layer transceiver,
  delay of transceiver and propagation of signal back.
- Transceiver delay is measured in CAN FD frames on falling edge between
- EDL (FDF) bit and following r0 bit.
- In CAN 2.0 frames, Transceiver delay is not measured.
- Transceiver delay is measured in multiples of System clock (not Time Quanta)
- and its measurement is controlled by Protocol control FSM.
+ 
+\color red
+Transmitter delay
+\color inherit
+ is measured in CAN FD frames on falling edge between 
+\color red
+FDF
+\color inherit
+ (
+\color red
+EDL
+\color inherit
+) bit and following r0 bit.
+ In CAN 2.0 frames, 
+\color red
+Transmitter delay
+\color inherit
+ is not measured.
+ 
+\color red
+Transmitter delay
+\color inherit
+ is measured in multiples of System clock (not 
+\color red
+time quanta
+\color inherit
+) and its measurement is controlled by Protocol control FSM.
  Measurement is described in Table 
 \begin_inset CommandInset ref
 LatexCommand ref
@@ -33245,15 +33603,26 @@ noprefix "false"
 \end_layout
 
 \begin_layout Standard
-Measured Transceiver Delay can be read out from TRV_DELAY register via SW.
- Transceiver delay readable from TRV_DELAY register is shadowed and this
- shadowed value is changed upon the end of Transceiver Delay measurement.
- Therefore if SW reads Transceiver Delay during measurement, it will read
- previous measured value.
+Measured 
+\color red
+transmitter delay
+\color inherit
+ can be read out from TRV_DELAY register via SW.
+ Transmitter delay readable from TRV_DELAY register is shadowed and this
+ shadowed value is changed upon the end of 
+\color red
+transmitter delay
+\color inherit
+ measurement.
+ Therefore if SW reads TRV_DELAY during measurement, it will read previous
+ measured value.
  New value will be read only after the end of current measurement.
- To read proper value of Transceiver Delay from TRV_DELAY, at least one
- CAN FD frame must have been transmitted during previous operation, otherwise
- 0 will be read from TRV_DELAY register.
+ To read proper value of 
+\color red
+transmitter delay
+\color inherit
+ from TRV_DELAY, at least one CAN FD frame must have been transmitted since
+ previous reset, otherwise 0 will be read from TRV_DELAY register.
 \end_layout
 
 \begin_layout Standard
@@ -33267,7 +33636,7 @@ status open
 \noindent
 \align center
 \begin_inset Tabular
-<lyxtabular version="3" rows="7" columns="2">
+<lyxtabular version="3" rows="8" columns="2">
 <features tabularvalignment="middle">
 <column alignment="left" valignment="top" width="5line%">
 <column alignment="left" valignment="top" width="88.5line%">
@@ -33331,8 +33700,28 @@ cellcolor{gray}
 \begin_inset Text
 
 \begin_layout Plain Layout
-Transmitter of CAN FD frame reaches Sample Point of EDL (FDF) bit.
- It enables measurement of Transceiver Delay.
+
+\color red
+Transmitter
+\color inherit
+ of CAN FD frame reaches 
+\color red
+sample point
+\color inherit
+ of 
+\color red
+FDF
+\color inherit
+ (
+\color red
+EDL
+\color inherit
+) bit.
+ It enables measurement of 
+\color red
+transmitter delay
+\color inherit
+.
 \end_layout
 
 \end_inset
@@ -33353,7 +33742,11 @@ Transmitter of CAN FD frame reaches Sample Point of EDL (FDF) bit.
 
 \begin_layout Plain Layout
 At start of next bit (Stuff pipeline stage, r0 bit), Protocol control transmits
- Dominant bit.
+ 
+\color red
+dominant
+\color inherit
+ bit.
 \end_layout
 
 \end_inset
@@ -33373,8 +33766,12 @@ At start of next bit (Stuff pipeline stage, r0 bit), Protocol control transmits
 \begin_inset Text
 
 \begin_layout Plain Layout
-An edge on TX is detected by Bus sampling.
- Transceiver Delay counter is erased.
+An edge on 
+\series bold
+can_tx
+\series default
+ is detected by Bus sampling.
+ Transmitter delay counter is erased.
 \end_layout
 
 \end_inset
@@ -33394,7 +33791,7 @@ An edge on TX is detected by Bus sampling.
 \begin_inset Text
 
 \begin_layout Plain Layout
-Transceiver Delay counter is incremented by 1 each clock cycle.
+Transmitter delay counter is incremented by 1 each clock cycle.
 \end_layout
 
 \end_inset
@@ -33414,8 +33811,45 @@ Transceiver Delay counter is incremented by 1 each clock cycle.
 \begin_inset Text
 
 \begin_layout Plain Layout
-The Dominant value which was transmitted in Step 2, propagates to Transceiver
- and back to CAN RX input of CTU CAN FD.
+The 
+\color red
+dominant
+\color inherit
+ value which was transmitted in Step 2, propagates to physical layer transceiver
+ and back to 
+\series bold
+can_tx
+\series default
+ input of CTU CAN FD.
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+6
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\series bold
+can_rx
+\series default
+ input is synchronized by 2 DFF synchronizer to System clock domain.
+ Delay of synchronizer is included in measured 
+\color red
+transmitter delay
+\color inherit
+.
 \end_layout
 
 \end_inset
@@ -33435,8 +33869,12 @@ The Dominant value which was transmitted in Step 2, propagates to Transceiver
 \begin_inset Text
 
 \begin_layout Plain Layout
-Bus Sampling detects edge on CAN RX.
- Measurement is finished.
+Bus sampling detects edge on 
+\series bold
+can_rx
+\series default
+.
+ Measurement is finished, new value can bea read from TRV_DELAY register.
 \end_layout
 
 \end_inset
@@ -33455,7 +33893,11 @@ Bus Sampling detects edge on CAN RX.
 \begin_inset Caption Standard
 
 \begin_layout Plain Layout
-Transceiver Delay measurement
+
+\color red
+Transmitter delay
+\color inherit
+ measurement
 \begin_inset CommandInset label
 LatexCommand label
 name "tab:transceiver-delay-measurement"
@@ -33477,7 +33919,6 @@ name "tab:transceiver-delay-measurement"
 
 \begin_layout Standard
 \begin_inset Float figure
-placement H
 wide false
 sideways false
 status open
@@ -33486,7 +33927,7 @@ status open
 \noindent
 \align center
 \begin_inset Graphics
-	filename /DOKUMENTY/Skola/CVUT-FEL/ctu_can_fd_2/doc/pics/Timing_diagrams/PDFs/transceiver_delay_measurement.pdf
+	filename ../pics/Timing_diagrams/PDFs/transceiver_delay_measurement.pdf
 	lyxscale 20
 	scale 63
 
@@ -33499,7 +33940,11 @@ status open
 \begin_inset Caption Standard
 
 \begin_layout Plain Layout
-Transceiver Delay Measurement
+
+\color red
+Transmitter delay
+\color inherit
+ measurement
 \begin_inset CommandInset label
 LatexCommand label
 name "fig:transceiver-delay-measurement"
@@ -33520,14 +33965,25 @@ name "fig:transceiver-delay-measurement"
 \end_layout
 
 \begin_layout Subsection
-Secondary Sampling Point Offset
+Secondary sampling point offset
 \end_layout
 
 \begin_layout Standard
-Secondary Sampling Point offset is calculated as an offset from start of
- bit (SYNC field) in multiples of System clock.
- Secondary Sampling Point offset can be configured by SW from SSP_CFG register
- according to Table 
+
+\color red
+Secondary sampling point
+\color inherit
+ offset is calculated as offset from start of bit (
+\color red
+SyncSeg
+\color inherit
+ field) in multiples of System clock.
+ 
+\color red
+Secondary sampling point
+\color inherit
+ offset can be configured by SW from SSP_CFG register according to Table
+ 
 \begin_inset CommandInset ref
 LatexCommand ref
 reference "tab:ssp-config"
@@ -33538,11 +33994,30 @@ noprefix "false"
 \end_inset
 
 .
- Secondary Sampling Point Offset can have values between 0 and 127.
- If Secondary Sampling Point Offset is 0, Secondary Sampling Point is active
- in the same clock cycle as TX Trigger.
- If Secondary Sampling Point Offset is higher than 127 (e.g.
- Measured Transceiver Delay + Offset > 127), it is saturated to 127.
+ 
+\color red
+Secondary sampling point
+\color inherit
+ Offset can have values between 0 and 127.
+ If 
+\color red
+secondary sampling point
+\color inherit
+ offset is 0, 
+\color red
+secondary sampling point
+\color inherit
+ is active in the same clock cycle as TX trigger.
+ If 
+\color red
+secondary sampling point
+\color inherit
+ offset is higher than 127 (e.g.
+ measured 
+\color red
+transmitter delay
+\color inherit
+ + offset > 127), it is saturated to 127.
 \end_layout
 
 \begin_layout Standard
@@ -33620,8 +34095,20 @@ Offset
 \begin_inset Text
 
 \begin_layout Plain Layout
-Position of Secondary Sampling Point is fixed at SSP_CFG[SSP_OFFSET].
- Measured Transceiver Delay is not taken into account.
+Position of 
+\color red
+secondary sampling point
+\color inherit
+ is fixed at SSP_CFG[SSP_OFFSET].
+ Measured 
+\color red
+transmitter
+\color inherit
+ 
+\color red
+delay
+\color inherit
+ is not taken into account.
 \end_layout
 
 \end_inset
@@ -33632,7 +34119,9 @@ Position of Secondary Sampling Point is fixed at SSP_CFG[SSP_OFFSET].
 \begin_inset Text
 
 \begin_layout Plain Layout
-Offset + Transceiver Delay
+Offset + 
+\color red
+transmitter delay
 \end_layout
 
 \end_inset
@@ -33641,8 +34130,12 @@ Offset + Transceiver Delay
 \begin_inset Text
 
 \begin_layout Plain Layout
-Position of Secondary Sampling Point is given as SSP_CFG[SSP_OFFSET] + Measured
- Transceiver Delay.
+Position of secondary sampling point is given as SSP_CFG[SSP_OFFSET] + Measured
+ 
+\color red
+transmitter delay
+\color inherit
+.
 \end_layout
 
 \end_inset
@@ -33662,8 +34155,31 @@ No SSP
 \begin_inset Text
 
 \begin_layout Plain Layout
-Bit-rate is never changed to Secondary Sampling and Bus is sampled at moment
- of Data Bit-Rate Sample Point.
+
+\color red
+Bit rate
+\color inherit
+ within Prescaler is never changed to 
+\begin_inset Quotes eld
+\end_inset
+
+Secondary
+\begin_inset Quotes erd
+\end_inset
+
+, it only changes to 
+\begin_inset Quotes eld
+\end_inset
+
+Data
+\begin_inset Quotes erd
+\end_inset
+
+ even for transmitter of CAN FD frame and bus is sampled at moment of 
+\color red
+data bit rate sample point
+\color inherit
+.
 \end_layout
 
 \end_inset
@@ -33682,7 +34198,11 @@ Bit-rate is never changed to Secondary Sampling and Bus is sampled at moment
 \begin_inset Caption Standard
 
 \begin_layout Plain Layout
-Secondary Sampling Point configuration
+
+\color red
+Secondary sampling point
+\color inherit
+ configuration
 \begin_inset CommandInset label
 LatexCommand label
 name "tab:ssp-config"
@@ -33703,13 +34223,19 @@ name "tab:ssp-config"
 \end_layout
 
 \begin_layout Subsection
-Secondary Sampling Point
+Secondary sampling point
 \end_layout
 
 \begin_layout Standard
-Secondary Sampling Point is created by delaying TX Trigger by the amount
- of Secondary Sampling Point Offset via shift register as is shown in Figure
- 
+
+\color red
+Secondary sampling point
+\color inherit
+ is created by delaying TX trigger by the amount of 
+\color red
+secondary sampling point
+\color inherit
+ offset via shift register as is shown in Figure 
 \begin_inset CommandInset ref
 LatexCommand ref
 reference "fig:secondary-sampling-point"
@@ -33720,11 +34246,37 @@ noprefix "false"
 \end_inset
 
 .
- Secondary Sampling Point Shift register is shifting only when current Bit
- Rate is configured to Secondary Sample.
- Note that Secondary Sampling Point is not used for processing off RX Data
- by Protocol control FSM but only to detect Bit Error by Transmitter of
- CAN FD Frame.
+ 
+\color red
+Secondary sampling point
+\color inherit
+ shift register is shifting only when current 
+\color red
+bit rate
+\color inherit
+ is configured to 
+\begin_inset Quotes eld
+\end_inset
+
+Secondary
+\begin_inset Quotes erd
+\end_inset
+
+.
+ Note that 
+\color red
+secondary sampling point
+\color inherit
+ is not used for processing off received data by Protocol control FSM but
+ only to detect 
+\color red
+bit error
+\color inherit
+ by 
+\color red
+transmitter
+\color inherit
+ of CAN FD Frame.
 \end_layout
 
 \begin_layout Standard
@@ -33738,7 +34290,7 @@ status open
 \noindent
 \align center
 \begin_inset Graphics
-	filename /DOKUMENTY/Skola/CVUT-FEL/ctu_can_fd_2/doc/pics/Timing_diagrams/PDFs/ssp_offset.pdf
+	filename ../pics/Timing_diagrams/PDFs/ssp_offset.pdf
 	lyxscale 20
 	scale 63
 
@@ -33751,7 +34303,11 @@ status open
 \begin_inset Caption Standard
 
 \begin_layout Plain Layout
-Secondary Sampling Point
+
+\color red
+Secondary sampling point
+\color inherit
+
 \begin_inset CommandInset label
 LatexCommand label
 name "fig:secondary-sampling-point"
@@ -33772,12 +34328,31 @@ name "fig:secondary-sampling-point"
 \end_layout
 
 \begin_layout Subsection
-Bit Error detection
+Bit error detection
 \end_layout
 
 \begin_layout Standard
-Bit Error detection differs for Nominal Bit-Rate, Data Bit-Rate and Secondary
- Sampling as is shown in Table 
+
+\color red
+Bit error
+\color inherit
+ detection differs for 
+\color red
+nominal
+\color inherit
+ 
+\color red
+bit rate
+\color inherit
+, 
+\color red
+data bit rate
+\color inherit
+ and 
+\color red
+Secondary sampling
+\color inherit
+ as is shown in Table 
 \begin_inset CommandInset ref
 LatexCommand ref
 reference "tab:bit-error-detection"
@@ -33788,10 +34363,18 @@ noprefix "false"
 \end_inset
 
 .
- Note that Bit Error is detected by Bus Sampling always when CTU CAN FD
- is enabled (SETTINGS[ENA] = 1).
- Bit Error is only ignored by Errror Detected module when it is irrelevant
- as shown in Table 
+ Note that 
+\color red
+bit error
+\color inherit
+ is detected by Bus sampling always when CTU CAN FD is enabled (SETTINGS[ENA]
+ = 1).
+ 
+\color red
+Bit error
+\color inherit
+ is only ignored by Error detector module when it is irrelevant as shown
+ in Table 
 \begin_inset CommandInset ref
 LatexCommand ref
 reference "tab:Bit-error-exceptions"
@@ -33802,7 +34385,19 @@ noprefix "false"
 \end_inset
 
 .
- Bit Error detection in Nominal Bit-Rate is shown in Figure 
+ 
+\color red
+Bit error
+\color inherit
+ detection in 
+\color red
+nominal
+\color inherit
+ 
+\color red
+bit rate
+\color inherit
+ is shown in Figure 
 \begin_inset CommandInset ref
 LatexCommand ref
 reference "fig:bit-error-detection"
@@ -33904,7 +34499,9 @@ cellcolor{gray}
 \begin_inset Text
 
 \begin_layout Plain Layout
-Nominal Bit-Rate
+
+\color red
+Nominal bit rate
 \end_layout
 
 \end_inset
@@ -33913,7 +34510,7 @@ Nominal Bit-Rate
 \begin_inset Text
 
 \begin_layout Plain Layout
-RX Trigger 1 is active (Sample Point)
+RX trigger 1 is active
 \end_layout
 
 \end_inset
@@ -33922,8 +34519,15 @@ RX Trigger 1 is active (Sample Point)
 \begin_inset Text
 
 \begin_layout Plain Layout
-Detected when latest CAN TX value (transmitted value in actual bit) is not
- equal to CAN RX value (sampled bus value).
+Detected when actual 
+\series bold
+can_tx
+\series default
+ value (transmitted value in actual bit) is not equal to
+\series bold
+can_rx
+\series default
+ value (sampled bus value).
 \end_layout
 
 \end_inset
@@ -33934,7 +34538,9 @@ Detected when latest CAN TX value (transmitted value in actual bit) is not
 \begin_inset Text
 
 \begin_layout Plain Layout
-Data Bit-Rate
+
+\color red
+Data bit rate
 \end_layout
 
 \end_inset
@@ -33943,7 +34549,7 @@ Data Bit-Rate
 \begin_inset Text
 
 \begin_layout Plain Layout
-RX Trigger is active (Sample Point)
+RX trigger 1 is active
 \end_layout
 
 \end_inset
@@ -33952,8 +34558,15 @@ RX Trigger is active (Sample Point)
 \begin_inset Text
 
 \begin_layout Plain Layout
-Detected when latest CAN TX value (transmitted value in actual bit) is not
- equal to CAN RX value (sampled bus value).
+Detected when actual 
+\series bold
+can_tx
+\series default
+ value (transmitted value in actual bit) is not equal to 
+\series bold
+can_rx
+\series default
+ value (sampled bus value).
 \end_layout
 
 \end_inset
@@ -33964,7 +34577,7 @@ Detected when latest CAN TX value (transmitted value in actual bit) is not
 \begin_inset Text
 
 \begin_layout Plain Layout
-Secondary Sample
+Secondary sample
 \end_layout
 
 \end_inset
@@ -33973,7 +34586,9 @@ Secondary Sample
 \begin_inset Text
 
 \begin_layout Plain Layout
-Secondary Sample Point
+
+\color red
+Secondary sample point
 \end_layout
 
 \end_inset
@@ -33982,8 +34597,15 @@ Secondary Sample Point
 \begin_inset Text
 
 \begin_layout Plain Layout
-Detected when CAN TX value on the output of TX Data cache is not equal to
- CAN RX value (sampled bus value).
+Detected when 
+\series bold
+can_tx
+\series default
+ value on the output of TX data cache is not equal to 
+\series bold
+can_rx
+\series default
+ value (sampled bus value).
 \end_layout
 
 \end_inset
@@ -34033,7 +34655,7 @@ status open
 \noindent
 \align center
 \begin_inset Graphics
-	filename /DOKUMENTY/Skola/CVUT-FEL/ctu_can_fd_2/doc/pics/Timing_diagrams/PDFs/bit_error_detection.pdf
+	filename ../pics/Timing_diagrams/PDFs/bit_error_detection.pdf
 	lyxscale 20
 	scale 60
 
@@ -34046,7 +34668,11 @@ status open
 \begin_inset Caption Standard
 
 \begin_layout Plain Layout
-Bit Error detection
+
+\color red
+Bit error
+\color inherit
+ detection
 \begin_inset CommandInset label
 LatexCommand label
 name "fig:bit-error-detection"
@@ -34067,24 +34693,49 @@ name "fig:bit-error-detection"
 \end_layout
 
 \begin_layout Subsection
-TX Data cache
+TX data cache
 \end_layout
 
 \begin_layout Standard
-To detect Bit Error in Secondary Sampling, CTU CAN FD needs to remember
- CAN TX values of several bits transmitted on CAN Bus (Secondary Sample
- Point can be so late, that it does not fit within the bit itself, and occurs
+To detect 
+\color red
+bit error
+\color inherit
+ in Secondary sampling, CTU CAN FD needs to remember 
+\series bold
+can_tx
+\series default
+ values of several bits transmitted on CAN bus (
+\color red
+secondary sample point
+\color inherit
+ can be so late, that it does not fit within the bit itself, and may occurs
  in following bits, therefore, a transmitted bit value must be rememebered
- until Secondary Sample Point).
- This functionality is implemented by TX Data cache.
- TX Data cache is FIFO memory with each entry containing single bit.
- CAN TX value is stored to TX Data Cache directly after a bit was transmitted
- to the bus (SYNC segment, One clock cycle after Stuff Pipeline stage).
- TX Data cache can store up to 8 bit values (therefore allowing 8 bits on
+ until 
+\color red
+secondary sample point
+\color inherit
+).
+ This functionality is implemented by TX data cache.
+ TX data cache is FIFO memory with each entry containing single bit.
+ 
+\series bold
+can_tx
+\series default
+ value is stored to TX data cache directly after a bit was transmitted to
+ the bus (SYNC segment, One clock cycle after Stuff pipeline stage).
+ TX data cache can store up to 8 bit values (therefore allowing 8 bits on
  the fly).
- A value is read from TX Data cache when Secondary Sampling Point is active.
- TX Data cache operation together with Bit Error detection during Secondary
- Sample is shown in Figure 
+ A value is read from TX data cache when 
+\color red
+secondary sampling point
+\color inherit
+ is active.
+ TX data cache operation together with 
+\color red
+bit error
+\color inherit
+ detection during Secondary Sampling is shown in Figure 
 \begin_inset CommandInset ref
 LatexCommand ref
 reference "fig:tx-data-cache-operation"
@@ -34108,7 +34759,7 @@ status open
 \noindent
 \align center
 \begin_inset Graphics
-	filename /DOKUMENTY/Skola/CVUT-FEL/ctu_can_fd_2/doc/pics/Timing_diagrams/PDFs/bit_error_ssp.pdf
+	filename ../pics/Timing_diagrams/PDFs/bit_error_ssp.pdf
 	lyxscale 20
 	scale 44
 
@@ -34121,7 +34772,7 @@ status open
 \begin_inset Caption Standard
 
 \begin_layout Plain Layout
-TX Data cache operation
+TX data cache operation
 \begin_inset CommandInset label
 LatexCommand label
 name "fig:tx-data-cache-operation"
@@ -34157,8 +34808,7 @@ Memory registers implement following functionality:
 \end_layout
 
 \begin_layout Itemize
-Configuration and Status registers of CTU CAN FD via SW accessing Memory
- registers.
+Contains configuration and status registers of CTU CAN FD (accessed by SW).
 \end_layout
 
 \begin_layout Itemize
@@ -34166,11 +34816,11 @@ Issue commands to CTU CAN FD by SW.
 \end_layout
 
 \begin_layout Itemize
-Read received CAN frame from RX Buffer FIFO.
+Read received CAN frame from RX buffer RAM.
 \end_layout
 
 \begin_layout Itemize
-Write CAN frame to be transmitted to TXT Buffer RAMs.
+Write CAN frame to be transmitted to TXT buffer RAMs.
 \end_layout
 
 \begin_layout Standard
@@ -34198,7 +34848,7 @@ status open
 \noindent
 \align center
 \begin_inset Graphics
-	filename /DOKUMENTY/Skola/CVUT-FEL/ctu_can_fd_2/doc/pics/Visio_generated/BD_memory_registers.pdf
+	filename ../pics/Visio_generated/BD_memory_registers.pdf
 	lyxscale 20
 	scale 80
 
@@ -34242,15 +34892,8 @@ filename "entity_docs/memory_registers.lyx"
 \end_layout
 
 \begin_layout Standard
-Memory registers contain 
-\begin_inset Quotes eld
-\end_inset
-
-Control Registers Module
-\begin_inset Quotes erd
-\end_inset
-
- which is generated by 
+Memory registers contain Control registers module which is generated by
+ 
 \begin_inset CommandInset citation
 LatexCommand cite
 key "key-7"
@@ -34259,9 +34902,9 @@ literal "false"
 \end_inset
 
 .
- Control Registers and format of CAN Frame as is stored in TXT Buffers and
- RX Buffer are described in IP-XACT format with slight modifications as
- explained in 
+ Control registers module and format of CAN frame as is stored in TXT buffers
+ and RX buffer are described in IP-XACT format with slight modifications
+ as explained in 
 \begin_inset CommandInset ref
 LatexCommand ref
 reference "tab:ip-xact-attributes"
@@ -34276,7 +34919,7 @@ noprefix "false"
 \end_layout
 
 \begin_layout Standard
-From one side, Control Registers Module is accessed via simple RAM-like
+From one side, Control registers module is accessed via simple RAM-like
  memory interface which is described in 
 \begin_inset CommandInset ref
 LatexCommand ref
@@ -34288,22 +34931,24 @@ noprefix "false"
 \end_inset
 
 .
- From other side, Control Registers Module is accessible via two records:
- Output record (signals going from Control Registers to rest of CTU CAN
- FD) and Input record (signals going from CTU CAN FD to Control Registers).
- Output from Control Registers is converted to Driving Bus and other control
+ From other side, Control registers module is accessible via two records:
+ Output record (signals going from Control registers module to rest of CTU
+ CAN FD) and Input record (signals going from rest of CTU CAN FD to Control
+ registers module).
+ Outputs from Control registers module is converted to Driving bus and other
+ control signals.
+ Inputs to Control registers module is driven by Status bus and other status
  signals.
- Input to Control Registers is driven by Status Bus and other status signals.
- Driving and Status Bus are kept from legacy resons, instead of directly
+ Driving and Status buses are kept from legacy resons, instead of directly
  bringing Input/Output records to the rest of CTU CAN FD.
- It has an additional advantage: Synthesis does not mess up the names through
- the whole design as is common with records.
+ It has an additional advantage: synthesis does not mess up the names through
+ the whole design as it is common with records.
 \end_layout
 
 \begin_layout Standard
-Memory registers block decodes write accesses to TXT Buffers (via TXT Buffer
- 1 to TXT Buffer 4 memory locations) and maps these accesses to access TXT
- Buffer RAMs.
+Memory registers block decodes write accesses to TXT buffers (via TXT buffer
+ 1 to TXT buffer 4 memory locations) and maps these accesses to access TXT
+ buffer RAMs.
 \end_layout
 
 \begin_layout Subsection
@@ -34311,7 +34956,7 @@ Register types
 \end_layout
 
 \begin_layout Standard
-Control Registers Module contains following types of registers:
+Control registers module contains following types of registers:
 \end_layout
 
 \begin_layout Subsubsection
@@ -34320,7 +34965,7 @@ Read/Write register
 
 \begin_layout Standard
 A DFF is instantiated and connected to output record (write value).
- When Register is read, value in this DFF is returned.
+ When register is read, value in this DFF is returned.
 \end_layout
 
 \begin_layout Subsubsection
@@ -34329,7 +34974,7 @@ Read only register
 
 \begin_layout Standard
 No DFF is instantiated.
- When Register is read, value from Input Record is returned.
+ When register is read, value from Input record is returned.
 \end_layout
 
 \begin_layout Subsubsection
@@ -34338,7 +34983,7 @@ Write only register
 
 \begin_layout Standard
 A DFF is instantiated and connected to output record (write value).
- When Register is read, all zeroes are returned.
+ When register is read, all zeroes are returned.
 \end_layout
 
 \begin_layout Subsubsection
@@ -34347,9 +34992,16 @@ Read/Write Once register
 
 \begin_layout Standard
 A DFF is instantiated and connected to output record (write value).
- When Register is read, value from Input record is used.
+ When register is read, value from Input record is used.
  This type of register is used when write value has different meaning than
  read value.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Newpage pagebreak
+\end_inset
+
+
 \end_layout
 
 \begin_layout Subsection
@@ -34364,7 +35016,7 @@ name "subsec:Register-attributes"
 \end_layout
 
 \begin_layout Standard
-Registers within Control Registers Module use additional IP-XACT attributes
+Registers within Control registers module use additional IP-XACT attributes
  as is shown in Table 
 \begin_inset CommandInset ref
 LatexCommand ref
@@ -34401,7 +35053,7 @@ status open
 \begin_inset Text
 
 \begin_layout Plain Layout
-IP XACT Attribute
+IP XACT attribute
 \begin_inset ERT
 status open
 
@@ -34423,7 +35075,7 @@ cellcolor{gray}
 \begin_inset Text
 
 \begin_layout Plain Layout
-Attribute Value
+Attribute value
 \begin_inset ERT
 status open
 
@@ -34513,7 +35165,7 @@ cellcolor{gray}
 \begin_inset Text
 
 \begin_layout Plain Layout
-Modified Write Value
+Modified write value
 \end_layout
 
 \end_inset
@@ -34645,6 +35297,7 @@ false
 
 , register is not instantiated and its reset value is returned upon read
  (if it is readable).
+ Value of this generic is added to generics of Control registers module.
 \end_layout
 
 \end_inset
@@ -34691,17 +35344,10 @@ RX_DATA
 \begin_inset Text
 
 \begin_layout Plain Layout
-\begin_inset Quotes eld
-\end_inset
-
-Read Signaller
-\begin_inset Quotes erd
-\end_inset
-
- module is instantiated.
+Read signaller module is instantiated.
  This module combinatorially decodes when register field is being read and
- provides this information in Output Record.
- Used to signal to RX Buffer that there is a read from RX_DATA register.
+ provides this information in Output record.
+ Used to signal to RX buffer that there is a read from RX_DATA register.
 \end_layout
 
 \end_inset
@@ -34712,7 +35358,7 @@ Read Signaller
 \begin_inset Text
 
 \begin_layout Plain Layout
-Vendor Extension - regLocks/ regLock
+Vendor extension - regLocks/ regLock
 \end_layout
 
 \end_inset
@@ -34749,22 +35395,18 @@ EWL/ ERP/ CTR_PRES
 
 \begin_layout Plain Layout
 If specified, register is writable only when 
-\begin_inset Quotes eld
-\end_inset
-
-lock = 0
-\begin_inset Quotes erd
-\end_inset
-
-.
- If not specified, 
-\begin_inset Quotes eld
-\end_inset
-
+\series bold
+\shape italic
 lock
-\begin_inset Quotes erd
-\end_inset
-
+\series default
+\shape default
+ = 0.
+ If not specified, 
+\series bold
+\shape italic
+lock
+\series default
+\shape default
  input has no effect.
  This is used to prevent user from writing EWL/ERP/CTR_PRES unless CTU CAN
  FD is in test mode.
@@ -34882,106 +35524,6 @@ status open
 
 https://github.com/Blebowski/Reg_Map_Gen
 \end_layout
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Bibliography
-\begin_inset CommandInset bibitem
-LatexCommand bibitem
-key "key-8"
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Bibliography
-\begin_inset CommandInset bibitem
-LatexCommand bibitem
-key "key-9"
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Bibliography
-\begin_inset CommandInset bibitem
-LatexCommand bibitem
-key "key-10"
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Bibliography
-\begin_inset CommandInset bibitem
-LatexCommand bibitem
-key "key-11"
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Bibliography
-\begin_inset CommandInset bibitem
-LatexCommand bibitem
-key "key-12"
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Bibliography
-\begin_inset CommandInset bibitem
-LatexCommand bibitem
-key "key-13"
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Bibliography
-\begin_inset CommandInset bibitem
-LatexCommand bibitem
-key "key-14"
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Bibliography
-\begin_inset CommandInset bibitem
-LatexCommand bibitem
-key "key-15"
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Bibliography
-\begin_inset CommandInset bibitem
-LatexCommand bibitem
-key "key-16"
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Bibliography
-\begin_inset CommandInset bibitem
-LatexCommand bibitem
-key "key-17"
 
 \end_inset
 
