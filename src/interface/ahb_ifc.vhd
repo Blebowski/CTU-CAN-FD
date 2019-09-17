@@ -117,6 +117,10 @@ architecture rtl of ahb_ifc is
     signal sbe_d       : std_logic_vector(3 downto 0);
     signal sbe_q       : std_logic_vector(3 downto 0);
 
+    signal swr_i       : std_logic;
+    signal srd_i       : std_logic;
+
+
 begin
     
     -- Only accept transaction if previous one completed OK!
@@ -196,17 +200,20 @@ begin
     -- Write control:
     --  When write access was registered, but master is not busy.
     ---------------------------------------------------------------------------
-    swr <= '1' when (write_acc_q = '1' and htrans /= TT_BUSY)
+    swr_i <= '1' when (write_acc_q = '1' and htrans /= TT_BUSY)
                else
             '0';
     
-    srd <= '1' when (hsel_valid = '1' and htrans /= TT_BUSY and hwrite = '0')
+    srd_i <= '1' when (hsel_valid = '1' and htrans /= TT_BUSY and hwrite = '0')
                else
            '0';
     
-    scs <= '1' when (swr = '1' or srd = '1') else
+    scs <= '1' when (swr_i = '1' or srd_i = '1') else
            '0';
-    
+
+    swr <= swr_i;
+    srd <= srd_i;
+
     ---------------------------------------------------------------------------
     -- We need to stall the master when there is Read after write because we
     -- cant deliver the read data in the same clock cycle as we are writing!
