@@ -45,6 +45,7 @@ feature:
         wave: feature/feature_env_setup.tcl
     tests:
         arbitration:
+        mode_loopback:
         fault_confinement:
         forbid_fd:
         # interrupt:
