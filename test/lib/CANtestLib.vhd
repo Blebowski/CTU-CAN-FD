@@ -158,7 +158,7 @@ package CANtestLib is
     end record;
     
     constant SW_mode_rst_val : SW_mode := (false, false, false, false, false,
-        true, false, false, false, false);
+        true, false, false, false, true);
 
     -- Controller commands
     type SW_command is record
