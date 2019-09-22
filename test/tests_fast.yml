@@ -48,6 +48,8 @@ feature:
         mode_loopback:
         mode_listen_only:
         mode_self_test:
+        mode_frame_filters:
+            iterations: 6
         fault_confinement:
         forbid_fd:
         # interrupt:
