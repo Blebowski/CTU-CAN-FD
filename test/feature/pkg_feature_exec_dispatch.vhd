@@ -66,6 +66,7 @@ package pkg_feature_exec_dispath is
         stat_bus   : std_logic_vector(511 downto 0);
         irq        : std_logic;
         hw_reset   : std_logic;
+        can_tx     : std_logic;
     end record;
 
     type instance_outputs_arr_t is array (1 to NINST) of instance_outputs_t;
