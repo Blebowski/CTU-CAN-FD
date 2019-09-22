@@ -47,6 +47,7 @@ feature:
         arbitration:
         mode_loopback:
         mode_listen_only:
+        mode_self_test:
         fault_confinement:
         forbid_fd:
         # interrupt:

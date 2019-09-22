@@ -74,6 +74,7 @@ feature:
         mode_loopback:
             iterations: 10
         mode_listen_only:
+        mode_self_test:
         fault_confinement:
         forbid_fd:
         # interrupt:
