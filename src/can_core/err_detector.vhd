@@ -356,12 +356,12 @@ begin
     --------------------------------------------------------------------------
     -- Error code, next value
     ---------------------------------------------------------------------------
-    err_type_d <= "010" when (form_err_i = '1') else
-                  "000" when (bit_err = '1' and bit_err_enable = '1') else
-                  "000" when (bit_err_arb = '1') else
-                  "001" when (crc_err = '1') else
-                  "011" when (ack_err = '1') else
-                  "100" when (stuff_err = '1') else
+    err_type_d <= ERC_FRM_ERR when (form_err_i = '1') else
+                  ERC_BIT_ERR when (bit_err = '1' and bit_err_enable = '1') else
+                  ERC_BIT_ERR when (bit_err_arb = '1') else
+                  ERC_CRC_ERR when (crc_err = '1') else
+                  ERC_ACK_ERR when (ack_err = '1') else
+                  ERC_STUF_ERR when (stuff_err = '1') else
                   err_type_q;
                   
     ---------------------------------------------------------------------------
@@ -381,7 +381,7 @@ begin
     end process;
 
     -- Internal signal to output propagation
-    erc_capture <= err_pos_q & err_type_q;
+    erc_capture <= err_type_q & err_pos_q;
     crc_match <= crc_match_q;
 
     -- <RELEASE_OFF>
