@@ -77,6 +77,7 @@ feature:
         mode_self_test:
         mode_frame_filters:
             iterations: 15
+        mode_fd_enable:
         fault_confinement:
         forbid_fd:
         # interrupt:
