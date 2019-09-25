@@ -487,7 +487,14 @@ CTU CAN FD IP Core
 \begin_inset Text
 
 \begin_layout Plain Layout
-Version 0.1
+Version 0.1, Commit: 
+\begin_inset CommandInset include
+LatexCommand input
+filename "version.tex"
+
+\end_inset
+
+
 \end_layout
 
 \end_inset
@@ -908,12 +915,10 @@ When CTU CAN FD GIT repository is clonned, register map can be generated
 \end_layout
 
 \begin_layout Verbatim
-
 cd scripts
 \end_layout
 
 \begin_layout Verbatim
-
 ./update_reg_map
 \end_layout
 
@@ -926,12 +931,10 @@ Documentation can be exported from VHDL RTL codes by following script:
 \end_layout
 
 \begin_layout Verbatim
-
 cd scripts
 \end_layout
 
 \begin_layout Verbatim
-
 python gen_lyx_tables.py --configPath vhdl_lyx_interface_cfg.yml
 \end_layout
 
@@ -964,12 +967,10 @@ CTU CAN FD contains release tags in GIT repository.
 \end_layout
 
 \begin_layout Verbatim
-
 cd scripts
 \end_layout
 
 \begin_layout Verbatim
-
 python create_release.py --output_dir ../release_directory_name
 \end_layout
 
@@ -991,12 +992,10 @@ src/component.xml
 \end_layout
 
 \begin_layout Verbatim
-
 cd scripts
 \end_layout
 
 \begin_layout Verbatim
-
 python gen_vivado_component.py
 \end_layout
 

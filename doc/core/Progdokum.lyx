@@ -485,7 +485,14 @@ CTU CAN FD IP Core
 \begin_inset Text
 
 \begin_layout Plain Layout
-Version 2.1.5
+Version 2.2, Commit:
+\begin_inset CommandInset include
+LatexCommand input
+filename "version.tex"
+
+\end_inset
+
+
 \end_layout
 
 \end_inset
