@@ -13,9 +13,9 @@ unit:
         iterations: 50
         timeout: 100 ms
     tests:
-        bit_stuffing:
-            iterations: 10
-            wave: unit/Bit_Stuffing/bsdt_unit.tcl
+        #bit_stuffing:
+        #    iterations: 10
+        #    wave: unit/Bit_Stuffing/bsdt_unit.tcl
         apb:
             iterations: 1
         crc:
@@ -51,7 +51,7 @@ feature:
         mode_frame_filters:
             iterations: 6
         mode_fd_enable:
-        fault_confinement:
+        # fault_confinement:
         forbid_fd:
         # interrupt:
         int_rx:
@@ -59,8 +59,8 @@ feature:
         int_ewl:
         int_do:
         int_fcs:
-        invalid_configs:
-        overload:
+        # invalid_configs:
+        # overload:
         retr_limit:
         retr_limit_2:
         retr_limit_3:
@@ -68,9 +68,9 @@ feature:
         rx_status:
         spec_mode:
         traf_meas:
-        tran_delay:
+        # tran_delay:
         tx_arb_time_tran:
-        timestamp_options:
+        # timestamp_options:
         byte_enable:
         data_length_code:
         # bus_start:
@@ -78,13 +78,13 @@ feature:
             iterations: 1
         # txtb_state:
         #     iterations: 1
-        message_filter:
-            iterations: 1
+        # message_filter:
+        #     iterations: 1
         timestamp_registers:
         txt_buffer_hazard:
             iterations: 1
-        txt_buffer_priority:
-            iterations: 5
+        # txt_buffer_priority:
+        #     iterations: 5
 reference:
     default:
         <<: *default
