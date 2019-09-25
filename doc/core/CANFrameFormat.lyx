@@ -2019,15 +2019,15 @@ X\end_layout
 
 \end_layout
 \begin_layout Description
-DLC Data Length Code as defined in CAN FD Specification.
+DLC Data Length Code.
 \end_layout
 \begin_layout Description
-RTR Remote Transmission Request flag. Has meaning only for CAN frames. CAN FD does not have RTR frames.\begin_inset Newline newline\end_inset
+RTR Logic 1 indicates Remote frame. Has meaning only for CAN frames. CAN FD does not have RTR frames.\begin_inset Newline newline\end_inset
 		0b0  - NO_RTR_FRAME - CAN frame is not RTR frame.\begin_inset Newline newline\end_inset
 		0b1  - RTR_FRAME - CAN frame is RTR frame.
 \end_layout
 \begin_layout Description
-IDE Extended Identifier Type. Distinguishes between Base and Extended Identifiers.\begin_inset Newline newline\end_inset
+IDE Extended Identifier Type. Logic 1 indicates CAN frame with both Base identifier and Identifier extension. Logic 0 indicates CAN frame with only Base identifier.\begin_inset Newline newline\end_inset
 		0b0  - BASE - Frame Identifier is Basic (11 bits)\begin_inset Newline newline\end_inset
 		0b1  - EXTENDED - Frame Identifier is Extended (11 + 18 bits)
 \end_layout
@@ -2037,17 +2037,17 @@ FDF Flexible Data-rate Format. Distinguishes between CAN 2.0 and CAN FD Frames.\
 		0b1  - FD_CAN - Frame is CAN FD frame.
 \end_layout
 \begin_layout Description
-BRS Bit Rate Shift. In case of CAN FD frames indicates whether Bit-rate is shifted during for Data field of CAN FD frame. This bit has no meaning for CAN Frames.\begin_inset Newline newline\end_inset
+BRS Bit Rate Shift. In case of CAN FD frames indicates whether bit rate is shifted CAN FD frame. This bit has no meaning for CAN frames.\begin_inset Newline newline\end_inset
 		0b0  - BR_NO_SHIFT - Bit rate should not be shifted if frame is CAN FD frame.\begin_inset Newline newline\end_inset
 		0b1  - BR_SHIFT - Bit rate should be shifted if frame is CAN FD frame.
 \end_layout
 \begin_layout Description
-ESI_RSV Error State Indicator bit for received CAN FD frames. Bit has no meaning for CAN frames nor for transmitted CAN FD frames (in TXT Buffer).\begin_inset Newline newline\end_inset
+ESI_RSV Error State Indicator bit for received CAN FD frames. Bit has no meaning for CAN frames nor for transmitted CAN FD frames (in TXT buffer).\begin_inset Newline newline\end_inset
 		0b0  - ESI_ERR_ACTIVE - Transmitted of received CAN FD frame is error active.\begin_inset Newline newline\end_inset
 		0b1  - ESI_ERR_PASIVE - Transmitted of received CAN FD frame is error passive.
 \end_layout
 \begin_layout Description
-RWCNT Size of CAN frame in RX Buffer without FRAME_FORMAT WORD.(E.g RTR frame RWCNT=3, 64 Byte FD frame RWCNT=19). In TXT Buffer this field has no meaning.
+RWCNT Size of CAN frame in RX buffer without FRAME_FORMAT WORD. (E.g RTR frame RWCNT=3, 64 Byte FD frame RWCNT=19). In TXT buffer this field has no meaning.
 \end_layout
 \begin_layout Standard
 \begin_inset VSpace bigskip

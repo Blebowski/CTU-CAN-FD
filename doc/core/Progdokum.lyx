@@ -3730,15 +3730,5 @@ key "key-1"
 CTU CAN FD, System architecture.
 \end_layout
 
-\begin_layout Bibliography
-\begin_inset CommandInset bibitem
-LatexCommand bibitem
-key "key-2"
-
-\end_inset
-
-
-\end_layout
-
 \end_body
 \end_document
