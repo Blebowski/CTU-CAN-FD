@@ -2861,27 +2861,6 @@
 						</ipxact:enumeratedValues>
 					</ipxact:field>
 					<ipxact:field>
-						<ipxact:name>TBF</ipxact:name>
-						<ipxact:displayName>TBF</ipxact:displayName>
-						<ipxact:description>Time Base Format. Shall be always set to 1.</ipxact:description>
-						<ipxact:bitOffset>8</ipxact:bitOffset>
-						<ipxact:bitWidth>1</ipxact:bitWidth>
-						<ipxact:enumeratedValues>
-							<ipxact:enumeratedValue>
-								<ipxact:name>TIME_BASED</ipxact:name>
-								<ipxact:displayName>TIME_BASED</ipxact:displayName>
-								<ipxact:description>TIMESTAMP_L and TIMESTAMP_H contain valid timestamp for transmission or reception.</ipxact:description>
-								<ipxact:value>1</ipxact:value>
-							</ipxact:enumeratedValue>
-							<ipxact:enumeratedValue>
-								<ipxact:name>NOT_TIME_BASED</ipxact:name>
-								<ipxact:displayName>NOT_TIME_BASED</ipxact:displayName>
-								<ipxact:description>TIMESTAMP_L and TIMESTAMP_H does not contain valid timestamp for transmission or reception.</ipxact:description>
-								<ipxact:value>0</ipxact:value>
-							</ipxact:enumeratedValue>
-						</ipxact:enumeratedValues>
-					</ipxact:field>
-					<ipxact:field>
 						<ipxact:name>BRS</ipxact:name>
 						<ipxact:displayName>BRS</ipxact:displayName>
 						<ipxact:description>Bit Rate Shift. In case of CAN FD frames indicates whether Bit-rate is shifted during for Data field of CAN FD frame. This bit has no meaning for CAN Frames.</ipxact:description>

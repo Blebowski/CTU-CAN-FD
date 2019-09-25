@@ -572,7 +572,7 @@ begin
     frame_form_w(RTR_IND)                 <= rec_is_rtr;
     frame_form_w(IDE_IND)                 <= rec_ident_type;
     frame_form_w(FDF_IND)                 <= rec_frame_type;
-    frame_form_w(TBF_IND)                 <= '1'; -- All frames have the timestamp
+    frame_form_w(8)                       <= '1'; -- Reserved
     frame_form_w(BRS_IND)                 <= rec_brs;
     frame_form_w(ESI_RSV_IND)             <= rec_esi;
 

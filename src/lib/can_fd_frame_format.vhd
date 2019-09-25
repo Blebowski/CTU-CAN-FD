@@ -131,7 +131,6 @@ package can_fd_frame_format is
   constant RTR_IND                : natural := 5;
   constant IDE_IND                : natural := 6;
   constant FDF_IND                : natural := 7;
-  constant TBF_IND                : natural := 8;
   constant BRS_IND                : natural := 9;
   constant ESI_RSV_IND           : natural := 10;
   constant RWCNT_L               : natural := 11;
@@ -148,10 +147,6 @@ package can_fd_frame_format is
   -- "FDF" field enumerated values
   constant NORMAL_CAN         : std_logic := '0';
   constant FD_CAN             : std_logic := '1';
-
-  -- "TBF" field enumerated values
-  constant NOT_TIME_BASED     : std_logic := '0';
-  constant TIME_BASED         : std_logic := '1';
 
   -- "BRS" field enumerated values
   constant BR_NO_SHIFT        : std_logic := '0';

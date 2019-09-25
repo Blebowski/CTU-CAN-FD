@@ -1606,7 +1606,7 @@ BRS\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-TBF\end_layout
+Reserved\end_layout
 
 \end_inset
 </cell>
@@ -1687,7 +1687,7 @@ X\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-X\end_layout
+-\end_layout
 
 \end_inset
 </cell>
@@ -2035,11 +2035,6 @@ IDE Extended Identifier Type. Distinguishes between Base and Extended Identifier
 FDF Flexible Data-rate Format. Distinguishes between CAN 2.0 and CAN FD Frames.\begin_inset Newline newline\end_inset
 		0b0  - NORMAL_CAN - Frame is CAN frame.\begin_inset Newline newline\end_inset
 		0b1  - FD_CAN - Frame is CAN FD frame.
-\end_layout
-\begin_layout Description
-TBF Time Base Format. Shall be always set to 1.\begin_inset Newline newline\end_inset
-		0b0  - NOT_TIME_BASED - TIMESTAMP_L and TIMESTAMP_H does not contain valid timestamp for transmission or reception.\begin_inset Newline newline\end_inset
-		0b1  - TIME_BASED - TIMESTAMP_L and TIMESTAMP_H contain valid timestamp for transmission or reception.
 \end_layout
 \begin_layout Description
 BRS Bit Rate Shift. In case of CAN FD frames indicates whether Bit-rate is shifted during for Data field of CAN FD frame. This bit has no meaning for CAN Frames.\begin_inset Newline newline\end_inset

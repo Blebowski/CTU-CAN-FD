@@ -729,8 +729,6 @@ bool ctu_can_fd_insert_frame(struct ctucanfd_priv *priv,
 	else
 		ffw.s.ide = BASE;
 
-	ffw.s.tbf = TIME_BASED;
-
 	idw = ctu_can_fd_id_to_hwid(cf->can_id);
 
 	if (!ctu_can_fd_len_to_dlc(cf->len, &dlc))
