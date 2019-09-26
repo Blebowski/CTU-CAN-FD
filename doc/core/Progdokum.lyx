@@ -486,13 +486,6 @@ CTU CAN FD IP Core
 
 \begin_layout Plain Layout
 Version 2.2, Commit:
-\begin_inset CommandInset include
-LatexCommand input
-filename "version.tex"
-
-\end_inset
-
-
 \end_layout
 
 \end_inset
@@ -3696,6 +3689,8 @@ d by 1.
  by 1.
  TX_COUNTER register can be cleared by writing logic 1 to COMMAND[TXFCRST].
  RX_COUNTER register can be cleared by writing logic 1 to COMMAND[RXFCRST].
+ When CTU CAN FD is in Loopback mode and own transmitted frame is stored
+ to RX buffer, RX_COUNTER is also incremented.
 \end_layout
 
 \begin_layout Subsection
