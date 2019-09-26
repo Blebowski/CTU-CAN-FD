@@ -41,7 +41,7 @@
 
 --------------------------------------------------------------------------------
 -- Module:
---  Resynchronisation.
+--  Bit segment meter.
 --
 -- Purpose:
 --  This module measures segment length (TSEG1 or TSEG2) with respect to 
@@ -167,7 +167,7 @@ use work.reduce_lib.all;
 use work.CAN_FD_register_map.all;
 use work.CAN_FD_frame_format.all;
 
-entity resynchronisation is
+entity bit_segment_meter is
     generic (
         -- Reset polarity
         G_RESET_POLARITY          :       std_logic := '0';
@@ -247,7 +247,7 @@ entity resynchronisation is
     );
 end entity;
 
-architecture rtl of resynchronisation is
+architecture rtl of bit_segment_meter is
 
     function max(
         a : natural;

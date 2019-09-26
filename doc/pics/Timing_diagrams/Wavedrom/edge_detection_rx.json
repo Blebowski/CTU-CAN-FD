@@ -1,0 +1,24 @@
+{signal: [
+  {name: 'System clock', 				wave: 'p....................',
+   										node: '.....................'},
+  
+  {name: 'Time quanta counter', 		wave: '=====================', 	data: [0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0],
+   										node: '.....................'},
+
+  {name: 'Time quanta edge', 			wave: '010101010101010101010',
+   										node: '.........e.......h...'},
+  
+  {name: 'CAN TX', 						wave: '1...0.....1..0.......',
+   										node: '....a........f.......'},
+  
+  {name: 'CAN RX', 						wave: '1.......0.....1..0...',
+   										node: '........c........i...'},
+  
+  {name: 'RX (Synchronization) edges',	wave: '0........10......10..', 	data: [1, 2, 3, 4, 1, 2, 3, 4, 0, 1, 2],
+   										node: '.........d.......j...'},
+  
+  {name: 'TX edges',					wave: '0...10.......10......', 	data: [1, 2, 3, 4, 1, 2, 3, 4, 0, 1, 2],
+   										node: '....b........g.......'},
+ ],
+edge:['a->b Detected immediately','c->d Detected at Time Quanta','e->d','f->g Detected immediately','h-i', 'i->j Detedted at Time Quanta'],
+}

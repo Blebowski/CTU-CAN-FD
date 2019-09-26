@@ -158,7 +158,7 @@ package CANtestLib is
     end record;
     
     constant SW_mode_rst_val : SW_mode := (false, false, false, false, false,
-        true, false, false, false, false);
+        true, false, false, false, true);
 
     -- Controller commands
     type SW_command is record
@@ -260,6 +260,32 @@ package CANtestLib is
         txt_buffer_4_priority   :   natural range 0 to 7;
     end record;
 
+    type SW_error_type is (
+        can_err_bit,
+        can_err_form,
+        can_err_ack,
+        can_err_crc,
+        can_err_stuff        
+    );
+    
+    type SW_error_position is (
+        err_pos_sof,
+        err_pos_arbitration,
+        err_pos_ctrl,
+        err_pos_data,
+        err_pos_crc,
+        err_pos_ack,
+        err_pos_interframe_space,
+        err_pos_err_frame,
+        err_pos_overload_frame,
+        err_pos_other
+    );
+    
+    -- Error code capture data
+    type SW_error_capture is record
+        err_pos         : SW_error_position;
+        err_type        : SW_error_type;
+    end record;
 
     -- SSP (Secondary Sampling Point) configuration options
     type SSP_set_command_type is (
@@ -1901,6 +1927,7 @@ package CANtestLib is
         signal   mem_bus        : inout Avalon_mem_type
     );
     
+    
     ----------------------------------------------------------------------------
     -- Configure priority of the TXT Buffers in TX Arbitrator. Higher priority 
     -- value signals that buffer is selected earlier for transmission. 
@@ -1918,6 +1945,20 @@ package CANtestLib is
         signal   mem_bus        : inout Avalon_mem_type
     );    
     
+    
+    ----------------------------------------------------------------------------
+    -- Read Error code capture register to determine position of last error. 
+    -- 
+    -- Arguments:
+    --  err_capt        Information about last error on the bus
+    --  ID              Index of CTU CAN FD Core instance.
+    --  mem_bus         Avalon memory bus to execute the access on.
+    ----------------------------------------------------------------------------
+    procedure CAN_read_error_code_capture(
+        variable err_capt       : inout SW_error_capture;
+        constant ID             : in    natural range 0 to 15;
+        signal   mem_bus        : inout Avalon_mem_type
+    );
 
     
     ----------------------------------------------------------------------------
@@ -3532,7 +3573,6 @@ package body CANtestLib is
         w_data(RTR_IND)             := frame.rtr;
         w_data(IDE_IND)             := frame.ident_type;
         w_data(FDF_IND)             := frame.frame_format;
-        w_data(TBF_IND)             := '1';
         w_data(BRS_IND)             := frame.brs;
         w_data(ESI_RSV_IND)         := '0'; -- ESI is receive only
         CAN_write(w_data, buf_offset, ID, mem_bus);
@@ -4816,6 +4856,43 @@ package body CANtestLib is
         info("Write 'TX_PRIORITY_ADR': 0x" & to_hstring(data) & ".");
         address := TX_PRIORITY_ADR;
         CAN_write(data, address, ID, mem_bus, BIT_16);
+    end procedure;
+    
+    procedure CAN_read_error_code_capture(
+        variable err_capt       : inout SW_error_capture;
+        constant ID             : in    natural range 0 to 15;
+        signal   mem_bus        : inout Avalon_mem_type
+    ) is
+        variable data           :       std_logic_vector(31 downto 0) :=
+                                            (OTHERS => '0');
+    begin
+        CAN_read(data, ERR_CAPT_ADR, ID, mem_bus, BIT_8);
+        
+        case data(ERR_TYPE_H downto ERR_TYPE_L) is
+        when ERC_BIT_ERR  => err_capt.err_type := can_err_bit;
+        when ERC_CRC_ERR  => err_capt.err_type := can_err_crc;
+        when ERC_FRM_ERR  => err_capt.err_type := can_err_form;
+        when ERC_ACK_ERR  => err_capt.err_type := can_err_ack;
+        when ERC_STUF_ERR => err_capt.err_type := can_err_stuff;
+        when others =>
+            error("Unknown Error type in Error code capture register!");
+        end case;
+        
+        case data(ERR_POS_H downto ERR_POS_L) is
+        when ERC_POS_SOF    => err_capt.err_pos := err_pos_sof;
+        when ERC_POS_ARB    => err_capt.err_pos := err_pos_arbitration;
+        when ERC_POS_CTRL   => err_capt.err_pos := err_pos_ctrl;
+        when ERC_POS_DATA   => err_capt.err_pos := err_pos_data;
+        when ERC_POS_CRC    => err_capt.err_pos := err_pos_crc;
+        when ERC_POS_ACK    => err_capt.err_pos := err_pos_ack;
+        when ERC_POS_INTF   => err_capt.err_pos := err_pos_interframe_space;
+        when ERC_POS_ERR    => err_capt.err_pos := err_pos_err_frame;
+        when ERC_POS_OVRL   => err_capt.err_pos := err_pos_overload_frame;
+        when ERC_POS_OTHER  => err_capt.err_pos := err_pos_other;
+        when others =>
+            error("Unknown Error position in Error code capture register!");
+        end case;
+
     end procedure;
     
     

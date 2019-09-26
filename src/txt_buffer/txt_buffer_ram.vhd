@@ -141,5 +141,4 @@ begin
         data_out             => port_b_data_out
     );
   
-  
 end architecture;

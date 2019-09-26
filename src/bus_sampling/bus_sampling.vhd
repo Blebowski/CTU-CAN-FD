@@ -141,8 +141,8 @@ entity bus_sampling is
         -- Reset for Secondary Sampling point Shift register.
         ssp_reset            :in   std_logic;
 
-        -- Calibration command for transciever delay compenstation
-        trv_delay_calib      :in   std_logic; 
+        -- Measure transmitter delay
+        tran_delay_meas      :in   std_logic; 
 
         -- Secondary sampling RX trigger
         sample_sec           :out  std_logic;
@@ -276,7 +276,7 @@ begin
 
         edge_tx_valid          => edge_tx_valid,            -- IN
         edge_rx_valid          => edge_rx_valid,            -- IN
-        trv_delay_calib        => trv_delay_calib,          -- IN
+        tran_delay_meas        => tran_delay_meas,          -- IN
         ssp_offset             => drv_ssp_offset,           -- IN                    
         ssp_delay_select       => drv_ssp_delay_select,     -- IN
         
@@ -307,9 +307,7 @@ begin
     ----------------------------------------------------------------------------
     -- Reset for shift registers for secondary sampling point
     ----------------------------------------------------------------------------
-    shift_regs_res_d <= G_RESET_POLARITY when (res_n = G_RESET_POLARITY) or
-                                              (ssp_reset = '1')
-                                         else
+    shift_regs_res_d <= G_RESET_POLARITY when (ssp_reset = '1') else
                         (not G_RESET_POLARITY);
 
     ----------------------------------------------------------------------------
@@ -318,17 +316,15 @@ begin
     shift_regs_rst_reg_inst : dff_arst
     generic map(
         G_RESET_POLARITY   => G_RESET_POLARITY,
-        G_RST_VAL          => '1'
+        
+        -- Reset to the same value as is polarity of reset so that other DFFs
+        -- which are reset by output of this one will be reset too!
+        G_RST_VAL          => G_RESET_POLARITY
     )
     port map(
-        -- Keep without reset! We can't use res_n to avoid reset recovery!
-        -- This does not mind, since stable value will be here one clock cycle
-        -- after reset by res_n.
-        arst               => '1',                  -- IN
+        arst               => res_n,                -- IN
         clk                => clk_sys,              -- IN
-
         input              => shift_regs_res_d,     -- IN
-        ce                 => '1',                  -- IN
         
         output             => shift_regs_res_q      -- OUT
     );
@@ -344,9 +340,7 @@ begin
     port map(
         arst               => res_n,                -- IN
         clk                => clk_sys,              -- IN
-
         input              => tx_trigger,           -- IN
-        ce                 => '1',                  -- IN
         
         output             => tx_trigger_q          -- OUT
     );

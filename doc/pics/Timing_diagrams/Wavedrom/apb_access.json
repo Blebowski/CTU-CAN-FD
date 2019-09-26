@@ -1,0 +1,41 @@
+{signal: [
+  {name: 'clk_sys', 					wave: 'p..................',
+   										node: '...................'},
+  
+  {name: 'scs', 						wave: '01..0.1..0.1.0..1.0',
+   										node: '...................'},
+
+  {name: 'swr', 						wave: '01..0......10....10',
+   										node: '...................'},
+  
+  {name: 'srd', 						wave: '0.....1..0..10..10.',
+   										node: '...................'},
+
+  {name: 'sbe', 					    wave: 'x345x.345x.34x..34x', 		data: ['BE 0','BE 1','BE 2', 'BE 0','BE 1','BE 2','BE 1','BE 2','BE 1','BE 2'],
+   										node: '...................'},
+  
+  {name: 'address', 					wave: 'x345x.345x.34x..34x', 		data: ['0000','0004','0008', '0000','0004','0008','0004','0008','0004','0008'],
+   										node: '...................'},
+  
+  {name: 'data_in', 					wave: 'x345x......3x....4x', 		data: [['tspan', {class:'h6'}, 'Data 0'],
+                                                                               ['tspan', {class:'h6'}, 'Data 4'],
+                                                                               ['tspan', {class:'h6'}, 'Data 8'],
+                                                                               ['tspan', {class:'h6'}, 'Data 4'],
+                                                                               ['tspan', {class:'h6'}, 'Data 8']],
+   										node: '...................'},
+  
+  {name: 'data_out', 					wave: 'x......345x..4x..3x', 		data: [['tspan', {class:'h6'}, 'Data 0'],
+                                                                               ['tspan', {class:'h6'}, 'Data 4'],
+                                                                               ['tspan', {class:'h6'}, 'Data 8'],
+                                                                               ['tspan', {class:'h6'}, 'Data 8'],
+                                                                               ['tspan', {class:'h6'}, 'Data 4']],
+   										node: '................'},
+  
+ ],
+  edge:[''],
+ 
+ foot: {text:
+  ['tspan', '        Write access                                  Read access                       Write after Read                  Read after Write',]
+}
+
+}

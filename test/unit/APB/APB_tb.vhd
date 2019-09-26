@@ -52,7 +52,7 @@ context work.ctu_can_synth_context;
 context work.ctu_can_test_context;
 
 architecture apb_unit_test of CAN_test is
-    component CTU_CAN_FD_v1_0 is
+    component can_top_apb is
         generic(
             sup_filtA        : boolean                := true;
             sup_filtB        : boolean                := true;
@@ -80,7 +80,7 @@ architecture apb_unit_test of CAN_test is
             s_apb_pwdata     : in  std_logic_vector(31 downto 0);
             s_apb_pwrite     : in  std_logic
     );
-    end component CTU_CAN_FD_v1_0;
+    end component can_top_apb;
 
     signal s_apb_paddr      : std_logic_vector(31 downto 0);
     signal s_apb_penable    : std_logic;
@@ -96,7 +96,7 @@ architecture apb_unit_test of CAN_test is
     signal aclk : std_logic := '0';
     signal arstn : std_logic := '0';
 begin
-    can: CTU_CAN_FD_v1_0
+    can: can_top_apb
         generic map (
             sup_filtA   => false,
             sup_filtB   => false,
@@ -197,9 +197,10 @@ begin
         status    <= running;
         error_ctr <= 0;
 
-        -- do not wait 2 cycles after HW reset - the APB interface should account for it
+        wait until rising_edge(aclk);
+        wait until rising_edge(aclk);
+        wait until rising_edge(aclk);
 
-        -- read just after HW reset
         apb_read(DEVICE_ID_ADR);
         check(s_apb_prdata = x"0202CAFD", "CAN ID reg mismatch (just after HW reset)");
 
@@ -235,6 +236,10 @@ begin
         arstn     <= '0';
         wait until rising_edge(aclk);
         arstn     <= '1';
+        
+        wait until rising_edge(aclk);
+        wait until rising_edge(aclk);
+        
         apb_write(BTR_ADR, x"DEADBEEF", b"1111");
         apb_read(BTR_ADR);
         check(s_apb_prdata = x"DEADBEEF", "Readback for write-after-HW-reset mismatch.");

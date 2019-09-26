@@ -36,7 +36,7 @@
 -- The CAN protocol is developed by Robert Bosch GmbH and protected by patents.
 -- Anybody who wants to implement this IP core on silicon has to obtain a CAN
 -- protocol license from Bosch.
--- 
+-- t
 --------------------------------------------------------------------------------
 
 --------------------------------------------------------------------------------
@@ -76,7 +76,10 @@ package can_components is
             sup_filtC      : boolean                := true;
             
             -- Insert Range Filter
-            sup_range      : boolean                := true
+            sup_range      : boolean                := true;
+            
+            -- Support traffic counters
+            sup_traffic_ctrs : boolean              := true
         );
         port(
             -----------------------------------------------------------------------
@@ -144,7 +147,40 @@ package can_components is
             timestamp    : in std_logic_vector(63 downto 0)
         );
     end component can_top_level;
-   
+    
+    component ahb_ifc is
+    port (
+        -----------------------------------------------------------------------
+        -- CTU CAN FD Interface
+        -----------------------------------------------------------------------
+        data_in          : out std_logic_vector(31 downto 0);
+        data_out         : in  std_logic_vector(31 downto 0);
+        adress           : out std_logic_vector(15 downto 0);
+        sbe              : out std_logic_vector(3 downto 0);
+        scs              : out std_logic;
+        swr              : out std_logic;
+        srd              : out std_logic;
+
+        -----------------------------------------------------------------------
+        -- AHB interface 
+        -----------------------------------------------------------------------
+        hresetn          : in std_logic;
+        hclk             : in std_logic;
+        haddr            : in std_logic_vector(31 downto 0);
+        hwdata           : in std_logic_vector(31 downto 0);
+        hsel             : in std_logic;
+        hwrite           : in std_logic;
+        hsize            : in std_logic_vector(2 downto 0);
+        hburst           : in std_logic_vector(2 downto 0);
+        hprot            : in std_logic_vector(3 downto 0);
+        htrans           : in std_logic_vector(1 downto 0);
+        hmastlock        : in std_logic;
+        hready           : in std_logic;
+        hreadyout        : out std_logic;
+        hresp            : out std_logic;
+        hrdata           : out std_logic_vector(31 downto 0)
+    );
+    end component;
    
     component bus_sampling is 
         generic(        
@@ -218,8 +254,8 @@ package can_components is
             -- Reset for Secondary Sampling point Shift register.
             ssp_reset            :in   std_logic;
     
-            -- Calibration command for transciever delay compenstation
-            trv_delay_calib      :in   std_logic; 
+            -- Enable measurement of transmitter delay
+            tran_delay_meas      :in   std_logic; 
     
             -- Secondary sampling RX trigger
             sample_sec           :out  std_logic;
@@ -396,8 +432,8 @@ package can_components is
         -- Stop measurement (on RX Edge)
         edge_rx_valid       :in   std_logic;
         
-        -- Transceiver Delay Measurement enabled (by Protocol control)
-        trv_delay_calib     :in   std_logic;
+        -- Enable measurement of transmitter delay
+        tran_delay_meas      :in   std_logic; 
 
         ------------------------------------------------------------------------
         -- Memory registers interface
@@ -1754,8 +1790,8 @@ package can_components is
         -- Clear the Shift register for secondary sampling point.
         ssp_reset               :out   std_logic;
 
-        -- Enable measurement of Transciever delay
-        trv_delay_calib         :out   std_logic;
+        -- Enable measurement of transmitter delay
+        tran_delay_meas         :out   std_logic; 
 
         -- Protocol control FSM state output
         pc_state                :out   t_protocol_control_state;
@@ -2090,8 +2126,8 @@ package can_components is
         -- Clear the Shift register for secondary sampling point.
         ssp_reset               :out  std_logic;
         
-        -- Enable measurement of Transciever delay
-        trv_delay_calib         :out  std_logic;
+        -- Enable measurement of transmitter delay
+        tran_delay_meas         :out   std_logic; 
 
         -- Transmitted frame is valid
         tran_valid              :out  std_logic;
@@ -2439,7 +2475,10 @@ package can_components is
         G_CRC17_POL             :     std_logic_vector(19 downto 0) := x"3685B";
         
         -- CRC 15 polynomial
-        G_CRC21_POL             :     std_logic_vector(23 downto 0) := x"302899"  
+        G_CRC21_POL             :     std_logic_vector(23 downto 0) := x"302899";
+
+        -- Support traffic counters
+        G_SUP_TRAFFIC_CTRS      :     boolean := true
     );
     port(
         ------------------------------------------------------------------------
@@ -2605,8 +2644,8 @@ package can_components is
         -- Secondary sample point reset
         ssp_reset           :out  std_logic; 
 
-        -- Enable measurement of Transciever delay
-        trv_delay_calib     :out  std_logic;
+        -- Enable measurement of Transmitter delay
+        tran_delay_meas     :out  std_logic;
 
         -- Bit Error detected 
         bit_err             :in   std_logic;
@@ -2899,6 +2938,9 @@ package can_components is
         -- Support Range Filter
         G_SUP_RANGE         : boolean                         := true;
 
+        -- Support Traffic counters
+        G_SUP_TRAFFIC_CTRS  : boolean                         := true;
+        
         -- Number of TXT Buffers
         G_TXT_BUFFER_COUNT  : natural range 0 to 7            := 4;
 
@@ -3311,7 +3353,7 @@ package can_components is
     end component;
 
 
-    component resynchronisation is
+    component bit_segment_meter is
     generic (
         -- Reset polarity
         G_RESET_POLARITY          :       std_logic := '0';
@@ -3959,8 +4001,8 @@ package can_components is
         -- Data words from TXT Buffers RAM memories
         txtb_port_b_data        :in t_txt_bufs_output;
         
-        -- TXT Buffers are ready, can be selected by TX Arbitrator
-        txtb_ready              :in std_logic_vector(G_TXT_BUFFER_COUNT - 1 downto 0);
+        -- TXT Buffers are available, can be selected by TX Arbitrator
+        txtb_available          :in std_logic_vector(G_TXT_BUFFER_COUNT - 1 downto 0);
         
         -- Pointer to TXT Buffer
         txtb_port_b_address     :out natural range 0 to 19;
@@ -4067,8 +4109,8 @@ package can_components is
         -- Buffer status (FSM state) encoded for reading by SW.
         txtb_state             :out  std_logic_vector(3 downto 0);
 
-        -- TXT Buffer is ready to be locked by CAN Core for transmission
-        txtb_ready             :out  std_logic
+        -- TXT Buffer is available to be locked by CAN Core for transmission
+        txtb_available         :out  std_logic
     );             
     end component;
 
@@ -4176,8 +4218,8 @@ package can_components is
         -- Unit just turned bus off.
         is_bus_off             :in   std_logic;
 
-        -- TXT Buffer is ready to be locked by CAN Core for transmission
-        txtb_ready          :out  std_logic
+        -- TXT Buffer is available to be locked by CAN Core for transmission
+        txtb_available         :out  std_logic
     );
     end component;
 
@@ -4242,7 +4284,8 @@ package can_components is
         constant SUP_FILT_A          : boolean := true;
         constant SUP_RANGE           : boolean := true;
         constant SUP_FILT_C          : boolean := true;
-        constant SUP_FILT_B          : boolean := true
+        constant SUP_FILT_B          : boolean := true;
+        constant SUP_TRAFFIC_CTRS    : boolean := true
     );
     port (
         signal clk_sys               :in std_logic;

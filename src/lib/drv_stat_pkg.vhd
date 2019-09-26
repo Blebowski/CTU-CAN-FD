@@ -269,7 +269,7 @@ package drv_stat_pkg is
     constant STAT_SP_CONTROL_LOW  : natural := 10;
 
     constant STAT_SSP_RESET_INDEX       : natural := 12;
-    constant STAT_TRV_DELAY_CALIB_INDEX : natural := 13;
+    constant STAT_TRAN_DELAY_MEAS_INDEX : natural := 13;
     constant STAT_SYNC_CONTROL_HIGH     : natural := 15;
     constant STAT_SYNC_CONTROL_LOW      : natural := 14;
 

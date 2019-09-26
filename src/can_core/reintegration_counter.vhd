@@ -138,10 +138,11 @@ begin
         end if;
     end process;
 
+    -- <RELEASE_OFF>
     ---------------------------------------------------------------------------
     -- Assertions
     ---------------------------------------------------------------------------
-    
     -- psl default clock is rising_edge(clk_sys);
 
+    -- <RELEASE_ON>
 end architecture;

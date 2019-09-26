@@ -139,10 +139,13 @@ end entity;
 architecture rtl of err_counters is
 
     -- Error counter registers
-    signal tx_err_ctr_d : unsigned(8 downto 0);
-    signal rx_err_ctr_d : unsigned(8 downto 0);
-    signal tx_err_ctr_q : unsigned(8 downto 0);
-    signal rx_err_ctr_q : unsigned(8 downto 0);
+    signal tx_err_ctr_d     : unsigned(8 downto 0);
+    signal rx_err_ctr_d     : unsigned(8 downto 0);
+    signal tx_err_ctr_q     : unsigned(8 downto 0);
+    signal rx_err_ctr_q     : unsigned(8 downto 0);
+    
+    signal rx_err_ctr_inc   : unsigned(8 downto 0);
+    signal rx_err_ctr_sat   : unsigned(8 downto 0);
 
     -- Clock enables for error counter registers
     signal tx_err_ctr_ce : std_logic;
@@ -234,11 +237,22 @@ begin
                       (rx_err_ctr_q - 1) when (rx_err_ctr_q > 0) else
                             rx_err_ctr_q;
 
+
+   -- Inrement RX counter
+   rx_err_ctr_inc <= rx_err_ctr_q + err_ctr_inc;
+   
+   -- Saturate RX counter when overflow would occur according to 12.1.4.3
+   -- of CAN FD ISO spec
+   rx_err_ctr_sat <= (OTHERS => '1') when (rx_err_ctr_inc < rx_err_ctr_q) else
+                      rx_err_ctr_inc;
+
+   ----------------------------------------------------------------------------
    -- Next value for error counter increment when any of "inc" commands is
    -- valid. Decrement otherwise!
+   ----------------------------------------------------------------------------
    rx_err_ctr_d <=
              unsigned(drv_ctr_val) when (rx_err_ctr_pload = '1') else
-        rx_err_ctr_q + err_ctr_inc when (inc_one = '1' or inc_eight = '1') else
+                    rx_err_ctr_sat when (inc_one = '1' or inc_eight = '1') else
                     rx_err_ctr_dec;
       
    -- Clock enable: Tick error counter register when unit is transmitter and
@@ -323,6 +337,7 @@ begin
    norm_err_ctr <= std_logic_vector(nom_err_ctr_q);
    data_err_ctr <= std_logic_vector(data_err_ctr_q);
 
+   -- <RELEASE_OFF>
    ----------------------------------------------------------------------------
    -- Assertions
    ----------------------------------------------------------------------------
@@ -341,14 +356,10 @@ begin
    -- report "Unit can't be transmitter and receiver at once"
    -- severity error;
 
-   -- psl rx_ctr_never_mt_262 : assert never
-   --  (rx_err_ctr_q > 262)
-   --  report "RX Error counter is bigger than 262, node should be Bus off!"
+   -- psl tx_ctr_never_mt_263 : assert never
+   --  (tx_err_ctr_q > 263)
+   --  report "TX Error counter is bigger than 263, node should be Bus off!"
    --  severity error;
-
-   -- psl tx_ctr_never_mt_262 : assert never
-   --  (tx_err_ctr_q > 262)
-   --  report "TX Error counter is bigger than 262, node should be Bus off!"
-   --  severity error;
-
+   
+   -- <RELEASE_ON>
 end architecture;

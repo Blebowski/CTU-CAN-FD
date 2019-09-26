@@ -196,12 +196,11 @@ begin
         G_RST_VAL          => '0'
     )
     port map(
-        arst               => res_n,
-        clk                => clk_sys,
-
-        input              => destuff_enable,
-        ce                 => '1',
-        output             => enable_prev
+        arst               => res_n,            -- IN
+        clk                => clk_sys,          -- IN
+        input              => destuff_enable,   -- IN
+        
+        output             => enable_prev       -- OUT
     );
 
     ---------------------------------------------------------------------------
@@ -265,18 +264,18 @@ begin
     -- fixed stuff bit and insert stuff bit in the beginning of CRC for CAN FD
     -- automatically!
     ---------------------------------------------------------------------------
-    dff_fixed_stuff_reg : dff_arst
+    dff_fixed_stuff_reg : dff_arst_ce
     generic map(
         G_RESET_POLARITY   => G_RESET_POLARITY,
         G_RST_VAL          => '0'
     )
     port map(
-        arst               => res_n,
-        clk                => clk_sys,
-
-        input              => fixed_prev_d,
-        ce                 => destuff_enable,
-        output             => fixed_prev_q
+        arst               => res_n,            -- IN
+        clk                => clk_sys,          -- IN
+        input              => fixed_prev_d,     -- IN
+        ce                 => destuff_enable,   -- IN
+        
+        output             => fixed_prev_q      -- OUT
     );
 
 
@@ -385,12 +384,11 @@ begin
         G_RST_VAL          => '0'
     )
     port map(
-        arst               => res_n,
-        clk                => clk_sys,
-
-        input              => destuffed_d,
-        ce                 => '1',
-        output             => destuffed_q
+        arst               => res_n,            -- IN
+        clk                => clk_sys,          -- IN
+        input              => destuffed_d,      -- IN
+        
+        output             => destuffed_q       -- OUT
     );
 
 
@@ -412,12 +410,11 @@ begin
         G_RST_VAL          => '0'
     )
     port map(
-        arst               => res_n,
-        clk                => clk_sys,
-
-        input              => stuff_err_d,
-        ce                 => '1',
-        output             => stuff_err_q
+        arst               => res_n,            -- IN
+        clk                => clk_sys,          -- IN
+        input              => stuff_err_d,      -- IN
+        
+        output             => stuff_err_q       -- OUT
     );
 
 
@@ -441,12 +438,11 @@ begin
         G_RST_VAL          => RECESSIVE
     )
     port map(
-        arst               => res_n,
-        clk                => clk_sys,
-
-        input              => prev_val_d,
-        ce                 => '1',
-        output             => prev_val_q
+        arst               => res_n,            -- IN
+        clk                => clk_sys,          -- IN
+        input              => prev_val_d,       -- IN
+        
+        output             => prev_val_q        -- OUT
     );
 
 
@@ -455,7 +451,7 @@ begin
     -- of delay is inserted so that next pipeline stage always processes the
     -- same data!
     ---------------------------------------------------------------------------
-    dff_data_out_val_reg : dff_arst
+    dff_data_out_val_reg : dff_arst_ce
     generic map(
         G_RESET_POLARITY   => G_RESET_POLARITY,
         G_RST_VAL          => RECESSIVE
@@ -478,6 +474,7 @@ begin
     dst_ctr     <= std_logic_vector(dst_ctr_q);
 
 
+    -- <RELEASE_OFF>
     ----------------------------------------------------------------------------
     -- Assertions on input settings
     ----------------------------------------------------------------------------
@@ -487,5 +484,7 @@ begin
     -- psl valid_stuff_length_setting_asrt : assert never
     --   ((destuff_length = "000" or destuff_length = "001") and (destuff_enable = '1'))
     -- report "0 and 1 bit stuffing length is invalid!" severity error;
-    
+
+    -- <RELEASE_ON>
+
 end architecture;

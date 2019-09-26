@@ -384,7 +384,7 @@ begin
         read_pointer_inc_1_i <= read_pointer_i + 1;
     end process;
     
-    
+    -- <RELEASE_OFF>
     ----------------------------------------------------------------------------
     ----------------------------------------------------------------------------
     -- Functional coverage
@@ -409,5 +409,6 @@ begin
     --
     -- psl rx_read_ptr_higher_than_write_ptr_cov : 
     --      cover (read_pointer_i > write_pointer_i);    
-    
+
+    -- <RELEASE_ON>
 end architecture;

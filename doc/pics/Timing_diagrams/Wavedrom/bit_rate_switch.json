@@ -1,0 +1,33 @@
+{signal: [
+  {name: 'System clock', 						wave: 'p.............',
+   												node: '..............'},
+  
+  {name: 'Bit time segment', 					wave: '3.....4.....3.', 	data: ['TSEG1', 'TSEG2', 'TSEG1'],
+   												node: '..............'},
+  
+  {name: 'Pipeline stage', 						wave: 'x....34x...5x.', data:[['tspan', {class:'h6'}, 'Destuf'],
+                                                                              ['tspan', {class:'h6'}, 'Process'],
+                                                                              ['tspan', {class:'h6'}, 'Stuff'],],
+   												node: '..............'},
+  
+  {name: 'Sample control', 						wave: '5.....3.......', 	data: ['Nominal', 'Data'],
+   												node: '..............'},
+  
+  {name: 'Time quanta counter', 				wave: '=======.......', 	data: [0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0],
+   												node: '..............'},
+
+  {name: 'Time quanta edge', 					wave: '010101........',
+   												node: '..............'},
+
+  {name: 'Expected segment length', 			wave: '3.....4.....3.', 	data: [10, 6, 7],
+   												node: '..............'},
+
+  {name: 'Segment counter', 					wave: '=.=.=.========', 	data: [7, 8, 9, 0, 1, 2, 3, 4, 5, 0, 1],
+   												node: '..............'},
+
+  {name: 'Segment end', 						wave: '0....10....10.',
+   												node: '..............'},
+  
+ ],
+  edge:['a-b','c-d'],
+}

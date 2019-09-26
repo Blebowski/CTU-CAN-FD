@@ -1,0 +1,44 @@
+{signal: [
+  {name: 'System clock', 				wave: 'p....................',
+   										node: '........a......c.....'},
+  
+  {name: 'Protocol control FSM', 		wave: '3....4...............', 	data: ['EDL','r0'],
+   										node: '.....................'},
+  
+  {name: 'Pipeline Stage', 				wave: 'x..34x.5x............', 	data: [['tspan', {class:'h6'}, 'Destuff'],
+                                                                               ['tspan', {class:'h6'}, 'Process'],
+                                                                               'Stuff'],
+   										node: '.....................'},
+  
+  {name: 'Measurement enable', 			wave: '0....1...............',
+   										node: '.....................'},
+  
+  {name: 'Time quanta counter', 		wave: '=====================', 	data: [0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0],
+   										node: '.....................'},
+
+  {name: 'Time quanta edge', 			wave: '010101010101010101010',
+   										node: '.....................'},
+  
+  {name: 'CAN TX', 						wave: '1.......0............',
+   										node: '.....................'},
+  
+  {name: 'CAN RX', 						wave: '1..............0.....',
+   										node: '.....................'},
+  
+  {name: 'RX edge',						wave: '0..............10....',
+   										node: '.....................'},
+  
+  {name: 'TX edges',					wave: '0.......10...........',
+   										node: '.....................'},
+  
+  {name: 'Transceiver delay counter',   wave: '=........=======.....', 	data: ['0', 1, 2, 3, 4, 5, 6, 7, 0, 1, 2],
+   										node: '.....................'},
+  
+  {name: 'Shadowed Transceiver Delay',  wave: '=...............=....', 	data: ['Previous Transceiver Delay', 7],
+   										node: '.....................'},
+  
+  {name: '',  							wave: '',
+   										node: '........b......d.....'},
+ ],
+edge:['a-b Measurement Start', 'c-d Measurement End'],
+}

@@ -1,0 +1,22 @@
+{signal: [
+  {name: 'System clock', 				wave: 'p.................',
+   										node: '...a..........i...'},
+
+  {name: 'Bit time segment', 			wave: '3..4...3......4...', 	data: ['TSEG1', 'TSEG2', 'TSEG1', 'TSEG2'],
+   										node: '..................'},
+
+  {name: 'Synchronisation edge', 		wave: '0...10...10.10..10',
+   										node: '....c....e..g...k.'},
+
+  {name: 'Valid Synchronisation edge', 	wave: '0...10..........10',
+   										node: '....d....f..h...l.'},
+
+  {name: 'Segment end', 				wave: '0.10..10.....10...',
+   										node: '...b..........j...'},
+
+ ],
+  foot: {text:
+  ['tspan', 'Sample Point                                                                                       Sample Point         '],
+},
+  edge:['a-b','c->d Valid', 'e->f Ignored', 'g->h Ignored', 'i-j', 'k->l Valid'],
+}

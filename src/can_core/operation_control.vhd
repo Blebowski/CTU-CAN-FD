@@ -224,6 +224,7 @@ begin
         end if;
     end process;
 
+    -- <RELEASE_OFF>
     ---------------------------------------------------------------------------
     -- Assertions
     ---------------------------------------------------------------------------
@@ -249,4 +250,5 @@ begin
     -- report "Unit can't be set to transmitter and idle simultaneously!"
     -- severity error;
 
+    -- <RELEASE_ON>
 end architecture;

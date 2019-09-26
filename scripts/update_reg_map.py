@@ -105,7 +105,7 @@ def ctu_can_update_header(specPath, licensePath, memMap,
 	headerGeneratorWrapper.do_update()
 
 
-def ctu_can_update_lyx_docu(specPath, memMap, wordWidthBit, outPath, genRegions, genFiDesc, lyxTemplate):
+def ctu_can_update_lyx_docu(specPath, memMap, wordWidthBit, outPath, genRegions, genFiDesc, lyxTemplate, configPath):
 	"""
 	Update Lyx documenation of CTU CAN FD register maps.
 	"""
@@ -118,6 +118,7 @@ def ctu_can_update_lyx_docu(specPath, memMap, wordWidthBit, outPath, genRegions,
 	lyxDocuGeneratorWrapper.genRegions = genRegions
 	lyxDocuGeneratorWrapper.genFiDesc = genFiDesc
 	lyxDocuGeneratorWrapper.lyxTemplate = lyxTemplate
+	lyxDocuGeneratorWrapper.configPath = configPath
 
 	lyxDocuGeneratorWrapper.do_update()
 
@@ -209,7 +210,8 @@ if __name__ == '__main__':
 								outPath="../doc/core/registerMap.lyx",
 								genRegions=True,
 								genFiDesc=True,
-								lyxTemplate="../doc/core/template.lyx")
+								lyxTemplate="../doc/core/template.lyx",
+								configPath="reg_map_lyx_cfg.yml")
 
 		ctu_can_update_lyx_docu(specPath=args.xactSpec,
 								memMap="CAN_Frame_format",
@@ -217,7 +219,8 @@ if __name__ == '__main__':
 								outPath="../doc/core/CANFrameFormat.lyx",
 								genRegions=False,
 								genFiDesc=True,
-								lyxTemplate="../doc/core/template.lyx")
+								lyxTemplate="../doc/core/template.lyx",
+								configPath="reg_map_lyx_cfg.yml")
 
 		print("\nDone\n")
 

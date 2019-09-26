@@ -485,8 +485,8 @@ entity protocol_control_fsm is
         -- Clear the Shift register for secondary sampling point.
         ssp_reset               :out   std_logic;
 
-        -- Enable measurement of Transciever delay
-        trv_delay_calib         :out   std_logic;
+        -- Enable measurement of Transmitter delay
+        tran_delay_meas         :out   std_logic;
 
         -- Protocol control FSM state output
         pc_state                :out   t_protocol_control_state;
@@ -1347,7 +1347,7 @@ begin
         
         -- Secondary sampling point measurement
         ssp_reset_i <= '0';
-        trv_delay_calib <= '0';
+        tran_delay_meas <= '0';
         
         -- Fault confinement
         primary_err_i <= '0';
@@ -1584,7 +1584,6 @@ begin
                 
                 if (ide_is_arbitration = '1') then
                     is_arbitration_i <= '1';
-                    bit_err_disable <= '1';
                     
                     if (tx_data_wbs = DOMINANT and rx_data_nbs = RECESSIVE) then
                         bit_err_arb_i <= '1';
@@ -1698,7 +1697,7 @@ begin
                 ctrl_ctr_pload_val <= C_DLC_DURATION;
                 tx_load_dlc_i <= '1';
                 err_pos <= ERC_POS_CTRL;
-                trv_delay_calib <= '1';
+                tran_delay_meas <= '1';
                 crc_enable <= '1';
                 is_control <= '1';
                 bit_err_disable_receiver <= '1';
@@ -1719,7 +1718,7 @@ begin
             -- r0 bit in CAN FD Frames (both Base and Extended identifier)
             ------------------------------------------------------------------- 
             when s_pc_r0_fd =>
-                trv_delay_calib <= '1';
+                tran_delay_meas <= '1';
                 err_pos <= ERC_POS_CTRL;
                 perform_hsync <= '1';
                 crc_enable <= '1';
@@ -2392,9 +2391,7 @@ begin
                     else
                         ctrl_ctr_pload_val <= C_INTERMISSION_DURATION;
                     end if;
-                end if;
-
-                if (rx_data_nbs = DOMINANT) then
+                elsif (rx_data_nbs = DOMINANT) then
                     form_err_i <= '1';
                 end if;
 
@@ -2442,9 +2439,7 @@ begin
                     else
                         ctrl_ctr_pload_val <= C_INTERMISSION_DURATION;
                     end if;
-                end if;
-                
-                if (rx_data_nbs = DOMINANT) then
+                elsif (rx_data_nbs = DOMINANT) then
                     form_err_i <= '1';
                 end if;
 
@@ -2844,6 +2839,7 @@ begin
     arbitration_lost <= arbitration_lost_i;
     retr_ctr_add <= retr_ctr_add_i;
 
+    -- <RELEASE_OFF>
     -----------------------------------------------------------------------
     -- Assertions
     -----------------------------------------------------------------------
@@ -2861,4 +2857,5 @@ begin
     --  " since they should occur in different pipeline stages!"
     --  severity error;
 
+    -- <RELEASE_ON>
 end architecture;

@@ -193,7 +193,8 @@ begin
     -- TX Trigger is active when either direct trigger or flag is active.
     ---------------------------------------------------------------------------
     tx_trigger <= tx_trig_req_flag_dq;
-    
+
+    -- <RELEASE_OFF>
     ---------------------------------------------------------------------------
     ---------------------------------------------------------------------------
     -- Assertions
@@ -211,5 +212,6 @@ begin
     --  report "Sync and Sample trigger should no be requested at once!"
     --  severity error;
     ---------------------------------------------------------------------------
-        
+
+    -- <RELEASE_ON>
 end architecture rtl;

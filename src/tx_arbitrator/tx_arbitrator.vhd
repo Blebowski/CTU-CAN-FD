@@ -95,8 +95,8 @@ entity tx_arbitrator is
         -- Data words from TXT Buffers RAM memories
         txtb_port_b_data        :in t_txt_bufs_output;
         
-        -- TXT Buffers are ready, can be selected by TX Arbitrator
-        txtb_ready              :in std_logic_vector(G_TXT_BUFFER_COUNT - 1 downto 0);
+        -- TXT Buffers are available, can be selected by TX Arbitrator
+        txtb_available          :in std_logic_vector(G_TXT_BUFFER_COUNT - 1 downto 0);
         
         -- Pointer to TXT Buffer
         txtb_port_b_address     :out natural range 0 to 19;
@@ -175,7 +175,9 @@ architecture rtl of tx_arbitrator is
     -- The output of priority decoder (selected TXT Buffer) has changed, pulse
     -- for one clock cycle
     signal select_index_changed       : std_logic;
-
+    
+    -- Signal that there is "Validated" TXT Buffer
+    signal validated_buffer           : std_logic;    
 
     ---------------------------------------------------------------------------
     -- Internal registers
@@ -267,7 +269,7 @@ begin
   )
   port map( 
      prio           => txtb_prorities,      -- IN
-     prio_valid     => txtb_ready,          -- IN
+     prio_valid     => txtb_available,      -- IN
      
      output_valid   => select_buf_avail,    -- OUT
      output_index   => select_buf_index     -- OUT
@@ -328,15 +330,18 @@ begin
 
 
   ------------------------------------------------------------------------------
-  -- Invalid state of the buffer must be immediately available to the
-  -- CAN Core, otherwise Core might attempt to lock buffer which was
-  -- already aborted!
+  -- When TXT Buffer which is currently "Validated" suddenly becomes 
+  -- "Unavailable" (e.g. due to Set Abort command), this must be signalled to 
+  -- Protocol control in the same clock cycle!
   -- During transmission, CAN Core is reading metadata from outputs. Since the
   -- frame is valid, it is logical to also have "tran_frame_valid" active!
   ------------------------------------------------------------------------------
-  tran_frame_valid <= '1' when ((select_buf_avail = '1' and 
-                                tran_frame_valid_com = '1') or
-                                (tx_arb_locked = '1'))
+  validated_buffer <= '1' when (txtb_available(int_txtb_index) = '1') and
+                               (tran_frame_valid_com = '1')
+                          else
+                      '0';
+  
+  tran_frame_valid <= '1' when (validated_buffer = '1') or (tx_arb_locked = '1')
                           else
                       '0';
   
@@ -456,9 +461,10 @@ begin
     end if;
   end process;
 
-  txtb_changed  <= '0' when (last_txtb_index = int_txtb_index)
+  txtb_changed  <= '1' when (last_txtb_index /= int_txtb_index and
+                             store_last_txtb_index = '1')
                        else
-                   '1';
+                   '0';
 
 
   ------------------------------------------------------------------------------
@@ -505,6 +511,7 @@ begin
     end if;
   end process;
 
+  -- <RELEASE_OFF>
   ------------------------------------------------------------------------------
   -- Functional coverage
   ------------------------------------------------------------------------------
@@ -534,23 +541,23 @@ begin
   --     select_buf_avail = '1'};
   --
   -- Here it is enough to make sure that two concrete buffers with the
-  -- same priority are ready! Here we only test the proper index selection
+  -- same priority are available! Here we only test the proper index selection
   -- in case of equal priorities!
   -- psl txt_buf_eq_priority_cov : cover
-  --    (txtb_ready(0) = '1' and txtb_ready(1) = '1' and
+  --    (txtb_available(0) = '1' and txtb_available(1) = '1' and
   --     txtb_prorities(0) = txtb_prorities(1))
   --    report "Selected Buffer index changed while buffer selected";
   --
-  -- Change of buffer from Ready to not Ready but not due to lock (e.g.
-  --  set abort). Again one buffer is enough!
+  -- Change of buffer from available to not available but not due to lock 
+  --  (e.g. set abort). Again one buffer is enough!
   -- psl buf_ready_to_not_ready_cov : cover
-  --    {txtb_ready(0) = '1' and select_buf_index = 0 and 
-  --     txtb_hw_cmd.lock = '0'; txtb_ready(0) = '0'}
+  --    {txtb_available(0) = '1' and select_buf_index = 0 and 
+  --     txtb_hw_cmd.lock = '0'; txtb_available(0) = '0'}
   --    report "Buffer became non-ready but not due to lock command"; 
   --
-  -- psl txt_buf_all_ready_cov : cover
-  --    (txtb_ready(0) = '1' and txtb_ready(1) = '1' and
-  --     txtb_ready(2) = '1' and txtb_ready(3) = '1');
+  -- psl txt_buf_all_available_cov : cover
+  --    (txtb_available(0) = '1' and txtb_available(1) = '1' and
+  --     txtb_available(2) = '1' and txtb_available(3) = '1');
   --
   -- psl txt_buf_change_cov : cover
   --    (txtb_changed = '1' and txtb_hw_cmd.lock = '1')
@@ -573,5 +580,6 @@ begin
   --    tran_frame_valid = '0' and txtb_hw_cmd.lock = '1'}
   --   report "NO TXT Buffer ready and lock occurs!" severity error;
   -----------------------------------------------------------------------------
+  -- <RELEASE_ON>
   
 end architecture;

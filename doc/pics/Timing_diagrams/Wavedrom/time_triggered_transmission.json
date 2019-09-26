@@ -1,0 +1,34 @@
+{signal: [
+  {name: 'Bit time segment', 			wave: '3....4....3....4....3....4....', 	data:["TSEG1", "TSEG2", "TSEG1", "TSEG2","TSEG1","TSEG2"],
+   										node: '.....a...................e....'},
+
+  {name: 'Protocol control', 		 	wave: '5..............3..............', 	data:["Idle", "SOF"],
+   										node: '..............................'},
+  
+  {name: 'Lock', 		 				wave: '0.............10..............',
+   										node: '..............................'},
+  
+  {name: 'TXT buffer FSM state', 		wave: '3..............4..............', 	data:["Ready", "TX in progress"],
+   										node: '..............................'},
+  
+  {name: 'CAN TX', 		 				wave: '1...................0.........',
+   										node: '..............................'},
+  
+  {name: 'Timestamp input',  			wave: '==============================', 	data: [10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39],
+   										node: '..............................'},
+
+  {name: 'TX frame timestamp', 		 	wave: '=.............................', 	data:["15"],
+   										node: '..............................'},
+  
+  {name: 'Timestamp passed', 		 	wave: '0....1........................',     phase:-0.2,
+   										node: '.....c........................'},
+  
+  {name: 'TXT Buffer validated', 		wave: '0....1........................', 	phase:-0.4,
+   										node: '.....d........................'},
+  
+  {name: '', 							wave: '',
+   										node: '.....b...................f....'},
+ ],
+  edge:['a-b','c->d TXT buffer validation finished','e-f','b<->f Nearly two bit times between reaching desired transmission time and sample point of SOF'],
+
+}

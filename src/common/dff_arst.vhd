@@ -41,7 +41,7 @@
 
 --------------------------------------------------------------------------------
 -- Module:
---  Single Flip-flop with asynchronous reset and clock enable.
+--  Single Flip-flop with asynchronous reset.
 --------------------------------------------------------------------------------
 
 Library ieee;
@@ -65,9 +65,6 @@ entity dff_arst is
         -- Data input (D)
         input              : in    std_logic;
         
-        -- Clock enable (CE)
-        ce                 : in    std_logic;
-        
         -- Data output (Q)
         output             : out   std_logic
     );
@@ -81,11 +78,8 @@ begin
     begin
         if (arst = G_RESET_POLARITY) then
             output     <= G_RST_VAL;
-
         elsif (rising_edge(clk)) then
-            if (ce = '1') then
-                output <= input;
-            end if;
+            output <= input;
         end if;
     end process;
 

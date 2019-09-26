@@ -91,7 +91,10 @@ entity can_top_level is
         sup_filtC      : boolean                := true;
         
         -- Insert Range Filter
-        sup_range      : boolean                := true
+        sup_range      : boolean                := true;
+        
+        -- Insert Traffic counters
+        sup_traffic_ctrs : boolean              := true
     );
     port(
         -----------------------------------------------------------------------
@@ -330,8 +333,8 @@ architecture rtl of can_top_level is
     -- Index of TXT Buffer for which HW commands is valid          
     signal txtb_hw_cmd_index   :   natural range 0 to C_TXT_BUFFER_COUNT - 1;
     
-    -- TXT Buffers are ready, can be selected by TX Arbitrator
-    signal txtb_ready          :   std_logic_vector(C_TXT_BUFFER_COUNT - 1 downto 0);
+    -- TXT Buffers are available, can be selected by TX Arbitrator
+    signal txtb_available      :   std_logic_vector(C_TXT_BUFFER_COUNT - 1 downto 0);
         
     -- Pointer to TXT Buffer
     signal txtb_ptr            :   natural range 0 to 19;
@@ -434,8 +437,8 @@ architecture rtl of can_top_level is
     -- Secondary sample point reset
     signal ssp_reset            :  std_logic; 
 
-    -- Enable measurement of Transciever delay
-    signal trv_delay_calib      :  std_logic;
+    -- Enable measurement of Transmitter delay
+    signal tran_delay_meas      :  std_logic;
 
     -- Bit Error detected 
     signal bit_err              :  std_logic;
@@ -484,6 +487,7 @@ begin
         G_SUP_FILTB         => sup_filtB,
         G_SUP_FILTC         => sup_filtC,
         G_SUP_RANGE         => sup_range,
+        G_SUP_TRAFFIC_CTRS  => sup_traffic_ctrs,
         G_TXT_BUFFER_COUNT  => C_TXT_BUFFER_COUNT, 
         G_ID                => ID,
         G_INT_COUNT         => C_INT_COUNT,
@@ -619,7 +623,7 @@ begin
             txtb_port_b_data       => txtb_port_b_data(i),  -- OUT
             txtb_port_b_address    => txtb_port_b_address,  -- IN
             is_bus_off             => is_bus_off,           -- IN
-            txtb_ready             => txtb_ready(i)         -- OUT
+            txtb_available         => txtb_available(i)     -- OUT
         );
     end generate;
 
@@ -637,7 +641,7 @@ begin
 
         -- TXT Buffers interface
         txtb_port_b_data        => txtb_port_b_data,    -- IN
-        txtb_ready              => txtb_ready,          -- IN
+        txtb_available          => txtb_available,      -- IN
         txtb_port_b_address     => txtb_port_b_address, -- OUT
 
         -- CAN Core Interface
@@ -804,7 +808,7 @@ begin
         -- Others
         timestamp               => timestamp,       -- IN
         ssp_reset               => ssp_reset,       -- OUT
-        trv_delay_calib         => trv_delay_calib, -- OUT
+        tran_delay_meas         => tran_delay_meas, -- OUT
         bit_err                 => bit_err,         -- IN
         sample_sec              => sample_sec       -- IN
     );
@@ -883,7 +887,7 @@ begin
         rx_data_wbs             => rx_data_wbs,     -- OUT
         sp_control              => sp_control,      -- IN
         ssp_reset               => ssp_reset,       -- IN
-        trv_delay_calib         => trv_delay_calib, -- IN
+        tran_delay_meas         => tran_delay_meas, -- IN
         sample_sec              => sample_sec,      -- OUT
         bit_err                 => bit_err          -- OUT
     );

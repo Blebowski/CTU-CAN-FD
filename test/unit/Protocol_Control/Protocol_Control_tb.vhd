@@ -241,7 +241,7 @@ architecture Protocol_Control_unit_test of CAN_test is
     signal sync_control_1            :  std_logic_vector(1 downto 0); 
     signal no_pos_resync_1           :  std_logic;
     signal ssp_reset_1               :  std_logic;
-    signal trv_delay_calib_1         :  std_logic;
+    signal tran_delay_meas_1         :  std_logic;
     signal tran_valid_1              :  std_logic;
     signal rec_valid_1               :  std_logic;
 
@@ -347,7 +347,7 @@ architecture Protocol_Control_unit_test of CAN_test is
     signal sync_control_2            :  std_logic_vector(1 downto 0); 
     signal no_pos_resync_2           :  std_logic;
     signal ssp_reset_2               :  std_logic;
-    signal trv_delay_calib_2         :  std_logic;
+    signal tran_delay_meas_2         :  std_logic;
     signal tran_valid_2              :  std_logic;
     signal rec_valid_2               :  std_logic;
 
@@ -749,7 +749,7 @@ begin
         sync_control            => sync_control_1,
         no_pos_resync           => no_pos_resync_1,
         ssp_reset               => ssp_reset_1,
-        trv_delay_calib         => trv_delay_calib_1,
+        tran_delay_meas         => tran_delay_meas_1,
         tran_valid              => tran_valid_1,
         rec_valid               => rec_valid_1,
 
@@ -871,7 +871,7 @@ begin
         sync_control            => sync_control_2,
         no_pos_resync           => no_pos_resync_2,
         ssp_reset               => ssp_reset_2,
-        trv_delay_calib         => trv_delay_calib_2,
+        tran_delay_meas         => tran_delay_meas_2,
         tran_valid              => tran_valid_2,
         rec_valid               => rec_valid_2,
 

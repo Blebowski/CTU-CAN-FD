@@ -1,0 +1,27 @@
+{signal: [
+  {name: 'System clock', 				wave: 'p......................',
+   										node: '.......................'},
+  
+  {name: 'Bit time segment', 			wave: '3..4.....3...4.....3...', 	data: ['TSEG2', 'TSEG1', 'TSEG2', 'TSEG1','TSEG2'],
+   										node: '.......................'},
+
+  {name: 'TX Trigger', 					wave: '0.10........10.........',
+   										node: '.......................'},
+  
+  {name: 'RX Trigger 0', 				wave: '0.......10........10...',
+   										node: '.......................'},
+  
+  {name: 'RX Trigger 1', 				wave: '0........10........10..',
+   										node: '.........c.........g...'},
+  
+  {name: 'CAN TX', 						wave: '1..0.........1.........',
+   										node: '...a.....d.........h...'},
+  
+  {name: 'CAN RX', 						wave: '1.....0................',
+   										node: '......b..e.........i...'},
+  
+  {name: 'Bit Error', 					wave: '0..................10..',
+   										node: '.........f.........j...'},
+ ],
+  edge:['a~>b Transceiver Delay','c-d','d-e CAN TX=CAN RX, No Bit Error','e->f','g-h','h-i CAN TX /= CAN RX, Bit Error','i->j'],
+}

@@ -109,9 +109,6 @@ architecture rtl of bus_traffic_counters is
     signal tx_ctr_i          :     std_logic_vector(31 downto 0);
     signal rx_ctr_i          :     std_logic_vector(31 downto 0);
 
-    -- Input selector
-    signal sel                 :     std_logic;   
-
     -- Selected value to increment
     signal sel_value           :     unsigned(31 downto 0);
 
@@ -130,12 +127,8 @@ begin
     tx_ctr <= tx_ctr_i;
     rx_ctr <= rx_ctr_i;
 
-    -- Input selector
-    sel <= '1' when (inc_tx_ctr = '1') else
-           '0';
-
     -- Multiplexor between TX and RX value to increment
-    sel_value <= unsigned(tx_ctr_i) when (sel = '1') else
+    sel_value <= unsigned(tx_ctr_i) when (inc_tx_ctr = '1') else
                  unsigned(rx_ctr_i);
 
     -- Incremented value of either TX or RX counter
@@ -144,46 +137,32 @@ begin
     ----------------------------------------------------------------------------
     -- Reset registers
     ----------------------------------------------------------------------------
-    tx_ctr_rst_d <= G_RESET_POLARITY when (res_n = G_RESET_POLARITY) else
-                    G_RESET_POLARITY when (clear_tx_ctr = '1') else
+    tx_ctr_rst_d <= G_RESET_POLARITY when (clear_tx_ctr = '1') else
                     (not G_RESET_POLARITY);
     
-    rx_ctr_rst_d <= G_RESET_POLARITY when (res_n = G_RESET_POLARITY) else
-                    G_RESET_POLARITY when (clear_rx_ctr = '1') else
+    rx_ctr_rst_d <= G_RESET_POLARITY when (clear_rx_ctr = '1') else
                     (not G_RESET_POLARITY);                
     
     tx_ctr_res_inst : dff_arst
     generic map(
         G_RESET_POLARITY   => G_RESET_POLARITY,
-        G_RST_VAL          => '1'
+        
+        -- Reset to the same value as is polarity of reset so that other DFFs
+        -- which are reset by output of this one will be reset too!
+        G_RST_VAL          => G_RESET_POLARITY
     )
     port map(
-        -- Keep without reset! We can't use res_n to avoid reset recovery!
-        -- This does not mind, since stable value will be here one clock cycle
-        -- after reset by res_n.
-        arst               => '1',                  -- IN
+        arst               => res_n,                -- IN
         clk                => clk_sys,              -- IN
-
         input              => tx_ctr_rst_d,         -- IN
-        ce                 => '1',                  -- IN
-        
+
         output             => tx_ctr_rst_q          -- OUT
     );
     
-    rx_ctr_res_inst : dff_arst
-    generic map(
-        G_RESET_POLARITY   => G_RESET_POLARITY,
-        G_RST_VAL          => '1'
-    )
+    rx_ctr_res_inst : dff
     port map(
-        -- Keep without reset! We can't use res_n to avoid reset recovery!
-        -- This does not mind, since stable value will be here one clock cycle
-        -- after reset by res_n.
-        arst               => '1',                  -- IN
         clk                => clk_sys,              -- IN
-
         input              => rx_ctr_rst_d,         -- IN
-        ce                 => '1',                  -- IN
         
         output             => rx_ctr_rst_q          -- OUT
     );
@@ -219,6 +198,7 @@ begin
         end if;
     end process;
 
+    -- <RELEASE_OFF>
     ---------------------------------------------------------------------------
     -- Assertions
     ---------------------------------------------------------------------------
@@ -229,4 +209,5 @@ begin
     -- report "Simultaneous increment of TX and RX error traffic counter"
     -- severity error;
 
+    -- <RELEASE_ON>
 end architecture;

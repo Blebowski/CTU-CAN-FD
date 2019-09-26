@@ -402,28 +402,24 @@ begin
     --  2. Release Receive Buffer command - drv_erase_rx.
     -- To avoid glitches a DFF is inserted after the reset!
     ----------------------------------------------------------------------------
-    rx_buf_res_d <= G_RESET_POLARITY when (res_n = G_RESET_POLARITY) else
-                    G_RESET_POLARITY when (drv_erase_rx = '1') else
+    rx_buf_res_d <= G_RESET_POLARITY when (drv_erase_rx = '1') else
                     (not G_RESET_POLARITY);
 
     res_reg_inst : dff_arst
     generic map(
         G_RESET_POLARITY   => G_RESET_POLARITY,
-        G_RST_VAL          => '1'
+        
+        -- Reset to the same value as is polarity of reset so that other DFFs
+        -- which are reset by output of this one will be reset too!
+        G_RST_VAL          => G_RESET_POLARITY
     )
     port map(
-        -- Keep without reset! We can't use res_n to avoid reset recovery!
-        -- This does not mind, since stable value will be here one clock cycle
-        -- after reset by res_n.
-        arst               => '1',                  -- IN
+        arst               => res_n,                -- IN
         clk                => clk_sys,              -- IN
-
         input              => rx_buf_res_d,         -- IN
-        ce                 => '1',                  -- IN
 
         output             => rx_buf_res_q          -- OUT
     );
-
     
 
     ----------------------------------------------------------------------------
@@ -576,7 +572,7 @@ begin
     frame_form_w(RTR_IND)                 <= rec_is_rtr;
     frame_form_w(IDE_IND)                 <= rec_ident_type;
     frame_form_w(FDF_IND)                 <= rec_frame_type;
-    frame_form_w(TBF_IND)                 <= '1'; -- All frames have the timestamp
+    frame_form_w(8)                       <= '1'; -- Reserved
     frame_form_w(BRS_IND)                 <= rec_brs;
     frame_form_w(ESI_RSV_IND)             <= rec_esi;
 
@@ -836,6 +832,7 @@ begin
     report "Unsupported RX Buffer size! RX Buffer must be power of 2!"
         severity failure;
 
+    -- <RELEASE_OFF>
 
     ----------------------------------------------------------------------------
     -- Storing sequence is like so:
@@ -886,7 +883,8 @@ begin
         end if;
     end process;
     -- pragma translate_on
-    
+
+
     ----------------------------------------------------------------------------
     -- Assertions
     ----------------------------------------------------------------------------
@@ -991,5 +989,7 @@ begin
     --
     -- psl rx_buf_store_64_byte_frame_cov :
     --      cover (rec_dlc = "1111" and rec_is_rtr = '0' and commit_rx_frame = '1');
-    
+
+    -- <RELEASE_ON>
+
 end architecture;

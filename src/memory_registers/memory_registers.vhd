@@ -84,6 +84,9 @@ entity memory_registers is
         
         -- Support Range Filter
         G_SUP_RANGE         : boolean                         := true;
+        
+        -- Support Traffic counters
+        G_SUP_TRAFFIC_CTRS  : boolean                         := true;
 
         -- Number of TXT Buffers
         G_TXT_BUFFER_COUNT  : natural range 0 to 7            := 4;
@@ -277,6 +280,8 @@ architecture rtl of memory_registers is
     signal soft_res_q             :     std_logic;
     signal soft_res_q_n           :     std_logic;
 
+    constant C_NOT_RESET_POLARITY :     std_logic := not G_RESET_POLARITY;
+
     ---------------------------------------------------------------------------
     -- 
     ---------------------------------------------------------------------------
@@ -394,7 +399,8 @@ begin
         SUP_FILT_A            => G_SUP_FILTA,
         SUP_RANGE             => G_SUP_RANGE,
         SUP_FILT_C            => G_SUP_FILTC,
-        SUP_FILT_B            => G_SUP_FILTB
+        SUP_FILT_B            => G_SUP_FILTB,
+        SUP_TRAFFIC_CTRS      => G_SUP_TRAFFIC_CTRS
     )
     port map(
         clk_sys               => clk_sys,
@@ -422,14 +428,20 @@ begin
     soft_res_reg_inst : dff_arst
     generic map(
         G_RESET_POLARITY   => G_RESET_POLARITY,
+        
+        -- Reset to oposite value as polarity of soft reset! Since Soft reset
+        -- DFF is ANDed with res_n itself, res_n will cause system reset to be
+        -- low. Additionally, if system reset will be de-asserted, then Soft 
+        -- reset already will be high and System reset will become inactive and 
+        -- will not depend on MODE[RST] value combinatorially decoded from input 
+        -- of CTU CAN FD!
         G_RST_VAL          => '0'
     )
     port map(
-        arst               => '1',                                      -- IN
+        arst               => res_n,                                    -- IN
+    
         clk                => clk_sys,                                  -- IN
-
         input              => control_registers_out.mode(RST_IND),      -- IN
-        ce                 => '1',                                      -- IN
 
         output             => soft_res_q                                -- OUT
     );
@@ -444,6 +456,7 @@ begin
     end generate;
 
     res_pol_1_gen : if (G_RESET_POLARITY = '1') generate
+        soft_res_q_n <= '0';
         res_out_i <= res_n OR soft_res_q;
     end generate;
     

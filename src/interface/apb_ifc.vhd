@@ -46,9 +46,6 @@
 -- Purpose:
 --  Adaptor from APB4 to internal bus of CTU CAN FD.
 --
--- Note: 
---  This is not strictly APB conformant as the read data stays only for the
---  next cycle; after that they are zeroed.
 --------------------------------------------------------------------------------
 
 Library ieee;
@@ -103,9 +100,6 @@ entity apb_ifc is
 end entity;
 
 architecture rtl of apb_ifc is
-    signal rst_countdown_reg : natural range 0 to 3;
-    signal next_apb_pready   : std_logic;
-    signal ready_for_read    : std_logic;
 
     function to_std_logic(a : boolean) return std_logic is
     begin
@@ -115,6 +109,7 @@ architecture rtl of apb_ifc is
             return '0';
         end if;
     end function to_std_logic;
+    
 begin
     
     reg_data_in_o <= s_apb_pwdata;
@@ -131,40 +126,28 @@ begin
     reg_addr_o(1 downto 0) <= (others => '0');
 
     -- path can be shortened by registering
-    reg_be_o   <= s_apb_pstrb when s_apb_pwrite = '1'
-                              else
+    reg_be_o   <= s_apb_pstrb when (s_apb_pwrite = '1') else
                   (others => '1');
 
+    ---------------------------------------------------------------------------
+    -- Read must be issued one cycle before finishing the transaction and
+    -- must be active only for 1 cycle, so that when reading from a FIFO the 
+    -- pointer is only incremented once.
+    ---------------------------------------------------------------------------
+    reg_rden_o <= '1' when (s_apb_psel = '1' and s_apb_pwrite = '0' and
+                            s_apb_penable = '0')
+                      else
+                  '0';
 
-    -- Read must be issued one cycle before finishing the transaction
-    -- and must be active only for 1 cycle so that when reading from a FIFO
-    -- the pointer is only incremented once.
-    -- rst_countdown_reg = 0 -> not s_apb_penable
-    -- otherwise rst_countdown_reg = 1 (s_apb_penable will stay in '1', so double trigger won't happen)
-    ready_for_read <= (not s_apb_penable and next_apb_pready) or to_std_logic(rst_countdown_reg = 1);
-    reg_rden_o <= s_apb_psel and not s_apb_pwrite and ready_for_read;
+    reg_wren_o <= '1' when (s_apb_psel = '1' and s_apb_pwrite = '1' and
+                            s_apb_penable = '1')
+                      else
+                  '0';
 
-    -- path can be shortened by registering it
-    -- ignore s_apb_pprot
-    reg_wren_o <= s_apb_psel and s_apb_pwrite and s_apb_penable;
-
-    p_rready : process(arstn, aclk)
-    begin
-        if arstn = '0' then
-            rst_countdown_reg <= 3;
-        elsif rising_edge(aclk) then
-            if rst_countdown_reg > 0 then
-                rst_countdown_reg <= rst_countdown_reg - 1;
-            end if;
-        end if;
-    end process;
-
-    next_apb_pready <= '1' when rst_countdown_reg = 0 else '0';
-    s_apb_pready <= next_apb_pready;
+    s_apb_pready  <= '1';
     s_apb_pslverr <= '0';
     
-    
-    -- ASRT_START
+    -- <RELEASE_OFF>
     ---------------------------------------------------------------------------
     ---------------------------------------------------------------------------
     -- Assertions
@@ -177,6 +160,6 @@ begin
     --  report "Read enable shall be active only for one clock cycle"
     --  severity error;
       
-    -- ASRT_END
+    -- <RELEASE_ON>
     
 end architecture rtl;

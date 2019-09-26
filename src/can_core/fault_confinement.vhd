@@ -205,9 +205,7 @@ begin
     port map(
         arst               => res_n,                -- IN
         clk                => clk_sys,              -- IN
-        
         input              => set_err_active,       -- IN
-        ce                 => '1',                  -- IN
         
         output             => set_err_active_q      -- OUT
     );
@@ -293,6 +291,7 @@ begin
     tx_err_ctr           <= tx_err_ctr_i;
     rx_err_ctr           <= rx_err_ctr_i;
 
+    -- <RELEASE_OFF>
     ---------------------------------------------------------------------------
     -- Assertions
     ---------------------------------------------------------------------------
@@ -305,4 +304,5 @@ begin
     --   "receiver"
     -- severity error;
 
+    -- <RELEASE_ON>
 end architecture;

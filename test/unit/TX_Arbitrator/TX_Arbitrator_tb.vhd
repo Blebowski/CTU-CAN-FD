@@ -64,7 +64,7 @@ architecture tx_arb_unit_test of CAN_test is
     signal txtb_port_b_data       :  t_txt_bufs_output :=
                                         (OTHERS => (OTHERS => '0'));
 
-    signal txtb_ready          :  std_logic_vector(C_TXT_BUFFER_COUNT - 1 downto 0)
+    signal txtb_available         :  std_logic_vector(C_TXT_BUFFER_COUNT - 1 downto 0)
                                         := (OTHERS => '0');
 
     signal txtb_port_b_address               :  natural range 0 to 19;
@@ -191,7 +191,7 @@ begin
         clk_sys                => clk_sys,
         res_n                  => res_n,
         txtb_port_b_data       => txtb_port_b_data,
-        txtb_ready             => txtb_ready,
+        txtb_available         => txtb_available,
         txtb_port_b_address    => txtb_port_b_address,
         tran_word              => tran_word,
         tran_dlc               => tran_dlc,
@@ -248,7 +248,7 @@ begin
             rand_logic_v(rand_ctr_1, ready, 0.1);
 
             -- Set it to the buffer
-            txtb_ready(integer(buf_index)) <= ready;
+            txtb_available(integer(buf_index)) <= ready;
         end if;
 
     end process;
@@ -273,7 +273,7 @@ begin
         buf_index := buf_index * 3.0;
 
         -- Wait till it can be accessed
-        while txtb_ready(integer(buf_index)) = '1' loop
+        while txtb_available(integer(buf_index)) = '1' loop
             wait until rising_edge(clk_sys);
         end loop;
 
@@ -329,7 +329,7 @@ begin
     -- Model TX Arbitrator. Choose Highest priority "ready" TXT Buffer.
     -- This should model the "priorityDecoder" entity inside TX Arbitrator.
     ----------------------------------------------------------------------------
-    prio_dec_model_proc : process(txtb_ready, txtb_prorities)
+    prio_dec_model_proc : process(txtb_available, txtb_prorities)
         variable tmp_index    : natural;
         variable tmp_prio     : natural;
         variable txt_valid    : boolean;
@@ -348,7 +348,7 @@ begin
         -- Choose highest priority TXT buffer
         for i in C_TXT_BUFFER_COUNT - 1 downto 0 loop
             if ((to_integer(unsigned(txtb_prorities(i))) >= tmp_prio) and
-                txtb_ready(i) = '1')
+                txtb_available(i) = '1')
             then
                 tmp_index   := i;
                 tmp_prio    := to_integer(unsigned(txtb_prorities(i)));
@@ -544,8 +544,9 @@ begin
                              else
                         false;
 
-    sel_buf_mism <= true when (last_locked_index   /= mod_buf_index and
-                               txtb_changed = '0')
+    sel_buf_mism <= true when (last_locked_index /= mod_buf_index and
+                               txtb_changed = '0' and
+                               txtb_hw_cmd.lock = '1')
                          else
                     false;
 

@@ -95,7 +95,10 @@ entity can_core is
         G_CRC17_POL             :     std_logic_vector(19 downto 0) := x"3685B";
         
         -- CRC 15 polynomial
-        G_CRC21_POL             :     std_logic_vector(23 downto 0) := x"302899"  
+        G_CRC21_POL             :     std_logic_vector(23 downto 0) := x"302899";
+        
+        -- Support traffic counters
+        G_SUP_TRAFFIC_CTRS      :     boolean := true
     );
     port(
         ------------------------------------------------------------------------
@@ -260,8 +263,8 @@ entity can_core is
         -- Secondary sample point reset
         ssp_reset           :out  std_logic; 
 
-        -- Enable measurement of Transciever delay
-        trv_delay_calib     :out  std_logic;
+        -- Enable measurement of Transmitter delay
+        tran_delay_meas     :out  std_logic;
 
         -- Bit Error detected 
         bit_err             :in   std_logic;
@@ -279,6 +282,7 @@ architecture rtl of can_core is
     signal drv_clr_rx_ctr          :     std_logic;
     signal drv_clr_tx_ctr          :     std_logic;
     signal drv_bus_mon_ena         :     std_logic;
+    signal drv_ena                 :     std_logic;
    
     ----------------------------------------------------------------------------
     ----------------------------------------------------------------------------
@@ -347,7 +351,7 @@ architecture rtl of can_core is
     signal sp_control_q            :    std_logic_vector(1 downto 0);
     signal sync_control_i          :    std_logic_vector(1 downto 0); 
     signal ssp_reset_i             :    std_logic;
-    signal trv_delay_calib_i       :    std_logic;
+    signal tran_delay_meas_i       :    std_logic;
     signal tran_valid_i            :    std_logic;
     signal rec_valid_i             :    std_logic;
     signal ack_received_i          :    std_logic;
@@ -437,6 +441,7 @@ begin
     drv_clr_rx_ctr        <=  drv_bus(DRV_CLR_RX_CTR_INDEX);
     drv_clr_tx_ctr        <=  drv_bus(DRV_CLR_TX_CTR_INDEX);
     drv_bus_mon_ena       <=  drv_bus(DRV_BUS_MON_ENA_INDEX);
+    drv_ena               <=  drv_bus(DRV_ENA_INDEX);
 
     ----------------------------------------------------------------------------
     -- Protocol control
@@ -555,7 +560,7 @@ begin
         sync_control            => sync_control_i,      -- OUT
         no_pos_resync           => no_pos_resync,       -- OUT
         ssp_reset               => ssp_reset_i,         -- OUT
-        trv_delay_calib         => trv_delay_calib_i,   -- OUT
+        tran_delay_meas         => tran_delay_meas_i,   -- OUT
         tran_valid              => tran_valid_i,        -- OUT
         rec_valid               => rec_valid_i,         -- OUT
         
@@ -747,25 +752,31 @@ begin
     ---------------------------------------------------------------------------
     -- Bus traffic counters
     ---------------------------------------------------------------------------
-    bus_traffic_counters_inst : bus_traffic_counters
-    generic map(
-        G_RESET_POLARITY    => G_RESET_POLARITY
-    )
-    port map(
-        clk_sys             => clk_sys,                 -- IN
-        res_n               => res_n,                   -- IN
-
-        -- Control signals
-        clear_rx_ctr        => drv_clr_rx_ctr,          -- IN
-        clear_tx_ctr        => drv_clr_tx_ctr,          -- IN
-        inc_tx_ctr          => tran_valid_i,            -- IN
-        inc_rx_ctr          => rec_valid_i,             -- IN
-
-        -- Counter outputs
-        tx_ctr              => tx_ctr,                  -- OUT
-        rx_ctr              => rx_ctr                   -- OUT
-    );
-                         
+    bus_traffic_ctrs_gen : if (G_SUP_TRAFFIC_CTRS = true) generate
+        bus_traffic_counters_inst : bus_traffic_counters
+        generic map(
+            G_RESET_POLARITY    => G_RESET_POLARITY
+        )
+        port map(
+            clk_sys             => clk_sys,                 -- IN
+            res_n               => res_n,                   -- IN
+    
+            -- Control signals
+            clear_rx_ctr        => drv_clr_rx_ctr,          -- IN
+            clear_tx_ctr        => drv_clr_tx_ctr,          -- IN
+            inc_tx_ctr          => tran_valid_i,            -- IN
+            inc_rx_ctr          => rec_valid_i,             -- IN
+    
+            -- Counter outputs
+            tx_ctr              => tx_ctr,                  -- OUT
+            rx_ctr              => rx_ctr                   -- OUT
+        );
+    end generate bus_traffic_ctrs_gen;
+    
+    no_bus_traffic_ctrs_gen : if (G_SUP_TRAFFIC_CTRS = false) generate
+        tx_ctr <= (OTHERS => '0');
+        rx_ctr <= (OTHERS => '0');
+    end generate;
     
     ---------------------------------------------------------------------------
     -- Trigger multiplexor    
@@ -849,10 +860,11 @@ begin
                     rx_data_wbs;
 
     ---------------------------------------------------------------------------
-    -- In Bus monitoring mode, transmitted data to the bus are only recessive.
-    -- Otherwise transmitted data are stuffed data!
+    -- In Bus monitoring mode or when core is disabled, transmitted data to the
+    -- bus are only recessive. Otherwise transmitted data are stuffed data!
     ---------------------------------------------------------------------------
-    tx_data_wbs_i <= RECESSIVE when (drv_bus_mon_ena = '1') else
+    tx_data_wbs_i <= RECESSIVE when (drv_ena = CTU_CAN_DISABLED) else
+                     RECESSIVE when (drv_bus_mon_ena = '1') else
                      bst_data_out;
 
 
@@ -944,8 +956,8 @@ begin
     stat_bus(STAT_SSP_RESET_INDEX) <=
         ssp_reset_i;
 
-    stat_bus(STAT_TRV_DELAY_CALIB_INDEX) <=
-        trv_delay_calib_i;
+    stat_bus(STAT_TRAN_DELAY_MEAS_INDEX) <=
+        tran_delay_meas_i;
 
     stat_bus(STAT_SYNC_CONTROL_HIGH downto STAT_SYNC_CONTROL_LOW) <= 
         sync_control_i;
@@ -1140,9 +1152,9 @@ begin
     tx_data_wbs <= tx_data_wbs_i;
     sp_control <= sp_control_i;
     ssp_reset <= ssp_reset_i;
-    trv_delay_calib <= trv_delay_calib_i;
+    tran_delay_meas <= tran_delay_meas_i;
     is_bus_off <= is_bus_off_i;
     sof_pulse <= sof_pulse_i;
     is_overload <= is_overload_i;
- 
+    
 end architecture;

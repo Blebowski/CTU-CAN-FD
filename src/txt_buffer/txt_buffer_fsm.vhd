@@ -116,8 +116,8 @@ entity txt_buffer_fsm is
         -- Buffer status (FSM state) encoded for reading by SW.
         txtb_state             :out  std_logic_vector(3 downto 0);
 
-        -- TXT Buffer is ready to be locked by CAN Core for transmission
-        txtb_ready          :out  std_logic
+        -- TXT Buffer is available to be locked by CAN Core for transmission
+        txtb_available         :out  std_logic
     );             
 end entity;
 
@@ -189,12 +189,16 @@ begin
 
                 -- Retransmitt reached, transmitt OK, or try again...
                 if (txtb_hw_cmd.failed         = '1') then
-                    next_state     <= s_txt_error;
+                    next_state     <= s_txt_failed;
                 elsif (txtb_hw_cmd.valid       = '1') then
                     next_state     <= s_txt_ok;
                 elsif (txtb_hw_cmd.err         = '1' or 
                        txtb_hw_cmd.arbl        = '1') then
-                    next_state     <= s_txt_ready;
+                    if (abort_applied = '1') then
+                        next_state     <= s_txt_aborted;
+                    else
+                        next_state     <= s_txt_ready;
+                    end if;
                 end if;
 
             -- Request abort during transmission
@@ -212,7 +216,7 @@ begin
 
                 -- Retransmitt reached, transmitt OK, or try again... 
                 if (txtb_hw_cmd.failed         = '1') then
-                    next_state     <= s_txt_error;
+                    next_state     <= s_txt_failed;
                 elsif (txtb_hw_cmd.valid       = '1') then
                     next_state     <= s_txt_ok;
                 elsif (txtb_hw_cmd.err         = '1' or 
@@ -224,7 +228,7 @@ begin
         --------------------------------------------------------------------
         -- Transmission from buffer failed. Retransmitt limit was reached.
         --------------------------------------------------------------------
-        when s_txt_error =>
+        when s_txt_failed =>
 
             -- "Set_ready"
             if (txtb_sw_cmd.set_rdy = '1' and sw_cbs = '1') then
@@ -276,7 +280,7 @@ begin
             (curr_state = s_txt_ab_prog) or (curr_state = s_txt_tx_prog) or
             (curr_state = s_txt_ready)))
         then
-            next_state <= s_txt_error;
+            next_state <= s_txt_failed;
         end if;
 
     end process;
@@ -323,10 +327,10 @@ begin
                            else
                         '0';
 
-    -- Buffer is ready for selection by TX Arbitrator only in state "Ready"
+    -- Buffer is available for selection by TX Arbitrator only in state "Ready"
     -- Abort signal must not be active. If not considered, race condition
     -- between HW and SW commands could occur!
-    txtb_ready       <= '1' when ((curr_state = s_txt_ready) and
+    txtb_available   <= '1' when ((curr_state = s_txt_ready) and
                                   (abort_applied = '0'))
                             else
                         '0';
@@ -337,11 +341,11 @@ begin
         TXT_TRAN  when s_txt_tx_prog,
         TXT_ABTP  when s_txt_ab_prog,
         TXT_TOK   when s_txt_ok,
-        TXT_ERR   when s_txt_error,
+        TXT_ERR   when s_txt_failed,
         TXT_ABT   when s_txt_aborted,
         TXT_ETY   when s_txt_empty;    
 
-
+    -- <RELEASE_OFF>
     ----------------------------------------------------------------------------
     ----------------------------------------------------------------------------
     -- Functional coverage
@@ -354,7 +358,7 @@ begin
     -- psl txtb_fsm_ready_cov : cover (curr_state = s_txt_ready);
     -- psl txtb_fsm_tx_prog_cov : cover (curr_state = s_txt_tx_prog);
     -- psl txtb_fsm_ab_prog_cov : cover (curr_state = s_txt_ab_prog);
-    -- psl txtb_fsm_error_cov : cover (curr_state = s_txt_error);
+    -- psl txtb_fsm_error_cov : cover (curr_state = s_txt_failed);
     -- psl txtb_fsm_aborted_cov : cover (curr_state = s_txt_aborted);
     -- psl txtb_fsm_tx_ok_cov : cover (curr_state = s_txt_ok);
     
@@ -390,4 +394,5 @@ begin
     --  report "LOCK command after ABORT was applied!" severity error;
     ----------------------------------------------------------------------------
 
+    -- <RELEASE_ON>
 end architecture;

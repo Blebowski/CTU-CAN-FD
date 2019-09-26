@@ -1,0 +1,32 @@
+{signal: [
+  {name: 'System clock', 				wave: 'p................................',
+   										node: '.................................'},
+  
+  {name: 'Bit time segment', 			wave: '3.4....3...4....3...4....3...4...', 	data: ['TSEG2', 'TSEG1', 'TSEG2', 'TSEG1','TSEG2','TSEG1','TSEG2','TSEG1'],
+   										node: '.................................'},
+
+  {name: 'TX Trigger', 					wave: '010.......10.......10.......10...',
+   										node: '..c.................q............'},
+  
+  {name: 'Secondary Sample Point', 		wave: '0...10.......10.......10.......10',
+   										node: '.............d........hs.......l.'},
+  
+  {name: 'CAN TX', 						wave: '1.0........1.....................',
+   										node: '..a..............................'},
+  
+  {name: 'CAN RX', 						wave: '1...........0........1......0....',
+   										node: '............be........i........m.'},
+  
+  {name: 'TX Data cache entries', 		wave: '3.5..3.....5..3.....5..3.....5..3', data: [1,2,1,2,1,2,1,2,1],
+   										node: '....................r..t.........'},
+  
+  {name: 'TX Data cache output', 		wave: '1....0........1..................', data: [1,2,1,2,1,2,1,2,1],
+   										node: '.............f........j........n.'},
+  
+  {name: 'Bit Error', 					wave: '0..............................10',
+   										node: '.............g........k........o.'},
+ ],
+  edge:['a~>b Transceiver Delay', 'c<~>d Secondary Sample Point Offset', 'd-e',
+  		'e-f','f->g TX Data cache output = CAN RX, No Bit Error', 'h-i','i-j','j->k TX Data cache output = CAN RX, No Bit Error',
+		'l-m','m-n','n->o TX Data cache output != CAN RX, Bit Error', 'q->r Push to TX Data cache','s->t Pop from TX Data cache'],
+}

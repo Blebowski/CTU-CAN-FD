@@ -1,0 +1,79 @@
+{signal: [
+  {name: 'System clock', 			wave: 'p..........', period:2,
+                         			node: '...........'},
+  
+  {name: 'Memory Bus - Read',   	wave: '0.1.0.1...........0...',
+                           			node: '......................'},
+  
+  {name: 'Memory Bus - Address', 		wave: 'x.=.x.=...........x...', data:['RX_DATA', 'RX_DATA'],
+                           		 		node: '......................'},
+  
+  {name: 'Memory Bus - Read data', 		wave: 'x...3.x.4.5.=.3.4.5.x.', data:[['tspan', {class:'h6'}, 'Frame Format'],
+                                                                              ['tspan', {class:'h6'}, 'Identifier'],
+                                                                             ['tspan', {class:'h6'}, 'Times. Low '],
+                                                                             ['tspan', {class:'h6'}, 'Times. High '],
+                                                                             ['tspan', {class:'h6'}, 'Data word 1'],
+                                                                             ['tspan', {class:'h6'}, 'Data word 2'],
+                                                                             ['tspan', {class:'h6'}, 'Data word 3']],
+                           		 		node: '........d.h..........'},
+  
+  {name: 'RX Buffer read', 		 		wave: '0.1.0.1...........0...',
+                           		 		node: '.....................'},
+  
+  {name: 'RX Buffer RAM read data', 	wave: '3...4...5.=.3.4.5.3...', data: [['tspan', {class:'h6'}, 'Frame Format'],
+                                                                               ['tspan', {class:'h6'}, 'Identifier'],
+                                                                              ['tspan', {class:'h6'}, 'Times. Low '],
+                                                                              ['tspan', {class:'h6'}, 'Times. High '],
+                                                                              ['tspan', {class:'h6'}, 'Data word 1'],
+                                                                              ['tspan', {class:'h6'}, 'Data word 2'],
+                                                                              ['tspan', {class:'h6'}, 'Data word 3'],
+                                                                              ['tspan', {class:'h6'}, 'Frame Format (next frame)'],], 
+                           		 		node: '.....b.cf.g..........'},
+  
+  {name: '', 							wave: '',
+                           		 		node: ''},
+  
+  {name: 'RX Buffer RAM address', 		wave: '3.4...5.=.3.4.5.3.=...', data: [['tspan', {class:'h6'}, 'Frame Format'],
+   																			   ['tspan', {class:'h6'}, 'Identifier'],
+                                                                               ['tspan', {class:'h6'}, 'Times. Low '],
+                                                                               ['tspan', {class:'h6'}, 'Times. High '],
+                                                                               ['tspan', {class:'h6'}, 'Data word 1'],
+                                                                               ['tspan', {class:'h6'}, 'Data word 2'],
+                                                                               ['tspan', {class:'h6'}, 'Data word 3'],
+                                                                               ['tspan', {class:'h6'}, 'Frame Format*'],
+																			   ['tspan', {class:'h6'}, 'Identifier (next frame)']],
+                           		 		node: '...a....e............'},
+  
+  {name: 'Read pointer', 				wave: '3...4...5.=.3.4.5.3...', data: [['tspan', {class:'h6'}, 'Frame Format'],
+                                                                               ['tspan', {class:'h6'}, 'Identifier'],
+                                                                               ['tspan', {class:'h6'}, 'Times. Low '],
+                                                                               ['tspan', {class:'h6'}, 'Times. High '],
+                                                                               ['tspan', {class:'h6'}, 'Data word 1'],
+                                                                               ['tspan', {class:'h6'}, 'Data word 2'],
+                                                                               ['tspan', {class:'h6'}, 'Data word 3'],
+                                                                               ['tspan', {class:'h6'}, 'Frame Format (next frame)']],
+                           		 		node: '.....................'},
+  
+  {name: 'Speculative read pointer', 	wave: '4...5...=.3.4.5.3.=...', data: [['tspan', {class:'h6'}, 'Identifier'],
+                                                                               ['tspan', {class:'h6'}, 'Times. Low'],
+                                                                               ['tspan', {class:'h6'}, 'Times. High '],
+                                                                               ['tspan', {class:'h6'}, 'Data word 1'],
+                                                                               ['tspan', {class:'h6'}, 'Data word 2'],
+                                                                               ['tspan', {class:'h6'}, 'Data word 3'],
+                                                                               ['tspan', {class:'h6'}, 'Frame Format*'],
+                                                                               ['tspan', {class:'h6'}, 'Identifier (next frame)']],
+                           		 		node: '.....................'},
+  
+  {name: 'Use speculative pointer',     wave: '0.1.0.1...........0...',
+                           		 		node: '.....................'},
+
+], edge : [
+  'a->b',
+  'c->d',
+  'e->f RAM address to RAM read data',
+  'g->h RAM read data to Memory bus read data'
+],
+ foot: {text:
+  ['tspan', '* Frame format (next frame)                                                                                                                                                                                                                     ',]
+}
+}

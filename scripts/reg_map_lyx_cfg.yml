@@ -1,0 +1,23 @@
+###############################################################################
+## Configuration file for generation of Documentation of CTU CAN FD.
+## This configuration file determines content of documentation that will be
+## generated. Two types are possible:
+##   IP (skip_conditional = false)
+##   ASIC (skip_conditional = true)
+##
+## For IP, each register in the IP core is present (regardless of top level
+## generic settings) with notes that mention conditional presence of register
+## based on generic values (e.g. FILTER_A_MASK dependance on sup_filt_A).
+##
+## For ASIC, only registers which are present when the core is used with 
+## generics as set in this config are present.
+###############################################################################
+
+skip_conditional: false
+
+parameters:
+    sup_filt_A: true
+    sup_filt_B: true
+    sup_filt_C: true
+    sup_range: true
+    sup_traffic_ctrs: true

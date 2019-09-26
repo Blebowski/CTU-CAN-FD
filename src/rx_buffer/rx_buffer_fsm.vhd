@@ -168,7 +168,7 @@ begin
         -- Idle, waiting for "store_metada" to start storing first 4 words.
         --------------------------------------------------------------------
         when s_rxb_idle =>
-            if (store_metadata_f = '1') then
+            if (store_metadata_f = '1' and rec_abort_f = '0') then
                 next_state      <= s_rxb_store_frame_format;
             end if;
 
@@ -190,34 +190,20 @@ begin
         -- repeat the writes with timestamp captured at the end of frame!
         --------------------------------------------------------------------
         when s_rxb_store_identifier =>
-            if (rec_abort_f = '1') then
-                next_state      <= s_rxb_idle;
-            else
-                next_state      <= s_rxb_skip_ts_low;
-            end if;
-
-
+            next_state      <= s_rxb_skip_ts_low;
+            
         --------------------------------------------------------------------
         -- Skip through TIMESTAMP_L_W, store only zeroes.
         --------------------------------------------------------------------
         when s_rxb_skip_ts_low =>
-            if (rec_abort_f = '1') then
-                next_state      <= s_rxb_idle;
-            else
-                next_state      <= s_rxb_skip_ts_high;
-            end if;
-
-
+            next_state      <= s_rxb_skip_ts_high;
+            
         --------------------------------------------------------------------
         -- Skip through TIMESTAMP_U_W, store only zeroes.
         --------------------------------------------------------------------
         when s_rxb_skip_ts_high =>
-            if (rec_abort_f = '1') then
-                next_state      <= s_rxb_idle;
-            else                
-                next_state      <= s_rxb_store_data;
-            end if;
-
+            next_state      <= s_rxb_store_data;
+            
         --------------------------------------------------------------------
         -- Store DATA_W. If error ocurrs, abort the storing. If storing is
         -- finished, go to idle or again timestamp storing depending on the
@@ -332,6 +318,7 @@ begin
     -- Joined commands, for assertions only
     cmd_join <= store_metadata_f & store_data_f & rec_valid_f & rec_abort_f; 
 
+    -- <RELEASE_OFF>
     ---------------------------------------------------------------------------
     -- Assertions
     ---------------------------------------------------------------------------
@@ -359,5 +346,14 @@ begin
     --    cmd_join = "0010" or cmd_join = "0100" or cmd_join = "1000")
     -- report "RX Buffer: RX Buffer commands should be one-hot encoded!"
     -- severity error;
+    
+    -- psl rx_no_abort_after_metadata : assert never
+    --  (rec_abort_f = '1') and
+    --  (curr_state = s_rxb_store_identifier or curr_state = s_rxb_skip_ts_low or
+    --   curr_state = s_rxb_skip_ts_high or curr_state = s_rxb_store_end_ts_low or
+    --   curr_state = s_rxb_store_end_ts_high)
+    --  report "RX Buffer abort not supported storing of Identifier and Timestamp"
+    --  severity error;
 
+    -- <RELEASE_ON>
 end architecture;

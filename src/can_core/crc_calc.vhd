@@ -171,6 +171,7 @@ begin
     -- Register to output propagation.
     crc <= crc_q;
 
+    -- <RELEASE_OFF>
     ----------------------------------------------------------------------------
     -- Assertions on input settings
     ----------------------------------------------------------------------------
@@ -181,5 +182,6 @@ begin
     --   (enable = '1' and trig = '1' and load_init_vect = '1')
     -- report "Can't load CRC init vector and execute CRC calculation at once!"
     -- severity error;
-
+    
+    -- <RELEASE_ON>
 end architecture;

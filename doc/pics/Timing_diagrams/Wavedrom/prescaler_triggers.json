@@ -1,0 +1,32 @@
+{signal: [
+  {name: 'System clock', 				wave: 'p..............',
+   										node: '...............'},
+  
+  {name: 'Bit time segment', 			wave: '3...4.......3..', 	data: ['TSEG1', 'TSEG2', 'TSEG1'],
+   										node: '...a.....f.....'},
+  
+  {name: 'Pipeline stage', 				wave: 'x..54x.....3x..', 	data: [['tspan', {class:'h6'}, 'Destuff'],
+   																		       ['tspan', {class:'h6'}, 'Process'],
+   																		       ['tspan', {class:'h6'}, 'Stuff']],
+   										node: '...............'},
+
+  {name: 'Segment end', 				wave: '0..10......10..',
+   										node: '...b.......g...'},
+  
+  {name: 'Sample request',  			wave: '0..10..........',
+   										node: '...c...........'},
+  
+  {name: 'RX Trigger 0',  				wave: '0..10..........',
+   										node: '...d...........'},
+
+  {name: 'RX Trigger 1',  				wave: '0...10.........',
+   										node: '....e..........'},
+  
+  {name: 'Sync request',  				wave: '0..........10..',
+   										node: '...........h...'},
+
+  {name: 'TX Trigger',  				wave: '0..........10..',
+   										node: '...........i...'},  
+ ],
+  edge:['a->c TSEG 1 ends','c->d Sample request','d->e Next pipeline stage','f->g','g->h Tseg2 ends','h->i Sync request'],
+}

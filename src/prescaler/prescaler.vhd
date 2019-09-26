@@ -47,9 +47,9 @@
 --  1. Bit time config capture
 --  2. Synchronisation checker
 --  3. Bit time counters (Nominal)
---  4. Resynchronisation (Nominal)
+--  4. Bit segment meter (Nominal)
 --  5. Bit time counters (Data)
---  6. Resynchronisation (Data)
+--  6. Bit segment meter (Data)
 --  7. Segment end detector
 --  8. Bit time FSM.
 --  9. Trigger generator.                                          
@@ -303,9 +303,9 @@ begin
 
     
     ---------------------------------------------------------------------------
-    -- Re-synchronisation (Nominal Bit Time)
+    -- Bit segment meter (Nominal Bit Time)
     ---------------------------------------------------------------------------
-    resynchronisation_nbt_inst : resynchronisation
+    bit_segment_meter_nbt_inst : bit_segment_meter
     generic map(
         G_RESET_POLARITY       => G_RESET_POLARITY,
         G_SJW_WIDTH            => G_SJW_NBT_WIDTH,
@@ -355,9 +355,9 @@ begin
     
 
     ---------------------------------------------------------------------------
-    -- Re-synchronisation (Data Bit Time)
+    -- Bit segment meter (Data Bit Time)
     ---------------------------------------------------------------------------
-    resynchronisation_dbt_inst : resynchronisation
+    bit_segment_meter_dbt_inst : bit_segment_meter
     generic map(
         G_RESET_POLARITY       => G_RESET_POLARITY,
         G_SJW_WIDTH            => G_SJW_DBT_WIDTH,
@@ -469,6 +469,7 @@ begin
         tx_trigger  => tx_trigger       -- OUT
     );
 
+    -- <RELEASE_OFF>
     ---------------------------------------------------------------------------
     ---------------------------------------------------------------------------
     -- Assertions
@@ -477,5 +478,6 @@ begin
     
     -- psl default clock is rising_edge(clk_sys);
     --
-
+    
+    -- <RELEASE_ON>
 end architecture;

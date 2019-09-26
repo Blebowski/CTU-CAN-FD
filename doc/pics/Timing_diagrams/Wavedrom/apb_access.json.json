@@ -1,0 +1,41 @@
+{signal: [
+  {name: 'aclk', 						wave: 'p...............',
+   										node: '................'},
+  
+  {name: 'psel', 						wave: '01.....01.....0.',
+   										node: '................'},
+
+  {name: 'pwrite', 						wave: '01.....0........',
+   										node: '................'},
+  
+  {name: 'penable', 					wave: '0.101010.101010.',
+   										node: '................'},
+
+  {name: 'pstrb', 					    wave: 'x3.4.5.x=.....x.', 		data: ['0001','0011','1111', '0000','BE 1','BE 2','BE 1','BE 2','BE 1','BE 2'],
+   										node: '................'},
+  
+  {name: 'paddr', 						wave: 'x3.4.5.x3.4.5.x.', 		data: ['0000','0004','0008', '0000','0004','0008','0004','0008','0004','0008'],
+   										node: '................'},
+  
+  {name: 'pwdata', 						wave: 'x.3x4x5x........', 		data: [['tspan', {class:'h6'}, 'Data 0'],
+                                                                               ['tspan', {class:'h6'}, 'Data 4'],
+                                                                               ['tspan', {class:'h6'}, 'Data 8'],
+                                                                               ['tspan', {class:'h6'}, 'Data 4'],
+                                                                               ['tspan', {class:'h6'}, 'Data 8']],
+   										node: '................'},
+  
+  {name: 'prdata', 						wave: 'x........3x4x5x.', 		data: [['tspan', {class:'h6'}, 'Data 0'],
+                                                                               ['tspan', {class:'h6'}, 'Data 4'],
+                                                                               ['tspan', {class:'h6'}, 'Data 8'],
+                                                                               ['tspan', {class:'h6'}, 'Data 8'],
+                                                                               ['tspan', {class:'h6'}, 'Data 4']],
+   										node: '................'},
+  
+ ],
+  edge:[''],
+ 
+ foot: {text:
+  ['tspan', '8/16/32 bit Write access                                         Read accesses     ',]
+}
+
+}

@@ -131,8 +131,8 @@ entity txt_buffer is
         -- Unit just turned bus off.
         is_bus_off             :in   std_logic;
 
-        -- TXT Buffer is ready to be locked by CAN Core for transmission
-        txtb_ready             :out  std_logic
+        -- TXT Buffer is available to be locked by CAN Core for transmission
+        txtb_available         :out  std_logic
     );
 end entity;
 
@@ -234,10 +234,10 @@ begin
         txtb_user_accessible   => txtb_user_accessible,     -- OUT
         txtb_hw_cmd_int        => txtb_hw_cmd_int,          -- OUT
         txtb_state             => txtb_state,               -- OUT
-        txtb_ready             => txtb_ready                -- OUT
+        txtb_available         => txtb_available            -- OUT
     );
 
-    
+    -- <RELEASE_OFF>
     ----------------------------------------------------------------------------
     ----------------------------------------------------------------------------
     -- Functional coverage
@@ -263,4 +263,5 @@ begin
     
     end block;
 
+    -- <RELEASE_ON>
 end architecture;

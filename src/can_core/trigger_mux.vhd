@@ -222,12 +222,11 @@ begin
         G_RST_VAL          => '0'
     )
     port map(
-        arst               => res_n,
-        clk                => clk_sys,
-
-        input              => tx_trigger,
-        ce                 => '1',
-        output             => tx_trigger_q
+        arst               => res_n,            -- IN
+        clk                => clk_sys,          -- IN
+        input              => tx_trigger,       -- IN
+        
+        output             => tx_trigger_q      -- OUT
     );
 
     crc_trig_tx_wbs <= '0' when (fixed_stuff = '1' and data_halt = '1') else
@@ -241,18 +240,18 @@ begin
     -- (Bit Destuffing input) to avoid possible change, and calculate the CRC
     -- with rx_trigger(0) (in Process pipeline stage).
     ---------------------------------------------------------------------------
-    crc_data_rx_wbs_reg : dff_arst
+    crc_data_rx_wbs_reg : dff_arst_ce
     generic map(
         G_RESET_POLARITY   => G_RESET_POLARITY,
         G_RST_VAL          => '0'
     )
     port map(
-        arst               => res_n,
-        clk                => clk_sys,
-
-        input              => bds_data_in,
-        ce                 => rx_triggers(1),
-        output             => crc_data_rx_wbs
+        arst               => res_n,            -- IN
+        clk                => clk_sys,          -- IN
+        input              => bds_data_in,      -- IN
+        ce                 => rx_triggers(1),   -- IN
+        
+        output             => crc_data_rx_wbs   -- OUT
     );
     
     crc_trig_rx_wbs <= '0' when (fixed_stuff = '1' and destuffed = '1') else

@@ -5285,7 +5285,7 @@ Clear the Shift register for secondary sampling point.\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-trv_delay_calib\end_layout
+tran_delay_meas\end_layout
 
 \end_inset
 </cell>
@@ -5309,7 +5309,7 @@ std_logic\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-Enable measurement of Transciever delay\end_layout
+Enable measurement of Transmitter delay\end_layout
 
 \end_inset
 </cell>

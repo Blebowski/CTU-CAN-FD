@@ -217,12 +217,11 @@ begin
         G_RST_VAL          => '0'
     )
     port map(
-        arst               => res_n,
-        clk                => clk_sys,
-
-        input              => stuff_enable,
-        ce                 => '1',
-        output             => enable_prev
+        arst               => res_n,            -- IN
+        clk                => clk_sys,          -- IN
+        input              => stuff_enable,     -- IN
+        
+        output             => enable_prev       -- OUT
     );
 
     ---------------------------------------------------------------------------
@@ -247,18 +246,18 @@ begin
     -- fixed stuff bit and insert stuff bit in the beginning of CRC for CAN FD
     -- automatically!
     ---------------------------------------------------------------------------
-    dff_fixed_stuff_reg : dff_arst
+    dff_fixed_stuff_reg : dff_arst_ce
     generic map(
         G_RESET_POLARITY   => G_RESET_POLARITY,
         G_RST_VAL          => '0'
     )
     port map(
-        arst               => res_n,
-        clk                => clk_sys,
-
-        input              => fixed_reg_d,
-        ce                 => stuff_enable,
-        output             => fixed_reg_q
+        arst               => res_n,            -- IN
+        clk                => clk_sys,          -- IN
+        input              => fixed_reg_d,      -- IN
+        ce                 => stuff_enable,     -- IN
+        
+        output             => fixed_reg_q       -- OUT
     );
 
     ---------------------------------------------------------------------------    
@@ -402,18 +401,18 @@ begin
     -- trigger, or input data are piped directly to this register when
     -- enable = '0'.
     ---------------------------------------------------------------------------
-    dff_data_out_reg : dff_arst
+    dff_data_out_reg : dff_arst_ce
     generic map(
         G_RESET_POLARITY   => G_RESET_POLARITY,
         G_RST_VAL          => RECESSIVE
     )
     port map(
-        arst               => res_n,
-        clk                => clk_sys,
-
-        input              => data_out_d,
-        ce                 => data_out_ce,
-        output             => data_out_i
+        arst               => res_n,            -- IN
+        clk                => clk_sys,          -- IN
+        input              => data_out_d,       -- IN
+        ce                 => data_out_ce,      -- IN
+        
+        output             => data_out_i        -- OUT
     );
 
 
@@ -450,12 +449,11 @@ begin
         G_RST_VAL          => '0'
     )
     port map(
-        arst               => res_n,
-        clk                => clk_sys,
-
-        input              => data_halt_d,
-        ce                 => '1',
-        output             => data_halt_q
+        arst               => res_n,            -- IN
+        clk                => clk_sys,          -- IN
+        input              => data_halt_d,      -- IN
+        
+        output             => data_halt_q       -- OUT
     );
 
 

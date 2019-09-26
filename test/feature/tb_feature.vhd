@@ -204,6 +204,8 @@ begin
         ---------------------------------
         xd: p(i).CAN_rx           <= s_bus_level;
         xe: bus_level             <= s_bus_level;
+        
+        xf: iout(i).can_tx        <= p(i).CAN_tx;
 
         ---------------------------------
         -- Clock & timestamp generation

@@ -186,7 +186,7 @@ architecture rtl of int_manager is
         (false,  -- RXI_IND
          false,  -- TXI_IND
          false,  -- EWLI_IND
-         true,   -- DOI_IND
+         false,  -- DOI_IND
          false,  -- EPI_IND
          false,  -- ALI_IND
          false,  -- BEI_IND
@@ -282,15 +282,14 @@ begin
         G_RST_VAL          => '0'
     )
     port map(
-        arst               => res_n,
-        clk                => clk_sys,
+        arst               => res_n,        -- IN
+        clk                => clk_sys,      -- IN
+        input              => int_i,        -- IN
 
-        input              => int_i,
-        ce                 => '1',
-        output             => int
+        output             => int           -- OUT
     );
 
-
+    -- <RELEASE_OFF>
     ---------------------------------------------------------------------------
     -- Functional coverage
     ---------------------------------------------------------------------------
@@ -380,4 +379,5 @@ begin
     -- psl ofi_enable_cov : cover
     --  (int_vect_i(OFI_IND) = '1' and int_ena(OFI_IND) = '1');
 
+    -- <RELEASE_ON>
 end architecture;
