@@ -60,6 +60,7 @@ build_doc:
     artifacts:
         paths:
             - doc/core/Progdokum.pdf
+            - doc/core/ctu_can_fd_architecture.pdf
 
 build_linux_driver:
     stage: build
