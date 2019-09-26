@@ -440,10 +440,10 @@ begin
                 int_mask_exp(i) <= '0';
             end if;
 
-            if (drv_int_clear(i) = '1') then
-                int_status_exp(i) <= '0';
-            elsif (int_input(i) = '1' and int_mask_exp(i) = '0') then
+            if (int_input(i) = '1' and int_mask_exp(i) = '0') then
                 int_status_exp(i) <= '1';
+            elsif (drv_int_clear(i) = '1') then
+                int_status_exp(i) <= '0';
             end if;
         
         end loop;
