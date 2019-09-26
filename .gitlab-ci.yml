@@ -119,6 +119,7 @@ pages:
         - cp test/tests_*.xml public/
         - mv test/code_html public/coverage || true
         - cp doc/core/Progdokum.pdf public/ || true
+        - cp doc/core/ctu_can_fd_architecture.pdf public/ || true
         - mkdir public/functional_coverage
         - cp -R test/build/functional_coverage/* public/functional_coverage || true
     only:
