@@ -109,9 +109,6 @@ architecture rtl of bus_traffic_counters is
     signal tx_ctr_i          :     std_logic_vector(31 downto 0);
     signal rx_ctr_i          :     std_logic_vector(31 downto 0);
 
-    -- Input selector
-    signal sel                 :     std_logic;   
-
     -- Selected value to increment
     signal sel_value           :     unsigned(31 downto 0);
 
@@ -130,12 +127,8 @@ begin
     tx_ctr <= tx_ctr_i;
     rx_ctr <= rx_ctr_i;
 
-    -- Input selector
-    sel <= '1' when (inc_tx_ctr = '1') else
-           '0';
-
     -- Multiplexor between TX and RX value to increment
-    sel_value <= unsigned(tx_ctr_i) when (sel = '1') else
+    sel_value <= unsigned(tx_ctr_i) when (inc_tx_ctr = '1') else
                  unsigned(rx_ctr_i);
 
     -- Incremented value of either TX or RX counter
