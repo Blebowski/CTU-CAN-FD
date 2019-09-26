@@ -593,6 +593,7 @@ architecture bit_stuffing_unit_test of CAN_test is
         end loop;
 
         -- Finish test step by turning bit stuffing off!
+        wait for 50 ns;
         stuff_enable    <= '0';
         destuff_enable    <= '0';
         wbs_ptr      := 0;
@@ -656,23 +657,23 @@ begin
     ----------------------------------------------------------------------------
     stuff_gen : process
     begin
-        wait until falling_edge(clk_sys);
+        wait until rising_edge(clk_sys);
         tx_trig_intent       <= '1';
-        wait until falling_edge(clk_sys);
+        wait until rising_edge(clk_sys);
         tx_trig_intent       <= '0';
         bst_trigger              <= '1';
-        wait until falling_edge(clk_sys);
+        wait until rising_edge(clk_sys);
         bst_trigger              <= '0';
         bds_trigger              <= '1';
-        wait until falling_edge(clk_sys);
+        wait until rising_edge(clk_sys);
         bds_trigger              <= '0';
         rx_trig_intent       <= '1';
-        wait until falling_edge(clk_sys);
+        wait until rising_edge(clk_sys);
         rx_trig_intent       <= '0';
-        wait until falling_edge(clk_sys);
-        wait until falling_edge(clk_sys);
-        wait until falling_edge(clk_sys);
-        wait until falling_edge(clk_sys);
+        wait until rising_edge(clk_sys);
+        wait until rising_edge(clk_sys);
+        wait until rising_edge(clk_sys);
+        wait until rising_edge(clk_sys);
     end process;
 
 
@@ -694,7 +695,7 @@ begin
         exp_stuffed         <= set.stuffed_data_seq(wbs_index);
         should_be_stuffed   <= set.stuffed_bits_mark(wbs_index);
     end process;
-
+    
     ----------------------------------------------------------------------------
     -- When bit stuff occurs, value of next bit should be oposite of previous
     -- one! Bit destuffing is thus expecting bit of opposite polarity that
@@ -707,29 +708,44 @@ begin
     gen_st_error : process
         variable tmp        : real := 0.0;
     begin
-
-        while (res_n = C_RESET_POLARITY) loop
+        
+        -- Wait until bit was stuffed
+        while (data_halt /= '1') loop
             wait until rising_edge(clk_sys);
         end loop;
-
-        -- Wait until bit was stuffed
-        wait until rising_edge(data_halt);
-
+            
         -- Generate random stuff error;
         rand_real_v(rand_st_err_ctr, tmp);
-        if (tmp > 0.98) then
+        if (tmp < 0.02) then
             err_data <= '1';
-            wait until rising_edge(clk_sys) and (bds_trigger = '1');
-            wait for 1 ns;
+            wait for 11 ns; -- One cycle + little bit more
 
             info("Stuff error inserted");
 
-            -- Now stuff error should be fired by bit destuffing, since
-            -- bit value was forced to be the same as previous bits!
-            check(stuff_err = '1', "Stuff error not fired!");
+            -------------------------------------------------------------------
+            -- Now stuff error should be fired by bit destuffing, since bit
+            -- value was forced to be the same as previous bits! Do this check
+            -- only when destuffing is enabled! Due to TB, it can happend that
+            -- this if condition will enter right after bit sequence end!
+            -- In this case, Stuff error is not fired because bit stuffing is
+            -- already disabled (which is OK!)
+            -------------------------------------------------------------------
+            --if (destuff_enable = '1') then
+            --    if (stuff_err /= '1') then
+            --        wait for 150 ns;
+            --        error("Stuff error not fired");
+            --    end if;
+                check(stuff_err = '1', "Stuff error not fired!");
+            --end if;
+
             wait until rising_edge(clk_sys);
             err_data <= '0';
         end if;
+        
+        while (data_halt /= '0') loop
+            wait until rising_edge(clk_sys);
+        end loop;
+
     end process;
 
 
