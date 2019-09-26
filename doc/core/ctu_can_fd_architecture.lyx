@@ -511,18 +511,28 @@ filename "version.tex"
 \noindent
 \align center
 \begin_inset Tabular
-<lyxtabular version="3" rows="2" columns="4">
+<lyxtabular version="3" rows="2" columns="5">
 <features tabularvalignment="middle">
 <column alignment="center" valignment="top" width="1.5cm">
+<column alignment="center" valignment="top" width="3cm">
 <column alignment="center" valignment="top" width="2cm">
 <column alignment="center" valignment="top" width="2cm">
-<column alignment="center" valignment="top" width="10cm">
+<column alignment="center" valignment="top" width="6.8cm">
 <row>
 <cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
 Document version
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Corresponding Datasheet version (release)
 \end_layout
 
 \end_inset
@@ -569,6 +579,15 @@ Change description
 \begin_inset Text
 
 \begin_layout Plain Layout
+2.2
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
 Ondrej Ille
 \end_layout
 
@@ -578,7 +597,7 @@ Ondrej Ille
 \begin_inset Text
 
 \begin_layout Plain Layout
-13-09-2019
+26-09-2019
 \end_layout
 
 \end_inset
