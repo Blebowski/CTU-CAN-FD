@@ -1,4 +1,4 @@
-all: Progdokum.pdf
+all: Progdokum.pdf ctu_can_fd_architecture.pdf
 
 Progdokum.pdf: version.tex
 	#lyx --export-to pdf Progdokum.pdf Progdokum.lyx
@@ -9,6 +9,16 @@ Progdokum.pdf: version.tex
 	# run again to generate PDF outline and references
 	xelatex Progdokum
 	xelatex Progdokum
+
+ctu_can_fd_architecture.pdf: version.tex
+	lyx --export-to latex ctu_can_fd_architecture.tex ctu_can_fd_architecture.lyx
+    sed -rie '/\{inputenc\}/d' ctu_can_fd_architecture.tex
+	iconv -f latin2 -t utf8 <ctu_can_fd_architecture.tex >ctu_can_fd_architecture.tex-1 && mv ctu_can_fd_architecture.tex-1 ctu_can_fd_architecture.tex
+	xelatex ctu_can_fd_architecture
+	# run again to generate PDF outline and references
+	xelatex ctu_can_fd_architecture
+	xelatex ctu_can_fd_architecture
+
 
 version.tex: FORCE
 	desc=$$(git describe --always); \
