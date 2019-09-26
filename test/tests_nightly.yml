@@ -12,9 +12,9 @@ unit:
         iterations: 500
         timeout: 1000 ms
     tests:
-        # bit_stuffing:
-        #     iterations: 100
-        #     wave: unit/Bit_Stuffing/bsdt_unit.tcl
+        bit_stuffing:
+            iterations: 100
+            wave: unit/Bit_Stuffing/bsdt_unit.tcl
         apb:
             iterations: 1
         crc:
