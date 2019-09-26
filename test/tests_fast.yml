@@ -34,7 +34,7 @@ unit:
             iterations: 10
         tx_arb:
             wave: unit/TX_Arbitrator/txar_unit.tcl
-            iterations: 1000
+            iterations: 0
         tx_buf:
             wave: unit/TX_Buffer/txbf_unit.tcl
 feature:
