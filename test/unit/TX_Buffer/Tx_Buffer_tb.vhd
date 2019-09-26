@@ -163,7 +163,11 @@ architecture tx_buf_unit_test of CAN_test is
                 if (hw_cmd.valid = '1') then
                     exp_state   <= TXT_TOK;
                 elsif (hw_cmd.err = '1' or hw_cmd.arbl = '1') then
-                    exp_state   <= TXT_RDY;
+                    if (sw_cmd.set_abt = '1') then
+                        exp_state   <= TXT_ABT;
+                    else
+                        exp_state   <= TXT_RDY;
+                    end if;
                 elsif (hw_cmd.failed = '1') then
                     exp_state   <= TXT_ERR;
                 end if;
