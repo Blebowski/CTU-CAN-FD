@@ -91,8 +91,8 @@ package can_fd_register_map is
   constant EWL_ADR                   : std_logic_vector(11 downto 0) := x"02C";
   constant ERP_ADR                   : std_logic_vector(11 downto 0) := x"02D";
   constant FAULT_STATE_ADR           : std_logic_vector(11 downto 0) := x"02E";
-  constant RXC_ADR                   : std_logic_vector(11 downto 0) := x"030";
-  constant TXC_ADR                   : std_logic_vector(11 downto 0) := x"032";
+  constant REC_ADR                   : std_logic_vector(11 downto 0) := x"030";
+  constant TEC_ADR                   : std_logic_vector(11 downto 0) := x"032";
   constant ERR_NORM_ADR              : std_logic_vector(11 downto 0) := x"034";
   constant ERR_FD_ADR                : std_logic_vector(11 downto 0) := x"036";
   constant CTR_PRES_ADR              : std_logic_vector(11 downto 0) := x"038";
@@ -197,11 +197,11 @@ package can_fd_register_map is
      size      => 16,
      reg_type  => reg_read_only,
      reset_val => "00000000000000010000000000000000"),
-    (address   => RXC_ADR,
+    (address   => REC_ADR,
      size      => 16,
      reg_type  => reg_read_only,
      reset_val => "00000000000000000000000000000000"),
-    (address   => TXC_ADR,
+    (address   => TEC_ADR,
      size      => 16,
      reg_type  => reg_read_only,
      reset_val => "00000000000000000000000000000000"),
@@ -792,24 +792,24 @@ package can_fd_register_map is
   constant ERA_RSTVAL         : std_logic := '1';
 
   ------------------------------------------------------------------------------
-  -- RXC register
+  -- REC register
   --
   ------------------------------------------------------------------------------
-  constant RXC_VAL_L              : natural := 0;
-  constant RXC_VAL_H             : natural := 15;
+  constant REC_VAL_L              : natural := 0;
+  constant REC_VAL_H             : natural := 15;
 
-  -- RXC register reset values
-  constant RXC_VAL_RSTVAL : std_logic_vector(15 downto 0) := x"0000";
+  -- REC register reset values
+  constant REC_VAL_RSTVAL : std_logic_vector(15 downto 0) := x"0000";
 
   ------------------------------------------------------------------------------
-  -- TXC register
+  -- TEC register
   --
   ------------------------------------------------------------------------------
-  constant TXC_VAL_L             : natural := 16;
-  constant TXC_VAL_H             : natural := 31;
+  constant TEC_VAL_L             : natural := 16;
+  constant TEC_VAL_H             : natural := 31;
 
-  -- TXC register reset values
-  constant TXC_VAL_RSTVAL : std_logic_vector(15 downto 0) := x"0000";
+  -- TEC register reset values
+  constant TEC_VAL_RSTVAL : std_logic_vector(15 downto 0) := x"0000";
 
   ------------------------------------------------------------------------------
   -- ERR_NORM register

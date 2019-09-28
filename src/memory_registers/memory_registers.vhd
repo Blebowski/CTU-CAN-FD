@@ -958,29 +958,29 @@ begin
 
 
     ---------------------------------------------------------------------------
-    -- RXC Register - Receive error counter
+    -- REC Register - Receive error counter
     ---------------------------------------------------------------------------
-    rxc_reg_block : block
-        constant length : natural := Control_registers_in.rxc'length;
+    rec_reg_block : block
+        constant length : natural := Control_registers_in.rec'length;
     begin
-        Control_registers_in.rxc(
-            align_reg_to_wrd(RXC_VAL_H, length) downto
-            align_reg_to_wrd(RXC_VAL_L, length)) <=
+        Control_registers_in.rec(
+            align_reg_to_wrd(REC_VAL_H, length) downto
+            align_reg_to_wrd(REC_VAL_L, length)) <=
             "0000000" & stat_bus(STAT_RX_COUNTER_HIGH downto STAT_RX_COUNTER_LOW);
-    end block rxc_reg_block;
+    end block rec_reg_block;
 
 
     ---------------------------------------------------------------------------
-    -- TXC Register - Transmitt error counter
+    -- TEC Register - Transmitt error counter
     ---------------------------------------------------------------------------
-    txc_reg_block : block
-        constant length : natural := Control_registers_in.txc'length;
+    tec_reg_block : block
+        constant length : natural := Control_registers_in.tec'length;
     begin
-        Control_registers_in.txc(
-            align_reg_to_wrd(TXC_VAL_H, length) downto
-            align_reg_to_wrd(TXC_VAL_L, length)) <= 
+        Control_registers_in.tec(
+            align_reg_to_wrd(TEC_VAL_H, length) downto
+            align_reg_to_wrd(TEC_VAL_L, length)) <= 
             "0000000" & stat_bus(STAT_TX_COUNTER_HIGH downto STAT_TX_COUNTER_LOW);
-    end block txc_reg_block;
+    end block tec_reg_block;
 
     ---------------------------------------------------------------------------
     -- ERR_NORM - Error counter Nominal Bit-Rate

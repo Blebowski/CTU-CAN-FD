@@ -88,8 +88,8 @@ package can_registers_pkg is
      int_ena_set                 : std_logic_vector(15 downto 0);
      int_mask_set                : std_logic_vector(15 downto 0);
      fault_state                 : std_logic_vector(15 downto 0);
-     rxc                         : std_logic_vector(15 downto 0);
-     txc                         : std_logic_vector(15 downto 0);
+     rec                         : std_logic_vector(15 downto 0);
+     tec                         : std_logic_vector(15 downto 0);
      err_norm                    : std_logic_vector(15 downto 0);
      err_fd                      : std_logic_vector(15 downto 0);
      filter_status               : std_logic_vector(15 downto 0);

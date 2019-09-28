@@ -50,8 +50,8 @@ enum ctu_can_fd_can_registers {
 	CTU_CAN_FD_EWL                  = 0x2c,
 	CTU_CAN_FD_ERP                  = 0x2d,
 	CTU_CAN_FD_FAULT_STATE          = 0x2e,
-	CTU_CAN_FD_RXC                  = 0x30,
-	CTU_CAN_FD_TXC                  = 0x32,
+	CTU_CAN_FD_REC                  = 0x30,
+	CTU_CAN_FD_TEC                  = 0x32,
 	CTU_CAN_FD_ERR_NORM             = 0x34,
 	CTU_CAN_FD_ERR_FD               = 0x36,
 	CTU_CAN_FD_CTR_PRES             = 0x38,
@@ -420,17 +420,17 @@ union ctu_can_fd_ewl_erp_fault_state {
 	} s;
 };
 
-union ctu_can_fd_rxc_txc {
+union ctu_can_fd_rec_tec {
 	uint32_t u32;
-	struct ctu_can_fd_rxc_txc_s {
+	struct ctu_can_fd_rec_tec_s {
 #ifdef __LITTLE_ENDIAN_BITFIELD
-  /* RXC */
-		uint32_t rxc_val                : 16;
-  /* TXC */
-		uint32_t txc_val                : 16;
+  /* REC */
+		uint32_t rec_val                : 16;
+  /* TEC */
+		uint32_t tec_val                : 16;
 #else
-		uint32_t txc_val                : 16;
-		uint32_t rxc_val                : 16;
+		uint32_t tec_val                : 16;
+		uint32_t rec_val                : 16;
 #endif
 	} s;
 };

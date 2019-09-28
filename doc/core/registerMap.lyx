@@ -1083,7 +1083,7 @@ hyperref[EWL]{EWL}\end_layout
 status open
 \begin_layout Plain Layout
 \backslash
-hyperref[TXC]{TXC}\end_layout
+hyperref[TEC]{TEC}\end_layout
 \end_inset
 \end_layout
 
@@ -1097,7 +1097,7 @@ hyperref[TXC]{TXC}\end_layout
 status open
 \begin_layout Plain Layout
 \backslash
-hyperref[TXC]{TXC}\end_layout
+hyperref[TEC]{TEC}\end_layout
 \end_inset
 \end_layout
 
@@ -1111,7 +1111,7 @@ hyperref[TXC]{TXC}\end_layout
 status open
 \begin_layout Plain Layout
 \backslash
-hyperref[RXC]{RXC}\end_layout
+hyperref[REC]{REC}\end_layout
 \end_inset
 \end_layout
 
@@ -1125,7 +1125,7 @@ hyperref[RXC]{RXC}\end_layout
 status open
 \begin_layout Plain Layout
 \backslash
-hyperref[RXC]{RXC}\end_layout
+hyperref[REC]{REC}\end_layout
 \end_inset
 \end_layout
 
@@ -15627,12 +15627,12 @@ BOF Bus off
 \end_inset
 \end_layout
 \begin_layout Subsection
-RXC
+REC
 \begin_inset ERT
 status open
 \begin_layout Plain Layout
 \backslash
-label{RXC
+label{REC
 }\end_layout
 \end_inset
 \end_layout
@@ -15820,7 +15820,7 @@ cellcolor{cyan}
 \begin_inset Text
 
 \begin_layout Plain Layout
-RXC_VAL[15:8]\end_layout
+REC_VAL[15:8]\end_layout
 
 \end_inset
 </cell>
@@ -15828,7 +15828,7 @@ RXC_VAL[15:8]\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-RXC_VAL[15:8]\end_layout
+REC_VAL[15:8]\end_layout
 
 \end_inset
 </cell>
@@ -15836,7 +15836,7 @@ RXC_VAL[15:8]\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-RXC_VAL[15:8]\end_layout
+REC_VAL[15:8]\end_layout
 
 \end_inset
 </cell>
@@ -15844,7 +15844,7 @@ RXC_VAL[15:8]\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-RXC_VAL[15:8]\end_layout
+REC_VAL[15:8]\end_layout
 
 \end_inset
 </cell>
@@ -15852,7 +15852,7 @@ RXC_VAL[15:8]\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-RXC_VAL[15:8]\end_layout
+REC_VAL[15:8]\end_layout
 
 \end_inset
 </cell>
@@ -15860,7 +15860,7 @@ RXC_VAL[15:8]\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-RXC_VAL[15:8]\end_layout
+REC_VAL[15:8]\end_layout
 
 \end_inset
 </cell>
@@ -15868,7 +15868,7 @@ RXC_VAL[15:8]\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-RXC_VAL[15:8]\end_layout
+REC_VAL[15:8]\end_layout
 
 \end_inset
 </cell>
@@ -15876,7 +15876,7 @@ RXC_VAL[15:8]\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-RXC_VAL[15:8]\end_layout
+REC_VAL[15:8]\end_layout
 
 \end_inset
 </cell>
@@ -16140,7 +16140,7 @@ cellcolor{cyan}
 \begin_inset Text
 
 \begin_layout Plain Layout
-RXC_VAL[7:0]\end_layout
+REC_VAL[7:0]\end_layout
 
 \end_inset
 </cell>
@@ -16148,7 +16148,7 @@ RXC_VAL[7:0]\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-RXC_VAL[7:0]\end_layout
+REC_VAL[7:0]\end_layout
 
 \end_inset
 </cell>
@@ -16156,7 +16156,7 @@ RXC_VAL[7:0]\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-RXC_VAL[7:0]\end_layout
+REC_VAL[7:0]\end_layout
 
 \end_inset
 </cell>
@@ -16164,7 +16164,7 @@ RXC_VAL[7:0]\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-RXC_VAL[7:0]\end_layout
+REC_VAL[7:0]\end_layout
 
 \end_inset
 </cell>
@@ -16172,7 +16172,7 @@ RXC_VAL[7:0]\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-RXC_VAL[7:0]\end_layout
+REC_VAL[7:0]\end_layout
 
 \end_inset
 </cell>
@@ -16180,7 +16180,7 @@ RXC_VAL[7:0]\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-RXC_VAL[7:0]\end_layout
+REC_VAL[7:0]\end_layout
 
 \end_inset
 </cell>
@@ -16188,7 +16188,7 @@ RXC_VAL[7:0]\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-RXC_VAL[7:0]\end_layout
+REC_VAL[7:0]\end_layout
 
 \end_inset
 </cell>
@@ -16196,7 +16196,7 @@ RXC_VAL[7:0]\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-RXC_VAL[7:0]\end_layout
+REC_VAL[7:0]\end_layout
 
 \end_inset
 </cell>
@@ -16289,19 +16289,19 @@ cellcolor{cyan}
 
 \end_layout
 \begin_layout Description
-RXC_VAL RX error counter (REC).
+REC_VAL RX error counter (REC).
 \end_layout
 \begin_layout Standard
 \begin_inset VSpace bigskip
 \end_inset
 \end_layout
 \begin_layout Subsection
-TXC
+TEC
 \begin_inset ERT
 status open
 \begin_layout Plain Layout
 \backslash
-label{TXC
+label{TEC
 }\end_layout
 \end_inset
 \end_layout
@@ -16489,7 +16489,7 @@ cellcolor{cyan}
 \begin_inset Text
 
 \begin_layout Plain Layout
-TXC_VAL[15:8]\end_layout
+TEC_VAL[15:8]\end_layout
 
 \end_inset
 </cell>
@@ -16497,7 +16497,7 @@ TXC_VAL[15:8]\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-TXC_VAL[15:8]\end_layout
+TEC_VAL[15:8]\end_layout
 
 \end_inset
 </cell>
@@ -16505,7 +16505,7 @@ TXC_VAL[15:8]\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-TXC_VAL[15:8]\end_layout
+TEC_VAL[15:8]\end_layout
 
 \end_inset
 </cell>
@@ -16513,7 +16513,7 @@ TXC_VAL[15:8]\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-TXC_VAL[15:8]\end_layout
+TEC_VAL[15:8]\end_layout
 
 \end_inset
 </cell>
@@ -16521,7 +16521,7 @@ TXC_VAL[15:8]\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-TXC_VAL[15:8]\end_layout
+TEC_VAL[15:8]\end_layout
 
 \end_inset
 </cell>
@@ -16529,7 +16529,7 @@ TXC_VAL[15:8]\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-TXC_VAL[15:8]\end_layout
+TEC_VAL[15:8]\end_layout
 
 \end_inset
 </cell>
@@ -16537,7 +16537,7 @@ TXC_VAL[15:8]\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-TXC_VAL[15:8]\end_layout
+TEC_VAL[15:8]\end_layout
 
 \end_inset
 </cell>
@@ -16545,7 +16545,7 @@ TXC_VAL[15:8]\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-TXC_VAL[15:8]\end_layout
+TEC_VAL[15:8]\end_layout
 
 \end_inset
 </cell>
@@ -16809,7 +16809,7 @@ cellcolor{cyan}
 \begin_inset Text
 
 \begin_layout Plain Layout
-TXC_VAL[7:0]\end_layout
+TEC_VAL[7:0]\end_layout
 
 \end_inset
 </cell>
@@ -16817,7 +16817,7 @@ TXC_VAL[7:0]\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-TXC_VAL[7:0]\end_layout
+TEC_VAL[7:0]\end_layout
 
 \end_inset
 </cell>
@@ -16825,7 +16825,7 @@ TXC_VAL[7:0]\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-TXC_VAL[7:0]\end_layout
+TEC_VAL[7:0]\end_layout
 
 \end_inset
 </cell>
@@ -16833,7 +16833,7 @@ TXC_VAL[7:0]\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-TXC_VAL[7:0]\end_layout
+TEC_VAL[7:0]\end_layout
 
 \end_inset
 </cell>
@@ -16841,7 +16841,7 @@ TXC_VAL[7:0]\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-TXC_VAL[7:0]\end_layout
+TEC_VAL[7:0]\end_layout
 
 \end_inset
 </cell>
@@ -16849,7 +16849,7 @@ TXC_VAL[7:0]\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-TXC_VAL[7:0]\end_layout
+TEC_VAL[7:0]\end_layout
 
 \end_inset
 </cell>
@@ -16857,7 +16857,7 @@ TXC_VAL[7:0]\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-TXC_VAL[7:0]\end_layout
+TEC_VAL[7:0]\end_layout
 
 \end_inset
 </cell>
@@ -16865,7 +16865,7 @@ TXC_VAL[7:0]\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-TXC_VAL[7:0]\end_layout
+TEC_VAL[7:0]\end_layout
 
 \end_inset
 </cell>
@@ -16958,7 +16958,7 @@ cellcolor{cyan}
 
 \end_layout
 \begin_layout Description
-TXC_VAL TX error counter (TEC).
+TEC_VAL TX error counter (TEC).
 \end_layout
 \begin_layout Standard
 \begin_inset VSpace bigskip

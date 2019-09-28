@@ -4584,15 +4584,15 @@ package body CANtestLib is
         variable data           :       std_logic_vector(31 downto 0);
         variable msg            :       line;
     begin
-        -- Reading separately for possible future separation of RXC and TXC!
-        CAN_read(data, RXC_ADR, ID, mem_bus, BIT_16);
+        -- Reading separately for possible future separation of REC and TEC!
+        CAN_read(data, REC_ADR, ID, mem_bus, BIT_16);
 
         err_counters.rx_counter :=
-                to_integer(unsigned(data(RXC_VAL_H downto RXC_VAL_L)));
+                to_integer(unsigned(data(REC_VAL_H downto REC_VAL_L)));
 
-        CAN_read(data, TXC_ADR, ID, mem_bus, BIT_16);
+        CAN_read(data, TEC_ADR, ID, mem_bus, BIT_16);
         err_counters.tx_counter :=
-                to_integer(unsigned(data(TXC_VAL_H downto TXC_VAL_L)));
+                to_integer(unsigned(data(TEC_VAL_H downto TEC_VAL_L)));
 
         CAN_read(data, ERR_NORM_ADR, ID, mem_bus, BIT_16);
         err_counters.err_norm :=

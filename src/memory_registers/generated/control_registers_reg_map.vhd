@@ -931,7 +931,7 @@ begin
     control_registers_in.err_fd & control_registers_in.err_norm &
 
     -- Adress:48
-    control_registers_in.txc & control_registers_in.rxc &
+    control_registers_in.tec & control_registers_in.rec &
 
     -- Adress:44
     control_registers_in.fault_state & control_registers_out_i.erp & control_registers_out_i.ewl &
@@ -1085,11 +1085,11 @@ begin
     --     cs = '1' and read = '1' and reg_sel(11) = '1' and 
     --     (be(2) = '1' or be(3) = '1'));
 
-    --  psl rxc_read_access_cov : cover (
+    --  psl rec_read_access_cov : cover (
     --     cs = '1' and read = '1' and reg_sel(12) = '1' and 
     --     (be(0) = '1' or be(1) = '1'));
 
-    --  psl txc_read_access_cov : cover (
+    --  psl tec_read_access_cov : cover (
     --     cs = '1' and read = '1' and reg_sel(12) = '1' and 
     --     (be(2) = '1' or be(3) = '1'));
 

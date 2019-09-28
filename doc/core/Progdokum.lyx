@@ -1005,7 +1005,7 @@ Features
 \end_layout
 
 \begin_layout Itemize
-Vendor independent, VHDL RTL code for synthesis (compliant with VHDL 96).
+Vendor independent, VHDL RTL code for synthesis (compliant with VHDL 93).
 \end_layout
 
 \begin_layout Itemize
@@ -3361,7 +3361,7 @@ noprefix "false"
 \end_inset
 
 .
- Fault confinement counters (REC, TEC) are readable from RXC and TXC registers.
+ Fault confinement counters are readable from REC and TEC registers.
  These counters correspond to transmitt error counter and receive error
  counter as defined in ISO11898-1.
  CTU CAN FD additionally contains counters distigushing between errors detected
@@ -3373,7 +3373,7 @@ noprefix "false"
 \end_layout
 
 \begin_layout Standard
-All four counters (RXC, TXC, ERR_NORM, ERR_FD) can be manipulated by SW.
+All four counters (REC, TEC, ERR_NORM, ERR_FD) can be manipulated by SW.
  As this feature directly affects compliance of the device with ISO11898-1,
  this is only allowed when MODE[TSTM] = 1.
  All counters can be set from SW via CTR_PRES register.
