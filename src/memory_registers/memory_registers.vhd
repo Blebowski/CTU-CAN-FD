@@ -1253,33 +1253,33 @@ begin
 
 
     ---------------------------------------------------------------------------
-    -- RX_COUNTER register
+    -- RX_FR_CTR register
     ---------------------------------------------------------------------------
-    rx_counter_block : block
-        constant length : natural := Control_registers_in.rx_counter'length;
+    rx_fr_ctr_block : block
+        constant length : natural := Control_registers_in.rx_fr_ctr'length;
     begin
 
-        Control_registers_in.rx_counter(
-            align_reg_to_wrd(RX_COUNTER_VAL_H, length) downto
-            align_reg_to_wrd(RX_COUNTER_VAL_L, length)) <=
+        Control_registers_in.rx_fr_ctr(
+            align_reg_to_wrd(RX_FR_CTR_VAL_H, length) downto
+            align_reg_to_wrd(RX_FR_CTR_VAL_L, length)) <=
             stat_bus(STAT_RX_CTR_HIGH downto STAT_RX_CTR_LOW);
 
-    end block rx_counter_block;
+    end block rx_fr_ctr_block;
 
 
     ---------------------------------------------------------------------------
-    -- TX_COUNTER register
+    -- TX_FR_CTR register
     ---------------------------------------------------------------------------
-    tx_counter_block : block
-        constant length : natural := Control_registers_in.tx_counter'length;
+    tx_fr_ctr_block : block
+        constant length : natural := Control_registers_in.tx_fr_ctr'length;
     begin
 
-        Control_registers_in.tx_counter(
-            align_reg_to_wrd(TX_COUNTER_VAL_H, length) downto
-            align_reg_to_wrd(TX_COUNTER_VAL_L, length)) <=
+        Control_registers_in.tx_fr_ctr(
+            align_reg_to_wrd(TX_FR_CTR_VAL_H, length) downto
+            align_reg_to_wrd(TX_FR_CTR_VAL_L, length)) <=
             stat_bus(STAT_TX_CTR_HIGH downto STAT_TX_CTR_LOW);
 
-    end block tx_counter_block;
+    end block tx_fr_ctr_block;
 
 
     ---------------------------------------------------------------------------

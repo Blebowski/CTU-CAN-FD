@@ -1639,8 +1639,8 @@
 					</ipxact:field>
 				</ipxact:register>
 				<ipxact:register>
-					<ipxact:name>TX_COUNTER</ipxact:name>
-					<ipxact:displayName>TX_COUNTER</ipxact:displayName>
+					<ipxact:name>TX_FR_CTR</ipxact:name>
+					<ipxact:displayName>TX_FR_CTR</ipxact:displayName>
 					<ipxact:description>Bus traffic TX counter.</ipxact:description>
 					<ipxact:isPresent>uuid_db903261_61eb_4f15_8155_5b14164c20b0</ipxact:isPresent>
 					<ipxact:dim>0</ipxact:dim>
@@ -1649,7 +1649,7 @@
 					<ipxact:volatile>true</ipxact:volatile>
 					<ipxact:access>read-only</ipxact:access>
 					<ipxact:field>
-						<ipxact:name>TX_COUNTER_VAL</ipxact:name>
+						<ipxact:name>TX_FR_CTR_VAL</ipxact:name>
 						<ipxact:description>Number of transmitted frames by CTU CAN FD.</ipxact:description>
 						<ipxact:bitOffset>0</ipxact:bitOffset>
 						<ipxact:resets>
@@ -1661,8 +1661,8 @@
 					</ipxact:field>
 				</ipxact:register>
 				<ipxact:register>
-					<ipxact:name>RX_COUNTER</ipxact:name>
-					<ipxact:displayName>RX_COUNTER</ipxact:displayName>
+					<ipxact:name>RX_FR_CTR</ipxact:name>
+					<ipxact:displayName>RX_FR_CTR</ipxact:displayName>
 					<ipxact:description>Bus traffic RX counter.</ipxact:description>
 					<ipxact:isPresent>uuid_db903261_61eb_4f15_8155_5b14164c20b0</ipxact:isPresent>
 					<ipxact:dim>0</ipxact:dim>
@@ -1671,7 +1671,7 @@
 					<ipxact:volatile>true</ipxact:volatile>
 					<ipxact:access>read-only</ipxact:access>
 					<ipxact:field>
-						<ipxact:name>RX_COUNTER_VAL</ipxact:name>
+						<ipxact:name>RX_FR_CTR_VAL</ipxact:name>
 						<ipxact:description>Number of received frames by CTU CAN FD.</ipxact:description>
 						<ipxact:bitOffset>0</ipxact:bitOffset>
 						<ipxact:resets>

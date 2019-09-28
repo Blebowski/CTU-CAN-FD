@@ -4696,13 +4696,13 @@ package body CANtestLib is
     )is
         variable data           :       std_logic_vector(31 downto 0);
     begin
-        CAN_read(data, RX_COUNTER_ADR, ID, mem_bus);
+        CAN_read(data, RX_FR_CTR_ADR, ID, mem_bus);
         ctr.rx_frames := to_integer(unsigned(data(
-                            RX_COUNTER_VAL_H downto RX_COUNTER_VAL_L)));
+                            RX_FR_CTR_VAL_H downto RX_FR_CTR_VAL_L)));
 
-        CAN_read(data, TX_COUNTER_ADR, ID, mem_bus);
+        CAN_read(data, TX_FR_CTR_ADR, ID, mem_bus);
         ctr.tx_frames := to_integer(unsigned(data(
-                            TX_COUNTER_VAL_H downto TX_COUNTER_VAL_L)));
+                            TX_FR_CTR_VAL_H downto TX_FR_CTR_VAL_L)));
     end procedure;
 
 

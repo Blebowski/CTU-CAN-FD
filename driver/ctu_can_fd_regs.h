@@ -77,8 +77,8 @@ enum ctu_can_fd_can_registers {
 	CTU_CAN_FD_ALC                  = 0x7e,
 	CTU_CAN_FD_TRV_DELAY            = 0x80,
 	CTU_CAN_FD_SSP_CFG              = 0x82,
-	CTU_CAN_FD_RX_COUNTER           = 0x84,
-	CTU_CAN_FD_TX_COUNTER           = 0x88,
+	CTU_CAN_FD_RX_FR_CTR            = 0x84,
+	CTU_CAN_FD_TX_FR_CTR            = 0x88,
 	CTU_CAN_FD_DEBUG_REGISTER       = 0x8c,
 	CTU_CAN_FD_YOLO_REG             = 0x90,
 	CTU_CAN_FD_TIMESTAMP_LOW        = 0x94,
@@ -875,19 +875,19 @@ enum ctu_can_fd_ssp_cfg_ssp_src {
 	SSP_SRC_OFFSET              = 0x2,
 };
 
-union ctu_can_fd_rx_counter {
+union ctu_can_fd_rx_fr_ctr {
 	uint32_t u32;
-	struct ctu_can_fd_rx_counter_s {
-  /* RX_COUNTER */
-		uint32_t rx_counter_val         : 32;
+	struct ctu_can_fd_rx_fr_ctr_s {
+  /* RX_FR_CTR */
+		uint32_t rx_fr_ctr_val          : 32;
 	} s;
 };
 
-union ctu_can_fd_tx_counter {
+union ctu_can_fd_tx_fr_ctr {
 	uint32_t u32;
-	struct ctu_can_fd_tx_counter_s {
-  /* TX_COUNTER */
-		uint32_t tx_counter_val         : 32;
+	struct ctu_can_fd_tx_fr_ctr_s {
+  /* TX_FR_CTR */
+		uint32_t tx_fr_ctr_val          : 32;
 	} s;
 };
 

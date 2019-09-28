@@ -118,8 +118,8 @@ package can_fd_register_map is
   constant ALC_ADR                   : std_logic_vector(11 downto 0) := x"07E";
   constant TRV_DELAY_ADR             : std_logic_vector(11 downto 0) := x"080";
   constant SSP_CFG_ADR               : std_logic_vector(11 downto 0) := x"082";
-  constant RX_COUNTER_ADR            : std_logic_vector(11 downto 0) := x"084";
-  constant TX_COUNTER_ADR            : std_logic_vector(11 downto 0) := x"088";
+  constant RX_FR_CTR_ADR             : std_logic_vector(11 downto 0) := x"084";
+  constant TX_FR_CTR_ADR             : std_logic_vector(11 downto 0) := x"088";
   constant DEBUG_REGISTER_ADR        : std_logic_vector(11 downto 0) := x"08C";
   constant YOLO_REG_ADR              : std_logic_vector(11 downto 0) := x"090";
   constant TIMESTAMP_LOW_ADR         : std_logic_vector(11 downto 0) := x"094";
@@ -305,11 +305,11 @@ package can_fd_register_map is
      size      => 16,
      reg_type  => reg_read_write,
      reset_val => "00000000000001000000000000000000"),
-    (address   => RX_COUNTER_ADR,
+    (address   => RX_FR_CTR_ADR,
      size      => 32,
      reg_type  => reg_read_only,
      reset_val => "00000000000000000000000000000000"),
-    (address   => TX_COUNTER_ADR,
+    (address   => TX_FR_CTR_ADR,
      size      => 32,
      reg_type  => reg_read_only,
      reset_val => "00000000000000000000000000000000"),
@@ -1263,28 +1263,26 @@ package can_fd_register_map is
   constant SSP_SRC_RSTVAL : std_logic_vector(1 downto 0) := "00";
 
   ------------------------------------------------------------------------------
-  -- RX_COUNTER register
+  -- RX_FR_CTR register
   --
   -- Bus traffic RX counter.
   ------------------------------------------------------------------------------
-  constant RX_COUNTER_VAL_L       : natural := 0;
-  constant RX_COUNTER_VAL_H      : natural := 31;
+  constant RX_FR_CTR_VAL_L        : natural := 0;
+  constant RX_FR_CTR_VAL_H       : natural := 31;
 
-  -- RX_COUNTER register reset values
-  constant RX_COUNTER_VAL_RSTVAL
-                 : std_logic_vector(31 downto 0) := x"00000000";
+  -- RX_FR_CTR register reset values
+  constant RX_FR_CTR_VAL_RSTVAL : std_logic_vector(31 downto 0) := x"00000000";
 
   ------------------------------------------------------------------------------
-  -- TX_COUNTER register
+  -- TX_FR_CTR register
   --
   -- Bus traffic TX counter.
   ------------------------------------------------------------------------------
-  constant TX_COUNTER_VAL_L       : natural := 0;
-  constant TX_COUNTER_VAL_H      : natural := 31;
+  constant TX_FR_CTR_VAL_L        : natural := 0;
+  constant TX_FR_CTR_VAL_H       : natural := 31;
 
-  -- TX_COUNTER register reset values
-  constant TX_COUNTER_VAL_RSTVAL
-                 : std_logic_vector(31 downto 0) := x"00000000";
+  -- TX_FR_CTR register reset values
+  constant TX_FR_CTR_VAL_RSTVAL : std_logic_vector(31 downto 0) := x"00000000";
 
   ------------------------------------------------------------------------------
   -- DEBUG_REGISTER register

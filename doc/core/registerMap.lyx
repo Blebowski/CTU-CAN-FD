@@ -2415,7 +2415,7 @@ hyperref[TRV_DELAY]{TRV\backslash textunderscore DELAY}\end_layout
 status open
 \begin_layout Plain Layout
 \backslash
-hyperref[RX_COUNTER]{RX\backslash textunderscore COUNTER}\end_layout
+hyperref[RX_FR_CTR]{RX\backslash textunderscore FR\backslash textunderscore CTR}\end_layout
 \end_inset
 \end_layout
 
@@ -2429,7 +2429,7 @@ hyperref[RX_COUNTER]{RX\backslash textunderscore COUNTER}\end_layout
 status open
 \begin_layout Plain Layout
 \backslash
-hyperref[RX_COUNTER]{RX\backslash textunderscore COUNTER}\end_layout
+hyperref[RX_FR_CTR]{RX\backslash textunderscore FR\backslash textunderscore CTR}\end_layout
 \end_inset
 \end_layout
 
@@ -2443,7 +2443,7 @@ hyperref[RX_COUNTER]{RX\backslash textunderscore COUNTER}\end_layout
 status open
 \begin_layout Plain Layout
 \backslash
-hyperref[RX_COUNTER]{RX\backslash textunderscore COUNTER}\end_layout
+hyperref[RX_FR_CTR]{RX\backslash textunderscore FR\backslash textunderscore CTR}\end_layout
 \end_inset
 \end_layout
 
@@ -2457,7 +2457,7 @@ hyperref[RX_COUNTER]{RX\backslash textunderscore COUNTER}\end_layout
 status open
 \begin_layout Plain Layout
 \backslash
-hyperref[RX_COUNTER]{RX\backslash textunderscore COUNTER}\end_layout
+hyperref[RX_FR_CTR]{RX\backslash textunderscore FR\backslash textunderscore CTR}\end_layout
 \end_inset
 \end_layout
 
@@ -2481,7 +2481,7 @@ hyperref[RX_COUNTER]{RX\backslash textunderscore COUNTER}\end_layout
 status open
 \begin_layout Plain Layout
 \backslash
-hyperref[TX_COUNTER]{TX\backslash textunderscore COUNTER}\end_layout
+hyperref[TX_FR_CTR]{TX\backslash textunderscore FR\backslash textunderscore CTR}\end_layout
 \end_inset
 \end_layout
 
@@ -2495,7 +2495,7 @@ hyperref[TX_COUNTER]{TX\backslash textunderscore COUNTER}\end_layout
 status open
 \begin_layout Plain Layout
 \backslash
-hyperref[TX_COUNTER]{TX\backslash textunderscore COUNTER}\end_layout
+hyperref[TX_FR_CTR]{TX\backslash textunderscore FR\backslash textunderscore CTR}\end_layout
 \end_inset
 \end_layout
 
@@ -2509,7 +2509,7 @@ hyperref[TX_COUNTER]{TX\backslash textunderscore COUNTER}\end_layout
 status open
 \begin_layout Plain Layout
 \backslash
-hyperref[TX_COUNTER]{TX\backslash textunderscore COUNTER}\end_layout
+hyperref[TX_FR_CTR]{TX\backslash textunderscore FR\backslash textunderscore CTR}\end_layout
 \end_inset
 \end_layout
 
@@ -2523,7 +2523,7 @@ hyperref[TX_COUNTER]{TX\backslash textunderscore COUNTER}\end_layout
 status open
 \begin_layout Plain Layout
 \backslash
-hyperref[TX_COUNTER]{TX\backslash textunderscore COUNTER}\end_layout
+hyperref[TX_FR_CTR]{TX\backslash textunderscore FR\backslash textunderscore CTR}\end_layout
 \end_inset
 \end_layout
 
@@ -40592,12 +40592,12 @@ SSP_SRC Source of Secondary Sampling Point. If configured value exceeds 127, it 
 \end_inset
 \end_layout
 \begin_layout Subsection
-RX_COUNTER
+RX_FR_CTR
 \begin_inset ERT
 status open
 \begin_layout Plain Layout
 \backslash
-label{RX_COUNTER
+label{RX_FR_CTR
 }\end_layout
 \end_inset
 \end_layout
@@ -40788,7 +40788,7 @@ cellcolor{cyan}
 \begin_inset Text
 
 \begin_layout Plain Layout
-RX_COUNTER_VAL[31:24]\end_layout
+RX_FR_CTR_VAL[31:24]\end_layout
 
 \end_inset
 </cell>
@@ -40796,7 +40796,7 @@ RX_COUNTER_VAL[31:24]\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-RX_COUNTER_VAL[31:24]\end_layout
+RX_FR_CTR_VAL[31:24]\end_layout
 
 \end_inset
 </cell>
@@ -40804,7 +40804,7 @@ RX_COUNTER_VAL[31:24]\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-RX_COUNTER_VAL[31:24]\end_layout
+RX_FR_CTR_VAL[31:24]\end_layout
 
 \end_inset
 </cell>
@@ -40812,7 +40812,7 @@ RX_COUNTER_VAL[31:24]\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-RX_COUNTER_VAL[31:24]\end_layout
+RX_FR_CTR_VAL[31:24]\end_layout
 
 \end_inset
 </cell>
@@ -40820,7 +40820,7 @@ RX_COUNTER_VAL[31:24]\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-RX_COUNTER_VAL[31:24]\end_layout
+RX_FR_CTR_VAL[31:24]\end_layout
 
 \end_inset
 </cell>
@@ -40828,7 +40828,7 @@ RX_COUNTER_VAL[31:24]\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-RX_COUNTER_VAL[31:24]\end_layout
+RX_FR_CTR_VAL[31:24]\end_layout
 
 \end_inset
 </cell>
@@ -40836,7 +40836,7 @@ RX_COUNTER_VAL[31:24]\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-RX_COUNTER_VAL[31:24]\end_layout
+RX_FR_CTR_VAL[31:24]\end_layout
 
 \end_inset
 </cell>
@@ -40844,7 +40844,7 @@ RX_COUNTER_VAL[31:24]\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-RX_COUNTER_VAL[31:24]\end_layout
+RX_FR_CTR_VAL[31:24]\end_layout
 
 \end_inset
 </cell>
@@ -41108,7 +41108,7 @@ cellcolor{cyan}
 \begin_inset Text
 
 \begin_layout Plain Layout
-RX_COUNTER_VAL[23:16]\end_layout
+RX_FR_CTR_VAL[23:16]\end_layout
 
 \end_inset
 </cell>
@@ -41116,7 +41116,7 @@ RX_COUNTER_VAL[23:16]\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-RX_COUNTER_VAL[23:16]\end_layout
+RX_FR_CTR_VAL[23:16]\end_layout
 
 \end_inset
 </cell>
@@ -41124,7 +41124,7 @@ RX_COUNTER_VAL[23:16]\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-RX_COUNTER_VAL[23:16]\end_layout
+RX_FR_CTR_VAL[23:16]\end_layout
 
 \end_inset
 </cell>
@@ -41132,7 +41132,7 @@ RX_COUNTER_VAL[23:16]\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-RX_COUNTER_VAL[23:16]\end_layout
+RX_FR_CTR_VAL[23:16]\end_layout
 
 \end_inset
 </cell>
@@ -41140,7 +41140,7 @@ RX_COUNTER_VAL[23:16]\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-RX_COUNTER_VAL[23:16]\end_layout
+RX_FR_CTR_VAL[23:16]\end_layout
 
 \end_inset
 </cell>
@@ -41148,7 +41148,7 @@ RX_COUNTER_VAL[23:16]\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-RX_COUNTER_VAL[23:16]\end_layout
+RX_FR_CTR_VAL[23:16]\end_layout
 
 \end_inset
 </cell>
@@ -41156,7 +41156,7 @@ RX_COUNTER_VAL[23:16]\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-RX_COUNTER_VAL[23:16]\end_layout
+RX_FR_CTR_VAL[23:16]\end_layout
 
 \end_inset
 </cell>
@@ -41164,7 +41164,7 @@ RX_COUNTER_VAL[23:16]\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-RX_COUNTER_VAL[23:16]\end_layout
+RX_FR_CTR_VAL[23:16]\end_layout
 
 \end_inset
 </cell>
@@ -41428,7 +41428,7 @@ cellcolor{cyan}
 \begin_inset Text
 
 \begin_layout Plain Layout
-RX_COUNTER_VAL[15:8]\end_layout
+RX_FR_CTR_VAL[15:8]\end_layout
 
 \end_inset
 </cell>
@@ -41436,7 +41436,7 @@ RX_COUNTER_VAL[15:8]\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-RX_COUNTER_VAL[15:8]\end_layout
+RX_FR_CTR_VAL[15:8]\end_layout
 
 \end_inset
 </cell>
@@ -41444,7 +41444,7 @@ RX_COUNTER_VAL[15:8]\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-RX_COUNTER_VAL[15:8]\end_layout
+RX_FR_CTR_VAL[15:8]\end_layout
 
 \end_inset
 </cell>
@@ -41452,7 +41452,7 @@ RX_COUNTER_VAL[15:8]\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-RX_COUNTER_VAL[15:8]\end_layout
+RX_FR_CTR_VAL[15:8]\end_layout
 
 \end_inset
 </cell>
@@ -41460,7 +41460,7 @@ RX_COUNTER_VAL[15:8]\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-RX_COUNTER_VAL[15:8]\end_layout
+RX_FR_CTR_VAL[15:8]\end_layout
 
 \end_inset
 </cell>
@@ -41468,7 +41468,7 @@ RX_COUNTER_VAL[15:8]\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-RX_COUNTER_VAL[15:8]\end_layout
+RX_FR_CTR_VAL[15:8]\end_layout
 
 \end_inset
 </cell>
@@ -41476,7 +41476,7 @@ RX_COUNTER_VAL[15:8]\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-RX_COUNTER_VAL[15:8]\end_layout
+RX_FR_CTR_VAL[15:8]\end_layout
 
 \end_inset
 </cell>
@@ -41484,7 +41484,7 @@ RX_COUNTER_VAL[15:8]\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-RX_COUNTER_VAL[15:8]\end_layout
+RX_FR_CTR_VAL[15:8]\end_layout
 
 \end_inset
 </cell>
@@ -41748,7 +41748,7 @@ cellcolor{cyan}
 \begin_inset Text
 
 \begin_layout Plain Layout
-RX_COUNTER_VAL[7:0]\end_layout
+RX_FR_CTR_VAL[7:0]\end_layout
 
 \end_inset
 </cell>
@@ -41756,7 +41756,7 @@ RX_COUNTER_VAL[7:0]\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-RX_COUNTER_VAL[7:0]\end_layout
+RX_FR_CTR_VAL[7:0]\end_layout
 
 \end_inset
 </cell>
@@ -41764,7 +41764,7 @@ RX_COUNTER_VAL[7:0]\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-RX_COUNTER_VAL[7:0]\end_layout
+RX_FR_CTR_VAL[7:0]\end_layout
 
 \end_inset
 </cell>
@@ -41772,7 +41772,7 @@ RX_COUNTER_VAL[7:0]\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-RX_COUNTER_VAL[7:0]\end_layout
+RX_FR_CTR_VAL[7:0]\end_layout
 
 \end_inset
 </cell>
@@ -41780,7 +41780,7 @@ RX_COUNTER_VAL[7:0]\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-RX_COUNTER_VAL[7:0]\end_layout
+RX_FR_CTR_VAL[7:0]\end_layout
 
 \end_inset
 </cell>
@@ -41788,7 +41788,7 @@ RX_COUNTER_VAL[7:0]\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-RX_COUNTER_VAL[7:0]\end_layout
+RX_FR_CTR_VAL[7:0]\end_layout
 
 \end_inset
 </cell>
@@ -41796,7 +41796,7 @@ RX_COUNTER_VAL[7:0]\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-RX_COUNTER_VAL[7:0]\end_layout
+RX_FR_CTR_VAL[7:0]\end_layout
 
 \end_inset
 </cell>
@@ -41804,7 +41804,7 @@ RX_COUNTER_VAL[7:0]\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-RX_COUNTER_VAL[7:0]\end_layout
+RX_FR_CTR_VAL[7:0]\end_layout
 
 \end_inset
 </cell>
@@ -41897,19 +41897,19 @@ cellcolor{cyan}
 
 \end_layout
 \begin_layout Description
-RX_COUNTER_VAL Number of received frames by CTU CAN FD.
+RX_FR_CTR_VAL Number of received frames by CTU CAN FD.
 \end_layout
 \begin_layout Standard
 \begin_inset VSpace bigskip
 \end_inset
 \end_layout
 \begin_layout Subsection
-TX_COUNTER
+TX_FR_CTR
 \begin_inset ERT
 status open
 \begin_layout Plain Layout
 \backslash
-label{TX_COUNTER
+label{TX_FR_CTR
 }\end_layout
 \end_inset
 \end_layout
@@ -42100,7 +42100,7 @@ cellcolor{cyan}
 \begin_inset Text
 
 \begin_layout Plain Layout
-TX_COUNTER_VAL[31:24]\end_layout
+TX_FR_CTR_VAL[31:24]\end_layout
 
 \end_inset
 </cell>
@@ -42108,7 +42108,7 @@ TX_COUNTER_VAL[31:24]\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-TX_COUNTER_VAL[31:24]\end_layout
+TX_FR_CTR_VAL[31:24]\end_layout
 
 \end_inset
 </cell>
@@ -42116,7 +42116,7 @@ TX_COUNTER_VAL[31:24]\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-TX_COUNTER_VAL[31:24]\end_layout
+TX_FR_CTR_VAL[31:24]\end_layout
 
 \end_inset
 </cell>
@@ -42124,7 +42124,7 @@ TX_COUNTER_VAL[31:24]\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-TX_COUNTER_VAL[31:24]\end_layout
+TX_FR_CTR_VAL[31:24]\end_layout
 
 \end_inset
 </cell>
@@ -42132,7 +42132,7 @@ TX_COUNTER_VAL[31:24]\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-TX_COUNTER_VAL[31:24]\end_layout
+TX_FR_CTR_VAL[31:24]\end_layout
 
 \end_inset
 </cell>
@@ -42140,7 +42140,7 @@ TX_COUNTER_VAL[31:24]\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-TX_COUNTER_VAL[31:24]\end_layout
+TX_FR_CTR_VAL[31:24]\end_layout
 
 \end_inset
 </cell>
@@ -42148,7 +42148,7 @@ TX_COUNTER_VAL[31:24]\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-TX_COUNTER_VAL[31:24]\end_layout
+TX_FR_CTR_VAL[31:24]\end_layout
 
 \end_inset
 </cell>
@@ -42156,7 +42156,7 @@ TX_COUNTER_VAL[31:24]\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-TX_COUNTER_VAL[31:24]\end_layout
+TX_FR_CTR_VAL[31:24]\end_layout
 
 \end_inset
 </cell>
@@ -42420,7 +42420,7 @@ cellcolor{cyan}
 \begin_inset Text
 
 \begin_layout Plain Layout
-TX_COUNTER_VAL[23:16]\end_layout
+TX_FR_CTR_VAL[23:16]\end_layout
 
 \end_inset
 </cell>
@@ -42428,7 +42428,7 @@ TX_COUNTER_VAL[23:16]\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-TX_COUNTER_VAL[23:16]\end_layout
+TX_FR_CTR_VAL[23:16]\end_layout
 
 \end_inset
 </cell>
@@ -42436,7 +42436,7 @@ TX_COUNTER_VAL[23:16]\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-TX_COUNTER_VAL[23:16]\end_layout
+TX_FR_CTR_VAL[23:16]\end_layout
 
 \end_inset
 </cell>
@@ -42444,7 +42444,7 @@ TX_COUNTER_VAL[23:16]\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-TX_COUNTER_VAL[23:16]\end_layout
+TX_FR_CTR_VAL[23:16]\end_layout
 
 \end_inset
 </cell>
@@ -42452,7 +42452,7 @@ TX_COUNTER_VAL[23:16]\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-TX_COUNTER_VAL[23:16]\end_layout
+TX_FR_CTR_VAL[23:16]\end_layout
 
 \end_inset
 </cell>
@@ -42460,7 +42460,7 @@ TX_COUNTER_VAL[23:16]\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-TX_COUNTER_VAL[23:16]\end_layout
+TX_FR_CTR_VAL[23:16]\end_layout
 
 \end_inset
 </cell>
@@ -42468,7 +42468,7 @@ TX_COUNTER_VAL[23:16]\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-TX_COUNTER_VAL[23:16]\end_layout
+TX_FR_CTR_VAL[23:16]\end_layout
 
 \end_inset
 </cell>
@@ -42476,7 +42476,7 @@ TX_COUNTER_VAL[23:16]\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-TX_COUNTER_VAL[23:16]\end_layout
+TX_FR_CTR_VAL[23:16]\end_layout
 
 \end_inset
 </cell>
@@ -42740,7 +42740,7 @@ cellcolor{cyan}
 \begin_inset Text
 
 \begin_layout Plain Layout
-TX_COUNTER_VAL[15:8]\end_layout
+TX_FR_CTR_VAL[15:8]\end_layout
 
 \end_inset
 </cell>
@@ -42748,7 +42748,7 @@ TX_COUNTER_VAL[15:8]\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-TX_COUNTER_VAL[15:8]\end_layout
+TX_FR_CTR_VAL[15:8]\end_layout
 
 \end_inset
 </cell>
@@ -42756,7 +42756,7 @@ TX_COUNTER_VAL[15:8]\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-TX_COUNTER_VAL[15:8]\end_layout
+TX_FR_CTR_VAL[15:8]\end_layout
 
 \end_inset
 </cell>
@@ -42764,7 +42764,7 @@ TX_COUNTER_VAL[15:8]\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-TX_COUNTER_VAL[15:8]\end_layout
+TX_FR_CTR_VAL[15:8]\end_layout
 
 \end_inset
 </cell>
@@ -42772,7 +42772,7 @@ TX_COUNTER_VAL[15:8]\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-TX_COUNTER_VAL[15:8]\end_layout
+TX_FR_CTR_VAL[15:8]\end_layout
 
 \end_inset
 </cell>
@@ -42780,7 +42780,7 @@ TX_COUNTER_VAL[15:8]\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-TX_COUNTER_VAL[15:8]\end_layout
+TX_FR_CTR_VAL[15:8]\end_layout
 
 \end_inset
 </cell>
@@ -42788,7 +42788,7 @@ TX_COUNTER_VAL[15:8]\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-TX_COUNTER_VAL[15:8]\end_layout
+TX_FR_CTR_VAL[15:8]\end_layout
 
 \end_inset
 </cell>
@@ -42796,7 +42796,7 @@ TX_COUNTER_VAL[15:8]\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-TX_COUNTER_VAL[15:8]\end_layout
+TX_FR_CTR_VAL[15:8]\end_layout
 
 \end_inset
 </cell>
@@ -43060,7 +43060,7 @@ cellcolor{cyan}
 \begin_inset Text
 
 \begin_layout Plain Layout
-TX_COUNTER_VAL[7:0]\end_layout
+TX_FR_CTR_VAL[7:0]\end_layout
 
 \end_inset
 </cell>
@@ -43068,7 +43068,7 @@ TX_COUNTER_VAL[7:0]\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-TX_COUNTER_VAL[7:0]\end_layout
+TX_FR_CTR_VAL[7:0]\end_layout
 
 \end_inset
 </cell>
@@ -43076,7 +43076,7 @@ TX_COUNTER_VAL[7:0]\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-TX_COUNTER_VAL[7:0]\end_layout
+TX_FR_CTR_VAL[7:0]\end_layout
 
 \end_inset
 </cell>
@@ -43084,7 +43084,7 @@ TX_COUNTER_VAL[7:0]\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-TX_COUNTER_VAL[7:0]\end_layout
+TX_FR_CTR_VAL[7:0]\end_layout
 
 \end_inset
 </cell>
@@ -43092,7 +43092,7 @@ TX_COUNTER_VAL[7:0]\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-TX_COUNTER_VAL[7:0]\end_layout
+TX_FR_CTR_VAL[7:0]\end_layout
 
 \end_inset
 </cell>
@@ -43100,7 +43100,7 @@ TX_COUNTER_VAL[7:0]\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-TX_COUNTER_VAL[7:0]\end_layout
+TX_FR_CTR_VAL[7:0]\end_layout
 
 \end_inset
 </cell>
@@ -43108,7 +43108,7 @@ TX_COUNTER_VAL[7:0]\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-TX_COUNTER_VAL[7:0]\end_layout
+TX_FR_CTR_VAL[7:0]\end_layout
 
 \end_inset
 </cell>
@@ -43116,7 +43116,7 @@ TX_COUNTER_VAL[7:0]\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-TX_COUNTER_VAL[7:0]\end_layout
+TX_FR_CTR_VAL[7:0]\end_layout
 
 \end_inset
 </cell>
@@ -43209,7 +43209,7 @@ cellcolor{cyan}
 
 \end_layout
 \begin_layout Description
-TX_COUNTER_VAL Number of transmitted frames by CTU CAN FD.
+TX_FR_CTR_VAL Number of transmitted frames by CTU CAN FD.
 \end_layout
 \begin_layout Standard
 \begin_inset VSpace bigskip

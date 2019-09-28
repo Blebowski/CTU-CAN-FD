@@ -22129,7 +22129,8 @@ literal "false"
 \begin_layout Standard
 Both counters can be erased by SW via COMMAND[TXFRCRST] and COMMAND[RXFRCRST]
  register.
- Value of counters can be read out from TX_COUNTER and RX_COUNTER registers.
+ Value of traffic counters can be read out from TX_FR_CTR and RX_FR_CTR
+ registers.
  Bus traffic counters are instantiated only when 
 \series bold
 \shape italic

@@ -101,8 +101,8 @@ package can_registers_pkg is
      err_capt                    : std_logic_vector(7 downto 0);
      alc                         : std_logic_vector(7 downto 0);
      trv_delay                   : std_logic_vector(15 downto 0);
-     rx_counter                  : std_logic_vector(31 downto 0);
-     tx_counter                  : std_logic_vector(31 downto 0);
+     rx_fr_ctr                   : std_logic_vector(31 downto 0);
+     tx_fr_ctr                   : std_logic_vector(31 downto 0);
      debug_register              : std_logic_vector(31 downto 0);
      yolo_reg                    : std_logic_vector(31 downto 0);
      timestamp_low               : std_logic_vector(31 downto 0);
