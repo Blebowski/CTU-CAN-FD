@@ -2542,7 +2542,6 @@
 				<ipxact:register>
 					<ipxact:name>TXC</ipxact:name>
 					<ipxact:displayName>TXC</ipxact:displayName>
-					<ipxact:isPresent>uuid_db903261_61eb_4f15_8155_5b14164c20b0</ipxact:isPresent>
 					<ipxact:dim>0</ipxact:dim>
 					<ipxact:addressOffset>'h32</ipxact:addressOffset>
 					<ipxact:size>16</ipxact:size>
@@ -2563,7 +2562,6 @@
 				<ipxact:register>
 					<ipxact:name>RXC</ipxact:name>
 					<ipxact:displayName>RXC</ipxact:displayName>
-					<ipxact:isPresent>uuid_db903261_61eb_4f15_8155_5b14164c20b0</ipxact:isPresent>
 					<ipxact:dim>0</ipxact:dim>
 					<ipxact:addressOffset>'h30</ipxact:addressOffset>
 					<ipxact:size>16</ipxact:size>
@@ -3077,7 +3075,7 @@
 			<ipxact:displayName>sup_filt_B</ipxact:displayName>
 			<ipxact:value>1</ipxact:value>
 		</ipxact:parameter>
-		<ipxact:parameter kactus2:usageCount="4" parameterId="uuid_db903261_61eb_4f15_8155_5b14164c20b0">
+		<ipxact:parameter kactus2:usageCount="2" parameterId="uuid_db903261_61eb_4f15_8155_5b14164c20b0">
 			<ipxact:name>sup_traffic_ctrs</ipxact:name>
 			<ipxact:displayName>sup_traffic_ctrs</ipxact:displayName>
 			<ipxact:value>1</ipxact:value>
