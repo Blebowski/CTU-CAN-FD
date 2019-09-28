@@ -159,8 +159,16 @@ begin
         output             => tx_ctr_rst_q          -- OUT
     );
     
-    rx_ctr_res_inst : dff
+    rx_ctr_res_inst : dff_arst
+    generic map(
+        G_RESET_POLARITY   => G_RESET_POLARITY,
+        
+        -- Reset to the same value as is polarity of reset so that other DFFs
+        -- which are reset by output of this one will be reset too!
+        G_RST_VAL          => G_RESET_POLARITY
+    )
     port map(
+        arst               => res_n,                -- IN
         clk                => clk_sys,              -- IN
         input              => rx_ctr_rst_d,         -- IN
         
