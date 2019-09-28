@@ -94,6 +94,7 @@ feature:
         one_shot:
         rx_status:
         tx_counter:
+        rx_counter:
         # tran_delay:
         tx_arb_time_tran:
         # timestamp_options:
