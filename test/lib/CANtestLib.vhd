@@ -2464,7 +2464,8 @@ package body CANtestLib is
     begin
         if (id_type = EXTENDED) then
             check(id_in < 536870912,
-                  "Extended Identifier Exceeds the maximal value!");
+                  "Extended Identifier: " & integer'image(id_in) &
+                  " Exceeds the maximal value!");
             id_vect := std_logic_vector(to_unsigned(id_in, 29));
 
             id_out(IDENTIFIER_BASE_H downto IDENTIFIER_BASE_L) :=
@@ -2473,7 +2474,8 @@ package body CANtestLib is
                 id_vect(17 downto 0);
         else
             check(id_in < 2048,
-                  "Base Identifier Exceeds the maximal value!");
+                  "Base Identifier: " & integer'image(id_in) &
+                  " Exceeds the maximal value!");
             id_vect := "000000000000000000" &
                            std_logic_vector(to_unsigned(id_in, 11));
             id_out(IDENTIFIER_BASE_H downto IDENTIFIER_BASE_L) :=
@@ -4665,15 +4667,17 @@ package body CANtestLib is
 
         case data(ALC_ID_FIELD_H downto ALC_ID_FIELD_L) is
         when ALC_BASE_ID =>
-            alc := 12 - to_integer(unsigned(data(ALC_BIT_H downto ALC_BIT_L)));
+            alc := 11 - to_integer(unsigned(data(ALC_BIT_H downto ALC_BIT_L)));
         when ALC_EXTENSION =>
-            alc := 32 - to_integer(unsigned(data(ALC_BIT_H downto ALC_BIT_L)));
+            alc := 31 - to_integer(unsigned(data(ALC_BIT_H downto ALC_BIT_L)));
         when ALC_SRR_RTR =>
             alc := 12;
         when ALC_IDE =>
             alc := 13;
         when ALC_RTR =>
-            alc := 33;
+            alc := 32;
+        when ALC_RSVD =>
+            alc := 0;
         when others =>
             error("Unsupported ALC type");
         end case;
