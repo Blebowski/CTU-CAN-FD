@@ -511,7 +511,7 @@ filename "version.tex"
 \noindent
 \align center
 \begin_inset Tabular
-<lyxtabular version="3" rows="2" columns="5">
+<lyxtabular version="3" rows="3" columns="5">
 <features tabularvalignment="middle">
 <column alignment="center" valignment="top" width="1.5cm">
 <column alignment="center" valignment="top" width="3cm">
@@ -566,11 +566,59 @@ Change description
 </cell>
 </row>
 <row>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
 0.1
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+2.2
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Ondrej Ille
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+26-09-2019
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Initial version - separated stand-alone architecture document from Datasheet
+ document.
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+0.2
 \end_layout
 
 \end_inset
@@ -597,7 +645,7 @@ Ondrej Ille
 \begin_inset Text
 
 \begin_layout Plain Layout
-26-09-2019
+29-09-2019
 \end_layout
 
 \end_inset
@@ -606,8 +654,7 @@ Ondrej Ille
 \begin_inset Text
 
 \begin_layout Plain Layout
-Initial version - separated stand-alone architecture document from Datasheet
- document.
+TX Arbitrator loads identifier as part of TXT buffer validation.
 \end_layout
 
 \end_inset
@@ -934,10 +981,12 @@ When CTU CAN FD GIT repository is clonned, register map can be generated
 \end_layout
 
 \begin_layout Verbatim
+
 cd scripts
 \end_layout
 
 \begin_layout Verbatim
+
 ./update_reg_map
 \end_layout
 
@@ -950,10 +999,12 @@ Documentation can be exported from VHDL RTL codes by following script:
 \end_layout
 
 \begin_layout Verbatim
+
 cd scripts
 \end_layout
 
 \begin_layout Verbatim
+
 python gen_lyx_tables.py --configPath vhdl_lyx_interface_cfg.yml
 \end_layout
 
@@ -986,10 +1037,12 @@ CTU CAN FD contains release tags in GIT repository.
 \end_layout
 
 \begin_layout Verbatim
+
 cd scripts
 \end_layout
 
 \begin_layout Verbatim
+
 python create_release.py --output_dir ../release_directory_name
 \end_layout
 
@@ -1011,10 +1064,12 @@ src/component.xml
 \end_layout
 
 \begin_layout Verbatim
+
 cd scripts
 \end_layout
 
 \begin_layout Verbatim
+
 python gen_vivado_component.py
 \end_layout
 
@@ -11961,7 +12016,7 @@ Base identifier
 \begin_inset Text
 
 \begin_layout Plain Layout
-TXT Buffer RAM data output on Port B.
+Identifier capture register in TX Arbitrator.
 \end_layout
 
 \end_inset
@@ -11996,7 +12051,7 @@ Identifier extension
 \begin_inset Text
 
 \begin_layout Plain Layout
-TXT Buffer RAM data output on Port B.
+Identifier capture register in TX Arbitrator.
 \end_layout
 
 \end_inset
@@ -26537,7 +26592,7 @@ TXT buffer moves to Abort in progress.
 \begin_inset Text
 
 \begin_layout Plain Layout
-
+5
 \end_layout
 
 \end_inset
@@ -27220,7 +27275,7 @@ arbitration
 \begin_inset Text
 
 \begin_layout Plain Layout
-6
+5
 \end_layout
 
 \end_inset
@@ -27304,8 +27359,8 @@ Pick TXT buffer for transmission.
 \end_layout
 
 \begin_layout Itemize
-Load CAN frame metadata from TXT buffer and provide them to CAN core during
- transmission.
+Load CAN frame metadata and Identifier from TXT buffer and provide them
+ to CAN core for transmission.
 \end_layout
 
 \begin_layout Itemize
@@ -27466,20 +27521,24 @@ noprefix "false"
 \end_inset
 
 .
- Note that every state of TXT buffer FSM lasts for two clock cycles due
- to wait state.
+ Note each state of TXT buffer FSM which is part of TXT buffer validation
+ lasts for two clock cycles due to wait state.
  Such wait state is inserted to cover delay of TXT buffer RAM.
 \end_layout
 
 \begin_layout Standard
 If index of Selected TXT buffer changes (due to another higher priority
  TXT buffer becoming Ready or change of TXT buffers priorities) during validatio
-n process or after validation process was finished, TXT buffer validation
- process restarts with newly Selected TXT buffer.
- If Validated TXT buffer suddenly becomes Unavailable (due to Set abort
- SW command), TX arbitrator signals immediately (in the same clock cycle)
- to Protocol control FSM that there is no Validated TXT buffer (this is
- done to avoid control hazards on TX frame datapath and it is further explained
+n process or after validation process was finished (TX arbitrator FSM is
+ in Validated state), TXT buffer validation process restarts with newly
+ Selected TXT buffer.
+\end_layout
+
+\begin_layout Standard
+If Validated TXT buffer suddenly becomes Unavailable (due to Set abort SW
+ command), TX arbitrator signals immediately (in the same clock cycle) to
+ Protocol control FSM that there is no Validated TXT buffer (this is done
+ to avoid control hazards on TX frame datapath and it is further explained
  in 
 \begin_inset CommandInset ref
 LatexCommand ref
@@ -27490,12 +27549,11 @@ noprefix "false"
 
 \end_inset
 
-).
- These situations are not mutually exclusive, possible cornercases are explained
- in 
+) and TX arbitrator FSM moves to Idle state.
+ Several use-cases are explained in 
 \begin_inset CommandInset ref
 LatexCommand ref
-reference "tab:tx-arbitrator-cornercase-1"
+reference "tab:tx-arbitrator-usecase-1"
 plural "false"
 caps "false"
 noprefix "false"
@@ -27505,7 +27563,7 @@ noprefix "false"
  and 
 \begin_inset CommandInset ref
 LatexCommand ref
-reference "tab:tx-arbitrator-cornercase-2"
+reference "tab:tx-arbitrator-use-case-2"
 plural "false"
 caps "false"
 noprefix "false"
@@ -27542,6 +27600,50 @@ noprefix "false"
 \end_inset
 
 )
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+placement H
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\noindent
+\align center
+\begin_inset Graphics
+	filename ../pics/Visio_generated/FSM_TX_Arbitrator.pdf
+	lyxscale 20
+	scale 80
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+TX arbitrator FSM
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:fsm-tx-arbitrator"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
@@ -27770,49 +27872,6 @@ name "tab:tx-arbitrator-buffer-processing"
 \end_layout
 
 \begin_layout Standard
-\begin_inset Float figure
-placement H
-wide false
-sideways false
-status open
-
-\begin_layout Plain Layout
-\noindent
-\align center
-\begin_inset Graphics
-	filename ../pics/Visio_generated/FSM_TX_Arbitrator.pdf
-	lyxscale 20
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Plain Layout
-\begin_inset Caption Standard
-
-\begin_layout Plain Layout
-TX arbitrator FSM
-\begin_inset CommandInset label
-LatexCommand label
-name "fig:fsm-tx-arbitrator"
-
-\end_inset
-
-
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Standard
 \begin_inset Float table
 placement H
 wide false
@@ -27823,7 +27882,7 @@ status open
 \noindent
 \align center
 \begin_inset Tabular
-<lyxtabular version="3" rows="11" columns="3">
+<lyxtabular version="3" rows="13" columns="3">
 <features tabularvalignment="middle">
 <column alignment="left" valignment="top" width="5line%">
 <column alignment="left" valignment="top" width="30line%">
@@ -28099,8 +28158,80 @@ timestamp
 
 \begin_layout Plain Layout
 TX arbitrator FSM loads TX frame metadata from TXT buffer 1 RAM (Frame format
- word) to capture registers.
- TXT buffer 1 becomes 
+ word) to double-buffer registers.
+ These are not visible to CAN Core, they hold metadata internally.
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+7
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+TX arbitrator FSM loads TX frame identifier from TXT buffer 1 RAM (Identifier
+ word) to Identifier capture register.
+ At the same clock cycle, TX arbitrator FSM loads metadata from double-buffer
+ registers to capture registers on output of TX Arbitrator.
+ Reffer to 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "subsec:Metadata-double-buffering"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+ for explanation.
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+TXT buffer 1 becomes 
 \begin_inset Quotes eld
 \end_inset
 
@@ -28429,7 +28560,8 @@ TXT buffer 1 FSM goes to Ready state and therefore TXT buffer 1 becomes
 
 \begin_layout Plain Layout
 TX arbitrator performs validation process (loads timestamp words, executes
- timestamp comparison, loads metadata) and TXT buffer 1 becomes Validated.
+ timestamp comparison, loads metadata and identifier) and TXT buffer 1 becomes
+ Validated.
  TX arbitrator signals to CAN core that there is validated TXT buffer for
  transmission.
 \end_layout
@@ -28493,11 +28625,8 @@ TXT buffer 2 FSM goes to Ready state and therefore TXT buffer 2 becomes
 
 \begin_layout Plain Layout
 TXT buffer 2 validation process restarts with TXT buffer 2.
- During this time TXT buffer 1 remains Validated
-\begin_inset Quotes erd
-\end_inset
-
- (TXT buffer 1 is still Available).
+ During this time TXT buffer 1 remains Validated (TXT buffer 1 is still
+ Available).
  If during validation process of TXT buffer 2, Protocol control issued HW
  Lock command, transmission would still be started from TXT buffer 1.
 \end_layout
@@ -28581,10 +28710,10 @@ Protocol control issues Lock command and since now TXT bufer 2 is Validated,
 \begin_inset Caption Standard
 
 \begin_layout Plain Layout
-TX arbitrator - corner case 1
+TX arbitrator - use-case 1
 \begin_inset CommandInset label
 LatexCommand label
-name "tab:tx-arbitrator-cornercase-1"
+name "tab:tx-arbitrator-usecase-1"
 
 \end_inset
 
@@ -28599,6 +28728,30 @@ name "tab:tx-arbitrator-cornercase-1"
 \end_inset
 
 
+\end_layout
+
+\begin_layout Description
+Note: This allows performing validation of another TXT buffer while previous
+ TXT buffer is still Validated.
+ Only when validation process is finished, index of Validated TXT buffer
+ will be changed to new TXT buffer.
+ The reason behind this is following: If TXT buffer is validated and SW
+ decides to issue Set ready to another TXT buffer which is higher priority,
+ Lock command might arrive just slightly after this moment (SW and Protocol
+ control have no synchronisation).
+ If first TXT buffer did not remain validated during validation process
+ of new TXT buffer, 
+\series bold
+\shape italic
+tran_frame_valid
+\series default
+\shape default
+ would need to drop low before the validation process of second TXT buffer
+ is finished.
+ This would cause that for some short time, Protocol control would not have
+ any TXT buffer available for transmission, while actually two TXT buffers
+ are in Ready state.
+ This effect is undesirable.
 \end_layout
 
 \begin_layout Standard
@@ -28741,8 +28894,8 @@ TXT buffers 1 and 2 become Available and TXT buffer 2 becomes Selected because
 
 \begin_layout Plain Layout
 TX arbitrator performs TXT buffer 2 validation process (loads timestamp
- words, executes timestamp comparison, loads metadata) and TXT buffer 2
- becomes Validated.
+ words, executes timestamp comparison, loads metadata and identifier) and
+ TXT buffer 2 becomes Validated.
  TX arbitrator signals to CAN core that there is Validated TXT buffer for
  transmission.
 \end_layout
@@ -28774,8 +28927,8 @@ SW Issues Set abort command to TXT buffer 2.
 
 \begin_layout Plain Layout
 TXT buffer 2 which is now Validated becomes Unavailable.
- TX arbitrator immediately signals to CAN core that no TXT buffer is available
- for transmission (
+ TX arbitrator immediately (in the same clock cycle) signals to CAN core
+ that no TXT buffer is available for transmission (
 \series bold
 \shape italic
 tran_frame_valid
@@ -28835,10 +28988,10 @@ TX arbitrator proceeds with validation of TXT buffer 1 and upon its end
 \begin_inset Caption Standard
 
 \begin_layout Plain Layout
-TX arbitrator - corner case 2
+TX arbitrator - use-case 2
 \begin_inset CommandInset label
 LatexCommand label
-name "tab:tx-arbitrator-cornercase-2"
+name "tab:tx-arbitrator-use-case-2"
 
 \end_inset
 
@@ -28853,6 +29006,19 @@ name "tab:tx-arbitrator-cornercase-2"
 \end_inset
 
 
+\end_layout
+
+\begin_layout Description
+Note: This behaviour is necessary, since TXT buffer which is Validated suddenly
+ becomes Unavailable due to Set Abort command.
+ If 
+\series bold
+\shape italic
+tran_frame_valid
+\series default
+\shape default
+ did not drop low immediately, it could happend that Protocol control would
+ issue Lock command on a TXT buffer which was Unavailable (in Aborted state).
 \end_layout
 
 \begin_layout Subsection
@@ -28868,7 +29034,7 @@ name "subsec:Priority-decoder"
 
 \begin_layout Standard
 Priority decoder selects highest priority TXT buffer from all Available
- TXT buffers combinatorially in single cycle.
+ TXT buffers combinatorially.
  Such TXT buffer becomes Selected.
  Priority of TXT buffers is given by SW (TX_PRIORITY register).
  If no TXT buffer is Available, Priority decoder signals it on its output
@@ -28919,27 +29085,26 @@ Available
 
 \begin_layout Itemize
 When no TXT buffer input is Available, 
-\begin_inset Quotes eld
-\end_inset
-
-Available
-\begin_inset Quotes erd
-\end_inset
-
- output is low.
+\series bold
+\shape italic
+\color black
+output_valid
+\series default
+\shape default
+\color inherit
+ is low.
 \end_layout
 
 \begin_layout Itemize
 When both TXT buffer inputs are Available, 
-\begin_inset Quotes eld
-\end_inset
-
-Available
-\begin_inset Quotes erd
-\end_inset
-
- output is high and index TXT Buffer with higher priority is propagated
- as winner.
+\series bold
+\shape italic
+\color black
+output_valid
+\series default
+\shape default
+\color inherit
+ is high and index TXT Buffer with higher priority is propagated as winner.
 \end_layout
 
 \begin_layout Standard
@@ -29410,23 +29575,88 @@ name "tab:txt-buffer-change"
 \end_layout
 
 \begin_layout Subsection
+TX Arbitrator corner-cases
+\end_layout
+
+\begin_layout Standard
+TX arbitrator must react on following events which are all not synchronized:
+\end_layout
+
+\begin_layout Itemize
+Change of TXT buffer priorities by SW -> possibly change of selected TXT
+ buffer.
+\end_layout
+
+\begin_layout Itemize
+Change of TXT buffer state (due to SW commands) -> possibly change of selected
+ TXT buffer.
+\end_layout
+
+\begin_layout Itemize
+Lock command from Protocol control.
+\end_layout
+
+\begin_layout Standard
+Handling of these events is resolved by following set of requirements:
+\end_layout
+
+\begin_layout Itemize
+Lock command shall never occur when TX Arbitrator FSM is Idle.
+\end_layout
+
+\begin_layout Itemize
+Unlock command shall never occur when TX Arbitrator FSM is not Locked.
+\end_layout
+
+\begin_layout Itemize
+Lock command shall only occur when there is TXT buffer available for transmissio
+n, or when it was available for transmission in previous clock cycle.
+ It might happend, that Lock command and Set abort command are active simultaneo
+usly.
+ Due to Set abort command, it might be that only Available TXT buffer becomes
+ immediately unavailable, therefore Lock command is active when no Available
+ TXT buffer is signalled.
+ This is OK since TXT buffer FSM resolves simultaneous Set abort and Lock
+ command.
+\end_layout
+
+\begin_layout Itemize
+Lock command occurs at them same time as suddenly, no TXT buffer is available
+ (but was in previous cycle, this is the same situation as previous point).
+ TX Arbitrator FSM shall become Locked.
+ 
+\end_layout
+
+\begin_layout Itemize
+Lock command occurs at the same time as Selected TXT Buffer is changed.
+ Lock command shall have priority and TX Arbitrator FSM shall become Locked.
+\end_layout
+
+\begin_layout Itemize
+TXT Buffer validation process is about to be finished, but Lock command
+ occurs.
+ Lock command shall have priority, TX Arbitrator FSM shall become Locked
+ and Metadata, Identifier capture registers shall not be preloaded!
+\end_layout
+
+\begin_layout Subsection
 TXT buffer addressing
+\end_layout
+
+\begin_layout Standard
+During TXT buffer validation process, TX arbitrator is accessing TXT buffer
+ memories and loads Frame format, Identifier, Timestamp low and Timestamp
+ High registers, therefore TXT buffer address is given by TX arbitrator
+ FSM.
 \end_layout
 
 \begin_layout Standard
 During transmission when TX arbitrator is Locked, TX arbitrator holds index
  of Used TXT buffer.
  During this time, Protocol control FSM provides address of memory word
- from which it reads relevant word for transmission.
- Protocol Control is addressing Identifier memory word and transmitts 
-\color red
-base identifier
-\color inherit
- and 
-\color red
-identifier extension
-\color inherit
- from this word.
+ from which it reads relevant data word for transmission.
+ TX arbitrator uses this address to drive TXT buffer address and index of
+ Used TXT buffer to multiplex read data.
  Data memory words (see 
 \begin_inset CommandInset ref
 LatexCommand ref
@@ -29463,9 +29693,8 @@ noprefix "false"
 \end_inset
 
 ).
- Therefore Protocol control must address according memory word in previous
- CAN frame field to cover latency of TXT buffer RAM as is shown in Table
- 
+ Therefore Protocol control provides address of data word with sufficient
+ reserve to cover latency of TXT buffer RAM as is shown in Table 
 \begin_inset CommandInset ref
 LatexCommand ref
 reference "tab:txt-buffer-ram-addressing"
@@ -29476,10 +29705,8 @@ noprefix "false"
 \end_inset
 
 .
- Metadata for transmission are available from capture registers in TX arbitrator
- which were loaded during TXT buffer validation process.
- It is assumed to be smarter to have metadata available permanently since
- these are used in many states of Protocol control FSM.
+ Metadata and Identifier for transmission are available from capture registers
+ in TX arbitrator which were loaded during TXT buffer validation process.
 \end_layout
 
 \begin_layout Standard
@@ -29493,7 +29720,7 @@ status open
 \noindent
 \align center
 \begin_inset Tabular
-<lyxtabular version="3" rows="5" columns="3">
+<lyxtabular version="3" rows="3" columns="3">
 <features tabularvalignment="middle">
 <column alignment="left" valignment="top" width="20line%">
 <column alignment="left" valignment="top" width="25line%">
@@ -29561,84 +29788,6 @@ cellcolor{gray}
 \end_inset
 
 
-\end_layout
-
-\end_inset
-</cell>
-</row>
-<row>
-<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-
-\color red
-SOF
-\color inherit
-, 
-\color red
-idle
-\color inherit
-, 
-\color red
-suspend transmission
-\color inherit
-, 
-\color red
-intermission
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-Identifier
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-
-\color red
-base identifier
-\end_layout
-
-\end_inset
-</cell>
-</row>
-<row>
-<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-
-\color red
-IDE
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-Identifier
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-
-\color red
-identifier extension
 \end_layout
 
 \end_inset
@@ -30013,6 +30162,36 @@ receiver
 \end_layout
 
 \begin_layout Subsection
+Metadata double-buffering
+\begin_inset CommandInset label
+LatexCommand label
+name "subsec:Metadata-double-buffering"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+During TXT buffer validation process, TX arbitrator first reads Frame format
+ word from TXT buffer RAM and stores it in internal registers which are
+ invisible to CAN core.
+ In the next step TX arbitrator reads Identifier word from TXT buffer RAM
+ and stores it to capture register which is available to CAN core.
+ At the same time internal registers with metadata are moved to capture
+ registers for metadata.
+ Therefore, reading of metadata from TXT buffer RAM is double-buffered.
+ Both identifier and metadata available for CAN core are changed at once
+ (atomically), therefore it will never happend that Identifier in capture
+ registers corresponds to different CAN frame than metadata in capture registers.
+ This is necessary as when there is Validated TXT buffer, another TXT buffer
+ validation process can be in progress.
+ In change was not atomic, CAN core could issue Lock command and transmitt
+ e.g.
+ ID from TXT buffer 1 and metadata from TXT buffer 2.
+\end_layout
+
+\begin_layout Subsection
 TX datapath hazard protection
 \begin_inset CommandInset label
 LatexCommand label
@@ -30026,7 +30205,7 @@ name "subsec:TX-Datapath-hazard"
 \begin_layout Standard
 TX frame datapath (TX arbitrator + TXT buffers) are both manipulated by
  SW and HW commands simultaneously.
- This fact opens question of control hazards susceptibility.
+ This fact opens question of hazards susceptibility.
  Such a hazard would occur, when e.g.
  TXT buffer FSM moved to Aborted state after Set abort command, but Protocol
  control FSM still managed to issue Lock command and start transmission
