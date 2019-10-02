@@ -70,7 +70,7 @@ feature:
         timeout: 100 ms
         wave: feature/feature_env_setup.tcl
     tests:
-        arbitration:
+        alc_base_id:
         mode_loopback:
             iterations: 10
         mode_listen_only:

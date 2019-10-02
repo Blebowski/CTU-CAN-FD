@@ -122,6 +122,9 @@ entity tx_arbitrator is
         -- TX Frame Bit rate shift Flag 
         tran_brs                :out std_logic;
     
+        -- TX Identifier
+        tran_identifier         :out std_logic_vector(28 downto 0);
+    
         -- There is valid frame selected, can be locked for transmission
         tran_frame_valid        :out std_logic;
 
@@ -164,7 +167,7 @@ architecture rtl of tx_arbitrator is
    
     -- Input word from TXT Buffer !!!
     signal txtb_selected_input        : std_logic_vector(31 downto 0);
-  
+
     -- TXT Buffer timestamp joined combinationally. Given by ts_low_internal and
     -- upper timestamp word, out the output of RAM
     signal txtb_timestamp             : std_logic_vector(63 downto 0);
@@ -186,6 +189,9 @@ architecture rtl of tx_arbitrator is
     -- Registered values for detection of change
     signal select_buf_index_reg       : natural range 0 to G_TXT_BUFFER_COUNT - 1;
   
+    -- TXT Buffer index
+    signal buffer_index_muxed         : natural range 0 to G_TXT_BUFFER_COUNT - 1;
+  
     -- Lower timestamp loaded from TXT Buffer
     signal ts_low_internal            : std_logic_vector(31 downto 0);
   
@@ -200,6 +206,13 @@ architecture rtl of tx_arbitrator is
     -- timstamp during the selection of TXT Buffer.
     signal txtb_pointer_meta          : natural range 0 to 19;
 
+    -- Double buffer registers for metadata
+    signal tran_dlc_dbl_buf           : std_logic_vector(3 downto 0);
+    signal tran_is_rtr_dbl_buf        : std_logic;
+    signal tran_ident_type_dbl_buf    : std_logic;
+    signal tran_frame_type_dbl_buf    : std_logic;
+    signal tran_brs_dbl_buf           : std_logic;
+    
     -- Comitted values of internal signals
     signal tran_dlc_com               : std_logic_vector(3 downto 0);
     signal tran_is_rtr_com            : std_logic;
@@ -207,7 +220,7 @@ architecture rtl of tx_arbitrator is
     signal tran_frame_type_com        : std_logic;
     signal tran_brs_com               : std_logic;
     signal tran_frame_valid_com       : std_logic;
-
+    signal tran_identifier_com        : std_logic_vector(28 downto 0);
 
     ---------------------------------------------------------------------------
     -- TX Arbitrator FSM outputs
@@ -222,11 +235,20 @@ architecture rtl of tx_arbitrator is
     -- Load Frame format word to metadata pointer
     signal load_ffmt_w_addr           : std_logic;
 
+    -- Load identifier word to metadata pointer
+    signal load_ident_w_addr          : std_logic;
+
     -- Store timestamp lower word
     signal store_ts_l_w               : std_logic;
 
     -- Store metadata (Frame format word) on the output of TX Arbitrator
     signal store_md_w                 : std_logic;
+    
+    -- Store identifier (Identifier word) on the output of TX Arbitrator
+    signal store_ident_w              : std_logic;
+
+    -- Store metadata (Frame format word) to double buffer registers.
+    signal buffer_md_w                : std_logic;
 
     -- Store last locked TXT Buffer index
     signal store_last_txtb_index      : std_logic;
@@ -295,39 +317,24 @@ begin
     load_ts_lw_addr        => load_ts_lw_addr,          -- OUT
     load_ts_uw_addr        => load_ts_uw_addr,          -- OUT
     load_ffmt_w_addr       => load_ffmt_w_addr,         -- OUT
+    load_ident_w_addr      => load_ident_w_addr,        -- OUT
+    
     store_ts_l_w           => store_ts_l_w,             -- OUT
     store_md_w             => store_md_w,               -- OUT
+    store_ident_w          => store_ident_w,            -- OUT
+    buffer_md_w            => buffer_md_w,              -- OUT
     tx_arb_locked          => tx_arb_locked,            -- OUT
     store_last_txtb_index  => store_last_txtb_index,    -- OUT
     frame_valid_com_set    => frame_valid_com_set,      -- OUT
     frame_valid_com_clear  => frame_valid_com_clear     -- OUT
   );
-    
-
-
-  ------------------------------------------------------------------------------
-  -- Selecting TXT Buffer output word based on the chosen TXT Buffer. We use
-  -- the combinationally selected buffer. If change on selected buffer occurs
-  -- during selection, selection is restarted. Thus we can always during 
-  -- selection use combinationally selected buffer !!!
-  ------------------------------------------------------------------------------
-  txtb_selected_input <= txtb_port_b_data(select_buf_index);
-  
-
-  ------------------------------------------------------------------------------
-  -- Joined timestamp from TXT Buffer. Note that it is not always valid!
-  -- Only when the TXT Buffer is addressed with upper timestamp word address!
-  ------------------------------------------------------------------------------
-  txtb_timestamp      <= txtb_selected_input & ts_low_internal;
-  
 
   ------------------------------------------------------------------------------
   -- Comparing timestamp with external timestamp. This assumes that Upper 
   -- timestamp is on the output of buffer and lower timestamp is stored in
   -- "ts_low_internal".
   ------------------------------------------------------------------------------
-  timestamp_valid    <= less_than(txtb_timestamp, timestamp);
-
+  timestamp_valid <= less_than(txtb_timestamp, timestamp);
 
   ------------------------------------------------------------------------------
   -- When TXT Buffer which is currently "Validated" suddenly becomes 
@@ -344,14 +351,27 @@ begin
   tran_frame_valid <= '1' when (validated_buffer = '1') or (tx_arb_locked = '1')
                           else
                       '0';
-  
 
   ------------------------------------------------------------------------------
-  -- Output data word is selected based on the stored buffer index at the time
-  -- of buffer locking.
-  ------------------------------------------------------------------------------  
-  tran_word   <= txtb_port_b_data(int_txtb_index);
+  -- Selecting TXT Buffer output word based on TXT Buffer index. During transmi
+  -- ssion, use last stored TXT buffer. Otherwise use combinatorially selected
+  -- TXT buffer (during validation).
+  ------------------------------------------------------------------------------
+  buffer_index_muxed <= int_txtb_index when (tx_arb_locked = '1')
+                                       else
+                      select_buf_index;
 
+  -- Select read data based on index of TXT buffer which should be accessed
+  txtb_selected_input <= txtb_port_b_data(buffer_index_muxed);
+  
+  -- Transmitted data word taken from TXT Buffer output
+  tran_word <= txtb_selected_input;
+
+  ------------------------------------------------------------------------------
+  -- Joined timestamp from TXT Buffer. Note that it is not always valid!
+  -- Only when the TXT Buffer is addressed with upper timestamp word address!
+  ------------------------------------------------------------------------------
+  txtb_timestamp <= txtb_selected_input & ts_low_internal;
 
   ------------------------------------------------------------------------------
   -- Output frame metadata and Identifier for CAN Core
@@ -361,21 +381,17 @@ begin
   tran_ident_type  <= tran_ident_type_com;
   tran_frame_type  <= tran_frame_type_com;
   tran_brs         <= tran_brs_com;
-  
+  tran_identifier  <= tran_identifier_com;
 
   ------------------------------------------------------------------------------
   -- During Buffer selection, TX Arbitrator is addressing TXT Buffers.
   -- During Transmission, the Core is addressing TXT Buffers.
-  -- In the last cycle when the unlock command comes, TX Arbitrator must
-  -- already provide pointer from FSM, not the one from CAN Core. It is already
-  -- addressing the lower timestamp word for timestamp selection!
   ------------------------------------------------------------------------------
   txtb_port_b_address <= txtb_ptr when (tx_arb_locked = '1')
                                   else
                          txtb_pointer_meta;
 
   txtb_hw_cmd_index <= int_txtb_index;
-  
 
   ------------------------------------------------------------------------------
   -- Register for loading lower 32 bits of CAN Frame timestamp
@@ -391,9 +407,32 @@ begin
     end if;
   end process;
 
+  ------------------------------------------------------------------------------
+  -- Double buffer registers for Metadata.
+  ------------------------------------------------------------------------------
+  dbl_buf_reg_proc : process(clk_sys, res_n)
+  begin
+    if (res_n = G_RESET_POLARITY) then    
+      tran_dlc_dbl_buf           <= (OTHERS => '0');
+      tran_is_rtr_dbl_buf        <= '0';
+      tran_ident_type_dbl_buf    <= '0';
+      tran_frame_type_dbl_buf    <= '0';
+      tran_brs_dbl_buf           <= '0';
+    elsif (rising_edge(clk_sys)) then
+      if (buffer_md_w = '1') then
+        tran_dlc_dbl_buf           <= txtb_selected_input(DLC_H downto DLC_L);
+        tran_is_rtr_dbl_buf        <= txtb_selected_input(RTR_IND);
+        tran_ident_type_dbl_buf    <= txtb_selected_input(IDE_IND);
+        tran_frame_type_dbl_buf    <= txtb_selected_input(FDF_IND);
+        tran_brs_dbl_buf           <= txtb_selected_input(BRS_IND);
+      end if;
+    end if;
+  end process;
+
 
   ------------------------------------------------------------------------------
-  -- Registers for metadata commited to output of TX Arbitrator.
+  -- Capture registers for metadata commited to output of TX Arbitrator. Taken
+  -- from double buffer register.
   ------------------------------------------------------------------------------
   meta_data_reg_proc : process(clk_sys, res_n)
   begin
@@ -405,11 +444,26 @@ begin
         tran_brs_com                <= '0';
     elsif (rising_edge(clk_sys)) then
         if (store_md_w = '1') then
-            tran_frame_type_com     <= txtb_selected_input(FDF_IND);
-            tran_ident_type_com     <= txtb_selected_input(IDE_IND);
-            tran_dlc_com            <= txtb_selected_input(DLC_H downto DLC_L);
-            tran_is_rtr_com         <= txtb_selected_input(RTR_IND);
-            tran_brs_com            <= txtb_selected_input(BRS_IND);
+            tran_frame_type_com     <= tran_frame_type_dbl_buf;
+            tran_ident_type_com     <= tran_ident_type_dbl_buf;
+            tran_dlc_com            <= tran_dlc_dbl_buf;
+            tran_is_rtr_com         <= tran_is_rtr_dbl_buf;
+            tran_brs_com            <= tran_brs_dbl_buf;
+        end if;
+    end if;
+  end process;
+
+
+  ------------------------------------------------------------------------------
+  -- Capture registers for Identifier commited to output of TX Arbitrator.
+  ------------------------------------------------------------------------------
+  identifier_reg_proc : process(clk_sys, res_n)
+  begin
+    if (res_n = G_RESET_POLARITY) then
+        tran_identifier_com <= (OTHERS => '0');
+    elsif (rising_edge(clk_sys)) then
+        if (store_ident_w = '1') then
+            tran_identifier_com <= txtb_selected_input(28 downto 0);
         end if;
     end if;
   end process;
@@ -498,18 +552,25 @@ begin
     elsif (rising_edge(clk_sys)) then
 
         if (load_ts_lw_addr = '1') then
-            txtb_pointer_meta       <= to_integer(unsigned(
-                                         TIMESTAMP_L_W_ADR(11 downto 2)));
+            txtb_pointer_meta <=
+                to_integer(unsigned(TIMESTAMP_L_W_ADR(11 downto 2)));
+
         elsif (load_ts_uw_addr = '1') then
-            txtb_pointer_meta       <= to_integer(unsigned(
-                                         TIMESTAMP_U_W_ADR(11 downto 2)));
+            txtb_pointer_meta <=
+                to_integer(unsigned(TIMESTAMP_U_W_ADR(11 downto 2)));
+
         elsif (load_ffmt_w_addr = '1') then
-            txtb_pointer_meta       <= to_integer(unsigned(
-                                         FRAME_FORM_W_ADR(11 downto 2)));
+            txtb_pointer_meta <=
+                to_integer(unsigned(FRAME_FORM_W_ADR(11 downto 2)));
+
+        elsif (load_ident_w_addr = '1') then
+            txtb_pointer_meta <=
+                to_integer(unsigned(IDENTIFIER_W_ADR(11 downto 2)));
         end if;
 
     end if;
   end process;
+
 
   -- <RELEASE_OFF>
   ------------------------------------------------------------------------------

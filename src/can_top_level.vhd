@@ -363,6 +363,9 @@ architecture rtl of can_top_level is
     -- TX Frame Bit rate shift Flag 
     signal tran_brs               :   std_logic;
     
+    -- TX Identifier
+    signal tran_identifier        :   std_logic_vector(28 downto 0);
+        
     -- Word from TXT Buffer RAM selected by TX Arbitrator
     signal tran_word              :   std_logic_vector(31 downto 0);
     
@@ -651,6 +654,7 @@ begin
         tran_ident_type         => tran_ident_type,     -- OUT
         tran_frame_type         => tran_frame_type,     -- OUT
         tran_brs                => tran_brs,            -- OUT
+        tran_identifier         => tran_identifier,     -- OUT
         tran_frame_valid        => tran_frame_valid,    -- OUT
         txtb_hw_cmd             => txtb_hw_cmd,         -- IN
         txtb_changed            => txtb_changed,        -- OUT
@@ -762,6 +766,7 @@ begin
         tran_ident_type         => tran_ident_type,     -- IN
         tran_frame_type         => tran_frame_type,     -- IN
         tran_brs                => tran_brs,            -- IN
+        tran_identifier         => tran_identifier,     -- IN
         tran_frame_valid        => tran_frame_valid,    -- IN
         txtb_hw_cmd             => txtb_hw_cmd,         -- OUT
         txtb_changed            => txtb_changed,        -- IN

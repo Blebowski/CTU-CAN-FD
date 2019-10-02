@@ -141,9 +141,12 @@ package can_types is
 
     -- TX arbitrator state type
     type t_tx_arb_state is (
+        s_arb_idle,
         s_arb_sel_low_ts,
         s_arb_sel_upp_ts,
         s_arb_sel_ffw,
+        s_arb_sel_idw,
+        s_arb_validated,
         s_arb_locked
     );
   

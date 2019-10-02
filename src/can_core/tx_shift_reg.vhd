@@ -158,6 +158,9 @@ entity tx_shift_reg is
         -----------------------------------------------------------------------
         -- TXT Buffer RAM word
         tran_word               :in   std_logic_vector(31 downto 0);
+
+        -- TX Identifier
+        tran_identifier         :in   std_logic_vector(28 downto 0);
         
         -- TXT Buffer RAM word (byte endianity swapped)
         tran_word_swapped       :in   std_logic_vector(31 downto 0);
@@ -233,8 +236,8 @@ begin
     stuff_count <= bst_ctr_grey & bst_parity;
 
     -- Choosing Base and Ext IDs from TXT Buffer RAM memory words!
-    tx_base_id <= tran_word(IDENTIFIER_BASE_H downto IDENTIFIER_BASE_L);
-    tx_ext_id <= tran_word(IDENTIFIER_EXT_H downto IDENTIFIER_EXT_L);
+    tx_base_id <= tran_identifier(IDENTIFIER_BASE_H downto IDENTIFIER_BASE_L);
+    tx_ext_id <= tran_identifier(IDENTIFIER_EXT_H downto IDENTIFIER_EXT_L);
 
     ---------------------------------------------------------------------------
     -- Shift register pre-load value:
