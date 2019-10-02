@@ -130,7 +130,7 @@ package body alc_base_id_feature is
         variable frames_equal       :     boolean := false;
         
         constant id_template        :     std_logic_vector(10 downto 0) :=
-                "10101010101";
+                "01010101010";
         variable id_var             :     std_logic_vector(10 downto 0) :=
                  (OTHERS => '0');
     begin
@@ -229,7 +229,11 @@ package body alc_base_id_feature is
                     check(stat_2.transmitter, "Node 2 transmitter!");
                     check_false(stat_2.receiver, "Node 2 not receiver!");
                     
-                    check(iout(2).can_tx = DOMINANT, "Dominant transmitted!");
+                    if (K mod 2 = 0) then
+                        check(iout(2).can_tx = RECESSIVE, "Recessive transmitted!");
+                    else
+                        check(iout(2).can_tx = DOMINANT, "Dominant transmitted!");
+                    end if;
                 end if;
 
             end loop;
