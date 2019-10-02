@@ -165,6 +165,9 @@ entity protocol_control is
         -- TX Bit rate shift
         tran_brs                :in   std_logic; 
         
+        -- TX Identifier
+        tran_identifier         :in   std_logic_vector(28 downto 0);
+                
         -- Frame in TXT Buffer is valid any can be transmitted.
         tran_frame_valid        :in   std_logic;
         
@@ -957,6 +960,7 @@ begin
         is_err_active           => is_err_active,           -- IN
         bst_ctr                 => bst_ctr,                 -- IN
         tran_word               => tran_word,               -- IN
+        tran_identifier         => tran_identifier,         -- IN
         tran_word_swapped       => tran_word_swapped,       -- IN
         tran_dlc                => tran_dlc                 -- IN
     );

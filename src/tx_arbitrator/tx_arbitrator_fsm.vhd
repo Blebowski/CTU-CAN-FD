@@ -116,12 +116,21 @@ entity tx_arbitrator_fsm is
         
         -- Load Frame format word to metadata pointer
         load_ffmt_w_addr       :out std_logic;
-        
+
+        -- Load identifier word to metadata pointer
+        load_ident_w_addr      :out std_logic;
+
         -- Store timestamp lower word
         store_ts_l_w           :out std_logic;
         
         -- Store metadata (Frame format word) on the output of TX Arbitrator
         store_md_w             :out std_logic;
+        
+        -- Store identifier (Identifier word) on the output of TX Arbitrator
+        store_ident_w          :out std_logic;
+
+        -- Store metadata (Frame format word) to double buffer registers.
+        buffer_md_w            :out std_logic; 
         
         -- Signals that TX Arbitrator is locked (CAN Core is transmitting from TXT
         -- Buffer)
@@ -149,24 +158,10 @@ architecture rtl of tx_arbitrator_fsm is
   signal fsm_wait_state_d         : std_logic;
   signal fsm_wait_state_q         : std_logic;
 
-  -- Restart TXT Buffer selection
-  signal buf_sel_restart          : std_logic;
-
 begin
 
-
     ----------------------------------------------------------------------------
-    -- Buffer selection is restarted when selected TXT Buffer changed, or held
-    -- in initial state when there is no Buffer available!
-    ----------------------------------------------------------------------------
-    buf_sel_restart <= '1' when (select_buf_avail = '0' or
-                                 select_index_changed = '1')
-                           else
-                       '0';
-
-    ----------------------------------------------------------------------------
-    -- State machine driving selection of highest priority buffer and load of 
-    -- the metadata and identifier words on parallel outputs.
+    -- Next state process
     ----------------------------------------------------------------------------
     tx_arb_fsm_proc : process(curr_state, txtb_hw_cmd, select_buf_avail, 
         select_index_changed, timestamp_valid, fsm_wait_state_q)
@@ -175,61 +170,248 @@ begin
         next_state                <= curr_state;
         
         case curr_state is   
-
+        
         --------------------------------------------------------------------
-        -- Polling on Low timestamp of the highest prority TXT buffer.
+        -- No TXT Buffer is available, or was just unlocked after
+        -- transmission
+        --------------------------------------------------------------------
+        when s_arb_idle =>
+            if (select_buf_avail = '1') then
+            next_state <= s_arb_sel_low_ts;
+        end if;
+        
+        --------------------------------------------------------------------
+        -- Read Low timestamp word of Selected TXT buffer.
         --------------------------------------------------------------------
         when s_arb_sel_low_ts =>
             if (txtb_hw_cmd.lock = '1') then
                 next_state         <= s_arb_locked;
-            elsif (buf_sel_restart = '1') then
-                next_state         <= s_arb_sel_low_ts; 
+            elsif (select_buf_avail = '0') then
+                next_state         <= s_arb_idle;
+            elsif (select_index_changed = '1') then
+                next_state         <= s_arb_sel_low_ts;
             elsif (fsm_wait_state_q = '0') then
                 next_state         <= s_arb_sel_upp_ts;
-            end if;        
-
+            end if;
+        
         --------------------------------------------------------------------
-        -- Compare the timestamps,
-        -- now output of TXT Buffers give the upper timestamp
-        -- Lower timestamp is stored from previous state.
+        -- Read Upper timestamp word of Selected TXT Buffer. Perform
+        -- Timestamp comparison (Lower word is in capture register).
+        -- When Timestamp elapses -> proceed with validation!
         --------------------------------------------------------------------  
         when s_arb_sel_upp_ts =>
-             if (txtb_hw_cmd.lock = '1') then
+            if (txtb_hw_cmd.lock = '1') then
                 next_state         <= s_arb_locked;
-            elsif (buf_sel_restart = '1') then
-                next_state         <= s_arb_sel_low_ts; 
+            elsif (select_buf_avail = '0') then
+                next_state         <= s_arb_idle;
+            elsif (select_index_changed = '1') then
+                next_state         <= s_arb_sel_low_ts;
             elsif (fsm_wait_state_q = '0') then
                 if (timestamp_valid = '1') then
                     next_state     <= s_arb_sel_ffw;
                 end if;
             end if;
-
+        
         --------------------------------------------------------------------
-        -- Store the Frame format info to the output. We can do this
-        -- directly, since it is all done in one clock cycle!
-        -- Buffer input did not change during the whole selection, we 
-        -- can store its index to the output and us it for access from 
-        -- CAN Core.
+        -- Read Frame format word.
         --------------------------------------------------------------------  
         when s_arb_sel_ffw =>
              if (txtb_hw_cmd.lock = '1') then
                 next_state         <= s_arb_locked;
-            elsif (buf_sel_restart = '1') then
-                next_state         <= s_arb_sel_low_ts; 
+            elsif (select_buf_avail = '0') then
+                next_state         <= s_arb_idle;
+            elsif (select_index_changed = '1') then
+                next_state         <= s_arb_sel_low_ts;
             elsif (fsm_wait_state_q = '0') then
+                next_state         <= s_arb_sel_idw;
+            end if;
+        
+        --------------------------------------------------------------------
+        -- Read identifier word.
+        --------------------------------------------------------------------  
+        when s_arb_sel_idw =>
+             if (txtb_hw_cmd.lock = '1') then
+                next_state         <= s_arb_locked;
+            elsif (select_buf_avail = '0') then
+                next_state         <= s_arb_idle;
+            elsif (select_index_changed = '1') then
+                next_state         <= s_arb_sel_low_ts;
+            elsif (fsm_wait_state_q = '0') then
+                next_state         <= s_arb_validated;
+            end if;
+        
+        --------------------------------------------------------------------
+        -- TXT Buffer is validated!
+        --------------------------------------------------------------------  
+        when s_arb_validated =>
+             if (txtb_hw_cmd.lock = '1') then
+                next_state         <= s_arb_locked;
+            elsif (select_buf_avail = '0') then
+                next_state         <= s_arb_idle;
+            elsif (select_index_changed = '1') then
                 next_state         <= s_arb_sel_low_ts;
             end if;
-
+        
         --------------------------------------------------------------------
         -- Finishing the transmission = unlocking the buffer 
         --------------------------------------------------------------------  
         when s_arb_locked =>
             if (txtb_hw_cmd.unlock = '1') then
-                next_state         <= s_arb_sel_low_ts;
+                next_state         <= s_arb_idle;
             end if;
+
         end case;
     end process;
+
+
+    ------------------------------------------------------------------------------
+    -- TX Arbitrator FSM outputs
+    ------------------------------------------------------------------------------
+    tx_arb_fsm_out_proc : process(curr_state, fsm_wait_state_q, timestamp_valid,
+        select_index_changed, select_buf_avail, txtb_hw_cmd)
+    begin
+        
+        -- By default all outputs are inactive
+        load_ts_lw_addr        <= '0';
+        load_ts_uw_addr        <= '0';
+        load_ffmt_w_addr       <= '0';
+        load_ident_w_addr      <= '0';
+        
+        store_ts_l_w           <= '0';
+        store_md_w             <= '0';
+        store_ident_w          <= '0';
+        buffer_md_w            <= '0'; 
+        tx_arb_locked          <= '0';
+        frame_valid_com_set    <= '0';
+        frame_valid_com_clear  <= '0';
+        store_last_txtb_index  <= '0';
+        
+        fsm_wait_state_d       <= '0';
     
+        case curr_state is   
+        
+        --------------------------------------------------------------------
+        -- No TXT Buffer is available, or was just unlocked after
+        -- transmission
+        --------------------------------------------------------------------
+        when s_arb_idle =>
+            if (select_buf_avail = '1') then
+                fsm_wait_state_d <= '1';
+                load_ts_lw_addr  <= '1';
+            end if;
+
+        --------------------------------------------------------------------
+        -- Read Low timestamp word of Selected TXT buffer.
+        --------------------------------------------------------------------
+        when s_arb_sel_low_ts =>
+            if (txtb_hw_cmd.lock = '1') then
+                store_last_txtb_index <= '1';
+
+            elsif (select_buf_avail = '0') then
+                frame_valid_com_clear <= '1';
+
+            elsif (select_index_changed = '1') then
+                fsm_wait_state_d <= '1';
+                load_ts_lw_addr <= '1';
+                
+            elsif (fsm_wait_state_q = '0') then
+                fsm_wait_state_d <= '1';
+                load_ts_uw_addr  <= '1';
+                store_ts_l_w     <= '1';
+            end if;
+        
+        --------------------------------------------------------------------
+        -- Read Upper timestamp word of Selected TXT Buffer. Perform
+        -- Timestamp comparison (Lower word is in capture register).
+        -- When Timestamp elapses -> proceed with validation!
+        --------------------------------------------------------------------  
+        when s_arb_sel_upp_ts =>
+            if (txtb_hw_cmd.lock = '1') then
+                store_last_txtb_index <= '1';
+
+            elsif (select_buf_avail = '0') then
+                frame_valid_com_clear <= '1';
+
+            elsif (select_index_changed = '1') then
+                fsm_wait_state_d <= '1';
+                load_ts_lw_addr  <= '1';
+                
+            elsif (fsm_wait_state_q = '0') then
+                if (timestamp_valid = '1') then
+                    fsm_wait_state_d <= '1';
+                    load_ffmt_w_addr <= '1';
+                end if;
+            end if;
+        
+        --------------------------------------------------------------------
+        -- Read Frame format word.
+        --------------------------------------------------------------------  
+        when s_arb_sel_ffw =>
+            if (txtb_hw_cmd.lock = '1') then
+                store_last_txtb_index <= '1';
+
+            elsif (select_buf_avail = '0') then
+                frame_valid_com_clear <= '1';
+
+            elsif (select_index_changed = '1') then
+                fsm_wait_state_d <= '1';
+                load_ts_lw_addr  <= '1';
+                
+            elsif (fsm_wait_state_q = '0') then
+                fsm_wait_state_d  <= '1';
+                load_ident_w_addr <= '1';
+                buffer_md_w       <= '1';
+            end if;
+        
+        --------------------------------------------------------------------
+        -- Read identifier word.
+        --------------------------------------------------------------------  
+        when s_arb_sel_idw =>
+            if (txtb_hw_cmd.lock = '1') then
+                store_last_txtb_index <= '1';
+
+            elsif (select_buf_avail = '0') then
+                frame_valid_com_clear <= '1';
+
+            elsif (select_index_changed = '1') then
+                fsm_wait_state_d <= '1';
+                load_ts_lw_addr  <= '1';
+
+            elsif (fsm_wait_state_q = '0') then
+                store_ident_w       <= '1';
+                store_md_w          <= '1';
+                frame_valid_com_set <= '1';
+            end if;
+
+        --------------------------------------------------------------------
+        -- TXT Buffer is validated!
+        --------------------------------------------------------------------  
+        when s_arb_validated =>
+            if (txtb_hw_cmd.lock = '1') then
+                store_last_txtb_index <= '1';
+
+            elsif (select_buf_avail = '0') then
+                frame_valid_com_clear <= '1';
+
+            elsif (select_index_changed = '1') then
+                fsm_wait_state_d    <= '1';
+                load_ts_lw_addr     <= '1';
+            end if;
+        
+        --------------------------------------------------------------------
+        -- Finishing the transmission = unlocking the buffer 
+        --------------------------------------------------------------------  
+        when s_arb_locked =>
+            tx_arb_locked <= '1';
+
+            if (txtb_hw_cmd.unlock = '1') then
+                frame_valid_com_clear <= '1';
+            end if;
+
+        end case;
+    end process;
+
+  
     ---------------------------------------------------------------------------
     -- State register
     ---------------------------------------------------------------------------
@@ -248,21 +430,11 @@ begin
     tx_arb_fsm_ce <= '1' when (curr_state /= next_state) else
                      '0';
 
+
     ---------------------------------------------------------------------------
-    -- Wait state DFF. Insert wait state after each State change. This will halt
-    -- operation until data are properly loaded from RAM when loading Timestamp
-    -- words from TXT Buffer. Insert wait state when we are selecting low
-    -- timestamp word and selected buffer changes. We must also wait, since
-    -- there might be other buffer selected and thus other lower timestamp
-    -- loaded!
+    -- Wait state DFF. Wait state inserted when next state must last two clock
+    -- cycles!
     ---------------------------------------------------------------------------
-    fsm_wait_state_d <= '1' when (curr_state /= next_state)
-                            else
-                        '1' when (buf_sel_restart = '1') and
-                                 (curr_state = s_arb_sel_low_ts)
-                            else
-                        '0';
-    
     fsm_wait_state_proc : process(clk_sys, res_n)
     begin
         if (res_n = G_RESET_POLARITY) then
@@ -271,116 +443,8 @@ begin
             fsm_wait_state_q <= fsm_wait_state_d;
         end if;
     end process;
-    
-
-  ------------------------------------------------------------------------------
-  -- TX Arbitrator FSM outputs
-  ------------------------------------------------------------------------------
-  tx_arb_fsm_out_proc : process(curr_state, fsm_wait_state_q, timestamp_valid,
-                                select_index_changed, select_buf_avail,
-                                txtb_hw_cmd)
-  begin
-    
-    -- By default all outputs are inactive
-    load_ts_lw_addr        <= '0';
-    load_ts_uw_addr        <= '0';
-    load_ffmt_w_addr       <= '0';
-
-    store_ts_l_w           <= '0';
-    store_md_w             <= '0';
-    tx_arb_locked          <= '0';
-    frame_valid_com_set    <= '0';
-    frame_valid_com_clear  <= '0';
-    store_last_txtb_index  <= '0';
-
-    ------------------------------------------------------------------------
-    -- Finishing the transmission = unlocking the Buffer -> Signal
-    -- start of new buffer selection, first Timestamp Low word is loaded.
-    ------------------------------------------------------------------------      
-    if (curr_state = s_arb_locked) then
-        if (txtb_hw_cmd.unlock = '1') then
-            load_ts_lw_addr <= '1';
-        else
-            tx_arb_locked   <= '1';
-        end if;
-
-    ------------------------------------------------------------------------
-    -- Locking the buffer, only store the last TXT Buffer index!
-    ------------------------------------------------------------------------      
-    elsif (txtb_hw_cmd.lock = '1') then
-        store_last_txtb_index   <= '1';
-
-    ------------------------------------------------------------------------
-    -- Restart the selection if one of following occurs:
-    --  1. Selected Buffer changed.
-    --  2. There is not buffer marked as ready -> Hold in not selected!
-    ------------------------------------------------------------------------
-    elsif (buf_sel_restart = '1') then
-        load_ts_lw_addr         <= '1';
-        
-        -----------------------------------------------------------------------
-        -- Clear the buffer only when it is not available! Keep output valid
-        -- when buffer changes! Core will either lock old buffer (when 
-        -- loading does not finish in time, or it loads new buffer. This will
-        -- avoid a situation where Buffer A is ready, Buffer B with higher
-        -- priority will be marked as valid, and "frame ready for transmission"
-        -- will drop low for few clock cycles until new buffer metadata are
-        -- loaded for transmission! Possibly just chaning a buffer would cause
-        -- that no frame is selected for transmission even if two buffers
-        -- are marked as ready!
-        -- This option makes sure that either old or new buffer is selected.
-        -----------------------------------------------------------------------
-        if (select_buf_avail = '0') then
-            frame_valid_com_clear   <= '1';
-        end if;
-    else
   
-        case curr_state is   
-
-        --------------------------------------------------------------------
-        -- Polling on Low timestamp of the highest prority TXT buffer
-        --------------------------------------------------------------------
-        when s_arb_sel_low_ts =>
-            if (fsm_wait_state_q = '0') then
-                load_ts_uw_addr    <= '1';
-                store_ts_l_w       <= '1';
-            end if;        
-
-        --------------------------------------------------------------------
-        -- Compare the timestamps,
-        -- now output of TXT Buffers give the upper timestamp
-        -- Lower timestamp is stored from previous state.
-        --------------------------------------------------------------------  
-        when s_arb_sel_upp_ts =>
-            if (fsm_wait_state_q = '0') then
-                if (timestamp_valid = '1') then
-                    load_ffmt_w_addr   <= '1';
-                end if;
-            end if;
-
-        --------------------------------------------------------------------
-        -- Store the Frame format info to the output. We can do this
-        -- directly, since it is all done in one clock cycle!
-        -- Buffer input did not change during the whole selection, we 
-        -- can store its index to the output and us it for access from 
-        -- CAN Core.
-        --------------------------------------------------------------------  
-        when s_arb_sel_ffw =>
-            if (fsm_wait_state_q = '0') then
-                load_ts_lw_addr        <= '1';
-                frame_valid_com_set    <= '1';
-                store_md_w             <= '1';
-            end if;
-
-        --------------------------------------------------------------------
-        -- By default only arb_locked is here, but it is checked before
-        -- next state decoder!
-        --------------------------------------------------------------------  
-        when others =>
-
-        end case;
-      end if;
-  end process;
+  
 
   -- <RELEASE_OFF>
   ------------------------------------------------------------------------------

@@ -1917,7 +1917,10 @@ package can_components is
         
         -- TX Bit rate shift
         tran_brs                :in   std_logic; 
-        
+
+        -- TX Identifier
+        tran_identifier         :in   std_logic_vector(28 downto 0);
+
         -- Frame in TXT Buffer is valid any can be transmitted.
         tran_frame_valid        :in   std_logic;
         
@@ -2442,6 +2445,9 @@ package can_components is
         -- TXT Buffer RAM word
         tran_word               :in   std_logic_vector(31 downto 0);
         
+        -- TX Identifier
+        tran_identifier         :in   std_logic_vector(28 downto 0);
+        
         -- TXT Buffer RAM word (byte endianity swapped)
         tran_word_swapped       :in   std_logic_vector(31 downto 0);
 
@@ -2519,6 +2525,9 @@ package can_components is
 
         -- TX Bit Rate Shift
         tran_brs               :in   std_logic;
+
+        -- TX Identifier
+        tran_identifier        :in   std_logic_vector(28 downto 0);
 
         -- Frame in TXT Buffer is valid any can be transmitted.
         tran_frame_valid       :in   std_logic; 
@@ -3941,7 +3950,7 @@ package can_components is
         -- CAN Core Interface
         -----------------------------------------------------------------------
         -- HW Commands from CAN Core for manipulation with TXT Buffers 
-        txtb_hw_cmd            :in t_txtb_hw_cmd;  
+        txtb_hw_cmd             :in t_txtb_hw_cmd;  
         
         ---------------------------------------------------------------------------
         -- TX Arbitrator FSM outputs
@@ -3954,12 +3963,21 @@ package can_components is
         
         -- Load Frame format word to metadata pointer
         load_ffmt_w_addr       :out std_logic;
-        
+
+        -- Load identifier word to metadata pointer
+        load_ident_w_addr      :out std_logic;
+
         -- Store timestamp lower word
         store_ts_l_w           :out std_logic;
         
         -- Store metadata (Frame format word) on the output of TX Arbitrator
         store_md_w             :out std_logic;
+        
+        -- Store identifier (Identifier word) on the output of TX Arbitrator
+        store_ident_w          :out std_logic;
+
+        -- Store metadata (Frame format word) to double buffer registers.
+        buffer_md_w            :out std_logic; 
         
         -- Signals that TX Arbitrator is locked (CAN Core is transmitting from TXT
         -- Buffer)
@@ -4027,7 +4045,10 @@ package can_components is
     
         -- TX Frame Bit rate shift Flag 
         tran_brs                :out std_logic;
-    
+        
+        -- TX Identifier
+        tran_identifier         :out std_logic_vector(28 downto 0);
+        
         -- There is valid frame selected, can be locked for transmission
         tran_frame_valid        :out std_logic;
 

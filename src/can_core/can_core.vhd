@@ -139,7 +139,10 @@ entity can_core is
 
         -- TX Bit Rate Shift
         tran_brs               :in   std_logic;
-
+        
+        -- TX Identifier
+        tran_identifier        :in   std_logic_vector(28 downto 0);
+        
         -- Frame in TXT Buffer is valid any can be transmitted.
         tran_frame_valid       :in   std_logic; 
 
@@ -482,6 +485,7 @@ begin
         tran_ident_type         => tran_ident_type,     -- IN
         tran_frame_type         => tran_frame_type,     -- IN
         tran_brs                => tran_brs,            -- IN
+        tran_identifier         => tran_identifier,     -- IN
         tran_frame_valid        => tran_frame_valid,    -- IN
         txtb_hw_cmd             => txtb_hw_cmd_i,       -- IN
         txtb_ptr                => txtb_ptr,            -- OUT
