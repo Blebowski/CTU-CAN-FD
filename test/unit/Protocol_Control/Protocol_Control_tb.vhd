@@ -168,7 +168,8 @@ architecture Protocol_Control_unit_test of CAN_test is
     signal tran_is_rtr_1             :   std_logic;
     signal tran_ident_type_1         :   std_logic;
     signal tran_frame_type_1         :   std_logic;
-    signal tran_brs_1                :   std_logic; 
+    signal tran_brs_1                :   std_logic;
+    signal tran_identifier_1         :   std_logic_vector(28 downto 0);
     signal tran_frame_valid_1        :   std_logic;
     signal txtb_hw_cmd_1             :   t_txtb_hw_cmd;
     signal txtb_ptr_1                :   natural range 0 to 19;
@@ -273,15 +274,20 @@ architecture Protocol_Control_unit_test of CAN_test is
     signal is_overload_2             :  std_logic;
     
     -- TXT Buffers interface
-    signal tran_word_2               :   std_logic_vector(31 downto 0);
-    signal tran_dlc_2                :   std_logic_vector(3 downto 0);
-    signal tran_is_rtr_2             :   std_logic;
-    signal tran_ident_type_2         :   std_logic;
-    signal tran_frame_type_2         :   std_logic;
-    signal tran_brs_2                :   std_logic; 
-    signal tran_frame_valid_2        :   std_logic;
-    signal txtb_hw_cmd_2             :  t_txtb_hw_cmd;
-    signal txtb_ptr_2                :  natural range 0 to 19;
+    signal tran_word_2               :   std_logic_vector(31 downto 0)
+         := (OTHERS => '0');
+         
+    signal tran_dlc_2                :   std_logic_vector(3 downto 0)
+        := (OTHERS => '0');
+        
+    signal tran_is_rtr_2             :   std_logic := '0';
+    signal tran_ident_type_2         :   std_logic := '0';
+    signal tran_frame_type_2         :   std_logic := '0';
+    signal tran_brs_2                :   std_logic := '0';
+    signal tran_identifier_2         :   std_logic_vector(28 downto 0) := (OTHERS => '0');
+    signal tran_frame_valid_2        :   std_logic := '0'; 
+    signal txtb_hw_cmd_2             :   t_txtb_hw_cmd;
+    signal txtb_ptr_2                :   natural range 0 to 19;
     signal txtb_changed_2            :   std_logic := '0';
     
     -- RX Buffer interface
@@ -676,6 +682,7 @@ begin
         tran_ident_type         => tran_ident_type_1,
         tran_frame_type         => tran_frame_type_1,
         tran_brs                => tran_brs_1,
+        tran_identifier         => tran_identifier_1,
         tran_frame_valid        => tran_frame_valid_1,
         txtb_hw_cmd             => txtb_hw_cmd_1,
         txtb_ptr                => txtb_ptr_1,
@@ -798,6 +805,7 @@ begin
         tran_ident_type         => tran_ident_type_2,
         tran_frame_type         => tran_frame_type_2,
         tran_brs                => tran_brs_2,
+        tran_identifier         => tran_identifier_2,
         tran_frame_valid        => tran_frame_valid_2,
         txtb_hw_cmd             => txtb_hw_cmd_2,
         txtb_ptr                => txtb_ptr_2,
@@ -960,6 +968,7 @@ begin
     begin
         wait until rising_edge(clk_sys);
         tran_word_1 <= txtb_mem(txtb_ptr_1);
+        tran_identifier_1 <= txtb_mem(1)(28 downto 0);
     end process;
 
 
