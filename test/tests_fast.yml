@@ -47,6 +47,7 @@ feature:
         alc_base_id:
         alc_srr_rtr:
         alc_srr_rtr_2:
+        alc_ide:
         mode_loopback:
         mode_listen_only:
         mode_self_test:
