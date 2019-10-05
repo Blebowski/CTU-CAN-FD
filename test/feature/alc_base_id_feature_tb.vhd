@@ -46,7 +46,7 @@
 -- Verifies:
 --  1. Arbitration within base identifier. Node loses arbitration on a bit where
 --     it send recessive and samples dominant.
---  2. Arbitration lost capture position.
+--  2. Arbitration lost capture position within Base identifier.
 --
 -- Test sequence:
 --  1. Configure both Nodes to one-shot mode.
