@@ -72,6 +72,7 @@ feature:
     tests:
         alc_base_id:
         alc_srr_rtr:
+        alc_srr_rtr_2:
         mode_loopback:
             iterations: 10
         mode_listen_only:
