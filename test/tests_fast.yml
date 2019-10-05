@@ -45,6 +45,7 @@ feature:
         wave: feature/feature_env_setup.tcl
     tests:
         alc_base_id:
+        alc_id_extension:
         alc_srr_rtr:
         alc_srr_rtr_2:
         alc_ide:
