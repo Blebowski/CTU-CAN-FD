@@ -85,7 +85,6 @@ feature:
         mode_fd_enable:
         # fault_confinement:
         forbid_fd:
-        # interrupt:
         int_rx:
         int_tx:
         int_ewl:
