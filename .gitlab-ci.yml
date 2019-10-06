@@ -62,7 +62,7 @@ build_doc:
         paths:
             - doc/core/Progdokum.pdf
             - doc/core/ctu_can_fd_architecture.pdf
-            - doc/core/build
+            - doc/driver/build
 
 build_linux_driver:
     stage: build
