@@ -122,7 +122,7 @@ pages:
         - mv test/code_html public/coverage || true
         - cp doc/core/Progdokum.pdf public/ || true
         - cp doc/core/ctu_can_fd_architecture.pdf public/ || true
-        - cp doc/driver/build public/driver_doc || true
+        - cp -R doc/driver/build public/driver_doc || true
         - mkdir public/functional_coverage
         - cp -R test/build/functional_coverage/* public/functional_coverage || true
     only:
