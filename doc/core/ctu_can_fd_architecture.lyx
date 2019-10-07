@@ -511,7 +511,7 @@ filename "version.tex"
 \noindent
 \align center
 \begin_inset Tabular
-<lyxtabular version="3" rows="3" columns="5">
+<lyxtabular version="3" rows="4" columns="5">
 <features tabularvalignment="middle">
 <column alignment="center" valignment="top" width="1.5cm">
 <column alignment="center" valignment="top" width="3cm">
@@ -614,11 +614,58 @@ Initial version - separated stand-alone architecture document from Datasheet
 </cell>
 </row>
 <row>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
 0.2
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+2.2
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Ondrej Ille
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+29-09-2019
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+TX Arbitrator loads identifier as part of TXT buffer validation.
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+0.3
 \end_layout
 
 \end_inset
@@ -645,7 +692,7 @@ Ondrej Ille
 \begin_inset Text
 
 \begin_layout Plain Layout
-29-09-2019
+07-10-2019
 \end_layout
 
 \end_inset
@@ -654,7 +701,7 @@ Ondrej Ille
 \begin_inset Text
 
 \begin_layout Plain Layout
-TX Arbitrator loads identifier as part of TXT buffer validation.
+Update interfaces
 \end_layout
 
 \end_inset
@@ -981,12 +1028,10 @@ When CTU CAN FD GIT repository is clonned, register map can be generated
 \end_layout
 
 \begin_layout Verbatim
-
 cd scripts
 \end_layout
 
 \begin_layout Verbatim
-
 ./update_reg_map
 \end_layout
 
@@ -999,12 +1044,10 @@ Documentation can be exported from VHDL RTL codes by following script:
 \end_layout
 
 \begin_layout Verbatim
-
 cd scripts
 \end_layout
 
 \begin_layout Verbatim
-
 python gen_lyx_tables.py --configPath vhdl_lyx_interface_cfg.yml
 \end_layout
 
@@ -1037,12 +1080,10 @@ CTU CAN FD contains release tags in GIT repository.
 \end_layout
 
 \begin_layout Verbatim
-
 cd scripts
 \end_layout
 
 \begin_layout Verbatim
-
 python create_release.py --output_dir ../release_directory_name
 \end_layout
 
@@ -1064,12 +1105,10 @@ src/component.xml
 \end_layout
 
 \begin_layout Verbatim
-
 cd scripts
 \end_layout
 
 \begin_layout Verbatim
-
 python gen_vivado_component.py
 \end_layout
 

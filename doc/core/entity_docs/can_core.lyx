@@ -564,7 +564,7 @@ Ports
 \noindent
 \align center
 \begin_inset Tabular
-<lyxtabular version="3" rows="58" columns="4">
+<lyxtabular version="3" rows="59" columns="4">
 <features islongtable="true" longtabularalignment="center">
 <column alignment="center" valignment="top" width="4cm">
 <column alignment="center" valignment="top" width="1.2cm">
@@ -1321,6 +1321,48 @@ std_logic
 
 \begin_layout Plain Layout
 TX Bit Rate Shift
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+tran_identifier
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+in
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+std_logic_vector 
+\begin_inset Newline newline
+\end_inset
+
+(28 downto 0)
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+TX Identifier
 \end_layout
 
 \end_inset
