@@ -108,7 +108,10 @@ entity bit_stuffing is
         fixed_stuff         :in   std_logic;    
 
         -- Length of Bit Stuffing rule
-        stuff_length        :in   std_logic_vector(2 downto 0); 
+        stuff_length        :in   std_logic_vector(2 downto 0);
+        
+        -- Frame transmission without SOF started
+        tx_frame_no_sof     :in   std_logic;
 
         ------------------------------------------------------------------------
         -- Status signals
@@ -327,11 +330,15 @@ begin
 
     ---------------------------------------------------------------------------
     -- Next value for counter of equal consecutive bits:
-    --  1. Reset
-    --  2. Increment if not reset when processing bit.
-    --  3. Keep original value otherwise.
+    --  1. Set to 2 when transmission started without SOF and first bit of
+    --     Base ID is dominant! This accounts for SOF + Base ID (1)!
+    --  2. Reset
+    --  3. Increment if not reset when processing bit.
+    --  4. Keep original value otherwise.
     ---------------------------------------------------------------------------
-    same_bits_d <=         "001" when (same_bits_rst = '1') else
+    same_bits_d <=        "010" when (tx_frame_no_sof = '1' and
+                                      data_in = DOMINANT) else 
+                          "001" when (same_bits_rst = '1') else
                    same_bits_add when (bst_trigger = '1') else
                      same_bits_q;
 

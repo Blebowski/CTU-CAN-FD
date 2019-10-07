@@ -591,7 +591,10 @@ package can_components is
 
         -- Length of Bit Stuffing rule
         stuff_length        :in   std_logic_vector(2 downto 0); 
-
+        
+        -- Frame transmission without SOF started
+        tx_frame_no_sof     :in   std_logic;
+        
         ------------------------------------------------------------------------
         -- Status signals
         ------------------------------------------------------------------------
@@ -1717,6 +1720,9 @@ package can_components is
         -- Fixed Bit stuffing method
         fixed_stuff             :out   std_logic;
         
+        -- Frame transmission without SOF started
+        tx_frame_no_sof         :out   std_logic;
+        
         -----------------------------------------------------------------------
         -- Operation control interface
         -----------------------------------------------------------------------
@@ -2058,6 +2064,9 @@ package can_components is
 
         -- Bit Stuffing type (0-Normal, 1-Fixed)
         fixed_stuff             :out  std_logic;
+        
+        -- Frame transmission without SOF started
+        tx_frame_no_sof         :out  std_logic;
 
         -- Length of Bit Stuffing rule
         stuff_length            :out  std_logic_vector(2 downto 0);

@@ -260,8 +260,8 @@ Ports
 \noindent
 \align center
 \begin_inset Tabular
-<lyxtabular version="3" rows="15" columns="4">
-<features tabularvalignment="middle">
+<lyxtabular version="3" rows="16" columns="4">
+<features islongtable="true" longtabularalignment="center">
 <column alignment="center" valignment="top" width="4cm">
 <column alignment="center" valignment="top" width="1.2cm">
 <column alignment="center" valignment="top" width="3.5cm">
@@ -930,6 +930,44 @@ std_logic_vector
 
 \begin_layout Plain Layout
 Length of Bit Stuffing rule
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+tx_frame_no_sof
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+in
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+std_logic
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Frame transmission without SOF started
 \end_layout
 
 \end_inset

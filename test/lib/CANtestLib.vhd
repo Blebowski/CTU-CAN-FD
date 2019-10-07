@@ -2021,10 +2021,14 @@ package CANtestLib is
     -- Wait until sample point (from Status Bus).
     --
     -- Arguments:
-    --  pc_dbg          State to poll on.
+    --  pc_dbg           State to poll on.
+    --  skip_stuff_bits  When true, bits which are destuffed are skipped, only
+    --                   bits counted by protocol control are taken into account.
+    --                   When false, also stuff bits are taken into account.
     ----------------------------------------------------------------------------
     procedure CAN_wait_sample_point(
-        signal   stat_bus         : in    std_logic_vector(511 downto 0) 
+        signal   stat_bus           : in    std_logic_vector(511 downto 0);
+        constant skip_stuff_bits    : in    boolean := true
     );
 
     ----------------------------------------------------------------------------
@@ -4910,10 +4914,15 @@ package body CANtestLib is
     
     
     procedure CAN_wait_sample_point(
-        signal   stat_bus         : in    std_logic_vector(511 downto 0) 
+        signal   stat_bus           : in    std_logic_vector(511 downto 0);
+        constant skip_stuff_bits    : in    boolean := true
     ) is
     begin
-        wait until stat_bus(STAT_REC_TRIG) = '1';
+        if (skip_stuff_bits) then
+            wait until stat_bus(STAT_REC_TRIG) = '1';
+        else
+            wait until stat_bus(STAT_RX_TRIGGER) = '1';
+        end if;
     end procedure;
 
 
