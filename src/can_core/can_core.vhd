@@ -335,6 +335,7 @@ architecture rtl of can_core is
     signal stuff_enable            :    std_logic;
     signal destuff_enable          :    std_logic;
     signal fixed_stuff             :    std_logic;
+    signal tx_frame_no_sof         :    std_logic;
     signal stuff_length            :    std_logic_vector(2 downto 0);
     signal dst_ctr                 :    std_logic_vector(2 downto 0);
     signal bst_ctr                 :    std_logic_vector(2 downto 0);
@@ -538,6 +539,7 @@ begin
         stuff_enable            => stuff_enable,        -- OUT
         destuff_enable          => destuff_enable,      -- OUT
         fixed_stuff             => fixed_stuff,         -- OUT
+        tx_frame_no_sof         => tx_frame_no_sof,     -- OUT
         stuff_length            => stuff_length,        -- OUT
         dst_ctr                 => dst_ctr,             -- IN
         bst_ctr                 => bst_ctr,             -- IN
@@ -718,6 +720,7 @@ begin
         stuff_enable        => stuff_enable,            -- IN
         fixed_stuff         => fixed_stuff,             -- IN
         stuff_length        => stuff_length,            -- IN
+        tx_frame_no_sof     => tx_frame_no_sof,         -- IN
 
         -- Status signals
         bst_ctr             => bst_ctr,                 -- OUT

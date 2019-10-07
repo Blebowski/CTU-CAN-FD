@@ -306,6 +306,9 @@ entity protocol_control is
         -- Bit Stuffing type (0-Normal, 1-Fixed)
         fixed_stuff             :out  std_logic;
 
+        -- Frame transmission without SOF started
+        tx_frame_no_sof         :out  std_logic;
+
         -- Length of Bit Stuffing rule
         stuff_length            :out  std_logic_vector(2 downto 0);
 
@@ -762,6 +765,7 @@ begin
         destuff_enable          => destuff_enable,          -- OUT
         stuff_length            => stuff_length,            -- OUT
         fixed_stuff             => fixed_stuff_i,           -- OUT
+        tx_frame_no_sof         => tx_frame_no_sof,         -- OUT
         
         -- Operation control interface
         is_transmitter          => is_transmitter,          -- IN

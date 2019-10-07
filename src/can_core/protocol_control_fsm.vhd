@@ -411,7 +411,10 @@ entity protocol_control_fsm is
         
         -- Fixed Bit stuffing method
         fixed_stuff             :out   std_logic;
-
+        
+        -- Frame transmission without SOF started
+        tx_frame_no_sof         :out   std_logic;
+        
         -----------------------------------------------------------------------
         -- Operation control interface
         -----------------------------------------------------------------------
@@ -722,6 +725,10 @@ architecture rtl of protocol_control_fsm is
     
     -- Blocking HW command for Unlock When Error frame request is active
     signal block_txtb_unlock_due_error : std_logic;
+    
+    -- No SOF transmitted
+    signal tx_frame_no_sof_d         :  std_logic;
+    signal tx_frame_no_sof_q         :  std_logic;
     
 begin
 
@@ -1365,6 +1372,7 @@ begin
         stuff_enable_clear <= '0';
         destuff_enable_set <= '0';
         destuff_enable_clear <= '0';
+        tx_frame_no_sof_d <= '0';
         
         -- Synchronisation control
         perform_hsync <= '0';
@@ -2147,7 +2155,10 @@ begin
                     -- is received, become receiver! 
                     if (tx_frame_ready = '1' and go_to_suspend = '0') then
                         txtb_hw_cmd_d.lock <= '1';
-                        set_transmitter_i   <= '1';
+                        set_transmitter_i <= '1';
+                        if (rx_data_nbs = DOMINANT) then
+                            tx_frame_no_sof_d <= '1';
+                        end if;
                     elsif (rx_data_nbs = DOMINANT) then
                         set_receiver_i   <= '1';
                     end if;
@@ -2241,7 +2252,6 @@ begin
                 if (rx_data_nbs = DOMINANT and is_bus_off = '0') then
                     ctrl_ctr_pload_i <= '1';
                     ctrl_ctr_pload_val <= C_BASE_ID_DURATION;
-                    tx_load_base_id_i <= '1';
                     sof_pulse_i <= '1';
                     crc_enable <= '1';
                 end if;
@@ -2249,6 +2259,11 @@ begin
                 if (tx_frame_ready = '1' and is_bus_off = '0') then
                     txtb_hw_cmd_d.lock <= '1';
                     set_transmitter_i <= '1';
+                    tx_load_base_id_i <= '1';
+                    if (rx_data_nbs = DOMINANT) then
+                        tx_frame_no_sof_d <= '1';
+                    end if;
+
                 elsif (rx_data_nbs = DOMINANT) then
                     set_receiver_i <= '1';
                 end if;
@@ -2819,6 +2834,19 @@ begin
         end if;
     end process;
     
+    -----------------------------------------------------------------------
+    -- Frame transmission (transmitter) started without SOF!
+    -----------------------------------------------------------------------
+    tx_frame_no_sof_proc : process(clk_sys, res_n)
+    begin
+        if (res_n = G_RESET_POLARITY) then
+            tx_frame_no_sof_q <= '0';
+        elsif (rising_edge(clk_sys)) then
+            if (rx_trigger = '1') then
+                tx_frame_no_sof_q <= tx_frame_no_sof_d;
+            end if;
+        end if;
+    end process;
 
     -----------------------------------------------------------------------
     -- Internal signals to output propagation
@@ -2838,6 +2866,7 @@ begin
     retr_ctr_clear <= retr_ctr_clear_i;
     arbitration_lost <= arbitration_lost_i;
     retr_ctr_add <= retr_ctr_add_i;
+    tx_frame_no_sof <= tx_frame_no_sof_q;
 
     -- <RELEASE_OFF>
     -----------------------------------------------------------------------
