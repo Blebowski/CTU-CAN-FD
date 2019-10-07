@@ -619,6 +619,7 @@ begin
         stuff_enable       =>  stuff_enable,
         data_in            =>  tx_data,
         fixed_stuff        =>  fixed_stuff,
+        tx_frame_no_sof    =>  '0',
         data_halt          =>  data_halt,
         stuff_length       =>  stuff_length,
         bst_ctr            =>  bst_ctr,
