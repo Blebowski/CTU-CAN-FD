@@ -348,6 +348,10 @@ package drv_stat_pkg is
     constant STAT_REC_TRIG             : natural := 182;
     constant STAT_SAMPLE_INDEX         : natural := 184;
     constant STAT_SAMPLE_SEC           : natural := 185;
+    
+    -- TX/RX triggers (with stuff bits included)
+    constant STAT_RX_TRIGGER           : natural := 186;
+    constant STAT_TX_TRIGGER           : natural := 187;
 
     -- Arbitration lost capture
     constant STAT_ALC_ID_FIELD_HIGH  : natural := 296;

@@ -880,7 +880,7 @@ begin
     ----------------------------------------------------------------------------
     stat_bus(511 downto 384) <= (OTHERS => '0');
     stat_bus(299 downto 297) <= (OTHERS => '0');
-    stat_bus(187 downto 186) <= (OTHERS => '0');
+    stat_bus(187 downto 188) <= (OTHERS => '0');
     stat_bus(98 downto 90)   <= (OTHERS => '0');
     stat_bus(60 downto 32)   <= (OTHERS => '0');
     stat_bus(113)            <= '0';
@@ -1135,7 +1135,12 @@ begin
         
     stat_bus(STAT_RETR_CTR_HIGH downto STAT_RETR_CTR_LOW) <=
         retr_ctr_i;
+        
+    stat_bus(STAT_RX_TRIGGER) <=
+        rx_triggers(0);
 
+    stat_bus(STAT_TX_TRIGGER) <=
+        tx_trigger;
 
     ---------------------------------------------------------------------------
     -- Internal signals to output propagation
