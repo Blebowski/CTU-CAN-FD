@@ -78,9 +78,6 @@ entity can_top_level is
         -- RX Buffer RAM size (32 bit words)
         rx_buffer_size : natural range 32 to 4096 := 128;
 
-        -- ID (bits 19-16 of adress)
-        ID             : natural range 0 to 15  := 1;
-
         -- Insert Filter A
         sup_filtA      : boolean                := true;
         
@@ -492,7 +489,6 @@ begin
         G_SUP_RANGE         => sup_range,
         G_SUP_TRAFFIC_CTRS  => sup_traffic_ctrs,
         G_TXT_BUFFER_COUNT  => C_TXT_BUFFER_COUNT, 
-        G_ID                => ID,
         G_INT_COUNT         => C_INT_COUNT,
         G_TRV_CTR_WIDTH     => C_TRV_CTR_WIDTH,
         G_DEVICE_ID         => C_CAN_DEVICE_ID,

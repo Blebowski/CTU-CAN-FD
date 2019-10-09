@@ -91,9 +91,6 @@ entity memory_registers is
         -- Number of TXT Buffers
         G_TXT_BUFFER_COUNT  : natural range 0 to 7            := 4;
 
-        -- ID on Memory bus
-        G_ID                : natural                         := 1;
-
         -- Number of Interrupts
         G_INT_COUNT         : natural                         := 12;
 
@@ -351,10 +348,7 @@ begin
                              '0';
     end generate txtb_port_a_cs_gen;
 
-    can_core_cs <= '1' when (scs = ACT_CSC) and
-                            (adress(ID_ADRESS_HIGHER downto ID_ADRESS_LOWER) =
-                             std_logic_vector(to_unsigned(G_ID, 4)))
-                       else
+    can_core_cs <= '1' when (scs = ACT_CSC) else
                    '0';
 
 
