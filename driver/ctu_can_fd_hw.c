@@ -384,8 +384,8 @@ void ctu_can_fd_read_err_ctrs(struct ctucanfd_priv *priv,
 	union ctu_can_fd_rxc_txc reg;
 
 	reg.u32 = priv->read_reg(priv, CTU_CAN_FD_RXC);
-	ctr->txerr = reg.s.rxc_val;
-	ctr->rxerr = reg.s.txc_val;
+	ctr->txerr = reg.s.txc_val;
+	ctr->rxerr = reg.s.rxc_val;
 }
 
 enum can_state ctu_can_fd_read_error_state(struct ctucanfd_priv *priv)
