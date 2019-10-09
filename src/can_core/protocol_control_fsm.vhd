@@ -2383,7 +2383,7 @@ begin
                 end if;
 
                 -- Node received dominant bit as first bit after Error flag!
-                -- This shall be treated as primamry error
+                -- This shall be treated as primary error
                 if (rx_data_nbs = DOMINANT and first_err_delim_q = '1') then
                     primary_err_i <= '1';
                     first_err_delim_d <= '0';
@@ -2628,8 +2628,8 @@ begin
                   sp_control_q_i;
 
     ---------------------------------------------------------------------------
-    -- Indicates that Error or Overload flag is being transmitted! Can't
-    -- be part of current state, since it must be valid also during
+    -- Indicates that Active Error or Overload flag is being transmitted!
+    -- Can't be part of current state, since it must be valid also during
     -- error condition to distiguish error during error flag!
     ---------------------------------------------------------------------------
     act_err_ovr_flag <= '1' when (curr_state = s_pc_act_err_flag) else
