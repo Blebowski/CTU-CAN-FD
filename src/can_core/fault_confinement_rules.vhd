@@ -120,7 +120,7 @@ begin
     
     ---------------------------------------------------------------------------
     -- Increment RX Error counter by 1 when Receiver detects an error which
-    -- is not during Error flag or overload flag!
+    -- is not during Active Error flag or overload flag!
     ---------------------------------------------------------------------------
     inc_one <= '1' when (err_detected = '1' and act_err_ovr_flag = '0' and
                          is_receiver = '1')
