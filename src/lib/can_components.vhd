@@ -63,9 +63,6 @@ package can_components is
             -- RX Buffer RAM size (32 bit words)
             rx_buffer_size : natural range 32 to 4096 := 128;
     
-            -- ID (bits 19-16 of adress)
-            ID             : natural range 0 to 15  := 1;
-    
             -- Insert Filter A
             sup_filtA      : boolean                := true;
             
@@ -2961,9 +2958,6 @@ package can_components is
         
         -- Number of TXT Buffers
         G_TXT_BUFFER_COUNT  : natural range 0 to 7            := 4;
-
-        -- ID on Memory bus
-        G_ID                : natural                         := 1;
 
         -- Number of Interrupts
         G_INT_COUNT         : natural                         := 12;

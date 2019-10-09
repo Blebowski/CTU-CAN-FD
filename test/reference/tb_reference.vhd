@@ -273,8 +273,7 @@ begin
     ----------------------------------------------------------------------------
     CAN_inst : CAN_top_level
         generic map(
-            rx_buffer_size    => 64,
-            ID                => 0
+            rx_buffer_size    => 64
         )
         port map(
             clk_sys           => clk_sys,

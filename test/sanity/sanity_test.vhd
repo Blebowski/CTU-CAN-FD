@@ -459,8 +459,7 @@ begin
     comp_gen : for i in 1 to NODE_COUNT generate
         can_inst : CAN_top_level
         generic map(
-             rx_buffer_size   => 64,
-             ID               => i
+             rx_buffer_size   => 64
         )
         port map(
              res_n            => res_n_v(i),
