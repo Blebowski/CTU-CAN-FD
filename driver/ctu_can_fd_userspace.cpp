@@ -286,14 +286,14 @@ int main(int argc, char *argv[])
 
     printf("DevID: 0x%08x, should be 0x%08x\n", reg.s.device_id, CTU_CAN_FD_ID);
 
-    if (!ctu_can_fd_check_access(priv))
-        errx(1, "error: ctu_can_fd_check_access");
+    if (!ctucan_hw_check_access(priv))
+        errx(1, "error: ctucan_hw_check_access");
 
-    u32 version = ctu_can_fd_get_version(priv);
+    u32 version = ctucan_hw_get_version(priv);
     printf("Core version: %u\n", version);
 
     //struct can_ctrlmode ctrlmode = {CAN_CTRLMODE_FD, CAN_CTRLMODE_FD};
-    //ctu_can_fd_set_mode(priv, &ctrlmode);
+    //ctucan_hw_set_mode(priv, &ctrlmode);
 
     if (test_read_speed) {
         struct timespec tic, tac, diff;
@@ -302,7 +302,7 @@ int main(int argc, char *argv[])
 	(void)dummy;
         clock_gettime(CLOCK_MONOTONIC, &tic);
 	for (i = 0; i < 1000 * 1000; i++) {
-		dummy = ctu_can_fd_read32(priv, CTU_CAN_FD_RX_DATA);
+		dummy = ctucan_hw_read32(priv, CTU_CAN_FD_RX_DATA);
 	}
         clock_gettime(CLOCK_MONOTONIC, &tac);
 
@@ -313,7 +313,7 @@ int main(int argc, char *argv[])
 	dummy = 0;
         clock_gettime(CLOCK_MONOTONIC, &tic);
 	for (i = 0; i < 1000 * 1000; i++) {
-		ctu_can_fd_write32(priv, CTU_CAN_FD_FILTER_C_VAL, dummy);
+		ctucan_hw_write32(priv, CTU_CAN_FD_FILTER_C_VAL, dummy);
 	}
         clock_gettime(CLOCK_MONOTONIC, &tac);
 
@@ -326,7 +326,7 @@ int main(int argc, char *argv[])
 
 
     //printf("NOT RESETTING!\n");
-    ctu_can_fd_reset(priv);
+    ctucan_hw_reset(priv);
 
     {
         union ctu_can_fd_mode_settings mode;
@@ -385,23 +385,23 @@ int main(int argc, char *argv[])
 
     //priv->write_reg(priv, CTU_CAN_FD_INT_MASK_CLR, 0xffff);
     //priv->write_reg(priv, CTU_CAN_FD_INT_ENA_SET, 0xffff);
-    ctu_can_fd_set_nom_bittiming(priv, &nom_timing);
-    ctu_can_fd_set_data_bittiming(priv, &data_timing);
-    //ctu_can_fd_rel_rx_buf(priv);
-    //ctu_can_fd_set_ret_limit(priv, true, 1);
-    //ctu_can_fd_set_ret_limit(priv, false, 0);
-    //ctu_can_fd_abort_tx(priv);
-    //ctu_can_fd_txt_set_abort(priv, CTU_CAN_FD_TXT_BUFFER_1);
-    //ctu_can_fd_txt_set_empty(priv, CTU_CAN_FD_TXT_BUFFER_1);
+    ctucan_hw_set_nom_bittiming(priv, &nom_timing);
+    ctucan_hw_set_data_bittiming(priv, &data_timing);
+    //ctucan_hw_rel_rx_buf(priv);
+    //ctucan_hw_set_ret_limit(priv, true, 1);
+    //ctucan_hw_set_ret_limit(priv, false, 0);
+    //ctucan_hw_abort_tx(priv);
+    //ctucan_hw_txt_set_abort(priv, CTU_CAN_FD_TXT_BUFFER_1);
+    //ctucan_hw_txt_set_empty(priv, CTU_CAN_FD_TXT_BUFFER_1);
 
     if (loopback_mode) {
         struct can_ctrlmode mode = {0, 0};
 	mode.mask  = CAN_CTRLMODE_LOOPBACK | CAN_CTRLMODE_PRESUME_ACK;
 	mode.flags = CAN_CTRLMODE_LOOPBACK | CAN_CTRLMODE_PRESUME_ACK;
-        ctu_can_fd_set_mode(priv, &mode);
+        ctucan_hw_set_mode(priv, &mode);
     }
 
-    ctu_can_fd_enable(priv, true);
+    ctucan_hw_enable(priv, true);
     usleep(10000);
 
     printf("MODE=0x%02x\n", priv->read_reg(priv, CTU_CAN_FD_MODE));
@@ -415,22 +415,22 @@ int main(int argc, char *argv[])
         memcpy(txf.data, d, sizeof(d));
         txf.len = sizeof(d);
 
-        res = ctu_can_fd_insert_frame(priv, &txf, 0, CTU_CAN_FD_TXT_BUFFER_1, false);
+        res = ctucan_hw_insert_frame(priv, &txf, 0, CTU_CAN_FD_TXT_BUFFER_1, false);
         if (!res)
             printf("TX failed\n");
-        ctu_can_fd_txt_set_rdy(priv, CTU_CAN_FD_TXT_BUFFER_1);
+        ctucan_hw_txt_set_rdy(priv, CTU_CAN_FD_TXT_BUFFER_1);
         return 0;
     }
 
     while (1) {
-        u32 nrxf = ctu_can_fd_get_rx_frame_count(priv);//ctu_can_fd_get_rx_frame_ctr(priv);
+        u32 nrxf = ctucan_hw_get_rx_frame_count(priv);//ctucan_hw_get_rx_frame_ctr(priv);
         union ctu_can_fd_rx_mem_info reg;
-        reg.u32 = ctu_can_fd_read32(priv, CTU_CAN_FD_RX_MEM_INFO);
+        reg.u32 = ctucan_hw_read32(priv, CTU_CAN_FD_RX_MEM_INFO);
         u32 rxsz = reg.s.rx_buff_size - reg.s.rx_mem_free;
         union ctu_can_fd_status status = ctu_can_get_status(priv);
         union ctu_can_fd_err_capt_alc err_capt_alc;
         union ctu_can_fd_int_stat int_stat = ctu_can_fd_int_sts(priv);
-        ctu_can_fd_int_clr(priv, int_stat);
+        ctucan_hw_int_clr(priv, int_stat);
 
 
         printf("%u RX frames, %u words", nrxf, rxsz);
@@ -461,13 +461,13 @@ int main(int argc, char *argv[])
         while (nrxf || rxsz) {
             struct canfd_frame cf;
             u64 ts;
-            ctu_can_fd_read_rx_frame(priv, &cf, &ts);
+            ctucan_hw_read_rx_frame(priv, &cf, &ts);
             printf("%llu: #%x [%u]", ts, cf.can_id, cf.len);
             for (int i=0; i<cf.len; ++i)
                 printf(" %02x", cf.data[i]);
             printf("\n");
             rxsz = 0;
-            nrxf = ctu_can_fd_get_rx_frame_count(priv);
+            nrxf = ctucan_hw_get_rx_frame_count(priv);
         }
 
         if (do_periodic_transmit && (loop_cycle & 1)) {
@@ -487,10 +487,10 @@ int main(int argc, char *argv[])
                 txf.len = sizeof(d);
 	    }
 
-            res = ctu_can_fd_insert_frame(priv, &txf, 0, CTU_CAN_FD_TXT_BUFFER_1, transmit_fdf);
+            res = ctucan_hw_insert_frame(priv, &txf, 0, CTU_CAN_FD_TXT_BUFFER_1, transmit_fdf);
             if (!res)
                 printf("TX failed\n");
-            ctu_can_fd_txt_set_rdy(priv, CTU_CAN_FD_TXT_BUFFER_1);
+            ctucan_hw_txt_set_rdy(priv, CTU_CAN_FD_TXT_BUFFER_1);
 
         }
 

@@ -96,8 +96,8 @@ struct ctucanfd_priv* ctucanfd_init(uint32_t addr)
     memset(priv, 0, sizeof(*priv));
 
     priv->mem_base = base;
-    priv->read_reg = ctu_can_fd_read32;
-    priv->write_reg = ctu_can_fd_write32;
+    priv->read_reg = ctucan_hw_read32;
+    priv->write_reg = ctucan_hw_write32;
 
      // will leak memory, but who cares, this is just a prototype testing tool
     return priv;
