@@ -91,8 +91,7 @@ struct ctucan_priv {
 	struct list_head peers_on_pdev;
 };
 
-// #define CTUCAN_FLAG_RX_SCHED		1
-#define CTUCAN_FLAG_RX_FFW_BUFFERED	2
+#define CTUCAN_FLAG_RX_FFW_BUFFERED	1
 
 static int ctucan_reset(struct net_device *ndev)
 {
@@ -223,8 +222,6 @@ static int ctucan_chip_start(struct net_device *ndev)
 	}
 
 	int_msk.u32 = ~int_ena.u32; /* mask all disabled interrupts */
-
-	// clear_bit(CTUCAN_FLAG_RX_SCHED, &priv->drv_flags);
 
 	/* It's after reset, so there is no need to clear anything */
 	ctu_can_fd_int_mask_set(&priv->p, int_msk);
@@ -557,7 +554,6 @@ static int ctucan_rx_poll(struct napi_struct *napi, int quota)
 			 */
 			iec.u32 = 0;
 			iec.s.rbnei = 1;
-			// clear_bit(CTUCAN_FLAG_RX_SCHED, &priv->drv_flags);
 			ctu_can_fd_int_clr(&priv->p, iec);
 			ctu_can_fd_int_mask_clr(&priv->p, iec);
 		}
@@ -712,9 +708,6 @@ static irqreturn_t ctucan_interrupt(int irq, void *dev_id)
 		/* Get the interrupt status */
 		isr = ctu_can_fd_int_sts(&priv->p);
 
-		//if (test_bit(CTUCAN_FLAG_RX_SCHED, &priv->drv_flags))
-		//	isr.s.rbnei = 0;
-
 		if (!isr.u32)
 			return irq_loops ? IRQ_HANDLED : IRQ_NONE;
 
@@ -729,7 +722,6 @@ static irqreturn_t ctucan_interrupt(int irq, void *dev_id)
 			 */
 			ctu_can_fd_int_mask_set(&priv->p, icr);
 			ctu_can_fd_int_clr(&priv->p, icr);
-			// set_bit(CTUCAN_FLAG_RX_SCHED, &priv->drv_flags);
 			napi_schedule(&priv->napi);
 		}
 
@@ -800,7 +792,6 @@ static void ctucan_chip_stop(struct net_device *ndev)
 	/* Disable interrupts and disable can */
 	ctu_can_fd_int_mask_set(&priv->p, mask);
 	ctu_can_fd_enable(&priv->p, false);
-	// clear_bit(CTUCAN_FLAG_RX_SCHED, &priv->drv_flags);
 	priv->can.state = CAN_STATE_STOPPED;
 }
 
