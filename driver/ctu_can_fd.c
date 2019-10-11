@@ -1188,8 +1188,9 @@ static struct platform_driver ctucanfd_driver = {
 
 module_platform_driver(ctucanfd_driver);
 
-/* FIXME: split this file into OF and PCI implementation */
-#elif CONFIG_PCI
+#endif /*CONFIG_OF*/
+
+#ifdef CONFIG_PCI
 
 #include <linux/pci.h>
 
