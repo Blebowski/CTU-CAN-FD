@@ -278,7 +278,7 @@ int main(int argc, char *argv[])
     if (addr_base == 0)
         addr_base = addrs[ifc];
 
-    struct ctucanfd_priv *priv = ctucanfd_init(addr_base);
+    struct ctucan_hw_priv *priv = ctucanfd_init(addr_base);
     int res;
 
     union ctu_can_fd_device_id_version reg;

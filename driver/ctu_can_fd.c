@@ -71,7 +71,7 @@ MODULE_PARM_DESC(pci_use_second, "Use the second CAN core on PCIe card. Default:
 
 struct ctucan_priv {
 	struct can_priv can; // must be first member!
-	struct ctucanfd_priv p;
+	struct ctucan_hw_priv p;
 
 	unsigned int txb_head;
 	unsigned int txb_tail;
