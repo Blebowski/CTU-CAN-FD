@@ -136,6 +136,10 @@ architecture rtl of fault_confinement_fsm is
 
     signal tx_err_ctr_mt_255 : std_logic;
     
+    -- Error warning limit register (to detect change)
+    signal err_warning_limit_d : std_logic;
+    signal err_warning_limit_q : std_logic;
+    
     ---------------------------------------------------------------------------
     -- Fault confinement FSM
     ---------------------------------------------------------------------------
@@ -164,11 +168,28 @@ begin
     rx_err_ctr_mt_ewl <= '1' when (unsigned(rx_err_ctr) >= unsigned(ewl)) else
                          '0';
 
-    err_warning_limit <= '1' when (tx_err_ctr_mt_ewl = '1' or
-                                   rx_err_ctr_mt_ewl = '1')
+    err_warning_limit_d <= '1' when (tx_err_ctr_mt_ewl = '1' or
+                                     rx_err_ctr_mt_ewl = '1')
+                               else
+                           '0';
+
+    ---------------------------------------------------------------------------
+    -- Error warning limit register
+    ---------------------------------------------------------------------------
+    ewl_reg_proc : process(res_n, clk_sys)
+    begin
+        if (res_n = G_RESET_POLARITY) then
+            err_warning_limit_q <= '0';
+        elsif (rising_edge(clk_sys)) then
+            err_warning_limit_q <= err_warning_limit_d;
+        end if;
+    end process;
+    
+    err_warning_limit <= '1' when (err_warning_limit_d = '1' and
+                                   err_warning_limit_q = '0')
                              else
                          '0';
-    
+
     ---------------------------------------------------------------------------
     -- Next state process
     ---------------------------------------------------------------------------
