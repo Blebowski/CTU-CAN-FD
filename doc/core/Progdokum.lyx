@@ -3527,8 +3527,8 @@ Fault confinement
 \end_layout
 
 \begin_layout Standard
-When transmitt error counter or receive error counter are equal to or higher
- than EWL register INT_STAT[EWLI] is set.
+When Transmitt error counter (TEC) or Receive error counter (REC) are equal
+ to, or higher than EWL register INT_STAT[EWLI] is set.
  When Fault confinement state of CTU CAN FD changes INT_STAT[FCSI] is set.
  This bit is set upon any Fault confinement state change (even bus off to
  error active).
