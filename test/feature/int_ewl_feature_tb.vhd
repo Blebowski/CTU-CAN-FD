@@ -64,16 +64,14 @@
 --     EWL Interrupt is set and INT pin is high.
 --  3. Disable EWL Interrupt and check INT pin goes low. Enable EWL Interrupt
 --     and check INT pin goes high. 
---  4. Clear EWL Interrupt and check it is still set (TX counter still 96).
---     Set TX Error counter to 95. Clear EWL Interrupt. Check EWL interrupt 
---     is cleared.
+--  4. Clear EWL Interrupt and check it not set. Set TX Error counter to
+--     95. Clear EWL Interrupt. Check EWL interrupt is cleared.
 --  5. Set RX Error counter to 96. Check that EWL Interrupt was set. Check that
 --     INT pin goes high. 
 --  6. Disable EWL Interrupt and check INT pin goes low. Enable EWL Interrupt
 --     and check INT pin goes high again. 
---  7. Clear EWL Interrupt. Check that EWL Interrupt is still set (RX Error
---     counter is still 96). Set RX Error counter to 95. Clear EWL Interrupt.
---     Check INT pin goes low and Interrupt is cleared!
+--  7. Clear EWL Interrupt. Check that EWL Interrupt is not set. Set RX Error
+--     counter to 95. Check INT pin goes low and Interrupt is cleared!
 --  8. Mask EWL Interrupt. Set TX Error counter to 96. Check that EWL interrupt
 --     was not set.
 --  9. Disable EWL Interrupt and check it was disabled. Enable EWL Interrupt and
@@ -178,20 +176,21 @@ package body int_ewl_feature is
         check(iout(1).irq = '1', "INT pin should be high!");
 
         -----------------------------------------------------------------------
-        -- 4. Clear EWL Interrupt and check it is still set (TX counter still
-        --    97). Set TX Error counter to 95. Clear EWL Interrupt. Check EWL
-        --    interrupt is cleared.
+        -- 4. Clear EWL Interrupt and check it not set. Set TX Error
+        --    counter to 95. Clear EWL Interrupt. Check EWL interrupt is
+        --    cleared.
         -----------------------------------------------------------------------
         info("Step 4: Check EWL is set again.");
         int_stat.error_warning_int := true;
         clear_int_status(int_stat, ID_1, mem_bus(1));
         read_int_status(int_stat, ID_1, mem_bus(1));
-        check(int_stat.error_warning_int, "EWL Interrupt set again when RX Error counter >= EWL!");
+        check_false(int_stat.error_warning_int,
+            "EWL Interrupt set again when RX Error counter >= EWL!");
         err_ctrs.tx_counter := 95;
         set_error_counters(err_ctrs, ID_1, mem_bus(1));
-        clear_int_status(int_stat, ID_1, mem_bus(1));
         read_int_status(int_stat, ID_1, mem_bus(1));
-        check_false(int_stat.error_warning_int, "EWL Interrupt not set when RX Error counter < EWL!");
+        check_false(int_stat.error_warning_int,
+            "EWL Interrupt not set when RX Error counter < EWL!");
         check(iout(1).irq = '0', "INT pin should be low!");
 
         -----------------------------------------------------------------------
@@ -220,21 +219,22 @@ package body int_ewl_feature is
         check(iout(1).irq = '1', "INT pin should be high!");
 
         -----------------------------------------------------------------------
-        -- 7. Clear EWL Interrupt. Check that EWL Interrupt is still set
-        --    (RX Error counter is still 96). Set RX Error counter to 95.
-        --    Clear EWL Interrupt. Check INT pin goes low and Interrupt is 
+        -- 7. Clear EWL Interrupt. Check that EWL Interrupt is not set. Set RX
+        --    Error counter to 95. Check INT pin goes low and Interrupt is
         --    cleared!
         -----------------------------------------------------------------------
         info("Step 7: Check EWL from RX counter is set again.");
         int_stat.error_warning_int := true;
         clear_int_status(int_stat, ID_1, mem_bus(1));
         read_int_status(int_stat, ID_1, mem_bus(1));
-        check(int_stat.error_warning_int, "EWL Interrupt set again when TX Error counter >= EWL!");
+        check_false(int_stat.error_warning_int,
+            "EWL Interrupt not set again when TX Error counter >= EWL!");
         err_ctrs.rx_counter := 95;
+
         set_error_counters(err_ctrs, ID_1, mem_bus(1));
-        clear_int_status(int_stat, ID_1, mem_bus(1));
         read_int_status(int_stat, ID_1, mem_bus(1));
-        check_false(int_stat.error_warning_int, "EWL Interrupt not set when RX Error counter < EWL!");
+        check_false(int_stat.error_warning_int,
+            "EWL Interrupt not set when RX Error counter < EWL!");
         check(iout(1).irq = '0', "INT pin should be low!");
 
         -----------------------------------------------------------------------
