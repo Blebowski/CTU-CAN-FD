@@ -44,10 +44,10 @@ extern "C" {
 #include <inttypes.h>
 #include <err.h>
 
-struct ctucanfd_priv *ctucanfd_init(uint32_t addr);
+struct ctucan_hw_priv *ctucanfd_init(uint32_t addr);
 
-unsigned int ctu_can_fd_read8(struct ctucanfd_priv *priv,
+unsigned int ctu_can_fd_read8(struct ctucan_hw_priv *priv,
 				enum ctu_can_fd_can_registers reg);
 
-unsigned int ctu_can_fd_read16(struct ctucanfd_priv *priv,
+unsigned int ctu_can_fd_read16(struct ctucan_hw_priv *priv,
 				enum ctu_can_fd_can_registers reg);

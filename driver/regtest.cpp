@@ -45,7 +45,7 @@
 */
 
 uint32_t s_apb_prdata;
-struct ctucanfd_priv *priv;
+struct ctucan_hw_priv *priv;
 unsigned error = 0;
 
 void CHECK(uint32_t expected, const char *msg)
