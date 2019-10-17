@@ -130,7 +130,7 @@ begin
         G_DEPTH                => G_RX_BUFF_SIZE,
         G_ADDRESS_WIDTH        => port_a_address'length,
         G_RESET_POLARITY       => G_RESET_POLARITY,
-        G_SIMULATION_RESET     => true,
+        G_SIMULATION_RESET     => false,
         G_SYNC_READ            => true
     )
     port map(
