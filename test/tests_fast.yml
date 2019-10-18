@@ -57,6 +57,7 @@ feature:
         mode_frame_filters:
             iterations: 6
         mode_fd_enable:
+        mode_test:
         # fault_confinement:
         forbid_fd:
         int_rx:
