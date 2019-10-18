@@ -1075,10 +1075,12 @@ When CTU CAN FD GIT repository is clonned, register map can be generated
 \end_layout
 
 \begin_layout Verbatim
+
 cd scripts
 \end_layout
 
 \begin_layout Verbatim
+
 ./update_reg_map
 \end_layout
 
@@ -1091,10 +1093,12 @@ Documentation can be exported from VHDL RTL codes by following script:
 \end_layout
 
 \begin_layout Verbatim
+
 cd scripts
 \end_layout
 
 \begin_layout Verbatim
+
 python gen_lyx_tables.py --configPath vhdl_lyx_interface_cfg.yml
 \end_layout
 
@@ -1127,10 +1131,12 @@ CTU CAN FD contains release tags in GIT repository.
 \end_layout
 
 \begin_layout Verbatim
+
 cd scripts
 \end_layout
 
 \begin_layout Verbatim
+
 python create_release.py --output_dir ../release_directory_name
 \end_layout
 
@@ -1152,10 +1158,12 @@ src/component.xml
 \end_layout
 
 \begin_layout Verbatim
+
 cd scripts
 \end_layout
 
 \begin_layout Verbatim
+
 python gen_vivado_component.py
 \end_layout
 
@@ -3427,7 +3435,7 @@ s_apb_pslverr
  on any access.
  If access is executed to an invalid location within CTU CAN FD, it is simply
  ignored.
- This is done to enable memory dumping of whole CTU CAN FD memory without
+ This is done to enable taking snapshot of CTU CAN FD registers without
  memory access errors.
  Accesses on APB Interface shall be 4 byte aligned.
  If access is not 4 byte aligned, lowest 2 bits of address are ignored.
@@ -4107,7 +4115,7 @@ hresp
  on any accesses.
  If access is executed to an invalid location within CTU CAN FD, it is simply
  ignored.
- This is done to enable memory dumping of whole CTU CAN FD memory without
+ This is done to enable taking snapshot of CTU CAN FD registers without
  memory access errors.
  Unaligned accesses are not supported by CTU CAN FD on AHB Bus.
  Each access shall be aligned to its own size (8-bit access can have arbitrary
@@ -6224,7 +6232,7 @@ If CTU CAN FD is implemented in SoC system, it is recommended to implement
 recessive
 \color inherit
  bits to CAN Bus.
- Due to nature of CAN Bus communication, it is impossible to gate clocks
+ Due to nature of CAN Bus communication, it is impractical to gate clocks
  for CTU CAN FD when there is no communication on CAN Bus and enable it
  when frame reception starts.
 \end_layout
@@ -6250,8 +6258,10 @@ noprefix "false"
  All DFFs are active on positive clock edge (to mitigate effects of clock
  duty-cycle).
  CTU CAN FD is latch free.
- The facts can be used as a sanity check that there should be no DFFs without
- Set and Reset within CTU CAN FD after synthesis.
+ These facts can be used as a sanity check that there should be no DFFs
+ without Set and Reset within CTU CAN FD after synthesis (apart from TXT
+ Buffer / RX Buffer RAMs, if they are synthesized, not inferred, nor replaced
+ by Hard RAM macros).
 \end_layout
 
 \begin_layout Section
@@ -6503,7 +6513,15 @@ noprefix "false"
  resources on FPGA.
  ASIC implementation can either replace these memories by hard macros, or
  leave memory implementation to synthesis tool.
- In such case, each memory cell consists of DFFs without set and reset.
+ In such case, memory consists of DFFs without set or reset (memory is 
+\begin_inset Quotes eld
+\end_inset
+
+uninitalized
+\begin_inset Quotes erd
+\end_inset
+
+).
 \end_layout
 
 \begin_layout Standard
@@ -8051,9 +8069,9 @@ Protocol Control
 \begin_inset Text
 
 \begin_layout Plain Layout
-CRC from output of TX shift register (TX data without 
+CRC from output of TX shift register (TX data before 
 \color red
-stuff bits
+bit stuffing
 \color inherit
 ) is calculated.
 \end_layout
@@ -8099,7 +8117,7 @@ bit stuffing
 \color inherit
  is calculated.
  As this stage does not affect data transmitted on the bus in the actual
- bit, it is not considered as pipeline stage.
+ bit, it is not considered as separate pipeline stage.
 \end_layout
 
 \end_inset
@@ -10363,7 +10381,7 @@ noprefix "false"
  Control counter is preloaded in Process pipeline stage.
  Control counter counts towards zero.
  Control counter counting is controlled by Protocol control FSM.
- Control counter is decremented by 1 each bit of CAN frame field in Process
+ Control counter is decremented by 1 in each bit of CAN frame field in Process
  pipeline stage.
  When Control counter is equal to 1 and 0, this is signalled to Protocol
  control FSM.
@@ -11894,8 +11912,8 @@ TX shift register is 32 bit shift register which transmitts given bit sequence
 \color red
 stuff bit
 \color inherit
- is inserted (Protocol control is halted for one bit), TX shift register
- is not shifted.
+ is inserted, TX shift register is not shifted (Protocol control is halted
+ for one bit).
 \end_layout
 
 \begin_layout Standard
@@ -13440,11 +13458,16 @@ CRC sequence
 \color red
 CRC check
 \color inherit
- directly from RX shift register because after 
+ directly from RX shift register (
 \color red
 CRC frame field
 \color inherit
-, RX shift register is not used till the end of frame and its content remains
+ is the last field of CAN frame which is shifted into RX shift register,
+ therefore after CRC frame field, CRC remains in RX shift register).
+\end_layout
+
+\begin_layout Standard
+RX shift register is not used till the end of frame and its content remains
  stable.
  Other one bit metadata information are stored to dedicated capture registers
  directly from input of RX shift register in corresponding fields of CAN
@@ -15934,10 +15957,6 @@ CRC
 , 
 \color red
 CRC delimiter
-\color inherit
-, 
-\color red
-ACK
 \end_layout
 
 \end_inset
@@ -15968,8 +15987,7 @@ Bit error detector in Bus sampling module
 \color red
 Bit error
 \color inherit
- is detected by Bus sampling module by comparing transmitted and received
- value of bit on CAN bus.
+ is detected when transmitted and received value of bit on CAN bus differs.
  Reffer to 
 \begin_inset CommandInset ref
 LatexCommand ref
@@ -16510,7 +16528,7 @@ CRC error
 \begin_layout Plain Layout
 
 \color red
-CRC delimiter
+ACK delimiter
 \end_layout
 
 \end_inset
@@ -16519,9 +16537,10 @@ CRC delimiter
 \begin_inset Text
 
 \begin_layout Plain Layout
-all fields but 
+
 \color red
-CRC delimiter
+SOF, Arbitration, Control, Data, Stuff Count, CRC, CRC Delimiter, ACK, End
+ of Frame, Intermission, Bus idle, Error frame, Overload frame
 \end_layout
 
 \end_inset
@@ -16530,7 +16549,7 @@ CRC delimiter
 \begin_inset Text
 
 \begin_layout Plain Layout
-Error detector
+Protocol control FSM
 \end_layout
 
 \end_inset
@@ -16630,9 +16649,10 @@ ACK
 \begin_inset Text
 
 \begin_layout Plain Layout
-all fields but 
+
 \color red
-ACK
+SOF, Arbitration, Control, Data, Stuff Count, CRC, CRC Delimiter, ACK Delimiter,
+ End of Frame, Intermission, Bus idle, Error frame, Overload frame
 \end_layout
 
 \end_inset
@@ -18891,7 +18911,7 @@ cellcolor{gray}
 \begin_inset Text
 
 \begin_layout Plain Layout
-RX error counter
+Receive error counter
 \end_layout
 
 \end_inset
@@ -18909,15 +18929,7 @@ REC
 \begin_inset Text
 
 \begin_layout Plain Layout
-Incremented, decremented as described in 
-\begin_inset CommandInset citation
-LatexCommand cite
-key "key-1"
-literal "false"
-
-\end_inset
-
-.
+Incremented, decremented as described below.
 \end_layout
 
 \end_inset
@@ -18928,7 +18940,7 @@ literal "false"
 \begin_inset Text
 
 \begin_layout Plain Layout
-TX error counter
+Transmitt error counter
 \end_layout
 
 \end_inset
@@ -18946,15 +18958,7 @@ TEC
 \begin_inset Text
 
 \begin_layout Plain Layout
-Incremented, decremented as described in 
-\begin_inset CommandInset citation
-LatexCommand cite
-key "key-1"
-literal "false"
-
-\end_inset
-
-.
+Incremented, decremented as described below.
 \end_layout
 
 \end_inset
@@ -19069,7 +19073,85 @@ name "tab:error-counters"
 
 \end_layout
 
+\begin_layout Subsubsection
+Fault confinement rules
+\end_layout
+
 \begin_layout Standard
+The error counters shall be modified according to the following rules (more
+ than one rule may apply during a given frame transfer):
+\end_layout
+
+\begin_layout Description
+a) When a receiver detects an error, the receive error counter shall be
+ incremented by 1, except when the detected error was a bit error during
+ the sending of an active error flag or an overload flag.
+\end_layout
+
+\begin_layout Description
+b) When a receiver detects a dominant bit as a first bit after sending an
+ error flag, the receive error counter shall be incremented by 8.
+\end_layout
+
+\begin_layout Description
+c) When a transmitter sends an error flag, the transmit error counter shall
+ be incremented by 8.
+\end_layout
+
+\begin_deeper
+\begin_layout Description
+Exception 1: If the transmitter is error-passive and detects an ACK error
+ because of not detecting a dominant ACK and does not detect a dominant
+ bit while sending its passive error flag.
+ 
+\end_layout
+
+\begin_layout Description
+Exception 2: If the transmitter sends an error flag because a stuff error
+ occurred during arbitration, whereby the stuff bit should have been recessive,
+ and has been sent recessive but is monitored to be dominant.
+ In exception 1 and in exception 2, the transmit error counter remains unchanged.
+\end_layout
+
+\end_deeper
+\begin_layout Description
+d) If a transmitter detects a bit error while sending an active error flag
+ or an overload flag, the transmit error counter shall be incremented by
+ 8.
+\end_layout
+
+\begin_layout Description
+e) If a receiver detects a bit error while sending an active error flag
+ or an overload flag, the receive error counter shall be incremented by
+ 8.
+\end_layout
+
+\begin_layout Description
+f) Any node shall tolerate up to 7 consecutive dominant bits after sending
+ an active error flag, passive error flag, or overload flag.
+ After detecting 14 consecutive dominant bits (in case of an active error
+ flag or an overload flag) or after detecting 8 consecutive dominant bits
+ following a passive error flag, and after each sequence of additional 8
+ consecutive dominant bits, every transmitter shall increment its transmit
+ error counter by 8 and every receiver shall increment its receive counter
+ by 8.
+\end_layout
+
+\begin_layout Description
+g) After the successful transmission of a frame (getting ACK and no error
+ has been detected until EOF is finished), the transmit error counter shall
+ be decremented by 1 unless it was already 0.
+\end_layout
+
+\begin_layout Description
+h) After the successful reception of a frame (reception without error up
+ to the ACK slot and the successful sending of the ACK bit), the receive
+ error counter shall be decremented by 1, if it was between 1 and 127.
+ If the receive error counter was 0, it shall stay at 0, and if it was greater
+ than 127, then it shall be set to a value between 119 and 127.
+\end_layout
+
+\begin_layout Description
 \begin_inset Newpage pagebreak
 \end_inset
 
@@ -19158,7 +19240,7 @@ noprefix "false"
 .
  When Bit stuffing is enabled, it inserts bit of opposite polarity to transmitte
 d bit stream based on Bit stuffing mode.
- Data are processed by Bit stuffing mdoule with one clock cycle delay (output
+ Data are processed by Bit stuffing module with one clock cycle delay (output
  is registered).
  When Bit stuffing module is disabled, it propagates data from input to
  output without inserting 
@@ -19428,13 +19510,13 @@ Regular
 \begin_inset Text
 
 \begin_layout Plain Layout
-When 5 consecutive bits of equal polarity are processed, bit of opposite
- polarity is inserted.
+When 5 consecutive bits of equal value are processed, bit of opposite value
+ is inserted.
  Inserted 
 \color red
 stuff bit
 \color inherit
- counts as first bit of next sequence of 5 equal bits (
+ counts as first bit of next sequence of 5 equal consecutive bits (
 \color red
 bit stuffing
 \color inherit
@@ -19467,9 +19549,9 @@ Fixed
 \begin_inset Text
 
 \begin_layout Plain Layout
-When 4 bits are processed a bit of opposite polarity (with respect to last
- bit of those 4) is inserted on output of Bit stuffing module regardless
- of value of these 4 bits.
+When 4 bits are processed (regardless of their value), a bit of opposite
+ value than last bit of these 4 bits is inserted on output of Bit stuffing
+ module.
 \end_layout
 
 \end_inset
@@ -22494,8 +22576,8 @@ Raw write pointer
 \begin_inset Text
 
 \begin_layout Plain Layout
-When a word is written to RX buffer RAM (Metadata, Identifier, Data word
- or Timestamp)
+When a word is written to RX buffer RAM (Metadata, Identifier, Timestamp
+ or Data word)
 \end_layout
 
 \end_inset
@@ -23531,7 +23613,8 @@ At the end of last bit of
 \color red
 data field
 \color inherit
-, Protocol control FSM issues Store data command.
+, Protocol control FSM issues Store data command if the length of data field
+ is not multiple of bytes.
  Remaining bytes are stored to RX buffer RAM and Raw write pointer is incremente
 d.
 \end_layout
@@ -23715,7 +23798,7 @@ sample point
 timestamp
 \series default
 \shape default
- is captured to ac apture register and stored to RX bufer RAM from capture
+ is captured to capture register and stored to RX bufer RAM from capture
  register at the end of CAN frame .
  As position of Timestamp memory words within RX buffer RAM is lower than
  Data words, when timestamp is about to be stored (in 
