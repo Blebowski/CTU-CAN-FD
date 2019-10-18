@@ -220,8 +220,8 @@ package CANtestLib is
 
     -- Error counters (Normal and Special)
     type SW_error_counters is record
-        rx_counter              :   natural range 0 to 2 ** 16 - 1;
-        tx_counter              :   natural range 0 to 2 ** 16 - 1;
+        rx_counter              :   natural range 0 to 2 ** 9 - 1;
+        tx_counter              :   natural range 0 to 2 ** 9 - 1;
         err_norm                :   natural range 0 to 2 ** 16 - 1;
         err_fd                  :   natural range 0 to 2 ** 16 - 1;
     end record;
