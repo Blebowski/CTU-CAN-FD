@@ -796,20 +796,20 @@ package can_fd_register_map is
   --
   ------------------------------------------------------------------------------
   constant REC_VAL_L              : natural := 0;
-  constant REC_VAL_H             : natural := 15;
+  constant REC_VAL_H              : natural := 8;
 
   -- REC register reset values
-  constant REC_VAL_RSTVAL : std_logic_vector(15 downto 0) := x"0000";
+  constant REC_VAL_RSTVAL : std_logic_vector(8 downto 0) := (OTHERS => '0');
 
   ------------------------------------------------------------------------------
   -- TEC register
   --
   ------------------------------------------------------------------------------
   constant TEC_VAL_L             : natural := 16;
-  constant TEC_VAL_H             : natural := 31;
+  constant TEC_VAL_H             : natural := 24;
 
   -- TEC register reset values
-  constant TEC_VAL_RSTVAL : std_logic_vector(15 downto 0) := x"0000";
+  constant TEC_VAL_RSTVAL : std_logic_vector(8 downto 0) := (OTHERS => '0');
 
   ------------------------------------------------------------------------------
   -- ERR_NORM register

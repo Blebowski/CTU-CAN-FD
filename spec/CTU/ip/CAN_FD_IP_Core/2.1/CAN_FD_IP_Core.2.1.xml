@@ -2556,7 +2556,7 @@
 								<ipxact:value>0</ipxact:value>
 							</ipxact:reset>
 						</ipxact:resets>
-						<ipxact:bitWidth>16</ipxact:bitWidth>
+						<ipxact:bitWidth>9</ipxact:bitWidth>
 					</ipxact:field>
 				</ipxact:register>
 				<ipxact:register>
@@ -2577,7 +2577,7 @@
 								<ipxact:value>0</ipxact:value>
 							</ipxact:reset>
 						</ipxact:resets>
-						<ipxact:bitWidth>16</ipxact:bitWidth>
+						<ipxact:bitWidth>9</ipxact:bitWidth>
 						<ipxact:access>read-only</ipxact:access>
 					</ipxact:field>
 				</ipxact:register>

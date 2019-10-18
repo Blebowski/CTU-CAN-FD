@@ -425,12 +425,16 @@ union ctu_can_fd_rec_tec {
 	struct ctu_can_fd_rec_tec_s {
 #ifdef __LITTLE_ENDIAN_BITFIELD
   /* REC */
-		uint32_t rec_val                : 16;
+		uint32_t rec_val                 : 9;
+		uint32_t reserved_15_9           : 7;
   /* TEC */
-		uint32_t tec_val                : 16;
+		uint32_t tec_val                 : 9;
+		uint32_t reserved_31_25          : 7;
 #else
-		uint32_t tec_val                : 16;
-		uint32_t rec_val                : 16;
+		uint32_t reserved_31_25          : 7;
+		uint32_t tec_val                 : 9;
+		uint32_t reserved_15_9           : 7;
+		uint32_t rec_val                 : 9;
 #endif
 	} s;
 };

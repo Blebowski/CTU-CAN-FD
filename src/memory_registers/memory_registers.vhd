@@ -966,7 +966,7 @@ begin
         Control_registers_in.rec(
             align_reg_to_wrd(REC_VAL_H, length) downto
             align_reg_to_wrd(REC_VAL_L, length)) <=
-            "0000000" & stat_bus(STAT_RX_COUNTER_HIGH downto STAT_RX_COUNTER_LOW);
+            stat_bus(STAT_RX_COUNTER_HIGH downto STAT_RX_COUNTER_LOW);
     end block rec_reg_block;
 
 
@@ -979,7 +979,7 @@ begin
         Control_registers_in.tec(
             align_reg_to_wrd(TEC_VAL_H, length) downto
             align_reg_to_wrd(TEC_VAL_L, length)) <= 
-            "0000000" & stat_bus(STAT_TX_COUNTER_HIGH downto STAT_TX_COUNTER_LOW);
+            stat_bus(STAT_TX_COUNTER_HIGH downto STAT_TX_COUNTER_LOW);
     end block tec_reg_block;
 
     ---------------------------------------------------------------------------
