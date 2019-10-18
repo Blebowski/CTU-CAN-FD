@@ -363,8 +363,8 @@ void ctucan_hw_read_err_ctrs(struct ctucan_hw_priv *priv,
 	union ctu_can_fd_rec_tec reg;
 
 	reg.u32 = priv->read_reg(priv, CTU_CAN_FD_REC);
-	ctr->txerr = reg.s.txc_val;
-	ctr->rxerr = reg.s.rxc_val;
+	ctr->txerr = reg.s.tec_val;
+	ctr->rxerr = reg.s.rec_val;
 }
 
 enum can_state ctucan_hw_read_error_state(struct ctucan_hw_priv *priv)
