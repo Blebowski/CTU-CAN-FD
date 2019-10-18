@@ -23841,7 +23841,8 @@ noprefix "false"
 \end_inset
 
 .
- Read pointer is incremented after each word is read.
+ Read pointer is incremented after each word is read (an exception to this
+ rule is when FIFO is empty).
  RX buffer supports single reads (Read indication asserted for one clock
  cycle) and also continous burst read (Read indication asserted for several
  consecutive clock cycles).
