@@ -98,6 +98,7 @@ feature:
         one_shot:
         no_sof_tx:
         rx_status:
+        rx_buf_empty_read:
         tx_counter:
         rx_counter:
         # tran_delay:
