@@ -76,6 +76,7 @@ feature:
         alc_srr_rtr_2:
         alc_ide:
         alc_rtr_r0:
+        bus_start:
         device_id:
         mode_loopback:
             iterations: 10
@@ -108,7 +109,6 @@ feature:
         # timestamp_options:
         byte_enable:
         data_length_code:
-        # bus_start:
         data_overrun_clear:
             iterations: 1
         #txtb_state:
