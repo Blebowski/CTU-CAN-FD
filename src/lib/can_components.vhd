@@ -938,6 +938,9 @@ package can_components is
 
         -- Set unit to be error active
         set_err_active          :in   std_logic;
+        
+        -- Unit enabled
+        drv_ena                 :in   std_logic;
        
         -----------------------------------------------------------------------
         -- Error counters
