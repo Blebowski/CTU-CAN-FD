@@ -41,7 +41,7 @@
 
 --------------------------------------------------------------------------------
 -- Purpose:
---  Data length Code feature test.
+--  Data length Code CAN 2.0 more than 8 bytes feature test.
 --
 -- Verifies:
 --  1. When transmission of CAN 2.0 frame with DLC higher than 8 is requested,
@@ -65,8 +65,8 @@ context work.ctu_can_test_context;
 
 use lib.pkg_feature_exec_dispath.all;
 
-package data_length_code_feature is
-    procedure data_length_code_feature_exec(
+package dlc_can20_8_64_bytes_feature is
+    procedure dlc_can20_8_64_bytes_feature_exec(
         variable    o               : out    feature_outputs_t;
         signal      so              : out    feature_signal_outputs_t;
         signal      rand_ctr        : inout  natural range 0 to RAND_POOL_SIZE;
@@ -77,8 +77,8 @@ package data_length_code_feature is
 end package;
 
 
-package body data_length_code_feature is
-    procedure data_length_code_feature_exec(
+package body dlc_can20_8_64_bytes_feature is
+    procedure dlc_can20_8_64_bytes_feature_exec(
         variable    o               : out    feature_outputs_t;
         signal      so              : out    feature_signal_outputs_t;
         signal      rand_ctr        : inout  natural range 0 to RAND_POOL_SIZE;
