@@ -41,18 +41,23 @@
 
 --------------------------------------------------------------------------------
 -- Purpose:
---  Data length Code feature test. Verifies functionality of maximal DLC equal
---  to 8 for CAN 2.0 frames.
+--  Data length Code feature test.
+--
+-- Verifies:
+--  1. When transmission of CAN 2.0 frame with DLC higher than 8 is requested,
+--     only 8 bytes are transmitted! 
 --
 --  Test sequence:
 --    1. Generate CAN 2.0 Frame and set DLC higher than 8. Set higher data
 --       bytes accordingly!
---    2. Send the CAN Frame via Node 1.
+--    2. Send the CAN Frame via Node 1. Monitor the bus and check that only
+--       8 bytes are sent!
 --    3. Verify that frame received by Node 2, has the same DLC, but is has
 --       received only 8 bytes of Data!
 --------------------------------------------------------------------------------
 -- Revision History:
 --    14.7.2018   Created file
+--   21.10.2018   Add check monitoring data field length.
 --------------------------------------------------------------------------------
 
 context work.ctu_can_synth_context;
@@ -88,16 +93,18 @@ package body data_length_code_feature is
                     (0, (OTHERS => (OTHERS => '0')), "0000", 0, '0', '0',
                      '0', '0', '0', (OTHERS => '0'), 0);
         variable frame_sent         :        boolean;
+        variable pc_dbg             :        SW_PC_Debug;
     begin
         o.outcome := true;
 
         ------------------------------------------------------------------------
-        -- Generate CAN Frame and force CAN 2.0 and DLC higher than 8! This
-        -- DLC will be transmitted in DLC bits, but only 8 bytes of data
-        -- should be transmitted!
+        -- 1. Generate CAN 2.0 Frame and set DLC higher than 8. Set higher data
+        --    bytes accordingly!
         ------------------------------------------------------------------------
+        info("Step 1: Generate frame");
         CAN_generate_frame(rand_ctr, CAN_frame);
         rand_logic_vect_v(rand_ctr, CAN_frame.dlc, 0.5);
+        -- Set highest bit to 1 -> DLC will be more than 8!
         CAN_frame.dlc(3) := '1';
         CAN_frame.rtr := NO_RTR_FRAME;
         CAN_frame.frame_format := NORMAL_CAN;
@@ -107,17 +114,36 @@ package body data_length_code_feature is
         end loop;
 
         ------------------------------------------------------------------------
-        -- Send frame by Node 1
+        -- 2. Send the CAN Frame via Node 1. Monitor the bus and check that only
+        --    8 bytes are sent!
         ------------------------------------------------------------------------
+        info("Step 2: Send frame");
         CAN_send_frame(CAN_frame, 1, ID_1, mem_bus(1), frame_sent);
-        CAN_wait_frame_sent(ID_1, mem_bus(1));
+        CAN_wait_pc_state(pc_deb_data, ID_1, mem_bus(1));
+        for i in 0 to 63 loop
+            CAN_wait_sample_point(iout(1).stat_bus);
+            wait for 11 ns; -- for DFF to flip
+            
+            CAN_read_pc_debug(pc_dbg, ID_1, mem_bus(1));
+            
+            if (i = 63) then
+                check_false(pc_dbg = pc_deb_data,
+                    "After 64 bytes data field ended!");
+            else
+                check(pc_dbg = pc_deb_data,
+                    "Before 64 bytes data field goes on!");
+            end if;
+        end loop;
+        CAN_wait_bus_idle(ID_1, mem_bus(1));
+        CAN_wait_bus_idle(ID_2, mem_bus(2));
+
         wait for 500 ns;
 
         ------------------------------------------------------------------------
-        -- Read frame by Node 2. Received DLC should be matching the transmitted
-        -- DLC, but only 8 bytes of data should be received (int_dlc was forced
-        -- to 8!). Thus RWCNT field should be 5!
+        -- 3. Verify that frame received by Node 2, has the same DLC, but is has
+        --    received only 8 bytes of Data!
         ------------------------------------------------------------------------
+        info("Step 3: Check frame received!");
         CAN_read_frame(CAN_frame_2, ID_2, mem_bus(2));
         check(CAN_frame_2.dlc = CAN_frame.dlc, "Invalid DLC received!");
         check(CAN_frame_2.rwcnt = 5, "Invalid DLC received!");
