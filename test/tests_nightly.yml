@@ -77,6 +77,8 @@ feature:
         alc_ide:
         alc_rtr_r0:
         bus_start:
+        command_rrb:
+            iterations: 20
         device_id:
         dlc_can20_8_64_bytes:        
         mode_loopback:
