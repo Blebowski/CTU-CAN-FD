@@ -304,8 +304,9 @@ static int ctucan_start_xmit(struct sk_buff *skb, struct net_device *ndev)
 				     can_is_canfd_skb(skb));
 
 	if (!ok) {
-		netdev_err(ndev, "BUG! cannot insert frame into TXTB!");
-		return NETDEV_TX_OK; // TODO: what else to return
+		netdev_err(ndev,
+            "BUG! TXNF set but cannot insert frame into TXTB! HW Bug?");
+		return NETDEV_TX_BUSY;
 	}
 	can_put_echo_skb(skb, ndev, txb_id);
 
