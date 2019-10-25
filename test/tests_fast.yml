@@ -52,6 +52,7 @@ feature:
         alc_rtr_r0:
         bus_start:
         command_rrb:
+        command_cdo:        
         device_id:
         dlc_can20_8_64_bytes:        
         mode_loopback:

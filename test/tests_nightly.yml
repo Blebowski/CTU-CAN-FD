@@ -79,6 +79,7 @@ feature:
         bus_start:
         command_rrb:
             iterations: 20
+        command_cdo:
         device_id:
         dlc_can20_8_64_bytes:        
         mode_loopback:
