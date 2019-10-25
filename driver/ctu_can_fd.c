@@ -645,6 +645,7 @@ static void ctucan_tx_interrupt(struct net_device *ndev)
 				if (first) {
 					netdev_err(ndev, "BUG: TXB#%u not in a finished state (0x%x)!",
 						   txb_idx, status);
+					spin_unlock_irqrestore(&priv->tx_lock, flags);
 					/* do not clear nor wake */
 					return;
 				}
