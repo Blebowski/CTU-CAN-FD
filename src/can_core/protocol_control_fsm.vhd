@@ -2633,7 +2633,6 @@ begin
     -- error condition to distiguish error during error flag!
     ---------------------------------------------------------------------------
     act_err_ovr_flag <= '1' when (curr_state = s_pc_act_err_flag) else
-                        '1' when (curr_state = s_pc_pas_err_flag) else
                         '1' when (curr_state = s_pc_ovr_flag) else
                         '0';
 
