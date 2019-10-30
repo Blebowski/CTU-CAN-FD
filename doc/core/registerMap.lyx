@@ -8898,7 +8898,7 @@ RXI Frame Received Interrupt.
 TXI Frame Transmitted Interrupt. 
 \end_layout
 \begin_layout Description
-EWLI Error Warning Limit interrupt. When both TX Error Counter (TEC) and RX Error Counter (REC) are lower than EWL and one of the becomes higher than EWL, condition for this interrupt is valid. When Interrupt is cleared and RXC, or TXC is still equal to or higher than EWL, Interrupt is not set again.
+EWLI Error Warning Limit interrupt. When both TEC and REC are lower than EWL and one of the becomes higher than EWL, or when both TEC and REC become less than EWL, condition for this interrupt is valid. When Interrupt is cleared and RXC, or TXC is still equal to or higher than EWL, Interrupt is not set again.
 \end_layout
 \begin_layout Description
 DOI Data Overrun on RX Buffer Interrupt. Before this interrupt is cleared , STATUS[DOR] must be cleared to avoid setting of this interrupt again.
