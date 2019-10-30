@@ -263,16 +263,6 @@ void ctucan_hw_rel_rx_buf(struct ctucan_hw_priv *priv);
 void ctucan_hw_clr_overrun_flag(struct ctucan_hw_priv *priv);
 
 /**
- * ctucan_hw_abort_tx - Gives command to CTU CAN FD Core to abort
- *                       the transmission immediately.
- *
- * This action will most likely result in transmission of Error frame.
- *
- * @priv: Private info
- */
-void ctucan_hw_abort_tx(struct ctucan_hw_priv *priv);
-
-/**
  * ctu_can_get_status - Returns mode/status vector of CTU CAN FD Core.
  *
  * @priv: Private info
