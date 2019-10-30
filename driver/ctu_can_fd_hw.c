@@ -179,14 +179,6 @@ void ctucan_hw_set_mode_reg(struct ctucan_hw_priv *priv,
 		reg.s.lom = flags & CAN_CTRLMODE_LISTENONLY ?
 					LOM_ENABLED : LOM_DISABLED;
 
-#ifdef CTUCANFD_TSM_AVAILABLE
-	if (mode->mask & CAN_CTRLMODE_3_SAMPLES)
-		reg.s.tsm = flags & CAN_CTRLMODE_3_SAMPLES ?
-				TSM_ENABLE : TSM_DISABLE;
-#else
-#warning TSM_ENABLE not defined
-#endif
-
 	if (mode->mask & CAN_CTRLMODE_FD)
 		reg.s.fde = flags & CAN_CTRLMODE_FD ?
 				FDE_ENABLE : FDE_DISABLE;
@@ -217,19 +209,6 @@ void ctucan_hw_clr_overrun_flag(struct ctucan_hw_priv *priv)
 
 	reg.u32 = 0;
 	reg.s.cdo = 1;
-	priv->write_reg(priv, CTU_CAN_FD_COMMAND, reg.u32);
-}
-
-void ctucan_hw_abort_tx(struct ctucan_hw_priv *priv)
-{
-	union ctu_can_fd_command reg;
-
-	reg.u32 = 0;
-#ifdef CTUCANFD_ABT_AVAILABLE
-	reg.s.abt = 1;
-#else
-#warning abt not available
-#endif
 	priv->write_reg(priv, CTU_CAN_FD_COMMAND, reg.u32);
 }
 
