@@ -109,7 +109,7 @@ architecture tx_buf_unit_test of CAN_test is
     ------------------------------------
     type shadow_memory_type is array (0 to 19) of std_logic_vector(31 downto 0);
     signal shadow_mem             :     shadow_memory_type
-            := (OTHERS => (OTHERS => '0'));
+            := (OTHERS => (OTHERS => 'U'));
 
     -- Random generator counters
     signal rand_gen_ctr           :     natural range 0 to RAND_POOL_SIZE;
