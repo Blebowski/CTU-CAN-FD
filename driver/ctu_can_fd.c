@@ -511,7 +511,6 @@ static int ctucan_rx_poll(struct napi_struct *napi, int quota)
 	int work_done = 0;
 	union ctu_can_fd_status status;
 	u32 framecnt;
-	//netdev_dbg(ndev, "ctucan_rx_poll");
 
 	framecnt = ctucan_hw_get_rx_frame_count(&priv->p);
 	netdev_dbg(ndev, "rx_poll: %d frames in RX FIFO", framecnt);
@@ -691,7 +690,7 @@ clear:
  * @irq:	irq number
  * @dev_id:	device id poniter
  *
- * This is the xilinx CAN Isr. It checks for the type of interrupt
+ * This is the CTU CAN FD ISR. It checks for the type of interrupt
  * and invokes the corresponding ISR.
  *
  * Return:
@@ -998,12 +997,11 @@ static int ctucan_probe_common(struct device *dev, void __iomem *addr,
 	priv->can.do_set_data_bittiming = ctucan_set_data_bittiming;
 
 	priv->can.do_get_berr_counter = ctucan_get_berr_counter;
-	//priv->can.do_get_state = ctucan_get_state;
 	priv->can.ctrlmode_supported = CAN_CTRLMODE_LOOPBACK
 					| CAN_CTRLMODE_LISTENONLY
-					| CAN_CTRLMODE_3_SAMPLES
 					| CAN_CTRLMODE_FD
 					| CAN_CTRLMODE_PRESUME_ACK
+					| CAN_CTRLMODE_BERR_REPORTING
 					| CAN_CTRLMODE_FD_NON_ISO
 					| CAN_CTRLMODE_ONE_SHOT;
 	priv->p.mem_base = addr;
