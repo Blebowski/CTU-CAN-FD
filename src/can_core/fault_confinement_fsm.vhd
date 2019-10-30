@@ -185,8 +185,7 @@ begin
         end if;
     end process;
     
-    err_warning_limit <= '1' when (err_warning_limit_d = '1' and
-                                   err_warning_limit_q = '0')
+    err_warning_limit <= '1' when (err_warning_limit_d /= err_warning_limit_q)
                              else
                          '0';
 
