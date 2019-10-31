@@ -112,6 +112,7 @@ feature:
         rx_counter:
         status_rxne:
         status_txnf:
+        status_eft:
         # tran_delay:
         tx_arb_time_tran:
         # timestamp_options:
