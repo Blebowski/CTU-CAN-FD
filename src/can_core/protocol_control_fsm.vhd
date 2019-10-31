@@ -2198,8 +2198,11 @@ begin
                     end if;
                     
                     -- If we dont sample dominant, nor we have sth ready for
-                    -- transmission, we go to Idle!
-                    if (rx_data_nbs = RECESSIVE and tx_frame_ready = '0') then
+                    -- transmission, we go to Idle! Don't become idle when we
+                    -- go to suspend!
+                    if (rx_data_nbs = RECESSIVE and tx_frame_ready = '0' and
+                        go_to_suspend = '0')
+                    then
                         set_idle_i <= '1';
                     end if;
     
