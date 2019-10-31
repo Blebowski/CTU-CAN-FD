@@ -2252,6 +2252,7 @@ begin
                         set_transmitter_i <= '1';
                         destuff_enable_set <= '1';
                         stuff_enable_set <= '1';
+                        txtb_hw_cmd_d.lock <= '1';
                     else
                         set_idle_i <= '1';
                     end if;
