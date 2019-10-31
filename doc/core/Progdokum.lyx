@@ -502,7 +502,7 @@ Version 2.2, Commit:
 \noindent
 \align center
 \begin_inset Tabular
-<lyxtabular version="3" rows="11" columns="4">
+<lyxtabular version="3" rows="12" columns="4">
 <features tabularvalignment="middle">
 <column alignment="center" valignment="top" width="1.5cm">
 <column alignment="center" valignment="top" width="2cm">
@@ -896,11 +896,49 @@ Split functional descripion and register map from original document.
 </cell>
 </row>
 <row>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
 2.2.1
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Ondrej Ille
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+21-10-2019
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Clarify TXT buffer behaviour when node goes bus-off.
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+2.2.2
 \end_layout
 
 \end_inset
@@ -918,7 +956,7 @@ Ondrej Ille
 \begin_inset Text
 
 \begin_layout Plain Layout
-21-10-2019
+31-10-2019
 \end_layout
 
 \end_inset
@@ -927,7 +965,8 @@ Ondrej Ille
 \begin_inset Text
 
 \begin_layout Plain Layout
-Clarify TXT buffer behaviour when node goes bus-off.
+Clarify Bus-off behaviour aftet Start-up.
+ Clarify that frame must be inserted to TXT Buffer before sending.
 \end_layout
 
 \end_inset
@@ -3026,6 +3065,32 @@ command |= (1 << 8);                                  // Choose TXT Buffer
 
 \begin_layout LyX-Code
 CAN_write_32(TX_COMMAND_ADDR, command);               // Issue the command
+\end_layout
+
+\begin_layout Subsection
+Notes
+\end_layout
+
+\begin_layout Description
+Note
+\begin_inset space ~
+\end_inset
+
+1 When CTU CAN FD is started by writing SETTINGS[ENA] = '1', it is still
+ bus-off during integration to the CAN bus.
+ If during this time Set ready command is sent to TXT buffer, TXT buffer
+ immediately moves to Aborted state (since node is bus-off and all TXT buffers
+ in TX ready move to Aborted when CTU CAN FD is bus-off).
+\end_layout
+
+\begin_layout Description
+Note
+\begin_inset space ~
+\end_inset
+
+2 TXT buffers are not initialized, nor reset.
+ Therefore, before issuing Set ready command, SW shall fill according TXT
+ buffer with valid CAN frame for transmission.
 \end_layout
 
 \begin_layout Section
