@@ -110,6 +110,7 @@ feature:
         rx_buf_empty_read:
         tx_counter:
         rx_counter:
+        status_rxne:
         # tran_delay:
         tx_arb_time_tran:
         # timestamp_options:
