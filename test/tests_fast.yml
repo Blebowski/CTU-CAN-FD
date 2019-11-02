@@ -88,6 +88,7 @@ feature:
             iterations: 5
         status_txs:
         status_rxs:
+        status_ewl:
         # tran_delay:
         tx_arb_time_tran:
         # timestamp_options:
