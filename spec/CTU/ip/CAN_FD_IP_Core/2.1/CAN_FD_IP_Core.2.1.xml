@@ -372,7 +372,7 @@
 					<ipxact:field>
 						<ipxact:name>EWL</ipxact:name>
 						<ipxact:displayName>EWL</ipxact:displayName>
-						<ipxact:description>Error warning limit was reached by either TX or RX Error counter (TXC or RXC).</ipxact:description>
+						<ipxact:description>TX Error counter (TEC) or RX Error counter (REC) is higher than Error warning limit (EWL).</ipxact:description>
 						<ipxact:bitOffset>6</ipxact:bitOffset>
 						<ipxact:resets>
 							<ipxact:reset>

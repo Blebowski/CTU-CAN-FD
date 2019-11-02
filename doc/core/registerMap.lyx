@@ -6899,7 +6899,7 @@ RXS CTU CAN FD is receiving CAN Frame.
 TXS CTU CAN FD is transmitting CAN Frame.
 \end_layout
 \begin_layout Description
-EWL Error warning limit was reached by either TX or RX Error counter (TXC or RXC).
+EWL TX Error counter (TEC) or RX Error counter (REC) is higher than Error warning limit (EWL).
 \end_layout
 \begin_layout Description
 IDLE Bus is idle (no frame being transmitted/received) or CTU CAN FD is bus off.
