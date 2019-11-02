@@ -477,17 +477,14 @@ begin
                              '1' when (is_idle = '1') else
                              '0';
 
-    status_comb(EWL_IND) <= '1' when 
-                            (control_registers_out.ewl 
-                              < 
-                             stat_bus(STAT_TX_COUNTER_HIGH downto
-                                      STAT_TX_COUNTER_LOW) or
-                            (control_registers_out.ewl 
-                              < 
-                             stat_bus(STAT_RX_COUNTER_HIGH downto
-                                      STAT_RX_COUNTER_LOW)))
-                            else
-                            '0';
+    status_comb(EWL_IND) <=
+        '1' when to_integer(unsigned(control_registers_out.ewl)) <= 
+                 to_integer(unsigned(stat_bus(STAT_TX_COUNTER_HIGH downto STAT_TX_COUNTER_LOW)))
+            else
+        '1' when to_integer(unsigned(control_registers_out.ewl)) <= 
+                 to_integer(unsigned(stat_bus(STAT_RX_COUNTER_HIGH downto STAT_RX_COUNTER_LOW)))
+            else
+        '0';
 
     status_comb(TXS_IND) <= is_transmitter;
     status_comb(RXS_IND) <= is_receiver;
