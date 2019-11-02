@@ -558,7 +558,7 @@
 					<ipxact:field>
 						<ipxact:name>EWLI</ipxact:name>
 						<ipxact:displayName>EWLI</ipxact:displayName>
-						<ipxact:description>Error Warning Limit interrupt. When both TEC and REC are lower than EWL and one of the becomes higher than EWL, or when both TEC and REC become less than EWL, condition for this interrupt is valid. When Interrupt is cleared and RXC, or TXC is still equal to or higher than EWL, Interrupt is not set again.</ipxact:description>
+						<ipxact:description>Error Warning Limit interrupt. When both TEC and REC are lower than EWL and one of the becomes equal to or higher than EWL, or when both TEC and REC become less than EWL, condition for this interrupt is valid. When Interrupt is cleared and RXC, or TXC is still equal to or higher than EWL, Interrupt is not set again.</ipxact:description>
 						<ipxact:bitOffset>2</ipxact:bitOffset>
 						<ipxact:resets>
 							<ipxact:reset>
