@@ -142,6 +142,7 @@ entity can_top_level is
         -- RX signal from CAN bus
         can_rx      : in  std_logic;
 
+        -- <RELEASE_OFF>
         -----------------------------------------------------------------------
         -- Internal signals for testbenches
         -----------------------------------------------------------------------
@@ -152,6 +153,7 @@ entity can_top_level is
         -- Status Bus output
         stat_bus_o   : out std_logic_vector(511 downto 0);
         -- synthesis translate_on
+        -- <RELEASE_ON>
 
         -----------------------------------------------------------------------
         -- Timestamp for time based transmission / reception
@@ -468,10 +470,12 @@ architecture rtl of can_top_level is
      
 begin
 
+    -- <RELEASE_OFF>
     -- synthesis translate_off
     drv_bus_o   <= drv_bus;
     stat_bus_o  <= stat_bus;
     -- synthesis translate_on
+    -- <RELEASE_ON>
 
     ---------------------------------------------------------------------------
     -- Reset synchroniser
