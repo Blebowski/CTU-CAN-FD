@@ -4223,7 +4223,10 @@ package can_components is
         txtb_state             :out  std_logic_vector(3 downto 0);
 
         -- TXT Buffer is available to be locked by CAN Core for transmission
-        txtb_available         :out  std_logic
+        txtb_available         :out  std_logic;
+        
+        -- UnMask content of TXT Buffer RAM
+        txtb_unmask_data_ram   :out  std_logic
     );             
     end component;
 

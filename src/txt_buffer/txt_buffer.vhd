@@ -155,6 +155,12 @@ architecture rtl of txt_buffer is
     signal hw_cbs                 : std_logic;
     signal sw_cbs                 : std_logic;
 
+    -- Unmask TXT Buffer RAM output
+    signal txtb_unmask_data_ram   : std_logic;
+
+    -- Output of TXT Buffer RAM
+    signal txtb_port_b_data_i     : std_logic_vector(31 downto 0);
+
     ----------------------------------------------------------------------------
     ----------------------------------------------------------------------------
     -- RAM wrapper signals
@@ -184,10 +190,24 @@ begin
                      else
                  '0';
 
-    -- TXT Buffer read address (connected to read pointer)
-    RAM_read_address   <= std_logic_vector(to_unsigned(
-                             txtb_port_b_address, RAM_read_address'length)); 
+    -- TXT Buffer read address (connected to read pointer)    
+    RAM_read_address <= std_logic_vector(to_unsigned(
+                        txtb_port_b_address, RAM_read_address'length));
 
+    ----------------------------------------------------------------------------
+    -- Output of TXT Buffer RAM is masked when it is not valid. This has
+    -- several reasons:
+    --  1. RAM content is undefined, therefore before filling RAM, XXXs on
+    --     output if further comparator logic of TX Arbitrator will yell a lot.
+    --     This saves from flood of simulation warnings!
+    --  2. CAN Core and TX Arbitrator should not be reading any data from
+    --     TXT Buffer RAM when it is not in Ready, TX in Progress or Abort in
+    --     Progress (SW did not fill them yet). So we make sure that they are
+    --     not used somewhere when they might be undefined yet!
+    ----------------------------------------------------------------------------
+    txtb_port_b_data <= txtb_port_b_data_i when (txtb_unmask_data_ram = '1')
+                                           else
+                           (OTHERS => '0');
 
     ----------------------------------------------------------------------------
     -- RAM Memory of TXT Buffer
@@ -208,7 +228,7 @@ begin
 
         -- Port B - Read (from CAN Core)
         port_b_address       => RAM_read_address,       -- IN
-        port_b_data_out      => txtb_port_b_data        -- OUT
+        port_b_data_out      => txtb_port_b_data_i      -- OUT
     );
 
     
@@ -234,7 +254,8 @@ begin
         txtb_user_accessible   => txtb_user_accessible,     -- OUT
         txtb_hw_cmd_int        => txtb_hw_cmd_int,          -- OUT
         txtb_state             => txtb_state,               -- OUT
-        txtb_available         => txtb_available            -- OUT
+        txtb_available         => txtb_available,           -- OUT
+        txtb_unmask_data_ram   => txtb_unmask_data_ram      -- OUT
     );
 
     -- <RELEASE_OFF>
