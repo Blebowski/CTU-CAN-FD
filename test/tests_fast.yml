@@ -86,6 +86,7 @@ feature:
         status_txnf:
         status_eft:
             iterations: 5
+        status_txs:
         # tran_delay:
         tx_arb_time_tran:
         # timestamp_options:
