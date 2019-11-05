@@ -511,7 +511,7 @@ filename "version.tex"
 \noindent
 \align center
 \begin_inset Tabular
-<lyxtabular version="3" rows="4" columns="5">
+<lyxtabular version="3" rows="5" columns="5">
 <features tabularvalignment="middle">
 <column alignment="center" valignment="top" width="1.5cm">
 <column alignment="center" valignment="top" width="3cm">
@@ -661,11 +661,58 @@ TX Arbitrator loads identifier as part of TXT buffer validation.
 </cell>
 </row>
 <row>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
 0.3
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+2.2
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Ondrej Ille
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+07-10-2019
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Update interfaces
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+0.4
 \end_layout
 
 \end_inset
@@ -692,7 +739,7 @@ Ondrej Ille
 \begin_inset Text
 
 \begin_layout Plain Layout
-07-10-2019
+02-11-2019
 \end_layout
 
 \end_inset
@@ -701,7 +748,7 @@ Ondrej Ille
 \begin_inset Text
 
 \begin_layout Plain Layout
-Update interfaces
+Describe SSP Calculator
 \end_layout
 
 \end_inset
@@ -34096,7 +34143,7 @@ transmitter delay
 \begin_inset Text
 
 \begin_layout Plain Layout
-6
+7
 \end_layout
 
 \end_inset
@@ -34459,7 +34506,7 @@ name "tab:ssp-config"
 \end_layout
 
 \begin_layout Subsection
-Secondary sampling point
+Secondary sampling point generator
 \end_layout
 
 \begin_layout Standard
@@ -34467,11 +34514,11 @@ Secondary sampling point
 \color red
 Secondary sampling point
 \color inherit
- is created by delaying TX trigger by the amount of 
+ (SSP) is created by delaying TX trigger by the amount of 
 \color red
-secondary sampling point
+SSP
 \color inherit
- offset via shift register as is shown in Figure 
+ offset as is shown in Figure 
 \begin_inset CommandInset ref
 LatexCommand ref
 reference "fig:secondary-sampling-point"
@@ -34482,37 +34529,62 @@ noprefix "false"
 \end_inset
 
 .
- 
+ When bit rate is switched from Nominal to Data, first 
 \color red
-Secondary sampling point
+SSP
 \color inherit
- shift register is shifting only when current 
+ is delayed from TX trigger by the amount of 
 \color red
-bit rate
+SSP
 \color inherit
- is configured to 
-\begin_inset Quotes eld
-\end_inset
+ offset.
+ As 
+\color red
+SSP 
+\color inherit
+is used to detect bit errors by Transmitters of CAN FD frames during data
+ bit rate, each next 
+\color red
+SSP
+\color inherit
+ is located whole data bit time later from previous 
+\color red
+SSP
+\color inherit
+ (there is no resynchronisation by Transmitters in data bit rate, so bit
+ time is not shortened nor lengthened for them).
+ The position of first three 
+\color red
+SSPs 
+\color inherit
+is shown in Figure 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:secondary-sampling-point-positions"
+plural "false"
+caps "false"
+noprefix "false"
 
-Secondary
-\begin_inset Quotes erd
 \end_inset
 
 .
- Note that 
+ The relationship between first and next 
 \color red
-secondary sampling point
+SSPs
 \color inherit
- is not used for processing off received data by Protocol control FSM but
- only to detect 
-\color red
-bit error
-\color inherit
- by 
-\color red
-transmitter
-\color inherit
- of CAN FD Frame.
+ is used by SSP generator module which creates SSP and provides it to Bit
+ error detector.
+ Operation of SSP generator is described in Table 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "tab:ssp-generator-operation"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+.
 \end_layout
 
 \begin_layout Standard
@@ -34547,6 +34619,308 @@ Secondary sampling point
 \begin_inset CommandInset label
 LatexCommand label
 name "fig:secondary-sampling-point"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+placement H
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\noindent
+\align center
+\begin_inset Graphics
+	filename ../pics/Visio_generated/SSP_timing.pdf
+	lyxscale 20
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+
+\color red
+Secondary sampling point
+\color inherit
+ positions
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:secondary-sampling-point-positions"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float table
+placement H
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\noindent
+\align center
+\begin_inset Tabular
+<lyxtabular version="3" rows="8" columns="2">
+<features tabularvalignment="middle">
+<column alignment="left" valignment="top" width="5line%">
+<column alignment="left" valignment="top" width="88.5line%">
+<row>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Step 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+cellcolor{gray}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Action
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+cellcolor{gray}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+1
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+CTU CAN FD is transmitter of CAN FD frame where bit rate will be switched.
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+2
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Protocol control switched bit rate in sample point of BRS bit.
+ Protocol control configures SSP generator to measure length of data bit
+ time and to create first SSP.
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+3
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+SSP generator waits for first TX trigger in data bit rate and starts measurement
+ of data bit time length when TX trigger is active (by means of so called
+ SSP counter (SSPC)).
+ SSP generator starts measuring delay of SSP offset from TX trigger (by
+ means of so called Bit time measurement counter (BTMC)).
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+4
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+When next TX trigger occurs (at start of next bit), SSP generator stops
+ measurement of data bit time in SSPC.
+ Now SSP generator knows distance between each next SSP (SSPC value).
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+5
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+When BTMC reaches value of SSP offset, SSP generator creates first SSP.
+ 
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+6
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+SSPC is restarted, and position of next sample point starts to be calculated
+ by SSPC.
+ Now the delay of each next SSP is given by data bit time length (value
+ of BTMC).
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+7
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Step 5 is repeated for each SSP until the end of data phase of CAN FD frame.
+ Note that SSPC can reach value of SSP offset for first SSP sooner than
+ BTMC measurement will finish (This position occurs when SSP position is
+ located within the same bit time).
+ This does not mind, since value of BTMC will always be higher than SSPC,
+ therefore SSPC can count when BTMC is still running.
+\end_layout
+
+\end_inset
+</cell>
+</row>
+</lyxtabular>
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\noindent
+\align center
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+
+\color red
+SSP
+\color inherit
+ generator operation
+\begin_inset CommandInset label
+LatexCommand label
+name "tab:ssp-generator-operation"
 
 \end_inset
 
