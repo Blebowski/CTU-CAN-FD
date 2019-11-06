@@ -413,7 +413,8 @@ static void ctucan_err_interrupt(struct net_device *ndev,
 	union ctu_can_fd_err_capt_alc err_capt_alc;
 	int dologerr = net_ratelimit();
 
-	state = ctucan_hw_read_error_state(&priv->p, &berr);
+	ctucan_hw_read_err_ctrs(&priv->p, &berr);
+	state = ctucan_hw_read_error_state(&priv->p);
 	err_capt_alc = ctu_can_fd_read_err_capt_alc(&priv->p);
 
 	if (dologerr)

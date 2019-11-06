@@ -526,15 +526,12 @@ static inline void ctucan_hw_erase_fd_errs(struct ctucan_hw_priv *priv)
 
 /**
  * ctucan_hw_read_error_state - Read fault confinement state of CTU CAN FD Core
- *                               (determined by TX/RX Counters). Counter values
- *                               are returned in supplied struct.
+ *                               (determined by TX/RX Counters).
  *
  * @priv: Private info
- * @ctr: Pointer to error counter structure to fill, can be NULL
  * Return: Error state of the CTU CAN FD Core.
  */
-enum can_state ctucan_hw_read_error_state(struct ctucan_hw_priv *priv,
-				struct can_berr_counter *ctr);
+enum can_state ctucan_hw_read_error_state(struct ctucan_hw_priv *priv);
 
 /**
  * ctucan_hw_set_err_ctrs - Set value to TX/RX error counters

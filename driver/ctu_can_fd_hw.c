@@ -367,19 +367,13 @@ void ctucan_hw_read_err_ctrs(struct ctucan_hw_priv *priv,
 	ctr->rxerr = reg.s.rxc_val;
 }
 
-enum can_state ctucan_hw_read_error_state(struct ctucan_hw_priv *priv,
-					struct can_berr_counter *ctr)
+enum can_state ctucan_hw_read_error_state(struct ctucan_hw_priv *priv)
 {
 	union ctu_can_fd_ewl_erp_fault_state reg;
 	union ctu_can_fd_rxc_txc err;
 
 	reg.u32 = priv->read_reg(priv, CTU_CAN_FD_EWL);
 	err.u32 = priv->read_reg(priv, CTU_CAN_FD_RXC);
-
-	if (ctr) {
-		ctr->txerr = err.s.txc_val;
-		ctr->rxerr = err.s.rxc_val;
-	}
 
 	if (reg.s.era) {
 		if (reg.s.ew_limit > err.s.rxc_val &&
