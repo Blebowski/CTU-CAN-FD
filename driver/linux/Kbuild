@@ -1,2 +1,3 @@
-obj-m := ctucanfd.o
-ctucanfd-y := ctu_can_fd.o ctu_can_fd_hw.o
+obj-m := ctucanfd_pci.o ctucanfd_platform.o
+ctucanfd_pci-y := ctu_can_fd.o ctu_can_fd_hw.o ctu_can_fd_pci.o
+ctucanfd_platform-y := ctu_can_fd.o ctu_can_fd_hw.o ctu_can_fd_platform.o

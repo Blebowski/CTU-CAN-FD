@@ -7,6 +7,6 @@
 .tmp_versions
 modules.order
 Module.symvers
-ctucanfd.mod.c
+ctucanfd*.mod.c
 a.out
 *.ko
