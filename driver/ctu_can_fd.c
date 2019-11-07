@@ -45,12 +45,12 @@
 #include "ctu_can_fd_regs.h"
 
 static const char *ctucan_state_strings[] = {
-	"ERROR_ACTIVE",
-	"ERROR_WARNING",
-	"ERROR_PASSIVE",
-	"BUS_OFF",
-	"STOPPED",
-	"SLEEPING"
+	"CAN_STATE_ERROR_ACTIVE",
+	"CAN_STATE_ERROR_WARNING",
+	"CAN_STATE_ERROR_PASSIVE",
+	"CAN_STATE_BUS_OFF",
+	"CAN_STATE_STOPPED",
+	"CAN_STATE_SLEEPING"
 };
 
 /* TX buffer rotation:
