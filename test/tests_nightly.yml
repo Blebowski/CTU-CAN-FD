@@ -118,6 +118,7 @@ feature:
         status_rxs:
         status_ewl:
             iterations: 5
+        status_idle:
         # tran_delay:
         tx_arb_time_tran:
         # timestamp_options:
