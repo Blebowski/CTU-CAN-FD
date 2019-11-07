@@ -59,6 +59,15 @@ static bool pci_use_second = 1;
 module_param(pci_use_second, bool, 0444);
 MODULE_PARM_DESC(pci_use_second, "Use the second CAN core on PCIe card. Default: 1 (yes)");
 
+static const char *ctucan_state_strings[] = {
+	"ERROR_ACTIVE",
+	"ERROR_WARNING",
+	"ERROR_PASSIVE",
+	"BUS_OFF",
+	"STOPPED",
+	"SLEEPING"
+};
+
 /* TX buffer rotation:
  * - when a buffer transitions to empty state, rotate order and priorities
  * - if more buffers seem to transition at the same time, rotate
@@ -227,7 +236,8 @@ static int ctucan_chip_start(struct net_device *ndev)
 	ctucan_hw_int_mask_set(&priv->p, int_msk);
 	ctucan_hw_int_ena_set(&priv->p, int_ena);
 
-	priv->can.state = CAN_STATE_ERROR_ACTIVE;
+	/* Controller enters ERROR_ACTIVE on initial FCSI */
+	priv->can.state = CAN_STATE_STOPPED;
 
 	/* Enable the controller */
 	ctucan_hw_enable(&priv->p, true);
@@ -374,6 +384,14 @@ static int ctucan_rx(struct net_device *ndev)
 	return 1;
 }
 
+
+static const char *ctucan_state_to_str(enum can_state state)
+{
+	if (state >= CAN_STATE_MAX)
+		return "UNKNOWN";
+	return ctucan_state_strings[state];
+}
+
 /**
  * ctucan_err_interrupt - error frame Isr
  * @ndev:	net_device pointer
@@ -390,12 +408,13 @@ static void ctucan_err_interrupt(struct net_device *ndev,
 	struct net_device_stats *stats = &ndev->stats;
 	struct can_frame *cf;
 	struct sk_buff *skb;
+	enum can_state state;
 	struct can_berr_counter berr;
 	union ctu_can_fd_err_capt_alc err_capt_alc;
 	int dologerr = net_ratelimit();
 
 	ctucan_hw_read_err_ctrs(&priv->p, &berr);
-
+	state = ctucan_hw_read_error_state(&priv->p);
 	err_capt_alc = ctu_can_fd_read_err_capt_alc(&priv->p);
 
 	if (dologerr)
@@ -407,26 +426,30 @@ static void ctucan_err_interrupt(struct net_device *ndev,
 
 	skb = alloc_can_err_skb(ndev, &cf);
 
-	/* EWI:  error warning
+	/* EWLI:  error warning limit condition met
 	 * FCSI: Fault confinement State changed
 	 * ALI:  arbitration lost (just informative)
 	 * BEI:  bus error interrupt
 	 */
-	if (isr.s.fcsi) {
-		/* error passive or bus off */
-		enum can_state state = ctucan_hw_read_error_state(&priv->p);
 
-		netdev_info(ndev, "  Fault conf: state = %u", state);
+	if (isr.s.fcsi || isr.s.ewli) {
+
+		netdev_info(ndev, "  state changes from %s to %s",
+				ctucan_state_to_str(priv->can.state),
+				ctucan_state_to_str(state));
+
+		if (priv->can.state == state)
+			netdev_warn(ndev, "   current and previous state is the same!"
+					" (missed interrupt?)");
+
 		priv->can.state = state;
 		if (state == CAN_STATE_BUS_OFF) {
 			priv->can.can_stats.bus_off++;
-			netdev_info(ndev, "    bus_off");
 			can_bus_off(ndev);
 			if (skb)
 				cf->can_id |= CAN_ERR_BUSOFF;
 		} else if (state == CAN_STATE_ERROR_PASSIVE) {
 			priv->can.can_stats.error_passive++;
-			netdev_info(ndev, "    error_passive");
 			if (skb) {
 				cf->can_id |= CAN_ERR_CRTL;
 				cf->data[1] = (berr.rxerr > 127) ?
@@ -436,31 +459,22 @@ static void ctucan_err_interrupt(struct net_device *ndev,
 				cf->data[7] = berr.rxerr;
 			}
 		} else if (state == CAN_STATE_ERROR_WARNING) {
-			netdev_warn(ndev, "    error_warning, but ISR[FCSI] was set! (HW bug?)");
-			goto err_warning;
+			priv->can.can_stats.error_warning++;
+			if (skb) {
+				cf->can_id |= CAN_ERR_CRTL;
+				cf->data[1] |= (berr.txerr > berr.rxerr) ?
+					CAN_ERR_CRTL_TX_WARNING :
+					CAN_ERR_CRTL_RX_WARNING;
+				cf->data[6] = berr.txerr;
+				cf->data[7] = berr.rxerr;
+			}
 		} else if (state == CAN_STATE_ERROR_ACTIVE) {
-			netdev_info(ndev, "    reached error active state");
 			cf->data[1] = CAN_ERR_CRTL_ACTIVE;
 			cf->data[6] = berr.txerr;
 			cf->data[7] = berr.rxerr;
 		} else {
-			netdev_warn(ndev, "    unhandled error state (%d)!",
-				    state);
-		}
-	} else if (isr.s.ewli) {
-err_warning:
-		/* error warning */
-		priv->can.state = CAN_STATE_ERROR_WARNING;
-		priv->can.can_stats.error_warning++;
-		if (dologerr)
-			netdev_info(ndev, "  error_warning");
-		if (skb) {
-			cf->can_id |= CAN_ERR_CRTL;
-			cf->data[1] |= (berr.txerr > berr.rxerr) ?
-					CAN_ERR_CRTL_TX_WARNING :
-					CAN_ERR_CRTL_RX_WARNING;
-			cf->data[6] = berr.txerr;
-			cf->data[7] = berr.rxerr;
+			netdev_warn(ndev, "    unhandled error state (%d:%s)!",
+				    state, ctucan_state_to_str(state));
 		}
 	}
 
