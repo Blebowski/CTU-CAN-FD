@@ -527,6 +527,12 @@
       </spirit:file>
 
       <spirit:file>
+        <spirit:name>bus_sampling/ssp_generator.vhd</spirit:name>
+        <spirit:fileType>vhdlSource</spirit:fileType>
+        <spirit:logicalName>xil_defaultlib</spirit:logicalName>
+      </spirit:file>
+
+      <spirit:file>
         <spirit:name>bus_sampling/trv_delay_meas.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
         <spirit:logicalName>xil_defaultlib</spirit:logicalName>
@@ -1039,6 +1045,13 @@
 
       <spirit:file>
         <spirit:name>bus_sampling/sample_mux.vhd</spirit:name>
+        <spirit:fileType>vhdlSource</spirit:fileType>
+        <spirit:userFileType>USED_IN_ipstatic</spirit:userFileType>
+        <spirit:logicalName>xil_defaultlib</spirit:logicalName>
+      </spirit:file>
+
+      <spirit:file>
+        <spirit:name>bus_sampling/ssp_generator.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
         <spirit:userFileType>USED_IN_ipstatic</spirit:userFileType>
         <spirit:logicalName>xil_defaultlib</spirit:logicalName>
