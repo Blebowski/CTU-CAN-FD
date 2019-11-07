@@ -110,10 +110,13 @@ package can_config is
         
     -- Width (number of bits) in transceiver delay measurement counter
     constant C_TRV_CTR_WIDTH        : natural := 7;
-        
+
     -- Optional usage of saturated value of ssp_delay 
     constant C_USE_SSP_SATURATION   : boolean := true;
-             
+
+    -- Width of SSP counters
+    constant C_SSP_CTRS_WIDTH       : natural := 14;
+
     -- CRC polynomials
     constant C_CRC15_POL : std_logic_vector(15 downto 0) := x"C599";
     constant C_CRC17_POL : std_logic_vector(19 downto 0) := x"3685B";

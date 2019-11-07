@@ -446,6 +446,15 @@ architecture rtl of can_top_level is
     -- Secondary sample signal 
     signal sample_sec           :  std_logic;
     
+    -- Reset Bit time measurement counter
+    signal btmc_reset           :  std_logic;
+    
+    -- Start Measurement of data bit time (in TX Trigger)
+    signal dbt_measure_start    :  std_logic;
+    
+    -- First SSP generated (in ESI bit)
+    signal gen_first_ssp        :  std_logic;
+    
     ------------------------------------------------------------------------
     -- Bus Sampling <-> Prescaler Interface
     ------------------------------------------------------------------------
@@ -807,11 +816,14 @@ begin
         tx_data_wbs             => tx_data_wbs,     -- OUT
 
         -- Others
-        timestamp               => timestamp,       -- IN
-        ssp_reset               => ssp_reset,       -- OUT
-        tran_delay_meas         => tran_delay_meas, -- OUT
-        bit_err                 => bit_err,         -- IN
-        sample_sec              => sample_sec       -- IN
+        timestamp               => timestamp,           -- IN
+        ssp_reset               => ssp_reset,           -- OUT
+        tran_delay_meas         => tran_delay_meas,     -- OUT
+        bit_err                 => bit_err,             -- IN
+        sample_sec              => sample_sec,          -- IN
+        btmc_reset              => btmc_reset,          -- OUT
+        dbt_measure_start       => dbt_measure_start,   -- OUT
+        gen_first_ssp           => gen_first_ssp        -- OUT
     );
     
     
@@ -864,7 +876,8 @@ begin
         G_SSP_SHIFT_LENGTH      => C_SSP_SHIFT_LENGTH,
         G_TX_CACHE_DEPTH        => C_TX_CACHE_DEPTH,
         G_TRV_CTR_WIDTH         => C_TRV_CTR_WIDTH,
-        G_USE_SSP_SATURATION    => C_USE_SSP_SATURATION
+        G_USE_SSP_SATURATION    => C_USE_SSP_SATURATION,
+        G_SSP_CTRS_WIDTH        => C_SSP_CTRS_WIDTH
     )
     port map(
         clk_sys                 => clk_sys,         -- IN
@@ -884,13 +897,16 @@ begin
         sync_edge               => sync_edge,       -- OUT
 
         -- CAN Core Interface
-        tx_data_wbs             => tx_data_wbs,     -- IN
-        rx_data_wbs             => rx_data_wbs,     -- OUT
-        sp_control              => sp_control,      -- IN
-        ssp_reset               => ssp_reset,       -- IN
-        tran_delay_meas         => tran_delay_meas, -- IN
-        sample_sec              => sample_sec,      -- OUT
-        bit_err                 => bit_err          -- OUT
+        tx_data_wbs             => tx_data_wbs,         -- IN
+        rx_data_wbs             => rx_data_wbs,         -- OUT
+        sp_control              => sp_control,          -- IN
+        ssp_reset               => ssp_reset,           -- IN
+        tran_delay_meas         => tran_delay_meas,     -- IN
+        sample_sec              => sample_sec,          -- OUT
+        bit_err                 => bit_err,             -- OUT
+        btmc_reset              => btmc_reset,          -- IN
+        dbt_measure_start       => dbt_measure_start,   -- IN
+        gen_first_ssp           => gen_first_ssp        -- IN
     );
 
 end architecture;

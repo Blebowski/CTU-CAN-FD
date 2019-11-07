@@ -84,7 +84,10 @@ entity bus_sampling is
         G_TRV_CTR_WIDTH         :     natural := 7;
         
         -- Optional usage of saturated value of ssp_delay 
-        G_USE_SSP_SATURATION    :     boolean := true
+        G_USE_SSP_SATURATION    :     boolean := true;
+        
+        -- Width of SSP generator counters (BTMC, SSPC)
+        G_SSP_CTRS_WIDTH        :      natural := 14
     );  
     port(
         ------------------------------------------------------------------------
@@ -148,7 +151,16 @@ entity bus_sampling is
         sample_sec           :out  std_logic;
 
         -- Bit error detected
-        bit_err              :out  std_logic 
+        bit_err              :out  std_logic;
+        
+        -- Reset Bit time measurement counter
+        btmc_reset          :in    std_logic;
+
+        -- Start Measurement of data bit time (in TX Trigger)
+        dbt_measure_start   :in    std_logic;
+
+        -- First SSP generated (in ESI bit)
+        gen_first_ssp       :in    std_logic
     );
 end entity;
 
@@ -196,9 +208,6 @@ architecture rtl of bus_sampling is
     -- sampling point.
     signal data_tx_delayed      : std_logic;
 
-    -- Shift Register for generating secondary sampling signal
-    signal sample_sec_shift     : std_logic_vector(G_SSP_SHIFT_LENGTH - 1 downto 0);
-
     -- Appropriate edge appeared at recieved data
     signal edge_rx_valid        : std_logic;
 
@@ -230,7 +239,7 @@ architecture rtl of bus_sampling is
     signal shift_regs_res_q     : std_logic;
     
     -- Enable for secondary sampling point shift register
-    signal ssp_sr_ce            : std_logic;
+    signal ssp_enable            : std_logic;
 
 begin
     
@@ -346,47 +355,44 @@ begin
     );
 
     ----------------------------------------------------------------------------
+    -- Generator of secondary sampling point
+    ----------------------------------------------------------------------------
+    ssp_generator_inst : ssp_generator
+    generic map(
+        G_RESET_POLARITY    => G_RESET_POLARITY,
+        G_SSP_CTRS_WIDTH    => G_SSP_CTRS_WIDTH
+    )
+    port map(
+        -- Clock and Async reset
+        clk_sys             => clk_sys,             -- (IN)
+        res_n               => res_n,               -- (IN)
+
+        -- Control signals
+        btmc_reset          => btmc_reset,          -- (IN)
+        dbt_measure_start   => dbt_measure_start,   -- (IN)
+        gen_first_ssp       => gen_first_ssp,       -- (IN)
+        ssp_delay           => ssp_delay,           -- (IN)
+        ssp_enable          => ssp_enable,          -- (IN)
+
+        -- Trigger signals
+        tx_trigger          => tx_trigger,          -- (IN)
+        sample_sec          => sample_sec_i         -- (OUT)
+    );
+
+    -- Secondary sampling point shift register clock enable
+    ssp_enable <= '1' when (sp_control = SECONDARY_SAMPLE) else
+                  '0';
+
+    ----------------------------------------------------------------------------
     -- Secondary sampling point input: Delayed TX Trigger gated and available
-    -- only during secondary sampling!
+    -- only during secondary sampling! TX trigger for storing data to TX
+    -- cache must be delayed since TX data will be one output of Bit Stuffing
+    -- only one clock cycle after TX Trigger!
     ----------------------------------------------------------------------------
     tx_trigger_ssp <= '1' when (tx_trigger_q = '1' and
                                 sp_control = SECONDARY_SAMPLE)
                           else
                       '0';
-
-
-    ----------------------------------------------------------------------------
-    -- Shift register for secondary sampling point. Delayed TX Trigger is
-    -- shifted into shift register to generate delayed sampling point.
-    ----------------------------------------------------------------------------
-    ssp_shift_reg_inst : shift_reg
-    generic map(
-        G_RESET_POLARITY     => G_RESET_POLARITY,
-        G_RESET_VALUE        => C_SSP_SHIFT_RST_VAL,
-        G_WIDTH              => G_SSP_SHIFT_LENGTH,
-        G_SHIFT_DOWN         => false
-    )
-    port map(
-        clk                => clk_sys,              -- IN
-        res_n              => shift_regs_res_q,     -- IN
-
-        input              => tx_trigger_ssp,       -- IN
-        enable             => ssp_sr_ce,            -- IN
-
-        reg_stat           => sample_sec_shift,     -- OUT
-        output             => open                  -- OUT
-    );
-
-    -- Secondary sampling point shift register clock enable
-    ssp_sr_ce <= '1' when (sp_control = SECONDARY_SAMPLE) else
-                 '0';
-
-    ----------------------------------------------------------------------------
-    -- Secondary sampling point address decoder. Secondary sampling point
-    -- is taken from SSP Shift register at position of transceiver delay.
-    ----------------------------------------------------------------------------
-    sample_sec_i <= sample_sec_shift(to_integer(unsigned(ssp_delay)));
-
 
     ----------------------------------------------------------------------------
     -- TX DATA Cache. Stores TX Data when Sample point enters the SSP shift
