@@ -1829,7 +1829,7 @@ begin
                 end if;
                 
                 -- Transmitter transmitts via SSP
-                if (sp_control = SECONDARY_SAMPLE) then
+                if (sp_control_q_i = SECONDARY_SAMPLE) then
                     dbt_measure_start <= '1';
                     gen_first_ssp     <= '1';
                 end if;
