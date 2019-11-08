@@ -60,11 +60,12 @@ package can_fd_register_map is
     reg_read_write_once
   );
 
-  type t_reg is record
+  type t_memory_reg is record
        address       : std_logic_vector(11 downto 0);
        size                                : integer;
        reg_type                         : t_reg_type;
        reset_val     : std_logic_vector(31 downto 0);
+       is_implem     : std_logic_vector(31 downto 0);
   end record;
 
 
@@ -91,8 +92,8 @@ package can_fd_register_map is
   constant EWL_ADR                   : std_logic_vector(11 downto 0) := x"02C";
   constant ERP_ADR                   : std_logic_vector(11 downto 0) := x"02D";
   constant FAULT_STATE_ADR           : std_logic_vector(11 downto 0) := x"02E";
-  constant RXC_ADR                   : std_logic_vector(11 downto 0) := x"030";
-  constant TXC_ADR                   : std_logic_vector(11 downto 0) := x"032";
+  constant REC_ADR                   : std_logic_vector(11 downto 0) := x"030";
+  constant TEC_ADR                   : std_logic_vector(11 downto 0) := x"032";
   constant ERR_NORM_ADR              : std_logic_vector(11 downto 0) := x"034";
   constant ERR_FD_ADR                : std_logic_vector(11 downto 0) := x"036";
   constant CTR_PRES_ADR              : std_logic_vector(11 downto 0) := x"038";
@@ -118,8 +119,8 @@ package can_fd_register_map is
   constant ALC_ADR                   : std_logic_vector(11 downto 0) := x"07E";
   constant TRV_DELAY_ADR             : std_logic_vector(11 downto 0) := x"080";
   constant SSP_CFG_ADR               : std_logic_vector(11 downto 0) := x"082";
-  constant RX_COUNTER_ADR            : std_logic_vector(11 downto 0) := x"084";
-  constant TX_COUNTER_ADR            : std_logic_vector(11 downto 0) := x"088";
+  constant RX_FR_CTR_ADR             : std_logic_vector(11 downto 0) := x"084";
+  constant TX_FR_CTR_ADR             : std_logic_vector(11 downto 0) := x"088";
   constant DEBUG_REGISTER_ADR        : std_logic_vector(11 downto 0) := x"08C";
   constant YOLO_REG_ADR              : std_logic_vector(11 downto 0) := x"090";
   constant TIMESTAMP_LOW_ADR         : std_logic_vector(11 downto 0) := x"094";
@@ -129,206 +130,255 @@ package can_fd_register_map is
   -- Register list
   ------------------------------------------------------------------------------
 
-  type t_Control_registers_list is array (0 to 48) of t_reg;
+  type t_Control_registers_list is array (0 to 48) of t_memory_reg;
 
   constant Control_registers_list : t_Control_registers_list :=(
 
     (address   => DEVICE_ID_ADR,
      size      => 16,
      reg_type  => reg_read_only,
-     reset_val => "00000000000000001100101011111101"),
+     reset_val => "00000000000000001100101011111101",
+     is_implem => "00000000000000001111111111111111"),
     (address   => VERSION_ADR,
      size      => 16,
      reg_type  => reg_read_only,
-     reset_val => "00000000000000000000000000000000"),
+     reset_val => "00000000000000000000000000000000",
+     is_implem => "00000000000000000000000000000000"),
     (address   => MODE_ADR,
      size      => 16,
      reg_type  => reg_read_write,
-     reset_val => "00000000000000000000000000010000"),
+     reset_val => "00000000000000000000000000010000",
+     is_implem => "00000000000000000000000110011111"),
     (address   => SETTINGS_ADR,
      size      => 16,
      reg_type  => reg_read_write,
-     reset_val => "00000000000000000000000000000000"),
+     reset_val => "00000000000000000000000000000000",
+     is_implem => "00000000000000000000000000000000"),
     (address   => STATUS_ADR,
      size      => 32,
      reg_type  => reg_read_only,
-     reset_val => "00000000000000000000000010000000"),
+     reset_val => "00000000000000000000000010000100",
+     is_implem => "00000000000000000000000011111111"),
     (address   => COMMAND_ADR,
      size      => 32,
      reg_type  => reg_write_only,
-     reset_val => "00000000000000000000000000000000"),
+     reset_val => "00000000000000000000000000000000",
+     is_implem => "00000000000000000000000001111100"),
     (address   => INT_STAT_ADR,
      size      => 16,
      reg_type  => reg_read_write_once,
-     reset_val => "00000000000000000000000000000000"),
+     reset_val => "00000000000000000000000000000000",
+     is_implem => "00000000000000000000111111111111"),
     (address   => INT_ENA_SET_ADR,
      size      => 16,
      reg_type  => reg_read_write_once,
-     reset_val => "00000000000000000000000000000000"),
+     reset_val => "00000000000000000000000000000000",
+     is_implem => "00000000000000000000111111111111"),
     (address   => INT_ENA_CLR_ADR,
      size      => 16,
      reg_type  => reg_write_only,
-     reset_val => "00000000000000000000000000000000"),
+     reset_val => "00000000000000000000000000000000",
+     is_implem => "00000000000000000000111111111111"),
     (address   => INT_MASK_SET_ADR,
      size      => 16,
      reg_type  => reg_read_write_once,
-     reset_val => "00000000000000000000000000000000"),
+     reset_val => "00000000000000000000000000000000",
+     is_implem => "00000000000000000000111111111111"),
     (address   => INT_MASK_CLR_ADR,
      size      => 16,
      reg_type  => reg_write_only,
-     reset_val => "00000000000000000000000000000000"),
+     reset_val => "00000000000000000000000000000000",
+     is_implem => "00000000000000000000111111111111"),
     (address   => BTR_ADR,
      size      => 32,
      reg_type  => reg_read_write,
-     reset_val => "00010000010100001010000110000101"),
+     reset_val => "00010000010100001010000110000101",
+     is_implem => "11111111111111111111111111111111"),
     (address   => BTR_FD_ADR,
      size      => 32,
      reg_type  => reg_read_write,
-     reset_val => "00010000001000000110000110000011"),
+     reset_val => "00010000001000000110000110000011",
+     is_implem => "11111111111110111110111110111111"),
     (address   => EWL_ADR,
      size      => 8,
      reg_type  => reg_read_write,
-     reset_val => "00000000000000000000000001100000"),
+     reset_val => "00000000000000000000000001100000",
+     is_implem => "00000000000000000000000011111111"),
     (address   => ERP_ADR,
      size      => 8,
      reg_type  => reg_read_write,
-     reset_val => "00000000000000001000000000000000"),
+     reset_val => "00000000000000001000000000000000",
+     is_implem => "00000000000000000000000000000000"),
     (address   => FAULT_STATE_ADR,
      size      => 16,
      reg_type  => reg_read_only,
-     reset_val => "00000000000000010000000000000000"),
-    (address   => RXC_ADR,
+     reset_val => "00000000000000010000000000000000",
+     is_implem => "00000000000000000000000000000000"),
+    (address   => REC_ADR,
      size      => 16,
      reg_type  => reg_read_only,
-     reset_val => "00000000000000000000000000000000"),
-    (address   => TXC_ADR,
+     reset_val => "00000000000000000000000000000000",
+     is_implem => "00000000000000000000000111111111"),
+    (address   => TEC_ADR,
      size      => 16,
      reg_type  => reg_read_only,
-     reset_val => "00000000000000000000000000000000"),
+     reset_val => "00000000000000000000000000000000",
+     is_implem => "00000000000000000000000000000000"),
     (address   => ERR_NORM_ADR,
      size      => 16,
      reg_type  => reg_read_only,
-     reset_val => "00000000000000000000000000000000"),
+     reset_val => "00000000000000000000000000000000",
+     is_implem => "00000000000000001111111111111111"),
     (address   => ERR_FD_ADR,
      size      => 16,
      reg_type  => reg_read_only,
-     reset_val => "00000000000000000000000000000000"),
+     reset_val => "00000000000000000000000000000000",
+     is_implem => "00000000000000000000000000000000"),
     (address   => CTR_PRES_ADR,
      size      => 32,
      reg_type  => reg_write_only,
-     reset_val => "00000000000000000000000000000000"),
+     reset_val => "00000000000000000000000000000000",
+     is_implem => "00000000000000000001111111111111"),
     (address   => FILTER_A_MASK_ADR,
      size      => 32,
      reg_type  => reg_read_write,
-     reset_val => "00000000000000000000000000000000"),
+     reset_val => "00000000000000000000000000000000",
+     is_implem => "00011111111111111111111111111111"),
     (address   => FILTER_A_VAL_ADR,
      size      => 32,
      reg_type  => reg_read_write,
-     reset_val => "00000000000000000000000000000000"),
+     reset_val => "00000000000000000000000000000000",
+     is_implem => "00011111111111111111111111111111"),
     (address   => FILTER_B_MASK_ADR,
      size      => 32,
      reg_type  => reg_read_write,
-     reset_val => "00000000000000000000000000000000"),
+     reset_val => "00000000000000000000000000000000",
+     is_implem => "00011111111111111111111111111111"),
     (address   => FILTER_B_VAL_ADR,
      size      => 32,
      reg_type  => reg_read_write,
-     reset_val => "00000000000000000000000000000000"),
+     reset_val => "00000000000000000000000000000000",
+     is_implem => "00011111111111111111111111111111"),
     (address   => FILTER_C_MASK_ADR,
      size      => 32,
      reg_type  => reg_read_write,
-     reset_val => "00000000000000000000000000000000"),
+     reset_val => "00000000000000000000000000000000",
+     is_implem => "00011111111111111111111111111111"),
     (address   => FILTER_C_VAL_ADR,
      size      => 32,
      reg_type  => reg_read_write,
-     reset_val => "00000000000000000000000000000000"),
+     reset_val => "00000000000000000000000000000000",
+     is_implem => "00011111111111111111111111111111"),
     (address   => FILTER_RAN_LOW_ADR,
      size      => 32,
      reg_type  => reg_read_write,
-     reset_val => "00000000000000000000000000000000"),
+     reset_val => "00000000000000000000000000000000",
+     is_implem => "00011111111111111111111111111111"),
     (address   => FILTER_RAN_HIGH_ADR,
      size      => 32,
      reg_type  => reg_read_write,
-     reset_val => "00000000000000000000000000000000"),
+     reset_val => "00000000000000000000000000000000",
+     is_implem => "00011111111111111111111111111111"),
     (address   => FILTER_CONTROL_ADR,
      size      => 16,
      reg_type  => reg_read_write,
-     reset_val => "00000000000000000000000000001111"),
+     reset_val => "00000000000000000000000000001111",
+     is_implem => "00000000000000001111111111111111"),
     (address   => FILTER_STATUS_ADR,
      size      => 16,
      reg_type  => reg_read_only,
-     reset_val => "00000000000000000000000000000000"),
+     reset_val => "00000000000000000000000000000000",
+     is_implem => "00000000000000000000000000000000"),
     (address   => RX_MEM_INFO_ADR,
      size      => 32,
      reg_type  => reg_read_only,
-     reset_val => "00000000000000000000000000000000"),
+     reset_val => "00000000000000000000000000000000",
+     is_implem => "00011111111111110001111111111111"),
     (address   => RX_POINTERS_ADR,
      size      => 32,
      reg_type  => reg_read_only,
-     reset_val => "00000000000000000000000000000000"),
+     reset_val => "00000000000000000000000000000000",
+     is_implem => "00001111111111110000111111111111"),
     (address   => RX_STATUS_ADR,
      size      => 16,
      reg_type  => reg_read_only,
-     reset_val => "00000000000000000000000000000011"),
+     reset_val => "00000000000000000000000000000001",
+     is_implem => "00000000000000000111111111110011"),
     (address   => RX_SETTINGS_ADR,
      size      => 8,
      reg_type  => reg_read_write,
-     reset_val => "00000000000000000000000000000000"),
+     reset_val => "00000000000000000000000000000000",
+     is_implem => "00000000000000000000000000000000"),
     (address   => RX_DATA_ADR,
      size      => 32,
      reg_type  => reg_read_only,
-     reset_val => "00000000000000000000000000000000"),
+     reset_val => "00000000000000000000000000000000",
+     is_implem => "11111111111111111111111111111111"),
     (address   => TX_STATUS_ADR,
      size      => 16,
      reg_type  => reg_read_only,
-     reset_val => "00000000000000001000100010001000"),
+     reset_val => "00000000000000001000100010001000",
+     is_implem => "00000000000000001111111111111111"),
     (address   => TX_COMMAND_ADR,
      size      => 16,
      reg_type  => reg_write_only,
-     reset_val => "00000000000000000000000000000000"),
+     reset_val => "00000000000000000000000000000000",
+     is_implem => "00000000000000000000111100000111"),
     (address   => TX_PRIORITY_ADR,
      size      => 16,
      reg_type  => reg_read_write,
-     reset_val => "00000000000000000000000000000001"),
+     reset_val => "00000000000000000000000000000001",
+     is_implem => "00000000000000000111011101110111"),
     (address   => ERR_CAPT_ADR,
      size      => 8,
      reg_type  => reg_read_only,
-     reset_val => "00000000000000000000000000011111"),
+     reset_val => "00000000000000000000000000011111",
+     is_implem => "00000000000000000000000011111111"),
     (address   => ALC_ADR,
      size      => 8,
      reg_type  => reg_read_only,
-     reset_val => "00000000000000000000000000000000"),
+     reset_val => "00000000000000000000000000000000",
+     is_implem => "00000000000000000000000000000000"),
     (address   => TRV_DELAY_ADR,
      size      => 16,
      reg_type  => reg_read_only,
-     reset_val => "00000000000000000000000000000000"),
+     reset_val => "00000000000000000000000000000000",
+     is_implem => "00000000000000001111111111111111"),
     (address   => SSP_CFG_ADR,
      size      => 16,
      reg_type  => reg_read_write,
-     reset_val => "00000000000001000000000000000000"),
-    (address   => RX_COUNTER_ADR,
+     reset_val => "00000000000001000000000000000000",
+     is_implem => "00000000000000000000000000000000"),
+    (address   => RX_FR_CTR_ADR,
      size      => 32,
      reg_type  => reg_read_only,
-     reset_val => "00000000000000000000000000000000"),
-    (address   => TX_COUNTER_ADR,
+     reset_val => "00000000000000000000000000000000",
+     is_implem => "11111111111111111111111111111111"),
+    (address   => TX_FR_CTR_ADR,
      size      => 32,
      reg_type  => reg_read_only,
-     reset_val => "00000000000000000000000000000000"),
+     reset_val => "00000000000000000000000000000000",
+     is_implem => "11111111111111111111111111111111"),
     (address   => DEBUG_REGISTER_ADR,
      size      => 32,
      reg_type  => reg_read_only,
-     reset_val => "00000000000000000000000000000000"),
+     reset_val => "00000000000000000000000000000000",
+     is_implem => "00000000000000111111111111111111"),
     (address   => YOLO_REG_ADR,
      size      => 32,
      reg_type  => reg_read_only,
-     reset_val => "11011110101011011011111011101111"),
+     reset_val => "11011110101011011011111011101111",
+     is_implem => "11111111111111111111111111111111"),
     (address   => TIMESTAMP_LOW_ADR,
      size      => 32,
      reg_type  => reg_read_only,
-     reset_val => "00000000000000000000000000000000"),
+     reset_val => "00000000000000000000000000000000",
+     is_implem => "11111111111111111111111111111111"),
     (address   => TIMESTAMP_HIGH_ADR,
      size      => 32,
      reg_type  => reg_read_only,
-     reset_val => "00000000000000000000000000000000")
+     reset_val => "00000000000000000000000000000000",
+     is_implem => "11111111111111111111111111111111")
   );
 
   ------------------------------------------------------------------------------
@@ -346,22 +396,25 @@ package can_fd_register_map is
   -- Register list
   ------------------------------------------------------------------------------
 
-  type t_TX_Buffer_1_list is array (0 to 2) of t_reg;
+  type t_TX_Buffer_1_list is array (0 to 2) of t_memory_reg;
 
   constant TX_Buffer_1_list : t_TX_Buffer_1_list :=(
 
     (address   => TXTB1_DATA_1_ADR,
      size      => 32,
      reg_type  => reg_none,
-     reset_val => "00000000000000000000000000000000"),
+     reset_val => "00000000000000000000000000000000",
+     is_implem => "11111111111111111111111111111111"),
     (address   => TXTB1_DATA_2_ADR,
      size      => 32,
      reg_type  => reg_none,
-     reset_val => "00000000000000000000000000000000"),
+     reset_val => "00000000000000000000000000000000",
+     is_implem => "11111111111111111111111111111111"),
     (address   => TXTB1_DATA_20_ADR,
      size      => 32,
      reg_type  => reg_none,
-     reset_val => "00000000000000000000000000000000")
+     reset_val => "00000000000000000000000000000000",
+     is_implem => "11111111111111111111111111111111")
   );
 
   ------------------------------------------------------------------------------
@@ -379,22 +432,25 @@ package can_fd_register_map is
   -- Register list
   ------------------------------------------------------------------------------
 
-  type t_TX_Buffer_2_list is array (0 to 2) of t_reg;
+  type t_TX_Buffer_2_list is array (0 to 2) of t_memory_reg;
 
   constant TX_Buffer_2_list : t_TX_Buffer_2_list :=(
 
     (address   => TXTB2_DATA_1_ADR,
      size      => 32,
      reg_type  => reg_none,
-     reset_val => "00000000000000000000000000000000"),
+     reset_val => "00000000000000000000000000000000",
+     is_implem => "11111111111111111111111111111111"),
     (address   => TXTB2_DATA_2_ADR,
      size      => 32,
      reg_type  => reg_none,
-     reset_val => "00000000000000000000000000000000"),
+     reset_val => "00000000000000000000000000000000",
+     is_implem => "11111111111111111111111111111111"),
     (address   => TXTB2_DATA_20_ADR,
      size      => 32,
      reg_type  => reg_none,
-     reset_val => "00000000000000000000000000000000")
+     reset_val => "00000000000000000000000000000000",
+     is_implem => "11111111111111111111111111111111")
   );
 
   ------------------------------------------------------------------------------
@@ -412,22 +468,25 @@ package can_fd_register_map is
   -- Register list
   ------------------------------------------------------------------------------
 
-  type t_TX_Buffer_3_list is array (0 to 2) of t_reg;
+  type t_TX_Buffer_3_list is array (0 to 2) of t_memory_reg;
 
   constant TX_Buffer_3_list : t_TX_Buffer_3_list :=(
 
     (address   => TXTB3_DATA_1_ADR,
      size      => 32,
      reg_type  => reg_none,
-     reset_val => "00000000000000000000000000000000"),
+     reset_val => "00000000000000000000000000000000",
+     is_implem => "11111111111111111111111111111111"),
     (address   => TXTB3_DATA_2_ADR,
      size      => 32,
      reg_type  => reg_none,
-     reset_val => "00000000000000000000000000000000"),
+     reset_val => "00000000000000000000000000000000",
+     is_implem => "11111111111111111111111111111111"),
     (address   => TXTB3_DATA_20_ADR,
      size      => 32,
      reg_type  => reg_none,
-     reset_val => "00000000000000000000000000000000")
+     reset_val => "00000000000000000000000000000000",
+     is_implem => "11111111111111111111111111111111")
   );
 
   ------------------------------------------------------------------------------
@@ -445,22 +504,25 @@ package can_fd_register_map is
   -- Register list
   ------------------------------------------------------------------------------
 
-  type t_TX_Buffer_4_list is array (0 to 2) of t_reg;
+  type t_TX_Buffer_4_list is array (0 to 2) of t_memory_reg;
 
   constant TX_Buffer_4_list : t_TX_Buffer_4_list :=(
 
     (address   => TXTB4_DATA_1_ADR,
      size      => 32,
      reg_type  => reg_none,
-     reset_val => "00000000000000000000000000000000"),
+     reset_val => "00000000000000000000000000000000",
+     is_implem => "11111111111111111111111111111111"),
     (address   => TXTB4_DATA_2_ADR,
      size      => 32,
      reg_type  => reg_none,
-     reset_val => "00000000000000000000000000000000"),
+     reset_val => "00000000000000000000000000000000",
+     is_implem => "11111111111111111111111111111111"),
     (address   => TXTB4_DATA_20_ADR,
      size      => 32,
      reg_type  => reg_none,
-     reset_val => "00000000000000000000000000000000")
+     reset_val => "00000000000000000000000000000000",
+     is_implem => "11111111111111111111111111111111")
   );
 
   ------------------------------------------------------------------------------
@@ -584,7 +646,7 @@ package can_fd_register_map is
 
   -- STATUS register reset values
   constant RXNE_RSTVAL        : std_logic := '0';
-  constant TXNF_RSTVAL        : std_logic := '0';
+  constant TXNF_RSTVAL        : std_logic := '1';
   constant DOR_RSTVAL         : std_logic := '0';
   constant EFT_RSTVAL         : std_logic := '0';
   constant RXS_RSTVAL         : std_logic := '0';
@@ -792,24 +854,24 @@ package can_fd_register_map is
   constant ERA_RSTVAL         : std_logic := '1';
 
   ------------------------------------------------------------------------------
-  -- RXC register
+  -- REC register
   --
   ------------------------------------------------------------------------------
-  constant RXC_VAL_L              : natural := 0;
-  constant RXC_VAL_H             : natural := 15;
+  constant REC_VAL_L              : natural := 0;
+  constant REC_VAL_H              : natural := 8;
 
-  -- RXC register reset values
-  constant RXC_VAL_RSTVAL : std_logic_vector(15 downto 0) := x"0000";
+  -- REC register reset values
+  constant REC_VAL_RSTVAL : std_logic_vector(8 downto 0) := (OTHERS => '0');
 
   ------------------------------------------------------------------------------
-  -- TXC register
+  -- TEC register
   --
   ------------------------------------------------------------------------------
-  constant TXC_VAL_L             : natural := 16;
-  constant TXC_VAL_H             : natural := 31;
+  constant TEC_VAL_L             : natural := 16;
+  constant TEC_VAL_H             : natural := 24;
 
-  -- TXC register reset values
-  constant TXC_VAL_RSTVAL : std_logic_vector(15 downto 0) := x"0000";
+  -- TEC register reset values
+  constant TEC_VAL_RSTVAL : std_logic_vector(8 downto 0) := (OTHERS => '0');
 
   ------------------------------------------------------------------------------
   -- ERR_NORM register
@@ -1061,7 +1123,7 @@ package can_fd_register_map is
 
   -- RX_STATUS register reset values
   constant RXE_RSTVAL         : std_logic := '1';
-  constant RXF_RSTVAL         : std_logic := '1';
+  constant RXF_RSTVAL         : std_logic := '0';
   constant RXFRC_RSTVAL : std_logic_vector(10 downto 0) := (OTHERS => '0');
 
   ------------------------------------------------------------------------------
@@ -1263,28 +1325,26 @@ package can_fd_register_map is
   constant SSP_SRC_RSTVAL : std_logic_vector(1 downto 0) := "00";
 
   ------------------------------------------------------------------------------
-  -- RX_COUNTER register
+  -- RX_FR_CTR register
   --
   -- Bus traffic RX counter.
   ------------------------------------------------------------------------------
-  constant RX_COUNTER_VAL_L       : natural := 0;
-  constant RX_COUNTER_VAL_H      : natural := 31;
+  constant RX_FR_CTR_VAL_L        : natural := 0;
+  constant RX_FR_CTR_VAL_H       : natural := 31;
 
-  -- RX_COUNTER register reset values
-  constant RX_COUNTER_VAL_RSTVAL
-                 : std_logic_vector(31 downto 0) := x"00000000";
+  -- RX_FR_CTR register reset values
+  constant RX_FR_CTR_VAL_RSTVAL : std_logic_vector(31 downto 0) := x"00000000";
 
   ------------------------------------------------------------------------------
-  -- TX_COUNTER register
+  -- TX_FR_CTR register
   --
   -- Bus traffic TX counter.
   ------------------------------------------------------------------------------
-  constant TX_COUNTER_VAL_L       : natural := 0;
-  constant TX_COUNTER_VAL_H      : natural := 31;
+  constant TX_FR_CTR_VAL_L        : natural := 0;
+  constant TX_FR_CTR_VAL_H       : natural := 31;
 
-  -- TX_COUNTER register reset values
-  constant TX_COUNTER_VAL_RSTVAL
-                 : std_logic_vector(31 downto 0) := x"00000000";
+  -- TX_FR_CTR register reset values
+  constant TX_FR_CTR_VAL_RSTVAL : std_logic_vector(31 downto 0) := x"00000000";
 
   ------------------------------------------------------------------------------
   -- DEBUG_REGISTER register
@@ -1349,7 +1409,6 @@ package can_fd_register_map is
   constant TIMESTAMP_LOW_H       : natural := 31;
 
   -- TIMESTAMP_LOW register reset values
-  constant TIMESTAMP_LOW_RSTVAL : std_logic_vector(31 downto 0) := x"00000000";
 
   ------------------------------------------------------------------------------
   -- TIMESTAMP_HIGH register
@@ -1364,8 +1423,6 @@ package can_fd_register_map is
   constant TIMESTAMP_HIGH_H      : natural := 31;
 
   -- TIMESTAMP_HIGH register reset values
-  constant TIMESTAMP_HIGH_RSTVAL
-                 : std_logic_vector(31 downto 0) := x"00000000";
 
   ------------------------------------------------------------------------------
   -- TXTB1_DATA_1 register

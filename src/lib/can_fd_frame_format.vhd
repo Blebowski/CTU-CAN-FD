@@ -60,11 +60,12 @@ package can_fd_frame_format is
     reg_read_write_once
   );
 
-  type t_reg is record
+  type t_memory_reg is record
        address       : std_logic_vector(11 downto 0);
        size                                : integer;
        reg_type                         : t_reg_type;
        reset_val     : std_logic_vector(31 downto 0);
+       is_implem     : std_logic_vector(31 downto 0);
   end record;
 
 
@@ -87,38 +88,45 @@ package can_fd_frame_format is
   -- Register list
   ------------------------------------------------------------------------------
 
-  type t_CAN_FD_Frame_format_list is array (0 to 6) of t_reg;
+  type t_CAN_FD_Frame_format_list is array (0 to 6) of t_memory_reg;
 
   constant CAN_FD_Frame_format_list : t_CAN_FD_Frame_format_list :=(
 
     (address   => FRAME_FORM_W_ADR,
      size      => 32,
      reg_type  => reg_none,
-     reset_val => "00000000000000000000000000000000"),
+     reset_val => "00000000000000000000000000000000",
+     is_implem => "00000000000000001111111011101111"),
     (address   => IDENTIFIER_W_ADR,
      size      => 32,
      reg_type  => reg_none,
-     reset_val => "00000000000000000000000000000000"),
+     reset_val => "00000000000000000000000000000000",
+     is_implem => "00011111111111111111111111111111"),
     (address   => TIMESTAMP_L_W_ADR,
      size      => 32,
      reg_type  => reg_none,
-     reset_val => "00000000000000000000000000000000"),
+     reset_val => "00000000000000000000000000000000",
+     is_implem => "11111111111111111111111111111111"),
     (address   => TIMESTAMP_U_W_ADR,
      size      => 32,
      reg_type  => reg_none,
-     reset_val => "00000000000000000000000000000000"),
+     reset_val => "00000000000000000000000000000000",
+     is_implem => "11111111111111111111111111111111"),
     (address   => DATA_1_4_W_ADR,
      size      => 32,
      reg_type  => reg_none,
-     reset_val => "00000000000000000000000000000000"),
+     reset_val => "00000000000000000000000000000000",
+     is_implem => "11111111111111111111111111111111"),
     (address   => DATA_5_8_W_ADR,
      size      => 32,
      reg_type  => reg_none,
-     reset_val => "00000000000000000000000000000000"),
+     reset_val => "00000000000000000000000000000000",
+     is_implem => "11111111111111111111111111111111"),
     (address   => DATA_61_64_W_ADR,
      size      => 32,
      reg_type  => reg_none,
-     reset_val => "00000000000000000000000000000000")
+     reset_val => "00000000000000000000000000000000",
+     is_implem => "11111111111111111111111111111111")
   );
 
   ------------------------------------------------------------------------------

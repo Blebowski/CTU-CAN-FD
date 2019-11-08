@@ -1,5 +1,5 @@
-#LyX 2.2 created this file. For more info see http://www.lyx.org/
-\lyxformat 508
+#LyX 2.3 created this file. For more info see http://www.lyx.org/
+\lyxformat 544
 \begin_document
 \begin_header
 \save_transient_properties true
@@ -30,6 +30,8 @@ customHeadersFooters
 \font_osf false
 \font_sf_scale 100 100
 \font_tt_scale 100 100
+\use_microtype false
+\use_dash_ligatures true
 \graphics default
 \default_output_format default
 \output_sync 0
@@ -71,6 +73,7 @@ customHeadersFooters
 \suppress_date false
 \justification true
 \use_refstyle 1
+\use_minted 0
 \index Index
 \shortcut idx
 \color #008000
@@ -84,7 +87,10 @@ customHeadersFooters
 \tocdepth 5
 \paragraph_separation skip
 \defskip smallskip
-\quotes_language english
+\is_math_indent 0
+\math_numbering_side default
+\quotes_style english
+\dynamic_quotes 0
 \papercolumns 1
 \papersides 1
 \paperpagestyle headings
@@ -1083,7 +1089,7 @@ hyperref[EWL]{EWL}\end_layout
 status open
 \begin_layout Plain Layout
 \backslash
-hyperref[TXC]{TXC}\end_layout
+hyperref[TEC]{TEC}\end_layout
 \end_inset
 \end_layout
 
@@ -1097,7 +1103,7 @@ hyperref[TXC]{TXC}\end_layout
 status open
 \begin_layout Plain Layout
 \backslash
-hyperref[TXC]{TXC}\end_layout
+hyperref[TEC]{TEC}\end_layout
 \end_inset
 \end_layout
 
@@ -1111,7 +1117,7 @@ hyperref[TXC]{TXC}\end_layout
 status open
 \begin_layout Plain Layout
 \backslash
-hyperref[RXC]{RXC}\end_layout
+hyperref[REC]{REC}\end_layout
 \end_inset
 \end_layout
 
@@ -1125,7 +1131,7 @@ hyperref[RXC]{RXC}\end_layout
 status open
 \begin_layout Plain Layout
 \backslash
-hyperref[RXC]{RXC}\end_layout
+hyperref[REC]{REC}\end_layout
 \end_inset
 \end_layout
 
@@ -2415,7 +2421,7 @@ hyperref[TRV_DELAY]{TRV\backslash textunderscore DELAY}\end_layout
 status open
 \begin_layout Plain Layout
 \backslash
-hyperref[RX_COUNTER]{RX\backslash textunderscore COUNTER}\end_layout
+hyperref[RX_FR_CTR]{RX\backslash textunderscore FR\backslash textunderscore CTR}\end_layout
 \end_inset
 \end_layout
 
@@ -2429,7 +2435,7 @@ hyperref[RX_COUNTER]{RX\backslash textunderscore COUNTER}\end_layout
 status open
 \begin_layout Plain Layout
 \backslash
-hyperref[RX_COUNTER]{RX\backslash textunderscore COUNTER}\end_layout
+hyperref[RX_FR_CTR]{RX\backslash textunderscore FR\backslash textunderscore CTR}\end_layout
 \end_inset
 \end_layout
 
@@ -2443,7 +2449,7 @@ hyperref[RX_COUNTER]{RX\backslash textunderscore COUNTER}\end_layout
 status open
 \begin_layout Plain Layout
 \backslash
-hyperref[RX_COUNTER]{RX\backslash textunderscore COUNTER}\end_layout
+hyperref[RX_FR_CTR]{RX\backslash textunderscore FR\backslash textunderscore CTR}\end_layout
 \end_inset
 \end_layout
 
@@ -2457,7 +2463,7 @@ hyperref[RX_COUNTER]{RX\backslash textunderscore COUNTER}\end_layout
 status open
 \begin_layout Plain Layout
 \backslash
-hyperref[RX_COUNTER]{RX\backslash textunderscore COUNTER}\end_layout
+hyperref[RX_FR_CTR]{RX\backslash textunderscore FR\backslash textunderscore CTR}\end_layout
 \end_inset
 \end_layout
 
@@ -2481,7 +2487,7 @@ hyperref[RX_COUNTER]{RX\backslash textunderscore COUNTER}\end_layout
 status open
 \begin_layout Plain Layout
 \backslash
-hyperref[TX_COUNTER]{TX\backslash textunderscore COUNTER}\end_layout
+hyperref[TX_FR_CTR]{TX\backslash textunderscore FR\backslash textunderscore CTR}\end_layout
 \end_inset
 \end_layout
 
@@ -2495,7 +2501,7 @@ hyperref[TX_COUNTER]{TX\backslash textunderscore COUNTER}\end_layout
 status open
 \begin_layout Plain Layout
 \backslash
-hyperref[TX_COUNTER]{TX\backslash textunderscore COUNTER}\end_layout
+hyperref[TX_FR_CTR]{TX\backslash textunderscore FR\backslash textunderscore CTR}\end_layout
 \end_inset
 \end_layout
 
@@ -2509,7 +2515,7 @@ hyperref[TX_COUNTER]{TX\backslash textunderscore COUNTER}\end_layout
 status open
 \begin_layout Plain Layout
 \backslash
-hyperref[TX_COUNTER]{TX\backslash textunderscore COUNTER}\end_layout
+hyperref[TX_FR_CTR]{TX\backslash textunderscore FR\backslash textunderscore CTR}\end_layout
 \end_inset
 \end_layout
 
@@ -2523,7 +2529,7 @@ hyperref[TX_COUNTER]{TX\backslash textunderscore COUNTER}\end_layout
 status open
 \begin_layout Plain Layout
 \backslash
-hyperref[TX_COUNTER]{TX\backslash textunderscore COUNTER}\end_layout
+hyperref[TX_FR_CTR]{TX\backslash textunderscore FR\backslash textunderscore CTR}\end_layout
 \end_inset
 \end_layout
 
@@ -6853,7 +6859,7 @@ cellcolor{cyan}
 \begin_inset Text
 
 \begin_layout Plain Layout
-0\end_layout
+1\end_layout
 
 \end_inset
 </cell>
@@ -6899,7 +6905,7 @@ RXS CTU CAN FD is receiving CAN Frame.
 TXS CTU CAN FD is transmitting CAN Frame.
 \end_layout
 \begin_layout Description
-EWL Error warning limit was reached by either TX or RX Error counter (TXC or RXC).
+EWL TX Error counter (TEC) or RX Error counter (REC) is equal to or higher than Error warning limit (EWL).
 \end_layout
 \begin_layout Description
 IDLE Bus is idle (no frame being transmitted/received) or CTU CAN FD is bus off.
@@ -8898,7 +8904,7 @@ RXI Frame Received Interrupt.
 TXI Frame Transmitted Interrupt. 
 \end_layout
 \begin_layout Description
-EWLI Error Warning Limit interrupt. When both TEC and REC are lower than EWL and one of the becomes higher than EWL, or when both TEC and REC become less than EWL, condition for this interrupt is valid. When Interrupt is cleared and RXC, or TXC is still equal to or higher than EWL, Interrupt is not set again.
+EWLI Error Warning Limit interrupt. When both TEC and REC are lower than EWL and one of the becomes equal to or higher than EWL, or when both TEC and REC become less than EWL, condition for this interrupt is valid. When Interrupt is cleared and RXC, or TXC is still equal to or higher than EWL, Interrupt is not set again.
 \end_layout
 \begin_layout Description
 DOI Data Overrun on RX Buffer Interrupt. Before this interrupt is cleared , STATUS[DOR] must be cleared to avoid setting of this interrupt again.
@@ -15627,12 +15633,12 @@ BOF Bus off
 \end_inset
 \end_layout
 \begin_layout Subsection
-RXC
+REC
 \begin_inset ERT
 status open
 \begin_layout Plain Layout
 \backslash
-label{RXC
+label{REC
 }\end_layout
 \end_inset
 \end_layout
@@ -15645,9 +15651,6 @@ Address: 0x30
 \begin_layout Description
 Size: 2 bytes
 \end_layout
-\begin_layout Description
-Note: Register is present only when sup_traffic_ctrs = true. Otherwise this address is reserved.
-\end_layout
 \begin_layout Standard
 
 \end_layout
@@ -15819,67 +15822,67 @@ cellcolor{cyan}
 
 \end_inset
 </cell>
+<cell alignment="center" leftline="true" multicolumn="1" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Reserved\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" multicolumn="2" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Reserved\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" multicolumn="2" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Reserved\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" multicolumn="2" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Reserved\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" multicolumn="2" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Reserved\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" multicolumn="2" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Reserved\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" multicolumn="2" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Reserved\end_layout
+
+\end_inset
+</cell>
 <cell alignment="center" leftline="true" multicolumn="1" rightline="true" topline="true" usebox="none" valignment="top">
 \begin_inset Text
 
 \begin_layout Plain Layout
-RXC_VAL[15:8]\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" leftline="true" multicolumn="2" topline="true" usebox="none" valignment="top">
-\begin_inset Text
-
-\begin_layout Plain Layout
-RXC_VAL[15:8]\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" leftline="true" multicolumn="2" topline="true" usebox="none" valignment="top">
-\begin_inset Text
-
-\begin_layout Plain Layout
-RXC_VAL[15:8]\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" leftline="true" multicolumn="2" topline="true" usebox="none" valignment="top">
-\begin_inset Text
-
-\begin_layout Plain Layout
-RXC_VAL[15:8]\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" leftline="true" multicolumn="2" topline="true" usebox="none" valignment="top">
-\begin_inset Text
-
-\begin_layout Plain Layout
-RXC_VAL[15:8]\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" leftline="true" multicolumn="2" topline="true" usebox="none" valignment="top">
-\begin_inset Text
-
-\begin_layout Plain Layout
-RXC_VAL[15:8]\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" leftline="true" multicolumn="2" topline="true" usebox="none" valignment="top">
-\begin_inset Text
-
-\begin_layout Plain Layout
-RXC_VAL[15:8]\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" leftline="true" multicolumn="2" rightline="true" topline="true" usebox="none" valignment="top">
-\begin_inset Text
-
-\begin_layout Plain Layout
-RXC_VAL[15:8]\end_layout
+REC_VAL[8]\end_layout
 
 \end_inset
 </cell>
@@ -15904,7 +15907,7 @@ cellcolor{cyan}
 \begin_inset Text
 
 \begin_layout Plain Layout
-0\end_layout
+-\end_layout
 
 \end_inset
 </cell>
@@ -15912,7 +15915,7 @@ cellcolor{cyan}
 \begin_inset Text
 
 \begin_layout Plain Layout
-0\end_layout
+-\end_layout
 
 \end_inset
 </cell>
@@ -15920,7 +15923,7 @@ cellcolor{cyan}
 \begin_inset Text
 
 \begin_layout Plain Layout
-0\end_layout
+-\end_layout
 
 \end_inset
 </cell>
@@ -15928,7 +15931,7 @@ cellcolor{cyan}
 \begin_inset Text
 
 \begin_layout Plain Layout
-0\end_layout
+-\end_layout
 
 \end_inset
 </cell>
@@ -15936,7 +15939,7 @@ cellcolor{cyan}
 \begin_inset Text
 
 \begin_layout Plain Layout
-0\end_layout
+-\end_layout
 
 \end_inset
 </cell>
@@ -15944,7 +15947,7 @@ cellcolor{cyan}
 \begin_inset Text
 
 \begin_layout Plain Layout
-0\end_layout
+-\end_layout
 
 \end_inset
 </cell>
@@ -15952,7 +15955,7 @@ cellcolor{cyan}
 \begin_inset Text
 
 \begin_layout Plain Layout
-0\end_layout
+-\end_layout
 
 \end_inset
 </cell>
@@ -16143,7 +16146,7 @@ cellcolor{cyan}
 \begin_inset Text
 
 \begin_layout Plain Layout
-RXC_VAL[7:0]\end_layout
+REC_VAL[7:0]\end_layout
 
 \end_inset
 </cell>
@@ -16151,7 +16154,7 @@ RXC_VAL[7:0]\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-RXC_VAL[7:0]\end_layout
+REC_VAL[7:0]\end_layout
 
 \end_inset
 </cell>
@@ -16159,7 +16162,7 @@ RXC_VAL[7:0]\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-RXC_VAL[7:0]\end_layout
+REC_VAL[7:0]\end_layout
 
 \end_inset
 </cell>
@@ -16167,7 +16170,7 @@ RXC_VAL[7:0]\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-RXC_VAL[7:0]\end_layout
+REC_VAL[7:0]\end_layout
 
 \end_inset
 </cell>
@@ -16175,7 +16178,7 @@ RXC_VAL[7:0]\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-RXC_VAL[7:0]\end_layout
+REC_VAL[7:0]\end_layout
 
 \end_inset
 </cell>
@@ -16183,7 +16186,7 @@ RXC_VAL[7:0]\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-RXC_VAL[7:0]\end_layout
+REC_VAL[7:0]\end_layout
 
 \end_inset
 </cell>
@@ -16191,7 +16194,7 @@ RXC_VAL[7:0]\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-RXC_VAL[7:0]\end_layout
+REC_VAL[7:0]\end_layout
 
 \end_inset
 </cell>
@@ -16199,7 +16202,7 @@ RXC_VAL[7:0]\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-RXC_VAL[7:0]\end_layout
+REC_VAL[7:0]\end_layout
 
 \end_inset
 </cell>
@@ -16292,19 +16295,19 @@ cellcolor{cyan}
 
 \end_layout
 \begin_layout Description
-RXC_VAL RX error counter (REC).
+REC_VAL RX error counter (REC).
 \end_layout
 \begin_layout Standard
 \begin_inset VSpace bigskip
 \end_inset
 \end_layout
 \begin_layout Subsection
-TXC
+TEC
 \begin_inset ERT
 status open
 \begin_layout Plain Layout
 \backslash
-label{TXC
+label{TEC
 }\end_layout
 \end_inset
 \end_layout
@@ -16317,9 +16320,6 @@ Address: 0x32
 \begin_layout Description
 Size: 2 bytes
 \end_layout
-\begin_layout Description
-Note: Register is present only when sup_traffic_ctrs = true. Otherwise this address is reserved.
-\end_layout
 \begin_layout Standard
 
 \end_layout
@@ -16491,67 +16491,67 @@ cellcolor{cyan}
 
 \end_inset
 </cell>
+<cell alignment="center" leftline="true" multicolumn="1" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Reserved\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" multicolumn="2" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Reserved\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" multicolumn="2" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Reserved\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" multicolumn="2" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Reserved\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" multicolumn="2" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Reserved\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" multicolumn="2" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Reserved\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" multicolumn="2" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Reserved\end_layout
+
+\end_inset
+</cell>
 <cell alignment="center" leftline="true" multicolumn="1" rightline="true" topline="true" usebox="none" valignment="top">
 \begin_inset Text
 
 \begin_layout Plain Layout
-TXC_VAL[15:8]\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" leftline="true" multicolumn="2" topline="true" usebox="none" valignment="top">
-\begin_inset Text
-
-\begin_layout Plain Layout
-TXC_VAL[15:8]\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" leftline="true" multicolumn="2" topline="true" usebox="none" valignment="top">
-\begin_inset Text
-
-\begin_layout Plain Layout
-TXC_VAL[15:8]\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" leftline="true" multicolumn="2" topline="true" usebox="none" valignment="top">
-\begin_inset Text
-
-\begin_layout Plain Layout
-TXC_VAL[15:8]\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" leftline="true" multicolumn="2" topline="true" usebox="none" valignment="top">
-\begin_inset Text
-
-\begin_layout Plain Layout
-TXC_VAL[15:8]\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" leftline="true" multicolumn="2" topline="true" usebox="none" valignment="top">
-\begin_inset Text
-
-\begin_layout Plain Layout
-TXC_VAL[15:8]\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" leftline="true" multicolumn="2" topline="true" usebox="none" valignment="top">
-\begin_inset Text
-
-\begin_layout Plain Layout
-TXC_VAL[15:8]\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" leftline="true" multicolumn="2" rightline="true" topline="true" usebox="none" valignment="top">
-\begin_inset Text
-
-\begin_layout Plain Layout
-TXC_VAL[15:8]\end_layout
+TEC_VAL[8]\end_layout
 
 \end_inset
 </cell>
@@ -16576,7 +16576,7 @@ cellcolor{cyan}
 \begin_inset Text
 
 \begin_layout Plain Layout
-0\end_layout
+-\end_layout
 
 \end_inset
 </cell>
@@ -16584,7 +16584,7 @@ cellcolor{cyan}
 \begin_inset Text
 
 \begin_layout Plain Layout
-0\end_layout
+-\end_layout
 
 \end_inset
 </cell>
@@ -16592,7 +16592,7 @@ cellcolor{cyan}
 \begin_inset Text
 
 \begin_layout Plain Layout
-0\end_layout
+-\end_layout
 
 \end_inset
 </cell>
@@ -16600,7 +16600,7 @@ cellcolor{cyan}
 \begin_inset Text
 
 \begin_layout Plain Layout
-0\end_layout
+-\end_layout
 
 \end_inset
 </cell>
@@ -16608,7 +16608,7 @@ cellcolor{cyan}
 \begin_inset Text
 
 \begin_layout Plain Layout
-0\end_layout
+-\end_layout
 
 \end_inset
 </cell>
@@ -16616,7 +16616,7 @@ cellcolor{cyan}
 \begin_inset Text
 
 \begin_layout Plain Layout
-0\end_layout
+-\end_layout
 
 \end_inset
 </cell>
@@ -16624,7 +16624,7 @@ cellcolor{cyan}
 \begin_inset Text
 
 \begin_layout Plain Layout
-0\end_layout
+-\end_layout
 
 \end_inset
 </cell>
@@ -16815,7 +16815,7 @@ cellcolor{cyan}
 \begin_inset Text
 
 \begin_layout Plain Layout
-TXC_VAL[7:0]\end_layout
+TEC_VAL[7:0]\end_layout
 
 \end_inset
 </cell>
@@ -16823,7 +16823,7 @@ TXC_VAL[7:0]\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-TXC_VAL[7:0]\end_layout
+TEC_VAL[7:0]\end_layout
 
 \end_inset
 </cell>
@@ -16831,7 +16831,7 @@ TXC_VAL[7:0]\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-TXC_VAL[7:0]\end_layout
+TEC_VAL[7:0]\end_layout
 
 \end_inset
 </cell>
@@ -16839,7 +16839,7 @@ TXC_VAL[7:0]\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-TXC_VAL[7:0]\end_layout
+TEC_VAL[7:0]\end_layout
 
 \end_inset
 </cell>
@@ -16847,7 +16847,7 @@ TXC_VAL[7:0]\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-TXC_VAL[7:0]\end_layout
+TEC_VAL[7:0]\end_layout
 
 \end_inset
 </cell>
@@ -16855,7 +16855,7 @@ TXC_VAL[7:0]\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-TXC_VAL[7:0]\end_layout
+TEC_VAL[7:0]\end_layout
 
 \end_inset
 </cell>
@@ -16863,7 +16863,7 @@ TXC_VAL[7:0]\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-TXC_VAL[7:0]\end_layout
+TEC_VAL[7:0]\end_layout
 
 \end_inset
 </cell>
@@ -16871,7 +16871,7 @@ TXC_VAL[7:0]\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-TXC_VAL[7:0]\end_layout
+TEC_VAL[7:0]\end_layout
 
 \end_inset
 </cell>
@@ -16964,7 +16964,7 @@ cellcolor{cyan}
 
 \end_layout
 \begin_layout Description
-TXC_VAL TX error counter (TEC).
+TEC_VAL TX error counter (TEC).
 \end_layout
 \begin_layout Standard
 \begin_inset VSpace bigskip
@@ -34786,7 +34786,7 @@ cellcolor{cyan}
 \begin_inset Text
 
 \begin_layout Plain Layout
-1\end_layout
+0\end_layout
 
 \end_inset
 </cell>
@@ -40598,12 +40598,12 @@ SSP_SRC Source of Secondary Sampling Point. If configured value exceeds 127, it 
 \end_inset
 \end_layout
 \begin_layout Subsection
-RX_COUNTER
+RX_FR_CTR
 \begin_inset ERT
 status open
 \begin_layout Plain Layout
 \backslash
-label{RX_COUNTER
+label{RX_FR_CTR
 }\end_layout
 \end_inset
 \end_layout
@@ -40794,7 +40794,7 @@ cellcolor{cyan}
 \begin_inset Text
 
 \begin_layout Plain Layout
-RX_COUNTER_VAL[31:24]\end_layout
+RX_FR_CTR_VAL[31:24]\end_layout
 
 \end_inset
 </cell>
@@ -40802,7 +40802,7 @@ RX_COUNTER_VAL[31:24]\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-RX_COUNTER_VAL[31:24]\end_layout
+RX_FR_CTR_VAL[31:24]\end_layout
 
 \end_inset
 </cell>
@@ -40810,7 +40810,7 @@ RX_COUNTER_VAL[31:24]\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-RX_COUNTER_VAL[31:24]\end_layout
+RX_FR_CTR_VAL[31:24]\end_layout
 
 \end_inset
 </cell>
@@ -40818,7 +40818,7 @@ RX_COUNTER_VAL[31:24]\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-RX_COUNTER_VAL[31:24]\end_layout
+RX_FR_CTR_VAL[31:24]\end_layout
 
 \end_inset
 </cell>
@@ -40826,7 +40826,7 @@ RX_COUNTER_VAL[31:24]\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-RX_COUNTER_VAL[31:24]\end_layout
+RX_FR_CTR_VAL[31:24]\end_layout
 
 \end_inset
 </cell>
@@ -40834,7 +40834,7 @@ RX_COUNTER_VAL[31:24]\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-RX_COUNTER_VAL[31:24]\end_layout
+RX_FR_CTR_VAL[31:24]\end_layout
 
 \end_inset
 </cell>
@@ -40842,7 +40842,7 @@ RX_COUNTER_VAL[31:24]\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-RX_COUNTER_VAL[31:24]\end_layout
+RX_FR_CTR_VAL[31:24]\end_layout
 
 \end_inset
 </cell>
@@ -40850,7 +40850,7 @@ RX_COUNTER_VAL[31:24]\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-RX_COUNTER_VAL[31:24]\end_layout
+RX_FR_CTR_VAL[31:24]\end_layout
 
 \end_inset
 </cell>
@@ -41114,7 +41114,7 @@ cellcolor{cyan}
 \begin_inset Text
 
 \begin_layout Plain Layout
-RX_COUNTER_VAL[23:16]\end_layout
+RX_FR_CTR_VAL[23:16]\end_layout
 
 \end_inset
 </cell>
@@ -41122,7 +41122,7 @@ RX_COUNTER_VAL[23:16]\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-RX_COUNTER_VAL[23:16]\end_layout
+RX_FR_CTR_VAL[23:16]\end_layout
 
 \end_inset
 </cell>
@@ -41130,7 +41130,7 @@ RX_COUNTER_VAL[23:16]\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-RX_COUNTER_VAL[23:16]\end_layout
+RX_FR_CTR_VAL[23:16]\end_layout
 
 \end_inset
 </cell>
@@ -41138,7 +41138,7 @@ RX_COUNTER_VAL[23:16]\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-RX_COUNTER_VAL[23:16]\end_layout
+RX_FR_CTR_VAL[23:16]\end_layout
 
 \end_inset
 </cell>
@@ -41146,7 +41146,7 @@ RX_COUNTER_VAL[23:16]\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-RX_COUNTER_VAL[23:16]\end_layout
+RX_FR_CTR_VAL[23:16]\end_layout
 
 \end_inset
 </cell>
@@ -41154,7 +41154,7 @@ RX_COUNTER_VAL[23:16]\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-RX_COUNTER_VAL[23:16]\end_layout
+RX_FR_CTR_VAL[23:16]\end_layout
 
 \end_inset
 </cell>
@@ -41162,7 +41162,7 @@ RX_COUNTER_VAL[23:16]\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-RX_COUNTER_VAL[23:16]\end_layout
+RX_FR_CTR_VAL[23:16]\end_layout
 
 \end_inset
 </cell>
@@ -41170,7 +41170,7 @@ RX_COUNTER_VAL[23:16]\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-RX_COUNTER_VAL[23:16]\end_layout
+RX_FR_CTR_VAL[23:16]\end_layout
 
 \end_inset
 </cell>
@@ -41434,7 +41434,7 @@ cellcolor{cyan}
 \begin_inset Text
 
 \begin_layout Plain Layout
-RX_COUNTER_VAL[15:8]\end_layout
+RX_FR_CTR_VAL[15:8]\end_layout
 
 \end_inset
 </cell>
@@ -41442,7 +41442,7 @@ RX_COUNTER_VAL[15:8]\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-RX_COUNTER_VAL[15:8]\end_layout
+RX_FR_CTR_VAL[15:8]\end_layout
 
 \end_inset
 </cell>
@@ -41450,7 +41450,7 @@ RX_COUNTER_VAL[15:8]\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-RX_COUNTER_VAL[15:8]\end_layout
+RX_FR_CTR_VAL[15:8]\end_layout
 
 \end_inset
 </cell>
@@ -41458,7 +41458,7 @@ RX_COUNTER_VAL[15:8]\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-RX_COUNTER_VAL[15:8]\end_layout
+RX_FR_CTR_VAL[15:8]\end_layout
 
 \end_inset
 </cell>
@@ -41466,7 +41466,7 @@ RX_COUNTER_VAL[15:8]\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-RX_COUNTER_VAL[15:8]\end_layout
+RX_FR_CTR_VAL[15:8]\end_layout
 
 \end_inset
 </cell>
@@ -41474,7 +41474,7 @@ RX_COUNTER_VAL[15:8]\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-RX_COUNTER_VAL[15:8]\end_layout
+RX_FR_CTR_VAL[15:8]\end_layout
 
 \end_inset
 </cell>
@@ -41482,7 +41482,7 @@ RX_COUNTER_VAL[15:8]\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-RX_COUNTER_VAL[15:8]\end_layout
+RX_FR_CTR_VAL[15:8]\end_layout
 
 \end_inset
 </cell>
@@ -41490,7 +41490,7 @@ RX_COUNTER_VAL[15:8]\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-RX_COUNTER_VAL[15:8]\end_layout
+RX_FR_CTR_VAL[15:8]\end_layout
 
 \end_inset
 </cell>
@@ -41754,7 +41754,7 @@ cellcolor{cyan}
 \begin_inset Text
 
 \begin_layout Plain Layout
-RX_COUNTER_VAL[7:0]\end_layout
+RX_FR_CTR_VAL[7:0]\end_layout
 
 \end_inset
 </cell>
@@ -41762,7 +41762,7 @@ RX_COUNTER_VAL[7:0]\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-RX_COUNTER_VAL[7:0]\end_layout
+RX_FR_CTR_VAL[7:0]\end_layout
 
 \end_inset
 </cell>
@@ -41770,7 +41770,7 @@ RX_COUNTER_VAL[7:0]\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-RX_COUNTER_VAL[7:0]\end_layout
+RX_FR_CTR_VAL[7:0]\end_layout
 
 \end_inset
 </cell>
@@ -41778,7 +41778,7 @@ RX_COUNTER_VAL[7:0]\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-RX_COUNTER_VAL[7:0]\end_layout
+RX_FR_CTR_VAL[7:0]\end_layout
 
 \end_inset
 </cell>
@@ -41786,7 +41786,7 @@ RX_COUNTER_VAL[7:0]\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-RX_COUNTER_VAL[7:0]\end_layout
+RX_FR_CTR_VAL[7:0]\end_layout
 
 \end_inset
 </cell>
@@ -41794,7 +41794,7 @@ RX_COUNTER_VAL[7:0]\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-RX_COUNTER_VAL[7:0]\end_layout
+RX_FR_CTR_VAL[7:0]\end_layout
 
 \end_inset
 </cell>
@@ -41802,7 +41802,7 @@ RX_COUNTER_VAL[7:0]\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-RX_COUNTER_VAL[7:0]\end_layout
+RX_FR_CTR_VAL[7:0]\end_layout
 
 \end_inset
 </cell>
@@ -41810,7 +41810,7 @@ RX_COUNTER_VAL[7:0]\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-RX_COUNTER_VAL[7:0]\end_layout
+RX_FR_CTR_VAL[7:0]\end_layout
 
 \end_inset
 </cell>
@@ -41903,19 +41903,19 @@ cellcolor{cyan}
 
 \end_layout
 \begin_layout Description
-RX_COUNTER_VAL Number of received frames by CTU CAN FD.
+RX_FR_CTR_VAL Number of received frames by CTU CAN FD.
 \end_layout
 \begin_layout Standard
 \begin_inset VSpace bigskip
 \end_inset
 \end_layout
 \begin_layout Subsection
-TX_COUNTER
+TX_FR_CTR
 \begin_inset ERT
 status open
 \begin_layout Plain Layout
 \backslash
-label{TX_COUNTER
+label{TX_FR_CTR
 }\end_layout
 \end_inset
 \end_layout
@@ -42106,7 +42106,7 @@ cellcolor{cyan}
 \begin_inset Text
 
 \begin_layout Plain Layout
-TX_COUNTER_VAL[31:24]\end_layout
+TX_FR_CTR_VAL[31:24]\end_layout
 
 \end_inset
 </cell>
@@ -42114,7 +42114,7 @@ TX_COUNTER_VAL[31:24]\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-TX_COUNTER_VAL[31:24]\end_layout
+TX_FR_CTR_VAL[31:24]\end_layout
 
 \end_inset
 </cell>
@@ -42122,7 +42122,7 @@ TX_COUNTER_VAL[31:24]\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-TX_COUNTER_VAL[31:24]\end_layout
+TX_FR_CTR_VAL[31:24]\end_layout
 
 \end_inset
 </cell>
@@ -42130,7 +42130,7 @@ TX_COUNTER_VAL[31:24]\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-TX_COUNTER_VAL[31:24]\end_layout
+TX_FR_CTR_VAL[31:24]\end_layout
 
 \end_inset
 </cell>
@@ -42138,7 +42138,7 @@ TX_COUNTER_VAL[31:24]\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-TX_COUNTER_VAL[31:24]\end_layout
+TX_FR_CTR_VAL[31:24]\end_layout
 
 \end_inset
 </cell>
@@ -42146,7 +42146,7 @@ TX_COUNTER_VAL[31:24]\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-TX_COUNTER_VAL[31:24]\end_layout
+TX_FR_CTR_VAL[31:24]\end_layout
 
 \end_inset
 </cell>
@@ -42154,7 +42154,7 @@ TX_COUNTER_VAL[31:24]\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-TX_COUNTER_VAL[31:24]\end_layout
+TX_FR_CTR_VAL[31:24]\end_layout
 
 \end_inset
 </cell>
@@ -42162,7 +42162,7 @@ TX_COUNTER_VAL[31:24]\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-TX_COUNTER_VAL[31:24]\end_layout
+TX_FR_CTR_VAL[31:24]\end_layout
 
 \end_inset
 </cell>
@@ -42426,7 +42426,7 @@ cellcolor{cyan}
 \begin_inset Text
 
 \begin_layout Plain Layout
-TX_COUNTER_VAL[23:16]\end_layout
+TX_FR_CTR_VAL[23:16]\end_layout
 
 \end_inset
 </cell>
@@ -42434,7 +42434,7 @@ TX_COUNTER_VAL[23:16]\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-TX_COUNTER_VAL[23:16]\end_layout
+TX_FR_CTR_VAL[23:16]\end_layout
 
 \end_inset
 </cell>
@@ -42442,7 +42442,7 @@ TX_COUNTER_VAL[23:16]\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-TX_COUNTER_VAL[23:16]\end_layout
+TX_FR_CTR_VAL[23:16]\end_layout
 
 \end_inset
 </cell>
@@ -42450,7 +42450,7 @@ TX_COUNTER_VAL[23:16]\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-TX_COUNTER_VAL[23:16]\end_layout
+TX_FR_CTR_VAL[23:16]\end_layout
 
 \end_inset
 </cell>
@@ -42458,7 +42458,7 @@ TX_COUNTER_VAL[23:16]\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-TX_COUNTER_VAL[23:16]\end_layout
+TX_FR_CTR_VAL[23:16]\end_layout
 
 \end_inset
 </cell>
@@ -42466,7 +42466,7 @@ TX_COUNTER_VAL[23:16]\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-TX_COUNTER_VAL[23:16]\end_layout
+TX_FR_CTR_VAL[23:16]\end_layout
 
 \end_inset
 </cell>
@@ -42474,7 +42474,7 @@ TX_COUNTER_VAL[23:16]\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-TX_COUNTER_VAL[23:16]\end_layout
+TX_FR_CTR_VAL[23:16]\end_layout
 
 \end_inset
 </cell>
@@ -42482,7 +42482,7 @@ TX_COUNTER_VAL[23:16]\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-TX_COUNTER_VAL[23:16]\end_layout
+TX_FR_CTR_VAL[23:16]\end_layout
 
 \end_inset
 </cell>
@@ -42746,7 +42746,7 @@ cellcolor{cyan}
 \begin_inset Text
 
 \begin_layout Plain Layout
-TX_COUNTER_VAL[15:8]\end_layout
+TX_FR_CTR_VAL[15:8]\end_layout
 
 \end_inset
 </cell>
@@ -42754,7 +42754,7 @@ TX_COUNTER_VAL[15:8]\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-TX_COUNTER_VAL[15:8]\end_layout
+TX_FR_CTR_VAL[15:8]\end_layout
 
 \end_inset
 </cell>
@@ -42762,7 +42762,7 @@ TX_COUNTER_VAL[15:8]\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-TX_COUNTER_VAL[15:8]\end_layout
+TX_FR_CTR_VAL[15:8]\end_layout
 
 \end_inset
 </cell>
@@ -42770,7 +42770,7 @@ TX_COUNTER_VAL[15:8]\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-TX_COUNTER_VAL[15:8]\end_layout
+TX_FR_CTR_VAL[15:8]\end_layout
 
 \end_inset
 </cell>
@@ -42778,7 +42778,7 @@ TX_COUNTER_VAL[15:8]\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-TX_COUNTER_VAL[15:8]\end_layout
+TX_FR_CTR_VAL[15:8]\end_layout
 
 \end_inset
 </cell>
@@ -42786,7 +42786,7 @@ TX_COUNTER_VAL[15:8]\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-TX_COUNTER_VAL[15:8]\end_layout
+TX_FR_CTR_VAL[15:8]\end_layout
 
 \end_inset
 </cell>
@@ -42794,7 +42794,7 @@ TX_COUNTER_VAL[15:8]\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-TX_COUNTER_VAL[15:8]\end_layout
+TX_FR_CTR_VAL[15:8]\end_layout
 
 \end_inset
 </cell>
@@ -42802,7 +42802,7 @@ TX_COUNTER_VAL[15:8]\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-TX_COUNTER_VAL[15:8]\end_layout
+TX_FR_CTR_VAL[15:8]\end_layout
 
 \end_inset
 </cell>
@@ -43066,7 +43066,7 @@ cellcolor{cyan}
 \begin_inset Text
 
 \begin_layout Plain Layout
-TX_COUNTER_VAL[7:0]\end_layout
+TX_FR_CTR_VAL[7:0]\end_layout
 
 \end_inset
 </cell>
@@ -43074,7 +43074,7 @@ TX_COUNTER_VAL[7:0]\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-TX_COUNTER_VAL[7:0]\end_layout
+TX_FR_CTR_VAL[7:0]\end_layout
 
 \end_inset
 </cell>
@@ -43082,7 +43082,7 @@ TX_COUNTER_VAL[7:0]\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-TX_COUNTER_VAL[7:0]\end_layout
+TX_FR_CTR_VAL[7:0]\end_layout
 
 \end_inset
 </cell>
@@ -43090,7 +43090,7 @@ TX_COUNTER_VAL[7:0]\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-TX_COUNTER_VAL[7:0]\end_layout
+TX_FR_CTR_VAL[7:0]\end_layout
 
 \end_inset
 </cell>
@@ -43098,7 +43098,7 @@ TX_COUNTER_VAL[7:0]\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-TX_COUNTER_VAL[7:0]\end_layout
+TX_FR_CTR_VAL[7:0]\end_layout
 
 \end_inset
 </cell>
@@ -43106,7 +43106,7 @@ TX_COUNTER_VAL[7:0]\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-TX_COUNTER_VAL[7:0]\end_layout
+TX_FR_CTR_VAL[7:0]\end_layout
 
 \end_inset
 </cell>
@@ -43114,7 +43114,7 @@ TX_COUNTER_VAL[7:0]\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-TX_COUNTER_VAL[7:0]\end_layout
+TX_FR_CTR_VAL[7:0]\end_layout
 
 \end_inset
 </cell>
@@ -43122,7 +43122,7 @@ TX_COUNTER_VAL[7:0]\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-TX_COUNTER_VAL[7:0]\end_layout
+TX_FR_CTR_VAL[7:0]\end_layout
 
 \end_inset
 </cell>
@@ -43215,7 +43215,7 @@ cellcolor{cyan}
 
 \end_layout
 \begin_layout Description
-TX_COUNTER_VAL Number of transmitted frames by CTU CAN FD.
+TX_FR_CTR_VAL Number of transmitted frames by CTU CAN FD.
 \end_layout
 \begin_layout Standard
 \begin_inset VSpace bigskip
@@ -46153,7 +46153,7 @@ cellcolor{cyan}
 \begin_inset Text
 
 \begin_layout Plain Layout
-0\end_layout
+X\end_layout
 
 \end_inset
 </cell>
@@ -46161,7 +46161,7 @@ cellcolor{cyan}
 \begin_inset Text
 
 \begin_layout Plain Layout
-0\end_layout
+X\end_layout
 
 \end_inset
 </cell>
@@ -46169,7 +46169,7 @@ cellcolor{cyan}
 \begin_inset Text
 
 \begin_layout Plain Layout
-0\end_layout
+X\end_layout
 
 \end_inset
 </cell>
@@ -46177,7 +46177,7 @@ cellcolor{cyan}
 \begin_inset Text
 
 \begin_layout Plain Layout
-0\end_layout
+X\end_layout
 
 \end_inset
 </cell>
@@ -46185,7 +46185,7 @@ cellcolor{cyan}
 \begin_inset Text
 
 \begin_layout Plain Layout
-0\end_layout
+X\end_layout
 
 \end_inset
 </cell>
@@ -46193,7 +46193,7 @@ cellcolor{cyan}
 \begin_inset Text
 
 \begin_layout Plain Layout
-0\end_layout
+X\end_layout
 
 \end_inset
 </cell>
@@ -46201,7 +46201,7 @@ cellcolor{cyan}
 \begin_inset Text
 
 \begin_layout Plain Layout
-0\end_layout
+X\end_layout
 
 \end_inset
 </cell>
@@ -46209,7 +46209,7 @@ cellcolor{cyan}
 \begin_inset Text
 
 \begin_layout Plain Layout
-0\end_layout
+X\end_layout
 
 \end_inset
 </cell>
@@ -46473,7 +46473,7 @@ cellcolor{cyan}
 \begin_inset Text
 
 \begin_layout Plain Layout
-0\end_layout
+X\end_layout
 
 \end_inset
 </cell>
@@ -46481,7 +46481,7 @@ cellcolor{cyan}
 \begin_inset Text
 
 \begin_layout Plain Layout
-0\end_layout
+X\end_layout
 
 \end_inset
 </cell>
@@ -46489,7 +46489,7 @@ cellcolor{cyan}
 \begin_inset Text
 
 \begin_layout Plain Layout
-0\end_layout
+X\end_layout
 
 \end_inset
 </cell>
@@ -46497,7 +46497,7 @@ cellcolor{cyan}
 \begin_inset Text
 
 \begin_layout Plain Layout
-0\end_layout
+X\end_layout
 
 \end_inset
 </cell>
@@ -46505,7 +46505,7 @@ cellcolor{cyan}
 \begin_inset Text
 
 \begin_layout Plain Layout
-0\end_layout
+X\end_layout
 
 \end_inset
 </cell>
@@ -46513,7 +46513,7 @@ cellcolor{cyan}
 \begin_inset Text
 
 \begin_layout Plain Layout
-0\end_layout
+X\end_layout
 
 \end_inset
 </cell>
@@ -46521,7 +46521,7 @@ cellcolor{cyan}
 \begin_inset Text
 
 \begin_layout Plain Layout
-0\end_layout
+X\end_layout
 
 \end_inset
 </cell>
@@ -46529,7 +46529,7 @@ cellcolor{cyan}
 \begin_inset Text
 
 \begin_layout Plain Layout
-0\end_layout
+X\end_layout
 
 \end_inset
 </cell>
@@ -46793,7 +46793,7 @@ cellcolor{cyan}
 \begin_inset Text
 
 \begin_layout Plain Layout
-0\end_layout
+X\end_layout
 
 \end_inset
 </cell>
@@ -46801,7 +46801,7 @@ cellcolor{cyan}
 \begin_inset Text
 
 \begin_layout Plain Layout
-0\end_layout
+X\end_layout
 
 \end_inset
 </cell>
@@ -46809,7 +46809,7 @@ cellcolor{cyan}
 \begin_inset Text
 
 \begin_layout Plain Layout
-0\end_layout
+X\end_layout
 
 \end_inset
 </cell>
@@ -46817,7 +46817,7 @@ cellcolor{cyan}
 \begin_inset Text
 
 \begin_layout Plain Layout
-0\end_layout
+X\end_layout
 
 \end_inset
 </cell>
@@ -46825,7 +46825,7 @@ cellcolor{cyan}
 \begin_inset Text
 
 \begin_layout Plain Layout
-0\end_layout
+X\end_layout
 
 \end_inset
 </cell>
@@ -46833,7 +46833,7 @@ cellcolor{cyan}
 \begin_inset Text
 
 \begin_layout Plain Layout
-0\end_layout
+X\end_layout
 
 \end_inset
 </cell>
@@ -46841,7 +46841,7 @@ cellcolor{cyan}
 \begin_inset Text
 
 \begin_layout Plain Layout
-0\end_layout
+X\end_layout
 
 \end_inset
 </cell>
@@ -46849,7 +46849,7 @@ cellcolor{cyan}
 \begin_inset Text
 
 \begin_layout Plain Layout
-0\end_layout
+X\end_layout
 
 \end_inset
 </cell>
@@ -47113,7 +47113,7 @@ cellcolor{cyan}
 \begin_inset Text
 
 \begin_layout Plain Layout
-0\end_layout
+X\end_layout
 
 \end_inset
 </cell>
@@ -47121,7 +47121,7 @@ cellcolor{cyan}
 \begin_inset Text
 
 \begin_layout Plain Layout
-0\end_layout
+X\end_layout
 
 \end_inset
 </cell>
@@ -47129,7 +47129,7 @@ cellcolor{cyan}
 \begin_inset Text
 
 \begin_layout Plain Layout
-0\end_layout
+X\end_layout
 
 \end_inset
 </cell>
@@ -47137,7 +47137,7 @@ cellcolor{cyan}
 \begin_inset Text
 
 \begin_layout Plain Layout
-0\end_layout
+X\end_layout
 
 \end_inset
 </cell>
@@ -47145,7 +47145,7 @@ cellcolor{cyan}
 \begin_inset Text
 
 \begin_layout Plain Layout
-0\end_layout
+X\end_layout
 
 \end_inset
 </cell>
@@ -47153,7 +47153,7 @@ cellcolor{cyan}
 \begin_inset Text
 
 \begin_layout Plain Layout
-0\end_layout
+X\end_layout
 
 \end_inset
 </cell>
@@ -47161,7 +47161,7 @@ cellcolor{cyan}
 \begin_inset Text
 
 \begin_layout Plain Layout
-0\end_layout
+X\end_layout
 
 \end_inset
 </cell>
@@ -47169,7 +47169,7 @@ cellcolor{cyan}
 \begin_inset Text
 
 \begin_layout Plain Layout
-0\end_layout
+X\end_layout
 
 \end_inset
 </cell>
@@ -47462,7 +47462,7 @@ cellcolor{cyan}
 \begin_inset Text
 
 \begin_layout Plain Layout
-0\end_layout
+X\end_layout
 
 \end_inset
 </cell>
@@ -47470,7 +47470,7 @@ cellcolor{cyan}
 \begin_inset Text
 
 \begin_layout Plain Layout
-0\end_layout
+X\end_layout
 
 \end_inset
 </cell>
@@ -47478,7 +47478,7 @@ cellcolor{cyan}
 \begin_inset Text
 
 \begin_layout Plain Layout
-0\end_layout
+X\end_layout
 
 \end_inset
 </cell>
@@ -47486,7 +47486,7 @@ cellcolor{cyan}
 \begin_inset Text
 
 \begin_layout Plain Layout
-0\end_layout
+X\end_layout
 
 \end_inset
 </cell>
@@ -47494,7 +47494,7 @@ cellcolor{cyan}
 \begin_inset Text
 
 \begin_layout Plain Layout
-0\end_layout
+X\end_layout
 
 \end_inset
 </cell>
@@ -47502,7 +47502,7 @@ cellcolor{cyan}
 \begin_inset Text
 
 \begin_layout Plain Layout
-0\end_layout
+X\end_layout
 
 \end_inset
 </cell>
@@ -47510,7 +47510,7 @@ cellcolor{cyan}
 \begin_inset Text
 
 \begin_layout Plain Layout
-0\end_layout
+X\end_layout
 
 \end_inset
 </cell>
@@ -47518,7 +47518,7 @@ cellcolor{cyan}
 \begin_inset Text
 
 \begin_layout Plain Layout
-0\end_layout
+X\end_layout
 
 \end_inset
 </cell>
@@ -47782,7 +47782,7 @@ cellcolor{cyan}
 \begin_inset Text
 
 \begin_layout Plain Layout
-0\end_layout
+X\end_layout
 
 \end_inset
 </cell>
@@ -47790,7 +47790,7 @@ cellcolor{cyan}
 \begin_inset Text
 
 \begin_layout Plain Layout
-0\end_layout
+X\end_layout
 
 \end_inset
 </cell>
@@ -47798,7 +47798,7 @@ cellcolor{cyan}
 \begin_inset Text
 
 \begin_layout Plain Layout
-0\end_layout
+X\end_layout
 
 \end_inset
 </cell>
@@ -47806,7 +47806,7 @@ cellcolor{cyan}
 \begin_inset Text
 
 \begin_layout Plain Layout
-0\end_layout
+X\end_layout
 
 \end_inset
 </cell>
@@ -47814,7 +47814,7 @@ cellcolor{cyan}
 \begin_inset Text
 
 \begin_layout Plain Layout
-0\end_layout
+X\end_layout
 
 \end_inset
 </cell>
@@ -47822,7 +47822,7 @@ cellcolor{cyan}
 \begin_inset Text
 
 \begin_layout Plain Layout
-0\end_layout
+X\end_layout
 
 \end_inset
 </cell>
@@ -47830,7 +47830,7 @@ cellcolor{cyan}
 \begin_inset Text
 
 \begin_layout Plain Layout
-0\end_layout
+X\end_layout
 
 \end_inset
 </cell>
@@ -47838,7 +47838,7 @@ cellcolor{cyan}
 \begin_inset Text
 
 \begin_layout Plain Layout
-0\end_layout
+X\end_layout
 
 \end_inset
 </cell>
@@ -48102,7 +48102,7 @@ cellcolor{cyan}
 \begin_inset Text
 
 \begin_layout Plain Layout
-0\end_layout
+X\end_layout
 
 \end_inset
 </cell>
@@ -48110,7 +48110,7 @@ cellcolor{cyan}
 \begin_inset Text
 
 \begin_layout Plain Layout
-0\end_layout
+X\end_layout
 
 \end_inset
 </cell>
@@ -48118,7 +48118,7 @@ cellcolor{cyan}
 \begin_inset Text
 
 \begin_layout Plain Layout
-0\end_layout
+X\end_layout
 
 \end_inset
 </cell>
@@ -48126,7 +48126,7 @@ cellcolor{cyan}
 \begin_inset Text
 
 \begin_layout Plain Layout
-0\end_layout
+X\end_layout
 
 \end_inset
 </cell>
@@ -48134,7 +48134,7 @@ cellcolor{cyan}
 \begin_inset Text
 
 \begin_layout Plain Layout
-0\end_layout
+X\end_layout
 
 \end_inset
 </cell>
@@ -48142,7 +48142,7 @@ cellcolor{cyan}
 \begin_inset Text
 
 \begin_layout Plain Layout
-0\end_layout
+X\end_layout
 
 \end_inset
 </cell>
@@ -48150,7 +48150,7 @@ cellcolor{cyan}
 \begin_inset Text
 
 \begin_layout Plain Layout
-0\end_layout
+X\end_layout
 
 \end_inset
 </cell>
@@ -48158,7 +48158,7 @@ cellcolor{cyan}
 \begin_inset Text
 
 \begin_layout Plain Layout
-0\end_layout
+X\end_layout
 
 \end_inset
 </cell>
@@ -48422,7 +48422,7 @@ cellcolor{cyan}
 \begin_inset Text
 
 \begin_layout Plain Layout
-0\end_layout
+X\end_layout
 
 \end_inset
 </cell>
@@ -48430,7 +48430,7 @@ cellcolor{cyan}
 \begin_inset Text
 
 \begin_layout Plain Layout
-0\end_layout
+X\end_layout
 
 \end_inset
 </cell>
@@ -48438,7 +48438,7 @@ cellcolor{cyan}
 \begin_inset Text
 
 \begin_layout Plain Layout
-0\end_layout
+X\end_layout
 
 \end_inset
 </cell>
@@ -48446,7 +48446,7 @@ cellcolor{cyan}
 \begin_inset Text
 
 \begin_layout Plain Layout
-0\end_layout
+X\end_layout
 
 \end_inset
 </cell>
@@ -48454,7 +48454,7 @@ cellcolor{cyan}
 \begin_inset Text
 
 \begin_layout Plain Layout
-0\end_layout
+X\end_layout
 
 \end_inset
 </cell>
@@ -48462,7 +48462,7 @@ cellcolor{cyan}
 \begin_inset Text
 
 \begin_layout Plain Layout
-0\end_layout
+X\end_layout
 
 \end_inset
 </cell>
@@ -48470,7 +48470,7 @@ cellcolor{cyan}
 \begin_inset Text
 
 \begin_layout Plain Layout
-0\end_layout
+X\end_layout
 
 \end_inset
 </cell>
@@ -48478,7 +48478,7 @@ cellcolor{cyan}
 \begin_inset Text
 
 \begin_layout Plain Layout
-0\end_layout
+X\end_layout
 
 \end_inset
 </cell>

@@ -41,31 +41,30 @@
 
 --------------------------------------------------------------------------------
 -- Purpose:
---  Bus Start feature test. Verifies if unit is capable of joining fully,
---  loaded bus.
+--  Bus start feature test
 --
---  Test sequence:
---      1. Disable both Nodes.
---      2. Generate CAN Frame with ID 10, and insert it to all 4 TXT buffers of
---         Node 1.
---      3. Generate ACK for Node 1 by forcing bus level to be dominant during
---         ACK Slot. This is necessary for 11 consecutive recessive bits:
---          ACK Delim + 7 EOF + 3 Interframe
---      4. Enable Node 1, wait for some time until its integration ends.
---      5. Now, Node 1 is transmitting. Generate CAN Frame with lower ID than
---         10 (e.g. 9) and insert it to Node 2.
---      6. Enable Node 2. Node 2 should finish its integration during 11 bits
---         after frame from Node 1, start transmitting next frame, and win
---         arbitration since it has lower ID. Note that it is guaranteed that
---         if the unit does not join the integration, next frame will be tran-
---         smitted by Node 1, since it has 4 frames available! Thus it is
---         guaranteed that there will be minimal necessary gap for integration
---         which must be enough for Node 2!
---      7. Wait until Node 1 transmitts its second frame!
+-- Verifies:
+--  1. CTU CAN FD can integrate to bus comunication within 11 consecutive
+--     recessive bits!
+--
+-- Test sequence:
+--   1. Disable both Nodes. Insert 2 frames to Node 1. Check both Nodes are 
+--      Bus off. Enable Node 1.
+--   2. Wait till sample point in Node 1 11 times, check that after 11 recesive
+--      bits, Node 1 becomes error active. Wait until Node 1 becomes transmitter.
+--   3. Enable Node 2, wait until ACK field in Node 2. Force the bus low so that
+--      Node 1 receives ACK. Wait till Node 1 is not in ACK anymore. Check it
+--      is in ACK Delimiter!
+--   4. Wait for 11 sample points in Node 2. Check that Node 2 became Error
+--      active (this should have occurred in ACK Delimiter + EOF + Intermission
+--      of Node 1).
+--   5. Wait until CAN frame starts in Node 2. Check Node 2 turned receiver!
 --      
 --------------------------------------------------------------------------------
 -- Revision History:
 --    30.8.2018   Created file
+--   18.10.2019   Re-wrote to be comformant to new test format. Be more strict
+--                in Bit time length measurements!
 --------------------------------------------------------------------------------
 
 context work.ctu_can_synth_context;
@@ -96,115 +95,114 @@ package body bus_start_feature is
     ) is
         variable ID_1           	:       natural := 1;
         variable ID_2           	:       natural := 2;
-        variable CAN_frame          :       SW_CAN_frame_type;
+        variable CAN_frame_1        :       SW_CAN_frame_type;
+        variable CAN_frame_2        :       SW_CAN_frame_type;
+        variable CAN_frame_3        :       SW_CAN_frame_type;
         variable frame_sent         :       boolean := false;
         variable mode               :       SW_mode := SW_mode_rst_val;
         variable rx_state           :       SW_RX_Buffer_info;
+        
+        variable fault_state_1      :       SW_fault_state;
+        variable fault_state_2      :       SW_fault_state;
+        
+        variable read_state         :       SW_PC_Debug;
+        variable status             :       SW_status;
+
     begin
         o.outcome := true;
 
         ------------------------------------------------------------------------
-        -- Disable both controllers
+        -- 1. Disable both Nodes. Insert 2 frames to Node 1. Check both Nodes
+        --    are Bus off. Enable Node 1.
         ------------------------------------------------------------------------
+        info("Step 1: Disable both nodes!");
+        get_fault_state(fault_state_1, ID_1, mem_bus(1));
+        get_fault_state(fault_state_2, ID_2, mem_bus(2));
+        check(fault_state_1 = fc_error_active, "Node 1 Error active!");
+        check(fault_state_2 = fc_error_active, "Node 2 Error active!");
+        
         CAN_turn_controller(false, ID_1, mem_bus(1));
         CAN_turn_controller(false, ID_2, mem_bus(2));
+        CAN_generate_frame(rand_ctr, CAN_frame_1);
+        CAN_generate_frame(rand_ctr, CAN_frame_2);
+        CAN_insert_TX_frame(CAN_frame_1, 1, ID_1, mem_bus(1));
+        CAN_insert_TX_frame(CAN_frame_2, 2, ID_1, mem_bus(1));
 
-        ------------------------------------------------------------------------
-        -- Generate frame, hardcode ID to 514, Identifier type to BASE
-        ------------------------------------------------------------------------
-        CAN_generate_frame(rand_ctr, CAN_frame);
-        CAN_frame.ident_type := BASE;
-        CAN_frame.identifier := 514;
-
-        ------------------------------------------------------------------------
-        -- Insert frame to 2 TXT Buffers of Node 1
-        ------------------------------------------------------------------------
-        CAN_send_frame(CAN_frame, 1, ID_1, mem_bus(1), frame_sent);
-        CAN_send_frame(CAN_frame, 2, ID_1, mem_bus(1), frame_sent);
-
-        ------------------------------------------------------------------------
-        -- Turn on Node 1, Wait until it starts transmitting
-        ------------------------------------------------------------------------
-        info("Turning ON Node 1.");
-        CAN_turn_controller(true, ID_1, mem_bus(1));
-        CAN_wait_pc_state(pc_deb_arbitration, ID_1, mem_bus(1));
-
-        ------------------------------------------------------------------------
-        -- Modify frame to have ID 513, and insert it to Node 2 for transmission.
-        -- Enable Node 2, so that it may start integration.
-        ------------------------------------------------------------------------
-        info("Turning ON Node 2.");
-        wait_rand_cycles(rand_ctr, mem_bus(1).clk_sys, 10, 11);
-        CAN_frame.identifier := 513;
-        CAN_send_frame(CAN_frame, 1, ID_2, mem_bus(2), frame_sent);
-        CAN_turn_controller(true, ID_2, mem_bus(2));
-
-        ------------------------------------------------------------------------
-        -- Generate ACK for Node 1, so that there will be for sure only 11
-        -- consecutive recessive bits.
-        ------------------------------------------------------------------------
-        CAN_wait_pc_state(pc_deb_ack, ID_1, mem_bus(1));
+        get_fault_state(fault_state_1, ID_1, mem_bus(1));
+        get_fault_state(fault_state_2, ID_2, mem_bus(2));
+        check(fault_state_1 = fc_bus_off, "Node 1 Bus off!");
+        check(fault_state_2 = fc_bus_off, "Node 2 Bus off!");
         
-        -- Pull ACK low
-        info("Started ACK");
-        info("Forcing ACK");
-        so.bl_inject <= DOMINANT;
-        so.bl_force  <= true;
-        wait_rand_cycles(rand_ctr, mem_bus(1).clk_sys, 200, 201);
-        so.bl_force <= false;
-        so.bl_inject <= RECESSIVE;
+        CAN_turn_controller(true, ID_1, mem_bus(1));
 
         ------------------------------------------------------------------------
-        -- Wait until bus is idle.
+        -- 2. Wait till sample point in Node 1 11 times, check that after 11
+        --    recessive bits, Node 1 becomes error active. Wait until Node 1
+        --    becomes transmitter.
         ------------------------------------------------------------------------
-        CAN_wait_bus_idle(ID_1, mem_bus(1));
-        info("Bus is idle");
+        info("Step 2: Check integration of Node 1");
+        for i in 0 to 10 loop
+            CAN_wait_sample_point(iout(1).stat_bus);
+            wait for 21 ns; -- For DFF to take place
+            get_fault_state(fault_state_1, ID_1, mem_bus(1));
+            
+            if (i = 10) then
+                check(fault_state_1 = fc_error_active,
+                    "Node error active after 11 bits of integration!");    
+            else
+                check(fault_state_1 = fc_bus_off,
+                    "Node bus off before 11 bits of integration!");    
+            end if;
+        end loop;
+        send_TXT_buf_cmd(buf_set_ready, 1, ID_1, mem_bus(1));
+        send_TXT_buf_cmd(buf_set_ready, 2, ID_1, mem_bus(1));
+        CAN_wait_tx_rx_start(true, false, ID_1, mem_bus(1));
 
         ------------------------------------------------------------------------
-        -- Now wait until another frame is transmitted. This one should be
-        -- arbitrated, and Node 2 should have won.
+        -- 3. Enable Node 2, wait until ACK field in Node 2. Force the bus low
+        --    so that Node 1 receives ACK. Wait till Node 1 is not in ACK 
+        --    anymore. Check it is in ACK Delimiter!
         ------------------------------------------------------------------------
-        CAN_wait_frame_sent(ID_1, mem_bus(1));
-        info("Second frame was sent!");
+        info("Step 3: Enable node 2");
+        CAN_turn_controller(true, ID_2, mem_bus(2));
+        CAN_wait_pc_state(pc_deb_ack, ID_1, mem_bus(1));
+        force_bus_level(DOMINANT, so.bl_force, so.bl_inject);
+        CAN_wait_not_pc_state(pc_deb_ack, ID_1, mem_bus(1));
+        release_bus_level(so.bl_force);
+
+        CAN_read_pc_debug(read_state, ID_1, mem_bus(1));
+        check(read_state = pc_deb_ack_delim, "Node 2 is in ACK delimiter!");
 
         ------------------------------------------------------------------------
-        -- Read status of RX Buffer in Node 1! It should have sent ACK and
-        -- Received frame from Node 2 with ID = 513!
-        -- If not, Node 2 did not manage to get out of Integration during
-        -- minimal necessary time, and test fails!
-        --
-        -- Note that IDs were selected so that there would be RECESSIVE bit
-        -- in second bit of ID! This is to avoid error frame in case when
-        -- Node 2 locks after SOF bit (according to standard it can skip SOF,
-        -- if it detects DOMINANT during Interrmission), and thus does not
-        -- send Stuff bit as Node 1. Due to this, CAN FD standard does not
-        -- increment error counters upon stuff error in Arbitration!
-        -- After Error Frame, both nodes have frame available and both start
-        -- transmission of SOF, so this error will not cause deadlock!
-        -- 
-        -- CTU CAN FD tries to be smarter, not skip SOF, but move Protocol
-        -- Control to SOF upon hard sync edge though! This thing is verified
-        -- in special feature test!
+        -- 4. Wait for 11 sample points in Node 2. Check that Node 2 became
+        --    Error active (this should have occurred in ACK Delimiter + EOF +
+        --    Intermission of Node 1).
         ------------------------------------------------------------------------
-        get_rx_buf_state(rx_state, ID_1, mem_bus(1));
-        info("Read RX Buffer state");
-
-        check_false(rx_state.rx_empty,
-               "RX Buffer is empty, but Frame should be received!");
-
-        CAN_frame.identifier := 0;
-        CAN_read_frame(CAN_frame, ID_1, mem_bus(1));
-        check(CAN_frame.identifier = 513,
-              "Wrong Identifier received by Node 1! Expected: 513 , Real: " &
-               integer'image(CAN_frame.identifier));
+        info("Step 4: Check integration of Node 2");
+        for i in 0 to 10 loop
+            CAN_wait_sample_point(iout(2).stat_bus);
+            wait for 21 ns; -- For DFF to take place
+            get_fault_state(fault_state_1, ID_2, mem_bus(2));
+            
+            if (i = 10) then
+                check(fault_state_1 = fc_error_active,
+                    "Node error active after 11 bits of integration!");    
+            else
+                check(fault_state_1 = fc_bus_off,
+                    "Node bus off before 11 bits of integration!");    
+            end if;
+        end loop;
 
         ------------------------------------------------------------------------
-        -- Now wait until Node 1 transmitts frame which lost the arbitration
-        -- so that we leave test environmnet withou pending frames in TXT
-        -- Buffers.
+        -- 5. Wait until CAN frame starts in Node 1. Check Node 1 turned
+        --    transmitter!
         ------------------------------------------------------------------------
-        CAN_wait_bus_idle(ID_1, mem_bus(1));
-        info("Last frame was sent!");
+        info("Step 5: Check Node 2 joined bus communication!");
+        CAN_wait_tx_rx_start(true, true, ID_2, mem_bus(2));
+        get_controller_status(status, ID_2, mem_bus(2));
+        
+        check(status.receiver, "Node 2 joined bus communication!");
+
 
   end procedure;
 

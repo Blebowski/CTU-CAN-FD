@@ -859,10 +859,10 @@ static inline u16 ctucan_hw_get_tran_delay(struct ctucan_hw_priv *priv)
  */
 static inline u32 ctucan_hw_get_tx_frame_ctr(struct ctucan_hw_priv *priv)
 {
-	union ctu_can_fd_tx_counter reg;
+	union ctu_can_fd_tx_fr_ctr reg;
 
-	reg.u32 = priv->read_reg(priv, CTU_CAN_FD_TX_COUNTER);
-	return reg.s.tx_counter_val;
+	reg.u32 = priv->read_reg(priv, CTU_CAN_FD_TX_FR_CTR);
+	return reg.s.tx_fr_ctr_val;
 }
 
 /**
@@ -874,10 +874,10 @@ static inline u32 ctucan_hw_get_tx_frame_ctr(struct ctucan_hw_priv *priv)
  */
 static inline u32 ctucan_hw_get_rx_frame_ctr(struct ctucan_hw_priv *priv)
 {
-	union ctu_can_fd_rx_counter reg;
+	union ctu_can_fd_rx_fr_ctr reg;
 
-	reg.u32 = priv->read_reg(priv, CTU_CAN_FD_RX_COUNTER);
-	return reg.s.rx_counter_val;
+	reg.u32 = priv->read_reg(priv, CTU_CAN_FD_RX_FR_CTR);
+	return reg.s.rx_fr_ctr_val;
 }
 
 /*

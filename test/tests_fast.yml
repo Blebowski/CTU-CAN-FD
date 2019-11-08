@@ -45,15 +45,27 @@ feature:
         wave: feature/feature_env_setup.tcl
     tests:
         alc_base_id:
+        alc_id_extension:
+        alc_srr_rtr:
+        alc_srr_rtr_2:
+        alc_ide:
+        alc_rtr_r0:
+        bus_start:
+        command_rrb:
+        command_cdo:
+        command_frcrst:
+        device_id:
+        dlc_can20_8_64_bytes:        
         mode_loopback:
         mode_listen_only:
         mode_self_test:
         mode_frame_filters:
             iterations: 6
         mode_fd_enable:
+        mode_rst:
+        mode_test:
         # fault_confinement:
         forbid_fd:
-        # interrupt:
         int_rx:
         int_tx:
         int_ewl:
@@ -67,14 +79,21 @@ feature:
         one_shot:
         no_sof_tx:
         rx_status:
+        rx_buf_empty_read:
         tx_counter:
         rx_counter:
+        status_rxne:
+        status_txnf:
+        status_eft:
+            iterations: 5
+        status_txs:
+        status_rxs:
+        status_ewl:
+        status_idle:
         # tran_delay:
         tx_arb_time_tran:
         # timestamp_options:
         byte_enable:
-        data_length_code:
-        # bus_start:
         data_overrun_clear:
             iterations: 1
         # txtb_state:

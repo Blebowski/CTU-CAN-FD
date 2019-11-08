@@ -50,8 +50,8 @@ enum ctu_can_fd_can_registers {
 	CTU_CAN_FD_EWL                  = 0x2c,
 	CTU_CAN_FD_ERP                  = 0x2d,
 	CTU_CAN_FD_FAULT_STATE          = 0x2e,
-	CTU_CAN_FD_RXC                  = 0x30,
-	CTU_CAN_FD_TXC                  = 0x32,
+	CTU_CAN_FD_REC                  = 0x30,
+	CTU_CAN_FD_TEC                  = 0x32,
 	CTU_CAN_FD_ERR_NORM             = 0x34,
 	CTU_CAN_FD_ERR_FD               = 0x36,
 	CTU_CAN_FD_CTR_PRES             = 0x38,
@@ -77,8 +77,8 @@ enum ctu_can_fd_can_registers {
 	CTU_CAN_FD_ALC                  = 0x7e,
 	CTU_CAN_FD_TRV_DELAY            = 0x80,
 	CTU_CAN_FD_SSP_CFG              = 0x82,
-	CTU_CAN_FD_RX_COUNTER           = 0x84,
-	CTU_CAN_FD_TX_COUNTER           = 0x88,
+	CTU_CAN_FD_RX_FR_CTR            = 0x84,
+	CTU_CAN_FD_TX_FR_CTR            = 0x88,
 	CTU_CAN_FD_DEBUG_REGISTER       = 0x8c,
 	CTU_CAN_FD_YOLO_REG             = 0x90,
 	CTU_CAN_FD_TIMESTAMP_LOW        = 0x94,
@@ -420,17 +420,21 @@ union ctu_can_fd_ewl_erp_fault_state {
 	} s;
 };
 
-union ctu_can_fd_rxc_txc {
+union ctu_can_fd_rec_tec {
 	uint32_t u32;
-	struct ctu_can_fd_rxc_txc_s {
+	struct ctu_can_fd_rec_tec_s {
 #ifdef __LITTLE_ENDIAN_BITFIELD
-  /* RXC */
-		uint32_t rxc_val                : 16;
-  /* TXC */
-		uint32_t txc_val                : 16;
+  /* REC */
+		uint32_t rec_val                 : 9;
+		uint32_t reserved_15_9           : 7;
+  /* TEC */
+		uint32_t tec_val                 : 9;
+		uint32_t reserved_31_25          : 7;
 #else
-		uint32_t txc_val                : 16;
-		uint32_t rxc_val                : 16;
+		uint32_t reserved_31_25          : 7;
+		uint32_t tec_val                 : 9;
+		uint32_t reserved_15_9           : 7;
+		uint32_t rec_val                 : 9;
 #endif
 	} s;
 };
@@ -875,19 +879,19 @@ enum ctu_can_fd_ssp_cfg_ssp_src {
 	SSP_SRC_OFFSET              = 0x2,
 };
 
-union ctu_can_fd_rx_counter {
+union ctu_can_fd_rx_fr_ctr {
 	uint32_t u32;
-	struct ctu_can_fd_rx_counter_s {
-  /* RX_COUNTER */
-		uint32_t rx_counter_val         : 32;
+	struct ctu_can_fd_rx_fr_ctr_s {
+  /* RX_FR_CTR */
+		uint32_t rx_fr_ctr_val          : 32;
 	} s;
 };
 
-union ctu_can_fd_tx_counter {
+union ctu_can_fd_tx_fr_ctr {
 	uint32_t u32;
-	struct ctu_can_fd_tx_counter_s {
-  /* TX_COUNTER */
-		uint32_t tx_counter_val         : 32;
+	struct ctu_can_fd_tx_fr_ctr_s {
+  /* TX_FR_CTR */
+		uint32_t tx_fr_ctr_val          : 32;
 	} s;
 };
 

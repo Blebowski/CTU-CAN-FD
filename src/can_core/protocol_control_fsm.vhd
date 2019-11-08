@@ -774,7 +774,7 @@ begin
                          else
                      '0';
 
-    ide_is_arbitration <= '1' when (tran_frame_type = EXTENDED)
+    ide_is_arbitration <= '1' when (tran_ident_type = EXTENDED)
                               else
                           '0';
 
@@ -2198,8 +2198,11 @@ begin
                     end if;
                     
                     -- If we dont sample dominant, nor we have sth ready for
-                    -- transmission, we go to Idle!
-                    if (rx_data_nbs = RECESSIVE and tx_frame_ready = '0') then
+                    -- transmission, we go to Idle! Don't become idle when we
+                    -- go to suspend!
+                    if (rx_data_nbs = RECESSIVE and tx_frame_ready = '0' and
+                        go_to_suspend = '0')
+                    then
                         set_idle_i <= '1';
                     end if;
     
@@ -2252,6 +2255,7 @@ begin
                         set_transmitter_i <= '1';
                         destuff_enable_set <= '1';
                         stuff_enable_set <= '1';
+                        txtb_hw_cmd_d.lock <= '1';
                     else
                         set_idle_i <= '1';
                     end if;

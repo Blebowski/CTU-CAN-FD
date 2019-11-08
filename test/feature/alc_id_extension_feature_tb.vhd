@@ -41,40 +41,38 @@
 
 --------------------------------------------------------------------------------
 -- Purpose:
---  Arbitration lost capture - Base ID feature test.
+--  Arbitration lost capture - ID Extension feature test.
 --
 -- Verifies:
---  1. Arbitration within base identifier. Node loses arbitration on a bit where
---     it send recessive and samples dominant.
---  2. Arbitration lost capture position within Base identifier.
+--  1. Arbitration within identifier extension. Node loses arbitration on a bit
+--     where it send recessive and samples dominant.
+--  2. Arbitration lost capture position within Identifier extension
 --
 -- Test sequence:
 --  1. Configure both Nodes to one-shot mode.
---  2. Loop by N between 1 and 11: 
---    2.1 Generate two CAN frames. Both with base ID only. Both IDs are the
---        same, appart from N-th bit. On N-th bit Node 1 will have Dominant
---        Node 2 Recessive.
+--  2. Loop by N between 1 and 18: 
+--    2.1 Generate two CAN frames. Both with Extended ID. Both IDs have Base ID
+--        the same. N-th bit of ID Extension differs. On N-th bit Node 1 will
+--        have Dominant, Node 2 Recessive.
 --    2.2 Wait till sample point on Node 1. Send frame 1 by Node 1 and frame 2 
 --        by Node 2 right one after another.
 --    2.3 Wait till Arbitration field in Node 2. This is right after sample
 --        point of Node 2 in SOF or Intermission (if there is no SOF). Check
 --        that Node 2 is Transmitter.
---    2.4 Wait N-times till sample point in Node 2. After every wait before N
+--    2.4 Wait 11+1+1 (Base ID, RTR/SRR, IDE) times until sample point in Node
+--        2.
+--    2.5 Wait N-times till sample point in Node 2. After every wait before N
 --        is reached, check Node 2 is still transmitter. After N waits we are
 --        right after Sample point where Node 2 should have lost arbitration.
 --        Check Node 2 is receiver. Read content of ALC, check arbitration was
 --        lost at correct position.
---    2.5 Wait till the CRC delimiter in Node 2, and monitor that Node 2 is 
+--    2.6 Wait till the CRC delimiter in Node 2, and monitor that Node 2 is 
 --        transmitting recessive value.
---    2.6 Wait till bus is idle! Check frame was sucessfully transmitted in
+--    2.7 Wait till bus is idle! Check frame was sucessfully transmitted in
 --        Node 1. Check it was succesfully received in Node 2!
 --------------------------------------------------------------------------------
 -- Revision History:
---    20.6.2016   Created file
---    06.02.2018  Modified to work with the IP-XACT generated memory map
---    11.06.2018  Modified to work with HAL functions from CAN Test lib instead
---                of direct register access.
---     28.9.2019  Re-write TC to cover ALC related functionality!
+--    05.10.2019  Created file.
 --------------------------------------------------------------------------------
 
 context work.ctu_can_synth_context;
@@ -82,8 +80,8 @@ context work.ctu_can_test_context;
 
 use lib.pkg_feature_exec_dispath.all;
 
-package alc_base_id_feature is
-    procedure alc_base_id_feature_exec(
+package alc_id_extension_feature is
+    procedure alc_id_extension_feature_exec(
         variable    o               : out    feature_outputs_t;
         signal      so              : out    feature_signal_outputs_t;
         signal      rand_ctr        : inout  natural range 0 to RAND_POOL_SIZE;
@@ -94,8 +92,8 @@ package alc_base_id_feature is
 end package;
 
 
-package body alc_base_id_feature is
-    procedure alc_base_id_feature_exec(
+package body alc_id_extension_feature is
+    procedure alc_id_extension_feature_exec(
         variable    o               : out    feature_outputs_t;
         signal      so              : out    feature_signal_outputs_t;
         signal      rand_ctr        : inout  natural range 0 to RAND_POOL_SIZE;
@@ -129,9 +127,9 @@ package body alc_base_id_feature is
         variable rx_buf_info        :     SW_RX_Buffer_info;
         variable frames_equal       :     boolean := false;
         
-        constant id_template        :     std_logic_vector(10 downto 0) :=
-                "01010101010";
-        variable id_var             :     std_logic_vector(10 downto 0) :=
+        constant id_template        :     std_logic_vector(28 downto 0) :=
+                "10101001010010101010101010101";
+        variable id_var             :     std_logic_vector(28 downto 0) :=
                  (OTHERS => '0');
     begin
         o.outcome := true;
@@ -144,33 +142,39 @@ package body alc_base_id_feature is
         CAN_enable_retr_limit(true, 0, ID_2, mem_bus(2));
 
         ------------------------------------------------------------------------
-        --  2. Loop by N between 1 and 11: 
+        --  2. Loop by N between 1 and 18: 
         ------------------------------------------------------------------------
-        info("Step 2: Loop over each bit of Base ID!");
-        for N in 1 to 11 loop
+        info("Step 2: Loop over each bit of ID Extension!");
+        for N in 1 to 18 loop
             info("-----------------------------------------------------------");
             info("Step 2: Bit " & integer'image(N));
             info("-----------------------------------------------------------");
             
             --------------------------------------------------------------------
-            -- 2.1 Generate two CAN frames. Both with base ID only. Both IDs are
-            --     the same, appart from N-th bit. On N-th bit Node 1 will have
-            --     Dominant Node 2 Recessive.
+            -- 2.1 Generate two CAN frames. Both with Extended ID. Both IDs have
+            --     Base ID the same. N-th bit of ID Extension differs. On N-th
+            --     bit Node 1 will have Dominant, Node 2 Recessive.
             --------------------------------------------------------------------
             info("Step 2.1: Generate frames!");
             CAN_generate_frame(rand_ctr, frame_1);
             CAN_generate_frame(rand_ctr, frame_2);
-            frame_1.ident_type := BASE;        
-            frame_2.ident_type := BASE;
+            frame_1.ident_type := EXTENDED;        
+            frame_2.ident_type := EXTENDED;
+            
+            frame_1.rtr := NO_RTR_FRAME;
+            frame_2.rtr := NO_RTR_FRAME;
+            
+            -- Use short data length to avoid long test times!
+            frame_1.data_length := 1;
             
             -- Node 1 - Should win -> N-th bit Dominant.
             id_var := id_template;
-            id_var(11 - N) := DOMINANT;
+            id_var(18 - N) := DOMINANT;
             frame_1.identifier := to_integer(unsigned(id_var));
 
             -- Node 2 - Should loose -> N-th bit Recessive.
             id_var := id_template;
-            id_var(11 - N) := RECESSIVE;
+            id_var(18 - N) := RECESSIVE;
             frame_2.identifier := to_integer(unsigned(id_var));
             
             CAN_insert_TX_frame(frame_1, 1, ID_1, mem_bus(1));
@@ -190,20 +194,29 @@ package body alc_base_id_feature is
             --     sample point of Node 2 in SOF or Intermission (if there is no
             --     SOF). Check that Node 2 is Transmitter.
             --------------------------------------------------------------------
-            info("Step 2.2: Wait till arbitration!");
+            info("Step 2.3: Wait till arbitration!");
             CAN_wait_pc_state(pc_deb_arbitration, ID_2, mem_bus(2));
             get_controller_status(stat_2, ID_2, mem_bus(2));
             check(stat_2.transmitter, "Node 2 transmitting!");
     
             -------------------------------------------------------------------
-            -- 2.4 Wait N-times till sample point in Node 2. After every wait 
+            -- 2.4 Wait 11+1+1 (Base ID, RTR/SRR, IDE) times until sample 
+            --     point in Node 2.
+            -------------------------------------------------------------------
+            info("Step 2.4: Wait till Identifier Extension!");
+            for i in 1 to 13 loop
+                CAN_wait_sample_point(iout(2).stat_bus); 
+            end loop;
+    
+            -------------------------------------------------------------------
+            -- 2.5 Wait N-times till sample point in Node 2. After every wait 
             --     before N is reached, check Node 2 is still transmitter.
             --     After N waits we are right after Sample point where Node 2
             --     should have lost arbitration. Check Node 2 is receiver.
             --     Read content of ALC, check arbitration was lost at correct
             --     position.
             -------------------------------------------------------------------
-            info("Step 2.4: Wait till N-th bit!");
+            info("Step 2.5: Wait till N-th bit!");
             for K in 1 to N loop
                 info ("Loop: " & integer'image(K));
                 CAN_wait_sample_point(iout(2).stat_bus);
@@ -216,7 +229,7 @@ package body alc_base_id_feature is
                     check_false(stat_2.transmitter, "Node 2 not transmitter!");
 
                     read_alc(alc, ID_2, mem_bus(2));
-                    check(alc = N, "Arbitration lost at correct bit by Node 2!");
+                    check(alc = N + 13, "Arbitration lost at correct bit by Node 2!");
                     
                     read_alc(alc, ID_1, mem_bus(1));
                     check(alc = 0, "Arbitration not lost by Node 1!");
@@ -239,7 +252,7 @@ package body alc_base_id_feature is
             end loop;
             
         -----------------------------------------------------------------------
-        -- 2.5 Wait till the CRC delimiter in Node 2, and monitor that Node 2
+        -- 2.6 Wait till the CRC delimiter in Node 2, and monitor that Node 2
         --     is transmitting recessive value.
         -----------------------------------------------------------------------
         info("Step 2.5: Wait till end of frame!");

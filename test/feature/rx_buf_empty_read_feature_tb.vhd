@@ -41,18 +41,21 @@
 
 --------------------------------------------------------------------------------
 -- Purpose:
---  Data length Code feature test. Verifies functionality of maximal DLC equal
---  to 8 for CAN 2.0 frames.
+--  RX Buffer empty - read feature test
 --
---  Test sequence:
---    1. Generate CAN 2.0 Frame and set DLC higher than 8. Set higher data
---       bytes accordingly!
---    2. Send the CAN Frame via Node 1.
---    3. Verify that frame received by Node 2, has the same DLC, but is has
---       received only 8 bytes of Data!
+-- Verifies:
+--  1. Verifies that when reading from empty RX Buffer, RX pointer is not
+--     incremented!
+--
+-- Test sequence:
+--  1. Read pointers from RX Buffer, check pointers are 0 (DUT is post reset).
+--  2. Try to read CAN frame from RX Buffer. This should generate at least 4
+--     reads from RX DATA register.
+--  3. Read pointers from RX Buffer, check pointers are still 0.
+--
 --------------------------------------------------------------------------------
 -- Revision History:
---    14.7.2018   Created file
+--    18.10.2019   Created file
 --------------------------------------------------------------------------------
 
 context work.ctu_can_synth_context;
@@ -60,8 +63,8 @@ context work.ctu_can_test_context;
 
 use lib.pkg_feature_exec_dispath.all;
 
-package data_length_code_feature is
-    procedure data_length_code_feature_exec(
+package rx_buf_empty_read_feature is
+    procedure rx_buf_empty_read_feature_exec(
         variable    o               : out    feature_outputs_t;
         signal      so              : out    feature_signal_outputs_t;
         signal      rand_ctr        : inout  natural range 0 to RAND_POOL_SIZE;
@@ -72,8 +75,8 @@ package data_length_code_feature is
 end package;
 
 
-package body data_length_code_feature is
-    procedure data_length_code_feature_exec(
+package body rx_buf_empty_read_feature is
+    procedure rx_buf_empty_read_feature_exec(
         variable    o               : out    feature_outputs_t;
         signal      so              : out    feature_signal_outputs_t;
         signal      rand_ctr        : inout  natural range 0 to RAND_POOL_SIZE;
@@ -81,51 +84,61 @@ package body data_length_code_feature is
         signal      mem_bus         : inout  mem_bus_arr_t;
         signal      bus_level       : in     std_logic
     ) is
-        constant ID_1               :        natural := 1;
-        constant ID_2               :        natural := 2;
-        variable CAN_frame          :        SW_CAN_frame_type;
-        variable CAN_frame_2        :        SW_CAN_frame_type  := 
-                    (0, (OTHERS => (OTHERS => '0')), "0000", 0, '0', '0',
-                     '0', '0', '0', (OTHERS => '0'), 0);
-        variable frame_sent         :        boolean;
+        variable rand_value         :       real;
+        variable alc                :       natural;
+
+        -- Some unit lost the arbitration...
+        -- 0 - initial , 1-Node 1 turned rec, 2 - Node 2 turned rec
+        variable unit_rec           :     natural := 0;
+
+        variable ID_1               :     natural := 1;
+        variable ID_2               :     natural := 2;
+        variable r_data             :     std_logic_vector(31 downto 0) :=
+                                               (OTHERS => '0');
+        -- Generated frames
+        variable frame_1            :     SW_CAN_frame_type;
+        variable frame_2            :     SW_CAN_frame_type;
+        variable frame_rx           :     SW_CAN_frame_type;
+
+        -- Node status
+        variable stat_1             :     SW_status;
+        variable stat_2             :     SW_status;
+
+        variable pc_dbg             :     SW_PC_Debug;
+        
+        variable txt_buf_state      :     SW_TXT_Buffer_state_type;
+        variable rx_buf_info        :     SW_RX_Buffer_info;
+        variable frames_equal       :     boolean := false;        
+
+        variable id_vect            :     std_logic_vector(28 downto 0);
     begin
         o.outcome := true;
 
-        ------------------------------------------------------------------------
-        -- Generate CAN Frame and force CAN 2.0 and DLC higher than 8! This
-        -- DLC will be transmitted in DLC bits, but only 8 bytes of data
-        -- should be transmitted!
-        ------------------------------------------------------------------------
-        CAN_generate_frame(rand_ctr, CAN_frame);
-        rand_logic_vect_v(rand_ctr, CAN_frame.dlc, 0.5);
-        CAN_frame.dlc(3) := '1';
-        CAN_frame.rtr := NO_RTR_FRAME;
-        CAN_frame.frame_format := NORMAL_CAN;
-        decode_dlc(CAN_frame.dlc, CAN_frame.data_length);
-        for i in 0 to CAN_frame.data_length - 1 loop
-            rand_logic_vect_v(rand_ctr, CAN_frame.data(i), 0.5);
-        end loop;
+        -----------------------------------------------------------------------
+        -- 1. Read pointers from RX Buffer, check pointers are 0 (DUT is post 
+        --    reset).
+        -----------------------------------------------------------------------
+        info("Step 1: Reading RX buffer pointers for first time");
+        get_rx_buf_state(rx_buf_info, ID_1, mem_bus(1));
+        check(rx_buf_info.rx_read_pointer = 0, "Read pointer 0!");
+        check(rx_buf_info.rx_write_pointer = 0, "Write pointer 0!");
+        
+        -----------------------------------------------------------------------
+        -- 2. Try to read CAN frame from RX Buffer. This should generate at 
+        --    least 4 reads from RX DATA register.
+        -----------------------------------------------------------------------
+        info("Step 2: Try to read frame from empty RX Buffer!");
+        CAN_read_frame(frame_rx, ID_1, mem_bus(1));
 
         ------------------------------------------------------------------------
-        -- Send frame by Node 1
+        -- 3. Read pointers from RX Buffer, check pointers are still 0.
         ------------------------------------------------------------------------
-        CAN_send_frame(CAN_frame, 1, ID_1, mem_bus(1), frame_sent);
-        CAN_wait_frame_sent(ID_1, mem_bus(1));
-        wait for 500 ns;
+        info("Step 3: Read RX Buffer pointers again!");
+        get_rx_buf_state(rx_buf_info, ID_1, mem_bus(1));
+        check(rx_buf_info.rx_read_pointer = 0, "Read pointer 0!");
+        check(rx_buf_info.rx_write_pointer = 0, "Write pointer 0!");
 
-        ------------------------------------------------------------------------
-        -- Read frame by Node 2. Received DLC should be matching the transmitted
-        -- DLC, but only 8 bytes of data should be received (int_dlc was forced
-        -- to 8!). Thus RWCNT field should be 5!
-        ------------------------------------------------------------------------
-        CAN_read_frame(CAN_frame_2, ID_2, mem_bus(2));
-        check(CAN_frame_2.dlc = CAN_frame.dlc, "Invalid DLC received!");
-        check(CAN_frame_2.rwcnt = 5, "Invalid DLC received!");
-          
-        for i in 8 to 63 loop
-            check(CAN_frame_2.data(i) = "00000000",
-                  "Byte index " & integer'image(i) & " not zero!");
-        end loop;
+        wait for 1000 ns;
 
   end procedure;
 

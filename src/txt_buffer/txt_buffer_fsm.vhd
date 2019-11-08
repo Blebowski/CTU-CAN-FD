@@ -117,7 +117,10 @@ entity txt_buffer_fsm is
         txtb_state             :out  std_logic_vector(3 downto 0);
 
         -- TXT Buffer is available to be locked by CAN Core for transmission
-        txtb_available         :out  std_logic
+        txtb_available         :out  std_logic;
+                
+        -- UnMask content of TXT Buffer RAM
+        txtb_unmask_data_ram   :out  std_logic
     );             
 end entity;
 
@@ -343,7 +346,20 @@ begin
         TXT_TOK   when s_txt_ok,
         TXT_ERR   when s_txt_failed,
         TXT_ABT   when s_txt_aborted,
-        TXT_ETY   when s_txt_empty;    
+        TXT_ETY   when s_txt_empty;
+        
+    ---------------------------------------------------------------------------
+    -- Unmask content of TXT Buffer RAM (make it available for CAN Core and
+    -- TX Arbitrator) when it is valid for them to read from there. That is
+    -- during TXT Buffer selection or during transmission. During other moments
+    -- content of TXT Buffer RAM is not needed by CAN Core nor TX Arbitrator!
+    ---------------------------------------------------------------------------
+    txtb_unmask_data_ram <= '1' when (curr_state = s_txt_ready or
+                                      curr_state = s_txt_tx_prog or
+                                      curr_state = s_txt_ab_prog)
+                                else
+                            '0';
+
 
     -- <RELEASE_OFF>
     ----------------------------------------------------------------------------

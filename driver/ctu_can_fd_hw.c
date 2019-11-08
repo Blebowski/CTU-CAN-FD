@@ -360,24 +360,24 @@ void ctucan_hw_set_err_limits(struct ctucan_hw_priv *priv, u8 ewl, u8 erp)
 void ctucan_hw_read_err_ctrs(struct ctucan_hw_priv *priv,
 			      struct can_berr_counter *ctr)
 {
-	union ctu_can_fd_rxc_txc reg;
+	union ctu_can_fd_rec_tec reg;
 
-	reg.u32 = priv->read_reg(priv, CTU_CAN_FD_RXC);
-	ctr->txerr = reg.s.txc_val;
-	ctr->rxerr = reg.s.rxc_val;
+	reg.u32 = priv->read_reg(priv, CTU_CAN_FD_REC);
+	ctr->txerr = reg.s.tec_val;
+	ctr->rxerr = reg.s.rec_val;
 }
 
 enum can_state ctucan_hw_read_error_state(struct ctucan_hw_priv *priv)
 {
 	union ctu_can_fd_ewl_erp_fault_state reg;
-	union ctu_can_fd_rxc_txc err;
+	union ctu_can_fd_rec_tec err;
 
 	reg.u32 = priv->read_reg(priv, CTU_CAN_FD_EWL);
-	err.u32 = priv->read_reg(priv, CTU_CAN_FD_RXC);
+	err.u32 = priv->read_reg(priv, CTU_CAN_FD_REC);
 
 	if (reg.s.era) {
-		if (reg.s.ew_limit > err.s.rxc_val &&
-		    reg.s.ew_limit > err.s.txc_val)
+		if (reg.s.ew_limit > err.s.rec_val &&
+		    reg.s.ew_limit > err.s.tec_val)
 			return CAN_STATE_ERROR_ACTIVE;
 		else
 			return CAN_STATE_ERROR_WARNING;

@@ -938,6 +938,9 @@ package can_components is
 
         -- Set unit to be error active
         set_err_active          :in   std_logic;
+        
+        -- Unit enabled
+        drv_ena                 :in   std_logic;
        
         -----------------------------------------------------------------------
         -- Error counters
@@ -4220,7 +4223,10 @@ package can_components is
         txtb_state             :out  std_logic_vector(3 downto 0);
 
         -- TXT Buffer is available to be locked by CAN Core for transmission
-        txtb_available         :out  std_logic
+        txtb_available         :out  std_logic;
+        
+        -- UnMask content of TXT Buffer RAM
+        txtb_unmask_data_ram   :out  std_logic
     );             
     end component;
 
