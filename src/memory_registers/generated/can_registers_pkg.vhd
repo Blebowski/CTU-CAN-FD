@@ -88,8 +88,8 @@ package can_registers_pkg is
      int_ena_set                 : std_logic_vector(15 downto 0);
      int_mask_set                : std_logic_vector(15 downto 0);
      fault_state                 : std_logic_vector(15 downto 0);
-     rxc                         : std_logic_vector(15 downto 0);
-     txc                         : std_logic_vector(15 downto 0);
+     rec                         : std_logic_vector(15 downto 0);
+     tec                         : std_logic_vector(15 downto 0);
      err_norm                    : std_logic_vector(15 downto 0);
      err_fd                      : std_logic_vector(15 downto 0);
      filter_status               : std_logic_vector(15 downto 0);
@@ -101,8 +101,8 @@ package can_registers_pkg is
      err_capt                    : std_logic_vector(7 downto 0);
      alc                         : std_logic_vector(7 downto 0);
      trv_delay                   : std_logic_vector(15 downto 0);
-     rx_counter                  : std_logic_vector(31 downto 0);
-     tx_counter                  : std_logic_vector(31 downto 0);
+     rx_fr_ctr                   : std_logic_vector(31 downto 0);
+     tx_fr_ctr                   : std_logic_vector(31 downto 0);
      debug_register              : std_logic_vector(31 downto 0);
      yolo_reg                    : std_logic_vector(31 downto 0);
      timestamp_low               : std_logic_vector(31 downto 0);

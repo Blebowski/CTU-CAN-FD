@@ -516,7 +516,16 @@ entity protocol_control_fsm is
         bit_err_enable          :out   std_logic;
 
         -- Bit rate shifted
-        br_shifted              :out   std_logic
+        br_shifted              :out   std_logic;
+        
+        -- Reset Bit time measurement counter
+        btmc_reset              :out   std_logic;
+    
+        -- Start Measurement of data bit time (in TX Trigger)
+        dbt_measure_start       :out  std_logic;
+    
+        -- First SSP generated (in ESI bit)
+        gen_first_ssp           :out  std_logic
     );
 end entity;
 
@@ -765,7 +774,7 @@ begin
                          else
                      '0';
 
-    ide_is_arbitration <= '1' when (tran_frame_type = EXTENDED)
+    ide_is_arbitration <= '1' when (tran_ident_type = EXTENDED)
                               else
                           '0';
 
@@ -1352,9 +1361,14 @@ begin
         sp_control_switch_data <= '0';
         sp_control_switch_nominal <= '0';
         
-        -- Secondary sampling point measurement
+        -- Transceiver delay measurement
         ssp_reset_i <= '0';
         tran_delay_meas <= '0';
+        
+        -- Secondary sampling point control
+        btmc_reset        <= '0';
+        dbt_measure_start <= '0';
+        gen_first_ssp     <= '0';
         
         -- Fault confinement
         primary_err_i <= '0';
@@ -1784,7 +1798,8 @@ begin
                 bit_err_disable_receiver <= '1';
                 nbt_ctrs_en <= '1';
                 dbt_ctrs_en <= '1';
-                
+                btmc_reset  <= '1';
+
                 if (is_transmitter = '1' and tran_brs = BR_NO_SHIFT) then
                     tx_dominant <= '1';
                 end if;
@@ -1811,6 +1826,12 @@ begin
                 
                 if (is_transmitter = '1' and is_err_active = '1') then
                     tx_dominant <= '1';
+                end if;
+                
+                -- Transmitter transmitts via SSP
+                if (sp_control_q_i = SECONDARY_SAMPLE) then
+                    dbt_measure_start <= '1';
+                    gen_first_ssp     <= '1';
                 end if;
 
             -------------------------------------------------------------------
@@ -2177,8 +2198,11 @@ begin
                     end if;
                     
                     -- If we dont sample dominant, nor we have sth ready for
-                    -- transmission, we go to Idle!
-                    if (rx_data_nbs = RECESSIVE and tx_frame_ready = '0') then
+                    -- transmission, we go to Idle! Don't become idle when we
+                    -- go to suspend!
+                    if (rx_data_nbs = RECESSIVE and tx_frame_ready = '0' and
+                        go_to_suspend = '0')
+                    then
                         set_idle_i <= '1';
                     end if;
     
@@ -2231,6 +2255,7 @@ begin
                         set_transmitter_i <= '1';
                         destuff_enable_set <= '1';
                         stuff_enable_set <= '1';
+                        txtb_hw_cmd_d.lock <= '1';
                     else
                         set_idle_i <= '1';
                     end if;

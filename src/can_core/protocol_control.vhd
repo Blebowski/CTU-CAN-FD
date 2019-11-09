@@ -327,6 +327,15 @@ entity protocol_control is
         -- Bit Error detected
         bit_err                 :in   std_logic;
         
+        -- Reset Bit time measurement counter
+        btmc_reset              :out   std_logic;
+    
+        -- Start Measurement of data bit time (in TX Trigger)
+        dbt_measure_start       :out  std_logic;
+    
+        -- First SSP generated (in ESI bit)
+        gen_first_ssp           :out  std_logic;
+        
         -----------------------------------------------------------------------
         -- CRC Interface
         -----------------------------------------------------------------------
@@ -801,7 +810,10 @@ begin
         crc_calc_from_rx        => crc_calc_from_rx,        -- OUT
         load_init_vect          => load_init_vect,          -- OUT
         bit_err_enable          => bit_err_enable,          -- OUT
-        br_shifted              => br_shifted               -- OUT
+        br_shifted              => br_shifted,              -- OUT
+        btmc_reset              => btmc_reset,              -- OUT
+        dbt_measure_start       => dbt_measure_start,       -- OUT
+        gen_first_ssp           => gen_first_ssp            -- OUT
     );
 
     ---------------------------------------------------------------------------

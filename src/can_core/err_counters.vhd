@@ -355,11 +355,6 @@ begin
    --   (is_transmitter = '1' and is_receiver = '1')
    -- report "Unit can't be transmitter and receiver at once"
    -- severity error;
-
-   -- psl tx_ctr_never_mt_263 : assert never
-   --  (tx_err_ctr_q > 263)
-   --  report "TX Error counter is bigger than 263, node should be Bus off!"
-   --  severity error;
    
    -- <RELEASE_ON>
 end architecture;

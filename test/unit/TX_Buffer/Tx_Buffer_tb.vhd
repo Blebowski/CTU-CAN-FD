@@ -291,6 +291,7 @@ begin
     ----------------------------------------------------------------------------
     data_read_proc : process
         variable tmp   : std_logic_vector(4 downto 0);
+        constant C_DATA_ZEROES : std_logic_vector(31 downto 0) := (OTHERS => '0');
     begin
         while res_n = C_RESET_POLARITY loop
             wait until rising_edge(clk_sys);
@@ -311,7 +312,11 @@ begin
 
         -- At any point the data should be matching the data in
         -- the shadow buffer
-        check(txtb_port_b_data = shadow_mem(txtb_port_b_address), "Data coherency error!");
+        if (txtb_state = TXT_RDY or txtb_state = TXT_TRAN or txtb_state = TXT_ABTP) then           
+            check(txtb_port_b_data = shadow_mem(txtb_port_b_address), "Data coherency error!");
+        else
+            check(txtb_port_b_data = C_DATA_ZEROES, "Data not masked out!");
+        end if;
     end process;
 
 

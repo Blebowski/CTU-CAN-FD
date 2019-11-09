@@ -273,7 +273,16 @@ entity can_core is
         bit_err             :in   std_logic;
         
         -- Secondary sample signal 
-        sample_sec          :in   std_logic
+        sample_sec          :in   std_logic;
+        
+        -- Reset Bit time measurement counter
+        btmc_reset          :out   std_logic;
+    
+        -- Start Measurement of data bit time (in TX Trigger)
+        dbt_measure_start   :out  std_logic;
+    
+        -- First SSP generated (in ESI bit)
+        gen_first_ssp       :out  std_logic
     );
 end entity;
 
@@ -547,6 +556,9 @@ begin
         
         -- Bus Sampling Interface
         bit_err                 => bit_err,             -- IN
+        btmc_reset              => btmc_reset,          -- OUT
+        dbt_measure_start       => dbt_measure_start,   -- OUT
+        gen_first_ssp           => gen_first_ssp,       -- OUT
         
         -- CRC Interface
         crc_enable              => crc_enable,          -- OUT

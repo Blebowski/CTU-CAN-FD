@@ -502,7 +502,7 @@ Version 2.2, Commit:
 \noindent
 \align center
 \begin_inset Tabular
-<lyxtabular version="3" rows="10" columns="4">
+<lyxtabular version="3" rows="12" columns="4">
 <features tabularvalignment="middle">
 <column alignment="center" valignment="top" width="1.5cm">
 <column alignment="center" valignment="top" width="2cm">
@@ -858,11 +858,87 @@ Re-worked Prescaler.
 </cell>
 </row>
 <row>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
 2.2
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Ondrej Ille
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+26-09-2019
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Split functional descripion and register map from original document.
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+2.2.1
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Ondrej Ille
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+21-10-2019
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Clarify TXT buffer behaviour when node goes bus-off.
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+2.2.2
 \end_layout
 
 \end_inset
@@ -880,7 +956,7 @@ Ondrej Ille
 \begin_inset Text
 
 \begin_layout Plain Layout
-26-09-2019
+31-10-2019
 \end_layout
 
 \end_inset
@@ -889,7 +965,8 @@ Ondrej Ille
 \begin_inset Text
 
 \begin_layout Plain Layout
-Split functional descripion and register map from original document.
+Clarify Bus-off behaviour aftet Start-up.
+ Clarify that frame must be inserted to TXT Buffer before sending.
 \end_layout
 
 \end_inset
@@ -1005,7 +1082,7 @@ Features
 \end_layout
 
 \begin_layout Itemize
-Vendor independent, VHDL RTL code for synthesis (compliant with VHDL 96).
+Vendor independent, VHDL RTL code for synthesis (compliant with VHDL 93).
 \end_layout
 
 \begin_layout Itemize
@@ -2990,6 +3067,32 @@ command |= (1 << 8);                                  // Choose TXT Buffer
 CAN_write_32(TX_COMMAND_ADDR, command);               // Issue the command
 \end_layout
 
+\begin_layout Subsection
+Notes
+\end_layout
+
+\begin_layout Description
+Note
+\begin_inset space ~
+\end_inset
+
+1 When CTU CAN FD is started by writing SETTINGS[ENA] = '1', it is still
+ bus-off during integration to the CAN bus.
+ If during this time Set ready command is sent to TXT buffer, TXT buffer
+ immediately moves to Aborted state (since node is bus-off and all TXT buffers
+ in TX ready move to Aborted when CTU CAN FD is bus-off).
+\end_layout
+
+\begin_layout Description
+Note
+\begin_inset space ~
+\end_inset
+
+2 TXT buffers are not initialized, nor reset.
+ Therefore, before issuing Set ready command, SW shall fill according TXT
+ buffer with valid CAN frame for transmission.
+\end_layout
+
 \begin_layout Section
 CAN frame reception
 \end_layout
@@ -3361,7 +3464,7 @@ noprefix "false"
 \end_inset
 
 .
- Fault confinement counters (REC, TEC) are readable from RXC and TXC registers.
+ Fault confinement counters are readable from REC and TEC registers.
  These counters correspond to transmitt error counter and receive error
  counter as defined in ISO11898-1.
  CTU CAN FD additionally contains counters distigushing between errors detected
@@ -3373,7 +3476,7 @@ noprefix "false"
 \end_layout
 
 \begin_layout Standard
-All four counters (RXC, TXC, ERR_NORM, ERR_FD) can be manipulated by SW.
+All four counters (REC, TEC, ERR_NORM, ERR_FD) can be manipulated by SW.
  As this feature directly affects compliance of the device with ISO11898-1,
  this is only allowed when MODE[TSTM] = 1.
  All counters can be set from SW via CTR_PRES register.

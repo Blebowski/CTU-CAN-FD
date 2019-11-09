@@ -477,17 +477,14 @@ begin
                              '1' when (is_idle = '1') else
                              '0';
 
-    status_comb(EWL_IND) <= '1' when 
-                            (control_registers_out.ewl 
-                              < 
-                             stat_bus(STAT_TX_COUNTER_HIGH downto
-                                      STAT_TX_COUNTER_LOW) or
-                            (control_registers_out.ewl 
-                              < 
-                             stat_bus(STAT_RX_COUNTER_HIGH downto
-                                      STAT_RX_COUNTER_LOW)))
-                            else
-                            '0';
+    status_comb(EWL_IND) <=
+        '1' when to_integer(unsigned(control_registers_out.ewl)) <= 
+                 to_integer(unsigned(stat_bus(STAT_TX_COUNTER_HIGH downto STAT_TX_COUNTER_LOW)))
+            else
+        '1' when to_integer(unsigned(control_registers_out.ewl)) <= 
+                 to_integer(unsigned(stat_bus(STAT_RX_COUNTER_HIGH downto STAT_RX_COUNTER_LOW)))
+            else
+        '0';
 
     status_comb(TXS_IND) <= is_transmitter;
     status_comb(RXS_IND) <= is_receiver;
@@ -958,29 +955,29 @@ begin
 
 
     ---------------------------------------------------------------------------
-    -- RXC Register - Receive error counter
+    -- REC Register - Receive error counter
     ---------------------------------------------------------------------------
-    rxc_reg_block : block
-        constant length : natural := Control_registers_in.rxc'length;
+    rec_reg_block : block
+        constant length : natural := Control_registers_in.rec'length;
     begin
-        Control_registers_in.rxc(
-            align_reg_to_wrd(RXC_VAL_H, length) downto
-            align_reg_to_wrd(RXC_VAL_L, length)) <=
-            "0000000" & stat_bus(STAT_RX_COUNTER_HIGH downto STAT_RX_COUNTER_LOW);
-    end block rxc_reg_block;
+        Control_registers_in.rec(
+            align_reg_to_wrd(REC_VAL_H, length) downto
+            align_reg_to_wrd(REC_VAL_L, length)) <=
+            stat_bus(STAT_RX_COUNTER_HIGH downto STAT_RX_COUNTER_LOW);
+    end block rec_reg_block;
 
 
     ---------------------------------------------------------------------------
-    -- TXC Register - Transmitt error counter
+    -- TEC Register - Transmitt error counter
     ---------------------------------------------------------------------------
-    txc_reg_block : block
-        constant length : natural := Control_registers_in.txc'length;
+    tec_reg_block : block
+        constant length : natural := Control_registers_in.tec'length;
     begin
-        Control_registers_in.txc(
-            align_reg_to_wrd(TXC_VAL_H, length) downto
-            align_reg_to_wrd(TXC_VAL_L, length)) <= 
-            "0000000" & stat_bus(STAT_TX_COUNTER_HIGH downto STAT_TX_COUNTER_LOW);
-    end block txc_reg_block;
+        Control_registers_in.tec(
+            align_reg_to_wrd(TEC_VAL_H, length) downto
+            align_reg_to_wrd(TEC_VAL_L, length)) <= 
+            stat_bus(STAT_TX_COUNTER_HIGH downto STAT_TX_COUNTER_LOW);
+    end block tec_reg_block;
 
     ---------------------------------------------------------------------------
     -- ERR_NORM - Error counter Nominal Bit-Rate
@@ -1253,33 +1250,33 @@ begin
 
 
     ---------------------------------------------------------------------------
-    -- RX_COUNTER register
+    -- RX_FR_CTR register
     ---------------------------------------------------------------------------
-    rx_counter_block : block
-        constant length : natural := Control_registers_in.rx_counter'length;
+    rx_fr_ctr_block : block
+        constant length : natural := Control_registers_in.rx_fr_ctr'length;
     begin
 
-        Control_registers_in.rx_counter(
-            align_reg_to_wrd(RX_COUNTER_VAL_H, length) downto
-            align_reg_to_wrd(RX_COUNTER_VAL_L, length)) <=
+        Control_registers_in.rx_fr_ctr(
+            align_reg_to_wrd(RX_FR_CTR_VAL_H, length) downto
+            align_reg_to_wrd(RX_FR_CTR_VAL_L, length)) <=
             stat_bus(STAT_RX_CTR_HIGH downto STAT_RX_CTR_LOW);
 
-    end block rx_counter_block;
+    end block rx_fr_ctr_block;
 
 
     ---------------------------------------------------------------------------
-    -- TX_COUNTER register
+    -- TX_FR_CTR register
     ---------------------------------------------------------------------------
-    tx_counter_block : block
-        constant length : natural := Control_registers_in.tx_counter'length;
+    tx_fr_ctr_block : block
+        constant length : natural := Control_registers_in.tx_fr_ctr'length;
     begin
 
-        Control_registers_in.tx_counter(
-            align_reg_to_wrd(TX_COUNTER_VAL_H, length) downto
-            align_reg_to_wrd(TX_COUNTER_VAL_L, length)) <=
+        Control_registers_in.tx_fr_ctr(
+            align_reg_to_wrd(TX_FR_CTR_VAL_H, length) downto
+            align_reg_to_wrd(TX_FR_CTR_VAL_L, length)) <=
             stat_bus(STAT_TX_CTR_HIGH downto STAT_TX_CTR_LOW);
 
-    end block tx_counter_block;
+    end block tx_fr_ctr_block;
 
 
     ---------------------------------------------------------------------------

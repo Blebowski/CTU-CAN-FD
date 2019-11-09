@@ -316,7 +316,7 @@
 						<ipxact:bitOffset>2</ipxact:bitOffset>
 						<ipxact:resets>
 							<ipxact:reset>
-								<ipxact:value>0</ipxact:value>
+								<ipxact:value>1</ipxact:value>
 							</ipxact:reset>
 						</ipxact:resets>
 						<ipxact:bitWidth>1</ipxact:bitWidth>
@@ -372,7 +372,7 @@
 					<ipxact:field>
 						<ipxact:name>EWL</ipxact:name>
 						<ipxact:displayName>EWL</ipxact:displayName>
-						<ipxact:description>Error warning limit was reached by either TX or RX Error counter (TXC or RXC).</ipxact:description>
+						<ipxact:description>TX Error counter (TEC) or RX Error counter (REC) is equal to or higher than Error warning limit (EWL).</ipxact:description>
 						<ipxact:bitOffset>6</ipxact:bitOffset>
 						<ipxact:resets>
 							<ipxact:reset>
@@ -558,7 +558,7 @@
 					<ipxact:field>
 						<ipxact:name>EWLI</ipxact:name>
 						<ipxact:displayName>EWLI</ipxact:displayName>
-						<ipxact:description>Error Warning Limit interrupt. When both TEC and REC are lower than EWL and one of the becomes higher than EWL, or when both TEC and REC become less than EWL, condition for this interrupt is valid. When Interrupt is cleared and RXC, or TXC is still equal to or higher than EWL, Interrupt is not set again.</ipxact:description>
+						<ipxact:description>Error Warning Limit interrupt. When both TEC and REC are lower than EWL and one of the becomes equal to or higher than EWL, or when both TEC and REC become less than EWL, condition for this interrupt is valid. When Interrupt is cleared and RXC, or TXC is still equal to or higher than EWL, Interrupt is not set again.</ipxact:description>
 						<ipxact:bitOffset>2</ipxact:bitOffset>
 						<ipxact:resets>
 							<ipxact:reset>
@@ -1369,11 +1369,6 @@
 						<ipxact:displayName>TIMESTAMP_HIGH</ipxact:displayName>
 						<ipxact:description>Bits 63:32 of time base.</ipxact:description>
 						<ipxact:bitOffset>0</ipxact:bitOffset>
-						<ipxact:resets>
-							<ipxact:reset>
-								<ipxact:value>00</ipxact:value>
-							</ipxact:reset>
-						</ipxact:resets>
 						<ipxact:bitWidth>32</ipxact:bitWidth>
 						<ipxact:access>read-only</ipxact:access>
 					</ipxact:field>
@@ -1392,11 +1387,6 @@
 						<ipxact:displayName>TIMESTAMP_LOW</ipxact:displayName>
 						<ipxact:description>Bits 31:0 of time base.</ipxact:description>
 						<ipxact:bitOffset>0</ipxact:bitOffset>
-						<ipxact:resets>
-							<ipxact:reset>
-								<ipxact:value>0</ipxact:value>
-							</ipxact:reset>
-						</ipxact:resets>
 						<ipxact:bitWidth>32</ipxact:bitWidth>
 						<ipxact:access>read-only</ipxact:access>
 					</ipxact:field>
@@ -1639,8 +1629,8 @@
 					</ipxact:field>
 				</ipxact:register>
 				<ipxact:register>
-					<ipxact:name>TX_COUNTER</ipxact:name>
-					<ipxact:displayName>TX_COUNTER</ipxact:displayName>
+					<ipxact:name>TX_FR_CTR</ipxact:name>
+					<ipxact:displayName>TX_FR_CTR</ipxact:displayName>
 					<ipxact:description>Bus traffic TX counter.</ipxact:description>
 					<ipxact:isPresent>uuid_db903261_61eb_4f15_8155_5b14164c20b0</ipxact:isPresent>
 					<ipxact:dim>0</ipxact:dim>
@@ -1649,7 +1639,7 @@
 					<ipxact:volatile>true</ipxact:volatile>
 					<ipxact:access>read-only</ipxact:access>
 					<ipxact:field>
-						<ipxact:name>TX_COUNTER_VAL</ipxact:name>
+						<ipxact:name>TX_FR_CTR_VAL</ipxact:name>
 						<ipxact:description>Number of transmitted frames by CTU CAN FD.</ipxact:description>
 						<ipxact:bitOffset>0</ipxact:bitOffset>
 						<ipxact:resets>
@@ -1661,8 +1651,8 @@
 					</ipxact:field>
 				</ipxact:register>
 				<ipxact:register>
-					<ipxact:name>RX_COUNTER</ipxact:name>
-					<ipxact:displayName>RX_COUNTER</ipxact:displayName>
+					<ipxact:name>RX_FR_CTR</ipxact:name>
+					<ipxact:displayName>RX_FR_CTR</ipxact:displayName>
 					<ipxact:description>Bus traffic RX counter.</ipxact:description>
 					<ipxact:isPresent>uuid_db903261_61eb_4f15_8155_5b14164c20b0</ipxact:isPresent>
 					<ipxact:dim>0</ipxact:dim>
@@ -1671,7 +1661,7 @@
 					<ipxact:volatile>true</ipxact:volatile>
 					<ipxact:access>read-only</ipxact:access>
 					<ipxact:field>
-						<ipxact:name>RX_COUNTER_VAL</ipxact:name>
+						<ipxact:name>RX_FR_CTR_VAL</ipxact:name>
 						<ipxact:description>Number of received frames by CTU CAN FD.</ipxact:description>
 						<ipxact:bitOffset>0</ipxact:bitOffset>
 						<ipxact:resets>
@@ -2041,7 +2031,7 @@
 						<ipxact:bitOffset>1</ipxact:bitOffset>
 						<ipxact:resets>
 							<ipxact:reset>
-								<ipxact:value>1</ipxact:value>
+								<ipxact:value>0</ipxact:value>
 							</ipxact:reset>
 						</ipxact:resets>
 						<ipxact:bitWidth>1</ipxact:bitWidth>
@@ -2540,16 +2530,15 @@
 					</ipxact:field>
 				</ipxact:register>
 				<ipxact:register>
-					<ipxact:name>TXC</ipxact:name>
+					<ipxact:name>TEC</ipxact:name>
 					<ipxact:displayName>TXC</ipxact:displayName>
-					<ipxact:isPresent>uuid_db903261_61eb_4f15_8155_5b14164c20b0</ipxact:isPresent>
 					<ipxact:dim>0</ipxact:dim>
 					<ipxact:addressOffset>'h32</ipxact:addressOffset>
 					<ipxact:size>16</ipxact:size>
 					<ipxact:volatile>true</ipxact:volatile>
 					<ipxact:access>read-only</ipxact:access>
 					<ipxact:field>
-						<ipxact:name>TXC_VAL</ipxact:name>
+						<ipxact:name>TEC_VAL</ipxact:name>
 						<ipxact:description>TX error counter (TEC).</ipxact:description>
 						<ipxact:bitOffset>0</ipxact:bitOffset>
 						<ipxact:resets>
@@ -2557,20 +2546,19 @@
 								<ipxact:value>0</ipxact:value>
 							</ipxact:reset>
 						</ipxact:resets>
-						<ipxact:bitWidth>16</ipxact:bitWidth>
+						<ipxact:bitWidth>9</ipxact:bitWidth>
 					</ipxact:field>
 				</ipxact:register>
 				<ipxact:register>
-					<ipxact:name>RXC</ipxact:name>
+					<ipxact:name>REC</ipxact:name>
 					<ipxact:displayName>RXC</ipxact:displayName>
-					<ipxact:isPresent>uuid_db903261_61eb_4f15_8155_5b14164c20b0</ipxact:isPresent>
 					<ipxact:dim>0</ipxact:dim>
 					<ipxact:addressOffset>'h30</ipxact:addressOffset>
 					<ipxact:size>16</ipxact:size>
 					<ipxact:volatile>true</ipxact:volatile>
 					<ipxact:access>read-only</ipxact:access>
 					<ipxact:field>
-						<ipxact:name>RXC_VAL</ipxact:name>
+						<ipxact:name>REC_VAL</ipxact:name>
 						<ipxact:displayName>RXC_VAL</ipxact:displayName>
 						<ipxact:description>RX error counter (REC).</ipxact:description>
 						<ipxact:bitOffset>0</ipxact:bitOffset>
@@ -2579,7 +2567,7 @@
 								<ipxact:value>0</ipxact:value>
 							</ipxact:reset>
 						</ipxact:resets>
-						<ipxact:bitWidth>16</ipxact:bitWidth>
+						<ipxact:bitWidth>9</ipxact:bitWidth>
 						<ipxact:access>read-only</ipxact:access>
 					</ipxact:field>
 				</ipxact:register>
@@ -3077,7 +3065,7 @@
 			<ipxact:displayName>sup_filt_B</ipxact:displayName>
 			<ipxact:value>1</ipxact:value>
 		</ipxact:parameter>
-		<ipxact:parameter kactus2:usageCount="4" parameterId="uuid_db903261_61eb_4f15_8155_5b14164c20b0">
+		<ipxact:parameter kactus2:usageCount="2" parameterId="uuid_db903261_61eb_4f15_8155_5b14164c20b0">
 			<ipxact:name>sup_traffic_ctrs</ipxact:name>
 			<ipxact:displayName>sup_traffic_ctrs</ipxact:displayName>
 			<ipxact:value>1</ipxact:value>

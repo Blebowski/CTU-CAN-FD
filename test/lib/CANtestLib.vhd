@@ -220,8 +220,8 @@ package CANtestLib is
 
     -- Error counters (Normal and Special)
     type SW_error_counters is record
-        rx_counter              :   natural range 0 to 2 ** 16 - 1;
-        tx_counter              :   natural range 0 to 2 ** 16 - 1;
+        rx_counter              :   natural range 0 to 2 ** 9 - 1;
+        tx_counter              :   natural range 0 to 2 ** 9 - 1;
         err_norm                :   natural range 0 to 2 ** 16 - 1;
         err_fd                  :   natural range 0 to 2 ** 16 - 1;
     end record;
@@ -4584,15 +4584,15 @@ package body CANtestLib is
         variable data           :       std_logic_vector(31 downto 0);
         variable msg            :       line;
     begin
-        -- Reading separately for possible future separation of RXC and TXC!
-        CAN_read(data, RXC_ADR, ID, mem_bus, BIT_16);
+        -- Reading separately for possible future separation of REC and TEC!
+        CAN_read(data, REC_ADR, ID, mem_bus, BIT_16);
 
         err_counters.rx_counter :=
-                to_integer(unsigned(data(RXC_VAL_H downto RXC_VAL_L)));
+                to_integer(unsigned(data(REC_VAL_H downto REC_VAL_L)));
 
-        CAN_read(data, TXC_ADR, ID, mem_bus, BIT_16);
+        CAN_read(data, TEC_ADR, ID, mem_bus, BIT_16);
         err_counters.tx_counter :=
-                to_integer(unsigned(data(TXC_VAL_H downto TXC_VAL_L)));
+                to_integer(unsigned(data(TEC_VAL_H downto TEC_VAL_L)));
 
         CAN_read(data, ERR_NORM_ADR, ID, mem_bus, BIT_16);
         err_counters.err_norm :=
@@ -4696,13 +4696,13 @@ package body CANtestLib is
     )is
         variable data           :       std_logic_vector(31 downto 0);
     begin
-        CAN_read(data, RX_COUNTER_ADR, ID, mem_bus);
+        CAN_read(data, RX_FR_CTR_ADR, ID, mem_bus);
         ctr.rx_frames := to_integer(unsigned(data(
-                            RX_COUNTER_VAL_H downto RX_COUNTER_VAL_L)));
+                            RX_FR_CTR_VAL_H downto RX_FR_CTR_VAL_L)));
 
-        CAN_read(data, TX_COUNTER_ADR, ID, mem_bus);
+        CAN_read(data, TX_FR_CTR_ADR, ID, mem_bus);
         ctr.tx_frames := to_integer(unsigned(data(
-                            TX_COUNTER_VAL_H downto TX_COUNTER_VAL_L)));
+                            TX_FR_CTR_VAL_H downto TX_FR_CTR_VAL_L)));
     end procedure;
 
 

@@ -93,6 +93,9 @@ entity fault_confinement_fsm is
 
         -- Set unit to be error active
         set_err_active          :in   std_logic;
+        
+        -- Unit enabled
+        drv_ena                 :in   std_logic;
        
         -----------------------------------------------------------------------
         -- Error counters
@@ -146,6 +149,10 @@ architecture rtl of fault_confinement_fsm is
     signal curr_state : t_fault_conf_state;
     signal next_state : t_fault_conf_state;
     
+    -- Reset DFF
+    signal fc_fsm_res_d : std_logic;
+    signal fc_fsm_res_q : std_logic;
+    
 begin
     
     -- TX Error counter more than Error Passive Limit
@@ -188,7 +195,26 @@ begin
     err_warning_limit <= '1' when (err_warning_limit_d /= err_warning_limit_q)
                              else
                          '0';
+                         
+    -- Reset DFF, keep Bus-off when disabled!
+    fc_fsm_res_d <= drv_ena;
+    
+    dff_fc_reset_inst : dff_arst
+    generic map(
+        G_RESET_POLARITY   => G_RESET_POLARITY,
+        
+        -- Reset to the same value as is polarity of reset so that other DFFs
+        -- which are reset by output of this one will be reset too!
+        G_RST_VAL          => G_RESET_POLARITY
+    )
+    port map(
+        arst               => res_n,                -- IN
+        clk                => clk_sys,              -- IN
+        input              => fc_fsm_res_d,         -- IN
 
+        output             => fc_fsm_res_q          -- OUT
+    );
+    
     ---------------------------------------------------------------------------
     -- Next state process
     ---------------------------------------------------------------------------
@@ -221,9 +247,9 @@ begin
     ---------------------------------------------------------------------------
     -- State register
     ---------------------------------------------------------------------------
-    fault_conf_state_reg : process(clk_sys, res_n)
+    fault_conf_state_reg : process(clk_sys, fc_fsm_res_q)
     begin
-        if (res_n = G_RESET_POLARITY) then
+        if (fc_fsm_res_q = G_RESET_POLARITY) then
             curr_state <= s_fc_bus_off;
         elsif (rising_edge(clk_sys)) then
             curr_state <= next_state;

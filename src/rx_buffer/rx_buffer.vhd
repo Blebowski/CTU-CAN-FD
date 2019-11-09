@@ -751,10 +751,10 @@ begin
         if (res_n = G_RESET_POLARITY) then
             data_overrun_i        <= '0';
         elsif (rising_edge(clk_sys)) then
-            if (reset_overrun_flag = '1') then
-                data_overrun_i    <= '0';
-            elsif (overrun_condition = '1' or drv_erase_rx = '1') then
+            if (overrun_condition = '1' or drv_erase_rx = '1') then
                 data_overrun_i    <= '1';
+            elsif (reset_overrun_flag = '1') then
+                data_overrun_i    <= '0';
             else
                 data_overrun_i    <= data_overrun_i;
             end if;

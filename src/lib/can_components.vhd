@@ -194,7 +194,10 @@ package can_components is
             G_TRV_CTR_WIDTH         :     natural := 7;
             
             -- Optional usage of saturated value of ssp_delay 
-            G_USE_SSP_SATURATION    :     boolean := true
+            G_USE_SSP_SATURATION    :     boolean := true;
+            
+            -- Width of SSP generator counters (BTMC, SSPC)
+            G_SSP_CTRS_WIDTH        :     natural := 14
         );  
         port(
             ------------------------------------------------------------------------
@@ -258,7 +261,16 @@ package can_components is
             sample_sec           :out  std_logic;
     
             -- Bit error detected
-            bit_err              :out  std_logic 
+            bit_err              :out  std_logic;
+            
+            -- Reset Bit time measurement counter
+            btmc_reset           :in   std_logic;
+        
+            -- Start Measurement of data bit time (in TX Trigger)
+            dbt_measure_start    :in   std_logic;
+        
+            -- First SSP generated (in ESI bit)
+            gen_first_ssp        :in   std_logic
         );
     end component bus_sampling;
    
@@ -393,6 +405,53 @@ package can_components is
     );
     end component sample_mux;
    
+  
+    component ssp_generator is
+    generic(
+        -- Reset polarity
+        G_RESET_POLARITY     :      std_logic := '0';
+
+        -- Width of SSP generator counters (BTMC, SSPC)
+        G_SSP_CTRS_WIDTH     :      natural := 14
+    );
+    port(
+        ------------------------------------------------------------------------
+        -- Clock and Async reset
+        ------------------------------------------------------------------------
+        -- System clock
+        clk_sys              :in   std_logic;
+
+        -- Asynchronous reset
+        res_n                :in   std_logic;       
+
+        ------------------------------------------------------------------------
+        -- Control signals
+        ------------------------------------------------------------------------
+        -- Reset Bit time measurement counter
+        btmc_reset          :in    std_logic;
+
+        -- Start Measurement of data bit time (in TX Trigger)
+        dbt_measure_start   :in    std_logic;
+
+        -- First SSP generated (in ESI bit)
+        gen_first_ssp       :in    std_logic;
+
+        -- SSP offset
+        ssp_delay           :in    std_logic_vector(7 downto 0);
+
+        -- SSP enable (SSP trigger gated when disabled)
+        ssp_enable          :in    std_logic;
+
+        -----------------------------------------------------------------------
+        -- Trigger signals
+        -----------------------------------------------------------------------
+        -- TX Trigger
+        tx_trigger          :in    std_logic;
+        
+        -- RX Trigger
+        sample_sec          :out   std_logic
+    );
+    end component;
    
     component trv_delay_measurement is
     generic(
@@ -879,6 +938,9 @@ package can_components is
 
         -- Set unit to be error active
         set_err_active          :in   std_logic;
+        
+        -- Unit enabled
+        drv_ena                 :in   std_logic;
        
         -----------------------------------------------------------------------
         -- Error counters
@@ -1821,7 +1883,16 @@ package can_components is
         bit_err_enable          :out   std_logic;
 
         -- Bit rate shifted
-        br_shifted              :out   std_logic
+        br_shifted              :out   std_logic;
+        
+        -- Reset Bit time measurement counter
+        btmc_reset              :out   std_logic;
+    
+        -- Start Measurement of data bit time (in TX Trigger)
+        dbt_measure_start       :out  std_logic;
+    
+        -- First SSP generated (in ESI bit)
+        gen_first_ssp           :out  std_logic
     );
     end component;
 
@@ -2081,7 +2152,16 @@ package can_components is
         -- Bus Sampling Interface
         ------------------------------------------------------------------------
         -- Bit Error detected
-        bit_err               :in   std_logic;
+        bit_err                 :in   std_logic;
+        
+        -- Reset Bit time measurement counter
+        btmc_reset              :out   std_logic;
+    
+        -- Start Measurement of data bit time (in TX Trigger)
+        dbt_measure_start       :out  std_logic;
+    
+        -- First SSP generated (in ESI bit)
+        gen_first_ssp           :out  std_logic;
         
         -----------------------------------------------------------------------
         -- CRC Interface
@@ -2666,7 +2746,16 @@ package can_components is
         bit_err             :in   std_logic;
         
         -- Secondary sample signal 
-        sample_sec          :in   std_logic
+        sample_sec          :in   std_logic;
+        
+        -- Reset Bit time measurement counter
+        btmc_reset          :out   std_logic;
+    
+        -- Start Measurement of data bit time (in TX Trigger)
+        dbt_measure_start   :out  std_logic;
+    
+        -- First SSP generated (in ESI bit)
+        gen_first_ssp       :out  std_logic
     );
     end component;
 
@@ -4134,7 +4223,10 @@ package can_components is
         txtb_state             :out  std_logic_vector(3 downto 0);
 
         -- TXT Buffer is available to be locked by CAN Core for transmission
-        txtb_available         :out  std_logic
+        txtb_available         :out  std_logic;
+        
+        -- UnMask content of TXT Buffer RAM
+        txtb_unmask_data_ram   :out  std_logic
     );             
     end component;
 
