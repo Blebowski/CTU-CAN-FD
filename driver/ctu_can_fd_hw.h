@@ -907,6 +907,19 @@ static inline union ctu_can_fd_debug_register
  */
 u64 ctucan_hw_read_timestamp(struct ctucan_hw_priv *priv);
 
+/**
+ * ctucan_hw_configure_ssp - Configure Secondary sample point usage and
+ *			     position.
+ *
+ * @priv: Private info
+ * @enable_ssp Enable Secondary Sampling point. When false, regular sampling
+ *	       point is used.
+ * @use_trv_delay Add Transmitter delay to secondary sampling point position.
+ * @ssp_offset Position of secondary sampling point.
+ */
+void ctucan_hw_configure_ssp(struct ctucan_hw_priv *priv, bool enable_ssp,
+			     bool use_trv_delay, int ssp_offset);
+
 extern const struct can_bittiming_const ctu_can_fd_bit_timing_max;
 extern const struct can_bittiming_const ctu_can_fd_bit_timing_data_max;
 

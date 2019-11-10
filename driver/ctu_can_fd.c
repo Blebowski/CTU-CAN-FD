@@ -173,6 +173,47 @@ static int ctucan_set_data_bittiming(struct net_device *ndev)
 }
 
 /**
+ * ctucan_set_secondary_sample_point - CAN set secondary sample point routine
+ * @ndev:	Pointer to net_device structure
+ *
+ * Return: 0 on success and failure value on error
+ */
+static int ctucan_set_secondary_sample_point(struct net_device *ndev)
+{
+	struct ctucan_priv *priv = netdev_priv(ndev);
+	struct can_bittiming *dbt = &priv->can.data_bittiming;
+	int ssp_offset = 0;
+	bool ssp_ena;
+
+	netdev_dbg(ndev, "ctucan_set_secondary_sample_point");
+
+	if (ctucan_hw_is_enabled(&priv->p)) {
+		netdev_alert(ndev,
+			     "BUG! Cannot set SSP - CAN is enabled\n");
+		return -EPERM;
+	}
+
+	// Use for bit-rates above 1 Mbits/s
+	if (dbt->bitrate > 1000000){
+		ssp_ena = true;
+
+		// Calculate SSP in minimal time quanta
+		ssp_offset = (priv->can.clock.freq / 1000) *
+			      dbt->sample_point / dbt->bitrate;
+
+		if (ssp_offset > 127){
+			netdev_warn(ndev, "SSP offset saturated to 127\n");
+			ssp_offset = 127;
+		}
+	} else
+		ssp_ena = false;
+
+	ctucan_hw_configure_ssp(&priv->p, ssp_ena, true, ssp_offset);
+
+	return 0;
+}
+
+/**
  * ctucan_chip_start - This the drivers start routine
  * @ndev:	Pointer to net_device structure
  *
@@ -203,6 +244,10 @@ static int ctucan_chip_start(struct net_device *ndev)
 		return err;
 
 	err = ctucan_set_data_bittiming(ndev);
+	if (err < 0)
+		return err;
+
+	err = ctucan_set_secondary_sample_point(ndev);
 	if (err < 0)
 		return err;
 

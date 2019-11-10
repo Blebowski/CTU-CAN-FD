@@ -761,4 +761,23 @@ u64 ctucan_hw_read_timestamp(struct ctucan_hw_priv *priv)
 	return (((u64)ts_high_2.u32) << 32) | ((u64)ts_low.u32);
 }
 
+void ctucan_hw_configure_ssp(struct ctucan_hw_priv *priv, bool enable_ssp,
+			     bool use_trv_delay, int ssp_offset)
+{
+	union ctu_can_fd_trv_delay_ssp_cfg ssp_cfg;
+
+	ssp_cfg.u32 = 0;
+	if (enable_ssp){
+		if (use_trv_delay)
+			ssp_cfg.s.ssp_src = SSP_SRC_MEAS_N_OFFSET;
+		else
+			ssp_cfg.s.ssp_src = SSP_SRC_OFFSET;
+	} else {
+		ssp_cfg.s.ssp_src = SSP_SRC_NO_SSP;
+	}
+
+	ssp_cfg.s.ssp_offset = (uint32_t)ssp_offset;
+	priv->write_reg(priv, CTU_CAN_FD_SSP_CFG, ssp_cfg.u32);
+}
+
 // TODO: AL_CAPTURE and ERROR_CAPTURE
