@@ -1197,7 +1197,7 @@ begin
             -- expires!
             -------------------------------------------------------------------
             when s_pc_reintegrating =>            
-                if (reinteg_ctr_expired = '1') then
+                if (reinteg_ctr_expired = '1' and ctrl_ctr_zero = '1') then
                     next_state <= s_pc_idle;
                 end if;
                 
@@ -2339,7 +2339,9 @@ begin
                     ctrl_ctr_pload_val <= C_INTEGRATION_DURATION;    
                 end if;
 
-                if (reinteg_ctr_expired = '1') then
+                if (reinteg_ctr_expired = '1' and ctrl_ctr_zero = '1' and
+                    rx_trigger = '1')
+                then
                     set_idle_i <= '1';
                     set_err_active_i <= '1';
                     load_init_vect_i <= '1';
