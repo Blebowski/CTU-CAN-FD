@@ -92,7 +92,7 @@ feature:
         mode_fd_enable:
         mode_rst:
         mode_test:
-        # fault_confinement:
+        fault_state:
         forbid_fd:
         int_rx:
         int_tx:
