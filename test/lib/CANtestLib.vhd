@@ -3352,10 +3352,12 @@ package body CANtestLib is
         outcome := true;
 
         if (frame_A.frame_format /= frame_B.frame_format) then
+            info("Frame format (FDF) mismatch");
             outcome := false;
         end if;
 
         if (frame_A.ident_type /= frame_B.ident_type) then
+            info("Identifier type (IDE) mismatch");
             outcome := false;
         end if;
 
@@ -3363,6 +3365,7 @@ package body CANtestLib is
         -- no RTR bit!
         if (frame_A.frame_format = NORMAL_CAN) then
             if (frame_A.rtr /= frame_B.rtr) then
+                info("Remote transmission request (RTR) mismatch");
                 outcome := false;
             end if;
         end if;
@@ -3370,25 +3373,25 @@ package body CANtestLib is
         -- BRS bit is compared only in FD frame
         if (frame_A.frame_format = FD_CAN) then
             if (frame_A.brs /= frame_B.brs) then
+                info("Bit-rate shift (BRS) mismatch");
                 outcome := false;
             end if;
         end if;
 
         -- Received word count
         if (frame_A.rwcnt /= frame_B.rwcnt) then
+            info("Read word count (RWCNT) mismatch");
             outcome := false;
         end if;
 
-        -- DLC is compared only in non-RTR frames!
-        -- In RTR frames it does not necessarily have to be equal due to
-        -- RTR-pref feature (though it should be zero in normal controllers).
-        if ((frame_A.rtr = NO_RTR_FRAME or frame_A.frame_format = FD_CAN)
-            and (frame_A.dlc /= frame_B.dlc))
-        then
+        -- DLC comparison
+        if (frame_A.dlc /= frame_B.dlc) then
+            info("Data length code (DLC) mismatch");
             outcome := false;
         end if;
 
         if (frame_A.identifier /= frame_B.identifier) then
+            info("Identifier mismatch");
             outcome := false;
         end if;
 
@@ -3401,6 +3404,7 @@ package body CANtestLib is
             then
                 for i in 0 to (frame_A.data_length - 1) loop
                     if (frame_A.data(i) /= frame_B.data(i)) then
+                        info("Data byte: " & integer'image(i) & " mismatch!");
                         outcome  := false;
                     end if;
                 end loop;
