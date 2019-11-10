@@ -120,8 +120,8 @@ begin
                           else
                       '0';
 
-    -- Counter is expired when 128 is reached
-    reinteg_ctr_expired <= '1' when (reinteg_ctr_q = 128) else
+    -- Counter is expired when 127 is reached (counted 128 * 11 bits)
+    reinteg_ctr_expired <= '1' when (reinteg_ctr_q = 127) else
                            '0';
 
     ---------------------------------------------------------------------------
