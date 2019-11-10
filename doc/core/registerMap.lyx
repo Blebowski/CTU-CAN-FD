@@ -40549,14 +40549,6 @@ cellcolor{cyan}
 \begin_inset Text
 
 \begin_layout Plain Layout
-0\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" bottomline="true" leftline="true" topline="true" usebox="none" valignment="top">
-\begin_inset Text
-
-\begin_layout Plain Layout
 1\end_layout
 
 \end_inset
@@ -40566,6 +40558,14 @@ cellcolor{cyan}
 
 \begin_layout Plain Layout
 0\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" bottomline="true" leftline="true" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+1\end_layout
 
 \end_inset
 </cell>
