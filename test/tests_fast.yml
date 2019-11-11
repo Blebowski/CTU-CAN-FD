@@ -71,7 +71,7 @@ feature:
         int_ewl:
         int_do:
         int_fcs:
-        # invalid_configs:
+        invalid_configs:
         # overload:
         retr_limit:
         retr_limit_2:
