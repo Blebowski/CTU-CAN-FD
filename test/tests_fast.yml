@@ -50,6 +50,7 @@ feature:
         alc_srr_rtr_2:
         alc_ide:
         alc_rtr_r0:
+        btr:
         bus_start:
         byte_enable:
         command_rrb:
