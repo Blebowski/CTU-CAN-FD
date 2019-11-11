@@ -78,6 +78,7 @@ feature:
         retr_limit_3:
         one_shot:
         no_sof_tx:
+        rec_saturation:
         rx_status:
         rx_buf_empty_read:
         tx_counter:
