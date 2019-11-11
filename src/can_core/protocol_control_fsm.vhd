@@ -745,7 +745,8 @@ begin
                           else
                       '0';
 
-    no_data_transmitter <= '1' when (tran_dlc = "0000" or tran_is_rtr = RTR_FRAME)
+    no_data_transmitter <= '1' when (tran_dlc = "0000" or 
+                                    (tran_is_rtr = RTR_FRAME and tran_frame_type = NORMAL_CAN))
                                else
                            '0';
 
