@@ -35,7 +35,11 @@
 
 #include "ctu_can_fd.h"
 
-#define DRIVER_NAME	"ctucanfd"
+MODULE_LICENSE("GPL");
+MODULE_AUTHOR("Martin Jerabek");
+MODULE_DESCRIPTION("CTU CAN FD for platform");
+
+#define DRV_NAME	"ctucanfd"
 
 static void ctucan_platform_set_drvdata(struct device *dev,
 										struct net_device *ndev)
@@ -135,7 +139,7 @@ static struct platform_driver ctucanfd_driver = {
 	.probe	= ctucan_platform_probe,
 	.remove	= ctucan_platform_remove,
 	.driver	= {
-		.name = DRIVER_NAME,
+		.name = DRV_NAME,
 		.pm = &ctucan_dev_pm_ops,
 		.of_match_table	= ctucan_of_match,
 	},

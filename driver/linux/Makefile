@@ -27,7 +27,9 @@ default:
 	$(MAKE) $(MAKEARGS) M=$$PWD
 ifneq ($(INSTALL_DIR),)
 	-rm -f $(INSTALL_DIR)/ctucanfd.ko
+	-rm -f $(INSTALL_DIR)/ctucanfd_platform.ko
 	cp ctucanfd.ko $(INSTALL_DIR)/
+	cp ctucanfd_platform.ko $(INSTALL_DIR)/
 endif
 
 CTUCANF_SOURCES = ctu_can_fd.c ctu_can_fd_hw.c ctu_can_fd_frame.h ctu_can_fd_hw.h ctu_can_fd_regs.h ctu_can_fd_platform.c ctu_can_fd_pci.c

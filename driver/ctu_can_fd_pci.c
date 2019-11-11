@@ -32,6 +32,12 @@
 
 #include "ctu_can_fd.h"
 
+MODULE_LICENSE("GPL");
+MODULE_AUTHOR("Martin Jerabek");
+MODULE_DESCRIPTION("CTU CAN FD for PCI bus");
+
+#define DRV_NAME	"ctucanfd_pci"
+
 #ifndef PCI_DEVICE_DATA
 #define PCI_DEVICE_DATA(vend, dev, data) \
 .vendor = PCI_VENDOR_ID_##vend, \

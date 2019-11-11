@@ -44,6 +44,12 @@
 #include "ctu_can_fd.h"
 #include "ctu_can_fd_regs.h"
 
+MODULE_LICENSE("GPL");
+MODULE_AUTHOR("Martin Jerabek");
+MODULE_DESCRIPTION("CTU CAN FD interface");
+
+#define DRV_NAME "ctucanfd"
+
 static const char *ctucan_state_strings[] = {
 	"CAN_STATE_ERROR_ACTIVE",
 	"CAN_STATE_ERROR_WARNING",
@@ -954,6 +960,7 @@ int ctucan_suspend(struct device *dev)
 
 	return 0;
 }
+EXPORT_SYMBOL(ctucan_suspend);
 
 int ctucan_resume(struct device *dev)
 {
@@ -971,6 +978,7 @@ int ctucan_resume(struct device *dev)
 
 	return 0;
 }
+EXPORT_SYMBOL(ctucan_resume);
 
 int ctucan_probe_common(struct device *dev, void __iomem *addr,
 		int irq, unsigned int ntxbufs, unsigned long can_clk_rate,
@@ -1086,7 +1094,20 @@ err_free:
 	free_candev(ndev);
 	return ret;
 }
+EXPORT_SYMBOL(ctucan_probe_common);
 
-MODULE_LICENSE("GPL");
-MODULE_AUTHOR("Martin Jerabek");
-MODULE_DESCRIPTION("CTU CAN FD interface");
+static __init int ctucan_init(void)
+{
+        printk(KERN_INFO "%s CAN netdevice driver\n", DRV_NAME);
+
+        return 0;
+}
+
+module_init(ctucan_init);
+
+static __exit void ctucan_exit(void)
+{
+        printk(KERN_INFO "%s: driver removed\n", DRV_NAME);
+}
+
+module_exit(ctucan_exit);
