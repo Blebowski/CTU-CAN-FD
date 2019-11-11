@@ -51,6 +51,7 @@ feature:
         alc_ide:
         alc_rtr_r0:
         bus_start:
+        byte_enable:
         command_rrb:
         command_cdo:
         command_frcrst:
@@ -65,14 +66,12 @@ feature:
         mode_rst:
         mode_test:
         fault_state:
-        forbid_fd:
         int_rx:
         int_tx:
         int_ewl:
         int_do:
         int_fcs:
         invalid_configs:
-        # overload:
         retr_limit:
         retr_limit_2:
         retr_limit_3:
@@ -94,9 +93,6 @@ feature:
         # tran_delay:
         tx_arb_time_tran:
         # timestamp_options:
-        byte_enable:
-        data_overrun_clear:
-            iterations: 1
         # txtb_state:
         #     iterations: 1
         # message_filter:
