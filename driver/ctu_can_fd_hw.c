@@ -777,7 +777,7 @@ void ctucan_hw_configure_ssp(struct ctucan_hw_priv *priv, bool enable_ssp,
 	}
 
 	ssp_cfg.s.ssp_offset = (uint32_t)ssp_offset;
-	priv->write_reg(priv, CTU_CAN_FD_SSP_CFG, ssp_cfg.u32);
+	priv->write_reg(priv, CTU_CAN_FD_TRV_DELAY, ssp_cfg.u32);
 }
 
 // TODO: AL_CAPTURE and ERROR_CAPTURE
