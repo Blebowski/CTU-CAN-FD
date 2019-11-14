@@ -1921,8 +1921,8 @@ package CANtestLib is
     --  mem_bus         Avalon memory bus to execute the access on.
     ----------------------------------------------------------------------------
     procedure CAN_configure_ssp(
-        variable ssp_source     : in    SSP_set_command_type;
-        variable ssp_offset_val : in   std_logic_vector(6 downto 0);
+        constant ssp_source     : in    SSP_set_command_type;
+        constant ssp_offset_val : in   std_logic_vector(6 downto 0);
         constant ID             : in    natural range 0 to 15;
         signal   mem_bus        : inout Avalon_mem_type
     );
@@ -4740,8 +4740,8 @@ package body CANtestLib is
 
 
     procedure CAN_configure_ssp(
-        variable ssp_source     : in    SSP_set_command_type;
-        variable ssp_offset_val : in    std_logic_vector(6 downto 0);
+        constant ssp_source     : in    SSP_set_command_type;
+        constant ssp_offset_val : in    std_logic_vector(6 downto 0);
         constant ID             : in    natural range 0 to 15;
         signal   mem_bus        : inout Avalon_mem_type
     ) is
