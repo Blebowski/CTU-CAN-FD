@@ -105,7 +105,7 @@ package body btr_feature is
         variable clock_per_bit      :       natural := 0;
 
         variable clock_meas         :       natural := 0;
-
+        variable frames_equal       :       boolean;
     begin
         o.outcome := true;
 
@@ -185,6 +185,7 @@ package body btr_feature is
                           bus_timing.ph2_nbt) * bus_timing.tq_nbt;
 
         CAN_configure_timing(bus_timing, ID_1, mem_bus(1));
+        CAN_configure_timing(bus_timing, ID_2, mem_bus(2));
 
         CAN_turn_controller(true, ID_1, mem_bus(1));
         CAN_turn_controller(true, ID_2, mem_bus(2));
@@ -221,11 +222,11 @@ package body btr_feature is
         --    Node 1!
         -----------------------------------------------------------------------
         CAN_generate_frame(rand_ctr, CAN_frame_1);
-        CAN_send_frame(CAN_frame, 1, ID_1, mem_bus(1), frame_sent);
+        CAN_send_frame(CAN_frame_1, 1, ID_1, mem_bus(1), frame_sent);
         CAN_wait_frame_sent(ID_2, mem_bus(2));
         CAN_read_frame(CAN_frame_2, ID_2, mem_bus(2));
 
-        CAN_compare_frames(CAN_frame_1, CAN_frame_2, frames_equal);
+        CAN_compare_frames(CAN_frame_1, CAN_frame_2, false, frames_equal);
         check(frames_equal, "TX/RX frame equal!");
 
   end procedure;
