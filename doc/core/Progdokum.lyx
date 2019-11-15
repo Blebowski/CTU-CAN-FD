@@ -3093,6 +3093,16 @@ Note
  buffer with valid CAN frame for transmission.
 \end_layout
 
+\begin_layout Description
+Note
+\begin_inset space ~
+\end_inset
+
+3 CTU CAN FD only transmitts only reactive Overload frames.
+ There are no internal conditions in CTU CAN FD which would cause transmission
+ of Overload frame.
+\end_layout
+
 \begin_layout Section
 CAN frame reception
 \end_layout
