@@ -627,6 +627,53 @@ begin
   -- psl txt_buf_sim_chng_and_lock_cov : cover
   --    (select_index_changed = '1' and txtb_hw_cmd.lock = '1');
 
+  ----------------------------------------------------------------------------
+  -- Functional coverage for Priority decoder!
+  --
+  -- Following functional coverage takes into accoount only 4 TXT Buffers!
+  ----------------------------------------------------------------------------
+
+  -- Combinations in first comparator!
+    
+  -- psl prio_dec_stage_1_cov_1 : cover
+  --  ((unsigned(txtb_prorities(0)) > unsigned(txtb_prorities(1))) and
+  --   txtb_available(0) = '1' and txtb_available(1) = '1');
+    
+  -- psl prio_dec_stage_1_cov_2 : cover
+  --  ((unsigned(txtb_prorities(0)) < unsigned(txtb_prorities(1))) and
+  --   txtb_available(0) = '1' and txtb_available(1) = '1');
+    
+  -- psl prio_dec_stage_1_cov_3 : cover
+  --  ((unsigned(txtb_prorities(0)) = unsigned(txtb_prorities(1))) and
+  --   txtb_available(0) = '1' and txtb_available(1) = '1');
+    
+  -- psl prio_dec_stage_1_cov_4 : cover
+  --  (txtb_available(0) = '0' and txtb_available(1) = '1');
+    
+  -- psl prio_dec_stage_1_cov_5 : cover
+  --  (txtb_available(0) = '1' and txtb_available(1) = '0');
+        
+  -- Combinations in second comparator!
+    
+  -- psl prio_dec_stage_2_cov_1 : cover
+  --  ((unsigned(txtb_prorities(2)) > unsigned(txtb_prorities(3))) and
+  --   txtb_available(2) = '1' and txtb_available(3) = '1');
+    
+  -- psl prio_dec_stage_2_cov_2 : cover
+  --  ((unsigned(txtb_prorities(2)) < unsigned(txtb_prorities(3))) and
+  --   txtb_available(2) = '1' and txtb_available(3) = '1');
+    
+  -- psl prio_dec_stage_2_cov_3 : cover
+  --  ((unsigned(txtb_prorities(2)) = unsigned(txtb_prorities(3))) and
+  --   txtb_available(2) = '1' and txtb_available(3) = '1');
+   
+  -- psl prio_dec_stage_2_cov_4 : cover
+  --  (txtb_available(2) = '0' and txtb_available(3) = '1');
+    
+  -- psl prio_dec_stage_2_cov_5 : cover
+  --  (txtb_available(2) = '1' and txtb_available(3) = '0');
+
+
   -----------------------------------------------------------------------------
   -- Assertions
   -----------------------------------------------------------------------------
