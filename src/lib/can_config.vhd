@@ -115,7 +115,7 @@ package can_config is
     constant C_USE_SSP_SATURATION   : boolean := true;
 
     -- Width of SSP counters
-    constant C_SSP_CTRS_WIDTH       : natural := 14;
+    constant C_SSP_CTRS_WIDTH       : natural := 15;
 
     -- CRC polynomials
     constant C_CRC15_POL : std_logic_vector(15 downto 0) := x"C599";
