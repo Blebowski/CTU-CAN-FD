@@ -2897,21 +2897,138 @@ begin
 
     -- <RELEASE_OFF>
     -----------------------------------------------------------------------
+    -----------------------------------------------------------------------
     -- Assertions
+    -----------------------------------------------------------------------
     -----------------------------------------------------------------------
     
     -- psl default clock is rising_edge(clk_sys);
 
-    -- psl no_simul_crc_17_crc_21 : assert never
+    -- psl no_simul_crc_17_crc_21_asrt : assert never
     --  (crc_use_17 = '1' and crc_use_21 = '1')
     --  report "Can't use simultaneously CRC 17 and CRC 21"
     --  severity error;
     
-    -- psl no_simul_rx_trigger_err_req : assert never
+    -- psl no_simul_rx_trigger_err_req_asrt : assert never
     --  (rx_trigger = '1' and err_frm_req = '1')
     --  report "RX Trigger and Error frame request can't be active at once " &
     --  " since they should occur in different pipeline stages!"
     --  severity error;
+
+    -- psl no_simul_rx_rtr_and_fd_frame_asrt : assert never
+    --  (rec_is_rtr = RTR_FRAME and rec_frame_type = FD_CAN)
+    --  report "RTR and FDF can't be received simultaneously!"
+    --  severity error;
+
+
+    -- Error frame requests can't arrive during following frame fields:
+    --  OFF, Integrating, reintegrating, Idle, Intermission (dominant bit
+    --  is interpreted as Overload or SOF of new frame), Suspend
+    --  (dominant bit is new frame), Error delimiter wait (Accepts 
+    --  both dominant and recessive and waits for recessive)
+    
+    -- psl no_err_frm_req_in_off : assert never
+    --  (err_frm_req = '1') and
+    --  (curr_state = s_pc_off or curr_state = s_pc_integrating or
+    --   curr_state = s_pc_idle or curr_state = s_pc_intermission or
+    --   curr_state = s_pc_suspend or curr_state = s_pc_reintegrating or
+    --   curr_state = s_pc_err_delim_wait)
+    --   
+    --  report "Error frame request in invalid Protocol control field!"
+    --  severity error;
+
+    -----------------------------------------------------------------------
+    -----------------------------------------------------------------------
+    -- Functional coverage
+    -----------------------------------------------------------------------
+    -----------------------------------------------------------------------
+
+    -- Error frame request in various parts of CAN frame!
+
+    -- psl err_frm_req_in_sof_cov : cover
+    -- (curr_state = s_pc_sof and err_frm_req);
+
+    -- psl err_frm_req_in_s_pc_base_id_in_base_cov : cover
+    -- (curr_state = s_pc_base_id and err_frm_req);
+    
+    -- psl err_frm_req_in_s_pc_ext_id_in_ext_id_cov : cover
+    -- (curr_state = s_pc_ext_id and err_frm_req);
+    
+    -- psl err_frm_req_in_s_pc_ext_id_in_rtr_srr_r1_cov : cover
+    -- (curr_state = s_pc_rtr_srr_r1 and err_frm_req);
+
+    -- psl err_frm_req_in_s_pc_ext_id_in_ide_cov : cover
+    -- (curr_state = s_pc_ide and err_frm_req);
+
+    -- psl err_frm_req_in_s_pc_rtr_r1_cov : cover
+    -- (curr_state = s_pc_rtr_r1 and err_frm_req);
+
+    -- psl err_frm_req_in_s_pc_edl_r1_cov : cover
+    --  (curr_state = s_pc_edl_r1 and err_frm_req);
+    
+    -- psl err_frm_req_in_s_pc_r0_ext_cov : cover
+    --  (curr_state = s_pc_r0_ext and err_frm_req);
+    
+    -- psl err_frm_req_in_s_pc_r0_fd_cov : cover
+    --  (curr_state = s_pc_r0_fd and err_frm_req);
+
+    -- psl err_frm_req_in_s_pc_edl_r0_cov : cover
+    --  (curr_state = s_pc_edl_r0 and err_frm_req);
+
+    -- psl err_frm_req_in_s_pc_esi_cov : cover
+    --  (curr_state = s_pc_esi and err_frm_req);
+
+    -- psl err_frm_req_in_s_pc_dlc_cov : cover
+    --  (curr_state = s_pc_dlc and err_frm_req);
+
+    -- psl err_frm_req_in_s_pc_data_cov : cover
+    --  (curr_state = s_pc_data and err_frm_req);
+
+    -- psl err_frm_req_in_s_pc_stuff_count_cov : cover
+    --  (curr_state = s_pc_stuff_count and err_frm_req);
+
+    -- psl err_frm_req_in_s_pc_crc_cov : cover
+    --  (curr_state = s_pc_crc and err_frm_req);
+
+    -- psl err_frm_req_in_s_pc_crc_delim_cov : cover
+    --  (curr_state = s_pc_crc_delim and err_frm_req);
+
+    -- psl err_frm_req_in_s_pc_ack_cov : cover
+    --  (curr_state = s_pc_ack and err_frm_req);
+
+    -- psl err_frm_req_in_s_pc_eof_cov : cover
+    --  (curr_state = s_pc_eof and err_frm_req);
+
+    -- psl err_frm_req_in_s_pc_act_err_flag_cov : cover
+    --  (curr_state = s_pc_act_err_flag and err_frm_req);
+
+    -- psl err_frm_req_in_s_pc_pas_err_flag_cov : cover
+    --  (curr_state = s_pc_pas_err_flag and err_frm_req);
+
+    -- psl err_frm_req_in_s_pc_ovr_flag_cov : cover
+    --  (curr_state = s_pc_ovr_flag and err_frm_req);
+
+    -- psl err_frm_req_in_s_pc_ovr_delim_cov : cover
+    --  (curr_state = s_pc_ovr_delim and err_frm_req);
+
+    -- psl err_frm_req_in_s_pc_err_delim_cov : cover
+    --  (curr_state = s_pc_err_delim and err_frm_req);
+
+
+    -- Overload frame requests
+    
+    -- psl ovr_from_eof_cov : cover
+    --  (curr_state = s_pc_eof and next_state = s_pc_ovr_flag);
+    
+    -- psl ovr_from_intermission_cov : cover
+    --  (curr_state = s_pc_intermission and next_state = s_pc_ovr_flag);
+    
+    -- psl ovr_from_err_delim : cover
+    --  (curr_state = s_pc_err_delim and next_state = s_pc_ovr_flag);
+    
+    -- psl ovr_from_ovr_delim_cov : cover
+    --  (curr_state = s_pc_ovr_delim and next_state = s_pc_ovr_flag);
+
 
     -- <RELEASE_ON>
 end architecture;
