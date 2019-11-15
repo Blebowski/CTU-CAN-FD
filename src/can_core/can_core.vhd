@@ -892,7 +892,7 @@ begin
     ----------------------------------------------------------------------------
     stat_bus(511 downto 384) <= (OTHERS => '0');
     stat_bus(299 downto 297) <= (OTHERS => '0');
-    stat_bus(187 downto 188) <= (OTHERS => '0');
+    stat_bus(188 downto 187) <= (OTHERS => '0');
     stat_bus(98 downto 90)   <= (OTHERS => '0');
     stat_bus(60 downto 32)   <= (OTHERS => '0');
     stat_bus(113)            <= '0';
