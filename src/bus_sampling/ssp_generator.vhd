@@ -71,7 +71,7 @@ entity ssp_generator is
         G_RESET_POLARITY     :      std_logic := '0';
 
         -- Width of SSP generator counters (BTMC, SSPC)
-        G_SSP_CTRS_WIDTH     :      natural := 14
+        G_SSP_CTRS_WIDTH     :      natural := 15
     );
     port(
         ------------------------------------------------------------------------
