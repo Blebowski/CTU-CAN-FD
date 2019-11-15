@@ -171,7 +171,7 @@ begin
 
                 -- Simultaneous "lock" and abort -> transmit, but
                 -- with abort pending
-                if (txtb_sw_cmd.set_abt = '1' and sw_cbs = '1') then
+                if (abort_applied = '1') then
                     next_state     <= s_txt_ab_prog;
                 else
                     next_state     <= s_txt_tx_prog;
@@ -379,9 +379,14 @@ begin
     -- psl txtb_fsm_tx_ok_cov : cover (curr_state = s_txt_ok);
     
     -- Simultaneous HW and SW Commands
-    -- psl txtb_hw_sw_cmd_hazard_cov : cover
-    --  (txtb_hw_cmd.lock = '1' and hw_cbs = '1' and
-    --   txtb_sw_cmd.set_abt = '1' and sw_cbs = '1');
+    --
+    -- psl txtb_hw_sw_cmd_txt_ready_hazard_cov : cover
+    --  (txtb_hw_cmd.lock = '1' and hw_cbs = '1' and abort_applied = '1' and
+    --   curr_state = s_txt_ready);
+    --
+    -- psl txtb_hw_sw_cmd_txt_tx_prog_hazard_cov : cover
+    --  (txtb_hw_cmd.unlock = '1' and hw_cbs = '1' and abort_applied = '1' and
+    --   curr_state = s_txt_tx_prog);
     
     ----------------------------------------------------------------------------
     -- Assertions
