@@ -122,7 +122,9 @@ package body btr_feature is
         rand_int_v(rand_ctr, 127, bus_timing.prop_nbt);
         rand_int_v(rand_ctr, 63, bus_timing.ph1_nbt);
         rand_int_v(rand_ctr, 63, bus_timing.ph2_nbt);
-        rand_int_v(rand_ctr, 255, bus_timing.tq_nbt);
+        
+        -- Longer TQ is possible but test run-time is killing us!
+        rand_int_v(rand_ctr, 63, bus_timing.tq_nbt);
         rand_int_v(rand_ctr, 33, bus_timing.sjw_nbt);
 
         -----------------------------------------------------------------------
