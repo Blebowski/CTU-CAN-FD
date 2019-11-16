@@ -235,7 +235,7 @@ def get_seed(cfg) -> int:
     if 'seed' in cfg and 'randomize' in cfg:
         log.warning('Both "seed" and "randomize" are set - seed takes precedence')
     if 'seed' in cfg:
-        seed = int(cfg['seed'], 0)
+        seed = int(str(cfg['seed']), 0)
     elif cfg.get('randomize', False):
         # only 31 bits
         seed = int(random.random() * 2**31) & 0x7FFFFFFF
