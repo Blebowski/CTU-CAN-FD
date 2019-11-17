@@ -41,50 +41,26 @@
 
 --------------------------------------------------------------------------------
 -- Purpose:
---  Buffer operation feature test. Verifies states of TXT Buffer and application
---  of "set_ready", "set_empty" and "set_abort" commands on TXT Buffer.
+--  TXT Buffer Set empty - SW command (TX_COMMAND) feature test.
 --
---  Test sequence:
---      Part 1 (set_empty):
---          1. Generate CAN Frame and insert to Node 1 for transmission.
---          2. Wait till transmission starts. Check that TXT Buffer is in
---             "TX in progress".
---          3. Wait till transmission ends. Check that TXT Buffer is in "Done".
---          4. Send "set_empty" command.
---          5. Verify that TXT Buffer ends up "Empty" state!
---      Part 2 (set_abort):
---          1. Insert CAN Frame to Node 1 and send "set_ready" command.
---          2. Wait till Transmission starts.
---          3. Send "set_abort" command.
---          4. Verify that TX Buffer is in "Abort in Progress".
---          5. Wait till transmission ends.
---          6. Verify that TX Buffer ended up in "Aborted".
---      Part 3 (set_ready, set_abort):
---          1. Insert 1 frame to TXT Buffer "n" of Node 1.
---          2. Send "set_ready" command on TXT Buffer "n".
---          3. Wait till transmission starts.
---          4. Insert the frame into "n+1" TXT Buffer.
---          5. Send "set_ready" command on TXT Buffer "n+1".
---          6. Verify that TXT Buffer "n+1" is in "TX Ready".
---          7. Send "send_abort" command to TXT Buffer "n+1".
---          8. Verify that TXT Buffer is "Aborted". Wait till bus is idle.
---      Part 4 (Error state):
---          1. Configure Retransmitt limit to e.g. 5 on Node 1.
---          2. Forbid Acknowledge on Node 2.
---          3. Erase error counters on Node 1 and Node 2.
---          4. Insert Frame to TXT Buffer of Node 1.
---          4. Give "set_ready" command to Node 1.
---          5. Wait till transmission starts and ends for 5 times. After this
---             amount TXT Buffer with the frame should be in "TX Error".
---      Part 5 (Different TXT Buffers):
---          Repeat Parts 1 to 4 for all TXT Buffers via simple for loop!
+-- Verifies:
+--  1. Set Empty command moves TXT Buffer from TX OK, TX Error, Aborted to Empty.
 --
---      One iteration of this test is enough. This test is namely to improve
---      code coverage for TXT Buffer registers!
---
+-- Test sequence:
+--  1. Check TXT Buffer is empty. Issue Set empty and check it is still empty.
+--  2. Generate random CAN frame, send it from TXT Buffer and wait until it is
+--     received. Check TXT Buffer is in TX OK. Issue Set Empty command and
+--     check TXT Buffer is empty.
+--  3. Generate random CAN frame, send it fom TXT Buffer and issue Set Abort
+--     command. Wait until frame is over and check TXT Buffer is Aborted. Issue
+--     Set Empty command and check it becomes Empty.
+--  4. Set One shot mode in Node 1. Forbid ACK in Node 2. Send CAN frame by Node
+--     1. Wait until CAN frame is sent and check TXT Buffer from which it was
+--     sent ended in TX Error. Issue Set empty command and check TXT Buffer is
+--     Empty.
 --------------------------------------------------------------------------------
 -- Revision History:
---    11.9.2018   Created file
+--   16.11.2019   Created file
 --------------------------------------------------------------------------------
 
 context work.ctu_can_synth_context;
@@ -92,8 +68,8 @@ context work.ctu_can_test_context;
 
 use lib.pkg_feature_exec_dispath.all;
 
-package txtb_state_feature is
-    procedure txtb_state_feature_exec(
+package tx_cmd_set_empty_feature is
+    procedure tx_cmd_set_empty_feature_exec(
         variable    o               : out    feature_outputs_t;
         signal      so              : out    feature_signal_outputs_t;
         signal      rand_ctr        : inout  natural range 0 to RAND_POOL_SIZE;
@@ -104,8 +80,8 @@ package txtb_state_feature is
 end package;
 
 
-package body txtb_state_feature is
-    procedure txtb_state_feature_exec(
+package body tx_cmd_set_empty_feature is
+    procedure tx_cmd_set_empty_feature_exec(
         variable    o               : out    feature_outputs_t;
         signal      so              : out    feature_signal_outputs_t;
         signal      rand_ctr        : inout  natural range 0 to RAND_POOL_SIZE;
@@ -122,186 +98,87 @@ package body txtb_state_feature is
         variable txt_state          :       SW_TXT_Buffer_state_type;
         variable error_counters     :       SW_error_counters := (0, 0, 0, 0);
         variable nxt_buffer         :       natural := 0;
+        variable buf_nr             :       natural;
+        variable mode_2             :       SW_mode := SW_mode_rst_val;
     begin
         o.outcome := true;
 
+        -- For whole test random TXT Buffer will be used!
+        rand_int_v(rand_ctr, 4, buf_nr);
+        if (buf_nr = 0) then
+            buf_nr := 1;
+        end if;
+        info("Testing with TXT Buffer: " & integer'image(buf_nr));
+
+        -----------------------------------------------------------------------
+        -- 1. Check TXT Buffer is empty. Issue Set empty and check it is still
+        --    empty.
+        -----------------------------------------------------------------------
+        info("Step 1");
+        get_tx_buf_state(buf_nr, txt_state, ID_1, mem_bus(1));
+        check(txt_state = buf_empty, "TXT Buffer empty upon start");
+        send_TXT_buf_cmd(buf_set_empty, buf_nr, ID_1, mem_bus(1));
+        get_tx_buf_state(buf_nr, txt_state, ID_1, mem_bus(1));
+        check(txt_state = buf_empty, "TXT Buffer still empty even post restart!");
+
         ------------------------------------------------------------------------
-        -- Generate CAN Frame to be used during the whole test.
-        -- Use RTR frame to make the test shorter.
-        -- Wait till the end of unit integration!
-        -- Disable Retransmitt limit Enable, so that TXT Buffers can end up
-        -- also in "TX Aborted" state!
+        -- 2. Generate random CAN frame, send it from TXT Buffer and wait until
+        --    it is received. Check TXT Buffer is in TX OK. Issue Set Empty
+        --    command and check TXT Buffer is empty.
         ------------------------------------------------------------------------
+        info("Step 2");
         CAN_generate_frame(rand_ctr, CAN_frame);
-        CAN_frame.rtr := RTR_FRAME;
-        CAN_frame.frame_format := NORMAL_CAN;
-        CAN_enable_retr_limit(false, 0, ID_1, mem_bus(1));
+        CAN_send_frame(CAN_frame, buf_nr, ID_1, mem_bus(1), frame_sent);
+        CAN_wait_frame_sent(ID_1, mem_bus(1));
 
-        for i in 1 to C_TXT_BUFFER_COUNT loop
+        get_tx_buf_state(buf_nr, txt_state, ID_1, mem_bus(1));
+        check(txt_state = buf_done, "TXT Buffer OK after frame sent!");
+        send_TXT_buf_cmd(buf_set_empty, buf_nr, ID_1, mem_bus(1));
+        wait for 11 ns; -- This command is pipelined, delay must be inserted!
+        get_tx_buf_state(buf_nr, txt_state, ID_1, mem_bus(1));
+        check(txt_state = buf_empty, "Set Empty: TX OK -> Empty");
 
-            info("Starting TXT Buffer " & integer'image(i) & " test!");
+        ------------------------------------------------------------------------
+        -- 3. Generate random CAN frame, send it fom TXT Buffer and issue Set
+        --    Abort command. Wait until frame is over and check TXT Buffer is
+        --    Aborted. Issue Set Empty command and check it becomes Empty.
+        ------------------------------------------------------------------------
+        info("Step 2");
+        CAN_generate_frame(rand_ctr, CAN_frame);
+        CAN_send_frame(CAN_frame, buf_nr, ID_1, mem_bus(1), frame_sent);
+        CAN_wait_tx_rx_start(true, false, ID_1, mem_bus(1));
+        send_TXT_buf_cmd(buf_set_abort, buf_nr, ID_1, mem_bus(1));
+        CAN_wait_bus_idle(ID_1, mem_bus(1));
 
-            --------------------------------------------------------------------
-            -- Part 1 (set_empty)
-            --------------------------------------------------------------------
-            info("Starting " & integer'image(i) & ".1");
+        get_tx_buf_state(buf_nr, txt_state, ID_1, mem_bus(1));
+        check(txt_state = buf_aborted, "TXT Buffer Aborted!");
+        send_TXT_buf_cmd(buf_set_empty, buf_nr, ID_1, mem_bus(1));
+        wait for 11 ns; -- This command is pipelined, delay must be inserted!
+        get_tx_buf_state(buf_nr, txt_state, ID_1, mem_bus(1));
+        check(txt_state = buf_empty, "Set Empty: Aborted -> Empty");
 
-            --------------------------------------------------------------------
-            -- Insert frame to Node 1, Wait until it starts transmitting
-            --------------------------------------------------------------------
-            CAN_send_frame(CAN_frame, i, ID_1, mem_bus(1), frame_sent);
-            CAN_wait_tx_rx_start(true, false, ID_1, mem_bus(1));
+        -----------------------------------------------------------------------
+        -- 4. Set One shot mode in Node 1. Forbid ACK in Node 2. Send CAN frame
+        --    by Node 1. Wait until CAN frame is sent and check TXT Buffer from
+        --    which it was sent ended in TX Error. Issue Set empty command and
+        --    check TXT Buffer is Empty.
+        -----------------------------------------------------------------------
+        info("Step 3");
+        CAN_enable_retr_limit(true, 0, ID_1, mem_bus(1));
+        mode_2.acknowledge_forbidden := true;
+        set_core_mode(mode_2, ID_2, mem_bus(2));
 
-            --------------------------------------------------------------------
-            -- Check that TXT Buffer state is "TX in progress"
-            --------------------------------------------------------------------
-            get_tx_buf_state(i, txt_state, ID_1, mem_bus(1));
-            check(txt_state = buf_tx_progress,
-                  "TXT Buffer " & integer'image(i) & " is not " &
-                  "'TX in Progress' as expected!");
-            CAN_wait_bus_idle(ID_1, mem_bus(1));
+        CAN_generate_frame(rand_ctr, CAN_frame);
+        CAN_send_frame(CAN_frame, buf_nr, ID_1, mem_bus(1), frame_sent);
+        CAN_wait_frame_sent(ID_1, mem_bus(1));
 
-            --------------------------------------------------------------------
-            -- Check that TXT Buffer state is "TX Done" after the transmission!
-            --------------------------------------------------------------------
-            get_tx_buf_state(i, txt_state, ID_1, mem_bus(1));
-            check(txt_state = buf_done,
-                  "TXT Buffer " & integer'image(i) & " is not " &
-                  "'TX Done' as expected!");
+        get_tx_buf_state(buf_nr, txt_state, ID_1, mem_bus(1));
+        check(txt_state = buf_failed, "TXT Buffer Failed!");
 
-            --------------------------------------------------------------------
-            -- Issue "set_empty" command and check that buffer is in "Empty"!
-            --------------------------------------------------------------------
-            send_TXT_buf_cmd(buf_set_empty, i, ID_1, mem_bus(1));
-            get_tx_buf_state(i, txt_state, ID_1, mem_bus(1));
-            check(txt_state = buf_empty,
-                  "TXT Buffer " & integer'image(i) & " is not " &
-                  "'Empty' as expected!");
-
-
-            --------------------------------------------------------------------
-            -- Part 2 (set_abort)
-            --------------------------------------------------------------------
-            info("Starting " & integer'image(i) & ".2");
-            --------------------------------------------------------------------
-            -- Insert CAN Frame and wait till transmission starts.
-            --------------------------------------------------------------------
-            CAN_send_frame(CAN_frame, i, ID_1, mem_bus(1), frame_sent);
-            CAN_wait_tx_rx_start(true, false, ID_1, mem_bus(1));
-
-            --------------------------------------------------------------------
-            -- Send "set_abort" command
-            --------------------------------------------------------------------
-            send_TXT_buf_cmd(buf_set_abort, i, ID_1, mem_bus(1));
-            get_tx_buf_state(i, txt_state, ID_1, mem_bus(1));
-            check(txt_state = buf_ab_progress,
-                  "TXT Buffer " & integer'image(i) & " is not " &
-                  "'Abort in progress' as expected!");
-
-            --------------------------------------------------------------------
-            -- Forbid ACK on Node 2 (not to end up in TXT OK)!
-            -- Wait till transmission end, check that TXT Buffer is in "Aborted"
-            --------------------------------------------------------------------
-            get_core_mode(mode, ID_2, mem_bus(2));
-            mode.acknowledge_forbidden := true;
-            set_core_mode(mode, ID_2, mem_bus(2));
-            
-            CAN_wait_bus_idle(ID_1, mem_bus(1));
-            get_tx_buf_state(i, txt_state, ID_1, mem_bus(1));
-            check(txt_state = buf_aborted,
-                 "TXT Buffer " & integer'image(i) & " is not " &
-                      "'Aborted' as expected!");
-
-            --------------------------------------------------------------------
-            -- Allow ACK Again for Node 2.
-            --------------------------------------------------------------------
-            mode.acknowledge_forbidden := false;
-            set_core_mode(mode, ID_2, mem_bus(2));
-
-
-            --------------------------------------------------------------------
-            -- Part 3 (set_ready)
-            --------------------------------------------------------------------
-            info("Starting " & integer'image(i) & ".3");
-            --------------------------------------------------------------------
-            -- Send CAN Frame by Node 1, TXT Buffer i.
-            -- Wait till transmission starts!
-            --------------------------------------------------------------------
-            CAN_send_frame(CAN_frame, i, ID_1, mem_bus(1), frame_sent);
-            CAN_wait_tx_rx_start(true, false, ID_1, mem_bus(1));
-
-            --------------------------------------------------------------------
-            -- Insert CAN Frame to Node 1, TXT Buffer i + 1.
-            -- Send "set_ready" command.
-            --------------------------------------------------------------------
-            nxt_buffer := (i mod C_TXT_BUFFER_COUNT) + 1;
-            CAN_insert_TX_frame(CAN_frame, nxt_buffer, ID_1, mem_bus(1));
-            send_TXT_buf_cmd(buf_set_ready, nxt_buffer, ID_1, mem_bus(1));
-
-            --------------------------------------------------------------------
-            -- Check that Buffer "n+1" is in "TX Ready"!
-            --------------------------------------------------------------------
-            get_tx_buf_state(nxt_buffer, txt_state, ID_1, mem_bus(1));
-            check(txt_state = buf_ready,
-                  "TXT Buffer " & integer'image(nxt_buffer) &
-                  " is not 'TX Ready' as expected!");
-
-            --------------------------------------------------------------------
-            -- Send "set_abort" command on Buffer "n+1" and check that
-            -- TXT Buffer ends up in "Aborted" state. 
-            --------------------------------------------------------------------
-            send_TXT_buf_cmd(buf_set_abort, nxt_buffer, ID_1, mem_bus(1));
-            get_tx_buf_state(nxt_buffer, txt_state, ID_1, mem_bus(1));
-            check(txt_state = buf_aborted,
-                  "TXT Buffer " & integer'image(nxt_buffer) &
-                  " is not 'Aborted' as expected!");
-            CAN_wait_bus_idle(ID_1, mem_bus(1));
-
-
-            --------------------------------------------------------------------
-            -- Part 4 (Error state)
-            --------------------------------------------------------------------
-            info("Starting " & integer'image(i) & ".4");
-            --------------------------------------------------------------------
-            -- Set "ACF" - Acknowledge forbidden on Node 2.
-            -- Set Retransmitt limit to 5 on Node 1.
-            --------------------------------------------------------------------
-            get_core_mode(mode, ID_2, mem_bus(2));
-            mode.acknowledge_forbidden := true;
-            set_core_mode(mode, ID_2, mem_bus(2));
-            CAN_enable_retr_limit(true, 5, ID_1, mem_bus(1));
-        
-            --------------------------------------------------------------------
-            -- Erase error counters on both nodes.
-            --------------------------------------------------------------------
-            set_error_counters(error_counters, ID_1, mem_bus(1));
-            set_error_counters(error_counters, ID_2, mem_bus(2));
-
-            --------------------------------------------------------------------
-            -- Send frame from Node 1. Wait till the frame is retransmitted
-            -- 6 (retransmitted 5 times) times!
-            --------------------------------------------------------------------
-            CAN_send_frame(CAN_frame, i, ID_1, mem_bus(1), frame_sent);
-            for i in 0 to 5 loop
-                CAN_wait_tx_rx_start(true, false, ID_1, mem_bus(1));
-                CAN_wait_bus_idle(ID_1, mem_bus(1));
-            end loop;
-
-            --------------------------------------------------------------------
-            -- Check that state of TXT Buffer is "TX Failed".
-            --------------------------------------------------------------------
-            get_tx_buf_state(i, txt_state, ID_1, mem_bus(1));
-            check(txt_state = buf_failed,
-                  "TXT Buffer " & integer'image(i) &
-                  " is not 'TX Failed' as expected!");
-
-            --------------------------------------------------------------------
-            -- Allow ACK Again for Node 2.
-            --------------------------------------------------------------------
-            mode.acknowledge_forbidden := false;
-            set_core_mode(mode, ID_2, mem_bus(2));
-
-        end loop;
+        send_TXT_buf_cmd(buf_set_empty, buf_nr, ID_1, mem_bus(1));
+        wait for 11 ns; -- This command is pipelined, delay must be inserted!
+        get_tx_buf_state(buf_nr, txt_state, ID_1, mem_bus(1));
+        check(txt_state = buf_empty, "Set Empty: TX Failed -> Empty");
 
   end procedure;
 
