@@ -41,24 +41,22 @@
 
 --------------------------------------------------------------------------------
 -- Purpose:
---  TXT Buffer Set ready - SW command (TX_COMMAND) feature test.
+--  TXT Buffer Set Abort - SW command (TX_COMMAND) feature test.
 --
 -- Verifies:
---  1. Set Ready command moves TXT Buffer from TX OK, TX Error, Aborted and 
---     Empty to Ready.
+--  1. Set Abort command moves TXT Buffer from Ready to Aborted and from
+--     TX in progress to Aborted.
 --
 -- Test sequence:
---  1. Check TXT Buffer is empty. Wait until sample point and issue Set ready
---     and check it becomes Ready. Wait until frame is sent.
---  2. Check TXT Buffer state is TX OK. Wait until sample point and issue
---     Set ready command. Check TXT Buffer is ready. Wait until frame is sent.
---  3. Wait until Sample point. Issue Set Ready and consecutively Set Abort.
---     Check TXT Buffer is aborted. Issue Set Ready again and check it is
---     Ready now!
---  4. Set One shot mode in Node 1. Forbid ACK in Node 2. Send CAN frame
---     by Node 1. Wait until CAN frame is sent and check TXT Buffer from
---     which it was sent ended in TX Error. Wait unitl sample point. Issue Set
---     Ready command and check TXT Buffer is Ready
+--  1. Generate frame and insert it for transmission to random TXT Buffer.
+--     Wait until sample point. Issue Set Ready command and check TXT Buffer
+--     becomes Ready. Issue Set Abort command and check TXT Buffer becomes
+--     Aborted. Bit time should be sufficiently long so that there is enough
+--     time to issue two commands and read buffer state ones before next sample
+--     point arrives.
+--  2. Issue Set Ready command and wait until transmission starts. Check that
+--     TXT Buffer is in TX in progress. Issue Set Abort and check that TXT
+--     Buffer moves to Abort in progress. Wait until transmission is over.
 --------------------------------------------------------------------------------
 -- Revision History:
 --   17.11.2019   Created file
@@ -69,8 +67,8 @@ context work.ctu_can_test_context;
 
 use lib.pkg_feature_exec_dispath.all;
 
-package tx_cmd_set_ready_feature is
-    procedure tx_cmd_set_ready_feature_exec(
+package tx_cmd_set_abort_feature is
+    procedure tx_cmd_set_abort_feature_exec(
         variable    o               : out    feature_outputs_t;
         signal      so              : out    feature_signal_outputs_t;
         signal      rand_ctr        : inout  natural range 0 to RAND_POOL_SIZE;
@@ -81,8 +79,8 @@ package tx_cmd_set_ready_feature is
 end package;
 
 
-package body tx_cmd_set_ready_feature is
-    procedure tx_cmd_set_ready_feature_exec(
+package body tx_cmd_set_abort_feature is
+    procedure tx_cmd_set_abort_feature_exec(
         variable    o               : out    feature_outputs_t;
         signal      so              : out    feature_signal_outputs_t;
         signal      rand_ctr        : inout  natural range 0 to RAND_POOL_SIZE;
@@ -112,12 +110,15 @@ package body tx_cmd_set_ready_feature is
         info("Testing with TXT Buffer: " & integer'image(buf_nr));
 
         -----------------------------------------------------------------------
-        -- 1. Check TXT Buffer is empty. Wait until sample point and issue
-        --    Set ready and check it becomes Ready. Wait until frame is sent.
+        -- 1. Generate frame and insert it for transmission to random TXT Buffer.
+        --    Wait until sample point. Issue Set Ready command and check TXT 
+        --    Buffer becomes Ready. Issue Set Abort command and check TXT Buffer
+        --    becomes Aborted. Bit time should be sufficiently long so that there
+        --    is enough time to issue two commands and read buffer state ones
+        --    before next sample point arrives.
         -----------------------------------------------------------------------
         info("Step 1");
-        get_tx_buf_state(buf_nr, txt_state, ID_1, mem_bus(1));
-        check(txt_state = buf_empty, "TXT Buffer empty upon start");
+        
         CAN_generate_frame(rand_ctr, CAN_frame);
         CAN_insert_TX_frame(CAN_frame, buf_nr, ID_1, mem_bus(1));
 
@@ -125,71 +126,33 @@ package body tx_cmd_set_ready_feature is
         send_TXT_buf_cmd(buf_set_ready, buf_nr, ID_1, mem_bus(1));
         wait for 11 ns; -- This command is pipelined, delay must be inserted!
         get_tx_buf_state(buf_nr, txt_state, ID_1, mem_bus(1));
-        check(txt_state = buf_ready, "Set Ready: Empty -> Ready");
-        CAN_wait_frame_sent(ID_1, mem_bus(1));
+        check(txt_state = buf_ready, "TXT Buffer ready!");
 
-        ------------------------------------------------------------------------
-        -- 2. Check TXT Buffer state is TX OK. Wait until sample point and issue
-        --    Set ready command. Check TXT Buffer is ready. Wait until frame is
-        --    sent.
-        ------------------------------------------------------------------------
-        info("Step 2");
-        get_tx_buf_state(buf_nr, txt_state, ID_1, mem_bus(1));
-        check(txt_state = buf_done, "TXT Buffer OK after frame sent!");
-        
-        CAN_wait_sample_point(iout(1).stat_bus);
-
-        send_TXT_buf_cmd(buf_set_ready, buf_nr, ID_1, mem_bus(1));
-        wait for 11 ns; -- This command is pipelined, delay must be inserted!
-        get_tx_buf_state(buf_nr, txt_state, ID_1, mem_bus(1));
-        check(txt_state = buf_ready, "Set Ready: TX OK -> Ready");
-        CAN_wait_frame_sent(ID_1, mem_bus(1));
-
-        ------------------------------------------------------------------------
-        -- 3. Wait until Sample point. Issue Set Ready and consecutively Set
-        --    Abort. Check TXT Buffer is aborted. Issue Set Ready again and
-        --    check it is Ready now!
-        ------------------------------------------------------------------------
-        info("Step 3");
-        CAN_wait_sample_point(iout(1).stat_bus);
-        send_TXT_buf_cmd(buf_set_ready, buf_nr, ID_1, mem_bus(1));
         send_TXT_buf_cmd(buf_set_abort, buf_nr, ID_1, mem_bus(1));
-        
-        get_tx_buf_state(buf_nr, txt_state, ID_1, mem_bus(1));
-        check(txt_state = buf_aborted, "TXT Buffer Aborted!");
-        
-        CAN_wait_sample_point(iout(1).stat_bus);
-        send_TXT_buf_cmd(buf_set_ready, buf_nr, ID_1, mem_bus(1));
         wait for 11 ns; -- This command is pipelined, delay must be inserted!
         get_tx_buf_state(buf_nr, txt_state, ID_1, mem_bus(1));
-        check(txt_state = buf_ready, "Set Ready: Aborted -> Ready");        
-        CAN_wait_frame_sent(ID_1, mem_bus(1));
+        check(txt_state = buf_aborted, "Set Abort: Ready -> Aborted");
 
-        return;
-        
         -----------------------------------------------------------------------
-        -- 4. Set One shot mode in Node 1. Forbid ACK in Node 2. Send CAN frame
-        --    by Node 1. Wait until CAN frame is sent and check TXT Buffer from
-        --    which it was sent ended in TX Error. Wait unitl sample point.
-        --    Issue Set Ready command and check TXT Buffer is Ready
+        -- 2. Issue Set Ready command and wait until transmission starts. Check
+        --    that TXT Buffer is in TX in progress. Issue Set Abort and check
+        --    that TXT Buffer moves to Abort in progress. Wait until 
+        --    transmission is over.
         -----------------------------------------------------------------------
-        info("Step 3");
-        CAN_enable_retr_limit(true, 0, ID_1, mem_bus(1));
-        mode_2.acknowledge_forbidden := true;
-        set_core_mode(mode_2, ID_2, mem_bus(2));
+        info("Step 2");
 
-        CAN_generate_frame(rand_ctr, CAN_frame);
-        CAN_send_frame(CAN_frame, buf_nr, ID_1, mem_bus(1), frame_sent);
-        CAN_wait_frame_sent(ID_1, mem_bus(1));
-
-        get_tx_buf_state(buf_nr, txt_state, ID_1, mem_bus(1));
-        check(txt_state = buf_failed, "TXT Buffer Failed!");
-
-        CAN_wait_sample_point(iout(1).stat_bus);
         send_TXT_buf_cmd(buf_set_ready, buf_nr, ID_1, mem_bus(1));
+        CAN_wait_tx_rx_start(true, false, ID_1, mem_bus(1));
+        get_tx_buf_state(buf_nr, txt_state, ID_1, mem_bus(1));
+        check(txt_state = buf_tx_progress, "TXT Buffer TX in Progress");
+
+        send_TXT_buf_cmd(buf_set_abort, buf_nr, ID_1, mem_bus(1));
         wait for 11 ns; -- This command is pipelined, delay must be inserted!
         get_tx_buf_state(buf_nr, txt_state, ID_1, mem_bus(1));
-        check(txt_state = buf_ready, "Set Ready: TX Failed -> Ready");
+        check(txt_state = buf_ab_progress,
+            "Set Abort: TX in Progress -> Abort in Progress");
+            
+        CAN_wait_frame_sent(ID_1, mem_bus(1));
 
   end procedure;
 
