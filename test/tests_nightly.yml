@@ -136,6 +136,7 @@ feature:
         txt_buffer_hazard:
             iterations: 1
         tx_cmd_set_empty:
+        tx_cmd_set_ready:
         tx_priority:
             iterations: 5
 sanity:
