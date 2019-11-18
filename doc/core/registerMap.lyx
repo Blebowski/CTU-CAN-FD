@@ -40588,7 +40588,7 @@ cellcolor{cyan}
 SSP_OFFSET Secondary sampling point offset. Value is given as multiple of Minimal Data Time Quanta.
 \end_layout
 \begin_layout Description
-SSP_SRC Source of Secondary Sampling Point. If configured value exceeds 127, it is saturated to 127.\begin_inset Newline newline\end_inset
+SSP_SRC Source of Secondary Sampling Point.\begin_inset Newline newline\end_inset
 		0b00  - SSP_SRC_MEAS_N_OFFSET - SSP position = TRV_DELAY (Measured Value) + SSP_OFFSET.\begin_inset Newline newline\end_inset
 		0b01  - SSP_SRC_NO_SSP - SSP is not used. Transmitter uses regular Sampling Point during Data Bit-Rate.\begin_inset Newline newline\end_inset
 		0b10  - SSP_SRC_OFFSET - SSP position = SSP_Offset. Measured value is ignored.
