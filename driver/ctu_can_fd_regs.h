@@ -860,15 +860,13 @@ union ctu_can_fd_trv_delay_ssp_cfg {
 		uint32_t trv_delay_value         : 7;
 		uint32_t reserved_15_7           : 9;
   /* SSP_CFG */
-		uint32_t ssp_offset              : 7;
-		uint32_t reserved_23             : 1;
+		uint32_t ssp_offset              : 8;
 		uint32_t ssp_src                 : 2;
 		uint32_t reserved_31_26          : 6;
 #else
 		uint32_t reserved_31_26          : 6;
 		uint32_t ssp_src                 : 2;
-		uint32_t reserved_23             : 1;
-		uint32_t ssp_offset              : 7;
+		uint32_t ssp_offset              : 8;
 		uint32_t reserved_15_7           : 9;
 		uint32_t trv_delay_value         : 7;
 #endif

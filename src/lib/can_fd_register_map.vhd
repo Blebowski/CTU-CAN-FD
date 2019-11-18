@@ -1311,7 +1311,7 @@ package can_fd_register_map is
   -- d be modified only when SETTINGS[ENA]=0.
   ------------------------------------------------------------------------------
   constant SSP_OFFSET_L          : natural := 16;
-  constant SSP_OFFSET_H          : natural := 22;
+  constant SSP_OFFSET_H          : natural := 23;
   constant SSP_SRC_L             : natural := 24;
   constant SSP_SRC_H             : natural := 25;
 
@@ -1321,7 +1321,7 @@ package can_fd_register_map is
   constant SSP_SRC_OFFSET : std_logic_vector(1 downto 0) := "10";
 
   -- SSP_CFG register reset values
-  constant SSP_OFFSET_RSTVAL : std_logic_vector(6 downto 0) := "0001010";
+  constant SSP_OFFSET_RSTVAL : std_logic_vector(7 downto 0) := x"0A";
   constant SSP_SRC_RSTVAL : std_logic_vector(1 downto 0) := "00";
 
   ------------------------------------------------------------------------------
