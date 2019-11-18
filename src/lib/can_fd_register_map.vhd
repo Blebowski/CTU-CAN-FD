@@ -343,7 +343,7 @@ package can_fd_register_map is
      size      => 16,
      reg_type  => reg_read_only,
      reset_val => "00000000000000000000000000000000",
-     is_implem => "00000000000000001111111111111111"),
+     is_implem => "00000000000000000000000001111111"),
     (address   => SSP_CFG_ADR,
      size      => 16,
      reg_type  => reg_read_write,
@@ -1298,10 +1298,10 @@ package can_fd_register_map is
   -- alue is updated.
   ------------------------------------------------------------------------------
   constant TRV_DELAY_VALUE_L      : natural := 0;
-  constant TRV_DELAY_VALUE_H     : natural := 15;
+  constant TRV_DELAY_VALUE_H      : natural := 6;
 
   -- TRV_DELAY register reset values
-  constant TRV_DELAY_VALUE_RSTVAL : std_logic_vector(15 downto 0) := x"0000";
+  constant TRV_DELAY_VALUE_RSTVAL : std_logic_vector(6 downto 0) := "0000000";
 
   ------------------------------------------------------------------------------
   -- SSP_CFG register
