@@ -502,7 +502,7 @@ Version 2.2, Commit:
 \noindent
 \align center
 \begin_inset Tabular
-<lyxtabular version="3" rows="12" columns="4">
+<lyxtabular version="3" rows="13" columns="4">
 <features tabularvalignment="middle">
 <column alignment="center" valignment="top" width="1.5cm">
 <column alignment="center" valignment="top" width="2cm">
@@ -934,11 +934,50 @@ Clarify TXT buffer behaviour when node goes bus-off.
 </cell>
 </row>
 <row>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
 2.2.2
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Ondrej Ille
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+31-10-2019
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Clarify Bus-off behaviour aftet Start-up.
+ Clarify that frame must be inserted to TXT Buffer before sending.
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+2.2.3
 \end_layout
 
 \end_inset
@@ -956,7 +995,7 @@ Ondrej Ille
 \begin_inset Text
 
 \begin_layout Plain Layout
-31-10-2019
+18-11-2019
 \end_layout
 
 \end_inset
@@ -965,8 +1004,7 @@ Ondrej Ille
 \begin_inset Text
 
 \begin_layout Plain Layout
-Clarify Bus-off behaviour aftet Start-up.
- Clarify that frame must be inserted to TXT Buffer before sending.
+Clarify behaviour of Transmitter delay measurement.
 \end_layout
 
 \end_inset
@@ -2297,10 +2335,18 @@ s of the fact if bit rate is switched in current frame) on recessive to
  dominant edge between FDF (EDL) and r0 bits.
  Transmitter delay is readable after its measurement from TRV_DELAY register.
  Transmitter delay is measured in periods of System clock.
- Note that measured transmitter delay of CTU CAN FD includes input time
- of CTU CAN FD which is 2 clock periods of System clock.
- Therefore value read from TRV_DELAY register, will be higher than actual
- delay from can_tx to can_rx by 2 clock periods of System clock.
+\end_layout
+
+\begin_layout Description
+Note Transmitter delay measuerement includes input delay of CTU CAN FD (which
+ is 2 clock cycles).
+ CTU CAN FD contains compensation mechanism for this delay on Transmitter
+ delay measurement which corrects it to one clock cycle.
+ Therefore measured Transmitter delay will be always always as if Transmitter
+ delay is ceiled to high value.
+ (E.g.
+ can_tx to can_rx delay of 1 ns will be measured as 1, delay of 11 ns will
+ be measured as 2 and so on).
 \end_layout
 
 \begin_layout Standard
