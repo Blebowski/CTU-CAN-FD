@@ -2338,7 +2338,7 @@ s of the fact if bit rate is switched in current frame) on recessive to
 \end_layout
 
 \begin_layout Description
-Note Transmitter delay measuerement includes input delay of CTU CAN FD (which
+Note Transmitter delay measurement includes input delay of CTU CAN FD (which
  is 2 clock cycles).
  CTU CAN FD contains compensation mechanism for this delay on Transmitter
  delay measurement which corrects it to one clock cycle.
@@ -2347,6 +2347,14 @@ Note Transmitter delay measuerement includes input delay of CTU CAN FD (which
  (E.g.
  can_tx to can_rx delay of 1 ns will be measured as 1, delay of 11 ns will
  be measured as 2 and so on).
+\end_layout
+
+\begin_layout Description
+Note Transmitter delay measurement is saturated to 127 System clock cycles.
+ If the delay between can_tx and can_rx is longer, only 127 clock cycles
+ will be measured.
+ When system clock frequency is 100 Mhz, this gives 1,27 us of maximal measurabl
+e transmitter delay.
 \end_layout
 
 \begin_layout Standard
@@ -3127,6 +3135,8 @@ Note
  If during this time Set ready command is sent to TXT buffer, TXT buffer
  immediately moves to Aborted state (since node is bus-off and all TXT buffers
  in TX ready move to Aborted when CTU CAN FD is bus-off).
+ SW shall wait until node is Error active (either polling or via FCS Interrupt)
+ before issuing Set Ready command to any TXT buffer.
 \end_layout
 
 \begin_layout Description
