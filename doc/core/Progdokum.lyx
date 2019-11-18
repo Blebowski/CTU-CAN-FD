@@ -2410,8 +2410,9 @@ Secondary sampling point is used by transmitters during data bit rate to
  detect bit errors.
  Its position is configured as delay from start of bit time (Sync_Seg) in
  multiples of System clock (NOT time quanta!).
- Secondary sampling point position can be fixed, given by Transmitter delay,
- or it can be disabled as is shown in Figure 
+ Secondary sampling point position can be fixed (SSP Offset only), derived
+ from Transmitter delay (SSP Offset + Transmitter delay), or it can be disabled
+ (No SSP) as is shown in Figure 
 \begin_inset CommandInset ref
 LatexCommand ref
 reference "fig:secondary-sampling-point"
@@ -2425,12 +2426,22 @@ noprefix "false"
  When Secondary sampling point is disabled, regular sampling point as configured
  by BRP_FD register is used by transmitters during data bit rate for bit
  error detection.
- Secondary sampling point position is configurable between 0 - 127.
- If Secondary sampling point is configured to more than 127 (e.g.
- as result of large measured Transmitter delay), it is saturated to 127.
- Note that since CTU CAN FD input delay is 2 System clock periods (minimum
- time quanta), position of Secondary sampling point shall be configured
- to at least 2 to compensate its own input delay.
+\end_layout
+
+\begin_layout Standard
+Secondary sampling point offset is configurable between 0 - 255.
+ If position of secondary sampling point would be later than 255 clock cycles
+ from start of bit (e.g.
+ as result of large measured Transmitter delay), it is saturated to 255.
+\end_layout
+
+\begin_layout Description
+Note Since CTU CAN FD input delay is 2 System clock periods (minimum time
+ quanta), position of Secondary sampling point shall be configured to at
+ least 2 to compensate its own input delay (therefore if SSP_CFG[SSP_OFFSET]
+ < 3 and SSP_CFG[SSP_SRC] = SSP_SRC_OFFSET], it is impossible to transmitt
+ CAN FD frames without detecting bit error on CTU CAN FDs own transmitted
+ frame).
 \end_layout
 
 \begin_layout Standard

@@ -1434,7 +1434,7 @@
 					</ipxact:field>
 					<ipxact:field>
 						<ipxact:name>SSP_SRC</ipxact:name>
-						<ipxact:description>Source of Secondary Sampling Point. If configured value exceeds 127, it is saturated to 127.</ipxact:description>
+						<ipxact:description>Source of Secondary Sampling Point.</ipxact:description>
 						<ipxact:bitOffset>8</ipxact:bitOffset>
 						<ipxact:resets>
 							<ipxact:reset>
