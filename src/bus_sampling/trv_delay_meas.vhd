@@ -188,10 +188,14 @@ architecture rtl of trv_delay_measurement is
     ---------------------------------------------------------------------------
     signal trv_delay_ctr_q   :  std_logic_vector(G_TRV_CTR_WIDTH - 1 downto 0);
     signal trv_delay_ctr_d   :  std_logic_vector(G_TRV_CTR_WIDTH - 1 downto 0);
-
+    signal trv_delay_ctr_add   :  std_logic_vector(G_TRV_CTR_WIDTH - 1 downto 0);
+    
     -- Reset for the counter
     signal trv_delay_ctr_rst_d   :  std_logic;
     signal trv_delay_ctr_rst_q   :  std_logic;
+
+    constant C_TRV_DEL_SAT  :  std_logic_vector(G_TRV_CTR_WIDTH - 1 downto 0) :=
+        std_logic_vector(to_unsigned(127, G_TRV_CTR_WIDTH));
 
     ---------------------------------------------------------------------------
     -- SSP Shadowed register
@@ -271,9 +275,14 @@ begin
     ----------------------------------------------------------------------------
     -- Combinationally incremented value of trv_delay counter by 1.
     ----------------------------------------------------------------------------                                             
-    trv_delay_ctr_d <= std_logic_vector(to_unsigned(
+    trv_delay_ctr_add <= std_logic_vector(to_unsigned(
                             to_integer(unsigned(trv_delay_ctr_q) + 1),
-                            trv_delay_ctr_q'length));                     
+                            trv_delay_ctr_q'length));           
+
+    -- Saturate when counter reaches 127, do not add anymore to avoid overflow!
+    trv_delay_ctr_d <= C_TRV_DEL_SAT when (trv_delay_ctr_q = C_TRV_DEL_SAT)
+                                     else
+                      trv_delay_ctr_add;
 
     ----------------------------------------------------------------------------
     -- Register for transceiver delay measurement progress flag.
