@@ -1079,10 +1079,34 @@ package CANtestLib is
     );
 
 
+    ----------------------------------------------------------------------------
+    ----------------------------------------------------------------------------
+    -- CAN feauture TB configuration routines
+    ----------------------------------------------------------------------------
+    ----------------------------------------------------------------------------
+    
+    -- Signals for feature test intialization
+    
+    type t_ftr_tx_delay is array (1 to 2) of time;
+    
+    ----------------------------------------------------------------------------
+    -- Configure transmitter delay in feature TB.
+    --
+    -- Arguments:
+    --  tx_del          Delay to be set
+    --  ID              ID of the node where delay shall be set.
+    ----------------------------------------------------------------------------
+    procedure ftr_tb_set_tran_delay(
+        constant tx_del         : in    time;
+        constant ID             : in    natural range 0 to 15;
+        signal   actual_delay   : out   t_ftr_tx_delay
+    );
 
 
     ----------------------------------------------------------------------------
+    ----------------------------------------------------------------------------
     -- CAN configuration routines
+    ----------------------------------------------------------------------------
     ----------------------------------------------------------------------------
 
     ----------------------------------------------------------------------------
@@ -1922,7 +1946,7 @@ package CANtestLib is
     ----------------------------------------------------------------------------
     procedure CAN_configure_ssp(
         constant ssp_source     : in    SSP_set_command_type;
-        constant ssp_offset_val : in   std_logic_vector(6 downto 0);
+        constant ssp_offset_val : in    std_logic_vector(7 downto 0);
         constant ID             : in    natural range 0 to 15;
         signal   mem_bus        : inout Avalon_mem_type
     );
@@ -2875,6 +2899,22 @@ package body CANtestLib is
         else
             aval_read_burst(r_data, int_address, stat_burst, mem_bus);
         end if;
+    end procedure;
+    
+    
+    procedure ftr_tb_set_tran_delay(
+        constant tx_del         : in    time;
+        constant ID             : in    natural range 0 to 15;
+        signal   actual_delay   : out   t_ftr_tx_delay
+    )is
+    begin
+        if (ID /= 2 and ID /= 1) then
+            warning("Transmitter delay config: " &
+                    "Only nodes 1 and 2 are supported -> Skipping!");
+           return;
+        end if;
+    
+        actual_delay(ID) <= tx_del;
     end procedure;
 
 
@@ -4741,7 +4781,7 @@ package body CANtestLib is
 
     procedure CAN_configure_ssp(
         constant ssp_source     : in    SSP_set_command_type;
-        constant ssp_offset_val : in    std_logic_vector(6 downto 0);
+        constant ssp_offset_val : in    std_logic_vector(7 downto 0);
         constant ID             : in    natural range 0 to 15;
         signal   mem_bus        : inout Avalon_mem_type
     ) is
