@@ -93,7 +93,7 @@ feature:
         status_rxs:
         status_ewl:
         status_idle:
-        # tran_delay:
+        trv_delay:
         tx_arb_time_tran:
         # timestamp_options:
         # txtb_state:
