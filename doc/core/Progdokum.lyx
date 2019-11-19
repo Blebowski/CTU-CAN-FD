@@ -2428,11 +2428,13 @@ noprefix "false"
  error detection.
 \end_layout
 
-\begin_layout Standard
-Secondary sampling point offset is configurable between 0 - 255.
- If position of secondary sampling point would be later than 255 clock cycles
- from start of bit (e.g.
- as result of large measured Transmitter delay), it is saturated to 255.
+\begin_layout Description
+Note Secondary sampling point offset (SSP_CFG[SSP_OFFSET]) is configurable
+ between 0 - 255.
+ Internal range of secondary sampling point position is also 0 - 255.
+ If due to some reason secondary sampling point position would be more than
+ 255 clock cycles from start of bit (e.g.
+ due to large measured Transmitter delay) it is saturated to 255.
 \end_layout
 
 \begin_layout Description
