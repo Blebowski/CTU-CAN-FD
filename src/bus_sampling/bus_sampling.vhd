@@ -75,14 +75,17 @@ entity bus_sampling is
         G_RESET_POLARITY        :     std_logic := '0';
         
         -- Secondary sampling point Shift registers length
-        G_SSP_SHIFT_LENGTH      :     natural := 130;
+        G_SSP_DELAY_SAT_VAL     :     natural := 255;
 
         -- Depth of FIFO Cache for TX Data
         G_TX_CACHE_DEPTH        :     natural := 8;
         
         -- Width (number of bits) in transceiver delay measurement counter
         G_TRV_CTR_WIDTH         :     natural := 7;
-        
+
+        -- Width of SSP position
+        G_SSP_POS_WIDTH          :    natural := 8;
+
         -- Optional usage of saturated value of ssp_delay 
         G_USE_SSP_SATURATION    :     boolean := true;
         
@@ -167,18 +170,6 @@ end entity;
 architecture rtl of bus_sampling is
 
     -----------------------------------------------------------------------------
-    -- Internal constants declaration.
-    -----------------------------------------------------------------------------
-    -- Reset value for secondar sampling point shift registers
-    constant C_SSP_SHIFT_RST_VAL : std_logic_vector(G_SSP_SHIFT_LENGTH - 1 downto 0) :=
-                                    (OTHERS => '0');
-
-    -- Saturation value of Secondary sampling point delay!
-    -- Saturate the value to one less than length of secondary sampling point
-    -- shift register to avoid overflow!
-    constant C_SSP_DELAY_SAT_VAL : natural := G_SSP_SHIFT_LENGTH - 1; 
-
-    -----------------------------------------------------------------------------
     -- Driving bus aliases
     -----------------------------------------------------------------------------
 
@@ -186,7 +177,7 @@ architecture rtl of bus_sampling is
     signal drv_ena              : std_logic;
 
     -- Secondary sampling point offset.
-    signal drv_ssp_offset       : std_logic_vector(6 downto 0);
+    signal drv_ssp_offset       : std_logic_vector(7 downto 0);
 
     -- What value shall be used for ssp_delay (trv_delay, trv_delay+ssp_offset,
     -- ssp_offset)
@@ -276,8 +267,9 @@ begin
     generic map(
         G_RESET_POLARITY         => G_RESET_POLARITY,
         G_TRV_CTR_WIDTH          => G_TRV_CTR_WIDTH,
+        G_SSP_POS_WIDTH          => G_SSP_POS_WIDTH,
         G_USE_SSP_SATURATION     => G_USE_SSP_SATURATION,
-        G_SSP_SATURATION_LVL     => C_SSP_DELAY_SAT_VAL
+        G_SSP_SATURATION_LVL     => G_SSP_DELAY_SAT_VAL
     )
     port map(
         clk_sys                => clk_sys,                  -- IN

@@ -174,7 +174,7 @@ package drv_stat_pkg is
     constant DRV_SSP_DELAY_SELECT_HIGH : natural := 374;
     constant DRV_SSP_DELAY_SELECT_LOW : natural := 373;
 
-    constant DRV_SSP_OFFSET_HIGH : natural := 381;
+    constant DRV_SSP_OFFSET_HIGH : natural := 382;
     constant DRV_SSP_OFFSET_LOW : natural := 375;
   
     ----------------------------------------------------------------------------

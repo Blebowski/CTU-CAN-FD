@@ -877,9 +877,10 @@ begin
     bus_sampling_inst : bus_sampling 
     generic map(
         G_RESET_POLARITY        => C_RESET_POLARITY,
-        G_SSP_SHIFT_LENGTH      => C_SSP_SHIFT_LENGTH,
+        G_SSP_DELAY_SAT_VAL     => C_SSP_DELAY_SAT_VAL,
         G_TX_CACHE_DEPTH        => C_TX_CACHE_DEPTH,
         G_TRV_CTR_WIDTH         => C_TRV_CTR_WIDTH,
+        G_SSP_POS_WIDTH         => C_SSP_POS_WIDTH,
         G_USE_SSP_SATURATION    => C_USE_SSP_SATURATION,
         G_SSP_CTRS_WIDTH        => C_SSP_CTRS_WIDTH
     )

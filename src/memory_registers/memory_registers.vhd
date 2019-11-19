@@ -1412,7 +1412,7 @@ begin
     drv_bus(365 downto 363) <= (OTHERS => '0');
     drv_bus(370 downto 368) <= (OTHERS => '0');
     drv_bus(371)            <= '0';
-    drv_bus(399 downto 382) <= (OTHERS => '0');
+    drv_bus(399 downto 383) <= (OTHERS => '0');
     drv_bus(459 downto 445) <= (OTHERS => '0');
     drv_bus(464 downto 462) <= (OTHERS => '0');
     drv_bus(609 downto 601) <= (OTHERS => '0');
