@@ -299,6 +299,7 @@ package CANtestLib is
     -- Protocol control Debug values
     type SW_PC_Debug is (
         pc_deb_none,
+        pc_deb_sof,
         pc_deb_arbitration,
         pc_deb_control,
         pc_deb_data,
@@ -4897,6 +4898,8 @@ package body CANtestLib is
             pc_dbg := pc_deb_suspend;
         elsif (data(PC_OVR_IND) = '1') then
             pc_dbg := pc_deb_overload;
+        elsif (data(PC_SOF_IND) = '1') then
+            pc_dbg := pc_deb_sof;
         end if;
     end procedure;
 
