@@ -43771,11 +43771,11 @@ Reserved\end_layout
 
 \end_inset
 </cell>
-<cell alignment="center" leftline="true" multicolumn="2" topline="true" usebox="none" valignment="top">
+<cell alignment="center" leftline="true" multicolumn="1" topline="true" usebox="none" valignment="top">
 \begin_inset Text
 
 \begin_layout Plain Layout
-Reserved\end_layout
+PC_SOF\end_layout
 
 \end_inset
 </cell>
@@ -43856,7 +43856,7 @@ cellcolor{cyan}
 \begin_inset Text
 
 \begin_layout Plain Layout
--\end_layout
+0\end_layout
 
 \end_inset
 </cell>
@@ -44564,6 +44564,9 @@ PC_SUSP Protocol control State machine is in Suspend transmission field.
 \end_layout
 \begin_layout Description
 PC_OVR Protocol control State machine is in Overload field.
+\end_layout
+\begin_layout Description
+PC_SOF Protocol control State machine is in Start of frame field.
 \end_layout
 \begin_layout Standard
 \begin_inset VSpace bigskip

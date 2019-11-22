@@ -914,9 +914,11 @@ union ctu_can_fd_debug_register {
 		uint32_t pc_int                  : 1;
 		uint32_t pc_susp                 : 1;
 		uint32_t pc_ovr                  : 1;
-		uint32_t reserved_31_18         : 14;
+		uint32_t pc_sof                  : 1;
+		uint32_t reserved_31_19         : 13;
 #else
-		uint32_t reserved_31_18         : 14;
+		uint32_t reserved_31_19         : 13;
+		uint32_t pc_sof                  : 1;
 		uint32_t pc_ovr                  : 1;
 		uint32_t pc_susp                 : 1;
 		uint32_t pc_int                  : 1;

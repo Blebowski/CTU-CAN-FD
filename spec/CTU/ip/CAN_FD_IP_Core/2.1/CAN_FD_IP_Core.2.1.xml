@@ -1606,6 +1606,18 @@
 						<ipxact:bitWidth>1</ipxact:bitWidth>
 					</ipxact:field>
 					<ipxact:field>
+						<ipxact:name>PC_SOF</ipxact:name>
+						<ipxact:displayName>PC_SOF</ipxact:displayName>
+						<ipxact:description>Protocol control State machine is in Start of frame field.</ipxact:description>
+						<ipxact:bitOffset>18</ipxact:bitOffset>
+						<ipxact:resets>
+							<ipxact:reset>
+								<ipxact:value>0</ipxact:value>
+							</ipxact:reset>
+						</ipxact:resets>
+						<ipxact:bitWidth>1</ipxact:bitWidth>
+					</ipxact:field>
+					<ipxact:field>
 						<ipxact:name>PC_OVR</ipxact:name>
 						<ipxact:description>Protocol control State machine is in Overload field.</ipxact:description>
 						<ipxact:bitOffset>17</ipxact:bitOffset>
