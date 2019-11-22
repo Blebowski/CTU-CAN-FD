@@ -132,7 +132,7 @@ feature:
             iterations: 5
         # message_filter:
         #    iterations: 1
-        timestamp_registers:
+        timestamp_low_high:
         txt_buffer_hazard:
             iterations: 1
         tx_cmd_set_abort:

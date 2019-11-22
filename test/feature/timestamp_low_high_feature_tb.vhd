@@ -43,10 +43,18 @@
 -- Purpose:
 --  Feature test for Timestamp options on RX frame in RX Buffer!
 --
+-- Verifies:
+--  1. TIMESTAMP_LOW and TIMESTAMP_HIGH registers functionality.
+--
+-- Test sequence:
+--  1. Preset Timestamp value in TB. Read values from TIMESTAMP_LOW and
+--     TIMESTAMP_HIGH registers. Check read value matches value which was
+--     preset.
+--
 --------------------------------------------------------------------------------
 -- Revision History:
---
---    29.6.2018     Created file 
+--    29.6.2018     Created file
+--   22.11.2019     Add support for timestamp randomization! 
 --------------------------------------------------------------------------------
 
 context work.ctu_can_synth_context;
@@ -54,8 +62,8 @@ context work.ctu_can_test_context;
 
 use lib.pkg_feature_exec_dispath.all;
 
-package timestamp_registers_feature is
-    procedure timestamp_registers_feature_exec(
+package timestamp_low_high_feature is
+    procedure timestamp_low_high_feature_exec(
         variable    o               : out    feature_outputs_t;
         signal      so              : out    feature_signal_outputs_t;
         signal      rand_ctr        : inout  natural range 0 to RAND_POOL_SIZE;
@@ -66,8 +74,8 @@ package timestamp_registers_feature is
 end package;
 
 
-package body timestamp_registers_feature is
-    procedure timestamp_registers_feature_exec(
+package body timestamp_low_high_feature is
+    procedure timestamp_low_high_feature_exec(
         variable    o               : out    feature_outputs_t;
         signal      so              : out    feature_signal_outputs_t;
         signal      rand_ctr        : inout  natural range 0 to RAND_POOL_SIZE;
@@ -82,10 +90,28 @@ package body timestamp_registers_feature is
 
         variable ts_input           :        std_logic_vector(63 downto 0);
         variable ts_read            :        std_logic_vector(63 downto 0);
+        
+        variable ts_rand            :        std_logic_vector(63 downto 0);
     begin
         o.outcome := true;
 
-        wait for 1000 ns;
+        -----------------------------------------------------------------------
+        -- 1. Preset Timestamp value in TB. Read values from TIMESTAMP_LOW and
+        --    TIMESTAMP_HIGH registers. Check read value matches value which
+        --    was preset.
+        -----------------------------------------------------------------------
+        info("Step 1");
+
+        -- Force random timestamp so that we are sure that both words of the
+        -- timestamp are clocked properly!
+        rand_logic_vect_v(rand_ctr, ts_rand, 0.5);
+        -- Keep highest bit 0 to avoid complete overflow during the test!
+        ts_rand(63) := '0';
+
+        ftr_tb_set_timestamp(ts_rand, ID_1, so.ts_preset, so.ts_preset_val);
+        info("Forcing start timestamp in Node 1 to: " & to_hstring(ts_rand));
+
+        wait for 100 ns;
 
         for i in 0 to 50 loop
             -------------------------------------------------------------------
@@ -101,20 +127,22 @@ package body timestamp_registers_feature is
             -------------------------------------------------------------------
             -- Compare both values
             -------------------------------------------------------------------
+            -- Calculate difference. Two separate cases are needed to avoid
+            -- underflow
+            if (ts_input > ts_read) then
+                diff := unsigned(ts_input) - unsigned(ts_read);
+            else
+                diff := unsigned(ts_read) - unsigned(ts_input);
+            end if;
+
             info("Timestamp input: 0x" & to_hstring(ts_input));
             info("Timestamp read: 0x" & to_hstring(ts_read));
 
-            -------------------------------------------------------------------
-            -- Substract Read timestamp from Input timestamp. Input timestamp is
-            -- stored first, thus it will be always lower than read timestamp 
-            -- (memory access lasts one clock cycle). When substracting in this
-            -- order, we avoid underflow on "unsigned" data type, which is
-            -- defined from 0.
-            -------------------------------------------------------------------
-            diff := unsigned(ts_read) - unsigned(ts_input);
-
             check(to_integer(diff) < 10, "Timestamp difference is too big! " & 
                   "Difference " & integer'image(to_integer(diff)));
+
+            wait for 100 ns;
+
         end loop;
 
     end procedure;
