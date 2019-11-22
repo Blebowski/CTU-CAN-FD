@@ -97,6 +97,9 @@ architecture CAN_reference_test of CAN_test is
     signal bit_sequence     : bit_seq_type := ((OTHERS => 1), (OTHERS => '0'), 1);
 
     constant ITER_PRESET    : natural := 0;
+    
+    signal ts_preset        : std_logic_vector(2 downto 1) := "00";
+    signal ts_preset_val    : std_logic_vector(63 downto 0) := (OTHERS => '0');
 
     ----------------------------------------------------------------------------
     -- Config file with generated bit sequences
@@ -312,7 +315,7 @@ begin
     ----------------------------------------------------------------------------
     clk_gen_proc : clock_gen_proc(period => f100_Mhz, duty => 50, 
                                    epsilon_ppm => 0, out_clk => clk_sys);
-    tsgen_proc : timestamp_gen_proc(clk_sys, timestamp);
+    tsgen_proc : timestamp_gen_proc(clk_sys, timestamp, ts_preset(1), ts_preset_val);
 
     ----------------------------------------------------------------------------
     -- Bit generator

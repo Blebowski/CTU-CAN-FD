@@ -73,6 +73,8 @@
 --     15.9.2018  Added support for message filter manipulation!
 --     27.9.2018  Added burst support for avalon access. Added option to read
 --                frame from RX Buffer via burst partially!
+--    19.11.2019  Added options to force transmitter delay and timestamp in
+--                feature tests.
 --------------------------------------------------------------------------------
 
 Library ieee;
@@ -698,7 +700,9 @@ package CANtestLib is
     ----------------------------------------------------------------------------
     procedure timestamp_gen_proc(
         signal     clk           : in    std_logic;
-        signal     timestamp     : out   std_logic_vector(63 downto 0)
+        signal     timestamp     : out   std_logic_vector(63 downto 0);
+        signal     ts_preset     : in    std_logic;
+        signal     ts_preset_val : in    std_logic_vector(63 downto 0)
     );
 
 
@@ -1095,12 +1099,30 @@ package CANtestLib is
     -- Arguments:
     --  tx_del          Delay to be set
     --  ID              ID of the node where delay shall be set.
+    --  actual_delay    Delay signal to force
     ----------------------------------------------------------------------------
     procedure ftr_tb_set_tran_delay(
         constant tx_del         : in    time;
         constant ID             : in    natural range 0 to 15;
         signal   actual_delay   : out   t_ftr_tx_delay
     );
+
+    ----------------------------------------------------------------------------
+    -- Configure timestamp in feature TB.
+    --
+    -- Arguments:
+    --  ts_value        Value to be forced to timestamp.
+    --  ID              ID of the node where delay shall be set.
+    --  ts_preset       Vector controlling presetting.
+    --  ts_preset_val   Value controlling presetting.
+    ----------------------------------------------------------------------------
+    procedure ftr_tb_set_timestamp(
+        constant ts_value       : in    std_logic_vector(63 downto 0);
+        constant ID             : in    natural range 0 to 15;
+        signal   ts_preset      : out   std_logic_vector;
+        signal   ts_preset_val  : out   std_logic_vector(63 downto 0)
+    );
+
 
 
     ----------------------------------------------------------------------------
@@ -2195,7 +2217,9 @@ package body CANtestLib is
 
     procedure timestamp_gen_proc(
         signal     clk           : in    std_logic;
-        signal     timestamp     : out   std_logic_vector(63 downto 0)
+        signal     timestamp     : out   std_logic_vector(63 downto 0);
+        signal     ts_preset     : in    std_logic;
+        signal     ts_preset_val : in    std_logic_vector(63 downto 0)
     ) is
         variable ts_lo    : natural := 0;
         variable tmp      : natural := 0;
@@ -2212,6 +2236,12 @@ package body CANtestLib is
             ts_lo := tmp;
             timestamp <= std_logic_vector(  to_unsigned(ts_hi, 32)
                                           & to_unsigned(ts_lo, 32));
+                                          
+            if (ts_preset = '1') then
+                ts_lo := to_integer(unsigned(ts_preset_val(31 downto 0)));
+                ts_hi := to_integer(unsigned(ts_preset_val(63 downto 32)));
+                wait for 0 ns;
+            end if;
         end loop;
     end procedure;
 
@@ -2917,6 +2947,33 @@ package body CANtestLib is
         actual_delay(ID) <= tx_del;
     end procedure;
 
+
+    procedure ftr_tb_set_timestamp(
+        constant ts_value       : in    std_logic_vector(63 downto 0);
+        constant ID             : in    natural range 0 to 15;
+        signal   ts_preset      : out   std_logic_vector;
+        signal   ts_preset_val  : out   std_logic_vector(63 downto 0)
+    )is
+    begin
+        ts_preset_val <= ts_value;
+        wait for 0 ns;
+
+        if (ID = 1) then
+            ts_preset <= "01";        
+        elsif (ID = 2) then
+            ts_preset <= "10";
+        end if;
+        
+        -- This is ugly hack to achieve that timestamp generation process
+        -- will loop at least once and thus catch our action (system clock
+        -- is 10 ns).
+        wait for 11 ns; 
+
+        ts_preset <= "00";
+        wait for 0 ns;
+
+    end procedure;
+    
 
     procedure CAN_configure_timing(
         constant bus_timing     : in    bit_time_config_type;

@@ -153,6 +153,9 @@ architecture rx_buf_unit_test of CAN_test is
     signal mod_pointer              :    natural := 0;
 
     constant C_RX_BUFF_SIZE              :    natural := 32;
+    
+    signal ts_preset        : std_logic_vector(2 downto 1) := "00";
+    signal ts_preset_val    : std_logic_vector(63 downto 0) := (OTHERS => '0');
 
 
     ----------------------------------------------------------------------------
@@ -546,7 +549,7 @@ begin
     ----------------------------------------------------------------------------
     clock_gen_proc(period => f100_Mhz, duty => 50, epsilon_ppm => 0,
                    out_clk => clk_sys);
-    timestamp_gen_proc(clk_sys, timestamp);
+    timestamp_gen_proc(clk_sys, timestamp, ts_preset(1), ts_preset_val);
 
     -- Overall amount of errors is sum of errors from all processes
     error_ctr   <=  stim_errs + read_errs + status_errs + cons_errs;

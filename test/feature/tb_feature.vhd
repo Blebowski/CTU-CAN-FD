@@ -88,6 +88,10 @@ entity CAN_feature_test is
         
         -- Transmitter delays
         signal transmitter_delays :in   t_ftr_tx_delay;
+        
+        -- Timestamp forcing (preset)
+        signal ts_preset        : in    std_logic_vector(2 downto 1);
+        signal ts_preset_val    : in    std_logic_vector(63 downto 0);
 
         -- Internal signals; TODO: direction
         signal iteration_done   : in boolean := false;
@@ -216,7 +220,8 @@ begin
         ---------------------------------
         clk_gen_proc: clock_gen_proc(period => f100_Mhz, duty => 50,
                        epsilon_ppm => (i - 1) * 100, out_clk => p(i).clk_sys);
-        tsgen_proc: timestamp_gen_proc(p(i).clk_sys, p(i).timestamp);
+        tsgen_proc: timestamp_gen_proc(p(i).clk_sys, p(i).timestamp, ts_preset(i),
+                        ts_preset_val);
     end generate;
 
     tr_proc:process(all)
@@ -381,7 +386,9 @@ architecture tb of tb_feature is
         ((
             11 * f100_Mhz * 1 ps,
             11 * f100_Mhz * 1 ps
-        ))
+        )),
+        "00",
+        (OTHERS => '0')
     );
 
 begin
@@ -403,6 +410,9 @@ begin
         bl_inject        =>  bl_inject,
         bl_force         =>  bl_force,
         transmitter_delays =>  ftr_tb_trv_delays,
+        
+        ts_preset        => so.ts_preset,
+        ts_preset_val    => so.ts_preset_val,
 
         iteration_done   => iteration_done,
         hw_reset_on_new_test => hw_reset_on_new_test,
