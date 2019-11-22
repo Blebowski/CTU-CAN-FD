@@ -127,6 +127,7 @@ feature:
             iterations: 5
         status_idle:
         trv_delay:
+        tx_from_intermission:
         tx_arb_time_tran:
         tx_status:
             iterations: 5
