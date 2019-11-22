@@ -293,8 +293,9 @@ begin
     trv_del_ctr_proc : process(clk_sys, trv_delay_ctr_rst_q)
     begin
         if (trv_delay_ctr_rst_q = G_RESET_POLARITY) then
-            trv_delay_ctr_q <= (OTHERS => '0');
-            
+            trv_delay_ctr_q(0) <= '1'; 
+            trv_delay_ctr_q(G_TRV_CTR_WIDTH - 1 downto 1) <= (OTHERS => '0');
+
         elsif (rising_edge(clk_sys)) then
             
             -- Increment the counter if the measurement is in progress
