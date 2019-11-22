@@ -1005,6 +1005,7 @@ Ondrej Ille
 
 \begin_layout Plain Layout
 Clarify behaviour of Transmitter delay measurement.
+ Add notes on RX frame timestamping.
 \end_layout
 
 \end_inset
@@ -3327,6 +3328,21 @@ RX buffer can be flushed (Release RX buffer) by writing logic 1 to COMMAND[RRB]
  RX buffer is as if no frame was received to it yet.
  If this command is issued during CAN frame reception, this frame is also
  not stored to RX buffer.
+\end_layout
+
+\begin_layout Subsection
+Timestamping
+\end_layout
+
+\begin_layout Standard
+Timestamp of received CAN frame is stored during CAN frame reception.
+ When reading received CAN frame from RX buffer, timestamp can be read from
+ TIMESTAMP_L_W, TIMESTAMP_U_W memory words.
+ It is possible to configure whether timestamp for received frame will be
+ taken in sample point of Start of Frame bit or in 6th bit of End of Frame
+ (moment when received CAN frame is considered valid according to CAN FD
+ specification).
+ This setting is given by RX_SETTINGS[RTSOP].
 \end_layout
 
 \begin_layout Subsection
