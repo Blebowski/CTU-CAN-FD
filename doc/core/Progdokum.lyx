@@ -2340,13 +2340,10 @@ s of the fact if bit rate is switched in current frame) on recessive to
 \begin_layout Description
 Note Transmitter delay measurement includes input delay of CTU CAN FD (which
  is 2 clock cycles).
- CTU CAN FD contains compensation mechanism for this delay on Transmitter
- delay measurement which corrects it to one clock cycle.
- Therefore measured Transmitter delay will be always always as if Transmitter
- delay is ceiled to high value.
- (E.g.
- can_tx to can_rx delay of 1 ns will be measured as 1, delay of 11 ns will
- be measured as 2 and so on).
+ Therefore measured transmitter delay will be always higher by two than
+ actual delay from can_tx to can_rx (e.g.
+ if signal propagation from can_tx to can_rx takes 110 ns (11 System clock
+ periods at 100 MHz), measured transmitter delay will be 13).
 \end_layout
 
 \begin_layout Description
@@ -3781,7 +3778,7 @@ In self test mode CTU CAN FD considers transmitted frame valid even if does
 \end_layout
 
 \begin_layout Subsection
-Acknowledge forbidden mode
+XAcknowledge forbidden mode
 \end_layout
 
 \begin_layout Standard
