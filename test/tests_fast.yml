@@ -81,6 +81,7 @@ feature:
         one_shot:
         no_sof_tx:
         rec_saturation:
+        rx_settings_rtsop:
         rx_status:
         rx_buf_empty_read:
         tx_counter:
@@ -95,7 +96,6 @@ feature:
         status_idle:
         trv_delay:
         tx_arb_time_tran:
-        # timestamp_options:
         # txtb_state:
         #     iterations: 1
         # message_filter:
