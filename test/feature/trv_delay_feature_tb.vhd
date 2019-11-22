@@ -57,7 +57,7 @@
 --     TRV Delays!
 --  2. Configure delay to 1 ns in TB. Run CAN FD frame and verify that measured
 --     delay is correct! 
---  3. Configure delay to 1265 ns in TB. Run CAN FD frame and verify that
+--  3. Configure delay to 1255 ns in TB. Run CAN FD frame and verify that
 --     measured delay is 127.
 --  4. Configure Transmitter delay to 130. Run CAN FD frame and verify that
 --     measured value is 127 (value has not overflown!).
@@ -173,8 +173,8 @@ package body trv_delay_feature is
         
         -- Measured delay is always rounded up to nearest multiple of 10 ns
         -- (Delay of 1 ns -> 10 ns -> 1)!
-        check(measured_delay = 1, "Minimal transmitter delay!" &
-              " Expected: " & integer'image(0) &
+        check(measured_delay = 2, "Minimal transmitter delay!" &
+              " Expected: " & integer'image(2) &
               " Measured: " & integer'image(measured_delay));
 
         CAN_read_frame(CAN_RX_frame, ID_2, mem_bus(2));
@@ -183,11 +183,11 @@ package body trv_delay_feature is
         check(frames_equal, "TX RX frames match");
 
         -----------------------------------------------------------------------
-        -- 3. Configure delay to 1265 ns in TB. Run CAN FD frame and verify
+        -- 3. Configure delay to 1255 ns in TB. Run CAN FD frame and verify
         --    that measured delay is 127.
         -----------------------------------------------------------------------
         info("Step 3");
-        ftr_tb_set_tran_delay(1265 ns, ID_1, so.ftr_tb_trv_delay);
+        ftr_tb_set_tran_delay(1255 ns, ID_1, so.ftr_tb_trv_delay);
 
         CAN_send_frame(CAN_TX_frame, 1, ID_1, mem_bus(1), frame_sent);
         CAN_wait_frame_sent(ID_2, mem_bus(2));
@@ -195,7 +195,7 @@ package body trv_delay_feature is
         read_trv_delay(measured_delay, ID_1, mem_bus(1));
         
         -- Measured delay is always rounded up to nearest multiple of 10 ns
-        -- (Delay of 1265 ns -> 1270 ns -> 127)!
+        -- (Delay of 1255 ns -> 1250 -> 125 + 2 synchronisation cycles = 127)!
         check(measured_delay = 127, "Maximal transmitter delay!" &
               " Expected: " & integer'image(127) &
               " Measured: " & integer'image(measured_delay));
@@ -217,8 +217,7 @@ package body trv_delay_feature is
 
         read_trv_delay(measured_delay, ID_1, mem_bus(1));
         
-        -- Measured delay is always rounded up to nearest multiple of 10 ns
-        -- (Delay of 1265 ns -> 1270 ns -> 127)!
+        -- Measured delay should have saturated at 127!
         check(measured_delay = 127, "Saturated transmitter delay!" &
               " Expected: " & integer'image(127) &
               " Measured: " & integer'image(measured_delay));
@@ -237,7 +236,7 @@ package body trv_delay_feature is
         -----------------------------------------------------------------------
         info("Step 5");
 
-        rand_int_v(rand_ctr, 1269, rand_time);
+        rand_int_v(rand_ctr, 1259, rand_time);
         if (rand_time = 0) then
             rand_time := 1;
         end if;
@@ -249,7 +248,9 @@ package body trv_delay_feature is
 
         read_trv_delay(measured_delay, ID_1, mem_bus(1));
 
-        rand_time_ceiled := integer(ceil(real(rand_time) / 10.0));
+        -- Ceil will give us one more clock cycle. We need one more to
+        -- compensate full input delay.
+        rand_time_ceiled := integer(ceil(real(rand_time) / 10.0)) + 1;
 
         -- Measured delay is always rounded up to nearest multiple of 10 ns
         check(measured_delay = rand_time_ceiled, "Random transmitter delay!" &
