@@ -913,5 +913,27 @@ begin
         dbt_measure_start       => dbt_measure_start,   -- IN
         gen_first_ssp           => gen_first_ssp        -- IN
     );
+    
+    -- <RELEASE_OFF>
+    -----------------------------------------------------------------------
+    -----------------------------------------------------------------------
+    -- Assertions
+    -----------------------------------------------------------------------
+    -----------------------------------------------------------------------
+    
+    -- psl default clock is rising_edge(clk_sys);
+
+    -- psl no_tx_dominant_when_disabled : assert never
+    --  (drv_bus(DRV_ENA_INDEX) = '0' and can_tx = DOMINANT)
+    --  report "Dominant bit can't be transmitted when Node is disabled!"
+    --  severity error;
+
+    -- psl no_tx_dominant_when_bus_monitoring : assert never
+    --  (drv_bus(DRV_BUS_MON_ENA_INDEX) = '1' and can_tx = DOMINANT)
+    --  report "Dominant bit can't be transmitted in Bus monitoring mode!"
+    --  severity error;
+
+    -- <RELEASE_ON>
+    
 
 end architecture;
