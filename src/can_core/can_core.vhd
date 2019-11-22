@@ -946,7 +946,7 @@ begin
     
     stat_bus(STAT_PC_IS_EOF_INDEX) <=
         is_eof;
-    
+
     stat_bus(STAT_PC_IS_INTERMISSION_INDEX) <=
         is_intermission;
     
@@ -955,6 +955,9 @@ begin
         
     stat_bus(STAT_PC_IS_ERR_INDEX) <=
         is_err_frm;
+
+    stat_bus(STAT_PC_IS_OVERLOAD_INDEX) <=
+        is_overload_i;
 
     stat_bus(STAT_PC_IS_SOF) <=
         is_sof;
