@@ -398,5 +398,6 @@ package drv_stat_pkg is
     constant STAT_PC_IS_ERR_INDEX           : natural := 381;
     constant STAT_PC_IS_OVERLOAD_INDEX      : natural := 382;
     constant STAT_SOF_PULSE_INDEX           : natural := 383;
+    constant STAT_PC_IS_SOF                 : natural := 384;
 
 end package;

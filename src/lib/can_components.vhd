@@ -1550,6 +1550,9 @@ package can_components is
         -- Overload frame is being transmitted
         is_overload             :out  std_logic;
         
+        -- Start of Frame
+        is_sof                  :out  std_logic;
+        
         -----------------------------------------------------------------------
         -- Data-path interface
         -----------------------------------------------------------------------
@@ -1976,6 +1979,9 @@ package can_components is
         
         -- Overload frame is being transmitted
         is_overload             :out  std_logic;
+        
+        -- Start of Frame
+        is_sof                  :out  std_logic;
                 
         -----------------------------------------------------------------------
         -- TXT Buffers interface

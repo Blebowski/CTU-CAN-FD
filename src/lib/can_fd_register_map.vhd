@@ -363,7 +363,7 @@ package can_fd_register_map is
      size      => 32,
      reg_type  => reg_read_only,
      reset_val => "00000000000000000000000000000000",
-     is_implem => "00000000000000111111111111111111"),
+     is_implem => "00000000000001111111111111111111"),
     (address   => YOLO_REG_ADR,
      size      => 32,
      reg_type  => reg_read_only,
@@ -1368,6 +1368,7 @@ package can_fd_register_map is
   constant PC_INT_IND            : natural := 15;
   constant PC_SUSP_IND           : natural := 16;
   constant PC_OVR_IND            : natural := 17;
+  constant PC_SOF_IND            : natural := 18;
 
   -- DEBUG_REGISTER register reset values
   constant STUFF_COUNT_RSTVAL : std_logic_vector(2 downto 0) := "000";
@@ -1382,6 +1383,7 @@ package can_fd_register_map is
   constant PC_CRC_RSTVAL      : std_logic := '0';
   constant PC_EOF_RSTVAL      : std_logic := '0';
   constant PC_SUSP_RSTVAL     : std_logic := '0';
+  constant PC_SOF_RSTVAL      : std_logic := '0';
   constant PC_OVR_RSTVAL      : std_logic := '0';
   constant PC_INT_RSTVAL      : std_logic := '0';
 

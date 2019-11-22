@@ -173,6 +173,9 @@ entity protocol_control_fsm is
         
         -- Overload frame is being transmitted
         is_overload             :out  std_logic;
+        
+        -- Start of Frame
+        is_sof                  :out  std_logic;
 
         -----------------------------------------------------------------------
         -- Data-path interface
@@ -1423,6 +1426,7 @@ begin
         is_err_frm      <= '0';
         is_overload     <= '0';
         is_intermission <= '0';
+        is_sof          <= '0';
 
         if (err_frm_req = '1') then
             ctrl_ctr_pload_i   <= '1';
@@ -1502,6 +1506,7 @@ begin
                 crc_enable <= '1';
                 txtb_ptr_d <= 1;
                 nbt_ctrs_en <= '1';
+                is_sof <= '1';
                 
                 if (rx_data_nbs = RECESSIVE) then
                     form_err_i <= '1';

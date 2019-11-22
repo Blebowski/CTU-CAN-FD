@@ -439,6 +439,7 @@ architecture rtl of can_core is
     signal is_intermission         :     std_logic;
     signal is_suspend              :     std_logic;
     signal is_overload_i           :     std_logic;
+    signal is_sof                  :     std_logic;
     
     signal sof_pulse_i             :     std_logic;
     
@@ -487,6 +488,7 @@ begin
         is_suspend              => is_suspend,          -- OUT
         is_err_frm              => is_err_frm,          -- OUT
         is_overload             => is_overload_i,       -- OUT
+        is_sof                  => is_sof,              -- OUT
         
         -- TXT Buffers interface
         tran_word               => tran_word,           -- IN
@@ -890,7 +892,7 @@ begin
     ----------------------------------------------------------------------------
     -- STATUS Bus Implementation
     ----------------------------------------------------------------------------
-    stat_bus(511 downto 384) <= (OTHERS => '0');
+    stat_bus(511 downto 385) <= (OTHERS => '0');
     stat_bus(299 downto 297) <= (OTHERS => '0');
     stat_bus(188 downto 187) <= (OTHERS => '0');
     stat_bus(98 downto 90)   <= (OTHERS => '0');
@@ -953,10 +955,10 @@ begin
         
     stat_bus(STAT_PC_IS_ERR_INDEX) <=
         is_err_frm;
-    
-    stat_bus(STAT_PC_IS_OVERLOAD_INDEX) <=
-        is_overload_i;
-    
+
+    stat_bus(STAT_PC_IS_SOF) <=
+        is_sof;
+
     stat_bus(STAT_ARB_LOST_INDEX) <=
         arbitration_lost_i;
         
@@ -1180,5 +1182,5 @@ begin
     is_bus_off <= is_bus_off_i;
     sof_pulse <= sof_pulse_i;
     is_overload <= is_overload_i;
-    
+
 end architecture;

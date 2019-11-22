@@ -1298,6 +1298,11 @@ begin
             align_reg_to_wrd(DESTUFF_COUNT_L, length)) <=
             stat_bus(STAT_BD_CTR_HIGH downto STAT_BD_CTR_LOW);
 
+        -- PC_ARB field - Protocol control FSM - Start of frame field
+        Control_registers_in.debug_register(
+            align_reg_to_wrd(PC_SOF_IND, length)) <=
+            stat_bus(STAT_PC_IS_SOF);
+
         -- PC_ARB field - Protocol control FSM - arbitration field
         Control_registers_in.debug_register(
             align_reg_to_wrd(PC_ARB_IND, length)) <=
@@ -1359,7 +1364,7 @@ begin
             stat_bus(STAT_PC_IS_SUSPEND_INDEX);
 
         -- Pad rest by zeroes
-        Control_registers_in.debug_register(31 downto 18) <= (OTHERS => '0');
+        Control_registers_in.debug_register(31 downto 19) <= (OTHERS => '0');
 
     end block debug_register_block;
 
