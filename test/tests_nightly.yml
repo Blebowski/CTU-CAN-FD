@@ -141,6 +141,7 @@ feature:
         tx_cmd_set_ready:
         tx_priority:
             iterations: 5
+        overload:
 sanity:
     default:
         <<: *default
