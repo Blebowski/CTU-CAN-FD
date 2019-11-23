@@ -2138,9 +2138,16 @@ begin
                     rec_valid_d <= '1';
                 end if;
                 
-                -- DOMINANT during EOF (apart from last bit) means error!
-                if (rx_data_nbs = DOMINANT and ctrl_ctr_zero = '0') then
-                    form_err_i <= '1';
+                -- DOMINANT during EOF. All bits before last -> Form error!
+                -- Last bit -> Receiver treats it as overload condition, so
+                -- no error frame will be transmitted. Transmitter treats it
+                -- as Form error!
+                if (rx_data_nbs = DOMINANT) then
+                    if (ctrl_ctr_zero = '0') then
+                        form_err_i <= '1';
+                    elsif (is_transmitter = '1') then
+                        form_err_i <= '1';
+                    end if;
                 end if;
     
             -------------------------------------------------------------------
