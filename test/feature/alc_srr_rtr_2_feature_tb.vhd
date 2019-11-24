@@ -230,13 +230,15 @@ package body alc_srr_rtr_2_feature is
         --    from Node 2 and check it.
         -----------------------------------------------------------------------
         info("Step 7: Check arbitration lost on SRR/RTR");
-        CAN_wait_pc_state(pc_deb_arbitration, ID_1, mem_bus(1));
+        CAN_wait_pc_state(pc_deb_arbitration, ID_2, mem_bus(2));
         for i in 0 to 11 loop
-            CAN_wait_sample_point(iout(1).stat_bus);
+            CAN_wait_sample_point(iout(2).stat_bus);
         end loop;
         check(iout(1).can_tx = DOMINANT, "Dominant RTR transmitted!");
         check(iout(2).can_tx = RECESSIVE, "Recessive RTR transmitted!");
-        wait for 20 ns; -- To account for trigger processing
+        
+        -- Wait for up to one bit time since triggers can be shifted! 
+        wait for 1000 ns;
         
         get_controller_status(stat_2, ID_2, mem_bus(2));
         check(stat_2.receiver, "Node 2 lost arbitration!");
