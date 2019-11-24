@@ -143,10 +143,18 @@ package body command_cdo_feature is
         CAN_insert_TX_frame(frame_1, 1, ID_2, mem_bus(2));
         send_TXT_buf_cmd(buf_set_ready, 1, ID_2, mem_bus(2));
         
+        info("Read RX Buffer size: " & integer'image(rx_buf_info.rx_buff_size));
+        info("Sending " & integer'image(rx_buf_info.rx_buff_size / 4) &
+             " RTR frames");
+
         for i in 0 to (rx_buf_info.rx_buff_size / 4) - 1 loop
+            info("Sending frame nr: " & integer'image(i));
             send_TXT_buf_cmd(buf_set_ready, 1, ID_2, mem_bus(2));
-            CAN_wait_frame_sent(ID_1, mem_bus(1));
+            CAN_wait_frame_sent(ID_2, mem_bus(2));
         end loop;
+
+        CAN_wait_bus_idle(ID_1, mem_bus(1));
+        CAN_wait_bus_idle(ID_2, mem_bus(2));
 
         -----------------------------------------------------------------------
         -- 2. Read status of RX Buffer in Node 1. Check that RX Buffer full is
@@ -167,7 +175,10 @@ package body command_cdo_feature is
         -----------------------------------------------------------------------
         info("Step 3");
         send_TXT_buf_cmd(buf_set_ready, 1, ID_2, mem_bus(2));
-        CAN_wait_frame_sent(ID_1, mem_bus(1));
+        CAN_wait_frame_sent(ID_2, mem_bus(2));
+        
+        CAN_wait_bus_idle(ID_1, mem_bus(1));
+        CAN_wait_bus_idle(ID_2, mem_bus(2));
         
         get_rx_buf_state(rx_buf_info, ID_1, mem_bus(1));
         check(rx_buf_info.rx_full, "RX full set");
@@ -187,6 +198,9 @@ package body command_cdo_feature is
         info("Step 4");
         send_TXT_buf_cmd(buf_set_ready, 1, ID_2, mem_bus(2));
         CAN_wait_frame_sent(ID_1, mem_bus(1));
+        
+        CAN_wait_bus_idle(ID_1, mem_bus(1));
+        CAN_wait_bus_idle(ID_2, mem_bus(2));
         
         get_controller_status(stat_1, ID_1, mem_bus(1));
         check(stat_1.data_overrun, "DOR flag set!");
