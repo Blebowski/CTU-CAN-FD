@@ -742,6 +742,9 @@ architecture rtl of protocol_control_fsm is
     signal tx_frame_no_sof_d         :  std_logic;
     signal tx_frame_no_sof_q         :  std_logic;
     
+    -- Control signal should be updated!
+    signal ctrl_signal_upd          :   std_logic;
+    
 begin
 
     tx_frame_ready <= '1' when (tran_frame_valid = '1' and drv_bus_mon_ena = '0')
@@ -1999,11 +2002,10 @@ begin
                 nbt_ctrs_en <= '1';
                 dbt_ctrs_en <= '1';
                 bit_err_disable <= '1';
-                
+                destuff_enable_clear <= '1';
+                stuff_enable_clear <= '1';
+
                 if (rx_trigger = '1') then
-                    destuff_enable_clear <= '1';
-                    stuff_enable_clear <= '1';
-                    
                     if (is_receiver = '1') then
                         crc_check <= '1';
                     end if;
@@ -2184,30 +2186,27 @@ begin
                         ctrl_ctr_pload_val <= C_SUSPEND_DURATION;
                     end if;
 
-                    -- Lock Buffer when there is what to transmitt, and no
+                    -- Lock TXT Buffer when there is what to transmitt, and no
                     -- suspend! Unit becomes transmitter! If not, and DOMINANT
                     -- is received, become receiver! 
                     if (tx_frame_ready = '1' and go_to_suspend = '0') then
                         txtb_hw_cmd_d.lock <= '1';
                         set_transmitter_i <= '1';
+                        stuff_enable_set <= '1';
+
                         if (rx_data_nbs = DOMINANT) then
                             tx_frame_no_sof_d <= '1';
                         end if;
+                        
                     elsif (rx_data_nbs = DOMINANT) then
                         set_receiver_i   <= '1';
                     end if;
                     
                     -- Transmission/reception started -> Enable Bit stuffing!
                     -- Clear RX Shift Register!
-                    if (frame_start = '1' and rx_trigger = '1') then
+                    if (frame_start = '1') then
                         destuff_enable_set <= '1';
                         rx_clear_i <= '1';
-                    end if;
-                    
-                    -- If we are starting transmission and not going to suspend
-                    -- start bit stuffing
-                    if (tx_frame_ready = '1' and go_to_suspend = '0') then
-                        stuff_enable_set <= '1';
                     end if;
                     
                     -- If we dont sample dominant, nor we have sth ready for
@@ -2251,7 +2250,7 @@ begin
                 -- account for DFF delay and RAM delay! 
                 txtb_ptr_d <= 1;
                 
-                if (rx_data_nbs = DOMINANT and rx_trigger = '1') then
+                if (rx_data_nbs = DOMINANT) then
                     ctrl_ctr_pload_i <= '1';
                     ctrl_ctr_pload_val <= C_BASE_ID_DURATION;
                     tx_load_base_id_i <= '1';
@@ -2264,11 +2263,11 @@ begin
                 -- transmitt, otherwise it goes to SOF and transmitts
                 elsif (ctrl_ctr_zero = '1') then
                     if (tx_frame_ready = '1') then
-                        rx_clear_i <= '1';
                         set_transmitter_i <= '1';
+                        txtb_hw_cmd_d.lock <= '1';
+                        rx_clear_i <= '1';
                         destuff_enable_set <= '1';
                         stuff_enable_set <= '1';
-                        txtb_hw_cmd_d.lock <= '1';
                     else
                         set_idle_i <= '1';
                     end if;
@@ -2298,6 +2297,8 @@ begin
                     txtb_hw_cmd_d.lock <= '1';
                     set_transmitter_i <= '1';
                     tx_load_base_id_i <= '1';
+                    stuff_enable_set <= '1';
+
                     if (rx_data_nbs = DOMINANT) then
                         tx_frame_no_sof_d <= '1';
                     end if;
@@ -2308,16 +2309,9 @@ begin
 
                 -- Transmission/reception started -> Enable Bit de-stuffing!
                 -- Clear RX Shift register!
-                if (frame_start = '1' and rx_trigger = '1' and
-                    is_bus_off = '0')
-                then
+                if (frame_start = '1' and is_bus_off = '0') then
                     destuff_enable_set <= '1';
                     rx_clear_i <= '1';
-                end if;
-                
-                -- Transmission started -> Enable bit stuffing!
-                if (tx_frame_ready = '1' and is_bus_off = '0') then
-                    stuff_enable_set <= '1';
                 end if;
 
             -------------------------------------------------------------------
@@ -2507,8 +2501,8 @@ begin
     -- FSM State register
     -----------------------------------------------------------------------
     state_reg_ce <= '1' when (next_state /= curr_state and
-                              (rx_trigger = '1' or drv_ena = '0' or
-                               err_frm_req = '1' or tick_state_reg = '1'))
+                              (ctrl_signal_upd = '1' or drv_ena = '0' or
+                               tick_state_reg = '1'))
                         else
                     '0';
 
@@ -2530,8 +2524,7 @@ begin
     --     gating with RX Trigger in each FSM state!
     -----------------------------------------------------------------------
     ctrl_ctr_pload <= ctrl_ctr_pload_i when (curr_state = s_pc_off) else
-                      ctrl_ctr_pload_i when (rx_trigger = '1' or
-                                             err_frm_req = '1') else
+                      ctrl_ctr_pload_i when (ctrl_signal_upd = '1') else
                       '0';
 
     -----------------------------------------------------------------------
@@ -2570,6 +2563,10 @@ begin
         end if;
     end process;
     
+    ctrl_signal_upd <= '1' when (rx_trigger = '1' or err_frm_req = '1')
+                           else
+                       '0';
+
     -----------------------------------------------------------------------
     -- TXT Buffer HW commands pipeline
     -----------------------------------------------------------------------
@@ -2583,7 +2580,7 @@ begin
             txtb_hw_cmd_q.arbl    <= '0';
             txtb_hw_cmd_q.failed  <= '0';
         elsif (rising_edge(clk_sys)) then
-            if (rx_trigger = '1' or err_frm_req = '1') then
+            if (ctrl_signal_upd = '1') then
                 txtb_hw_cmd_q <= txtb_hw_cmd_d;
             else
                 txtb_hw_cmd_q <= ('0', '0', '0', '0', '0', '0');
@@ -2707,7 +2704,11 @@ begin
     no_pos_resync <= '1' when (is_transmitter = '1' and tx_data_wbs = DOMINANT)
                          else
                      '0';
-    
+
+    rx_clear <= '1' when (rx_clear_i = '1' and rx_trigger = '1')
+                    else
+                '0'; 
+
     ---------------------------------------------------------------------------
     -- Bit error is disabled:
     --  1. In arbitration field, there it is detected extra since only
@@ -2817,11 +2818,13 @@ begin
         if (res_n = G_RESET_POLARITY) then
             stuff_enable <= '0';
         elsif (rising_edge(clk_sys)) then
-            if (stuff_enable_set = '1') then
-               stuff_enable <= '1';
-            elsif (stuff_enable_clear = '1') then
-               stuff_enable <= '0';
-           end if;
+            if (ctrl_signal_upd = '1') then
+                if (stuff_enable_set = '1') then
+                   stuff_enable <= '1';
+                elsif (stuff_enable_clear = '1') then
+                   stuff_enable <= '0';
+               end if;
+            end if;
         end if;
     end process;
     
@@ -2833,10 +2836,12 @@ begin
         if (res_n = G_RESET_POLARITY) then
             destuff_enable <= '0';
         elsif (rising_edge(clk_sys)) then
-            if (destuff_enable_set = '1') then
-                destuff_enable <= '1';
-            elsif (destuff_enable_clear = '1') then
-                destuff_enable <= '0';
+            if (ctrl_signal_upd = '1') then
+                if (destuff_enable_set = '1') then
+                    destuff_enable <= '1';
+                elsif (destuff_enable_clear = '1') then
+                    destuff_enable <= '0';
+                end if;
             end if;
         end if;    
     end process;
@@ -2894,7 +2899,6 @@ begin
     txtb_hw_cmd <= txtb_hw_cmd_q;
     tran_valid <= txtb_hw_cmd_q.valid;
     ssp_reset <= ssp_reset_i; 
-    rx_clear <= rx_clear_i;
     sync_control <= sync_control_q;
     txtb_ptr <= txtb_ptr_q;
     pc_state <= curr_state;
