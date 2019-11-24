@@ -60,6 +60,8 @@ feature:
         device_id:
         dlc_can20_8_64_bytes:
         err_norm_fd:
+        error_rules_a:
+        fault_state:
         mode_loopback:
         mode_listen_only:
         mode_self_test:
@@ -68,7 +70,6 @@ feature:
         mode_fd_enable:
         mode_rst:
         mode_test:
-        fault_state:
         int_rx:
         int_tx:
         int_ewl:

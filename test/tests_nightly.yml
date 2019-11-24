@@ -90,6 +90,8 @@ feature:
         dlc_can20_8_64_bytes:
         err_norm_fd:
             iterations: 5
+        error_rules_a:
+        fault_state:
         mode_loopback:
             iterations: 10
         mode_listen_only:
@@ -99,7 +101,6 @@ feature:
         mode_fd_enable:
         mode_rst:
         mode_test:
-        fault_state:
         int_rx:
         int_tx:
         int_ewl:
