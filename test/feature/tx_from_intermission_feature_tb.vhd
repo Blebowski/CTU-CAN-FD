@@ -134,9 +134,9 @@ package body tx_from_intermission_feature is
         -----------------------------------------------------------------------
         CAN_generate_frame(rand_ctr, frame_1);
         CAN_send_frame(frame_1, 1, ID_2, mem_bus(2), frame_sent);
-        
+
         CAN_wait_tx_rx_start(true, false, ID_2, mem_bus(2));
-        wait for 1000 ns; -- To be sure the other node started reception!
+        wait for 5000 ns; -- To be sure Node 1 started reception!
 
         CAN_generate_frame(rand_ctr, frame_2);
         CAN_send_frame(frame_2, 1, ID_1, mem_bus(1), frame_sent);
