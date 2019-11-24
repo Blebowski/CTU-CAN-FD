@@ -149,7 +149,10 @@ package body command_frcrst_feature is
         
         read_traffic_counters(traff_ctrs_2, ID_2, mem_bus(2));
         check(traff_ctrs_2.tx_frames = 0, "TX frame counter erased!");
-        
+
+        CAN_wait_bus_idle(ID_1, mem_bus(1));
+        CAN_wait_bus_idle(ID_2, mem_bus(2));
+
         -----------------------------------------------------------------------
         -- 2. Check that RX Frame counter of Node 1 is not zero. Issue
         --    COMMAND[TXFRCRST] and check it is still not 0. Issue 
@@ -158,6 +161,9 @@ package body command_frcrst_feature is
         info("Step 2");
         
         read_traffic_counters(traff_ctrs_1, ID_1, mem_bus(1));
+        info("Node 1");
+        info("RX frames: " & integer'image(traff_ctrs_1.rx_frames));
+        info("TX frames: " & integer'image(traff_ctrs_1.tx_frames));
         check(traff_ctrs_1.rx_frames /= 0, "RX frame counter not 0!");
         
         command.tx_frame_ctr_rst := true;
