@@ -2338,23 +2338,6 @@ s of the fact if bit rate is switched in current frame) on recessive to
  Transmitter delay is measured in periods of System clock.
 \end_layout
 
-\begin_layout Description
-Note Transmitter delay measurement includes input delay of CTU CAN FD (which
- is 2 clock cycles).
- Therefore measured transmitter delay will be always higher by two than
- actual delay from can_tx to can_rx (e.g.
- if signal propagation from can_tx to can_rx takes 110 ns (11 System clock
- periods at 100 MHz), measured transmitter delay will be 13).
-\end_layout
-
-\begin_layout Description
-Note Transmitter delay measurement is saturated to 127 System clock cycles.
- If the delay between can_tx and can_rx is longer, only 127 clock cycles
- will be measured.
- When system clock frequency is 100 Mhz, this gives 1,27 us of maximal measurabl
-e transmitter delay.
-\end_layout
-
 \begin_layout Standard
 \begin_inset Float figure
 placement h
@@ -2399,6 +2382,22 @@ name "fig:transmitter-delay"
 
 \end_layout
 
+\begin_layout Description
+Note Transmitter delay measurement includes input delay of CTU CAN FD (which
+ is 2 clock periods of System clock).
+ Therefore measured transmitter delay will be always higher by two than
+ actual delay from can_tx to can_rx (e.g.
+ if signal propagation from can_tx to can_rx takes 110 ns (11 System clock
+ periods at 100 MHz), measured transmitter delay will be 13).
+\end_layout
+
+\begin_layout Description
+Note Transmitter delay measurement is saturated to 127 System clock periods.
+ If the delay between can_tx and can_rx is longer, only 127 will be measured.
+ When system clock frequency is 100 Mhz, this gives 1,27 us of maximal measurabl
+e transmitter delay which is more than most of CAN transceivers need.
+\end_layout
+
 \begin_layout Subsection
 Secondary sampling point
 \end_layout
@@ -2424,24 +2423,6 @@ noprefix "false"
  When Secondary sampling point is disabled, regular sampling point as configured
  by BRP_FD register is used by transmitters during data bit rate for bit
  error detection.
-\end_layout
-
-\begin_layout Description
-Note Secondary sampling point offset (SSP_CFG[SSP_OFFSET]) is configurable
- between 0 - 255.
- Internal range of secondary sampling point position is also 0 - 255.
- If due to some reason secondary sampling point position would be more than
- 255 clock cycles from start of bit (e.g.
- due to large measured Transmitter delay) it is saturated to 255.
-\end_layout
-
-\begin_layout Description
-Note Since CTU CAN FD input delay is 2 System clock periods (minimum time
- quanta), position of Secondary sampling point shall be configured to at
- least 2 to compensate its own input delay (therefore if SSP_CFG[SSP_OFFSET]
- < 3 and SSP_CFG[SSP_SRC] = SSP_SRC_OFFSET], it is impossible to transmitt
- CAN FD frames without detecting bit error on CTU CAN FDs own transmitted
- frame).
 \end_layout
 
 \begin_layout Standard
@@ -2486,6 +2467,68 @@ name "fig:secondary-sampling-point"
 \end_inset
 
 
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+placement h
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\noindent
+\align center
+\begin_inset Graphics
+	filename ../pics/Visio_generated/SSP_timing.pdf
+	lyxscale 20
+	scale 90
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Secondary sampling point 2
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:secondary-sampling-point-2"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Description
+Note Secondary sampling point offset (SSP_CFG[SSP_OFFSET]) is configurable
+ between 0 - 255.
+ Internal range of secondary sampling point position is also 0 - 255.
+ If due to some reason secondary sampling point position would be more than
+ 255 clock cycles from start of bit (e.g.
+ due to large measured Transmitter delay) it is saturated to 255.
+\end_layout
+
+\begin_layout Description
+Note Since CTU CAN FD input delay is 2 System clock periods (minimum time
+ quanta), position of Secondary sampling point shall be configured to at
+ least 2 to compensate its own input delay (therefore if SSP_CFG[SSP_OFFSET]
+ < 3 and SSP_CFG[SSP_SRC] = SSP_SRC_OFFSET], it is impossible to transmitt
+ CAN FD frames without detecting bit error on CTU CAN FDs own transmitted
+ frame).
 \end_layout
 
 \begin_layout Subsection
