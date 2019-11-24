@@ -206,19 +206,21 @@ package body err_norm_fd_feature is
         CAN_wait_pc_state(pc_deb_control, ID_1, mem_bus(1));
         CAN_wait_not_pc_state(pc_deb_control, ID_1, mem_bus(1));
         
-        -- Now we should be in Data bit rate!
+        -- Now we should be in Data bit rate! This is either CRC or data field!
         wait_rand_cycles(rand_ctr, mem_bus(1).clk_sys, 0, 150);
 
-        wait until iout(1).CAN_tx = DOMINANT;
-        force_bus_level(RECESSIVE, so.bl_force, so.bl_inject);
+        wait until iout(1).CAN_tx = RECESSIVE;
+        force_bus_level(DOMINANT, so.bl_force, so.bl_inject);
 
-        --  Wait twice since we can miss it due to SSP. This might cause one
-        --  or actually two error frames (error frame as result of first bit
-        --  corrupted during error frame!)
-        CAN_wait_sample_point(iout(1).stat_bus, false);
-        wait for 20 ns;
-        CAN_wait_sample_point(iout(1).stat_bus, false);
-
+        -- Wait for some time, unit should sample the forced dominant bus
+        -- value. This can be later due to SSP, so we must wait for sufficient
+        -- time of SSP! If bit-rate is fast enough, we might wait till Error
+        -- frame. We don't mind since node is error active and value that
+        -- we forced will be DOMINANT which is the same as during Error flag.
+        -- Sowe release the bus during the error flag!
+        -- Here we assume that Error flag will last less than 2500 ns. With
+        -- max 1 us of Nominal bit-rate we should be fine!
+        wait for 2550 ns; -- SSP could be up to 255!
         release_bus_level(so.bl_force);
 
         CAN_wait_bus_idle(ID_1, mem_bus(1));
@@ -226,9 +228,8 @@ package body err_norm_fd_feature is
         read_error_counters(err_counters_2_1, ID_1, mem_bus(1));
         read_error_counters(err_counters_2_2, ID_2, mem_bus(2));
 
-        check((err_counters_1_1.err_fd + 1 = err_counters_2_1.err_fd) or
-              (err_counters_1_1.err_fd + 2 = err_counters_2_1.err_fd),
-                "ERR_FD incremented by 1 or 2 in transmitter!");
+        check((err_counters_1_1.err_fd + 1 = err_counters_2_1.err_fd),
+                "ERR_FD incremented by 1 in transmitter!");
         check(err_counters_1_2.err_fd + 1 = err_counters_2_2.err_fd,
                 "ERR_FD incremented by 1 in receiver!");
 
