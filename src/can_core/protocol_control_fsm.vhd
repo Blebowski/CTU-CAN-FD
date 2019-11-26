@@ -1719,6 +1719,10 @@ begin
                         ssp_reset_i <= '1';
                     end if;
                 end if;
+                
+                if (drv_can_fd_ena = FDE_DISABLE and rx_data_nbs = RECESSIVE) then
+                    form_err_i <= '1';
+                end if;
 
             -------------------------------------------------------------------
             -- r0 bit after EDL/r1 bit in Extended CAN Frames.
