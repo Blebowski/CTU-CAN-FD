@@ -16772,7 +16772,7 @@ status open
 \noindent
 \align center
 \begin_inset Tabular
-<lyxtabular version="3" rows="6" columns="2">
+<lyxtabular version="3" rows="7" columns="2">
 <features tabularvalignment="middle">
 <column alignment="left" valignment="middle" width="30.5line%">
 <column alignment="left" valignment="top" width="63line%">
@@ -16871,35 +16871,9 @@ r1
 \color inherit
  bit in frame with 
 \color red
-extended identifier
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-If 
-\color red
-recessive
+extended identifier 
 \color inherit
- bit is received, 
-\color red
-form error
-\color inherit
- is detected.
-\end_layout
-
-\end_inset
-</cell>
-</row>
-<row>
-<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-
+or 
 \color red
 r0
 \color inherit
@@ -16921,8 +16895,64 @@ recessive
 form error
 \color inherit
  is detected.
+ Recessive bit would mean extending beyond CAN FD standard (CAN XL).
+ This is not supported.
  Protocol exception is not implemented on further extensions beyond CAN
  FD protocol.
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\color red
+EDL
+\color inherit
+/
+\color red
+r0
+\color inherit
+ bit in CAN frames with 
+\color red
+base identifier
+\color inherit
+.
+ 
+\color red
+EDL
+\color inherit
+/
+\color red
+r1
+\color inherit
+ bit in CAN FD frames with 
+\color red
+extended identifier
+\color inherit
+.
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+If 
+\color red
+recessive
+\color inherit
+ bit is received and CAN FD support is disabled MODE[FDE] = '0', 
+\color red
+form error
+\color inherit
+ is detected.
+ Recessive bit here indicates CAN FD frame.
 \end_layout
 
 \end_inset
@@ -16940,10 +16970,6 @@ CRC delimiter
 , 
 \color red
 ACK delimiter
-\color inherit
-, 
-\color red
-EOF
 \end_layout
 
 \end_inset
@@ -16961,6 +16987,38 @@ dominant
 form error
 \color inherit
  is detected.
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\color red
+EOF
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+If 
+\color red
+dominant
+\color inherit
+ bit is detected at all but last bit of EOF, form Error is detected.
+ At last bit 
+\color red
+dominant
+\color inherit
+ bit means Error frame only for transmitter.
+ For receiver, it means Overload condition.
 \end_layout
 
 \end_inset

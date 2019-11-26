@@ -1006,6 +1006,7 @@ Ondrej Ille
 \begin_layout Plain Layout
 Clarify behaviour of Transmitter delay measurement.
  Add notes on RX frame timestamping.
+ Extend SSP position to 255.
 \end_layout
 
 \end_inset
