@@ -1205,7 +1205,7 @@ begin
     --       Error frame transmission starts! 
 
     -- psl no_stuff_bit_in_error_frame_2_asrt : assert never
-    --  {is_err_frm = '1'} |=> {data_halt = '0'} 
+    --  ({is_err_frm = '1'; is_err_frm = '1' and destuffed = '1'}) 
     --  report "Stuff bits not allowed in Error frame!"
     --  severity error;
 
@@ -1229,6 +1229,48 @@ begin
     --  report "Stuff bits not allowed in Bus idle!"
     --  severity error;
     
+    -----------------------------------------------------------------------
+    -----------------------------------------------------------------------
+    -- Functional coverage
+    -----------------------------------------------------------------------
+    -----------------------------------------------------------------------
+
+    -- Transmitted frame combinations (no RTR)
+
+    -- psl tx_base_id_can_2_0_cov : cover
+    --  (tran_ident_type = BASE and tran_frame_type = NORMAL_CAN and
+    --   tran_is_rtr = '0');
+    
+    -- psl tx_extended_id_can_2_0_cov : cover
+    --  (tran_ident_type = EXTENDED and tran_frame_type = NORMAL_CAN and
+    --   tran_is_rtr = '0');
+    
+    -- psl tx_base_id_can_fd_cov : cover
+    --  (tran_ident_type = BASE and tran_frame_type = FD_CAN and
+    --   tran_is_rtr = '0');
+
+    -- psl tx_extended_id_can_fd_cov : cover
+    --  (tran_ident_type = EXTENDED and tran_frame_type = FD_CAN and
+    --   tran_is_rtr = '0');  
+
+    -- RTR frames (in combination with FD_CAN, this is ignored!)
+
+    -- psl tx_base_id_can_2_0_rtr_cov : cover
+    --  (tran_ident_type = BASE and tran_frame_type = NORMAL_CAN and
+    --   tran_is_rtr = '1');
+    
+    -- psl tx_extended_id_can_2_0_rtr_cov : cover
+    --  (tran_ident_type = EXTENDED and tran_frame_type = NORMAL_CAN and
+    --   tran_is_rtr = '1');
+    
+    -- psl tx_base_id_can_fd_rtr_cov : cover
+    --  (tran_ident_type = BASE and tran_frame_type = FD_CAN and
+    --   tran_is_rtr = '1');
+
+    -- psl tx_extended_id_can_fd_rtr_cov : cover
+    --  (tran_ident_type = EXTENDED and tran_frame_type = FD_CAN and
+    --   tran_is_rtr = '1');
+
     -- <RELEASE_ON>
 
 end architecture;
