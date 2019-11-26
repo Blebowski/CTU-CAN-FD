@@ -61,6 +61,7 @@ feature:
         dlc_can20_8_64_bytes:
         err_norm_fd:
         error_rules_a:
+        error_rules_b:
         fault_state:
         mode_loopback:
         mode_listen_only:

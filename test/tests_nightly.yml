@@ -91,6 +91,7 @@ feature:
         err_norm_fd:
             iterations: 5
         error_rules_a:
+        error_rules_b:
         fault_state:
         mode_loopback:
             iterations: 10
