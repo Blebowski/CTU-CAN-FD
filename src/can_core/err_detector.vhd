@@ -344,6 +344,7 @@ begin
                               else
                           '1' when (stuff_err = '1' and
                                     is_arbitration = '1' and
+                                    is_transmitter = '1' and
                                     rx_data = DOMINANT and
                                     tx_data = RECESSIVE)
                               else
