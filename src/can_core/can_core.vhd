@@ -1186,4 +1186,49 @@ begin
     sof_pulse <= sof_pulse_i;
     is_overload <= is_overload_i;
 
+    -- <RELEASE_OFF>
+    -----------------------------------------------------------------------
+    -----------------------------------------------------------------------
+    -- Assertions
+    -----------------------------------------------------------------------
+    -----------------------------------------------------------------------
+
+    -- psl default clock is rising_edge(clk_sys);
+
+    -- psl no_stuff_bit_in_error_frame_1_asrt : assert never
+    --  (data_halt = '1' and is_err_frm = '1')
+    --  report "Stuff bits not allowed in Error frame!"
+    --  severity error;
+
+    -- Note: In following assertion, we can't check at the same clock cycle
+    --       because Data halt will be cleared one clock cycle later than
+    --       Error frame transmission starts! 
+
+    -- psl no_stuff_bit_in_error_frame_2_asrt : assert never
+    --  {is_err_frm = '1'} |=> {data_halt = '0'} 
+    --  report "Stuff bits not allowed in Error frame!"
+    --  severity error;
+
+    -- psl no_stuff_bit_in_overload_frame_asrt : assert never
+    --  ((destuffed = '1' or data_halt = '1') and is_overload_i = '1')
+    --  report "Stuff bits not allowed in Overload frame!"
+    --  severity error;
+    
+    -- psl no_stuff_bit_in_eof_asrt : assert never
+    --  ((destuffed = '1' or data_halt = '1') and is_eof = '1')
+    --  report "Stuff bits not allowed in End of frame!"
+    --  severity error;
+    
+    -- psl no_stuff_bit_in_intermission_asrt : assert never
+    --  ((destuffed = '1' or data_halt = '1') and is_intermission = '1')
+    --  report "Stuff bits not allowed in Intermission!"
+    --  severity error;
+
+    -- psl no_stuff_bit_in_idle_asrt : assert never
+    --  ((destuffed = '1' or data_halt = '1') and is_idle = '1')
+    --  report "Stuff bits not allowed in Bus idle!"
+    --  severity error;
+    
+    -- <RELEASE_ON>
+
 end architecture;
