@@ -735,8 +735,8 @@ architecture rtl of protocol_control_fsm is
     signal retr_ctr_add_block        :  std_logic;
     signal retr_ctr_add_block_clr    :  std_logic;
     
-    -- Blocking HW command for Unlock When Error frame request is active
-    signal block_txtb_unlock_due_error : std_logic;
+    -- Blocking HW command for Unlock.
+    signal block_txtb_unlock         :  std_logic;
     
     -- No SOF transmitted
     signal tx_frame_no_sof_d         :  std_logic;
@@ -810,12 +810,13 @@ begin
                    '1' when (rx_data_nbs = DOMINANT) else
                    '0';
 
-    block_txtb_unlock_due_error <= '1' when (curr_state = s_pc_act_err_flag or
-                                             curr_state = s_pc_pas_err_flag or
-                                             curr_state = s_pc_err_delim_wait or
-                                             curr_state = s_pc_err_delim)
-                                       else
-                                   '0';
+    block_txtb_unlock <= '1' when (curr_state = s_pc_act_err_flag or
+                                   curr_state = s_pc_pas_err_flag or
+                                   curr_state = s_pc_err_delim_wait or
+                                   curr_state = s_pc_err_delim or
+                                   curr_state = s_pc_ovr_flag)
+                             else
+                         '0';
 
     ---------------------------------------------------------------------------
     -- CRC sequence selection
@@ -1447,7 +1448,7 @@ begin
                 br_shifted_i <= '1';
             end if;
 
-            if (is_transmitter = '1' and block_txtb_unlock_due_error = '0') then
+            if (is_transmitter = '1' and block_txtb_unlock = '0') then
                 txtb_hw_cmd_d.unlock <= '1';
                 if (tx_failed = '1') then
                     txtb_hw_cmd_d.failed  <= '1';
