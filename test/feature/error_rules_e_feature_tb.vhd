@@ -41,24 +41,24 @@
 
 --------------------------------------------------------------------------------
 -- Purpose:
---  Fault confinement rules - rule D - feature test.
+--  Fault confinement rules - rule E - feature test.
 --
 -- Verifies:
---  1. If a transmitter detects a bit error while sending an active error flag
---     or an overload flag, the transmit error counter shall be incremented by
+--  1. If a receiver detects a bit error while sending an active error flag
+--     or an overload flag, the receive error counter shall be incremented by
 --     8.
 --
 -- Test sequence:
 --  1. Set Node 2 to ACK forbidden mode. Generate CAN frame and send it by Node
---     1. Wait until Error frame is sent by Node 1. Wait for random amount of
+--     1. Wait until Error frame is sent by Node 2. Wait for random amount of
 --     bits (0-5) and force bus level to recessive for duration of one bit time.
---     Wait until bus is idle and check that TX Error counter was incremented
---     by 16 (first ACK error, next bit error during Error frame)!
+--     Wait until bus is idle and check that RX Error counter was incremented
+--     by 9 (first form error in EOF, next bit error during Error frame)!
 --  2. Unset ACK Forbidden in Node 2. Generate CAN frame and send it by Node 1.
---     Wait until Intermission in Node 1 and force bus low for duration of one
+--     Wait until Intermission in Node 2 and force bus low for duration of one
 --     bit time (overload condition). Check that overload frame is being tran-
 --     smitted. Wait for random amount of bits (0-5) and force bus level to
---     recessive for one bit-time. Wait until bus is idle and check that TX
+--     recessive for one bit-time. Wait until bus is idle and check that RX
 --     Error counter was incremented by 7 (incremented by 8, but decremented by
 --     1 due to tran frame valid!)
 --------------------------------------------------------------------------------
@@ -71,8 +71,8 @@ context work.ctu_can_test_context;
 
 use lib.pkg_feature_exec_dispath.all;
 
-package error_rules_d_feature is
-    procedure error_rules_d_feature_exec(
+package error_rules_e_feature is
+    procedure error_rules_e_feature_exec(
         variable    o               : out    feature_outputs_t;
         signal      so              : out    feature_signal_outputs_t;
         signal      rand_ctr        : inout  natural range 0 to RAND_POOL_SIZE;
@@ -82,8 +82,8 @@ package error_rules_d_feature is
     );
 end package;
 
-package body error_rules_d_feature is
-    procedure error_rules_d_feature_exec(
+package body error_rules_e_feature is
+    procedure error_rules_e_feature_exec(
         variable    o               : out    feature_outputs_t;
         signal      so              : out    feature_signal_outputs_t;
         signal      rand_ctr        : inout  natural range 0 to RAND_POOL_SIZE;
@@ -120,15 +120,15 @@ package body error_rules_d_feature is
 
         -----------------------------------------------------------------------
         -- 1. Set Node 2 to ACK forbidden mode. Generate CAN frame and send it
-        --    by Node 1. Wait until Error frame is sent by Node 1. Wait for
+        --    by Node 1. Wait until Error frame is sent by Node 2. Wait for
         --    random amount of bits (0-5) and force bus level to recessive for
         --    duration of one bit time. Wait until bus is idle and check that
-        --    TX Error counter was incremented by 16 (first ACK error, next bit
-        --    error during Overload frame)!
+        --    RX Error counter was incremented by 9 (first form Error in EOF,
+        --    next bit error during Overload frame)!
         -----------------------------------------------------------------------
         info("Step 1");
         
-        read_error_counters(err_counters_1, ID_1, mem_bus(1));
+        read_error_counters(err_counters_1, ID_2, mem_bus(2));
         
         mode_2.acknowledge_forbidden := true;
         set_core_mode(mode_2, ID_2, mem_bus(2));
@@ -137,33 +137,33 @@ package body error_rules_d_feature is
         
         CAN_generate_frame(rand_ctr, CAN_frame);
         CAN_send_frame(CAN_frame, 1, ID_1, mem_bus(1), frame_sent);
-        CAN_wait_error_frame(ID_1, mem_bus(1));
+        CAN_wait_error_frame(ID_2, mem_bus(2));
         
         rand_int_v(rand_ctr, 5, bit_waits);
         for i in 0 to bit_waits - 1 loop
-            CAN_wait_sample_point(iout(1).stat_bus);
+            CAN_wait_sample_point(iout(2).stat_bus);
         end loop;
 
         -- Force Recessive during Error Flag!
         force_bus_level(RECESSIVE, so.bl_force, so.bl_inject);
-        CAN_wait_sample_point(iout(1).stat_bus, false);
+        CAN_wait_sample_point(iout(2).stat_bus, false);
         wait for 20 ns;
         release_bus_level(so.bl_force);
 
         CAN_wait_bus_idle(ID_1, mem_bus(1));
         CAN_wait_bus_idle(ID_2, mem_bus(2));
-        
-        read_error_counters(err_counters_2, ID_1, mem_bus(1));
-        
-        check(err_counters_2.tx_counter = err_counters_1.tx_counter + 16,
-            "TX Error counter inctemented by 8 due to bit error in Error flag!");
 
-        check(err_counters_2.rx_counter = err_counters_1.rx_counter,
-            "RX Error counter unchanged in transmitter!");
+        read_error_counters(err_counters_2, ID_2, mem_bus(2));
+
+        check(err_counters_2.rx_counter = err_counters_1.rx_counter + 9,
+            "RX Error counter inctemented by 8 due to bit error in Error flag!");
+
+        check(err_counters_2.tx_counter = err_counters_1.tx_counter,
+            "TX Error counter unchanged in receiver!");
 
         -----------------------------------------------------------------------
         -- 2. Unset ACK Forbidden in Node 2. Generate CAN frame and send it by
-        --    Node 1. Wait until Intermission in Node 1 and force bus low for
+        --    Node 1. Wait until Intermission in Node 2 and force bus low for
         --    duration of one bit time (overload condition). Check that
         --    overload frame is being transmitted. Wait for random amount of
         --    bits (0-5) and force bus level to recessive for one bit-time.
@@ -173,45 +173,45 @@ package body error_rules_d_feature is
         -----------------------------------------------------------------------
         info("Step 2");
 
-        read_error_counters(err_counters_3, ID_1, mem_bus(1));
+        read_error_counters(err_counters_3, ID_2, mem_bus(2));
 
         mode_2.acknowledge_forbidden := false;
         set_core_mode(mode_2, ID_2, mem_bus(2));
 
         CAN_generate_frame(rand_ctr, CAN_frame);
         CAN_send_frame(CAN_frame, 1, ID_1, mem_bus(1), frame_sent);
-        CAN_wait_pc_state(pc_deb_intermission, ID_1, mem_bus(1));
+        CAN_wait_pc_state(pc_deb_intermission, ID_2, mem_bus(2));
 
         -- Force Dominant -> Overload condition!
         force_bus_level(DOMINANT, so.bl_force, so.bl_inject);
-        CAN_wait_sample_point(iout(1).stat_bus, false);
+        CAN_wait_sample_point(iout(2).stat_bus, false);
         wait for 20 ns;
         release_bus_level(so.bl_force);
         
-        CAN_read_pc_debug(pc_dbg, ID_1, mem_bus(1));
+        CAN_read_pc_debug(pc_dbg, ID_2, mem_bus(2));
         check(pc_dbg = pc_deb_overload, "Overload frame transmitted!");
 
         rand_int_v(rand_ctr, 5, bit_waits);
         for i in 0 to bit_waits - 1 loop
-            CAN_wait_sample_point(iout(1).stat_bus);
+            CAN_wait_sample_point(iout(2).stat_bus);
         end loop;
 
         -- Force Recessive during Overload Flag!
         force_bus_level(RECESSIVE, so.bl_force, so.bl_inject);
-        CAN_wait_sample_point(iout(1).stat_bus, false);
+        CAN_wait_sample_point(iout(2).stat_bus, false);
         wait for 20 ns;
         release_bus_level(so.bl_force);
 
         CAN_wait_bus_idle(ID_1, mem_bus(1));
         CAN_wait_bus_idle(ID_2, mem_bus(2));
 
-        read_error_counters(err_counters_4, ID_1, mem_bus(1));
+        read_error_counters(err_counters_4, ID_2, mem_bus(2));
 
-        check(err_counters_3.tx_counter + 7 = err_counters_4.tx_counter,
-            "TX Error counter inctemented by 8 due to bit error in Overload flag!");
+        check(err_counters_3.rx_counter + 7 = err_counters_4.rx_counter,
+            "RX Error counter inctemented by 8 due to bit error in Overload flag!");
 
-        check(err_counters_3.rx_counter = err_counters_4.rx_counter,
-            "RX Error counter unchanged in transmitter!");
+        check(err_counters_3.tx_counter = err_counters_4.tx_counter,
+            "TX Error counter unchanged in transmitter!");
 
     end procedure;
 
