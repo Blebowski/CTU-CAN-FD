@@ -938,7 +938,7 @@ begin
         drv_fd_type             => drv_fd_type,             -- IN
         is_arbitration          => is_arbitration_i,        -- IN
         is_transmitter          => is_transmitter,          -- IN
-        is_err_passive          => is_receiver,             -- IN
+        is_err_passive          => is_err_passive,          -- IN
 
         -- Status output
         err_frm_req             => err_frm_req,         -- OUT
