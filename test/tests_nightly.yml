@@ -93,6 +93,7 @@ feature:
         error_rules_a:
         error_rules_b:
         error_rules_c:
+        error_rules_d:
         fault_state:
         mode_loopback:
             iterations: 10
