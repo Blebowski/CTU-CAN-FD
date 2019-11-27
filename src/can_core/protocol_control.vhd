@@ -909,7 +909,7 @@ begin
         res_n                   => res_n,               -- IN
 
         -- Data-path interface
-        tx_data                 => tx_data_nbs_i,       -- IN
+        tx_data                 => tx_data_wbs,         -- IN
         rx_data                 => rx_data_nbs,         -- IN
         
         -- Error sources
