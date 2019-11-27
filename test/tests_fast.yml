@@ -62,6 +62,7 @@ feature:
         err_norm_fd:
         error_rules_a:
         error_rules_b:
+        error_rules_c:
         fault_state:
         mode_loopback:
         mode_listen_only:
