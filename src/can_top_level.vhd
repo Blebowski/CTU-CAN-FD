@@ -877,9 +877,10 @@ begin
     bus_sampling_inst : bus_sampling 
     generic map(
         G_RESET_POLARITY        => C_RESET_POLARITY,
-        G_SSP_SHIFT_LENGTH      => C_SSP_SHIFT_LENGTH,
+        G_SSP_DELAY_SAT_VAL     => C_SSP_DELAY_SAT_VAL,
         G_TX_CACHE_DEPTH        => C_TX_CACHE_DEPTH,
         G_TRV_CTR_WIDTH         => C_TRV_CTR_WIDTH,
+        G_SSP_POS_WIDTH         => C_SSP_POS_WIDTH,
         G_USE_SSP_SATURATION    => C_USE_SSP_SATURATION,
         G_SSP_CTRS_WIDTH        => C_SSP_CTRS_WIDTH
     )
@@ -912,5 +913,27 @@ begin
         dbt_measure_start       => dbt_measure_start,   -- IN
         gen_first_ssp           => gen_first_ssp        -- IN
     );
+    
+    -- <RELEASE_OFF>
+    -----------------------------------------------------------------------
+    -----------------------------------------------------------------------
+    -- Assertions
+    -----------------------------------------------------------------------
+    -----------------------------------------------------------------------
+    
+    -- psl default clock is rising_edge(clk_sys);
+
+    -- psl no_tx_dominant_when_disabled : assert never
+    --  (drv_bus(DRV_ENA_INDEX) = '0' and can_tx = DOMINANT)
+    --  report "Dominant bit can't be transmitted when Node is disabled!"
+    --  severity error;
+
+    -- psl no_tx_dominant_when_bus_monitoring : assert never
+    --  (drv_bus(DRV_BUS_MON_ENA_INDEX) = '1' and can_tx = DOMINANT)
+    --  report "Dominant bit can't be transmitted in Bus monitoring mode!"
+    --  severity error;
+
+    -- <RELEASE_ON>
+    
 
 end architecture;

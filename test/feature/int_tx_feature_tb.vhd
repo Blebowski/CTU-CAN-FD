@@ -150,7 +150,7 @@ package body int_tx_feature is
         
         -----------------------------------------------------------------------
         --  2. Set Retransmitt limit to 0 on Node 1 (One shot-mode). Enable 
-        --     Retransmitt limitations on Node 1. Send frame by Node 2.
+        --     Retransmitt limitations on Node 1. Send frame by Node 1.
         -----------------------------------------------------------------------
         info("Step 2: Sending frame");
         CAN_enable_retr_limit(true, 0, ID_1, mem_bus(1));
@@ -216,6 +216,9 @@ package body int_tx_feature is
         -----------------------------------------------------------------------
         info("Step 6: Check TX Interrupt is not set upon Error Frame!");
         CAN_generate_frame(rand_ctr, CAN_frame);
+        -- CAN 2.0 frame is needed! In FD frame, ACK can be prolonged so it
+        -- is not enough to force it recessive for one bit!!!
+        CAN_frame.frame_format := NORMAL_CAN; 
         CAN_send_frame(CAN_frame, 1, ID_1, mem_bus(1), frame_sent);
         CAN_wait_pc_state(pc_deb_ack, ID_1, mem_bus(1));
         force_bus_level(RECESSIVE, so.bl_force, so.bl_inject);

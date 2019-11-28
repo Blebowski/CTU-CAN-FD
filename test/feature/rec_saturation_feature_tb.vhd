@@ -41,14 +41,21 @@
 
 --------------------------------------------------------------------------------
 -- Purpose:
---  Feature test for setting error counters from user and its appropriate fault
---  confinement state manipulation!
+--  REC (RX Error counter) saturation feature test.
 --
+-- Verifies:
+--  1. REC is saturated at its width (9 bits) and further errors in receiver
+--     will not cause its overflow.
+--
+-- Test sequence:
+--  1. Set Test mode in Node 1. Disable CAN FD support in Node 1 and Set REC to
+--     510 in Node 1. Check that REC is 510.
+--  2. Send CAN FD frame by Node 2 few times. Wait until CAN frame is sent and
+--     check that REC in Node 1 is 511 after first frame (was incremented by 1)
+--     and also after each next attempt to transmitt a frame.
 --------------------------------------------------------------------------------
 -- Revision History:
---
---    30.6.2016   Created file
---    06.02.2018  Modified to work with the IP-XACT generated memory map
+--    11.11.2019   Created file
 --------------------------------------------------------------------------------
 
 context work.ctu_can_synth_context;
@@ -56,8 +63,8 @@ context work.ctu_can_test_context;
 
 use lib.pkg_feature_exec_dispath.all;
 
-package fault_confinement_feature is
-    procedure fault_confinement_feature_exec(
+package rec_saturation_feature is
+    procedure rec_saturation_feature_exec(
         variable    o               : out    feature_outputs_t;
         signal      so              : out    feature_signal_outputs_t;
         signal      rand_ctr        : inout  natural range 0 to RAND_POOL_SIZE;
@@ -68,8 +75,8 @@ package fault_confinement_feature is
 end package;
 
 
-package body fault_confinement_feature is
-    procedure fault_confinement_feature_exec(
+package body rec_saturation_feature is
+    procedure rec_saturation_feature_exec(
         variable    o               : out    feature_outputs_t;
         signal      so              : out    feature_signal_outputs_t;
         signal      rand_ctr        : inout  natural range 0 to RAND_POOL_SIZE;
@@ -77,76 +84,70 @@ package body fault_confinement_feature is
         signal      mem_bus         : inout  mem_bus_arr_t;
         signal      bus_level       : in     std_logic
     ) is
-        variable r_data             :       std_logic_vector(31 downto 0) :=
-                                                (OTHERS => '0');
+        variable ID_1               :       natural := 1;
+        variable ID_2               :       natural := 2;
         variable CAN_frame          :       SW_CAN_frame_type;
+        variable RX_CAN_frame       :       SW_CAN_frame_type;
         variable frame_sent         :       boolean := false;
-        variable ctr_1              :       natural;
-        variable ctr_2              :       natural;
-        variable ID_1           	:       natural := 1;
-        variable ID_2           	:       natural := 2;
-        variable rand_val           :       real;
-        variable th_1               :       natural := 0;
-        variable rxc                :       natural := 0;
-        variable txc                :       natural := 0;
+        variable rand_value         :       natural;
 
-        variable err_counters       :       SW_error_counters;
-        variable fault_th           :       SW_fault_thresholds := (0, 0);
-        variable fault_th_2         :       SW_fault_thresholds := (0, 0);
-        variable fault_state        :       SW_fault_state;
+        variable ctrs_1             :       SW_traffic_counters;
+        variable ctrs_2             :       SW_traffic_counters;
+        variable ctrs_3             :       SW_traffic_counters;
+        variable ctrs_4             :       SW_traffic_counters;
+        variable ctrs_5             :       SW_traffic_counters;
+        
+        variable status             :       SW_status;
+        variable command            :       SW_command := SW_command_rst_val;
+        
+        variable rx_buf_info        :       SW_RX_Buffer_info;
+        variable mode_1             :       SW_mode := SW_mode_rst_val;
+        
+        variable err_counters       :       SW_error_counters := (0, 0, 0, 0);
     begin
         o.outcome := true;
 
         ------------------------------------------------------------------------
-        -- Generate random setting of ERP treshold and RX counters to preset
+        -- 1. Set Test mode in Node 1. Disable CAN FD support in Node 1 and Set
+        --    REC to 510 in Node 1. Check that REC is 510.
         ------------------------------------------------------------------------
-        rand_real_v(rand_ctr, rand_val);
-        fault_th.erp := integer(rand_val * 254.0);
+        info("Step 1");
+        mode_1.test := true;
+        mode_1.flexible_data_rate := false;
+        set_core_mode(mode_1, ID_1, mem_bus(1));
 
-        rand_real_v(rand_ctr, rand_val);
-        err_counters.rx_counter := integer(rand_val * 257.0);
-
-        rand_real_v(rand_ctr,rand_val);
-        err_counters.tx_counter := integer(rand_val * 257.0);
-
-
-        ------------------------------------------------------------------------
-        -- Set the counter and tresholds
-        ------------------------------------------------------------------------
+        err_counters.rx_counter := 510;
         set_error_counters(err_counters, ID_1, mem_bus(1));
-        set_fault_thresholds(fault_th, ID_1, mem_bus(1));
-
-
-        ------------------------------------------------------------------------
-        -- Read counters back
-        ------------------------------------------------------------------------
-        get_fault_thresholds(fault_th_2, ID_1, mem_bus(1));
-
-        check(fault_th.ewl = fault_th_2.ewl,
-              "Error warning limit threshold was not set properly!");
-
-        check(fault_th.erp = fault_th_2.erp,
-              "Error passive threshold was not set properly!");
+        err_counters.rx_counter := 0;
+        read_error_counters(err_counters, ID_1, mem_bus(1));
+        check(err_counters.rx_counter = 510, "REC set properly!");
 
         ------------------------------------------------------------------------
-        -- Read fault confinement state
+        -- 2. Send CAN FD frame by Node 2 few times. Wait until CAN frame is
+        --    sent and check that REC in Node 1 is 511 after first frame (was
+        --    incremented by 1) and also after each next attempt to transmitt a
+        --    frame.
         ------------------------------------------------------------------------
-        get_fault_state(fault_state, ID_1, mem_bus(1));
+        info("Step 2");
+        
+        -- Set to one shot mode
+        CAN_enable_retr_limit(true, 0, ID_1, mem_bus(1));
 
-        if (err_counters.tx_counter > 255 or
-            err_counters.rx_counter > 255)
-        then
-            check(fault_state /= fc_bus_off, "Unit not Bus off as expected!");
+        CAN_generate_frame(rand_ctr, CAN_frame);
+        CAN_frame.frame_format := FD_CAN;
+
+        for i in 0 to 3 loop
+            CAN_send_frame(CAN_frame, 1, ID_2, mem_bus(2), frame_sent);
+            CAN_wait_frame_sent(ID_1, mem_bus(1));
             
-        elsif (err_counters.tx_counter < fault_th.ewl and
-               err_counters.rx_counter < fault_th.ewl)
-        then
-            check(fault_state = fc_error_active,
-                  "Unit not Error Active as expected!");
-        else
-          check(fault_state = fc_error_passive,
-                "Unit not Error Passive as expected!");
-        end if;
+            read_error_counters(err_counters, ID_1, mem_bus(1));
+            
+            if (i = 0) then
+                check(err_counters.rx_counter = 511, "REC incremented to 511!");
+            else
+                check(err_counters.rx_counter = 511, "REC remains saturated at 511!");
+            end if;
+        end loop;
 
     end procedure;
 

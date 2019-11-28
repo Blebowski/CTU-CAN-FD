@@ -41,18 +41,25 @@
 
 --------------------------------------------------------------------------------
 -- Purpose:
---  This test will verify that TX Buffer datapath is hazard free.
+--  TXT Buffer datapath hazard feature test.
 --
---  Test sequence:  
---      1. Insert frame to TXT Buffer
---      2. Mark the buffer as ready.
---      3. Immediately send set_abort command.
---      4. Readout status of the buffer.
---      5. If the buffer is "aborted", check that no transmission is in progress
---         (e.g. via STATUS), throw an error if not.
---      6. If the buffer is "abort in progress" check that transmission is 
---         in progress and wait till its end. Throw an error if not.
---      7. If buffer is in any other state, throw an error.  
+-- Verifies:
+--  1. When Lock command is issued on Protocol control at the same time as
+--     Set Abort command, Lock command will have priority.
+--  2. TXT Buffer will never end up Aborted when Protocol control succesfully
+--     locks TXT Buffer for transmission! 
+--
+-- Test sequence:  
+--  1. Insert frame to TXT Buffer
+--  2. Mark the buffer as ready and wait for incrementing time.
+--  3. Send set_abort command.
+--  4. Readout status of TXT buffer.
+--  5. If the buffer is "Aborted", check that no transmission is in progress
+--     (via STATUS), throw an error if not.
+--  6. If the buffer is "Abort in progress" check that transmission is 
+--     in progress and wait till its end. Throw an error if not.
+--  7. If buffer is in any other state, throw an error. Set Abort command should
+--     not be missed by HW!
 --
 --------------------------------------------------------------------------------
 -- Revision History:
@@ -151,7 +158,6 @@ package body txt_buffer_hazard_feature is
                      "in consistence state." & " [" & to_string(i) & "]");
          
                 -- Wait until bus is idle 
-                ------------------------------------------------------------------
                 CAN_wait_bus_idle(ID_1, mem_bus(1));
 
                 -- Is the unit now in idle since it is after transmittion already?

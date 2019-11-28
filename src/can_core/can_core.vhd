@@ -439,6 +439,7 @@ architecture rtl of can_core is
     signal is_intermission         :     std_logic;
     signal is_suspend              :     std_logic;
     signal is_overload_i           :     std_logic;
+    signal is_sof                  :     std_logic;
     
     signal sof_pulse_i             :     std_logic;
     
@@ -487,6 +488,7 @@ begin
         is_suspend              => is_suspend,          -- OUT
         is_err_frm              => is_err_frm,          -- OUT
         is_overload             => is_overload_i,       -- OUT
+        is_sof                  => is_sof,              -- OUT
         
         -- TXT Buffers interface
         tran_word               => tran_word,           -- IN
@@ -890,9 +892,9 @@ begin
     ----------------------------------------------------------------------------
     -- STATUS Bus Implementation
     ----------------------------------------------------------------------------
-    stat_bus(511 downto 384) <= (OTHERS => '0');
+    stat_bus(511 downto 385) <= (OTHERS => '0');
     stat_bus(299 downto 297) <= (OTHERS => '0');
-    stat_bus(187 downto 188) <= (OTHERS => '0');
+    stat_bus(187)            <= '0';
     stat_bus(98 downto 90)   <= (OTHERS => '0');
     stat_bus(60 downto 32)   <= (OTHERS => '0');
     stat_bus(113)            <= '0';
@@ -944,7 +946,7 @@ begin
     
     stat_bus(STAT_PC_IS_EOF_INDEX) <=
         is_eof;
-    
+
     stat_bus(STAT_PC_IS_INTERMISSION_INDEX) <=
         is_intermission;
     
@@ -953,10 +955,13 @@ begin
         
     stat_bus(STAT_PC_IS_ERR_INDEX) <=
         is_err_frm;
-    
+
     stat_bus(STAT_PC_IS_OVERLOAD_INDEX) <=
         is_overload_i;
-    
+
+    stat_bus(STAT_PC_IS_SOF) <=
+        is_sof;
+
     stat_bus(STAT_ARB_LOST_INDEX) <=
         arbitration_lost_i;
         
@@ -1180,5 +1185,92 @@ begin
     is_bus_off <= is_bus_off_i;
     sof_pulse <= sof_pulse_i;
     is_overload <= is_overload_i;
+
+    -- <RELEASE_OFF>
+    -----------------------------------------------------------------------
+    -----------------------------------------------------------------------
+    -- Assertions
+    -----------------------------------------------------------------------
+    -----------------------------------------------------------------------
+
+    -- psl default clock is rising_edge(clk_sys);
+
+    -- psl no_stuff_bit_in_error_frame_1_asrt : assert never
+    --  (data_halt = '1' and is_err_frm = '1')
+    --  report "Stuff bits not allowed in Error frame!"
+    --  severity error;
+
+    -- Note: In following assertion, we can't check at the same clock cycle
+    --       because Data halt will be cleared one clock cycle later than
+    --       Error frame transmission starts! 
+
+    -- psl no_stuff_bit_in_error_frame_2_asrt : assert never
+    --  ({is_err_frm = '1'; is_err_frm = '1' and destuffed = '1'}) 
+    --  report "Stuff bits not allowed in Error frame!"
+    --  severity error;
+
+    -- psl no_stuff_bit_in_overload_frame_asrt : assert never
+    --  ((destuffed = '1' or data_halt = '1') and is_overload_i = '1')
+    --  report "Stuff bits not allowed in Overload frame!"
+    --  severity error;
     
+    -- psl no_stuff_bit_in_eof_asrt : assert never
+    --  ((destuffed = '1' or data_halt = '1') and is_eof = '1')
+    --  report "Stuff bits not allowed in End of frame!"
+    --  severity error;
+    
+    -- psl no_stuff_bit_in_intermission_asrt : assert never
+    --  ((destuffed = '1' or data_halt = '1') and is_intermission = '1')
+    --  report "Stuff bits not allowed in Intermission!"
+    --  severity error;
+
+    -- psl no_stuff_bit_in_idle_asrt : assert never
+    --  ((destuffed = '1' or data_halt = '1') and is_idle = '1')
+    --  report "Stuff bits not allowed in Bus idle!"
+    --  severity error;
+    
+    -----------------------------------------------------------------------
+    -----------------------------------------------------------------------
+    -- Functional coverage
+    -----------------------------------------------------------------------
+    -----------------------------------------------------------------------
+
+    -- Transmitted frame combinations (no RTR)
+
+    -- psl tx_base_id_can_2_0_cov : cover
+    --  (tran_ident_type = BASE and tran_frame_type = NORMAL_CAN and
+    --   tran_is_rtr = '0');
+    
+    -- psl tx_extended_id_can_2_0_cov : cover
+    --  (tran_ident_type = EXTENDED and tran_frame_type = NORMAL_CAN and
+    --   tran_is_rtr = '0');
+    
+    -- psl tx_base_id_can_fd_cov : cover
+    --  (tran_ident_type = BASE and tran_frame_type = FD_CAN and
+    --   tran_is_rtr = '0');
+
+    -- psl tx_extended_id_can_fd_cov : cover
+    --  (tran_ident_type = EXTENDED and tran_frame_type = FD_CAN and
+    --   tran_is_rtr = '0');  
+
+    -- RTR frames (in combination with FD_CAN, this is ignored!)
+
+    -- psl tx_base_id_can_2_0_rtr_cov : cover
+    --  (tran_ident_type = BASE and tran_frame_type = NORMAL_CAN and
+    --   tran_is_rtr = '1');
+    
+    -- psl tx_extended_id_can_2_0_rtr_cov : cover
+    --  (tran_ident_type = EXTENDED and tran_frame_type = NORMAL_CAN and
+    --   tran_is_rtr = '1');
+    
+    -- psl tx_base_id_can_fd_rtr_cov : cover
+    --  (tran_ident_type = BASE and tran_frame_type = FD_CAN and
+    --   tran_is_rtr = '1');
+
+    -- psl tx_extended_id_can_fd_rtr_cov : cover
+    --  (tran_ident_type = EXTENDED and tran_frame_type = FD_CAN and
+    --   tran_is_rtr = '1');
+
+    -- <RELEASE_ON>
+
 end architecture;

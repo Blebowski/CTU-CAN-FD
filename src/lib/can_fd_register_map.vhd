@@ -343,7 +343,7 @@ package can_fd_register_map is
      size      => 16,
      reg_type  => reg_read_only,
      reset_val => "00000000000000000000000000000000",
-     is_implem => "00000000000000001111111111111111"),
+     is_implem => "00000000000000000000000001111111"),
     (address   => SSP_CFG_ADR,
      size      => 16,
      reg_type  => reg_read_write,
@@ -363,7 +363,7 @@ package can_fd_register_map is
      size      => 32,
      reg_type  => reg_read_only,
      reset_val => "00000000000000000000000000000000",
-     is_implem => "00000000000000111111111111111111"),
+     is_implem => "00000000000001111111111111111111"),
     (address   => YOLO_REG_ADR,
      size      => 32,
      reg_type  => reg_read_only,
@@ -1298,10 +1298,10 @@ package can_fd_register_map is
   -- alue is updated.
   ------------------------------------------------------------------------------
   constant TRV_DELAY_VALUE_L      : natural := 0;
-  constant TRV_DELAY_VALUE_H     : natural := 15;
+  constant TRV_DELAY_VALUE_H      : natural := 6;
 
   -- TRV_DELAY register reset values
-  constant TRV_DELAY_VALUE_RSTVAL : std_logic_vector(15 downto 0) := x"0000";
+  constant TRV_DELAY_VALUE_RSTVAL : std_logic_vector(6 downto 0) := "0000000";
 
   ------------------------------------------------------------------------------
   -- SSP_CFG register
@@ -1311,7 +1311,7 @@ package can_fd_register_map is
   -- d be modified only when SETTINGS[ENA]=0.
   ------------------------------------------------------------------------------
   constant SSP_OFFSET_L          : natural := 16;
-  constant SSP_OFFSET_H          : natural := 22;
+  constant SSP_OFFSET_H          : natural := 23;
   constant SSP_SRC_L             : natural := 24;
   constant SSP_SRC_H             : natural := 25;
 
@@ -1321,7 +1321,7 @@ package can_fd_register_map is
   constant SSP_SRC_OFFSET : std_logic_vector(1 downto 0) := "10";
 
   -- SSP_CFG register reset values
-  constant SSP_OFFSET_RSTVAL : std_logic_vector(6 downto 0) := "0001010";
+  constant SSP_OFFSET_RSTVAL : std_logic_vector(7 downto 0) := x"0A";
   constant SSP_SRC_RSTVAL : std_logic_vector(1 downto 0) := "00";
 
   ------------------------------------------------------------------------------
@@ -1368,6 +1368,7 @@ package can_fd_register_map is
   constant PC_INT_IND            : natural := 15;
   constant PC_SUSP_IND           : natural := 16;
   constant PC_OVR_IND            : natural := 17;
+  constant PC_SOF_IND            : natural := 18;
 
   -- DEBUG_REGISTER register reset values
   constant STUFF_COUNT_RSTVAL : std_logic_vector(2 downto 0) := "000";
@@ -1382,6 +1383,7 @@ package can_fd_register_map is
   constant PC_CRC_RSTVAL      : std_logic := '0';
   constant PC_EOF_RSTVAL      : std_logic := '0';
   constant PC_SUSP_RSTVAL     : std_logic := '0';
+  constant PC_SOF_RSTVAL      : std_logic := '0';
   constant PC_OVR_RSTVAL      : std_logic := '0';
   constant PC_INT_RSTVAL      : std_logic := '0';
 

@@ -140,10 +140,13 @@ entity protocol_control is
 
         -- Error frame is being transmitted
         is_err_frm              :out  std_logic;
-        
+
         -- Overload frame is being transmitted
         is_overload             :out  std_logic;
-        
+
+        -- Start of Frame
+        is_sof                  :out  std_logic;
+
         -----------------------------------------------------------------------
         -- TXT Buffers interface
         -----------------------------------------------------------------------
@@ -685,6 +688,7 @@ begin
         is_suspend              => is_suspend,          -- OUT
         is_err_frm              => is_err_frm,          -- OUT
         is_overload             => is_overload,         -- OUT
+        is_sof                  => is_sof,              -- OUT
 
         -- Data-path interface
         tx_data_wbs             => tx_data_wbs,         -- IN
@@ -905,7 +909,7 @@ begin
         res_n                   => res_n,               -- IN
 
         -- Data-path interface
-        tx_data                 => tx_data_nbs_i,       -- IN
+        tx_data                 => tx_data_wbs,         -- IN
         rx_data                 => rx_data_nbs,         -- IN
         
         -- Error sources
@@ -934,7 +938,7 @@ begin
         drv_fd_type             => drv_fd_type,             -- IN
         is_arbitration          => is_arbitration_i,        -- IN
         is_transmitter          => is_transmitter,          -- IN
-        is_err_passive          => is_receiver,             -- IN
+        is_err_passive          => is_err_passive,          -- IN
 
         -- Status output
         err_frm_req             => err_frm_req,         -- OUT

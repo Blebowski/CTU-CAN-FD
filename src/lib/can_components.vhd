@@ -185,13 +185,16 @@ package can_components is
             G_RESET_POLARITY        :     std_logic := '0';
             
             -- Secondary sampling point Shift registers length
-            G_SSP_SHIFT_LENGTH      :     natural := 130;
+            G_SSP_DELAY_SAT_VAL     :     natural := 255;
     
             -- Depth of FIFO Cache for TX Data
             G_TX_CACHE_DEPTH        :     natural := 8;
             
             -- Width (number of bits) in transceiver delay measurement counter
             G_TRV_CTR_WIDTH         :     natural := 7;
+            
+            -- Width of SSP position
+            G_SSP_POS_WIDTH          :     natural := 8;
             
             -- Optional usage of saturated value of ssp_delay 
             G_USE_SSP_SATURATION    :     boolean := true;
@@ -460,7 +463,10 @@ package can_components is
         
         -- Width (number of bits) in transceiver delay measurement counter
         G_TRV_CTR_WIDTH          :     natural := 7;
-        
+
+        -- Width of SSP position
+        G_SSP_POS_WIDTH          :     natural := 8;
+
         -- Optional usage of saturated value of ssp_delay 
         G_USE_SSP_SATURATION     :     boolean := true;
         
@@ -495,7 +501,7 @@ package can_components is
         -- Memory registers interface
         ------------------------------------------------------------------------
         -- Secondary sampling point offset
-        ssp_offset          :in   std_logic_vector(G_TRV_CTR_WIDTH - 1 downto 0);
+        ssp_offset          :in   std_logic_vector(G_SSP_POS_WIDTH - 1 downto 0);
 
         -- Source of secondary sampling point 
         -- (Measured, Offset, Measured and Offset)
@@ -508,7 +514,7 @@ package can_components is
         trv_delay_shadowed  :out  std_logic_vector(G_TRV_CTR_WIDTH - 1 downto 0);
                                                
         -- Shadowed value of SSP configuration. Updated when measurement ends.
-        ssp_delay_shadowed  :out  std_logic_vector(G_TRV_CTR_WIDTH downto 0)
+        ssp_delay_shadowed  :out  std_logic_vector(G_SSP_POS_WIDTH - 1 downto 0)
     );
     end component;
    
@@ -1544,6 +1550,9 @@ package can_components is
         -- Overload frame is being transmitted
         is_overload             :out  std_logic;
         
+        -- Start of Frame
+        is_sof                  :out  std_logic;
+        
         -----------------------------------------------------------------------
         -- Data-path interface
         -----------------------------------------------------------------------
@@ -1970,6 +1979,9 @@ package can_components is
         
         -- Overload frame is being transmitted
         is_overload             :out  std_logic;
+        
+        -- Start of Frame
+        is_sof                  :out  std_logic;
                 
         -----------------------------------------------------------------------
         -- TXT Buffers interface

@@ -76,13 +76,26 @@ feature:
         alc_srr_rtr_2:
         alc_ide:
         alc_rtr_r0:
+        btr:
+            iterations: 3
+        btr_fd:
+            iterations: 3
         bus_start:
+        byte_enable:
         command_rrb:
             iterations: 20
         command_cdo:
         command_frcrst:
         device_id:
-        dlc_can20_8_64_bytes:        
+        dlc_can20_8_64_bytes:
+        err_norm_fd:
+            iterations: 5
+        error_rules_a:
+        error_rules_b:
+        error_rules_c:
+        error_rules_d:
+        error_rules_e:
+        fault_state:
         mode_loopback:
             iterations: 10
         mode_listen_only:
@@ -92,20 +105,19 @@ feature:
         mode_fd_enable:
         mode_rst:
         mode_test:
-        # fault_confinement:
-        forbid_fd:
         int_rx:
         int_tx:
         int_ewl:
         int_do:
         int_fcs:
         invalid_configs:
-        # overload:
         retr_limit:
         retr_limit_2:
         retr_limit_3:
         one_shot:
         no_sof_tx:
+        rec_saturation:
+        rx_settings_rtsop:
         rx_status:
         rx_buf_empty_read:
         tx_counter:
@@ -119,21 +131,22 @@ feature:
         status_ewl:
             iterations: 5
         status_idle:
-        # tran_delay:
+        trv_delay:
+        tx_from_intermission:
         tx_arb_time_tran:
-        # timestamp_options:
-        byte_enable:
-        data_overrun_clear:
-            iterations: 1
-        #txtb_state:
-        #    iterations: 1
+        tx_status:
+            iterations: 5
         # message_filter:
         #    iterations: 1
-        timestamp_registers:
+        timestamp_low_high:
         txt_buffer_hazard:
             iterations: 1
-        # txt_buffer_priority:
-        #     iterations: 5
+        tx_cmd_set_abort:
+        tx_cmd_set_empty:
+        tx_cmd_set_ready:
+        tx_priority:
+            iterations: 5
+        overload:
 sanity:
     default:
         <<: *default

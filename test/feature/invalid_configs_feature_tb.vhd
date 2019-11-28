@@ -41,16 +41,26 @@
 
 --------------------------------------------------------------------------------
 -- Purpose:
---  Feature test for frame transmittion with invalid combination of configu
---  rations.
+--  Feature test for frame transmittion with invalid combination of CAN frame
+--  configurations.
 --
+-- Verifies:
+--  1. When CAN FD frame with RTR bit is sent, RTR bit is ignored and CAN FD
+--     frame without RTR bit set is received!
+--  2. When CAN 2.0 frame with BRS bit is sent, BRS bit is ignored and CAN 2.0
+--     frame without BRS bit is received!
+--
+-- Test sequence:
+--  1. Send CAN FD frame with RTR bit set and check it is received without RTR.
+--  2. Send CAN 2.0 frame with BRS bit set and check it is received without BRS.
+
 --------------------------------------------------------------------------------
 -- Revision History:
---
 --    30.6.2016   Created file
 --    06.02.2018  Modified to work with the IP-XACT generated memory map
 --     12.6.2018  Modified to use CAN Test lib instead of direct register
 --                access functions.
+--    11.11.2019  Modified to have new common format of header.
 --------------------------------------------------------------------------------
 
 context work.ctu_can_synth_context;
@@ -90,57 +100,35 @@ package body invalid_configs_feature is
         o.outcome := true;
 
         ------------------------------------------------------------------------
-        -- Part 1
+        -- 1. Send CAN FD frame with RTR bit set and check it is received
+        --    without RTR.
         ------------------------------------------------------------------------
-        ------------------------------------------------------------------------
-        -- Release recieve buffer 2
-        ------------------------------------------------------------------------
-        command.release_rec_buffer := true;
-        give_controller_command(command, ID_2, mem_bus(2));
+        info("Step 1");
 
-        ------------------------------------------------------------------------
-        -- Send NORMAL frame with BRS = 1
-        ------------------------------------------------------------------------
-        CAN_generate_frame(rand_ctr, tx_frame);
-        tx_frame.frame_format := NORMAL_CAN;
-        tx_frame.brs := BR_SHIFT;
-        CAN_send_frame(tx_frame, 1, ID_1, mem_bus(1), frame_sent);
-        CAN_wait_frame_sent(ID_1, mem_bus(1));
-
-        ------------------------------------------------------------------------
-        -- Read frame. CAN 2.0 frame with no BRS bit should be received.
-        ------------------------------------------------------------------------
-        CAN_read_frame(rx_frame, ID_2, mem_bus(2));
-        check_false(rx_frame.brs = BR_SHIFT,
-                    "Frame with BRS should not be received!");
-        check_false(rx_frame.frame_format = FD_CAN,
-                    "FD Frame should not be received");
-
-        ------------------------------------------------------------------------
-        -- Part 2
-        ------------------------------------------------------------------------
-        ------------------------------------------------------------------------
-        -- Release recieve buffer 2
-        ------------------------------------------------------------------------
-        give_controller_command(command, ID_2, mem_bus(2));
-
-        ------------------------------------------------------------------------
-        -- Send FD frame with RTR = 1
-        ------------------------------------------------------------------------
         CAN_generate_frame(rand_ctr, tx_frame);
         tx_frame.frame_format := FD_CAN;
         tx_frame.rtr := RTR_FRAME;
         CAN_send_frame(tx_frame, 1, ID_1, mem_bus(1), frame_sent);
-        CAN_wait_frame_sent(ID_1, mem_bus(1));
-
-        wait for 100 ns;
-
-        ------------------------------------------------------------------------
-        -- Read frame. CAN FD Frame without RTR bit should be read
-        ------------------------------------------------------------------------
+        CAN_wait_frame_sent(ID_2, mem_bus(2));
         CAN_read_frame(rx_frame, ID_2, mem_bus(2));
-        check(rx_frame.frame_format = FD_CAN, "FD frame should be received");
-        check(rx_frame.rtr = NO_RTR_FRAME, "NO RTR frame should be received");
+        check(rx_frame.frame_format = FD_CAN, "FD frame received");
+        check(rx_frame.rtr = NO_RTR_FRAME, "NO RTR received");
+        
+        ------------------------------------------------------------------------
+        -- 2. Send CAN 2.0 frame with BRS bit set and check it is received
+        --    without BRS.
+        ------------------------------------------------------------------------
+        info("Step 2");
+        
+        CAN_generate_frame(rand_ctr, tx_frame);
+        tx_frame.frame_format := NORMAL_CAN;
+        tx_frame.brs := BR_SHIFT;
+        CAN_send_frame(tx_frame, 1, ID_1, mem_bus(1), frame_sent);
+        CAN_wait_frame_sent(ID_2, mem_bus(2));        
+        
+        CAN_read_frame(rx_frame, ID_2, mem_bus(2));
+        check(rx_frame.brs = BR_NO_SHIFT, "Frame with no BRS received!");
+        check(rx_frame.frame_format = NORMAL_CAN, "CAN 2.0 frame received!");        
 
     end procedure;
 

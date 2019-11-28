@@ -285,6 +285,9 @@ architecture behavioral of sanity_test is
 
     -- Frame counter for all frames on the bus
     signal overal_frame_counter : natural;
+    
+    signal ts_preset        : std_logic_vector(2 downto 1) := "00";
+    signal ts_preset_val    : std_logic_vector(63 downto 0) := (OTHERS => '0');
 
     ----------------------------------------------
     ----------------------------------------------
@@ -493,7 +496,7 @@ begin
     ----------------------------------------------------------------------------
     clock_generic : for i in 1 to NODE_COUNT generate
         clock_gen_proc(f100_mhz, 50, epsilon_v(i), mem_aux_clk(i));
-        timestamp_gen_proc(mem_aux_clk(i), timestamp_v(i));
+        timestamp_gen_proc(mem_aux_clk(i), timestamp_v(i), ts_preset(1), ts_preset_val);
     end generate clock_generic;
 
 

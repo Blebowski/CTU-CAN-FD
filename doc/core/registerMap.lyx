@@ -39447,7 +39447,7 @@ cellcolor{cyan}
 \begin_inset Text
 
 \begin_layout Plain Layout
-TRV_DELAY_VALUE[15:8]\end_layout
+Reserved\end_layout
 
 \end_inset
 </cell>
@@ -39455,7 +39455,7 @@ TRV_DELAY_VALUE[15:8]\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-TRV_DELAY_VALUE[15:8]\end_layout
+Reserved\end_layout
 
 \end_inset
 </cell>
@@ -39463,7 +39463,7 @@ TRV_DELAY_VALUE[15:8]\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-TRV_DELAY_VALUE[15:8]\end_layout
+Reserved\end_layout
 
 \end_inset
 </cell>
@@ -39471,7 +39471,7 @@ TRV_DELAY_VALUE[15:8]\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-TRV_DELAY_VALUE[15:8]\end_layout
+Reserved\end_layout
 
 \end_inset
 </cell>
@@ -39479,7 +39479,7 @@ TRV_DELAY_VALUE[15:8]\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-TRV_DELAY_VALUE[15:8]\end_layout
+Reserved\end_layout
 
 \end_inset
 </cell>
@@ -39487,7 +39487,7 @@ TRV_DELAY_VALUE[15:8]\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-TRV_DELAY_VALUE[15:8]\end_layout
+Reserved\end_layout
 
 \end_inset
 </cell>
@@ -39495,7 +39495,7 @@ TRV_DELAY_VALUE[15:8]\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-TRV_DELAY_VALUE[15:8]\end_layout
+Reserved\end_layout
 
 \end_inset
 </cell>
@@ -39503,7 +39503,7 @@ TRV_DELAY_VALUE[15:8]\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-TRV_DELAY_VALUE[15:8]\end_layout
+Reserved\end_layout
 
 \end_inset
 </cell>
@@ -39528,7 +39528,7 @@ cellcolor{cyan}
 \begin_inset Text
 
 \begin_layout Plain Layout
-0\end_layout
+-\end_layout
 
 \end_inset
 </cell>
@@ -39536,7 +39536,7 @@ cellcolor{cyan}
 \begin_inset Text
 
 \begin_layout Plain Layout
-0\end_layout
+-\end_layout
 
 \end_inset
 </cell>
@@ -39544,7 +39544,7 @@ cellcolor{cyan}
 \begin_inset Text
 
 \begin_layout Plain Layout
-0\end_layout
+-\end_layout
 
 \end_inset
 </cell>
@@ -39552,7 +39552,7 @@ cellcolor{cyan}
 \begin_inset Text
 
 \begin_layout Plain Layout
-0\end_layout
+-\end_layout
 
 \end_inset
 </cell>
@@ -39560,7 +39560,7 @@ cellcolor{cyan}
 \begin_inset Text
 
 \begin_layout Plain Layout
-0\end_layout
+-\end_layout
 
 \end_inset
 </cell>
@@ -39568,7 +39568,7 @@ cellcolor{cyan}
 \begin_inset Text
 
 \begin_layout Plain Layout
-0\end_layout
+-\end_layout
 
 \end_inset
 </cell>
@@ -39576,7 +39576,7 @@ cellcolor{cyan}
 \begin_inset Text
 
 \begin_layout Plain Layout
-0\end_layout
+-\end_layout
 
 \end_inset
 </cell>
@@ -39584,7 +39584,7 @@ cellcolor{cyan}
 \begin_inset Text
 
 \begin_layout Plain Layout
-0\end_layout
+-\end_layout
 
 \end_inset
 </cell>
@@ -39763,11 +39763,19 @@ cellcolor{cyan}
 
 \end_inset
 </cell>
+<cell alignment="center" leftline="true" multicolumn="1" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Reserved\end_layout
+
+\end_inset
+</cell>
 <cell alignment="center" leftline="true" multicolumn="1" rightline="true" topline="true" usebox="none" valignment="top">
 \begin_inset Text
 
 \begin_layout Plain Layout
-TRV_DELAY_VALUE[7:0]\end_layout
+TRV_DELAY_VALUE\end_layout
 
 \end_inset
 </cell>
@@ -39775,7 +39783,7 @@ TRV_DELAY_VALUE[7:0]\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-TRV_DELAY_VALUE[7:0]\end_layout
+TRV_DELAY_VALUE\end_layout
 
 \end_inset
 </cell>
@@ -39783,7 +39791,7 @@ TRV_DELAY_VALUE[7:0]\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-TRV_DELAY_VALUE[7:0]\end_layout
+TRV_DELAY_VALUE\end_layout
 
 \end_inset
 </cell>
@@ -39791,7 +39799,7 @@ TRV_DELAY_VALUE[7:0]\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-TRV_DELAY_VALUE[7:0]\end_layout
+TRV_DELAY_VALUE\end_layout
 
 \end_inset
 </cell>
@@ -39799,7 +39807,7 @@ TRV_DELAY_VALUE[7:0]\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-TRV_DELAY_VALUE[7:0]\end_layout
+TRV_DELAY_VALUE\end_layout
 
 \end_inset
 </cell>
@@ -39807,15 +39815,7 @@ TRV_DELAY_VALUE[7:0]\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-TRV_DELAY_VALUE[7:0]\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" leftline="true" multicolumn="2" topline="true" usebox="none" valignment="top">
-\begin_inset Text
-
-\begin_layout Plain Layout
-TRV_DELAY_VALUE[7:0]\end_layout
+TRV_DELAY_VALUE\end_layout
 
 \end_inset
 </cell>
@@ -39823,7 +39823,7 @@ TRV_DELAY_VALUE[7:0]\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-TRV_DELAY_VALUE[7:0]\end_layout
+TRV_DELAY_VALUE\end_layout
 
 \end_inset
 </cell>
@@ -39848,7 +39848,7 @@ cellcolor{cyan}
 \begin_inset Text
 
 \begin_layout Plain Layout
-0\end_layout
+-\end_layout
 
 \end_inset
 </cell>
@@ -40432,15 +40432,15 @@ cellcolor{cyan}
 
 \end_inset
 </cell>
-<cell alignment="center" leftline="true" multicolumn="1" topline="true" usebox="none" valignment="top">
+<cell alignment="center" leftline="true" multicolumn="1" rightline="true" topline="true" usebox="none" valignment="top">
 \begin_inset Text
 
 \begin_layout Plain Layout
-Reserved\end_layout
+SSP_OFFSET\end_layout
 
 \end_inset
 </cell>
-<cell alignment="center" leftline="true" multicolumn="1" rightline="true" topline="true" usebox="none" valignment="top">
+<cell alignment="center" leftline="true" multicolumn="2" topline="true" usebox="none" valignment="top">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -40517,7 +40517,7 @@ cellcolor{cyan}
 \begin_inset Text
 
 \begin_layout Plain Layout
--\end_layout
+0\end_layout
 
 \end_inset
 </cell>
@@ -40588,7 +40588,7 @@ cellcolor{cyan}
 SSP_OFFSET Secondary sampling point offset. Value is given as multiple of Minimal Data Time Quanta.
 \end_layout
 \begin_layout Description
-SSP_SRC Source of Secondary Sampling Point. If configured value exceeds 127, it is saturated to 127.\begin_inset Newline newline\end_inset
+SSP_SRC Source of Secondary Sampling Point.\begin_inset Newline newline\end_inset
 		0b00  - SSP_SRC_MEAS_N_OFFSET - SSP position = TRV_DELAY (Measured Value) + SSP_OFFSET.\begin_inset Newline newline\end_inset
 		0b01  - SSP_SRC_NO_SSP - SSP is not used. Transmitter uses regular Sampling Point during Data Bit-Rate.\begin_inset Newline newline\end_inset
 		0b10  - SSP_SRC_OFFSET - SSP position = SSP_Offset. Measured value is ignored.
@@ -43771,11 +43771,11 @@ Reserved\end_layout
 
 \end_inset
 </cell>
-<cell alignment="center" leftline="true" multicolumn="2" topline="true" usebox="none" valignment="top">
+<cell alignment="center" leftline="true" multicolumn="1" topline="true" usebox="none" valignment="top">
 \begin_inset Text
 
 \begin_layout Plain Layout
-Reserved\end_layout
+PC_SOF\end_layout
 
 \end_inset
 </cell>
@@ -43856,7 +43856,7 @@ cellcolor{cyan}
 \begin_inset Text
 
 \begin_layout Plain Layout
--\end_layout
+0\end_layout
 
 \end_inset
 </cell>
@@ -44564,6 +44564,9 @@ PC_SUSP Protocol control State machine is in Suspend transmission field.
 \end_layout
 \begin_layout Description
 PC_OVR Protocol control State machine is in Overload field.
+\end_layout
+\begin_layout Description
+PC_SOF Protocol control State machine is in Start of frame field.
 \end_layout
 \begin_layout Standard
 \begin_inset VSpace bigskip

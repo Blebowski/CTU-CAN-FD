@@ -857,18 +857,18 @@ union ctu_can_fd_trv_delay_ssp_cfg {
 	struct ctu_can_fd_trv_delay_ssp_cfg_s {
 #ifdef __LITTLE_ENDIAN_BITFIELD
   /* TRV_DELAY */
-		uint32_t trv_delay_value        : 16;
+		uint32_t trv_delay_value         : 7;
+		uint32_t reserved_15_7           : 9;
   /* SSP_CFG */
-		uint32_t ssp_offset              : 7;
-		uint32_t reserved_23             : 1;
+		uint32_t ssp_offset              : 8;
 		uint32_t ssp_src                 : 2;
 		uint32_t reserved_31_26          : 6;
 #else
 		uint32_t reserved_31_26          : 6;
 		uint32_t ssp_src                 : 2;
-		uint32_t reserved_23             : 1;
-		uint32_t ssp_offset              : 7;
-		uint32_t trv_delay_value        : 16;
+		uint32_t ssp_offset              : 8;
+		uint32_t reserved_15_7           : 9;
+		uint32_t trv_delay_value         : 7;
 #endif
 	} s;
 };
@@ -914,9 +914,11 @@ union ctu_can_fd_debug_register {
 		uint32_t pc_int                  : 1;
 		uint32_t pc_susp                 : 1;
 		uint32_t pc_ovr                  : 1;
-		uint32_t reserved_31_18         : 14;
+		uint32_t pc_sof                  : 1;
+		uint32_t reserved_31_19         : 13;
 #else
-		uint32_t reserved_31_18         : 14;
+		uint32_t reserved_31_19         : 13;
+		uint32_t pc_sof                  : 1;
 		uint32_t pc_ovr                  : 1;
 		uint32_t pc_susp                 : 1;
 		uint32_t pc_int                  : 1;

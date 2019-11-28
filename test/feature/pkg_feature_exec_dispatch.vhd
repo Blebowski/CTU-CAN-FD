@@ -55,8 +55,11 @@ package pkg_feature_exec_dispath is
     end record;
 
     type feature_signal_outputs_t is record
-        bl_inject    : std_logic;
-        bl_force     : boolean;
+        bl_inject           : std_logic;
+        bl_force            : boolean;
+        ftr_tb_trv_delay    : t_ftr_tx_delay;
+        ts_preset           : std_logic_vector(2 downto 1);
+        ts_preset_val       : std_logic_vector(63 downto 0);
     end record;
 
     constant NINST : natural := 2;

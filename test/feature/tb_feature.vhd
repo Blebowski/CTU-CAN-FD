@@ -85,6 +85,13 @@ entity CAN_feature_test is
         -- Bus level injected value and whether it should be forced on bus
         signal bl_inject        : in    std_logic;
         signal bl_force         : in    boolean;
+        
+        -- Transmitter delays
+        signal transmitter_delays :in   t_ftr_tx_delay;
+        
+        -- Timestamp forcing (preset)
+        signal ts_preset        : in    std_logic_vector(2 downto 1);
+        signal ts_preset_val    : in    std_logic_vector(63 downto 0);
 
         -- Internal signals; TODO: direction
         signal iteration_done   : in boolean := false;
@@ -205,13 +212,16 @@ begin
         xe: bus_level             <= s_bus_level;
         
         xf: iout(i).can_tx        <= p(i).CAN_tx;
+        
+        x10: p(i).tr_del          <= transmitter_delays(i);
 
         ---------------------------------
         -- Clock & timestamp generation
         ---------------------------------
         clk_gen_proc: clock_gen_proc(period => f100_Mhz, duty => 50,
                        epsilon_ppm => (i - 1) * 100, out_clk => p(i).clk_sys);
-        tsgen_proc: timestamp_gen_proc(p(i).clk_sys, p(i).timestamp);
+        tsgen_proc: timestamp_gen_proc(p(i).clk_sys, p(i).timestamp, ts_preset(i),
+                        ts_preset_val);
     end generate;
 
     tr_proc:process(all)
@@ -327,6 +337,12 @@ architecture tb of tb_feature is
         data_out    => (OTHERS =>'0'),
         sbe         => x"0"
     );
+    
+    constant tran_delay_init : t_ftr_tx_delay :=
+        (
+            11 * f100_Mhz * 1 ps,
+            11 * f100_Mhz * 1 ps
+    );
 
     procedure restart_mem_bus(
         signal mem_bus : out  Avalon_mem_type
@@ -348,6 +364,9 @@ architecture tb of tb_feature is
     signal bl_inject      : std_logic := RECESSIVE;
     signal bl_force       : boolean := false;
 
+    -- Default delay of 110 ns is realistic for CAN transceivers! 
+    signal ftr_tb_trv_delays     :   t_ftr_tx_delay := tran_delay_init;
+
     -- test internal signals
     signal iteration_done : boolean := false;
 
@@ -358,14 +377,26 @@ architecture tb of tb_feature is
     signal bus_level      : std_logic;
 
     signal rand_ctr       : natural range 0 to RAND_POOL_SIZE;
+    
     constant padded_test_name : string(1 to 20) := strtolen(20, test_name);
 
-    signal so : feature_signal_outputs_t;
+    signal so : feature_signal_outputs_t := (
+        '0',
+        false,
+        ((
+            11 * f100_Mhz * 1 ps,
+            11 * f100_Mhz * 1 ps
+        )),
+        "00",
+        (OTHERS => '0')
+    );
+
 begin
     bl_inject <= so.bl_inject;
     bl_force  <= so.bl_force;
+    ftr_tb_trv_delays <= so.ftr_tb_trv_delay;
 
-    --In this test wrapper generics are directly connected to the signals
+    -- In this test wrapper generics are directly connected to the signals
     -- of test entity
     test_comp: entity work.CAN_feature_test
     port map(
@@ -378,6 +409,10 @@ begin
         mem_bus          =>  mem_bus,
         bl_inject        =>  bl_inject,
         bl_force         =>  bl_force,
+        transmitter_delays =>  ftr_tb_trv_delays,
+        
+        ts_preset        => so.ts_preset,
+        ts_preset_val    => so.ts_preset_val,
 
         iteration_done   => iteration_done,
         hw_reset_on_new_test => hw_reset_on_new_test,

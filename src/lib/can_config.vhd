@@ -103,19 +103,22 @@ package can_config is
     constant C_SJW_DBT_WIDTH        : natural := 5;
     
     -- Secondary sampling point Shift registers length
-    constant C_SSP_SHIFT_LENGTH     : natural := 128;
+    constant C_SSP_DELAY_SAT_VAL    : natural := 255;
 
     -- Depth of FIFO Cache for TX Data
     constant C_TX_CACHE_DEPTH       : natural := 8;
         
     -- Width (number of bits) in transceiver delay measurement counter
     constant C_TRV_CTR_WIDTH        : natural := 7;
+    
+    -- Secondary sample point position width
+    constant C_SSP_POS_WIDTH        : natural := 8;
 
     -- Optional usage of saturated value of ssp_delay 
     constant C_USE_SSP_SATURATION   : boolean := true;
 
     -- Width of SSP counters
-    constant C_SSP_CTRS_WIDTH       : natural := 14;
+    constant C_SSP_CTRS_WIDTH       : natural := 15;
 
     -- CRC polynomials
     constant C_CRC15_POL : std_logic_vector(15 downto 0) := x"C599";

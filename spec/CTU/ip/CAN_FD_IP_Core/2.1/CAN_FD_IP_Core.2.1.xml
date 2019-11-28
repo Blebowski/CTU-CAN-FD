@@ -1430,11 +1430,11 @@
 								<ipxact:value>10</ipxact:value>
 							</ipxact:reset>
 						</ipxact:resets>
-						<ipxact:bitWidth>7</ipxact:bitWidth>
+						<ipxact:bitWidth>8</ipxact:bitWidth>
 					</ipxact:field>
 					<ipxact:field>
 						<ipxact:name>SSP_SRC</ipxact:name>
-						<ipxact:description>Source of Secondary Sampling Point. If configured value exceeds 127, it is saturated to 127.</ipxact:description>
+						<ipxact:description>Source of Secondary Sampling Point.</ipxact:description>
 						<ipxact:bitOffset>8</ipxact:bitOffset>
 						<ipxact:resets>
 							<ipxact:reset>
@@ -1598,6 +1598,18 @@
 						<ipxact:name>PC_SUSP</ipxact:name>
 						<ipxact:description>Protocol control State machine is in Suspend transmission field.</ipxact:description>
 						<ipxact:bitOffset>16</ipxact:bitOffset>
+						<ipxact:resets>
+							<ipxact:reset>
+								<ipxact:value>0</ipxact:value>
+							</ipxact:reset>
+						</ipxact:resets>
+						<ipxact:bitWidth>1</ipxact:bitWidth>
+					</ipxact:field>
+					<ipxact:field>
+						<ipxact:name>PC_SOF</ipxact:name>
+						<ipxact:displayName>PC_SOF</ipxact:displayName>
+						<ipxact:description>Protocol control State machine is in Start of frame field.</ipxact:description>
+						<ipxact:bitOffset>18</ipxact:bitOffset>
 						<ipxact:resets>
 							<ipxact:reset>
 								<ipxact:value>0</ipxact:value>
@@ -1919,7 +1931,7 @@
 								<ipxact:value>0</ipxact:value>
 							</ipxact:reset>
 						</ipxact:resets>
-						<ipxact:bitWidth>16</ipxact:bitWidth>
+						<ipxact:bitWidth>7</ipxact:bitWidth>
 					</ipxact:field>
 				</ipxact:register>
 				<ipxact:register>

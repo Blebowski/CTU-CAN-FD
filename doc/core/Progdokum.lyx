@@ -502,7 +502,7 @@ Version 2.2, Commit:
 \noindent
 \align center
 \begin_inset Tabular
-<lyxtabular version="3" rows="12" columns="4">
+<lyxtabular version="3" rows="13" columns="4">
 <features tabularvalignment="middle">
 <column alignment="center" valignment="top" width="1.5cm">
 <column alignment="center" valignment="top" width="2cm">
@@ -934,11 +934,50 @@ Clarify TXT buffer behaviour when node goes bus-off.
 </cell>
 </row>
 <row>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
 2.2.2
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Ondrej Ille
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+31-10-2019
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Clarify Bus-off behaviour aftet Start-up.
+ Clarify that frame must be inserted to TXT Buffer before sending.
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+2.2.3
 \end_layout
 
 \end_inset
@@ -956,7 +995,7 @@ Ondrej Ille
 \begin_inset Text
 
 \begin_layout Plain Layout
-31-10-2019
+18-11-2019
 \end_layout
 
 \end_inset
@@ -965,8 +1004,9 @@ Ondrej Ille
 \begin_inset Text
 
 \begin_layout Plain Layout
-Clarify Bus-off behaviour aftet Start-up.
- Clarify that frame must be inserted to TXT Buffer before sending.
+Clarify behaviour of Transmitter delay measurement.
+ Add notes on RX frame timestamping.
+ Extend SSP position to 255.
 \end_layout
 
 \end_inset
@@ -2297,10 +2337,6 @@ s of the fact if bit rate is switched in current frame) on recessive to
  dominant edge between FDF (EDL) and r0 bits.
  Transmitter delay is readable after its measurement from TRV_DELAY register.
  Transmitter delay is measured in periods of System clock.
- Note that measured transmitter delay of CTU CAN FD includes input time
- of CTU CAN FD which is 2 clock periods of System clock.
- Therefore value read from TRV_DELAY register, will be higher than actual
- delay from can_tx to can_rx by 2 clock periods of System clock.
 \end_layout
 
 \begin_layout Standard
@@ -2347,6 +2383,22 @@ name "fig:transmitter-delay"
 
 \end_layout
 
+\begin_layout Description
+Note Transmitter delay measurement includes input delay of CTU CAN FD (which
+ is 2 clock periods of System clock).
+ Therefore measured transmitter delay will be always higher by two than
+ actual delay from can_tx to can_rx (e.g.
+ if signal propagation from can_tx to can_rx takes 110 ns (11 System clock
+ periods at 100 MHz), measured transmitter delay will be 13).
+\end_layout
+
+\begin_layout Description
+Note Transmitter delay measurement is saturated to 127 System clock periods.
+ If the delay between can_tx and can_rx is longer, only 127 will be measured.
+ When system clock frequency is 100 Mhz, this gives 1,27 us of maximal measurabl
+e transmitter delay which is more than most of CAN transceivers need.
+\end_layout
+
 \begin_layout Subsection
 Secondary sampling point
 \end_layout
@@ -2356,8 +2408,9 @@ Secondary sampling point is used by transmitters during data bit rate to
  detect bit errors.
  Its position is configured as delay from start of bit time (Sync_Seg) in
  multiples of System clock (NOT time quanta!).
- Secondary sampling point position can be fixed, given by Transmitter delay,
- or it can be disabled as is shown in Figure 
+ Secondary sampling point position can be fixed (SSP Offset only), derived
+ from Transmitter delay (SSP Offset + Transmitter delay), or it can be disabled
+ (No SSP) as is shown in Figure 
 \begin_inset CommandInset ref
 LatexCommand ref
 reference "fig:secondary-sampling-point"
@@ -2371,12 +2424,6 @@ noprefix "false"
  When Secondary sampling point is disabled, regular sampling point as configured
  by BRP_FD register is used by transmitters during data bit rate for bit
  error detection.
- Secondary sampling point position is configurable between 0 - 127.
- If Secondary sampling point is configured to more than 127 (e.g.
- as result of large measured Transmitter delay), it is saturated to 127.
- Note that since CTU CAN FD input delay is 2 System clock periods (minimum
- time quanta), position of Secondary sampling point shall be configured
- to at least 2 to compensate its own input delay.
 \end_layout
 
 \begin_layout Standard
@@ -2423,6 +2470,68 @@ name "fig:secondary-sampling-point"
 
 \end_layout
 
+\begin_layout Standard
+\begin_inset Float figure
+placement h
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\noindent
+\align center
+\begin_inset Graphics
+	filename ../pics/Visio_generated/SSP_timing.pdf
+	lyxscale 20
+	scale 90
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Secondary sampling point 2
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:secondary-sampling-point-2"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Description
+Note Secondary sampling point offset (SSP_CFG[SSP_OFFSET]) is configurable
+ between 0 - 255.
+ Internal range of secondary sampling point position is also 0 - 255.
+ If due to some reason secondary sampling point position would be more than
+ 255 clock cycles from start of bit (e.g.
+ due to large measured Transmitter delay) it is saturated to 255.
+\end_layout
+
+\begin_layout Description
+Note Since CTU CAN FD input delay is 2 System clock periods (minimum time
+ quanta), position of Secondary sampling point shall be configured to at
+ least 2 to compensate its own input delay (therefore if SSP_CFG[SSP_OFFSET]
+ < 3 and SSP_CFG[SSP_SRC] = SSP_SRC_OFFSET], it is impossible to transmitt
+ CAN FD frames without detecting bit error on CTU CAN FDs own transmitted
+ frame).
+\end_layout
+
 \begin_layout Subsection
 CAN FD support
 \end_layout
@@ -2456,7 +2565,7 @@ System clock period is equal to minimal time quanta.
 e by CTU CAN FD is 2 time quanta (value of information processing time).
  Minimal duration of Sync_Seg + Prop_Seg + Phase1_Seg is also 2 time quanta.
  This can be achieved by: Prop_Seg = 0 and Phase1_Seg = 1, or Prop_Seg =
- 1 and Phase1_Seg = 2.
+ 1 and Phase1_Seg = 0.
  Such configuration is possible for both nominal and data bit rate.
  Note that this is absolute maximum rating, and therefore allows very little
  flexibility in bit rate configuration.
@@ -3081,6 +3190,8 @@ Note
  If during this time Set ready command is sent to TXT buffer, TXT buffer
  immediately moves to Aborted state (since node is bus-off and all TXT buffers
  in TX ready move to Aborted when CTU CAN FD is bus-off).
+ SW shall wait until node is Error active (either polling or via FCS Interrupt)
+ before issuing Set Ready command to any TXT buffer.
 \end_layout
 
 \begin_layout Description
@@ -3091,6 +3202,16 @@ Note
 2 TXT buffers are not initialized, nor reset.
  Therefore, before issuing Set ready command, SW shall fill according TXT
  buffer with valid CAN frame for transmission.
+\end_layout
+
+\begin_layout Description
+Note
+\begin_inset space ~
+\end_inset
+
+3 CTU CAN FD only transmitts only reactive Overload frames.
+ There are no internal conditions in CTU CAN FD which would cause transmission
+ of Overload frame.
 \end_layout
 
 \begin_layout Section
@@ -3251,6 +3372,21 @@ RX buffer can be flushed (Release RX buffer) by writing logic 1 to COMMAND[RRB]
  RX buffer is as if no frame was received to it yet.
  If this command is issued during CAN frame reception, this frame is also
  not stored to RX buffer.
+\end_layout
+
+\begin_layout Subsection
+Timestamping
+\end_layout
+
+\begin_layout Standard
+Timestamp of received CAN frame is stored during CAN frame reception.
+ When reading received CAN frame from RX buffer, timestamp can be read from
+ TIMESTAMP_L_W, TIMESTAMP_U_W memory words.
+ It is possible to configure whether timestamp for received frame will be
+ taken in sample point of Start of Frame bit or in 6th bit of End of Frame
+ (moment when received CAN frame is considered valid according to CAN FD
+ specification).
+ This setting is given by RX_SETTINGS[RTSOP].
 \end_layout
 
 \begin_layout Subsection
@@ -3702,7 +3838,7 @@ In self test mode CTU CAN FD considers transmitted frame valid even if does
 \end_layout
 
 \begin_layout Subsection
-Acknowledge forbidden mode
+XAcknowledge forbidden mode
 \end_layout
 
 \begin_layout Standard

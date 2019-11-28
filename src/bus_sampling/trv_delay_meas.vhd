@@ -121,6 +121,9 @@ entity trv_delay_measurement is
         -- Width (number of bits) in transceiver delay measurement counter
         G_TRV_CTR_WIDTH          :     natural := 7;
         
+        -- Width of SSP position
+        G_SSP_POS_WIDTH          :     natural := 8;
+
         -- Optional usage of saturated value of ssp_delay 
         G_USE_SSP_SATURATION     :     boolean := true;
         
@@ -143,19 +146,19 @@ entity trv_delay_measurement is
         -- Transceiver Delay measurement control
         ------------------------------------------------------------------------
         -- Start measurement (on TX Edge)
-        edge_tx_valid          :in   std_logic;
+        edge_tx_valid       :in   std_logic;
         
         -- Stop measurement (on RX Edge)
-        edge_rx_valid           :in   std_logic;
+        edge_rx_valid       :in   std_logic;
         
         -- Transmitter delay measurement enabled (by Protocol control)
-        tran_delay_meas         :in   std_logic;
+        tran_delay_meas     :in   std_logic;
 
         ------------------------------------------------------------------------
         -- Memory registers interface
         ------------------------------------------------------------------------
         -- Secondary sampling point offset
-        ssp_offset          :in   std_logic_vector(G_TRV_CTR_WIDTH - 1 downto 0);
+        ssp_offset          :in   std_logic_vector(G_SSP_POS_WIDTH - 1 downto 0);
 
         -- Source of secondary sampling point 
         -- (Measured, Offset, Measured and Offset)
@@ -169,7 +172,7 @@ entity trv_delay_measurement is
         trv_delay_shadowed  :out  std_logic_vector(G_TRV_CTR_WIDTH - 1 downto 0);
                                                
         -- Shadowed value of SSP configuration. Updated when measurement ends.
-        ssp_delay_shadowed  :out  std_logic_vector(G_TRV_CTR_WIDTH downto 0)
+        ssp_delay_shadowed  :out  std_logic_vector(G_SSP_POS_WIDTH - 1 downto 0)
     );
 end entity;
 
@@ -188,10 +191,16 @@ architecture rtl of trv_delay_measurement is
     ---------------------------------------------------------------------------
     signal trv_delay_ctr_q   :  std_logic_vector(G_TRV_CTR_WIDTH - 1 downto 0);
     signal trv_delay_ctr_d   :  std_logic_vector(G_TRV_CTR_WIDTH - 1 downto 0);
+    signal trv_delay_ctr_add   :  std_logic_vector(G_TRV_CTR_WIDTH - 1 downto 0);
+    
+    signal trv_delay_ctr_q_padded : std_logic_vector(G_SSP_POS_WIDTH downto 0);
 
     -- Reset for the counter
     signal trv_delay_ctr_rst_d   :  std_logic;
     signal trv_delay_ctr_rst_q   :  std_logic;
+
+    constant C_TRV_DEL_SAT  :  std_logic_vector(G_TRV_CTR_WIDTH - 1 downto 0) :=
+        std_logic_vector(to_unsigned(127, G_TRV_CTR_WIDTH));
 
     ---------------------------------------------------------------------------
     -- SSP Shadowed register
@@ -207,14 +216,14 @@ architecture rtl of trv_delay_measurement is
     -- Note that output counter is one bit wider than width of counter since
     -- output value can be addition of two values of trv_ctr_width size and
     -- we want to avoid overflow.
-    signal ssp_delay_raw        :  std_logic_vector(G_TRV_CTR_WIDTH downto 0);
+    signal ssp_delay_raw        :  std_logic_vector(G_SSP_POS_WIDTH downto 0);
 
     -- Saturated value of ssp_delay. If saturation is not used, ssp_delay_raw
     -- is connected directly
-    signal ssp_delay_saturated  :  std_logic_vector(G_TRV_CTR_WIDTH downto 0);
+    signal ssp_delay_saturated  :  std_logic_vector(G_SSP_POS_WIDTH - 1 downto 0);
                                            
     -- Measured transceiver value + trv_offset
-    signal trv_delay_sum        :  std_logic_vector(G_TRV_CTR_WIDTH downto 0);
+    signal trv_delay_sum        :  std_logic_vector(G_SSP_POS_WIDTH downto 0);
 
 begin
     
@@ -271,9 +280,12 @@ begin
     ----------------------------------------------------------------------------
     -- Combinationally incremented value of trv_delay counter by 1.
     ----------------------------------------------------------------------------                                             
-    trv_delay_ctr_d <= std_logic_vector(to_unsigned(
-                            to_integer(unsigned(trv_delay_ctr_q) + 1),
-                            trv_delay_ctr_q'length));                     
+    trv_delay_ctr_add <= std_logic_vector(unsigned(trv_delay_ctr_q) + 1);
+
+    -- Saturate when counter reaches 127, do not add anymore to avoid overflow!
+    trv_delay_ctr_d <= C_TRV_DEL_SAT when (trv_delay_ctr_q = C_TRV_DEL_SAT)
+                                     else
+                      trv_delay_ctr_add;
 
     ----------------------------------------------------------------------------
     -- Register for transceiver delay measurement progress flag.
@@ -281,8 +293,9 @@ begin
     trv_del_ctr_proc : process(clk_sys, trv_delay_ctr_rst_q)
     begin
         if (trv_delay_ctr_rst_q = G_RESET_POLARITY) then
-            trv_delay_ctr_q <= (OTHERS => '0');
-            
+            trv_delay_ctr_q(0) <= '1'; 
+            trv_delay_ctr_q(G_TRV_CTR_WIDTH - 1 downto 1) <= (OTHERS => '0');
+
         elsif (rising_edge(clk_sys)) then
             
             -- Increment the counter if the measurement is in progress
@@ -292,14 +305,21 @@ begin
         end if;
     end process;
 
+    ---------------------------------------------------------------------------
+    -- Padding to width of SSP position width + 1 (for addition calculation)
+    ---------------------------------------------------------------------------
+    trv_delay_ctr_q_padded(G_TRV_CTR_WIDTH - 1 downto 0) <= trv_delay_ctr_q;
+
+    trv_delay_ctr_q_padded(G_SSP_POS_WIDTH downto G_TRV_CTR_WIDTH) <=
+        (OTHERS => '0');
+
 
     ---------------------------------------------------------------------------
-    -- Combinationally adding ssp_offset and trv_delay_ctr_q
+    -- Combinationally adding ssp_offset and trv_delay_ctr_q.
+    -- These are one bit wider to cover possible overflow!
     ---------------------------------------------------------------------------
-    trv_delay_sum <= std_logic_vector(to_unsigned(
-                        to_integer(unsigned(trv_delay_ctr_q)) +
-                        to_integer(unsigned(ssp_offset)), trv_delay_sum'length));
-                        
+    trv_delay_sum <= std_logic_vector(unsigned(trv_delay_ctr_q_padded) +
+                                      ('0' & unsigned(ssp_offset)));
 
     ----------------------------------------------------------------------------
     -- Multiplexor for selected secondary sampling point delay. Selects:
@@ -315,30 +335,22 @@ begin
     -- SSP Delay saturation
     ----------------------------------------------------------------------------
     ssp_delay_sat_block : block
-        constant ssp_delay_range  : natural := 2 ** ssp_delay_raw'length - 1;
-        signal ssp_delay_nxt_i  : natural range 0 to ssp_delay_range;
-        signal ssp_delay_sat_i  : natural range 0 to ssp_delay_range;
+        constant C_SSP_SAT_LVL_VECT : std_logic_vector(G_SSP_POS_WIDTH - 1 downto 0) :=
+            std_logic_vector(to_unsigned(G_SSP_SATURATION_LVL, G_SSP_POS_WIDTH));
     begin
-        ssp_delay_nxt_i   <= to_integer(unsigned(ssp_delay_raw));
-
         -- Use saturation
         ssp_sat_true : if (G_USE_SSP_SATURATION) generate
 
-            -- Saturate on "natural" types
-            ssp_delay_sat_i <=
-                G_SSP_SATURATION_LVL when (ssp_delay_nxt_i > G_SSP_SATURATION_LVL)
-                                     else
-                ssp_delay_nxt_i;
-
-            -- Convert natural back to vector
-            ssp_delay_saturated <= std_logic_vector(to_unsigned(
-                                    ssp_delay_sat_i, ssp_delay_saturated'length));
+            -- Saturate if highest bit of result is set
+            ssp_delay_saturated <=
+                C_SSP_SAT_LVL_VECT when (ssp_delay_raw(G_SSP_POS_WIDTH) = '1') else
+                ssp_delay_raw(G_SSP_POS_WIDTH - 1 downto 0);
 
         end generate ssp_sat_true;
 
         -- Don't use saturation
         ssp_sat_false : if (not G_USE_SSP_SATURATION) generate
-            ssp_delay_saturated <= ssp_delay_raw;
+            ssp_delay_saturated <= ssp_delay_raw(G_SSP_POS_WIDTH - 1 downto 0);
         end generate ssp_sat_false;
         
     end block ssp_delay_sat_block;
@@ -372,7 +384,15 @@ begin
     ---------------------------------------------------------------------------
     ssp_shadow_ce <= '1' when (trv_meas_progress_del = '1') and
                                 (trv_meas_progress_q = '0')
-                           else
-                       '0';
+                         else
+                     '0';
+
+    -- <RELEASE_OFF>
+    
+    assert (G_TRV_CTR_WIDTH <= G_SSP_POS_WIDTH)
+        report "SSP Position width must be higher or equal to trv counter width!"
+        severity error;
+    
+    -- <RELEASE_ON>
 
 end architecture;

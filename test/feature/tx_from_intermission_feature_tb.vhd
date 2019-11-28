@@ -8,8 +8,8 @@
 --     Martin Jerabek <martin.jerabek01@gmail.com>
 -- 
 -- Project advisors: 
--- 	Jiri Novak <jnovak@fel.cvut.cz>
--- 	Pavel Pisa <pisa@cmp.felk.cvut.cz>
+--  Jiri Novak <jnovak@fel.cvut.cz>
+--  Pavel Pisa <pisa@cmp.felk.cvut.cz>
 -- 
 -- Department of Measurement         (http://meas.fel.cvut.cz/)
 -- Faculty of Electrical Engineering (http://www.fel.cvut.cz)
@@ -41,30 +41,27 @@
 
 --------------------------------------------------------------------------------
 -- Purpose:
---  Clear data overrun command feature test.
+--  Start of transmission from Intermission 
 --
 -- Verifies:
---  1. Data overrun flag is set when more frames are received than capacity of
---     RX Buffer.
---  2. RX Buffer full is active when there is no free space available in RX
---     Buffer.
---  3. COMMAND[CDO] will clear data overrun flag.
---  4. COMMAND[RRB] will clear data overrun flag.
+--  1. Transmission is started when Node detects Dominant bit during third
+--     bit of intermission and it has frame for transmission available.
+--  2. Reception is started when Node detectes Dominant bit during third bit
+--     of Intermission and it has no frame for transmission available.
 --
 -- Test sequence:
---  1. Read size of RX Buffer in Node 1. Check that DOR flag is not set.
---     Generate number of RTR CAN frames (4 words in RX Buffer) which exactly
---     fill RX Buffer and send them by Node 2. Wait until frames are sent.
---  2. Read status of RX Buffer in Node 1. Check that RX Buffer full is active.
---     Check that DOR flag is not set yet.
---  3. Send one more frame by Node 2 and wait until it is sent. Check that Data
---     Overrun flag is set. Issue Clear Data Overrun Command. Check that CDO
---     flag was cleared.
---  4. Again send frame by Node 2. Check DOR is set again. Issue Command[RRB].
---     Check Data Overrun Flag was cleared.
+--  1. Insert CAN frame for transmission into Node 2. Wait until transmission
+--     will be started. Insert CAN frame to Node 1 during transmission of frame
+--     from Node 2 and wait until Intermission.
+--  2. Wait for two sample points and force the bus dominant during third bit
+--     of intermission for Node 1. Wait until sample point, and check that Node
+--     1 started transmitting. Check that Node 1 is in "arbitration" phase.
+--     Check that Node 1 is NOT in SOF. Wait until frame is sent, and check
+--     it is properly receieved by Node 2 (Node 2 should have turned receiver).
+--      
 --------------------------------------------------------------------------------
 -- Revision History:
---    21.10.2019   Created file
+--    22.11.2019   Created file
 --------------------------------------------------------------------------------
 
 context work.ctu_can_synth_context;
@@ -72,8 +69,8 @@ context work.ctu_can_test_context;
 
 use lib.pkg_feature_exec_dispath.all;
 
-package command_cdo_feature is
-    procedure command_cdo_feature_exec(
+package tx_from_intermission_feature is
+    procedure tx_from_intermission_feature_exec(
         variable    o               : out    feature_outputs_t;
         signal      so              : out    feature_signal_outputs_t;
         signal      rand_ctr        : inout  natural range 0 to RAND_POOL_SIZE;
@@ -84,8 +81,8 @@ package command_cdo_feature is
 end package;
 
 
-package body command_cdo_feature is
-    procedure command_cdo_feature_exec(
+package body tx_from_intermission_feature is
+    procedure tx_from_intermission_feature_exec(
         variable    o               : out    feature_outputs_t;
         signal      so              : out    feature_signal_outputs_t;
         signal      rand_ctr        : inout  natural range 0 to RAND_POOL_SIZE;
@@ -118,100 +115,74 @@ package body command_cdo_feature is
         variable txt_buf_state      :     SW_TXT_Buffer_state_type;
         variable rx_buf_info        :     SW_RX_Buffer_info;
         variable frames_equal       :     boolean := false;        
+        variable frame_sent         :     boolean;
 
         variable id_vect            :     std_logic_vector(28 downto 0);
         variable command            :     SW_command := SW_command_rst_val;
+        
+        variable num_frames         :     integer;
+        variable mode_1             :     SW_mode;
+        
+        variable frame_equal        :     boolean;
     begin
         o.outcome := true;
 
         -----------------------------------------------------------------------
-        -- 1. Read size of RX Buffer in Node 1. Check that DOR flag is not set.
-        --    Generate number of RTR CAN frames (4 words in RX Buffer) which
-        --    exactly fill RX Buffer and send them by Node 2. Wait until frames
-        --    are sent. 
+        -- 1. Insert CAN frame for transmission into Node 2. Wait until
+        --    transmission will be started. Insert CAN frame to Node 1 during 
+        --    transmission of frame from Node 2 and wait until Intermission.
         -----------------------------------------------------------------------
-        info("Step 1");
-        get_rx_buf_state(rx_buf_info, ID_1, mem_bus(1));
-        check_false(rx_buf_info.rx_full, "RX full not set!");
-        
-        get_controller_status(stat_1, ID_1, mem_bus(1));
-        check_false(stat_1.data_overrun, "DOR flag not set!");
-        
         CAN_generate_frame(rand_ctr, frame_1);
-        frame_1.rtr := RTR_FRAME;
-        frame_1.frame_format := NORMAL_CAN;
-        CAN_insert_TX_frame(frame_1, 1, ID_2, mem_bus(2));
-        send_TXT_buf_cmd(buf_set_ready, 1, ID_2, mem_bus(2));
-        
-        info("Read RX Buffer size: " & integer'image(rx_buf_info.rx_buff_size));
-        info("Sending " & integer'image(rx_buf_info.rx_buff_size / 4) &
-             " RTR frames");
+        CAN_send_frame(frame_1, 1, ID_2, mem_bus(2), frame_sent);
 
-        for i in 0 to (rx_buf_info.rx_buff_size / 4) - 1 loop
-            info("Sending frame nr: " & integer'image(i));
-            send_TXT_buf_cmd(buf_set_ready, 1, ID_2, mem_bus(2));
-            CAN_wait_frame_sent(ID_2, mem_bus(2));
-        end loop;
+        CAN_wait_tx_rx_start(true, false, ID_2, mem_bus(2));
+        wait for 5000 ns; -- To be sure Node 1 started reception!
+
+        CAN_generate_frame(rand_ctr, frame_2);
+        CAN_send_frame(frame_2, 1, ID_1, mem_bus(1), frame_sent);
+
+        -- We must wait for Intermission of Node 1! Only that way we are sure
+        -- we properly measure two bits of its intermission!
+        CAN_wait_pc_state(pc_deb_intermission, ID_1, mem_bus(1));
+
+        -----------------------------------------------------------------------
+        -- 2. Wait for two sample points and force the bus dominant during
+        --    third bit of intermission for Node 1. Wait until sample point,
+        --    and check that Node 1 started transmitting. Check that Node 1 is
+        --    in "arbitration" phase. Check that Node 1 is NOT in SOF. Wait 
+        --    until frame is sent, and check it is properly receieved by Node 2
+        --    (Node 2 should have turned receiver).
+        -----------------------------------------------------------------------
+        CAN_wait_sample_point(iout(1).stat_bus, false);
+        CAN_wait_sample_point(iout(1).stat_bus, false);
+
+        force_bus_level(DOMINANT, so.bl_force, so.bl_inject);
+        CAN_wait_sample_point(iout(1).stat_bus, false);
+        wait for 15 ns; -- To be sure sample point was processed!
+        release_bus_level(so.bl_force);
+        
+        -- Now Node 1 thinks that third bit of its intermission was dominant.
+        -- It should start transmitting with first bit of Base ID. Node 2 should
+        -- also interpret this as SOF and start receiving.
+        -- Hopefully, Node 2 clock will not be too slow so that it will still
+        -- catch this as second bit of Intermission and Interpret this as
+        -- Overload frame ...
+
+        CAN_read_pc_debug(pc_dbg, ID_1, mem_bus(1));     
+        check(pc_dbg = pc_deb_arbitration, "Node 2 in arbitration");
+        check_false(pc_dbg = pc_deb_sof, "Node 2 NOT in SOF!");
+
+        get_controller_status(stat_1, ID_1, mem_bus(1));
+        check(stat_1.transmitter, "Node 1 transmitter!");
 
         CAN_wait_bus_idle(ID_1, mem_bus(1));
-        CAN_wait_bus_idle(ID_2, mem_bus(2));
+        CAN_wait_bus_idle(ID_1, mem_bus(2));
 
-        -----------------------------------------------------------------------
-        -- 2. Read status of RX Buffer in Node 1. Check that RX Buffer full is
-        --    active. Check that DOR flag is not set yet.
-        -----------------------------------------------------------------------
-        info("Step 2");
+        CAN_read_frame(frame_rx, ID_2, mem_bus(2));
+        CAN_compare_frames(frame_rx, frame_2, false, frame_equal);
 
-        get_rx_buf_state(rx_buf_info, ID_1, mem_bus(1));
-        check(rx_buf_info.rx_full, "RX full set");
-
-        get_controller_status(stat_1, ID_1, mem_bus(1));
-        check_false(stat_1.data_overrun, "DOR flag not set!");
-
-        -----------------------------------------------------------------------
-        -- 3. Send one more frame by Node 2 and wait until it is sent. Check
-        --    that Data Overrun flag is set. Issue Clear Data Overrun Command.
-        --    Check that CDO flag was cleared.
-        -----------------------------------------------------------------------
-        info("Step 3");
-        send_TXT_buf_cmd(buf_set_ready, 1, ID_2, mem_bus(2));
-        CAN_wait_frame_sent(ID_2, mem_bus(2));
+        check(frame_equal, "TX/RX frame match");
         
-        CAN_wait_bus_idle(ID_1, mem_bus(1));
-        CAN_wait_bus_idle(ID_2, mem_bus(2));
-        
-        get_rx_buf_state(rx_buf_info, ID_1, mem_bus(1));
-        check(rx_buf_info.rx_full, "RX full set");
-        get_controller_status(stat_1, ID_1, mem_bus(1));
-        check(stat_1.data_overrun, "DOR flag set!");       
-
-        command.clear_data_overrun := true;
-        give_controller_command(command, ID_1, mem_bus(1));
-
-        get_controller_status(stat_1, ID_1, mem_bus(1));
-        check_false(stat_1.data_overrun, "DOR flag was cleared!");
-
-        -----------------------------------------------------------------------
-        --  4. Again send frame by Node 2. Check DOR is set again. Issue
-        --     Command[RRB]. Check Data Overrun Flag was cleared.
-        -----------------------------------------------------------------------
-        info("Step 4");
-        send_TXT_buf_cmd(buf_set_ready, 1, ID_2, mem_bus(2));
-        CAN_wait_frame_sent(ID_1, mem_bus(1));
-        
-        CAN_wait_bus_idle(ID_1, mem_bus(1));
-        CAN_wait_bus_idle(ID_2, mem_bus(2));
-        
-        get_controller_status(stat_1, ID_1, mem_bus(1));
-        check(stat_1.data_overrun, "DOR flag set!");
-
-        command.clear_data_overrun := false;
-        command.release_rec_buffer := true;
-        give_controller_command(command, ID_1, mem_bus(1));
-
-        get_controller_status(stat_1, ID_1, mem_bus(1));
-        check_false(stat_1.data_overrun, "DOR flag cleared by COMMAND[RRB]!");
-
         wait for 100 ns;
 
   end procedure;

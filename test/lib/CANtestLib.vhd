@@ -73,6 +73,8 @@
 --     15.9.2018  Added support for message filter manipulation!
 --     27.9.2018  Added burst support for avalon access. Added option to read
 --                frame from RX Buffer via burst partially!
+--    19.11.2019  Added options to force transmitter delay and timestamp in
+--                feature tests.
 --------------------------------------------------------------------------------
 
 Library ieee;
@@ -297,6 +299,7 @@ package CANtestLib is
     -- Protocol control Debug values
     type SW_PC_Debug is (
         pc_deb_none,
+        pc_deb_sof,
         pc_deb_arbitration,
         pc_deb_control,
         pc_deb_data,
@@ -698,7 +701,9 @@ package CANtestLib is
     ----------------------------------------------------------------------------
     procedure timestamp_gen_proc(
         signal     clk           : in    std_logic;
-        signal     timestamp     : out   std_logic_vector(63 downto 0)
+        signal     timestamp     : out   std_logic_vector(63 downto 0);
+        signal     ts_preset     : in    std_logic;
+        signal     ts_preset_val : in    std_logic_vector(63 downto 0)
     );
 
 
@@ -1079,10 +1084,52 @@ package CANtestLib is
     );
 
 
+    ----------------------------------------------------------------------------
+    ----------------------------------------------------------------------------
+    -- CAN feauture TB configuration routines
+    ----------------------------------------------------------------------------
+    ----------------------------------------------------------------------------
+    
+    -- Signals for feature test intialization
+    
+    type t_ftr_tx_delay is array (1 to 2) of time;
+    
+    ----------------------------------------------------------------------------
+    -- Configure transmitter delay in feature TB.
+    --
+    -- Arguments:
+    --  tx_del          Delay to be set
+    --  ID              ID of the node where delay shall be set.
+    --  actual_delay    Delay signal to force
+    ----------------------------------------------------------------------------
+    procedure ftr_tb_set_tran_delay(
+        constant tx_del         : in    time;
+        constant ID             : in    natural range 0 to 15;
+        signal   actual_delay   : out   t_ftr_tx_delay
+    );
+
+    ----------------------------------------------------------------------------
+    -- Configure timestamp in feature TB.
+    --
+    -- Arguments:
+    --  ts_value        Value to be forced to timestamp.
+    --  ID              ID of the node where delay shall be set.
+    --  ts_preset       Vector controlling presetting.
+    --  ts_preset_val   Value controlling presetting.
+    ----------------------------------------------------------------------------
+    procedure ftr_tb_set_timestamp(
+        constant ts_value       : in    std_logic_vector(63 downto 0);
+        constant ID             : in    natural range 0 to 15;
+        signal   ts_preset      : out   std_logic_vector;
+        signal   ts_preset_val  : out   std_logic_vector(63 downto 0)
+    );
+
 
 
     ----------------------------------------------------------------------------
+    ----------------------------------------------------------------------------
     -- CAN configuration routines
+    ----------------------------------------------------------------------------
     ----------------------------------------------------------------------------
 
     ----------------------------------------------------------------------------
@@ -1921,8 +1968,8 @@ package CANtestLib is
     --  mem_bus         Avalon memory bus to execute the access on.
     ----------------------------------------------------------------------------
     procedure CAN_configure_ssp(
-        variable ssp_source     : in    SSP_set_command_type;
-        variable ssp_offset_val : in   std_logic_vector(6 downto 0);
+        constant ssp_source     : in    SSP_set_command_type;
+        constant ssp_offset_val : in    std_logic_vector(7 downto 0);
         constant ID             : in    natural range 0 to 15;
         signal   mem_bus        : inout Avalon_mem_type
     );
@@ -2171,7 +2218,9 @@ package body CANtestLib is
 
     procedure timestamp_gen_proc(
         signal     clk           : in    std_logic;
-        signal     timestamp     : out   std_logic_vector(63 downto 0)
+        signal     timestamp     : out   std_logic_vector(63 downto 0);
+        signal     ts_preset     : in    std_logic;
+        signal     ts_preset_val : in    std_logic_vector(63 downto 0)
     ) is
         variable ts_lo    : natural := 0;
         variable tmp      : natural := 0;
@@ -2188,6 +2237,12 @@ package body CANtestLib is
             ts_lo := tmp;
             timestamp <= std_logic_vector(  to_unsigned(ts_hi, 32)
                                           & to_unsigned(ts_lo, 32));
+                                          
+            if (ts_preset = '1') then
+                ts_lo := to_integer(unsigned(ts_preset_val(31 downto 0)));
+                ts_hi := to_integer(unsigned(ts_preset_val(63 downto 32)));
+                wait for 0 ns;
+            end if;
         end loop;
     end procedure;
 
@@ -2876,7 +2931,50 @@ package body CANtestLib is
             aval_read_burst(r_data, int_address, stat_burst, mem_bus);
         end if;
     end procedure;
+    
+    
+    procedure ftr_tb_set_tran_delay(
+        constant tx_del         : in    time;
+        constant ID             : in    natural range 0 to 15;
+        signal   actual_delay   : out   t_ftr_tx_delay
+    )is
+    begin
+        if (ID /= 2 and ID /= 1) then
+            warning("Transmitter delay config: " &
+                    "Only nodes 1 and 2 are supported -> Skipping!");
+           return;
+        end if;
+    
+        actual_delay(ID) <= tx_del;
+    end procedure;
 
+
+    procedure ftr_tb_set_timestamp(
+        constant ts_value       : in    std_logic_vector(63 downto 0);
+        constant ID             : in    natural range 0 to 15;
+        signal   ts_preset      : out   std_logic_vector;
+        signal   ts_preset_val  : out   std_logic_vector(63 downto 0)
+    )is
+    begin
+        ts_preset_val <= ts_value;
+        wait for 0 ns;
+
+        if (ID = 1) then
+            ts_preset <= "01";        
+        elsif (ID = 2) then
+            ts_preset <= "10";
+        end if;
+        
+        -- This is ugly hack to achieve that timestamp generation process
+        -- will loop at least once and thus catch our action (system clock
+        -- is 10 ns).
+        wait for 11 ns; 
+
+        ts_preset <= "00";
+        wait for 0 ns;
+
+    end procedure;
+    
 
     procedure CAN_configure_timing(
         constant bus_timing     : in    bit_time_config_type;
@@ -3352,10 +3450,12 @@ package body CANtestLib is
         outcome := true;
 
         if (frame_A.frame_format /= frame_B.frame_format) then
+            info("Frame format (FDF) mismatch");
             outcome := false;
         end if;
 
         if (frame_A.ident_type /= frame_B.ident_type) then
+            info("Identifier type (IDE) mismatch");
             outcome := false;
         end if;
 
@@ -3363,6 +3463,7 @@ package body CANtestLib is
         -- no RTR bit!
         if (frame_A.frame_format = NORMAL_CAN) then
             if (frame_A.rtr /= frame_B.rtr) then
+                info("Remote transmission request (RTR) mismatch");
                 outcome := false;
             end if;
         end if;
@@ -3370,25 +3471,25 @@ package body CANtestLib is
         -- BRS bit is compared only in FD frame
         if (frame_A.frame_format = FD_CAN) then
             if (frame_A.brs /= frame_B.brs) then
+                info("Bit-rate shift (BRS) mismatch");
                 outcome := false;
             end if;
         end if;
 
         -- Received word count
         if (frame_A.rwcnt /= frame_B.rwcnt) then
+            info("Read word count (RWCNT) mismatch");
             outcome := false;
         end if;
 
-        -- DLC is compared only in non-RTR frames!
-        -- In RTR frames it does not necessarily have to be equal due to
-        -- RTR-pref feature (though it should be zero in normal controllers).
-        if ((frame_A.rtr = NO_RTR_FRAME or frame_A.frame_format = FD_CAN)
-            and (frame_A.dlc /= frame_B.dlc))
-        then
+        -- DLC comparison
+        if (frame_A.dlc /= frame_B.dlc) then
+            info("Data length code (DLC) mismatch");
             outcome := false;
         end if;
 
         if (frame_A.identifier /= frame_B.identifier) then
+            info("Identifier mismatch");
             outcome := false;
         end if;
 
@@ -3401,6 +3502,7 @@ package body CANtestLib is
             then
                 for i in 0 to (frame_A.data_length - 1) loop
                     if (frame_A.data(i) /= frame_B.data(i)) then
+                        info("Data byte: " & integer'image(i) & " mismatch!");
                         outcome  := false;
                     end if;
                 end loop;
@@ -4736,8 +4838,8 @@ package body CANtestLib is
 
 
     procedure CAN_configure_ssp(
-        variable ssp_source     : in    SSP_set_command_type;
-        variable ssp_offset_val : in    std_logic_vector(6 downto 0);
+        constant ssp_source     : in    SSP_set_command_type;
+        constant ssp_offset_val : in    std_logic_vector(7 downto 0);
         constant ID             : in    natural range 0 to 15;
         signal   mem_bus        : inout Avalon_mem_type
     ) is
@@ -4796,6 +4898,8 @@ package body CANtestLib is
             pc_dbg := pc_deb_suspend;
         elsif (data(PC_OVR_IND) = '1') then
             pc_dbg := pc_deb_overload;
+        elsif (data(PC_SOF_IND) = '1') then
+            pc_dbg := pc_deb_sof;
         end if;
     end procedure;
 
