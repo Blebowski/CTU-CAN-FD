@@ -126,10 +126,10 @@ architecture rtl of bit_err_detector is
     -- Capture register for Secondary sampling point bit error
     signal bit_err_ssp_capt_d  : std_logic;
     signal bit_err_ssp_capt_q  : std_logic;
-    signal bit_err_ssp_capt_dq : std_logic;
     
     -- Valid Bit error detected by Secondary sampling
-    signal bit_err_ssp_valid   : std_logic;
+    signal bit_err_ssp_valid        : std_logic;
+    signal bit_err_ssp_condition    : std_logic; 
     
     -- Valid Bit Error detected by regular sampling
     signal bit_err_norm_valid  : std_logic;
@@ -137,15 +137,21 @@ architecture rtl of bit_err_detector is
 begin
 
     ----------------------------------------------------------------------------
+    -- Condition for SSP bit error is valid when TX Data cache output is not
+    -- equal to CAN RX in the moment of SSP!
+    ----------------------------------------------------------------------------    
+    bit_err_ssp_condition <= '1' when (data_tx_delayed /= data_rx_synced and
+                                       sample_sec = '1')
+                                 else
+                             '0';
+
+    ----------------------------------------------------------------------------
     -- Capture register for secondary sampling point bit error:
     --  1. Clear upon next regular sample point.
     --  2. Set when Bit error is detected by secondary sampling point.
     ----------------------------------------------------------------------------
-    bit_err_ssp_capt_d <= '0' when (rx_trigger = '1')
-                              else
-                          '1' when (data_tx_delayed /= data_rx_synced and
-                                    sample_sec = '1')
-                              else
+    bit_err_ssp_capt_d <= '0' when (rx_trigger = '1') else
+                          '1' when (bit_err_ssp_condition = '1') else
           bit_err_ssp_capt_q;
 
     bit_error_ssp_capt_reg_proc : process(clk_sys, res_n)
@@ -157,14 +163,16 @@ begin
         end if;
     end process;
     
-    bit_err_ssp_capt_dq <= '1' when (bit_err_ssp_capt_d = '1' OR
-                                     bit_err_ssp_capt_q = '1')
-                               else
-                           '0';
-    
+    ----------------------------------------------------------------------------
+    -- Bit Error for SSP is processed in Sample point (RX Trigger). We must look
+    -- at capture register (bit_err_ssp_capt_q) and also SSP condition because
+    -- SSP might occur at the same cycle as RX Trigger and in this case bit
+    -- error is processed immediately and not captured!
+    ----------------------------------------------------------------------------
     bit_err_ssp_valid <= '1' when (sp_control = SECONDARY_SAMPLE and
-                                   bit_err_ssp_capt_dq = '1' and
-                                   rx_trigger = '1')
+                                   rx_trigger = '1' and
+                                   (bit_err_ssp_capt_q = '1' or
+                                    bit_err_ssp_condition = '1'))
                              else
                          '0';
 
