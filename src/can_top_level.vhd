@@ -467,6 +467,9 @@ architecture rtl of can_top_level is
     ------------------------------------------------------------------------
     -- Bit time FSM state
     signal bt_fsm               :    t_bit_time;
+    
+    -- Time quanta edge
+    signal tq_edge              :    std_logic;
      
 begin
 
@@ -867,7 +870,8 @@ begin
         tx_trigger              => tx_trigger,      -- OUT
         
         -- Status outputs
-        bt_fsm                  => bt_fsm           -- OUT
+        bt_fsm                  => bt_fsm,          -- OUT
+        tq_edge                 => tq_edge          -- OUT
     );
   
  
@@ -900,6 +904,7 @@ begin
         rx_trigger              => rx_triggers(1),  -- IN
         tx_trigger              => tx_trigger,      -- IN
         sync_edge               => sync_edge,       -- OUT
+        tq_edge                 => tq_edge,         -- IN
 
         -- CAN Core Interface
         tx_data_wbs             => tx_data_wbs,         -- IN

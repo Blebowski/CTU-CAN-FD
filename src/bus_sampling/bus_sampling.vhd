@@ -131,6 +131,9 @@ entity bus_sampling is
         
         -- Valid synchronisation edge appeared (Recessive to Dominant)
         sync_edge            :out  std_logic;
+        
+        -- Time quanta edge
+        tq_edge              :in   std_logic;
 
         ------------------------------------------------------------------------
         -- CAN Core Interface
@@ -450,15 +453,18 @@ begin
     );
 
     -- Output data propagation - Pipe directly - no delay
-    can_tx             <= tx_data_wbs;
+    can_tx      <= tx_data_wbs;
 
     -- RX Data for bit destuffing - Output of re-synchroniser.
-    rx_data_wbs        <= data_rx_synced;
+    rx_data_wbs <= data_rx_synced;
 
     -- As synchroniation edge, valid edge on RX Data is selected!
-    sync_edge          <= edge_rx_valid;
+    -- Gated by Time Quanta edge so that edges aligned with time
+    -- quanta are propagated! 
+    sync_edge   <= '1' when (edge_rx_valid = '1' and tq_edge = '1') else
+                   '0';
 
     -- Registers to output propagation
-    sample_sec         <=  sample_sec_i;
+    sample_sec  <=  sample_sec_i;
 
 end architecture;

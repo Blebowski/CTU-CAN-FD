@@ -241,6 +241,9 @@ package can_components is
             
             -- Valid synchronisation edge appeared (Recessive to Dominant)
             sync_edge            :out  std_logic;
+            
+            -- Time quanta edge
+            tq_edge              :out std_logic;
     
             ------------------------------------------------------------------------
             -- CAN Core Interface
@@ -3461,7 +3464,10 @@ package can_components is
         -----------------------------------------------------------------------
         
         -- Bit Time FSM state
-        bt_fsm          : out t_bit_time 
+        bt_fsm          : out t_bit_time;
+        
+        -- Time quanta edge
+        tq_edge         : out std_logic
     );
     end component;
 
