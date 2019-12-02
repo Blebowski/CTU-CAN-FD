@@ -579,22 +579,22 @@ begin
   -- psl default clock is rising_edge(clk_sys);
 
   -- psl txt_lock_cov : cover
-  --    (txtb_hw_cmd.lock = '1');
+  --    {txtb_hw_cmd.lock = '1'};
   --
   -- psl txt_unlock_cov : cover
-  --    (txtb_hw_cmd.unlock = '1');
+  --    {txtb_hw_cmd.unlock = '1'};
   --
   -- psl txt_lock_buf_1_cov : cover
-  --    (txtb_hw_cmd_index = 0 and txtb_hw_cmd.lock = '1');
+  --    {txtb_hw_cmd_index = 0 and txtb_hw_cmd.lock = '1'};
   --
   -- psl txt_lock_buf_2_cov : cover
-  --    (txtb_hw_cmd_index = 1 and txtb_hw_cmd.lock = '1');
+  --    {txtb_hw_cmd_index = 1 and txtb_hw_cmd.lock = '1'};
   --
   -- psl txt_lock_buf_3_cov : cover
-  --    (txtb_hw_cmd_index = 2 and txtb_hw_cmd.lock = '1');
+  --    {txtb_hw_cmd_index = 2 and txtb_hw_cmd.lock = '1'};
   --
   -- psl txt_lock_buf_4_cov : cover
-  --    (txtb_hw_cmd_index = 3 and txtb_hw_cmd.lock = '1');
+  --    {txtb_hw_cmd_index = 3 and txtb_hw_cmd.lock = '1'};
   --
   -- psl txt_prio_change_cov : cover
   --    {select_buf_avail = '1';
@@ -605,8 +605,8 @@ begin
   -- same priority are available! Here we only test the proper index selection
   -- in case of equal priorities!
   -- psl txt_buf_eq_priority_cov : cover
-  --    (txtb_available(0) = '1' and txtb_available(1) = '1' and
-  --     txtb_prorities(0) = txtb_prorities(1))
+  --    {txtb_available(0) = '1' and txtb_available(1) = '1' and
+  --     txtb_prorities(0) = txtb_prorities(1)}
   --    report "Selected Buffer index changed while buffer selected";
   --
   -- Change of buffer from available to not available but not due to lock 
@@ -617,15 +617,15 @@ begin
   --    report "Buffer became non-ready but not due to lock command"; 
   --
   -- psl txt_buf_all_available_cov : cover
-  --    (txtb_available(0) = '1' and txtb_available(1) = '1' and
-  --     txtb_available(2) = '1' and txtb_available(3) = '1');
+  --    {txtb_available(0) = '1' and txtb_available(1) = '1' and
+  --     txtb_available(2) = '1' and txtb_available(3) = '1'};
   --
   -- psl txt_buf_change_cov : cover
-  --    (txtb_changed = '1' and txtb_hw_cmd.lock = '1')
+  --    {txtb_changed = '1' and txtb_hw_cmd.lock = '1'}
   --    report "TX Buffer changed between two frames";
   --
   -- psl txt_buf_sim_chng_and_lock_cov : cover
-  --    (select_index_changed = '1' and txtb_hw_cmd.lock = '1');
+  --    {select_index_changed = '1' and txtb_hw_cmd.lock = '1'};
 
   ----------------------------------------------------------------------------
   -- Functional coverage for Priority decoder!
@@ -636,42 +636,42 @@ begin
   -- Combinations in first comparator!
     
   -- psl prio_dec_stage_1_cov_1 : cover
-  --  ((unsigned(txtb_prorities(0)) > unsigned(txtb_prorities(1))) and
-  --   txtb_available(0) = '1' and txtb_available(1) = '1');
+  --  {(unsigned(txtb_prorities(0)) > unsigned(txtb_prorities(1))) and
+  --   txtb_available(0) = '1' and txtb_available(1) = '1'};
     
   -- psl prio_dec_stage_1_cov_2 : cover
-  --  ((unsigned(txtb_prorities(0)) < unsigned(txtb_prorities(1))) and
-  --   txtb_available(0) = '1' and txtb_available(1) = '1');
+  --  {(unsigned(txtb_prorities(0)) < unsigned(txtb_prorities(1))) and
+  --   txtb_available(0) = '1' and txtb_available(1) = '1'};
     
   -- psl prio_dec_stage_1_cov_3 : cover
-  --  ((unsigned(txtb_prorities(0)) = unsigned(txtb_prorities(1))) and
-  --   txtb_available(0) = '1' and txtb_available(1) = '1');
+  --  {(unsigned(txtb_prorities(0)) = unsigned(txtb_prorities(1))) and
+  --   txtb_available(0) = '1' and txtb_available(1) = '1'};
     
   -- psl prio_dec_stage_1_cov_4 : cover
-  --  (txtb_available(0) = '0' and txtb_available(1) = '1');
+  --  {txtb_available(0) = '0' and txtb_available(1) = '1'};
     
   -- psl prio_dec_stage_1_cov_5 : cover
-  --  (txtb_available(0) = '1' and txtb_available(1) = '0');
+  --  {txtb_available(0) = '1' and txtb_available(1) = '0'};
         
   -- Combinations in second comparator!
     
   -- psl prio_dec_stage_2_cov_1 : cover
-  --  ((unsigned(txtb_prorities(2)) > unsigned(txtb_prorities(3))) and
-  --   txtb_available(2) = '1' and txtb_available(3) = '1');
+  --  {(unsigned(txtb_prorities(2)) > unsigned(txtb_prorities(3))) and
+  --   txtb_available(2) = '1' and txtb_available(3) = '1'};
     
   -- psl prio_dec_stage_2_cov_2 : cover
-  --  ((unsigned(txtb_prorities(2)) < unsigned(txtb_prorities(3))) and
-  --   txtb_available(2) = '1' and txtb_available(3) = '1');
+  --  {(unsigned(txtb_prorities(2)) < unsigned(txtb_prorities(3))) and
+  --   txtb_available(2) = '1' and txtb_available(3) = '1'};
     
   -- psl prio_dec_stage_2_cov_3 : cover
-  --  ((unsigned(txtb_prorities(2)) = unsigned(txtb_prorities(3))) and
-  --   txtb_available(2) = '1' and txtb_available(3) = '1');
+  --  {(unsigned(txtb_prorities(2)) = unsigned(txtb_prorities(3))) and
+  --   txtb_available(2) = '1' and txtb_available(3) = '1'};
    
   -- psl prio_dec_stage_2_cov_4 : cover
-  --  (txtb_available(2) = '0' and txtb_available(3) = '1');
+  --  {txtb_available(2) = '0' and txtb_available(3) = '1'};
     
   -- psl prio_dec_stage_2_cov_5 : cover
-  --  (txtb_available(2) = '1' and txtb_available(3) = '0');
+  --  {txtb_available(2) = '1' and txtb_available(3) = '0'};
 
 
   -----------------------------------------------------------------------------

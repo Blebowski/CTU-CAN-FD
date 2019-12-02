@@ -455,62 +455,62 @@ begin
   -- LOCK commands in various parts of TXT Buffer validation
 
   -- psl txtb_lock_arb_sel_low_cov : cover
-  --  (curr_state = s_arb_sel_low_ts and txtb_hw_cmd.lock = '1'); 
+  --  {curr_state = s_arb_sel_low_ts and txtb_hw_cmd.lock = '1'}; 
   --
   -- psl txtb_lock_arb_sel_hi_cov : cover
-  --  (curr_state = s_arb_sel_upp_ts and txtb_hw_cmd.lock = '1');
+  --  {curr_state = s_arb_sel_upp_ts and txtb_hw_cmd.lock = '1'};
   --
   -- psl txtb_lock_arb_sel_ffw_cov : cover
-  --  (curr_state = s_arb_sel_ffw and txtb_hw_cmd.lock = '1');
+  --  {curr_state = s_arb_sel_ffw and txtb_hw_cmd.lock = '1'};
   --
   -- psl txtb_lock_arb_sel_idw_cov : cover
-  --  (curr_state = s_arb_sel_idw and txtb_hw_cmd.lock = '1');
+  --  {curr_state = s_arb_sel_idw and txtb_hw_cmd.lock = '1'};
   --
   -- psl txtb_lock_arb_sel_validated_cov : cover
-  --  (curr_state = s_arb_validated and txtb_hw_cmd.lock = '1');
+  --  {curr_state = s_arb_validated and txtb_hw_cmd.lock = '1'};
 
 
   -- TXT Buffer becoming suddenly unavailable during TXT Buffer validation
  
   -- psl_txtb_not_available_arb_sel_low_cov : cover
-  --  (curr_state = s_arb_sel_low_ts and select_buf_avail = '0');
+  --  {curr_state = s_arb_sel_low_ts and select_buf_avail = '0'};
   --
   -- psl_txtb_not_available_arb_sel_upp_cov : cover
-  --  (curr_state = s_arb_sel_upp_ts and select_buf_avail = '0');
+  --  {curr_state = s_arb_sel_upp_ts and select_buf_avail = '0'};
   --
   -- psl_txtb_not_available_arb_sel_ffw_cov : cover
-  --  (curr_state = s_arb_sel_ffw and select_buf_avail = '0');
+  --  {curr_state = s_arb_sel_ffw and select_buf_avail = '0'};
   --
   -- psl_txtb_not_available_arb_sel_idw_cov : cover
-  --  (curr_state = s_arb_sel_idw and select_buf_avail = '0');
+  --  {curr_state = s_arb_sel_idw and select_buf_avail = '0'};
   --
   -- psl_txtb_not_available_arb_validated_cov : cover
-  --  (curr_state = s_arb_validated and select_buf_avail = '0');  
+  --  {curr_state = s_arb_validated and select_buf_avail = '0'};  
 
 
   -- TXT Buffer index change during TXT Buffer validation
 
   -- psl_txtb_changed_arb_sel_low_cov : cover
-  --  (curr_state = s_arb_sel_low_ts and select_index_changed = '0');
+  --  {curr_state = s_arb_sel_low_ts and select_index_changed = '0'};
   --
   -- psl_txtb_changed_arb_sel_upp_cov : cover
-  --  (curr_state = s_arb_sel_upp_ts and select_index_changed = '0');
+  --  {curr_state = s_arb_sel_upp_ts and select_index_changed = '0'};
   --
   -- psl_txtb_changed_arb_sel_ffw_cov : cover
-  --  (curr_state = s_arb_sel_ffw and select_index_changed = '0');
+  --  {curr_state = s_arb_sel_ffw and select_index_changed = '0'};
   --
   -- psl_txtb_changed_arb_sel_idw_cov : cover
-  --  (curr_state = s_arb_sel_idw and select_index_changed = '0');
+  --  {curr_state = s_arb_sel_idw and select_index_changed = '0'};
   --
   -- psl_txtb_changed_arb_validated_cov : cover
-  --  (curr_state = s_arb_validated and select_index_changed = '0');  
+  --  {curr_state = s_arb_validated and select_index_changed = '0'};  
 
 
   -- Waiting till timestamp will be ready (transmission at given time)
 
   -- psl txt_buf_wait_till_timestamp_cov : cover
-  --    (curr_state = s_arb_sel_upp_ts and fsm_wait_state_q = '0' and
-  --     timestamp_valid = '0');
+  --    {curr_state = s_arb_sel_upp_ts and fsm_wait_state_q = '0' and
+  --     timestamp_valid = '0'};
 
   ------------------------------------------------------------------------------
   -- Assertions

@@ -270,17 +270,17 @@ begin
     -- psl default clock is rising_edge(clk_sys);
 
     -- Each SW command active
-    -- psl txtb_set_ready_cov : cover (txtb_sw_cmd.set_rdy = '1' and sw_cbs = '1');
-    -- psl txtb_set_empty_cov : cover (txtb_sw_cmd.set_ety = '1' and sw_cbs = '1');
-    -- psl txtb_set_abort_cov : cover (txtb_sw_cmd.set_abt = '1' and sw_cbs = '1');
+    -- psl txtb_set_ready_cov : cover {txtb_sw_cmd.set_rdy = '1' and sw_cbs = '1'};
+    -- psl txtb_set_empty_cov : cover {txtb_sw_cmd.set_ety = '1' and sw_cbs = '1'};
+    -- psl txtb_set_abort_cov : cover {txtb_sw_cmd.set_abt = '1' and sw_cbs = '1'};
       
     -- HW Commands
-    -- psl txtb_hw_lock : cover (txtb_hw_cmd.lock = '1' and hw_cbs = '1');
-    -- psl txtb_hw_unlock : cover (txtb_hw_cmd.unlock = '1' and hw_cbs = '1');
-    -- psl txtb_hw_valid : cover (txtb_hw_cmd.valid = '1' and hw_cbs = '1');
-    -- psl txtb_hw_err : cover (txtb_hw_cmd.err = '1' and hw_cbs = '1');
-    -- psl txtb_hw_arbl : cover (txtb_hw_cmd.arbl = '1' and hw_cbs = '1');
-    -- psl txtb_hw_failed : cover (txtb_hw_cmd.failed = '1' and hw_cbs = '1');
+    -- psl txtb_hw_lock : cover {txtb_hw_cmd.lock = '1' and hw_cbs = '1'};
+    -- psl txtb_hw_unlock : cover {txtb_hw_cmd.unlock = '1' and hw_cbs = '1'};
+    -- psl txtb_hw_valid : cover {txtb_hw_cmd.valid = '1' and hw_cbs = '1'};
+    -- psl txtb_hw_err : cover {txtb_hw_cmd.err = '1' and hw_cbs = '1'};
+    -- psl txtb_hw_arbl : cover {txtb_hw_cmd.arbl = '1' and hw_cbs = '1'};
+    -- psl txtb_hw_failed : cover {txtb_hw_cmd.failed = '1' and hw_cbs = '1'};
     
     end block;
 

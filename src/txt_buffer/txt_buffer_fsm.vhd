@@ -370,23 +370,23 @@ begin
     -- psl default clock is rising_edge(clk_sys);
 
     -- Each FSM state
-    -- psl txtb_fsm_empty_cov : cover (curr_state = s_txt_empty);
-    -- psl txtb_fsm_ready_cov : cover (curr_state = s_txt_ready);
-    -- psl txtb_fsm_tx_prog_cov : cover (curr_state = s_txt_tx_prog);
-    -- psl txtb_fsm_ab_prog_cov : cover (curr_state = s_txt_ab_prog);
-    -- psl txtb_fsm_error_cov : cover (curr_state = s_txt_failed);
-    -- psl txtb_fsm_aborted_cov : cover (curr_state = s_txt_aborted);
-    -- psl txtb_fsm_tx_ok_cov : cover (curr_state = s_txt_ok);
+    -- psl txtb_fsm_empty_cov : cover {curr_state = s_txt_empty};
+    -- psl txtb_fsm_ready_cov : cover {curr_state = s_txt_ready};
+    -- psl txtb_fsm_tx_prog_cov : cover {curr_state = s_txt_tx_prog};
+    -- psl txtb_fsm_ab_prog_cov : cover {curr_state = s_txt_ab_prog};
+    -- psl txtb_fsm_error_cov : cover {curr_state = s_txt_failed};
+    -- psl txtb_fsm_aborted_cov : cover {curr_state = s_txt_aborted};
+    -- psl txtb_fsm_tx_ok_cov : cover {curr_state = s_txt_ok};
     
     -- Simultaneous HW and SW Commands
     --
     -- psl txtb_hw_sw_cmd_txt_ready_hazard_cov : cover
-    --  (txtb_hw_cmd.lock = '1' and hw_cbs = '1' and abort_applied = '1' and
-    --   curr_state = s_txt_ready);
+    --  {txtb_hw_cmd.lock = '1' and hw_cbs = '1' and abort_applied = '1' and
+    --   curr_state = s_txt_ready};
     --
     -- psl txtb_hw_sw_cmd_txt_tx_prog_hazard_cov : cover
-    --  (txtb_hw_cmd.unlock = '1' and hw_cbs = '1' and abort_applied = '1' and
-    --   curr_state = s_txt_tx_prog);
+    --  {txtb_hw_cmd.unlock = '1' and hw_cbs = '1' and abort_applied = '1' and
+    --   curr_state = s_txt_tx_prog};
     
     ----------------------------------------------------------------------------
     -- Assertions
