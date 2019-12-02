@@ -107,6 +107,9 @@ entity data_edge_detector is
         -- RX Data value from previous Sample point.
         prev_rx_sample           :in   std_logic;
         
+        -- Time quanta edge
+        tq_edge                  :in   std_logic;
+        
         ------------------------------------------------------------------------
         -- Outputs
         ------------------------------------------------------------------------
@@ -114,7 +117,10 @@ entity data_edge_detector is
         tx_edge                  :out  std_logic;
 
         -- Edge detected on RX Data                                             
-        rx_edge                  :out  std_logic
+        rx_edge                  :out  std_logic;
+        
+        -- Synchronisation edge
+        sync_edge                :out  std_logic
     );
 end entity;
 
@@ -124,6 +130,7 @@ architecture rtl of data_edge_detector is
     -- Previous values on rx_data, tx_data inputs to detect edge
     signal rx_data_prev                 :       std_logic;
     signal tx_data_prev                 :       std_logic;
+    signal rx_data_sync_prev            :       std_logic;
 
     -- Immediate edges on tx_data, rx_data (not yet finally valid)
     signal rx_edge_immediate            :       std_logic;
@@ -144,10 +151,15 @@ begin
         if (res_n = G_RESET_POLARITY) then
             rx_data_prev        <= RECESSIVE;
             tx_data_prev        <= RECESSIVE;
+            rx_data_sync_prev   <= RECESSIVE;
         elsif (rising_edge(clk_sys)) then
             rx_data_prev        <= rx_data;
             tx_data_prev        <= tx_data;
-        end if;        
+            
+            if (tq_edge = '1') then
+                rx_data_sync_prev <= rx_data;
+            end if;
+        end if;
     end process;
 
 
@@ -159,7 +171,7 @@ begin
                          '0';
                          
     tx_edge_immediate <= '1' when (tx_data_prev /= tx_data) else
-                         '0';
+                         '0';   
 
 
     ----------------------------------------------------------------------------
@@ -185,10 +197,27 @@ begin
                      else
                  '0';
 
+
+    ----------------------------------------------------------------------------
+    -- Synchronisation edge:
+    --  1. Edge on RX data, aligned with Time Quanta
+    --  2. Recessive to Dominant
+    --  3. Data sampled in previous Sample point are different from actual
+    --     rx_data immediately after edge!
+    --  4. Aligned with time quanta!
+    ----------------------------------------------------------------------------
+    sync_edge <= '1' when (rx_data_sync_prev /= rx_data) and
+                          (rx_data_sync_prev = RECESSIVE) and
+                          (prev_rx_sample /= rx_data) and
+                          (tq_edge = '1')
+                     else
+                 '0';
+
     ----------------------------------------------------------------------------
     -- Internal signals to output propagation
     ----------------------------------------------------------------------------
     rx_edge <= rx_edge_i;
     tx_edge <= tx_edge_i;
+
 
 end architecture;

@@ -33987,12 +33987,11 @@ can_rx
 \series default
  are detected with granularity of 
 \color red
-time quanta (
-\color blue
-This is TODO, so far detected with System clock period, gating by tq_edge
- needs to be added
+time quanta 
+\color black
+(Edges are gated by Time quanta edge provided by Prescaler)
 \color red
-).
+.
  
 \color black
 When CTU CAN FD is running in 

@@ -155,7 +155,10 @@ entity prescaler is
         -- Status outputs
         -----------------------------------------------------------------------        
         -- Bit Time FSM state
-        bt_fsm          : out t_bit_time 
+        bt_fsm          : out t_bit_time;
+        
+        -- Time quanta edge
+        tq_edge         : out std_logic
   );
 end entity;
 
@@ -226,7 +229,7 @@ architecture rtl of prescaler is
     -- Time quanta edges
     signal tq_edge_nbt          : std_logic;
     signal tq_edge_dbt          : std_logic;
-    
+
     -- Sample trigger request (in sample point)
     signal rx_trig_req           : std_logic;
     
@@ -468,6 +471,9 @@ begin
         rx_triggers => rx_triggers,     -- OUT
         tx_trigger  => tx_trigger       -- OUT
     );
+    
+    tq_edge <= tq_edge_nbt when (sp_control = NOMINAL_SAMPLE) else
+               tq_edge_dbt;
 
     -- <RELEASE_OFF>
     ---------------------------------------------------------------------------
