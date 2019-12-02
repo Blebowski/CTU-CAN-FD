@@ -300,84 +300,84 @@ begin
     --  {int_vect_i(RXI_IND) = '0';int_vect_i(RXI_IND) = '1'};
 
     -- psl rxi_enable_cov : cover
-    --  (int_vect_i(RXI_IND) = '1' and int_ena(RXI_IND) = '1');
+    --  {int_vect_i(RXI_IND) = '1' and int_ena(RXI_IND) = '1'};
 
 
     -- psl txi_set_cov : cover
     --  {int_vect_i(TXI_IND) = '0';int_vect_i(TXI_IND) = '1'};
 
     -- psl txi_enable_cov : cover
-    --  (int_vect_i(TXI_IND) = '1' and int_ena(TXI_IND) = '1');
+    --  {int_vect_i(TXI_IND) = '1' and int_ena(TXI_IND) = '1'};
 
 
     -- psl ewli_int_set_cov : cover
     --  {int_vect_i(EWLI_IND) = '0';int_vect_i(EWLI_IND) = '1'};
 
     -- psl ewli_enable_cov : cover
-    --  (int_vect_i(EWLI_IND) = '1' and int_ena(EWLI_IND) = '1');
+    --  {int_vect_i(EWLI_IND) = '1' and int_ena(EWLI_IND) = '1'};
 
 
     -- psl doi_int_set_cov : cover
     --  {int_vect_i(DOI_IND) = '0';int_vect_i(DOI_IND) = '1'};
 
     -- psl doi_enable_cov : cover
-    --  (int_vect_i(DOI_IND) = '1' and int_ena(DOI_IND) = '1');
+    --  {int_vect_i(DOI_IND) = '1' and int_ena(DOI_IND) = '1'};
 
 
     -- psl fcsi_int_set_cov : cover
     --  {int_vect_i(FCSI_IND) = '0';int_vect_i(FCSI_IND) = '1'};
 
     -- psl fcsi_enable_cov : cover
-    --  (int_vect_i(FCSI_IND) = '1' and int_ena(FCSI_IND) = '1');
+    --  {int_vect_i(FCSI_IND) = '1' and int_ena(FCSI_IND) = '1'};
 
 
     -- psl ali_int_set_cov : cover
     --  {int_vect_i(ALI_IND) = '0';int_vect_i(ALI_IND) = '1'};
 
     -- psl ali_enable_cov : cover
-    --  (int_vect_i(ALI_IND) = '1' and int_ena(ALI_IND) = '1');
+    --  {int_vect_i(ALI_IND) = '1' and int_ena(ALI_IND) = '1'};
 
 
     -- psl beu_int_set_cov : cover
     --  {int_vect_i(BEI_IND) = '0';int_vect_i(BEI_IND) = '1'};
 
     -- psl bei_enable_cov : cover
-    --  (int_vect_i(BEI_IND) = '1' and int_ena(BEI_IND) = '1');
+    --  {int_vect_i(BEI_IND) = '1' and int_ena(BEI_IND) = '1'};
 
 
     -- psl rxfi_int_set_cov : cover
     --  {int_vect_i(RXFI_IND) = '0';int_vect_i(RXFI_IND) = '1'};
 
     -- psl rxfi_enable_cov : cover
-    --  (int_vect_i(RXFI_IND) = '1' and int_ena(RXFI_IND) = '1');
+    --  {int_vect_i(RXFI_IND) = '1' and int_ena(RXFI_IND) = '1'};
 
 
     -- psl bsi_int_set_cov : cover
     --  {int_vect_i(BSI_IND) = '0';int_vect_i(BSI_IND) = '1'};
 
     -- psl bsi_enable_cov : cover
-    --  (int_vect_i(BSI_IND) = '1' and int_ena(BSI_IND) = '1');
+    --  {int_vect_i(BSI_IND) = '1' and int_ena(BSI_IND) = '1'};
 
 
     -- psl rbnei_int_set_cov : cover
     --  {int_vect_i(RBNEI_IND) = '0';int_vect_i(RBNEI_IND) = '1'};
 
     -- psl rbnei_enable_cov : cover
-    --  (int_vect_i(RBNEI_IND) = '1' and int_ena(RBNEI_IND) = '1');
+    --  {int_vect_i(RBNEI_IND) = '1' and int_ena(RBNEI_IND) = '1'};
 
 
     -- psl txbhci_int_set_cov : cover
     --  {int_vect_i(TXBHCI_IND) = '0';int_vect_i(TXBHCI_IND) = '1'};
 
     -- psl txbhci_enable_cov : cover
-    --  (int_vect_i(TXBHCI_IND) = '1' and int_ena(TXBHCI_IND) = '1');
+    --  {int_vect_i(TXBHCI_IND) = '1' and int_ena(TXBHCI_IND) = '1'};
 
 
     -- psl ofi_int_set_cov : cover
     --  {int_vect_i(OFI_IND) = '0';int_vect_i(OFI_IND) = '1'};
 
     -- psl ofi_enable_cov : cover
-    --  (int_vect_i(OFI_IND) = '1' and int_ena(OFI_IND) = '1');
+    --  {int_vect_i(OFI_IND) = '1' and int_ena(OFI_IND) = '1'};
 
     -- <RELEASE_ON>
 end architecture;

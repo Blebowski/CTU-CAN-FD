@@ -393,22 +393,22 @@ begin
     -- psl default clock is rising_edge(clk_sys);
     --
     -- psl rx_no_raw_mem_free_cov : 
-    --      cover (to_integer(unsigned(rx_mem_free_raw)) = 0);
+    --      cover {to_integer(unsigned(rx_mem_free_raw)) = 0};
     --
     -- psl rx_all_raw_mem_free_cov : 
-    --      cover (to_integer(unsigned(rx_mem_free_raw)) = G_RX_BUFF_SIZE);
+    --      cover {to_integer(unsigned(rx_mem_free_raw)) = G_RX_BUFF_SIZE};
     --
     -- psl rx_no_int_mem_free_cov : 
-    --      cover (to_integer(unsigned(rx_mem_free_i)) = 0);
+    --      cover {to_integer(unsigned(rx_mem_free_i)) = 0};
     --
     -- psl rx_all_int_mem_free_cov : 
-    --      cover (to_integer(unsigned(rx_mem_free_i)) = G_RX_BUFF_SIZE);
+    --      cover {to_integer(unsigned(rx_mem_free_i)) = G_RX_BUFF_SIZE};
     --
     -- psl rx_write_ptr_higher_than_read_ptr_cov : 
-    --      cover (write_pointer_i > read_pointer_i);
+    --      cover {write_pointer_i > read_pointer_i};
     --
     -- psl rx_read_ptr_higher_than_write_ptr_cov : 
-    --      cover (read_pointer_i > write_pointer_i);    
+    --      cover {read_pointer_i > write_pointer_i};    
 
     -- <RELEASE_ON>
 end architecture;
