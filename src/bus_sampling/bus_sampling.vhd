@@ -302,9 +302,11 @@ begin
         tx_data             => tx_data_wbs,     -- IN
         rx_data             => data_rx_synced,  -- IN
         prev_rx_sample      => prev_sample,     -- IN
+        tq_edge             => tq_edge,         -- IN
         
         tx_edge             => edge_tx_valid,   -- OUT
-        rx_edge             => edge_rx_valid    -- OUT
+        rx_edge             => edge_rx_valid,   -- OUT
+        sync_edge           => sync_edge        -- OUT
     );
 
 
@@ -457,12 +459,6 @@ begin
 
     -- RX Data for bit destuffing - Output of re-synchroniser.
     rx_data_wbs <= data_rx_synced;
-
-    -- As synchroniation edge, valid edge on RX Data is selected!
-    -- Gated by Time Quanta edge so that edges aligned with time
-    -- quanta are propagated! 
-    sync_edge   <= '1' when (edge_rx_valid = '1' and tq_edge = '1') else
-                   '0';
 
     -- Registers to output propagation
     sample_sec  <=  sample_sec_i;
