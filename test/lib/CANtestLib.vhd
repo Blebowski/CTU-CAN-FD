@@ -86,6 +86,7 @@ USE ieee.math_real.ALL;
 USE work.randomLib.All;
 use work.can_constants.all;
 use work.drv_stat_pkg.all;
+use work.can_config.all;
 
 use work.CAN_FD_register_map.all;
 use work.CAN_FD_frame_format.all;
@@ -2077,6 +2078,20 @@ package CANtestLib is
         signal   stat_bus           : in    std_logic_vector(511 downto 0);
         constant skip_stuff_bits    : in    boolean := true
     );
+
+
+    ----------------------------------------------------------------------------
+    -- Initialize TXT Buffer memories
+    --
+    -- Arguments:
+    --  ID              Index of CTU CAN FD Core instance.
+    --  mem_bus         Avalon memory bus to execute the access on.
+    ----------------------------------------------------------------------------
+    procedure CAN_init_txtb_mems(
+        constant ID                 : in    natural range 0 to 15;
+        signal   mem_bus            : inout Avalon_mem_type
+    );
+    
 
     ----------------------------------------------------------------------------
     ----------------------------------------------------------------------------
@@ -4969,7 +4984,8 @@ package body CANtestLib is
         address := TX_PRIORITY_ADR;
         CAN_write(data, address, ID, mem_bus, BIT_16);
     end procedure;
-    
+
+
     procedure CAN_read_error_code_capture(
         variable err_capt       : inout SW_error_capture;
         constant ID             : in    natural range 0 to 15;
@@ -5029,6 +5045,24 @@ package body CANtestLib is
         end if;
     end procedure;
 
+
+    procedure CAN_init_txtb_mems(
+        constant ID                 : in    natural range 0 to 15;
+        signal   mem_bus            : inout Avalon_mem_type
+    ) is
+        variable address : std_logic_vector(11 downto 0);
+        variable data    : std_logic_vector(31 downto 0):=
+            (OTHERS => '0');
+    begin
+        for i in 1 to C_TXT_BUFFER_COUNT loop
+            address := std_logic_vector(to_unsigned(
+                        to_integer((unsigned(TXTB1_DATA_1_ADR)) * i), 12));
+            for j in 0 to 19 loop
+                CAN_write(data, address, ID, mem_bus);
+                address := std_logic_vector(unsigned(address) + 4);
+            end loop;
+        end loop;
+    end procedure;
 
 end package body;
 

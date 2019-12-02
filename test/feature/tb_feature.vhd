@@ -453,6 +453,10 @@ begin
         --wait for 10 ns;
         info("... ready .. let's begin");
 
+        -- Initialize TXT Buffer memories (not to have too many logs!)
+        CAN_init_txtb_mems(ID_1, mem_bus(1));
+        CAN_init_txtb_mems(ID_2, mem_bus(2));
+
         --Execute the controllers configuration
         CAN_turn_controller(true, ID_1, mem_bus(1));
         CAN_turn_controller(true, ID_2, mem_bus(2));
