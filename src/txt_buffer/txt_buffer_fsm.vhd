@@ -328,7 +328,12 @@ begin
                                                     (sw_cbs = '1') and
                                                     (curr_state = s_txt_ready)))
                            else
-                        '0';
+                       '1' when (is_bus_off = '1' and next_state = s_txt_failed and
+                                ((curr_state = s_txt_ab_prog) or
+                                 (curr_state = s_txt_tx_prog) or
+                                 (curr_state = s_txt_ready)))
+                           else  
+                       '0';
 
     -- Buffer is available for selection by TX Arbitrator only in state "Ready"
     -- Abort signal must not be active. If not considered, race condition
