@@ -354,7 +354,6 @@ architecture rtl of can_core is
     signal crc_enable              :    std_logic;
     signal crc_spec_enable         :    std_logic;
     signal crc_calc_from_rx        :    std_logic;
-    signal crc_src                 :    std_logic_vector(1 downto 0);
     signal crc_15                  :    std_logic_vector(14 downto 0);
     signal crc_17                  :    std_logic_vector(16 downto 0);
     signal crc_21                  :    std_logic_vector(20 downto 0);
@@ -567,7 +566,6 @@ begin
         crc_spec_enable         => crc_spec_enable,     -- OUT
         crc_calc_from_rx        => crc_calc_from_rx,    -- OUT
         load_init_vect          => load_init_vect,      -- OUT
-        crc_src                 => crc_src,             -- OUT
         crc_15                  => crc_15,              -- IN
         crc_17                  => crc_17,              -- IN
         crc_21                  => crc_21,              -- IN
@@ -894,7 +892,6 @@ begin
     ----------------------------------------------------------------------------
     stat_bus(511 downto 385) <= (OTHERS => '0');
     stat_bus(299 downto 297) <= (OTHERS => '0');
-    stat_bus(187)            <= '0';
     stat_bus(98 downto 90)   <= (OTHERS => '0');
     stat_bus(60 downto 32)   <= (OTHERS => '0');
     stat_bus(113)            <= '0';

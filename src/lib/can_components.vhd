@@ -2199,9 +2199,6 @@ package can_components is
         -- Load CRC Initialization vector
         load_init_vect          :out   std_logic;
         
-        -- CRC Source to be used (CRC 15, CRC 17, CRC 21)
-        crc_src                 :out  std_logic_vector(1 downto 0);
-
         -- Calculated CRC 15
         crc_15                  :in   std_logic_vector(14 downto 0);
 
@@ -3739,12 +3736,6 @@ package can_components is
 
         -- Start of Frame pulse
         sof_pulse            :in     std_logic;
-
-        -----------------------------------------------------------------------
-        -- Memory registers interface
-        -----------------------------------------------------------------------
-        -- Driving bus
-        drv_bus              :in     std_logic_vector(1023 downto 0);
 
         -----------------------------------------------------------------------
         -- FSM outputs
