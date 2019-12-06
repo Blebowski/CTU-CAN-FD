@@ -80,6 +80,7 @@ feature:
             iterations: 3
         btr_fd:
             iterations: 3
+        btr_ssp_access:
         bus_start:
         byte_enable:
         command_rrb:
