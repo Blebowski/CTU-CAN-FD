@@ -50,10 +50,6 @@ use IEEE.std_logic_textio.all;
 package pkg_feature_exec_dispath is
     --Procedure for processing the feature tests!
 
-    type feature_outputs_t is record
-        outcome      : boolean;
-    end record;
-
     type feature_signal_outputs_t is record
         bl_inject           : std_logic;
         bl_force            : boolean;
@@ -78,7 +74,6 @@ package pkg_feature_exec_dispath is
     procedure exec_feature_test(
         --Common test parameters
         constant test_name    : in     string;
-        variable o            : out    feature_outputs_t;
         signal   so           : out    feature_signal_outputs_t;
         signal   rand_ctr     : inout  natural range 0 to RAND_POOL_SIZE;
         signal   iout         : in     instance_outputs_arr_t;

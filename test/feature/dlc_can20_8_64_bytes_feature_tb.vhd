@@ -67,7 +67,6 @@ use lib.pkg_feature_exec_dispath.all;
 
 package dlc_can20_8_64_bytes_feature is
     procedure dlc_can20_8_64_bytes_feature_exec(
-        variable    o               : out    feature_outputs_t;
         signal      so              : out    feature_signal_outputs_t;
         signal      rand_ctr        : inout  natural range 0 to RAND_POOL_SIZE;
         signal      iout            : in     instance_outputs_arr_t;
@@ -79,7 +78,6 @@ end package;
 
 package body dlc_can20_8_64_bytes_feature is
     procedure dlc_can20_8_64_bytes_feature_exec(
-        variable    o               : out    feature_outputs_t;
         signal      so              : out    feature_signal_outputs_t;
         signal      rand_ctr        : inout  natural range 0 to RAND_POOL_SIZE;
         signal      iout            : in     instance_outputs_arr_t;
@@ -95,7 +93,6 @@ package body dlc_can20_8_64_bytes_feature is
         variable frame_sent         :        boolean;
         variable pc_dbg             :        SW_PC_Debug;
     begin
-        o.outcome := true;
 
         ------------------------------------------------------------------------
         -- 1. Generate CAN 2.0 Frame and set DLC higher than 8. Set higher data

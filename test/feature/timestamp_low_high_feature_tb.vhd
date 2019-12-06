@@ -64,7 +64,6 @@ use lib.pkg_feature_exec_dispath.all;
 
 package timestamp_low_high_feature is
     procedure timestamp_low_high_feature_exec(
-        variable    o               : out    feature_outputs_t;
         signal      so              : out    feature_signal_outputs_t;
         signal      rand_ctr        : inout  natural range 0 to RAND_POOL_SIZE;
         signal      iout            : in     instance_outputs_arr_t;
@@ -76,7 +75,6 @@ end package;
 
 package body timestamp_low_high_feature is
     procedure timestamp_low_high_feature_exec(
-        variable    o               : out    feature_outputs_t;
         signal      so              : out    feature_signal_outputs_t;
         signal      rand_ctr        : inout  natural range 0 to RAND_POOL_SIZE;
         signal      iout            : in     instance_outputs_arr_t;
@@ -93,7 +91,6 @@ package body timestamp_low_high_feature is
         
         variable ts_rand            :        std_logic_vector(63 downto 0);
     begin
-        o.outcome := true;
 
         -----------------------------------------------------------------------
         -- 1. Preset Timestamp value in TB. Read values from TIMESTAMP_LOW and

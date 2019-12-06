@@ -64,7 +64,6 @@ use lib.pkg_feature_exec_dispath.all;
 
 package status_ewl_feature is
     procedure status_ewl_feature_exec(
-        variable    o               : out    feature_outputs_t;
         signal      so              : out    feature_signal_outputs_t;
         signal      rand_ctr        : inout  natural range 0 to RAND_POOL_SIZE;
         signal      iout            : in     instance_outputs_arr_t;
@@ -76,7 +75,6 @@ end package;
 
 package body status_ewl_feature is
     procedure status_ewl_feature_exec(
-        variable    o               : out    feature_outputs_t;
         signal      so              : out    feature_signal_outputs_t;
         signal      rand_ctr        : inout  natural range 0 to RAND_POOL_SIZE;
         signal      iout            : in     instance_outputs_arr_t;
@@ -120,7 +118,6 @@ package body status_ewl_feature is
         variable fault_th           :     SW_fault_thresholds := (0,0);
         variable exp_stat_ewl       :     boolean;
     begin
-        o.outcome := true;
 
         -----------------------------------------------------------------------
         -- 1. Set Node 1 in test mode. Generate random EWL and configure it.

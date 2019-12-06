@@ -73,7 +73,6 @@ use lib.pkg_feature_exec_dispath.all;
 
 package command_rrb_feature is
     procedure command_rrb_feature_exec(
-        variable    o               : out    feature_outputs_t;
         signal      so              : out    feature_signal_outputs_t;
         signal      rand_ctr        : inout  natural range 0 to RAND_POOL_SIZE;
         signal      iout            : in     instance_outputs_arr_t;
@@ -85,7 +84,6 @@ end package;
 
 package body command_rrb_feature is
     procedure command_rrb_feature_exec(
-        variable    o               : out    feature_outputs_t;
         signal      so              : out    feature_signal_outputs_t;
         signal      rand_ctr        : inout  natural range 0 to RAND_POOL_SIZE;
         signal      iout            : in     instance_outputs_arr_t;
@@ -121,7 +119,6 @@ package body command_rrb_feature is
         variable id_vect            :     std_logic_vector(28 downto 0);
         variable command            :     SW_command := SW_command_rst_val;
     begin
-        o.outcome := true;
 
         -----------------------------------------------------------------------
         --  1. Check RX buffer in Node 1 is empty. Generate CAN frame and send 

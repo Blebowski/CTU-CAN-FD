@@ -77,7 +77,6 @@ use lib.pkg_feature_exec_dispath.all;
 
 package err_norm_fd_feature is
     procedure err_norm_fd_feature_exec(
-        variable    o               : out    feature_outputs_t;
         signal      so              : out    feature_signal_outputs_t;
         signal      rand_ctr        : inout  natural range 0 to RAND_POOL_SIZE;
         signal      iout            : in     instance_outputs_arr_t;
@@ -89,7 +88,6 @@ end package;
 
 package body err_norm_fd_feature is
     procedure err_norm_fd_feature_exec(
-        variable    o               : out    feature_outputs_t;
         signal      so              : out    feature_signal_outputs_t;
         signal      rand_ctr        : inout  natural range 0 to RAND_POOL_SIZE;
         signal      iout            : in     instance_outputs_arr_t;
@@ -134,7 +132,6 @@ package body err_norm_fd_feature is
         variable frame_sent         :     boolean;
 
     begin
-        o.outcome := true;
 
         -----------------------------------------------------------------------
         -- 1. Generate random frame where bit rate is not switched. Insert the

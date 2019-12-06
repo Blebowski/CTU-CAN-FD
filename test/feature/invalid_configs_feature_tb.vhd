@@ -70,7 +70,6 @@ use lib.pkg_feature_exec_dispath.all;
 
 package invalid_configs_feature is
     procedure invalid_configs_feature_exec(
-        variable    o               : out    feature_outputs_t;
         signal      so              : out    feature_signal_outputs_t;
         signal      rand_ctr        : inout  natural range 0 to RAND_POOL_SIZE;
         signal      iout            : in     instance_outputs_arr_t;
@@ -83,7 +82,6 @@ end package;
 
 package body invalid_configs_feature is
     procedure invalid_configs_feature_exec(
-        variable    o               : out    feature_outputs_t;
         signal      so              : out    feature_signal_outputs_t;
         signal      rand_ctr        : inout  natural range 0 to RAND_POOL_SIZE;
         signal      iout            : in     instance_outputs_arr_t;
@@ -97,7 +95,6 @@ package body invalid_configs_feature is
         variable ID_2           	:       natural := 2;
         variable command            :       SW_command := SW_command_rst_val;
     begin
-        o.outcome := true;
 
         ------------------------------------------------------------------------
         -- 1. Send CAN FD frame with RTR bit set and check it is received

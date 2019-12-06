@@ -70,7 +70,6 @@ use lib.pkg_feature_exec_dispath.all;
 
 package status_eft_feature is
     procedure status_eft_feature_exec(
-        variable    o               : out    feature_outputs_t;
         signal      so              : out    feature_signal_outputs_t;
         signal      rand_ctr        : inout  natural range 0 to RAND_POOL_SIZE;
         signal      iout            : in     instance_outputs_arr_t;
@@ -82,7 +81,6 @@ end package;
 
 package body status_eft_feature is
     procedure status_eft_feature_exec(
-        variable    o               : out    feature_outputs_t;
         signal      so              : out    feature_signal_outputs_t;
         signal      rand_ctr        : inout  natural range 0 to RAND_POOL_SIZE;
         signal      iout            : in     instance_outputs_arr_t;
@@ -128,7 +126,6 @@ package body status_eft_feature is
         variable err_counters       :     SW_error_counters := (0,0,0,0);
         variable fault_state        :     SW_fault_state;
     begin
-        o.outcome := true;
 
         -----------------------------------------------------------------------
         --  1. Set Node 2 to ACF mode. Enable test mode in Node 1. Send frame

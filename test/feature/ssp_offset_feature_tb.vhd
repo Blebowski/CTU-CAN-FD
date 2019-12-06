@@ -58,7 +58,6 @@ use lib.pkg_feature_exec_dispath.all;
 
 package ssp_offset_feature is
     procedure ssp_offset_feature_exec(
-        variable    o               : out    feature_outputs_t;
         signal      so              : out    feature_signal_outputs_t;
         signal      rand_ctr        : inout  natural range 0 to RAND_POOL_SIZE;
         signal      iout            : in     instance_outputs_arr_t;
@@ -70,7 +69,6 @@ end package;
 
 package body ssp_offset_feature is
     procedure ssp_offset_feature_exec(
-        variable    o               : out    feature_outputs_t;
         signal      so              : out    feature_signal_outputs_t;
         signal      rand_ctr        : inout  natural range 0 to RAND_POOL_SIZE;
         signal      iout            : in     instance_outputs_arr_t;
@@ -97,7 +95,6 @@ package body ssp_offset_feature is
         variable ssp_source         :       SSP_set_command_type;   
         variable ssp_offset         :       std_logic_vector(6 downto 0);   
     begin
-        o.outcome := true;
 
         ------------------------------------------------------------------------
         -- Set both nodes to forbid acknowledge

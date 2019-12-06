@@ -73,7 +73,6 @@ use lib.pkg_feature_exec_dispath.all;
 
 package error_rules_e_feature is
     procedure error_rules_e_feature_exec(
-        variable    o               : out    feature_outputs_t;
         signal      so              : out    feature_signal_outputs_t;
         signal      rand_ctr        : inout  natural range 0 to RAND_POOL_SIZE;
         signal      iout            : in     instance_outputs_arr_t;
@@ -84,7 +83,6 @@ end package;
 
 package body error_rules_e_feature is
     procedure error_rules_e_feature_exec(
-        variable    o               : out    feature_outputs_t;
         signal      so              : out    feature_signal_outputs_t;
         signal      rand_ctr        : inout  natural range 0 to RAND_POOL_SIZE;
         signal      iout            : in     instance_outputs_arr_t;
@@ -116,7 +114,6 @@ package body error_rules_e_feature is
         variable bit_waits          :       natural := 0;
         variable pc_dbg             :       SW_PC_Debug;
     begin
-        o.outcome := true;
 
         -----------------------------------------------------------------------
         -- 1. Set Node 2 to ACK forbidden mode. Generate CAN frame and send it

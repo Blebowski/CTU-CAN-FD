@@ -80,7 +80,6 @@ use lib.pkg_feature_exec_dispath.all;
 
 package fault_state_feature is
     procedure fault_state_feature_exec(
-        variable    o               : out    feature_outputs_t;
         signal      so              : out    feature_signal_outputs_t;
         signal      rand_ctr        : inout  natural range 0 to RAND_POOL_SIZE;
         signal      iout            : in     instance_outputs_arr_t;
@@ -92,7 +91,6 @@ end package;
 
 package body fault_state_feature is
     procedure fault_state_feature_exec(
-        variable    o               : out    feature_outputs_t;
         signal      so              : out    feature_signal_outputs_t;
         signal      rand_ctr        : inout  natural range 0 to RAND_POOL_SIZE;
         signal      iout            : in     instance_outputs_arr_t;
@@ -127,7 +125,6 @@ package body fault_state_feature is
         variable command            :       SW_command := SW_command_rst_val;
         variable mode_1             :       SW_mode := SW_mode_rst_val;
     begin
-        o.outcome := true;
 
         -----------------------------------------------------------------------
         -- Pre-generate thresholds

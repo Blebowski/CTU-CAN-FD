@@ -69,7 +69,6 @@ use lib.pkg_feature_exec_dispath.all;
 
 package status_txnf_feature is
     procedure status_txnf_feature_exec(
-        variable    o               : out    feature_outputs_t;
         signal      so              : out    feature_signal_outputs_t;
         signal      rand_ctr        : inout  natural range 0 to RAND_POOL_SIZE;
         signal      iout            : in     instance_outputs_arr_t;
@@ -81,7 +80,6 @@ end package;
 
 package body status_txnf_feature is
     procedure status_txnf_feature_exec(
-        variable    o               : out    feature_outputs_t;
         signal      so              : out    feature_signal_outputs_t;
         signal      rand_ctr        : inout  natural range 0 to RAND_POOL_SIZE;
         signal      iout            : in     instance_outputs_arr_t;
@@ -120,7 +118,6 @@ package body status_txnf_feature is
         variable num_frames         :     integer;
         variable mode_1             :     SW_mode;
     begin
-        o.outcome := true;
 
         -----------------------------------------------------------------------
         -- 1. Set LOM mode in Node 1. Check that STATUS[TXNF] is set (all TXT

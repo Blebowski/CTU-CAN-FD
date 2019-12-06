@@ -66,7 +66,6 @@ use lib.pkg_feature_exec_dispath.all;
 
 package stuff_in_data_feature is
     procedure stuff_in_data_feature_exec(
-        variable    o               : out    feature_outputs_t;
         signal      so              : out    feature_signal_outputs_t;
         signal      rand_ctr        : inout  natural range 0 to RAND_POOL_SIZE;
         signal      iout            : in     instance_outputs_arr_t;
@@ -78,7 +77,6 @@ end package;
 
 package body stuff_in_data_feature is
     procedure stuff_in_data_feature_exec(
-        variable    o               : out    feature_outputs_t;
         signal      so              : out    feature_signal_outputs_t;
         signal      rand_ctr        : inout  natural range 0 to RAND_POOL_SIZE;
         signal      iout            : in     instance_outputs_arr_t;
@@ -95,7 +93,6 @@ package body stuff_in_data_feature is
         variable frames_equal       :        boolean;
         variable pc_dbg             :        SW_PC_Debug;
     begin
-        o.outcome := true;
 
         ----------------------------------------------------------------------
         -- 1. Generate CAN frame which has last 5 bits of data field dominant!

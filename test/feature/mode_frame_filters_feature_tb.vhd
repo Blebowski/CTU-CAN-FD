@@ -74,7 +74,6 @@ use lib.pkg_feature_exec_dispath.all;
 
 package mode_frame_filters_feature is
     procedure mode_frame_filters_feature_exec(
-        variable    o               : out    feature_outputs_t;
         signal      so              : out    feature_signal_outputs_t;
         signal      rand_ctr        : inout  natural range 0 to RAND_POOL_SIZE;
         signal      iout            : in     instance_outputs_arr_t;
@@ -86,7 +85,6 @@ end package;
 
 package body mode_frame_filters_feature is
     procedure mode_frame_filters_feature_exec(
-        variable    o               : out    feature_outputs_t;
         signal      so              : out    feature_signal_outputs_t;
         signal      rand_ctr        : inout  natural range 0 to RAND_POOL_SIZE;
         signal      iout            : in     instance_outputs_arr_t;
@@ -118,7 +116,6 @@ package body mode_frame_filters_feature is
         variable filt_B_C_cfg       :       SW_CAN_mask_filter_config;
         variable filter_range_cfg   :       SW_CAN_range_filter_config;
     begin
-        o.outcome := true;
 
         ------------------------------------------------------------------------
         -- 1. Configure frame filters mode in Node 1. Configure filter A to 
