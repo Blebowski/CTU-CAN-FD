@@ -240,8 +240,24 @@ package body trv_delay_feature is
         if (rand_time = 0) then
             rand_time := 1;
         end if;
+
+        -----------------------------------------------------------------------
+        -- Here we avoid explicit multiples of 10 ns! The reason is following:
+        --  When delay is e.g. 120 ns, then value will arrive at CAN RX when
+        --  rising_edge is active. Therefore sampled value might, or might not
+        --  be processed by clock based on which delta cycle was processed
+        --  first (Since signal delayer does not work with system clocks, it
+        --  might not be processed the same way as e.g. shift register!)
+        --  This would cause occasional test failures based on which process
+        --  was executed first (either rising_edge sampling the data, or data
+        --  delayed by signal delayer).
+        -----------------------------------------------------------------------
+        if (rand_time mod 10 = 0) then
+            rand_time := rand_time + 1;
+        end if;
         
-        ftr_tb_set_tran_delay(rand_time * 1 ns, ID_1, so.ftr_tb_trv_delay);
+        info("Random time is: " & integer'image(rand_time) & " ns");
+        ftr_tb_set_tran_delay((rand_time * 1 ns), ID_1, so.ftr_tb_trv_delay);
 
         CAN_send_frame(CAN_TX_frame, 1, ID_1, mem_bus(1), frame_sent);
         CAN_wait_frame_sent(ID_2, mem_bus(2));
