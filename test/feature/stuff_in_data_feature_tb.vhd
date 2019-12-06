@@ -106,11 +106,15 @@ package body stuff_in_data_feature is
 
         info("Step 1");
         CAN_generate_frame(rand_ctr, CAN_frame);
+        
+        -- Use only DLC of 1, as data byte 1 is set so that stuff bit is
+        -- inserted at last bit of data field!
         CAN_frame.dlc := "0001";
+        CAN_frame.data(0) := x"21";
         CAN_frame.rtr := NO_RTR_FRAME;
         CAN_frame.frame_format := FD_CAN;
         decode_dlc(CAN_frame.dlc, CAN_frame.data_length);
-        CAN_frame.data(0) := x"21";
+        decode_dlc_rx_buff(CAN_frame.dlc, CAN_frame.rwcnt);
 
         CAN_send_frame(CAN_frame, 1, ID_1, mem_bus(1), frame_sent);
         CAN_wait_frame_sent(ID_1, mem_bus(1));
