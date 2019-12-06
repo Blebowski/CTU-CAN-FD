@@ -213,11 +213,21 @@ package body btr_fd_feature is
         CAN_generate_frame(rand_ctr, CAN_frame_1);
         CAN_frame_1.brs := BR_SHIFT;
         CAN_frame_1.frame_format := FD_CAN;
-    
+
         -- Force DLC length to 1 byte only not to have long test run time!
         CAN_frame_1.dlc := "0001";
         decode_dlc(CAN_frame_1.dlc, CAN_frame_1.data_length);
         CAN_frame_1.data(0) := x"AA";
+
+        -- We need to make sure that frame is not RTR frame, because CAN FD
+        -- frames have no RTR frames! This would lead to fail in check between
+        -- TX and RX frame! Also, we have to re-calculate RWCNT for the check
+        -- accordingly!
+        CAN_frame_1.rtr := NO_RTR_FRAME;
+        decode_dlc_rx_buff(CAN_frame_1.dlc, CAN_frame_1.rwcnt);
+
+        -- These data bytes are preloaded to have all elements of memory word
+        -- defined!
         CAN_frame_1.data(1) := x"BB";
         CAN_frame_1.data(2) := x"CC";
         CAN_frame_1.data(3) := x"DD";
