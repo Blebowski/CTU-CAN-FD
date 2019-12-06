@@ -3465,12 +3465,16 @@ package body CANtestLib is
         outcome := true;
 
         if (frame_A.frame_format /= frame_B.frame_format) then
-            info("Frame format (FDF) mismatch");
+            info("Frame format (FDF) mismatch A: " &
+                  std_logic'image(frame_A.frame_format) & " B: " &
+                  std_logic'image(frame_B.frame_format));
             outcome := false;
         end if;
 
         if (frame_A.ident_type /= frame_B.ident_type) then
-            info("Identifier type (IDE) mismatch");
+            info("Identifier type (IDE) mismatch A: " &
+                  std_logic'image(frame_A.ident_type) & " B: " &
+                  std_logic'image(frame_B.ident_type));
             outcome := false;
         end if;
 
@@ -3486,25 +3490,32 @@ package body CANtestLib is
         -- BRS bit is compared only in FD frame
         if (frame_A.frame_format = FD_CAN) then
             if (frame_A.brs /= frame_B.brs) then
-                info("Bit-rate shift (BRS) mismatch");
+                info("Bit-rate shift (BRS) mismatch A: " &
+                  std_logic'image(frame_A.brs) & " B: " &
+                  std_logic'image(frame_B.brs));
                 outcome := false;
             end if;
         end if;
 
         -- Received word count
         if (frame_A.rwcnt /= frame_B.rwcnt) then
-            info("Read word count (RWCNT) mismatch");
+            info("Read word count (RWCNT) mismatch A: " &
+                  integer'image(frame_A.rwcnt) & " B: " &
+                  integer'image(frame_B.rwcnt));
             outcome := false;
         end if;
 
         -- DLC comparison
         if (frame_A.dlc /= frame_B.dlc) then
-            info("Data length code (DLC) mismatch");
+            info("Data length code (DLC) mismatch A: " &
+                  to_hstring(frame_A.dlc) & " B: " &
+                  to_hstring(frame_B.dlc));
             outcome := false;
         end if;
 
         if (frame_A.identifier /= frame_B.identifier) then
-            info("Identifier mismatch");
+            info("Identifier mismatch A: " & integer'image(frame_A.identifier) &
+                 " B: " & integer'image(frame_B.identifier));
             outcome := false;
         end if;
 
