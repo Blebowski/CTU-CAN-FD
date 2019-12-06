@@ -139,7 +139,10 @@ package body command_rrb_feature is
         CAN_generate_frame(rand_ctr, frame_1);
         CAN_insert_TX_frame(frame_1, 1, ID_2, mem_bus(2));
         send_TXT_buf_cmd(buf_set_ready, 1, ID_2, mem_bus(2));
+        
         CAN_wait_frame_sent(ID_1, mem_bus(1));
+        CAN_wait_bus_idle(ID_1, mem_bus(1));
+        CAN_wait_bus_idle(ID_2, mem_bus(2));
 
         get_rx_buf_state(rx_buf_info, ID_1, mem_bus(1));
         check(rx_buf_info.rx_write_pointer /= 0, "Write pointer not 0");
@@ -180,6 +183,9 @@ package body command_rrb_feature is
         check_false(rx_buf_info.rx_empty, "Empty flag not set");
         check(rx_buf_info.rx_frame_count = 1, "Frame count 1");
 
+        CAN_wait_bus_idle(ID_1, mem_bus(1));
+        CAN_wait_bus_idle(ID_2, mem_bus(2));
+
         -----------------------------------------------------------------------
         -- 4. Send frame by Node 2. Wait until Node 1 starts receiving. Wait
         --    for random amount of time and issue COMMAND[RRB].  Wait until
@@ -189,8 +195,6 @@ package body command_rrb_feature is
         -----------------------------------------------------------------------
         info("Step 4");
         CAN_generate_frame(rand_ctr, frame_1);
-        -- To avoid long runs have only shorter frames!
-        frame_1.data_length := frame_1.data_length mod 9;
         CAN_insert_TX_frame(frame_1, 1, ID_2, mem_bus(2));
         send_TXT_buf_cmd(buf_set_ready, 1, ID_2, mem_bus(2));
 
@@ -200,6 +204,7 @@ package body command_rrb_feature is
         command.release_rec_buffer := true;
         give_controller_command(command, ID_1, mem_bus(1));
         CAN_wait_bus_idle(ID_1, mem_bus(1));
+        CAN_wait_bus_idle(ID_1, mem_bus(2));
         
         get_rx_buf_state(rx_buf_info, ID_1, mem_bus(1));
         
@@ -223,12 +228,12 @@ package body command_rrb_feature is
         -----------------------------------------------------------------------
         info("Step 5");
         CAN_generate_frame(rand_ctr, frame_1);
-        -- To avoid long runs have only shorter frames!
-        frame_1.data_length := frame_1.data_length mod 9;
         CAN_insert_TX_frame(frame_1, 1, ID_2, mem_bus(2));
         send_TXT_buf_cmd(buf_set_ready, 1, ID_2, mem_bus(2));
 
         CAN_wait_frame_sent(ID_1, mem_bus(1));
+        CAN_wait_bus_idle(ID_1, mem_bus(1));
+        CAN_wait_bus_idle(ID_2, mem_bus(2));
         
         get_rx_buf_state(rx_buf_info, ID_1, mem_bus(1));
         check(rx_buf_info.rx_write_pointer /= 0, "Write pointer not 0");
@@ -238,6 +243,10 @@ package body command_rrb_feature is
         
         CAN_read_frame(frame_rx, ID_1, mem_bus(1));
         CAN_compare_frames(frame_rx, frame_1, false, frames_equal);
+        info("TX frame:");
+        CAN_print_frame(frame_1);
+        info("RX frame:");
+        CAN_print_frame(frame_rx);
         check(frames_equal, "TX vs. RX frames match!");
 
         -- Issue COMMAND[RRB] to clean-up after itself (for next iterations)

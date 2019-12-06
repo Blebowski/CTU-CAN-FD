@@ -193,9 +193,19 @@ package body error_rules_a_feature is
         wait for 20 ns;
         release_bus_level(so.bl_force);
 
-        CAN_wait_bus_idle(ID_1, mem_bus(1));
-        CAN_wait_bus_idle(ID_2, mem_bus(2));       
+        wait for 20 ns; -- To update error counters!
         
+        -- We need to check right away, not when node becomes idle! The reason
+        -- is:
+        --  When forcing recessive, Node 2 is already in Error delimiter and
+        --  it will therefore finish its error delimiter and go idle during the
+        --  time of Active error flag of Node 1 which we force Recessive.
+        --  So at time when we release the bus and Node 1 finally transmitts its
+        --  Active Error flag, Node 2 will already accept this as SOF, detect
+        --  Stuff Error and will transmitt error frame! Due to this Node 1 will
+        --  increment its REC by 8 because it detected Dominant bit after sending
+        --  Active Error flag. So when we would wait until idle, REC of Node 1
+        --  would be higher by 8 due to that detected dominant bit!
         read_error_counters(err_counters_3, ID_1, mem_bus(1));
         check(err_counters_2.rx_counter + 129 = err_counters_3.rx_counter,
               "RX counter incremented by 8 for each recessive during error flag! " &
@@ -203,6 +213,9 @@ package body error_rules_a_feature is
               " Real: " & integer'image(err_counters_3.rx_counter));
         check(err_counters_2.tx_counter = err_counters_3.tx_counter,
               "TX counter unchanged in Receiver!");
+
+        CAN_wait_bus_idle(ID_1, mem_bus(1));
+        CAN_wait_bus_idle(ID_2, mem_bus(2));       
 
         return;
 
