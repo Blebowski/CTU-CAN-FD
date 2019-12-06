@@ -11632,6 +11632,8 @@ Address: 0x24
 \begin_layout Description
 Size: 4 bytes
 \end_layout
+\begin_layout Description
+Note: Register can be only written when SETTINGS[ENA] = 0, otherwise write has no effect.\end_layout
 \begin_layout Standard
 Bit Timing Register for nominal bit rate. This register should be modified only when SETTINGS[ENA]=0.
 \end_layout
@@ -12953,6 +12955,8 @@ Address: 0x28
 \begin_layout Description
 Size: 4 bytes
 \end_layout
+\begin_layout Description
+Note: Register can be only written when SETTINGS[ENA] = 0, otherwise write has no effect.\end_layout
 \begin_layout Standard
 Bit Timing Register for data bit rate. This register can be modified only when SETTINGS[ENA]=0.
 \end_layout
@@ -39941,6 +39945,8 @@ Address: 0x82
 \begin_layout Description
 Size: 2 bytes
 \end_layout
+\begin_layout Description
+Note: Register can be only written when SETTINGS[ENA] = 0, otherwise write has no effect.\end_layout
 \begin_layout Standard
 Secondary Sampling Point configuration register. Used by transmitter in data bit rate for calculation of Secondary Sampling Point. This register should be modified only when SETTINGS[ENA]=0.
 \end_layout

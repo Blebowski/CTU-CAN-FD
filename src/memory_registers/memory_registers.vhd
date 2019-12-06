@@ -270,8 +270,9 @@ architecture rtl of memory_registers is
     -- Internal value of output reset. This is combined res_n and MODE[RST]
     signal res_out_i              :     std_logic;
 
-    -- Lock active (inactive only in test mode)
-    signal reg_lock_active        :     std_logic;
+    -- Locks active
+    signal reg_lock_1_active      :     std_logic;
+    signal reg_lock_2_active      :     std_logic;
     
     -- Soft reset registering
     signal soft_res_q             :     std_logic;
@@ -406,7 +407,8 @@ begin
         read                  => srd,
         write                 => swr,
         be                    => sbe,
-        lock                  => reg_lock_active,
+        lock_1                => reg_lock_1_active,
+        lock_2                => reg_lock_2_active,
         control_registers_out => control_registers_out,
         control_registers_in  => control_registers_in
     );
@@ -414,7 +416,8 @@ begin
     ----------------------------------------------------------------------------
     -- Several registers are locked and accessible only in Test mode!
     ----------------------------------------------------------------------------
-    reg_lock_active <= not control_registers_out.mode(TSTM_IND);
+    reg_lock_1_active <= not control_registers_out.mode(TSTM_IND);
+    reg_lock_2_active <= control_registers_out.settings(ENA_IND mod 16);
     
     ----------------------------------------------------------------------------
     -- Pipeline on Soft reset register.
