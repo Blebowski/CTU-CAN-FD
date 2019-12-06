@@ -240,10 +240,21 @@ package body alc_srr_rtr_feature is
         check(iout(2).can_tx = RECESSIVE, "Recessive RTR transmitted!");
         wait for 20 ns; -- To account for trigger processing
         
-        get_controller_status(stat_2, ID_2, mem_bus(2));
-        check(stat_2.receiver, "Node 2 lost arbitration!");
         get_controller_status(stat_1, ID_1, mem_bus(1));
         check(stat_1.transmitter, "Node 1 transmitter!");
+
+        -- This wait is needed since we waited for RX Trigger of Node 1.
+        -- Node 2 could have not reached RX Trigger yet! To be sure, we
+        -- wait one more RX Trigger of Node 2! If Node 2 RX Trigger was earlier,
+        -- we wait till next bit (which does not mind since we lost arbitration
+        -- already and we need it for check of operational state only). If
+        -- Node 2 RX Trigger was later, we get right behind the sample point
+        -- where we should have lost arbitration!
+        CAN_wait_sample_point(iout(2).stat_bus);
+        wait for 20 ns;
+        
+        get_controller_status(stat_2, ID_2, mem_bus(2));
+        check(stat_2.receiver, "Node 2 lost arbitration!");
         
         read_alc(alc, ID_2, mem_bus(2));
         check(alc = 12, "Arbitration lost at correct bit by Node 2!");
