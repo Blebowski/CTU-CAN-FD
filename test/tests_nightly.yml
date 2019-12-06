@@ -32,6 +32,7 @@ unit:
             wave: unit/RX_Buffer/rxbf_unit.tcl
         tx_arb:
             wave: unit/TX_Arbitrator/txar_unit.tcl
+            iterations: 0
         tx_buf:
             wave: unit/TX_Buffer/txbf_unit.tcl
 reference:
