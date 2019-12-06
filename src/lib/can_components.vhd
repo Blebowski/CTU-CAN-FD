@@ -243,7 +243,7 @@ package can_components is
             sync_edge            :out  std_logic;
             
             -- Time quanta edge
-            tq_edge              :out std_logic;
+            tq_edge              :in   std_logic;
     
             ------------------------------------------------------------------------
             -- CAN Core Interface
