@@ -61,7 +61,7 @@ entity memory_reg is
         
         -- When set to 1, Logic 1 on 'lock' input will prevent register
         -- from being written!
-        constant is_lockable          :     std_logic     
+        constant is_lockable          :     boolean     
     );
     port(
         ------------------------------------------------------------------------
@@ -125,14 +125,14 @@ begin
         ------------------------------------------------------------------------
         -- Register with write lock
         ------------------------------------------------------------------------
-        wr_sel_lock_gen : if (is_lockable = '1') generate
+        wr_sel_lock_gen : if (is_lockable = true) generate
             wr_select(i) <= write and cs and w_be(i) and (not lock);
         end generate wr_sel_lock_gen;
     
         ------------------------------------------------------------------------
         -- Register without write lock
         ------------------------------------------------------------------------
-        wr_sel_no_lock_gen : if (is_lockable = '0') generate
+        wr_sel_no_lock_gen : if (is_lockable = false) generate
             wr_select(i) <= write and cs and w_be(i);
         end generate wr_sel_no_lock_gen;
         

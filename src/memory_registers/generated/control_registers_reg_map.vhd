@@ -74,7 +74,8 @@ port (
     signal read                  :in std_logic;
     signal write                 :in std_logic;
     signal be                    :in std_logic_vector(data_width / 8 - 1 downto 0);
-    signal lock                  :in std_logic;
+    signal lock_1                :in std_logic;
+    signal lock_2                :in std_logic;
     signal control_registers_out :out Control_registers_out_t;
     signal control_registers_in  :in Control_registers_in_t
 );
@@ -122,7 +123,7 @@ begin
         reset_polarity                  => RESET_POLARITY ,
         reset_value                     => "0000000000010000" ,
         auto_clear                      => "0000000000000001" ,
-        is_lockable                     => '0' 
+        is_lockable                     => false 
     )
     port map(
         clk_sys                         => clk_sys ,-- in
@@ -131,7 +132,7 @@ begin
         write                           => write ,-- in
         cs                              => reg_sel(1) ,-- in
         w_be                            => be(1 downto 0) ,-- in
-        lock                            => lock ,-- in
+        lock                            => '0' ,-- in
         reg_value                       => control_registers_out_i.mode -- out
     );
 
@@ -146,7 +147,7 @@ begin
         reset_polarity                  => RESET_POLARITY ,
         reset_value                     => "0000000000000000" ,
         auto_clear                      => "0000000000000000" ,
-        is_lockable                     => '0' 
+        is_lockable                     => false 
     )
     port map(
         clk_sys                         => clk_sys ,-- in
@@ -155,7 +156,7 @@ begin
         write                           => write ,-- in
         cs                              => reg_sel(1) ,-- in
         w_be                            => be(3 downto 2) ,-- in
-        lock                            => lock ,-- in
+        lock                            => '0' ,-- in
         reg_value                       => control_registers_out_i.settings -- out
     );
 
@@ -170,7 +171,7 @@ begin
         reset_polarity                  => RESET_POLARITY ,
         reset_value                     => "00000000000000000000000000000000" ,
         auto_clear                      => "00000000000000000000000001111100" ,
-        is_lockable                     => '0' 
+        is_lockable                     => false 
     )
     port map(
         clk_sys                         => clk_sys ,-- in
@@ -179,7 +180,7 @@ begin
         write                           => write ,-- in
         cs                              => reg_sel(3) ,-- in
         w_be                            => be(3 downto 0) ,-- in
-        lock                            => lock ,-- in
+        lock                            => '0' ,-- in
         reg_value                       => control_registers_out_i.command -- out
     );
 
@@ -194,7 +195,7 @@ begin
         reset_polarity                  => RESET_POLARITY ,
         reset_value                     => "0000000000000000" ,
         auto_clear                      => "0000111111111111" ,
-        is_lockable                     => '0' 
+        is_lockable                     => false 
     )
     port map(
         clk_sys                         => clk_sys ,-- in
@@ -203,7 +204,7 @@ begin
         write                           => write ,-- in
         cs                              => reg_sel(4) ,-- in
         w_be                            => be(1 downto 0) ,-- in
-        lock                            => lock ,-- in
+        lock                            => '0' ,-- in
         reg_value                       => control_registers_out_i.int_stat -- out
     );
 
@@ -218,7 +219,7 @@ begin
         reset_polarity                  => RESET_POLARITY ,
         reset_value                     => "0000000000000000" ,
         auto_clear                      => "0000111111111111" ,
-        is_lockable                     => '0' 
+        is_lockable                     => false 
     )
     port map(
         clk_sys                         => clk_sys ,-- in
@@ -227,7 +228,7 @@ begin
         write                           => write ,-- in
         cs                              => reg_sel(5) ,-- in
         w_be                            => be(1 downto 0) ,-- in
-        lock                            => lock ,-- in
+        lock                            => '0' ,-- in
         reg_value                       => control_registers_out_i.int_ena_set -- out
     );
 
@@ -242,7 +243,7 @@ begin
         reset_polarity                  => RESET_POLARITY ,
         reset_value                     => "0000000000000000" ,
         auto_clear                      => "0000111111111111" ,
-        is_lockable                     => '0' 
+        is_lockable                     => false 
     )
     port map(
         clk_sys                         => clk_sys ,-- in
@@ -251,7 +252,7 @@ begin
         write                           => write ,-- in
         cs                              => reg_sel(6) ,-- in
         w_be                            => be(1 downto 0) ,-- in
-        lock                            => lock ,-- in
+        lock                            => '0' ,-- in
         reg_value                       => control_registers_out_i.int_ena_clr -- out
     );
 
@@ -266,7 +267,7 @@ begin
         reset_polarity                  => RESET_POLARITY ,
         reset_value                     => "0000000000000000" ,
         auto_clear                      => "0000111111111111" ,
-        is_lockable                     => '0' 
+        is_lockable                     => false 
     )
     port map(
         clk_sys                         => clk_sys ,-- in
@@ -275,7 +276,7 @@ begin
         write                           => write ,-- in
         cs                              => reg_sel(7) ,-- in
         w_be                            => be(1 downto 0) ,-- in
-        lock                            => lock ,-- in
+        lock                            => '0' ,-- in
         reg_value                       => control_registers_out_i.int_mask_set -- out
     );
 
@@ -290,7 +291,7 @@ begin
         reset_polarity                  => RESET_POLARITY ,
         reset_value                     => "0000000000000000" ,
         auto_clear                      => "0000111111111111" ,
-        is_lockable                     => '0' 
+        is_lockable                     => false 
     )
     port map(
         clk_sys                         => clk_sys ,-- in
@@ -299,7 +300,7 @@ begin
         write                           => write ,-- in
         cs                              => reg_sel(8) ,-- in
         w_be                            => be(1 downto 0) ,-- in
-        lock                            => lock ,-- in
+        lock                            => '0' ,-- in
         reg_value                       => control_registers_out_i.int_mask_clr -- out
     );
 
@@ -314,7 +315,7 @@ begin
         reset_polarity                  => RESET_POLARITY ,
         reset_value                     => "00010000010100001010000110000101" ,
         auto_clear                      => "00000000000000000000000000000000" ,
-        is_lockable                     => '0' 
+        is_lockable                     => true 
     )
     port map(
         clk_sys                         => clk_sys ,-- in
@@ -323,7 +324,7 @@ begin
         write                           => write ,-- in
         cs                              => reg_sel(9) ,-- in
         w_be                            => be(3 downto 0) ,-- in
-        lock                            => lock ,-- in
+        lock                            => lock_2 ,-- in
         reg_value                       => control_registers_out_i.btr -- out
     );
 
@@ -338,7 +339,7 @@ begin
         reset_polarity                  => RESET_POLARITY ,
         reset_value                     => "00010000001000000110000110000011" ,
         auto_clear                      => "00000000000000000000000000000000" ,
-        is_lockable                     => '0' 
+        is_lockable                     => true 
     )
     port map(
         clk_sys                         => clk_sys ,-- in
@@ -347,7 +348,7 @@ begin
         write                           => write ,-- in
         cs                              => reg_sel(10) ,-- in
         w_be                            => be(3 downto 0) ,-- in
-        lock                            => lock ,-- in
+        lock                            => lock_2 ,-- in
         reg_value                       => control_registers_out_i.btr_fd -- out
     );
 
@@ -362,7 +363,7 @@ begin
         reset_polarity                  => RESET_POLARITY ,
         reset_value                     => "01100000" ,
         auto_clear                      => "00000000" ,
-        is_lockable                     => '1' 
+        is_lockable                     => true 
     )
     port map(
         clk_sys                         => clk_sys ,-- in
@@ -371,7 +372,7 @@ begin
         write                           => write ,-- in
         cs                              => reg_sel(11) ,-- in
         w_be                            => be(0 downto 0) ,-- in
-        lock                            => lock ,-- in
+        lock                            => lock_1 ,-- in
         reg_value                       => control_registers_out_i.ewl -- out
     );
 
@@ -386,7 +387,7 @@ begin
         reset_polarity                  => RESET_POLARITY ,
         reset_value                     => "10000000" ,
         auto_clear                      => "00000000" ,
-        is_lockable                     => '1' 
+        is_lockable                     => true 
     )
     port map(
         clk_sys                         => clk_sys ,-- in
@@ -395,7 +396,7 @@ begin
         write                           => write ,-- in
         cs                              => reg_sel(11) ,-- in
         w_be                            => be(1 downto 1) ,-- in
-        lock                            => lock ,-- in
+        lock                            => lock_1 ,-- in
         reg_value                       => control_registers_out_i.erp -- out
     );
 
@@ -410,7 +411,7 @@ begin
         reset_polarity                  => RESET_POLARITY ,
         reset_value                     => "00000000000000000000000000000000" ,
         auto_clear                      => "00000000000000000001111111111111" ,
-        is_lockable                     => '1' 
+        is_lockable                     => true 
     )
     port map(
         clk_sys                         => clk_sys ,-- in
@@ -419,7 +420,7 @@ begin
         write                           => write ,-- in
         cs                              => reg_sel(14) ,-- in
         w_be                            => be(3 downto 0) ,-- in
-        lock                            => lock ,-- in
+        lock                            => lock_1 ,-- in
         reg_value                       => control_registers_out_i.ctr_pres -- out
     );
 
@@ -435,7 +436,7 @@ begin
         reset_polarity                  => RESET_POLARITY ,
         reset_value                     => "00000000000000000000000000000000" ,
         auto_clear                      => "00000000000000000000000000000000" ,
-        is_lockable                     => '0' 
+        is_lockable                     => false 
     )
     port map(
         clk_sys                         => clk_sys ,-- in
@@ -444,7 +445,7 @@ begin
         write                           => write ,-- in
         cs                              => reg_sel(15) ,-- in
         w_be                            => be(3 downto 0) ,-- in
-        lock                            => lock ,-- in
+        lock                            => '0' ,-- in
         reg_value                       => control_registers_out_i.filter_a_mask -- out
     );
 
@@ -466,7 +467,7 @@ begin
         reset_polarity                  => RESET_POLARITY ,
         reset_value                     => "00000000000000000000000000000000" ,
         auto_clear                      => "00000000000000000000000000000000" ,
-        is_lockable                     => '0' 
+        is_lockable                     => false 
     )
     port map(
         clk_sys                         => clk_sys ,-- in
@@ -475,7 +476,7 @@ begin
         write                           => write ,-- in
         cs                              => reg_sel(16) ,-- in
         w_be                            => be(3 downto 0) ,-- in
-        lock                            => lock ,-- in
+        lock                            => '0' ,-- in
         reg_value                       => control_registers_out_i.filter_a_val -- out
     );
 
@@ -497,7 +498,7 @@ begin
         reset_polarity                  => RESET_POLARITY ,
         reset_value                     => "00000000000000000000000000000000" ,
         auto_clear                      => "00000000000000000000000000000000" ,
-        is_lockable                     => '0' 
+        is_lockable                     => false 
     )
     port map(
         clk_sys                         => clk_sys ,-- in
@@ -506,7 +507,7 @@ begin
         write                           => write ,-- in
         cs                              => reg_sel(17) ,-- in
         w_be                            => be(3 downto 0) ,-- in
-        lock                            => lock ,-- in
+        lock                            => '0' ,-- in
         reg_value                       => control_registers_out_i.filter_b_mask -- out
     );
 
@@ -528,7 +529,7 @@ begin
         reset_polarity                  => RESET_POLARITY ,
         reset_value                     => "00000000000000000000000000000000" ,
         auto_clear                      => "00000000000000000000000000000000" ,
-        is_lockable                     => '0' 
+        is_lockable                     => false 
     )
     port map(
         clk_sys                         => clk_sys ,-- in
@@ -537,7 +538,7 @@ begin
         write                           => write ,-- in
         cs                              => reg_sel(18) ,-- in
         w_be                            => be(3 downto 0) ,-- in
-        lock                            => lock ,-- in
+        lock                            => '0' ,-- in
         reg_value                       => control_registers_out_i.filter_b_val -- out
     );
 
@@ -559,7 +560,7 @@ begin
         reset_polarity                  => RESET_POLARITY ,
         reset_value                     => "00000000000000000000000000000000" ,
         auto_clear                      => "00000000000000000000000000000000" ,
-        is_lockable                     => '0' 
+        is_lockable                     => false 
     )
     port map(
         clk_sys                         => clk_sys ,-- in
@@ -568,7 +569,7 @@ begin
         write                           => write ,-- in
         cs                              => reg_sel(19) ,-- in
         w_be                            => be(3 downto 0) ,-- in
-        lock                            => lock ,-- in
+        lock                            => '0' ,-- in
         reg_value                       => control_registers_out_i.filter_c_mask -- out
     );
 
@@ -590,7 +591,7 @@ begin
         reset_polarity                  => RESET_POLARITY ,
         reset_value                     => "00000000000000000000000000000000" ,
         auto_clear                      => "00000000000000000000000000000000" ,
-        is_lockable                     => '0' 
+        is_lockable                     => false 
     )
     port map(
         clk_sys                         => clk_sys ,-- in
@@ -599,7 +600,7 @@ begin
         write                           => write ,-- in
         cs                              => reg_sel(20) ,-- in
         w_be                            => be(3 downto 0) ,-- in
-        lock                            => lock ,-- in
+        lock                            => '0' ,-- in
         reg_value                       => control_registers_out_i.filter_c_val -- out
     );
 
@@ -621,7 +622,7 @@ begin
         reset_polarity                  => RESET_POLARITY ,
         reset_value                     => "00000000000000000000000000000000" ,
         auto_clear                      => "00000000000000000000000000000000" ,
-        is_lockable                     => '0' 
+        is_lockable                     => false 
     )
     port map(
         clk_sys                         => clk_sys ,-- in
@@ -630,7 +631,7 @@ begin
         write                           => write ,-- in
         cs                              => reg_sel(21) ,-- in
         w_be                            => be(3 downto 0) ,-- in
-        lock                            => lock ,-- in
+        lock                            => '0' ,-- in
         reg_value                       => control_registers_out_i.filter_ran_low -- out
     );
 
@@ -652,7 +653,7 @@ begin
         reset_polarity                  => RESET_POLARITY ,
         reset_value                     => "00000000000000000000000000000000" ,
         auto_clear                      => "00000000000000000000000000000000" ,
-        is_lockable                     => '0' 
+        is_lockable                     => false 
     )
     port map(
         clk_sys                         => clk_sys ,-- in
@@ -661,7 +662,7 @@ begin
         write                           => write ,-- in
         cs                              => reg_sel(22) ,-- in
         w_be                            => be(3 downto 0) ,-- in
-        lock                            => lock ,-- in
+        lock                            => '0' ,-- in
         reg_value                       => control_registers_out_i.filter_ran_high -- out
     );
 
@@ -682,7 +683,7 @@ begin
         reset_polarity                  => RESET_POLARITY ,
         reset_value                     => "0000000000001111" ,
         auto_clear                      => "0000000000000000" ,
-        is_lockable                     => '0' 
+        is_lockable                     => false 
     )
     port map(
         clk_sys                         => clk_sys ,-- in
@@ -691,7 +692,7 @@ begin
         write                           => write ,-- in
         cs                              => reg_sel(23) ,-- in
         w_be                            => be(1 downto 0) ,-- in
-        lock                            => lock ,-- in
+        lock                            => '0' ,-- in
         reg_value                       => control_registers_out_i.filter_control -- out
     );
 
@@ -706,7 +707,7 @@ begin
         reset_polarity                  => RESET_POLARITY ,
         reset_value                     => "00000000" ,
         auto_clear                      => "00000000" ,
-        is_lockable                     => '0' 
+        is_lockable                     => false 
     )
     port map(
         clk_sys                         => clk_sys ,-- in
@@ -715,7 +716,7 @@ begin
         write                           => write ,-- in
         cs                              => reg_sel(26) ,-- in
         w_be                            => be(2 downto 2) ,-- in
-        lock                            => lock ,-- in
+        lock                            => '0' ,-- in
         reg_value                       => control_registers_out_i.rx_settings -- out
     );
 
@@ -754,7 +755,7 @@ begin
         reset_polarity                  => RESET_POLARITY ,
         reset_value                     => "0000000000000000" ,
         auto_clear                      => "0000111100000111" ,
-        is_lockable                     => '0' 
+        is_lockable                     => false 
     )
     port map(
         clk_sys                         => clk_sys ,-- in
@@ -763,7 +764,7 @@ begin
         write                           => write ,-- in
         cs                              => reg_sel(29) ,-- in
         w_be                            => be(1 downto 0) ,-- in
-        lock                            => lock ,-- in
+        lock                            => '0' ,-- in
         reg_value                       => control_registers_out_i.tx_command -- out
     );
 
@@ -778,7 +779,7 @@ begin
         reset_polarity                  => RESET_POLARITY ,
         reset_value                     => "0000000000000001" ,
         auto_clear                      => "0000000000000000" ,
-        is_lockable                     => '0' 
+        is_lockable                     => false 
     )
     port map(
         clk_sys                         => clk_sys ,-- in
@@ -787,7 +788,7 @@ begin
         write                           => write ,-- in
         cs                              => reg_sel(30) ,-- in
         w_be                            => be(1 downto 0) ,-- in
-        lock                            => lock ,-- in
+        lock                            => '0' ,-- in
         reg_value                       => control_registers_out_i.tx_priority -- out
     );
 
@@ -802,7 +803,7 @@ begin
         reset_polarity                  => RESET_POLARITY ,
         reset_value                     => "0000000000001010" ,
         auto_clear                      => "0000000000000000" ,
-        is_lockable                     => '0' 
+        is_lockable                     => true 
     )
     port map(
         clk_sys                         => clk_sys ,-- in
@@ -811,7 +812,7 @@ begin
         write                           => write ,-- in
         cs                              => reg_sel(32) ,-- in
         w_be                            => be(3 downto 2) ,-- in
-        lock                            => lock ,-- in
+        lock                            => lock_2 ,-- in
         reg_value                       => control_registers_out_i.ssp_cfg -- out
     );
 

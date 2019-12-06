@@ -99,7 +99,7 @@ component memory_reg is
         constant reset_polarity       :     std_logic := '0';
         constant reset_value          :     std_logic_vector;
         constant auto_clear           :     std_logic_vector;
-        constant is_lockable          :     std_logic     
+        constant is_lockable          :     boolean     
     );
     port(
         signal clk_sys                :in   std_logic;
