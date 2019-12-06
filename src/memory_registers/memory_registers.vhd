@@ -337,10 +337,10 @@ begin
     txtb_port_a_cs_gen : for i in 0 to G_TXT_BUFFER_COUNT - 1 generate
         type tx_buff_addr_type is array (0 to G_TXT_BUFFER_COUNT - 1) of
             std_logic_vector(3 downto 0);
-        signal buf_addr : tx_buff_addr_type := (TX_BUFFER_1_BLOCK,
-                                                TX_BUFFER_2_BLOCK,
-                                                TX_BUFFER_3_BLOCK,
-                                                TX_BUFFER_4_BLOCK);
+        constant buf_addr : tx_buff_addr_type := (TX_BUFFER_1_BLOCK,
+                                                  TX_BUFFER_2_BLOCK,
+                                                  TX_BUFFER_3_BLOCK,
+                                                  TX_BUFFER_4_BLOCK);
     begin
         txtb_port_a_cs(i) <= '1' when ((adress(11 downto 8) = buf_addr(i)) and
                                         scs = '1' and swr = '1')
@@ -964,6 +964,7 @@ begin
             align_reg_to_wrd(REC_VAL_H, length) downto
             align_reg_to_wrd(REC_VAL_L, length)) <=
             stat_bus(STAT_RX_COUNTER_HIGH downto STAT_RX_COUNTER_LOW);
+        Control_registers_in.rec(15 downto 9) <= (OTHERS => '0');
     end block rec_reg_block;
 
 
@@ -977,6 +978,7 @@ begin
             align_reg_to_wrd(TEC_VAL_H, length) downto
             align_reg_to_wrd(TEC_VAL_L, length)) <= 
             stat_bus(STAT_TX_COUNTER_HIGH downto STAT_TX_COUNTER_LOW);
+            Control_registers_in.tec(15 downto 9) <= (OTHERS => '0');
     end block tec_reg_block;
 
     ---------------------------------------------------------------------------
@@ -1245,7 +1247,7 @@ begin
             align_reg_to_wrd(TRV_DELAY_VALUE_H, length) downto
             align_reg_to_wrd(TRV_DELAY_VALUE_L, length)) <=
             trv_delay;
- 
+        Control_registers_in.trv_delay(15 downto 7) <= (others => '0');
     end block trv_delay_block;
 
 

@@ -235,7 +235,6 @@ architecture Protocol_Control_unit_test of CAN_test is
     -- CRC Interface
     signal crc_enable_1              :  std_logic;
     signal crc_spec_enable_1         :  std_logic;
-    signal crc_src_1                 :  std_logic_vector(1 downto 0);
     
     -- Control signals
     signal sp_control_1              :  std_logic_vector(1 downto 0);
@@ -346,7 +345,6 @@ architecture Protocol_Control_unit_test of CAN_test is
     -- CRC Interface
     signal crc_enable_2              :  std_logic;
     signal crc_spec_enable_2         :  std_logic;
-    signal crc_src_2                 :  std_logic_vector(1 downto 0);
     
     -- Control signals
     signal sp_control_2              :  std_logic_vector(1 downto 0);
@@ -746,7 +744,6 @@ begin
         -- CRC Interface
         crc_enable              => crc_enable_1,
         crc_spec_enable         => crc_spec_enable_1,
-        crc_src                 => crc_src_1,
         crc_15                  => crc_15,
         crc_17                  => crc_17,
         crc_21                  => crc_21,
@@ -869,7 +866,6 @@ begin
         -- CRC Interface
         crc_enable              => crc_enable_2,
         crc_spec_enable         => crc_spec_enable_2,
-        crc_src                 => crc_src_2,
         crc_15                  => crc_15,
         crc_17                  => crc_17,
         crc_21                  => crc_21,

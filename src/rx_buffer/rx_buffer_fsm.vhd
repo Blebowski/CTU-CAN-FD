@@ -98,12 +98,6 @@ entity rx_buffer_fsm is
         sof_pulse            :in     std_logic;
 
         -----------------------------------------------------------------------
-        -- Memory registers interface
-        -----------------------------------------------------------------------
-        -- Driving bus
-        drv_bus              :in     std_logic_vector(1023 downto 0);
-
-        -----------------------------------------------------------------------
         -- FSM outputs
         -----------------------------------------------------------------------
         -- Intent to write to RX Buffer RAM
@@ -132,12 +126,6 @@ end entity;
 
 architecture rtl of rx_buffer_fsm is
 
-    ----------------------------------------------------------------------------
-    -- Driving bus signal aliases
-    ----------------------------------------------------------------------------
-    -- Receive Timestamp options
-    signal drv_rtsopt               :       std_logic;
-
     -- RX Buffer FSM
     signal curr_state               :       t_rx_buf_state;
     signal next_state               :       t_rx_buf_state;
@@ -145,20 +133,18 @@ architecture rtl of rx_buffer_fsm is
     -- Clock enable for state register
     signal rx_fsm_ce                :       std_logic;
 
+    -- <RELEASE_OFF>
     -- Joined commands (for assertions only)
     signal cmd_join                 :       std_logic_vector(3 downto 0);
-begin
+    -- <RELEASE_ON>
 
-    ----------------------------------------------------------------------------
-    -- Driving bus aliases
-    ----------------------------------------------------------------------------
-    drv_rtsopt            <= drv_bus(DRV_RTSOPT_INDEX);    
+begin
 
     ----------------------------------------------------------------------------
     -- Next State process
     ----------------------------------------------------------------------------
     next_state_proc : process(curr_state, store_metadata_f, rec_abort_f, 
-        rec_valid_f, drv_rtsopt)
+        rec_valid_f)
     begin
         next_state <= curr_state;
         
@@ -314,15 +300,15 @@ begin
     -- Clock enable for State reg
     rx_fsm_ce <= '1' when (next_state /= curr_state) else
                  '0';
-
-    -- Joined commands, for assertions only
-    cmd_join <= store_metadata_f & store_data_f & rec_valid_f & rec_abort_f; 
-
+    
     -- <RELEASE_OFF>
     ---------------------------------------------------------------------------
     -- Assertions
     ---------------------------------------------------------------------------
     -- psl default clock is rising_edge(clk_sys);
+
+    -- Joined commands, for assertions only
+    cmd_join <= store_metadata_f & store_data_f & rec_valid_f & rec_abort_f; 
     
     -- psl store_metadata_in_idle_asrt : assert never
     --  (store_metadata_f = '1' and (curr_state /= s_rxb_idle))

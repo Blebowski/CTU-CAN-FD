@@ -354,9 +354,6 @@ entity protocol_control is
         -- Load CRC Initialization vector
         load_init_vect          :out   std_logic;
         
-        -- CRC Source to be used (CRC 15, CRC 17, CRC 21)
-        crc_src                 :out  std_logic_vector(1 downto 0);
-
         -- Calculated CRC 15
         crc_15                  :in   std_logic_vector(14 downto 0);
 
@@ -586,7 +583,7 @@ architecture rtl of protocol_control is
   signal crc_clear_match_flag    :      std_logic;
 
   -- CRC Source (CRC15, CRC17, CRC21)
-  signal crc_src_i               :      std_logic_vector(1 downto 0);
+  signal crc_src                 :      std_logic_vector(1 downto 0);
     
   -- Error position field (for Error capture)
   signal err_pos                 :      std_logic_vector(4 downto 0);
@@ -769,7 +766,7 @@ begin
         crc_match               => crc_match,               -- IN
         crc_err                 => crc_err_i,               -- OUT
         crc_clear_match_flag    => crc_clear_match_flag,    -- OUT
-        crc_src                 => crc_src_i,               -- OUT
+        crc_src                 => crc_src,                 -- OUT
         err_pos                 => err_pos,                 -- OUT
         is_arbitration          => is_arbitration_i,        -- OUT
         
@@ -934,7 +931,7 @@ begin
         err_pos                 => err_pos,                 -- IN
         crc_check               => crc_check,               -- IN
         crc_clear_match_flag    => crc_clear_match_flag,    -- IN
-        crc_src                 => crc_src_i,               -- IN
+        crc_src                 => crc_src,                 -- IN
         drv_fd_type             => drv_fd_type,             -- IN
         is_arbitration          => is_arbitration_i,        -- IN
         is_transmitter          => is_transmitter,          -- IN
@@ -969,7 +966,7 @@ begin
         tx_load_crc             => tx_load_crc,         -- IN
         tx_shift_ena            => tx_shift_ena,        -- IN
         tx_dominant             => tx_dominant,         -- IN
-        crc_src                 => crc_src_i,           -- IN
+        crc_src                 => crc_src,             -- IN
 
         -- CAN CRC Interface
         crc_15                  => crc_15,              -- IN
@@ -1044,7 +1041,6 @@ begin
     crc_err <= crc_err_i;
     is_arbitration <= is_arbitration_i;
     fixed_stuff <= fixed_stuff_i;
-    crc_src <= crc_src_i;
     arbitration_lost <= arbitration_lost_i;
 
     -- <RELEASE_OFF>

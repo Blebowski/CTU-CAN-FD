@@ -437,7 +437,6 @@ begin
         rec_valid_f         => rec_valid_f,         -- IN
         rec_abort_f         => rec_abort_f,         -- IN
         sof_pulse           => sof_pulse,           -- IN
-        drv_bus             => drv_bus,             -- IN
         
         write_raw_intent    => write_raw_intent,    -- OUT
         write_ts            => write_ts,            -- OUT
