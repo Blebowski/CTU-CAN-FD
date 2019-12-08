@@ -2952,8 +2952,7 @@ begin
     --  (err_frm_req = '1') and
     --  (curr_state = s_pc_off or curr_state = s_pc_integrating or
     --   curr_state = s_pc_idle or curr_state = s_pc_intermission or
-    --   curr_state = s_pc_suspend or curr_state = s_pc_reintegrating or
-    --   curr_state = s_pc_err_delim_wait)
+    --   curr_state = s_pc_suspend or curr_state = s_pc_reintegrating)
     --   
     --  report "Error frame request in invalid Protocol control field!"
     --  severity error;
