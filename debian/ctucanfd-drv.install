@@ -1,7 +1,8 @@
 #!/bin/sh
 
-for fname in ctu_can_fd.c ctu_can_fd_frame.h ctu_can_fd_hw.c ctu_can_fd_hw.h \
-             ctu_can_fd_regs.h ; do
+for fname in ctu_can_fd.c ctu_can_fd_pci.c ctu_can_fd_platform.c ctu_can_fd.h \
+             ctu_can_fd_frame.h ctu_can_fd_hw.c ctu_can_fd_hw.h ctu_can_fd_regs.h
+do
     echo driver/${fname} /usr/src/${PACKAGE_NAME}-${PACKAGE_VERSION}
 done
 for fname in Kbuild  Makefile ; do
