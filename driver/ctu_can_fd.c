@@ -1056,6 +1056,7 @@ int ctucan_probe_common(struct device *dev, void __iomem *addr,
 		if ((priv->p.read_reg(&priv->p, CTU_CAN_FD_DEVICE_ID) &
 			      0xFFFF) != CTU_CAN_FD_ID) {
 			netdev_err(ndev, "CTU_CAN_FD signature not found\n");
+			ret = -ENODEV;
 			goto err_disableclks;
 		}
 	}
