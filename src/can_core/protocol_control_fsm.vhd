@@ -814,7 +814,9 @@ begin
                                    curr_state = s_pc_pas_err_flag or
                                    curr_state = s_pc_err_delim_wait or
                                    curr_state = s_pc_err_delim or
-                                   curr_state = s_pc_ovr_flag)
+                                   curr_state = s_pc_ovr_flag or
+                                   curr_state = s_pc_ovr_delim_wait or
+                                   curr_state = s_pc_ovr_delim)
                              else
                          '0';
 
