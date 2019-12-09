@@ -50,7 +50,7 @@ MODULE_DESCRIPTION("CTU CAN FD interface");
 
 #define DRV_NAME "ctucanfd"
 
-static const char *ctucan_state_strings[] = {
+static const char * const ctucan_state_strings[] = {
 	"CAN_STATE_ERROR_ACTIVE",
 	"CAN_STATE_ERROR_WARNING",
 	"CAN_STATE_ERROR_PASSIVE",
@@ -164,14 +164,14 @@ static int ctucan_set_secondary_sample_point(struct net_device *ndev)
 	}
 
 	// Use for bit-rates above 1 Mbits/s
-	if (dbt->bitrate > 1000000){
+	if (dbt->bitrate > 1000000) {
 		ssp_ena = true;
 
 		// Calculate SSP in minimal time quanta
 		ssp_offset = (priv->can.clock.freq / 1000) *
 			      dbt->sample_point / dbt->bitrate;
 
-		if (ssp_offset > 127){
+		if (ssp_offset > 127) {
 			netdev_warn(ndev, "SSP offset saturated to 127\n");
 			ssp_offset = 127;
 		}
@@ -330,7 +330,7 @@ static int ctucan_start_xmit(struct sk_buff *skb, struct net_device *ndev)
 
 	if (!ok) {
 		netdev_err(ndev,
-            "BUG! TXNF set but cannot insert frame into TXTB! HW Bug?");
+		    "BUG! TXNF set but cannot insert frame into TXTB! HW Bug?");
 		return NETDEV_TX_BUSY;
 	}
 	can_put_echo_skb(skb, ndev, txb_id);
@@ -1099,16 +1099,16 @@ EXPORT_SYMBOL(ctucan_probe_common);
 
 static __init int ctucan_init(void)
 {
-        printk(KERN_INFO "%s CAN netdevice driver\n", DRV_NAME);
+	printk(KERN_INFO "%s CAN netdevice driver\n", DRV_NAME);
 
-        return 0;
+	return 0;
 }
 
 module_init(ctucan_init);
 
 static __exit void ctucan_exit(void)
 {
-        printk(KERN_INFO "%s: driver removed\n", DRV_NAME);
+	printk(KERN_INFO "%s: driver removed\n", DRV_NAME);
 }
 
 module_exit(ctucan_exit);

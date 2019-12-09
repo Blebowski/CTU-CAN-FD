@@ -223,7 +223,7 @@ static int ctucan_pci_probe(struct pci_dev *pdev,
 
 	return 0;
 
-	err_free_board:
+err_free_board:
 	pci_set_drvdata(pdev, NULL);
 	kfree(bdata);
 	err_pci_iounmap_bar0:
@@ -272,28 +272,28 @@ static void ctucan_pci_remove(struct pci_dev *pdev)
 		struct ctucan_priv, peers_on_pdev)) != NULL) {
 		ndev = priv->can.dev;
 
-	unregister_candev(ndev);
+		unregister_candev(ndev);
 
-	netif_napi_del(&priv->napi);
+		netif_napi_del(&priv->napi);
 
-	list_del_init(&priv->peers_on_pdev);
-	free_candev(ndev);
-		}
+		list_del_init(&priv->peers_on_pdev);
+		free_candev(ndev);
+	}
 
-		pci_iounmap(pdev, bdata->bar1_base);
+	pci_iounmap(pdev, bdata->bar1_base);
 
-		if (bdata->use_msi) {
-			pci_disable_msi(pdev);
-			pci_clear_master(pdev);
-		}
+	if (bdata->use_msi) {
+		pci_disable_msi(pdev);
+		pci_clear_master(pdev);
+	}
 
-		pci_release_regions(pdev);
-		pci_disable_device(pdev);
+	pci_release_regions(pdev);
+	pci_disable_device(pdev);
 
-		pci_iounmap(pdev, bdata->bar0_base);
+	pci_iounmap(pdev, bdata->bar0_base);
 
-		pci_set_drvdata(pdev, NULL);
-		kfree(bdata);
+	pci_set_drvdata(pdev, NULL);
+	kfree(bdata);
 }
 
 static SIMPLE_DEV_PM_OPS(ctucan_pci_pm_ops, ctucan_suspend, ctucan_resume);

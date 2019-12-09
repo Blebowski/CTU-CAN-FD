@@ -97,7 +97,8 @@ static int ctucan_platform_probe(struct platform_device *pdev)
 
 	if (ret < 0)
 		platform_set_drvdata(pdev, NULL);
-	err:
+
+err:
 	return ret;
 }
 

@@ -767,7 +767,7 @@ void ctucan_hw_configure_ssp(struct ctucan_hw_priv *priv, bool enable_ssp,
 	union ctu_can_fd_trv_delay_ssp_cfg ssp_cfg;
 
 	ssp_cfg.u32 = 0;
-	if (enable_ssp){
+	if (enable_ssp) {
 		if (use_trv_delay)
 			ssp_cfg.s.ssp_src = SSP_SRC_MEAS_N_OFFSET;
 		else
