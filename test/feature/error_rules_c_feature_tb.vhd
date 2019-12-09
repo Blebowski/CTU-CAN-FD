@@ -120,7 +120,8 @@ package body error_rules_c_feature is
         variable err_counters_3     :       SW_error_counters := (0, 0, 0, 0);
         variable err_counters_4     :       SW_error_counters := (0, 0, 0, 0);
 
-        variable id_vect            :       std_logic_vector(28 downto 0);
+        variable id_vect            :       std_logic_vector(28 downto 0) :=
+                                                (OTHERS => '0');
         variable err_capt           :       SW_error_capture;
         
     begin
@@ -172,6 +173,8 @@ package body error_rules_c_feature is
         read_error_counters(err_counters_2, ID_1, mem_bus(1));
         
         CAN_generate_frame(rand_ctr, CAN_frame);
+        -- This is so that fixed ID can be set in further steps!
+        CAN_frame.ident_type := EXTENDED;
         CAN_send_frame(CAN_frame, 1, ID_1, mem_bus(1), frame_sent);
         CAN_wait_error_frame(ID_1, mem_bus(1));
 
