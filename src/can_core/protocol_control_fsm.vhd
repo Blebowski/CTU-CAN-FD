@@ -781,7 +781,7 @@ begin
                          else
                      '0';
 
-    ide_is_arbitration <= '1' when (tran_ident_type = EXTENDED)
+    ide_is_arbitration <= '1' when (tran_ident_type = EXTENDED or is_receiver = '1')
                               else
                           '0';
 
