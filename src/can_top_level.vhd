@@ -937,6 +937,20 @@ begin
     --  (drv_bus(DRV_BUS_MON_ENA_INDEX) = '1' and can_tx = DOMINANT)
     --  report "Dominant bit can't be transmitted in Bus monitoring mode!"
     --  severity error;
+    
+    -- Each TXT Buffer should have been unlocked already when unit is
+    -- transmitting overload frame! This-way we can be sure that no we can
+    -- block unlock command in Protocol control FSM in overload frames!
+     
+    -- psl no_tx_buf_transmitting_in_overload : assert never
+    --  (((txtb_state(0) = TXT_TRAN) or (txtb_state(0) = TXT_ABTP)) or
+    --   ((txtb_state(1) = TXT_TRAN) or (txtb_state(1) = TXT_ABTP)) or
+    --   ((txtb_state(2) = TXT_TRAN) or (txtb_state(2) = TXT_ABTP)) or
+    --   ((txtb_state(3) = TXT_TRAN) or (txtb_state(3) = TXT_ABTP))) and
+    --   (is_overload = '1')
+    --   report "TXT Buffer should have been unlocked when node is in " &
+    --      " Overload frame!"
+    --   severity error;
 
     -- <RELEASE_ON>
     
