@@ -82,7 +82,7 @@ struct ctucan_pci_board_data *ctucan_pci_get_bdata(struct pci_dev *pdev)
 }
 
 static void ctucan_pci_set_drvdata(struct device *dev,
-								   struct net_device *ndev)
+				   struct net_device *ndev)
 {
 	struct pci_dev *pdev = container_of(dev, struct pci_dev, dev);
 	struct ctucan_priv *priv = netdev_priv(ndev);
@@ -103,7 +103,7 @@ static void ctucan_pci_set_drvdata(struct device *dev,
  * Return: 0 on success and failure value on error
  */
 static int ctucan_pci_probe(struct pci_dev *pdev,
-							const struct pci_device_id *ent)
+			    const struct pci_device_id *ent)
 {
 	struct device	*dev = &pdev->dev;
 	unsigned long driver_data = ent->driver_data;
@@ -180,7 +180,6 @@ static int ctucan_pci_probe(struct pci_dev *pdev,
 
 	bdata = kzalloc(sizeof(*bdata), GFP_KERNEL);
 	if (!bdata) {
-		dev_err(dev, "Cannot allocate board private data\n");
 		ret = -ENOMEM;
 		goto err_pci_iounmap_bar0;
 	}
@@ -227,19 +226,19 @@ static int ctucan_pci_probe(struct pci_dev *pdev,
 err_free_board:
 	pci_set_drvdata(pdev, NULL);
 	kfree(bdata);
-	err_pci_iounmap_bar0:
+err_pci_iounmap_bar0:
 	pci_iounmap(pdev, cra_addr);
-	err_pci_iounmap_bar1:
+err_pci_iounmap_bar1:
 	pci_iounmap(pdev, addr);
-	err_release_regions:
+err_release_regions:
 	if (msi_ok) {
 		pci_disable_msi(pdev);
 		pci_clear_master(pdev);
 	}
 	pci_release_regions(pdev);
-	err_disable_device:
+err_disable_device:
 	pci_disable_device(pdev);
-	err:
+err:
 	return ret;
 }
 

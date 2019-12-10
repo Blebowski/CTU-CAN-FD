@@ -455,8 +455,8 @@ static void ctucan_err_interrupt(struct net_device *ndev,
 				ctucan_state_to_str(state));
 
 		if (priv->can.state == state)
-			netdev_warn(ndev, "   current and previous state is the same!"
-					" (missed interrupt?)");
+			netdev_warn(ndev,
+				    "current and previous state is the same! (missed interrupt?)");
 
 		priv->can.state = state;
 		if (state == CAN_STATE_BUS_OFF) {
@@ -674,7 +674,8 @@ static void ctucan_tx_interrupt(struct net_device *ndev)
 				if (first) {
 					netdev_err(ndev, "BUG: TXB#%u not in a finished state (0x%x)!",
 						   txb_idx, status);
-					spin_unlock_irqrestore(&priv->tx_lock, flags);
+					spin_unlock_irqrestore(&priv->tx_lock,
+								flags);
 					/* do not clear nor wake */
 					return;
 				}
@@ -1100,7 +1101,7 @@ EXPORT_SYMBOL(ctucan_probe_common);
 
 static __init int ctucan_init(void)
 {
-	printk(KERN_INFO "%s CAN netdevice driver\n", DRV_NAME);
+	netdev_info("%s CAN netdevice driver\n", DRV_NAME);
 
 	return 0;
 }
@@ -1109,7 +1110,7 @@ module_init(ctucan_init);
 
 static __exit void ctucan_exit(void)
 {
-	printk(KERN_INFO "%s: driver removed\n", DRV_NAME);
+	netdev_info("%s: driver removed\n", DRV_NAME);
 }
 
 module_exit(ctucan_exit);

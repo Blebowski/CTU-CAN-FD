@@ -43,10 +43,10 @@ MODULE_DESCRIPTION("CTU CAN FD for platform");
 #define DRV_NAME	"ctucanfd"
 
 static void ctucan_platform_set_drvdata(struct device *dev,
-										struct net_device *ndev)
+					struct net_device *ndev)
 {
 	struct platform_device *pdev = container_of(dev, struct platform_device,
-												dev);
+						    dev);
 
 	platform_set_drvdata(pdev, ndev);
 }
@@ -84,17 +84,12 @@ static int ctucan_platform_probe(struct platform_device *pdev)
 		goto err;
 	}
 
-	#if 0
-	/* tntxbufs should be used in future */
-	ret = of_property_read_u32(pdev->dev.of_node, "tntxbufs", &ntxbufs);
-	if (ret < 0)
-		goto err;
-	#endif
-
+	/* Number of tx bufs might be change in HW for future. If so,
+	 * it will be passed as property via device tree
+	 */
 	ntxbufs = 4;
-
 	ret = ctucan_probe_common(dev, addr, irq, ntxbufs, 0,
-							  1, ctucan_platform_set_drvdata);
+				  1, ctucan_platform_set_drvdata);
 
 	if (ret < 0)
 		platform_set_drvdata(pdev, NULL);
