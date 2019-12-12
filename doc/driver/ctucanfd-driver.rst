@@ -28,7 +28,7 @@ About SocketCAN
 SocketCAN is a standard common interface for CAN devices in the Linux
 kernel. As the name suggests, the bus is accessed via sockets, similarly
 to common network devices. The reasoning behind this is in depth
-described in `Linux SocketCAN <https://git.kernel.org/cgit/linux/kernel/git/torvalds/linux.git/tree/Documentation/networking/can.txt>`_.
+described in `Linux SocketCAN <https://git.kernel.org/cgit/linux/kernel/git/torvalds/linux.git/tree/Documentation/networking/can.rst>`_.
 In short, it offers a
 natural way to implement and work with higher layer protocols over CAN,
 in the same way as, e.g., UDP/IP over Ethernet.
@@ -227,7 +227,7 @@ The core interfaces a simple subset of the Avalon
 `Avalon Interface Specifications <https://www.intel.com/content/dam/www/programmable/us/en/pdfs/literature/manual/mnl_avalon_spec.pdf>`_
 bus as it was originally used on
 Alterra FPGA chips, yet Xilinx natively interfaces with AXI
-`AMBA AXI and ACE Protocol Specification AXI3, AXI4, and AXI4-Lite, ACE and ACE-Lite <https://developer.arm.com/docs/ihi0022/latest/amba-axi-and-ace-protocol-specification-axi3-axi4-axi5-ace-and-ace5>`_.
+`AMBA AXI and ACE Protocol Specification AXI3, AXI4, and AXI4-Lite, ACE and ACE-Lite <https://static.docs.arm.com/ihi0022/d/IHI0022D_amba_axi_protocol_spec.pdf>`_.
 The most obvious solution would be to use
 an Avalon/AXI bridge or implement some simple conversion entity.
 However, the core’s interface is half-duplex with no handshake
@@ -236,7 +236,7 @@ even AXI-Lite slave interface is quite resource-intensive, and the
 flexibility and speed of AXI are not required for a CAN core.
 
 Thus a much simpler bus was chosen – APB (Advanced Peripheral Bus)
-`AMBA APB Protocol Specification v2.0 <https://developer.arm.com/docs/ihi0024/latest/amba-apb-protocol-specification-v20>`_.
+`AMBA APB Protocol Specification v2.0 <https://static.docs.arm.com/ihi0024/c/IHI0024C_amba_apb_protocol_spec.pdf>`_.
 APB-AXI bridge is directly available in
 Xilinx Vivado, and the interface adaptor entity is just a few simple
 combinatorial assignments.
@@ -438,7 +438,7 @@ the FIFO is maintained, together with priority rotation, is depicted in
 
 |
 
-.. figure:: ../pics/ctucanfd_FSM_TXT_Buffer.png
+.. figure:: ../pics/Visio_generated/FSM_TXT_Buffer_user.png
 
    TX Buffer states with possible transitions
 
