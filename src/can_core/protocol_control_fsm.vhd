@@ -1233,8 +1233,19 @@ begin
             when s_pc_err_delim_wait =>
                 if (rx_data_nbs = RECESSIVE) then
                     next_state <= s_pc_err_delim;
+                elsif (ctrl_ctr_zero = '1') then
+                    next_state <= s_pc_err_ovr_flag_too_long;
                 end if;
-            
+
+            -------------------------------------------------------------------
+            -- 13 dominant bits (6 Error flag + 7 Error delimiter) has been
+            -- detected.
+            -------------------------------------------------------------------
+            when s_pc_err_ovr_flag_too_long =>
+                if (rx_data_nbs = RECESSIVE) then
+                    next_state <= s_pc_err_delim;
+                end if;
+
             -------------------------------------------------------------------
             -- Error delimiter
             -------------------------------------------------------------------
@@ -1261,6 +1272,8 @@ begin
             when s_pc_ovr_delim_wait =>
                 if (rx_data_nbs = RECESSIVE) then
                     next_state <= s_pc_ovr_delim;
+                elsif (ctrl_ctr_zero = '1') then
+                    next_state <= s_pc_err_ovr_flag_too_long;
                 end if;
 
             -------------------------------------------------------------------
@@ -2407,7 +2420,7 @@ begin
                 -- When waiting for RECESSIVE bit after Error flag, unit
                 -- may receive DOMINANT and not interpret this as Bit error!
                 bit_err_disable <= '1';
-                
+
                 if (ctrl_ctr_zero = '0') then
                     ctrl_ctr_ena <= '1';
                 end if;
@@ -2415,12 +2428,6 @@ begin
                 if (rx_data_nbs = RECESSIVE) then
                     ctrl_ctr_pload_i <= '1';
                     ctrl_ctr_pload_val <= C_ERR_DELIM_DURATION;
-                
-                -- Err flag (6 bits) + Delimiter wait (7 bits) elapsed and
-                -- dominant is detected, this signals 14 consecutive dominant
-                -- bits!
-                elsif (ctrl_ctr_zero = '1') then
-                    err_delim_late_i <= '1';
                 end if;
 
                 -- Node received dominant bit as first bit after Error flag!
@@ -2429,7 +2436,31 @@ begin
                     primary_err_i <= '1';
                     first_err_delim_d <= '0';
                 end if;
-                
+
+            -------------------------------------------------------------------
+            -- 13 dominant bits (6 error flag + 7 error delimiter) has been
+            -- detected (active error flag), or 7 has been detectd (passive
+            -- error flag).
+            -------------------------------------------------------------------
+            when s_pc_err_ovr_flag_too_long =>
+                is_err_frm <= '1';
+                err_pos <= ERC_POS_ERR;
+                nbt_ctrs_en <= '1';
+                bit_err_disable <= '1';
+                ctrl_ctr_ena <= '1';
+
+                if (rx_data_nbs = RECESSIVE) then
+                    ctrl_ctr_pload_i <= '1';
+                    ctrl_ctr_pload_val <= C_ERR_DELIM_DURATION;
+                    
+                -- This indicates that either 14th dominant bit was detected,
+                -- or each next consecutive 8 DOMINANT bits were detected!
+                elsif (ctrl_ctr_zero = '1') then
+                    ctrl_ctr_pload_i <= '1';
+                    ctrl_ctr_pload_val <= C_DOMINANT_REPEAT_DURATION;
+                    err_delim_late_i <= '1';
+                end if;
+
             -------------------------------------------------------------------
             -- Error delimiter
             -------------------------------------------------------------------
@@ -2461,6 +2492,11 @@ begin
                 err_pos <= ERC_POS_OVRL;
                 nbt_ctrs_en <= '1';
                 
+                if (ctrl_ctr_zero = '1') then
+                    ctrl_ctr_pload_i <= '1';
+                    ctrl_ctr_pload_val <= C_DELIM_WAIT_DURATION;
+                end if;
+                
             -------------------------------------------------------------------
             -- Wait till overload delimiter.
             -------------------------------------------------------------------
@@ -2468,6 +2504,10 @@ begin
                 is_overload <= '1';
                 err_pos <= ERC_POS_OVRL;
                 nbt_ctrs_en <= '1';
+                
+                if (ctrl_ctr_zero = '0') then
+                    ctrl_ctr_ena <= '1';
+                end if;
                 
                 -- When waiting for RECESSIVE bit after Overload flag, unit
                 -- may receive DOMINANT and not interpret this as Bit error!
