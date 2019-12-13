@@ -78,7 +78,7 @@ feature:
         alc_ide:
         alc_rtr_r0:
         btr:
-            iterations: 3
+            iterations: 1
         btr_fd:
             iterations: 3
         btr_ssp_access:
