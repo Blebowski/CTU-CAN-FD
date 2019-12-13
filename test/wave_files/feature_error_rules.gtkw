@@ -1,0 +1,57 @@
+[*]
+[*] GTKWave Analyzer v3.3.98 (w)1999-2019 BSI
+[*] Fri Dec 13 11:57:51 2019
+[*]
+[dumpfile] "/build/test/build/vunit_out/test_output/lib.tb_feature.error_rules_f_tx_b7c201f1e18a15862c8c6d7c155d24926810ff5a/ghdl/wave.ghw"
+[dumpfile_mtime] "Fri Dec 13 11:56:34 2019"
+[dumpfile_size] 12182076
+[savefile] "/build/test/wave_files/feature_error_rules.gtkw"
+[timestart] 120000000000
+[size] 1853 1025
+[pos] -1 -1
+*-35.000000 102280000000 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+[treeopen] top.
+[treeopen] top.tb_feature.
+[treeopen] top.tb_feature.mem_bus.
+[treeopen] top.tb_feature.test_comp.
+[treeopen] top.tb_feature.test_comp.g_inst[1].can_inst.
+[treeopen] top.tb_feature.test_comp.g_inst[1].can_inst.can_core_inst.
+[treeopen] top.tb_feature.test_comp.g_inst[1].can_inst.can_core_inst.protocol_control_inst.
+[treeopen] top.tb_feature.test_comp.g_inst[1].can_inst.can_core_inst.protocol_control_inst.control_counter_inst.
+[treeopen] top.tb_feature.test_comp.g_inst[2].
+[treeopen] top.tb_feature.test_comp.g_inst[2].can_inst.
+[treeopen] top.tb_feature.test_comp.g_inst[2].can_inst.can_core_inst.
+[sst_width] 389
+[signals_width] 320
+[sst_expanded] 1
+[sst_vpaned_height] 599
+@200
+-Node 1
+@28
+top.tb_feature.test_comp.g_inst[1].can_inst.can_rx
+top.tb_feature.test_comp.g_inst[1].can_inst.can_tx
+top.tb_feature.test_comp.g_inst[1].can_inst.can_core_inst.protocol_control_inst.protocol_control_fsm_inst.rx_data_nbs
+top.tb_feature.test_comp.g_inst[1].can_inst.can_core_inst.protocol_control_inst.protocol_control_fsm_inst.ctrl_ctr_zero
+@22
+#{top.tb_feature.test_comp.g_inst[1].can_inst.can_core_inst.protocol_control_inst.control_counter_inst.ctrl_ctr_q[8:0]} top.tb_feature.test_comp.g_inst[1].can_inst.can_core_inst.protocol_control_inst.control_counter_inst.ctrl_ctr_q[8] top.tb_feature.test_comp.g_inst[1].can_inst.can_core_inst.protocol_control_inst.control_counter_inst.ctrl_ctr_q[7] top.tb_feature.test_comp.g_inst[1].can_inst.can_core_inst.protocol_control_inst.control_counter_inst.ctrl_ctr_q[6] top.tb_feature.test_comp.g_inst[1].can_inst.can_core_inst.protocol_control_inst.control_counter_inst.ctrl_ctr_q[5] top.tb_feature.test_comp.g_inst[1].can_inst.can_core_inst.protocol_control_inst.control_counter_inst.ctrl_ctr_q[4] top.tb_feature.test_comp.g_inst[1].can_inst.can_core_inst.protocol_control_inst.control_counter_inst.ctrl_ctr_q[3] top.tb_feature.test_comp.g_inst[1].can_inst.can_core_inst.protocol_control_inst.control_counter_inst.ctrl_ctr_q[2] top.tb_feature.test_comp.g_inst[1].can_inst.can_core_inst.protocol_control_inst.control_counter_inst.ctrl_ctr_q[1] top.tb_feature.test_comp.g_inst[1].can_inst.can_core_inst.protocol_control_inst.control_counter_inst.ctrl_ctr_q[0]
+@28
+top.tb_feature.test_comp.g_inst[1].can_inst.can_core_inst.protocol_control_inst.rx_trigger
+@420
+top.tb_feature.test_comp.g_inst[1].can_inst.can_core_inst.protocol_control_inst.protocol_control_fsm_inst.curr_state
+@22
+#{top.tb_feature.test_comp.g_inst[1].can_inst.can_core_inst.fault_confinement_inst.err_counters_inst.rx_err_ctr_q[8:0]} top.tb_feature.test_comp.g_inst[1].can_inst.can_core_inst.fault_confinement_inst.err_counters_inst.rx_err_ctr_q[8] top.tb_feature.test_comp.g_inst[1].can_inst.can_core_inst.fault_confinement_inst.err_counters_inst.rx_err_ctr_q[7] top.tb_feature.test_comp.g_inst[1].can_inst.can_core_inst.fault_confinement_inst.err_counters_inst.rx_err_ctr_q[6] top.tb_feature.test_comp.g_inst[1].can_inst.can_core_inst.fault_confinement_inst.err_counters_inst.rx_err_ctr_q[5] top.tb_feature.test_comp.g_inst[1].can_inst.can_core_inst.fault_confinement_inst.err_counters_inst.rx_err_ctr_q[4] top.tb_feature.test_comp.g_inst[1].can_inst.can_core_inst.fault_confinement_inst.err_counters_inst.rx_err_ctr_q[3] top.tb_feature.test_comp.g_inst[1].can_inst.can_core_inst.fault_confinement_inst.err_counters_inst.rx_err_ctr_q[2] top.tb_feature.test_comp.g_inst[1].can_inst.can_core_inst.fault_confinement_inst.err_counters_inst.rx_err_ctr_q[1] top.tb_feature.test_comp.g_inst[1].can_inst.can_core_inst.fault_confinement_inst.err_counters_inst.rx_err_ctr_q[0]
+@24
+#{top.tb_feature.test_comp.g_inst[1].can_inst.can_core_inst.fault_confinement_inst.err_counters_inst.tx_err_ctr_q[8:0]} top.tb_feature.test_comp.g_inst[1].can_inst.can_core_inst.fault_confinement_inst.err_counters_inst.tx_err_ctr_q[8] top.tb_feature.test_comp.g_inst[1].can_inst.can_core_inst.fault_confinement_inst.err_counters_inst.tx_err_ctr_q[7] top.tb_feature.test_comp.g_inst[1].can_inst.can_core_inst.fault_confinement_inst.err_counters_inst.tx_err_ctr_q[6] top.tb_feature.test_comp.g_inst[1].can_inst.can_core_inst.fault_confinement_inst.err_counters_inst.tx_err_ctr_q[5] top.tb_feature.test_comp.g_inst[1].can_inst.can_core_inst.fault_confinement_inst.err_counters_inst.tx_err_ctr_q[4] top.tb_feature.test_comp.g_inst[1].can_inst.can_core_inst.fault_confinement_inst.err_counters_inst.tx_err_ctr_q[3] top.tb_feature.test_comp.g_inst[1].can_inst.can_core_inst.fault_confinement_inst.err_counters_inst.tx_err_ctr_q[2] top.tb_feature.test_comp.g_inst[1].can_inst.can_core_inst.fault_confinement_inst.err_counters_inst.tx_err_ctr_q[1] top.tb_feature.test_comp.g_inst[1].can_inst.can_core_inst.fault_confinement_inst.err_counters_inst.tx_err_ctr_q[0]
+@200
+-Node 2
+@28
+top.tb_feature.test_comp.g_inst[2].can_inst.can_rx
+top.tb_feature.test_comp.g_inst[2].can_inst.can_tx
+@420
+top.tb_feature.test_comp.g_inst[2].can_inst.can_core_inst.protocol_control_inst.protocol_control_fsm_inst.curr_state
+@24
+#{top.tb_feature.test_comp.g_inst[2].can_inst.can_core_inst.fault_confinement_inst.err_counters_inst.rx_err_ctr_q[8:0]} top.tb_feature.test_comp.g_inst[2].can_inst.can_core_inst.fault_confinement_inst.err_counters_inst.rx_err_ctr_q[8] top.tb_feature.test_comp.g_inst[2].can_inst.can_core_inst.fault_confinement_inst.err_counters_inst.rx_err_ctr_q[7] top.tb_feature.test_comp.g_inst[2].can_inst.can_core_inst.fault_confinement_inst.err_counters_inst.rx_err_ctr_q[6] top.tb_feature.test_comp.g_inst[2].can_inst.can_core_inst.fault_confinement_inst.err_counters_inst.rx_err_ctr_q[5] top.tb_feature.test_comp.g_inst[2].can_inst.can_core_inst.fault_confinement_inst.err_counters_inst.rx_err_ctr_q[4] top.tb_feature.test_comp.g_inst[2].can_inst.can_core_inst.fault_confinement_inst.err_counters_inst.rx_err_ctr_q[3] top.tb_feature.test_comp.g_inst[2].can_inst.can_core_inst.fault_confinement_inst.err_counters_inst.rx_err_ctr_q[2] top.tb_feature.test_comp.g_inst[2].can_inst.can_core_inst.fault_confinement_inst.err_counters_inst.rx_err_ctr_q[1] top.tb_feature.test_comp.g_inst[2].can_inst.can_core_inst.fault_confinement_inst.err_counters_inst.rx_err_ctr_q[0]
+@29
+top.tb_feature.test_comp.g_inst[2].can_inst.can_core_inst.protocol_control_inst.rx_trigger
+[pattern_trace] 1
+[pattern_trace] 0
