@@ -41,7 +41,7 @@
 
 --------------------------------------------------------------------------------
 -- Purpose:
---  Fault confinement rules - rule F - transmitter - feature test
+--  Fault confinement rules - rule F - receiver - feature test
 --
 -- Verifies:
 --  1. Any node shall tolerate up to 7 consecutive dominant bits after sending
@@ -54,17 +54,17 @@
 --
 -- Test sequence:
 --  1. Set Node 2 to ACK forbidden mode. Send frame by Node 1. Wait until Error
---     frame is sent by Node 1. Force bus low and wait for 7 bits. Check that
+--     frame is sent by Node 2. Force bus low and wait for 7 bits. Check that
 --     Error counter is still the same as after Error frame started! Wait for
 --     one more bit and check that TEC counter was incremented by 8! Wait for 7
 --     bits and check that TEC remains the same. Wait for one more bit and
 --     check that TEC is incremented again by 8. Release the bus and Wait until
 --     bus is idle!
---  2. Set Node 1 to Error passive. Send frame by Node 1 and wait until Error
---     frame is sent. Repeat the same procedure as in Step 1. Afterwards
---     release the bus and wait until bus is idle!
+--  2. Set Node 2 to Error passive. Send frame by Node 1 and wait until Error
+--     frame is sent by Node 2. Repeat the same procedure as in Step 1.
+--     Afterwards release the bus and wait until bus is idle!
 --  3. Unset ACK forbidden mode in Node 2. Send frame by Node 1. Wait until
---     Intermission of Node 1 and force bus low. Wait until Overload frame is
+--     Intermission of Node 2 and force bus low. Wait until Overload frame is
 --     sent. Repeat the procedure from step 1. Release the bus and wait until
 --     bus is idle!
 --------------------------------------------------------------------------------
@@ -77,8 +77,8 @@ context work.ctu_can_test_context;
 
 use lib.pkg_feature_exec_dispath.all;
 
-package error_rules_f_tx_feature is
-    procedure error_rules_f_tx_feature_exec(
+package error_rules_f_rx_feature is
+    procedure error_rules_f_rx_feature_exec(
         signal      so              : out    feature_signal_outputs_t;
         signal      rand_ctr        : inout  natural range 0 to RAND_POOL_SIZE;
         signal      iout            : in     instance_outputs_arr_t;
@@ -87,7 +87,7 @@ package error_rules_f_tx_feature is
     );
 end package;
 
-package body error_rules_f_tx_feature is
+package body error_rules_f_rx_feature is
 
     ---------------------------------------------------------------------------
     -- Executes following sequence:
@@ -104,54 +104,62 @@ package body error_rules_f_tx_feature is
     procedure do_14_8_check(
         signal      so              : out    feature_signal_outputs_t;     
         signal      iout            : in     instance_outputs_arr_t;
-        signal      mem_bus         : inout  mem_bus_arr_t
+        signal      mem_bus         : inout  mem_bus_arr_t;
+        constant    do_overload     : in     boolean
     ) is
-        variable ID_1               : natural := 1;
+        variable ID_2               : natural := 2;
         variable err_counters_1     : SW_error_counters := (0, 0, 0, 0);
         variable err_counters_2     : SW_error_counters := (0, 0, 0, 0);
         variable err_counters_3     : SW_error_counters := (0, 0, 0, 0);
         variable err_counters_4     : SW_error_counters := (0, 0, 0, 0);
         variable err_counters_5     : SW_error_counters := (0, 0, 0, 0);
     begin
-        read_error_counters(err_counters_1, ID_1, mem_bus(1));
+        read_error_counters(err_counters_1, ID_2, mem_bus(2));
         force_bus_level(DOMINANT, so.bl_force, so.bl_inject);
         for i in 0 to 12 loop
-            CAN_wait_sample_point(iout(1).stat_bus, false);
+            CAN_wait_sample_point(iout(2).stat_bus, false);
         end loop;
         wait for 20 ns; -- To be sure sample point was processed!
         
-        read_error_counters(err_counters_2, ID_1, mem_bus(1));
-        check(err_counters_1.tx_counter = err_counters_2.tx_counter,
-            "TEC not incremented after 13 dominant bits!");
+        read_error_counters(err_counters_2, ID_2, mem_bus(2));
         
-        CAN_wait_sample_point(iout(1).stat_bus, false);
+        if (do_overload = false) then
+            check(err_counters_1.rx_counter + 8 = err_counters_2.rx_counter,
+                "REC incremented only by 8 after 13 dominant bits!");
+        else
+            check(err_counters_1.rx_counter = err_counters_2.rx_counter,
+                "REC not incremented after 13 dominant bits!");
+        end if;
+        
+        CAN_wait_sample_point(iout(2).stat_bus, false);
         wait for 20 ns; -- To be sure sample point was processed!
-        read_error_counters(err_counters_3, ID_1, mem_bus(1));
+        read_error_counters(err_counters_3, ID_2, mem_bus(2));
         
-        check(err_counters_1.tx_counter + 8 = err_counters_3.tx_counter,
-            "TEC incremented by 8 after 14 dominant bits!");
-        
+        check(err_counters_2.rx_counter + 8 = err_counters_3.rx_counter,
+            "REC incremented by 8 after 14 dominant bits!");
+    
         for i in 0 to 6 loop
-            CAN_wait_sample_point(iout(1).stat_bus, false);
+            CAN_wait_sample_point(iout(2).stat_bus, false);
         end loop;
         wait for 20 ns; -- To be sure sample point was processed!
         
-        read_error_counters(err_counters_4, ID_1, mem_bus(1));
-        check(err_counters_3.tx_counter = err_counters_4.tx_counter,
-            "TEC not incremented after first 7 bits");
-
-        CAN_wait_sample_point(iout(1).stat_bus, false);
-        wait for 20 ns; -- To be sure sample point was processed!
-        read_error_counters(err_counters_5, ID_1, mem_bus(1));
+        read_error_counters(err_counters_4, ID_2, mem_bus(2));
         
-        check(err_counters_3.tx_counter + 8 = err_counters_5.tx_counter,
-            "TEC incremented after next 8 dominant bits!");
-            
+        check(err_counters_3.rx_counter = err_counters_4.rx_counter,
+            "REC not incremented after first 7 bits");
+    
+        CAN_wait_sample_point(iout(2).stat_bus, false);
+        wait for 20 ns; -- To be sure sample point was processed!
+        read_error_counters(err_counters_5, ID_2, mem_bus(2));
+        
+        check(err_counters_3.rx_counter + 8 = err_counters_5.rx_counter,
+            "REC incremented after next 8 dominant bits!");
+
         release_bus_level(so.bl_force);
     end procedure;
 
 
-    procedure error_rules_f_tx_feature_exec(
+    procedure error_rules_f_rx_feature_exec(
         signal      so              : out    feature_signal_outputs_t;
         signal      rand_ctr        : inout  natural range 0 to RAND_POOL_SIZE;
         signal      iout            : in     instance_outputs_arr_t;
@@ -186,7 +194,7 @@ package body error_rules_f_tx_feature is
 
         -----------------------------------------------------------------------
         -- 1. Set Node 2 to ACK forbidden mode. Send frame by Node 1. Wait until
-        --    Error frame is sent by Node 1. Force bus low and wait for 7 bits.
+        --    Error frame is sent by Node 2. Force bus low and wait for 7 bits.
         --    Check that Error counter is still the same as after Error frame
         --    started! Wait for one more bit and check that TEC counter was
         --    incremented by 8! Wait for 7 bits and check that TEC remains the
@@ -200,9 +208,9 @@ package body error_rules_f_tx_feature is
         
         CAN_generate_frame(rand_ctr, CAN_frame);
         CAN_send_frame(CAN_frame, 1, ID_1, mem_bus(1), frame_sent);
-        CAN_wait_error_frame(ID_1, mem_bus(1));
-        
-        do_14_8_check(so, iout, mem_bus);
+        CAN_wait_error_frame(ID_2, mem_bus(2));
+
+        do_14_8_check(so, iout, mem_bus, false);
         
         CAN_wait_bus_idle(ID_1, mem_bus(1));
         CAN_wait_bus_idle(ID_2, mem_bus(2));
@@ -210,7 +218,7 @@ package body error_rules_f_tx_feature is
         wait for 2000 ns;
         
         -----------------------------------------------------------------------
-        -- 2. Set Node 1 to Error passive. Send frame by Node 1 and wait until
+        -- 2. Set Node 2 to Error passive. Send frame by Node 1 and wait until
         --    Error frame is sent. Repeat the same procedure as in Step 1.
         --    Afterwards release the bus and wait until bus is idle!
         -----------------------------------------------------------------------
@@ -222,13 +230,13 @@ package body error_rules_f_tx_feature is
         err_counters_1.tx_counter := 150;
         err_counters_1.rx_counter := 0;
         
-        set_error_counters(err_counters_1, ID_1, mem_bus(1));
+        set_error_counters(err_counters_1, ID_2, mem_bus(2));
         
         CAN_generate_frame(rand_ctr, CAN_frame);
         CAN_send_frame(CAN_frame, 1, ID_1, mem_bus(1), frame_sent);
-        CAN_wait_error_frame(ID_1, mem_bus(1));
+        CAN_wait_error_frame(ID_2, mem_bus(2));
         
-        do_14_8_check(so, iout, mem_bus);
+        do_14_8_check(so, iout, mem_bus, false);
         
         CAN_wait_bus_idle(ID_1, mem_bus(1));
         CAN_wait_bus_idle(ID_2, mem_bus(2));
@@ -237,7 +245,7 @@ package body error_rules_f_tx_feature is
         
         -----------------------------------------------------------------------
         -- 3. Unset ACK forbidden mode in Node 2. Send frame by Node 1. Wait
-        --    until Intermission of Node 1 and force bus low. Wait until
+        --    until Intermission of Node 2 and force bus low. Wait until
         --    Overload frame is sent. Repeat the procedure from step 1. Release
         --    the bus and wait until bus is idle!
         -----------------------------------------------------------------------
@@ -249,12 +257,12 @@ package body error_rules_f_tx_feature is
         CAN_generate_frame(rand_ctr, CAN_frame);
         CAN_send_frame(CAN_frame, 1, ID_1, mem_bus(1), frame_sent);
         
-        CAN_wait_pc_state(pc_deb_intermission, ID_1, mem_bus(1));
+        CAN_wait_pc_state(pc_deb_intermission, ID_2, mem_bus(2));
         force_bus_level(DOMINANT, so.bl_force, so.bl_inject);
-        CAN_wait_pc_state(pc_deb_overload, ID_1, mem_bus(1));
+        CAN_wait_pc_state(pc_deb_overload, ID_2, mem_bus(2));
         release_bus_level(so.bl_force);
         
-        do_14_8_check(so, iout, mem_bus);
+        do_14_8_check(so, iout, mem_bus, true);
         
         CAN_wait_bus_idle(ID_1, mem_bus(1));
         CAN_wait_bus_idle(ID_2, mem_bus(2));

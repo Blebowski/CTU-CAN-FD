@@ -98,6 +98,7 @@ feature:
         error_rules_d:
         error_rules_e:
         error_rules_f_tx:
+        error_rules_f_rx:
         fault_state:
         mode_loopback:
             iterations: 10
