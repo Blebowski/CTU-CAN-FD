@@ -1027,7 +1027,7 @@ int ctucan_probe_common(struct device *dev, void __iomem *addr,
 	ndev->netdev_ops = &ctucan_netdev_ops;
 
 	/* Getting the CAN can_clk info */
-	if (can_clk_rate == 0) {
+	if (can_clk_rate == 0){
 		priv->can_clk = devm_clk_get(dev, NULL);
 		if (IS_ERR(priv->can_clk)) {
 			dev_err(dev, "Device clock not found.\n");
