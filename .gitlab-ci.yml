@@ -71,6 +71,7 @@ build_linux_driver:
     script:
         - cd driver/linux
         - "make -j`nproc` KDIR=/linux/build"
+        - "make checkpatch KDIR=/linux/build"
     artifacts:
         paths:
             - driver/linux/ctucanfd.ko

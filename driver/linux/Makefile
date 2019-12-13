@@ -35,7 +35,7 @@ endif
 CTUCANF_SOURCES = ctu_can_fd.c ctu_can_fd_hw.c ctu_can_fd_frame.h ctu_can_fd_hw.h ctu_can_fd_regs.h ctu_can_fd_platform.c ctu_can_fd_pci.c
 
 checkpatch:
-	cd $(KDIR) && $(KDIR)/source/scripts/checkpatch.pl -f $(CTUCANF_SOURCES:%=$(PWD)/%)
+	cd $(KDIR) && (! $(KDIR)/source/scripts/checkpatch.pl -f --no-tree $(CTUCANF_SOURCES:%=$(PWD)/%) | grep ERROR:)
 
 clean:
 	$(MAKE) $(MAKEARGS) M=$$PWD clean
