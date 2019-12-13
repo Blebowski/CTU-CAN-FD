@@ -1101,7 +1101,7 @@ EXPORT_SYMBOL(ctucan_probe_common);
 
 static __init int ctucan_init(void)
 {
-	netdev_info("%s CAN netdevice driver\n", DRV_NAME);
+	printk(KERN_INFO "%s CAN netdevice driver\n", DRV_NAME);
 
 	return 0;
 }
@@ -1110,7 +1110,7 @@ module_init(ctucan_init);
 
 static __exit void ctucan_exit(void)
 {
-	netdev_info("%s: driver removed\n", DRV_NAME);
+	printk(KERN_INFO "%s: driver removed\n", DRV_NAME);
 }
 
 module_exit(ctucan_exit);
