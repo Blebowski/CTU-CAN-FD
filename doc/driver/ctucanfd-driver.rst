@@ -520,6 +520,68 @@ CTU CAN FD Driver Sources Reference
 .. kernel-doc:: ../../driver/ctu_can_fd_platform.c
    :internal:
 
+CTU CAN FD IP Core and Driver Development Acknowledgement
+---------------------------------------------------------
+
+* Odrej Ille <illeondr@fel.cvut.cz>
+
+  * started the project as student at Department of Measurement, FEE, CTU
+  * invested great amount of personal time and enthusiasm to the project over years
+  * worked on more funded tasks
+
+* `Department of Measurement <https://meas.fel.cvut.cz/>`_,
+  `Faculty of Electrical Engineering <http://www.fel.cvut.cz/en/>`_,
+  `Czech Technical University <https://www.cvut.cz/en>`_
+
+  * is the main investor into the project over many years
+  * uses project in their CAN/CAN FD diagnostics framework for `Skoda Auto <https://www.skoda-auto.cz/>`_
+
+* `Digiteq Automotive <https://www.digiteqautomotive.com/en>`_
+
+  * funding of the project CAN FD Open Cores Support Linux Kernel Based Systems
+  * negotiated and paid CTU to allow public access to the project
+  * provided additional funding of the work
+
+* `Department of Control Engineering <https://dce.fel.cvut.cz/en>`_,
+  `Faculty of Electrical Engineering <http://www.fel.cvut.cz/en/>`_,
+  `Czech Technical University <https://www.cvut.cz/en>`_
+
+  * solving the project CAN FD Open Cores Support Linux Kernel Based Systems
+  * providing GitLab management
+  * virtual servers and computational power for continuous integration
+  * providing hardware for HIL continuous integration tests
+
+* `PiKRON Ltd. <http://pikron.com/>`_
+
+  * minor funding to initiate preparation of the project open-sourcing
+
+* Petr Porazil <porazil@pikron.com>
+
+  * design of PCIe transceiver addon board and assembly of boards
+  * design and assembly of MZ_APO baseboard for MicroZed/Zynq based system
+
+* Martin Jerabek <martin.jerabek01@gmail.com>
+
+  * Linux driver development
+  * continuous integration platform architect and GHDL updates
+  * theses `Open-source and Open-hardware CAN FD Protocol Support <https://dspace.cvut.cz/bitstream/handle/10467/80366/F3-DP-2019-Jerabek-Martin-Jerabek-thesis-2019-canfd.pdf>`_
+
+* Jiri Novak <jnovak@fel.cvut.cz>
+
+  * project initiation, management and use at Department of Measurement, FEE, CTU
+
+* Pavel Pisa <pisa@cmp.felk.cvut.cz>
+
+  * initiate open-sourcing, project coordination, management at Department of Control Engineering, FEE, CTU
+
+* Jaroslav Beran<jara.beran@gmail.com>
+
+ * system integration for Intel SoC, core and driver testing and updates
+
+Notes
+-----
+
+
 .. [1]
    Other buses have their own specific driver interface to set up the
    device.
