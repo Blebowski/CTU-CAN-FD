@@ -148,8 +148,13 @@ package body mode_self_test_feature is
         get_controller_status(status, ID_1, mem_bus(1));
         check_false(status.error_transmission, "Error frame not transmitted!");
         CAN_read_pc_debug(pc_dbg, ID_1, mem_bus(1));
-        check(pc_dbg = pc_deb_ack_delim, "ACK delimiter follows recessive ACK!");
         
+        -- For CAN FD frames secondary ACK is still marked as ACK to DEBUG
+        -- register! From there if this is recessive (it is now, no ACK is sent),
+        -- it is interpreted as ACK Delimiter and we move directly to EOF! This
+        -- is OK!
+        check(pc_dbg = pc_deb_ack_delim or
+              pc_dbg = pc_deb_eof, "ACK delimiter follows recessive ACK!");
         
         CAN_wait_bus_idle(ID_2, mem_bus(2));
         CAN_wait_bus_idle(ID_1, mem_bus(1));
