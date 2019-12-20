@@ -66,6 +66,9 @@ feature:
         error_rules_c:
         error_rules_d:
         error_rules_e:
+        error_rules_f_tx:
+        error_rules_f_rx:
+        error_rules_g:
         fault_state:
         mode_loopback:
         mode_listen_only:

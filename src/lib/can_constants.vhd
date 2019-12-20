@@ -135,5 +135,8 @@ package can_constants is
 
     constant C_ERR_DELIM_DURATION : std_logic_vector(8 downto 0) :=
         std_logic_vector(to_unsigned(6, 9));
+      
+    constant C_DOMINANT_REPEAT_DURATION : std_logic_vector(8 downto 0) :=
+        std_logic_vector(to_unsigned(7, 9));
         
 end package;

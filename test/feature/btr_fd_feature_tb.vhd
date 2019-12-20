@@ -68,7 +68,6 @@ use lib.pkg_feature_exec_dispath.all;
 
 package btr_fd_feature is
     procedure btr_fd_feature_exec(
-        variable    o               : out    feature_outputs_t;
         signal      so              : out    feature_signal_outputs_t;
         signal      rand_ctr        : inout  natural range 0 to RAND_POOL_SIZE;
         signal      iout            : in     instance_outputs_arr_t;
@@ -80,7 +79,6 @@ end package;
 
 package body btr_fd_feature is
     procedure btr_fd_feature_exec(
-        variable    o               : out    feature_outputs_t;
         signal      so              : out    feature_signal_outputs_t;
         signal      rand_ctr        : inout  natural range 0 to RAND_POOL_SIZE;
         signal      iout            : in     instance_outputs_arr_t;
@@ -109,7 +107,6 @@ package body btr_fd_feature is
         variable clock_meas         :       natural := 0;
         variable frames_equal       :       boolean;
     begin
-        o.outcome := true;
 
         -----------------------------------------------------------------------
         -- 1. Disable both Nodes. Generate random bit-rate and configure it sa 

@@ -94,7 +94,6 @@ use lib.pkg_feature_exec_dispath.all;
 
 package message_filter_feature is
     procedure message_filter_feature_exec(
-        variable    o               : out    feature_outputs_t;
         signal      so              : out    feature_signal_outputs_t;
         signal      rand_ctr        : inout  natural range 0 to RAND_POOL_SIZE;
         signal      iout            : in     instance_outputs_arr_t;
@@ -106,7 +105,6 @@ end package;
 
 package body message_filter_feature is
     procedure message_filter_feature_exec(
-        variable    o               : out    feature_outputs_t;
         signal      so              : out    feature_signal_outputs_t;
         signal      rand_ctr        : inout  natural range 0 to RAND_POOL_SIZE;
         signal      iout            : in     instance_outputs_arr_t;
@@ -132,7 +130,6 @@ package body message_filter_feature is
         variable l_th               :       natural := 0;
         variable h_th               :       natural := 0;
     begin
-        o.outcome := true;
         CAN_generate_frame(rand_ctr, CAN_frame);
         CAN_frame.brs := '0';
 

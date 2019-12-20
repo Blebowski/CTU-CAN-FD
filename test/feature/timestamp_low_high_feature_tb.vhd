@@ -64,7 +64,6 @@ use lib.pkg_feature_exec_dispath.all;
 
 package timestamp_low_high_feature is
     procedure timestamp_low_high_feature_exec(
-        variable    o               : out    feature_outputs_t;
         signal      so              : out    feature_signal_outputs_t;
         signal      rand_ctr        : inout  natural range 0 to RAND_POOL_SIZE;
         signal      iout            : in     instance_outputs_arr_t;
@@ -76,7 +75,6 @@ end package;
 
 package body timestamp_low_high_feature is
     procedure timestamp_low_high_feature_exec(
-        variable    o               : out    feature_outputs_t;
         signal      so              : out    feature_signal_outputs_t;
         signal      rand_ctr        : inout  natural range 0 to RAND_POOL_SIZE;
         signal      iout            : in     instance_outputs_arr_t;
@@ -93,7 +91,6 @@ package body timestamp_low_high_feature is
         
         variable ts_rand            :        std_logic_vector(63 downto 0);
     begin
-        o.outcome := true;
 
         -----------------------------------------------------------------------
         -- 1. Preset Timestamp value in TB. Read values from TIMESTAMP_LOW and
@@ -105,11 +102,18 @@ package body timestamp_low_high_feature is
         -- Force random timestamp so that we are sure that both words of the
         -- timestamp are clocked properly!
         rand_logic_vect_v(rand_ctr, ts_rand, 0.5);
+        
         -- Keep highest bit 0 to avoid complete overflow during the test!
         ts_rand(63) := '0';
 
-        ftr_tb_set_timestamp(ts_rand, ID_1, so.ts_preset, so.ts_preset_val);
+        -- Additionally, keep bit 31=0. This is because timestamp is internally
+        -- in TB implemented from two naturals which are 0 .. 2^31 - 1. If we
+        -- would generate bit 31=1, conversion "to_integer" from such unsigned
+        -- value is out of scope of natural!
+        ts_rand(31) := '0';
+
         info("Forcing start timestamp in Node 1 to: " & to_hstring(ts_rand));
+        ftr_tb_set_timestamp(ts_rand, ID_1, so.ts_preset, so.ts_preset_val);
 
         wait for 100 ns;
 

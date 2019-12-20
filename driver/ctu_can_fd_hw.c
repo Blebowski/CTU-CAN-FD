@@ -35,7 +35,6 @@
 #endif
 
 #include "ctu_can_fd_frame.h"
-//#include "ctu_can_fd_regs.h"
 #include "ctu_can_fd_hw.h"
 
 void ctucan_hw_write32(struct ctucan_hw_priv *priv,
@@ -648,15 +647,14 @@ bool ctucan_hw_txt_buf_give_command(struct ctucan_hw_priv *priv, u8 cmd, u8 buf)
 	}
 
 	// TODO: use named constants for the command
-	if (cmd & 0x1) {
+	if (cmd & 0x1)
 		reg.s.txce = 1;
-	} else if (cmd & 0x2) {
+	else if (cmd & 0x2)
 		reg.s.txcr = 1;
-	} else if (cmd & 0x4) {
+	else if (cmd & 0x4)
 		reg.s.txca = 1;
-	} else {
+	else
 		return false;
-	}
 
 	priv->write_reg(priv, CTU_CAN_FD_TX_COMMAND, reg.u32);
 	return true;
@@ -755,9 +753,8 @@ u64 ctucan_hw_read_timestamp(struct ctucan_hw_priv *priv)
 	ts_low.u32 = priv->read_reg(priv, CTU_CAN_FD_TIMESTAMP_LOW);
 	ts_high_2.u32 = priv->read_reg(priv, CTU_CAN_FD_TIMESTAMP_HIGH);
 
-	if (ts_high.u32 != ts_high_2.u32) {
+	if (ts_high.u32 != ts_high_2.u32)
 		ts_low.u32 = priv->read_reg(priv, CTU_CAN_FD_TIMESTAMP_LOW);
-	}
 
 	return (((u64)ts_high_2.u32) << 32) | ((u64)ts_low.u32);
 }

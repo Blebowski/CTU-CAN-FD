@@ -74,7 +74,6 @@ use lib.pkg_feature_exec_dispath.all;
 
 package tx_arb_time_tran_feature is
     procedure tx_arb_time_tran_feature_exec(
-        variable    o               : out    feature_outputs_t;
         signal      so              : out    feature_signal_outputs_t;
         signal      rand_ctr        : inout  natural range 0 to RAND_POOL_SIZE;
         signal      iout            : in     instance_outputs_arr_t;
@@ -86,7 +85,6 @@ end package;
 
 package body tx_arb_time_tran_feature is
     procedure tx_arb_time_tran_feature_exec(
-        variable    o               : out    feature_outputs_t;
         signal      so              : out    feature_signal_outputs_t;
         signal      rand_ctr        : inout  natural range 0 to RAND_POOL_SIZE;
         signal      iout            : in     instance_outputs_arr_t;
@@ -106,7 +104,6 @@ package body tx_arb_time_tran_feature is
         variable status             :       SW_Status;
     begin
 
-        o.outcome := true;
 
 
         ------------------------------------------------------------------------

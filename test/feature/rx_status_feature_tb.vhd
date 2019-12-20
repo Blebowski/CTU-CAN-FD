@@ -68,7 +68,6 @@ use lib.pkg_feature_exec_dispath.all;
 
 package rx_status_feature is
     procedure rx_status_feature_exec(
-        variable    o               : out    feature_outputs_t;
         signal      so              : out    feature_signal_outputs_t;
         signal      rand_ctr        : inout  natural range 0 to RAND_POOL_SIZE;
         signal      iout            : in     instance_outputs_arr_t;
@@ -80,7 +79,6 @@ end package;
 
 package body rx_status_feature is
     procedure rx_status_feature_exec(
-        variable    o               : out    feature_outputs_t;
         signal      so              : out    feature_signal_outputs_t;
         signal      rand_ctr        : inout  natural range 0 to RAND_POOL_SIZE;
         signal      iout            : in     instance_outputs_arr_t;
@@ -99,7 +97,6 @@ package body rx_status_feature is
         variable command            :       SW_command := SW_command_rst_val;
         variable status             :       SW_status;
     begin
-        o.outcome := true;
 
         ------------------------------------------------------------------------
         -- Restart the content of the buffer...

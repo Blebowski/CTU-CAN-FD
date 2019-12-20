@@ -1,5 +1,5 @@
-// SPDX-License-Identifier: GPL-2.0+
-/*******************************************************************************
+/* SPDX-License-Identifier: GPL-2.0+
+ *******************************************************************************
  *
  * CTU CAN FD IP Core
  * Copyright (C) 2015-2018
@@ -34,21 +34,11 @@
 #include <asm/byteorder.h>
 
 #if defined(__LITTLE_ENDIAN_BITFIELD) == defined(__BIG_ENDIAN_BITFIELD)
-# error Either __BIG_ENDIAN_BITFIELD or __LITTLE_ENDIAN_BITFIELD must be defined.
+# error __BIG_ENDIAN_BITFIELD or __LITTLE_ENDIAN_BITFIELD must be defined.
 #endif
 
 #include "ctu_can_fd_regs.h"
 #include "ctu_can_fd_frame.h"
-
-/*
-	MJ TODO:
-	+ consider move of more small functions to *.h, make them inline
-	+ either pass union arguments by value or just as u32;
-	  this way they are forced on stack instead of passing in register
-	  + one level of pointer indirection, which sucks performance-wise
-	  - use u32 directly, as non-primitive types (however small )are not
-		guaranteed to be passed in registers across all ABIs
-*/
 
 #define CTU_CAN_FD_RETR_MAX 15
 

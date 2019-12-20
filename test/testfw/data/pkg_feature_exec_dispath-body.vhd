@@ -62,7 +62,6 @@ package body pkg_feature_exec_dispath is
 procedure exec_feature_test(
     --Common test parameters
     constant test_name    : in     string;
-    variable o            : out    feature_outputs_t;
     signal   so           : out    feature_signal_outputs_t;
     signal   rand_ctr     : inout  natural range 0 to RAND_POOL_SIZE;
     signal   iout         : in     instance_outputs_arr_t;
@@ -70,13 +69,11 @@ procedure exec_feature_test(
     signal   bus_level    : in     std_logic
 ) is
 begin
-    o.outcome := false;
 
     if false then
     {% for test in tests %}
     elsif str_equal(test_name, "{{ test }}") then
         {{ test }}_feature_exec(
-            o => o,
             rand_ctr => rand_ctr,
             mem_bus => mem_bus,
             iout => iout,

@@ -72,7 +72,6 @@ use lib.pkg_feature_exec_dispath.all;
 
 package no_sof_tx_feature is
     procedure no_sof_tx_feature_exec(
-        variable    o               : out    feature_outputs_t;
         signal      so              : out    feature_signal_outputs_t;
         signal      rand_ctr        : inout  natural range 0 to RAND_POOL_SIZE;
         signal      iout            : in     instance_outputs_arr_t;
@@ -84,7 +83,6 @@ end package;
 
 package body no_sof_tx_feature is
     procedure no_sof_tx_feature_exec(
-        variable    o               : out    feature_outputs_t;
         signal      so              : out    feature_signal_outputs_t;
         signal      rand_ctr        : inout  natural range 0 to RAND_POOL_SIZE;
         signal      iout            : in     instance_outputs_arr_t;
@@ -124,7 +122,6 @@ package body no_sof_tx_feature is
                  
         variable pc_state           :     SW_PC_Debug;
     begin
-        o.outcome := true;
 
         ------------------------------------------------------------------------
         -- 1. Configure both Nodes to one-shot mode.

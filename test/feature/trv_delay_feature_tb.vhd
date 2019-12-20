@@ -78,7 +78,6 @@ use lib.pkg_feature_exec_dispath.all;
 
 package trv_delay_feature is
     procedure trv_delay_feature_exec(
-        variable    o               : out    feature_outputs_t;
         signal      so              : out    feature_signal_outputs_t;
         signal      rand_ctr        : inout  natural range 0 to RAND_POOL_SIZE;
         signal      iout            : in     instance_outputs_arr_t;
@@ -91,7 +90,6 @@ end package;
 
 package body trv_delay_feature is
     procedure trv_delay_feature_exec(
-        variable    o               : out    feature_outputs_t;
         signal      so              : out    feature_signal_outputs_t;
         signal      rand_ctr        : inout  natural range 0 to RAND_POOL_SIZE;
         signal      iout            : in     instance_outputs_arr_t;
@@ -114,7 +112,6 @@ package body trv_delay_feature is
 
         variable bus_timing         : bit_time_config_type;
     begin
-        o.outcome := true;
 
         -----------------------------------------------------------------------
         -- 1. Configure SSP Offset to 7 + TRV_DELAY and SSP source to use

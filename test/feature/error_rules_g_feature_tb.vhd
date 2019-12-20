@@ -41,29 +41,21 @@
 
 --------------------------------------------------------------------------------
 -- Purpose:
---  Fault confinement rules - rule B - feature test.
+--  Fault confinement rules - rule G - feature test.
 --
 -- Verifies:
---  1. When a receiver detects a dominant bit as the first bit after sending an
---     error flag, the receive error counter shall be incremented by 8.
+--  1. After the successful transmission of a frame (getting ACK and no error
+--     has been detected until EOF is finished), the transmit error counter
+--     shall be decremented by 1 unless it was already 0.
 --
 -- Test sequence:
---  1. Set Node 2 not to accept CAN FD frames. Transmitt CAN FD frame by Node 1
---     and Wait until Error frame in Node 2. Read Error counters of Node 2.
---     Wait for 7 sample points (Error flag + 1st bit post Error flag) of Node 2
---     and check that sampled value is dominant and sent is recessive. Read
---     RX Error counter and check that it was incremented by 8. Check that TX
---     Error counter is the same as before!
---  2. Set Node 1 not to accept CAN FD frames (Node 2 will accept CAN FD frames).
---     Transmitt CAN FD frame by Node 1
---     and Wait until Error frame in Node 2. Read Error counters of Node 2.
---     Wait for 7 sample points (Error flag + 1st bit post Error flag) of Node 2
---     and check that sampled value is dominant and sent is recessive. Read
---     RX Error counter and check that it was incremented by 8. Check that TX
---     Error counter is the same as before!
+--  1. Set TEC of Node 1 to random value till 255. Send frame by Node 1, wait
+--     till end of EOF and check that TEC is decremented at the end of EOF!
+--  2. Set TEC of Node 1 to 0. Send frame by Node 1. Wait until frame is sent
+--     and check that TEC is still 0!
 --------------------------------------------------------------------------------
 -- Revision History:
---    26.11.2019   Created file
+--    13.12.2019   Created file
 --------------------------------------------------------------------------------
 
 context work.ctu_can_synth_context;
@@ -71,8 +63,8 @@ context work.ctu_can_test_context;
 
 use lib.pkg_feature_exec_dispath.all;
 
-package error_rules_b_feature is
-    procedure error_rules_b_feature_exec(
+package error_rules_g_feature is
+    procedure error_rules_g_feature_exec(
         signal      so              : out    feature_signal_outputs_t;
         signal      rand_ctr        : inout  natural range 0 to RAND_POOL_SIZE;
         signal      iout            : in     instance_outputs_arr_t;
@@ -81,8 +73,8 @@ package error_rules_b_feature is
     );
 end package;
 
-package body error_rules_b_feature is
-    procedure error_rules_b_feature_exec(
+package body error_rules_g_feature is
+    procedure error_rules_g_feature_exec(
         signal      so              : out    feature_signal_outputs_t;
         signal      rand_ctr        : inout  natural range 0 to RAND_POOL_SIZE;
         signal      iout            : in     instance_outputs_arr_t;
@@ -107,91 +99,67 @@ package body error_rules_b_feature is
         variable err_counters_2     :       SW_error_counters := (0, 0, 0, 0);
         variable err_counters_3     :       SW_error_counters := (0, 0, 0, 0);
         variable err_counters_4     :       SW_error_counters := (0, 0, 0, 0);
+
+        variable id_vect            :       std_logic_vector(28 downto 0);
+        variable err_capt           :       SW_error_capture;
+        
+        variable bit_waits          :       natural := 0;
+        variable pc_dbg             :       SW_PC_Debug;
     begin
 
         -----------------------------------------------------------------------
-        -- 1. Set Node 2 not to accept CAN FD frames. Transmitt CAN FD frame by
-        --    Node 1 and Wait until Error frame in Node 2. Read Error counters
-        --    of Node 2. Wait for 7 sample points (Error flag + 1st bit post 
-        --    Error flag) of Node 2 and check that sampled value is dominant
-        --    and sent is recessive. Read RX Error counter and check that it
-        --    was incremented by 8. Check that TX Error counter is the same as
-        --    before! 
+        -- 1. Set TEC of Node 1 to random value till 255. Send frame by Node 1,
+        --    wait till end of EOF and check that TEC is decremented at the
+        --    end of EOF!
         -----------------------------------------------------------------------
         info("Step 1");
 
-        CAN_enable_retr_limit(true, 0, ID_1, mem_bus(1));
+        mode_1.test := true;
+        set_core_mode(mode_1, ID_1, mem_bus(1));
+
+        rand_int_v(rand_ctr, 255, err_counters_1.tx_counter);
+        if (err_counters_1.tx_counter = 0) then
+            err_counters_1.tx_counter := 1;
+        end if;
+        set_error_counters(err_counters_1, ID_1, mem_bus(1));
         
-        mode_2.flexible_data_rate := false;
-        set_core_mode(mode_2, ID_2, mem_bus(2));
-
         CAN_generate_frame(rand_ctr, CAN_frame);
-        CAN_frame.frame_format := FD_CAN;
         CAN_send_frame(CAN_frame, 1, ID_1, mem_bus(1), frame_sent);
+        CAN_wait_pc_state(pc_deb_eof, ID_1, mem_bus(1));
 
-        CAN_wait_error_frame(ID_2, mem_bus(2));
-        wait for 20 ns;
-        read_error_counters(err_counters_1, ID_2, mem_bus(2));
-
-        for i in 0 to 6 loop
-            CAN_wait_sample_point(iout(2).stat_bus);
+        CAN_read_pc_debug(pc_dbg, ID_1, mem_bus(1));
+        while (pc_dbg = pc_deb_eof) loop
+            CAN_read_pc_debug(pc_dbg, ID_1, mem_bus(1));
+            if (pc_dbg = pc_deb_eof) then
+                read_error_counters(err_counters_2, ID_1, mem_bus(1));
+                check(err_counters_1.tx_counter = err_counters_2.tx_counter,
+                        "TEC not decremented before end of EOF!");
+            end if;
+            wait for 50 ns; -- To make checks more sparse
         end loop;
-
-        wait for 20 ns;
-        read_error_counters(err_counters_2, ID_2, mem_bus(2));
-
-        check(err_counters_2.rx_counter = err_counters_1.rx_counter + 8,
-            "RX Error counter inctemented by 8 in receiver!");
-
-        check(err_counters_2.tx_counter = err_counters_1.tx_counter,
-            "TX Error counter unchanged in receiver!");
-
-        CAN_wait_bus_idle(ID_1, mem_bus(1));
-        CAN_wait_bus_idle(ID_2, mem_bus(2));
+        
+        read_error_counters(err_counters_2, ID_1, mem_bus(1));
+        check(err_counters_1.tx_counter - 1 = err_counters_2.tx_counter,
+                "TEC decremented by 1 after EOF");
 
         -----------------------------------------------------------------------
-        -- 2. Set Node 1 not to accept CAN FD frames (Node 2 will accept CAN FD 
-        --    frames). Transmitt CAN FD frame by Node 1 and Wait until Error 
-        --    frame in Node 2. Read Error counters of Node 2. Wait for 7 sample
-        --    points (Error flag + 1st bit post Error flag) of Node 2 and check
-        --    that sampled value is dominant and sent is recessive. Read RX Error
-        --    counter and check that it was incremented by 8. Check that TX Error
-        --    counter is the same as before!
+        -- 2. Set TEC of Node 1 to 0. Send frame by Node 1. Wait until frame is
+        --    sent and check that TEC is still 0!
         -----------------------------------------------------------------------
         info("Step 2");
 
-        -- Enable CAN FD frames in Node 2
-        mode_2.flexible_data_rate := true;
-        set_core_mode(mode_2, ID_2, mem_bus(2));
-
-        -- Disable in Node 1
-        mode_1.flexible_data_rate := false;
-        set_core_mode(mode_1, ID_1, mem_bus(1));
+        err_counters_1.tx_counter := 0;
+        set_error_counters(err_counters_1, ID_1, mem_bus(1));
 
         CAN_generate_frame(rand_ctr, CAN_frame);
-        CAN_frame.frame_format := FD_CAN;
         CAN_send_frame(CAN_frame, 1, ID_1, mem_bus(1), frame_sent);
-
-        -- Now Node 1 should be the first to transmitt Error frame!
-        CAN_wait_error_frame(ID_1, mem_bus(1));
-        wait for 20 ns;
-        read_error_counters(err_counters_1, ID_1, mem_bus(1));
-
-        for i in 0 to 6 loop
-            CAN_wait_sample_point(iout(1).stat_bus);
-        end loop;
-
-        wait for 20 ns;
-        read_error_counters(err_counters_2, ID_1, mem_bus(1));
-
-        check(err_counters_2.rx_counter = err_counters_1.rx_counter,
-            "RX Error counter unchanged in transmitter!");
-
-        check(err_counters_2.tx_counter = err_counters_1.tx_counter,
-            "TX Error counter unchanged in transmitter!");
+        CAN_wait_frame_sent(ID_1, mem_bus(1));
 
         CAN_wait_bus_idle(ID_1, mem_bus(1));
         CAN_wait_bus_idle(ID_2, mem_bus(2));
+        
+        read_error_counters(err_counters_2, ID_1, mem_bus(1));
+        check(err_counters_2.tx_counter = 0, "TEC remains zero!");
 
     end procedure;
 

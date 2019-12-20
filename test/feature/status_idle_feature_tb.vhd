@@ -69,7 +69,6 @@ use lib.pkg_feature_exec_dispath.all;
 
 package status_idle_feature is
     procedure status_idle_feature_exec(
-        variable    o               : out    feature_outputs_t;
         signal      so              : out    feature_signal_outputs_t;
         signal      rand_ctr        : inout  natural range 0 to RAND_POOL_SIZE;
         signal      iout            : in     instance_outputs_arr_t;
@@ -81,7 +80,6 @@ end package;
 
 package body status_idle_feature is
     procedure status_idle_feature_exec(
-        variable    o               : out    feature_outputs_t;
         signal      so              : out    feature_signal_outputs_t;
         signal      rand_ctr        : inout  natural range 0 to RAND_POOL_SIZE;
         signal      iout            : in     instance_outputs_arr_t;
@@ -125,7 +123,6 @@ package body status_idle_feature is
         variable fault_state        :     SW_fault_state;
 
     begin
-        o.outcome := true;
 
         -----------------------------------------------------------------------
         -- 1. Check that STATUS[IDLE] is set. Transmitt CAN frame by Node 1

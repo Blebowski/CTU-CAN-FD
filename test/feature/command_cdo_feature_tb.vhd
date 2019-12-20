@@ -74,7 +74,6 @@ use lib.pkg_feature_exec_dispath.all;
 
 package command_cdo_feature is
     procedure command_cdo_feature_exec(
-        variable    o               : out    feature_outputs_t;
         signal      so              : out    feature_signal_outputs_t;
         signal      rand_ctr        : inout  natural range 0 to RAND_POOL_SIZE;
         signal      iout            : in     instance_outputs_arr_t;
@@ -86,7 +85,6 @@ end package;
 
 package body command_cdo_feature is
     procedure command_cdo_feature_exec(
-        variable    o               : out    feature_outputs_t;
         signal      so              : out    feature_signal_outputs_t;
         signal      rand_ctr        : inout  natural range 0 to RAND_POOL_SIZE;
         signal      iout            : in     instance_outputs_arr_t;
@@ -122,7 +120,6 @@ package body command_cdo_feature is
         variable id_vect            :     std_logic_vector(28 downto 0);
         variable command            :     SW_command := SW_command_rst_val;
     begin
-        o.outcome := true;
 
         -----------------------------------------------------------------------
         -- 1. Read size of RX Buffer in Node 1. Check that DOR flag is not set.

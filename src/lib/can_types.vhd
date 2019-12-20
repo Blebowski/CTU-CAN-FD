@@ -108,6 +108,7 @@ package can_types is
         s_pc_act_err_flag,
         s_pc_pas_err_flag,
         s_pc_err_delim_wait,
+        s_pc_err_ovr_flag_too_long,
         s_pc_err_delim,
         s_pc_ovr_flag,
         s_pc_ovr_delim_wait,

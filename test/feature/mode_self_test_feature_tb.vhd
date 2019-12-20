@@ -66,7 +66,6 @@ use lib.pkg_feature_exec_dispath.all;
 
 package mode_self_test_feature is
     procedure mode_self_test_feature_exec(
-        variable    o               : out    feature_outputs_t;
         signal      so              : out    feature_signal_outputs_t;
         signal      rand_ctr        : inout  natural range 0 to RAND_POOL_SIZE;
         signal      iout            : in     instance_outputs_arr_t;
@@ -78,7 +77,6 @@ end package;
 
 package body mode_self_test_feature is
     procedure mode_self_test_feature_exec(
-        variable    o               : out    feature_outputs_t;
         signal      so              : out    feature_signal_outputs_t;
         signal      rand_ctr        : inout  natural range 0 to RAND_POOL_SIZE;
         signal      iout            : in     instance_outputs_arr_t;
@@ -107,7 +105,6 @@ package body mode_self_test_feature is
         variable frames_equal       :       boolean := false;
         variable pc_dbg             :       SW_PC_Debug;   
     begin
-        o.outcome := true;
 
         ------------------------------------------------------------------------
         -- 1. Configures Self Test mode in Node 1. Configure ACK forbidden in
@@ -151,8 +148,13 @@ package body mode_self_test_feature is
         get_controller_status(status, ID_1, mem_bus(1));
         check_false(status.error_transmission, "Error frame not transmitted!");
         CAN_read_pc_debug(pc_dbg, ID_1, mem_bus(1));
-        check(pc_dbg = pc_deb_ack_delim, "ACK delimiter follows recessive ACK!");
         
+        -- For CAN FD frames secondary ACK is still marked as ACK to DEBUG
+        -- register! From there if this is recessive (it is now, no ACK is sent),
+        -- it is interpreted as ACK Delimiter and we move directly to EOF! This
+        -- is OK!
+        check(pc_dbg = pc_deb_ack_delim or
+              pc_dbg = pc_deb_eof, "ACK delimiter follows recessive ACK!");
         
         CAN_wait_bus_idle(ID_2, mem_bus(2));
         CAN_wait_bus_idle(ID_1, mem_bus(1));

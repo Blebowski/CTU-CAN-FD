@@ -32,6 +32,7 @@ unit:
             wave: unit/RX_Buffer/rxbf_unit.tcl
         tx_arb:
             wave: unit/TX_Arbitrator/txar_unit.tcl
+            iterations: 0
         tx_buf:
             wave: unit/TX_Buffer/txbf_unit.tcl
 reference:
@@ -77,7 +78,7 @@ feature:
         alc_ide:
         alc_rtr_r0:
         btr:
-            iterations: 3
+            iterations: 1
         btr_fd:
             iterations: 3
         btr_ssp_access:
@@ -96,6 +97,9 @@ feature:
         error_rules_c:
         error_rules_d:
         error_rules_e:
+        error_rules_f_tx:
+        error_rules_f_rx:
+        error_rules_g:
         fault_state:
         mode_loopback:
             iterations: 10

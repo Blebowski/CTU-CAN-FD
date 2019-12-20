@@ -511,7 +511,7 @@ filename "version.tex"
 \noindent
 \align center
 \begin_inset Tabular
-<lyxtabular version="3" rows="6" columns="5">
+<lyxtabular version="3" rows="7" columns="5">
 <features tabularvalignment="middle">
 <column alignment="center" valignment="top" width="1.5cm">
 <column alignment="center" valignment="top" width="3cm">
@@ -755,11 +755,58 @@ Clarify TXT Buffer will go to TX Failed in Bus-off.
 </cell>
 </row>
 <row>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
 0.5
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+2.2
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Ondrej Ille
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+07-11-2019
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Replace SSP shift register by SSP generator.
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+0.6
 \end_layout
 
 \end_inset
@@ -786,7 +833,7 @@ Ondrej Ille
 \begin_inset Text
 
 \begin_layout Plain Layout
-07-11-2019
+13-12-2019
 \end_layout
 
 \end_inset
@@ -795,7 +842,16 @@ Ondrej Ille
 \begin_inset Text
 
 \begin_layout Plain Layout
-Replace SSP shift register by SSP generator.
+Add 
+\begin_inset Quotes eld
+\end_inset
+
+Error delimiter too long
+\begin_inset Quotes erd
+\end_inset
+
+ state to Protocol control FSM.
+ Clear non-actual TODOs.
 \end_layout
 
 \end_inset
@@ -1122,12 +1178,10 @@ When CTU CAN FD GIT repository is clonned, register map can be generated
 \end_layout
 
 \begin_layout Verbatim
-
 cd scripts
 \end_layout
 
 \begin_layout Verbatim
-
 ./update_reg_map
 \end_layout
 
@@ -1140,12 +1194,10 @@ Documentation can be exported from VHDL RTL codes by following script:
 \end_layout
 
 \begin_layout Verbatim
-
 cd scripts
 \end_layout
 
 \begin_layout Verbatim
-
 python gen_lyx_tables.py --configPath vhdl_lyx_interface_cfg.yml
 \end_layout
 
@@ -1178,12 +1230,10 @@ CTU CAN FD contains release tags in GIT repository.
 \end_layout
 
 \begin_layout Verbatim
-
 cd scripts
 \end_layout
 
 \begin_layout Verbatim
-
 python create_release.py --output_dir ../release_directory_name
 \end_layout
 
@@ -1205,12 +1255,10 @@ src/component.xml
 \end_layout
 
 \begin_layout Verbatim
-
 cd scripts
 \end_layout
 
 \begin_layout Verbatim
-
 python gen_vivado_component.py
 \end_layout
 
@@ -31380,11 +31428,8 @@ data
 \color inherit
 ).
  BTR and BTR_FD registers are writable only when SETTINGS[ENA]='0', otherwise
- write access to these registers has no effect (
-\color blue
-This is TODO, right now they are writable always!
-\color inherit
-) Timing parameters for each
+ write access to these registers has no effect.
+ Timing parameters for each
 \color red
  bit rate
 \color inherit

@@ -67,7 +67,6 @@ use lib.pkg_feature_exec_dispath.all;
 
 package status_txs_feature is
     procedure status_txs_feature_exec(
-        variable    o               : out    feature_outputs_t;
         signal      so              : out    feature_signal_outputs_t;
         signal      rand_ctr        : inout  natural range 0 to RAND_POOL_SIZE;
         signal      iout            : in     instance_outputs_arr_t;
@@ -79,7 +78,6 @@ end package;
 
 package body status_txs_feature is
     procedure status_txs_feature_exec(
-        variable    o               : out    feature_outputs_t;
         signal      so              : out    feature_signal_outputs_t;
         signal      rand_ctr        : inout  natural range 0 to RAND_POOL_SIZE;
         signal      iout            : in     instance_outputs_arr_t;
@@ -119,7 +117,6 @@ package body status_txs_feature is
         variable num_frames         :     integer;
         variable mode_1             :     SW_mode;
     begin
-        o.outcome := true;
 
         -----------------------------------------------------------------------
         --  1. Send frame by Node 1. Wait until SOF starts and check that

@@ -455,8 +455,8 @@ static void ctucan_err_interrupt(struct net_device *ndev,
 				ctucan_state_to_str(state));
 
 		if (priv->can.state == state)
-			netdev_warn(ndev, "   current and previous state is the same!"
-					" (missed interrupt?)");
+			netdev_warn(ndev,
+				    "current and previous state is the same! (missed interrupt?)");
 
 		priv->can.state = state;
 		if (state == CAN_STATE_BUS_OFF) {
@@ -674,7 +674,8 @@ static void ctucan_tx_interrupt(struct net_device *ndev)
 				if (first) {
 					netdev_err(ndev, "BUG: TXB#%u not in a finished state (0x%x)!",
 						   txb_idx, status);
-					spin_unlock_irqrestore(&priv->tx_lock, flags);
+					spin_unlock_irqrestore(&priv->tx_lock,
+								flags);
 					/* do not clear nor wake */
 					return;
 				}

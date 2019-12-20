@@ -71,7 +71,6 @@ use lib.pkg_feature_exec_dispath.all;
 
 package tx_from_intermission_feature is
     procedure tx_from_intermission_feature_exec(
-        variable    o               : out    feature_outputs_t;
         signal      so              : out    feature_signal_outputs_t;
         signal      rand_ctr        : inout  natural range 0 to RAND_POOL_SIZE;
         signal      iout            : in     instance_outputs_arr_t;
@@ -83,7 +82,6 @@ end package;
 
 package body tx_from_intermission_feature is
     procedure tx_from_intermission_feature_exec(
-        variable    o               : out    feature_outputs_t;
         signal      so              : out    feature_signal_outputs_t;
         signal      rand_ctr        : inout  natural range 0 to RAND_POOL_SIZE;
         signal      iout            : in     instance_outputs_arr_t;
@@ -125,7 +123,6 @@ package body tx_from_intermission_feature is
         
         variable frame_equal        :     boolean;
     begin
-        o.outcome := true;
 
         -----------------------------------------------------------------------
         -- 1. Insert CAN frame for transmission into Node 2. Wait until

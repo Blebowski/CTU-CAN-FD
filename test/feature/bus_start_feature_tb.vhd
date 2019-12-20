@@ -74,7 +74,6 @@ use lib.pkg_feature_exec_dispath.all;
 
 package bus_start_feature is
     procedure bus_start_feature_exec(
-        variable    o               : out    feature_outputs_t;
         signal      so              : out    feature_signal_outputs_t;
         signal      rand_ctr        : inout  natural range 0 to RAND_POOL_SIZE;
         signal      iout            : in     instance_outputs_arr_t;
@@ -86,7 +85,6 @@ end package;
 
 package body bus_start_feature is
     procedure bus_start_feature_exec(
-        variable    o               : out    feature_outputs_t;
         signal      so              : out    feature_signal_outputs_t;
         signal      rand_ctr        : inout  natural range 0 to RAND_POOL_SIZE;
         signal      iout            : in     instance_outputs_arr_t;
@@ -109,7 +107,6 @@ package body bus_start_feature is
         variable status             :       SW_status;
 
     begin
-        o.outcome := true;
 
         ------------------------------------------------------------------------
         -- 1. Disable both Nodes. Insert 2 frames to Node 1. Check both Nodes

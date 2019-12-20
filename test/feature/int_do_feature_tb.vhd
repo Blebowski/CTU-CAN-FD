@@ -89,7 +89,6 @@ use lib.pkg_feature_exec_dispath.all;
 
 package int_do_feature is
     procedure int_do_feature_exec(
-        variable    o               : out    feature_outputs_t;
         signal      so              : out    feature_signal_outputs_t;
         signal      rand_ctr        : inout  natural range 0 to RAND_POOL_SIZE;
         signal      iout            : in     instance_outputs_arr_t;
@@ -101,7 +100,6 @@ end package;
 
 package body int_do_feature is
     procedure int_do_feature_exec(
-        variable    o               : out    feature_outputs_t;
         signal      so              : out    feature_signal_outputs_t;
         signal      rand_ctr        : inout  natural range 0 to RAND_POOL_SIZE;
         signal      iout            : in     instance_outputs_arr_t;
@@ -134,7 +132,6 @@ package body int_do_feature is
         variable err_ctrs           :     SW_error_counters;
         variable status             :     SW_status;
     begin
-        o.outcome := true;
 
 
         -----------------------------------------------------------------------

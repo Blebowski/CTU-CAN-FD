@@ -74,7 +74,6 @@ use lib.pkg_feature_exec_dispath.all;
 
 package mode_listen_only_feature is
     procedure mode_listen_only_feature_exec(
-        variable    o               : out    feature_outputs_t;
         signal      so              : out    feature_signal_outputs_t;
         signal      rand_ctr        : inout  natural range 0 to RAND_POOL_SIZE;
         signal      iout            : in     instance_outputs_arr_t;
@@ -86,7 +85,6 @@ end package;
 
 package body mode_listen_only_feature is
     procedure mode_listen_only_feature_exec(
-        variable    o               : out    feature_outputs_t;
         signal      so              : out    feature_signal_outputs_t;
         signal      rand_ctr        : inout  natural range 0 to RAND_POOL_SIZE;
         signal      iout            : in     instance_outputs_arr_t;
@@ -115,7 +113,6 @@ package body mode_listen_only_feature is
         variable frames_equal       :       boolean := false;
         variable pc_dbg             :       SW_PC_Debug;   
     begin
-        o.outcome := true;
 
         ------------------------------------------------------------------------
         -- 1. Configure Listen only mode in Node 1. Set Self test mode in Node 2.

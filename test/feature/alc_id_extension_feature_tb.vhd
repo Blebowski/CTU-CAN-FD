@@ -82,7 +82,6 @@ use lib.pkg_feature_exec_dispath.all;
 
 package alc_id_extension_feature is
     procedure alc_id_extension_feature_exec(
-        variable    o               : out    feature_outputs_t;
         signal      so              : out    feature_signal_outputs_t;
         signal      rand_ctr        : inout  natural range 0 to RAND_POOL_SIZE;
         signal      iout            : in     instance_outputs_arr_t;
@@ -94,7 +93,6 @@ end package;
 
 package body alc_id_extension_feature is
     procedure alc_id_extension_feature_exec(
-        variable    o               : out    feature_outputs_t;
         signal      so              : out    feature_signal_outputs_t;
         signal      rand_ctr        : inout  natural range 0 to RAND_POOL_SIZE;
         signal      iout            : in     instance_outputs_arr_t;
@@ -132,7 +130,6 @@ package body alc_id_extension_feature is
         variable id_var             :     std_logic_vector(28 downto 0) :=
                  (OTHERS => '0');
     begin
-        o.outcome := true;
 
         ------------------------------------------------------------------------
         -- 1. Configure both Nodes to one-shot mode.

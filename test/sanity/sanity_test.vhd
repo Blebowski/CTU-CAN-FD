@@ -701,6 +701,9 @@ begin
 
                     config_done (i) <= false;
 
+                    -- Initialize TXT Buffer memories (not to have too many logs!)
+                    CAN_init_txtb_mems(n_index, mb_arr(i));
+
                     -- Perform the configuration of the node
                     CAN_configure_timing(timing_config, n_index, mb_arr(i));
                     CAN_turn_controller(true, n_index, mb_arr(i));

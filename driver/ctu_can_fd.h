@@ -1,5 +1,5 @@
-// SPDX-License-Identifier: GPL-2.0+
-/*******************************************************************************
+/* SPDX-License-Identifier: GPL-2.0+
+ *******************************************************************************
  *
  * CTU CAN FD IP Core
  * Copyright (C) 2015-2018
@@ -76,9 +76,11 @@ struct ctucan_priv {
  * Return: 0 on success and failure value on error
  */
 int ctucan_probe_common(struct device *dev, void __iomem *addr,
-						int irq, unsigned int ntxbufs, unsigned long can_clk_rate,
-						int pm_enable_call, void (*set_drvdata_fnc)(struct device *dev,
-																	struct net_device *ndev));
+			int irq, unsigned int ntxbufs,
+			unsigned long can_clk_rate,
+			int pm_enable_call,
+			void (*set_drvdata_fnc)(struct device *dev,
+			struct net_device *ndev));
 
 int ctucan_suspend(struct device *dev) __maybe_unused;
 int ctucan_resume(struct device *dev) __maybe_unused;

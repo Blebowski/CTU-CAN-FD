@@ -430,7 +430,6 @@ begin
     test:process
         constant ID_1    : natural range 0 to 15 := 1;
         constant ID_2    : natural range 0 to 15 := 2;
-        variable o       : feature_outputs_t;
     begin
         test_runner_setup(runner, runner_cfg);
 
@@ -480,7 +479,6 @@ begin
             info("Iteration ...");
             iteration_done <= false;
             exec_feature_test(test_name => test_name,
-                              o         => o,
                               rand_ctr  => rand_ctr,
                               mem_bus   => mem_bus,
                               iout      => iout,
@@ -488,13 +486,6 @@ begin
                               bus_level => bus_level
                               );
             info("... out of exec function");
-
-            if (o.outcome = false) then
-                -- LCOV_EXCL_START
-                process_error(error_ctr, error_beh, exit_imm);
-                error("Feature test failed!");
-                -- LCOV_EXCL_STOP
-            end if;
 
             wait for 200 ns;
             iteration_done <= true;

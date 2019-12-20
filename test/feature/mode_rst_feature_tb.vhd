@@ -86,7 +86,6 @@ use lib.pkg_feature_exec_dispath.all;
 
 package mode_rst_feature is
     procedure mode_rst_feature_exec(
-        variable    o               : out    feature_outputs_t;
         signal      so              : out    feature_signal_outputs_t;
         signal      rand_ctr        : inout  natural range 0 to RAND_POOL_SIZE;
         signal      iout            : in     instance_outputs_arr_t;
@@ -146,7 +145,6 @@ package body mode_rst_feature is
 
 
     procedure mode_rst_feature_exec(
-        variable    o               : out    feature_outputs_t;
         signal      so              : out    feature_signal_outputs_t;
         signal      rand_ctr        : inout  natural range 0 to RAND_POOL_SIZE;
         signal      iout            : in     instance_outputs_arr_t;
@@ -192,7 +190,6 @@ package body mode_rst_feature is
         variable access_size        :     aval_access_size := BIT_32;
 
     begin
-        o.outcome := true;
 
         -----------------------------------------------------------------------
         -- 1. Write all RW registers to random value. Check they were written.
@@ -203,6 +200,12 @@ package body mode_rst_feature is
 
                 rand_logic_vect_v(rand_ctr, rand_data, 0.5);
                 mask_reg_val(Control_registers_list(i), rand_data);
+                
+                -- Don't issue Soft reset under our own hands! Keep test mode!
+                if (Control_registers_list(i).address = MODE_ADR) then
+                    rand_data(RST_IND) := '0';
+                    rand_data(TSTM_IND) := '1';
+                end if;
                 
                 -- Keep what was written in models reset value attribute!    
                 reg_model(i).reset_val := rand_data;

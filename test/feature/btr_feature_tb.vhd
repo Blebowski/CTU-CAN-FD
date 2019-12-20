@@ -66,7 +66,6 @@ use lib.pkg_feature_exec_dispath.all;
 
 package btr_feature is
     procedure btr_feature_exec(
-        variable    o               : out    feature_outputs_t;
         signal      so              : out    feature_signal_outputs_t;
         signal      rand_ctr        : inout  natural range 0 to RAND_POOL_SIZE;
         signal      iout            : in     instance_outputs_arr_t;
@@ -78,7 +77,6 @@ end package;
 
 package body btr_feature is
     procedure btr_feature_exec(
-        variable    o               : out    feature_outputs_t;
         signal      so              : out    feature_signal_outputs_t;
         signal      rand_ctr        : inout  natural range 0 to RAND_POOL_SIZE;
         signal      iout            : in     instance_outputs_arr_t;
@@ -106,8 +104,9 @@ package body btr_feature is
 
         variable clock_meas         :       natural := 0;
         variable frames_equal       :       boolean;
+        
+        variable tx_delay           :       time;
     begin
-        o.outcome := true;
 
         -----------------------------------------------------------------------
         -- 1. Disable both Nodes. Generate random bit-rate and configure it sa 
@@ -126,6 +125,19 @@ package body btr_feature is
         -- Longer TQ is possible but test run-time is killing us!
         rand_int_v(rand_ctr, 63, bus_timing.tq_nbt);
         rand_int_v(rand_ctr, 33, bus_timing.sjw_nbt);
+        
+        -- Configure delay of TX -> RX so that for any generated bit-rate, it
+        -- is not too high! Otherwise, roundtrip will be too high and Node will
+        -- not manage to receive ACK in time!
+        -- Before sample point, whole roundtrip must be made (and 2 more clock
+        -- cycles due to input delay!). Lets take the delay as one third of
+        -- TSEG1. Roundtrip will take two thirds and we should be safe!
+        
+        tx_delay := (((1 + bus_timing.prop_nbt + bus_timing.ph1_nbt) *
+                       bus_timing.tq_nbt) / 3) * 10 ns;
+        info("TX delay is: " & time'image(tx_delay));
+        ftr_tb_set_tran_delay(tx_delay, ID_1, so.ftr_tb_trv_delay);
+        ftr_tb_set_tran_delay(tx_delay, ID_2, so.ftr_tb_trv_delay);
 
         -----------------------------------------------------------------------
         -- Leave Data bit rate unconfigured! This will result in XXXs in register

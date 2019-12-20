@@ -74,7 +74,6 @@ use lib.pkg_feature_exec_dispath.all;
 package txt_buffer_hazard_feature is
 
     procedure txt_buffer_hazard_feature_exec(
-        variable    o               : out    feature_outputs_t;
         signal      so              : out    feature_signal_outputs_t;
         signal      rand_ctr        : inout  natural range 0 to RAND_POOL_SIZE;
         signal      iout            : in     instance_outputs_arr_t;
@@ -87,7 +86,6 @@ end package;
 package body txt_buffer_hazard_feature is
 
     procedure txt_buffer_hazard_feature_exec(
-        variable    o               : out    feature_outputs_t;
         signal      so              : out    feature_signal_outputs_t;
         signal      rand_ctr        : inout  natural range 0 to RAND_POOL_SIZE;
         signal      iout            : in     instance_outputs_arr_t;
@@ -112,7 +110,6 @@ package body txt_buffer_hazard_feature is
         variable status             :       SW_status;
 	    variable txt_buf_state	    :	    SW_TXT_Buffer_state_type;	
   begin
-        o.outcome := true;
 
 
     -- Generate CAN frame

@@ -83,7 +83,6 @@ use lib.pkg_feature_exec_dispath.all;
 
 package rx_counter_feature is
     procedure rx_counter_feature_exec(
-        variable    o               : out    feature_outputs_t;
         signal      so              : out    feature_signal_outputs_t;
         signal      rand_ctr        : inout  natural range 0 to RAND_POOL_SIZE;
         signal      iout            : in     instance_outputs_arr_t;
@@ -96,7 +95,6 @@ end package;
 
 package body rx_counter_feature is
     procedure rx_counter_feature_exec(
-        variable    o               : out    feature_outputs_t;
         signal      so              : out    feature_signal_outputs_t;
         signal      rand_ctr        : inout  natural range 0 to RAND_POOL_SIZE;
         signal      iout            : in     instance_outputs_arr_t;
@@ -122,7 +120,6 @@ package body rx_counter_feature is
         variable rx_buf_info        :       SW_RX_Buffer_info;
         variable mode_1             :       SW_mode := SW_mode_rst_val;
     begin
-        o.outcome := true;
 
         ------------------------------------------------------------------------
         -- 1. Read TX Counter from Node 1. Set One-shot mode (no retransmission)

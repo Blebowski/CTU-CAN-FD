@@ -65,7 +65,6 @@ use lib.pkg_feature_exec_dispath.all;
 
 package rx_buf_empty_read_feature is
     procedure rx_buf_empty_read_feature_exec(
-        variable    o               : out    feature_outputs_t;
         signal      so              : out    feature_signal_outputs_t;
         signal      rand_ctr        : inout  natural range 0 to RAND_POOL_SIZE;
         signal      iout            : in     instance_outputs_arr_t;
@@ -77,7 +76,6 @@ end package;
 
 package body rx_buf_empty_read_feature is
     procedure rx_buf_empty_read_feature_exec(
-        variable    o               : out    feature_outputs_t;
         signal      so              : out    feature_signal_outputs_t;
         signal      rand_ctr        : inout  natural range 0 to RAND_POOL_SIZE;
         signal      iout            : in     instance_outputs_arr_t;
@@ -112,7 +110,6 @@ package body rx_buf_empty_read_feature is
 
         variable id_vect            :     std_logic_vector(28 downto 0);
     begin
-        o.outcome := true;
 
         -----------------------------------------------------------------------
         -- 1. Read pointers from RX Buffer, check pointers are 0 (DUT is post 
