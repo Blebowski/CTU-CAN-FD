@@ -201,6 +201,12 @@ package body mode_rst_feature is
                 rand_logic_vect_v(rand_ctr, rand_data, 0.5);
                 mask_reg_val(Control_registers_list(i), rand_data);
                 
+                -- Don't issue Soft reset under our own hands! Keep test mode!
+                if (Control_registers_list(i).address = MODE_ADR) then
+                    rand_data(RST_IND) := '0';
+                    rand_data(TSTM_IND) := '1';
+                end if;
+                
                 -- Keep what was written in models reset value attribute!    
                 reg_model(i).reset_val := rand_data;
 
