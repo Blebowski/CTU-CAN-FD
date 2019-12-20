@@ -22,7 +22,7 @@ Architecture of CTU CAN FD is described in:
 [![System architecture](https://img.shields.io/badge/System_architecture--blue.svg)]( http://canbus.pages.fel.cvut.cz/ctucanfd_ip_core/ctu_can_fd_architecture.pdf)
 
 Functional description of CTU CAN FD is in datasheet:
-[![Datasheet](https://img.shields.io/badge/Datasheet--blue.svg)]( http://canbus.pages.fel.cvut.cz/ctucanfd_ip_core/ProgDokum.pdf)
+[![Datasheet](https://img.shields.io/badge/Datasheet--blue.svg)]( http://canbus.pages.fel.cvut.cz/ctucanfd_ip_core/Progdokum.pdf)
 
 CTU CAN FD is written with frequent usage of clock enables (FPGA) allowing inferred clock gating.
 
