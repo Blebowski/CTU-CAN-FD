@@ -106,6 +106,7 @@ package body btr_fd_feature is
 
         variable clock_meas         :       natural := 0;
         variable frames_equal       :       boolean;
+        variable ssp_pos            :       std_logic_vector(7 downto 0);
     begin
 
         -----------------------------------------------------------------------
@@ -181,6 +182,11 @@ package body btr_fd_feature is
 
         CAN_configure_timing(bus_timing, ID_1, mem_bus(1));
         CAN_configure_timing(bus_timing, ID_2, mem_bus(2));
+
+        -- Configure SSP so that it samples in Data-bit rate and in 50 % of
+        -- expected received bit! We need it only for Node 1!
+        ssp_pos := std_logic_vector(to_unsigned(clock_per_bit/2, 8));
+        CAN_configure_ssp(ssp_meas_n_offset, ssp_pos, ID_1, mem_bus(1));
 
         -----------------------------------------------------------------------
         -- 2. Enable both Nodes and send CAN FD frame where bit-rate is shifted

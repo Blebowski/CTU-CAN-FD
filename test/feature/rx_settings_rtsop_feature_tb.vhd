@@ -128,6 +128,10 @@ package body rx_settings_rtsop_feature is
         rand_logic_vect_v(rand_ctr, rand_ts, 0.5);
         -- Keep highest bit 0 to avoid complete overflow during the test!
         rand_ts(63) := '0';
+        
+        -- Timestamp is realized as two 32 bit naturals! Due to this, we can't
+        -- have 1 in MSB to avoid overflow.
+        rand_ts(31) := '0';
 
         ftr_tb_set_timestamp(rand_ts, ID_1, so.ts_preset, so.ts_preset_val);
         info("Forcing start timestamp in Node 1 to: " & to_hstring(rand_ts));

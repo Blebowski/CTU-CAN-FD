@@ -51,9 +51,9 @@
 -- Test sequence:
 --  1. Set Node 2 to ACK forbidden mode. Generate CAN frame and send it by Node
 --     1. Wait until Error frame is sent by Node 2. Wait for random amount of
---     bits (0-5) and force bus level to recessive for duration of one bit time.
---     Wait until bus is idle and check that RX Error counter was incremented
---     by 9 (first form error in EOF, next bit error during Error frame)!
+--     bits (0-5) and force bus level to recessive. Wait until sample point and
+--     check that RX Error counter was incremented by 9 (first form error in EOF,
+--     next bit error during Error frame)! Wait until bus is idle!
 --  2. Unset ACK Forbidden in Node 2. Generate CAN frame and send it by Node 1.
 --     Wait until Intermission in Node 2 and force bus low for duration of one
 --     bit time (overload condition). Check that overload frame is being tran-
@@ -118,10 +118,10 @@ package body error_rules_e_feature is
         -----------------------------------------------------------------------
         -- 1. Set Node 2 to ACK forbidden mode. Generate CAN frame and send it
         --    by Node 1. Wait until Error frame is sent by Node 2. Wait for
-        --    random amount of bits (0-5) and force bus level to recessive for
-        --    duration of one bit time. Wait until bus is idle and check that
-        --    RX Error counter was incremented by 9 (first form Error in EOF,
-        --    next bit error during Overload frame)!
+        --    random amount of bits (0-5) and force bus level to recessive.
+        --    Wait until sample point and check that RX Error counter was
+        --    incremented by 9 (first form error in EOF, next bit error during
+        --    Error frame)! Wait until bus is idle!
         -----------------------------------------------------------------------
         info("Step 1");
         
@@ -137,6 +137,7 @@ package body error_rules_e_feature is
         CAN_wait_error_frame(ID_2, mem_bus(2));
         
         rand_int_v(rand_ctr, 5, bit_waits);
+        info ("Waiting for " & integer'image(bit_waits) & " bits!");
         for i in 0 to bit_waits - 1 loop
             CAN_wait_sample_point(iout(2).stat_bus);
         end loop;
@@ -147,9 +148,6 @@ package body error_rules_e_feature is
         wait for 20 ns;
         release_bus_level(so.bl_force);
 
-        CAN_wait_bus_idle(ID_1, mem_bus(1));
-        CAN_wait_bus_idle(ID_2, mem_bus(2));
-
         read_error_counters(err_counters_2, ID_2, mem_bus(2));
 
         check(err_counters_2.rx_counter = err_counters_1.rx_counter + 9,
@@ -157,6 +155,9 @@ package body error_rules_e_feature is
 
         check(err_counters_2.tx_counter = err_counters_1.tx_counter,
             "TX Error counter unchanged in receiver!");
+
+        CAN_wait_bus_idle(ID_1, mem_bus(1));
+        CAN_wait_bus_idle(ID_2, mem_bus(2));
 
         -----------------------------------------------------------------------
         -- 2. Unset ACK Forbidden in Node 2. Generate CAN frame and send it by
