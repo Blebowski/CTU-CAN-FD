@@ -88,6 +88,7 @@ feature:
         retr_limit_2:
         retr_limit_3:
         one_shot:
+        overload:
         no_sof_tx:
         rec_saturation:
         rx_settings_rtsop:
@@ -118,7 +119,6 @@ feature:
         tx_cmd_set_ready:
         tx_priority:
             iterations: 1
-        overload:
 reference:
     default:
         <<: *default
