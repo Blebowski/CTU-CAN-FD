@@ -1606,7 +1606,6 @@ begin
             -------------------------------------------------------------------
             when s_pc_ide =>
                 rx_store_ide_i <= '1';
-                bit_err_disable <= '1';
                 crc_enable <= '1';
                 txtb_ptr_d <= 1;
                 alc_id_field <= ALC_IDE;
@@ -1631,12 +1630,13 @@ begin
                 
                 if (ide_is_arbitration = '1') then
                     is_arbitration_i <= '1';
-                    
-                    if (tx_data_wbs = DOMINANT and rx_data_nbs = RECESSIVE) then
-                        bit_err_arb_i <= '1';
-                    end if;
+                    bit_err_disable <= '1';
                 else
                     is_control <= '1';
+                end if;
+                
+                if (tx_data_wbs = DOMINANT and rx_data_nbs = RECESSIVE) then
+                    bit_err_arb_i <= '1';
                 end if;
 
                 if (is_transmitter = '1' and tran_ident_type = BASE) then
