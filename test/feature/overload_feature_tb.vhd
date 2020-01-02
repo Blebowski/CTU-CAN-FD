@@ -207,9 +207,10 @@ package body overload_feature is
             CAN_wait_sample_point(iout(1).stat_bus, false);
         end loop;
         
-        -- This is to make sure that we are in last bit of EOF for both nodes.
-        -- In case of tight timing, this can lead to Errors!
-        CAN_wait_sample_point(iout(2).stat_bus, false);
+        -- This is to cover possibility that sample point of one bit before end
+        -- of EOF in Node 2 did not pass yet! We want to be also in last bit
+        -- of EOF of Node 2, because only then we get Overload frame!
+        wait for 400 ns;
 
         -- Now we should be in one bit before the end of EOF!
         force_bus_level(DOMINANT, so.bl_force, so.bl_inject);
