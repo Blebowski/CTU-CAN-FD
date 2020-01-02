@@ -129,6 +129,7 @@ feature:
         rx_buf_empty_read:
         tx_counter:
         rx_counter:
+        ssp_cfg:
         status_rxne:
         status_txnf:
         status_eft:
