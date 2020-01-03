@@ -60,6 +60,12 @@ feature:
         command_frcrst:
         device_id:
         dlc_can20_8_64_bytes:
+        err_capt_arb_bit:
+        err_capt_crc_bit:
+        err_capt_ctrl_bit:
+        err_capt_ctrl_form:
+        err_capt_data_bit:
+        err_capt_sof:
         err_norm_fd:
         error_rules_a:
         error_rules_b:
@@ -96,6 +102,7 @@ feature:
         rx_buf_empty_read:
         tx_counter:
         rx_counter:
+        ssp_cfg:
         status_rxne:
         status_txnf:
         status_eft:

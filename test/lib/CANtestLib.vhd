@@ -2069,16 +2069,23 @@ package CANtestLib is
     -- Wait until sample point (from Status Bus).
     --
     -- Arguments:
-    --  pc_dbg           State to poll on.
-    --  skip_stuff_bits  When true, bits which are destuffed are skipped, only
-    --                   bits counted by protocol control are taken into account.
-    --                   When false, also stuff bits are taken into account.
+    --  stat_bus        Status bus signal
+    --  skip_stuff_bits Whether stuff bits should be skipped or accounted.
     ----------------------------------------------------------------------------
     procedure CAN_wait_sample_point(
         signal   stat_bus           : in    std_logic_vector(511 downto 0);
         constant skip_stuff_bits    : in    boolean := true
     );
 
+    ----------------------------------------------------------------------------
+    -- Wait until start of bit (Sync Seg), (from Status Bus).
+    --
+    -- Arguments:
+    --  pc_dbg           State to poll on.
+    ----------------------------------------------------------------------------
+    procedure CAN_wait_sync_seg(
+        signal   stat_bus           : in    std_logic_vector(511 downto 0)
+    );
 
     ----------------------------------------------------------------------------
     -- Initialize TXT Buffer memories
@@ -2971,6 +2978,7 @@ package body CANtestLib is
         signal   ts_preset_val  : out   std_logic_vector(63 downto 0)
     )is
     begin
+        info ("Timestamp value to set: " & to_hstring(ts_value));
         ts_preset_val <= ts_value;
         wait for 0 ns;
 
@@ -5054,6 +5062,19 @@ package body CANtestLib is
         else
             wait until stat_bus(STAT_RX_TRIGGER) = '1';
         end if;
+    end procedure;
+    
+    procedure CAN_wait_sync_seg(
+        signal   stat_bus           : in    std_logic_vector(511 downto 0)
+    ) is
+    begin
+        while true loop    
+            wait until stat_bus(STAT_TX_TRIGGER);
+            wait for 1 ps;
+            if (stat_bus(STAT_TX_TRIGGER) = '1') then
+                return;
+            end if;
+        end loop;
     end procedure;
 
 
