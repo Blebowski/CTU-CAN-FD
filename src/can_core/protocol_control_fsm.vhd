@@ -1736,7 +1736,9 @@ begin
                     end if;
                 end if;
                 
-                if (drv_can_fd_ena = FDE_DISABLE and rx_data_nbs = RECESSIVE) then
+                if ((drv_can_fd_ena = FDE_DISABLE or tran_frame_type = NORMAL_CAN)
+                     and (rx_data_nbs = RECESSIVE))
+                then
                     form_err_i <= '1';
                 end if;
 
@@ -1812,7 +1814,9 @@ begin
                     ssp_reset_i <= '1';
                 end if;
                 
-                if (drv_can_fd_ena = FDE_DISABLE and rx_data_nbs = RECESSIVE) then
+                if ((drv_can_fd_ena = FDE_DISABLE or tran_frame_type = NORMAL_CAN)
+                     and (rx_data_nbs = RECESSIVE))
+                then
                     form_err_i <= '1';
                 end if;
 
