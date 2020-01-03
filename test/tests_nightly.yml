@@ -91,8 +91,9 @@ feature:
         command_frcrst:
         device_id:
         dlc_can20_8_64_bytes:
-        err_capt_sof:
         err_capt_arb_bit:
+        err_capt_ctrl_form:
+        err_capt_sof:
         err_norm_fd:
             iterations: 5
         error_rules_a:
