@@ -96,11 +96,6 @@ package body tx_priority_feature is
     ) is
         type CAN_frame_array_type is array (1 to 4) of SW_CAN_frame_type; 
 
-        variable data               :       std_logic_vector(31 downto 0) :=
-                                                (OTHERS => '0');
-        variable address            :       std_logic_vector(11 downto 0) :=
-                                                (OTHERS => '0');
-
         type t_txt_buf_priority_pair is record
             priority        :       natural range 0 to 7;
             index           :       natural range 1 to 4;
@@ -121,15 +116,11 @@ package body tx_priority_feature is
         variable max_priority_val   :       natural range 0 to 7;	
         variable max_priority_index :       natural range 0 to 7;
 
-        variable priority_index_max :       natural range 0 to 8;       
         variable frame_equal        :       boolean := false;
         variable tmp_int            :       natural := 0;
 
         variable txt_buf_mask       :       std_logic_vector(3 downto 0) := "0000";
         variable buffers_used       :       natural := 0;
-
-        variable found              :       boolean;
-
     begin
 
         -----------------------------------------------------------------------

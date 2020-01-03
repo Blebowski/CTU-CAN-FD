@@ -83,14 +83,7 @@ package body btr_ssp_access_feature is
     ) is
         constant ID_1               :        natural := 1;
         constant ID_2               :        natural := 2;
-        variable CAN_frame          :        SW_CAN_frame_type;
-        variable CAN_frame_2        :        SW_CAN_frame_type  := 
-                    (0, (OTHERS => (OTHERS => '0')), "0000", 0, '0', '0',
-                     '0', '0', '0', (OTHERS => '0'), 0);
-        variable frame_sent         :        boolean;
-        variable frames_equal       :        boolean;
-        variable pc_dbg             :        SW_PC_Debug;
-        
+
         variable btr                :        std_logic_vector(31 downto 0) :=
                                                 (OTHERS => '0');
         variable btr_fd             :        std_logic_vector(31 downto 0) :=

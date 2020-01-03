@@ -92,24 +92,14 @@ package body error_rules_d_feature is
         variable ID_1               :       natural := 1;
         variable ID_2               :       natural := 2;
         variable CAN_frame          :       SW_CAN_frame_type;
-        variable RX_CAN_frame       :       SW_CAN_frame_type;
         variable frame_sent         :       boolean := false;
-        variable rand_value         :       natural;
         
-        variable status             :       SW_status;
-        variable command            :       SW_command := SW_command_rst_val;
-        
-        variable rx_buf_info        :       SW_RX_Buffer_info;
-        variable mode_1             :       SW_mode := SW_mode_rst_val;
         variable mode_2             :       SW_mode := SW_mode_rst_val;
         
         variable err_counters_1     :       SW_error_counters := (0, 0, 0, 0);
         variable err_counters_2     :       SW_error_counters := (0, 0, 0, 0);
         variable err_counters_3     :       SW_error_counters := (0, 0, 0, 0);
         variable err_counters_4     :       SW_error_counters := (0, 0, 0, 0);
-
-        variable id_vect            :       std_logic_vector(28 downto 0);
-        variable err_capt           :       SW_error_capture;
         
         variable bit_waits          :       natural := 0;
         variable pc_dbg             :       SW_PC_Debug;

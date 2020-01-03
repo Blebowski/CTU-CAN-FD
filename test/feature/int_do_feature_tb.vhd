@@ -97,7 +97,6 @@ package int_do_feature is
     );
 end package;
 
-
 package body int_do_feature is
     procedure int_do_feature_exec(
         signal      so              : out    feature_signal_outputs_t;
@@ -106,30 +105,16 @@ package body int_do_feature is
         signal      mem_bus         : inout  mem_bus_arr_t;
         signal      bus_level       : in     std_logic
     ) is
-        variable r_data             :     std_logic_vector(31 downto 0) :=
-                                            (OTHERS => '0');
         variable CAN_frame          :     SW_CAN_frame_type;
-        variable CAN_frame_rx       :     SW_CAN_frame_type;
         variable frame_sent         :     boolean := false;
-        variable frames_equal       :     boolean := false;
-        variable size_of_buf        :     natural;
-        variable ctr_1              :     natural;
-        variable ctr_2              :     natural;
         variable ID_1           	:     natural := 1;
         variable ID_2           	:     natural := 2;
-        variable vect_1             :     std_logic_vector(31 downto 0);
-        variable vect_2             :     std_logic_vector(31 downto 0);
-        variable mode_prev          :     std_logic_vector(31 downto 0);
-        variable mode_prev_2        :     std_logic_vector(31 downto 0);
 
         variable int_mask           :     SW_interrupts := SW_interrupts_rst_val;
         variable int_ena            :     SW_interrupts := SW_interrupts_rst_val;
         variable int_stat           :     SW_interrupts := SW_interrupts_rst_val;
         variable command            :     SW_command := SW_command_rst_val;
-        variable mode               :     SW_mode := SW_mode_rst_val;
         variable buf_info           :     SW_RX_Buffer_info;
-        variable pc_dbg             :     SW_PC_Debug;
-        variable err_ctrs           :     SW_error_counters;
         variable status             :     SW_status;
     begin
 

@@ -97,22 +97,10 @@ package body fault_state_feature is
         signal      mem_bus         : inout  mem_bus_arr_t;
         signal      bus_level       : in     std_logic
     ) is
-        variable r_data             :       std_logic_vector(31 downto 0) :=
-                                                (OTHERS => '0');
-        variable CAN_frame          :       SW_CAN_frame_type;
         variable frame_sent         :       boolean := false;
-        variable ctr_1              :       natural;
-        variable ctr_2              :       natural;
         variable ID_1           	:       natural := 1;
-        variable ID_2           	:       natural := 2;
-        variable rand_val           :       real;
-        variable th_1               :       natural := 0;
-        variable rxc                :       natural := 0;
-        variable txc                :       natural := 0;
 
         variable err_counters       :       SW_error_counters;
-        variable fault_th           :       SW_fault_thresholds := (0, 0);
-        variable fault_th_2         :       SW_fault_thresholds := (0, 0);
         variable fault_state        :       SW_fault_state;
 
         variable tx_lt_erp          :       natural;

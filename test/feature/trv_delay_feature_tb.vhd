@@ -96,10 +96,6 @@ package body trv_delay_feature is
         signal      mem_bus         : inout  mem_bus_arr_t;
         signal      bus_level       : in     std_logic
     ) is
-        variable r_data             :       std_logic_vector(31 downto 0) :=
-                                                (OTHERS => '0');
-        variable w_data             :       std_logic_vector(31 downto 0) :=
-                                                (OTHERS => '0');
         variable ID_1           	:       natural := 1;
         variable ID_2           	:       natural := 2;
         variable CAN_TX_frame       :       SW_CAN_frame_type;
@@ -110,7 +106,7 @@ package body trv_delay_feature is
         variable rand_time          :       natural;
         variable rand_time_ceiled   :       natural;
 
-        variable bus_timing         : bit_time_config_type;
+        variable bus_timing         :       bit_time_config_type;
     begin
 
         -----------------------------------------------------------------------

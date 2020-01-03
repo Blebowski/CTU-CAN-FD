@@ -81,8 +81,6 @@ package body timestamp_low_high_feature is
         signal      mem_bus         : inout  mem_bus_arr_t;
         signal      bus_level       : in     std_logic
     ) is
-        variable r_data             :        std_logic_vector(31 downto 0) :=
-                                                 (OTHERS => '0');
         variable ID_1               :        natural := 1;
         variable diff               :        unsigned(63 downto 0);
 

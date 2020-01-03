@@ -94,8 +94,6 @@ package body rx_settings_rtsop_feature is
         signal      mem_bus         : inout  mem_bus_arr_t;
         signal      bus_level       : in     std_logic
     ) is
-        variable r_data             :        std_logic_vector(31 downto 0) :=
-                                                 (OTHERS => '0');
         variable CAN_TX_frame       :        SW_CAN_frame_type;
         variable CAN_RX_frame       :        SW_CAN_frame_type;
         variable frame_sent         :        boolean := false;

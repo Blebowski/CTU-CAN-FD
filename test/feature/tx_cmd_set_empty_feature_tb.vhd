@@ -91,11 +91,7 @@ package body tx_cmd_set_empty_feature is
         variable ID_2           	:       natural := 2;
         variable CAN_frame          :       SW_CAN_frame_type;
         variable frame_sent         :       boolean := false;
-        variable mode               :       SW_mode := SW_mode_rst_val;
-        variable rx_state           :       SW_RX_Buffer_info;
         variable txt_state          :       SW_TXT_Buffer_state_type;
-        variable error_counters     :       SW_error_counters := (0, 0, 0, 0);
-        variable nxt_buffer         :       natural := 0;
         variable buf_nr             :       natural;
         variable mode_2             :       SW_mode := SW_mode_rst_val;
     begin

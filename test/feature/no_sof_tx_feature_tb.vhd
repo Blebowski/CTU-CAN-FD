@@ -89,17 +89,9 @@ package body no_sof_tx_feature is
         signal      mem_bus         : inout  mem_bus_arr_t;
         signal      bus_level       : in     std_logic
     ) is
-        variable rand_value         :       real;
-        variable alc                :       natural;
-
-        -- Some unit lost the arbitration...
-        -- 0 - initial , 1-Node 1 turned rec, 2 - Node 2 turned rec
-        variable unit_rec           :     natural := 0;
-
         variable ID_1               :     natural := 1;
         variable ID_2               :     natural := 2;
-        variable r_data             :     std_logic_vector(31 downto 0) :=
-                                               (OTHERS => '0');
+
         -- Generated frames
         variable frame_1            :     SW_CAN_frame_type;
         variable frame_2            :     SW_CAN_frame_type;
@@ -107,18 +99,10 @@ package body no_sof_tx_feature is
 
         -- Node status
         variable stat_1             :     SW_status;
-        variable stat_2             :     SW_status;
-
-        variable pc_dbg             :     SW_PC_Debug;
         
         variable txt_buf_state      :     SW_TXT_Buffer_state_type;
         variable rx_buf_info        :     SW_RX_Buffer_info;
         variable frames_equal       :     boolean := false;
-        
-        constant id_template        :     std_logic_vector(10 downto 0) :=
-                "01010101010";
-        variable id_var             :     std_logic_vector(10 downto 0) :=
-                 (OTHERS => '0');
                  
         variable pc_state           :     SW_PC_Debug;
     begin

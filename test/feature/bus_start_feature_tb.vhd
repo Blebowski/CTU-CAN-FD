@@ -95,10 +95,6 @@ package body bus_start_feature is
         variable ID_2           	:       natural := 2;
         variable CAN_frame_1        :       SW_CAN_frame_type;
         variable CAN_frame_2        :       SW_CAN_frame_type;
-        variable CAN_frame_3        :       SW_CAN_frame_type;
-        variable frame_sent         :       boolean := false;
-        variable mode               :       SW_mode := SW_mode_rst_val;
-        variable rx_state           :       SW_RX_Buffer_info;
         
         variable fault_state_1      :       SW_fault_state;
         variable fault_state_2      :       SW_fault_state;

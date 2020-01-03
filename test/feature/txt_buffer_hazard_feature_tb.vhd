@@ -92,20 +92,9 @@ package body txt_buffer_hazard_feature is
         signal      mem_bus         : inout  mem_bus_arr_t;
         signal      bus_level       : in     std_logic
     ) is
-        variable r_data             :       std_logic_vector(31 downto 0) :=
-                                                (OTHERS => '0');
-        variable w_data             :       std_logic_vector(31 downto 0) :=
-                                                (OTHERS => '0');
         variable ID_1           	:       natural := 1;
         variable ID_2           	:       natural := 2;
         variable CAN_frame          :       SW_CAN_frame_type;
-        variable frame_sent         :       boolean := false;
-        variable frame_length       :       natural;
-        variable rand_value         :       real;
-        variable wt                 :       time;
-        variable bus_config         :       bit_time_config_type;
-        variable still_tx           :       boolean := false;
-        variable err_counters       :       SW_error_counters;
         variable command            :       SW_command := SW_command_rst_val;
         variable status             :       SW_status;
 	    variable txt_buf_state	    :	    SW_TXT_Buffer_state_type;	

@@ -54,6 +54,7 @@
 --      If the transmitter sends an error flag because a stuff error occurred
 --      during arbitration, whereby the stuff bit should have been recessive,
 --      and has been sent recessive but is monitored to be dominant.
+--  2. ERR_CAPT[ERR_POS] = Arbitration and Stuff Error!
 --
 -- Test sequence:
 --  1. Set Node 2 to ACK forbidden and test modes. Set Node 1 to One-shot mode.
@@ -104,14 +105,10 @@ package body error_rules_c_feature is
         variable ID_1               :       natural := 1;
         variable ID_2               :       natural := 2;
         variable CAN_frame          :       SW_CAN_frame_type;
-        variable RX_CAN_frame       :       SW_CAN_frame_type;
         variable frame_sent         :       boolean := false;
-        variable rand_value         :       natural;
         
         variable status             :       SW_status;
-        variable command            :       SW_command := SW_command_rst_val;
-        
-        variable rx_buf_info        :       SW_RX_Buffer_info;
+
         variable mode_1             :       SW_mode := SW_mode_rst_val;
         variable mode_2             :       SW_mode := SW_mode_rst_val;
         

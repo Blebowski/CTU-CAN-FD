@@ -91,7 +91,6 @@ package body stuff_in_data_feature is
                      '0', '0', '0', (OTHERS => '0'), 0);
         variable frame_sent         :        boolean;
         variable frames_equal       :        boolean;
-        variable pc_dbg             :        SW_PC_Debug;
     begin
 
         ----------------------------------------------------------------------

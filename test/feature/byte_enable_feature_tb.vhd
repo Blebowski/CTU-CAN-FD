@@ -94,7 +94,6 @@ package body byte_enable_feature is
         variable address			:		 std_logic_vector(11 downto 0) :=
                                                 (OTHERS => '0');
         variable ID                 :        natural := 1;
-        variable errmsg             :        line;
     begin
 
         ------------------------------------------------------------------------

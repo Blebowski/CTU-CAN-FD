@@ -94,32 +94,15 @@ package body tx_status_feature is
         signal      mem_bus         : inout  mem_bus_arr_t;
         signal      bus_level       : in     std_logic
     ) is
-        
-        variable data               :       std_logic_vector(31 downto 0) :=
-                                                (OTHERS => '0');
-        variable address            :       std_logic_vector(11 downto 0) :=
-                                                (OTHERS => '0');
-        
         variable ID_1               :       natural := 1;   -- Transmiter
         variable ID_2               :       natural := 2;   -- Receiver          
         
-        variable CAN_frame_rx       :       SW_CAN_frame_type;
-        variable CAN_frame_tx       :       SW_CAN_frame_type;
-        
-        variable mode_1             :       SW_mode := SW_mode_rst_val;
+        variable CAN_frame_tx       :       SW_CAN_frame_type;        
         variable mode_2             :       SW_mode := SW_mode_rst_val;
-
-        variable frame_equal        :       boolean := false;
         variable frame_sent         :       boolean := false;
-        variable tmp_int            :       natural := 0;
-
-        variable found              :       boolean;
-
         variable bus_timing         :       bit_time_config_type;
         variable txt_state          :       SW_TXT_Buffer_state_type;
-
         variable txt_buf_num        :       natural;
-
     begin
 
         -----------------------------------------------------------------------

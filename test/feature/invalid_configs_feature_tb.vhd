@@ -76,9 +76,7 @@ package invalid_configs_feature is
         signal      mem_bus         : inout  mem_bus_arr_t;
         signal      bus_level       : in     std_logic
     );
-
 end package;
-
 
 package body invalid_configs_feature is
     procedure invalid_configs_feature_exec(
@@ -93,7 +91,6 @@ package body invalid_configs_feature is
         variable frame_sent         :       boolean := false;
         variable ID_1           	:       natural := 1;
         variable ID_2           	:       natural := 2;
-        variable command            :       SW_command := SW_command_rst_val;
     begin
 
         ------------------------------------------------------------------------
