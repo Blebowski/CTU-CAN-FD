@@ -37830,13 +37830,13 @@ cellcolor{cyan}
 
 \end_layout
 \begin_layout Description
-TXCE Activates "set_empty" command. Transits frone TX Done, TX Error or TX Aborted to Done. Does not have any effect in other states.
+TXCE Activates "set_empty" command. Transits from TX OK, TX failed or  Aborted to Empty. Does not have any effect in other states.
 \end_layout
 \begin_layout Description
-TXCR Activates "set_ready" command. Transits frone TX Done, TX Error, TX Aborted or Empty to Ready. Does not have any effect in other states.
+TXCR Activates "set_ready" command. Transits frone TX OK, TX failed, Aborted or Empty to Ready. Does not have any effect in other states.
 \end_layout
 \begin_layout Description
-TXCA Activates "set_abort" command. Transits from Ready to TX Aborted. If transmission is in progress (state TX in Progress) from the buffer, transits to TX Aborted if current transmission is not succesfull. If the transmission is sucesfull, it has no effect. Does not have any effect in other states.
+TXCA Activates "set_abort" command. Transits from Ready to Aborted. If transmission is in progress (state TX in Progress) from the buffer, transits to Abort in progress. Upon following error frame or arbitration lost, buffer will move to Aborted. Does not have any effect in other states.
 \end_layout
 \begin_layout Description
 TXB1 Command is applied on TXT Buffer 1.
