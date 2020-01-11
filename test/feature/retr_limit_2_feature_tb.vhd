@@ -40,61 +40,65 @@
 --------------------------------------------------------------------------------
 
 --------------------------------------------------------------------------------
--- Purpose:
+-- @TestInfoStart
+--
+-- @Purpose:
 --  Retransmitt limit feature test 2 (cornercases).
 --
--- Verifies:
---  1. When TXT Buffer from which core transmits is changed between two
---     consecutive transmissions, retransmitt counter is cleared! 
---  2. When there are multiple errors during single frame, retransmitt counter
---     is incremented only by 1!
---  3. When there is Arbitration lost and Error frame during single frame,
---     retransmitt counter is incremented only by 1!
---  4. When unit is a receiver without attempt to transmitt a frame
---     (TXT Buffer is ready, unit is Error passive and dominant bit is detected
+-- @Verifies:
+--  @1. When TXT Buffer from which core transmits is changed between two
+--      consecutive transmissions, retransmitt counter is cleared! 
+--  @2. When there are multiple errors during single frame, retransmitt counter
+--      is incremented only by 1!
+--  @3. When there is Arbitration lost and Error frame during single frame,
+--      retransmitt counter is incremented only by 1!
+--  @4. When unit is a receiver without attempt to transmitt a frame
+--      (TXT Buffer is ready, unit is Error passive and dominant bit is detected
 --      during Suspend field), if an error occurs during such a frame,
---     retransmitt counter is not incremented!
+--      retransmitt counter is not incremented!
 --
--- Test sequence:
---  1. Configure retransmitt limit in Node 1, enable retransmitt limitation.
---     Enable Test Mode in Node 1 to be able manipulate with Error counters. 
---     Configure Node 2 to Acknowledge Forbidden Mode to invoke transmission of
---     Error frames during test. Configure TXT Buffer 1 in Node 1 with priority
---     1, TXT Buffer 2 in Node 1 with priority 2.
---  2. Send frame from TXT Buffer 1 by Node 1. After 2 transmit attempts, insert
---     frame to TXT Buffer 2 and mark TXT Buffer 2 as ready! Check that
---     retransmitt counter is equal to 2!
---  3. Wait until transmission starts by Node 1. Check that TXT Buffer 2 was
---     selected for transmission. Check that retransmitt limit is 0 now
---     (because TXT Buffer used is changed).
---  4. Check that 'retransmit limit - 1' times TXT Buffer 2 ends up in TX Ready
---     after transmission of an Error frame. Check that after 'retransmit limit'
---     retransmissions, TXT Buffer 2 ends in TX Error. This verifies that
---     previous retransmissions were not counted in transmission from TXT Buffer
---     2. Meanwhile, issue Abort command to TXT Buffer 1, so that we don't
---     continue transmissions from TXT Buffer 1 after retransmitt limit was
---     reached on TXT Buffer 2.
---  5. Check that Retransmitt counter is 0 now!
---  6. Clear TX Error counter in Node 1. Check it is 0. Send frame from TXT
---     Buffer 1. Send frame from TXT Buffer by Node 2.
---  7. Wait until error frame (due to ACF in Node 2), corrupt bus level for
---     duration of 6 bits, force bus level to be recessive.
---  8. Wait until transmission is over. Check that TXT Buffer 1 is in TX Ready,
---     Retransmitt counter is 1. Check that TX Error counter is (6+1)*8 = 56
---     (One increment as original missing ACK, 6 increments due to six errors
+-- @Test sequence:
+--  @1. Configure retransmitt limit in Node 1, enable retransmitt limitation.
+--      Enable Test Mode in Node 1 to be able manipulate with Error counters. 
+--      Configure Node 2 to Acknowledge Forbidden Mode to invoke transmission of
+--      Error frames during test. Configure TXT Buffer 1 in Node 1 with priority
+--      1, TXT Buffer 2 in Node 1 with priority 2.
+--  @2. Send frame from TXT Buffer 1 by Node 1. After 2 transmit attempts, insert
+--      frame to TXT Buffer 2 and mark TXT Buffer 2 as ready! Check that
+--      retransmitt counter is equal to 2!
+--  @3. Wait until transmission starts by Node 1. Check that TXT Buffer 2 was
+--      selected for transmission. Check that retransmitt limit is 0 now
+--      (because TXT Buffer used is changed).
+--  @4. Check that 'retransmit limit - 1' times TXT Buffer 2 ends up in TX Ready
+--      after transmission of an Error frame. Check that after 'retransmit limit'
+--      retransmissions, TXT Buffer 2 ends in TX Error. This verifies that
+--      previous retransmissions were not counted in transmission from TXT Buffer
+--      2. Meanwhile, issue Abort command to TXT Buffer 1, so that we don't
+--      continue transmissions from TXT Buffer 1 after retransmitt limit was
+--      reached on TXT Buffer 2.
+--  @5. Check that Retransmitt counter is 0 now!
+--  @6. Clear TX Error counter in Node 1. Check it is 0. Send frame from TXT
+--      Buffer 1. Send frame from TXT Buffer by Node 2.
+--  @7. Wait until error frame (due to ACF in Node 2), corrupt bus level for
+--      duration of 6 bits, force bus level to be recessive.
+--  @8. Wait until transmission is over. Check that TXT Buffer 1 is in TX Ready,
+--      Retransmitt counter is 1. Check that TX Error counter is (6+1)*8 = 56
+--      (One increment as original missing ACK, 6 increments due to six errors
 --      in Error frame). Wait until TXT Buffer 1 ends up in TX Error state.
---     Check Retransmitt counter is 0. Wait Until bus is idle.
---  9. Insert frame with CAN ID = 10 to Node 1, CAN ID = 9 to Node 2. Send frame
---     by both Nodes! Wait until Arbitration field. Check that both Nodes are
---     transmitters. Wait until Control field. Check that Node 1 is receiver now
---     and Node 2 is still transmitter. Check that Retransmitt counter in Node
---     1 is now 1. 
--- 10. Wait until ACK field. Force ACK field to be low during whole duration
---     of ACK field. Wait until change in Protocol control, check that
---     Error frame is being transmitted. Wait until Intermission field, check
---     that Retransmitt counter in Node 1 is still equal to 1. Wait until TXT
---     Buffer ends up in TX Error (after some retransmissions). Check that
---     retransmitt counter is now 0 in Node 1. Wait until bus is idle.
+--      Check Retransmitt counter is 0. Wait Until bus is idle.
+--  @9. Insert frame with CAN ID = 10 to Node 1, CAN ID = 9 to Node 2. Send frame
+--      by both Nodes! Wait until Arbitration field. Check that both Nodes are
+--      transmitters. Wait until Control field. Check that Node 1 is receiver now
+--      and Node 2 is still transmitter. Check that Retransmitt counter in Node
+--      1 is now 1. 
+-- @10. Wait until ACK field. Force ACK field to be low during whole duration
+--      of ACK field. Wait until change in Protocol control, check that
+--      Error frame is being transmitted. Wait until Intermission field, check
+--      that Retransmitt counter in Node 1 is still equal to 1. Wait until TXT
+--      Buffer ends up in TX Error (after some retransmissions). Check that
+--      retransmitt counter is now 0 in Node 1. Wait until bus is idle.
+--
+-- @TestInfoEnd
 --------------------------------------------------------------------------------
 -- Revision History:
 --    11.7.2019   Created file
@@ -142,7 +146,7 @@ package body retr_limit_2_feature is
         retr_th := 5;
 
         ------------------------------------------------------------------------
-        -- 1. Configure retransmitt limit in Node 1, enable retransmitt
+        -- @1. Configure retransmitt limit in Node 1, enable retransmitt
         --    limitation. Enable Test Mode in Node 1 to be able manipulate with
         --    Error counters. Configure Node 2 to Acknowledge Forbidden Mode to
         --    invoke transmission of Error frames during test. Configure TXT
@@ -160,7 +164,7 @@ package body retr_limit_2_feature is
         CAN_configure_tx_priority(2, 2, ID_1, mem_bus(1));
 
         ------------------------------------------------------------------------
-        -- 2. Send frame from TXT Buffer 2 by Node 1. After 2 transmit attempts,
+        -- @2. Send frame from TXT Buffer 2 by Node 1. After 2 transmit attempts,
         --    insert frame to TXT Buffer 1 and mark TXT Buffer 1 as ready! Check
         --    that retransmitt counter is equal to 2!
         ------------------------------------------------------------------------
@@ -179,7 +183,7 @@ package body retr_limit_2_feature is
         CAN_wait_not_pc_state(pc_deb_intermission, ID_1, mem_bus(1));
 
         ------------------------------------------------------------------------
-        -- 3. Wait until transmission starts by Node 1. Check that TXT Buffer 2
+        -- @3. Wait until transmission starts by Node 1. Check that TXT Buffer 2
         --    was selected for transmission. Check that retransmitt limit is 0
         --    now (because TXT Buffer used is changed).
         ------------------------------------------------------------------------
@@ -193,7 +197,7 @@ package body retr_limit_2_feature is
         check(retr_ctr = 0, "Retransmitt counter equal to 0!");
 
         ------------------------------------------------------------------------
-        -- 4. Check that 'retransmit limit - 1' times TXT Buffer 1 ends up in
+        -- @4. Check that 'retransmit limit - 1' times TXT Buffer 1 ends up in
         --    TX Ready after transmission of an Error frame. Check that after
         --    'retransmit limit' retransmissions, TXT Buffer 2 ends in TX Error.
         --    This verifies that previous retransmissions were not counted in
@@ -224,14 +228,14 @@ package body retr_limit_2_feature is
         end loop;
 
         ------------------------------------------------------------------------
-        -- 5. Check that Retransmitt counter is 0 now!
+        -- @5. Check that Retransmitt counter is 0 now!
         ------------------------------------------------------------------------
         info("Step 5: Check retransmitt counter is 0 after TXT Buffer in TX Error!");
         retr_ctr := CAN_spy_retr_ctr(iout(1).stat_bus);
         check(retr_ctr = 0, "Retransmitt counter equal to 0!");
 
         ------------------------------------------------------------------------
-        -- 6. Clear TX Error counter in Node 1. Check it is 0. Send frame from
+        -- @6. Clear TX Error counter in Node 1. Check it is 0. Send frame from
         --    TXT Buffer 1. Send frame from TXT Buffer by Node 2.
         ------------------------------------------------------------------------
         info("Step 6: Clear TX Error counter in Node 1. Send frame from Node 2.");
@@ -243,7 +247,7 @@ package body retr_limit_2_feature is
         CAN_send_frame(CAN_frame, 1, ID_1, mem_bus(1), frame_sent);
 
         ------------------------------------------------------------------------
-        -- 7. Wait until error frame (due to ACF in Node 2), corrupt bus level
+        -- @7. Wait until error frame (due to ACF in Node 2), corrupt bus level
         --    for duration of 6 bits, force bus level to be recessive.
         ------------------------------------------------------------------------
         info("Step 7: Corrupting bus level for 6 bits during Error frame!");
@@ -257,7 +261,7 @@ package body retr_limit_2_feature is
         release_bus_level(so.bl_force);
 
         ------------------------------------------------------------------------
-        -- 8. Wait until transmission is over. Check that TXT Buffer 1 is in TX
+        -- @8. Wait until transmission is over. Check that TXT Buffer 1 is in TX
         --    Ready, Retransmitt counter is 1. Check that TX Error counter is
         --    (6+1)*8 = 56 (One increment as original missing ACK, 6 increments
         --    due to six errors in Error frame). Wait until TXT Buffer 1 ends
@@ -291,7 +295,7 @@ package body retr_limit_2_feature is
         set_error_counters(err_counters, ID_1, mem_bus(1));
         
         ------------------------------------------------------------------------
-        -- 9. Insert frame with CAN ID = 10 to Node 1, CAN ID = 9 to Node 2.
+        -- @9. Insert frame with CAN ID = 10 to Node 1, CAN ID = 9 to Node 2.
         --    Send frame by both Nodes! Wait until Arbitration field. Check that
         --    both Nodes are transmitters. Wait until Control field. Check that
         --    Node 1 is receiver now and Node 2 is still transmitter. Check that
@@ -327,7 +331,7 @@ package body retr_limit_2_feature is
             "Retransmitt counter incremented after arbitration loss!");
 
         ------------------------------------------------------------------------
-        -- 10. Wait until ACK field. Force ACK field to be low during whole
+        -- @10. Wait until ACK field. Force ACK field to be low during whole
         --     duration of ACK field. Wait until change in Protocol control,
         --     check that Error frame is being transmitted. Wait until Intermi-
         --     ssion field, check that Retransmitt counter in Node 1 is still

@@ -40,14 +40,18 @@
 --------------------------------------------------------------------------------
 
 --------------------------------------------------------------------------------
--- Purpose:
+-- @TestInfoStart
+--
+-- @Purpose:
 --  Device ID feature test.
 --
--- Verifies:
---  1. Correct device ID is read from DEVICE_ID register.
+-- @Verifies:
+--  @1. Correct device ID is read from DEVICE_ID register.
 --
--- Test sequence:
---  1. Read device ID and check it.
+-- @Test sequence:
+--  @1. Read device ID and check it.
+--
+-- @TestInfoEnd
 --------------------------------------------------------------------------------
 -- Revision History:
 --    18.10.2019   Created file
@@ -85,7 +89,7 @@ package body device_id_feature is
     begin
 
         -----------------------------------------------------------------------
-        -- 1. Read device ID and check it.
+        -- @1. Read device ID and check it.
         -----------------------------------------------------------------------
         info("Step 1: Read device ID");
         CAN_read(r_data, DEVICE_ID_ADR, ID_1, mem_bus(1));

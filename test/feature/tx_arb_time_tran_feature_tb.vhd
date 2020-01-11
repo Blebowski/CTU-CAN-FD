@@ -40,38 +40,42 @@
 --------------------------------------------------------------------------------
 
 --------------------------------------------------------------------------------
--- Purpose:
+-- @TestInfoStart
+--
+-- @Purpose:
 --  TX arbitration and time transmittion feature test
 --
--- Verifies:
---  1. Frame is transmitted from TXT Buffer at time given by Timestamp in
---     TIMESTAMP_U_W and TIMESTAMP_L_W words.
---  2. When timestamp in TIMESTAMP_U_W and TIMESTAMP_L_W is lower than actual
---     timestamp input of CTU CAN FD, frame is transmitted immediately.
---  3. When timestamp of a frame in higher priority TXT buffer is not yet elapsed,
---     but timestamp of a frame in lower priority TXT buffer has already elapsed,
---     frame from lower priority buffer is not transmitted before frame from
---     higher priority buffer.
+-- @Verifies:
+--  @1. Frame is transmitted from TXT Buffer at time given by Timestamp in
+--      TIMESTAMP_U_W and TIMESTAMP_L_W words.
+--  @2. When timestamp in TIMESTAMP_U_W and TIMESTAMP_L_W is lower than actual
+--      timestamp input of CTU CAN FD, frame is transmitted immediately.
+--  @3. When timestamp of a frame in higher priority TXT buffer is not yet elapsed,
+--      but timestamp of a frame in lower priority TXT buffer has already elapsed,
+--      frame from lower priority buffer is not transmitted before frame from
+--      higher priority buffer.
 --
---  Test sequence:
---  1. Configure random timestamp to testbench. Generate random frame and insert
---     it for transmission from TXT Buffer 1 of Node 1. Generate random time of
---     transmission for the frame and Issue "set ready" command for TXT Buffer 1.
---     Wait until node turns transmitter! Read current timestamp from TB and
---     check that difference between expected time of transmission and actual
---     time when transmission started is less than 1 bit time (transmission
---     is not processed immediately, but in each sample point). Wait until
---     frame is sent.
---  2. Generate CAN frame for transmission with timestamp lower than actual
---     value of timestamp input of CTU CAN FD. Insert it for transmission and
---     issue "set ready" command to this TXT Buffer. Wait until transmission
---     starts and check that difference between start of transmission and time
---     when "set ready" command was sent is less than 1 bit time. Wait until
---     frame is sent.
---  3. Configure TXT Buffer 1 to higher priority than TXT Buffer 2. Insert CAN
---     frame with earlier time of transmission to TXT Buffer 1. Mark both frames
---     as ready. Wait until both frames are transmitted! Check that first frame
---     from Node 1 was transmitted!
+-- @Test sequence:
+--  @1. Configure random timestamp to testbench. Generate random frame and insert
+--      it for transmission from TXT Buffer 1 of Node 1. Generate random time of
+--      transmission for the frame and Issue "set ready" command for TXT Buffer 1.
+--      Wait until node turns transmitter! Read current timestamp from TB and
+--      check that difference between expected time of transmission and actual
+--      time when transmission started is less than 1 bit time (transmission
+--      is not processed immediately, but in each sample point). Wait until
+--      frame is sent.
+--  @2. Generate CAN frame for transmission with timestamp lower than actual
+--      value of timestamp input of CTU CAN FD. Insert it for transmission and
+--      issue "set ready" command to this TXT Buffer. Wait until transmission
+--      starts and check that difference between start of transmission and time
+--      when "set ready" command was sent is less than 1 bit time. Wait until
+--      frame is sent.
+--  @3. Configure TXT Buffer 1 to higher priority than TXT Buffer 2. Insert CAN
+--      frame with earlier time of transmission to TXT Buffer 1. Mark both frames
+--      as ready. Wait until both frames are transmitted! Check that first frame
+--      from Node 1 was transmitted!
+--
+-- @TestInfoEnd
 --------------------------------------------------------------------------------
 -- Revision History:
 --    23.6.2016   Created file
@@ -136,7 +140,7 @@ package body tx_arb_time_tran_feature is
     begin
 
         -------------------------------------------------------------------------
-        -- 1. Configure random timestamp to testbench. Generate random frame and
+        -- @1. Configure random timestamp to testbench. Generate random frame and
         --    insert it for transmission from TXT Buffer 1 of Node 1. Generate
         --    random time of transmission for the frame and Issue "set ready" 
         --    command for TXT Buffer 1. Wait until node turns transmitter! Read
@@ -197,7 +201,7 @@ package body tx_arb_time_tran_feature is
         CAN_wait_bus_idle(ID_1, mem_bus(1));
 
         ------------------------------------------------------------------------
-        -- 2. Generate CAN frame for transmission with timestamp lower than
+        -- @2. Generate CAN frame for transmission with timestamp lower than
         --    actual value of timestamp input of CTU CAN FD. Insert it for
         --    transmission and issue "set ready" command to this TXT Buffer.
         --    Wait until transmission starts and check that difference between
@@ -232,7 +236,7 @@ package body tx_arb_time_tran_feature is
         CAN_read_frame(CAN_frame_rx_1, ID_2, mem_bus(2));
         
         ------------------------------------------------------------------------
-        -- 3. Configure TXT Buffer 1 to higher priority than TXT Buffer 2. Insert
+        -- @3. Configure TXT Buffer 1 to higher priority than TXT Buffer 2. Insert
         --    CAN frame with earlier time of transmission to TXT Buffer 2. Mark
         --    both frames as ready. Wait until both frames are transmitted! Check
         --    that first frame from Node 2 was transmitted!

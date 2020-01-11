@@ -40,7 +40,9 @@
 --------------------------------------------------------------------------------
 
 --------------------------------------------------------------------------------
--- Purpose:
+-- @TestInfoStart
+--
+-- @Purpose:
 --  Unit test for bit stuffing and bit destuffing circuits.
 --
 --  Unit test makes use of bit stuffing/destuffing symmetry. Random data are
@@ -63,6 +65,7 @@
 --   frame transmission started). Note that SW model covers recursive behaviour
 --   of bit stuffing.
 --
+-- @TestInfoEnd
 --------------------------------------------------------------------------------
 -- Revision History:
 --

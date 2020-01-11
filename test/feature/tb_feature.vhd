@@ -40,9 +40,12 @@
 --------------------------------------------------------------------------------
 
 --------------------------------------------------------------------------------
--- Purpose:
+-- @TestInfoStart
+--
+-- @Purpose:
 --  Main environment for feature tests
 --
+-- @TestInfoEnd
 --------------------------------------------------------------------------------
 -- Revision History:
 --    20.6.2016   Created file
@@ -203,7 +206,7 @@ begin
         x9: iout(i).irq           <= p(i).int;
         xc: iout(i).hw_reset      <= p(i).res_n;
         -- stat_bus and drv_bus passwd directly, as indirection costs
-        -- 10% of simulation time
+        -- @10% of simulation time
 
         ---------------------------------
         --Transceiver and bus realization

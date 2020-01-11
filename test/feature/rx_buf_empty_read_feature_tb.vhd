@@ -40,19 +40,22 @@
 --------------------------------------------------------------------------------
 
 --------------------------------------------------------------------------------
--- Purpose:
+-- @TestInfoStart
+--
+-- @Purpose:
 --  RX Buffer empty - read feature test
 --
--- Verifies:
---  1. Verifies that when reading from empty RX Buffer, RX pointer is not
---     incremented!
+-- @Verifies:
+--  @1. Verifies that when reading from empty RX Buffer, RX pointer is not
+--      incremented!
 --
--- Test sequence:
---  1. Read pointers from RX Buffer, check pointers are 0 (DUT is post reset).
---  2. Try to read CAN frame from RX Buffer. This should generate at least 4
---     reads from RX DATA register.
---  3. Read pointers from RX Buffer, check pointers are still 0.
+-- @Test sequence:
+--  @1. Read pointers from RX Buffer, check pointers are 0 (DUT is post reset).
+--  @2. Try to read CAN frame from RX Buffer. This should generate at least 4
+--      reads from RX DATA register.
+--  @3. Read pointers from RX Buffer, check pointers are still 0.
 --
+-- @TestInfoEnd
 --------------------------------------------------------------------------------
 -- Revision History:
 --    18.10.2019   Created file
@@ -91,7 +94,7 @@ package body rx_buf_empty_read_feature is
     begin
 
         -----------------------------------------------------------------------
-        -- 1. Read pointers from RX Buffer, check pointers are 0 (DUT is post 
+        -- @1. Read pointers from RX Buffer, check pointers are 0 (DUT is post 
         --    reset).
         -----------------------------------------------------------------------
         info("Step 1: Reading RX buffer pointers for first time");
@@ -100,14 +103,14 @@ package body rx_buf_empty_read_feature is
         check(rx_buf_info.rx_write_pointer = 0, "Write pointer 0!");
         
         -----------------------------------------------------------------------
-        -- 2. Try to read CAN frame from RX Buffer. This should generate at 
+        -- @2. Try to read CAN frame from RX Buffer. This should generate at 
         --    least 4 reads from RX DATA register.
         -----------------------------------------------------------------------
         info("Step 2: Try to read frame from empty RX Buffer!");
         CAN_read_frame(frame_rx, ID_1, mem_bus(1));
 
         ------------------------------------------------------------------------
-        -- 3. Read pointers from RX Buffer, check pointers are still 0.
+        -- @3. Read pointers from RX Buffer, check pointers are still 0.
         ------------------------------------------------------------------------
         info("Step 3: Read RX Buffer pointers again!");
         get_rx_buf_state(rx_buf_info, ID_1, mem_bus(1));

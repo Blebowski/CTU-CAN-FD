@@ -40,18 +40,21 @@
 --------------------------------------------------------------------------------
 
 --------------------------------------------------------------------------------
--- Purpose:
+-- @TestInfoStart
+--
+-- @Purpose:
 --  RX Buffer status feature test implementation.
 --
---  Test sequence:
---    1. RX Buffer size is read and buffer is cleared.
---    2. Free memory, buffer status and message count is checked.
---    3. Random frames are sent on the bus by node 2 and recieved by node 1
---    4. After each frame amount of remaining memory is checked towards expected
+-- @Test sequence:
+--   @1. RX Buffer size is read and buffer is cleared.
+--   @2. Free memory, buffer status and message count is checked.
+--   @3. Random frames are sent on the bus by node 2 and recieved by node 1
+--   @4. After each frame amount of remaining memory is checked towards expected
 --       value.
---    5. When buffer is filled Data overrun flag is checked and cleared.
---    6. After clearing Overrun flag, it is checked it was really cleared.
+--   @5. When buffer is filled Data overrun flag is checked and cleared.
+--   @6. After clearing Overrun flag, it is checked it was really cleared.
 --
+-- @TestInfoEnd
 --------------------------------------------------------------------------------
 -- Revision History:
 --

@@ -40,28 +40,31 @@
 --------------------------------------------------------------------------------
 
 --------------------------------------------------------------------------------
--- Purpose:
+-- @TestInfoStart
+--
+-- @Purpose:
 --  Frame filters mode feature test.  
 --
--- Verifies:
---  1. When in Frame filters mode, RX frame which does not pass frame filters
---     will not be received!
---  2. When in Frame filters mode, RX frame which does pass frame filters will
---     be received.
---  3. When not in frame filters mode, RX frame which does not pass frame filters
---     will be received.
+-- @Verifies:
+--  @1. When in Frame filters mode, RX frame which does not pass frame filters
+--      will not be received!
+--  @2. When in Frame filters mode, RX frame which does pass frame filters will
+--      be received.
+--  @3. When not in frame filters mode, RX frame which does not pass frame filters
+--      will be received.
 --
--- Test sequence:
---  1. Configure frame filters mode in Node 1. Configure filter A to receive only
---     can frames with Odd base IDs (lowest bit = 1). Configure all other filters
---     not to accept any frames (disable all frame/identifier type combinations).
---  2. Generate random CAN frame and send by Node 2. Wait till frame is received.
---     If frame should be received (LSB of ID=1), check it is received. If it
---     should not be received, check it is not received!
---  3. Disable frame filters mode in Node 1. Send CAN frame with LSB of ID=0,
---     (should not be received according to frame filters settings).
---  4. Wait till frame passes and check it is received in Node 2!
+-- @Test sequence:
+--  @1. Configure frame filters mode in Node 1. Configure filter A to receive only
+--      can frames with Odd base IDs (lowest bit = 1). Configure all other filters
+--      not to accept any frames (disable all frame/identifier type combinations).
+--  @2. Generate random CAN frame and send by Node 2. Wait till frame is received.
+--      If frame should be received (LSB of ID=1), check it is received. If it
+--      should not be received, check it is not received!
+--  @3. Disable frame filters mode in Node 1. Send CAN frame with LSB of ID=0,
+--      (should not be received according to frame filters settings).
+--  @4. Wait till frame passes and check it is received in Node 2!
 --
+-- @TestInfoEnd
 --------------------------------------------------------------------------------
 -- Revision History:
 --    22.9.2019   Created file
@@ -107,7 +110,7 @@ package body mode_frame_filters_feature is
     begin
 
         ------------------------------------------------------------------------
-        -- 1. Configure frame filters mode in Node 1. Configure filter A to 
+        -- @1. Configure frame filters mode in Node 1. Configure filter A to 
         --    receive only can frames with Odd base IDs (lowest bit = 1). 
         --    Configure all other filters not to accept any frames (disable all
         --    frame/identifier type combinations).
@@ -142,7 +145,7 @@ package body mode_frame_filters_feature is
         CAN_set_range_filter(filter_range_cfg, ID_1, mem_bus(1));
 
         ------------------------------------------------------------------------
-        -- 2. Generate random CAN frame and send by Node 2. Wait till frame is 
+        -- @2. Generate random CAN frame and send by Node 2. Wait till frame is 
         --    received. If frame should be received (LSB of ID=1), check it is
         --    received. If it should not be received, check it is not received!
         ------------------------------------------------------------------------
@@ -166,7 +169,7 @@ package body mode_frame_filters_feature is
         end if;
                 
         ------------------------------------------------------------------------
-        -- 3. Disable frame filters mode in Node 1. Send CAN frame with LSB of
+        -- @3. Disable frame filters mode in Node 1. Send CAN frame with LSB of
         --    ID=0,(should not be received according to frame filters settings).
         ------------------------------------------------------------------------
         info("Step 3: Check frame filters mode disabled!");

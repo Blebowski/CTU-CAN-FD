@@ -40,23 +40,26 @@
 --------------------------------------------------------------------------------
 
 --------------------------------------------------------------------------------
--- Purpose:
+-- @TestInfoStart
+--
+-- @Purpose:
 --  STATUS[TXNF] feature test.
 --
--- Verifies:
---  1. When no TXT Buffer is in Empty state, STATUS[TXNF] is not set.
---  2. When at least on TXT Buffer is in Empty state STATUS[TXNF] is set.
+-- @Verifies:
+--  @1. When no TXT Buffer is in Empty state, STATUS[TXNF] is not set.
+--  @2. When at least on TXT Buffer is in Empty state STATUS[TXNF] is set.
 --
--- Test sequence:
---  1. Set LOM mode in Node 1. Check that STATUS[TXNF] is set (all TXT Buffers
---     should be empty).
---  2. Issue Set ready and Set Abort consecutively to all TXT Buffers. Check
---     that STATUS[TXNF] is set before last buffer. Check that after last buffer
---     STATUS[TXNF] is not set.
---  3. Check that all TXT Buffers are Aborted now. Move always single buffer to
---     empty and check that STATUS[TXNF] is set. Move this buffer to Ready again
---     and check that STATUS[TXNF] is not set. Repeat with each TXT Buffer.
---     
+-- @Test sequence:
+--  @1. Set LOM mode in Node 1. Check that STATUS[TXNF] is set (all TXT Buffers
+--      should be empty).
+--  @2. Issue Set ready and Set Abort consecutively to all TXT Buffers. Check
+--      that STATUS[TXNF] is set before last buffer. Check that after last buffer
+--      STATUS[TXNF] is not set.
+--  @3. Check that all TXT Buffers are Aborted now. Move always single buffer to
+--      empty and check that STATUS[TXNF] is set. Move this buffer to Ready again
+--      and check that STATUS[TXNF] is not set. Repeat with each TXT Buffer.
+--
+-- @TestInfoEnd
 --------------------------------------------------------------------------------
 -- Revision History:
 --    31.10.2019   Created file
@@ -100,7 +103,7 @@ package body status_txnf_feature is
     begin
 
         -----------------------------------------------------------------------
-        -- 1. Set LOM mode in Node 1. Check that STATUS[TXNF] is set (all TXT
+        -- @1. Set LOM mode in Node 1. Check that STATUS[TXNF] is set (all TXT
         --    Buffers should be empty).
         -----------------------------------------------------------------------
         info("Step 1");
@@ -111,7 +114,7 @@ package body status_txnf_feature is
         check(stat_1.tx_buffer_empty, "STATUS[TXNF] set!");
 
         -----------------------------------------------------------------------
-        -- 2. Issue Set ready and Set Abort consecutively to all TXT Buffers.
+        -- @2. Issue Set ready and Set Abort consecutively to all TXT Buffers.
         --    Check that STATUS[TXNF] is set before last buffer. Check that
         --    after last buffer STATUS[TXNF] is not set.
         -----------------------------------------------------------------------
@@ -131,7 +134,7 @@ package body status_txnf_feature is
         end loop;
 
         -----------------------------------------------------------------------
-        -- 3. Check that all TXT Buffers are Aborted now. Move always single
+        -- @3. Check that all TXT Buffers are Aborted now. Move always single
         --    buffer to empty and check that STATUS[TXNF] is set. Move this
         --    buffer to Ready again and check that STATUS[TXNF] is not set.
         --    Repeat with each TXT Buffer.

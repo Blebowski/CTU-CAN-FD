@@ -40,20 +40,24 @@
 --------------------------------------------------------------------------------
 
 --------------------------------------------------------------------------------
--- Purpose:
+-- @TestInfoStart
+--
+-- @Purpose:
 --  Data length Code CAN 2.0 more than 8 bytes feature test.
 --
--- Verifies:
---  1. When transmission of CAN 2.0 frame with DLC higher than 8 is requested,
---     only 8 bytes are transmitted! 
+-- @Verifies:
+--  @1. When transmission of CAN 2.0 frame with DLC higher than 8 is requested,
+--      only 8 bytes are transmitted! 
 --
---  Test sequence:
---    1. Generate CAN 2.0 Frame and set DLC higher than 8. Set higher data
+-- @Test sequence:
+--   @1. Generate CAN 2.0 Frame and set DLC higher than 8. Set higher data
 --       bytes accordingly!
---    2. Send the CAN Frame via Node 1. Monitor the bus and check that only
+--   @2. Send the CAN Frame via Node 1. Monitor the bus and check that only
 --       8 bytes are sent!
---    3. Verify that frame received by Node 2, has the same DLC, but is has
+--   @3. Verify that frame received by Node 2, has the same DLC, but is has
 --       received only 8 bytes of Data!
+--
+-- @TestInfoEnd
 --------------------------------------------------------------------------------
 -- Revision History:
 --    14.7.2018   Created file
@@ -95,7 +99,7 @@ package body dlc_can20_8_64_bytes_feature is
     begin
 
         ------------------------------------------------------------------------
-        -- 1. Generate CAN 2.0 Frame and set DLC higher than 8. Set higher data
+        -- @1. Generate CAN 2.0 Frame and set DLC higher than 8. Set higher data
         --    bytes accordingly!
         ------------------------------------------------------------------------
         info("Step 1: Generate frame");
@@ -111,7 +115,7 @@ package body dlc_can20_8_64_bytes_feature is
         end loop;
 
         ------------------------------------------------------------------------
-        -- 2. Send the CAN Frame via Node 1. Monitor the bus and check that only
+        -- @2. Send the CAN Frame via Node 1. Monitor the bus and check that only
         --    8 bytes are sent!
         ------------------------------------------------------------------------
         info("Step 2: Send frame");
@@ -137,7 +141,7 @@ package body dlc_can20_8_64_bytes_feature is
         wait for 500 ns;
 
         ------------------------------------------------------------------------
-        -- 3. Verify that frame received by Node 2, has the same DLC, but is has
+        -- @3. Verify that frame received by Node 2, has the same DLC, but is has
         --    received only 8 bytes of Data!
         ------------------------------------------------------------------------
         info("Step 3: Check frame received!");

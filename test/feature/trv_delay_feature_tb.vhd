@@ -40,29 +40,33 @@
 --------------------------------------------------------------------------------
 
 --------------------------------------------------------------------------------
--- Purpose:
+-- @TestInfoStart
+--
+-- @Purpose:
 --  Transceiver delay measurement feature test.
 --
--- Verifies:
---  1. Transceiver delay measurement in its range (2 - 127).
---  2. Shadowing of TRV_DELAY register (register updated only at the end of
---     measurement).
---  3. TRV_DELAY measuremenr does not overflow when measuring delay longer than
---     127 clock cycles.
+-- @Verifies:
+--  @1. Transceiver delay measurement in its range (2 - 127).
+--  @2. Shadowing of TRV_DELAY register (register updated only at the end of
+--      measurement).
+--  @3. TRV_DELAY measuremenr does not overflow when measuring delay longer than
+--      127 clock cycles.
 --
--- Test sequence:
---  1. Configure SSP Offset to 7 + TRV_DELAY and SSP source to use Measured
---     value + offset in Node 1. Configure bit-rate to 250 Kbit/s in Nominal
---     bit-rate. This-way bit-error detection will not get confused on high
---     TRV Delays!
---  2. Configure delay to 1 ns in TB. Run CAN FD frame and verify that measured
---     delay is correct! 
---  3. Configure delay to 1255 ns in TB. Run CAN FD frame and verify that
---     measured delay is 127.
---  4. Configure Transmitter delay to 130. Run CAN FD frame and verify that
---     measured value is 127 (value has not overflown!).
---  5. Configure transmitter delay to random value between 0 and 126. Run CAN
---     FD frame and check it is measured correctly!
+-- @Test sequence:
+--  @1. Configure SSP Offset to 7 + TRV_DELAY and SSP source to use Measured
+--      value + offset in Node 1. Configure bit-rate to 250 Kbit/s in Nominal
+--      bit-rate. This-way bit-error detection will not get confused on high
+--      TRV Delays!
+--  @2. Configure delay to 1 ns in TB. Run CAN FD frame and verify that measured
+--      delay is correct! 
+--  @3. Configure delay to 1255 ns in TB. Run CAN FD frame and verify that
+--      measured delay is 127.
+--  @4. Configure Transmitter delay to 130. Run CAN FD frame and verify that
+--      measured value is 127 (value has not overflown!).
+--  @5. Configure transmitter delay to random value between 0 and 126. Run CAN
+--      FD frame and check it is measured correctly!
+--
+-- @TestInfoEnd
 --------------------------------------------------------------------------------
 -- Revision History:
 --
@@ -110,7 +114,7 @@ package body trv_delay_feature is
     begin
 
         -----------------------------------------------------------------------
-        -- 1. Configure SSP Offset to 7 + TRV_DELAY and SSP source to use
+        -- @1. Configure SSP Offset to 7 + TRV_DELAY and SSP source to use
         --    Measured value + offset in Node 1.Configure bit-rate to 250
         --    Kbit/s in Nominal bit-rate. This-way bit-error detection will
         --    not get confused on high TRV Delays!
@@ -149,7 +153,7 @@ package body trv_delay_feature is
         CAN_wait_bus_on(ID_2, mem_bus(2));
         
         -----------------------------------------------------------------------
-        -- 2. Configure delay to 1 ns in TB. Run CAN FD frame and verify that
+        -- @2. Configure delay to 1 ns in TB. Run CAN FD frame and verify that
         --    measured delay is correct! 
         -----------------------------------------------------------------------
         info("Step 2");
@@ -176,7 +180,7 @@ package body trv_delay_feature is
         check(frames_equal, "TX RX frames match");
 
         -----------------------------------------------------------------------
-        -- 3. Configure delay to 1255 ns in TB. Run CAN FD frame and verify
+        -- @3. Configure delay to 1255 ns in TB. Run CAN FD frame and verify
         --    that measured delay is 127.
         -----------------------------------------------------------------------
         info("Step 3");
@@ -199,7 +203,7 @@ package body trv_delay_feature is
         check(frames_equal, "TX RX frames match");
 
         -----------------------------------------------------------------------
-        -- 4. Configure Transmitter delay to 130. Run CAN FD frame and verify
+        -- @4. Configure Transmitter delay to 130. Run CAN FD frame and verify
         --    that measured value is 127 (value has not overflown!).
         -----------------------------------------------------------------------
         info("Step 4");
@@ -224,7 +228,7 @@ package body trv_delay_feature is
         check(frames_equal, "TX RX frames match");
 
         -----------------------------------------------------------------------
-        --  5. Configure transmitter delay to random value between 0 and 126.
+        --  @5. Configure transmitter delay to random value between 0 and 126.
         --     Run CAN FD frame and check it is measured correctly!
         -----------------------------------------------------------------------
         info("Step 5");

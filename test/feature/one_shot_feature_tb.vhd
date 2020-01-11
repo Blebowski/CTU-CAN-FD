@@ -40,37 +40,41 @@
 --------------------------------------------------------------------------------
 
 --------------------------------------------------------------------------------
--- Purpose:
+-- @TestInfoStart
+--
+-- @Purpose:
 --  One shot mode feature test (Retransmitt limit = 0).
 --
--- Verifies:
---  1. One shot mode - Retransmitt limit enabled and set to 0. Verifies there is
---     only one atempt to transmitt a frame in one shot mode
---  2. When One shot mode is not set (retransmit limit = 0, but disabled),
---     core does not stop re-transmitting after retransmitt limit number of
---     retransmissions was reached (retransmitts indefinitely).
---  3. When transmission fails as result of Error frame, device in One shot mode
---     does not transmitt anymore!
---  4. When transmission fails as result of Arbitration loss, device in One shot
---     mode does not transmitt anymore!
+-- @Verifies:
+--  @1. One shot mode - Retransmitt limit enabled and set to 0. Verifies there is
+--      only one atempt to transmitt a frame in one shot mode
+--  @2. When One shot mode is not set (retransmit limit = 0, but disabled),
+--      core does not stop re-transmitting after retransmitt limit number of
+--      retransmissions was reached (retransmitts indefinitely).
+--  @3. When transmission fails as result of Error frame, device in One shot mode
+--      does not transmitt anymore!
+--  @4. When transmission fails as result of Arbitration loss, device in One shot
+--      mode does not transmitt anymore!
 --
--- Test sequence:
---  1. Set retransmitt limit to 0 in Node 1. Enable retransmitt limitations.
---     Set Acknowledge forbidden mode in Node 2 (to produce ACK errors). Turn
---     on Test mode in Node 1 (to manipulate error counters).
---  2. Generate frame and start sending the frame by Node 1. Wait until
---     error frame occurs and transmission is over.
---  3. Check transmission failed and transmitting TXT Buffer is "TX Error".
---  4. Disable retransmitt limitions in Node 1. Start sending a frame by Node 1.
---     Wait until error frame and check that transmitting TXT Buffer is "Ready"
---     again (hitting current retransmitt limit did not cause stopping
---     retransmissions when retransmitt limit is disabled).
---  5. Abort transmission by Node 1. Wait until transmission was aborted.
---  6. Insert frames for transmission to Node 1 and Node 2 simultaneously
---     to invoke arbitration. ID of frame in Node 1 is higher than the one in
---     Node 2 (to loose arbitration). Wait until node 1 is in Control field of
---     a frame. Check that Node 1 is receiver (arbitration was really lost) and
---     TXT Buffer in Node 1 ended up in "TX Error" state.
+-- @Test sequence:
+--  @1. Set retransmitt limit to 0 in Node 1. Enable retransmitt limitations.
+--      Set Acknowledge forbidden mode in Node 2 (to produce ACK errors). Turn
+--      on Test mode in Node 1 (to manipulate error counters).
+--  @2. Generate frame and start sending the frame by Node 1. Wait until
+--      error frame occurs and transmission is over.
+--  @3. Check transmission failed and transmitting TXT Buffer is "TX Error".
+--  @4. Disable retransmitt limitions in Node 1. Start sending a frame by Node 1.
+--      Wait until error frame and check that transmitting TXT Buffer is "Ready"
+--      again (hitting current retransmitt limit did not cause stopping
+--      retransmissions when retransmitt limit is disabled).
+--  @5. Abort transmission by Node 1. Wait until transmission was aborted.
+--  @6. Insert frames for transmission to Node 1 and Node 2 simultaneously
+--      to invoke arbitration. ID of frame in Node 1 is higher than the one in
+--      Node 2 (to loose arbitration). Wait until node 1 is in Control field of
+--      a frame. Check that Node 1 is receiver (arbitration was really lost) and
+--      TXT Buffer in Node 1 ended up in "TX Error" state.
+--
+-- @TestInfoEnd
 --------------------------------------------------------------------------------
 -- Revision History:
 --    06.7.2019   Created file
@@ -111,7 +115,7 @@ package body one_shot_feature is
     begin
 
         ------------------------------------------------------------------------
-        -- 1. Set retransmitt limit to 0 in Node 1. Enable retransmitt 
+        -- @1. Set retransmitt limit to 0 in Node 1. Enable retransmitt 
         --    limitations. Set Acknowledge forbidden mode in Node 2 (to produce
         --    ACK errors). Turn on Test mode in Node 1 (to manipulate error 
         --    counters).
@@ -124,7 +128,7 @@ package body one_shot_feature is
         set_core_mode(mode_1, ID_1, mem_bus(1));
         
         ------------------------------------------------------------------------
-        -- 2. Generate frame and start sending the frame by Node 1. Wait until
+        -- @2. Generate frame and start sending the frame by Node 1. Wait until
         --    error frame occurs and transmission is over.
         ------------------------------------------------------------------------
         info("Step 2: Sending frame by Node 1");
@@ -136,7 +140,7 @@ package body one_shot_feature is
         CAN_wait_bus_idle(ID_1, mem_bus(1));
 
         ------------------------------------------------------------------------
-        -- 3. Check transmission failed and transmitting TXT Buffer is
+        -- @3. Check transmission failed and transmitting TXT Buffer is
         --    "TX Error".
         ------------------------------------------------------------------------
         info("Step 3: Checking transmission failed.");
@@ -144,7 +148,7 @@ package body one_shot_feature is
         check(buf_state = buf_failed, "TXT Buffer failed!");
         
         ------------------------------------------------------------------------
-        -- 4. Disable retransmitt limitions in Node 1. Start sending a frame by
+        -- @4. Disable retransmitt limitions in Node 1. Start sending a frame by
         --    Node 1. Wait until error frame and check that transmitting TXT
         --    Buffer is "Ready" again (hitting current retransmitt limit did not
         --    cause stopping retransmissions when retransmitt limit is disabled).
@@ -157,7 +161,7 @@ package body one_shot_feature is
         check(buf_state = buf_ready, "TXT Buffer ready!");
         
         ------------------------------------------------------------------------
-        -- 5. Abort transmission by Node 1. Wait until transmission was aborted.
+        -- @5. Abort transmission by Node 1. Wait until transmission was aborted.
         ------------------------------------------------------------------------
         info("Step 5: Aborting transmission");
         send_TXT_buf_cmd(buf_set_abort, 1, ID_1, mem_bus(1));
@@ -168,7 +172,7 @@ package body one_shot_feature is
         CAN_wait_bus_idle(ID_1, mem_bus(1));
 
         ------------------------------------------------------------------------
-        -- 6. Insert frames for transmission to Node 1 and Node 2 simultaneously
+        -- @6. Insert frames for transmission to Node 1 and Node 2 simultaneously
         --    to invoke arbitration. ID of frame in Node 1 is higher than the
         --    one in Node 2 (to loose arbitration). Wait until node 1 is in 
         --    Control field of a frame. Check that Node 1 is receiver 

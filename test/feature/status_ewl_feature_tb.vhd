@@ -40,18 +40,22 @@
 --------------------------------------------------------------------------------
 
 --------------------------------------------------------------------------------
--- Purpose:
+-- @TestInfoStart
+--
+-- @Purpose:
 --  STATUS[EWL] feature test.
 --
--- Verifies:
---  1. When RX Error counter (REC) is higher than EWL, then STAT[EWL] is set.
---  2. When TX Error counter (TEC) is higher than EWL, then STAT[EWL] is set.
---  3. When both REC and TEC are lower than EWL, STAT[EWL] is not set.
+-- @Verifies:
+--  @1. When RX Error counter (REC) is higher than EWL, then STAT[EWL] is set.
+--  @2. When TX Error counter (TEC) is higher than EWL, then STAT[EWL] is set.
+--  @3. When both REC and TEC are lower than EWL, STAT[EWL] is not set.
 --
--- Test sequence:
---  1. Set Node 1 in test mode. Generate random EWL and configure it. Generate
---     random REC and TEC and set them in Node 1. Pre-calculate if STAT[EWL]
---     shall be set and check it.
+-- @Test sequence:
+--  @1. Set Node 1 in test mode. Generate random EWL and configure it. Generate
+--      random REC and TEC and set them in Node 1. Pre-calculate if STAT[EWL]
+--      shall be set and check it.
+--
+-- @TestInfoEnd
 --------------------------------------------------------------------------------
 -- Revision History:
 --    02.11.2019  Created file
@@ -97,7 +101,7 @@ package body status_ewl_feature is
     begin
 
         -----------------------------------------------------------------------
-        -- 1. Set Node 1 in test mode. Generate random EWL and configure it.
+        -- @1. Set Node 1 in test mode. Generate random EWL and configure it.
         --    Generate random REC and TEC and set them in Node 1. Pre-calculate
         --    if STAT[EWL] shall be set and check it.
         -----------------------------------------------------------------------

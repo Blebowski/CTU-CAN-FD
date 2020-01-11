@@ -40,13 +40,18 @@
 --------------------------------------------------------------------------------
 
 --------------------------------------------------------------------------------
--- Purpose:
+-- @TestInfoStart
+--
+-- @Purpose:
 --  Unit test for the Interrupt manager.
+--
 --  Random interrupt source signals are generated in the testbench. Periodically
 --  random setting of interrupt generator is used. Then test waits and evaluates
 --  whether interrupt prediction (int_test_ctr) matches the actual number of
 --  interrupts measured on the int_out rising and falling edges. Also interrupt
 --  vector is read and compared with modeled interrupt vector.
+--
+-- @TestInfoEnd
 --------------------------------------------------------------------------------
 -- Revision History:
 --    6.6.2016   Created file

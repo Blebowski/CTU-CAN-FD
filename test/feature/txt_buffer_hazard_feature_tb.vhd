@@ -40,27 +40,30 @@
 --------------------------------------------------------------------------------
 
 --------------------------------------------------------------------------------
--- Purpose:
+-- @TestInfoStart
+--
+-- @Purpose:
 --  TXT Buffer datapath hazard feature test.
 --
--- Verifies:
---  1. When Lock command is issued on Protocol control at the same time as
---     Set Abort command, Lock command will have priority.
---  2. TXT Buffer will never end up Aborted when Protocol control succesfully
---     locks TXT Buffer for transmission! 
+-- @Verifies:
+--  @1. When Lock command is issued on Protocol control at the same time as
+--      Set Abort command, Lock command will have priority.
+--  @2. TXT Buffer will never end up Aborted when Protocol control succesfully
+--      locks TXT Buffer for transmission! 
 --
--- Test sequence:  
---  1. Insert frame to TXT Buffer
---  2. Mark the buffer as ready and wait for incrementing time.
---  3. Send set_abort command.
---  4. Readout status of TXT buffer.
---  5. If the buffer is "Aborted", check that no transmission is in progress
---     (via STATUS), throw an error if not.
---  6. If the buffer is "Abort in progress" check that transmission is 
---     in progress and wait till its end. Throw an error if not.
---  7. If buffer is in any other state, throw an error. Set Abort command should
---     not be missed by HW!
+-- @Test sequence:  
+--  @1. Insert frame to TXT Buffer
+--  @2. Mark the buffer as ready and wait for incrementing time.
+--  @3. Send set_abort command.
+--  @4. Readout status of TXT buffer.
+--  @5. If the buffer is "Aborted", check that no transmission is in progress
+--      (via STATUS), throw an error if not.
+--  @6. If the buffer is "Abort in progress" check that transmission is 
+--      in progress and wait till its end. Throw an error if not.
+--  @7. If buffer is in any other state, throw an error. Set Abort command should
+--      not be missed by HW!
 --
+-- @TestInfoEnd
 --------------------------------------------------------------------------------
 -- Revision History:
 --      17.1.2019   Created file

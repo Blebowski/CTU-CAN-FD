@@ -40,49 +40,53 @@
 --------------------------------------------------------------------------------
 
 --------------------------------------------------------------------------------
--- Purpose:
+-- @TestInfoStart
+--
+-- @Purpose:
 --  Interrupt EWL feature test.
 --
--- Verifies:
---  1. EWL Interrupt is set when TX Error counter is more or equal to EWL.
---  2. EWL Interrupt is set when RX Error counter more or equal to EWL.
---  3. EWL Interrupt is not set when either TX or RX Interrupt more or equal to
---     EWL, and EWL Interrupt is masked.
---  4. EWL Interrupt causes INT to go high when it is enabled.
---  5. EWL Interrupt causes INT to go low when it is disabled.
---  6. EWL Interrupt is cleared by write to INT_STATUS register.
---  7. EWL Interrupt enable is manipulated properly by INT_ENA_SET and
---     INT_ENA_CLEAR.
---  8. EWL Interrupt mask is manipulated properly by INT_MASK_SET and
---     INT_MASK_CLEAR.
---  9. EWL Interrupt is set when RX Error counter becomes less than or equal
---     to EWL.
--- 10. EWL Interrupt is set when TX Error counter becomes less than or equal
---     to EWL.
+-- @Verifies:
+--  @1. EWL Interrupt is set when TX Error counter is more or equal to EWL.
+--  @2. EWL Interrupt is set when RX Error counter more or equal to EWL.
+--  @3. EWL Interrupt is not set when either TX or RX Interrupt more or equal to
+--      EWL, and EWL Interrupt is masked.
+--  @4. EWL Interrupt causes INT to go high when it is enabled.
+--  @5. EWL Interrupt causes INT to go low when it is disabled.
+--  @6. EWL Interrupt is cleared by write to INT_STATUS register.
+--  @7. EWL Interrupt enable is manipulated properly by INT_ENA_SET and
+--      INT_ENA_CLEAR.
+--  @8. EWL Interrupt mask is manipulated properly by INT_MASK_SET and
+--      INT_MASK_CLEAR.
+--  @9. EWL Interrupt is set when RX Error counter becomes less than or equal
+--      to EWL.
+-- @10. EWL Interrupt is set when TX Error counter becomes less than or equal
+--      to EWL.
 --
--- Test sequence:
---  1. Unmask and enable EWL Interrupt, disable and mask all other interrupts on
---     Node 1. Turn on Test mode (to manipulate error counters via CTR_PRES).
---     Leave default value of EWL (96).
---  2. Set TX Error counter to 96. Check that EWL Interrupt was set. Check that
---     EWL Interrupt is set and INT pin is high.
---  3. Disable EWL Interrupt and check INT pin goes low. Enable EWL Interrupt
---     and check INT pin goes high. 
---  4. Clear EWL Interrupt and check it not set. Set TX Error counter to
---     95. Check EWL is set. Clear EWL Interrupt. Check EWL interrupt is cleared.
---  5. Set RX Error counter to 96. Check that EWL Interrupt was set. Check that
---     INT pin goes high. 
---  6. Disable EWL Interrupt and check INT pin goes low. Enable EWL Interrupt
---     and check INT pin goes high again. 
---  7. Clear EWL Interrupt. Check that EWL Interrupt is not set. Set RX Error
---     counter to 95. Check EWL is set. Check INT pin goes high and Interrupt
---     is set. Clear the interrupt and check.
---  8. Mask EWL Interrupt. Set TX Error counter to 96. Check that EWL interrupt
---     was not set.
---  9. Disable EWL Interrupt and check it was disabled. Enable EWL Interrupt and
---     check it was enabled.
--- 10. Mask EWL Interrupt and check it was masked. Un-mask EWL Interrupt and
---     check it was un-masked.
+-- @Test sequence:
+--  @1. Unmask and enable EWL Interrupt, disable and mask all other interrupts on
+--      Node 1. Turn on Test mode (to manipulate error counters via CTR_PRES).
+--      Leave default value of EWL (96).
+--  @2. Set TX Error counter to 96. Check that EWL Interrupt was set. Check that
+--      EWL Interrupt is set and INT pin is high.
+--  @3. Disable EWL Interrupt and check INT pin goes low. Enable EWL Interrupt
+--      and check INT pin goes high. 
+--  @4. Clear EWL Interrupt and check it not set. Set TX Error counter to
+--      95. Check EWL is set. Clear EWL Interrupt. Check EWL interrupt is cleared.
+--  @5. Set RX Error counter to 96. Check that EWL Interrupt was set. Check that
+--      INT pin goes high. 
+--  @6. Disable EWL Interrupt and check INT pin goes low. Enable EWL Interrupt
+--      and check INT pin goes high again. 
+--  @7. Clear EWL Interrupt. Check that EWL Interrupt is not set. Set RX Error
+--      counter to 95. Check EWL is set. Check INT pin goes high and Interrupt
+--      is set. Clear the interrupt and check.
+--  @8. Mask EWL Interrupt. Set TX Error counter to 96. Check that EWL interrupt
+--      was not set.
+--  @9. Disable EWL Interrupt and check it was disabled. Enable EWL Interrupt and
+--      check it was enabled.
+-- @10. Mask EWL Interrupt and check it was masked. Un-mask EWL Interrupt and
+--      check it was un-masked.
+--
+-- @TestInfoEnd
 --------------------------------------------------------------------------------
 -- Revision History:
 --    22.6.2019   Created file
@@ -125,7 +129,7 @@ package body int_ewl_feature is
     begin
 
         -----------------------------------------------------------------------
-        -- 1. Unmask and enable EWL Interrupt, disable and mask all other 
+        -- @1. Unmask and enable EWL Interrupt, disable and mask all other 
         --    interrupts on Node 1. Turn on Test mode (to manipulate error
         --    counters via CTR_PRES). Leave default value of EWL (96).
         -----------------------------------------------------------------------
@@ -138,7 +142,7 @@ package body int_ewl_feature is
         set_core_mode(mode, ID_1, mem_bus(1));
 
         -----------------------------------------------------------------------
-        -- 2. Set TX Error counter to 96. Check that EWL Interrupt was set. 
+        -- @2. Set TX Error counter to 96. Check that EWL Interrupt was set. 
         -- Check that EWL Interrupt is set and INT pin is high.
         -----------------------------------------------------------------------
         info("Step 2: Check EWL from TX Error counter");
@@ -150,7 +154,7 @@ package body int_ewl_feature is
         check(iout(1).irq = '1', "INT pin should be high!");
 
         -----------------------------------------------------------------------
-        -- 3. Disable EWL Interrupt and check INT pin goes low. Enable EWL 
+        -- @3. Disable EWL Interrupt and check INT pin goes low. Enable EWL 
         --    Interrupt and check INT pin goes high. 
         -----------------------------------------------------------------------
         info("Step 3: Check EWL from TX counter toggles INT pin.");
@@ -164,7 +168,7 @@ package body int_ewl_feature is
         check(iout(1).irq = '1', "INT pin should be high!");
 
         -----------------------------------------------------------------------
-        -- 4. Clear EWL Interrupt and check it not set. Set TX Error
+        -- @4. Clear EWL Interrupt and check it not set. Set TX Error
         --    counter to 95. Check EWL is set. Clear EWL Interrupt. Check EWL
         --    interrupt is cleared.
         -----------------------------------------------------------------------
@@ -188,7 +192,7 @@ package body int_ewl_feature is
             "EWL Interrupt cleared!");
 
         -----------------------------------------------------------------------
-        -- 5. Set RX Error counter to 96. Check that EWL Interrupt was set. 
+        -- @5. Set RX Error counter to 96. Check that EWL Interrupt was set. 
         -- Check that INT pin goes high. 
         -----------------------------------------------------------------------
         info("Step 5: Check EWL from RX Error counter");
@@ -199,7 +203,7 @@ package body int_ewl_feature is
         check(iout(1).irq = '1', "INT pin should be high!");
 
         -----------------------------------------------------------------------
-        -- 6. Disable EWL Interrupt and check INT pin goes low. Enable EWL 
+        -- @6. Disable EWL Interrupt and check INT pin goes low. Enable EWL 
         --    Interrupt and check INT pin goes high again. 
         -----------------------------------------------------------------------
         info("Step 6: Check EWL from RX counter toggles INT pin.");
@@ -213,7 +217,7 @@ package body int_ewl_feature is
         check(iout(1).irq = '1', "INT pin should be high!");
 
         -----------------------------------------------------------------------
-        -- 7. Clear EWL Interrupt. Check that EWL Interrupt is not set. Set RX
+        -- @7. Clear EWL Interrupt. Check that EWL Interrupt is not set. Set RX
         --    Error counter to 95. Check EWL is set. Check INT pin goes high
         --    and Interrupt is set. Clear the interrupt and check.
         -----------------------------------------------------------------------
@@ -238,7 +242,7 @@ package body int_ewl_feature is
             "EWL Interrupt cleared!");
 
         -----------------------------------------------------------------------
-        -- 8. Mask EWL Interrupt. Set TX Error counter to 96. Check that EWL 
+        -- @8. Mask EWL Interrupt. Set TX Error counter to 96. Check that EWL 
         --    interrupt was not set.
         -----------------------------------------------------------------------
         info("Step 8: Check EWL is not set when masked!");
@@ -251,7 +255,7 @@ package body int_ewl_feature is
         check(iout(1).irq = '0', "INT pin should be low!");
 
         -----------------------------------------------------------------------
-        -- 9. Disable EWL Interrupt and check it was disabled. Enable EWL 
+        -- @9. Disable EWL Interrupt and check it was disabled. Enable EWL 
         -- Interrupt and check it was enabled.
         -----------------------------------------------------------------------
         info("Step 9: Check EWL Interrupt enable works OK!");
@@ -268,7 +272,7 @@ package body int_ewl_feature is
         check(int_ena.error_warning_int, "EWL Interrupt disabled!");
 
         -----------------------------------------------------------------------
-        -- 10. Mask EWL Interrupt and check it was masked. Un-mask EWL 
+        -- @10. Mask EWL Interrupt and check it was masked. Un-mask EWL 
         -- Interrupt and check it was un-masked.
         -----------------------------------------------------------------------
         info("Step 10: Check EWL Interrupt mask works OK!");

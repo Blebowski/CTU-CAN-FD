@@ -40,18 +40,22 @@
 --------------------------------------------------------------------------------
 
 --------------------------------------------------------------------------------
--- Purpose:
+-- @TestInfoStart
+--
+-- @Purpose:
 --  Soft reset feature test.
 --
--- Verifies:
---  1. Reset value of all memory registers.
---  2. MODE[RST] will reset all the memory registers.
+-- @Verifies:
+--  @1. Reset value of all memory registers.
+--  @2. MODE[RST] will reset all the memory registers.
 --
--- Test sequence:
---  1. Write all RW registers to random value. Check they were written.
---  2. Execute SW reset via MODE[RST].
---  3. Read all registers and check they return their reset value.
---  4. Write all RW registers to random value. Check they were written.
+-- @Test sequence:
+--  @1. Write all RW registers to random value. Check they were written.
+--  @2. Execute SW reset via MODE[RST].
+--  @3. Read all registers and check they return their reset value.
+--  @4. Write all RW registers to random value. Check they were written.
+--
+-- @TestInfoEnd
 --------------------------------------------------------------------------------
 -- Revision History:
 --    28.10.2019   Created file
@@ -168,7 +172,7 @@ package body mode_rst_feature is
     begin
 
         -----------------------------------------------------------------------
-        -- 1. Write all RW registers to random value. Check they were written.
+        -- @1. Write all RW registers to random value. Check they were written.
         -----------------------------------------------------------------------
         info("Step 1");
         for i in 0 to Control_registers_list'length - 1 loop
@@ -213,13 +217,13 @@ package body mode_rst_feature is
         end loop;
 
         -----------------------------------------------------------------------
-        -- 2. Execute SW reset via MODE[RST].
+        -- @2. Execute SW reset via MODE[RST].
         -----------------------------------------------------------------------
         info("Step 2");
         exec_SW_reset(ID_1, mem_bus(1));
 
         -----------------------------------------------------------------------
-        -- 3. Read all registers and check they return their reset value.
+        -- @3. Read all registers and check they return their reset value.
         -----------------------------------------------------------------------
         info("Step 3");
         for i in 0 to Control_registers_list'length - 1 loop

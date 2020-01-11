@@ -40,56 +40,60 @@
 --------------------------------------------------------------------------------
 
 --------------------------------------------------------------------------------
--- Purpose:
+-- @TestInfoStart
+--
+-- @Purpose:
 --  Retransmitt limit feature test
 --
--- Verifies:
---  1. When retransmitt limit is disabled, core does not stop re-transmitting
---     after retransmitt limit number of retransmissions was reached
---     (retransmitts indefinitely).
---  2. When retransmitt limit is set to 15 (maximum) and retransmitt limitation
---     is enabled, core retransmitts 15 times. After 15 retransmissions, core
---     does not retransmitt anymore.
---  3. Core retransmitts 'retransmitt limit' times when 'retransmitt limit' is
---     enabled.
---  4. When transmission fails as result of Error frame, this counts as
---     re-transmission and retransmitt counter is incremented.
---  5. When transmission fails as result of Arbitration loss, this counts as
---     re-transmission and retransmitt counter is incremented.
+-- @Verifies:
+--  @1. When retransmitt limit is disabled, core does not stop re-transmitting
+--      after retransmitt limit number of retransmissions was reached
+--      (retransmitts indefinitely).
+--  @2. When retransmitt limit is set to 15 (maximum) and retransmitt limitation
+--      is enabled, core retransmitts 15 times. After 15 retransmissions, core
+--      does not retransmitt anymore.
+--  @3. Core retransmitts 'retransmitt limit' times when 'retransmitt limit' is
+--      enabled.
+--  @4. When transmission fails as result of Error frame, this counts as
+--      re-transmission and retransmitt counter is incremented.
+--  @5. When transmission fails as result of Arbitration loss, this counts as
+--      re-transmission and retransmitt counter is incremented.
 --
--- Test sequence:
---  1. Set retransmitt limit to 1 in Node 1. Enable retransmitt limitations.
---     Set Acknowledge forbidden mode in Node 2 (to produce ACK errors). Turn
---     on Test mode in Node 1 (to manipulate error counters).
---  2. Generate frame and start sending the frame by Node 1. Wait until
---     error frame occurs and transmission is over two times.
---  3. Check transmission failed and transmitting TXT Buffer is "TX Error".
---  4. Disable retransmitt limitions in Node 1. Start sending a frame by Node 1.
---     Wait until error frame and check that transmitting TXT Buffer is "Ready"
---     again (hitting current retransmitt limit did not cause stopping
---     retransmissions when retransmitt limit is disabled).
---  5. Abort transmission by Node 1. Wait until transmission was aborted.
---  6. Generate random retransmitt limit (between 1 and 14). Enable retransmitt
---     limitation in Node 1. Erase TX error counter in Node 1. Erase TX Error
---     counter.
---  7. Send frame by Node 1. Monitor that after initial transmission and after
---     each next re-transmission sending TXT Buffer in Node 1 is "Ready". After
+-- @Test sequence:
+--  @1. Set retransmitt limit to 1 in Node 1. Enable retransmitt limitations.
+--      Set Acknowledge forbidden mode in Node 2 (to produce ACK errors). Turn
+--      on Test mode in Node 1 (to manipulate error counters).
+--  @2. Generate frame and start sending the frame by Node 1. Wait until
+--      error frame occurs and transmission is over two times.
+--  @3. Check transmission failed and transmitting TXT Buffer is "TX Error".
+--  @4. Disable retransmitt limitions in Node 1. Start sending a frame by Node 1.
+--      Wait until error frame and check that transmitting TXT Buffer is "Ready"
+--      again (hitting current retransmitt limit did not cause stopping
+--      retransmissions when retransmitt limit is disabled).
+--  @5. Abort transmission by Node 1. Wait until transmission was aborted.
+--  @6. Generate random retransmitt limit (between 1 and 14). Enable retransmitt
+--      limitation in Node 1. Erase TX error counter in Node 1. Erase TX Error
+--      counter.
+--  @7. Send frame by Node 1. Monitor that after initial transmission and after
+--      each next re-transmission sending TXT Buffer in Node 1 is "Ready". After
+--      'retransmitt limit' retransmissions check that sending TXT Buffer in
+--      Node 1 is in state "TX Error".
+--  @8. Check that value of TX Error counter in Node 1 is equal to:
+--      (retr_lim + 1) * 8.
+--  @9. Set retransmitt limit to 15 and Enable Retransmissions in Node 1.
+--      Start Sending frame by Node 1.
+-- @10. Monitor that after initial transmission and after each next
+--      re-transmission sending TXT Buffer in Node 1 is "Ready". After
 --     'retransmitt limit' retransmissions check that sending TXT Buffer in
---     Node 1 is in state "TX Error".
---  8. Check that value of TX Error counter in Node 1 is equal to:
---     (retr_lim + 1) * 8.
---  9. Set retransmitt limit to 15 and Enable Retransmissions in Node 1.
---     Start Sending frame by Node 1.
--- 10. Monitor that after initial transmission and after each next
---     re-transmission sending TXT Buffer in Node 1 is "Ready". After
---     'retransmitt limit' retransmissions check that sending TXT Buffer in
---     Node 1 is in state "TX Error".
--- 11. Set retransmitt limit to 0 in Node 1. Insert frames for transmission to
---     Node 1 and Node 2 simultaneously to invoke arbitration. ID of frame in
---     Node 1 is higher than the one in Node 2 (to loose arbitration).
---     Wait until node 1 is in Control field of a frame. Check that Node 1
---     is receiver (arbitration was really lost) and TXT Buffer in Node 1
---     ended up in "TX Error" state.
+--      Node 1 is in state "TX Error".
+-- @11. Set retransmitt limit to 0 in Node 1. Insert frames for transmission to
+--      Node 1 and Node 2 simultaneously to invoke arbitration. ID of frame in
+--      Node 1 is higher than the one in Node 2 (to loose arbitration).
+--      Wait until node 1 is in Control field of a frame. Check that Node 1
+--      is receiver (arbitration was really lost) and TXT Buffer in Node 1
+--      ended up in "TX Error" state.
+--
+-- @TestInfoEnd
 --------------------------------------------------------------------------------
 -- Revision History:
 --    30.6.2016   Created file
@@ -144,7 +148,7 @@ package body retr_limit_feature is
         txt_buf_nr := txt_buf_nr + 1;
 
         ------------------------------------------------------------------------
-        -- 1. Set retransmitt limit to 0 in Node 1. Enable retransmitt 
+        -- @1. Set retransmitt limit to 0 in Node 1. Enable retransmitt 
         --    limitations. Set Acknowledge forbidden mode in Node 2 (to produce
         --    ACK errors). Turn on Test mode in Node 1 (to manipulate error 
         --    counters).
@@ -157,7 +161,7 @@ package body retr_limit_feature is
         set_core_mode(mode_1, ID_1, mem_bus(1));
         
         ------------------------------------------------------------------------
-        -- 2. Generate frame and start sending the frame by Node 1. Wait until
+        -- @2. Generate frame and start sending the frame by Node 1. Wait until
         --    error frame occurs and transmission is over two times.
         ------------------------------------------------------------------------
         info("Step 2: Sending frame by Node 1");
@@ -169,7 +173,7 @@ package body retr_limit_feature is
         end loop;
 
         ------------------------------------------------------------------------
-        -- 3. Check transmission failed and transmitting TXT Buffer is
+        -- @3. Check transmission failed and transmitting TXT Buffer is
         --    "TX Error".
         ------------------------------------------------------------------------
         info("Step 3: Checking transmission failed.");
@@ -177,7 +181,7 @@ package body retr_limit_feature is
         check(buf_state = buf_failed, "TXT Buffer failed!");
         
         ------------------------------------------------------------------------
-        -- 4. Disable retransmitt limitions in Node 1. Start sending a frame by
+        -- @4. Disable retransmitt limitions in Node 1. Start sending a frame by
         --    Node 1. Wait until error frame and check that transmitting TXT
         --    Buffer is "Ready" again (hitting current retransmitt limit did not
         --    cause stopping retransmissions when retransmitt limit is disabled).
@@ -192,7 +196,7 @@ package body retr_limit_feature is
         check(buf_state = buf_ready, "TXT Buffer ready!");
         
         ------------------------------------------------------------------------
-        -- 5. Abort transmission by Node 1. Wait until transmission was aborted.
+        -- @5. Abort transmission by Node 1. Wait until transmission was aborted.
         ------------------------------------------------------------------------
         info("Step 5: Aborting transmission");
         send_TXT_buf_cmd(buf_set_abort, txt_buf_nr, ID_1, mem_bus(1));
@@ -203,7 +207,7 @@ package body retr_limit_feature is
         CAN_wait_bus_idle(ID_1, mem_bus(1));
 
         ------------------------------------------------------------------------
-        -- 6. Generate random retransmitt limit (between 1 and 14). Enable 
+        -- @6. Generate random retransmitt limit (between 1 and 14). Enable 
         --    retransmitt limitation in Node 1. Erase TX Error counter.
         ------------------------------------------------------------------------
         info("Step 6: Setting random retransmitt limit!");
@@ -215,7 +219,7 @@ package body retr_limit_feature is
         set_error_counters(err_counters, ID_1, mem_bus(1));
         
         ------------------------------------------------------------------------
-        -- 7. Send frame by Node 1. Monitor that after initial transmission and
+        -- @7. Send frame by Node 1. Monitor that after initial transmission and
         --    after each next re-transmission sending TXT Buffer in Node 1 is
         --    "Ready".
         ------------------------------------------------------------------------
@@ -234,7 +238,7 @@ package body retr_limit_feature is
         CAN_wait_bus_idle(ID_1, mem_bus(1));
 
         ------------------------------------------------------------------------
-        -- 8. Check that value of TX Error counter in Node 1 is equal to:
+        -- @8. Check that value of TX Error counter in Node 1 is equal to:
         --      (retr_lim + 1) * 8.
         ------------------------------------------------------------------------
         info("Step 8: Checking value of TX Error counter");
@@ -244,7 +248,7 @@ package body retr_limit_feature is
             " counters real: " & Integer'image(8 * (retr_th + 1)));
         
         ------------------------------------------------------------------------
-        -- 9. Set retransmitt limit to 15 and Enable Re-transmissions in Node 1.
+        -- @9. Set retransmitt limit to 15 and Enable Re-transmissions in Node 1.
         --    Start Sending frame by Node 1. Erase error counters so that
         --    we don't go to bus off (just to be sure).
         ------------------------------------------------------------------------
@@ -255,7 +259,7 @@ package body retr_limit_feature is
         set_error_counters(err_counters, ID_1, mem_bus(1));
         
         ------------------------------------------------------------------------
-        -- 10. Monitor that after initial transmission and after each next
+        -- @10. Monitor that after initial transmission and after each next
         --     re-transmission sending TXT Buffer in Node 1 is "Ready". After
         --     'retransmitt limit' retransmissions check that sending TXT Buffer
         --     in Node 1 is in state "TX Error".
@@ -277,7 +281,7 @@ package body retr_limit_feature is
         wait for 100 ns;
 
         ------------------------------------------------------------------------
-        -- 11. Set retransmitt limit to 1 in Node 1. Insert frames for 
+        -- @11. Set retransmitt limit to 1 in Node 1. Insert frames for 
         --     transmission to Node 1 and Node 2 simultaneously to invoke
         --     arbitration. ID of frame in Node 1 is higher than the one in
         --     Node 2 (to loose arbitration). Wait until node 1 is in Control

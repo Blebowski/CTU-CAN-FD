@@ -40,19 +40,23 @@
 --------------------------------------------------------------------------------
 
 --------------------------------------------------------------------------------
--- Purpose:
+-- @TestInfoStart
+--
+-- @Purpose:
 --  ERR_CAPT[ERR_POS] = ERC_POS_ARB, bit error feature test. 
 --
--- Verifies:
---  1. Detection of bit error in Arbitration field. Value of ERR_CAPT[ERR_POS]
---     when bit error should have been detected in arbitration field.
+-- @Verifies:
+--  @1. Detection of bit error in Arbitration field. Value of ERR_CAPT[ERR_POS]
+--      when bit error should have been detected in arbitration field.
 --
--- Test sequence:
---  1. Check that ERR_CAPT contains no error (post reset).
---  2. Generate CAN frame and send it by Node 1. Wait until transmission starts
---     and wait until arbitration field. Wait for random amount of time until
---     Dominant bit is sent! Force bus low and wait until sample point. Check
---     that Error frame is being transmitted. Check value of ERR_CAPT.
+-- @Test sequence:
+--  @1. Check that ERR_CAPT contains no error (post reset).
+--  @2. Generate CAN frame and send it by Node 1. Wait until transmission starts
+--      and wait until arbitration field. Wait for random amount of time until
+--      Dominant bit is sent! Force bus low and wait until sample point. Check
+--      that Error frame is being transmitted. Check value of ERR_CAPT.
+--
+-- @TestInfoEnd
 --------------------------------------------------------------------------------
 -- Revision History:
 --    03.02.2020   Created file
@@ -103,7 +107,7 @@ package body err_capt_arb_bit_feature is
     begin
 
         -----------------------------------------------------------------------
-        -- 1. Check that ERR_CAPT contains no error (post reset).
+        -- @1. Check that ERR_CAPT contains no error (post reset).
         -----------------------------------------------------------------------
         info("Step 1");
         
@@ -111,7 +115,7 @@ package body err_capt_arb_bit_feature is
         check(err_capt.err_pos = err_pos_other, "Reset of ERR_CAPT!");
         
         -----------------------------------------------------------------------        
-        --  2. Generate CAN frame and send it by Node 1. Wait until transmission
+        --  @2. Generate CAN frame and send it by Node 1. Wait until transmission
         --     starts and wait until arbitration field. Wait for random amount
         --     of time until Dominant bit is sent! Force bus low and wait until
         --     sample point. Check that Error frame is being transmitted. Check

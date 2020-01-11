@@ -40,19 +40,23 @@
 --------------------------------------------------------------------------------
 
 --------------------------------------------------------------------------------
--- Purpose:
+-- @TestInfoStart
+--
+-- @Purpose:
 --  Fault confinement rules - rule G - feature test.
 --
--- Verifies:
---  1. After the successful transmission of a frame (getting ACK and no error
---     has been detected until EOF is finished), the transmit error counter
---     shall be decremented by 1 unless it was already 0.
+-- @Verifies:
+--  @1. After the successful transmission of a frame (getting ACK and no error
+--      has been detected until EOF is finished), the transmit error counter
+--      shall be decremented by 1 unless it was already 0.
 --
--- Test sequence:
---  1. Set TEC of Node 1 to random value till 255. Send frame by Node 1, wait
---     till end of EOF and check that TEC is decremented at the end of EOF!
---  2. Set TEC of Node 1 to 0. Send frame by Node 1. Wait until frame is sent
---     and check that TEC is still 0!
+-- @Test sequence:
+--  @1. Set TEC of Node 1 to random value till 255. Send frame by Node 1, wait
+--      till end of EOF and check that TEC is decremented at the end of EOF!
+--  @2. Set TEC of Node 1 to 0. Send frame by Node 1. Wait until frame is sent
+--      and check that TEC is still 0!
+--
+-- @TestInfoEnd
 --------------------------------------------------------------------------------
 -- Revision History:
 --    13.12.2019   Created file
@@ -97,7 +101,7 @@ package body error_rules_g_feature is
     begin
 
         -----------------------------------------------------------------------
-        -- 1. Set TEC of Node 1 to random value till 255. Send frame by Node 1,
+        -- @1. Set TEC of Node 1 to random value till 255. Send frame by Node 1,
         --    wait till end of EOF and check that TEC is decremented at the
         --    end of EOF!
         -----------------------------------------------------------------------
@@ -132,7 +136,7 @@ package body error_rules_g_feature is
                 "TEC decremented by 1 after EOF");
 
         -----------------------------------------------------------------------
-        -- 2. Set TEC of Node 1 to 0. Send frame by Node 1. Wait until frame is
+        -- @2. Set TEC of Node 1 to 0. Send frame by Node 1. Wait until frame is
         --    sent and check that TEC is still 0!
         -----------------------------------------------------------------------
         info("Step 2");

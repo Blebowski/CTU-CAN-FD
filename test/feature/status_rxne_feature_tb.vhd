@@ -40,23 +40,27 @@
 --------------------------------------------------------------------------------
 
 --------------------------------------------------------------------------------
--- Purpose:
+-- @TestInfoStart
+--
+-- @Purpose:
 --  STATUS[RXNE] feature test.
 --
--- Verifies:
---  1. When no frame is stored in RX Buffer, STATUS[RXNE] is not set.
---  2. When one or more frames is stored in RX Buffer, STATUS[RXNE] is set.
---  3. STATUS[RXNE] is not set when last word of last frame in RX Buffer is
---     read.
+-- @Verifies:
+--  @1. When no frame is stored in RX Buffer, STATUS[RXNE] is not set.
+--  @2. When one or more frames is stored in RX Buffer, STATUS[RXNE] is set.
+--  @3. STATUS[RXNE] is not set when last word of last frame in RX Buffer is
+--      read.
 --
--- Test sequence:
---  1. Read STATUS[RXNE] of Node 1 and check it is not set. Send random amount
---     of CAN frames by Node 2 and wait until they are received. Check that
---     after each one, STATUS[RXNE] is set.
---  2. Read out frame by frame and check that STATUS[RXNE] is still set. Read
---     all frames but last one.
---  3. Read out last frame word by word and check that STATUS[RXNE] is still
---     set and STATUS[RXNE] is not set after reading out last word.
+-- @Test sequence:
+--  @1. Read STATUS[RXNE] of Node 1 and check it is not set. Send random amount
+--      of CAN frames by Node 2 and wait until they are received. Check that
+--      after each one, STATUS[RXNE] is set.
+--  @2. Read out frame by frame and check that STATUS[RXNE] is still set. Read
+--      all frames but last one.
+--  @3. Read out last frame word by word and check that STATUS[RXNE] is still
+--      set and STATUS[RXNE] is not set after reading out last word.
+--
+-- @TestInfoEnd
 --------------------------------------------------------------------------------
 -- Revision History:
 --    31.10.2019   Created file
@@ -102,7 +106,7 @@ package body status_rxne_feature is
     begin
 
         -----------------------------------------------------------------------
-        --  1. Read STATUS[RXNE] of Node 1 and check it is not set. Send
+        --  @1. Read STATUS[RXNE] of Node 1 and check it is not set. Send
         --     random amount of CAN frames by Node 2 and wait until they are
         --     received. Check that after each one, STATUS[RXNE] is set.
         -----------------------------------------------------------------------
@@ -127,7 +131,7 @@ package body status_rxne_feature is
         end loop;
 
         -----------------------------------------------------------------------
-        --  2. Read out frame by frame and check that STATUS[RXNE] is still set.
+        --  @2. Read out frame by frame and check that STATUS[RXNE] is still set.
         --     Read all frames but last one.
         -----------------------------------------------------------------------
         info("Step 2");
@@ -138,7 +142,7 @@ package body status_rxne_feature is
         end loop;
         
         -----------------------------------------------------------------------
-        --  3. Read out last frame word by word and check that STATUS[RXNE] is
+        --  @3. Read out last frame word by word and check that STATUS[RXNE] is
         --     still set and STATUS[RXNE] is not set after reading out last
         --     word.
         -----------------------------------------------------------------------

@@ -40,52 +40,56 @@
 --------------------------------------------------------------------------------
 
 --------------------------------------------------------------------------------
--- Purpose:
+-- @TestInfoStart
+--
+-- @Purpose:
 --  Interrupt EPI feature test.
 --
--- Verifies:
---  1. FCS Interrupt is set when unit turns from Error Active to Error Passive.
---  2. FCS Interrupt is set when unit turns from Error Passive to Bus-off.
---  3. FCS Interrupt is set when unit turns from Error Passive to Error Active.
---  4. FCS Interrupt is set when unit turns from Bus-off to Error Active.
---  5. FCS Interrupt is not set when it is masked.
---  6. FCS Interrupt causes INT to go high when it is enabled.
---  7. FCS Interrupt causes INT to go low when it is disabled.
---  8. FCS Interrupt is cleared by write to INT_STATUS register.
---  9. FCS Interrupt enable is manipulated properly by INT_ENA_SET and
---     INT_ENA_CLEAR.
--- 10. FCS Interrupt mask is manipulated properly by INT_MASK_SET and
---     INT_MASK_CLEAR.
+-- @Verifies:
+--  @1. FCS Interrupt is set when unit turns from Error Active to Error Passive.
+--  @2. FCS Interrupt is set when unit turns from Error Passive to Bus-off.
+--  @3. FCS Interrupt is set when unit turns from Error Passive to Error Active.
+--  @4. FCS Interrupt is set when unit turns from Bus-off to Error Active.
+--  @5. FCS Interrupt is not set when it is masked.
+--  @6. FCS Interrupt causes INT to go high when it is enabled.
+--  @7. FCS Interrupt causes INT to go low when it is disabled.
+--  @8. FCS Interrupt is cleared by write to INT_STATUS register.
+--  @9. FCS Interrupt enable is manipulated properly by INT_ENA_SET and
+--      INT_ENA_CLEAR.
+-- @10. FCS Interrupt mask is manipulated properly by INT_MASK_SET and
+--      INT_MASK_CLEAR.
 --
--- Test sequence:
---  1. Unmask and enable FCS Interrupt, disable and mask all other interrupts on
---     Node 1. Enable test mode (to manipulate with Error counter registers).
---     Keep ERP/EWL values default.
---  2. Check unit is error active. Set TX Error counter to 128. Check unit is
---     Error passive. Check FCS Interrupt is present. Check that INT pin is high.
---  3. Disable FCS Interrupt and check INT pin goes low. Enable FCS Interrupt
---     and check INT pin goes high.
---  4. Clear FCS Interrupt. Check it is cleared.
---  5. Set TX Error counter to 127. Check unit is Error active. Check that
---     FCS Interrupt is set. Check INT pin is high.
---  6. Clear EPI Interrupt. Check FCS Interrupt is cleared.
---  7. Set TX Error counter to 196. Check EPI Interrupt is set. Clear FCS
---     Interrupt.
---  8. Set TX Error counter to 256. Check that unit is Bus-off. Check that FCS
---     Interrupt is set. Check INT pin is high.
---  9. Clear FCS Interrupt. Check it is cleared. Check INT pin is low.
--- 10. Issue ERCRST command. Wait till unit turns Error Active. This does
---     not test proper duration after which unit turns Error active (128
---     ocurrences of 11 consecutive Recessive bits)!!! Meanwhile check that
---     FCS Interrupt is not set.
--- 11. When Unit turns error active, check that FCS Interrupt is set. Check
---     INT pin is high. Clear FCS Interrupt.
--- 12. Mask FCS Interrupt. Set RX Error counter to 128. Check Unit is Error
---     Passive. Check FCS Interrupt is not set. Check INT pin is low.
--- 13. Disable FCS Interrupt and check it was disabled. Enable FCS Interrupt and
---     check it was enabled.
--- 14. Mask FCS Interrupt and check it was masked. Un-mask FCS Interrupt and
---     check it was un-masked.
+-- @Test sequence:
+--  @1. Unmask and enable FCS Interrupt, disable and mask all other interrupts on
+--      Node 1. Enable test mode (to manipulate with Error counter registers).
+--      Keep ERP/EWL values default.
+--  @2. Check unit is error active. Set TX Error counter to 128. Check unit is
+--      Error passive. Check FCS Interrupt is present. Check that INT pin is high.
+--  @3. Disable FCS Interrupt and check INT pin goes low. Enable FCS Interrupt
+--      and check INT pin goes high.
+--  @4. Clear FCS Interrupt. Check it is cleared.
+--  @5. Set TX Error counter to 127. Check unit is Error active. Check that
+--      FCS Interrupt is set. Check INT pin is high.
+--  @6. Clear EPI Interrupt. Check FCS Interrupt is cleared.
+--  @7. Set TX Error counter to 196. Check EPI Interrupt is set. Clear FCS
+--      Interrupt.
+--  @8. Set TX Error counter to 256. Check that unit is Bus-off. Check that FCS
+--      Interrupt is set. Check INT pin is high.
+--  @9. Clear FCS Interrupt. Check it is cleared. Check INT pin is low.
+-- @10. Issue ERCRST command. Wait till unit turns Error Active. This does
+--      not test proper duration after which unit turns Error active (128
+--      ocurrences of 11 consecutive Recessive bits)!!! Meanwhile check that
+--      FCS Interrupt is not set.
+-- @11. When Unit turns error active, check that FCS Interrupt is set. Check
+--      INT pin is high. Clear FCS Interrupt.
+-- @12. Mask FCS Interrupt. Set RX Error counter to 128. Check Unit is Error
+--      Passive. Check FCS Interrupt is not set. Check INT pin is low.
+-- @13. Disable FCS Interrupt and check it was disabled. Enable FCS Interrupt and
+--      check it was enabled.
+-- @14. Mask FCS Interrupt and check it was masked. Un-mask FCS Interrupt and
+--      check it was un-masked.
+--
+-- @TestInfoEnd
 --------------------------------------------------------------------------------
 -- Revision History:
 --    1.7.2019   Created file
@@ -129,7 +133,7 @@ package body int_fcs_feature is
     begin
 
         -----------------------------------------------------------------------
-        -- 1. Unmask and enable FCS Interrupt, disable and mask all other
+        -- @1. Unmask and enable FCS Interrupt, disable and mask all other
         --    interrupts on Node 1. Enable test mode (to manipulate with Error
         --    counter registers). Keep ERP/EWL values default.
         -----------------------------------------------------------------------
@@ -142,7 +146,7 @@ package body int_fcs_feature is
         set_core_mode(mode, ID_1, mem_bus(1));
 
         -----------------------------------------------------------------------
-        -- 2. Check unit is Error Active. Set TX Error counter to 128. Check
+        -- @2. Check unit is Error Active. Set TX Error counter to 128. Check
         --    unit is Error passive. Check FCS Interrupt is present. Check that
         --    INT pin is high.
         -----------------------------------------------------------------------
@@ -160,7 +164,7 @@ package body int_fcs_feature is
         check(iout(1).irq = '1', "INT pin should be high!");
         
         -----------------------------------------------------------------------
-        -- 3. Disable FCS Interrupt and check INT pin goes low. Enable FCS 
+        -- @3. Disable FCS Interrupt and check INT pin goes low. Enable FCS 
         --    Interrupt and check INT pin goes high.
         -----------------------------------------------------------------------
         info("Step 3: Check FCS Interrupt toggles INT pin");
@@ -174,7 +178,7 @@ package body int_fcs_feature is
         check(iout(1).irq = '1', "INT pin should be high!");        
 
         -----------------------------------------------------------------------
-        -- 4. Clear FCS Interrupt. Check it is cleared.
+        -- @4. Clear FCS Interrupt. Check it is cleared.
         -----------------------------------------------------------------------
         info("Step 4: Clear FCS Interrupt - Check it is cleared");
         int_stat.fcs_changed_int := true;
@@ -185,7 +189,7 @@ package body int_fcs_feature is
         check(iout(1).irq = '0', "INT pin should be low!");             
 
         -----------------------------------------------------------------------
-        -- 5. Set TX Error counter to 127. Check unit is Error active. Check 
+        -- @5. Set TX Error counter to 127. Check unit is Error active. Check 
         --    that FCS Interrupt is set. Check INT pin is high.
         -----------------------------------------------------------------------
         info("Step 5: FCS Interrupt - Error Passive -> Error Active!");
@@ -199,7 +203,7 @@ package body int_fcs_feature is
         check(iout(1).irq = '1', "INT pin should be high!");
 
         -----------------------------------------------------------------------
-        -- 6. Clear FCS Interrupt. Check it is cleared.
+        -- @6. Clear FCS Interrupt. Check it is cleared.
         -----------------------------------------------------------------------
         info("Step 6: Clear FCS Interrupt - Check it is cleared");
         int_stat.fcs_changed_int := true;
@@ -210,7 +214,7 @@ package body int_fcs_feature is
         check(iout(1).irq = '0', "INT pin should be low!");
 
         -----------------------------------------------------------------------
-        -- 7. Set TX Error counter to 196. Check EPI Interrupt is set. Clear 
+        -- @7. Set TX Error counter to 196. Check EPI Interrupt is set. Clear 
         --    FCS Interrupt.
         -----------------------------------------------------------------------
         info("Step 7: FCS Interrupt - Moving to Error Passive!");
@@ -225,7 +229,7 @@ package body int_fcs_feature is
             "FCS Interrupt still set after clear!");
         
         -----------------------------------------------------------------------
-        -- 8. Set TX Error counter to 256. Check that unit is Bus-off. Check 
+        -- @8. Set TX Error counter to 256. Check that unit is Bus-off. Check 
         --    that FCS Interrupt is set. Check INT pin is high.
         -----------------------------------------------------------------------
         info("Step 8: FCS Interrupt - Error Passive -> Bus off!");
@@ -239,7 +243,7 @@ package body int_fcs_feature is
         check(iout(1).irq = '1', "INT pin should be high!");
 
         -----------------------------------------------------------------------
-        -- 9. Clear FCS Interrupt. Check it is cleared. Check INT pin is low.
+        -- @9. Clear FCS Interrupt. Check it is cleared. Check INT pin is low.
         -----------------------------------------------------------------------
         info("Step 9: FCS Interrupt clear");
         int_stat.fcs_changed_int := true;
@@ -250,7 +254,7 @@ package body int_fcs_feature is
         check(iout(1).irq = '0', "INT pin should be low!");
         
         -----------------------------------------------------------------------
-        -- 10. Issue ERCRST command. Wait till unit turns Error Active. This
+        -- @10. Issue ERCRST command. Wait till unit turns Error Active. This
         --     does not test proper duration after which unit turns Error 
         --     active (128 ocurrences of 11 consecutive Recessive bits)!!!
         --     Meanwhile check that FCS Interrupt is not set.
@@ -276,7 +280,7 @@ package body int_fcs_feature is
         end loop;
         
         -----------------------------------------------------------------------
-        -- 11. When Unit turns Error Active, check that FCS Interrupt is set.
+        -- @11. When Unit turns Error Active, check that FCS Interrupt is set.
         --     Check INT pin is high. Clear FCS Interrupt.
         -----------------------------------------------------------------------
         info("Step 11: FCS Interrupt: Bus-off -> Error Active");
@@ -294,7 +298,7 @@ package body int_fcs_feature is
             "FCS Interrupt still set after clear!");
             
         -----------------------------------------------------------------------
-        -- 12. Mask FCS Interrupt. Set TX Error counter to 128. Check Unit is
+        -- @12. Mask FCS Interrupt. Set TX Error counter to 128. Check Unit is
         --     Error Passive. Check FCS Interrupt is not set. Check INT pin is
         --     low.
         -----------------------------------------------------------------------
@@ -311,7 +315,7 @@ package body int_fcs_feature is
         check(iout(1).irq = '0', "INT pin should be low!");
 
         -----------------------------------------------------------------------
-        -- 13. Disable FCS Interrupt and check it was disabled. Enable FCS
+        -- @13. Disable FCS Interrupt and check it was disabled. Enable FCS
         --     Interrupt and check it was enabled.
         -----------------------------------------------------------------------
         info("Step 13: Check FCS Interrupt enable works OK!");
@@ -328,7 +332,7 @@ package body int_fcs_feature is
         check(int_ena.fcs_changed_int, "FCS Interrupt disabled!");
         
         -----------------------------------------------------------------------
-        -- 14. Mask FCS Interrupt and check it was masked. Un-mask FCS
+        -- @14. Mask FCS Interrupt and check it was masked. Un-mask FCS
         --     Interrupt and check it was un-masked.
         -----------------------------------------------------------------------
         info("Step 14: Check FCSI Interrupt mask works OK!");

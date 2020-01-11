@@ -40,19 +40,23 @@
 --------------------------------------------------------------------------------
 
 --------------------------------------------------------------------------------
--- Purpose:
+-- @TestInfoStart
+--
+-- @Purpose:
 --  REC (RX Error counter) saturation feature test.
 --
--- Verifies:
---  1. REC is saturated at its width (9 bits) and further errors in receiver
---     will not cause its overflow.
+-- @Verifies:
+--  @1. REC is saturated at its width (9 bits) and further errors in receiver
+--      will not cause its overflow.
 --
--- Test sequence:
---  1. Set Test mode in Node 1. Disable CAN FD support in Node 1 and Set REC to
---     510 in Node 1. Check that REC is 510.
---  2. Send CAN FD frame by Node 2 few times. Wait until CAN frame is sent and
---     check that REC in Node 1 is 511 after first frame (was incremented by 1)
---     and also after each next attempt to transmitt a frame.
+-- @Test sequence:
+--  @1. Set Test mode in Node 1. Disable CAN FD support in Node 1 and Set REC to
+--      510 in Node 1. Check that REC is 510.
+--  @2. Send CAN FD frame by Node 2 few times. Wait until CAN frame is sent and
+--      check that REC in Node 1 is 511 after first frame (was incremented by 1)
+--      and also after each next attempt to transmitt a frame.
+--
+-- @TestInfoEnd
 --------------------------------------------------------------------------------
 -- Revision History:
 --    11.11.2019   Created file
@@ -91,7 +95,7 @@ package body rec_saturation_feature is
     begin
 
         ------------------------------------------------------------------------
-        -- 1. Set Test mode in Node 1. Disable CAN FD support in Node 1 and Set
+        -- @1. Set Test mode in Node 1. Disable CAN FD support in Node 1 and Set
         --    REC to 510 in Node 1. Check that REC is 510.
         ------------------------------------------------------------------------
         info("Step 1");
@@ -106,7 +110,7 @@ package body rec_saturation_feature is
         check(err_counters.rx_counter = 510, "REC set properly!");
 
         ------------------------------------------------------------------------
-        -- 2. Send CAN FD frame by Node 2 few times. Wait until CAN frame is
+        -- @2. Send CAN FD frame by Node 2 few times. Wait until CAN frame is
         --    sent and check that REC in Node 1 is 511 after first frame (was
         --    incremented by 1) and also after each next attempt to transmitt a
         --    frame.

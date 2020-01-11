@@ -40,26 +40,30 @@
 --------------------------------------------------------------------------------
 
 --------------------------------------------------------------------------------
--- Purpose:
+-- @TestInfoStart
+--
+-- @Purpose:
 --  Fault confinement rules - rule A - feature test.
 --
--- Verifies:
---  1. When a receiver detects an error, the receive error counter shall be
---     incremented by 1, except when the detected error was a bit error during
---     the sending of an active error flag or an overload flag.
+-- @Verifies:
+--  @1. When a receiver detects an error, the receive error counter shall be
+--      incremented by 1, except when the detected error was a bit error during
+--      the sending of an active error flag or an overload flag.
 --
--- Test sequence:
---  1. Send CAN frame by Node 2. Wait until Node 2 is post arbitration and force
---     bus value to opposite level it has transmitted. Check that error frame
---     is transmitted by Node 2. Node 1 should hook up too by error frame. Wait
---     until bus is idle and check that REC was incremented by 1 in Node 1.
---  2. Send CAN frame by Node 2. Wait until Node 2 is post arbitration and force
---     bus value to opposite level it has transmitted. Check that error frame is
---     transmitted by Node 2. Release bus-level. Wait until Error frame in Node 1
---     and check that Node 1 RX counter was incremented by 1. Force bus high
---     and wait for 16 bit times. Release bus-level and check that RX Error
---     counter was incremented by 129 (1 for initial increment, 16 times
---     recessive bit was sampled during Error frame).
+-- @Test sequence:
+--  @1. Send CAN frame by Node 2. Wait until Node 2 is post arbitration and force
+--      bus value to opposite level it has transmitted. Check that error frame
+--      is transmitted by Node 2. Node 1 should hook up too by error frame. Wait
+--      until bus is idle and check that REC was incremented by 1 in Node 1.
+--  @2. Send CAN frame by Node 2. Wait until Node 2 is post arbitration and force
+--      bus value to opposite level it has transmitted. Check that error frame is
+--      transmitted by Node 2. Release bus-level. Wait until Error frame in Node 1
+--      and check that Node 1 RX counter was incremented by 1. Force bus high
+--      and wait for 16 bit times. Release bus-level and check that RX Error
+--      counter was incremented by 129 (1 for initial increment, 16 times
+--      recessive bit was sampled during Error frame).
+--
+-- @TestInfoEnd
 --------------------------------------------------------------------------------
 -- Revision History:
 --    24.11.2019   Created file
@@ -102,7 +106,7 @@ package body error_rules_a_feature is
     begin
 
         -----------------------------------------------------------------------
-        -- 1. Send CAN frame by Node 2. Wait until Node 2 is post arbitration
+        -- @1. Send CAN frame by Node 2. Wait until Node 2 is post arbitration
         --    and force bus value to opposite level it has transmitted. Check
         --    that error frame is transmitted by Node 2. Node 1 should hook up
         --    too by error frame. Wait until bus is idle and check that REC was
@@ -141,7 +145,7 @@ package body error_rules_a_feature is
               "TX counter unchanged in Receiver!");
 
         -----------------------------------------------------------------------
-        -- 2. Send CAN frame by Node 2. Wait until Node 2 is post arbitration
+        -- @2. Send CAN frame by Node 2. Wait until Node 2 is post arbitration
         --    and force bus value to opposite level it has transmitted. Check
         --    that error frame is transmitted by Node 2. Release bus-level.
         --    Wait until Error frame in Node 1 and check that Node 1 RX 

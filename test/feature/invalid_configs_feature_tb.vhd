@@ -40,20 +40,23 @@
 --------------------------------------------------------------------------------
 
 --------------------------------------------------------------------------------
--- Purpose:
+-- @TestInfoStart
+--
+-- @Purpose:
 --  Feature test for frame transmittion with invalid combination of CAN frame
 --  configurations.
 --
--- Verifies:
---  1. When CAN FD frame with RTR bit is sent, RTR bit is ignored and CAN FD
---     frame without RTR bit set is received!
---  2. When CAN 2.0 frame with BRS bit is sent, BRS bit is ignored and CAN 2.0
---     frame without BRS bit is received!
+-- @Verifies:
+--  @1. When CAN FD frame with RTR bit is sent, RTR bit is ignored and CAN FD
+--      frame without RTR bit set is received!
+--  @2. When CAN 2.0 frame with BRS bit is sent, BRS bit is ignored and CAN 2.0
+--      frame without BRS bit is received!
 --
--- Test sequence:
---  1. Send CAN FD frame with RTR bit set and check it is received without RTR.
---  2. Send CAN 2.0 frame with BRS bit set and check it is received without BRS.
-
+-- @Test sequence:
+--  @1. Send CAN FD frame with RTR bit set and check it is received without RTR.
+--  @2. Send CAN 2.0 frame with BRS bit set and check it is received without BRS.
+--
+-- @TestInfoEnd
 --------------------------------------------------------------------------------
 -- Revision History:
 --    30.6.2016   Created file
@@ -94,7 +97,7 @@ package body invalid_configs_feature is
     begin
 
         ------------------------------------------------------------------------
-        -- 1. Send CAN FD frame with RTR bit set and check it is received
+        -- @1. Send CAN FD frame with RTR bit set and check it is received
         --    without RTR.
         ------------------------------------------------------------------------
         info("Step 1");
@@ -109,7 +112,7 @@ package body invalid_configs_feature is
         check(rx_frame.rtr = NO_RTR_FRAME, "NO RTR received");
         
         ------------------------------------------------------------------------
-        -- 2. Send CAN 2.0 frame with BRS bit set and check it is received
+        -- @2. Send CAN 2.0 frame with BRS bit set and check it is received
         --    without BRS.
         ------------------------------------------------------------------------
         info("Step 2");

@@ -40,27 +40,31 @@
 --------------------------------------------------------------------------------
 
 --------------------------------------------------------------------------------
--- Purpose:
+-- @TestInfoStart
+--
+-- @Purpose:
 --  Fault confinement rules - rule B - feature test.
 --
--- Verifies:
---  1. When a receiver detects a dominant bit as the first bit after sending an
---     error flag, the receive error counter shall be incremented by 8.
+-- @Verifies:
+--  @1. When a receiver detects a dominant bit as the first bit after sending an
+--      error flag, the receive error counter shall be incremented by 8.
 --
--- Test sequence:
---  1. Set Node 2 not to accept CAN FD frames. Transmitt CAN FD frame by Node 1
---     and Wait until Error frame in Node 2. Read Error counters of Node 2.
---     Wait for 7 sample points (Error flag + 1st bit post Error flag) of Node 2
---     and check that sampled value is dominant and sent is recessive. Read
---     RX Error counter and check that it was incremented by 8. Check that TX
---     Error counter is the same as before!
---  2. Set Node 1 not to accept CAN FD frames (Node 2 will accept CAN FD frames).
---     Transmitt CAN FD frame by Node 1
---     and Wait until Error frame in Node 2. Read Error counters of Node 2.
---     Wait for 7 sample points (Error flag + 1st bit post Error flag) of Node 2
---     and check that sampled value is dominant and sent is recessive. Read
---     RX Error counter and check that it was incremented by 8. Check that TX
---     Error counter is the same as before!
+-- @Test sequence:
+--  @1. Set Node 2 not to accept CAN FD frames. Transmitt CAN FD frame by Node 1
+--      and Wait until Error frame in Node 2. Read Error counters of Node 2.
+--      Wait for 7 sample points (Error flag + 1st bit post Error flag) of Node 2
+--      and check that sampled value is dominant and sent is recessive. Read
+--      RX Error counter and check that it was incremented by 8. Check that TX
+--      Error counter is the same as before!
+--  @2. Set Node 1 not to accept CAN FD frames (Node 2 will accept CAN FD frames).
+--      Transmitt CAN FD frame by Node 1
+--      and Wait until Error frame in Node 2. Read Error counters of Node 2.
+--      Wait for 7 sample points (Error flag + 1st bit post Error flag) of Node 2
+--      and check that sampled value is dominant and sent is recessive. Read
+--      RX Error counter and check that it was incremented by 8. Check that TX
+--      Error counter is the same as before!
+--
+-- @TestInfoEnd
 --------------------------------------------------------------------------------
 -- Revision History:
 --    26.11.2019   Created file
@@ -104,7 +108,7 @@ package body error_rules_b_feature is
     begin
 
         -----------------------------------------------------------------------
-        -- 1. Set Node 2 not to accept CAN FD frames. Transmitt CAN FD frame by
+        -- @1. Set Node 2 not to accept CAN FD frames. Transmitt CAN FD frame by
         --    Node 1 and Wait until Error frame in Node 2. Read Error counters
         --    of Node 2. Wait for 7 sample points (Error flag + 1st bit post 
         --    Error flag) of Node 2 and check that sampled value is dominant
@@ -144,7 +148,7 @@ package body error_rules_b_feature is
         CAN_wait_bus_idle(ID_2, mem_bus(2));
 
         -----------------------------------------------------------------------
-        -- 2. Set Node 1 not to accept CAN FD frames (Node 2 will accept CAN FD 
+        -- @2. Set Node 1 not to accept CAN FD frames (Node 2 will accept CAN FD 
         --    frames). Transmitt CAN FD frame by Node 1 and Wait until Error 
         --    frame in Node 2. Read Error counters of Node 2. Wait for 7 sample
         --    points (Error flag + 1st bit post Error flag) of Node 2 and check

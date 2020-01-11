@@ -40,21 +40,25 @@
 --------------------------------------------------------------------------------
 
 --------------------------------------------------------------------------------
--- Purpose:
+-- @TestInfoStart
+--
+-- @Purpose:
 --  STATUS[RXS] feature test.
 --
--- Verifies:
---  1. STATUS[RXS] is set when unit is receiver.
---  2. STATUS[RXS] is not set when unit is transmitter.
+-- @Verifies:
+--  @1. STATUS[RXS] is set when unit is receiver.
+--  @2. STATUS[RXS] is not set when unit is transmitter.
 --
--- Test sequence:
---  1. Send frame by Node 2. Wait until SOF starts and check that STATUS[RXS] is
---     not set till SOF in Node 1. From SOF further monitor STATUS[RXS] and
---     check it set until the end of Intermission. Check that after the end of
---     intermission, STATUS[RXS] is not set anymore.
---  2. Send frame by Node 1. Monitor STATUS[RXS] of Node 1 until Intermission
---     and check STATUS[RXS] is not set. Monitor until the end of intermission
---     and check STATUS[RXS] is not set.
+-- @Test sequence:
+--  @1. Send frame by Node 2. Wait until SOF starts and check that STATUS[RXS] is
+--      not set till SOF in Node 1. From SOF further monitor STATUS[RXS] and
+--      check it set until the end of Intermission. Check that after the end of
+--      intermission, STATUS[RXS] is not set anymore.
+--  @2. Send frame by Node 1. Monitor STATUS[RXS] of Node 1 until Intermission
+--      and check STATUS[RXS] is not set. Monitor until the end of intermission
+--      and check STATUS[RXS] is not set.
+--
+-- @TestInfoEnd
 --------------------------------------------------------------------------------
 -- Revision History:
 --    31.10.2019   Created file
@@ -98,7 +102,7 @@ package body status_rxs_feature is
     begin
 
         -----------------------------------------------------------------------
-        --  1. Send frame by Node 2. Wait until SOF starts and check that
+        --  @1. Send frame by Node 2. Wait until SOF starts and check that
         --     STATUS[RXS] is not set till SOF in Node 1. From SOF further
         --     monitor STATUS[RXS] and check it set until the end of
         --     Intermission. Check that after the end of intermission, 
@@ -133,7 +137,7 @@ package body status_rxs_feature is
         CAN_wait_bus_idle(ID_2, mem_bus(2));
 
         -----------------------------------------------------------------------
-        -- 2. Send frame by Node 2. Monitor STATUS[RXS] of Node 1 until Inter-
+        -- @2. Send frame by Node 2. Monitor STATUS[RXS] of Node 1 until Inter-
         --    mission and check STATUS[RXS] is not set. Monitor until the end
         --    of intermission and check STATUS[RXS] is not set.
         -----------------------------------------------------------------------

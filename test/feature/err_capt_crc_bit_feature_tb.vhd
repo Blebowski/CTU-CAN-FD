@@ -40,19 +40,23 @@
 --------------------------------------------------------------------------------
 
 --------------------------------------------------------------------------------
--- Purpose:
+-- @TestInfoStart
+--
+-- @Purpose:
 --  ERR_CAPT[ERR_POS] = ERC_POS_CRC feature test - bit error.
 --
--- Verifies:
---  1. Detection of bit error in CRC field.
---  2. Value of ERR_CAPT when bit error is detected in CRC field.
+-- @Verifies:
+--  @1. Detection of bit error in CRC field.
+--  @2. Value of ERR_CAPT when bit error is detected in CRC field.
 --
--- Test sequence:
---  1. Check that ERR_CAPT contains no error (post reset).
---  2. Generate CAN frame, send it by Node 1. Wait until CRC field. Wait for
---     random duration of CRC field. Force bus to opposite value as transmitted
---     bit wait until sample point. Check that error frame is being transmitted.
---     Check that ERR_CAPT signals bit error in CRC field!
+-- @Test sequence:
+--  @1. Check that ERR_CAPT contains no error (post reset).
+--  @2. Generate CAN frame, send it by Node 1. Wait until CRC field. Wait for
+--      random duration of CRC field. Force bus to opposite value as transmitted
+--      bit wait until sample point. Check that error frame is being transmitted.
+--      Check that ERR_CAPT signals bit error in CRC field!
+--
+-- @TestInfoEnd
 --------------------------------------------------------------------------------
 -- Revision History:
 --    03.02.2020   Created file
@@ -100,7 +104,7 @@ package body err_capt_crc_bit_feature is
     begin
 
         -----------------------------------------------------------------------
-        -- 1. Check that ERR_CAPT contains no error (post reset).
+        -- @1. Check that ERR_CAPT contains no error (post reset).
         -----------------------------------------------------------------------
         info("Step 1");
 
@@ -108,7 +112,7 @@ package body err_capt_crc_bit_feature is
         check(err_capt.err_pos = err_pos_other, "Reset of ERR_CAPT!");
 
         -----------------------------------------------------------------------
-        -- 2. Generate CAN frame, send it by Node 1. Wait until data field.
+        -- @2. Generate CAN frame, send it by Node 1. Wait until data field.
         --    Wait for random duration of data field. Force bus to opposite
         --    value as transmitted bit wait until sample point. Check that
         --    error frame is being transmitted. Check that ERR_CAPT signals bit

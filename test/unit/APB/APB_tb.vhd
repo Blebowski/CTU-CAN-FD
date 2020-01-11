@@ -40,8 +40,12 @@
 --------------------------------------------------------------------------------
 
 --------------------------------------------------------------------------------
--- Purpose:
+-- @TestInfoStart
+--
+-- @Purpose:
 --    Simple test of can_top_apb, performing register read/write via APB.
+--
+-- @TestInfoEnd
 --------------------------------------------------------------------------------
 -- Revision History:
 --    April 2018   First Implementation - Martin Jerabek

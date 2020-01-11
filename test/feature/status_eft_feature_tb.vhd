@@ -40,24 +40,28 @@
 --------------------------------------------------------------------------------
 
 --------------------------------------------------------------------------------
--- Purpose:
+-- @TestInfoStart
+--
+-- @Purpose:
 --  STATUS[EFT] feature test.
 --
--- Verifies:
---  1. STATUS[EFT] is is set when Error frame is transmitted during Error active
---     and Error passive.
---  2. STATUS[EFT] is not set when Error frame is not being transmitted.
+-- @Verifies:
+--  @1. STATUS[EFT] is is set when Error frame is transmitted during Error active
+--      and Error passive.
+--  @2. STATUS[EFT] is not set when Error frame is not being transmitted.
 --
--- Test sequence:
---  1. Set Node 2 to ACF mode. Enable test mode in Node 1. Send frame by Node 1.
---     Randomize if Node 1 will be error active or error passive. Monitor
---     STATUS[EFT] and check that it is not set during whole duration of the
---     frame. Wait till ACK field.
---  2. Wait till Node 1 is NOT is ACK field anymore. Now since ACK was recessive,
---     Node 1 should be transmitting error frame! Monitor STATUS[EFT] and check
---     it is set until Node 1 gets to Intermission. Check it is not set after
---     Intermission has started! Monitor STATUS[EFT] and check it is not set
---     during whole time until unit is Bus Idle!
+-- @Test sequence:
+--  @1. Set Node 2 to ACF mode. Enable test mode in Node 1. Send frame by Node 1.
+--      Randomize if Node 1 will be error active or error passive. Monitor
+--      STATUS[EFT] and check that it is not set during whole duration of the
+--      frame. Wait till ACK field.
+--  @2. Wait till Node 1 is NOT is ACK field anymore. Now since ACK was recessive,
+--      Node 1 should be transmitting error frame! Monitor STATUS[EFT] and check
+--      it is set until Node 1 gets to Intermission. Check it is not set after
+--      Intermission has started! Monitor STATUS[EFT] and check it is not set
+--      during whole time until unit is Bus Idle!
+--
+-- @TestInfoEnd
 --------------------------------------------------------------------------------
 -- Revision History:
 --    31.10.2019   Created file
@@ -108,7 +112,7 @@ package body status_eft_feature is
     begin
 
         -----------------------------------------------------------------------
-        --  1. Set Node 2 to ACF mode. Enable test mode in Node 1. Send frame
+        --  @1. Set Node 2 to ACF mode. Enable test mode in Node 1. Send frame
         --     by Node 1. Randomize if Node 1 will be error active or error
         --     passive. Monitor STATUS[EFT] and check that it is not set 
         --     during whole duration of the frame. Wait till ACK field.
@@ -152,7 +156,7 @@ package body status_eft_feature is
         end loop;
 
         -----------------------------------------------------------------------
-        --  2. Wait till Node 1 is NOT is ACK field anymore. Now since ACK was
+        --  @2. Wait till Node 1 is NOT is ACK field anymore. Now since ACK was
         --     recessive, Node 1 should be transmitting error frame! Monitor
         --     STATUS[EFT] and check it is set until Node 1 gets to Intermi-
         --     ssion. Check it is not set after Intermission has started!

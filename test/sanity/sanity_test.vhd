@@ -40,13 +40,22 @@
 --------------------------------------------------------------------------------
 
 --------------------------------------------------------------------------------
--- Purpose:
+-- @TestInfoStart
+--
+-- @Purpose:
 --  Sanity test simulates real bus operation with 4 CTU CAN FD Cores connected
 --  on CAN Bus. Real bus topology with signal delay is implemented via
 --  "signalDelayer". Random bit noise is inserted to the bus simulation.
 --  Each node is clocked with different clock, to cover clock jitter and clock
 --  uncertainty of real bus controllers!
 --
+-- @Verifies:
+--  @1. TODO: What does this test verify??
+--
+-- @Test sequence:
+--  @1. TODO: Describe test sequence!
+--
+-- @TestInfoEnd
 --------------------------------------------------------------------------------
 -- Revision History:
 --

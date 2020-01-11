@@ -40,34 +40,38 @@
 --------------------------------------------------------------------------------
 
 --------------------------------------------------------------------------------
--- Purpose:
+-- @TestInfoStart
+--
+-- @Purpose:
 --  Arbitration lost capture - Base ID feature test.
 --
--- Verifies:
---  1. Arbitration within base identifier. Node loses arbitration on a bit where
---     it send recessive and samples dominant.
---  2. Arbitration lost capture position within Base identifier.
+-- @Verifies:
+--  @1. Arbitration within base identifier. Node loses arbitration on a bit where
+--      it send recessive and samples dominant.
+--  @2. Arbitration lost capture position within Base identifier.
 --
--- Test sequence:
---  1. Configure both Nodes to one-shot mode.
---  2. Loop by N between 1 and 11: 
---    2.1 Generate two CAN frames. Both with base ID only. Both IDs are the
+-- @Test sequence:
+--  @1. Configure both Nodes to one-shot mode.
+--  @2. Loop by N between 1 and 11: 
+--   @2.1 Generate two CAN frames. Both with base ID only. Both IDs are the
 --        same, appart from N-th bit. On N-th bit Node 1 will have Dominant
 --        Node 2 Recessive.
---    2.2 Wait till sample point on Node 1. Send frame 1 by Node 1 and frame 2 
+--   @2.2 Wait till sample point on Node 1. Send frame 1 by Node 1 and frame 2 
 --        by Node 2 right one after another.
---    2.3 Wait till Arbitration field in Node 2. This is right after sample
+--   @2.3 Wait till Arbitration field in Node 2. This is right after sample
 --        point of Node 2 in SOF or Intermission (if there is no SOF). Check
 --        that Node 2 is Transmitter.
---    2.4 Wait N-times till sample point in Node 2. After every wait before N
+--   @2.4 Wait N-times till sample point in Node 2. After every wait before N
 --        is reached, check Node 2 is still transmitter. After N waits we are
 --        right after Sample point where Node 2 should have lost arbitration.
 --        Check Node 2 is receiver. Read content of ALC, check arbitration was
 --        lost at correct position.
---    2.5 Wait till the CRC delimiter in Node 2, and monitor that Node 2 is 
+--   @2.5 Wait till the CRC delimiter in Node 2, and monitor that Node 2 is 
 --        transmitting recessive value.
---    2.6 Wait till bus is idle! Check frame was sucessfully transmitted in
+--   @2.6 Wait till bus is idle! Check frame was sucessfully transmitted in
 --        Node 1. Check it was succesfully received in Node 2!
+--
+-- @TestInfoEnd
 --------------------------------------------------------------------------------
 -- Revision History:
 --    20.6.2016   Created file
@@ -127,14 +131,14 @@ package body alc_base_id_feature is
     begin
 
         ------------------------------------------------------------------------
-        -- 1. Configure both Nodes to one-shot mode.
+        -- @1. Configure both Nodes to one-shot mode.
         ------------------------------------------------------------------------
         info("Step 1: Configure one -shot mode");
         CAN_enable_retr_limit(true, 0, ID_1, mem_bus(1));
         CAN_enable_retr_limit(true, 0, ID_2, mem_bus(2));
 
         ------------------------------------------------------------------------
-        --  2. Loop by N between 1 and 11: 
+        --  @2. Loop by N between 1 and 11: 
         ------------------------------------------------------------------------
         info("Step 2: Loop over each bit of Base ID!");
         for N in 1 to 11 loop
@@ -143,7 +147,7 @@ package body alc_base_id_feature is
             info("-----------------------------------------------------------");
             
             --------------------------------------------------------------------
-            -- 2.1 Generate two CAN frames. Both with base ID only. Both IDs are
+            -- @2.1 Generate two CAN frames. Both with base ID only. Both IDs are
             --     the same, appart from N-th bit. On N-th bit Node 1 will have
             --     Dominant Node 2 Recessive.
             --------------------------------------------------------------------
@@ -167,7 +171,7 @@ package body alc_base_id_feature is
             CAN_insert_TX_frame(frame_2, 1, ID_2, mem_bus(2));
 
             --------------------------------------------------------------------
-            -- 2.2 Wait till sample point on Node 1. Send frame 1 by Node 1 and
+            -- @2.2 Wait till sample point on Node 1. Send frame 1 by Node 1 and
             --     frame 2 by Node 2 right one after another.
             --------------------------------------------------------------------
             info("Step 2.2: Send frames!");
@@ -176,7 +180,7 @@ package body alc_base_id_feature is
             send_TXT_buf_cmd(buf_set_ready, 1, ID_2, mem_bus(2));
             
             --------------------------------------------------------------------
-            -- 2.3 Wait till Arbitration field in Node 2. This is right after
+            -- @2.3 Wait till Arbitration field in Node 2. This is right after
             --     sample point of Node 2 in SOF or Intermission (if there is no
             --     SOF). Check that Node 2 is Transmitter.
             --------------------------------------------------------------------
@@ -186,7 +190,7 @@ package body alc_base_id_feature is
             check(stat_2.transmitter, "Node 2 transmitting!");
     
             -------------------------------------------------------------------
-            -- 2.4 Wait N-times till sample point in Node 2. After every wait 
+            -- @2.4 Wait N-times till sample point in Node 2. After every wait 
             --     before N is reached, check Node 2 is still transmitter.
             --     After N waits we are right after Sample point where Node 2
             --     should have lost arbitration. Check Node 2 is receiver.
@@ -229,7 +233,7 @@ package body alc_base_id_feature is
             end loop;
             
         -----------------------------------------------------------------------
-        -- 2.5 Wait till the CRC delimiter in Node 2, and monitor that Node 2
+        -- @2.5 Wait till the CRC delimiter in Node 2, and monitor that Node 2
         --     is transmitting recessive value.
         -----------------------------------------------------------------------
         info("Step 2.5: Wait till end of frame!");
@@ -242,7 +246,7 @@ package body alc_base_id_feature is
         end loop;
         
         -----------------------------------------------------------------------
-        -- 2.7 Wait till bus is idle! Check frame was sucessfully transmitted
+        -- @2.6 Wait till bus is idle! Check frame was sucessfully transmitted
         --     in Node 1. Check it was succesfully received in Node 2!
         -----------------------------------------------------------------------
         info("Step 2.7: Wait till bus is idle!");

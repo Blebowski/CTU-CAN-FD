@@ -40,40 +40,44 @@
 --------------------------------------------------------------------------------
 
 --------------------------------------------------------------------------------
--- Purpose:
+-- @TestInfoStart
+--
+-- @Purpose:
 --  Fault confinement rules - rule C - feature test.
 --
--- Verifies:
---  1. When a transmitter sends an error flag, the transmit error counter shall
---     be incremented by 8.
---     Exception 1:
---      If the transmitter is error-passive and detects an ACK error because of
---      not detecting a dominant ACK and does not detect a dominant bit while
---      sending its passive error flag.
---     Exception 2:
---      If the transmitter sends an error flag because a stuff error occurred
---      during arbitration, whereby the stuff bit should have been recessive,
---      and has been sent recessive but is monitored to be dominant.
---  2. ERR_CAPT[ERR_POS] = Arbitration and Stuff Error!
+-- @Verifies:
+--  @1. When a transmitter sends an error flag, the transmit error counter shall
+--      be incremented by 8.
+--      Exception 1:
+--        If the transmitter is error-passive and detects an ACK error because of
+--        not detecting a dominant ACK and does not detect a dominant bit while
+--        sending its passive error flag.
+--      Exception 2:
+--        If the transmitter sends an error flag because a stuff error occurred
+--        during arbitration, whereby the stuff bit should have been recessive,
+--        and has been sent recessive but is monitored to be dominant.
+--  @2. ERR_CAPT[ERR_POS] = Arbitration and Stuff Error!
 --
--- Test sequence:
---  1. Set Node 2 to ACK forbidden and test modes. Set Node 1 to One-shot mode.
---     Send CAN frame by Node 1. Wait until CAN frame is sent and check that TX
---     Error counter of Node 1 has incremented by 8. Check that RX Error counter
---     is not incremented in Node 1.
---  2. Set Node 1 to Error Passive (via CTR_PRES). Send CAN frame and wait until
---     it is sent. Check that TX Error counter was not incremented. Check that
---     RX Error counter was not incremented. Reset Error counters.
---  3. Generate CAN frame with Recessive Stuff bit in CAN ID. Send such frame
---     by Node 1 and force that Stuff bit to Dominant. Check that Error frame
---     was transmitted. Check that Stuff Error occured during arbitraton. Check
---     that TEC was not incremented in Node 1! Check that REC was incremented
---     by 1 in Node 2.
---  4. Generate CAN frame with Dominant Stuff bit in CAN ID. Send such frame by
---     Node 1 and force that Stuff bit to Recessive. Check that Error frame was
---     transmitted. Check that Stuff Error (or bit error) occured during
---     arbitration. Check that TX Error counter was incremented by 8 in Node 1.
---     Check that REC was incremented by 1 in Node 2!
+-- @Test sequence:
+--  @1. Set Node 2 to ACK forbidden and test modes. Set Node 1 to One-shot mode.
+--      Send CAN frame by Node 1. Wait until CAN frame is sent and check that TX
+--      Error counter of Node 1 has incremented by 8. Check that RX Error counter
+--      is not incremented in Node 1.
+--  @2. Set Node 1 to Error Passive (via CTR_PRES). Send CAN frame and wait until
+--      it is sent. Check that TX Error counter was not incremented. Check that
+--      RX Error counter was not incremented. Reset Error counters.
+--  @3. Generate CAN frame with Recessive Stuff bit in CAN ID. Send such frame
+--      by Node 1 and force that Stuff bit to Dominant. Check that Error frame
+--      was transmitted. Check that Stuff Error occured during arbitraton. Check
+--      that TEC was not incremented in Node 1! Check that REC was incremented
+--      by 1 in Node 2.
+--  @4. Generate CAN frame with Dominant Stuff bit in CAN ID. Send such frame by
+--      Node 1 and force that Stuff bit to Recessive. Check that Error frame was
+--      transmitted. Check that Stuff Error (or bit error) occured during
+--      arbitration. Check that TX Error counter was incremented by 8 in Node 1.
+--      Check that REC was incremented by 1 in Node 2!
+--
+-- @TestInfoEnd
 --------------------------------------------------------------------------------
 -- Revision History:
 --    26.11.2019   Created file
@@ -124,7 +128,7 @@ package body error_rules_c_feature is
     begin
 
         -----------------------------------------------------------------------
-        -- 1. Set Node 2 to ACK forbidden and test modes. Set Node 1 to One-shot
+        -- @1. Set Node 2 to ACK forbidden and test modes. Set Node 1 to One-shot
         --    mode. Send CAN frame by Node 1. Wait until CAN frame is sent and
         --    check that TX Error counter of Node 1 has incremented by 8. Check
         --    that RX Error counter is not incremented in Node 1.
@@ -155,7 +159,7 @@ package body error_rules_c_feature is
         CAN_wait_bus_idle(ID_2, mem_bus(2));
         
         -----------------------------------------------------------------------
-        -- 2. Set Node 1 to Error Passive (via CTR_PRES). Send CAN frame and
+        -- @2. Set Node 1 to Error Passive (via CTR_PRES). Send CAN frame and
         --    wait until it is sent. Check that TX Error counter was not
         --    incremented. Check that RX Error counter was not incremented.
         --    Reset Error counters.
@@ -192,7 +196,7 @@ package body error_rules_c_feature is
         set_error_counters(err_counters_1, ID_1, mem_bus(1));
 
         -----------------------------------------------------------------------
-        -- 3. Generate CAN frame with Recessive Stuff bit in CAN ID. Send such
+        -- @3. Generate CAN frame with Recessive Stuff bit in CAN ID. Send such
         --    frame by Node 1 and force that Stuff bit to Dominant. Check that
         --    Error frame was transmitted. Check that Stuff Error occured 
         --    during arbitraton. Check that TEC was not incremented in Node 1!
@@ -239,7 +243,7 @@ package body error_rules_c_feature is
             "RX Error counter not incremented when transmitter!");
 
         -----------------------------------------------------------------------
-        -- 4. Generate CAN frame with Dominant Stuff bit in CAN ID. Send such
+        -- @4. Generate CAN frame with Dominant Stuff bit in CAN ID. Send such
         --    frame by Node 1 and force that Stuff bit to Recessive. Check that
         --    Error frame was transmitted. Check that Stuff Error (or bit error)
         --    occured during arbitration. Check that TX Error counter was 

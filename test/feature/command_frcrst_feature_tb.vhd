@@ -40,22 +40,26 @@
 --------------------------------------------------------------------------------
 
 --------------------------------------------------------------------------------
--- Purpose:
+-- @TestInfoStart
+--
+-- @Purpose:
 --  TX/RX frame counters clear command.
 --
--- Verifies:
---  1. TX Frame counter is cleared by COMMAND[TXRFCRST].
---  2. TX Frame counter is not cleared by COMMAND[TXFRCRST].
---  3. RX Frame counter is cleared by COMMAND[RXRFCRST].
---  4. RX Frame counter is not cleared by COMMAND[RXFRCRST].
+-- @Verifies:
+--  @1. TX Frame counter is cleared by COMMAND[TXRFCRST].
+--  @2. TX Frame counter is not cleared by COMMAND[TXFRCRST].
+--  @3. RX Frame counter is cleared by COMMAND[RXRFCRST].
+--  @4. RX Frame counter is not cleared by COMMAND[RXFRCRST].
 --
--- Test sequence:
---  1. Generate and send frame by Node 2. Check that TX frame counter of Node 2
---     is not zero. Issue COMMAND[RXFRCRST] and check it is still not 0. Issue
---     COMMAND[TXFRCRST] and check it is 0 now.
---  2. Check that RX Frame counter of Node 1 is not zero. Issue COMMAND[TXFRCRST]
---     and check it is still not 0. Issue COMMAND[RXFRCRST] and RX Frame counter
---     in Node 1 is 0.
+-- @Test sequence:
+--  @1. Generate and send frame by Node 2. Check that TX frame counter of Node 2
+--      is not zero. Issue COMMAND[RXFRCRST] and check it is still not 0. Issue
+--      COMMAND[TXFRCRST] and check it is 0 now.
+--  @2. Check that RX Frame counter of Node 1 is not zero. Issue COMMAND[TXFRCRST]
+--      and check it is still not 0. Issue COMMAND[RXFRCRST] and RX Frame counter
+--      in Node 1 is 0.
+--
+-- @TestInfoEnd
 --------------------------------------------------------------------------------
 -- Revision History:
 --    25.10.2019   Created file
@@ -99,7 +103,7 @@ package body command_frcrst_feature is
     begin
 
         -----------------------------------------------------------------------
-        -- 1. Generate and send frame by Node 2. Check that TX frame counter of
+        -- @1. Generate and send frame by Node 2. Check that TX frame counter of
         --    Node 2 is not zero. Issue COMMAND[RXFRCRST] and check it is still
         --    not 0. Issue COMMAND[TXFRCRST] and check it is 0 now.
         -----------------------------------------------------------------------
@@ -130,7 +134,7 @@ package body command_frcrst_feature is
         CAN_wait_bus_idle(ID_2, mem_bus(2));
 
         -----------------------------------------------------------------------
-        -- 2. Check that RX Frame counter of Node 1 is not zero. Issue
+        -- @2. Check that RX Frame counter of Node 1 is not zero. Issue
         --    COMMAND[TXFRCRST] and check it is still not 0. Issue 
         --    COMMAND[RXFRCRST] and RX Frame counter in Node 1 is 0. 
         -----------------------------------------------------------------------

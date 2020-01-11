@@ -40,17 +40,21 @@
 --------------------------------------------------------------------------------
 
 --------------------------------------------------------------------------------
--- Purpose:
+-- @TestInfoStart
+--
+-- @Purpose:
 --  ERR_CAPT[ERR_POS] = ERC_POS_SOF feature test. 
 --
--- Verifies:
---  1. Detection of form error in SOF bit.
+-- @Verifies:
+--  @1. Detection of form error in SOF bit.
 --
--- Test sequence:
---  1. Generate CAN frame and send it by Node 1. Wait until transmission starts
---     and force bus Recessive. Wait until sample point and check that Error
---     frame is transmitted. Check that ERR_CAPT says that Form Error during
---     SOF was detected!
+-- @Test sequence:
+--  @1. Generate CAN frame and send it by Node 1. Wait until transmission starts
+--      and force bus Recessive. Wait until sample point and check that Error
+--      frame is transmitted. Check that ERR_CAPT says that Form Error during
+--      SOF was detected!
+--
+-- @TestInfoEnd
 --------------------------------------------------------------------------------
 -- Revision History:
 --    02.02.2020   Created file
@@ -93,7 +97,7 @@ package body err_capt_sof_feature is
     begin
 
         -----------------------------------------------------------------------
-        -- 1. Generate CAN frame and send it by Node 1. Wait until transmission
+        -- @1. Generate CAN frame and send it by Node 1. Wait until transmission
         --    starts and force bus Recessive. Wait until sample point and check
         --    that Error frame is transmitted. Check that ERR_CAPT says that
         --    Form Error during SOF was detected!

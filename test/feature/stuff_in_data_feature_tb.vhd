@@ -40,20 +40,24 @@
 --------------------------------------------------------------------------------
 
 --------------------------------------------------------------------------------
--- Purpose:
+-- @TestInfoStart
+--
+-- @Purpose:
 --  Stuff bit on last bit of Data field.
 --
--- Verifies:
---  1. When stuff bit is inserted after last bit of Data field, no extra stuff
---     bit will be inserted during first bit of Stuff count (with fixed
---     stuffing). Wait until frame is sent. Read frame and check it is received
---     succesfully!
+-- @Verifies:
+--  @1. When stuff bit is inserted after last bit of Data field, no extra stuff
+--      bit will be inserted during first bit of Stuff count (with fixed
+--      stuffing). Wait until frame is sent. Read frame and check it is received
+--      succesfully!
 --
---  Test sequence:
---  1. Generate CAN frame which has last 5 bits of data field dominant! Send
---     it by Node 1. Wait until frame is sent and read it from Node 2. Check
---     that frames are equal.
---     Note: The check is only visual so far...
+-- @Test sequence:
+--  @1. Generate CAN frame which has last 5 bits of data field dominant! Send
+--      it by Node 1. Wait until frame is sent and read it from Node 2. Check
+--      that frames are equal.
+--      Note: The check is only visual so far...
+--
+-- @TestInfoEnd
 --------------------------------------------------------------------------------
 -- Revision History:
 --   02.12.2019   Created file
@@ -94,7 +98,7 @@ package body stuff_in_data_feature is
     begin
 
         ----------------------------------------------------------------------
-        -- 1. Generate CAN frame which has last 5 bits of data field dominant!
+        -- @1. Generate CAN frame which has last 5 bits of data field dominant!
         --    Send it by Node 1. Wait until frame is sent and read it from
         --    Node 2. Check that frames are equal. Note: The actual check is
         --    done by assertion!

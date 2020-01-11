@@ -40,7 +40,9 @@
 --------------------------------------------------------------------------------
 
 --------------------------------------------------------------------------------
--- Purpose:
+-- @TestInfoStart
+--
+-- @Purpose:
 --  Unit test for the RX Buffer circuit.
 --
 --  Following test instantiates RX Buffer. Stimuli generator generates input
@@ -51,6 +53,7 @@
 --  both memories is compared! When mismatch occurs test fails. Each time memory
 --  is filled test moves to the next iteration.
 --
+-- @TestInfoEnd
 --------------------------------------------------------------------------------
 -- Revision History:
 --    1.6.2016   Created file

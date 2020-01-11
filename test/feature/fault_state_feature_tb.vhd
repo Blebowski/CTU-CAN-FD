@@ -40,32 +40,35 @@
 --------------------------------------------------------------------------------
 
 --------------------------------------------------------------------------------
--- Purpose:
+-- @TestInfoStart
+--
+-- @Purpose:
 --  FAULT_STATE register feature test.  
 --
--- Verifies:
---  1. Fault confinement state change from Error Active to Error Passive and
---     vice versa.
---  2. Fault confinement state change from Error Passive to Bus-off.
---  3. Fault confinement state change from Bus-off to Error active (after
---     reintegration).
+-- @Verifies:
+--  @1. Fault confinement state change from Error Active to Error Passive and
+--      vice versa.
+--  @2. Fault confinement state change from Error Passive to Bus-off.
+--  @3. Fault confinement state change from Bus-off to Error active (after
+--      reintegration).
 --
--- Test sequence:
---  1. Turn on Test mode in Node 1. Generate random value of Error counters
---     below default value of ERP and set them in Node 1. Check Fault state is
---     Error active.
---  2. Generate RX counter to be between ERP and 255 included and set it in Node
---     1. Check that Node 1 Fault state is Error Passive.
---  3. Generate also TX counter to be between 128 and 255 included and set it
---     in Node 1. Check that Node 1 Fault state is still Error Passive. Lower
---     RX Counter below ERP and check Node 1 is still Error Passive. Lower also
---     TX Counter below ERP and check that now the node became Error active! 
---  4. Increment RX Error counter to more than 255 and check that Node 1 is 
---     Error Passive (should not go to bus-off by RX Counter).
---  5. Increment TX Counter to go above 255 and check that Node 1 is now bus off.
---  6. Issue COMMAND[ERCRST] and wait for 128*11 recessive bits. Check that
---     Node 1 becomes Error Active.
+-- @Test sequence:
+--  @1. Turn on Test mode in Node 1. Generate random value of Error counters
+--      below default value of ERP and set them in Node 1. Check Fault state is
+--      Error active.
+--  @2. Generate RX counter to be between ERP and 255 included and set it in Node
+--      1. Check that Node 1 Fault state is Error Passive.
+--  @3. Generate also TX counter to be between 128 and 255 included and set it
+--      in Node 1. Check that Node 1 Fault state is still Error Passive. Lower
+--      RX Counter below ERP and check Node 1 is still Error Passive. Lower also
+--      TX Counter below ERP and check that now the node became Error active! 
+--  @4. Increment RX Error counter to more than 255 and check that Node 1 is 
+--      Error Passive (should not go to bus-off by RX Counter).
+--  @5. Increment TX Counter to go above 255 and check that Node 1 is now bus off.
+--  @6. Issue COMMAND[ERCRST] and wait for 128*11 recessive bits. Check that
+--      Node 1 becomes Error Active.
 --
+-- @TestInfoEnd
 --------------------------------------------------------------------------------
 -- Revision History:
 --    30.6.2016   Created file
@@ -140,7 +143,7 @@ package body fault_state_feature is
         info("TX more than Bus off: " & integer'image(tx_mt_bof));
         
         -----------------------------------------------------------------------
-        -- 1. Turn on Test mode in Node 1. Generate random value of Error
+        -- @1. Turn on Test mode in Node 1. Generate random value of Error
         --    counters below default value of ERP and set them in Node 1.
         --    Check Fault state is Error active.
         -----------------------------------------------------------------------
@@ -155,7 +158,7 @@ package body fault_state_feature is
         check(fault_state = fc_error_active, "Node Error active!");
 
         -----------------------------------------------------------------------
-        -- 2. Generate RX counter to be between ERP and 255 included and set it
+        -- @2. Generate RX counter to be between ERP and 255 included and set it
         --    in Node 1. Check that Node 1 Fault state is Error Passive.
         -----------------------------------------------------------------------
         info("Step 2");
@@ -165,7 +168,7 @@ package body fault_state_feature is
         check(fault_state = fc_error_passive, "Node Error passive!");
 
         -----------------------------------------------------------------------
-        -- 3. Generate also TX counter to be between 128 and 255 included and
+        -- @3. Generate also TX counter to be between 128 and 255 included and
         --    set it in Node 1. Check that Node 1 Fault state is still Error
         --    Passive. Lower RX Counter below ERP and check Node 1 is still
         --    Error Passive. Lower also TX Counter below ERP and check that now
@@ -188,7 +191,7 @@ package body fault_state_feature is
         check(fault_state = fc_error_active, "Node Error active!");        
 
         -----------------------------------------------------------------------
-        -- 4. Increment RX Error counter to more than 255 and check that Node 1
+        -- @4. Increment RX Error counter to more than 255 and check that Node 1
         --    is Error Passive (should not go to bus-off by RX Counter).
         -----------------------------------------------------------------------
         info("Step 4");
@@ -198,7 +201,7 @@ package body fault_state_feature is
         check(fault_state = fc_error_passive, "Node Error passive!");
 
         -----------------------------------------------------------------------
-        -- 5. Increment TX Counter to go above 255 and check that Node 1 is now
+        -- @5. Increment TX Counter to go above 255 and check that Node 1 is now
         --    bus off.
         -----------------------------------------------------------------------
         info("Step 5");
@@ -208,7 +211,7 @@ package body fault_state_feature is
         check(fault_state = fc_bus_off, "Node Bus off!");
 
         -----------------------------------------------------------------------
-        -- 6. Issue COMMAND[ERCRST] and wait for 128*11 recessive bits. Check 
+        -- @6. Issue COMMAND[ERCRST] and wait for 128*11 recessive bits. Check 
         --    that Node 1 becomes Error Active.
         -----------------------------------------------------------------------
         info("Step 6");

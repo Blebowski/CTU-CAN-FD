@@ -40,27 +40,31 @@
 --------------------------------------------------------------------------------
 
 --------------------------------------------------------------------------------
--- Purpose:
+-- @TestInfoStart
+--
+-- @Purpose:
 --  Arbitration lost capture - RTR/r0 bit (after Identifier Extension) feature
 --  test.
 --
--- Verifies:
---  1. RTR frame with Extended identifier loses arbitration against data frame
---     with Extended Identifier.
---  2. Arbitration lost capture position on RTR/r0 bit after Base identifier.
+-- @Verifies:
+--  @1. RTR frame with Extended identifier loses arbitration against data frame
+--      with Extended Identifier.
+--  @2. Arbitration lost capture position on RTR/r0 bit after Base identifier.
 --
--- Test sequence:
---  1. Configure both Nodes to one-shot mode.
---  2. Generate two CAN frames: Frame 1 with Extended identifier RTR, Frame 2
---     with Extended Identifier, Data frame. Identifiers of both CAN 
---     frames are matching!
---  3. Wait till sample point in Node 1. Send Frame 1 by Node 1 and Frame 2 by
---     Node 2.
---  4. Wait till arbitration field in Node 1. Wait till sample point 32 times
---     (11 Base ID + RTR/SRR + IDE + 18 ID Extension + RTR/r0). Check Node 1
---     is transmitting recessive, Check Node 2 is transmitting dominant. Check
---     Node 1 lost arbitration. Check Node 2 is still transmitter. Read ALC
---     from Node 1 and check it.
+-- @Test sequence:
+--  @1. Configure both Nodes to one-shot mode.
+--  @2. Generate two CAN frames: Frame 1 with Extended identifier RTR, Frame 2
+--      with Extended Identifier, Data frame. Identifiers of both CAN 
+--      frames are matching!
+--  @3. Wait till sample point in Node 1. Send Frame 1 by Node 1 and Frame 2 by
+--      Node 2.
+--  @4. Wait till arbitration field in Node 1. Wait till sample point 32 times
+--      (11 Base ID + RTR/SRR + IDE + 18 ID Extension + RTR/r0). Check Node 1
+--      is transmitting recessive, Check Node 2 is transmitting dominant. Check
+--      Node 1 lost arbitration. Check Node 2 is still transmitter. Read ALC
+--      from Node 1 and check it.
+--
+-- @TestInfoEnd
 --------------------------------------------------------------------------------
 -- Revision History:
 --    05.10.2019   Created file
@@ -110,14 +114,14 @@ package body alc_rtr_r0_feature is
     begin
 
         -----------------------------------------------------------------------
-        -- 1. Configure both Nodes to one-shot mode.
+        -- @1. Configure both Nodes to one-shot mode.
         -----------------------------------------------------------------------
         info("Step 1: Configure one -shot mode");
         CAN_enable_retr_limit(true, 0, ID_1, mem_bus(1));
         CAN_enable_retr_limit(true, 0, ID_2, mem_bus(2));
 
         -----------------------------------------------------------------------
-        -- 2. Generate two CAN frames: Frame 1 with Extended identifier RTR,
+        -- @2. Generate two CAN frames: Frame 1 with Extended identifier RTR,
         --    Frame 2 with Extended Identifier, Data frame. Identifiers of both
         --    CAN frames are matching!
         -----------------------------------------------------------------------
@@ -134,7 +138,7 @@ package body alc_rtr_r0_feature is
         frame_1.identifier := frame_2.identifier;
 
         ------------------------------------------------------------------------
-        -- 3. Wait till sample point in Node 1. Send Frame 1 by Node 1 and 
+        -- @3. Wait till sample point in Node 1. Send Frame 1 by Node 1 and 
         --    Frame 2 by Node 2.
         ------------------------------------------------------------------------
         info("Step 3: Send frames");
@@ -146,7 +150,7 @@ package body alc_rtr_r0_feature is
         send_TXT_buf_cmd(buf_set_ready, 1, ID_2, mem_bus(2));
 
         -----------------------------------------------------------------------
-        -- 4. Wait till arbitration field in Node 1. Wait till sample point 32
+        -- @4. Wait till arbitration field in Node 1. Wait till sample point 32
         --    times (11 Base ID + RTR/SRR + IDE + 18 ID Extension + RTR/r0).
         --    Check Node 1 is transmitting recessive, Check Node 2 is 
         --    transmitting dominant. Check Node 1 lost arbitration. Check Node

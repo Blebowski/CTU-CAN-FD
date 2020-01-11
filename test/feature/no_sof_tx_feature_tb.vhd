@@ -40,26 +40,30 @@
 --------------------------------------------------------------------------------
 
 --------------------------------------------------------------------------------
--- Purpose:
+-- @TestInfoStart
+--
+-- @Purpose:
 --  No Start of Frame feature test - frame transmission!
 --
--- Verifies:
---  1. When a dominant bit is sampled in Bus idle and a frame is available for
---     transmission, its transmission is started without transmitting SOF bit.
---  2. When CTU CAN FD joins transmission without transmitting SOF bit, it
---     accounts SOF bit as transmitted dominant bit in number of equal conse-
---     cutive bits.
+-- @Verifies:
+--  @1. When a dominant bit is sampled in Bus idle and a frame is available for
+--      transmission, its transmission is started without transmitting SOF bit.
+--  @2. When CTU CAN FD joins transmission without transmitting SOF bit, it
+--      accounts SOF bit as transmitted dominant bit in number of equal conse-
+--      cutive bits.
 --
--- Test sequence:
---  1. Configure both Nodes to one-shot mode.
---  2. Insert CAN frames which have first 5 bits of identifier equal to zero to
---     both nodes. Check both nodes are Idle. Wait till Sample point in Node 1.
---  3. Send Set ready command to both nodes. Wait until Node 1 is not in Bus
---     idle state. Check it is transmitting Base Identifier (NOT SOF)!
---  4. Wait until sample point 5 times (5th bit of idetifier) in Node 1. Check
---     Node 1 is transmitting Recessive bit (Stuff bit).
---  5. Wait until frame is over. Check frame was received OK, read it from 
---     receiving node and verify it was received OK!
+-- @Test sequence:
+--  @1. Configure both Nodes to one-shot mode.
+--  @2. Insert CAN frames which have first 5 bits of identifier equal to zero to
+--      both nodes. Check both nodes are Idle. Wait till Sample point in Node 1.
+--  @3. Send Set ready command to both nodes. Wait until Node 1 is not in Bus
+--      idle state. Check it is transmitting Base Identifier (NOT SOF)!
+--  @4. Wait until sample point 5 times (5th bit of idetifier) in Node 1. Check
+--      Node 1 is transmitting Recessive bit (Stuff bit).
+--  @5. Wait until frame is over. Check frame was received OK, read it from 
+--      receiving node and verify it was received OK!
+--
+-- @TestInfoEnd
 --------------------------------------------------------------------------------
 -- Revision History:
 --    07.10.2019   Created file
@@ -108,14 +112,14 @@ package body no_sof_tx_feature is
     begin
 
         ------------------------------------------------------------------------
-        -- 1. Configure both Nodes to one-shot mode.
+        -- @1. Configure both Nodes to one-shot mode.
         ------------------------------------------------------------------------
         info("Step 1: Configure one -shot mode");
         CAN_enable_retr_limit(true, 0, ID_1, mem_bus(1));
         CAN_enable_retr_limit(true, 0, ID_2, mem_bus(2));
 
         ------------------------------------------------------------------------
-        -- 2. Insert CAN frames which have first 5 bits of identifier equal to
+        -- @2. Insert CAN frames which have first 5 bits of identifier equal to
         --    zero to both nodes. Check both nodes are Idle. Wait till Sample
         --    point in Node 2.
         ------------------------------------------------------------------------
@@ -134,7 +138,7 @@ package body no_sof_tx_feature is
         CAN_wait_sample_point(iout(2).stat_bus);
         
         ------------------------------------------------------------------------
-        -- 3. Send Set ready command to both nodes. Wait until Node 1 is not in
+        -- @3. Send Set ready command to both nodes. Wait until Node 1 is not in
         --    Bus idle state. Check it is transmitting Base Identifier (NOT SOF)!
         ------------------------------------------------------------------------
         send_TXT_buf_cmd(buf_set_ready, 1, ID_2, mem_bus(2));
@@ -152,7 +156,7 @@ package body no_sof_tx_feature is
         wait for 20 ns;
 
         ------------------------------------------------------------------------
-        -- 4. Wait until sample point 5 times (5th bit of idetifier) in Node 1.
+        -- @4. Wait until sample point 5 times (5th bit of idetifier) in Node 1.
         --    Check Node 1 is transmitting Recessive bit (Stuff bit).
         ------------------------------------------------------------------------
         for i in 0 to 4 loop
@@ -161,7 +165,7 @@ package body no_sof_tx_feature is
         check(iout(1).can_tx = RECESSIVE, "Stuff bit inserted!");
 
         ------------------------------------------------------------------------
-        -- 5. Wait until frame is over. Check frame was received OK, read it 
+        -- @5. Wait until frame is over. Check frame was received OK, read it 
         --    from receiving node and verify it was received OK!
         ------------------------------------------------------------------------
         CAN_wait_bus_idle(ID_1, mem_bus(1));

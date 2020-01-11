@@ -40,8 +40,11 @@
 --------------------------------------------------------------------------------
 
 --------------------------------------------------------------------------------
--- Purpose:
+-- @TestInfoStart
+--
+-- @Purpose:
 --  Unit test for the CRC circuit.
+--
 --  Unit test generates bit sequence 10 to 620 bits long as well as random
 --  drv_fd_type setting. Then it precalculates the CRC values by calc_crc pro-
 --  cedure. Afterwads it emulates reception of this sequence on input of CRC
@@ -50,6 +53,8 @@
 --  software precalculated CRC and CRC from DUT are compared! If mismatch occurs
 --  error is detected and test fails. Whole procedure is repeated "iterations"
 --  times.
+--
+-- @TestInfoEnd
 --------------------------------------------------------------------------------
 -- Revision History:
 --    4.6.2016   Created file

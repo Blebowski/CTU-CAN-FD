@@ -40,31 +40,35 @@
 --------------------------------------------------------------------------------
 
 --------------------------------------------------------------------------------
--- Purpose:
+-- @TestInfoStart
+--
+-- @Purpose:
 --  ERR_NORM (Nominal bit-rate) error counter feature test.
 --
--- Verifies:
---  1. ERR_NORM is incremented by 1 when error occurs for trasmitter/receiver
---     during nominal bit-rate.
---  2. ERR_FD is not increented by 1 when error occurs for transmitter/receiver
---     during nominal bit-rate.
---  3. ERR_NORM is not incremented by 1 when error occurs for trasmitter/receiver
---     during data bit-rate.
---  4. ERR_FD is incremented by 1 when error occurs for trasmitter/receiver
---     during data bit-rate.
+-- @Verifies:
+--  @1. ERR_NORM is incremented by 1 when error occurs for trasmitter/receiver
+--      during nominal bit-rate.
+--  @2. ERR_FD is not increented by 1 when error occurs for transmitter/receiver
+--      during nominal bit-rate.
+--  @3. ERR_NORM is not incremented by 1 when error occurs for trasmitter/receiver
+--      during data bit-rate.
+--  @4. ERR_FD is incremented by 1 when error occurs for trasmitter/receiver
+--      during data bit-rate.
 --
--- Test sequence:
---  1. Generate random frame where bit rate is not switched. Insert the frame
---     to Node 1. Wait until Node 1 starts transmission. Wait for random time
---     until Node 1 transmits Dominant bit. Force the bus-level Recessive for one
---     bit time! This should invoke bit error in Node 1. Wait until bus is idle.
---     Check that ERR_NORM in Node 1 and 2 incremented by 1. Check that ERR_FD
---     in Node 1 and 2 remained the same!
---  2. Generate random frame where bit rate shall be switched. Wait until data
---     portion of that frame. Wait until Recessive bit is transmitted. Force
---     bus Dominant for 1 bit time! Wait until bus is idle. Check that ERR_FD
---     incremented in Node 1 and Node 2 by 1. Check that ERR_NORM remained the
---     same in Node 1 and Node 2.
+-- @Test sequence:
+--  @1. Generate random frame where bit rate is not switched. Insert the frame
+--      to Node 1. Wait until Node 1 starts transmission. Wait for random time
+--      until Node 1 transmits Dominant bit. Force the bus-level Recessive for one
+--      bit time! This should invoke bit error in Node 1. Wait until bus is idle.
+--      Check that ERR_NORM in Node 1 and 2 incremented by 1. Check that ERR_FD
+--      in Node 1 and 2 remained the same!
+--  @2. Generate random frame where bit rate shall be switched. Wait until data
+--      portion of that frame. Wait until Recessive bit is transmitted. Force
+--      bus Dominant for 1 bit time! Wait until bus is idle. Check that ERR_FD
+--      incremented in Node 1 and Node 2 by 1. Check that ERR_NORM remained the
+--      same in Node 1 and Node 2.
+--
+-- @TestInfoEnd
 --------------------------------------------------------------------------------
 -- Revision History:
 --    16.11.2019   Created file
@@ -111,7 +115,7 @@ package body err_norm_fd_feature is
     begin
 
         -----------------------------------------------------------------------
-        -- 1. Generate random frame where bit rate is not switched. Insert the
+        -- @1. Generate random frame where bit rate is not switched. Insert the
         --    frame to Node 1. Wait until Node 1 starts transmission. Wait for
         --    random time until Node 1 transmits Dominant bit. Force the bus-
         --    level Recessive for one bit time! This should invoke bit error in
@@ -159,7 +163,7 @@ package body err_norm_fd_feature is
                 "ERR_FD not incremented by 1 in receiver!");
 
         -----------------------------------------------------------------------
-        -- 2. Generate random frame where bit rate shall be switched. Wait
+        -- @2. Generate random frame where bit rate shall be switched. Wait
         --    until data portion of that frame. Wait until Recessive bit is
         --    transmitted. Force bus Dominant for 1 bit time! Wait until bus is
         --    idle. Check that ERR_FD incremented in Node 1 and Node 2 by 1.

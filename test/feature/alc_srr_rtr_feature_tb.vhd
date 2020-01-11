@@ -40,34 +40,38 @@
 --------------------------------------------------------------------------------
 
 --------------------------------------------------------------------------------
--- Purpose:
+-- @TestInfoStart
+--
+-- @Purpose:
 --  Arbitration lost capture - SRR/RTR bit feature test.
 --
--- Verifies:
---  1. CAN frame with Extended Identifier loses arbitration on SRR bit when
---     it receives dominant bit.
---  2. CAN RTR frame with base identifier only loses arbitration or RTR bit
---     when it receives dominant bit.
---  3. Arbitration lost capture position on SRR/RTR bit after Base identifier.
+-- @Verifies:
+--  @1. CAN frame with Extended Identifier loses arbitration on SRR bit when
+--      it receives dominant bit.
+--  @2. CAN RTR frame with base identifier only loses arbitration or RTR bit
+--      when it receives dominant bit.
+--  @3. Arbitration lost capture position on SRR/RTR bit after Base identifier.
 --
--- Test sequence:
---  1. Configure both Nodes to one-shot mode.
---  2. Generate two CAN frames: Frame 1 with Extended identifier, Frame 2 with
---     Base Identifier only. Base identifier of both CAN frames is matching!
---  3. Wait till sample point in Node 1. Send Frame 1 by Node 1 and Frame 2 by
---     Node 2.
---  4. Wait till arbitration field in Node 1. Wait till sample point 12 times
---     (11 Base ID + RTR/SRR). Check Node 1 is transmitting recessive, Check
---     Node 2 is transmitting dominant. Check Node 1 lost arbitration. Check
---     Node 2 is still transmitter. Read ALC from Node 1 and check it.
---  5. Generate two CAN Frames: Frame 1 with Base ID. Frame 2 with Base ID 
---     equal to Frame 1 and RTR flag.
---  6. Wait till sample point in Node 1. Send Frame 1 by Node 1 and Frame 2 by
---     Node 2.
---  7. Wait till arbitration field in Node 2. Wait till sample point 12 times
---     (11 Base ID + RTR/SRR). Check Node 2 is transmitting recessive, Check
---     Node 1 is transmitting dominant. Check Node 2 lost arbitration. Check
---     Node 1 is still transmitter. Read ALC from Node 2 and check it.
+-- @Test sequence:
+--  @1. Configure both Nodes to one-shot mode.
+--  @2. Generate two CAN frames: Frame 1 with Extended identifier, Frame 2 with
+--      Base Identifier only. Base identifier of both CAN frames is matching!
+--  @3. Wait till sample point in Node 1. Send Frame 1 by Node 1 and Frame 2 by
+--      Node 2.
+--  @4. Wait till arbitration field in Node 1. Wait till sample point 12 times
+--      (11 Base ID + RTR/SRR). Check Node 1 is transmitting recessive, Check
+--      Node 2 is transmitting dominant. Check Node 1 lost arbitration. Check
+--      Node 2 is still transmitter. Read ALC from Node 1 and check it.
+--  @5. Generate two CAN Frames: Frame 1 with Base ID. Frame 2 with Base ID 
+--      equal to Frame 1 and RTR flag.
+--  @6. Wait till sample point in Node 1. Send Frame 1 by Node 1 and Frame 2 by
+--      Node 2.
+--  @7. Wait till arbitration field in Node 2. Wait till sample point 12 times
+--      (11 Base ID + RTR/SRR). Check Node 2 is transmitting recessive, Check
+--      Node 1 is transmitting dominant. Check Node 2 lost arbitration. Check
+--      Node 1 is still transmitter. Read ALC from Node 2 and check it.
+--
+-- @TestInfoEnd
 --------------------------------------------------------------------------------
 -- Revision History:
 --    02.10.2019   Created file
@@ -114,14 +118,14 @@ package body alc_srr_rtr_feature is
     begin
 
         -----------------------------------------------------------------------
-        -- 1. Configure both Nodes to one-shot mode.
+        -- @1. Configure both Nodes to one-shot mode.
         -----------------------------------------------------------------------
         info("Step 1: Configure one -shot mode");
         CAN_enable_retr_limit(true, 0, ID_1, mem_bus(1));
         CAN_enable_retr_limit(true, 0, ID_2, mem_bus(2));
 
         -----------------------------------------------------------------------
-        -- 2. Generate two CAN frames: Frame 1 with Extended identifier, Frame 
+        -- @2. Generate two CAN frames: Frame 1 with Extended identifier, Frame 
         --    2 with Base Identifier only. Base identifier of both CAN frames 
         --    is matching!
         -----------------------------------------------------------------------
@@ -141,7 +145,7 @@ package body alc_srr_rtr_feature is
         frame_1.identifier := to_integer(unsigned(id_vect));
 
         ------------------------------------------------------------------------
-        -- 3. Wait till sample point in Node 1. Send Frame 1 by Node 1 and 
+        -- @3. Wait till sample point in Node 1. Send Frame 1 by Node 1 and 
         --    Frame 2 by Node 2.
         ------------------------------------------------------------------------
         info("Step 3: Send frames");
@@ -153,7 +157,7 @@ package body alc_srr_rtr_feature is
         send_TXT_buf_cmd(buf_set_ready, 1, ID_2, mem_bus(2));
 
         -----------------------------------------------------------------------
-        --  4. Wait till arbitration field in Node 1. Wait till sample point 12
+        --  @4. Wait till arbitration field in Node 1. Wait till sample point 12
         --     times (11 Base ID + RTR/SRR). Check Node 1 is transmitting 
         --     recessive, Check Node 2 is transmitting dominant. Check Node 1
         --     lost arbitration. Check Node 2 is still transmitter. Read ALC
@@ -180,7 +184,7 @@ package body alc_srr_rtr_feature is
         CAN_wait_bus_idle(ID_2, mem_bus(2));
         
         -----------------------------------------------------------------------
-        -- 5. Generate two CAN Frames: Frame 1 with Base ID. Frame 2 with Base 
+        -- @5. Generate two CAN Frames: Frame 1 with Base ID. Frame 2 with Base 
         --    ID equal to Frame 1 and RTR flag.
         -----------------------------------------------------------------------
         info("Step 5: Generate frames");
@@ -197,7 +201,7 @@ package body alc_srr_rtr_feature is
         frame_2.rtr := RTR_FRAME;
 
         -----------------------------------------------------------------------
-        -- 6. Wait till sample point in Node 1. Send Frame 1 by Node 1 and 
+        -- @6. Wait till sample point in Node 1. Send Frame 1 by Node 1 and 
         --    Frame 2 by Node 2.
         -----------------------------------------------------------------------
         info("Step 6: Send frames");
@@ -209,7 +213,7 @@ package body alc_srr_rtr_feature is
         send_TXT_buf_cmd(buf_set_ready, 1, ID_2, mem_bus(2));
         
         -----------------------------------------------------------------------
-        -- 7. Wait till arbitration field in Node 2. Wait till sample point 12
+        -- @7. Wait till arbitration field in Node 2. Wait till sample point 12
         --    times (11 Base ID + RTR/SRR). Check Node 2 is transmitting 
         --    recessive, Check Node 1 is transmitting dominant. Check Node 2
         --    lost arbitration. Check Node 1 is still transmitter. Read ALC 

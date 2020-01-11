@@ -40,21 +40,25 @@
 --------------------------------------------------------------------------------
 
 --------------------------------------------------------------------------------
--- Purpose:
+-- @TestInfoStart
+--
+-- @Purpose:
 --  STATUS[TXS] feature test.
 --
--- Verifies:
---  1. STATUS[TXS] is set when unit is transmitter.
---  2. STATUS[TXS] is not set when unit is receiver.
+-- @Verifies:
+--  @1. STATUS[TXS] is set when unit is transmitter.
+--  @2. STATUS[TXS] is not set when unit is receiver.
 --
--- Test sequence:
---  1. Send frame by Node 1. Wait until SOF starts and check that STATUS[TXS] is
---     not set till SOF. From SOF further monitor STATUS[TXS] and check it set
---     until the end of Intermission. Check that after the end of intermission,
---     STATUS[TXS] is not set anymore.
---  2. Send frame by Node 2. Monitor STATUS[TXS] of Node 1 until Intermission
---     and check STATUS[TXS] is not set. Monitor until the end of intermission
---     and check STATUS[TXS] is not set.
+-- @Test sequence:
+--  @1. Send frame by Node 1. Wait until SOF starts and check that STATUS[TXS] is
+--      not set till SOF. From SOF further monitor STATUS[TXS] and check it set
+--      until the end of Intermission. Check that after the end of intermission,
+--      STATUS[TXS] is not set anymore.
+--  @2. Send frame by Node 2. Monitor STATUS[TXS] of Node 1 until Intermission
+--      and check STATUS[TXS] is not set. Monitor until the end of intermission
+--      and check STATUS[TXS] is not set.
+--
+-- @TestInfoEnd
 --------------------------------------------------------------------------------
 -- Revision History:
 --    31.10.2019   Created file
@@ -98,7 +102,7 @@ package body status_txs_feature is
     begin
 
         -----------------------------------------------------------------------
-        --  1. Send frame by Node 1. Wait until SOF starts and check that
+        --  @1. Send frame by Node 1. Wait until SOF starts and check that
         --     STATUS[TXS] is not set till SOF. From SOF further monitor
         --     STATUS[TXS] and check it set until the end of Intermission.
         --     Check that after the end of intermission, STATUS[TXS] is not set
@@ -133,7 +137,7 @@ package body status_txs_feature is
         CAN_wait_bus_idle(ID_2, mem_bus(2));
 
         -----------------------------------------------------------------------
-        -- 2. Send frame by Node 2. Monitor STATUS[TXS] of Node 1 until Inter-
+        -- @2. Send frame by Node 2. Monitor STATUS[TXS] of Node 1 until Inter-
         --    mission and check STATUS[TXS] is not set. Monitor until the end
         --    of intermission and check STATUS[TXS] is not set.
         -----------------------------------------------------------------------

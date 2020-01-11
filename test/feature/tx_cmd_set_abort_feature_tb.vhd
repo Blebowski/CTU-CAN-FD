@@ -40,23 +40,27 @@
 --------------------------------------------------------------------------------
 
 --------------------------------------------------------------------------------
--- Purpose:
+-- @TestInfoStart
+--
+-- @Purpose:
 --  TXT Buffer Set Abort - SW command (TX_COMMAND) feature test.
 --
--- Verifies:
---  1. Set Abort command moves TXT Buffer from Ready to Aborted and from
---     TX in progress to Aborted.
+-- @Verifies:
+--  @1. Set Abort command moves TXT Buffer from Ready to Aborted and from
+--      TX in progress to Aborted.
 --
--- Test sequence:
---  1. Generate frame and insert it for transmission to random TXT Buffer.
---     Wait until sample point. Issue Set Ready command and check TXT Buffer
---     becomes Ready. Issue Set Abort command and check TXT Buffer becomes
---     Aborted. Bit time should be sufficiently long so that there is enough
---     time to issue two commands and read buffer state ones before next sample
---     point arrives.
---  2. Issue Set Ready command and wait until transmission starts. Check that
---     TXT Buffer is in TX in progress. Issue Set Abort and check that TXT
---     Buffer moves to Abort in progress. Wait until transmission is over.
+-- @Test sequence:
+--  @1. Generate frame and insert it for transmission to random TXT Buffer.
+--      Wait until sample point. Issue Set Ready command and check TXT Buffer
+--      becomes Ready. Issue Set Abort command and check TXT Buffer becomes
+--      Aborted. Bit time should be sufficiently long so that there is enough
+--      time to issue two commands and read buffer state ones before next sample
+--      point arrives.
+--  @2. Issue Set Ready command and wait until transmission starts. Check that
+--      TXT Buffer is in TX in progress. Issue Set Abort and check that TXT
+--      Buffer moves to Abort in progress. Wait until transmission is over.
+--
+-- @TestInfoEnd
 --------------------------------------------------------------------------------
 -- Revision History:
 --   17.11.2019   Created file
@@ -101,7 +105,7 @@ package body tx_cmd_set_abort_feature is
         info("Testing with TXT Buffer: " & integer'image(buf_nr));
 
         -----------------------------------------------------------------------
-        -- 1. Generate frame and insert it for transmission to random TXT Buffer.
+        -- @1. Generate frame and insert it for transmission to random TXT Buffer.
         --    Wait until sample point. Issue Set Ready command and check TXT 
         --    Buffer becomes Ready. Issue Set Abort command and check TXT Buffer
         --    becomes Aborted. Bit time should be sufficiently long so that there
@@ -125,7 +129,7 @@ package body tx_cmd_set_abort_feature is
         check(txt_state = buf_aborted, "Set Abort: Ready -> Aborted");
 
         -----------------------------------------------------------------------
-        -- 2. Issue Set Ready command and wait until transmission starts. Check
+        -- @2. Issue Set Ready command and wait until transmission starts. Check
         --    that TXT Buffer is in TX in progress. Issue Set Abort and check
         --    that TXT Buffer moves to Abort in progress. Wait until 
         --    transmission is over.

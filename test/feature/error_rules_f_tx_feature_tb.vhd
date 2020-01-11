@@ -40,33 +40,37 @@
 --------------------------------------------------------------------------------
 
 --------------------------------------------------------------------------------
--- Purpose:
+-- @TestInfoStart
+--
+-- @Purpose:
 --  Fault confinement rules - rule F - transmitter - feature test
 --
--- Verifies:
---  1. Any node shall tolerate up to 7 consecutive dominant bits after sending
---     an active error flag, passive error flag, or overload flag. After detecting
---     14 consecutive dominant bits (in case of an active error  flag or an
---     overload flag) or after detecting 8 consecutive dominant bits following a
---     passive error flag, and after each sequence of additional 8 consecutive
---     dominant bits, every transmitter shall increment its transmit error counter
---     by 8 and every receiver shall increment its receive counter by 8.
+-- @Verifies:
+--  @1. Any node shall tolerate up to 7 consecutive dominant bits after sending
+--      an active error flag, passive error flag, or overload flag. After detecting
+--      14 consecutive dominant bits (in case of an active error  flag or an
+--      overload flag) or after detecting 8 consecutive dominant bits following a
+--      passive error flag, and after each sequence of additional 8 consecutive
+--      dominant bits, every transmitter shall increment its transmit error counter
+--      by 8 and every receiver shall increment its receive counter by 8.
 --
--- Test sequence:
---  1. Set Node 2 to ACK forbidden mode. Send frame by Node 1. Wait until Error
---     frame is sent by Node 1. Force bus low and wait for 7 bits. Check that
---     Error counter is still the same as after Error frame started! Wait for
---     one more bit and check that TEC counter was incremented by 8! Wait for 7
---     bits and check that TEC remains the same. Wait for one more bit and
---     check that TEC is incremented again by 8. Release the bus and Wait until
---     bus is idle!
---  2. Set Node 1 to Error passive. Send frame by Node 1 and wait until Error
---     frame is sent. Repeat the same procedure as in Step 1. Afterwards
---     release the bus and wait until bus is idle!
---  3. Unset ACK forbidden mode in Node 2. Send frame by Node 1. Wait until
---     Intermission of Node 1 and force bus low. Wait until Overload frame is
---     sent. Repeat the procedure from step 1. Release the bus and wait until
---     bus is idle!
+-- @Test sequence:
+--  @1. Set Node 2 to ACK forbidden mode. Send frame by Node 1. Wait until Error
+--      frame is sent by Node 1. Force bus low and wait for 7 bits. Check that
+--      Error counter is still the same as after Error frame started! Wait for
+--      one more bit and check that TEC counter was incremented by 8! Wait for 7
+--      bits and check that TEC remains the same. Wait for one more bit and
+--      check that TEC is incremented again by 8. Release the bus and Wait until
+--      bus is idle!
+--  @2. Set Node 1 to Error passive. Send frame by Node 1 and wait until Error
+--      frame is sent. Repeat the same procedure as in Step 1. Afterwards
+--      release the bus and wait until bus is idle!
+--  @3. Unset ACK forbidden mode in Node 2. Send frame by Node 1. Wait until
+--      Intermission of Node 1 and force bus low. Wait until Overload frame is
+--      sent. Repeat the procedure from step 1. Release the bus and wait until
+--      bus is idle!
+--
+-- @TestInfoEnd
 --------------------------------------------------------------------------------
 -- Revision History:
 --    10.12.2019   Created file
@@ -91,15 +95,15 @@ package body error_rules_f_tx_feature is
 
     ---------------------------------------------------------------------------
     -- Executes following sequence:
-    --  1. Read TEC and Force bus low and wait for 13 bits.
-    --  2. Check that TEC has not changed.
-    --  3. Wait for one more bit.
-    --  4. Check that TEC was incremented by 8.
-    --  5. Wait for 7 bits.
-    --  6. Check that TEC has not changed.
-    --  7. Wait for one more bit.
-    --  8. Check that TEC has changed!
-    --  9. Release bus
+    --  @1. Read TEC and Force bus low and wait for 13 bits.
+    --  @2. Check that TEC has not changed.
+    --  @3. Wait for one more bit.
+    --  @4. Check that TEC was incremented by 8.
+    --  @5. Wait for 7 bits.
+    --  @6. Check that TEC has not changed.
+    --  @7. Wait for one more bit.
+    --  @8. Check that TEC has changed!
+    --  @9. Release bus
     ---------------------------------------------------------------------------
     procedure do_14_8_check(
         signal      so              : out    feature_signal_outputs_t;     
@@ -175,7 +179,7 @@ package body error_rules_f_tx_feature is
     begin
 
         -----------------------------------------------------------------------
-        -- 1. Set Node 2 to ACK forbidden mode. Send frame by Node 1. Wait until
+        -- @1. Set Node 2 to ACK forbidden mode. Send frame by Node 1. Wait until
         --    Error frame is sent by Node 1. Force bus low and wait for 7 bits.
         --    Check that Error counter is still the same as after Error frame
         --    started! Wait for one more bit and check that TEC counter was
@@ -200,7 +204,7 @@ package body error_rules_f_tx_feature is
         wait for 2000 ns;
         
         -----------------------------------------------------------------------
-        -- 2. Set Node 1 to Error passive. Send frame by Node 1 and wait until
+        -- @2. Set Node 1 to Error passive. Send frame by Node 1 and wait until
         --    Error frame is sent. Repeat the same procedure as in Step 1.
         --    Afterwards release the bus and wait until bus is idle!
         -----------------------------------------------------------------------
@@ -226,7 +230,7 @@ package body error_rules_f_tx_feature is
         wait for 2000 ns;
         
         -----------------------------------------------------------------------
-        -- 3. Unset ACK forbidden mode in Node 2. Send frame by Node 1. Wait
+        -- @3. Unset ACK forbidden mode in Node 2. Send frame by Node 1. Wait
         --    until Intermission of Node 1 and force bus low. Wait until
         --    Overload frame is sent. Repeat the procedure from step 1. Release
         --    the bus and wait until bus is idle!

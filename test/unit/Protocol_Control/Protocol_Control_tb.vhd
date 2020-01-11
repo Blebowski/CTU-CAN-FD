@@ -40,7 +40,9 @@
 --------------------------------------------------------------------------------
 
 --------------------------------------------------------------------------------
--- Purpose:
+-- @TestInfoStart
+--
+-- @Purpose:
 --  Unit test for Protocol Control. The architecture of this test is depicted
 --  in picture below. It is inherited from original Protocol Control testbench
 --  created during implementation of the CAN FD IP Core. This testbench only
@@ -107,6 +109,7 @@
 --    further! But the transmitted frame would not be according to spec!
 --    This is reason for SW model of CAN Frame!
 --
+-- @TestInfoEnd
 --------------------------------------------------------------------------------
 -- Revision History:
 --    13.6.2016   Created file
