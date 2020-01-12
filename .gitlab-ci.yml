@@ -99,6 +99,8 @@ test_ip_nightly:
     script:
         - cd test
         - make test_nightly
+    after_script:
+        - cd test
         - make coverage
         - make functional_coverage
         - cd ../scripts
