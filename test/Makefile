@@ -15,7 +15,7 @@ test_%: tests_%.yml FORCE
 	$(PYTHON) run.py test $(TEST_OPTS_$@) $< -- $(TEST_FLAGS)
 
 coverage:
-	lcov --capture --directory $(BUILD_DIR) --output-file code_coverage.info
+	lcov --capture --gcov-tool=/opt/ghdl/bin/gcov --directory $(BUILD_DIR) --output-file code_coverage.info
 	genhtml code_coverage.info --output-directory code_html
 
 functional_coverage:
