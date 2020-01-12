@@ -82,7 +82,7 @@ test_ip_fast:
     dependencies: [build_ip_and_tests]
     script:
         - cd test
-        - make test_debug
+        - make test_fast
     artifacts:
         when: always
         paths:
@@ -98,11 +98,10 @@ test_ip_nightly:
         - schedules
     script:
         - cd test
-        - make test_debug
+        - make test_nightly
     after_script:
         - cd test
-        - which gcov
-        #- make coverage
+        - make coverage
         - make functional_coverage
         - cd ../scripts
         - chmod +x gen_vrm
