@@ -101,6 +101,7 @@ test_ip_nightly:
         - make test_debug
     after_script:
         - cd test
+        - which gcov
         - make coverage
         - make functional_coverage
         - cd ../scripts
