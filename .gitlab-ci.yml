@@ -98,7 +98,7 @@ test_ip_nightly:
         - schedules
     script:
         - cd test
-        - make test_nightly
+        - make test_debug
     after_script:
         - cd test
         - make coverage
