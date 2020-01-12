@@ -105,6 +105,7 @@ test_ip_nightly:
         #- make coverage
         - make functional_coverage
         - cd ../scripts
+        - chmod +x gen_vrm
         - ./gen_vrm
     coverage: "/lines......: ([^%]+%)/"
     artifacts:
