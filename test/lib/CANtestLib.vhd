@@ -278,7 +278,7 @@ package CANtestLib is
         err_pos_data,
         err_pos_crc,
         err_pos_ack,
-        err_pos_interframe_space,
+        err_pos_eof,
         err_pos_err_frame,
         err_pos_overload_frame,
         err_pos_other
@@ -946,6 +946,36 @@ package CANtestLib is
     ---------------------------------------------------------------------------
     procedure release_bus_level(
         signal  bl_force        : out   boolean
+    );
+
+    ---------------------------------------------------------------------------
+    -- Force CAN RX of single controller to given value. This can be used when
+    -- only RX value of single node shall be forced to different value
+    --
+    -- Arguments:
+    --  value       Value to be forced
+    --  ID          ID of node on whose CAN_rx value will be forced
+    --  crx_force   Force CAN RX level signal.
+    --  crx_inject  Force CAN RX level value.
+    --  crx_index   Force CAN RX level index.
+    ---------------------------------------------------------------------------
+    procedure force_can_rx(
+        constant value           : in    std_logic;
+        constant ID              : in    natural range 1 to 2;
+        signal   crx_force       : out   boolean;
+        signal   crx_inject      : out   std_logic;
+        signal   crx_index       : out   natural range 1 to 2
+    );
+    
+    
+    ---------------------------------------------------------------------------
+    -- Release CAN_RX value.
+    --
+    -- Arguments:
+    --  crx_force   Force CAN RX level signal.
+    ---------------------------------------------------------------------------
+    procedure release_can_rx(
+       signal   crx_force        : out   boolean
     );
 
 
@@ -2709,6 +2739,25 @@ package body CANtestLib is
         bl_force <= false;
     end procedure;
 
+    procedure force_can_rx(
+        constant value           : in    std_logic;
+        constant ID              : in    natural range 1 to 2;
+        signal   crx_force       : out   boolean;
+        signal   crx_inject      : out   std_logic;
+        signal   crx_index       : out   natural range 1 to 2
+    ) is
+    begin
+        crx_force <= true;
+        crx_inject <= value;
+        crx_index <= ID;
+    end procedure;
+
+    procedure release_can_rx(
+       signal   crx_force        : out   boolean
+    ) is
+    begin
+        crx_force <= false;
+    end procedure;
 
 
     procedure aval_write(
@@ -5032,7 +5081,7 @@ package body CANtestLib is
         when ERC_POS_DATA   => err_capt.err_pos := err_pos_data;
         when ERC_POS_CRC    => err_capt.err_pos := err_pos_crc;
         when ERC_POS_ACK    => err_capt.err_pos := err_pos_ack;
-        when ERC_POS_INTF   => err_capt.err_pos := err_pos_interframe_space;
+        when ERC_POS_EOF    => err_capt.err_pos := err_pos_eof;
         when ERC_POS_ERR    => err_capt.err_pos := err_pos_err_frame;
         when ERC_POS_OVRL   => err_capt.err_pos := err_pos_overload_frame;
         when ERC_POS_OTHER  => err_capt.err_pos := err_pos_other;

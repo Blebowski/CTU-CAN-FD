@@ -1,20 +1,19 @@
 _default: &default
-    log_level: debug
+    log_level: info
     psl_coverage: true
     error_tolerance: 0
-    # seed: 0 # optional; use to reconstruct results from randomized runs
-    # randomize: false
+    randomize: true
     # In GUI mode, dump all signals, not only these included in layout file.
     dump_all_signals: true
 unit:
     default:
         <<: *default
-        log_level: info
-        iterations: 50
-        timeout: 100 ms
+        log_level: warning
+        iterations: 0
+        timeout: 1000 ms
     tests:
         bit_stuffing:
-            iterations: 20
+            iterations: 100
             wave: unit/Bit_Stuffing/bsdt_unit.tcl
         apb:
             iterations: 1
@@ -23,25 +22,53 @@ unit:
             wave: unit/CRC/crct_unit.tcl
         int_man:
             wave: unit/Int_Manager/intm_unit.tcl
+            iterations: 5000
         mess_filt:
             wave: unit/Message_filter/msft_unit.tcl
         presc:
             wave: unit/Prescaler/prsc_unit.tcl
         protocol_control:
             wave: unit/Protocol_Control/pctl_unit.tcl
-            iterations: 100
         rx_buf:
             wave: unit/RX_Buffer/rxbf_unit.tcl
-            iterations: 10
         tx_arb:
             wave: unit/TX_Arbitrator/txar_unit.tcl
             iterations: 0
         tx_buf:
             wave: unit/TX_Buffer/txbf_unit.tcl
+reference:
+    default:
+        <<: *default
+        log_level: warning
+        iterations: 0
+        timeout: 1000 ms
+        wave: reference/reference_env_setup.tcl
+        error_tolerance: 0
+    tests:
+        data_set_1:
+            data_path: reference/data_sets/log_500Kb_2Mb_80p_1K_samples_1
+        data_set_2:
+            data_path: reference/data_sets/log_500Kb_2Mb_80p_1K_samples_2
+        data_set_3:
+            data_path: reference/data_sets/log_500Kb_2Mb_80p_1K_samples_3
+        data_set_4:
+            data_path: reference/data_sets/log_500Kb_2Mb_80p_1K_samples_4
+        data_set_5:
+            data_path: reference/data_sets/log_500Kb_2Mb_80p_1K_samples_5
+        data_set_6:
+            data_path: reference/data_sets/log_500Kb_2Mb_80p_1K_samples_6
+        data_set_7:
+            data_path: reference/data_sets/log_500Kb_2Mb_80p_1K_samples_7
+        data_set_8:
+            data_path: reference/data_sets/log_500Kb_2Mb_80p_1K_samples_8
+        data_set_9:
+            data_path: reference/data_sets/log_500Kb_2Mb_80p_1K_samples_9
+        data_set_10:
+            data_path: reference/data_sets/log_500Kb_2Mb_80p_1K_samples_10
 feature:
     default:
         <<: *default
-        iterations: 1
+        iterations: 0
         timeout: 100 ms
         wave: feature/feature_env_setup.tcl
     tests:
@@ -53,11 +80,15 @@ feature:
         alc_rtr_r0:
         alc_rtr_ext_id:
         btr:
+            timeout: 200 ms
+            iterations: 0
         btr_fd:
+            iterations: 0
         btr_ssp_access:
         bus_start:
         byte_enable:
         command_rrb:
+            iterations: 20
         command_cdo:
         command_frcrst:
         device_id:
@@ -73,6 +104,7 @@ feature:
         err_capt_eof:
         err_capt_sof:
         err_norm_fd:
+            iterations: 5
         error_rules_a:
         error_rules_b:
         error_rules_c:
@@ -83,10 +115,11 @@ feature:
         error_rules_g:
         fault_state:
         mode_loopback:
+            iterations: 10
         mode_listen_only:
         mode_self_test:
         mode_frame_filters:
-            iterations: 6
+            iterations: 15
         mode_fd_enable:
         mode_rst:
         mode_test:
@@ -116,14 +149,16 @@ feature:
         status_txs:
         status_rxs:
         status_ewl:
+            iterations: 5
         status_idle:
         stuff_in_data:
         trv_delay:
         tx_from_intermission:
         tx_arb_time_tran:
         tx_status:
+            iterations: 5
         # message_filter:
-        #     iterations: 1
+        #    iterations: 1
         timestamp_low_high:
         txt_buffer_hazard:
             iterations: 1
@@ -131,46 +166,17 @@ feature:
         tx_cmd_set_empty:
         tx_cmd_set_ready:
         tx_priority:
-            iterations: 1
-reference:
-    default:
-        <<: *default
-        log_level: warning
-        iterations: 20
-        timeout: 1000 ms
-        wave: reference/reference_env_setup.tcl
-        error_tolerance: 0
-    tests:
-        data_set_1:
-            data_path: reference/data_sets/log_500Kb_2Mb_80p_1K_samples_1
-        data_set_2:
-            data_path: reference/data_sets/log_500Kb_2Mb_80p_1K_samples_2
-        data_set_3:
-            data_path: reference/data_sets/log_500Kb_2Mb_80p_1K_samples_3
-        data_set_4:
-            data_path: reference/data_sets/log_500Kb_2Mb_80p_1K_samples_4
-        data_set_5:
-            data_path: reference/data_sets/log_500Kb_2Mb_80p_1K_samples_5
-        data_set_6:
-            data_path: reference/data_sets/log_500Kb_2Mb_80p_1K_samples_6
-        data_set_7:
-            data_path: reference/data_sets/log_500Kb_2Mb_80p_1K_samples_7
-        data_set_8:
-            data_path: reference/data_sets/log_500Kb_2Mb_80p_1K_samples_8
-        data_set_9:
-            data_path: reference/data_sets/log_500Kb_2Mb_80p_1K_samples_9
-        data_set_10:
-            data_path: reference/data_sets/log_500Kb_2Mb_80p_1K_samples_10
+            iterations: 5
 sanity:
     default:
         <<: *default
-        iterations: 5
+        iterations: 0
         timeout: 2 sec
         gauss_iter: 40
         wave: sanity/sanity_env_setup.tcl
         dump_all_signals: false
     tests:
-        "1Mb/5Mb 20 m Star":
+        "1Mb/10Mb 20 m Star":
             topology: star
             bus_len_v: [10.0, 10.0, 10.0, 10.0, 0.0, 0.0]
             trv_del_v: [10, 10, 10, 10]
@@ -179,4 +185,4 @@ sanity:
             nw_var: 5.0
             ng_mean: 300000.0
             ng_var:  100000.0
-            timing_config: [1, 1, 33, 33, 33, 4, 4, 8, 7, 3]
+            timing_config: [4, 1, 8, 8, 8, 3, 3, 1, 5, 2]
