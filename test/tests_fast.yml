@@ -84,6 +84,7 @@ feature:
         error_rules_f_rx:
         error_rules_g:
         fault_state:
+        glitch_filtering:
         mode_loopback:
         mode_listen_only:
         mode_self_test:

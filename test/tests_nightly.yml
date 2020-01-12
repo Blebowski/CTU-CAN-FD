@@ -116,6 +116,7 @@ feature:
         error_rules_f_rx:
         error_rules_g:
         fault_state:
+        glitch_filtering:
         mode_loopback:
             iterations: 10
         mode_listen_only:
