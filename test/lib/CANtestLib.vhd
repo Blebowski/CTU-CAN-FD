@@ -278,7 +278,7 @@ package CANtestLib is
         err_pos_data,
         err_pos_crc,
         err_pos_ack,
-        err_pos_interframe_space,
+        err_pos_eof,
         err_pos_err_frame,
         err_pos_overload_frame,
         err_pos_other
@@ -5081,7 +5081,7 @@ package body CANtestLib is
         when ERC_POS_DATA   => err_capt.err_pos := err_pos_data;
         when ERC_POS_CRC    => err_capt.err_pos := err_pos_crc;
         when ERC_POS_ACK    => err_capt.err_pos := err_pos_ack;
-        when ERC_POS_INTF   => err_capt.err_pos := err_pos_interframe_space;
+        when ERC_POS_EOF    => err_capt.err_pos := err_pos_eof;
         when ERC_POS_ERR    => err_capt.err_pos := err_pos_err_frame;
         when ERC_POS_OVRL   => err_capt.err_pos := err_pos_overload_frame;
         when ERC_POS_OTHER  => err_capt.err_pos := err_pos_other;

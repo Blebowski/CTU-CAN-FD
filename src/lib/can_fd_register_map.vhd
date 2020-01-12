@@ -1249,7 +1249,7 @@ package can_fd_register_map is
   constant ERC_POS_DATA : std_logic_vector(4 downto 0) := "00011";
   constant ERC_POS_CRC : std_logic_vector(4 downto 0) := "00100";
   constant ERC_POS_ACK : std_logic_vector(4 downto 0) := "00101";
-  constant ERC_POS_INTF : std_logic_vector(4 downto 0) := "00110";
+  constant ERC_POS_EOF : std_logic_vector(4 downto 0) := "00110";
   constant ERC_POS_ERR : std_logic_vector(4 downto 0) := "00111";
   constant ERC_POS_OVRL : std_logic_vector(4 downto 0) := "01000";
   constant ERC_POS_OTHER : std_logic_vector(4 downto 0) := "11111";

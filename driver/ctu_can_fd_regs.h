@@ -830,7 +830,7 @@ enum ctu_can_fd_err_capt_err_pos {
 	ERC_POS_DATA        = 0x3,
 	ERC_POS_CRC         = 0x4,
 	ERC_POS_ACK         = 0x5,
-	ERC_POS_INTF        = 0x6,
+	ERC_POS_EOF         = 0x6,
 	ERC_POS_ERR         = 0x7,
 	ERC_POS_OVRL        = 0x8,
 	ERC_POS_OTHER      = 0x1f,

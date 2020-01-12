@@ -2136,7 +2136,7 @@ begin
             when s_pc_eof =>
                 ctrl_ctr_ena <= '1';
                 is_eof <= '1';
-                err_pos <= ERC_POS_INTF;
+                err_pos <= ERC_POS_EOF;
                 nbt_ctrs_en <= '1';
                 bit_err_disable <= '1';
 

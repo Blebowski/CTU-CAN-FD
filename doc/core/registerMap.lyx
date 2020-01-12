@@ -38881,8 +38881,8 @@ ERR_POS Position of last error.\begin_inset Newline newline\end_inset
 		0b00010  - ERC_POS_CTRL - Error in Control field\begin_inset Newline newline\end_inset
 		0b00011  - ERC_POS_DATA - Error in Data Field\begin_inset Newline newline\end_inset
 		0b00100  - ERC_POS_CRC - Error in CRC Field\begin_inset Newline newline\end_inset
-		0b00101  - ERC_POS_ACK - Error in Acknowledge field or CRC delimiter\begin_inset Newline newline\end_inset
-		0b00110  - ERC_POS_INTF - Error in interframe space\begin_inset Newline newline\end_inset
+		0b00101  - ERC_POS_ACK - Error in CRC delimiter, ACK field or ACK delimiter\begin_inset Newline newline\end_inset
+		0b00110  - ERC_POS_EOF - Error in End of frame field\begin_inset Newline newline\end_inset
 		0b00111  - ERC_POS_ERR - Error during Error frame\begin_inset Newline newline\end_inset
 		0b01000  - ERC_POS_OVRL - Error in Overload frame\begin_inset Newline newline\end_inset
 		0b11111  - ERC_POS_OTHER - Other position of error
