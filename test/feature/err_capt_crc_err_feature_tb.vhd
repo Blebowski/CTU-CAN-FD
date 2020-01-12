@@ -134,9 +134,10 @@ package body err_capt_crc_err_feature is
         CAN_send_frame(frame_1, 1, ID_1, mem_bus(1), frame_sent);
         
         CAN_wait_pc_state(pc_deb_crc, ID_2, mem_bus(2));
-        rand_int_v(rand_ctr, 14, wait_time);
+        rand_int_v(rand_ctr, 13, wait_time);
 
         info("waiting for:" & integer'image(wait_time) & " bits!");
+        wait_time := wait_time + 1;
         for i in 1 to wait_time loop
             CAN_wait_sync_seg(iout(2).stat_bus);
         end loop;
@@ -148,6 +149,7 @@ package body err_capt_crc_err_feature is
         force_can_rx(not iout(2).can_rx, ID_2, so.crx_force, so.crx_inject,
                         so.crx_index);
         CAN_wait_sample_point(iout(2).stat_bus);
+        wait for 20 ns;
         release_can_rx(so.crx_force);
 
         -- Generate ACK for Node 1. We have to wait till both Nodes are in ACK so
