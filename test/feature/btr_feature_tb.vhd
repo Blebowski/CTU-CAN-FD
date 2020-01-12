@@ -40,20 +40,24 @@
 --------------------------------------------------------------------------------
 
 --------------------------------------------------------------------------------
--- Purpose:
+-- @TestInfoStart
+--
+-- @Purpose:
 --  BTR (Bit timing register) feature test.
 --
--- Verifies:
---  1. BTR register properly configures PROP, PH1, PH2 registers.
---  2. Transmission/reception at random bit-rate.
+-- @Verifies:
+--  @1. BTR register properly configures PROP, PH1, PH2 registers.
+--  @2. Transmission/reception at random bit-rate.
 --
--- Test sequence:
---   1. Disable both Nodes. Generate random bit-rate and configure it sa Nominal
+-- @Test sequence:
+--  @1. Disable both Nodes. Generate random bit-rate and configure it sa Nominal
 --      bit-rate! Enable both nodes and wait till both nodes are on.
---   2. Wait until sample point in Node 1 and measure number of clock cycles
+--  @2. Wait until sample point in Node 1 and measure number of clock cycles
 --      till next sample point. Check that it corresponds to pre-computed value!
---   3. Send frame by Node 1 and wait until it is sent. Read frame from Node 2
+--  @3. Send frame by Node 1 and wait until it is sent. Read frame from Node 2
 --      and check they are matching. Do vice-versa from Node 2 to Node 1!
+--
+-- @TestInfoEnd
 --------------------------------------------------------------------------------
 -- Revision History:
 --   11.11.2019   Created file
@@ -87,16 +91,7 @@ package body btr_feature is
         variable ID_2           	:       natural := 2;
         variable CAN_frame_1        :       SW_CAN_frame_type;
         variable CAN_frame_2        :       SW_CAN_frame_type;
-        variable CAN_frame_3        :       SW_CAN_frame_type;
         variable frame_sent         :       boolean := false;
-        variable mode               :       SW_mode := SW_mode_rst_val;
-        variable rx_state           :       SW_RX_Buffer_info;
-        
-        variable fault_state_1      :       SW_fault_state;
-        variable fault_state_2      :       SW_fault_state;
-        
-        variable read_state         :       SW_PC_Debug;
-        variable status             :       SW_status;
         
         variable bus_timing         :       bit_time_config_type;
 
@@ -109,7 +104,7 @@ package body btr_feature is
     begin
 
         -----------------------------------------------------------------------
-        -- 1. Disable both Nodes. Generate random bit-rate and configure it sa 
+        -- @1. Disable both Nodes. Generate random bit-rate and configure it sa 
         --    Nominal bit-rate! Enable both nodes and wait till both nodes are 
         --    on.
         -----------------------------------------------------------------------
@@ -214,7 +209,7 @@ package body btr_feature is
         info("SJW: " & integer'image(bus_timing.sjw_nbt));
 
         -----------------------------------------------------------------------
-        -- 2. Wait until sample point in Node 1 and measure number of clock
+        -- @2. Wait until sample point in Node 1 and measure number of clock
         --    cycles till next sample point. Check that it corresponds to
         --    pre-computed value!
         -----------------------------------------------------------------------
@@ -232,7 +227,7 @@ package body btr_feature is
             " Measured clock per bit: " & integer'image(clock_meas));
 
         -----------------------------------------------------------------------
-        -- 3. Send frame by Node 1 and wait until it is sent. Read frame from
+        -- @3. Send frame by Node 1 and wait until it is sent. Read frame from
         --    Node 2 and check they are matching. Do vice-versa from Node 2 to
         --    Node 1!
         -----------------------------------------------------------------------

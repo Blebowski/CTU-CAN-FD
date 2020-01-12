@@ -40,26 +40,29 @@
 --------------------------------------------------------------------------------
 
 --------------------------------------------------------------------------------
--- Purpose:
+-- @TestInfoStart
+--
+-- @Purpose:
 --  Bus start feature test
 --
--- Verifies:
---  1. CTU CAN FD can integrate to bus comunication within 11 consecutive
---     recessive bits!
+-- @Verifies:
+--  @1. CTU CAN FD can integrate to bus comunication within 11 consecutive
+--      recessive bits!
 --
--- Test sequence:
---   1. Disable both Nodes. Insert 2 frames to Node 1. Check both Nodes are 
+-- @Test sequence:
+--  @1. Disable both Nodes. Insert 2 frames to Node 1. Check both Nodes are 
 --      Bus off. Enable Node 1.
---   2. Wait till sample point in Node 1 11 times, check that after 11 recesive
+--  @2. Wait till sample point in Node 1 11 times, check that after 11 recesive
 --      bits, Node 1 becomes error active. Wait until Node 1 becomes transmitter.
---   3. Enable Node 2, wait until ACK field in Node 2. Force the bus low so that
+--  @3. Enable Node 2, wait until ACK field in Node 2. Force the bus low so that
 --      Node 1 receives ACK. Wait till Node 1 is not in ACK anymore. Check it
 --      is in ACK Delimiter!
---   4. Wait for 11 sample points in Node 2. Check that Node 2 became Error
+--  @4. Wait for 11 sample points in Node 2. Check that Node 2 became Error
 --      active (this should have occurred in ACK Delimiter + EOF + Intermission
 --      of Node 1).
---   5. Wait until CAN frame starts in Node 2. Check Node 2 turned receiver!
---      
+--  @5. Wait until CAN frame starts in Node 2. Check Node 2 turned receiver!
+--
+-- @TestInfoEnd
 --------------------------------------------------------------------------------
 -- Revision History:
 --    30.8.2018   Created file
@@ -95,10 +98,6 @@ package body bus_start_feature is
         variable ID_2           	:       natural := 2;
         variable CAN_frame_1        :       SW_CAN_frame_type;
         variable CAN_frame_2        :       SW_CAN_frame_type;
-        variable CAN_frame_3        :       SW_CAN_frame_type;
-        variable frame_sent         :       boolean := false;
-        variable mode               :       SW_mode := SW_mode_rst_val;
-        variable rx_state           :       SW_RX_Buffer_info;
         
         variable fault_state_1      :       SW_fault_state;
         variable fault_state_2      :       SW_fault_state;
@@ -109,7 +108,7 @@ package body bus_start_feature is
     begin
 
         ------------------------------------------------------------------------
-        -- 1. Disable both Nodes. Insert 2 frames to Node 1. Check both Nodes
+        -- @1. Disable both Nodes. Insert 2 frames to Node 1. Check both Nodes
         --    are Bus off. Enable Node 1.
         ------------------------------------------------------------------------
         info("Step 1: Disable both nodes!");
@@ -133,7 +132,7 @@ package body bus_start_feature is
         CAN_turn_controller(true, ID_1, mem_bus(1));
 
         ------------------------------------------------------------------------
-        -- 2. Wait till sample point in Node 1 11 times, check that after 11
+        -- @2. Wait till sample point in Node 1 11 times, check that after 11
         --    recessive bits, Node 1 becomes error active. Wait until Node 1
         --    becomes transmitter.
         ------------------------------------------------------------------------
@@ -156,7 +155,7 @@ package body bus_start_feature is
         CAN_wait_tx_rx_start(true, false, ID_1, mem_bus(1));
 
         ------------------------------------------------------------------------
-        -- 3. Enable Node 2, wait until ACK field in Node 2. Force the bus low
+        -- @3. Enable Node 2, wait until ACK field in Node 2. Force the bus low
         --    so that Node 1 receives ACK. Wait till Node 1 is not in ACK 
         --    anymore. Check it is in ACK Delimiter!
         ------------------------------------------------------------------------
@@ -171,7 +170,7 @@ package body bus_start_feature is
         check(read_state = pc_deb_ack_delim, "Node 2 is in ACK delimiter!");
 
         ------------------------------------------------------------------------
-        -- 4. Wait for 11 sample points in Node 2. Check that Node 2 became
+        -- @4. Wait for 11 sample points in Node 2. Check that Node 2 became
         --    Error active (this should have occurred in ACK Delimiter + EOF +
         --    Intermission of Node 1).
         ------------------------------------------------------------------------
@@ -191,7 +190,7 @@ package body bus_start_feature is
         end loop;
 
         ------------------------------------------------------------------------
-        -- 5. Wait until CAN frame starts in Node 1. Check Node 1 turned
+        -- @5. Wait until CAN frame starts in Node 1. Check Node 1 turned
         --    transmitter!
         ------------------------------------------------------------------------
         info("Step 5: Check Node 2 joined bus communication!");

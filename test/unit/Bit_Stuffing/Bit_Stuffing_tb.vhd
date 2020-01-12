@@ -40,9 +40,35 @@
 --------------------------------------------------------------------------------
 
 --------------------------------------------------------------------------------
--- Purpose:
+-- @TestInfoStart
+--
+-- @Purpose:
 --  Unit test for bit stuffing and bit destuffing circuits.
 --
+-- @Verifies:
+--  @1. Functionality of Bit Stuffing and Bit Destuffing modules.
+--  @1. Insertion of stuff bits after 5 bits of equal consecutive value.
+--  @2. Discarding of stuffing bits after 5 bits of equal consecutive value.
+--  @3. Fixed bit stuffing and Fixed bit destuffing. Stuff bit is inserted
+--      after 4 bits regardless of bit value.
+--  @4. Stuff Error detection if 6-th equal consecutive bit is received.
+--  @5. Recursive behaviour of bit stuffing (stuff bit counts as first bit in
+--      the next sequence of equal consecutive bits).
+--  @6. Insertion of Stuff bit upon change from non-fixed to fixed bit stuffing
+--      (modeling insertion of stuff bit before stuff count field of CAN FD
+--      frame).
+--
+-- @Test sequence:
+--  @1. Generate random bit sequence. Randomize whether at some point of the
+--      sequence, switch to fixed bit stuffing will occur.
+--  @2. Calculate expected sequence after bit stuffing (SW model).
+--  @3. Apply sequence on inputs of Bit Stuffing. Compare output of bit
+--      stuffing with expected bit coming out of SW model.
+--  @4. Stuffed sequence is destuffed with bit destuffing and compared with
+--      original generated sequence. Random stuff error is inserted. A check
+--      if bit error is detected is executed.
+-- 
+-- @Notes:
 --  Unit test makes use of bit stuffing/destuffing symmetry. Random data are
 --  generated on input of bit stuffing. Data are stuffed and compared with
 --  reference SW model. Then data are destuff_enable and output is compared with
@@ -63,6 +89,7 @@
 --   frame transmission started). Note that SW model covers recursive behaviour
 --   of bit stuffing.
 --
+-- @TestInfoEnd
 --------------------------------------------------------------------------------
 -- Revision History:
 --

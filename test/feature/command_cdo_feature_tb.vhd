@@ -40,28 +40,32 @@
 --------------------------------------------------------------------------------
 
 --------------------------------------------------------------------------------
--- Purpose:
+-- @TestInfoStart
+--
+-- @Purpose:
 --  Clear data overrun command feature test.
 --
--- Verifies:
---  1. Data overrun flag is set when more frames are received than capacity of
---     RX Buffer.
---  2. RX Buffer full is active when there is no free space available in RX
---     Buffer.
---  3. COMMAND[CDO] will clear data overrun flag.
---  4. COMMAND[RRB] will clear data overrun flag.
+-- @Verifies:
+--  @1. Data overrun flag is set when more frames are received than capacity of
+--      RX Buffer.
+--  @2. RX Buffer full is active when there is no free space available in RX
+--      Buffer.
+--  @3. COMMAND[CDO] will clear data overrun flag.
+--  @4. COMMAND[RRB] will clear data overrun flag.
 --
--- Test sequence:
---  1. Read size of RX Buffer in Node 1. Check that DOR flag is not set.
---     Generate number of RTR CAN frames (4 words in RX Buffer) which exactly
---     fill RX Buffer and send them by Node 2. Wait until frames are sent.
---  2. Read status of RX Buffer in Node 1. Check that RX Buffer full is active.
---     Check that DOR flag is not set yet.
---  3. Send one more frame by Node 2 and wait until it is sent. Check that Data
---     Overrun flag is set. Issue Clear Data Overrun Command. Check that CDO
---     flag was cleared.
---  4. Again send frame by Node 2. Check DOR is set again. Issue Command[RRB].
---     Check Data Overrun Flag was cleared.
+-- @Test sequence:
+--  @1. Read size of RX Buffer in Node 1. Check that DOR flag is not set.
+--      Generate number of RTR CAN frames (4 words in RX Buffer) which exactly
+--      fill RX Buffer and send them by Node 2. Wait until frames are sent.
+--  @2. Read status of RX Buffer in Node 1. Check that RX Buffer full is active.
+--      Check that DOR flag is not set yet.
+--  @3. Send one more frame by Node 2 and wait until it is sent. Check that Data
+--      Overrun flag is set. Issue Clear Data Overrun Command. Check that CDO
+--      flag was cleared.
+--  @4. Again send frame by Node 2. Check DOR is set again. Issue Command[RRB].
+--      Check Data Overrun Flag was cleared.
+--
+-- @TestInfoEnd
 --------------------------------------------------------------------------------
 -- Revision History:
 --    21.10.2019   Created file
@@ -91,38 +95,22 @@ package body command_cdo_feature is
         signal      mem_bus         : inout  mem_bus_arr_t;
         signal      bus_level       : in     std_logic
     ) is
-        variable rand_value         :       real;
-        variable alc                :       natural;
-
-        -- Some unit lost the arbitration...
-        -- 0 - initial , 1-Node 1 turned rec, 2 - Node 2 turned rec
-        variable unit_rec           :     natural := 0;
-
         variable ID_1               :     natural := 1;
         variable ID_2               :     natural := 2;
-        variable r_data             :     std_logic_vector(31 downto 0) :=
-                                               (OTHERS => '0');
+
         -- Generated frames
         variable frame_1            :     SW_CAN_frame_type;
-        variable frame_2            :     SW_CAN_frame_type;
-        variable frame_rx           :     SW_CAN_frame_type;
 
         -- Node status
         variable stat_1             :     SW_status;
-        variable stat_2             :     SW_status;
-
-        variable pc_dbg             :     SW_PC_Debug;
         
-        variable txt_buf_state      :     SW_TXT_Buffer_state_type;
-        variable rx_buf_info        :     SW_RX_Buffer_info;
-        variable frames_equal       :     boolean := false;        
+        variable rx_buf_info        :     SW_RX_Buffer_info;    
 
-        variable id_vect            :     std_logic_vector(28 downto 0);
         variable command            :     SW_command := SW_command_rst_val;
     begin
 
         -----------------------------------------------------------------------
-        -- 1. Read size of RX Buffer in Node 1. Check that DOR flag is not set.
+        -- @1. Read size of RX Buffer in Node 1. Check that DOR flag is not set.
         --    Generate number of RTR CAN frames (4 words in RX Buffer) which
         --    exactly fill RX Buffer and send them by Node 2. Wait until frames
         --    are sent. 
@@ -154,7 +142,7 @@ package body command_cdo_feature is
         CAN_wait_bus_idle(ID_2, mem_bus(2));
 
         -----------------------------------------------------------------------
-        -- 2. Read status of RX Buffer in Node 1. Check that RX Buffer full is
+        -- @2. Read status of RX Buffer in Node 1. Check that RX Buffer full is
         --    active. Check that DOR flag is not set yet.
         -----------------------------------------------------------------------
         info("Step 2");
@@ -166,7 +154,7 @@ package body command_cdo_feature is
         check_false(stat_1.data_overrun, "DOR flag not set!");
 
         -----------------------------------------------------------------------
-        -- 3. Send one more frame by Node 2 and wait until it is sent. Check
+        -- @3. Send one more frame by Node 2 and wait until it is sent. Check
         --    that Data Overrun flag is set. Issue Clear Data Overrun Command.
         --    Check that CDO flag was cleared.
         -----------------------------------------------------------------------
@@ -189,7 +177,7 @@ package body command_cdo_feature is
         check_false(stat_1.data_overrun, "DOR flag was cleared!");
 
         -----------------------------------------------------------------------
-        --  4. Again send frame by Node 2. Check DOR is set again. Issue
+        --  @4. Again send frame by Node 2. Check DOR is set again. Issue
         --     Command[RRB]. Check Data Overrun Flag was cleared.
         -----------------------------------------------------------------------
         info("Step 4");

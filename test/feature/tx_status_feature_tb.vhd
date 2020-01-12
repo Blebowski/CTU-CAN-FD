@@ -40,31 +40,35 @@
 --------------------------------------------------------------------------------
 
 --------------------------------------------------------------------------------
--- Purpose:
+-- @TestInfoStart
+--
+-- @Purpose:
 --  TX Status feature test.
 --
--- Verifies:
---  1. TXT Buffer is Empty after reset
---  2. TXT Buffer is OK after successfull transmission.
---  2. TXT Buffer is Failed after transmission fails from this buffer!
---  3. TXT Buffer is Aborted after Set Abort command was issued during
---     transmission.
+-- @Verifies:
+--  @1. TXT Buffer is Empty after reset
+--  @2. TXT Buffer is OK after successfull transmission.
+--  @2. TXT Buffer is Failed after transmission fails from this buffer!
+--  @3. TXT Buffer is Aborted after Set Abort command was issued during
+--      transmission.
 --
--- Test sequence:
---  1. Reset Node, Enable it, and wait until it integrates. Pick random TXT
---     Buffer which will be used during this test. Check that TXT Buffer is
---     empty.
---  2. Transmitt CAN Frame by Node 1 and wait until it is received in Node 2.
---     Check that TXT Buffer is OK.
---  3. Set ACK Forbidden mode in Node 2. Set One shot mode in Node 1. Send frame
---     by Node 1 and wait until it is sent. Check that TXT Buffer is in TX
---     Failed.
---  4. Send CAN frame and when it starts, issue Set Abort Command. Wait until
---     frame is sent and check that TXT Buffer is in Aborted.
+-- @Test sequence:
+--  @1. Reset Node, Enable it, and wait until it integrates. Pick random TXT
+--      Buffer which will be used during this test. Check that TXT Buffer is
+--      empty.
+--  @2. Transmitt CAN Frame by Node 1 and wait until it is received in Node 2.
+--      Check that TXT Buffer is OK.
+--  @3. Set ACK Forbidden mode in Node 2. Set One shot mode in Node 1. Send frame
+--      by Node 1 and wait until it is sent. Check that TXT Buffer is in TX
+--      Failed.
+--  @4. Send CAN frame and when it starts, issue Set Abort Command. Wait until
+--      frame is sent and check that TXT Buffer is in Aborted.
 --
 -- Note:
 --  Ready, TX in Progress and Abort in Progress are not tested here as they are
 --  checked in tx_cmd_set_ready/empty/abort test case.
+--
+-- @TestInfoEnd
 --------------------------------------------------------------------------------
 -- Revision History:
 --     22.11.2019   Created file
@@ -94,36 +98,19 @@ package body tx_status_feature is
         signal      mem_bus         : inout  mem_bus_arr_t;
         signal      bus_level       : in     std_logic
     ) is
-        
-        variable data               :       std_logic_vector(31 downto 0) :=
-                                                (OTHERS => '0');
-        variable address            :       std_logic_vector(11 downto 0) :=
-                                                (OTHERS => '0');
-        
         variable ID_1               :       natural := 1;   -- Transmiter
         variable ID_2               :       natural := 2;   -- Receiver          
         
-        variable CAN_frame_rx       :       SW_CAN_frame_type;
-        variable CAN_frame_tx       :       SW_CAN_frame_type;
-        
-        variable mode_1             :       SW_mode := SW_mode_rst_val;
+        variable CAN_frame_tx       :       SW_CAN_frame_type;        
         variable mode_2             :       SW_mode := SW_mode_rst_val;
-
-        variable frame_equal        :       boolean := false;
         variable frame_sent         :       boolean := false;
-        variable tmp_int            :       natural := 0;
-
-        variable found              :       boolean;
-
         variable bus_timing         :       bit_time_config_type;
         variable txt_state          :       SW_TXT_Buffer_state_type;
-
         variable txt_buf_num        :       natural;
-
     begin
 
         -----------------------------------------------------------------------
-        -- 1. Reset Node, Enable it, and wait until it integrates. Pick random
+        -- @1. Reset Node, Enable it, and wait until it integrates. Pick random
         --    TXT Buffer which will be used during this test. Check that TXT
         --    Buffer is empty.
         -----------------------------------------------------------------------
@@ -151,7 +138,7 @@ package body tx_status_feature is
         check(txt_state = buf_empty, "TX Empty after reset!");
 
         -----------------------------------------------------------------------
-        -- 2. Transmitt CAN Frame by Node 1 and wait until it is received in
+        -- @2. Transmitt CAN Frame by Node 1 and wait until it is received in
         --    Node 2. Check that TXT Buffer is OK.
         -----------------------------------------------------------------------
         info("Step 2");
@@ -165,7 +152,7 @@ package body tx_status_feature is
         check(txt_state = buf_done, "TX OK after frame sent!");
 
         -----------------------------------------------------------------------
-        -- 3. Set ACK Forbidden mode in Node 2. Set One shot mode in Node 1. 
+        -- @3. Set ACK Forbidden mode in Node 2. Set One shot mode in Node 1. 
         --    Send frame by Node 1 and wait until it is sent. Check that TXT
         --    Buffer is in TX Failed.
         -----------------------------------------------------------------------

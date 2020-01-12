@@ -40,23 +40,27 @@
 --------------------------------------------------------------------------------
 
 --------------------------------------------------------------------------------
--- Purpose:
+-- @TestInfoStart
+--
+-- @Purpose:
 --  STATUS[IDLE] feature test.
 --
--- Verifies:
---  1. STATUS[IDLE] is set when bus is idle (no frame is in progress).
---  2. STATUS[IDLE] is not set when unit is transmitting or receiving a frame.
---  3. STATUS[IDLE] is set when unit is bus-off!
+-- @Verifies:
+--  @1. STATUS[IDLE] is set when bus is idle (no frame is in progress).
+--  @2. STATUS[IDLE] is not set when unit is transmitting or receiving a frame.
+--  @3. STATUS[IDLE] is set when unit is bus-off!
 --
--- Test sequence:
---  1. Check that STATUS[IDLE] is set. Transmitt CAN frame by Node 1 wait till
---     SOF and check that STATUS[IDLE] is not set. Wait until the end of frame
---     and check that after the end of Intermission STATUS[IDLE] is set again!
---  2. Transmitt CAN frame by Node 2, wait till arbitration field in Node 1
---     and check that STATUS[IDLE] is not set. Wait until the end of frame and
---     check that STATUS[IDLE] is set after the end of intermission.
---  3. Set Node 1 to Bus-off by the means of modifying TX Error counter and
---     check it is bus-off. Check that STATUS[IDLE] is set.
+-- @Test sequence:
+--  @1. Check that STATUS[IDLE] is set. Transmitt CAN frame by Node 1 wait till
+--      SOF and check that STATUS[IDLE] is not set. Wait until the end of frame
+--      and check that after the end of Intermission STATUS[IDLE] is set again!
+--  @2. Transmitt CAN frame by Node 2, wait till arbitration field in Node 1
+--      and check that STATUS[IDLE] is not set. Wait until the end of frame and
+--      check that STATUS[IDLE] is set after the end of intermission.
+--  @3. Set Node 1 to Bus-off by the means of modifying TX Error counter and
+--      check it is bus-off. Check that STATUS[IDLE] is set.
+--
+-- @TestInfoEnd
 --------------------------------------------------------------------------------
 -- Revision History:
 --    07.11.2019   Created file
@@ -86,37 +90,19 @@ package body status_idle_feature is
         signal      mem_bus         : inout  mem_bus_arr_t;
         signal      bus_level       : in     std_logic
     ) is
-        variable rand_value         :       real;
-        variable alc                :       natural;
-
-        -- Some unit lost the arbitration...
-        -- 0 - initial , 1-Node 1 turned rec, 2 - Node 2 turned rec
-        variable unit_rec           :     natural := 0;
-
         variable ID_1               :     natural := 1;
         variable ID_2               :     natural := 2;
-        variable r_data             :     std_logic_vector(31 downto 0) :=
-                                               (OTHERS => '0');
+        
         -- Generated frames
         variable frame_1            :     SW_CAN_frame_type;
-        variable frame_2            :     SW_CAN_frame_type;
-        variable frame_rx           :     SW_CAN_frame_type;
 
         -- Node status
         variable stat_1             :     SW_status;
         variable stat_2             :     SW_status;
 
         variable pc_dbg             :     SW_PC_Debug;
-        
-        variable txt_buf_state      :     SW_TXT_Buffer_state_type;
-        variable rx_buf_info        :     SW_RX_Buffer_info;
-        variable frames_equal       :     boolean := false;        
         variable frame_sent         :     boolean;
 
-        variable id_vect            :     std_logic_vector(28 downto 0);
-        variable command            :     SW_command := SW_command_rst_val;
-        
-        variable num_frames         :     integer;
         variable mode_1             :     SW_mode;
         
         variable err_counters       :     SW_error_counters := (0,0,0,0);
@@ -125,7 +111,7 @@ package body status_idle_feature is
     begin
 
         -----------------------------------------------------------------------
-        -- 1. Check that STATUS[IDLE] is set. Transmitt CAN frame by Node 1
+        -- @1. Check that STATUS[IDLE] is set. Transmitt CAN frame by Node 1
         --    wait till SOF and check that STATUS[IDLE] is not set. Wait until
         --    the end of frame and check that after the end of Intermission
         --    STATUS[IDLE] is set again!
@@ -168,7 +154,7 @@ package body status_idle_feature is
         check(stat_1.bus_status, "Node 1 idle after frame has ended!");
 
         -----------------------------------------------------------------------
-        -- 2. Transmitt CAN frame by Node 2, wait till arbitration field in 
+        -- @2. Transmitt CAN frame by Node 2, wait till arbitration field in 
         --    Node 1 and check that STATUS[IDLE] is not set. Wait until the end
         --    of frame and check that STATUS[IDLE] is set after the end of
         --    intermission.
@@ -208,7 +194,7 @@ package body status_idle_feature is
         check(stat_1.bus_status, "Node 1 idle after frame has ended!");
 
         -----------------------------------------------------------------------
-        -- 3. Set Node 1 to Bus-off by the means of modifying TX Error counter
+        -- @3. Set Node 1 to Bus-off by the means of modifying TX Error counter
         --    and check it is bus-off. Check that STATUS[IDLE] is set.
         -----------------------------------------------------------------------
         info("Step 3");

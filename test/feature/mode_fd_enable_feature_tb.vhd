@@ -40,32 +40,36 @@
 --------------------------------------------------------------------------------
 
 --------------------------------------------------------------------------------
--- Purpose:
+-- @TestInfoStart
+--
+-- @Purpose:
 --  Flexible data-rate enable feature test!
 --
--- Verifies:
---  1. CAN FD frame (EDL bit recessive) is received OK when Flexible data-rate
---     mode is enabled (as default).
---  2. Receiving CAN FD frame results in Error frame when Flexible data-rate
---     mode is disabled.
---  3. Transmitting CAN FD frame when Flexible data-rate mode is disabled
---     results in transmission of Error frame.
+-- @Verifies:
+--  @1. CAN FD frame (EDL bit recessive) is received OK when Flexible data-rate
+--      mode is enabled (as default).
+--  @2. Receiving CAN FD frame results in Error frame when Flexible data-rate
+--      mode is disabled.
+--  @3. Transmitting CAN FD frame when Flexible data-rate mode is disabled
+--      results in transmission of Error frame.
 --
--- Test sequence:
---  1. Send CAN FD frame by Node 2. Wait till frame is sent. Read it from Node 1
---     and compare it with send frame.
---  2. Disable Flexible data-rate mode in Node 1. Send CAN frame by Node 2.
---     Wait till Control field of Node 1. Set both nodes to One-shot mode.
---  3. Wait till Node 1 is not in Control field. Check that it is transmitting
---     error frame. Read Error code capture and check that it shows Form Error
---     during Control field. Wait till the frame is transmitted.
---  4. Set Node 2 to Acknowledge forbidden mode. Transmitt frame by Node 1.
---     Wait till it is sent, read Error code capture and check it is NOT equal
---     to Form error (this is just to achieve change in Error code capture).  
---  5. Send frame by Node 1. Wait till it is in Control field.
---  6. Wait until Node 1 is not in control field. Check that Error frame is
---     being transmitted. Read Error code capture and check that it shows Form 
---     Error during Control field. Wait till the frame is transmitted.
+-- @Test sequence:
+--  @1. Send CAN FD frame by Node 2. Wait till frame is sent. Read it from Node 1
+--      and compare it with send frame.
+--  @2. Disable Flexible data-rate mode in Node 1. Send CAN frame by Node 2.
+--      Wait till Control field of Node 1. Set both nodes to One-shot mode.
+--  @3. Wait till Node 1 is not in Control field. Check that it is transmitting
+--      error frame. Read Error code capture and check that it shows Form Error
+--      during Control field. Wait till the frame is transmitted.
+--  @4. Set Node 2 to Acknowledge forbidden mode. Transmitt frame by Node 1.
+--      Wait till it is sent, read Error code capture and check it is NOT equal
+--      to Form error (this is just to achieve change in Error code capture).  
+--  @5. Send frame by Node 1. Wait till it is in Control field.
+--  @6. Wait until Node 1 is not in control field. Check that Error frame is
+--      being transmitted. Read Error code capture and check that it shows Form 
+--      Error during Control field. Wait till the frame is transmitted.
+--
+-- @TestInfoEnd
 --------------------------------------------------------------------------------
 -- Revision History:
 --    22.9.2019   Created file
@@ -95,31 +99,21 @@ package body mode_fd_enable_feature is
         signal      mem_bus         : inout  mem_bus_arr_t;
         signal      bus_level       : in     std_logic
     ) is
-        variable r_data             :       std_logic_vector(31 downto 0) :=
-                                                (OTHERS => '0');
         variable CAN_TX_frame       :       SW_CAN_frame_type;
         variable CAN_RX_frame       :       SW_CAN_frame_type;
         variable frame_sent         :       boolean := false;
-        variable ctr_1              :       natural;
-        variable ctr_2              :       natural;
         variable ID_1           	:       natural := 1;
         variable ID_2           	:       natural := 2;
-        variable rand_val           :       real;
-        variable retr_th            :       natural;
-        variable mode_backup        :       std_logic_vector(31 downto 0) :=
-                                                (OTHERS => '0');
+        
         variable mode_1             :       SW_mode := SW_mode_rst_val;
         variable mode_2             :       SW_mode := SW_mode_rst_val;
-        variable err_counters       :       SW_error_counters := (0, 0, 0, 0);
-        variable txt_buf_state      :       SW_TXT_Buffer_state_type;
-        variable rx_buf_state       :       SW_RX_Buffer_info;
         variable status             :       SW_status;
         variable frames_equal       :       boolean := false;
         variable err_capt           :       SW_error_capture;
     begin
 
         ------------------------------------------------------------------------
-        -- 1. Send CAN FD frame by Node 2. Wait till frame is sent. Read it from
+        -- @1. Send CAN FD frame by Node 2. Wait till frame is sent. Read it from
         --    Node 1 and compare it with send frame.
         ------------------------------------------------------------------------
         info("Step 1: Sending CAN FD frame when FD mode enabled!");
@@ -132,7 +126,7 @@ package body mode_fd_enable_feature is
         check(frames_equal, "TX - RX frames matching!");
 
         ------------------------------------------------------------------------
-        -- 2. Disable Flexible data-rate mode in Node 1. Send CAN frame by 
+        -- @2. Disable Flexible data-rate mode in Node 1. Send CAN frame by 
         --    Node 2. Wait till Control field of Node 1. Set both nodes to
         --    One-shot mode.
         ------------------------------------------------------------------------
@@ -146,7 +140,7 @@ package body mode_fd_enable_feature is
         CAN_wait_pc_state(pc_deb_control, ID_1, mem_bus(1));
 
         ------------------------------------------------------------------------
-        -- 3. Wait till Node 1 is not in Control field. Check that it is 
+        -- @3. Wait till Node 1 is not in Control field. Check that it is 
         --    transmitting error frame. Read Error code capture and check that
         --    it shows Form Error during Control field. Wait till the frame is
         --    transmitted.
@@ -164,7 +158,7 @@ package body mode_fd_enable_feature is
         CAN_wait_bus_idle(ID_1, mem_bus(1));
 
         ------------------------------------------------------------------------
-        -- 4. Set Node 2 to Acknowledge forbidden mode. Transmitt frame by 
+        -- @4. Set Node 2 to Acknowledge forbidden mode. Transmitt frame by 
         --    Node 1. Wait till it is sent, read Error code capture and check it
         --    is NOT equal to Form error (this is just to achieve change in Error
         --    code capture).
@@ -180,14 +174,14 @@ package body mode_fd_enable_feature is
         CAN_wait_bus_idle(ID_1, mem_bus(1));
         
         ------------------------------------------------------------------------
-        -- 5. Send frame by Node 1. Wait till it is in Control field.
+        -- @5. Send frame by Node 1. Wait till it is in Control field.
         ------------------------------------------------------------------------
         info("Step 4: Send frame by node with FD disabled");
         CAN_send_frame(CAN_TX_frame, 1, ID_1, mem_bus(1), frame_sent);
         CAN_wait_pc_state(pc_deb_control, ID_1, mem_bus(1));
 
         ------------------------------------------------------------------------
-        -- 6. Wait until Node 1 is not in control field. Check that Error frame
+        -- @6. Wait until Node 1 is not in control field. Check that Error frame
         --    is being transmitted. Read Error code capture and check that it
         --    shows Form Error during Control field. Wait till the frame is
         --    transmitted.

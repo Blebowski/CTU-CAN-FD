@@ -40,24 +40,28 @@
 --------------------------------------------------------------------------------
 
 --------------------------------------------------------------------------------
--- Purpose:
+-- @TestInfoStart
+--
+-- @Purpose:
 --  TXT Buffer Set empty - SW command (TX_COMMAND) feature test.
 --
--- Verifies:
---  1. Set Empty command moves TXT Buffer from TX OK, TX Error, Aborted to Empty.
+-- @Verifies:
+--  @1. Set Empty command moves TXT Buffer from TX OK, TX Error, Aborted to Empty.
 --
--- Test sequence:
---  1. Check TXT Buffer is empty. Issue Set empty and check it is still empty.
---  2. Generate random CAN frame, send it from TXT Buffer and wait until it is
---     received. Check TXT Buffer is in TX OK. Issue Set Empty command and
---     check TXT Buffer is empty.
---  3. Generate random CAN frame, send it fom TXT Buffer and issue Set Abort
---     command. Wait until frame is over and check TXT Buffer is Aborted. Issue
---     Set Empty command and check it becomes Empty.
---  4. Set One shot mode in Node 1. Forbid ACK in Node 2. Send CAN frame by Node
---     1. Wait until CAN frame is sent and check TXT Buffer from which it was
---     sent ended in TX Error. Issue Set empty command and check TXT Buffer is
---     Empty.
+-- @Test sequence:
+--  @1. Check TXT Buffer is empty. Issue Set empty and check it is still empty.
+--  @2. Generate random CAN frame, send it from TXT Buffer and wait until it is
+--      received. Check TXT Buffer is in TX OK. Issue Set Empty command and
+--      check TXT Buffer is empty.
+--  @3. Generate random CAN frame, send it fom TXT Buffer and issue Set Abort
+--      command. Wait until frame is over and check TXT Buffer is Aborted. Issue
+--      Set Empty command and check it becomes Empty.
+--  @4. Set One shot mode in Node 1. Forbid ACK in Node 2. Send CAN frame by Node
+--      1. Wait until CAN frame is sent and check TXT Buffer from which it was
+--      sent ended in TX Error. Issue Set empty command and check TXT Buffer is
+--      Empty.
+--
+-- @TestInfoEnd
 --------------------------------------------------------------------------------
 -- Revision History:
 --   16.11.2019   Created file
@@ -91,11 +95,7 @@ package body tx_cmd_set_empty_feature is
         variable ID_2           	:       natural := 2;
         variable CAN_frame          :       SW_CAN_frame_type;
         variable frame_sent         :       boolean := false;
-        variable mode               :       SW_mode := SW_mode_rst_val;
-        variable rx_state           :       SW_RX_Buffer_info;
         variable txt_state          :       SW_TXT_Buffer_state_type;
-        variable error_counters     :       SW_error_counters := (0, 0, 0, 0);
-        variable nxt_buffer         :       natural := 0;
         variable buf_nr             :       natural;
         variable mode_2             :       SW_mode := SW_mode_rst_val;
     begin
@@ -108,7 +108,7 @@ package body tx_cmd_set_empty_feature is
         info("Testing with TXT Buffer: " & integer'image(buf_nr));
 
         -----------------------------------------------------------------------
-        -- 1. Check TXT Buffer is empty. Issue Set empty and check it is still
+        -- @1. Check TXT Buffer is empty. Issue Set empty and check it is still
         --    empty.
         -----------------------------------------------------------------------
         info("Step 1");
@@ -119,7 +119,7 @@ package body tx_cmd_set_empty_feature is
         check(txt_state = buf_empty, "TXT Buffer still empty even post restart!");
 
         ------------------------------------------------------------------------
-        -- 2. Generate random CAN frame, send it from TXT Buffer and wait until
+        -- @2. Generate random CAN frame, send it from TXT Buffer and wait until
         --    it is received. Check TXT Buffer is in TX OK. Issue Set Empty
         --    command and check TXT Buffer is empty.
         ------------------------------------------------------------------------
@@ -136,7 +136,7 @@ package body tx_cmd_set_empty_feature is
         check(txt_state = buf_empty, "Set Empty: TX OK -> Empty");
 
         ------------------------------------------------------------------------
-        -- 3. Generate random CAN frame, send it fom TXT Buffer and issue Set
+        -- @3. Generate random CAN frame, send it fom TXT Buffer and issue Set
         --    Abort command. Wait until frame is over and check TXT Buffer is
         --    Aborted. Issue Set Empty command and check it becomes Empty.
         ------------------------------------------------------------------------
@@ -155,7 +155,7 @@ package body tx_cmd_set_empty_feature is
         check(txt_state = buf_empty, "Set Empty: Aborted -> Empty");
 
         -----------------------------------------------------------------------
-        -- 4. Set One shot mode in Node 1. Forbid ACK in Node 2. Send CAN frame
+        -- @4. Set One shot mode in Node 1. Forbid ACK in Node 2. Send CAN frame
         --    by Node 1. Wait until CAN frame is sent and check TXT Buffer from
         --    which it was sent ended in TX Error. Issue Set empty command and
         --    check TXT Buffer is Empty.

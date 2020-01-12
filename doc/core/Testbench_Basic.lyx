@@ -465,7 +465,7 @@ Department of Measurement
 \begin_layout Plain Layout
 
 \size larger
-CTU CAN FD IP Core
+CTU CAN FD IP Core - Testbench
 \end_layout
 
 \end_inset
@@ -502,7 +502,7 @@ Version 2.1.5
 \noindent
 \align center
 \begin_inset Tabular
-<lyxtabular version="3" rows="10" columns="4">
+<lyxtabular version="3" rows="2" columns="4">
 <features tabularvalignment="middle">
 <column alignment="center" valignment="top" width="1.5cm">
 <column alignment="center" valignment="top" width="2cm">
@@ -547,322 +547,11 @@ Change description
 </cell>
 </row>
 <row>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-1.0
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-Ondrej Ille
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-07-2015
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-Initial version describing release 1.0
-\end_layout
-
-\end_inset
-</cell>
-</row>
-<row>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-2.0
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-Ondrej Ille
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-09-2016
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-Added test framework description.
- Updated document to cover latest description of CAN Core.
-\end_layout
-
-\end_inset
-</cell>
-</row>
-<row>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-2.0.1
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-Ondrej Ille
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-07-2018
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-Updated register map description, external references to generated maps.
- Updated block diagrams.
- Updated test framework description.
- Updated Synthesis table.
-\end_layout
-
-\end_inset
-</cell>
-</row>
-<row>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-2.1
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-Martin Jerabek
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-10-2018
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-Added Linux driver description
-\end_layout
-
-\end_inset
-</cell>
-</row>
-<row>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-2.1.1
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-Ondrej Ille
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-12-2018
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-Added Register map block diagram after re-implementation of registers via
- Register map generator.
-\end_layout
-
-\end_inset
-</cell>
-</row>
-<row>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-2.1.2
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-Ondrej Ille
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-12-2018
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-Added CRC Wrapper.
- Extended CRC description.
-\end_layout
-
-\end_inset
-</cell>
-</row>
-<row>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-2.1.3
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-Ondrej Ille
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-01-2019
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-Added TIMESTAMP_LOW, TIMESTAMP_HIGH registers.
-\end_layout
-
-\end_inset
-</cell>
-</row>
-<row>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-2.1.4
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-Ondrej Ille
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-03-2019
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-Re-worked Prescaler.
- Removed 0x3 in bits 23:20 of address.
-\end_layout
-
-\end_inset
-</cell>
-</row>
-<row>
 <cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
-2.1.5
+0.1
 \end_layout
 
 \end_inset
@@ -880,7 +569,7 @@ Ondrej Ille
 \begin_inset Text
 
 \begin_layout Plain Layout
-09-2019
+01-2020
 \end_layout
 
 \end_inset
@@ -889,7 +578,7 @@ Ondrej Ille
 \begin_inset Text
 
 \begin_layout Plain Layout
-TODO
+Initial version after separation of TB document from System architecture.
 \end_layout
 
 \end_inset
@@ -987,1095 +676,642 @@ thispagestyle{fancy}
 \end_layout
 
 \begin_layout Standard
-This document describes CTU CAN FD IP Core originally developed at Department
- of Measurement at Faculty of Electrical Engineering at Czech Technical
- University for the purpose of testing CAN Bus.
- The core supports ISO as well as NON-ISO variants of the CAN FD protocol.
- The core contains its own test framework and an extensive set of RTL tests.
- Low-level C driver with OS/CPU independent driver and Socket CAN Linux
- driver are available.
- Project contains several scripts for design automation and CAN testing
- purposes such as IP-XACT register map generator or KvaAlt (Kvaser / Altera)
- Logger.
+This document describes testbenches and test architecture for CTU CAN FD.
 \end_layout
 
 \begin_layout Section
-Features
-\end_layout
-
-\begin_layout Itemize
-Vendor independent, VHDL RTL code for synthesis.
-\end_layout
-
-\begin_layout Itemize
-RTL test framework wrapped in VUnit wrappers and simulations executable
- via GHDL or Modelsim.
- Code coverage available via 
-\begin_inset Quotes eld
-\end_inset
-
-gcov
-\begin_inset Quotes erd
-\end_inset
-
- engine.
-\end_layout
-
-\begin_layout Itemize
-Example project of Synthesis in Xilinx Vivado and Intel Quartus Prime.
-\end_layout
-
-\begin_layout Itemize
-Low level driver and Linux Socket CAN driver.
-\end_layout
-
-\begin_layout Itemize
-Support of ISO and Non-ISO CAN FD protocol.
-\end_layout
-
-\begin_layout Itemize
-SDC and XDC design constraints for synthesis to Altera and Xilinx FPGAs.
-\end_layout
-
-\begin_layout Section
-License
+Dependencies
 \end_layout
 
 \begin_layout Standard
-HW and test framework of CTU CAN FD IP core are published under MIT License:
-\end_layout
-
-\begin_layout Quote
-Permission is hereby granted, free of charge, to any person obtaining a
- copy of this software and associated documentation files (the "Software"),
- to deal in the Software without restriction, including without limitation
- the rights to use, copy, modify, merge, publish, distribute, sublicense,
- and/or sell copies of the Software, and to permit persons to whom the Software
- is furnished to do so, subject to the following conditions:
-\end_layout
-
-\begin_layout Quote
-The above copyright notice and this permission notice shall be included
- in all copies or substantial portions of the Software.
-\end_layout
-
-\begin_layout Quote
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
- OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
- IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
- DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE
-, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
- OTHER DEALINGS IN THE SOFTWARE.
-\end_layout
-
-\begin_layout Standard
-Linux driver and low level driver are published under GPL v 2.0:
-\end_layout
-
-\begin_layout Quote
-This program is free software; you can redistribute it and/or * modify it
- under the terms of the GNU General Public License as published by the Free
- Software Foundation; either version 2 of the License, or (at your option)
- any later version.
- This program is distributed in the hope that it will be useful, but WITHOUT
- ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
- FOR A PARTICULAR PURPOSE.
- See the GNU General Public License for more details.
- You should have received a copy of the GNU General Public License along
- with this program; if not, write to the Free Software Foundation, Inc.,
- 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- 
-\end_layout
-
-\begin_layout Section
-Development tools
-\end_layout
-
-\begin_layout Standard
-To develop this IP Core following tools are used:
+To run tests of CTU CAN FD, following dependencies are needed:
 \end_layout
 
 \begin_layout Itemize
-Modelsim ALTERA Starter Edition 6.5b and GHDL for RTL simulations.
+GTKWave - Waveform viewer.
 \end_layout
 
 \begin_layout Itemize
-Quartus Prime and Xilinx Vivado for Synthesis to Intel and Xilinx FPGAs,
- Timing analysis and design size benchmarks.
-\end_layout
-
-\begin_layout Itemize
-VUnit for simulation wrappers.
-\end_layout
-
-\begin_layout Itemize
-Kactus2 for definition of register map in IP-XACT format.
-\end_layout
-
-\begin_layout Itemize
-\SpecialChar LyX
- v.2.3.0 to write documentation.
-\end_layout
-
-\begin_layout Itemize
-GitLab of CTU FEE as a remote GIT repository.
-\end_layout
-
-\begin_layout Itemize
-TimingAnalyzer SW for Timing Diagrams.
-\end_layout
-
-\begin_layout Section
-Design automation
-\end_layout
-
-\begin_layout Standard
-To simplify development of CTU CAN FD IP core, achieve scalability and maintaina
-bility of the design, part of CTU CAN FD Core is auto-generated.
- Register map is implemented in Kactus 2 in IP-XACT format.
- The design in IP-XACT format is considered to be an unified specification
- of user-interface.
- Following design resources are generated from IP-XACT specification:
-\end_layout
-
-\begin_layout Itemize
-VHDL packages with address, bit-fields and reset values definitions (
-\begin_inset Quotes eld
-\end_inset
-
-src/Libraries/CAN_FD_Frame_format.vhd
-\begin_inset Quotes erd
-\end_inset
-
-, 
-\begin_inset Quotes eld
-\end_inset
-
-src/Libraries/CAN_FD_Register_map.vhd
-\begin_inset Quotes erd
-\end_inset
-
-).
-\end_layout
-
-\begin_layout Itemize
-C header file with address map definitions and register descriptions (
-\begin_inset Quotes eld
-\end_inset
-
-driver/ctu_can_fd_regs.h
-\begin_inset Quotes erd
-\end_inset
-
-, 
-\begin_inset Quotes eld
-\end_inset
-
-driver/ctu_can_fd_frame.h
-\begin_inset Quotes erd
-\end_inset
-
-).
-\end_layout
-
-\begin_layout Itemize
-Lyx documentation.
- Chapters: 
-\begin_inset ERT
+VUnit - Unit test framework for VHDL.
+ Custom modifications are done to allow interactive graphic debugging (
+\begin_inset Flex URL
 status open
 
 \begin_layout Plain Layout
 
-
-\backslash
-hyperref[3.
- CAN FD Core memory map]{3.
- CAN FD Core memory map}
+https://github.com/mjerabek/vunit
 \end_layout
 
+\end_inset
+
+).
+\end_layout
+
+\begin_layout Itemize
+GHDL - VHDL simulator.
+ Custom modifications are done to speed-up dumping of waveforms to GHW file
+ (
+\begin_inset Flex URL
+status open
+
+\begin_layout Plain Layout
+
+https://github.com/Blebowski/ghdl
+\end_layout
+
+\end_inset
+
+).
+\end_layout
+
+\begin_layout Itemize
+Python 3 - To run VUnit.
+ Following Python modules are used: pyvcd attrs jinja2 parsy pyyaml click
+ yattag json2html
+\end_layout
+
+\begin_layout Standard
+There is a docker Image available which is ready to run the simulations
+ available at: 
+\begin_inset Flex URL
+status open
+
+\begin_layout Plain Layout
+
+https://gitlab.com/canfd/server-tools/container_registry
+\end_layout
+
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Section
+How to run test environment?
+\end_layout
+
+\begin_layout Standard
+Test environment can be started (from docker image) in root directory of
+ the project as:
+\end_layout
+
+\begin_layout Quotation
+
+\series bold
+./run-docker-test
+\end_layout
+
+\begin_layout Section
+How to run tests?
+\end_layout
+
+\begin_layout Standard
+Tests (regression) can be started by 
+\begin_inset Quotes eld
+\end_inset
+
+run
+\begin_inset Quotes erd
+\end_inset
+
+ script like so:
+\end_layout
+
+\begin_layout Quotation
+
+\series bold
+run.py test <config_file>
+\end_layout
+
+\begin_layout Standard
+Where <config_file> describes test configuration (see TODO).
+ There are two main configuration sets: Fast (must pass before merge) and
+ Nightly (should be debugged before release).
+ These can be run like so:
+\end_layout
+
+\begin_layout Quotation
+
+\series bold
+run.py test tests_fast.yml
+\end_layout
+
+\begin_layout Quotation
+
+\series bold
+run.py test tests_nightly.yml
+\end_layout
+
+\begin_layout Standard
+Note that these commands will run given configuration in single thread only.
+ Gitlab CI is using parallel run (to save time), where up to N instances
+ can be ran in parallel (N being number of cores in a system).
+ In such a case, tests can be run from Makefile:
+\end_layout
+
+\begin_layout Quotation
+
+\series bold
+make tests_fast
+\end_layout
+
+\begin_layout Quotation
+
+\series bold
+make tests_nightly
+\end_layout
+
+\begin_layout Standard
+To extract coverage (so far from GHDL via GCov, which is not real HW coverage,
+ but at least something):
+\end_layout
+
+\begin_layout Quotation
+
+\series bold
+make coverage
+\end_layout
+
+\begin_layout Standard
+To extract PSL functional coverage after tests has been executed:
+\end_layout
+
+\begin_layout Quotation
+
+\series bold
+make functional_coverage
+\end_layout
+
+\begin_layout Standard
+To debug interactively with GTKWave:
+\end_layout
+
+\begin_layout Quotation
+
+\series bold
+run.py test tests_fast.yml -- -g
+\end_layout
+
+\begin_layout Standard
+VUnit supports multiple simulators to be used and in history this project
+ used also Modelsim.
+ Right now support for Modelsim is non-functional since free version of
+ Modelsim does not support PSL assertions.
+ However, if e.g.
+ Modelsim DE is used, user can switch to it from GHDL for test run like
+ so:
+\end_layout
+
+\begin_layout Quotation
+
+\series bold
+VUNIT_SIMULATOR=modelsim ./run.py test tests_fast.yml
+\end_layout
+
+\begin_layout Section
+Wave dumping
+\end_layout
+
+\begin_layout Standard
+By default when debugging interactively, all signal waves are dumped to
+ GHW file.
+ This can take significant amount of time in case of bit test cases (typically
+ sanity tests).
+ To speed this up, only sub-set of waves can be dumped to GHW file.
+ To do this, Modelsim wave files need to be first converted to Wave opt
+ files for GHDL.
+ This is further described in TODO.
+ This can be executed like so:
+\end_layout
+
+\begin_layout Quotation
+
+\series bold
+run.py test tests_fast.yml --create-ghws
+\end_layout
+
+\begin_layout Standard
+Which will elaborate the design and generate wave files for most needed
+ signals for debugging.
+ Consecutive run with 
+\begin_inset Quotes eld
+\end_inset
+
+-g
+\begin_inset Quotes erd
+\end_inset
+
+ option will then start GTKWave with layout file already loaded.
+ 
+\end_layout
+
+\begin_layout Section
+Test configuration
+\end_layout
+
+\begin_layout Standard
+Configuration of regression runs is in YAML config files: 
+\series bold
+tests_fast.yml
+\series default
+ and 
+\series bold
+tests_nightly.yml
+\series default
+.
+ Meaning of entries within config files is following:
+\end_layout
+
+\begin_layout Description
+log_level Severity of log messages which will be printed to log file during
+ test run.
+ Available options are: info, debug, warning and error.
+\end_layout
+
+\begin_layout Description
+psl_coverage Whether PSL coverage / assertions will be collected.
+ This option is supported only for GDHL.
+\end_layout
+
+\begin_layout Description
+error_tolerance Number of errors which are tolerated before test fails.
+ This option is deprecated.
+ Tests fails ALWAYS when there is any log with severities Error or Failure.
+\end_layout
+
+\begin_layout Description
+randomize Whether test run should be randomized.
+ Available options: True / False.
+\end_layout
+
+\begin_layout Description
+seed If test is not randomized, this seed will be used.
+ If not specfied, seed=0 will be used.
+\end_layout
+
+\begin_layout Description
+dump_all_signals When GHW Wave opt file is present, it will be ignored and
+ all signals will be dumped to GHW file.
+\end_layout
+
+\begin_layout Description
+timeout Simulation timeout (from simulation time perspective).
+\end_layout
+
+\begin_layout Description
+iterations Number of iterations each test should execute in single run.
+\end_layout
+
+\begin_layout Description
+wave Path to Modelsim Wave file.
+\end_layout
+
+\begin_layout Section
+Test types
+\end_layout
+
+\begin_layout Standard
+There are 4 possible test types in CTU CAN FD verification:
+\end_layout
+
+\begin_layout Description
+Unit Test each unit towards its expected functionality.
+\end_layout
+
+\begin_layout Description
+Feature Test functionality of CTU CAN FD as whole in specific situations.
+\end_layout
+
+\begin_layout Description
+Sanity Test implements various bus topologies and simulates bus traffic
+ with more controllers.
+\end_layout
+
+\begin_layout Description
+Reference Test verifies communication with existing CAN FD implementation.
+\end_layout
+
+\begin_layout Section
+Test evaluation
+\end_layout
+
+\begin_layout Standard
+All tests are architected with 
+\begin_inset Quotes eld
+\end_inset
+
+fail fast
+\begin_inset Quotes erd
+\end_inset
+
+ approach, therefore errors are not tolerated.
+ Each log with 
+\begin_inset Quotes eld
+\end_inset
+
+error
+\begin_inset Quotes erd
+\end_inset
+
+ or 
+\begin_inset Quotes eld
+\end_inset
+
+failure
+\begin_inset Quotes erd
+\end_inset
+
+ severity immediately causes test to fail.
+\end_layout
+
+\begin_layout Chapter
+Unit tests
+\end_layout
+
+\begin_layout Standard
+Each unit test tests functionality of a single module within CTU CAN FD.
+ There are no test-cases in unit tests each unit test has several 
+\begin_inset Quotes eld
+\end_inset
+
+driving
+\begin_inset Quotes erd
+\end_inset
+
+ processes and 
+\begin_inset Quotes eld
+\end_inset
+
+monitoring
+\begin_inset Quotes erd
+\end_inset
+
+ processes.
+ Each unit test has a process which controls execution of a test.
+\end_layout
+
+\begin_layout Section
+CRC unit test
+\end_layout
+
+\begin_layout Standard
+CRC unit test generates random bit sequence 10 to 620 bits long (
+\family roman
+\shape italic
+gen_bit_sequence
+\family default
+\shape default
+) and random 
+\family roman
+\shape italic
+drv_fd_type
+\family default
+\shape default
+ setting.
+ According to TODOISO standard, there is different initialization vector
+ in CRC shift register in ISO CAN FD protocol as in non-ISO CAN protocol.
+ Signal 
+\family roman
+\shape italic
+drv_fd_type
+\family default
+\shape default
+ distinguishes between these two options.
+ Then CRC is calculated in software (model) by 
+\family roman
+\shape italic
+calc_crc
+\family default
+\shape default
+ procedure.
+ Afterwards, generated bit sequence is applied to DUT input.
+ Triggering signals are generated by 
+\family roman
+\shape italic
+sample_gen
+\family default
+\shape default
+ process, and serial data are processed by CRC circuit.
+ At the end, software calculated CRC and DUT output are compared.
+ If these two are not equal, an error is detected.
+\end_layout
+
+\begin_layout Section
+Bit stuffing and Bit destuffing
+\end_layout
+
+\begin_layout Standard
+This unit test tests 
+\begin_inset Quotes eld
+\end_inset
+
+Bit Stuffing
+\begin_inset Quotes erd
 \end_inset
 
  and 
-\begin_inset ERT
-status open
+\begin_inset Quotes eld
+\end_inset
 
-\begin_layout Plain Layout
+Bit De-stuffing
+\begin_inset Quotes erd
+\end_inset
 
-
-\backslash
-hyperref[4.
- CAN FD frame format]{4.
- CAN FD frame format}
+ module as well.
+ Architecture of this testbench is shown in Figure TODO.
+ Both circuits are connected in a chain, after bit stuffing serial data
+ stream is fed to bit destuffing.
+ In each step of unit test, following random inputs are generated:
 \end_layout
 
-\end_inset
+\begin_layout Itemize
+Random setting of stuff rule length (number of equal consecutive stuff bits
+ after which stuff bit is inserted).
+\end_layout
 
- are generated (
-\begin_inset Quotes eld
-\end_inset
-
-doc/core/CANFrameformat.lyx
-\begin_inset Quotes erd
-\end_inset
-
-, 
-\begin_inset Quotes eld
-\end_inset
-
-doc/core/registerMap.lyx
-\begin_inset Quotes erd
-\end_inset
-
+\begin_layout Itemize
+Randomized bit sequence to be stuffed (procedure
+\family roman
+\shape italic
+ generate_bs_settings
+\family default
+\shape default
 ).
 \end_layout
 
 \begin_layout Itemize
-RTL Code of Control Registers module and Event Logger Registers module.
+Randomized fact whether at some point, switch from regular to fixed bit
+ stuffing will occur ( 
+\family roman
+\shape italic
+set.change_to_fixed
+\family default
+\shape default
+ ).
+ Tthis is a typical use-case, because bit stuffing in CAN frame always begin
+ with regular stuffing and at some point switches to Fixed bit stuffing.
+\end_layout
+
+\begin_layout Itemize
+Length of bit sequence which will be stuffed by regular stuff bits (
+\family roman
+\shape italic
+set.bc_non_fixed
+\family default
+\shape default
+) and length which will be stuffed by fixed stuff bits (
+\family roman
+\shape italic
+set.bc_fixed).
 \end_layout
 
 \begin_layout Standard
-To generate these design materials CTU CAN FD IP Core contains its own IP-XACT
- generator which can be found at 
-\begin_inset CommandInset href
-LatexCommand href
-name "regmap_gen"
-target "https://github.com/Blebowski/Reg_Map_Gen"
-literal "false"
+Note that generated bit sequence has higher probability (85 %) of equal
+ value between two consecutive bits.
+ This precaution makes sure that fair amount of Stuff Bits will be inserted
+ and discarded during the test.
+\end_layout
 
-\end_inset
-
+\begin_layout Standard
+SW model is realized via 
+\family roman
+\shape italic
+calc_sw_bit_stuf_sequence
+\family default
+\shape default
+ procedure which calculates expected bit sequence after bit stuffing in
+ 
+\family roman
+\shape italic
+set.stuffed_data_seq
+\family default
+\shape default
+ from generated bit sequence 
+\family roman
+\shape italic
+set.tx_data_seq
+\family default
+\shape default
 .
-\end_layout
-
-\begin_layout Section
-Source code access
-\end_layout
-
-\begin_layout Standard
-CTU CAN FD IP Core source code is available in CTU FEE GitLab repository
- at:
-\end_layout
-
-\begin_layout Standard
-\begin_inset space \qquad{}
-\end_inset
-
-
-\begin_inset CommandInset href
-LatexCommand href
-name "https://gitlab.fel.cvut.cz/canbus/ctucanfd_ip_core"
-target "https://gitlab.fel.cvut.cz/canbus/ctucanfd_ip_core"
-literal "false"
-
-\end_inset
-
-
+ Output of Bit Stuffing DUT is compared with expected output from model
+ after each bit is fed to Bit Stuffing DUT.
+ Furthermore, upon insertion of Stuff bit, random bit-flip is added into
+ bit stream (
+\family roman
+\shape italic
+err_data
+\family default
+\shape default
+) before bit destuffing and verification of stuff error detection is performed
+ (
+\family roman
+\shape italic
+gen_st_error
+\family default
+\shape default
+ process).
 \end_layout
 
 \begin_layout Chapter
-System architecture
+Reference tests
 \end_layout
 
 \begin_layout Standard
-\begin_inset ERT
-status open
-
-\begin_layout Plain Layout
-
- 
-\backslash
-thispagestyle{fancy}
-\end_layout
-
+Reference tests verify operation of CTU CAN FD with reference controller.
+ To achieve this, several sets of random CAN Frames were generated, transmitted
+ by reference CAN FD controller, and recorded by logic analyzer.
+ Each data set thus contains CAN Frame and according bit sequence which
+ was transmitted by reference controller.
+ Datasets are stored in dedicated files.
+ Generation of CAN frames, transmission by reference controller, control
+ of logic analyzer and recording of data sets was executed by auxiliary
+ utility Kvaalt Logger implemented in C (located in 
+\begin_inset Quotes eld
 \end_inset
 
+tools
+\begin_inset Quotes erd
+\end_inset
 
+ directory).
 \end_layout
 
 \begin_layout Standard
-The CTU CAN FD IP Core is compliant with VHDL 2008.
- Following VHDL packages from IEEE library are used in RTL sources of CTU
- CAN FD IP core:
-\end_layout
-
-\begin_layout Itemize
-std_logic_1164
-\end_layout
-
-\begin_layout Itemize
-numeric_std
-\end_layout
-
-\begin_layout Itemize
-std_logic_unsigned
-\end_layout
-
-\begin_layout Standard
-Each module has a unique function and number of dependencies between modules
- is minimal, which allows modularity and flexibility.
- CAN FD IP core is a memory mapped peripheral and it can be embedded into
- custom SoC on FPGA or ASIC.
- The code itself is vendor independent, requiring 
-\series bold
-no vendor specific libraries
-\series default
- or other IP cores.
- CTU CAN FD has a single Slave memory interface.
-\end_layout
-
-\begin_layout Section
-Configuration and IO signals 
-\end_layout
-
-\begin_layout Standard
-CTU CAN FD IP Core is highly configurable before synthesis.
- Different configuration options can be used to reduce logic resource usage.
-\end_layout
-
-\begin_layout Standard
-CTU CAN FD IP Core can be accessed over either of two buses, Avalon Bus
- or APB (Amba Peripheral Bus).
- Native interface is Avalon Bus.
- APB compatibility is achieved via wrapper circuit.
- For memory writes, write data are always sampled in the same clock cycle
- as address is active, thus allowing consecutive writes.
- For memory reads, read data are returned one clock cycle after address
- is active.
-\end_layout
-
-\begin_layout Section
-Absolute maximum ratings
-\end_layout
-
-\begin_layout Standard
-\begin_inset Float table
-placement H
-wide false
-sideways false
-status open
-
-\begin_layout Plain Layout
-\noindent
-\align center
-\begin_inset Tabular
-<lyxtabular version="3" rows="7" columns="5">
-<features tabularvalignment="middle">
-<column alignment="left" valignment="top" width="4cm">
-<column alignment="left" valignment="top" width="3cm">
-<column alignment="left" valignment="top" width="3cm">
-<column alignment="left" valignment="top" width="3cm">
-<column alignment="left" valignment="top" width="2cm">
-<row>
-<cell alignment="left" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-Parameter name
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="left" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-Minimal Value
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="left" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-Recommended value
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="left" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-Maximal value
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="left" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-Unit
-\end_layout
-
-\end_inset
-</cell>
-</row>
-<row>
-<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-Clock frequency
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
--
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-100
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-105.98
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-MHz
-\end_layout
-
-\end_inset
-</cell>
-</row>
-<row>
-<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-PH2, PH2 FD
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-4
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
--
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
--
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-Clock Cycles
-\end_layout
-
-\end_inset
-</cell>
-</row>
-<row>
-<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-PH1 + PROP FD
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-2
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
--
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
--
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-Clock Cycles
-\end_layout
-
-\end_inset
-</cell>
-</row>
-<row>
-<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-Nominal bit-rate
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-1,544
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
--
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-1 000
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-Kb/s
-\end_layout
-
-\end_inset
-</cell>
-</row>
-<row>
-<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-Data bit-rate
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-3,112
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
--
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-14 286
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-Kb/s
-\end_layout
-
-\end_inset
-</cell>
-</row>
-<row>
-<cell alignment="left" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-TX Frame selection
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="left" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-6
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="left" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
--
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="left" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-6
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="left" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-Clock
-\end_layout
-
-\begin_layout Plain Layout
-Cycles
-\end_layout
-
-\end_inset
-</cell>
-</row>
-</lyxtabular>
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Plain Layout
-\begin_inset Caption Standard
-
-\begin_layout Plain Layout
-Absolute maximum ratings
-\begin_inset CommandInset label
-LatexCommand label
-name "tab: Absolute_maximum_rating"
-
-\end_inset
-
-
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Section
-Block diagram
-\end_layout
-
-\begin_layout Standard
-The block diagram of CTU CAN FD is shown in 
-\begin_inset ERT
-status open
-
-\begin_layout Plain Layout
-
-
-\backslash
-hyperref[fig:IP-function-block]{Figure }
-\end_layout
-
-\end_inset
-
-
+The architecture of Reference test is shown in Figure 
 \begin_inset CommandInset ref
 LatexCommand ref
-reference "fig:IP-function-block"
+reference "fig:reference-test-block-diagram"
+plural "false"
+caps "false"
+noprefix "false"
 
 \end_inset
 
 .
- Every block is a separate VHDL entity and it is implemented in a standalone
- file.
-\end_layout
-
-\begin_layout Standard
-\begin_inset Float figure
-placement H
-wide false
-sideways false
-status open
-
-\begin_layout Plain Layout
-\noindent
-\align center
-\begin_inset Graphics
-	filename ../pics/Visio_generated/IP_core_block_diagram.pdf
-	lyxscale 20
-	scale 60
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Plain Layout
-\begin_inset Caption Standard
-
-\begin_layout Plain Layout
-CTU CAN FD block diagram
-\begin_inset CommandInset label
-LatexCommand label
-name "fig:IP-function-block"
-
-\end_inset
-
-
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Section
-Components description
-\end_layout
-
-\begin_layout Section
-Information Processing Time
-\begin_inset CommandInset label
-LatexCommand label
-name "sec-Information-processing"
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Standard
-CAN standard defines 
-\shape smallcaps
-Information Processing Time
+ First bit rate is configured by 
+\family roman
+\shape italic
+CAN_configure_timing
+\family default
 \shape default
- (IPT) which can be different for every implementation of CAN controller.
- IPT determines how many clock cycles CAN controller needs after sampling
- bus value in 
+ procedure.
+ At the moment, only one configuration is used (500 Kb/s in 
+\shape smallcaps
+Nominal Bit-Rate
+\shape default
+, 2 Mb/s in 
+\shape smallcaps
+Data Bit-Rate
+\shape default
+ and 80 % 
 \shape smallcaps
 Sample Point
 \shape default
-, before determining following bit value.
- Implementation of CTU CAN FD IP core is based on Triggers as explained
- in 
-\begin_inset CommandInset ref
-LatexCommand nameref
-reference "sec-Pipeline-architecture"
-plural "false"
-caps "false"
-noprefix "false"
-
-\end_inset
-
-.
- For sampling, three Triggering signals are used.
- These signals are mutually delayed by one clock cycle (Sample Trigger,
- Bit Destuffing Trigger, Receive Trigger).
- Thus minimal duration of 
-\shape smallcaps
-Phase 2
+).
+ Then, bit sequence (
+\family roman
+\shape italic
+bit_sequence)
+\family default
 \shape default
- is 4 clock cycles (one more cycle is needed to update internal registers
- of Fault Confinement and Protocol Control).
- 
-\begin_inset ERT
-status open
-
-\begin_layout Plain Layout
-
-
-\backslash
-hyperref[tab: IPT_reqs]{Table }
-\end_layout
-
-\end_inset
-
-
-\begin_inset CommandInset ref
-LatexCommand ref
-reference "tab: IPT_reqs"
-
-\end_inset
-
- shows minimal 
-\shape smallcaps
-Bit Time
+ and CAN frame (
+\family roman
+\shape italic
+TX_frame
+\family default
 \shape default
- settings in relation to Prescaler settings.
- Triggering signals (TX and RX) in this corner case are shown in 
-\begin_inset ERT
-status open
-
-\begin_layout Plain Layout
-
-
-\backslash
-hyperref[fig:Minimal_bit_time]{Figure }
-\end_layout
-
-\end_inset
-
-
-\begin_inset CommandInset ref
-LatexCommand ref
-reference "fig:Minimal_bit_time"
-
-\end_inset
-
-.
- 
-\end_layout
-
-\begin_layout Standard
-\begin_inset Float table
-placement H
-wide false
-sideways false
-status open
-
-\begin_layout Plain Layout
-\noindent
-\align center
-\begin_inset Tabular
-<lyxtabular version="3" rows="4" columns="3">
-<features tabularvalignment="middle">
-<column alignment="center" valignment="top">
-<column alignment="center" valignment="top">
-<column alignment="center" valignment="top">
-<row>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-Prescaler
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-Min.
- 
-\shape smallcaps
-Prop
+) are read from data set by 
+\family roman
+\shape italic
+read_bit_sequence
+\family default
 \shape default
- + 
-\shape smallcaps
-Ph1
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-Min.
- 
-\shape smallcaps
-Ph2
-\end_layout
-
-\end_inset
-</cell>
-</row>
-<row>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-1
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-2
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-4
-\end_layout
-
-\end_inset
-</cell>
-</row>
-<row>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-2
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-1
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-2
-\end_layout
-
-\end_inset
-</cell>
-</row>
-<row>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-4
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-1
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-1
-\end_layout
-
-\end_inset
-</cell>
-</row>
-</lyxtabular>
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Plain Layout
-\begin_inset Caption Standard
-
-\begin_layout Plain Layout
-
-\shape smallcaps
-Information Processing Time
+ function.
+ Then bit generator (
+\family roman
+\shape italic
+bit_gen_comp
+\family default
 \shape default
- requirements
-\begin_inset CommandInset label
-LatexCommand label
-name "tab: IPT_reqs"
-
-\end_inset
-
-
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
-\end_inset
-
-
+) is started.
+ Bit generator generates this sequence on CAN Bus which is connected to
+ CTU CAN FD.
+ Upon the end of generation (
+\family roman
+\shape italic
+bit_gen_done = true
+\family default
+\shape default
+), CTU CAN FD should have CAN FD frame received in its RX Buffer.
+ Frame is read from CTU CAN FD and compared with generated frame which was
+ inserted to reference controller (
+\family roman
+\shape italic
+TX_frame
+\family default
+\shape default
+).
+ If there is a mismatch, and error is reported.
 \end_layout
 
 \begin_layout Standard
@@ -2089,9 +1325,9 @@ status open
 \noindent
 \align center
 \begin_inset Graphics
-	filename ../pics/Minimal_IPT.png
+	filename ../pics/Visio_generated/Reference_Block_diagram.pdf
 	lyxscale 20
-	scale 60
+	scale 70
 
 \end_inset
 
@@ -2102,10 +1338,10 @@ status open
 \begin_inset Caption Standard
 
 \begin_layout Plain Layout
-Minimal Bit Time
+Reference test block diagram
 \begin_inset CommandInset label
 LatexCommand label
-name "fig:Minimal_bit_time"
+name "fig:reference-test-block-diagram"
 
 \end_inset
 
@@ -2116,141 +1352,6 @@ name "fig:Minimal_bit_time"
 
 
 \end_layout
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Standard
-From 
-\begin_inset ERT
-status open
-
-\begin_layout Plain Layout
-
-
-\backslash
-hyperref[tab: IPT_reqs]{Table }
-\end_layout
-
-\end_inset
-
-
-\begin_inset CommandInset ref
-LatexCommand ref
-reference "tab: IPT_reqs"
-
-\end_inset
-
- theoretical maximum 
-\shape smallcaps
-Data Bit-Rate
-\shape default
- of CAN Frame can be calculated.
- Assuming we have Prescaler set to 1, length of all bit segments together
- is 7, and clock is 100 MHz, CTU CAN FD IP Core reaches 14,7 Mbit/s 
-\shape smallcaps
-Bit-Rate
-\shape default
-.
- Note that this situation is theoretical maximum, and since timing conditions
- are very tight, synchronization errors can appear.
- This configuration was tested (see 
-\begin_inset CommandInset ref
-LatexCommand nameref
-reference "sec-Sanity-test"
-plural "false"
-caps "false"
-noprefix "false"
-
-\end_inset
-
-) in simulation, and one such a frame is shown in 
-\begin_inset ERT
-status open
-
-\begin_layout Plain Layout
-
-
-\backslash
-hyperref[fig:Max_bitrate]{Figure }
-\end_layout
-
-\end_inset
-
-
-\begin_inset CommandInset ref
-LatexCommand ref
-reference "fig:Max_bitrate"
-
-\end_inset
-
-.
-\end_layout
-
-\begin_layout Standard
-\begin_inset Float figure
-placement H
-wide false
-sideways false
-status open
-
-\begin_layout Plain Layout
-\noindent
-\align center
-\begin_inset Graphics
-	filename ../pics/14Mbit_20m_Star.png
-	lyxscale 20
-	scale 60
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Plain Layout
-\begin_inset Caption Standard
-
-\begin_layout Plain Layout
-Frame with maximum 
-\shape smallcaps
-Data Bit-Rate
-\shape default
-
-\begin_inset CommandInset label
-LatexCommand label
-name "fig:Max_bitrate"
-
-\end_inset
-
-
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Standard
-\begin_inset CommandInset include
-LatexCommand include
-filename "registerMap.lyx"
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Standard
-\begin_inset CommandInset include
-LatexCommand include
-filename "CANFrameFormat.lyx"
 
 \end_inset
 
@@ -2258,7 +1359,7 @@ filename "CANFrameFormat.lyx"
 \end_layout
 
 \begin_layout Chapter
-Testbench
+Unit tests
 \end_layout
 
 \begin_layout Standard
@@ -3416,404 +2517,6 @@ Existing unit tests
 \end_layout
 
 \begin_layout Subsubsection
-Bit Stuffing and Bit Destuffing
-\end_layout
-
-\begin_layout Standard
-This unit test includes the unit test of Bit Stuffing and Bit De-stuffing
- circuit as well.
- Both circuits are connected in a chain, after 
-\shape smallcaps
-Bit Stuffing
-\shape default
- serial data stream is fed to 
-\shape smallcaps
-Bit De-stuffing
-\shape default
-.
- In each step of unit test, random settings of both modules (length of 
-\shape smallcaps
-Bit Stuffing
-\shape default
- Rule) and randomized bit sequence are generated (procedure
-\family roman
-\shape italic
- generate_bs_settings
-\family default
-\shape default
-).
- To emulate insertion of extra Stuff Bit in the first bit of CAN FD CRC,
- some of bit sequences assume that at certain bit, Bit Stuffing method will
- change to Fixed Bit Stuffing.
- The presence / absence of change to Fixed Bit Stuffing is generated in
- 
-\family roman
-\shape italic
-set.change_to_fixed
-\family default
-\shape default
- variable.
- Length of standard Bit Stuffing is in 
-\family roman
-\shape italic
-set.bc_non_fixed
-\family default
-\shape default
-.
- Length of Fixed Bit Stuffing is in 
-\family roman
-\shape italic
-set.bc_fixed
-\family default
-\shape default
-.
- Note that generated bit sequence has higher probability (85 %) of equal
- value between two consecutive bits.
- This precaution makes sure that fair amount of Stuff Bits will be inserted
- and discarded during the test.
- A special assertion command is present to verify proper recursive behavior
- of Bit Stuffing.
-\end_layout
-
-\begin_layout Standard
-SW model is realized via 
-\family roman
-\shape italic
-calc_sw_bit_stuf_sequence
-\family default
-\shape default
- procedure which calculates expected bit sequence after bit stuffing in
- 
-\family roman
-\shape italic
-set.stuffed_data_seq
-\family default
-\shape default
- from generated bit sequence 
-\family roman
-\shape italic
-set.tx_data_seq
-\family default
-\shape default
-.
- Output of Bit Stuffing DUT is compared with expected output from model
- after each bit is fed to Bit Stuffing DUT.
- Furthermore upon insertion of 
-\shape smallcaps
-Stuff Bit
-\shape default
-, random bit-flip is added into bit stream (
-\family roman
-\shape italic
-err_data
-\family default
-\shape default
-) before Bit De-stuffing and verification of 
-\shape smallcaps
-Stuff Error
-\shape default
- detection is performed (
-\family roman
-\shape italic
-gen_st_error
-\family default
-\shape default
- process).
-\end_layout
-
-\begin_layout Subsubsection
-Bus Sampling
-\end_layout
-
-\begin_layout Standard
-Testbench generates random data sequences to be transmitted (as if coming
- from CAN Core) by 
-\family roman
-\shape italic
-data_gen
-\family default
-\shape default
- process and appropriate Triggering Signals (with random 
-\shape smallcaps
-Bit-Rate
-\shape default
- settings).
- Transmitted data on DUT output are inserted into a shift register that
- is realizing 
-\shape smallcaps
-Transceiver Delay
-\shape default
- (
-\family roman
-\shape italic
-tran_del_proc
-\family default
-\shape default
- process).
- Random errors are also inserted to this shift register (
-\family roman
-\shape italic
-rand_ctr_noise_gen
-\family default
-\shape default
-).
- Note that insertion of errors is forbidden for measurement of 
-\shape smallcaps
-Transceiver Delay
-\shape default
- to avoid malfunction of measurement.
- This point is potentially week spot of CAN FD Protocol! The test has 3
- parts.
- 
-\end_layout
-
-\begin_layout Standard
-In the first part, Nominal Sampling is used and sampled data (
-\family roman
-\shape italic
-data_rx
-\family default
-\shape default
-) are compared with transmitted data (
-\family roman
-\shape italic
-data_tx
-\family default
-\shape default
-).
- 
-\family roman
-\shape italic
-bit_Error
-\family default
-\shape default
- output is also observed.
- If there is a mismatch between transmitted and sampled data and 
-\family roman
-\shape italic
-bit_error
-\family default
-\shape default
- output is inactive, error in test is detected.
-\end_layout
-
-\begin_layout Standard
-In the second part Data Sampling is used, but test sequence remains the
- same as in the first part.
-\end_layout
-
-\begin_layout Standard
-In third part, Secondary Sampling is used and additional shift register
- is implemented in the test which stores the transmitted data (
-\family roman
-\shape italic
-tran_del_sr
-\family default
-\shape default
-).
- In the beginning of the third part, 
-\shape smallcaps
-Transceiver Delay
-\shape default
- is measured by 
-\family roman
-\shape italic
-trv_delay_calib
-\family default
-\shape default
- command (as coming from Protocol Control in Extended Data Length bit).
- Then, received data and delayed transmitted data are compared.
- Transmitted data are delayed by length of measured 
-\shape smallcaps
-Transceiver Delay
-\shape default
-.
- If a mismatch occurs, and 
-\family roman
-\shape italic
-bit_error
-\family default
-\shape default
- output is not set by DUT, error is detected.
- Note that in the beginning of third part, no 
-\shape smallcaps
-Bit Errors
-\shape default
- are generated during the time when 
-\shape smallcaps
-Transceiver Delay
-\shape default
- is being measured.
- Also, only 
-\shape smallcaps
-Recessive
-\shape default
- bits are generated for a short period at the beginning of third part.
- This is to simulate condition that during 
-\shape smallcaps
-Extended Data Length
-\shape default
- bit 
-\shape smallcaps
-Nominal Bit-Rate
-\shape default
- is still used, and 
-\shape smallcaps
-Transceiver Delay
-\shape default
- is shorter than a 
-\shape smallcaps
-Nominal Bit Time
-\shape default
-.
- Refer to source code of the test for more detailed explanation.
-\end_layout
-
-\begin_layout Standard
-This test thus verifies proper measurement of 
-\shape smallcaps
-Transceiver Delay
-\shape default
-, proper sampling of CAN Bus and 
-\shape smallcaps
-Bit Error
-\shape default
- detection during 
-\shape smallcaps
-Secondary Sampling
-\shape default
- 
-\shape smallcaps
-Point
-\shape default
-.
-\end_layout
-
-\begin_layout Subsubsection
-CRC
-\end_layout
-
-\begin_layout Standard
-CRC unit test generates random bit sequence 10 to 620 bits long (
-\family roman
-\shape italic
-gen_bit_sequence
-\family default
-\shape default
-).
- It also generates random 
-\family roman
-\shape italic
-drv_fd_type
-\family default
-\shape default
- setting.
- According to ISO FD standard, there is different starting value in CRC
- shift register in ISO CAN protocol as in non-ISO CAN protocol.
- Signal 
-\family roman
-\shape italic
-drv_fd_type
-\family default
-\shape default
- distinguishes between these two options.
- Then CRC is calculated in software by 
-\family roman
-\shape italic
-calc_crc
-\family default
-\shape default
- procedure.
- Afterwards, bit sequence is applied to DUT input.
- Triggering signals are generated by 
-\family roman
-\shape italic
-sample_gen
-\family default
-\shape default
- process, and serial data are processed by CRC circuit.
- At the end, software calculated CRC and DUT output are compared.
- If these two are not equal, an error is detected.
-\end_layout
-
-\begin_layout Subsubsection
-Event Logger
-\end_layout
-
-\begin_layout Standard
-Testbench generates random event inputs on Status Bus by 
-\family roman
-\shape italic
-ev_gen
-\family default
-\shape default
- process.
- An edge on each of generated events is evaluated by 
-\family roman
-\shape italic
-ev_edge_proc
-\family default
-\shape default
- process.
- To emulate behavior of Event Logger, SW model in 
-\family roman
-\shape italic
-ev_logger_model_proc
-\family default
-\shape default
- process is implemented.
- The process waits until Event Logger FSM is in state 
-\family roman
-\shape italic
-running
-\family default
-\shape default
-, and then fills 
-\family roman
-\shape italic
-log_mod_mem
-\family default
-\shape default
- memory upon occurrence of event edge.
- Note that for loop which evaluates each event, is selected to count top
- to bottom, to achieve the same priority as Event Harvesting mechanism of
- DUT.
- The main test process 
-\family roman
-\shape italic
-test_proc
-\family default
-\shape default
-, generates random trigger settings by 
-\family roman
-\shape italic
-generate_trigger_setting
-\family default
-\shape default
- and random logging settings by 
-\family roman
-\shape italic
-generate_capture_setting
-\family default
-\shape default
-.
- Upon the end of Event Logging (Event Logger FSM is in 
-\family roman
-\shape italic
-config
-\family default
-\shape default
-), contents of test memory is compared with Events read out from DUT by
- 
-\family roman
-\shape italic
-check_events
-\family default
-\shape default
- procedure.
-\end_layout
-
-\begin_layout Subsubsection
 Interrupt Manager
 \end_layout
 
@@ -4423,167 +3126,6 @@ test_proc
 \family default
 \shape default
  process.
-\end_layout
-
-\begin_layout Section
-Reference test
-\end_layout
-
-\begin_layout Standard
-Reference test verifies operation of CTU CAN FD with reference controller.
- To achieve this, several sets of random CAN Frames were generated, transmitted
- by reference CAN FD controller, and recorded by logic analyzer.
- Each data set thus contains CAN Frame and according bit sequence which
- was transmitted by reference controller.
- Generation of CAN Frames, transmission by reference controller, control
- of logic analyzer and recording of data sets was executed by auxiliary
- utility Kvaalt Logger implemented in C (located in 
-\begin_inset Quotes eld
-\end_inset
-
-tools
-\begin_inset Quotes erd
-\end_inset
-
- directory).
-\end_layout
-
-\begin_layout Standard
-The architecture of Reference test is shown in 
-\begin_inset ERT
-status open
-
-\begin_layout Plain Layout
-
-
-\backslash
-hyperref[fig:reference-test-block-diagram]{Figure }
-\end_layout
-
-\end_inset
-
-
-\begin_inset CommandInset ref
-LatexCommand ref
-reference "fig:reference-test-block-diagram"
-plural "false"
-caps "false"
-noprefix "false"
-
-\end_inset
-
-.
- First 
-\shape smallcaps
-Bit-Rate
-\shape default
- is configured by 
-\family roman
-\shape italic
-CAN_configure_timing
-\family default
-\shape default
- procedure.
- At the moment, only one configuration is used (500 Kb/s in 
-\shape smallcaps
-Nominal Bit-Rate
-\shape default
-, 2 Mb/s in 
-\shape smallcaps
-Data Bit-Rate
-\shape default
- and 80 % 
-\shape smallcaps
-Sample Point
-\shape default
-).
- Then, bit sequence (
-\family roman
-\shape italic
-bit_sequence)
-\family default
-\shape default
- and CAN frame (
-\family roman
-\shape italic
-TX_frame
-\family default
-\shape default
-) are read from data set by 
-\family roman
-\shape italic
-read_bit_sequence
-\family default
-\shape default
- function.
- Then Bit Generator (
-\family roman
-\shape italic
-bit_gen_comp
-\family default
-\shape default
-) is started.
- Bit Generator generates this sequence on CAN Bus which is connected to
- CTU CAN FD.
- Upon the end of generation (
-\family roman
-\shape italic
-bit_gen_done = true
-\family default
-\shape default
-), CTU CAN FD should have CAN FD frame received in RX Buffer.
- Frame is read from CTU CAN FD and compared with generated frame which was
- inserted to reference controller (
-\family roman
-\shape italic
-TX_frame
-\family default
-\shape default
-).
-\end_layout
-
-\begin_layout Standard
-\begin_inset Float figure
-placement H
-wide false
-sideways false
-status open
-
-\begin_layout Plain Layout
-\noindent
-\align center
-\begin_inset Graphics
-	filename ../pics/Visio_generated/Reference_Block_diagram.pdf
-	lyxscale 20
-	scale 70
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Plain Layout
-\begin_inset Caption Standard
-
-\begin_layout Plain Layout
-Reference test block diagram
-\begin_inset CommandInset label
-LatexCommand label
-name "fig:reference-test-block-diagram"
-
-\end_inset
-
-
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
-\end_inset
-
-
 \end_layout
 
 \begin_layout Section

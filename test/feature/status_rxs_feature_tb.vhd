@@ -40,21 +40,25 @@
 --------------------------------------------------------------------------------
 
 --------------------------------------------------------------------------------
--- Purpose:
+-- @TestInfoStart
+--
+-- @Purpose:
 --  STATUS[RXS] feature test.
 --
--- Verifies:
---  1. STATUS[RXS] is set when unit is receiver.
---  2. STATUS[RXS] is not set when unit is transmitter.
+-- @Verifies:
+--  @1. STATUS[RXS] is set when unit is receiver.
+--  @2. STATUS[RXS] is not set when unit is transmitter.
 --
--- Test sequence:
---  1. Send frame by Node 2. Wait until SOF starts and check that STATUS[RXS] is
---     not set till SOF in Node 1. From SOF further monitor STATUS[RXS] and
---     check it set until the end of Intermission. Check that after the end of
---     intermission, STATUS[RXS] is not set anymore.
---  2. Send frame by Node 1. Monitor STATUS[RXS] of Node 1 until Intermission
---     and check STATUS[RXS] is not set. Monitor until the end of intermission
---     and check STATUS[RXS] is not set.
+-- @Test sequence:
+--  @1. Send frame by Node 2. Wait until SOF starts and check that STATUS[RXS] is
+--      not set till SOF in Node 1. From SOF further monitor STATUS[RXS] and
+--      check it set until the end of Intermission. Check that after the end of
+--      intermission, STATUS[RXS] is not set anymore.
+--  @2. Send frame by Node 1. Monitor STATUS[RXS] of Node 1 until Intermission
+--      and check STATUS[RXS] is not set. Monitor until the end of intermission
+--      and check STATUS[RXS] is not set.
+--
+-- @TestInfoEnd
 --------------------------------------------------------------------------------
 -- Revision History:
 --    31.10.2019   Created file
@@ -84,42 +88,21 @@ package body status_rxs_feature is
         signal      mem_bus         : inout  mem_bus_arr_t;
         signal      bus_level       : in     std_logic
     ) is
-        variable rand_value         :       real;
-        variable alc                :       natural;
-
-        -- Some unit lost the arbitration...
-        -- 0 - initial , 1-Node 1 turned rec, 2 - Node 2 turned rec
-        variable unit_rec           :     natural := 0;
-
         variable ID_1               :     natural := 1;
         variable ID_2               :     natural := 2;
-        variable r_data             :     std_logic_vector(31 downto 0) :=
-                                               (OTHERS => '0');
+
         -- Generated frames
         variable frame_1            :     SW_CAN_frame_type;
-        variable frame_2            :     SW_CAN_frame_type;
-        variable frame_rx           :     SW_CAN_frame_type;
 
         -- Node status
         variable stat_1             :     SW_status;
-        variable stat_2             :     SW_status;
 
         variable pc_dbg             :     SW_PC_Debug;
-        
-        variable txt_buf_state      :     SW_TXT_Buffer_state_type;
-        variable rx_buf_info        :     SW_RX_Buffer_info;
-        variable frames_equal       :     boolean := false;        
         variable frame_sent         :     boolean;
-
-        variable id_vect            :     std_logic_vector(28 downto 0);
-        variable command            :     SW_command := SW_command_rst_val;
-        
-        variable num_frames         :     integer;
-        variable mode_1             :     SW_mode;
     begin
 
         -----------------------------------------------------------------------
-        --  1. Send frame by Node 2. Wait until SOF starts and check that
+        --  @1. Send frame by Node 2. Wait until SOF starts and check that
         --     STATUS[RXS] is not set till SOF in Node 1. From SOF further
         --     monitor STATUS[RXS] and check it set until the end of
         --     Intermission. Check that after the end of intermission, 
@@ -154,7 +137,7 @@ package body status_rxs_feature is
         CAN_wait_bus_idle(ID_2, mem_bus(2));
 
         -----------------------------------------------------------------------
-        -- 2. Send frame by Node 2. Monitor STATUS[RXS] of Node 1 until Inter-
+        -- @2. Send frame by Node 2. Monitor STATUS[RXS] of Node 1 until Inter-
         --    mission and check STATUS[RXS] is not set. Monitor until the end
         --    of intermission and check STATUS[RXS] is not set.
         -----------------------------------------------------------------------

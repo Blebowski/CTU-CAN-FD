@@ -83,16 +83,11 @@ test_ip_fast:
     script:
         - cd test
         - make test_fast
-        - make coverage
-        - make functional_coverage
-    coverage: "/lines......: ([^%]+%)/"
     artifacts:
         when: always
         paths:
-            - test/code_html
             - test/tests_fast.xml
             - test/xunit.xsl
-            - test/build/functional_coverage
         reports:
             junit: [test/tests_fast.xml]
 
@@ -104,13 +99,26 @@ test_ip_nightly:
     script:
         - cd test
         - make test_nightly
+        - make coverage
+        - make functional_coverage
+        - cd ../scripts
+        - ./gen_vrm
+    coverage: "/lines......: ([^%]+%)/"
     artifacts:
         when: always
         paths:
+            - test/code_html
             - test/tests_nightly.xml
             - test/xunit.xsl
+            - test/build/functional_coverage
+            - scripts/VRM.html
         reports:
             junit: [test/tests_nightly.xml]
+
+    # Nightly tests might fail due to randomization. It is not preffered to
+    # kill whole follow-up coverage processing due to this failure!
+    # Fast pipeline on the other hand can't fail because it must pass before merge!
+    allow_failure: true
 
 pages:
     stage: deploy
@@ -126,6 +134,7 @@ pages:
         - cp -R doc/driver/build public/driver_doc || true
         - mkdir public/functional_coverage
         - cp -R test/build/functional_coverage/* public/functional_coverage || true
+        - cp scripts/VRM.html public/ || true
     only:
         - master
     artifacts:

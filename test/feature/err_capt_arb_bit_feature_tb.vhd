@@ -40,19 +40,23 @@
 --------------------------------------------------------------------------------
 
 --------------------------------------------------------------------------------
--- Purpose:
+-- @TestInfoStart
+--
+-- @Purpose:
 --  ERR_CAPT[ERR_POS] = ERC_POS_ARB, bit error feature test. 
 --
--- Verifies:
---  1. Detection of bit error in Arbitration field. Value of ERR_CAPT[ERR_POS]
---     when bit error should have been detected in arbitration field.
+-- @Verifies:
+--  @1. Detection of bit error in Arbitration field. Value of ERR_CAPT[ERR_POS]
+--      when bit error should have been detected in arbitration field.
 --
--- Test sequence:
---  1. Check that ERR_CAPT contains no error (post reset).
---  2. Generate CAN frame and send it by Node 1. Wait until transmission starts
---     and wait until arbitration field. Wait for random amount of time until
---     Dominant bit is sent! Force bus low and wait until sample point. Check
---     that Error frame is being transmitted. Check value of ERR_CAPT.
+-- @Test sequence:
+--  @1. Check that ERR_CAPT contains no error (post reset).
+--  @2. Generate CAN frame and send it by Node 1. Wait until transmission starts
+--      and wait until arbitration field. Wait for random amount of time until
+--      Dominant bit is sent! Force bus low and wait until sample point. Check
+--      that Error frame is being transmitted. Check value of ERR_CAPT.
+--
+-- @TestInfoEnd
 --------------------------------------------------------------------------------
 -- Revision History:
 --    03.02.2020   Created file
@@ -82,40 +86,19 @@ package body err_capt_arb_bit_feature is
         signal      mem_bus         : inout  mem_bus_arr_t;
         signal      bus_level       : in     std_logic
     ) is
-        variable rand_value         :       real;
-        variable alc                :       natural;
-
-        -- Some unit lost the arbitration...
-        -- 0 - initial , 1-Node 1 turned rec, 2 - Node 2 turned rec
-        variable unit_rec           :     natural := 0;
-
         variable ID_1               :     natural := 1;
         variable ID_2               :     natural := 2;
-        variable r_data             :     std_logic_vector(31 downto 0) :=
-                                               (OTHERS => '0');
+        
         -- Generated frames
         variable frame_1            :     SW_CAN_frame_type;
-        variable frame_2            :     SW_CAN_frame_type;
-        variable frame_rx           :     SW_CAN_frame_type;
 
         -- Node status
         variable stat_1             :     SW_status;
-        variable stat_2             :     SW_status;
 
-        variable pc_dbg             :     SW_PC_Debug;
-        
-        variable txt_buf_state      :     SW_TXT_Buffer_state_type;
-        variable rx_buf_info        :     SW_RX_Buffer_info;
-        variable frames_equal       :     boolean := false;        
+        variable pc_dbg             :     SW_PC_Debug;    
 
         variable id_vect            :     std_logic_vector(28 downto 0);
         variable wait_time          :     natural;
-        
-        variable err_counters_1_1   :     SW_error_counters;
-        variable err_counters_1_2   :     SW_error_counters;
-
-        variable err_counters_2_1   :     SW_error_counters;
-        variable err_counters_2_2   :     SW_error_counters;
         
         variable frame_sent         :     boolean;
         
@@ -124,7 +107,7 @@ package body err_capt_arb_bit_feature is
     begin
 
         -----------------------------------------------------------------------
-        -- 1. Check that ERR_CAPT contains no error (post reset).
+        -- @1. Check that ERR_CAPT contains no error (post reset).
         -----------------------------------------------------------------------
         info("Step 1");
         
@@ -132,7 +115,7 @@ package body err_capt_arb_bit_feature is
         check(err_capt.err_pos = err_pos_other, "Reset of ERR_CAPT!");
         
         -----------------------------------------------------------------------        
-        --  2. Generate CAN frame and send it by Node 1. Wait until transmission
+        --  @2. Generate CAN frame and send it by Node 1. Wait until transmission
         --     starts and wait until arbitration field. Wait for random amount
         --     of time until Dominant bit is sent! Force bus low and wait until
         --     sample point. Check that Error frame is being transmitted. Check

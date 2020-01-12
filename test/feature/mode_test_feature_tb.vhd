@@ -40,31 +40,34 @@
 --------------------------------------------------------------------------------
 
 --------------------------------------------------------------------------------
--- Purpose:
+-- @TestInfoStart
+--
+-- @Purpose:
 --  Test mode - feature test.
 --
--- Verifies:
---  1. EWL register is writable in test mode, not writable when not in test
---     mode.
---  2. ERP register is writable in test mode, not writable when not in test
---     mode.
---  3. CTR_PRES register is writable in test mode, not writable when not in
---     test mode.
+-- @Verifies:
+--  @1. EWL register is writable in test mode, not writable when not in test
+--      mode.
+--  @2. ERP register is writable in test mode, not writable when not in test
+--      mode.
+--  @3. CTR_PRES register is writable in test mode, not writable when not in
+--      test mode.
 --
--- Test sequence:
---  1. Configure test mode in Node 1. Check that EWL and ERP are equal to its
---     reset values!
---  2. Generate random values and store them to EWL, ERP. Read back and check
---     that both were properly written!
---  3. Disable test mode in Node 1. Generate random values and store them to
---     EWL and ERP. Read back and check that values were NOT written!
---  4. Enable test mode in Node 1. Read each error counter and check it is 0!
---     Set each error counter to random value via CTR_PRES. Read back and check
---     that value was written!
---  5. Disable test mode in Node 1. Set each error counter to random values and
---     check that these values were NOT written (counters equal to previous
---     values).
+-- @Test sequence:
+--  @1. Configure test mode in Node 1. Check that EWL and ERP are equal to its
+--      reset values!
+--  @2. Generate random values and store them to EWL, ERP. Read back and check
+--      that both were properly written!
+--  @3. Disable test mode in Node 1. Generate random values and store them to
+--      EWL and ERP. Read back and check that values were NOT written!
+--  @4. Enable test mode in Node 1. Read each error counter and check it is 0!
+--      Set each error counter to random value via CTR_PRES. Read back and check
+--      that value was written!
+--  @5. Disable test mode in Node 1. Set each error counter to random values and
+--      check that these values were NOT written (counters equal to previous
+--      values).
 --
+-- @TestInfoEnd
 --------------------------------------------------------------------------------
 -- Revision History:
 --    18.10.2019   Created file
@@ -94,34 +97,22 @@ package body mode_test_feature is
         signal      mem_bus         : inout  mem_bus_arr_t;
         signal      bus_level       : in     std_logic
     ) is
-        variable r_data             :       std_logic_vector(31 downto 0) :=
-                                                (OTHERS => '0');
         variable CAN_TX_frame       :       SW_CAN_frame_type;
         variable CAN_RX_frame       :       SW_CAN_frame_type;
         variable frame_sent         :       boolean := false;
-        variable ctr_1              :       natural;
-        variable ctr_2              :       natural;
         variable ID_1           	:       natural := 1;
         variable ID_2           	:       natural := 2;
-        variable rand_val           :       real;
-        variable retr_th            :       natural;
-        variable mode_backup        :       std_logic_vector(31 downto 0) :=
-                                                (OTHERS => '0');
         variable mode_1             :       SW_mode := SW_mode_rst_val;
-        variable mode_2             :       SW_mode := SW_mode_rst_val;
+        
         variable err_counters       :       SW_error_counters := (0, 0, 0, 0);
         variable err_counters_2     :       SW_error_counters := (0, 0, 0, 0);
-        variable txt_buf_state      :       SW_TXT_Buffer_state_type;
-        variable rx_buf_state       :       SW_RX_Buffer_info;
+
         variable fault_th           :       SW_fault_thresholds;
         variable fault_th_2         :       SW_fault_thresholds;
-        variable status             :       SW_status;
-        variable frames_equal       :       boolean := false;
-        variable pc_dbg             :       SW_PC_Debug;   
     begin
 
         ------------------------------------------------------------------------
-        -- 1. Configure test mode in Node 1. Check that EWL and ERP are equal to
+        -- @1. Configure test mode in Node 1. Check that EWL and ERP are equal to
         --    its reset values!
         ------------------------------------------------------------------------
         info("Step 1: Configure test mode, check EWL/ERP!");
@@ -134,7 +125,7 @@ package body mode_test_feature is
             "ERP equal to reset value!");           
 
         ------------------------------------------------------------------------
-        -- 2. Generate random values and store them to EWL, ERP. Read back and
+        -- @2. Generate random values and store them to EWL, ERP. Read back and
         --    check that both were properly written!
         ------------------------------------------------------------------------
         info("Step 2: Store random values to EWL/ERP!");
@@ -147,7 +138,7 @@ package body mode_test_feature is
         check(fault_th.erp = fault_th_2.erp, "ERP written in test mode!");
         
         ------------------------------------------------------------------------
-        -- 3. Disable test mode in Node 1. Generate random values and store 
+        -- @3. Disable test mode in Node 1. Generate random values and store 
         --    them to EWL and ERP. Read back and check that values were NOT
         --    written!
         ------------------------------------------------------------------------
@@ -165,7 +156,7 @@ package body mode_test_feature is
             "ERP not written when not in test mode!");
         
         ------------------------------------------------------------------------
-        -- 4. Enable test mode in Node 1. Read each error counter and check it
+        -- @4. Enable test mode in Node 1. Read each error counter and check it
         --    is 0! Set each error counter to random value via CTR_PRES. Read
         --    back and check that value was written!
         ------------------------------------------------------------------------
@@ -192,7 +183,7 @@ package body mode_test_feature is
         -- are clear only! These are tested in separate (CTR_PRES) test!
         
         ------------------------------------------------------------------------
-        -- 5. Disable test mode in Node 1. Set each error counter to random 
+        -- @5. Disable test mode in Node 1. Set each error counter to random 
         --    values and check that these values were NOT written (counters 
         --    equal to previous values).
         ------------------------------------------------------------------------

@@ -40,28 +40,32 @@
 --------------------------------------------------------------------------------
 
 --------------------------------------------------------------------------------
--- Purpose:
+-- @TestInfoStart
+--
+-- @Purpose:
 --  ERR_CAPT[ERR_POS] = ERC_POS_CTRL, form error feature test. 
 --
--- Verifies:
---  1. Detection of form error in control field on r0 bit in CAN 2.0 base frame,
---     on r0 bit in CAN FD base frame, on r0/r1 bits in CAN 2.0 extended frame
---     and r0 in CAN FD extended frame!
---  2. Value of ERR_CAPT[ERR_POS] when form error shall be detected in control
---     field of CAN frame!
+-- @Verifies:
+--  @1. Detection of form error in control field on r0 bit in CAN 2.0 base frame,
+--      on r0 bit in CAN FD base frame, on r0/r1 bits in CAN 2.0 extended frame
+--      and r0 in CAN FD extended frame!
+--  @2. Value of ERR_CAPT[ERR_POS] when form error shall be detected in control
+--      field of CAN frame!
 --
--- Test sequence:
---  1. Check that ERR_CAPT contains no error (post reset).
---  2. Generate CAN frame (CAN 2.0 Base only, CAN FD Base only, CAN 2.0 Extended,
---     CAN FD extended), send it by Node 1. Wait until Arbitration field and wait
---     for 13 (Base ID, RTR, IDE) or 14 (Base ID, RTR, IDE, EDL) or 32 bits
---     (Base ID, SRR, IDE, Ext ID, RTR) or 33 (Base ID, SRR, IDE, Ext ID, RTR, 
---     r1) or 33 (Base ID, SRR, IDE, Ext ID, RTR, EDL) bits based on frame type.
---     Force bus Recessive (reserved bits are dominant) and wait until sample
---     point. Check that Node is transmitting error frame. Check that ERR_CAPT
---     signals Form Error in Control field. Reset the node, Wait until integration
---     is over and check that ERR_CAPT is at its reset value (this is to check
---     that next loops will truly set ERR_CAPT). Repeat with each frame type!
+-- @Test sequence:
+--  @1. Check that ERR_CAPT contains no error (post reset).
+--  @2. Generate CAN frame (CAN 2.0 Base only, CAN FD Base only, CAN 2.0 Extended,
+--      CAN FD extended), send it by Node 1. Wait until Arbitration field and wait
+--      for 13 (Base ID, RTR, IDE) or 14 (Base ID, RTR, IDE, EDL) or 32 bits
+--      (Base ID, SRR, IDE, Ext ID, RTR) or 33 (Base ID, SRR, IDE, Ext ID, RTR, 
+--      r1) or 33 (Base ID, SRR, IDE, Ext ID, RTR, EDL) bits based on frame type.
+--      Force bus Recessive (reserved bits are dominant) and wait until sample
+--      point. Check that Node is transmitting error frame. Check that ERR_CAPT
+--      signals Form Error in Control field. Reset the node, Wait until integration
+--      is over and check that ERR_CAPT is at its reset value (this is to check
+--      that next loops will truly set ERR_CAPT). Repeat with each frame type!
+--
+-- @TestInfoEnd
 --------------------------------------------------------------------------------
 -- Revision History:
 --    03.02.2020   Created file
@@ -91,49 +95,21 @@ package body err_capt_ctrl_form_feature is
         signal      mem_bus         : inout  mem_bus_arr_t;
         signal      bus_level       : in     std_logic
     ) is
-        variable rand_value         :       real;
-        variable alc                :       natural;
-
-        -- Some unit lost the arbitration...
-        -- 0 - initial , 1-Node 1 turned rec, 2 - Node 2 turned rec
-        variable unit_rec           :     natural := 0;
-
         variable ID_1               :     natural := 1;
-        variable ID_2               :     natural := 2;
-        variable r_data             :     std_logic_vector(31 downto 0) :=
-                                               (OTHERS => '0');
+
         -- Generated frames
         variable frame_1            :     SW_CAN_frame_type;
-        variable frame_2            :     SW_CAN_frame_type;
-        variable frame_rx           :     SW_CAN_frame_type;
 
         -- Node status
-        variable stat_1             :     SW_status;
-        variable stat_2             :     SW_status;
+        variable stat_1             :     SW_status;    
 
-        variable pc_dbg             :     SW_PC_Debug;
-        
-        variable txt_buf_state      :     SW_TXT_Buffer_state_type;
-        variable rx_buf_info        :     SW_RX_Buffer_info;
-        variable frames_equal       :     boolean := false;        
-
-        variable id_vect            :     std_logic_vector(28 downto 0);
         variable wait_time          :     natural;
-        
-        variable err_counters_1_1   :     SW_error_counters;
-        variable err_counters_1_2   :     SW_error_counters;
-
-        variable err_counters_2_1   :     SW_error_counters;
-        variable err_counters_2_2   :     SW_error_counters;
-        
         variable frame_sent         :     boolean;
-        
         variable err_capt           :     SW_error_capture;
-
     begin
 
         -----------------------------------------------------------------------
-        -- 1. Check that ERR_CAPT contains no error (post reset).
+        -- @1. Check that ERR_CAPT contains no error (post reset).
         -----------------------------------------------------------------------
         info("Step 1");
         
@@ -141,7 +117,7 @@ package body err_capt_ctrl_form_feature is
         check(err_capt.err_pos = err_pos_other, "Reset of ERR_CAPT!");
         
         -----------------------------------------------------------------------
-        -- 2. Generate CAN frame (CAN 2.0 Base only, CAN FD Base only, CAN 2.0
+        -- @2. Generate CAN frame (CAN 2.0 Base only, CAN FD Base only, CAN 2.0
         --    Extended, CAN FD extended), send it by Node 1. Wait until
         --    Arbitration field and wait for 13 (Base ID, RTR, IDE) or 14 (Base
         --    ID, RTR, IDE, EDL) or 34 bits (Base ID, SRR, IDE, Ext ID, RTR) or

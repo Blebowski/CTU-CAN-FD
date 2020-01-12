@@ -40,45 +40,49 @@
 --------------------------------------------------------------------------------
 
 --------------------------------------------------------------------------------
--- Purpose:
+-- @TestInfoStart
+--
+-- @Purpose:
 --  Interrupt RX feature test.
 --
--- Verifies:
---  1. RX Interrupt is set when frame is received OK in EOF field.
---  2. RX Interrupt causes INT to go high when it is enabled.
---  3. RX Interrupt causes INT to go low when it is disabled.
---  4. RX Interrupt is cleared by write to INT_STATUS register.
---  5. RX Interrupt is not set when Error frame occurs.
---  6. RX Interrupt is not set when it is masked.
---  7. RX Interrupt enable is manipulated properly by INT_ENA_SET and
---     INT_ENA_CLEAR.
---  8. RX Interrupt mask is manipulated properly by INT_MASk_SET and
---     INT_MASK_CLEAR.
---  9. RX Interrupt is not set when frame was transmitted.
+-- @Verifies:
+--  @1. RX Interrupt is set when frame is received OK in EOF field.
+--  @2. RX Interrupt causes INT to go high when it is enabled.
+--  @3. RX Interrupt causes INT to go low when it is disabled.
+--  @4. RX Interrupt is cleared by write to INT_STATUS register.
+--  @5. RX Interrupt is not set when Error frame occurs.
+--  @6. RX Interrupt is not set when it is masked.
+--  @7. RX Interrupt enable is manipulated properly by INT_ENA_SET and
+--      INT_ENA_CLEAR.
+--  @8. RX Interrupt mask is manipulated properly by INT_MASk_SET and
+--      INT_MASK_CLEAR.
+--  @9. RX Interrupt is not set when frame was transmitted.
 
--- Test sequence:
---  1. Unmask and enable RX Interrupt, disable and mask all other interrupts on
---     Node 1.
---  2. Set Retransmitt limit to 0 on Node 2 (One shot-mode). Enable Retransmitt
---     limitations on Node 2. Send frame by Node 2.
---  3. Monitor Node 1 frame, check that in the beginning of EOF, Interrupt is
---     Not set, after EOF it is set.
---  4. Check that INT pin is high. Disable RX Interrupt and check that INT pin
---     goes low. Enable Interrupt and check it goes high again.
---  5. Clear RX Interrupt, check it is cleared and INT pin goes low.
---  6. Send Frame by Node 2. Force bus level during ACK to recessive, check that
---     error frame is transmitted by both nodes. Wait till bus is idle, check
---     that no RX Interrupt was set, INT pin is low.
---  7. Mask RX Interrupt. Send frame by Node 2. Check that after frame RX
---     Interrupt was not set. Check that INT pin is low.
---  8. Unmask RX Interrupt. Send frame by Node 2. Check that after frame RX
---     Interrupt was set. Check INT pin is high.
---  9. Disable RX Interrupt, check that RX interrupt was disabled.
--- 10. Enable RX Interrupt, check that RX interrupt was enabled.
--- 11. Mask RX Interrupt, check RX Interrupt is Masked.
--- 12. Un-Mask RX Interrupt, check RX Interrupt is Un-masked.
--- 13. Send frame by Node 1. Check that after frame RX Interrupt is not set and
---     Interrupt pin remains low.
+-- @Test sequence:
+--  @1. Unmask and enable RX Interrupt, disable and mask all other interrupts on
+--      Node 1.
+--  @2. Set Retransmitt limit to 0 on Node 2 (One shot-mode). Enable Retransmitt
+--      limitations on Node 2. Send frame by Node 2.
+--  @3. Monitor Node 1 frame, check that in the beginning of EOF, Interrupt is
+--      Not set, after EOF it is set.
+--  @4. Check that INT pin is high. Disable RX Interrupt and check that INT pin
+--      goes low. Enable Interrupt and check it goes high again.
+--  @5. Clear RX Interrupt, check it is cleared and INT pin goes low.
+--  @6. Send Frame by Node 2. Force bus level during ACK to recessive, check that
+--      error frame is transmitted by both nodes. Wait till bus is idle, check
+--      that no RX Interrupt was set, INT pin is low.
+--  @7. Mask RX Interrupt. Send frame by Node 2. Check that after frame RX
+--      Interrupt was not set. Check that INT pin is low.
+--  @8. Unmask RX Interrupt. Send frame by Node 2. Check that after frame RX
+--      Interrupt was set. Check INT pin is high.
+--  @9. Disable RX Interrupt, check that RX interrupt was disabled.
+-- @10. Enable RX Interrupt, check that RX interrupt was enabled.
+-- @11. Mask RX Interrupt, check RX Interrupt is Masked.
+-- @12. Un-Mask RX Interrupt, check RX Interrupt is Un-masked.
+-- @13. Send frame by Node 1. Check that after frame RX Interrupt is not set and
+--      Interrupt pin remains low.
+--
+-- @TestInfoEnd
 --------------------------------------------------------------------------------
 -- Revision History:
 --    22.6.2019   Created file
@@ -99,7 +103,6 @@ package int_rx_feature is
     );
 end package;
 
-
 package body int_rx_feature is
     procedure int_rx_feature_exec(
         signal      so              : out    feature_signal_outputs_t;
@@ -108,33 +111,21 @@ package body int_rx_feature is
         signal      mem_bus         : inout  mem_bus_arr_t;
         signal      bus_level       : in     std_logic
     ) is
-        variable r_data             :     std_logic_vector(31 downto 0) :=
-                                            (OTHERS => '0');
         variable CAN_frame          :     SW_CAN_frame_type;
         variable CAN_frame_rx       :     SW_CAN_frame_type;
         variable frame_sent         :     boolean := false;
         variable frames_equal       :     boolean := false;
-        variable size_of_buf        :     natural;
-        variable ctr_1              :     natural;
-        variable ctr_2              :     natural;
         variable ID_1           	:     natural := 1;
         variable ID_2           	:     natural := 2;
-        variable vect_1             :     std_logic_vector(31 downto 0);
-        variable vect_2             :     std_logic_vector(31 downto 0);
-        variable mode_prev          :     std_logic_vector(31 downto 0);
-        variable mode_prev_2        :     std_logic_vector(31 downto 0);
 
         variable int_mask           :     SW_interrupts := SW_interrupts_rst_val;
         variable int_ena            :     SW_interrupts := SW_interrupts_rst_val;
         variable int_stat           :     SW_interrupts := SW_interrupts_rst_val;
-        variable command            :     SW_command := SW_command_rst_val;
-        variable mode               :     SW_mode := SW_mode_rst_val;
-        variable buf_info           :     SW_RX_Buffer_info;
         variable pc_dbg             :     SW_PC_Debug;  
     begin
 
         -----------------------------------------------------------------------
-        -- 1. Unmask and enable RX Interrupt, disable and mask all other 
+        -- @1. Unmask and enable RX Interrupt, disable and mask all other 
         --    interrupts on Node 1.
         -----------------------------------------------------------------------
         info("Step 1: Setting RX Interrupt");
@@ -144,7 +135,7 @@ package body int_rx_feature is
         write_int_enable(int_ena, ID_1, mem_bus(1));
         
         -----------------------------------------------------------------------
-        --  2. Set Retransmitt limit to 0 on Node 2 (One shot-mode). Enable 
+        --  @2. Set Retransmitt limit to 0 on Node 2 (One shot-mode). Enable 
         --     Retransmitt limitations on Node 2. Send frame by Node 2.
         -----------------------------------------------------------------------
         info("Step 2: Sending frame");
@@ -153,7 +144,7 @@ package body int_rx_feature is
         CAN_send_frame(CAN_frame, 1, ID_2, mem_bus(2), frame_sent);
         
         -----------------------------------------------------------------------
-        --  3. Monitor Node 1 frame, check that in the beginning of EOF, 
+        --  @3. Monitor Node 1 frame, check that in the beginning of EOF, 
         --     Interrupt is Not set, after EOF it is set.
         -----------------------------------------------------------------------  
         info("Step 3: Check RX Interrupt is set in EOF!"); 
@@ -176,7 +167,7 @@ package body int_rx_feature is
         check(frames_equal, "TX, RX frames should be equal!");
         
         -----------------------------------------------------------------------
-        --  4. Check that INT pin is high. Disable RX Interrupt and check that
+        --  @4. Check that INT pin is high. Disable RX Interrupt and check that
         --     INT pin goes low. Enable Interrupt and check it goes high again.
         -----------------------------------------------------------------------
         info("Step 4: Check INT pin toggles");
@@ -194,7 +185,7 @@ package body int_rx_feature is
         check(iout(1).irq = '1', "INT pin should be high!");
 
         -----------------------------------------------------------------------
-        --  5. Clear RX Interrupt, check it is cleared and INT pin goes low.
+        --  @5. Clear RX Interrupt, check it is cleared and INT pin goes low.
         -----------------------------------------------------------------------
         info("Step 4: Clear RX Interrupt, Check INT pin toggles");
         int_stat.receive_int := true;
@@ -205,7 +196,7 @@ package body int_rx_feature is
         check(iout(1).irq = '0', "INT pin should be low!");
         
         -----------------------------------------------------------------------
-        --  6. Send Frame by Node 2. Force bus level during ACK to recessive, 
+        --  @6. Send Frame by Node 2. Force bus level during ACK to recessive, 
         --     check that error frame is transmitted by both nodes. Wait till
         --     bus is idle, check.
         -----------------------------------------------------------------------
@@ -228,7 +219,7 @@ package body int_rx_feature is
         check(iout(1).irq = '0', "INT pin should be low!");
 
         -----------------------------------------------------------------------
-        --  7. Mask RX Interrupt. Send frame by Node 2. Check that after frame
+        --  @7. Mask RX Interrupt. Send frame by Node 2. Check that after frame
         --     RX Interrupt was not set. Check that INT pin is low.
         -----------------------------------------------------------------------
         info("Step 7: Check Masked RX Interrupt is not captured");
@@ -247,7 +238,7 @@ package body int_rx_feature is
         check(iout(1).irq = '0', "INT pin should be low!");
 
         -----------------------------------------------------------------------
-        --  8. Unmask RX Interrupt. Send frame by Node 2. Check that after 
+        --  @8. Unmask RX Interrupt. Send frame by Node 2. Check that after 
         --     frame RX Interrupt was set. Check INT pin is high.
         -----------------------------------------------------------------------
         info("Step 8: Check Un-Masked RX Interrupt is captured");
@@ -266,7 +257,7 @@ package body int_rx_feature is
         check(iout(1).irq = '1', "INT pin should be high");
         
         -----------------------------------------------------------------------
-        --  9. Disable RX Interrupt, check that RX interrupt was disabled.
+        --  @9. Disable RX Interrupt, check that RX interrupt was disabled.
         -----------------------------------------------------------------------
         info("Step 9: Check RX Interrupt Enable Set");
         int_ena.receive_int := false;
@@ -276,7 +267,7 @@ package body int_rx_feature is
         check_false(int_ena.receive_int, "RX Interrupt should be disabled!");
         
         -----------------------------------------------------------------------
-        -- 10. Enable RX Interrupt, check that RX interrupt was enabled.
+        -- @10. Enable RX Interrupt, check that RX interrupt was enabled.
         -----------------------------------------------------------------------
         info("Step 10: Check RX Interrupt Enable Clear");
         int_ena.receive_int := true;
@@ -287,7 +278,7 @@ package body int_rx_feature is
         check(int_ena.receive_int, "RX Interrupt should be enabled!");        
         
         -----------------------------------------------------------------------
-        -- 11. Mask RX Interrupt, check RX Interrupt is Masked.
+        -- @11. Mask RX Interrupt, check RX Interrupt is Masked.
         -----------------------------------------------------------------------
         info("Step 11: Check RX Interrupt Mask Set");
         int_mask.receive_int := true;
@@ -298,7 +289,7 @@ package body int_rx_feature is
         check(int_ena.receive_int, "RX Interrupt should be masked!");        
         
         -----------------------------------------------------------------------
-        -- 12. Un-Mask RX Interrupt, check RX Interrupt is Un-masked.
+        -- @12. Un-Mask RX Interrupt, check RX Interrupt is Un-masked.
         -----------------------------------------------------------------------
         info("Step 12: Check RX Interrupt Mask Clear");
         int_mask.receive_int := false;
@@ -309,7 +300,7 @@ package body int_rx_feature is
         check_false(int_mask.receive_int, "RX Interrupt should be unmasked!");
         
         -----------------------------------------------------------------------
-        -- 13. Send frame by Node 1. Check that after frame RX Interrupt is 
+        -- @13. Send frame by Node 1. Check that after frame RX Interrupt is 
         --     not set and INT pin remains low.
         -----------------------------------------------------------------------
         info("Step 13: Check TX does not cause RX Interrupt to be captured!");

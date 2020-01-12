@@ -40,30 +40,33 @@
 --------------------------------------------------------------------------------
 
 --------------------------------------------------------------------------------
--- Purpose:
+-- @TestInfoStart
+--
+-- @Purpose:
 --  RX Settings Timestamp options feature test.
 --
--- Verifies:
---  1. RX frame timestamp in sample point of SOF.
---  2. RX frame timestamp in sample point of EOF.
---  3. RX frame timestamp when receiving CAN frame without SOF.
+-- @Verifies:
+--  @1. RX frame timestamp in sample point of SOF.
+--  @2. RX frame timestamp in sample point of EOF.
+--  @3. RX frame timestamp when receiving CAN frame without SOF.
 --
--- Test sequence:
---  1. Configure timestamp to be captured in SOF. Set Loopback mode in Node 1
---     (so that we are sure that SOF is transmitted). Generate CAN frame and
---     issue it for transmission by Node 1. Wait until Node 1 turns transmitter
---     and wait till Sample point. Capture timestamp and wait till frame is sent
---     Check that RX frame timestamp is equal to captured timestamp!
---  2. Generate CAN frame for transmission and send it by Node 2. Poll until
---     Node 1 becomes receiver (this should be right after sample point of
---     Dominant bit in Idle which is interpreted as SOF) and capture timestamp.
---     Wait until CAN frame is sent and check that RX frame timestamp is equal
---     to captured timestamp.
---  3. Configure timestamp to be captured at EOF. Generate CAN frame and send
---     it by Node 2. Wait until EOF and then until EOF ends. At EOF end, capture
---     timestamp and wait till bus is idle! Compare captured timestamp with
---     RX frame timestamp.
+-- @Test sequence:
+--  @1. Configure timestamp to be captured in SOF. Set Loopback mode in Node 1
+--      (so that we are sure that SOF is transmitted). Generate CAN frame and
+--      issue it for transmission by Node 1. Wait until Node 1 turns transmitter
+--      and wait till Sample point. Capture timestamp and wait till frame is sent
+--      Check that RX frame timestamp is equal to captured timestamp!
+--  @2. Generate CAN frame for transmission and send it by Node 2. Poll until
+--      Node 1 becomes receiver (this should be right after sample point of
+--      Dominant bit in Idle which is interpreted as SOF) and capture timestamp.
+--      Wait until CAN frame is sent and check that RX frame timestamp is equal
+--      to captured timestamp.
+--  @3. Configure timestamp to be captured at EOF. Generate CAN frame and send
+--      it by Node 2. Wait until EOF and then until EOF ends. At EOF end, capture
+--      timestamp and wait till bus is idle! Compare captured timestamp with
+--      RX frame timestamp.
 --
+-- @TestInfoEnd
 --------------------------------------------------------------------------------
 -- Revision History:
 --    29.6.2018     Created file
@@ -94,8 +97,6 @@ package body rx_settings_rtsop_feature is
         signal      mem_bus         : inout  mem_bus_arr_t;
         signal      bus_level       : in     std_logic
     ) is
-        variable r_data             :        std_logic_vector(31 downto 0) :=
-                                                 (OTHERS => '0');
         variable CAN_TX_frame       :        SW_CAN_frame_type;
         variable CAN_RX_frame       :        SW_CAN_frame_type;
         variable frame_sent         :        boolean := false;
@@ -114,7 +115,7 @@ package body rx_settings_rtsop_feature is
     begin
 
         -----------------------------------------------------------------------
-        -- 1. Configure timestamp to be captured in SOF. Set Loopback mode in 
+        -- @1. Configure timestamp to be captured in SOF. Set Loopback mode in 
         --    Node 1 (so that we are sure that SOF is transmitted). Generate
         --    CAN frame and issue it for transmission by Node 1. Wait until
         --    Node 1 turns transmitter and wait till Sample point. Capture 
@@ -172,7 +173,7 @@ package body rx_settings_rtsop_feature is
                          " Difference: " & to_hstring(diff));
 
         -----------------------------------------------------------------------
-        -- 2. Generate CAN frame for transmission and send it by Node 2. Poll
+        -- @2. Generate CAN frame for transmission and send it by Node 2. Poll
         --    until Node 1 becomes receiver (this should be right after sample
         --    point of Dominant bit in Idle which is interpreted as SOF) and
         --    capture timestamp. Wait until CAN frame is sent and check that RX
@@ -209,7 +210,7 @@ package body rx_settings_rtsop_feature is
                          " Difference: " & to_hstring(diff));
 
         -----------------------------------------------------------------------
-        -- 3. Configure timestamp to be captured at EOF. Generate CAN frame
+        -- @3. Configure timestamp to be captured at EOF. Generate CAN frame
         --    and send it by Node 2. Wait until EOF and then until EOF ends. At
         --    EOF end, capture timestamp and wait till bus is idle! Compare
         --    captured timestamp with RX frame timestamp.

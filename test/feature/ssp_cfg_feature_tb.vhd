@@ -40,43 +40,47 @@
 --------------------------------------------------------------------------------
 
 --------------------------------------------------------------------------------
--- Purpose:
+-- @TestInfoStart
+--
+-- @Purpose:
 --  SSP_CFG register feature test.
 --
--- Verifies:
---  1. When SSP_CFG[SSP_SRC] = SSP_OFFSET, position of secondary sampling point
---     will be given only by SSP_OFFSET.
---  2. When SSP_CFG[SSP_SRC] = SSP_SRC_NO_SSP, there will be no SSP and regular
---     sample point will be used to detect bit error by bit-error detector!
---  3. When SSP_CFG[SSP_SRC] = SSP_SRC_MEAS_N_OFFSET, position of secondary
---     sampling point will be given as SSP_OFFSET + TRV_DELAY.
---  4. Position of Secondary sampling point is saturated to 255.
---  5. Transmitter detecting bit error in SSP will transmitt error frame at
---     nearest regular sample point, not earlier!
+-- @Verifies:
+--  @1. When SSP_CFG[SSP_SRC] = SSP_OFFSET, position of secondary sampling point
+--      will be given only by SSP_OFFSET.
+--  @2. When SSP_CFG[SSP_SRC] = SSP_SRC_NO_SSP, there will be no SSP and regular
+--      sample point will be used to detect bit error by bit-error detector!
+--  @3. When SSP_CFG[SSP_SRC] = SSP_SRC_MEAS_N_OFFSET, position of secondary
+--      sampling point will be given as SSP_OFFSET + TRV_DELAY.
+--  @4. Position of Secondary sampling point is saturated to 255.
+--  @5. Transmitter detecting bit error in SSP will transmitt error frame at
+--      nearest regular sample point, not earlier!
 --
--- Test sequence:
---  1. Generate random TRV_DELAY between 0 and 125. Configure it in TB as delay
---     between CAN TX and CAN RX.
---  2. Generate random SSP_CFG[SSP_SRC]. If it is offset only, generate
---     SSP_OFFSET which is higher than TRV_DELAY. If it is SSP_SRC_MEAS_N_OFFSET,
---     set SSP_OFFSET to random value between 0 and 255. Saturate calculated
---     value of SSP_SRC at 255. If it is SSP_SRC_NO_SSP, calculate SSP position
---     from regular data-bit rate.
---  3. Generate random CAN FD frame with bit-rate shift. Wait until bit-rate is
---     shifted and wait for random number of bits (but do not exceed length of
---     data phase). Wait until edge on CAN TX or CAN RX. Store transmitted value
---     on CAN TX after the edge. Wait for expected position of Secondary sample
---     point - 3 clock cycles.
---  4. Now we are 3 clock cycles before Secondary sampling point. Force bus to
---     opposite value than was sent. Check that Secondary sample point is active
---     (via Status Bus), if SSP_CFG[SSP_SRC] /= SSP_SRC_NO_SSP. Check that it is
---     not active when SSP_CFG[SSP_SRC] = SSP_SRC_NO_SSP.
---  5. Wait for one clock cycle and if SSP_CFG[SSP_SRC] = SSP_SRC_NO_SSP, error
---     frame is being transmitted (regular sample point should be used to detect
---     bit errors). If SSP_CFG[SSP_SRC] /= SSP_SRC_NO_SSP check that Error frame
---     is not transmitted and wait until nearest Sample point. Check that after
---     this sample point, error frame is transmitted. Wait until bus is idle in
---     both nodes.
+-- @Test sequence:
+--  @1. Generate random TRV_DELAY between 0 and 125. Configure it in TB as delay
+--      between CAN TX and CAN RX.
+--  @2. Generate random SSP_CFG[SSP_SRC]. If it is offset only, generate
+--      SSP_OFFSET which is higher than TRV_DELAY. If it is SSP_SRC_MEAS_N_OFFSET,
+--      set SSP_OFFSET to random value between 0 and 255. Saturate calculated
+--      value of SSP_SRC at 255. If it is SSP_SRC_NO_SSP, calculate SSP position
+--      from regular data-bit rate.
+--  @3. Generate random CAN FD frame with bit-rate shift. Wait until bit-rate is
+--      shifted and wait for random number of bits (but do not exceed length of
+--      data phase). Wait until edge on CAN TX or CAN RX. Store transmitted value
+--      on CAN TX after the edge. Wait for expected position of Secondary sample
+--      point - 3 clock cycles.
+--  @4. Now we are 3 clock cycles before Secondary sampling point. Force bus to
+--      opposite value than was sent. Check that Secondary sample point is active
+--      (via Status Bus), if SSP_CFG[SSP_SRC] /= SSP_SRC_NO_SSP. Check that it is
+--      not active when SSP_CFG[SSP_SRC] = SSP_SRC_NO_SSP.
+--  @5. Wait for one clock cycle and if SSP_CFG[SSP_SRC] = SSP_SRC_NO_SSP, error
+--      frame is being transmitted (regular sample point should be used to detect
+--      bit errors). If SSP_CFG[SSP_SRC] /= SSP_SRC_NO_SSP check that Error frame
+--      is not transmitted and wait until nearest Sample point. Check that after
+--      this sample point, error frame is transmitted. Wait until bus is idle in
+--      both nodes.
+--
+-- @TestInfoEnd
 --------------------------------------------------------------------------------
 -- Revision History:
 --    02.1.2020   Created file
@@ -106,38 +110,16 @@ package body ssp_cfg_feature is
         signal      mem_bus         : inout  mem_bus_arr_t;
         signal      bus_level       : in     std_logic
     ) is
-        variable rand_value         :       real;
-        variable alc                :       natural;
-
-        -- Some unit lost the arbitration...
-        -- 0 - initial , 1-Node 1 turned rec, 2 - Node 2 turned rec
-        variable unit_rec           :     natural := 0;
-
         variable ID_1               :     natural := 1;
         variable ID_2               :     natural := 2;
-        variable r_data             :     std_logic_vector(31 downto 0) :=
-                                               (OTHERS => '0');
+
         -- Generated frames
         variable frame_1            :     SW_CAN_frame_type;
-        variable frame_2            :     SW_CAN_frame_type;
-        variable frame_rx           :     SW_CAN_frame_type;
 
         -- Node status
         variable stat_1             :     SW_status;
-        variable stat_2             :     SW_status;
-
-        variable pc_dbg             :     SW_PC_Debug;
-        
-        variable txt_buf_state      :     SW_TXT_Buffer_state_type;
-        variable rx_buf_info        :     SW_RX_Buffer_info;
-        variable frames_equal       :     boolean := false;        
-        variable frame_sent         :     boolean;
-
-        variable id_vect            :     std_logic_vector(28 downto 0);
-        variable command            :     SW_command := SW_command_rst_val;
-        
-        variable num_frames         :     integer;
-        variable mode_1             :     SW_mode;
+    
+        variable frame_sent         :     boolean;        
         
         variable rand_trv_delay     :     natural;
         variable tmp                :     natural;
@@ -154,7 +136,7 @@ package body ssp_cfg_feature is
     begin
 
         -----------------------------------------------------------------------
-        -- 1. Generate random TRV_DELAY between 0 and 125. Configure it in TB
+        -- @1. Generate random TRV_DELAY between 0 and 125. Configure it in TB
         --    as delay between CAN TX and CAN RX.
         -----------------------------------------------------------------------
         info("Step 1");
@@ -202,7 +184,7 @@ package body ssp_cfg_feature is
         end if;
 
         -----------------------------------------------------------------------
-        -- 2. Generate random SSP_CFG[SSP_SRC]. If it is offset only, generate
+        -- @2. Generate random SSP_CFG[SSP_SRC]. If it is offset only, generate
         --    SSP_OFFSET which is higher than TRV_DELAY. If it is
         --    SSP_SRC_MEAS_N_OFFSET, set SSP_OFFSET to random value between 0
         --    and 255. Saturate calculated value of SSP_SRC at 255. If it is
@@ -286,7 +268,7 @@ package body ssp_cfg_feature is
         CAN_wait_bus_on(ID_2, mem_bus(2));
 
         -----------------------------------------------------------------------
-        -- 3. Generate random CAN FD frame with bit-rate shift. Wait until
+        -- @3. Generate random CAN FD frame with bit-rate shift. Wait until
         --    bit-rate is shifted and wait for random number of bits (but do
         --    not exceed length of data phase). Wait until edge on CAN TX or
         --    CAN RX. Store transmitted value on CAN TX after the edge. Wait
@@ -321,7 +303,7 @@ package body ssp_cfg_feature is
         wait for (ssp_pos - 3) * 10 ns;
 
         -----------------------------------------------------------------------
-        -- 4. Now we are 3 cycles before Secondary sampling point. Force bus
+        -- @4. Now we are 3 cycles before Secondary sampling point. Force bus
         --    to opposite value than was sent. Check that Secondary sample point
         --    is active (via Status Bus), if SSP_CFG[SSP_SRC] /= SSP_SRC_NO_SSP.
         --    Check that it is not active when SSP_CFG[SSP_SRC] = SSP_SRC_NO_SSP.
@@ -341,7 +323,7 @@ package body ssp_cfg_feature is
         end if;
         
         -----------------------------------------------------------------------
-        -- 5. Wait for one clock cycle and if SSP_CFG[SSP_SRC] = SSP_SRC_NO_SSP,
+        -- @5. Wait for one clock cycle and if SSP_CFG[SSP_SRC] = SSP_SRC_NO_SSP,
         --    error frame is being transmitted (regular sample point should be
         --    used to detect bit errors). If SSP_CFG[SSP_SRC] /= SSP_SRC_NO_SSP
         --    check that Error frame is not transmitted and wait until nearest

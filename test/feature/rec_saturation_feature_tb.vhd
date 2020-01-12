@@ -40,19 +40,23 @@
 --------------------------------------------------------------------------------
 
 --------------------------------------------------------------------------------
--- Purpose:
+-- @TestInfoStart
+--
+-- @Purpose:
 --  REC (RX Error counter) saturation feature test.
 --
--- Verifies:
---  1. REC is saturated at its width (9 bits) and further errors in receiver
---     will not cause its overflow.
+-- @Verifies:
+--  @1. REC is saturated at its width (9 bits) and further errors in receiver
+--      will not cause its overflow.
 --
--- Test sequence:
---  1. Set Test mode in Node 1. Disable CAN FD support in Node 1 and Set REC to
---     510 in Node 1. Check that REC is 510.
---  2. Send CAN FD frame by Node 2 few times. Wait until CAN frame is sent and
---     check that REC in Node 1 is 511 after first frame (was incremented by 1)
---     and also after each next attempt to transmitt a frame.
+-- @Test sequence:
+--  @1. Set Test mode in Node 1. Disable CAN FD support in Node 1 and Set REC to
+--      510 in Node 1. Check that REC is 510.
+--  @2. Send CAN FD frame by Node 2 few times. Wait until CAN frame is sent and
+--      check that REC in Node 1 is 511 after first frame (was incremented by 1)
+--      and also after each next attempt to transmitt a frame.
+--
+-- @TestInfoEnd
 --------------------------------------------------------------------------------
 -- Revision History:
 --    11.11.2019   Created file
@@ -85,27 +89,13 @@ package body rec_saturation_feature is
         variable ID_1               :       natural := 1;
         variable ID_2               :       natural := 2;
         variable CAN_frame          :       SW_CAN_frame_type;
-        variable RX_CAN_frame       :       SW_CAN_frame_type;
         variable frame_sent         :       boolean := false;
-        variable rand_value         :       natural;
-
-        variable ctrs_1             :       SW_traffic_counters;
-        variable ctrs_2             :       SW_traffic_counters;
-        variable ctrs_3             :       SW_traffic_counters;
-        variable ctrs_4             :       SW_traffic_counters;
-        variable ctrs_5             :       SW_traffic_counters;
-        
-        variable status             :       SW_status;
-        variable command            :       SW_command := SW_command_rst_val;
-        
-        variable rx_buf_info        :       SW_RX_Buffer_info;
         variable mode_1             :       SW_mode := SW_mode_rst_val;
-        
         variable err_counters       :       SW_error_counters := (0, 0, 0, 0);
     begin
 
         ------------------------------------------------------------------------
-        -- 1. Set Test mode in Node 1. Disable CAN FD support in Node 1 and Set
+        -- @1. Set Test mode in Node 1. Disable CAN FD support in Node 1 and Set
         --    REC to 510 in Node 1. Check that REC is 510.
         ------------------------------------------------------------------------
         info("Step 1");
@@ -120,7 +110,7 @@ package body rec_saturation_feature is
         check(err_counters.rx_counter = 510, "REC set properly!");
 
         ------------------------------------------------------------------------
-        -- 2. Send CAN FD frame by Node 2 few times. Wait until CAN frame is
+        -- @2. Send CAN FD frame by Node 2 few times. Wait until CAN frame is
         --    sent and check that REC in Node 1 is 511 after first frame (was
         --    incremented by 1) and also after each next attempt to transmitt a
         --    frame.

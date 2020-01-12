@@ -40,43 +40,47 @@
 --------------------------------------------------------------------------------
 
 --------------------------------------------------------------------------------
--- Purpose:
+-- @TestInfoStart
+--
+-- @Purpose:
 --  Interrupt DOI feature test.
 --
--- Verifies:
---  1. DO Interrupt is set when there is an attempt to write to full RX FIFO.
---  2. DO Interrupt is not set when there is a write to RX FIFO which just
---     fills the last words in the FIFO.
---  3. DO Interrupt is not set when it is masked.
---  4. DO Interrupt causes INT to go high when it is enabled.
---  5. DO Interrupt causes INT to go low when it is disabled.
---  6. DO Interrupt is cleared by write to INT_STATUS register.
---  7. DO Interrupt enable is manipulated properly by INT_ENA_SET and
---     INT_ENA_CLEAR.
---  8. DO Interrupt mask is manipulated properly by INT_MASK_SET and
---     INT_MASK_CLEAR.
+-- @Verifies:
+--  @1. DO Interrupt is set when there is an attempt to write to full RX FIFO.
+--  @2. DO Interrupt is not set when there is a write to RX FIFO which just
+--      fills the last words in the FIFO.
+--  @3. DO Interrupt is not set when it is masked.
+--  @4. DO Interrupt causes INT to go high when it is enabled.
+--  @5. DO Interrupt causes INT to go low when it is disabled.
+--  @6. DO Interrupt is cleared by write to INT_STATUS register.
+--  @7. DO Interrupt enable is manipulated properly by INT_ENA_SET and
+--      INT_ENA_CLEAR.
+--  @8. DO Interrupt mask is manipulated properly by INT_MASK_SET and
+--      INT_MASK_CLEAR.
 --
--- Test sequence:
---  1. Unmask and enable DO Interrupt, disable and mask all other interrupts on
---     Node 1.
---  2. Read RX Buffer size of Node 1 and send number of RTR frames by Node 2 
---     which will just fill RX Buffer of Node (no overrun yet). Check DO
---     Interrupt is not set and INT pin is low after each frame.
---  3. Send one more frame which should cause Data overrun by Node 2.
---     Check that DO Interrupt is set. Check that INT pin is high.
---  4. Disable DO Interrupt and check INT pin goes low. Enable DO Interrupt
---     and check INT pin goes high.
---  5. Clear DO Interrupt and check it is still set (Data overrun flag is still
---     set).
---  6. Clear Data overrun flag, clear DO Interrupt. Check DO Interrupt is
---     cleared. Check INT pin goes low.
---  7. Mask DO Interrupt. Send one frame by Node 2. Check that DO Interrupt
---     is not set. Check that INT pin is low. Check that Data overrun flag (DOR)
---     is set (overrun really occurred).
---  8. Disable DO Interrupt and check it was disabled. Enable DO Interrupt and
---     check it was enabled.
---  9. Mask DO Interrupt and check it was masked. Un-mask DO Interrupt and
---     check it was un-masked.
+-- @Test sequence:
+--  @1. Unmask and enable DO Interrupt, disable and mask all other interrupts on
+--      Node 1.
+--  @2. Read RX Buffer size of Node 1 and send number of RTR frames by Node 2 
+--      which will just fill RX Buffer of Node (no overrun yet). Check DO
+--      Interrupt is not set and INT pin is low after each frame.
+--  @3. Send one more frame which should cause Data overrun by Node 2.
+--      Check that DO Interrupt is set. Check that INT pin is high.
+--  @4. Disable DO Interrupt and check INT pin goes low. Enable DO Interrupt
+--      and check INT pin goes high.
+--  @5. Clear DO Interrupt and check it is still set (Data overrun flag is still
+--      set).
+--  @6. Clear Data overrun flag, clear DO Interrupt. Check DO Interrupt is
+--      cleared. Check INT pin goes low.
+--  @7. Mask DO Interrupt. Send one frame by Node 2. Check that DO Interrupt
+--      is not set. Check that INT pin is low. Check that Data overrun flag (DOR)
+--      is set (overrun really occurred).
+--  @8. Disable DO Interrupt and check it was disabled. Enable DO Interrupt and
+--      check it was enabled.
+--  @9. Mask DO Interrupt and check it was masked. Un-mask DO Interrupt and
+--      check it was un-masked.
+--
+-- @TestInfoEnd
 --------------------------------------------------------------------------------
 -- Revision History:
 --    1.7.2019   Created file
@@ -97,7 +101,6 @@ package int_do_feature is
     );
 end package;
 
-
 package body int_do_feature is
     procedure int_do_feature_exec(
         signal      so              : out    feature_signal_outputs_t;
@@ -106,36 +109,22 @@ package body int_do_feature is
         signal      mem_bus         : inout  mem_bus_arr_t;
         signal      bus_level       : in     std_logic
     ) is
-        variable r_data             :     std_logic_vector(31 downto 0) :=
-                                            (OTHERS => '0');
         variable CAN_frame          :     SW_CAN_frame_type;
-        variable CAN_frame_rx       :     SW_CAN_frame_type;
         variable frame_sent         :     boolean := false;
-        variable frames_equal       :     boolean := false;
-        variable size_of_buf        :     natural;
-        variable ctr_1              :     natural;
-        variable ctr_2              :     natural;
         variable ID_1           	:     natural := 1;
         variable ID_2           	:     natural := 2;
-        variable vect_1             :     std_logic_vector(31 downto 0);
-        variable vect_2             :     std_logic_vector(31 downto 0);
-        variable mode_prev          :     std_logic_vector(31 downto 0);
-        variable mode_prev_2        :     std_logic_vector(31 downto 0);
 
         variable int_mask           :     SW_interrupts := SW_interrupts_rst_val;
         variable int_ena            :     SW_interrupts := SW_interrupts_rst_val;
         variable int_stat           :     SW_interrupts := SW_interrupts_rst_val;
         variable command            :     SW_command := SW_command_rst_val;
-        variable mode               :     SW_mode := SW_mode_rst_val;
         variable buf_info           :     SW_RX_Buffer_info;
-        variable pc_dbg             :     SW_PC_Debug;
-        variable err_ctrs           :     SW_error_counters;
         variable status             :     SW_status;
     begin
 
 
         -----------------------------------------------------------------------
-        -- 1. Unmask and enable DO Interrupt, disable and mask all other 
+        -- @1. Unmask and enable DO Interrupt, disable and mask all other 
         --    interrupts on Node 1.
         -----------------------------------------------------------------------
         info("Step 1: Setting DO Interrupt");
@@ -145,7 +134,7 @@ package body int_do_feature is
         write_int_enable(int_ena, ID_1, mem_bus(1));
 
         -----------------------------------------------------------------------
-        -- 2. Read RX Buffer size of Node 1 and send number of RTR frames by 
+        -- @2. Read RX Buffer size of Node 1 and send number of RTR frames by 
         --    Node 2 which will just fill RX Buffer of Node 1.
         -----------------------------------------------------------------------
         info("Step 2: Filling RX Buffer FIFO");
@@ -167,7 +156,7 @@ package body int_do_feature is
         end loop;
         
         -----------------------------------------------------------------------
-        -- 3. Send one more frame which should cause Data overrun by Node 2.
+        -- @3. Send one more frame which should cause Data overrun by Node 2.
         --    Check that DO Interrupt is set. Check that INT pin is high.
         -----------------------------------------------------------------------
         info("Step 3: Overruning RX Buffer FIFO");   
@@ -178,7 +167,7 @@ package body int_do_feature is
         check(iout(1).irq = '1', "INT pin should be high!");
 
         -----------------------------------------------------------------------
-        -- 4. Disable DO Interrupt and check INT pin goes low. Enable DO
+        -- @4. Disable DO Interrupt and check INT pin goes low. Enable DO
         --    Interrupt and check INT pin goes high.
         -----------------------------------------------------------------------
         info("Step 4: Check DO Interrupt toggles INT pin");
@@ -192,7 +181,7 @@ package body int_do_feature is
         check(iout(1).irq = '1', "INT pin should be high!");
 
         -----------------------------------------------------------------------
-        -- 5. Clear DO Interrupt and check it is still set (Data Overrun flag 
+        -- @5. Clear DO Interrupt and check it is still set (Data Overrun flag 
         --    is still set).
         -----------------------------------------------------------------------
         info("Step 5: Clear DO Interrupt - DOR Flag Set.");
@@ -204,7 +193,7 @@ package body int_do_feature is
         check(iout(1).irq = '1', "INT pin should be high!");     
         
         -----------------------------------------------------------------------
-        -- 6. Clear Data overrun flag, clear DO Interrupt. Check DO Interrupt
+        -- @6. Clear Data overrun flag, clear DO Interrupt. Check DO Interrupt
         --    is cleared. Check INT pin goes low.
         -----------------------------------------------------------------------
         info("Step 6: Clear DO Interrupt - DOR Flag Cleared.");
@@ -218,7 +207,7 @@ package body int_do_feature is
         check(iout(1).irq = '0', "INT pin should be low!");     
         
         -----------------------------------------------------------------------
-        -- 7. Mask DO Interrupt. Send one frame by Node 2. Check that DO 
+        -- @7. Mask DO Interrupt. Send one frame by Node 2. Check that DO 
         --    Interrupt is not set. Check that INT pin is low. Check that 
         --    Data overrun flag (DOR) is set (overrun really occurred).
         -----------------------------------------------------------------------
@@ -239,7 +228,7 @@ package body int_do_feature is
         command.clear_data_overrun := false;
         
         -----------------------------------------------------------------------
-        -- 8. Disable DO Interrupt and check it was disabled. Enable DO 
+        -- @8. Disable DO Interrupt and check it was disabled. Enable DO 
         --    Interrupt and check it was enabled.
         -----------------------------------------------------------------------
         info("Step 8: Check DO Interrupt enable works OK!");
@@ -256,7 +245,7 @@ package body int_do_feature is
         check(int_ena.data_overrun_int, "DO Interrupt disabled!");
 
         -----------------------------------------------------------------------
-        -- 9. Mask DO Interrupt and check it was masked. Un-mask DO Interrupt 
+        -- @9. Mask DO Interrupt and check it was masked. Un-mask DO Interrupt 
         --    and check it was un-masked.
         -----------------------------------------------------------------------
         info("Step 9: Check DO Interrupt mask works OK!");

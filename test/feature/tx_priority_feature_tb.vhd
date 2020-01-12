@@ -40,27 +40,30 @@
 --------------------------------------------------------------------------------
 
 --------------------------------------------------------------------------------
--- Purpose:
+-- @TestInfoStart
+--
+-- @Purpose:
 --  TX Priority feature test.
 --
--- Verifies:
---  1. TX_PRIORITY register gives priority of TXT Buffers in selection for
---     transmission.
---  2. TXT Buffer with higher priority is selected for transmission.
---  3. When TXT Buffer of higher priority is not Ready, it will not be selected
---     for transmission.
---  4. When two TXT Buffers have equal priority, TXT Buffer with lower priority
---     is selected for transmission.
+-- @Verifies:
+--  @1. TX_PRIORITY register gives priority of TXT Buffers in selection for
+--      transmission.
+--  @2. TXT Buffer with higher priority is selected for transmission.
+--  @3. When TXT Buffer of higher priority is not Ready, it will not be selected
+--      for transmission.
+--  @4. When two TXT Buffers have equal priority, TXT Buffer with lower priority
+--      is selected for transmission.
 --
--- Test sequence:
---  1. Generate random priorities of TXT Buffers and configure them in Node 1.
---     Generate random mask of TXT Buffers which will actually be used for
---     transmission. Generate random frames for transmission and insert them
---     to Node 1.
---  2. Send atomic command to TXT Buffer 1 which will set all TX frames to
---     Ready. Wait until expected amount of frames is received.
---  3. Check that frames are received in expected order.
+-- @Test sequence:
+--  @1. Generate random priorities of TXT Buffers and configure them in Node 1.
+--      Generate random mask of TXT Buffers which will actually be used for
+--      transmission. Generate random frames for transmission and insert them
+--      to Node 1.
+--  @2. Send atomic command to TXT Buffer 1 which will set all TX frames to
+--      Ready. Wait until expected amount of frames is received.
+--  @3. Check that frames are received in expected order.
 --
+-- @TestInfoEnd
 --------------------------------------------------------------------------------
 -- Revision History:
 --      24.3.2019   Created file
@@ -96,11 +99,6 @@ package body tx_priority_feature is
     ) is
         type CAN_frame_array_type is array (1 to 4) of SW_CAN_frame_type; 
 
-        variable data               :       std_logic_vector(31 downto 0) :=
-                                                (OTHERS => '0');
-        variable address            :       std_logic_vector(11 downto 0) :=
-                                                (OTHERS => '0');
-
         type t_txt_buf_priority_pair is record
             priority        :       natural range 0 to 7;
             index           :       natural range 1 to 4;
@@ -121,19 +119,15 @@ package body tx_priority_feature is
         variable max_priority_val   :       natural range 0 to 7;	
         variable max_priority_index :       natural range 0 to 7;
 
-        variable priority_index_max :       natural range 0 to 8;       
         variable frame_equal        :       boolean := false;
         variable tmp_int            :       natural := 0;
 
         variable txt_buf_mask       :       std_logic_vector(3 downto 0) := "0000";
         variable buffers_used       :       natural := 0;
-
-        variable found              :       boolean;
-
     begin
 
         -----------------------------------------------------------------------
-        --  1. Generate random priorities of TXT Buffers and configure them in
+        --  @1. Generate random priorities of TXT Buffers and configure them in
         --     Node 1. Generate random mask of TXT Buffers which will actually
         --     be used for transmission. Generate random frames for transmi-
         --     ssion and insert them to Node 1.
@@ -230,7 +224,7 @@ package body tx_priority_feature is
         end loop;
 
         -----------------------------------------------------------------------
-        -- 2. Send atomic command to TXT Buffer 1 which will set all TX frames
+        -- @2. Send atomic command to TXT Buffer 1 which will set all TX frames
         --    to Ready. Wait until expected amount of frames is received.
         -----------------------------------------------------------------------
         info("TXT Buffer mask: " & to_hstring(txt_buf_mask));
@@ -242,7 +236,7 @@ package body tx_priority_feature is
         end loop;
 
         -----------------------------------------------------------------------
-        -- 3. Check that frames are received in expected order.
+        -- @3. Check that frames are received in expected order.
         -----------------------------------------------------------------------
         for i in 1 to 4 loop
             

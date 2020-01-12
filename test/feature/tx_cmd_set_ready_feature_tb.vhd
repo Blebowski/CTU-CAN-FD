@@ -40,25 +40,29 @@
 --------------------------------------------------------------------------------
 
 --------------------------------------------------------------------------------
--- Purpose:
+-- @TestInfoStart
+--
+-- @Purpose:
 --  TXT Buffer Set ready - SW command (TX_COMMAND) feature test.
 --
--- Verifies:
---  1. Set Ready command moves TXT Buffer from TX OK, TX Error, Aborted and 
---     Empty to Ready.
+-- @Verifies:
+--  @1. Set Ready command moves TXT Buffer from TX OK, TX Error, Aborted and 
+--      Empty to Ready.
 --
--- Test sequence:
---  1. Check TXT Buffer is empty. Wait until sample point and issue Set ready
---     and check it becomes Ready. Wait until frame is sent.
---  2. Check TXT Buffer state is TX OK. Wait until sample point and issue
---     Set ready command. Check TXT Buffer is ready. Wait until frame is sent.
---  3. Wait until Sample point. Issue Set Ready and consecutively Set Abort.
---     Check TXT Buffer is aborted. Issue Set Ready again and check it is
---     Ready now!
---  4. Set One shot mode in Node 1. Forbid ACK in Node 2. Send CAN frame
---     by Node 1. Wait until CAN frame is sent and check TXT Buffer from
---     which it was sent ended in TX Error. Wait unitl sample point. Issue Set
---     Ready command and check TXT Buffer is Ready
+-- @Test sequence:
+--  @1. Check TXT Buffer is empty. Wait until sample point and issue Set ready
+--      and check it becomes Ready. Wait until frame is sent.
+--  @2. Check TXT Buffer state is TX OK. Wait until sample point and issue
+--      Set ready command. Check TXT Buffer is ready. Wait until frame is sent.
+--  @3. Wait until Sample point. Issue Set Ready and consecutively Set Abort.
+--      Check TXT Buffer is aborted. Issue Set Ready again and check it is
+--      Ready now!
+--  @4. Set One shot mode in Node 1. Forbid ACK in Node 2. Send CAN frame
+--      by Node 1. Wait until CAN frame is sent and check TXT Buffer from
+--      which it was sent ended in TX Error. Wait unitl sample point. Issue Set
+--      Ready command and check TXT Buffer is Ready
+--
+-- @TestInfoEnd
 --------------------------------------------------------------------------------
 -- Revision History:
 --   17.11.2019   Created file
@@ -91,12 +95,8 @@ package body tx_cmd_set_ready_feature is
         variable ID_1           	:       natural := 1;
         variable ID_2           	:       natural := 2;
         variable CAN_frame          :       SW_CAN_frame_type;
-        variable frame_sent         :       boolean := false;
-        variable mode               :       SW_mode := SW_mode_rst_val;
-        variable rx_state           :       SW_RX_Buffer_info;
+        variable frame_sent         :       boolean := false;       
         variable txt_state          :       SW_TXT_Buffer_state_type;
-        variable error_counters     :       SW_error_counters := (0, 0, 0, 0);
-        variable nxt_buffer         :       natural := 0;
         variable buf_nr             :       natural;
         variable mode_2             :       SW_mode := SW_mode_rst_val;
     begin
@@ -109,7 +109,7 @@ package body tx_cmd_set_ready_feature is
         info("Testing with TXT Buffer: " & integer'image(buf_nr));
 
         -----------------------------------------------------------------------
-        -- 1. Check TXT Buffer is empty. Wait until sample point and issue
+        -- @1. Check TXT Buffer is empty. Wait until sample point and issue
         --    Set ready and check it becomes Ready. Wait until frame is sent.
         -----------------------------------------------------------------------
         info("Step 1");
@@ -126,7 +126,7 @@ package body tx_cmd_set_ready_feature is
         CAN_wait_frame_sent(ID_1, mem_bus(1));
 
         ------------------------------------------------------------------------
-        -- 2. Check TXT Buffer state is TX OK. Wait until sample point and issue
+        -- @2. Check TXT Buffer state is TX OK. Wait until sample point and issue
         --    Set ready command. Check TXT Buffer is ready. Wait until frame is
         --    sent.
         ------------------------------------------------------------------------
@@ -143,7 +143,7 @@ package body tx_cmd_set_ready_feature is
         CAN_wait_frame_sent(ID_1, mem_bus(1));
 
         ------------------------------------------------------------------------
-        -- 3. Wait until Sample point. Issue Set Ready and consecutively Set
+        -- @3. Wait until Sample point. Issue Set Ready and consecutively Set
         --    Abort. Check TXT Buffer is aborted. Issue Set Ready again and
         --    check it is Ready now!
         ------------------------------------------------------------------------
@@ -165,7 +165,7 @@ package body tx_cmd_set_ready_feature is
         return;
         
         -----------------------------------------------------------------------
-        -- 4. Set One shot mode in Node 1. Forbid ACK in Node 2. Send CAN frame
+        -- @4. Set One shot mode in Node 1. Forbid ACK in Node 2. Send CAN frame
         --    by Node 1. Wait until CAN frame is sent and check TXT Buffer from
         --    which it was sent ended in TX Error. Wait unitl sample point.
         --    Issue Set Ready command and check TXT Buffer is Ready

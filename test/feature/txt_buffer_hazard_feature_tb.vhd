@@ -40,27 +40,30 @@
 --------------------------------------------------------------------------------
 
 --------------------------------------------------------------------------------
--- Purpose:
+-- @TestInfoStart
+--
+-- @Purpose:
 --  TXT Buffer datapath hazard feature test.
 --
--- Verifies:
---  1. When Lock command is issued on Protocol control at the same time as
---     Set Abort command, Lock command will have priority.
---  2. TXT Buffer will never end up Aborted when Protocol control succesfully
---     locks TXT Buffer for transmission! 
+-- @Verifies:
+--  @1. When Lock command is issued on Protocol control at the same time as
+--      Set Abort command, Lock command will have priority.
+--  @2. TXT Buffer will never end up Aborted when Protocol control succesfully
+--      locks TXT Buffer for transmission! 
 --
--- Test sequence:  
---  1. Insert frame to TXT Buffer
---  2. Mark the buffer as ready and wait for incrementing time.
---  3. Send set_abort command.
---  4. Readout status of TXT buffer.
---  5. If the buffer is "Aborted", check that no transmission is in progress
---     (via STATUS), throw an error if not.
---  6. If the buffer is "Abort in progress" check that transmission is 
---     in progress and wait till its end. Throw an error if not.
---  7. If buffer is in any other state, throw an error. Set Abort command should
---     not be missed by HW!
+-- @Test sequence:  
+--  @1. Insert frame to TXT Buffer
+--  @2. Mark the buffer as ready and wait for incrementing time.
+--  @3. Send set_abort command.
+--  @4. Readout status of TXT buffer.
+--  @5. If the buffer is "Aborted", check that no transmission is in progress
+--      (via STATUS), throw an error if not.
+--  @6. If the buffer is "Abort in progress" check that transmission is 
+--      in progress and wait till its end. Throw an error if not.
+--  @7. If buffer is in any other state, throw an error. Set Abort command should
+--      not be missed by HW!
 --
+-- @TestInfoEnd
 --------------------------------------------------------------------------------
 -- Revision History:
 --      17.1.2019   Created file
@@ -92,20 +95,9 @@ package body txt_buffer_hazard_feature is
         signal      mem_bus         : inout  mem_bus_arr_t;
         signal      bus_level       : in     std_logic
     ) is
-        variable r_data             :       std_logic_vector(31 downto 0) :=
-                                                (OTHERS => '0');
-        variable w_data             :       std_logic_vector(31 downto 0) :=
-                                                (OTHERS => '0');
         variable ID_1           	:       natural := 1;
         variable ID_2           	:       natural := 2;
         variable CAN_frame          :       SW_CAN_frame_type;
-        variable frame_sent         :       boolean := false;
-        variable frame_length       :       natural;
-        variable rand_value         :       real;
-        variable wt                 :       time;
-        variable bus_config         :       bit_time_config_type;
-        variable still_tx           :       boolean := false;
-        variable err_counters       :       SW_error_counters;
         variable command            :       SW_command := SW_command_rst_val;
         variable status             :       SW_status;
 	    variable txt_buf_state	    :	    SW_TXT_Buffer_state_type;	

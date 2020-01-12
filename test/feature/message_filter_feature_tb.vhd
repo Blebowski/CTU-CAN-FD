@@ -40,11 +40,13 @@
 --------------------------------------------------------------------------------
 
 --------------------------------------------------------------------------------
--- Purpose:
+-- @TestInfoStart
+--
+-- @Purpose:
 --  Bus Start feature test. Verifies if unit is capable of joining fully,
 --  loaded bus.
 --
---  Test sequence:
+-- @Test sequence:
 --      Part 1 (Message filter disabled):
 --          1. Disable message filters in Node 1.
 --          2. Set all filters in Node 1 to not to pass any frame/identifier.
@@ -82,6 +84,8 @@
 --          9. Verify that frame was received by Node 1.
 --         10. Send frame which is higher than high threshold by Node 2.
 --             Verify that frame is not received by CAN Node 1.
+--
+-- @TestInfoEnd
 --------------------------------------------------------------------------------
 -- Revision History:
 --    15.9.2018   Created file
@@ -208,15 +212,15 @@ package body message_filter_feature is
             -- unit test. In each scenario, it is evaluated whether frame should
             -- be received (PASS) or not (FAIL).
             -- Following scenarios are considered:
-            --  1. Accept only FD, Bit mask match, Frame type match -> PASS
-            --  2. Accept only FD, Bit mask match, Frame type not -> FAIL
-            --  3. Accept only FD, Bit mask mismatch, Frame type match -> FAIL
-            --  4. Accept only 2.0, Bit mask match, Frame type match -> PASS
-            --  5. Accept only 2.0, Bit mask match, Frame type not -> FAIL
-            --  6. Accept only 2.0, Bit mask mismatch, Frame type match -> FAIL
-            --  7. Accept both, Bit mask match, Frame type CAN 2.0 -> PASS
-            --  8. Accept both, Bit mask match, Frame type FD -> PASS
-            --  9. Accept both, Bit mask mismatch, Frame type any -> FAIL
+            --  @1. Accept only FD, Bit mask match, Frame type match -> PASS
+            --  @2. Accept only FD, Bit mask match, Frame type not -> FAIL
+            --  @3. Accept only FD, Bit mask mismatch, Frame type match -> FAIL
+            --  @4. Accept only 2.0, Bit mask match, Frame type match -> PASS
+            --  @5. Accept only 2.0, Bit mask match, Frame type not -> FAIL
+            --  @6. Accept only 2.0, Bit mask mismatch, Frame type match -> FAIL
+            --  @7. Accept both, Bit mask match, Frame type CAN 2.0 -> PASS
+            --  @8. Accept both, Bit mask match, Frame type FD -> PASS
+            --  @9. Accept both, Bit mask mismatch, Frame type any -> FAIL
             --------------------------------------------------------------------
             for j in 1 to 9 loop
                 mask_filt_config.acc_CAN_2_0 := false;
@@ -359,11 +363,11 @@ package body message_filter_feature is
 
         ------------------------------------------------------------------------
         -- Execute test of range fitlers. Following scenarios are tested:
-        --  1. CAN ID Lower than Low TH -> FAIL.
-        --  2. CAN ID Equal to Low TH -> PASS
-        --  3. CAN ID between Low and High TH -> PASS 
-        --  4. CAN ID equal to High TH -> PASS
-        --  5. CAN ID higher than High TH -> FAIL
+        --  @1. CAN ID Lower than Low TH -> FAIL.
+        --  @2. CAN ID Equal to Low TH -> PASS
+        --  @3. CAN ID between Low and High TH -> PASS 
+        --  @4. CAN ID equal to High TH -> PASS
+        --  @5. CAN ID higher than High TH -> FAIL
         ------------------------------------------------------------------------
         for i in 1 to 5 loop
             

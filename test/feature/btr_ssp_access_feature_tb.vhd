@@ -40,18 +40,22 @@
 --------------------------------------------------------------------------------
 
 --------------------------------------------------------------------------------
--- Purpose:
+-- @TestInfoStart
+--
+-- @Purpose:
 --  BTR, BTR_FD and SSP_CFG register access feature test.
 --
--- Verifies:
---  1. When node is disabled SETTINGS[ENA]='0', BTR, BTR_FD and SSP_CFG registers
---     are not writable. When node is enabled, they are writable!
+-- @Verifies:
+--  @1. When node is disabled SETTINGS[ENA]='0', BTR, BTR_FD and SSP_CFG registers
+--      are not writable. When node is enabled, they are writable!
 --
---  Test sequence:
---  1. Read values in BTR, BTR_FD and SSP_CFG registers. Try to write them,
---     read them back and check that value has not changed! Node 1 is enabled!
---  2. Disable Node 1 and try to write BTR, BTR_FD and SSP_CFG registers. Read
---     them back and check that value was written!
+-- @Test sequence:
+--  @1. Read values in BTR, BTR_FD and SSP_CFG registers. Try to write them,
+--      read them back and check that value has not changed! Node 1 is enabled!
+--  @2. Disable Node 1 and try to write BTR, BTR_FD and SSP_CFG registers. Read
+--      them back and check that value was written!
+--
+-- @TestInfoEnd
 --------------------------------------------------------------------------------
 -- Revision History:
 --   06.12.2019   Created file
@@ -83,14 +87,7 @@ package body btr_ssp_access_feature is
     ) is
         constant ID_1               :        natural := 1;
         constant ID_2               :        natural := 2;
-        variable CAN_frame          :        SW_CAN_frame_type;
-        variable CAN_frame_2        :        SW_CAN_frame_type  := 
-                    (0, (OTHERS => (OTHERS => '0')), "0000", 0, '0', '0',
-                     '0', '0', '0', (OTHERS => '0'), 0);
-        variable frame_sent         :        boolean;
-        variable frames_equal       :        boolean;
-        variable pc_dbg             :        SW_PC_Debug;
-        
+
         variable btr                :        std_logic_vector(31 downto 0) :=
                                                 (OTHERS => '0');
         variable btr_fd             :        std_logic_vector(31 downto 0) :=
@@ -108,7 +105,7 @@ package body btr_ssp_access_feature is
     begin
 
         ----------------------------------------------------------------------
-        -- 1. Read values in BTR, BTR_FD and SSP_CFG registers. Try to write 
+        -- @1. Read values in BTR, BTR_FD and SSP_CFG registers. Try to write 
         --    them, read them back and check that value has not changed!
         --    Node 1 is enabled!
         ----------------------------------------------------------------------
@@ -134,7 +131,7 @@ package body btr_ssp_access_feature is
         check(ssp_cfg = ssp_cfg_2, "SSP_CFG register not written!");
 
         ----------------------------------------------------------------------
-        -- 2. Disable Node 1 and try to write BTR, BTR_FD and SSP_CFG
+        -- @2. Disable Node 1 and try to write BTR, BTR_FD and SSP_CFG
         --    registers. Read them back and check that value was written!
         ----------------------------------------------------------------------
         info("Step 2");
@@ -160,7 +157,7 @@ package body btr_ssp_access_feature is
         rand_value(31 downto 26) := (OTHERS => '0');
         CAN_write(rand_value, SSP_CFG_ADR, ID_1, mem_bus(1), BIT_16);
         CAN_read(btr, SSP_CFG_ADR, ID_1, mem_bus(1), BIT_16);
-        btr(15 downto 0) := (OTHERS => '0');  -- 16 LSBs are other register!
+        btr(15 downto 0) := (OTHERS => '0');  -- @16 LSBs are other register!
         btr(31 downto 26) := (OTHERS => '0'); -- These are not implemented!
         check(btr = rand_value, "SSP CFG register written!");
 

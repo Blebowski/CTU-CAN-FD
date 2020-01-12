@@ -40,24 +40,28 @@
 --------------------------------------------------------------------------------
 
 --------------------------------------------------------------------------------
--- Purpose:
+-- @TestInfoStart
+--
+-- @Purpose:
 --  Byte enable feature test.
 --
--- Verifies:
---  1. 8/16/32 bit read access.
---  2. 8/16/32 bit write access.
+-- @Verifies:
+--  @1. 8/16/32 bit read access.
+--  @2. 8/16/32 bit write access.
 --
--- Test sequence:
---  1. Disable Node 1 (so that BTR, BTR_FD are writable). Read 32-bit register
---     via 32-bit access. Check correct value.
---  2. Read 32-bit register via 2 16 bit accesses. Check correct values.
---  3. Read 32-bit register via 4 8 bit accesses. Check correct values.
---  4. Erase 32-bit R/W register. Write pattern to a single byte. Read 32-bit
---     check that pattern was written to single byte only and rest are zeroes.
---     Repeat with each byte!
---  5. Erase 32-bit R/W register. Write pattern to lower half word. Read 32-bit,
---     check that pattern was written to half word only and rest are zeroes.
---     Repeat with upper half word!
+-- @Test sequence:
+--  @1. Disable Node 1 (so that BTR, BTR_FD are writable). Read 32-bit register
+--      via 32-bit access. Check correct value.
+--  @2. Read 32-bit register via 2 16 bit accesses. Check correct values.
+--  @3. Read 32-bit register via 4 8 bit accesses. Check correct values.
+--  @4. Erase 32-bit R/W register. Write pattern to a single byte. Read 32-bit
+--      check that pattern was written to single byte only and rest are zeroes.
+--      Repeat with each byte!
+--  @5. Erase 32-bit R/W register. Write pattern to lower half word. Read 32-bit,
+--      check that pattern was written to half word only and rest are zeroes.
+--      Repeat with upper half word!
+--
+-- @TestInfoEnd
 --------------------------------------------------------------------------------
 -- Revision History:
 --    12.7.2018     Created file
@@ -94,11 +98,10 @@ package body byte_enable_feature is
         variable address			:		 std_logic_vector(11 downto 0) :=
                                                 (OTHERS => '0');
         variable ID                 :        natural := 1;
-        variable errmsg             :        line;
     begin
 
         ------------------------------------------------------------------------
-        -- 1. Disable Node 1 (so that BTR, BTR_FD are writable). Read 32-bit 
+        -- @1. Disable Node 1 (so that BTR, BTR_FD are writable). Read 32-bit 
         --    register via 32-bit access. Check correct value.
         ------------------------------------------------------------------------
         info("Step 1: 32-bit read");
@@ -108,7 +111,7 @@ package body byte_enable_feature is
         check(data = x"DEADBEEF", "32 bit read error");
 
         ------------------------------------------------------------------------
-        -- 2. Read 32-bit register via 2 16 bit accesses. Check correct values.
+        -- @2. Read 32-bit register via 2 16 bit accesses. Check correct values.
         ------------------------------------------------------------------------
         info("Step 2: 16-bit read");
         for i in 0 to 1 loop        
@@ -128,7 +131,7 @@ package body byte_enable_feature is
         end loop;
 
         ------------------------------------------------------------------------
-        -- 3. Read 32-bit register via 4 8 bit accesses. Check correct values.
+        -- @3. Read 32-bit register via 4 8 bit accesses. Check correct values.
         ------------------------------------------------------------------------
         info("Step 3: 8-bit read");
         for i in 0 to 3 loop        
@@ -165,7 +168,7 @@ package body byte_enable_feature is
         end loop;
 
         ------------------------------------------------------------------------
-        -- 4. Erase 32-bit R/W register. Write pattern to a single byte. Read 
+        -- @4. Erase 32-bit R/W register. Write pattern to a single byte. Read 
         --    32-bit check that pattern was written to single byte only and 
         --    rest are zeroes. Repeat with each byte!
         ------------------------------------------------------------------------
@@ -211,7 +214,7 @@ package body byte_enable_feature is
         end loop;
         
         ------------------------------------------------------------------------
-        --  5. Erase 32-bit R/W register. Write pattern to lower half word. Read
+        --  @5. Erase 32-bit R/W register. Write pattern to lower half word. Read
         --     32-bit, check that pattern was written to half word only and rest
         --     are zeroes. Repeat with upper half word!
         ------------------------------------------------------------------------

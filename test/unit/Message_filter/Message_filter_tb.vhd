@@ -40,8 +40,24 @@
 --------------------------------------------------------------------------------
 
 --------------------------------------------------------------------------------
--- Purpose:
---  Unit test for the message filter circuit
+-- @TestInfoStart
+--
+-- @Purpose:
+--  Unit test for the frame filters circuit.
+--
+-- @Verifies:
+--  @1. Bit filter functionality (Filter value and filter mask).
+--  @2. Range filter functionality (Low and High thresholds).
+--
+-- @Test sequence:
+--  @1. Generate random bit values, bit masks for bit filters and low-high
+--      thresholds for range filter.
+--  @2. Generate random CAN ID and frame and identifier type on input of Frame
+--      filters.
+--  @3. Calculate whether frame shall pass filters (SW model).
+--  @4. Check whether output of frame filters equals to output of SW model.
+--
+-- @TestInfoEnd
 --------------------------------------------------------------------------------
 -- Revision History:
 --    30.5.2016   Created file

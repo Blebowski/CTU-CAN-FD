@@ -40,16 +40,24 @@
 --------------------------------------------------------------------------------
 
 --------------------------------------------------------------------------------
--- Purpose:
+-- @TestInfoStart
+--
+-- @Purpose:
 --  Unit test for the CRC circuit.
---  Unit test generates bit sequence 10 to 620 bits long as well as random
---  drv_fd_type setting. Then it precalculates the CRC values by calc_crc pro-
---  cedure. Afterwads it emulates reception of this sequence on input of CRC
---  circuit. Sync signal is  used for enable transition. Simple rx trigger signal
---  is used as trigger signal for processing input data. After the calculation,
---  software precalculated CRC and CRC from DUT are compared! If mismatch occurs
---  error is detected and test fails. Whole procedure is repeated "iterations"
---  times.
+--
+-- @Verifies:
+--  @1. Calculation of CRC15, CRC17 and CRC21 according to 11898-1:2015.
+--  @2. Calculation of CRC15, CRC17 and CRC21 according to CAN FD specification
+--      1.0 (non-iso version with different intialization vectors).
+--
+-- @Test sequence:
+--  @1. Generate random bit sequence between 10 and 620 bits long. Generate
+--      random setting of ISO/NON-ISO.
+--  @2. Calculate expected CRC results for this bit sequence (SW model).
+--  @3. Apply generated bit sequence to inputs of CRC module.
+--  @4. Compare results of SW model and CRC value on DUT outputs.
+--
+-- @TestInfoEnd
 --------------------------------------------------------------------------------
 -- Revision History:
 --    4.6.2016   Created file

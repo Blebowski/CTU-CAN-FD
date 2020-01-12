@@ -40,13 +40,43 @@
 --------------------------------------------------------------------------------
 
 --------------------------------------------------------------------------------
--- Purpose:
---  Sanity test simulates real bus operation with 4 CTU CAN FD Cores connected
---  on CAN Bus. Real bus topology with signal delay is implemented via
---  "signalDelayer". Random bit noise is inserted to the bus simulation.
---  Each node is clocked with different clock, to cover clock jitter and clock
---  uncertainty of real bus controllers!
+-- @TestInfoStart
 --
+-- @Purpose:
+--  Sanity test simulates real bus operation with 4 CTU CAN FD Cores connected
+--  on CAN Bus.
+--
+-- @Verifies:
+--  @1. Communication of CTU CAN FD with real bus delay between units.
+--  @2. Communication with various topologies (Star, Bus, Tree)
+--  @3. Response to errors (bit flips on bus) injected to simulation.
+--  @4. Data consitency of communication (what has been send by 1 node must
+--      be received by all other nodes)!
+--
+-- @Test sequence:
+--  @1. Restart all nodes and configure bit timing. Turn all nodes on. Wait
+--      until integration is over.
+--  @2. Generate random frames and insert them to each CTU CAN FD instance for
+--      transmission. Store each frame that was pushed to each of CTU CAN FDs
+--      to auxiliarly memory (so called TX memory which monitors what all has
+--      been sent!) for each node.
+--  @3. Poll on RX Buffer and read out frames. Store read out frames in
+--      auxiliarly memories (RX memories) for each node.
+--  @4. Repeat generation of frames until RX memories are filled. Inject random
+--      bit noise to the bus.
+--  @5. When RX memories are filled, compare content of RX memories with TX
+--      memories of each other node! Each frame which was sent by a Node must
+--      be received by each other node (CAN bus needs to guarantee data
+--      consistency). If a frame which was sent is not found in RX memories
+--      of each other node, error is detected!
+--
+-- @Notes:
+--  Real bus topology with signal delay is implemented via "signalDelayer".
+--  Random bit noise is inserted to the bus simulation. Each node is clocked
+--  with different clock, to cover clock jitter and clock uncertainty of real
+--  bus controllers!
+--
+-- @TestInfoEnd
 --------------------------------------------------------------------------------
 -- Revision History:
 --
@@ -397,6 +427,7 @@ architecture behavioral of sanity_test is
     -- Additionally we modify the identifiers to have first N bits matching
     -- (N is random), so that arbitration is lost in random bit. With absolutely
     -- random identifiers arbitration is usually lost very soon (first 3 bits).
+    -- The reason behind this is to excercise arbitration behavior more heavily!
     ----------------------------------------------------------------------------
     procedure correct_identifiers(
         signal   rand_ctr       : inout     natural range 0 to RAND_POOL_SIZE;

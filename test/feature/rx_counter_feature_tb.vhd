@@ -40,37 +40,41 @@
 --------------------------------------------------------------------------------
 
 --------------------------------------------------------------------------------
--- Purpose:
+-- @TestInfoStart
+--
+-- @Purpose:
 --  RX Traffic counter feature test implementation.
 --
--- Verifies:
---  1. RX Counter is incremented after each succesfully received frame.
---  2. RX Counter is not incremented when error frame is transmitted.
---  3. TX Counter is not incremented when frame is succesfully received.
---  4. RX Counter is cleared by COMMAND[RXFRCRST].
---  5. RX Counter is NOT cleared by COMMAND[TXFRCRST].
---  6. RX Counter is incremented when frame is transmitted in Loopback mode.
+-- @Verifies:
+--  @1. RX Counter is incremented after each succesfully received frame.
+--  @2. RX Counter is not incremented when error frame is transmitted.
+--  @3. TX Counter is not incremented when frame is succesfully received.
+--  @4. RX Counter is cleared by COMMAND[RXFRCRST].
+--  @5. RX Counter is NOT cleared by COMMAND[TXFRCRST].
+--  @6. RX Counter is incremented when frame is transmitted in Loopback mode.
 --
--- Test sequence:
---  1. Read TX Counter from Node 1. Set One-shot mode (no retransmission) in
---     Node 1.
---  2. Send frame from Node 2. Wait until EOF field. Read RX counter from Node 1
---     and check it did not change yet.
---  3. Wait until the end of EOF. Read RX counter and check it was incremented.
---     Read TX counter and check it is not incremented!
---  4. Send Frame from Node 2. Wait till ACK field. Corrupt ACK field to be
---     recessive. Wait till Node 2 is not in ACK field anymore. Check Node 2
---     is transmitting Error frame.
---  5. Wait until Node 1 also starts transmitting error frame. Wait until bus 
---     is idle, check that RX Counter was not incremented in Node 1.
---  6. Send random amount of frames by Node 2 and wait until they are sent.
---  7. Check that RX counter was incremented by N in Node 1!
---  8. Issue COMMAND[TXFRCRST] and check RX counter was NOT cleared in Node 1.
---  9. Issue COMMAND[RXFRCRST] and check RX counter was cleared in Node 1.
--- 10. Read all frames from RX buffer in Node 1.
--- 11. Set Loopback mode in Node 1. Send frame by Node 1 and wait until it is
---     sent. Check there is a frame received in RX buffer. Check that RX frame
---     counter was incremented.
+-- @Test sequence:
+--  @1. Read TX Counter from Node 1. Set One-shot mode (no retransmission) in
+--      Node 1.
+--  @2. Send frame from Node 2. Wait until EOF field. Read RX counter from Node 1
+--      and check it did not change yet.
+--  @3. Wait until the end of EOF. Read RX counter and check it was incremented.
+--      Read TX counter and check it is not incremented!
+--  @4. Send Frame from Node 2. Wait till ACK field. Corrupt ACK field to be
+--      recessive. Wait till Node 2 is not in ACK field anymore. Check Node 2
+--      is transmitting Error frame.
+--  @5. Wait until Node 1 also starts transmitting error frame. Wait until bus 
+--      is idle, check that RX Counter was not incremented in Node 1.
+--  @6. Send random amount of frames by Node 2 and wait until they are sent.
+--  @7. Check that RX counter was incremented by N in Node 1!
+--  @8. Issue COMMAND[TXFRCRST] and check RX counter was NOT cleared in Node 1.
+--  @9. Issue COMMAND[RXFRCRST] and check RX counter was cleared in Node 1.
+-- @10. Read all frames from RX buffer in Node 1.
+-- @11. Set Loopback mode in Node 1. Send frame by Node 1 and wait until it is
+--      sent. Check there is a frame received in RX buffer. Check that RX frame
+--      counter was incremented.
+--
+-- @TestInfoEnd
 --------------------------------------------------------------------------------
 -- Revision History:
 --    28.9.2019   Created file
@@ -122,7 +126,7 @@ package body rx_counter_feature is
     begin
 
         ------------------------------------------------------------------------
-        -- 1. Read TX Counter from Node 1. Set One-shot mode (no retransmission)
+        -- @1. Read TX Counter from Node 1. Set One-shot mode (no retransmission)
         --    in Node 1.
         ------------------------------------------------------------------------
         info("Step 1: Read initial counter values.");
@@ -130,7 +134,7 @@ package body rx_counter_feature is
         CAN_enable_retr_limit(true, 0, ID_2, mem_bus(2));
         
         ------------------------------------------------------------------------
-        -- 2. Send frame from Node 2. Wait until EOF field. Read RX counter from
+        -- @2. Send frame from Node 2. Wait until EOF field. Read RX counter from
         --    Node 1 and check it did not change yet.
         ------------------------------------------------------------------------        
         info("Step 2: Send frame by Node 2!");
@@ -144,7 +148,7 @@ package body rx_counter_feature is
             "RX counter unchanged before EOF!");
 
         ------------------------------------------------------------------------
-        -- 3. Wait until the end of EOF. Read RX counter and check it was
+        -- @3. Wait until the end of EOF. Read RX counter and check it was
         --    incremented. Read TX counter and check it is not incremented!
         ------------------------------------------------------------------------
         info("Step 3: Check TX, RX counters after frame.");
@@ -157,7 +161,7 @@ package body rx_counter_feature is
         CAN_wait_bus_idle(ID_1, mem_bus(1));
 
         ------------------------------------------------------------------------
-        -- 4. Send Frame from Node 2. Wait till ACK field. Corrupt ACK field to
+        -- @4. Send Frame from Node 2. Wait till ACK field. Corrupt ACK field to
         --    be recessive. Wait till Node 2 is not in ACK field anymore. Check
         --    Node 2 is transmitting Error frame.
         ------------------------------------------------------------------------
@@ -174,7 +178,7 @@ package body rx_counter_feature is
         release_bus_level(so.bl_force);
 
         ------------------------------------------------------------------------
-        -- 5. Wait until Node 1 also starts transmitting error frame. Wait until
+        -- @5. Wait until Node 1 also starts transmitting error frame. Wait until
         --    bus is idle, check that RX Counter was not incremented in Node 1.
         ------------------------------------------------------------------------
         info("Step 5: Wait until error frame!");
@@ -187,7 +191,7 @@ package body rx_counter_feature is
             "RX counter unchanged after Error frame!");
 
         ------------------------------------------------------------------------
-        -- 6. Send random amount of frames by Node 2 and wait until they are
+        -- @6. Send random amount of frames by Node 2 and wait until they are
         --    sent.
         ------------------------------------------------------------------------
         info("Step 6: Send N random frames!");
@@ -199,7 +203,7 @@ package body rx_counter_feature is
         end loop;
 
         ------------------------------------------------------------------------
-        -- 7. Check that RX counter was incremented by N in Node 1!
+        -- @7. Check that RX counter was incremented by N in Node 1!
         ------------------------------------------------------------------------
         info("Step 7: Check RX counter was incremented by N!");
         read_traffic_counters(ctrs_5, ID_1, mem_bus(1));
@@ -207,7 +211,7 @@ package body rx_counter_feature is
               "RX Frames counter incremented by: " & integer'image(rand_value));
 
         ------------------------------------------------------------------------
-        -- 8. Issue COMMAND[TXFRCRST] and check RX counter was NOT cleared in 
+        -- @8. Issue COMMAND[TXFRCRST] and check RX counter was NOT cleared in 
         --    Node 1.
         ------------------------------------------------------------------------
         info("Step 8: Issue COMMAND[TXFRCRST]");
@@ -218,7 +222,7 @@ package body rx_counter_feature is
               "RX counter not cleared by COMMAND[TXFRCRST]");
 
         ------------------------------------------------------------------------
-        -- 9. Issue COMMAND[RXFRCRST] and check RX counter was cleared in 
+        -- @9. Issue COMMAND[RXFRCRST] and check RX counter was cleared in 
         --     Node 1.
         ------------------------------------------------------------------------
         info("Step 9: Issue COMMAND[RXFRCRST]");
@@ -229,7 +233,7 @@ package body rx_counter_feature is
         check(ctrs_1.rx_frames = 0, "RX counter cleared by COMMAND[RXFRCRST]");
 
         ------------------------------------------------------------------------
-        -- 10. Read all frames from RX buffer in Node 1.
+        -- @10. Read all frames from RX buffer in Node 1.
         ------------------------------------------------------------------------
         info("Step 10: Read all frames from RX Buffer!");
         get_rx_buf_state(rx_buf_info, ID_1, mem_bus(1));
@@ -240,7 +244,7 @@ package body rx_counter_feature is
         end if;
         
         ------------------------------------------------------------------------
-        -- 11. Set Loopback mode in Node 1. Send frame by Node 1 and wait until
+        -- @11. Set Loopback mode in Node 1. Send frame by Node 1 and wait until
         --     it is sent. Check there is a frame received in RX buffer. Check
         --     that RX frame counter was incremented.
         ------------------------------------------------------------------------

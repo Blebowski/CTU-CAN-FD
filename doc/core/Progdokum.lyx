@@ -465,7 +465,7 @@ Department of Measurement
 \begin_layout Plain Layout
 
 \size larger
-CTU CAN FD IP Core
+CTU CAN FD IP Core - Datasheet
 \end_layout
 
 \end_inset
@@ -485,7 +485,7 @@ CTU CAN FD IP Core
 \begin_inset Text
 
 \begin_layout Plain Layout
-Version 2.2, Commit:
+Version 2.2.4, Commit:
 \begin_inset CommandInset include
 LatexCommand input
 filename "version.tex"

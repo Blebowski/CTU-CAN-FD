@@ -40,20 +40,23 @@
 --------------------------------------------------------------------------------
 
 --------------------------------------------------------------------------------
--- Purpose:
+-- @TestInfoStart
+--
+-- @Purpose:
 --  Self test mode - feature test.
 --
--- Verifies:
---  1. In Self test mode, transmitted frame is valid even if ACK was recessive!
+-- @Verifies:
+--  @1. In Self test mode, transmitted frame is valid even if ACK was recessive!
 --
--- Test sequence:
---  1. Configures Self Test mode in Node 1. Configure ACK forbidden in Node 2.
---  2. Send frame by Node 1. Wait till ACK field.
---  3. Monitor during whole ACK field that frame bus is RECESSIVE.
---  4. Check that after ACK field, Node 1 is NOT transmitting Error frame!
---     Wait till bus is idle and check that TXT Buffer in Node 1 is in TX OK!
---     Check that frame was received by Node 2.
+-- @Test sequence:
+--  @1. Configures Self Test mode in Node 1. Configure ACK forbidden in Node 2.
+--  @2. Send frame by Node 1. Wait till ACK field.
+--  @3. Monitor during whole ACK field that frame bus is RECESSIVE.
+--  @4. Check that after ACK field, Node 1 is NOT transmitting Error frame!
+--      Wait till bus is idle and check that TXT Buffer in Node 1 is in TX OK!
+--      Check that frame was received by Node 2.
 --
+-- @TestInfoEnd
 --------------------------------------------------------------------------------
 -- Revision History:
 --    22.9.2019   Created file
@@ -83,22 +86,14 @@ package body mode_self_test_feature is
         signal      mem_bus         : inout  mem_bus_arr_t;
         signal      bus_level       : in     std_logic
     ) is
-        variable r_data             :       std_logic_vector(31 downto 0) :=
-                                                (OTHERS => '0');
         variable CAN_TX_frame       :       SW_CAN_frame_type;
         variable CAN_RX_frame       :       SW_CAN_frame_type;
         variable frame_sent         :       boolean := false;
-        variable ctr_1              :       natural;
-        variable ctr_2              :       natural;
         variable ID_1           	:       natural := 1;
         variable ID_2           	:       natural := 2;
-        variable rand_val           :       real;
-        variable retr_th            :       natural;
-        variable mode_backup        :       std_logic_vector(31 downto 0) :=
-                                                (OTHERS => '0');
         variable mode_1             :       SW_mode := SW_mode_rst_val;
         variable mode_2             :       SW_mode := SW_mode_rst_val;
-        variable err_counters       :       SW_error_counters := (0, 0, 0, 0);
+        
         variable txt_buf_state      :       SW_TXT_Buffer_state_type;
         variable rx_buf_state       :       SW_RX_Buffer_info;
         variable status             :       SW_status;
@@ -107,7 +102,7 @@ package body mode_self_test_feature is
     begin
 
         ------------------------------------------------------------------------
-        -- 1. Configures Self Test mode in Node 1. Configure ACK forbidden in
+        -- @1. Configures Self Test mode in Node 1. Configure ACK forbidden in
         --    Node 2.
         ------------------------------------------------------------------------
         info("Step 1: Configuring STM in Node 1, ACF in Node 2!");
@@ -117,7 +112,7 @@ package body mode_self_test_feature is
         set_core_mode(mode_2, ID_2, mem_bus(2));
 
         ------------------------------------------------------------------------
-        -- 2. Send frame by Node 1. Wait till ACK field.
+        -- @2. Send frame by Node 1. Wait till ACK field.
         ------------------------------------------------------------------------
         info("Step 2: Send frame by Node 1, Wait till ACK");
         CAN_generate_frame(rand_ctr, CAN_TX_frame);
@@ -125,7 +120,7 @@ package body mode_self_test_feature is
         CAN_wait_pc_state(pc_deb_ack, ID_1, mem_bus(1));
         
         ------------------------------------------------------------------------
-        -- 3. Monitor during whole ACK field that frame bus is RECESSIVE.
+        -- @3. Monitor during whole ACK field that frame bus is RECESSIVE.
         ------------------------------------------------------------------------
         info("Step 3: Checking ACK field is recessive"); 
         CAN_read_pc_debug(pc_dbg, ID_1, mem_bus(1));
@@ -140,7 +135,7 @@ package body mode_self_test_feature is
         end loop;
         
         ------------------------------------------------------------------------
-        -- 4. Check that after ACK field, Node 1 is NOT transmitting Error 
+        -- @4. Check that after ACK field, Node 1 is NOT transmitting Error 
         --    frame! Wait till bus is idle and check that TXT Buffer in Node 1
         --    is in TX OK! Check that frame was received by Node 2.
         ------------------------------------------------------------------------

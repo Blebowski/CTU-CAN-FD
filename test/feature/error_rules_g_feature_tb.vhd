@@ -40,19 +40,23 @@
 --------------------------------------------------------------------------------
 
 --------------------------------------------------------------------------------
--- Purpose:
+-- @TestInfoStart
+--
+-- @Purpose:
 --  Fault confinement rules - rule G - feature test.
 --
--- Verifies:
---  1. After the successful transmission of a frame (getting ACK and no error
---     has been detected until EOF is finished), the transmit error counter
---     shall be decremented by 1 unless it was already 0.
+-- @Verifies:
+--  @1. After the successful transmission of a frame (getting ACK and no error
+--      has been detected until EOF is finished), the transmit error counter
+--      shall be decremented by 1 unless it was already 0.
 --
--- Test sequence:
---  1. Set TEC of Node 1 to random value till 255. Send frame by Node 1, wait
---     till end of EOF and check that TEC is decremented at the end of EOF!
---  2. Set TEC of Node 1 to 0. Send frame by Node 1. Wait until frame is sent
---     and check that TEC is still 0!
+-- @Test sequence:
+--  @1. Set TEC of Node 1 to random value till 255. Send frame by Node 1, wait
+--      till end of EOF and check that TEC is decremented at the end of EOF!
+--  @2. Set TEC of Node 1 to 0. Send frame by Node 1. Wait until frame is sent
+--      and check that TEC is still 0!
+--
+-- @TestInfoEnd
 --------------------------------------------------------------------------------
 -- Revision History:
 --    13.12.2019   Created file
@@ -84,31 +88,20 @@ package body error_rules_g_feature is
         variable ID_1               :       natural := 1;
         variable ID_2               :       natural := 2;
         variable CAN_frame          :       SW_CAN_frame_type;
-        variable RX_CAN_frame       :       SW_CAN_frame_type;
         variable frame_sent         :       boolean := false;
-        variable rand_value         :       natural;
-        
-        variable status             :       SW_status;
-        variable command            :       SW_command := SW_command_rst_val;
-        
-        variable rx_buf_info        :       SW_RX_Buffer_info;
+
         variable mode_1             :       SW_mode := SW_mode_rst_val;
-        variable mode_2             :       SW_mode := SW_mode_rst_val;
         
         variable err_counters_1     :       SW_error_counters := (0, 0, 0, 0);
         variable err_counters_2     :       SW_error_counters := (0, 0, 0, 0);
         variable err_counters_3     :       SW_error_counters := (0, 0, 0, 0);
         variable err_counters_4     :       SW_error_counters := (0, 0, 0, 0);
 
-        variable id_vect            :       std_logic_vector(28 downto 0);
-        variable err_capt           :       SW_error_capture;
-        
-        variable bit_waits          :       natural := 0;
         variable pc_dbg             :       SW_PC_Debug;
     begin
 
         -----------------------------------------------------------------------
-        -- 1. Set TEC of Node 1 to random value till 255. Send frame by Node 1,
+        -- @1. Set TEC of Node 1 to random value till 255. Send frame by Node 1,
         --    wait till end of EOF and check that TEC is decremented at the
         --    end of EOF!
         -----------------------------------------------------------------------
@@ -143,7 +136,7 @@ package body error_rules_g_feature is
                 "TEC decremented by 1 after EOF");
 
         -----------------------------------------------------------------------
-        -- 2. Set TEC of Node 1 to 0. Send frame by Node 1. Wait until frame is
+        -- @2. Set TEC of Node 1 to 0. Send frame by Node 1. Wait until frame is
         --    sent and check that TEC is still 0!
         -----------------------------------------------------------------------
         info("Step 2");

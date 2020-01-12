@@ -40,13 +40,30 @@
 --------------------------------------------------------------------------------
 
 --------------------------------------------------------------------------------
--- Purpose:
+-- @TestInfoStart
+--
+-- @Purpose:
 --  Unit test for the Interrupt manager.
+--
+-- @Verifies:
+--  @1. Interrupt enable, Interrupt mask and capturing of interrupts by Interrupt
+--      Manager module.
+--
+-- @Test sequence:
+--  @1. Generate random setting of Interrupt manager module (Interrupt enables,
+--      Interrupt masks).
+--  @2. Generate random inputs to Interrupt manager. Calculate expected results
+--      of Interrupt manager (SW model).
+--  @3. Compare results of Interrupt manager with SW model.
+--
+-- @Notes:
 --  Random interrupt source signals are generated in the testbench. Periodically
 --  random setting of interrupt generator is used. Then test waits and evaluates
 --  whether interrupt prediction (int_test_ctr) matches the actual number of
 --  interrupts measured on the int_out rising and falling edges. Also interrupt
 --  vector is read and compared with modeled interrupt vector.
+--
+-- @TestInfoEnd
 --------------------------------------------------------------------------------
 -- Revision History:
 --    6.6.2016   Created file

@@ -40,23 +40,26 @@
 --------------------------------------------------------------------------------
 
 --------------------------------------------------------------------------------
--- Purpose:
+-- @TestInfoStart
+--
+-- @Purpose:
 --  STATUS[TXNF] feature test.
 --
--- Verifies:
---  1. When no TXT Buffer is in Empty state, STATUS[TXNF] is not set.
---  2. When at least on TXT Buffer is in Empty state STATUS[TXNF] is set.
+-- @Verifies:
+--  @1. When no TXT Buffer is in Empty state, STATUS[TXNF] is not set.
+--  @2. When at least on TXT Buffer is in Empty state STATUS[TXNF] is set.
 --
--- Test sequence:
---  1. Set LOM mode in Node 1. Check that STATUS[TXNF] is set (all TXT Buffers
---     should be empty).
---  2. Issue Set ready and Set Abort consecutively to all TXT Buffers. Check
---     that STATUS[TXNF] is set before last buffer. Check that after last buffer
---     STATUS[TXNF] is not set.
---  3. Check that all TXT Buffers are Aborted now. Move always single buffer to
---     empty and check that STATUS[TXNF] is set. Move this buffer to Ready again
---     and check that STATUS[TXNF] is not set. Repeat with each TXT Buffer.
---     
+-- @Test sequence:
+--  @1. Set LOM mode in Node 1. Check that STATUS[TXNF] is set (all TXT Buffers
+--      should be empty).
+--  @2. Issue Set ready and Set Abort consecutively to all TXT Buffers. Check
+--      that STATUS[TXNF] is set before last buffer. Check that after last buffer
+--      STATUS[TXNF] is not set.
+--  @3. Check that all TXT Buffers are Aborted now. Move always single buffer to
+--      empty and check that STATUS[TXNF] is set. Move this buffer to Ready again
+--      and check that STATUS[TXNF] is not set. Repeat with each TXT Buffer.
+--
+-- @TestInfoEnd
 --------------------------------------------------------------------------------
 -- Revision History:
 --    31.10.2019   Created file
@@ -86,41 +89,21 @@ package body status_txnf_feature is
         signal      mem_bus         : inout  mem_bus_arr_t;
         signal      bus_level       : in     std_logic
     ) is
-        variable rand_value         :       real;
-        variable alc                :       natural;
-
-        -- Some unit lost the arbitration...
-        -- 0 - initial , 1-Node 1 turned rec, 2 - Node 2 turned rec
-        variable unit_rec           :     natural := 0;
-
         variable ID_1               :     natural := 1;
         variable ID_2               :     natural := 2;
-        variable r_data             :     std_logic_vector(31 downto 0) :=
-                                               (OTHERS => '0');
+
         -- Generated frames
         variable frame_1            :     SW_CAN_frame_type;
-        variable frame_2            :     SW_CAN_frame_type;
-        variable frame_rx           :     SW_CAN_frame_type;
 
         -- Node status
         variable stat_1             :     SW_status;
-        variable stat_2             :     SW_status;
-
-        variable pc_dbg             :     SW_PC_Debug;
         
         variable txt_buf_state      :     SW_TXT_Buffer_state_type;
-        variable rx_buf_info        :     SW_RX_Buffer_info;
-        variable frames_equal       :     boolean := false;        
-
-        variable id_vect            :     std_logic_vector(28 downto 0);
-        variable command            :     SW_command := SW_command_rst_val;
-        
-        variable num_frames         :     integer;
         variable mode_1             :     SW_mode;
     begin
 
         -----------------------------------------------------------------------
-        -- 1. Set LOM mode in Node 1. Check that STATUS[TXNF] is set (all TXT
+        -- @1. Set LOM mode in Node 1. Check that STATUS[TXNF] is set (all TXT
         --    Buffers should be empty).
         -----------------------------------------------------------------------
         info("Step 1");
@@ -131,7 +114,7 @@ package body status_txnf_feature is
         check(stat_1.tx_buffer_empty, "STATUS[TXNF] set!");
 
         -----------------------------------------------------------------------
-        -- 2. Issue Set ready and Set Abort consecutively to all TXT Buffers.
+        -- @2. Issue Set ready and Set Abort consecutively to all TXT Buffers.
         --    Check that STATUS[TXNF] is set before last buffer. Check that
         --    after last buffer STATUS[TXNF] is not set.
         -----------------------------------------------------------------------
@@ -151,7 +134,7 @@ package body status_txnf_feature is
         end loop;
 
         -----------------------------------------------------------------------
-        -- 3. Check that all TXT Buffers are Aborted now. Move always single
+        -- @3. Check that all TXT Buffers are Aborted now. Move always single
         --    buffer to empty and check that STATUS[TXNF] is set. Move this
         --    buffer to Ready again and check that STATUS[TXNF] is not set.
         --    Repeat with each TXT Buffer.

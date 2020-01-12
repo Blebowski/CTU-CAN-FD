@@ -40,27 +40,31 @@
 --------------------------------------------------------------------------------
 
 --------------------------------------------------------------------------------
--- Purpose:
+-- @TestInfoStart
+--
+-- @Purpose:
 --  Release receive buffer command feature test.
 --
--- Verifies:
---  1. RX Buffer is reset by issuing COMMAND[RRB].
---  2. COMMAND[RRB] issued during CAN frame reception will erase RX Buffer
---     properly, and RX buffer will remain consistent.
+-- @Verifies:
+--  @1. RX Buffer is reset by issuing COMMAND[RRB].
+--  @2. COMMAND[RRB] issued during CAN frame reception will erase RX Buffer
+--      properly, and RX buffer will remain consistent.
 --
--- Test sequence:
---  1. Check RX buffer in Node 1 is empty. Generate CAN frame and send it by 
---     Node 2. Wait until frame is sent. Check RX Buffer is not empty.
---  2. Issue COMMAND[RRB] and check that RX Buffer is empty again!
---  3. Send CAN frame by Node 2, wait until frame is sent and check that RX
---     Buffer is not empty again.
---  4. Send frame by Node 2. Wait until Node 1 starts receiving. Wait for
---     random amount of time and issue COMMAND[RRB]. Wait until bus is idle.
---     RX Buffer can be either empty (command was issued after first word
---     was stored), or there are is one frame (command was issued before
---     first word was stored).
---  5. Send frame by Node 2 again. Wait until frame is sent and check it is
---     properly received by Node 1.
+-- @Test sequence:
+--  @1. Check RX buffer in Node 1 is empty. Generate CAN frame and send it by 
+--      Node 2. Wait until frame is sent. Check RX Buffer is not empty.
+--  @2. Issue COMMAND[RRB] and check that RX Buffer is empty again!
+--  @3. Send CAN frame by Node 2, wait until frame is sent and check that RX
+--      Buffer is not empty again.
+--  @4. Send frame by Node 2. Wait until Node 1 starts receiving. Wait for
+--      random amount of time and issue COMMAND[RRB]. Wait until bus is idle.
+--      RX Buffer can be either empty (command was issued after first word
+--      was stored), or there are is one frame (command was issued before
+--      first word was stored).
+--  @5. Send frame by Node 2 again. Wait until frame is sent and check it is
+--      properly received by Node 1.
+--
+-- @TestInfoEnd
 --------------------------------------------------------------------------------
 -- Revision History:
 --    21.10.2019   Created file
@@ -90,38 +94,21 @@ package body command_rrb_feature is
         signal      mem_bus         : inout  mem_bus_arr_t;
         signal      bus_level       : in     std_logic
     ) is
-        variable rand_value         :       real;
-        variable alc                :       natural;
-
-        -- Some unit lost the arbitration...
-        -- 0 - initial , 1-Node 1 turned rec, 2 - Node 2 turned rec
-        variable unit_rec           :     natural := 0;
-
         variable ID_1               :     natural := 1;
         variable ID_2               :     natural := 2;
-        variable r_data             :     std_logic_vector(31 downto 0) :=
-                                               (OTHERS => '0');
+        
         -- Generated frames
         variable frame_1            :     SW_CAN_frame_type;
-        variable frame_2            :     SW_CAN_frame_type;
         variable frame_rx           :     SW_CAN_frame_type;
-
-        -- Node status
-        variable stat_1             :     SW_status;
-        variable stat_2             :     SW_status;
-
-        variable pc_dbg             :     SW_PC_Debug;
         
-        variable txt_buf_state      :     SW_TXT_Buffer_state_type;
         variable rx_buf_info        :     SW_RX_Buffer_info;
         variable frames_equal       :     boolean := false;        
 
-        variable id_vect            :     std_logic_vector(28 downto 0);
         variable command            :     SW_command := SW_command_rst_val;
     begin
 
         -----------------------------------------------------------------------
-        --  1. Check RX buffer in Node 1 is empty. Generate CAN frame and send 
+        --  @1. Check RX buffer in Node 1 is empty. Generate CAN frame and send 
         --     it by Node 2. Wait until frame is sent. Check RX Buffer is not
         --     empty.
         -----------------------------------------------------------------------
@@ -149,7 +136,7 @@ package body command_rrb_feature is
         check(rx_buf_info.rx_frame_count = 1, "Frame count 1");
 
         -----------------------------------------------------------------------
-        -- 2. Issue COMMAND[RRB] and check that RX Buffer is empty again!
+        -- @2. Issue COMMAND[RRB] and check that RX Buffer is empty again!
         -----------------------------------------------------------------------
         info("Step 2");
         command.release_rec_buffer := true;
@@ -163,7 +150,7 @@ package body command_rrb_feature is
         check(rx_buf_info.rx_frame_count = 0, "Frame count 0");
         
         -----------------------------------------------------------------------
-        -- 3. Send CAN frame by Node 2, wait until frame is sent and check that
+        -- @3. Send CAN frame by Node 2, wait until frame is sent and check that
         --    RX Buffer is not empty again.
         -----------------------------------------------------------------------
         info("Step 3");
@@ -184,7 +171,7 @@ package body command_rrb_feature is
         CAN_wait_bus_idle(ID_2, mem_bus(2));
 
         -----------------------------------------------------------------------
-        -- 4. Send frame by Node 2. Wait until Node 1 starts receiving. Wait
+        -- @4. Send frame by Node 2. Wait until Node 1 starts receiving. Wait
         --    for random amount of time and issue COMMAND[RRB].  Wait until
         --    bus is idle. RX Buffer can be either empty (command was issued
         --    after first word was stored), or there are is one frame (command
@@ -220,7 +207,7 @@ package body command_rrb_feature is
         check(rx_buf_info.rx_frame_count = 0, "Frame count 0");
         
         -----------------------------------------------------------------------
-        -- 5. Send frame by Node 2 again. Wait until frame is sent and check it
+        -- @5. Send frame by Node 2 again. Wait until frame is sent and check it
         --    is properly received by Node 1.
         -----------------------------------------------------------------------
         info("Step 5");

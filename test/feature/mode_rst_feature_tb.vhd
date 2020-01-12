@@ -40,18 +40,22 @@
 --------------------------------------------------------------------------------
 
 --------------------------------------------------------------------------------
--- Purpose:
+-- @TestInfoStart
+--
+-- @Purpose:
 --  Soft reset feature test.
 --
--- Verifies:
---  1. Reset value of all memory registers.
---  2. MODE[RST] will reset all the memory registers.
+-- @Verifies:
+--  @1. Reset value of all memory registers.
+--  @2. MODE[RST] will reset all the memory registers.
 --
--- Test sequence:
---  1. Write all RW registers to random value. Check they were written.
---  2. Execute SW reset via MODE[RST].
---  3. Read all registers and check they return their reset value.
---  4. Write all RW registers to random value. Check they were written.
+-- @Test sequence:
+--  @1. Write all RW registers to random value. Check they were written.
+--  @2. Execute SW reset via MODE[RST].
+--  @3. Read all registers and check they return their reset value.
+--  @4. Write all RW registers to random value. Check they were written.
+--
+-- @TestInfoEnd
 --------------------------------------------------------------------------------
 -- Revision History:
 --    28.10.2019   Created file
@@ -151,34 +155,10 @@ package body mode_rst_feature is
         signal      mem_bus         : inout  mem_bus_arr_t;
         signal      bus_level       : in     std_logic
     ) is
-        variable rand_value         :       real;
-        variable alc                :       natural;
-
-        -- Some unit lost the arbitration...
-        -- 0 - initial , 1-Node 1 turned rec, 2 - Node 2 turned rec
-        variable unit_rec           :     natural := 0;
-
         variable ID_1               :     natural := 1;
         variable ID_2               :     natural := 2;
         variable r_data             :     std_logic_vector(31 downto 0) :=
                                                (OTHERS => '0');
-        -- Generated frames
-        variable frame_1            :     SW_CAN_frame_type;
-        variable frame_2            :     SW_CAN_frame_type;
-        variable frame_rx           :     SW_CAN_frame_type;
-
-        -- Node status
-        variable stat_1             :     SW_status;
-        variable stat_2             :     SW_status;
-
-        variable pc_dbg             :     SW_PC_Debug;
-        
-        variable txt_buf_state      :     SW_TXT_Buffer_state_type;
-        variable rx_buf_info        :     SW_RX_Buffer_info;
-        variable frames_equal       :     boolean := false;        
-
-        variable id_vect            :     std_logic_vector(28 downto 0);
-        variable command            :     SW_command := SW_command_rst_val;
         
         variable reg_model          :     t_Control_registers_list;
         
@@ -192,7 +172,7 @@ package body mode_rst_feature is
     begin
 
         -----------------------------------------------------------------------
-        -- 1. Write all RW registers to random value. Check they were written.
+        -- @1. Write all RW registers to random value. Check they were written.
         -----------------------------------------------------------------------
         info("Step 1");
         for i in 0 to Control_registers_list'length - 1 loop
@@ -237,13 +217,13 @@ package body mode_rst_feature is
         end loop;
 
         -----------------------------------------------------------------------
-        -- 2. Execute SW reset via MODE[RST].
+        -- @2. Execute SW reset via MODE[RST].
         -----------------------------------------------------------------------
         info("Step 2");
         exec_SW_reset(ID_1, mem_bus(1));
 
         -----------------------------------------------------------------------
-        -- 3. Read all registers and check they return their reset value.
+        -- @3. Read all registers and check they return their reset value.
         -----------------------------------------------------------------------
         info("Step 3");
         for i in 0 to Control_registers_list'length - 1 loop

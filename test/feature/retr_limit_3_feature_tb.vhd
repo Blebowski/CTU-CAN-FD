@@ -40,28 +40,32 @@
 --------------------------------------------------------------------------------
 
 --------------------------------------------------------------------------------
--- Purpose:
+-- @TestInfoStart
+--
+-- @Purpose:
 --  Retransmitt limit feature test 3 (cornercases).
 --
--- Verifies:
---  1. When unit is a receiver without attempt to transmitt a frame
---     (TXT Buffer is ready, unit is Error passive and dominant bit is detected
---      during Suspend field), if an error occurs during such a frame,
---     retransmitt counter is not incremented!
+-- @Verifies:
+--  @1. When unit is a receiver without attempt to transmitt a frame
+--      (TXT Buffer is ready, unit is Error passive and dominant bit is detected
+--       during Suspend field), if an error occurs during such a frame,
+--      retransmitt counter is not incremented!
 --
--- Test sequence:
---  1. Configure retransmitt limit in Node 1, enable retransmitt limitation.
---     Enable Test Mode in Node 1 to be able manipulate with Error counters.
---     Configure Node 2 to Acknowledge Forbidden Mode to invoke transmission
---     of Error frames during test.
---  2. Set Node 1 TX Error counter to 150. Check that Node 1 is Error Passive.
---     Send frame by Node 1. Wait until Error frame occurs. Check that Retransmit
---     counter in Node 1 is now 1. Insert frame to Node 2. Wait until Suspend
---     transmission in Node 1.
---  3. Wait until Arbitration field in Node 1, check that Node 1 is now receiver.
---     Wait until ACK field, force the bus for the whole duration of ACK field
---     to Recessive. Check that Error frame is transmitted by Node 1. Wait until
---     bus is Idle. Check that Retransmitt counter is stil1 1.
+-- @Test sequence:
+--  @1. Configure retransmitt limit in Node 1, enable retransmitt limitation.
+--      Enable Test Mode in Node 1 to be able manipulate with Error counters.
+--      Configure Node 2 to Acknowledge Forbidden Mode to invoke transmission
+--      of Error frames during test.
+--  @2. Set Node 1 TX Error counter to 150. Check that Node 1 is Error Passive.
+--      Send frame by Node 1. Wait until Error frame occurs. Check that Retransmit
+--      counter in Node 1 is now 1. Insert frame to Node 2. Wait until Suspend
+--      transmission in Node 1.
+--  @3. Wait until Arbitration field in Node 1, check that Node 1 is now receiver.
+--      Wait until ACK field, force the bus for the whole duration of ACK field
+--      to Recessive. Check that Error frame is transmitted by Node 1. Wait until
+--      bus is Idle. Check that Retransmitt counter is stil1 1.
+--
+-- @TestInfoEnd
 --------------------------------------------------------------------------------
 -- Revision History:
 --    13.7.2019   Created file
@@ -91,22 +95,15 @@ package body retr_limit_3_feature is
         signal      mem_bus         : inout  mem_bus_arr_t;
         signal      bus_level       : in     std_logic
     ) is
-        variable r_data             :       std_logic_vector(31 downto 0) :=
-                                                (OTHERS => '0');
         variable CAN_frame          :       SW_CAN_frame_type;
         variable frame_sent         :       boolean := false;
-        variable ctr_1              :       natural;
-        variable ctr_2              :       natural;
         variable ID_1           	:       natural := 1;
         variable ID_2           	:       natural := 2;
-        variable rand_val           :       real;
         variable retr_th            :       natural;
-        variable mode_backup        :       std_logic_vector(31 downto 0) :=
-                                                (OTHERS => '0');
+
         variable mode_1             :       SW_mode := SW_mode_rst_val;
         variable mode_2             :       SW_mode := SW_mode_rst_val;
         variable err_counters       :       SW_error_counters := (0, 0, 0, 0);
-        variable buf_state          :       SW_TXT_Buffer_state_type;
         variable status             :       SW_status;
         variable retr_ctr           :       natural;
         variable fault_state        :       SW_fault_state;
@@ -116,7 +113,7 @@ package body retr_limit_3_feature is
         retr_th := 5;
 
         ------------------------------------------------------------------------
-        -- 1. Configure retransmitt limit in Node 1, enable retransmitt
+        -- @1. Configure retransmitt limit in Node 1, enable retransmitt
         --    limitation. Enable Test Mode in Node 1 to be able manipulate with
         --    Error counters. Configure Node 2 to Acknowledge Forbidden Mode to
         --    invoke transmission of Error frames during test.
@@ -129,7 +126,7 @@ package body retr_limit_3_feature is
         set_core_mode(mode_1, ID_1, mem_bus(1));
         
         ------------------------------------------------------------------------
-        -- 2. Set Node 1 TX Error counter to 150. Check that Node 1 is Error
+        -- @2. Set Node 1 TX Error counter to 150. Check that Node 1 is Error
         --    Passive. Send frame by Node 1. Wait until Error frame occurs.
         --    Check that Retransmit counter in Node 1 is now 1. Wait until 
         --    Suspend transmission in Node 1. Insert frame to Node 2.
@@ -150,7 +147,7 @@ package body retr_limit_3_feature is
         CAN_send_frame(CAN_frame, 1, ID_2, mem_bus(2), frame_sent);
         
         ------------------------------------------------------------------------
-        -- 3. Wait until Arbitration field in Node 1, check that Node 1 is now
+        -- @3. Wait until Arbitration field in Node 1, check that Node 1 is now
         --    receiver. Wait until ACK field, force the bus for the whole du-
         --    ration of ACK field to Recessive. Check that Error frame is
         --    transmitted by Node 1. Wait until Intermission. Check that Retran-

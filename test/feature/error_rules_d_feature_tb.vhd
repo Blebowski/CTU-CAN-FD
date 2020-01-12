@@ -40,27 +40,31 @@
 --------------------------------------------------------------------------------
 
 --------------------------------------------------------------------------------
--- Purpose:
+-- @TestInfoStart
+--
+-- @Purpose:
 --  Fault confinement rules - rule D - feature test.
 --
--- Verifies:
---  1. If a transmitter detects a bit error while sending an active error flag
---     or an overload flag, the transmit error counter shall be incremented by
---     8.
+-- @Verifies:
+--  @1. If a transmitter detects a bit error while sending an active error flag
+--      or an overload flag, the transmit error counter shall be incremented by
+--      8.
 --
--- Test sequence:
---  1. Set Node 2 to ACK forbidden mode. Generate CAN frame and send it by Node
---     1. Wait until Error frame is sent by Node 1. Wait for random amount of
---     bits (0-5) and force bus level to recessive for duration of one bit time.
---     Wait until bus is idle and check that TX Error counter was incremented
---     by 16 (first ACK error, next bit error during Error frame)!
---  2. Unset ACK Forbidden in Node 2. Generate CAN frame and send it by Node 1.
---     Wait until Intermission in Node 1 and force bus low for duration of one
---     bit time (overload condition). Check that overload frame is being tran-
---     smitted. Wait for random amount of bits (0-5) and force bus level to
---     recessive for one bit-time. Wait until bus is idle and check that TX
---     Error counter was incremented by 7 (incremented by 8, but decremented by
---     1 due to tran frame valid!)
+-- @Test sequence:
+--  @1. Set Node 2 to ACK forbidden mode. Generate CAN frame and send it by Node
+--      1. Wait until Error frame is sent by Node 1. Wait for random amount of
+--      bits (0-5) and force bus level to recessive for duration of one bit time.
+--      Wait until bus is idle and check that TX Error counter was incremented
+--      by 16 (first ACK error, next bit error during Error frame)!
+--  @2. Unset ACK Forbidden in Node 2. Generate CAN frame and send it by Node 1.
+--      Wait until Intermission in Node 1 and force bus low for duration of one
+--      bit time (overload condition). Check that overload frame is being tran-
+--      smitted. Wait for random amount of bits (0-5) and force bus level to
+--      recessive for one bit-time. Wait until bus is idle and check that TX
+--      Error counter was incremented by 7 (incremented by 8, but decremented by
+--      1 due to tran frame valid!)
+--
+-- @TestInfoEnd
 --------------------------------------------------------------------------------
 -- Revision History:
 --    26.11.2019   Created file
@@ -92,31 +96,21 @@ package body error_rules_d_feature is
         variable ID_1               :       natural := 1;
         variable ID_2               :       natural := 2;
         variable CAN_frame          :       SW_CAN_frame_type;
-        variable RX_CAN_frame       :       SW_CAN_frame_type;
         variable frame_sent         :       boolean := false;
-        variable rand_value         :       natural;
         
-        variable status             :       SW_status;
-        variable command            :       SW_command := SW_command_rst_val;
-        
-        variable rx_buf_info        :       SW_RX_Buffer_info;
-        variable mode_1             :       SW_mode := SW_mode_rst_val;
         variable mode_2             :       SW_mode := SW_mode_rst_val;
         
         variable err_counters_1     :       SW_error_counters := (0, 0, 0, 0);
         variable err_counters_2     :       SW_error_counters := (0, 0, 0, 0);
         variable err_counters_3     :       SW_error_counters := (0, 0, 0, 0);
         variable err_counters_4     :       SW_error_counters := (0, 0, 0, 0);
-
-        variable id_vect            :       std_logic_vector(28 downto 0);
-        variable err_capt           :       SW_error_capture;
         
         variable bit_waits          :       natural := 0;
         variable pc_dbg             :       SW_PC_Debug;
     begin
 
         -----------------------------------------------------------------------
-        -- 1. Set Node 2 to ACK forbidden mode. Generate CAN frame and send it
+        -- @1. Set Node 2 to ACK forbidden mode. Generate CAN frame and send it
         --    by Node 1. Wait until Error frame is sent by Node 1. Wait for
         --    random amount of bits (0-5) and force bus level to recessive for
         --    duration of one bit time. Wait until bus is idle and check that
@@ -159,7 +153,7 @@ package body error_rules_d_feature is
             "RX Error counter unchanged in transmitter!");
 
         -----------------------------------------------------------------------
-        -- 2. Unset ACK Forbidden in Node 2. Generate CAN frame and send it by
+        -- @2. Unset ACK Forbidden in Node 2. Generate CAN frame and send it by
         --    Node 1. Wait until Intermission in Node 1 and force bus low for
         --    duration of one bit time (overload condition). Check that
         --    overload frame is being transmitted. Wait for random amount of

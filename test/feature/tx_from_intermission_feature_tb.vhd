@@ -40,25 +40,28 @@
 --------------------------------------------------------------------------------
 
 --------------------------------------------------------------------------------
--- Purpose:
+-- @TestInfoStart
+--
+-- @Purpose:
 --  Start of transmission from Intermission 
 --
--- Verifies:
---  1. Transmission is started when Node detects Dominant bit during third
---     bit of intermission and it has frame for transmission available.
---  2. Reception is started when Node detectes Dominant bit during third bit
---     of Intermission and it has no frame for transmission available.
+-- @Verifies:
+--  @1. Transmission is started when Node detects Dominant bit during third
+--      bit of intermission and it has frame for transmission available.
+--  @2. Reception is started when Node detectes Dominant bit during third bit
+--      of Intermission and it has no frame for transmission available.
 --
--- Test sequence:
---  1. Insert CAN frame for transmission into Node 2. Wait until transmission
---     will be started. Insert CAN frame to Node 1 during transmission of frame
---     from Node 2 and wait until Intermission.
---  2. Wait for two sample points and force the bus dominant during third bit
---     of intermission for Node 1. Wait until sample point, and check that Node
---     1 started transmitting. Check that Node 1 is in "arbitration" phase.
---     Check that Node 1 is NOT in SOF. Wait until frame is sent, and check
---     it is properly receieved by Node 2 (Node 2 should have turned receiver).
---      
+-- @Test sequence:
+--  @1. Insert CAN frame for transmission into Node 2. Wait until transmission
+--      will be started. Insert CAN frame to Node 1 during transmission of frame
+--      from Node 2 and wait until Intermission.
+--  @2. Wait for two sample points and force the bus dominant during third bit
+--      of intermission for Node 1. Wait until sample point, and check that Node
+--      1 started transmitting. Check that Node 1 is in "arbitration" phase.
+--      Check that Node 1 is NOT in SOF. Wait until frame is sent, and check
+--      it is properly receieved by Node 2 (Node 2 should have turned receiver).
+--
+-- @TestInfoEnd
 --------------------------------------------------------------------------------
 -- Revision History:
 --    22.11.2019   Created file
@@ -88,17 +91,9 @@ package body tx_from_intermission_feature is
         signal      mem_bus         : inout  mem_bus_arr_t;
         signal      bus_level       : in     std_logic
     ) is
-        variable rand_value         :       real;
-        variable alc                :       natural;
-
-        -- Some unit lost the arbitration...
-        -- 0 - initial , 1-Node 1 turned rec, 2 - Node 2 turned rec
-        variable unit_rec           :     natural := 0;
-
         variable ID_1               :     natural := 1;
         variable ID_2               :     natural := 2;
-        variable r_data             :     std_logic_vector(31 downto 0) :=
-                                               (OTHERS => '0');
+
         -- Generated frames
         variable frame_1            :     SW_CAN_frame_type;
         variable frame_2            :     SW_CAN_frame_type;
@@ -106,26 +101,14 @@ package body tx_from_intermission_feature is
 
         -- Node status
         variable stat_1             :     SW_status;
-        variable stat_2             :     SW_status;
 
         variable pc_dbg             :     SW_PC_Debug;
-        
-        variable txt_buf_state      :     SW_TXT_Buffer_state_type;
-        variable rx_buf_info        :     SW_RX_Buffer_info;
-        variable frames_equal       :     boolean := false;        
         variable frame_sent         :     boolean;
-
-        variable id_vect            :     std_logic_vector(28 downto 0);
-        variable command            :     SW_command := SW_command_rst_val;
-        
-        variable num_frames         :     integer;
-        variable mode_1             :     SW_mode;
-        
         variable frame_equal        :     boolean;
     begin
 
         -----------------------------------------------------------------------
-        -- 1. Insert CAN frame for transmission into Node 2. Wait until
+        -- @1. Insert CAN frame for transmission into Node 2. Wait until
         --    transmission will be started. Insert CAN frame to Node 1 during 
         --    transmission of frame from Node 2 and wait until Intermission.
         -----------------------------------------------------------------------
@@ -143,7 +126,7 @@ package body tx_from_intermission_feature is
         CAN_wait_pc_state(pc_deb_intermission, ID_1, mem_bus(1));
 
         -----------------------------------------------------------------------
-        -- 2. Wait for two sample points and force the bus dominant during
+        -- @2. Wait for two sample points and force the bus dominant during
         --    third bit of intermission for Node 1. Wait until sample point,
         --    and check that Node 1 started transmitting. Check that Node 1 is
         --    in "arbitration" phase. Check that Node 1 is NOT in SOF. Wait 

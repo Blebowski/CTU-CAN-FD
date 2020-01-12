@@ -40,28 +40,31 @@
 --------------------------------------------------------------------------------
 
 --------------------------------------------------------------------------------
--- Purpose:
+-- @TestInfoStart
+--
+-- @Purpose:
 --  Frame filters mode feature test.  
 --
--- Verifies:
---  1. When in Frame filters mode, RX frame which does not pass frame filters
---     will not be received!
---  2. When in Frame filters mode, RX frame which does pass frame filters will
---     be received.
---  3. When not in frame filters mode, RX frame which does not pass frame filters
---     will be received.
+-- @Verifies:
+--  @1. When in Frame filters mode, RX frame which does not pass frame filters
+--      will not be received!
+--  @2. When in Frame filters mode, RX frame which does pass frame filters will
+--      be received.
+--  @3. When not in frame filters mode, RX frame which does not pass frame filters
+--      will be received.
 --
--- Test sequence:
---  1. Configure frame filters mode in Node 1. Configure filter A to receive only
---     can frames with Odd base IDs (lowest bit = 1). Configure all other filters
---     not to accept any frames (disable all frame/identifier type combinations).
---  2. Generate random CAN frame and send by Node 2. Wait till frame is received.
---     If frame should be received (LSB of ID=1), check it is received. If it
---     should not be received, check it is not received!
---  3. Disable frame filters mode in Node 1. Send CAN frame with LSB of ID=0,
---     (should not be received according to frame filters settings).
---  4. Wait till frame passes and check it is received in Node 2!
+-- @Test sequence:
+--  @1. Configure frame filters mode in Node 1. Configure filter A to receive only
+--      can frames with Odd base IDs (lowest bit = 1). Configure all other filters
+--      not to accept any frames (disable all frame/identifier type combinations).
+--  @2. Generate random CAN frame and send by Node 2. Wait till frame is received.
+--      If frame should be received (LSB of ID=1), check it is received. If it
+--      should not be received, check it is not received!
+--  @3. Disable frame filters mode in Node 1. Send CAN frame with LSB of ID=0,
+--      (should not be received according to frame filters settings).
+--  @4. Wait till frame passes and check it is received in Node 2!
 --
+-- @TestInfoEnd
 --------------------------------------------------------------------------------
 -- Revision History:
 --    22.9.2019   Created file
@@ -91,34 +94,23 @@ package body mode_frame_filters_feature is
         signal      mem_bus         : inout  mem_bus_arr_t;
         signal      bus_level       : in     std_logic
     ) is
-        variable r_data             :       std_logic_vector(31 downto 0) :=
-                                                (OTHERS => '0');
         variable CAN_TX_frame       :       SW_CAN_frame_type;
         variable CAN_RX_frame       :       SW_CAN_frame_type;
         variable frame_sent         :       boolean := false;
-        variable ctr_1              :       natural;
-        variable ctr_2              :       natural;
         variable ID_1           	:       natural := 1;
         variable ID_2           	:       natural := 2;
-        variable rand_val           :       real;
-        variable retr_th            :       natural;
-        variable mode_backup        :       std_logic_vector(31 downto 0) :=
-                                                (OTHERS => '0');
+        
         variable mode_1             :       SW_mode := SW_mode_rst_val;
-        variable mode_2             :       SW_mode := SW_mode_rst_val;
-        variable err_counters       :       SW_error_counters := (0, 0, 0, 0);
-        variable txt_buf_state      :       SW_TXT_Buffer_state_type;
+        
         variable rx_buf_state       :       SW_RX_Buffer_info;
-        variable status             :       SW_status;
         variable frames_equal       :       boolean := false;
-        variable pc_dbg             :       SW_PC_Debug;
         variable filt_A_cfg         :       SW_CAN_mask_filter_config;
         variable filt_B_C_cfg       :       SW_CAN_mask_filter_config;
         variable filter_range_cfg   :       SW_CAN_range_filter_config;
     begin
 
         ------------------------------------------------------------------------
-        -- 1. Configure frame filters mode in Node 1. Configure filter A to 
+        -- @1. Configure frame filters mode in Node 1. Configure filter A to 
         --    receive only can frames with Odd base IDs (lowest bit = 1). 
         --    Configure all other filters not to accept any frames (disable all
         --    frame/identifier type combinations).
@@ -153,7 +145,7 @@ package body mode_frame_filters_feature is
         CAN_set_range_filter(filter_range_cfg, ID_1, mem_bus(1));
 
         ------------------------------------------------------------------------
-        -- 2. Generate random CAN frame and send by Node 2. Wait till frame is 
+        -- @2. Generate random CAN frame and send by Node 2. Wait till frame is 
         --    received. If frame should be received (LSB of ID=1), check it is
         --    received. If it should not be received, check it is not received!
         ------------------------------------------------------------------------
@@ -177,7 +169,7 @@ package body mode_frame_filters_feature is
         end if;
                 
         ------------------------------------------------------------------------
-        -- 3. Disable frame filters mode in Node 1. Send CAN frame with LSB of
+        -- @3. Disable frame filters mode in Node 1. Send CAN frame with LSB of
         --    ID=0,(should not be received according to frame filters settings).
         ------------------------------------------------------------------------
         info("Step 3: Check frame filters mode disabled!");

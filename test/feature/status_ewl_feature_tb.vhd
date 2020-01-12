@@ -40,18 +40,22 @@
 --------------------------------------------------------------------------------
 
 --------------------------------------------------------------------------------
--- Purpose:
+-- @TestInfoStart
+--
+-- @Purpose:
 --  STATUS[EWL] feature test.
 --
--- Verifies:
---  1. When RX Error counter (REC) is higher than EWL, then STAT[EWL] is set.
---  2. When TX Error counter (TEC) is higher than EWL, then STAT[EWL] is set.
---  3. When both REC and TEC are lower than EWL, STAT[EWL] is not set.
+-- @Verifies:
+--  @1. When RX Error counter (REC) is higher than EWL, then STAT[EWL] is set.
+--  @2. When TX Error counter (TEC) is higher than EWL, then STAT[EWL] is set.
+--  @3. When both REC and TEC are lower than EWL, STAT[EWL] is not set.
 --
--- Test sequence:
---  1. Set Node 1 in test mode. Generate random EWL and configure it. Generate
---     random REC and TEC and set them in Node 1. Pre-calculate if STAT[EWL]
---     shall be set and check it.
+-- @Test sequence:
+--  @1. Set Node 1 in test mode. Generate random EWL and configure it. Generate
+--      random REC and TEC and set them in Node 1. Pre-calculate if STAT[EWL]
+--      shall be set and check it.
+--
+-- @TestInfoEnd
 --------------------------------------------------------------------------------
 -- Revision History:
 --    02.11.2019  Created file
@@ -81,46 +85,23 @@ package body status_ewl_feature is
         signal      mem_bus         : inout  mem_bus_arr_t;
         signal      bus_level       : in     std_logic
     ) is
-        variable rand_value         :       real;
-        variable alc                :       natural;
-
-        -- Some unit lost the arbitration...
-        -- 0 - initial , 1-Node 1 turned rec, 2 - Node 2 turned rec
-        variable unit_rec           :     natural := 0;
-
         variable ID_1               :     natural := 1;
         variable ID_2               :     natural := 2;
-        variable r_data             :     std_logic_vector(31 downto 0) :=
-                                               (OTHERS => '0');
+
         -- Generated frames
         variable frame_1            :     SW_CAN_frame_type;
-        variable frame_2            :     SW_CAN_frame_type;
-        variable frame_rx           :     SW_CAN_frame_type;
 
         -- Node status
         variable stat_1             :     SW_status;
-        variable stat_2             :     SW_status;
-
-        variable pc_dbg             :     SW_PC_Debug;
         
-        variable txt_buf_state      :     SW_TXT_Buffer_state_type;
-        variable rx_buf_info        :     SW_RX_Buffer_info;
-        variable frames_equal       :     boolean := false;        
-        variable frame_sent         :     boolean;
-
-        variable id_vect            :     std_logic_vector(28 downto 0);
-        variable command            :     SW_command := SW_command_rst_val;
-        
-        variable num_frames         :     integer;
         variable mode_1             :     SW_mode;
-        
         variable err_counters       :     SW_error_counters;
         variable fault_th           :     SW_fault_thresholds := (0,0);
         variable exp_stat_ewl       :     boolean;
     begin
 
         -----------------------------------------------------------------------
-        -- 1. Set Node 1 in test mode. Generate random EWL and configure it.
+        -- @1. Set Node 1 in test mode. Generate random EWL and configure it.
         --    Generate random REC and TEC and set them in Node 1. Pre-calculate
         --    if STAT[EWL] shall be set and check it.
         -----------------------------------------------------------------------

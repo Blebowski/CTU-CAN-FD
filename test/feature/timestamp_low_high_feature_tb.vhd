@@ -40,17 +40,20 @@
 --------------------------------------------------------------------------------
 
 --------------------------------------------------------------------------------
--- Purpose:
+-- @TestInfoStart
+--
+-- @Purpose:
 --  Feature test for Timestamp options on RX frame in RX Buffer!
 --
--- Verifies:
---  1. TIMESTAMP_LOW and TIMESTAMP_HIGH registers functionality.
+-- @Verifies:
+--  @1. TIMESTAMP_LOW and TIMESTAMP_HIGH registers functionality.
 --
--- Test sequence:
---  1. Preset Timestamp value in TB. Read values from TIMESTAMP_LOW and
---     TIMESTAMP_HIGH registers. Check read value matches value which was
---     preset.
+-- @Test sequence:
+--  @1. Preset Timestamp value in TB. Read values from TIMESTAMP_LOW and
+--      TIMESTAMP_HIGH registers. Check read value matches value which was
+--      preset.
 --
+-- @TestInfoEnd
 --------------------------------------------------------------------------------
 -- Revision History:
 --    29.6.2018     Created file
@@ -81,8 +84,6 @@ package body timestamp_low_high_feature is
         signal      mem_bus         : inout  mem_bus_arr_t;
         signal      bus_level       : in     std_logic
     ) is
-        variable r_data             :        std_logic_vector(31 downto 0) :=
-                                                 (OTHERS => '0');
         variable ID_1               :        natural := 1;
         variable diff               :        unsigned(63 downto 0);
 
@@ -93,7 +94,7 @@ package body timestamp_low_high_feature is
     begin
 
         -----------------------------------------------------------------------
-        -- 1. Preset Timestamp value in TB. Read values from TIMESTAMP_LOW and
+        -- @1. Preset Timestamp value in TB. Read values from TIMESTAMP_LOW and
         --    TIMESTAMP_HIGH registers. Check read value matches value which
         --    was preset.
         -----------------------------------------------------------------------

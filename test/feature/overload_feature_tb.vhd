@@ -40,28 +40,32 @@
 --------------------------------------------------------------------------------
 
 --------------------------------------------------------------------------------
--- Purpose:
+-- @TestInfoStart
+--
+-- @Purpose:
 --  Overload frame feature test 
 --
--- Verifies:
---  1. Overload frame is transmitted as a result of sampling dominant during
---     first and second bit of intermission.
---  2. Overload frame is transmitted as a result of sampling dominant during
---     last bit of end of frame by receiver.
---  3. Error frame is transmitted as a result of sampling dominant bit during
---     last bit of end of frame by transmitter.
+-- @Verifies:
+--  @1. Overload frame is transmitted as a result of sampling dominant during
+--      first and second bit of intermission.
+--  @2. Overload frame is transmitted as a result of sampling dominant during
+--      last bit of end of frame by receiver.
+--  @3. Error frame is transmitted as a result of sampling dominant bit during
+--      last bit of end of frame by transmitter.
 --
--- Test sequence:
---  1. Send frame by Node 1. Wait until first bit of intermission in Node 1 and
---     force bus level Dominant. Check that Node 1 transmitts Overload frame.
---     Wait until the end of overload frame in Node 1.
---  2. Check that we are in "Intermission field now". Wait until second bit of
---     Intermission and force bus low. Wait until sample point and check that
---     Node has transmitted Overload frame. Wait until the end of Overload frame.
---     Wait until bus is idle for both Nodes.
---  3. Send frame by Node 1. Wait until last bit of End of Frame field of Node 1.
---     Force bus low. Check that Node 1 reacts with Error frame. Check that
---     Node 2 reacts with Overload frame.
+-- @Test sequence:
+--  @1. Send frame by Node 1. Wait until first bit of intermission in Node 1 and
+--      force bus level Dominant. Check that Node 1 transmitts Overload frame.
+--      Wait until the end of overload frame in Node 1.
+--  @2. Check that we are in "Intermission field now". Wait until second bit of
+--      Intermission and force bus low. Wait until sample point and check that
+--      Node has transmitted Overload frame. Wait until the end of Overload frame.
+--      Wait until bus is idle for both Nodes.
+--  @3. Send frame by Node 1. Wait until last bit of End of Frame field of Node 1.
+--      Force bus low. Check that Node 1 reacts with Error frame. Check that
+--      Node 2 reacts with Overload frame.
+--
+-- @TestInfoEnd
 --------------------------------------------------------------------------------
 -- Revision History:
 --    22.11.2019   Created file
@@ -91,46 +95,20 @@ package body overload_feature is
         signal      mem_bus         : inout  mem_bus_arr_t;
         signal      bus_level       : in     std_logic
     ) is
-        variable rand_value         :       real;
-        variable alc                :       natural;
-
-        -- Some unit lost the arbitration...
-        -- 0 - initial , 1-Node 1 turned rec, 2 - Node 2 turned rec
-        variable unit_rec           :     natural := 0;
-
         variable ID_1               :     natural := 1;
         variable ID_2               :     natural := 2;
-        variable r_data             :     std_logic_vector(31 downto 0) :=
-                                               (OTHERS => '0');
+
         -- Generated frames
         variable frame_1            :     SW_CAN_frame_type;
-        variable frame_2            :     SW_CAN_frame_type;
-        variable frame_rx           :     SW_CAN_frame_type;
-
-        -- Node status
-        variable stat_1             :     SW_status;
-        variable stat_2             :     SW_status;
 
         variable pc_dbg             :     SW_PC_Debug;
-        
-        variable txt_buf_state      :     SW_TXT_Buffer_state_type;
-        variable rx_buf_info        :     SW_RX_Buffer_info;
-        variable frames_equal       :     boolean := false;        
         variable frame_sent         :     boolean;
-
-        variable id_vect            :     std_logic_vector(28 downto 0);
         variable command            :     SW_command := SW_command_rst_val;
-        
-        variable num_frames         :     integer;
-        variable mode_1             :     SW_mode;
-        
-        variable frame_equal        :     boolean;
         variable status             :     SW_status;
-
     begin
         
         -----------------------------------------------------------------------
-        -- 1. Send frame by Node 1. Wait until first bit of intermission in
+        -- @1. Send frame by Node 1. Wait until first bit of intermission in
         --    Node 1 and force bus level Dominant. Check that Node 1 transmitts
         --    Overload frame. Wait until the end of overload frame in Node 1.
         -----------------------------------------------------------------------
@@ -161,7 +139,7 @@ package body overload_feature is
         CAN_wait_not_pc_state(pc_deb_overload, ID_1, mem_bus(1)); 
 
         -----------------------------------------------------------------------
-        -- 2. Check that we are in "Intermission field now". Wait until second
+        -- @2. Check that we are in "Intermission field now". Wait until second
         --    bit of Intermission and force bus low. Wait until sample point
         --    and check that Node has transmitted Overload frame. Wait until
         --    the end of Overload frame. Wait until bus is idle for both Nodes.
@@ -194,7 +172,7 @@ package body overload_feature is
         CAN_wait_bus_idle(ID_1, mem_bus(2));
 
         -----------------------------------------------------------------------
-        -- 3. Send frame by Node 1. Wait until last bit of End of Frame field
+        -- @3. Send frame by Node 1. Wait until last bit of End of Frame field
         --    of Node 1. Force bus low. Check that Node 1 reacts with Error
         --    frame. Check that Node 2 reacts with Overload frame.
         -----------------------------------------------------------------------

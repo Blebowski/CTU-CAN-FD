@@ -40,17 +40,21 @@
 --------------------------------------------------------------------------------
 
 --------------------------------------------------------------------------------
--- Purpose:
+-- @TestInfoStart
+--
+-- @Purpose:
 --  ERR_CAPT[ERR_POS] = ERC_POS_SOF feature test. 
 --
--- Verifies:
---  1. Detection of form error in SOF bit.
+-- @Verifies:
+--  @1. Detection of form error in SOF bit.
 --
--- Test sequence:
---  1. Generate CAN frame and send it by Node 1. Wait until transmission starts
---     and force bus Recessive. Wait until sample point and check that Error
---     frame is transmitted. Check that ERR_CAPT says that Form Error during
---     SOF was detected!
+-- @Test sequence:
+--  @1. Generate CAN frame and send it by Node 1. Wait until transmission starts
+--      and force bus Recessive. Wait until sample point and check that Error
+--      frame is transmitted. Check that ERR_CAPT says that Form Error during
+--      SOF was detected!
+--
+-- @TestInfoEnd
 --------------------------------------------------------------------------------
 -- Revision History:
 --    02.02.2020   Created file
@@ -80,49 +84,20 @@ package body err_capt_sof_feature is
         signal      mem_bus         : inout  mem_bus_arr_t;
         signal      bus_level       : in     std_logic
     ) is
-        variable rand_value         :       real;
-        variable alc                :       natural;
-
-        -- Some unit lost the arbitration...
-        -- 0 - initial , 1-Node 1 turned rec, 2 - Node 2 turned rec
-        variable unit_rec           :     natural := 0;
-
         variable ID_1               :     natural := 1;
-        variable ID_2               :     natural := 2;
-        variable r_data             :     std_logic_vector(31 downto 0) :=
-                                               (OTHERS => '0');
+        
         -- Generated frames
         variable frame_1            :     SW_CAN_frame_type;
-        variable frame_2            :     SW_CAN_frame_type;
-        variable frame_rx           :     SW_CAN_frame_type;
-
+        
         -- Node status
         variable stat_1             :     SW_status;
-        variable stat_2             :     SW_status;
-
-        variable pc_dbg             :     SW_PC_Debug;
-        
-        variable txt_buf_state      :     SW_TXT_Buffer_state_type;
-        variable rx_buf_info        :     SW_RX_Buffer_info;
-        variable frames_equal       :     boolean := false;        
-
-        variable id_vect            :     std_logic_vector(28 downto 0);
-        variable wait_time          :     natural;
-        
-        variable err_counters_1_1   :     SW_error_counters;
-        variable err_counters_1_2   :     SW_error_counters;
-
-        variable err_counters_2_1   :     SW_error_counters;
-        variable err_counters_2_2   :     SW_error_counters;
         
         variable frame_sent         :     boolean;
-        
         variable err_capt           :     SW_error_capture;
-
     begin
 
         -----------------------------------------------------------------------
-        -- 1. Generate CAN frame and send it by Node 1. Wait until transmission
+        -- @1. Generate CAN frame and send it by Node 1. Wait until transmission
         --    starts and force bus Recessive. Wait until sample point and check
         --    that Error frame is transmitted. Check that ERR_CAPT says that
         --    Form Error during SOF was detected!

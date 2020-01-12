@@ -40,17 +40,48 @@
 --------------------------------------------------------------------------------
 
 --------------------------------------------------------------------------------
--- Purpose:
+-- @TestInfoStart
+--
+-- @Purpose:
 --  Unit test for the RX Buffer circuit.
 --
+-- @Verifies:
+--  @1. Storing protocol to RX Buffer (store metadata, store data word, reception
+--      valid, reception abort).
+--  @2. Storing of Metadata, Identifier and Data words to RX Buffer. 
+--  @2. Reading protocol from RX Buffer. Reading of CAN frame from RX Buffer.
+--  @3. Over-run detection by RX Buffer (frame is discarded when overrun is
+--      detected).
+--  @4. Simultaneous commit and finishing read of frame from RX Buffer.
+--
+-- @Test sequence:
+--  @1. Generate random CAN frames on input of RX Buffer. Emulate storing protocol
+--      as if coming from CAN Core. Randomize whether abort will be issued.
+--      (As if error frame was occured). Randomize time between frames. Randomize
+--      timestamp capturing in SOF or EOF.
+--  @2. If Overrun is signalled or frame abort is issued, discard the frame. If
+--      frame storing finished succesfully, store the frame also to auxiliarly
+--      memory (Input memory). This memory contains what all has been stored to
+--      RX Buffer.
+--  @3. Read frames from RX Buffer with random gaps between (emulate read
+--      protocol). If frame is read, store it to auxiliarly memory (Output memory).
+--      Output memory contains what all has been read from RX Buffer.
+--  @4. When Input memory is filled, stop generating CAN frames to RX Buffer.
+--      Wait until all frames are read from RX Buffer and compare contents of
+--      Input memory and Output memory (everything what was succesfully stored
+--      to RX Buffer must be also in the same order read from RX Buffer). This
+--      verifies proper pointer handling.  
+
+-- @Notes:
 --  Following test instantiates RX Buffer. Stimuli generator generates input
---  frames as CAN_Core would do. Then it checks whether frame was stored into
+--  frames as CAN Core would do. Then it checks whether frame was stored into
 --  the buffer! Another process reads the data as user would do by memory access.
 --  Both, data written into the buffer, and data read from the buffer are stored
 --  into test memories (in_mem,out_mem). When test memory is full content of
 --  both memories is compared! When mismatch occurs test fails. Each time memory
 --  is filled test moves to the next iteration.
 --
+-- @TestInfoEnd
 --------------------------------------------------------------------------------
 -- Revision History:
 --    1.6.2016   Created file
