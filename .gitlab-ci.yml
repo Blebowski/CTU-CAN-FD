@@ -30,7 +30,7 @@ build_ip_and_tests:
     artifacts:
         paths: &vunit_build_paths
             - test/build
-        expire_in: 1 hour
+        expire_in: 3 hrs
     script:
         - cd test
         - make elaborate
