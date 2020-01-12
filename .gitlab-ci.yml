@@ -30,7 +30,7 @@ build_ip_and_tests:
     artifacts:
         paths: &vunit_build_paths
             - test/build
-        expire_in: 1 hour
+        expire_in: 3 hrs
     script:
         - cd test
         - make elaborate
@@ -83,16 +83,11 @@ test_ip_fast:
     script:
         - cd test
         - make test_fast
-        - make coverage
-        - make functional_coverage
-    coverage: "/lines......: ([^%]+%)/"
     artifacts:
         when: always
         paths:
-            - test/code_html
             - test/tests_fast.xml
             - test/xunit.xsl
-            - test/build/functional_coverage
         reports:
             junit: [test/tests_fast.xml]
 
@@ -104,11 +99,19 @@ test_ip_nightly:
     script:
         - cd test
         - make test_nightly
+        - make coverage
+        - make functional_coverage
+        - cd ../scripts
+        - ./gen_vrm
+    coverage: "/lines......: ([^%]+%)/"
     artifacts:
         when: always
         paths:
+            - test/code_html
             - test/tests_nightly.xml
             - test/xunit.xsl
+            - test/build/functional_coverage
+            - scripts/VRM.html
         reports:
             junit: [test/tests_nightly.xml]
 
@@ -116,27 +119,6 @@ test_ip_nightly:
     # kill whole follow-up coverage processing due to this failure!
     # Fast pipeline on the other hand can't fail because it must pass before merge!
     allow_failure: true
-
-get_test_results:
-    stage: test
-    dependencies: [test_ip_fast, test_ip_nightly]
-    when: always
-    script:
-        - cd test
-        - make coverage
-        - make functional_coverage
-        - cd ../scripts
-        - ./gen_vrm
-    artifacts:
-        when: always
-        paths:
-            - test/code_html
-            - test/tests_fast.xml
-            - test/xunit.xsl
-            - test/build/functional_coverage
-            - scripts/VRM.html
-        reports:
-            junit: [test/tests_fast.xml]
 
 pages:
     stage: deploy
