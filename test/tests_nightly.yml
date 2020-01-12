@@ -102,6 +102,7 @@ feature:
         err_capt_ctrl_form:
         err_capt_data_bit:
         err_capt_eof:
+        err_capt_err_frm:
         err_capt_sof:
         err_norm_fd:
             iterations: 5
