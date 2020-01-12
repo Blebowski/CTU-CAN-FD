@@ -45,6 +45,12 @@
 -- @Purpose:
 --  Unit test for TX Arbitrator circuit
 --
+-- @Verifies:
+--  @1. TODO
+--
+-- @Test sequence:
+--  @1. TODO
+--
 -- @TestInfoEnd
 --------------------------------------------------------------------------------
 -- Revision History:

@@ -43,10 +43,33 @@
 -- @TestInfoStart
 --
 -- @Purpose:
---  Unit test for Protocol Control. The architecture of this test is depicted
---  in picture below. It is inherited from original Protocol Control testbench
---  created during implementation of the CAN FD IP Core. This testbench only
---  tests the state machine of protocol control!
+--  Unit test for Protocol Control FSM.
+--
+-- @Verifies:
+--  @1. CAN 2.0 frame with Base identifier format.
+--  @2. CAN FD frame with Base identifier format.
+--  @3. CAN 2.0 frame with Extended identifier format.
+--  @4. CAN FD frame with Extended identifier format.
+--  @5. Basic frame formats transmission and reception by Protocol control FSM.
+--
+-- @Test sequence:
+--   @1. Generate random frame on input of Protocol Control 1.
+--   @2. Calculate expected bit sequence (frame) on the CAN bus including
+--       ACK and EOF (SW model)!
+--   @3. Transmitt the frame by Protocol control 1 DUT and record transmitted
+--       bit sequence! Protocol control 2 DUT receives the bit sequence.
+--   @4. Compare if Expected bit sequence (SW model output) is equal to
+--       recorded one.
+--   @5. Compare if Generated frame (data,ident,type of frame...) inserted to
+--       Protocol control 1 for transmission is equal to received frame by
+--       Protocol control 2.
+--   @6. Loop points 1 to 6 until the number of iterations was reached!
+--
+-- @Notes:
+--  The architecture of this test is depicted in picture below. It is inherited
+--  from original Protocol Control testbench created during implementation of
+--  the CAN FD IP Core. This testbench only tests the state machine of protocol
+--  control!
 --
 --  Following features of are NOT tested here:
 --    - bit stuffing and destuffing (frames transmitted from protocol control
@@ -89,18 +112,6 @@
 --               v                                   not matching
 --            Error if
 --          not matching
---
---
---  Test sequence:
---    1. Generate random frame on input of Protocol Control 1
---    2. Calculate expected bit sequence (frame) on the CAN bus including
---       ACK and EOF!
---    3. Transmitt the frame and record the bit sequence!
---    4. Compare if Expected bit sequence is equal to recorded one
---    5. Compare if Generated frame (data,ident,type of frame...) is equal
---       to received one!
---    6. If points 4 or 5 give mismatch increase error counter
---    7. Loop points 1 to 6 until the number of iterations was reached!
 --
 --    Note that since additional function for buidling CAN frame in "SW" is used
 --    it verifies the protocol control towards errors which can be not detected

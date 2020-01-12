@@ -45,6 +45,11 @@
 -- @Purpose:
 --    Simple test of can_top_apb, performing register read/write via APB.
 --
+-- @Verifies:
+--  @1. Read transactions to CTU CAN FD via APB.
+--  @2. Write transactions to CTU CAN FD via APB.
+--  @3. 32 bit and 16 bit transactions.
+--
 -- @TestInfoEnd
 --------------------------------------------------------------------------------
 -- Revision History:
