@@ -948,6 +948,36 @@ package CANtestLib is
         signal  bl_force        : out   boolean
     );
 
+    ---------------------------------------------------------------------------
+    -- Force CAN RX of single controller to given value. This can be used when
+    -- only RX value of single node shall be forced to different value
+    --
+    -- Arguments:
+    --  value       Value to be forced
+    --  ID          ID of node on whose CAN_rx value will be forced
+    --  crx_force   Force CAN RX level signal.
+    --  crx_inject  Force CAN RX level value.
+    --  crx_index   Force CAN RX level index.
+    ---------------------------------------------------------------------------
+    procedure force_can_rx(
+        constant value           : in    std_logic;
+        constant ID              : in    natural range 1 to 2;
+        signal   crx_force       : out   boolean;
+        signal   crx_inject      : out   std_logic;
+        signal   crx_index       : out   natural range 1 to 2
+    );
+    
+    
+    ---------------------------------------------------------------------------
+    -- Release CAN_RX value.
+    --
+    -- Arguments:
+    --  crx_force   Force CAN RX level signal.
+    ---------------------------------------------------------------------------
+    procedure release_can_rx(
+       signal   crx_force        : out   boolean
+    );
+
 
     ----------------------------------------------------------------------------
     -- Memory access routines
@@ -2709,6 +2739,25 @@ package body CANtestLib is
         bl_force <= false;
     end procedure;
 
+    procedure force_can_rx(
+        constant value           : in    std_logic;
+        constant ID              : in    natural range 1 to 2;
+        signal   crx_force       : out   boolean;
+        signal   crx_inject      : out   std_logic;
+        signal   crx_index       : out   natural range 1 to 2
+    ) is
+    begin
+        crx_force <= true;
+        crx_inject <= value;
+        crx_index <= ID;
+    end procedure;
+
+    procedure release_can_rx(
+       signal   crx_force        : out   boolean
+    ) is
+    begin
+        crx_force <= false;
+    end procedure;
 
 
     procedure aval_write(

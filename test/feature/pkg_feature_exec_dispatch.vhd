@@ -53,6 +53,9 @@ package pkg_feature_exec_dispath is
     type feature_signal_outputs_t is record
         bl_inject           : std_logic;
         bl_force            : boolean;
+        crx_inject          : std_logic;
+        crx_force           : boolean;
+        crx_index           : natural range 1 to 2;
         ftr_tb_trv_delay    : t_ftr_tx_delay;
         ts_preset           : std_logic_vector(2 downto 1);
         ts_preset_val       : std_logic_vector(63 downto 0);

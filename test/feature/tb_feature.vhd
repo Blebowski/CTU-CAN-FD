@@ -89,6 +89,11 @@ entity CAN_feature_test is
         signal bl_inject        : in    std_logic;
         signal bl_force         : in    boolean;
         
+        -- CAN RX force values
+        signal crx_inject       : in    std_logic;
+        signal crx_force        : in    boolean;
+        signal crx_index        : in    natural range 1 to 2;
+        
         -- Transmitter delays
         signal transmitter_delays :in   t_ftr_tx_delay;
         
@@ -210,8 +215,11 @@ begin
 
         ---------------------------------
         --Transceiver and bus realization
-        ---------------------------------
-        xd: p(i).CAN_rx           <= s_bus_level;
+        ---------------------------------        
+        xd: p(i).CAN_rx           <= crx_inject when (crx_force and crx_index = i)
+                                                else
+                                     s_bus_level;
+
         xe: bus_level             <= s_bus_level;
         
         xf: iout(i).can_tx        <= p(i).CAN_tx;
@@ -367,6 +375,10 @@ architecture tb of tb_feature is
 
     signal bl_inject      : std_logic := RECESSIVE;
     signal bl_force       : boolean := false;
+    
+    signal crx_inject     : std_logic;
+    signal crx_force      : boolean;
+    signal crx_index      : natural range 1 to 2;
 
     -- Default delay of 110 ns is realistic for CAN transceivers! 
     signal ftr_tb_trv_delays     :   t_ftr_tx_delay := tran_delay_init;
@@ -387,6 +399,9 @@ architecture tb of tb_feature is
     signal so : feature_signal_outputs_t := (
         '0',
         false,
+        '0',
+        false,
+        1,
         ((
             11 * f100_Mhz * 1 ps,
             11 * f100_Mhz * 1 ps
@@ -400,6 +415,10 @@ begin
     bl_force  <= so.bl_force;
     ftr_tb_trv_delays <= so.ftr_tb_trv_delay;
 
+    crx_inject <= so.crx_inject;
+    crx_force <= so.crx_force;
+    crx_index <= so.crx_index;
+
     -- In this test wrapper generics are directly connected to the signals
     -- of test entity
     test_comp: entity work.CAN_feature_test
@@ -411,8 +430,14 @@ begin
         error_tol        =>  error_tol,
         status           =>  status_int,
         mem_bus          =>  mem_bus,
+        
         bl_inject        =>  bl_inject,
         bl_force         =>  bl_force,
+        
+        crx_inject       =>  crx_inject,
+        crx_force        =>  crx_force,
+        crx_index        =>  crx_index,
+        
         transmitter_delays =>  ftr_tb_trv_delays,
         
         ts_preset        => so.ts_preset,
