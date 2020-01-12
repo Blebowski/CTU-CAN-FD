@@ -82,7 +82,7 @@ test_ip_fast:
     dependencies: [build_ip_and_tests]
     script:
         - cd test
-        - make test_fast
+        - make test_debug
     artifacts:
         when: always
         paths:
