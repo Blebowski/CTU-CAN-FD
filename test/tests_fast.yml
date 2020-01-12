@@ -62,6 +62,7 @@ feature:
         command_frcrst:
         device_id:
         dlc_can20_8_64_bytes:
+        err_capt_ack_ack:
         err_capt_arb_bit:
         err_capt_arb_stuff:
         err_capt_crc_bit:
