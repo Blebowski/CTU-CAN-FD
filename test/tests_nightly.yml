@@ -104,6 +104,7 @@ feature:
         err_capt_eof:
         err_capt_err_frm:
         err_capt_sof:
+        err_capt_ovr_frm:
         err_norm_fd:
             iterations: 5
         error_rules_a:
