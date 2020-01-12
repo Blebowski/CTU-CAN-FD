@@ -102,7 +102,7 @@ test_ip_nightly:
     after_script:
         - cd test
         - which gcov
-        - make coverage
+        #- make coverage
         - make functional_coverage
         - cd ../scripts
         - ./gen_vrm
