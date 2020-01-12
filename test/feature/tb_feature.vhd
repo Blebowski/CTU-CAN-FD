@@ -215,6 +215,7 @@ begin
         xe: bus_level             <= s_bus_level;
         
         xf: iout(i).can_tx        <= p(i).CAN_tx;
+        xg: iout(i).can_rx        <= p(i).CAN_rx;
         
         x10: p(i).tr_del          <= transmitter_delays(i);
 
