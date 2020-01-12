@@ -17,6 +17,7 @@ unit:
             wave: unit/Bit_Stuffing/bsdt_unit.tcl
         apb:
             iterations: 1
+            wave: unit/APB/dummy.tcl
         crc:
             wave: unit/CRC/crct_unit.tcl
         int_man:
