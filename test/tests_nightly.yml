@@ -78,6 +78,7 @@ feature:
         alc_srr_rtr_2:
         alc_ide:
         alc_rtr_r0:
+        alc_rtr_ext_id:
         btr:
             timeout: 200 ms
             iterations: 1
