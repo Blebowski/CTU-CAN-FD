@@ -152,9 +152,9 @@ package body alc_rtr_ext_id_feature is
         --     transmitter. Read ALC from Node 1 and check it.
         -----------------------------------------------------------------------
         info("Step 4: Check arbitration lost on RTR after Extended ID");
-        CAN_wait_pc_state(pc_deb_arbitration, ID_2, mem_bus(2));
+        CAN_wait_pc_state(pc_deb_arbitration, ID_1, mem_bus(1));
         for i in 0 to 31 loop
-            CAN_wait_sample_point(iout(2).stat_bus);
+            CAN_wait_sample_point(iout(1).stat_bus);
         end loop;
         check(iout(2).can_tx = DOMINANT, "Dominant RTR transmitted!");
         check(iout(1).can_tx = RECESSIVE, "Recessive RTR transmitted!");
