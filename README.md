@@ -59,7 +59,7 @@ Test architecture is further described in:
 TODO.
 
 Each test/testbench has common header which is used to collect what has been verified (call it VRM if you want...):  
-[![Verification items](https://img.shields.io/badge/Verification_Items--yellow.svg)(http://canbus.pages.fel.cvut.cz/ctucanfd_ip_core/VRM.html)
+[![Verification items](https://img.shields.io/badge/Verification_Items--yellow.svg)](http://canbus.pages.fel.cvut.cz/ctucanfd_ip_core/VRM.html)
 
 There is PSL functional coverage and PSL assertions available in:  
 [![functional coverage](https://img.shields.io/badge/functional%20coverage--orange.svg)](http://canbus.pages.fel.cvut.cz/ctucanfd_ip_core/functional_coverage/functional_coverage_report.html)
