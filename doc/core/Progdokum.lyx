@@ -3984,6 +3984,16 @@ Note Stuff error which occured during fixed bit stuffing method of CAN FD
  frame is reported as Form error in Error code capture.
 \end_layout
 
+\begin_layout Description
+Note
+\begin_inset space ~
+\end_inset
+
+2 There is an exception to above mentioned error priority order.
+ If dominant stuff bit is sent during arbitration field and recessive value
+ is sampled, then this is captured as Stuff error, not as Bit error.
+\end_layout
+
 \begin_layout Subsection
 Arbitration lost capture
 \end_layout
