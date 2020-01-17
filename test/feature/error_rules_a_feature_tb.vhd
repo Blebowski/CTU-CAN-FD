@@ -126,7 +126,7 @@ package body error_rules_a_feature is
 
         wait until iout(2).can_tx = DOMINANT;
         force_bus_level(RECESSIVE, so.bl_force, so.bl_inject);
-        CAN_wait_sample_point(iout(2).stat_bus);
+        CAN_wait_sample_point(iout(2).stat_bus, false);
         wait for 20 ns;
         
         get_controller_status(status, ID_2, mem_bus(2));
