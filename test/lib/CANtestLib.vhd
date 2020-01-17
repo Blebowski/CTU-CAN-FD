@@ -87,6 +87,7 @@ USE work.randomLib.All;
 use work.can_constants.all;
 use work.drv_stat_pkg.all;
 use work.can_config.all;
+use work.tb_reg_map_defs_pkg.All;
 
 use work.CAN_FD_register_map.all;
 use work.CAN_FD_frame_format.all;

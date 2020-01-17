@@ -3949,6 +3949,49 @@ CTU CAN FD contains Error code capture register.
  Error code capture is updated in sample point of a bit where error was
  detected.
  Error code capture is readable via ERR_CAPT register.
+ CAN FD standard does not defined types of errors as mutually exclusive
+ (e.g.
+ bit error and stuff error may occur at the same time when transmitted stuff
+ bit value is corrupted to opposite value).
+ In such case, Error code capture captures only one type of error with highest
+ priority.
+ Priorities of error types are defined as (Form error having the highest
+ priority):
+\end_layout
+
+\begin_layout Enumerate
+Form error
+\end_layout
+
+\begin_layout Enumerate
+Bit error
+\end_layout
+
+\begin_layout Enumerate
+CRC error
+\end_layout
+
+\begin_layout Enumerate
+ACK error
+\end_layout
+
+\begin_layout Enumerate
+Stuff error
+\end_layout
+
+\begin_layout Description
+Note Stuff error which occured during fixed bit stuffing method of CAN FD
+ frame is reported as Form error in Error code capture.
+\end_layout
+
+\begin_layout Description
+Note
+\begin_inset space ~
+\end_inset
+
+2 There is an exception to above mentioned error priority order.
+ If dominant stuff bit is sent during arbitration field and recessive value
+ is sampled, then this is captured as Stuff error, not as Bit error.
 \end_layout
 
 \begin_layout Subsection

@@ -146,7 +146,7 @@ package body err_capt_crc_bit_feature is
             crc_len := 15; -- CRC 15 (CAN 2.0 frames have no Stuff count)!
         end if;
 
-        -- Wait for Random amount of time!
+        -- Wait for Random amount of bits, but not longer than CRC field!
         rand_int_v(rand_ctr, crc_len - 1, tmp);
         info("Waiting for: " & integer'image(tmp) & " bits!");
         for i in 1 to tmp loop
@@ -165,7 +165,22 @@ package body err_capt_crc_bit_feature is
         check (stat_1.error_transmission, "Error frame is being transmitted!");
         
         CAN_read_error_code_capture(err_capt, ID_1, mem_bus(1));
-        check(err_capt.err_type = can_err_bit, "Bit error detected!");
+        
+        -----------------------------------------------------------------------
+        -- It might happend that we corrupt a bit which is just stuff bit (due
+        -- to randomization). If this is a CAN FD frame, this will be considered
+        -- as form error (stuff error during fixed bit stuffing shall be reported
+        -- as form error). In such case, form error has higher priority than
+        -- stuff error, so form error is reported. Tolerate this as this is not
+        -- a bug!
+        -----------------------------------------------------------------------
+        if (frame_1.frame_format = FD_CAN) then
+            check(err_capt.err_type = can_err_bit or
+                  err_capt.err_type = can_err_form, "Bit or Form error detected!");
+        else
+            check(err_capt.err_type = can_err_bit, "Bit error detected!");
+        end if;
+            
         check(err_capt.err_pos = err_pos_crc, "Error detected in CRC field!");
         
         CAN_wait_bus_idle(ID_1, mem_bus(1));

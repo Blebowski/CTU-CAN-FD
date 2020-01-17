@@ -38,6 +38,7 @@ from pyXact_generator.gen_lib import *
 from pyXact_generator.HeaderAddrGeneratorWrapper import HeaderAddrGeneratorWrapper
 from pyXact_generator.LyxAddrGeneratorWrapper import LyxAddrGeneratorWrapper
 from pyXact_generator.VhdlAddrGeneratorWrapper import VhdlAddrGeneratorWrapper
+from pyXact_generator.VhdlTbAddrGeneratorWrapper import VhdlTbAddrGeneratorWrapper
 from pyXact_generator.VhdlRegMapGeneratorWrapper import VhdlRegMapGeneratorWrapper
 
 MIT_LICENSE_PATH = "../LICENSE"
@@ -67,6 +68,11 @@ def parse_args():
 	parser.add_argument('--updRTLRegMap', dest='updRTLRegMap', help="""Whether VHDL 
 										RTL register map should be generated.
 										(../src/Registers_Memory_Interface/generated)""")
+
+	parser.add_argument('--updTbPackage', dest='updTbPackage', help="""Whether Testbench
+										package with register list should be generated
+										(../test/lib)""")
+
 	return parser.parse_args();
 
 
@@ -136,6 +142,23 @@ def ctu_can_update_vhdl_rtl(specPath, licensePath, memMap, wordWidthBit, outDir)
 	vhdlRTLGeneratorWrapper.outDir = outDir
 
 	vhdlRTLGeneratorWrapper.do_update()
+
+
+def ctu_can_update_vhdl_tb_package(specPath, licensePath, memMap, 
+								wordWidthBit, outPath, packName):
+	"""
+	Update VHDL Testbench packages of CTU CAN FD register maps.
+	"""
+	tbAddrGeneratorWrapper = VhdlTbAddrGeneratorWrapper()
+
+	tbAddrGeneratorWrapper.xactSpec = specPath
+	tbAddrGeneratorWrapper.licPath = licensePath
+	tbAddrGeneratorWrapper.memMap = memMap
+	tbAddrGeneratorWrapper.wordWidth = wordWidthBit
+	tbAddrGeneratorWrapper.outFile = outPath
+	tbAddrGeneratorWrapper.packName = packName
+
+	tbAddrGeneratorWrapper.do_update()
 
 
 if __name__ == '__main__':
@@ -227,7 +250,7 @@ if __name__ == '__main__':
 
 	###########################################################################
 	# Generate VHDL RTL codes
-	###########################################################################	
+	###########################################################################
 	if (str_arg_to_bool(args.updRTLRegMap)):
 
 		print("Generating CAN FD memory registers Documentation...\n")
@@ -242,7 +265,24 @@ if __name__ == '__main__':
 		# visualisaion only
 
 		print("\nDone\n")
-	
+
+
+	###########################################################################
+	# Generate Testbench package
+	###########################################################################
+	if (str_arg_to_bool(args.updTbPackage)):
+
+		print("Generating Testbench package...\n")
+
+		ctu_can_update_vhdl_tb_package(specPath=args.xactSpec,
+									   licensePath=MIT_LICENSE_PATH,
+									   memMap="CAN_Registers",
+									   wordWidthBit=32,
+									   outPath="../test/lib/can_fd_tb_register_map.vhd",
+									   packName="can_fd_tb_register_map")
+		print("\nDone\n")
+		
+
 	print( 80 * "*")
 	print("**  Finished")
 	print(80 * "*")

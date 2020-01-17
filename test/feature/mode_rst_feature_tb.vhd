@@ -81,6 +81,8 @@ use lib.cmn_lib.all;
 use lib.drv_stat_pkg.all;
 use lib.reduce_lib.all;
 use lib.can_config.all;
+use lib.tb_reg_map_defs_pkg.All;
+use lib.can_fd_tb_register_map.All;
 
 use lib.CAN_FD_register_map.all;
 

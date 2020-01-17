@@ -112,6 +112,7 @@ package body tx_from_intermission_feature is
         --    transmission will be started. Insert CAN frame to Node 1 during 
         --    transmission of frame from Node 2 and wait until Intermission.
         -----------------------------------------------------------------------
+        info("Step 1");
         CAN_generate_frame(rand_ctr, frame_1);
         CAN_send_frame(frame_1, 1, ID_2, mem_bus(2), frame_sent);
 
@@ -133,6 +134,7 @@ package body tx_from_intermission_feature is
         --    until frame is sent, and check it is properly receieved by Node 2
         --    (Node 2 should have turned receiver).
         -----------------------------------------------------------------------
+        info("Step 2");
         CAN_wait_sample_point(iout(1).stat_bus, false);
         CAN_wait_sample_point(iout(1).stat_bus, false);
 

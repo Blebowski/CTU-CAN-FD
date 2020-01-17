@@ -141,7 +141,18 @@ package body err_capt_ctrl_bit_feature is
         for i in 1 to 4 loop
             info ("Inner Loop: " & integer'image(i));
             CAN_generate_frame(rand_ctr, frame_1);
-            
+
+            -- Detect patterns in which stuff bit might be placed. In such 
+            -- case, avoid it. Because if we stuff the same value of bit as
+            -- we are trying to force, error frame will not be sent (obviously,
+            -- bus has equal value as is sent) and test will fail!
+            if (frame_1.dlc(3) = frame_1.dlc(2)) then
+                
+                -- It is enough to break first two equal bits!
+                frame_1.dlc(3) := not frame_1.dlc(2);
+                decode_dlc(frame_1.dlc, frame_1.data_length);
+            end if;
+
             -- ID is not important in this TC. Avoid overflows of high generated
             -- IDs on Base IDs!
             frame_1.identifier := 10;
