@@ -89,6 +89,7 @@
 context work.ctu_can_synth_context;
 context work.ctu_can_test_context;
 
+--Library ieee;
 use lib.pkg_feature_exec_dispath.all;
 
 package ssp_cfg_feature is
@@ -99,10 +100,47 @@ package ssp_cfg_feature is
         signal      mem_bus         : inout  mem_bus_arr_t;
         signal      bus_level       : in     std_logic
     );
+    
+    procedure correct_ssp_offset(
+       ssp_offset_generated         : in    std_logic_vector(7 downto 0);
+       bus_timing                   : in    bit_time_config_type;
+       ssp_offset_corrected         : out   std_logic_vector(7 downto 0)
+    );
+
 end package;
 
 
 package body ssp_cfg_feature is
+
+    ---------------------------------------------------------------------------
+    -- Data bit time is generated random. Also SSP_OFFSET is generated random.
+    -- We set real delay from CAN_TX to CAN_RX in TB also to random generated
+    -- value. If generated SSP_OFFSET is higher than duration of bit, then
+    -- we will never sample correct value, because we just sample next bit
+    -- already! So we need to constrain configured SSP_OFFSET to less than
+    -- data bit time!
+    --------------------------------------------------------------------------- 
+    procedure correct_ssp_offset(
+       ssp_offset_generated         : in    std_logic_vector(7 downto 0);
+       bus_timing                   : in    bit_time_config_type;
+       ssp_offset_corrected         : out   std_logic_vector(7 downto 0)
+    ) is
+        variable bit_time_length    :       natural;
+    begin
+        bit_time_length := bus_timing.tq_dbt * (1 + bus_timing.prop_dbt +
+            bus_timing.ph1_dbt + bus_timing.ph2_dbt);
+
+        if (to_integer(unsigned(ssp_offset_generated)) >= bit_time_length) then
+            ssp_offset_corrected := std_logic_vector(to_unsigned(bit_time_length - 1, 8));
+            info("Correcting SSP offset. Bit time length: " &
+                  integer'image(bit_time_length) & " cycles. New SSP offset value:" &
+                  integer'image(to_integer(unsigned(ssp_offset_corrected))));
+        else
+            ssp_offset_corrected := ssp_offset_generated;
+        end if;
+
+    end procedure;
+
     procedure ssp_cfg_feature_exec(
         signal      so              : out    feature_signal_outputs_t;
         signal      rand_ctr        : inout  natural range 0 to RAND_POOL_SIZE;
@@ -132,7 +170,8 @@ package body ssp_cfg_feature is
         variable num_bit_waits      :     natural;
         variable num_bit_waits_max  :     natural;
         variable tx_val             :     std_logic;
-
+        variable bit_rate           :     real;
+        variable cycles_per_bit     :     integer;
     begin
 
         -----------------------------------------------------------------------
@@ -151,12 +190,44 @@ package body ssp_cfg_feature is
         bus_timing.tq_nbt := 4;
         bus_timing.sjw_nbt := 5;
 
-        -- Should be 2 Mbit/s
-        bus_timing.prop_dbt := 10;
-        bus_timing.ph1_dbt := 20;
-        bus_timing.ph2_dbt := 19;
-        bus_timing.tq_dbt := 1;
-        bus_timing.sjw_dbt := 5;
+        -- Generate random data bit timing!
+        rand_int_v(rand_ctr, 63, bus_timing.prop_dbt);
+        rand_int_v(rand_ctr, 31, bus_timing.ph1_dbt);
+        rand_int_v(rand_ctr, 31, bus_timing.ph2_dbt);
+        
+        -- Constrain time quanta to something realistinc for data phase so
+        -- that we don't have too long run times!
+        rand_int_v(rand_ctr, 4, bus_timing.tq_dbt);
+        rand_int_v(rand_ctr, 33, bus_timing.sjw_dbt);
+        
+        -- Minimal time quanta
+        if (bus_timing.tq_dbt = 0) then
+            bus_timing.tq_dbt := 1;
+        end if;
+        
+        cycles_per_bit := bus_timing.tq_dbt * (1 + bus_timing.prop_dbt +
+                            bus_timing.ph1_dbt + bus_timing.ph2_dbt);
+        
+        -- Constrain minimal bit times
+        if (cycles_per_bit < 7) then
+            bus_timing.prop_dbt := 7;
+        end if;
+
+        if (bus_timing.tq_dbt = 1 and bus_timing.ph2_dbt = 1) then
+            bus_timing.ph2_dbt := 2;
+        end if;
+        
+        cycles_per_bit := bus_timing.tq_dbt * (1 + bus_timing.prop_dbt +
+                            bus_timing.ph1_dbt + bus_timing.ph2_dbt);
+        info("Cycles per bit:" & integer'image(cycles_per_bit));
+
+        info ("Generated data bit time bit-rate:");
+        info ("TQ: " & integer'image(bus_timing.tq_dbt));
+        info ("PROP: " & integer'image(bus_timing.prop_dbt));
+        info ("PH1: " & integer'image(bus_timing.ph1_dbt));
+        info ("PH2: " & integer'image(bus_timing.ph2_dbt));
+        bit_rate := 100000000.0 / (real(cycles_per_bit));
+        info ("Data bit rate: " & real'image(bit_rate/1000000.0) & " Mbit/s");
 
         -- We configure Nominal bit-rate to 500 Kbit/s so that generated
         -- TRV_DELAY will not cause error frames in arbitration bit-rate!
@@ -202,9 +273,12 @@ package body ssp_cfg_feature is
             info("TRV_DELAY + Offset");
             ssp_source := ssp_meas_n_offset;
             rand_logic_vect_v (rand_ctr, ssp_offset_var, 0.3);
+            info("Generated SSP offset: " & integer'image(to_integer(unsigned(ssp_offset_var))));
+            
+            correct_ssp_offset(ssp_offset_var, bus_timing, ssp_offset_var);
             
             -- SSP position is offset + delay
-            info("SSP offset: " & integer'image(to_integer(unsigned(ssp_offset_var))));
+            info("Post correction SSP offset: " & integer'image(to_integer(unsigned(ssp_offset_var))));
             info("Trv delay div: " & integer'image(rand_trv_delay / 10));
             
             ssp_pos := to_integer(unsigned(ssp_offset_var)) + rand_trv_delay / 10;
@@ -238,6 +312,10 @@ package body ssp_cfg_feature is
             ssp_source := ssp_offset;
             rand_logic_vect_v (rand_ctr, ssp_offset_var, 0.3);
             
+            correct_ssp_offset(ssp_offset_var, bus_timing, ssp_offset_var);
+            
+            info("Post correction SSP offset: " & integer'image(to_integer(unsigned(ssp_offset_var))));
+
             -- Here lengthen the SSP offset so that we are sufficiently over TRV_DELAY!
             -- It should be enough to lengthen it by two clock cycles (input delay of
             -- CTU CAN FD) + one cycle reserve for truncation of non-multiple of 10
@@ -282,6 +360,7 @@ package body ssp_cfg_feature is
 
         CAN_send_frame(frame_1, 1, ID_1, mem_bus(1), frame_sent);
         CAN_wait_pc_state(pc_deb_control, ID_1, mem_bus(1));
+        
         CAN_wait_not_pc_state(pc_deb_control, ID_1, mem_bus(1));
 
         -- +10 is to cover some part of CRC
