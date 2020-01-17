@@ -159,7 +159,11 @@ package body err_capt_arb_bit_feature is
         check (stat_1.error_transmission, "Error frame is being transmitted!");
         
         CAN_read_error_code_capture(err_capt, ID_1, mem_bus(1));
-        check(err_capt.err_type = can_err_bit, "Bit error detected!");
+        
+        -- If Dominant stuff bit is sent and recessive is monitored, then this
+        -- can be detected as Stuff Error, not as bit Error!
+        check(err_capt.err_type = can_err_bit or err_capt.err_type = can_err_stuff,
+                "Bit or Stuff error detected!");
         check(err_capt.err_pos = err_pos_arbitration, "Error detected in Arbitration!");
         
         CAN_wait_bus_idle(ID_1, mem_bus(1));
