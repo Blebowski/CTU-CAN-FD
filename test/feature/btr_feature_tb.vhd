@@ -55,7 +55,7 @@
 --  @2. Wait until sample point in Node 1 and measure number of clock cycles
 --      till next sample point. Check that it corresponds to pre-computed value!
 --  @3. Send frame by Node 1 and wait until it is sent. Read frame from Node 2
---      and check they are matching. Do vice-versa from Node 2 to Node 1!
+--      and check they are matching.
 --
 -- @TestInfoEnd
 --------------------------------------------------------------------------------
@@ -113,7 +113,7 @@ package body btr_feature is
         CAN_turn_controller(false, ID_2, mem_bus(2));
 
         -- Generate random Nominal bit rate!
-        rand_int_v(rand_ctr, 127, bus_timing.prop_nbt);
+        rand_int_v(rand_ctr, 255, bus_timing.prop_nbt);
         rand_int_v(rand_ctr, 63, bus_timing.ph1_nbt);
         rand_int_v(rand_ctr, 63, bus_timing.ph2_nbt);
         
@@ -228,11 +228,21 @@ package body btr_feature is
 
         -----------------------------------------------------------------------
         -- @3. Send frame by Node 1 and wait until it is sent. Read frame from
-        --    Node 2 and check they are matching. Do vice-versa from Node 2 to
-        --    Node 1!
+        --    Node 2 and check they are matching.
         -----------------------------------------------------------------------
         info("Step 3");
+        
+        -- Shorten length of generated frame to max 4 data bytes! The thing is
+        -- that if generated bit rate is too low, and data field length too
+        -- high, test run time explodes! It has no sense to test long data fields
+        -- on any bit-rate since its functionality should not depend on it!
         CAN_generate_frame(rand_ctr, CAN_frame_1);
+        
+        if (CAN_frame_1.data_length > 4) then
+            CAN_frame_1.data_length := 4;
+            decode_length(CAN_frame_1.data_length, CAN_frame_1.dlc);
+        end if;        
+
         CAN_send_frame(CAN_frame_1, 1, ID_1, mem_bus(1), frame_sent);
         CAN_wait_frame_sent(ID_2, mem_bus(2));
         CAN_read_frame(CAN_frame_2, ID_2, mem_bus(2));
