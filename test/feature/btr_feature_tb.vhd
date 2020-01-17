@@ -113,12 +113,12 @@ package body btr_feature is
         CAN_turn_controller(false, ID_2, mem_bus(2));
 
         -- Generate random Nominal bit rate!
-        rand_int_v(rand_ctr, 255, bus_timing.prop_nbt);
+        rand_int_v(rand_ctr, 127, bus_timing.prop_nbt);
         rand_int_v(rand_ctr, 63, bus_timing.ph1_nbt);
         rand_int_v(rand_ctr, 63, bus_timing.ph2_nbt);
         
         -- Longer TQ is possible but test run-time is killing us!
-        rand_int_v(rand_ctr, 63, bus_timing.tq_nbt);
+        rand_int_v(rand_ctr, 32, bus_timing.tq_nbt);
         rand_int_v(rand_ctr, 33, bus_timing.sjw_nbt);
         
         -- Configure delay of TX -> RX so that for any generated bit-rate, it
