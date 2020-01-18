@@ -2150,8 +2150,9 @@ name "fig:CTU-CAN-FD-operating-modes"
 \begin_layout Standard
 When CTU CAN FD is error active, it takes part in CAN bus communication.
  If CTU CAN FD becomes error passive and later bus-off, it stops any communicati
-on on CAN bus and waits before starting Reintegration until it receives
- Error counter reset command (writing logic 1 to COMMAND[ERCRST]).
+on on CAN bus (error frame which caused transition to bus off is still transmitt
+ed) and waits before starting Reintegration until it receives Error counter
+ reset command (writing logic 1 to COMMAND[ERCRST]).
  Upon this command, CTU CAN FD starts Reintegration.
  Reintegration lasts until CTU CAN FD detects 128 sequences of 11 consecutive
  recessive bits.
@@ -2179,6 +2180,24 @@ noprefix "false"
 \end_inset
 
 ).
+\end_layout
+
+\begin_layout Description
+Note COMMAND[ERCRST] is 
+\begin_inset Quotes eld
+\end_inset
+
+sticky
+\begin_inset Quotes erd
+\end_inset
+
+.
+ This means that if CTU CAN FD is not yet bus off and this command is issued,
+ it will be remembered by CTU CAN FD and it will automatically start reintegrati
+on upon nearest transition to bus-off.
+ This gives an advantage that command can be issued in advance during communicat
+ion and CTU CAN FD will re-integrate as quickly as possible after becoming
+ bus off.
 \end_layout
 
 \begin_layout Section

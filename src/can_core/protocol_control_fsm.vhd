@@ -705,8 +705,8 @@ architecture rtl of protocol_control_fsm is
     -- Complementary counter enable
     signal compl_ctr_ena_i           :  std_logic;
     
-    -- State register will be clocked extra, not only in in Sample point or
-    -- error frame request.
+    -- Logic for clocking FSM state register
+    signal tick_state_reg_on_off     :  std_logic;
     signal tick_state_reg            :  std_logic;
     
     -- Bit-rate shifted (internal value)
@@ -743,7 +743,10 @@ architecture rtl of protocol_control_fsm is
     signal tx_frame_no_sof_q         :  std_logic;
     
     -- Control signal should be updated!
-    signal ctrl_signal_upd          :   std_logic;
+    signal ctrl_signal_upd           :  std_logic;
+    
+    -- Clear bus-off reset flag
+    signal clr_bus_off_rst_flg       :  std_logic; 
     
 begin
 
@@ -904,7 +907,7 @@ begin
         elsif (rising_edge(clk_sys)) then
             if (drv_bus_off_reset = '1') then
                 drv_bus_off_reset_q <= '1';
-            elsif (rx_trigger = '1') then
+            elsif (rx_trigger = '1' and clr_bus_off_rst_flg = '1') then
                 drv_bus_off_reset_q <= '0';
             end if;
         end if;
@@ -1425,13 +1428,11 @@ begin
         -- Bit time counters enabling
         nbt_ctrs_en <= '0';
         dbt_ctrs_en <= '0';
-        
-        -- Always tick FSM state register.
-        tick_state_reg <= '0';
 
         -- Clear block register for retransmitt counter add signal.
         retr_ctr_add_block_clr <= '0';
-        
+        tick_state_reg <= '0';
+
         -- Status signals for debug
         is_control      <= '0';
         is_data         <= '0';
@@ -1446,8 +1447,11 @@ begin
         is_overload     <= '0';
         is_intermission <= '0';
         is_sof          <= '0';
+        
+        clr_bus_off_rst_flg <= '0';
 
         if (err_frm_req = '1') then
+            tick_state_reg <= '1';
             ctrl_ctr_pload_i   <= '1';
             ctrl_ctr_pload_val <= C_ERR_FLG_DURATION;
             rec_abort_d <= '1';
@@ -1485,7 +1489,6 @@ begin
             -------------------------------------------------------------------
             when s_pc_off =>
                 if (drv_ena = CTU_CAN_ENABLED) then
-                    tick_state_reg <= '1';
                     ctrl_ctr_pload_i <= '1';
                     ctrl_ctr_pload_val <= C_INTEGRATION_DURATION;
                 end if;
@@ -1506,6 +1509,7 @@ begin
                 end if;
                 
                 if (ctrl_ctr_zero = '1') then
+                    tick_state_reg <= '1';
                     set_idle_i <= '1';
                     set_err_active_i <= '1';
                     load_init_vect_i <= '1';
@@ -1515,6 +1519,7 @@ begin
             -- Start of frame
             -------------------------------------------------------------------
             when s_pc_sof =>
+                tick_state_reg <= '1';
                 bit_err_disable <= '1';
                 ctrl_ctr_pload_i <= '1';
                 ctrl_ctr_pload_val <= C_BASE_ID_DURATION;
@@ -1558,6 +1563,7 @@ begin
                 end if;
                 
                 if (ctrl_ctr_zero = '1') then
+                    tick_state_reg <= '1';
                     rx_store_base_id_i <= '1';
                 end if;
                 
@@ -1569,6 +1575,7 @@ begin
             -- RTR/SRR/R1 bit. First bit after Base identifier.
             -------------------------------------------------------------------
             when s_pc_rtr_srr_r1 =>
+                tick_state_reg <= '1';
                 is_arbitration_i <= '1';
                 bit_err_disable <= '1';
                 crc_enable <= '1';
@@ -1605,6 +1612,7 @@ begin
             -- IDE bit
             -------------------------------------------------------------------
             when s_pc_ide =>
+                tick_state_reg <= '1';
                 rx_store_ide_i <= '1';
                 crc_enable <= '1';
                 txtb_ptr_d <= 1;
@@ -1675,6 +1683,7 @@ begin
                 end if;
                 
                 if (ctrl_ctr_zero = '1') then
+                    tick_state_reg <= '1';
                     rx_store_ext_id_i         <= '1';
                 end if;
 
@@ -1686,6 +1695,7 @@ begin
             -- RTR/R1 bit after the Extended identifier
             -------------------------------------------------------------------
             when s_pc_rtr_r1 =>
+                tick_state_reg <= '1';
                 is_arbitration_i <= '1';
                 bit_err_disable <= '1';
                 crc_enable <= '1';                
@@ -1721,6 +1731,7 @@ begin
             -- EDL/r1 bit after RTR/r1 bit in Extended Identifier
             -------------------------------------------------------------------
             when s_pc_edl_r1 =>
+                tick_state_reg <= '1';
                 rx_store_edl_i <= '1';
                 err_pos <= ERC_POS_CTRL;
                 crc_enable <= '1';
@@ -1747,6 +1758,7 @@ begin
             -- r0 bit after EDL/r1 bit in Extended CAN Frames.
             -------------------------------------------------------------------
             when s_pc_r0_ext =>
+                tick_state_reg <= '1';
                 ctrl_ctr_pload_i <= '1';
                 ctrl_ctr_pload_val <= C_DLC_DURATION;
                 tx_load_dlc_i <= '1';
@@ -1772,6 +1784,7 @@ begin
             -- r0 bit in CAN FD Frames (both Base and Extended identifier)
             ------------------------------------------------------------------- 
             when s_pc_r0_fd =>
+                tick_state_reg <= '1';
                 tran_delay_meas <= '1';
                 err_pos <= ERC_POS_CTRL;
                 perform_hsync <= '1';
@@ -1796,6 +1809,7 @@ begin
             -- only!
             -------------------------------------------------------------------
             when s_pc_edl_r0 =>
+                tick_state_reg <= '1';
                 rx_store_edl_i <= '1';
                 err_pos <= ERC_POS_CTRL;
                 crc_enable <= '1';
@@ -1826,6 +1840,7 @@ begin
             -- BRS (Bit rate shift) Bit
             -------------------------------------------------------------------
             when s_pc_brs =>
+                tick_state_reg <= '1';
                 rx_store_brs_i <= '1';
                 err_pos <= ERC_POS_CTRL;
                 crc_enable <= '1';
@@ -1848,6 +1863,7 @@ begin
             -- ESI (Error State Indicator) Bit
             ------------------------------------------------------------------- 
             when s_pc_esi =>
+                tick_state_reg <= '1';
                 ctrl_ctr_pload_i <= '1';
                 ctrl_ctr_pload_val <= C_DLC_DURATION;
                 tx_load_dlc_i <= '1';
@@ -1896,7 +1912,9 @@ begin
                 end if;
                 
                 if (ctrl_ctr_zero = '1') then
+                    tick_state_reg <= '1';
                     ctrl_ctr_pload_i <= '1';
+
                     if (no_data_field = '1') then
                         if (go_to_stuff_count = '1') then
                             ctrl_ctr_pload_val <= C_STUFF_COUNT_DURATION;
@@ -1943,6 +1961,9 @@ begin
                 end if;
 
                 if (ctrl_ctr_zero = '1') then
+                    tick_state_reg <= '1';
+                    ctrl_ctr_pload_i <= '1';
+
                     if (go_to_stuff_count = '1') then
                         ctrl_ctr_pload_val <= C_STUFF_COUNT_DURATION;
                         tx_load_stuff_count_i <= '1';
@@ -1950,7 +1971,6 @@ begin
                         ctrl_ctr_pload_val <= crc_length_i;
                         tx_load_crc_i <= '1';
                     end if;
-                    ctrl_ctr_pload_i <= '1';
                     
                     -- Store data word at the end of data field.
                     store_data_d <= '1';
@@ -1986,6 +2006,7 @@ begin
                 end if;
                 
                 if (ctrl_ctr_zero = '1') then
+                    tick_state_reg <= '1';
                     ctrl_ctr_pload_val <= crc_length_i;
                     ctrl_ctr_pload_i <= '1';
                     tx_load_crc_i <= '1';
@@ -2018,11 +2039,16 @@ begin
                     stuff_length <= std_logic_vector(to_unsigned(4, 3));
                     fixed_stuff <= '1';
                 end if;
+                
+                if (ctrl_ctr_zero = '1') then
+                    tick_state_reg <= '1';
+                end if;
 
             -------------------------------------------------------------------
             -- CRC Delimiter
             -------------------------------------------------------------------
             when s_pc_crc_delim =>
+                tick_state_reg <= '1';
                 err_pos <= ERC_POS_ACK;
                 is_crc_delim  <= '1';
                 nbt_ctrs_en <= '1';
@@ -2052,6 +2078,7 @@ begin
             -- Secondary CRC Delimiter, or an ACK Slot if DOMINANT.
             -------------------------------------------------------------------
             when s_pc_crc_delim_sec =>
+                tick_state_reg <= '1';
                 err_pos <= ERC_POS_ACK;
                 is_crc_delim  <= '1';
                 nbt_ctrs_en <= '1';
@@ -2062,6 +2089,7 @@ begin
             -- ACK Slot, or a ACK delim, if previous two bits were recessive!
             -------------------------------------------------------------------
             when s_pc_ack =>
+                tick_state_reg <= '1';
                 err_pos <= ERC_POS_ACK;
                 is_ack_field  <= '1';
                 nbt_ctrs_en <= '1';
@@ -2092,6 +2120,7 @@ begin
             -- Secondary ACK field (in FD Frames),or ACK Delimiter if RECESSIVE
             -------------------------------------------------------------------
             when s_pc_ack_sec =>
+                tick_state_reg <= '1';
                 err_pos <= ERC_POS_ACK;
                 is_ack_field  <= '1';
                 nbt_ctrs_en <= '1';
@@ -2114,6 +2143,7 @@ begin
             -- ACK Delimiter
             -------------------------------------------------------------------
             when s_pc_ack_delim =>
+                tick_state_reg <= '1';
                 ctrl_ctr_pload_i <= '1';
                 ctrl_ctr_pload_val <= C_EOF_DURATION;
                 err_pos <= ERC_POS_ACK;
@@ -2141,6 +2171,7 @@ begin
                 bit_err_disable <= '1';
 
                 if (ctrl_ctr_zero = '1') then
+                    tick_state_reg <= '1';
                     ctrl_ctr_pload_i <= '1';
                     
                     if (rx_data_nbs = RECESSIVE) then
@@ -2191,9 +2222,15 @@ begin
                 -- Address Identifier Word in TXT Buffer RAM in advance to
                 -- account for DFF delay and RAM delay! 
                 txtb_ptr_d <= 1;
+                
+                -- If we are bus-off, go to reintegration wait!
+                if (is_bus_off = '1') then
+                    tick_state_reg <= '1';
+                end if;
 
                 -- Last (third) bit of intermission
-                if (ctrl_ctr_zero = '1') then
+                if (ctrl_ctr_zero = '1' and is_bus_off = '0') then
+                    tick_state_reg <= '1';
                     ctrl_ctr_pload_i <= '1';
                     crc_spec_enable_i <= '1';
                     
@@ -2245,7 +2282,8 @@ begin
                     end if;
     
                 -- First or second bit of intermission!
-                elsif (rx_data_nbs = DOMINANT) then
+                elsif (rx_data_nbs = DOMINANT and is_bus_off = '0') then
+                    tick_state_reg <= '1';
                     ctrl_ctr_pload_i <= '1';
                     ctrl_ctr_pload_val <= C_OVR_FLG_DURATION;
                 end if;
@@ -2277,6 +2315,7 @@ begin
                 txtb_ptr_d <= 1;
                 
                 if (rx_data_nbs = DOMINANT) then
+                    tick_state_reg <= '1';
                     ctrl_ctr_pload_i <= '1';
                     ctrl_ctr_pload_val <= C_BASE_ID_DURATION;
                     tx_load_base_id_i <= '1';
@@ -2288,6 +2327,7 @@ begin
                 -- End of Suspend -> Unit goes to IDLE if there is nothing to
                 -- transmitt, otherwise it goes to SOF and transmitts
                 elsif (ctrl_ctr_zero = '1') then
+                    tick_state_reg <= '1';
                     if (tx_frame_ready = '1') then
                         set_transmitter_i <= '1';
                         txtb_hw_cmd_d.lock <= '1';
@@ -2312,32 +2352,40 @@ begin
                 -- account for DFF delay and RAM delay! 
                 txtb_ptr_d <= 1;
                 
-                if (rx_data_nbs = DOMINANT and is_bus_off = '0') then
-                    ctrl_ctr_pload_i <= '1';
-                    ctrl_ctr_pload_val <= C_BASE_ID_DURATION;
-                    sof_pulse_i <= '1';
-                    crc_enable <= '1';
-                end if;
-
-                if (tx_frame_ready = '1' and is_bus_off = '0') then
-                    txtb_hw_cmd_d.lock <= '1';
-                    set_transmitter_i <= '1';
-                    tx_load_base_id_i <= '1';
-                    stuff_enable_set <= '1';
-
+                if (is_bus_off = '0') then
                     if (rx_data_nbs = DOMINANT) then
-                        tx_frame_no_sof_d <= '1';
+                        tick_state_reg <= '1';
+                        ctrl_ctr_pload_i <= '1';
+                        ctrl_ctr_pload_val <= C_BASE_ID_DURATION;
+                        sof_pulse_i <= '1';
+                        crc_enable <= '1';
                     end if;
 
-                elsif (rx_data_nbs = DOMINANT) then
-                    set_receiver_i <= '1';
-                end if;
+                    if (tx_frame_ready = '1') then
+                        tick_state_reg <= '1';
+                        txtb_hw_cmd_d.lock <= '1';
+                        set_transmitter_i <= '1';
+                        tx_load_base_id_i <= '1';
+                        stuff_enable_set <= '1';
+    
+                        if (rx_data_nbs = DOMINANT) then
+                            tx_frame_no_sof_d <= '1';
+                        end if;
+    
+                    elsif (rx_data_nbs = DOMINANT) then
+                        set_receiver_i <= '1';
+                    end if;
 
-                -- Transmission/reception started -> Enable Bit de-stuffing!
-                -- Clear RX Shift register!
-                if (frame_start = '1' and is_bus_off = '0') then
-                    destuff_enable_set <= '1';
-                    rx_clear_i <= '1';
+                    -- Transmission/reception started -> Enable Bit de-stuffing!
+                    -- Clear RX Shift register!
+                    if (frame_start = '1') then
+                        destuff_enable_set <= '1';
+                        rx_clear_i <= '1';
+                    end if;
+                    
+                -- If we are bus-off we need to move to wait for reintegration command!
+                else
+                    tick_state_reg <= '1';
                 end if;
 
             -------------------------------------------------------------------
@@ -2348,9 +2396,11 @@ begin
                 nbt_ctrs_en <= '1';
                 
                 if (drv_bus_off_reset_q = '1') then
+                    tick_state_reg <= '1';
                     ctrl_ctr_pload_i <= '1';
                     reinteg_ctr_clr <= '1';
                     ctrl_ctr_pload_val <= C_INTEGRATION_DURATION;
+                    clr_bus_off_rst_flg <= '1';
                 end if;
 
             -------------------------------------------------------------------
@@ -2375,6 +2425,7 @@ begin
                 if (reinteg_ctr_expired = '1' and ctrl_ctr_zero = '1' and
                     rx_trigger = '1')
                 then
+                    tick_state_reg <= '1';
                     set_idle_i <= '1';
                     set_err_active_i <= '1';
                     load_init_vect_i <= '1';
@@ -2391,6 +2442,7 @@ begin
                 nbt_ctrs_en <= '1';
 
                 if (ctrl_ctr_zero = '1') then
+                    tick_state_reg <= '1';
                     ctrl_ctr_pload_i <= '1';
                     ctrl_ctr_pload_val <= C_DELIM_WAIT_DURATION;
                     first_err_delim_d <= '1';
@@ -2410,6 +2462,7 @@ begin
                 bit_err_disable <= '1';
                 
                 if (ctrl_ctr_zero = '1') then
+                    tick_state_reg <= '1';
                     ctrl_ctr_pload_i <= '1';
                     ctrl_ctr_pload_val <= C_DELIM_WAIT_DURATION;
                     first_err_delim_d <= '1';
@@ -2429,9 +2482,12 @@ begin
 
                 if (ctrl_ctr_zero = '0') then
                     ctrl_ctr_ena <= '1';
+                else
+                    tick_state_reg <= '1';
                 end if;
 
                 if (rx_data_nbs = RECESSIVE) then
+                    tick_state_reg <= '1';
                     ctrl_ctr_pload_i <= '1';
                     ctrl_ctr_pload_val <= C_ERR_DELIM_DURATION;
                 end if;
@@ -2456,12 +2512,14 @@ begin
                 ctrl_ctr_ena <= '1';
 
                 if (rx_data_nbs = RECESSIVE) then
+                    tick_state_reg <= '1';
                     ctrl_ctr_pload_i <= '1';
                     ctrl_ctr_pload_val <= C_ERR_DELIM_DURATION;
-                    
+
                 -- This indicates that either 14th dominant bit was detected,
                 -- or each next consecutive 8 DOMINANT bits were detected!
                 elsif (ctrl_ctr_zero = '1') then
+                    tick_state_reg <= '1';
                     ctrl_ctr_pload_i <= '1';
                     ctrl_ctr_pload_val <= C_DOMINANT_REPEAT_DURATION;
                     err_delim_late_i <= '1';
@@ -2478,7 +2536,9 @@ begin
                 bit_err_disable <= '1';
                                 
                 if (ctrl_ctr_zero = '1') then
+                    tick_state_reg <= '1';
                     ctrl_ctr_pload_i <= '1';
+
                     if (rx_data_nbs = DOMINANT) then
                         ctrl_ctr_pload_val <= C_OVR_FLG_DURATION;
                     else
@@ -2499,6 +2559,7 @@ begin
                 nbt_ctrs_en <= '1';
                 
                 if (ctrl_ctr_zero = '1') then
+                    tick_state_reg <= '1';
                     ctrl_ctr_pload_i <= '1';
                     ctrl_ctr_pload_val <= C_DELIM_WAIT_DURATION;
                 end if;
@@ -2513,6 +2574,8 @@ begin
                 
                 if (ctrl_ctr_zero = '0') then
                     ctrl_ctr_ena <= '1';
+                else
+                    tick_state_reg <= '1';
                 end if;
                 
                 -- When waiting for RECESSIVE bit after Overload flag, unit
@@ -2520,6 +2583,7 @@ begin
                 bit_err_disable <= '1';
                 
                 if (rx_data_nbs = RECESSIVE) then
+                    tick_state_reg <= '1';
                     ctrl_ctr_pload_i <= '1';
                     ctrl_ctr_pload_val <= C_OVR_DELIM_DURATION;
                 end if;
@@ -2535,7 +2599,9 @@ begin
                 bit_err_disable <= '1';
 
                 if (ctrl_ctr_zero = '1') then
+                    tick_state_reg <= '1';
                     ctrl_ctr_pload_i <= '1';
+
                     if (rx_data_nbs = DOMINANT) then
                         ctrl_ctr_pload_val <= C_OVR_FLG_DURATION;
                     else
@@ -2549,15 +2615,24 @@ begin
         end if;
 
     end process;
+    
+    -----------------------------------------------------------------------
+    -- Turn on/off of whole controller is not synchronized with any
+    -- other event! Therefore it creates separate clock enable condition
+    -- for FSM state register
+    -----------------------------------------------------------------------
+    tick_state_reg_on_off <=
+        '1' when (curr_state = s_pc_off and drv_ena = CTU_CAN_ENABLED) else
+        '1' when (curr_state /= s_pc_off and drv_ena = CTU_CAN_DISABLED) else
+        '0';
 
     -----------------------------------------------------------------------
     -- FSM State register
     -----------------------------------------------------------------------
-    state_reg_ce <= '1' when (next_state /= curr_state and
-                              (ctrl_signal_upd = '1' or drv_ena = '0' or
-                               tick_state_reg = '1'))
-                        else
-                    '0';
+    state_reg_ce <=
+        '1' when (tick_state_reg = '1' and ctrl_signal_upd = '1') else
+        '1' when (tick_state_reg_on_off = '1') else
+        '0';
 
     fsm_state_reg_proc : process(clk_sys, res_n)
     begin
