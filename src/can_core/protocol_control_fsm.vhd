@@ -743,7 +743,10 @@ architecture rtl of protocol_control_fsm is
     signal tx_frame_no_sof_q         :  std_logic;
     
     -- Control signal should be updated!
-    signal ctrl_signal_upd          :   std_logic;
+    signal ctrl_signal_upd           :  std_logic;
+    
+    -- Clear bus-off reset flag
+    signal clr_bus_off_rst_flg       :  std_logic; 
     
 begin
 
@@ -904,7 +907,7 @@ begin
         elsif (rising_edge(clk_sys)) then
             if (drv_bus_off_reset = '1') then
                 drv_bus_off_reset_q <= '1';
-            elsif (rx_trigger = '1') then
+            elsif (rx_trigger = '1' and clr_bus_off_rst_flg = '1') then
                 drv_bus_off_reset_q <= '0';
             end if;
         end if;
@@ -1444,6 +1447,8 @@ begin
         is_overload     <= '0';
         is_intermission <= '0';
         is_sof          <= '0';
+        
+        clr_bus_off_rst_flg <= '0';
 
         if (err_frm_req = '1') then
             tick_state_reg <= '1';
@@ -2395,6 +2400,7 @@ begin
                     ctrl_ctr_pload_i <= '1';
                     reinteg_ctr_clr <= '1';
                     ctrl_ctr_pload_val <= C_INTEGRATION_DURATION;
+                    clr_bus_off_rst_flg <= '1';
                 end if;
 
             -------------------------------------------------------------------
