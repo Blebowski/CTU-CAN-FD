@@ -2217,9 +2217,14 @@ begin
                 -- Address Identifier Word in TXT Buffer RAM in advance to
                 -- account for DFF delay and RAM delay! 
                 txtb_ptr_d <= 1;
+                
+                -- If we are bus-off, go to reintegration wait!
+                if (is_bus_off = '1') then
+                    tick_state_reg <= '1';
+                end if;
 
                 -- Last (third) bit of intermission
-                if (ctrl_ctr_zero = '1') then
+                if (ctrl_ctr_zero = '1' and is_bus_off = '0') then
                     tick_state_reg <= '1';
                     ctrl_ctr_pload_i <= '1';
                     crc_spec_enable_i <= '1';
@@ -2272,7 +2277,7 @@ begin
                     end if;
     
                 -- First or second bit of intermission!
-                elsif (rx_data_nbs = DOMINANT) then
+                elsif (rx_data_nbs = DOMINANT and is_bus_off = '0') then
                     tick_state_reg <= '1';
                     ctrl_ctr_pload_i <= '1';
                     ctrl_ctr_pload_val <= C_OVR_FLG_DURATION;
@@ -2372,6 +2377,10 @@ begin
                         destuff_enable_set <= '1';
                         rx_clear_i <= '1';
                     end if;
+                    
+                -- If we are bus-off we need to move to wait for reintegration command!
+                else
+                    tick_state_reg <= '1';
                 end if;
 
             -------------------------------------------------------------------
