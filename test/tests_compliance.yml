@@ -2,8 +2,8 @@ _default: &default
     log_level: info
     psl_coverage: true
     error_tolerance: 0
-    #seed: 1325440635  # optional; use to reconstruct results from randomized runs
-    randomize: true
+    seed: 1325440635  # optional; use to reconstruct results from randomized runs
+    randomize: false
     # In GUI mode, dump all signals, not only these included in layout file.
     dump_all_signals: true
 compliance:
@@ -29,16 +29,26 @@ compliance:
 
     tests:
         demo:
-        #iso_7_1_1:
+        iso_7_1_1:
+        iso_7_1_2:
+        iso_7_1_3:
         iso_7_1_4:
         iso_7_1_5:
+        iso_7_1_6:
+        iso_7_1_7:
         iso_7_1_8:
         iso_7_1_9:
+        iso_7_1_10:
+        iso_7_1_11:
         iso_7_1_12:
 
         iso_7_2_1:
+        iso_7_2_2:
+        iso_7_2_3:
+        iso_7_2_4:
         iso_7_2_6:
         iso_7_2_7:
+        iso_7_2_8:
         iso_7_2_9:
         iso_7_2_10:
         iso_7_2_11:
@@ -50,8 +60,19 @@ compliance:
 
         iso_7_4_1:
         iso_7_4_2:
+        iso_7_4_3:
         iso_7_4_4:
         iso_7_4_5:
+        iso_7_4_6:
+        iso_7_4_7:
+
+        iso_7_5_1:
+        iso_7_5_2:
+        iso_7_5_3:
+        iso_7_5_4:
+        iso_7_5_5:
+        iso_7_5_6:
+        iso_7_5_7:
 
         iso_7_6_1:
         iso_7_6_2:
@@ -61,6 +82,8 @@ compliance:
         iso_7_6_6:
         iso_7_6_7:
         iso_7_6_8:
+        iso_7_6_9:
+        iso_7_6_10:
         iso_7_6_11:
         iso_7_6_12:
         iso_7_6_13:
@@ -71,6 +94,9 @@ compliance:
         iso_7_6_18:
         iso_7_6_19:
         iso_7_6_20:
+        iso_7_6_21:
+        iso_7_6_22:
+        iso_7_6_23:
 
         iso_7_7_1:
         iso_7_7_3:
@@ -137,7 +163,16 @@ compliance:
         iso_7_8_9_3:
 
         iso_8_1_1:
+        iso_8_1_2:
         iso_8_1_3:
+            # TODO Equal time quanta of 3 are chosen here because if mismatching prescalers are used,
+            #      during first frame DUT will re-synchronize in data bit rate. This depends on where
+            #      within time quanta DUT will attemp to transmitt and it is therefore random! Monitor
+            #      does not do such resynchronisation and is therefore off by some data time quanta!
+            #      This needs to be fixed!!! There 
+            brp: 3
+            brp_fd: 3
+        iso_8_1_4:
             # TODO Equal time quanta of 3 are chosen here because if mismatching prescalers are used,
             #      during first frame DUT will re-synchronize in data bit rate. This depends on where
             #      within time quanta DUT will attemp to transmitt and it is therefore random! Monitor
@@ -150,5 +185,57 @@ compliance:
         iso_8_1_7:
         iso_8_1_8:
 
+        iso_8_2_1:
+        iso_8_2_2:
+        iso_8_2_3:
+        iso_8_2_4:
         iso_8_2_6:
         iso_8_2_7:
+
+        iso_8_3_1:
+        iso_8_3_2:
+        iso_8_3_3:
+        iso_8_3_4:
+
+        iso_8_4_1:
+        iso_8_4_2:
+        iso_8_4_3:
+        iso_8_4_4:
+        iso_8_4_5:
+
+        iso_8_5_1:
+        iso_8_5_2:
+        iso_8_5_3:
+        iso_8_5_4:
+            # In this test, BRP must be equal to BRP_FD! It is necessary since
+            # huge time quanta difference will cause mismatch during first
+            # resynchronisation (in ESI bit) during Data bit phase!
+            brp: 3
+            brp_fd: 3
+        iso_8_5_5:
+        iso_8_5_6:
+        iso_8_5_7:
+        iso_8_5_8:
+        iso_8_5_9:
+        iso_8_5_10:
+
+        iso_8_6_1:
+        iso_8_6_2:
+        iso_8_6_3:
+        iso_8_6_4:
+        iso_8_6_5:
+        iso_8_6_6:
+        iso_8_6_8:
+        iso_8_6_9:
+        iso_8_6_10:
+        iso_8_6_11:
+        iso_8_6_12:
+        iso_8_6_13:
+        iso_8_6_14:
+        iso_8_6_15:
+        iso_8_6_16:
+        iso_8_6_17:
+        iso_8_6_18:
+        iso_8_6_19:
+
+        iso_8_7_1:

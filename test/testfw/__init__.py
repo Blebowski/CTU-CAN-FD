@@ -25,7 +25,7 @@ def setup_logging() -> None:
 setup_logging()
 
 from . import vunit_ifc
-from . import test_unit, test_sanity, test_feature, test_reference
+from . import test_unit, test_sanity, test_feature, test_reference, test_compliance
 from vunit.ui import VUnit
 from .test_common import add_rtl_sources, add_tb_sources, get_compile_options
 
@@ -146,6 +146,7 @@ def test(obj, *, config, strict, create_ghws, dumpall, vunit_args):
         ('sanity', test_sanity.SanityTests),
         ('feature', test_feature.FeatureTests),
         ('reference', test_reference.ReferenceTests),
+        ('compliance', test_compliance.ComplianceTests)
     ]
 
     tests = []
@@ -193,6 +194,7 @@ def create_vunit(obj, vunit_args, out_basename):
         args += ['--compile']
     args += ['--xunit-xml', '../{}.xml1'.format(out_basename)] + list(vunit_args)
     ui = VUnit.from_argv(args)
+    ui.add_com()
     return ui
 
 
