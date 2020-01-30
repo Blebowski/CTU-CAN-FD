@@ -1,0 +1,15 @@
+_default: &default
+    log_level: debug
+    psl_coverage: true
+    error_tolerance: 0
+    # seed: 0 # optional; use to reconstruct results from randomized runs
+    # randomize: false
+    # In GUI mode, dump all signals, not only these included in layout file.
+    dump_all_signals: true
+compliance:
+    default:
+        <<: *default
+        iterations: 1
+        timeout: 100 ms
+    tests:
+        demo:
