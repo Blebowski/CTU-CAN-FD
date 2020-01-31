@@ -537,6 +537,15 @@ begin
                 mon_count := monitored_item.monitor_time / monitor_sample_rate;
                 debug("Number of samples: " & integer'image(mon_count));
                 
+                -- So far do not support when sample rate is not multiple of monitor
+                -- time! This would require extra handling of waiting time after last
+                -- sample!
+                if (mon_count * monitor_sample_rate /= monitored_item.monitor_time) then
+                    error("Monitor time must be multiple of sample rate! " &
+                          "Monitor time: " & time'image(monitored_item.monitor_time) &
+                          " Sample rate: " & time'image(monitor_sample_rate));
+                end if;
+                
                 -- Do not check on the last iteration because value might be changing
                 -- there already (if sample rate is multiple of monitor time, then we
                 -- are exactly at the end of monitor_time).
@@ -560,6 +569,10 @@ begin
                         monitor_mismatch <= '0';
                     end if;
                 end loop;
+                
+                -- We must wait one sample rate longer because we monitored only
+                -- -1 samples!
+                wait for monitor_sample_rate;
 
                 monitor_rp <= (monitor_rp + 1) mod G_MONITOR_FIFO_DEPTH;
                 wait for 0 ns;
