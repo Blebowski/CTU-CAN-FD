@@ -242,13 +242,16 @@ begin
         can_agent_driver_push_value(net, '1', 20 ns);
         can_agent_driver_start(net);
 
-        wait for 1000 ns;
+        --wait for 1000 ns;
         can_agent_monitor_wait_finish(net);
         can_agent_monitor_stop(net);
         can_agent_driver_stop(net);
 
         wait for 1000 ns;
         
+        can_agent_monitor_check_result(net);
+
+
         stop_clk_gen_agent(net);
 
         test_runner_cleanup(runner, false);

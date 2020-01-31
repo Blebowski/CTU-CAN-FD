@@ -382,6 +382,13 @@ package can_agent_pkg is
         constant    msg         : in    string(1 to C_MAX_MSG_LENGTH)
     );
 
+    ---------------------------------------------------------------------------
+    -- TODO!
+    ---------------------------------------------------------------------------
+    procedure can_agent_monitor_check_result(
+        signal      net         : inout network_t
+    );
+
 
     ---------------------------------------------------------------------------
     ---------------------------------------------------------------------------
@@ -417,6 +424,8 @@ package can_agent_pkg is
 
     constant CAN_AGNT_CMD_MONITOR_SET_SAMPLE_RATE       : integer := 22;
     constant CAN_AGNT_CMD_MONITOR_GET_SAMPLE_RATE       : integer := 23;
+    
+    constant CAN_AGNT_CMD_MONITOR_CHECK_RESULT          : integer := 24;
 
     constant CAN_AGNT_CMD_REPLY_OK                  : integer := 256;
     constant CAN_AGNT_CMD_REPLY_ERR                 : integer := 257;
@@ -1034,5 +1043,21 @@ package body can_agent_pkg is
         can_agent_monitor_single_item(net, item);
     end procedure;
 
+
+    procedure can_agent_monitor_check_result(
+        signal      net         : inout network_t
+    ) is
+        constant can_gen_rec : actor_t := find("actor_can_agent");
+        variable req_msg, reply_msg  : msg_t;
+    begin
+        info(CAN_AGENT_TAG  & "Checking monitor result!");
+        req_msg := new_msg(msg_type => (p_code => CAN_AGNT_CMD_MONITOR_CHECK_RESULT));
+        send(net         => net,
+             receiver    => can_gen_rec,
+             msg         => req_msg);
+        receive_reply(net, req_msg, reply_msg);
+        check(message_type(reply_msg).p_code = CAN_AGNT_CMD_REPLY_OK,
+              CAN_AGENT_TAG & " Monitor result checked");
+    end procedure;
 
 end package body;

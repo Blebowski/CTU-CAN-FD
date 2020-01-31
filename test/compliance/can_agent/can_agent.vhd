@@ -387,6 +387,9 @@ begin
         when CAN_AGNT_CMD_MONITOR_GET_SAMPLE_RATE =>
             push(ack_msg, monitor_sample_rate);
 
+        when CAN_AGNT_CMD_MONITOR_CHECK_RESULT =>
+            check(mon_mismatch_ctr = 0, CAN_AGENT_TAG & "Mismatches in monitor!");
+
         when others =>
             warning (CAN_AGENT_TAG & "Invalid message type: " & integer'image(cmd));
             ack_msg := new_msg(msg_type => (p_code => CAN_AGNT_CMD_REPLY_ERR));
@@ -405,6 +408,7 @@ begin
         if (driver_ena) then
             while (true) loop
                 if (not driver_ena) then
+                    driving_in_progress <= false;
                     exit;            
                 end if;
 
@@ -431,6 +435,7 @@ begin
                 end if;
             end loop;
         else
+            driving_in_progress <= false;
             wait until driver_ena;
         end if;
     end process;
@@ -478,10 +483,10 @@ begin
                 -- Note: This triggers also when driver is started but its
                 --       FIFO is empty so it does not drive anything!
                 when trig_driver_start =>
-                    wait until (driver_ena = true);
+                    wait until (driver_ena = true) or (monitor_ena = false);
                     
                 when trig_driver_stop =>
-                    wait until (driver_ena = false);
+                    wait until (driver_ena = false) or (monitor_ena = false);
                 end case;
 
                 if (monitor_ena = false) then
