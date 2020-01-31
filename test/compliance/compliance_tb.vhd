@@ -214,18 +214,6 @@ begin
         set_duty_clk_agent(net, 50);
         wait for 100 ns;
 
-        -- Test CAN agent driver here!
-        can_agent_driver_start(net);
-
-        can_agent_driver_push_value(net, '0', 10 ns);
-        can_agent_driver_push_value(net, '1', 20 ns);
-        can_agent_driver_push_value(net, '0', 30 ns);
-        can_agent_driver_push_value(net, 'X', 40 ns);
-        can_agent_driver_push_value(net, 'Z', 50 ns);
-        can_agent_driver_push_value(net, 'U', 60 ns);
-        can_agent_driver_push_value(net, 'L', 70 ns);
-        can_agent_driver_push_value(net, 'H', 80 ns);
-        
         test_signal <= '1';
 
         --mem_bus_agent_write_non_blocking(net, 4, x"AAAAAAAA", "1111");
@@ -237,6 +225,27 @@ begin
         
         wait for 1000 ns;
         mem_bus_agent_stop(net);
+
+        wait for 1000 ns;
+
+        can_agent_monitor_set_trigger(net, trig_driver_start);
+        can_agent_monitor_push_value(net, '0', 20 ns);
+        can_agent_monitor_push_value(net, '1', 20 ns);
+        can_agent_monitor_push_value(net, '0', 20 ns);
+        can_agent_monitor_push_value(net, '1', 20 ns);
+        can_agent_monitor_start(net);
+        
+        -- Test CAN agent driver here!
+        can_agent_driver_push_value(net, '0', 20 ns);
+        can_agent_driver_push_value(net, '1', 20 ns);
+        can_agent_driver_push_value(net, '0', 20 ns);
+        can_agent_driver_push_value(net, '1', 20 ns);
+        can_agent_driver_start(net);
+
+        wait for 1000 ns;
+        can_agent_monitor_wait_finish(net);
+        can_agent_monitor_stop(net);
+        can_agent_driver_stop(net);
 
         wait for 1000 ns;
         
