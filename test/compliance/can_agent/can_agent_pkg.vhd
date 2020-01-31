@@ -95,8 +95,31 @@ package can_agent_pkg is
     type t_can_monitor_entry is record
         value           :   std_logic;          -- Value to be checked
         monitor_time    :   time;               -- Time for which to monitor
+        print_msg       :   boolean;            -- Whether message should be printed
         msg             :   string(1 to C_MAX_MSG_LENGTH);   -- Message which to print
+        check_severity  :   log_level_t;
     end record;
+    
+    -- Trigger type for monitor (when will monitor start monitoring)
+    type t_can_monitor_trigger is (
+        trig_immediately,
+        trig_can_rx_rising_edge,
+        trig_can_rx_falling_edge,
+        trig_can_tx_rising_edge,
+        trig_can_tx_falling_edge,
+        trig_time_elapsed,
+        trig_driver_start,
+        trig_driver_stop
+    );
+    
+    -- Current monitor state
+    type t_can_monitor_state is(
+        mon_disabled,
+        mon_waiting_for_trigger,
+        mon_running,
+        mon_passed,
+        mon_failed
+    );
     
     ---------------------------------------------------------------------------
     -- TODO!    
@@ -211,15 +234,162 @@ package can_agent_pkg is
         constant    time        : in    time;
         constant    msg         : in    string(1 to C_MAX_MSG_LENGTH)
     );
-
     
+    ---------------------------------------------------------------------------
+    -- TODO!
+    ---------------------------------------------------------------------------
+    procedure can_agent_monitor_start(
+        signal      net         : inout network_t
+    );
+
+    ---------------------------------------------------------------------------
+    -- TODO!
+    ---------------------------------------------------------------------------
+    procedure can_agent_monitor_stop(
+        signal      net         : inout network_t
+    );
+    
+    ---------------------------------------------------------------------------
+    -- TODO!
+    ---------------------------------------------------------------------------
+    procedure can_agent_monitor_flush(
+        signal      net         : inout network_t
+    );
+    
+    --------------------------------------------------------------------------
+    -- TODO!
+    ---------------------------------------------------------------------------
+    procedure can_agent_monitor_get_state(
+        signal      net         : inout network_t;
+        variable    state       : out   t_can_monitor_state
+    );
+
+    --------------------------------------------------------------------------
+    -- TODO!
+    ---------------------------------------------------------------------------
+    procedure can_agent_monitor_get_monitored_val(
+        signal      net            : inout network_t;
+        variable    monitored_val  : out   std_logic
+    );
+    
+    --------------------------------------------------------------------------
+    -- TODO!
+    ---------------------------------------------------------------------------
+    procedure can_agent_monitor_push_item(
+        signal      net         : inout network_t;
+        constant    item        : in    t_can_monitor_entry
+    );
+
+    --------------------------------------------------------------------------
+    -- TODO!
+    ---------------------------------------------------------------------------
+    procedure can_agent_monitor_set_wait_timeout(
+        signal      net         : inout network_t;
+        constant    timeout     : in    time
+    );
+
+    --------------------------------------------------------------------------
+    -- TODO!
+    ---------------------------------------------------------------------------
+    procedure can_agent_monitor_wait_finish(
+        signal      net         : inout network_t
+    );
+
+    --------------------------------------------------------------------------
+    -- TODO!
+    ---------------------------------------------------------------------------
+    procedure can_agent_monitor_single_item(
+        signal      net         : inout network_t;
+        constant    item        : in    t_can_monitor_entry
+    );
+    
+    --------------------------------------------------------------------------
+    -- TODO!
+    ---------------------------------------------------------------------------
+    procedure can_agent_monitor_all_items(
+        signal      net         : inout network_t
+    );
+
+    --------------------------------------------------------------------------
+    -- TODO!
+    ---------------------------------------------------------------------------    
+    procedure can_agent_monitor_set_trigger(
+        signal      net         : inout network_t;
+        constant    trigger     : in    t_can_monitor_trigger
+    );
+
+    --------------------------------------------------------------------------
+    -- TODO!
+    ---------------------------------------------------------------------------    
+    procedure can_agent_monitor_get_trigger(
+        signal      net         : inout network_t;
+        variable    trigger     : out   t_can_monitor_trigger
+    );
+    
+    --------------------------------------------------------------------------
+    -- TODO!
+    ---------------------------------------------------------------------------    
+    procedure can_agent_monitor_set_sample_rate(
+        signal      net         : inout network_t;
+        constant    sample_rate : in    time
+    );
+
+    --------------------------------------------------------------------------
+    -- TODO!
+    ---------------------------------------------------------------------------    
+    procedure can_agent_monitor_get_sample_rate(
+        signal      net         : inout network_t;
+        variable    sample_rate : out   time
+    );
+    
+    --------------------------------------------------------------------------
+    -- TODO!
+    ---------------------------------------------------------------------------
+    procedure can_agent_monitor_push_value(
+        signal      net         : inout network_t;
+        constant    value       : in    std_logic;
+        constant    mon_time    : in    time;
+        constant    log_level   : in    log_level_t := warning
+    );
+
+    --------------------------------------------------------------------------
+    -- TODO!
+    ---------------------------------------------------------------------------
+    procedure can_agent_monitor_push_value(
+        signal      net         : inout network_t;
+        constant    value       : in    std_logic;
+        constant    mon_time    : in    time;
+        constant    log_level   : in    log_level_t := warning;
+        constant    msg         : in    string(1 to C_MAX_MSG_LENGTH)
+    );
+
+    ---------------------------------------------------------------------------
+    -- TODO!
+    ---------------------------------------------------------------------------
+    procedure can_agent_monitor_monitor_value(
+        signal      net         : inout network_t;
+        constant    value       : in    std_logic;
+        constant    mon_time    : in    time
+    );
+    
+    ---------------------------------------------------------------------------
+    -- TODO!
+    ---------------------------------------------------------------------------
+    procedure can_agent_monitor_monitor_value(
+        signal      net         : inout network_t;
+        constant    value       : in    std_logic;
+        constant    mon_time    : in    time;
+        constant    msg         : in    string(1 to C_MAX_MSG_LENGTH)
+    );
+
+
     ---------------------------------------------------------------------------
     ---------------------------------------------------------------------------
     -- Private declarations 
     ---------------------------------------------------------------------------
     ---------------------------------------------------------------------------
 
-    -- Supported commands for clock agent (sent as message types)
+    -- Supported commands for CAN agent (sent as message types)
     constant CAN_AGNT_CMD_DRIVER_START              : integer := 0;
     constant CAN_AGNT_CMD_DRIVER_STOP               : integer := 1;
     constant CAN_AGNT_CMD_DRIVER_FLUSH              : integer := 2;
@@ -231,6 +401,23 @@ package can_agent_pkg is
     constant CAN_AGNT_CMD_DRIVER_DRIVE_SINGLE_ITEM  : integer := 8;
     constant CAN_AGNT_CMD_DRIVER_DRIVE_ALL_ITEMS    : integer := 9;
    
+    constant CAN_AGNT_CMD_MONITOR_START                 : integer := 10;
+    constant CAN_AGNT_CMD_MONITOR_STOP                  : integer := 11;
+    constant CAN_AGNT_CMD_MONITOR_FLUSH                 : integer := 12;
+    constant CAN_AGNT_CMD_MONITOR_GET_STATE             : integer := 13;
+    constant CAN_AGNT_CMD_MONITOR_GET_MONITORED_VAL     : integer := 14;
+    constant CAN_AGNT_CMD_MONITOR_PUSH_ITEM             : integer := 15;
+    constant CAN_AGNT_CMD_MONITOR_SET_WAIT_TIMEOUT      : integer := 16;
+    constant CAN_AGNT_CMD_MONITOR_WAIT_FINISH           : integer := 17;
+    constant CAN_AGNT_CMD_MONITOR_MONITOR_SINGLE_ITEM   : integer := 18;
+    constant CAN_AGNT_CMD_MONITOR_MONITOR_ALL_ITEMS     : integer := 19;
+    
+    constant CAN_AGNT_CMD_MONITOR_SET_TRIGGER           : integer := 20;
+    constant CAN_AGNT_CMD_MONITOR_GET_TRIGGER           : integer := 21;
+
+    constant CAN_AGNT_CMD_MONITOR_SET_SAMPLE_RATE       : integer := 22;
+    constant CAN_AGNT_CMD_MONITOR_GET_SAMPLE_RATE       : integer := 23;
+
     constant CAN_AGNT_CMD_REPLY_OK                  : integer := 256;
     constant CAN_AGNT_CMD_REPLY_ERR                 : integer := 257;
     
@@ -504,5 +691,348 @@ package body can_agent_pkg is
         can_agent_driver_drive_single_item(net, item);
     end procedure;
 
+
+    procedure can_agent_monitor_start(
+        signal      net         : inout network_t
+    ) is
+        constant can_gen_rec : actor_t := find("actor_can_agent");
+        variable req_msg, reply_msg  : msg_t;
+    begin
+        info(CAN_AGENT_TAG  & "Starting monitor");
+        req_msg := new_msg(msg_type => (p_code => CAN_AGNT_CMD_MONITOR_START));
+        send(net         => net,
+             receiver    => can_gen_rec,
+             msg         => req_msg);
+        receive_reply(net, req_msg, reply_msg); 
+        check(message_type(reply_msg).p_code = CAN_AGNT_CMD_REPLY_OK,
+              CAN_AGENT_TAG & " Monitor started");
+    end procedure;
+
+
+    procedure can_agent_monitor_stop(
+        signal      net         : inout network_t
+    ) is
+        constant can_gen_rec : actor_t := find("actor_can_agent");
+        variable req_msg, reply_msg  : msg_t;
+    begin
+        info(CAN_AGENT_TAG  & "Stopping monitor");
+        req_msg := new_msg(msg_type => (p_code => CAN_AGNT_CMD_MONITOR_STOP));
+        send(net         => net,
+             receiver    => can_gen_rec,
+             msg         => req_msg);
+        receive_reply(net, req_msg, reply_msg); 
+        check(message_type(reply_msg).p_code = CAN_AGNT_CMD_REPLY_OK,
+              CAN_AGENT_TAG & " Monitor stopped");
+    end procedure;
+
+
+    procedure can_agent_monitor_flush(
+        signal      net         : inout network_t
+    ) is
+        constant can_gen_rec : actor_t := find("actor_can_agent");
+        variable req_msg, reply_msg  : msg_t;
+    begin
+        info(CAN_AGENT_TAG  & "Flushing monitor FIFO");
+        req_msg := new_msg(msg_type => (p_code => CAN_AGNT_CMD_MONITOR_FLUSH));
+        send(net         => net,
+             receiver    => can_gen_rec,
+             msg         => req_msg);
+        receive_reply(net, req_msg, reply_msg); 
+        check(message_type(reply_msg).p_code = CAN_AGNT_CMD_REPLY_OK,
+              CAN_AGENT_TAG & " Monitor FIFO flushed");
+    end procedure;
+
+
+    procedure can_agent_monitor_get_state(
+        signal      net         : inout network_t;
+        variable    state       : out   t_can_monitor_state
+    ) is
+        constant can_gen_rec : actor_t := find("actor_can_agent");
+        variable req_msg, reply_msg  : msg_t;
+        variable rec_int : integer;
+    begin
+        info(CAN_AGENT_TAG  & "Getting monitor state");
+        req_msg := new_msg(msg_type => (p_code => CAN_AGNT_CMD_MONITOR_GET_STATE));
+        send(net         => net,
+             receiver    => can_gen_rec,
+             msg         => req_msg);
+        receive_reply(net, req_msg, reply_msg);
+        rec_int := pop(reply_msg);
+        state := t_can_monitor_state'val(rec_int);
+        check(message_type(reply_msg).p_code = CAN_AGNT_CMD_REPLY_OK,
+              CAN_AGENT_TAG & " Monitor state got");
+    end procedure;
+
+
+    procedure can_agent_monitor_get_monitored_val(
+        signal      net            : inout network_t;
+        variable    monitored_val  : out   std_logic
+    ) is
+        constant can_gen_rec : actor_t := find("actor_can_agent");
+        variable req_msg, reply_msg  : msg_t;
+    begin
+        info(CAN_AGENT_TAG  & "Getting monitored value");
+        req_msg := new_msg(msg_type => (p_code => CAN_AGNT_CMD_MONITOR_GET_MONITORED_VAL));
+        send(net         => net,
+             receiver    => can_gen_rec,
+             msg         => req_msg);
+        receive_reply(net, req_msg, reply_msg);
+        monitored_val := pop(reply_msg);
+        check(message_type(reply_msg).p_code = CAN_AGNT_CMD_REPLY_OK,
+              CAN_AGENT_TAG & " Monitor value got");
+    end procedure;
     
+    
+    procedure can_agent_monitor_push_item(
+        signal      net         : inout network_t;
+        constant    item        : in    t_can_monitor_entry
+    ) is
+        constant can_gen_rec : actor_t := find("actor_can_agent");
+        variable req_msg, reply_msg  : msg_t;
+    begin
+        info(CAN_AGENT_TAG  & "Pushing monitoring item");
+        req_msg := new_msg(msg_type => (p_code => CAN_AGNT_CMD_MONITOR_PUSH_ITEM));
+        
+        push(req_msg, item.value);
+        push(req_msg, item.monitor_time);
+        push(req_msg, log_level_t'pos(item.check_severity));
+        push(req_msg, item.print_msg);
+        if (item.print_msg) then
+            push(req_msg, item.msg);
+        end if;
+
+        send(net         => net,
+             receiver    => can_gen_rec,
+             msg         => req_msg);
+        receive_reply(net, req_msg, reply_msg);
+        check(message_type(reply_msg).p_code = CAN_AGNT_CMD_REPLY_OK,
+              CAN_AGENT_TAG & " Monitor item pushed");
+    end procedure;
+
+    
+    procedure can_agent_monitor_set_wait_timeout(
+        signal      net         : inout network_t;
+        constant    timeout     : in    time
+    ) is
+        constant can_gen_rec : actor_t := find("actor_can_agent");
+        variable req_msg, reply_msg  : msg_t;
+    begin
+        info(CAN_AGENT_TAG  & "Setting wait timeout");
+        req_msg := new_msg(msg_type => (p_code => CAN_AGNT_CMD_MONITOR_SET_WAIT_TIMEOUT));
+        push(req_msg, timeout);
+        send(net         => net,
+             receiver    => can_gen_rec,
+             msg         => req_msg);
+        receive_reply(net, req_msg, reply_msg);
+        check(message_type(reply_msg).p_code = CAN_AGNT_CMD_REPLY_OK,
+              CAN_AGENT_TAG & " wait timeout set");
+    end procedure;
+
+    
+    procedure can_agent_monitor_wait_finish(
+        signal      net         : inout network_t
+    )is
+        constant can_gen_rec : actor_t := find("actor_can_agent");
+        variable req_msg, reply_msg  : msg_t;
+    begin
+        info(CAN_AGENT_TAG  & "Waiting for monitor finish");
+        req_msg := new_msg(msg_type => (p_code => CAN_AGNT_CMD_MONITOR_WAIT_FINISH));
+        send(net         => net,
+             receiver    => can_gen_rec,
+             msg         => req_msg);
+        receive_reply(net, req_msg, reply_msg);
+        check(message_type(reply_msg).p_code = CAN_AGNT_CMD_REPLY_OK,
+              CAN_AGENT_TAG & " monitor finished");
+    end procedure;
+
+
+    procedure can_agent_monitor_single_item(
+        signal      net         : inout network_t;
+        constant    item        : in    t_can_monitor_entry
+    ) is
+        constant can_gen_rec : actor_t := find("actor_can_agent");
+        variable req_msg, reply_msg  : msg_t;
+    begin
+        info(CAN_AGENT_TAG  & "Monitoring single item");
+        req_msg := new_msg(msg_type => (p_code => CAN_AGNT_CMD_MONITOR_MONITOR_SINGLE_ITEM));
+        
+        push(req_msg, item.value);
+        push(req_msg, item.monitor_time);
+        push(req_msg, log_level_t'pos(item.check_severity));
+        push(req_msg, item.print_msg);
+        if (item.print_msg) then
+            push(req_msg, item.msg);
+        end if;
+
+        send(net         => net,
+             receiver    => can_gen_rec,
+             msg         => req_msg);
+        receive_reply(net, req_msg, reply_msg);
+        check(message_type(reply_msg).p_code = CAN_AGNT_CMD_REPLY_OK,
+              CAN_AGENT_TAG & " Single item monitored");
+    end procedure;
+    
+
+    procedure can_agent_monitor_all_items(
+        signal      net         : inout network_t
+    )is
+        constant can_gen_rec : actor_t := find("actor_can_agent");
+        variable req_msg, reply_msg  : msg_t;
+    begin
+        info(CAN_AGENT_TAG  & "Waiting till all items will be monitored");
+        req_msg := new_msg(msg_type => (p_code => CAN_AGNT_CMD_MONITOR_MONITOR_ALL_ITEMS));
+        send(net         => net,
+             receiver    => can_gen_rec,
+             msg         => req_msg);
+        receive_reply(net, req_msg, reply_msg);
+        check(message_type(reply_msg).p_code = CAN_AGNT_CMD_REPLY_OK,
+              CAN_AGENT_TAG & " all items monitored");
+    end procedure;
+
+
+    procedure can_agent_monitor_set_trigger(
+        signal      net         : inout network_t;
+        constant    trigger     : in    t_can_monitor_trigger
+    ) is
+        constant can_gen_rec : actor_t := find("actor_can_agent");
+        variable req_msg, reply_msg  : msg_t;
+        variable rec_int : integer;
+    begin
+        info(CAN_AGENT_TAG  & "Setting monitor trigger to: " &
+             t_can_monitor_trigger'image(trigger));
+        req_msg := new_msg(msg_type => (p_code => CAN_AGNT_CMD_MONITOR_SET_TRIGGER));
+        push(req_msg, t_can_monitor_trigger'pos(trigger));
+        send(net         => net,
+             receiver    => can_gen_rec,
+             msg         => req_msg);
+        receive_reply(net, req_msg, reply_msg);
+        check(message_type(reply_msg).p_code = CAN_AGNT_CMD_REPLY_OK,
+              CAN_AGENT_TAG & " Monitor trigger set");
+    end procedure;
+
+
+    procedure can_agent_monitor_get_trigger(
+        signal      net         : inout network_t;
+        variable    trigger     : out   t_can_monitor_trigger
+    ) is
+        constant can_gen_rec : actor_t := find("actor_can_agent");
+        variable req_msg, reply_msg  : msg_t;
+        variable rec_int : integer;
+    begin
+        info(CAN_AGENT_TAG  & "Getting monitor trigger");
+        req_msg := new_msg(msg_type => (p_code => CAN_AGNT_CMD_MONITOR_GET_TRIGGER));
+        send(net         => net,
+             receiver    => can_gen_rec,
+             msg         => req_msg);
+        receive_reply(net, req_msg, reply_msg);
+        rec_int := pop(reply_msg);
+        trigger := t_can_monitor_trigger'val(rec_int);
+        check(message_type(reply_msg).p_code = CAN_AGNT_CMD_REPLY_OK,
+              CAN_AGENT_TAG & " Monitor trigger got");
+    end procedure;
+
+
+    procedure can_agent_monitor_set_sample_rate(
+        signal      net         : inout network_t;
+        constant    sample_rate : in    time
+    ) is
+        constant can_gen_rec : actor_t := find("actor_can_agent");
+        variable req_msg, reply_msg  : msg_t;
+    begin
+        info(CAN_AGENT_TAG  & "Setting monitor sample rate to: " &
+             time'image(sample_rate));
+        req_msg := new_msg(msg_type => (p_code => CAN_AGNT_CMD_MONITOR_SET_SAMPLE_RATE));
+        push(req_msg, sample_rate);
+        send(net         => net,
+             receiver    => can_gen_rec,
+             msg         => req_msg);
+        receive_reply(net, req_msg, reply_msg);
+        check(message_type(reply_msg).p_code = CAN_AGNT_CMD_REPLY_OK,
+              CAN_AGENT_TAG & " monitor sample rate set");
+    end procedure;
+
+
+    procedure can_agent_monitor_get_sample_rate(
+        signal      net         : inout network_t;
+        variable    sample_rate : out   time
+    ) is
+        constant can_gen_rec : actor_t := find("actor_can_agent");
+        variable req_msg, reply_msg  : msg_t;
+    begin
+        info(CAN_AGENT_TAG  & "Getting monitor sample rate.");
+        req_msg := new_msg(msg_type => (p_code => CAN_AGNT_CMD_MONITOR_GET_SAMPLE_RATE));
+        send(net         => net,
+             receiver    => can_gen_rec,
+             msg         => req_msg);
+        receive_reply(net, req_msg, reply_msg);
+        sample_rate := pop(reply_msg);
+        check(message_type(reply_msg).p_code = CAN_AGNT_CMD_REPLY_OK,
+              CAN_AGENT_TAG & " monitor sample rate got");
+    end procedure;
+
+
+    procedure can_agent_monitor_push_value(
+        signal      net         : inout network_t;
+        constant    value       : in    std_logic;
+        constant    mon_time    : in    time;
+        constant    log_level   : in    log_level_t := warning
+    ) is
+        variable item                   : t_can_monitor_entry;
+    begin
+        item.value := value;
+        item.monitor_time := mon_time;
+        item.print_msg := false;
+        item.check_severity := log_level; 
+        can_agent_monitor_push_item(net, item);
+    end procedure;
+
+
+    procedure can_agent_monitor_push_value(
+        signal      net         : inout network_t;
+        constant    value       : in    std_logic;
+        constant    mon_time    : in    time;
+        constant    log_level   : in    log_level_t := warning;
+        constant    msg         : in    string(1 to C_MAX_MSG_LENGTH)
+    ) is
+        variable item                   : t_can_monitor_entry;
+    begin
+        item.value := value;
+        item.monitor_time := mon_time;
+        item.print_msg := true;
+        item.msg := msg;
+        item.check_severity := log_level;
+        can_agent_monitor_push_item(net, item);
+    end procedure;
+
+
+    procedure can_agent_monitor_monitor_value(
+        signal      net         : inout network_t;
+        constant    value       : in    std_logic;
+        constant    mon_time    : in    time
+    ) is
+        variable item                   : t_can_monitor_entry;
+    begin
+        item.value := value;
+        item.monitor_time := mon_time;
+        item.print_msg := false;
+        can_agent_monitor_single_item(net, item);
+    end procedure;
+    
+
+    procedure can_agent_monitor_monitor_value(
+        signal      net         : inout network_t;
+        constant    value       : in    std_logic;
+        constant    mon_time    : in    time;
+        constant    msg         : in    string(1 to C_MAX_MSG_LENGTH)
+    )is
+        variable item                   : t_can_monitor_entry;
+    begin
+        item.value := value;
+        item.monitor_time := mon_time;
+        item.print_msg := true;
+        item.msg := msg;
+        can_agent_monitor_single_item(net, item);
+    end procedure;
+
+
 end package body;
