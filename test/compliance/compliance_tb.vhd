@@ -229,17 +229,17 @@ begin
         wait for 1000 ns;
 
         can_agent_monitor_set_trigger(net, trig_driver_start);
-        can_agent_monitor_push_value(net, '0', 20 ns);
-        can_agent_monitor_push_value(net, '1', 20 ns);
-        can_agent_monitor_push_value(net, '0', 20 ns);
-        can_agent_monitor_push_value(net, '1', 20 ns);
+        can_agent_monitor_push_value(net, '0', 20 ns, "SOF");
+        can_agent_monitor_push_value(net, '1', 20 ns, "ID[0]");
+        can_agent_monitor_push_value(net, '0', 20 ns, "ID[1]");
+        can_agent_monitor_push_value(net, '1', 20 ns, "ID[2]");
         can_agent_monitor_start(net);
         
         -- Test CAN agent driver here!
-        can_agent_driver_push_value(net, '0', 20 ns);
-        can_agent_driver_push_value(net, '1', 20 ns);
-        can_agent_driver_push_value(net, '0', 20 ns);
-        can_agent_driver_push_value(net, '1', 20 ns);
+        can_agent_driver_push_value(net, '0', 20 ns, "A");
+        can_agent_driver_push_value(net, '1', 20 ns, "B");
+        can_agent_driver_push_value(net, '0', 20 ns, "C");
+        can_agent_driver_push_value(net, '1', 20 ns, "D");
         can_agent_driver_start(net);
 
         --wait for 1000 ns;

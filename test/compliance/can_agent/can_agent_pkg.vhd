@@ -198,7 +198,7 @@ package can_agent_pkg is
         signal      net         : inout network_t;
         constant    value       : in    std_logic;
         constant    time        : in    time;
-        constant    msg         : in    string(1 to C_MAX_MSG_LENGTH)
+        constant    msg         : in    string
     );
     
     ---------------------------------------------------------------------------
@@ -232,7 +232,7 @@ package can_agent_pkg is
         signal      net         : inout network_t;
         constant    value       : in    std_logic;
         constant    time        : in    time;
-        constant    msg         : in    string(1 to C_MAX_MSG_LENGTH)
+        constant    msg         : in    string
     );
     
     ---------------------------------------------------------------------------
@@ -359,8 +359,8 @@ package can_agent_pkg is
         signal      net         : inout network_t;
         constant    value       : in    std_logic;
         constant    mon_time    : in    time;
-        constant    log_level   : in    log_level_t := warning;
-        constant    msg         : in    string(1 to C_MAX_MSG_LENGTH)
+        constant    msg         : in    string;
+        constant    log_level   : in    log_level_t := warning
     );
 
     ---------------------------------------------------------------------------
@@ -379,7 +379,7 @@ package can_agent_pkg is
         signal      net         : inout network_t;
         constant    value       : in    std_logic;
         constant    mon_time    : in    time;
-        constant    msg         : in    string(1 to C_MAX_MSG_LENGTH)
+        constant    msg         : in    string
     );
 
     ---------------------------------------------------------------------------
@@ -618,14 +618,15 @@ package body can_agent_pkg is
         signal      net         : inout network_t;
         constant    value       : in    std_logic;
         constant    time        : in    time;
-        constant    msg         : in    string(1 to C_MAX_MSG_LENGTH)
+        constant    msg         : in    string
     ) is
         variable item           : t_can_driver_entry;
     begin
         item.value := value;
         item.print_msg := true;
         item.drive_time := time;
-        item.msg := msg;
+        item.msg := (OTHERS => ' ');
+        item.msg(1 to msg'length) := msg;
         can_agent_driver_push_item(net, item);
     end procedure;
 
@@ -689,14 +690,15 @@ package body can_agent_pkg is
         signal      net         : inout network_t;
         constant    value       : in    std_logic;
         constant    time        : in    time;
-        constant    msg         : in    string(1 to C_MAX_MSG_LENGTH)
+        constant    msg         : in    string
     ) is
         variable item                   : t_can_driver_entry;
     begin
         item.value := value;
         item.drive_time := time;
         item.print_msg := true;
-        item.msg := msg;
+        item.msg := (OTHERS => ' ');
+        item.msg(1 to msg'length) := msg;
         can_agent_driver_drive_single_item(net, item);
     end procedure;
 
@@ -1000,15 +1002,16 @@ package body can_agent_pkg is
         signal      net         : inout network_t;
         constant    value       : in    std_logic;
         constant    mon_time    : in    time;
-        constant    log_level   : in    log_level_t := warning;
-        constant    msg         : in    string(1 to C_MAX_MSG_LENGTH)
+        constant    msg         : in    string;
+        constant    log_level   : in    log_level_t := warning
     ) is
         variable item                   : t_can_monitor_entry;
     begin
         item.value := value;
         item.monitor_time := mon_time;
         item.print_msg := true;
-        item.msg := msg;
+        item.msg := (OTHERS => ' ');
+        item.msg(1 to msg'length) := msg;
         item.check_severity := log_level;
         can_agent_monitor_push_item(net, item);
     end procedure;
@@ -1032,14 +1035,15 @@ package body can_agent_pkg is
         signal      net         : inout network_t;
         constant    value       : in    std_logic;
         constant    mon_time    : in    time;
-        constant    msg         : in    string(1 to C_MAX_MSG_LENGTH)
+        constant    msg         : in    string
     )is
         variable item                   : t_can_monitor_entry;
     begin
         item.value := value;
         item.monitor_time := mon_time;
         item.print_msg := true;
-        item.msg := msg;
+        item.msg := (OTHERS => ' ');
+        item.msg(1 to msg'length) := msg;
         can_agent_monitor_single_item(net, item);
     end procedure;
 

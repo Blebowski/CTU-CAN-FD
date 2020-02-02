@@ -573,6 +573,7 @@ begin
                 -- We must wait one sample rate longer because we monitored only
                 -- -1 samples!
                 wait for monitor_sample_rate;
+                monitor_mismatch <= '0';
 
                 monitor_rp <= (monitor_rp + 1) mod G_MONITOR_FIFO_DEPTH;
                 wait for 0 ns;
