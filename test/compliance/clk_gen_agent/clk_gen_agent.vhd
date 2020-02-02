@@ -183,5 +183,5 @@ begin
             wait until enabled;
         end if;
     end process;
-    
+
 end architecture;
