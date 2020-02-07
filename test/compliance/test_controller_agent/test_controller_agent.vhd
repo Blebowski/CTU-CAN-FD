@@ -41,8 +41,12 @@
 
 --------------------------------------------------------------------------------
 --  @Purpose:
---    Test controller agent.
---    TODO: Further documentation!
+--    Test controller agent. Controls CAN FD compliance TB over Vunit
+--    communication library.
+--
+--    More on Vunit and its communication library can be found at:
+--     https://vunit.github.io/documentation.html
+--     https://vunit.github.io/com/user_guide.html
 --  
 --------------------------------------------------------------------------------
 -- Revision History:

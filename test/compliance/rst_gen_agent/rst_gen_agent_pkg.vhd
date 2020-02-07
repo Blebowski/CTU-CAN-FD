@@ -41,8 +41,8 @@
 
 --------------------------------------------------------------------------------
 --  @Purpose:
---    Package with declarations for reset generator agent accessible over
---    Vunit communication library!
+--    Package with API for Reset generator agent.
+--
 --------------------------------------------------------------------------------
 -- Revision History:
 --    19.1.2020   Created file
@@ -75,21 +75,28 @@ package rst_gen_agent_pkg is
     ---------------------------------------------------------------------------
 
     ---------------------------------------------------------------------------
-    -- TODO!    
+    -- Assert reset by Reset generator agent.
+    --
+    -- @param net Network on which Reset agent listens (use "net").    
     ---------------------------------------------------------------------------
     procedure assert_rst_agent(
         signal      net         : inout network_t
     );
 
     ---------------------------------------------------------------------------
-    -- TODO!    
+    -- De-assert reset by Reset generator agent.
+    --
+    -- @param net Network on which Reset agent listens (use "net").
     ---------------------------------------------------------------------------
     procedure deassert_rst_agent(
         signal      net         : inout network_t
     );
 
     ---------------------------------------------------------------------------
-    -- TODO!    
+    -- Set polarity of Reset generator agent.
+    --
+    -- @param net       Network on which Reset agent listens (use "net").
+    -- @param polarity  Polarity to be set.
     ---------------------------------------------------------------------------
     procedure polarity_set_rst_agent(
         signal      net         : inout network_t;
@@ -97,7 +104,10 @@ package rst_gen_agent_pkg is
     );
 
     ---------------------------------------------------------------------------
-    -- TODO!    
+    -- Get polarity of Reset generator agent.
+    --
+    -- @param net       Network on which Reset agent listens (use "net").
+    -- @param polarity  Obtained polarity.   
     ---------------------------------------------------------------------------
     procedure polarity_get_rst_agent(
         signal      net         : inout network_t;

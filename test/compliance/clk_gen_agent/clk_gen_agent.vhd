@@ -42,7 +42,25 @@
 --------------------------------------------------------------------------------
 --  @Purpose:
 --    Clock generator agent. Configurable over Vunit Communication library.
---    TODO: Further documentation!
+--
+--    More on Vunit and its communication library can be found at:
+---     https://vunit.github.io/documentation.html
+--      https://vunit.github.io/com/user_guide.html
+
+--    Clock generator agent generates clock (whoooa thats surprise right).
+--    
+--    Clock generator agent only generates clock when it is enabled. When it is
+--    disabled, its clock output remains in value which clock output had at 
+--    time when it was disabled.
+--    
+--    Clock generator agent has following configurable parameters:
+--      Clock period        Obvious who does not know what clock period is should
+--                          not be reading this text.
+--      Jitter              Cycle to cycle jitter. Each clock cycle can last:
+--                          period +- "rand_val"  where "rand_val" is less than
+--                          or equal to jitter.
+--      Duty cycle          Again, obvious, if you don't know what duty cycle
+--                          is, seriously, stop reading!
 --  
 --------------------------------------------------------------------------------
 -- Revision History:
@@ -83,9 +101,6 @@ architecture tb of clk_gen_agent is
     
     -- Duty cycle of generated clock (in %)
     signal duty             :    integer range 0 to 100 := 50;
-    
-    -- Duty cycle jitter (in %)
-    signal duty_jitter      :    integer range 0 to 100 := 0;
 
     -- Jitter of generated clock (short time -> cycle to cycle)
     signal jitter           :    time := 1 fs;

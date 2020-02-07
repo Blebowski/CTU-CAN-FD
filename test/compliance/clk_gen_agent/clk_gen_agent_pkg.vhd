@@ -41,8 +41,8 @@
 
 --------------------------------------------------------------------------------
 --  @Purpose:
---    Package with declarations for clock generator agent accessible over
---    Vunit communication library!
+--    Package with API for Clock generator agent.
+--
 --------------------------------------------------------------------------------
 -- Revision History:
 --    19.1.2020   Created file
@@ -75,21 +75,28 @@ package clk_gen_agent_pkg is
     ---------------------------------------------------------------------------
     
     ---------------------------------------------------------------------------
-    -- TODO!    
+    -- Start clock generator agent.
+    --
+    -- @param net Network on which Memory bus agent listens (use "net"). 
     ---------------------------------------------------------------------------
     procedure start_clk_gen_agent(
         signal      net         : inout network_t
     );
 
     ---------------------------------------------------------------------------
-    -- TODO!    
+    -- Stop clock generator agent.
+    --
+    -- @param net Network on which Memory bus agent listens (use "net"). 
     ---------------------------------------------------------------------------
     procedure stop_clk_gen_agent(
         signal      net         : inout network_t
     );
         
     ---------------------------------------------------------------------------
-    -- TODO!    
+    -- Set clock period of clock generator agent.
+    --
+    -- @param net       Network on which Memory bus agent listens (use "net").
+    -- @param period    Clock period to be set.
     ---------------------------------------------------------------------------
     procedure set_period_clk_agent(
         signal      net         : inout network_t;
@@ -97,7 +104,10 @@ package clk_gen_agent_pkg is
     );
     
     ---------------------------------------------------------------------------
-    -- TODO!    
+    -- Get clock period of clock generator agent.
+    --
+    -- @param net       Network on which Memory bus agent listens (use "net").
+    -- @param period    Obtained clock period.
     ---------------------------------------------------------------------------
     procedure get_period_clk_agent(
         signal      net         : inout network_t;
@@ -105,7 +115,10 @@ package clk_gen_agent_pkg is
     );
     
     ---------------------------------------------------------------------------
-    -- TODO!    
+    -- Set clock generator jitter.
+    --
+    -- @param net       Network on which Memory bus agent listens (use "net").
+    -- @param jitter    Jitter to be set.    
     ---------------------------------------------------------------------------
     procedure set_jitter_clk_agent(
         signal      net         : inout network_t;
@@ -113,7 +126,10 @@ package clk_gen_agent_pkg is
     );
     
     ---------------------------------------------------------------------------
-    -- TODO!    
+    -- Get clock generator jitter.
+    --
+    -- @param net       Network on which Memory bus agent listens (use "net").
+    -- @param jitter    Obtained jitter.  
     ---------------------------------------------------------------------------
     procedure get_jitter_clk_agent(
         signal      net         : inout network_t;
@@ -121,7 +137,10 @@ package clk_gen_agent_pkg is
     );
 
     ---------------------------------------------------------------------------
-    -- TODO!    
+    -- Set clock generator duty cycle.
+    --
+    -- @param net       Network on which Memory bus agent listens (use "net").
+    -- @param duty      Duty cycle to be set.
     ---------------------------------------------------------------------------
     procedure set_duty_clk_agent(
         signal      net         : inout network_t;
@@ -129,7 +148,10 @@ package clk_gen_agent_pkg is
     );
 
     ---------------------------------------------------------------------------
-    -- TODO!    
+    -- Get clock generator duty cycle.
+    --
+    -- @param net       Network on which Memory bus agent listens (use "net").
+    -- @param duty      Obtained duty cycle.  
     ---------------------------------------------------------------------------
     procedure get_duty_clk_agent(
         signal      net         : inout network_t;

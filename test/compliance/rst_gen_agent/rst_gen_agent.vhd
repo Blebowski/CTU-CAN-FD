@@ -41,9 +41,14 @@
 
 --------------------------------------------------------------------------------
 --  @Purpose:
---    Clock generator agent. Configurable over Vunit Communication library.
---    TODO: Further documentation!
---  
+--    Reset generator agent. Configurable over Vunit Communication library.
+--
+--    More on Vunit and its communication library can be found at:
+---     https://vunit.github.io/documentation.html
+--      https://vunit.github.io/com/user_guide.html
+--
+--    Reset generator has configurable polarity.  
+--
 --------------------------------------------------------------------------------
 -- Revision History:
 --    19.1.2020   Created file

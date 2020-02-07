@@ -41,8 +41,8 @@
 
 --------------------------------------------------------------------------------
 --  @Purpose:
---    Package with declarations for Memory bus agent accessible over Vunit
---    communication library!
+--    Package with API for Memory bus agent.
+--
 --------------------------------------------------------------------------------
 -- Revision History:
 --    19.1.2020   Created file
@@ -92,21 +92,35 @@ package mem_bus_agent_pkg is
     end record;
 
     ---------------------------------------------------------------------------
-    -- TODO!    
+    -- Start memory bus agent.
+    --
+    -- @param net Network on which CAN Agent listens (use "net").
     ---------------------------------------------------------------------------
     procedure mem_bus_agent_start(
         signal      net         : inout network_t
     );
     
     ---------------------------------------------------------------------------
-    -- TODO!    
+    -- Stop memory bus agent.
+    --
+    -- @param net Network on which CAN Agent listens (use "net").
     ---------------------------------------------------------------------------
     procedure mem_bus_agent_stop(
         signal      net         : inout network_t
     );
     
     ---------------------------------------------------------------------------
-    -- TODO!    
+    -- Push write transaction to Memory bus agent FIFO. Function returns
+    -- immediately after transaction is inserted and does not wait until
+    -- transaction is executed.
+    --
+    -- This function is "raw" in such sense that user has to fill byte_enable
+    -- and according data by himself.
+    --
+    -- @param net           Network on which CAN Agent listens (use "net").
+    -- @param address       Memory bus address
+    -- @param write_data    Data to write
+    -- @param byte_enable   Byte enable value.
     ---------------------------------------------------------------------------
     procedure mem_bus_agent_write_non_blocking(
         signal      net         : inout network_t;
@@ -116,7 +130,14 @@ package mem_bus_agent_pkg is
     );
 
     ---------------------------------------------------------------------------
-    -- TODO!    
+    -- Push write transaction to Memory bus agent FIFO and wait till this
+    -- memory transaction is executed. Memory bus agent must be enabled before
+    -- calling this function.
+    --
+    -- @param net           Network on which CAN Agent listens (use "net").
+    -- @param address       Memory bus address
+    -- @param write_data    Data to write
+    -- @param byte_enable   Byte enable signals.
     ---------------------------------------------------------------------------
     procedure mem_bus_agent_write_blocking(
         signal      net         : inout network_t;
@@ -126,21 +147,32 @@ package mem_bus_agent_pkg is
     );
 
     ---------------------------------------------------------------------------
-    -- TODO!
+    -- Start X-mode in Memory bus agent. In X-mode, setup, hold and data out
+    -- delay parameters are considered and signals of memory transaction are
+    -- driven to X everywhere apart from "Setup + hold" window. Also, read
+    -- data on memory bus are sampled with "data out" delay from point where
+    -- they should be exposed output of DUT.
+    --
+    -- @param net           Network on which CAN Agent listens (use "net").
     ---------------------------------------------------------------------------
     procedure mem_bus_agent_x_mode_start(
         signal      net         : inout network_t
     );
 
     ---------------------------------------------------------------------------
-    -- TODO!
+    -- Stop X-mode in Memory bus agent.
+    --
+    -- @param net           Network on which CAN Agent listens (use "net").
     ---------------------------------------------------------------------------
     procedure mem_bus_agent_x_mode_stop(
         signal      net         : inout network_t
     );
 
     ---------------------------------------------------------------------------
-    -- TODO!
+    -- Configure Setup time for X-mode of Memory bus agent.
+    --
+    -- @param net           Network on which CAN Agent listens (use "net").
+    -- @param setup         Setup time to be configured.
     ---------------------------------------------------------------------------
     procedure mem_bus_agent_set_x_mode_setup(
         signal      net         : inout network_t;
@@ -148,7 +180,10 @@ package mem_bus_agent_pkg is
     );
 
     ---------------------------------------------------------------------------
-    -- TODO!
+    -- Configure Hold time for X-mode of Memory bus agent.
+    --
+    -- @param net           Network on which CAN Agent listens (use "net").
+    -- @param hold          Hold time to be configured.
     ---------------------------------------------------------------------------
     procedure mem_bus_agent_set_x_mode_hold(
         signal      net         : inout network_t;
@@ -156,7 +191,10 @@ package mem_bus_agent_pkg is
     );
 
     ---------------------------------------------------------------------------
-    -- TODO!
+    -- Configure expected clock period by Memory bus agent.
+    --
+    -- @param net           Network on which CAN Agent listens (use "net").
+    -- @param period          Hold time to be configured.
     ---------------------------------------------------------------------------
     procedure mem_bus_agent_set_period(
         signal      net        : inout network_t;
@@ -164,7 +202,11 @@ package mem_bus_agent_pkg is
     );
 
     ---------------------------------------------------------------------------
-    -- TODO!
+    -- Configure data out delay of DUT. During read transactions data are
+    -- sampled from DUT with data out delay from rising edge of clock.
+    --
+    -- @param net             Network on which CAN Agent listens (use "net").
+    -- @param out_delay       Output delay to use for sampling.
     ---------------------------------------------------------------------------
     procedure mem_bus_agent_set_output_delay(
         signal      net        : inout network_t;
@@ -172,7 +214,13 @@ package mem_bus_agent_pkg is
     );
 
     ---------------------------------------------------------------------------
-    -- TODO!    
+    -- Execute read transaction by Memory bus agent. This function returns
+    -- after read transaction was executed.
+    --
+    -- @param net           Network on which CAN Agent listens (use "net").
+    -- @param address       Memory bus address.
+    -- @param read_data     Variable in which output data will be read.
+    -- @param byte_enable   Byte enable value.
     ---------------------------------------------------------------------------
     procedure mem_bus_agent_read(
         signal      net         : inout network_t;
@@ -182,7 +230,37 @@ package mem_bus_agent_pkg is
     );
 
     ---------------------------------------------------------------------------
-    -- TODO!    
+    -- Insert Write transaction to Memory bus agent FIFO.
+    --
+    -- This function is "wrapper" and provides higher level abstraction for
+    -- memory bus access.
+    --
+    -- Size of Memory access is determined by size of "write_data" input
+    -- parameter. Following values are supported:
+    --  8       - Byte access       -> Any address
+    --  16      - Half-word access  -> Address must be half-word aligned.
+    --  32      - Word access       -> Address must be word aligned.
+    --  32 * N  - N cell burst      -> Address must be word aligned.
+    --
+    -- If address is not aligned properly, unaligned access error is reported
+    -- and transaction is ignored.
+    --
+    -- In case of N-cell burst, this burst is executed in N consecutive clock
+    -- cycles. Data are interpreted LSB first, e.g:
+    --
+    --  Input data vector:      127 downto 0
+    --
+    --  First burst cell:       31 downto 0
+    --  Second burst cell:      63 downto 32
+    --  Third burst cell:       95 downto 64
+    --  Fourth burst cell:      127 downto 96    
+    --
+    -- @param net           Network on which CAN Agent listens (use "net").
+    -- @param address       Memory bus address.
+    -- @param write_data    Data to be written.
+    -- @param blocking      True if function shall return only after write
+    --                      was executed (blocking write), false if function
+    --                      shall return immediately (non-blocking write).
     ---------------------------------------------------------------------------
     procedure mem_bus_agent_write(
         signal      net         : inout network_t;
@@ -192,7 +270,34 @@ package mem_bus_agent_pkg is
     );
     
     ---------------------------------------------------------------------------
-    -- TODO!    
+    -- Insert Read transaction to Memory bus agent FIFO.
+    --
+    -- This function is "wrapper" and provides higher level abstraction for
+    -- memory bus access.
+    --
+    -- Size of Memory access is determined by size of "read_data" input
+    -- parameter. Following values are supported:
+    --  8       - Byte access       -> Any address
+    --  16      - Half-word access  -> Address must be half-word aligned.
+    --  32      - Word access       -> Address must be word aligned.
+    --  32 * N  - N cell burst      -> Address must be word aligned.
+    --
+    -- If address is not aligned properly, unaligned access error is reported
+    -- and transaction is ignored.
+    --
+    -- In case of N-cell burst, this burst is executed in N consecutive clock
+    -- cycles. Data are interpreted LSB first, e.g:
+    --
+    --  Output data vector:      127 downto 0
+    --
+    --  First burst cell:       31 downto 0
+    --  Second burst cell:      63 downto 32
+    --  Third burst cell:       95 downto 64
+    --  Fourth burst cell:      127 downto 96    
+    --
+    -- @param net           Network on which CAN Agent listens (use "net").
+    -- @param address       Memory bus address.
+    -- @param read_data     Variable in which output data are read.  
     ---------------------------------------------------------------------------
     procedure mem_bus_agent_read(
         signal      net         : inout network_t;
