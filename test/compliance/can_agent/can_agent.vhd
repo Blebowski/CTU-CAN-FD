@@ -42,8 +42,46 @@
 --------------------------------------------------------------------------------
 --  @Purpose:
 --    CAN Bus agent. Configurable over Vunit Communication library.
---    TODO: Further documentation!
---  
+--
+--    More on Vunit and its communication library can be found at:
+---     https://vunit.github.io/documentation.html
+--      https://vunit.github.io/com/user_guide.html
+--
+--    CAN Bus agent is connected to can_tx and can_rx signals of DUT. It drives
+--    can_rx via driver and it monitors_can_tx via monitor.
+--
+--    Driver contains FIFO of items to be driven. Each item contains value and
+--    a time for which to drive the value. When driving of 1 item finishes it
+--    is immediately followed by next one until driver FIFO is empty. Driver
+--    can be started by a command over Communication library.
+--
+--    Monitor contains a FIFO of items to be monitored. Each item contains
+--    value and a time for which to monitor the value. When Monitoring of 1 item
+--    finishes, it is immediately followed by next one until monitor FIFO is
+--    empty. Monitor does not check for the value constantly, but it samples
+--    can_tx output with configurable sampling period. If monitored value is
+--    not equal to expected value when it is sampled, internal mismatch counter
+--    is incremented.
+--
+--    Monitor can be in one of five states: "Idle", "Waiting for Trigger",
+--    "Running", "Passed" and "Failed". When it is "Idle", no monitoring is
+--    progress. When it is started via communication library, it moves to
+--    "Waiting for Trigger". In this state it waits until trigger event occurs
+--    (Type of trigger event is also configurable over Communication library)
+--    and moves to "Running". When it is running, it monitors items from Monito
+--    FIFO one after another. After all items were monitored, monitor transfers to
+--    "Passed" when no mismatch between can_tx and monitored values occured
+--    during monitoring. Otherwise it transfers to failed.
+--
+--    Trigger functionality of monitor is a way how to synchronize its operation
+--    with driver.
+--
+--    When Monitor operation starts its internal error counter is erased. When
+--    its ends, succesfull monitoring (no errors) can be checked via
+--    Communication library.
+--
+--    API for work with CAN agent is implemented in "can_agent_pkg" package. 
+--
 --------------------------------------------------------------------------------
 -- Revision History:
 --    25.1.2020   Created file
@@ -447,6 +485,34 @@ begin
     ---------------------------------------------------------------------------
     monitor_proc : process
         variable mon_count          : integer := 0;
+        
+        -----------------------------------------------------------------------
+        -- Comparison procedure for monitor. Simple "=" operator is not enough
+        -- since GHDL might improprely handle don't care values. Also, compare
+        -- is not symmetrical (can_tx is now allowed to have "don't care"
+        -----------------------------------------------------------------------
+        procedure monitor_compare is
+        begin
+            if (can_rx = 'X' or can_rx = 'U' or can_rx = '-' or can_rx = 'Y' or
+                can_rx = 'Z')
+            then
+                return false;
+            end if;
+            
+            if (monitored_item.value = '-' and (can_tx = '1' or can_rx = '0'))
+            then
+                return true;
+            end if;
+
+            if (can_tx = '0' and monitored_item.value = '0') then
+                return true;
+            elsif (can_tx = '1' and monitored_item.value = '1') then
+                return true;
+            end if;
+            
+            return false;
+        end procedure;
+        
     begin
         case monitor_state is
         when mon_disabled =>
@@ -556,7 +622,7 @@ begin
                     monitor_sample <= '0';
                     wait for 0 ns;
 
-                    if (can_tx /= monitored_item.value) then
+                    if (monitor_compare = false) then
                         monitor_mismatch <= 'X';
                         mon_mismatch_ctr <= mon_mismatch_ctr + 1;
 

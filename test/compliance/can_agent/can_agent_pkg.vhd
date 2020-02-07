@@ -41,8 +41,8 @@
 
 --------------------------------------------------------------------------------
 --  @Purpose:
---    Package with declarations for CAN bus agent accessible over Vunit
---    communication library!
+--    Package with API for CAN bus agent.
+--
 --------------------------------------------------------------------------------
 -- Revision History:
 --    26.1.2020   Created file
@@ -63,8 +63,8 @@ package can_agent_pkg is
     ---------------------------------------------------------------------------
     component can_agent is
     generic(
-        G_DRIVER_FIFO_DEPTH : natural := 128;
-        G_MONITOR_FIFO_DEPTH : natural := 128
+        G_DRIVER_FIFO_DEPTH     : natural := 128;
+        G_MONITOR_FIFO_DEPTH    : natural := 128
     );
     port (
         -- CAN bus connections
@@ -84,19 +84,37 @@ package can_agent_pkg is
     
     -- Driver FIFO entry
     type t_can_driver_entry is record
-        value           :   std_logic;          -- Value to be driven
-        drive_time      :   time;               -- Time for which to drive
-        print_msg       :   boolean;            -- Whether message should be printed
-                                                -- when driving of value starts!
-        msg             :   string(1 to C_MAX_MSG_LENGTH);   -- Message which to print;
+    
+        -- Value to be driven
+        value           :   std_logic;
+        
+        -- Time for which to drive this value
+        drive_time      :   time;
+        
+        -- Print message when driving of this item starts
+        print_msg       :   boolean;
+        
+        -- Message to print
+        msg             :   string(1 to C_MAX_MSG_LENGTH);
     end record;
 
     -- Monitor FIFO entry
     type t_can_monitor_entry is record
-        value           :   std_logic;          -- Value to be checked
-        monitor_time    :   time;               -- Time for which to monitor
-        print_msg       :   boolean;            -- Whether message should be printed
-        msg             :   string(1 to C_MAX_MSG_LENGTH);   -- Message which to print
+    
+        -- Value to be monitored
+        value           :   std_logic;
+        
+        -- Time for which to monitor this value
+        monitor_time    :   time;
+        
+        -- Print message when monitoring of this item starts
+        print_msg       :   boolean;
+        
+        -- Message which to print
+        msg             :   string(1 to C_MAX_MSG_LENGTH);
+        
+        -- Severity level which will be used when monitor detects other value
+        -- than it expects. Error and Warning severities are supported!
         check_severity  :   log_level_t;
     end record;
     
@@ -122,28 +140,39 @@ package can_agent_pkg is
     );
     
     ---------------------------------------------------------------------------
-    -- TODO!    
+    -- Start CAN Agent driver.
+    --
+    -- @param net Network on which CAN Agent listens (use "net").    
     ---------------------------------------------------------------------------
     procedure can_agent_driver_start(
         signal      net         : inout network_t
     ); 
 
     ---------------------------------------------------------------------------
-    -- TODO!    
+    -- Stop CAN Agent driver. If driving of an item is in progress, this item
+    -- is finished first and driver stops only then.
+    --
+    -- @param net Network on which CAN Agent listens (use "net").    
     ---------------------------------------------------------------------------
     procedure can_agent_driver_stop(
         signal      net         : inout network_t
     ); 
 
     ---------------------------------------------------------------------------
-    -- TODO!    
+    -- Flush CAN Agent driver FIFO. All items which remain to be driven will
+    -- be effectively erased from FIFO
+    --
+    -- @param net Network on which CAN Agent listens (use "net").
     ---------------------------------------------------------------------------
     procedure can_agent_driver_flush(
         signal      net         : inout network_t
     ); 
 
     ---------------------------------------------------------------------------
-    -- TODO!    
+    -- Check if driving of items is in progress.
+    --
+    -- @param net       Network on which CAN Agent listens (use "net").
+    -- @param progress  True when driving is in progres, false if not.
     ---------------------------------------------------------------------------
     procedure can_agent_driver_get_progress(
         signal      net         : inout network_t;
@@ -151,7 +180,10 @@ package can_agent_pkg is
     );
 
     ---------------------------------------------------------------------------
-    -- TODO!    
+    -- Get actually driven value by driver.
+    --
+    -- @param net           Network on which CAN Agent listens (use "net").
+    -- @param driven_val    Currently driven value by driver.
     ---------------------------------------------------------------------------
     procedure can_agent_driver_get_driven_val(
         signal      net         : inout network_t;
@@ -159,7 +191,10 @@ package can_agent_pkg is
     );
     
     ---------------------------------------------------------------------------
-    -- TODO!    
+    -- Push item into driver FIFO.
+    --
+    -- @param net   Network on which CAN Agent listens (use "net").
+    -- @param item  Item to be pushed.
     ---------------------------------------------------------------------------
     procedure can_agent_driver_push_item(
         signal      net         : inout network_t;
@@ -167,22 +202,32 @@ package can_agent_pkg is
     );
 
     ---------------------------------------------------------------------------
-    -- TODO!
-    ---------------------------------------------------------------------------
-    procedure can_agent_driver_set_wait_timeout(
-        signal      net         : inout network_t;
-        variable    timeout     : in    time
-    );
-    
-    ---------------------------------------------------------------------------
-    -- TODO!
+    -- Wait till driver finishes driving of all items. If timeout is reached
+    -- before all items are driven, this function returns.
+    --
+    -- @param net   Network on which CAN Agent listens (use "net").
     ---------------------------------------------------------------------------
     procedure can_agent_driver_wait_finish(
         signal      net         : inout network_t
     );
 
     ---------------------------------------------------------------------------
-    -- TODO!
+    -- Set timeout for waiting till driver finishes driving of all items.
+    --
+    -- @param net       Network on which CAN Agent listens (use "net").
+    -- @param timeout   Timeout value to set.
+    ---------------------------------------------------------------------------
+    procedure can_agent_driver_set_wait_timeout(
+        signal      net         : inout network_t;
+        variable    timeout     : in    time
+    );
+
+    ---------------------------------------------------------------------------
+    -- Push value into driver FIFO.
+    --
+    -- @param net   Network on which CAN Agent listens (use "net").
+    -- @param value Value to be driven.
+    -- @param time  Time for which drive this value.
     ---------------------------------------------------------------------------
     procedure can_agent_driver_push_value(
         signal      net         : inout network_t;
@@ -190,9 +235,13 @@ package can_agent_pkg is
         constant    time        : in    time
     );
     
-    
     ---------------------------------------------------------------------------
-    -- TODO!
+    -- Push value into driver FIFO.
+    --
+    -- @param net   Network on which CAN Agent listens (use "net").
+    -- @param value Value to be driven.
+    -- @param time  Time for which drive this value.
+    -- @param msg   Message to be printed when driving of this value starts.
     ---------------------------------------------------------------------------
     procedure can_agent_driver_push_value(
         signal      net         : inout network_t;
@@ -202,7 +251,12 @@ package can_agent_pkg is
     );
     
     ---------------------------------------------------------------------------
-    -- TODO!
+    -- Drive single item. This producedure will push the item into driver FIFO,
+    -- enable the driver and wait until this item is driven. If other items
+    -- are present in driver FIFO, these items will be driven first.
+    --
+    -- @param net   Network on which CAN Agent listens (use "net").
+    -- @param item  Item to be driven.
     ---------------------------------------------------------------------------
     procedure can_agent_driver_drive_single_item(
         signal      net         : inout network_t;
@@ -210,14 +264,23 @@ package can_agent_pkg is
     );
     
     ---------------------------------------------------------------------------
-    -- TODO!
+    -- Drive all items from driver FIFO. This procedure will enable driver and
+    -- wait until all items in driver FIFO are driven.
+    --
+    -- @param net   Network on which CAN Agent listens (use "net").
     ---------------------------------------------------------------------------
     procedure can_agent_driver_drive_all_items(
         signal      net         : inout network_t
     );
 
     ---------------------------------------------------------------------------
-    -- TODO!
+    -- Drive single value. This producedure will push the item into driver FIFO,
+    -- enable the driver and wait until this item is driven. If other items
+    -- are present in driver FIFO, these items will be driven first.
+    --
+    -- @param net   Network on which CAN Agent listens (use "net").
+    -- @param value Value to be driven.
+    -- @param time  Time for which to drive this value.
     ---------------------------------------------------------------------------
     procedure can_agent_driver_drive_value(
         signal      net         : inout network_t;
@@ -226,7 +289,14 @@ package can_agent_pkg is
     );
     
     ---------------------------------------------------------------------------
-    -- TODO!
+    -- Drive single value. This producedure will push the item into driver FIFO,
+    -- enable the driver and wait until this item is driven. If other items
+    -- are present in driver FIFO, these items will be driven first.
+    --
+    -- @param net   Network on which CAN Agent listens (use "net").
+    -- @param value Value to be driven.
+    -- @param time  Time for which to drive this value.
+    -- @param msg   Message to be printed when driving of this value starts.
     ---------------------------------------------------------------------------
     procedure can_agent_driver_drive_value(
         signal      net         : inout network_t;
@@ -236,28 +306,43 @@ package can_agent_pkg is
     );
     
     ---------------------------------------------------------------------------
-    -- TODO!
+    -- Start Can agent monitor.
+    --
+    -- @param net   Network on which CAN Agent listens (use "net").
     ---------------------------------------------------------------------------
     procedure can_agent_monitor_start(
         signal      net         : inout network_t
     );
 
     ---------------------------------------------------------------------------
-    -- TODO!
+    -- Stop Can agent monitor.
+    --
+    -- @param net   Network on which CAN Agent listens (use "net").
     ---------------------------------------------------------------------------
     procedure can_agent_monitor_stop(
         signal      net         : inout network_t
     );
     
     ---------------------------------------------------------------------------
-    -- TODO!
+    -- Flush monitor FIFO. All item in Monitor FIFO which were not monitored
+    -- will be effectively erased.
+    --
+    -- @param net   Network on which CAN Agent listens (use "net").
     ---------------------------------------------------------------------------
     procedure can_agent_monitor_flush(
         signal      net         : inout network_t
     );
     
     --------------------------------------------------------------------------
-    -- TODO!
+    -- Get state of Monitor. Monitor can be in one of following states:
+    --  Idle
+    --  Waiting for trigger
+    --  Running
+    --  Passed
+    --  Failed
+    --
+    -- @param net   Network on which CAN Agent listens (use "net").
+    -- @param state State of the monitor.
     ---------------------------------------------------------------------------
     procedure can_agent_monitor_get_state(
         signal      net         : inout network_t;
@@ -265,15 +350,21 @@ package can_agent_pkg is
     );
 
     --------------------------------------------------------------------------
-    -- TODO!
+    -- Get currently monitored value.
+    --
+    -- @param net           Network on which CAN Agent listens (use "net").
+    -- @param monitored_val Value which is being monitored.
     ---------------------------------------------------------------------------
     procedure can_agent_monitor_get_monitored_val(
         signal      net            : inout network_t;
         variable    monitored_val  : out   std_logic
     );
-    
+
     --------------------------------------------------------------------------
-    -- TODO!
+    -- Push item into Monitor FIFO.
+    --
+    -- @param net   Network on which CAN Agent listens (use "net").
+    -- @param item  Item to be pushed into monitor FIFO.
     ---------------------------------------------------------------------------
     procedure can_agent_monitor_push_item(
         signal      net         : inout network_t;
@@ -281,7 +372,10 @@ package can_agent_pkg is
     );
 
     --------------------------------------------------------------------------
-    -- TODO!
+    -- Set wait timeout for driver.
+    --
+    -- @param net       Network on which CAN Agent listens (use "net").
+    -- @param timeout   Timeout to be set on CAN driver.
     ---------------------------------------------------------------------------
     procedure can_agent_monitor_set_wait_timeout(
         signal      net         : inout network_t;
@@ -289,14 +383,23 @@ package can_agent_pkg is
     );
 
     --------------------------------------------------------------------------
-    -- TODO!
+    -- If timeout is reached before all items are monitored, this function
+    -- returns.
+    --
+    -- @param net       Network on which CAN Agent listens (use "net").    
     ---------------------------------------------------------------------------
     procedure can_agent_monitor_wait_finish(
         signal      net         : inout network_t
     );
 
     --------------------------------------------------------------------------
-    -- TODO!
+    -- Monitor single item. This function pushes item into monitor FIFO and it
+    -- waits until this item is monitored. If other items are in monitor FIFO,
+    -- these will be monitored first. If timeout occurs before this item is
+    -- monitored, this function returns.
+    --
+    -- @param net       Network on which CAN Agent listens (use "net").
+    -- @param item      Item to be monitored.
     ---------------------------------------------------------------------------
     procedure can_agent_monitor_single_item(
         signal      net         : inout network_t;
@@ -304,14 +407,29 @@ package can_agent_pkg is
     );
     
     --------------------------------------------------------------------------
-    -- TODO!
+    -- Enable monitor (Move it from "Idle" to "Waiting for trigger") and wait
+    -- until it monitors all items. If timeout occurs before all items were
+    -- monitored, this function returns.
+    --
+    -- @param net       Network on which CAN Agent listens (use "net").
     ---------------------------------------------------------------------------
     procedure can_agent_monitor_all_items(
         signal      net         : inout network_t
     );
 
     --------------------------------------------------------------------------
-    -- TODO!
+    -- Configure Monitor trigger. Trigger CAN be one of following sources:
+    --   Trigger immediately (Go from Idle right to Running)
+    --   Trigger on rising edge on can_rx
+    --   Trigger on falling edge on can_rx
+    --   Trigger on rising edge on can_tx
+    --   Trigger on falling edge on can_tx
+    --   Trigger after time (configurable by TODO) elapsed.
+    --   Trigger when driver starts driving
+    --   Trigger when driver stops driving.
+    --
+    -- @param net       Network on which CAN Agent listens (use "net").
+    -- @param trigger   Trigger to configure
     ---------------------------------------------------------------------------    
     procedure can_agent_monitor_set_trigger(
         signal      net         : inout network_t;
@@ -319,7 +437,10 @@ package can_agent_pkg is
     );
 
     --------------------------------------------------------------------------
-    -- TODO!
+    -- Get trigger which is configured in CAN agent monitor.
+    --
+    -- @param net       Network on which CAN Agent listens (use "net").
+    -- @param trigger   Trigger to obtain
     ---------------------------------------------------------------------------    
     procedure can_agent_monitor_get_trigger(
         signal      net         : inout network_t;
@@ -327,7 +448,13 @@ package can_agent_pkg is
     );
     
     --------------------------------------------------------------------------
-    -- TODO!
+    -- Set sample rate for CAN agent monitor. With this sample rate, monitor
+    -- samples can_tx during monitoring of an item from monitor FIFO. Time for
+    -- which each item from monitor FIFO is monitored must be a multiple of
+    -- monitor sample rate.
+    --
+    -- @param net           Network on which CAN Agent listens (use "net").
+    -- @param sample_rate   Sample rate to set
     ---------------------------------------------------------------------------    
     procedure can_agent_monitor_set_sample_rate(
         signal      net         : inout network_t;
@@ -335,7 +462,10 @@ package can_agent_pkg is
     );
 
     --------------------------------------------------------------------------
-    -- TODO!
+    -- Get CAN agent monitor sample rate.
+    --
+    -- @param net           Network on which CAN Agent listens (use "net").
+    -- @param sample_rate   Obtained sample rate
     ---------------------------------------------------------------------------    
     procedure can_agent_monitor_get_sample_rate(
         signal      net         : inout network_t;
@@ -343,7 +473,13 @@ package can_agent_pkg is
     );
     
     --------------------------------------------------------------------------
-    -- TODO!
+    -- Push value into CAN agent monitor FIFO.
+    --
+    -- @param net           Network on which CAN Agent listens (use "net").
+    -- @param value         Value to be monitored
+    -- @param mon_time      Time for which to monitor this value.
+    -- @param log_level     Logger severity which is used to print a report
+    --                      when can_tx is different than monitored item.
     ---------------------------------------------------------------------------
     procedure can_agent_monitor_push_value(
         signal      net         : inout network_t;
@@ -353,7 +489,15 @@ package can_agent_pkg is
     );
 
     --------------------------------------------------------------------------
-    -- TODO!
+    -- Push value into CAN agent monitor FIFO.
+    --
+    -- @param net           Network on which CAN Agent listens (use "net").
+    -- @param value         Value to be monitored
+    -- @param mon_time      Time for which to monitor this value.
+    -- @param msg           Message to be printed when monitoring of this
+    --                      value starts.
+    -- @param log_level     Logger severity which is used to print a report
+    --                      when can_tx is different than monitored item.
     ---------------------------------------------------------------------------
     procedure can_agent_monitor_push_value(
         signal      net         : inout network_t;
@@ -364,7 +508,13 @@ package can_agent_pkg is
     );
 
     ---------------------------------------------------------------------------
-    -- TODO!
+    -- Monitor single value by CAN agent monitor. If other values are in
+    -- monitor FIFO, these will be monitored first. If timeout elapses, then
+    -- this function will return immediately.
+    --
+    -- @param net           Network on which CAN Agent listens (use "net").
+    -- @param value         Value to be monitored
+    -- @param mon_time      Time for which to monitor this value.
     ---------------------------------------------------------------------------
     procedure can_agent_monitor_monitor_value(
         signal      net         : inout network_t;
@@ -373,7 +523,14 @@ package can_agent_pkg is
     );
     
     ---------------------------------------------------------------------------
-    -- TODO!
+    -- Monitor single value by CAN agent monitor. If other values are in
+    -- monitor FIFO, these will be monitored first. If timeout elapses, then
+    -- this function will return immediately.
+    --
+    -- @param net           Network on which CAN Agent listens (use "net").
+    -- @param value         Value to be monitored
+    -- @param mon_time      Time for which to monitor this value.
+    -- @param msg           Message to be printed when monitoring starts.
     ---------------------------------------------------------------------------
     procedure can_agent_monitor_monitor_value(
         signal      net         : inout network_t;
@@ -383,7 +540,11 @@ package can_agent_pkg is
     );
 
     ---------------------------------------------------------------------------
-    -- TODO!
+    -- Check result of previous monitoring run (Idle, Waiting For Trigger,
+    -- Passed/Failed transition). Reports error if monitor ended in "Failed"
+    -- state.
+    --
+    -- @param net           Network on which CAN Agent listens (use "net").
     ---------------------------------------------------------------------------
     procedure can_agent_monitor_check_result(
         signal      net         : inout network_t
@@ -397,16 +558,16 @@ package can_agent_pkg is
     ---------------------------------------------------------------------------
 
     -- Supported commands for CAN agent (sent as message types)
-    constant CAN_AGNT_CMD_DRIVER_START              : integer := 0;
-    constant CAN_AGNT_CMD_DRIVER_STOP               : integer := 1;
-    constant CAN_AGNT_CMD_DRIVER_FLUSH              : integer := 2;
-    constant CAN_AGNT_CMD_DRIVER_GET_PROGRESS       : integer := 3;
-    constant CAN_AGNT_CMD_DRIVER_GET_DRIVEN_VAL     : integer := 4;
-    constant CAN_AGNT_CMD_DRIVER_PUSH_ITEM          : integer := 5;
-    constant CAN_AGNT_CMD_DRIVER_SET_WAIT_TIMEOUT   : integer := 6;
-    constant CAN_AGNT_CMD_DRIVER_WAIT_FINISH        : integer := 7;
-    constant CAN_AGNT_CMD_DRIVER_DRIVE_SINGLE_ITEM  : integer := 8;
-    constant CAN_AGNT_CMD_DRIVER_DRIVE_ALL_ITEMS    : integer := 9;
+    constant CAN_AGNT_CMD_DRIVER_START                  : integer := 0;
+    constant CAN_AGNT_CMD_DRIVER_STOP                   : integer := 1;
+    constant CAN_AGNT_CMD_DRIVER_FLUSH                  : integer := 2;
+    constant CAN_AGNT_CMD_DRIVER_GET_PROGRESS           : integer := 3;
+    constant CAN_AGNT_CMD_DRIVER_GET_DRIVEN_VAL         : integer := 4;
+    constant CAN_AGNT_CMD_DRIVER_PUSH_ITEM              : integer := 5;
+    constant CAN_AGNT_CMD_DRIVER_SET_WAIT_TIMEOUT       : integer := 6;
+    constant CAN_AGNT_CMD_DRIVER_WAIT_FINISH            : integer := 7;
+    constant CAN_AGNT_CMD_DRIVER_DRIVE_SINGLE_ITEM      : integer := 8;
+    constant CAN_AGNT_CMD_DRIVER_DRIVE_ALL_ITEMS        : integer := 9;
    
     constant CAN_AGNT_CMD_MONITOR_START                 : integer := 10;
     constant CAN_AGNT_CMD_MONITOR_STOP                  : integer := 11;
@@ -427,8 +588,8 @@ package can_agent_pkg is
     
     constant CAN_AGNT_CMD_MONITOR_CHECK_RESULT          : integer := 24;
 
-    constant CAN_AGNT_CMD_REPLY_OK                  : integer := 256;
-    constant CAN_AGNT_CMD_REPLY_ERR                 : integer := 257;
+    constant CAN_AGNT_CMD_REPLY_OK                      : integer := 256;
+    constant CAN_AGNT_CMD_REPLY_ERR                     : integer := 257;
     
     -- CAN agent actor
     constant actor_can_agent : actor_t := new_actor("actor_can_agent");

@@ -42,7 +42,37 @@
 --------------------------------------------------------------------------------
 --  @Purpose:
 --    Memory bus agent. Configurable over Vunit Communication library.
---    TODO: Further documentation!
+--
+--    More on Vunit and its communication library can be found at:
+---     https://vunit.github.io/documentation.html
+--      https://vunit.github.io/com/user_guide.html
+--
+--    Memory bus agent executes accesses on simple RAM-like interface. It
+--    contains FIFO which buffers the accesses. Following types of accesses are
+--    supported:
+--      1. Non-blocking write access
+--      2. Blocking write access
+--      3. Read access (always blocking)
+--
+--    This means that it is impossible to post several Read accesses and execute
+--    them at once, because read always has to return value, therefore its
+--    transaction must elapse.
+--
+--    Memory bus agent supports two modes:
+--      normal mode
+--      X-mode
+--    In X-mode control signals are driven to X everywhere apart from setup +
+--    hold within rising edge of clock and read data are sampled with data
+--    output delay.
+--
+--    Memory Bus agent can be started or stopped via Vunit Communication Library.
+--    When Memory Bus agent is started, it executes transactions from its
+--    internal FIFO. When it is stopped, transcations are buffered in FIFO and
+--    executed once Memory bus agent is started.
+--
+--    For correct operation in X-mode, clock period must be configured in
+--    Memory bus agent. Clock signal is provided externally, but for proper
+--    measurement of setup and hold times, its period must be provided. 
 --
 --------------------------------------------------------------------------------
 -- Revision History:
@@ -171,6 +201,7 @@ begin
 
         when MEM_BUS_AGNT_CMD_X_MODE_START =>
             is_x_mode <= true;
+
         when MEM_BUS_AGNT_CMD_X_MODE_STOP =>
             is_x_mode <= false;
 
