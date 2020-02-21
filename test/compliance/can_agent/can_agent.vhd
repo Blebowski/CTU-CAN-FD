@@ -491,9 +491,12 @@ begin
         -- since GHDL might improprely handle don't care values. Also, compare
         -- is not symmetrical (can_tx is now allowed to have "don't care"
         -----------------------------------------------------------------------
-        procedure monitor_compare is
+        impure function monitor_compare return boolean is
         begin
-            if (can_rx = 'X' or can_rx = 'U' or can_rx = '-' or can_rx = 'Y' or
+            if (can_rx = 'X' or
+                can_rx = 'U' or
+                can_rx = '-' or
+                can_rx = 'W' or
                 can_rx = 'Z')
             then
                 return false;
@@ -511,7 +514,7 @@ begin
             end if;
             
             return false;
-        end procedure;
+        end function;
         
     begin
         case monitor_state is
