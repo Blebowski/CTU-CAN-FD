@@ -63,6 +63,7 @@ use work.clk_gen_agent_pkg.all;
 use work.rst_gen_agent_pkg.all;
 use work.mem_bus_agent_pkg.all;
 use work.can_agent_pkg.all;
+use work.test_controller_agent_pkg.all;
 
 -- Design libraries
 use work.can_components.all;
@@ -94,6 +95,20 @@ architecture tb of can_compliance_tb is
     signal dut_timestamp    : std_logic_vector(63 downto 0) := (OTHERS => '0');
 
     signal test_signal      : std_logic := '0';
+
+    -- Top level VPI for communication with SW part of TB
+    signal vpi_req          : std_logic := '0';
+    signal vpi_ack          : std_logic := '0';
+    signal vpi_cmd          : integer := 0;
+    signal vpi_dest         : integer := 0;
+    signal vpi_data_in      : std_logic_vector(31 downto 0) := (OTHERS => '0');
+    signal vpi_data_out     : std_logic_vector(31 downto 0) := (OTHERS => '0');
+    
+    -- VPI test control interface
+    signal vpi_control_req  : std_logic := '0';
+    signal vpi_control_gnt  : std_logic := '0';
+    signal vpi_test_end     : std_logic  := '0';
+    signal vpi_test_result  : boolean := false;
 
 begin
 
@@ -187,7 +202,31 @@ begin
         timestamp   => dut_timestamp
     );
 
+    ---------------------------------------------------------------------------
+    -- Test controller agent (communication with SW part of TB)
+    ---------------------------------------------------------------------------
+    test_controller_agent_inst : test_controller_agent
+    generic map(
+        cfg => runner_cfg_default
+    )
+    port map(
+        -- VPI communication interface
+        vpi_req         => vpi_req,
+        vpi_ack         => vpi_ack,
+        vpi_cmd         => vpi_cmd,
+        vpi_dest        => vpi_dest,
+        vpi_data_in     => vpi_data_in,
+        vpi_data_out    => vpi_data_out,
+    
+        -- VPI test control interface
+        vpi_control_req => vpi_control_req,
+        vpi_control_gnt => vpi_control_gnt,
+        vpi_test_end    => vpi_test_end,
+        vpi_test_result => vpi_test_result
+    );
 
+
+    /*
     -- This is an example process only!
     test_proc : process
         variable read_data : std_logic_vector(31 downto 0);
@@ -258,6 +297,6 @@ begin
 
         wait;
     end process;
-
+    */
 
 end architecture;

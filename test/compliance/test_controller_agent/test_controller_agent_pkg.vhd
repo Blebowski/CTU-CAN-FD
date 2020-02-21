@@ -57,6 +57,27 @@ context vunit_lib.com_context;
 
 package test_controller_agent_pkg is
 
+    component test_controller_agent is
+    generic (
+        cfg             : string
+    );
+    port(
+        -- VPI communication interface
+        vpi_req         : in    std_logic;
+        vpi_ack         : out   std_logic;
+        vpi_cmd         : in    integer;
+        vpi_dest        : in    integer;
+        vpi_data_in     : in    std_logic_vector(31 downto 0);
+        vpi_data_out    : out   std_logic_vector(31 downto 0);
+    
+        -- VPI test control interface
+        vpi_control_req : out   std_logic;
+        vpi_control_gnt : in    std_logic;
+        vpi_test_end    : in    std_logic;
+        vpi_test_result : in    boolean
+    );
+    end component;
+
     -- VPI command destinations
     constant VPI_DEST_TEST_CONTROLLER_AGENT : integer := 0;
     constant VPI_DEST_CLK_GEN_AGENT         : integer := 1;

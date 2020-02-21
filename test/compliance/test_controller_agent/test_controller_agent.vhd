@@ -64,10 +64,17 @@ context vunit_lib.vunit_context;
 context vunit_lib.com_context;
 
 Library work;
+use work.test_controller_agent_pkg.all;
+use work.clk_gen_agent_pkg.all;
+use work.rst_gen_agent_pkg.all;
+use work.mem_bus_agent_pkg.all;
+use work.can_agent_pkg.all;
 
 entity test_controller_agent is
     generic (
-        runner_cfg : string := runner_cfg_default
+        -- This is Vunit runner config, don't name it runner_cfg so that
+        -- Vunit will not scan it automatically as standalone test!
+        cfg             : string
     );
     port(
         -- VPI communication interface
@@ -88,7 +95,10 @@ end entity;
 
 architecture tb of test_controller_agent is
 
-    procedure vpi_process_rst_agnt is
+    procedure vpi_process_rst_agnt(
+        signal      net             : inout network_t;
+        signal      vpi_data_out    : out   std_logic_vector
+    ) is
         variable data   :  std_logic;
     begin
         case vpi_cmd is
@@ -99,7 +109,7 @@ architecture tb of test_controller_agent is
         when VPI_RST_AGNT_CMD_POLARITY_SET =>
             polarity_set_rst_agent(net, vpi_data_in(0));
         when VPI_RST_AGNT_CMD_POLARITY_GET =>
-            data := polarity_get_rst_agent(net);
+            polarity_get_rst_agent(net, data);
             vpi_data_out(0) <= data;
             wait for 0 ns;
         when others =>
@@ -114,38 +124,47 @@ begin
     ---------------------------------------------------------------------------
     main_test_proc : process
     begin
-        test_runner_setup(runner, runner_cfg);
-        
+        test_runner_setup(runner, cfg);
+
+        wait for 10 ns;
+
         -----------------------------------------------------------------------
         -- Relinquish control to SW part of TB. SW part of TB controls
         -- everything, reset, clock, memory access, CAN agent (driver, monitor)
         -----------------------------------------------------------------------
         vpi_control_req <= '1';
-        wait until vpi_control_gnt <= '1' for 10 ns;
+        wait for 1 ns;
+        
+        if (vpi_control_gnt /= '1') then
+            wait until vpi_control_gnt <= '1' for 10 ns;
+        end if;
 
-        if (vpi_control_gnt /= 1) then
+        if (vpi_control_gnt /= '1') then
             error("SW part of TB did not take over control!");
         end if;
-        
+
         -----------------------------------------------------------------------
         -- Wait until SW part of TB signals to us we are done!
         -- (No need to add timeout, VUnit takes care of this)
         -----------------------------------------------------------------------
+        info("Simulator waiting till SW part of TB will end!");
         wait until vpi_test_end = '1';
 
         test_runner_cleanup(runner, vpi_test_result);
     end process;
-    
+
     ---------------------------------------------------------------------------
     -- Listen on VPI commands and send them to individual agents!
     ---------------------------------------------------------------------------
     vpi_listener_process : process
     begin
         wait until (vpi_req = '1');
-        
+
         case vpi_dest is
         when VPI_DEST_RES_GEN_AGENT =>
-            vpi_process_rst_agnt;
+            vpi_process_rst_agnt(net, vpi_data_out);
+        when OTHERS =>
+            error("Unknown VPI command");
         end case;
 
         vpi_ack <= '1';
