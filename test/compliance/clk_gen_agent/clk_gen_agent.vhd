@@ -83,7 +83,7 @@ use work.clk_gen_agent_pkg.all;
 entity clk_gen_agent is
     port (
         -- Generated clock output
-        clock   :   out std_logic
+        clock   :   out std_logic := '0'
     );
 end entity;
 
@@ -93,8 +93,10 @@ architecture tb of clk_gen_agent is
     -- Parameters configured over communication library
     ---------------------------------------------------------------------------
     
-    -- Clock generator is enabled, clocks are being generated
-    signal enabled          :    boolean := false;
+    -- Clock generator is enabled, clocks are being generated!
+    -- Note: This must be enabled by default when testbench is controlled from 
+    --       SW, otherwise simulator will run out of events and timeout!
+    signal enabled          :    boolean := true;
     
     -- Generated clock period
     signal period           :    time := 10 ns;

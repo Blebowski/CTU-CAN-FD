@@ -71,10 +71,10 @@ package test_controller_agent_pkg is
         vpi_data_out    : out   std_logic_vector(31 downto 0);
     
         -- VPI test control interface
-        vpi_control_req : out   std_logic;
-        vpi_control_gnt : in    std_logic;
-        vpi_test_end    : in    std_logic;
-        vpi_test_result : in    boolean
+        vpi_control_req     : out   std_logic;
+        vpi_control_gnt     : in    std_logic;
+        vpi_test_end        : in    std_logic;
+        vpi_test_result     : in    boolean
     );
     end component;
 

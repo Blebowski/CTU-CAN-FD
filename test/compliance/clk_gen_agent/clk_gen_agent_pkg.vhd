@@ -64,7 +64,7 @@ package clk_gen_agent_pkg is
     component clk_gen_agent is
     port (
         -- Generated clock output
-        clock   :   out std_logic
+        clock   :   out std_logic := '0'
     );
     end component;
 
@@ -73,7 +73,7 @@ package clk_gen_agent_pkg is
     -- Clock generator agent API    
     ---------------------------------------------------------------------------
     ---------------------------------------------------------------------------
-    
+
     ---------------------------------------------------------------------------
     -- Start clock generator agent.
     --
