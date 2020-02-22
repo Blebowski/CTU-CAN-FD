@@ -70,7 +70,8 @@ use work.can_components.all;
 
 entity can_compliance_tb is
     generic (
-        runner_cfg : string := runner_cfg_default
+        runner_cfg     : string := runner_cfg_default;
+        vpi_test_name  : string
     );
 end entity;
 
@@ -94,7 +95,12 @@ architecture tb of can_compliance_tb is
 
     signal dut_timestamp    : std_logic_vector(63 downto 0) := (OTHERS => '0');
 
-    signal test_signal      : std_logic := '0';
+    ---------------------------------------------------------------------------
+    -- This is an ugly hack to pass String over VPI since GHDL does not provide
+    -- string type signals on vpiScan for nets!
+    --------------------------------------------------------------------------- 
+    signal vpi_test_name_array : std_logic_vector((vpi_test_name'length * 8) - 1 downto 0)
+        := (OTHERS => '0');
 
     -- Top level VPI for communication with SW part of TB
     signal vpi_req          : std_logic := '0';
@@ -105,10 +111,10 @@ architecture tb of can_compliance_tb is
     signal vpi_data_out     : std_logic_vector(31 downto 0) := (OTHERS => '0');
     
     -- VPI test control interface
-    signal vpi_control_req  : std_logic := '0';
-    signal vpi_control_gnt  : std_logic := '0';
-    signal vpi_test_end     : std_logic  := '0';
-    signal vpi_test_result  : boolean := false;
+    signal vpi_control_req      : std_logic := '0';
+    signal vpi_control_gnt      : std_logic := '0';
+    signal vpi_test_end         : std_logic := '0';
+    signal vpi_test_result      : boolean   := false;
 
 begin
 
@@ -207,7 +213,7 @@ begin
     ---------------------------------------------------------------------------
     test_controller_agent_inst : test_controller_agent
     generic map(
-        cfg => runner_cfg_default
+        cfg => runner_cfg
     )
     port map(
         -- VPI communication interface
@@ -219,12 +225,21 @@ begin
         vpi_data_out    => vpi_data_out,
     
         -- VPI test control interface
-        vpi_control_req => vpi_control_req,
-        vpi_control_gnt => vpi_control_gnt,
-        vpi_test_end    => vpi_test_end,
-        vpi_test_result => vpi_test_result
+        vpi_control_req     => vpi_control_req,
+        vpi_control_gnt     => vpi_control_gnt,
+        vpi_test_end        => vpi_test_end,
+        vpi_test_result     => vpi_test_result
     );
 
+    test_proc : process
+    begin
+        for i in 0 to vpi_test_name'length - 1 loop
+            vpi_test_name_array (i * 8 + 7 downto i * 8) <=
+                std_logic_vector(to_unsigned(
+                    character'pos(vpi_test_name(vpi_test_name'length - i)), 8));
+        end loop;
+        wait;
+    end process;
 
     /*
     -- This is an example process only!

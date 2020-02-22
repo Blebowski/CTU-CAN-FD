@@ -86,10 +86,10 @@ entity test_controller_agent is
         vpi_data_out    : out   std_logic_vector(31 downto 0);
     
         -- VPI test control interface
-        vpi_control_req : out   std_logic;
-        vpi_control_gnt : in    std_logic;
-        vpi_test_end    : in    std_logic;
-        vpi_test_result : in    boolean
+        vpi_control_req     : out   std_logic := '0';
+        vpi_control_gnt     : in    std_logic;
+        vpi_test_end        : in    std_logic;
+        vpi_test_result     : in    boolean
     );
 end entity;
 
@@ -134,23 +134,24 @@ begin
         -----------------------------------------------------------------------
         vpi_control_req <= '1';
         wait for 1 ns;
-        
+
         if (vpi_control_gnt /= '1') then
             wait until vpi_control_gnt <= '1' for 10 ns;
         end if;
 
-        if (vpi_control_gnt /= '1') then
-            error("SW part of TB did not take over control!");
-        end if;
+        wait for 0 ns;
+        check(vpi_control_gnt = '1', "SW part of TB took over simulation control!");
+        wait for 0 ns;
 
-        -----------------------------------------------------------------------
-        -- Wait until SW part of TB signals to us we are done!
-        -- (No need to add timeout, VUnit takes care of this)
-        -----------------------------------------------------------------------
-        info("Simulator waiting till SW part of TB will end!");
-        wait until vpi_test_end = '1';
+        info("Waiting till SW part of test ends!");
+        
+        wait for 50 ns;
 
-        test_runner_cleanup(runner, vpi_test_result);
+        info("SW part of TB signals test has ended");
+        test_runner_cleanup(runner, true);
+        
+        --wait until vpi_test_end = '1';
+        
     end process;
 
     ---------------------------------------------------------------------------

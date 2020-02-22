@@ -21,6 +21,7 @@ class ComplianceTests(TestsBase):
         sources.append('compliance/rst_gen_agent/*.vhd');
         sources.append('compliance/mem_bus_agent/*.vhd');
         sources.append('compliance/can_agent/*.vhd');
+        sources.append('compliance/test_controller_agent/*.vhd');
         sources.append('compliance/*.vhd')
         add_sources(self.lib, sources)
 
@@ -39,6 +40,7 @@ class ComplianceTests(TestsBase):
         # generate & set per-test modelsim tcl file
         sim_options += self.generate_init_tcl('modelsim_init_feature.tcl', 'tb_feature/test_comp')
         sim_options += self.add_modelsim_gui_file(tb, default, 'feature', sim_options['modelsim.init_files.after_load'])
+        sim_options['ghdl.sim_flags'] += ["--vpi=../compliance/sw_model/build/simulator_interface/libVPI_LIBRARY.so"]
 
         for name, cfg in self.config['tests'].items():
             if cfg is None:
@@ -46,6 +48,9 @@ class ComplianceTests(TestsBase):
 
             dict_merge(cfg, default)
 
+            generics = {
+                'vpi_test_name'     : name
+            }
             ##generics = {
             ##    'timeout'      : cfg['timeout'],
             ##    'iterations'   : cfg['iterations'],
@@ -61,6 +66,7 @@ class ComplianceTests(TestsBase):
             ##    local_sim_options += self.add_psl_cov('{}.{}'.format(tb.name, name))
 
             local_sim_options = sim_options + local_sim_options
-            tb.add_config(name, sim_options=local_sim_options)
+            #tb.add_config(name, sim_options=local_sim_options)
+            tb.add_config(name, generics=generics, sim_options=local_sim_options)
 
         return True
