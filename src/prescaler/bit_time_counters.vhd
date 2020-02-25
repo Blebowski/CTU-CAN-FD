@@ -133,7 +133,7 @@ architecture rtl of bit_time_counters is
     constant tq_zeroes : std_logic_vector(G_BRP_WIDTH - 1 downto 0) :=
         (OTHERS => '0');
     constant tq_run_th : std_logic_vector(G_BRP_WIDTH - 1 downto 0) :=
-        (0 => '1', OTHERS => '0');
+        std_logic_vector(to_unsigned(1, G_BRP_WIDTH));
     
     -- Bit Time counter
     signal segm_counter_d         : std_logic_vector(G_BT_WIDTH - 1 downto 0);
