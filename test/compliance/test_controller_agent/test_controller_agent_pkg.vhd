@@ -65,10 +65,14 @@ package test_controller_agent_pkg is
         -- VPI communication interface
         vpi_req         : in    std_logic;
         vpi_ack         : out   std_logic;
-        vpi_cmd         : in    integer;
-        vpi_dest        : in    integer;
+        vpi_cmd         : in    std_logic_vector(7 downto 0);
+        vpi_dest        : in    std_logic_vector(7 downto 0);
         vpi_data_in     : in    std_logic_vector(31 downto 0);
         vpi_data_out    : out   std_logic_vector(31 downto 0);
+    
+        -- VPI Mutex lock/unlock interface
+        vpi_mutex_lock      : out   std_logic := '0';
+        vpi_mutex_unlock    : out   std_logic := '0';
     
         -- VPI test control interface
         vpi_control_req     : out   std_logic;
@@ -79,17 +83,17 @@ package test_controller_agent_pkg is
     end component;
 
     -- VPI command destinations
-    constant VPI_DEST_TEST_CONTROLLER_AGENT : integer := 0;
-    constant VPI_DEST_CLK_GEN_AGENT         : integer := 1;
-    constant VPI_DEST_RES_GEN_AGENT         : integer := 2;
-    constant VPI_DEST_MEM_BUS_AGENT         : integer := 3;
-    constant VPI_DEST_CAN_AGENT             : integer := 4;
+    constant VPI_DEST_TEST_CONTROLLER_AGENT : std_logic_vector(7 downto 0) := x"00";
+    constant VPI_DEST_CLK_GEN_AGENT         : std_logic_vector(7 downto 0) := x"01";
+    constant VPI_DEST_RES_GEN_AGENT         : std_logic_vector(7 downto 0) := x"02";
+    constant VPI_DEST_MEM_BUS_AGENT         : std_logic_vector(7 downto 0) := x"03";
+    constant VPI_DEST_CAN_AGENT             : std_logic_vector(7 downto 0) := x"04";
 
     -- VPI commands for Reset agent
-    constant VPI_RST_AGNT_CMD_ASSERT        : integer := 0;
-    constant VPI_RST_AGNT_CMD_DEASSERT      : integer := 1;
-    constant VPI_RST_AGNT_CMD_POLARITY_SET  : integer := 2;
-    constant VPI_RST_AGNT_CMD_POLARITY_GET  : integer := 3;
+    constant VPI_RST_AGNT_CMD_ASSERT        : std_logic_vector(7 downto 0) := x"01";
+    constant VPI_RST_AGNT_CMD_DEASSERT      : std_logic_vector(7 downto 0) := x"02";
+    constant VPI_RST_AGNT_CMD_POLARITY_SET  : std_logic_vector(7 downto 0) := x"03";
+    constant VPI_RST_AGNT_CMD_POLARITY_GET  : std_logic_vector(7 downto 0) := x"04";
 
     -- VPI commands for Clock generator
     -- TODO:
@@ -107,7 +111,5 @@ context vunit_lib.vunit_context;
 context vunit_lib.com_context;
 
 package body test_controller_agent_pkg is
-
-    
 
 end package body;

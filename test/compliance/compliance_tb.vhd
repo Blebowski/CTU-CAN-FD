@@ -105,11 +105,15 @@ architecture tb of can_compliance_tb is
     -- Top level VPI for communication with SW part of TB
     signal vpi_req          : std_logic := '0';
     signal vpi_ack          : std_logic := '0';
-    signal vpi_cmd          : integer := 0;
-    signal vpi_dest         : integer := 0;
+    signal vpi_cmd          : std_logic_vector(7 downto 0) := (OTHERS => '0');
+    signal vpi_dest         : std_logic_vector(7 downto 0) := (OTHERS => '0');
     signal vpi_data_in      : std_logic_vector(31 downto 0) := (OTHERS => '0');
     signal vpi_data_out     : std_logic_vector(31 downto 0) := (OTHERS => '0');
     
+    -- VPI lock mutex
+    signal vpi_mutex_lock   : std_logic := '0';
+    signal vpi_mutex_unlock : std_logic := '0';
+
     -- VPI test control interface
     signal vpi_control_req      : std_logic := '0';
     signal vpi_control_gnt      : std_logic := '0';
@@ -223,6 +227,10 @@ begin
         vpi_dest        => vpi_dest,
         vpi_data_in     => vpi_data_in,
         vpi_data_out    => vpi_data_out,
+    
+        -- VPI Mutext lock/unlock interface
+        vpi_mutex_lock      => vpi_mutex_lock,
+        vpi_mutex_unlock    => vpi_mutex_unlock,
     
         -- VPI test control interface
         vpi_control_req     => vpi_control_req,

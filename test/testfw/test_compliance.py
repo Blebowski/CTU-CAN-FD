@@ -40,7 +40,8 @@ class ComplianceTests(TestsBase):
         # generate & set per-test modelsim tcl file
         sim_options += self.generate_init_tcl('modelsim_init_feature.tcl', 'tb_feature/test_comp')
         sim_options += self.add_modelsim_gui_file(tb, default, 'feature', sim_options['modelsim.init_files.after_load'])
-        sim_options['ghdl.sim_flags'] += ["--vpi=../compliance/sw_model/build/simulator_interface/libVPI_LIBRARY.so"]
+        sim_options['ghdl.sim_flags'] += ["--vpi=../compliance/sw_model/build/simulator_interface/libSIMULATOR_INTERFACE_LIB.so"]
+        #sim_options['ghdl.elab_flags'] += ["-Wl,../compliance/sw_model/build/simulator_interface/libSIMULATOR_INTERFACE_LIB.so"]
 
         for name, cfg in self.config['tests'].items():
             if cfg is None:
