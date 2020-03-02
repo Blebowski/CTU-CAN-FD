@@ -79,7 +79,7 @@ package rst_gen_agent_pkg is
     --
     -- @param net Network on which Reset agent listens (use "net").    
     ---------------------------------------------------------------------------
-    procedure assert_rst_agent(
+    procedure rst_agent_assert(
         signal      net         : inout network_t
     );
 
@@ -88,7 +88,7 @@ package rst_gen_agent_pkg is
     --
     -- @param net Network on which Reset agent listens (use "net").
     ---------------------------------------------------------------------------
-    procedure deassert_rst_agent(
+    procedure rst_agent_deassert(
         signal      net         : inout network_t
     );
 
@@ -98,7 +98,7 @@ package rst_gen_agent_pkg is
     -- @param net       Network on which Reset agent listens (use "net").
     -- @param polarity  Polarity to be set.
     ---------------------------------------------------------------------------
-    procedure polarity_set_rst_agent(
+    procedure rst_agent_polarity_set(
         signal      net         : inout network_t;
         constant    polarity    : in    std_logic
     );
@@ -109,7 +109,7 @@ package rst_gen_agent_pkg is
     -- @param net       Network on which Reset agent listens (use "net").
     -- @param polarity  Obtained polarity.   
     ---------------------------------------------------------------------------
-    procedure polarity_get_rst_agent(
+    procedure rst_agent_polarity_get(
         signal      net         : inout network_t;
         variable    polarity    : out   std_logic
     );
@@ -151,7 +151,7 @@ package body rst_gen_agent_pkg is
     ---------------------------------------------------------------------------
     ---------------------------------------------------------------------------
    
-    procedure assert_rst_agent(
+    procedure rst_agent_assert(
         signal      net         : inout network_t
     ) is
         constant rst_gen_rec : actor_t := find("actor_rst_gen_agent");
@@ -168,7 +168,7 @@ package body rst_gen_agent_pkg is
     end procedure;
 
 
-    procedure deassert_rst_agent(
+    procedure rst_agent_deassert(
         signal      net         : inout network_t
     ) is
         constant rst_gen_rec : actor_t := find("actor_rst_gen_agent");
@@ -185,7 +185,7 @@ package body rst_gen_agent_pkg is
     end procedure;
 
 
-    procedure polarity_set_rst_agent(
+    procedure rst_agent_polarity_set(
         signal      net         : inout network_t;
         constant    polarity    : in    std_logic
     ) is
@@ -203,7 +203,7 @@ package body rst_gen_agent_pkg is
               RESET_AGENT_TAG & "Reset polarity set");
     end procedure;
 
-    procedure polarity_get_rst_agent(
+    procedure rst_agent_polarity_get(
         signal      net         : inout network_t;
         variable    polarity    : out   std_logic
     ) is

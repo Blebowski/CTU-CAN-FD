@@ -67,8 +67,9 @@ package test_controller_agent_pkg is
         vpi_ack         : out   std_logic;
         vpi_cmd         : in    std_logic_vector(7 downto 0);
         vpi_dest        : in    std_logic_vector(7 downto 0);
-        vpi_data_in     : in    std_logic_vector(31 downto 0);
-        vpi_data_out    : out   std_logic_vector(31 downto 0);
+        vpi_data_in     : in    std_logic_vector(63 downto 0);
+        vpi_str_buf_in  : in    std_logic_vector(511 downto 0);
+        vpi_data_out    : out   std_logic_vector(63 downto 0);
     
         -- VPI Mutex lock/unlock interface
         vpi_mutex_lock      : out   std_logic := '0';
@@ -96,15 +97,61 @@ package test_controller_agent_pkg is
     constant VPI_RST_AGNT_CMD_POLARITY_GET  : std_logic_vector(7 downto 0) := x"04";
 
     -- VPI commands for Clock generator
-    -- TODO:
+    constant VPI_CLK_AGNT_CMD_START        : std_logic_vector(7 downto 0) := x"01";
+    constant VPI_CLK_AGNT_CMD_STOP         : std_logic_vector(7 downto 0) := x"02";
+    constant VPI_CLK_AGNT_CMD_PERIOD_SET   : std_logic_vector(7 downto 0) := x"03";
+    constant VPI_CLK_AGNT_CMD_PERIOD_GET   : std_logic_vector(7 downto 0) := x"04";
+    constant VPI_CLK_AGNT_CMD_JITTER_SET   : std_logic_vector(7 downto 0) := x"05";
+    constant VPI_CLK_AGNT_CMD_JITTER_GET   : std_logic_vector(7 downto 0) := x"06";
+    constant VPI_CLK_AGNT_CMD_DUTY_SET     : std_logic_vector(7 downto 0) := x"07";
+    constant VPI_CLK_AGNT_CMD_DUTY_GET     : std_logic_vector(7 downto 0) := x"08";
 
     -- VPI commands for Memory bus agent
-    -- TODO:
-    
+    constant VPI_MEM_BUS_AGNT_START                 : std_logic_vector(7 downto 0) := x"01";
+    constant VPI_MEM_BUS_AGNT_STOP                  : std_logic_vector(7 downto 0) := x"02";
+    constant VPI_MEM_BUS_AGNT_WRITE                 : std_logic_vector(7 downto 0) := x"03";
+    constant VPI_MEM_BUS_AGNT_READ                  : std_logic_vector(7 downto 0) := x"04";
+    constant VPI_MEM_BUS_AGNT_X_MODE_START          : std_logic_vector(7 downto 0) := x"05";
+    constant VPI_MEM_BUS_AGNT_X_MODE_STOP           : std_logic_vector(7 downto 0) := x"06";
+    constant VPI_MEM_BUS_AGNT_SET_X_MODE_SETUP      : std_logic_vector(7 downto 0) := x"07";
+    constant VPI_MEM_BUS_AGNT_SET_X_MODE_HOLD       : std_logic_vector(7 downto 0) := x"08";   
+    constant VPI_MEM_BUS_AGNT_SET_PERIOD            : std_logic_vector(7 downto 0) := x"09";   
+    constant VPI_MEM_BUS_AGNT_SET_OUTPUT_DELAY      : std_logic_vector(7 downto 0) := x"0A";
+    constant VPI_MEM_BUS_AGNT_WAIT_DONE             : std_logic_vector(7 downto 0) := x"0B";
+
     -- VPI commands for CAN Agent
-    -- TODO:
+    constant VPI_CAN_AGNT_DRIVER_START              : std_logic_vector(7 downto 0) := x"01";
+    constant VPI_CAN_AGNT_DRIVER_STOP               : std_logic_vector(7 downto 0) := x"02";
+    constant VPI_CAN_AGNT_DRIVER_FLUSH              : std_logic_vector(7 downto 0) := x"03";
+    constant VPI_CAN_AGNT_DRIVER_GET_PROGRESS       : std_logic_vector(7 downto 0) := x"04";
+    constant VPI_CAN_AGNT_DRIVER_GET_DRIVEN_VAL     : std_logic_vector(7 downto 0) := x"05";
+    constant VPI_CAN_AGNT_DRIVER_PUSH_ITEM          : std_logic_vector(7 downto 0) := x"06";
+    constant VPI_CAN_AGNT_DRIVER_SET_WAIT_TIMEOUT   : std_logic_vector(7 downto 0) := x"07";
+    constant VPI_CAN_AGNT_DRIVER_WAIT_FINISH        : std_logic_vector(7 downto 0) := x"08";
+    constant VPI_CAN_AGNT_DRIVER_DRIVE_SINGLE_ITEM  : std_logic_vector(7 downto 0) := x"09";
+    constant VPI_CAN_AGNT_DRIVER_DRIVE_ALL_ITEM     : std_logic_vector(7 downto 0) := x"0A";
+
+    constant VPI_CAN_AGNT_MONITOR_START                 : std_logic_vector(7 downto 0) := x"0B";
+    constant VPI_CAN_AGNT_MONITOR_STOP                  : std_logic_vector(7 downto 0) := x"0C";
+    constant VPI_CAN_AGNT_MONITOR_FLUSH                 : std_logic_vector(7 downto 0) := x"0D";
+    constant VPI_CAN_AGNT_MONITOR_GET_STATE             : std_logic_vector(7 downto 0) := x"0E";
+    constant VPI_CAN_AGNT_MONITOR_GET_MONITORED_VAL     : std_logic_vector(7 downto 0) := x"0F";
+    constant VPI_CAN_AGNT_MONITOR_PUSH_ITEM             : std_logic_vector(7 downto 0) := x"10";
+    constant VPI_CAN_AGNT_MONITOR_SET_WAIT_TIMEOUT      : std_logic_vector(7 downto 0) := x"11";
+    constant VPI_CAN_AGNT_MONITOR_WAIT_FINISH           : std_logic_vector(7 downto 0) := x"12";
+    constant VPI_CAN_AGNT_MONITOR_MONITOR_SINGLE_ITEM   : std_logic_vector(7 downto 0) := x"13";
+    constant VPI_CAN_AGNT_MONITOR_MONITOR_ALL_ITEMS     : std_logic_vector(7 downto 0) := x"14";
+
+    constant VPI_CAN_AGNT_MONITOR_SET_TRIGGER           : std_logic_vector(7 downto 0) := x"15";
+    constant VPI_CAN_AGNT_MONITOR_GET_TRIGGER           : std_logic_vector(7 downto 0) := x"16";
+
+    constant VPI_CAN_AGNT_MONITOR_SET_SAMPLE_RATE       : std_logic_vector(7 downto 0) := x"17";
+    constant VPI_CAN_AGNT_MONITOR_GET_SAMPLE_RATE       : std_logic_vector(7 downto 0) := x"18";
+
+    constant VPI_CAN_AGNT_MONITOR_CHECK_RESULT          : std_logic_vector(7 downto 0) := x"19";
 
 end package;
+
 
 library vunit_lib;
 context vunit_lib.vunit_context;
