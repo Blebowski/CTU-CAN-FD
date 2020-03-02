@@ -79,7 +79,7 @@ package clk_gen_agent_pkg is
     --
     -- @param net Network on which Memory bus agent listens (use "net"). 
     ---------------------------------------------------------------------------
-    procedure start_clk_gen_agent(
+    procedure clk_gen_agent_start(
         signal      net         : inout network_t
     );
 
@@ -88,7 +88,7 @@ package clk_gen_agent_pkg is
     --
     -- @param net Network on which Memory bus agent listens (use "net"). 
     ---------------------------------------------------------------------------
-    procedure stop_clk_gen_agent(
+    procedure clk_gen_agent_stop(
         signal      net         : inout network_t
     );
         
@@ -98,7 +98,7 @@ package clk_gen_agent_pkg is
     -- @param net       Network on which Memory bus agent listens (use "net").
     -- @param period    Clock period to be set.
     ---------------------------------------------------------------------------
-    procedure set_period_clk_agent(
+    procedure clk_agent_set_period(
         signal      net         : inout network_t;
         constant    period      : in    time
     );
@@ -109,7 +109,7 @@ package clk_gen_agent_pkg is
     -- @param net       Network on which Memory bus agent listens (use "net").
     -- @param period    Obtained clock period.
     ---------------------------------------------------------------------------
-    procedure get_period_clk_agent(
+    procedure clk_agent_get_period(
         signal      net         : inout network_t;
         variable    period      : out   time
     );
@@ -120,7 +120,7 @@ package clk_gen_agent_pkg is
     -- @param net       Network on which Memory bus agent listens (use "net").
     -- @param jitter    Jitter to be set.    
     ---------------------------------------------------------------------------
-    procedure set_jitter_clk_agent(
+    procedure clk_agent_set_jitter(
         signal      net         : inout network_t;
         constant    jitter      : in    time
     );
@@ -131,7 +131,7 @@ package clk_gen_agent_pkg is
     -- @param net       Network on which Memory bus agent listens (use "net").
     -- @param jitter    Obtained jitter.  
     ---------------------------------------------------------------------------
-    procedure get_jitter_clk_agent(
+    procedure clk_agent_get_jitter(
         signal      net         : inout network_t;
         variable    jitter      : out   time
     );
@@ -142,7 +142,7 @@ package clk_gen_agent_pkg is
     -- @param net       Network on which Memory bus agent listens (use "net").
     -- @param duty      Duty cycle to be set.
     ---------------------------------------------------------------------------
-    procedure set_duty_clk_agent(
+    procedure clk_agent_set_duty(
         signal      net         : inout network_t;
         constant    duty        : in    integer range 0 to 100
     );
@@ -153,7 +153,7 @@ package clk_gen_agent_pkg is
     -- @param net       Network on which Memory bus agent listens (use "net").
     -- @param duty      Obtained duty cycle.  
     ---------------------------------------------------------------------------
-    procedure get_duty_clk_agent(
+    procedure clk_agent_get_duty(
         signal      net         : inout network_t;
         variable    duty        : out   integer range 0 to 100
     );
@@ -195,7 +195,7 @@ package body clk_gen_agent_pkg is
     ---------------------------------------------------------------------------
     ---------------------------------------------------------------------------
     
-    procedure start_clk_gen_agent(
+    procedure clk_gen_agent_start(
         signal net              : inout network_t
     ) is
         constant clk_gen_rec : actor_t := find("actor_clk_gen_agent");
@@ -212,7 +212,7 @@ package body clk_gen_agent_pkg is
     end procedure;
 
 
-    procedure stop_clk_gen_agent(
+    procedure clk_gen_agent_stop(
         signal net : inout network_t
     ) is
         constant clk_gen_rec : actor_t := find("actor_clk_gen_agent");
@@ -229,7 +229,7 @@ package body clk_gen_agent_pkg is
     end procedure;
 
  
-    procedure set_period_clk_agent(
+    procedure clk_agent_set_period(
         signal      net         : inout network_t;
         constant    period      : in    time
     ) is
@@ -248,7 +248,7 @@ package body clk_gen_agent_pkg is
     end procedure;
 
 
-    procedure get_period_clk_agent(
+    procedure clk_agent_get_period(
         signal      net         : inout network_t;
         variable    period      : out   time
     ) is
@@ -267,7 +267,7 @@ package body clk_gen_agent_pkg is
     end procedure;
  
  
-    procedure set_jitter_clk_agent(
+    procedure clk_agent_set_jitter(
         signal      net         : inout network_t;
         constant    jitter      : in    time
     ) is
@@ -286,7 +286,7 @@ package body clk_gen_agent_pkg is
     end procedure;
 
 
-    procedure get_jitter_clk_agent(
+    procedure clk_agent_get_jitter(
         signal      net         : inout network_t;
         variable    jitter      : out   time
     ) is
@@ -305,7 +305,7 @@ package body clk_gen_agent_pkg is
     end procedure;
  
  
-    procedure set_duty_clk_agent(
+    procedure clk_agent_set_duty(
         signal      net         : inout network_t;
         constant    duty        : in    integer range 0 to 100
     ) is
@@ -324,7 +324,7 @@ package body clk_gen_agent_pkg is
     end procedure;
     
     
-    procedure get_duty_clk_agent(
+    procedure clk_agent_get_duty(
         signal      net         : inout network_t;
         variable    duty        : out   integer range 0 to 100
     ) is

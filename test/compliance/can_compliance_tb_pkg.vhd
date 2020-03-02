@@ -70,11 +70,125 @@ context vunit_lib.vunit_context;
 
 package can_compliance_tb_pkg is
 
+    ---------------------------------------------------------------------------
+    --
+    ---------------------------------------------------------------------------
+    procedure str_to_logic_vector(
+               input       : in   string;
+        signal output      : out  std_logic_vector
+    );
+    
+    
+    ---------------------------------------------------------------------------
+    --
+    ---------------------------------------------------------------------------
+    procedure logic_vector_to_str(
+                input       : in   std_logic_vector;
+       variable output      : out  string
+    );
+
+
+    ---------------------------------------------------------------------------
+    --
+    ---------------------------------------------------------------------------
+    procedure time_to_logic_vector(
+                 input       : in  time;
+        variable output      : out std_logic_vector(63 downto 0)   
+    );
+
+
+    ---------------------------------------------------------------------------
+    --
+    ---------------------------------------------------------------------------
+    procedure logic_vector_to_time(
+                 input       : in  std_logic_vector(63 downto 0);
+        variable output      : out time
+    );
 
 end package;
 
 
 package body can_compliance_tb_pkg is
 
+
+    procedure str_to_logic_vector(
+               input       : in   string;
+        signal output      : out  std_logic_vector
+    ) is
+        variable cropped_length : integer := input'length;
+    begin
+        -- By default null everywhere, no string character
+        output(output'length - 1 downto 0) <= (OTHERS => '0');
+        
+        -- Crop if string is longer
+        if (output'length < cropped_length * 8) then
+            cropped_length := output'length / 8;
+        end if;
+        
+        -- Convert as if ASCII
+        for i in 0 to cropped_length - 1 loop
+            output(i * 8 + 7 downto i * 8) <= std_logic_vector(to_unsigned(
+                    character'pos(input(input'length - i)), 8));
+        end loop;
+    end procedure;
+
+
+    procedure logic_vector_to_str(
+                input       : in   std_logic_vector;
+       variable output      : out  string
+    ) is
+        variable cropped_length : integer := input'length;
+    begin
+        -- By default null everywhere, no string character
+        output(input'length - 1 downto 0) := (OTHERS => ' ');
+        
+        -- Crop if vector is longer than output string
+        if (output'length > cropped_length) then
+            cropped_length := output'length;
+        end if;
+        
+        -- Convert as if ASCII
+        for i in 0 to cropped_length - 1 loop
+            output(cropped_length - i) := character'val(to_integer(unsigned(
+                            input(i * 8 + 7 downto i * 8))));
+        end loop;    
+    end procedure;
+    
+
+
+    procedure time_to_logic_vector(
+                 input       : in  time;
+        variable output      : out std_logic_vector(63 downto 0)   
+    ) is
+        variable low       : integer;
+        variable high      : integer;
+    begin 
+        high := input / (integer'high * 1 fs);
+        
+        -- If input is higher than integer'high, it will overflow automatically
+        --  performing needed modulo operation.
+        low := input / 1 fs;
+
+        output(30 downto 0) := std_logic_vector(to_unsigned(low, 31));
+        output(61 downto 31) := std_logic_vector(to_unsigned(high, 31));
+        
+        -- Note: Positive integer is up to 2^31 - 1, convert to two integers
+        --       and crop highest two bits. This will effectively overflow
+        --       all time values above 2^62 * 1 fs, but we don't care!
+    end procedure;
+
+
+    procedure logic_vector_to_time(
+                 input       : in  std_logic_vector(63 downto 0);
+        variable output      : out time
+    ) is
+        variable low       : integer;
+        variable high      : integer;
+    begin
+        low := to_integer(unsigned(input(30 downto 0)));
+        high := to_integer(unsigned(input(61 downto 31)));
+
+        output := (low * 1 fs) + (high * (integer'high * 1 fs + 1 fs)); 
+    end;
 
 end package body;

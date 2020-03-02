@@ -213,6 +213,16 @@ package mem_bus_agent_pkg is
                     out_delay  : in    time
     );
 
+    
+    ---------------------------------------------------------------------------
+    -- Wait till all transactions executed by memory bus agent are over.
+    --
+    -- @param net             Network on which CAN Agent listens (use "net").
+    ---------------------------------------------------------------------------
+    procedure mem_bus_agent_wait_done(
+        signal      net        : inout network_t
+    );
+
     ---------------------------------------------------------------------------
     -- Execute read transaction by Memory bus agent. This function returns
     -- after read transaction was executed.

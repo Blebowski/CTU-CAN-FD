@@ -65,6 +65,8 @@ use work.mem_bus_agent_pkg.all;
 use work.can_agent_pkg.all;
 use work.test_controller_agent_pkg.all;
 
+use work.can_compliance_tb_pkg.all;
+
 -- Design libraries
 use work.can_components.all;
 
@@ -107,8 +109,9 @@ architecture tb of can_compliance_tb is
     signal vpi_ack          : std_logic := '0';
     signal vpi_cmd          : std_logic_vector(7 downto 0) := (OTHERS => '0');
     signal vpi_dest         : std_logic_vector(7 downto 0) := (OTHERS => '0');
-    signal vpi_data_in      : std_logic_vector(31 downto 0) := (OTHERS => '0');
-    signal vpi_data_out     : std_logic_vector(31 downto 0) := (OTHERS => '0');
+    signal vpi_data_in      : std_logic_vector(63 downto 0) := (OTHERS => '0');
+    signal vpi_str_buf_in   : std_logic_vector(511 downto 0) := (OTHERS => '0');
+    signal vpi_data_out     : std_logic_vector(63 downto 0) := (OTHERS => '0');
     
     -- VPI lock mutex
     signal vpi_mutex_lock   : std_logic := '0';
@@ -226,6 +229,7 @@ begin
         vpi_cmd         => vpi_cmd,
         vpi_dest        => vpi_dest,
         vpi_data_in     => vpi_data_in,
+        vpi_str_buf_in  => vpi_str_buf_in,
         vpi_data_out    => vpi_data_out,
     
         -- VPI Mutext lock/unlock interface
@@ -239,87 +243,14 @@ begin
         vpi_test_result     => vpi_test_result
     );
 
+    ---------------------------------------------------------------------------
+    -- Write test name from generic to signal (TODO: Test config!)
+    ---------------------------------------------------------------------------
     test_proc : process
     begin
-        for i in 0 to vpi_test_name'length - 1 loop
-            vpi_test_name_array (i * 8 + 7 downto i * 8) <=
-                std_logic_vector(to_unsigned(
-                    character'pos(vpi_test_name(vpi_test_name'length - i)), 8));
-        end loop;
+        str_to_logic_vector(vpi_test_name, vpi_test_name_array);
         wait;
     end process;
 
-    /*
-    -- This is an example process only!
-    test_proc : process
-        variable read_data : std_logic_vector(31 downto 0);
-    begin
-        test_runner_setup(runner, runner_cfg);
-        
-        wait for 100 ns;
-        
-        polarity_set_rst_agent(net, '0');
-        assert_rst_agent(net);
-        
-        set_period_clk_agent(net, 10 ns);
-        start_clk_gen_agent(net);
-        
-        wait for 100 ns;
-        set_period_clk_agent(net, 20 ns);
-        deassert_rst_agent(net);
-
-        wait for 100 ns;
-        set_period_clk_agent(net, 5 ns);
-        
-        wait for 200 ns;
-        set_period_clk_agent(net, 10 ns);
-        set_duty_clk_agent(net, 50);
-        wait for 100 ns;
-
-        test_signal <= '1';
-
-        --mem_bus_agent_write_non_blocking(net, 4, x"AAAAAAAA", "1111");
-        --mem_bus_agent_write_non_blocking(net, 8, x"BBBBBBBB", "1111");
-        wait for 10 ns;
-        mem_bus_agent_start(net);
-
-        mem_bus_agent_read(net, 0, read_data, "1111");
-        
-        wait for 1000 ns;
-        mem_bus_agent_stop(net);
-
-        wait for 1000 ns;
-
-        can_agent_monitor_set_trigger(net, trig_driver_start);
-        can_agent_monitor_push_value(net, '0', 20 ns, "SOF");
-        can_agent_monitor_push_value(net, '1', 20 ns, "ID[0]");
-        can_agent_monitor_push_value(net, '0', 20 ns, "ID[1]");
-        can_agent_monitor_push_value(net, '1', 20 ns, "ID[2]");
-        can_agent_monitor_start(net);
-        
-        -- Test CAN agent driver here!
-        can_agent_driver_push_value(net, '0', 20 ns, "A");
-        can_agent_driver_push_value(net, '1', 20 ns, "B");
-        can_agent_driver_push_value(net, '0', 20 ns, "C");
-        can_agent_driver_push_value(net, '1', 20 ns, "D");
-        can_agent_driver_start(net);
-
-        --wait for 1000 ns;
-        can_agent_monitor_wait_finish(net);
-        can_agent_monitor_stop(net);
-        can_agent_driver_stop(net);
-
-        wait for 1000 ns;
-        
-        can_agent_monitor_check_result(net);
-
-
-        stop_clk_gen_agent(net);
-
-        test_runner_cleanup(runner, false);
-
-        wait;
-    end process;
-    */
 
 end architecture;
