@@ -1306,8 +1306,8 @@ begin
         is_receiver, crc_match, drv_ack_forb, drv_self_test_ena, tx_frame_ready,
         go_to_suspend, frame_start, ctrl_ctr_one, drv_bus_off_reset_q,
         reinteg_ctr_expired, first_err_delim_q, go_to_stuff_count,
-        crc_length_i, data_length_bits_c, ctrl_ctr_mem_index, is_bus_off
-        )
+        crc_length_i, data_length_bits_c, ctrl_ctr_mem_index, is_bus_off,
+        block_txtb_unlock)
     begin
 
         -----------------------------------------------------------------------

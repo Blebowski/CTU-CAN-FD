@@ -90,7 +90,6 @@ architecture tx_arb_unit_test of CAN_test is
     signal txtb_changed           :  std_logic;
     signal txtb_hw_cmd_index      :  natural range 0 to C_TXT_BUFFER_COUNT - 1;
     signal txtb_ptr      :  natural range 0 to 19 := 0;
-    signal drv_bus                :  std_logic_vector(1023 downto 0);
     signal txtb_prorities         :  t_txt_bufs_priorities :=
                                         (OTHERS => (OTHERS => '0'));
     signal timestamp              :  std_logic_vector(63 downto 0) :=
@@ -217,7 +216,6 @@ begin
         txtb_changed           => txtb_changed,
         txtb_hw_cmd_index      => txtb_hw_cmd_index,
         txtb_ptr               => txtb_ptr,
-        drv_bus                => drv_bus,
         txtb_prorities         => txtb_prorities,
         timestamp              => timestamp
     );

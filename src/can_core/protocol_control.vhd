@@ -976,7 +976,6 @@ begin
         err_frm_req             => err_frm_req,             -- IN
         is_err_active           => is_err_active,           -- IN
         bst_ctr                 => bst_ctr,                 -- IN
-        tran_word               => tran_word,               -- IN
         tran_identifier         => tran_identifier,         -- IN
         tran_word_swapped       => tran_word_swapped,       -- IN
         tran_dlc                => tran_dlc                 -- IN

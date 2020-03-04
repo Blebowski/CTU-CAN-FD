@@ -2546,9 +2546,6 @@ package can_components is
         -----------------------------------------------------------------------
         -- TXT Buffers interface
         -----------------------------------------------------------------------
-        -- TXT Buffer RAM word
-        tran_word               :in   std_logic_vector(31 downto 0);
-        
         -- TX Identifier
         tran_identifier         :in   std_logic_vector(28 downto 0);
         
@@ -3690,9 +3687,6 @@ package can_components is
         -- Sync Trigger Request (TX Trigger request)
         tx_trig_req       : in    std_logic;
 
-        -- Sample control (Nominal, Data, Secondary)
-        sp_control        : in    std_logic_vector(1 downto 0);
-        
         -----------------------------------------------------------------------
         -- Trigger outputs
         -----------------------------------------------------------------------
@@ -3809,12 +3803,6 @@ package can_components is
 
         -- RX Buffer RAM is being read by SW
         read_increment       :in     std_logic;
-
-        -----------------------------------------------------------------------
-        -- Memory registers interface
-        -----------------------------------------------------------------------
-        -- Driving bus
-        drv_bus              :in     std_logic_vector(1023 downto 0);
 
         -----------------------------------------------------------------------
         -- Status outputs
@@ -4174,9 +4162,6 @@ package can_components is
         -----------------------------------------------------------------------
         -- Memory registers interface
         -----------------------------------------------------------------------
-        -- Driving Bus
-        drv_bus                 :in std_logic_vector(1023 downto 0);
-
         -- Priorities of TXT Buffers
         txtb_prorities          :in t_txt_bufs_priorities;
     

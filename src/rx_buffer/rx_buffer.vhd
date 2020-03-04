@@ -466,7 +466,6 @@ begin
         store_ts_wr_ptr         => store_ts_wr_ptr,         -- IN
         inc_ts_wr_ptr           => inc_ts_wr_ptr,           -- IN
         read_increment          => read_increment,          -- IN
-        drv_bus                 => drv_bus,                 -- IN
         
         read_pointer            => read_pointer,            -- OUT
         read_pointer_inc_1      => read_pointer_inc_1,      -- OUT

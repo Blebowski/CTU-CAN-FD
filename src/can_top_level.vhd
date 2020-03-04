@@ -674,7 +674,6 @@ begin
         txtb_ptr                => txtb_ptr,            -- IN
 
         -- Memory registers interface
-        drv_bus                 => drv_bus,             -- IN
         txtb_prorities          => txtb_prorities,      -- IN
         timestamp               => timestamp            -- IN
     );

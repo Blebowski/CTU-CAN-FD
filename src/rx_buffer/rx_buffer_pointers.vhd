@@ -119,12 +119,6 @@ entity rx_buffer_pointers is
         read_increment       :in     std_logic;
 
         -----------------------------------------------------------------------
-        -- Memory registers interface
-        -----------------------------------------------------------------------
-        -- Driving bus
-        drv_bus              :in     std_logic_vector(1023 downto 0);
-
-        -----------------------------------------------------------------------
         -- Status outputs
         -----------------------------------------------------------------------
         -- Read Pointer (access from SW)

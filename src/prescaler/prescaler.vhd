@@ -466,8 +466,7 @@ begin
         res_n       => res_n,           -- IN
         rx_trig_req => rx_trig_req,     -- IN
         tx_trig_req => tx_trig_req,     -- IN
-        sp_control  => sp_control,      -- IN
-        
+
         rx_triggers => rx_triggers,     -- OUT
         tx_trigger  => tx_trigger       -- OUT
     );
