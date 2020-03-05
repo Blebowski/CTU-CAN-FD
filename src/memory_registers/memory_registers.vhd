@@ -389,7 +389,7 @@ begin
         DATA_WIDTH            => 32,
         ADDRESS_WIDTH         => 16,
         REGISTERED_READ       => true,
-        CLEAR_READ_DATA       => true,
+        CLEAR_READ_DATA       => false,
         RESET_POLARITY        => G_RESET_POLARITY,
         SUP_FILT_A            => G_SUP_FILTA,
         SUP_RANGE             => G_SUP_RANGE,
