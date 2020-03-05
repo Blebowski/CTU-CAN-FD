@@ -852,7 +852,7 @@ begin
   ------------------------------------------------------------------------------
   -- Read data driver
   ------------------------------------------------------------------------------
-  read_data_mux_in  <= 
+  read_data_mux_in <=
     -- Adress:152
     control_registers_in.timestamp_high &
 
@@ -973,298 +973,228 @@ begin
     ----------------------------------------------------------------------------
     -- Read data mask - Byte enables
     ----------------------------------------------------------------------------
-    read_data_mask_n  <= 
-      be(3) & be(3) & be(3) & be(3) & be(3) & be(3) & be(3) & be(3) &
-      be(2) & be(2) & be(2) & be(2) & be(2) & be(2) & be(2) & be(2) &
-      be(1) & be(1) & be(1) & be(1) & be(1) & be(1) & be(1) & be(1) &
-      be(0) & be(0) & be(0) & be(0) & be(0) & be(0) & be(0) & be(0);
+    read_data_mask_n <=
+      be(3) & be(3) & be(3) & be(3) & be(3) & be(3) & be(3) & be(3) & 
+      be(2) & be(2) & be(2) & be(2) & be(2) & be(2) & be(2) & be(2) & 
+      be(1) & be(1) & be(1) & be(1) & be(1) & be(1) & be(1) & be(1) & 
+      be(0) & be(0) & be(0) & be(0) & be(0) & be(0) & be(0) & be(0) ;
 
     Control_registers_out <= Control_registers_out_i;
 
     -- <RELEASE_OFF>
     ----------------------------------------------------------------------------
-    -- PSL functional coverage
+    -- Functional coverage
     ----------------------------------------------------------------------------
     --  psl default clock is rising_edge(clk_sys);
-    --  psl device_id_read_access_cov : cover {
-    --     cs = '1' and read = '1' and reg_sel(0) = '1' and 
-    --     (be(0) = '1' or be(1) = '1')};
-
-    --  psl version_read_access_cov : cover {
-    --     cs = '1' and read = '1' and reg_sel(0) = '1' and 
-    --     (be(2) = '1' or be(3) = '1')};
-
-    --  psl mode_write_access_cov : cover {
-    --     cs = '1' and write = '1' and reg_sel(1) = '1' and 
-    --     (be(0) = '1' or be(1) = '1')};
-
-    --  psl mode_read_access_cov : cover {
-    --     cs = '1' and read = '1' and reg_sel(1) = '1' and 
-    --     (be(0) = '1' or be(1) = '1')};
-
-    --  psl settings_write_access_cov : cover {
-    --     cs = '1' and write = '1' and reg_sel(1) = '1' and 
-    --     (be(2) = '1' or be(3) = '1')};
-
-    --  psl settings_read_access_cov : cover {
-    --     cs = '1' and read = '1' and reg_sel(1) = '1' and 
-    --     (be(2) = '1' or be(3) = '1')};
-
-    --  psl status_read_access_cov : cover {
-    --     cs = '1' and read = '1' and reg_sel(2) = '1' and 
-    --     (be(0) = '1' or be(1) = '1' or be(2) = '1' or be(3) = '1')};
-
-    --  psl command_write_access_cov : cover {
-    --     cs = '1' and write = '1' and reg_sel(3) = '1' and 
-    --     (be(0) = '1' or be(1) = '1' or be(2) = '1' or be(3) = '1')};
-
-    --  psl int_stat_write_access_cov : cover {
-    --     cs = '1' and write = '1' and reg_sel(4) = '1' and 
-    --     (be(0) = '1' or be(1) = '1')};
-
-    --  psl int_stat_read_access_cov : cover {
-    --     cs = '1' and read = '1' and reg_sel(4) = '1' and 
-    --     (be(0) = '1' or be(1) = '1')};
-
-    --  psl int_ena_set_write_access_cov : cover {
-    --     cs = '1' and write = '1' and reg_sel(5) = '1' and 
-    --     (be(0) = '1' or be(1) = '1')};
-
-    --  psl int_ena_set_read_access_cov : cover {
-    --     cs = '1' and read = '1' and reg_sel(5) = '1' and 
-    --     (be(0) = '1' or be(1) = '1')};
-
-    --  psl int_ena_clr_write_access_cov : cover {
-    --     cs = '1' and write = '1' and reg_sel(6) = '1' and 
-    --     (be(0) = '1' or be(1) = '1')};
-
-    --  psl int_mask_set_write_access_cov : cover {
-    --     cs = '1' and write = '1' and reg_sel(7) = '1' and 
-    --     (be(0) = '1' or be(1) = '1')};
-
-    --  psl int_mask_set_read_access_cov : cover {
-    --     cs = '1' and read = '1' and reg_sel(7) = '1' and 
-    --     (be(0) = '1' or be(1) = '1')};
-
-    --  psl int_mask_clr_write_access_cov : cover {
-    --     cs = '1' and write = '1' and reg_sel(8) = '1' and 
-    --     (be(0) = '1' or be(1) = '1')};
-
-    --  psl btr_write_access_cov : cover {
-    --     cs = '1' and write = '1' and reg_sel(9) = '1' and 
-    --     (be(0) = '1' or be(1) = '1' or be(2) = '1' or be(3) = '1')};
-
-    --  psl btr_read_access_cov : cover {
-    --     cs = '1' and read = '1' and reg_sel(9) = '1' and 
-    --     (be(0) = '1' or be(1) = '1' or be(2) = '1' or be(3) = '1')};
-
-    --  psl btr_fd_write_access_cov : cover {
-    --     cs = '1' and write = '1' and reg_sel(10) = '1' and 
-    --     (be(0) = '1' or be(1) = '1' or be(2) = '1' or be(3) = '1')};
-
-    --  psl btr_fd_read_access_cov : cover {
-    --     cs = '1' and read = '1' and reg_sel(10) = '1' and 
-    --     (be(0) = '1' or be(1) = '1' or be(2) = '1' or be(3) = '1')};
-
-    --  psl ewl_write_access_cov : cover {
-    --     cs = '1' and write = '1' and reg_sel(11) = '1' and 
-    --     (be(0) = '1')};
-
-    --  psl ewl_read_access_cov : cover {
-    --     cs = '1' and read = '1' and reg_sel(11) = '1' and 
-    --     (be(0) = '1')};
-
-    --  psl erp_write_access_cov : cover {
-    --     cs = '1' and write = '1' and reg_sel(11) = '1' and 
-    --     (be(1) = '1')};
-
-    --  psl erp_read_access_cov : cover {
-    --     cs = '1' and read = '1' and reg_sel(11) = '1' and 
-    --     (be(1) = '1')};
-
-    --  psl fault_state_read_access_cov : cover {
-    --     cs = '1' and read = '1' and reg_sel(11) = '1' and 
-    --     (be(2) = '1' or be(3) = '1')};
-
-    --  psl rec_read_access_cov : cover {
-    --     cs = '1' and read = '1' and reg_sel(12) = '1' and 
-    --     (be(0) = '1' or be(1) = '1')};
-
-    --  psl tec_read_access_cov : cover {
-    --     cs = '1' and read = '1' and reg_sel(12) = '1' and 
-    --     (be(2) = '1' or be(3) = '1')};
-
-    --  psl err_norm_read_access_cov : cover {
-    --     cs = '1' and read = '1' and reg_sel(13) = '1' and 
-    --     (be(0) = '1' or be(1) = '1')};
-
-    --  psl err_fd_read_access_cov : cover {
-    --     cs = '1' and read = '1' and reg_sel(13) = '1' and 
-    --     (be(2) = '1' or be(3) = '1')};
-
-    --  psl ctr_pres_write_access_cov : cover {
-    --     cs = '1' and write = '1' and reg_sel(14) = '1' and 
-    --     (be(0) = '1' or be(1) = '1' or be(2) = '1' or be(3) = '1')};
-
-    --  psl filter_a_mask_write_access_cov : cover {
-    --     cs = '1' and write = '1' and reg_sel(15) = '1' and 
-    --     (be(0) = '1' or be(1) = '1' or be(2) = '1' or be(3) = '1')};
-
-    --  psl filter_a_mask_read_access_cov : cover {
-    --     cs = '1' and read = '1' and reg_sel(15) = '1' and 
-    --     (be(0) = '1' or be(1) = '1' or be(2) = '1' or be(3) = '1')};
-
-    --  psl filter_a_val_write_access_cov : cover {
-    --     cs = '1' and write = '1' and reg_sel(16) = '1' and 
-    --     (be(0) = '1' or be(1) = '1' or be(2) = '1' or be(3) = '1')};
-
-    --  psl filter_a_val_read_access_cov : cover {
-    --     cs = '1' and read = '1' and reg_sel(16) = '1' and 
-    --     (be(0) = '1' or be(1) = '1' or be(2) = '1' or be(3) = '1')};
-
-    --  psl filter_b_mask_write_access_cov : cover {
-    --     cs = '1' and write = '1' and reg_sel(17) = '1' and 
-    --     (be(0) = '1' or be(1) = '1' or be(2) = '1' or be(3) = '1')};
-
-    --  psl filter_b_mask_read_access_cov : cover {
-    --     cs = '1' and read = '1' and reg_sel(17) = '1' and 
-    --     (be(0) = '1' or be(1) = '1' or be(2) = '1' or be(3) = '1')};
-
-    --  psl filter_b_val_write_access_cov : cover {
-    --     cs = '1' and write = '1' and reg_sel(18) = '1' and 
-    --     (be(0) = '1' or be(1) = '1' or be(2) = '1' or be(3) = '1')};
-
-    --  psl filter_b_val_read_access_cov : cover {
-    --     cs = '1' and read = '1' and reg_sel(18) = '1' and 
-    --     (be(0) = '1' or be(1) = '1' or be(2) = '1' or be(3) = '1')};
-
-    --  psl filter_c_mask_write_access_cov : cover {
-    --     cs = '1' and write = '1' and reg_sel(19) = '1' and 
-    --     (be(0) = '1' or be(1) = '1' or be(2) = '1' or be(3) = '1')};
-
-    --  psl filter_c_mask_read_access_cov : cover {
-    --     cs = '1' and read = '1' and reg_sel(19) = '1' and 
-    --     (be(0) = '1' or be(1) = '1' or be(2) = '1' or be(3) = '1')};
-
-    --  psl filter_c_val_write_access_cov : cover {
-    --     cs = '1' and write = '1' and reg_sel(20) = '1' and 
-    --     (be(0) = '1' or be(1) = '1' or be(2) = '1' or be(3) = '1')};
-
-    --  psl filter_c_val_read_access_cov : cover {
-    --     cs = '1' and read = '1' and reg_sel(20) = '1' and 
-    --     (be(0) = '1' or be(1) = '1' or be(2) = '1' or be(3) = '1')};
-
-    --  psl filter_ran_low_write_access_cov : cover {
-    --     cs = '1' and write = '1' and reg_sel(21) = '1' and 
-    --     (be(0) = '1' or be(1) = '1' or be(2) = '1' or be(3) = '1')};
-
-    --  psl filter_ran_low_read_access_cov : cover {
-    --     cs = '1' and read = '1' and reg_sel(21) = '1' and 
-    --     (be(0) = '1' or be(1) = '1' or be(2) = '1' or be(3) = '1')};
-
-    --  psl filter_ran_high_write_access_cov : cover {
-    --     cs = '1' and write = '1' and reg_sel(22) = '1' and 
-    --     (be(0) = '1' or be(1) = '1' or be(2) = '1' or be(3) = '1')};
-
-    --  psl filter_ran_high_read_access_cov : cover {
-    --     cs = '1' and read = '1' and reg_sel(22) = '1' and 
-    --     (be(0) = '1' or be(1) = '1' or be(2) = '1' or be(3) = '1')};
-
-    --  psl filter_control_write_access_cov : cover {
-    --     cs = '1' and write = '1' and reg_sel(23) = '1' and 
-    --     (be(0) = '1' or be(1) = '1')};
-
-    --  psl filter_control_read_access_cov : cover {
-    --     cs = '1' and read = '1' and reg_sel(23) = '1' and 
-    --     (be(0) = '1' or be(1) = '1')};
-
-    --  psl filter_status_read_access_cov : cover {
-    --     cs = '1' and read = '1' and reg_sel(23) = '1' and 
-    --     (be(2) = '1' or be(3) = '1')};
-
-    --  psl rx_mem_info_read_access_cov : cover {
-    --     cs = '1' and read = '1' and reg_sel(24) = '1' and 
-    --     (be(0) = '1' or be(1) = '1' or be(2) = '1' or be(3) = '1')};
-
-    --  psl rx_pointers_read_access_cov : cover {
-    --     cs = '1' and read = '1' and reg_sel(25) = '1' and 
-    --     (be(0) = '1' or be(1) = '1' or be(2) = '1' or be(3) = '1')};
-
-    --  psl rx_status_read_access_cov : cover {
-    --     cs = '1' and read = '1' and reg_sel(26) = '1' and 
-    --     (be(0) = '1' or be(1) = '1')};
-
-    --  psl rx_settings_write_access_cov : cover {
-    --     cs = '1' and write = '1' and reg_sel(26) = '1' and 
-    --     (be(2) = '1')};
-
-    --  psl rx_settings_read_access_cov : cover {
-    --     cs = '1' and read = '1' and reg_sel(26) = '1' and 
-    --     (be(2) = '1')};
-
-    --  psl rx_data_read_access_cov : cover {
-    --     cs = '1' and read = '1' and reg_sel(27) = '1' and 
-    --     (be(0) = '1' or be(1) = '1' or be(2) = '1' or be(3) = '1')};
-
-    --  psl tx_status_read_access_cov : cover {
-    --     cs = '1' and read = '1' and reg_sel(28) = '1' and 
-    --     (be(0) = '1' or be(1) = '1')};
-
-    --  psl tx_command_write_access_cov : cover {
-    --     cs = '1' and write = '1' and reg_sel(29) = '1' and 
-    --     (be(0) = '1' or be(1) = '1')};
-
-    --  psl tx_priority_write_access_cov : cover {
-    --     cs = '1' and write = '1' and reg_sel(30) = '1' and 
-    --     (be(0) = '1' or be(1) = '1')};
-
-    --  psl tx_priority_read_access_cov : cover {
-    --     cs = '1' and read = '1' and reg_sel(30) = '1' and 
-    --     (be(0) = '1' or be(1) = '1')};
-
-    --  psl err_capt_read_access_cov : cover {
-    --     cs = '1' and read = '1' and reg_sel(31) = '1' and 
-    --     (be(0) = '1')};
-
-    --  psl alc_read_access_cov : cover {
-    --     cs = '1' and read = '1' and reg_sel(31) = '1' and 
-    --     (be(2) = '1')};
-
-    --  psl trv_delay_read_access_cov : cover {
-    --     cs = '1' and read = '1' and reg_sel(32) = '1' and 
-    --     (be(0) = '1' or be(1) = '1')};
-
-    --  psl ssp_cfg_write_access_cov : cover {
-    --     cs = '1' and write = '1' and reg_sel(32) = '1' and 
-    --     (be(2) = '1' or be(3) = '1')};
-
-    --  psl ssp_cfg_read_access_cov : cover {
-    --     cs = '1' and read = '1' and reg_sel(32) = '1' and 
-    --     (be(2) = '1' or be(3) = '1')};
-
-    --  psl rx_fr_ctr_read_access_cov : cover {
-    --     cs = '1' and read = '1' and reg_sel(33) = '1' and 
-    --     (be(0) = '1' or be(1) = '1' or be(2) = '1' or be(3) = '1')};
-
-    --  psl tx_fr_ctr_read_access_cov : cover {
-    --     cs = '1' and read = '1' and reg_sel(34) = '1' and 
-    --     (be(0) = '1' or be(1) = '1' or be(2) = '1' or be(3) = '1')};
-
-    --  psl debug_register_read_access_cov : cover {
-    --     cs = '1' and read = '1' and reg_sel(35) = '1' and 
-    --     (be(0) = '1' or be(1) = '1' or be(2) = '1' or be(3) = '1')};
-
-    --  psl yolo_reg_read_access_cov : cover {
-    --     cs = '1' and read = '1' and reg_sel(36) = '1' and 
-    --     (be(0) = '1' or be(1) = '1' or be(2) = '1' or be(3) = '1')};
-
-    --  psl timestamp_low_read_access_cov : cover {
-    --     cs = '1' and read = '1' and reg_sel(37) = '1' and 
-    --     (be(0) = '1' or be(1) = '1' or be(2) = '1' or be(3) = '1')};
-
-    --  psl timestamp_high_read_access_cov : cover {
-    --     cs = '1' and read = '1' and reg_sel(38) = '1' and 
-    --     (be(0) = '1' or be(1) = '1' or be(2) = '1' or be(3) = '1')};
+    -- psl device_id_read_access_cov : cover
+    -- {((cs='1') and (read='1') and (reg_sel(0)='1') and ((be(0)='1') or (be(1)='1')))};
+
+    -- psl version_read_access_cov : cover
+    -- {((cs='1') and (read='1') and (reg_sel(0)='1') and ((be(2)='1') or (be(3)='1')))};
+
+    -- psl mode_write_access_cov : cover
+    -- {((cs='1') and (write='1') and (reg_sel(1)='1') and ((be(0)='1') or (be(1)='1')))};
+
+    -- psl mode_read_access_cov : cover
+    -- {((cs='1') and (read='1') and (reg_sel(1)='1') and ((be(0)='1') or (be(1)='1')))};
+
+    -- psl settings_write_access_cov : cover
+    -- {((cs='1') and (write='1') and (reg_sel(1)='1') and ((be(2)='1') or (be(3)='1')))};
+
+    -- psl settings_read_access_cov : cover
+    -- {((cs='1') and (read='1') and (reg_sel(1)='1') and ((be(2)='1') or (be(3)='1')))};
+
+    -- psl status_read_access_cov : cover
+    -- {((cs='1') and (read='1') and (reg_sel(2)='1') and ((be(0)='1') or (be(1)='1') or (be(2)='1') or (be(3)='1')))};
+
+    -- psl command_write_access_cov : cover
+    -- {((cs='1') and (write='1') and (reg_sel(3)='1') and ((be(0)='1') or (be(1)='1') or (be(2)='1') or (be(3)='1')))};
+
+    -- psl int_stat_write_access_cov : cover
+    -- {((cs='1') and (write='1') and (reg_sel(4)='1') and ((be(0)='1') or (be(1)='1')))};
+
+    -- psl int_stat_read_access_cov : cover
+    -- {((cs='1') and (read='1') and (reg_sel(4)='1') and ((be(0)='1') or (be(1)='1')))};
+
+    -- psl int_ena_set_write_access_cov : cover
+    -- {((cs='1') and (write='1') and (reg_sel(5)='1') and ((be(0)='1') or (be(1)='1')))};
+
+    -- psl int_ena_set_read_access_cov : cover
+    -- {((cs='1') and (read='1') and (reg_sel(5)='1') and ((be(0)='1') or (be(1)='1')))};
+
+    -- psl int_ena_clr_write_access_cov : cover
+    -- {((cs='1') and (write='1') and (reg_sel(6)='1') and ((be(0)='1') or (be(1)='1')))};
+
+    -- psl int_mask_set_write_access_cov : cover
+    -- {((cs='1') and (write='1') and (reg_sel(7)='1') and ((be(0)='1') or (be(1)='1')))};
+
+    -- psl int_mask_set_read_access_cov : cover
+    -- {((cs='1') and (read='1') and (reg_sel(7)='1') and ((be(0)='1') or (be(1)='1')))};
+
+    -- psl int_mask_clr_write_access_cov : cover
+    -- {((cs='1') and (write='1') and (reg_sel(8)='1') and ((be(0)='1') or (be(1)='1')))};
+
+    -- psl btr_write_access_cov : cover
+    -- {((cs='1') and (write='1') and (reg_sel(9)='1') and ((be(0)='1') or (be(1)='1') or (be(2)='1') or (be(3)='1')))};
+
+    -- psl btr_read_access_cov : cover
+    -- {((cs='1') and (read='1') and (reg_sel(9)='1') and ((be(0)='1') or (be(1)='1') or (be(2)='1') or (be(3)='1')))};
+
+    -- psl btr_fd_write_access_cov : cover
+    -- {((cs='1') and (write='1') and (reg_sel(10)='1') and ((be(0)='1') or (be(1)='1') or (be(2)='1') or (be(3)='1')))};
+
+    -- psl btr_fd_read_access_cov : cover
+    -- {((cs='1') and (read='1') and (reg_sel(10)='1') and ((be(0)='1') or (be(1)='1') or (be(2)='1') or (be(3)='1')))};
+
+    -- psl ewl_write_access_cov : cover
+    -- {((cs='1') and (write='1') and (reg_sel(11)='1') and ((be(0)='1')))};
+
+    -- psl ewl_read_access_cov : cover
+    -- {((cs='1') and (read='1') and (reg_sel(11)='1') and ((be(0)='1')))};
+
+    -- psl erp_write_access_cov : cover
+    -- {((cs='1') and (write='1') and (reg_sel(11)='1') and ((be(1)='1')))};
+
+    -- psl erp_read_access_cov : cover
+    -- {((cs='1') and (read='1') and (reg_sel(11)='1') and ((be(1)='1')))};
+
+    -- psl fault_state_read_access_cov : cover
+    -- {((cs='1') and (read='1') and (reg_sel(11)='1') and ((be(2)='1') or (be(3)='1')))};
+
+    -- psl rec_read_access_cov : cover
+    -- {((cs='1') and (read='1') and (reg_sel(12)='1') and ((be(0)='1') or (be(1)='1')))};
+
+    -- psl tec_read_access_cov : cover
+    -- {((cs='1') and (read='1') and (reg_sel(12)='1') and ((be(2)='1') or (be(3)='1')))};
+
+    -- psl err_norm_read_access_cov : cover
+    -- {((cs='1') and (read='1') and (reg_sel(13)='1') and ((be(0)='1') or (be(1)='1')))};
+
+    -- psl err_fd_read_access_cov : cover
+    -- {((cs='1') and (read='1') and (reg_sel(13)='1') and ((be(2)='1') or (be(3)='1')))};
+
+    -- psl ctr_pres_write_access_cov : cover
+    -- {((cs='1') and (write='1') and (reg_sel(14)='1') and ((be(0)='1') or (be(1)='1') or (be(2)='1') or (be(3)='1')))};
+
+    -- psl filter_a_mask_write_access_cov : cover
+    -- {((cs='1') and (write='1') and (reg_sel(15)='1') and ((be(0)='1') or (be(1)='1') or (be(2)='1') or (be(3)='1')))};
+
+    -- psl filter_a_mask_read_access_cov : cover
+    -- {((cs='1') and (read='1') and (reg_sel(15)='1') and ((be(0)='1') or (be(1)='1') or (be(2)='1') or (be(3)='1')))};
+
+    -- psl filter_a_val_write_access_cov : cover
+    -- {((cs='1') and (write='1') and (reg_sel(16)='1') and ((be(0)='1') or (be(1)='1') or (be(2)='1') or (be(3)='1')))};
+
+    -- psl filter_a_val_read_access_cov : cover
+    -- {((cs='1') and (read='1') and (reg_sel(16)='1') and ((be(0)='1') or (be(1)='1') or (be(2)='1') or (be(3)='1')))};
+
+    -- psl filter_b_mask_write_access_cov : cover
+    -- {((cs='1') and (write='1') and (reg_sel(17)='1') and ((be(0)='1') or (be(1)='1') or (be(2)='1') or (be(3)='1')))};
+
+    -- psl filter_b_mask_read_access_cov : cover
+    -- {((cs='1') and (read='1') and (reg_sel(17)='1') and ((be(0)='1') or (be(1)='1') or (be(2)='1') or (be(3)='1')))};
+
+    -- psl filter_b_val_write_access_cov : cover
+    -- {((cs='1') and (write='1') and (reg_sel(18)='1') and ((be(0)='1') or (be(1)='1') or (be(2)='1') or (be(3)='1')))};
+
+    -- psl filter_b_val_read_access_cov : cover
+    -- {((cs='1') and (read='1') and (reg_sel(18)='1') and ((be(0)='1') or (be(1)='1') or (be(2)='1') or (be(3)='1')))};
+
+    -- psl filter_c_mask_write_access_cov : cover
+    -- {((cs='1') and (write='1') and (reg_sel(19)='1') and ((be(0)='1') or (be(1)='1') or (be(2)='1') or (be(3)='1')))};
+
+    -- psl filter_c_mask_read_access_cov : cover
+    -- {((cs='1') and (read='1') and (reg_sel(19)='1') and ((be(0)='1') or (be(1)='1') or (be(2)='1') or (be(3)='1')))};
+
+    -- psl filter_c_val_write_access_cov : cover
+    -- {((cs='1') and (write='1') and (reg_sel(20)='1') and ((be(0)='1') or (be(1)='1') or (be(2)='1') or (be(3)='1')))};
+
+    -- psl filter_c_val_read_access_cov : cover
+    -- {((cs='1') and (read='1') and (reg_sel(20)='1') and ((be(0)='1') or (be(1)='1') or (be(2)='1') or (be(3)='1')))};
+
+    -- psl filter_ran_low_write_access_cov : cover
+    -- {((cs='1') and (write='1') and (reg_sel(21)='1') and ((be(0)='1') or (be(1)='1') or (be(2)='1') or (be(3)='1')))};
+
+    -- psl filter_ran_low_read_access_cov : cover
+    -- {((cs='1') and (read='1') and (reg_sel(21)='1') and ((be(0)='1') or (be(1)='1') or (be(2)='1') or (be(3)='1')))};
+
+    -- psl filter_ran_high_write_access_cov : cover
+    -- {((cs='1') and (write='1') and (reg_sel(22)='1') and ((be(0)='1') or (be(1)='1') or (be(2)='1') or (be(3)='1')))};
+
+    -- psl filter_ran_high_read_access_cov : cover
+    -- {((cs='1') and (read='1') and (reg_sel(22)='1') and ((be(0)='1') or (be(1)='1') or (be(2)='1') or (be(3)='1')))};
+
+    -- psl filter_control_write_access_cov : cover
+    -- {((cs='1') and (write='1') and (reg_sel(23)='1') and ((be(0)='1') or (be(1)='1')))};
+
+    -- psl filter_control_read_access_cov : cover
+    -- {((cs='1') and (read='1') and (reg_sel(23)='1') and ((be(0)='1') or (be(1)='1')))};
+
+    -- psl filter_status_read_access_cov : cover
+    -- {((cs='1') and (read='1') and (reg_sel(23)='1') and ((be(2)='1') or (be(3)='1')))};
+
+    -- psl rx_mem_info_read_access_cov : cover
+    -- {((cs='1') and (read='1') and (reg_sel(24)='1') and ((be(0)='1') or (be(1)='1') or (be(2)='1') or (be(3)='1')))};
+
+    -- psl rx_pointers_read_access_cov : cover
+    -- {((cs='1') and (read='1') and (reg_sel(25)='1') and ((be(0)='1') or (be(1)='1') or (be(2)='1') or (be(3)='1')))};
+
+    -- psl rx_status_read_access_cov : cover
+    -- {((cs='1') and (read='1') and (reg_sel(26)='1') and ((be(0)='1') or (be(1)='1')))};
+
+    -- psl rx_settings_write_access_cov : cover
+    -- {((cs='1') and (write='1') and (reg_sel(26)='1') and ((be(2)='1')))};
+
+    -- psl rx_settings_read_access_cov : cover
+    -- {((cs='1') and (read='1') and (reg_sel(26)='1') and ((be(2)='1')))};
+
+    -- psl rx_data_read_access_cov : cover
+    -- {((cs='1') and (read='1') and (reg_sel(27)='1') and ((be(0)='1') or (be(1)='1') or (be(2)='1') or (be(3)='1')))};
+
+    -- psl tx_status_read_access_cov : cover
+    -- {((cs='1') and (read='1') and (reg_sel(28)='1') and ((be(0)='1') or (be(1)='1')))};
+
+    -- psl tx_command_write_access_cov : cover
+    -- {((cs='1') and (write='1') and (reg_sel(29)='1') and ((be(0)='1') or (be(1)='1')))};
+
+    -- psl tx_priority_write_access_cov : cover
+    -- {((cs='1') and (write='1') and (reg_sel(30)='1') and ((be(0)='1') or (be(1)='1')))};
+
+    -- psl tx_priority_read_access_cov : cover
+    -- {((cs='1') and (read='1') and (reg_sel(30)='1') and ((be(0)='1') or (be(1)='1')))};
+
+    -- psl err_capt_read_access_cov : cover
+    -- {((cs='1') and (read='1') and (reg_sel(31)='1') and ((be(0)='1')))};
+
+    -- psl alc_read_access_cov : cover
+    -- {((cs='1') and (read='1') and (reg_sel(31)='1') and ((be(2)='1')))};
+
+    -- psl trv_delay_read_access_cov : cover
+    -- {((cs='1') and (read='1') and (reg_sel(32)='1') and ((be(0)='1') or (be(1)='1')))};
+
+    -- psl ssp_cfg_write_access_cov : cover
+    -- {((cs='1') and (write='1') and (reg_sel(32)='1') and ((be(2)='1') or (be(3)='1')))};
+
+    -- psl ssp_cfg_read_access_cov : cover
+    -- {((cs='1') and (read='1') and (reg_sel(32)='1') and ((be(2)='1') or (be(3)='1')))};
+
+    -- psl rx_fr_ctr_read_access_cov : cover
+    -- {((cs='1') and (read='1') and (reg_sel(33)='1') and ((be(0)='1') or (be(1)='1') or (be(2)='1') or (be(3)='1')))};
+
+    -- psl tx_fr_ctr_read_access_cov : cover
+    -- {((cs='1') and (read='1') and (reg_sel(34)='1') and ((be(0)='1') or (be(1)='1') or (be(2)='1') or (be(3)='1')))};
+
+    -- psl debug_register_read_access_cov : cover
+    -- {((cs='1') and (read='1') and (reg_sel(35)='1') and ((be(0)='1') or (be(1)='1') or (be(2)='1') or (be(3)='1')))};
+
+    -- psl yolo_reg_read_access_cov : cover
+    -- {((cs='1') and (read='1') and (reg_sel(36)='1') and ((be(0)='1') or (be(1)='1') or (be(2)='1') or (be(3)='1')))};
+
+    -- psl timestamp_low_read_access_cov : cover
+    -- {((cs='1') and (read='1') and (reg_sel(37)='1') and ((be(0)='1') or (be(1)='1') or (be(2)='1') or (be(3)='1')))};
+
+    -- psl timestamp_high_read_access_cov : cover
+    -- {((cs='1') and (read='1') and (reg_sel(38)='1') and ((be(0)='1') or (be(1)='1') or (be(2)='1') or (be(3)='1')))};
 
     -- <RELEASE_ON>
 
