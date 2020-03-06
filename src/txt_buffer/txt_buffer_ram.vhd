@@ -126,7 +126,6 @@ begin
         G_DEPTH                => 20,
         G_ADDRESS_WIDTH        => port_a_address'length,
         G_RESET_POLARITY       => G_RESET_POLARITY,
-        G_SIMULATION_RESET     => false,
         G_SYNC_READ            => true
     )
     port map(

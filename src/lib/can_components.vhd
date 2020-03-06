@@ -4354,9 +4354,6 @@ package can_components is
         -- Address width (in bits)
         G_ADDRESS_WIDTH        :     natural := 8;
 
-        -- RAM content reset upon reset
-        G_SIMULATION_RESET     :     boolean := true;
-
         -- Synchronous read
         G_SYNC_READ            :     boolean := true
     );

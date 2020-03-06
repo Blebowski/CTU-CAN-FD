@@ -69,9 +69,6 @@ entity inf_ram_wrapper is
         -- Address width (in bits)
         G_ADDRESS_WIDTH        :     natural := 8;
 
-        -- RAM content reset upon reset
-        G_SIMULATION_RESET     :     boolean := true;
-
         -- Synchronous read
         G_SYNC_READ            :     boolean := true
     );
@@ -123,21 +120,10 @@ begin
     ----------------------------------------------------------------------------
     ram_write_process : process(res_n, clk_sys)
     begin
-        if (res_n = G_RESET_POLARITY) then
-
-            -- pragma translate_off
-            if (G_SIMULATION_RESET) then
-                ram_memory <= (OTHERS => (OTHERS => '0'));
-            end if;            
-            -- pragma translate_on
-           
-        elsif (rising_edge(clk_sys)) then
-
-            -- Store the data into the RAM memory
+        if (rising_edge(clk_sys)) then
             if (write = '1') then
                 ram_memory(to_integer(unsigned(addr_A))) <= data_in;
             end if;
-
         end if;
     end process;
 
@@ -151,17 +137,10 @@ begin
     sync_read_gen : if (G_SYNC_READ) generate
         ram_read_process : process(res_n, clk_sys)
         begin
-            if (res_n = G_RESET_POLARITY) then
-
-                -- pragma translate_off
-                if (G_SIMULATION_RESET) then                            
-                    data_out <= (OTHERS => '0');
-                end if;
-                -- pragma translate_on
-
+            if (res_n = G_RESET_POLARITY) then                        
+                data_out <= (OTHERS => '0');
             elsif (rising_edge(clk_sys)) then
                 data_out <= int_read_data;
-                
             end if;
         end process;
     end generate;
