@@ -436,7 +436,6 @@ begin
         store_data_f        => store_data_f,        -- IN
         rec_valid_f         => rec_valid_f,         -- IN
         rec_abort_f         => rec_abort_f,         -- IN
-        sof_pulse           => sof_pulse,           -- IN
         
         write_raw_intent    => write_raw_intent,    -- OUT
         write_ts            => write_ts,            -- OUT
@@ -987,6 +986,16 @@ begin
     --
     -- psl rx_buf_store_64_byte_frame_cov :
     --      cover {rec_dlc = "1111" and rec_is_rtr = '0' and commit_rx_frame = '1'};
+
+    ---------------------------------------------------------------------------
+    -- "reset_overrun_flag = '1'" only in "s_rxb_idle" state. Therefore we can
+    -- use this signal to check that FSM is in s_rxb_idle state!
+    ---------------------------------------------------------------------------
+    
+    -- psl sof_pulse_asrt_asrt : assert never
+    --   (sof_pulse = '1' and reset_overrun_flag = '0')
+    -- report "RX Buffer: SOF pulse should come when RX Buffer is idle!"
+    -- severity error;
 
     -- <RELEASE_ON>
 

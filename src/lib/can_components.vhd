@@ -3716,9 +3716,6 @@ package can_components is
         -- Abort storing of RX Frame to RX Buffer.
         rec_abort_f          :in     std_logic;
 
-        -- Start of Frame pulse
-        sof_pulse            :in     std_logic;
-
         -----------------------------------------------------------------------
         -- FSM outputs
         -----------------------------------------------------------------------
