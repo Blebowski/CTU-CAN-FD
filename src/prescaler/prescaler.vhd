@@ -444,7 +444,6 @@ begin
         clk_sys          => clk_sys,            -- IN
         res_n            => res_n,              -- IN
         segm_end         => segment_end,        -- IN
-        h_sync_valid     => h_sync_valid,       -- IN
         drv_ena          => drv_ena,            -- IN
         is_tseg1         => is_tseg1,           -- OUT
         is_tseg2         => is_tseg2,           -- OUT

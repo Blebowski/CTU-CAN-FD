@@ -86,9 +86,6 @@ entity bit_time_fsm is
         -----------------------------------------------------------------------
         -- Segment end (either due to re-sync, or reaching expected length)
         segm_end            : in    std_logic;
-        
-        -- Hard synchronisation is valid
-        h_sync_valid        : in    std_logic;
 
         -- CTU CAN FD is enabled
         drv_ena             : in    std_logic;
@@ -127,7 +124,7 @@ begin
     ----------------------------------------------------------------------------
     -- Next state process (combinational)
     ----------------------------------------------------------------------------
-    next_state_proc : process(current_state, h_sync_valid, segm_end, drv_ena)
+    next_state_proc : process(current_state, segm_end, drv_ena)
     begin
         next_state <= current_state;
     

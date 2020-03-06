@@ -792,9 +792,6 @@ package can_components is
 
         -- Use RX Data for CRC calculation
         crc_calc_from_rx :in   std_logic;
-
-        -- Unit is receiver of a frame
-        is_receiver      :in   std_logic;
         
         -- Load CRC Initialization vector
         load_init_vect   :in  std_logic;
@@ -1809,9 +1806,6 @@ package can_components is
         -- Unit is receiver
         is_receiver             :in   std_logic;
 
-        -- Unit is idle
-        is_idle                 :in   std_logic;
-
         -- Loss of arbitration -> Turn receiver!
         arbitration_lost        :out  std_logic;
 
@@ -2075,9 +2069,6 @@ package can_components is
         
         -- Unit is receiver
         is_receiver             :in   std_logic;
-        
-        -- Unit is idle
-        is_idle                 :in  std_logic;
         
         -- Loss of arbitration -> Turn receiver!
         arbitration_lost        :out  std_logic;
@@ -3351,9 +3342,6 @@ package can_components is
         -----------------------------------------------------------------------
         -- Segment end (either due to re-sync, or reaching expected length)
         segm_end            : in    std_logic;
-        
-        -- Hard synchronisation is valid
-        h_sync_valid        : in    std_logic;
 
         -- CTU CAN FD is enabled
         drv_ena             : in    std_logic;

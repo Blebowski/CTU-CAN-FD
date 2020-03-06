@@ -231,9 +231,6 @@ entity protocol_control is
         -- Unit is receiver
         is_receiver             :in   std_logic;
         
-        -- Unit is idle
-        is_idle                 :in  std_logic;
-        
         -- Loss of arbitration -> Turn receiver!
         arbitration_lost        :out  std_logic;
         
@@ -635,15 +632,13 @@ begin
     ---------------------------------------------------------------------------
     endian_swapper_tx_inst : endian_swapper 
     generic map(
-        G_SWAP_BY_SIGNAL    => false,
         G_SWAP_GEN          => true,
         G_WORD_SIZE         => 4,   -- Number of Groups
         G_GROUP_SIZE        => 8    -- Group size (bits)
     )
     port map(
         input               => tran_word,           -- IN
-        output              => tran_word_swapped,   -- OUT
-        swap_in             => '0'                  -- IN
+        output              => tran_word_swapped    -- OUT
     );
 
     
@@ -780,7 +775,6 @@ begin
         -- Operation control interface
         is_transmitter          => is_transmitter,          -- IN
         is_receiver             => is_receiver,             -- IN
-        is_idle                 => is_idle,                 -- IN
         arbitration_lost        => arbitration_lost_i,      -- OUT
         set_transmitter         => set_transmitter,         -- OUT
         set_receiver            => set_receiver,            -- OUT

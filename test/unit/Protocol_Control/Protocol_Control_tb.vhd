@@ -206,7 +206,6 @@ architecture Protocol_Control_unit_test of CAN_test is
     -- Operation control FSM Interface
     signal is_transmitter_1          :  std_logic := '1';
     signal is_receiver_1             :  std_logic := '0';
-    signal is_idle_1                 :  std_logic := '0';
     signal arbitration_lost_1        :  std_logic;
     signal set_transmitter_1         :  std_logic;
     signal set_receiver_1            :  std_logic;
@@ -320,7 +319,6 @@ architecture Protocol_Control_unit_test of CAN_test is
     -- Operation control FSM Interface
     signal is_transmitter_2          :  std_logic := '0';
     signal is_receiver_2             :  std_logic := '1';
-    signal is_idle_2                 :  std_logic := '0';
     signal arbitration_lost_2        :  std_logic;
     signal set_transmitter_2         :  std_logic;
     signal set_receiver_2            :  std_logic;
@@ -717,7 +715,6 @@ begin
         -- Operation control FSM Interface
         is_transmitter          => is_transmitter_1,
         is_receiver             => is_receiver_1,
-        is_idle                 => is_idle_1,
         arbitration_lost        => arbitration_lost_1,
         set_transmitter         => set_transmitter_1,
         set_receiver            => set_receiver_1,
@@ -839,7 +836,6 @@ begin
         -- Operation control FSM Interface
         is_transmitter          => is_transmitter_2,
         is_receiver             => is_receiver_2,
-        is_idle                 => is_idle_2,
         arbitration_lost        => arbitration_lost_2,
         set_transmitter         => set_transmitter_2,
         set_receiver            => set_receiver_2,

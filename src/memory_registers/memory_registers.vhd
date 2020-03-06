@@ -280,6 +280,8 @@ architecture rtl of memory_registers is
 
     constant C_NOT_RESET_POLARITY :     std_logic := not G_RESET_POLARITY;
 
+    signal ewl_padded             :     std_logic_vector(8 downto 0);
+
     ---------------------------------------------------------------------------
     -- 
     ---------------------------------------------------------------------------
@@ -480,12 +482,14 @@ begin
                              '1' when (is_idle = '1') else
                              '0';
 
+    ewl_padded <= '0' & control_registers_out.ewl(7 downto 0);
+
     status_comb(EWL_IND) <=
-        '1' when to_integer(unsigned(control_registers_out.ewl)) <= 
-                 to_integer(unsigned(stat_bus(STAT_TX_COUNTER_HIGH downto STAT_TX_COUNTER_LOW)))
+        '1' when unsigned(ewl_padded) <= 
+                 unsigned(stat_bus(STAT_TX_COUNTER_HIGH downto STAT_TX_COUNTER_LOW))
             else
-        '1' when to_integer(unsigned(control_registers_out.ewl)) <= 
-                 to_integer(unsigned(stat_bus(STAT_RX_COUNTER_HIGH downto STAT_RX_COUNTER_LOW)))
+        '1' when unsigned(ewl_padded) <= 
+                 unsigned(stat_bus(STAT_RX_COUNTER_HIGH downto STAT_RX_COUNTER_LOW))
             else
         '0';
 

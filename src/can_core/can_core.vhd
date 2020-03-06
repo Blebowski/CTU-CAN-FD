@@ -519,7 +519,6 @@ begin
         -- Operation control FSM Interface
         is_transmitter          => is_transmitter,      -- IN
         is_receiver             => is_receiver,         -- IN
-        is_idle                 => is_idle,             -- IN
         arbitration_lost        => arbitration_lost_i,  -- OUT
         set_transmitter         => set_transmitter,     -- OUT
         set_receiver            => set_receiver,        -- OUT
@@ -702,7 +701,6 @@ begin
         crc_enable       => crc_enable,                 -- IN
         crc_spec_enable  => crc_spec_enable,            -- IN
         crc_calc_from_rx => crc_calc_from_rx,           -- IN
-        is_receiver      => is_receiver,                -- IN
         load_init_vect   => load_init_vect,             -- IN
 
         -- CRC Outputs

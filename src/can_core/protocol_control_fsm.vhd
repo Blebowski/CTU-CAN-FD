@@ -427,9 +427,6 @@ entity protocol_control_fsm is
         -- Unit is receiver
         is_receiver             :in   std_logic;
 
-        -- Unit is idle
-        is_idle                 :in   std_logic;
-
         -- Loss of arbitration -> Turn receiver!
         arbitration_lost        :out  std_logic;
 
