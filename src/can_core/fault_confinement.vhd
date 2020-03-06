@@ -173,7 +173,6 @@ architecture rtl of fault_confinement is
     signal drv_erp               :     std_logic_vector(8 downto 0);
     signal drv_ctr_val           :     std_logic_vector(8 downto 0);
     signal drv_ctr_sel           :     std_logic_vector(3 downto 0);
-    signal drv_clr_err_ctrs      :     std_logic;
     signal drv_ena               :     std_logic;
 
     -- Internal TX/RX Error counter values
@@ -196,7 +195,6 @@ begin
     drv_erp             <=  '0' & drv_bus(DRV_ERP_HIGH downto DRV_ERP_LOW);
     drv_ctr_val         <=  drv_bus(DRV_CTR_VAL_HIGH downto DRV_CTR_VAL_LOW);
     drv_ctr_sel         <=  drv_bus(DRV_CTR_SEL_HIGH downto DRV_CTR_SEL_LOW);
-    drv_clr_err_ctrs    <=  drv_bus(DRV_ERR_CTR_CLR);
     drv_ena             <=  drv_bus(DRV_ENA_INDEX);
 
     dff_arst_inst : dff_arst
