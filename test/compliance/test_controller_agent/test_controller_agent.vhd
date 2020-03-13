@@ -140,7 +140,7 @@ architecture tb of test_controller_agent is
         when VPI_CLK_AGNT_CMD_STOP =>
             clk_gen_agent_stop(net);
         when VPI_CLK_AGNT_CMD_PERIOD_SET =>
-            logic_vector_to_time(vpi_data_in, period);  
+            logic_vector_to_time(vpi_data_in, period);
             clk_agent_set_period(net, period);
         when VPI_CLK_AGNT_CMD_PERIOD_GET =>
             clk_agent_get_period(net, period);
@@ -202,7 +202,7 @@ architecture tb of test_controller_agent is
                 mem_bus_agent_write(net, address, data_8, blocking);
             elsif (vpi_data_in(49 downto 48) = "01") then
                 mem_bus_agent_write(net, address, data_16, blocking);
-            elsif (vpi_data_in(49 downto 48) = "10") then
+            elsif (vpi_data_in(49 downto 48) = "10") then                
                 mem_bus_agent_write(net, address, data_32, blocking);
             else
                 error("VPI: Invalid memory bus agent write access size: " &
