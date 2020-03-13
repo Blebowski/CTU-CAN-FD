@@ -135,6 +135,8 @@ architecture tb of mem_bus_agent is
 
     signal period               :   time := 10 ns;
 
+    signal read_data_i          :   std_logic_vector(31 downto 0);
+    
 begin
     
     --------------------------------------------------------------------------
@@ -174,9 +176,7 @@ begin
             transaction.write := true;
             transaction.address := pop(msg);
             transaction.byte_enable := pop(msg);
-            if (transaction.write) then
-                transaction.write_data := pop(msg);
-            end if;
+            transaction.write_data := pop(msg);
 
             mem_bus_access_fifo(fifo_wp) <= transaction;
             wait for 0 ns;
@@ -197,7 +197,8 @@ begin
             wait for 0 ns;
 
             wait until (fifo_wp = fifo_rp);
-            push(ack_msg, mem_bus_access_fifo(fifo_wp).read_data);
+            --info("Read data when pushing response: " & to_hstring(read_data_i));
+            push(ack_msg, read_data_i);
 
         when MEM_BUS_AGNT_CMD_X_MODE_START =>
             is_x_mode <= true;
@@ -235,10 +236,11 @@ begin
     -- Memory bus access process
     ---------------------------------------------------------------------------
     mem_bus_access_proc : process
-        variable curr_access : t_mem_bus_access_item;
-        
+        variable curr_access   : t_mem_bus_access_item;
+
         procedure drive_access(
-            variable mem_access    : inout t_mem_bus_access_item
+            variable mem_access    : inout t_mem_bus_access_item;
+            signal   read_data_i   : out   std_logic_vector(31 downto 0)
         ) is
             variable post_re_time, post_re_time_2   : time;
         begin
@@ -290,13 +292,14 @@ begin
                     sbe <= "XXXX";
                     address <= (OTHERS => 'X');
                 else
-                    mem_access.read_data := read_data;
+                    read_data_i <= read_data;
+                    wait for 0 ns;
                 end if;
                 
                 wait for post_re_time_2;
                 
                 if (post_re_time = x_mode_hold) then
-                    mem_access.read_data := read_data;
+                    read_data_i <= read_data;
                 else
                     scs <= '0';
                     swr <= 'X';
@@ -309,7 +312,7 @@ begin
             -- Sample data without waiting, it should be available immediately!
             else
                 wait for 1 ps; -- To avoid possible delta cycles
-                mem_access.read_data := read_data;
+                read_data_i <= read_data;
                 wait for (period / 2) - 2 ps; -- This will end up just before next falling edge!
                 swr <= '0';
                 srd <= '0';
@@ -330,7 +333,8 @@ begin
                 -- There is something in FIFO -> do memory access
                 if (fifo_rp /= fifo_wp) then
                     curr_access := mem_bus_access_fifo(fifo_rp);
-                    drive_access(curr_access);
+                    drive_access(curr_access, read_data_i);
+
                     fifo_rp <= (fifo_rp + 1) mod G_ACCESS_FIFO_DEPTH;
                     wait for 0 ns;
                 else
@@ -339,7 +343,7 @@ begin
             end loop;
         else
             wait until mem_bus_agent_ena;
-        end if;        
+        end if;
     end process;
     
 end architecture;

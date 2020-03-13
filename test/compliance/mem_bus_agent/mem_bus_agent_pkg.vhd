@@ -438,6 +438,7 @@ package body mem_bus_agent_pkg is
         req_msg := new_msg(msg_type => (p_code => MEM_BUS_AGNT_CMD_WRITE_BLOCKING));
         push(req_msg, address);
         push(req_msg, byte_enable);
+        push(req_msg, write_data);
         send(net         => net,
              receiver    => mem_bus_agnt_rec,
              msg         => req_msg);
@@ -612,17 +613,17 @@ package body mem_bus_agent_pkg is
         size        : in    natural
     ) return boolean is
     begin
-        if (size /= 8 and size /= 16 and (size mod 32 /= 0)) then
+        if ((size /= 8) and (size /= 16) and ((size mod 32) /= 0)) then
             return false;
         end if;
 
         -- Half-word unaligned access
-        if (size = 16 and (address mod 2) /= 0) then
+        if ((size = 16) and ((address mod 2) /= 0)) then
             return false;
         end if;
 
         -- Word unaligned access
-        if (size mod 32 = 0) and (address mod 32 /= 0) then
+        if ((size mod 32) = 0) and ((address mod 4) /= 0) then
             return false;
         end if;
 
@@ -670,48 +671,73 @@ package body mem_bus_agent_pkg is
     end procedure;
 
 
-    procedure convert_be_and_read_data(
+    procedure convert_be(
                  address     : in    natural;
                  data_in     : in    std_logic_vector(31 downto 0);
-        variable be          : out   std_logic_vector(3 downto 0);
-        variable read_data   : out   std_logic_vector
+        variable be          : out   std_logic_vector(3 downto 0)
     )is
     begin
-        for i in 0 to read_data'length - 1 loop
-            read_data(i) := '0';
-        end loop;
 
         case data_in'length is
         when 8 =>
             case (address mod 4) is
             when 0 =>
                 be := "0001";
-                read_data := data_in(7 downto 0);
             when 1 =>
                 be := "0010";
-                read_data := data_in(15 downto 8);
             when 2 =>
                 be := "0100";
-                read_data := data_in(23 downto 16);
             when 3 =>
                 be := "1000";
-                read_data := data_in(31 downto 24);
             end case;
         when 16 =>
             case (address mod 2) is
             when 0 =>
                 be := "0011";
-                read_data := data_in(15 downto 0);
             when 1 =>
                 be := "1100";
-               read_data := data_in(31 downto 16);
             end case;
         when others =>
             be := "1111";
-            read_data := data_in(31 downto 0);
         end case;
     end procedure;
 
+    procedure convert_read_data(
+                 address             : in    natural;
+                 size                : in    natural;
+                 data_in             : in    std_logic_vector(31 downto 0);
+        variable data_out            : out   std_logic_vector
+    )is
+    begin
+        case size is
+        when 8 =>
+            case (address mod 4) is
+            when 0 =>
+                data_out(7 downto 0) := data_in(7 downto 0);
+            when 1 =>
+                data_out(7 downto 0) := data_in(15 downto 8);
+            when 2 =>
+                data_out(7 downto 0) := data_in(23 downto 16);
+            when 3 =>
+                data_out(7 downto 0) := data_in(31 downto 24);
+            when others =>
+                error("Invalid 32 bit access!");
+            end case;
+        when 16 =>
+            case (address mod 4) is
+            when 0 =>
+                data_out(15 downto 0) := data_in(15 downto 0);
+            when 2 =>
+                data_out(15 downto 0) := data_in(31 downto 16);
+            when others =>
+                error("Invalid address for 16 bit access!");
+            end case;
+        when 32 =>
+            data_out := data_in;
+        when others =>
+            error("Unknown access size: " & integer'image(size));
+        end case;
+    end;
 
     procedure mem_bus_agent_write(
         signal      net         : inout network_t;
@@ -771,8 +797,9 @@ package body mem_bus_agent_pkg is
 
         if (read_data'length = 8 or read_data'length = 16 or read_data'length = 32) then
             addr_aligned := address - (address mod 4);
+            convert_be(address, data_32, be);
             mem_bus_agent_read(net, addr_aligned, data_32, be);
-            convert_be_and_read_data(address, data_32, be, read_data);
+            convert_read_data(address, read_data'length, data_32, read_data);
         else
             loop_count := read_data'length / 32;
             addr_loop := address;
