@@ -239,7 +239,7 @@ architecture tb of test_controller_agent is
 
         when VPI_MEM_BUS_AGNT_SET_X_MODE_HOLD =>
             logic_vector_to_time(vpi_data_in, hold);
-            mem_bus_agent_set_x_mode_setup(net, hold);
+            mem_bus_agent_set_x_mode_hold(net, hold);
 
         when VPI_MEM_BUS_AGNT_SET_PERIOD =>
             logic_vector_to_time(vpi_data_in, period);
