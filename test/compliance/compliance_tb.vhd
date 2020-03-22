@@ -105,6 +105,7 @@ architecture tb of can_compliance_tb is
         := (OTHERS => '0');
 
     -- Top level VPI for communication with SW part of TB
+    signal vpi_clk          : std_logic := '0';
     signal vpi_req          : std_logic := '0';
     signal vpi_ack          : std_logic := '0';
     signal vpi_cmd          : std_logic_vector(7 downto 0) := (OTHERS => '0');
@@ -112,16 +113,10 @@ architecture tb of can_compliance_tb is
     signal vpi_data_in      : std_logic_vector(63 downto 0) := (OTHERS => '0');
     signal vpi_str_buf_in   : std_logic_vector(511 downto 0) := (OTHERS => '0');
     signal vpi_data_out     : std_logic_vector(63 downto 0) := (OTHERS => '0');
-    
-    -- VPI lock mutex
-    signal vpi_mutex_lock   : std_logic := '0';
-    signal vpi_mutex_unlock : std_logic := '0';
 
     -- VPI test control interface
     signal vpi_control_req      : std_logic := '0';
     signal vpi_control_gnt      : std_logic := '0';
-    signal vpi_test_end         : std_logic := '0';
-    signal vpi_test_result      : boolean   := false;
 
 begin
 
@@ -224,6 +219,7 @@ begin
     )
     port map(
         -- VPI communication interface
+        vpi_clk         => vpi_clk,
         vpi_req         => vpi_req,
         vpi_ack         => vpi_ack,
         vpi_cmd         => vpi_cmd,
@@ -231,16 +227,10 @@ begin
         vpi_data_in     => vpi_data_in,
         vpi_str_buf_in  => vpi_str_buf_in,
         vpi_data_out    => vpi_data_out,
-    
-        -- VPI Mutext lock/unlock interface
-        vpi_mutex_lock      => vpi_mutex_lock,
-        vpi_mutex_unlock    => vpi_mutex_unlock,
-    
+
         -- VPI test control interface
         vpi_control_req     => vpi_control_req,
-        vpi_control_gnt     => vpi_control_gnt,
-        vpi_test_end        => vpi_test_end,
-        vpi_test_result     => vpi_test_result
+        vpi_control_gnt     => vpi_control_gnt
     );
 
     ---------------------------------------------------------------------------
