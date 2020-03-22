@@ -79,6 +79,7 @@ entity test_controller_agent is
     );
     port(
         -- VPI communication interface
+        vpi_clk         : out   std_logic;
         vpi_req         : in    std_logic;
         vpi_ack         : out   std_logic := '0';
         vpi_cmd         : in    std_logic_vector(7 downto 0);
@@ -87,21 +88,23 @@ entity test_controller_agent is
         vpi_str_buf_in  : in    std_logic_vector(511 downto 0);
         vpi_data_out    : out   std_logic_vector(63 downto 0);
     
-        -- VPI Mutext lock/unlock interface
-        vpi_mutex_lock      : out   std_logic;
-        vpi_mutex_unlock    : out   std_logic;
-        
         -- VPI test control interface
         vpi_control_req     : out   std_logic := '0';
-        vpi_control_gnt     : in    std_logic;
-        vpi_test_end        : in    std_logic;
-        vpi_test_result     : in    boolean
+        vpi_control_gnt     : in    std_logic
     );
 end entity;
 
 architecture tb of test_controller_agent is
 
+    signal test_end     : std_logic := '0';
+    signal test_result  : std_logic := '0';
 
+    ---------------------------------------------------------------------------
+    -- 
+    --
+    -- @param net Network on which Reset agent listens (use "net").
+    -- @param vpi_data_out VPI data output in testbench top.    
+    ---------------------------------------------------------------------------
     procedure vpi_process_rst_agnt(
         signal      net             : inout network_t;
         signal      vpi_data_out    : out   std_logic_vector
@@ -125,6 +128,12 @@ architecture tb of test_controller_agent is
     end procedure;
 
 
+    ---------------------------------------------------------------------------
+    -- 
+    --
+    -- @param net Network on which Reset agent listens (use "net").
+    -- @param vpi_data_out VPI data output in testbench top.    
+    ---------------------------------------------------------------------------
     procedure vpi_process_clk_agent(
         signal net                  : inout network_t;
         signal vpi_data_out         : out   std_logic_vector
@@ -165,6 +174,12 @@ architecture tb of test_controller_agent is
     end procedure;
 
 
+    ---------------------------------------------------------------------------
+    -- 
+    --
+    -- @param net Network on which Reset agent listens (use "net").
+    -- @param vpi_data_out VPI data output in testbench top.    
+    ---------------------------------------------------------------------------
     procedure vpi_process_mem_bus_agent(
         signal net                  : inout network_t;
         signal vpi_data_out         : out   std_logic_vector
@@ -258,6 +273,12 @@ architecture tb of test_controller_agent is
     end procedure;
 
 
+    ---------------------------------------------------------------------------
+    -- 
+    --
+    -- @param net Network on which Reset agent listens (use "net").
+    -- @param vpi_data_out VPI data output in testbench top.    
+    ---------------------------------------------------------------------------
     procedure vpi_process_can_agent(
         signal net                  : inout network_t;
         signal vpi_data_out         : out   std_logic_vector
@@ -305,11 +326,12 @@ architecture tb of test_controller_agent is
             driver_item.value := vpi_data_in(63);
             if (vpi_data_in(62) = '1') then
                 driver_item.print_msg := true;
+                logic_vector_to_str(vpi_str_buf_in, driver_item.msg);
             else
                 driver_item.print_msg := false;
             end if;
             logic_vector_to_time(vpi_data_in, driver_item.drive_time);
-            logic_vector_to_str(vpi_str_buf_in, driver_item.msg);
+            
             can_agent_driver_push_item(net, driver_item);
 
         when VPI_CAN_AGNT_DRIVER_SET_WAIT_TIMEOUT =>
@@ -327,11 +349,11 @@ architecture tb of test_controller_agent is
             driver_item.value := vpi_data_in(63);
             if (vpi_data_in(62) = '1') then
                 driver_item.print_msg := true;
+                logic_vector_to_str(vpi_str_buf_in, driver_item.msg);
             else
                 driver_item.print_msg := false;
             end if;
             logic_vector_to_time(vpi_data_in, driver_item.drive_time);
-            logic_vector_to_str(vpi_str_buf_in, driver_item.msg);
             can_agent_driver_drive_single_item(net, driver_item);
 
         when VPI_CAN_AGNT_DRIVER_DRIVE_ALL_ITEM =>
@@ -369,6 +391,7 @@ architecture tb of test_controller_agent is
             monitor_item.value := vpi_data_in(63);
             if (vpi_data_in(62) = '1') then
                 monitor_item.print_msg := true;
+                logic_vector_to_str(vpi_str_buf_in, monitor_item.msg);
             else
                 monitor_item.print_msg := false;
             end if;
@@ -377,7 +400,6 @@ architecture tb of test_controller_agent is
             -- remaining information for driven item into remaining two
             -- bits so that we don't need to declare next signal via VPI.
             logic_vector_to_time(vpi_data_in, monitor_item.monitor_time);
-            logic_vector_to_str(vpi_str_buf_in, monitor_item.msg);
             
             can_agent_monitor_push_item(net, monitor_item);
 
@@ -392,6 +414,7 @@ architecture tb of test_controller_agent is
             monitor_item.value := vpi_data_in(63);
             if (vpi_data_in(62) = '1') then
                 monitor_item.print_msg := true;
+                logic_vector_to_str(vpi_str_buf_in, monitor_item.msg);
             else
                 monitor_item.print_msg := false;
             end if;
@@ -400,7 +423,6 @@ architecture tb of test_controller_agent is
             -- remaining information for driven item into remaining two
             -- bits so that we don't need to declare next signal via VPI.
             logic_vector_to_time(vpi_data_in, monitor_item.monitor_time);
-            logic_vector_to_str(vpi_str_buf_in, monitor_item.msg);
             
             can_agent_monitor_single_item(net, monitor_item);
 
@@ -470,6 +492,30 @@ architecture tb of test_controller_agent is
     end procedure;
 
 
+    ---------------------------------------------------------------------------
+    -- 
+    --
+    -- @param net Network on which Reset agent listens (use "net").
+    -- @param vpi_data_out VPI data output in testbench top.
+    -- @param test_end Signal to signalize that test has ended.
+    -- @param test_result Signal to signalize test result (1-passed, 0-failed).
+    ---------------------------------------------------------------------------
+    procedure vpi_process_test_agent(
+        signal net                  : inout network_t;
+        signal vpi_data_out         : out   std_logic_vector;
+        signal test_end             : out   std_logic;
+        signal test_result          : out   std_logic
+    ) is
+    begin
+        case vpi_cmd is
+        when VPI_TEST_AGNT_TEST_END =>
+            test_end <= '1';
+            test_result <= vpi_data_in(0);
+        when others =>
+            error("VPI: Unknown test agent command with code: 0x" & to_hstring(vpi_cmd));
+        end case;
+    end procedure;
+
 begin
     
     ---------------------------------------------------------------------------
@@ -498,102 +544,40 @@ begin
         wait for 0 ns;
 
         info("Waiting till SW part of test ends!");
-
-        wait for 5000 ns;
-
+        wait until (test_end = '1');
         info("SW part of TB signals test has ended");
-        test_runner_cleanup(runner, true);
-        
-        --wait until vpi_test_end = '1';
-        
+
+        wait for 100 ns;
+        if (test_result = '1') then
+            test_runner_cleanup(runner, false);
+        else
+            test_runner_cleanup(runner, true);
+        end if;
     end process;
 
+    ---------------------------------------------------------------------------
+    -- Generate VPI clock.
+    -- Callbacks are executed on this clock and requests from SW are colllected
+    -- by these callbacks!
+    ---------------------------------------------------------------------------
+    vpi_clk_gen_proc : process
+    begin
+        vpi_clk <= '1';
+        wait for 1 ns;
+        vpi_clk <= '0';
+        wait for 1 ns;
+    end process;
 
     ---------------------------------------------------------------------------
     -- Listen on VPI commands and send them to individual agents!
     ---------------------------------------------------------------------------
     vpi_listener_process : process
-        
-        -----------------------------------------------------------------------
-        -- Lock / Unlock of mutex in VPI .so library via interface with
-        -- callback.
-        -- Due to non-zero wait after assigning lock/unlock, this process
-        -- should schedule away in simulator till next simulation time 1 ps
-        -- larger. At that point simulator should treat it as another non-delta
-        -- cycle and should execute VPI callback which will lock the mutex and
-        -- return only after it is locked. So when any of these two functions
-        -- exits it should hold the mutex for VPI handshake interface and
-        -- running C++ test thread should not mess with values on vpi_*
-        -- signals!
-        --
-        -- Further-more memory barriers should not be needed since mutex is
-        -- used.
-        --
-        -- Note that whole handshake interface will have lot of overhead because
-        -- following sequence must be executed to send just single transaction
-        -- from C++ thread to simulation:
-        --  1. CPP  : Set data, destination to be sent
-        --  2. CPP  : Lock mutex
-        --  3. CPP  : Set vpi_req = '1'
-        --  4. CPP  : Unlock mutex
-        --  5. GHDL : Lock mutex
-        --  6. GHDL : Read vpi_req = '1'
-        --  7. GHDL : Process the transaction, issue vpi_ack = '1'
-        --  8. GHDL : Unlock mutex
-        --  9. CPP  : Lock mutex
-        -- 10. CPP  : Read vpi_ack = '1'
-        -- 11. CPP  : Issue vpi_ack = '0'
-        -- 12. CPP  : Unlock mutex
-        -- 13. GHDL : Lock mutes
-        -- 14. GHDL : Read vpi_req = '0'
-        -- 15. GHDL : Issue vpi_ack = '0'
-        -- 16. GHDL : Unlock mutex
-        -- 17. CPP  : Lock mutex
-        -- 18. CPP  : Read vpi_ack ='0'
-        -- 19. CPP  : Unlock mutex
-        --
-        -- It is assumed that this form of communication will be e.g. one time
-        -- setup, sending data to monitor/driver, or sending memory transaction
-        -- to memory bus agent (for reading/writing data from/to DUT). This
-        -- should not be used for polling as simulation will be very un-efective
-        -- in this case!
-        --
-        -- This also affected architecture of the TB. It was assumed that it will
-        -- be difficult to control GHDL simulation via VPI in "timing exact"
-        -- manner. Therefore, driving of signals for exact times was left to TB
-        -- and modeling of CAN protocol on higher level was abstracted to C++.
-        -- Also, driving value e.g. each cycle would significantly decrease
-        -- performance of the simulation as was already observed with e.g.
-        -- CocoTB.
-        --
-        -- To synchronize TB and SW operation, rather SW mechanisms should be
-        -- used: e.g. callback on driver/monitor finished!
-        -----------------------------------------------------------------------
-        procedure lock_handshake_mutex is
-        begin
-            vpi_mutex_lock <= not vpi_mutex_lock;
-            wait for 1 ps;
-        end procedure;
-        
-        procedure unlock_handshake_mutex is
-        begin
-            vpi_mutex_unlock <= not vpi_mutex_unlock;
-            wait for 1 ps;
-        end procedure;
-
     begin
         
         -----------------------------------------------------------------------
         -- Poll on for vpi_req = '1'
         -----------------------------------------------------------------------
-        while (true) loop
-            lock_handshake_mutex;
-            if (vpi_req = '1') then
-                exit;
-            end if;
-            unlock_handshake_mutex;
-            wait for 1 ns;
-        end loop;
+        wait until (vpi_req = '1');
         wait for 1 ps;
         
         -----------------------------------------------------------------------
@@ -608,35 +592,26 @@ begin
             vpi_process_mem_bus_agent(net, vpi_data_out);
         when VPI_DEST_CAN_AGENT =>
             vpi_process_can_agent(net, vpi_data_out);
+        when VPI_DEST_TEST_CONTROLLER_AGENT =>
+            vpi_process_test_agent(net, vpi_data_out, test_end, test_result);
         when OTHERS =>
             error("Unknown VPI destination: " & to_hstring(vpi_dest));
         end case;
+
+        wait for 1 ps;
 
         -----------------------------------------------------------------------
         -- Issue vpi_ack = '1'
         -----------------------------------------------------------------------
         vpi_ack <= '1';
-        unlock_handshake_mutex;
         wait for 1 ps;
 
         -----------------------------------------------------------------------
         -- Poll on for vpi_reg = '0'
         -----------------------------------------------------------------------
-        while (true) loop
-            lock_handshake_mutex;
-            if (vpi_req = '0') then
-                exit;
-            end if;
-            wait for 1 ns;
-            unlock_handshake_mutex;
-        end loop;
+        wait until (vpi_req = '0');
         wait for 1 ps;
-        
-        -----------------------------------------------------------------------
-        -- Poll on for vpi_ack = '0'
-        -----------------------------------------------------------------------
         vpi_ack <= '0';
-        unlock_handshake_mutex;
         wait for 1 ps;
 
     end process;

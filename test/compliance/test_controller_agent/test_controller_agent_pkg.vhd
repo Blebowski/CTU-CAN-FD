@@ -63,6 +63,7 @@ package test_controller_agent_pkg is
     );
     port(
         -- VPI communication interface
+        vpi_clk         : out   std_logic;
         vpi_req         : in    std_logic;
         vpi_ack         : out   std_logic;
         vpi_cmd         : in    std_logic_vector(7 downto 0);
@@ -70,16 +71,10 @@ package test_controller_agent_pkg is
         vpi_data_in     : in    std_logic_vector(63 downto 0);
         vpi_str_buf_in  : in    std_logic_vector(511 downto 0);
         vpi_data_out    : out   std_logic_vector(63 downto 0);
-    
-        -- VPI Mutex lock/unlock interface
-        vpi_mutex_lock      : out   std_logic := '0';
-        vpi_mutex_unlock    : out   std_logic := '0';
-    
+
         -- VPI test control interface
         vpi_control_req     : out   std_logic;
-        vpi_control_gnt     : in    std_logic;
-        vpi_test_end        : in    std_logic;
-        vpi_test_result     : in    boolean
+        vpi_control_gnt     : in    std_logic
     );
     end component;
 
@@ -149,6 +144,9 @@ package test_controller_agent_pkg is
     constant VPI_CAN_AGNT_MONITOR_GET_SAMPLE_RATE       : std_logic_vector(7 downto 0) := x"18";
 
     constant VPI_CAN_AGNT_MONITOR_CHECK_RESULT          : std_logic_vector(7 downto 0) := x"19";
+
+    -- VPI commands for Test controller agent
+    constant VPI_TEST_AGNT_TEST_END                     : std_logic_vector(7 downto 0) := x"01";
 
 end package;
 
