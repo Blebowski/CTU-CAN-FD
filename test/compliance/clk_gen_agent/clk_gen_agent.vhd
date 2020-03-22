@@ -96,7 +96,7 @@ architecture tb of clk_gen_agent is
     -- Clock generator is enabled, clocks are being generated!
     -- Note: This must be enabled by default when testbench is controlled from 
     --       SW, otherwise simulator will run out of events and timeout!
-    signal enabled          :    boolean := true;
+    signal enabled          :    boolean := false;
     
     -- Generated clock period
     signal period           :    time := 10 ns;
@@ -182,20 +182,26 @@ begin
         variable rand_jitter : time;
         variable seed1 : positive := 1;
         variable seed2 : positive := 1;
+        variable jitter_div_2 : time := jitter / 2;
     begin
         if (enabled) then
             
             if (jitter > 0 fs) then
                 uniform(seed1, seed2, rand_real);
-                rand_jitter := jitter * (0.5 - rand_real);
-                t_high_with_jitter := (period + rand_jitter) * (real(duty) / 100.0);
-                t_low_with_jitter := (period + rand_jitter) * (1.0 - (real(duty) / 100.0));
+                rand_jitter := jitter * rand_real;
+                t_high_with_jitter := (period + rand_jitter - jitter_div_2) * (real(duty) / 100.0);
+                t_low_with_jitter := (period + rand_jitter - jitter_div_2) * (1.0 - (real(duty) / 100.0));
+
+                clock <= '1';
+                wait for t_high_with_jitter;
+                clock <= '0';
+                wait for t_low_with_jitter;
+            else
+                clock <= '1';
+                wait for t_high;
+                clock <= '0';
+                wait for t_low;
             end if;
-            
-            clock <= '1';
-            wait for t_high_with_jitter;
-            clock <= '0';
-            wait for t_low_with_jitter;
         else
             wait until enabled;
         end if;
