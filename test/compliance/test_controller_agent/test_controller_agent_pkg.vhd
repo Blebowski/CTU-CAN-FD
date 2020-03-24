@@ -59,7 +59,20 @@ package test_controller_agent_pkg is
 
     component test_controller_agent is
     generic (
-        cfg             : string
+        cfg             : string;
+        
+        -- Test configuration
+        cfg_clock_period   : time := 10 ns;
+        cfg_brp            : natural := 4;  
+        cfg_prop           : natural := 0;
+        cfg_ph_1           : natural := 1;
+        cfg_ph_2           : natural := 1;
+        cfg_sjw            : natural := 2;
+        cfg_brp_fd         : natural := 1;
+        cfg_prop_fd        : natural := 3;
+        cfg_ph_1_fd        : natural := 1;
+        cfg_ph_2_fd        : natural := 2;
+        cfg_sjw_fd         : natural := 2
     );
     port(
         -- VPI communication interface
@@ -147,6 +160,7 @@ package test_controller_agent_pkg is
 
     -- VPI commands for Test controller agent
     constant VPI_TEST_AGNT_TEST_END                     : std_logic_vector(7 downto 0) := x"01";
+    constant VPI_TEST_AGNT_GET_CFG                      : std_logic_vector(7 downto 0) := x"02";
 
 end package;
 

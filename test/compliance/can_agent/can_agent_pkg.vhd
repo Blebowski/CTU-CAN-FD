@@ -708,7 +708,9 @@ package body can_agent_pkg is
         constant can_gen_rec : actor_t := find("actor_can_agent");
         variable req_msg, reply_msg  : msg_t;
     begin
-        info(CAN_AGENT_TAG & "Pushing item into driver FIFO");
+        info(CAN_AGENT_TAG & "Pushing item into driver FIFO (" &
+                                std_logic'image(item.value) & ", " &
+                                time'image(item.drive_time) & ")");
         req_msg := new_msg(msg_type => (p_code => CAN_AGNT_CMD_DRIVER_PUSH_ITEM));
         push(req_msg, item.value);
         push(req_msg, item.drive_time);
@@ -962,7 +964,9 @@ package body can_agent_pkg is
         constant can_gen_rec : actor_t := find("actor_can_agent");
         variable req_msg, reply_msg  : msg_t;
     begin
-        info(CAN_AGENT_TAG  & "Pushing monitoring item");
+        info(CAN_AGENT_TAG  & "Pushing item to monitor FIFO (" &
+                                std_logic'image(item.value) & ", " &
+                                time'image(item.monitor_time) & ")");
         req_msg := new_msg(msg_type => (p_code => CAN_AGNT_CMD_MONITOR_PUSH_ITEM));
         
         push(req_msg, item.value);

@@ -73,7 +73,20 @@ use work.can_components.all;
 entity can_compliance_tb is
     generic (
         runner_cfg     : string := runner_cfg_default;
-        vpi_test_name  : string
+        vpi_test_name  : string;
+        
+        -- Test configuration
+        cfg_clock_period   : string := "10 ns";
+        cfg_brp            : natural := 4;  
+        cfg_prop           : natural := 0;
+        cfg_ph_1           : natural := 1;
+        cfg_ph_2           : natural := 1;
+        cfg_sjw            : natural := 2;
+        cfg_brp_fd         : natural := 1;
+        cfg_prop_fd        : natural := 3;
+        cfg_ph_1_fd        : natural := 1;
+        cfg_ph_2_fd        : natural := 2;
+        cfg_sjw_fd         : natural := 2
     );
 end entity;
 
@@ -215,7 +228,19 @@ begin
     ---------------------------------------------------------------------------
     test_controller_agent_inst : test_controller_agent
     generic map(
-        cfg => runner_cfg
+        cfg => runner_cfg,
+        
+        cfg_clock_period => time'value(cfg_clock_period),
+        cfg_brp          => cfg_brp,
+        cfg_prop         => cfg_prop,
+        cfg_ph_1         => cfg_ph_1,
+        cfg_ph_2         => cfg_ph_2,
+        cfg_sjw          => cfg_sjw,
+        cfg_brp_fd       => cfg_brp_fd,
+        cfg_prop_fd      => cfg_prop_fd,
+        cfg_ph_1_fd      => cfg_ph_1_fd,
+        cfg_ph_2_fd      => cfg_ph_2_fd,
+        cfg_sjw_fd       => cfg_sjw_fd
     )
     port map(
         -- VPI communication interface

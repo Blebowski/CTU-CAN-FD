@@ -137,13 +137,13 @@ package body can_compliance_tb_pkg is
                 input       : in   std_logic_vector;
        variable output      : out  string
     ) is
-        variable cropped_length : integer := input'length;
+        variable cropped_length : integer := input'length / 8;
     begin
         -- By default null everywhere, no string character
-        output(input'length - 1 downto 0) := (OTHERS => ' ');
+        output(1 to output'high) := (OTHERS => ' ');
         
         -- Crop if vector is longer than output string
-        if (output'length > cropped_length) then
+        if (cropped_length > output'length) then
             cropped_length := output'length;
         end if;
         

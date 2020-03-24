@@ -75,7 +75,20 @@ entity test_controller_agent is
     generic (
         -- This is Vunit runner config, don't name it runner_cfg so that
         -- Vunit will not scan it automatically as standalone test!
-        cfg             : string
+        cfg             : string;
+        
+        -- Test configuration
+        cfg_clock_period   : time := 10 ns;
+        cfg_brp            : natural := 4;  
+        cfg_prop           : natural := 0;
+        cfg_ph_1           : natural := 1;
+        cfg_ph_2           : natural := 1;
+        cfg_sjw            : natural := 2;
+        cfg_brp_fd         : natural := 1;
+        cfg_prop_fd        : natural := 3;
+        cfg_ph_1_fd        : natural := 1;
+        cfg_ph_2_fd        : natural := 2;
+        cfg_sjw_fd         : natural := 2
     );
     port(
         -- VPI communication interface
@@ -506,11 +519,59 @@ architecture tb of test_controller_agent is
         signal test_end             : out   std_logic;
         signal test_result          : out   std_logic
     ) is
+        variable param_name         : string(1 to 64);
+        variable vpi_data_out_i     : std_logic_vector(63 downto 0) := (OTHERS => '0');
     begin
         case vpi_cmd is
         when VPI_TEST_AGNT_TEST_END =>
             test_end <= '1';
             test_result <= vpi_data_in(0);
+
+        when VPI_TEST_AGNT_GET_CFG =>
+            -- VPI message string encodes desired configuration parameter
+            logic_vector_to_str(vpi_str_buf_in, param_name);
+            vpi_data_out(vpi_data_out'length - 1 downto 0) <= (OTHERS => '0');
+            
+            info("SW test queries parameter: " & param_name(1 to 64) );
+
+            if (param_name(45 to 64) = "CFG_DUT_CLOCK_PERIOD") then
+               time_to_logic_vector(cfg_clock_period, vpi_data_out_i);
+               vpi_data_out <= vpi_data_out_i;
+
+            elsif (param_name(54 to 64) = "CFG_DUT_BRP") then
+               vpi_data_out <= std_logic_vector(to_unsigned(cfg_brp, vpi_data_out'length));
+
+            elsif (param_name(53 to 64) = "CFG_DUT_PROP") then
+               vpi_data_out <= std_logic_vector(to_unsigned(cfg_prop, vpi_data_out'length));
+
+            elsif (param_name(54 to 64) = "CFG_DUT_PH1") then
+               vpi_data_out <= std_logic_vector(to_unsigned(cfg_ph_1, vpi_data_out'length));
+
+            elsif (param_name(54 to 64) = "CFG_DUT_PH2") then
+               vpi_data_out <= std_logic_vector(to_unsigned(cfg_ph_2, vpi_data_out'length));
+
+            elsif (param_name(54 to 64) = "CFG_DUT_SJW") then
+               vpi_data_out <= std_logic_vector(to_unsigned(cfg_sjw, vpi_data_out'length));
+
+            elsif (param_name(51 to 64) = "CFG_DUT_BRP_FD") then
+               vpi_data_out <= std_logic_vector(to_unsigned(cfg_brp_fd, vpi_data_out'length));
+
+            elsif (param_name(50 to 64) = "CFG_DUT_PROP_FD") then
+               vpi_data_out <= std_logic_vector(to_unsigned(cfg_prop_fd, vpi_data_out'length));
+
+            elsif (param_name(51 to 64) = "CFG_DUT_PH1_FD") then
+               vpi_data_out <= std_logic_vector(to_unsigned(cfg_ph_1_fd, vpi_data_out'length));
+
+            elsif (param_name(51 to 64) = "CFG_DUT_PH2_FD") then
+               vpi_data_out <= std_logic_vector(to_unsigned(cfg_ph_2_fd, vpi_data_out'length));
+
+            elsif (param_name(51 to 64) = "CFG_DUT_SJW_FD") then
+               vpi_data_out <= std_logic_vector(to_unsigned(cfg_sjw_fd, vpi_data_out'length));
+
+            else
+               error("Unsupported configuration parameter name: " & param_name);
+            end if;
+
         when others =>
             error("VPI: Unknown test agent command with code: 0x" & to_hstring(vpi_cmd));
         end case;
