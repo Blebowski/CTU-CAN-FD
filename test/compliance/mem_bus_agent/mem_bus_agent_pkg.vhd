@@ -404,7 +404,7 @@ package body mem_bus_agent_pkg is
         constant mem_bus_agnt_rec : actor_t := find("actor_mem_bus_agent");
         variable req_msg, reply_msg  : msg_t;
     begin
-        debug(MEM_BUS_AGENT_TAG & "Posting non-blocking write, Address: 0x" &
+        info(MEM_BUS_AGENT_TAG & "Posting non-blocking write, Address: 0x" &
                to_hstring(std_logic_vector(to_unsigned(address, 16))) &
               " " & to_hstring(write_data));
 
@@ -431,7 +431,7 @@ package body mem_bus_agent_pkg is
         constant mem_bus_agnt_rec : actor_t := find("actor_mem_bus_agent");
         variable req_msg, reply_msg  : msg_t;
     begin
-        debug(MEM_BUS_AGENT_TAG & "Blocking write, Address: 0x" &
+        info(MEM_BUS_AGENT_TAG & "Blocking write, Address: 0x" &
                to_hstring(std_logic_vector(to_unsigned(address, 16))) &
               " " & to_hstring(write_data));
 
@@ -458,7 +458,7 @@ package body mem_bus_agent_pkg is
         constant mem_bus_agnt_rec : actor_t := find("actor_mem_bus_agent");
         variable req_msg, reply_msg  : msg_t;
     begin
-        debug(MEM_BUS_AGENT_TAG & "Read, Address: 0x" &
+        info(MEM_BUS_AGENT_TAG & "Read, Address: 0x" &
                to_hstring(std_logic_vector(to_unsigned(address, 16))));
 
         req_msg := new_msg(msg_type => (p_code => MEM_BUS_AGNT_CMD_READ));

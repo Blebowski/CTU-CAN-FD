@@ -50,8 +50,20 @@ class ComplianceTests(TestsBase):
             dict_merge(cfg, default)
 
             generics = {
-                'vpi_test_name'     : name
+                'vpi_test_name'     : name,
+                'cfg_clock_period'  : cfg["clock_period"],
+                'cfg_brp'           : cfg["brp"],
+                'cfg_prop'          : cfg["prop"],
+                'cfg_ph_1'          : cfg["ph_1"],
+                'cfg_ph_2'          : cfg["ph_2"],
+                'cfg_sjw'           : cfg["sjw"],
+                'cfg_brp_fd'        : cfg["brp_fd"],
+                'cfg_prop_fd'       : cfg["prop_fd"],
+                'cfg_ph_1_fd'       : cfg["ph_1_fd"],
+                'cfg_ph_2_fd'       : cfg["ph_2_fd"],
+                'cfg_sjw_fd'        : cfg["sjw_fd"]
             }
+
             ##generics = {
             ##    'timeout'      : cfg['timeout'],
             ##    'iterations'   : cfg['iterations'],
