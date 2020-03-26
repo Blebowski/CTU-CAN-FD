@@ -171,6 +171,9 @@ architecture tb of can_agent is
     -- Mismatch counter
     signal mon_mismatch_ctr         :   integer := 0;
 
+    -- Input delay
+    signal mon_input_delay          :   time := 0 ns;
+
 begin
 
     ---------------------------------------------------------------------------
@@ -428,6 +431,9 @@ begin
         when CAN_AGNT_CMD_MONITOR_CHECK_RESULT =>
             check(mon_mismatch_ctr = 0, CAN_AGENT_TAG & "Mismatches in monitor!");
 
+        when CAN_AGNT_CMD_MONITOR_SET_INPUT_DELAY =>
+            mon_input_delay <= pop(msg);
+
         when others =>
             warning (CAN_AGENT_TAG & "Invalid message type: " & integer'image(cmd));
             ack_msg := new_msg(msg_type => (p_code => CAN_AGNT_CMD_REPLY_ERR));
@@ -561,6 +567,9 @@ begin
                 if (monitor_ena = false) then
                     monitor_state <= mon_disabled;
                 else
+                    -- Wait additional monitor delay
+                    wait for mon_input_delay;                    
+
                     monitor_state <= mon_running;
                 end if;
                 wait for 0 ns;

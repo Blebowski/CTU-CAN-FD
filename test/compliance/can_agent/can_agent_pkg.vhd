@@ -552,6 +552,22 @@ package can_agent_pkg is
 
 
     ---------------------------------------------------------------------------
+    -- Set monitor delay. When monitor trigger occurs and its operation starts,
+    -- monitor waits additional delay before driving first item.
+    --
+    -- This delay should correspond to input delay of CAN node and can be
+    -- used to correct shift of sequence on can_tx and can_rx. Input delay of
+    -- CAN node is caused by resynchronisation of input signal!
+    --
+    -- @param net           Network on which CAN Agent listens (use "net").
+    ---------------------------------------------------------------------------
+    procedure can_agent_monitor_set_input_delay(
+        signal      net         : inout network_t;
+        constant    input_delay : in    time
+    );
+
+
+    ---------------------------------------------------------------------------
     ---------------------------------------------------------------------------
     -- Private declarations 
     ---------------------------------------------------------------------------
@@ -587,6 +603,8 @@ package can_agent_pkg is
     constant CAN_AGNT_CMD_MONITOR_GET_SAMPLE_RATE       : integer := 23;
     
     constant CAN_AGNT_CMD_MONITOR_CHECK_RESULT          : integer := 24;
+
+    constant CAN_AGNT_CMD_MONITOR_SET_INPUT_DELAY       : integer := 25;
 
     constant CAN_AGNT_CMD_REPLY_OK                      : integer := 256;
     constant CAN_AGNT_CMD_REPLY_ERR                     : integer := 257;
@@ -1228,5 +1246,25 @@ package body can_agent_pkg is
         check(message_type(reply_msg).p_code = CAN_AGNT_CMD_REPLY_OK,
               CAN_AGENT_TAG & " Monitor result checked");
     end procedure;
+
+
+    procedure can_agent_monitor_set_input_delay(
+        signal      net         : inout network_t;
+        constant    input_delay : in    time
+    ) is
+        constant can_gen_rec : actor_t := find("actor_can_agent");
+        variable req_msg, reply_msg  : msg_t;
+    begin
+        info(CAN_AGENT_TAG  & "Settting input delay");
+        req_msg := new_msg(msg_type => (p_code => CAN_AGNT_CMD_MONITOR_SET_INPUT_DELAY));
+        push(req_msg, input_delay);
+        send(net         => net,
+             receiver    => can_gen_rec,
+             msg         => req_msg);
+        receive_reply(net, req_msg, reply_msg);
+        check(message_type(reply_msg).p_code = CAN_AGNT_CMD_REPLY_OK,
+              CAN_AGENT_TAG & " Monitor input delay set");
+    end procedure;
+
 
 end package body;

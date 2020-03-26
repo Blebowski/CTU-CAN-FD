@@ -307,6 +307,7 @@ architecture tb of test_controller_agent is
         variable result         : std_logic;
         variable sample_rate    : time;
         variable vpi_data_out_i : std_logic_vector(63 downto 0);
+        variable input_delay    : time;
     begin
         case vpi_cmd is
             
@@ -414,6 +415,7 @@ architecture tb of test_controller_agent is
             -- bits so that we don't need to declare next signal via VPI.
             logic_vector_to_time(vpi_data_in, monitor_item.monitor_time);
             
+            monitor_item.check_severity := info;
             can_agent_monitor_push_item(net, monitor_item);
 
         when VPI_CAN_AGNT_MONITOR_SET_WAIT_TIMEOUT =>
@@ -498,6 +500,10 @@ architecture tb of test_controller_agent is
 
         when VPI_CAN_AGNT_MONITOR_CHECK_RESULT =>
             can_agent_monitor_check_result(net);
+
+        when VPI_CAN_AGNT_MONITOR_SET_INPUT_DELAY =>
+            logic_vector_to_time(vpi_data_in, input_delay);
+            can_agent_monitor_set_input_delay(net, input_delay);
 
         when others =>
             error("VPI: Unknown CAN agent command with code: 0x" & to_hstring(vpi_cmd));

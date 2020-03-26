@@ -157,6 +157,8 @@ package test_controller_agent_pkg is
     constant VPI_CAN_AGNT_MONITOR_GET_SAMPLE_RATE       : std_logic_vector(7 downto 0) := x"18";
 
     constant VPI_CAN_AGNT_MONITOR_CHECK_RESULT          : std_logic_vector(7 downto 0) := x"19";
+    
+    constant VPI_CAN_AGNT_MONITOR_SET_INPUT_DELAY       : std_logic_vector(7 downto 0) := x"1A";
 
     -- VPI commands for Test controller agent
     constant VPI_TEST_AGNT_TEST_END                     : std_logic_vector(7 downto 0) := x"01";
