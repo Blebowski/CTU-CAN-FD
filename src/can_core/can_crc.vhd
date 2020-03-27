@@ -146,9 +146,6 @@ entity can_crc is
         
         -- Use RX Data for CRC calculation
         crc_calc_from_rx :in   std_logic;
-
-        -- Unit is receiver of a frame
-        is_receiver      :in   std_logic;
         
         -- Load CRC Initialization vector
         load_init_vect   :in   std_logic;

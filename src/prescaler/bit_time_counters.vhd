@@ -174,7 +174,7 @@ begin
         if (res_n = G_RESET_POLARITY) then
             tq_counter_q <= (OTHERS => '0');
         elsif (rising_edge(clk_sys)) then
-            if (tq_counter_allow = '1') then
+            if (tq_counter_ce = '1') then
                 tq_counter_q <= tq_counter_d;
             end if;
         end if;

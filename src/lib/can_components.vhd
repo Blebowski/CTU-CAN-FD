@@ -792,9 +792,6 @@ package can_components is
 
         -- Use RX Data for CRC calculation
         crc_calc_from_rx :in   std_logic;
-
-        -- Unit is receiver of a frame
-        is_receiver      :in   std_logic;
         
         -- Load CRC Initialization vector
         load_init_vect   :in  std_logic;
@@ -1809,9 +1806,6 @@ package can_components is
         -- Unit is receiver
         is_receiver             :in   std_logic;
 
-        -- Unit is idle
-        is_idle                 :in   std_logic;
-
         -- Loss of arbitration -> Turn receiver!
         arbitration_lost        :out  std_logic;
 
@@ -2075,9 +2069,6 @@ package can_components is
         
         -- Unit is receiver
         is_receiver             :in   std_logic;
-        
-        -- Unit is idle
-        is_idle                 :in  std_logic;
         
         -- Loss of arbitration -> Turn receiver!
         arbitration_lost        :out  std_logic;
@@ -2546,9 +2537,6 @@ package can_components is
         -----------------------------------------------------------------------
         -- TXT Buffers interface
         -----------------------------------------------------------------------
-        -- TXT Buffer RAM word
-        tran_word               :in   std_logic_vector(31 downto 0);
-        
         -- TX Identifier
         tran_identifier         :in   std_logic_vector(28 downto 0);
         
@@ -3354,9 +3342,6 @@ package can_components is
         -----------------------------------------------------------------------
         -- Segment end (either due to re-sync, or reaching expected length)
         segm_end            : in    std_logic;
-        
-        -- Hard synchronisation is valid
-        h_sync_valid        : in    std_logic;
 
         -- CTU CAN FD is enabled
         drv_ena             : in    std_logic;
@@ -3690,9 +3675,6 @@ package can_components is
         -- Sync Trigger Request (TX Trigger request)
         tx_trig_req       : in    std_logic;
 
-        -- Sample control (Nominal, Data, Secondary)
-        sp_control        : in    std_logic_vector(1 downto 0);
-        
         -----------------------------------------------------------------------
         -- Trigger outputs
         -----------------------------------------------------------------------
@@ -3733,9 +3715,6 @@ package can_components is
         
         -- Abort storing of RX Frame to RX Buffer.
         rec_abort_f          :in     std_logic;
-
-        -- Start of Frame pulse
-        sof_pulse            :in     std_logic;
 
         -----------------------------------------------------------------------
         -- FSM outputs
@@ -3809,12 +3788,6 @@ package can_components is
 
         -- RX Buffer RAM is being read by SW
         read_increment       :in     std_logic;
-
-        -----------------------------------------------------------------------
-        -- Memory registers interface
-        -----------------------------------------------------------------------
-        -- Driving bus
-        drv_bus              :in     std_logic_vector(1023 downto 0);
 
         -----------------------------------------------------------------------
         -- Status outputs
@@ -4174,9 +4147,6 @@ package can_components is
         -----------------------------------------------------------------------
         -- Memory registers interface
         -----------------------------------------------------------------------
-        -- Driving Bus
-        drv_bus                 :in std_logic_vector(1023 downto 0);
-
         -- Priorities of TXT Buffers
         txtb_prorities          :in t_txt_bufs_priorities;
     
@@ -4368,9 +4338,6 @@ package can_components is
 
         -- Address width (in bits)
         G_ADDRESS_WIDTH        :     natural := 8;
-
-        -- RAM content reset upon reset
-        G_SIMULATION_RESET     :     boolean := true;
 
         -- Synchronous read
         G_SYNC_READ            :     boolean := true

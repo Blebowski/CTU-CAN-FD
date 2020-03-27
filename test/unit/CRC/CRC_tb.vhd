@@ -295,7 +295,6 @@ begin
         crc_enable       => enable,
         crc_spec_enable  => '0',
         crc_calc_from_rx => '0',
-        is_receiver      => '0',
         load_init_vect   => load_init_vect,
 
         -- CRC Outputs

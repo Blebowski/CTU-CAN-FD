@@ -68,11 +68,7 @@ use work.CAN_FD_frame_format.all;
 
 entity endian_swapper is 
     generic (
-        
-        -- If true, "swap_in" signal selects between swapping/non-swapping.
-        -- If false "swap_gen" generic selects bewtween swapping/non-swapping.
-        G_SWAP_BY_SIGNAL        :     boolean := false;
-        
+
         -- When true, output word is endian swapped as long as "swap_by_signal"
         -- is true. Otherwise it has no meaning.
         G_SWAP_GEN              :     boolean := false;
@@ -88,11 +84,7 @@ entity endian_swapper is
         input   : in  std_logic_vector(G_WORD_SIZE * G_GROUP_SIZE - 1 downto 0);
         
         -- Data output
-        output  : out std_logic_vector(G_WORD_SIZE * G_GROUP_SIZE - 1 downto 0);
-        
-        -- Swap signal (used only when "swap_by_signal=true")
-        -- Swaps endian when '1', keeps otherwise.
-        swap_in : in  std_logic
+        output  : out std_logic_vector(G_WORD_SIZE * G_GROUP_SIZE - 1 downto 0)
     );
 end entity;
 
@@ -123,30 +115,19 @@ begin
                 input(u_ind_orig downto l_ind_orig);
         end loop;
     end process;
-    
+
     ---------------------------------------------------------------------------
     -- Swapping by generic
     ---------------------------------------------------------------------------
-    swap_by_generic_gen : if (not G_SWAP_BY_SIGNAL) generate
-        
-        -- Swap
-        swap_by_generic_true_gen : if (G_SWAP_GEN) generate
-            output <= swapped;    
-        end generate swap_by_generic_true_gen;
-        
-        -- Don't Swap
-        swap_by_generic_false_gen : if (not G_SWAP_GEN) generate
-            output <= input;    
-        end generate swap_by_generic_false_gen;
 
-    end generate swap_by_generic_gen;
-
+    -- Swap
+    swap_by_generic_true_gen : if (G_SWAP_GEN) generate
+        output <= swapped;    
+    end generate swap_by_generic_true_gen;
     
-    ---------------------------------------------------------------------------
-    -- Swapping by input    
-    ---------------------------------------------------------------------------    
-    swap_by_input_gen : if (G_SWAP_BY_SIGNAL) generate
-        output <= swapped when (swap_in = '1') else
-                  input;
-    end generate swap_by_input_gen; 
+    -- Don't Swap
+    swap_by_generic_false_gen : if (not G_SWAP_GEN) generate
+        output <= input;    
+    end generate swap_by_generic_false_gen;
+
 end architecture;

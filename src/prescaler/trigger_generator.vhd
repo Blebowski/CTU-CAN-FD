@@ -120,9 +120,6 @@ entity trigger_generator is
         -- TX Trigger request (Sync)
         tx_trig_req      : in    std_logic;
 
-        -- Sample control (Nominal, Data, Secondary)
-        sp_control       : in    std_logic_vector(1 downto 0);
-        
         -----------------------------------------------------------------------
         -- Trigger outputs
         -----------------------------------------------------------------------

@@ -133,10 +133,6 @@ package cmn_lib is
     component endian_swapper is 
     generic (
         
-        -- If true, "swap_in" signal selects between swapping/non-swapping.
-        -- If false "swap_gen" generic selects bewtween swapping/non-swapping.
-        G_SWAP_BY_SIGNAL        :     boolean := false;
-        
         -- When true, output word is endian swapped as long as "swap_by_signal"
         -- is true. Otherwise it has no meaning.
         G_SWAP_GEN              :     boolean := false;
@@ -152,11 +148,7 @@ package cmn_lib is
         input   : in  std_logic_vector(G_WORD_SIZE * G_GROUP_SIZE - 1 downto 0);
         
         -- Data output
-        output  : out std_logic_vector(G_WORD_SIZE * G_GROUP_SIZE - 1 downto 0);
-        
-        -- Swap signal (used only when "swap_by_signal=true")
-        -- Swaps endian when '1', keeps otherwise.
-        swap_in : in  std_logic
+        output  : out std_logic_vector(G_WORD_SIZE * G_GROUP_SIZE - 1 downto 0)
     );
     end component;
 
@@ -173,9 +165,6 @@ package cmn_lib is
 
         -- Address width (in bits)
         G_ADDRESS_WIDTH        :     natural := 8;
-
-        -- RAM content reset upon reset
-        G_SIMULATION_RESET     :     boolean := true;
 
         -- Synchronous read
         G_SYNC_READ            :     boolean := true

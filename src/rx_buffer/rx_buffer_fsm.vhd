@@ -94,9 +94,6 @@ entity rx_buffer_fsm is
         -- Abort storing of RX Frame to RX Buffer.
         rec_abort_f          :in     std_logic;
 
-        -- Start of Frame pulse
-        sof_pulse            :in     std_logic;
-
         -----------------------------------------------------------------------
         -- FSM outputs
         -----------------------------------------------------------------------
@@ -320,11 +317,6 @@ begin
     --  ((rec_valid_f = '1' or store_data_f = '1') and curr_state /= s_rxb_store_data)
     -- report "RX Buffer: Store data or frame commit commands did not come " &
     --        "when RX Buffer is receiving data!"
-    -- severity error;
-
-    -- psl sof_pulse_asrt_asrt : assert never
-    --   (sof_pulse = '1' and (curr_state /= s_rxb_idle))
-    -- report "RX Buffer: SOF pulse should come when RX Buffer is idle!"
     -- severity error;
     
     -- psl rx_buf_cmds_one_hot_asrt : assert always

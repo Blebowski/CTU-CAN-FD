@@ -444,7 +444,6 @@ begin
         clk_sys          => clk_sys,            -- IN
         res_n            => res_n,              -- IN
         segm_end         => segment_end,        -- IN
-        h_sync_valid     => h_sync_valid,       -- IN
         drv_ena          => drv_ena,            -- IN
         is_tseg1         => is_tseg1,           -- OUT
         is_tseg2         => is_tseg2,           -- OUT
@@ -466,8 +465,7 @@ begin
         res_n       => res_n,           -- IN
         rx_trig_req => rx_trig_req,     -- IN
         tx_trig_req => tx_trig_req,     -- IN
-        sp_control  => sp_control,      -- IN
-        
+
         rx_triggers => rx_triggers,     -- OUT
         tx_trigger  => tx_trigger       -- OUT
     );

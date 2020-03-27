@@ -94,16 +94,21 @@ end entity memory_reg;
 
 architecture rtl of memory_reg is
 
-    pure function bit_in_mask(mask_vec: std_logic_vector; bit_pos : natural)
-                                        return std_ulogic is
-    begin
-       if mask_vec'ascending then
-           return mask_vec(mask_vec'length - 1 - bit_pos);
-       else
-           return mask_vec(bit_pos);
-       end if;
-       --return mask_vec(bit_pos);
-    end function bit_in_mask;
+    ---------------------------------------------------------------------------
+    -- Create new constants for reset value, implemented etc.
+    -- This is important because generic can't be directly passed to if-generate
+    -- condition. In instance of the module, generic is filled like so:
+    --   data_mask                       => "0000000110011111"
+    -- Some tools interpret this vector as 'downto' (GHDL), other tools as 'to'.
+    -- (Vivado). We want to keep the module generic therefore we will not give
+    -- range (and direction) to generic "data_mask", but we must tell the tool
+    -- how to interpret this constant that is passed without "to/downto"!
+    -- So we re-declare constants internally and give direction to them.
+    -- Tool should assign the constant the same way as it was passed.
+    ---------------------------------------------------------------------------
+    constant data_mask_i   : std_logic_vector(data_width - 1 downto 0) := data_mask;
+    constant reset_value_i : std_logic_vector(data_width - 1 downto 0) := reset_value;
+    constant auto_clear_i  : std_logic_vector(data_width - 1 downto 0) := auto_clear;
 
     -- Register implementation itself!
     signal reg_value_r          :   std_logic_vector(data_width - 1 downto 0);
@@ -150,17 +155,17 @@ begin
         ------------------------------------------------------------------------
         -- Register implementation itself
         ------------------------------------------------------------------------
-        reg_present_gen : if (bit_in_mask(data_mask, i) = '1') generate
+        reg_present_gen : if (data_mask_i(i) = '1') generate
 
             --------------------------------------------------------------------
             -- Regular register (DFF)
             --------------------------------------------------------------------
-            reg_regular_gen : if (bit_in_mask(auto_clear, i) = '0') generate
+            reg_regular_gen : if (auto_clear_i(i) = '0') generate
                 
                 reg_access_proc : process(clk_sys, res_n)
                 begin
                     if (res_n = reset_polarity) then
-                        reg_value_r(i)  <= bit_in_mask(reset_value, i);
+                        reg_value_r(i)  <= reset_value_i(i);
                     elsif (rising_edge(clk_sys)) then                    
                         if (wr_select_expanded(i) = '1') then
                             reg_value_r(i)  <= data_in(i);
@@ -175,11 +180,11 @@ begin
             -- Autoclear register (no DFF - combinatorial only). When access
             -- is made, put data to output, reset value otherwise.
             --------------------------------------------------------------------
-            reg_autoclear_gen : if (bit_in_mask(auto_clear, i) = '1') generate
+            reg_autoclear_gen : if (auto_clear_i(i) = '1') generate
                 
                 reg_value_r(i) <= data_in(i) when wr_select_expanded(i) = '1'
                                              else
-                                  bit_in_mask(reset_value, i);
+                                  reset_value_i(i);
 
             end generate reg_autoclear_gen;
 
@@ -189,8 +194,8 @@ begin
         -----------------------------------------------------------------------
         -- Registers which are not present are stuck at reset value
         -----------------------------------------------------------------------
-        reg_not_present_gen : if (bit_in_mask(data_mask, i) = '0') generate
-            reg_value_r(i)    <=  bit_in_mask(reset_value, i);
+        reg_not_present_gen : if (data_mask_i(i) = '0') generate
+            reg_value_r(i)    <=  reset_value_i(i);
         end generate reg_not_present_gen;
 
     end generate bit_gen;

@@ -156,9 +156,6 @@ entity tx_shift_reg is
         -----------------------------------------------------------------------
         -- TXT Buffers interface
         -----------------------------------------------------------------------
-        -- TXT Buffer RAM word
-        tran_word               :in   std_logic_vector(31 downto 0);
-
         -- TX Identifier
         tran_identifier         :in   std_logic_vector(28 downto 0);
         

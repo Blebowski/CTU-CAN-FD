@@ -143,9 +143,6 @@ entity tx_arbitrator is
         -----------------------------------------------------------------------
         -- Memory registers interface
         -----------------------------------------------------------------------
-        -- Driving Bus
-        drv_bus                 :in std_logic_vector(1023 downto 0);
-
         -- Priorities of TXT Buffers
         txtb_prorities          :in t_txt_bufs_priorities;
     
