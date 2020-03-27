@@ -98,6 +98,7 @@ entity test_controller_agent is
         vpi_cmd         : in    std_logic_vector(7 downto 0);
         vpi_dest        : in    std_logic_vector(7 downto 0);
         vpi_data_in     : in    std_logic_vector(63 downto 0);
+        vpi_data_in_2   : in    std_logic_vector(63 downto 0);
         vpi_str_buf_in  : in    std_logic_vector(511 downto 0);
         vpi_data_out    : out   std_logic_vector(63 downto 0);
     
@@ -414,7 +415,8 @@ architecture tb of test_controller_agent is
             -- remaining information for driven item into remaining two
             -- bits so that we don't need to declare next signal via VPI.
             logic_vector_to_time(vpi_data_in, monitor_item.monitor_time);
-            
+            logic_vector_to_time(vpi_data_in_2, monitor_item.sample_rate);
+
             monitor_item.check_severity := info;
             can_agent_monitor_push_item(net, monitor_item);
 
@@ -438,7 +440,8 @@ architecture tb of test_controller_agent is
             -- remaining information for driven item into remaining two
             -- bits so that we don't need to declare next signal via VPI.
             logic_vector_to_time(vpi_data_in, monitor_item.monitor_time);
-            
+            logic_vector_to_time(vpi_data_in_2, monitor_item.sample_rate);
+
             can_agent_monitor_single_item(net, monitor_item);
 
         when VPI_CAN_AGNT_MONITOR_MONITOR_ALL_ITEMS =>
@@ -488,15 +491,6 @@ architecture tb of test_controller_agent is
             when trig_driver_stop =>
                 vpi_data_out(2 downto 0) <= "111";
             end case;
-
-        when VPI_CAN_AGNT_MONITOR_SET_SAMPLE_RATE =>
-            logic_vector_to_time(vpi_data_in, sample_rate);
-            can_agent_monitor_set_sample_rate(net, sample_rate);
-
-        when VPI_CAN_AGNT_MONITOR_GET_SAMPLE_RATE =>
-            can_agent_monitor_get_sample_rate(net, sample_rate);
-            time_to_logic_vector(sample_rate, vpi_data_out_i);
-            vpi_data_out <= vpi_data_out_i;
 
         when VPI_CAN_AGNT_MONITOR_CHECK_RESULT =>
             can_agent_monitor_check_result(net);

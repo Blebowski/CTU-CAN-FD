@@ -124,6 +124,7 @@ architecture tb of can_compliance_tb is
     signal vpi_cmd          : std_logic_vector(7 downto 0) := (OTHERS => '0');
     signal vpi_dest         : std_logic_vector(7 downto 0) := (OTHERS => '0');
     signal vpi_data_in      : std_logic_vector(63 downto 0) := (OTHERS => '0');
+    signal vpi_data_in_2    : std_logic_vector(63 downto 0) := (OTHERS => '0');
     signal vpi_str_buf_in   : std_logic_vector(511 downto 0) := (OTHERS => '0');
     signal vpi_data_out     : std_logic_vector(63 downto 0) := (OTHERS => '0');
 
@@ -250,6 +251,7 @@ begin
         vpi_cmd         => vpi_cmd,
         vpi_dest        => vpi_dest,
         vpi_data_in     => vpi_data_in,
+        vpi_data_in_2   => vpi_data_in_2,
         vpi_str_buf_in  => vpi_str_buf_in,
         vpi_data_out    => vpi_data_out,
 

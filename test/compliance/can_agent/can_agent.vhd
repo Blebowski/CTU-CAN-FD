@@ -68,7 +68,7 @@
 --    progress. When it is started via communication library, it moves to
 --    "Waiting for Trigger". In this state it waits until trigger event occurs
 --    (Type of trigger event is also configurable over Communication library)
---    and moves to "Running". When it is running, it monitors items from Monito
+--    and moves to "Running". When it is running, it monitors items from Monitor
 --    FIFO one after another. After all items were monitored, monitor transfers to
 --    "Passed" when no mismatch between can_tx and monitored values occured
 --    during monitoring. Otherwise it transfers to failed.
@@ -80,6 +80,30 @@
 --    its ends, succesfull monitoring (no errors) can be checked via
 --    Communication library.
 --
+-------------------------------------------------------------------------------
+--    MONITORING of an ITEM (examples):
+--
+--    Lets suppose that monitor is about to monitor logic 1 for 100 ns with
+--    sample period of 20 ns. Following figure shows where can_tx will be
+--    checked:
+--
+--               _______________________________________________________
+--  can_tx  _____|                                                      |____
+--
+--  Check:            O           O           O           O
+--          |         |           |           |           |           |
+--         0ns       20ns        40ns        60 ns       80ns       100ns
+--
+--  Note that monitor will NOT execute check of can_rx less than sample_time
+--  after start of monitoring item and less than sample time before the end of
+--  monitoring of an item! This behvaiour is intentional!
+--
+--  When DUT is configured e.g with BRP = 4, and Driver is not synchronized
+--  with DUT, then shift between Driver and DUT can up to 1 TQ! Therefore, the
+--  value of edge coming from DUT can be floating in range between 0 ns and
+--  1 TQ! (DUT does not operate on lower granularity than time quanta).
+--
+-------------------------------------------------------------------------------
 --    API for work with CAN agent is implemented in "can_agent_pkg" package. 
 --
 --------------------------------------------------------------------------------
@@ -153,13 +177,13 @@ architecture tb of can_agent is
     signal monitored_item           :   t_can_monitor_entry := (
         value           => 'Z',
         monitor_time    => 0 ns,
+        sample_rate     => 0 ns,
         print_msg       => false,
         msg             => C_EMPTY_STRING,
         check_severity  => warning
     );
 
     signal monitor_trigger          :   t_can_monitor_trigger := trig_immediately;
-    signal monitor_sample_rate      :   time := 1 ns;
     signal monitor_trig_wait_time   :   time := 100 ns;
     
     -- Debug signal only, shows where can_rx is sampled!
@@ -343,6 +367,7 @@ begin
             else
                 push_mon_item.msg := (OTHERS => ' ');
             end if;
+            push_mon_item.sample_rate := pop(msg);
             
             monitor_fifo_push;
 
@@ -371,6 +396,7 @@ begin
             else
                 push_mon_item.msg := (OTHERS => ' ');
             end if;
+            push_mon_item.sample_rate := pop(msg);
 
             if (monitor_wp /= monitor_rp) then
                 warning(CAN_AGENT_TAG &
@@ -421,12 +447,6 @@ begin
 
         when CAN_AGNT_CMD_MONITOR_GET_TRIGGER =>
             push(ack_msg, t_can_monitor_trigger'pos(monitor_trigger));
-
-        when CAN_AGNT_CMD_MONITOR_SET_SAMPLE_RATE =>
-            monitor_sample_rate <= pop(msg);
-
-        when CAN_AGNT_CMD_MONITOR_GET_SAMPLE_RATE =>
-            push(ack_msg, monitor_sample_rate);
 
         when CAN_AGNT_CMD_MONITOR_CHECK_RESULT =>
             check(mon_mismatch_ctr = 0, CAN_AGENT_TAG & "Mismatches in monitor!");
@@ -491,6 +511,7 @@ begin
     ---------------------------------------------------------------------------
     monitor_proc : process
         variable mon_count          : integer := 0;
+        variable monitored_time     : time := 0 fs;
         
         -----------------------------------------------------------------------
         -- Comparison procedure for monitor. Simple "=" operator is not enough
@@ -612,23 +633,17 @@ begin
                     info(monitored_item.msg);
                 end if;
                 
-                mon_count := monitored_item.monitor_time / monitor_sample_rate;
+                mon_count := monitored_item.monitor_time / monitored_item.sample_rate;
+                monitored_time := 0 ns;
                 debug("Number of samples: " & integer'image(mon_count));
-                
-                -- So far do not support when sample rate is not multiple of monitor
-                -- time! This would require extra handling of waiting time after last
-                -- sample!
-                if (mon_count * monitor_sample_rate /= monitored_item.monitor_time) then
-                    error("Monitor time must be multiple of sample rate! " &
-                          "Monitor time: " & time'image(monitored_item.monitor_time) &
-                          " Sample rate: " & time'image(monitor_sample_rate));
-                end if;
-                
-                -- Do not check on the last iteration because value might be changing
-                -- there already (if sample rate is multiple of monitor time, then we
-                -- are exactly at the end of monitor_time).
-                for i in 1 to mon_count - 1 loop
-                    wait for (monitor_sample_rate - 1 ps);
+
+                ------------------------------------------------------------------------
+                -- Monitor until we are not closer than sample rate from the end. This
+                -- will truncate the last sample so that we dont compare too close to
+                -- the end!
+                ------------------------------------------------------------------------
+                while (monitored_time < monitored_item.monitor_time - monitored_item.sample_rate) loop
+                    wait for (monitored_item.sample_rate - 1 ps);
                     monitor_sample <= '1';
                     wait for 1 ps;
                     monitor_sample <= '0';
@@ -646,11 +661,12 @@ begin
                     else
                         monitor_mismatch <= '0';
                     end if;
+                    monitored_time := monitored_time + monitored_item.sample_rate;
                 end loop;
-                
-                -- We must wait one sample rate longer because we monitored only
-                -- -1 samples!
-                wait for monitor_sample_rate;
+
+                -- We must wait the rest so that monitor item lasts proper time!
+                wait for monitored_item.monitor_time - monitored_time;
+
                 monitor_mismatch <= '0';
 
                 monitor_rp <= (monitor_rp + 1) mod G_MONITOR_FIFO_DEPTH;

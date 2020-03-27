@@ -82,6 +82,7 @@ package test_controller_agent_pkg is
         vpi_cmd         : in    std_logic_vector(7 downto 0);
         vpi_dest        : in    std_logic_vector(7 downto 0);
         vpi_data_in     : in    std_logic_vector(63 downto 0);
+        vpi_data_in_2   : in    std_logic_vector(63 downto 0);
         vpi_str_buf_in  : in    std_logic_vector(511 downto 0);
         vpi_data_out    : out   std_logic_vector(63 downto 0);
 
@@ -152,9 +153,6 @@ package test_controller_agent_pkg is
 
     constant VPI_CAN_AGNT_MONITOR_SET_TRIGGER           : std_logic_vector(7 downto 0) := x"15";
     constant VPI_CAN_AGNT_MONITOR_GET_TRIGGER           : std_logic_vector(7 downto 0) := x"16";
-
-    constant VPI_CAN_AGNT_MONITOR_SET_SAMPLE_RATE       : std_logic_vector(7 downto 0) := x"17";
-    constant VPI_CAN_AGNT_MONITOR_GET_SAMPLE_RATE       : std_logic_vector(7 downto 0) := x"18";
 
     constant VPI_CAN_AGNT_MONITOR_CHECK_RESULT          : std_logic_vector(7 downto 0) := x"19";
     

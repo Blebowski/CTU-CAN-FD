@@ -107,6 +107,10 @@ package can_agent_pkg is
         -- Time for which to monitor this value
         monitor_time    :   time;
         
+        -- Sample time after which the value is sampled. This must be lower than
+        -- monitor time!
+        sample_rate     :   time;
+        
         -- Print message when monitoring of this item starts
         print_msg       :   boolean;
         
@@ -994,6 +998,7 @@ package body can_agent_pkg is
         if (item.print_msg) then
             push(req_msg, item.msg);
         end if;
+        push(req_msg, item.sample_rate);
 
         send(net         => net,
              receiver    => can_gen_rec,
@@ -1057,6 +1062,7 @@ package body can_agent_pkg is
         if (item.print_msg) then
             push(req_msg, item.msg);
         end if;
+        push(req_msg, item.sample_rate);
 
         send(net         => net,
              receiver    => can_gen_rec,
