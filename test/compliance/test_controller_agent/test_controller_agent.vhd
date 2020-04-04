@@ -88,7 +88,9 @@ entity test_controller_agent is
         cfg_prop_fd        : natural := 3;
         cfg_ph_1_fd        : natural := 1;
         cfg_ph_2_fd        : natural := 2;
-        cfg_sjw_fd         : natural := 2
+        cfg_sjw_fd         : natural := 2;
+        
+        seed               : natural := 0
     );
     port(
         -- VPI communication interface
@@ -571,6 +573,9 @@ architecture tb of test_controller_agent is
             else
                error("Unsupported configuration parameter name: " & param_name);
             end if;
+
+        when VPI_TEST_AGNT_GET_SEED =>
+            vpi_data_out <= std_logic_vector(to_unsigned(seed, vpi_data_out'length));
 
         when others =>
             error("VPI: Unknown test agent command with code: 0x" & to_hstring(vpi_cmd));

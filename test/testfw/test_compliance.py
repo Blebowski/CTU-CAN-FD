@@ -61,7 +61,8 @@ class ComplianceTests(TestsBase):
                 'cfg_prop_fd'       : cfg["prop_fd"],
                 'cfg_ph_1_fd'       : cfg["ph_1_fd"],
                 'cfg_ph_2_fd'       : cfg["ph_2_fd"],
-                'cfg_sjw_fd'        : cfg["sjw_fd"]
+                'cfg_sjw_fd'        : cfg["sjw_fd"],
+                'seed'              : get_seed(cfg)
             }
 
             ##generics = {

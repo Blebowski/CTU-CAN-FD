@@ -72,7 +72,9 @@ package test_controller_agent_pkg is
         cfg_prop_fd        : natural := 3;
         cfg_ph_1_fd        : natural := 1;
         cfg_ph_2_fd        : natural := 2;
-        cfg_sjw_fd         : natural := 2
+        cfg_sjw_fd         : natural := 2;
+        
+        seed               : natural := 0
     );
     port(
         -- VPI communication interface
@@ -161,6 +163,7 @@ package test_controller_agent_pkg is
     -- VPI commands for Test controller agent
     constant VPI_TEST_AGNT_TEST_END                     : std_logic_vector(7 downto 0) := x"01";
     constant VPI_TEST_AGNT_GET_CFG                      : std_logic_vector(7 downto 0) := x"02";
+    constant VPI_TEST_AGNT_GET_SEED                     : std_logic_vector(7 downto 0) := x"03";
 
 end package;
 

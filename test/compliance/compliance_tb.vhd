@@ -86,7 +86,10 @@ entity can_compliance_tb is
         cfg_prop_fd        : natural := 3;
         cfg_ph_1_fd        : natural := 1;
         cfg_ph_2_fd        : natural := 2;
-        cfg_sjw_fd         : natural := 2
+        cfg_sjw_fd         : natural := 2;
+        
+        -- Seed
+        seed               : natural := 0
     );
 end entity;
 
@@ -241,7 +244,8 @@ begin
         cfg_prop_fd      => cfg_prop_fd,
         cfg_ph_1_fd      => cfg_ph_1_fd,
         cfg_ph_2_fd      => cfg_ph_2_fd,
-        cfg_sjw_fd       => cfg_sjw_fd
+        cfg_sjw_fd       => cfg_sjw_fd,
+        seed             => seed
     )
     port map(
         -- VPI communication interface
