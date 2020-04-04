@@ -193,6 +193,9 @@ architecture rtl of rx_shift_reg is
     -- Shift register input selector demuxed
     signal rx_shift_in_sel_demuxed : std_logic_vector(3 downto 0);
 
+    signal rec_is_rtr_i : std_logic;
+    signal rec_frame_type_i : std_logic;
+
 begin
 
      -- Internal reset: Async reset + reset by design!
@@ -295,13 +298,17 @@ begin
     rx_store_proc : process(clk_sys, res_n_i)
     begin
         if (res_n_i = G_RESET_POLARITY) then
-            rec_is_rtr <= '0';    
+            rec_is_rtr_i <= '0';    
         elsif (rising_edge(clk_sys)) then
             if (rx_store_rtr = '1') then
-                rec_is_rtr <= rx_data_nbs;
+                rec_is_rtr_i <= rx_data_nbs;
             end if;
         end if;
     end process;
+    
+    -- RTR flag can't be active at the same time as FDF. FDF has priority!
+    rec_is_rtr <= rec_is_rtr_i when (rec_frame_type_i = NORMAL_CAN) else
+                  NO_RTR_FRAME;
 
     ---------------------------------------------------------------------------
     -- Store EDL/FDF bit (Extended data length or Flexible data-rate format)
@@ -309,13 +316,16 @@ begin
     edl_store_proc : process(clk_sys, res_n_i)
     begin
         if (res_n_i = G_RESET_POLARITY) then
-            rec_frame_type <= '0';    
+            rec_frame_type_i <= '0';    
         elsif (rising_edge(clk_sys)) then
             if (rx_store_edl = '1') then
-                rec_frame_type <= rx_data_nbs;
+                rec_frame_type_i <= rx_data_nbs;
             end if;
         end if;
     end process;
+
+    rec_frame_type <= rec_frame_type_i;
+
 
     ---------------------------------------------------------------------------
     -- Store ESI bit (Error state indicator)
