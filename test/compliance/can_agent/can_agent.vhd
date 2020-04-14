@@ -486,7 +486,7 @@ begin
                           "Driving: " & std_logic'image(driven_item.value) &
                           " for time: " & time'image(driven_item.drive_time));
                     if (driven_item.print_msg) then
-                        info(driven_item.msg);
+                        info("Driving item: " & driven_item.msg);
                     end if;
 
                     can_rx <= driven_item.value;
@@ -630,7 +630,7 @@ begin
                       " for time: " & time'image(monitored_item.monitor_time));
                 
                 if (monitored_item.print_msg) then
-                    info(monitored_item.msg);
+                    info("Monitoring item: " & monitored_item.msg);
                 end if;
                 
                 mon_count := monitored_item.monitor_time / monitored_item.sample_rate;
