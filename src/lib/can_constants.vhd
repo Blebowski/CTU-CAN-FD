@@ -119,7 +119,7 @@ package can_constants is
         std_logic_vector(to_unsigned(5, 9));
 
     constant C_OVR_DELIM_DURATION : std_logic_vector(8 downto 0) :=
-        std_logic_vector(to_unsigned(5, 9));
+        std_logic_vector(to_unsigned(6, 9));
 
     constant C_DELIM_WAIT_DURATION : std_logic_vector(8 downto 0) :=
         std_logic_vector(to_unsigned(6, 9));
