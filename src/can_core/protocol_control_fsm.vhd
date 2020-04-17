@@ -463,6 +463,9 @@ entity protocol_control_fsm is
         -- Unit is Bus off
         is_bus_off              :in   std_logic;
         
+        -- Decrement REC
+        decrement_rec           :out  std_logic;
+
         -----------------------------------------------------------------------
         -- Other control signals
         -----------------------------------------------------------------------
@@ -496,9 +499,6 @@ entity protocol_control_fsm is
 
         -- Transmitted frame is valid
         tran_valid              :out   std_logic;
-
-        -- ACK received
-        ack_received            :out   std_logic;
 
         -- CRC calculation enabled
         crc_enable              :out   std_logic;
@@ -726,8 +726,9 @@ architecture rtl of protocol_control_fsm is
     -- Increment Retransmitt counter by 1
     signal retr_ctr_add_i            :  std_logic;
 
+    -- Decrement Receive error counter (internal value)
+    signal decrement_rec_i           :  std_logic;
 
-    
     -- Blocking register for retransmitt counter add signal.
     signal retr_ctr_add_block        :  std_logic;
     signal retr_ctr_add_block_clr    :  std_logic;
@@ -1093,7 +1094,8 @@ begin
                 end if;
 
             -------------------------------------------------------------------
-            -- Secondary CRC Delimiter, or an ACK Slot if DOMINANT.
+            -- Secondary CRC Delimiter (Transmitter of FD frame only), or an
+            -- ACK Slot if DOMINANT.
             -------------------------------------------------------------------
             when s_pc_crc_delim_sec =>
                 if (rx_data_nbs = DOMINANT) then
@@ -1400,7 +1402,6 @@ begin
         set_err_active_i <= '0';
         
         br_shifted_i <= '0';
-        ack_received <= '0';
 
         -- Bit Stuffing/Destuffing control
         stuff_length <= std_logic_vector(to_unsigned(5, 3));
@@ -1446,6 +1447,7 @@ begin
         is_sof          <= '0';
         
         clr_bus_off_rst_flg <= '0';
+        decrement_rec_i <= '0';
 
         if (err_frm_req = '1') then
             tick_state_reg <= '1';
@@ -2082,6 +2084,10 @@ begin
                 dbt_ctrs_en <= '1';
                 bit_err_disable <= '1';
                 
+                -- Note: We don't have to consider decrement of REC here,
+                --       because we get here only for transmitter of CAN FD
+                --       frame!
+
             -------------------------------------------------------------------
             -- ACK Slot, or a ACK delim, if previous two bits were recessive!
             -------------------------------------------------------------------
@@ -2096,21 +2102,23 @@ begin
                     drv_ack_forb = '0')
                 then
                     tx_dominant <= '1';
-                
+
                 -- Bit Error still shall be detected when unit sends dominant
                 -- (receiver) and receives recessive!
                 else
                     bit_err_disable <= '1';
                 end if;
-                
+
+                if (is_receiver = '1' and crc_match = '1' and
+                    rx_data_nbs = DOMINANT)
+                then
+                    decrement_rec_i <= '1';
+                end if;
+
                 if (is_transmitter = '1' and drv_self_test_ena = '0' and
                     rx_data_nbs = RECESSIVE)
                 then
                     ack_err_i <= '1';
-                end if;
-                
-                if (rx_data_nbs = DOMINANT) then
-                    ack_received <= '1';
                 end if;
 
             -------------------------------------------------------------------
@@ -2130,10 +2138,6 @@ begin
 
                 if (is_receiver = '1' and crc_match = '0') then
                     crc_err_i <= '1';
-                end if;
-
-                if (rx_data_nbs = DOMINANT) then
-                    ack_received <= '1';
                 end if;
 
             -------------------------------------------------------------------
@@ -2753,6 +2757,7 @@ begin
     ack_err <= ack_err_i and rx_trigger; 
     crc_err <= crc_err_i and rx_trigger;
     bit_err_arb <= bit_err_arb_i and rx_trigger;
+    decrement_rec <= decrement_rec_i and rx_trigger;
 
     -----------------------------------------------------------------------
     -- Switching of Bit-rate

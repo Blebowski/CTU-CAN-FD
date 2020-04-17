@@ -366,7 +366,6 @@ architecture rtl of can_core is
     signal tran_delay_meas_i       :    std_logic;
     signal tran_valid_i            :    std_logic;
     signal rec_valid_i             :    std_logic;
-    signal ack_received_i          :    std_logic;
     signal br_shifted_i            :    std_logic;
     
     -- Fault confinement status signals
@@ -446,6 +445,9 @@ architecture rtl of can_core is
     
     signal retr_ctr_i              :     std_logic_vector(G_RETR_LIM_CTR_WIDTH - 1 downto 0);
     
+    -- Decrement Receive Error counter
+    signal decrement_rec           :     std_logic;
+
 begin
   
     ----------------------------------------------------------------------------
@@ -580,9 +582,9 @@ begin
         tran_delay_meas         => tran_delay_meas_i,   -- OUT
         tran_valid              => tran_valid_i,        -- OUT
         rec_valid               => rec_valid_i,         -- OUT
-        
+        decrement_rec           => decrement_rec,       -- OUT
+
         -- Status signals
-        ack_received            => ack_received_i,      -- OUT
         br_shifted              => br_shifted_i,        -- OUT
         form_err                => form_err,            -- OUT
         ack_err                 => ack_err,             -- OUT
@@ -654,6 +656,7 @@ begin
         err_delim_late          => err_delim_late,          -- IN
         tran_valid              => tran_valid_i,            -- IN
         rec_valid               => rec_valid_i,             -- IN
+        decrement_rec           => decrement_rec,           -- IN
 
         -- Fault confinement State indication
         is_err_active           => is_err_active,           -- OUT
@@ -895,6 +898,7 @@ begin
     stat_bus(113)            <= '0';
     stat_bus(115)            <= '0';
     stat_bus(183)            <= '0';
+    stat_bus(255)            <= '0';
     stat_bus(120 downto 118) <= (OTHERS => '0');
     stat_bus(178 downto 158) <= (OTHERS => '0');
 
@@ -1129,9 +1133,6 @@ begin
 
     stat_bus(STAT_ERR_VALID_INDEX) <=
         err_detected_i;
- 
-    stat_bus(STAT_ACK_RECIEVED_OUT_INDEX) <=
-        ack_received_i;
         
     stat_bus(STAT_BIT_ERR_VALID_INDEX) <=
         bit_err;

@@ -393,13 +393,13 @@ entity protocol_control is
 
         -- Received frame is valid
         rec_valid               :out  std_logic;
+        
+        -- Decrement Receive Error counter
+        decrement_rec           :out  std_logic;
 
         -----------------------------------------------------------------------
         -- Status signals
         -----------------------------------------------------------------------
-        -- ACK received
-        ack_received            :out  std_logic;
-
         -- Bit rate shifted
         br_shifted              :out  std_logic;
         
@@ -788,7 +788,8 @@ begin
         is_err_active           => is_err_active,           -- IN
         is_err_passive          => is_err_passive,          -- IN
         is_bus_off              => is_bus_off,              -- IN
-
+        decrement_rec           => decrement_rec,           -- OUT
+        
         -- Other control signals
         sp_control              => sp_control,              -- OUT
         sp_control_q            => sp_control_q,            -- OUT
@@ -799,7 +800,6 @@ begin
         ssp_reset               => ssp_reset,               -- OUT
         tran_delay_meas         => tran_delay_meas,         -- OUT
         tran_valid              => tran_valid,              -- OUT
-        ack_received            => ack_received,            -- OUT
         crc_enable              => crc_enable,              -- OUT
         crc_spec_enable         => crc_spec_enable,         -- OUT
         crc_calc_from_rx        => crc_calc_from_rx,        -- OUT

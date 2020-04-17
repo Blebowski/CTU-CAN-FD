@@ -97,8 +97,8 @@ entity fault_confinement_rules is
         -- Transmission of frame valid
         tran_valid              :in   std_logic;
         
-        -- Reception of frame valid
-        rec_valid               :in   std_logic;
+        -- Decrement receive Error counter
+        decrement_rec           :in   std_logic;
 
         -----------------------------------------------------------------------
         -- Output signals to error counters
@@ -150,7 +150,7 @@ begin
     ---------------------------------------------------------------------------
     -- Decrement by 1 when either transmission or reception is valid
     ---------------------------------------------------------------------------
-    dec_one <= '1' when (rec_valid = '1' or tran_valid = '1') else
+    dec_one <= '1' when (decrement_rec = '1' or tran_valid = '1') else
                '0';
 
 end architecture;
