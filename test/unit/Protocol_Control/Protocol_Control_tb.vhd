@@ -259,7 +259,6 @@ architecture Protocol_Control_unit_test of CAN_test is
     signal rec_valid_1               :  std_logic;
 
     -- Status signals
-    signal ack_received_1            :  std_logic;
     signal br_shifted_1              :  std_logic;
     signal form_err_1              :  std_logic;
     signal ack_err_1               :  std_logic;
@@ -368,7 +367,6 @@ architecture Protocol_Control_unit_test of CAN_test is
     signal rec_valid_2               :  std_logic;
 
     -- Status signals
-    signal ack_received_2            :  std_logic;
     signal br_shifted_2              :  std_logic;
     signal form_err_2              :  std_logic;
     signal ack_err_2               :  std_logic;
@@ -769,7 +767,6 @@ begin
         rec_valid               => rec_valid_1,
 
         -- Status signals
-        ack_received            => ack_received_1,
         br_shifted              => br_shifted_1,
         form_err              => form_err_1,
         ack_err               => ack_err_1,
@@ -890,7 +887,6 @@ begin
         rec_valid               => rec_valid_2,
 
         -- Status signals
-        ack_received            => ack_received_2,
         br_shifted              => br_shifted_2,
         form_err                => form_err_2,
         ack_err                 => ack_err_2,

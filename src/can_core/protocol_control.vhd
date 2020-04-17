@@ -400,9 +400,6 @@ entity protocol_control is
         -----------------------------------------------------------------------
         -- Status signals
         -----------------------------------------------------------------------
-        -- ACK received
-        ack_received            :out  std_logic;
-
         -- Bit rate shifted
         br_shifted              :out  std_logic;
         
@@ -803,7 +800,6 @@ begin
         ssp_reset               => ssp_reset,               -- OUT
         tran_delay_meas         => tran_delay_meas,         -- OUT
         tran_valid              => tran_valid,              -- OUT
-        ack_received            => ack_received,            -- OUT
         crc_enable              => crc_enable,              -- OUT
         crc_spec_enable         => crc_spec_enable,         -- OUT
         crc_calc_from_rx        => crc_calc_from_rx,        -- OUT

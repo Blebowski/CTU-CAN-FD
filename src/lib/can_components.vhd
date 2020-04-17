@@ -1882,9 +1882,6 @@ package can_components is
         -- Transmitted frame is valid
         tran_valid              :out   std_logic;
 
-        -- ACK received
-        ack_received            :out   std_logic;
-
         -- CRC calculation enabled
         crc_enable              :out   std_logic;
         
@@ -2245,9 +2242,6 @@ package can_components is
         -----------------------------------------------------------------------
         -- Status signals
         -----------------------------------------------------------------------
-        -- ACK received
-        ack_received            :out  std_logic;
-
         -- Bit rate shifted
         br_shifted              :out  std_logic;
         

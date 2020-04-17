@@ -371,8 +371,6 @@ package drv_stat_pkg is
     constant STAT_EWL_REACHED_INDEX : natural := 253;
     constant STAT_ERR_VALID_INDEX : natural := 254;
 
-    constant STAT_ACK_RECIEVED_OUT_INDEX : natural := 255;
-
     constant STAT_BIT_ERR_VALID_INDEX : natural := 256;
 
     constant STAT_BS_CTR_HIGH : natural := 302;

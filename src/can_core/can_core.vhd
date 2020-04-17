@@ -366,7 +366,6 @@ architecture rtl of can_core is
     signal tran_delay_meas_i       :    std_logic;
     signal tran_valid_i            :    std_logic;
     signal rec_valid_i             :    std_logic;
-    signal ack_received_i          :    std_logic;
     signal br_shifted_i            :    std_logic;
     
     -- Fault confinement status signals
@@ -586,7 +585,6 @@ begin
         decrement_rec           => decrement_rec,       -- OUT
 
         -- Status signals
-        ack_received            => ack_received_i,      -- OUT
         br_shifted              => br_shifted_i,        -- OUT
         form_err                => form_err,            -- OUT
         ack_err                 => ack_err,             -- OUT
@@ -900,6 +898,7 @@ begin
     stat_bus(113)            <= '0';
     stat_bus(115)            <= '0';
     stat_bus(183)            <= '0';
+    stat_bus(255)            <= '0';
     stat_bus(120 downto 118) <= (OTHERS => '0');
     stat_bus(178 downto 158) <= (OTHERS => '0');
 
@@ -1134,9 +1133,6 @@ begin
 
     stat_bus(STAT_ERR_VALID_INDEX) <=
         err_detected_i;
- 
-    stat_bus(STAT_ACK_RECIEVED_OUT_INDEX) <=
-        ack_received_i;
         
     stat_bus(STAT_BIT_ERR_VALID_INDEX) <=
         bit_err;

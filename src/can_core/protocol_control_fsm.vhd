@@ -500,9 +500,6 @@ entity protocol_control_fsm is
         -- Transmitted frame is valid
         tran_valid              :out   std_logic;
 
-        -- ACK received
-        ack_received            :out   std_logic;
-
         -- CRC calculation enabled
         crc_enable              :out   std_logic;
         
@@ -1405,7 +1402,6 @@ begin
         set_err_active_i <= '0';
         
         br_shifted_i <= '0';
-        ack_received <= '0';
 
         -- Bit Stuffing/Destuffing control
         stuff_length <= std_logic_vector(to_unsigned(5, 3));
@@ -2124,10 +2120,6 @@ begin
                 then
                     ack_err_i <= '1';
                 end if;
-                
-                if (rx_data_nbs = DOMINANT) then
-                    ack_received <= '1';
-                end if;
 
             -------------------------------------------------------------------
             -- Secondary ACK field (in FD Frames),or ACK Delimiter if RECESSIVE
@@ -2146,10 +2138,6 @@ begin
 
                 if (is_receiver = '1' and crc_match = '0') then
                     crc_err_i <= '1';
-                end if;
-
-                if (rx_data_nbs = DOMINANT) then
-                    ack_received <= '1';
                 end if;
 
             -------------------------------------------------------------------
