@@ -393,6 +393,9 @@ entity protocol_control is
 
         -- Received frame is valid
         rec_valid               :out  std_logic;
+        
+        -- Decrement Receive Error counter
+        decrement_rec           :out  std_logic;
 
         -----------------------------------------------------------------------
         -- Status signals
@@ -788,7 +791,8 @@ begin
         is_err_active           => is_err_active,           -- IN
         is_err_passive          => is_err_passive,          -- IN
         is_bus_off              => is_bus_off,              -- IN
-
+        decrement_rec           => decrement_rec,           -- OUT
+        
         -- Other control signals
         sp_control              => sp_control,              -- OUT
         sp_control_q            => sp_control_q,            -- OUT

@@ -902,7 +902,7 @@ package can_components is
         
         -- Unit is transmitter
         is_transmitter         :in   std_logic;
-        
+
         -- Unit is receiver
         is_receiver            :in   std_logic;
 
@@ -1019,8 +1019,8 @@ package can_components is
         -- Transmission of frame valid
         tran_valid              :in   std_logic;
         
-        -- Reception of frame valid
-        rec_valid               :in   std_logic;
+        -- Decrement receive Error counter
+        decrement_rec           :in   std_logic;
 
         -----------------------------------------------------------------------
         -- Output signals to error counters
@@ -1105,6 +1105,9 @@ package can_components is
         
         -- Reception of frame valid
         rec_valid               :in   std_logic;
+        
+        -- Decrement receive Error counter
+        decrement_rec           :in   std_logic;
 
         -----------------------------------------------------------------------
         -- Fault confinement State indication
@@ -1842,6 +1845,9 @@ package can_components is
         -- Unit is Bus off
         is_bus_off              :in   std_logic;
         
+        -- Decrement REC
+        decrement_rec           :out  std_logic;
+
         -----------------------------------------------------------------------
         -- Other control signals
         -----------------------------------------------------------------------
@@ -2232,6 +2238,9 @@ package can_components is
 
         -- Received frame is valid
         rec_valid               :out  std_logic;
+        
+        -- Decrement Receive Error counter
+        decrement_rec           :out  std_logic;
 
         -----------------------------------------------------------------------
         -- Status signals

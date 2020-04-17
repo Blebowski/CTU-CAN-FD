@@ -134,6 +134,9 @@ entity fault_confinement is
         
         -- Reception of frame valid
         rec_valid               :in   std_logic;
+        
+        -- Decrement receive Error counter
+        decrement_rec           :in   std_logic;
 
         -----------------------------------------------------------------------
         -- Fault confinement State indication
@@ -278,7 +281,7 @@ begin
         act_err_ovr_flag       => act_err_ovr_flag,     -- IN
         err_delim_late         => err_delim_late,       -- IN
         tran_valid             => tran_valid,           -- IN
-        rec_valid              => rec_valid,            -- IN
+        decrement_rec          => decrement_rec,        -- IN
 
         inc_one                => inc_one,              -- OUT
         inc_eight              => inc_eight,            -- OUT

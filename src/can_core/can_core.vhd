@@ -446,6 +446,9 @@ architecture rtl of can_core is
     
     signal retr_ctr_i              :     std_logic_vector(G_RETR_LIM_CTR_WIDTH - 1 downto 0);
     
+    -- Decrement Receive Error counter
+    signal decrement_rec           :     std_logic;
+
 begin
   
     ----------------------------------------------------------------------------
@@ -580,7 +583,8 @@ begin
         tran_delay_meas         => tran_delay_meas_i,   -- OUT
         tran_valid              => tran_valid_i,        -- OUT
         rec_valid               => rec_valid_i,         -- OUT
-        
+        decrement_rec           => decrement_rec,       -- OUT
+
         -- Status signals
         ack_received            => ack_received_i,      -- OUT
         br_shifted              => br_shifted_i,        -- OUT
@@ -654,6 +658,7 @@ begin
         err_delim_late          => err_delim_late,          -- IN
         tran_valid              => tran_valid_i,            -- IN
         rec_valid               => rec_valid_i,             -- IN
+        decrement_rec           => decrement_rec,           -- IN
 
         -- Fault confinement State indication
         is_err_active           => is_err_active,           -- OUT
