@@ -25464,7 +25464,7 @@ Stores single CAN frame for transmission in internal RAM memory.
 \end_layout
 
 \begin_layout Itemize
-Manages HW and SW access to this RAM memory.
+Manages access from HW and SW to this RAM memory.
 \end_layout
 
 \begin_layout Itemize
@@ -25483,6 +25483,7 @@ filename "entity_docs/txt_buffer.lyx"
 
 \begin_layout Standard
 There are 4 TXT buffers in CTU CAN FD.
+ Each TXT buffer contains 1 RAM memory.
  Each TXT buffer RAM is accessed by SW via Memory registers as described
  in 
 \begin_inset CommandInset citation
@@ -25495,11 +25496,12 @@ literal "false"
 .
  SW stores CAN frame to TXT buffer.
  For SW, TXT buffer RAM is write-only.
- TXT buffer RAM is also accessed by Protocol control FSM and TX arbitrator
- which read CAN frame from TXT buffer and transmitts it on CAN Bus.
+ TXT buffer RAM is also accessed by Protocol control FSM and TX arbitrator.
+ TX arbitrator reads parts of CAN frame as part of TXT buffer valiation.
+ Protocol control FSM reads data words from TXT buffer RAM as part of their
+ transmission on CAN bus.
  For Protocol control and TX arbitrator, TXT buffer is read-only.
- TXT buffer is managed by Protocol control FSM which is shown in Figure
- 
+ TXT buffer is managed by FSM which is shown in Figure 
 \begin_inset CommandInset ref
 LatexCommand ref
 reference "fig:txt-buffer-fsm"
@@ -25561,7 +25563,7 @@ status open
 \begin_inset Caption Standard
 
 \begin_layout Plain Layout
-TXT Buffer FSM
+TXT buffer FSM
 \begin_inset CommandInset label
 LatexCommand label
 name "fig:txt-buffer-fsm"
@@ -25607,7 +25609,9 @@ noprefix "false"
 \end_inset
 
 .
- Behaviour of simultaneous SW and HW commands is described in Table 
+ Since operation of SW and Protocol control FSM are not synchronized, HW
+ and SW commands can occur simultaneously.
+ Behavior in such cases is described in Table 
 \begin_inset CommandInset ref
 LatexCommand ref
 reference "tab:txt-buffer-simul-hw-sw-commands"
@@ -25621,8 +25625,7 @@ noprefix "false"
  If SW command is applied to TXT buffer FSM in state for which it is not
  valid, it has no effect.
  HW command is never applied in TXT buffer FSM state for which it is not
- valid.
- 
+ valid (there are design assertions to prove that).
 \end_layout
 
 \begin_layout Standard
@@ -25764,8 +25767,7 @@ Empty, TX OK, Aborted, TX failed
 \begin_inset Text
 
 \begin_layout Plain Layout
-SW has filled TXT buffer RAM with CAN frame and wants to transmitt this
- frame.
+SW stored CAN frame to TXT buffer RAM and wants to transmit this frame.
 \end_layout
 
 \end_inset
@@ -26227,9 +26229,7 @@ Ready
 \begin_inset Text
 
 \begin_layout Plain Layout
-TXT buffer is locked for transmission, Protocol control transmitts from
- this buffer.
- TXT buffer becomes 
+TXT buffer becomes 
 \begin_inset Quotes eld
 \end_inset
 
@@ -26237,7 +26237,7 @@ Abort in progress
 \begin_inset Quotes erd
 \end_inset
 
- and transmission is attempted only once.
+, Protocol control attempts to do do single transmission from thix TXT buffer.
 \end_layout
 
 \end_inset
@@ -26377,8 +26377,8 @@ Aborted
 
 .
  No more transmissions are attempted from this TXT buffer.
- In this case SW command has priority over HW command to guarantee that
- SW command will not be lost!
+ In this case SW command has priority over HW command.
+ Due to this, transmissions will not go on from thix TXT buffer.
 \end_layout
 
 \end_inset
@@ -26426,8 +26426,8 @@ File: txt_buffer_ram.vhd
 \end_layout
 
 \begin_layout Standard
-TXT buffer RAM is written by SW (port A) and read by Protocol Control (port
- B).
+TXT buffer RAM is written by SW (port A) and read by Protocol Control FSM
+ (port B).
  With regards to accessibility, TXT buffer RAM can be in two states: Unlocked
  and Locked.
  TXT buffer FSM states corresponding to Locked and Unlocked state of TXT
@@ -26674,8 +26674,8 @@ TXT buffer moves to Ready state.
 \begin_inset Text
 
 \begin_layout Plain Layout
-TX validates TXT buffer for transmission and indicates this to Protocol
- control.
+TX arbitrator validates TXT buffer for transmission and indicates this to
+ Protocol control.
  On third bit of 
 \color red
 intermission
@@ -27309,7 +27309,7 @@ arbitration
  is lost, Protocol control issues Unlock - error or Unlock - arbitration
  lost command.
  TXT buffer moves to state Ready.
- Retransmitt counter is incremented to 1.
+ Retransmitt counter is incremented by 1.
 \end_layout
 
 \end_inset
@@ -28193,11 +28193,7 @@ Selected
 
 \begin_layout Plain Layout
 TXT buffer is Selected when it is Available with highest priority out of
- all Available
-\begin_inset Quotes erd
-\end_inset
-
- TXT buffers.
+ all Available TXT buffers.
 \end_layout
 
 \end_inset
@@ -28721,7 +28717,7 @@ idle
 \begin_layout Plain Layout
 TX arbitrator is Locked and it is waiting for Unlock command.
  No TXT buffer validation is in progress.
- If another higher priority TXT buffer becomes Available this has no effect
+ If another higher priority TXT buffer became Available this has no effect
  as frame transmission is already in progress.
 \end_layout
 
@@ -28756,7 +28752,7 @@ Protocol control transmitts frame from TXT buffer 1, and issues Unlock -
  buffer FSM moves to TX OK).
  Since TXT buffer 1 was only TXT buffer which was Available before the transmiss
 ion, now there is no TXT buffer which is Available.
- Therefore no TXT buffer is Selected and no TXT buffer validation is in
+ Therefore no TXT buffer is Selected, and no TXT buffer validation is in
  progress.
  TX arbitrator signals there is no Validated TXT buffer to CAN Core.
 \end_layout
@@ -28779,7 +28775,7 @@ ion, now there is no TXT buffer which is Available.
 
 \begin_layout Plain Layout
 SW reads state of TXT buffer 1 and finds out whether transmission was aborted
- or it ended succesfully (or an Interrupt can be fired).
+ or it ended succesfully.
 \end_layout
 
 \end_inset
@@ -29032,7 +29028,7 @@ TXT buffer 2 FSM goes to Ready state and therefore TXT buffer 2 becomes
 \begin_inset Text
 
 \begin_layout Plain Layout
-TXT buffer 2 validation process restarts with TXT buffer 2.
+TXT buffer validation process restarts with TXT buffer 2.
  During this time TXT buffer 1 remains Validated (TXT buffer 1 is still
  Available).
  If during validation process of TXT buffer 2, Protocol control issued HW
@@ -29067,8 +29063,8 @@ TXT buffer 2 validation process restarts with TXT buffer 2.
 \begin_layout Plain Layout
 TX arbitrator finishes validation process (loads timestamp words, executes
  timestamp comparison, loads metadata) of TXT buffer 2.
- At the end TXT buffer 2 becomes Validated and TXT buffer 1 (which was Validated
- till now) becomes Available.
+ At the end, TXT buffer 2 becomes Validated and TXT buffer 1 (which was
+ Validated till now) becomes Available.
 \end_layout
 
 \end_inset
@@ -29160,6 +29156,15 @@ tran_frame_valid
  any TXT buffer available for transmission, while actually two TXT buffers
  are in Ready state.
  This effect is undesirable.
+\end_layout
+
+\begin_layout Description
+Note: Due to meta-data double buffering, validated TXT buffer is swapped
+ atomically (TXT buffer index, identifer and loaded metadata) from Protocol
+ control point of view.
+ It can never occur that e.g.
+ data will be transmitted from TXT buffer 1 with incorrect metadata or identifie
+r, this would be a bug.
 \end_layout
 
 \begin_layout Standard
@@ -30009,7 +30014,7 @@ Lock command from Protocol control.
 \end_layout
 
 \begin_layout Standard
-Handling of these events is resolved by following set of requirements:
+Handling of these events is resolved like so:
 \end_layout
 
 \begin_layout Itemize
@@ -30033,13 +30038,6 @@ usly.
 \end_layout
 
 \begin_layout Itemize
-Lock command occurs at them same time as suddenly, no TXT buffer is available
- (but was in previous cycle, this is the same situation as previous point).
- TX Arbitrator FSM shall become Locked.
- 
-\end_layout
-
-\begin_layout Itemize
 Lock command occurs at the same time as Selected TXT Buffer is changed.
  Lock command shall have priority and TX Arbitrator FSM shall become Locked.
 \end_layout
@@ -30058,8 +30056,8 @@ TXT buffer addressing
 \begin_layout Standard
 During TXT buffer validation process, TX arbitrator is accessing TXT buffer
  memories and loads Frame format, Identifier, Timestamp low and Timestamp
- High registers, therefore TXT buffer address is given by TX arbitrator
- FSM.
+ High words, therefore TXT buffer RAM address on port B is given by TX arbitrato
+r FSM.
 \end_layout
 
 \begin_layout Standard
