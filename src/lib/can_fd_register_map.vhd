@@ -230,6 +230,7 @@ package can_fd_register_map is
   constant ILBP_IND              : natural := 21;
   constant ENA_IND               : natural := 22;
   constant NISOFD_IND            : natural := 23;
+  constant PEX_IND               : natural := 24;
 
   -- "RTRLE" field enumerated values
   constant RTRLE_DISABLED     : std_logic := '0';
@@ -247,12 +248,17 @@ package can_fd_register_map is
   constant ISO_FD             : std_logic := '0';
   constant NON_ISO_FD         : std_logic := '1';
 
+  -- "PEX" field enumerated values
+  constant PROTOCOL_EXCEPTION_DISABLED : std_logic := '0';
+  constant PROTOCOL_EXCEPTION_ENABLED : std_logic := '1';
+
   -- SETTINGS register reset values
   constant RTRLE_RSTVAL       : std_logic := '0';
   constant RTRTH_RSTVAL : std_logic_vector(3 downto 0) := x"0";
   constant ILBP_RSTVAL        : std_logic := '0';
   constant ENA_RSTVAL         : std_logic := '0';
   constant NISOFD_RSTVAL      : std_logic := '0';
+  constant PEX_RSTVAL         : std_logic := '0';
 
   ------------------------------------------------------------------------------
   -- STATUS register

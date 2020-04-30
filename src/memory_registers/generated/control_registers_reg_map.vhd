@@ -143,7 +143,7 @@ begin
     settings_reg_comp : memory_reg
     generic map(
         data_width                      => 16 ,
-        data_mask                       => "0000000011111111" ,
+        data_mask                       => "0000000111111111" ,
         reset_polarity                  => RESET_POLARITY ,
         reset_value                     => "0000000000000000" ,
         auto_clear                      => "0000000000000000" ,
