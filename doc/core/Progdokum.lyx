@@ -509,7 +509,7 @@ filename "version.tex"
 \noindent
 \align center
 \begin_inset Tabular
-<lyxtabular version="3" rows="14" columns="4">
+<lyxtabular version="3" rows="15" columns="4">
 <features tabularvalignment="middle">
 <column alignment="center" valignment="top" width="1.5cm">
 <column alignment="center" valignment="top" width="2cm">
@@ -1020,11 +1020,49 @@ Clarify behaviour of Transmitter delay measurement.
 </cell>
 </row>
 <row>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
 2.2.4
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Ondrej Ille
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+13-12-2019
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Clarify that only TEC above 255 will cause node to go Bus off.
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+2.2.5
 \end_layout
 
 \end_inset
@@ -1042,7 +1080,7 @@ Ondrej Ille
 \begin_inset Text
 
 \begin_layout Plain Layout
-13-12-2019
+30-4-2020
 \end_layout
 
 \end_inset
@@ -1051,7 +1089,7 @@ Ondrej Ille
 \begin_inset Text
 
 \begin_layout Plain Layout
-Clarify that only TEC above 255 will cause node to go Bus off.
+Add SETTING[PEX] and Protocol exception support.
 \end_layout
 
 \end_inset
@@ -2610,12 +2648,341 @@ n 1.0.
  This register shall be modified only when SETTINGS[ENA] = 0.
 \end_layout
 
+\begin_layout Subsection
+Implementation type
+\end_layout
+
 \begin_layout Standard
-CTU CAN FD can be configured to support only CAN 2.0 protocol.
- When MODE[FDE] = 0, CTU CAN FD can't receive CAN FD frames and transmitts
- error frames as response to CAN FD frames.
- When MODE[FDE] = 0, SW shall not insert CAN FD frames for transmission
- as this will also result in transmission of error frames.
+ISO11898-1 2015 defines three implementation types of CAN protocol: Classical
+ CAN, CAN FD tolerant and CAN FD enabled.
+ CTU CAN FD supports all three implementation types and compliance to each
+ implementation can be changed via MODE[FDE] and SETTINGS[PEX] registers.
+ Both of these registers chall be modified only when SETTINGS[ENA] = 0.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float table
+placement h
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\noindent
+\align center
+\begin_inset Tabular
+<lyxtabular version="3" rows="5" columns="4">
+<features tabularvalignment="middle">
+<column alignment="left" valignment="top" width="17text%">
+<column alignment="left" valignment="top" width="10text%">
+<column alignment="left" valignment="top" width="10text%">
+<column alignment="left" valignment="top" width="52text%">
+<row>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Implementation type
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+cellcolor{gray}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+MODE[FDE]
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+cellcolor{gray}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+SETTING[PEX]
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+cellcolor{gray}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Behavior
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+cellcolor{gray}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Classical CAN
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+0
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+0
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+When CTU CAN FD detects recessive FDF bit, it responds with error frame.
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+CAN FD tolerant
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+0
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+1
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+When CTU CAN FD detects recessive FDF bit, it enters bus integration state.
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+CAN FD enabled
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+1
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+0
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+CTU CAN FD is able to receive / transmit CAN FD frames.
+ When CTU CAN FD detects recessive value on position of 
+\begin_inset Quotes eld
+\end_inset
+
+res
+\begin_inset Quotes erd
+\end_inset
+
+ bit (one bit after FDF bit), it responds with error frame.
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+CAN FD enabled - with protocol exception
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+1
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+1
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+CTU CAN FD is able to receive / transmit CAN FD frames.
+ When CTU CAN FD detects recessive value on position of 
+\begin_inset Quotes eld
+\end_inset
+
+res
+\begin_inset Quotes erd
+\end_inset
+
+ bit (one bit after FDF bit), it enters bus integration state.
+ This configuration tolerates future extensions of CAN FD protocol (e.g.
+ CAN XL).
+\end_layout
+
+\end_inset
+</cell>
+</row>
+</lyxtabular>
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\noindent
+\align center
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+CAN implementation type
+\begin_inset CommandInset label
+LatexCommand label
+name "tab:apb-interface"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Description
+Note When CTU CAN FD is configured as Classical CAN / CAN FD tolerant node
+ and user attempts to send CAN FD frame (FRAME_FORMAT[FDF_BIT] = 1 in TXT
+ buffer), it will detect error upon its own transmitted frame.
+ Therefore SW shall not attempt to send CAN FD frames when CTU CAN FD is
+ configured as Classical CAN / CAN FD tolerant node.
+\end_layout
+
+\begin_layout Description
+Note When CTU CAN FD is configured as Classical CAN / CAN FD tolerant node,
+ SETTINGS[NISOFD] register has no effect.
 \end_layout
 
 \begin_layout Subsection
