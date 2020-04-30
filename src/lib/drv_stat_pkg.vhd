@@ -217,6 +217,8 @@ package drv_stat_pkg is
 
     constant DRV_ENA_INDEX     : natural := 509;
     constant DRV_FD_TYPE_INDEX : natural := 510;
+    
+    constant DRV_PEX_INDEX     : natural := 511;
 
     ----------------------------------------------------------------------------
     -- RX, TX and TXT Buffer frame format signal indexes
