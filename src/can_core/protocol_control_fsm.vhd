@@ -1771,13 +1771,6 @@ begin
                 if (is_transmitter = '1') then
                     tx_dominant <= '1';
                 end if;
-                
-                -- Here recessive would mean further extending beyond CAN FD
-                -- protocol (CAN XL in future). Now we don't have protocol
-                -- exception, so we throw error here!
-                if (rx_data_nbs = RECESSIVE) then
-                    form_err_i <= '1';
-                end if;
 
             -------------------------------------------------------------------
             -- r0 bit in CAN FD Frames (both Base and Extended identifier)
