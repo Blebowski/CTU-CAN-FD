@@ -511,7 +511,7 @@ filename "version.tex"
 \noindent
 \align center
 \begin_inset Tabular
-<lyxtabular version="3" rows="7" columns="5">
+<lyxtabular version="3" rows="8" columns="5">
 <features tabularvalignment="middle">
 <column alignment="center" valignment="top" width="1.5cm">
 <column alignment="center" valignment="top" width="3cm">
@@ -802,11 +802,67 @@ Replace SSP shift register by SSP generator.
 </cell>
 </row>
 <row>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
 0.6
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+2.2
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Ondrej Ille
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+13-12-2019
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Add 
+\begin_inset Quotes eld
+\end_inset
+
+Error delimiter too long
+\begin_inset Quotes erd
+\end_inset
+
+ state to Protocol control FSM.
+ Clear non-actual TODOs.
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+0.7
 \end_layout
 
 \end_inset
@@ -833,7 +889,7 @@ Ondrej Ille
 \begin_inset Text
 
 \begin_layout Plain Layout
-13-12-2019
+30-04-2020
 \end_layout
 
 \end_inset
@@ -842,16 +898,9 @@ Ondrej Ille
 \begin_inset Text
 
 \begin_layout Plain Layout
-Add 
-\begin_inset Quotes eld
-\end_inset
-
-Error delimiter too long
-\begin_inset Quotes erd
-\end_inset
-
- state to Protocol control FSM.
- Clear non-actual TODOs.
+Add note about implementation types.
+ Remove form error on EDL/R0.
+ Update Protocol control FSM to handle protocol exception.
 \end_layout
 
 \end_inset
