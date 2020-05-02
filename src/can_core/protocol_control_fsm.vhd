@@ -138,6 +138,9 @@ entity protocol_control_fsm is
         -- Secondary sampling point delay select
         drv_ssp_delay_select    :in   std_logic_vector(1 downto 0);
         
+        -- Protocol exception handling
+        drv_pex                 :in   std_logic;
+        
         -- Control field is being transmitted
         is_control              :out  std_logic;
 
@@ -744,7 +747,11 @@ architecture rtl of protocol_control_fsm is
     signal ctrl_signal_upd           :  std_logic;
     
     -- Clear bus-off reset flag
-    signal clr_bus_off_rst_flg       :  std_logic; 
+    signal clr_bus_off_rst_flg       :  std_logic;
+    
+    -- Protocol exception signals
+    signal pex_on_fdf_enable         :  std_logic;
+    signal pex_on_res_enable         :  std_logic;
     
 begin
 
@@ -818,6 +825,16 @@ begin
                                    curr_state = s_pc_ovr_flag or
                                    curr_state = s_pc_ovr_delim_wait or
                                    curr_state = s_pc_ovr_delim)
+                             else
+                         '0';
+
+    pex_on_fdf_enable <= '1' when (drv_ena = FDE_DISABLE and
+                                   drv_pex = PROTOCOL_EXCEPTION_ENABLED) 
+                             else
+                         '0';
+
+    pex_on_res_enable <= '1' when (drv_ena = FDE_ENABLE and
+                                   drv_pex = PROTOCOL_EXCEPTION_ENABLED)
                              else
                          '0';
 
@@ -1001,7 +1018,11 @@ begin
                 if (rx_data_nbs = DOMINANT) then
                     next_state <= s_pc_r0_ext;
                 else
-                    next_state <= s_pc_r0_fd; 
+                    if (pex_on_fdf_enable = '1') then
+                        next_state <= s_pc_integrating;
+                    else
+                        next_state <= s_pc_r0_fd;
+                    end if; 
                 end if;
                     
             -------------------------------------------------------------------
@@ -1011,10 +1032,14 @@ begin
                 next_state <= s_pc_dlc;
 
             -------------------------------------------------------------------
-            -- r0 bit in CAN FD Frames (both Base and Extended identifier)
+            -- r0(res) bit in CAN FD Frames (both Base and Extended identifier)
             ------------------------------------------------------------------- 
             when s_pc_r0_fd =>
-                next_state <= s_pc_brs;    
+                if (rx_data_nbs = RECESSIVE and pex_on_res_enable = '1') then
+                    next_state <= s_pc_integrating;
+                else
+                    next_state <= s_pc_brs;
+                end if;    
                 
             -------------------------------------------------------------------
             -- EDL/r0 bit in CAN 2.0 and CAN FD Frames with BASE identifier
@@ -1024,7 +1049,13 @@ begin
                 if (rx_data_nbs = DOMINANT) then
                     next_state <= s_pc_dlc;
                 else
-                    next_state <= s_pc_r0_fd;
+                    -- Protocol exception on recessive FDF/EDL in "Classical CAN"
+                    -- configuration
+                    if (pex_on_fdf_enable = '1') then
+                        next_state <= s_pc_integrating;
+                    else
+                        next_state <= s_pc_r0_fd;
+                    end if;
                 end if; 
             
             -------------------------------------------------------------------
@@ -1746,11 +1777,29 @@ begin
                     end if;
                 end if;
                 
-                if ((drv_can_fd_ena = FDE_DISABLE) or
-                    (tran_frame_type = NORMAL_CAN and is_transmitter = '1'))
-                    and (rx_data_nbs = RECESSIVE)
+                -- Sample recessive but CAN FD is disabled -> Form error or
+                -- protocol exception!
+                if (rx_data_nbs = RECESSIVE and
+                    drv_can_fd_ena = FDE_DISABLE)
                 then
-                    form_err_i <= '1';
+                    if (drv_pex = PROTOCOL_EXCEPTION_DISABLED) then
+                        form_err_i <= '1';
+                    
+                    -----------------------------------------------------------
+                    -- Here we detect protocol exception. Although unit should
+                    -- not be transmitter at this moment (see datasheet), it
+                    -- is possible user is stupid! Unlock TXT Buffer so that
+                    -- it does not end up in deadlock!
+                    -----------------------------------------------------------
+                    elsif (is_transmitter = '1') then
+                        txtb_hw_cmd_d.unlock <= '1';
+                        stuff_enable_clear <= '1';
+                        if (tx_failed = '1') then
+                            txtb_hw_cmd_d.failed  <= '1';
+                        else
+                            txtb_hw_cmd_d.arbl    <= '1';
+                        end if;
+                    end if;
                 end if;
 
             -------------------------------------------------------------------
@@ -1770,13 +1819,6 @@ begin
                 
                 if (is_transmitter = '1') then
                     tx_dominant <= '1';
-                end if;
-                
-                -- Here recessive would mean further extending beyond CAN FD
-                -- protocol (CAN XL in future). Now we don't have protocol
-                -- exception, so we throw error here!
-                if (rx_data_nbs = RECESSIVE) then
-                    form_err_i <= '1';
                 end if;
 
             -------------------------------------------------------------------
@@ -1800,7 +1842,24 @@ begin
                 -- protocol (CAN XL in future). Now we don't have protocol
                 -- exception, so we throw error here!
                 if (rx_data_nbs = RECESSIVE) then
-                    form_err_i <= '1';
+                    if (drv_pex = PROTOCOL_EXCEPTION_DISABLED) then
+                        form_err_i <= '1';
+
+                    -----------------------------------------------------------
+                    -- Here we detect protocol exception. Although unit should
+                    -- not be transmitter at this moment (see datasheet), it
+                    -- is possible user is stupid! Unlock TXT Buffer so that
+                    -- it does not end up in deadlock!
+                    -----------------------------------------------------------
+                    elsif (is_transmitter = '1') then
+                        txtb_hw_cmd_d.unlock <= '1';
+                        stuff_enable_clear <= '1';
+                        if (tx_failed = '1') then
+                            txtb_hw_cmd_d.failed  <= '1';
+                        else
+                            txtb_hw_cmd_d.arbl    <= '1';
+                        end if;
+                    end if;
                 end if;
                 
             -------------------------------------------------------------------
@@ -1828,11 +1887,29 @@ begin
                     ssp_reset_i <= '1';
                 end if;
                 
-                if ((drv_can_fd_ena = FDE_DISABLE) or
-                    (tran_frame_type = NORMAL_CAN and is_transmitter = '1'))
-                    and (rx_data_nbs = RECESSIVE)
+                -- Sample recessive but CAN FD is disabled -> Form error or
+                -- protocol exception!
+                if (rx_data_nbs = RECESSIVE and
+                    drv_can_fd_ena = FDE_DISABLE)
                 then
-                    form_err_i <= '1';
+                    if (drv_pex = PROTOCOL_EXCEPTION_DISABLED) then
+                        form_err_i <= '1';
+
+                    -----------------------------------------------------------
+                    -- Here we detect protocol exception. Although unit should
+                    -- not be transmitter at this moment (see datasheet), it
+                    -- is possible user is stupid! Unlock TXT Buffer so that
+                    -- it does not end up in deadlock!
+                    -----------------------------------------------------------
+                    elsif (is_transmitter = '1') then
+                        txtb_hw_cmd_d.unlock <= '1';
+                        stuff_enable_clear <= '1';
+                        if (tx_failed = '1') then
+                            txtb_hw_cmd_d.failed  <= '1';
+                        else
+                            txtb_hw_cmd_d.arbl    <= '1';
+                        end if;
+                    end if;
                 end if;
 
             -------------------------------------------------------------------

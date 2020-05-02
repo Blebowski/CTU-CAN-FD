@@ -102,221 +102,178 @@ customHeadersFooters
 \end_header
 
 \begin_body
-
 \begin_layout Description
-Generics
-\end_layout
-
+Generics\end_layout
 \begin_layout Standard
 \noindent
 \align center
 \begin_inset Tabular
-<lyxtabular version="3" rows="4" columns="4">
-<features tabularvalignment="middle">
+<lyxtabular columns="4" rows="4" version="3">
+<features islongtable="true" longtabularalignment="center">
 <column alignment="center" valignment="top" width="4cm">
 <column alignment="center" valignment="top" width="3.5cm">
 <column alignment="center" valignment="top" width="1.2cm">
 <column alignment="center" valignment="top" width="7cm">
 <row>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+<cell alignment="center" leftline="true" topline="true" usebox="none" valignment="top">
 \begin_inset Text
 
 \begin_layout Plain Layout
-Name
-\begin_inset ERT
+Name\begin_inset ERT
 status open
-
 \begin_layout Plain Layout
-
-
 \backslash
 cellcolor{cyan}
 \end_layout
-
 \end_inset
-
-
 \end_layout
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+<cell alignment="center" leftline="true" topline="true" usebox="none" valignment="top">
 \begin_inset Text
 
 \begin_layout Plain Layout
-Type
-\begin_inset ERT
+Type\begin_inset ERT
 status open
-
 \begin_layout Plain Layout
-
-
 \backslash
 cellcolor{cyan}
 \end_layout
-
 \end_inset
-
-
 \end_layout
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+<cell alignment="center" leftline="true" topline="true" usebox="none" valignment="top">
 \begin_inset Text
 
 \begin_layout Plain Layout
-Default value
-\begin_inset ERT
+Default value\begin_inset ERT
 status open
-
 \begin_layout Plain Layout
-
-
 \backslash
 cellcolor{cyan}
 \end_layout
-
 \end_inset
-
-
 \end_layout
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+<cell alignment="center" leftline="true" rightline="true" topline="true" usebox="none" valignment="top">
 \begin_inset Text
 
 \begin_layout Plain Layout
-Description
-\begin_inset ERT
+Description\begin_inset ERT
 status open
-
 \begin_layout Plain Layout
-
-
 \backslash
 cellcolor{cyan}
 \end_layout
-
 \end_inset
-
-
 \end_layout
 
 \end_inset
 </cell>
 </row>
 <row>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+<cell alignment="center" leftline="true" topline="true" usebox="none" valignment="top">
 \begin_inset Text
 
 \begin_layout Plain Layout
-G_RESET_POLARITY
-\end_layout
+G_RESET_POLARITY\end_layout
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+<cell alignment="center" leftline="true" topline="true" usebox="none" valignment="top">
 \begin_inset Text
 
 \begin_layout Plain Layout
-std_logic
-\end_layout
+std_logic\end_layout
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+<cell alignment="center" leftline="true" topline="true" usebox="none" valignment="top">
 \begin_inset Text
 
 \begin_layout Plain Layout
-'0'
-\end_layout
+'0'\end_layout
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+<cell alignment="center" leftline="true" rightline="true" topline="true" usebox="none" valignment="top">
 \begin_inset Text
 
 \begin_layout Plain Layout
-Reset polarity
-\end_layout
+Reset polarity\end_layout
 
 \end_inset
 </cell>
 </row>
 <row>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+<cell alignment="center" leftline="true" topline="true" usebox="none" valignment="top">
 \begin_inset Text
 
 \begin_layout Plain Layout
-G_TXT_BUFFER_COUNT
+G_TXT_BUFFER_COUNT\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+natural range 1 to 8\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
 \end_layout
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+<cell alignment="center" leftline="true" rightline="true" topline="true" usebox="none" valignment="top">
 \begin_inset Text
 
 \begin_layout Plain Layout
-natural range 1 to 8
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-Number of TXT Buffers
-\end_layout
+Number of TXT Buffers\end_layout
 
 \end_inset
 </cell>
 </row>
 <row>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+<cell alignment="center" bottomline="true" leftline="true" topline="true" usebox="none" valignment="top">
 \begin_inset Text
 
 \begin_layout Plain Layout
-G_ID
-\end_layout
+G_ID\end_layout
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+<cell alignment="center" bottomline="true" leftline="true" topline="true" usebox="none" valignment="top">
 \begin_inset Text
 
 \begin_layout Plain Layout
-natural
-\end_layout
+natural\end_layout
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+<cell alignment="center" bottomline="true" leftline="true" topline="true" usebox="none" valignment="top">
 \begin_inset Text
 
 \begin_layout Plain Layout
-1
-\end_layout
+1\end_layout
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+<cell alignment="center" bottomline="true" leftline="true" rightline="true" topline="true" usebox="none" valignment="top">
 \begin_inset Text
 
 \begin_layout Plain Layout
-TXT Buffer ID
-\end_layout
+TXT Buffer ID\end_layout
 
 \end_inset
 </cell>
@@ -327,387 +284,290 @@ TXT Buffer ID
 
 
 \end_layout
-
 \begin_layout Description
-Ports
-\end_layout
-
+Ports\end_layout
 \begin_layout Standard
 \noindent
 \align center
 \begin_inset Tabular
-<lyxtabular version="3" rows="20" columns="4">
+<lyxtabular columns="4" rows="20" version="3">
 <features islongtable="true" longtabularalignment="center">
 <column alignment="center" valignment="top" width="4cm">
 <column alignment="center" valignment="top" width="1.2cm">
 <column alignment="center" valignment="top" width="3.5cm">
 <column alignment="center" valignment="top" width="7cm">
 <row>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+<cell alignment="center" leftline="true" topline="true" usebox="none" valignment="top">
 \begin_inset Text
 
 \begin_layout Plain Layout
-Name
-\begin_inset ERT
+Name\begin_inset ERT
 status open
-
 \begin_layout Plain Layout
-
-
 \backslash
 cellcolor{cyan}
 \end_layout
-
 \end_inset
-
-
 \end_layout
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+<cell alignment="center" leftline="true" topline="true" usebox="none" valignment="top">
 \begin_inset Text
 
 \begin_layout Plain Layout
-Direction
-\begin_inset ERT
+Direction\begin_inset ERT
 status open
-
 \begin_layout Plain Layout
-
-
 \backslash
 cellcolor{cyan}
 \end_layout
-
 \end_inset
-
-
 \end_layout
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+<cell alignment="center" leftline="true" topline="true" usebox="none" valignment="top">
 \begin_inset Text
 
 \begin_layout Plain Layout
-Type
-\begin_inset ERT
+Type\begin_inset ERT
 status open
-
 \begin_layout Plain Layout
-
-
 \backslash
 cellcolor{cyan}
 \end_layout
-
 \end_inset
-
-
 \end_layout
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+<cell alignment="center" leftline="true" rightline="true" topline="true" usebox="none" valignment="top">
 \begin_inset Text
 
 \begin_layout Plain Layout
-Description
-\begin_inset ERT
+Description\begin_inset ERT
 status open
-
 \begin_layout Plain Layout
-
-
 \backslash
 cellcolor{cyan}
 \end_layout
-
 \end_inset
-
-
 \end_layout
 
 \end_inset
 </cell>
 </row>
 <row>
-<cell multicolumn="1" alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+<cell alignment="center" leftline="true" multicolumn="1" rightline="true" topline="true" usebox="none" valignment="top">
 \begin_inset Text
 
 \begin_layout Plain Layout
-Clock and Asynchronous reset
-\begin_inset ERT
+Clock and Asynchronous reset\begin_inset ERT
 status open
-
 \begin_layout Plain Layout
-
-
 \backslash
 cellcolor{gray}
 \end_layout
-
 \end_inset
-
-
 \end_layout
 
 \end_inset
 </cell>
-<cell multicolumn="2" alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+<cell alignment="center" leftline="true" multicolumn="2" topline="true" usebox="none" valignment="top">
 \begin_inset Text
 
 \begin_layout Plain Layout
-Clock and Asynchronous reset
-\begin_inset ERT
+Clock and Asynchronous reset\begin_inset ERT
 status open
-
 \begin_layout Plain Layout
-
-
 \backslash
 cellcolor{gray}
 \end_layout
-
 \end_inset
-
-
 \end_layout
 
 \end_inset
 </cell>
-<cell multicolumn="2" alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+<cell alignment="center" leftline="true" multicolumn="2" topline="true" usebox="none" valignment="top">
 \begin_inset Text
 
 \begin_layout Plain Layout
-Clock and Asynchronous reset
-\begin_inset ERT
+Clock and Asynchronous reset\begin_inset ERT
 status open
-
 \begin_layout Plain Layout
-
-
 \backslash
 cellcolor{gray}
 \end_layout
-
 \end_inset
-
-
 \end_layout
 
 \end_inset
 </cell>
-<cell multicolumn="2" alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+<cell alignment="center" leftline="true" multicolumn="2" rightline="true" topline="true" usebox="none" valignment="top">
 \begin_inset Text
 
 \begin_layout Plain Layout
-Clock and Asynchronous reset
-\begin_inset ERT
+Clock and Asynchronous reset\begin_inset ERT
 status open
-
 \begin_layout Plain Layout
-
-
 \backslash
 cellcolor{gray}
 \end_layout
-
 \end_inset
-
-
 \end_layout
 
 \end_inset
 </cell>
 </row>
 <row>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+<cell alignment="center" leftline="true" topline="true" usebox="none" valignment="top">
 \begin_inset Text
 
 \begin_layout Plain Layout
-clk_sys
+clk_sys\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+in\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+std_logic\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" rightline="true" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+System clock\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" leftline="true" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+res_n\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+in\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+std_logic\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" rightline="true" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Asynchronous reset\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" leftline="true" multicolumn="1" rightline="true" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Memory Registers Interface\begin_inset ERT
+status open
+\begin_layout Plain Layout
+\backslash
+cellcolor{gray}
+\end_layout
+\end_inset
 \end_layout
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+<cell alignment="center" leftline="true" multicolumn="2" topline="true" usebox="none" valignment="top">
 \begin_inset Text
 
 \begin_layout Plain Layout
-in
+Memory Registers Interface\begin_inset ERT
+status open
+\begin_layout Plain Layout
+\backslash
+cellcolor{gray}
+\end_layout
+\end_inset
 \end_layout
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+<cell alignment="center" leftline="true" multicolumn="2" topline="true" usebox="none" valignment="top">
 \begin_inset Text
 
 \begin_layout Plain Layout
-std_logic
+Memory Registers Interface\begin_inset ERT
+status open
+\begin_layout Plain Layout
+\backslash
+cellcolor{gray}
+\end_layout
+\end_inset
 \end_layout
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+<cell alignment="center" leftline="true" multicolumn="2" rightline="true" topline="true" usebox="none" valignment="top">
 \begin_inset Text
 
 \begin_layout Plain Layout
-System clock
+Memory Registers Interface\begin_inset ERT
+status open
+\begin_layout Plain Layout
+\backslash
+cellcolor{gray}
+\end_layout
+\end_inset
 \end_layout
 
 \end_inset
 </cell>
 </row>
 <row>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+<cell alignment="center" leftline="true" topline="true" usebox="none" valignment="top">
 \begin_inset Text
 
 \begin_layout Plain Layout
-res_n
-\end_layout
+txtb_port_a_data\end_layout
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+<cell alignment="center" leftline="true" topline="true" usebox="none" valignment="top">
 \begin_inset Text
 
 \begin_layout Plain Layout
-in
-\end_layout
+in\end_layout
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-std_logic
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-Asynchronous reset
-\end_layout
-
-\end_inset
-</cell>
-</row>
-<row>
-<cell multicolumn="1" alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-Memory Registers Interface
-\begin_inset ERT
-status open
-
-\begin_layout Plain Layout
-
-
-\backslash
-cellcolor{gray}
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
-\end_inset
-</cell>
-<cell multicolumn="2" alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-Memory Registers Interface
-\begin_inset ERT
-status open
-
-\begin_layout Plain Layout
-
-
-\backslash
-cellcolor{gray}
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
-\end_inset
-</cell>
-<cell multicolumn="2" alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-Memory Registers Interface
-\begin_inset ERT
-status open
-
-\begin_layout Plain Layout
-
-
-\backslash
-cellcolor{gray}
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
-\end_inset
-</cell>
-<cell multicolumn="2" alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-Memory Registers Interface
-\begin_inset ERT
-status open
-
-\begin_layout Plain Layout
-
-
-\backslash
-cellcolor{gray}
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
-\end_inset
-</cell>
-</row>
-<row>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-txtb_port_a_data
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-in
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+<cell alignment="center" leftline="true" topline="true" usebox="none" valignment="top">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -715,41 +575,37 @@ std_logic_vector
 \begin_inset Newline newline
 \end_inset
 
-(31 downto 0)
-\end_layout
+(31 downto 0)\end_layout
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+<cell alignment="center" leftline="true" rightline="true" topline="true" usebox="none" valignment="top">
 \begin_inset Text
 
 \begin_layout Plain Layout
-Data to be written to TXT Buffer RAM
-\end_layout
+Data to be written to TXT Buffer RAM\end_layout
 
 \end_inset
 </cell>
 </row>
 <row>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+<cell alignment="center" leftline="true" topline="true" usebox="none" valignment="top">
 \begin_inset Text
 
 \begin_layout Plain Layout
-txtb_port_a_address
-\end_layout
+txtb_port_a_address\end_layout
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+<cell alignment="center" leftline="true" topline="true" usebox="none" valignment="top">
 \begin_inset Text
 
 \begin_layout Plain Layout
-in
-\end_layout
+in\end_layout
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+<cell alignment="center" leftline="true" topline="true" usebox="none" valignment="top">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -757,117 +613,105 @@ std_logic_vector
 \begin_inset Newline newline
 \end_inset
 
-(4 downto 0)
-\end_layout
+(4 downto 0)\end_layout
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+<cell alignment="center" leftline="true" rightline="true" topline="true" usebox="none" valignment="top">
 \begin_inset Text
 
 \begin_layout Plain Layout
-Address in TXT Buffer RAM
-\end_layout
+Address in TXT Buffer RAM\end_layout
 
 \end_inset
 </cell>
 </row>
 <row>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+<cell alignment="center" leftline="true" topline="true" usebox="none" valignment="top">
 \begin_inset Text
 
 \begin_layout Plain Layout
-txtb_port_a_cs
-\end_layout
+txtb_port_a_cs\end_layout
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+<cell alignment="center" leftline="true" topline="true" usebox="none" valignment="top">
 \begin_inset Text
 
 \begin_layout Plain Layout
-in
-\end_layout
+in\end_layout
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+<cell alignment="center" leftline="true" topline="true" usebox="none" valignment="top">
 \begin_inset Text
 
 \begin_layout Plain Layout
-std_logic
-\end_layout
+std_logic\end_layout
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+<cell alignment="center" leftline="true" rightline="true" topline="true" usebox="none" valignment="top">
 \begin_inset Text
 
 \begin_layout Plain Layout
-TXT Buffer RAM chip select
-\end_layout
+TXT Buffer RAM chip select\end_layout
 
 \end_inset
 </cell>
 </row>
 <row>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+<cell alignment="center" leftline="true" topline="true" usebox="none" valignment="top">
 \begin_inset Text
 
 \begin_layout Plain Layout
-txtb_sw_cmd
-\end_layout
+txtb_sw_cmd\end_layout
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+<cell alignment="center" leftline="true" topline="true" usebox="none" valignment="top">
 \begin_inset Text
 
 \begin_layout Plain Layout
-in
-\end_layout
+in\end_layout
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+<cell alignment="center" leftline="true" topline="true" usebox="none" valignment="top">
 \begin_inset Text
 
 \begin_layout Plain Layout
-t_txtb_sw_cmd
-\end_layout
+t_txtb_sw_cmd\end_layout
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+<cell alignment="center" leftline="true" rightline="true" topline="true" usebox="none" valignment="top">
 \begin_inset Text
 
 \begin_layout Plain Layout
-SW commands
-\end_layout
+SW commands\end_layout
 
 \end_inset
 </cell>
 </row>
 <row>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+<cell alignment="center" leftline="true" topline="true" usebox="none" valignment="top">
 \begin_inset Text
 
 \begin_layout Plain Layout
-txtb_sw_cmd_index
-\end_layout
+txtb_sw_cmd_index\end_layout
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+<cell alignment="center" leftline="true" topline="true" usebox="none" valignment="top">
 \begin_inset Text
 
 \begin_layout Plain Layout
-in
-\end_layout
+in\end_layout
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+<cell alignment="center" leftline="true" topline="true" usebox="none" valignment="top">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -875,41 +719,37 @@ std_logic_vector
 \begin_inset Newline newline
 \end_inset
 
-(G_TXT_BUFFER_COUNT - 1 downto 0)
-\end_layout
+(G_TXT_BUFFER_COUNT - 1 downto 0)\end_layout
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+<cell alignment="center" leftline="true" rightline="true" topline="true" usebox="none" valignment="top">
 \begin_inset Text
 
 \begin_layout Plain Layout
-TXT Buffer index for which SW command is valid
-\end_layout
+TXT Buffer index for which SW command is valid\end_layout
 
 \end_inset
 </cell>
 </row>
 <row>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+<cell alignment="center" leftline="true" topline="true" usebox="none" valignment="top">
 \begin_inset Text
 
 \begin_layout Plain Layout
-txtb_state
-\end_layout
+txtb_state\end_layout
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+<cell alignment="center" leftline="true" topline="true" usebox="none" valignment="top">
 \begin_inset Text
 
 \begin_layout Plain Layout
-out
-\end_layout
+out\end_layout
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+<cell alignment="center" leftline="true" topline="true" usebox="none" valignment="top">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -917,335 +757,263 @@ std_logic_vector
 \begin_inset Newline newline
 \end_inset
 
-(3 downto 0)
+(3 downto 0)\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" rightline="true" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Buffer State (encoded for Memory registers)\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" leftline="true" multicolumn="1" rightline="true" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Interrupt Manager Interface\begin_inset ERT
+status open
+\begin_layout Plain Layout
+\backslash
+cellcolor{gray}
+\end_layout
+\end_inset
 \end_layout
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+<cell alignment="center" leftline="true" multicolumn="2" topline="true" usebox="none" valignment="top">
 \begin_inset Text
 
 \begin_layout Plain Layout
-Buffer State (encoded for Memory registers)
+Interrupt Manager Interface\begin_inset ERT
+status open
+\begin_layout Plain Layout
+\backslash
+cellcolor{gray}
+\end_layout
+\end_inset
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" multicolumn="2" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Interrupt Manager Interface\begin_inset ERT
+status open
+\begin_layout Plain Layout
+\backslash
+cellcolor{gray}
+\end_layout
+\end_inset
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" multicolumn="2" rightline="true" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Interrupt Manager Interface\begin_inset ERT
+status open
+\begin_layout Plain Layout
+\backslash
+cellcolor{gray}
+\end_layout
+\end_inset
 \end_layout
 
 \end_inset
 </cell>
 </row>
 <row>
-<cell multicolumn="1" alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+<cell alignment="center" leftline="true" topline="true" usebox="none" valignment="top">
 \begin_inset Text
 
 \begin_layout Plain Layout
-Interrupt Manager Interface
-\begin_inset ERT
-status open
+txtb_hw_cmd_int\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" topline="true" usebox="none" valignment="top">
+\begin_inset Text
 
 \begin_layout Plain Layout
+out\end_layout
 
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" topline="true" usebox="none" valignment="top">
+\begin_inset Text
 
+\begin_layout Plain Layout
+std_logic\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" rightline="true" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+HW Command applied\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" leftline="true" multicolumn="1" rightline="true" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+CAN Core and TX Arbitrator Interface\begin_inset ERT
+status open
+\begin_layout Plain Layout
 \backslash
 cellcolor{gray}
 \end_layout
-
 \end_inset
-
-
 \end_layout
 
 \end_inset
 </cell>
-<cell multicolumn="2" alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+<cell alignment="center" leftline="true" multicolumn="2" topline="true" usebox="none" valignment="top">
 \begin_inset Text
 
 \begin_layout Plain Layout
-Interrupt Manager Interface
-\begin_inset ERT
+CAN Core and TX Arbitrator Interface\begin_inset ERT
 status open
-
 \begin_layout Plain Layout
-
-
 \backslash
 cellcolor{gray}
 \end_layout
-
 \end_inset
-
-
 \end_layout
 
 \end_inset
 </cell>
-<cell multicolumn="2" alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+<cell alignment="center" leftline="true" multicolumn="2" topline="true" usebox="none" valignment="top">
 \begin_inset Text
 
 \begin_layout Plain Layout
-Interrupt Manager Interface
-\begin_inset ERT
+CAN Core and TX Arbitrator Interface\begin_inset ERT
 status open
-
 \begin_layout Plain Layout
-
-
 \backslash
 cellcolor{gray}
 \end_layout
-
 \end_inset
-
-
 \end_layout
 
 \end_inset
 </cell>
-<cell multicolumn="2" alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+<cell alignment="center" leftline="true" multicolumn="2" rightline="true" topline="true" usebox="none" valignment="top">
 \begin_inset Text
 
 \begin_layout Plain Layout
-Interrupt Manager Interface
-\begin_inset ERT
+CAN Core and TX Arbitrator Interface\begin_inset ERT
 status open
-
 \begin_layout Plain Layout
-
-
 \backslash
 cellcolor{gray}
 \end_layout
-
 \end_inset
-
-
 \end_layout
 
 \end_inset
 </cell>
 </row>
 <row>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+<cell alignment="center" leftline="true" topline="true" usebox="none" valignment="top">
 \begin_inset Text
 
 \begin_layout Plain Layout
-txtb_hw_cmd_int
-\end_layout
+txtb_hw_cmd\end_layout
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+<cell alignment="center" leftline="true" topline="true" usebox="none" valignment="top">
 \begin_inset Text
 
 \begin_layout Plain Layout
-out
-\end_layout
+in\end_layout
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+<cell alignment="center" leftline="true" topline="true" usebox="none" valignment="top">
 \begin_inset Text
 
 \begin_layout Plain Layout
-std_logic
-\end_layout
+t_txtb_hw_cmd\end_layout
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+<cell alignment="center" leftline="true" rightline="true" topline="true" usebox="none" valignment="top">
 \begin_inset Text
 
 \begin_layout Plain Layout
-HW Command applied
-\end_layout
+HW Commands\end_layout
 
 \end_inset
 </cell>
 </row>
 <row>
-<cell multicolumn="1" alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+<cell alignment="center" leftline="true" topline="true" usebox="none" valignment="top">
 \begin_inset Text
 
 \begin_layout Plain Layout
-CAN Core and TX Arbitrator Interface
-\begin_inset ERT
-status open
-
-\begin_layout Plain Layout
-
-
-\backslash
-cellcolor{gray}
-\end_layout
-
-\end_inset
-
-
-\end_layout
+txtb_hw_cmd_index\end_layout
 
 \end_inset
 </cell>
-<cell multicolumn="2" alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+<cell alignment="center" leftline="true" topline="true" usebox="none" valignment="top">
 \begin_inset Text
 
 \begin_layout Plain Layout
-CAN Core and TX Arbitrator Interface
-\begin_inset ERT
-status open
-
-\begin_layout Plain Layout
-
-
-\backslash
-cellcolor{gray}
-\end_layout
-
-\end_inset
-
-
-\end_layout
+in\end_layout
 
 \end_inset
 </cell>
-<cell multicolumn="2" alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+<cell alignment="center" leftline="true" topline="true" usebox="none" valignment="top">
 \begin_inset Text
 
 \begin_layout Plain Layout
-CAN Core and TX Arbitrator Interface
-\begin_inset ERT
-status open
-
-\begin_layout Plain Layout
-
-
-\backslash
-cellcolor{gray}
-\end_layout
-
-\end_inset
-
-
-\end_layout
+natural range 0 to G_TXT_BUFFER_COUNT - 1\end_layout
 
 \end_inset
 </cell>
-<cell multicolumn="2" alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+<cell alignment="center" leftline="true" rightline="true" topline="true" usebox="none" valignment="top">
 \begin_inset Text
 
 \begin_layout Plain Layout
-CAN Core and TX Arbitrator Interface
-\begin_inset ERT
-status open
-
-\begin_layout Plain Layout
-
-
-\backslash
-cellcolor{gray}
-\end_layout
-
-\end_inset
-
-
-\end_layout
+Index of TXT Buffer for which HW commands is valid\end_layout
 
 \end_inset
 </cell>
 </row>
 <row>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+<cell alignment="center" leftline="true" topline="true" usebox="none" valignment="top">
 \begin_inset Text
 
 \begin_layout Plain Layout
-txtb_hw_cmd
-\end_layout
+txtb_port_b_data\end_layout
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+<cell alignment="center" leftline="true" topline="true" usebox="none" valignment="top">
 \begin_inset Text
 
 \begin_layout Plain Layout
-in
-\end_layout
+out\end_layout
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-t_txtb_hw_cmd
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-HW Commands
-\end_layout
-
-\end_inset
-</cell>
-</row>
-<row>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-txtb_hw_cmd_index
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-in
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-natural range 0 to G_TXT_BUFFER_COUNT - 1
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-Index of TXT Buffer for which HW commands is valid
-\end_layout
-
-\end_inset
-</cell>
-</row>
-<row>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-txtb_port_b_data
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-out
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+<cell alignment="center" leftline="true" topline="true" usebox="none" valignment="top">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -1253,131 +1021,117 @@ std_logic_vector
 \begin_inset Newline newline
 \end_inset
 
-(31 downto 0)
-\end_layout
+(31 downto 0)\end_layout
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+<cell alignment="center" leftline="true" rightline="true" topline="true" usebox="none" valignment="top">
 \begin_inset Text
 
 \begin_layout Plain Layout
-TXT Buffer RAM data output
-\end_layout
-
-\end_inset
-</cell>
-</row>
-<row>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-txtb_port_b_address
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-in
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-natural range 0 to 19
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-TXT Buffer RAM address
-\end_layout
+TXT Buffer RAM data output\end_layout
 
 \end_inset
 </cell>
 </row>
 <row>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+<cell alignment="center" leftline="true" topline="true" usebox="none" valignment="top">
 \begin_inset Text
 
 \begin_layout Plain Layout
-is_bus_off
-\end_layout
+txtb_port_b_address\end_layout
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+<cell alignment="center" leftline="true" topline="true" usebox="none" valignment="top">
 \begin_inset Text
 
 \begin_layout Plain Layout
-in
-\end_layout
+in\end_layout
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+<cell alignment="center" leftline="true" topline="true" usebox="none" valignment="top">
 \begin_inset Text
 
 \begin_layout Plain Layout
-std_logic
-\end_layout
+natural range 0 to 19\end_layout
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+<cell alignment="center" leftline="true" rightline="true" topline="true" usebox="none" valignment="top">
 \begin_inset Text
 
 \begin_layout Plain Layout
-Unit just turned bus off.
-\end_layout
+TXT Buffer RAM address\end_layout
 
 \end_inset
 </cell>
 </row>
 <row>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+<cell alignment="center" leftline="true" topline="true" usebox="none" valignment="top">
 \begin_inset Text
 
 \begin_layout Plain Layout
-txtb_available
-\end_layout
+is_bus_off\end_layout
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+<cell alignment="center" leftline="true" topline="true" usebox="none" valignment="top">
 \begin_inset Text
 
 \begin_layout Plain Layout
-out
-\end_layout
+in\end_layout
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+<cell alignment="center" leftline="true" topline="true" usebox="none" valignment="top">
 \begin_inset Text
 
 \begin_layout Plain Layout
-std_logic
-\end_layout
+std_logic\end_layout
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+<cell alignment="center" leftline="true" rightline="true" topline="true" usebox="none" valignment="top">
 \begin_inset Text
 
 \begin_layout Plain Layout
-TXT Buffer is available to be locked by CAN Core for transmission
-\end_layout
+Unit just turned bus off.\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" bottomline="true" leftline="true" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+txtb_available\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" bottomline="true" leftline="true" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+out\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" bottomline="true" leftline="true" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+std_logic\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" bottomline="true" leftline="true" rightline="true" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+TXT Buffer is available to be locked by CAN Core for transmission\end_layout
 
 \end_inset
 </cell>
@@ -1388,6 +1142,5 @@ TXT Buffer is available to be locked by CAN Core for transmission
 
 
 \end_layout
-
 \end_body
 \end_document

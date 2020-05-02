@@ -141,9 +141,11 @@ union ctu_can_fd_mode_settings {
 		uint32_t ilbp                    : 1;
 		uint32_t ena                     : 1;
 		uint32_t nisofd                  : 1;
-		uint32_t reserved_31_24          : 8;
+		uint32_t pex                     : 1;
+		uint32_t reserved_31_25          : 7;
 #else
-		uint32_t reserved_31_24          : 8;
+		uint32_t reserved_31_25          : 7;
+		uint32_t pex                     : 1;
 		uint32_t nisofd                  : 1;
 		uint32_t ena                     : 1;
 		uint32_t ilbp                    : 1;
@@ -205,6 +207,11 @@ enum ctu_can_fd_settings_ena {
 enum ctu_can_fd_settings_nisofd {
 	ISO_FD           = 0x0,
 	NON_ISO_FD       = 0x1,
+};
+
+enum ctu_can_fd_settings_pex {
+	PROTOCOL_EXCEPTION_DISABLED       = 0x0,
+	PROTOCOL_EXCEPTION_ENABLED        = 0x1,
 };
 
 union ctu_can_fd_status {

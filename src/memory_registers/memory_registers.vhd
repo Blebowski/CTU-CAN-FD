@@ -592,6 +592,9 @@ begin
     drv_bus(DRV_INT_LOOBACK_ENA_INDEX) <= align_wrd_to_reg(
         control_registers_out.settings, ILBP_IND);
 
+    -- PEX - Protocol exception mode
+    drv_bus(DRV_PEX_INDEX) <= align_wrd_to_reg(
+        control_registers_out.settings, PEX_IND);
 
     ---------------------------------------------------------------------------
     -- INT_STAT - Clearing interrupt vector by write
@@ -1424,14 +1427,13 @@ begin
     drv_bus(360 downto 358) <= (OTHERS => '0');
     drv_bus(362 downto 361) <= (OTHERS => '0');
     drv_bus(365 downto 363) <= (OTHERS => '0');
-    drv_bus(370 downto 368) <= (OTHERS => '0');
-    drv_bus(371)            <= '0';
+    drv_bus(371 downto 368) <= (OTHERS => '0');
     drv_bus(399 downto 383) <= (OTHERS => '0');
     drv_bus(459 downto 445) <= (OTHERS => '0');
     drv_bus(464 downto 462) <= (OTHERS => '0');
     drv_bus(609 downto 601) <= (OTHERS => '0');
     drv_bus(579 downto 570) <= (OTHERS => '0');
-    drv_bus(519 downto 511) <= (OTHERS => '0');
+    drv_bus(519 downto 512) <= (OTHERS => '0');
     drv_bus(506 downto 475) <= (OTHERS => '0');
     drv_bus(444 downto 430) <= (OTHERS => '0');
 

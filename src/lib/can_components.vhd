@@ -1520,6 +1520,9 @@ package can_components is
         -- Secondary sampling point delay select
         drv_ssp_delay_select    :in   std_logic_vector(1 downto 0);
         
+        -- Protocol exception handling
+        drv_pex                 :in   std_logic;
+        
         -- Arbitration field is being transmitted
         is_arbitration          :out  std_logic;
         

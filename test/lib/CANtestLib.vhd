@@ -159,10 +159,11 @@ package CANtestLib is
         acknowledge_forbidden   :   boolean;
         internal_loopback       :   boolean;
         iso_fd_support          :   boolean;
+        pex_support             :   boolean;
     end record;
     
     constant SW_mode_rst_val : SW_mode := (false, false, false, false, false,
-        true, false, false, false, true);
+        true, false, false, false, true, false);
 
     -- Controller commands
     type SW_command is record
@@ -4301,6 +4302,12 @@ package body CANtestLib is
             data(ILBP_IND)   := '1';
         else
             data(ILBP_IND)   := '0';
+        end if;
+        
+        if (mode.pex_support) then
+            data(PEX_IND) := '1';
+        else
+            data(PEX_IND) := '0';
         end if;
 
         CAN_write(data, SETTINGS_ADR, ID, mem_bus, BIT_16);

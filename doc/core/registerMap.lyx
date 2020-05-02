@@ -5085,67 +5085,67 @@ cellcolor{cyan}
 
 \end_inset
 </cell>
+<cell alignment="center" leftline="true" multicolumn="1" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Reserved\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" multicolumn="2" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Reserved\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" multicolumn="2" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Reserved\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" multicolumn="2" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Reserved\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" multicolumn="2" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Reserved\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" multicolumn="2" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Reserved\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" multicolumn="2" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Reserved\end_layout
+
+\end_inset
+</cell>
 <cell alignment="center" leftline="true" multicolumn="1" rightline="true" topline="true" usebox="none" valignment="top">
 \begin_inset Text
 
 \begin_layout Plain Layout
-Reserved\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" leftline="true" multicolumn="2" topline="true" usebox="none" valignment="top">
-\begin_inset Text
-
-\begin_layout Plain Layout
-Reserved\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" leftline="true" multicolumn="2" topline="true" usebox="none" valignment="top">
-\begin_inset Text
-
-\begin_layout Plain Layout
-Reserved\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" leftline="true" multicolumn="2" topline="true" usebox="none" valignment="top">
-\begin_inset Text
-
-\begin_layout Plain Layout
-Reserved\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" leftline="true" multicolumn="2" topline="true" usebox="none" valignment="top">
-\begin_inset Text
-
-\begin_layout Plain Layout
-Reserved\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" leftline="true" multicolumn="2" topline="true" usebox="none" valignment="top">
-\begin_inset Text
-
-\begin_layout Plain Layout
-Reserved\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" leftline="true" multicolumn="2" topline="true" usebox="none" valignment="top">
-\begin_inset Text
-
-\begin_layout Plain Layout
-Reserved\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" leftline="true" multicolumn="2" rightline="true" topline="true" usebox="none" valignment="top">
-\begin_inset Text
-
-\begin_layout Plain Layout
-Reserved\end_layout
+PEX\end_layout
 
 \end_inset
 </cell>
@@ -5226,7 +5226,7 @@ cellcolor{cyan}
 \begin_inset Text
 
 \begin_layout Plain Layout
--\end_layout
+0\end_layout
 
 \end_inset
 </cell>
@@ -5579,6 +5579,11 @@ ENA Enable of CTU CAN FD. When disabled, IP Core acts as if not connected to CAN
 NISOFD Non ISO FD. When active CTU CAN FD is compliant to NON-ISO CAN FD specification (no stuff count field). This bit should be modified only when SETTINGS[ENA]=0.\begin_inset Newline newline\end_inset
 		0b0  - ISO_FD - The CAN Controller conforms to ISO CAN FD specification.\begin_inset Newline newline\end_inset
 		0b1  - NON_ISO_FD - The CAN Controller conforms to NON ISO CAN FD specification.
+\end_layout
+\begin_layout Description
+PEX Protocol exception handling. When turned-on CTU CAN FD will turn to integration state upon detection of protocol exception. This should be modified only when SETTINGS[ENA] = '0'.\begin_inset Newline newline\end_inset
+		0b0  - PROTOCOL_EXCEPTION_DISABLED - Protocol exception handling is disabled.\begin_inset Newline newline\end_inset
+		0b1  - PROTOCOL_EXCEPTION_ENABLED - Protocol exception handling is enabled.
 \end_layout
 \begin_layout Standard
 \begin_inset VSpace bigskip
