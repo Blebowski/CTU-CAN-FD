@@ -164,7 +164,10 @@ package body trv_delay_feature is
         CAN_TX_frame.brs := BR_SHIFT;
 
         CAN_send_frame(CAN_TX_frame, 1, ID_1, mem_bus(1), frame_sent);
-        CAN_wait_frame_sent(ID_2, mem_bus(2));
+        CAN_wait_frame_sent(ID_1, mem_bus(1));
+
+        CAN_wait_bus_idle(ID_1, mem_bus(1));
+        CAN_wait_bus_idle(ID_2, mem_bus(2));
 
         read_trv_delay(measured_delay, ID_1, mem_bus(1));
         
@@ -187,7 +190,10 @@ package body trv_delay_feature is
         ftr_tb_set_tran_delay(1255 ns, ID_1, so.ftr_tb_trv_delay);
 
         CAN_send_frame(CAN_TX_frame, 1, ID_1, mem_bus(1), frame_sent);
-        CAN_wait_frame_sent(ID_2, mem_bus(2));
+        CAN_wait_frame_sent(ID_1, mem_bus(1));
+
+        CAN_wait_bus_idle(ID_1, mem_bus(1));
+        CAN_wait_bus_idle(ID_2, mem_bus(2));
 
         read_trv_delay(measured_delay, ID_1, mem_bus(1));
         
