@@ -124,7 +124,10 @@ package body status_rxne_feature is
         
         for i in 0 to num_frames - 1 loop
             send_TXT_buf_cmd(buf_set_ready, 1, ID_2, mem_bus(2));
-            CAN_wait_frame_sent(ID_1, mem_bus(1));
+            CAN_wait_frame_sent(ID_2, mem_bus(2));
+            
+            CAN_wait_bus_idle(ID_1, mem_bus(1));
+            CAN_wait_bus_idle(ID_2, mem_bus(2));
             
             get_controller_status(stat_1, ID_1, mem_bus(1));
             check(stat_1.receive_buffer, "RX Buffer not empty");

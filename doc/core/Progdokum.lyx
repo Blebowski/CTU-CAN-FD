@@ -2657,7 +2657,7 @@ ISO11898-1 2015 defines three implementation types of CAN protocol: Classical
  CAN, CAN FD tolerant and CAN FD enabled.
  CTU CAN FD supports all three implementation types and compliance to each
  implementation can be changed via MODE[FDE] and SETTINGS[PEX] registers.
- Both of these registers chall be modified only when SETTINGS[ENA] = 0.
+ Both of these registers shall be modified only when SETTINGS[ENA] = 0.
 \end_layout
 
 \begin_layout Standard
@@ -2726,7 +2726,7 @@ cellcolor{gray}
 \begin_inset Text
 
 \begin_layout Plain Layout
-SETTING[PEX]
+SETTING [PEX]
 \begin_inset ERT
 status open
 
@@ -2983,6 +2983,13 @@ Note When CTU CAN FD is configured as Classical CAN / CAN FD tolerant node
 \begin_layout Description
 Note When CTU CAN FD is configured as Classical CAN / CAN FD tolerant node,
  SETTINGS[NISOFD] register has no effect.
+\end_layout
+
+\begin_layout Description
+Note According to 10.9.10 of ISO11898-1 2015, CAN FD Enabled implementation
+ shall not be set to a mode where it behaves as CAN FD tolerant implementation.
+ It is therefore users responsibility to use this option only for evaluation
+ / debugging purposes!
 \end_layout
 
 \begin_layout Subsection

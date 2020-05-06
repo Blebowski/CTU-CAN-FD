@@ -488,9 +488,6 @@ entity protocol_control_fsm is
         -- Resynchronisation)
         sync_control            :out   std_logic_vector(1 downto 0);
 
-        -- No Resynchronisation due to positive phase error
-        no_pos_resync           :out   std_logic;
-
         -- Clear the Shift register for secondary sampling point.
         ssp_reset               :out   std_logic;
 
@@ -2906,11 +2903,6 @@ begin
     set_err_active <= '1' when (set_err_active_i = '1' and rx_trigger = '1')
                           else
                       '0';
-
-    -- No positive resynchronisation for transmitter of dominant bit!
-    no_pos_resync <= '1' when (is_transmitter = '1' and tx_data_wbs = DOMINANT)
-                         else
-                     '0';
 
     rx_clear <= '1' when (rx_clear_i = '1' and rx_trigger = '1')
                     else

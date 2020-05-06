@@ -379,9 +379,6 @@ entity protocol_control is
         -- Resynchronisation
         sync_control            :out  std_logic_vector(1 downto 0); 
         
-        -- No Resynchronisation due to positive phase error
-        no_pos_resync           :out   std_logic;
-        
         -- Clear the Shift register for secondary sampling point.
         ssp_reset               :out  std_logic;
         
@@ -800,7 +797,6 @@ begin
         nbt_ctrs_en             => nbt_ctrs_en,             -- OUT
         dbt_ctrs_en             => dbt_ctrs_en,             -- OUT
         sync_control            => sync_control,            -- OUT
-        no_pos_resync           => no_pos_resync,           -- OUT
         ssp_reset               => ssp_reset,               -- OUT
         tran_delay_meas         => tran_delay_meas,         -- OUT
         tran_valid              => tran_valid,              -- OUT

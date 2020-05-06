@@ -138,6 +138,11 @@ package body tx_from_intermission_feature is
         CAN_wait_sample_point(iout(1).stat_bus, false);
         CAN_wait_sample_point(iout(1).stat_bus, false);
 
+        -- This is needed to be sure that Node 2 also reached second sample
+        -- point of intermission. Otherwise, it would interpret this as
+        -- overload condition, and it would not turn reciever!
+        wait for 100 ns;
+
         force_bus_level(DOMINANT, so.bl_force, so.bl_inject);
         CAN_wait_sample_point(iout(1).stat_bus, false);
         wait for 15 ns; -- To be sure sample point was processed!

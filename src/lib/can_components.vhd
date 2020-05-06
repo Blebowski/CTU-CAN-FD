@@ -1870,9 +1870,6 @@ package can_components is
         -- Resynchronisation)
         sync_control            :out   std_logic_vector(1 downto 0);
 
-        -- No Resynchronisation due to positive phase error
-        no_pos_resync           :out   std_logic;
-
         -- Clear the Shift register for secondary sampling point.
         ssp_reset               :out   std_logic;
 
@@ -2223,9 +2220,6 @@ package can_components is
         -- Synchronisation control (No synchronisation, Hard Synchronisation,
         -- Resynchronisation
         sync_control            :out  std_logic_vector(1 downto 0); 
-        
-        -- No Resynchronisation due to positive phase error
-        no_pos_resync           :out   std_logic;
         
         -- Clear the Shift register for secondary sampling point.
         ssp_reset               :out  std_logic;
