@@ -166,6 +166,10 @@ package body rx_status_feature is
 
             CAN_send_frame(CAN_frame, 1, ID_2, mem_bus(2), frame_sent);
             CAN_wait_frame_sent(ID_1, mem_bus(1));
+            
+            CAN_wait_bus_idle(ID_1, mem_bus(1));
+            CAN_wait_bus_idle(ID_2, mem_bus(2));
+
             number_frms_sent := number_frms_sent + 1;
             in_RX_buf := in_RX_buf + CAN_frame.rwcnt + 1;
 
