@@ -577,7 +577,6 @@ begin
         nbt_ctrs_en             => nbt_ctrs_en,         -- OUT
         dbt_ctrs_en             => dbt_ctrs_en,         -- OUT
         sync_control            => sync_control_i,      -- OUT
-        no_pos_resync           => no_pos_resync,       -- OUT
         ssp_reset               => ssp_reset_i,         -- OUT
         tran_delay_meas         => tran_delay_meas_i,   -- OUT
         tran_valid              => tran_valid_i,        -- OUT
@@ -887,6 +886,12 @@ begin
                      RECESSIVE when (drv_bus_mon_ena = '1') else
                      bst_data_out;
 
+    ----------------------------------------------------------------------------
+    -- Node transmitting dominant bit does shall not re-synchronize as a result
+    -- of dominant transmitted bit.
+    ----------------------------------------------------------------------------
+    no_pos_resync <= '1' when (tx_data_wbs_i = DOMINANT) else
+                     '0';
 
     ----------------------------------------------------------------------------
     -- STATUS Bus Implementation
