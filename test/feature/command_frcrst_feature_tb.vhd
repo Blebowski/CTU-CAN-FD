@@ -114,6 +114,9 @@ package body command_frcrst_feature is
 
         CAN_wait_frame_sent(ID_1, mem_bus(1));
 
+        CAN_wait_bus_idle(ID_1, mem_bus(1));
+        CAN_wait_bus_idle(ID_2, mem_bus(2));
+
         read_traffic_counters(traff_ctrs_2, ID_2, mem_bus(2));
         check(traff_ctrs_2.tx_frames /= 0, "TX frame counter not 0!");
 
