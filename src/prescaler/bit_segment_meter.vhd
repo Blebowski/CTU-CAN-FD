@@ -271,6 +271,8 @@ architecture rtl of bit_segment_meter is
     constant C_E_WIDTH     : natural := max(G_BT_WIDTH, G_TSEG2_WIDTH);
     constant C_E_SJW_WIDTH : natural := max(C_E_WIDTH, G_SJW_WIDTH);
 
+    constant C_ONE : natural := 1;
+
     -- Selector between TSEG1 and TSEG2
     signal sel_tseg1            : std_logic;
     
@@ -415,7 +417,8 @@ begin
     -- err underflows, but we don't care since we don't use it then!
     ---------------------------------------------------------------------------
     neg_phase_err  <= resize(unsigned(tseg_2), C_E_WIDTH) -
-                      resize(unsigned(segm_counter), C_E_WIDTH);
+                      resize(unsigned(segm_counter), C_E_WIDTH) -
+                      to_unsigned(C_ONE, C_E_WIDTH);
 
     phase_err <= resize(neg_phase_err, C_E_WIDTH) when (is_tseg2 = '1') else
                  resize(unsigned(segm_counter), C_E_WIDTH);
