@@ -417,8 +417,7 @@ begin
     -- err underflows, but we don't care since we don't use it then!
     ---------------------------------------------------------------------------
     neg_phase_err  <= resize(unsigned(tseg_2), C_E_WIDTH) -
-                      resize(unsigned(segm_counter), C_E_WIDTH) -
-                      to_unsigned(C_ONE, C_E_WIDTH);
+                      resize(unsigned(segm_counter), C_E_WIDTH);
 
     phase_err <= resize(neg_phase_err, C_E_WIDTH) when (is_tseg2 = '1') else
                  resize(unsigned(segm_counter), C_E_WIDTH);
