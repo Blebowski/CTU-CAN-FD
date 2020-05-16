@@ -572,6 +572,19 @@ package can_agent_pkg is
 
 
     ---------------------------------------------------------------------------
+    -- Enable/Disable feedback from can_tx to can_rx. This allows DUT to see
+    -- its own transmitted error/overload frames without necessity to insert
+    -- error frames also to driver!
+    --
+    -- @param net           Network on which CAN Agent listens (use "net").
+    -- @param enable        Enable/Disable feedback.
+    ---------------------------------------------------------------------------
+    procedure can_agent_configure_tx_to_rx_feedback(
+        signal      net         : inout network_t;
+        constant    enable      : in    boolean
+    );
+
+    ---------------------------------------------------------------------------
     ---------------------------------------------------------------------------
     -- Private declarations 
     ---------------------------------------------------------------------------
@@ -609,6 +622,9 @@ package can_agent_pkg is
     constant CAN_AGNT_CMD_MONITOR_CHECK_RESULT          : integer := 24;
 
     constant CAN_AGNT_CMD_MONITOR_SET_INPUT_DELAY       : integer := 25;
+    
+    constant CAN_AGNT_CMD_TX_RX_FEEDBACK_ENABLE         : integer := 26;
+    constant CAN_AGNT_CMD_TX_RX_FEEDBACK_DISABLE        : integer := 27;
 
     constant CAN_AGNT_CMD_REPLY_OK                      : integer := 256;
     constant CAN_AGNT_CMD_REPLY_ERR                     : integer := 257;
@@ -1272,5 +1288,26 @@ package body can_agent_pkg is
               CAN_AGENT_TAG & " Monitor input delay set");
     end procedure;
 
+
+    procedure can_agent_configure_tx_to_rx_feedback(
+        signal      net         : inout network_t;
+        constant    enable      : in    boolean
+    ) is
+        constant can_gen_rec : actor_t := find("actor_can_agent");
+        variable req_msg, reply_msg  : msg_t;
+    begin
+        info(CAN_AGENT_TAG  & "Configuring can_tx to can_rx feedback!");
+        if (enable) then
+            req_msg := new_msg(msg_type => (p_code => CAN_AGNT_CMD_TX_RX_FEEDBACK_ENABLE));
+        else
+            req_msg := new_msg(msg_type => (p_code => CAN_AGNT_CMD_TX_RX_FEEDBACK_DISABLE));
+        end if;
+        send(net         => net,
+             receiver    => can_gen_rec,
+             msg         => req_msg);
+        receive_reply(net, req_msg, reply_msg);
+        check(message_type(reply_msg).p_code = CAN_AGNT_CMD_REPLY_OK,
+              CAN_AGENT_TAG & " Monitor can_tx to can_rx feedback configured!");
+    end procedure;
 
 end package body;

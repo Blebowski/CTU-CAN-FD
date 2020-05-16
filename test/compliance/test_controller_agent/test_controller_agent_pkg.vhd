@@ -160,6 +160,9 @@ package test_controller_agent_pkg is
     
     constant VPI_CAN_AGNT_MONITOR_SET_INPUT_DELAY       : std_logic_vector(7 downto 0) := x"1A";
 
+    constant VPI_CAN_AGNT_TX_RX_FEEDBACK_ENABLE         : std_logic_vector(7 downto 0) := x"1B";
+    constant VPI_CAN_AGNT_TX_RX_FEEDBACK_DISABLE        : std_logic_vector(7 downto 0) := x"1C";
+
     -- VPI commands for Test controller agent
     constant VPI_TEST_AGNT_TEST_END                     : std_logic_vector(7 downto 0) := x"01";
     constant VPI_TEST_AGNT_GET_CFG                      : std_logic_vector(7 downto 0) := x"02";

@@ -500,7 +500,13 @@ architecture tb of test_controller_agent is
         when VPI_CAN_AGNT_MONITOR_SET_INPUT_DELAY =>
             logic_vector_to_time(vpi_data_in, input_delay);
             can_agent_monitor_set_input_delay(net, input_delay);
-
+            
+        when VPI_CAN_AGNT_TX_RX_FEEDBACK_ENABLE =>
+            can_agent_configure_tx_to_rx_feedback(net, true);
+            
+        when VPI_CAN_AGNT_TX_RX_FEEDBACK_DISABLE =>
+            can_agent_configure_tx_to_rx_feedback(net, false);
+            
         when others =>
             error("VPI: Unknown CAN agent command with code: 0x" & to_hstring(vpi_cmd));
         end case;

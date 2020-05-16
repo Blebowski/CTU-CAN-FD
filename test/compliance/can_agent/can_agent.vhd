@@ -198,6 +198,12 @@ architecture tb of can_agent is
     -- Input delay
     signal mon_input_delay          :   time := 0 ns;
 
+    -- can_tx to can_rx feedback
+    signal tx_to_rx_feedback_enable :   boolean := false;
+
+    -- Internal value of can_rx
+    signal can_rx_i                 :   std_logic := '1';
+
 begin
 
     ---------------------------------------------------------------------------
@@ -454,6 +460,14 @@ begin
         when CAN_AGNT_CMD_MONITOR_SET_INPUT_DELAY =>
             mon_input_delay <= pop(msg);
 
+        when CAN_AGNT_CMD_TX_RX_FEEDBACK_ENABLE =>
+            tx_to_rx_feedback_enable <= true;
+            wait for 0 ns;
+        
+        when CAN_AGNT_CMD_TX_RX_FEEDBACK_DISABLE =>
+            tx_to_rx_feedback_enable <= false;
+            wait for 0 ns;
+
         when others =>
             warning (CAN_AGENT_TAG & "Invalid message type: " & integer'image(cmd));
             ack_msg := new_msg(msg_type => (p_code => CAN_AGNT_CMD_REPLY_ERR));
@@ -489,7 +503,7 @@ begin
                         info("Driving item: " & driven_item.msg);
                     end if;
 
-                    can_rx <= driven_item.value;
+                    can_rx_i <= driven_item.value;
                     wait for driven_item.drive_time;
                     driver_rp <= (driver_rp + 1) mod G_DRIVER_FIFO_DEPTH;
                     wait for 0 ns;
@@ -520,11 +534,11 @@ begin
         -----------------------------------------------------------------------
         impure function monitor_compare return boolean is
         begin
-            if (can_rx = 'X' or
-                can_rx = 'U' or
-                can_rx = '-' or
-                can_rx = 'W' or
-                can_rx = 'Z')
+            if (can_tx = 'X' or
+                can_tx = 'U' or
+                can_tx = '-' or
+                can_tx = 'W' or
+                can_tx = 'Z')
             then
                 return false;
             end if;
@@ -689,5 +703,11 @@ begin
             
         end case;
     end process;
+
+    -----------------------------------------------------------------------------
+    -- CAN tx to CAN rx feedback. This corresponds to CAN bus realization!
+    -----------------------------------------------------------------------------
+    can_rx <= can_rx_i when (tx_to_rx_feedback_enable = false) else
+              can_rx_i and can_tx;
 
 end architecture;
