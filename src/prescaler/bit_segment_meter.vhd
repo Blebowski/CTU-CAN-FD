@@ -432,7 +432,7 @@ begin
 
     phase_err_sjw_by_one <= '1' when (resize(phase_err, C_E_SJW_WIDTH) =
                                       (resize(unsigned(sjw), C_E_SJW_WIDTH) +
-                                       to_unsigned(C_ONE, C_E_SJW_WIDTH)))
+                                       to_unsigned(1, C_E_SJW_WIDTH)))
                                 else
                             '0';
 
