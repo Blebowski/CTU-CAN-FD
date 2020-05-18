@@ -45,8 +45,8 @@
 --
 -- Purpose:
 --  Detects end of current segment (TSEG1 or TSEG2) as a result of Hard-sync.,
---  or request from Re-synchronisation. Provides signal for clearing Bit Time 
---  counters. Only requests from resynchronisation module which matches current
+--  or request from Bit segment meter. Provides signal for clearing Bit Time 
+--  counters. Only requests from Bit segment meter module which matches current
 --  Bit-rate is considered (Nominal resynchronisation is considered in Nominal
 --  Bit-rate, Data resynchronisation is considered in Data Bit-rate).
 --------------------------------------------------------------------------------
