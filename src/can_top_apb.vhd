@@ -136,7 +136,6 @@ begin
     apb_inst : apb_ifc
         port map (
             aclk           => aclk,
-            arstn          => arstn,
 
             reg_data_in_o  => reg_data_in,
             reg_data_out_i => reg_data_out,

@@ -71,7 +71,6 @@ entity apb_ifc is
     );
     port (
         aclk             : in  std_logic;
-        arstn            : in  std_logic;
 
         -----------------------------------------------------------------------
         -- CTU CAN FD Interface

@@ -301,6 +301,7 @@ architecture rtl of bit_segment_meter is
 
     -- Phase error higher than SJW
     signal phase_err_mt_sjw     : std_logic;
+    signal phase_err_eq_sjw     : std_logic;
     
     -- Exit PH2 immediately
     signal exit_ph2_immediate   : std_logic;
@@ -317,7 +318,15 @@ architecture rtl of bit_segment_meter is
     
     -- Choose basic segment length
     signal use_basic_segm_length   : std_logic;
-     
+    
+    -- Phase error = SJW + 1 -> Used for immediate segment end in case of
+    -- negative resync, since at point where edge is evaluated, bit time
+    -- should be ended!
+    signal phase_err_sjw_by_one    : std_logic;
+    
+    -- Shorten following Tseg1 by 1 due to negative resync with Phase err <= SJW
+    signal shorten_tseg1_after_tseg2 : std_logic;
+    
 begin
 
     ---------------------------------------------------------------------------
@@ -325,7 +334,8 @@ begin
     -- Re-synchronisation data-path
     ---------------------------------------------------------------------------
     ---------------------------------------------------------------------------
-    sel_tseg1 <= '1' when (h_sync_valid = '1' or start_edge = '1') else
+    sel_tseg1 <= '1' when (h_sync_valid = '1' or start_edge = '1' or
+                           shorten_tseg1_after_tseg2 = '1') else
                  '1' when (segm_end = '1' and is_tseg2 = '1') else
                  '1' when (segm_end = '0' and is_tseg1 = '1') else
                  '0';
@@ -335,7 +345,8 @@ begin
         resize(unsigned(tseg_2), C_BS_WIDTH);
 
     segm_extension <= 
-               to_unsigned(1, C_EXT_WIDTH) when (h_sync_valid = '1') else
+               to_unsigned(1, C_EXT_WIDTH) when (h_sync_valid = '1' or
+                                                 shorten_tseg1_after_tseg2 = '1') else
         resize(unsigned(sjw), C_EXT_WIDTH) when (phase_err_mt_sjw = '1') else
         resize(unsigned(segm_counter), C_EXT_WIDTH);
 
@@ -345,7 +356,8 @@ begin
     segm_ext_sub <= resize(basic_segm_length, C_EXP_WIDTH) -
                     resize(segm_extension, C_EXP_WIDTH);
 
-    sync_segm_length <= segm_ext_sub when (is_tseg2 = '1' or h_sync_valid = '1')
+    sync_segm_length <= segm_ext_sub when (is_tseg2 = '1' or h_sync_valid = '1' or
+                                           exit_ph2_immediate = '1')
                                      else
                         segm_ext_add;
 
@@ -354,12 +366,14 @@ begin
     --  1. Circuit start
     --  2. Segment end, but not due to hard-sync. When segment end due to hard
     --     sync occurs, we must take TSEG1 - 1 which is calculated in synced
-    --     segment length!
+    --     segment length! This also applies when there is negative resync.
+    --     due to Phase error <= SJW.
     ---------------------------------------------------------------------------
     use_basic_segm_length <= '1' when (start_edge = '1')
                                  else
                              '1' when (segm_end = '1' and
-                                       h_sync_valid = '0') 
+                                       h_sync_valid = '0' and
+                                       shorten_tseg1_after_tseg2 = '0') 
                                  else
                              '0';
     
@@ -395,6 +409,7 @@ begin
     -- Phase error calculation:
     --  1. For TSEG2: TSEG2 - Bit Time counter
     --  2. For TSEG1: Only Bit Time counter
+    --
     -- Note that subtraction in unsigned type is safe here since segm_counter
     -- is never higher than tseg_2 in tseg_2. If we are in tseg_1 neg_phase
     -- err underflows, but we don't care since we don't use it then!
@@ -410,16 +425,44 @@ begin
                             else
                         '0';
 
+    phase_err_eq_sjw <= '1' when (resize(phase_err, C_E_SJW_WIDTH) =
+                                  resize(unsigned(sjw), C_E_SJW_WIDTH))
+                            else
+                        '0'; 
+
+    phase_err_sjw_by_one <= '1' when (resize(phase_err, C_E_SJW_WIDTH) =
+                                      (resize(unsigned(sjw), C_E_SJW_WIDTH) +
+                                       to_unsigned(1, C_E_SJW_WIDTH)))
+                                else
+                            '0';
+
     sjw_mt_zero <= '1' when (unsigned(sjw) > 0) else
                    '0';
 
     ---------------------------------------------------------------------------
     -- Immediate exit occurs during PH2 when resync edge occurs.
+    -- This occurs in two cases:
+    --  1. Phase error <= SJW. Also, consecutive TSEG1 is shortened.
+    --  2. Phase error = SJW + 1. In this case immediate end also occurs,
+    --     because at the end of TQ we flip to Phase error of 5 and we must
+    --     shorten TSEG2 by SJW. In this case consecutive TSEG1 is NOT
+    --     shortened!
     ---------------------------------------------------------------------------
-    exit_ph2_immediate <= '1' when (phase_err_mt_sjw = '0' and is_tseg2 = '1' and
+    exit_ph2_immediate <= '1' when ((phase_err_mt_sjw = '0' or phase_err_sjw_by_one = '1') and
+                                    is_tseg2 = '1' and
                                     resync_edge_valid = '1')
                               else
                           '0';
+
+
+    ---------------------------------------------------------------------------
+    -- When negative resynchronisation occurs due to Phase error <= SJW,
+    -- we exit immediately! But we also exit immediately when Phase error
+    ---------------------------------------------------------------------------
+    shorten_tseg1_after_tseg2 <= '1' when (exit_ph2_immediate = '1' and
+                                           phase_err_sjw_by_one = '0')
+                                     else
+                                 '0';
 
     ---------------------------------------------------------------------------
     -- Regular end occurs when Bit time counter reaches expected length of

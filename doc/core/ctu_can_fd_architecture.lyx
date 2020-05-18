@@ -511,7 +511,7 @@ filename "version.tex"
 \noindent
 \align center
 \begin_inset Tabular
-<lyxtabular version="3" rows="8" columns="5">
+<lyxtabular version="3" rows="9" columns="5">
 <features tabularvalignment="middle">
 <column alignment="center" valignment="top" width="1.5cm">
 <column alignment="center" valignment="top" width="3cm">
@@ -858,7 +858,7 @@ Error delimiter too long
 </cell>
 </row>
 <row>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -867,7 +867,7 @@ Error delimiter too long
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -876,7 +876,7 @@ Error delimiter too long
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -885,7 +885,7 @@ Ondrej Ille
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -894,13 +894,60 @@ Ondrej Ille
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
 Add note about implementation types.
  Remove form error on EDL/R0.
  Update Protocol control FSM to handle protocol exception.
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+0.8
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+2.3
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Ondre Ille
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+18-05-2020
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Correct Expected segment lenght preload values for negative resynchronisation.
 \end_layout
 
 \end_inset
@@ -32078,7 +32125,7 @@ status open
 \noindent
 \align center
 \begin_inset Tabular
-<lyxtabular version="3" rows="8" columns="3">
+<lyxtabular version="3" rows="9" columns="3">
 <features tabularvalignment="middle">
 <column alignment="left" valignment="top" width="36line%">
 <column alignment="left" valignment="top" width="30line%">
@@ -32178,7 +32225,7 @@ PH2
 \begin_inset Text
 
 \begin_layout Plain Layout
-
+Regular end of segment, no synchronisation.
 \end_layout
 
 \end_inset
@@ -32208,7 +32255,7 @@ SYNC + PROP + PH1
 \begin_inset Text
 
 \begin_layout Plain Layout
-
+Regular end of segment, no synchronisation.
 \end_layout
 
 \end_inset
@@ -32249,7 +32296,16 @@ Segment counter =
 \color red
 phase error
 \color inherit
- in this case.
+ in this case, therefore overall efect is as if TSEG1 was re-started with
+ SYNC completed as in 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "key-1"
+literal "false"
+
+\end_inset
+
+.
 \end_layout
 
 \end_inset
@@ -32286,7 +32342,7 @@ SYNC + PROP + PH1 + SJW
 \begin_inset Text
 
 \begin_layout Plain Layout
-
+Lengthening of TSEG1 by SJW.
 \end_layout
 
 \end_inset
@@ -32314,7 +32370,7 @@ phase error
 \begin_inset Text
 
 \begin_layout Plain Layout
-SYNC + PROP + PH1
+SYNC + PROP + PH1 - 1
 \end_layout
 
 \end_inset
@@ -32325,7 +32381,7 @@ SYNC + PROP + PH1
 \begin_layout Plain Layout
 Immediate end of segment.
  TSEG2 ends, therefore Expected segment length register is preloaded with
- length of TSEG1.
+ length of TSEG1 - 1 (the same effect as hard synchronisation).
 \end_layout
 
 \end_inset
@@ -32333,6 +32389,45 @@ Immediate end of segment.
 </row>
 <row>
 <cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\color red
+Negative resynchronisation
+\color inherit
+ with 
+\color red
+phase error =
+\color inherit
+ SJW + 1.
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+SYNC + PROP + PH1
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Immediate end of segment.
+ TSEG2 ends since magnitude of phase error is equal to amount of SJW.
+ Length of enxt segment is preloaded.
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -32362,7 +32457,7 @@ PH2 - SJW
 \begin_inset Text
 
 \begin_layout Plain Layout
-
+Shortening TSEG2 by SJW.
 \end_layout
 
 \end_inset
