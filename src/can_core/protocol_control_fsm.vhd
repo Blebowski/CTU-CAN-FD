@@ -932,8 +932,8 @@ begin
         curr_state, drv_ena, err_frm_req, ctrl_ctr_zero, no_data_field,
         drv_fd_type, allow_2bit_crc_delim, allow_2bit_ack, is_receiver,
         is_bus_off, go_to_suspend, tx_frame_ready, drv_bus_off_reset_q,
-        reinteg_ctr_expired, rx_data_nbs, is_err_active, go_to_stuff_count
-        )
+        reinteg_ctr_expired, rx_data_nbs, is_err_active, go_to_stuff_count,
+        pex_on_fdf_enable)
     begin
         next_state <= curr_state;
 
