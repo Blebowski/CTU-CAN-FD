@@ -4448,8 +4448,7 @@ package can_components is
         );
         port (
             aclk             : in  std_logic;
-            arstn            : in  std_logic;
-
+            
             reg_data_in_o    : out std_logic_vector(31 downto 0);
             reg_data_out_i   : in  std_logic_vector(31 downto 0);
             reg_addr_o       : out std_logic_vector(15 downto 0);
