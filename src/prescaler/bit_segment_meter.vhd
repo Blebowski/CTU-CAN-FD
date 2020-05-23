@@ -271,8 +271,6 @@ architecture rtl of bit_segment_meter is
     constant C_E_WIDTH     : natural := max(G_BT_WIDTH, G_TSEG2_WIDTH);
     constant C_E_SJW_WIDTH : natural := max(C_E_WIDTH, G_SJW_WIDTH);
 
-    constant C_ONE : natural := 1;
-
     -- Selector between TSEG1 and TSEG2
     signal sel_tseg1            : std_logic;
     
