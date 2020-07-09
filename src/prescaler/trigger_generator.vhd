@@ -187,9 +187,12 @@ begin
     rx_triggers(0) <= rx_trig_req_q;
 
     ---------------------------------------------------------------------------
-    -- TX Trigger is active when either direct trigger or flag is active.
+    -- TX Trigger is active when either direct trigger or flag is active. But
+    -- it must be gated when RX Trigger 1 is active. In this case TX Trigger
+    -- request flag was set and TX Trigger will be shifted by one clock cycle.
     ---------------------------------------------------------------------------
-    tx_trigger <= tx_trig_req_flag_dq;
+    tx_trigger <= '0' when (rx_triggers(0) = '1') else
+                  tx_trig_req_flag_dq;
 
     -- <RELEASE_OFF>
     ---------------------------------------------------------------------------
