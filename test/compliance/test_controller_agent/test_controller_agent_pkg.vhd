@@ -131,16 +131,16 @@ package test_controller_agent_pkg is
     constant VPI_MEM_BUS_AGNT_WAIT_DONE             : std_logic_vector(7 downto 0) := x"0B";
 
     -- VPI commands for CAN Agent
-    constant VPI_CAN_AGNT_DRIVER_START              : std_logic_vector(7 downto 0) := x"01";
-    constant VPI_CAN_AGNT_DRIVER_STOP               : std_logic_vector(7 downto 0) := x"02";
-    constant VPI_CAN_AGNT_DRIVER_FLUSH              : std_logic_vector(7 downto 0) := x"03";
-    constant VPI_CAN_AGNT_DRIVER_GET_PROGRESS       : std_logic_vector(7 downto 0) := x"04";
-    constant VPI_CAN_AGNT_DRIVER_GET_DRIVEN_VAL     : std_logic_vector(7 downto 0) := x"05";
-    constant VPI_CAN_AGNT_DRIVER_PUSH_ITEM          : std_logic_vector(7 downto 0) := x"06";
-    constant VPI_CAN_AGNT_DRIVER_SET_WAIT_TIMEOUT   : std_logic_vector(7 downto 0) := x"07";
-    constant VPI_CAN_AGNT_DRIVER_WAIT_FINISH        : std_logic_vector(7 downto 0) := x"08";
-    constant VPI_CAN_AGNT_DRIVER_DRIVE_SINGLE_ITEM  : std_logic_vector(7 downto 0) := x"09";
-    constant VPI_CAN_AGNT_DRIVER_DRIVE_ALL_ITEM     : std_logic_vector(7 downto 0) := x"0A";
+    constant VPI_CAN_AGNT_DRIVER_START                  : std_logic_vector(7 downto 0) := x"01";
+    constant VPI_CAN_AGNT_DRIVER_STOP                   : std_logic_vector(7 downto 0) := x"02";
+    constant VPI_CAN_AGNT_DRIVER_FLUSH                  : std_logic_vector(7 downto 0) := x"03";
+    constant VPI_CAN_AGNT_DRIVER_GET_PROGRESS           : std_logic_vector(7 downto 0) := x"04";
+    constant VPI_CAN_AGNT_DRIVER_GET_DRIVEN_VAL         : std_logic_vector(7 downto 0) := x"05";
+    constant VPI_CAN_AGNT_DRIVER_PUSH_ITEM              : std_logic_vector(7 downto 0) := x"06";
+    constant VPI_CAN_AGNT_DRIVER_SET_WAIT_TIMEOUT       : std_logic_vector(7 downto 0) := x"07";
+    constant VPI_CAN_AGNT_DRIVER_WAIT_FINISH            : std_logic_vector(7 downto 0) := x"08";
+    constant VPI_CAN_AGNT_DRIVER_DRIVE_SINGLE_ITEM      : std_logic_vector(7 downto 0) := x"09";
+    constant VPI_CAN_AGNT_DRIVER_DRIVE_ALL_ITEM         : std_logic_vector(7 downto 0) := x"0A";
 
     constant VPI_CAN_AGNT_MONITOR_START                 : std_logic_vector(7 downto 0) := x"0B";
     constant VPI_CAN_AGNT_MONITOR_STOP                  : std_logic_vector(7 downto 0) := x"0C";
@@ -162,6 +162,8 @@ package test_controller_agent_pkg is
 
     constant VPI_CAN_AGNT_TX_RX_FEEDBACK_ENABLE         : std_logic_vector(7 downto 0) := x"1B";
     constant VPI_CAN_AGNT_TX_RX_FEEDBACK_DISABLE        : std_logic_vector(7 downto 0) := x"1C";
+    
+    constant VPI_CAN_AGNT_DRIVER_SET_WAIT_FOR_MONITOR   : std_logic_vector(7 downto 0) := x"1D";
 
     -- VPI commands for Test controller agent
     constant VPI_TEST_AGNT_TEST_END                     : std_logic_vector(7 downto 0) := x"01";

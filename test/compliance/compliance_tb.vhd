@@ -111,7 +111,7 @@ architecture tb of can_compliance_tb is
     signal dut_srd          : std_logic;
     signal dut_sbe          : std_logic_vector(3 downto 0);
 
-    signal dut_timestamp    : std_logic_vector(63 downto 0) := (OTHERS => '0');
+    signal dut_timestamp    : std_logic_vector(63 downto 0) := (OTHERS => '1');
 
     ---------------------------------------------------------------------------
     -- This is an ugly hack to pass String over VPI since GHDL does not provide

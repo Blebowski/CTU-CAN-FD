@@ -53,7 +53,9 @@
 --    Driver contains FIFO of items to be driven. Each item contains value and
 --    a time for which to drive the value. When driving of 1 item finishes it
 --    is immediately followed by next one until driver FIFO is empty. Driver
---    can be started by a command over Communication library.
+--    can be started by a command over Communication library (this is intended
+--    for sending frame by CAN agent), or simultaneously with Monitor (this is
+--    intended for receiving frame by CAN Agent from DUT).
 --
 --    Monitor contains a FIFO of items to be monitored. Each item contains
 --    value and a time for which to monitor the value. When Monitoring of 1 item
@@ -150,6 +152,7 @@ architecture tb of can_agent is
     signal driver_rp                :   natural := 0;
     signal driver_ena               :   boolean := false;
     signal driving_in_progress      :   boolean := false;
+    signal driver_wait_for_monitor  :   boolean := false;
 
     -- Monitor signals
     signal monitor_mem              :   t_monitor_fifo_mem;
@@ -344,6 +347,9 @@ begin
                 driver_ena <= false;
             end if;
 
+        when CAN_AGNT_CMD_SET_WAIT_FOR_MONITOR =>
+            driver_wait_for_monitor <= pop(msg);
+
         when CAN_AGNT_CMD_MONITOR_START =>
             monitor_ena <= true;
 
@@ -379,12 +385,10 @@ begin
 
         when CAN_AGNT_CMD_MONITOR_SET_WAIT_TIMEOUT =>
             monitor_wait_timeout <= pop(msg);
-            
+
         when CAN_AGNT_CMD_MONITOR_WAIT_FINISH =>
             wait for 0 ns;
-            if (monitor_in_progress) then
-                wait until (monitor_in_progress = false) for monitor_wait_timeout;
-            end if;
+            wait until (monitor_in_progress = false) for monitor_wait_timeout;
 
         when CAN_AGNT_CMD_MONITOR_MONITOR_SINGLE_ITEM =>
             if (not monitor_ena) then
@@ -484,6 +488,9 @@ begin
     driver_proc : process
     begin
         if (driver_ena) then
+            if (driver_wait_for_monitor = true) then
+                wait until (monitor_state = mon_running);
+            end if;
             while (true) loop
                 if (not driver_ena) then
                     driving_in_progress <= false;

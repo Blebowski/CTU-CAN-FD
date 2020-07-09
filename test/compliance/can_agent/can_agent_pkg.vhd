@@ -278,6 +278,19 @@ package can_agent_pkg is
     );
 
     ---------------------------------------------------------------------------
+    -- Configure waiting of driver for monitor. If enabled, when driver is
+    -- enabled, driving first item from driver FIFO does not start immediately,
+    -- but only when monitor starts running. This allows synchronisation of
+    -- driver/monitor when DUT is transmitter!
+    --
+    -- @param net   Network on which CAN Agent listens (use "net").
+    ---------------------------------------------------------------------------
+    procedure can_agent_driver_set_wait_for_monitor(
+        signal      net             : inout network_t;
+        constant    wait_for_mon    : in    boolean
+    );
+
+    ---------------------------------------------------------------------------
     -- Drive single value. This producedure will push the item into driver FIFO,
     -- enable the driver and wait until this item is driven. If other items
     -- are present in driver FIFO, these items will be driven first.
@@ -625,6 +638,8 @@ package can_agent_pkg is
     
     constant CAN_AGNT_CMD_TX_RX_FEEDBACK_ENABLE         : integer := 26;
     constant CAN_AGNT_CMD_TX_RX_FEEDBACK_DISABLE        : integer := 27;
+    
+    constant CAN_AGNT_CMD_SET_WAIT_FOR_MONITOR          : integer := 28;
 
     constant CAN_AGNT_CMD_REPLY_OK                      : integer := 256;
     constant CAN_AGNT_CMD_REPLY_ERR                     : integer := 257;
@@ -870,6 +885,25 @@ package body can_agent_pkg is
         receive_reply(net, req_msg, reply_msg); 
         check(message_type(reply_msg).p_code = CAN_AGNT_CMD_REPLY_OK,
               CAN_AGENT_TAG & "All items driven from driver FIFO driven");
+    end procedure;
+
+    procedure can_agent_driver_set_wait_for_monitor(
+        signal      net             : inout network_t;
+        constant    wait_for_mon    : in    boolean
+    ) is
+        constant can_gen_rec            : actor_t := find("actor_can_agent");
+        variable req_msg, reply_msg     : msg_t;
+    begin    
+        info(CAN_AGENT_TAG & "Setting driver wait for monitor to: " &
+             boolean'image(wait_for_mon));
+        req_msg := new_msg(msg_type => (p_code => CAN_AGNT_CMD_SET_WAIT_FOR_MONITOR));
+        push(req_msg, wait_for_mon);
+        send(net         => net,
+             receiver    => can_gen_rec,
+             msg         => req_msg);
+        receive_reply(net, req_msg, reply_msg); 
+        check(message_type(reply_msg).p_code = CAN_AGNT_CMD_REPLY_OK,
+              CAN_AGENT_TAG & "Driver wait for monitor set");
     end procedure;
 
 

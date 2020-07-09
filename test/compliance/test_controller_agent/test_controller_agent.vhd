@@ -376,6 +376,13 @@ architecture tb of test_controller_agent is
         when VPI_CAN_AGNT_DRIVER_DRIVE_ALL_ITEM =>
             can_agent_driver_drive_all_items(net);
 
+        when VPI_CAN_AGNT_DRIVER_SET_WAIT_FOR_MONITOR =>
+            if (vpi_data_in(0) = '1') then
+                can_agent_driver_set_wait_for_monitor(net, true);
+            else
+                can_agent_driver_set_wait_for_monitor(net, false);
+            end if;
+
         when VPI_CAN_AGNT_MONITOR_START =>
             can_agent_monitor_start(net);
 
