@@ -144,6 +144,7 @@ feature:
         rx_buf_empty_read:
         tx_counter:
         rx_counter:
+        single_bus_node:
         ssp_cfg:
         status_rxne:
         status_txnf:
