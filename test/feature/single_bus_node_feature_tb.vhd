@@ -101,6 +101,8 @@ package body single_bus_node_feature is
         variable frame_2            :     SW_CAN_frame_type;
         variable frame_rx           :     SW_CAN_frame_type;
 
+        variable mode_1             :     SW_mode;
+
         -- Node status
         variable stat_2             :     SW_status;
 
@@ -127,17 +129,23 @@ package body single_bus_node_feature is
         info("Step 1: Disabling Node 2");
         CAN_turn_controller(false, ID_2, mem_bus(2));        
         CAN_enable_retr_limit(false, 0, ID_1, mem_bus(1));
-
+        
+        --get_core_mode(mode_1, ID_1, mem_bus(1));
+        --mode_1.self_test := true;
+        --set_core_mode(mode_1, ID_1, mem_bus(1));
+        
         ------------------------------------------------------------------------
         -- @2. Transmitt frame by Node 1.
         ------------------------------------------------------------------------
         info("Step 2: Transmit frame by Node 1");
         CAN_generate_frame(rand_ctr, frame_1);
-        --frame_1.rtr := RTR_FRAME;
-        --frame_1.frame_format := FD_CAN;
-        -- To keep test short!
+        frame_1.rtr := NO_RTR_FRAME;
+        frame_1.frame_format := NORMAL_CAN;
         frame_1.dlc := "0001";
         frame_1.data_length := 1;
+        frame_1.identifier := 256;
+        frame_1.data(0) := x"AA";      
+
         CAN_send_frame(frame_1, 1, ID_1, mem_bus(1), frame_sent);
 
         ------------------------------------------------------------------------
