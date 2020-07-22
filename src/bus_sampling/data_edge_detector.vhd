@@ -131,10 +131,6 @@ architecture rtl of data_edge_detector is
     signal rx_data_prev                 :       std_logic;
     signal tx_data_prev                 :       std_logic;
     signal rx_data_sync_prev            :       std_logic;
-
-    -- Immediate edges on tx_data, rx_data (not yet finally valid)
-    signal rx_edge_immediate            :       std_logic;
-    signal tx_edge_immediate            :       std_logic;
     
     -- Internal value of output signals
     signal rx_edge_i                    :       std_logic;
@@ -162,41 +158,25 @@ begin
         end if;
     end process;
 
-
     ----------------------------------------------------------------------------
-    -- Immediate edges are detected when there is difference between input
-    -- data (TX,RX) and its registered version.
-    ----------------------------------------------------------------------------
-    rx_edge_immediate <= '1' when (rx_data_prev /= rx_data) else
-                         '0';
-                         
-    tx_edge_immediate <= '1' when (tx_data_prev /= tx_data) else
-                         '0';   
-
-
-    ----------------------------------------------------------------------------
-    -- Valid TX Edge:
+    -- Valid TX Edge (Used to start transceiver delay measurement):
     --  1. Edge on tx_data
     --  2. RECESSIVE to DOMINANT
     ----------------------------------------------------------------------------
-    tx_edge_i <= '1' when (tx_edge_immediate = '1') and 
+    tx_edge_i <= '1' when (tx_data_prev /= tx_data) and 
                           (tx_data_prev = RECESSIVE)
                      else
                  '0';
 
     ----------------------------------------------------------------------------
-    -- Valid RX Edge:
+    -- Valid RX Edge (used to stop transceiver delay measurement)
     --  1. Edge on rx_data
     --  2. RECESSIVE to DOMINANT
-    --  3. Data sampled in previous Sample point are different from actual
-    --     rx_data immediately after edge. 
     ----------------------------------------------------------------------------
-    rx_edge_i <= '1' when (rx_edge_immediate = '1') and 
-                          (rx_data_prev = RECESSIVE) and
-                          (prev_rx_sample /= rx_data)
+    rx_edge_i <= '1' when (rx_data_prev /= rx_data) and 
+                          (rx_data_prev = RECESSIVE)
                      else
                  '0';
-
 
     ----------------------------------------------------------------------------
     -- Synchronisation edge:

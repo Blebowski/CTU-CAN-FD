@@ -111,11 +111,11 @@
 --           |           |   + error |     |  |   +-----+
 --           |  +-----+  |   +------>+  >  +----->+     | Immediate
 --     +-----+->+     |  |   +       |     |      |     |   exit
---      TSEG2   |  -  +->+  +        +-----+ +--->+ AND +--------->
---     +------->+     |  +-+     Is TSEG2?   |    |     |
---              +-----+         +------------+ +->+     |
---                           Resynchronisation |  +-----+
---                         +-------------------+
+--      TSEG2   |     +->+  +        +-----+ +--->+ AND +--------->
+--     +------->+  -  |  +-+     Is TSEG2?   |    |     |
+--        1     |     |         +------------+ +->+     |
+--     +------->|     |      Resynchronisation |  +-----+
+--              +-----+    +-------------------+
 --                                 valid
 --      
 --   Phase error detection functions like so:
@@ -407,7 +407,7 @@ begin
 
     ---------------------------------------------------------------------------
     -- Phase error calculation:
-    --  1. For TSEG2: TSEG2 - Bit Time counter
+    --  1. For TSEG2: TSEG2 - Bit Time counter - 1
     --  2. For TSEG1: Only Bit Time counter
     --
     -- Note that subtraction in unsigned type is safe here since segm_counter
@@ -415,7 +415,7 @@ begin
     -- err underflows, but we don't care since we don't use it then!
     ---------------------------------------------------------------------------
     neg_phase_err  <= resize(unsigned(tseg_2), C_E_WIDTH) -
-                      resize(unsigned(segm_counter), C_E_WIDTH); 
+                      resize(unsigned(segm_counter), C_E_WIDTH);
 
     phase_err <= resize(neg_phase_err, C_E_WIDTH) when (is_tseg2 = '1') else
                  resize(unsigned(segm_counter), C_E_WIDTH);

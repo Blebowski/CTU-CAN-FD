@@ -191,7 +191,7 @@ begin
     -- it must be gated when RX Trigger 1 is active. In this case TX Trigger
     -- request flag was set and TX Trigger will be shifted by one clock cycle.
     ---------------------------------------------------------------------------
-    tx_trigger <= '0' when (rx_triggers(0) = '1') else
+    tx_trigger <= '0' when (rx_trig_req_q = '1') else
                   tx_trig_req_flag_dq;
 
     -- <RELEASE_OFF>
