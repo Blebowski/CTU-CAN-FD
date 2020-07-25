@@ -1,3 +1,4 @@
+ifeq ($(KDIR),)
 ifeq ($(KERNEL_VERSION),)
 
 CROSS_COMPILE?= arm-linux-gnueabihf-
@@ -13,6 +14,7 @@ endif
 
 else
 KDIR = /lib/modules/$(KERNEL_VERSION)/build
+endif
 endif
 
 MAKEARGS := -C $(KDIR)
