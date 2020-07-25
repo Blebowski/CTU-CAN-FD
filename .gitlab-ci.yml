@@ -70,8 +70,8 @@ build_linux_driver:
     image: registry.gitlab.com/canfd/server-tools/ctucanfd_drvtest
     script:
         - cd driver/linux
-        - "make -j`nproc` KDIR=/linux/build"
-        - "make checkpatch KDIR=/linux/build"
+        - "make -j`nproc` KDIR=/linux/build CROSS_COMPILE=arm-linux-gnueabihf- ARCH=arm"
+        - "make checkpatch KDIR=/linux/build CROSS_COMPILE=arm-linux-gnueabihf- ARCH=arm"
     artifacts:
         paths:
             - driver/linux/ctucanfd.ko
