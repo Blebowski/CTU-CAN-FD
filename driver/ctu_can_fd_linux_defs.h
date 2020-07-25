@@ -39,6 +39,7 @@
 #include <stdint.h>
 #include <stdio.h>
 #include <stddef.h>
+#include <endian.h>
 #include <linux/types.h>
 #include <linux/socket.h>
 #include <arpa/inet.h>
@@ -86,6 +87,50 @@ if (unlikely(__ret_warn_on))					\
     __WARN_printf(format);					\
     unlikely(__ret_warn_on);					\
 })
+#endif
+
+#ifndef _LINUX_BYTEORDER_BIG_ENDIAN_H
+#ifndef _LINUX_BYTEORDER_LITTLE_ENDIAN_H
+
+#ifndef __cpu_to_le32
+#define __cpu_to_le32(x) htole32(x)
+#endif
+#ifndef __cpu_to_be32
+#define __cpu_to_be32(x) htobe32(x)
+#endif
+#ifndef __cpu_to_le16
+#define __cpu_to_le16(x) htole16(x)
+#endif
+#ifndef __cpu_to_be16
+#define __cpu_to_be16(x) htobe16(x)
+#endif
+#ifndef __le32_to_cpu
+#define __le32_to_cpu(x) le32toh(x)
+#endif
+#ifndef __be32_to_cpu
+#define __be32_to_cpu(x) be32toh(x)
+#endif
+#ifndef __le16_to_cpu
+#define __le16_to_cpu(x) le16toh(x)
+#endif
+#ifndef __be16_to_cpu
+#define __be16_to_cpu(x) be16toh(x)
+#endif
+
+#endif
+#endif
+
+#ifndef cpu_to_le32
+
+#define cpu_to_le32(x) __cpu_to_le32(x)
+#define cpu_to_be32(x) __cpu_to_be32(x)
+#define cpu_to_le16(x) __cpu_to_le16(x)
+#define cpu_to_be16(x) __cpu_to_be16(x)
+#define le32_to_cpu(x) __le32_to_cpu(x)
+#define be32_to_cpu(x) __be32_to_cpu(x)
+#define le16_to_cpu(x) __le16_to_cpu(x)
+#define be16_to_cpu(x) __be16_to_cpu(x)
+
 #endif
 
 /*
@@ -137,16 +182,6 @@ __attribute__((noinline))
 static inline u8 ioread8(const void *addr)
 {
 	return *(const volatile u8*)addr;
-}
-
-static inline u32 cpu_to_be32(u32 v)
-{
-	return htonl(v);
-}
-
-static inline u32 be32_to_cpu(u32 v)
-{
-	return ntohl(v);
 }
 
 __attribute__((noinline))

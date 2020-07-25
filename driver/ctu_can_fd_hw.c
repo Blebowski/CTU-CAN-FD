@@ -580,7 +580,7 @@ void ctucan_hw_read_rx_frame_ffw(struct ctucan_hw_priv *priv,
 	/* Data */
 	for (i = 0; i < cf->len; i += 4) {
 		u32 data = priv->read_reg(priv, CTU_CAN_FD_RX_DATA);
-		*(u32 *)(cf->data + i) = data;
+		*(__le32 *)(cf->data + i) = cpu_to_le32(data);
 	}
 }
 
@@ -733,7 +733,7 @@ bool ctucan_hw_insert_frame(struct ctucan_hw_priv *priv,
 
 	if (!(cf->can_id & CAN_RTR_FLAG)) {
 		for (i = 0; i < cf->len; i += 4) {
-			u32 data = *(u32 *)(cf->data + i);
+			u32 data = le32_to_cpu(*(__le32 *)(cf->data + i));
 
 			ctucan_hw_write_txt_buf(priv, buf_base,
 					CTU_CAN_FD_DATA_1_4_W + i, data);
