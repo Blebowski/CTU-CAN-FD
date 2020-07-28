@@ -46,7 +46,7 @@ void ctucan_hw_write32(struct ctucan_hw_priv *priv,
 void ctucan_hw_write32_be(struct ctucan_hw_priv *priv,
 			   enum ctu_can_fd_can_registers reg, u32 val)
 {
-	iowrite32(val, (char *)priv->mem_base + reg);
+	iowrite32be(val, (char *)priv->mem_base + reg);
 }
 
 u32 ctucan_hw_read32(struct ctucan_hw_priv *priv,
