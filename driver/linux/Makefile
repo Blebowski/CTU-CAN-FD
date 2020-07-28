@@ -1,20 +1,23 @@
+# CTU CAN FD ip core Linux driver Makefile
+
+# Invoked make without parameters for native build for current running kernel
+# Set KERNEL_VERSION variable to compile for specific installed kernel version
+# Exact location of Linux kernel build tree can be chosen by KDIR variable
+# If you build for different CPU architecture than native and you do not
+# use GNUmakefile trick to set CROSS_COMPILE and ARCH then set these to
+# matching values else you do not screw only CTU CAN FD build but even
+# base kernel build
+
+#CROSS_COMPILE?= arm-linux-gnueabihf-
+#KDIR ?= /home/mjerabek/projects/kernel/linux-4.15-build/zynq
+#ARCH=arm
+
 ifeq ($(KDIR),)
 ifeq ($(KERNEL_VERSION),)
-
-CROSS_COMPILE?= arm-linux-gnueabihf-
-KDIR ?= /home/mjerabek/projects/kernel/linux-4.15-build/zynq
-ARCH=arm
-
-ifeq ($(shell hostname),hathi)
-INSTALL_DIR=/srv/nfs4/debian-armhf-devel
+KERNEL_VERSION=$(shell uname -r)
 endif
 
-#KDIR ?= /lib/modules/$(shell uname -r)/build
-#ARCH ?= x86_64
-
-else
 KDIR = /lib/modules/$(KERNEL_VERSION)/build
-endif
 endif
 
 MAKEARGS := -C $(KDIR)
