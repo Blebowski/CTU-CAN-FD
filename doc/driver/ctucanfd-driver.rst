@@ -21,6 +21,12 @@ not have enumeration support, and the device must be specified in Device Tree.
 This kind of devices is called platform device in the kernel and is
 handled by a platform device driver.
 
+The basic functional model of the CTU CAN FD peripheral is developed
+to extend `QEMU CAN emulation support <https://git.qemu.org/?p=qemu.git;a=blob;f=docs/can.txt>`_
+to CAN FD and CTU CAN FD core emulation. The support is submitted for mainline
+and can be cloned from ctu-canfd branch of QEMU local development
+`repository <https://gitlab.fel.cvut.cz/canbus/qemu-canbus>`_.
+
 
 About SocketCAN
 ---------------
@@ -577,6 +583,20 @@ CTU CAN FD IP Core and Driver Development Acknowledgement
 * Jaroslav Beran<jara.beran@gmail.com>
 
  * system integration for Intel SoC, core and driver testing and updates
+
+* Carsten Emde (`OSADL <https://www.osadl.org/>`_)
+
+ * provided OSADL expertise to discuss IP core licensing
+ * pointed to possible deadlock for LGPL and CAN bus possible patent case which lead to relicense IP core design to BSD like license
+
+* Reiner Zitzmann and Holger Zeltwanger (`CAN in Automation <https://www.can-cia.org/>`_)
+
+ * provided suggestions and help to inform community about the project and invited us to events focused on CAN bus future development directions
+
+* Jan Charvat
+
+ * implemented CTU CAN FD functional model for QEMU
+ * Bachelor theses Model of CAN FD Communication Controller for QEMU Emulator
 
 Notes
 -----
