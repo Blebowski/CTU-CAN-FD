@@ -46,7 +46,7 @@ global USE_KERNEL_LICENSE_FLAG
 global KERNEL_LICENSE_FLAG
 
 USE_KERNEL_LICENSE_FLAG = True
-KERNEL_LICENSE_FLAG = "// SPDX-License-Identifier: GPL-2.0+"
+KERNEL_LICENSE_FLAG = "/* SPDX-License-Identifier: GPL-2.0-or-later */"
 
 
 ################################################################################
