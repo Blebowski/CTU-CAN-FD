@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-2.0+
+// SPDX-License-Identifier: GPL-2.0-or-later
 /*******************************************************************************
  *
  * CTU CAN FD IP Core
@@ -34,7 +34,7 @@
 #include "ctu_can_fd.h"
 
 MODULE_LICENSE("GPL");
-MODULE_AUTHOR("Martin Jerabek");
+MODULE_AUTHOR("Pavel Pisa");
 MODULE_DESCRIPTION("CTU CAN FD for PCI bus");
 
 #define DRV_NAME	"ctucanfd_pci"
@@ -142,12 +142,12 @@ static int ctucan_pci_probe(struct pci_dev *pdev,
 	}
 
 	dev_info(dev, "ctucan BAR0 0x%08llx 0x%08llx\n",
-			 (long long)pci_resource_start(pdev, 0),
-			 (long long)pci_resource_len(pdev, 0));
+		 (long long)pci_resource_start(pdev, 0),
+		 (long long)pci_resource_len(pdev, 0));
 
 	dev_info(dev, "ctucan BAR1 0x%08llx 0x%08llx\n",
-			 (long long)pci_resource_start(pdev, 1),
-			 (long long)pci_resource_len(pdev, 1));
+		 (long long)pci_resource_start(pdev, 1),
+		 (long long)pci_resource_len(pdev, 1));
 
 	addr = pci_iomap(pdev, 1, pci_resource_len(pdev, 1));
 	if (!addr) {
@@ -193,7 +193,7 @@ static int ctucan_pci_probe(struct pci_dev *pdev,
 	pci_set_drvdata(pdev, bdata);
 
 	ret = ctucan_probe_common(dev, addr, irq, ntxbufs, 100000000,
-							  0, ctucan_pci_set_drvdata);
+				  0, ctucan_pci_set_drvdata);
 	if (ret < 0)
 		goto err_free_board;
 
@@ -202,10 +202,10 @@ static int ctucan_pci_probe(struct pci_dev *pdev,
 	while (pci_use_second && (core_i < num_cores)) {
 		addr += 0x4000;
 		ret = ctucan_probe_common(dev, addr, irq, ntxbufs, 100000000,
-								  0, ctucan_pci_set_drvdata);
+					  0, ctucan_pci_set_drvdata);
 		if (ret < 0) {
 			dev_info(dev, "CTU CAN FD core %d initialization failed\n",
-					 core_i);
+				 core_i);
 			break;
 		}
 		core_i++;
@@ -299,11 +299,9 @@ static void ctucan_pci_remove(struct pci_dev *pdev)
 static SIMPLE_DEV_PM_OPS(ctucan_pci_pm_ops, ctucan_suspend, ctucan_resume);
 
 static const struct pci_device_id ctucan_pci_tbl[] = {
-	{PCI_DEVICE_DATA(ALTERA, CTUCAN_TEST,
-		CTUCAN_WITHOUT_CTUCAN_ID)},
-		{PCI_DEVICE_DATA(TEDIA, CTUCAN_VER21,
-			CTUCAN_WITH_CTUCAN_ID)},
-			{},
+	{PCI_DEVICE_DATA(TEDIA, CTUCAN_VER21,
+		CTUCAN_WITH_CTUCAN_ID)},
+	{},
 };
 
 static struct pci_driver ctucan_pci_driver = {

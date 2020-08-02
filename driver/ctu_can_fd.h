@@ -1,5 +1,5 @@
-/* SPDX-License-Identifier: GPL-2.0+
- *******************************************************************************
+/* SPDX-License-Identifier: GPL-2.0-or-later */
+/*******************************************************************************
  *
  * CTU CAN FD IP Core
  * Copyright (C) 2015-2018
@@ -38,14 +38,14 @@
 #include "ctu_can_fd_hw.h"
 
 struct ctucan_priv {
-	struct can_priv can; // must be first member!
+	struct can_priv can; /* must be first member! */
 	struct ctucan_hw_priv p;
 
 	unsigned int txb_head;
 	unsigned int txb_tail;
 	u32 txb_prio;
 	unsigned int txb_mask;
-	spinlock_t tx_lock;
+	spinlock_t tx_lock; /* spinlock to serialize allocation and processing of TX buffers */
 
 	struct napi_struct napi;
 	struct device *dev;
@@ -80,7 +80,7 @@ int ctucan_probe_common(struct device *dev, void __iomem *addr,
 			unsigned long can_clk_rate,
 			int pm_enable_call,
 			void (*set_drvdata_fnc)(struct device *dev,
-			struct net_device *ndev));
+						struct net_device *ndev));
 
 int ctucan_suspend(struct device *dev) __maybe_unused;
 int ctucan_resume(struct device *dev) __maybe_unused;
