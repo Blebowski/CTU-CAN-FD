@@ -1,3 +1,5 @@
+.. SPDX-License-Identifier: GPL-2.0-or-later
+
 CTU CAN FD Driver
 =================
 
@@ -299,9 +301,9 @@ constraints and the requested parameters.
 
            struct can_bittiming_const {
                char name[16];      /* Name of the CAN controller hardware */
-               __u32 tseg1_min;    /* Time segement 1 = prop_seg + phase_seg1 */
+               __u32 tseg1_min;    /* Time segment 1 = prop_seg + phase_seg1 */
                __u32 tseg1_max;
-               __u32 tseg2_min;    /* Time segement 2 = phase_seg2 */
+               __u32 tseg2_min;    /* Time segment 2 = phase_seg2 */
                __u32 tseg2_max;
                __u32 sjw_max;      /* Synchronisation jump width */
                __u32 brp_min;      /* Bit-rate prescaler */
@@ -526,7 +528,7 @@ CTU CAN FD Driver Sources Reference
 .. kernel-doc:: ../../driver/ctu_can_fd_platform.c
    :internal:
 
-CTU CAN FD IP Core and Driver Development Acknowledgement
+CTU CAN FD IP Core and Driver Development Acknowledgment
 ---------------------------------------------------------
 
 * Odrej Ille <illeondr@fel.cvut.cz>

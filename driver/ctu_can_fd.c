@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-2.0+
+// SPDX-License-Identifier: GPL-2.0-or-later
 /*******************************************************************************
  *
  * CTU CAN FD IP Core
@@ -69,7 +69,6 @@ static const char * const ctucan_state_strings[] = {
  * - at frame filling, do not rotate anything, just increment buffer modulo
  *   counter
  */
-
 
 #define CTUCAN_FLAG_RX_FFW_BUFFERED	1
 
@@ -176,8 +175,9 @@ static int ctucan_set_secondary_sample_point(struct net_device *ndev)
 			netdev_warn(ndev, "SSP offset saturated to 127\n");
 			ssp_offset = 127;
 		}
-	} else
+	} else {
 		ssp_ena = false;
+	}
 
 	ctucan_hw_configure_ssp(&priv->p, ssp_ena, true, ssp_offset);
 
@@ -327,11 +327,11 @@ static int ctucan_start_xmit(struct sk_buff *skb, struct net_device *ndev)
 	txb_id = priv->txb_head & priv->txb_mask;
 	netdev_dbg(ndev, "%s: using TXB#%u", __func__, txb_id);
 	ok = ctucan_hw_insert_frame(&priv->p, cf, 0, txb_id,
-				     can_is_canfd_skb(skb));
+				    can_is_canfd_skb(skb));
 
 	if (!ok) {
 		netdev_err(ndev,
-		    "BUG! TXNF set but cannot insert frame into TXTB! HW Bug?");
+			   "BUG! TXNF set but cannot insert frame into TXTB! HW Bug?");
 		return NETDEV_TX_BUSY;
 	}
 	can_put_echo_skb(skb, ndev, txb_id);
@@ -400,7 +400,6 @@ static int ctucan_rx(struct net_device *ndev)
 	return 1;
 }
 
-
 static const char *ctucan_state_to_str(enum can_state state)
 {
 	if (state >= CAN_STATE_MAX)
@@ -449,10 +448,9 @@ static void ctucan_err_interrupt(struct net_device *ndev,
 	 */
 
 	if (isr.s.fcsi || isr.s.ewli) {
-
 		netdev_info(ndev, "  state changes from %s to %s",
-				ctucan_state_to_str(priv->can.state),
-				ctucan_state_to_str(state));
+			    ctucan_state_to_str(priv->can.state),
+			    ctucan_state_to_str(state));
 
 		if (priv->can.state == state)
 			netdev_warn(ndev,
@@ -675,7 +673,7 @@ static void ctucan_tx_interrupt(struct net_device *ndev)
 					netdev_err(ndev, "BUG: TXB#%u not in a finished state (0x%x)!",
 						   txb_idx, status);
 					spin_unlock_irqrestore(&priv->tx_lock,
-								flags);
+							       flags);
 					/* do not clear nor wake */
 					return;
 				}
@@ -785,12 +783,12 @@ static irqreturn_t ctucan_interrupt(int irq, void *dev_id)
 		int i;
 
 		netdev_err(ndev, "txb_head=0x%08x txb_tail=0x%08x\n",
-			priv->txb_head, priv->txb_tail);
+			   priv->txb_head, priv->txb_tail);
 		for (i = 0; i <= priv->txb_mask; i++) {
 			u32 status = ctucan_hw_get_tx_status(&priv->p, i);
 
 			netdev_err(ndev, "txb[%d] txb status=0x%08x\n",
-				i, status);
+				   i, status);
 		}
 	}
 
@@ -983,9 +981,9 @@ int ctucan_resume(struct device *dev)
 EXPORT_SYMBOL(ctucan_resume);
 
 int ctucan_probe_common(struct device *dev, void __iomem *addr,
-		int irq, unsigned int ntxbufs, unsigned long can_clk_rate,
-		int pm_enable_call, void (*set_drvdata_fnc)(struct device *dev,
-		struct net_device *ndev))
+			int irq, unsigned int ntxbufs, unsigned long can_clk_rate,
+			int pm_enable_call, void (*set_drvdata_fnc)(struct device *dev,
+			struct net_device *ndev))
 {
 	struct ctucan_priv *priv;
 	struct net_device *ndev;
@@ -1101,7 +1099,7 @@ EXPORT_SYMBOL(ctucan_probe_common);
 
 static __init int ctucan_init(void)
 {
-	printk(KERN_INFO "%s CAN netdevice driver\n", DRV_NAME);
+	pr_info("%s CAN netdevice driver\n", DRV_NAME);
 
 	return 0;
 }
@@ -1110,7 +1108,7 @@ module_init(ctucan_init);
 
 static __exit void ctucan_exit(void)
 {
-	printk(KERN_INFO "%s: driver removed\n", DRV_NAME);
+	pr_info("%s: driver removed\n", DRV_NAME);
 }
 
 module_exit(ctucan_exit);

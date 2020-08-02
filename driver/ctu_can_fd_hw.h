@@ -1,5 +1,5 @@
-/* SPDX-License-Identifier: GPL-2.0+
- *******************************************************************************
+/* SPDX-License-Identifier: GPL-2.0-or-later */
+/*******************************************************************************
  *
  * CTU CAN FD IP Core
  * Copyright (C) 2015-2018
@@ -130,16 +130,16 @@ struct ctucan_hw_priv {
 	u32 (*read_reg)(struct ctucan_hw_priv *priv,
 			enum ctu_can_fd_can_registers reg);
 	void (*write_reg)(struct ctucan_hw_priv *priv,
-			enum ctu_can_fd_can_registers reg, u32 val);
+			  enum ctu_can_fd_can_registers reg, u32 val);
 };
 #endif
 
 void ctucan_hw_write32(struct ctucan_hw_priv *priv,
-			enum ctu_can_fd_can_registers reg, u32 val);
+		       enum ctu_can_fd_can_registers reg, u32 val);
 void ctucan_hw_write32_be(struct ctucan_hw_priv *priv,
-			enum ctu_can_fd_can_registers reg, u32 val);
+			  enum ctu_can_fd_can_registers reg, u32 val);
 u32 ctucan_hw_read32(struct ctucan_hw_priv *priv,
-			enum ctu_can_fd_can_registers reg);
+		     enum ctu_can_fd_can_registers reg);
 u32 ctucan_hw_read32_be(struct ctucan_hw_priv *priv,
 			enum ctu_can_fd_can_registers reg);
 
@@ -187,7 +187,7 @@ void ctucan_hw_reset(struct ctucan_hw_priv *priv);
  * ctucan_hw_set_ret_limit - Set retransmit limit for sent messages
  *
  * Configures CTU CAN FD Core to limit the amount of retransmit attempts after
- * occurence of error (Error frame, Arbitration lost). If retransmit limit is
+ * occurrence of error (Error frame, Arbitration lost). If retransmit limit is
  * disabled, the Core will attempt to retransmit inifinitely. If retransmit
  * limit is reached, the Core will finish and according TXT buffer will end up
  * in TX Error state.
@@ -198,7 +198,7 @@ void ctucan_hw_reset(struct ctucan_hw_priv *priv);
  * Return: True if set correctly. False if "limit" is too high.
  */
 bool ctucan_hw_set_ret_limit(struct ctucan_hw_priv *priv, bool enable,
-			      u8 limit);
+			     u8 limit);
 
 /**
  * ctucan_hw_set_mode_reg - Configures CTU CAN FD Core for special operating
@@ -233,7 +233,7 @@ bool ctucan_hw_set_ret_limit(struct ctucan_hw_priv *priv, bool enable,
  * @mode: CAN mode to be set to on the Core.
  */
 void ctucan_hw_set_mode_reg(struct ctucan_hw_priv *priv,
-			     const struct can_ctrlmode *mode);
+			    const struct can_ctrlmode *mode);
 
 /**
  * ctucan_hw_rel_rx_buf - Gives command to CTU CAN FD Core to erase
@@ -306,7 +306,7 @@ static inline union ctu_can_fd_int_stat
  * @mask: Mask of interrupts which should be cleared.
  */
 static inline void ctucan_hw_int_clr(struct ctucan_hw_priv *priv,
-				      union ctu_can_fd_int_stat mask)
+				     union ctu_can_fd_int_stat mask)
 {
 	priv->write_reg(priv, CTU_CAN_FD_INT_STAT, mask.u32);
 }
@@ -318,7 +318,7 @@ static inline void ctucan_hw_int_clr(struct ctucan_hw_priv *priv,
  * @mask: Mask of interrupts which should be disabled.
  */
 static inline void ctucan_hw_int_ena_set(struct ctucan_hw_priv *priv,
-					  union ctu_can_fd_int_stat mask)
+					 union ctu_can_fd_int_stat mask)
 {
 	priv->write_reg(priv, CTU_CAN_FD_INT_ENA_SET, mask.u32);
 }
@@ -330,7 +330,7 @@ static inline void ctucan_hw_int_ena_set(struct ctucan_hw_priv *priv,
  * @mask: Mask of interrupts which should be disabled.
  */
 static inline void ctucan_hw_int_ena_clr(struct ctucan_hw_priv *priv,
-					  union ctu_can_fd_int_stat mask)
+					 union ctu_can_fd_int_stat mask)
 {
 	priv->write_reg(priv, CTU_CAN_FD_INT_ENA_CLR, mask.u32);
 }
@@ -343,8 +343,8 @@ static inline void ctucan_hw_int_ena_clr(struct ctucan_hw_priv *priv,
  * @val: 0 - disable, 1 - enable the interrupt.
  */
 void ctucan_hw_int_ena(struct ctucan_hw_priv *priv,
-			union ctu_can_fd_int_stat mask,
-			union ctu_can_fd_int_stat val);
+		       union ctu_can_fd_int_stat mask,
+		       union ctu_can_fd_int_stat val);
 
 /**
  * ctucan_hw_int_mask_set - Mask interrupts of CTU CAN FD Core.
@@ -353,7 +353,7 @@ void ctucan_hw_int_ena(struct ctucan_hw_priv *priv,
  * @mask: Mask of interrupts which should be masked.
  */
 static inline void ctucan_hw_int_mask_set(struct ctucan_hw_priv *priv,
-					   union ctu_can_fd_int_stat mask)
+					  union ctu_can_fd_int_stat mask)
 {
 	priv->write_reg(priv, CTU_CAN_FD_INT_MASK_SET, mask.u32);
 }
@@ -365,7 +365,7 @@ static inline void ctucan_hw_int_mask_set(struct ctucan_hw_priv *priv,
  * @mask: Mask of interrupts which should be unmasked.
  */
 static inline void ctucan_hw_int_mask_clr(struct ctucan_hw_priv *priv,
-					   union ctu_can_fd_int_stat mask)
+					  union ctu_can_fd_int_stat mask)
 {
 	priv->write_reg(priv, CTU_CAN_FD_INT_MASK_CLR, mask.u32);
 }
@@ -378,8 +378,8 @@ static inline void ctucan_hw_int_mask_clr(struct ctucan_hw_priv *priv,
  * @val: 0 - unmask, 1 - mask the interrupt.
  */
 void ctucan_hw_int_mask(struct ctucan_hw_priv *priv,
-			 union ctu_can_fd_int_stat mask,
-			 union ctu_can_fd_int_stat val);
+			union ctu_can_fd_int_stat mask,
+			union ctu_can_fd_int_stat val);
 
 /**
  * ctucan_hw_set_mode - Set the modes of CTU CAN FD IP Core.
@@ -392,7 +392,7 @@ void ctucan_hw_int_mask(struct ctucan_hw_priv *priv,
  * @mode: Mode of the controller from Socket CAN.
  */
 void ctucan_hw_set_mode(struct ctucan_hw_priv *priv,
-			 const struct can_ctrlmode *mode);
+			const struct can_ctrlmode *mode);
 
 /**
  * ctucan_hw_set_nom_bittiming - Set Nominal bit timing of CTU CAN FD Core.
@@ -405,7 +405,7 @@ void ctucan_hw_set_mode(struct ctucan_hw_priv *priv,
  * @nbt: Nominal bit timing settings of CAN Controller.
  */
 void ctucan_hw_set_nom_bittiming(struct ctucan_hw_priv *priv,
-				  struct can_bittiming *nbt);
+				 struct can_bittiming *nbt);
 
 /**
  * ctucan_hw_set_data_bittiming - Set Data bit timing of CTU CAN FD Core.
@@ -418,7 +418,7 @@ void ctucan_hw_set_nom_bittiming(struct ctucan_hw_priv *priv,
  * @dbt: Data bit timing settings of CAN Controller.
  */
 void ctucan_hw_set_data_bittiming(struct ctucan_hw_priv *priv,
-				   struct can_bittiming *dbt);
+				  struct can_bittiming *dbt);
 
 /**
  * ctucan_hw_set_err_limits - Set limits for error warning and passive
@@ -453,7 +453,7 @@ static inline void ctucan_hw_set_def_err_limits(struct ctucan_hw_priv *priv)
  * @ctr: Pointer to error counter structure to fill
  */
 void ctucan_hw_read_err_ctrs(struct ctucan_hw_priv *priv,
-			      struct can_berr_counter *ctr);
+			     struct can_berr_counter *ctr);
 
 /**
  * ctucan_hw_read_nom_errs - Read special error counter which returns number
@@ -533,9 +533,9 @@ enum can_state ctucan_hw_read_error_state(struct ctucan_hw_priv *priv);
  * Return: Error state of the CTU CAN FD Core.
  */
 void ctucan_hw_set_err_ctrs(struct ctucan_hw_priv *priv,
-			     const struct can_berr_counter *ctr);
+			    const struct can_berr_counter *ctr);
 
-/*
+/**
  * ctu_can_fd_read_err_capt_alc - Read core captured last error or arbitration
  *                                lost reason.
  *
@@ -580,7 +580,7 @@ bool ctucan_hw_get_range_filter_support(struct ctucan_hw_priv *priv);
  * Return: True if mask filter was configured properly, false otherwise.
  */
 bool ctucan_hw_set_mask_filter(struct ctucan_hw_priv *priv, u8 fnum,
-				bool enable, const struct can_filter *filter);
+			       bool enable, const struct can_filter *filter);
 
 /**
  * ctucan_hw_set_range_filter - Configure range filter of CTU CAN FD Core.
@@ -594,7 +594,7 @@ bool ctucan_hw_set_mask_filter(struct ctucan_hw_priv *priv, u8 fnum,
  * @enable: Enable the range filter.
  */
 void ctucan_hw_set_range_filter(struct ctucan_hw_priv *priv, canid_t low_th,
-				 canid_t high_th, bool enable);
+				canid_t high_th, bool enable);
 
 /**
  * ctucan_hw_get_rx_fifo_size - Get size of the RX FIFO Buffer
@@ -676,9 +676,9 @@ static inline u16 ctucan_hw_get_rx_frame_count(struct ctucan_hw_priv *priv)
  * @val: Timestamp option settings.
  */
 void ctucan_hw_set_rx_tsop(struct ctucan_hw_priv *priv,
-			    enum ctu_can_fd_rx_settings_rtsop val);
+			   enum ctu_can_fd_rx_settings_rtsop val);
 
-/*
+/**
  * ctu_can_fd_read_rx_ffw - Reads the first word of CAN Frame from RX FIFO
  *                          Buffer.
  *
@@ -716,7 +716,7 @@ static inline u32 ctucan_hw_read_rx_word(struct ctucan_hw_priv *priv)
  * @ts: Pointer to u64 where RX Timestamp should be stored.
  */
 void ctucan_hw_read_rx_frame(struct ctucan_hw_priv *priv,
-			      struct canfd_frame *data, u64 *ts);
+			     struct canfd_frame *data, u64 *ts);
 
 /**
  * ctucan_hw_read_rx_frame_ffw - Reads rest of CAN Frame from RX FIFO Buffer
@@ -728,10 +728,10 @@ void ctucan_hw_read_rx_frame(struct ctucan_hw_priv *priv,
  * @ffw: Already read the first frame control word by the caller
  */
 void ctucan_hw_read_rx_frame_ffw(struct ctucan_hw_priv *priv,
-				  struct canfd_frame *cf, u64 *ts,
-				  union ctu_can_fd_frame_form_w ffw);
+				 struct canfd_frame *cf, u64 *ts,
+				 union ctu_can_fd_frame_form_w ffw);
 
-/*
+/**
  * ctucan_hw_get_tx_status - Returns status of TXT Buffer.
  *
  * @priv: Private info
@@ -761,7 +761,7 @@ bool ctucan_hw_is_txt_buf_accessible(struct ctucan_hw_priv *priv, u8 buf);
  * Return: Status of the TXT Buffer.
  */
 bool ctucan_hw_txt_buf_give_command(struct ctucan_hw_priv *priv, u8 cmd,
-				     u8 buf);
+				    u8 buf);
 
 /**
  * ctucan_hw_txt_set_empty - Give "set_empty" command to TXT Buffer.
@@ -820,8 +820,8 @@ void ctucan_hw_set_txt_priority(struct ctucan_hw_priv *priv, const u8 *prio);
  * Return: True if the frame was inserted successfully, False otherwise.
  */
 bool ctucan_hw_insert_frame(struct ctucan_hw_priv *priv,
-			     const struct canfd_frame *data, u64 ts,
-			     u8 buf, bool isfdf);
+			    const struct canfd_frame *data, u64 ts,
+			    u8 buf, bool isfdf);
 
 /**
  * ctucan_hw_get_tran_delay - Read transceiver delay as measured
@@ -871,7 +871,7 @@ static inline u32 ctucan_hw_get_rx_frame_ctr(struct ctucan_hw_priv *priv)
 	return reg.s.rx_fr_ctr_val;
 }
 
-/*
+/**
  * ctu_can_fd_read_debug_info - Returns debug information of CTU CAN FD Core.
  *
  * @priv: Private info

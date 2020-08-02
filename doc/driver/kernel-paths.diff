@@ -1,0 +1,32 @@
+--- ctucanfd-driver.rst	2020-08-02 22:03:52.311872303 +0200
++++ ctucanfd-driver.rst	2020-08-02 21:27:30.000000000 +0200
+@@ -446,7 +446,7 @@
+ 
+ |
+ 
+-.. figure:: ../pics/Visio_generated/FSM_TXT_Buffer_user.png
++.. figure:: FSM_TXT_Buffer_user.png
+ 
+    TX Buffer states with possible transitions
+ 
+@@ -516,16 +516,16 @@
+ CTU CAN FD Driver Sources Reference
+ -----------------------------------
+ 
+-.. kernel-doc:: ../../driver/ctu_can_fd_hw.h
++.. kernel-doc:: drivers/net/can/ctucanfd/ctu_can_fd_hw.h
+    :internal:
+ 
+-.. kernel-doc:: ../../driver/ctu_can_fd.c
++.. kernel-doc:: drivers/net/can/ctucanfd/ctu_can_fd.c
+    :internal:
+ 
+-.. kernel-doc:: ../../driver/ctu_can_fd_pci.c
++.. kernel-doc:: drivers/net/can/ctucanfd/ctu_can_fd_pci.c
+    :internal:
+ 
+-.. kernel-doc:: ../../driver/ctu_can_fd_platform.c
++.. kernel-doc:: drivers/net/can/ctucanfd/ctu_can_fd_platform.c
+    :internal:
+ 
+ CTU CAN FD IP Core and Driver Development Acknowledgment
