@@ -195,7 +195,7 @@ static int ctucan_set_secondary_sample_point(struct net_device *ndev)
 static int ctucan_chip_start(struct net_device *ndev)
 {
 	struct ctucan_priv *priv = netdev_priv(ndev);
-	union ctu_can_fd_int_stat int_ena, int_msk, int_enamask_mask;
+	union ctu_can_fd_int_stat int_ena, int_msk;
 	int err;
 	struct can_ctrlmode mode;
 
@@ -229,8 +229,6 @@ static int ctucan_chip_start(struct net_device *ndev)
 
 	int_ena.s.ewli = 1;
 	int_ena.s.fcsi = 1;
-
-	int_enamask_mask.u32 = 0xFFFFFFFF;
 
 	mode.flags = priv->can.ctrlmode;
 	mode.mask = 0xFFFFFFFF;
