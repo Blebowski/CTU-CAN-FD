@@ -2,12 +2,11 @@
 /*******************************************************************************
  *
  * CTU CAN FD IP Core
- * Copyright (C) 2015-2018
  *
- * Authors:
- *     Ondrej Ille <ondrej.ille@gmail.com>
- *     Martin Jerabek <martin.jerabek01@gmail.com>
- *     Jaroslav Beran <jara.beran@gmail.com>
+ * Copyright (C) 2015-2018 Ondrej Ille <ondrej.ille@gmail.com> FEE CTU
+ * Copyright (C) 2018-2020 Ondrej Ille <ondrej.ille@gmail.com> self-funded
+ * Copyright (C) 2018-2019 Martin Jerabek <martin.jerabek01@gmail.com> FEE CTU
+ * Copyright (C) 2018-2020 Pavel Pisa <pisa@cmp.felk.cvut.cz> FEE CTU/self-funded
  *
  * Project advisors:
  *     Jiri Novak <jnovak@fel.cvut.cz>
@@ -28,10 +27,20 @@
  * GNU General Public License for more details.
  ******************************************************************************/
 
-#ifndef __KERNEL__
-# include "ctu_can_fd_linux_defs.h"
-#else
+
+#ifdef __KERNEL__
 # include <linux/can/dev.h>
+#else
+/* The hardware registers mapping and low level layer should build
+ * in userspace to allow development and verification of CTU CAN IP
+ * core VHDL design when loaded into hardware. Debugging hardware
+ * from kernel driver is really difficult, leads to system stucks
+ * by error reporting etc. Testing of exactly the same code
+ * in userspace together with headers generated automatically
+ * generated from from IP-XACT/cactus helps to driver to hardware
+ * and QEMU emulation model consistency keeping.
+ */
+# include "ctu_can_fd_linux_defs.h"
 #endif
 
 #include "ctu_can_fd_frame.h"
@@ -40,25 +49,25 @@
 void ctucan_hw_write32(struct ctucan_hw_priv *priv,
 		       enum ctu_can_fd_can_registers reg, u32 val)
 {
-	iowrite32(val, (char *)priv->mem_base + reg);
+	iowrite32(val, priv->mem_base + reg);
 }
 
 void ctucan_hw_write32_be(struct ctucan_hw_priv *priv,
 			  enum ctu_can_fd_can_registers reg, u32 val)
 {
-	iowrite32be(val, (char *)priv->mem_base + reg);
+	iowrite32be(val, priv->mem_base + reg);
 }
 
 u32 ctucan_hw_read32(struct ctucan_hw_priv *priv,
 		     enum ctu_can_fd_can_registers reg)
 {
-	return ioread32((char *)priv->mem_base + reg);
+	return ioread32(priv->mem_base + reg);
 }
 
 u32 ctucan_hw_read32_be(struct ctucan_hw_priv *priv,
 			enum ctu_can_fd_can_registers reg)
 {
-	return ioread32be((char *)priv->mem_base + reg);
+	return ioread32be(priv->mem_base + reg);
 }
 
 static void ctucan_hw_write_txt_buf(struct ctucan_hw_priv *priv,
@@ -68,7 +77,7 @@ static void ctucan_hw_write_txt_buf(struct ctucan_hw_priv *priv,
 	priv->write_reg(priv, buf_base + offset, val);
 }
 
-static inline union ctu_can_fd_identifier_w ctucan_hw_id_to_hwid(canid_t id)
+static union ctu_can_fd_identifier_w ctucan_hw_id_to_hwid(canid_t id)
 {
 	union ctu_can_fd_identifier_w hwid;
 
@@ -86,9 +95,9 @@ static inline union ctu_can_fd_identifier_w ctucan_hw_id_to_hwid(canid_t id)
 }
 
 // TODO: rename or do not depend on previous value of id
-static inline void ctucan_hw_hwid_to_id(union ctu_can_fd_identifier_w hwid,
-					canid_t *id,
-					enum ctu_can_fd_frame_form_w_ide type)
+static void ctucan_hw_hwid_to_id(union ctu_can_fd_identifier_w hwid,
+				 canid_t *id,
+				 enum ctu_can_fd_frame_form_w_ide type)
 {
 	/* Preserve flags which we dont set */
 	*id &= ~(CAN_EFF_FLAG | CAN_EFF_MASK);

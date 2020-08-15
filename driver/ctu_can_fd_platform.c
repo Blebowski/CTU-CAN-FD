@@ -2,12 +2,11 @@
 /*******************************************************************************
  *
  * CTU CAN FD IP Core
- * Copyright (C) 2015-2018
  *
- * Authors:
- *     Ondrej Ille <ondrej.ille@gmail.com>
- *     Martin Jerabek <martin.jerabek01@gmail.com>
- *     Jaroslav Beran <jara.beran@gmail.com>
+ * Copyright (C) 2015-2018 Ondrej Ille <ondrej.ille@gmail.com> FEE CTU
+ * Copyright (C) 2018-2020 Ondrej Ille <ondrej.ille@gmail.com> self-funded
+ * Copyright (C) 2018-2019 Martin Jerabek <martin.jerabek01@gmail.com> FEE CTU
+ * Copyright (C) 2018-2020 Pavel Pisa <pisa@cmp.felk.cvut.cz> FEE CTU/self-funded
  *
  * Project advisors:
  *     Jiri Novak <jnovak@fel.cvut.cz>
@@ -35,10 +34,6 @@
 #include <linux/pm_runtime.h>
 
 #include "ctu_can_fd.h"
-
-MODULE_LICENSE("GPL");
-MODULE_AUTHOR("Martin Jerabek");
-MODULE_DESCRIPTION("CTU CAN FD for platform");
 
 #define DRV_NAME	"ctucanfd"
 
@@ -120,13 +115,11 @@ static int ctucan_platform_remove(struct platform_device *pdev)
 	return 0;
 }
 
-static const struct dev_pm_ops ctucan_dev_pm_ops = {
-	SET_SYSTEM_SLEEP_PM_OPS(ctucan_suspend, ctucan_resume)
-};
+static SIMPLE_DEV_PM_OPS(ctucan_platform_pm_ops, ctucan_suspend, ctucan_resume);
 
 /* Match table for OF platform binding */
 static const struct of_device_id ctucan_of_match[] = {
-	{ .compatible = "ctu,canfd-2", },
+	{ .compatible = "ctu,ctucanfd-2", },
 	{ .compatible = "ctu,ctucanfd", },
 	{ /* end of list */ },
 };
@@ -137,9 +130,13 @@ static struct platform_driver ctucanfd_driver = {
 	.remove	= ctucan_platform_remove,
 	.driver	= {
 		.name = DRV_NAME,
-		.pm = &ctucan_dev_pm_ops,
+		.pm = &ctucan_platform_pm_ops,
 		.of_match_table	= ctucan_of_match,
 	},
 };
 
 module_platform_driver(ctucanfd_driver);
+
+MODULE_LICENSE("GPL");
+MODULE_AUTHOR("Martin Jerabek");
+MODULE_DESCRIPTION("CTU CAN FD for platform");

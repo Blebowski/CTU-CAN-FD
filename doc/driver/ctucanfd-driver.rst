@@ -632,4 +632,3 @@ Notes
 
 .. [7]
    Or rather in the next clock cycle
-

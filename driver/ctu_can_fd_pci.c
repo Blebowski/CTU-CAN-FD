@@ -2,12 +2,11 @@
 /*******************************************************************************
  *
  * CTU CAN FD IP Core
- * Copyright (C) 2015-2018
  *
- * Authors:
- *     Ondrej Ille <ondrej.ille@gmail.com>
- *     Martin Jerabek <martin.jerabek01@gmail.com>
- *     Jaroslav Beran <jara.beran@gmail.com>
+ * Copyright (C) 2015-2018 Ondrej Ille <ondrej.ille@gmail.com> FEE CTU
+ * Copyright (C) 2018-2020 Ondrej Ille <ondrej.ille@gmail.com> self-funded
+ * Copyright (C) 2018-2019 Martin Jerabek <martin.jerabek01@gmail.com> FEE CTU
+ * Copyright (C) 2018-2020 Pavel Pisa <pisa@cmp.felk.cvut.cz> FEE CTU/self-funded
  *
  * Project advisors:
  *     Jiri Novak <jnovak@fel.cvut.cz>
@@ -32,10 +31,6 @@
 #include <linux/pci.h>
 
 #include "ctu_can_fd.h"
-
-MODULE_LICENSE("GPL");
-MODULE_AUTHOR("Pavel Pisa");
-MODULE_DESCRIPTION("CTU CAN FD for PCI bus");
 
 #define DRV_NAME	"ctucanfd_pci"
 
@@ -76,7 +71,7 @@ struct ctucan_pci_board_data {
 	int use_msi;
 };
 
-struct ctucan_pci_board_data *ctucan_pci_get_bdata(struct pci_dev *pdev)
+static struct ctucan_pci_board_data *ctucan_pci_get_bdata(struct pci_dev *pdev)
 {
 	return (struct ctucan_pci_board_data *)pci_get_drvdata(pdev);
 }
@@ -168,8 +163,8 @@ static int ctucan_pci_probe(struct pci_dev *pdev,
 		cra_addr = bar0_base;
 		num_cores = 2;
 	} else {
-		cra_addr = (char *)bar0_base + CTUCAN_BAR0_CRA_BASE;
-		ctucan_id = ioread32((char *)bar0_base + CTUCAN_BAR0_CTUCAN_ID);
+		cra_addr = bar0_base + CTUCAN_BAR0_CRA_BASE;
+		ctucan_id = ioread32(bar0_base + CTUCAN_BAR0_CTUCAN_ID);
 		dev_info(dev, "ctucan_id 0x%08lx\n", (unsigned long)ctucan_id);
 		num_cores = ctucan_id & 0xf;
 	}
@@ -214,11 +209,11 @@ static int ctucan_pci_probe(struct pci_dev *pdev,
 	/* enable interrupt in
 	 * Avalon-MM to PCI Express Interrupt Enable Register
 	 */
-	cra_a2p_ie = ioread32((char *)cra_addr + CYCLONE_IV_CRA_A2P_IE);
+	cra_a2p_ie = ioread32(cra_addr + CYCLONE_IV_CRA_A2P_IE);
 	dev_info(dev, "cra_a2p_ie 0x%08x\n", cra_a2p_ie);
 	cra_a2p_ie |= 1;
-	iowrite32(cra_a2p_ie, (char *)cra_addr + CYCLONE_IV_CRA_A2P_IE);
-	cra_a2p_ie = ioread32((char *)cra_addr + CYCLONE_IV_CRA_A2P_IE);
+	iowrite32(cra_a2p_ie, cra_addr + CYCLONE_IV_CRA_A2P_IE);
+	cra_a2p_ie = ioread32(cra_addr + CYCLONE_IV_CRA_A2P_IE);
 	dev_info(dev, "cra_a2p_ie 0x%08x\n", cra_a2p_ie);
 
 	return 0;
@@ -266,10 +261,10 @@ static void ctucan_pci_remove(struct pci_dev *pdev)
 	 * Avalon-MM to PCI Express Interrupt Enable Register
 	 */
 	if (bdata->cra_base)
-		iowrite32(0, (char *)bdata->cra_base + CYCLONE_IV_CRA_A2P_IE);
+		iowrite32(0, bdata->cra_base + CYCLONE_IV_CRA_A2P_IE);
 
-	while ((priv = list_first_entry_or_null(&bdata->ndev_list_head,
-		struct ctucan_priv, peers_on_pdev)) != NULL) {
+	while ((priv = list_first_entry_or_null(&bdata->ndev_list_head, struct ctucan_priv,
+						peers_on_pdev)) != NULL) {
 		ndev = priv->can.dev;
 
 		unregister_candev(ndev);
@@ -314,3 +309,6 @@ static struct pci_driver ctucan_pci_driver = {
 
 module_pci_driver(ctucan_pci_driver);
 
+MODULE_LICENSE("GPL");
+MODULE_AUTHOR("Pavel Pisa");
+MODULE_DESCRIPTION("CTU CAN FD for PCI bus");

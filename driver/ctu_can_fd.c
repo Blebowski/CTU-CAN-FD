@@ -2,12 +2,11 @@
 /*******************************************************************************
  *
  * CTU CAN FD IP Core
- * Copyright (C) 2015-2018
  *
- * Authors:
- *     Ondrej Ille <ondrej.ille@gmail.com>
- *     Martin Jerabek <martin.jerabek01@gmail.com>
- *     Jaroslav Beran <jara.beran@gmail.com>
+ * Copyright (C) 2015-2018 Ondrej Ille <ondrej.ille@gmail.com> FEE CTU
+ * Copyright (C) 2018-2020 Ondrej Ille <ondrej.ille@gmail.com> self-funded
+ * Copyright (C) 2018-2019 Martin Jerabek <martin.jerabek01@gmail.com> FEE CTU
+ * Copyright (C) 2018-2020 Pavel Pisa <pisa@cmp.felk.cvut.cz> FEE CTU/self-funded
  *
  * Project advisors:
  *     Jiri Novak <jnovak@fel.cvut.cz>
@@ -45,10 +44,6 @@
 #include "ctu_can_fd.h"
 #include "ctu_can_fd_regs.h"
 
-MODULE_LICENSE("GPL");
-MODULE_AUTHOR("Martin Jerabek");
-MODULE_DESCRIPTION("CTU CAN FD interface");
-
 #define DRV_NAME "ctucanfd"
 
 static const char * const ctucan_state_strings[] = {
@@ -80,14 +75,16 @@ static int ctucan_reset(struct net_device *ndev)
 	netdev_dbg(ndev, "ctucan_reset");
 
 	ctucan_hw_reset(&priv->p);
-	for (i = 0; i < 100; ++i) {
-		if (ctucan_hw_check_access(&priv->p))
-			return 0;
+	i = 100;
+	while (!ctucan_hw_check_access(&priv->p)) {
+		if (!i--) {
+			netdev_warn(ndev, "device did not leave reset\n");
+			return -ETIMEDOUT;
+		}
 		usleep_range(100, 200);
 	}
 
-	netdev_warn(ndev, "device did not leave reset\n");
-	return -ETIMEDOUT;
+	return 0;
 }
 
 /**
@@ -105,8 +102,8 @@ static int ctucan_set_bittiming(struct net_device *ndev)
 	netdev_dbg(ndev, "ctucan_set_bittiming");
 
 	if (ctucan_hw_is_enabled(&priv->p)) {
-		netdev_alert(ndev,
-			     "BUG! Cannot set bittiming - CAN is enabled\n");
+		netdev_err(ndev,
+			   "BUG! Cannot set bittiming - CAN is enabled\n");
 		return -EPERM;
 	}
 
@@ -131,8 +128,8 @@ static int ctucan_set_data_bittiming(struct net_device *ndev)
 	netdev_dbg(ndev, "ctucan_set_data_bittiming");
 
 	if (ctucan_hw_is_enabled(&priv->p)) {
-		netdev_alert(ndev,
-			     "BUG! Cannot set bittiming - CAN is enabled\n");
+		netdev_err(ndev,
+			   "BUG! Cannot set bittiming - CAN is enabled\n");
 		return -EPERM;
 	}
 
@@ -158,16 +155,18 @@ static int ctucan_set_secondary_sample_point(struct net_device *ndev)
 	netdev_dbg(ndev, "ctucan_set_secondary_sample_point");
 
 	if (ctucan_hw_is_enabled(&priv->p)) {
-		netdev_alert(ndev,
-			     "BUG! Cannot set SSP - CAN is enabled\n");
+		netdev_err(ndev,
+			   "BUG! Cannot set SSP - CAN is enabled\n");
 		return -EPERM;
 	}
 
-	// Use for bit-rates above 1 Mbits/s
+	ssp_ena = false;
+
+	/* Use SSP for bit-rates above 1 Mbits/s */
 	if (dbt->bitrate > 1000000) {
 		ssp_ena = true;
 
-		// Calculate SSP in minimal time quanta
+		/* Calculate SSP in minimal time quanta */
 		ssp_offset = (priv->can.clock.freq / 1000) *
 			      dbt->sample_point / dbt->bitrate;
 
@@ -175,8 +174,6 @@ static int ctucan_set_secondary_sample_point(struct net_device *ndev)
 			netdev_warn(ndev, "SSP offset saturated to 127\n");
 			ssp_offset = 127;
 		}
-	} else {
-		ssp_ena = false;
 	}
 
 	ctucan_hw_configure_ssp(&priv->p, ssp_ena, true, ssp_offset);
@@ -185,7 +182,7 @@ static int ctucan_set_secondary_sample_point(struct net_device *ndev)
 }
 
 /**
- * ctucan_chip_start - This the drivers start routine
+ * ctucan_chip_start - This routine starts the driver
  * @ndev:	Pointer to net_device structure
  *
  * This is the drivers start routine.
@@ -195,7 +192,7 @@ static int ctucan_set_secondary_sample_point(struct net_device *ndev)
 static int ctucan_chip_start(struct net_device *ndev)
 {
 	struct ctucan_priv *priv = netdev_priv(ndev);
-	union ctu_can_fd_int_stat int_ena, int_msk, int_enamask_mask;
+	union ctu_can_fd_int_stat int_ena, int_msk;
 	int err;
 	struct can_ctrlmode mode;
 
@@ -229,8 +226,6 @@ static int ctucan_chip_start(struct net_device *ndev)
 
 	int_ena.s.ewli = 1;
 	int_ena.s.fcsi = 1;
-
-	int_enamask_mask.u32 = 0xFFFFFFFF;
 
 	mode.flags = priv->can.ctrlmode;
 	mode.mask = 0xFFFFFFFF;
@@ -303,9 +298,9 @@ static int ctucan_do_set_mode(struct net_device *ndev, enum can_mode mode)
  * function uses the next available free txbuf and populates their fields to
  * start the transmission.
  *
- * Return: 0 on success and failure value on error
+ * Return: %NETDEV_TX_OK on success and failure value on error
  */
-static int ctucan_start_xmit(struct sk_buff *skb, struct net_device *ndev)
+static netdev_tx_t ctucan_start_xmit(struct sk_buff *skb, struct net_device *ndev)
 {
 	struct ctucan_priv *priv = netdev_priv(ndev);
 	struct net_device_stats *stats = &ndev->stats;
@@ -356,7 +351,7 @@ static int ctucan_start_xmit(struct sk_buff *skb, struct net_device *ndev)
 
 /**
  * xcan_rx -  Is called from CAN isr to complete the received
- *		frame  processing
+ *		frame processing
  * @ndev:	Pointer to net_device structure
  *
  * This function is invoked from the CAN isr(poll) to process the Rx frames. It
@@ -402,9 +397,9 @@ static int ctucan_rx(struct net_device *ndev)
 
 static const char *ctucan_state_to_str(enum can_state state)
 {
-	if (state >= CAN_STATE_MAX)
-		return "UNKNOWN";
-	return ctucan_state_strings[state];
+	if (state >= 0 && state < CAN_STATE_MAX)
+		return ctucan_state_strings[state];
+	return "UNKNOWN";
 }
 
 /**
@@ -412,9 +407,8 @@ static const char *ctucan_state_to_str(enum can_state state)
  * @ndev:	net_device pointer
  * @isr:	interrupt status register value
  *
- * This is the CAN error interrupt and it will
- * check the the type of error and forward the error
- * frame to upper layers.
+ * This is the CAN error interrupt and it will check the the type of error
+ * and forward the error frame to upper layers.
  */
 static void ctucan_err_interrupt(struct net_device *ndev,
 				 union ctu_can_fd_int_stat isr)
@@ -441,8 +435,8 @@ static void ctucan_err_interrupt(struct net_device *ndev,
 
 	skb = alloc_can_err_skb(ndev, &cf);
 
-	/* EWLI:  error warning limit condition met
-	 * FCSI: Fault confinement State changed
+	/* EWLI: error warning limit condition met
+	 * FCSI: fault confinement state changed
 	 * ALI:  arbitration lost (just informative)
 	 * BEI:  bus error interrupt
 	 */
@@ -457,12 +451,14 @@ static void ctucan_err_interrupt(struct net_device *ndev,
 				    "current and previous state is the same! (missed interrupt?)");
 
 		priv->can.state = state;
-		if (state == CAN_STATE_BUS_OFF) {
+		switch (state) {
+		case CAN_STATE_BUS_OFF:
 			priv->can.can_stats.bus_off++;
 			can_bus_off(ndev);
 			if (skb)
 				cf->can_id |= CAN_ERR_BUSOFF;
-		} else if (state == CAN_STATE_ERROR_PASSIVE) {
+			break;
+		case CAN_STATE_ERROR_PASSIVE:
 			priv->can.can_stats.error_passive++;
 			if (skb) {
 				cf->can_id |= CAN_ERR_CRTL;
@@ -472,7 +468,8 @@ static void ctucan_err_interrupt(struct net_device *ndev,
 				cf->data[6] = berr.txerr;
 				cf->data[7] = berr.rxerr;
 			}
-		} else if (state == CAN_STATE_ERROR_WARNING) {
+			break;
+		case CAN_STATE_ERROR_WARNING:
 			priv->can.can_stats.error_warning++;
 			if (skb) {
 				cf->can_id |= CAN_ERR_CRTL;
@@ -482,13 +479,16 @@ static void ctucan_err_interrupt(struct net_device *ndev,
 				cf->data[6] = berr.txerr;
 				cf->data[7] = berr.rxerr;
 			}
-		} else if (state == CAN_STATE_ERROR_ACTIVE) {
+			break;
+		case CAN_STATE_ERROR_ACTIVE:
 			cf->data[1] = CAN_ERR_CRTL_ACTIVE;
 			cf->data[6] = berr.txerr;
 			cf->data[7] = berr.rxerr;
-		} else {
+			break;
+		default:
 			netdev_warn(ndev, "    unhandled error state (%d:%s)!",
 				    state, ctucan_state_to_str(state));
+			break;
 		}
 	}
 
@@ -507,7 +507,7 @@ static void ctucan_err_interrupt(struct net_device *ndev,
 	if (isr.s.bei) {
 		netdev_info(ndev, "  bus error");
 		priv->can.can_stats.bus_error++;
-		stats->tx_errors++; // TODO: really?
+		stats->rx_errors++;
 		if (skb) {
 			cf->can_id |= CAN_ERR_PROT | CAN_ERR_BUSERROR;
 			cf->data[2] = CAN_ERR_PROT_UNSPEC;
@@ -691,13 +691,14 @@ static void ctucan_tx_interrupt(struct net_device *ndev)
 clear:
 		spin_unlock_irqrestore(&priv->tx_lock, flags);
 
-		/* If no buffers were processed this time, wa cannot
+		/* If no buffers were processed this time, we cannot
 		 * clear - that would introduce a race condition.
 		 */
 		if (some_buffers_processed) {
-			/* Clear the interrupt again as not to receive it again
-			 * for a buffer we already handled (possibly causing
-			 * the bug log)
+			/* Clear the interrupt again. We do not want to receive
+			 * again interrupt for the buffer already handled.
+			 * If it is the last finished one then it would cause
+			 * log of spurious interrupt.
 			 */
 			ctucan_hw_int_clr(&priv->p, icr);
 		}
@@ -730,11 +731,11 @@ static irqreturn_t ctucan_interrupt(int irq, void *dev_id)
 	struct net_device *ndev = (struct net_device *)dev_id;
 	struct ctucan_priv *priv = netdev_priv(ndev);
 	union ctu_can_fd_int_stat isr, icr;
-	int irq_loops = 0;
+	int irq_loops;
 
 	netdev_dbg(ndev, "ctucan_interrupt");
 
-	do {
+	for (irq_loops = 0; irq_loops < 10000; irq_loops++) {
 		/* Get the interrupt status */
 		isr = ctu_can_fd_int_sts(&priv->p);
 
@@ -774,7 +775,7 @@ static irqreturn_t ctucan_interrupt(int irq, void *dev_id)
 			ctucan_err_interrupt(ndev, isr);
 		}
 		/* Ignore RI, TI, LFI, RFI, BSI */
-	} while (irq_loops++ < 10000);
+	}
 
 	netdev_err(ndev, "%s: stuck interrupt (isr=0x%08x), stopping\n",
 		   __func__, isr.u32);
@@ -819,7 +820,7 @@ static void ctucan_chip_stop(struct net_device *ndev)
 
 	mask.u32 = 0xffffffff;
 
-	/* Disable interrupts and disable can */
+	/* Disable interrupts and disable CAN */
 	ctucan_hw_int_mask_set(&priv->p, mask);
 	ctucan_hw_enable(&priv->p, false);
 	priv->can.state = CAN_STATE_STOPPED;
@@ -843,6 +844,7 @@ static int ctucan_open(struct net_device *ndev)
 	if (ret < 0) {
 		netdev_err(ndev, "%s: pm_runtime_get failed(%d)\n",
 			   __func__, ret);
+		pm_runtime_put_noidle(priv->dev);
 		return ret;
 	}
 
@@ -927,6 +929,7 @@ static int ctucan_get_berr_counter(const struct net_device *ndev,
 	if (ret < 0) {
 		netdev_err(ndev, "%s: pm_runtime_get failed(%d)\n",
 			   __func__, ret);
+		pm_runtime_put_noidle(priv->dev);
 		return ret;
 	}
 
@@ -980,10 +983,9 @@ int ctucan_resume(struct device *dev)
 }
 EXPORT_SYMBOL(ctucan_resume);
 
-int ctucan_probe_common(struct device *dev, void __iomem *addr,
-			int irq, unsigned int ntxbufs, unsigned long can_clk_rate,
-			int pm_enable_call, void (*set_drvdata_fnc)(struct device *dev,
-			struct net_device *ndev))
+int ctucan_probe_common(struct device *dev, void __iomem *addr, int irq, unsigned int ntxbufs,
+			unsigned long can_clk_rate, int pm_enable_call,
+			void (*set_drvdata_fnc)(struct device *dev, struct net_device *ndev))
 {
 	struct ctucan_priv *priv;
 	struct net_device *ndev;
@@ -1021,13 +1023,13 @@ int ctucan_probe_common(struct device *dev, void __iomem *addr,
 	ndev->irq = irq;
 	ndev->flags |= IFF_ECHO;	/* We support local echo */
 
-	if (set_drvdata_fnc != NULL)
+	if (set_drvdata_fnc)
 		set_drvdata_fnc(dev, ndev);
 	SET_NETDEV_DEV(ndev, dev);
 	ndev->netdev_ops = &ctucan_netdev_ops;
 
 	/* Getting the CAN can_clk info */
-	if (can_clk_rate == 0) {
+	if (!can_clk_rate) {
 		priv->can_clk = devm_clk_get(dev, NULL);
 		if (IS_ERR(priv->can_clk)) {
 			dev_err(dev, "Device clock not found.\n");
@@ -1046,6 +1048,7 @@ int ctucan_probe_common(struct device *dev, void __iomem *addr,
 	if (ret < 0) {
 		netdev_err(ndev, "%s: pm_runtime_get failed(%d)\n",
 			   __func__, ret);
+		pm_runtime_put_noidle(priv->dev);
 		goto err_pmdisable;
 	}
 
@@ -1057,13 +1060,13 @@ int ctucan_probe_common(struct device *dev, void __iomem *addr,
 			      0xFFFF) != CTU_CAN_FD_ID) {
 			netdev_err(ndev, "CTU_CAN_FD signature not found\n");
 			ret = -ENODEV;
-			goto err_disableclks;
+			goto err_deviceoff;
 		}
 	}
 
 	ret = ctucan_reset(ndev);
 	if (ret < 0)
-		goto err_pmdisable;
+		goto err_deviceoff;
 
 	priv->can.clock.freq = can_clk_rate;
 
@@ -1072,7 +1075,7 @@ int ctucan_probe_common(struct device *dev, void __iomem *addr,
 	ret = register_candev(ndev);
 	if (ret) {
 		dev_err(dev, "fail to register failed (err=%d)\n", ret);
-		goto err_disableclks;
+		goto err_deviceoff;
 	}
 
 	devm_can_led_init(ndev);
@@ -1085,7 +1088,7 @@ int ctucan_probe_common(struct device *dev, void __iomem *addr,
 
 	return 0;
 
-err_disableclks:
+err_deviceoff:
 	pm_runtime_put(priv->dev);
 err_pmdisable:
 	if (pm_enable_call)
@@ -1097,18 +1100,6 @@ err_free:
 }
 EXPORT_SYMBOL(ctucan_probe_common);
 
-static __init int ctucan_init(void)
-{
-	pr_info("%s CAN netdevice driver\n", DRV_NAME);
-
-	return 0;
-}
-
-module_init(ctucan_init);
-
-static __exit void ctucan_exit(void)
-{
-	pr_info("%s: driver removed\n", DRV_NAME);
-}
-
-module_exit(ctucan_exit);
+MODULE_LICENSE("GPL");
+MODULE_AUTHOR("Martin Jerabek");
+MODULE_DESCRIPTION("CTU CAN FD interface");
