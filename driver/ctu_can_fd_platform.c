@@ -35,10 +35,6 @@
 
 #include "ctu_can_fd.h"
 
-MODULE_LICENSE("GPL");
-MODULE_AUTHOR("Martin Jerabek");
-MODULE_DESCRIPTION("CTU CAN FD for platform");
-
 #define DRV_NAME	"ctucanfd"
 
 static void ctucan_platform_set_drvdata(struct device *dev,
@@ -119,13 +115,11 @@ static int ctucan_platform_remove(struct platform_device *pdev)
 	return 0;
 }
 
-static const struct dev_pm_ops ctucan_dev_pm_ops = {
-	SET_SYSTEM_SLEEP_PM_OPS(ctucan_suspend, ctucan_resume)
-};
+static SIMPLE_DEV_PM_OPS(ctucan_platform_pm_ops, ctucan_suspend, ctucan_resume);
 
 /* Match table for OF platform binding */
 static const struct of_device_id ctucan_of_match[] = {
-	{ .compatible = "ctu,canfd-2", },
+	{ .compatible = "ctu,ctucanfd-2", },
 	{ .compatible = "ctu,ctucanfd", },
 	{ /* end of list */ },
 };
@@ -136,9 +130,13 @@ static struct platform_driver ctucanfd_driver = {
 	.remove	= ctucan_platform_remove,
 	.driver	= {
 		.name = DRV_NAME,
-		.pm = &ctucan_dev_pm_ops,
+		.pm = &ctucan_platform_pm_ops,
 		.of_match_table	= ctucan_of_match,
 	},
 };
 
 module_platform_driver(ctucanfd_driver);
+
+MODULE_LICENSE("GPL");
+MODULE_AUTHOR("Martin Jerabek");
+MODULE_DESCRIPTION("CTU CAN FD for platform");

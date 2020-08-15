@@ -32,10 +32,6 @@
 
 #include "ctu_can_fd.h"
 
-MODULE_LICENSE("GPL");
-MODULE_AUTHOR("Pavel Pisa");
-MODULE_DESCRIPTION("CTU CAN FD for PCI bus");
-
 #define DRV_NAME	"ctucanfd_pci"
 
 #ifndef PCI_DEVICE_DATA
@@ -267,8 +263,8 @@ static void ctucan_pci_remove(struct pci_dev *pdev)
 	if (bdata->cra_base)
 		iowrite32(0, bdata->cra_base + CYCLONE_IV_CRA_A2P_IE);
 
-	while ((priv = list_first_entry_or_null(&bdata->ndev_list_head,
-		struct ctucan_priv, peers_on_pdev)) != NULL) {
+	while ((priv = list_first_entry_or_null(&bdata->ndev_list_head, struct ctucan_priv,
+						peers_on_pdev)) != NULL) {
 		ndev = priv->can.dev;
 
 		unregister_candev(ndev);
@@ -312,3 +308,7 @@ static struct pci_driver ctucan_pci_driver = {
 };
 
 module_pci_driver(ctucan_pci_driver);
+
+MODULE_LICENSE("GPL");
+MODULE_AUTHOR("Pavel Pisa");
+MODULE_DESCRIPTION("CTU CAN FD for PCI bus");

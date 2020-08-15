@@ -27,10 +27,20 @@
  * GNU General Public License for more details.
  ******************************************************************************/
 
-#ifndef __KERNEL__
-# include "ctu_can_fd_linux_defs.h"
-#else
+
+#ifdef __KERNEL__
 # include <linux/can/dev.h>
+#else
+/* The hardware registers mapping and low level layer should build
+ * in userspace to allow development and verification of CTU CAN IP
+ * core VHDL design when loaded into hardware. Debugging hardware
+ * from kernel driver is really difficult, leads to system stucks
+ * by error reporting etc. Testing of exactly the same code
+ * in userspace together with headers generated automatically
+ * generated from from IP-XACT/cactus helps to driver to hardware
+ * and QEMU emulation model consistency keeping.
+ */
+# include "ctu_can_fd_linux_defs.h"
 #endif
 
 #include "ctu_can_fd_frame.h"
@@ -86,8 +96,8 @@ static union ctu_can_fd_identifier_w ctucan_hw_id_to_hwid(canid_t id)
 
 // TODO: rename or do not depend on previous value of id
 static void ctucan_hw_hwid_to_id(union ctu_can_fd_identifier_w hwid,
-					canid_t *id,
-					enum ctu_can_fd_frame_form_w_ide type)
+				 canid_t *id,
+				 enum ctu_can_fd_frame_form_w_ide type)
 {
 	/* Preserve flags which we dont set */
 	*id &= ~(CAN_EFF_FLAG | CAN_EFF_MASK);
