@@ -1,13 +1,12 @@
-// SPDX-License-Identifier: GPL-2.0+
+/* SPDX-License-Identifier: GPL-2.0-or-later */
 /*******************************************************************************
  *
  * CTU CAN FD IP Core
- * Copyright (C) 2015-2018
  *
- * Authors:
- *     Ondrej Ille <ondrej.ille@gmail.com>
- *     Martin Jerabek <martin.jerabek01@gmail.com>
- *     Jaroslav Beran <jara.beran@gmail.com>
+ * Copyright (C) 2015-2018 Ondrej Ille <ondrej.ille@gmail.com> FEE CTU
+ * Copyright (C) 2018-2020 Ondrej Ille <ondrej.ille@gmail.com> self-funded
+ * Copyright (C) 2018-2019 Martin Jerabek <martin.jerabek01@gmail.com> FEE CTU
+ * Copyright (C) 2018-2020 Pavel Pisa <pisa@cmp.felk.cvut.cz> FEE CTU/self-funded
  *
  * Project advisors:
  *     Jiri Novak <jnovak@fel.cvut.cz>
