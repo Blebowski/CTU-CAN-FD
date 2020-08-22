@@ -47,9 +47,9 @@
 Library ieee;
 use ieee.std_logic_1164.all;
 
-Library work;
-use work.can_registers_pkg.all;
-use work.cmn_reg_map_pkg.all;
+Library ctu_can_fd_rtl;
+use ctu_can_fd_rtl.can_registers_pkg.all;
+use ctu_can_fd_rtl.cmn_reg_map_pkg.all;
 
 entity control_registers_reg_map is
 generic (
