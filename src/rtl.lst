@@ -1,0 +1,121 @@
+###############################################################################
+## This file contains all VHDL RTL source codes of CTU CAN FD.
+##
+## RTL shall be compiled to VHDL library "ctu_can_fd_rtl".
+##
+## Top level bus (APB, AHB, RAM-like) can be selected by using entity from
+## can_top_apb.vhd (APB), can_top_ahb.vhd (AHB) or can_top_level.vhd (RAM-like)
+###############################################################################
+
+# Libraries and packages
+src/can_constants.vhd
+src/can_config.vhd
+src/can_fd_frame_format.vhd
+src/can_fd_register_map.vhd
+src/can_registers_pkg.vhd
+src/can_types.vhd
+src/can_components.vhd
+src/cmn_lib.vhd
+src/drv_stat_pkg.vhd
+src/id_transfer.vhd
+src/reduce_lib.vhd
+
+# Common modules
+src/dff.vhd
+src/dff_arst.vhd
+src/dff_arst_ce.vhd
+src/dlc_decoder.vhd
+src/endian_swapper.vhd
+src/inf_ram_wrapper.vhd
+src/majority_decoder_3.vhd
+src/rst_sync.vhd
+src/shift_reg.vhd
+src/shift_reg_byte.vhd
+src/shift_reg_preload.vhd
+src/sig_sync.vhd
+
+# Bus sampling
+src/bit_err_detector.vhd
+src/bus_sampling.vhd
+src/data_edge_detector.vhd
+src/sample_mux.vhd
+src/ssp_generator.vhd
+src/trv_delay_meas.vhd
+src/tx_data_cache.vhd
+
+# Bit Destuffing
+src/bit_destuffing.vhd
+src/bit_stuffing.vhd
+src/bus_traffic_counters.vhd
+src/can_core.vhd
+src/can_crc.vhd
+src/control_counter.vhd
+src/crc_calc.vhd
+src/err_counters.vhd
+src/err_detector.vhd
+src/fault_confinement.vhd
+src/fault_confinement_fsm.vhd
+src/fault_confinement_rules.vhd
+src/operation_control.vhd
+src/protocol_control.vhd
+src/protocol_control_fsm.vhd
+src/reintegration_counter.vhd
+src/retransmitt_counter.vhd
+src/rx_shift_reg.vhd
+src/trigger_mux.vhd
+src/tx_shift_reg.vhd
+
+# Frame filters
+src/bit_filter.vhd
+src/frame_filters.vhd
+src/range_filter.vhd
+
+# Interfaces
+src/ahb_ifc.vhd
+src/apb_ifc.vhd
+
+# Interrupt manager
+src/int_manager.vhd
+src/int_module.vhd
+
+# Register map
+src/cmn_reg_map_pkg.vhd
+src/access_signaler.vhd
+src/address_decoder.vhd
+src/data_mux.vhd
+src/memory_bus.vhd
+src/memory_reg.vhd
+src/control_registers_reg_map.vhd
+src/memory_registers.vhd
+
+# Prescaler
+src/bit_segment_meter.vhd
+src/bit_time_cfg_capture.vhd
+src/bit_time_counters.vhd
+src/bit_time_fsm.vhd
+src/segment_end_detector.vhd
+src/synchronisation_checker.vhd
+src/trigger_generator.vhd
+src/prescaler.vhd
+
+# RX Buffer
+src/rx_buffer_fsm.vhd
+src/rx_buffer_pointers.vhd
+src/rx_buffer_ram.vhd
+src/rx_buffer.vhd
+
+# TXT Buffer
+src/txt_buffer_fsm.vhd
+src/txt_buffer_ram.vhd
+src/txt_buffer.vhd
+
+# TX Arbitrator
+src/priority_decoder.vhd
+src/tx_arbitrator_fsm.vhd
+src/tx_arbitrator.vhd
+
+# TOP Level entities
+src/can_top_ahb.vhd
+src/can_top_apb.vhd
+src/can_top_level.vhd
+

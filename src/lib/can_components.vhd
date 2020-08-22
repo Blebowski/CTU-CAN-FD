@@ -36,7 +36,7 @@
 -- The CAN protocol is developed by Robert Bosch GmbH and protected by patents.
 -- Anybody who wants to implement this IP core on silicon has to obtain a CAN
 -- protocol license from Bosch.
--- t
+--
 --------------------------------------------------------------------------------
 
 --------------------------------------------------------------------------------
