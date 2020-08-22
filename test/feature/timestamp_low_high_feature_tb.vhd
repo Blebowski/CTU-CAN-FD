@@ -60,10 +60,11 @@
 --   22.11.2019     Add support for timestamp randomization! 
 --------------------------------------------------------------------------------
 
-context work.ctu_can_synth_context;
-context work.ctu_can_test_context;
+Library ctu_can_fd_tb;
+context ctu_can_fd_tb.ctu_can_synth_context;
+context ctu_can_fd_tb.ctu_can_test_context;
 
-use lib.pkg_feature_exec_dispath.all;
+use ctu_can_fd_tb.pkg_feature_exec_dispath.all;
 
 package timestamp_low_high_feature is
     procedure timestamp_low_high_feature_exec(

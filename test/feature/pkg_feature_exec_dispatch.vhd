@@ -39,12 +39,15 @@
 -- 
 --------------------------------------------------------------------------------
 
-context work.ctu_can_synth_context;
+Library ctu_can_fd_tb;
+context ctu_can_fd_tb.ctu_can_synth_context;
 
-use work.CANtestLib.All;
-use work.randomLib.All;
+use ctu_can_fd_tb.CANtestLib.All;
+use ctu_can_fd_tb.randomLib.All;
 
 use STD.textio.all;
+
+Library Ieee;
 use IEEE.std_logic_textio.all;
 
 package pkg_feature_exec_dispath is

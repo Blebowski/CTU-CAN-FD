@@ -52,9 +52,10 @@ Library ieee;
 use ieee.std_logic_1164.all;
 use ieee.numeric_std.ALL;
 
-use work.can_types.all;
-use work.can_constants.all;
-use work.can_registers_pkg.all;
+Library ctu_can_fd_rtl;
+use ctu_can_fd_rtl.can_types.all;
+use ctu_can_fd_rtl.can_constants.all;
+use ctu_can_fd_rtl.can_registers_pkg.all;
 
 package can_components is
 

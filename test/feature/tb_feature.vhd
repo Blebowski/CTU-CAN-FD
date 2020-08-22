@@ -52,10 +52,11 @@
 --    June 2018   Major rewrite for support of new unified testing framework.
 --------------------------------------------------------------------------------
 
-context work.ctu_can_synth_context;
-context work.ctu_can_test_context;
+Library ctu_can_fd_tb;
+context ctu_can_fd_tb.ctu_can_synth_context;
+context ctu_can_fd_tb.ctu_can_test_context;
 
-use lib.pkg_feature_exec_dispath.all;
+use ctu_can_fd_tb.pkg_feature_exec_dispath.all;
 
 --------------------------------------------------------------------------------
 -- Test enity for feature tests. Additional signals representing two memory
@@ -187,7 +188,7 @@ begin
             stat_bus_o        => iout(i).stat_bus
         );
 
-        i_txdelay : entity work.signal_delayer
+        i_txdelay : entity ctu_can_fd_tb.signal_delayer
             generic map (
                 NSAMPLES    => 16
             )
@@ -303,10 +304,15 @@ context vunit_lib.vunit_context;
 USE IEEE.std_logic_1164.all;
 USE IEEE.numeric_std.ALL;
 USE ieee.math_real.ALL;
-use work.can_constants.all;
-USE work.CANtestLib.All;
-USE work.randomLib.All;
-use work.pkg_feature_exec_dispath.all;
+
+Library ctu_can_fd_rtl;
+use ctu_can_fd_rtl.can_constants.all;
+
+Library ctu_can_fd_tb;
+USE ctu_can_fd_tb.CANtestLib.All;
+USE ctu_can_fd_tb.randomLib.All;
+use ctu_can_fd_tb.pkg_feature_exec_dispath.all;
+
 
 entity tb_feature is
     generic (
@@ -421,7 +427,7 @@ begin
 
     -- In this test wrapper generics are directly connected to the signals
     -- of test entity
-    test_comp: entity work.CAN_feature_test
+    test_comp: entity ctu_can_fd_tb.CAN_feature_test
     port map(
         run              =>  run,
         iterations       =>  iterations,

@@ -50,7 +50,9 @@
 Library ieee;
 USE IEEE.std_logic_1164.all;
 USE IEEE.numeric_std.ALL;
-use work.CAN_FD_frame_format.all;
+
+Library ctu_can_fd_rtl;
+use ctu_can_fd_rtl.CAN_FD_frame_format.all;
 
 package id_transfer is
 

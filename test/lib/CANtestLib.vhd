@@ -83,14 +83,18 @@ USE IEEE.numeric_std.ALL;
 use STD.textio.all;
 use IEEE.std_logic_textio.all;
 USE ieee.math_real.ALL;
-USE work.randomLib.All;
-use work.can_constants.all;
-use work.drv_stat_pkg.all;
-use work.can_config.all;
-use work.tb_reg_map_defs_pkg.All;
 
-use work.CAN_FD_register_map.all;
-use work.CAN_FD_frame_format.all;
+Library ctu_can_fd_tb;
+USE ctu_can_fd_tb.randomLib.All;
+use ctu_can_fd_tb.tb_reg_map_defs_pkg.All;
+
+Library ctu_can_fd_rtl;
+use ctu_can_fd_rtl.can_constants.all;
+use ctu_can_fd_rtl.drv_stat_pkg.all;
+use ctu_can_fd_rtl.can_config.all;
+
+use ctu_can_fd_rtl.CAN_FD_register_map.all;
+use ctu_can_fd_rtl.CAN_FD_frame_format.all;
 
 library vunit_lib;
 context vunit_lib.vunit_context;

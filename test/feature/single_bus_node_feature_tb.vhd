@@ -43,30 +43,26 @@
 -- @TestInfoStart
 --
 -- @Purpose:
---  No Start of Frame feature test - frame transmission!
+--  Single bus node test
 --
 -- @Verifies:
---  @1. When a dominant bit is sampled in Bus idle and a frame is available for
---      transmission, its transmission is started without transmitting SOF bit.
---  @2. When CTU CAN FD joins transmission without transmitting SOF bit, it
---      accounts SOF bit as transmitted dominant bit in number of equal conse-
---      cutive bits.
+--  @1. Node which is single on bus (other node is not transmitting, acking,
+--      sending error frames), will turn error passive and not bus-off when
+--      trying to transmitt a frame!
 --
 -- @Test sequence:
---  @1. Configure both Nodes to one-shot mode.
---  @2. Insert CAN frames which have first 5 bits of identifier equal to zero to
---      both nodes. Check both nodes are Idle. Wait till Sample point in Node 1.
---  @3. Send Set ready command to both nodes. Wait until Node 1 is not in Bus
---      idle state. Check it is transmitting Base Identifier (NOT SOF)!
---  @4. Wait until sample point 5 times (5th bit of idetifier) in Node 1. Check
---      Node 1 is transmitting Recessive bit (Stuff bit).
---  @5. Wait until frame is over. Check frame was received OK, read it from 
---      receiving node and verify it was received OK!
+--  @1. Disable Node 2, disable retransmitt limit in Node 1.
+--  @2. Transmitt frame by Node 1.
+--  @3. Wait until error frame starts and check that error counter is incremented
+--      by 8. Repeat until node turns error passive!
+--  @4. Wait for several times that node transmitts a frame and check that after
+--      each, TX Error counter is not incremented.
+--
 --
 -- @TestInfoEnd
 --------------------------------------------------------------------------------
 -- Revision History:
---    07.10.2019   Created file
+--    18.7.2020   Created file
 --------------------------------------------------------------------------------
 
 Library ctu_can_fd_tb;
@@ -75,8 +71,8 @@ context ctu_can_fd_tb.ctu_can_test_context;
 
 use ctu_can_fd_tb.pkg_feature_exec_dispath.all;
 
-package no_sof_tx_feature is
-    procedure no_sof_tx_feature_exec(
+package single_bus_node_feature is
+    procedure single_bus_node_feature_exec(
         signal      so              : out    feature_signal_outputs_t;
         signal      rand_ctr        : inout  natural range 0 to RAND_POOL_SIZE;
         signal      iout            : in     instance_outputs_arr_t;
@@ -86,101 +82,114 @@ package no_sof_tx_feature is
 end package;
 
 
-package body no_sof_tx_feature is
-    procedure no_sof_tx_feature_exec(
+package body single_bus_node_feature is
+    procedure single_bus_node_feature_exec(
         signal      so              : out    feature_signal_outputs_t;
         signal      rand_ctr        : inout  natural range 0 to RAND_POOL_SIZE;
         signal      iout            : in     instance_outputs_arr_t;
         signal      mem_bus         : inout  mem_bus_arr_t;
         signal      bus_level       : in     std_logic
     ) is
+        variable alc                :       natural;
+
         variable ID_1               :     natural := 1;
         variable ID_2               :     natural := 2;
 
+        variable fault_state_1      :     SW_fault_state;
+        
         -- Generated frames
         variable frame_1            :     SW_CAN_frame_type;
         variable frame_2            :     SW_CAN_frame_type;
         variable frame_rx           :     SW_CAN_frame_type;
 
+        variable mode_1             :     SW_mode;
+
         -- Node status
-        variable stat_1             :     SW_status;
+        variable stat_2             :     SW_status;
+
+        variable pc_dbg             :     SW_PC_Debug;
         
         variable txt_buf_state      :     SW_TXT_Buffer_state_type;
         variable rx_buf_info        :     SW_RX_Buffer_info;
         variable frames_equal       :     boolean := false;
-                 
-        variable pc_state           :     SW_PC_Debug;
+        
+        variable err_counters       :     SW_error_counters;
+        
+        constant id_template        :     std_logic_vector(10 downto 0) :=
+                "01010101010";
+        variable id_var             :     std_logic_vector(10 downto 0) :=
+                 (OTHERS => '0');
+        variable retr_index         :     natural := 0;
+        variable tec_at_err_passive :     natural;
+        variable frame_sent         :     boolean := false;
     begin
 
         ------------------------------------------------------------------------
-        -- @1. Configure both Nodes to one-shot mode.
+        -- @1. Disable Node 2, disable retransmitt limit in Node 1.
         ------------------------------------------------------------------------
-        info("Step 1: Configure one -shot mode");
-        CAN_enable_retr_limit(true, 0, ID_1, mem_bus(1));
-        CAN_enable_retr_limit(true, 0, ID_2, mem_bus(2));
-
+        info("Step 1: Disabling Node 2");
+        CAN_turn_controller(false, ID_2, mem_bus(2));        
+        CAN_enable_retr_limit(false, 0, ID_1, mem_bus(1));
+        
+        --get_core_mode(mode_1, ID_1, mem_bus(1));
+        --mode_1.self_test := true;
+        --set_core_mode(mode_1, ID_1, mem_bus(1));
+        
         ------------------------------------------------------------------------
-        -- @2. Insert CAN frames which have first 5 bits of identifier equal to
-        --    zero to both nodes. Check both nodes are Idle. Wait till Sample
-        --    point in Node 2.
+        -- @2. Transmitt frame by Node 1.
         ------------------------------------------------------------------------
-        info("Step 2: Insert CAN frames!");
+        info("Step 2: Transmit frame by Node 1");
         CAN_generate_frame(rand_ctr, frame_1);
-        CAN_generate_frame(rand_ctr, frame_2);
-        frame_1.ident_type := BASE;
-        frame_2.ident_type := BASE;
-        frame_1.identifier := 1;
-        frame_2.identifier := 2;
-        -- Use FD can frames, they contain stuff count!!
-        frame_1.frame_format := FD_CAN;
-        frame_2.frame_format := FD_CAN;
-        CAN_insert_TX_frame(frame_1, 1, ID_1, mem_bus(1));
-        CAN_insert_TX_frame(frame_2, 1, ID_2, mem_bus(2));
-        CAN_wait_sample_point(iout(2).stat_bus);
-        
+        frame_1.rtr := NO_RTR_FRAME;
+        frame_1.frame_format := NORMAL_CAN;
+        frame_1.dlc := "0001";
+        frame_1.data_length := 1;
+        frame_1.identifier := 256;
+        frame_1.data(0) := x"AA";      
+
+        CAN_send_frame(frame_1, 1, ID_1, mem_bus(1), frame_sent);
+
         ------------------------------------------------------------------------
-        -- @3. Send Set ready command to both nodes. Wait until Node 1 is not in
-        --    Bus idle state. Check it is transmitting Base Identifier (NOT SOF)!
+        -- @3.  Wait until error frame starts and check that error counter is
+        --      incremented by 8. Repeat until node turns error passive!
         ------------------------------------------------------------------------
-        send_TXT_buf_cmd(buf_set_ready, 1, ID_2, mem_bus(2));
-        CAN_wait_sample_point(iout(2).stat_bus);
-        send_TXT_buf_cmd(buf_set_ready, 1, ID_1, mem_bus(1));
+        info("Step 3: Looping till error passive");
+        get_fault_state(fault_state_1, ID_1, mem_bus(1));
+        while (fault_state_1 = fc_error_active) loop
+            CAN_wait_error_frame(ID_1, mem_bus(1));
         
-        -- Wait until bus is not idle by Node 1!
-        get_controller_status(stat_1, ID_1, mem_bus(1));
-        while (stat_1.bus_status) loop
-            get_controller_status(stat_1, ID_1, mem_bus(1));
+            -- Wait till error frame is for sure over
+            for i in 0 to 13 loop
+                CAN_wait_sample_point(iout(1).stat_bus);
+            end loop;
+
+            read_error_counters(err_counters, ID_1, mem_bus(1));
+            retr_index := retr_index + 1;
+            check(err_counters.tx_counter = retr_index * 8);
+                        
+            get_fault_state(fault_state_1, ID_1, mem_bus(1));
         end loop;
 
-        CAN_read_pc_debug(pc_state, ID_1, mem_bus(1));
-        check(pc_state = pc_deb_arbitration, "Node 1 did not transmitt SOF!");
-        wait for 20 ns;
-
         ------------------------------------------------------------------------
-        -- @4. Wait until sample point 5 times (5th bit of idetifier) in Node 1.
-        --    Check Node 1 is transmitting Recessive bit (Stuff bit).
+        -- @4. Wait for several times that node transmitts a frame and check
+        --     that after each, TX Error counter is not incremented.
         ------------------------------------------------------------------------
-        for i in 0 to 4 loop
-            CAN_wait_sample_point(iout(1).stat_bus, skip_stuff_bits => false);
-        end loop;
-        check(iout(1).can_tx = RECESSIVE, "Stuff bit inserted!");
-
-        ------------------------------------------------------------------------
-        -- @5. Wait until frame is over. Check frame was received OK, read it 
-        --    from receiving node and verify it was received OK!
-        ------------------------------------------------------------------------
-        CAN_wait_bus_idle(ID_1, mem_bus(1));
-        CAN_wait_bus_idle(ID_2, mem_bus(2));
-
-        get_tx_buf_state(1, txt_buf_state, ID_1, mem_bus(1));
-        check(txt_buf_state = buf_done, "Frame transmitted OK!");
+        info("Step 4: Checking TEC stays!");
+        read_error_counters(err_counters, ID_1, mem_bus(1));
+        tec_at_err_passive := err_counters.tx_counter;
         
-        get_rx_buf_state(rx_buf_info, ID_2, mem_bus(2));
-        check(rx_buf_info.rx_frame_count = 1, "Frame received OK!");
+        for i in 0 to 10 loop
+            CAN_wait_error_frame(ID_1, mem_bus(1));
+        
+            -- Wait till error frame is for sure over
+            for j in 0 to 13 loop
+                CAN_wait_sample_point(iout(1).stat_bus);
+            end loop;
 
-        CAN_read_frame(frame_rx, ID_2, mem_bus(2));
-        CAN_compare_frames(frame_rx, frame_1, false, frames_equal);
-        check(frames_equal, "TX vs. RX frames match!");
+            read_error_counters(err_counters, ID_1, mem_bus(1));
+            check(err_counters.tx_counter = tec_at_err_passive);
+        end loop;
+
 
     wait for 1000 ns;
   end procedure;

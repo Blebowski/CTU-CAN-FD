@@ -50,8 +50,9 @@
 Library ieee;
 use ieee.std_logic_1164.all;
 
-use work.can_constants.all;
-use work.can_config.all;
+Library ctu_can_fd_rtl;
+use ctu_can_fd_rtl.can_constants.all;
+use ctu_can_fd_rtl.can_config.all;
 
 package can_types is
 

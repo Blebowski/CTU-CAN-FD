@@ -27,7 +27,7 @@ setup_logging()
 from . import vunit_ifc
 from . import test_unit, test_sanity, test_feature, test_reference
 from vunit.ui import VUnit
-from .test_common import add_common_sources, get_compile_options
+from .test_common import add_rtl_sources, add_tb_sources, get_compile_options
 
 
 #-------------------------------------------------------------------------------
@@ -131,8 +131,14 @@ def test(obj, *, config, strict, create_ghws, dumpall, vunit_args):
 
     ui = create_vunit(obj, vunit_args, out_basename)
 
-    lib = ui.add_library("lib")
-    add_common_sources(lib, ui)
+    ctu_can_fd_rtl = ui.add_library("ctu_can_fd_rtl")
+    ctu_can_fd_tb = ui.add_library("ctu_can_fd_tb")
+
+    add_rtl_sources(ctu_can_fd_rtl)
+    add_tb_sources(ctu_can_fd_tb)
+
+    ui.enable_check_preprocessing()
+    ui.enable_location_preprocessing()  # (additional_subprograms=['log'])
 
     tests_classes = [
         # key in config, factory
@@ -145,7 +151,7 @@ def test(obj, *, config, strict, create_ghws, dumpall, vunit_args):
     tests = []
     for cfg_key, factory in tests_classes:
         if cfg_key in config:
-            tests.append(factory(ui, lib, config[cfg_key], build, base,
+            tests.append(factory(ui, ctu_can_fd_tb, config[cfg_key], build, base,
                                  create_ghws=create_ghws,
                                  force_unrestricted_dump_signals=dumpall))
 
@@ -157,12 +163,13 @@ def test(obj, *, config, strict, create_ghws, dumpall, vunit_args):
 
     c = get_compile_options()
     for k, v in c.items():
-        lib.set_compile_option(k, v)
+        ctu_can_fd_tb.set_compile_option(k, v)
+        ctu_can_fd_rtl.set_compile_option(k,v)
 
     conf_ok = [t.configure() for t in tests]
 
     # check for unknown tests
-    all_benches = lib.get_test_benches('*')
+    all_benches = ctu_can_fd_tb.get_test_benches('*')
     pattern = 'tb_.*?_unit_test|tb_sanity|tb_feature|tb_reference_wrapper'
     unknown_tests = [tb for tb in all_benches
                      if not re.match(pattern, tb.name)]

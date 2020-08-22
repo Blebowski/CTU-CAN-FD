@@ -52,8 +52,12 @@
 
 library ieee;
 use ieee.std_logic_1164.all;
-use work.CANtestLib.all;
-use work.can_constants.all;
+
+Library ctu_can_fd_tb;
+use ctu_can_fd_tb.CANtestLib.all;
+
+Library ctu_can_fd_rtl;
+use ctu_can_fd_rtl.can_constants.all;
 
 entity bit_generator is
     generic (

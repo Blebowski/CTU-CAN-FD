@@ -54,7 +54,9 @@
 Library ieee;
 use ieee.std_logic_1164.all;
 use ieee.numeric_std.all;
-use work.CAN_FD_frame_format.all;
+
+Library ctu_can_fd_rtl;
+use ctu_can_fd_rtl.CAN_FD_frame_format.all;
 
 entity dlc_decoder is
     port (

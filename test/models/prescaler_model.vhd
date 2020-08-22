@@ -81,13 +81,13 @@ use ieee.std_logic_1164.all;
 use ieee.numeric_std.ALL;
 use ieee.math_real.ALL;
 
-Library work;
-use work.can_constants.all;
-use work.can_types.all;
-use work.drv_stat_pkg.all;
+Library ctu_can_fd_rtl;
+use ctu_can_fd_rtl.can_constants.all;
+use ctu_can_fd_rtl.can_types.all;
+use ctu_can_fd_rtl.drv_stat_pkg.all;
 
-use work.CAN_FD_register_map.all;
-use work.CAN_FD_frame_format.all;
+use ctu_can_fd_rtl.CAN_FD_register_map.all;
+use ctu_can_fd_rtl.CAN_FD_frame_format.all;
 
 library vunit_lib;
 context vunit_lib.vunit_context;

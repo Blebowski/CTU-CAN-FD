@@ -92,8 +92,9 @@
 --
 --------------------------------------------------------------------------------
 
-context work.ctu_can_synth_context;
-context work.ctu_can_test_context;
+Library ctu_can_fd_tb;
+context ctu_can_fd_tb.ctu_can_synth_context;
+context ctu_can_fd_tb.ctu_can_test_context;
 
 architecture rx_buf_unit_test of CAN_test is
 
@@ -533,7 +534,7 @@ architecture rx_buf_unit_test of CAN_test is
         end loop;
     end procedure;
 
-  for rx_Buffer_inst : rx_buffer use entity work.rx_buffer(rtl);
+  for rx_Buffer_inst : rx_buffer use entity ctu_can_fd_rtl.rx_buffer(rtl);
 
 begin
 

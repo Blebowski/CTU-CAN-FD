@@ -57,8 +57,9 @@
 --      May 2018   Converted from AXI to APB, using CAN_test intrface
 --------------------------------------------------------------------------------
 
-context work.ctu_can_synth_context;
-context work.ctu_can_test_context;
+Library ctu_can_fd_tb;
+context ctu_can_fd_tb.ctu_can_synth_context;
+context ctu_can_fd_tb.ctu_can_test_context;
 
 architecture apb_unit_test of CAN_test is
     component can_top_apb is
@@ -104,8 +105,11 @@ architecture apb_unit_test of CAN_test is
 
     signal aclk : std_logic := '0';
     signal arstn : std_logic := '0';
+    
+    for can_inst : can_top_apb use entity ctu_can_fd_rtl.can_top_apb(rtl);
+    
 begin
-    can: can_top_apb
+    can_inst : can_top_apb
         generic map (
             sup_filtA   => false,
             sup_filtB   => false,
