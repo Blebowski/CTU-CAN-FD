@@ -56,19 +56,20 @@ library vunit_lib;
 context vunit_lib.vunit_context;
 context vunit_lib.com_context;
 
-Library work;
 
 -- Testbench libraries
-use work.clk_gen_agent_pkg.all;
-use work.rst_gen_agent_pkg.all;
-use work.mem_bus_agent_pkg.all;
-use work.can_agent_pkg.all;
-use work.test_controller_agent_pkg.all;
+Library ctu_can_fd_tb;
+use ctu_can_fd_tb.clk_gen_agent_pkg.all;
+use ctu_can_fd_tb.rst_gen_agent_pkg.all;
+use ctu_can_fd_tb.mem_bus_agent_pkg.all;
+use ctu_can_fd_tb.can_agent_pkg.all;
+use ctu_can_fd_tb.test_controller_agent_pkg.all;
 
-use work.can_compliance_tb_pkg.all;
+use ctu_can_fd_tb.can_compliance_tb_pkg.all;
 
 -- Design libraries
-use work.can_components.all;
+Library ctu_can_fd_rtl;
+use ctu_can_fd_rtl.can_components.all;
 
 entity can_compliance_tb is
     generic (
