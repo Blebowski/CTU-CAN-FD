@@ -105,8 +105,10 @@
 --                transits to fixed stuffing as during CAN FD Frame.
 --------------------------------------------------------------------------------
 
-context work.ctu_can_synth_context;
-context work.ctu_can_test_context;
+Library ctu_can_fd_tb;
+context ctu_can_fd_tb.ctu_can_synth_context;
+context ctu_can_fd_tb.ctu_can_test_context;
+
 
 architecture bit_stuffing_unit_test of CAN_test is
 

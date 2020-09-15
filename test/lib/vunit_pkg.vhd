@@ -41,64 +41,32 @@
 
 --------------------------------------------------------------------------------
 -- Purpose:
---  Package for converting between Register format of CAN Identifier and decimal
---  format of Identifier. Needed by TX arbitrator and message filter when fil-
---  tering data based on identifier decimal value. When acessing CAN Controller
---  from software driver should take care of this conversion!
+--  This file contains definitions of functions which are used from Vunit
+--  framework. It can be used as replacement when Vunit framework is not
+--  present. In such case, log mocking will not work (everything will be logged)
+--  and test logs will have to be grepped for errors manually!
+--
+--------------------------------------------------------------------------------
+-- Revision History:
+--   22.08.2020   Created file - Ondrej Ille
 --------------------------------------------------------------------------------
 
 Library ieee;
 USE IEEE.std_logic_1164.all;
 USE IEEE.numeric_std.ALL;
-
-Library ctu_can_fd_rtl;
-use ctu_can_fd_rtl.CAN_FD_frame_format.all;
-
-package id_transfer is
-
-    -- Register value to decimal value
-    procedure ID_reg_to_decimal(
-        signal ID_reg   : in    std_logic_vector(28 downto 0);
-        signal ID_dec   : out   natural
-    );
-
-    -- Decimal value to register value
-    procedure ID_decimal_to_reg(
-        signal ID_dec   : in    natural;
-        signal ID_reg   : out   std_logic_vector(28 downto 0)
-    );
-
-end package id_transfer;
-
-package body id_transfer is
+USE ieee.math_real.ALL;
 
 
-    procedure ID_reg_to_decimal(
-        signal ID_reg   : in  std_logic_vector(28 downto 0);
-        signal ID_dec   : out natural
-    ) is
-        variable base : std_logic_vector(10 downto 0);
-        variable ext  : std_logic_vector(17 downto 0);
-        variable conc : std_logic_vector(28 downto 0);
-    begin
-        base   := ID_reg(IDENTIFIER_BASE_H downto IDENTIFIER_BASE_L);
-        ext    := ID_reg(IDENTIFIER_EXT_H downto IDENTIFIER_EXT_L);
-        conc   := base&ext;
-        ID_dec <= to_integer(unsigned(conc));
-    end procedure ID_reg_to_decimal;
+package vunit_pkg is
+
+    
+
+end package;
 
 
-    procedure ID_decimal_to_reg(
-        signal ID_dec : in  natural;
-        signal ID_reg : out std_logic_vector(28 downto 0)
-    ) is
-        variable vector : std_logic_vector(28 downto 0);
-    begin
-        vector := std_logic_vector(to_unsigned(ID_dec, 29));
-        ID_reg(IDENTIFIER_BASE_H downto IDENTIFIER_BASE_L) 
-              <= vector(28 downto 18);    
-        ID_reg(IDENTIFIER_EXT_H downto IDENTIFIER_EXT_L) 
-              <= vector(17 downto 0);
-    end procedure ID_decimal_to_reg;
+package body vunit_pkg is
 
-end id_transfer;
+    
+
+end package body;
+    

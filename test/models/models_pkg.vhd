@@ -53,20 +53,20 @@ use ieee.numeric_std.ALL;
 use ieee.math_real.ALL;
 
 -- Name of work library is by default set to "lib" in GHDL.
-Library lib;
-use lib.id_transfer.all;
-use lib.can_constants.all;
-use lib.can_components.all;
-use lib.can_types.all;
-use lib.cmn_lib.all;
-use lib.drv_stat_pkg.all;
-use lib.reduce_lib.all;
+Library ctu_can_fd_rtl;
+use ctu_can_fd_rtl.id_transfer.all;
+use ctu_can_fd_rtl.can_constants.all;
+use ctu_can_fd_rtl.can_components.all;
+use ctu_can_fd_rtl.can_types.all;
+use ctu_can_fd_rtl.cmn_lib.all;
+use ctu_can_fd_rtl.drv_stat_pkg.all;
+use ctu_can_fd_rtl.reduce_lib.all;
 
-use lib.CAN_FD_register_map.all;
-use lib.CAN_FD_frame_format.all;
+use ctu_can_fd_rtl.CAN_FD_register_map.all;
+use ctu_can_fd_rtl.CAN_FD_frame_format.all;
 
-Library work;
-use work.CANtestLib.All;
+Library ctu_can_fd_tb;
+use ctu_can_fd_tb.CANtestLib.All;
 
 package models_pkg is
 

@@ -76,10 +76,11 @@
 --    18.9.2019   Created file
 --------------------------------------------------------------------------------
 
-context work.ctu_can_synth_context;
-context work.ctu_can_test_context;
+Library ctu_can_fd_tb;
+context ctu_can_fd_tb.ctu_can_synth_context;
+context ctu_can_fd_tb.ctu_can_test_context;
 
-use lib.pkg_feature_exec_dispath.all;
+use ctu_can_fd_tb.pkg_feature_exec_dispath.all;
 
 package mode_loopback_feature is
     procedure mode_loopback_feature_exec(

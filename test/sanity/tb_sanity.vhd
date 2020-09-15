@@ -47,8 +47,9 @@
 --    February 2018   First Implementation - Martin Jerabek
 --------------------------------------------------------------------------------
 
-context work.ctu_can_synth_context;
-context work.ctu_can_test_context;
+Library ctu_can_fd_tb;
+context ctu_can_fd_tb.ctu_can_synth_context;
+context ctu_can_fd_tb.ctu_can_test_context;
 
 package mypkg is
     type bus_length_type is array(1 to 6) of real;
@@ -58,9 +59,10 @@ end package;
 library vunit_lib;
 context vunit_lib.vunit_context;
 
-context work.ctu_can_synth_context;
-context work.ctu_can_test_context;
-use work.mypkg.all;
+Library ctu_can_fd_tb;
+context ctu_can_fd_tb.ctu_can_synth_context;
+context ctu_can_fd_tb.ctu_can_test_context;
+use ctu_can_fd_tb.mypkg.all;
 
 entity tb_sanity is
     generic (

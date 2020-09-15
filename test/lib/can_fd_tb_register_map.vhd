@@ -47,9 +47,10 @@
 Library ieee;
 use ieee.std_logic_1164.all;
 
-Library work;
-use work.tb_reg_map_defs_pkg.all;
-use work.CAN_FD_register_map.all;
+Library ctu_can_fd_tb;
+use ctu_can_fd_tb.tb_reg_map_defs_pkg.all;
+Library ctu_can_fd_rtl;
+use ctu_can_fd_rtl.CAN_FD_register_map.all;
 
 package can_fd_tb_register_map is
 

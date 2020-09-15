@@ -53,10 +53,10 @@
 
 context ctu_can_test_context is
 
-    Library lib;
-    use lib.CANtestLib.All;
-    use lib.models_pkg.All;
-    use lib.randomLib.All;
+    Library ctu_can_fd_tb;
+    use ctu_can_fd_tb.CANtestLib.All;
+    use ctu_can_fd_tb.models_pkg.All;
+    use ctu_can_fd_tb.randomLib.All;
 
     use STD.textio.all;
 

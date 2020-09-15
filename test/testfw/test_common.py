@@ -12,7 +12,7 @@ from typing import List, Tuple
 import copy
 import re
 
-__all__ = ['add_sources', 'add_common_sources',
+__all__ = ['add_sources', 'add_rtl_sources', 'add_tb_sources',
            'dict_merge', 'vhdl_serialize', 'dump_sim_options',
            'TestsBase', 'get_seed', 'OptionsDict']
 
@@ -187,10 +187,11 @@ def add_sources(lib, patterns) -> None:
                 lib.add_source_file(str(f))
 
 
-def add_common_sources(lib, ui) -> None:
+def add_rtl_sources(lib) -> None:
     add_sources(lib, ['../src/**/*.vhd'])
-    ui.enable_check_preprocessing()
-    ui.enable_location_preprocessing() #(additional_subprograms=['log'])
+
+
+def add_tb_sources(lib) -> None:
     add_sources(lib, ['*.vhd', 'lib/*.vhd', 'models/*.vhd'])
 
 

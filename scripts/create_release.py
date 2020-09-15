@@ -98,16 +98,17 @@ if __name__ == '__main__':
     os.system("mkdir {}".format(build_dir))
     os.system("mkdir {}".format(build_dir / "src"))
     os.system("mkdir {}".format(build_dir / "doc"))
+    os.system("mkdir {}".format(build_dir / "tb"))
+    os.system("mkdir {}".format(build_dir / "run_scripts"))
     print("Build directory: {}\n".format(build_dir))
 
-    # Copy sources, create List file
+    # Copy sources, copy RTL list file
     repo_root = Path(__file__).absolute().parent.parent
     src_dir = repo_root / "src"
-    with open(build_dir / "src.lst", 'w') as list_file:
-        for vhdl_file in src_dir.glob("**/*.vhd"):
-            print("Processing source file: {}".format(vhdl_file))
-            os.system("cp {} {}".format(vhdl_file, build_dir / "src"))
-            list_file.write("src/" + vhdl_file.name + "\n")
+    for vhdl_file in src_dir.glob("**/*.vhd"):
+        print("Copying RTL source file: {}".format(vhdl_file))
+        os.system("cp {} {}".format(vhdl_file, build_dir / "src"))
+    os.system("cp {}/rtl.lst {}".format(repo_root/ "src", build_dir / "src"))
 
     # Walk through the released sources, remove lines which should not be Released
     for vhdl_file in build_dir.glob("src/*.vhd"):
@@ -128,6 +129,21 @@ if __name__ == '__main__':
                 # Turn off replacements
                 if (RELEASE_ON_TAG in line):
                     erase_lines = False
+
+    # Copy all feature tests, unit tests, sanity tests and reference tests
+    test_dir = repo_root / "test"
+    print("Copying testbenches...")
+    os.system("cp -r {} {}".format(test_dir / "lib", build_dir / "tb"))
+    os.system("cp -r {} {}".format(test_dir / "models", build_dir / "tb"))
+    os.system("cp -r {} {}".format(test_dir / "reference", build_dir / "tb"))
+    os.system("cp -r {} {}".format(test_dir / "sanity", build_dir / "tb"))
+    os.system("cp -r {} {}".format(test_dir / "unit", build_dir / "tb"))
+    os.system("cp {} {}".format(test_dir / "tb.lst", build_dir / "tb"))
+    print("Done!")
+
+    # Copy Run scripts
+    run_scripts_dir = repo_root / "scripts" / "run_scripts"
+    os.system("cp -r {} {}".format(run_scripts_dir, build_dir))
 
     # Build Documentation
     print("\n\n Exporting Datasheet ... \n\n")

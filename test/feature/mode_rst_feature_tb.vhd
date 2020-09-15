@@ -72,23 +72,24 @@ use ieee.std_logic_1164.all;
 use ieee.numeric_std.ALL;
 use ieee.math_real.ALL;
 
-Library lib;
-use lib.id_transfer.all;
-use lib.can_constants.all;
-use lib.can_components.all;
-use lib.can_types.all;
-use lib.cmn_lib.all;
-use lib.drv_stat_pkg.all;
-use lib.reduce_lib.all;
-use lib.can_config.all;
-use lib.tb_reg_map_defs_pkg.All;
-use lib.can_fd_tb_register_map.All;
+Library ctu_can_fd_rtl;
+use ctu_can_fd_rtl.id_transfer.all;
+use ctu_can_fd_rtl.can_constants.all;
+use ctu_can_fd_rtl.can_components.all;
+use ctu_can_fd_rtl.can_types.all;
+use ctu_can_fd_rtl.cmn_lib.all;
+use ctu_can_fd_rtl.drv_stat_pkg.all;
+use ctu_can_fd_rtl.reduce_lib.all;
+use ctu_can_fd_rtl.can_config.all;
+use ctu_can_fd_rtl.CAN_FD_register_map.all;
 
-use lib.CAN_FD_register_map.all;
+Library ctu_can_fd_tb;
+use ctu_can_fd_tb.tb_reg_map_defs_pkg.All;
+use ctu_can_fd_tb.can_fd_tb_register_map.All;
+use ctu_can_fd_tb.pkg_feature_exec_dispath.all;
 
-context work.ctu_can_test_context;
+context ctu_can_fd_tb.ctu_can_test_context;
 
-use lib.pkg_feature_exec_dispath.all;
 
 package mode_rst_feature is
     procedure mode_rst_feature_exec(
