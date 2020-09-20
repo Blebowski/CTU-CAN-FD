@@ -21,13 +21,8 @@ class ReferenceTests(TestsBase):
         tb = self.lib.get_test_benches('*reference*')[0]
         default = self.config['default']
 
-        # TODO: is this necessary?
         tb.scan_tests_from_file(str(self.base / "reference/vunit_reference_wrapper.vhd"))
-
         sim_options = self.get_default_sim_options()
-        # generate & set per-test modelsim tcl file
-        sim_options += self.generate_init_tcl('modelsim_init_reference.tcl', 'tb_reference_wrapper/i_test')
-        sim_options += self.add_modelsim_gui_file(tb, default, 'reference', sim_options['modelsim.init_files.after_load'])
 
         for data_set, cfg in self.config['tests'].items():
             dict_merge(cfg, default)

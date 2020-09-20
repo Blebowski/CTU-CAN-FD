@@ -31,17 +31,11 @@ class FeatureTests(TestsBase):
         default = self.config['default']
 
         sim_options = self.get_default_sim_options()
-        # generate & set per-test modelsim tcl file
-        sim_options += self.generate_init_tcl('modelsim_init_feature.tcl', 'tb_feature/test_comp')
-        sim_options += self.add_modelsim_gui_file(tb, default, 'feature', sim_options['modelsim.init_files.after_load'])
 
         for name, cfg in self.config['tests'].items():
             if cfg is None:
                 cfg = dict()
 
-            if 'wave' in cfg:
-                log.warn('"wave" in feature test config {} is ignored' +
-                         ' (set it in default instead)'.format(name))
             dict_merge(cfg, default)
 
             generics = {
