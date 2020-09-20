@@ -7,7 +7,6 @@ from pathlib import Path
 from jinja2 import Environment, PackageLoader
 from pprint import pprint
 import random
-from .gtkwave import tcl2gtkw
 from typing import List, Tuple
 import copy
 import re
@@ -83,83 +82,6 @@ class TestsBase:
         Return False if there were unconfigured tests found."""
 
         raise NotImplementedError()
-
-    def generate_init_tcl(self, fname: str, tcomp: str) -> OptionsDict:
-        tcl = self.build / fname
-        with tcl.open('wt', encoding='utf-8') as f:
-            print(dedent('''\
-                global TCOMP
-                set TCOMP {}
-                '''.format(tcomp)), file=f)
-        return OptionsDict({"modelsim.init_files.after_load": [str(tcl)]})
-
-    def add_modelsim_gui_file(self, tb, cfg, name, tcl_init_files: List[str]) -> OptionsDict:
-        """Return sim_options to add to the testcase."""
-        sim_options = OptionsDict({'ghdl.sim_flags': []})
-        if 'wave' in cfg:
-            tcl = self.base / cfg['wave']
-            if not tcl.exists():
-                log.warn('Wave file {} not found'.format(cfg['wave']))
-        else:
-            tcl = self.build / 'modelsim_gui_{}.tcl'.format(name)
-            with tcl.open('wt', encoding='utf-8') as f:
-                print(dedent('''\
-                    start_CAN_simulation "dummy"
-                    global IgnoreAddWaveErrors
-                    puts "Automatically adding common waves. Failures are handled gracefully."
-                    set IgnoreAddWaveErrors 1
-                    add_test_status_waves
-                    add_system_waves
-                    set IgnoreAddWaveErrors 0
-                    run_simulation
-                    get_test_results
-                    '''.format(name)), file=f)
-
-        sim_options["modelsim.init_file.gui"] = str(tcl)
-        if 'gtkw' in cfg:
-            gtkw = self.base / cfg['gtkw']
-            if not gtkw.exists():
-                log.warn('GTKW wave file {} not found'.format(cfg['gtkw']))
-        else:
-            tclfname = tcl.relative_to(self.base)
-            base = str(tclfname.with_suffix("")).replace('/', '__')
-            gtkw = self.build / (base+'.gtkw')
-            ghw_file = self.build / (tb.name+'.elab.ghw')
-            wave_opt_file = gtkw.with_suffix('.wevaopt.txt')
-            # We need the GHW file for TCL -> GTKW conversion. If we are
-            # generating them, there is no sense in actually doing
-            # the conversion now.
-            if self.create_ghws:
-                log.info('Will generate {}'.format(ghw_file))
-                sim_options["ghdl.sim_flags"] += ['--wave=' + str(ghw_file)]
-            else:
-                if not ghw_file.exists():
-                    log.warning("Cannot convert wave file {} to gtkw, because"
-                                " GHW file is missing. Run test with "
-                                "--create-ghws.".format(tclfname))
-                    gtkw = None
-                else:
-                    log.debug('Converting wave file {} to gtkw ...'.format(tclfname))
-                    used_signals = tcl2gtkw(str(tcl), tcl_init_files, str(gtkw), ghw_file)
-                    with wave_opt_file.open('wt') as f:
-                        f.write('$ version 1.1\n')
-                        f.writelines('\n'.join(used_signals))
-                    if not cfg['dump_all_signals'] and not self.force_unrestricted_dump_signals:
-                        log.info('Only signals included in the layout file '
-                                 'will be dumped. To see them all, run with '
-                                 '--dumpall.')
-                        sim_options['ghdl.sim_flags'] += ['--read-wave-opt='+str(wave_opt_file)]
-        if gtkw:
-            try:
-                tb.set_sim_option("ghdl.gtkwave_flags", [])
-                sim_options["ghdl.gtkwave_flags"] = ['--save='+str(gtkw)]
-            except ValueError:
-                try:
-                    tb.set_sim_option("ghdl.gtkw_file", "")
-                    sim_options["ghdl.gtkw_file"] = str(gtkw)
-                except ValueError:
-                    log.warning('Setting GTKW file per test is not supported in this VUnit version.')
-        return OptionsDict(sim_options)
 
     def get_default_sim_options(self) -> OptionsDict:
         c, s = get_default_compile_and_sim_options()

@@ -39,9 +39,6 @@ class UnitTests(TestsBase):
             tb.set_generic('seed', get_seed(cfg))
 
             sim_options = self.get_default_sim_options()
-            # generate & set per-test modelsim tcl file
-            sim_options += self.generate_init_tcl('modelsim_init_{}.tcl'.format(name), 'tb_{}_unit_test/tb/i_test'.format(name))
-            sim_options += self.add_modelsim_gui_file(tb, cfg, name, sim_options['modelsim.init_files.after_load'])
 
             if cfg['psl_coverage']:
                 sim_options += self.add_psl_cov(tb.name)

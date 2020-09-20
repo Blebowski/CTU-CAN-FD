@@ -20,14 +20,8 @@ class SanityTests(TestsBase):
         default = self.config['default']
 
         sim_options = self.get_default_sim_options()
-        # generate & set per-test modelsim tcl file
-        sim_options += self.generate_init_tcl('modelsim_init_sanity.tcl', 'tb_sanity')
-        sim_options += self.add_modelsim_gui_file(tb, default, 'sanity', sim_options['modelsim.init_files.after_load'])
 
         for name, cfg in self.config['tests'].items():
-            if 'wave' in cfg:
-                log.warn('"wave" in sanity test config {} is ignored' +
-                         ' (set it in default instead)'.format(name))
 
             dict_merge(cfg, default)
             generics = {
