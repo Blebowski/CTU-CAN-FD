@@ -500,517 +500,517 @@
       <spirit:file>
         <spirit:name>bus_sampling/bit_err_detector.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
-        <spirit:logicalName>xil_defaultlib</spirit:logicalName>
+        <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
       </spirit:file>
 
       <spirit:file>
         <spirit:name>bus_sampling/bus_sampling.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
-        <spirit:logicalName>xil_defaultlib</spirit:logicalName>
+        <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
       </spirit:file>
 
       <spirit:file>
         <spirit:name>bus_sampling/data_edge_detector.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
-        <spirit:logicalName>xil_defaultlib</spirit:logicalName>
+        <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
       </spirit:file>
 
       <spirit:file>
         <spirit:name>bus_sampling/sample_mux.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
-        <spirit:logicalName>xil_defaultlib</spirit:logicalName>
+        <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
       </spirit:file>
 
       <spirit:file>
         <spirit:name>bus_sampling/ssp_generator.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
-        <spirit:logicalName>xil_defaultlib</spirit:logicalName>
+        <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
       </spirit:file>
 
       <spirit:file>
         <spirit:name>bus_sampling/trv_delay_meas.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
-        <spirit:logicalName>xil_defaultlib</spirit:logicalName>
+        <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
       </spirit:file>
 
       <spirit:file>
         <spirit:name>bus_sampling/tx_data_cache.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
-        <spirit:logicalName>xil_defaultlib</spirit:logicalName>
+        <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
       </spirit:file>
 
       <spirit:file>
         <spirit:name>can_core/bit_destuffing.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
-        <spirit:logicalName>xil_defaultlib</spirit:logicalName>
+        <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
       </spirit:file>
 
       <spirit:file>
         <spirit:name>can_core/bit_stuffing.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
-        <spirit:logicalName>xil_defaultlib</spirit:logicalName>
+        <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
       </spirit:file>
 
       <spirit:file>
         <spirit:name>can_core/bus_traffic_counters.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
-        <spirit:logicalName>xil_defaultlib</spirit:logicalName>
+        <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
       </spirit:file>
 
       <spirit:file>
         <spirit:name>can_core/can_core.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
-        <spirit:logicalName>xil_defaultlib</spirit:logicalName>
+        <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
       </spirit:file>
 
       <spirit:file>
         <spirit:name>can_core/can_crc.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
-        <spirit:logicalName>xil_defaultlib</spirit:logicalName>
+        <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
       </spirit:file>
 
       <spirit:file>
         <spirit:name>can_core/control_counter.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
-        <spirit:logicalName>xil_defaultlib</spirit:logicalName>
+        <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
       </spirit:file>
 
       <spirit:file>
         <spirit:name>can_core/crc_calc.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
-        <spirit:logicalName>xil_defaultlib</spirit:logicalName>
+        <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
       </spirit:file>
 
       <spirit:file>
         <spirit:name>can_core/err_counters.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
-        <spirit:logicalName>xil_defaultlib</spirit:logicalName>
+        <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
       </spirit:file>
 
       <spirit:file>
         <spirit:name>can_core/err_detector.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
-        <spirit:logicalName>xil_defaultlib</spirit:logicalName>
+        <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
       </spirit:file>
 
       <spirit:file>
         <spirit:name>can_core/fault_confinement.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
-        <spirit:logicalName>xil_defaultlib</spirit:logicalName>
+        <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
       </spirit:file>
 
       <spirit:file>
         <spirit:name>can_core/fault_confinement_fsm.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
-        <spirit:logicalName>xil_defaultlib</spirit:logicalName>
+        <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
       </spirit:file>
 
       <spirit:file>
         <spirit:name>can_core/fault_confinement_rules.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
-        <spirit:logicalName>xil_defaultlib</spirit:logicalName>
+        <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
       </spirit:file>
 
       <spirit:file>
         <spirit:name>can_core/operation_control.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
-        <spirit:logicalName>xil_defaultlib</spirit:logicalName>
+        <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
       </spirit:file>
 
       <spirit:file>
         <spirit:name>can_core/protocol_control.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
-        <spirit:logicalName>xil_defaultlib</spirit:logicalName>
+        <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
       </spirit:file>
 
       <spirit:file>
         <spirit:name>can_core/protocol_control_fsm.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
-        <spirit:logicalName>xil_defaultlib</spirit:logicalName>
+        <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
       </spirit:file>
 
       <spirit:file>
         <spirit:name>can_core/reintegration_counter.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
-        <spirit:logicalName>xil_defaultlib</spirit:logicalName>
+        <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
       </spirit:file>
 
       <spirit:file>
         <spirit:name>can_core/retransmitt_counter.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
-        <spirit:logicalName>xil_defaultlib</spirit:logicalName>
+        <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
       </spirit:file>
 
       <spirit:file>
         <spirit:name>can_core/rx_shift_reg.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
-        <spirit:logicalName>xil_defaultlib</spirit:logicalName>
+        <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
       </spirit:file>
 
       <spirit:file>
         <spirit:name>can_core/trigger_mux.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
-        <spirit:logicalName>xil_defaultlib</spirit:logicalName>
+        <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
       </spirit:file>
 
       <spirit:file>
         <spirit:name>can_core/tx_shift_reg.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
-        <spirit:logicalName>xil_defaultlib</spirit:logicalName>
+        <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
       </spirit:file>
 
       <spirit:file>
         <spirit:name>can_top_ahb.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
-        <spirit:logicalName>xil_defaultlib</spirit:logicalName>
+        <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
       </spirit:file>
 
       <spirit:file>
         <spirit:name>can_top_apb.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
-        <spirit:logicalName>xil_defaultlib</spirit:logicalName>
+        <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
       </spirit:file>
 
       <spirit:file>
         <spirit:name>can_top_level.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
-        <spirit:logicalName>xil_defaultlib</spirit:logicalName>
+        <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
       </spirit:file>
 
       <spirit:file>
         <spirit:name>common/dff.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
-        <spirit:logicalName>xil_defaultlib</spirit:logicalName>
+        <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
       </spirit:file>
 
       <spirit:file>
         <spirit:name>common/dff_arst.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
-        <spirit:logicalName>xil_defaultlib</spirit:logicalName>
+        <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
       </spirit:file>
 
       <spirit:file>
         <spirit:name>common/dff_arst_ce.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
-        <spirit:logicalName>xil_defaultlib</spirit:logicalName>
+        <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
       </spirit:file>
 
       <spirit:file>
         <spirit:name>common/dlc_decoder.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
-        <spirit:logicalName>xil_defaultlib</spirit:logicalName>
+        <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
       </spirit:file>
 
       <spirit:file>
         <spirit:name>common/endian_swapper.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
-        <spirit:logicalName>xil_defaultlib</spirit:logicalName>
+        <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
       </spirit:file>
 
       <spirit:file>
         <spirit:name>common/inf_ram_wrapper.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
-        <spirit:logicalName>xil_defaultlib</spirit:logicalName>
+        <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
       </spirit:file>
 
       <spirit:file>
         <spirit:name>common/majority_decoder_3.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
-        <spirit:logicalName>xil_defaultlib</spirit:logicalName>
+        <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
       </spirit:file>
 
       <spirit:file>
         <spirit:name>common/rst_sync.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
-        <spirit:logicalName>xil_defaultlib</spirit:logicalName>
+        <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
       </spirit:file>
 
       <spirit:file>
         <spirit:name>common/shift_reg.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
-        <spirit:logicalName>xil_defaultlib</spirit:logicalName>
+        <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
       </spirit:file>
 
       <spirit:file>
         <spirit:name>common/shift_reg_byte.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
-        <spirit:logicalName>xil_defaultlib</spirit:logicalName>
+        <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
       </spirit:file>
 
       <spirit:file>
         <spirit:name>common/shift_reg_preload.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
-        <spirit:logicalName>xil_defaultlib</spirit:logicalName>
+        <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
       </spirit:file>
 
       <spirit:file>
         <spirit:name>common/sig_sync.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
-        <spirit:logicalName>xil_defaultlib</spirit:logicalName>
+        <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
       </spirit:file>
 
       <spirit:file>
         <spirit:name>frame_filters/bit_filter.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
-        <spirit:logicalName>xil_defaultlib</spirit:logicalName>
+        <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
       </spirit:file>
 
       <spirit:file>
         <spirit:name>frame_filters/frame_filters.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
-        <spirit:logicalName>xil_defaultlib</spirit:logicalName>
+        <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
       </spirit:file>
 
       <spirit:file>
         <spirit:name>frame_filters/range_filter.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
-        <spirit:logicalName>xil_defaultlib</spirit:logicalName>
+        <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
       </spirit:file>
 
       <spirit:file>
         <spirit:name>interface/ahb_ifc.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
-        <spirit:logicalName>xil_defaultlib</spirit:logicalName>
+        <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
       </spirit:file>
 
       <spirit:file>
         <spirit:name>interface/apb_ifc.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
-        <spirit:logicalName>xil_defaultlib</spirit:logicalName>
+        <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
       </spirit:file>
 
       <spirit:file>
         <spirit:name>interrupts/int_manager.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
-        <spirit:logicalName>xil_defaultlib</spirit:logicalName>
+        <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
       </spirit:file>
 
       <spirit:file>
         <spirit:name>interrupts/int_module.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
-        <spirit:logicalName>xil_defaultlib</spirit:logicalName>
+        <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
       </spirit:file>
 
       <spirit:file>
         <spirit:name>lib/can_components.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
-        <spirit:logicalName>xil_defaultlib</spirit:logicalName>
+        <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
       </spirit:file>
 
       <spirit:file>
         <spirit:name>lib/can_config.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
-        <spirit:logicalName>xil_defaultlib</spirit:logicalName>
+        <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
       </spirit:file>
 
       <spirit:file>
         <spirit:name>lib/can_constants.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
-        <spirit:logicalName>xil_defaultlib</spirit:logicalName>
+        <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
       </spirit:file>
 
       <spirit:file>
         <spirit:name>lib/can_fd_frame_format.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
-        <spirit:logicalName>xil_defaultlib</spirit:logicalName>
+        <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
       </spirit:file>
 
       <spirit:file>
         <spirit:name>lib/can_fd_register_map.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
-        <spirit:logicalName>xil_defaultlib</spirit:logicalName>
+        <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
       </spirit:file>
 
       <spirit:file>
         <spirit:name>lib/can_types.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
-        <spirit:logicalName>xil_defaultlib</spirit:logicalName>
+        <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
       </spirit:file>
 
       <spirit:file>
         <spirit:name>lib/cmn_lib.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
-        <spirit:logicalName>xil_defaultlib</spirit:logicalName>
+        <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
       </spirit:file>
 
       <spirit:file>
         <spirit:name>lib/drv_stat_pkg.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
-        <spirit:logicalName>xil_defaultlib</spirit:logicalName>
+        <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
       </spirit:file>
 
       <spirit:file>
         <spirit:name>lib/id_transfer.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
-        <spirit:logicalName>xil_defaultlib</spirit:logicalName>
+        <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
       </spirit:file>
 
       <spirit:file>
         <spirit:name>lib/reduce_lib.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
-        <spirit:logicalName>xil_defaultlib</spirit:logicalName>
+        <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
       </spirit:file>
 
       <spirit:file>
         <spirit:name>memory_registers/generated/access_signaler.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
-        <spirit:logicalName>xil_defaultlib</spirit:logicalName>
+        <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
       </spirit:file>
 
       <spirit:file>
         <spirit:name>memory_registers/generated/address_decoder.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
-        <spirit:logicalName>xil_defaultlib</spirit:logicalName>
+        <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
       </spirit:file>
 
       <spirit:file>
         <spirit:name>memory_registers/generated/can_registers_pkg.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
-        <spirit:logicalName>xil_defaultlib</spirit:logicalName>
+        <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
       </spirit:file>
 
       <spirit:file>
         <spirit:name>memory_registers/generated/cmn_reg_map_pkg.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
-        <spirit:logicalName>xil_defaultlib</spirit:logicalName>
+        <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
       </spirit:file>
 
       <spirit:file>
         <spirit:name>memory_registers/generated/control_registers_reg_map.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
-        <spirit:logicalName>xil_defaultlib</spirit:logicalName>
+        <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
       </spirit:file>
 
       <spirit:file>
         <spirit:name>memory_registers/generated/data_mux.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
-        <spirit:logicalName>xil_defaultlib</spirit:logicalName>
+        <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
       </spirit:file>
 
       <spirit:file>
         <spirit:name>memory_registers/generated/memory_bus.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
-        <spirit:logicalName>xil_defaultlib</spirit:logicalName>
+        <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
       </spirit:file>
 
       <spirit:file>
         <spirit:name>memory_registers/generated/memory_reg.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
-        <spirit:logicalName>xil_defaultlib</spirit:logicalName>
+        <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
       </spirit:file>
 
       <spirit:file>
         <spirit:name>memory_registers/memory_registers.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
-        <spirit:logicalName>xil_defaultlib</spirit:logicalName>
+        <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
       </spirit:file>
 
       <spirit:file>
         <spirit:name>prescaler/bit_segment_meter.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
-        <spirit:logicalName>xil_defaultlib</spirit:logicalName>
+        <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
       </spirit:file>
 
       <spirit:file>
         <spirit:name>prescaler/bit_time_cfg_capture.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
-        <spirit:logicalName>xil_defaultlib</spirit:logicalName>
+        <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
       </spirit:file>
 
       <spirit:file>
         <spirit:name>prescaler/bit_time_counters.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
-        <spirit:logicalName>xil_defaultlib</spirit:logicalName>
+        <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
       </spirit:file>
 
       <spirit:file>
         <spirit:name>prescaler/bit_time_fsm.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
-        <spirit:logicalName>xil_defaultlib</spirit:logicalName>
+        <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
       </spirit:file>
 
       <spirit:file>
         <spirit:name>prescaler/prescaler.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
-        <spirit:logicalName>xil_defaultlib</spirit:logicalName>
+        <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
       </spirit:file>
 
       <spirit:file>
         <spirit:name>prescaler/segment_end_detector.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
-        <spirit:logicalName>xil_defaultlib</spirit:logicalName>
+        <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
       </spirit:file>
 
       <spirit:file>
         <spirit:name>prescaler/synchronisation_checker.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
-        <spirit:logicalName>xil_defaultlib</spirit:logicalName>
+        <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
       </spirit:file>
 
       <spirit:file>
         <spirit:name>prescaler/trigger_generator.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
-        <spirit:logicalName>xil_defaultlib</spirit:logicalName>
+        <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
       </spirit:file>
 
       <spirit:file>
         <spirit:name>rx_buffer/rx_buffer.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
-        <spirit:logicalName>xil_defaultlib</spirit:logicalName>
+        <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
       </spirit:file>
 
       <spirit:file>
         <spirit:name>rx_buffer/rx_buffer_fsm.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
-        <spirit:logicalName>xil_defaultlib</spirit:logicalName>
+        <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
       </spirit:file>
 
       <spirit:file>
         <spirit:name>rx_buffer/rx_buffer_pointers.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
-        <spirit:logicalName>xil_defaultlib</spirit:logicalName>
+        <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
       </spirit:file>
 
       <spirit:file>
         <spirit:name>rx_buffer/rx_buffer_ram.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
-        <spirit:logicalName>xil_defaultlib</spirit:logicalName>
+        <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
       </spirit:file>
 
       <spirit:file>
         <spirit:name>tx_arbitrator/priority_decoder.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
-        <spirit:logicalName>xil_defaultlib</spirit:logicalName>
+        <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
       </spirit:file>
 
       <spirit:file>
         <spirit:name>tx_arbitrator/tx_arbitrator.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
-        <spirit:logicalName>xil_defaultlib</spirit:logicalName>
+        <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
       </spirit:file>
 
       <spirit:file>
         <spirit:name>tx_arbitrator/tx_arbitrator_fsm.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
-        <spirit:logicalName>xil_defaultlib</spirit:logicalName>
+        <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
       </spirit:file>
 
       <spirit:file>
         <spirit:name>txt_buffer/txt_buffer.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
-        <spirit:logicalName>xil_defaultlib</spirit:logicalName>
+        <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
       </spirit:file>
 
       <spirit:file>
         <spirit:name>txt_buffer/txt_buffer_fsm.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
-        <spirit:logicalName>xil_defaultlib</spirit:logicalName>
+        <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
       </spirit:file>
 
       <spirit:file>
         <spirit:name>txt_buffer/txt_buffer_ram.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
-        <spirit:logicalName>xil_defaultlib</spirit:logicalName>
+        <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
       </spirit:file>
 
     </spirit:fileSet>
@@ -1021,602 +1021,602 @@
         <spirit:name>bus_sampling/bit_err_detector.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
         <spirit:userFileType>USED_IN_ipstatic</spirit:userFileType>
-        <spirit:logicalName>xil_defaultlib</spirit:logicalName>
+        <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
       </spirit:file>
 
       <spirit:file>
         <spirit:name>bus_sampling/bus_sampling.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
         <spirit:userFileType>USED_IN_ipstatic</spirit:userFileType>
-        <spirit:logicalName>xil_defaultlib</spirit:logicalName>
+        <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
       </spirit:file>
 
       <spirit:file>
         <spirit:name>bus_sampling/data_edge_detector.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
         <spirit:userFileType>USED_IN_ipstatic</spirit:userFileType>
-        <spirit:logicalName>xil_defaultlib</spirit:logicalName>
+        <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
       </spirit:file>
 
       <spirit:file>
         <spirit:name>bus_sampling/sample_mux.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
         <spirit:userFileType>USED_IN_ipstatic</spirit:userFileType>
-        <spirit:logicalName>xil_defaultlib</spirit:logicalName>
+        <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
       </spirit:file>
 
       <spirit:file>
         <spirit:name>bus_sampling/ssp_generator.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
         <spirit:userFileType>USED_IN_ipstatic</spirit:userFileType>
-        <spirit:logicalName>xil_defaultlib</spirit:logicalName>
+        <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
       </spirit:file>
 
       <spirit:file>
         <spirit:name>bus_sampling/trv_delay_meas.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
         <spirit:userFileType>USED_IN_ipstatic</spirit:userFileType>
-        <spirit:logicalName>xil_defaultlib</spirit:logicalName>
+        <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
       </spirit:file>
 
       <spirit:file>
         <spirit:name>bus_sampling/tx_data_cache.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
         <spirit:userFileType>USED_IN_ipstatic</spirit:userFileType>
-        <spirit:logicalName>xil_defaultlib</spirit:logicalName>
+        <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
       </spirit:file>
 
       <spirit:file>
         <spirit:name>can_core/bit_destuffing.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
         <spirit:userFileType>USED_IN_ipstatic</spirit:userFileType>
-        <spirit:logicalName>xil_defaultlib</spirit:logicalName>
+        <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
       </spirit:file>
 
       <spirit:file>
         <spirit:name>can_core/bit_stuffing.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
         <spirit:userFileType>USED_IN_ipstatic</spirit:userFileType>
-        <spirit:logicalName>xil_defaultlib</spirit:logicalName>
+        <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
       </spirit:file>
 
       <spirit:file>
         <spirit:name>can_core/bus_traffic_counters.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
         <spirit:userFileType>USED_IN_ipstatic</spirit:userFileType>
-        <spirit:logicalName>xil_defaultlib</spirit:logicalName>
+        <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
       </spirit:file>
 
       <spirit:file>
         <spirit:name>can_core/can_core.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
         <spirit:userFileType>USED_IN_ipstatic</spirit:userFileType>
-        <spirit:logicalName>xil_defaultlib</spirit:logicalName>
+        <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
       </spirit:file>
 
       <spirit:file>
         <spirit:name>can_core/can_crc.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
         <spirit:userFileType>USED_IN_ipstatic</spirit:userFileType>
-        <spirit:logicalName>xil_defaultlib</spirit:logicalName>
+        <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
       </spirit:file>
 
       <spirit:file>
         <spirit:name>can_core/control_counter.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
         <spirit:userFileType>USED_IN_ipstatic</spirit:userFileType>
-        <spirit:logicalName>xil_defaultlib</spirit:logicalName>
+        <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
       </spirit:file>
 
       <spirit:file>
         <spirit:name>can_core/crc_calc.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
         <spirit:userFileType>USED_IN_ipstatic</spirit:userFileType>
-        <spirit:logicalName>xil_defaultlib</spirit:logicalName>
+        <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
       </spirit:file>
 
       <spirit:file>
         <spirit:name>can_core/err_counters.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
         <spirit:userFileType>USED_IN_ipstatic</spirit:userFileType>
-        <spirit:logicalName>xil_defaultlib</spirit:logicalName>
+        <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
       </spirit:file>
 
       <spirit:file>
         <spirit:name>can_core/err_detector.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
         <spirit:userFileType>USED_IN_ipstatic</spirit:userFileType>
-        <spirit:logicalName>xil_defaultlib</spirit:logicalName>
+        <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
       </spirit:file>
 
       <spirit:file>
         <spirit:name>can_core/fault_confinement.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
         <spirit:userFileType>USED_IN_ipstatic</spirit:userFileType>
-        <spirit:logicalName>xil_defaultlib</spirit:logicalName>
+        <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
       </spirit:file>
 
       <spirit:file>
         <spirit:name>can_core/fault_confinement_fsm.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
         <spirit:userFileType>USED_IN_ipstatic</spirit:userFileType>
-        <spirit:logicalName>xil_defaultlib</spirit:logicalName>
+        <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
       </spirit:file>
 
       <spirit:file>
         <spirit:name>can_core/fault_confinement_rules.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
         <spirit:userFileType>USED_IN_ipstatic</spirit:userFileType>
-        <spirit:logicalName>xil_defaultlib</spirit:logicalName>
+        <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
       </spirit:file>
 
       <spirit:file>
         <spirit:name>can_core/operation_control.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
         <spirit:userFileType>USED_IN_ipstatic</spirit:userFileType>
-        <spirit:logicalName>xil_defaultlib</spirit:logicalName>
+        <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
       </spirit:file>
 
       <spirit:file>
         <spirit:name>can_core/protocol_control.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
         <spirit:userFileType>USED_IN_ipstatic</spirit:userFileType>
-        <spirit:logicalName>xil_defaultlib</spirit:logicalName>
+        <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
       </spirit:file>
 
       <spirit:file>
         <spirit:name>can_core/protocol_control_fsm.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
         <spirit:userFileType>USED_IN_ipstatic</spirit:userFileType>
-        <spirit:logicalName>xil_defaultlib</spirit:logicalName>
+        <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
       </spirit:file>
 
       <spirit:file>
         <spirit:name>can_core/reintegration_counter.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
         <spirit:userFileType>USED_IN_ipstatic</spirit:userFileType>
-        <spirit:logicalName>xil_defaultlib</spirit:logicalName>
+        <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
       </spirit:file>
 
       <spirit:file>
         <spirit:name>can_core/retransmitt_counter.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
         <spirit:userFileType>USED_IN_ipstatic</spirit:userFileType>
-        <spirit:logicalName>xil_defaultlib</spirit:logicalName>
+        <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
       </spirit:file>
 
       <spirit:file>
         <spirit:name>can_core/rx_shift_reg.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
         <spirit:userFileType>USED_IN_ipstatic</spirit:userFileType>
-        <spirit:logicalName>xil_defaultlib</spirit:logicalName>
+        <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
       </spirit:file>
 
       <spirit:file>
         <spirit:name>can_core/trigger_mux.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
         <spirit:userFileType>USED_IN_ipstatic</spirit:userFileType>
-        <spirit:logicalName>xil_defaultlib</spirit:logicalName>
+        <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
       </spirit:file>
 
       <spirit:file>
         <spirit:name>can_core/tx_shift_reg.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
         <spirit:userFileType>USED_IN_ipstatic</spirit:userFileType>
-        <spirit:logicalName>xil_defaultlib</spirit:logicalName>
+        <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
       </spirit:file>
 
       <spirit:file>
         <spirit:name>can_top_ahb.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
         <spirit:userFileType>USED_IN_ipstatic</spirit:userFileType>
-        <spirit:logicalName>xil_defaultlib</spirit:logicalName>
+        <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
       </spirit:file>
 
       <spirit:file>
         <spirit:name>can_top_apb.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
         <spirit:userFileType>USED_IN_ipstatic</spirit:userFileType>
-        <spirit:logicalName>xil_defaultlib</spirit:logicalName>
+        <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
       </spirit:file>
 
       <spirit:file>
         <spirit:name>can_top_level.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
         <spirit:userFileType>USED_IN_ipstatic</spirit:userFileType>
-        <spirit:logicalName>xil_defaultlib</spirit:logicalName>
+        <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
       </spirit:file>
 
       <spirit:file>
         <spirit:name>common/dff.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
         <spirit:userFileType>USED_IN_ipstatic</spirit:userFileType>
-        <spirit:logicalName>xil_defaultlib</spirit:logicalName>
+        <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
       </spirit:file>
 
       <spirit:file>
         <spirit:name>common/dff_arst.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
         <spirit:userFileType>USED_IN_ipstatic</spirit:userFileType>
-        <spirit:logicalName>xil_defaultlib</spirit:logicalName>
+        <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
       </spirit:file>
 
       <spirit:file>
         <spirit:name>common/dff_arst_ce.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
         <spirit:userFileType>USED_IN_ipstatic</spirit:userFileType>
-        <spirit:logicalName>xil_defaultlib</spirit:logicalName>
+        <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
       </spirit:file>
 
       <spirit:file>
         <spirit:name>common/dlc_decoder.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
         <spirit:userFileType>USED_IN_ipstatic</spirit:userFileType>
-        <spirit:logicalName>xil_defaultlib</spirit:logicalName>
+        <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
       </spirit:file>
 
       <spirit:file>
         <spirit:name>common/endian_swapper.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
         <spirit:userFileType>USED_IN_ipstatic</spirit:userFileType>
-        <spirit:logicalName>xil_defaultlib</spirit:logicalName>
+        <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
       </spirit:file>
 
       <spirit:file>
         <spirit:name>common/inf_ram_wrapper.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
         <spirit:userFileType>USED_IN_ipstatic</spirit:userFileType>
-        <spirit:logicalName>xil_defaultlib</spirit:logicalName>
+        <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
       </spirit:file>
 
       <spirit:file>
         <spirit:name>common/majority_decoder_3.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
         <spirit:userFileType>USED_IN_ipstatic</spirit:userFileType>
-        <spirit:logicalName>xil_defaultlib</spirit:logicalName>
+        <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
       </spirit:file>
 
       <spirit:file>
         <spirit:name>common/rst_sync.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
         <spirit:userFileType>USED_IN_ipstatic</spirit:userFileType>
-        <spirit:logicalName>xil_defaultlib</spirit:logicalName>
+        <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
       </spirit:file>
 
       <spirit:file>
         <spirit:name>common/shift_reg.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
         <spirit:userFileType>USED_IN_ipstatic</spirit:userFileType>
-        <spirit:logicalName>xil_defaultlib</spirit:logicalName>
+        <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
       </spirit:file>
 
       <spirit:file>
         <spirit:name>common/shift_reg_byte.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
         <spirit:userFileType>USED_IN_ipstatic</spirit:userFileType>
-        <spirit:logicalName>xil_defaultlib</spirit:logicalName>
+        <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
       </spirit:file>
 
       <spirit:file>
         <spirit:name>common/shift_reg_preload.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
         <spirit:userFileType>USED_IN_ipstatic</spirit:userFileType>
-        <spirit:logicalName>xil_defaultlib</spirit:logicalName>
+        <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
       </spirit:file>
 
       <spirit:file>
         <spirit:name>common/sig_sync.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
         <spirit:userFileType>USED_IN_ipstatic</spirit:userFileType>
-        <spirit:logicalName>xil_defaultlib</spirit:logicalName>
+        <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
       </spirit:file>
 
       <spirit:file>
         <spirit:name>frame_filters/bit_filter.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
         <spirit:userFileType>USED_IN_ipstatic</spirit:userFileType>
-        <spirit:logicalName>xil_defaultlib</spirit:logicalName>
+        <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
       </spirit:file>
 
       <spirit:file>
         <spirit:name>frame_filters/frame_filters.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
         <spirit:userFileType>USED_IN_ipstatic</spirit:userFileType>
-        <spirit:logicalName>xil_defaultlib</spirit:logicalName>
+        <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
       </spirit:file>
 
       <spirit:file>
         <spirit:name>frame_filters/range_filter.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
         <spirit:userFileType>USED_IN_ipstatic</spirit:userFileType>
-        <spirit:logicalName>xil_defaultlib</spirit:logicalName>
+        <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
       </spirit:file>
 
       <spirit:file>
         <spirit:name>interface/ahb_ifc.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
         <spirit:userFileType>USED_IN_ipstatic</spirit:userFileType>
-        <spirit:logicalName>xil_defaultlib</spirit:logicalName>
+        <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
       </spirit:file>
 
       <spirit:file>
         <spirit:name>interface/apb_ifc.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
         <spirit:userFileType>USED_IN_ipstatic</spirit:userFileType>
-        <spirit:logicalName>xil_defaultlib</spirit:logicalName>
+        <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
       </spirit:file>
 
       <spirit:file>
         <spirit:name>interrupts/int_manager.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
         <spirit:userFileType>USED_IN_ipstatic</spirit:userFileType>
-        <spirit:logicalName>xil_defaultlib</spirit:logicalName>
+        <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
       </spirit:file>
 
       <spirit:file>
         <spirit:name>interrupts/int_module.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
         <spirit:userFileType>USED_IN_ipstatic</spirit:userFileType>
-        <spirit:logicalName>xil_defaultlib</spirit:logicalName>
+        <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
       </spirit:file>
 
       <spirit:file>
         <spirit:name>lib/can_components.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
         <spirit:userFileType>USED_IN_ipstatic</spirit:userFileType>
-        <spirit:logicalName>xil_defaultlib</spirit:logicalName>
+        <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
       </spirit:file>
 
       <spirit:file>
         <spirit:name>lib/can_config.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
         <spirit:userFileType>USED_IN_ipstatic</spirit:userFileType>
-        <spirit:logicalName>xil_defaultlib</spirit:logicalName>
+        <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
       </spirit:file>
 
       <spirit:file>
         <spirit:name>lib/can_constants.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
         <spirit:userFileType>USED_IN_ipstatic</spirit:userFileType>
-        <spirit:logicalName>xil_defaultlib</spirit:logicalName>
+        <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
       </spirit:file>
 
       <spirit:file>
         <spirit:name>lib/can_fd_frame_format.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
         <spirit:userFileType>USED_IN_ipstatic</spirit:userFileType>
-        <spirit:logicalName>xil_defaultlib</spirit:logicalName>
+        <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
       </spirit:file>
 
       <spirit:file>
         <spirit:name>lib/can_fd_register_map.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
         <spirit:userFileType>USED_IN_ipstatic</spirit:userFileType>
-        <spirit:logicalName>xil_defaultlib</spirit:logicalName>
+        <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
       </spirit:file>
 
       <spirit:file>
         <spirit:name>lib/can_types.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
         <spirit:userFileType>USED_IN_ipstatic</spirit:userFileType>
-        <spirit:logicalName>xil_defaultlib</spirit:logicalName>
+        <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
       </spirit:file>
 
       <spirit:file>
         <spirit:name>lib/cmn_lib.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
         <spirit:userFileType>USED_IN_ipstatic</spirit:userFileType>
-        <spirit:logicalName>xil_defaultlib</spirit:logicalName>
+        <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
       </spirit:file>
 
       <spirit:file>
         <spirit:name>lib/drv_stat_pkg.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
         <spirit:userFileType>USED_IN_ipstatic</spirit:userFileType>
-        <spirit:logicalName>xil_defaultlib</spirit:logicalName>
+        <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
       </spirit:file>
 
       <spirit:file>
         <spirit:name>lib/id_transfer.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
         <spirit:userFileType>USED_IN_ipstatic</spirit:userFileType>
-        <spirit:logicalName>xil_defaultlib</spirit:logicalName>
+        <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
       </spirit:file>
 
       <spirit:file>
         <spirit:name>lib/reduce_lib.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
         <spirit:userFileType>USED_IN_ipstatic</spirit:userFileType>
-        <spirit:logicalName>xil_defaultlib</spirit:logicalName>
+        <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
       </spirit:file>
 
       <spirit:file>
         <spirit:name>memory_registers/generated/access_signaler.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
         <spirit:userFileType>USED_IN_ipstatic</spirit:userFileType>
-        <spirit:logicalName>xil_defaultlib</spirit:logicalName>
+        <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
       </spirit:file>
 
       <spirit:file>
         <spirit:name>memory_registers/generated/address_decoder.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
         <spirit:userFileType>USED_IN_ipstatic</spirit:userFileType>
-        <spirit:logicalName>xil_defaultlib</spirit:logicalName>
+        <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
       </spirit:file>
 
       <spirit:file>
         <spirit:name>memory_registers/generated/can_registers_pkg.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
         <spirit:userFileType>USED_IN_ipstatic</spirit:userFileType>
-        <spirit:logicalName>xil_defaultlib</spirit:logicalName>
+        <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
       </spirit:file>
 
       <spirit:file>
         <spirit:name>memory_registers/generated/cmn_reg_map_pkg.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
         <spirit:userFileType>USED_IN_ipstatic</spirit:userFileType>
-        <spirit:logicalName>xil_defaultlib</spirit:logicalName>
+        <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
       </spirit:file>
 
       <spirit:file>
         <spirit:name>memory_registers/generated/control_registers_reg_map.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
         <spirit:userFileType>USED_IN_ipstatic</spirit:userFileType>
-        <spirit:logicalName>xil_defaultlib</spirit:logicalName>
+        <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
       </spirit:file>
 
       <spirit:file>
         <spirit:name>memory_registers/generated/data_mux.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
         <spirit:userFileType>USED_IN_ipstatic</spirit:userFileType>
-        <spirit:logicalName>xil_defaultlib</spirit:logicalName>
+        <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
       </spirit:file>
 
       <spirit:file>
         <spirit:name>memory_registers/generated/memory_bus.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
         <spirit:userFileType>USED_IN_ipstatic</spirit:userFileType>
-        <spirit:logicalName>xil_defaultlib</spirit:logicalName>
+        <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
       </spirit:file>
 
       <spirit:file>
         <spirit:name>memory_registers/generated/memory_reg.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
         <spirit:userFileType>USED_IN_ipstatic</spirit:userFileType>
-        <spirit:logicalName>xil_defaultlib</spirit:logicalName>
+        <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
       </spirit:file>
 
       <spirit:file>
         <spirit:name>memory_registers/memory_registers.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
         <spirit:userFileType>USED_IN_ipstatic</spirit:userFileType>
-        <spirit:logicalName>xil_defaultlib</spirit:logicalName>
+        <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
       </spirit:file>
 
       <spirit:file>
         <spirit:name>prescaler/bit_segment_meter.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
         <spirit:userFileType>USED_IN_ipstatic</spirit:userFileType>
-        <spirit:logicalName>xil_defaultlib</spirit:logicalName>
+        <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
       </spirit:file>
 
       <spirit:file>
         <spirit:name>prescaler/bit_time_cfg_capture.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
         <spirit:userFileType>USED_IN_ipstatic</spirit:userFileType>
-        <spirit:logicalName>xil_defaultlib</spirit:logicalName>
+        <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
       </spirit:file>
 
       <spirit:file>
         <spirit:name>prescaler/bit_time_counters.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
         <spirit:userFileType>USED_IN_ipstatic</spirit:userFileType>
-        <spirit:logicalName>xil_defaultlib</spirit:logicalName>
+        <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
       </spirit:file>
 
       <spirit:file>
         <spirit:name>prescaler/bit_time_fsm.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
         <spirit:userFileType>USED_IN_ipstatic</spirit:userFileType>
-        <spirit:logicalName>xil_defaultlib</spirit:logicalName>
+        <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
       </spirit:file>
 
       <spirit:file>
         <spirit:name>prescaler/prescaler.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
         <spirit:userFileType>USED_IN_ipstatic</spirit:userFileType>
-        <spirit:logicalName>xil_defaultlib</spirit:logicalName>
+        <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
       </spirit:file>
 
       <spirit:file>
         <spirit:name>prescaler/segment_end_detector.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
         <spirit:userFileType>USED_IN_ipstatic</spirit:userFileType>
-        <spirit:logicalName>xil_defaultlib</spirit:logicalName>
+        <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
       </spirit:file>
 
       <spirit:file>
         <spirit:name>prescaler/synchronisation_checker.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
         <spirit:userFileType>USED_IN_ipstatic</spirit:userFileType>
-        <spirit:logicalName>xil_defaultlib</spirit:logicalName>
+        <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
       </spirit:file>
 
       <spirit:file>
         <spirit:name>prescaler/trigger_generator.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
         <spirit:userFileType>USED_IN_ipstatic</spirit:userFileType>
-        <spirit:logicalName>xil_defaultlib</spirit:logicalName>
+        <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
       </spirit:file>
 
       <spirit:file>
         <spirit:name>rx_buffer/rx_buffer.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
         <spirit:userFileType>USED_IN_ipstatic</spirit:userFileType>
-        <spirit:logicalName>xil_defaultlib</spirit:logicalName>
+        <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
       </spirit:file>
 
       <spirit:file>
         <spirit:name>rx_buffer/rx_buffer_fsm.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
         <spirit:userFileType>USED_IN_ipstatic</spirit:userFileType>
-        <spirit:logicalName>xil_defaultlib</spirit:logicalName>
+        <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
       </spirit:file>
 
       <spirit:file>
         <spirit:name>rx_buffer/rx_buffer_pointers.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
         <spirit:userFileType>USED_IN_ipstatic</spirit:userFileType>
-        <spirit:logicalName>xil_defaultlib</spirit:logicalName>
+        <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
       </spirit:file>
 
       <spirit:file>
         <spirit:name>rx_buffer/rx_buffer_ram.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
         <spirit:userFileType>USED_IN_ipstatic</spirit:userFileType>
-        <spirit:logicalName>xil_defaultlib</spirit:logicalName>
+        <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
       </spirit:file>
 
       <spirit:file>
         <spirit:name>tx_arbitrator/priority_decoder.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
         <spirit:userFileType>USED_IN_ipstatic</spirit:userFileType>
-        <spirit:logicalName>xil_defaultlib</spirit:logicalName>
+        <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
       </spirit:file>
 
       <spirit:file>
         <spirit:name>tx_arbitrator/tx_arbitrator.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
         <spirit:userFileType>USED_IN_ipstatic</spirit:userFileType>
-        <spirit:logicalName>xil_defaultlib</spirit:logicalName>
+        <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
       </spirit:file>
 
       <spirit:file>
         <spirit:name>tx_arbitrator/tx_arbitrator_fsm.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
         <spirit:userFileType>USED_IN_ipstatic</spirit:userFileType>
-        <spirit:logicalName>xil_defaultlib</spirit:logicalName>
+        <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
       </spirit:file>
 
       <spirit:file>
         <spirit:name>txt_buffer/txt_buffer.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
         <spirit:userFileType>USED_IN_ipstatic</spirit:userFileType>
-        <spirit:logicalName>xil_defaultlib</spirit:logicalName>
+        <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
       </spirit:file>
 
       <spirit:file>
         <spirit:name>txt_buffer/txt_buffer_fsm.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
         <spirit:userFileType>USED_IN_ipstatic</spirit:userFileType>
-        <spirit:logicalName>xil_defaultlib</spirit:logicalName>
+        <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
       </spirit:file>
 
       <spirit:file>
         <spirit:name>txt_buffer/txt_buffer_ram.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
         <spirit:userFileType>USED_IN_ipstatic</spirit:userFileType>
-        <spirit:logicalName>xil_defaultlib</spirit:logicalName>
+        <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
       </spirit:file>
 
     </spirit:fileSet>
