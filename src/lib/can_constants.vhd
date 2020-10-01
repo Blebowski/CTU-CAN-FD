@@ -133,6 +133,9 @@ package can_constants is
     constant C_ERR_FLG_DURATION : std_logic_vector(8 downto 0) :=
         std_logic_vector(to_unsigned(5, 9));
 
+    constant C_SHORTENED_ERR_FLG_DURATION : std_logic_vector(8 downto 0) :=
+        std_logic_vector(to_unsigned(4, 9));
+
     constant C_ERR_DELIM_DURATION : std_logic_vector(8 downto 0) :=
         std_logic_vector(to_unsigned(6, 9));
       

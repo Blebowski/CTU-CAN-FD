@@ -750,6 +750,9 @@ architecture rtl of protocol_control_fsm is
     signal pex_on_fdf_enable         :  std_logic;
     signal pex_on_res_enable         :  std_logic;
     
+    -- Counting of consecutive bits during passive error flag
+    signal rx_data_nbs_prev          :  std_logic;
+    
 begin
 
     tx_frame_ready <= '1' when (tran_frame_valid = '1' and drv_bus_mon_ena = '0')
@@ -2536,7 +2539,13 @@ begin
                 -- DOMINANT, and DOMINANT shall not be treated as bit error!
                 bit_err_disable <= '1';
                 
-                if (ctrl_ctr_zero = '1') then
+                -- Reseting control counter if different bit that previous
+                -- is detected. Passive error flag must be completed after
+                -- 6 bits of equal polarity!
+                if (rx_data_nbs_prev /= rx_data_nbs) then
+                    ctrl_ctr_pload_i   <= '1';
+                    ctrl_ctr_pload_val <= C_SHORTENED_ERR_FLG_DURATION;
+                elsif (ctrl_ctr_zero = '1') then
                     tick_state_reg <= '1';
                     ctrl_ctr_pload_i <= '1';
                     ctrl_ctr_pload_val <= C_DELIM_WAIT_DURATION;
@@ -3090,6 +3099,21 @@ begin
             end if;
         end if;
     end process;
+    
+    -----------------------------------------------------------------------
+    -- Registering value from previous bit of CAN_RX signal
+    -----------------------------------------------------------------------
+    prev_rx_data_reg_proc : process(res_n, clk_sys)
+    begin
+        if (res_n = G_RESET_POLARITY) then
+            rx_data_nbs_prev <= RECESSIVE;
+        elsif (rising_edge(clk_sys)) then
+            if (rx_trigger = '1') then
+                rx_data_nbs_prev <= rx_data_nbs;
+            end if;
+        end if;
+    end process;
+    
 
     -----------------------------------------------------------------------
     -- Internal signals to output propagation
