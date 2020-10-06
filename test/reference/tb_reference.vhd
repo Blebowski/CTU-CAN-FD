@@ -411,6 +411,11 @@ begin
             wait until rising_edge(clk_sys);
             wait until bit_gen_done = true;
 
+            -- Wait additional time. This is necessary since some of the recorded values
+            -- did not go until the end of EOF! Therefore at point when the driven sequence
+            -- is finished, DUT had not finished EOF yet and frame is not yet received!
+            wait for 10 us;
+            
             -- Read CAN Frame from the device.
             CAN_read_frame(RX_frame, 0, mem_bus);
 
