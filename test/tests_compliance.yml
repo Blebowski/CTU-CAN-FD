@@ -27,7 +27,6 @@ compliance:
         ph_2_fd: 5
         sjw_fd: 4
 
-
     tests:
         demo:
         iso_7_1_1:
@@ -71,13 +70,6 @@ compliance:
         iso_7_5_2:
         iso_7_5_3:
         iso_7_5_4:
-        iso_7_5_5:
-        iso_7_5_6:
-        iso_7_5_7:
-
-        iso_7_5_1:
-        iso_7_5_2:
-        iso_7_5_3:
         iso_7_5_5:
         iso_7_5_6:
         iso_7_5_7:
