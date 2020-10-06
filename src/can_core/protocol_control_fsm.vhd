@@ -1146,14 +1146,10 @@ begin
                 end if;
 
             -------------------------------------------------------------------
-            -- Secondary ACK field (in FD Frames),or ACK Delimiter if RECESSIVE
+            -- Secondary ACK field (in FD Frames only)
             -------------------------------------------------------------------
             when s_pc_ack_sec =>
-                if (rx_data_nbs = DOMINANT) then
-                    next_state <= s_pc_ack_delim;
-                else
-                    next_state <= s_pc_eof;
-                end if;
+                next_state <= s_pc_ack_delim;
 
             -------------------------------------------------------------------
             -- ACK Delimiter
@@ -2207,15 +2203,6 @@ begin
                 is_ack_field  <= '1';
                 nbt_ctrs_en <= '1';
                 bit_err_disable <= '1';
-                
-                if (rx_data_nbs = RECESSIVE) then
-                    ctrl_ctr_pload_i <= '1';
-                    ctrl_ctr_pload_val <= C_EOF_DURATION;
-                end if;
-
-                if (is_receiver = '1' and crc_match = '0') then
-                    crc_err_i <= '1';
-                end if;
 
             -------------------------------------------------------------------
             -- ACK Delimiter
