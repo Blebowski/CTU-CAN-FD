@@ -2545,7 +2545,7 @@ begin
                 
                 -- If dominant bit is detected, and previous error was ACK, then
                 -- TEC shall be still incremented!
-                if (ack_err_flag = '1' and rx_data_nbs = DOMINANT) then
+                if (ack_err_flag = '1' and rx_data_nbs = DOMINANT and rx_trigger = '1') then
                     bit_err_after_ack_err <= '1';
                     ack_err_flag_clr <= '1';
                 end if;
