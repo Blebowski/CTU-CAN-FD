@@ -447,6 +447,9 @@ architecture rtl of can_core is
     
     -- Decrement Receive Error counter
     signal decrement_rec           :     std_logic;
+    
+    -- Bit Error in passive error flag following ACK error!
+    signal bit_err_after_ack_err   :     std_logic;
 
 begin
   
@@ -572,16 +575,17 @@ begin
         crc_21                  => crc_21,              -- IN
         
         -- Control signals
-        sp_control              => sp_control_i,        -- OUT
-        sp_control_q            => sp_control_q,        -- OUT
-        nbt_ctrs_en             => nbt_ctrs_en,         -- OUT
-        dbt_ctrs_en             => dbt_ctrs_en,         -- OUT
-        sync_control            => sync_control_i,      -- OUT
-        ssp_reset               => ssp_reset_i,         -- OUT
-        tran_delay_meas         => tran_delay_meas_i,   -- OUT
-        tran_valid              => tran_valid_i,        -- OUT
-        rec_valid               => rec_valid_i,         -- OUT
-        decrement_rec           => decrement_rec,       -- OUT
+        sp_control              => sp_control_i,            -- OUT
+        sp_control_q            => sp_control_q,            -- OUT
+        nbt_ctrs_en             => nbt_ctrs_en,             -- OUT
+        dbt_ctrs_en             => dbt_ctrs_en,             -- OUT
+        sync_control            => sync_control_i,          -- OUT
+        ssp_reset               => ssp_reset_i,             -- OUT
+        tran_delay_meas         => tran_delay_meas_i,       -- OUT
+        tran_valid              => tran_valid_i,            -- OUT
+        rec_valid               => rec_valid_i,             -- OUT
+        decrement_rec           => decrement_rec,           -- OUT
+        bit_err_after_ack_err   => bit_err_after_ack_err,   -- OUT
 
         -- Status signals
         br_shifted              => br_shifted_i,        -- OUT
@@ -656,6 +660,7 @@ begin
         tran_valid              => tran_valid_i,            -- IN
         rec_valid               => rec_valid_i,             -- IN
         decrement_rec           => decrement_rec,           -- IN
+        bit_err_after_ack_err   => bit_err_after_ack_err,   -- IN
 
         -- Fault confinement State indication
         is_err_active           => is_err_active,           -- OUT

@@ -109,7 +109,11 @@ package body error_rules_f_tx_feature is
     procedure do_14_8_check(
         signal      so              : out    feature_signal_outputs_t;     
         signal      iout            : in     instance_outputs_arr_t;
-        signal      mem_bus         : inout  mem_bus_arr_t
+        signal      mem_bus         : inout  mem_bus_arr_t;
+        
+        -- Caused by detection of ACK error followed by dominant bit during
+        -- consecutive passive error flag!
+        constant    offset_8        : in     boolean
     ) is
         variable ID_1               : natural := 1;
         variable err_counters_1     : SW_error_counters := (0, 0, 0, 0);
@@ -117,7 +121,17 @@ package body error_rules_f_tx_feature is
         variable err_counters_3     : SW_error_counters := (0, 0, 0, 0);
         variable err_counters_4     : SW_error_counters := (0, 0, 0, 0);
         variable err_counters_5     : SW_error_counters := (0, 0, 0, 0);
+        variable increment_A        : integer;
+        variable increment_B        : integer;
     begin
+        if (offset_8) then
+            increment_A := 8;
+            increment_B := 16;
+        else
+            increment_A := 0;
+            increment_B := 8;
+        end if;
+        
         read_error_counters(err_counters_1, ID_1, mem_bus(1));
         force_bus_level(DOMINANT, so.bl_force, so.bl_inject);
         for i in 0 to 12 loop
@@ -126,14 +140,15 @@ package body error_rules_f_tx_feature is
         wait for 20 ns; -- To be sure sample point was processed!
         
         read_error_counters(err_counters_2, ID_1, mem_bus(1));
-        check(err_counters_1.tx_counter = err_counters_2.tx_counter,
+        
+        check(err_counters_1.tx_counter + increment_A = err_counters_2.tx_counter,
             "TEC not incremented after 13 dominant bits!");
         
         CAN_wait_sample_point(iout(1).stat_bus, false);
         wait for 20 ns; -- To be sure sample point was processed!
         read_error_counters(err_counters_3, ID_1, mem_bus(1));
         
-        check(err_counters_1.tx_counter + 8 = err_counters_3.tx_counter,
+        check(err_counters_1.tx_counter + increment_B = err_counters_3.tx_counter,
             "TEC incremented by 8 after 14 dominant bits!");
         
         for i in 0 to 6 loop
@@ -197,7 +212,7 @@ package body error_rules_f_tx_feature is
         CAN_send_frame(CAN_frame, 1, ID_1, mem_bus(1), frame_sent);
         CAN_wait_error_frame(ID_1, mem_bus(1));
         
-        do_14_8_check(so, iout, mem_bus);
+        do_14_8_check(so, iout, mem_bus, false);
         
         CAN_wait_bus_idle(ID_1, mem_bus(1));
         CAN_wait_bus_idle(ID_2, mem_bus(2));
@@ -223,7 +238,7 @@ package body error_rules_f_tx_feature is
         CAN_send_frame(CAN_frame, 1, ID_1, mem_bus(1), frame_sent);
         CAN_wait_error_frame(ID_1, mem_bus(1));
         
-        do_14_8_check(so, iout, mem_bus);
+        do_14_8_check(so, iout, mem_bus, true);
         
         CAN_wait_bus_idle(ID_1, mem_bus(1));
         CAN_wait_bus_idle(ID_2, mem_bus(2));
@@ -249,7 +264,7 @@ package body error_rules_f_tx_feature is
         CAN_wait_pc_state(pc_deb_overload, ID_1, mem_bus(1));
         release_bus_level(so.bl_force);
         
-        do_14_8_check(so, iout, mem_bus);
+        do_14_8_check(so, iout, mem_bus, false);
         
         CAN_wait_bus_idle(ID_1, mem_bus(1));
         CAN_wait_bus_idle(ID_2, mem_bus(2));

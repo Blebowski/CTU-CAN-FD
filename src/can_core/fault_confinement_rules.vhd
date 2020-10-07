@@ -100,6 +100,9 @@ entity fault_confinement_rules is
         -- Decrement receive Error counter
         decrement_rec           :in   std_logic;
 
+        -- Bit Error in passive error flag after ACK error
+        bit_err_after_ack_err   :in   std_logic;
+
         -----------------------------------------------------------------------
         -- Output signals to error counters
         -----------------------------------------------------------------------
@@ -138,13 +141,14 @@ begin
     --     (rule "c")
     --  - Error delimiter comes too late (more than 14 consecutive bits),
     --    (rule "f")
+    --  - ACK Error followed by bit error during passive error frame!
     ---------------------------------------------------------------------------
     inc_eight <= '1' when (primary_err = '1' and is_receiver = '1') else
                  '1' when (act_err_ovr_flag = '1' and err_detected = '1') else
                  '1' when (is_transmitter = '1' and 
                            err_detected = '1' and
                            err_ctrs_unchanged = '0') else
-                 '1' when (err_delim_late = '1') else
+                 '1' when (err_delim_late = '1' or bit_err_after_ack_err = '1') else
                  '0';         
 
     ---------------------------------------------------------------------------

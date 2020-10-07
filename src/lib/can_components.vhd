@@ -1022,6 +1022,9 @@ package can_components is
         
         -- Decrement receive Error counter
         decrement_rec           :in   std_logic;
+        
+        -- Bit Error in passive error flag after ACK error
+        bit_err_after_ack_err   :in   std_logic;
 
         -----------------------------------------------------------------------
         -- Output signals to error counters
@@ -1109,6 +1112,9 @@ package can_components is
         
         -- Decrement receive Error counter
         decrement_rec           :in   std_logic;
+        
+        -- Bit Error in passive error flag after ACK error
+        bit_err_after_ack_err   :in   std_logic;
 
         -----------------------------------------------------------------------
         -- Fault confinement State indication
@@ -1851,6 +1857,9 @@ package can_components is
         
         -- Decrement REC
         decrement_rec           :out  std_logic;
+        
+        -- Bit Error in passive error flag after ACK error
+        bit_err_after_ack_err   :out  std_logic;
 
         -----------------------------------------------------------------------
         -- Other control signals
@@ -2236,6 +2245,9 @@ package can_components is
         
         -- Decrement Receive Error counter
         decrement_rec           :out  std_logic;
+        
+        -- Bit Error in passive error flag after ACK error
+        bit_err_after_ack_err   :out  std_logic;
 
         -----------------------------------------------------------------------
         -- Status signals

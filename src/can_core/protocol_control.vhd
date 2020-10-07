@@ -394,6 +394,9 @@ entity protocol_control is
         -- Decrement Receive Error counter
         decrement_rec           :out  std_logic;
 
+        -- Bit Error in passive error flag after ACK Error
+        bit_err_after_ack_err   :out  std_logic;
+
         -----------------------------------------------------------------------
         -- Status signals
         -----------------------------------------------------------------------
@@ -759,6 +762,7 @@ begin
         ack_err                 => ack_err_i,               -- OUT
         crc_check               => crc_check,               -- OUT
         bit_err_arb             => bit_err_arb,             -- OUT
+        bit_err_after_ack_err   => bit_err_after_ack_err,   -- OUT
         crc_match               => crc_match,               -- IN
         crc_err                 => crc_err_i,               -- OUT
         crc_clear_match_flag    => crc_clear_match_flag,    -- OUT
