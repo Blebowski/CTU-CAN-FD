@@ -548,12 +548,6 @@ architecture rtl of protocol_control_fsm is
     signal no_data_transmitter : std_logic;
     signal no_data_receiver : std_logic;
     signal no_data_field : std_logic;
-    
-    -- Allow 2 bit long CRC delimiter
-    signal allow_2bit_crc_delim : std_logic;
-    
-    -- Allow 2 bit long ACK slot
-    signal allow_2bit_ack : std_logic;
 
     -- Preload control counter internal signal
     signal ctrl_ctr_pload_i : std_logic;
@@ -752,7 +746,7 @@ architecture rtl of protocol_control_fsm is
     
     -- Counting of consecutive bits during passive error flag
     signal rx_data_nbs_prev          :  std_logic;
-    
+
 begin
 
     tx_frame_ready <= '1' when (tran_frame_valid = '1' and drv_bus_mon_ena = '0')
@@ -773,17 +767,6 @@ begin
                      '1' when (is_receiver = '1' and no_data_receiver = '1')
                          else
                      '0';
-
-    allow_2bit_crc_delim <= '1' when (is_transmitter = '1' and 
-                                      tran_frame_type = FD_CAN)
-                                else
-                            '0';
-
-    allow_2bit_ack <= '1' when (is_transmitter = '1' and tran_frame_type = FD_CAN)
-                          else
-                      '1' when (is_receiver = '1' and rec_frame_type = FD_CAN)
-                          else
-                      '0';
 
     go_to_suspend <= '1' when (is_err_passive = '1' and is_transmitter = '1')
                          else
@@ -933,7 +916,7 @@ begin
     ---------------------------------------------------------------------------
     next_state_proc : process(
         curr_state, drv_ena, err_frm_req, ctrl_ctr_zero, no_data_field,
-        drv_fd_type, allow_2bit_crc_delim, allow_2bit_ack, is_receiver,
+        drv_fd_type, is_receiver, is_fd_frame,
         is_bus_off, go_to_suspend, tx_frame_ready, drv_bus_off_reset_q,
         reinteg_ctr_expired, rx_data_nbs, is_err_active, go_to_stuff_count,
         pex_on_fdf_enable, pex_on_res_enable)
@@ -1118,39 +1101,30 @@ begin
             -- CRC Delimiter
             -------------------------------------------------------------------
             when s_pc_crc_delim =>
-                if (allow_2bit_crc_delim = '1') then
-                    next_state <= s_pc_crc_delim_sec;
+                if (is_fd_frame = '1') then
+                    next_state <= s_pc_ack_fd_1;
                 else
                     next_state <= s_pc_ack;
                 end if;
 
             -------------------------------------------------------------------
-            -- Secondary CRC Delimiter (Transmitter of FD frame only), or an
-            -- ACK Slot if DOMINANT.
-            -------------------------------------------------------------------
-            when s_pc_crc_delim_sec =>
-                if (rx_data_nbs = DOMINANT) then
-                    next_state <= s_pc_ack_sec;
-                else
-                    next_state <= s_pc_ack;
-                end if;
-
-            -------------------------------------------------------------------
-            -- ACK Slot
+            -- ACK Slot of CAN 2.0 frame
             -------------------------------------------------------------------
             when s_pc_ack =>
-                if (allow_2bit_ack = '1') then
-                    next_state <= s_pc_ack_sec;
-                else
-                    next_state <= s_pc_ack_delim;
-                end if;
-
-            -------------------------------------------------------------------
-            -- Secondary ACK field (in FD Frames only)
-            -------------------------------------------------------------------
-            when s_pc_ack_sec =>
                 next_state <= s_pc_ack_delim;
 
+            -------------------------------------------------------------------
+            -- First bit of CAN FD Frame ACK
+            -------------------------------------------------------------------
+            when s_pc_ack_fd_1 =>
+                next_state <= s_pc_ack_fd_2;
+                
+            -------------------------------------------------------------------
+            -- Second bit of CAN FD Frame ACK
+            -------------------------------------------------------------------
+            when s_pc_ack_fd_2 =>
+                next_state <= s_pc_ack_delim;
+            
             -------------------------------------------------------------------
             -- ACK Delimiter
             -------------------------------------------------------------------
@@ -1333,7 +1307,7 @@ begin
         go_to_suspend, frame_start, ctrl_ctr_one, drv_bus_off_reset_q,
         reinteg_ctr_expired, first_err_delim_q, go_to_stuff_count,
         crc_length_i, data_length_bits_c, ctrl_ctr_mem_index, is_bus_off,
-        block_txtb_unlock, drv_pex)
+        block_txtb_unlock, drv_pex, rx_data_nbs_prev)
     begin
 
         -----------------------------------------------------------------------
@@ -2147,22 +2121,7 @@ begin
                 end if;
 
             -------------------------------------------------------------------
-            -- Secondary CRC Delimiter, or an ACK Slot if DOMINANT.
-            -------------------------------------------------------------------
-            when s_pc_crc_delim_sec =>
-                tick_state_reg <= '1';
-                err_pos <= ERC_POS_ACK;
-                is_crc_delim  <= '1';
-                nbt_ctrs_en <= '1';
-                dbt_ctrs_en <= '1';
-                bit_err_disable <= '1';
-                
-                -- Note: We don't have to consider decrement of REC here,
-                --       because we get here only for transmitter of CAN FD
-                --       frame!
-
-            -------------------------------------------------------------------
-            -- ACK Slot, or a ACK delim, if previous two bits were recessive!
+            -- ACK Slot of CAN 2.0 frame
             -------------------------------------------------------------------
             when s_pc_ack =>
                 tick_state_reg <= '1';
@@ -2195,14 +2154,52 @@ begin
                 end if;
 
             -------------------------------------------------------------------
-            -- Secondary ACK field (in FD Frames),or ACK Delimiter if RECESSIVE
+            -- First bit of CAN FD Frame ACK - Receiver sends ACK
             -------------------------------------------------------------------
-            when s_pc_ack_sec =>
+            when s_pc_ack_fd_1 =>
                 tick_state_reg <= '1';
                 err_pos <= ERC_POS_ACK;
                 is_ack_field  <= '1';
                 nbt_ctrs_en <= '1';
+                dbt_ctrs_en <= '1';
+
+                if (is_receiver = '1' and crc_match = '1' and
+                    drv_ack_forb = '0')
+                then
+                    tx_dominant <= '1';
+
+                -- Bit Error still shall be detected when unit sends dominant
+                -- (receiver) and receives recessive!
+                else
+                    bit_err_disable <= '1';
+                end if;
+                
+                if (is_receiver = '1' and crc_match = '1' and
+                    rx_data_nbs = DOMINANT)
+                then
+                    decrement_rec_i <= '1';
+                end if;
+
+            -------------------------------------------------------------------
+            -- Second bit of CAN FD Frame ACK
+            -------------------------------------------------------------------
+            when s_pc_ack_fd_2 =>
+                tick_state_reg <= '1';
+                err_pos <= ERC_POS_ACK;
+                is_ack_field  <= '1';
+                nbt_ctrs_en <= '1';
+                dbt_ctrs_en <= '1';
+                
+                -- No ACK sent now, but dominant or recessive should be tolerated.
                 bit_err_disable <= '1';
+
+                -- Transmitter not detecting dominant bit now, nor at previous
+                -- bit -> Ack Error
+                if (is_transmitter = '1' and drv_self_test_ena = '0' and
+                    rx_data_nbs = RECESSIVE and rx_data_nbs_prev = RECESSIVE)
+                then
+                    ack_err_i <= '1';
+                end if;
 
             -------------------------------------------------------------------
             -- ACK Delimiter
