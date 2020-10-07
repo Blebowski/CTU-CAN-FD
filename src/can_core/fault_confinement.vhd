@@ -138,6 +138,9 @@ entity fault_confinement is
         -- Decrement receive Error counter
         decrement_rec           :in   std_logic;
 
+        -- Bit Error after ACK error in Passive Error flag
+        bit_err_after_ack_err   :in   std_logic;
+
         -----------------------------------------------------------------------
         -- Fault confinement State indication
         -----------------------------------------------------------------------
@@ -282,6 +285,7 @@ begin
         err_delim_late         => err_delim_late,       -- IN
         tran_valid             => tran_valid,           -- IN
         decrement_rec          => decrement_rec,        -- IN
+        bit_err_after_ack_err  => bit_err_after_ack_err,-- IN
 
         inc_one                => inc_one,              -- OUT
         inc_eight              => inc_eight,            -- OUT

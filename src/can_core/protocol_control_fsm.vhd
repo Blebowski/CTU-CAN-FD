@@ -386,10 +386,10 @@ entity protocol_control_fsm is
         bit_err_arb             :out   std_logic;
         
         -- Calculated CRC and Stuff count are matching received ones
-        crc_match               :in   std_logic;
+        crc_match               :in    std_logic;
 
         -- CRC error signalling
-        crc_err                 :out  std_logic;
+        crc_err                 :out   std_logic;
 
         -- Clear CRC Match flag
         crc_clear_match_flag    :out   std_logic;
@@ -466,8 +466,11 @@ entity protocol_control_fsm is
         -- Unit is Bus off
         is_bus_off              :in   std_logic;
         
-        -- Decrement REC
+        -- Decrement REC (by 1)
         decrement_rec           :out  std_logic;
+        
+        -- Bit Error in passive error flag after ACK Error
+        bit_err_after_ack_err   :out   std_logic;
 
         -----------------------------------------------------------------------
         -- Other control signals
@@ -631,7 +634,9 @@ architecture rtl of protocol_control_fsm is
 
     -- Internal signals for detected errors
     signal form_err_i                :  std_logic;
-    signal ack_err_i                 :  std_logic;  
+    signal ack_err_i                 :  std_logic;
+    signal ack_err_flag              :  std_logic; 
+    signal ack_err_flag_clr          :  std_logic;
     signal crc_err_i                 :  std_logic;
     signal bit_err_arb_i             :  std_logic;
 
@@ -1449,6 +1454,8 @@ begin
         
         clr_bus_off_rst_flg <= '0';
         decrement_rec_i <= '0';
+        ack_err_flag_clr <= '0';
+        bit_err_after_ack_err <= '0';
 
         if (err_frm_req = '1') then
             tick_state_reg <= '1';
@@ -2535,6 +2542,13 @@ begin
                     ctrl_ctr_pload_val <= C_DELIM_WAIT_DURATION;
                     first_err_delim_d <= '1';
                 end if;
+                
+                -- If dominant bit is detected, and previous error was ACK, then
+                -- TEC shall be still incremented!
+                if (ack_err_flag = '1' and rx_data_nbs = DOMINANT) then
+                    bit_err_after_ack_err <= '1';
+                    ack_err_flag_clr <= '1';
+                end if;
 
             -------------------------------------------------------------------
             -- Wait till Error delimiter (detection of recessive bit)
@@ -2543,6 +2557,7 @@ begin
                 is_err_frm <= '1';
                 err_pos <= ERC_POS_ERR;
                 nbt_ctrs_en <= '1';
+                ack_err_flag_clr <= '1';
                 
                 -- When waiting for RECESSIVE bit after Error flag, unit
                 -- may receive DOMINANT and not interpret this as Bit error!
@@ -3098,6 +3113,22 @@ begin
         end if;
     end process;
     
+    -----------------------------------------------------------------------
+    -- Remembering ACK error. Needed by transmitted sending passive error
+    -- frame due to ACK error.
+    -----------------------------------------------------------------------
+    ack_err_flag_proc : process(clk_sys, res_n)
+    begin
+        if (res_n = G_RESET_POLARITY) then
+            ack_err_flag <= '0';
+        elsif (rising_edge(clk_sys)) then
+            if (ack_err_i = '1' and rx_trigger = '1') then
+                ack_err_flag <= '1';
+            elsif (ack_err_flag_clr = '1') then
+                ack_err_flag <= '0';
+            end if;
+        end if;    
+    end process;
 
     -----------------------------------------------------------------------
     -- Internal signals to output propagation
