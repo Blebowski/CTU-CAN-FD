@@ -460,6 +460,7 @@ architecture rtl of can_top_level is
     ------------------------------------------------------------------------
     -- Bus Sampling <-> Prescaler Interface
     ------------------------------------------------------------------------
+    -- Synchronisation edge (aligned with time quanta)
     signal sync_edge            :  std_logic;
     
     ------------------------------------------------------------------------
@@ -829,7 +830,8 @@ begin
         sample_sec              => sample_sec,          -- IN
         btmc_reset              => btmc_reset,          -- OUT
         dbt_measure_start       => dbt_measure_start,   -- OUT
-        gen_first_ssp           => gen_first_ssp        -- OUT
+        gen_first_ssp           => gen_first_ssp,       -- OUT
+        sync_edge               => sync_edge            -- IN
     );
     
     

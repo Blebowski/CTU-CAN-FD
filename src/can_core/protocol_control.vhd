@@ -336,6 +336,9 @@ entity protocol_control is
         -- First SSP generated (in ESI bit)
         gen_first_ssp           :out  std_logic;
         
+        -- Synchronization edge
+        sync_edge               :in   std_logic;
+        
         -----------------------------------------------------------------------
         -- CRC Interface
         -----------------------------------------------------------------------
@@ -812,7 +815,8 @@ begin
         br_shifted              => br_shifted,              -- OUT
         btmc_reset              => btmc_reset,              -- OUT
         dbt_measure_start       => dbt_measure_start,       -- OUT
-        gen_first_ssp           => gen_first_ssp            -- OUT
+        gen_first_ssp           => gen_first_ssp,           -- OUT
+        sync_edge               => sync_edge                -- IN
     );
 
     ---------------------------------------------------------------------------

@@ -1917,7 +1917,10 @@ package can_components is
         dbt_measure_start       :out  std_logic;
     
         -- First SSP generated (in ESI bit)
-        gen_first_ssp           :out  std_logic
+        gen_first_ssp           :out  std_logic;
+        
+        -- Synchronization edge
+        sync_edge               :in   std_logic
     );
     end component;
 
@@ -2187,6 +2190,9 @@ package can_components is
     
         -- First SSP generated (in ESI bit)
         gen_first_ssp           :out  std_logic;
+        
+        -- Synchronization edge
+        sync_edge               :in   std_logic;
         
         -----------------------------------------------------------------------
         -- CRC Interface
@@ -2774,7 +2780,10 @@ package can_components is
         dbt_measure_start   :out  std_logic;
     
         -- First SSP generated (in ESI bit)
-        gen_first_ssp       :out  std_logic
+        gen_first_ssp       :out  std_logic;
+        
+        -- Synchronization edge
+        sync_edge           :in   std_logic
     );
     end component;
 
