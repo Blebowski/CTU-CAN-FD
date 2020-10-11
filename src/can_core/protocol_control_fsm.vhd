@@ -528,7 +528,10 @@ entity protocol_control_fsm is
         dbt_measure_start       :out  std_logic;
     
         -- First SSP generated (in ESI bit)
-        gen_first_ssp           :out  std_logic
+        gen_first_ssp           :out  std_logic;
+        
+        -- Synchronization edge
+        sync_edge               :in   std_logic
     );
 end entity;
 
@@ -554,6 +557,11 @@ architecture rtl of protocol_control_fsm is
 
     -- Preload control counter internal signal
     signal ctrl_ctr_pload_i : std_logic;
+    
+    -- Used when control counter should be preloaded elsewhere than in sample
+    -- point. This is used during integration to reset control counter upon
+    -- synchronisation edge!
+    signal ctrl_ctr_pload_unaliged : std_logic;
     
     -- CRC Selection
     signal crc_use_21         : std_logic;
@@ -1312,7 +1320,7 @@ begin
         go_to_suspend, frame_start, ctrl_ctr_one, drv_bus_off_reset_q,
         reinteg_ctr_expired, first_err_delim_q, go_to_stuff_count,
         crc_length_i, data_length_bits_c, ctrl_ctr_mem_index, is_bus_off,
-        block_txtb_unlock, drv_pex, rx_data_nbs_prev)
+        block_txtb_unlock, drv_pex, rx_data_nbs_prev, sync_edge)
     begin
 
         -----------------------------------------------------------------------
@@ -1322,6 +1330,7 @@ begin
         -- Control counter
         ctrl_ctr_pload_i     <= '0';
         ctrl_ctr_pload_val   <= (OTHERS => '0');
+        ctrl_ctr_pload_unaliged <= '0';
         ctrl_ctr_ena         <= '0';
         compl_ctr_ena_i      <= '0';
         alc_id_field         <= ALC_RSVD; 
@@ -1509,12 +1518,26 @@ begin
                 perform_hsync <= '1';
                 nbt_ctrs_en <= '1';
                 
-                -- Restart integration upon reception of DOMINANT bit!
-                if (rx_data_nbs = DOMINANT) then
-                    ctrl_ctr_pload_i <= '1';
+                -- Restart integration upon reception of DOMINANT bit or upon
+                -- synchronization edge detected!
+                if (rx_data_nbs = DOMINANT or sync_edge = '1') then
                     ctrl_ctr_pload_val <= C_INTEGRATION_DURATION;
                 end if;
                 
+                -- When preloaded due to synchronisation edge, this is
+                -- outside of sample point!
+                if (rx_data_nbs = DOMINANT) then
+                    ctrl_ctr_pload_i <= '1';
+                end if;
+
+                if (sync_edge = '1' and
+                   -- Third reset condition shall be valid for nodes which are
+                   -- CAN FD tolerant or CAN FD enabled!
+                   (not(drv_pex = '0' and drv_can_fd_ena = '0')))
+                then
+                    ctrl_ctr_pload_unaliged <= '1';
+                end if;
+
                 if (ctrl_ctr_zero = '1') then
                     tick_state_reg <= '1';
                     set_idle_i <= '1';
@@ -1763,19 +1786,24 @@ begin
                         form_err_i <= '1';
                     
                     -----------------------------------------------------------
-                    -- Here we detect protocol exception. Although unit should
-                    -- not be transmitter at this moment (see datasheet), it
-                    -- is possible user is stupid! Unlock TXT Buffer so that
-                    -- it does not end up in deadlock!
+                    -- Detect protocol exception. Disable bit stuffing, and
+                    -- unlock TXT Buffer if needed in case user attempted to
+                    -- transmitt frame on which its own protocol exception is
+                    -- detected!
                     -----------------------------------------------------------
-                    elsif (is_transmitter = '1') then
-                        txtb_hw_cmd_d.unlock <= '1';
-                        stuff_enable_clear <= '1';
-                        if (tx_failed = '1') then
-                            txtb_hw_cmd_d.failed  <= '1';
-                        else
-                            txtb_hw_cmd_d.arbl    <= '1';
+                    else
+                        if (is_transmitter = '1') then
+                            txtb_hw_cmd_d.unlock <= '1';
+                            stuff_enable_clear <= '1';
+                            if (tx_failed = '1') then
+                                txtb_hw_cmd_d.failed  <= '1';
+                            else
+                                txtb_hw_cmd_d.arbl    <= '1';
+                            end if;
                         end if;
+                        destuff_enable_clear <= '1';
+                        ctrl_ctr_pload_i <= '1';
+                        ctrl_ctr_pload_val <= C_INTEGRATION_DURATION;
                     end if;
                 end if;
 
@@ -1823,19 +1851,24 @@ begin
                         form_err_i <= '1';
 
                     -----------------------------------------------------------
-                    -- Here we detect protocol exception. Although unit should
-                    -- not be transmitter at this moment (see datasheet), it
-                    -- is possible user is stupid! Unlock TXT Buffer so that
-                    -- it does not end up in deadlock!
+                    -- Detect protocol exception. Disable bit stuffing, and
+                    -- unlock TXT Buffer if needed in case user attempted to
+                    -- transmitt frame on which its own protocol exception is
+                    -- detected!
                     -----------------------------------------------------------
-                    elsif (is_transmitter = '1') then
-                        txtb_hw_cmd_d.unlock <= '1';
-                        stuff_enable_clear <= '1';
-                        if (tx_failed = '1') then
-                            txtb_hw_cmd_d.failed  <= '1';
-                        else
-                            txtb_hw_cmd_d.arbl    <= '1';
+                    else
+                        if (is_transmitter = '1') then
+                            txtb_hw_cmd_d.unlock <= '1';
+                            stuff_enable_clear <= '1';
+                            if (tx_failed = '1') then
+                                txtb_hw_cmd_d.failed  <= '1';
+                            else
+                                txtb_hw_cmd_d.arbl    <= '1';
+                            end if;
                         end if;
+                        destuff_enable_clear <= '1';
+                        ctrl_ctr_pload_i <= '1';
+                        ctrl_ctr_pload_val <= C_INTEGRATION_DURATION;
                     end if;
                 end if;
                 
@@ -1873,19 +1906,24 @@ begin
                         form_err_i <= '1';
 
                     -----------------------------------------------------------
-                    -- Here we detect protocol exception. Although unit should
-                    -- not be transmitter at this moment (see datasheet), it
-                    -- is possible user is stupid! Unlock TXT Buffer so that
-                    -- it does not end up in deadlock!
+                    -- Detect protocol exception. Disable bit stuffing, and
+                    -- unlock TXT Buffer if needed in case user attempted to
+                    -- transmitt frame on which its own protocol exception is
+                    -- detected!
                     -----------------------------------------------------------
-                    elsif (is_transmitter = '1') then
-                        txtb_hw_cmd_d.unlock <= '1';
-                        stuff_enable_clear <= '1';
-                        if (tx_failed = '1') then
-                            txtb_hw_cmd_d.failed  <= '1';
-                        else
-                            txtb_hw_cmd_d.arbl    <= '1';
+                    else
+                        if (is_transmitter = '1') then
+                            txtb_hw_cmd_d.unlock <= '1';
+                            stuff_enable_clear <= '1';
+                            if (tx_failed = '1') then
+                                txtb_hw_cmd_d.failed  <= '1';
+                            else
+                                txtb_hw_cmd_d.arbl    <= '1';
+                            end if;
                         end if;
+                        destuff_enable_clear <= '1';
+                        ctrl_ctr_pload_i <= '1';
+                        ctrl_ctr_pload_val <= C_INTEGRATION_DURATION;
                     end if;
                 end if;
 
@@ -2733,9 +2771,12 @@ begin
     --  1. When core is off and becomes non-off
     --  2. When preloaded by any state and RX trigger is active. This saves
     --     gating with RX Trigger in each FSM state!
+    --  3. When counter is reset during integration due to synchronisation
+    --     edge. This can be anytime, not just in sample point!
     -----------------------------------------------------------------------
     ctrl_ctr_pload <= ctrl_ctr_pload_i when (curr_state = s_pc_off) else
                       ctrl_ctr_pload_i when (ctrl_signal_upd = '1') else
+                      '1' when (ctrl_ctr_pload_unaliged = '1') else
                       '0';
 
     -----------------------------------------------------------------------

@@ -767,7 +767,9 @@ begin
         br_shifted              => br_shifted_1,
         form_err              => form_err_1,
         ack_err               => ack_err_1,
-        crc_err               => crc_err_1
+        crc_err               => crc_err_1,
+        
+        sync_edge              => '0'
     );
     
     
@@ -886,7 +888,9 @@ begin
         br_shifted              => br_shifted_2,
         form_err                => form_err_2,
         ack_err                 => ack_err_2,
-        crc_err                 => crc_err_2
+        crc_err                 => crc_err_2,
+        
+        sync_edge               => '0'
     );
     
     ----------------------------------------------------------------------------

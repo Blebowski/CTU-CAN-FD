@@ -282,7 +282,10 @@ entity can_core is
         dbt_measure_start   :out  std_logic;
     
         -- First SSP generated (in ESI bit)
-        gen_first_ssp       :out  std_logic
+        gen_first_ssp       :out  std_logic;
+        
+        -- Synchronization edge
+        sync_edge           :in   std_logic
     );
 end entity;
 
@@ -564,6 +567,7 @@ begin
         btmc_reset              => btmc_reset,          -- OUT
         dbt_measure_start       => dbt_measure_start,   -- OUT
         gen_first_ssp           => gen_first_ssp,       -- OUT
+        sync_edge               => sync_edge,           -- IN
         
         -- CRC Interface
         crc_enable              => crc_enable,          -- OUT
