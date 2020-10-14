@@ -101,18 +101,6 @@ package cmn_lib is
     );
     end component dff_arst;
 
-    component dff is
-    port (
-        -- Clock
-        clk                : in    std_logic;
-
-        -- Data input (D)
-        input              : in    std_logic;
-        
-        -- Data output (Q)
-        output             : out   std_logic
-    );
-    end component dff;
 
     component dlc_decoder is
     port (
