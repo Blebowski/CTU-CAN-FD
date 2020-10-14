@@ -678,12 +678,6 @@
       </spirit:file>
 
       <spirit:file>
-        <spirit:name>common/dff.vhd</spirit:name>
-        <spirit:fileType>vhdlSource</spirit:fileType>
-        <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
-      </spirit:file>
-
-      <spirit:file>
         <spirit:name>common/dff_arst.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
         <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
@@ -1222,13 +1216,6 @@
 
       <spirit:file>
         <spirit:name>can_top_level.vhd</spirit:name>
-        <spirit:fileType>vhdlSource</spirit:fileType>
-        <spirit:userFileType>USED_IN_ipstatic</spirit:userFileType>
-        <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
-      </spirit:file>
-
-      <spirit:file>
-        <spirit:name>common/dff.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
         <spirit:userFileType>USED_IN_ipstatic</spirit:userFileType>
         <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
