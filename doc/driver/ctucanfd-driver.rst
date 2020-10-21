@@ -601,7 +601,7 @@ CTU CAN FD IP Core and Driver Development Acknowledgment
 
 * Jan Charvat
 
- * implemented CTU CAN FD functional model for QEMU which has been integrated into QEMU mainline (`docs/can.txt <https://git.qemu.org/?p=qemu.git;a=blob;f=docs/can.txt/>`_)
+ * implemented CTU CAN FD functional model for QEMU which has been integrated into QEMU mainline (`docs/can.txt <https://git.qemu.org/?p=qemu.git;a=blob;f=docs/can.txt>`_)
  * Bachelor theses Model of CAN FD Communication Controller for QEMU Emulator
 
 Notes
