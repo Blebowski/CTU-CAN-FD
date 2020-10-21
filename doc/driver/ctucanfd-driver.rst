@@ -15,19 +15,23 @@ It originated in 2015 as Ondrej Ille's project
 at the `Department of Measurement <https://meas.fel.cvut.cz/>`_
 of `FEE <http://www.fel.cvut.cz/en/>`_ at `CTU <http://www.fel.cvut.cz/en/>`_.
 
-The SocketCAN driver for Xilinx Zynq SoC based MicroZed board has been developed
-as well as support for PCIe integration of the core.
+The SocketCAN driver for Xilinx Zynq SoC based MicroZed board
+`integration <https://gitlab.fel.cvut.cz/canbus/zynq/zynq-can-sja1000-top>`_
+and Intel Cyclone V 5CSEMA4U23C6 based DE0-Nano-SoC Terasic board
+`integration <https://gitlab.fel.cvut.cz/canbus/intel-soc-ctucanfd>`_
+has been developed as well as support for
+`PCIe integration <https://gitlab.fel.cvut.cz/canbus/pcie-ctucanfd>`_ of the core.
 
 In the case of Zynq, the core is connected via the APB system bus, which does
 not have enumeration support, and the device must be specified in Device Tree.
 This kind of devices is called platform device in the kernel and is
 handled by a platform device driver.
 
-The basic functional model of the CTU CAN FD peripheral is developed
-to extend `QEMU CAN emulation support <https://git.qemu.org/?p=qemu.git;a=blob;f=docs/can.txt>`_
-to CAN FD and CTU CAN FD core emulation. The support is submitted for mainline
-and can be cloned from ctu-canfd branch of QEMU local development
-`repository <https://gitlab.fel.cvut.cz/canbus/qemu-canbus>`_.
+The basic functional model of the CTU CAN FD peripheral has been
+accepted into QEMU mainline. See QEMU `CAN emulation support <https://git.qemu.org/?p=qemu.git;a=blob;f=docs/can.txt>`_
+for CAN FD buses, host connection and CTU CAN FD core emulation. The development
+version of emulation support can be cloned from ctu-canfd branch of QEMU local
+development `repository <https://gitlab.fel.cvut.cz/canbus/qemu-canbus>`_.
 
 
 About SocketCAN
@@ -597,7 +601,7 @@ CTU CAN FD IP Core and Driver Development Acknowledgment
 
 * Jan Charvat
 
- * implemented CTU CAN FD functional model for QEMU
+ * implemented CTU CAN FD functional model for QEMU which has been integrated into QEMU mainline (`docs/can.txt <https://git.qemu.org/?p=qemu.git;a=blob;f=docs/can.txt/>`_)
  * Bachelor theses Model of CAN FD Communication Controller for QEMU Emulator
 
 Notes

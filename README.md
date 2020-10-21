@@ -94,20 +94,24 @@ There are three driver parts:
 - Platform
 - PCI
 
-Driver has been tested on two boards:
-- [![PCI board](https://img.shields.io/badge/PCI_board--blue.svg)](https://gitlab.fel.cvut.cz/canbus/pcie-ctu_can_fd)
+Driver has been tested on three boards:
+- [![PCI board](https://img.shields.io/badge/PCI_board--blue.svg)](https://gitlab.fel.cvut.cz/canbus/pcie-ctucanfd)
 - [![Xilinx Zynq board](https://img.shields.io/badge/Zynq_board--blue.svg)](https://gitlab.fel.cvut.cz/canbus/zynq/zynq-can-sja1000-top) (Used for automated tests)
+- [![Intel SoC Systems](https://img.shields.io/badge/Intel_SoC--blue.svg)](https://gitlab.fel.cvut.cz/canbus/intel-soc-ctucanfd)
 
 Operation up to 5 Mbits was tested (depending on physical layer transceiver type).
 
 ## Linux driver tests
 
 Linux driver was debugged and tested manually against Kvaser devices, CANoe and other CAN FD controllers. Regular communication
-and handling of Error states were debugged manually. There is an automated emulator at CTU FEE pulling latest CTU CAN FD
-RTL, synthesizing into Xilinx Zynq FPGA, running PetaLinux, loading SocketCAN driver and running CAN/CAN FD communication (500 Kbit/s Nominal bit rate, 4 Mbit Data bit rate) with randomly generated frames between CTU CAN FDs and FD tolerant SJA1000. Results can be found at:  
+and handling of Error states were debugged manually. Automated test for the newer IP core version version is run daily at CTU FEE. It pulls latest CTU CAN FD sources and integrates them into respective Xilinx Zynq FPGA project, compiles latest SocketCAN driver and runs CAN/CAN FD communication (500 Kbit/s Nominal bit rate, 4 Mbit Data bit rate) with randomly generated frames between CTU CAN FDs and FD tolerant SJA1000. Results can be found at:..
 [![FPGA Emulator tests](https://img.shields.io/badge/FPGA_Emulator_Tests--cyan.svg)](https://gitlab.fel.cvut.cz/canbus/zynq/zynq-can-sja1000-top/pipelines)
 
 However, there are no written tests for the driver itself (apart from compiling it without error and passing Linux kernels checkpatch which is required for pipeline to pass). In future QEMU + VPCIE + GHDL cosimulation is planned.
+
+## QEMU emulation
+
+The CTU CAN FD IP core functional model emulation has been integrated into QEMU mainline. QEMU CAN documentation [docs/can.txt](https://git.qemu.org/?p=qemu.git;a=blob;f=docs/can.txt) describes CTU CAN FD emulation setup.
 
 ## RTL release package
 
