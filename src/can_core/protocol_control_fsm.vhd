@@ -1541,7 +1541,15 @@ begin
                 if (ctrl_ctr_zero = '1') then
                     tick_state_reg <= '1';
                     set_idle_i <= '1';
-                    set_err_active_i <= '1';
+                    
+                    -- Device can be integrating right after start or after
+                    -- protocol exception. Only after start, it is bus off,
+                    -- then it shall be set to error active and error counters
+                    -- shall be cleared. Otherwise, error counters shall retain
+                    -- their value!
+                    if (is_bus_off = '1') then
+                        set_err_active_i <= '1';
+                    end if;
                     load_init_vect_i <= '1';
                 end if;
 
