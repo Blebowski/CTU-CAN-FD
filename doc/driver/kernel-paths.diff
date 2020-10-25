@@ -13,20 +13,20 @@
  CTU CAN FD Driver Sources Reference
  -----------------------------------
  
--.. kernel-doc:: ../../driver/ctu_can_fd_hw.h
-+.. kernel-doc:: drivers/net/can/ctucanfd/ctu_can_fd_hw.h
+-.. kernel-doc:: ../../driver/ctucanfd_hw.h
++.. kernel-doc:: drivers/net/can/ctucanfd/ctucanfd_hw.h
     :internal:
  
--.. kernel-doc:: ../../driver/ctu_can_fd.c
-+.. kernel-doc:: drivers/net/can/ctucanfd/ctu_can_fd.c
+-.. kernel-doc:: ../../driver/ctucanfd_base.c
++.. kernel-doc:: drivers/net/can/ctucanfd/ctucanfd_base.c
     :internal:
  
--.. kernel-doc:: ../../driver/ctu_can_fd_pci.c
-+.. kernel-doc:: drivers/net/can/ctucanfd/ctu_can_fd_pci.c
+-.. kernel-doc:: ../../driver/ctucanfd_pci.c
++.. kernel-doc:: drivers/net/can/ctucanfd/ctucanfd_pci.c
     :internal:
  
--.. kernel-doc:: ../../driver/ctu_can_fd_platform.c
-+.. kernel-doc:: drivers/net/can/ctucanfd/ctu_can_fd_platform.c
+-.. kernel-doc:: ../../driver/ctucanfd_platform.c
++.. kernel-doc:: drivers/net/can/ctucanfd/ctucanfd_platform.c
     :internal:
  
  CTU CAN FD IP Core and Driver Development Acknowledgment

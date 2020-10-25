@@ -520,16 +520,16 @@ detected to be *Error Passive*, *Error Passive* should be reported.
 CTU CAN FD Driver Sources Reference
 -----------------------------------
 
-.. kernel-doc:: ../../driver/ctu_can_fd_hw.h
+.. kernel-doc:: ../../driver/ctucanfd_hw.h
    :internal:
 
-.. kernel-doc:: ../../driver/ctu_can_fd.c
+.. kernel-doc:: ../../driver/ctucanfd_base.c
    :internal:
 
-.. kernel-doc:: ../../driver/ctu_can_fd_pci.c
+.. kernel-doc:: ../../driver/ctucanfd_pci.c
    :internal:
 
-.. kernel-doc:: ../../driver/ctu_can_fd_platform.c
+.. kernel-doc:: ../../driver/ctucanfd_platform.c
    :internal:
 
 CTU CAN FD IP Core and Driver Development Acknowledgment
@@ -622,8 +622,8 @@ Notes
 
 .. [4]
    As is done in the low-level driver functions
-   ``ctu_can_fd_set_nom_bittiming`` and
-   ``ctu_can_fd_set_data_bittiming``.
+   ``ctucan_hw_set_nom_bittiming`` and
+   ``ctucan_hw_set_data_bittiming``.
 
 .. [5]
    At the time of writing this thesis, option 1 is still being used and

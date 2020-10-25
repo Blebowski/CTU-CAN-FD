@@ -207,14 +207,14 @@ if __name__ == '__main__':
 									licensePath=GPL2_LICENSE_PATH,
 									memMap="CAN_Registers",
 									wordWidthBit=32,
-									outPath="../driver/ctu_can_fd_regs.h",
+									outPath="../driver/ctucanfd_regs.h",
 									headName="CAN_FD_register_map")
 
 		ctu_can_update_header(specPath=args.xactSpec,
 									licensePath=GPL2_LICENSE_PATH,
 									memMap="CAN_Frame_format",
 									wordWidthBit=32,
-									outPath="../driver/ctu_can_fd_frame.h",
+									outPath="../driver/ctucanfd_frame.h",
 									headName="CAN_FD_frame_format")
 
 		print("\nDone\n")

@@ -22,7 +22,8 @@ check_component:
         paths:
             - src/component.xml
             - doc/core/registerMap.lyx
-            - driver/ctu_can_fd_regs.h
+            - driver/ctucanfd_regs.h
+            - driver/ctucanfd_frame.h
             - src/lib/can_fd_register_map.vhd
 
 build_ip_and_tests:
