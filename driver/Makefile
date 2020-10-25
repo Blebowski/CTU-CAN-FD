@@ -17,8 +17,6 @@ ifeq ($(shell hostname),hathi)
 	cp ./test ./regtest /srv/nfs4/debian-armhf-devel/
 endif
 
-CTUCANFD_HEADERS = ctu_can_fd.h ctu_can_fd_frame.h ctu_can_fd_hw.h ctu_can_fd_regs.h ctu_can_fd_linux_defs.h
-
 ctu_can_%.h : ctucan%.h
 	ln -s $< $@
 
@@ -26,9 +24,9 @@ test: $(OBJS) ctucanfd_userspace.cpp.o
 	$(CXX) $(CXXFLAGS) -o $@ $^ $(LDFLAGS)
 regtest: $(OBJS) regtest.cpp.o
 	$(CXX) $(CXXFLAGS) -o $@ $^ $(LDFLAGS)
-%.c.o: %.c  $(CTUCANFD_HEADERS)
+%.c.o: %.c
 	$(CC) $(CFLAGS) -MMD -MP -c $< -o $@
-%.cpp.o: %.cpp  $(CTUCANFD_HEADERS)
+%.cpp.o: %.cpp
 	$(CXX) $(CXXFLAGS) -MMD -MP -c $< -o $@
 
 .PHONY: all clean

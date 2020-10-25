@@ -41,8 +41,8 @@
 #include <linux/can/led.h>
 #include <linux/pm_runtime.h>
 
-#include "ctu_can_fd.h"
-#include "ctu_can_fd_regs.h"
+#include "ctucanfd.h"
+#include "ctucanfd_regs.h"
 
 #define DRV_NAME "ctucanfd"
 

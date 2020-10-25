@@ -40,11 +40,11 @@
  * generated from from IP-XACT/cactus helps to driver to hardware
  * and QEMU emulation model consistency keeping.
  */
-# include "ctu_can_fd_linux_defs.h"
+# include "ctucanfd_linux_defs.h"
 #endif
 
-#include "ctu_can_fd_frame.h"
-#include "ctu_can_fd_hw.h"
+#include "ctucanfd_frame.h"
+#include "ctucanfd_hw.h"
 
 void ctucan_hw_write32(struct ctucan_hw_priv *priv,
 		       enum ctu_can_fd_can_registers reg, u32 val)

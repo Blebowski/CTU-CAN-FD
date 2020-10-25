@@ -30,7 +30,7 @@
 #include <linux/module.h>
 #include <linux/pci.h>
 
-#include "ctu_can_fd.h"
+#include "ctucanfd.h"
 
 #define DRV_NAME	"ctucanfd_pci"
 

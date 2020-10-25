@@ -27,8 +27,8 @@
  * GNU General Public License for more details.
  ******************************************************************************/
 
-#ifndef __CTU_CAN_FD_HW__
-#define __CTU_CAN_FD_HW__
+#ifndef __CTUCANFD_HW__
+#define __CTUCANFD_HW__
 
 #include <asm/byteorder.h>
 
@@ -36,8 +36,8 @@
 # error __BIG_ENDIAN_BITFIELD or __LITTLE_ENDIAN_BITFIELD must be defined.
 #endif
 
-#include "ctu_can_fd_regs.h"
-#include "ctu_can_fd_frame.h"
+#include "ctucanfd_regs.h"
+#include "ctucanfd_frame.h"
 
 #define CTU_CAN_FD_RETR_MAX 15
 
