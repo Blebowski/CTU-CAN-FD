@@ -401,8 +401,7 @@ begin
     --
     -- psl txtb_lock_only_in_rdy_asrt : assert always
     --  ((txtb_hw_cmd.lock = '1' and hw_cbs = '1') -> curr_state = s_txt_ready)
-    --  report "TXT Buffer " & integer'image(G_ID) &
-    --  " not READY when LOCK command occurred!" severity error;
+    --  report "TXT Buffer not READY when LOCK command occurred!";
     ----------------------------------------------------------------------------
     -- HW Unlock command is valid only when Buffer is TX in Progress or Abort in
     -- progress.
@@ -411,13 +410,13 @@ begin
     --  ((txtb_hw_cmd.unlock = '1' and hw_cbs = '1') ->
     --   (curr_state = s_txt_tx_prog or curr_state = s_txt_ab_prog))
     --  report "TXT Buffer " & integer'image(G_ID) &
-    --  " not TX in progress or Abort in progress" severity error;
+    --  " not TX in progress or Abort in progress";
     ----------------------------------------------------------------------------
     -- HW Lock command should never occur when there was abort in previous cycle!
     --
     -- psl txtb_no_lock_after_abort : assert never
     --  {abort_applied = '1';txtb_hw_cmd.lock = '1' and hw_cbs = '1'}
-    --  report "LOCK command after ABORT was applied!" severity error;
+    --  report "LOCK command after ABORT was applied!";
     ----------------------------------------------------------------------------
 
     -- <RELEASE_ON>
