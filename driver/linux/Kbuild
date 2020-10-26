@@ -1,10 +1,8 @@
 obj-m := ctucanfd.o
-ctucanfd-y := ctu_can_fd.o ctu_can_fd_hw.o
+ctucanfd-y := ctucanfd_base.o ctucanfd_hw.o
 ifneq ($(CONFIG_PCI),)
 obj-m += ctucanfd_pci.o
-ctucanfd_pci-y := ctu_can_fd_pci.o
 endif
 ifneq ($(CONFIG_OF),)
 obj-m += ctucanfd_platform.o
-ctucanfd_platform-y += ctu_can_fd_platform.o
 endif

@@ -33,7 +33,7 @@
 #include <linux/platform_device.h>
 #include <linux/pm_runtime.h>
 
-#include "ctu_can_fd.h"
+#include "ctucanfd.h"
 
 #define DRV_NAME	"ctucanfd"
 

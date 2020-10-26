@@ -30,8 +30,8 @@
 #pragma once
 
 extern "C" {
-#include "ctu_can_fd_linux_defs.h"
-#include "ctu_can_fd_hw.h"
+#include "ctucanfd_linux_defs.h"
+#include "ctucanfd_hw.h"
 }
 
 #undef abs

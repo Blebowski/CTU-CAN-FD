@@ -27,14 +27,14 @@
  * GNU General Public License for more details.
  ******************************************************************************/
 
-#ifndef __CTU_CAN_FD__
-#define __CTU_CAN_FD__
+#ifndef __CTUCANFD__
+#define __CTUCANFD__
 
 #include <linux/netdevice.h>
 #include <linux/can/dev.h>
 #include <linux/list.h>
 
-#include "ctu_can_fd_hw.h"
+#include "ctucanfd_hw.h"
 
 struct ctucan_priv {
 	struct can_priv can; /* must be first member! */
@@ -84,4 +84,4 @@ int ctucan_probe_common(struct device *dev, void __iomem *addr,
 int ctucan_suspend(struct device *dev) __maybe_unused;
 int ctucan_resume(struct device *dev) __maybe_unused;
 
-#endif /*__CTU_CAN_FD__*/
+#endif /*__CTUCANFD__*/

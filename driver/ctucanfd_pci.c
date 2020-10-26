@@ -30,7 +30,7 @@
 #include <linux/module.h>
 #include <linux/pci.h>
 
-#include "ctu_can_fd.h"
+#include "ctucanfd.h"
 
 #define DRV_NAME	"ctucanfd_pci"
 
@@ -41,12 +41,14 @@
 .subvendor = PCI_ANY_ID, .subdevice = PCI_ANY_ID, 0, 0, \
 .driver_data = (kernel_ulong_t)(data)
 #endif
+
 #ifndef PCI_VENDOR_ID_TEDIA
 #define PCI_VENDOR_ID_TEDIA 0x1760
 #endif
 
-#define PCI_DEVICE_ID_ALTERA_CTUCAN_TEST  0xCAFD
+#ifndef PCI_DEVICE_ID_TEDIA_CTUCAN_VER21
 #define PCI_DEVICE_ID_TEDIA_CTUCAN_VER21 0xff00
+#endif
 
 #define CTUCAN_BAR0_CTUCAN_ID 0x0000
 #define CTUCAN_BAR0_CRA_BASE  0x4000
@@ -55,11 +57,11 @@
 #define CTUCAN_WITHOUT_CTUCAN_ID  0
 #define CTUCAN_WITH_CTUCAN_ID     1
 
-static bool use_msi = 1;
+static bool use_msi = true;
 module_param(use_msi, bool, 0444);
 MODULE_PARM_DESC(use_msi, "PCIe implementation use MSI interrupts. Default: 1 (yes)");
 
-static bool pci_use_second = 1;
+static bool pci_use_second = true;
 module_param(pci_use_second, bool, 0444);
 MODULE_PARM_DESC(pci_use_second, "Use the second CAN core on PCIe card. Default: 1 (yes)");
 

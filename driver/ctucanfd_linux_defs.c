@@ -27,7 +27,7 @@
  * GNU General Public License for more details.
  ******************************************************************************/
 
-#include "ctu_can_fd_linux_defs.h"
+#include "ctucanfd_linux_defs.h"
 
 #include <errno.h>
 #include <limits.h>

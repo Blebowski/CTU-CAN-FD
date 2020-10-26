@@ -32,8 +32,8 @@
  * Linux, this file replaces common kernel headers.
  */
 
-#ifndef __CTU_CAN_FD_LINUX_DEFS__
-#define __CTU_CAN_FD_LINUX_DEFS__
+#ifndef __CTUCANFD_LINUX_DEFS__
+#define __CTUCANFD_LINUX_DEFS__
 
 #include <stdint.h>
 #include <stdio.h>
@@ -629,4 +629,12 @@ int can_get_bittiming(struct net_device *dev, struct can_bittiming *bt,
 #define netdev_warn(dev, format, ...) printf("%s" format, "netdev_warn: ", ##__VA_ARGS__);
 #define netdev_err(dev, format, ...) printf("%s" format, "netdev_err: ", ##__VA_ARGS__);
 
-#endif /* __CTU_CAN_FD_LINUX_DEFS__ */
+#ifndef likely
+#define likely
+#endif
+
+#ifndef unlikely
+#define unlikely
+#endif
+
+#endif /* __CTUCANFD_LINUX_DEFS__ */

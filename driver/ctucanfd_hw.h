@@ -27,8 +27,8 @@
  * GNU General Public License for more details.
  ******************************************************************************/
 
-#ifndef __CTU_CAN_FD_HW__
-#define __CTU_CAN_FD_HW__
+#ifndef __CTUCANFD_HW__
+#define __CTUCANFD_HW__
 
 #include <asm/byteorder.h>
 
@@ -36,8 +36,8 @@
 # error __BIG_ENDIAN_BITFIELD or __LITTLE_ENDIAN_BITFIELD must be defined.
 #endif
 
-#include "ctu_can_fd_regs.h"
-#include "ctu_can_fd_frame.h"
+#include "ctucanfd_regs.h"
+#include "ctucanfd_frame.h"
 
 #define CTU_CAN_FD_RETR_MAX 15
 
@@ -56,65 +56,65 @@
  * Status macros -> pass "ctu_can_get_status" result
  */
 
-// True if Core is transceiver of current frame
+/* True if Core is transceiver of current frame */
 #define CTU_CAN_FD_IS_TRANSMITTER(stat) (!!(stat).ts)
 
-// True if Core is receiver of current frame
+/* True if Core is receiver of current frame */
 #define CTU_CAN_FD_IS_RECEIVER(stat) (!!(stat).s.rxs)
 
-// True if Core is idle (integrating or interfame space)
+/* True if Core is idle (integrating or interfame space) */
 #define CTU_CAN_FD_IS_IDLE(stat) (!!(stat).s.idle)
 
-// True if Core is transmitting error frame
+/* True if Core is transmitting error frame */
 #define CTU_CAN_FD_ERR_FRAME(stat) (!!(stat).s.eft)
 
-// True if Error warning limit was reached
+/* True if Error warning limit was reached */
 #define CTU_CAN_FD_EWL(stat) (!!(stat).s.ewl)
 
-// True if at least one TXT Buffer is empty
+/* True if at least one TXT Buffer is empty */
 #define CTU_CAN_FD_TXTNF(stat) (!!(stat).s.txnf)
 
-// True if data overrun flag of RX Buffer occurred
+/* True if data overrun flag of RX Buffer occurred */
 #define CTU_CAN_FD_DATA_OVERRUN(stat) (!!(stat).s.dor)
 
-// True if RX Buffer is not empty
+/* True if RX Buffer is not empty */
 #define CTU_CAN_FD_RX_BUF_NEMPTY(stat) (!!(stat).s.rxne)
 
 /*
  * Interrupt macros -> pass "ctu_can_fd_int_sts" result
  */
 
-// Frame reveived interrupt
+/* Frame reveived interrupt */
 #define CTU_CAN_FD_RX_INT(int_stat) (!!(int_stat).s.rxi)
 
-// Frame transceived interrupt
+/* Frame transceived interrupt */
 #define CTU_CAN_FD_TX_INT(int_stat) (!!(int_stat).s.txi)
 
-// Error warning limit reached interrupt
+/* Error warning limit reached interrupt */
 #define CTU_CAN_FD_EWL_INT(int_stat) (!!(int_stat).s.ewli)
 
-// RX Buffer data overrun interrupt
+/* RX Buffer data overrun interrupt */
 #define CTU_CAN_FD_OVERRUN_INT(int_stat) (!!(int_stat).s.doi)
 
-// Fault confinement changed interrupt
+/* Fault confinement changed interrupt */
 #define CTU_CAN_FD_FAULT_STATE_CHANGED_INT(int_stat) (!!(int_stat).s.fcsi)
 
-// Error frame transmission started interrupt
+/* Error frame transmission started interrupt */
 #define CTU_CAN_FD_BUS_ERROR_INT(int_stat) (!!(int_stat).s.bei)
 
-// Event logger finished interrupt
+/* Event logger finished interrupt */
 #define CTU_CAN_FD_LOGGER_FIN_INT(int_stat) (!!(int_stat).s.lfi)
 
-// RX Buffer full interrupt
+/* RX Buffer full interrupt */
 #define CTU_CAN_FD_RX_FULL_INT(int_stat) (!!(int_stat).s.rxfi)
 
-// Bit-rate shifted interrupt
+/* Bit-rate shifted interrupt */
 #define CTU_CAN_FD_BIT_RATE_SHIFT_INT(int_stat) (!!(int_stat).s.bsi)
 
-// Receive buffer not empty interrupt
+/* Receive buffer not empty interrupt */
 #define CTU_CAN_FD_RX_BUF_NEPMTY_INT(int_stat) (!!(int_stat).s.rbnei)
 
-// TX Buffer received HW command interrupt
+/* TX Buffer received HW command interrupt */
 #define CTU_CAN_FD_TXT_BUF_HWCMD_INT(int_stat) (!!(int_stat).s.txbhci)
 
 static inline bool CTU_CAN_FD_INT_ERROR(union ctu_can_fd_int_stat i)
@@ -122,8 +122,6 @@ static inline bool CTU_CAN_FD_INT_ERROR(union ctu_can_fd_int_stat i)
 	return i.s.ewli || i.s.doi || i.s.fcsi || i.s.ali;
 }
 
-struct ctucan_hw_priv;
-#ifndef ctucan_hw_priv
 struct ctucan_hw_priv {
 	void __iomem *mem_base;
 	u32 (*read_reg)(struct ctucan_hw_priv *priv,
@@ -131,7 +129,6 @@ struct ctucan_hw_priv {
 	void (*write_reg)(struct ctucan_hw_priv *priv,
 			  enum ctu_can_fd_can_registers reg, u32 val);
 };
-#endif
 
 void ctucan_hw_write32(struct ctucan_hw_priv *priv,
 		       enum ctu_can_fd_can_registers reg, u32 val);
@@ -699,7 +696,7 @@ static inline union ctu_can_fd_frame_form_w
  *
  * @priv: Private info
  *
- * Return: One wword of received frame
+ * Return: One word of received frame
  */
 static inline u32 ctucan_hw_read_rx_word(struct ctucan_hw_priv *priv)
 {
@@ -755,23 +752,37 @@ bool ctucan_hw_is_txt_buf_accessible(struct ctucan_hw_priv *priv, u8 buf);
  *                                   of CTU CAN FD Core.
  *
  * @priv: Private info
- * @cmd: Command line buffer.
+ * @cmd: Command to issue for given Tx buffer.
  * @buf: TXT Buffer index (1 to CTU_CAN_FD_TXT_BUFFER_COUNT)
- * Return: Status of the TXT Buffer.
  */
-bool ctucan_hw_txt_buf_give_command(struct ctucan_hw_priv *priv, u8 cmd,
-				    u8 buf);
+static inline void ctucan_hw_txt_buf_give_command(struct ctucan_hw_priv *priv,
+				union ctu_can_fd_tx_command cmd, u8 buf)
+{
+	union ctu_can_fd_tx_command reg;
+
+	reg.u32 = 0;
+	reg.s.txb1 = 1;
+
+	reg.u32 <<= buf - CTU_CAN_FD_TXT_BUFFER_1;
+	reg.u32 |= cmd.u32;
+
+	priv->write_reg(priv, CTU_CAN_FD_TX_COMMAND, reg.u32);
+}
 
 /**
  * ctucan_hw_txt_set_empty - Give "set_empty" command to TXT Buffer.
  *
  * @priv: Private info
  * @buf: TXT Buffer index (1 to CTU_CAN_FD_TXT_BUFFER_COUNT)
- * Return: Status of the TXT Buffer.
  */
 static inline void ctucan_hw_txt_set_empty(struct ctucan_hw_priv *priv, u8 buf)
 {
-	ctucan_hw_txt_buf_give_command(priv, 0x1, buf);
+	union ctu_can_fd_tx_command cmd;
+
+	cmd.u32 = 0;
+	cmd.s.txce = 1;
+
+	ctucan_hw_txt_buf_give_command(priv, cmd, buf);
 }
 
 /**
@@ -779,11 +790,15 @@ static inline void ctucan_hw_txt_set_empty(struct ctucan_hw_priv *priv, u8 buf)
  *
  * @priv: Private info
  * @buf: TXT Buffer index (1 to CTU_CAN_FD_TXT_BUFFER_COUNT)
- * Return: Status of the TXT Buffer.
  */
 static inline void ctucan_hw_txt_set_rdy(struct ctucan_hw_priv *priv, u8 buf)
 {
-	ctucan_hw_txt_buf_give_command(priv, 0x2, buf);
+	union ctu_can_fd_tx_command cmd;
+
+	cmd.u32 = 0;
+	cmd.s.txcr = 1;
+
+	ctucan_hw_txt_buf_give_command(priv, cmd, buf);
 }
 
 /**
@@ -791,11 +806,15 @@ static inline void ctucan_hw_txt_set_rdy(struct ctucan_hw_priv *priv, u8 buf)
  *
  * @priv: Private info
  * @buf: TXT Buffer index (1 to CTU_CAN_FD_TXT_BUFFER_COUNT)
- * Return: Status of the TXT Buffer.
  */
 static inline void ctucan_hw_txt_set_abort(struct ctucan_hw_priv *priv, u8 buf)
 {
-	ctucan_hw_txt_buf_give_command(priv, 0x4, buf);
+	union ctu_can_fd_tx_command cmd;
+
+	cmd.u32 = 0;
+	cmd.s.txca = 1;
+
+	ctucan_hw_txt_buf_give_command(priv, cmd, buf);
 }
 
 /**
