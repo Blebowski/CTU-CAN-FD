@@ -16,9 +16,9 @@ at the `Department of Measurement <https://meas.fel.cvut.cz/>`_
 of `FEE <http://www.fel.cvut.cz/en/>`_ at `CTU <http://www.fel.cvut.cz/en/>`_.
 
 The SocketCAN driver for Xilinx Zynq SoC based MicroZed board
-`integration <https://gitlab.fel.cvut.cz/canbus/zynq/zynq-can-sja1000-top>`_
+`Vivado integration <https://gitlab.fel.cvut.cz/canbus/zynq/zynq-can-sja1000-top>`_
 and Intel Cyclone V 5CSEMA4U23C6 based DE0-Nano-SoC Terasic board
-`integration <https://gitlab.fel.cvut.cz/canbus/intel-soc-ctucanfd>`_
+`QSys integration <https://gitlab.fel.cvut.cz/canbus/intel-soc-ctucanfd>`_
 has been developed as well as support for
 `PCIe integration <https://gitlab.fel.cvut.cz/canbus/pcie-ctucanfd>`_ of the core.
 
@@ -450,7 +450,7 @@ the FIFO is maintained, together with priority rotation, is depicted in
 
 |
 
-.. figure:: ../pics/Visio_generated/FSM_TXT_Buffer_user.png
+.. figure:: fsm_txt_buffer_user.svg
 
    TX Buffer states with possible transitions
 
