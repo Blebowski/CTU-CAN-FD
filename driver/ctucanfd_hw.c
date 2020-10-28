@@ -95,7 +95,7 @@ static union ctu_can_fd_identifier_w ctucan_hw_id_to_hwid(canid_t id)
 }
 
 static u32 ctucan_hw_hwid_to_id(union ctu_can_fd_identifier_w hwid,
-				 enum ctu_can_fd_frame_form_w_ide type)
+				 enum ctu_can_fd_frame_format_w_ide type)
 {
 	u32 id;
 
@@ -531,7 +531,7 @@ void ctucan_hw_set_rx_tsop(struct ctucan_hw_priv *priv,
 void ctucan_hw_read_rx_frame(struct ctucan_hw_priv *priv,
 			     struct canfd_frame *cf, u64 *ts)
 {
-	union ctu_can_fd_frame_form_w ffw;
+	union ctu_can_fd_frame_format_w ffw;
 
 	ffw.u32 = priv->read_reg(priv, CTU_CAN_FD_RX_DATA);
 	ctucan_hw_read_rx_frame_ffw(priv, cf, ts, ffw);
@@ -539,17 +539,17 @@ void ctucan_hw_read_rx_frame(struct ctucan_hw_priv *priv,
 
 void ctucan_hw_read_rx_frame_ffw(struct ctucan_hw_priv *priv,
 				 struct canfd_frame *cf, u64 *ts,
-				 union ctu_can_fd_frame_form_w ffw)
+				 union ctu_can_fd_frame_format_w ffw)
 {
 	union ctu_can_fd_identifier_w idw;
 	unsigned int i;
 	unsigned int wc;
 	unsigned int len;
-	enum ctu_can_fd_frame_form_w_ide ide;
+	enum ctu_can_fd_frame_format_w_ide ide;
 
 	idw.u32 = priv->read_reg(priv, CTU_CAN_FD_RX_DATA);
 
-	ide = (enum ctu_can_fd_frame_form_w_ide)ffw.s.ide;
+	ide = (enum ctu_can_fd_frame_format_w_ide)ffw.s.ide;
 	cf->can_id = ctucan_hw_hwid_to_id(idw, ide);
 
 	/* BRS, ESI, RTR Flags */
@@ -656,7 +656,7 @@ bool ctucan_hw_insert_frame(struct ctucan_hw_priv *priv,
 			    bool isfdf)
 {
 	enum ctu_can_fd_can_registers buf_base;
-	union ctu_can_fd_frame_form_w ffw;
+	union ctu_can_fd_frame_format_w ffw;
 	union ctu_can_fd_identifier_w idw;
 	unsigned int i;
 
@@ -692,7 +692,7 @@ bool ctucan_hw_insert_frame(struct ctucan_hw_priv *priv,
 	}
 
 	ctucan_hw_write_txt_buf(priv, buf_base,
-				CTU_CAN_FD_FRAME_FORM_W, ffw.u32);
+				CTU_CAN_FD_FRAME_FORMAT_W, ffw.u32);
 
 	ctucan_hw_write_txt_buf(priv, buf_base,
 				CTU_CAN_FD_IDENTIFIER_W, idw.u32);

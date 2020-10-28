@@ -405,7 +405,7 @@ static int ctucan_rx(struct net_device *ndev)
 	struct canfd_frame *cf;
 	struct sk_buff *skb;
 	u64 ts;
-	union ctu_can_fd_frame_form_w ffw;
+	union ctu_can_fd_frame_format_w ffw;
 
 	if (test_bit(CTUCAN_FLAG_RX_FFW_BUFFERED, &priv->drv_flags)) {
 		ffw = priv->rxfrm_first_word;
