@@ -8,7 +8,7 @@
 		<ipxact:memoryMap>
 			<ipxact:name>CAN_Registers</ipxact:name>
 			<ipxact:displayName>CAN FD Core memory map</ipxact:displayName>
-			<ipxact:description>CTU CAN FD is designed as 32 bit peripheria with support for 8, 16 or 32 bit access. Unaligned access is not supported. Byte or half word access is executed via byte enable signal. The memory is organized as Big endian. Write to read only memory location will have no effect. Read from write only memory location will return zeroes. The memory map consists of following memory regions:</ipxact:description>
+			<ipxact:description>CTU CAN FD is  32 bit peripheria with support of 8, 16 or 32 bit access. Unaligned access is not supported. Byte or half word access is supported. The memory is organized as Big endian. Write to read only memory location will have no effect. Read from write only memory location can return undefined values. The memory map of CTU CAN FD consists of following memory regions:</ipxact:description>
 			<ipxact:addressBlock>
 				<ipxact:name>Control_registers</ipxact:name>
 				<ipxact:displayName>Control registers</ipxact:displayName>
@@ -43,7 +43,7 @@
 							<ipxact:enumeratedValue>
 								<ipxact:name>CTU_CAN_FD_ID</ipxact:name>
 								<ipxact:displayName>CTU_CAN_FD_DEVICE_ID</ipxact:displayName>
-								<ipxact:description>Identifier of CTU CAN FD IP Core.</ipxact:description>
+								<ipxact:description>Identifier of CTU CAN FD.</ipxact:description>
 								<ipxact:value>'hCAFD</ipxact:value>
 							</ipxact:enumeratedValue>
 						</ipxact:enumeratedValues>
@@ -52,7 +52,6 @@
 				<ipxact:register>
 					<ipxact:name>MODE</ipxact:name>
 					<ipxact:displayName>MODE</ipxact:displayName>
-					<ipxact:description>Controls CTU CAN FD modes.</ipxact:description>
 					<ipxact:dim>0</ipxact:dim>
 					<ipxact:addressOffset>'h4</ipxact:addressOffset>
 					<ipxact:size>16</ipxact:size>
@@ -74,7 +73,7 @@
 					<ipxact:field>
 						<ipxact:name>FDE</ipxact:name>
 						<ipxact:displayName>FDE</ipxact:displayName>
-						<ipxact:description>Flexible data rate enable. When disabled, receiving recessive FDF(EDL) bit (CAN FD frame) causes Form error. This bit does not affect capability to transmitt CAN FD frames, however error frame will be also transmitted after FDF(EDL) bit.</ipxact:description>
+						<ipxact:description>Flexible data rate enable. When flexible data rate is enabled CTU CAN FD recognizes CAN FD frames (FDF bit = 1).</ipxact:description>
 						<ipxact:bitOffset>4</ipxact:bitOffset>
 						<ipxact:resets>
 							<ipxact:reset>
@@ -126,7 +125,7 @@
 					<ipxact:field>
 						<ipxact:name>LOM</ipxact:name>
 						<ipxact:displayName>LOM</ipxact:displayName>
-						<ipxact:description>Listen Only Mode. In this mode CTU CAN FD only receives data and sends only recessive bits on the bus. When a dominant bus is sent, it is re-routed internally so that bus value remains the same. Note that when this mode is enabled controller will not transmit any inserted frame!</ipxact:description>
+						<ipxact:description>Listen Only Mode. In this mode CTU CAN FD only receives frames and sends only recessive bits on CAN bus. When a dominant bit is sent, it is re-routed internally so that bus value is not changed. When this mode is enabled, controller will not transmit any inserted frame!</ipxact:description>
 						<ipxact:bitOffset>1</ipxact:bitOffset>
 						<ipxact:resets>
 							<ipxact:reset>
@@ -152,7 +151,7 @@
 					<ipxact:field>
 						<ipxact:name>STM</ipxact:name>
 						<ipxact:displayName>STM</ipxact:displayName>
-						<ipxact:description>Self Test Mode. In this mode transmitted frame is considered valid even if acknowledge was not received.</ipxact:description>
+						<ipxact:description>Self Test Mode. In this mode transmitted frame is considered valid even if dominant acknowledge was not received.</ipxact:description>
 						<ipxact:bitOffset>2</ipxact:bitOffset>
 						<ipxact:resets>
 							<ipxact:reset>
@@ -178,7 +177,7 @@
 					<ipxact:field>
 						<ipxact:name>AFM</ipxact:name>
 						<ipxact:displayName>AFM</ipxact:displayName>
-						<ipxact:description>Acceptance Filters Mode. If enabled, only RX frames which pass Frame filters are stored in RX buffer. If disabled, every received frame is stored in RX buffer. This bit has meaning only if there is at least one filter synthesized. Otherwise, this bit is reserved.</ipxact:description>
+						<ipxact:description>Acceptance Filters Mode. If enabled, only RX frames which pass Frame filters are stored in RX buffer. If disabled, every received frame is stored to RX buffer. This bit has meaning only if there is at least one filter available. Otherwise, this bit is reserved.</ipxact:description>
 						<ipxact:bitOffset>3</ipxact:bitOffset>
 						<ipxact:resets>
 							<ipxact:reset>
@@ -203,6 +202,7 @@
 					</ipxact:field>
 					<ipxact:field>
 						<ipxact:name>TSTM</ipxact:name>
+						<ipxact:displayName>TSTM</ipxact:displayName>
 						<ipxact:description>Test Mode. In test mode several registers have special features. Reffer to description of Test mode for further details.</ipxact:description>
 						<ipxact:bitOffset>8</ipxact:bitOffset>
 						<ipxact:resets>
@@ -216,7 +216,7 @@
 				<ipxact:register>
 					<ipxact:name>COMMAND</ipxact:name>
 					<ipxact:displayName>COMMAND</ipxact:displayName>
-					<ipxact:description>Issuing commands to CTU CAN FD. Writing logic 1 to each bit gives a command to CTU CAN FD. After writing logic 1, logic 0 does not need to be written.</ipxact:description>
+					<ipxact:description>Allows issuing commands to CTU CAN FD. Writing logic 1 to each bit gives a command to CTU CAN FD. After writing logic 1, logic 0 does not need to be written.</ipxact:description>
 					<ipxact:dim>0</ipxact:dim>
 					<ipxact:addressOffset>'hC</ipxact:addressOffset>
 					<ipxact:size>32</ipxact:size>
@@ -225,7 +225,7 @@
 					<ipxact:field>
 						<ipxact:name>RRB</ipxact:name>
 						<ipxact:displayName>RRB</ipxact:displayName>
-						<ipxact:description>Release RX Buffer. This command deletes all frames from the RX buffer and restarts its memory pointers.</ipxact:description>
+						<ipxact:description>Release RX Buffer. This command flushes RX buffer and resets its memory pointers.</ipxact:description>
 						<ipxact:bitOffset>2</ipxact:bitOffset>
 						<ipxact:resets>
 							<ipxact:reset>
@@ -251,7 +251,7 @@
 					<ipxact:field>
 						<ipxact:name>ERCRST</ipxact:name>
 						<ipxact:displayName>ERCRST</ipxact:displayName>
-						<ipxact:description>Error Counters Reset. When unit is bus off, issuing this command will request erasing TX, RX error counters after 128 consecutive ocurrences of 11 recessive bits. Upon completion, TX and RX Error counters are erased and fault confinement state is set to Error Active. When unit is not bus off or when unit is bus off due to being disabled (SETTINGS[ENA] = '0'), this command has no effect.</ipxact:description>
+						<ipxact:description>Error Counters Reset. When unit is bus off, issuing this command will request erasing TEC, REC counters after 128 consecutive ocurrences of 11 recessive bits. Upon completion, TEC and REC   are erased and fault confinement state is set to error-active. When unit is not bus-off, or when unit is bus-off due to being disabled (SETTINGS[ENA] = '0'), this command has no effect.</ipxact:description>
 						<ipxact:bitOffset>4</ipxact:bitOffset>
 						<ipxact:resets>
 							<ipxact:reset>
@@ -264,7 +264,7 @@
 					<ipxact:field>
 						<ipxact:name>RXFCRST</ipxact:name>
 						<ipxact:displayName>RXFCRST</ipxact:displayName>
-						<ipxact:description>Clear RX bus traffic counter (RX_COUNTER).</ipxact:description>
+						<ipxact:description>Clear RX bus traffic counter (RX_COUNTER register).</ipxact:description>
 						<ipxact:bitOffset>5</ipxact:bitOffset>
 						<ipxact:resets>
 							<ipxact:reset>
@@ -277,7 +277,7 @@
 					<ipxact:field>
 						<ipxact:name>TXFCRST</ipxact:name>
 						<ipxact:displayName>TXFCRST</ipxact:displayName>
-						<ipxact:description>Clear TX bus traffic counter (TX_COUNTER).</ipxact:description>
+						<ipxact:description>Clear TX bus traffic counter (TX_COUNTER register).</ipxact:description>
 						<ipxact:bitOffset>6</ipxact:bitOffset>
 						<ipxact:resets>
 							<ipxact:reset>
@@ -291,7 +291,6 @@
 				<ipxact:register>
 					<ipxact:name>STATUS</ipxact:name>
 					<ipxact:displayName>STATUS</ipxact:displayName>
-					<ipxact:description>Status register contains state of CTU CAN FD. Logic 1 signals active status/flag.</ipxact:description>
 					<ipxact:dim>0</ipxact:dim>
 					<ipxact:addressOffset>'h8</ipxact:addressOffset>
 					<ipxact:size>32</ipxact:size>
@@ -300,7 +299,7 @@
 					<ipxact:field>
 						<ipxact:name>RXNE</ipxact:name>
 						<ipxact:displayName>RXNE</ipxact:displayName>
-						<ipxact:description>RX buffer not empty.  Active when at least one frame is stored in RX buffer.</ipxact:description>
+						<ipxact:description>RX buffer not empty.  This bit is 1 when least one frame is stored in RX buffer.</ipxact:description>
 						<ipxact:bitOffset>0</ipxact:bitOffset>
 						<ipxact:resets>
 							<ipxact:reset>
@@ -312,7 +311,7 @@
 					<ipxact:field>
 						<ipxact:name>TXNF</ipxact:name>
 						<ipxact:displayName>TXNF</ipxact:displayName>
-						<ipxact:description>TXT buffers status. Active if at least one  TXT buffer is in &quot;Empty&quot; state.</ipxact:description>
+						<ipxact:description>TXT buffers status. This bit is set if at least one  TXT buffer is in &quot;Empty&quot; state.</ipxact:description>
 						<ipxact:bitOffset>2</ipxact:bitOffset>
 						<ipxact:resets>
 							<ipxact:reset>
@@ -324,7 +323,7 @@
 					<ipxact:field>
 						<ipxact:name>DOR</ipxact:name>
 						<ipxact:displayName>DOR</ipxact:displayName>
-						<ipxact:description>Data Overrun Status (flag). A frame was lost due to insufficient space in RX buffer. This bit can be cleared by COMMAND[RRB].</ipxact:description>
+						<ipxact:description>Data Overrun flag. This bit is set when frame was dropped due to lack of space in RX buffer. This bit can be cleared by COMMAND[RRB].</ipxact:description>
 						<ipxact:bitOffset>1</ipxact:bitOffset>
 						<ipxact:resets>
 							<ipxact:reset>
@@ -336,7 +335,7 @@
 					<ipxact:field>
 						<ipxact:name>EFT</ipxact:name>
 						<ipxact:displayName>EFT</ipxact:displayName>
-						<ipxact:description>Error frame is being transmitted.</ipxact:description>
+						<ipxact:description>Error frame is being transmitted at the moment.</ipxact:description>
 						<ipxact:bitOffset>3</ipxact:bitOffset>
 						<ipxact:resets>
 							<ipxact:reset>
@@ -348,7 +347,7 @@
 					<ipxact:field>
 						<ipxact:name>RXS</ipxact:name>
 						<ipxact:displayName>RXS</ipxact:displayName>
-						<ipxact:description>CTU CAN FD is receiving CAN Frame.</ipxact:description>
+						<ipxact:description>CTU CAN FD is receiver of CAN Frame.</ipxact:description>
 						<ipxact:bitOffset>4</ipxact:bitOffset>
 						<ipxact:resets>
 							<ipxact:reset>
@@ -360,7 +359,7 @@
 					<ipxact:field>
 						<ipxact:name>TXS</ipxact:name>
 						<ipxact:displayName>TXS</ipxact:displayName>
-						<ipxact:description>CTU CAN FD is transmitting CAN Frame.</ipxact:description>
+						<ipxact:description>CTU CAN FD is transmitter of CAN Frame.</ipxact:description>
 						<ipxact:bitOffset>5</ipxact:bitOffset>
 						<ipxact:resets>
 							<ipxact:reset>
@@ -372,7 +371,7 @@
 					<ipxact:field>
 						<ipxact:name>EWL</ipxact:name>
 						<ipxact:displayName>EWL</ipxact:displayName>
-						<ipxact:description>TX Error counter (TEC) or RX Error counter (REC) is equal to or higher than Error warning limit (EWL).</ipxact:description>
+						<ipxact:description>TX Error counter (TEC) or RX Error counter (REC) is equal to, or higher than Error warning limit (EWL).</ipxact:description>
 						<ipxact:bitOffset>6</ipxact:bitOffset>
 						<ipxact:resets>
 							<ipxact:reset>
@@ -384,7 +383,7 @@
 					<ipxact:field>
 						<ipxact:name>IDLE</ipxact:name>
 						<ipxact:displayName>IDLE</ipxact:displayName>
-						<ipxact:description>Bus is idle (no frame being transmitted/received) or CTU CAN FD is bus off.</ipxact:description>
+						<ipxact:description>Bus is idle (no frame is being transmitted/received) or CTU CAN FD is bus-off.</ipxact:description>
 						<ipxact:bitOffset>7</ipxact:bitOffset>
 						<ipxact:resets>
 							<ipxact:reset>
@@ -397,7 +396,6 @@
 				<ipxact:register>
 					<ipxact:name>SETTINGS</ipxact:name>
 					<ipxact:displayName>SETTINGS</ipxact:displayName>
-					<ipxact:description>Settings of CTU CAN FD.</ipxact:description>
 					<ipxact:dim>0</ipxact:dim>
 					<ipxact:addressOffset>'h6</ipxact:addressOffset>
 					<ipxact:size>16</ipxact:size>
@@ -406,7 +404,7 @@
 					<ipxact:field>
 						<ipxact:name>RTRLE</ipxact:name>
 						<ipxact:displayName>RTRLE</ipxact:displayName>
-						<ipxact:description>Retransmitt Limit Enable. If enabled, CTU CAN FD only attempts to transmitt each frame up to RTR_TH times.</ipxact:description>
+						<ipxact:description>Retransmitt Limit Enable. If enabled, CTU CAN FD only attempts to retransmitt each frame up to RTR_TH times.</ipxact:description>
 						<ipxact:bitOffset>0</ipxact:bitOffset>
 						<ipxact:resets>
 							<ipxact:reset>
@@ -444,7 +442,7 @@
 					<ipxact:field>
 						<ipxact:name>ILBP</ipxact:name>
 						<ipxact:displayName>ILBP</ipxact:displayName>
-						<ipxact:description>Internal Loop-Back. When enabled, CTU CAN FD receives any frame it transmitts.</ipxact:description>
+						<ipxact:description>Internal Loop Back. When enabled, CTU CAN FD receives any frame it transmitts.</ipxact:description>
 						<ipxact:bitOffset>5</ipxact:bitOffset>
 						<ipxact:resets>
 							<ipxact:reset>
@@ -470,7 +468,7 @@
 					<ipxact:field>
 						<ipxact:name>ENA</ipxact:name>
 						<ipxact:displayName>ENA</ipxact:displayName>
-						<ipxact:description>Enable of CTU CAN FD. When disabled, IP Core acts as if not connected to CAN Bus.</ipxact:description>
+						<ipxact:description>Main enable bit of CTU CAN FD. When enabled, CTU CAN FD communicates on CAN bus. When disabled, it is bus-off and does not take part of CAN bus communication.</ipxact:description>
 						<ipxact:bitOffset>6</ipxact:bitOffset>
 						<ipxact:resets>
 							<ipxact:reset>
@@ -496,7 +494,7 @@
 					<ipxact:field>
 						<ipxact:name>NISOFD</ipxact:name>
 						<ipxact:displayName>NISOFD</ipxact:displayName>
-						<ipxact:description>Non ISO FD. When active CTU CAN FD is compliant to NON-ISO CAN FD specification (no stuff count field). This bit should be modified only when SETTINGS[ENA]=0.</ipxact:description>
+						<ipxact:description>Non ISO FD. When this bit is set, CTU CAN FD is compliant to NON-ISO CAN FD specification (no stuff count field). This bit should be modified only when SETTINGS[ENA]=0.</ipxact:description>
 						<ipxact:bitOffset>7</ipxact:bitOffset>
 						<ipxact:resets>
 							<ipxact:reset>
@@ -522,7 +520,7 @@
 					<ipxact:field>
 						<ipxact:name>PEX</ipxact:name>
 						<ipxact:displayName>PEX</ipxact:displayName>
-						<ipxact:description>Protocol exception handling. When turned-on CTU CAN FD will turn to integration state upon detection of protocol exception. This should be modified only when SETTINGS[ENA] = '0'.</ipxact:description>
+						<ipxact:description>Protocol exception handling. When this bit is set, CTU CAN FD will start integration upon detection of protocol exception. This should be modified only when SETTINGS[ENA] = '0'.</ipxact:description>
 						<ipxact:bitOffset>8</ipxact:bitOffset>
 						<ipxact:resets>
 							<ipxact:reset>
@@ -558,7 +556,7 @@
 					<ipxact:field>
 						<ipxact:name>RXI</ipxact:name>
 						<ipxact:displayName>RXI</ipxact:displayName>
-						<ipxact:description>Frame Received Interrupt.</ipxact:description>
+						<ipxact:description>Frame received interrupt.</ipxact:description>
 						<ipxact:bitOffset>0</ipxact:bitOffset>
 						<ipxact:resets>
 							<ipxact:reset>
@@ -571,7 +569,7 @@
 					<ipxact:field>
 						<ipxact:name>TXI</ipxact:name>
 						<ipxact:displayName>TXI</ipxact:displayName>
-						<ipxact:description>Frame Transmitted Interrupt. </ipxact:description>
+						<ipxact:description>Frame transmitted interrupt. </ipxact:description>
 						<ipxact:bitOffset>1</ipxact:bitOffset>
 						<ipxact:resets>
 							<ipxact:reset>
@@ -584,7 +582,7 @@
 					<ipxact:field>
 						<ipxact:name>EWLI</ipxact:name>
 						<ipxact:displayName>EWLI</ipxact:displayName>
-						<ipxact:description>Error Warning Limit interrupt. When both TEC and REC are lower than EWL and one of the becomes equal to or higher than EWL, or when both TEC and REC become less than EWL, condition for this interrupt is valid. When Interrupt is cleared and RXC, or TXC is still equal to or higher than EWL, Interrupt is not set again.</ipxact:description>
+						<ipxact:description>Error warning limit interrupt. When both TEC and REC are lower than EWL and one of the becomes equal to or higher than EWL, or when both TEC and REC become less than EWL, this interrupt is generated. When Interrupt is cleared and REC, or TEC is still equal to or higher than EWL, Interrupt is not generated again.</ipxact:description>
 						<ipxact:bitOffset>2</ipxact:bitOffset>
 						<ipxact:resets>
 							<ipxact:reset>
@@ -597,7 +595,7 @@
 					<ipxact:field>
 						<ipxact:name>DOI</ipxact:name>
 						<ipxact:displayName>DOI</ipxact:displayName>
-						<ipxact:description>Data Overrun on RX Buffer Interrupt. Before this interrupt is cleared , STATUS[DOR] must be cleared to avoid setting of this interrupt again.</ipxact:description>
+						<ipxact:description>Data overrun interrupt. Before this interrupt is cleared , STATUS[DOR] must be cleared to avoid setting of this interrupt again.</ipxact:description>
 						<ipxact:bitOffset>3</ipxact:bitOffset>
 						<ipxact:resets>
 							<ipxact:reset>
@@ -610,7 +608,7 @@
 					<ipxact:field>
 						<ipxact:name>FCSI</ipxact:name>
 						<ipxact:displayName>FCSI</ipxact:displayName>
-						<ipxact:description>Fault confinement state changed Interrupt. Interrupt is set when node turns Error Passive (from Error Active), Bus Off (from Error Passive) or Error Active (from Bus off after reintegration or from Error Passive).</ipxact:description>
+						<ipxact:description>Fault confinement state changed interrupt. Interrupt is set when node turns error-passive (from error-active), bus-off (from error-passive) or error-active (from bus-off after reintegration or from error-passive).</ipxact:description>
 						<ipxact:bitOffset>4</ipxact:bitOffset>
 						<ipxact:resets>
 							<ipxact:reset>
@@ -623,7 +621,7 @@
 					<ipxact:field>
 						<ipxact:name>ALI</ipxact:name>
 						<ipxact:displayName>ALI</ipxact:displayName>
-						<ipxact:description>Arbitration Lost Interrupt.</ipxact:description>
+						<ipxact:description>Arbitration lost interrupt.</ipxact:description>
 						<ipxact:bitOffset>5</ipxact:bitOffset>
 						<ipxact:resets>
 							<ipxact:reset>
@@ -636,7 +634,7 @@
 					<ipxact:field>
 						<ipxact:name>BEI</ipxact:name>
 						<ipxact:displayName>BEI</ipxact:displayName>
-						<ipxact:description>Bus Error interrupt.</ipxact:description>
+						<ipxact:description>Bus error interrupt.</ipxact:description>
 						<ipxact:bitOffset>6</ipxact:bitOffset>
 						<ipxact:resets>
 							<ipxact:reset>
@@ -649,7 +647,7 @@
 					<ipxact:field>
 						<ipxact:name>RXFI</ipxact:name>
 						<ipxact:displayName>RXFI</ipxact:displayName>
-						<ipxact:description>RX buffer Full interrupt.</ipxact:description>
+						<ipxact:description>RX buffer full interrupt.</ipxact:description>
 						<ipxact:bitOffset>8</ipxact:bitOffset>
 						<ipxact:resets>
 							<ipxact:reset>
@@ -662,7 +660,7 @@
 					<ipxact:field>
 						<ipxact:name>BSI</ipxact:name>
 						<ipxact:displayName>BSI</ipxact:displayName>
-						<ipxact:description>Bit-Rate shifted interrupt.</ipxact:description>
+						<ipxact:description>Bit rate shifted interrupt.</ipxact:description>
 						<ipxact:bitOffset>9</ipxact:bitOffset>
 						<ipxact:resets>
 							<ipxact:reset>
@@ -687,7 +685,8 @@
 					</ipxact:field>
 					<ipxact:field>
 						<ipxact:name>OFI</ipxact:name>
-						<ipxact:description>Overload frame Interrupt.</ipxact:description>
+						<ipxact:displayName>OFI</ipxact:displayName>
+						<ipxact:description>Overload frame interrupt.</ipxact:description>
 						<ipxact:bitOffset>7</ipxact:bitOffset>
 						<ipxact:resets>
 							<ipxact:reset>
@@ -700,7 +699,7 @@
 					<ipxact:field>
 						<ipxact:name>TXBHCI</ipxact:name>
 						<ipxact:displayName>TXBHCI</ipxact:displayName>
-						<ipxact:description>TX Buffer HW command interrupt. Anytime TX Buffer receives HW command from CAN Core which changes TXT Buffer state to TX Ok, Error or Aborted, this interrupt will be acivated.</ipxact:description>
+						<ipxact:description>TXT buffer HW command interrupt. Anytime TXT buffer receives HW command from CAN Core which changes TXT buffer state to &quot;TX OK&quot;, &quot;Error&quot; or &quot;Aborted&quot;, this interrupt will be generated.</ipxact:description>
 						<ipxact:bitOffset>11</ipxact:bitOffset>
 						<ipxact:resets>
 							<ipxact:reset>
@@ -723,7 +722,7 @@
 					<ipxact:field>
 						<ipxact:name>RTSOP</ipxact:name>
 						<ipxact:displayName>RTSOP</ipxact:displayName>
-						<ipxact:description>Receive buffer Timestamp option. This register should be modified only when SETTINGS[ENA]=0.</ipxact:description>
+						<ipxact:description>Receive buffer timestamp option. This register should be modified only when SETTINGS[ENA]=0.</ipxact:description>
 						<ipxact:bitOffset>0</ipxact:bitOffset>
 						<ipxact:resets>
 							<ipxact:reset>
@@ -750,7 +749,7 @@
 				<ipxact:register>
 					<ipxact:name>INT_ENA_CLR</ipxact:name>
 					<ipxact:displayName>INT_ENA_CLR</ipxact:displayName>
-					<ipxact:description>Interrupt Enable Clear register. Writing logic 1 disables according interrupt. Writing logic 0 has no effect. Reading this register has no effect. Disabled interrupt wil not cause interrupt to be raised by CTU CAN FD even if it is captured in Interrupt status register.</ipxact:description>
+					<ipxact:description>Interrupt Enable Clear register. Writing logic 1 disables according interrupt. Writing logic 0 has no effect. Reading this register has no effect. Disabled interrupt wil not cause interrupt to be raised by CTU CAN FD even if it is set in Interrupt status register.</ipxact:description>
 					<ipxact:dim>0</ipxact:dim>
 					<ipxact:addressOffset>'h18</ipxact:addressOffset>
 					<ipxact:size>16</ipxact:size>
@@ -842,7 +841,7 @@
 				<ipxact:register>
 					<ipxact:name>BTR_FD</ipxact:name>
 					<ipxact:displayName>BTR_FD</ipxact:displayName>
-					<ipxact:description>Bit Timing Register for data bit rate. This register can be modified only when SETTINGS[ENA]=0.</ipxact:description>
+					<ipxact:description>Bit timing register for data bit rate.</ipxact:description>
 					<ipxact:dim>0</ipxact:dim>
 					<ipxact:addressOffset>'h28</ipxact:addressOffset>
 					<ipxact:size>32</ipxact:size>
@@ -934,7 +933,7 @@
 				<ipxact:register>
 					<ipxact:name>BTR</ipxact:name>
 					<ipxact:displayName>BTR</ipxact:displayName>
-					<ipxact:description>Bit Timing Register for nominal bit rate. This register should be modified only when SETTINGS[ENA]=0.</ipxact:description>
+					<ipxact:description>Bit timing register for nominal bit rate.</ipxact:description>
 					<ipxact:dim>0</ipxact:dim>
 					<ipxact:addressOffset>'h24</ipxact:addressOffset>
 					<ipxact:size>32</ipxact:size>
@@ -1002,7 +1001,7 @@
 				<ipxact:register>
 					<ipxact:name>ALC</ipxact:name>
 					<ipxact:displayName>ALC</ipxact:displayName>
-					<ipxact:description>Arbitration Lost Capture register. Determines position of last arbitration loss within CAN frame.</ipxact:description>
+					<ipxact:description>Arbitration lost capture register. Determines position of last arbitration loss within CAN frame.</ipxact:description>
 					<ipxact:dim>0</ipxact:dim>
 					<ipxact:addressOffset>'h7E</ipxact:addressOffset>
 					<ipxact:size>8</ipxact:size>
@@ -1074,7 +1073,7 @@
 				<ipxact:register>
 					<ipxact:name>EWL</ipxact:name>
 					<ipxact:displayName>EWL</ipxact:displayName>
-					<ipxact:description>Error Warning Limit register. This register should be modified only when SETTINGS[ENA]=0.</ipxact:description>
+					<ipxact:description>Error warning limit register. This register shall be modified only when SETTINGS[ENA]=0.</ipxact:description>
 					<ipxact:dim>0</ipxact:dim>
 					<ipxact:addressOffset>'h2C</ipxact:addressOffset>
 					<ipxact:size>8</ipxact:size>
@@ -1083,7 +1082,7 @@
 					<ipxact:field>
 						<ipxact:name>EW_LIMIT</ipxact:name>
 						<ipxact:displayName>EW_LIMIT</ipxact:displayName>
-						<ipxact:description>Error warning limit.  If error warning limit is reached interrupt can be fired. Error warning limit indicates heavily disturbed bus.</ipxact:description>
+						<ipxact:description>Error warning limit.  If error warning limit is reached interrupt can be generated. Error warning limit indicates heavily disturbed bus.</ipxact:description>
 						<ipxact:bitOffset>0</ipxact:bitOffset>
 						<ipxact:resets>
 							<ipxact:reset>
@@ -1096,7 +1095,7 @@
 				<ipxact:register>
 					<ipxact:name>ERP</ipxact:name>
 					<ipxact:displayName>ERP</ipxact:displayName>
-					<ipxact:description>Error Passive Limit register. This register should be modified only when SETTINGS[ENA]=0.</ipxact:description>
+					<ipxact:description>Error passive limit register. This register shall be modified only when SETTINGS[ENA]=0.</ipxact:description>
 					<ipxact:dim>0</ipxact:dim>
 					<ipxact:addressOffset>'h2D</ipxact:addressOffset>
 					<ipxact:size>8</ipxact:size>
@@ -1105,7 +1104,7 @@
 					<ipxact:field>
 						<ipxact:name>ERP_LIMIT</ipxact:name>
 						<ipxact:displayName>ERP_LIMIT</ipxact:displayName>
-						<ipxact:description>Error Passive Limit. When one of error counters (RXC/TXC) exceeds this value, Fault confinement state changes to error passive. Note that CTU CAN FD always turns to bus_off once any error counter reaches 255!</ipxact:description>
+						<ipxact:description>Error Passive Limit. When one of error counters (REC/TEC) exceeds this value, Fault confinement state changes to error-passive.</ipxact:description>
 						<ipxact:bitOffset>0</ipxact:bitOffset>
 						<ipxact:resets>
 							<ipxact:reset>
@@ -1127,7 +1126,7 @@
 					<ipxact:field>
 						<ipxact:name>ERP</ipxact:name>
 						<ipxact:displayName>ERP</ipxact:displayName>
-						<ipxact:description>Error passive</ipxact:description>
+						<ipxact:description>Error-passive</ipxact:description>
 						<ipxact:bitOffset>1</ipxact:bitOffset>
 						<ipxact:resets>
 							<ipxact:reset>
@@ -1139,7 +1138,7 @@
 					<ipxact:field>
 						<ipxact:name>BOF</ipxact:name>
 						<ipxact:displayName>BOF</ipxact:displayName>
-						<ipxact:description>Bus off</ipxact:description>
+						<ipxact:description>Bus-off</ipxact:description>
 						<ipxact:bitOffset>2</ipxact:bitOffset>
 						<ipxact:resets>
 							<ipxact:reset>
@@ -1151,7 +1150,7 @@
 					<ipxact:field>
 						<ipxact:name>ERA</ipxact:name>
 						<ipxact:displayName>ERA</ipxact:displayName>
-						<ipxact:description>Error active</ipxact:description>
+						<ipxact:description>Error-active</ipxact:description>
 						<ipxact:bitOffset>0</ipxact:bitOffset>
 						<ipxact:resets>
 							<ipxact:reset>
@@ -1164,7 +1163,6 @@
 				<ipxact:register>
 					<ipxact:name>FILTER_A_VAL</ipxact:name>
 					<ipxact:displayName>FILTER_A_VAL</ipxact:displayName>
-					<ipxact:description>Filter A Bit value. The identifier format is the same as transmitted and received Identifier. BASE Identifier is 11 LSB and Identifier extension are bits 28-12. If filter A is not present, writes to this register have no effect and read will return all zeroes.</ipxact:description>
 					<ipxact:isPresent>uuid_09846e1a_b03a_4f0b_99b5_c1981400ea9e</ipxact:isPresent>
 					<ipxact:dim>0</ipxact:dim>
 					<ipxact:addressOffset>'h40</ipxact:addressOffset>
@@ -1174,7 +1172,8 @@
 					<ipxact:field>
 						<ipxact:name>BIT_VAL_A_VAL</ipxact:name>
 						<ipxact:displayName>BIT_VAL_A_VAL</ipxact:displayName>
-						<ipxact:description>Bit Value for acceptance filters to be compared with income identifier. Only bits set in according to FILTER_A_MASK register are compared.</ipxact:description>
+						<ipxact:description>Filter A value. The identifier format is the same as in IDENTIFIER_W of TXT buffer or RX buffer. If filter A is not present, writes to this register have no effect and read will return all zeroes.
+</ipxact:description>
 						<ipxact:bitOffset>0</ipxact:bitOffset>
 						<ipxact:resets>
 							<ipxact:reset>
@@ -1187,7 +1186,7 @@
 				<ipxact:register>
 					<ipxact:name>FILTER_STATUS</ipxact:name>
 					<ipxact:displayName>FILTER_STATUS</ipxact:displayName>
-					<ipxact:description>Filter Status indicates if Frame filters are available.</ipxact:description>
+					<ipxact:description>Filter status indicates if frame filters are available in CTU CAN FD.</ipxact:description>
 					<ipxact:dim>0</ipxact:dim>
 					<ipxact:addressOffset>'h5E</ipxact:addressOffset>
 					<ipxact:size>16</ipxact:size>
@@ -1225,7 +1224,7 @@
 				<ipxact:register>
 					<ipxact:name>TX_PRIORITY</ipxact:name>
 					<ipxact:displayName>TX_PRIORITY</ipxact:displayName>
-					<ipxact:description>Priority of TXT buffers. Always highest priority TXT buffer in Ready state is selected for transmission. If two TXT buffers have equal priorities, TXT buffer with lower index is selected.</ipxact:description>
+					<ipxact:description>Priority of TXT buffers. Highest priority TXT buffer in &quot;Ready&quot; state is selected for transmission.</ipxact:description>
 					<ipxact:dim>0</ipxact:dim>
 					<ipxact:addressOffset>'h78</ipxact:addressOffset>
 					<ipxact:size>16</ipxact:size>
@@ -1283,7 +1282,7 @@
 				<ipxact:register>
 					<ipxact:name>TX_COMMAND</ipxact:name>
 					<ipxact:displayName>TX_COMMAND</ipxact:displayName>
-					<ipxact:description>Command register for TXT buffers. Command is activated by writing logic 1 to TXC(E,R,A) bit. TXT buffer that receives the command is selected by setting bit TXBI(1..4) to logic 1. Command and index must be set by single access. Register is automatically erased upon the command completion. Reffer to description of TXT buffer and TXT buffer State machine. If TXCE and TXCR are applied simultaneously, only TXCE command is applied. If multiple commands are applied at once, only those which have effect in immediate state of TXT buffer are applied to the buffer.</ipxact:description>
+					<ipxact:description>Command register for TXT buffers. Command is activated by writing logic 1 to TXC(E|R|A) bit. TXT buffer that receives the command is selected by setting bit TXB[1-4] to logic 1. Command and index must be set by single access. Register is automatically erased upon the command completion. Reffer to description of TXT buffer for meaning of commands. If TXCE and TXCR are applied simultaneously, only TXCE command is applied. If multiple commands are applied at once, only those which have effect in immediate state of TXT buffer are applied to the buffer.</ipxact:description>
 					<ipxact:dim>0</ipxact:dim>
 					<ipxact:addressOffset>'h74</ipxact:addressOffset>
 					<ipxact:size>16</ipxact:size>
@@ -1292,7 +1291,7 @@
 					<ipxact:field>
 						<ipxact:name>TXCE</ipxact:name>
 						<ipxact:displayName>TXCE</ipxact:displayName>
-						<ipxact:description>Activates &quot;set_empty&quot; command. Transits from TX OK, TX failed or  Aborted to Empty. Does not have any effect in other states.</ipxact:description>
+						<ipxact:description>Issues &quot;set empty&quot; command.</ipxact:description>
 						<ipxact:bitOffset>0</ipxact:bitOffset>
 						<ipxact:resets>
 							<ipxact:reset>
@@ -1305,7 +1304,7 @@
 					<ipxact:field>
 						<ipxact:name>TXCR</ipxact:name>
 						<ipxact:displayName>TXCR</ipxact:displayName>
-						<ipxact:description>Activates &quot;set_ready&quot; command. Transits frone TX OK, TX failed, Aborted or Empty to Ready. Does not have any effect in other states.</ipxact:description>
+						<ipxact:description>Issues &quot;set ready&quot; command.</ipxact:description>
 						<ipxact:bitOffset>1</ipxact:bitOffset>
 						<ipxact:resets>
 							<ipxact:reset>
@@ -1318,7 +1317,7 @@
 					<ipxact:field>
 						<ipxact:name>TXCA</ipxact:name>
 						<ipxact:displayName>TXCA</ipxact:displayName>
-						<ipxact:description>Activates &quot;set_abort&quot; command. Transits from Ready to Aborted. If transmission is in progress (state TX in Progress) from the buffer, transits to Abort in progress. Upon following error frame or arbitration lost, buffer will move to Aborted. Does not have any effect in other states.</ipxact:description>
+						<ipxact:description>Issues &quot;set abort&quot; command.</ipxact:description>
 						<ipxact:bitOffset>2</ipxact:bitOffset>
 						<ipxact:resets>
 							<ipxact:reset>
@@ -1384,7 +1383,7 @@
 				<ipxact:register>
 					<ipxact:name>TIMESTAMP_HIGH</ipxact:name>
 					<ipxact:displayName>TIMESTAMP_HIGH</ipxact:displayName>
-					<ipxact:description>Register with current value of CTU CAN FD time base. Bits 63:32 of time base are available from this register. No shadowing is implemented on TIMESTAMP_LOW/HIGH registers and user has to take care of proper read from both registers, since overflow of TIMESTAMP_LOW might occur between read of TIMESTAMP_LOW and TIMESTAMP_HIGH.</ipxact:description>
+					<ipxact:description>Register with current value of CTU CAN FD time base. No shadowing is implemented on TIMESTAMP_LOW/HIGH registers and user has to take care of proper read from both registers, since overflow of TIMESTAMP_LOW might occur between read of TIMESTAMP_LOW and TIMESTAMP_HIGH.</ipxact:description>
 					<ipxact:dim>0</ipxact:dim>
 					<ipxact:addressOffset>'h98</ipxact:addressOffset>
 					<ipxact:size>32</ipxact:size>
@@ -1402,7 +1401,7 @@
 				<ipxact:register>
 					<ipxact:name>TIMESTAMP_LOW</ipxact:name>
 					<ipxact:displayName>TIMESTAMP_LOW</ipxact:displayName>
-					<ipxact:description>Register with current value of CTU CAN FD time base. Bits 31:0 of time base are available from this register. No shadowing is implemented on TIMESTAMP_LOW/HIGH registers and user has to take care of proper read from both registers, since overflow of TIMESTAMP_LOW might occur between read of TIMESTAMP_LOW and TIMESTAMP_HIGH.</ipxact:description>
+					<ipxact:description>Register with current value of CTU CAN FD time base. No shadowing is implemented on TIMESTAMP_LOW/HIGH registers and user has to take care of proper read from both registers, since overflow of TIMESTAMP_LOW might occur between read of TIMESTAMP_LOW and TIMESTAMP_HIGH.</ipxact:description>
 					<ipxact:dim>0</ipxact:dim>
 					<ipxact:addressOffset>'h94</ipxact:addressOffset>
 					<ipxact:size>32</ipxact:size>
@@ -1428,6 +1427,7 @@
 					<ipxact:access>read-only</ipxact:access>
 					<ipxact:field>
 						<ipxact:name>YOLO_VAL</ipxact:name>
+						<ipxact:displayName>YOLO_VAL</ipxact:displayName>
 						<ipxact:description>What else could be in this register??</ipxact:description>
 						<ipxact:bitOffset>0</ipxact:bitOffset>
 						<ipxact:resets>
@@ -1441,7 +1441,7 @@
 				<ipxact:register>
 					<ipxact:name>SSP_CFG</ipxact:name>
 					<ipxact:displayName>SSP_CFG</ipxact:displayName>
-					<ipxact:description>Secondary Sampling Point configuration register. Used by transmitter in data bit rate for calculation of Secondary Sampling Point. This register should be modified only when SETTINGS[ENA]=0.</ipxact:description>
+					<ipxact:description>Secondary sampling point configuration register. Used by transmitter in data bit rate for calculation of Secondary sampling point.</ipxact:description>
 					<ipxact:dim>0</ipxact:dim>
 					<ipxact:addressOffset>'h82</ipxact:addressOffset>
 					<ipxact:size>16</ipxact:size>
@@ -1449,7 +1449,8 @@
 					<ipxact:access>read-write</ipxact:access>
 					<ipxact:field>
 						<ipxact:name>SSP_OFFSET</ipxact:name>
-						<ipxact:description>Secondary sampling point offset. Value is given as multiple of Minimal Data Time Quanta.</ipxact:description>
+						<ipxact:displayName>SSP_OFFSET</ipxact:displayName>
+						<ipxact:description>Secondary sampling point offset. Value is given as multiple of minimal Time quanta.</ipxact:description>
 						<ipxact:bitOffset>0</ipxact:bitOffset>
 						<ipxact:resets>
 							<ipxact:reset>
@@ -1460,7 +1461,8 @@
 					</ipxact:field>
 					<ipxact:field>
 						<ipxact:name>SSP_SRC</ipxact:name>
-						<ipxact:description>Source of Secondary Sampling Point.</ipxact:description>
+						<ipxact:displayName>SSP_SRC</ipxact:displayName>
+						<ipxact:description>Source of Secondary sampling point.</ipxact:description>
 						<ipxact:bitOffset>8</ipxact:bitOffset>
 						<ipxact:resets>
 							<ipxact:reset>
@@ -1472,19 +1474,19 @@
 							<ipxact:enumeratedValue>
 								<ipxact:name>SSP_SRC_OFFSET</ipxact:name>
 								<ipxact:displayName>SSP_SRC_OFFSET</ipxact:displayName>
-								<ipxact:description>SSP position = SSP_Offset. Measured value is ignored.</ipxact:description>
+								<ipxact:description>SSP position = SSP_OFFSET. Measured Transmitter delay value is ignored.</ipxact:description>
 								<ipxact:value>2</ipxact:value>
 							</ipxact:enumeratedValue>
 							<ipxact:enumeratedValue>
 								<ipxact:name>SSP_SRC_MEAS_N_OFFSET</ipxact:name>
 								<ipxact:displayName>SSP_SRC_MEAS_N_OFFSET</ipxact:displayName>
-								<ipxact:description>SSP position = TRV_DELAY (Measured Value) + SSP_OFFSET.</ipxact:description>
+								<ipxact:description>SSP position = TRV_DELAY (Measured Transmitter delay) + SSP_OFFSET.</ipxact:description>
 								<ipxact:value>0</ipxact:value>
 							</ipxact:enumeratedValue>
 							<ipxact:enumeratedValue>
 								<ipxact:name>SSP_SRC_NO_SSP</ipxact:name>
 								<ipxact:displayName>SSP_SRC_NO_SSP</ipxact:displayName>
-								<ipxact:description>SSP is not used. Transmitter uses regular Sampling Point during Data Bit-Rate.</ipxact:description>
+								<ipxact:description>SSP is not used. Transmitter uses regular Sampling Point during data bit rate.</ipxact:description>
 								<ipxact:value>1</ipxact:value>
 							</ipxact:enumeratedValue>
 						</ipxact:enumeratedValues>
@@ -1493,7 +1495,7 @@
 				<ipxact:register>
 					<ipxact:name>DEBUG_REGISTER</ipxact:name>
 					<ipxact:displayName>DEBUG_REGISTER</ipxact:displayName>
-					<ipxact:description>Register for reading out state of the controller. This register is only for debugging purposes!</ipxact:description>
+					<ipxact:description>Register for reading state of the controller. This register is only for debugging purposes!</ipxact:description>
 					<ipxact:dim>0</ipxact:dim>
 					<ipxact:addressOffset>'h8C</ipxact:addressOffset>
 					<ipxact:size>32</ipxact:size>
@@ -1501,7 +1503,8 @@
 					<ipxact:access>read-only</ipxact:access>
 					<ipxact:field>
 						<ipxact:name>STUFF_COUNT</ipxact:name>
-						<ipxact:description>Actual stuff count modulo 8 as definned in ISO FD protocol. Stuff count is erased in the beginning of the frame and increased by one with each stuff bit until STUFF count field in ISO FD CRC. Then it stays fixed until the beginning of next frame. In non-ISO FD or normal CAN stuff bits are counted until the end of a frame. Note that this field is NOT gray encoded as defined in ISO FD standard. Stuff count is calculated only as long as controller is transceiving on the bus. During the reception this value remains fixed!</ipxact:description>
+						<ipxact:displayName>STUFF_COUNT</ipxact:displayName>
+						<ipxact:description>Actual stuff count modulo 8 as definned in ISO FD protocol. Stuff count is erased in the beginning of CAN frame and increased by one with each stuff bit until Stuff count field in ISO FD frame. Then it stays fixed until the beginning of next frame. In non-ISO FD or normal CAN stuff bits are counted until the end of a frame. Note that this field is NOT gray encoded as defined in ISO FD standard. Stuff count is calculated only as long as controller is transceiving on the bus. During the reception this value remains fixed!</ipxact:description>
 						<ipxact:bitOffset>0</ipxact:bitOffset>
 						<ipxact:resets>
 							<ipxact:reset>
@@ -1512,7 +1515,8 @@
 					</ipxact:field>
 					<ipxact:field>
 						<ipxact:name>DESTUFF_COUNT</ipxact:name>
-						<ipxact:description>Actual de-stuff count modulo 8 as defined in ISO FD protocol. De-Stuff count is erased in the beginning of the frame and increased by one with each de-stuffed bit until STUFF count field in ISO FD CRC. Then it stays fixed until beginning of next frame. In non-ISO FD or normal CAN de-stuff bits are counted until the end of the frame. Note that this field is NOT grey encoded as defined in ISO FD standard. De-stuff count is calculated in both. Transceiver as well as receiver.</ipxact:description>
+						<ipxact:displayName>DESTUFF_COUNT</ipxact:displayName>
+						<ipxact:description>Actual de-stuff count modulo 8 as defined in ISO FD protocol. De-Stuff count is erased in the beginning of the frame and increased by one with each de-stuffed bit until Stuff count field in ISO FD Frame. Then it stays fixed until beginning of next frame. In non-ISO FD or normal CAN de-stuff bits are counted until the end of the frame. Note that this field is NOT grey encoded as defined in ISO FD standard. De-stuff count is calculated in both. Transceiver as well as receiver.</ipxact:description>
 						<ipxact:bitOffset>3</ipxact:bitOffset>
 						<ipxact:resets>
 							<ipxact:reset>
@@ -1523,7 +1527,8 @@
 					</ipxact:field>
 					<ipxact:field>
 						<ipxact:name>PC_ARB</ipxact:name>
-						<ipxact:description>Protocol control State machine is in Arbitration field.</ipxact:description>
+						<ipxact:displayName>PC_ARB</ipxact:displayName>
+						<ipxact:description>Protocol control state machine is in Arbitration field.</ipxact:description>
 						<ipxact:bitOffset>6</ipxact:bitOffset>
 						<ipxact:resets>
 							<ipxact:reset>
@@ -1534,7 +1539,8 @@
 					</ipxact:field>
 					<ipxact:field>
 						<ipxact:name>PC_ACKD</ipxact:name>
-						<ipxact:description>Protocol control State machine is in ACK Delimiter field.</ipxact:description>
+						<ipxact:displayName>PC_ACKD</ipxact:displayName>
+						<ipxact:description>Protocol control state machine is in ACK Delimiter field.</ipxact:description>
 						<ipxact:bitOffset>13</ipxact:bitOffset>
 						<ipxact:resets>
 							<ipxact:reset>
@@ -1545,7 +1551,8 @@
 					</ipxact:field>
 					<ipxact:field>
 						<ipxact:name>PC_ACK</ipxact:name>
-						<ipxact:description>Protocol control State machine is in ACK field.</ipxact:description>
+						<ipxact:displayName>PC_ACK</ipxact:displayName>
+						<ipxact:description>Protocol control state machine is in ACK field.</ipxact:description>
 						<ipxact:bitOffset>12</ipxact:bitOffset>
 						<ipxact:resets>
 							<ipxact:reset>
@@ -1556,7 +1563,8 @@
 					</ipxact:field>
 					<ipxact:field>
 						<ipxact:name>PC_CRCD</ipxact:name>
-						<ipxact:description>Protocol control State machine is in CRC Delimiter field.</ipxact:description>
+						<ipxact:displayName>PC_CRCD</ipxact:displayName>
+						<ipxact:description>Protocol control state machine is in CRC Delimiter field.</ipxact:description>
 						<ipxact:bitOffset>11</ipxact:bitOffset>
 						<ipxact:resets>
 							<ipxact:reset>
@@ -1567,7 +1575,8 @@
 					</ipxact:field>
 					<ipxact:field>
 						<ipxact:name>PC_STC</ipxact:name>
-						<ipxact:description>Protocol control State machine is in Stuff Count field.</ipxact:description>
+						<ipxact:displayName>PC_STC</ipxact:displayName>
+						<ipxact:description>Protocol control state machine is in Stuff Count field.</ipxact:description>
 						<ipxact:bitOffset>9</ipxact:bitOffset>
 						<ipxact:resets>
 							<ipxact:reset>
@@ -1578,7 +1587,8 @@
 					</ipxact:field>
 					<ipxact:field>
 						<ipxact:name>PC_CON</ipxact:name>
-						<ipxact:description>Protocol control State machine is in Control field.</ipxact:description>
+						<ipxact:displayName>PC_CON</ipxact:displayName>
+						<ipxact:description>Protocol control state machine is in Control field.</ipxact:description>
 						<ipxact:bitOffset>7</ipxact:bitOffset>
 						<ipxact:resets>
 							<ipxact:reset>
@@ -1589,7 +1599,8 @@
 					</ipxact:field>
 					<ipxact:field>
 						<ipxact:name>PC_DAT</ipxact:name>
-						<ipxact:description>Protocol control State machine is in Data field.</ipxact:description>
+						<ipxact:displayName>PC_DAT</ipxact:displayName>
+						<ipxact:description>Protocol control state machine is in Data field.</ipxact:description>
 						<ipxact:bitOffset>8</ipxact:bitOffset>
 						<ipxact:resets>
 							<ipxact:reset>
@@ -1600,7 +1611,8 @@
 					</ipxact:field>
 					<ipxact:field>
 						<ipxact:name>PC_CRC</ipxact:name>
-						<ipxact:description>Protocol control State machine is in CRC field.</ipxact:description>
+						<ipxact:displayName>PC_CRC</ipxact:displayName>
+						<ipxact:description>Protocol control state machine is in CRC field.</ipxact:description>
 						<ipxact:bitOffset>10</ipxact:bitOffset>
 						<ipxact:resets>
 							<ipxact:reset>
@@ -1611,7 +1623,8 @@
 					</ipxact:field>
 					<ipxact:field>
 						<ipxact:name>PC_EOF</ipxact:name>
-						<ipxact:description>Protocol control State machine is in End of file field.</ipxact:description>
+						<ipxact:displayName>PC_EOF</ipxact:displayName>
+						<ipxact:description>Protocol control state machine is in End of file field.</ipxact:description>
 						<ipxact:bitOffset>14</ipxact:bitOffset>
 						<ipxact:resets>
 							<ipxact:reset>
@@ -1622,7 +1635,8 @@
 					</ipxact:field>
 					<ipxact:field>
 						<ipxact:name>PC_SUSP</ipxact:name>
-						<ipxact:description>Protocol control State machine is in Suspend transmission field.</ipxact:description>
+						<ipxact:displayName>PC_SUSP</ipxact:displayName>
+						<ipxact:description>Protocol control state machine is in Suspend transmission field.</ipxact:description>
 						<ipxact:bitOffset>16</ipxact:bitOffset>
 						<ipxact:resets>
 							<ipxact:reset>
@@ -1634,7 +1648,7 @@
 					<ipxact:field>
 						<ipxact:name>PC_SOF</ipxact:name>
 						<ipxact:displayName>PC_SOF</ipxact:displayName>
-						<ipxact:description>Protocol control State machine is in Start of frame field.</ipxact:description>
+						<ipxact:description>Protocol control state machine is in Start of frame field.</ipxact:description>
 						<ipxact:bitOffset>18</ipxact:bitOffset>
 						<ipxact:resets>
 							<ipxact:reset>
@@ -1645,7 +1659,8 @@
 					</ipxact:field>
 					<ipxact:field>
 						<ipxact:name>PC_OVR</ipxact:name>
-						<ipxact:description>Protocol control State machine is in Overload field.</ipxact:description>
+						<ipxact:displayName>PC_OVR</ipxact:displayName>
+						<ipxact:description>Protocol control state machine is in Overload field.</ipxact:description>
 						<ipxact:bitOffset>17</ipxact:bitOffset>
 						<ipxact:resets>
 							<ipxact:reset>
@@ -1656,7 +1671,8 @@
 					</ipxact:field>
 					<ipxact:field>
 						<ipxact:name>PC_INT</ipxact:name>
-						<ipxact:description>Protocol control State machine is in Intermission field.</ipxact:description>
+						<ipxact:displayName>PC_INT</ipxact:displayName>
+						<ipxact:description>Protocol control state machine is in Intermission field.</ipxact:description>
 						<ipxact:bitOffset>15</ipxact:bitOffset>
 						<ipxact:resets>
 							<ipxact:reset>
@@ -1669,7 +1685,6 @@
 				<ipxact:register>
 					<ipxact:name>TX_FR_CTR</ipxact:name>
 					<ipxact:displayName>TX_FR_CTR</ipxact:displayName>
-					<ipxact:description>Bus traffic TX counter.</ipxact:description>
 					<ipxact:isPresent>uuid_db903261_61eb_4f15_8155_5b14164c20b0</ipxact:isPresent>
 					<ipxact:dim>0</ipxact:dim>
 					<ipxact:addressOffset>'h88</ipxact:addressOffset>
@@ -1678,6 +1693,7 @@
 					<ipxact:access>read-only</ipxact:access>
 					<ipxact:field>
 						<ipxact:name>TX_FR_CTR_VAL</ipxact:name>
+						<ipxact:displayName>TX_FR_CTR_VAL</ipxact:displayName>
 						<ipxact:description>Number of transmitted frames by CTU CAN FD.</ipxact:description>
 						<ipxact:bitOffset>0</ipxact:bitOffset>
 						<ipxact:resets>
@@ -1691,7 +1707,6 @@
 				<ipxact:register>
 					<ipxact:name>RX_FR_CTR</ipxact:name>
 					<ipxact:displayName>RX_FR_CTR</ipxact:displayName>
-					<ipxact:description>Bus traffic RX counter.</ipxact:description>
 					<ipxact:isPresent>uuid_db903261_61eb_4f15_8155_5b14164c20b0</ipxact:isPresent>
 					<ipxact:dim>0</ipxact:dim>
 					<ipxact:addressOffset>'h84</ipxact:addressOffset>
@@ -1700,6 +1715,7 @@
 					<ipxact:access>read-only</ipxact:access>
 					<ipxact:field>
 						<ipxact:name>RX_FR_CTR_VAL</ipxact:name>
+						<ipxact:displayName>RX_FR_CTR_VAL</ipxact:displayName>
 						<ipxact:description>Number of received frames by CTU CAN FD.</ipxact:description>
 						<ipxact:bitOffset>0</ipxact:bitOffset>
 						<ipxact:resets>
@@ -1713,7 +1729,7 @@
 				<ipxact:register>
 					<ipxact:name>ERR_CAPT</ipxact:name>
 					<ipxact:displayName>ERR_CAPT</ipxact:displayName>
-					<ipxact:description>Error code Capture register. Determines position within CAN frame where last error was detected.</ipxact:description>
+					<ipxact:description>Error code capture register. Determines position within CAN frame where last error was detected.</ipxact:description>
 					<ipxact:dim>0</ipxact:dim>
 					<ipxact:addressOffset>'h7C</ipxact:addressOffset>
 					<ipxact:size>8</ipxact:size>
@@ -1841,7 +1857,6 @@
 				<ipxact:register>
 					<ipxact:name>TX_STATUS</ipxact:name>
 					<ipxact:displayName>TX_STATUS</ipxact:displayName>
-					<ipxact:description>Status of TXT buffers. </ipxact:description>
 					<ipxact:dim>0</ipxact:dim>
 					<ipxact:addressOffset>'h70</ipxact:addressOffset>
 					<ipxact:size>16</ipxact:size>
@@ -1849,8 +1864,8 @@
 					<ipxact:access>read-only</ipxact:access>
 					<ipxact:field>
 						<ipxact:name>TX2S</ipxact:name>
-						<ipxact:displayName>TX1S</ipxact:displayName>
-						<ipxact:description>Status of TXT Buffer 2. Bit field meaning is analogous to TX1S.</ipxact:description>
+						<ipxact:displayName>TX2S</ipxact:displayName>
+						<ipxact:description>Status of TXT buffer 2. Bit field meaning is analogous to TX1S.</ipxact:description>
 						<ipxact:bitOffset>4</ipxact:bitOffset>
 						<ipxact:resets>
 							<ipxact:reset>
@@ -1861,8 +1876,8 @@
 					</ipxact:field>
 					<ipxact:field>
 						<ipxact:name>TX1S</ipxact:name>
-						<ipxact:displayName>TX2S</ipxact:displayName>
-						<ipxact:description>Status of TXT Buffer 1.</ipxact:description>
+						<ipxact:displayName>TX1S</ipxact:displayName>
+						<ipxact:description>Status of TXT buffer 1.</ipxact:description>
 						<ipxact:bitOffset>0</ipxact:bitOffset>
 						<ipxact:resets>
 							<ipxact:reset>
@@ -1873,51 +1888,52 @@
 						<ipxact:enumeratedValues>
 							<ipxact:enumeratedValue usage="read">
 								<ipxact:name>TXT_ETY</ipxact:name>
-								<ipxact:displayName>TXT_EMPTY</ipxact:displayName>
-								<ipxact:description>TXT Buffer is  empty.</ipxact:description>
+								<ipxact:displayName>TXT_ETY</ipxact:displayName>
+								<ipxact:description>TXT buffer is in &quot;Empty&quot; state.</ipxact:description>
 								<ipxact:value>'h8</ipxact:value>
 							</ipxact:enumeratedValue>
 							<ipxact:enumeratedValue usage="read">
 								<ipxact:name>TXT_TOK</ipxact:name>
 								<ipxact:displayName>TXT_OK</ipxact:displayName>
-								<ipxact:description>Transmission from TXT Buffer finished OK.</ipxact:description>
+								<ipxact:description>TXT buffer is in &quot;TX OK&quot; state.</ipxact:description>
 								<ipxact:value>'h4</ipxact:value>
 							</ipxact:enumeratedValue>
 							<ipxact:enumeratedValue usage="read">
 								<ipxact:name>TXT_ERR</ipxact:name>
 								<ipxact:displayName>TXT_ERR</ipxact:displayName>
-								<ipxact:description>Transmission from TXT Buffer failed.</ipxact:description>
+								<ipxact:description>TXT buffer is in &quot;Failed&quot; state.</ipxact:description>
 								<ipxact:value>'h6</ipxact:value>
 							</ipxact:enumeratedValue>
 							<ipxact:enumeratedValue usage="read">
 								<ipxact:name>TXT_ABT</ipxact:name>
 								<ipxact:displayName>TXT_ABT</ipxact:displayName>
-								<ipxact:description>Transmission from TXT Buffer was aborted by SW.</ipxact:description>
+								<ipxact:description>TXT buffer is in &quot;Aborted&quot; state.</ipxact:description>
 								<ipxact:value>'h7</ipxact:value>
 							</ipxact:enumeratedValue>
 							<ipxact:enumeratedValue usage="read">
 								<ipxact:name>TXT_TRAN</ipxact:name>
 								<ipxact:displayName>TXT_TRAN</ipxact:displayName>
-								<ipxact:description>Transmission from TXT Buffer is in progress.</ipxact:description>
+								<ipxact:description>TXT buffer is in &quot;TX in progress&quot; state. CTU CAN FD is transmitting frame.</ipxact:description>
 								<ipxact:value>'h2</ipxact:value>
 							</ipxact:enumeratedValue>
 							<ipxact:enumeratedValue usage="read">
 								<ipxact:name>TXT_ABTP</ipxact:name>
 								<ipxact:displayName>TXT_ABTP</ipxact:displayName>
-								<ipxact:description>Transmission from TXT Buffer is in progress, stop trying at nearest error frame or arbitration lost.</ipxact:description>
+								<ipxact:description>TXT buffer is in &quot;Abort in progress&quot; state.</ipxact:description>
 								<ipxact:value>'h3</ipxact:value>
 							</ipxact:enumeratedValue>
 							<ipxact:enumeratedValue usage="read">
 								<ipxact:name>TXT_RDY</ipxact:name>
 								<ipxact:displayName>TXT_RDY</ipxact:displayName>
-								<ipxact:description>TXT Buffer is ready to be selected for transmission by the CAN Core.</ipxact:description>
+								<ipxact:description>TXT buffer is in &quot;Ready&quot; state, it is waiting for CTU CAN FD to start transmission from it.</ipxact:description>
 								<ipxact:value>'h1</ipxact:value>
 							</ipxact:enumeratedValue>
 						</ipxact:enumeratedValues>
 					</ipxact:field>
 					<ipxact:field>
 						<ipxact:name>TX3S</ipxact:name>
-						<ipxact:description>Status of TXT Buffer 3. Bit field meaning is analogous to TX1S.</ipxact:description>
+						<ipxact:displayName>TX3S</ipxact:displayName>
+						<ipxact:description>Status of TXT buffer 3. Bit field meaning is analogous to TX1S.</ipxact:description>
 						<ipxact:bitOffset>8</ipxact:bitOffset>
 						<ipxact:resets>
 							<ipxact:reset>
@@ -1928,7 +1944,8 @@
 					</ipxact:field>
 					<ipxact:field>
 						<ipxact:name>TX4S</ipxact:name>
-						<ipxact:description>Status of TXT Buffer 4. Bit field meaning is analogous to TX1S.</ipxact:description>
+						<ipxact:displayName>TX4S</ipxact:displayName>
+						<ipxact:description>Status of TXT buffer 4. Bit field meaning is analogous to TX1S.</ipxact:description>
 						<ipxact:bitOffset>12</ipxact:bitOffset>
 						<ipxact:resets>
 							<ipxact:reset>
@@ -1941,7 +1958,7 @@
 				<ipxact:register>
 					<ipxact:name>TRV_DELAY</ipxact:name>
 					<ipxact:displayName>TRV_DELAY</ipxact:displayName>
-					<ipxact:description>Transceiver Delay register. When transmitting CAN FD Frame, Transceiver delay is measured. After the measurement (after FDF bit), it can be read out from this register. The value in this register is valid since first transmission of CAN FD frame with bit rate shift. After each next measurement the value is updated.</ipxact:description>
+					<ipxact:description>Transmitter delay register. When transmitting CAN FD Frame, Transmitter delay is measured. After the measurement (after FDF bit), it can be read out from this register. The value in this register is valid since first transmission of CAN FD frame. After each next measurement the value is updated.</ipxact:description>
 					<ipxact:dim>0</ipxact:dim>
 					<ipxact:addressOffset>'h80</ipxact:addressOffset>
 					<ipxact:size>16</ipxact:size>
@@ -1950,7 +1967,7 @@
 					<ipxact:field>
 						<ipxact:name>TRV_DELAY_VALUE</ipxact:name>
 						<ipxact:displayName>TRV_DELAY_VALUE</ipxact:displayName>
-						<ipxact:description>Measured Transceiver Delay in multiple of Minimal Time Quanta.</ipxact:description>
+						<ipxact:description>Measured Transmitter delay in multiple of minimal Time quanta.</ipxact:description>
 						<ipxact:bitOffset>0</ipxact:bitOffset>
 						<ipxact:resets>
 							<ipxact:reset>
@@ -1963,7 +1980,6 @@
 				<ipxact:register>
 					<ipxact:name>RX_DATA</ipxact:name>
 					<ipxact:displayName>RX_DATA</ipxact:displayName>
-					<ipxact:description>Read data from RX buffer.</ipxact:description>
 					<ipxact:dim>0</ipxact:dim>
 					<ipxact:addressOffset>'h6C</ipxact:addressOffset>
 					<ipxact:size>32</ipxact:size>
@@ -1972,7 +1988,7 @@
 					<ipxact:field>
 						<ipxact:name>RX_DATA</ipxact:name>
 						<ipxact:displayName>RX_DATA</ipxact:displayName>
-						<ipxact:description>RX buffer data at read pointer position in FIFO. By reading from this register read pointer is automatically increased, as long as there is next data word stored in RX buffer. Next read from this register returns next word of CAN frame. First stored word in the buffer is FRAME_FORM, next TIMESTAMP_U etc. This register shall be read by 32 bit access.</ipxact:description>
+						<ipxact:description>RX buffer data at read pointer position in FIFO. By reading from this register, read pointer is automatically increased, as long as there is next data word stored in RX buffer. First stored word in the buffer is FRAME_FORMAT_W, next IDENTIFIER_W etc. This register shall be read by 32 bit access.</ipxact:description>
 						<ipxact:bitOffset>0</ipxact:bitOffset>
 						<ipxact:resets>
 							<ipxact:reset>
@@ -1986,7 +2002,6 @@
 				<ipxact:register>
 					<ipxact:name>RX_POINTERS</ipxact:name>
 					<ipxact:displayName>RX_POINTERS</ipxact:displayName>
-					<ipxact:description>Pointers in RX buffer FIFO.</ipxact:description>
 					<ipxact:dim>0</ipxact:dim>
 					<ipxact:addressOffset>'h64</ipxact:addressOffset>
 					<ipxact:size>32</ipxact:size>
@@ -2020,7 +2035,6 @@
 				<ipxact:register>
 					<ipxact:name>RX_MEM_INFO</ipxact:name>
 					<ipxact:displayName>RX_MEM_INFO</ipxact:displayName>
-					<ipxact:description>RX buffer FIFO memory information register.</ipxact:description>
 					<ipxact:dim>0</ipxact:dim>
 					<ipxact:addressOffset>'h60</ipxact:addressOffset>
 					<ipxact:size>32</ipxact:size>
@@ -2044,7 +2058,6 @@
 				<ipxact:register>
 					<ipxact:name>RX_STATUS</ipxact:name>
 					<ipxact:displayName>RX_STATUS</ipxact:displayName>
-					<ipxact:description>Status register of RX buffer FIFO.</ipxact:description>
 					<ipxact:dim>0</ipxact:dim>
 					<ipxact:addressOffset>'h68</ipxact:addressOffset>
 					<ipxact:size>16</ipxact:size>
@@ -2065,7 +2078,7 @@
 					<ipxact:field>
 						<ipxact:name>RXF</ipxact:name>
 						<ipxact:displayName>RXF</ipxact:displayName>
-						<ipxact:description>RX buffer is full.</ipxact:description>
+						<ipxact:description>RX buffer is full, all memory words of RX buffer are occupied.</ipxact:description>
 						<ipxact:bitOffset>1</ipxact:bitOffset>
 						<ipxact:resets>
 							<ipxact:reset>
@@ -2077,7 +2090,7 @@
 					<ipxact:field>
 						<ipxact:name>RXFRC</ipxact:name>
 						<ipxact:displayName>RXFRC</ipxact:displayName>
-						<ipxact:description>RX buffer frame count. Number of CAN Frames stored in RX buffer.</ipxact:description>
+						<ipxact:description>RX buffer frame count. Number of CAN frames stored in RX buffer.</ipxact:description>
 						<ipxact:bitOffset>4</ipxact:bitOffset>
 						<ipxact:resets>
 							<ipxact:reset>
@@ -2098,7 +2111,7 @@
 					<ipxact:access>read-write</ipxact:access>
 					<ipxact:field>
 						<ipxact:name>FANB</ipxact:name>
-						<ipxact:displayName>FILT_A_BASIC</ipxact:displayName>
+						<ipxact:displayName>FANB</ipxact:displayName>
 						<ipxact:description>CAN Basic Frame is accepted by filter A.</ipxact:description>
 						<ipxact:bitOffset>0</ipxact:bitOffset>
 						<ipxact:resets>
@@ -2110,7 +2123,7 @@
 					</ipxact:field>
 					<ipxact:field>
 						<ipxact:name>FAFB</ipxact:name>
-						<ipxact:displayName>FILT_A_FD_BAS</ipxact:displayName>
+						<ipxact:displayName>FAFB</ipxact:displayName>
 						<ipxact:description>CAN FD Basic Frame is accepted by filter A.</ipxact:description>
 						<ipxact:bitOffset>2</ipxact:bitOffset>
 						<ipxact:resets>
@@ -2122,7 +2135,7 @@
 					</ipxact:field>
 					<ipxact:field>
 						<ipxact:name>FANE</ipxact:name>
-						<ipxact:displayName>FILT_A_EXT</ipxact:displayName>
+						<ipxact:displayName>FANE</ipxact:displayName>
 						<ipxact:description>CAN Extended Frame is accepted by Filter A.</ipxact:description>
 						<ipxact:bitOffset>1</ipxact:bitOffset>
 						<ipxact:resets>
@@ -2134,7 +2147,7 @@
 					</ipxact:field>
 					<ipxact:field>
 						<ipxact:name>FAFE</ipxact:name>
-						<ipxact:displayName>FILT_A_FD_EXT</ipxact:displayName>
+						<ipxact:displayName>FAFE</ipxact:displayName>
 						<ipxact:description>CAN FD Extended Frame is accepted by filter A.</ipxact:description>
 						<ipxact:bitOffset>3</ipxact:bitOffset>
 						<ipxact:resets>
@@ -2146,7 +2159,7 @@
 					</ipxact:field>
 					<ipxact:field>
 						<ipxact:name>FBNB</ipxact:name>
-						<ipxact:displayName>FILT_B_BASIC</ipxact:displayName>
+						<ipxact:displayName>FBNB</ipxact:displayName>
 						<ipxact:description>CAN Basic Frame is accepted by filter B.</ipxact:description>
 						<ipxact:bitOffset>4</ipxact:bitOffset>
 						<ipxact:resets>
@@ -2158,7 +2171,7 @@
 					</ipxact:field>
 					<ipxact:field>
 						<ipxact:name>FBNE</ipxact:name>
-						<ipxact:displayName>FILT_B_EXT</ipxact:displayName>
+						<ipxact:displayName>FBNE</ipxact:displayName>
 						<ipxact:description>CAN Extended Frame is accepted by Filter B.</ipxact:description>
 						<ipxact:bitOffset>5</ipxact:bitOffset>
 						<ipxact:resets>
@@ -2170,7 +2183,7 @@
 					</ipxact:field>
 					<ipxact:field>
 						<ipxact:name>FBFB</ipxact:name>
-						<ipxact:displayName>FILT_B_FD_BAS</ipxact:displayName>
+						<ipxact:displayName>FBFB</ipxact:displayName>
 						<ipxact:description>CAN FD Basic Frame is accepted by filter B.</ipxact:description>
 						<ipxact:bitOffset>6</ipxact:bitOffset>
 						<ipxact:resets>
@@ -2182,7 +2195,7 @@
 					</ipxact:field>
 					<ipxact:field>
 						<ipxact:name>FBFE</ipxact:name>
-						<ipxact:displayName>FILT_B_FD_EXT</ipxact:displayName>
+						<ipxact:displayName>FBFE</ipxact:displayName>
 						<ipxact:description>CAN FD Extended Frame is accepted by filter B.</ipxact:description>
 						<ipxact:bitOffset>7</ipxact:bitOffset>
 						<ipxact:resets>
@@ -2194,7 +2207,7 @@
 					</ipxact:field>
 					<ipxact:field>
 						<ipxact:name>FCNB</ipxact:name>
-						<ipxact:displayName>FILT_C_BASIC</ipxact:displayName>
+						<ipxact:displayName>FCNB</ipxact:displayName>
 						<ipxact:description>CAN Basic Frame is accepted by filter C.</ipxact:description>
 						<ipxact:bitOffset>8</ipxact:bitOffset>
 						<ipxact:resets>
@@ -2206,7 +2219,7 @@
 					</ipxact:field>
 					<ipxact:field>
 						<ipxact:name>FCNE</ipxact:name>
-						<ipxact:displayName>FILT_C_EXT</ipxact:displayName>
+						<ipxact:displayName>FCNE</ipxact:displayName>
 						<ipxact:description>CAN Extended Frame is accepted by Filter C.</ipxact:description>
 						<ipxact:bitOffset>9</ipxact:bitOffset>
 						<ipxact:resets>
@@ -2218,7 +2231,7 @@
 					</ipxact:field>
 					<ipxact:field>
 						<ipxact:name>FCFB</ipxact:name>
-						<ipxact:displayName>FILT_C_FD_BAS</ipxact:displayName>
+						<ipxact:displayName>FCFB</ipxact:displayName>
 						<ipxact:description>CAN FD Basic Frame is accepted by filter C.</ipxact:description>
 						<ipxact:bitOffset>10</ipxact:bitOffset>
 						<ipxact:resets>
@@ -2230,7 +2243,7 @@
 					</ipxact:field>
 					<ipxact:field>
 						<ipxact:name>FRFE</ipxact:name>
-						<ipxact:displayName>FILT_RANGE_FD_EXT</ipxact:displayName>
+						<ipxact:displayName>FRFE</ipxact:displayName>
 						<ipxact:description>CAN FD Extended Frame is accepted by Range filter.</ipxact:description>
 						<ipxact:bitOffset>15</ipxact:bitOffset>
 						<ipxact:resets>
@@ -2242,7 +2255,7 @@
 					</ipxact:field>
 					<ipxact:field>
 						<ipxact:name>FRFB</ipxact:name>
-						<ipxact:displayName>FILT_RANGE_FD_BAS</ipxact:displayName>
+						<ipxact:displayName>FRFB</ipxact:displayName>
 						<ipxact:description>CAN FD Basic Frame is accepted by Range filter.</ipxact:description>
 						<ipxact:bitOffset>14</ipxact:bitOffset>
 						<ipxact:resets>
@@ -2254,7 +2267,7 @@
 					</ipxact:field>
 					<ipxact:field>
 						<ipxact:name>FRNE</ipxact:name>
-						<ipxact:displayName>FILT_RANGE_EXT</ipxact:displayName>
+						<ipxact:displayName>FRNE</ipxact:displayName>
 						<ipxact:description>CAN Extended Frame is accepted by Range filter.</ipxact:description>
 						<ipxact:bitOffset>13</ipxact:bitOffset>
 						<ipxact:resets>
@@ -2266,7 +2279,7 @@
 					</ipxact:field>
 					<ipxact:field>
 						<ipxact:name>FRNB</ipxact:name>
-						<ipxact:displayName>FILT_RANGE_BASIC</ipxact:displayName>
+						<ipxact:displayName>FRNB</ipxact:displayName>
 						<ipxact:description>CAN Basic Frame is accepted by Range filter.</ipxact:description>
 						<ipxact:bitOffset>12</ipxact:bitOffset>
 						<ipxact:resets>
@@ -2278,7 +2291,7 @@
 					</ipxact:field>
 					<ipxact:field>
 						<ipxact:name>FCFE</ipxact:name>
-						<ipxact:displayName>FILT_C_FD_EXT</ipxact:displayName>
+						<ipxact:displayName>FCFE</ipxact:displayName>
 						<ipxact:description>CAN FD Extended Frame is accepted by filter C.</ipxact:description>
 						<ipxact:bitOffset>11</ipxact:bitOffset>
 						<ipxact:resets>
@@ -2292,7 +2305,6 @@
 				<ipxact:register>
 					<ipxact:name>FILTER_RAN_HIGH</ipxact:name>
 					<ipxact:displayName>FILTER_RAN_HIGH</ipxact:displayName>
-					<ipxact:description>Filter Range High threshold. The identifier format is the same as transmitted and received identifier format. BASE Identifier is in bits 28 : 18 and Identifier extension are bits 17 : 0. If Range filter is not supported, writes to this register have no effect and read will return all zeroes.</ipxact:description>
 					<ipxact:isPresent>uuid_41f98f04_041f_4ab6_b60d_c6226cd54eb6</ipxact:isPresent>
 					<ipxact:dim>0</ipxact:dim>
 					<ipxact:addressOffset>'h58</ipxact:addressOffset>
@@ -2302,7 +2314,7 @@
 					<ipxact:field>
 						<ipxact:name>BIT_RAN_HIGH_VAL</ipxact:name>
 						<ipxact:displayName>BIT_RAN_HIGH_VAL</ipxact:displayName>
-						<ipxact:description>High threshold value</ipxact:description>
+						<ipxact:description>Range filter High threshold. The identifier format is the same as in IDENTIFIER_W of TXT buffer or RX buffer. If Range filter is not supported, writes to this register have no effect and read will return all zeroes.</ipxact:description>
 						<ipxact:bitOffset>0</ipxact:bitOffset>
 						<ipxact:resets>
 							<ipxact:reset>
@@ -2315,7 +2327,6 @@
 				<ipxact:register>
 					<ipxact:name>FILTER_RAN_LOW</ipxact:name>
 					<ipxact:displayName>FILTER_RAN_LOW</ipxact:displayName>
-					<ipxact:description>Filter Range Low threshold. The identifier format is the same as transmitted and received identifier format. BASE Identifier is in bits 28 : 18 and Identifier extension are bits 17 : 0. If Range filter is not supported, writes to this register have no effect and read will return all zeroes.</ipxact:description>
 					<ipxact:isPresent>uuid_41f98f04_041f_4ab6_b60d_c6226cd54eb6</ipxact:isPresent>
 					<ipxact:dim>0</ipxact:dim>
 					<ipxact:addressOffset>'h54</ipxact:addressOffset>
@@ -2325,7 +2336,7 @@
 					<ipxact:field>
 						<ipxact:name>BIT_RAN_LOW_VAL</ipxact:name>
 						<ipxact:displayName>BIT_RAN_LOW_VAL</ipxact:displayName>
-						<ipxact:description>Low threshold value</ipxact:description>
+						<ipxact:description>Filter Range Low threshold. The identifier format is the same as in IDENTIFIER_W of TXT buffer or RX buffer. If Range filter is not supported, writes to this register have no effect and read will return all zeroes.</ipxact:description>
 						<ipxact:bitOffset>0</ipxact:bitOffset>
 						<ipxact:resets>
 							<ipxact:reset>
@@ -2338,7 +2349,6 @@
 				<ipxact:register>
 					<ipxact:name>FILTER_C_VAL</ipxact:name>
 					<ipxact:displayName>FILTER_C_VAL</ipxact:displayName>
-					<ipxact:description>Filter C Bit value. The identifier format is the same as transmitted and received Identifier. BASE Identifier is 11 LSB and Identifier extension are bits 28-12. If filter C is not present, writes to this register have no effect and read will return all zeroes.</ipxact:description>
 					<ipxact:isPresent>uuid_d4ccabd1_3f50_49b0_ae1e_45cf5fdb460e</ipxact:isPresent>
 					<ipxact:dim>0</ipxact:dim>
 					<ipxact:addressOffset>'h50</ipxact:addressOffset>
@@ -2348,7 +2358,8 @@
 					<ipxact:field>
 						<ipxact:name>BIT_VAL_C_VAL</ipxact:name>
 						<ipxact:displayName>BIT_VAL_C_VAL</ipxact:displayName>
-						<ipxact:description>Bit Value for acceptance filters to be compared with income identifier. Only bits set in according to FILTER_C_MASK register are compared.</ipxact:description>
+						<ipxact:description>Filter C value. The identifier format is the same as in IDENTIFIER_W of TXT buffer or RX buffer. If filter A is not present, writes to this register have no effect and read will return all zeroes.
+</ipxact:description>
 						<ipxact:bitOffset>0</ipxact:bitOffset>
 						<ipxact:resets>
 							<ipxact:reset>
@@ -2361,7 +2372,6 @@
 				<ipxact:register>
 					<ipxact:name>FILTER_C_MASK</ipxact:name>
 					<ipxact:displayName>FILTER_C_MASK</ipxact:displayName>
-					<ipxact:description>Filter C Bit mask. The identifier format is the same as transmitted and received Identifier. BASE Identifier is 11 LSB and Identifier extension are bits 28-12. If filter C is not present, writes to this register have no effect and read will return all zeroes.</ipxact:description>
 					<ipxact:isPresent>uuid_d4ccabd1_3f50_49b0_ae1e_45cf5fdb460e</ipxact:isPresent>
 					<ipxact:dim>0</ipxact:dim>
 					<ipxact:addressOffset>'h4C</ipxact:addressOffset>
@@ -2371,7 +2381,8 @@
 					<ipxact:field>
 						<ipxact:name>BIT_MASK_C_VAL</ipxact:name>
 						<ipxact:displayName>BIT_MASK_C_VAL</ipxact:displayName>
-						<ipxact:description>Bit mask for acceptance filters. Logic 1 indicates this bit of Income identifier is compared with the same bit in FILTER_C_VALUE. Logic 0 indicates this bit is not compared.</ipxact:description>
+						<ipxact:description>Filter C mask. The identifier format is the same as in IDENTIFIER_W of TXT buffer or RX buffer. If filter A is not present, writes to this register have no effect and read will return all zeroes.
+</ipxact:description>
 						<ipxact:bitOffset>0</ipxact:bitOffset>
 						<ipxact:resets>
 							<ipxact:reset>
@@ -2384,7 +2395,6 @@
 				<ipxact:register>
 					<ipxact:name>FILTER_B_VAL</ipxact:name>
 					<ipxact:displayName>FILTER_B_VAL</ipxact:displayName>
-					<ipxact:description>Filter B Bit value. The identifier format is the same as transmitted and received Identifier. BASE Identifier is 11 LSB and Identifier extension are bits 28-12. If filter B is not present, writes to this register have no effect and read will return all zeroes.</ipxact:description>
 					<ipxact:isPresent>uuid_ee0c8305_bed6_412e_8743_8e3657e8b866</ipxact:isPresent>
 					<ipxact:dim>0</ipxact:dim>
 					<ipxact:addressOffset>'h48</ipxact:addressOffset>
@@ -2394,7 +2404,8 @@
 					<ipxact:field>
 						<ipxact:name>BIT_VAL_B_VAL</ipxact:name>
 						<ipxact:displayName>BIT_VAL_B_VAL</ipxact:displayName>
-						<ipxact:description>Bit Value for acceptance filters to be compared with income identifier. Only bits set in according to FILTER_B_MASK register are compared.</ipxact:description>
+						<ipxact:description>Filter B value. The identifier format is the same as in IDENTIFIER_W of TXT buffer or RX buffer. If filter A is not present, writes to this register have no effect and read will return all zeroes.
+</ipxact:description>
 						<ipxact:bitOffset>0</ipxact:bitOffset>
 						<ipxact:resets>
 							<ipxact:reset>
@@ -2407,7 +2418,6 @@
 				<ipxact:register>
 					<ipxact:name>FILTER_B_MASK</ipxact:name>
 					<ipxact:displayName>FILTER_B_MASK</ipxact:displayName>
-					<ipxact:description>Filter B Bit mask. The identifier format is the same as transmitted and received Identifier. BASE Identifier is 11 LSB and Identifier extension are bits 28-12. If filter B is not present, writes to this register have no effect and read will return all zeroes.</ipxact:description>
 					<ipxact:isPresent>uuid_ee0c8305_bed6_412e_8743_8e3657e8b866</ipxact:isPresent>
 					<ipxact:dim>0</ipxact:dim>
 					<ipxact:addressOffset>'h44</ipxact:addressOffset>
@@ -2417,7 +2427,8 @@
 					<ipxact:field>
 						<ipxact:name>BIT_MASK_B_VAL</ipxact:name>
 						<ipxact:displayName>BIT_MASK_B_VAL</ipxact:displayName>
-						<ipxact:description>Bit mask for acceptance filters. Logic 1 indicates this bit of Income identifier is compared with the same bit in FILTER_B_VALUE. Logic 0 indicates this bit is not compared.</ipxact:description>
+						<ipxact:description>Filter B mask. The identifier format is the same as in IDENTIFIER_W of TXT buffer or RX buffer. If filter A is not present, writes to this register have no effect and read will return all zeroes.
+</ipxact:description>
 						<ipxact:bitOffset>0</ipxact:bitOffset>
 						<ipxact:resets>
 							<ipxact:reset>
@@ -2430,7 +2441,6 @@
 				<ipxact:register>
 					<ipxact:name>FILTER_A_MASK</ipxact:name>
 					<ipxact:displayName>FILTER_A_MASK</ipxact:displayName>
-					<ipxact:description>Filter A Bit mask. The identifier format is the same as transmitted and received Identifier. BASE Identifier is 11 LSB and Identifier extension are bits 28-12. If filter A is not present, writes to this register have no effect and read will return all zeroes.</ipxact:description>
 					<ipxact:isPresent>uuid_09846e1a_b03a_4f0b_99b5_c1981400ea9e</ipxact:isPresent>
 					<ipxact:dim>0</ipxact:dim>
 					<ipxact:addressOffset>'h3C</ipxact:addressOffset>
@@ -2440,7 +2450,8 @@
 					<ipxact:field>
 						<ipxact:name>BIT_MASK_A_VAL</ipxact:name>
 						<ipxact:displayName>BIT_MASK_A_VAL</ipxact:displayName>
-						<ipxact:description>Bit mask for acceptance filters. Logic 1 indicates this bit of Income identifier is compared with the same bit in FILTER_A_VALUE. Logic 0 indicates this bit is not compared.</ipxact:description>
+						<ipxact:description>Filter A mask. The identifier format is the same as in IDENTIFIER_W of TXT buffer or RX buffer. If filter A is not present, writes to this register have no effect and read will return all zeroes.
+</ipxact:description>
 						<ipxact:bitOffset>0</ipxact:bitOffset>
 						<ipxact:resets>
 							<ipxact:reset>
@@ -2453,7 +2464,7 @@
 				<ipxact:register>
 					<ipxact:name>CTR_PRES</ipxact:name>
 					<ipxact:displayName>CTR_PRES</ipxact:displayName>
-					<ipxact:description>Counter Preset Register. Error counters can be modified via this register.</ipxact:description>
+					<ipxact:description>Counter preset register. Error counters can be modified via this register.</ipxact:description>
 					<ipxact:dim>0</ipxact:dim>
 					<ipxact:addressOffset>'h38</ipxact:addressOffset>
 					<ipxact:size>32</ipxact:size>
@@ -2569,7 +2580,7 @@
 				</ipxact:register>
 				<ipxact:register>
 					<ipxact:name>TEC</ipxact:name>
-					<ipxact:displayName>TXC</ipxact:displayName>
+					<ipxact:displayName>TEC</ipxact:displayName>
 					<ipxact:dim>0</ipxact:dim>
 					<ipxact:addressOffset>'h32</ipxact:addressOffset>
 					<ipxact:size>16</ipxact:size>
@@ -2577,6 +2588,7 @@
 					<ipxact:access>read-only</ipxact:access>
 					<ipxact:field>
 						<ipxact:name>TEC_VAL</ipxact:name>
+						<ipxact:displayName>TEC_VAL</ipxact:displayName>
 						<ipxact:description>TX error counter (TEC).</ipxact:description>
 						<ipxact:bitOffset>0</ipxact:bitOffset>
 						<ipxact:resets>
@@ -2589,7 +2601,7 @@
 				</ipxact:register>
 				<ipxact:register>
 					<ipxact:name>REC</ipxact:name>
-					<ipxact:displayName>RXC</ipxact:displayName>
+					<ipxact:displayName>REC</ipxact:displayName>
 					<ipxact:dim>0</ipxact:dim>
 					<ipxact:addressOffset>'h30</ipxact:addressOffset>
 					<ipxact:size>16</ipxact:size>
@@ -2662,7 +2674,7 @@
 			<ipxact:addressBlock>
 				<ipxact:name>TX_Buffer_2</ipxact:name>
 				<ipxact:displayName>TXT Buffer 2</ipxact:displayName>
-				<ipxact:description>Access to this memory region is mapped to TXT buffer 2.  CAN FD frame for transmittion can be inserted to this buffer. The frame layout corresponds to the layout described in Chapter &quot;CAN FD frame format&quot;. First adress in this region (TXTB2_DATA_1) corresponds to FRAME_FORMAT_W, second address (TXTB2_DATA_2) corresponds to IDENTIFIER_W etc. The last address (TXTB2_DATA_20) corresponds to DATA_61_64_W. The adresses in between correspond linearly. This memory region is write only and read access will return all zeroes. This region supports only 32 bit access.</ipxact:description>
+				<ipxact:description>Access to this memory region is mapped to TXT buffer 2.  CAN FD frame for transmittion can be inserted to this buffer. The frame layout corresponds to the layout described in Chapter &quot;CAN FD frame format&quot;. First adress in this region (TXTB2_DATA_1) corresponds to FRAME_FORMAT_W, second address (TXTB2_DATA_2) corresponds to IDENTIFIER_W etc. The last address (TXTB2_DATA_20) corresponds to DATA_61_64_W. The adresses in between correspond linearly. This memory region is write only and read access will return all zeroes. This region supports only 32 bit access. This region is write only.</ipxact:description>
 				<ipxact:baseAddress>'h200</ipxact:baseAddress>
 				<ipxact:range>256</ipxact:range>
 				<ipxact:width>32</ipxact:width>
@@ -2708,7 +2720,7 @@
 			<ipxact:addressBlock>
 				<ipxact:name>TX_Buffer_3</ipxact:name>
 				<ipxact:displayName>TXT Buffer 3</ipxact:displayName>
-				<ipxact:description>Access to this memory region is mapped to TXT buffer 3.  CAN FD frame for transmittion can be inserted to this buffer. The frame layout corresponds to the layout described in Chapter &quot;CAN FD frame format&quot;. First adress in this region (TXTB3_DATA_1) corresponds to FRAME_FORMAT_W, second address (TXTB3_DATA_2) corresponds to IDENTIFIER_W etc. The last address (TXTB2_DATA_20) corresponds to DATA_61_64_W. The adresses in between correspond linearly. This memory region is write only and read access will return all zeroes. This region supports only 32 bit access. This region is write only.</ipxact:description>
+				<ipxact:description>Access to this memory region is mapped to TXT buffer 3.  CAN FD frame for transmittion can be inserted to this buffer. The frame layout corresponds to the layout described in Chapter &quot;CAN FD frame format&quot;. First adress in this region (TXTB3_DATA_1) corresponds to FRAME_FORMAT_W, second address (TXTB3_DATA_2) corresponds to IDENTIFIER_W etc. The last address (TXTB3_DATA_20) corresponds to DATA_61_64_W. The adresses in between correspond linearly. This memory region is write only and read access will return all zeroes. This region supports only 32 bit access. This region is write only.</ipxact:description>
 				<ipxact:baseAddress>'h300</ipxact:baseAddress>
 				<ipxact:range>256</ipxact:range>
 				<ipxact:width>32</ipxact:width>
@@ -2810,7 +2822,7 @@
 				<ipxact:range>80</ipxact:range>
 				<ipxact:width>32</ipxact:width>
 				<ipxact:register>
-					<ipxact:name>FRAME_FORM_W</ipxact:name>
+					<ipxact:name>FRAME_FORMAT_W</ipxact:name>
 					<ipxact:displayName>FRAME_FORM_W</ipxact:displayName>
 					<ipxact:description>Frame format word with CAN frame metadata.</ipxact:description>
 					<ipxact:dim>0</ipxact:dim>
@@ -2963,7 +2975,7 @@
 					<ipxact:addressOffset>'h8</ipxact:addressOffset>
 					<ipxact:size>32</ipxact:size>
 					<ipxact:field>
-						<ipxact:name>TIME_STAMP_31_0</ipxact:name>
+						<ipxact:name>TIME_STAMP_L_W</ipxact:name>
 						<ipxact:displayName>TIME_STAMP_31_0</ipxact:displayName>
 						<ipxact:description>Lower 32 bits of timestamp when the frame should be transmitted or when it was received.</ipxact:description>
 						<ipxact:bitOffset>0</ipxact:bitOffset>
@@ -2977,7 +2989,7 @@
 					<ipxact:addressOffset>'hC</ipxact:addressOffset>
 					<ipxact:size>32</ipxact:size>
 					<ipxact:field>
-						<ipxact:name>TIMESTAMP_L_W</ipxact:name>
+						<ipxact:name>TIMESTAMP_U_W</ipxact:name>
 						<ipxact:displayName>TIMESTAMP_L_W</ipxact:displayName>
 						<ipxact:description>Upper 32 bits of timestamp when the frame should be transmitted or when it was received.</ipxact:description>
 						<ipxact:bitOffset>0</ipxact:bitOffset>
@@ -3118,12 +3130,12 @@
 			<kactus2:kts_firmness>Mutable</kactus2:kts_firmness>
 		</kactus2:kts_attributes>
 		<ipxact:regLocks>
-			<ipxact:regLock lock_signal="lock_1" reg_name="CTR_PRES" description="Register can be only written when MODE[TSTM] = 1, otherwise write has no effect."/>
-			<ipxact:regLock lock_signal="lock_1" reg_name="EWL" description="Register can be only written when MODE[TSTM] = 1, otherwise write has no effect."/>
-			<ipxact:regLock lock_signal="lock_1" reg_name="ERP" description="Register can be only written when MODE[TSTM] = 1, otherwise write has no effect."/>
-			<ipxact:regLock lock_signal="lock_2" reg_name="BTR" description="Register can be only written when SETTINGS[ENA] = 0, otherwise write has no effect."/>
-			<ipxact:regLock lock_signal="lock_2" reg_name="BTR_FD" description="Register can be only written when SETTINGS[ENA] = 0, otherwise write has no effect."/>
-			<ipxact:regLock lock_signal="lock_2" reg_name="SSP_CFG" description="Register can be only written when SETTINGS[ENA] = 0, otherwise write has no effect."/>
+			<ipxact:regLock description="Register can be only written when MODE[TSTM] = 1, otherwise write has no effect." reg_name="CTR_PRES" lock_signal="lock_1"/>
+			<ipxact:regLock description="Register can be only written when MODE[TSTM] = 1, otherwise write has no effect." reg_name="EWL" lock_signal="lock_1"/>
+			<ipxact:regLock description="Register can be only written when MODE[TSTM] = 1, otherwise write has no effect." reg_name="ERP" lock_signal="lock_1"/>
+			<ipxact:regLock description="Register can be only written when SETTINGS[ENA] = 0, otherwise write has no effect." reg_name="BTR" lock_signal="lock_2"/>
+			<ipxact:regLock description="Register can be only written when SETTINGS[ENA] = 0, otherwise write has no effect." reg_name="BTR_FD" lock_signal="lock_2"/>
+			<ipxact:regLock description="Register can be only written when SETTINGS[ENA] = 0, otherwise write has no effect." reg_name="SSP_CFG" lock_signal="lock_2"/>
 		</ipxact:regLocks>
 		<kactus2:license>MIT</kactus2:license>
 	</ipxact:vendorExtensions>

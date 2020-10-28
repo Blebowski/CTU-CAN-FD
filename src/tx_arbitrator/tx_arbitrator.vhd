@@ -558,7 +558,7 @@ begin
 
         elsif (load_ffmt_w_addr = '1') then
             txtb_pointer_meta <=
-                to_integer(unsigned(FRAME_FORM_W_ADR(11 downto 2)));
+                to_integer(unsigned(FRAME_FORMAT_W_ADR(11 downto 2)));
 
         elsif (load_ident_w_addr = '1') then
             txtb_pointer_meta <=

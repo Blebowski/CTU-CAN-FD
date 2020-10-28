@@ -56,7 +56,7 @@ package can_fd_frame_format is
   ------------------------------------------------------------------------------
   constant CAN_FD_FRAME_FORMAT_BLOCK    : std_logic_vector(3 downto 0) := x"0";
 
-  constant FRAME_FORM_W_ADR          : std_logic_vector(11 downto 0) := x"000";
+  constant FRAME_FORMAT_W_ADR        : std_logic_vector(11 downto 0) := x"000";
   constant IDENTIFIER_W_ADR          : std_logic_vector(11 downto 0) := x"004";
   constant TIMESTAMP_L_W_ADR         : std_logic_vector(11 downto 0) := x"008";
   constant TIMESTAMP_U_W_ADR         : std_logic_vector(11 downto 0) := x"00C";
@@ -65,7 +65,7 @@ package can_fd_frame_format is
   constant DATA_61_64_W_ADR          : std_logic_vector(11 downto 0) := x"04C";
 
   ------------------------------------------------------------------------------
-  -- FRAME_FORM_W register
+  -- FRAME_FORMAT_W register
   --
   -- Frame format word with CAN frame metadata.
   ------------------------------------------------------------------------------
@@ -99,7 +99,7 @@ package can_fd_frame_format is
   constant ESI_ERR_ACTIVE     : std_logic := '0';
   constant ESI_ERR_PASIVE     : std_logic := '1';
 
-  -- FRAME_FORM_W register reset values
+  -- FRAME_FORMAT_W register reset values
 
   ------------------------------------------------------------------------------
   -- IDENTIFIER_W register
@@ -117,8 +117,8 @@ package can_fd_frame_format is
   -- TIMESTAMP_L_W register
   --
   ------------------------------------------------------------------------------
-  constant TIME_STAMP_31_0_L      : natural := 0;
-  constant TIME_STAMP_31_0_H     : natural := 31;
+  constant TIME_STAMP_L_W_L       : natural := 0;
+  constant TIME_STAMP_L_W_H      : natural := 31;
 
   -- TIMESTAMP_L_W register reset values
 
@@ -126,8 +126,8 @@ package can_fd_frame_format is
   -- TIMESTAMP_U_W register
   --
   ------------------------------------------------------------------------------
-  constant TIMESTAMP_L_W_L        : natural := 0;
-  constant TIMESTAMP_L_W_H       : natural := 31;
+  constant TIMESTAMP_U_W_L        : natural := 0;
+  constant TIMESTAMP_U_W_H       : natural := 31;
 
   -- TIMESTAMP_U_W register reset values
 

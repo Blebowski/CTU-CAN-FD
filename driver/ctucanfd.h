@@ -53,7 +53,7 @@ struct ctucan_priv {
 	int irq_flags;
 	unsigned long drv_flags;
 
-	union ctu_can_fd_frame_form_w rxfrm_first_word;
+	union ctu_can_fd_frame_format_w rxfrm_first_word;
 
 	struct list_head peers_on_pdev;
 };

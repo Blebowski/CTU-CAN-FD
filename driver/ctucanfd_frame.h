@@ -34,22 +34,22 @@
 
 /* CAN_Frame_format memory map */
 enum ctu_can_fd_can_frame_format {
-	CTU_CAN_FD_FRAME_FORM_W        = 0x0,
-	CTU_CAN_FD_IDENTIFIER_W        = 0x4,
-	CTU_CAN_FD_TIMESTAMP_L_W       = 0x8,
-	CTU_CAN_FD_TIMESTAMP_U_W       = 0xc,
-	CTU_CAN_FD_DATA_1_4_W         = 0x10,
-	CTU_CAN_FD_DATA_5_8_W         = 0x14,
-	CTU_CAN_FD_DATA_61_64_W       = 0x4c,
+	CTU_CAN_FD_FRAME_FORMAT_W       = 0x0,
+	CTU_CAN_FD_IDENTIFIER_W         = 0x4,
+	CTU_CAN_FD_TIMESTAMP_L_W        = 0x8,
+	CTU_CAN_FD_TIMESTAMP_U_W        = 0xc,
+	CTU_CAN_FD_DATA_1_4_W          = 0x10,
+	CTU_CAN_FD_DATA_5_8_W          = 0x14,
+	CTU_CAN_FD_DATA_61_64_W        = 0x4c,
 };
 
 
 /* Register descriptions: */
-union ctu_can_fd_frame_form_w {
+union ctu_can_fd_frame_format_w {
 	uint32_t u32;
-	struct ctu_can_fd_frame_form_w_s {
+	struct ctu_can_fd_frame_format_w_s {
 #ifdef __LITTLE_ENDIAN_BITFIELD
-  /* FRAME_FORM_W */
+  /* FRAME_FORMAT_W */
 		uint32_t dlc                     : 4;
 		uint32_t reserved_4              : 1;
 		uint32_t rtr                     : 1;
@@ -75,27 +75,27 @@ union ctu_can_fd_frame_form_w {
 	} s;
 };
 
-enum ctu_can_fd_frame_form_w_rtr {
+enum ctu_can_fd_frame_format_w_rtr {
 	NO_RTR_FRAME       = 0x0,
 	RTR_FRAME          = 0x1,
 };
 
-enum ctu_can_fd_frame_form_w_ide {
+enum ctu_can_fd_frame_format_w_ide {
 	BASE           = 0x0,
 	EXTENDED       = 0x1,
 };
 
-enum ctu_can_fd_frame_form_w_fdf {
+enum ctu_can_fd_frame_format_w_fdf {
 	NORMAL_CAN       = 0x0,
 	FD_CAN           = 0x1,
 };
 
-enum ctu_can_fd_frame_form_w_brs {
+enum ctu_can_fd_frame_format_w_brs {
 	BR_NO_SHIFT       = 0x0,
 	BR_SHIFT          = 0x1,
 };
 
-enum ctu_can_fd_frame_form_w_esi_rsv {
+enum ctu_can_fd_frame_format_w_esi_rsv {
 	ESI_ERR_ACTIVE       = 0x0,
 	ESI_ERR_PASIVE       = 0x1,
 };
@@ -120,7 +120,7 @@ union ctu_can_fd_timestamp_l_w {
 	uint32_t u32;
 	struct ctu_can_fd_timestamp_l_w_s {
   /* TIMESTAMP_L_W */
-		uint32_t time_stamp_31_0        : 32;
+		uint32_t time_stamp_l_w         : 32;
 	} s;
 };
 
@@ -128,7 +128,7 @@ union ctu_can_fd_timestamp_u_w {
 	uint32_t u32;
 	struct ctu_can_fd_timestamp_u_w_s {
   /* TIMESTAMP_U_W */
-		uint32_t timestamp_l_w          : 32;
+		uint32_t timestamp_u_w          : 32;
 	} s;
 };
 

@@ -682,10 +682,10 @@ void ctucan_hw_set_rx_tsop(struct ctucan_hw_priv *priv,
  *
  * Return: The firts word of received frame
  */
-static inline union ctu_can_fd_frame_form_w
+static inline union ctu_can_fd_frame_format_w
 	ctu_can_fd_read_rx_ffw(struct ctucan_hw_priv *priv)
 {
-	union ctu_can_fd_frame_form_w ffw;
+	union ctu_can_fd_frame_format_w ffw;
 
 	ffw.u32 = priv->read_reg(priv, CTU_CAN_FD_RX_DATA);
 	return ffw;
@@ -725,7 +725,7 @@ void ctucan_hw_read_rx_frame(struct ctucan_hw_priv *priv,
  */
 void ctucan_hw_read_rx_frame_ffw(struct ctucan_hw_priv *priv,
 				 struct canfd_frame *cf, u64 *ts,
-				 union ctu_can_fd_frame_form_w ffw);
+				 union ctu_can_fd_frame_format_w ffw);
 
 /**
  * ctucan_hw_get_tx_status - Returns status of TXT Buffer.
