@@ -3106,8 +3106,10 @@ begin
     ---------------------------------------------------------------------------
     -- Synchronisation type
     ---------------------------------------------------------------------------
-    sync_control_d <= NO_SYNC when (switch_to_ssp = '1' or
-                                    sp_control_q_i = SECONDARY_SAMPLE)
+    sync_control_d <= NO_SYNC when (sp_control_switch_data = '1' or
+                                    sp_control_q_i = SECONDARY_SAMPLE or
+                                    (sp_control_q_i = DATA_SAMPLE and
+                                     is_transmitter = '1'))
                               else
                     HARD_SYNC when (perform_hsync = '1')
                               else
@@ -3209,19 +3211,16 @@ begin
 
     -- psl no_simul_crc_17_crc_21_asrt : assert never
     --  (crc_use_17 = '1' and crc_use_21 = '1')
-    --  report "Can't use simultaneously CRC 17 and CRC 21"
-    --  severity error;
+    --  report "Can't use simultaneously CRC 17 and CRC 21";
     
     -- psl no_simul_rx_trigger_err_req_asrt : assert never
     --  (rx_trigger = '1' and err_frm_req = '1')
     --  report "RX Trigger and Error frame request can't be active at once " &
-    --  " since they should occur in different pipeline stages!"
-    --  severity error;
+    --  " since they should occur in different pipeline stages!";
 
     -- psl no_simul_rx_rtr_and_fd_frame_asrt : assert never
     --  (rec_is_rtr = RTR_FRAME and rec_frame_type = FD_CAN)
-    --  report "RTR and FDF can't be received simultaneously!"
-    --  severity error;
+    --  report "RTR and FDF can't be received simultaneously!";
 
 
     -- Error frame requests can't arrive during following frame fields:
@@ -3234,10 +3233,12 @@ begin
     --  (err_frm_req = '1') and
     --  (curr_state = s_pc_off or curr_state = s_pc_integrating or
     --   curr_state = s_pc_idle or curr_state = s_pc_intermission or
-    --   curr_state = s_pc_suspend or curr_state = s_pc_reintegrating)
-    --   
-    --  report "Error frame request in invalid Protocol control field!"
-    --  severity error;
+    --   curr_state = s_pc_suspend or curr_state = s_pc_reintegrating)   
+    --  report "Error frame request in invalid Protocol control field!";
+    
+    -- psl no_secondary_sample_receiver : assert never
+    --  (sp_control_q_i = SECONDARY_SAMPLE) and (is_receiver = '1')
+    --  report "Receiver shall never use secondary sample point!";
 
     -----------------------------------------------------------------------
     -----------------------------------------------------------------------
