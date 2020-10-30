@@ -126,7 +126,7 @@ union ctu_can_fd_mode_settings {
 #ifdef __LITTLE_ENDIAN_BITFIELD
   /* MODE */
 		uint32_t rst                     : 1;
-		uint32_t lom                     : 1;
+		uint32_t bmm                     : 1;
 		uint32_t stm                     : 1;
 		uint32_t afm                     : 1;
 		uint32_t fde                     : 1;
@@ -157,15 +157,15 @@ union ctu_can_fd_mode_settings {
 		uint32_t fde                     : 1;
 		uint32_t afm                     : 1;
 		uint32_t stm                     : 1;
-		uint32_t lom                     : 1;
+		uint32_t bmm                     : 1;
 		uint32_t rst                     : 1;
 #endif
 	} s;
 };
 
-enum ctu_can_fd_mode_lom {
-	LOM_DISABLED       = 0x0,
-	LOM_ENABLED        = 0x1,
+enum ctu_can_fd_mode_bmm {
+	BMM_DISABLED       = 0x0,
+	BMM_ENABLED        = 0x1,
 };
 
 enum ctu_can_fd_mode_stm {

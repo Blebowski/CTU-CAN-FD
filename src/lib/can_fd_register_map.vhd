@@ -182,7 +182,7 @@ package can_fd_register_map is
   --
   ------------------------------------------------------------------------------
   constant RST_IND                : natural := 0;
-  constant LOM_IND                : natural := 1;
+  constant BMM_IND                : natural := 1;
   constant STM_IND                : natural := 2;
   constant AFM_IND                : natural := 3;
   constant FDE_IND                : natural := 4;
@@ -197,9 +197,9 @@ package can_fd_register_map is
   constant ACF_DISABLED       : std_logic := '0';
   constant ACF_ENABLED        : std_logic := '1';
 
-  -- "LOM" field enumerated values
-  constant LOM_DISABLED       : std_logic := '0';
-  constant LOM_ENABLED        : std_logic := '1';
+  -- "BMM" field enumerated values
+  constant BMM_DISABLED       : std_logic := '0';
+  constant BMM_ENABLED        : std_logic := '1';
 
   -- "STM" field enumerated values
   constant STM_DISABLED       : std_logic := '0';
@@ -213,7 +213,7 @@ package can_fd_register_map is
   constant RST_RSTVAL         : std_logic := '0';
   constant FDE_RSTVAL         : std_logic := '1';
   constant ACF_RSTVAL         : std_logic := '0';
-  constant LOM_RSTVAL         : std_logic := '0';
+  constant BMM_RSTVAL         : std_logic := '0';
   constant STM_RSTVAL         : std_logic := '0';
   constant AFM_RSTVAL         : std_logic := '0';
   constant TSTM_RSTVAL        : std_logic := '0';
