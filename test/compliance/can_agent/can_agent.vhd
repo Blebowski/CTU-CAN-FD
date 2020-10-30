@@ -503,12 +503,12 @@ begin
                     driven_item <= driver_mem(driver_rp);
                     wait for 0 ns;
 
-                    debug(CAN_AGENT_TAG &
-                          "Driving: " & std_logic'image(driven_item.value) &
-                          " for time: " & time'image(driven_item.drive_time));
-                    if (driven_item.print_msg) then
-                        info("Driving item: " & driven_item.msg);
-                    end if;
+                    --debug(CAN_AGENT_TAG &
+                    --      "Driving: " & std_logic'image(driven_item.value) &
+                    --      " for time: " & time'image(driven_item.drive_time));
+                    --if (driven_item.print_msg) then
+                    --    info("Driving item: " & driven_item.msg);
+                    --end if;
 
                     can_rx_i <= driven_item.value;
                     wait for driven_item.drive_time;
@@ -646,13 +646,13 @@ begin
                 monitored_item <= monitor_mem(monitor_rp);
                 wait for 0 ns;
                 
-                debug(CAN_AGENT_TAG & 
-                      "Monitoring: " & std_logic'image(monitored_item.value) &
-                      " for time: " & time'image(monitored_item.monitor_time));
+                --debug(CAN_AGENT_TAG & 
+                --      "Monitoring: " & std_logic'image(monitored_item.value) &
+                --      " for time: " & time'image(monitored_item.monitor_time));
                 
-                if (monitored_item.print_msg) then
-                    info("Monitoring item: " & monitored_item.msg);
-                end if;
+                --if (monitored_item.print_msg) then
+                --    info("Monitoring item: " & monitored_item.msg);
+                --end if;
                 
                 mon_count := monitored_item.monitor_time / monitored_item.sample_rate;
                 monitored_time := 0 ns;
