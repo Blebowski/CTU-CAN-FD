@@ -147,6 +147,9 @@ entity protocol_control is
         -- Start of Frame
         is_sof                  :out  std_logic;
 
+        -- Protocol exception status
+        is_pexs                 :out  std_logic;
+
         -----------------------------------------------------------------------
         -- TXT Buffers interface
         -----------------------------------------------------------------------
@@ -461,6 +464,7 @@ architecture rtl of protocol_control is
   
   -- Protocol exception
   signal drv_pex                  :     std_logic;
+  signal drv_cpexs                :     std_logic;
   
   -----------------------------------------------------------------------------
   -- Internal signals
@@ -632,6 +636,7 @@ begin
     drv_ssp_delay_select  <=  drv_bus(DRV_SSP_DELAY_SELECT_HIGH downto
                                       DRV_SSP_DELAY_SELECT_LOW);
     drv_pex               <=  drv_bus(DRV_PEX_INDEX);
+    drv_cpexs             <=  drv_bus(DRV_PEXS_CLR_INDEX);
   
     ---------------------------------------------------------------------------
     -- TX Data word endian swapper
@@ -675,6 +680,7 @@ begin
         drv_can_fd_ena          => drv_can_fd_ena,      -- IN
         drv_ssp_delay_select    => drv_ssp_delay_select,-- IN
         drv_pex                 => drv_pex,             -- IN
+        drv_cpexs               => drv_cpexs,           -- IN
         is_control              => is_control,          -- OUT
         is_data                 => is_data,             -- OUT
         is_stuff_count          => is_stuff_count,      -- OUT
@@ -688,6 +694,7 @@ begin
         is_err_frm              => is_err_frm,          -- OUT
         is_overload             => is_overload,         -- OUT
         is_sof                  => is_sof,              -- OUT
+        is_pexs                 => is_pexs,             -- OUT
 
         -- Data-path interface
         tx_data_wbs             => tx_data_wbs,         -- IN

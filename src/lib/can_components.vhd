@@ -1530,6 +1530,9 @@ package can_components is
         -- Protocol exception handling
         drv_pex                 :in   std_logic;
         
+        -- Protocol exception status clear
+        drv_cpexs               :in   std_logic;
+
         -- Arbitration field is being transmitted
         is_arbitration          :out  std_logic;
         
@@ -1571,6 +1574,9 @@ package can_components is
         
         -- Start of Frame
         is_sof                  :out  std_logic;
+        
+        -- Protocol exception status
+        is_pexs                 :out  std_logic;
         
         -----------------------------------------------------------------------
         -- Data-path interface
@@ -2001,6 +2007,9 @@ package can_components is
         
         -- Start of Frame
         is_sof                  :out  std_logic;
+        
+        -- Protocol exception status
+        is_pexs                 :out  std_logic;
                 
         -----------------------------------------------------------------------
         -- TXT Buffers interface

@@ -218,7 +218,8 @@ package drv_stat_pkg is
     constant DRV_ENA_INDEX     : natural := 509;
     constant DRV_FD_TYPE_INDEX : natural := 510;
     
-    constant DRV_PEX_INDEX     : natural := 511;
+    constant DRV_PEX_INDEX      : natural := 511;
+    constant DRV_PEXS_CLR_INDEX : natural := 512;
 
     ----------------------------------------------------------------------------
     -- RX, TX and TXT Buffer frame format signal indexes
@@ -399,5 +400,7 @@ package drv_stat_pkg is
     constant STAT_PC_IS_OVERLOAD_INDEX      : natural := 382;
     constant STAT_SOF_PULSE_INDEX           : natural := 383;
     constant STAT_PC_IS_SOF                 : natural := 384;
+    
+    constant STAT_PEXS_INDEX                : natural := 385;
 
 end package;

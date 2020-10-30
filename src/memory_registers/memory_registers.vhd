@@ -510,7 +510,9 @@ begin
 
     status_comb(EFT_IND)  <= stat_bus(STAT_PC_IS_ERR_INDEX);
 
-    status_comb(31 downto 8) <= (others => '0');
+    status_comb(PEXS_IND) <= stat_bus(STAT_PEXS_INDEX);
+
+    status_comb(31 downto 9) <= (others => '0');
 
     ----------------------------------------------------------------------------
     ----------------------------------------------------------------------------
@@ -567,6 +569,9 @@ begin
     drv_bus(DRV_CLR_TX_CTR_INDEX) <= align_wrd_to_reg(
         control_registers_out.command, TXFCRST_IND);
 
+    -- CPEXS - Clear protocol exception status (flag)
+    drv_bus(DRV_PEXS_CLR_INDEX) <= align_wrd_to_reg(
+        control_registers_out.command, CPEXS_IND);
 
     ---------------------------------------------------------------------------
     -- SETTINGS Register
@@ -1433,7 +1438,7 @@ begin
     drv_bus(464 downto 462) <= (OTHERS => '0');
     drv_bus(609 downto 601) <= (OTHERS => '0');
     drv_bus(579 downto 570) <= (OTHERS => '0');
-    drv_bus(519 downto 512) <= (OTHERS => '0');
+    drv_bus(519 downto 513) <= (OTHERS => '0');
     drv_bus(506 downto 475) <= (OTHERS => '0');
     drv_bus(444 downto 430) <= (OTHERS => '0');
 
@@ -1457,6 +1462,5 @@ begin
     drv_bus(366)            <= '0';
     drv_bus(357)            <= '0';
     drv_bus(356)            <= '0';
-    drv_bus(551 downto 520) <= (OTHERS => '0');
 
 end architecture;

@@ -141,6 +141,9 @@ entity protocol_control_fsm is
         -- Protocol exception handling
         drv_pex                 :in   std_logic;
         
+        -- Protocol exception status clear
+        drv_cpexs               :in   std_logic;
+        
         -- Control field is being transmitted
         is_control              :out  std_logic;
 
@@ -179,6 +182,9 @@ entity protocol_control_fsm is
         
         -- Start of Frame
         is_sof                  :out  std_logic;
+        
+        -- Protocol exception status
+        is_pexs                 :out  std_logic;
 
         -----------------------------------------------------------------------
         -- Data-path interface
@@ -759,6 +765,9 @@ architecture rtl of protocol_control_fsm is
     
     -- Counting of consecutive bits during passive error flag
     signal rx_data_nbs_prev          :  std_logic;
+
+    -- Protocol exception status
+    signal pexs_set                  :  std_logic;
 
 begin
 
@@ -1465,6 +1474,8 @@ begin
         decrement_rec_i <= '0';
         ack_err_flag_clr <= '0';
         bit_err_after_ack_err <= '0';
+        
+        pexs_set <= '0';
 
         if (err_frm_req = '1') then
             tick_state_reg <= '1';
@@ -1812,6 +1823,7 @@ begin
                         destuff_enable_clear <= '1';
                         ctrl_ctr_pload_i <= '1';
                         ctrl_ctr_pload_val <= C_INTEGRATION_DURATION;
+                        pexs_set <= '1';
                     end if;
                 end if;
 
@@ -1877,6 +1889,7 @@ begin
                         destuff_enable_clear <= '1';
                         ctrl_ctr_pload_i <= '1';
                         ctrl_ctr_pload_val <= C_INTEGRATION_DURATION;
+                        pexs_set <= '1';
                     end if;
                 end if;
                 
@@ -1932,6 +1945,7 @@ begin
                         destuff_enable_clear <= '1';
                         ctrl_ctr_pload_i <= '1';
                         ctrl_ctr_pload_val <= C_INTEGRATION_DURATION;
+                        pexs_set <= '1';
                     end if;
                 end if;
 
@@ -3179,6 +3193,22 @@ begin
                 ack_err_flag <= '0';
             end if;
         end if;    
+    end process;
+
+    -----------------------------------------------------------------------
+    -- Protocol exception status
+    -----------------------------------------------------------------------
+    pexs_proc : process(clk_sys, res_n)
+    begin
+        if (res_n = G_RESET_POLARITY) then
+            is_pexs <= '0';
+        elsif (rising_edge(clk_sys)) then
+            if (pexs_set = '1') then
+                is_pexs <= '1';
+            elsif (drv_cpexs = '1') then
+                is_pexs <= '0';
+            end if;
+        end if;
     end process;
 
     -----------------------------------------------------------------------
