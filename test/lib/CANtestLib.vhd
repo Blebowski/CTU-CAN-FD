@@ -154,7 +154,7 @@ package CANtestLib is
     -- Controller modes
     type SW_mode is record
         reset                   :   boolean;
-        listen_only             :   boolean;
+        bus_monitoring          :   boolean;
         test                    :   boolean;
         self_test               :   boolean;
         acceptance_filter       :   boolean;
@@ -4266,8 +4266,8 @@ package body CANtestLib is
             data(RST_IND)       := '1';
         end if;
 
-        if (mode.listen_only) then
-            data(LOM_IND)       := '1';
+        if (mode.bus_monitoring) then
+            data(BMM_IND)       := '1';
         end if;
 
         if (mode.self_test) then
@@ -4328,7 +4328,7 @@ package body CANtestLib is
         CAN_read(data, MODE_ADR, ID, mem_bus, BIT_8);
 
         mode.reset                      := false;
-        mode.listen_only                := false;
+        mode.bus_monitoring             := false;
         mode.self_test                  := false;
         mode.acceptance_filter          := false;
         mode.flexible_data_rate         := false;
@@ -4340,8 +4340,8 @@ package body CANtestLib is
             mode.reset                  := true;
         end if;
 
-        if (data(LOM_IND) = '1') then
-            mode.listen_only            := true;
+        if (data(BMM_IND) = '1') then
+            mode.bus_monitoring         := true;
         end if;
 
         if (data(STM_IND) = '1') then

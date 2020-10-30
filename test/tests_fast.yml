@@ -85,7 +85,7 @@ feature:
         fault_state:
         glitch_filtering:
         mode_loopback:
-        mode_listen_only:
+        mode_bus_monitoring:
         mode_self_test:
         mode_frame_filters:
             iterations: 6

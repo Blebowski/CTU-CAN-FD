@@ -526,9 +526,9 @@ begin
     drv_bus(DRV_CAN_FD_ENA_INDEX) <= align_wrd_to_reg(
         control_registers_out.mode, FDE_IND);
 
-    -- Bus monitoring = listen only mode
+    -- Bus monitoring mode
     drv_bus(DRV_BUS_MON_ENA_INDEX) <= align_wrd_to_reg(
-        control_registers_out.mode, LOM_IND);
+        control_registers_out.mode, BMM_IND);
 
     -- STM - Self test mode 
     drv_bus(DRV_SELF_TEST_ENA_INDEX) <= align_wrd_to_reg(

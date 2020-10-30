@@ -50,7 +50,7 @@
 --  @2. When at least on TXT Buffer is in Empty state STATUS[TXNF] is set.
 --
 -- @Test sequence:
---  @1. Set LOM mode in Node 1. Check that STATUS[TXNF] is set (all TXT Buffers
+--  @1. Set BMM mode in Node 1. Check that STATUS[TXNF] is set (all TXT Buffers
 --      should be empty).
 --  @2. Issue Set ready and Set Abort consecutively to all TXT Buffers. Check
 --      that STATUS[TXNF] is set before last buffer. Check that after last buffer
@@ -104,11 +104,11 @@ package body status_txnf_feature is
     begin
 
         -----------------------------------------------------------------------
-        -- @1. Set LOM mode in Node 1. Check that STATUS[TXNF] is set (all TXT
+        -- @1. Set BMM mode in Node 1. Check that STATUS[TXNF] is set (all TXT
         --    Buffers should be empty).
         -----------------------------------------------------------------------
         info("Step 1");
-        mode_1.listen_only := true;
+        mode_1.bus_monitoring := true;
         set_core_mode(mode_1, ID_1, mem_bus(1));
 
         get_controller_status(stat_1, ID_1, mem_bus(1));
