@@ -167,10 +167,10 @@ begin
     command_reg_comp : memory_reg
     generic map(
         data_width                      => 32 ,
-        data_mask                       => "00000000000000000000000001111100" ,
+        data_mask                       => "00000000000000000000000011111100" ,
         reset_polarity                  => RESET_POLARITY ,
         reset_value                     => "00000000000000000000000000000000" ,
-        auto_clear                      => "00000000000000000000000001111100" ,
+        auto_clear                      => "00000000000000000000000011111100" ,
         is_lockable                     => false 
     )
     port map(

@@ -270,6 +270,7 @@ package can_fd_register_map is
   constant TXS_IND                : natural := 5;
   constant EWL_IND                : natural := 6;
   constant IDLE_IND               : natural := 7;
+  constant PEXS_IND               : natural := 8;
 
   -- STATUS register reset values
   constant RXNE_RSTVAL        : std_logic := '0';
@@ -280,6 +281,7 @@ package can_fd_register_map is
   constant TXS_RSTVAL         : std_logic := '0';
   constant EWL_RSTVAL         : std_logic := '0';
   constant IDLE_RSTVAL        : std_logic := '1';
+  constant PEXS_RSTVAL        : std_logic := '0';
 
   ------------------------------------------------------------------------------
   -- COMMAND register
@@ -293,6 +295,7 @@ package can_fd_register_map is
   constant ERCRST_IND             : natural := 4;
   constant RXFCRST_IND            : natural := 5;
   constant TXFCRST_IND            : natural := 6;
+  constant CPEXS_IND              : natural := 7;
 
   -- COMMAND register reset values
   constant RRB_RSTVAL         : std_logic := '0';
@@ -300,6 +303,7 @@ package can_fd_register_map is
   constant ERCRST_RSTVAL      : std_logic := '0';
   constant RXFCRST_RSTVAL     : std_logic := '0';
   constant TXFCRST_RSTVAL     : std_logic := '0';
+  constant CPEXS_RSTVAL       : std_logic := '0';
 
   ------------------------------------------------------------------------------
   -- INT_STAT register

@@ -226,9 +226,11 @@ union ctu_can_fd_status {
 		uint32_t txs                     : 1;
 		uint32_t ewl                     : 1;
 		uint32_t idle                    : 1;
-		uint32_t reserved_31_8          : 24;
+		uint32_t pexs                    : 1;
+		uint32_t reserved_31_9          : 23;
 #else
-		uint32_t reserved_31_8          : 24;
+		uint32_t reserved_31_9          : 23;
+		uint32_t pexs                    : 1;
 		uint32_t idle                    : 1;
 		uint32_t ewl                     : 1;
 		uint32_t txs                     : 1;
@@ -252,9 +254,11 @@ union ctu_can_fd_command {
 		uint32_t ercrst                  : 1;
 		uint32_t rxfcrst                 : 1;
 		uint32_t txfcrst                 : 1;
-		uint32_t reserved_31_7          : 25;
+		uint32_t cpexs                   : 1;
+		uint32_t reserved_31_8          : 24;
 #else
-		uint32_t reserved_31_7          : 25;
+		uint32_t reserved_31_8          : 24;
+		uint32_t cpexs                   : 1;
 		uint32_t txfcrst                 : 1;
 		uint32_t rxfcrst                 : 1;
 		uint32_t ercrst                  : 1;
