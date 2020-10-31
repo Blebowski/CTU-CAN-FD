@@ -141,6 +141,8 @@ package drv_stat_pkg is
     constant DRV_FILTER_RAN_HI_TH_HIGH : natural := 328;
 
     constant DRV_FILTERS_ENA_INDEX : natural := 329;
+    
+    constant DRV_FILTER_DROP_RF_INDEX : natural := 330;
 
     -- RX Buffer
     constant DRV_ERASE_RX_INDEX   : natural := 350;

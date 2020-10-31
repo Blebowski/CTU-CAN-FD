@@ -2880,6 +2880,9 @@ package can_components is
         
         -- Command to abort storing of RX frame (due to Error frame)
         rec_abort            : in  std_logic;
+        
+        -- RX Remote transmission request Flag
+        rec_is_rtr           : in  std_logic;
 
         ------------------------------------------------------------------------
         -- Frame filters output

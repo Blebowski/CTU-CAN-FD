@@ -607,6 +607,10 @@ begin
     -- TBFBO - TXT Buffer Failed Bus off
     txt_buf_failed_bof <= align_wrd_to_reg(
         control_registers_out.settings, TBFBO_IND);
+        
+    -- Frame filters - drop remote frames
+    drv_bus(DRV_FILTER_DROP_RF_INDEX) <= align_wrd_to_reg(
+        control_registers_out.settings, FDRF_IND);
 
     ---------------------------------------------------------------------------
     -- INT_STAT - Clearing interrupt vector by write
@@ -1434,7 +1438,7 @@ begin
     ----------------------------------------------------------------------------
     -- Note:  All unused signals indices are assigned to zero!
     drv_bus(80 downto 61)   <= (OTHERS => '0');
-    drv_bus(349 downto 330) <= (OTHERS => '0');
+    drv_bus(349 downto 331) <= (OTHERS => '0');
     drv_bus(355 downto 354) <= (OTHERS => '0');
     drv_bus(360 downto 358) <= (OTHERS => '0');
     drv_bus(362 downto 361) <= (OTHERS => '0');
