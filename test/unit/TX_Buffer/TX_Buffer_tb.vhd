@@ -240,6 +240,7 @@ begin
         txtb_hw_cmd             => txtb_hw_cmd,
         txtb_hw_cmd_int         => txtb_hw_cmd_int,
         txtb_hw_cmd_index       => txtb_hw_cmd_index,
+        txt_buf_failed_bof      => '1',
         is_bus_off              => is_bus_off,
         txtb_port_b_data        => txtb_port_b_data,
         txtb_port_b_address     => txtb_port_b_address,

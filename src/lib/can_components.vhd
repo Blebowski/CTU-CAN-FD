@@ -3203,6 +3203,9 @@ package can_components is
         -- TXT Buffer priorities
         txtb_prorities       :out  t_txt_bufs_priorities;
          
+        -- TXT Buffer bus-off behavior
+        txt_buf_failed_bof   :out  std_logic;
+        
         ------------------------------------------------------------------------
         -- Bus synchroniser interface
         ------------------------------------------------------------------------
@@ -4212,7 +4215,10 @@ package can_components is
         txtb_sw_cmd             :in   t_txtb_sw_cmd;
         
         -- SW buffer select
-        sw_cbs                 :in   std_logic;
+        sw_cbs                  :in   std_logic;
+        
+        -- TXT Buffer bus-off behavior
+        txt_buf_failed_bof      :in   std_logic;
 
         ------------------------------------------------------------------------   
         -- CAN Core interface
@@ -4325,6 +4331,9 @@ package can_components is
 
         -- Buffer State (encoded for Memory registers)
         txtb_state             :out  std_logic_vector(3 downto 0);
+
+        -- TXT buffer bus off behavior
+        txt_buf_failed_bof     :in   std_logic;
 
         ------------------------------------------------------------------------   
         -- Interrupt Manager Interface

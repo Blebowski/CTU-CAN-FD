@@ -78,10 +78,10 @@ entity txt_buffer_fsm is
         -- Clock and Asynchronous reset
         ------------------------------------------------------------------------
         -- System clock
-        clk_sys                :in   std_logic;
+        clk_sys                 :in   std_logic;
         
         -- Asynchronous reset
-        res_n                  :in   std_logic;
+        res_n                   :in   std_logic;
 
         ------------------------------------------------------------------------
         -- Memory registers interface
@@ -90,7 +90,10 @@ entity txt_buffer_fsm is
         txtb_sw_cmd             :in   t_txtb_sw_cmd;
         
         -- SW buffer select
-        sw_cbs                 :in   std_logic;
+        sw_cbs                  :in   std_logic;
+        
+        -- TXT Buffer bus-off behavior
+        txt_buf_failed_bof      :in   std_logic;
 
         ------------------------------------------------------------------------   
         -- CAN Core interface
@@ -99,28 +102,28 @@ entity txt_buffer_fsm is
         txtb_hw_cmd             :in   t_txtb_hw_cmd;  
         
         -- HW Buffer select
-        hw_cbs                 :in   std_logic;
+        hw_cbs                  :in   std_logic;
     
         -- Unit is Bus off
-        is_bus_off             :in   std_logic;
+        is_bus_off              :in   std_logic;
 
         ------------------------------------------------------------------------
         -- Status signals
         ------------------------------------------------------------------------
         -- Buffer accessible from SW
-        txtb_user_accessible   :out  std_logic;
+        txtb_user_accessible    :out  std_logic;
 
         -- HW Command applied on TXT Buffer.
-        txtb_hw_cmd_int        :out  std_logic;
+        txtb_hw_cmd_int         :out  std_logic;
 
         -- Buffer status (FSM state) encoded for reading by SW.
-        txtb_state             :out  std_logic_vector(3 downto 0);
+        txtb_state              :out  std_logic_vector(3 downto 0);
 
         -- TXT Buffer is available to be locked by CAN Core for transmission
-        txtb_available         :out  std_logic;
+        txtb_available          :out  std_logic;
                 
         -- UnMask content of TXT Buffer RAM
-        txtb_unmask_data_ram   :out  std_logic
+        txtb_unmask_data_ram    :out  std_logic
     );             
 end entity;
 
@@ -279,7 +282,8 @@ begin
         -- If Core is bus-off, TXT Buffer goes to failed from any transient
         -- state.
         --------------------------------------------------------------------
-        if (is_bus_off = '1' and (
+        if ((is_bus_off = '1') and 
+            (txt_buf_failed_bof = TXTBUF_FAILED_BUS_OFF_ENABLE) and (
             (curr_state = s_txt_ab_prog) or (curr_state = s_txt_tx_prog) or
             (curr_state = s_txt_ready)))
         then

@@ -208,7 +208,10 @@ entity memory_registers is
         
         -- TXT Buffer priorities
         txtb_prorities       :out  t_txt_bufs_priorities;
-         
+        
+        -- TXT Buffer bus-off behavior
+        txt_buf_failed_bof   :out  std_logic;
+
         ------------------------------------------------------------------------
         -- Bus synchroniser interface
         ------------------------------------------------------------------------
@@ -600,6 +603,10 @@ begin
     -- PEX - Protocol exception mode
     drv_bus(DRV_PEX_INDEX) <= align_wrd_to_reg(
         control_registers_out.settings, PEX_IND);
+        
+    -- TBFBO - TXT Buffer Failed Bus off
+    txt_buf_failed_bof <= align_wrd_to_reg(
+        control_registers_out.settings, TBFBO_IND);
 
     ---------------------------------------------------------------------------
     -- INT_STAT - Clearing interrupt vector by write
