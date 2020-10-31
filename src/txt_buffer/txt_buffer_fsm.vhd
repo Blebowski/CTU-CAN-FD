@@ -283,7 +283,7 @@ begin
         -- state.
         --------------------------------------------------------------------
         if ((is_bus_off = '1') and 
-            (txt_buf_failed_bof = TXTBUF_FAILED_BUS_OFF_ENABLE) and (
+            (txt_buf_failed_bof = TXTBUF_FAILED_BUS_OFF_ENABLED) and (
             (curr_state = s_txt_ab_prog) or (curr_state = s_txt_tx_prog) or
             (curr_state = s_txt_ready)))
         then

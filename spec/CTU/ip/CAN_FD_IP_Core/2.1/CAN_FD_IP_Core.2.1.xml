@@ -571,7 +571,7 @@
 					<ipxact:field>
 						<ipxact:name>TBFBO</ipxact:name>
 						<ipxact:displayName>TBFBO</ipxact:displayName>
-						<ipxact:description>All TXT buffers shall become failed when CTU CAN FD becomes bus-off.</ipxact:description>
+						<ipxact:description>All TXT buffers shall go to &quot;TX failed&quot; state when CTU CAN FD becomes bus-off.</ipxact:description>
 						<ipxact:bitOffset>9</ipxact:bitOffset>
 						<ipxact:resets>
 							<ipxact:reset>
@@ -581,13 +581,15 @@
 						<ipxact:bitWidth>1</ipxact:bitWidth>
 						<ipxact:enumeratedValues>
 							<ipxact:enumeratedValue>
-								<ipxact:name>TXTBUF_FAILED_BUS_OFF_ENABLE</ipxact:name>
-								<ipxact:displayName>TXTBUF_FAILED_BUS_OFF_ENABLE</ipxact:displayName>
+								<ipxact:name>TXTBUF_FAILED_BUS_OFF_ENABLED</ipxact:name>
+								<ipxact:displayName>TXTBUF_FAILED_BUS_OFF_ENABLED</ipxact:displayName>
+								<ipxact:description>TXT Buffers go to &quot;TX failed&quot; state when CTU CAN FD becomes bus-off.</ipxact:description>
 								<ipxact:value>1</ipxact:value>
 							</ipxact:enumeratedValue>
 							<ipxact:enumeratedValue>
-								<ipxact:name>TXTBUF_FAILED_BUS_OFF_DISABLE</ipxact:name>
-								<ipxact:displayName>TXTBUF_FAILED_BUS_OFF_DISABLE</ipxact:displayName>
+								<ipxact:name>TXTBUF_FAILED_BUS_OFF_DISABLED</ipxact:name>
+								<ipxact:displayName>TXTBUF_FAILED_BUS_OFF_DISABLED</ipxact:displayName>
+								<ipxact:description>TXT Buffers dont go to &quot;TX failed&quot; state when CTU CAN FD becomes bus-off.</ipxact:description>
 								<ipxact:value>0</ipxact:value>
 							</ipxact:enumeratedValue>
 						</ipxact:enumeratedValues>
@@ -607,11 +609,13 @@
 							<ipxact:enumeratedValue>
 								<ipxact:name>DROP_RF_ENABLED</ipxact:name>
 								<ipxact:displayName>DROP_RF_ENABLED</ipxact:displayName>
+								<ipxact:description>Frame filters drop RTR frames.</ipxact:description>
 								<ipxact:value>1</ipxact:value>
 							</ipxact:enumeratedValue>
 							<ipxact:enumeratedValue>
 								<ipxact:name>DROP_RF_DISABLED</ipxact:name>
 								<ipxact:displayName>DROP_RF_DISABLED</ipxact:displayName>
+								<ipxact:description>Frame filters accept RTR frames.</ipxact:description>
 								<ipxact:value>0</ipxact:value>
 							</ipxact:enumeratedValue>
 						</ipxact:enumeratedValues>
@@ -3203,12 +3207,12 @@
 			<kactus2:kts_firmness>Mutable</kactus2:kts_firmness>
 		</kactus2:kts_attributes>
 		<ipxact:regLocks>
-			<ipxact:regLock reg_name="CTR_PRES" description="Register can be only written when MODE[TSTM] = 1, otherwise write has no effect." lock_signal="lock_1"/>
-			<ipxact:regLock reg_name="EWL" description="Register can be only written when MODE[TSTM] = 1, otherwise write has no effect." lock_signal="lock_1"/>
-			<ipxact:regLock reg_name="ERP" description="Register can be only written when MODE[TSTM] = 1, otherwise write has no effect." lock_signal="lock_1"/>
-			<ipxact:regLock reg_name="BTR" description="Register can be only written when SETTINGS[ENA] = 0, otherwise write has no effect." lock_signal="lock_2"/>
-			<ipxact:regLock reg_name="BTR_FD" description="Register can be only written when SETTINGS[ENA] = 0, otherwise write has no effect." lock_signal="lock_2"/>
-			<ipxact:regLock reg_name="SSP_CFG" description="Register can be only written when SETTINGS[ENA] = 0, otherwise write has no effect." lock_signal="lock_2"/>
+			<ipxact:regLock description="Register can be only written when MODE[TSTM] = 1, otherwise write has no effect." reg_name="CTR_PRES" lock_signal="lock_1"/>
+			<ipxact:regLock description="Register can be only written when MODE[TSTM] = 1, otherwise write has no effect." reg_name="EWL" lock_signal="lock_1"/>
+			<ipxact:regLock description="Register can be only written when MODE[TSTM] = 1, otherwise write has no effect." reg_name="ERP" lock_signal="lock_1"/>
+			<ipxact:regLock description="Register can be only written when SETTINGS[ENA] = 0, otherwise write has no effect." reg_name="BTR" lock_signal="lock_2"/>
+			<ipxact:regLock description="Register can be only written when SETTINGS[ENA] = 0, otherwise write has no effect." reg_name="BTR_FD" lock_signal="lock_2"/>
+			<ipxact:regLock description="Register can be only written when SETTINGS[ENA] = 0, otherwise write has no effect." reg_name="SSP_CFG" lock_signal="lock_2"/>
 		</ipxact:regLocks>
 		<kactus2:license>MIT</kactus2:license>
 	</ipxact:vendorExtensions>

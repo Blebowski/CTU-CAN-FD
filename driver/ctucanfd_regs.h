@@ -218,8 +218,8 @@ enum ctu_can_fd_settings_pex {
 };
 
 enum ctu_can_fd_settings_tbfbo {
-	TXTBUF_FAILED_BUS_OFF_DISABLE       = 0x0,
-	TXTBUF_FAILED_BUS_OFF_ENABLE        = 0x1,
+	TXTBUF_FAILED_BUS_OFF_DISABLED       = 0x0,
+	TXTBUF_FAILED_BUS_OFF_ENABLED        = 0x1,
 };
 
 enum ctu_can_fd_settings_fdrf {

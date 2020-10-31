@@ -253,8 +253,8 @@ package can_fd_register_map is
   constant PROTOCOL_EXCEPTION_ENABLED : std_logic := '1';
 
   -- "TBFBO" field enumerated values
-  constant TXTBUF_FAILED_BUS_OFF_DISABLE : std_logic := '0';
-  constant TXTBUF_FAILED_BUS_OFF_ENABLE : std_logic := '1';
+  constant TXTBUF_FAILED_BUS_OFF_DISABLED : std_logic := '0';
+  constant TXTBUF_FAILED_BUS_OFF_ENABLED : std_logic := '1';
 
   -- "FDRF" field enumerated values
   constant DROP_RF_DISABLED   : std_logic := '0';
