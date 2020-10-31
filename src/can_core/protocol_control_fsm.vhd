@@ -1259,16 +1259,25 @@ begin
                 if (rx_data_nbs = RECESSIVE) then
                     next_state <= s_pc_err_delim;
                 elsif (ctrl_ctr_zero = '1') then
-                    next_state <= s_pc_err_ovr_flag_too_long;
+                    next_state <= s_pc_err_flag_too_long;
                 end if;
 
             -------------------------------------------------------------------
             -- 13 dominant bits (6 Error flag + 7 Error delimiter) has been
             -- detected.
             -------------------------------------------------------------------
-            when s_pc_err_ovr_flag_too_long =>
+            when s_pc_err_flag_too_long =>
                 if (rx_data_nbs = RECESSIVE) then
                     next_state <= s_pc_err_delim;
+                end if;
+
+            -------------------------------------------------------------------
+            -- 13 dominant bits (6 Overload flag + 7 Overload delimiter) has
+            -- been detected.
+            -------------------------------------------------------------------
+            when s_pc_ovr_flag_too_long =>
+                if (rx_data_nbs = RECESSIVE) then
+                    next_state <= s_pc_ovr_delim;
                 end if;
 
             -------------------------------------------------------------------
@@ -1298,7 +1307,7 @@ begin
                 if (rx_data_nbs = RECESSIVE) then
                     next_state <= s_pc_ovr_delim;
                 elsif (ctrl_ctr_zero = '1') then
-                    next_state <= s_pc_err_ovr_flag_too_long;
+                    next_state <= s_pc_ovr_flag_too_long;
                 end if;
 
             -------------------------------------------------------------------
@@ -2644,10 +2653,10 @@ begin
 
             -------------------------------------------------------------------
             -- 13 dominant bits (6 error flag + 7 error delimiter) has been
-            -- detected (active error flag), or 7 has been detectd (passive
+            -- detected (active error flag), or 7 has been detected (passive
             -- error flag).
             -------------------------------------------------------------------
-            when s_pc_err_ovr_flag_too_long =>
+            when s_pc_err_flag_too_long =>
                 is_err_frm <= '1';
                 err_pos <= ERC_POS_ERR;
                 nbt_ctrs_en <= '1';
@@ -2658,6 +2667,31 @@ begin
                     tick_state_reg <= '1';
                     ctrl_ctr_pload_i <= '1';
                     ctrl_ctr_pload_val <= C_ERR_DELIM_DURATION;
+
+                -- This indicates that either 14th dominant bit was detected,
+                -- or each next consecutive 8 DOMINANT bits were detected!
+                elsif (ctrl_ctr_zero = '1') then
+                    tick_state_reg <= '1';
+                    ctrl_ctr_pload_i <= '1';
+                    ctrl_ctr_pload_val <= C_DOMINANT_REPEAT_DURATION;
+                    err_delim_late_i <= '1';
+                end if;
+
+            -------------------------------------------------------------------
+            -- 13 dominant bits (6 overload flag + 7 overload delimiter) has 
+            -- been detected.
+            -------------------------------------------------------------------
+            when s_pc_ovr_flag_too_long =>
+                is_overload <= '1';
+                err_pos <= ERC_POS_OVRL;
+                nbt_ctrs_en <= '1';
+                bit_err_disable <= '1';
+                ctrl_ctr_ena <= '1';
+
+                if (rx_data_nbs = RECESSIVE) then
+                    tick_state_reg <= '1';
+                    ctrl_ctr_pload_i <= '1';
+                    ctrl_ctr_pload_val <= C_OVR_DELIM_DURATION;
 
                 -- This indicates that either 14th dominant bit was detected,
                 -- or each next consecutive 8 DOMINANT bits were detected!
