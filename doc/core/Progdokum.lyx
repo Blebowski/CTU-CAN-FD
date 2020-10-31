@@ -1127,7 +1127,8 @@ Ondrej Ille
 \begin_inset Text
 
 \begin_layout Plain Layout
-Add frame filters example, minor refactoring.
+Add frame filters examples, add TBFBO and FDRF bits in SETTINGS registers,
+ minor refactoring.
 \end_layout
 
 \end_inset
@@ -2685,7 +2686,17 @@ noprefix "false"
  of CTU CAN FD.
  CTU CAN FD measures its own transmitter delay when it transmitts CAN FD
  frame (regardles of the fact if bit rate is switched in the frame) on recessive
- to dominant edge between FDF (EDL) and r0 bits.
+ to dominant edge between FDF (EDL) and r0 bits as is shown in Figure 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:transmitter-delay-measurement"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+.
  Transmitter delay is readable after its measurement from TRV_DELAY register.
  Transmitter delay is measured in periods of System clock.
 \end_layout
@@ -2718,6 +2729,50 @@ Transmitter delay
 \begin_inset CommandInset label
 LatexCommand label
 name "fig:transmitter-delay"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+placement H
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\noindent
+\align center
+\begin_inset Graphics
+	filename ../pics/Visio_generated/Transmitter_delay_measurement.pdf
+	lyxscale 20
+	scale 90
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Transmitter delay measurement
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:transmitter-delay-measurement"
 
 \end_inset
 
@@ -4475,7 +4530,7 @@ Received CAN frames are filtered by HW filters.
  filter mode is enabled (MODE[AFM] = 1).
  MODE[AFM] shall be modified only when CTU CAN FD is disabled (SETTINGS[ENA]
  = 0).
- When Acceptance filter mode is not enabled, filtering is not applied, and
+ When Acceptance filter mode is disabled, filtering is not applied, and
  each received CAN frame is stored to RX buffer.
 \end_layout
 
@@ -4484,10 +4539,63 @@ Each filter can be selectively configured to accept only certain types of
  CAN frame types (CAN 2.0 frame / CAN FD frame) and Identifier types (frame
  with Base identifier only, frame with Base + Extended identifier).
  Such configuration is available in FILTER_CONTROL register.
- If combination of received frame type and identifier type is not selected
- in FILTER_CONTROL register, received CAN frame is not stored in RX buffer.
- Each filter is disabled by setting all its according bits in FILTER_CONTROL
- register to 0.
+ Each filter is disabled by setting all bits in FILTER_CONTROL register
+ belonging to this filter to 0.
+ Frame filters operation is described in Figure 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:frame-filters-operation"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+placement h
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\noindent
+\align center
+\begin_inset Graphics
+	filename /DOKUMENTY/Projekty/ctu_can_fd/doc/pics/Visio_generated/Frame_filters_flow.pdf
+	lyxscale 20
+	scale 70
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Frame filters operation (* stands for A/B/C/R based on filter type)
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:frame-filters-operation"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
@@ -4505,32 +4613,13 @@ Bit filter
 Bit filter checks if received CAN frame identifier is equal to predefined
  identifier in FILTER_X_VALUE register (X=A,B,C based on filter instance).
  Only bits given by filter mask in FILTER_X_MASK register are compared.
- Behaviour of Bit filter can be described by following pseudo-code:
 \end_layout
 
-\begin_layout LyX-Code
-\noindent
-\align left
-IF (FILTER_X_VALUE & FILTER_X_MASK) == (Received CAN Identifier & FILTER_X_MASK)
- THEN
+\begin_layout Description
+Note When using Bit filter to filter frames with Base identifiers only,
+ set FILTER_X_MASK[17:0] = 0b000000000000000000.
 \end_layout
 
-\begin_deeper
-\begin_layout LyX-Code
-Store frame in RX buffer
-\end_layout
-
-\end_deeper
-\begin_layout LyX-Code
-ELSE
-\end_layout
-
-\begin_deeper
-\begin_layout LyX-Code
-Drop frame
-\end_layout
-
-\end_deeper
 \begin_layout Subsubsection
 Range filter
 \end_layout
@@ -4540,31 +4629,14 @@ Range filter determines if received CAN frame identifier is within certain
  decimal range.
  Lower threshold of this decimal range is given by FILTER_RAN_LOW and upper
  threshold is given by FILTER_RAN_HIGH.
- Behavior of Range filter can be described by following pseudo-code:
 \end_layout
 
-\begin_layout LyX-Code
-\noindent
-\align left
-IF FILTER_RAN_LOW <= Received CAN Identifier <= FILTER_RAN_HIGH THEN
+\begin_layout Description
+Note When using Range filter to filter frames with Base identifiers only,
+ set FILTER_RAN_LOW[17:0] = 0b000000000000000000 and FILTER_RAN_HIGH[17:0]
+ = 0b111111111111111111.
 \end_layout
 
-\begin_deeper
-\begin_layout LyX-Code
-Store frame in RX Buffer
-\end_layout
-
-\end_deeper
-\begin_layout LyX-Code
-ELSE
-\end_layout
-
-\begin_deeper
-\begin_layout LyX-Code
-Drop frame
-\end_layout
-
-\end_deeper
 \begin_layout Subsection
 Sample code 1 - Frame reception
 \end_layout
@@ -4679,7 +4751,7 @@ for(int i = 0; i < rwcnt; i++){
 \end_layout
 
 \begin_layout Subsection
-Sample code 2 - Frame filter configuration
+Sample code 2 - Bit filter configuration
 \end_layout
 
 \begin_layout LyX-Code
@@ -4706,11 +4778,11 @@ Sample code 2 - Frame filter configuration
 \end_layout
 
 \begin_layout LyX-Code
-uint32_t filter_mask = 0xF; // Compare 4 LSBs of Base ID
+uint32_t filter_mask = 0xF << 18; // Compare 4 LSBs of Base ID
 \end_layout
 
 \begin_layout LyX-Code
-uint32_t filter_val = 0x2; // Must be equal to 0x2 (0010)
+uint32_t filter_val = 0x2 << 18; // Must be equal to 0x2 (0010)
 \end_layout
 
 \begin_layout Standard
@@ -4740,7 +4812,7 @@ CAN_write_32(FILTER_A_MASK_ADDR, filter_mask);
 \end_layout
 
 \begin_layout LyX-Code
-/* Enable reception of CAN 2.0 and CAN FD frames with base identifiers only
+/* Enable reception of CAN 2.0 and CAN FD frames with Base identifiers only
  */
 \end_layout
 
