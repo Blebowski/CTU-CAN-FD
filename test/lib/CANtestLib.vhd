@@ -154,7 +154,7 @@ package CANtestLib is
     -- Controller modes
     type SW_mode is record
         reset                   :   boolean;
-        listen_only             :   boolean;
+        bus_monitoring          :   boolean;
         test                    :   boolean;
         self_test               :   boolean;
         acceptance_filter       :   boolean;
@@ -164,10 +164,11 @@ package CANtestLib is
         internal_loopback       :   boolean;
         iso_fd_support          :   boolean;
         pex_support             :   boolean;
+        fdrf                    :   boolean;
     end record;
     
     constant SW_mode_rst_val : SW_mode := (false, false, false, false, false,
-        true, false, false, false, true, false);
+        true, false, false, false, true, false, false);
 
     -- Controller commands
     type SW_command is record
@@ -4266,8 +4267,8 @@ package body CANtestLib is
             data(RST_IND)       := '1';
         end if;
 
-        if (mode.listen_only) then
-            data(LOM_IND)       := '1';
+        if (mode.bus_monitoring) then
+            data(BMM_IND)       := '1';
         end if;
 
         if (mode.self_test) then
@@ -4313,6 +4314,12 @@ package body CANtestLib is
         else
             data(PEX_IND) := '0';
         end if;
+        
+        if (mode.fdrf) then
+            data(FDRF_IND) := '1';
+        else
+            data(FDRF_IND) := '0';
+        end if;
 
         CAN_write(data, SETTINGS_ADR, ID, mem_bus, BIT_16);
     end procedure;
@@ -4328,7 +4335,7 @@ package body CANtestLib is
         CAN_read(data, MODE_ADR, ID, mem_bus, BIT_8);
 
         mode.reset                      := false;
-        mode.listen_only                := false;
+        mode.bus_monitoring             := false;
         mode.self_test                  := false;
         mode.acceptance_filter          := false;
         mode.flexible_data_rate         := false;
@@ -4340,8 +4347,8 @@ package body CANtestLib is
             mode.reset                  := true;
         end if;
 
-        if (data(LOM_IND) = '1') then
-            mode.listen_only            := true;
+        if (data(BMM_IND) = '1') then
+            mode.bus_monitoring         := true;
         end if;
 
         if (data(STM_IND) = '1') then
@@ -4376,6 +4383,12 @@ package body CANtestLib is
             mode.internal_loopback      := true;
         else
             mode.internal_loopback      := false;
+        end if;
+        
+        if (data(FDRF_IND) = '1') then
+            mode.fdrf                   := true;
+        else
+            mode.fdrf                   := false;
         end if;
 
     end procedure;

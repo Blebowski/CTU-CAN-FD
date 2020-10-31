@@ -116,6 +116,9 @@ entity frame_filters is
 
         -- Input frame type (0-CAN 2.0, 1- CAN FD) 
         rec_frame_type       : in  std_logic;
+        
+        -- RX Remote transmission request Flag
+        rec_is_rtr           : in  std_logic;
 
         -- Store Metadata in RX Buffer
         store_metadata       : in  std_logic;
@@ -224,13 +227,16 @@ architecture rtl of frame_filters is
     signal filter_C_enable          :       std_logic;
     signal filter_range_enable      :       std_logic; 
 
-    -- At least one filter output is valid
-    signal min_one_filt_valid       :       std_logic;
+    signal filter_result            :       std_logic;
 
     -- Valid output value
     signal ident_valid_d            :       std_logic;  
     signal ident_valid_q            :       std_logic;  
  
+    signal drv_drop_remote_frames   :       std_logic;
+ 
+    signal drop_rtr_frame           :       std_logic;
+    
 begin
 
     ---------------------------------------------------------------------------
@@ -261,7 +267,7 @@ begin
     drv_filter_ran_hi_th        <= drv_bus(DRV_FILTER_RAN_HI_TH_HIGH downto
                                            DRV_FILTER_RAN_HI_TH_LOW);
     drv_filters_ena             <= drv_bus(DRV_FILTERS_ENA_INDEX);
-    
+    drv_drop_remote_frames      <= drv_bus(DRV_FILTER_DROP_RF_INDEX);
 
     ---------------------------------------------------------------------------
     -- Decoding Filter enables based on accepted frame types by each filter
@@ -368,16 +374,22 @@ begin
     filt_sup_gen_true : if (G_SUP_FILTA = true or G_SUP_FILTB = true or
                             G_SUP_FILTC = true or G_SUP_RANGE = true) generate
 
-        min_one_filt_valid <= int_filter_A_valid   OR
-                              int_filter_B_valid   OR
-                              int_filter_C_valid   OR
-                              int_filter_ran_valid;
+        drop_rtr_frame <= '1' when (drv_drop_remote_frames = DROP_RF_ENABLED
+                                    and rec_is_rtr = RTR_FRAME)
+                              else
+                          '0';
+        
+        filter_result <= '0' when (drop_rtr_frame = '1') else
+                         '1' when (int_filter_A_valid = '1' or
+                                   int_filter_B_valid = '1' or
+                                   int_filter_C_valid = '1' or
+                                   int_filter_ran_valid = '1')
+                             else
+                         '0';
 
-        -- If received message is valid and at least one of the filters is  
-        -- matching the message passed the filter.
-        ident_valid_d <=  min_one_filt_valid when (drv_filters_ena = '1')
-                                             else
-                                         '1';
+        ident_valid_d <=  filter_result when (drv_filters_ena = '1')
+                                        else
+                                    '1';
     end generate;
 
 

@@ -454,6 +454,9 @@ architecture rtl of can_core is
     -- Bit Error in passive error flag following ACK error!
     signal bit_err_after_ack_err   :     std_logic;
 
+    -- Protocol exception status
+    signal is_pexs                 :     std_logic;
+
 begin
   
     ----------------------------------------------------------------------------
@@ -496,6 +499,7 @@ begin
         is_err_frm              => is_err_frm,          -- OUT
         is_overload             => is_overload_i,       -- OUT
         is_sof                  => is_sof,              -- OUT
+        is_pexs                 => is_pexs,             -- OUT
         
         -- TXT Buffers interface
         tran_word               => tran_word,           -- IN
@@ -905,7 +909,7 @@ begin
     ----------------------------------------------------------------------------
     -- STATUS Bus Implementation
     ----------------------------------------------------------------------------
-    stat_bus(511 downto 385) <= (OTHERS => '0');
+    stat_bus(511 downto 386) <= (OTHERS => '0');
     stat_bus(299 downto 297) <= (OTHERS => '0');
     stat_bus(98 downto 90)   <= (OTHERS => '0');
     stat_bus(60 downto 32)   <= (OTHERS => '0');
@@ -1168,6 +1172,8 @@ begin
 
     stat_bus(STAT_TX_TRIGGER) <=
         tx_trigger;
+        
+    stat_bus(STAT_PEXS_INDEX) <= is_pexs;
 
     ---------------------------------------------------------------------------
     -- Internal signals to output propagation

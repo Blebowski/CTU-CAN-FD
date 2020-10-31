@@ -43,15 +43,15 @@
 -- @TestInfoStart
 --
 -- @Purpose:
---  Listen only mode - feature test.
+--  Bus monitoring mode - feature test.
 --
 -- @Verifies:
---  @1. No frame is transmitted during Listen only mode.
---  @2. No dominant bit is transmitted in Listen only mode. ACK and Error frames
---      are re-reouted internally and bus remains unchanged!
+--  @1. No frame i-s transmitted during Bus monitoring mode.
+--  @2. No dominant bit is transmitted in Bus monitoring mode. ACK and Error
+--      frames are re-reouted internally and bus remains unchanged!
 --
 -- @Test sequence:
---  @1. Configure Listen only mode in Node 1. Set Self test mode in Node 2.
+--  @1. Configure Bus monitoring mode in Node 1. Set Self test mode in Node 2.
 --  @2. Insert frame for transmission to Node 1. Check for sufficiently long 
 --      that it will NOT be transmitted (TXT Buffer remains Ready).
 --  @3. Send CAN frame by Node 2. Wait till ACK field.
@@ -77,8 +77,8 @@ context ctu_can_fd_tb.ctu_can_test_context;
 
 use ctu_can_fd_tb.pkg_feature_exec_dispath.all;
 
-package mode_listen_only_feature is
-    procedure mode_listen_only_feature_exec(
+package mode_bus_monitoring_feature is
+    procedure mode_bus_monitoring_feature_exec(
         signal      so              : out    feature_signal_outputs_t;
         signal      rand_ctr        : inout  natural range 0 to RAND_POOL_SIZE;
         signal      iout            : in     instance_outputs_arr_t;
@@ -88,8 +88,8 @@ package mode_listen_only_feature is
 end package;
 
 
-package body mode_listen_only_feature is
-    procedure mode_listen_only_feature_exec(
+package body mode_bus_monitoring_feature is
+    procedure mode_bus_monitoring_feature_exec(
         signal      so              : out    feature_signal_outputs_t;
         signal      rand_ctr        : inout  natural range 0 to RAND_POOL_SIZE;
         signal      iout            : in     instance_outputs_arr_t;
@@ -112,10 +112,10 @@ package body mode_listen_only_feature is
     begin
 
         ------------------------------------------------------------------------
-        -- @1. Configure Listen only mode in Node 1. Set Self test mode in Node 2.
+        -- @1. Configure Bus monitoring mode in Node 1. Set Self test mode in Node 2.
         ------------------------------------------------------------------------
-        info("Step 1: Configuring LOM in Node 1, STM in Node 2!");
-        mode_1.listen_only := true;
+        info("Step 1: Configuring BMM in Node 1, STM in Node 2!");
+        mode_1.bus_monitoring := true;
         set_core_mode(mode_1, ID_1, mem_bus(1));
         mode_2.self_test := true;
         set_core_mode(mode_2, ID_2, mem_bus(2));
@@ -124,7 +124,7 @@ package body mode_listen_only_feature is
         -- @2. Insert frame for transmission to Node 1. Check for sufficiently 
         --    long that it will NOT be transmitted (TXT Buffer remains Ready).
         ------------------------------------------------------------------------
-        info("Step 2: Checking frame is not transmitted in Listen only mode!");
+        info("Step 2: Checking frame is not transmitted in Bus monitoring mode!");
         CAN_generate_frame(rand_ctr, CAN_TX_frame);
         CAN_send_frame(CAN_TX_frame, 1, ID_1, mem_bus(1), frame_sent);
         
@@ -132,8 +132,8 @@ package body mode_listen_only_feature is
             get_tx_buf_state(1, txt_buf_state, ID_1, mem_bus(1));
             check(txt_buf_state = buf_ready, "TXT buffer remains ready!");
             get_controller_status(status, ID_1, mem_bus(1));
-            check_false(status.transmitter, "Node does not transmitt in LOM!");
-            check_false(status.receiver, "Node turned receiver in LOM -> WTF?");
+            check_false(status.transmitter, "Node does not transmitt in BMM!");
+            check_false(status.receiver, "Node turned receiver in BMM -> WTF?");
             check(status.bus_status, "Node remains idle");
             wait for 50 ns; -- To make checks more sparse
         end loop;
@@ -169,7 +169,7 @@ package body mode_listen_only_feature is
         ------------------------------------------------------------------------
         info("Step 5: Checking frame received OK"); 
         get_rx_buf_state(rx_buf_state, ID_1, mem_bus(1));
-        check(rx_buf_state.rx_frame_count = 1, "Frame received in LOM");
+        check(rx_buf_state.rx_frame_count = 1, "Frame received in BMM");
         CAN_read_frame(CAN_RX_frame, ID_1, mem_bus(1));
         CAN_compare_frames(CAN_RX_frame, CAN_TX_frame, false, frames_equal);
         check(frames_equal, "TX vs. RX frame matching!");

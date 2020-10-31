@@ -182,7 +182,7 @@ package can_fd_register_map is
   --
   ------------------------------------------------------------------------------
   constant RST_IND                : natural := 0;
-  constant LOM_IND                : natural := 1;
+  constant BMM_IND                : natural := 1;
   constant STM_IND                : natural := 2;
   constant AFM_IND                : natural := 3;
   constant FDE_IND                : natural := 4;
@@ -197,9 +197,9 @@ package can_fd_register_map is
   constant ACF_DISABLED       : std_logic := '0';
   constant ACF_ENABLED        : std_logic := '1';
 
-  -- "LOM" field enumerated values
-  constant LOM_DISABLED       : std_logic := '0';
-  constant LOM_ENABLED        : std_logic := '1';
+  -- "BMM" field enumerated values
+  constant BMM_DISABLED       : std_logic := '0';
+  constant BMM_ENABLED        : std_logic := '1';
 
   -- "STM" field enumerated values
   constant STM_DISABLED       : std_logic := '0';
@@ -213,7 +213,7 @@ package can_fd_register_map is
   constant RST_RSTVAL         : std_logic := '0';
   constant FDE_RSTVAL         : std_logic := '1';
   constant ACF_RSTVAL         : std_logic := '0';
-  constant LOM_RSTVAL         : std_logic := '0';
+  constant BMM_RSTVAL         : std_logic := '0';
   constant STM_RSTVAL         : std_logic := '0';
   constant AFM_RSTVAL         : std_logic := '0';
   constant TSTM_RSTVAL        : std_logic := '0';
@@ -229,6 +229,8 @@ package can_fd_register_map is
   constant ENA_IND               : natural := 22;
   constant NISOFD_IND            : natural := 23;
   constant PEX_IND               : natural := 24;
+  constant TBFBO_IND             : natural := 25;
+  constant FDRF_IND              : natural := 26;
 
   -- "RTRLE" field enumerated values
   constant RTRLE_DISABLED     : std_logic := '0';
@@ -250,6 +252,14 @@ package can_fd_register_map is
   constant PROTOCOL_EXCEPTION_DISABLED : std_logic := '0';
   constant PROTOCOL_EXCEPTION_ENABLED : std_logic := '1';
 
+  -- "TBFBO" field enumerated values
+  constant TXTBUF_FAILED_BUS_OFF_DISABLED : std_logic := '0';
+  constant TXTBUF_FAILED_BUS_OFF_ENABLED : std_logic := '1';
+
+  -- "FDRF" field enumerated values
+  constant DROP_RF_DISABLED   : std_logic := '0';
+  constant DROP_RF_ENABLED    : std_logic := '1';
+
   -- SETTINGS register reset values
   constant RTRLE_RSTVAL       : std_logic := '0';
   constant RTRTH_RSTVAL : std_logic_vector(3 downto 0) := x"0";
@@ -257,6 +267,8 @@ package can_fd_register_map is
   constant ENA_RSTVAL         : std_logic := '0';
   constant NISOFD_RSTVAL      : std_logic := '0';
   constant PEX_RSTVAL         : std_logic := '0';
+  constant TBFBO_RSTVAL       : std_logic := '1';
+  constant FDRF_RSTVAL        : std_logic := '0';
 
   ------------------------------------------------------------------------------
   -- STATUS register
@@ -270,6 +282,7 @@ package can_fd_register_map is
   constant TXS_IND                : natural := 5;
   constant EWL_IND                : natural := 6;
   constant IDLE_IND               : natural := 7;
+  constant PEXS_IND               : natural := 8;
 
   -- STATUS register reset values
   constant RXNE_RSTVAL        : std_logic := '0';
@@ -280,6 +293,7 @@ package can_fd_register_map is
   constant TXS_RSTVAL         : std_logic := '0';
   constant EWL_RSTVAL         : std_logic := '0';
   constant IDLE_RSTVAL        : std_logic := '1';
+  constant PEXS_RSTVAL        : std_logic := '0';
 
   ------------------------------------------------------------------------------
   -- COMMAND register
@@ -293,6 +307,7 @@ package can_fd_register_map is
   constant ERCRST_IND             : natural := 4;
   constant RXFCRST_IND            : natural := 5;
   constant TXFCRST_IND            : natural := 6;
+  constant CPEXS_IND              : natural := 7;
 
   -- COMMAND register reset values
   constant RRB_RSTVAL         : std_logic := '0';
@@ -300,6 +315,7 @@ package can_fd_register_map is
   constant ERCRST_RSTVAL      : std_logic := '0';
   constant RXFCRST_RSTVAL     : std_logic := '0';
   constant TXFCRST_RSTVAL     : std_logic := '0';
+  constant CPEXS_RSTVAL       : std_logic := '0';
 
   ------------------------------------------------------------------------------
   -- INT_STAT register

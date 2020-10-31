@@ -243,6 +243,9 @@ architecture rtl of can_top_level is
     -- TXT Buffer priorities
     signal txtb_prorities       :    t_txt_bufs_priorities;
     
+    -- TXT Buffer bus-off behavior
+    signal txt_buf_failed_bof   :    std_logic;
+    
     ------------------------------------------------------------------------
     -- Interrupt Manager <-> Memory registers Interface
     ------------------------------------------------------------------------
@@ -550,6 +553,7 @@ begin
         txtb_sw_cmd          => txtb_sw_cmd,            -- OUT
         txtb_sw_cmd_index    => txtb_sw_cmd_index,      -- OUT
         txtb_prorities       => txtb_prorities,         -- OUT
+        txt_buf_failed_bof   => txt_buf_failed_bof,     -- OUT
          
         -- Bus synchroniser interface
         trv_delay            => trv_delay,              -- IN
@@ -629,6 +633,7 @@ begin
             txtb_sw_cmd            => txtb_sw_cmd,          -- IN
             txtb_sw_cmd_index      => txtb_sw_cmd_index,    -- IN
             txtb_state             => txtb_state(i),        -- OUT
+            txt_buf_failed_bof     => txt_buf_failed_bof,   -- IN
     
             -- Interrupt Manager Interface
             txtb_hw_cmd_int        => txtb_hw_cmd_int(i),   -- OUT
@@ -701,6 +706,7 @@ begin
         rec_ident           => rec_ident,           -- IN
         rec_ident_type      => rec_ident_type,      -- IN
         rec_frame_type      => rec_frame_type,      -- IN
+        rec_is_rtr          => rec_is_rtr,          -- IN
         store_metadata      => store_metadata,      -- IN
         store_data          => store_data,          -- IN
         rec_valid           => rec_valid,           -- IN

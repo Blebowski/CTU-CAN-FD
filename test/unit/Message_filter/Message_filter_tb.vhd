@@ -264,6 +264,7 @@ begin
         rec_ident          =>  rec_ident_in,
         rec_ident_type     =>  ident_type,
         rec_frame_type     =>  frame_type,
+        rec_is_rtr         =>  '0',
         drv_bus            =>  drv_bus,
         ident_valid        =>  out_ident_valid,
         
@@ -321,7 +322,8 @@ begin
     drv_bus(DRV_FILTERS_ENA_INDEX) <=
         drv_settings.drv_filters_ena;
 
-
+    drv_bus(DRV_FILTER_DROP_RF_INDEX) <= '0';
+    
     -- Connect input generator to the circuit
     rec_ident_in       <=  frame_info.rec_ident_in;
     ident_type         <=  frame_info.ident_type;

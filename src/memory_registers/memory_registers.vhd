@@ -208,7 +208,10 @@ entity memory_registers is
         
         -- TXT Buffer priorities
         txtb_prorities       :out  t_txt_bufs_priorities;
-         
+        
+        -- TXT Buffer bus-off behavior
+        txt_buf_failed_bof   :out  std_logic;
+
         ------------------------------------------------------------------------
         -- Bus synchroniser interface
         ------------------------------------------------------------------------
@@ -510,7 +513,9 @@ begin
 
     status_comb(EFT_IND)  <= stat_bus(STAT_PC_IS_ERR_INDEX);
 
-    status_comb(31 downto 8) <= (others => '0');
+    status_comb(PEXS_IND) <= stat_bus(STAT_PEXS_INDEX);
+
+    status_comb(31 downto 9) <= (others => '0');
 
     ----------------------------------------------------------------------------
     ----------------------------------------------------------------------------
@@ -526,9 +531,9 @@ begin
     drv_bus(DRV_CAN_FD_ENA_INDEX) <= align_wrd_to_reg(
         control_registers_out.mode, FDE_IND);
 
-    -- Bus monitoring = listen only mode
+    -- Bus monitoring mode
     drv_bus(DRV_BUS_MON_ENA_INDEX) <= align_wrd_to_reg(
-        control_registers_out.mode, LOM_IND);
+        control_registers_out.mode, BMM_IND);
 
     -- STM - Self test mode 
     drv_bus(DRV_SELF_TEST_ENA_INDEX) <= align_wrd_to_reg(
@@ -567,6 +572,9 @@ begin
     drv_bus(DRV_CLR_TX_CTR_INDEX) <= align_wrd_to_reg(
         control_registers_out.command, TXFCRST_IND);
 
+    -- CPEXS - Clear protocol exception status (flag)
+    drv_bus(DRV_PEXS_CLR_INDEX) <= align_wrd_to_reg(
+        control_registers_out.command, CPEXS_IND);
 
     ---------------------------------------------------------------------------
     -- SETTINGS Register
@@ -595,6 +603,14 @@ begin
     -- PEX - Protocol exception mode
     drv_bus(DRV_PEX_INDEX) <= align_wrd_to_reg(
         control_registers_out.settings, PEX_IND);
+        
+    -- TBFBO - TXT Buffer Failed Bus off
+    txt_buf_failed_bof <= align_wrd_to_reg(
+        control_registers_out.settings, TBFBO_IND);
+        
+    -- Frame filters - drop remote frames
+    drv_bus(DRV_FILTER_DROP_RF_INDEX) <= align_wrd_to_reg(
+        control_registers_out.settings, FDRF_IND);
 
     ---------------------------------------------------------------------------
     -- INT_STAT - Clearing interrupt vector by write
@@ -1422,7 +1438,7 @@ begin
     ----------------------------------------------------------------------------
     -- Note:  All unused signals indices are assigned to zero!
     drv_bus(80 downto 61)   <= (OTHERS => '0');
-    drv_bus(349 downto 330) <= (OTHERS => '0');
+    drv_bus(349 downto 331) <= (OTHERS => '0');
     drv_bus(355 downto 354) <= (OTHERS => '0');
     drv_bus(360 downto 358) <= (OTHERS => '0');
     drv_bus(362 downto 361) <= (OTHERS => '0');
@@ -1433,7 +1449,7 @@ begin
     drv_bus(464 downto 462) <= (OTHERS => '0');
     drv_bus(609 downto 601) <= (OTHERS => '0');
     drv_bus(579 downto 570) <= (OTHERS => '0');
-    drv_bus(519 downto 512) <= (OTHERS => '0');
+    drv_bus(519 downto 513) <= (OTHERS => '0');
     drv_bus(506 downto 475) <= (OTHERS => '0');
     drv_bus(444 downto 430) <= (OTHERS => '0');
 
@@ -1457,6 +1473,5 @@ begin
     drv_bus(366)            <= '0';
     drv_bus(357)            <= '0';
     drv_bus(356)            <= '0';
-    drv_bus(551 downto 520) <= (OTHERS => '0');
 
 end architecture;

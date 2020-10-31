@@ -126,7 +126,7 @@ union ctu_can_fd_mode_settings {
 #ifdef __LITTLE_ENDIAN_BITFIELD
   /* MODE */
 		uint32_t rst                     : 1;
-		uint32_t lom                     : 1;
+		uint32_t bmm                     : 1;
 		uint32_t stm                     : 1;
 		uint32_t afm                     : 1;
 		uint32_t fde                     : 1;
@@ -141,9 +141,13 @@ union ctu_can_fd_mode_settings {
 		uint32_t ena                     : 1;
 		uint32_t nisofd                  : 1;
 		uint32_t pex                     : 1;
-		uint32_t reserved_31_25          : 7;
+		uint32_t tbfbo                   : 1;
+		uint32_t fdrf                    : 1;
+		uint32_t reserved_31_27          : 5;
 #else
-		uint32_t reserved_31_25          : 7;
+		uint32_t reserved_31_27          : 5;
+		uint32_t fdrf                    : 1;
+		uint32_t tbfbo                   : 1;
 		uint32_t pex                     : 1;
 		uint32_t nisofd                  : 1;
 		uint32_t ena                     : 1;
@@ -157,15 +161,15 @@ union ctu_can_fd_mode_settings {
 		uint32_t fde                     : 1;
 		uint32_t afm                     : 1;
 		uint32_t stm                     : 1;
-		uint32_t lom                     : 1;
+		uint32_t bmm                     : 1;
 		uint32_t rst                     : 1;
 #endif
 	} s;
 };
 
-enum ctu_can_fd_mode_lom {
-	LOM_DISABLED       = 0x0,
-	LOM_ENABLED        = 0x1,
+enum ctu_can_fd_mode_bmm {
+	BMM_DISABLED       = 0x0,
+	BMM_ENABLED        = 0x1,
 };
 
 enum ctu_can_fd_mode_stm {
@@ -213,6 +217,16 @@ enum ctu_can_fd_settings_pex {
 	PROTOCOL_EXCEPTION_ENABLED        = 0x1,
 };
 
+enum ctu_can_fd_settings_tbfbo {
+	TXTBUF_FAILED_BUS_OFF_DISABLED       = 0x0,
+	TXTBUF_FAILED_BUS_OFF_ENABLED        = 0x1,
+};
+
+enum ctu_can_fd_settings_fdrf {
+	DROP_RF_DISABLED       = 0x0,
+	DROP_RF_ENABLED        = 0x1,
+};
+
 union ctu_can_fd_status {
 	uint32_t u32;
 	struct ctu_can_fd_status_s {
@@ -226,9 +240,11 @@ union ctu_can_fd_status {
 		uint32_t txs                     : 1;
 		uint32_t ewl                     : 1;
 		uint32_t idle                    : 1;
-		uint32_t reserved_31_8          : 24;
+		uint32_t pexs                    : 1;
+		uint32_t reserved_31_9          : 23;
 #else
-		uint32_t reserved_31_8          : 24;
+		uint32_t reserved_31_9          : 23;
+		uint32_t pexs                    : 1;
 		uint32_t idle                    : 1;
 		uint32_t ewl                     : 1;
 		uint32_t txs                     : 1;
@@ -252,9 +268,11 @@ union ctu_can_fd_command {
 		uint32_t ercrst                  : 1;
 		uint32_t rxfcrst                 : 1;
 		uint32_t txfcrst                 : 1;
-		uint32_t reserved_31_7          : 25;
+		uint32_t cpexs                   : 1;
+		uint32_t reserved_31_8          : 24;
 #else
-		uint32_t reserved_31_7          : 25;
+		uint32_t reserved_31_8          : 24;
+		uint32_t cpexs                   : 1;
 		uint32_t txfcrst                 : 1;
 		uint32_t rxfcrst                 : 1;
 		uint32_t ercrst                  : 1;

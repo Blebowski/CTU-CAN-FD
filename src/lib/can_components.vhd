@@ -1530,6 +1530,9 @@ package can_components is
         -- Protocol exception handling
         drv_pex                 :in   std_logic;
         
+        -- Protocol exception status clear
+        drv_cpexs               :in   std_logic;
+
         -- Arbitration field is being transmitted
         is_arbitration          :out  std_logic;
         
@@ -1571,6 +1574,9 @@ package can_components is
         
         -- Start of Frame
         is_sof                  :out  std_logic;
+        
+        -- Protocol exception status
+        is_pexs                 :out  std_logic;
         
         -----------------------------------------------------------------------
         -- Data-path interface
@@ -2001,6 +2007,9 @@ package can_components is
         
         -- Start of Frame
         is_sof                  :out  std_logic;
+        
+        -- Protocol exception status
+        is_pexs                 :out  std_logic;
                 
         -----------------------------------------------------------------------
         -- TXT Buffers interface
@@ -2871,6 +2880,9 @@ package can_components is
         
         -- Command to abort storing of RX frame (due to Error frame)
         rec_abort            : in  std_logic;
+        
+        -- RX Remote transmission request Flag
+        rec_is_rtr           : in  std_logic;
 
         ------------------------------------------------------------------------
         -- Frame filters output
@@ -3194,6 +3206,9 @@ package can_components is
         -- TXT Buffer priorities
         txtb_prorities       :out  t_txt_bufs_priorities;
          
+        -- TXT Buffer bus-off behavior
+        txt_buf_failed_bof   :out  std_logic;
+        
         ------------------------------------------------------------------------
         -- Bus synchroniser interface
         ------------------------------------------------------------------------
@@ -4203,7 +4218,10 @@ package can_components is
         txtb_sw_cmd             :in   t_txtb_sw_cmd;
         
         -- SW buffer select
-        sw_cbs                 :in   std_logic;
+        sw_cbs                  :in   std_logic;
+        
+        -- TXT Buffer bus-off behavior
+        txt_buf_failed_bof      :in   std_logic;
 
         ------------------------------------------------------------------------   
         -- CAN Core interface
@@ -4316,6 +4334,9 @@ package can_components is
 
         -- Buffer State (encoded for Memory registers)
         txtb_state             :out  std_logic_vector(3 downto 0);
+
+        -- TXT buffer bus off behavior
+        txt_buf_failed_bof     :in   std_logic;
 
         ------------------------------------------------------------------------   
         -- Interrupt Manager Interface

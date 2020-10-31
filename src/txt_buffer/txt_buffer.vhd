@@ -107,6 +107,9 @@ entity txt_buffer is
         -- Buffer State (encoded for Memory registers)
         txtb_state             :out  std_logic_vector(3 downto 0);
 
+        -- TXT Buffer bus-off behavior
+        txt_buf_failed_bof     :in   std_logic;
+
         ------------------------------------------------------------------------   
         -- Interrupt Manager Interface
         ------------------------------------------------------------------------
@@ -246,6 +249,7 @@ begin
 
         txtb_sw_cmd            => txtb_sw_cmd,              -- IN
         sw_cbs                 => sw_cbs,                   -- IN
+        txt_buf_failed_bof     => txt_buf_failed_bof,       -- IN
 
         txtb_hw_cmd            => txtb_hw_cmd,              -- IN
         hw_cbs                 => hw_cbs,                   -- IN

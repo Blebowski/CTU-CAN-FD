@@ -1127,7 +1127,8 @@ Ondrej Ille
 \begin_inset Text
 
 \begin_layout Plain Layout
-Add frame filters example, minor refactoring.
+Add frame filters examples, add TBFBO and FDRF bits in SETTINGS registers,
+ minor refactoring.
 \end_layout
 
 \end_inset
@@ -1272,7 +1273,7 @@ Interrupts
 \end_layout
 
 \begin_layout Itemize
-Loopback mode, Listen-only mode, Self-test mode
+Loopback mode, Bus monitoring mode, ACK forbidden mode, Self-test mode
 \end_layout
 
 \begin_layout Section
@@ -2179,6 +2180,13 @@ H and TIMESTAMP_L registers.
 
 \begin_layout Section
 Operating modes
+\begin_inset CommandInset label
+LatexCommand label
+name "sec:Operating-modes"
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
@@ -2290,8 +2298,31 @@ CTU CAN FD can be at any time disabled by writing logic 0 to SETTINGS[ENA]
  time, as this would result in transmission of error frame by other nodes
  on CAN bus.
  Therefore SW driver operating on CTU CAN FD shall ensure that none of TXT
- buffers within CTU CAN FD is Ready, TX in progress or Abort in progress
- (see 
+ buffers within CTU CAN FD is in 
+\begin_inset Quotes eld
+\end_inset
+
+Ready
+\begin_inset Quotes erd
+\end_inset
+
+, 
+\begin_inset Quotes eld
+\end_inset
+
+TX in progress
+\begin_inset Quotes erd
+\end_inset
+
+ or 
+\begin_inset Quotes eld
+\end_inset
+
+Abort in progress
+\begin_inset Quotes erd
+\end_inset
+
+ states (see 
 \begin_inset CommandInset ref
 LatexCommand ref
 reference "sec:CAN-frame-transmission"
@@ -2317,9 +2348,129 @@ sticky
  This means that if CTU CAN FD is not yet bus-off and this command is issued,
  it will be remembered by CTU CAN FD and it will automatically start reintegrati
 on upon nearest transition to bus-off.
- This gives an advantage that command can be issued in advance during communicat
-ion and CTU CAN FD will re-integrate as quickly as possible after becoming
+ The reason is, that command can be issued in advance (during communication),
+ and CTU CAN FD will re-integrate as quickly as possible after becoming
  bus-off (without SW additional delay caused by interaction with SW driver).
+\end_layout
+
+\begin_layout Section
+Initialization sequence
+\end_layout
+
+\begin_layout Standard
+CTU CAN FD initialization sequence shall consist of following steps:
+\end_layout
+
+\begin_layout Enumerate
+Reset (Either HW reset or Soft reset)
+\end_layout
+
+\begin_layout Enumerate
+Configuration of CTU CAN FD:
+\end_layout
+
+\begin_deeper
+\begin_layout Enumerate
+Configure interrupts as in 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "sec:Interrupts"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Enumerate
+Configure bit rate as in 
+\begin_inset CommandInset ref
+LatexCommand vpageref
+reference "subsec:Bit-rate"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Enumerate
+Configure other features (filters, special modes, etc...)
+\end_layout
+
+\end_deeper
+\begin_layout Enumerate
+Enable CTU CAN FD by writing SETTINGS[ENA] = 1.
+\end_layout
+
+\begin_layout Enumerate
+Poll on FAULT_STATE register, or wait on Fault confinement state changed
+ interrupt (INT_STAT[FCSI]).
+ Integration is finished when FAULT_STATE[ERA]=1 (CTU CAN FD becomes error-activ
+e).
+\end_layout
+
+\begin_layout Enumerate
+Initialization is finished, SW driver can send and receive frames.
+\end_layout
+
+\begin_layout Section
+De-initialization sequence
+\end_layout
+
+\begin_layout Standard
+CTU CAN FD de-initialization sequence shall consist of following steps:
+\end_layout
+
+\begin_layout Enumerate
+Write SETTINGS[ENA]=0.
+\end_layout
+
+\begin_layout Enumerate
+SW shall ensure that no TXT buffer is in any of 
+\begin_inset Quotes eld
+\end_inset
+
+Ready
+\begin_inset Quotes erd
+\end_inset
+
+, 
+\begin_inset Quotes eld
+\end_inset
+
+TX in progress
+\begin_inset Quotes erd
+\end_inset
+
+ or 
+\begin_inset Quotes eld
+\end_inset
+
+Abort in progress
+\begin_inset Quotes erd
+\end_inset
+
+ states.
+ This can be done by issuing 
+\series bold
+Set abort
+\series default
+ command (see 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "sec:CAN-frame-transmission"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+) to TXT buffers, and by not issuing next frames for transmission.
 \end_layout
 
 \begin_layout Section
@@ -2335,6 +2486,13 @@ name "sec:CAN-bus-configuration"
 
 \begin_layout Subsection
 Bit rate
+\begin_inset CommandInset label
+LatexCommand label
+name "subsec:Bit-rate"
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
@@ -2528,7 +2686,17 @@ noprefix "false"
  of CTU CAN FD.
  CTU CAN FD measures its own transmitter delay when it transmitts CAN FD
  frame (regardles of the fact if bit rate is switched in the frame) on recessive
- to dominant edge between FDF (EDL) and r0 bits.
+ to dominant edge between FDF (EDL) and r0 bits as is shown in Figure 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:transmitter-delay-measurement"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+.
  Transmitter delay is readable after its measurement from TRV_DELAY register.
  Transmitter delay is measured in periods of System clock.
 \end_layout
@@ -2561,6 +2729,50 @@ Transmitter delay
 \begin_inset CommandInset label
 LatexCommand label
 name "fig:transmitter-delay"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+placement H
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\noindent
+\align center
+\begin_inset Graphics
+	filename ../pics/Visio_generated/Transmitter_delay_measurement.pdf
+	lyxscale 20
+	scale 90
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Transmitter delay measurement
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:transmitter-delay-measurement"
 
 \end_inset
 
@@ -2737,7 +2949,37 @@ CTU CAN FD supports both ISO and non-ISO versions of CAN FD protocol.
  When NON ISO version is chosen, CTU CAN FD is conformant to CAN FD specificatio
 n 1.0.
  Selection between these two versions is done via SETTINGS[NISOFD] register.
- This register shall be modified only when SETTINGS[ENA] = 0.
+ SETTINGS[NISOFD] shall be modified only when CTU CAN FD is disabled (SETTINGS[E
+NA] = 0).
+\end_layout
+
+\begin_layout Subsection
+Protocol exception handling
+\end_layout
+
+\begin_layout Standard
+CTU CAN FD supports Protocol exception detection.
+ Protocol exception is enabled when MODE[PEX] = 1.
+ MODE[PEX] shall be changed only when CTU CAN FD is disabled (SETTINGS[ENA]=0).
+ Protocol exception behavior is different for various CAN implementation
+ types (see 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "tab:apb-interface"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+).
+ Upon detection of Protocol exception, CTU CAN FD enters bus integration
+ state and it waits for 11 consecutive recessive bits to be monitored on
+ CAN_RX signal.
+ REC/TEC counters are not changed upon Protocol exception, nor is Fault
+ confinement state of CTU CAN FD.
+ When Protocol exception occurs, STATUS[PEXS] flag is set.
+ STATUS[PEXS] can be cleared by writing COMMAND[CPEXS] = 1.
 \end_layout
 
 \begin_layout Subsection
@@ -2747,9 +2989,10 @@ Implementation type
 \begin_layout Standard
 ISO11898-1 2015 defines three implementation types of CAN protocol: Classical
  CAN, CAN FD tolerant and CAN FD enabled.
- CTU CAN FD supports all three implementation types and compliance to each
- implementation can be changed via MODE[FDE] and SETTINGS[PEX] bits.
- Both of these bits shall be modified only when SETTINGS[ENA] = 0.
+ CTU CAN FD supports all three implementation types, Compliance to each
+ implementation type can be changed via MODE[FDE] and SETTINGS[PEX] bits.
+ Both of these bits shall be modified only when CTU CAN FD is disabled (SETTINGS
+[ENA] = 0).
 \end_layout
 
 \begin_layout Standard
@@ -2929,7 +3172,8 @@ CAN FD tolerant
 \begin_inset Text
 
 \begin_layout Plain Layout
-When CTU CAN FD detects recessive FDF bit, it enters bus integration state.
+When CTU CAN FD detects recessive FDF bit, it detects Protocol exception
+ and enters bus integration state.
 \end_layout
 
 \end_inset
@@ -3023,7 +3267,8 @@ res
 \begin_inset Quotes erd
 \end_inset
 
- bit (one bit after FDF bit), it enters bus integration state.
+ bit (one bit after FDF bit), it detects Protocol exception and enters bus
+ integration state.
  This configuration tolerates future extensions of CAN FD protocol (e.g.
  CAN XL).
 \end_layout
@@ -3558,7 +3803,7 @@ Retransmitt limitation
 \begin_layout Standard
 CTU CAN FD can limit number of retransmission from a single TXT buffer.
  Retransmitt limitation is enabled when SETTINGS[RTRLE] = 1.
- Number of retransmission is configured in SETTINGS[RTRTH].
+ Number of retransmissions is configured in SETTINGS[RTRTH].
  First attempt to transmitt CAN frame does not count as retransmission.
  Possible configuration options are shown in Table 
 \begin_inset CommandInset ref
@@ -3892,6 +4137,49 @@ TX failed state
 \end_inset
 
  if retransmitt limit was reached.
+\end_layout
+
+\begin_layout Subsection
+TXT buffer - Bus-off behavior
+\end_layout
+
+\begin_layout Standard
+When CTU CAN FD becomes bus-off due to TEC > 255, TXT buffers can react
+ to this event in two ways:
+\end_layout
+
+\begin_layout Enumerate
+All TXT buffers immediately go to 
+\begin_inset Quotes eld
+\end_inset
+
+TX failed
+\begin_inset Quotes erd
+\end_inset
+
+ state.
+ This option is enabled by setting SETTINGS[TBFBO] = 1, and it is default
+ configuration of TXT buffers.
+\end_layout
+
+\begin_layout Enumerate
+TXT buffers remain in their current states.
+ This option is enabled by setting SETTINGS[TBFBO] = 0.
+ After CTU CAN FD finishes reintegration (see 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "sec:Operating-modes"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+), transmission will begin from one one such TXT buffer, as per regular
+ TXT buffer selection by priority.
+ This option is usefull when, COMMAND[ERCRST] is issued in advance, and
+ CTU CAN FD will automatically start reintegration after becoming bus-off.
+ It allows re-integrating with the bus without need of SW interaction.
 \end_layout
 
 \begin_layout Subsection
@@ -4240,9 +4528,10 @@ Received CAN frames are filtered by HW filters.
  (logical OR betwen filter results).
  Frame filters are applied on received frame identifier only if Acceptance
  filter mode is enabled (MODE[AFM] = 1).
- This bit shall be changed only when SETTINGS[ENA]=0.
- When Acceptance filter mode is not set, filtering is not applied, and each
- received CAN frame is stored to RX buffer.
+ MODE[AFM] shall be modified only when CTU CAN FD is disabled (SETTINGS[ENA]
+ = 0).
+ When Acceptance filter mode is disabled, filtering is not applied, and
+ each received CAN frame is stored to RX buffer.
 \end_layout
 
 \begin_layout Standard
@@ -4250,10 +4539,63 @@ Each filter can be selectively configured to accept only certain types of
  CAN frame types (CAN 2.0 frame / CAN FD frame) and Identifier types (frame
  with Base identifier only, frame with Base + Extended identifier).
  Such configuration is available in FILTER_CONTROL register.
- If combination of received frame type and identifier type is not selected
- in FILTER_CONTROL register, received CAN frame is not stored in RX buffer.
- Each filter is disabled by setting all its according bits in FILTER_CONTROL
- register to 0.
+ Each filter is disabled by setting all bits in FILTER_CONTROL register
+ belonging to this filter to 0.
+ Frame filters operation is described in Figure 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:frame-filters-operation"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+placement h
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\noindent
+\align center
+\begin_inset Graphics
+	filename /DOKUMENTY/Projekty/ctu_can_fd/doc/pics/Visio_generated/Frame_filters_flow.pdf
+	lyxscale 20
+	scale 70
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Frame filters operation (* stands for A/B/C/R based on filter type)
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:frame-filters-operation"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
@@ -4271,32 +4613,13 @@ Bit filter
 Bit filter checks if received CAN frame identifier is equal to predefined
  identifier in FILTER_X_VALUE register (X=A,B,C based on filter instance).
  Only bits given by filter mask in FILTER_X_MASK register are compared.
- Behaviour of Bit filter can be described by following pseudo-code:
 \end_layout
 
-\begin_layout LyX-Code
-\noindent
-\align left
-IF (FILTER_X_VALUE & FILTER_X_MASK) == (Received CAN Identifier & FILTER_X_MASK)
- THEN
+\begin_layout Description
+Note When using Bit filter to filter frames with Base identifiers only,
+ set FILTER_X_MASK[17:0] = 0b000000000000000000.
 \end_layout
 
-\begin_deeper
-\begin_layout LyX-Code
-Store frame in RX buffer
-\end_layout
-
-\end_deeper
-\begin_layout LyX-Code
-ELSE
-\end_layout
-
-\begin_deeper
-\begin_layout LyX-Code
-Drop frame
-\end_layout
-
-\end_deeper
 \begin_layout Subsubsection
 Range filter
 \end_layout
@@ -4306,31 +4629,14 @@ Range filter determines if received CAN frame identifier is within certain
  decimal range.
  Lower threshold of this decimal range is given by FILTER_RAN_LOW and upper
  threshold is given by FILTER_RAN_HIGH.
- Behavior of Range filter can be described by following pseudo-code:
 \end_layout
 
-\begin_layout LyX-Code
-\noindent
-\align left
-IF FILTER_RAN_LOW <= Received CAN Identifier <= FILTER_RAN_HIGH THEN
+\begin_layout Description
+Note When using Range filter to filter frames with Base identifiers only,
+ set FILTER_RAN_LOW[17:0] = 0b000000000000000000 and FILTER_RAN_HIGH[17:0]
+ = 0b111111111111111111.
 \end_layout
 
-\begin_deeper
-\begin_layout LyX-Code
-Store frame in RX Buffer
-\end_layout
-
-\end_deeper
-\begin_layout LyX-Code
-ELSE
-\end_layout
-
-\begin_deeper
-\begin_layout LyX-Code
-Drop frame
-\end_layout
-
-\end_deeper
 \begin_layout Subsection
 Sample code 1 - Frame reception
 \end_layout
@@ -4445,7 +4751,7 @@ for(int i = 0; i < rwcnt; i++){
 \end_layout
 
 \begin_layout Subsection
-Sample code 2 - Frame filter configuration
+Sample code 2 - Bit filter configuration
 \end_layout
 
 \begin_layout LyX-Code
@@ -4472,11 +4778,11 @@ Sample code 2 - Frame filter configuration
 \end_layout
 
 \begin_layout LyX-Code
-uint32_t filter_mask = 0xF; // Compare 4 LSBs of Base ID
+uint32_t filter_mask = 0xF << 18; // Compare 4 LSBs of Base ID
 \end_layout
 
 \begin_layout LyX-Code
-uint32_t filter_val = 0x2; // Must be equal to 0x2 (0010)
+uint32_t filter_val = 0x2 << 18; // Must be equal to 0x2 (0010)
 \end_layout
 
 \begin_layout Standard
@@ -4506,7 +4812,7 @@ CAN_write_32(FILTER_A_MASK_ADDR, filter_mask);
 \end_layout
 
 \begin_layout LyX-Code
-/* Enable reception of CAN 2.0 and CAN FD frames with base identifiers only
+/* Enable reception of CAN 2.0 and CAN FD frames with Base identifiers only
  */
 \end_layout
 
@@ -4816,15 +5122,16 @@ Loopback mode
 \end_layout
 
 \begin_layout Standard
-In Loopback mode CTU CAN FD receives any CAN frame that it transmitts.
- Any CAN frame transmitted from any of TXT buffers will be stored to RX
- buffer when its transmission is successfull.
+In Loopback mode, any CAN frame transmitted by CTU CAN FD from any of TXT
+ buffers, will be stored to RX buffer if its transmission is successfull
+ (and the frame passes Frame filters).
  Note that altough CTU CAN FD stores its own transmitted frame to RX buffer,
  it still acts as a transmitter, therefore it does not acknowledge its own
  frame! For succesfull transmission, the frame must be acknowledged by other
  node on CAN bus.
- Loopback mode is enabled when MODE[LOM]=1.
- MODE[LOM] shall be only changed when SETTINGS[ENA]=0.
+ Loopback mode is enabled when SETTINGS[ILBP]=1.
+ SETTINGS[ILBP] shall be modified only when CTU CAN FD is disabled (SETTINGS[ENA
+] = 0).
 \end_layout
 
 \begin_layout Subsection
@@ -4834,9 +5141,11 @@ Self test mode
 \begin_layout Standard
 In Self test mode CTU CAN FD considers transmitted frame valid even if does
  not receive dominant bit during ACK slot.
- This mode can be used along with loopback mode to verify operation of CTU
+ This mode can be used along with Loopback mode to verify operation of CTU
  CAN FD when it is single node on a bus.
  Self test mode is enabled when MODE[STM]=1.
+ MODE[STM] shall be modified only when CTU CAN FD is disabled (SETTINGS[ENA]
+ = 0).
 \end_layout
 
 \begin_layout Subsection
@@ -4848,20 +5157,22 @@ When Acknowledge forbidden mode is enabled, CTU CAN FD acting as receiver
  of CAN frame does not transmitt dominant bit during ACK slot even if received
  CRC matches calculated CRC.
  Acknowledge forbidden mode is enabled when MODE[ACF] = 1.
+ MODE[ACF] shall be modified only when CTU CAN FD is disabled (SETTINGS[ENA]
+ = 0).
 \end_layout
 
 \begin_layout Subsection
-Listen only mode
+Bus monitoring mode
 \end_layout
 
 \begin_layout Standard
-In Listen only mode, CTU CAN FD does not transmit any frames it only receives
- CAN frames.
+In Bus monitoring mode, CTU CAN FD does not transmit any frames, it only
+ receives CAN frames.
  If CAN frame is inserted to TXT buffer and 
 \series bold
 Set ready
 \series default
- command is issued, this frame will not be transmitted and TXT buffer will
+ command is issued, this frame will not be transmitted, and TXT buffer will
  remain in 
 \begin_inset Quotes eld
 \end_inset
@@ -4871,11 +5182,14 @@ Ready
 \end_inset
 
  state.
- If CTU CAN FD is receiver during Listen only mode, it also does not transmit
- any dominant bit on the bus.
- If dominant bit shall be transmitted to the bus (e.g.
- ACK or error frame), it is re-routed internally so that CTU CAN FD would
- receive this bit, but other nodes on CAN bus do not see this dominant bit.
+ If CTU CAN FD is receiver during Bus monitoring mode, it also does not
+ transmit any dominant bit on the bus.
+ If dominant bit is about to be transmitted to the bus (e.g.
+ ACK or error frame), it is re-routed internally so that CTU CAN FD receives
+ this bit, but other nodes on CAN bus do not see this dominant bit.
+ Bus monitoring mode is enabled when MODE[BMM] = 1.
+ MODE[BMM] shall be modified only when CTU CAN FD is disabled (SETTINGS[ENA]
+ = 0).
 \end_layout
 
 \begin_layout Subsection
@@ -4954,7 +5268,7 @@ Stuff error
 
 \begin_layout Description
 Note Stuff error which occured during fixed bit stuffing method of CAN FD
- frame is reported as Form error in Error code capture register
+ frame is reported as Form error in Error code capture register.
 \end_layout
 
 \begin_layout Description

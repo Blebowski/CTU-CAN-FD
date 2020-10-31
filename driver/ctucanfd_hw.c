@@ -178,8 +178,8 @@ void ctucan_hw_set_mode_reg(struct ctucan_hw_priv *priv,
 					INT_LOOP_ENABLED : INT_LOOP_DISABLED;
 
 	if (mode->mask & CAN_CTRLMODE_LISTENONLY)
-		reg.s.lom = flags & CAN_CTRLMODE_LISTENONLY ?
-					LOM_ENABLED : LOM_DISABLED;
+		reg.s.bmm = flags & CAN_CTRLMODE_LISTENONLY ?
+					BMM_ENABLED : BMM_DISABLED;
 
 	if (mode->mask & CAN_CTRLMODE_FD)
 		reg.s.fde = flags & CAN_CTRLMODE_FD ?

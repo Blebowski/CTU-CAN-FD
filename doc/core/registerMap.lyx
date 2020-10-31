@@ -4760,7 +4760,7 @@ STM\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-LOM\end_layout
+BMM\end_layout
 
 \end_inset
 </cell>
@@ -4864,9 +4864,9 @@ cellcolor{cyan}
 RST Soft reset. Writing logic 1 resets CTU CAN FD. After writing logic 1,  logic 0 does not need to be written, this bit is automatically cleared.
 \end_layout
 \begin_layout Description
-LOM Listen Only Mode. In this mode CTU CAN FD only receives frames and sends only recessive bits on CAN bus. When a dominant bit is sent, it is re-routed internally so that bus value is not changed. When this mode is enabled, controller will not transmit any inserted frame!\begin_inset Newline newline\end_inset
-		0b0  - LOM_DISABLED - Listen only mode disabled.\begin_inset Newline newline\end_inset
-		0b1  - LOM_ENABLED - Listen only mode enabled.
+BMM Bus monitoring mode. In this mode CTU CAN FD only receives frames and sends only recessive bits on CAN bus. When a dominant bit is sent, it is re-routed internally so that bus value is not changed. When this mode is enabled, CTU CAN FD will not transmit any frame from TXT Buffers,\begin_inset Newline newline\end_inset
+		0b0  - BMM_DISABLED - Bus monitoring mode disabled.\begin_inset Newline newline\end_inset
+		0b1  - BMM_ENABLED - Bus monitoring mode enabled.
 \end_layout
 \begin_layout Description
 STM Self Test Mode. In this mode transmitted frame is considered valid even if dominant acknowledge was not received.\begin_inset Newline newline\end_inset
@@ -5125,19 +5125,19 @@ Reserved\end_layout
 
 \end_inset
 </cell>
-<cell alignment="center" leftline="true" multicolumn="2" topline="true" usebox="none" valignment="top">
+<cell alignment="center" leftline="true" multicolumn="1" topline="true" usebox="none" valignment="top">
 \begin_inset Text
 
 \begin_layout Plain Layout
-Reserved\end_layout
+FDRF\end_layout
 
 \end_inset
 </cell>
-<cell alignment="center" leftline="true" multicolumn="2" topline="true" usebox="none" valignment="top">
+<cell alignment="center" leftline="true" multicolumn="1" topline="true" usebox="none" valignment="top">
 \begin_inset Text
 
 \begin_layout Plain Layout
-Reserved\end_layout
+TBFBO\end_layout
 
 \end_inset
 </cell>
@@ -5210,7 +5210,7 @@ cellcolor{cyan}
 \begin_inset Text
 
 \begin_layout Plain Layout
--\end_layout
+0\end_layout
 
 \end_inset
 </cell>
@@ -5218,7 +5218,7 @@ cellcolor{cyan}
 \begin_inset Text
 
 \begin_layout Plain Layout
--\end_layout
+1\end_layout
 
 \end_inset
 </cell>
@@ -5566,7 +5566,7 @@ RTRLE Retransmitt Limit Enable. If enabled, CTU CAN FD only attempts to retransm
 RTRTH Retransmitt Limit Threshold. Maximal amount of retransmission attempts when SETTINGS[RTRLE] is enabled.
 \end_layout
 \begin_layout Description
-ILBP Internal Loop Back. When enabled, CTU CAN FD receives any frame it transmitts.\begin_inset Newline newline\end_inset
+ILBP Internal Loop Back mode. When enabled, CTU CAN FD receives any frame it transmitts.\begin_inset Newline newline\end_inset
 		0b0  - INT_LOOP_DISABLED - Internal loop-back is disabled.\begin_inset Newline newline\end_inset
 		0b1  - INT_LOOP_ENABLED - Internal loop-back is enabled.
 \end_layout
@@ -5584,6 +5584,16 @@ NISOFD Non ISO FD. When this bit is set, CTU CAN FD is compliant to NON-ISO CAN 
 PEX Protocol exception handling. When this bit is set, CTU CAN FD will start integration upon detection of protocol exception. This should be modified only when SETTINGS[ENA] = '0'.\begin_inset Newline newline\end_inset
 		0b0  - PROTOCOL_EXCEPTION_DISABLED - Protocol exception handling is disabled.\begin_inset Newline newline\end_inset
 		0b1  - PROTOCOL_EXCEPTION_ENABLED - Protocol exception handling is enabled.
+\end_layout
+\begin_layout Description
+TBFBO All TXT buffers shall go to "TX failed" state when CTU CAN FD becomes bus-off.\begin_inset Newline newline\end_inset
+		0b0  - TXTBUF_FAILED_BUS_OFF_DISABLED - TXT Buffers dont go to "TX failed" state when CTU CAN FD becomes bus-off.\begin_inset Newline newline\end_inset
+		0b1  - TXTBUF_FAILED_BUS_OFF_ENABLED - TXT Buffers go to "TX failed" state when CTU CAN FD becomes bus-off.
+\end_layout
+\begin_layout Description
+FDRF Frame filters drop Remote frames.\begin_inset Newline newline\end_inset
+		0b0  - DROP_RF_DISABLED - Frame filters accept RTR frames.\begin_inset Newline newline\end_inset
+		0b1  - DROP_RF_ENABLED - Frame filters drop RTR frames.
 \end_layout
 \begin_layout Standard
 \begin_inset VSpace bigskip
@@ -6419,67 +6429,67 @@ cellcolor{cyan}
 
 \end_inset
 </cell>
+<cell alignment="center" leftline="true" multicolumn="1" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Reserved\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" multicolumn="2" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Reserved\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" multicolumn="2" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Reserved\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" multicolumn="2" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Reserved\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" multicolumn="2" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Reserved\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" multicolumn="2" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Reserved\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" multicolumn="2" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Reserved\end_layout
+
+\end_inset
+</cell>
 <cell alignment="center" leftline="true" multicolumn="1" rightline="true" topline="true" usebox="none" valignment="top">
 \begin_inset Text
 
 \begin_layout Plain Layout
-Reserved\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" leftline="true" multicolumn="2" topline="true" usebox="none" valignment="top">
-\begin_inset Text
-
-\begin_layout Plain Layout
-Reserved\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" leftline="true" multicolumn="2" topline="true" usebox="none" valignment="top">
-\begin_inset Text
-
-\begin_layout Plain Layout
-Reserved\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" leftline="true" multicolumn="2" topline="true" usebox="none" valignment="top">
-\begin_inset Text
-
-\begin_layout Plain Layout
-Reserved\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" leftline="true" multicolumn="2" topline="true" usebox="none" valignment="top">
-\begin_inset Text
-
-\begin_layout Plain Layout
-Reserved\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" leftline="true" multicolumn="2" topline="true" usebox="none" valignment="top">
-\begin_inset Text
-
-\begin_layout Plain Layout
-Reserved\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" leftline="true" multicolumn="2" topline="true" usebox="none" valignment="top">
-\begin_inset Text
-
-\begin_layout Plain Layout
-Reserved\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" leftline="true" multicolumn="2" rightline="true" topline="true" usebox="none" valignment="top">
-\begin_inset Text
-
-\begin_layout Plain Layout
-Reserved\end_layout
+PEXS\end_layout
 
 \end_inset
 </cell>
@@ -6560,7 +6570,7 @@ cellcolor{cyan}
 \begin_inset Text
 
 \begin_layout Plain Layout
--\end_layout
+0\end_layout
 
 \end_inset
 </cell>
@@ -6914,6 +6924,9 @@ EWL TX Error counter (TEC) or RX Error counter (REC) is equal to, or higher than
 \end_layout
 \begin_layout Description
 IDLE Bus is idle (no frame is being transmitted/received) or CTU CAN FD is bus-off.
+\end_layout
+\begin_layout Description
+PEXS Protocol exception status (flag). Set when Protocol exception occurs. Cleared by writing COMMAND[CPEXS]=1.
 \end_layout
 \begin_layout Standard
 \begin_inset VSpace bigskip
@@ -8073,7 +8086,7 @@ cellcolor{cyan}
 \begin_inset Text
 
 \begin_layout Plain Layout
-Reserved\end_layout
+CPEXS\end_layout
 
 \end_inset
 </cell>
@@ -8154,7 +8167,7 @@ cellcolor{cyan}
 \begin_inset Text
 
 \begin_layout Plain Layout
--\end_layout
+0\end_layout
 
 \end_inset
 </cell>
@@ -8235,6 +8248,9 @@ RXFCRST Clear RX bus traffic counter (RX_COUNTER register).
 \end_layout
 \begin_layout Description
 TXFCRST Clear TX bus traffic counter (TX_COUNTER register).
+\end_layout
+\begin_layout Description
+CPEXS Clear Protocol exception status (STATUS[PEXS]).
 \end_layout
 \begin_layout Standard
 \begin_inset VSpace bigskip

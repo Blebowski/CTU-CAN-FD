@@ -123,9 +123,9 @@
 						</ipxact:enumeratedValues>
 					</ipxact:field>
 					<ipxact:field>
-						<ipxact:name>LOM</ipxact:name>
-						<ipxact:displayName>LOM</ipxact:displayName>
-						<ipxact:description>Listen Only Mode. In this mode CTU CAN FD only receives frames and sends only recessive bits on CAN bus. When a dominant bit is sent, it is re-routed internally so that bus value is not changed. When this mode is enabled, controller will not transmit any inserted frame!</ipxact:description>
+						<ipxact:name>BMM</ipxact:name>
+						<ipxact:displayName>BMM</ipxact:displayName>
+						<ipxact:description>Bus monitoring mode. In this mode CTU CAN FD only receives frames and sends only recessive bits on CAN bus. When a dominant bit is sent, it is re-routed internally so that bus value is not changed. When this mode is enabled, CTU CAN FD will not transmit any frame from TXT Buffers,</ipxact:description>
 						<ipxact:bitOffset>1</ipxact:bitOffset>
 						<ipxact:resets>
 							<ipxact:reset>
@@ -135,15 +135,15 @@
 						<ipxact:bitWidth>1</ipxact:bitWidth>
 						<ipxact:enumeratedValues>
 							<ipxact:enumeratedValue>
-								<ipxact:name>LOM_ENABLED</ipxact:name>
-								<ipxact:displayName>LOM_ENABLED</ipxact:displayName>
-								<ipxact:description>Listen only mode enabled.</ipxact:description>
+								<ipxact:name>BMM_ENABLED</ipxact:name>
+								<ipxact:displayName>BMM_ENABLED</ipxact:displayName>
+								<ipxact:description>Bus monitoring mode enabled.</ipxact:description>
 								<ipxact:value>1</ipxact:value>
 							</ipxact:enumeratedValue>
 							<ipxact:enumeratedValue>
-								<ipxact:name>LOM_DISABLED</ipxact:name>
-								<ipxact:displayName>LOM_DISABLED</ipxact:displayName>
-								<ipxact:description>Listen only mode disabled.</ipxact:description>
+								<ipxact:name>BMM_DISABLED</ipxact:name>
+								<ipxact:displayName>BMM_DISABLED</ipxact:displayName>
+								<ipxact:description>Bus monitoring mode disabled.</ipxact:description>
 								<ipxact:value>0</ipxact:value>
 							</ipxact:enumeratedValue>
 						</ipxact:enumeratedValues>
@@ -287,6 +287,19 @@
 						<ipxact:bitWidth>1</ipxact:bitWidth>
 						<ipxact:modifiedWriteValue>clear</ipxact:modifiedWriteValue>
 					</ipxact:field>
+					<ipxact:field>
+						<ipxact:name>CPEXS</ipxact:name>
+						<ipxact:displayName>CPEXS</ipxact:displayName>
+						<ipxact:description>Clear Protocol exception status (STATUS[PEXS]).</ipxact:description>
+						<ipxact:bitOffset>7</ipxact:bitOffset>
+						<ipxact:resets>
+							<ipxact:reset>
+								<ipxact:value>0</ipxact:value>
+							</ipxact:reset>
+						</ipxact:resets>
+						<ipxact:bitWidth>1</ipxact:bitWidth>
+						<ipxact:modifiedWriteValue>clear</ipxact:modifiedWriteValue>
+					</ipxact:field>
 				</ipxact:register>
 				<ipxact:register>
 					<ipxact:name>STATUS</ipxact:name>
@@ -392,6 +405,18 @@
 						</ipxact:resets>
 						<ipxact:bitWidth>1</ipxact:bitWidth>
 					</ipxact:field>
+					<ipxact:field>
+						<ipxact:name>PEXS</ipxact:name>
+						<ipxact:displayName>PEXS</ipxact:displayName>
+						<ipxact:description>Protocol exception status (flag). Set when Protocol exception occurs. Cleared by writing COMMAND[CPEXS]=1.</ipxact:description>
+						<ipxact:bitOffset>8</ipxact:bitOffset>
+						<ipxact:resets>
+							<ipxact:reset>
+								<ipxact:value>0</ipxact:value>
+							</ipxact:reset>
+						</ipxact:resets>
+						<ipxact:bitWidth>1</ipxact:bitWidth>
+					</ipxact:field>
 				</ipxact:register>
 				<ipxact:register>
 					<ipxact:name>SETTINGS</ipxact:name>
@@ -442,7 +467,7 @@
 					<ipxact:field>
 						<ipxact:name>ILBP</ipxact:name>
 						<ipxact:displayName>ILBP</ipxact:displayName>
-						<ipxact:description>Internal Loop Back. When enabled, CTU CAN FD receives any frame it transmitts.</ipxact:description>
+						<ipxact:description>Internal Loop Back mode. When enabled, CTU CAN FD receives any frame it transmitts.</ipxact:description>
 						<ipxact:bitOffset>5</ipxact:bitOffset>
 						<ipxact:resets>
 							<ipxact:reset>
@@ -540,6 +565,58 @@
 								<ipxact:displayName>PROTOCOL_EXCEPTION_DISABLED</ipxact:displayName>
 								<ipxact:description>Protocol exception handling is enabled.</ipxact:description>
 								<ipxact:value>1</ipxact:value>
+							</ipxact:enumeratedValue>
+						</ipxact:enumeratedValues>
+					</ipxact:field>
+					<ipxact:field>
+						<ipxact:name>TBFBO</ipxact:name>
+						<ipxact:displayName>TBFBO</ipxact:displayName>
+						<ipxact:description>All TXT buffers shall go to &quot;TX failed&quot; state when CTU CAN FD becomes bus-off.</ipxact:description>
+						<ipxact:bitOffset>9</ipxact:bitOffset>
+						<ipxact:resets>
+							<ipxact:reset>
+								<ipxact:value>1</ipxact:value>
+							</ipxact:reset>
+						</ipxact:resets>
+						<ipxact:bitWidth>1</ipxact:bitWidth>
+						<ipxact:enumeratedValues>
+							<ipxact:enumeratedValue>
+								<ipxact:name>TXTBUF_FAILED_BUS_OFF_ENABLED</ipxact:name>
+								<ipxact:displayName>TXTBUF_FAILED_BUS_OFF_ENABLED</ipxact:displayName>
+								<ipxact:description>TXT Buffers go to &quot;TX failed&quot; state when CTU CAN FD becomes bus-off.</ipxact:description>
+								<ipxact:value>1</ipxact:value>
+							</ipxact:enumeratedValue>
+							<ipxact:enumeratedValue>
+								<ipxact:name>TXTBUF_FAILED_BUS_OFF_DISABLED</ipxact:name>
+								<ipxact:displayName>TXTBUF_FAILED_BUS_OFF_DISABLED</ipxact:displayName>
+								<ipxact:description>TXT Buffers dont go to &quot;TX failed&quot; state when CTU CAN FD becomes bus-off.</ipxact:description>
+								<ipxact:value>0</ipxact:value>
+							</ipxact:enumeratedValue>
+						</ipxact:enumeratedValues>
+					</ipxact:field>
+					<ipxact:field>
+						<ipxact:name>FDRF</ipxact:name>
+						<ipxact:displayName>FDRF</ipxact:displayName>
+						<ipxact:description>Frame filters drop Remote frames.</ipxact:description>
+						<ipxact:bitOffset>10</ipxact:bitOffset>
+						<ipxact:resets>
+							<ipxact:reset>
+								<ipxact:value>0</ipxact:value>
+							</ipxact:reset>
+						</ipxact:resets>
+						<ipxact:bitWidth>1</ipxact:bitWidth>
+						<ipxact:enumeratedValues>
+							<ipxact:enumeratedValue>
+								<ipxact:name>DROP_RF_ENABLED</ipxact:name>
+								<ipxact:displayName>DROP_RF_ENABLED</ipxact:displayName>
+								<ipxact:description>Frame filters drop RTR frames.</ipxact:description>
+								<ipxact:value>1</ipxact:value>
+							</ipxact:enumeratedValue>
+							<ipxact:enumeratedValue>
+								<ipxact:name>DROP_RF_DISABLED</ipxact:name>
+								<ipxact:displayName>DROP_RF_DISABLED</ipxact:displayName>
+								<ipxact:description>Frame filters accept RTR frames.</ipxact:description>
+								<ipxact:value>0</ipxact:value>
 							</ipxact:enumeratedValue>
 						</ipxact:enumeratedValues>
 					</ipxact:field>

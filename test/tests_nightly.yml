@@ -118,13 +118,14 @@ feature:
         glitch_filtering:
         mode_loopback:
             iterations: 10
-        mode_listen_only:
+        mode_bus_monitoring:
         mode_self_test:
         mode_frame_filters:
             iterations: 15
         mode_fd_enable:
         mode_rst:
         mode_test:
+        mode_fdrf:
         int_rx:
         int_tx:
         int_ewl:
