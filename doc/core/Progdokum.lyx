@@ -2179,6 +2179,13 @@ H and TIMESTAMP_L registers.
 
 \begin_layout Section
 Operating modes
+\begin_inset CommandInset label
+LatexCommand label
+name "sec:Operating-modes"
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
@@ -2423,7 +2430,7 @@ Write SETTINGS[ENA]=0.
 \end_layout
 
 \begin_layout Enumerate
-SW shall ensure that no TXT Buffer is in any of 
+SW shall ensure that no TXT buffer is in any of 
 \begin_inset Quotes eld
 \end_inset
 
@@ -4075,6 +4082,49 @@ TX failed state
 \end_inset
 
  if retransmitt limit was reached.
+\end_layout
+
+\begin_layout Subsection
+TXT buffer - Bus-off behavior
+\end_layout
+
+\begin_layout Standard
+When CTU CAN FD becomes bus-off due to TEC > 255, TXT buffers can react
+ to this event in two ways:
+\end_layout
+
+\begin_layout Enumerate
+All TXT buffers immediately go to 
+\begin_inset Quotes eld
+\end_inset
+
+TX failed
+\begin_inset Quotes erd
+\end_inset
+
+ state.
+ This option is enabled by setting SETTINGS[TBFBO] = 1, and it is default
+ configuration of TXT buffers.
+\end_layout
+
+\begin_layout Enumerate
+TXT buffers remain in their current states.
+ This option is enabled by setting SETTINGS[TBFBO] = 0.
+ After CTU CAN FD finishes reintegration (see 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "sec:Operating-modes"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+), transmission will begin from one one such TXT buffer, as per regular
+ TXT buffer selection by priority.
+ This option is usefull when, COMMAND[ERCRST] is issued in advance, and
+ CTU CAN FD will automatically start reintegration after becoming bus-off.
+ It allows re-integrating with the bus without need of SW interaction.
 \end_layout
 
 \begin_layout Subsection

@@ -230,6 +230,7 @@ package can_fd_register_map is
   constant NISOFD_IND            : natural := 23;
   constant PEX_IND               : natural := 24;
   constant TBFBO_IND             : natural := 25;
+  constant FDRF_IND              : natural := 26;
 
   -- "RTRLE" field enumerated values
   constant RTRLE_DISABLED     : std_logic := '0';
@@ -255,6 +256,10 @@ package can_fd_register_map is
   constant TXTBUF_FAILED_BUS_OFF_DISABLE : std_logic := '0';
   constant TXTBUF_FAILED_BUS_OFF_ENABLE : std_logic := '1';
 
+  -- "FDRF" field enumerated values
+  constant DROP_RF_DISABLED   : std_logic := '0';
+  constant DROP_RF_ENABLED    : std_logic := '1';
+
   -- SETTINGS register reset values
   constant RTRLE_RSTVAL       : std_logic := '0';
   constant RTRTH_RSTVAL : std_logic_vector(3 downto 0) := x"0";
@@ -263,6 +268,7 @@ package can_fd_register_map is
   constant NISOFD_RSTVAL      : std_logic := '0';
   constant PEX_RSTVAL         : std_logic := '0';
   constant TBFBO_RSTVAL       : std_logic := '1';
+  constant FDRF_RSTVAL        : std_logic := '0';
 
   ------------------------------------------------------------------------------
   -- STATUS register

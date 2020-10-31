@@ -142,9 +142,11 @@ union ctu_can_fd_mode_settings {
 		uint32_t nisofd                  : 1;
 		uint32_t pex                     : 1;
 		uint32_t tbfbo                   : 1;
-		uint32_t reserved_31_26          : 6;
+		uint32_t fdrf                    : 1;
+		uint32_t reserved_31_27          : 5;
 #else
-		uint32_t reserved_31_26          : 6;
+		uint32_t reserved_31_27          : 5;
+		uint32_t fdrf                    : 1;
 		uint32_t tbfbo                   : 1;
 		uint32_t pex                     : 1;
 		uint32_t nisofd                  : 1;
@@ -218,6 +220,11 @@ enum ctu_can_fd_settings_pex {
 enum ctu_can_fd_settings_tbfbo {
 	TXTBUF_FAILED_BUS_OFF_DISABLE       = 0x0,
 	TXTBUF_FAILED_BUS_OFF_ENABLE        = 0x1,
+};
+
+enum ctu_can_fd_settings_fdrf {
+	DROP_RF_DISABLED       = 0x0,
+	DROP_RF_ENABLED        = 0x1,
 };
 
 union ctu_can_fd_status {

@@ -592,6 +592,30 @@
 							</ipxact:enumeratedValue>
 						</ipxact:enumeratedValues>
 					</ipxact:field>
+					<ipxact:field>
+						<ipxact:name>FDRF</ipxact:name>
+						<ipxact:displayName>FDRF</ipxact:displayName>
+						<ipxact:description>Frame filters drop Remote frames.</ipxact:description>
+						<ipxact:bitOffset>10</ipxact:bitOffset>
+						<ipxact:resets>
+							<ipxact:reset>
+								<ipxact:value>0</ipxact:value>
+							</ipxact:reset>
+						</ipxact:resets>
+						<ipxact:bitWidth>1</ipxact:bitWidth>
+						<ipxact:enumeratedValues>
+							<ipxact:enumeratedValue>
+								<ipxact:name>DROP_RF_ENABLED</ipxact:name>
+								<ipxact:displayName>DROP_RF_ENABLED</ipxact:displayName>
+								<ipxact:value>1</ipxact:value>
+							</ipxact:enumeratedValue>
+							<ipxact:enumeratedValue>
+								<ipxact:name>DROP_RF_DISABLED</ipxact:name>
+								<ipxact:displayName>DROP_RF_DISABLED</ipxact:displayName>
+								<ipxact:value>0</ipxact:value>
+							</ipxact:enumeratedValue>
+						</ipxact:enumeratedValues>
+					</ipxact:field>
 				</ipxact:register>
 				<ipxact:register>
 					<ipxact:name>INT_STAT</ipxact:name>
