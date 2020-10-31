@@ -4565,7 +4565,7 @@ status open
 \noindent
 \align center
 \begin_inset Graphics
-	filename /DOKUMENTY/Projekty/ctu_can_fd/doc/pics/Visio_generated/Frame_filters_flow.pdf
+	filename ../pics/Visio_generated/Frame_filters_flow.pdf
 	lyxscale 20
 	scale 70
 
