@@ -92,6 +92,7 @@ feature:
         mode_fd_enable:
         mode_rst:
         mode_test:
+        mode_fdrf:
         int_rx:
         int_tx:
         int_ewl:

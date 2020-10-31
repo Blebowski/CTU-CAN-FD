@@ -164,10 +164,11 @@ package CANtestLib is
         internal_loopback       :   boolean;
         iso_fd_support          :   boolean;
         pex_support             :   boolean;
+        fdrf                    :   boolean;
     end record;
     
     constant SW_mode_rst_val : SW_mode := (false, false, false, false, false,
-        true, false, false, false, true, false);
+        true, false, false, false, true, false, false);
 
     -- Controller commands
     type SW_command is record
@@ -4313,6 +4314,12 @@ package body CANtestLib is
         else
             data(PEX_IND) := '0';
         end if;
+        
+        if (mode.fdrf) then
+            data(FDRF_IND) := '1';
+        else
+            data(FDRF_IND) := '0';
+        end if;
 
         CAN_write(data, SETTINGS_ADR, ID, mem_bus, BIT_16);
     end procedure;
@@ -4376,6 +4383,12 @@ package body CANtestLib is
             mode.internal_loopback      := true;
         else
             mode.internal_loopback      := false;
+        end if;
+        
+        if (data(FDRF_IND) = '1') then
+            mode.fdrf                   := true;
+        else
+            mode.fdrf                   := false;
         end if;
 
     end procedure;
