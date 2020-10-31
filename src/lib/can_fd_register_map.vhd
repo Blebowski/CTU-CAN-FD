@@ -229,6 +229,7 @@ package can_fd_register_map is
   constant ENA_IND               : natural := 22;
   constant NISOFD_IND            : natural := 23;
   constant PEX_IND               : natural := 24;
+  constant TBFBO_IND             : natural := 25;
 
   -- "RTRLE" field enumerated values
   constant RTRLE_DISABLED     : std_logic := '0';
@@ -250,6 +251,10 @@ package can_fd_register_map is
   constant PROTOCOL_EXCEPTION_DISABLED : std_logic := '0';
   constant PROTOCOL_EXCEPTION_ENABLED : std_logic := '1';
 
+  -- "TBFBO" field enumerated values
+  constant TXTBUF_FAILED_BUS_OFF_DISABLE : std_logic := '0';
+  constant TXTBUF_FAILED_BUS_OFF_ENABLE : std_logic := '1';
+
   -- SETTINGS register reset values
   constant RTRLE_RSTVAL       : std_logic := '0';
   constant RTRTH_RSTVAL : std_logic_vector(3 downto 0) := x"0";
@@ -257,6 +262,7 @@ package can_fd_register_map is
   constant ENA_RSTVAL         : std_logic := '0';
   constant NISOFD_RSTVAL      : std_logic := '0';
   constant PEX_RSTVAL         : std_logic := '0';
+  constant TBFBO_RSTVAL       : std_logic := '1';
 
   ------------------------------------------------------------------------------
   -- STATUS register

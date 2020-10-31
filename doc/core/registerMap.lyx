@@ -5133,11 +5133,11 @@ Reserved\end_layout
 
 \end_inset
 </cell>
-<cell alignment="center" leftline="true" multicolumn="2" topline="true" usebox="none" valignment="top">
+<cell alignment="center" leftline="true" multicolumn="1" topline="true" usebox="none" valignment="top">
 \begin_inset Text
 
 \begin_layout Plain Layout
-Reserved\end_layout
+TBFBO\end_layout
 
 \end_inset
 </cell>
@@ -5218,7 +5218,7 @@ cellcolor{cyan}
 \begin_inset Text
 
 \begin_layout Plain Layout
--\end_layout
+1\end_layout
 
 \end_inset
 </cell>
@@ -5584,6 +5584,11 @@ NISOFD Non ISO FD. When this bit is set, CTU CAN FD is compliant to NON-ISO CAN 
 PEX Protocol exception handling. When this bit is set, CTU CAN FD will start integration upon detection of protocol exception. This should be modified only when SETTINGS[ENA] = '0'.\begin_inset Newline newline\end_inset
 		0b0  - PROTOCOL_EXCEPTION_DISABLED - Protocol exception handling is disabled.\begin_inset Newline newline\end_inset
 		0b1  - PROTOCOL_EXCEPTION_ENABLED - Protocol exception handling is enabled.
+\end_layout
+\begin_layout Description
+TBFBO All TXT buffers shall become failed when CTU CAN FD becomes bus-off.\begin_inset Newline newline\end_inset
+		0b0  - TXTBUF_FAILED_BUS_OFF_DISABLE - \begin_inset Newline newline\end_inset
+		0b1  - TXTBUF_FAILED_BUS_OFF_ENABLE - 
 \end_layout
 \begin_layout Standard
 \begin_inset VSpace bigskip

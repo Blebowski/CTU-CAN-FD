@@ -568,6 +568,30 @@
 							</ipxact:enumeratedValue>
 						</ipxact:enumeratedValues>
 					</ipxact:field>
+					<ipxact:field>
+						<ipxact:name>TBFBO</ipxact:name>
+						<ipxact:displayName>TBFBO</ipxact:displayName>
+						<ipxact:description>All TXT buffers shall become failed when CTU CAN FD becomes bus-off.</ipxact:description>
+						<ipxact:bitOffset>9</ipxact:bitOffset>
+						<ipxact:resets>
+							<ipxact:reset>
+								<ipxact:value>1</ipxact:value>
+							</ipxact:reset>
+						</ipxact:resets>
+						<ipxact:bitWidth>1</ipxact:bitWidth>
+						<ipxact:enumeratedValues>
+							<ipxact:enumeratedValue>
+								<ipxact:name>TXTBUF_FAILED_BUS_OFF_ENABLE</ipxact:name>
+								<ipxact:displayName>TXTBUF_FAILED_BUS_OFF_ENABLE</ipxact:displayName>
+								<ipxact:value>1</ipxact:value>
+							</ipxact:enumeratedValue>
+							<ipxact:enumeratedValue>
+								<ipxact:name>TXTBUF_FAILED_BUS_OFF_DISABLE</ipxact:name>
+								<ipxact:displayName>TXTBUF_FAILED_BUS_OFF_DISABLE</ipxact:displayName>
+								<ipxact:value>0</ipxact:value>
+							</ipxact:enumeratedValue>
+						</ipxact:enumeratedValues>
+					</ipxact:field>
 				</ipxact:register>
 				<ipxact:register>
 					<ipxact:name>INT_STAT</ipxact:name>
