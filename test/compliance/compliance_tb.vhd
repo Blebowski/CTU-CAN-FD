@@ -159,8 +159,8 @@ begin
     ---------------------------------------------------------------------------
     can_agent_inst : can_agent
     generic map(
-        G_DRIVER_FIFO_DEPTH  => 1500,
-        G_MONITOR_FIFO_DEPTH => 1500
+        G_DRIVER_FIFO_DEPTH  => 2048,
+        G_MONITOR_FIFO_DEPTH => 2048
     )
     port map(
         -- CAN bus connections
