@@ -140,13 +140,14 @@ package body retr_limit_feature is
         variable buf_state          :       SW_TXT_Buffer_state_type;
         variable status             :       SW_status;
         variable txt_buf_nr         :       natural range 1 to 4;
+        variable tmp_int            :       natural;
     begin
 
         ------------------------------------------------------------------------
         -- Randomize used TXT Buffer
         ------------------------------------------------------------------------
-        rand_int_v(rand_ctr, 3, txt_buf_nr); 
-        txt_buf_nr := txt_buf_nr + 1;
+        rand_int_v(rand_ctr, 3, tmp_int);
+        txt_buf_nr := (tmp_int mod 4) + 1;
 
         ------------------------------------------------------------------------
         -- @1. Set retransmitt limit to 0 in Node 1. Enable retransmitt 
@@ -224,7 +225,8 @@ package body retr_limit_feature is
         --    after each next re-transmission sending TXT Buffer in Node 1 is
         --    "Ready".
         ------------------------------------------------------------------------
-        info("Step 7: Checking number of re-transmissions");
+        info("Step 7: Checking number of re-transmissions: " &
+                integer'image(retr_th));
         CAN_send_frame(CAN_frame, txt_buf_nr, ID_1, mem_bus(1), frame_sent);
         for i in 0 to retr_th loop
             info("Loop: " & integer'image(i));

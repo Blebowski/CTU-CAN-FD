@@ -128,6 +128,7 @@ package body mode_fdrf_feature is
         info("Step 2: Check that RTR frame is filtered when FDRF=1.");
         CAN_generate_frame(rand_ctr, CAN_TX_frame);
         CAN_TX_frame.ident_type := BASE;
+        CAN_TX_frame.frame_format := NORMAL_CAN;
         CAN_TX_frame.identifier := CAN_TX_frame.identifier mod 2048;
         CAN_TX_frame.rtr := RTR_FRAME;
         CAN_send_frame(CAN_TX_frame, 1, ID_2, mem_bus(2), frame_sent);
