@@ -51,14 +51,11 @@
 --      secutive recessive bits!
 --
 -- @Test sequence:
---  @1. Set Node 1 TXC to 255 via test mode. Forbid CAN FD frames in Node 1.
---      Generate CAN FD frame by Node 1 and send it. This should force Node 1
---      to generate Error frame on its own transmitted frame. Poll on Node 1
---      fault confinement state until it becomes bus-off.
+--  @1. Set Node 1 TXC to 256 via test mode. This should set node to bus-off.
 --  @2. When Node 1 becomes bus off, issue COMMAND[ERCRST] to Node 1. Wait until
 --      bus level is recessive (this should be in the start of Error delimiter).
 --      Now wait for 127 * 11 + 10 bits. Check that unit is still bus off!
---      Wait for 20 more bits and check that Node 1 is now Error active!
+--      Wait for 30 more bits and check that Node 1 is now Error active!
 --
 -- @TestInfoEnd
 --------------------------------------------------------------------------------
@@ -106,10 +103,7 @@ package body command_ercrst_feature is
     begin
 
         -----------------------------------------------------------------------
-        -- @1. Set Node 1 TXC to 255 via test mode. Forbid CAN FD frames in
-        --     Node 1. Generate CAN FD frame by Node 1 and send it. This should
-        --     force Node 1 to generate Error frame on its own transmitted
-        --     frame. Poll on Node 1 fault confinement state until it becomes
+        -- @1. Set Node 1 TXC to 259 via test mode. This should set node to
         --     bus-off.
         -----------------------------------------------------------------------
         info("Step 1");
@@ -118,13 +112,8 @@ package body command_ercrst_feature is
         mode_1.test := true; -- We need it to set error counters!
         set_core_mode(mode_1, ID_1, mem_bus(1));
 
-        err_ctrs.tx_counter := 255;
+        err_ctrs.tx_counter := 256;
         set_error_counters(err_ctrs, ID_1, mem_bus(1));
-
-        CAN_generate_frame(rand_ctr, frame_1);
-        frame_1.frame_format := FD_CAN;
-        CAN_insert_TX_frame(frame_1, 1, ID_1, mem_bus(1));
-        send_TXT_buf_cmd(buf_set_ready, 1, ID_1, mem_bus(1));
 
         get_fault_state(fault_state, ID_1, mem_bus(1));
         while (fault_state /= fc_bus_off) loop
@@ -156,9 +145,9 @@ package body command_ercrst_feature is
         get_fault_state(fault_state, ID_1, mem_bus(1));
         check(fault_state = fc_bus_off, "Node still bus off!");
 
-        -- 20 bits is chosen just as upper bound. In fact, we would only need
+        -- 30 bits is chosen just as upper bound. In fact, we would only need
         -- to account for Error delimiter + Intermission
-        for i in 0 to 19 loop
+        for i in 0 to 29 loop
             CAN_wait_sample_point(iout(1).stat_bus);
         end loop;
         

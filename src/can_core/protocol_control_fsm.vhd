@@ -768,15 +768,22 @@ architecture rtl of protocol_control_fsm is
 
     -- Protocol exception status
     signal pexs_set                  :  std_logic;
+    
+    -- Internal TX frame type
+    signal tran_frame_type_i         :  std_logic;
 
 begin
 
     tx_frame_ready <= '1' when (tran_frame_valid = '1' and drv_bus_mon_ena = '0')
                           else
                       '0';
+                      
+    tran_frame_type_i <= FD_CAN when (tran_frame_type = FD_CAN and drv_can_fd_ena = '1')
+                                else
+                         NORMAL_CAN;
 
     no_data_transmitter <= '1' when (tran_dlc = "0000" or 
-                                    (tran_is_rtr = RTR_FRAME and tran_frame_type = NORMAL_CAN))
+                                    (tran_is_rtr = RTR_FRAME and tran_frame_type_i = NORMAL_CAN))
                                else
                            '0';
 
@@ -809,7 +816,7 @@ begin
                      else
                  '0';
 
-    is_fd_frame <= '1' when (is_transmitter = '1' and tran_frame_type = FD_CAN)
+    is_fd_frame <= '1' when (is_transmitter = '1' and tran_frame_type_i = FD_CAN)
                        else
                    '1' when (is_receiver = '1' and rec_frame_type = FD_CAN)
                        else
@@ -846,7 +853,7 @@ begin
     ---------------------------------------------------------------------------
     -- CRC sequence selection
     ---------------------------------------------------------------------------
-    crc_use_21 <= '1' when (is_transmitter = '1' and tran_frame_type = FD_CAN and
+    crc_use_21 <= '1' when (is_transmitter = '1' and tran_frame_type_i = FD_CAN and
                             to_integer(unsigned(tran_data_length)) > 16)
                       else
                   '1' when (is_receiver = '1' and rec_frame_type = FD_CAN and
@@ -854,7 +861,7 @@ begin
                       else
                   '0';
 
-    crc_use_17 <= '1' when (is_transmitter = '1' and tran_frame_type = FD_CAN and
+    crc_use_17 <= '1' when (is_transmitter = '1' and tran_frame_type_i = FD_CAN and
                             crc_use_21 = '0')
                       else
                   '1' when (is_receiver = '1' and rec_frame_type = FD_CAN and
@@ -877,7 +884,7 @@ begin
     dlc_decoder_tx_inst : dlc_decoder
     port map(
         dlc           => tran_dlc,
-        frame_type    => tran_frame_type,
+        frame_type    => tran_frame_type_i,
 
         data_length   => tran_data_length,
         is_valid      => open
@@ -1331,7 +1338,7 @@ begin
     curr_state_proc : process(
         curr_state, err_frm_req, sp_control_q_i, tx_failed, drv_ena, rx_data_nbs,
         ctrl_ctr_zero, arbitration_lost_condition, tx_data_wbs, is_transmitter,
-        tran_ident_type, tran_frame_type, tran_is_rtr, ide_is_arbitration,
+        tran_ident_type, tran_frame_type_i, tran_is_rtr, ide_is_arbitration,
         drv_can_fd_ena, tran_brs, rx_trigger, is_err_active, no_data_field,
         drv_fd_type, ctrl_counted_byte, ctrl_counted_byte_index, is_fd_frame,
         is_receiver, crc_match, drv_ack_forb, drv_self_test_ena, tx_frame_ready,
@@ -1655,7 +1662,7 @@ begin
                 end if;
                 
                 if (is_transmitter = '1' and tran_ident_type = BASE) then
-                    if (tran_frame_type = FD_CAN or
+                    if (tran_frame_type_i = FD_CAN or
                         tran_is_rtr = NO_RTR_FRAME)
                     then
                         tx_dominant <= '1';
@@ -1774,7 +1781,7 @@ begin
                 end if;
                 
                 if (is_transmitter = '1') then
-                    if (tran_frame_type = FD_CAN) then
+                    if (tran_frame_type_i = FD_CAN) then
                         tx_dominant <= '1';
                     elsif (tran_is_rtr = NO_RTR_FRAME) then
                         tx_dominant <= '1';
@@ -1798,7 +1805,7 @@ begin
                 nbt_ctrs_en <= '1';
                 
                 if (is_transmitter = '1') then
-                    if (tran_frame_type = NORMAL_CAN) then
+                    if (tran_frame_type_i = NORMAL_CAN) then
                         tx_dominant <= '1';
                     else
                         ssp_reset_i <= '1';
@@ -1921,7 +1928,7 @@ begin
                     tx_load_dlc_i <= '1';
                 end if;
                 
-                if (is_transmitter = '1' and tran_frame_type = NORMAL_CAN) then
+                if (is_transmitter = '1' and tran_frame_type_i = NORMAL_CAN) then
                     tx_dominant <= '1';
                 else
                     ssp_reset_i <= '1';
@@ -2550,6 +2557,26 @@ begin
                 perform_hsync <= '1';
                 bit_err_disable <= '1';
                 nbt_ctrs_en <= '1';
+
+                -- Restart integration upon reception of DOMINANT bit or upon
+                -- synchronization edge detected!
+                if (rx_data_nbs = DOMINANT or sync_edge = '1') then
+                    ctrl_ctr_pload_val <= C_INTEGRATION_DURATION;
+                end if;
+                
+                -- When preloaded due to synchronisation edge, this is
+                -- outside of sample point!
+                if (rx_data_nbs = DOMINANT) then
+                    ctrl_ctr_pload_i <= '1';
+                end if;
+
+                if (sync_edge = '1' and
+                   -- Third reset condition shall be valid for nodes which are
+                   -- CAN FD tolerant or CAN FD enabled!
+                   (not(drv_pex = '0' and drv_can_fd_ena = '0')))
+                then
+                    ctrl_ctr_pload_unaliged <= '1';
+                end if;
                 
                 if (ctrl_ctr_zero = '1') then
                     reinteg_ctr_enable <= '1';

@@ -509,7 +509,7 @@ filename "version.tex"
 \noindent
 \align center
 \begin_inset Tabular
-<lyxtabular version="3" rows="16" columns="4">
+<lyxtabular version="3" rows="17" columns="4">
 <features tabularvalignment="middle">
 <column alignment="center" valignment="top" width="1.5cm">
 <column alignment="center" valignment="top" width="2cm">
@@ -1096,11 +1096,50 @@ Add SETTING[PEX] and Protocol exception support.
 </cell>
 </row>
 <row>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
 2.2.6
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Ondrej Ille
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+28-10-2020
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Add frame filters examples, add TBFBO and FDRF bits in SETTINGS registers,
+ minor refactoring.
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+2.2.7
 \end_layout
 
 \end_inset
@@ -1118,7 +1157,7 @@ Ondrej Ille
 \begin_inset Text
 
 \begin_layout Plain Layout
-28-10-2020
+05-11-2020
 \end_layout
 
 \end_inset
@@ -1127,8 +1166,7 @@ Ondrej Ille
 \begin_inset Text
 
 \begin_layout Plain Layout
-Add frame filters examples, add TBFBO and FDRF bits in SETTINGS registers,
- minor refactoring.
+Add general overview and TX frame type description.
 \end_layout
 
 \end_inset
@@ -1238,6 +1276,16 @@ literal "false"
 \end_inset
 
 .
+\end_layout
+
+\begin_layout Section
+General overview
+\end_layout
+
+\begin_layout Standard
+CTU CAN FD is soft IP-core written in VHDL with no vendor-specific libraries
+ needed.
+ It implements CAN FD protocol as specified by ISO11898-1.
 \end_layout
 
 \begin_layout Section
@@ -2284,9 +2332,9 @@ When CTU CAN FD is error-active, it takes part in CAN bus communication.
  on CAN bus and waits before starting Reintegration until it receives Error
  counter reset command (writing COMMAND[ERCRST] = 1).
  Upon this command, CTU CAN FD starts Reintegration.
- Reintegration lasts until CTU CAN FD detects 128 sequences of 11 consecutive
+ Reintegration lasts until CTU CAN FD detects 129 sequences of 11 consecutive
  recessive bits.
- After 128 such sequences, CTU CAN FD becomes error-active again.
+ After 129 such sequences, CTU CAN FD becomes error-active again.
 \end_layout
 
 \begin_layout Standard
@@ -2345,7 +2393,7 @@ sticky
 \end_inset
 
 .
- This means that if CTU CAN FD is not yet bus-off and this command is issued,
+ This means that if CTU CAN FD is not yet bus-off, and this command is issued,
  it will be remembered by CTU CAN FD and it will automatically start reintegrati
 on upon nearest transition to bus-off.
  The reason is, that command can be issued in advance (during communication),
@@ -2959,13 +3007,13 @@ Protocol exception handling
 
 \begin_layout Standard
 CTU CAN FD supports Protocol exception detection.
- Protocol exception is enabled when MODE[PEX] = 1.
+ Protocol exception is enabled by MODE[PEX] = 1.
  MODE[PEX] shall be changed only when CTU CAN FD is disabled (SETTINGS[ENA]=0).
  Protocol exception behavior is different for various CAN implementation
  types (see 
 \begin_inset CommandInset ref
 LatexCommand ref
-reference "tab:apb-interface"
+reference "tab:can-implementation-type"
 plural "false"
 caps "false"
 noprefix "false"
@@ -2973,13 +3021,15 @@ noprefix "false"
 \end_inset
 
 ).
- Upon detection of Protocol exception, CTU CAN FD enters bus integration
- state and it waits for 11 consecutive recessive bits to be monitored on
- CAN_RX signal.
+ If MODE[PEX] = 1 and CTU CAN FD detects Protocol exception, it enters bus
+ integration state and it waits for 11 consecutive recessive bits to be
+ monitored on CAN_RX signal.
  REC/TEC counters are not changed upon Protocol exception, nor is Fault
  confinement state of CTU CAN FD.
  When Protocol exception occurs, STATUS[PEXS] flag is set.
  STATUS[PEXS] can be cleared by writing COMMAND[CPEXS] = 1.
+ If MODE[PEX] = 0 and conditions for Protocol exception are valid, CTU CAN
+ FD transmits error frame instead.
 \end_layout
 
 \begin_layout Subsection
@@ -3292,7 +3342,7 @@ res
 CAN implementation type
 \begin_inset CommandInset label
 LatexCommand label
-name "tab:apb-interface"
+name "tab:can-implementation-type"
 
 \end_inset
 
@@ -3311,10 +3361,9 @@ name "tab:apb-interface"
 
 \begin_layout Description
 Note When CTU CAN FD is configured as Classical CAN / CAN FD tolerant node
- and user attempts to send CAN FD frame (FRAME_FORMAT_W[FDF_BIT] = 1 in
- TXT buffer), it will detect error upon its own transmitted frame.
- Therefore SW shall not attempt to send CAN FD frames when CTU CAN FD is
- configured as Classical CAN / CAN FD tolerant node.
+ (MODE[FDE] = 0) and user attempts to send CAN FD frame (FRAME_FORMAT_W[FDF_BIT]
+ = 1 in TXT buffer), frame type in TXT buffer will be ignored and CAN 2.0
+ frame will be sent.
 \end_layout
 
 \begin_layout Description
@@ -3767,8 +3816,8 @@ Ready
 
 \begin_layout Itemize
 If TXT buffer A has higher priority than TXT buffer B, CTU CAN FD will pick
- frame from TXT buffer A even if its time of transmission is lower (transmission
- should start earlier) than the one from TXT Buffer B
+ frame from TXT buffer A even if its time of transmission is higher (transmissio
+n should start later) than the one from TXT Buffer B.
 \end_layout
 
 \begin_layout Itemize
@@ -3794,6 +3843,83 @@ Ready
  for Time base to reach its time of transmission.
  When frame transmission already starts, TXT buffer priority is not considered
  anymore (no frame swapping).
+\end_layout
+
+\begin_layout Subsection
+TX frame type
+\end_layout
+
+\begin_layout Standard
+Type of CAN frame transmitted by CTU CAN FD is determined by content of
+ FRAME_FORMAT_W in TXT buffer, and settings of CTU CAN FD as show in Table
+ 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:tx-frame-type"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+placement h
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\noindent
+\align center
+\begin_inset Graphics
+	filename ../pics/Visio_generated/TX_frame_flow.pdf
+	lyxscale 20
+	scale 80
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+TX frame type
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:tx-frame-type"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Description
+Note When FRAME_FORMAT_W[FDF] = FD_CAN and MODE[FDE] = 0, CTU CAN FD transmits
+ CAN 2.0 frame.
+ If in such case TXT buffer contains CAN FD frame with more than 8 bytes
+ of data payload, bytes 8 above 8-th bit will not be sent.
+\end_layout
+
+\begin_layout Description
+Note When FRAME_FORMAT_W[RTR] = RTR_FRAME and FRAME_FORMAT_W[FDF] = FD_CAN,
+ RTR flag is ignored and CTU CAN FD transmits CAN FD data frame (there are
+ no remote frames in CAN FD protocol).
 \end_layout
 
 \begin_layout Subsection
@@ -4289,7 +4415,7 @@ CAN_write_32(TX_COMMAND_ADDR, command);               // Issue the command
 \end_layout
 
 \begin_layout Description
-Note When CTU CAN FD is enabled by writing SETTINGS[ENA] = '1', it is still
+Note When CTU CAN FD is enabled by writing SETTINGS[ENA] = 1, it is still
  bus-off during integration to the CAN bus.
  If during this time 
 \series bold
@@ -4303,23 +4429,7 @@ Aborted
 \begin_inset Quotes erd
 \end_inset
 
- state (because CTU CAN is bus-off, and all TXT buffers in 
-\begin_inset Quotes eld
-\end_inset
-
-TX ready
-\begin_inset Quotes erd
-\end_inset
-
- state move to 
-\begin_inset Quotes eld
-\end_inset
-
-Aborted
-\begin_inset Quotes erd
-\end_inset
-
- state when CTU CAN FD is bus-off).
+ state when SETTINGS[TBFBO] = 1.
  SW shall wait until node is Error active (either polling FAULT_STATE or
  via FCS Interrupt) before issuing 
 \series bold
@@ -4567,7 +4677,7 @@ status open
 \begin_inset Graphics
 	filename ../pics/Visio_generated/Frame_filters_flow.pdf
 	lyxscale 20
-	scale 70
+	scale 80
 
 \end_inset
 

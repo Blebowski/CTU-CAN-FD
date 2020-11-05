@@ -51,7 +51,7 @@
 --  @2. Receiving CAN FD frame results in Error frame when Flexible data-rate
 --      mode is disabled.
 --  @3. Transmitting CAN FD frame when Flexible data-rate mode is disabled
---      results in transmission of Error frame.
+--      results in transmission of CAN 2.0 frame only!
 --
 -- @Test sequence:
 --  @1. Send CAN FD frame by Node 2. Wait till frame is sent. Read it from Node 1
@@ -64,10 +64,9 @@
 --  @4. Set Node 2 to Acknowledge forbidden mode. Transmitt frame by Node 1.
 --      Wait till it is sent, read Error code capture and check it is NOT equal
 --      to Form error (this is just to achieve change in Error code capture).  
---  @5. Send frame by Node 1. Wait till it is in Control field.
---  @6. Wait until Node 1 is not in control field. Check that Error frame is
---      being transmitted. Read Error code capture and check that it shows Form 
---      Error during Control field. Wait till the frame is transmitted.
+--  @5. Unset ACK forbidden in Node 2. Send CAN FD frame by Node 1.
+--  @6. Wait until frame is sent and check that it is received OK in node 2.
+--      Make sure it CAN 2.0 frame.
 --
 -- @TestInfoEnd
 --------------------------------------------------------------------------------
@@ -175,29 +174,26 @@ package body mode_fd_enable_feature is
         CAN_wait_bus_idle(ID_1, mem_bus(1));
         
         ------------------------------------------------------------------------
-        -- @5. Send frame by Node 1. Wait till it is in Control field.
+        -- @5. Unset ACK forbidden in Node 2. Send frame by Node 1.
         ------------------------------------------------------------------------
+        wait for 20000 ns;
         info("Step 4: Send frame by node with FD disabled");
+        mode_2.acknowledge_forbidden := false;
+        set_core_mode(mode_2, ID_2, mem_bus(2));
+        CAN_TX_frame.frame_format := FD_CAN;
         CAN_send_frame(CAN_TX_frame, 1, ID_1, mem_bus(1), frame_sent);
-        CAN_wait_pc_state(pc_deb_control, ID_1, mem_bus(1));
 
         ------------------------------------------------------------------------
-        -- @6. Wait until Node 1 is not in control field. Check that Error frame
-        --    is being transmitted. Read Error code capture and check that it
-        --    shows Form Error during Control field. Wait till the frame is
-        --    transmitted.
+        -- @6. Wait until frame is sent and check that it is received OK in
+        --     Node 2. Make sure it CAN 2.0 frame.
         ------------------------------------------------------------------------
-        info("Step 5: Check node transmitts error frame on ist own FD frame!");
-        CAN_wait_not_pc_state(pc_deb_control, ID_1, mem_bus(1));
-        get_controller_status(status, ID_1, mem_bus(1));
-        check(status.error_transmission,
-            "Error frame transmitted when attempting to send CAN FD frame!");
-
-        CAN_read_error_code_capture(err_capt, ID_1, mem_bus(1));
-        check(err_capt.err_type = can_err_form,
-            "Error type: " & SW_error_type'image(err_capt.err_type));
-        check(err_capt.err_pos = err_pos_ctrl,
-            "Error in :" & SW_error_position'image(err_capt.err_pos));
+        info("Step 5: Check Node 2 receives CAN 2.0 frame!");
+        CAN_wait_frame_sent(ID_2, mem_bus(2));
+        CAN_read_frame(CAN_RX_frame, ID_2, mem_bus(2));
+    
+        check(CAN_RX_frame.frame_format = NORMAL_CAN, "CAN 2.0 frame received");
+        check(CAN_RX_frame.dlc = CAN_TX_frame.dlc, "TX/RX DLC matching");
+    
         CAN_wait_bus_idle(ID_1, mem_bus(1));
 
         wait for 1000 ns;

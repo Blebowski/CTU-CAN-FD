@@ -56,13 +56,6 @@
 --      and check that sampled value is dominant and sent is recessive. Read
 --      RX Error counter and check that it was incremented by 8. Check that TX
 --      Error counter is the same as before!
---  @2. Set Node 1 not to accept CAN FD frames (Node 2 will accept CAN FD frames).
---      Transmitt CAN FD frame by Node 1
---      and Wait until Error frame in Node 2. Read Error counters of Node 2.
---      Wait for 7 sample points (Error flag + 1st bit post Error flag) of Node 2
---      and check that sampled value is dominant and sent is recessive. Read
---      RX Error counter and check that it was incremented by 8. Check that TX
---      Error counter is the same as before!
 --
 -- @TestInfoEnd
 --------------------------------------------------------------------------------
@@ -144,50 +137,6 @@ package body error_rules_b_feature is
 
         check(err_counters_2.tx_counter = err_counters_1.tx_counter,
             "TX Error counter unchanged in receiver!");
-
-        CAN_wait_bus_idle(ID_1, mem_bus(1));
-        CAN_wait_bus_idle(ID_2, mem_bus(2));
-
-        -----------------------------------------------------------------------
-        -- @2. Set Node 1 not to accept CAN FD frames (Node 2 will accept CAN FD 
-        --    frames). Transmitt CAN FD frame by Node 1 and Wait until Error 
-        --    frame in Node 2. Read Error counters of Node 2. Wait for 7 sample
-        --    points (Error flag + 1st bit post Error flag) of Node 2 and check
-        --    that sampled value is dominant and sent is recessive. Read RX Error
-        --    counter and check that it was incremented by 8. Check that TX Error
-        --    counter is the same as before!
-        -----------------------------------------------------------------------
-        info("Step 2");
-
-        -- Enable CAN FD frames in Node 2
-        mode_2.flexible_data_rate := true;
-        set_core_mode(mode_2, ID_2, mem_bus(2));
-
-        -- Disable in Node 1
-        mode_1.flexible_data_rate := false;
-        set_core_mode(mode_1, ID_1, mem_bus(1));
-
-        CAN_generate_frame(rand_ctr, CAN_frame);
-        CAN_frame.frame_format := FD_CAN;
-        CAN_send_frame(CAN_frame, 1, ID_1, mem_bus(1), frame_sent);
-
-        -- Now Node 1 should be the first to transmitt Error frame!
-        CAN_wait_error_frame(ID_1, mem_bus(1));
-        wait for 20 ns;
-        read_error_counters(err_counters_1, ID_1, mem_bus(1));
-
-        for i in 0 to 6 loop
-            CAN_wait_sample_point(iout(1).stat_bus);
-        end loop;
-
-        wait for 20 ns;
-        read_error_counters(err_counters_2, ID_1, mem_bus(1));
-
-        check(err_counters_2.rx_counter = err_counters_1.rx_counter,
-            "RX Error counter unchanged in transmitter!");
-
-        check(err_counters_2.tx_counter = err_counters_1.tx_counter,
-            "TX Error counter unchanged in transmitter!");
 
         CAN_wait_bus_idle(ID_1, mem_bus(1));
         CAN_wait_bus_idle(ID_2, mem_bus(2));

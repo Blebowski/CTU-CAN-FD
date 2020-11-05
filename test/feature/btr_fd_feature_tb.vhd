@@ -137,6 +137,13 @@ package body btr_fd_feature is
         if (bus_timing.tq_dbt = 0) then
             bus_timing.tq_dbt := 1;
         end if;
+        
+        -- Make sure there is not too big difference between BRP nominal and BRP data,
+        -- otherwise frame might not be received correctly!
+        if (abs(bus_timing.tq_nbt - bus_timing.tq_dbt) > 5) then
+            bus_timing.tq_nbt := 2;
+            bus_timing.tq_dbt := 1;
+        end if;
 
         -- Pre-calculate expected number of clock cycles
         clock_per_bit := (1 + bus_timing.prop_dbt + bus_timing.ph1_dbt +
@@ -198,12 +205,14 @@ package body btr_fd_feature is
         CAN_wait_bus_on(ID_2, mem_bus(2));
 
         info("CAN bus nominal bit-rate:");
+        info("BRP: " & integer'image(bus_timing.tq_nbt));
         info("PROP: " & integer'image(bus_timing.prop_nbt));
         info("PH1: " & integer'image(bus_timing.ph1_nbt));
         info("PH2: " & integer'image(bus_timing.ph2_nbt));
         info("SJW: " & integer'image(bus_timing.sjw_nbt));
 
         info("CAN bus Data bit-rate:");
+        info("BRP: " & integer'image(bus_timing.tq_dbt));
         info("PROP: " & integer'image(bus_timing.prop_dbt));
         info("PH1: " & integer'image(bus_timing.ph1_dbt));
         info("PH2: " & integer'image(bus_timing.ph2_dbt));

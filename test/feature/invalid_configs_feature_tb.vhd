@@ -108,6 +108,9 @@ package body invalid_configs_feature is
         tx_frame.rtr := RTR_FRAME;
         CAN_send_frame(tx_frame, 1, ID_1, mem_bus(1), frame_sent);
         CAN_wait_frame_sent(ID_2, mem_bus(2));
+        CAN_wait_bus_idle(ID_1, mem_bus(1));
+        CAN_wait_bus_idle(ID_2, mem_bus(2));
+        
         CAN_read_frame(rx_frame, ID_2, mem_bus(2));
         check(rx_frame.frame_format = FD_CAN, "FD frame received");
         check(rx_frame.rtr = NO_RTR_FRAME, "NO RTR received");
@@ -123,6 +126,8 @@ package body invalid_configs_feature is
         tx_frame.brs := BR_SHIFT;
         CAN_send_frame(tx_frame, 1, ID_1, mem_bus(1), frame_sent);
         CAN_wait_frame_sent(ID_2, mem_bus(2));        
+        CAN_wait_bus_idle(ID_1, mem_bus(1));
+        CAN_wait_bus_idle(ID_2, mem_bus(2));
         
         CAN_read_frame(rx_frame, ID_2, mem_bus(2));
         check(rx_frame.brs = BR_NO_SHIFT, "Frame with no BRS received!");

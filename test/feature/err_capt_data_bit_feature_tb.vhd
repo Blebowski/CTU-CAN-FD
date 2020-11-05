@@ -133,10 +133,10 @@ package body err_capt_data_bit_feature is
         CAN_wait_tx_rx_start(true, false, ID_1, mem_bus(1));
         CAN_wait_pc_state(pc_deb_data, ID_1, mem_bus(1));
 
-        -- Wait for random number of bits
+        -- Wait for random number of bits within data field
         rand_int_v(rand_ctr, (frame_1.data_length * 8) - 1, tmp);
         info("Waiting for: " & integer'image(tmp) & " bits!");
-        for i in 0 to tmp loop
+        for i in 0 to tmp - 1 loop
             CAN_wait_sample_point(iout(1).stat_bus, true);
         end loop;
 

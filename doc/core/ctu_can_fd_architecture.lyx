@@ -9760,7 +9760,7 @@ Reintegration
 \begin_inset Quotes erd
 \end_inset
 
- means attempt to detect 128 ocurrences of 11 consecutive recessive bits
+ means attempt to detect 129 ocurrences of 11 consecutive recessive bits
  after node went 
 \color red
 bus off
@@ -10975,7 +10975,7 @@ Re-integration
 \begin_inset Text
 
 \begin_layout Plain Layout
-11, preloaded 128 times.
+11, preloaded 129 times.
 \end_layout
 
 \end_inset
@@ -11702,7 +11702,7 @@ File: reintegration_counter.vhd
 \end_layout
 
 \begin_layout Standard
-Reintegration counter counts 128 consecutive ocurrences of 11 consecutive
+Reintegration counter counts 129 consecutive ocurrences of 11 consecutive
  
 \color red
 recessive
@@ -11745,8 +11745,9 @@ dominant
 recessive
 \color inherit
  bits were reached).
- When reintegration counter reaches 128, it signals this to Protocol control
- FSM (Protocol control FSM becomes Idle), unit becomes 
+ When reintegration counter reaches 128 (0-128 = 129 times), it signals
+ this to Protocol control FSM (Protocol control FSM becomes Idle), unit
+ becomes 
 \color red
 error active
 \color inherit
@@ -12059,7 +12060,7 @@ Protocol control FSM increments Reintegration counter by 1.
 \begin_inset Text
 
 \begin_layout Plain Layout
-After 128 repetitions of 11 consecutive 
+After 129 repetitions of 11 consecutive 
 \color red
 recessive
 \color inherit
