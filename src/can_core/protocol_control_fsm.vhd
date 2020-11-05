@@ -2550,6 +2550,26 @@ begin
                 perform_hsync <= '1';
                 bit_err_disable <= '1';
                 nbt_ctrs_en <= '1';
+
+                -- Restart integration upon reception of DOMINANT bit or upon
+                -- synchronization edge detected!
+                if (rx_data_nbs = DOMINANT or sync_edge = '1') then
+                    ctrl_ctr_pload_val <= C_INTEGRATION_DURATION;
+                end if;
+                
+                -- When preloaded due to synchronisation edge, this is
+                -- outside of sample point!
+                if (rx_data_nbs = DOMINANT) then
+                    ctrl_ctr_pload_i <= '1';
+                end if;
+
+                if (sync_edge = '1' and
+                   -- Third reset condition shall be valid for nodes which are
+                   -- CAN FD tolerant or CAN FD enabled!
+                   (not(drv_pex = '0' and drv_can_fd_ena = '0')))
+                then
+                    ctrl_ctr_pload_unaliged <= '1';
+                end if;
                 
                 if (ctrl_ctr_zero = '1') then
                     reinteg_ctr_enable <= '1';
