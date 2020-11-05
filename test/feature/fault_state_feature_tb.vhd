@@ -65,7 +65,7 @@
 --  @4. Increment RX Error counter to more than 255 and check that Node 1 is 
 --      Error Passive (should not go to bus-off by RX Counter).
 --  @5. Increment TX Counter to go above 255 and check that Node 1 is now bus off.
---  @6. Issue COMMAND[ERCRST] and wait for 128*11 recessive bits. Check that
+--  @6. Issue COMMAND[ERCRST] and wait for 129*11 recessive bits. Check that
 --      Node 1 becomes Error Active.
 --
 -- @TestInfoEnd
@@ -221,8 +221,8 @@ package body fault_state_feature is
         wait for 20 ns; -- To make sure sample point is missed!
         give_controller_command(command, ID_1, mem_bus(1));
 
-        -- Wait for 127 * 11 + 10 consecutive recessive bits
-        for i in 0 to (127 * 11) - 1 loop
+        -- Wait for 128 * 11 + 10 consecutive recessive bits
+        for i in 0 to (128 * 11) - 1 loop
             CAN_wait_sample_point(iout(1).stat_bus, false);
         end loop;
 
@@ -232,14 +232,14 @@ package body fault_state_feature is
 
         get_fault_state(fault_state, ID_1, mem_bus(1));
         check(fault_state = fc_bus_off,
-            "Node not reintegrated before 128 * 11 bits");
+            "Node not reintegrated before 129 * 11 bits");
 
         CAN_wait_sample_point(iout(1).stat_bus, false);
         wait for 20 ns;
         
         get_fault_state(fault_state, ID_1, mem_bus(1));
         check(fault_state = fc_error_active,
-            "Node reintegration finished after 128 * 11 bits");
+            "Node reintegration finished after 129 * 11 bits");
 
         read_error_counters(err_counters, ID_1, mem_bus(1));
         check(err_counters.tx_counter = 0, "TX Error counter erased!");
