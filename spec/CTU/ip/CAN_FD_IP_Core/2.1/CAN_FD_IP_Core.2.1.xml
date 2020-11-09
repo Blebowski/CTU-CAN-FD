@@ -212,6 +212,32 @@
 						</ipxact:resets>
 						<ipxact:bitWidth>1</ipxact:bitWidth>
 					</ipxact:field>
+					<ipxact:field>
+						<ipxact:name>ROM</ipxact:name>
+						<ipxact:displayName>ROM</ipxact:displayName>
+						<ipxact:description>Restricted operation mode.</ipxact:description>
+						<ipxact:bitOffset>6</ipxact:bitOffset>
+						<ipxact:resets>
+							<ipxact:reset>
+								<ipxact:value>0</ipxact:value>
+							</ipxact:reset>
+						</ipxact:resets>
+						<ipxact:bitWidth>1</ipxact:bitWidth>
+						<ipxact:enumeratedValues>
+							<ipxact:enumeratedValue>
+								<ipxact:name>ROM_ENABLED</ipxact:name>
+								<ipxact:displayName>ROM_ENABLED</ipxact:displayName>
+								<ipxact:description>Restricted operation mode is enabled.</ipxact:description>
+								<ipxact:value>1</ipxact:value>
+							</ipxact:enumeratedValue>
+							<ipxact:enumeratedValue>
+								<ipxact:name>ROM_DISABLED</ipxact:name>
+								<ipxact:displayName>ROM_DISABLED</ipxact:displayName>
+								<ipxact:description>Restricted operation mode is disabled.</ipxact:description>
+								<ipxact:value>0</ipxact:value>
+							</ipxact:enumeratedValue>
+						</ipxact:enumeratedValues>
+					</ipxact:field>
 				</ipxact:register>
 				<ipxact:register>
 					<ipxact:name>COMMAND</ipxact:name>

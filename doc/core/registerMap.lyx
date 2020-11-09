@@ -4720,11 +4720,11 @@ ACF\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-Reserved\end_layout
+ROM\end_layout
 
 \end_inset
 </cell>
-<cell alignment="center" leftline="true" multicolumn="2" topline="true" usebox="none" valignment="top">
+<cell alignment="center" leftline="true" multicolumn="1" topline="true" usebox="none" valignment="top">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -4801,7 +4801,7 @@ cellcolor{cyan}
 \begin_inset Text
 
 \begin_layout Plain Layout
--\end_layout
+0\end_layout
 
 \end_inset
 </cell>
@@ -4882,6 +4882,11 @@ AFM Acceptance Filters Mode. If enabled, only RX frames which pass Frame filters
 FDE Flexible data rate enable. When flexible data rate is enabled CTU CAN FD recognizes CAN FD frames (FDF bit = 1).\begin_inset Newline newline\end_inset
 		0b0  - FDE_DISABLE - Flexible data-rate support disabled.\begin_inset Newline newline\end_inset
 		0b1  - FDE_ENABLE - Flexible data-rate support enabled.
+\end_layout
+\begin_layout Description
+ROM Restricted operation mode.\begin_inset Newline newline\end_inset
+		0b0  - ROM_DISABLED - Restricted operation mode is disabled.\begin_inset Newline newline\end_inset
+		0b1  - ROM_ENABLED - Restricted operation mode is enabled.
 \end_layout
 \begin_layout Description
 ACF Acknowledge Forbidden Mode. When enabled, acknowledge is not sent even if received CRC matches the calculated one.\begin_inset Newline newline\end_inset
