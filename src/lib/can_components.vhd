@@ -4264,6 +4264,12 @@ package can_components is
         
         -- TXT Buffer bus-off behavior
         txt_buf_failed_bof      :in   std_logic;
+        
+        -- Restricted operation mode
+        drv_rom_ena            :in   std_logic;
+
+        -- Bus monitoring mode
+        drv_bus_mon_ena        :in   std_logic;
 
         ------------------------------------------------------------------------   
         -- CAN Core interface
@@ -4379,6 +4385,12 @@ package can_components is
 
         -- TXT buffer bus off behavior
         txt_buf_failed_bof     :in   std_logic;
+
+        -- Restricted operation mode
+        drv_rom_ena            :in   std_logic;
+
+        -- Bus monitoring mode
+        drv_bus_mon_ena        :in   std_logic;
 
         ------------------------------------------------------------------------   
         -- Interrupt Manager Interface

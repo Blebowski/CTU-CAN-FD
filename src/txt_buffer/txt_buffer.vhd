@@ -136,6 +136,12 @@ entity txt_buffer is
 
         -- TXT Buffer bus-off behavior
         txt_buf_failed_bof     :in   std_logic;
+        
+        -- Restricted operation mode
+        drv_rom_ena            :in   std_logic;
+
+        -- Bus monitoring mode
+        drv_bus_mon_ena        :in   std_logic;
 
         ------------------------------------------------------------------------   
         -- Interrupt Manager Interface
@@ -281,6 +287,8 @@ begin
         txtb_hw_cmd            => txtb_hw_cmd,              -- IN
         hw_cbs                 => hw_cbs,                   -- IN
         is_bus_off             => is_bus_off,               -- IN
+        drv_rom_ena            => drv_rom_ena,              -- IN
+        drv_bus_mon_ena        => drv_bus_mon_ena,          -- IN
 
         txtb_user_accessible   => txtb_user_accessible,     -- OUT
         txtb_hw_cmd_int        => txtb_hw_cmd_int,          -- OUT
