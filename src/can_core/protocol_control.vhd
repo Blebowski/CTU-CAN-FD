@@ -645,6 +645,9 @@ architecture rtl of protocol_control is
   -- Arbitration lost capture - ID field
   signal alc_id_field            :      std_logic_vector(2 downto 0);
   
+  -- Restricted operation mode
+  signal drv_rom_ena             :      std_logic;
+
 begin
     
     ---------------------------------------------------------------------------
@@ -664,7 +667,8 @@ begin
                                       DRV_SSP_DELAY_SELECT_LOW);
     drv_pex               <=  drv_bus(DRV_PEX_INDEX);
     drv_cpexs             <=  drv_bus(DRV_PEXS_CLR_INDEX);
-  
+    drv_rom_ena           <=  drv_bus(DRV_ROM_ENA_INDEX);
+
     ---------------------------------------------------------------------------
     -- TX Data word endian swapper
     ---------------------------------------------------------------------------
@@ -708,6 +712,8 @@ begin
         drv_ssp_delay_select    => drv_ssp_delay_select,-- IN
         drv_pex                 => drv_pex,             -- IN
         drv_cpexs               => drv_cpexs,           -- IN
+        drv_rom_ena             => drv_rom_ena,         -- IN
+
         is_control              => is_control,          -- OUT
         is_data                 => is_data,             -- OUT
         is_stuff_count          => is_stuff_count,      -- OUT

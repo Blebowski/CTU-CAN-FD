@@ -577,6 +577,9 @@ begin
     drv_bus(DRV_ACK_FORB_INDEX) <= align_wrd_to_reg(
         control_registers_out.mode, ACF_IND);
 
+    -- ROM - Restricted operation mode
+    drv_bus(DRV_ROM_ENA_INDEX) <= align_wrd_to_reg(
+        control_registers_out.mode, ROM_IND);
 
     ---------------------------------------------------------------------------
     -- COMMAND Register
@@ -1484,7 +1487,7 @@ begin
     drv_bus(464 downto 462) <= (OTHERS => '0');
     drv_bus(609 downto 601) <= (OTHERS => '0');
     drv_bus(579 downto 570) <= (OTHERS => '0');
-    drv_bus(519 downto 513) <= (OTHERS => '0');
+    drv_bus(519 downto 514) <= (OTHERS => '0');
     drv_bus(506 downto 475) <= (OTHERS => '0');
     drv_bus(444 downto 430) <= (OTHERS => '0');
 
