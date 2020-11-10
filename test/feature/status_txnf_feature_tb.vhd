@@ -79,11 +79,11 @@
 -- @Test sequence:
 --  @1. Set BMM mode in Node 1. Check that STATUS[TXNF] is set (all TXT Buffers
 --      should be empty).
---  @2. Issue Set ready and Set Abort consecutively to all TXT Buffers. Check
---      that STATUS[TXNF] is set before last buffer. Check that after last buffer
---      STATUS[TXNF] is not set.
---  @3. Check that all TXT Buffers are Aborted now. Move always single buffer to
---      empty and check that STATUS[TXNF] is set. Move this buffer to Ready again
+--  @2. Issue Set ready consecutively to all TXT Buffers. Check that STATUS[TXNF]
+--      is set before last buffer. Check that after last buffer STATUS[TXNF] is
+--      not set.
+--  @3. Check that all TXT Buffers are Failed now. Move always single buffer to
+--      empty and check that STATUS[TXNF] is set. Move this buffer to Failed again
 --      and check that STATUS[TXNF] is not set. Repeat with each TXT Buffer.
 --
 -- @TestInfoEnd
@@ -142,13 +142,12 @@ package body status_txnf_feature is
         check(stat_1.tx_buffer_empty, "STATUS[TXNF] set!");
 
         -----------------------------------------------------------------------
-        -- @2. Issue Set ready and Set Abort consecutively to all TXT Buffers.
-        --    Check that STATUS[TXNF] is set before last buffer. Check that
-        --    after last buffer STATUS[TXNF] is not set.
+        -- @2. Issue Set ready consecutively to all TXT Buffers. Check that
+        --     STATUS[TXNF] is set before last buffer. Check that after last
+        --     buffer STATUS[TXNF] is not set.
         -----------------------------------------------------------------------
         for i in 1 to C_TXT_BUFFER_COUNT loop
             send_TXT_buf_cmd(buf_set_ready, i, ID_1, mem_bus(1));
-            send_TXT_buf_cmd(buf_set_abort, i, ID_1, mem_bus(1));
 
             get_controller_status(stat_1, ID_1, mem_bus(1));
 
@@ -162,16 +161,16 @@ package body status_txnf_feature is
         end loop;
 
         -----------------------------------------------------------------------
-        -- @3. Check that all TXT Buffers are Aborted now. Move always single
+        -- @3. Check that all TXT Buffers are Failed now. Move always single
         --    buffer to empty and check that STATUS[TXNF] is set. Move this
-        --    buffer to Ready again and check that STATUS[TXNF] is not set.
+        --    buffer to Failed again and check that STATUS[TXNF] is not set.
         --    Repeat with each TXT Buffer.
         -----------------------------------------------------------------------
         info("Step 3");
         for i in 1 to C_TXT_BUFFER_COUNT loop
             get_tx_buf_state(i, txt_buf_state, ID_1, mem_bus(1));
-            check(txt_buf_state = buf_aborted, "TXT Buffer: " &
-                integer'image(i) & " aborted!");
+            check(txt_buf_state = buf_failed, "TXT Buffer: " &
+                integer'image(i) & " failed!");
         end loop;
 
         for i in 1 to C_TXT_BUFFER_COUNT loop
@@ -186,7 +185,7 @@ package body status_txnf_feature is
             check_false(stat_1.tx_buffer_empty, "STATUS[TXNF] not set!");
             
             get_tx_buf_state(i, txt_buf_state, ID_1, mem_bus(1));
-            check(txt_buf_state = buf_ready, "TXT Buffer: " &
+            check(txt_buf_state = buf_failed, "TXT Buffer: " &
                 integer'image(i) & " ready!");
         end loop;
         
