@@ -192,10 +192,11 @@ package CANtestLib is
         iso_fd_support          :   boolean;
         pex_support             :   boolean;
         fdrf                    :   boolean;
+        restricted_operation    :   boolean;
     end record;
     
     constant SW_mode_rst_val : SW_mode := (false, false, false, false, false,
-        true, false, false, false, true, false, false);
+        true, false, false, false, true, false, false, false);
 
     -- Controller commands
     type SW_command is record
@@ -4314,6 +4315,9 @@ package body CANtestLib is
             data(FDE_IND)       := '1';
         end if;
 
+        if (mode.restricted_operation) then
+            data(ROM_IND)       := '1';
+        end if;
 
         if (mode.acknowledge_forbidden) then
             data(ACF_IND)       := '1';
@@ -4369,6 +4373,8 @@ package body CANtestLib is
         mode.rtr_pref                   := false;
         mode.acknowledge_forbidden      := false;
         mode.test                       := false;
+        mode.fdrf                       := false;
+        mode.restricted_operation       := false;
 
         if (data(RST_IND) = '1') then
             mode.reset                  := true;
@@ -4388,6 +4394,10 @@ package body CANtestLib is
 
         if (data(FDE_IND) = '1') then
             mode.flexible_data_rate     := true;
+        end if;
+
+        if (data(ROM_IND) = '1') then
+            mode.restricted_operation   := true;
         end if;
 
         if (data(ACF_IND) = '1') then
