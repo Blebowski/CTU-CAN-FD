@@ -73,14 +73,15 @@
 --  Bus monitoring mode - feature test.
 --
 -- @Verifies:
---  @1. No frame i-s transmitted during Bus monitoring mode.
+--  @1. No frame is transmitted during Bus monitoring mode.
 --  @2. No dominant bit is transmitted in Bus monitoring mode. ACK and Error
 --      frames are re-reouted internally and bus remains unchanged!
 --
 -- @Test sequence:
 --  @1. Configure Bus monitoring mode in Node 1. Set Self test mode in Node 2.
 --  @2. Insert frame for transmission to Node 1. Check for sufficiently long 
---      that it will NOT be transmitted (TXT Buffer remains Ready).
+--      that it will NOT be transmitted (TXT Buffer goes to failed and no 
+--      transmission is started).
 --  @3. Send CAN frame by Node 2. Wait till ACK field.
 --  @4. Monitor bus during whole ACK field, check that it is recessive. Wait
 --      till bus is idle.
@@ -155,9 +156,11 @@ package body mode_bus_monitoring_feature is
         CAN_generate_frame(rand_ctr, CAN_TX_frame);
         CAN_send_frame(CAN_TX_frame, 1, ID_1, mem_bus(1), frame_sent);
         
+        wait for 20 ns;
+        
         for i in 0 to 100 loop
             get_tx_buf_state(1, txt_buf_state, ID_1, mem_bus(1));
-            check(txt_buf_state = buf_ready, "TXT buffer remains ready!");
+            check(txt_buf_state = buf_failed, "TXT buffer went to failed");
             get_controller_status(status, ID_1, mem_bus(1));
             check_false(status.transmitter, "Node does not transmitt in BMM!");
             check_false(status.receiver, "Node turned receiver in BMM -> WTF?");
