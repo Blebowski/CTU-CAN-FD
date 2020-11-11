@@ -1543,6 +1543,7 @@ begin
                 ctrl_ctr_pload_val <= C_ERR_FLG_DURATION;
             else
                 ctrl_ctr_pload_val <= C_INTEGRATION_DURATION;
+                set_idle_i <= '1';
             end if;
             rec_abort_d <= '1';
             
@@ -2392,6 +2393,7 @@ begin
                             ctrl_ctr_pload_val <= C_OVR_FLG_DURATION;
                         else
                             ctrl_ctr_pload_val <= C_INTEGRATION_DURATION;
+                            set_idle_i <= '1';
                         end if;
                     end if;
                     
@@ -2496,6 +2498,7 @@ begin
                         ctrl_ctr_pload_val <= C_OVR_FLG_DURATION;
                     else
                         ctrl_ctr_pload_val <= C_INTEGRATION_DURATION;
+                        set_idle_i <= '1';
                     end if;
                 end if;
                 
@@ -3183,8 +3186,13 @@ begin
     set_receiver <= '1' when (set_receiver_i = '1' and rx_trigger = '1')
                         else
                     '0';
-                    
-    set_idle <= '1' when (set_idle_i = '1' and rx_trigger = '1')
+
+    ---------------------------------------------------------------------------
+    -- Idle must be un-gated also by Error frame request, since in ROM mode
+    -- it is possible that upon any kind of error, unit should go to integrating
+    -- and therefore stop being transmitter or receiver!
+    ---------------------------------------------------------------------------
+    set_idle <= '1' when (set_idle_i = '1' and (rx_trigger = '1' or err_frm_req = '1'))
                     else
                 '0';
 
@@ -3410,6 +3418,12 @@ begin
     -- psl no_tx_in_rom_mode : assert never
     --  (drv_rom_ena = '1' and is_transmitter = '1')
     -- report "Device shall not transmit frames in ROM mode!";
+
+    -- psl no_stuff_destuff_in_eof : assert never
+    --  (stuff_enable = '1' or destuff_enable = '1') and
+    --  (curr_state = s_pc_eof)
+    -- report "Bit stuffing destuffin should be never enabled during EOF!";
+
 
     -----------------------------------------------------------------------
     -----------------------------------------------------------------------
