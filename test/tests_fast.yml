@@ -101,6 +101,7 @@ feature:
         mode_rst:
         mode_test:
         mode_fdrf:
+        mode_restr_op:
         int_rx:
         int_tx:
         int_ewl:
