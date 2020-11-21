@@ -1597,6 +1597,17 @@ begin
                 nbt_ctrs_en <= '1';
                 is_sof <= '1';
                 
+                -- If we have transmission pending, FSM goes to SOF in sample
+                -- point of third bit of intermission or in idle. But till the
+                -- end of bit, it is still Intermission/Idle from bus
+                -- perspective, so we must allow hard-synchronization!
+                -- Then, even during TSEG1 of SOF bit, we can keep hard-sync
+                -- enabled, because it should be disabled due to no_pos_resync.
+                -- since DUT sends dominant bit, and sync edge during TSEG1
+                -- means positive phase error! Therefore any sync_edge will
+                -- be ignored by prescaler!
+                perform_hsync <= '1';
+                
                 if (rx_data_nbs = RECESSIVE) then
                     form_err_i <= '1';
                 end if;
@@ -3330,6 +3341,10 @@ begin
     -- psl no_secondary_sample_receiver : assert never
     --  (sp_control_q_i = SECONDARY_SAMPLE) and (is_receiver = '1')
     --  report "Receiver shall never use secondary sample point!";
+
+    -- psl no_sof_receiver : assert never
+    --  (curr_state = s_pc_sof and is_receiver = '1')
+    --  report "SOF state shall never be entered when receiver!";
 
     -----------------------------------------------------------------------
     -----------------------------------------------------------------------
