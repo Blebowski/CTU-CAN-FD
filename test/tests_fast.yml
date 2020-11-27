@@ -135,6 +135,8 @@ feature:
         tx_cmd_set_ready:
         tx_priority:
             iterations: 1
+        tx_priority_change:
+            iterations: 1
 reference:
     default:
         <<: *default
