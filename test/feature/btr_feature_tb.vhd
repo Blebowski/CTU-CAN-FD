@@ -238,12 +238,14 @@ package body btr_feature is
         -- high, test run time explodes! It has no sense to test long data fields
         -- on any bit-rate since its functionality should not depend on it!
         CAN_generate_frame(rand_ctr, CAN_frame_1);
+        info("Generated frame");
         CAN_frame_1.frame_format := NORMAL_CAN;
 
         if (CAN_frame_1.data_length > 4) then
             CAN_frame_1.data_length := 4;
             decode_length(CAN_frame_1.data_length, CAN_frame_1.dlc);
-        end if;        
+            decode_dlc_rx_buff(CAN_frame_1.dlc, CAN_frame_1.rwcnt);
+        end if;
 
         -- Force frame type to CAN 2.0 since we are measuring nominal bit rate!
         CAN_send_frame(CAN_frame_1, 1, ID_1, mem_bus(1), frame_sent);
