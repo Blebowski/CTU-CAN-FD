@@ -133,6 +133,7 @@ feature:
         tx_cmd_set_abort:
         tx_cmd_set_empty:
         tx_cmd_set_ready:
+        tx_arb_consistency:
         tx_priority:
             iterations: 1
         tx_priority_change:
