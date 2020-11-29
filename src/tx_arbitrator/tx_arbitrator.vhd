@@ -595,7 +595,7 @@ begin
   --
   -- psl txt_prio_change_cov : cover
   --    {select_buf_avail = '1';
-  --     select_buf_avail = '1' and select_buf_index'active;
+  --     select_buf_avail = '1' and (select_buf_index /= select_buf_index'LAST_VALUE);
   --     select_buf_avail = '1'};
   --
   -- Here it is enough to make sure that two concrete buffers with the
