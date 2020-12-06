@@ -22,7 +22,7 @@ class ReferenceTests(TestsBase):
         default = self.config['default']
 
         tb.scan_tests_from_file(str(self.base / "reference/vunit_reference_wrapper.vhd"))
-        sim_options = self.get_default_sim_options()
+        sim_options = self.get_sim_options(default)
 
         for data_set, cfg in self.config['tests'].items():
             dict_merge(cfg, default)
@@ -35,7 +35,7 @@ class ReferenceTests(TestsBase):
                 'data_path'    : str(self.build) + '/../' + cfg['data_path'],
             }
             local_sim_options = OptionsDict()
-            if cfg['psl_coverage']:
+            if cfg['functional_coverage']:
                 local_sim_options += self.add_psl_cov('{}.{}'.format(tb.name, data_set))
             local_sim_options = sim_options + local_sim_options
             tb.add_config(data_set, generics=generics, sim_options=local_sim_options)

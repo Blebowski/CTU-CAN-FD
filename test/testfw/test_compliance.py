@@ -36,8 +36,8 @@ class ComplianceTests(TestsBase):
         tb = self.lib.get_test_benches('*can_compliance_tb')[0]
 
         default = self.config['default']
-        sim_options = self.get_default_sim_options()
-        # generate & set per-test modelsim tcl file
+        sim_options = self.get_sim_options(default)
+
         sim_options['ghdl.sim_flags'] += ["--vpi=../compliance/libSIMULATOR_INTERFACE_LIB.so"]
         #sim_options['ghdl.elab_flags'] += ["-Wl,../compliance/sw_model/build/simulator_interface/libSIMULATOR_INTERFACE_LIB.so"]
 
@@ -63,19 +63,10 @@ class ComplianceTests(TestsBase):
                 'seed'              : get_seed(cfg)
             }
 
-            ##generics = {
-            ##    'timeout'      : cfg['timeout'],
-            ##    'iterations'   : cfg['iterations'],
-            ##    'log_level'    : cfg['log_level'] + '_l',
-            ##    'error_tol'    : cfg['error_tolerance'],
-            ##    'test_name'    : name,
-            ##    'seed'         : get_seed(cfg)
-            ##}
-
             local_sim_options = OptionsDict()
             
-            ##if cfg['psl_coverage']:
-            ##    local_sim_options += self.add_psl_cov('{}.{}'.format(tb.name, name))
+            if cfg['functional_coverage']:
+                local_sim_options += self.add_psl_cov('{}.{}'.format(tb.name, name))
 
             local_sim_options = sim_options + local_sim_options
             #tb.add_config(name, sim_options=local_sim_options)

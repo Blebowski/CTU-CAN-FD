@@ -38,10 +38,10 @@ class UnitTests(TestsBase):
             tb.set_generic('error_tol', cfg['error_tolerance'])
             tb.set_generic('seed', get_seed(cfg))
 
-            sim_options = self.get_default_sim_options()
-
-            if cfg['psl_coverage']:
+            sim_options = self.get_sim_options(default)
+            if cfg['functional_coverage']:
                 sim_options += self.add_psl_cov(tb.name)
+
             self.set_sim_options(tb, sim_options)
 
         return self._check_for_unconfigured()

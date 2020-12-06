@@ -1,11 +1,13 @@
 _default: &default
     log_level: info
-    psl_coverage: true
+    functional_coverage: true
+    code_coverage: true
     error_tolerance: 0
-    seed: 1325440635  # optional; use to reconstruct results from randomized runs
     randomize: false
+    # seed:0
     # In GUI mode, dump all signals, not only these included in layout file.
     dump_all_signals: true
+
 compliance:
     default:
         <<: *default

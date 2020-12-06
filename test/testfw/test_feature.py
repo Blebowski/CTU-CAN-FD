@@ -21,7 +21,6 @@ class FeatureTests(TestsBase):
 
         wrname = self.build / 'pkg_feature_exec_dispatch-body.vhd'
         self._create_wrapper(wrname)
-        # add_sources(self.lib, [str(wrname)])
         self.lib.add_source_file(str(wrname))
         tb = self.lib.get_test_benches('*tb_feature')[0]
         tb.scan_tests_from_file(str(wrname))
@@ -30,7 +29,7 @@ class FeatureTests(TestsBase):
         tb = self.lib.get_test_benches('*tb_feature')[0]
         default = self.config['default']
 
-        sim_options = self.get_default_sim_options()
+        sim_options = self.get_sim_options(default)
 
         for name, cfg in self.config['tests'].items():
             if cfg is None:
@@ -48,7 +47,7 @@ class FeatureTests(TestsBase):
             }
 
             local_sim_options = OptionsDict()
-            if cfg['psl_coverage']:
+            if cfg['functional_coverage']:
                 local_sim_options += self.add_psl_cov('{}.{}'.format(tb.name, name))
 
             local_sim_options = sim_options + local_sim_options
