@@ -59,15 +59,12 @@ class OptionsDict(dict):
 
 
 class TestsBase:
-    def __init__(self, ui, lib, config, build, base, create_ghws: bool,
-                 force_unrestricted_dump_signals: bool):
+    def __init__(self, ui, lib, config, build, base):
         self.ui = ui
         self.lib = lib
         self.config = config
         self.build = build
         self.base = base
-        self.create_ghws = create_ghws
-        self.force_unrestricted_dump_signals = force_unrestricted_dump_signals
 
     @property
     def jinja_env(self):
@@ -83,8 +80,8 @@ class TestsBase:
 
         raise NotImplementedError()
 
-    def get_default_sim_options(self) -> OptionsDict:
-        c, s = get_default_compile_and_sim_options()
+    def get_sim_options(self, config) -> OptionsDict:
+        c, s = get_compile_and_sim_options(config)
         return s
 
     def add_psl_cov(self, name) -> OptionsDict:
@@ -117,22 +114,20 @@ def add_tb_sources(lib) -> None:
     add_sources(lib, ['*.vhd', 'lib/*.vhd', 'models/*.vhd'])
 
 
-def get_default_compile_and_sim_options() -> Tuple[OptionsDict, OptionsDict]:
-    # TODO: move to config
-    debug = True
-    coverage = True
-    psl = True
+def get_compile_and_sim_options(config) -> Tuple[OptionsDict, OptionsDict]:
 
     compile_flags = []  # type: List[str]
     elab_flags = ["-Wl,-no-pie"]
 
-    if debug:
+    if ('debug' in config) and config['debug'] == True:
         compile_flags += ['-g']
         elab_flags += ['-g']
-    if coverage:
+
+    if ('code_coverage' in config) and config['code_coverage'] == True:
         compile_flags += ["-fprofile-arcs", "-ftest-coverage"]
         elab_flags += ["-Wl,-lgcov", "-Wl,--coverage"]
-    if psl:
+
+    if ('functional_coverage' in config) and config['functional_coverage'] == True:
         compile_flags += ['-fpsl']
         elab_flags += ['-fpsl']
 
@@ -144,13 +139,13 @@ def get_default_compile_and_sim_options() -> Tuple[OptionsDict, OptionsDict]:
     sim_options = OptionsDict({
         "ghdl.elab_flags": elab_flags,
         "modelsim.init_files.after_load": common_modelsim_init_files,
-        "ghdl.sim_flags": ["--ieee-asserts=disable-at-0"],
+        "ghdl.sim_flags": ["--ieee-asserts=disable"],
     })
     return compile_options, sim_options
 
 
-def get_compile_options() -> OptionsDict:
-    c, s = get_default_compile_and_sim_options()
+def get_compile_options(config) -> OptionsDict:
+    c, s = get_compile_and_sim_options(config)
     return c
 
 

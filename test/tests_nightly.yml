@@ -1,8 +1,11 @@
 _default: &default
     log_level: info
-    psl_coverage: true
+    functional_coverage: true
+    code_coverage: true
     error_tolerance: 0
     randomize: true
+    # seed:0
+
     # In GUI mode, dump all signals, not only these included in layout file.
     dump_all_signals: true
 unit:
@@ -144,6 +147,7 @@ feature:
         rx_buf_empty_read:
         tx_counter:
         rx_counter:
+        single_bus_node:
         ssp_cfg:
         status_rxne:
         status_txnf:

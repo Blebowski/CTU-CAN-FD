@@ -9,6 +9,7 @@ stages:
     - precheck
     - build
     - test
+    - coverage
     - deploy
 
 check_component:
@@ -100,22 +101,14 @@ test_ip_nightly:
     script:
         - cd test
         - make test_nightly
-    after_script:
-        - cd test
-        - make coverage
-        - make functional_coverage
-        - cd ../scripts
-        - chmod +x gen_vrm
-        - ./gen_vrm
-    coverage: "/lines......: ([^%]+%)/"
     artifacts:
         when: always
         paths:
-            - test/code_html
             - test/tests_nightly.xml
             - test/xunit.xsl
+            - test/build/code_coverage_tests_nightly
             - test/build/functional_coverage
-            - scripts/VRM.html
+            - test/build/vunit_out/preprocessed
         reports:
             junit: [test/tests_nightly.xml]
 
@@ -124,10 +117,59 @@ test_ip_nightly:
     # Fast pipeline on the other hand can't fail because it must pass before merge!
     allow_failure: true
 
+test_ip_compliance:
+    stage: test
+    dependencies: [build_ip_and_tests]
+    only:
+        - schedules
+    script:
+        - cd test
+        - make test_compliance
+    artifacts:
+        when: always
+        paths:
+            - test/tests_compliance.xml
+            - test/xunit.xsl
+            - test/build/code_coverage_tests_compliance
+            - test/build/functional_coverage
+            - test/build/vunit_out/preprocessed
+        reports:
+            junit: [test/tests_compliance.xml]
+
+    # For now not all compliance tests are debugged, allow failure...
+    allow_failure: true
+
+process_coverage:
+    stage: coverage
+    dependencies: [build_ip_and_tests, test_ip_compliance, test_ip_nightly]
+    only:
+        - schedules
+    script:
+        # Merge code coverage outputs from nightly and compliance stages, process code coverage
+        - cd test/build
+        - gcov-tool merge -o code_coverage_merged code_coverage_tests_nightly code_coverage_tests_compliance
+        - mv code_coverage_tests_nightly/*.gcno code_coverage_merged
+        - cd ..
+        - make coverage_merged
+
+        - ls build/functional_coverage/coverage_data
+        - make functional_coverage
+
+        - cd ../scripts
+        - chmod +x gen_vrm
+        - ./gen_vrm
+
+    coverage: "/lines......: ([^%]+%)/"
+    artifacts:
+        when: always
+        paths:
+            - test/code_html
+            - test/build/functional_coverage
+            - scripts/VRM.html
+
 pages:
     stage: deploy
     when: always
-    #dependencies: [test_ip_unit, test_ip_sanity]
     script:
         - mkdir -p public
         - cp test/xunit.xsl public/

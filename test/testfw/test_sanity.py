@@ -19,7 +19,7 @@ class SanityTests(TestsBase):
         tb = self.lib.get_test_benches('*tb_sanity')[0]
         default = self.config['default']
 
-        sim_options = self.get_default_sim_options()
+        sim_options = self.get_sim_options(default)
 
         for name, cfg in self.config['tests'].items():
 
@@ -31,7 +31,6 @@ class SanityTests(TestsBase):
                 'error_tol'    : cfg['error_tolerance'],
                 'seed'         : get_seed(cfg),
                 'topology'     : cfg['topology'],
-                #'bm'           : vhdl_serialize(bm),
                 'bus_len_v'    : vhdl_serialize(cfg['bus_len_v']),
                 'trv_del_v'    : vhdl_serialize(cfg['trv_del_v']),
                 'osc_tol_v'    : vhdl_serialize(cfg['osc_tol_v']),
@@ -44,7 +43,7 @@ class SanityTests(TestsBase):
             }
 
             local_sim_options = OptionsDict()
-            if cfg['psl_coverage']:
+            if cfg['functional_coverage']:
                 local_sim_options += self.add_psl_cov('{}.{}'.format(tb.name, name))
             local_sim_options = sim_options + local_sim_options
             tb.add_config(name, generics=generics, sim_options=local_sim_options)

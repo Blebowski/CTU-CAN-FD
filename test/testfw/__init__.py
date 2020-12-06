@@ -25,7 +25,7 @@ def setup_logging() -> None:
 setup_logging()
 
 from . import vunit_ifc
-from . import test_unit, test_sanity, test_feature, test_reference
+from . import test_unit, test_sanity, test_feature, test_reference, test_compliance
 from vunit.ui import VUnit
 from .test_common import add_rtl_sources, add_tb_sources, get_compile_options
 
@@ -71,21 +71,11 @@ def create():
     pass
 
 
-# NOTE: I'd like to use [True, False, None] for strict, but click is damn
-#       stubborn about interpreting None as False
 @cli.command()
 @click.argument('config', type=click.Path())
 @click.argument('vunit_args', nargs=-1)
-@click.option('--__strict-from-config', 'strict', flag_value=-1, default=True, hidden=True)
-@click.option('--strict', 'strict', flag_value=1,
-              help='Return non-zero if an unconfigured test was found.')
-@click.option('--no-strict', 'strict', flag_value=0)
-@click.option('--dumpall', is_flag=True, flag_value=True, default=False,
-              help='In GUI mode, dump all signals, not only these included in layout file.')
-@click.option('--create-ghws/--no-create-ghws', default=False,
-              help='Only elaborate and create basic GHW files necessary for converting TCL layout files to GTKW files for gtkwave..')
 @click.pass_obj
-def test(obj, *, config, strict, create_ghws, dumpall, vunit_args):
+def test(obj, *, config, vunit_args):
     """Run the tests. Configuration is passed in YAML config file.
 
     You mas pass arguments directly to VUnit by appending them at the command end.
@@ -116,19 +106,6 @@ def test(obj, *, config, strict, create_ghws, dumpall, vunit_args):
     build.mkdir(exist_ok=True)
     os.chdir(str(build))
 
-    if 'strict' in config:
-        if strict == -1:
-            strict = config['strict']
-    if strict == -1:
-        strict = 0
-    strict = bool(strict)
-
-    if create_ghws:
-        # filter out "-g" (gui mode) - it causes problems.
-        # It's not 100% fool-proof, but should catch 99% of cases.
-        vunit_args = [a for a in vunit_args if a != '-g']
-        vunit_args += ['--elaborate']
-
     ui = create_vunit(obj, vunit_args, out_basename)
 
     ctu_can_fd_rtl = ui.add_library("ctu_can_fd_rtl")
@@ -146,14 +123,13 @@ def test(obj, *, config, strict, create_ghws, dumpall, vunit_args):
         ('sanity', test_sanity.SanityTests),
         ('feature', test_feature.FeatureTests),
         ('reference', test_reference.ReferenceTests),
+        ('compliance', test_compliance.ComplianceTests)
     ]
 
     tests = []
     for cfg_key, factory in tests_classes:
         if cfg_key in config:
-            tests.append(factory(ui, ctu_can_fd_tb, config[cfg_key], build, base,
-                                 create_ghws=create_ghws,
-                                 force_unrestricted_dump_signals=dumpall))
+            tests.append(factory(ui, ctu_can_fd_tb, config[cfg_key], build, base))
 
     (func_cov_dir / "html").mkdir(parents=True, exist_ok=True)
     (func_cov_dir / "coverage_data").mkdir(parents=True, exist_ok=True)
@@ -161,10 +137,10 @@ def test(obj, *, config, strict, create_ghws, dumpall, vunit_args):
     for t in tests:
         t.add_sources()
 
-    c = get_compile_options()
+    c = get_compile_options(config['_default'])
     for k, v in c.items():
-        ctu_can_fd_tb.set_compile_option(k, v)
-        ctu_can_fd_rtl.set_compile_option(k,v)
+        #ctu_can_fd_tb.set_compile_option(k, v)
+        ctu_can_fd_rtl.set_compile_option(k, v)
 
     conf_ok = [t.configure() for t in tests]
 
@@ -178,10 +154,17 @@ def test(obj, *, config, strict, create_ghws, dumpall, vunit_args):
                  .format(', '.join(tb.name for tb in unknown_tests)))
 
     res = vunit_run(ui, build, out_basename)
-    if not all(conf_ok) and strict:
+    if not all(conf_ok):
         log.error('Some test cases were discovered but not configured (see above).')
-        if res == 0:
-            res = 1
+
+    # Move code coverage results to stand-alone directory to avoid overwriting it by runs
+    # of other configs
+    if config['_default']['code_coverage']:
+        code_coverage = build / 'code_coverage_{}'.format(out_basename)
+        code_coverage.mkdir(exist_ok=True)
+        os.system("mv *.gcda {}".format(code_coverage))
+        os.system("mv *.gcno {}".format(code_coverage))
+
     sys.exit(res)
 
 
@@ -193,6 +176,7 @@ def create_vunit(obj, vunit_args, out_basename):
         args += ['--compile']
     args += ['--xunit-xml', '../{}.xml1'.format(out_basename)] + list(vunit_args)
     ui = VUnit.from_argv(args)
+    ui.add_com()
     return ui
 
 
