@@ -135,7 +135,9 @@ package body err_capt_arb_bit_feature is
         -- arbitration field (of base or extended). After 26 bits, if there are
         -- all dominant till end of frame, we are sure at least one stuff bit
         -- will be there!
-        rand_int_v(rand_ctr, 25, wait_time);
+        rand_int_v(rand_ctr, 24, wait_time);
+        -- We need at least 1 bit to wait, otherwise we try to corrupt still in SOF!
+        wait_time := wait_time + 1;
         info ("Waiting for:" & integer'image(wait_time) & " bits!");
 
         for i in 1 to wait_time loop

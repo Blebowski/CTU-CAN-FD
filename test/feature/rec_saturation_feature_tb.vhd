@@ -126,8 +126,11 @@ package body rec_saturation_feature is
 
         for i in 0 to 3 loop
             CAN_send_frame(CAN_frame, 1, ID_2, mem_bus(2), frame_sent);
-            CAN_wait_frame_sent(ID_1, mem_bus(1));
+            CAN_wait_frame_sent(ID_2, mem_bus(2));
             
+            CAN_wait_bus_idle(ID_1, mem_bus(1));
+            CAN_wait_bus_idle(ID_2, mem_bus(2));
+
             read_error_counters(err_counters, ID_1, mem_bus(1));
             
             if (i = 0) then
