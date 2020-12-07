@@ -196,8 +196,12 @@ package body tx_arb_time_tran_feature is
             diff := to_integer(unsigned(ts_expected) - unsigned(ts_tx_start));
         end if;
 
-        check(diff < clk_per_bit, "Time of transmission correct!" &
-            " Diff: " & integer'image(diff));
+        -- If it happends that RX trigger occurs just after timestamp matches,
+        -- but frame validation is still in progress, then diff can be actually
+        -- higher than one bit time by the length of validation!
+        check(diff < clk_per_bit + 6, "Time of transmission correct!" &
+            " Diff: " & integer'image(diff) &
+            " Time per bit: " & integer'image(clk_per_bit));
 
         CAN_wait_bus_idle(ID_1, mem_bus(1));
 

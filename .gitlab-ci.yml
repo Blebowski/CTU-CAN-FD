@@ -148,11 +148,11 @@ process_coverage:
         # Merge code coverage outputs from nightly and compliance stages, process code coverage
         - cd test/build
         - gcov-tool merge -o code_coverage_merged code_coverage_tests_nightly code_coverage_tests_compliance
+        - mv code_coverage_tests_compliance/*.gcno code_coverage_merged
         - mv code_coverage_tests_nightly/*.gcno code_coverage_merged
         - cd ..
-        - make coverage_merged
 
-        - ls build/functional_coverage/coverage_data
+        - make coverage_merged
         - make functional_coverage
 
         - cd ../scripts
