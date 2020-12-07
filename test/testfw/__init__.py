@@ -139,7 +139,7 @@ def test(obj, *, config, vunit_args):
 
     c = get_compile_options(config['_default'])
     for k, v in c.items():
-        #ctu_can_fd_tb.set_compile_option(k, v)
+        ctu_can_fd_tb.set_compile_option(k, v)
         ctu_can_fd_rtl.set_compile_option(k, v)
 
     conf_ok = [t.configure() for t in tests]
