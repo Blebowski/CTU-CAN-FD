@@ -1,7 +1,11 @@
 _default: &default
     log_level: info
-    functional_coverage: true
+
+    # If tests_fast run in pipeline parallel to other tests, functional coverage or code coverage
+    # cant be enabled!!
+    functional_coverage: false
     code_coverage: false
+
     error_tolerance: 0
     randomize: false
     # seed:0

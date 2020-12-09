@@ -43,7 +43,7 @@ class SanityTests(TestsBase):
             }
 
             local_sim_options = OptionsDict()
-            if cfg['functional_coverage']:
+            if ('functional_coverage' in cfg) and cfg['functional_coverage'] == True:
                 local_sim_options += self.add_psl_cov('{}.{}'.format(tb.name, name))
             local_sim_options = sim_options + local_sim_options
             tb.add_config(name, generics=generics, sim_options=local_sim_options)

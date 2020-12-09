@@ -123,13 +123,13 @@ def get_compile_and_sim_options(config) -> Tuple[OptionsDict, OptionsDict]:
     compile_flags += ['-g']
     elab_flags += ['-g']
 
-    #if ('code_coverage' in config) and config['code_coverage'] == True:
-    compile_flags += ["-fprofile-arcs", "-ftest-coverage"]
-    elab_flags += ["-Wl,-lgcov", "-Wl,--coverage"]
+    if ('code_coverage' in config) and config['code_coverage'] == True:
+        compile_flags += ["-fprofile-arcs", "-ftest-coverage"]
+        elab_flags += ["-Wl,-lgcov", "-Wl,--coverage"]
 
-    #if ('functional_coverage' in config) and config['functional_coverage'] == True:
-    compile_flags += ['-fpsl']
-    elab_flags += ['-fpsl']
+    if ('functional_coverage' in config) and config['functional_coverage'] == True:
+        compile_flags += ['-fpsl']
+        elab_flags += ['-fpsl']
 
     compile_options = OptionsDict()
     compile_options["ghdl.flags"] = compile_flags
