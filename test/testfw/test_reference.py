@@ -35,7 +35,7 @@ class ReferenceTests(TestsBase):
                 'data_path'    : str(self.build) + '/../' + cfg['data_path'],
             }
             local_sim_options = OptionsDict()
-            if cfg['functional_coverage']:
+            if ('functional_coverage' in cfg) and cfg['functional_coverage'] == True:
                 local_sim_options += self.add_psl_cov('{}.{}'.format(tb.name, data_set))
             local_sim_options = sim_options + local_sim_options
             tb.add_config(data_set, generics=generics, sim_options=local_sim_options)

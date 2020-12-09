@@ -39,7 +39,7 @@ class UnitTests(TestsBase):
             tb.set_generic('seed', get_seed(cfg))
 
             sim_options = self.get_sim_options(default)
-            if cfg['functional_coverage']:
+            if ('functional_coverage' in cfg) and cfg['functional_coverage'] == True:
                 sim_options += self.add_psl_cov(tb.name)
 
             self.set_sim_options(tb, sim_options)
