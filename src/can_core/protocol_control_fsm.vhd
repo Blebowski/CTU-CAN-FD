@@ -3354,8 +3354,10 @@ begin
 
     -- Error frame request in various parts of CAN frame!
 
+    -- Note: SOF must be actually previous cycle, since at time when error
+    --       frame request arrives, it is already next state!
     -- psl err_frm_req_in_sof_cov : cover
-    --  {curr_state = s_pc_sof and err_frm_req = '1'};
+    --  {curr_state = s_pc_sof; err_frm_req = '1'};
 
     -- psl err_frm_req_in_s_pc_base_id_in_base_cov : cover
     --  {curr_state = s_pc_base_id and err_frm_req = '1'};
@@ -3410,9 +3412,6 @@ begin
 
     -- psl err_frm_req_in_s_pc_act_err_flag_cov : cover
     --  {curr_state = s_pc_act_err_flag and err_frm_req = '1'};
-
-    -- psl err_frm_req_in_s_pc_pas_err_flag_cov : cover
-    --  {curr_state = s_pc_pas_err_flag and err_frm_req = '1'};
 
     -- psl err_frm_req_in_s_pc_ovr_flag_cov : cover
     --  {curr_state = s_pc_ovr_flag and err_frm_req = '1'};

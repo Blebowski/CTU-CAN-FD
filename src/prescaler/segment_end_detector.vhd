@@ -319,4 +319,25 @@ begin
     segm_end        <= segment_end_i;
     h_sync_valid    <= h_sync_valid_i;
  
+ 
+    -- <RELEASE_OFF>
+    ---------------------------------------------------------------------------
+    ---------------------------------------------------------------------------
+    -- Assertions
+    ---------------------------------------------------------------------------
+    ---------------------------------------------------------------------------
+
+    -- psl default clock is rising_edge(clk_sys);
+
+    -- psl segm_end_req_0_capt_cov : cover
+    --  {segm_end_req_capt_q(0) = '1'};
+
+    -- psl segm_end_req_1_capt_cov : cover
+    --  {segm_end_req_capt_q(1) = '1'};
+    
+    -- psl segm_end_req_2_capt_cov : cover
+    --  {segm_end_req_capt_q(2) = '1'};
+    
+    -- <RELEASE_ON>
+ 
 end architecture rtl;

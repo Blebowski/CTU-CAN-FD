@@ -173,7 +173,7 @@ feature:
         tx_cmd_set_empty:
         tx_cmd_set_ready:
         tx_arb_consistency:
-            iterations: 10
+            iterations: 20
         tx_priority:
             iterations: 10
         tx_priority_change:

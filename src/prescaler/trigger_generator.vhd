@@ -212,6 +212,10 @@ begin
     --  report "Sync and Sample trigger should no be requested at once!"
     --  severity error;
     ---------------------------------------------------------------------------
+    
+    -- psl tx_trigger_throttling_cov : cover
+    --  {rx_trig_req_q = '1' and tx_trig_req = '1'}
+    --  report "TX trigger throtlled!";
 
     -- <RELEASE_ON>
 end architecture rtl;
