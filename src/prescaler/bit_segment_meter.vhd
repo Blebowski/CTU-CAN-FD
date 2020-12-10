@@ -507,4 +507,57 @@ begin
                                exit_segm_regular_tseg2 = '1') else
                      '0';
 
+    -- <RELEASE_OFF>
+    ---------------------------------------------------------------------------
+    ---------------------------------------------------------------------------
+    -- Assertions
+    ---------------------------------------------------------------------------
+    ---------------------------------------------------------------------------
+
+    -- psl default clock is rising_edge(clk_sys);
+
+    -- psl pos_resync_e_less_than_sjw_cov : cover
+    --  {exp_seg_length_ce = '1' and use_basic_segm_length = '0' and is_tseg1 = '1'
+    --   and resync_edge_valid = '1' and
+    --   resize(phase_err, C_E_SJW_WIDTH) < resize(unsigned(sjw), C_E_SJW_WIDTH)}
+    --   report "Positive resynchronization with E < SJW";
+
+    -- psl pos_resync_e_more_than_sjw_cov : cover
+    --  {exp_seg_length_ce = '1' and use_basic_segm_length = '0' and is_tseg1 = '1'
+    --   and resync_edge_valid = '1' and
+    --   resize(phase_err, C_E_SJW_WIDTH) > resize(unsigned(sjw), C_E_SJW_WIDTH)}
+    --   report "Positive resynchronization with E > SJW";
+
+    -- psl pos_resync_e_equal_sjw_cov : cover
+    --  {exp_seg_length_ce = '1' and use_basic_segm_length = '0' and is_tseg1 = '1'
+    --   and resync_edge_valid = '1' and
+    --   resize(phase_err, C_E_SJW_WIDTH) = resize(unsigned(sjw), C_E_SJW_WIDTH)}
+    --   report "Positive resynchronization with E = SJW";
+
+    -- psl neg_resync_e_less_than_sjw_cov : cover
+    --  {exp_seg_length_ce = '1' and resync_edge_valid = '1' and is_tseg2 = '1' and
+    --   resize(phase_err, C_E_SJW_WIDTH) < resize(unsigned(sjw), C_E_SJW_WIDTH)}
+    --   report "Negative resynchronization with E < SJW";
+
+    -- psl neg_resync_e_more_than_sjw_cov : cover
+    --  {exp_seg_length_ce = '1' and resync_edge_valid = '1' and is_tseg2 = '1' and
+    --   resize(phase_err, C_E_SJW_WIDTH) > resize(unsigned(sjw), C_E_SJW_WIDTH)}
+    --   report "Negative resynchronization with E > SJW";
+
+    -- psl neg_resync_e_equal_sjw_cov : cover
+    --  {exp_seg_length_ce = '1' and resync_edge_valid = '1' and is_tseg2 = '1' and
+    --   resize(phase_err, C_E_SJW_WIDTH) = resize(unsigned(sjw), C_E_SJW_WIDTH)}
+    --   report "Negative resynchronization with E = SJW";
+
+    -- psl exit_segm_immediate_cov : cover
+    --  {exit_segm_req = '1' and exit_ph2_immediate = '1'};
+
+    -- psl exit_segm_regular_tseg1_cov : cover
+    --  {exit_segm_req = '1' and exit_segm_regular_tseg1 = '1' and exit_segm_regular_tseg2 = '0'};
+
+    -- psl exit_segm_regular_tseg2_cov : cover
+    --  {exit_segm_req = '1' and exit_segm_regular_tseg1 = '0' and exit_segm_regular_tseg2 = '1'};
+
+    -- <RELEASE_ON>
+
 end architecture rtl;

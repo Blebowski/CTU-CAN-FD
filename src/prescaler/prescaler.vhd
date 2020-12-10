@@ -479,9 +479,69 @@ begin
     -- Assertions
     ---------------------------------------------------------------------------
     ---------------------------------------------------------------------------
-    
+
     -- psl default clock is rising_edge(clk_sys);
-    --
+
+    -- psl nominal_sample_cov : cover
+    --  {sp_control = NOMINAL_SAMPLE};
+
+    -- psl data_sample_cov : cover
+    --  {sp_control = DATA_SAMPLE};
+
+    -- psl secondary_sample_cov : cover
+    --  {sp_control = SECONDARY_SAMPLE};
+
+    -- psl minimal_bit_time_nbt_cov : cover
+    --  {to_integer(unsigned(tseg1_nbt)) = 5 and to_integer(unsigned(tseg2_nbt)) = 3
+    --   and to_integer(unsigned(brp_nbt)) = 1};
+
+    -- psl minimal_bit_time_dbt_cov : cover
+    --  {to_integer(unsigned(tseg1_dbt)) = 3 and to_integer(unsigned(tseg2_dbt)) = 2
+    --   and to_integer(unsigned(brp_dbt)) = 1};
+
+    -- psl brp_bin_1_1_cov : cover
+    --  {to_integer(unsigned(brp_nbt)) = 1 and to_integer(unsigned(brp_dbt)) = 1};
+
+    -- psl brp_bin_2_1_cov : cover
+    --  {to_integer(unsigned(brp_nbt)) = 2 and to_integer(unsigned(brp_dbt)) = 1};
+
+    -- psl brp_bin_3_1_cov : cover
+    --  {to_integer(unsigned(brp_nbt)) = 3 and to_integer(unsigned(brp_dbt)) = 1};
+
+    -- psl brp_bin_4_1_cov : cover
+    --  {to_integer(unsigned(brp_nbt)) = 4 and to_integer(unsigned(brp_dbt)) = 1};
     
+    -- psl brp_bin_4_2_cov : cover
+    --  {to_integer(unsigned(brp_nbt)) = 4 and to_integer(unsigned(brp_dbt)) = 2};
+    
+    -- psl brp_bin_4_3_cov : cover
+    --  {to_integer(unsigned(brp_nbt)) = 4 and to_integer(unsigned(brp_dbt)) = 3};
+    
+    -- psl brp_bin_1_2_cov : cover
+    --  {to_integer(unsigned(brp_nbt)) = 1 and to_integer(unsigned(brp_dbt)) = 2};
+    
+    -- psl brp_nbt_max_cov : cover
+    --  {to_integer(unsigned(brp_nbt)) = 255};
+    
+    -- psl brp_dbt_max_cov : cover
+    --  {to_integer(unsigned(brp_dbt)) = 255};
+    
+    -- psl pos_resync_in_nominal_bit_rate_cov : cover
+    --  {resync_edge_valid = '1' and is_tseg1 = '1' and sp_control = NOMINAL_SAMPLE}
+    --  report "Positive resynchronization in Nominal bit rate!";
+
+    -- psl neg_resync_in_nominal_bit_rate_cov : cover
+    --  {resync_edge_valid = '1' and is_tseg2 = '1' and sp_control = NOMINAL_SAMPLE}
+    --  report "Negative resynchronization in Nominal bit rate!";
+
+    -- psl neg_resync_in_data_bit_rate_cov : cover
+    --  {resync_edge_valid = '1' and is_tseg2 = '1' and sp_control = DATA_SAMPLE}
+    --  report "Negative resynchronization in Data bit rate!";
+
+    -- psl pos_resync_in_data_bit_rate_cov : cover
+    --  {resync_edge_valid = '1' and is_tseg1 = '1' and sp_control = DATA_SAMPLE}
+    --  report "Positive resynchronization in Data bit rate!";
+
     -- <RELEASE_ON>
+    
 end architecture;
