@@ -709,7 +709,8 @@ union ctu_can_fd_rx_status_rx_settings {
   /* RX_STATUS */
 		uint32_t rxe                     : 1;
 		uint32_t rxf                     : 1;
-		uint32_t reserved_3_2            : 2;
+		uint32_t rxmof                   : 1;
+		uint32_t reserved_3              : 1;
 		uint32_t rxfrc                  : 11;
 		uint32_t reserved_15             : 1;
   /* RX_SETTINGS */
@@ -720,7 +721,8 @@ union ctu_can_fd_rx_status_rx_settings {
 		uint32_t rtsop                   : 1;
 		uint32_t reserved_15             : 1;
 		uint32_t rxfrc                  : 11;
-		uint32_t reserved_3_2            : 2;
+		uint32_t reserved_3              : 1;
+		uint32_t rxmof                   : 1;
 		uint32_t rxf                     : 1;
 		uint32_t rxe                     : 1;
 #endif

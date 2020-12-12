@@ -1243,6 +1243,22 @@ Memory registers are always described with capital letters e.g.
  a register.
 \end_layout
 
+\begin_layout Itemize
+States of modules are written in apostrophe like so: 
+\begin_inset Quotes eld
+\end_inset
+
+TX Failed
+\begin_inset Quotes erd
+\end_inset
+
+.
+\end_layout
+
+\begin_layout LyX-Code
+Source code examples are written by this font
+\end_layout
+
 \begin_layout Chapter
 Introduction
 \end_layout
@@ -1293,27 +1309,27 @@ Features
 \end_layout
 
 \begin_layout Itemize
-Designed to be compliant with ISO11898-1 2015.
+Designed to be compliant with ISO11898-1 2015
 \end_layout
 
 \begin_layout Itemize
-RX buffer FIFO of 32 - 4096 words (1-204 CAN FD frames with 64 byte of data).
+RX buffer FIFO of 32 - 4096 words (1-204 CAN FD frames with 64 byte of data)
 \end_layout
 
 \begin_layout Itemize
-4 TXT buffers (1 CAN FD frame in each TXT buffer).
+4 TXT buffers (1 CAN FD frame in each TXT buffer)
 \end_layout
 
 \begin_layout Itemize
-32 bit slave memory interface (APB, AHB, RAM-like interface).
+32 bit slave memory interface (APB, AHB, RAM-like interface)
 \end_layout
 
 \begin_layout Itemize
-Support of ISO and non-ISO CAN FD protocol.
+Support of ISO and non-ISO CAN FD protocol
 \end_layout
 
 \begin_layout Itemize
-Timestamping and Time triggered transmission.
+Timestamping and Time triggered transmission
 \end_layout
 
 \begin_layout Itemize
@@ -1931,7 +1947,7 @@ rx_buffer_size
 \begin_inset Text
 
 \begin_layout Plain Layout
-32-4096.
+32 - 4096
 \end_layout
 
 \end_inset
@@ -2183,8 +2199,8 @@ literal "false"
 
 ) or by Soft reset.
  Soft reset is executed by writing MODE[RST] = 1.
- If HW reset was issued to CTU CAN FD , CTU CAN FD shall not be accessed
- for two clock periods of System clock.
+ If HW reset was issued to CTU CAN FD , it shall not be accessed for two
+ clock periods of System clock.
  For example if CTU CAN FD System clock is 100 MHz, SW shall wait 20 ns
  after HW reset was released.
  If Soft reset is issued, no waiting is required.
@@ -2589,6 +2605,7 @@ status open
 \begin_inset Graphics
 	filename ../pics/Visio_generated/Bit_time.pdf
 	lyxscale 20
+	scale 75
 
 \end_inset
 
@@ -2980,10 +2997,9 @@ Note Secondary sampling point offset (SSP_CFG[SSP_OFFSET]) is configurable
 \begin_layout Description
 Note Since CTU CAN FD input delay is 2 System clock periods (minimum time
  quanta), position of Secondary sampling point shall be configured to at
- least 2 to compensate its own input delay (therefore if SSP_CFG[SSP_OFFSET]
- < 3 and SSP_CFG[SSP_SRC] = SSP_SRC_OFFSET], it is impossible to transmitt
- CAN FD frames without detecting bit error on CTU CAN FDs own transmitted
- frame).
+ least 2 to compensate its own input delay (if SSP_CFG[SSP_OFFSET] < 3 and
+ SSP_CFG[SSP_SRC] = SSP_SRC_OFFSET], it is impossible to transmitt CAN FD
+ frames without detecting bit error on CTU CAN FDs own transmitted frame).
 \end_layout
 
 \begin_layout Subsection
@@ -3449,7 +3465,7 @@ Set
 \begin_inset space ~
 \end_inset
 
-ready Requests TXT buffer to move to 
+ready requests TXT buffer to move to 
 \begin_inset Quotes eld
 \end_inset
 
@@ -3465,7 +3481,7 @@ Set
 \begin_inset space ~
 \end_inset
 
-abort Requests TXT buffer to move to 
+abort requests TXT buffer to move to 
 \begin_inset Quotes eld
 \end_inset
 
@@ -3489,7 +3505,7 @@ Set
 \begin_inset space ~
 \end_inset
 
-empty Requests TXT buffer to move to 
+empty requests TXT buffer to move to 
 \begin_inset Quotes eld
 \end_inset
 
@@ -3810,8 +3826,8 @@ Ready
  state.
  At any moment TXT buffer priority is considered first before time triggered
  transmission.
- The behavior of TXT buffer priority and time triggered transmission is
- following:
+ The behavior of the TXT buffer priority and time triggered transmission
+ is following:
 \end_layout
 
 \begin_layout Itemize
@@ -4317,11 +4333,11 @@ Sample code
 \end_layout
 
 \begin_layout LyX-Code
-#define TX_COMMAND_ADDR CTU_CAN_FD_BASE+0x74
+#define TX_COMMAND_ADDR (CTU_CAN_FD_BASE + 0x74)
 \end_layout
 
 \begin_layout LyX-Code
-#define TXT_BUFFER_1_BASE CTU_CAN_FD_BASE+0x100
+#define TXT_BUFFER_1_BASE (CTU_CAN_FD_BASE + 0x100)
 \end_layout
 
 \begin_layout Standard
@@ -4368,21 +4384,21 @@ uint32_t id_word = (55 << 18);                        // Identifier: 55
 \end_layout
 
 \begin_layout LyX-Code
-CAN_write_32(TXT_BUFFER_1_BASE+0x4, id_word);         // Store identifier
+CAN_write_32(TXT_BUFFER_1_BASE + 0x4, id_word);         // Store identifier
  word
 \end_layout
 
 \begin_layout LyX-Code
-CAN_write_32(TXT_BUFFER_1_BASE+0x8, 1000);
+CAN_write_32(TXT_BUFFER_1_BASE + 0x8, 1000);
 \end_layout
 
 \begin_layout LyX-Code
-CAN_write_32(TXT_BUFFER_1_BASE+0xC, 0);               // Transmitt at time
- 1000
+CAN_write_32(TXT_BUFFER_1_BASE + 0xC, 0);               // Transmitt at
+ time 1000
 \end_layout
 
 \begin_layout LyX-Code
-CAN_write_32(TXT_BUFFER_1_BASE+0x10, 0xAABBCCDD);     // Data: 0xAA 0xBB
+CAN_write_32(TXT_BUFFER_1_BASE + 0x10, 0xAABBCCDD);     // Data: 0xAA 0xBB
  0xCC 0xDD
 \end_layout
 
@@ -4570,7 +4586,7 @@ Read pointer position, readable from RX_POINTERS[RX_RPP].
 \end_layout
 
 \begin_layout Subsection
-RX buffer empty / full
+RX buffer status
 \end_layout
 
 \begin_layout Standard
@@ -4609,6 +4625,30 @@ RX buffer can be flushed by writing COMMAND[RRB]=1.
  RX buffer is as if no frame was received to it yet.
  If this command is issued during CAN frame reception, currently received
  frame is also droped.
+\end_layout
+
+\begin_layout Subsection
+Inconsistency protection
+\end_layout
+
+\begin_layout Standard
+Reading CAN frame from RX buffer involves multiple reads of RX_DATA register.
+ Each read increments read pointer inside RX buffer (read operation with
+ side effect).
+ If an error occurs (e.g.
+ bus error, ECC error) during read from RX_DATA register, then read data
+ can be lost (RX buffer increments read pointer, and SW driver can't read
+ the word again).
+ As consequence, SW driver and RX buffer can become inconsistent.
+ SW driver can use RX_STATUS[RXMOF] to recover from such state.
+ When next read from RX_DATA register is about to return other word than
+ FRAME_FORMAT_W (RX buffer read pointer points to middle of frame), then
+ RX_STATUS[RXMOF] = 1.
+ If SW driver gets into inconsistent state during readout of frame, it can
+ repetitively read from RX_DATA until RX_STATUS[RX_MOF] = 0.
+ When such condition is detected, RX_DATA points to FRAME_FORMAT_W word
+ of new frame, or RX buffer is empty (if the error occured during readout
+ of only frame in RX buffer).
 \end_layout
 
 \begin_layout Subsection
@@ -4756,11 +4796,11 @@ Sample code 1 - Frame reception
 \end_layout
 
 \begin_layout LyX-Code
-#define RX_DATA_ADDR CTU_CAN_FD_BASE+0x6C
+#define RX_DATA_ADDR (CTU_CAN_FD_BASE + 0x6C)
 \end_layout
 
 \begin_layout LyX-Code
-#define RX_STATUS_ADDR CTU_CAN_FD_BASE+0x68
+#define RX_STATUS_ADDR (CTU_CAN_FD_BASE + 0x68)
 \end_layout
 
 \begin_layout Standard
@@ -4775,15 +4815,19 @@ Sample code 1 - Frame reception
 \end_layout
 
 \begin_layout LyX-Code
-uint32_t rx_status = CAN_read_32(RX_STATUS_ADDR);
+uint32_t rx_status;
 \end_layout
 
 \begin_layout LyX-Code
-while ((rx_status & 0x1) == 0)
+do {
 \end_layout
 
 \begin_layout LyX-Code
     rx_status = CAN_read_32(RX_STATUS_ADDR);
+\end_layout
+
+\begin_layout LyX-Code
+} while ((rx_status & 0x1) == 0)
 \end_layout
 
 \begin_layout Standard
@@ -4869,15 +4913,15 @@ Sample code 2 - Bit filter configuration
 \end_layout
 
 \begin_layout LyX-Code
-#define FILTER_CONTROL_ADDR CTU_CAN_FD_BASE+0x5C
+#define FILTER_CONTROL_ADDR (CTU_CAN_FD_BASE + 0x5C)
 \end_layout
 
 \begin_layout LyX-Code
-#define FILTER_A_VAL_ADDR CTU_CAN_FD_BASE+0x40
+#define FILTER_A_VAL_ADDR (CTU_CAN_FD_BASE + 0x40)
 \end_layout
 
 \begin_layout LyX-Code
-#define FILTER_A_MASK_ADDR CTU_CAN_FD_BASE+0x3C
+#define FILTER_A_MASK_ADDR (CTU_CAN_FD_BASE + 0x3C)
 \end_layout
 
 \begin_layout Standard
@@ -5308,7 +5352,7 @@ Test mode
 
 \begin_layout Standard
 CTU CAN FD has Test mode which is enabled when MODE[TSTM] = 1.
- In Test mode, CTU CAN FD has following features:
+ In Test mode, CTU CAN FD has the following features:
 \end_layout
 
 \begin_layout Itemize
@@ -5356,24 +5400,161 @@ CTU CAN FD contains Error code capture register.
  priority):
 \end_layout
 
-\begin_layout Enumerate
+\begin_layout Standard
+\noindent
+\align center
+\begin_inset Tabular
+<lyxtabular version="3" rows="2" columns="6">
+<features tabularvalignment="middle">
+<column alignment="center" valignment="top">
+<column alignment="center" valignment="top">
+<column alignment="center" valignment="top">
+<column alignment="center" valignment="top">
+<column alignment="center" valignment="top">
+<column alignment="center" valignment="top" width="0pt">
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Priority 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+cellcolor{gray}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+1
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+2
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+3
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+4
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+5
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Error type 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+cellcolor{gray}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
 Form error
 \end_layout
 
-\begin_layout Enumerate
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
 Bit error
 \end_layout
 
-\begin_layout Enumerate
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
 CRC error
 \end_layout
 
-\begin_layout Enumerate
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
 ACK error
 \end_layout
 
-\begin_layout Enumerate
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
 Stuff error
+\end_layout
+
+\end_inset
+</cell>
+</row>
+</lyxtabular>
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Description

@@ -736,7 +736,7 @@ label{FRAME_FORMAT_W
 Type: 
 \end_layout
 \begin_layout Description
-Address: 0x0
+Offset: 0x0
 \end_layout
 \begin_layout Description
 Size: 4 bytes
@@ -2073,7 +2073,7 @@ label{IDENTIFIER_W
 Type: 
 \end_layout
 \begin_layout Description
-Address: 0x4
+Offset: 0x4
 \end_layout
 \begin_layout Description
 Size: 4 bytes
@@ -3385,7 +3385,7 @@ label{TIMESTAMP_L_W
 Type: 
 \end_layout
 \begin_layout Description
-Address: 0x8
+Offset: 0x8
 \end_layout
 \begin_layout Description
 Size: 4 bytes
@@ -4694,7 +4694,7 @@ label{TIMESTAMP_U_W
 Type: 
 \end_layout
 \begin_layout Description
-Address: 0xC
+Offset: 0xC
 \end_layout
 \begin_layout Description
 Size: 4 bytes
@@ -6003,7 +6003,7 @@ label{DATA_1_4_W
 Type: 
 \end_layout
 \begin_layout Description
-Address: 0x10
+Offset: 0x10
 \end_layout
 \begin_layout Description
 Size: 4 bytes
@@ -7321,7 +7321,7 @@ label{DATA_5_8_W
 Type: 
 \end_layout
 \begin_layout Description
-Address: 0x14
+Offset: 0x14
 \end_layout
 \begin_layout Description
 Size: 4 bytes
@@ -8639,7 +8639,7 @@ label{DATA_61_64_W
 Type: 
 \end_layout
 \begin_layout Description
-Address: 0x4C
+Offset: 0x4C
 \end_layout
 \begin_layout Description
 Size: 4 bytes

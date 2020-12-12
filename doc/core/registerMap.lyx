@@ -2870,7 +2870,7 @@ label{DEVICE_ID
 Type: read-only
 \end_layout
 \begin_layout Description
-Address: 0x0
+Offset: 0x0
 \end_layout
 \begin_layout Description
 Size: 2 bytes
@@ -3540,7 +3540,7 @@ label{VERSION
 Type: read-only
 \end_layout
 \begin_layout Description
-Address: 0x2
+Offset: 0x2
 \end_layout
 \begin_layout Description
 Size: 2 bytes
@@ -4212,7 +4212,7 @@ label{MODE
 Type: read-write
 \end_layout
 \begin_layout Description
-Address: 0x4
+Offset: 0x4
 \end_layout
 \begin_layout Description
 Size: 2 bytes
@@ -4909,7 +4909,7 @@ label{SETTINGS
 Type: read-write
 \end_layout
 \begin_layout Description
-Address: 0x6
+Offset: 0x6
 \end_layout
 \begin_layout Description
 Size: 2 bytes
@@ -5613,7 +5613,7 @@ label{STATUS
 Type: read-only
 \end_layout
 \begin_layout Description
-Address: 0x8
+Offset: 0x8
 \end_layout
 \begin_layout Description
 Size: 4 bytes
@@ -6946,7 +6946,7 @@ label{COMMAND
 Type: write-only
 \end_layout
 \begin_layout Description
-Address: 0xC
+Offset: 0xC
 \end_layout
 \begin_layout Description
 Size: 4 bytes
@@ -8270,7 +8270,7 @@ label{INT_STAT
 Type: read-writeOnce
 \end_layout
 \begin_layout Description
-Address: 0x10
+Offset: 0x10
 \end_layout
 \begin_layout Description
 Size: 2 bytes
@@ -8972,7 +8972,7 @@ label{INT_ENA_SET
 Type: read-writeOnce
 \end_layout
 \begin_layout Description
-Address: 0x14
+Offset: 0x14
 \end_layout
 \begin_layout Description
 Size: 2 bytes
@@ -9641,7 +9641,7 @@ label{INT_ENA_CLR
 Type: write-only
 \end_layout
 \begin_layout Description
-Address: 0x18
+Offset: 0x18
 \end_layout
 \begin_layout Description
 Size: 2 bytes
@@ -10310,7 +10310,7 @@ label{INT_MASK_SET
 Type: read-writeOnce
 \end_layout
 \begin_layout Description
-Address: 0x1C
+Offset: 0x1C
 \end_layout
 \begin_layout Description
 Size: 2 bytes
@@ -10979,7 +10979,7 @@ label{INT_MASK_CLR
 Type: write-only
 \end_layout
 \begin_layout Description
-Address: 0x20
+Offset: 0x20
 \end_layout
 \begin_layout Description
 Size: 2 bytes
@@ -11648,7 +11648,7 @@ label{BTR
 Type: read-write
 \end_layout
 \begin_layout Description
-Address: 0x24
+Offset: 0x24
 \end_layout
 \begin_layout Description
 Size: 4 bytes
@@ -12971,7 +12971,7 @@ label{BTR_FD
 Type: read-write
 \end_layout
 \begin_layout Description
-Address: 0x28
+Offset: 0x28
 \end_layout
 \begin_layout Description
 Size: 4 bytes
@@ -14294,7 +14294,7 @@ label{EWL
 Type: read-write
 \end_layout
 \begin_layout Description
-Address: 0x2C
+Offset: 0x2C
 \end_layout
 \begin_layout Description
 Size: 1 byte
@@ -14645,7 +14645,7 @@ label{ERP
 Type: read-write
 \end_layout
 \begin_layout Description
-Address: 0x2D
+Offset: 0x2D
 \end_layout
 \begin_layout Description
 Size: 1 byte
@@ -14996,7 +14996,7 @@ label{FAULT_STATE
 Type: read-only
 \end_layout
 \begin_layout Description
-Address: 0x2E
+Offset: 0x2E
 \end_layout
 \begin_layout Description
 Size: 2 bytes
@@ -15671,7 +15671,7 @@ label{REC
 Type: read-only
 \end_layout
 \begin_layout Description
-Address: 0x30
+Offset: 0x30
 \end_layout
 \begin_layout Description
 Size: 2 bytes
@@ -16340,7 +16340,7 @@ label{TEC
 Type: read-only
 \end_layout
 \begin_layout Description
-Address: 0x32
+Offset: 0x32
 \end_layout
 \begin_layout Description
 Size: 2 bytes
@@ -17009,7 +17009,7 @@ label{ERR_NORM
 Type: read-only
 \end_layout
 \begin_layout Description
-Address: 0x34
+Offset: 0x34
 \end_layout
 \begin_layout Description
 Size: 2 bytes
@@ -17678,7 +17678,7 @@ label{ERR_FD
 Type: read-only
 \end_layout
 \begin_layout Description
-Address: 0x36
+Offset: 0x36
 \end_layout
 \begin_layout Description
 Size: 2 bytes
@@ -18347,7 +18347,7 @@ label{CTR_PRES
 Type: write-only
 \end_layout
 \begin_layout Description
-Address: 0x38
+Offset: 0x38
 \end_layout
 \begin_layout Description
 Size: 4 bytes
@@ -19670,7 +19670,7 @@ label{FILTER_A_MASK
 Type: read-write
 \end_layout
 \begin_layout Description
-Address: 0x3C
+Offset: 0x3C
 \end_layout
 \begin_layout Description
 Size: 4 bytes
@@ -20983,7 +20983,7 @@ label{FILTER_A_VAL
 Type: read-write
 \end_layout
 \begin_layout Description
-Address: 0x40
+Offset: 0x40
 \end_layout
 \begin_layout Description
 Size: 4 bytes
@@ -22296,7 +22296,7 @@ label{FILTER_B_MASK
 Type: read-write
 \end_layout
 \begin_layout Description
-Address: 0x44
+Offset: 0x44
 \end_layout
 \begin_layout Description
 Size: 4 bytes
@@ -23609,7 +23609,7 @@ label{FILTER_B_VAL
 Type: read-write
 \end_layout
 \begin_layout Description
-Address: 0x48
+Offset: 0x48
 \end_layout
 \begin_layout Description
 Size: 4 bytes
@@ -24922,7 +24922,7 @@ label{FILTER_C_MASK
 Type: read-write
 \end_layout
 \begin_layout Description
-Address: 0x4C
+Offset: 0x4C
 \end_layout
 \begin_layout Description
 Size: 4 bytes
@@ -26235,7 +26235,7 @@ label{FILTER_C_VAL
 Type: read-write
 \end_layout
 \begin_layout Description
-Address: 0x50
+Offset: 0x50
 \end_layout
 \begin_layout Description
 Size: 4 bytes
@@ -27548,7 +27548,7 @@ label{FILTER_RAN_LOW
 Type: read-write
 \end_layout
 \begin_layout Description
-Address: 0x54
+Offset: 0x54
 \end_layout
 \begin_layout Description
 Size: 4 bytes
@@ -28860,7 +28860,7 @@ label{FILTER_RAN_HIGH
 Type: read-write
 \end_layout
 \begin_layout Description
-Address: 0x58
+Offset: 0x58
 \end_layout
 \begin_layout Description
 Size: 4 bytes
@@ -30172,7 +30172,7 @@ label{FILTER_CONTROL
 Type: read-write
 \end_layout
 \begin_layout Description
-Address: 0x5C
+Offset: 0x5C
 \end_layout
 \begin_layout Description
 Size: 2 bytes
@@ -30886,7 +30886,7 @@ label{FILTER_STATUS
 Type: read-only
 \end_layout
 \begin_layout Description
-Address: 0x5E
+Offset: 0x5E
 \end_layout
 \begin_layout Description
 Size: 2 bytes
@@ -31564,7 +31564,7 @@ label{RX_MEM_INFO
 Type: read-only
 \end_layout
 \begin_layout Description
-Address: 0x60
+Offset: 0x60
 \end_layout
 \begin_layout Description
 Size: 4 bytes
@@ -32876,7 +32876,7 @@ label{RX_POINTERS
 Type: read-only
 \end_layout
 \begin_layout Description
-Address: 0x64
+Offset: 0x64
 \end_layout
 \begin_layout Description
 Size: 4 bytes
@@ -34188,7 +34188,7 @@ label{RX_STATUS
 Type: read-only
 \end_layout
 \begin_layout Description
-Address: 0x68
+Offset: 0x68
 \end_layout
 \begin_layout Description
 Size: 2 bytes
@@ -34724,11 +34724,11 @@ Reserved\end_layout
 
 \end_inset
 </cell>
-<cell alignment="center" leftline="true" multicolumn="2" topline="true" usebox="none" valignment="top">
+<cell alignment="center" leftline="true" multicolumn="1" topline="true" usebox="none" valignment="top">
 \begin_inset Text
 
 \begin_layout Plain Layout
-Reserved\end_layout
+RXMOF\end_layout
 
 \end_inset
 </cell>
@@ -34809,7 +34809,7 @@ cellcolor{cyan}
 \begin_inset Text
 
 \begin_layout Plain Layout
--\end_layout
+0\end_layout
 
 \end_inset
 </cell>
@@ -34843,6 +34843,9 @@ RXE RX buffer is empty. There is no CAN Frame stored in it.
 RXF RX buffer is full, all memory words of RX buffer are occupied.
 \end_layout
 \begin_layout Description
+RXMOF RX Buffer middle of frame. When RXMOF = 1, next read from RX_DATA register will return other than first word (FRAME_FORMAT_W) of CAN frame.
+\end_layout
+\begin_layout Description
 RXFRC RX buffer frame count. Number of CAN frames stored in RX buffer.
 \end_layout
 \begin_layout Standard
@@ -34863,7 +34866,7 @@ label{RX_SETTINGS
 Type: read-write
 \end_layout
 \begin_layout Description
-Address: 0x6A
+Offset: 0x6A
 \end_layout
 \begin_layout Description
 Size: 1 byte
@@ -35214,7 +35217,7 @@ label{RX_DATA
 Type: read-only
 \end_layout
 \begin_layout Description
-Address: 0x6C
+Offset: 0x6C
 \end_layout
 \begin_layout Description
 Size: 4 bytes
@@ -36523,7 +36526,7 @@ label{TX_STATUS
 Type: read-only
 \end_layout
 \begin_layout Description
-Address: 0x70
+Offset: 0x70
 \end_layout
 \begin_layout Description
 Size: 2 bytes
@@ -37208,7 +37211,7 @@ label{TX_COMMAND
 Type: write-only
 \end_layout
 \begin_layout Description
-Address: 0x74
+Offset: 0x74
 \end_layout
 \begin_layout Description
 Size: 2 bytes
@@ -37895,7 +37898,7 @@ label{TX_PRIORITY
 Type: read-write
 \end_layout
 \begin_layout Description
-Address: 0x78
+Offset: 0x78
 \end_layout
 \begin_layout Description
 Size: 2 bytes
@@ -38573,7 +38576,7 @@ label{ERR_CAPT
 Type: read-only
 \end_layout
 \begin_layout Description
-Address: 0x7C
+Offset: 0x7C
 \end_layout
 \begin_layout Description
 Size: 1 byte
@@ -38940,7 +38943,7 @@ label{ALC
 Type: read-only
 \end_layout
 \begin_layout Description
-Address: 0x7E
+Offset: 0x7E
 \end_layout
 \begin_layout Description
 Size: 1 byte
@@ -39298,7 +39301,7 @@ label{TRV_DELAY
 Type: read-only
 \end_layout
 \begin_layout Description
-Address: 0x80
+Offset: 0x80
 \end_layout
 \begin_layout Description
 Size: 2 bytes
@@ -39967,7 +39970,7 @@ label{SSP_CFG
 Type: read-write
 \end_layout
 \begin_layout Description
-Address: 0x82
+Offset: 0x82
 \end_layout
 \begin_layout Description
 Size: 2 bytes
@@ -40644,7 +40647,7 @@ label{RX_FR_CTR
 Type: read-only
 \end_layout
 \begin_layout Description
-Address: 0x84
+Offset: 0x84
 \end_layout
 \begin_layout Description
 Size: 4 bytes
@@ -41956,7 +41959,7 @@ label{TX_FR_CTR
 Type: read-only
 \end_layout
 \begin_layout Description
-Address: 0x88
+Offset: 0x88
 \end_layout
 \begin_layout Description
 Size: 4 bytes
@@ -43268,7 +43271,7 @@ label{DEBUG_REGISTER
 Type: read-only
 \end_layout
 \begin_layout Description
-Address: 0x8C
+Offset: 0x8C
 \end_layout
 \begin_layout Description
 Size: 4 bytes
@@ -44619,7 +44622,7 @@ label{YOLO_REG
 Type: read-only
 \end_layout
 \begin_layout Description
-Address: 0x90
+Offset: 0x90
 \end_layout
 \begin_layout Description
 Size: 4 bytes
@@ -45928,7 +45931,7 @@ label{TIMESTAMP_LOW
 Type: read-only
 \end_layout
 \begin_layout Description
-Address: 0x94
+Offset: 0x94
 \end_layout
 \begin_layout Description
 Size: 4 bytes
@@ -47237,7 +47240,7 @@ label{TIMESTAMP_HIGH
 Type: read-only
 \end_layout
 \begin_layout Description
-Address: 0x98
+Offset: 0x98
 \end_layout
 \begin_layout Description
 Size: 4 bytes

@@ -184,6 +184,9 @@ entity memory_registers is
             
         -- Data overrun Flag
         rx_data_overrun      :in   std_logic;
+        
+        -- Middle of frame indication
+        rx_mof               :in   std_logic;
 
         ------------------------------------------------------------------------
         -- Interface to TXT Buffers
@@ -1171,9 +1174,14 @@ begin
             align_reg_to_wrd(RXFRC_L, length)) <=
             rx_frame_count;
 
+        -- RXMOF - RX Buffer middle of frame
+        Control_registers_in.rx_status(
+            align_reg_to_wrd(RXMOF_IND, length)) <=
+            rx_mof;
+
         -- Padd rest by zeroes
         Control_registers_in.rx_status(15) <= '0';
-        Control_registers_in.rx_status(3 downto 2) <= (OTHERS => '0');
+        Control_registers_in.rx_status(3) <= '0';
 
     end block rx_status_block;
 

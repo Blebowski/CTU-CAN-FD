@@ -232,7 +232,7 @@ package can_fd_tb_register_map is
      size      => 16,
      reg_type  => reg_read_only,
      reset_val => "00000000000000000000000000000001",
-     is_implem => "00000000000000000111111111110011"),
+     is_implem => "00000000000000000111111111110111"),
     (address   => RX_SETTINGS_ADR,
      size      => 8,
      reg_type  => reg_read_write,
