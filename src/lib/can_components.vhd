@@ -3181,6 +3181,9 @@ package can_components is
             
         -- Data overrun Flag
         rx_data_overrun      :in   std_logic;
+        
+        -- Middle of frame indication
+        rx_mof               :in   std_logic;
 
         ------------------------------------------------------------------------
         -- Interface to TXT Buffers
@@ -3989,6 +3992,9 @@ package can_components is
         -- Overrun occurred, data were discarded!
         -- (This is a flag and persists until it is cleared by SW)! 
         rx_data_overrun      :out    std_logic;
+        
+        -- Middle of frame indication
+        rx_mof               :out    std_logic;
         
         -- External timestamp input
         timestamp            :in     std_logic_vector(63 downto 0);

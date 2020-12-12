@@ -165,6 +165,9 @@ entity rx_buffer is
         -- (This is a flag and persists until it is cleared by SW)! 
         rx_data_overrun      :out    std_logic;
         
+        -- Middle of frame indication
+        rx_mof               :out    std_logic;
+        
         -- External timestamp input
         timestamp            :in     std_logic_vector(63 downto 0);
 
@@ -363,7 +366,6 @@ architecture rtl of rx_buffer is
     ----------------------------------------------------------------------------
     signal rx_buf_res_d             :       std_logic;
     signal rx_buf_res_q             :       std_logic;
-    
 
 begin
 
@@ -806,6 +808,12 @@ begin
                               read_pointer;
                               
 
+    ----------------------------------------------------------------------------
+    -- RX buffer middle of frame
+    ----------------------------------------------------------------------------
+    rx_mof <= '0' when (read_counter_q = "00000") else
+              '1';
+    
     ----------------------------------------------------------------------------
     ----------------------------------------------------------------------------
     -- Assertions

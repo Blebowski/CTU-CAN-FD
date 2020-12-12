@@ -219,6 +219,9 @@ architecture rtl of can_top_level is
     -- Actually loaded data for reading from RX Buffer
     signal rx_read_buff         :    std_logic_vector(31 downto 0);
 
+    -- RX buffer middle of frame
+    signal rx_mof               :    std_logic;
+
     ----------------------------------------------------------------------------
     -- TXT Buffer <-> Memory registers Interface
     ----------------------------------------------------------------------------
@@ -544,6 +547,7 @@ begin
         rx_read_pointer      => rx_read_pointer,        -- IN
         rx_write_pointer     => rx_write_pointer,       -- IN
         rx_data_overrun      => rx_data_overrun,        -- IN
+        rx_mof               => rx_mof,                 -- IN
 
         -- Interface to TXT Buffers
         txtb_port_a_data     => txtb_port_a_data,       -- OUT
@@ -603,6 +607,7 @@ begin
         rx_read_pointer      => rx_read_pointer,        -- OUT
         rx_write_pointer     => rx_write_pointer,       -- OUT
         rx_data_overrun      => rx_data_overrun,        -- OUT
+        rx_mof               => rx_mof,                 -- OUT
         
         -- External timestamp input
         timestamp            => timestamp,          -- IN
