@@ -402,10 +402,7 @@ begin
     --  (unsigned(trv_delay_ctr_q) > unsigned(C_TRV_DEL_SAT));
 
     -- psl ssp_offset_sat_asrt : assert never
-    -- (unsigned(ssp_delay_shadowed) > unsigned(C_SSP_SAT_LVL_VECT));
-
-    -- psl bit_err_normal_cov : cover
-    --  {bit_err_norm_detected = '1'};
+    -- (unsigned(ssp_delay_shadowed) > to_unsigned(G_SSP_SATURATION_LVL, G_SSP_POS_WIDTH));
     
     -- psl trv_measurement_cov : cover
     --  {tran_delay_meas = '1'};
@@ -422,7 +419,7 @@ begin
     --       even if SSP is not used!
     
     -- psl ssp_offset_sat_cov : cover
-    --  {ssp_delay_saturated = C_SSP_SAT_LVL_VECT};
+    --  {ssp_delay_saturated = std_logic_vector(to_unsigned(G_SSP_SATURATION_LVL, G_SSP_POS_WIDTH))};
     
     -- <RELEASE_ON>
 
