@@ -3437,6 +3437,7 @@ begin
     -- psl ovr_from_ovr_delim_cov : cover
     --  {curr_state = s_pc_ovr_delim and next_state = s_pc_ovr_flag};
 
+
     -- Protocol exception
     
     -- psl pex_on_fdf_enable_cov : cover
@@ -3450,6 +3451,24 @@ begin
     
     -- psl pex_in_s_pc_edl_r1_cov : cover
     --  {curr_state = s_pc_edl_r1 and pexs_set = '1'};
+
+
+    -- Arbitration lost
+    
+    -- psl arb_lost_base_id_cov : cover
+    --  {curr_state = s_pc_base_id and arbitration_lost_i = '1'};
+    
+    -- psl arb_lost_rtr_srr_r1_cov : cover
+    --  {curr_state = s_pc_rtr_srr_r1 and arbitration_lost_i = '1'};
+    
+    -- psl arb_lost_ide_cov : cover
+    --  {curr_state = s_pc_ide and arbitration_lost_i = '1'};
+    
+    -- psl arb_lost_ext_id_cov : cover
+    --  {curr_state = s_pc_ext_id and arbitration_lost_i = '1'};
+    
+    -- psl arb_lost_rtr_r1_cov : cover
+    --  {curr_state = s_pc_rtr_r1 and arbitration_lost_i = '1'};
     
     -- <RELEASE_ON>
 
