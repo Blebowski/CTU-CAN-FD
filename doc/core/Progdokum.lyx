@@ -1243,6 +1243,22 @@ Memory registers are always described with capital letters e.g.
  a register.
 \end_layout
 
+\begin_layout Itemize
+States of modules are written in apostrophe like so: 
+\begin_inset Quotes eld
+\end_inset
+
+TX Failed
+\begin_inset Quotes erd
+\end_inset
+
+.
+\end_layout
+
+\begin_layout LyX-Code
+Source code examples are written in this font
+\end_layout
+
 \begin_layout Chapter
 Introduction
 \end_layout
