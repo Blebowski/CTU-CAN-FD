@@ -393,6 +393,37 @@ begin
         report "SSP Position width must be higher or equal to trv counter width!"
         severity error;
     
+    ----------------------------------------------------------------------------
+    -- Assertions and Functional coverge
+    ----------------------------------------------------------------------------
+    -- psl default clock is rising_edge(clk_sys);
+
+    -- psl trv_delay_ctr_sat_asrt : assert never
+    --  (unsigned(trv_delay_ctr_q) > unsigned(C_TRV_DEL_SAT));
+
+    -- psl ssp_offset_sat_asrt : assert never
+    -- (unsigned(ssp_delay_shadowed) > unsigned(C_SSP_SAT_LVL_VECT));
+
+    -- psl bit_err_normal_cov : cover
+    --  {bit_err_norm_detected = '1'};
+    
+    -- psl trv_measurement_cov : cover
+    --  {tran_delay_meas = '1'};
+    
+    -- psl ssp_meas_n_offset_cov : cover
+    --  {ssp_delay_select = SSP_SRC_MEAS_N_OFFSET and tran_delay_meas = '1'};
+    
+    -- psl ssp_offset_cov : cover
+    --  {ssp_delay_select = SSP_SRC_OFFSET and tran_delay_meas = '1'};
+    
+    -- psl ssp_no_ssp_cov : cover
+    --  {ssp_delay_select = SSP_SRC_NO_SSP and tran_delay_meas = '1'};
+    -- Note: Protocol control FSM actually requests the measurement of TRV delay
+    --       even if SSP is not used!
+    
+    -- psl ssp_offset_sat_cov : cover
+    --  {ssp_delay_saturated = C_SSP_SAT_LVL_VECT};
+    
     -- <RELEASE_ON>
 
 end architecture;

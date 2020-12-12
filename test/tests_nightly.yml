@@ -135,6 +135,7 @@ feature:
         int_do:
         int_fcs:
         invalid_configs:
+            iterations: 5
         retr_limit:
         retr_limit_2:
         retr_limit_3:

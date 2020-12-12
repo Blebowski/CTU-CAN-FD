@@ -387,9 +387,28 @@ begin
 
     -- <RELEASE_OFF>
     ---------------------------------------------------------------------------
-    -- Assertions
+    -- Assertions and functional coverage
     ---------------------------------------------------------------------------
     -- psl default clock is rising_edge(clk_sys);
 
+    -- psl err_detect_bit_err_cov : cover
+    --  {bit_err = '1'};
+
+    -- psl err_detect_bit_err_arb_cov : cover
+    --  {bit_err_arb = '1'};
+
+    -- psl err_detect_stuff_err_cov : cover
+    --  {stuff_err = '1'};
+
+    -- psl err_detect_form_err_cov : cover
+    --  {form_err = '1'};
+
+    -- psl err_detect_ack_err_cov : cover
+    --  {ack_err = '1'};
+
+    -- psl err_detect_crc_err_cov : cover
+    --  {crc_err = '1'};
+
     -- <RELEASE_ON>
+
 end architecture;
