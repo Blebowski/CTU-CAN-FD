@@ -463,4 +463,15 @@ begin
     -- Registers to output propagation
     sample_sec  <=  sample_sec_i;
 
+    -- <RELEASE_OFF>
+    ----------------------------------------------------------------------------
+    -- Assertions on input signals
+    ----------------------------------------------------------------------------
+    -- psl default clock is rising_edge(clk_sys);
+
+    -- psl tx_trigger_ssp_cov : cover
+    --  (tx_trigger_ssp = '1');
+
+    -- <RELEASE_ON>
+
 end architecture;
