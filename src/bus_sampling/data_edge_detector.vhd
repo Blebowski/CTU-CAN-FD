@@ -207,11 +207,11 @@ begin
     -- psl default clock is rising_edge(clk_sys);
 
     -- psl sync_edge_cov : cover
-    --  (sync_edge = '1');
+    --  {sync_edge = '1'};
     
     -- psl sync_edge_but_prev_sample_the_same_cov : cover
-    --  (rx_data_sync_prev /= rx_data) and (rx_data_sync_prev = RECESSIVE) and
-    --  (prev_rx_sample = rx_data) and (tq_edge = '1');
+    --  {(rx_data_sync_prev /= rx_data) and (rx_data_sync_prev = RECESSIVE) and
+    --   (prev_rx_sample = rx_data) and (tq_edge = '1')};
 
     -- <RELEASE_ON>
 

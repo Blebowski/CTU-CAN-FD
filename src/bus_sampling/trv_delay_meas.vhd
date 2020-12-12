@@ -405,24 +405,24 @@ begin
     -- (unsigned(ssp_delay_shadowed) > unsigned(C_SSP_SAT_LVL_VECT));
 
     -- psl bit_err_normal_cov : cover
-    --  (bit_err_norm_detected = '1');
+    --  {bit_err_norm_detected = '1'};
     
     -- psl trv_measurement_cov : cover
-    --  (tran_delay_meas = '1');
+    --  {tran_delay_meas = '1'};
     
     -- psl ssp_meas_n_offset_cov : cover
-    --  (ssp_delay_select = SSP_SRC_MEAS_N_OFFSET and tran_delay_meas = '1');
+    --  {ssp_delay_select = SSP_SRC_MEAS_N_OFFSET and tran_delay_meas = '1'};
     
     -- psl ssp_offset_cov : cover
-    --  (ssp_delay_select = SSP_SRC_OFFSET and tran_delay_meas = '1');
+    --  {ssp_delay_select = SSP_SRC_OFFSET and tran_delay_meas = '1'};
     
     -- psl ssp_no_ssp_cov : cover
-    --  (ssp_delay_select = SSP_SRC_NO_SSP and tran_delay_meas = '1');
+    --  {ssp_delay_select = SSP_SRC_NO_SSP and tran_delay_meas = '1'};
     -- Note: Protocol control FSM actually requests the measurement of TRV delay
     --       even if SSP is not used!
     
     -- psl ssp_offset_sat_cov : cover
-    --  (ssp_delay_saturated = C_SSP_SAT_LVL_VECT);
+    --  {ssp_delay_saturated = C_SSP_SAT_LVL_VECT};
     
     -- <RELEASE_ON>
 

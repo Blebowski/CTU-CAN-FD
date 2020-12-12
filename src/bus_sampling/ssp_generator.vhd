@@ -301,10 +301,10 @@ begin
     --  report "BTMC overflow";
     
     -- psl first_ssp_cov : cover
-    --  (first_ssp_q = '1');
+    --  {first_ssp_q = '1'};
 
     -- psl sspc_ena_q_cov : cover
-    --  (sspc_ena_q = '1');
+    --  {sspc_ena_q = '1'};
 
     -- <RELEASE_ON>
 

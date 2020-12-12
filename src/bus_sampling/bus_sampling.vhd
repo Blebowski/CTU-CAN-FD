@@ -470,7 +470,7 @@ begin
     -- psl default clock is rising_edge(clk_sys);
 
     -- psl tx_trigger_ssp_cov : cover
-    --  (tx_trigger_ssp = '1');
+    --  {tx_trigger_ssp = '1'};
 
     -- <RELEASE_ON>
 

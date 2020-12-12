@@ -218,18 +218,18 @@ begin
     --       decide this!
 
     -- psl bit_err_normal_cov : cover
-    --  (bit_err_norm_detected = '1');
+    --  {bit_err_norm_detected = '1'};
     
     -- psl bit_err_secondary_cov : cover
-    --  (bit_err_ssp_valid = '1' and bit_err_norm_valid = '0');
+    --  {bit_err_ssp_valid = '1' and bit_err_norm_valid = '0'};
 
     -- psl bit_err_secondary_capt_cov : cover
-    --  (bit_err_ssp_valid = '1' and bit_err_ssp_capt_q = '1' and
-    --   bit_err_ssp_condition = '0');
+    --  {bit_err_ssp_valid = '1' and bit_err_ssp_capt_q = '1' and
+    --   bit_err_ssp_condition = '0'};
 
     -- psl bit_err_secondary_direct_cov : cover
-    --  (bit_err_ssp_valid = '1' and bit_err_ssp_capt_q = '0' and
-    --   bit_err_ssp_condition = '1');
+    --  {bit_err_ssp_valid = '1' and bit_err_ssp_capt_q = '0' and
+    --   bit_err_ssp_condition = '1'};
 
     -- <RELEASE_ON>
 
