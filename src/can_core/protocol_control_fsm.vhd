@@ -3437,6 +3437,20 @@ begin
     -- psl ovr_from_ovr_delim_cov : cover
     --  {curr_state = s_pc_ovr_delim and next_state = s_pc_ovr_flag};
 
-
+    -- Protocol exception
+    
+    -- psl pex_on_fdf_enable_cov : cover
+    --  {pex_on_fdf_enable = '1' and is_pexs = '1'};
+    
+    -- psl pex_on_res_enable_cov : cover
+    --  {pex_on_res_enable = '1' and is_pexs = '1'};
+    
+    -- psl pex_in_s_pc_r0_fd_cov : cover
+    --  {curr_state = s_pc_r0_fd and pexs_set = '1'};
+    
+    -- psl pex_in_s_pc_edl_r1_cov : cover
+    --  {curr_state = s_pc_edl_r1 and pexs_set = '1'};
+    
     -- <RELEASE_ON>
+
 end architecture;
