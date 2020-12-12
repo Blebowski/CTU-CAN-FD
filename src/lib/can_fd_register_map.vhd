@@ -725,6 +725,7 @@ package can_fd_register_map is
   ------------------------------------------------------------------------------
   constant RXE_IND                : natural := 0;
   constant RXF_IND                : natural := 1;
+  constant RXMOF_IND              : natural := 2;
   constant RXFRC_L                : natural := 4;
   constant RXFRC_H               : natural := 14;
 
@@ -732,6 +733,7 @@ package can_fd_register_map is
   constant RXE_RSTVAL         : std_logic := '1';
   constant RXF_RSTVAL         : std_logic := '0';
   constant RXFRC_RSTVAL : std_logic_vector(10 downto 0) := (OTHERS => '0');
+  constant RXMOF_RSTVAL       : std_logic := '0';
 
   ------------------------------------------------------------------------------
   -- RX_SETTINGS register

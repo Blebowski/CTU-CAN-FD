@@ -34724,11 +34724,11 @@ Reserved\end_layout
 
 \end_inset
 </cell>
-<cell alignment="center" leftline="true" multicolumn="2" topline="true" usebox="none" valignment="top">
+<cell alignment="center" leftline="true" multicolumn="1" topline="true" usebox="none" valignment="top">
 \begin_inset Text
 
 \begin_layout Plain Layout
-Reserved\end_layout
+RXMOF\end_layout
 
 \end_inset
 </cell>
@@ -34809,7 +34809,7 @@ cellcolor{cyan}
 \begin_inset Text
 
 \begin_layout Plain Layout
--\end_layout
+0\end_layout
 
 \end_inset
 </cell>
@@ -34841,6 +34841,9 @@ RXE RX buffer is empty. There is no CAN Frame stored in it.
 \end_layout
 \begin_layout Description
 RXF RX buffer is full, all memory words of RX buffer are occupied.
+\end_layout
+\begin_layout Description
+RXMOF RX Buffer middle of frame. When RXMOF = 1, next read from RX_DATA register will return other than first word (FRAME_FORMAT_W) of CAN frame.
 \end_layout
 \begin_layout Description
 RXFRC RX buffer frame count. Number of CAN frames stored in RX buffer.
