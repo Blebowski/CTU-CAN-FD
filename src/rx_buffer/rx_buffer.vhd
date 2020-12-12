@@ -955,8 +955,10 @@ begin
     --      cover {(read_increment = '1')[*4]};
     --
     -- psl rx_buf_burst_read_max_cov :
-    --      cover {(read_increment = '1')[*20]};
-    --
+    --      cover {(read_increment = '1')[*19]};
+    -- Note: SW reads the frame like so: Read one word, then burst of 19 to read rest.
+    --       Therefore highest burst achievable is 19!
+    
     -- psl rx_buf_frame_abort_cov :
     --      cover {rec_abort_f = '1'};
     --
