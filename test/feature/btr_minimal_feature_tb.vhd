@@ -154,8 +154,8 @@ package body btr_minimal_feature is
         -----------------------------------------------------------------------
         info("Step 2");
 
-        ftr_tb_set_tran_delay(10 ns, ID_1, so.ftr_tb_trv_delay);
-        ftr_tb_set_tran_delay(10 ns, ID_2, so.ftr_tb_trv_delay);
+        ftr_tb_set_tran_delay(1 ns, ID_1, so.ftr_tb_trv_delay);
+        ftr_tb_set_tran_delay(1 ns, ID_2, so.ftr_tb_trv_delay);
 
         -----------------------------------------------------------------------
         -- @3. Generate random frame which is FD frame with bit-rate shift.
