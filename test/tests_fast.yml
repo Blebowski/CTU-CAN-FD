@@ -58,6 +58,7 @@ feature:
         alc_rtr_ext_id:
         btr:
         btr_fd:
+        btr_minimal:
         btr_ssp_access:
         bus_start:
         byte_enable:
