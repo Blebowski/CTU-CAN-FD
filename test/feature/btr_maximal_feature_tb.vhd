@@ -43,17 +43,15 @@
 -- @TestInfoStart
 --
 -- @Purpose:
---  BTR (Bit timing register) - minimal settings feature test.
+--  BTR (Bit timing register) - maximal settings feature test.
 --
 -- @Verifies:
---  @1. Node is able to send frame succesfully with maximal possible bit-rate
+--  @1. Node is able to send frame succesfully with minimal possible bit-rate
 --      (nominal and data), as specified by datasheet.
 --
 -- @Test sequence:
---  @1. Configure highest possible bit-rate as given by datasheet in both nodes.
+--  @1. Configure slowest possible bit-rate as given by datasheet in both nodes.
 --      Disable Secondary sampling point.
---  @2. Configure small Transmitter delay, so that sampling in nominal bit rate
---      will not fire an error.
 --  @3. Generate random frame which is FD frame with bit-rate shift. Send the
 --      frame by Node 1, receive it by Node 2 and check it.
 --
@@ -69,8 +67,8 @@ context ctu_can_fd_tb.ctu_can_test_context;
 
 use ctu_can_fd_tb.pkg_feature_exec_dispath.all;
 
-package btr_minimal_feature is
-    procedure btr_minimal_feature_exec(
+package btr_maximal_feature is
+    procedure btr_maximal_feature_exec(
         signal      so              : out    feature_signal_outputs_t;
         signal      rand_ctr        : inout  natural range 0 to RAND_POOL_SIZE;
         signal      iout            : in     instance_outputs_arr_t;
@@ -80,8 +78,8 @@ package btr_minimal_feature is
 end package;
 
 
-package body btr_minimal_feature is
-    procedure btr_minimal_feature_exec(
+package body btr_maximal_feature is
+    procedure btr_maximal_feature_exec(
         signal      so              : out    feature_signal_outputs_t;
         signal      rand_ctr        : inout  natural range 0 to RAND_POOL_SIZE;
         signal      iout            : in     instance_outputs_arr_t;
@@ -105,30 +103,27 @@ package body btr_minimal_feature is
     begin
 
         -----------------------------------------------------------------------
-        -- @1. Configure highest possible bit-rate as given by datasheet in
+        -- @1. Configure lowest possible bit-rate as given by datasheet in
         --     both nodes. Disable Secondary sampling point.
         -----------------------------------------------------------------------
         info("Step 1");
         CAN_turn_controller(false, ID_1, mem_bus(1));
         CAN_turn_controller(false, ID_2, mem_bus(2));
 
-        bus_timing.prop_nbt := 3;
-        bus_timing.ph1_nbt := 2;
-        bus_timing.ph2_nbt := 2;
-        bus_timing.sjw_nbt := 2;
-        bus_timing.tq_nbt := 1;
-        
-        bus_timing.prop_dbt := 0;
-        bus_timing.ph1_dbt := 2;
-        bus_timing.ph2_dbt := 2;
-        bus_timing.sjw_nbt := 1;
-        bus_timing.tq_dbt := 1;
+        bus_timing.prop_nbt := 127;
+        bus_timing.ph1_nbt := 63;
+        bus_timing.ph2_nbt := 63;
+        bus_timing.sjw_nbt := 5;
+        bus_timing.tq_nbt := 255;
+
+        bus_timing.prop_dbt := 63;
+        bus_timing.ph1_dbt := 31;
+        bus_timing.ph2_dbt := 31;
+        bus_timing.sjw_nbt := 5;
+        bus_timing.tq_dbt := 255;
 
         CAN_configure_timing(bus_timing, ID_1, mem_bus(1));
         CAN_configure_timing(bus_timing, ID_2, mem_bus(2));
-
-        CAN_configure_ssp(ssp_no_ssp, x"00", ID_1, mem_bus(1));
-        CAN_configure_ssp(ssp_no_ssp, x"00", ID_2, mem_bus(2));
 
         CAN_turn_controller(true, ID_1, mem_bus(1));
         CAN_turn_controller(true, ID_2, mem_bus(2));
@@ -149,16 +144,7 @@ package body btr_minimal_feature is
         info("SJW: " & integer'image(bus_timing.sjw_dbt));
 
         -----------------------------------------------------------------------
-        -- @2. Configure small Transmitter delay, so that sampling in nominal
-        --     bit rate will not fire an error.
-        -----------------------------------------------------------------------
-        info("Step 2");
-
-        ftr_tb_set_tran_delay(10 ns, ID_1, so.ftr_tb_trv_delay);
-        ftr_tb_set_tran_delay(10 ns, ID_2, so.ftr_tb_trv_delay);
-
-        -----------------------------------------------------------------------
-        -- @3. Generate random frame which is FD frame with bit-rate shift.
+        -- @2. Generate random frame which is FD frame with bit-rate shift.
         --     Send the frame by Node 1, receive it by Node 2 and check it.
         -----------------------------------------------------------------------
         info("Step 3");
@@ -168,6 +154,10 @@ package body btr_minimal_feature is
         CAN_frame_1.frame_format := FD_CAN;
         CAN_frame_1.brs := BR_SHIFT;
         CAN_frame_1.rtr := NO_RTR_FRAME;
+        CAN_frame_1.ident_type := BASE;
+        CAN_frame_1.data_length := 0;
+        CAN_frame_1.dlc := "0000";
+        decode_dlc_rx_buff(CAN_frame_1.dlc, CAN_frame_1.rwcnt);
         
         CAN_send_frame(CAN_frame_1, 1, ID_1, mem_bus(1), frame_sent);
         CAN_wait_frame_sent(ID_2, mem_bus(2));
