@@ -3002,6 +3002,18 @@ Note Since CTU CAN FD input delay is 2 System clock periods (minimum time
  frames without detecting bit error on CTU CAN FDs own transmitted frame).
 \end_layout
 
+\begin_layout Description
+Note CTU CAN FD can handle at most 8 bits on flight between CAN_TX and CAN_RX
+ pins when using secondary sampling point.
+ E.g.
+ if System clock = 100 MHz and Data bit rate = 5 Mbit/s, then one data bit
+ time = 20 System clock periods.
+ Then, latest possible position of Secondary sampling point is 20 * 8 =
+ 160 System clock periods.
+ This limitation applies on final position of secondary sampling point (with
+ SSP_CFG[SSP_OFFSET]/TRV_DELAY included).
+\end_layout
+
 \begin_layout Subsection
 CAN FD support
 \end_layout

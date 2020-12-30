@@ -130,9 +130,9 @@ package body fault_state_feature is
         rx_mt_erp := rx_mt_erp + 128;
 
         rand_int_v(rand_ctr, 50, tx_mt_bof);
-        tx_mt_bof := tx_mt_bof + 255;
+        tx_mt_bof := tx_mt_bof + 256;
         rand_int_v(rand_ctr, 50, rx_mt_bof);
-        rx_mt_bof := rx_mt_bof + 255;
+        rx_mt_bof := rx_mt_bof + 256;
         
         info("RX less than ERP: " & integer'image(rx_lt_erp));
         info("TX less than ERP: " & integer'image(tx_lt_erp));

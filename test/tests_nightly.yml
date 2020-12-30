@@ -85,6 +85,8 @@ feature:
             iterations: 1
         btr_fd:
             iterations: 3
+        btr_minimal:
+        btr_maximal:
         btr_ssp_access:
         bus_start:
         byte_enable:
