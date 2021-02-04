@@ -1,10 +1,10 @@
 _default: &default
     log_level: info
-    functional_coverage: true
+    functional_coverage: false
     code_coverage: true
     error_tolerance: 0
     randomize: false
-    # seed:0
+    # seed: 10
     # In GUI mode, dump all signals, not only these included in layout file.
     dump_all_signals: true
 
@@ -49,6 +49,7 @@ compliance:
         iso_7_2_2:
         iso_7_2_3:
         iso_7_2_4:
+        iso_7_2_5:
         iso_7_2_6:
         iso_7_2_7:
         iso_7_2_8:
@@ -169,21 +170,7 @@ compliance:
         iso_8_1_1:
         iso_8_1_2:
         iso_8_1_3:
-            # TODO Equal time quanta of 3 are chosen here because if mismatching prescalers are used,
-            #      during first frame DUT will re-synchronize in data bit rate. This depends on where
-            #      within time quanta DUT will attemp to transmitt and it is therefore random! Monitor
-            #      does not do such resynchronisation and is therefore off by some data time quanta!
-            #      This needs to be fixed!!! There 
-            brp: 3
-            brp_fd: 3
         iso_8_1_4:
-            # TODO Equal time quanta of 3 are chosen here because if mismatching prescalers are used,
-            #      during first frame DUT will re-synchronize in data bit rate. This depends on where
-            #      within time quanta DUT will attemp to transmitt and it is therefore random! Monitor
-            #      does not do such resynchronisation and is therefore off by some data time quanta!
-            #      This needs to be fixed!!! There 
-            brp: 3
-            brp_fd: 3
         iso_8_1_5:
         iso_8_1_6:
         iso_8_1_7:
@@ -265,3 +252,17 @@ compliance:
         iso_8_8_1_1:
         iso_8_8_1_2:
         iso_8_8_1_3:
+        iso_8_8_1_4:
+        iso_8_8_2_1:
+        iso_8_8_2_2:
+        iso_8_8_2_3:
+        iso_8_8_3_1:
+            brp_fd: 3
+        iso_8_8_3_2:
+            brp_fd: 3
+        iso_8_8_4_1:
+            brp_fd: 3
+        iso_8_8_4_2:
+            brp_fd: 3
+        iso_8_8_5_1:
+        iso_8_8_5_2:
