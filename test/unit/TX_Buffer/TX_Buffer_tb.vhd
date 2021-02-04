@@ -267,6 +267,8 @@ begin
         txtb_hw_cmd             => txtb_hw_cmd,
         txtb_hw_cmd_int         => txtb_hw_cmd_int,
         txtb_hw_cmd_index       => txtb_hw_cmd_index,
+        drv_rom_ena             => '0',
+        drv_bus_mon_ena         => '0',
         txt_buf_failed_bof      => '1',
         is_bus_off              => is_bus_off,
         txtb_port_b_data        => txtb_port_b_data,

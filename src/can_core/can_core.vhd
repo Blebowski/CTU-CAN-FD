@@ -1268,7 +1268,8 @@ begin
     --  severity error;
 
     -- psl no_stuff_bit_in_idle_asrt : assert never
-    --  ((destuffed = '1' or data_halt = '1') and is_idle = '1')
+    --  ((destuffed = '1' or data_halt = '1') and is_idle = '1' and
+    --    drv_bus(DRV_ROM_ENA_INDEX) = '0')
     --  report "Stuff bits not allowed in Bus idle!"
     --  severity error;
     

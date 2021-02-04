@@ -219,6 +219,9 @@ architecture rtl of fault_confinement is
     signal inc_eight             :     std_logic;
     signal dec_one               :     std_logic;
 
+    -- Restricted operation mode
+    signal drv_rom_ena           :     std_logic;
+
 begin
   
     ---------------------------------------------------------------------------
@@ -229,6 +232,7 @@ begin
     drv_ctr_val         <=  drv_bus(DRV_CTR_VAL_HIGH downto DRV_CTR_VAL_LOW);
     drv_ctr_sel         <=  drv_bus(DRV_CTR_SEL_HIGH downto DRV_CTR_SEL_LOW);
     drv_ena             <=  drv_bus(DRV_ENA_INDEX);
+    drv_rom_ena         <=  drv_bus(DRV_ROM_ENA_INDEX);
 
     dff_arst_inst : dff_arst
     generic map(
@@ -303,20 +307,21 @@ begin
     ---------------------------------------------------------------------------
     fault_confinement_rules_inst : fault_confinement_rules
     port map(
-        is_transmitter         => is_transmitter,       -- IN
-        is_receiver            => is_receiver,          -- IN
-        err_detected           => err_detected,         -- IN
-        err_ctrs_unchanged     => err_ctrs_unchanged,   -- IN
-        primary_err            => primary_err,          -- IN
-        act_err_ovr_flag       => act_err_ovr_flag,     -- IN
-        err_delim_late         => err_delim_late,       -- IN
-        tran_valid             => tran_valid,           -- IN
-        decrement_rec          => decrement_rec,        -- IN
-        bit_err_after_ack_err  => bit_err_after_ack_err,-- IN
+        is_transmitter         => is_transmitter,           -- IN
+        is_receiver            => is_receiver,              -- IN
+        err_detected           => err_detected,             -- IN
+        err_ctrs_unchanged     => err_ctrs_unchanged,       -- IN
+        primary_err            => primary_err,              -- IN
+        act_err_ovr_flag       => act_err_ovr_flag,         -- IN
+        err_delim_late         => err_delim_late,           -- IN
+        tran_valid             => tran_valid,               -- IN
+        decrement_rec          => decrement_rec,            -- IN
+        bit_err_after_ack_err  => bit_err_after_ack_err,    -- IN
+        drv_rom_ena            => drv_rom_ena,              -- IN
 
-        inc_one                => inc_one,              -- OUT
-        inc_eight              => inc_eight,            -- OUT
-        dec_one                => dec_one               -- OUT
+        inc_one                => inc_one,                  -- OUT
+        inc_eight              => inc_eight,                -- OUT
+        dec_one                => dec_one                   -- OUT
     );
 
 

@@ -213,6 +213,7 @@ package can_fd_register_map is
   constant STM_IND                : natural := 2;
   constant AFM_IND                : natural := 3;
   constant FDE_IND                : natural := 4;
+  constant ROM_IND                : natural := 6;
   constant ACF_IND                : natural := 7;
   constant TSTM_IND               : natural := 8;
 
@@ -236,6 +237,10 @@ package can_fd_register_map is
   constant AFM_DISABLED       : std_logic := '0';
   constant AFM_ENABLED        : std_logic := '1';
 
+  -- "ROM" field enumerated values
+  constant ROM_DISABLED       : std_logic := '0';
+  constant ROM_ENABLED        : std_logic := '1';
+
   -- MODE register reset values
   constant RST_RSTVAL         : std_logic := '0';
   constant FDE_RSTVAL         : std_logic := '1';
@@ -244,6 +249,7 @@ package can_fd_register_map is
   constant STM_RSTVAL         : std_logic := '0';
   constant AFM_RSTVAL         : std_logic := '0';
   constant TSTM_RSTVAL        : std_logic := '0';
+  constant ROM_RSTVAL         : std_logic := '0';
 
   ------------------------------------------------------------------------------
   -- SETTINGS register

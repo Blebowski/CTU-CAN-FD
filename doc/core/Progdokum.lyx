@@ -485,7 +485,7 @@ CTU CAN FD IP Core - Datasheet
 \begin_inset Text
 
 \begin_layout Plain Layout
-Version 2.2.6, Commit:
+Version 2.3, Commit:
 \begin_inset CommandInset include
 LatexCommand input
 filename "version.tex"
@@ -509,7 +509,7 @@ filename "version.tex"
 \noindent
 \align center
 \begin_inset Tabular
-<lyxtabular version="3" rows="18" columns="4">
+<lyxtabular version="3" rows="19" columns="4">
 <features tabularvalignment="middle">
 <column alignment="center" valignment="top" width="1.5cm">
 <column alignment="center" valignment="top" width="2cm">
@@ -1173,11 +1173,49 @@ Add general overview and TX frame type description.
 </cell>
 </row>
 <row>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
 2.2.8
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Ondrej Ille
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+4-2-2021
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Change license
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+2.3
 \end_layout
 
 \end_inset
@@ -1195,7 +1233,7 @@ Ondrej Ille
 \begin_inset Text
 
 \begin_layout Plain Layout
-4-2-2021
+4-2-2020
 \end_layout
 
 \end_inset
@@ -1204,7 +1242,7 @@ Ondrej Ille
 \begin_inset Text
 
 \begin_layout Plain Layout
-Change license
+Added MODE[ROM] - Restricted operation mode.
 \end_layout
 
 \end_inset
@@ -1375,7 +1413,8 @@ Interrupts
 \end_layout
 
 \begin_layout Itemize
-Loopback mode, Bus monitoring mode, ACK forbidden mode, Self-test mode
+Loopback mode, Bus monitoring mode, ACK forbidden mode, Self-test mode,
+ Restricted operation mode
 \end_layout
 
 \begin_layout Section
@@ -3726,6 +3765,23 @@ Ready
 
 \end_layout
 
+\begin_layout Description
+Note When CTU CAN FD operates in Bus monitoring mode (MODE[BMM] = 1) or
+ Restricted operation mode (MODE[ROM] = 1) it always ends up in 
+\begin_inset Quotes eld
+\end_inset
+
+TX failed
+\begin_inset Quotes erd
+\end_inset
+
+ state when 
+\series bold
+Set ready
+\series default
+ command is issued, without any attempt to transmit the frame.
+\end_layout
+
 \begin_layout Subsection
 TXT buffer selection
 \end_layout
@@ -4767,7 +4823,7 @@ status open
 \begin_inset Graphics
 	filename ../pics/Visio_generated/Frame_filters_flow.pdf
 	lyxscale 20
-	scale 80
+	scale 70
 
 \end_inset
 
@@ -5376,23 +5432,52 @@ In Bus monitoring mode, CTU CAN FD does not transmit any frames, it only
 \series bold
 Set ready
 \series default
- command is issued, this frame will not be transmitted, and TXT buffer will
- remain in 
+ command is issued, frame will not be transmitted, and TXT buffer will immediate
+ly move to 
 \begin_inset Quotes eld
 \end_inset
 
-Ready
+TX failed
 \begin_inset Quotes erd
 \end_inset
 
  state.
- If CTU CAN FD is receiver during Bus monitoring mode, it also does not
- transmit any dominant bit on the bus.
+ In Bus monitoring mode, CTU CAN FD does not transmit any dominant bit on
+ the bus.
  If dominant bit is about to be transmitted to the bus (e.g.
  ACK or error frame), it is re-routed internally so that CTU CAN FD receives
  this bit, but other nodes on CAN bus do not see this dominant bit.
  Bus monitoring mode is enabled when MODE[BMM] = 1.
  MODE[BMM] shall be modified only when CTU CAN FD is disabled (SETTINGS[ENA]
+ = 0).
+\end_layout
+
+\begin_layout Subsection
+Restricted operation mode
+\end_layout
+
+\begin_layout Standard
+In Restricted operation mode, CTU CAN FD is able to receive frames on CAN
+ bus, but it does not transmit any frames.
+ If CAN frame is inserted to TXT buffer and Set ready command is issued,
+ frame will not be transmitted, and TXT buffer will immediately move to
+ 
+\begin_inset Quotes eld
+\end_inset
+
+TX failed
+\begin_inset Quotes erd
+\end_inset
+
+ state.
+ In Restricted operation mode, CTU CAN FD gives ACK to valid frames, but
+ it does not send Error frames nor Overload frames.
+ If Error or Overload condition is detected, CTU CAN FD enters bus integration
+ state, and waits for 11 consecutive recessive bits.
+ In Restricted operation mode, REC and TEC counters are not modified, therefore
+ CTU CAN FD will always stay in Error active state.
+ Restricted operation mode is enabled when MODE[ROM] = 1.
+ MODE[ROM] shall be modified only when CTU CAN FD is disabled (SETTINGS[ENA]
  = 0).
 \end_layout
 

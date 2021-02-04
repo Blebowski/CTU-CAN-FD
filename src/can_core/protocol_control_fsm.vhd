@@ -171,6 +171,9 @@ entity protocol_control_fsm is
         -- Protocol exception status clear
         drv_cpexs               :in   std_logic;
         
+        -- ROM mode enabled
+        drv_rom_ena             :in   std_logic;
+        
         -- Control field is being transmitted
         is_control              :out  std_logic;
 
@@ -801,7 +804,9 @@ architecture rtl of protocol_control_fsm is
 
 begin
 
-    tx_frame_ready <= '1' when (tran_frame_valid = '1' and drv_bus_mon_ena = '0')
+    tx_frame_ready <= '1' when (tran_frame_valid = '1' and
+                                drv_bus_mon_ena = BMM_DISABLED and
+                                drv_rom_ena = ROM_DISABLED)
                           else
                       '0';
                       
@@ -975,7 +980,7 @@ begin
         drv_fd_type, is_receiver, is_fd_frame,
         is_bus_off, go_to_suspend, tx_frame_ready, drv_bus_off_reset_q,
         reinteg_ctr_expired, rx_data_nbs, is_err_active, go_to_stuff_count,
-        pex_on_fdf_enable, pex_on_res_enable)
+        pex_on_fdf_enable, pex_on_res_enable, drv_rom_ena)
     begin
         next_state <= curr_state;
 
@@ -983,10 +988,14 @@ begin
             next_state <= s_pc_off;
             
         elsif (err_frm_req = '1') then
-            if (is_err_active = '1') then
-                next_state <= s_pc_act_err_flag;
+            if (drv_rom_ena = ROM_DISABLED) then
+                if (is_err_active = '1') then
+                    next_state <= s_pc_act_err_flag;
+                else
+                    next_state <= s_pc_pas_err_flag;
+                end if;
             else
-                next_state <= s_pc_pas_err_flag;
+                next_state <= s_pc_integrating;
             end if;
             
         else
@@ -1196,7 +1205,11 @@ begin
                     if (rx_data_nbs = RECESSIVE) then
                         next_state <= s_pc_intermission;
                     elsif (is_receiver = '1') then
-                        next_state <= s_pc_ovr_flag;
+                        if (drv_rom_ena = ROM_DISABLED) then
+                            next_state <= s_pc_ovr_flag;
+                        else
+                            next_state <= s_pc_integrating;
+                        end if;
                     end if;
                 end if;
 
@@ -1221,7 +1234,11 @@ begin
                 
                 -- First or second bit of intermission!
                 elsif (rx_data_nbs = DOMINANT) then
-                    next_state <= s_pc_ovr_flag;
+                    if (drv_rom_ena = ROM_DISABLED) then
+                        next_state <= s_pc_ovr_flag;
+                    else
+                        next_state <= s_pc_integrating;
+                    end if;
                 end if;
 
             -------------------------------------------------------------------
@@ -1244,7 +1261,6 @@ begin
             -- Unit is in Bus idle period.
             -------------------------------------------------------------------
             when s_pc_idle =>
-
                if (is_bus_off = '1') then
                    next_state <= s_pc_reintegrating_wait;
                elsif (rx_data_nbs = DOMINANT) then
@@ -1523,7 +1539,12 @@ begin
         if (err_frm_req = '1') then
             tick_state_reg <= '1';
             ctrl_ctr_pload_i   <= '1';
-            ctrl_ctr_pload_val <= C_ERR_FLG_DURATION;
+            if (drv_rom_ena = ROM_DISABLED) then
+                ctrl_ctr_pload_val <= C_ERR_FLG_DURATION;
+            else
+                ctrl_ctr_pload_val <= C_INTEGRATION_DURATION;
+                set_idle_i <= '1';
+            end if;
             rec_abort_d <= '1';
             
             crc_clear_match_flag <= '1';
@@ -2368,7 +2389,12 @@ begin
                         end if;
                         
                     elsif (is_receiver = '1') then
-                        ctrl_ctr_pload_val <= C_OVR_FLG_DURATION;
+                        if (drv_rom_ena = ROM_DISABLED) then
+                            ctrl_ctr_pload_val <= C_OVR_FLG_DURATION;
+                        else
+                            ctrl_ctr_pload_val <= C_INTEGRATION_DURATION;
+                            set_idle_i <= '1';
+                        end if;
                     end if;
                     
                     crc_clear_match_flag <= '1';
@@ -2468,7 +2494,12 @@ begin
                 elsif (rx_data_nbs = DOMINANT and is_bus_off = '0') then
                     tick_state_reg <= '1';
                     ctrl_ctr_pload_i <= '1';
-                    ctrl_ctr_pload_val <= C_OVR_FLG_DURATION;
+                    if (drv_rom_ena = ROM_DISABLED) then
+                        ctrl_ctr_pload_val <= C_OVR_FLG_DURATION;
+                    else
+                        ctrl_ctr_pload_val <= C_INTEGRATION_DURATION;
+                        set_idle_i <= '1';
+                    end if;
                 end if;
                 
                 -- Second or third bit of intermission, Hard Synchronisation
@@ -3155,8 +3186,13 @@ begin
     set_receiver <= '1' when (set_receiver_i = '1' and rx_trigger = '1')
                         else
                     '0';
-                    
-    set_idle <= '1' when (set_idle_i = '1' and rx_trigger = '1')
+
+    ---------------------------------------------------------------------------
+    -- Idle must be un-gated also by Error frame request, since in ROM mode
+    -- it is possible that upon any kind of error, unit should go to integrating
+    -- and therefore stop being transmitter or receiver!
+    ---------------------------------------------------------------------------
+    set_idle <= '1' when (set_idle_i = '1' and (rx_trigger = '1' or err_frm_req = '1'))
                     else
                 '0';
 
@@ -3372,6 +3408,22 @@ begin
     -- psl no_sof_receiver : assert never
     --  (curr_state = s_pc_sof and is_receiver = '1')
     --  report "SOF state shall never be entered when receiver!";
+
+    -- psl no_err_ovr_in_rom_mode : assert never
+    --  (curr_state = s_pc_act_err_flag or curr_state = s_pc_pas_err_flag or
+    --   curr_state = s_pc_err_delim or curr_state = s_pc_ovr_delim)
+    --  and (drv_rom_ena = ROM_ENABLED)
+    -- report "Error or Overload frames shall never be transmitted in ROM mode!"; 
+
+    -- psl no_tx_in_rom_mode : assert never
+    --  (drv_rom_ena = '1' and is_transmitter = '1')
+    -- report "Device shall not transmit frames in ROM mode!";
+
+    -- psl no_stuff_destuff_in_eof : assert never
+    --  (stuff_enable = '1' or destuff_enable = '1') and
+    --  (curr_state = s_pc_eof)
+    -- report "Bit stuffing destuffin should be never enabled during EOF!";
+
 
     -----------------------------------------------------------------------
     -----------------------------------------------------------------------

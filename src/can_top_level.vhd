@@ -504,7 +504,7 @@ architecture rtl of can_top_level is
     
     -- Time quanta edge
     signal tq_edge              :    std_logic;
-     
+
 begin
 
     -- <RELEASE_OFF>
@@ -659,13 +659,15 @@ begin
             res_n                  => res_n_i,              -- IN
 
             -- Memory Registers Interface
-            txtb_port_a_data       => txtb_port_a_data,     -- IN
-            txtb_port_a_address    => txtb_port_a_address,  -- IN
-            txtb_port_a_cs         => txtb_port_a_cs(i),    -- IN
-            txtb_sw_cmd            => txtb_sw_cmd,          -- IN
-            txtb_sw_cmd_index      => txtb_sw_cmd_index,    -- IN
-            txtb_state             => txtb_state(i),        -- OUT
-            txt_buf_failed_bof     => txt_buf_failed_bof,   -- IN
+            txtb_port_a_data       => txtb_port_a_data,                 -- IN
+            txtb_port_a_address    => txtb_port_a_address,              -- IN
+            txtb_port_a_cs         => txtb_port_a_cs(i),                -- IN
+            txtb_sw_cmd            => txtb_sw_cmd,                      -- IN
+            txtb_sw_cmd_index      => txtb_sw_cmd_index,                -- IN
+            txtb_state             => txtb_state(i),                    -- OUT
+            txt_buf_failed_bof     => txt_buf_failed_bof,               -- IN
+            drv_rom_ena            => drv_bus(DRV_ROM_ENA_INDEX),       -- IN
+            drv_bus_mon_ena        => drv_bus(DRV_BUS_MON_ENA_INDEX),   -- IN
     
             -- Interrupt Manager Interface
             txtb_hw_cmd_int        => txtb_hw_cmd_int(i),   -- OUT

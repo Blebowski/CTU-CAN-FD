@@ -122,6 +122,12 @@ entity txt_buffer_fsm is
         -- TXT Buffer bus-off behavior
         txt_buf_failed_bof      :in   std_logic;
 
+        -- Restricted operation mode
+        drv_rom_ena            :in   std_logic;
+
+        -- Bus monitoring mode
+        drv_bus_mon_ena        :in   std_logic;
+
         ------------------------------------------------------------------------   
         -- CAN Core interface
         ------------------------------------------------------------------------
@@ -166,16 +172,34 @@ architecture rtl of txt_buffer_fsm is
     -- TXT Buffer clock enable
     signal txt_fsm_ce          : std_logic;
 
+    -- Forced transition to failed state
+    signal go_to_failed        : std_logic;
+    signal transient_state     : std_logic;
+
 begin
 
     abort_applied <= '1' when (txtb_sw_cmd.set_abt = '1' and sw_cbs = '1') else
                      '0';
 
+    transient_state <= '1' when ((curr_state = s_txt_ab_prog) or
+                                 (curr_state = s_txt_tx_prog) or
+                                 (curr_state = s_txt_ready))
+                          else
+                      '0';
+
+    go_to_failed <= '1' when (transient_state = '1') and
+                             ((is_bus_off = '1' and txt_buf_failed_bof =
+                               TXTBUF_FAILED_BUS_OFF_ENABLED) or
+                             drv_bus_mon_ena = BMM_ENABLED or
+                             drv_rom_ena = ROM_ENABLED)
+                        else
+                    '0';
+
     ----------------------------------------------------------------------------
     -- Next state process
     ----------------------------------------------------------------------------
     tx_buf_fsm_next_state_proc : process(curr_state, txtb_sw_cmd, sw_cbs, 
-        txtb_hw_cmd, hw_cbs, is_bus_off, abort_applied)
+        txtb_hw_cmd, hw_cbs, is_bus_off, abort_applied, go_to_failed)
     begin
         next_state <= curr_state;
 
@@ -309,11 +333,7 @@ begin
         -- If Core is bus-off, TXT Buffer goes to failed from any transient
         -- state.
         --------------------------------------------------------------------
-        if ((is_bus_off = '1') and 
-            (txt_buf_failed_bof = TXTBUF_FAILED_BUS_OFF_ENABLED) and (
-            (curr_state = s_txt_ab_prog) or (curr_state = s_txt_tx_prog) or
-            (curr_state = s_txt_ready)))
-        then
+        if (go_to_failed = '1') then
             next_state <= s_txt_failed;
         end if;
 
@@ -360,9 +380,7 @@ begin
                                                     (curr_state = s_txt_ready)))
                            else
                        '1' when (is_bus_off = '1' and next_state = s_txt_failed and
-                                ((curr_state = s_txt_ab_prog) or
-                                 (curr_state = s_txt_tx_prog) or
-                                 (curr_state = s_txt_ready)))
+                                transient_state = '1')
                            else  
                        '0';
 
@@ -390,9 +408,7 @@ begin
     -- during TXT Buffer selection or during transmission. During other moments
     -- content of TXT Buffer RAM is not needed by CAN Core nor TX Arbitrator!
     ---------------------------------------------------------------------------
-    txtb_unmask_data_ram <= '1' when (curr_state = s_txt_ready or
-                                      curr_state = s_txt_tx_prog or
-                                      curr_state = s_txt_ab_prog)
+    txtb_unmask_data_ram <= '1' when (transient_state = '1')
                                 else
                             '0';
 

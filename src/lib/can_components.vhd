@@ -1054,6 +1054,12 @@ package can_components is
         bit_err_after_ack_err   :in   std_logic;
 
         -----------------------------------------------------------------------
+        -- Control registers interface
+        -----------------------------------------------------------------------
+        -- ROM mode enabled
+        drv_rom_ena             :in   std_logic;
+
+        -----------------------------------------------------------------------
         -- Output signals to error counters
         -----------------------------------------------------------------------
         -- Increment Error counter by 1
@@ -1559,6 +1565,9 @@ package can_components is
         
         -- Protocol exception status clear
         drv_cpexs               :in   std_logic;
+
+        -- ROM mode enabled
+        drv_rom_ena             :in   std_logic;
 
         -- Arbitration field is being transmitted
         is_arbitration          :out  std_logic;
@@ -4255,6 +4264,12 @@ package can_components is
         
         -- TXT Buffer bus-off behavior
         txt_buf_failed_bof      :in   std_logic;
+        
+        -- Restricted operation mode
+        drv_rom_ena            :in   std_logic;
+
+        -- Bus monitoring mode
+        drv_bus_mon_ena        :in   std_logic;
 
         ------------------------------------------------------------------------   
         -- CAN Core interface
@@ -4370,6 +4385,12 @@ package can_components is
 
         -- TXT buffer bus off behavior
         txt_buf_failed_bof     :in   std_logic;
+
+        -- Restricted operation mode
+        drv_rom_ena            :in   std_logic;
+
+        -- Bus monitoring mode
+        drv_bus_mon_ena        :in   std_logic;
 
         ------------------------------------------------------------------------   
         -- Interrupt Manager Interface

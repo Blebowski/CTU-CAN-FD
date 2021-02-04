@@ -131,6 +131,12 @@ entity fault_confinement_rules is
         bit_err_after_ack_err   :in   std_logic;
 
         -----------------------------------------------------------------------
+        -- Control registers interface
+        -----------------------------------------------------------------------
+        -- ROM mode enabled
+        drv_rom_ena             :in   std_logic;
+
+        -----------------------------------------------------------------------
         -- Output signals to error counters
         -----------------------------------------------------------------------
         -- Increment Error counter by 1
@@ -146,16 +152,19 @@ end entity;
 
 architecture rtl of fault_confinement_rules is
 
+    signal inc_one_i    : std_logic;
+    signal inc_eight_i  : std_logic;
+
 begin
     
     ---------------------------------------------------------------------------
     -- Increment RX Error counter by 1 when Receiver detects an error which
     -- is not during Active Error flag or overload flag!
     ---------------------------------------------------------------------------
-    inc_one <= '1' when (err_detected = '1' and act_err_ovr_flag = '0' and
-                         is_receiver = '1')
-                   else
-               '0';
+    inc_one_i <= '1' when (err_detected = '1' and act_err_ovr_flag = '0' and
+                           is_receiver = '1')
+                     else
+                 '0';
 
     ---------------------------------------------------------------------------
     -- Increment by 8:
@@ -170,18 +179,28 @@ begin
     --    (rule "f")
     --  - ACK Error followed by bit error during passive error frame!
     ---------------------------------------------------------------------------
-    inc_eight <= '1' when (primary_err = '1' and is_receiver = '1') else
-                 '1' when (act_err_ovr_flag = '1' and err_detected = '1') else
-                 '1' when (is_transmitter = '1' and 
-                           err_detected = '1' and
-                           err_ctrs_unchanged = '0') else
-                 '1' when (err_delim_late = '1' or bit_err_after_ack_err = '1') else
-                 '0';         
+    inc_eight_i <= '1' when (primary_err = '1' and is_receiver = '1') else
+                   '1' when (act_err_ovr_flag = '1' and err_detected = '1') else
+                   '1' when (is_transmitter = '1' and 
+                             err_detected = '1' and
+                             err_ctrs_unchanged = '0') else
+                   '1' when (err_delim_late = '1' or bit_err_after_ack_err = '1') else
+                   '0';         
 
     ---------------------------------------------------------------------------
     -- Decrement by 1 when either transmission or reception is valid
     ---------------------------------------------------------------------------
     dec_one <= '1' when (decrement_rec = '1' or tran_valid = '1') else
                '0';
+
+    ---------------------------------------------------------------------------
+    -- Gating by ROM mode. In ROM mode, Error counters shall not increment
+    -- in ROM mode. Not that decrement does not need to be gated since the
+    -- counter will stay at 0!
+    ---------------------------------------------------------------------------
+    inc_one <= '1' when (inc_one_i = '1' and drv_rom_ena = ROM_DISABLED) else
+               '0';
+    inc_eight <= '1' when (inc_eight_i = '1' and drv_rom_ena = ROM_DISABLED) else
+                 '0';
 
 end architecture;
