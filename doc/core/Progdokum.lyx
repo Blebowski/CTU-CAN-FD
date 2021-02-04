@@ -509,7 +509,7 @@ filename "version.tex"
 \noindent
 \align center
 \begin_inset Tabular
-<lyxtabular version="3" rows="17" columns="4">
+<lyxtabular version="3" rows="18" columns="4">
 <features tabularvalignment="middle">
 <column alignment="center" valignment="top" width="1.5cm">
 <column alignment="center" valignment="top" width="2cm">
@@ -1135,11 +1135,49 @@ Add frame filters examples, add TBFBO and FDRF bits in SETTINGS registers,
 </cell>
 </row>
 <row>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
 2.2.7
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Ondrej Ille
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+05-11-2020
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Add general overview and TX frame type description.
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+2.2.8
 \end_layout
 
 \end_inset
@@ -1157,7 +1195,7 @@ Ondrej Ille
 \begin_inset Text
 
 \begin_layout Plain Layout
-05-11-2020
+4-2-2021
 \end_layout
 
 \end_inset
@@ -1166,7 +1204,7 @@ Ondrej Ille
 \begin_inset Text
 
 \begin_layout Plain Layout
-Add general overview and TX frame type description.
+Change license
 \end_layout
 
 \end_inset
@@ -1345,31 +1383,31 @@ License
 \end_layout
 
 \begin_layout Standard
-RTL and testbench of CTU CAN FD IP core are published under MIT License:
+RTL and testbench of CTU CAN FD IP core are published under following license:
 \end_layout
 
 \begin_layout Quote
 Permission is hereby granted, free of charge, to any person obtaining a
- copy of this software and associated documentation files (the "Software"),
- to deal in the Software without restriction, including without limitation
- the rights to use, copy, modify, merge, publish, distribute, sublicense,
- and/or sell copies of the Software, and to permit persons to whom the Software
- is furnished to do so, subject to the following conditions:
+ copy of this VHDL component and associated documentation files (the "Component"
+), to use, copy, modify, merge, publish, distribute the Component for educationa
+l, research, evaluation, self-interest purposes.
+ Using the Component for commercial purposes is forbidden unless previously
+ agreed with Copyright holder.
 \end_layout
 
 \begin_layout Quote
 The above copyright notice and this permission notice shall be included
- in all copies or substantial portions of the Software.
+ in all copies or substantial portions of the Component.
 \end_layout
 
 \begin_layout Quote
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
+THE COMPONENT IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
- IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
+ IN NO EVENT SHALL THE AUTHORS OR COPYRIGHTHOLDERS BE LIABLE FOR ANY CLAIM,
  DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE
-, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
- OTHER DEALINGS IN THE SOFTWARE.
+, ARISING FROM, OUT OF OR IN CONNECTION WITH THE COMPONENT OR THE USE OR
+ OTHER DEALINGS IN THE COMPONENT.
 \end_layout
 
 \begin_layout Standard
