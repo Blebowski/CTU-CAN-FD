@@ -5,7 +5,7 @@ Supports ISO and NON-ISO versions of CAN FD protocol.
 
 ## License
 
-CTU CAN FD is published under MIT license shown in:  
+CTU CAN FD is published under following license :  
 [![License](https://img.shields.io/badge/License--black.svg)]( https://gitlab.fel.cvut.cz/canbus/ctucanfd_ip_core/blob/master/LICENSE)
 
 CTU CAN FD linux driver is published under GPLv2 license.
