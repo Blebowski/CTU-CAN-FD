@@ -103,22 +103,25 @@ use ctu_can_fd_rtl.CAN_FD_frame_format.all;
 entity can_top_level is
     generic(
         -- RX Buffer RAM size (32 bit words)
-        rx_buffer_size : natural range 32 to 4096 := 128;
+        rx_buffer_size      : natural range 32 to 4096 := 128;
 
         -- Insert Filter A
-        sup_filtA      : boolean                := true;
+        sup_filtA           : boolean                := true;
         
         -- Insert Filter B
-        sup_filtB      : boolean                := true;
+        sup_filtB           : boolean                := true;
         
         -- Insert Filter C
-        sup_filtC      : boolean                := true;
+        sup_filtC           : boolean                := true;
         
         -- Insert Range Filter
-        sup_range      : boolean                := true;
+        sup_range           : boolean                := true;
         
         -- Insert Traffic counters
-        sup_traffic_ctrs : boolean              := true
+        sup_traffic_ctrs    : boolean                := true;
+        
+        -- Target technology (ASIC or FPGA)
+        target_technology   : natural                := C_TECH_ASIC
     );
     port(
         -----------------------------------------------------------------------
@@ -543,7 +546,8 @@ begin
         G_TRV_CTR_WIDTH     => C_TRV_CTR_WIDTH,
         G_DEVICE_ID         => C_CAN_DEVICE_ID,
         G_VERSION_MINOR     => C_CTU_CAN_FD_VERSION_MINOR,
-        G_VERSION_MAJOR     => C_CTU_CAN_FD_VERSION_MAJOR
+        G_VERSION_MAJOR     => C_CTU_CAN_FD_VERSION_MAJOR,
+        G_TECHNOLOGY        => target_technology
     )
     port map(
         clk_sys             => clk_sys,         -- IN

@@ -79,6 +79,11 @@ use ieee.std_logic_1164.all;
 
 package cmn_lib is
 
+    -- Technology variants
+    constant C_TECH_ASIC : natural := 0;
+    constant C_TECH_FPGA : natural := 1;
+
+
     component dff_arst_ce is
     generic (
         -- Reset polarity
@@ -395,5 +400,21 @@ package cmn_lib is
         sync                 : out   std_logic
     );
     end component sig_sync;
+
+    component clk_gate is
+        generic (
+            G_TECHNOLOGY       :       natural := 0
+        );
+        port (
+            -- Clock input
+            clk_in             : in    std_logic;
+            
+            -- Clock Enable
+            clk_en             : in    std_logic;
+    
+            -- Gated clocks
+            clk_out            : out   std_logic
+        );
+    end component clk_gate;
 
 end package cmn_lib;

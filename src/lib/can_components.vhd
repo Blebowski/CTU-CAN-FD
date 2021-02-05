@@ -82,6 +82,7 @@ use ieee.numeric_std.ALL;
 Library ctu_can_fd_rtl;
 use ctu_can_fd_rtl.can_types.all;
 use ctu_can_fd_rtl.can_constants.all;
+use ctu_can_fd_rtl.cmn_lib.all;
 use ctu_can_fd_rtl.can_registers_pkg.all;
 
 package can_components is
@@ -104,7 +105,10 @@ package can_components is
             sup_range      : boolean                := true;
             
             -- Support traffic counters
-            sup_traffic_ctrs : boolean              := true
+            sup_traffic_ctrs : boolean              := true;
+            
+            -- Target technology (ASIC or FPGA)
+            target_technology   : natural           := C_TECH_ASIC
         );
         port(
             -----------------------------------------------------------------------
@@ -3137,7 +3141,10 @@ package can_components is
         G_VERSION_MINOR     : std_logic_vector(7 downto 0)    := x"01";
 
         -- MAJOR Design version
-        G_VERSION_MAJOR     : std_logic_vector(7 downto 0)    := x"02"
+        G_VERSION_MAJOR     : std_logic_vector(7 downto 0)    := x"02";
+        
+        -- Technology type
+        G_TECHNOLOGY        : natural                         := C_TECH_ASIC
     );
     port(
         ------------------------------------------------------------------------
