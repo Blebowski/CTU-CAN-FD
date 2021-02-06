@@ -580,81 +580,81 @@ architecture rtl of protocol_control_fsm is
     -- FSM related signals
     ---------------------------------------------------------------------------
     -- Protocol control FSM
-    signal curr_state : t_protocol_control_state;
-    signal next_state : t_protocol_control_state;
+    signal curr_state               :   t_protocol_control_state;
+    signal next_state               :   t_protocol_control_state;
 
     -- Clock enable for state register
-    signal state_reg_ce : std_logic;
+    signal state_reg_ce             :   std_logic;
     
     ---------------------------------------------------------------------------
     -- Internal combinational signals
     ---------------------------------------------------------------------------
     -- No data field should be transmitted
-    signal no_data_transmitter : std_logic;
-    signal no_data_receiver : std_logic;
-    signal no_data_field : std_logic;
+    signal no_data_transmitter      :   std_logic;
+    signal no_data_receiver         :   std_logic;
+    signal no_data_field            :   std_logic;
 
     -- Preload control counter internal signal
-    signal ctrl_ctr_pload_i : std_logic;
+    signal ctrl_ctr_pload_i          :  std_logic;
     
     -- Used when control counter should be preloaded elsewhere than in sample
     -- point. This is used during integration to reset control counter upon
     -- synchronisation edge!
-    signal ctrl_ctr_pload_unaliged : std_logic;
+    signal ctrl_ctr_pload_unaliged   :  std_logic;
     
     -- CRC Selection
-    signal crc_use_21         : std_logic;
-    signal crc_use_17         : std_logic;
-    signal crc_src_i          : std_logic_vector(1 downto 0);
-    signal crc_length_i       : std_logic_vector(8 downto 0);
+    signal crc_use_21                :  std_logic;
+    signal crc_use_17                :  std_logic;
+    signal crc_src_i                 :  std_logic_vector(1 downto 0);
+    signal crc_length_i              :  std_logic_vector(8 downto 0);
 
     -- Length of data field (decoded from DLC, does not take RTR into account)
-    signal tran_data_length   : std_logic_vector(6 downto 0);
-    signal rec_data_length    : std_logic_vector(6 downto 0);
-    signal rec_data_length_c  : std_logic_vector(6 downto 0);
+    signal tran_data_length          :  std_logic_vector(6 downto 0);
+    signal rec_data_length           :  std_logic_vector(6 downto 0);
+    signal rec_data_length_c         :  std_logic_vector(6 downto 0);
 
-    signal data_length_c         : std_logic_vector(6 downto 0);
-    signal data_length_shifted_c : std_logic_vector(9 downto 0);
-    signal data_length_sub_c     : unsigned(9 downto 0);
-    signal data_length_bits_c    : std_logic_vector(8 downto 0);
+    signal data_length_c             :  std_logic_vector(6 downto 0);
+    signal data_length_shifted_c     :  std_logic_vector(9 downto 0);
+    signal data_length_sub_c         :  unsigned(9 downto 0);
+    signal data_length_bits_c        :  std_logic_vector(8 downto 0);
     
     -- FD Frame is being transmitted/received
-    signal is_fd_frame        : std_logic;
+    signal is_fd_frame               :  std_logic;
     
     -- Frame transmission/reception can be started from idle or intermission!
-    signal frame_start        : std_logic;
+    signal frame_start               :  std_logic;
     
     -- There is TX Frame ready for transmission
-    signal tx_frame_ready     : std_logic;
+    signal tx_frame_ready            :  std_logic;
     
     -- IDE bit is part of arbitration
-    signal ide_is_arbitration : std_logic;
+    signal ide_is_arbitration        :  std_logic;
     
     -- Arbitration lost condition
     signal arbitration_lost_condition : std_logic;
 
     -- Loss of arbitration -> Turn receiver!
-    signal arbitration_lost_i   : std_logic;
+    signal arbitration_lost_i        :  std_logic;
     
     -- Transmission failed (due to reached number of retransmissions), or
     -- first error, arb lost when there are 0 retransmissions allowed!
-    signal tx_failed            : std_logic;
+    signal tx_failed                 :  std_logic;
     
     -- Internal commands for RX Buffer
-    signal store_metadata_d     : std_logic;
-    signal store_data_d         : std_logic;
-    signal rec_valid_d          : std_logic;
-    signal rec_abort_d          : std_logic;
+    signal store_metadata_d          :  std_logic;
+    signal store_data_d              :  std_logic;
+    signal rec_valid_d               :  std_logic;
+    signal rec_abort_d               :  std_logic;
 
     -- Internal commands for TXT Buffers
-    signal txtb_hw_cmd_d         : t_txtb_hw_cmd;
-    signal txtb_hw_cmd_q         : t_txtb_hw_cmd;
+    signal txtb_hw_cmd_d             :  t_txtb_hw_cmd;
+    signal txtb_hw_cmd_q             :  t_txtb_hw_cmd;
     
     -- Unit should go to suspend transmission field!
-    signal go_to_suspend        : std_logic;
+    signal go_to_suspend             :  std_logic;
     
     -- Unit should go to stuff count field
-    signal go_to_stuff_count    : std_logic;
+    signal go_to_stuff_count         :  std_logic;
     
     -- Internal store commands for RX Shift register
     signal rx_store_base_id_i        :  std_logic;
@@ -696,7 +696,7 @@ architecture rtl of protocol_control_fsm is
     
     signal sp_control_ce             :  std_logic;
     signal sp_control_d              :  std_logic_vector(1 downto 0);
-    signal sp_control_q_i              :  std_logic_vector(1 downto 0);
+    signal sp_control_q_i            :  std_logic_vector(1 downto 0);
 
     -- Secondary sampling point shift register reset
     signal ssp_reset_i               :  std_logic;
