@@ -1655,7 +1655,10 @@ package can_components is
         txtb_hw_cmd             :out  t_txtb_hw_cmd;
         
         -- Pointer to TXT Buffer memory
-        txtb_ptr             :out  natural range 0 to 19;
+        txtb_ptr                :out  natural range 0 to 19;
+        
+        -- Clock enable for TXT Buffer memory
+        txtb_clk_en             :out  std_logic;
         
         -- TX Data length code
         tran_dlc                :in   std_logic_vector(3 downto 0);
@@ -2083,6 +2086,9 @@ package can_components is
         
         -- Pointer to TXT buffer memory
         txtb_ptr                :out  natural range 0 to 19;
+        
+        -- Clock enable for TXT Buffer memory
+        txtb_clk_en             :out  std_logic;
         
         -- Selected TXT Buffer index changed
         txtb_changed            :in   std_logic;
@@ -2700,6 +2706,9 @@ package can_components is
 
         -- Pointer to TXT buffer memory
         txtb_ptr               :out  natural range 0 to 19;
+        
+        -- Clock enable for TXT Buffer memory
+        txtb_clk_en            :out  std_logic;
 
         -- Transition to bus off has occurred
         is_bus_off             :out  std_logic;
@@ -3945,7 +3954,10 @@ package can_components is
         G_RESET_POLARITY            :       std_logic := '0';
         
         -- RX Buffer size
-        G_RX_BUFF_SIZE              :       natural range 32 to 4096 := 32
+        G_RX_BUFF_SIZE              :       natural range 32 to 4096 := 32;
+        
+        -- Technology type
+        G_TECHNOLOGY                :       natural := C_TECH_ASIC
     );
     port(
         ------------------------------------------------------------------------
@@ -4132,6 +4144,9 @@ package can_components is
 
         -- Load identifier word to metadata pointer
         load_ident_w_addr      :out std_logic;
+        
+        -- Clock enable for TXT Buffer RAM
+        txtb_meta_clk_en       :out std_logic;
 
         -- Store timestamp lower word
         store_ts_l_w           :out std_logic;
@@ -4190,6 +4205,9 @@ package can_components is
         
         -- Pointer to TXT Buffer
         txtb_port_b_address     :out natural range 0 to 19;
+        
+        -- Clock enable to TXT Buffer port B
+        txtb_port_b_clk_en      :out std_logic;
 
         -----------------------------------------------------------------------
         -- CAN Core Interface
@@ -4228,7 +4246,10 @@ package can_components is
         txtb_hw_cmd_index       :out natural range 0 to G_TXT_BUFFER_COUNT - 1;
 
         -- Pointer to TXT Buffer given by CAN Core. Used for reading data words
-        txtb_ptr                :in natural range 0 to 19;
+        txtb_ptr                :in  natural range 0 to 19;
+
+        -- TXT Buffer clock enable (from Protocol control)
+        txtb_clk_en             :in  std_logic;
 
         -----------------------------------------------------------------------
         -- Memory registers interface
@@ -4357,7 +4378,10 @@ package can_components is
         G_TXT_BUFFER_COUNT     :     natural range 1 to 8;
         
         -- TXT Buffer ID
-        G_ID                   :     natural := 1
+        G_ID                   :     natural := 1;
+        
+        -- Technology type
+        G_TECHNOLOGY           :     natural := C_TECH_ASIC
     );
     port(
         ------------------------------------------------------------------------
@@ -4419,6 +4443,9 @@ package can_components is
         
         -- TXT Buffer RAM address
         txtb_port_b_address    :in   natural range 0 to 19;
+        
+        -- Clock enable to TXT Buffer port B
+        txtb_port_b_clk_en     :in   std_logic;
 
         -- Unit just turned bus off.
         is_bus_off             :in   std_logic;

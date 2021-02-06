@@ -380,6 +380,9 @@ architecture rtl of can_top_level is
     -- TXT Buffer RAM address
     signal txtb_port_b_address :   natural range 0 to 19;
     
+    -- Clock enable to TXT Buffer port B
+    signal txtb_port_b_clk_en  :   std_logic;
+    
     ------------------------------------------------------------------------
     -- CAN Core <-> TX Arbitrator
     ------------------------------------------------------------------------    
@@ -410,6 +413,9 @@ architecture rtl of can_top_level is
     
     -- Selected TXT Buffer index changed
     signal txtb_changed           :   std_logic;
+    
+    -- TXT Buffer clock enable
+    signal txtb_clk_en            :   std_logic;
     
     ------------------------------------------------------------------------
     -- CAN Core <-> Interrupt manager
@@ -605,7 +611,8 @@ begin
     rx_buffer_inst : rx_buffer
     generic map(
         G_RESET_POLARITY    => C_RESET_POLARITY,
-        G_RX_BUFF_SIZE      => rx_buffer_size
+        G_RX_BUFF_SIZE      => rx_buffer_size,
+        G_TECHNOLOGY        => target_technology
     )
     port map(
         clk_sys             => clk_sys,             -- IN
@@ -656,7 +663,8 @@ begin
         generic map(
             G_RESET_POLARITY       => C_RESET_POLARITY,
             G_TXT_BUFFER_COUNT     => C_TXT_BUFFER_COUNT,
-            G_ID                   => i
+            G_ID                   => i,
+            G_TECHNOLOGY           => target_technology
         )
         port map(
             clk_sys                => clk_sys,              -- IN
@@ -681,6 +689,7 @@ begin
             txtb_hw_cmd_index      => txtb_hw_cmd_index,    -- IN
             txtb_port_b_data       => txtb_port_b_data(i),  -- OUT
             txtb_port_b_address    => txtb_port_b_address,  -- IN
+            txtb_port_b_clk_en     => txtb_port_b_clk_en,   -- IN
             is_bus_off             => is_bus_off,           -- IN
             txtb_available         => txtb_available(i)     -- OUT
         );
@@ -702,6 +711,7 @@ begin
         txtb_port_b_data        => txtb_port_b_data,    -- IN
         txtb_available          => txtb_available,      -- IN
         txtb_port_b_address     => txtb_port_b_address, -- OUT
+        txtb_port_b_clk_en      => txtb_port_b_clk_en,  -- OUT
 
         -- CAN Core Interface
         tran_word               => tran_word,           -- OUT
@@ -716,6 +726,7 @@ begin
         txtb_changed            => txtb_changed,        -- OUT
         txtb_hw_cmd_index       => txtb_hw_cmd_index,   -- IN
         txtb_ptr                => txtb_ptr,            -- IN
+        txtb_clk_en             => txtb_clk_en,         -- IN
 
         -- Memory registers interface
         txtb_prorities          => txtb_prorities,      -- IN
@@ -827,6 +838,7 @@ begin
         txtb_hw_cmd             => txtb_hw_cmd,         -- OUT
         txtb_changed            => txtb_changed,        -- IN
         txtb_ptr                => txtb_ptr,            -- OUT
+        txtb_clk_en             => txtb_clk_en,         -- OUT
         is_bus_off              => is_bus_off,          -- OUT
 
         -- Recieve Buffer and Message Filter Interface

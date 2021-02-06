@@ -255,6 +255,9 @@ entity protocol_control_fsm is
         -- Pointer to TXT Buffer memory
         txtb_ptr                :out  natural range 0 to 19;
         
+        -- Clock enable for TXT Buffer memory
+        txtb_clk_en             :out  std_logic;
+        
         -- TX Data length code
         tran_dlc                :in   std_logic_vector(3 downto 0);
         
@@ -736,8 +739,8 @@ architecture rtl of protocol_control_fsm is
     signal bit_err_disable_receiver  :  std_logic;
     
     -- TXT Buffer pointer
-    signal txtb_ptr_d             :  natural range 0 to 19;
-    signal txtb_ptr_q             :  natural range 0 to 19;
+    signal txtb_ptr_d                :  natural range 0 to 19;
+    signal txtb_ptr_q                :  natural range 0 to 19;
     
     -- Start of frame pulse
     signal sof_pulse_i               :  std_logic;
@@ -801,6 +804,10 @@ architecture rtl of protocol_control_fsm is
     
     -- Internal TX frame type
     signal tran_frame_type_i         :  std_logic;
+    
+    -- Clock enable for TXT Buffer RAM
+    signal txtb_clk_en_d             :  std_logic;
+    signal txtb_clk_en_q             :  std_logic;
 
 begin
 
@@ -3281,10 +3288,30 @@ begin
         if (res_n = G_RESET_POLARITY) then
             txtb_ptr_q <= 0;
         elsif (rising_edge(clk_sys)) then
-            txtb_ptr_q <= txtb_ptr_d;
+            if (txtb_clk_en_d = '1') then
+                txtb_ptr_q <= txtb_ptr_d;
+            end if;
         end if;
     end process;
     
+    -- Enable memory only when pointer changes. This allows clocking the
+    -- memory only when new read data are to be read!
+    txtb_clk_en_d <= '1' when (txtb_ptr_q /= txtb_ptr_d) else
+                     '0';
+
+    -----------------------------------------------------------------------
+    -- Register clock enable! Data need to be loaded from TXT Buffer RAM
+    -- after address has changed!
+    -----------------------------------------------------------------------
+    txtb_ce_reg_proc : process(clk_sys, res_n)
+    begin
+        if (res_n = G_RESET_POLARITY) then
+            txtb_clk_en_q <= '0';
+        elsif (rising_edge(clk_sys)) then
+            txtb_clk_en_q <= txtb_clk_en_d;
+        end if;
+    end process;
+
     -----------------------------------------------------------------------
     -- Frame transmission (transmitter) started without SOF!
     -----------------------------------------------------------------------
@@ -3364,6 +3391,7 @@ begin
     arbitration_lost <= arbitration_lost_i;
     retr_ctr_add <= retr_ctr_add_i;
     tx_frame_no_sof <= tx_frame_no_sof_q;
+    txtb_clk_en <= txtb_clk_en_q;
 
     -- <RELEASE_OFF>
     -----------------------------------------------------------------------

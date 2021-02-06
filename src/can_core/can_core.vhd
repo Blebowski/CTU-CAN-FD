@@ -182,6 +182,9 @@ entity can_core is
         -- Pointer to TXT buffer memory
         txtb_ptr               :out  natural range 0 to 19;
 
+        -- Clock enable for TXT Buffer memory
+        txtb_clk_en            :out  std_logic;
+
         -- Transition to bus off has occurred
         is_bus_off             :out  std_logic;
 
@@ -539,6 +542,7 @@ begin
         tran_frame_valid        => tran_frame_valid,    -- IN
         txtb_hw_cmd             => txtb_hw_cmd_i,       -- IN
         txtb_ptr                => txtb_ptr,            -- OUT
+        txtb_clk_en             => txtb_clk_en,         -- OUT
         txtb_changed            => txtb_changed,        -- OUT
         
         -- RX Buffer interface

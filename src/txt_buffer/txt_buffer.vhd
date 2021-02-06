@@ -101,7 +101,10 @@ entity txt_buffer is
         G_TXT_BUFFER_COUNT     :     natural range 1 to 8;
         
         -- TXT Buffer ID
-        G_ID                   :     natural := 1
+        G_ID                   :     natural := 1;
+        
+        -- Technology type
+        G_TECHNOLOGY           :     natural := C_TECH_ASIC
     );
     port(
         ------------------------------------------------------------------------
@@ -164,6 +167,9 @@ entity txt_buffer is
         -- TXT Buffer RAM address
         txtb_port_b_address    :in   natural range 0 to 19;
 
+        -- Clock enable to TXT Buffer port B
+        txtb_port_b_clk_en     :in   std_logic;
+
         -- Unit just turned bus off.
         is_bus_off             :in   std_logic;
 
@@ -204,11 +210,16 @@ architecture rtl of txt_buffer is
     ---------------------------------------------------------------------------
     
     -- Write control signal    
-    signal RAM_write              : std_logic;
+    signal ram_write              : std_logic;
 
     -- Read address (connected to read pointer)
-    signal RAM_read_address       : std_logic_vector(4 downto 0);
+    signal ram_read_address       : std_logic_vector(4 downto 0);
 
+    -- Clock enabled
+    signal txtb_ram_clk_en        : std_logic;
+    
+    -- RAM clocks
+    signal clk_ram                : std_logic;
 
 begin
         
@@ -222,12 +233,12 @@ begin
               '0';
     
     -- TXT Buffer RAM write signal
-    RAM_write <= '1' when (txtb_port_a_cs = '1' and txtb_user_accessible = '1')
+    ram_write <= '1' when (txtb_port_a_cs = '1' and txtb_user_accessible = '1')
                      else
                  '0';
 
     -- TXT Buffer read address (connected to read pointer)    
-    RAM_read_address <= std_logic_vector(to_unsigned(
+    ram_read_address <= std_logic_vector(to_unsigned(
                         txtb_port_b_address, RAM_read_address'length));
 
     ----------------------------------------------------------------------------
@@ -246,6 +257,25 @@ begin
                            (OTHERS => '0');
 
     ----------------------------------------------------------------------------
+    -- Clock gating for TXT Buffer RAM
+    -- We must un-gate the clocks either for read access or write access.
+    ----------------------------------------------------------------------------
+    txtb_ram_clk_en <= '1' when (txtb_port_b_clk_en = '1' or ram_write = '1')
+                           else
+                       '0';
+
+    clk_gate_txt_buffer_ram_comp : clk_gate
+    generic map(
+        G_TECHNOLOGY       => G_TECHNOLOGY
+    )
+    port map(
+        clk_in             => clk_sys,
+        clk_en             => txtb_ram_clk_en,
+
+        clk_out            => clk_ram
+    );
+
+    ----------------------------------------------------------------------------
     -- RAM Memory of TXT Buffer
     ----------------------------------------------------------------------------
     txt_buffer_ram_inst : txt_buffer_ram
@@ -254,16 +284,16 @@ begin
     )
     port map(
         -- Clock and Asynchronous reset
-        clk_sys              => clk_sys,                -- IN
+        clk_sys              => clk_ram,                -- IN
         res_n                => res_n,                  -- IN
 
         -- Port A - Write (from Memory registers)
         port_a_address       => txtb_port_a_address,    -- IN
         port_a_data_in       => txtb_port_a_data,       -- IN
-        port_a_write         => RAM_write,              -- IN
+        port_a_write         => ram_write,              -- IN
 
         -- Port B - Read (from CAN Core)
-        port_b_address       => RAM_read_address,       -- IN
+        port_b_address       => ram_read_address,       -- IN
         port_b_data_out      => txtb_port_b_data_i      -- OUT
     );
 
