@@ -127,6 +127,9 @@ entity tx_arbitrator is
         
         -- Pointer to TXT Buffer
         txtb_port_b_address     :out natural range 0 to 19;
+        
+        -- Clock enable to TXT Buffer port B
+        txtb_port_b_clk_en      :out std_logic;
 
         -----------------------------------------------------------------------
         -- CAN Core Interface
@@ -166,6 +169,9 @@ entity tx_arbitrator is
 
         -- Pointer to TXT Buffer given by CAN Core. Used for reading data words
         txtb_ptr                :in natural range 0 to 19;
+
+        -- TXT Buffer clock enable (from Protocol control)
+        txtb_clk_en             :in  std_logic;
 
         -----------------------------------------------------------------------
         -- Memory registers interface
@@ -228,7 +234,8 @@ architecture rtl of tx_arbitrator is
   
     -- Pointer to TXT Buffer for loading CAN frame metadata and
     -- timstamp during the selection of TXT Buffer.
-    signal txtb_pointer_meta          : natural range 0 to 19;
+    signal txtb_pointer_meta_q        : natural range 0 to 19;
+    signal txtb_pointer_meta_d        : natural range 0 to 19;
 
     -- Double buffer registers for metadata
     signal tran_dlc_dbl_buf           : std_logic_vector(3 downto 0);
@@ -286,6 +293,8 @@ architecture rtl of tx_arbitrator is
     -- TX Arbitrator is locked
     signal tx_arb_locked              : std_logic;
 
+    -- TXT Buffer clock enable for reading metadata
+    signal txtb_meta_clk_en           : std_logic;
 
     ---------------------------------------------------------------------------
     -- Comparing procedure for two 64 bit std logic vectors
@@ -342,6 +351,7 @@ begin
     load_ts_uw_addr        => load_ts_uw_addr,          -- OUT
     load_ffmt_w_addr       => load_ffmt_w_addr,         -- OUT
     load_ident_w_addr      => load_ident_w_addr,        -- OUT
+    txtb_meta_clk_en       => txtb_meta_clk_en,         -- OUT
     
     store_ts_l_w           => store_ts_l_w,             -- OUT
     store_md_w             => store_md_w,               -- OUT
@@ -410,10 +420,15 @@ begin
   ------------------------------------------------------------------------------
   -- During Buffer selection, TX Arbitrator is addressing TXT Buffers.
   -- During Transmission, the Core is addressing TXT Buffers.
+  -- The same goes for clock enable.
   ------------------------------------------------------------------------------
   txtb_port_b_address <= txtb_ptr when (tx_arb_locked = '1')
                                   else
-                         txtb_pointer_meta;
+                         txtb_pointer_meta_q;
+
+  txtb_port_b_clk_en <= txtb_clk_en when (tx_arb_locked = '1')
+                                    else
+                        txtb_meta_clk_en;
 
   txtb_hw_cmd_index <= int_txtb_index;
 
@@ -555,7 +570,7 @@ begin
     if (res_n = G_RESET_POLARITY) then
         select_buf_index_reg  <= 0;
     elsif (rising_edge(clk_sys)) then
-        select_buf_index_reg        <= select_buf_index;
+        select_buf_index_reg <= select_buf_index;
     end if;
   end process;
 
@@ -565,33 +580,21 @@ begin
 
 
   ------------------------------------------------------------------------------
-  -- Storing value of metadata pointer to address TXT Buffer Timestamp and
-  -- Metadata Words.
+  -- Metadata pointer to address TXT Buffer Timestamp and Metadata Words.
   ------------------------------------------------------------------------------
+  txtb_pointer_meta_d <=
+    to_integer(unsigned(TIMESTAMP_L_W_ADR(11 downto 2))) when (load_ts_lw_addr = '1') else 
+    to_integer(unsigned(TIMESTAMP_U_W_ADR(11 downto 2))) when (load_ts_uw_addr = '1') else
+    to_integer(unsigned(FRAME_FORMAT_W_ADR(11 downto 2))) when (load_ffmt_w_addr = '1') else
+    to_integer(unsigned(IDENTIFIER_W_ADR(11 downto 2))) when (load_ident_w_addr = '1') else
+    txtb_pointer_meta_q;
+ 
   store_meta_data_ptr_proc : process(clk_sys, res_n)
   begin
     if (res_n = G_RESET_POLARITY) then
-        txtb_pointer_meta           <= to_integer(unsigned(
-                                        TIMESTAMP_L_W_ADR(11 downto 2)));
+        txtb_pointer_meta_q <= to_integer(unsigned(TIMESTAMP_L_W_ADR(11 downto 2)));
     elsif (rising_edge(clk_sys)) then
-
-        if (load_ts_lw_addr = '1') then
-            txtb_pointer_meta <=
-                to_integer(unsigned(TIMESTAMP_L_W_ADR(11 downto 2)));
-
-        elsif (load_ts_uw_addr = '1') then
-            txtb_pointer_meta <=
-                to_integer(unsigned(TIMESTAMP_U_W_ADR(11 downto 2)));
-
-        elsif (load_ffmt_w_addr = '1') then
-            txtb_pointer_meta <=
-                to_integer(unsigned(FRAME_FORMAT_W_ADR(11 downto 2)));
-
-        elsif (load_ident_w_addr = '1') then
-            txtb_pointer_meta <=
-                to_integer(unsigned(IDENTIFIER_W_ADR(11 downto 2)));
-        end if;
-
+        txtb_pointer_meta_q <= txtb_pointer_meta_d;
     end if;
   end process;
 

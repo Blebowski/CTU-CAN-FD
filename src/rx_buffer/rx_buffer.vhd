@@ -101,7 +101,10 @@ entity rx_buffer is
         G_RESET_POLARITY            :       std_logic := '0';
         
         -- RX Buffer size
-        G_RX_BUFF_SIZE              :       natural range 32 to 4096 := 32
+        G_RX_BUFF_SIZE              :       natural range 32 to 4096 := 32;
+        
+        -- Technology type
+        G_TECHNOLOGY                :       natural := C_TECH_ASIC
     );
     port(
         ------------------------------------------------------------------------
@@ -393,6 +396,12 @@ architecture rtl of rx_buffer is
     ----------------------------------------------------------------------------
     signal rx_buf_res_d             :       std_logic;
     signal rx_buf_res_q             :       std_logic;
+
+    ----------------------------------------------------------------------------
+    -- Clock gating for memory
+    ----------------------------------------------------------------------------
+    signal rx_buf_ram_clk_en        :       std_logic;
+    signal clk_ram                  :       std_logic;
 
 begin
 
@@ -787,7 +796,25 @@ begin
         end if;
     end process;
 
+    ----------------------------------------------------------------------------
+    -- Clock gating for RAM
+    -- Ungate when CAN Core is writing or when reading occurs from register map. 
+    ----------------------------------------------------------------------------
+    rx_buf_ram_clk_en <= '1' when (RAM_write = '1' or drv_read_start = '1')
+                             else
+                         '0';
+    
+    clk_gate_rx_buffer_ram_comp : clk_gate
+    generic map(
+        G_TECHNOLOGY       => G_TECHNOLOGY
+    )
+    port map(
+        clk_in             => clk_sys,
+        clk_en             => rx_buf_ram_clk_en,
 
+        clk_out            => clk_ram
+    );
+    
     ----------------------------------------------------------------------------
     -- RAM Memory of RX Buffer
     ----------------------------------------------------------------------------
@@ -798,7 +825,7 @@ begin
     )
     port map(
         -- Clocks and Asynchronous reset 
-        clk_sys              => clk_sys,                -- IN
+        clk_sys              => clk_ram,                -- IN
         res_n                => res_n,                  -- IN
 
         -- Port A - Write (from CAN Core)

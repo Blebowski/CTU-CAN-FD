@@ -232,6 +232,7 @@ begin
         txtb_port_b_data       => txtb_port_b_data,
         txtb_available         => txtb_available,
         txtb_port_b_address    => txtb_port_b_address,
+        txtb_port_b_clk_en     => open,
         tran_word              => tran_word,
         tran_dlc               => tran_dlc,
         tran_is_rtr            => tran_is_rtr,
@@ -243,6 +244,7 @@ begin
         txtb_changed           => txtb_changed,
         txtb_hw_cmd_index      => txtb_hw_cmd_index,
         txtb_ptr               => txtb_ptr,
+        txtb_clk_en            => '1',
         txtb_prorities         => txtb_prorities,
         timestamp              => timestamp
     );

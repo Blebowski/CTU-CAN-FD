@@ -131,7 +131,10 @@ entity memory_registers is
         G_VERSION_MINOR     : std_logic_vector(7 downto 0)    := x"01";
 
         -- MAJOR Design version
-        G_VERSION_MAJOR     : std_logic_vector(7 downto 0)    := x"02"
+        G_VERSION_MAJOR     : std_logic_vector(7 downto 0)    := x"02";
+        
+        -- Technology type
+        G_TECHNOLOGY        : natural                         := C_TECH_ASIC
     );
     port(
         ------------------------------------------------------------------------
@@ -315,6 +318,10 @@ architecture rtl of memory_registers is
 
     signal ewl_padded             :     std_logic_vector(8 downto 0);
 
+    -- Clock gating for register map
+    signal reg_map_clk_en         :     std_logic;
+    signal clk_reg_map            :     std_logic;
+
     ---------------------------------------------------------------------------
     -- 
     ---------------------------------------------------------------------------
@@ -417,6 +424,27 @@ begin
                 (OTHERS => '0');
 
     ----------------------------------------------------------------------------
+    -- Clock gating - Ungate clocks for read or write.
+    -- Note that write enable / read enable is still brought also to register
+    -- map! This is for FPGA implementation where clock gate is transparent!
+    ----------------------------------------------------------------------------
+    reg_map_clk_en <= '1' when (srd = '1' or swr = '1') and
+                               (control_registers_cs = '1')
+                          else
+                      '0'; 
+
+    clk_gate_reg_map_comp : clk_gate
+    generic map(
+        G_TECHNOLOGY       => G_TECHNOLOGY
+    )
+    port map(
+        clk_in             => clk_sys,
+        clk_en             => reg_map_clk_en,
+
+        clk_out            => clk_reg_map
+    );
+
+    ----------------------------------------------------------------------------
     -- Control registers instance
     ----------------------------------------------------------------------------
     control_registers_reg_map_comp : control_registers_reg_map
@@ -433,7 +461,7 @@ begin
         SUP_TRAFFIC_CTRS      => G_SUP_TRAFFIC_CTRS
     )
     port map(
-        clk_sys               => clk_sys,
+        clk_sys               => clk_reg_map,
         res_n                 => res_out_i,
         address               => adress,
         w_data                => data_in,

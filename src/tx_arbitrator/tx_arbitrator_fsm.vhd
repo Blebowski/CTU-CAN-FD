@@ -147,6 +147,9 @@ entity tx_arbitrator_fsm is
         -- Load identifier word to metadata pointer
         load_ident_w_addr      :out std_logic;
 
+        -- Clock enable for TXT Buffer RAM
+        txtb_meta_clk_en       :out std_logic;
+
         -- Store timestamp lower word
         store_ts_l_w           :out std_logic;
         
@@ -304,6 +307,9 @@ begin
         load_ffmt_w_addr       <= '0';
         load_ident_w_addr      <= '0';
         
+        -- By default, clocks for memories are gated
+        txtb_meta_clk_en       <= '0';
+        
         store_ts_l_w           <= '0';
         store_md_w             <= '0';
         store_ident_w          <= '0';
@@ -331,6 +337,8 @@ begin
         -- Read Low timestamp word of Selected TXT buffer.
         --------------------------------------------------------------------
         when s_arb_sel_low_ts =>
+            txtb_meta_clk_en <= '1';
+            
             if (txtb_hw_cmd.lock = '1') then
                 store_last_txtb_index <= '1';
 
@@ -353,6 +361,8 @@ begin
         -- When Timestamp elapses -> proceed with validation!
         --------------------------------------------------------------------  
         when s_arb_sel_upp_ts =>
+            txtb_meta_clk_en <= '1';
+            
             if (txtb_hw_cmd.lock = '1') then
                 store_last_txtb_index <= '1';
 
@@ -374,6 +384,8 @@ begin
         -- Read Frame format word.
         --------------------------------------------------------------------  
         when s_arb_sel_ffw =>
+            txtb_meta_clk_en <= '1';
+            
             if (txtb_hw_cmd.lock = '1') then
                 store_last_txtb_index <= '1';
 
@@ -394,6 +406,8 @@ begin
         -- Read identifier word.
         --------------------------------------------------------------------  
         when s_arb_sel_idw =>
+            txtb_meta_clk_en <= '1';
+            
             if (txtb_hw_cmd.lock = '1') then
                 store_last_txtb_index <= '1';
 

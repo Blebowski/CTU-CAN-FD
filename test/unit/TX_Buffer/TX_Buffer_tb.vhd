@@ -253,7 +253,8 @@ begin
     txt_buffer_comp : txt_buffer
     generic map(
         G_TXT_BUFFER_COUNT      => 4,
-        G_ID                    => 0
+        G_ID                    => 0,
+        G_TECHNOLOGY            => C_TECH_ASIC
     )
     port map(
         clk_sys                 => clk_sys,
@@ -273,6 +274,7 @@ begin
         is_bus_off              => is_bus_off,
         txtb_port_b_data        => txtb_port_b_data,
         txtb_port_b_address     => txtb_port_b_address,
+        txtb_port_b_clk_en      => '1',
         txtb_available          => txtb_available
     );
 

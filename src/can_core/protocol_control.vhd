@@ -210,6 +210,9 @@ entity protocol_control is
         -- Pointer to TXT buffer memory
         txtb_ptr                :out  natural range 0 to 19;
         
+        -- Clock enable for TXT Buffer memory
+        txtb_clk_en             :out  std_logic;
+        
         -- Selected TXT Buffer index changed
         txtb_changed            :in   std_logic;
         
@@ -744,6 +747,7 @@ begin
         tran_frame_valid        => tran_frame_valid,    -- IN
         txtb_hw_cmd             => txtb_hw_cmd,         -- OUT
         txtb_ptr                => txtb_ptr,            -- OUT
+        txtb_clk_en             => txtb_clk_en,         -- OUT
         tran_dlc                => tran_dlc,            -- IN
         tran_is_rtr             => tran_is_rtr,         -- IN
         tran_frame_type         => tran_frame_type,     -- IN
