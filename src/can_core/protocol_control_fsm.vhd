@@ -1648,7 +1648,6 @@ begin
                 tx_dominant <= '1';
                 err_pos <= ERC_POS_SOF;
                 crc_enable <= '1';
-                txtb_ptr_d <= 1;
                 nbt_ctrs_en <= '1';
                 is_sof <= '1';
                 
@@ -1678,7 +1677,6 @@ begin
                 tx_shift_ena_i <= '1';
                 err_pos <= ERC_POS_ARB;
                 crc_enable <= '1';
-                txtb_ptr_d <= 1;
                 alc_id_field <= ALC_BASE_ID;
                 nbt_ctrs_en <= '1';
                 
@@ -1712,7 +1710,6 @@ begin
                 crc_enable <= '1';
                 rx_store_rtr_i <= '1';
                 err_pos <= ERC_POS_ARB;
-                txtb_ptr_d <= 1;
                 alc_id_field <= ALC_SRR_RTR;
                 nbt_ctrs_en <= '1';
                 
@@ -1746,7 +1743,6 @@ begin
                 tick_state_reg <= '1';
                 rx_store_ide_i <= '1';
                 crc_enable <= '1';
-                txtb_ptr_d <= 1;
                 alc_id_field <= ALC_IDE;
                 nbt_ctrs_en <= '1';
                 
@@ -2435,10 +2431,6 @@ begin
                 retr_ctr_add_block_clr <= '1';
                 bit_err_disable <= '1';
                 
-                -- Address Identifier Word in TXT Buffer RAM in advance to
-                -- account for DFF delay and RAM delay! 
-                txtb_ptr_d <= 1;
-                
                 -- If we are bus-off, go to reintegration wait!
                 if (is_bus_off = '1') then
                     tick_state_reg <= '1';
@@ -2531,10 +2523,6 @@ begin
                 is_suspend <= '1';
                 nbt_ctrs_en <= '1';
                 
-                -- Address Identifier Word in TXT Buffer RAM in advance to
-                -- account for DFF delay and RAM delay! 
-                txtb_ptr_d <= 1;
-                
                 if (rx_data_nbs = DOMINANT) then
                     tick_state_reg <= '1';
                     ctrl_ctr_pload_i <= '1';
@@ -2568,10 +2556,6 @@ begin
                 crc_spec_enable_i <= '1';
                 bit_err_disable <= '1';
                 nbt_ctrs_en <= '1';
-
-                -- Address Identifier Word in TXT Buffer RAM in advance to
-                -- account for DFF delay and RAM delay! 
-                txtb_ptr_d <= 1;
                 
                 if (is_bus_off = '0') then
                     if (rx_data_nbs = DOMINANT) then
