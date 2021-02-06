@@ -869,6 +869,10 @@ begin
                    '1' when (rx_data_nbs = DOMINANT) else
                    '0';
 
+    ---------------------------------------------------------------------------
+    -- Signal is not decoded inside curr_state process, because it is sensitive
+    -- to this signal! Done here to avoid loops!
+    ---------------------------------------------------------------------------
     block_txtb_unlock <= '1' when (curr_state = s_pc_act_err_flag or
                                    curr_state = s_pc_pas_err_flag or
                                    curr_state = s_pc_err_delim_wait or
