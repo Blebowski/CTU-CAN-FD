@@ -511,7 +511,7 @@ filename "version.tex"
 \noindent
 \align center
 \begin_inset Tabular
-<lyxtabular version="3" rows="10" columns="5">
+<lyxtabular version="3" rows="11" columns="5">
 <features tabularvalignment="middle">
 <column alignment="center" valignment="top" width="1.5cm">
 <column alignment="center" valignment="top" width="3cm">
@@ -954,7 +954,7 @@ Correct Expected segment lenght preload values for negative resynchronisation.
 </cell>
 </row>
 <row>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -963,11 +963,58 @@ Correct Expected segment lenght preload values for negative resynchronisation.
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
 2.2.5
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Ondrej Ille
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+6-10-2020
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Update Protocol control FSM diagram.
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+0.10
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+2.3.0
 \end_layout
 
 \end_inset
@@ -985,7 +1032,7 @@ Ondrej Ille
 \begin_inset Text
 
 \begin_layout Plain Layout
-6-10-2020
+6-02-2021
 \end_layout
 
 \end_inset
@@ -994,7 +1041,7 @@ Ondrej Ille
 \begin_inset Text
 
 \begin_layout Plain Layout
-Update Protocol control FSM diagram.
+Add notes on clock gating.
 \end_layout
 
 \end_inset
@@ -1321,10 +1368,12 @@ When CTU CAN FD GIT repository is clonned, register map can be generated
 \end_layout
 
 \begin_layout Verbatim
+
 cd scripts
 \end_layout
 
 \begin_layout Verbatim
+
 ./update_reg_map
 \end_layout
 
@@ -1337,10 +1386,12 @@ Documentation can be exported from VHDL RTL codes by following script:
 \end_layout
 
 \begin_layout Verbatim
+
 cd scripts
 \end_layout
 
 \begin_layout Verbatim
+
 python gen_lyx_tables.py --configPath vhdl_lyx_interface_cfg.yml
 \end_layout
 
@@ -1373,10 +1424,12 @@ CTU CAN FD contains release tags in GIT repository.
 \end_layout
 
 \begin_layout Verbatim
+
 cd scripts
 \end_layout
 
 \begin_layout Verbatim
+
 python create_release.py --output_dir ../release_directory_name
 \end_layout
 
@@ -1398,10 +1451,12 @@ src/component.xml
 \end_layout
 
 \begin_layout Verbatim
+
 cd scripts
 \end_layout
 
 \begin_layout Verbatim
+
 python gen_vivado_component.py
 \end_layout
 
@@ -5483,7 +5538,7 @@ status open
 \noindent
 \align center
 \begin_inset Tabular
-<lyxtabular version="3" rows="7" columns="5">
+<lyxtabular version="3" rows="8" columns="5">
 <features tabularvalignment="middle">
 <column alignment="left" valignment="top" width="0pt">
 <column alignment="left" valignment="top" width="0pt">
@@ -5908,7 +5963,7 @@ noprefix "false"
 </cell>
 </row>
 <row>
-<cell alignment="left" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -5920,7 +5975,7 @@ sup_traffic_counters
 
 \end_inset
 </cell>
-<cell alignment="left" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -5929,7 +5984,7 @@ boolean
 
 \end_inset
 </cell>
-<cell alignment="left" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -5938,7 +5993,7 @@ true
 
 \end_inset
 </cell>
-<cell alignment="left" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -5947,7 +6002,7 @@ true/false
 
 \end_inset
 </cell>
-<cell alignment="left" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -5963,6 +6018,56 @@ noprefix "false"
 \end_inset
 
 .
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\series bold
+\shape italic
+target_technology
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+natural
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+0
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+0-1
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Target technology (set 0 for ASIC, set 1 for FPGA)
 \end_layout
 
 \end_inset
@@ -6429,7 +6534,7 @@ time quanta
  CTU CAN FD is assumed to be implemented in a single power domain, all parts
  of CTU CAN FD must be either turned on or off.
  To reduce dynamic power consumption, majority of registers is written to
- allow inference of 
+ allow usage of 
 \begin_inset Quotes eld
 \end_inset
 
@@ -6437,7 +6542,7 @@ clock enables
 \begin_inset Quotes erd
 \end_inset
 
- (FPGAs) or automated 
+ (FPGAs) or inferred 
 \begin_inset Quotes eld
 \end_inset
 
@@ -6446,8 +6551,51 @@ clock gating
 \end_inset
 
  (ASIC).
- There is no explicit clock gating used within CTU CAN FD to achieve easy
- portability between FPGA and ASIC implementations.
+\end_layout
+
+\begin_layout Standard
+If 
+\series bold
+\shape italic
+target_technology
+\series default
+\shape default
+ = 0 (ASIC), hand-written clock gating is implemented for Memory registers,
+ RX buffer RAM and TXT Buffer RAMs.
+ If 
+\series bold
+\shape italic
+target_technology
+\series default
+\shape default
+ = 1 (FPGA), no hand-written clock gating is implemented, clocks for memory
+ registers RX buffer RAMs , and TXT Buffer RAMs are always enabled.
+ There is no functional difference between ASIC/FPGA target technology (even
+ if clocks are always enabled, registers are wrriten only when enabled).
+\end_layout
+
+\begin_layout Standard
+If 
+\series bold
+\shape italic
+target_technology
+\series default
+\shape default
+ = 0 (ASIC), manually used clock gating cell (clk_gate.vhd) has Latch + AND
+ type.
+ It is recommended to replace clk_gate with with Integrated clock gating
+ cell (e.g.
+ by rewriting internals of clk_gate.vhd by instantiating technological ICG),
+ if such cell is available.
+ If not done, clk_gate.vhd will synthesize into discrete Latch + AND gate.
+ If 
+\series bold
+\shape italic
+target_technology
+\series default
+\shape default
+ = 1 (FPGA), then clk_gate.vhd does not gate clocks, but only connects input
+ clock to output clock.
 \end_layout
 
 \begin_layout Standard
@@ -6460,9 +6608,26 @@ If CTU CAN FD is implemented in SoC system, it is recommended to implement
 recessive
 \color inherit
  bits to CAN Bus.
- Due to nature of CAN Bus communication, it is impractical to gate clocks
- for CTU CAN FD when there is no communication on CAN Bus and enable it
- when frame reception starts.
+\end_layout
+
+\begin_layout Section
+Testability
+\end_layout
+
+\begin_layout Standard
+At the moment, CTU CAN FD does not support any manufacturing testability
+ features (to increase fault coverage).
+ It is recommended to insert DFT is using CTU CAN FD in ASIC system.
+\end_layout
+
+\begin_layout Standard
+
+\color blue
+TODO: In future releases, direct access to RX Buffer RAM and TXT Buffer
+ RAMs is planned to allow testing these RAMs if they are replaced by Hard
+ macros.
+ Currently, these memories are only testable if they are synthesized out
+ of DFFs and DFT is inserted.
 \end_layout
 
 \begin_layout Section
@@ -24619,6 +24784,28 @@ name "tab:frame-counter-handling"
 
 \end_layout
 
+\begin_layout Subsection
+RX Buffer RAM
+\begin_inset CommandInset label
+LatexCommand label
+name "subsec:rx-buffer-RAM"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+If 
+\series bold
+\shape italic
+target_technology
+\series default
+\shape default
+ = 0 (ASIC), clock for RX buffer RAM are gated if RX buffer RAM is not written
+ nor read.
+\end_layout
+
 \begin_layout Standard
 \begin_inset Newpage pagebreak
 \end_inset
@@ -30393,22 +30580,21 @@ TXT buffer RAM access
 \end_layout
 
 \begin_layout Standard
-
-\color blue
-TODO: Think here how to create CS/CE signals when RAMs will be fully extended
- by proper DP SRAM interface.
- Interface which constantly loads output data by pointer has the memory
- clocked each cycle.
- This might be 
-\begin_inset Quotes eld
-\end_inset
-
-power suicide
-\begin_inset Quotes erd
-\end_inset
-
- when either hard RAM would be used or memory would be synthesized out of
- DFFs!
+TXT Buffer RAM has clock gating implemented if 
+\series bold
+\shape italic
+target_technology 
+\series default
+\shape default
+= 0 (ASIC).
+ In such case, clocks are enabled only when there are write (by user) or
+ read accesses (by TX Arbitrator or Protocol control FSM) to RAM.
+ If TX Arbitrator is performing TXT buffer validation process, the clocks
+ are ungated during this process since TX Arbitrator is reading metadata
+ words from TXT buffer RAM.
+ If Protocol control FSM is reading data words (during transmission of data
+ field), TXT buffer RAM clocks are ungated when new word shall be read (when
+ read pointer is updated by Protocol control FSM).
 \end_layout
 
 \begin_layout Subsection
