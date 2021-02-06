@@ -204,19 +204,19 @@ architecture rtl of can_top_level is
     -- Common signals
     ----------------------------------------------------------------------------
     -- Driving Bus
-    signal drv_bus      : std_logic_vector(1023 downto 0);
+    signal drv_bus              : std_logic_vector(1023 downto 0);
     
     -- Status Bus
-    signal stat_bus     : std_logic_vector(511 downto 0);
+    signal stat_bus             : std_logic_vector(511 downto 0);
     
     -- Synchronised reset
-    signal res_n_sync   : std_logic;
+    signal res_n_sync           : std_logic;
     
     -- Internal reset (Synchronised reset + Soft Reset)
-    signal res_n_i      : std_logic;
+    signal res_n_i              : std_logic;
     
     -- Sample control (Nominal, Data, Secondary)
-    signal sp_control   : std_logic_vector(1 downto 0);
+    signal sp_control           : std_logic_vector(1 downto 0);
     
     ----------------------------------------------------------------------------
     -- RX Buffer <-> Memory registers Interface
@@ -283,84 +283,84 @@ architecture rtl of can_top_level is
     -- Interrupt Manager <-> Memory registers Interface
     ------------------------------------------------------------------------
     -- Interrupt vector
-    signal int_vector   :     std_logic_vector(C_INT_COUNT - 1 downto 0);
+    signal int_vector           :    std_logic_vector(C_INT_COUNT - 1 downto 0);
     
     -- Interrupt enable
-    signal int_ena      :     std_logic_vector(C_INT_COUNT - 1 downto 0);
+    signal int_ena              :    std_logic_vector(C_INT_COUNT - 1 downto 0);
     
     -- Interrupt mask
-    signal int_mask     :     std_logic_vector(C_INT_COUNT - 1 downto 0);
+    signal int_mask             :    std_logic_vector(C_INT_COUNT - 1 downto 0);
     
     ------------------------------------------------------------------------
     -- RX Buffer <-> CAN Core Interface
     ------------------------------------------------------------------------
     -- Frame Identifier
-    signal rec_ident        :     std_logic_vector(28 downto 0);
+    signal rec_ident            :    std_logic_vector(28 downto 0);
     
     -- Data length code
-    signal rec_dlc          :     std_logic_vector(3 downto 0);
+    signal rec_dlc              :    std_logic_vector(3 downto 0);
     
     -- Recieved identifier type (0-BASE Format, 1-Extended Format);
-    signal rec_ident_type   :     std_logic;
+    signal rec_ident_type       :    std_logic;
     
     -- Recieved frame type (0-Normal CAN, 1- CAN FD)
-    signal rec_frame_type   :     std_logic;
+    signal rec_frame_type       :    std_logic;
     
     -- Recieved frame is RTR Frame(0-No, 1-Yes)
-    signal rec_is_rtr       :     std_logic;
+    signal rec_is_rtr           :    std_logic;
     
     -- Whenever frame was recieved with BIT Rate shift 
-    signal rec_brs          :     std_logic;
+    signal rec_brs              :    std_logic;
 
     -- Recieved error state indicator
-    signal rec_esi          :     std_logic;
+    signal rec_esi              :    std_logic;
    
     -- Data word which should be stored when "store_data" is active!
-    signal store_data_word  :     std_logic_vector(31 downto 0);
+    signal store_data_word      :    std_logic_vector(31 downto 0);
 
     -- Signals start of frame. If timestamp on RX frame should be captured
     -- in the beginning of the frame, this pulse captures the timestamp!
-    signal sof_pulse        :     std_logic;
+    signal sof_pulse            :    std_logic;
 
     ------------------------------------------------------------------------
     -- Frame filters <-> CAN Core Interface (Commands for RX Buffer)
     ------------------------------------------------------------------------
     -- After control field of CAN frame, metadata are valid and can be stored.
     -- This command starts the RX FSM for storing.
-    signal store_metadata   :     std_logic;
+    signal store_metadata       :    std_logic;
     
     -- Signal that one word of data can be stored (TX_DATA_X_W). This signal
     -- is active when 4 bytes were received or data reception has finished 
     -- on 4 byte unaligned number of frames! (Thus allowing to store also
     -- data which are not 4 byte aligned!
-    signal store_data       :     std_logic;
+    signal store_data           :    std_logic;
 
     -- Received frame valid (commit RX Frame)
-    signal rec_valid        :     std_logic;
+    signal rec_valid            :    std_logic;
     
     -- Abort storing of RX Frame to RX Buffer.
-    signal rec_abort        :     std_logic;
+    signal rec_abort            :    std_logic;
     
     -- Filtered version of RX Buffer commands
-    signal store_metadata_f :     std_logic;
-    signal store_data_f     :     std_logic;
-    signal rec_valid_f      :     std_logic;
-    signal rec_abort_f      :     std_logic;
+    signal store_metadata_f     :    std_logic;
+    signal store_data_f         :    std_logic;
+    signal rec_valid_f          :    std_logic;
+    signal rec_abort_f          :    std_logic;
     
     ------------------------------------------------------------------------
     -- TXT Buffers <-> Interrrupt Manager Interface
     ------------------------------------------------------------------------
     -- TXT HW Commands Applied Interrupt
-    signal txtb_hw_cmd_int : std_logic_vector(C_TXT_BUFFER_COUNT - 1 downto 0);
+    signal txtb_hw_cmd_int      :    std_logic_vector(C_TXT_BUFFER_COUNT - 1 downto 0);
 
     ------------------------------------------------------------------------
     -- TXT Buffers <-> CAN Core Interface
     ------------------------------------------------------------------------    
     -- HW Commands 
-    signal txtb_hw_cmd            :   t_txtb_hw_cmd;
+    signal txtb_hw_cmd          :    t_txtb_hw_cmd;
 
     -- Unit just turned bus off.
-    signal is_bus_off             :   std_logic;
+    signal is_bus_off           :    std_logic;
 
     ------------------------------------------------------------------------
     -- TXT Buffers <-> TX Arbitrator
@@ -387,132 +387,132 @@ architecture rtl of can_top_level is
     -- CAN Core <-> TX Arbitrator
     ------------------------------------------------------------------------    
     -- TX Data length code
-    signal tran_dlc               :   std_logic_vector(3 downto 0);
+    signal tran_dlc            :   std_logic_vector(3 downto 0);
     
     -- TX Remote transmission request flag
-    signal tran_is_rtr            :   std_logic;
+    signal tran_is_rtr         :   std_logic;
 
     -- TX Identifier type (0-Basic,1-Extended);
-    signal tran_ident_type        :   std_logic;
+    signal tran_ident_type     :   std_logic;
     
     -- TX Frame type (0-CAN 2.0, 1-CAN FD)
-    signal tran_frame_type        :   std_logic;
+    signal tran_frame_type     :   std_logic;
     
     -- TX Frame Bit rate shift Flag 
-    signal tran_brs               :   std_logic;
+    signal tran_brs            :   std_logic;
     
     -- TX Identifier
-    signal tran_identifier        :   std_logic_vector(28 downto 0);
+    signal tran_identifier     :   std_logic_vector(28 downto 0);
         
     -- Word from TXT Buffer RAM selected by TX Arbitrator
-    signal tran_word              :   std_logic_vector(31 downto 0);
+    signal tran_word           :   std_logic_vector(31 downto 0);
     
     -- Valid frame is selected from transmission on output of TX Arbitrator.
     -- CAN Core may lock TXT Buffer for transmission!
-    signal tran_frame_valid       :   std_logic;
+    signal tran_frame_valid    :   std_logic;
     
     -- Selected TXT Buffer index changed
-    signal txtb_changed           :   std_logic;
+    signal txtb_changed        :   std_logic;
     
     -- TXT Buffer clock enable
-    signal txtb_clk_en            :   std_logic;
+    signal txtb_clk_en         :   std_logic;
     
     ------------------------------------------------------------------------
     -- CAN Core <-> Interrupt manager
     ------------------------------------------------------------------------    
     -- Error appeared
-    signal err_detected            :   std_logic;
+    signal err_detected         :   std_logic;
 
     -- Fault confinement state functionality changed
-    signal fcs_changed             :   std_logic;
+    signal fcs_changed          :   std_logic;
 
     -- Error warning limit reached
-    signal err_warning_limit       :   std_logic;
+    signal err_warning_limit    :   std_logic;
 
     -- Arbitration was lost input
-    signal arbitration_lost        :   std_logic;
+    signal arbitration_lost     :   std_logic;
 
     -- Transmitted frame is valid
-    signal tran_valid              :   std_logic;
+    signal tran_valid           :   std_logic;
 
     -- Bit Rate Was Shifted
-    signal br_shifted              :   std_logic;
+    signal br_shifted           :   std_logic;
     
     -- Overload frame is being transmitted
-    signal is_overload             :   std_logic;
+    signal is_overload          :   std_logic;
     
     ------------------------------------------------------------------------
     -- CAN Core <-> Prescaler Interface
     ------------------------------------------------------------------------
     -- RX Triggers (Sample)  
-    signal rx_triggers   : std_logic_vector(C_SAMPLE_TRIGGER_COUNT - 1 downto 0);
+    signal rx_triggers          :   std_logic_vector(C_SAMPLE_TRIGGER_COUNT - 1 downto 0);
     
     -- TX Trigger (Sync)
-    signal tx_trigger    : std_logic;
+    signal tx_trigger           :   std_logic;
     
     -- Synchronisation control (No synchronisation, Hard Synchronisation,
     -- Resynchronisation
-    signal sync_control  : std_logic_vector(1 downto 0);
+    signal sync_control         :   std_logic_vector(1 downto 0);
     
     -- No positive resynchronisation 
-    signal no_pos_resync : std_logic;
+    signal no_pos_resync        :   std_logic;
     
     -- Enable Nominal Bit time counters.
-    signal nbt_ctrs_en   : std_logic;
+    signal nbt_ctrs_en          :   std_logic;
         
     -- Enable Data Bit time counters.
-    signal dbt_ctrs_en   : std_logic;
+    signal dbt_ctrs_en          :   std_logic;
     
     ------------------------------------------------------------------------
     -- Bus Sampling <-> Memory Registers Interface
     ------------------------------------------------------------------------
     -- Measured Transceiver delay 
-    signal trv_delay     : std_logic_vector(C_TRV_CTR_WIDTH - 1 downto 0);
+    signal trv_delay            :   std_logic_vector(C_TRV_CTR_WIDTH - 1 downto 0);
     
     ------------------------------------------------------------------------
     -- Bus Sampling <-> CAN Core Interface
     ------------------------------------------------------------------------
     -- RX Data With Bit Stuffing
-    signal rx_data_wbs          : std_logic;
+    signal rx_data_wbs          :   std_logic;
     
     -- TX Data With Bit Stuffing
-    signal tx_data_wbs          : std_logic;
+    signal tx_data_wbs          :   std_logic;
     
     -- Secondary sample point reset
-    signal ssp_reset            :  std_logic; 
+    signal ssp_reset            :   std_logic; 
 
     -- Enable measurement of Transmitter delay
-    signal tran_delay_meas      :  std_logic;
+    signal tran_delay_meas      :   std_logic;
 
     -- Bit Error detected 
-    signal bit_err              :  std_logic;
+    signal bit_err              :   std_logic;
         
     -- Secondary sample signal 
-    signal sample_sec           :  std_logic;
+    signal sample_sec           :   std_logic;
     
     -- Reset Bit time measurement counter
-    signal btmc_reset           :  std_logic;
+    signal btmc_reset           :   std_logic;
     
     -- Start Measurement of data bit time (in TX Trigger)
-    signal dbt_measure_start    :  std_logic;
+    signal dbt_measure_start    :   std_logic;
     
     -- First SSP generated (in ESI bit)
-    signal gen_first_ssp        :  std_logic;
+    signal gen_first_ssp        :   std_logic;
     
     ------------------------------------------------------------------------
     -- Bus Sampling <-> Prescaler Interface
     ------------------------------------------------------------------------
     -- Synchronisation edge (aligned with time quanta)
-    signal sync_edge            :  std_logic;
+    signal sync_edge            :   std_logic;
     
     ------------------------------------------------------------------------
     -- Bit time FSM outputs
     ------------------------------------------------------------------------
     -- Bit time FSM state
-    signal bt_fsm               :    t_bit_time;
+    signal bt_fsm               :   t_bit_time;
     
     -- Time quanta edge
-    signal tq_edge              :    std_logic;
+    signal tq_edge              :   std_logic;
 
 begin
 
@@ -541,68 +541,68 @@ begin
     ---------------------------------------------------------------------------
     memory_registers_inst : memory_registers
     generic map(
-        G_RESET_POLARITY    => C_RESET_POLARITY,
-        G_SUP_FILTA         => sup_filtA,
-        G_SUP_FILTB         => sup_filtB,
-        G_SUP_FILTC         => sup_filtC,
-        G_SUP_RANGE         => sup_range,
-        G_SUP_TRAFFIC_CTRS  => sup_traffic_ctrs,
-        G_TXT_BUFFER_COUNT  => C_TXT_BUFFER_COUNT, 
-        G_INT_COUNT         => C_INT_COUNT,
-        G_TRV_CTR_WIDTH     => C_TRV_CTR_WIDTH,
-        G_DEVICE_ID         => C_CAN_DEVICE_ID,
-        G_VERSION_MINOR     => C_CTU_CAN_FD_VERSION_MINOR,
-        G_VERSION_MAJOR     => C_CTU_CAN_FD_VERSION_MAJOR,
-        G_TECHNOLOGY        => target_technology
+        G_RESET_POLARITY        => C_RESET_POLARITY,
+        G_SUP_FILTA             => sup_filtA,
+        G_SUP_FILTB             => sup_filtB,
+        G_SUP_FILTC             => sup_filtC,
+        G_SUP_RANGE             => sup_range,
+        G_SUP_TRAFFIC_CTRS      => sup_traffic_ctrs,
+        G_TXT_BUFFER_COUNT      => C_TXT_BUFFER_COUNT, 
+        G_INT_COUNT             => C_INT_COUNT,
+        G_TRV_CTR_WIDTH         => C_TRV_CTR_WIDTH,
+        G_DEVICE_ID             => C_CAN_DEVICE_ID,
+        G_VERSION_MINOR         => C_CTU_CAN_FD_VERSION_MINOR,
+        G_VERSION_MAJOR         => C_CTU_CAN_FD_VERSION_MAJOR,
+        G_TECHNOLOGY            => target_technology
     )
     port map(
-        clk_sys             => clk_sys,         -- IN
-        res_n               => res_n_sync,      -- IN
-        res_out             => res_n_i,         -- OUT
+        clk_sys                 => clk_sys,                 -- IN
+        res_n                   => res_n_sync,              -- IN
+        res_out                 => res_n_i,                 -- OUT
 
         -- Memory Interface
-        data_in             => data_in,         -- IN
-        data_out            => data_out,        -- OUT
-        adress              => adress,          -- IN
-        scs                 => scs,             -- IN
-        srd                 => srd,             -- IN
-        swr                 => swr,             -- IN
-        sbe                 => sbe,             -- IN
-        timestamp           => timestamp,       -- IN
+        data_in                 => data_in,                 -- IN
+        data_out                => data_out,                -- OUT
+        adress                  => adress,                  -- IN
+        scs                     => scs,                     -- IN
+        srd                     => srd,                     -- IN
+        swr                     => swr,                     -- IN
+        sbe                     => sbe,                     -- IN
+        timestamp               => timestamp,               -- IN
         
         -- Buses to/from rest of CTU CAN FD
-        drv_bus             => drv_bus,         -- OUT
-        stat_bus            => stat_bus,        -- IN
+        drv_bus                 => drv_bus,                 -- OUT
+        stat_bus                => stat_bus,                -- IN
 
         -- RX Buffer Interface
-        rx_read_buff         => rx_read_buff,           -- OUT
-        rx_buf_size          => rx_buf_size,            -- IN
-        rx_full              => rx_full,                -- IN
-        rx_empty             => rx_empty,               -- IN
-        rx_frame_count       => rx_frame_count,         -- IN
-        rx_mem_free          => rx_mem_free,            -- IN
-        rx_read_pointer      => rx_read_pointer,        -- IN
-        rx_write_pointer     => rx_write_pointer,       -- IN
-        rx_data_overrun      => rx_data_overrun,        -- IN
-        rx_mof               => rx_mof,                 -- IN
+        rx_read_buff            => rx_read_buff,            -- OUT
+        rx_buf_size             => rx_buf_size,             -- IN
+        rx_full                 => rx_full,                 -- IN
+        rx_empty                => rx_empty,                -- IN
+        rx_frame_count          => rx_frame_count,          -- IN
+        rx_mem_free             => rx_mem_free,             -- IN
+        rx_read_pointer         => rx_read_pointer,         -- IN
+        rx_write_pointer        => rx_write_pointer,        -- IN
+        rx_data_overrun         => rx_data_overrun,         -- IN
+        rx_mof                  => rx_mof,                  -- IN
 
         -- Interface to TXT Buffers
-        txtb_port_a_data     => txtb_port_a_data,       -- OUT
-        txtb_port_a_address  => txtb_port_a_address,    -- OUT
-        txtb_port_a_cs       => txtb_port_a_cs,         -- OUT
-        txtb_state           => txtb_state,             -- IN
-        txtb_sw_cmd          => txtb_sw_cmd,            -- OUT
-        txtb_sw_cmd_index    => txtb_sw_cmd_index,      -- OUT
-        txtb_prorities       => txtb_prorities,         -- OUT
-        txt_buf_failed_bof   => txt_buf_failed_bof,     -- OUT
+        txtb_port_a_data        => txtb_port_a_data,        -- OUT
+        txtb_port_a_address     => txtb_port_a_address,     -- OUT
+        txtb_port_a_cs          => txtb_port_a_cs,          -- OUT
+        txtb_state              => txtb_state,              -- IN
+        txtb_sw_cmd             => txtb_sw_cmd,             -- OUT
+        txtb_sw_cmd_index       => txtb_sw_cmd_index,       -- OUT
+        txtb_prorities          => txtb_prorities,          -- OUT
+        txt_buf_failed_bof      => txt_buf_failed_bof,      -- OUT
          
         -- Bus synchroniser interface
-        trv_delay            => trv_delay,              -- IN
+        trv_delay               => trv_delay,               -- IN
 
         -- Interrrupt Interface
-        int_vector           => int_vector,             -- IN
-        int_ena              => int_ena,                -- IN
-        int_mask             => int_mask                -- IN
+        int_vector              => int_vector,              -- IN
+        int_ena                 => int_ena,                 -- IN
+        int_mask                => int_mask                 -- IN
     );
 
     ---------------------------------------------------------------------------
@@ -610,49 +610,49 @@ begin
     ---------------------------------------------------------------------------
     rx_buffer_inst : rx_buffer
     generic map(
-        G_RESET_POLARITY    => C_RESET_POLARITY,
-        G_RX_BUFF_SIZE      => rx_buffer_size,
-        G_TECHNOLOGY        => target_technology
+        G_RESET_POLARITY        => C_RESET_POLARITY,
+        G_RX_BUFF_SIZE          => rx_buffer_size,
+        G_TECHNOLOGY            => target_technology
     )
     port map(
-        clk_sys             => clk_sys,             -- IN
-        res_n               => res_n_i,             -- IN
+        clk_sys                 => clk_sys,                 -- IN
+        res_n                   => res_n_i,                 -- IN
 
         -- Metadata from CAN Core
-        rec_ident           => rec_ident,           -- IN
-        rec_dlc             => rec_dlc,             -- IN
-        rec_ident_type      => rec_ident_type,      -- IN
-        rec_frame_type      => rec_frame_type,      -- IN
-        rec_is_rtr          => rec_is_rtr,          -- IN
-        rec_brs             => rec_brs,             -- IN
-        rec_esi             => rec_esi,             -- IN
+        rec_ident               => rec_ident,               -- IN
+        rec_dlc                 => rec_dlc,                 -- IN
+        rec_ident_type          => rec_ident_type,          -- IN
+        rec_frame_type          => rec_frame_type,          -- IN
+        rec_is_rtr              => rec_is_rtr,              -- IN
+        rec_brs                 => rec_brs,                 -- IN
+        rec_esi                 => rec_esi,                 -- IN
 
         -- Control signals from CAN Core which control storing of CAN Frame.
         -- Filtered by Frame filters.
-        store_metadata_f    => store_metadata_f,    -- IN
-        store_data_f        => store_data_f,        -- IN
-        store_data_word     => store_data_word,     -- IN
-        rec_valid_f         => rec_valid_f,         -- IN
-        rec_abort_f         => rec_abort_f,         -- IN
-        sof_pulse           => sof_pulse,           -- IN
+        store_metadata_f        => store_metadata_f,        -- IN
+        store_data_f            => store_data_f,            -- IN
+        store_data_word         => store_data_word,         -- IN
+        rec_valid_f             => rec_valid_f,             -- IN
+        rec_abort_f             => rec_abort_f,             -- IN
+        sof_pulse               => sof_pulse,               -- IN
 
         -- Status signals of recieve buffer
-        rx_buf_size          => rx_buf_size,            -- OUT
-        rx_full              => rx_full,                -- OUT
-        rx_empty             => rx_empty,               -- OUT
-        rx_frame_count       => rx_frame_count,         -- OUT
-        rx_mem_free          => rx_mem_free,            -- OUT
-        rx_read_pointer      => rx_read_pointer,        -- OUT
-        rx_write_pointer     => rx_write_pointer,       -- OUT
-        rx_data_overrun      => rx_data_overrun,        -- OUT
-        rx_mof               => rx_mof,                 -- OUT
+        rx_buf_size             => rx_buf_size,             -- OUT
+        rx_full                 => rx_full,                 -- OUT
+        rx_empty                => rx_empty,                -- OUT
+        rx_frame_count          => rx_frame_count,          -- OUT
+        rx_mem_free             => rx_mem_free,             -- OUT
+        rx_read_pointer         => rx_read_pointer,         -- OUT
+        rx_write_pointer        => rx_write_pointer,        -- OUT
+        rx_data_overrun         => rx_data_overrun,         -- OUT
+        rx_mof                  => rx_mof,                  -- OUT
         
         -- External timestamp input
-        timestamp            => timestamp,          -- IN
+        timestamp               => timestamp,               -- IN
 
         -- Memory registers interface
-        rx_read_buff         => rx_read_buff,       -- IN
-        drv_bus              => drv_bus             -- IN
+        rx_read_buff            => rx_read_buff,            -- IN
+        drv_bus                 => drv_bus                  -- IN
     );
 
     ---------------------------------------------------------------------------
@@ -661,37 +661,37 @@ begin
     txt_buf_comp_gen : for i in 0 to C_TXT_BUFFER_COUNT - 1 generate
         txt_buffer_inst : txt_buffer
         generic map(
-            G_RESET_POLARITY       => C_RESET_POLARITY,
-            G_TXT_BUFFER_COUNT     => C_TXT_BUFFER_COUNT,
-            G_ID                   => i,
-            G_TECHNOLOGY           => target_technology
+            G_RESET_POLARITY    => C_RESET_POLARITY,
+            G_TXT_BUFFER_COUNT  => C_TXT_BUFFER_COUNT,
+            G_ID                => i,
+            G_TECHNOLOGY        => target_technology
         )
         port map(
-            clk_sys                => clk_sys,              -- IN
-            res_n                  => res_n_i,              -- IN
+            clk_sys             => clk_sys,                         -- IN
+            res_n               => res_n_i,                         -- IN
 
             -- Memory Registers Interface
-            txtb_port_a_data       => txtb_port_a_data,                 -- IN
-            txtb_port_a_address    => txtb_port_a_address,              -- IN
-            txtb_port_a_cs         => txtb_port_a_cs(i),                -- IN
-            txtb_sw_cmd            => txtb_sw_cmd,                      -- IN
-            txtb_sw_cmd_index      => txtb_sw_cmd_index,                -- IN
-            txtb_state             => txtb_state(i),                    -- OUT
-            txt_buf_failed_bof     => txt_buf_failed_bof,               -- IN
-            drv_rom_ena            => drv_bus(DRV_ROM_ENA_INDEX),       -- IN
-            drv_bus_mon_ena        => drv_bus(DRV_BUS_MON_ENA_INDEX),   -- IN
+            txtb_port_a_data    => txtb_port_a_data,                -- IN
+            txtb_port_a_address => txtb_port_a_address,             -- IN
+            txtb_port_a_cs      => txtb_port_a_cs(i),               -- IN
+            txtb_sw_cmd         => txtb_sw_cmd,                     -- IN
+            txtb_sw_cmd_index   => txtb_sw_cmd_index,               -- IN
+            txtb_state          => txtb_state(i),                   -- OUT
+            txt_buf_failed_bof  => txt_buf_failed_bof,              -- IN
+            drv_rom_ena         => drv_bus(DRV_ROM_ENA_INDEX),      -- IN
+            drv_bus_mon_ena     => drv_bus(DRV_BUS_MON_ENA_INDEX),  -- IN
     
             -- Interrupt Manager Interface
-            txtb_hw_cmd_int        => txtb_hw_cmd_int(i),   -- OUT
+            txtb_hw_cmd_int     => txtb_hw_cmd_int(i),              -- OUT
     
             -- CAN Core and TX Arbitrator Interface
-            txtb_hw_cmd            => txtb_hw_cmd,          -- IN
-            txtb_hw_cmd_index      => txtb_hw_cmd_index,    -- IN
-            txtb_port_b_data       => txtb_port_b_data(i),  -- OUT
-            txtb_port_b_address    => txtb_port_b_address,  -- IN
-            txtb_port_b_clk_en     => txtb_port_b_clk_en,   -- IN
-            is_bus_off             => is_bus_off,           -- IN
-            txtb_available         => txtb_available(i)     -- OUT
+            txtb_hw_cmd         => txtb_hw_cmd,                     -- IN
+            txtb_hw_cmd_index   => txtb_hw_cmd_index,               -- IN
+            txtb_port_b_data    => txtb_port_b_data(i),             -- OUT
+            txtb_port_b_address => txtb_port_b_address,             -- IN
+            txtb_port_b_clk_en  => txtb_port_b_clk_en,              -- IN
+            is_bus_off          => is_bus_off,                      -- IN
+            txtb_available      => txtb_available(i)                -- OUT
         );
     end generate;
 
@@ -704,33 +704,33 @@ begin
         G_TXT_BUFFER_COUNT      => C_TXT_BUFFER_COUNT
     )
     port map( 
-        clk_sys                 => clk_sys,             -- IN
-        res_n                   => res_n_i,             -- IN
+        clk_sys                 => clk_sys,                 -- IN
+        res_n                   => res_n_i,                 -- IN
 
         -- TXT Buffers interface
-        txtb_port_b_data        => txtb_port_b_data,    -- IN
-        txtb_available          => txtb_available,      -- IN
-        txtb_port_b_address     => txtb_port_b_address, -- OUT
-        txtb_port_b_clk_en      => txtb_port_b_clk_en,  -- OUT
+        txtb_port_b_data        => txtb_port_b_data,        -- IN
+        txtb_available          => txtb_available,          -- IN
+        txtb_port_b_address     => txtb_port_b_address,     -- OUT
+        txtb_port_b_clk_en      => txtb_port_b_clk_en,      -- OUT
 
         -- CAN Core Interface
-        tran_word               => tran_word,           -- OUT
-        tran_dlc                => tran_dlc,            -- OUT
-        tran_is_rtr             => tran_is_rtr,         -- OUT
-        tran_ident_type         => tran_ident_type,     -- OUT
-        tran_frame_type         => tran_frame_type,     -- OUT
-        tran_brs                => tran_brs,            -- OUT
-        tran_identifier         => tran_identifier,     -- OUT
-        tran_frame_valid        => tran_frame_valid,    -- OUT
-        txtb_hw_cmd             => txtb_hw_cmd,         -- IN
-        txtb_changed            => txtb_changed,        -- OUT
-        txtb_hw_cmd_index       => txtb_hw_cmd_index,   -- IN
-        txtb_ptr                => txtb_ptr,            -- IN
-        txtb_clk_en             => txtb_clk_en,         -- IN
+        tran_word               => tran_word,               -- OUT
+        tran_dlc                => tran_dlc,                -- OUT
+        tran_is_rtr             => tran_is_rtr,             -- OUT
+        tran_ident_type         => tran_ident_type,         -- OUT
+        tran_frame_type         => tran_frame_type,         -- OUT
+        tran_brs                => tran_brs,                -- OUT
+        tran_identifier         => tran_identifier,         -- OUT
+        tran_frame_valid        => tran_frame_valid,        -- OUT
+        txtb_hw_cmd             => txtb_hw_cmd,             -- IN
+        txtb_changed            => txtb_changed,            -- OUT
+        txtb_hw_cmd_index       => txtb_hw_cmd_index,       -- IN
+        txtb_ptr                => txtb_ptr,                -- IN
+        txtb_clk_en             => txtb_clk_en,             -- IN
 
         -- Memory registers interface
-        txtb_prorities          => txtb_prorities,      -- IN
-        timestamp               => timestamp            -- IN
+        txtb_prorities          => txtb_prorities,          -- IN
+        timestamp               => timestamp                -- IN
     );
 
     ---------------------------------------------------------------------------
@@ -738,35 +738,35 @@ begin
     ---------------------------------------------------------------------------
     frame_filters_inst : frame_filters
     generic map(
-        G_RESET_POLARITY       => C_RESET_POLARITY,
-        G_SUP_FILTA            => sup_filtA,
-        G_SUP_FILTB            => sup_filtB,
-        G_SUP_FILTC            => sup_filtC,
-        G_SUP_RANGE            => sup_range
+        G_RESET_POLARITY        => C_RESET_POLARITY,
+        G_SUP_FILTA             => sup_filtA,
+        G_SUP_FILTB             => sup_filtB,
+        G_SUP_FILTC             => sup_filtC,
+        G_SUP_RANGE             => sup_range
     )
     port map(
-        clk_sys             => clk_sys,             -- IN
-        res_n               => res_n_i,             -- IN
+        clk_sys                 => clk_sys,                 -- IN
+        res_n                   => res_n_i,                 -- IN
 
         -- Memory registers interface
-        drv_bus             => drv_bus,             -- IN
+        drv_bus                 => drv_bus,                 -- IN
 
         -- CAN Core interface
-        rec_ident           => rec_ident,           -- IN
-        rec_ident_type      => rec_ident_type,      -- IN
-        rec_frame_type      => rec_frame_type,      -- IN
-        rec_is_rtr          => rec_is_rtr,          -- IN
-        store_metadata      => store_metadata,      -- IN
-        store_data          => store_data,          -- IN
-        rec_valid           => rec_valid,           -- IN
-        rec_abort           => rec_abort,           -- IN
+        rec_ident               => rec_ident,               -- IN
+        rec_ident_type          => rec_ident_type,          -- IN
+        rec_frame_type          => rec_frame_type,          -- IN
+        rec_is_rtr              => rec_is_rtr,              -- IN
+        store_metadata          => store_metadata,          -- IN
+        store_data              => store_data,              -- IN
+        rec_valid               => rec_valid,               -- IN
+        rec_abort               => rec_abort,               -- IN
 
         -- Frame filters output
-        ident_valid         => open,                -- OUT
-        store_metadata_f    => store_metadata_f,    -- OUT
-        store_data_f        => store_data_f,        -- OUT
-        rec_valid_f         => rec_valid_f,         -- OUT
-        rec_abort_f         => rec_abort_f          -- OUT
+        ident_valid             => open,                    -- OUT
+        store_metadata_f        => store_metadata_f,        -- OUT
+        store_data_f            => store_data_f,            -- OUT
+        rec_valid_f             => rec_valid_f,             -- OUT
+        rec_abort_f             => rec_abort_f              -- OUT
     );
 
     ---------------------------------------------------------------------------
@@ -774,9 +774,9 @@ begin
     ---------------------------------------------------------------------------
     int_manager_inst : int_manager
     generic map(
-        G_RESET_POLARITY     => C_RESET_POLARITY,
-        G_INT_COUNT          => C_INT_COUNT,
-        G_TXT_BUFFER_COUNT   => C_TXT_BUFFER_COUNT
+        G_RESET_POLARITY        => C_RESET_POLARITY,
+        G_INT_COUNT             => C_INT_COUNT,
+        G_TXT_BUFFER_COUNT      => C_TXT_BUFFER_COUNT
     )
     port map(
         clk_sys                 => clk_sys,                 -- IN
@@ -819,42 +819,42 @@ begin
         G_CRC21_POL             => C_CRC21_POL
     )
     port map(
-        clk_sys                 => clk_sys,             -- IN
-        res_n                   => res_n_i,             -- IN
+        clk_sys                 => clk_sys,                 -- IN
+        res_n                   => res_n_i,                 -- IN
         
         -- Memory registers interface
-        drv_bus                 => drv_bus,             -- IN
-        stat_bus                => stat_bus,            -- OUT
+        drv_bus                 => drv_bus,                 -- IN
+        stat_bus                => stat_bus,                -- OUT
 
         -- Tx Arbitrator and TXT Buffers interface
-        tran_word               => tran_word,           -- IN
-        tran_dlc                => tran_dlc,            -- IN
-        tran_is_rtr             => tran_is_rtr,         -- IN
-        tran_ident_type         => tran_ident_type,     -- IN
-        tran_frame_type         => tran_frame_type,     -- IN
-        tran_brs                => tran_brs,            -- IN
-        tran_identifier         => tran_identifier,     -- IN
-        tran_frame_valid        => tran_frame_valid,    -- IN
-        txtb_hw_cmd             => txtb_hw_cmd,         -- OUT
-        txtb_changed            => txtb_changed,        -- IN
-        txtb_ptr                => txtb_ptr,            -- OUT
-        txtb_clk_en             => txtb_clk_en,         -- OUT
-        is_bus_off              => is_bus_off,          -- OUT
+        tran_word               => tran_word,               -- IN
+        tran_dlc                => tran_dlc,                -- IN
+        tran_is_rtr             => tran_is_rtr,             -- IN
+        tran_ident_type         => tran_ident_type,         -- IN
+        tran_frame_type         => tran_frame_type,         -- IN
+        tran_brs                => tran_brs,                -- IN
+        tran_identifier         => tran_identifier,         -- IN
+        tran_frame_valid        => tran_frame_valid,        -- IN
+        txtb_hw_cmd             => txtb_hw_cmd,             -- OUT
+        txtb_changed            => txtb_changed,            -- IN
+        txtb_ptr                => txtb_ptr,                -- OUT
+        txtb_clk_en             => txtb_clk_en,             -- OUT
+        is_bus_off              => is_bus_off,              -- OUT
 
         -- Recieve Buffer and Message Filter Interface
-        rec_ident               => rec_ident,           -- OUT
-        rec_dlc                 => rec_dlc,             -- OUT
-        rec_ident_type          => rec_ident_type,      -- OUT
-        rec_frame_type          => rec_frame_type,      -- OUT
-        rec_is_rtr              => rec_is_rtr,          -- OUT
-        rec_brs                 => rec_brs,             -- OUT
-        rec_esi                 => rec_esi,             -- OUT
-        rec_valid               => rec_valid,           -- OUT
-        store_metadata          => store_metadata,      -- OUT
-        store_data              => store_data,          -- OUT
-        store_data_word         => store_data_word,     -- OUT
-        rec_abort               => rec_abort,           -- OUT
-        sof_pulse               => sof_pulse,           -- OUT
+        rec_ident               => rec_ident,               -- OUT
+        rec_dlc                 => rec_dlc,                 -- OUT
+        rec_ident_type          => rec_ident_type,          -- OUT
+        rec_frame_type          => rec_frame_type,          -- OUT
+        rec_is_rtr              => rec_is_rtr,              -- OUT
+        rec_brs                 => rec_brs,                 -- OUT
+        rec_esi                 => rec_esi,                 -- OUT
+        rec_valid               => rec_valid,               -- OUT
+        store_metadata          => store_metadata,          -- OUT
+        store_data              => store_data,              -- OUT
+        store_data_word         => store_data_word,         -- OUT
+        rec_abort               => rec_abort,               -- OUT
+        sof_pulse               => sof_pulse,               -- OUT
 
         -- Interrupt Manager Interface 
         arbitration_lost        => arbitration_lost,        -- OUT
@@ -866,28 +866,28 @@ begin
         is_overload             => is_overload,             -- OUT
 
         -- Prescaler interface 
-        rx_triggers             => rx_triggers,     -- IN
-        tx_trigger              => tx_trigger,      -- IN
-        sync_control            => sync_control,    -- OUT
-        no_pos_resync           => no_pos_resync,   -- OUT
-        sp_control              => sp_control,      -- OUT
-        nbt_ctrs_en             => nbt_ctrs_en,     -- OUT
-        dbt_ctrs_en             => dbt_ctrs_en,     -- OUT
+        rx_triggers             => rx_triggers,             -- IN
+        tx_trigger              => tx_trigger,              -- IN
+        sync_control            => sync_control,            -- OUT
+        no_pos_resync           => no_pos_resync,           -- OUT
+        sp_control              => sp_control,              -- OUT
+        nbt_ctrs_en             => nbt_ctrs_en,             -- OUT
+        dbt_ctrs_en             => dbt_ctrs_en,             -- OUT
 
         -- CAN Bus serial data stream
-        rx_data_wbs             => rx_data_wbs,     -- IN
-        tx_data_wbs             => tx_data_wbs,     -- OUT
+        rx_data_wbs             => rx_data_wbs,             -- IN
+        tx_data_wbs             => tx_data_wbs,             -- OUT
 
         -- Others
-        timestamp               => timestamp,           -- IN
-        ssp_reset               => ssp_reset,           -- OUT
-        tran_delay_meas         => tran_delay_meas,     -- OUT
-        bit_err                 => bit_err,             -- IN
-        sample_sec              => sample_sec,          -- IN
-        btmc_reset              => btmc_reset,          -- OUT
-        dbt_measure_start       => dbt_measure_start,   -- OUT
-        gen_first_ssp           => gen_first_ssp,       -- OUT
-        sync_edge               => sync_edge            -- IN
+        timestamp               => timestamp,               -- IN
+        ssp_reset               => ssp_reset,               -- OUT
+        tran_delay_meas         => tran_delay_meas,         -- OUT
+        bit_err                 => bit_err,                 -- IN
+        sample_sec              => sample_sec,              -- IN
+        btmc_reset              => btmc_reset,              -- OUT
+        dbt_measure_start       => dbt_measure_start,       -- OUT
+        gen_first_ssp           => gen_first_ssp,           -- OUT
+        sync_edge               => sync_edge                -- IN
     );
     
     
@@ -908,27 +908,27 @@ begin
         G_SAMPLE_TRIGGER_COUNT  => C_SAMPLE_TRIGGER_COUNT
     )
     port map(
-        clk_sys                 => clk_sys,         -- IN
-        res_n                   => res_n_i,         -- IN
+        clk_sys                 => clk_sys,                 -- IN
+        res_n                   => res_n_i,                 -- IN
         
         -- Memory registers interface
-        drv_bus                 => drv_bus,         -- IN
+        drv_bus                 => drv_bus,                 -- IN
         
         -- Control Interface
-        sync_edge               => sync_edge,       -- IN
-        sp_control              => sp_control,      -- IN
-        sync_control            => sync_control,    -- IN
-        no_pos_resync           => no_pos_resync,   -- IN
-        nbt_ctrs_en             => nbt_ctrs_en,     -- IN
-        dbt_ctrs_en             => dbt_ctrs_en,     -- IN
+        sync_edge               => sync_edge,               -- IN
+        sp_control              => sp_control,              -- IN
+        sync_control            => sync_control,            -- IN
+        no_pos_resync           => no_pos_resync,           -- IN
+        nbt_ctrs_en             => nbt_ctrs_en,             -- IN
+        dbt_ctrs_en             => dbt_ctrs_en,             -- IN
         
         -- Trigger signals
-        rx_triggers             => rx_triggers,     -- OUT
-        tx_trigger              => tx_trigger,      -- OUT
+        rx_triggers             => rx_triggers,             -- OUT
+        tx_trigger              => tx_trigger,              -- OUT
         
         -- Status outputs
-        bt_fsm                  => bt_fsm,          -- OUT
-        tq_edge                 => tq_edge          -- OUT
+        bt_fsm                  => bt_fsm,                  -- OUT
+        tq_edge                 => tq_edge                  -- OUT
     );
   
  
@@ -946,34 +946,34 @@ begin
         G_SSP_CTRS_WIDTH        => C_SSP_CTRS_WIDTH
     )
     port map(
-        clk_sys                 => clk_sys,         -- IN
-        res_n                   => res_n_i,         -- IN
+        clk_sys                 => clk_sys,                 -- IN
+        res_n                   => res_n_i,                 -- IN
 
         -- Physical layer interface
-        can_rx                  => can_rx,          -- IN
-        can_tx                  => can_tx,          -- OUT
+        can_rx                  => can_rx,                  -- IN
+        can_tx                  => can_tx,                  -- OUT
 
         -- Memory registers interface
-        drv_bus                 => drv_bus,         -- IN
-        trv_delay               => trv_delay,       -- OUT
+        drv_bus                 => drv_bus,                 -- IN
+        trv_delay               => trv_delay,               -- OUT
 
         -- Prescaler interface
-        rx_trigger              => rx_triggers(1),  -- IN
-        tx_trigger              => tx_trigger,      -- IN
-        sync_edge               => sync_edge,       -- OUT
-        tq_edge                 => tq_edge,         -- IN
+        rx_trigger              => rx_triggers(1),          -- IN
+        tx_trigger              => tx_trigger,              -- IN
+        sync_edge               => sync_edge,               -- OUT
+        tq_edge                 => tq_edge,                 -- IN
 
         -- CAN Core Interface
-        tx_data_wbs             => tx_data_wbs,         -- IN
-        rx_data_wbs             => rx_data_wbs,         -- OUT
-        sp_control              => sp_control,          -- IN
-        ssp_reset               => ssp_reset,           -- IN
-        tran_delay_meas         => tran_delay_meas,     -- IN
-        sample_sec              => sample_sec,          -- OUT
-        bit_err                 => bit_err,             -- OUT
-        btmc_reset              => btmc_reset,          -- IN
-        dbt_measure_start       => dbt_measure_start,   -- IN
-        gen_first_ssp           => gen_first_ssp        -- IN
+        tx_data_wbs             => tx_data_wbs,             -- IN
+        rx_data_wbs             => rx_data_wbs,             -- OUT
+        sp_control              => sp_control,              -- IN
+        ssp_reset               => ssp_reset,               -- IN
+        tran_delay_meas         => tran_delay_meas,         -- IN
+        sample_sec              => sample_sec,              -- OUT
+        bit_err                 => bit_err,                 -- OUT
+        btmc_reset              => btmc_reset,              -- IN
+        dbt_measure_start       => dbt_measure_start,       -- IN
+        gen_first_ssp           => gen_first_ssp            -- IN
     );
     
     -- <RELEASE_OFF>
