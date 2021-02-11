@@ -543,7 +543,7 @@ begin
         txtb_hw_cmd             => txtb_hw_cmd_i,       -- IN
         txtb_ptr                => txtb_ptr,            -- OUT
         txtb_clk_en             => txtb_clk_en,         -- OUT
-        txtb_changed            => txtb_changed,        -- OUT
+        txtb_changed            => txtb_changed,        -- IN
         
         -- RX Buffer interface
         rec_ident               => rec_ident_i,         -- OUT
