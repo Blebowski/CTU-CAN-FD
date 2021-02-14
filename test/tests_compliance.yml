@@ -235,11 +235,17 @@ compliance:
 
         iso_8_8_1_1:
         iso_8_8_1_2:
+            brp: 3
         iso_8_8_1_3:
+            brp_fd: 3
         iso_8_8_1_4:
+            brp_fd: 3
         iso_8_8_2_1:
         iso_8_8_2_2:
         iso_8_8_2_3:
+            brp_fd: 3
+        iso_8_8_2_4:
+            brp_fd: 3
         iso_8_8_3_1:
             brp_fd: 3
         iso_8_8_3_2:
@@ -250,3 +256,6 @@ compliance:
             brp_fd: 3
         iso_8_8_5_1:
         iso_8_8_5_2:
+
+        iso_9_6_1:
+        iso_9_6_2:
