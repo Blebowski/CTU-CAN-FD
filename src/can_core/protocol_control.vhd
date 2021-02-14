@@ -553,10 +553,10 @@ architecture rtl of protocol_control is
   signal rec_frame_type_i        :     std_logic;
   
   -- Preload control counter
-  signal ctrl_ctr_pload        :      std_logic;
+  signal ctrl_ctr_pload          :      std_logic;
     
   -- Control counter preload value
-  signal ctrl_ctr_pload_val    :      std_logic_vector(8 downto 0);
+  signal ctrl_ctr_pload_val      :      std_logic_vector(8 downto 0);
     
   -- Control counter is enabled
   signal ctrl_ctr_ena            :      std_logic;

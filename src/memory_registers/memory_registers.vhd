@@ -615,7 +615,7 @@ begin
 
     -- CDO - Clear data overrun Flag    
     drv_bus(DRV_CLR_OVR_INDEX) <= align_wrd_to_reg(
-        control_registers_out.command, AFM_IND);
+        control_registers_out.command, CDO_IND);
     
     -- RRB - Release Receive Buffer
     drv_bus(DRV_ERASE_RX_INDEX) <= align_wrd_to_reg(

@@ -204,19 +204,19 @@ architecture rtl of can_top_level is
     -- Common signals
     ----------------------------------------------------------------------------
     -- Driving Bus
-    signal drv_bus              : std_logic_vector(1023 downto 0);
+    signal drv_bus              :    std_logic_vector(1023 downto 0);
     
     -- Status Bus
-    signal stat_bus             : std_logic_vector(511 downto 0);
+    signal stat_bus             :    std_logic_vector(511 downto 0);
     
     -- Synchronised reset
-    signal res_n_sync           : std_logic;
+    signal res_n_sync           :    std_logic;
     
     -- Internal reset (Synchronised reset + Soft Reset)
-    signal res_n_i              : std_logic;
+    signal res_n_i              :    std_logic;
     
     -- Sample control (Nominal, Data, Secondary)
-    signal sp_control           : std_logic_vector(1 downto 0);
+    signal sp_control           :    std_logic_vector(1 downto 0);
     
     ----------------------------------------------------------------------------
     -- RX Buffer <-> Memory registers Interface
