@@ -883,12 +883,12 @@ begin
                              else
                          '0';
 
-    pex_on_fdf_enable <= '1' when (drv_ena = FDE_DISABLE and
+    pex_on_fdf_enable <= '1' when (drv_can_fd_ena = FDE_DISABLE and
                                    drv_pex = PROTOCOL_EXCEPTION_ENABLED) 
                              else
                          '0';
 
-    pex_on_res_enable <= '1' when (drv_ena = FDE_ENABLE and
+    pex_on_res_enable <= '1' when (drv_can_fd_ena = FDE_ENABLE and
                                    drv_pex = PROTOCOL_EXCEPTION_ENABLED)
                              else
                          '0';
