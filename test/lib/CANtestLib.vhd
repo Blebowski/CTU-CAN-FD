@@ -280,6 +280,7 @@ package CANtestLib is
         rx_read_pointer         :   natural range 0 to 2 ** 13 - 1;
         rx_full                 :   boolean;
         rx_empty                :   boolean;
+        rx_mof                  :   boolean;
         rx_frame_count          :   natural range 0 to 2 ** 11 - 1;
     end record;
 
@@ -4234,6 +4235,7 @@ package body CANtestLib is
         CAN_read(data, RX_STATUS_ADR, ID, mem_bus, BIT_16);
         retVal.rx_full          := false;
         retVal.rx_empty         := false;
+        retVal.rx_mof           := false;
 
         if (data(RXF_IND) = '1') then
             retVal.rx_full      := true;
@@ -4241,6 +4243,10 @@ package body CANtestLib is
 
         if (data(RXE_IND) = '1') then
             retVal.rx_empty     := true;
+        end if;
+        
+        if (data(RXMOF_IND) = '1') then
+            retVal.rx_mof       := true;
         end if;
 
         retVal.rx_frame_count   := to_integer(unsigned(

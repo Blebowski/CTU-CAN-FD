@@ -148,6 +148,7 @@ feature:
         rec_saturation:
         rx_settings_rtsop:
         rx_status:
+        rx_status_mof:
         rx_buf_empty_read:
         tx_counter:
         rx_counter:
