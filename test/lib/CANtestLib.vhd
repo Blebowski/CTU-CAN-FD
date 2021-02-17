@@ -205,10 +205,11 @@ package CANtestLib is
         err_ctrs_rst            :   boolean;
         rx_frame_ctr_rst        :   boolean;
         tx_frame_ctr_rst        :   boolean;
+        clear_pexs_flag         :   boolean;
     end record;
 
     constant SW_command_rst_val : SW_command :=
-        (false, false, false, false, false);
+        (false, false, false, false, false, false);
 
     -- Controller status
     type SW_status is record
@@ -220,6 +221,7 @@ package CANtestLib is
         transmitter             :   boolean;
         error_warning           :   boolean;
         bus_status              :   boolean;
+        protocol_exception      :   boolean;
     end record;
 
 
@@ -4470,17 +4472,21 @@ package body CANtestLib is
         end if;
         
         if (command.err_ctrs_rst) then
-            data(ERCRST_IND)        := '1';
+            data(ERCRST_IND)     := '1';
         end if;
         
         if (command.rx_frame_ctr_rst) then
-            data(RXFCRST_IND)        := '1';
+            data(RXFCRST_IND)    := '1';
         end if;
         
         if (command.tx_frame_ctr_rst) then
-            data(TXFCRST_IND)        := '1';
+            data(TXFCRST_IND)    := '1';
         end if;
 
+        if (command.clear_pexs_flag) then
+            data(CPEXS_IND)      := '1';
+        end if;
+        
         CAN_write(data, COMMAND_ADR, ID, mem_bus, BIT_32);
     end procedure;
 
@@ -4533,6 +4539,10 @@ package body CANtestLib is
 
         if (data(IDLE_IND) = '1') then
             status.bus_status           := true;
+        end if;
+        
+        if (data(PEXS_IND) = '1') then
+            status.protocol_exception   := true;
         end if;
     end procedure;
 
