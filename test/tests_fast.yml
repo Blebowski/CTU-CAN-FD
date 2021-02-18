@@ -102,6 +102,7 @@ feature:
         mode_test:
         mode_fdrf:
         mode_restr_op:
+        mode_pex:
         int_rx:
         int_tx:
         int_ewl:
@@ -117,6 +118,7 @@ feature:
         rec_saturation:
         rx_settings_rtsop:
         rx_status:
+        rx_status_mof:
         rx_buf_empty_read:
         tx_counter:
         rx_counter:
