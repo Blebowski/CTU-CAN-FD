@@ -120,8 +120,7 @@ test_ip_nightly:
 test_ip_compliance:
     stage: test
     dependencies: [build_ip_and_tests]
-    only:
-        - schedules
+    only: *only
     script:
         - cd test
         - make test_compliance
