@@ -102,6 +102,7 @@ feature:
         mode_test:
         mode_fdrf:
         mode_restr_op:
+        mode_pex:
         int_rx:
         int_tx:
         int_ewl:
