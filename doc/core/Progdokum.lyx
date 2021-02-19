@@ -4397,7 +4397,31 @@ When CTU CAN FD becomes bus-off due to TEC > 255, TXT buffers can react
 \end_layout
 
 \begin_layout Enumerate
-All TXT buffers immediately go to 
+All TXT buffers which are in 
+\begin_inset Quotes eld
+\end_inset
+
+Ready
+\begin_inset Quotes erd
+\end_inset
+
+, 
+\begin_inset Quotes eld
+\end_inset
+
+TX in Progress
+\begin_inset Quotes erd
+\end_inset
+
+ or 
+\begin_inset Quotes eld
+\end_inset
+
+Abort in Progress
+\begin_inset Quotes erd
+\end_inset
+
+ immediately go to 
 \begin_inset Quotes eld
 \end_inset
 
@@ -4411,9 +4435,28 @@ TX failed
 \end_layout
 
 \begin_layout Enumerate
-TXT buffers remain in their current states.
+TXT buffer which was used for transmission at time when CTU CAN FD became
+ bus-off, will behave as if any other error frame was transmitted.
  This option is enabled by setting SETTINGS[TBFBO] = 0.
- After CTU CAN FD finishes reintegration (see 
+ If no 
+\begin_inset Quotes eld
+\end_inset
+
+Set abort
+\begin_inset Quotes erd
+\end_inset
+
+ command was issued to this buffer, nor retransmitt limit was reached, the
+ buffer will become 
+\begin_inset Quotes eld
+\end_inset
+
+Ready
+\begin_inset Quotes erd
+\end_inset
+
+.
+ When CTU CAN FD finishes reintegration (see 
 \begin_inset CommandInset ref
 LatexCommand ref
 reference "sec:Operating-modes"
@@ -4423,11 +4466,10 @@ noprefix "false"
 
 \end_inset
 
-), transmission will begin from one one such TXT buffer, as per regular
- TXT buffer selection by priority.
- This option is usefull when, COMMAND[ERCRST] is issued in advance, and
- CTU CAN FD will automatically start reintegration after becoming bus-off.
- It allows re-integrating with the bus without need of SW interaction.
+), transmission from this TXT buffer will begin as per regular TXT buffer
+ selection by priority.
+ This option allows going bus-off and re-integrating without the need of
+ SW interaction with TXT buffers.
 \end_layout
 
 \begin_layout Subsection
