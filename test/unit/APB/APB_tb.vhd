@@ -242,7 +242,7 @@ begin
         wait until rising_edge(aclk);
 
         apb_read(DEVICE_ID_ADR);
-        check(s_apb_prdata = x"0202CAFD", "CAN ID reg mismatch (just after HW reset)");
+        check(s_apb_prdata = x"0203CAFD", "CAN ID reg mismatch (just after HW reset)");
 
         apb_write(BTR_ADR, x"FFFFFFFF", b"1111");
         apb_read(DEVICE_ID_ADR);
