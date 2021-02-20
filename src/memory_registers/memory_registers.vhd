@@ -1290,8 +1290,7 @@ begin
             txtb3_stat_gen_false : if (G_TXT_BUFFER_COUNT <= buf_index) generate
                 Control_registers_in.tx_status(
                     align_reg_to_wrd(index_h, length) downto
-                    align_reg_to_wrd(index_l, length)) <=
-                    (OTHERS => '0');
+                    align_reg_to_wrd(index_l, length)) <= TXT_NOT_EXIST;
             end generate txtb3_stat_gen_false;
 
         end generate txtb_status_gen_loop;

@@ -2142,6 +2142,12 @@
 								<ipxact:value>'h6</ipxact:value>
 							</ipxact:enumeratedValue>
 							<ipxact:enumeratedValue usage="read">
+								<ipxact:name>TXT_NOT_EXIST</ipxact:name>
+								<ipxact:displayName>TXT_NOT_EXIST</ipxact:displayName>
+								<ipxact:description>TXT buffer does not exist in the core (applies only to TXT buffers 3-8, when CTU CAN FD was synthesized with less than 8 TXT buffers).</ipxact:description>
+								<ipxact:value>'h0</ipxact:value>
+							</ipxact:enumeratedValue>
+							<ipxact:enumeratedValue usage="read">
 								<ipxact:name>TXT_ABT</ipxact:name>
 								<ipxact:displayName>TXT_ABT</ipxact:displayName>
 								<ipxact:description>TXT buffer is in &quot;Aborted&quot; state.</ipxact:description>

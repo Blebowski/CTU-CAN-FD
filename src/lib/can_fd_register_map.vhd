@@ -859,6 +859,7 @@ package can_fd_register_map is
   constant TX8S_H                : natural := 31;
 
   -- "TX1S" field enumerated values
+  constant TXT_NOT_EXIST : std_logic_vector(3 downto 0) := x"0";
   constant TXT_RDY : std_logic_vector(3 downto 0) := x"1";
   constant TXT_TRAN : std_logic_vector(3 downto 0) := x"2";
   constant TXT_ABTP : std_logic_vector(3 downto 0) := x"3";

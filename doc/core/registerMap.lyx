@@ -37929,6 +37929,7 @@ cellcolor{cyan}
 \end_layout
 \begin_layout Description
 TX1S Status of TXT buffer 1.\begin_inset Newline newline\end_inset
+		0b0000  - TXT_NOT_EXIST - TXT buffer does not exist in the core (applies only to TXT buffers 3-8, when CTU CAN FD was synthesized with less than 8 TXT buffers).\begin_inset Newline newline\end_inset
 		0b0001  - TXT_RDY - TXT buffer is in "Ready" state, it is waiting for CTU CAN FD to start transmission from it.\begin_inset Newline newline\end_inset
 		0b0010  - TXT_TRAN - TXT buffer is in "TX in progress" state. CTU CAN FD is transmitting frame.\begin_inset Newline newline\end_inset
 		0b0011  - TXT_ABTP - TXT buffer is in "Abort in progress" state.\begin_inset Newline newline\end_inset

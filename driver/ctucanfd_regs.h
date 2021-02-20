@@ -789,13 +789,14 @@ union ctu_can_fd_tx_status {
 };
 
 enum ctu_can_fd_tx_status_tx1s {
-	TXT_RDY        = 0x1,
-	TXT_TRAN       = 0x2,
-	TXT_ABTP       = 0x3,
-	TXT_TOK        = 0x4,
-	TXT_ERR        = 0x6,
-	TXT_ABT        = 0x7,
-	TXT_ETY        = 0x8,
+	TXT_NOT_EXIST       = 0x0,
+	TXT_RDY             = 0x1,
+	TXT_TRAN            = 0x2,
+	TXT_ABTP            = 0x3,
+	TXT_TOK             = 0x4,
+	TXT_ERR             = 0x6,
+	TXT_ABT             = 0x7,
+	TXT_ETY             = 0x8,
 };
 
 union ctu_can_fd_tx_command_tx_config {
