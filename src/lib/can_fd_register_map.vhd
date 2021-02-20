@@ -121,6 +121,7 @@ package can_fd_register_map is
   constant RX_DATA_ADR               : std_logic_vector(11 downto 0) := x"06C";
   constant TX_STATUS_ADR             : std_logic_vector(11 downto 0) := x"070";
   constant TX_COMMAND_ADR            : std_logic_vector(11 downto 0) := x"074";
+  constant TX_CONFIG_ADR             : std_logic_vector(11 downto 0) := x"076";
   constant TX_PRIORITY_ADR           : std_logic_vector(11 downto 0) := x"078";
   constant ERR_CAPT_ADR              : std_logic_vector(11 downto 0) := x"07C";
   constant ALC_ADR                   : std_logic_vector(11 downto 0) := x"07E";
@@ -176,6 +177,50 @@ package can_fd_register_map is
   constant TXTB4_DATA_1_ADR          : std_logic_vector(11 downto 0) := x"400";
   constant TXTB4_DATA_2_ADR          : std_logic_vector(11 downto 0) := x"404";
   constant TXTB4_DATA_20_ADR         : std_logic_vector(11 downto 0) := x"44C";
+
+  ------------------------------------------------------------------------------
+  ------------------------------------------------------------------------------
+  -- Address block: TX_Buffer_5
+  ------------------------------------------------------------------------------
+  ------------------------------------------------------------------------------
+  constant TX_BUFFER_5_BLOCK            : std_logic_vector(3 downto 0) := x"5";
+
+  constant TXTB5_DATA_1_ADR          : std_logic_vector(11 downto 0) := x"500";
+  constant TXTB5_DATA_2_ADR          : std_logic_vector(11 downto 0) := x"504";
+  constant TXTB5_DATA_20_ADR         : std_logic_vector(11 downto 0) := x"54C";
+
+  ------------------------------------------------------------------------------
+  ------------------------------------------------------------------------------
+  -- Address block: TX_Buffer_6
+  ------------------------------------------------------------------------------
+  ------------------------------------------------------------------------------
+  constant TX_BUFFER_6_BLOCK            : std_logic_vector(3 downto 0) := x"6";
+
+  constant TXTB6_DATA_1_ADR          : std_logic_vector(11 downto 0) := x"600";
+  constant TXTB6_DATA_2_ADR          : std_logic_vector(11 downto 0) := x"604";
+  constant TXTB6_DATA_20_ADR         : std_logic_vector(11 downto 0) := x"64C";
+
+  ------------------------------------------------------------------------------
+  ------------------------------------------------------------------------------
+  -- Address block: TX_Buffer_7
+  ------------------------------------------------------------------------------
+  ------------------------------------------------------------------------------
+  constant TX_BUFFER_7_BLOCK            : std_logic_vector(3 downto 0) := x"7";
+
+  constant TXTB7_DATA_1_ADR          : std_logic_vector(11 downto 0) := x"700";
+  constant TXTB7_DATA_2_ADR          : std_logic_vector(11 downto 0) := x"704";
+  constant TXTB7_DATA_20_ADR         : std_logic_vector(11 downto 0) := x"74C";
+
+  ------------------------------------------------------------------------------
+  ------------------------------------------------------------------------------
+  -- Address block: TX_Buffer_8
+  ------------------------------------------------------------------------------
+  ------------------------------------------------------------------------------
+  constant TX_BUFFER_8_BLOCK            : std_logic_vector(3 downto 0) := x"8";
+
+  constant TXTB8_DATA_1_ADR          : std_logic_vector(11 downto 0) := x"800";
+  constant TXTB8_DATA_2_ADR          : std_logic_vector(11 downto 0) := x"804";
+  constant TXTB8_DATA_20_ADR         : std_logic_vector(11 downto 0) := x"84C";
 
   ------------------------------------------------------------------------------
   -- DEVICE_ID register
@@ -804,6 +849,14 @@ package can_fd_register_map is
   constant TX3S_H                : natural := 11;
   constant TX4S_L                : natural := 12;
   constant TX4S_H                : natural := 15;
+  constant TX5S_L                : natural := 16;
+  constant TX5S_H                : natural := 19;
+  constant TX6S_L                : natural := 20;
+  constant TX6S_H                : natural := 23;
+  constant TX7S_L                : natural := 24;
+  constant TX7S_H                : natural := 27;
+  constant TX8S_L                : natural := 28;
+  constant TX8S_H                : natural := 31;
 
   -- "TX1S" field enumerated values
   constant TXT_RDY : std_logic_vector(3 downto 0) := x"1";
@@ -819,13 +872,17 @@ package can_fd_register_map is
   constant TX1S_RSTVAL : std_logic_vector(3 downto 0) := x"8";
   constant TX3S_RSTVAL : std_logic_vector(3 downto 0) := x"8";
   constant TX4S_RSTVAL : std_logic_vector(3 downto 0) := x"8";
+  constant TX5S_RSTVAL : std_logic_vector(3 downto 0) := x"8";
+  constant TX7S_RSTVAL : std_logic_vector(3 downto 0) := x"8";
+  constant TX6S_RSTVAL : std_logic_vector(3 downto 0) := x"8";
+  constant TX8S_RSTVAL : std_logic_vector(3 downto 0) := x"8";
 
   ------------------------------------------------------------------------------
   -- TX_COMMAND register
   --
   -- Command register for TXT buffers. Command is activated by writing logic 1 t
   -- o TXC(E|R|A) bit. TXT buffer that receives the command is selected by setti
-  -- ng bit TXB[1-4] to logic 1. Command and index must be set by single access.
+  -- ng bit TXB[1-8] to logic 1. Command and index must be set by single access.
   --  Register is automatically erased upon the command completion. Reffer to de
   -- scription of TXT buffer for meaning of commands. If TXCE and TXCR are appli
   -- ed simultaneously, only TXCE command is applied. If multiple commands are a
@@ -839,6 +896,10 @@ package can_fd_register_map is
   constant TXB2_IND               : natural := 9;
   constant TXB3_IND              : natural := 10;
   constant TXB4_IND              : natural := 11;
+  constant TXB5_IND              : natural := 12;
+  constant TXB6_IND              : natural := 13;
+  constant TXB7_IND              : natural := 14;
+  constant TXB8_IND              : natural := 15;
 
   -- TX_COMMAND register reset values
   constant TXCE_RSTVAL        : std_logic := '0';
@@ -848,6 +909,21 @@ package can_fd_register_map is
   constant TXB2_RSTVAL        : std_logic := '0';
   constant TXB3_RSTVAL        : std_logic := '0';
   constant TXB4_RSTVAL        : std_logic := '0';
+  constant TXB5_RSTVAL        : std_logic := '0';
+  constant TXB6_RSTVAL        : std_logic := '0';
+  constant TXB7_RSTVAL        : std_logic := '0';
+  constant TXB8_RSTVAL        : std_logic := '0';
+
+  ------------------------------------------------------------------------------
+  -- TX_CONFIG register
+  --
+  -- Register with number of TXT Buffers present in CTU CAN FD.
+  ------------------------------------------------------------------------------
+  constant TXT_BUFFER_COUNT_L    : natural := 16;
+  constant TXT_BUFFER_COUNT_H    : natural := 19;
+
+  -- TX_CONFIG register reset values
+  constant TXT_BUFFER_COUNT_RSTVAL : std_logic_vector(3 downto 0) := x"4";
 
   ------------------------------------------------------------------------------
   -- TX_PRIORITY register
@@ -863,12 +939,24 @@ package can_fd_register_map is
   constant TXT3P_H               : natural := 10;
   constant TXT4P_L               : natural := 12;
   constant TXT4P_H               : natural := 14;
+  constant TXT5P_L               : natural := 16;
+  constant TXT5P_H               : natural := 18;
+  constant TXT6P_L               : natural := 20;
+  constant TXT6P_H               : natural := 22;
+  constant TXT7P_L               : natural := 24;
+  constant TXT7P_H               : natural := 26;
+  constant TXT8P_L               : natural := 28;
+  constant TXT8P_H               : natural := 30;
 
   -- TX_PRIORITY register reset values
   constant TXT1P_RSTVAL : std_logic_vector(2 downto 0) := "001";
   constant TXT2P_RSTVAL : std_logic_vector(2 downto 0) := "000";
   constant TXT3P_RSTVAL : std_logic_vector(2 downto 0) := "000";
   constant TXT4P_RSTVAL : std_logic_vector(2 downto 0) := "000";
+  constant TXT5P_RSTVAL : std_logic_vector(2 downto 0) := "000";
+  constant TXT6P_RSTVAL : std_logic_vector(2 downto 0) := "000";
+  constant TXT7P_RSTVAL : std_logic_vector(2 downto 0) := "000";
+  constant TXT8P_RSTVAL : std_logic_vector(2 downto 0) := "000";
 
   ------------------------------------------------------------------------------
   -- ERR_CAPT register
@@ -1178,5 +1266,125 @@ package can_fd_register_map is
   constant TXTB4_DATA_20_H       : natural := 31;
 
   -- TXTB4_DATA_20 register reset values
+
+  ------------------------------------------------------------------------------
+  -- TXTB5_DATA_1 register
+  --
+  -- This adress word corresponds to FRAME_FORM word
+  ------------------------------------------------------------------------------
+  constant TXTB5_DATA_1_L         : natural := 0;
+  constant TXTB5_DATA_1_H        : natural := 31;
+
+  -- TXTB5_DATA_1 register reset values
+
+  ------------------------------------------------------------------------------
+  -- TXTB5_DATA_2 register
+  --
+  -- This adress word corresponds to IDENTIFIER word.
+  ------------------------------------------------------------------------------
+  constant TXTB5_DATA_2_L         : natural := 0;
+  constant TXTB5_DATA_2_H        : natural := 31;
+
+  -- TXTB5_DATA_2 register reset values
+
+  ------------------------------------------------------------------------------
+  -- TXTB5_DATA_20 register
+  --
+  -- This adress word corresponds to DATA_61_64 word.
+  ------------------------------------------------------------------------------
+  constant TXTB5_DATA_20_L        : natural := 0;
+  constant TXTB5_DATA_20_H       : natural := 31;
+
+  -- TXTB5_DATA_20 register reset values
+
+  ------------------------------------------------------------------------------
+  -- TXTB6_DATA_1 register
+  --
+  -- This adress word corresponds to FRAME_FORM word
+  ------------------------------------------------------------------------------
+  constant TXTB6_DATA_1_L         : natural := 0;
+  constant TXTB6_DATA_1_H        : natural := 31;
+
+  -- TXTB6_DATA_1 register reset values
+
+  ------------------------------------------------------------------------------
+  -- TXTB6_DATA_2 register
+  --
+  -- This adress word corresponds to IDENTIFIER word.
+  ------------------------------------------------------------------------------
+  constant TXTB6_DATA_2_L         : natural := 0;
+  constant TXTB6_DATA_2_H        : natural := 31;
+
+  -- TXTB6_DATA_2 register reset values
+
+  ------------------------------------------------------------------------------
+  -- TXTB6_DATA_20 register
+  --
+  -- This adress word corresponds to DATA_61_64 word.
+  ------------------------------------------------------------------------------
+  constant TXTB6_DATA_20_L        : natural := 0;
+  constant TXTB6_DATA_20_H       : natural := 31;
+
+  -- TXTB6_DATA_20 register reset values
+
+  ------------------------------------------------------------------------------
+  -- TXTB7_DATA_1 register
+  --
+  -- This adress word corresponds to FRAME_FORM word
+  ------------------------------------------------------------------------------
+  constant TXTB7_DATA_1_L         : natural := 0;
+  constant TXTB7_DATA_1_H        : natural := 31;
+
+  -- TXTB7_DATA_1 register reset values
+
+  ------------------------------------------------------------------------------
+  -- TXTB7_DATA_2 register
+  --
+  -- This adress word corresponds to IDENTIFIER word.
+  ------------------------------------------------------------------------------
+  constant TXTB7_DATA_2_L         : natural := 0;
+  constant TXTB7_DATA_2_H        : natural := 31;
+
+  -- TXTB7_DATA_2 register reset values
+
+  ------------------------------------------------------------------------------
+  -- TXTB7_DATA_20 register
+  --
+  -- This adress word corresponds to DATA_61_64 word.
+  ------------------------------------------------------------------------------
+  constant TXTB7_DATA_20_L        : natural := 0;
+  constant TXTB7_DATA_20_H       : natural := 31;
+
+  -- TXTB7_DATA_20 register reset values
+
+  ------------------------------------------------------------------------------
+  -- TXTB8_DATA_1 register
+  --
+  -- This adress word corresponds to FRAME_FORM word
+  ------------------------------------------------------------------------------
+  constant TXTB8_DATA_1_L         : natural := 0;
+  constant TXTB8_DATA_1_H        : natural := 31;
+
+  -- TXTB8_DATA_1 register reset values
+
+  ------------------------------------------------------------------------------
+  -- TXTB8_DATA_2 register
+  --
+  -- This adress word corresponds to IDENTIFIER word.
+  ------------------------------------------------------------------------------
+  constant TXTB8_DATA_2_L         : natural := 0;
+  constant TXTB8_DATA_2_H        : natural := 31;
+
+  -- TXTB8_DATA_2 register reset values
+
+  ------------------------------------------------------------------------------
+  -- TXTB8_DATA_20 register
+  --
+  -- This adress word corresponds to DATA_61_64 word.
+  ------------------------------------------------------------------------------
+  constant TXTB8_DATA_20_L        : natural := 0;
+  constant TXTB8_DATA_20_H       : natural := 31;
+
+  -- TXTB8_DATA_20 register reset values
 
 end package;

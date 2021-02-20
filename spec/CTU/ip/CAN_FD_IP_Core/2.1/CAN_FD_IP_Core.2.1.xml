@@ -3199,7 +3199,7 @@
 					<ipxact:addressOffset>'h4</ipxact:addressOffset>
 					<ipxact:size>32</ipxact:size>
 					<ipxact:field>
-						<ipxact:name>TXTB5_DATA_2</ipxact:name>
+						<ipxact:name>TXTB6_DATA_2</ipxact:name>
 						<ipxact:bitOffset>0</ipxact:bitOffset>
 						<ipxact:bitWidth>32</ipxact:bitWidth>
 					</ipxact:field>
