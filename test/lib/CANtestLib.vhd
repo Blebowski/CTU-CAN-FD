@@ -193,10 +193,11 @@ package CANtestLib is
         pex_support             :   boolean;
         fdrf                    :   boolean;
         restricted_operation    :   boolean;
+        tx_buf_bus_off_failed   :   boolean;
     end record;
     
     constant SW_mode_rst_val : SW_mode := (false, false, false, false, false,
-        true, false, false, false, true, false, false, false);
+        true, false, false, false, true, false, false, false, true);
 
     -- Controller commands
     type SW_command is record
@@ -4359,6 +4360,12 @@ package body CANtestLib is
         else
             data(FDRF_IND) := '0';
         end if;
+        
+        if (mode.tx_buf_bus_off_failed) then
+            data(TBFBO_IND) := '1';
+        else
+            data(TBFBO_IND) := '0';
+        end if;
 
         CAN_write(data, SETTINGS_ADR, ID, mem_bus, BIT_16);
     end procedure;
@@ -4430,10 +4437,22 @@ package body CANtestLib is
             mode.internal_loopback      := false;
         end if;
         
+        if (data(PEX_IND) = '1') then
+            mode.pex_support            := true;
+        else
+            mode.pex_support            := false;
+        end if;
+        
         if (data(FDRF_IND) = '1') then
             mode.fdrf                   := true;
         else
             mode.fdrf                   := false;
+        end if;
+        
+        if (data(TBFBO_IND) = '1') then
+            mode.tx_buf_bus_off_failed  := true;
+        else
+            mode.tx_buf_bus_off_failed  := false;
         end if;
 
     end procedure;
