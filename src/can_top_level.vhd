@@ -105,6 +105,9 @@ entity can_top_level is
         -- RX Buffer RAM size (32 bit words)
         rx_buffer_size      : natural range 32 to 4096 := 128;
 
+        -- Number of supported TXT buffers
+        txt_buffer_count    : natural range 2 to 8   := C_TXT_BUFFER_COUNT; 
+
         -- Insert Filter A
         sup_filtA           : boolean                := true;
         
@@ -255,6 +258,7 @@ architecture rtl of can_top_level is
     ----------------------------------------------------------------------------
     -- TXT Buffer <-> Memory registers Interface
     ----------------------------------------------------------------------------
+        
     -- TXT Buffer RAM - Data input
     signal txtb_port_a_data     :    std_logic_vector(31 downto 0);
     
@@ -262,19 +266,19 @@ architecture rtl of can_top_level is
     signal txtb_port_a_address  :    std_logic_vector(4 downto 0);
     
     -- TXT Buffer chip select
-    signal txtb_port_a_cs       :    std_logic_vector(C_TXT_BUFFER_COUNT - 1 downto 0);
+    signal txtb_port_a_cs       :    std_logic_vector(txt_buffer_count - 1 downto 0);
 
     -- TXT Buffer status
-    signal txtb_state           :    t_txt_bufs_state;
+    signal txtb_state           :    t_txt_bufs_state(txt_buffer_count - 1 downto 0);
 
     -- SW Commands to TXT Buffer
     signal txtb_sw_cmd          :    t_txtb_sw_cmd;
     
     -- Command Index (Index in logic 1 means command is valid for buffer)          
-    signal txtb_sw_cmd_index    :    std_logic_vector(C_TXT_BUFFER_COUNT - 1 downto 0);
+    signal txtb_sw_cmd_index    :    std_logic_vector(txt_buffer_count - 1 downto 0);
     
     -- TXT Buffer priorities
-    signal txtb_prorities       :    t_txt_bufs_priorities;
+    signal txtb_prorities       :    t_txt_bufs_priorities(txt_buffer_count - 1 downto 0);
     
     -- TXT Buffer bus-off behavior
     signal txt_buf_failed_bof   :    std_logic;
@@ -351,7 +355,7 @@ architecture rtl of can_top_level is
     -- TXT Buffers <-> Interrrupt Manager Interface
     ------------------------------------------------------------------------
     -- TXT HW Commands Applied Interrupt
-    signal txtb_hw_cmd_int      :    std_logic_vector(C_TXT_BUFFER_COUNT - 1 downto 0);
+    signal txtb_hw_cmd_int      :    std_logic_vector(txt_buffer_count - 1 downto 0);
 
     ------------------------------------------------------------------------
     -- TXT Buffers <-> CAN Core Interface
@@ -366,16 +370,16 @@ architecture rtl of can_top_level is
     -- TXT Buffers <-> TX Arbitrator
     ------------------------------------------------------------------------    
     -- Index of TXT Buffer for which HW commands is valid          
-    signal txtb_hw_cmd_index   :   natural range 0 to C_TXT_BUFFER_COUNT - 1;
+    signal txtb_hw_cmd_index   :   natural range 0 to txt_buffer_count - 1;
     
     -- TXT Buffers are available, can be selected by TX Arbitrator
-    signal txtb_available      :   std_logic_vector(C_TXT_BUFFER_COUNT - 1 downto 0);
+    signal txtb_available      :   std_logic_vector(txt_buffer_count - 1 downto 0);
         
     -- Pointer to TXT Buffer
     signal txtb_ptr            :   natural range 0 to 19;
     
     -- TXT Buffer RAM data outputs
-    signal txtb_port_b_data    :   t_txt_bufs_output;
+    signal txtb_port_b_data    :   t_txt_bufs_output(txt_buffer_count - 1 downto 0);
     
     -- TXT Buffer RAM address
     signal txtb_port_b_address :   natural range 0 to 19;
@@ -547,7 +551,7 @@ begin
         G_SUP_FILTC             => sup_filtC,
         G_SUP_RANGE             => sup_range,
         G_SUP_TRAFFIC_CTRS      => sup_traffic_ctrs,
-        G_TXT_BUFFER_COUNT      => C_TXT_BUFFER_COUNT, 
+        G_TXT_BUFFER_COUNT      => txt_buffer_count, 
         G_INT_COUNT             => C_INT_COUNT,
         G_TRV_CTR_WIDTH         => C_TRV_CTR_WIDTH,
         G_DEVICE_ID             => C_CAN_DEVICE_ID,
@@ -658,11 +662,12 @@ begin
     ---------------------------------------------------------------------------
     -- TXT Buffers
     ---------------------------------------------------------------------------
-    txt_buf_comp_gen : for i in 0 to C_TXT_BUFFER_COUNT - 1 generate
+    txt_buf_comp_gen : for i in 0 to txt_buffer_count - 1 generate
+    begin
         txt_buffer_inst : txt_buffer
         generic map(
             G_RESET_POLARITY    => C_RESET_POLARITY,
-            G_TXT_BUFFER_COUNT  => C_TXT_BUFFER_COUNT,
+            G_TXT_BUFFER_COUNT  => txt_buffer_count,
             G_ID                => i,
             G_TECHNOLOGY        => target_technology
         )
@@ -701,7 +706,7 @@ begin
     tx_arbitrator_inst : tx_arbitrator
     generic map(
         G_RESET_POLARITY        => C_RESET_POLARITY,
-        G_TXT_BUFFER_COUNT      => C_TXT_BUFFER_COUNT
+        G_TXT_BUFFER_COUNT      => txt_buffer_count
     )
     port map( 
         clk_sys                 => clk_sys,                 -- IN
@@ -776,7 +781,7 @@ begin
     generic map(
         G_RESET_POLARITY        => C_RESET_POLARITY,
         G_INT_COUNT             => C_INT_COUNT,
-        G_TXT_BUFFER_COUNT      => C_TXT_BUFFER_COUNT
+        G_TXT_BUFFER_COUNT      => txt_buffer_count
     )
     port map(
         clk_sys                 => clk_sys,                 -- IN
@@ -1001,13 +1006,13 @@ begin
      
     -- psl no_tx_buf_transmitting_in_overload : assert never
     --  (((txtb_state(0) = TXT_TRAN) or (txtb_state(0) = TXT_ABTP)) or
-    --   ((txtb_state(1) = TXT_TRAN) or (txtb_state(1) = TXT_ABTP)) or
-    --   ((txtb_state(2) = TXT_TRAN) or (txtb_state(2) = TXT_ABTP)) or
-    --   ((txtb_state(3) = TXT_TRAN) or (txtb_state(3) = TXT_ABTP))) and
+    --   ((txtb_state(1) = TXT_TRAN) or (txtb_state(1) = TXT_ABTP))) and
     --   (is_overload = '1')
     --   report "TXT Buffer should have been unlocked when node is in " &
     --      " Overload frame!"
     --   severity error;
+
+    -- TODO: Add assertions also for other TXT buffer indices!
 
     -- <RELEASE_ON>
     

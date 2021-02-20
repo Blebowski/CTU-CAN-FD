@@ -91,6 +91,7 @@ use ctu_can_fd_rtl.CAN_FD_frame_format.all;
 entity can_top_apb is
     generic(
         rx_buffer_size   : natural range 32 to 4098 := 128;
+        txt_buffer_count : natural range 2 to 8     := 4; 
         sup_filtA        : boolean                  := true;
         sup_filtB        : boolean                  := true;
         sup_filtC        : boolean                  := true;
@@ -133,12 +134,13 @@ begin
 
     can_inst: CAN_top_level
         generic map (
-            rx_buffer_size  => rx_buffer_size,
-            sup_filtA       => sup_filtA,
-            sup_filtB       => sup_filtB,
-            sup_filtC       => sup_filtC,
-            sup_range       => sup_range,
-            sup_traffic_ctrs=> sup_traffic_ctrs
+            rx_buffer_size      => rx_buffer_size,
+            txt_buffer_count    => txt_buffer_count,
+            sup_filtA           => sup_filtA,
+            sup_filtB           => sup_filtB,
+            sup_filtC           => sup_filtC,
+            sup_range           => sup_range,
+            sup_traffic_ctrs    => sup_traffic_ctrs
         )
         port map (
             clk_sys         => aclk,

@@ -92,6 +92,9 @@ package can_components is
             -- RX Buffer RAM size (32 bit words)
             rx_buffer_size : natural range 32 to 4096 := 128;
     
+            -- Number of supported TXT buffers
+            txt_buffer_count    : natural range 2 to 8   := 4; 
+        
             -- Insert Filter A
             sup_filtA      : boolean                := true;
             
@@ -3250,7 +3253,7 @@ package can_components is
         txtb_port_a_cs       :out  std_logic_vector(G_TXT_BUFFER_COUNT - 1 downto 0);
 
         -- TXT Buffer status
-        txtb_state           :in   t_txt_bufs_state;
+        txtb_state           :in   t_txt_bufs_state(G_TXT_BUFFER_COUNT - 1 downto 0);
 
         -- SW Commands to TXT Buffer
         txtb_sw_cmd          :out  t_txtb_sw_cmd;
@@ -3259,7 +3262,7 @@ package can_components is
         txtb_sw_cmd_index    :out  std_logic_vector(G_TXT_BUFFER_COUNT - 1 downto 0);
         
         -- TXT Buffer priorities
-        txtb_prorities       :out  t_txt_bufs_priorities;
+        txtb_prorities       :out  t_txt_bufs_priorities(G_TXT_BUFFER_COUNT - 1 downto 0);
          
         -- TXT Buffer bus-off behavior
         txt_buf_failed_bof   :out  std_logic;
@@ -4075,7 +4078,7 @@ package can_components is
         -- TXT Buffer information
         ------------------------------------------------------------------------
         -- TXT Buffer priority
-        prio             : in  t_txt_bufs_priorities;
+        prio             : in  t_txt_bufs_priorities(G_TXT_BUFFER_COUNT - 1 downto 0);
         
         -- TXT Buffer is valid for selection
         prio_valid       : in  std_logic_vector(G_TXT_BUFFER_COUNT - 1 downto 0);
@@ -4198,7 +4201,7 @@ package can_components is
         -- TXT Buffers interface
         -----------------------------------------------------------------------
         -- Data words from TXT Buffers RAM memories
-        txtb_port_b_data        :in t_txt_bufs_output;
+        txtb_port_b_data        :in t_txt_bufs_output(G_TXT_BUFFER_COUNT - 1 downto 0);
         
         -- TXT Buffers are available, can be selected by TX Arbitrator
         txtb_available          :in std_logic_vector(G_TXT_BUFFER_COUNT - 1 downto 0);
@@ -4255,7 +4258,7 @@ package can_components is
         -- Memory registers interface
         -----------------------------------------------------------------------
         -- Priorities of TXT Buffers
-        txtb_prorities          :in t_txt_bufs_priorities;
+        txtb_prorities          :in t_txt_bufs_priorities(G_TXT_BUFFER_COUNT - 1 downto 0);
     
         -- TimeStamp value
         timestamp               :in std_logic_vector(63 downto 0)

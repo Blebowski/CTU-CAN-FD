@@ -116,7 +116,7 @@ entity memory_registers is
         G_SUP_TRAFFIC_CTRS  : boolean                         := true;
 
         -- Number of TXT Buffers
-        G_TXT_BUFFER_COUNT  : natural range 0 to 7            := 4;
+        G_TXT_BUFFER_COUNT  : natural range 2 to 8            := 4;
 
         -- Number of Interrupts
         G_INT_COUNT         : natural                         := 12;
@@ -231,7 +231,7 @@ entity memory_registers is
         txtb_port_a_cs       :out  std_logic_vector(G_TXT_BUFFER_COUNT - 1 downto 0);
 
         -- TXT Buffer status
-        txtb_state           :in   t_txt_bufs_state;
+        txtb_state           :in   t_txt_bufs_state(G_TXT_BUFFER_COUNT - 1 downto 0);
 
         -- SW Commands to TXT Buffer
         txtb_sw_cmd          :out  t_txtb_sw_cmd;
@@ -240,7 +240,7 @@ entity memory_registers is
         txtb_sw_cmd_index    :out  std_logic_vector(G_TXT_BUFFER_COUNT - 1 downto 0);
         
         -- TXT Buffer priorities
-        txtb_prorities       :out  t_txt_bufs_priorities;
+        txtb_prorities       :out  t_txt_bufs_priorities(G_TXT_BUFFER_COUNT - 1 downto 0);
         
         -- TXT Buffer bus-off behavior
         txt_buf_failed_bof   :out  std_logic;
@@ -275,7 +275,7 @@ architecture rtl of memory_registers is
 
     -- Status register - combinational decoder
     signal status_comb              : std_logic_vector(31 downto 0);
-
+    
     -- Padding for interrupt read data
     constant INT_PAD_H_IND          : natural :=
         Control_registers_in.int_stat'length - G_INT_COUNT;
@@ -378,12 +378,15 @@ begin
     -- TXT Buffer RAMs chip select signals.
     ---------------------------------------------------------------------------
     txtb_port_a_cs_gen : for i in 0 to G_TXT_BUFFER_COUNT - 1 generate
-        type tx_buff_addr_type is array (0 to G_TXT_BUFFER_COUNT - 1) of
+        type tx_buff_addr_type is array (0 to 7) of
             std_logic_vector(3 downto 0);
-        constant buf_addr : tx_buff_addr_type := (TX_BUFFER_1_BLOCK,
-                                                  TX_BUFFER_2_BLOCK,
-                                                  TX_BUFFER_3_BLOCK,
-                                                  TX_BUFFER_4_BLOCK);
+        constant buf_addr : tx_buff_addr_type := (
+            TX_BUFFER_1_BLOCK, TX_BUFFER_2_BLOCK,
+            TX_BUFFER_3_BLOCK, TX_BUFFER_4_BLOCK,
+            TX_BUFFER_5_BLOCK, TX_BUFFER_6_BLOCK,
+            TX_BUFFER_7_BLOCK, TX_BUFFER_8_BLOCK
+        );
+
     begin
         txtb_port_a_cs(i) <= '1' when ((adress(11 downto 8) = buf_addr(i)) and
                                         scs = '1' and swr = '1')
@@ -557,12 +560,18 @@ begin
     status_comb(TXS_IND) <= is_transmitter;
     status_comb(RXS_IND) <= is_receiver;
 
-    status_comb(TXNF_IND) <= '1' when (txtb_state(0) = TXT_ETY or
-                                       txtb_state(1) = TXT_ETY or
-                                       txtb_state(2) = TXT_ETY or
-                                       txtb_state(3) = TXT_ETY)
-                                 else
-                             '0';
+    -- Take into account only present number of TXT Buffers!
+    txnf_calc_proc : process(txtb_state)
+        variable txtb_state_ety : std_logic_vector(G_TXT_BUFFER_COUNT - 1 downto 0);
+    begin
+        txtb_state_ety := (OTHERS => '0');
+        for i in 0 to G_TXT_BUFFER_COUNT - 1 loop
+            if (txtb_state(i) = TXT_ETY) then
+                txtb_state_ety(i) := '1';
+            end if;
+        end loop;
+        status_comb(TXNF_IND) <= or_reduce(txtb_state_ety);
+    end process;
 
     -- When at least one message is availiable in the buffer
     status_comb(RXNE_IND) <= not rx_empty;
@@ -932,20 +941,15 @@ begin
     ---------------------------------------------------------------------------
 
     -- TXT Buffer 1 priority
-    txtb_prorities(0) <= align_wrd_to_reg(
-        control_registers_out.tx_priority, TXT1P_H, TXT1P_L);
-
-    -- TXT Buffer 2 priority
-    txtb_prorities(1) <= align_wrd_to_reg(
-        control_registers_out.tx_priority, TXT2P_H, TXT2P_L);
-
-    -- TXT Buffer 3 priority
-    txtb_prorities(2) <= align_wrd_to_reg(
-        control_registers_out.tx_priority, TXT3P_H, TXT3P_L);
-
-    -- TXT Buffer 4 priority
-    txtb_prorities(3) <= align_wrd_to_reg(
-        control_registers_out.tx_priority, TXT4P_H, TXT4P_L);
+    -- Dont use register map generated constant to make assigment simple.
+    -- It is unlikely position of individual priorities will ever change! 
+    txtb_prio_gen : for i in 0 to G_TXT_BUFFER_COUNT - 1 generate
+        constant src_index_l : natural := i * 4;
+        constant src_index_h : natural := src_index_l + 2;
+    begin
+        txtb_prorities(i) <= align_wrd_to_reg(
+            control_registers_out.tx_priority, src_index_h, src_index_l);
+    end generate txtb_prio_gen;
 
     ---------------------------------------------------------------------------
     -- SSP_CFG
@@ -1269,17 +1273,28 @@ begin
             align_reg_to_wrd(TX2S_L, length)) <=
             txtb_state(1);
 
-        -- TX3S - TXT Buffer 3 status field
-        Control_registers_in.tx_status(
-            align_reg_to_wrd(TX3S_H, length) downto
-            align_reg_to_wrd(TX3S_L, length)) <=
-            txtb_state(2);
+        -- TX3S, TX4S, TX5S, TX6S, TX7S, TX8S  - TXT Buffer 3-8 status fields
+        -- We dont use generated constants and rely on field positions.
+        -- It is unlikely these will change!
+        txtb_status_gen_loop : for buf_index in 2 to 7 generate
+            constant index_l : natural := buf_index * 4;
+            constant index_h : natural := index_l + 3;
+        begin
+            txtb3_stat_gen_true : if (G_TXT_BUFFER_COUNT > buf_index) generate
+                Control_registers_in.tx_status(
+                    align_reg_to_wrd(index_h, length) downto
+                    align_reg_to_wrd(index_l, length)) <=
+                    txtb_state(buf_index);
+            end generate txtb3_stat_gen_true;
 
-        -- TX4S - TXT Buffer 4 status field
-        Control_registers_in.tx_status(
-            align_reg_to_wrd(TX4S_H, length) downto
-            align_reg_to_wrd(TX4S_L, length)) <=
-            txtb_state(3);
+            txtb3_stat_gen_false : if (G_TXT_BUFFER_COUNT <= buf_index) generate
+                Control_registers_in.tx_status(
+                    align_reg_to_wrd(index_h, length) downto
+                    align_reg_to_wrd(index_l, length)) <=
+                    (OTHERS => '0');
+            end generate txtb3_stat_gen_false;
+
+        end generate txtb_status_gen_loop;
 
     end block tx_status_block;
 
