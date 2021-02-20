@@ -1297,6 +1297,17 @@ begin
 
     end block tx_status_block;
 
+    ---------------------------------------------------------------------------
+    -- TX_CONFIG register
+    ---------------------------------------------------------------------------
+    tx_config_block : block
+        constant length : natural := Control_registers_in.tx_config'length;
+    begin
+        Control_registers_in.tx_config(
+            align_reg_to_wrd(TXT_BUFFER_COUNT_H, length) downto
+            align_reg_to_wrd(TXT_BUFFER_COUNT_L, length)) <=
+            std_logic_vector(to_unsigned(G_TXT_BUFFER_COUNT, 4));
+    end block;
 
     ---------------------------------------------------------------------------
     -- ERR_CAPT register
