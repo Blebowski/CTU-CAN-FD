@@ -98,7 +98,7 @@ entity txt_buffer is
         G_RESET_POLARITY       :     std_logic := '0';
         
         -- Number of TXT Buffers
-        G_TXT_BUFFER_COUNT     :     natural range 1 to 8;
+        G_TXT_BUFFER_COUNT     :     natural range 2 to 8;
         
         -- TXT Buffer ID
         G_ID                   :     natural := 1;

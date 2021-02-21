@@ -97,7 +97,7 @@ use ctu_can_fd_rtl.CAN_FD_frame_format.all;
 entity priority_decoder is
     generic(
         -- Number of TXT Buffers
-        G_TXT_BUFFER_COUNT     : natural range 1 to 8
+        G_TXT_BUFFER_COUNT     : natural range 2 to 8
     );
     port( 
         ------------------------------------------------------------------------

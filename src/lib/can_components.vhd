@@ -82,6 +82,7 @@ use ieee.numeric_std.ALL;
 Library ctu_can_fd_rtl;
 use ctu_can_fd_rtl.can_types.all;
 use ctu_can_fd_rtl.can_constants.all;
+use ctu_can_fd_rtl.can_config.all;
 use ctu_can_fd_rtl.cmn_lib.all;
 use ctu_can_fd_rtl.can_registers_pkg.all;
 
@@ -93,7 +94,7 @@ package can_components is
             rx_buffer_size : natural range 32 to 4096 := 128;
     
             -- Number of supported TXT buffers
-            txt_buffer_count    : natural range 2 to 8   := 4; 
+            txt_buffer_count    : natural range 2 to 8   := C_TXT_BUFFER_COUNT; 
         
             -- Insert Filter A
             sup_filtA      : boolean                := true;
@@ -2993,7 +2994,7 @@ package can_components is
         G_INT_COUNT          : natural  := 11;
         
         -- Number of TXT Buffers
-        G_TXT_BUFFER_COUNT   : natural := 4
+        G_TXT_BUFFER_COUNT   : natural range 2 to 8 := C_TXT_BUFFER_COUNT
     );
     port(
         ------------------------------------------------------------------------
@@ -3138,7 +3139,7 @@ package can_components is
         G_SUP_TRAFFIC_CTRS  : boolean                         := true;
         
         -- Number of TXT Buffers
-        G_TXT_BUFFER_COUNT  : natural range 0 to 7            := 4;
+        G_TXT_BUFFER_COUNT  : natural range 2 to 8            := C_TXT_BUFFER_COUNT;
 
         -- Number of Interrupts
         G_INT_COUNT         : natural                         := 12;
@@ -4071,7 +4072,7 @@ package can_components is
     component priority_decoder is
     generic(
         -- Number of TXT Buffers
-        G_TXT_BUFFER_COUNT     : natural range 1 to 8
+        G_TXT_BUFFER_COUNT     : natural range 2 to 8
     );
     port( 
         ------------------------------------------------------------------------
@@ -4185,7 +4186,7 @@ package can_components is
         G_RESET_POLARITY        : std_logic := '0';
         
         -- Number of TXT Buffers
-        G_TXT_BUFFER_COUNT      : natural range 1 to 8
+        G_TXT_BUFFER_COUNT      : natural range 2 to 8
     );
     port( 
         -----------------------------------------------------------------------
@@ -4378,7 +4379,7 @@ package can_components is
         G_RESET_POLARITY       :     std_logic := '0';
         
         -- Number of TXT Buffers
-        G_TXT_BUFFER_COUNT     :     natural range 1 to 8;
+        G_TXT_BUFFER_COUNT     :     natural range 2 to 8;
         
         -- TXT Buffer ID
         G_ID                   :     natural := 1;
