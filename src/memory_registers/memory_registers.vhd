@@ -1298,12 +1298,12 @@ begin
     end block tx_status_block;
 
     ---------------------------------------------------------------------------
-    -- TX_CONFIG register
+    -- TXTB_INFO register
     ---------------------------------------------------------------------------
-    tx_config_block : block
-        constant length : natural := Control_registers_in.tx_config'length;
+    txtb_info_block : block
+        constant length : natural := Control_registers_in.txtb_info'length;
     begin
-        Control_registers_in.tx_config(
+        Control_registers_in.txtb_info(
             align_reg_to_wrd(TXT_BUFFER_COUNT_H, length) downto
             align_reg_to_wrd(TXT_BUFFER_COUNT_L, length)) <=
             std_logic_vector(to_unsigned(G_TXT_BUFFER_COUNT, 4));
