@@ -150,8 +150,10 @@ package body tx_priority_feature is
         variable frame_equal        :       boolean := false;
         variable tmp_int            :       natural := 0;
 
-        variable txt_buf_mask       :       std_logic_vector(3 downto 0) := "0000";
+        variable txt_buf_mask       :       std_logic_vector(7 downto 0) := "00000000";
         variable buffers_used       :       natural := 0;
+        
+        variable num_txt_bufs       :       natural;
     begin
 
         -----------------------------------------------------------------------
@@ -160,9 +162,10 @@ package body tx_priority_feature is
         --     be used for transmission. Generate random frames for transmi-
         --     ssion and insert them to Node 1.
         -----------------------------------------------------------------------
+        get_tx_buf_count(num_txt_bufs, ID_1, mem_bus(1));
 
         --  Generate random priorities and write it to TX_PRIORITY
-        for j in 1 to 4 loop
+        for j in 1 to num_txt_bufs loop
             rand_int_v(rand_ctr, 7, tmp_int);
             txt_buf_priorities(j).priority := tmp_int;
             txt_buf_priorities(j).index := j;
@@ -180,7 +183,7 @@ package body tx_priority_feature is
         end loop;
 
         -- Count number of used TXT Buffers!
-        for i in 1 to 4 loop
+        for i in 1 to num_txt_bufs loop
             if (txt_buf_priorities(i).buffer_used) then
                 buffers_used := buffers_used + 1;
             end if;
@@ -192,16 +195,16 @@ package body tx_priority_feature is
         end if;
 
         -- Generate random CAN frames (generate all, some will be skipped)
-        for i in 1 to 4 loop
+        for i in 1 to num_txt_bufs loop
             CAN_generate_frame(rand_ctr, CAN_frame_array_tx(i));
         end loop;
 
         -- Sort TXT Buffers based on priorities
-        for i in 1 to 4 loop
+        for i in 1 to num_txt_bufs loop
             max_priority_val := 0;
             max_priority_index := 0;
 
-            for j in i to 4 loop
+            for j in i to num_txt_bufs loop
                 if (txt_buf_priorities(j).priority > max_priority_val) then
                     max_priority_val := txt_buf_priorities(j).priority;
                     max_priority_index := j;
@@ -219,8 +222,8 @@ package body tx_priority_feature is
         -- Do second sorting which orders buffers with the same priority according
         -- to lower buffer index first. This could be done together with first
         -- search, but lets keep it simple stupid.
-        for i in 1 to 3 loop
-            for j in i+1 to 4 loop
+        for i in 1 to num_txt_bufs - 1 loop
+            for j in i+1 to num_txt_bufs loop
                 if (txt_buf_priorities(i).priority = txt_buf_priorities(j).priority
                     and txt_buf_priorities(i).index > txt_buf_priorities(j).index)
                 then
@@ -233,14 +236,14 @@ package body tx_priority_feature is
 
         -- Insert CAN frames to TXT Buffers. Put first to highest priority buffer
         -- Now TXT Buffers are sorted!
-        for i in 1 to 4 loop
+        for i in 1 to num_txt_bufs loop
             CAN_insert_TX_frame(CAN_frame_array_tx(i), txt_buf_priorities(i).index,
                                 ID_1, mem_bus(1));
         end loop;
         
         info("Number of used buffers: " & integer'image(buffers_used));
         info("TXT Buffer configuration (highest priority first):");
-        for i in 1 to 4 loop
+        for i in 1 to num_txt_bufs loop
             info("Buffer index: " & integer'image(txt_buf_priorities(i).index) &
                  " Priority: " & integer'image(txt_buf_priorities(i).priority) &
                  " Used: " & boolean'image(txt_buf_priorities(i).buffer_used) &
@@ -266,7 +269,7 @@ package body tx_priority_feature is
         -----------------------------------------------------------------------
         -- @3. Check that frames are received in expected order.
         -----------------------------------------------------------------------
-        for i in 1 to 4 loop
+        for i in 1 to num_txt_bufs loop
             
             -- Skip Buffer if it should not have been used
             if (not txt_buf_priorities(i).buffer_used) then

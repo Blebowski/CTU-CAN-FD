@@ -144,10 +144,7 @@ package body tx_status_feature is
         -----------------------------------------------------------------------
         info("Step 1");
         
-        rand_int_v(rand_ctr, 4, txt_buf_num);
-        if (txt_buf_num = 0) then
-            txt_buf_num := 1;
-        end if;
+        pick_random_txt_buffer(txt_buf_num, rand_ctr, ID_1, mem_bus(1));
 
         CAN_read_timing_v(bus_timing, ID_1, mem_bus(1));
         exec_SW_reset(ID_1, mem_bus(1));
