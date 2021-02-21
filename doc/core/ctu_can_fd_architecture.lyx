@@ -29852,8 +29852,14 @@ output_valid
 \end_layout
 
 \begin_layout Standard
-Priority decoder supports 8 input TXT buffers (currently only 4 are used).
- Unused inputs are driven to zeroes.
+Priority decoder supports up to 8 input TXT buffers.
+ If less than 8 TXT buffers are configured (see 
+\series bold
+\shape italic
+txt_buffer_count
+\series default
+\shape default
+), unused inputs are driven to zeroes.
 \end_layout
 
 \begin_layout Standard
@@ -36307,7 +36313,7 @@ noprefix "false"
 
 \begin_layout Standard
 Memory registers block decodes write accesses to TXT buffers (via TXT buffer
- 1 to TXT buffer 4 memory locations) and maps these accesses to access TXT
+ 1 to TXT buffer 8 memory locations) and maps these accesses to access TXT
  buffer RAMs.
 \end_layout
 
