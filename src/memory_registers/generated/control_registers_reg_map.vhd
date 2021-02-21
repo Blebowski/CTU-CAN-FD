@@ -908,7 +908,7 @@ begin
     control_registers_out_i.tx_priority &
 
     -- Adress:116
-    control_registers_in.tx_config & "00000000" & "00000000" &
+    control_registers_in.txtb_info & "00000000" & "00000000" &
 
     -- Adress:112
     control_registers_in.tx_status &
@@ -1184,7 +1184,7 @@ begin
     -- psl tx_command_write_access_cov : cover
     -- {((cs='1') and (write='1') and (reg_sel(29)='1') and ((be(0)='1') or (be(1)='1')))};
 
-    -- psl tx_config_read_access_cov : cover
+    -- psl txtb_info_read_access_cov : cover
     -- {((cs='1') and (read='1') and (reg_sel(29)='1') and ((be(2)='1') or (be(3)='1')))};
 
     -- psl tx_priority_write_access_cov : cover

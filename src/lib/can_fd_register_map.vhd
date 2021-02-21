@@ -121,7 +121,7 @@ package can_fd_register_map is
   constant RX_DATA_ADR               : std_logic_vector(11 downto 0) := x"06C";
   constant TX_STATUS_ADR             : std_logic_vector(11 downto 0) := x"070";
   constant TX_COMMAND_ADR            : std_logic_vector(11 downto 0) := x"074";
-  constant TX_CONFIG_ADR             : std_logic_vector(11 downto 0) := x"076";
+  constant TXTB_INFO_ADR             : std_logic_vector(11 downto 0) := x"076";
   constant TX_PRIORITY_ADR           : std_logic_vector(11 downto 0) := x"078";
   constant ERR_CAPT_ADR              : std_logic_vector(11 downto 0) := x"07C";
   constant ALC_ADR                   : std_logic_vector(11 downto 0) := x"07E";
@@ -916,15 +916,14 @@ package can_fd_register_map is
   constant TXB8_RSTVAL        : std_logic := '0';
 
   ------------------------------------------------------------------------------
-  -- TX_CONFIG register
+  -- TXTB_INFO register
   --
-  -- Register with number of TXT Buffers present in CTU CAN FD.
+  -- Register with information about supported features of TXT buffers.
   ------------------------------------------------------------------------------
   constant TXT_BUFFER_COUNT_L    : natural := 16;
   constant TXT_BUFFER_COUNT_H    : natural := 19;
 
-  -- TX_CONFIG register reset values
-  constant TXT_BUFFER_COUNT_RSTVAL : std_logic_vector(3 downto 0) := x"4";
+  -- TXTB_INFO register reset values
 
   ------------------------------------------------------------------------------
   -- TX_PRIORITY register

@@ -72,7 +72,7 @@ enum ctu_can_fd_can_registers {
 	CTU_CAN_FD_RX_DATA              = 0x6c,
 	CTU_CAN_FD_TX_STATUS            = 0x70,
 	CTU_CAN_FD_TX_COMMAND           = 0x74,
-	CTU_CAN_FD_TX_CONFIG            = 0x76,
+	CTU_CAN_FD_TXTB_INFO            = 0x76,
 	CTU_CAN_FD_TX_PRIORITY          = 0x78,
 	CTU_CAN_FD_ERR_CAPT             = 0x7c,
 	CTU_CAN_FD_ALC                  = 0x7e,
@@ -799,9 +799,9 @@ enum ctu_can_fd_tx_status_tx1s {
 	TXT_ETY             = 0x8,
 };
 
-union ctu_can_fd_tx_command_tx_config {
+union ctu_can_fd_tx_command_txtb_info {
 	uint32_t u32;
-	struct ctu_can_fd_tx_command_tx_config_s {
+	struct ctu_can_fd_tx_command_txtb_info_s {
 #ifdef __LITTLE_ENDIAN_BITFIELD
   /* TX_COMMAND */
 		uint32_t txce                    : 1;
@@ -816,7 +816,7 @@ union ctu_can_fd_tx_command_tx_config {
 		uint32_t txb6                    : 1;
 		uint32_t txb7                    : 1;
 		uint32_t txb8                    : 1;
-  /* TX_CONFIG */
+  /* TXTB_INFO */
 		uint32_t txt_buffer_count        : 4;
 		uint32_t reserved_31_20         : 12;
 #else

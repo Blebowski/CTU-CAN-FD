@@ -1360,7 +1360,7 @@
 					<ipxact:field>
 						<ipxact:name>TXT3P</ipxact:name>
 						<ipxact:displayName>TXT3P</ipxact:displayName>
-						<ipxact:description>Priority of TXT buffer 3.</ipxact:description>
+						<ipxact:description>Priority of TXT buffer 3. If number of TXT Buffers is less than 3, this field is reserved and has no function.</ipxact:description>
 						<ipxact:isPresent>uuid_64debd51_3bf7_42e3_a590_0a22e668b9af &gt; 2</ipxact:isPresent>
 						<ipxact:bitOffset>8</ipxact:bitOffset>
 						<ipxact:resets>
@@ -1373,7 +1373,7 @@
 					<ipxact:field>
 						<ipxact:name>TXT4P</ipxact:name>
 						<ipxact:displayName>TXT4P</ipxact:displayName>
-						<ipxact:description>Priority of TXT buffer 4.</ipxact:description>
+						<ipxact:description>Priority of TXT buffer 4. If number of TXT Buffers is less than 4, this field is reserved and has no function.</ipxact:description>
 						<ipxact:isPresent>uuid_64debd51_3bf7_42e3_a590_0a22e668b9af &gt; 3</ipxact:isPresent>
 						<ipxact:bitOffset>12</ipxact:bitOffset>
 						<ipxact:resets>
@@ -1386,7 +1386,7 @@
 					<ipxact:field>
 						<ipxact:name>TXT5P</ipxact:name>
 						<ipxact:displayName>TXT5P</ipxact:displayName>
-						<ipxact:description>Priority of TXT buffer 5.</ipxact:description>
+						<ipxact:description>Priority of TXT buffer 5. If number of TXT Buffers is less than 5, this field is reserved and has no function.</ipxact:description>
 						<ipxact:isPresent>uuid_64debd51_3bf7_42e3_a590_0a22e668b9af &gt; 4</ipxact:isPresent>
 						<ipxact:bitOffset>16</ipxact:bitOffset>
 						<ipxact:resets>
@@ -1399,7 +1399,7 @@
 					<ipxact:field>
 						<ipxact:name>TXT6P</ipxact:name>
 						<ipxact:displayName>TXT6P</ipxact:displayName>
-						<ipxact:description>Priority of TXT buffer 6.</ipxact:description>
+						<ipxact:description>Priority of TXT buffer 6. If number of TXT Buffers is less than 6, this field is reserved and has no function.</ipxact:description>
 						<ipxact:isPresent>uuid_64debd51_3bf7_42e3_a590_0a22e668b9af &gt; 5</ipxact:isPresent>
 						<ipxact:bitOffset>20</ipxact:bitOffset>
 						<ipxact:resets>
@@ -1412,7 +1412,7 @@
 					<ipxact:field>
 						<ipxact:name>TXT7P</ipxact:name>
 						<ipxact:displayName>TXT7P</ipxact:displayName>
-						<ipxact:description>Priority of TXT buffer 7.</ipxact:description>
+						<ipxact:description>Priority of TXT buffer 7. If number of TXT Buffers is less than 7, this field is reserved and has no function.</ipxact:description>
 						<ipxact:isPresent>uuid_64debd51_3bf7_42e3_a590_0a22e668b9af &gt; 6</ipxact:isPresent>
 						<ipxact:bitOffset>24</ipxact:bitOffset>
 						<ipxact:resets>
@@ -1425,7 +1425,7 @@
 					<ipxact:field>
 						<ipxact:name>TXT8P</ipxact:name>
 						<ipxact:displayName>TXT8P</ipxact:displayName>
-						<ipxact:description>Priority of TXT buffer 8.</ipxact:description>
+						<ipxact:description>Priority of TXT buffer 8. If number of TXT Buffers is less than 8, this field is reserved and has no function.</ipxact:description>
 						<ipxact:isPresent>uuid_64debd51_3bf7_42e3_a590_0a22e668b9af &gt; 7</ipxact:isPresent>
 						<ipxact:bitOffset>28</ipxact:bitOffset>
 						<ipxact:resets>
@@ -1513,7 +1513,7 @@
 					<ipxact:field>
 						<ipxact:name>TXB3</ipxact:name>
 						<ipxact:displayName>TXB3</ipxact:displayName>
-						<ipxact:description>Command is issued to TXT Buffer 3.</ipxact:description>
+						<ipxact:description>Command is issued to TXT Buffer 3. If number of TXT Buffers is less than 3, this field is reserved and has no function.</ipxact:description>
 						<ipxact:isPresent>uuid_64debd51_3bf7_42e3_a590_0a22e668b9af &gt; 2</ipxact:isPresent>
 						<ipxact:bitOffset>10</ipxact:bitOffset>
 						<ipxact:resets>
@@ -1527,7 +1527,7 @@
 					<ipxact:field>
 						<ipxact:name>TXB4</ipxact:name>
 						<ipxact:displayName>TXB4</ipxact:displayName>
-						<ipxact:description>Command is issued to TXT Buffer 4.</ipxact:description>
+						<ipxact:description>Command is issued to TXT Buffer 4. If number of TXT Buffers is less than 4, this field is reserved and has no function.</ipxact:description>
 						<ipxact:isPresent>uuid_64debd51_3bf7_42e3_a590_0a22e668b9af &gt; 3</ipxact:isPresent>
 						<ipxact:bitOffset>11</ipxact:bitOffset>
 						<ipxact:resets>
@@ -1541,7 +1541,7 @@
 					<ipxact:field>
 						<ipxact:name>TXB5</ipxact:name>
 						<ipxact:displayName>TXB5</ipxact:displayName>
-						<ipxact:description>Command is issued to TXT Buffer 5.</ipxact:description>
+						<ipxact:description>Command is issued to TXT Buffer 5. If number of TXT Buffers is less than 5, this field is reserved and has no function.</ipxact:description>
 						<ipxact:isPresent>uuid_64debd51_3bf7_42e3_a590_0a22e668b9af &gt; 4</ipxact:isPresent>
 						<ipxact:bitOffset>12</ipxact:bitOffset>
 						<ipxact:resets>
@@ -1555,7 +1555,7 @@
 					<ipxact:field>
 						<ipxact:name>TXB6</ipxact:name>
 						<ipxact:displayName>TXB6</ipxact:displayName>
-						<ipxact:description>Command is issued to TXT Buffer 6.</ipxact:description>
+						<ipxact:description>Command is issued to TXT Buffer 6. If number of TXT Buffers is less than 6, this field is reserved and has no function.</ipxact:description>
 						<ipxact:isPresent>uuid_64debd51_3bf7_42e3_a590_0a22e668b9af &gt; 5</ipxact:isPresent>
 						<ipxact:bitOffset>13</ipxact:bitOffset>
 						<ipxact:resets>
@@ -1569,7 +1569,7 @@
 					<ipxact:field>
 						<ipxact:name>TXB7</ipxact:name>
 						<ipxact:displayName>TXB7</ipxact:displayName>
-						<ipxact:description>Command is issued to TXT Buffer 7.</ipxact:description>
+						<ipxact:description>Command is issued to TXT Buffer 7. If number of TXT Buffers is less than 7, this field is reserved and has no function.</ipxact:description>
 						<ipxact:isPresent>uuid_64debd51_3bf7_42e3_a590_0a22e668b9af &gt; 6</ipxact:isPresent>
 						<ipxact:bitOffset>14</ipxact:bitOffset>
 						<ipxact:resets>
@@ -1583,7 +1583,7 @@
 					<ipxact:field>
 						<ipxact:name>TXB8</ipxact:name>
 						<ipxact:displayName>TXB8</ipxact:displayName>
-						<ipxact:description>Command is issued to TXT Buffer 8.</ipxact:description>
+						<ipxact:description>Command is issued to TXT Buffer 8. If number of TXT Buffers is less than 8, this field is reserved and has no function.</ipxact:description>
 						<ipxact:isPresent>uuid_64debd51_3bf7_42e3_a590_0a22e668b9af &gt; 7</ipxact:isPresent>
 						<ipxact:bitOffset>15</ipxact:bitOffset>
 						<ipxact:resets>
@@ -1614,9 +1614,9 @@
 					</ipxact:field>
 				</ipxact:register>
 				<ipxact:register>
-					<ipxact:name>TX_CONFIG</ipxact:name>
-					<ipxact:displayName>TX_CONFIG</ipxact:displayName>
-					<ipxact:description>Register with number of TXT Buffers present in CTU CAN FD.</ipxact:description>
+					<ipxact:name>TXTB_INFO</ipxact:name>
+					<ipxact:displayName>TXTB_INFO</ipxact:displayName>
+					<ipxact:description>Register with information about supported features of TXT buffers.</ipxact:description>
 					<ipxact:dim>0</ipxact:dim>
 					<ipxact:addressOffset>'h76</ipxact:addressOffset>
 					<ipxact:size>16</ipxact:size>
@@ -1627,11 +1627,6 @@
 						<ipxact:displayName>TXT_BUFFER_COUNT</ipxact:displayName>
 						<ipxact:description>Number of TXT buffers present in CTU CAN FD. Lowest buffer is always 1. Highest buffer is at index equal to number of present buffers.</ipxact:description>
 						<ipxact:bitOffset>0</ipxact:bitOffset>
-						<ipxact:resets>
-							<ipxact:reset>
-								<ipxact:value>4</ipxact:value>
-							</ipxact:reset>
-						</ipxact:resets>
 						<ipxact:bitWidth>4</ipxact:bitWidth>
 					</ipxact:field>
 				</ipxact:register>

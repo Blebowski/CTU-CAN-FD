@@ -2277,7 +2277,7 @@ hyperref[TX_STATUS]{TX\backslash textunderscore STATUS}\end_layout
 status open
 \begin_layout Plain Layout
 \backslash
-hyperref[TX_CONFIG]{TX\backslash textunderscore CONFIG}\end_layout
+hyperref[TXTB_INFO]{TXTB\backslash textunderscore INFO}\end_layout
 \end_inset
 \end_layout
 
@@ -2291,7 +2291,7 @@ hyperref[TX_CONFIG]{TX\backslash textunderscore CONFIG}\end_layout
 status open
 \begin_layout Plain Layout
 \backslash
-hyperref[TX_CONFIG]{TX\backslash textunderscore CONFIG}\end_layout
+hyperref[TXTB_INFO]{TXTB\backslash textunderscore INFO}\end_layout
 \end_inset
 \end_layout
 
@@ -38641,34 +38641,34 @@ TXB1 Command is issued to TXT Buffer 1.
 TXB2 Command is issued to TXT Buffer 2.
 \end_layout
 \begin_layout Description
-TXB3 Command is issued to TXT Buffer 3.
+TXB3 Command is issued to TXT Buffer 3. If number of TXT Buffers is less than 3, this field is reserved and has no function.
 \end_layout
 \begin_layout Description
-TXB4 Command is issued to TXT Buffer 4.
+TXB4 Command is issued to TXT Buffer 4. If number of TXT Buffers is less than 4, this field is reserved and has no function.
 \end_layout
 \begin_layout Description
-TXB5 Command is issued to TXT Buffer 5.
+TXB5 Command is issued to TXT Buffer 5. If number of TXT Buffers is less than 5, this field is reserved and has no function.
 \end_layout
 \begin_layout Description
-TXB6 Command is issued to TXT Buffer 6.
+TXB6 Command is issued to TXT Buffer 6. If number of TXT Buffers is less than 6, this field is reserved and has no function.
 \end_layout
 \begin_layout Description
-TXB7 Command is issued to TXT Buffer 7.
+TXB7 Command is issued to TXT Buffer 7. If number of TXT Buffers is less than 7, this field is reserved and has no function.
 \end_layout
 \begin_layout Description
-TXB8 Command is issued to TXT Buffer 8.
+TXB8 Command is issued to TXT Buffer 8. If number of TXT Buffers is less than 8, this field is reserved and has no function.
 \end_layout
 \begin_layout Standard
 \begin_inset VSpace bigskip
 \end_inset
 \end_layout
 \begin_layout Subsection
-TX_CONFIG
+TXTB_INFO
 \begin_inset ERT
 status open
 \begin_layout Plain Layout
 \backslash
-label{TX_CONFIG
+label{TXTB_INFO
 }\end_layout
 \end_inset
 \end_layout
@@ -38682,7 +38682,7 @@ Offset: 0x76
 Size: 2 bytes
 \end_layout
 \begin_layout Standard
-Register with number of TXT Buffers present in CTU CAN FD.
+Register with information about supported features of TXT buffers.
 \end_layout
 \begin_layout Standard
 \noindent
@@ -39289,7 +39289,7 @@ cellcolor{cyan}
 \begin_inset Text
 
 \begin_layout Plain Layout
-0\end_layout
+X\end_layout
 
 \end_inset
 </cell>
@@ -39297,7 +39297,7 @@ cellcolor{cyan}
 \begin_inset Text
 
 \begin_layout Plain Layout
-1\end_layout
+X\end_layout
 
 \end_inset
 </cell>
@@ -39305,7 +39305,7 @@ cellcolor{cyan}
 \begin_inset Text
 
 \begin_layout Plain Layout
-0\end_layout
+X\end_layout
 
 \end_inset
 </cell>
@@ -39313,7 +39313,7 @@ cellcolor{cyan}
 \begin_inset Text
 
 \begin_layout Plain Layout
-0\end_layout
+X\end_layout
 
 \end_inset
 </cell>
@@ -40640,22 +40640,22 @@ TXT1P Priority of TXT buffer 1.
 TXT2P Priority of TXT buffer 2.
 \end_layout
 \begin_layout Description
-TXT3P Priority of TXT buffer 3.
+TXT3P Priority of TXT buffer 3. If number of TXT Buffers is less than 3, this field is reserved and has no function.
 \end_layout
 \begin_layout Description
-TXT4P Priority of TXT buffer 4.
+TXT4P Priority of TXT buffer 4. If number of TXT Buffers is less than 4, this field is reserved and has no function.
 \end_layout
 \begin_layout Description
-TXT5P Priority of TXT buffer 5.
+TXT5P Priority of TXT buffer 5. If number of TXT Buffers is less than 5, this field is reserved and has no function.
 \end_layout
 \begin_layout Description
-TXT6P Priority of TXT buffer 6.
+TXT6P Priority of TXT buffer 6. If number of TXT Buffers is less than 6, this field is reserved and has no function.
 \end_layout
 \begin_layout Description
-TXT7P Priority of TXT buffer 7.
+TXT7P Priority of TXT buffer 7. If number of TXT Buffers is less than 7, this field is reserved and has no function.
 \end_layout
 \begin_layout Description
-TXT8P Priority of TXT buffer 8.
+TXT8P Priority of TXT buffer 8. If number of TXT Buffers is less than 8, this field is reserved and has no function.
 \end_layout
 \begin_layout Standard
 \begin_inset VSpace bigskip
