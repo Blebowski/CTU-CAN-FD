@@ -3533,8 +3533,25 @@ name "sec:CAN-frame-transmission"
 \begin_layout Standard
 CAN frames are transmitted by CTU CAN FD from TXT buffers.
  CTU CAN FD contains 2-8 TXT buffers (number of TXT buffers is selected
- at synthesis time, reffer to description of system which is integrating
- CTU CAN FD).
+ at synthesis time).
+ Number of TXT buffers present can be read from TXTB_INFO register.
+ If 
+\begin_inset Quotes eld
+\end_inset
+
+N
+\begin_inset Quotes erd
+\end_inset
+
+ buffers are present, then its always buffers with indices 1 - 
+\begin_inset Quotes eld
+\end_inset
+
+N
+\begin_inset Quotes erd
+\end_inset
+
+.
  Each TXT buffer can be in one of states as described in Figure 
 \begin_inset CommandInset ref
 LatexCommand ref

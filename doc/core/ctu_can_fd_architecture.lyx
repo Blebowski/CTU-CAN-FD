@@ -25802,7 +25802,14 @@ filename "entity_docs/txt_buffer.lyx"
 \end_layout
 
 \begin_layout Standard
-There are 4 TXT buffers in CTU CAN FD.
+Number of TXT buffers in CTU CAN FD is configurable at synthesis time via
+ 
+\series bold
+\shape italic
+txt_buffer_count
+\series default
+\shape default
+ top level generic.
  Each TXT buffer contains 1 RAM memory.
  Each TXT buffer RAM is accessed by SW via Memory registers as described
  in 
