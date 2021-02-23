@@ -906,9 +906,7 @@ begin
             txtb_sw_cmd.set_rdy <= '0';
             txtb_sw_cmd.set_ety <= '0';
             txtb_sw_cmd.set_abt <= '0';
-            txtb_sw_cmd_index <= (OTHERS => '0');
         elsif (rising_edge(clk_sys)) then
-            
             -- TX SW CMD - Set ready
             txtb_sw_cmd.set_rdy <= align_wrd_to_reg(
                 control_registers_out.tx_command, TXCR_IND);
@@ -920,21 +918,21 @@ begin
             -- TX SW CMD - Set abort
             txtb_sw_cmd.set_abt <= align_wrd_to_reg(
                 control_registers_out.tx_command, TXCA_IND);
-                
-            -- TXT Buffer command indices
-            txtb_sw_cmd_index(0) <= align_wrd_to_reg(
-                control_registers_out.tx_command, TXB1_IND);
-
-            txtb_sw_cmd_index(1) <= align_wrd_to_reg(
-                control_registers_out.tx_command, TXB2_IND);
-
-            txtb_sw_cmd_index(2) <= align_wrd_to_reg(
-                control_registers_out.tx_command, TXB3_IND);
-
-            txtb_sw_cmd_index(3) <= align_wrd_to_reg(
-                control_registers_out.tx_command, TXB4_IND);      
         end if;
     end process;
+    
+    txtb_cmd_index_gen : for txtb_index in 0 to G_TXT_BUFFER_COUNT - 1 generate
+        tx_cmd_in_reg_proc : process(clk_sys, res_out_i)
+        begin
+            if (res_out_i = G_RESET_POLARITY) then
+                txtb_sw_cmd_index(txtb_index) <= '0';
+            elsif (rising_edge(clk_sys)) then
+                txtb_sw_cmd_index(txtb_index)  <= align_wrd_to_reg(
+                control_registers_out.tx_command, TXB1_IND + txtb_index);
+            end if;
+        end process;
+    end generate;
+
 
     ---------------------------------------------------------------------------
     -- TX_PRIORITY
