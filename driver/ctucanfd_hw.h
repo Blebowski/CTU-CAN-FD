@@ -756,9 +756,9 @@ bool ctucan_hw_is_txt_buf_accessible(struct ctucan_hw_priv *priv, u8 buf);
  * @buf: TXT Buffer index (1 to CTU_CAN_FD_TXT_BUFFER_COUNT)
  */
 static inline void ctucan_hw_txt_buf_give_command(struct ctucan_hw_priv *priv,
-				union ctu_can_fd_tx_command cmd, u8 buf)
+				union ctu_can_fd_tx_command_txtb_info cmd, u8 buf)
 {
-	union ctu_can_fd_tx_command reg;
+	union ctu_can_fd_tx_command_txtb_info reg;
 
 	reg.u32 = 0;
 	reg.s.txb1 = 1;
@@ -777,7 +777,7 @@ static inline void ctucan_hw_txt_buf_give_command(struct ctucan_hw_priv *priv,
  */
 static inline void ctucan_hw_txt_set_empty(struct ctucan_hw_priv *priv, u8 buf)
 {
-	union ctu_can_fd_tx_command cmd;
+	union ctu_can_fd_tx_command_txtb_info cmd;
 
 	cmd.u32 = 0;
 	cmd.s.txce = 1;
@@ -793,7 +793,7 @@ static inline void ctucan_hw_txt_set_empty(struct ctucan_hw_priv *priv, u8 buf)
  */
 static inline void ctucan_hw_txt_set_rdy(struct ctucan_hw_priv *priv, u8 buf)
 {
-	union ctu_can_fd_tx_command cmd;
+	union ctu_can_fd_tx_command_txtb_info cmd;
 
 	cmd.u32 = 0;
 	cmd.s.txcr = 1;
@@ -809,7 +809,7 @@ static inline void ctucan_hw_txt_set_rdy(struct ctucan_hw_priv *priv, u8 buf)
  */
 static inline void ctucan_hw_txt_set_abort(struct ctucan_hw_priv *priv, u8 buf)
 {
-	union ctu_can_fd_tx_command cmd;
+	union ctu_can_fd_tx_command_txtb_info cmd;
 
 	cmd.u32 = 0;
 	cmd.s.txca = 1;
