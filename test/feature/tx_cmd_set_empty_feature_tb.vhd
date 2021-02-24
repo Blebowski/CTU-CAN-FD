@@ -129,10 +129,7 @@ package body tx_cmd_set_empty_feature is
     begin
 
         -- For whole test random TXT Buffer will be used!
-        rand_int_v(rand_ctr, 4, buf_nr);
-        if (buf_nr = 0) then
-            buf_nr := 1;
-        end if;
+        pick_random_txt_buffer(buf_nr, rand_ctr, ID_1, mem_bus(1));
         info("Testing with TXT Buffer: " & integer'image(buf_nr));
 
         -----------------------------------------------------------------------

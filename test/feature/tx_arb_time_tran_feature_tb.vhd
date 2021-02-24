@@ -205,6 +205,7 @@ package body tx_arb_time_tran_feature is
         CAN_frame.timestamp := ts_expected;
         info("Expected time of transmission: " & to_hstring(ts_expected));
 
+        
         CAN_insert_TX_frame(CAN_frame, 1, ID_1, mem_bus(1));
         send_TXT_buf_cmd(buf_set_ready, 1, ID_1, mem_bus(1));
 
@@ -276,18 +277,11 @@ package body tx_arb_time_tran_feature is
         info("Step 3");
         
         -- Generate buffers random!
-        rand_int_v(rand_ctr, 3, buf_1_index);
-        rand_int_v(rand_ctr, 3, buf_2_index);
-        buf_1_index := buf_1_index + 1;
-        buf_2_index := buf_2_index + 1;
-
-        if (buf_1_index = buf_2_index) then
-            if (buf_1_index = 4) then
-                buf_2_index := 3;
-            else
-                buf_2_index := buf_1_index + 1;
-            end if;
-        end if;
+        pick_random_txt_buffer(buf_1_index, rand_ctr, ID_1, mem_bus(1));
+        buf_2_index := buf_1_index;
+        while (buf_2_index = buf_1_index) loop
+            pick_random_txt_buffer(buf_2_index, rand_ctr, ID_2, mem_bus(2));         
+        end loop;
 
         CAN_configure_tx_priority(buf_2_index, 1, ID_1, mem_bus(1));
         CAN_configure_tx_priority(buf_1_index, 2, ID_1, mem_bus(1));

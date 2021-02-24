@@ -80,7 +80,6 @@
 --  @1. Write all RW registers to random value. Check they were written.
 --  @2. Execute SW reset via MODE[RST].
 --  @3. Read all registers and check they return their reset value.
---  @4. Write all RW registers to random value. Check they were written.
 --
 -- @TestInfoEnd
 --------------------------------------------------------------------------------
@@ -274,10 +273,19 @@ package body mode_rst_feature is
             mask_reg_val(Control_registers_list(i), reg_rst_val);
 
             -- RX_MEM_INFO register is generic dependant -> Do it manually!
-            if (Control_registers_list(i).address = x"060")then
+            -- TODO: Pass RX Buffer size as top level parameter!
+            if (Control_registers_list(i).address = RX_MEM_INFO_ADR) then
                 reg_rst_val := (OTHERS => '0');
                 reg_rst_val(6) := '1';  -- RX Buffer size = 32
                 reg_rst_val(22) := '1'; -- RX Mem free = 32
+            end if;
+
+            -- TXTB_INFO is generic dependant -> Do it manually!
+            -- TODO: Pass RX Buffer size as top level parameter!
+            if (Control_registers_list(i).address = TX_STATUS_ADR) then
+                -- Assume there are 4 Buffers, rest is un-implemented.
+                -- Mask TX Status5-8 as if non-existing!
+                reg_rst_val(31 downto 16) := x"0000";
             end if;
 
             -- Timestamp High/Low registers reflect current value of external

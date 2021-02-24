@@ -98,7 +98,7 @@ architecture tx_arb_unit_test of CAN_test is
     ------------------------
     signal clk_sys                :  std_logic;
     signal res_n                  :  std_logic := C_RESET_POLARITY;
-    signal txtb_port_b_data       :  t_txt_bufs_output :=
+    signal txtb_port_b_data       :  t_txt_bufs_output(C_TXT_BUFFER_COUNT - 1 downto 0) :=
                                         (OTHERS => (OTHERS => '0'));
 
     signal txtb_available         :  std_logic_vector(C_TXT_BUFFER_COUNT - 1 downto 0)
@@ -117,7 +117,7 @@ architecture tx_arb_unit_test of CAN_test is
     signal txtb_changed           :  std_logic;
     signal txtb_hw_cmd_index      :  natural range 0 to C_TXT_BUFFER_COUNT - 1;
     signal txtb_ptr      :  natural range 0 to 19 := 0;
-    signal txtb_prorities         :  t_txt_bufs_priorities :=
+    signal txtb_prorities         :  t_txt_bufs_priorities(C_TXT_BUFFER_COUNT - 1 downto 0) :=
                                         (OTHERS => (OTHERS => '0'));
     signal timestamp              :  std_logic_vector(63 downto 0) :=
                                         (OTHERS => '0');
@@ -273,7 +273,7 @@ begin
 
         -- Choose random TXT Buffer
         rand_real_v(rand_ctr_1, buf_index);
-        buf_index := buf_index * 3.0;
+        buf_index := buf_index * real(C_TXT_BUFFER_COUNT - 1);
 
         ------------------------------------------------------------------------
         -- Check whether the buffer is not locked by the Core, in this case one
@@ -310,7 +310,7 @@ begin
 
         -- Choose random TXT Buffer
         rand_real_v(rand_ctr_4, buf_index);
-        buf_index := buf_index * 3.0;
+        buf_index := buf_index * real(C_TXT_BUFFER_COUNT - 1);
 
         -- Wait till it can be accessed
         while txtb_available(integer(buf_index)) = '1' loop
@@ -352,15 +352,11 @@ begin
     buf_access_emu_proc : process (res_n, clk_sys)
     begin
         if (res_n = C_RESET_POLARITY) then
-             txtb_port_b_data(0) <= (OTHERS => '0');
-             txtb_port_b_data(1) <= (OTHERS => '0');
-             txtb_port_b_data(2) <= (OTHERS => '0');
-             txtb_port_b_data(3) <= (OTHERS => '0');
+             txtb_port_b_data <= (OTHERS => (OTHERS => 'U'));
         elsif (rising_edge(clk_sys)) then
-             txtb_port_b_data(0) <= shadow_mem(0)(txtb_port_b_address);
-             txtb_port_b_data(1) <= shadow_mem(1)(txtb_port_b_address);
-             txtb_port_b_data(2) <= shadow_mem(2)(txtb_port_b_address);
-             txtb_port_b_data(3) <= shadow_mem(3)(txtb_port_b_address);
+             for i in 0 to C_TXT_BUFFER_COUNT - 1 loop
+                 txtb_port_b_data(i) <= shadow_mem(i)(txtb_port_b_address);
+             end loop;
         end if;
     end process;
 
@@ -377,11 +373,11 @@ begin
 
 
         ------------------------------------------------------------------------
-        -- By default we have to assume index 3 (The highest one)
+        -- By default we have to assume the highest buffer
         -- This is default returned index by priority decoder when there is no
         -- valid frame!
         ------------------------------------------------------------------------
-        tmp_index           := 3;
+        tmp_index           := C_TXT_BUFFER_COUNT - 1;
         tmp_prio            := 0;
         txt_valid           := false;
 

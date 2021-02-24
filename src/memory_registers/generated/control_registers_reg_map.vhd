@@ -778,10 +778,10 @@ begin
     tx_command_reg_comp : memory_reg
     generic map(
         data_width                      => 16 ,
-        data_mask                       => "0000111100000111" ,
+        data_mask                       => "1111111100000111" ,
         reset_polarity                  => RESET_POLARITY ,
         reset_value                     => "0000000000000000" ,
-        auto_clear                      => "0000111100000111" ,
+        auto_clear                      => "1111111100000111" ,
         is_lockable                     => false 
     )
     port map(
@@ -801,20 +801,20 @@ begin
 
     tx_priority_reg_comp : memory_reg
     generic map(
-        data_width                      => 16 ,
-        data_mask                       => "0111011101110111" ,
+        data_width                      => 32 ,
+        data_mask                       => "01110111011101110111011101110111" ,
         reset_polarity                  => RESET_POLARITY ,
-        reset_value                     => "0000000000000001" ,
-        auto_clear                      => "0000000000000000" ,
+        reset_value                     => "00000000000000000000000000000001" ,
+        auto_clear                      => "00000000000000000000000000000000" ,
         is_lockable                     => false 
     )
     port map(
         clk_sys                         => clk_sys ,-- in
         res_n                           => res_n ,-- in
-        data_in                         => w_data(15 downto 0) ,-- in
+        data_in                         => w_data(31 downto 0) ,-- in
         write                           => write ,-- in
         cs                              => reg_sel(30) ,-- in
-        w_be                            => be(1 downto 0) ,-- in
+        w_be                            => be(3 downto 0) ,-- in
         lock                            => '0' ,-- in
         reg_value                       => control_registers_out_i.tx_priority -- out
     );
@@ -905,13 +905,13 @@ begin
     "00000000" & control_registers_in.alc & "00000000" & control_registers_in.err_capt &
 
     -- Adress:120
-    "00000000" & "00000000" & control_registers_out_i.tx_priority &
+    control_registers_out_i.tx_priority &
 
     -- Adress:116
-    "00000000" & "00000000" & "00000000" & "00000000" &
+    control_registers_in.txtb_info & "00000000" & "00000000" &
 
     -- Adress:112
-    "00000000" & "00000000" & control_registers_in.tx_status &
+    control_registers_in.tx_status &
 
     -- Adress:108
     control_registers_in.rx_data &
@@ -1179,16 +1179,19 @@ begin
     -- {((cs='1') and (read='1') and (reg_sel(27)='1') and ((be(0)='1') or (be(1)='1') or (be(2)='1') or (be(3)='1')))};
 
     -- psl tx_status_read_access_cov : cover
-    -- {((cs='1') and (read='1') and (reg_sel(28)='1') and ((be(0)='1') or (be(1)='1')))};
+    -- {((cs='1') and (read='1') and (reg_sel(28)='1') and ((be(0)='1') or (be(1)='1') or (be(2)='1') or (be(3)='1')))};
 
     -- psl tx_command_write_access_cov : cover
     -- {((cs='1') and (write='1') and (reg_sel(29)='1') and ((be(0)='1') or (be(1)='1')))};
 
+    -- psl txtb_info_read_access_cov : cover
+    -- {((cs='1') and (read='1') and (reg_sel(29)='1') and ((be(2)='1') or (be(3)='1')))};
+
     -- psl tx_priority_write_access_cov : cover
-    -- {((cs='1') and (write='1') and (reg_sel(30)='1') and ((be(0)='1') or (be(1)='1')))};
+    -- {((cs='1') and (write='1') and (reg_sel(30)='1') and ((be(0)='1') or (be(1)='1') or (be(2)='1') or (be(3)='1')))};
 
     -- psl tx_priority_read_access_cov : cover
-    -- {((cs='1') and (read='1') and (reg_sel(30)='1') and ((be(0)='1') or (be(1)='1')))};
+    -- {((cs='1') and (read='1') and (reg_sel(30)='1') and ((be(0)='1') or (be(1)='1') or (be(2)='1') or (be(3)='1')))};
 
     -- psl err_capt_read_access_cov : cover
     -- {((cs='1') and (read='1') and (reg_sel(31)='1') and ((be(0)='1')))};

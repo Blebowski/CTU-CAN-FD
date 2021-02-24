@@ -72,6 +72,7 @@ enum ctu_can_fd_can_registers {
 	CTU_CAN_FD_RX_DATA              = 0x6c,
 	CTU_CAN_FD_TX_STATUS            = 0x70,
 	CTU_CAN_FD_TX_COMMAND           = 0x74,
+	CTU_CAN_FD_TXTB_INFO            = 0x76,
 	CTU_CAN_FD_TX_PRIORITY          = 0x78,
 	CTU_CAN_FD_ERR_CAPT             = 0x7c,
 	CTU_CAN_FD_ALC                  = 0x7e,
@@ -95,6 +96,18 @@ enum ctu_can_fd_can_registers {
 	CTU_CAN_FD_TXTB4_DATA_1        = 0x400,
 	CTU_CAN_FD_TXTB4_DATA_2        = 0x404,
 	CTU_CAN_FD_TXTB4_DATA_20       = 0x44c,
+	CTU_CAN_FD_TXTB5_DATA_1        = 0x500,
+	CTU_CAN_FD_TXTB5_DATA_2        = 0x504,
+	CTU_CAN_FD_TXTB5_DATA_20       = 0x54c,
+	CTU_CAN_FD_TXTB6_DATA_1        = 0x600,
+	CTU_CAN_FD_TXTB6_DATA_2        = 0x604,
+	CTU_CAN_FD_TXTB6_DATA_20       = 0x64c,
+	CTU_CAN_FD_TXTB7_DATA_1        = 0x700,
+	CTU_CAN_FD_TXTB7_DATA_2        = 0x704,
+	CTU_CAN_FD_TXTB7_DATA_20       = 0x74c,
+	CTU_CAN_FD_TXTB8_DATA_1        = 0x800,
+	CTU_CAN_FD_TXTB8_DATA_2        = 0x804,
+	CTU_CAN_FD_TXTB8_DATA_20       = 0x84c,
 };
 
 
@@ -758,9 +771,15 @@ union ctu_can_fd_tx_status {
 		uint32_t tx2s                    : 4;
 		uint32_t tx3s                    : 4;
 		uint32_t tx4s                    : 4;
-		uint32_t reserved_31_16         : 16;
+		uint32_t tx5s                    : 4;
+		uint32_t tx6s                    : 4;
+		uint32_t tx7s                    : 4;
+		uint32_t tx8s                    : 4;
 #else
-		uint32_t reserved_31_16         : 16;
+		uint32_t tx8s                    : 4;
+		uint32_t tx7s                    : 4;
+		uint32_t tx6s                    : 4;
+		uint32_t tx5s                    : 4;
 		uint32_t tx4s                    : 4;
 		uint32_t tx3s                    : 4;
 		uint32_t tx2s                    : 4;
@@ -770,18 +789,19 @@ union ctu_can_fd_tx_status {
 };
 
 enum ctu_can_fd_tx_status_tx1s {
-	TXT_RDY        = 0x1,
-	TXT_TRAN       = 0x2,
-	TXT_ABTP       = 0x3,
-	TXT_TOK        = 0x4,
-	TXT_ERR        = 0x6,
-	TXT_ABT        = 0x7,
-	TXT_ETY        = 0x8,
+	TXT_NOT_EXIST       = 0x0,
+	TXT_RDY             = 0x1,
+	TXT_TRAN            = 0x2,
+	TXT_ABTP            = 0x3,
+	TXT_TOK             = 0x4,
+	TXT_ERR             = 0x6,
+	TXT_ABT             = 0x7,
+	TXT_ETY             = 0x8,
 };
 
-union ctu_can_fd_tx_command {
+union ctu_can_fd_tx_command_txtb_info {
 	uint32_t u32;
-	struct ctu_can_fd_tx_command_s {
+	struct ctu_can_fd_tx_command_txtb_info_s {
 #ifdef __LITTLE_ENDIAN_BITFIELD
   /* TX_COMMAND */
 		uint32_t txce                    : 1;
@@ -792,9 +812,20 @@ union ctu_can_fd_tx_command {
 		uint32_t txb2                    : 1;
 		uint32_t txb3                    : 1;
 		uint32_t txb4                    : 1;
-		uint32_t reserved_31_12         : 20;
+		uint32_t txb5                    : 1;
+		uint32_t txb6                    : 1;
+		uint32_t txb7                    : 1;
+		uint32_t txb8                    : 1;
+  /* TXTB_INFO */
+		uint32_t txt_buffer_count        : 4;
+		uint32_t reserved_31_20         : 12;
 #else
-		uint32_t reserved_31_12         : 20;
+		uint32_t reserved_31_20         : 12;
+		uint32_t txt_buffer_count        : 4;
+		uint32_t txb8                    : 1;
+		uint32_t txb7                    : 1;
+		uint32_t txb6                    : 1;
+		uint32_t txb5                    : 1;
 		uint32_t txb4                    : 1;
 		uint32_t txb3                    : 1;
 		uint32_t txb2                    : 1;
@@ -819,9 +850,25 @@ union ctu_can_fd_tx_priority {
 		uint32_t txt3p                   : 3;
 		uint32_t reserved_11             : 1;
 		uint32_t txt4p                   : 3;
-		uint32_t reserved_31_15         : 17;
+		uint32_t reserved_15             : 1;
+		uint32_t txt5p                   : 3;
+		uint32_t reserved_19             : 1;
+		uint32_t txt6p                   : 3;
+		uint32_t reserved_23             : 1;
+		uint32_t txt7p                   : 3;
+		uint32_t reserved_27             : 1;
+		uint32_t txt8p                   : 3;
+		uint32_t reserved_31             : 1;
 #else
-		uint32_t reserved_31_15         : 17;
+		uint32_t reserved_31             : 1;
+		uint32_t txt8p                   : 3;
+		uint32_t reserved_27             : 1;
+		uint32_t txt7p                   : 3;
+		uint32_t reserved_23             : 1;
+		uint32_t txt6p                   : 3;
+		uint32_t reserved_19             : 1;
+		uint32_t txt5p                   : 3;
+		uint32_t reserved_15             : 1;
 		uint32_t txt4p                   : 3;
 		uint32_t reserved_11             : 1;
 		uint32_t txt3p                   : 3;

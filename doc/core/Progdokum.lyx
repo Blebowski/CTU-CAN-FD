@@ -509,7 +509,7 @@ filename "version.tex"
 \noindent
 \align center
 \begin_inset Tabular
-<lyxtabular version="3" rows="19" columns="4">
+<lyxtabular version="3" rows="20" columns="4">
 <features tabularvalignment="middle">
 <column alignment="center" valignment="top" width="1.5cm">
 <column alignment="center" valignment="top" width="2cm">
@@ -1211,11 +1211,49 @@ Change license
 </cell>
 </row>
 <row>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
 2.3
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Ondrej Ille
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+4-2-2021
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Added MODE[ROM] - Restricted operation mode.
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+2.3.1
 \end_layout
 
 \end_inset
@@ -1233,7 +1271,7 @@ Ondrej Ille
 \begin_inset Text
 
 \begin_layout Plain Layout
-4-2-2020
+23-2-2021
 \end_layout
 
 \end_inset
@@ -1242,7 +1280,7 @@ Ondrej Ille
 \begin_inset Text
 
 \begin_layout Plain Layout
-Added MODE[ROM] - Restricted operation mode.
+Add TXTB_INFO and mention generic number of TXT buffers.
 \end_layout
 
 \end_inset
@@ -1393,7 +1431,7 @@ RX buffer FIFO of 32 - 4096 words (1-204 CAN FD frames with 64 byte of data)
 \end_layout
 
 \begin_layout Itemize
-4 TXT buffers (1 CAN FD frame in each TXT buffer)
+2-8 TXT buffers (1 CAN FD frame in each TXT buffer)
 \end_layout
 
 \begin_layout Itemize
@@ -3532,7 +3570,26 @@ name "sec:CAN-frame-transmission"
 
 \begin_layout Standard
 CAN frames are transmitted by CTU CAN FD from TXT buffers.
- CTU CAN FD contains 4 TXT buffers.
+ CTU CAN FD contains 2-8 TXT buffers (number of TXT buffers is selected
+ at synthesis time).
+ Number of TXT buffers present can be read from TXTB_INFO register.
+ If 
+\begin_inset Quotes eld
+\end_inset
+
+N
+\begin_inset Quotes erd
+\end_inset
+
+ buffers are present, then its always buffers with indices 1 - 
+\begin_inset Quotes eld
+\end_inset
+
+N
+\begin_inset Quotes erd
+\end_inset
+
+.
  Each TXT buffer can be in one of states as described in Figure 
 \begin_inset CommandInset ref
 LatexCommand ref
@@ -3642,7 +3699,7 @@ Aborted
 \end_inset
 
  states.
- CAN frame is stored to TXT buffers via TXT Buffer 1 - TXT Buffer 4 memory
+ CAN frame is stored to TXT buffers via TXT Buffer 1 - TXT Buffer 8 memory
  regions described in Chapter 3.
  TXT buffers support only 32 bit access (8 and 16 bit accesses are not supported
 ).

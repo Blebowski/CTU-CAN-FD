@@ -293,15 +293,6 @@ package CANtestLib is
         rx_time_stamp_options   :   boolean;
     end record;
 
-
-    -- TXT Buffer priorities
-    type SW_TXT_priority is record
-        txt_buffer_1_priority   :   natural range 0 to 7;
-        txt_buffer_2_priority   :   natural range 0 to 7;
-        txt_buffer_3_priority   :   natural range 0 to 7;
-        txt_buffer_4_priority   :   natural range 0 to 7;
-    end record;
-
     type SW_error_type is (
         can_err_bit,
         can_err_form,
@@ -448,6 +439,7 @@ package CANtestLib is
 
     -- TXT Buffer state (used in test access, not in synthesizable code)
     type SW_TXT_Buffer_state_type is (
+        buf_not_exist,
         buf_empty,
         buf_ready,
         buf_tx_progress,
@@ -463,6 +455,9 @@ package CANtestLib is
         buf_set_ready,
         buf_set_abort
     );
+    
+    -- TXT Buffer index type
+    subtype SW_TXT_index_type is natural range 1 to 8;
 
 
     ----------------------------------------------------------------------------
@@ -1449,7 +1444,7 @@ package CANtestLib is
     ----------------------------------------------------------------------------
     procedure CAN_insert_TX_frame(
         constant frame          : in    SW_CAN_frame_type;
-        constant buf_nr         : in    natural range 1 to 4;
+        constant buf_nr         : in    SW_TXT_index_type;
         constant ID             : in    natural range 0 to 15;
         signal   mem_bus        : inout Avalon_mem_type
     );
@@ -1472,7 +1467,7 @@ package CANtestLib is
     ----------------------------------------------------------------------------
     procedure CAN_send_frame(
         constant frame          : in    SW_CAN_frame_type;
-        constant buf_nr         : in    natural range 1 to 4;
+        constant buf_nr         : in    SW_TXT_index_type;
         constant ID             : in    natural range 0 to 15;
         signal   mem_bus        : inout Avalon_mem_type;
         variable outcome        : out   boolean
@@ -1623,7 +1618,7 @@ package CANtestLib is
     ----------------------------------------------------------------------------
     procedure send_TXT_buf_cmd(
         constant cmd            : in    SW_TXT_Buffer_command_type;
-        constant buf_n          : in    natural range 1 to 4;
+        constant buf_n          : in    SW_TXT_index_type;
         constant ID             : in    natural range 0 to 15;
         signal   mem_bus        : inout Avalon_mem_type
     );
@@ -1635,16 +1630,17 @@ package CANtestLib is
     -- Arguments:
     --  cmd             Command to give to TXT Buffer.
     --  buf_vector      Bit vector with TXT Buffers which should receive 
-    --                  the command (eg. "1001" = command for buffers 1 and 4.)
+    --                  the command (eg. "00001001" = command for buffers 1 and 4.)
     --  ID              Index of CTU CAN FD Core instance.
     --  mem_bus         Avalon memory bus to execute the access on.
     ----------------------------------------------------------------------------
     procedure send_TXT_buf_cmd(
         constant cmd            : in    SW_TXT_Buffer_command_type;
-        constant buf_vector     : in    std_logic_vector(3 downto 0);  
+        constant buf_vector     : in    std_logic_vector(7 downto 0);  
         constant ID             : in    natural range 0 to 15;
         signal   mem_bus        : inout Avalon_mem_type
     );
+
     ----------------------------------------------------------------------------
     -- Read state of TXT Buffer.
     --
@@ -1656,8 +1652,37 @@ package CANtestLib is
     --  mem_bus         Avalon memory bus to execute the access on.
     ----------------------------------------------------------------------------
     procedure get_tx_buf_state(
-        constant buf_n          : in    natural range 1 to 4;
+        constant buf_n          : in    SW_TXT_index_type;
         variable retVal         : out   SW_TXT_Buffer_state_type;
+        constant ID             : in    natural range 0 to 15;
+        signal   mem_bus        : inout Avalon_mem_type
+    );
+
+    ----------------------------------------------------------------------------
+    -- Get number of txt buffers present in CTU CAN FD.
+    --
+    -- Arguments:
+    --  num_buffers     Number of available TXT buffers.
+    --  ID              Index of CTU CAN FD Core instance.
+    --  mem_bus         Avalon memory bus to execute the access on.
+    ----------------------------------------------------------------------------
+    procedure get_tx_buf_count(
+        variable num_buffers    : out   natural range 1 to 8;
+        constant ID             : in    natural range 0 to 15;
+        signal   mem_bus        : inout Avalon_mem_type
+    );
+    
+    
+    ----------------------------------------------------------------------------
+    -- Pick random TXT buffer (checks number of available buffers).
+    --
+    -- Arguments:
+    --  ID              Index of CTU CAN FD Core instance.
+    --  mem_bus         Avalon memory bus to execute the access on.
+    ----------------------------------------------------------------------------
+    procedure pick_random_txt_buffer(
+        variable txt_buf        : out   SW_TXT_index_type;
+        signal   rand_ctr       : inout natural range 0 to RAND_POOL_SIZE;
         constant ID             : in    natural range 0 to 15;
         signal   mem_bus        : inout Avalon_mem_type
     );
@@ -2056,7 +2081,7 @@ package CANtestLib is
     --  mem_bus         Avalon memory bus to execute the access on.
     ----------------------------------------------------------------------------
     procedure CAN_configure_tx_priority(
-        constant buff_number    : in    natural range 1 to 4;
+        constant buff_number    : in    SW_TXT_index_type;
         constant priority       : in    natural range 0 to 7;   
         constant ID             : in    natural range 0 to 15;
         signal   mem_bus        : inout Avalon_mem_type
@@ -3776,7 +3801,7 @@ package body CANtestLib is
 
     procedure CAN_insert_TX_frame(
         constant frame          : in    SW_CAN_frame_type;
-        constant buf_nr         : in    natural range 1 to 4;
+        constant buf_nr         : in    SW_TXT_index_type;
         constant ID             : in    natural range 0 to 15;
         signal   mem_bus        : inout Avalon_mem_type
     )is
@@ -3793,6 +3818,10 @@ package body CANtestLib is
         when 2 => buf_offset := TXTB2_DATA_1_ADR;
         when 3 => buf_offset := TXTB3_DATA_1_ADR;
         when 4 => buf_offset := TXTB4_DATA_1_ADR;
+        when 5 => buf_offset := TXTB5_DATA_1_ADR;
+        when 6 => buf_offset := TXTB6_DATA_1_ADR;
+        when 7 => buf_offset := TXTB7_DATA_1_ADR;
+        when 8 => buf_offset := TXTB8_DATA_1_ADR;     
         when others =>
             error("Unsupported TX buffer number");
         end case;
@@ -3837,7 +3866,7 @@ package body CANtestLib is
 
     procedure CAN_send_frame(
         constant frame          : in    SW_CAN_frame_type;
-        constant buf_nr         : in    natural range 1 to 4;
+        constant buf_nr         : in    SW_TXT_index_type;
         constant ID             : in    natural range 0 to 15;
         signal   mem_bus        : inout Avalon_mem_type;
         variable outcome        : out   boolean
@@ -4112,7 +4141,7 @@ package body CANtestLib is
 
     procedure send_TXT_buf_cmd(
         constant cmd            : in    SW_TXT_Buffer_command_type;
-        constant buf_n          : in    natural range 1 to 4;
+        constant buf_n          : in    SW_TXT_index_type;
         constant ID             : in    natural range 0 to 15;
         signal   mem_bus        : inout Avalon_mem_type
     )is
@@ -4139,12 +4168,9 @@ package body CANtestLib is
     end procedure;
     
     
-    
-    
-    -- constant buf_vector     : in    std_logic_vector(7 downto 0);  No
     procedure send_TXT_buf_cmd(
         constant cmd            : in    SW_TXT_Buffer_command_type;
-        constant buf_vector     : in    std_logic_vector(3 downto 0);  
+        constant buf_vector     : in    std_logic_vector(7 downto 0);
         constant ID             : in    natural range 0 to 15;
         signal   mem_bus        : inout Avalon_mem_type
     )is
@@ -4162,10 +4188,9 @@ package body CANtestLib is
         elsif (cmd = buf_set_abort) then
             data(TXCA_IND) := '1';
         end if;
-
         
         -- Set index of Buffer on which the command should be executed.
-        for i in 0 to 3 loop
+        for i in 0 to 7 loop
         	if(buf_vector(i) = '1') then
         		data(i + TXB1_IND) := '1';
         	end if;
@@ -4175,23 +4200,16 @@ package body CANtestLib is
         CAN_write(data, TX_COMMAND_ADR, ID, mem_bus);
     end procedure;
     
-    
-    
-    
-    
-    
-    
-
 
     procedure get_tx_buf_state(
-        constant buf_n          : in    natural range 1 to 4;
+        constant buf_n          : in    SW_TXT_index_type;
         variable retVal         : out   SW_TXT_Buffer_state_type;
         constant ID             : in    natural range 0 to 15;
         signal   mem_bus        : inout Avalon_mem_type
     )is
         variable data           :       std_logic_vector(31 downto 0);
         variable b_state        :       std_logic_vector(3 downto 0);
-        variable buf_index      :       natural range 0 to 3;
+        variable buf_index      :       natural range 0 to 7;
     begin
         CAN_read(data, TX_STATUS_ADR, ID, mem_bus);
         buf_index := buf_n - 1;
@@ -4205,11 +4223,44 @@ package body CANtestLib is
         when TXT_ERR  => retVal := buf_failed;
         when TXT_ABT  => retVal := buf_aborted;
         when TXT_ETY  => retVal := buf_empty;
+        when TXT_NOT_EXIST => retVal := buf_not_exist;
         when others =>
         error("Invalid TXT Buffer state: " &
               integer'image(to_integer(unsigned(b_state))));
         end case;
 
+    end procedure;
+
+
+    procedure get_tx_buf_count(
+        variable num_buffers    : out   natural range 1 to 8;
+        constant ID             : in    natural range 0 to 15;
+        signal   mem_bus        : inout Avalon_mem_type
+    )is
+        variable data           :       std_logic_vector(31 downto 0);
+    begin
+        CAN_read(data, TXTB_INFO_ADR, ID, mem_bus, BIT_16);
+        warning("Number of TXT buffers: " & integer'image(
+                to_integer(unsigned(data(TXT_BUFFER_COUNT_H downto TXT_BUFFER_COUNT_L)))));
+        num_buffers := to_integer(unsigned(data(TXT_BUFFER_COUNT_H downto TXT_BUFFER_COUNT_L)));
+    end procedure;
+
+
+    procedure pick_random_txt_buffer(
+        variable txt_buf        : out   SW_TXT_index_type;
+        signal   rand_ctr       : inout natural range 0 to RAND_POOL_SIZE;
+        constant ID             : in    natural range 0 to 15;
+        signal   mem_bus        : inout Avalon_mem_type
+    )is
+        variable num_buffers : natural range 1 to 8;
+        variable tmp : natural;
+    begin
+        get_tx_buf_count(num_buffers, ID, mem_bus);
+        rand_int_v(rand_ctr, num_buffers, tmp);
+        if (tmp = 0) then
+            tmp := 1;
+        end if;
+        txt_buf := tmp;
     end procedure;
 
 
@@ -5115,7 +5166,7 @@ package body CANtestLib is
     
 
     procedure CAN_configure_tx_priority(
-        constant buff_number    : in    natural range 1 to 4;
+        constant buff_number    : in    SW_TXT_index_type;
         constant priority       : in    natural range 0 to 7;   
         constant ID             : in    natural range 0 to 15;
         signal   mem_bus        : inout Avalon_mem_type
@@ -5140,6 +5191,14 @@ package body CANtestLib is
                 data (10 downto 8) := std_logic_vector(to_unsigned(priority, 3));
             when 4 =>
                 data (14 downto 12) := std_logic_vector(to_unsigned(priority, 3));
+            when 5 =>
+                data (18 downto 16) := std_logic_vector(to_unsigned(priority, 3));
+            when 6 =>
+                data (22 downto 20) := std_logic_vector(to_unsigned(priority, 3));
+            when 7 =>
+                data (26 downto 24) := std_logic_vector(to_unsigned(priority, 3));
+            when 8 =>
+                data (30 downto 28) := std_logic_vector(to_unsigned(priority, 3));
             when others =>
                 error("Unsupported TX buffer number.");
             end case;

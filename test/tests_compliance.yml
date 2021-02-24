@@ -1,6 +1,6 @@
 _default: &default
     log_level: info
-    functional_coverage: false
+    functional_coverage: true
     code_coverage: true
     error_tolerance: 0
     randomize: false

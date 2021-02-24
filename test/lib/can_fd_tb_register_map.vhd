@@ -86,7 +86,7 @@ package can_fd_tb_register_map is
   -- Register list
   ------------------------------------------------------------------------------
 
-  type t_Control_registers_list is array (0 to 48) of t_memory_reg;
+  type t_Control_registers_list is array (0 to 49) of t_memory_reg;
 
   constant Control_registers_list : t_Control_registers_list :=(
 
@@ -271,20 +271,25 @@ package can_fd_tb_register_map is
      reset_val => "00000000000000000000000000000000",
      is_implem => "11111111111111111111111111111111"),
     (address   => TX_STATUS_ADR,
-     size      => 16,
+     size      => 32,
      reg_type  => reg_read_only,
-     reset_val => "00000000000000001000100010001000",
-     is_implem => "00000000000000001111111111111111"),
+     reset_val => "10001000100010001000100010001000",
+     is_implem => "11111111111111111111111111111111"),
     (address   => TX_COMMAND_ADR,
      size      => 16,
      reg_type  => reg_write_only,
      reset_val => "00000000000000000000000000000000",
-     is_implem => "00000000000000000000111100000111"),
-    (address   => TX_PRIORITY_ADR,
+     is_implem => "00000000000000001111111100000111"),
+    (address   => TXTB_INFO_ADR,
      size      => 16,
+     reg_type  => reg_read_only,
+     reset_val => "00000000000000000000000000000000",
+     is_implem => "00000000000000000000000000000000"),
+    (address   => TX_PRIORITY_ADR,
+     size      => 32,
      reg_type  => reg_read_write,
      reset_val => "00000000000000000000000000000001",
-     is_implem => "00000000000000000111011101110111"),
+     is_implem => "01110111011101110111011101110111"),
     (address   => ERR_CAPT_ADR,
      size      => 8,
      reg_type  => reg_read_only,
@@ -435,6 +440,110 @@ package can_fd_tb_register_map is
      reset_val => "00000000000000000000000000000000",
      is_implem => "11111111111111111111111111111111"),
     (address   => TXTB4_DATA_20_ADR,
+     size      => 32,
+     reg_type  => reg_none,
+     reset_val => "00000000000000000000000000000000",
+     is_implem => "11111111111111111111111111111111")
+  );
+
+
+  ------------------------------------------------------------------------------
+  -- Register list
+  ------------------------------------------------------------------------------
+
+  type t_TX_Buffer_5_list is array (0 to 2) of t_memory_reg;
+
+  constant TX_Buffer_5_list : t_TX_Buffer_5_list :=(
+
+    (address   => TXTB5_DATA_1_ADR,
+     size      => 32,
+     reg_type  => reg_none,
+     reset_val => "00000000000000000000000000000000",
+     is_implem => "11111111111111111111111111111111"),
+    (address   => TXTB5_DATA_2_ADR,
+     size      => 32,
+     reg_type  => reg_none,
+     reset_val => "00000000000000000000000000000000",
+     is_implem => "11111111111111111111111111111111"),
+    (address   => TXTB5_DATA_20_ADR,
+     size      => 32,
+     reg_type  => reg_none,
+     reset_val => "00000000000000000000000000000000",
+     is_implem => "11111111111111111111111111111111")
+  );
+
+
+  ------------------------------------------------------------------------------
+  -- Register list
+  ------------------------------------------------------------------------------
+
+  type t_TX_Buffer_6_list is array (0 to 2) of t_memory_reg;
+
+  constant TX_Buffer_6_list : t_TX_Buffer_6_list :=(
+
+    (address   => TXTB6_DATA_1_ADR,
+     size      => 32,
+     reg_type  => reg_none,
+     reset_val => "00000000000000000000000000000000",
+     is_implem => "11111111111111111111111111111111"),
+    (address   => TXTB6_DATA_2_ADR,
+     size      => 32,
+     reg_type  => reg_none,
+     reset_val => "00000000000000000000000000000000",
+     is_implem => "11111111111111111111111111111111"),
+    (address   => TXTB6_DATA_20_ADR,
+     size      => 32,
+     reg_type  => reg_none,
+     reset_val => "00000000000000000000000000000000",
+     is_implem => "11111111111111111111111111111111")
+  );
+
+
+  ------------------------------------------------------------------------------
+  -- Register list
+  ------------------------------------------------------------------------------
+
+  type t_TX_Buffer_7_list is array (0 to 2) of t_memory_reg;
+
+  constant TX_Buffer_7_list : t_TX_Buffer_7_list :=(
+
+    (address   => TXTB7_DATA_1_ADR,
+     size      => 32,
+     reg_type  => reg_none,
+     reset_val => "00000000000000000000000000000000",
+     is_implem => "11111111111111111111111111111111"),
+    (address   => TXTB7_DATA_2_ADR,
+     size      => 32,
+     reg_type  => reg_none,
+     reset_val => "00000000000000000000000000000000",
+     is_implem => "11111111111111111111111111111111"),
+    (address   => TXTB7_DATA_20_ADR,
+     size      => 32,
+     reg_type  => reg_none,
+     reset_val => "00000000000000000000000000000000",
+     is_implem => "11111111111111111111111111111111")
+  );
+
+
+  ------------------------------------------------------------------------------
+  -- Register list
+  ------------------------------------------------------------------------------
+
+  type t_TX_Buffer_8_list is array (0 to 2) of t_memory_reg;
+
+  constant TX_Buffer_8_list : t_TX_Buffer_8_list :=(
+
+    (address   => TXTB8_DATA_1_ADR,
+     size      => 32,
+     reg_type  => reg_none,
+     reset_val => "00000000000000000000000000000000",
+     is_implem => "11111111111111111111111111111111"),
+    (address   => TXTB8_DATA_2_ADR,
+     size      => 32,
+     reg_type  => reg_none,
+     reset_val => "00000000000000000000000000000000",
+     is_implem => "11111111111111111111111111111111"),
+    (address   => TXTB8_DATA_20_ADR,
      size      => 32,
      reg_type  => reg_none,
      reset_val => "00000000000000000000000000000000",

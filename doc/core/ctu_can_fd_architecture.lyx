@@ -1368,12 +1368,10 @@ When CTU CAN FD GIT repository is clonned, register map can be generated
 \end_layout
 
 \begin_layout Verbatim
-
 cd scripts
 \end_layout
 
 \begin_layout Verbatim
-
 ./update_reg_map
 \end_layout
 
@@ -1386,12 +1384,10 @@ Documentation can be exported from VHDL RTL codes by following script:
 \end_layout
 
 \begin_layout Verbatim
-
 cd scripts
 \end_layout
 
 \begin_layout Verbatim
-
 python gen_lyx_tables.py --configPath vhdl_lyx_interface_cfg.yml
 \end_layout
 
@@ -1424,12 +1420,10 @@ CTU CAN FD contains release tags in GIT repository.
 \end_layout
 
 \begin_layout Verbatim
-
 cd scripts
 \end_layout
 
 \begin_layout Verbatim
-
 python create_release.py --output_dir ../release_directory_name
 \end_layout
 
@@ -1451,12 +1445,10 @@ src/component.xml
 \end_layout
 
 \begin_layout Verbatim
-
 cd scripts
 \end_layout
 
 \begin_layout Verbatim
-
 python gen_vivado_component.py
 \end_layout
 
@@ -2011,7 +2003,7 @@ ESI and BRS values
 \begin_inset Text
 
 \begin_layout Plain Layout
-Partially Supported
+Supported
 \end_layout
 
 \end_inset
@@ -2020,9 +2012,10 @@ Partially Supported
 \begin_inset Text
 
 \begin_layout Plain Layout
-BRS value can be specified for transmitted CAN frames.
+BRS value can be specified for each transmitted CAN frame.
  ESI value can't be specified for transmitted CAN frames, it is always derived
  from current Fault confinement state of CTU CAN FD.
+ ESI value can be read for each received frame.
 \end_layout
 
 \end_inset
@@ -2100,7 +2093,7 @@ timestamp
 \series default
 \shape default
  input.
- The reason behind this is to share single Time base between multiple instances
+ The reason behind this, is to share single Time base between multiple instances
  of CTU CAN FD.
  
 \series bold
@@ -2230,7 +2223,7 @@ Restricted operation
 \begin_inset Text
 
 \begin_layout Plain Layout
-Not Supported
+Supported
 \end_layout
 
 \end_inset
@@ -2239,7 +2232,7 @@ Not Supported
 \begin_inset Text
 
 \begin_layout Plain Layout
-
+Supported via MODE[ROM].
 \end_layout
 
 \end_inset
@@ -5538,7 +5531,7 @@ status open
 \noindent
 \align center
 \begin_inset Tabular
-<lyxtabular version="3" rows="8" columns="5">
+<lyxtabular version="3" rows="9" columns="5">
 <features tabularvalignment="middle">
 <column alignment="left" valignment="top" width="0pt">
 <column alignment="left" valignment="top" width="0pt">
@@ -5706,6 +5699,67 @@ Size of RX Buffer RAM in 32 bit words.
 \begin_inset CommandInset ref
 LatexCommand ref
 reference "sec:RX-Buffer"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+.
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\series bold
+\shape italic
+txt_buffer_count
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+natural
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+4
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+2-8
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Number of TXT buffers.
+ See 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "sec:TXT-Buffer"
 plural "false"
 caps "false"
 noprefix "false"
@@ -7321,7 +7375,7 @@ txt_buffer_ram
 \begin_inset Text
 
 \begin_layout Plain Layout
-4
+2-8
 \end_layout
 
 \end_inset
@@ -25748,7 +25802,14 @@ filename "entity_docs/txt_buffer.lyx"
 \end_layout
 
 \begin_layout Standard
-There are 4 TXT buffers in CTU CAN FD.
+Number of TXT buffers in CTU CAN FD is configurable at synthesis time via
+ 
+\series bold
+\shape italic
+txt_buffer_count
+\series default
+\shape default
+ top level generic.
  Each TXT buffer contains 1 RAM memory.
  Each TXT buffer RAM is accessed by SW via Memory registers as described
  in 
@@ -29791,8 +29852,14 @@ output_valid
 \end_layout
 
 \begin_layout Standard
-Priority decoder supports 8 input TXT buffers (currently only 4 are used).
- Unused inputs are driven to zeroes.
+Priority decoder supports up to 8 input TXT buffers.
+ If less than 8 TXT buffers are configured (see 
+\series bold
+\shape italic
+txt_buffer_count
+\series default
+\shape default
+), unused inputs are driven to zeroes.
 \end_layout
 
 \begin_layout Standard
@@ -36246,7 +36313,7 @@ noprefix "false"
 
 \begin_layout Standard
 Memory registers block decodes write accesses to TXT buffers (via TXT buffer
- 1 to TXT buffer 4 memory locations) and maps these accesses to access TXT
+ 1 to TXT buffer 8 memory locations) and maps these accesses to access TXT
  buffer RAMs.
 \end_layout
 

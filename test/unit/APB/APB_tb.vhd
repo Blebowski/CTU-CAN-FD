@@ -91,10 +91,13 @@ context ctu_can_fd_tb.ctu_can_test_context;
 architecture apb_unit_test of CAN_test is
     component can_top_apb is
         generic(
-            sup_filtA        : boolean                := true;
-            sup_filtB        : boolean                := true;
-            sup_filtC        : boolean                := true;
-            sup_range        : boolean                := true
+            rx_buffer_size   : natural range 32 to 4098 := 128;
+            txt_buffer_count : natural range 2 to 8     := 4; 
+            sup_filtA        : boolean                  := true;
+            sup_filtB        : boolean                  := true;
+            sup_filtC        : boolean                  := true;
+            sup_range        : boolean                  := true;
+            sup_traffic_ctrs : boolean                  := true
         );
         port(
             aclk             : in  std_logic;
@@ -138,16 +141,18 @@ architecture apb_unit_test of CAN_test is
 begin
     can_inst : can_top_apb
         generic map (
-            sup_filtA   => false,
-            sup_filtB   => false,
-            sup_filtC   => false,
-            sup_range   => false
+            rx_buffer_size   => 128,
+            txt_buffer_count => 4, 
+            sup_filtA        => false,
+            sup_filtB        => false,
+            sup_filtC        => false,
+            sup_range        => false
         )
         port map (
             CAN_rx           => '1',
             timestamp        => (others => '0'),
-            aclk           => aclk,
-            arstn          => arstn,
+            aclk             => aclk,
+            arstn            => arstn,
 
             -- APB ports
             s_apb_paddr    => s_apb_paddr,

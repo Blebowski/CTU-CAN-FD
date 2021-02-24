@@ -121,8 +121,9 @@ package body tx_priority_change_feature is
         signal      bus_level       : in     std_logic
     ) is
         
-        type txt_buffer_priorities is array (1 to 4) of integer range 0 to 7;
-        type CAN_frame_array_type is array (1 to 4) of SW_CAN_frame_type; 
+        -- Assume maximal amount of TXT buffers
+        type txt_buffer_priorities is array (1 to 8) of integer range 0 to 7;
+        type CAN_frame_array_type is array (1 to 8) of SW_CAN_frame_type; 
         
         variable priorities : txt_buffer_priorities;
         variable txtb_state : SW_TXT_Buffer_state_type;
@@ -135,7 +136,9 @@ package body tx_priority_change_feature is
         variable frames_equal       :       boolean;
 
         variable ID_1               :       natural := 1;   -- Transmiter
-        variable ID_2               :       natural := 2;   -- Receiver          
+        variable ID_2               :       natural := 2;   -- Receiver
+        
+        variable num_txt_bufs       :       natural;       
     begin
 
         -----------------------------------------------------------------------
@@ -144,13 +147,16 @@ package body tx_priority_change_feature is
         --     TXT Buffers.
         -----------------------------------------------------------------------
         info("Step 1");
-        for i in 1 to 4 loop
+        
+        get_tx_buf_count(num_txt_bufs, ID_1, mem_bus(1));
+
+        for i in 1 to num_txt_bufs loop
             rand_int_v(rand_ctr, 7, priorities(i));
             -- Write generated priority TX_PRIORITY
             CAN_configure_tx_priority(i, priorities(i), ID_1, mem_bus(1));
         end loop;
 
-        for i in 1 to 4 loop
+        for i in 1 to num_txt_bufs loop
             CAN_generate_frame(rand_ctr, CAN_frame_array_tx(i));
             CAN_insert_TX_frame(CAN_frame_array_tx(i), i, ID_1, mem_bus(1));
         end loop;
@@ -162,10 +168,12 @@ package body tx_priority_change_feature is
         -----------------------------------------------------------------------
         info("Step 2");
         CAN_wait_sample_point(iout(1).stat_bus, false);
-        send_TXT_buf_cmd(buf_set_ready, "1111", ID_1, mem_bus(1));
+        -- If there is less buffers than 8, other bits should be reserved and
+        -- have no effect!
+        send_TXT_buf_cmd(buf_set_ready, "11111111", ID_1, mem_bus(1));
         wait for 15 ns;
         
-        for i in 1 to 4 loop
+        for i in 1 to num_txt_bufs loop
             get_tx_buf_state(i, txtb_state, ID_1, mem_bus(1));
             check(txtb_state = buf_ready, "TXT Buffer ready!");
         end loop;
@@ -174,7 +182,7 @@ package body tx_priority_change_feature is
         -- @3. Select new random priorities and write them to TXT Buffers.
         -----------------------------------------------------------------------
         info("Step 3");
-        for i in 1 to 4 loop
+        for i in 1 to num_txt_bufs loop
             rand_int_v(rand_ctr, 7, priorities(i));
             -- Write generated priority TX_PRIORITY
             CAN_configure_tx_priority(i, priorities(i), ID_1, mem_bus(1));
@@ -188,8 +196,8 @@ package body tx_priority_change_feature is
         CAN_wait_frame_sent(ID_1, mem_bus(1));
 
         -- Pick highest priority buffer
-        highest_prio_buf := 4;
-        for i in 4 downto 1 loop
+        highest_prio_buf := num_txt_bufs;
+        for i in num_txt_bufs downto 1 loop
             if (priorities(i) >= highest_prio) then
                 highest_prio := priorities(i);
                 highest_prio_buf := i;

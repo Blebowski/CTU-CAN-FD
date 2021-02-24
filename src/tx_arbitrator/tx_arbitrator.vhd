@@ -120,7 +120,7 @@ entity tx_arbitrator is
         -- TXT Buffers interface
         -----------------------------------------------------------------------
         -- Data words from TXT Buffers RAM memories
-        txtb_port_b_data        :in t_txt_bufs_output;
+        txtb_port_b_data        :in t_txt_bufs_output(G_TXT_BUFFER_COUNT - 1 downto 0);
         
         -- TXT Buffers are available, can be selected by TX Arbitrator
         txtb_available          :in std_logic_vector(G_TXT_BUFFER_COUNT - 1 downto 0);
@@ -177,7 +177,7 @@ entity tx_arbitrator is
         -- Memory registers interface
         -----------------------------------------------------------------------
         -- Priorities of TXT Buffers
-        txtb_prorities          :in t_txt_bufs_priorities;
+        txtb_prorities          :in t_txt_bufs_priorities(G_TXT_BUFFER_COUNT - 1 downto 0);
     
         -- TimeStamp value
         timestamp               :in std_logic_vector(63 downto 0)
