@@ -105,7 +105,6 @@ test_ip_nightly:
         when: always
         paths:
             - test/tests_nightly.xml
-            - test/xunit.xsl
             - test/build/code_coverage_tests_nightly
             - test/build/functional_coverage
             - test/build/vunit_out/preprocessed
@@ -128,7 +127,6 @@ test_ip_compliance:
         when: always
         paths:
             - test/tests_compliance.xml
-            - test/xunit.xsl
             - test/build/code_coverage_tests_compliance
             - test/build/functional_coverage
             - test/build/vunit_out/preprocessed
@@ -177,9 +175,17 @@ pages:
         - cp doc/core/Progdokum.pdf public/ || true
         - cp doc/core/ctu_can_fd_architecture.pdf public/ || true
         - cp -R doc/driver/build public/driver_doc || true
+
+        # Copy only functional coverage HTML reports
         - mkdir public/functional_coverage
-        - cp -R test/build/functional_coverage/* public/functional_coverage || true
+        - cp test/build/functional_coverage/*.html public/functional_coverage || true
+        - cp -R test/build/functional/coverage/html public/functional_coverage || true
+
+        # VRM result
         - cp scripts/VRM.html public/ || true
+
+        # Check size
+        - du -skh public/*
     only:
         - master
     artifacts:
