@@ -179,7 +179,7 @@ pages:
         # Copy only functional coverage HTML reports
         - mkdir public/functional_coverage
         - cp test/build/functional_coverage/*.html public/functional_coverage || true
-        - cp -R test/build/functional/coverage/html public/functional_coverage || true
+        - cp -R test/build/functional_coverage/html public/functional_coverage || true
 
         # VRM result
         - cp scripts/VRM.html public/ || true
