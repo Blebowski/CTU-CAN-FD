@@ -144,7 +144,7 @@ int main(int argc, char *argv[])
 
     apb_write(CTU_CAN_FD_BTR, 0xFFFFFFFF, 0b1111);
     apb_read(CTU_CAN_FD_DEVICE_ID);
-    CHECK(0x0202CAFD, "CAN ID reg mismatch");
+    CHECK(0x0203CAFD, "CAN ID reg mismatch");
 
     apb_read(CTU_CAN_FD_BTR);
     CHECK(0xFFFFFFFF, "readback mismatch");
