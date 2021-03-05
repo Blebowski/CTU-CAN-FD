@@ -164,15 +164,9 @@ package can_components is
             can_rx      : in  std_logic;
     
             -----------------------------------------------------------------------
-            -- Internal signals for testbenches
+            -- Debug signals for testbenches
             -----------------------------------------------------------------------
-            -- synthesis translate_off
-            -- Driving Bus output
-            drv_bus_o    : out std_logic_vector(1023 downto 0);
-            
-            -- Status Bus output
-            stat_bus_o   : out std_logic_vector(511 downto 0);
-            -- synthesis translate_on
+            test_probe  : out t_ctu_can_fd_test_probe;
     
             -----------------------------------------------------------------------
             -- Timestamp for time based transmission / reception

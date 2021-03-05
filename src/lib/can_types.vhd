@@ -237,4 +237,13 @@ package can_types is
     constant dlc_length : length_type := (0, 1, 2, 3, 4, 5, 6, 7, 8,
                                           12, 16, 20, 24, 32, 48, 64);
 
+    ---------------------------------------------------------------------------- 
+    -- Debug types
+    ----------------------------------------------------------------------------
+    type t_ctu_can_fd_test_probe is record
+        rx_trigger_nbs      : std_logic;
+        rx_trigger_wbs      : std_logic;
+        tx_trigger          : std_logic;
+    end record;
+
 end package;
