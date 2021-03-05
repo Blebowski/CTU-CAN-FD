@@ -123,8 +123,6 @@ use ctu_can_fd_rtl.can_config.all;
 use ctu_can_fd_rtl.CAN_FD_register_map.all;
 use ctu_can_fd_rtl.CAN_FD_frame_format.all;
 
-library vunit_lib;
-context vunit_lib.vunit_context;
 
 package CANtestLib is
 

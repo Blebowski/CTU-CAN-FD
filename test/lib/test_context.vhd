@@ -82,15 +82,11 @@ context ctu_can_test_context is
 
     Library ctu_can_fd_tb;
     use ctu_can_fd_tb.CANtestLib.All;
-    use ctu_can_fd_tb.models_pkg.All;
     use ctu_can_fd_tb.randomLib.All;
 
     use STD.textio.all;
 
     Library ieee;
     use IEEE.std_logic_textio.all;
-        
-    library vunit_lib;
-    context vunit_lib.vunit_context;
 
 end context;
