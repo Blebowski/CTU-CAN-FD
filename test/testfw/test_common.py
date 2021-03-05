@@ -110,10 +110,6 @@ def add_rtl_sources(lib) -> None:
     add_sources(lib, ['../src/**/*.vhd'])
 
 
-def add_tb_sources(lib) -> None:
-    add_sources(lib, ['*.vhd', 'lib/*.vhd', 'models/*.vhd'])
-
-
 def get_compile_and_sim_options(config) -> Tuple[OptionsDict, OptionsDict]:
 
     compile_flags = []  # type: List[str]
@@ -138,7 +134,6 @@ def get_compile_and_sim_options(config) -> Tuple[OptionsDict, OptionsDict]:
     common_modelsim_init_files = [str(d/x) for x in cmif]
     sim_options = OptionsDict({
         "ghdl.elab_flags": elab_flags,
-        "modelsim.init_files.after_load": common_modelsim_init_files,
         "ghdl.sim_flags": ["--ieee-asserts=disable"],
     })
     return compile_options, sim_options

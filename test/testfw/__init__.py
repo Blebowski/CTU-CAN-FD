@@ -25,9 +25,9 @@ def setup_logging() -> None:
 setup_logging()
 
 from . import vunit_ifc
-from . import test_unit, test_sanity, test_feature, test_reference, test_compliance
+from . import test_unit, test_sanity, test_feature, test_reference, test_compliance, test_main
 from vunit.ui import VUnit
-from .test_common import add_rtl_sources, add_tb_sources, get_compile_options
+from .test_common import add_rtl_sources, get_compile_options, dict_merge
 
 
 #-------------------------------------------------------------------------------
@@ -112,7 +112,6 @@ def test(obj, *, config, vunit_args):
     ctu_can_fd_tb = ui.add_library("ctu_can_fd_tb")
 
     add_rtl_sources(ctu_can_fd_rtl)
-    add_tb_sources(ctu_can_fd_tb)
 
     ui.enable_check_preprocessing()
     ui.enable_location_preprocessing()  # (additional_subprograms=['log'])
@@ -121,14 +120,16 @@ def test(obj, *, config, vunit_args):
         # key in config, factory
         ('unit', test_unit.UnitTests),
         ('sanity', test_sanity.SanityTests),
-        ('feature', test_feature.FeatureTests),
-        ('reference', test_reference.ReferenceTests),
-        ('compliance', test_compliance.ComplianceTests)
+        ('compliance', test_main.MainTests),
+        ('feature', test_main.MainTests),
+        ('reference', test_main.MainTests)
     ]
 
     tests = []
+
     for cfg_key, factory in tests_classes:
         if cfg_key in config:
+            dict_merge(config[cfg_key], config["_default"])
             tests.append(factory(ui, ctu_can_fd_tb, config[cfg_key], build, base))
 
     (func_cov_dir / "html").mkdir(parents=True, exist_ok=True)
@@ -146,7 +147,7 @@ def test(obj, *, config, vunit_args):
 
     # check for unknown tests
     all_benches = ctu_can_fd_tb.get_test_benches('*')
-    pattern = 'tb_.*?_unit_test|tb_sanity|tb_feature|tb_reference_wrapper'
+    pattern = 'tb_.*?_unit_test|tb_top_ctu_can_fd_main'
     unknown_tests = [tb for tb in all_benches
                      if not re.match(pattern, tb.name)]
     if len(unknown_tests):
@@ -176,7 +177,6 @@ def create_vunit(obj, vunit_args, out_basename):
         args += ['--compile']
     args += ['--xunit-xml', '../{}.xml1'.format(out_basename)] + list(vunit_args)
     ui = VUnit.from_argv(args)
-    ui.add_com()
     return ui
 
 

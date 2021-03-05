@@ -1,0 +1,270 @@
+_default: &default
+
+    # Test-bench configuration
+    log_level: info
+    functional_coverage: true
+    code_coverage: true
+    error_tolerance: 0
+    randomize: false
+    # seed: 10
+    # In GUI mode, dump all signals, not only these included in layout file.
+    dump_all_signals: true
+    iterations: 1
+    timeout: 100 ms
+
+    # DUT generics
+    rx_buffer_size: 64
+    txt_buffer_count: 4
+    sup_filtA: true
+    sup_filtB: true
+    sup_filtC: true
+    sup_range: true
+    sup_traffic_ctrs: true
+    target_technology: 0 # C_TECH_ASIC
+
+    # DUT Bit timing settings
+    brp: 5
+    prop: 10
+    ph_1: 10
+    ph_2: 10
+    sjw: 5
+    brp_fd: 1
+    prop_fd: 5
+    ph_1_fd: 5
+    ph_2_fd: 5
+    sjw_fd: 4
+
+    # Clock configuration
+    system_clock_period: 10 ns
+
+compliance:
+    test_type: "compliance"
+    tests:
+        demo:
+        iso_7_1_1:
+        iso_7_1_2:
+        iso_7_1_3:
+        iso_7_1_4:
+        iso_7_1_5:
+        iso_7_1_6:
+        iso_7_1_7:
+        iso_7_1_8:
+        iso_7_1_9:
+        iso_7_1_10:
+        iso_7_1_11:
+        iso_7_1_12:
+
+        iso_7_2_1:
+        iso_7_2_2:
+        iso_7_2_3:
+        iso_7_2_4:
+        iso_7_2_5:
+        iso_7_2_6:
+        iso_7_2_7:
+        iso_7_2_8:
+        iso_7_2_9:
+        iso_7_2_10:
+        iso_7_2_11:
+
+        iso_7_3_1:
+        iso_7_3_2:
+        iso_7_3_3:
+        iso_7_3_4:
+
+        iso_7_4_1:
+        iso_7_4_2:
+        iso_7_4_3:
+        iso_7_4_4:
+        iso_7_4_5:
+        iso_7_4_6:
+        iso_7_4_7:
+
+        iso_7_5_1:
+        iso_7_5_2:
+        iso_7_5_3:
+        iso_7_5_4:
+        iso_7_5_5:
+        iso_7_5_6:
+        iso_7_5_7:
+
+        iso_7_6_1:
+        iso_7_6_2:
+        iso_7_6_3:
+        iso_7_6_4:
+        iso_7_6_5:
+        iso_7_6_6:
+        iso_7_6_7:
+        iso_7_6_8:
+        iso_7_6_9:
+        iso_7_6_10:
+        iso_7_6_11:
+        iso_7_6_12:
+        iso_7_6_13:
+        iso_7_6_14:
+        iso_7_6_15:
+        iso_7_6_16:
+        iso_7_6_17:
+        iso_7_6_18:
+        iso_7_6_19:
+        iso_7_6_20:
+        iso_7_6_21:
+        iso_7_6_22:
+        iso_7_6_23:
+
+        iso_7_7_1:
+        iso_7_7_2:
+        iso_7_7_3:
+        iso_7_7_4:
+        iso_7_7_5:
+        iso_7_7_6:
+        iso_7_7_7:
+        iso_7_7_8:
+        iso_7_7_9_1:
+        iso_7_7_9_2:
+        iso_7_7_10:
+        iso_7_7_11:
+
+        iso_7_8_1_1:
+        iso_7_8_1_2:
+        iso_7_8_1_3:
+        iso_7_8_2_1:
+        iso_7_8_2_2:
+        iso_7_8_3_1:
+            # In this test, BRP must be equal to BRP_FD! It is necessary since
+            # huge time quanta difference will cause mismatch during first
+            # resynchronisation (in ESI bit) during Data bit phase!
+            brp: 2
+            brp_fd: 2
+        iso_7_8_3_2:
+        iso_7_8_3_3:
+        iso_7_8_4_1:
+            # In this test, BRP must be equal to BRP_FD! It is necessary since
+            # huge time quanta difference will cause mismatch during first
+            # resynchronisation (in ESI bit) during Data bit phase!
+            brp: 2
+            brp_fd: 2
+        iso_7_8_4_2:
+        iso_7_8_4_3:
+        iso_7_8_5_1:
+        iso_7_8_5_2:
+        iso_7_8_5_3:
+        iso_7_8_6_1:
+            # SJW is decremented so that more than 1 elementary test is ran
+            sjw_fd: 2
+        iso_7_8_6_2:
+            # SJW is decremented so that more than 1 elementary test is ran
+            sjw_fd: 2
+        iso_7_8_6_3:
+        iso_7_8_7_1:
+        iso_7_8_7_2:
+        iso_7_8_7_3:
+        iso_7_8_8_1:
+        iso_7_8_8_2:
+        iso_7_8_8_3:
+        iso_7_8_9_1:
+        iso_7_8_9_2:
+        iso_7_8_9_3:
+
+        iso_8_1_1:
+        iso_8_1_2:
+        iso_8_1_3:
+        iso_8_1_4:
+        iso_8_1_5:
+        iso_8_1_6:
+        iso_8_1_7:
+        iso_8_1_8:
+
+        iso_8_2_1:
+        iso_8_2_2:
+        iso_8_2_3:
+        iso_8_2_4:
+        iso_8_2_5:
+        iso_8_2_6:
+        iso_8_2_7:
+        iso_8_2_8:
+
+        iso_8_3_1:
+        iso_8_3_2:
+        iso_8_3_3:
+        iso_8_3_4:
+
+        iso_8_4_1:
+        iso_8_4_2:
+        iso_8_4_3:
+        iso_8_4_4:
+        iso_8_4_5:
+
+        iso_8_5_1:
+        iso_8_5_2:
+        iso_8_5_3:
+        iso_8_5_4:
+        iso_8_5_5:
+        iso_8_5_6:
+        iso_8_5_7:
+        iso_8_5_8:
+        iso_8_5_9:
+        iso_8_5_10:
+        iso_8_5_11:
+        iso_8_5_12:
+        iso_8_5_13:
+        iso_8_5_14:
+        iso_8_5_15:
+
+        iso_8_6_1:
+        iso_8_6_2:
+        iso_8_6_3:
+        iso_8_6_4:
+        iso_8_6_5:
+        iso_8_6_6:
+        iso_8_6_7:
+        iso_8_6_8:
+        iso_8_6_9:
+        iso_8_6_10:
+        iso_8_6_11:
+        iso_8_6_12:
+        iso_8_6_13:
+        iso_8_6_14:
+        iso_8_6_15:
+        iso_8_6_16:
+        iso_8_6_17:
+        iso_8_6_18:
+        iso_8_6_19:
+        iso_8_6_20:
+        iso_8_6_21:
+
+        iso_8_7_1:
+        iso_8_7_2:
+        iso_8_7_3:
+        iso_8_7_4:
+        iso_8_7_5:
+        iso_8_7_6:
+        iso_8_7_7:
+        iso_8_7_8:
+        iso_8_7_9:
+
+        iso_8_8_1_1:
+        iso_8_8_1_2:
+            brp: 3
+        iso_8_8_1_3:
+            brp_fd: 3
+        iso_8_8_1_4:
+            brp_fd: 3
+        iso_8_8_2_1:
+        iso_8_8_2_2:
+        iso_8_8_2_3:
+            brp_fd: 3
+        iso_8_8_2_4:
+            brp_fd: 3
+        iso_8_8_3_1:
+            brp_fd: 3
+        iso_8_8_3_2:
+            brp_fd: 3
+        iso_8_8_4_1:
+            brp_fd: 3
+        iso_8_8_4_2:
+            brp_fd: 3
+        iso_8_8_5_1:
+        iso_8_8_5_2:
+
+        iso_9_6_1:
+        iso_9_6_2:
