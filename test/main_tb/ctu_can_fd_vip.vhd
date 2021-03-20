@@ -68,34 +68,19 @@
 
 --------------------------------------------------------------------------------
 --  @Purpose:
---    CTU CAN FD VIP
+--    CTU CAN FD VIP - Main verification component, encapsulates all test
+--    functionality.
 --  
 --------------------------------------------------------------------------------
 -- Revision History:
 --    26.1.2021   Created file
 --------------------------------------------------------------------------------
 
-Library ieee;
-USE IEEE.std_logic_1164.all;
-USE IEEE.numeric_std.ALL;
-
--- Testbench libry
 Library ctu_can_fd_tb;
-
--- Common stuff
-use ctu_can_fd_tb.tb_communication_pkg.all;
-use ctu_can_fd_tb.tb_report_pkg.all;
-
--- Agents
-use ctu_can_fd_tb.reset_agent_pkg.all;
-use ctu_can_fd_tb.clk_gen_agent_pkg.all;
-use ctu_can_fd_tb.mem_bus_agent_pkg.all;
-use ctu_can_fd_tb.can_agent_pkg.all;
-
--- Design libraries
-Library ctu_can_fd_rtl;
-use ctu_can_fd_rtl.can_components.all;
-use ctu_can_fd_rtl.can_types.all;
+context ctu_can_fd_tb.ieee_context;
+context ctu_can_fd_tb.tb_common_context;
+context ctu_can_fd_tb.tb_agents_context;
+context ctu_can_fd_tb.rtl_context;
 
 
 entity ctu_can_fd_vip is
@@ -118,7 +103,10 @@ entity ctu_can_fd_vip is
         cfg_prop_fd             : natural;
         cfg_ph_1_fd             : natural;
         cfg_ph_2_fd             : natural;
-        cfg_sjw_fd              : natural
+        cfg_sjw_fd              : natural;
+        
+        -- Seed
+        seed                    : natural := 0
     );
     port(
         -- Test control
@@ -128,7 +116,7 @@ entity ctu_can_fd_vip is
          
         -- DUT interface
         clk_sys             : inout std_logic;
-        res_n               : out   std_logic;
+        res_n               : inout std_logic;
         
         write_data          : out   std_logic_vector(31 DOWNTO 0);
         read_data           : in    std_logic_vector(31 DOWNTO 0);
@@ -156,27 +144,184 @@ architecture behav of ctu_can_fd_vip is
 
     -- RX signals on CAN bus, as driven by various agents.
     -- TX signal is unique (driven by DUT)
-    signal can_rx_compliance_agent  : std_logic;
-    signal can_rx_feature_agent     : std_logic;
+    signal can_rx_compliance_agent  : std_logic := '1';
+    signal can_rx_feature_agent     : std_logic := '1';
+    
+    ---------------------------------------------------------------------------
+    -- Internal chip selects:
+    --  0 - DUT - out of VIP
+    --  1 - Test node of feature tests
+    ---------------------------------------------------------------------------
+    signal scs_i                    : std_logic_vector(1 downto 0);
+    
+    signal read_data_test_node      : std_logic_vector(31 downto 0);
+    signal read_data_muxed          : std_logic_vector(31 downto 0);
+    
+    signal res_n_i                  : std_logic;
     
 begin
     
     ---------------------------------------------------------------------------
-    -- Reset agent
+    -- Reset agent - Asserts reset
     ---------------------------------------------------------------------------
     reset_agent_inst : reset_agent
     port map (
-        reset   => res_n
+        reset   => res_n_i
     );
     
     ---------------------------------------------------------------------------
-    -- Clock agent
+    -- Clock agent - Generates clock
     ---------------------------------------------------------------------------
     clk_gen_agent_inst : clk_gen_agent
     port map(
-        clock  => clk_sys_clock_agent
+        clock_out  => clk_sys_clock_agent,
+        clock_in   => clk_sys_i
     );
 
+    ---------------------------------------------------------------------------
+    -- Memory bus agent - Executes memory accesses
+    ---------------------------------------------------------------------------
+    mem_bus_agent_inst : mem_bus_agent
+    generic map(
+        G_ACCESS_FIFO_DEPTH => 32,
+        G_NUM_SLAVES => 2
+    )
+    port map(
+        clk             => clk_sys_i,
+        scs             => scs_i,
+        swr             => swr,
+        srd             => srd,
+        sbe             => sbe,
+        write_data      => write_data,
+        read_data       => read_data_muxed,
+        address         => adress
+    );
+
+    ---------------------------------------------------------------------------
+    -- Interrupt agent - Checks interrupt pin
+    ---------------------------------------------------------------------------
+    interrupt_agent_inst : interrupt_agent
+    port map(
+        int   => int
+    );
+    
+    ---------------------------------------------------------------------------
+    -- Timestamp agent - generates timestamp for DUT
+    ---------------------------------------------------------------------------
+    timestamp_agent_inst : timestamp_agent
+    port map(
+        clk_sys         => clk_sys_i,
+        timestamp       => timestamp
+    );
+    
+    ---------------------------------------------------------------------------
+    -- Test controller agent - controls simulation
+    ---------------------------------------------------------------------------
+    test_controller_agent_inst : test_controller_agent
+    generic map(
+        test_name               => test_name,
+        test_type               => test_type,
+        stand_alone_vip_mode    => stand_alone_vip_mode,
+        seed                    => seed,
+        
+        -- DUT configuration
+        cfg_sys_clk_period      => cfg_sys_clk_period,
+        cfg_brp                 => cfg_brp,
+        cfg_prop                => cfg_prop,
+        cfg_ph_1                => cfg_ph_1,
+        cfg_ph_2                => cfg_ph_2,
+        cfg_sjw                 => cfg_sjw,
+        cfg_brp_fd              => cfg_brp_fd,
+        cfg_prop_fd             => cfg_prop_fd,
+        cfg_ph_1_fd             => cfg_ph_1_fd,
+        cfg_ph_2_fd             => cfg_ph_2_fd,
+        cfg_sjw_fd              => cfg_sjw_fd
+    )
+    port map(
+        test_start              => test_start,
+        test_done               => test_done,
+        test_success            => test_success
+    );
+
+    
+    ---------------------------------------------------------------------------
+    ---------------------------------------------------------------------------
+    -- Test type specific agents
+    ---------------------------------------------------------------------------
+    ---------------------------------------------------------------------------
+
+    ---------------------------------------------------------------------------
+    -- Compliance tests agent (CAN agent of ISO compliance library).
+    --
+    -- Used by compliance tests and reference tests.
+    ---------------------------------------------------------------------------
+    can_agent_gen : if (test_type = "compliance" or test_type = "reference") generate
+        compliance_agent_inst : can_agent
+        generic map(
+            G_DRIVER_FIFO_DEPTH     => 2048,
+            G_MONITOR_FIFO_DEPTH    => 2048
+        )
+        port map(
+            can_tx   => can_tx,
+            can_rx   => can_rx_compliance_agent
+        );
+    end generate;
+    
+    ---------------------------------------------------------------------------
+    -- Feature test agent. Used only by feature tests.
+    ---------------------------------------------------------------------------
+    feature_test_agent_gen : if (test_type = "feature") generate
+        feature_test_agent_inst : feature_test_agent
+        generic map(
+            -- Test details
+            test_name           => test_name,
+            test_type           => test_type,
+            stand_alone_vip_mode => stand_alone_vip_mode,
+        
+            -- DUT configuration
+            cfg_sys_clk_period  => cfg_sys_clk_period,
+           
+            cfg_brp             => cfg_brp,
+            cfg_prop            => cfg_prop,
+            cfg_ph_1            => cfg_ph_1,
+            cfg_ph_2            => cfg_ph_2,
+            cfg_sjw             => cfg_sjw,
+            cfg_brp_fd          => cfg_brp_fd,
+            cfg_prop_fd         => cfg_prop_fd,
+            cfg_ph_1_fd         => cfg_ph_1_fd,
+            cfg_ph_2_fd         => cfg_ph_2_fd,
+            cfg_sjw_fd          => cfg_sjw_fd
+        )
+        port map (
+            -- Test node connections
+            clk_sys             => clk_sys_i,
+            res_n               => res_n_i,
+            
+            write_data          => write_data,
+            read_data           => read_data_test_node,
+            adress              => adress,
+            scs                 => scs_i(1),
+            srd                 => srd,
+            swr                 => swr,
+            sbe                 => sbe,
+            
+            -- CAN bus from/to DUT
+            dut_can_tx          => can_tx,
+            dut_can_rx          => can_rx_feature_agent
+        );
+    end generate;
+    
+    ---------------------------------------------------------------------------
+    -- TODO: Reference test agent
+    ---------------------------------------------------------------------------
+
+    
+    ---------------------------------------------------------------------------
+    ---------------------------------------------------------------------------
+    -- Other common stuff
+    ---------------------------------------------------------------------------
+    ---------------------------------------------------------------------------
+    
     ---------------------------------------------------------------------------
     -- In stand-alone mode clock agent drives clock, in non-stand-alone, it
     -- receives clock from outside and clock agent is disconnected!
@@ -190,36 +335,7 @@ begin
         clk_sys_i <= clk_sys;
     end generate;
 
-    ---------------------------------------------------------------------------
-    -- Memory bus agent
-    ---------------------------------------------------------------------------
-    mem_bus_agent_inst : mem_bus_agent
-    generic map(
-        G_ACCESS_FIFO_DEPTH => 32
-    )
-    port map(
-        clk             => clk_sys_i,
-        scs             => scs,
-        swr             => swr,
-        srd             => srd,
-        sbe             => sbe,
-        write_data      => write_data,
-        read_data       => read_data,
-        address         => adress
-    );
-    
-    ---------------------------------------------------------------------------
-    -- Compliance tests agent (CAN agent of ISO compliance library)
-    ---------------------------------------------------------------------------
-    compliance_agent_inst : can_agent
-    generic map(
-        G_DRIVER_FIFO_DEPTH     => 2048,
-        G_MONITOR_FIFO_DEPTH    => 2048
-    )
-    port map(
-        can_tx   => can_tx,
-        can_rx   => can_rx_compliance_agent
-    );
+    res_n <= res_n_i;
 
     ---------------------------------------------------------------------------
     -- CAN bus connection
@@ -228,45 +344,15 @@ begin
     -- drive high, therfore they dont affect the bus!
     ---------------------------------------------------------------------------
     can_rx <= can_rx_compliance_agent AND can_rx_feature_agent;
-
-
-    ---------------------------------------------------------------------------
-    -- Test control - so far dummy
-    ---------------------------------------------------------------------------
-    test_proc : process
-    begin
-        -- Start hand-shake
-        wait until test_start = '1';
-     
-                
-        info("Asserting reset");            
-        rst_agent_assert(default_channel);
-        info("Asserted reset");
-
-
-        wait for 10 ns;
-        rst_agent_deassert(default_channel);
-        wait for 10 ns;
-     
-        clk_gen_agent_start(default_channel);
-        wait for 1000 ns;
-        clk_gen_agent_stop(default_channel);
-        wait for 100 ns;
-     
-        test_success <= '1';
-        wait for 0 ns;
-        test_done <= '1';
-        
-     
-        
-        -- Finish hand-shake
-        wait until test_start = '0';
-        test_done <= '0';
-    end process;
-
     
-
-
+    ---------------------------------------------------------------------------
+    -- DUT Memory bus routing
+    ---------------------------------------------------------------------------
+    scs <= scs_i(0);
+    
+    read_data_muxed <= read_data when (scs_i(0) = '1') else
+                       read_data_test_node when (scs_i(1) = '1') else
+                       (OTHERS => '0');
     
     ---------------------------------------------------------------------------
     -- Checks

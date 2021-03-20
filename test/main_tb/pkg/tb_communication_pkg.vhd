@@ -75,21 +75,23 @@
 --    28.2.2021   Created file
 --------------------------------------------------------------------------------
 
-Library ieee;
-USE IEEE.std_logic_1164.all;
-USE IEEE.numeric_std.ALL;
-
 Library ctu_can_fd_tb;
-use ctu_can_fd_tb.tb_report_pkg.ALL;
+context ctu_can_fd_tb.ieee_context;
+
+use ctu_can_fd_tb.tb_report_pkg.all;
+
 
 package tb_communication_pkg is
 
-    constant C_NUM_AGENTS : natural := 6;
+    constant C_NUM_AGENTS               : natural := 10;
     
-    constant C_RESET_AGENT_ID       : natural := 0;
-    constant C_CLOCK_AGENT_ID       : natural := 1; 
-    constant C_MEM_BUS_AGENT_ID     : natural := 2;
-    constant C_CAN_AGENT_ID         : natural := 3;
+    constant C_RESET_AGENT_ID           : natural := 0;
+    constant C_CLOCK_AGENT_ID           : natural := 1; 
+    constant C_MEM_BUS_AGENT_ID         : natural := 2;
+    constant C_CAN_AGENT_ID             : natural := 3;
+    constant C_FEATURE_TEST_AGENT_ID    : natural := 4;
+    constant C_INTERRUPT_AGENT_ID       : natural := 5;
+    constant C_TIMESTAMP_AGENT_ID       : natural := 5;
 
     constant COM_PKG_TAG : string := "Communication PKG: ";
 
@@ -289,7 +291,7 @@ package body tb_communication_pkg is
             if (param'length > 128) then
                 par_logic_vect(param'length - 1 downto 0) := param;
             else
-                warning(COM_PKG_TAG & " Truncating passed parameter!!");
+                warning_m(COM_PKG_TAG & " Truncating passed parameter!!");
                 par_logic_vect := param(127 downto 0);
             end if;
         end procedure;
@@ -416,7 +418,7 @@ package body tb_communication_pkg is
         
         -- Check reply code
         if com_channel_data.get_reply_code /= C_REPLY_CODE_OK then
-            error(COM_PKG_TAG & "Reply code error from " & integer'image(dest));
+            error_m(COM_PKG_TAG & "Reply code error from " & integer'image(dest));
         end if;
     end procedure;
 

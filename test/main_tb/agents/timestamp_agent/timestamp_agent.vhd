@@ -68,165 +68,126 @@
 
 --------------------------------------------------------------------------------
 --  @Purpose:
---    Clock generator agent.
-
---    Clock generator agent generates clock (whoooa thats surprise right).
---    
---    Clock generator agent only generates clock when it is enabled. When it is
---    disabled, its clock output remains in value which clock output had at 
---    time when it was disabled.
---    
---    Clock generator agent has following configurable parameters:
---      Clock period        Obvious who does not know what clock period is should
---                          not be reading this text.
---      Jitter              Cycle to cycle jitter. Each clock cycle can last:
---                          period +- "rand_val"  where "rand_val" is less than
---                          or equal to jitter.
---      Duty cycle          Again, obvious, if you don't know what duty cycle
---                          is, seriously, stop reading!
---  
+--    Timestamp agent - Generates timestamp on DUT input.
+--
+--    Has following features:
+--      - Initialization of timestamp
+--      - Step of timestamp (next value bigger than previous by step)
+--      - Prescaler of timestamp (how many cycles needed to increment by step).
+--      - Start/Stop counting.
+--
 --------------------------------------------------------------------------------
 -- Revision History:
---    19.1.2020   Created file
---    04.2.2021   Adjusted to work without Vunits COM library.
+--    12.3.2021   Created file
 --------------------------------------------------------------------------------
 
 Library ctu_can_fd_tb;
 context ctu_can_fd_tb.ieee_context;
 context ctu_can_fd_tb.tb_common_context;
 
-use ctu_can_fd_tb.clk_gen_agent_pkg.all;
+use ctu_can_fd_tb.timestamp_agent_pkg.all;
 
 
-entity clk_gen_agent is
+entity timestamp_agent is
     port (
-        -- Generated clock output
-        clock_out   :   out std_logic := '0';
-        clock_in    :   in  std_logic
+        clk_sys     : in std_logic;
+        timestamp   : out std_logic_vector(63 downto 0)
     );
 end entity;
 
-architecture tb of clk_gen_agent is
+
+architecture tb of timestamp_agent is
     
     ---------------------------------------------------------------------------
     -- Parameters configured over communication library
     ---------------------------------------------------------------------------
+    signal step         : unsigned(63 downto 0);
+    signal prescaler    : natural := 1;
     
-    -- Clock generator is enabled, clocks are being generated!
-    -- Note: This must be enabled by default when testbench is controlled from 
-    --       SW, otherwise simulator will run out of events and timeout!
-    signal enabled          :    boolean := false;
+    signal running      : boolean := false;
+
+    signal timestamp_i  : unsigned(63 downto 0);
+
+    signal timestamp_preset_val : std_logic_vector(63 downto 0);
+    signal timestamp_preset     : std_logic;
     
-    -- Generated clock period
-    signal period           :    time := 10 ns;
-    
-    -- Duty cycle of generated clock (in %)
-    signal duty             :    integer range 0 to 100 := 50;
-
-    -- Jitter of generated clock (short time -> cycle to cycle)
-    signal jitter           :    time := 1 fs;
-
-    -- High / Low times
-    signal t_low            :    time;
-    signal t_high           :    time;
-
-    procedure recalc_parameters(
-        p_period            :   in  time;
-        p_duty              :   in  integer range 0 to 100;
-        signal p_t_low      :   out time;
-        signal p_t_high     :   out time
-    )is
-    begin
-       p_t_low  <= p_period * (real(p_duty) / 100.0);
-       p_t_high <= p_period * (1.0 - (real(p_duty) / 100.0));
-    end;
-
+    signal prescaler_ctr        : natural := 0;
 begin
-    
+
     ---------------------------------------------------------------------------
     -- Comunication receiver process
     ---------------------------------------------------------------------------
     receiver_proc : process
         variable cmd : integer;
         variable reply_code : integer;
+        variable tmp : std_logic_vector(127 downto 0);
+        variable tmp_int : integer;
     begin
-        receive_start(default_channel, C_CLOCK_AGENT_ID);
-        
+        receive_start(default_channel, C_TIMESTAMP_AGENT_ID);
+
         -- Command is sent as message type
-        reply_code := C_REPLY_CODE_OK;
         cmd := com_channel_data.get_msg_code;
-
+        reply_code := C_REPLY_CODE_OK;
+         
         case cmd is
-        when CLK_AGNT_CMD_START =>
-            enabled <= true;
-
-        when CLK_AGNT_CMD_STOP =>
-            enabled <= false;
-
-        when CLK_AGNT_CMD_PERIOD_SET =>
-            period <= com_channel_data.get_param;
-            recalc_parameters(period, duty, t_low, t_high);
-
-        when CLK_AGNT_CMD_PERIOD_GET =>
-            com_channel_data.set_param(period);
-
-        when CLK_AGNT_CMD_JITTER_SET =>
-            jitter <= com_channel_data.get_param;
-
-        when CLK_AGNT_CMD_JITTER_GET =>
-            com_channel_data.set_param(jitter);
-
-        when CLK_AGNT_CMD_DUTY_SET =>
-            duty <= com_channel_data.get_param;
-            recalc_parameters(period, duty, t_low, t_high);
-
-        when CLK_AGNT_CMD_DUTY_GET =>
-            com_channel_data.set_param(duty);
+        when TIMESTAMP_AGENT_CMD_START =>
+            running <= true;
             
-        when CLK_AGNT_CMD_WAIT_CYCLE =>
-            wait until rising_edge(clock_in) for 1 us;
+        when TIMESTAMP_AGENT_CMD_STOP =>
+            running <= false;
+
+        when TIMESTAMP_AGENT_CMD_STEP_SET =>
+            tmp_int := com_channel_data.get_param;
+            step <= to_unsigned(tmp_int, 64);
+            
+        when TIMESTAMP_AGENT_CMD_PRESCALER_SET =>
+            prescaler <= com_channel_data.get_param;
+            
+        when TIMESTAMP_AGENT_CMD_TIMESTAMP_PRESET =>
+            tmp := com_channel_data.get_param;
+            timestamp_preset_val <= tmp(63 downto 0);
+            wait for 0 ns;
+            timestamp_preset <= '1';
+            wait for 0 ns;
+            timestamp_preset <= '0';
+            wait for 0 ns;
 
         when others =>
+            info_m("Invalid message type: " & integer'image(cmd));
             reply_code := C_REPLY_CODE_ERR;
-        end case;
 
+        end case;
         receive_finish(default_channel, reply_code);
     end process;
-
-
+    
     ---------------------------------------------------------------------------
-    -- Clock generation process
+    -- Timestamp generation
     ---------------------------------------------------------------------------
-    clk_gen_proc : process
-        variable t_high_with_jitter : time := t_high;
-        variable t_low_with_jitter : time := t_low;
-        variable rand_real : real;
-        variable rand_jitter : time;
-        variable seed1 : positive := 1;
-        variable seed2 : positive := 1;
-        variable jitter_div_2 : time := jitter / 2;
+    timestamp_gen_proc : process
     begin
-        if (enabled) then
-            
-            if (jitter > 0 fs) then
-                uniform(seed1, seed2, rand_real);
-                rand_jitter := jitter * rand_real;
-                t_high_with_jitter := (period + rand_jitter - jitter_div_2) * (real(duty) / 100.0);
-                t_low_with_jitter := (period + rand_jitter - jitter_div_2) * (1.0 - (real(duty) / 100.0));
+        if (running = false) then
+            wait until running = true;
+        end if;
+    
+        wait until rising_edge(clk_sys);
 
-                clock_out <= '1';
-                wait for t_high_with_jitter;
-                clock_out <= '0';
-                wait for t_low_with_jitter;
+        if (prescaler > 1) then
+            if (prescaler_ctr = prescaler - 1) then
+                prescaler_ctr <= 0;
+                timestamp_i <= timestamp_i + step;
             else
-                clock_out <= '1';
-                wait for t_high;
-                clock_out <= '0';
-                wait for t_low;
+                prescaler_ctr <= prescaler_ctr + 1;
             end if;
         else
-            wait until enabled;
+            timestamp_i <= timestamp_i + step;
+        end if;
+
+        -- TODO: Check last_event will catch previous event not the one that we just waited on!
+        if (timestamp_preset'last_event < clk_sys'last_event) then
+            timestamp_i <= unsigned(timestamp_preset_val);
         end if;
     end process;
 
+    timestamp <= std_logic_vector(timestamp_i);
+    
 end architecture;

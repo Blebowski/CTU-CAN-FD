@@ -67,35 +67,45 @@
 --------------------------------------------------------------------------------
 
 --------------------------------------------------------------------------------
--- Purpose:
---  Package with types used by register map generator generated packages for TB.
+--  Purpose:
+--    Lists all feature tests and provides feature test exec function.
+--
+--    Replacement for previous automated solution with Python. With manual
+--    solution, we have to list each and every feature test here, however,
+--    we dont need to include any third-party modules. It was decided to stick
+--    with this solution as it minimizes dependencies of the TB!
+--
+--    If VHDL had some sort of intro-spection or reflection, it would be
+--    possible to write this code much more nicely!
 --
 --------------------------------------------------------------------------------
 -- Revision History:
---   17.01.2020   Created file
+--    12.3.2021     Created file
 --------------------------------------------------------------------------------
-Library ieee;
-use ieee.std_logic_1164.all;
 
-package tb_reg_map_defs_pkg is
+Library ctu_can_fd_tb;
+context ctu_can_fd_tb.ieee_context;
+context ctu_can_fd_tb.tb_common_context;
 
-  ------------------------------------------------------------------------------
-  -- Common types
-  ------------------------------------------------------------------------------
-  type t_reg_type is (
-    reg_none,
-    reg_write_only,
-    reg_read_only,
-    reg_read_write,
-    reg_read_write_once
-  );
 
-  type t_memory_reg is record
-       address       : std_logic_vector(11 downto 0);
-       size                                : integer;
-       reg_type                         : t_reg_type;
-       reset_val     : std_logic_vector(31 downto 0);
-       is_implem     : std_logic_vector(31 downto 0);
-  end record;
+package feature_test_list_pkg is
+    
+    procedure exec_feature_test(
+        constant test_name    : in     string
+    );
 
 end package;
+
+
+package body feature_test_list_pkg is
+
+    procedure exec_feature_test(
+        constant test_name    : in     string
+    ) is
+    begin
+        if (test_name = "") then
+            error_m("TODO: Implement calling feature test function based on test name!!");
+        end if;
+    end procedure;
+
+end package body;

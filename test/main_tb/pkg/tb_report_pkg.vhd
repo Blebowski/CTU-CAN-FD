@@ -75,9 +75,9 @@
 --    28.2.2021   Created file
 --------------------------------------------------------------------------------
 
-Library ieee;
-USE IEEE.std_logic_1164.all;
-USE IEEE.numeric_std.ALL;
+Library ctu_can_fd_tb;
+context ctu_can_fd_tb.ieee_context;
+
 
 package tb_report_pkg is
 
@@ -90,52 +90,38 @@ package tb_report_pkg is
     
     signal global_verbosity : t_log_verbosity := verbosity_info;
     
-    procedure debug(
-                 msg         : in string;
-        constant line_num    : in natural;
-        constant file_name   : in string
+    procedure debug_m(
+                 msg         : in string
     );
     
-    procedure info(
-                 msg         : in string;
-        constant line_num    : in natural;
-        constant file_name   : in string
+    procedure info_m(
+        msg         : in string
     );
 
-    procedure warning(
-                 msg         : in string;
-        constant line_num    : in natural;
-        constant file_name   : in string
+    procedure warning_m(
+                 msg         : in string
     );
     
-    procedure error(
-                 msg         : in string;
-        constant line_num    : in natural;
-        constant file_name   : in string
+    procedure error_m(
+                 msg         : in string
     );
 
-    procedure check(
+    procedure check_m(
                  cond        : in boolean;
-                 msg         : in string;
-        constant line_num    : in natural;
-        constant file_name   : in string  
+                 msg         : in string
     );
     
-    procedure check_false(
+    procedure check_false_m(
                  cond        : in boolean;
-                 msg         : in string;
-        constant line_num    : in natural;
-        constant file_name   : in string  
+                 msg         : in string
     );
 
 end package;
 
 package body tb_report_pkg is
     
-    procedure info(
-                 msg         : in string;
-        constant line_num    : in natural;
-        constant file_name   : in string
+    procedure info_m(
+        msg         : in string
     ) is
     begin
         if (global_verbosity = verbosity_debug or
@@ -146,10 +132,8 @@ package body tb_report_pkg is
     end procedure;
 
     
-    procedure warning(
-                 msg         : in string;
-        constant line_num    : in natural;
-        constant file_name   : in string
+    procedure warning_m(
+                 msg         : in string
     ) is
     begin
         if (global_verbosity = verbosity_debug or
@@ -161,10 +145,8 @@ package body tb_report_pkg is
     end procedure;
 
 
-    procedure error(
-                 msg         : in string;
-        constant line_num    : in natural;
-        constant file_name   : in string
+    procedure error_m(
+                 msg         : in string
     ) is
     begin
         if ((global_verbosity = verbosity_debug or
@@ -176,10 +158,8 @@ package body tb_report_pkg is
         end if;
     end procedure;
     
-    procedure debug(
-                 msg         : in string;
-        constant line_num    : in natural;
-        constant file_name   : in string
+    procedure debug_m(
+                 msg         : in string
     ) is
     begin
         if (global_verbosity = verbosity_debug) then
@@ -188,11 +168,9 @@ package body tb_report_pkg is
     end procedure;
 
 
-    procedure check(
+    procedure check_m(
                  cond        : in boolean;
-                 msg         : in string;
-        constant line_num    : in natural;
-        constant file_name   : in string    
+                 msg         : in string
     ) is
     begin
         if (cond) then
@@ -203,11 +181,9 @@ package body tb_report_pkg is
     end procedure;
     
     
-    procedure check_false(
+    procedure check_false_m(
                  cond        : in boolean;
-                 msg         : in string;
-        constant line_num    : in natural;
-        constant file_name   : in string  
+                 msg         : in string
     ) is
     begin
         if (not cond) then

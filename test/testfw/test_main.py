@@ -18,14 +18,22 @@ class MainTests(TestsBase):
         sources = [];
         #sources.append('compliance/com/*.vhd');
         sources.append('main_tb/pkg/*.vhd');
+        sources.append('main_tb/common/*.vhd');
+
         sources.append('main_tb/agents/reset_agent/*.vhd');
         sources.append('main_tb/agents/clock_agent/*.vhd');
         sources.append('main_tb/agents/memory_bus_agent/*.vhd');
         sources.append('main_tb/agents/timestamp_agent/*.vhd');
+        sources.append('main_tb/agents/interrupt_agent/*.vhd');
+        sources.append('main_tb/agents/can_agent/*.vhd');
+
         sources.append('main_tb/agents/test_controller_agent/*.vhd');
+
         sources.append('main_tb/agents/feature_test_agent/*.vhd');
         sources.append('main_tb/agents/compliance_test_agent/*.vhd');
         sources.append('main_tb/agents/reference_test_agent/*.vhd');
+
+        sources.append('main_tb/contexts/*.vhd');
         sources.append('main_tb/ctu_can_fd_vip.vhd');
         sources.append('main_tb/tb_top_ctu_can_fd.vhd');
 

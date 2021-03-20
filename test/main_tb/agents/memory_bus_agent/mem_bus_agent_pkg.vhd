@@ -76,13 +76,10 @@
 --    04.2.2021   Adjusted to work without Vunits COM library.
 --------------------------------------------------------------------------------
 
-Library ieee;
-USE IEEE.std_logic_1164.all;
-USE IEEE.numeric_std.ALL;
-
 Library ctu_can_fd_tb;
-use ctu_can_fd_tb.tb_communication_pkg.ALL;
-use ctu_can_fd_tb.tb_report_pkg.ALL;
+context ctu_can_fd_tb.ieee_context;
+context ctu_can_fd_tb.tb_common_context;
+
 
 package mem_bus_agent_pkg is
 
@@ -91,11 +88,12 @@ package mem_bus_agent_pkg is
     ---------------------------------------------------------------------------
     component mem_bus_agent is
     generic(
-        G_ACCESS_FIFO_DEPTH  : natural := 32
+        G_ACCESS_FIFO_DEPTH  : natural := 32;
+        G_NUM_SLAVES         : natural := 2
     );
     port (
         clk             : in    std_logic;
-        scs             : out   std_logic := '0';
+        scs             : out   std_logic_vector(G_NUM_SLAVES - 1 downto 0) := (OTHERS => '0');
         swr             : out   std_logic := 'X';
         srd             : out   std_logic := 'X';
         sbe             : out   std_logic_vector(3 downto 0) := "XXXX";
@@ -343,6 +341,19 @@ package mem_bus_agent_pkg is
         variable    read_data   : out   std_logic_vector
     );
    
+    
+    ---------------------------------------------------------------------------
+    -- Changes slave node to which the transaction will be routed. Slave nodes
+    -- are distuiguished by chip select.
+    --
+    -- @param channel       Channel on which to send the request
+    --
+    ---------------------------------------------------------------------------
+    procedure mem_bus_agent_set_slave_index(
+        signal      channel     : inout t_com_channel;
+                    node        : in    natural
+    );
+   
     ---------------------------------------------------------------------------
     ---------------------------------------------------------------------------
     -- Private declarations 
@@ -364,6 +375,8 @@ package mem_bus_agent_pkg is
     constant MEM_BUS_AGNT_CMD_SET_PERIOD            : integer := 9;
     constant MEM_BUS_AGNT_CMD_SET_OUTPUT_DELAY      : integer := 10;
     constant MEM_BUS_AGNT_CMD_WAIT_DONE             : integer := 11;
+    
+    constant MEM_BUS_AGNT_CMD_SET_SLAVE_INDEX       : integer := 12;
    
     -- Tag for messages
     constant MEM_BUS_AGENT_TAG : string := "Memory Bus Agent: ";
@@ -383,9 +396,9 @@ package body mem_bus_agent_pkg is
         signal      channel     : inout t_com_channel
     ) is
     begin
-        info(MEM_BUS_AGENT_TAG & "Starting");
+        info_m(MEM_BUS_AGENT_TAG & "Starting");
         send(channel, C_MEM_BUS_AGENT_ID, MEM_BUS_AGNT_CMD_START);
-        info(MEM_BUS_AGENT_TAG & "Started");
+        info_m(MEM_BUS_AGENT_TAG & "Started");
     end procedure;
 
 
@@ -393,9 +406,9 @@ package body mem_bus_agent_pkg is
         signal      channel     : inout t_com_channel
     ) is
     begin
-        info(MEM_BUS_AGENT_TAG & "Stopping");
+        info_m(MEM_BUS_AGENT_TAG & "Stopping");
         send(channel, C_MEM_BUS_AGENT_ID, MEM_BUS_AGNT_CMD_STOP);
-        info(MEM_BUS_AGENT_TAG & "Stopped");
+        info_m(MEM_BUS_AGENT_TAG & "Stopped");
     end procedure;
 
 
@@ -406,7 +419,7 @@ package body mem_bus_agent_pkg is
                     byte_enable : in    std_logic_vector(3 downto 0) 
     )  is
     begin
-        info(MEM_BUS_AGENT_TAG & "Posting non-blocking write, Address: 0x" &
+        info_m(MEM_BUS_AGENT_TAG & "Posting non-blocking write, Address: 0x" &
                to_hstring(std_logic_vector(to_unsigned(address, 16))) &
               " " & to_hstring(write_data));
 
@@ -415,7 +428,7 @@ package body mem_bus_agent_pkg is
         com_channel_data.set_param(write_data & byte_enable);
         send(channel, C_MEM_BUS_AGENT_ID, MEM_BUS_AGNT_CMD_WRITE_NON_BLOCKING);
 
-        info(MEM_BUS_AGENT_TAG & "Mem bus agent non-blocking write posted");
+        info_m(MEM_BUS_AGENT_TAG & "Mem bus agent non-blocking write posted");
     end procedure;
 
 
@@ -426,7 +439,7 @@ package body mem_bus_agent_pkg is
                     byte_enable : in    std_logic_vector(3 downto 0) 
     )  is
     begin
-        info(MEM_BUS_AGENT_TAG & "Blocking write, Address: 0x" &
+        info_m(MEM_BUS_AGENT_TAG & "Blocking write, Address: 0x" &
                to_hstring(std_logic_vector(to_unsigned(address, 16))) &
               " " & to_hstring(write_data));
         
@@ -434,7 +447,7 @@ package body mem_bus_agent_pkg is
         com_channel_data.set_param(write_data & byte_enable);
         send(channel, C_MEM_BUS_AGENT_ID, MEM_BUS_AGNT_CMD_WRITE_BLOCKING);
 
-        info(MEM_BUS_AGENT_TAG & "Blocking write succesfull");
+        info_m(MEM_BUS_AGENT_TAG & "Blocking write succesfull");
     end procedure;
 
 
@@ -446,7 +459,7 @@ package body mem_bus_agent_pkg is
     ) is
         variable tmp : std_logic_vector(127 downto 0);
     begin
-        info(MEM_BUS_AGENT_TAG & "Read, Address: 0x" &
+        info_m(MEM_BUS_AGENT_TAG & "Read, Address: 0x" &
                to_hstring(std_logic_vector(to_unsigned(address, 16))));
 
         com_channel_data.set_param(address);
@@ -456,7 +469,7 @@ package body mem_bus_agent_pkg is
         tmp := com_channel_data.get_param;
         read_data := tmp(31 downto 0);
         wait for 0 ns;
-        info(MEM_BUS_AGENT_TAG & "Read done, read data: 0x" & to_hstring(read_data));
+        info_m(MEM_BUS_AGENT_TAG & "Read done, read data: 0x" & to_hstring(read_data));
     end procedure;
 
 
@@ -464,9 +477,9 @@ package body mem_bus_agent_pkg is
         signal      channel     : inout t_com_channel
     ) is
     begin
-        info(MEM_BUS_AGENT_TAG & "Enabling X mode");
+        info_m(MEM_BUS_AGENT_TAG & "Enabling X mode");
         send(channel, C_MEM_BUS_AGENT_ID, MEM_BUS_AGNT_CMD_X_MODE_START);
-        info(MEM_BUS_AGENT_TAG & "X mode enabled");
+        info_m(MEM_BUS_AGENT_TAG & "X mode enabled");
     end procedure;
 
 
@@ -474,9 +487,9 @@ package body mem_bus_agent_pkg is
         signal      channel     : inout t_com_channel
     ) is
     begin
-        info(MEM_BUS_AGENT_TAG & "Disabling X mode");
+        info_m(MEM_BUS_AGENT_TAG & "Disabling X mode");
         send(channel, C_MEM_BUS_AGENT_ID, MEM_BUS_AGNT_CMD_X_MODE_STOP);
-        info(MEM_BUS_AGENT_TAG & "X mode disabled");
+        info_m(MEM_BUS_AGENT_TAG & "X mode disabled");
     end procedure;
 
 
@@ -485,10 +498,10 @@ package body mem_bus_agent_pkg is
                     setup       : in    time
     ) is
     begin
-        info(MEM_BUS_AGENT_TAG & "Setting X mode setup to: " & time'image(setup));
+        info_m(MEM_BUS_AGENT_TAG & "Setting X mode setup to: " & time'image(setup));
         com_channel_data.set_param(setup);
         send(channel, C_MEM_BUS_AGENT_ID, MEM_BUS_AGNT_CMD_SET_X_MODE_SETUP);
-        info(MEM_BUS_AGENT_TAG & "X mode setup configured");
+        info_m(MEM_BUS_AGENT_TAG & "X mode setup configured");
     end procedure;
 
 
@@ -497,10 +510,10 @@ package body mem_bus_agent_pkg is
                     hold        : in    time
     ) is
     begin
-        info(MEM_BUS_AGENT_TAG & "Setting X mode hold to: " & time'image(hold));
+        info_m(MEM_BUS_AGENT_TAG & "Setting X mode hold to: " & time'image(hold));
         com_channel_data.set_param(hold);
         send(channel, C_MEM_BUS_AGENT_ID, MEM_BUS_AGNT_CMD_SET_X_MODE_HOLD);
-        info(MEM_BUS_AGENT_TAG & "X mode hold configured");
+        info_m(MEM_BUS_AGENT_TAG & "X mode hold configured");
     end procedure;
 
 
@@ -509,10 +522,10 @@ package body mem_bus_agent_pkg is
                     period      : in    time
     ) is
     begin
-        info(MEM_BUS_AGENT_TAG & "Setting clock period to: " & time'image(period));
+        info_m(MEM_BUS_AGENT_TAG & "Setting clock period to: " & time'image(period));
         com_channel_data.set_param(period);
         send(channel, C_MEM_BUS_AGENT_ID, MEM_BUS_AGNT_CMD_SET_PERIOD);
-        info(MEM_BUS_AGENT_TAG & "clock period configured");
+        info_m(MEM_BUS_AGENT_TAG & "clock period configured");
     end procedure;
 
 
@@ -521,10 +534,10 @@ package body mem_bus_agent_pkg is
                     out_delay   : in    time
     ) is
     begin
-        info(MEM_BUS_AGENT_TAG & "Setting data out output delay " & time'image(out_delay));
+        info_m(MEM_BUS_AGENT_TAG & "Setting data out output delay " & time'image(out_delay));
         com_channel_data.set_param(out_delay);
         send(channel, C_MEM_BUS_AGENT_ID, MEM_BUS_AGNT_CMD_SET_OUTPUT_DELAY);
-        info(MEM_BUS_AGENT_TAG & "data out output delay set");
+        info_m(MEM_BUS_AGENT_TAG & "data out output delay set");
     end procedure;
 
 
@@ -532,9 +545,21 @@ package body mem_bus_agent_pkg is
         signal      channel     : inout t_com_channel
     ) is
     begin
-        info(MEM_BUS_AGENT_TAG & "Waiting till all accesses are executed");
+        info_m(MEM_BUS_AGENT_TAG & "Waiting till all accesses are executed");
         send(channel, C_MEM_BUS_AGENT_ID, MEM_BUS_AGNT_CMD_WAIT_DONE);
-        info(MEM_BUS_AGENT_TAG & "All accesses are executed!");
+        info_m(MEM_BUS_AGENT_TAG & "All accesses are executed!");
+    end procedure;
+    
+    
+    procedure mem_bus_agent_set_slave_index(
+        signal      channel     : inout t_com_channel;
+                    node        : in    natural
+    ) is
+    begin
+        info_m(MEM_BUS_AGENT_TAG & "Setting slave index");
+        com_channel_data.set_param(node);
+        send(channel, C_MEM_BUS_AGENT_ID, MEM_BUS_AGNT_CMD_SET_SLAVE_INDEX);
+        info_m(MEM_BUS_AGENT_TAG & "Slave index set");
     end procedure;
 
 
@@ -656,7 +681,7 @@ package body mem_bus_agent_pkg is
             when 3 =>
                 data_out(7 downto 0) := data_in(31 downto 24);
             when others =>
-                error("Invalid 32 bit access!");
+                error_m("Invalid 32 bit access!");
             end case;
         when 16 =>
             case (address mod 4) is
@@ -665,12 +690,12 @@ package body mem_bus_agent_pkg is
             when 2 =>
                 data_out(15 downto 0) := data_in(31 downto 16);
             when others =>
-                error("Invalid address for 16 bit access!");
+                error_m("Invalid address for 16 bit access!");
             end case;
         when 32 =>
             data_out := data_in;
         when others =>
-            error("Unknown access size: " & integer'image(size));
+            error_m("Unknown access size: " & integer'image(size));
         end case;
     end;
 

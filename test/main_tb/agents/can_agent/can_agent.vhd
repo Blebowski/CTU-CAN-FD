@@ -145,17 +145,12 @@
 --    04.2.2021   Adjusted to work without Vunits COM library.
 --------------------------------------------------------------------------------
 
-Library ieee;
-USE IEEE.std_logic_1164.all;
-USE IEEE.numeric_std.ALL;
-use ieee.math_real.uniform;
-use ieee.math_real.floor;
-
 Library ctu_can_fd_tb;
-use ctu_can_fd_tb.tb_communication_pkg.ALL;
-use ctu_can_fd_tb.tb_report_pkg.ALL;
+context ctu_can_fd_tb.ieee_context;
+context ctu_can_fd_tb.tb_common_context;
 
 use ctu_can_fd_tb.can_agent_pkg.all;
+
 
 entity can_agent is
     generic(
@@ -304,7 +299,7 @@ begin
             -- handle pointers
             if ((driver_wp + 1) mod G_DRIVER_FIFO_DEPTH = driver_rp) then
                 reply_code := C_REPLY_CODE_ERR;
-                error(CAN_AGENT_TAG & "Driver FIFO overflow! -> Skipping");
+                error_m(CAN_AGENT_TAG & "Driver FIFO overflow! -> Skipping");
             else
                 driver_fifo_push;             
             end if;
@@ -334,19 +329,19 @@ begin
             end if;
 
             if (driver_wp /= driver_rp) then
-                warning(CAN_AGENT_TAG &
+                warning_m(CAN_AGENT_TAG &
                         "Driver FIFO not empty, other items will be driven first...");
             end if;
 
             if ((driver_wp + 1) mod G_DRIVER_FIFO_DEPTH = driver_rp) then
                 reply_code := C_REPLY_CODE_ERR;
-                error(CAN_AGENT_TAG & "Driver FIFO overflow -> Skipping");
+                error_m(CAN_AGENT_TAG & "Driver FIFO overflow -> Skipping");
             else
                 driver_fifo_push;
                 wait until (driver_wp = driver_rp) for driver_wait_timeout;
 
                 if (driver_wp /= driver_rp) then
-                    warning(CAN_AGENT_TAG & " Drive_single_item timeout!");
+                    warning_m(CAN_AGENT_TAG & " Drive_single_item timeout!");
                 end if;
             end if;
 
@@ -362,13 +357,13 @@ begin
             end if;
 
             if (driver_wp = driver_rp) then
-                warning(CAN_AGENT_TAG & "Driver FIFO empty, no items will be driven");
+                warning_m(CAN_AGENT_TAG & "Driver FIFO empty, no items will be driven");
             else
                 wait until (driver_wp = driver_rp) for driver_wait_timeout;
             end if;
 
             if (driver_wp /= driver_rp) then
-                warning(CAN_AGENT_TAG & " Drive_all_items timeout!");
+                warning_m(CAN_AGENT_TAG & " Drive_all_items timeout!");
             end if;
 
             -- If driver was previously disabled, put it back into the same state!
@@ -434,19 +429,19 @@ begin
             push_mon_item.sample_rate := com_channel_data.get_param2;
 
             if (monitor_wp /= monitor_rp) then
-                warning(CAN_AGENT_TAG &
+                warning_m(CAN_AGENT_TAG &
                         "Monitor FIFO not empty, other items will be monitored first...");
             end if;
             
             if ((monitor_wp + 1) mod G_MONITOR_FIFO_DEPTH = monitor_rp) then
                 reply_code := C_REPLY_CODE_ERR;
-                error(CAN_AGENT_TAG & "Monitor FIFO overflow -> Skipping");
+                error_m(CAN_AGENT_TAG & "Monitor FIFO overflow -> Skipping");
             else
                 monitor_fifo_push;
                 wait until (monitor_wp = monitor_rp) for monitor_wait_timeout;
 
                 if (monitor_wp /= monitor_rp) then
-                    warning(CAN_AGENT_TAG & " Monitor_single_item timeout!");
+                    warning_m(CAN_AGENT_TAG & " Monitor_single_item timeout!");
                 end if;
             end if;
 
@@ -462,13 +457,13 @@ begin
             end if;
 
             if (monitor_wp = monitor_rp) then
-                warning(CAN_AGENT_TAG & "Monitor FIFO empty, no items will be driven");
+                warning_m(CAN_AGENT_TAG & "Monitor FIFO empty, no items will be driven");
             else
                 wait until (monitor_wp = monitor_rp) for monitor_wait_timeout;
             end if;
 
             if (monitor_wp /= monitor_rp) then
-                warning(CAN_AGENT_TAG & " Monitor_all_items timeout!");
+                warning_m(CAN_AGENT_TAG & " Monitor_all_items timeout!");
             end if;
 
             -- If monitor was previously disabled, put it back into the same state!
@@ -484,7 +479,7 @@ begin
             com_channel_data.set_param(t_can_monitor_trigger'pos(monitor_trigger));
 
         when CAN_AGNT_CMD_MONITOR_CHECK_RESULT =>
-            check(mon_mismatch_ctr = 0, CAN_AGENT_TAG & "Mismatches in monitor!");
+            check_m(mon_mismatch_ctr = 0, CAN_AGENT_TAG & "Mismatches in monitor!");
 
         when CAN_AGNT_CMD_MONITOR_SET_INPUT_DELAY =>
             mon_input_delay <= com_channel_data.get_param;
@@ -498,7 +493,7 @@ begin
             wait for 0 ns;
 
         when others =>
-            warning (CAN_AGENT_TAG & "Invalid message type: " & integer'image(cmd));
+            warning_m(CAN_AGENT_TAG & "Invalid message type: " & integer'image(cmd));
             reply_code := C_REPLY_CODE_ERR;
         end case;
 
@@ -528,11 +523,11 @@ begin
                     driven_item <= driver_mem(driver_rp);
                     wait for 0 ns;
 
-                    --debug(CAN_AGENT_TAG &
+                    --debug_m(CAN_AGENT_TAG &
                     --      "Driving: " & std_logic'image(driven_item.value) &
                     --      " for time: " & time'image(driven_item.drive_time));
                     --if (driven_item.print_msg) then
-                    --    info("Driving item: " & driven_item.msg);
+                    --    info_m("Driving item: " & driven_item.msg);
                     --end if;
 
                     can_rx_i <= driven_item.value;
@@ -671,17 +666,17 @@ begin
                 monitored_item <= monitor_mem(monitor_rp);
                 wait for 0 ns;
                 
-                --debug(CAN_AGENT_TAG & 
+                --debug_m(CAN_AGENT_TAG & 
                 --      "Monitoring: " & std_logic'image(monitored_item.value) &
                 --      " for time: " & time'image(monitored_item.monitor_time));
                 
                 --if (monitored_item.print_msg) then
-                --    info("Monitoring item: " & monitored_item.msg);
+                --    info_m("Monitoring item: " & monitored_item.msg);
                 --end if;
                 
                 mon_count := monitored_item.monitor_time / monitored_item.sample_rate;
                 monitored_time := 0 ns;
-                debug("Number of samples: " & integer'image(mon_count));
+                debug_m("Number of samples: " & integer'image(mon_count));
 
                 ------------------------------------------------------------------------
                 -- Monitor until we are not closer than sample rate from the end. This
@@ -699,7 +694,7 @@ begin
                         monitor_mismatch <= 'X';
                         mon_mismatch_ctr <= mon_mismatch_ctr + 1;
 
-                        warning(CAN_AGENT_TAG &
+                        warning_m(CAN_AGENT_TAG &
                                 "Monitor mismatch! Expected: " &
                                 std_logic'image(monitored_item.value) & 
                                 " Monitored: " & std_logic'image(can_tx));
@@ -719,16 +714,16 @@ begin
             end loop;
 
         when mon_passed =>
-            info ("*****************************************************");
-            info (" Monitor sequence PASSED");
-            info ("*****************************************************");
+            info_m("*****************************************************");
+            info_m (" Monitor sequence PASSED");
+            info_m ("*****************************************************");
             monitor_state <= mon_disabled;
             wait for 0 ns;
 
         when mon_failed =>
-            info ("*****************************************************");
-            info (" Monitor sequence FAILED");
-            info ("*****************************************************");
+            info_m ("*****************************************************");
+            info_m (" Monitor sequence FAILED");
+            info_m ("*****************************************************");
             monitor_state <= mon_disabled;
             wait for 0 ns;
             

@@ -68,12 +68,11 @@
 
 --------------------------------------------------------------------------------
 --  @Purpose:
---    Package with API for Reset generator agent.
+--    Package with API for Timestamp agent.
 --
 --------------------------------------------------------------------------------
 -- Revision History:
---    19.1.2020   Created file
---    04.2.2021   Adjusted to work without Vunits COM library.
+--    12.3.2021   Created file
 --------------------------------------------------------------------------------
 
 Library ctu_can_fd_tb;
@@ -81,64 +80,74 @@ context ctu_can_fd_tb.ieee_context;
 context ctu_can_fd_tb.tb_common_context;
 
 
-package reset_agent_pkg is
+package timestamp_agent_pkg is
 
     ---------------------------------------------------------------------------
-    -- Reset generator component    
+    -- Interrupt agent component    
     ---------------------------------------------------------------------------
-    component reset_agent is
+    component timestamp_agent is
     port (
-        -- Generated reset
-        reset   :   out std_logic
+        clk_sys     : in std_logic;
+        timestamp   : out std_logic_vector(63 downto 0)
     );
     end component;
 
     ---------------------------------------------------------------------------
     ---------------------------------------------------------------------------
-    -- Reset generator agent API    
+    -- Timestamp agent API    
     ---------------------------------------------------------------------------
     ---------------------------------------------------------------------------
 
     ---------------------------------------------------------------------------
-    -- Assert reset by Reset generator agent.
+    -- Start timestamp agent
     --
     -- @param channel   Channel on which to send the request
     ---------------------------------------------------------------------------
-    procedure rst_agent_assert(
-        signal channel  : inout t_com_channel
+    procedure timestamp_agent_start(
+        signal   channel     : inout t_com_channel
     );
 
     ---------------------------------------------------------------------------
-    -- De-assert reset by Reset generator agent.
+    -- Stop timestamp agent
     --
     -- @param channel   Channel on which to send the request
     ---------------------------------------------------------------------------
-    procedure rst_agent_deassert(
-        signal channel  : inout t_com_channel
+    procedure timestamp_agent_stop(
+        signal   channel     : inout t_com_channel
     );
 
     ---------------------------------------------------------------------------
-    -- Set polarity of Reset generator agent.
+    -- Set step of timestamp agent
     --
     -- @param channel   Channel on which to send the request
-    -- @param polarity  Polarity to be set.
+    -- @param step      Natural
     ---------------------------------------------------------------------------
-    procedure rst_agent_polarity_set(
+    procedure timestamp_agent_set_step(
         signal   channel     : inout t_com_channel;
-        constant polarity    : in    std_logic
+        constant step        : in    natural
     );
 
     ---------------------------------------------------------------------------
-    -- Get polarity of Reset generator agent.
+    -- Set prescaler of timestamp agent
     --
     -- @param channel   Channel on which to send the request
-    -- @param polarity  Obtained polarity.   
+    -- @param prescaler Natural
     ---------------------------------------------------------------------------
-    procedure rst_agent_polarity_get(
+    procedure timestamp_agent_set_prescaler(
         signal   channel     : inout t_com_channel;
-        variable polarity    : out   std_logic
+        constant prescaler   : in    natural
     );
-
+    
+    ---------------------------------------------------------------------------
+    -- Preset timestamp value of timestamp agent
+    --
+    -- @param channel   Channel on which to send the request
+    -- @param timestamp Timestamp value to be preset
+    ---------------------------------------------------------------------------
+    procedure timestamp_agent_timestamp_preset(
+        signal   channel     : inout t_com_channel;
+        constant timestamp   : in    std_logic_vector(63 downto 0)
+    );
    
     ---------------------------------------------------------------------------
     ---------------------------------------------------------------------------
@@ -147,65 +156,73 @@ package reset_agent_pkg is
     ---------------------------------------------------------------------------
 
     -- Supported commands
-    constant RST_AGNT_CMD_ASSERT         : integer := 0;
-    constant RST_AGNT_CMD_DEASSERT       : integer := 1;
-    constant RST_AGNT_CMD_POLARITY_SET   : integer := 2;
-    constant RST_AGNT_CMD_POLARITY_GET   : integer := 3;
+    constant TIMESTAMP_AGENT_CMD_START                  : integer := 0;
+    constant TIMESTAMP_AGENT_CMD_STOP                   : integer := 1;
+    constant TIMESTAMP_AGENT_CMD_STEP_SET               : integer := 2;
+    constant TIMESTAMP_AGENT_CMD_PRESCALER_SET          : integer := 3;
+    constant TIMESTAMP_AGENT_CMD_TIMESTAMP_PRESET       : integer := 4;
     
-    -- Reset agent tag (for messages)
-    constant RESET_AGENT_TAG : string := "Reset Agent: ";
+    -- Tag for messages
+    constant TIMESTAMP_AGENT_TAG : string := "Timestamp Agent: ";
 
 end package;
 
 
-package body reset_agent_pkg is
+package body timestamp_agent_pkg is
     
-    ---------------------------------------------------------------------------
-    ---------------------------------------------------------------------------
-    -- Reset generator agent API
-    ---------------------------------------------------------------------------
-    ---------------------------------------------------------------------------
-   
-    procedure rst_agent_assert(
-        signal channel  : inout t_com_channel
+    procedure timestamp_agent_start(
+        signal   channel     : inout t_com_channel
     ) is
     begin
-        info_m(RESET_AGENT_TAG & "Asserting reset");
-        send(channel, C_RESET_AGENT_ID, RST_AGNT_CMD_ASSERT);
-        info_m(RESET_AGENT_TAG & "Asserted reset");
+        info_m(TIMESTAMP_AGENT_TAG & "Starting");
+        send(channel, C_INTERRUPT_AGENT_ID, TIMESTAMP_AGENT_CMD_START);
+        info_m(TIMESTAMP_AGENT_TAG & "Started");
     end procedure;
 
 
-    procedure rst_agent_deassert(
-        signal channel  : inout t_com_channel
+    procedure timestamp_agent_stop(
+        signal   channel     : inout t_com_channel
     ) is
     begin
-        info_m(RESET_AGENT_TAG & "De-Asserting reset");
-        send(channel, C_RESET_AGENT_ID, RST_AGNT_CMD_DEASSERT);
-        info_m(RESET_AGENT_TAG & "De-Asserted reset");
+        info_m(TIMESTAMP_AGENT_TAG & "Stopping");
+        send(channel, C_INTERRUPT_AGENT_ID, TIMESTAMP_AGENT_CMD_STOP);
+        info_m(TIMESTAMP_AGENT_TAG & "Stopped");
     end procedure;
 
 
-    procedure rst_agent_polarity_set(
-        signal   channel    : inout t_com_channel;
-        constant polarity   : in    std_logic
+    procedure timestamp_agent_set_step(
+        signal   channel     : inout t_com_channel;
+        constant step        : in    natural
     ) is
     begin
-        info_m(RESET_AGENT_TAG & "Setting reset polarity to: " & std_logic'image(polarity));
-        com_channel_data.set_param(polarity);
-        send(channel, C_RESET_AGENT_ID, RST_AGNT_CMD_POLARITY_SET);
-        info_m(RESET_AGENT_TAG & "Polarity set");
+        info_m(TIMESTAMP_AGENT_TAG & "Setting step");
+        com_channel_data.set_param(step);
+        send(channel, C_INTERRUPT_AGENT_ID, TIMESTAMP_AGENT_CMD_STEP_SET);
+        info_m(TIMESTAMP_AGENT_TAG & "Step set");
     end procedure;
 
-    procedure rst_agent_polarity_get(
-        signal   channel    : inout t_com_channel;
-        variable polarity   : out   std_logic
+
+    procedure timestamp_agent_set_prescaler(
+        signal   channel     : inout t_com_channel;
+        constant prescaler   : in    natural
     ) is
     begin
-        info_m(RESET_AGENT_TAG & "Getting reset polarity");
-        send(channel, C_RESET_AGENT_ID, RST_AGNT_CMD_POLARITY_GET);
-        polarity := com_channel_data.get_param;
-        info_m(RESET_AGENT_TAG & "Polarity got");
+        info_m(TIMESTAMP_AGENT_TAG & "Setting Prescaler");
+        com_channel_data.set_param(prescaler);
+        send(channel, C_INTERRUPT_AGENT_ID, TIMESTAMP_AGENT_CMD_PRESCALER_SET);
+        info_m(TIMESTAMP_AGENT_TAG & "Prescaler set");
+    end procedure;
+
+
+    procedure timestamp_agent_timestamp_preset(
+        signal   channel     : inout t_com_channel;
+        constant timestamp   : in    std_logic_vector(63 downto 0)
+    ) is
+    begin
+        info_m(TIMESTAMP_AGENT_TAG & "Presetting timestamp");
+        com_channel_data.set_param(timestamp);
+        send(channel, C_INTERRUPT_AGENT_ID, TIMESTAMP_AGENT_CMD_TIMESTAMP_PRESET);
+        info_m(TIMESTAMP_AGENT_TAG & "Timestamp preset");
     end procedure;
 
 end package body;

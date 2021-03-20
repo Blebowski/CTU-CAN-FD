@@ -68,25 +68,36 @@
 
 --------------------------------------------------------------------------------
 -- Purpose:
---   Declaration of test contex.
+--  Package with types used by register map generator generated packages for TB.
 --
---  Context definitions are used for tests only since free version of Quartus
---  does not support context clause for synthesis.
 --------------------------------------------------------------------------------
 -- Revision History:
---    02.01.2019   Created File - Ondrej Ille
---    05.03.2019   Add 'models_pkg'.
+--   17.01.2020   Created file
 --------------------------------------------------------------------------------
 
-context ctu_can_test_context is
+Library ctu_can_fd_tb;
+context ctu_can_fd_tb.ieee_context;
 
-    Library ctu_can_fd_tb;
-    use ctu_can_fd_tb.CANtestLib.All;
-    use ctu_can_fd_tb.randomLib.All;
 
-    use STD.textio.all;
+package tb_reg_map_defs_pkg is
 
-    Library ieee;
-    use IEEE.std_logic_textio.all;
+  ------------------------------------------------------------------------------
+  -- Common types
+  ------------------------------------------------------------------------------
+  type t_reg_type is (
+    reg_none,
+    reg_write_only,
+    reg_read_only,
+    reg_read_write,
+    reg_read_write_once
+  );
 
-end context;
+  type t_memory_reg is record
+       address       : std_logic_vector(11 downto 0);
+       size                                : integer;
+       reg_type                         : t_reg_type;
+       reset_val     : std_logic_vector(31 downto 0);
+       is_implem     : std_logic_vector(31 downto 0);
+  end record;
+
+end package;

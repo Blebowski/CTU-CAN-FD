@@ -76,13 +76,9 @@
 --    04.2.2021   Adjusted to work without Vunits COM library.
 --------------------------------------------------------------------------------
 
-Library ieee;
-USE IEEE.std_logic_1164.all;
-USE IEEE.numeric_std.ALL;
-
 Library ctu_can_fd_tb;
-use ctu_can_fd_tb.tb_communication_pkg.ALL;
-use ctu_can_fd_tb.tb_report_pkg.ALL;
+context ctu_can_fd_tb.ieee_context;
+context ctu_can_fd_tb.tb_common_context;
 
 
 package can_agent_pkg is
@@ -680,9 +676,9 @@ package body can_agent_pkg is
         signal      channel     : inout t_com_channel
     ) is
     begin
-        info(CAN_AGENT_TAG  & "Starting driver");
+        info_m(CAN_AGENT_TAG  & "Starting driver");
         send(channel, C_CAN_AGENT_ID, CAN_AGNT_CMD_DRIVER_START);
-        info(CAN_AGENT_TAG & " Driver started");
+        info_m(CAN_AGENT_TAG & " Driver started");
     end procedure;
     
     
@@ -690,9 +686,9 @@ package body can_agent_pkg is
         signal      channel     : inout t_com_channel
     ) is
     begin
-        info(CAN_AGENT_TAG & "Stopping driver");
+        info_m(CAN_AGENT_TAG & "Stopping driver");
         send(channel, C_CAN_AGENT_ID, CAN_AGNT_CMD_DRIVER_STOP);
-        info(CAN_AGENT_TAG & "Driver stopped");
+        info_m(CAN_AGENT_TAG & "Driver stopped");
     end procedure;
 
 
@@ -700,9 +696,9 @@ package body can_agent_pkg is
         signal      channel     : inout t_com_channel
     ) is
     begin
-        info(CAN_AGENT_TAG & "Flushing driver FIFO");
+        info_m(CAN_AGENT_TAG & "Flushing driver FIFO");
         send(channel, C_CAN_AGENT_ID, CAN_AGNT_CMD_DRIVER_FLUSH);
-        info(CAN_AGENT_TAG & "CAN agent driver FIFO flushed");
+        info_m(CAN_AGENT_TAG & "CAN agent driver FIFO flushed");
     end procedure;
 
 
@@ -711,11 +707,11 @@ package body can_agent_pkg is
         variable    progress    : out   boolean
     ) is
     begin
-        info(CAN_AGENT_TAG & "Getting driver progress");
+        info_m(CAN_AGENT_TAG & "Getting driver progress");
         send(channel, C_CAN_AGENT_ID, CAN_AGNT_CMD_DRIVER_GET_PROGRESS);
         progress := com_channel_data.get_param;
         wait for 0 ns;
-        info(CAN_AGENT_TAG & "Driver progress got");
+        info_m(CAN_AGENT_TAG & "Driver progress got");
     end procedure;
 
 
@@ -724,10 +720,10 @@ package body can_agent_pkg is
         variable    driven_val  : out   std_logic
     ) is
     begin
-        info(CAN_AGENT_TAG & "Getting driven value");
+        info_m(CAN_AGENT_TAG & "Getting driven value");
         send(channel, C_CAN_AGENT_ID, CAN_AGNT_CMD_DRIVER_GET_DRIVEN_VAL);
         driven_val := com_channel_data.get_param;
-        info(CAN_AGENT_TAG & "Driven value got");
+        info_m(CAN_AGENT_TAG & "Driven value got");
     end procedure;
 
 
@@ -736,7 +732,7 @@ package body can_agent_pkg is
         variable    item        : in    t_can_driver_entry
     ) is
     begin
-        debug(CAN_AGENT_TAG & "Pushing item into driver FIFO (" &
+        debug_m(CAN_AGENT_TAG & "Pushing item into driver FIFO (" &
                                 std_logic'image(item.value) & ", " &
                                 time'image(item.drive_time) & ")");
 
@@ -748,7 +744,7 @@ package body can_agent_pkg is
         end if;
         send(channel, C_CAN_AGENT_ID, CAN_AGNT_CMD_DRIVER_PUSH_ITEM);
          
-        info(CAN_AGENT_TAG & "Item pushed into driver FIFO");
+        info_m(CAN_AGENT_TAG & "Item pushed into driver FIFO");
     end procedure;
 
 
@@ -757,10 +753,10 @@ package body can_agent_pkg is
         variable    timeout     : in    time
     ) is
     begin
-        info(CAN_AGENT_TAG & "Setting wait timeout for driver");
+        info_m(CAN_AGENT_TAG & "Setting wait timeout for driver");
         com_channel_data.set_param(timeout);
         send(channel, C_CAN_AGENT_ID, CAN_AGNT_CMD_DRIVER_SET_WAIT_TIMEOUT);
-        info(CAN_AGENT_TAG & "Wait timeout for driver set");
+        info_m(CAN_AGENT_TAG & "Wait timeout for driver set");
     end procedure;
 
 
@@ -768,9 +764,9 @@ package body can_agent_pkg is
         signal      channel     : inout t_com_channel
     ) is
     begin
-        info(CAN_AGENT_TAG & "Waiting for driver to finish");
+        info_m(CAN_AGENT_TAG & "Waiting for driver to finish");
         send(channel, C_CAN_AGENT_ID, CAN_AGNT_CMD_DRIVER_WAIT_FINISH);
-        info(CAN_AGENT_TAG & "Driver finished");
+        info_m(CAN_AGENT_TAG & "Driver finished");
     end procedure;
 
 
@@ -810,7 +806,7 @@ package body can_agent_pkg is
         variable    item        : in    t_can_driver_entry
     ) is
     begin
-        info(CAN_AGENT_TAG & "Driving single item");
+        info_m(CAN_AGENT_TAG & "Driving single item");
         
         com_channel_data.set_param(item.value);
         com_channel_data.set_param(item.drive_time);
@@ -820,7 +816,7 @@ package body can_agent_pkg is
         end if;
         send(channel, C_CAN_AGENT_ID, CAN_AGNT_CMD_DRIVER_DRIVE_SINGLE_ITEM);
         
-        info(CAN_AGENT_TAG & "Single item driven");
+        info_m(CAN_AGENT_TAG & "Single item driven");
     end procedure;
 
 
@@ -828,9 +824,9 @@ package body can_agent_pkg is
         signal      channel     : inout t_com_channel
     ) is
     begin    
-        info(CAN_AGENT_TAG & "Driving all items in driver FIFO");
+        info_m(CAN_AGENT_TAG & "Driving all items in driver FIFO");
         send(channel, C_CAN_AGENT_ID, CAN_AGNT_CMD_DRIVER_DRIVE_ALL_ITEMS);
-        info(CAN_AGENT_TAG & "All items driven from driver FIFO driven");
+        info_m(CAN_AGENT_TAG & "All items driven from driver FIFO driven");
     end procedure;
 
     procedure can_agent_driver_set_wait_for_monitor(
@@ -838,13 +834,13 @@ package body can_agent_pkg is
         constant    wait_for_mon    : in    boolean
     ) is
     begin    
-        info(CAN_AGENT_TAG & "Setting driver wait for monitor to: " &
+        info_m(CAN_AGENT_TAG & "Setting driver wait for monitor to: " &
              boolean'image(wait_for_mon));
 
         com_channel_data.set_param(wait_for_mon);
         send(channel, C_CAN_AGENT_ID, CAN_AGNT_CMD_SET_WAIT_FOR_MONITOR);
 
-        info(CAN_AGENT_TAG & "Driver wait for monitor set");
+        info_m(CAN_AGENT_TAG & "Driver wait for monitor set");
     end procedure;
 
 
@@ -883,9 +879,9 @@ package body can_agent_pkg is
         signal      channel     : inout t_com_channel
     ) is
     begin
-        info(CAN_AGENT_TAG  & "Starting monitor");
+        info_m(CAN_AGENT_TAG  & "Starting monitor");
         send(channel, C_CAN_AGENT_ID, CAN_AGNT_CMD_MONITOR_START);
-        info(CAN_AGENT_TAG & " Monitor started");
+        info_m(CAN_AGENT_TAG & " Monitor started");
     end procedure;
 
 
@@ -893,9 +889,9 @@ package body can_agent_pkg is
         signal      channel     : inout t_com_channel
     ) is
     begin
-        info(CAN_AGENT_TAG  & "Stopping monitor");
+        info_m(CAN_AGENT_TAG  & "Stopping monitor");
         send(channel, C_CAN_AGENT_ID, CAN_AGNT_CMD_MONITOR_STOP);
-        info(CAN_AGENT_TAG & " Monitor stopped");
+        info_m(CAN_AGENT_TAG & " Monitor stopped");
     end procedure;
 
 
@@ -903,9 +899,9 @@ package body can_agent_pkg is
         signal      channel     : inout t_com_channel
     ) is
     begin
-        info(CAN_AGENT_TAG  & "Flushing monitor FIFO");
+        info_m(CAN_AGENT_TAG  & "Flushing monitor FIFO");
         send(channel, C_CAN_AGENT_ID, CAN_AGNT_CMD_MONITOR_FLUSH);
-        info(CAN_AGENT_TAG & " Monitor FIFO flushed");
+        info_m(CAN_AGENT_TAG & " Monitor FIFO flushed");
     end procedure;
 
 
@@ -915,12 +911,12 @@ package body can_agent_pkg is
     ) is
         variable rec_int : integer;
     begin
-        info(CAN_AGENT_TAG  & "Getting monitor state");
+        info_m(CAN_AGENT_TAG  & "Getting monitor state");
         send(channel, C_CAN_AGENT_ID, CAN_AGNT_CMD_MONITOR_GET_STATE);
         wait for 0 ns;
         rec_int := com_channel_data.get_param;
         state := t_can_monitor_state'val(rec_int);
-        info(CAN_AGENT_TAG & " Monitor state got");
+        info_m(CAN_AGENT_TAG & " Monitor state got");
     end procedure;
 
 
@@ -929,11 +925,11 @@ package body can_agent_pkg is
         variable    monitored_val   : out   std_logic
     ) is
     begin
-        info(CAN_AGENT_TAG  & "Getting monitored value");
+        info_m(CAN_AGENT_TAG  & "Getting monitored value");
         send(channel, C_CAN_AGENT_ID, CAN_AGNT_CMD_MONITOR_GET_MONITORED_VAL);
         wait for 0 ns;
         monitored_val := com_channel_data.get_param;
-        info(CAN_AGENT_TAG & " Monitor value got");
+        info_m(CAN_AGENT_TAG & " Monitor value got");
     end procedure;
     
     
@@ -942,7 +938,7 @@ package body can_agent_pkg is
         constant    item        : in    t_can_monitor_entry
     ) is
     begin
-        debug(CAN_AGENT_TAG  & "Pushing item to monitor FIFO (" &
+        debug_m(CAN_AGENT_TAG  & "Pushing item to monitor FIFO (" &
                                 std_logic'image(item.value) & ", " &
                                 time'image(item.monitor_time) & ")");
         
@@ -956,7 +952,7 @@ package body can_agent_pkg is
         com_channel_data.set_param2(item.sample_rate);
         
         send(channel, C_CAN_AGENT_ID, CAN_AGNT_CMD_MONITOR_PUSH_ITEM);
-        info(CAN_AGENT_TAG & " Monitor item pushed");
+        info_m(CAN_AGENT_TAG & " Monitor item pushed");
     end procedure;
 
     
@@ -965,10 +961,10 @@ package body can_agent_pkg is
         constant    timeout     : in    time
     ) is
     begin
-        info(CAN_AGENT_TAG  & "Setting wait timeout");
+        info_m(CAN_AGENT_TAG  & "Setting wait timeout");
         com_channel_data.set_param(timeout);
         send(channel, C_CAN_AGENT_ID, CAN_AGNT_CMD_MONITOR_SET_WAIT_TIMEOUT);
-        info(CAN_AGENT_TAG & " wait timeout set");
+        info_m(CAN_AGENT_TAG & " wait timeout set");
     end procedure;
 
     
@@ -976,9 +972,9 @@ package body can_agent_pkg is
         signal      channel     : inout t_com_channel
     )is
     begin
-        info(CAN_AGENT_TAG  & "Waiting for monitor finish");
+        info_m(CAN_AGENT_TAG  & "Waiting for monitor finish");
         send(channel, C_CAN_AGENT_ID, CAN_AGNT_CMD_MONITOR_WAIT_FINISH);
-        info(CAN_AGENT_TAG & " monitor finished");
+        info_m(CAN_AGENT_TAG & " monitor finished");
     end procedure;
 
 
@@ -987,7 +983,7 @@ package body can_agent_pkg is
         constant    item        : in    t_can_monitor_entry
     ) is
     begin
-        debug(CAN_AGENT_TAG  & "Monitoring single item");
+        debug_m(CAN_AGENT_TAG  & "Monitoring single item");
         
         com_channel_data.set_param(item.value);
         com_channel_data.set_param(item.monitor_time);
@@ -999,7 +995,7 @@ package body can_agent_pkg is
         
         send(channel, C_CAN_AGENT_ID, CAN_AGNT_CMD_MONITOR_MONITOR_SINGLE_ITEM);
 
-        info(CAN_AGENT_TAG & " Single item monitored");
+        info_m(CAN_AGENT_TAG & " Single item monitored");
     end procedure;
     
 
@@ -1007,9 +1003,9 @@ package body can_agent_pkg is
         signal      channel     : inout t_com_channel
     )is
     begin
-        info(CAN_AGENT_TAG  & "Waiting till all items will be monitored");
+        info_m(CAN_AGENT_TAG  & "Waiting till all items will be monitored");
         send(channel, C_CAN_AGENT_ID, CAN_AGNT_CMD_MONITOR_MONITOR_ALL_ITEMS);
-        info(CAN_AGENT_TAG & " all items monitored");
+        info_m(CAN_AGENT_TAG & " all items monitored");
     end procedure;
 
 
@@ -1018,11 +1014,11 @@ package body can_agent_pkg is
         constant    trigger     : in    t_can_monitor_trigger
     ) is
     begin
-        info(CAN_AGENT_TAG  & "Setting monitor trigger to: " &
+        info_m(CAN_AGENT_TAG  & "Setting monitor trigger to: " &
              t_can_monitor_trigger'image(trigger));
         com_channel_data.set_param(t_can_monitor_trigger'pos(trigger));
         send(channel, C_CAN_AGENT_ID, CAN_AGNT_CMD_MONITOR_SET_TRIGGER);
-        info(CAN_AGENT_TAG & " Monitor trigger set");
+        info_m(CAN_AGENT_TAG & " Monitor trigger set");
     end procedure;
 
 
@@ -1032,12 +1028,12 @@ package body can_agent_pkg is
     ) is
         variable rec_int : integer;
     begin
-        info(CAN_AGENT_TAG  & "Getting monitor trigger");
+        info_m(CAN_AGENT_TAG  & "Getting monitor trigger");
         send(channel, C_CAN_AGENT_ID, CAN_AGNT_CMD_MONITOR_GET_TRIGGER);
         wait for 0 ns;
         rec_int := com_channel_data.get_param;
         trigger := t_can_monitor_trigger'val(rec_int);
-        info(CAN_AGENT_TAG & " Monitor trigger got");
+        info_m(CAN_AGENT_TAG & " Monitor trigger got");
     end procedure;
 
 
@@ -1046,11 +1042,11 @@ package body can_agent_pkg is
         constant    sample_rate : in    time
     ) is
     begin
-        info(CAN_AGENT_TAG  & "Setting monitor sample rate to: " &
+        info_m(CAN_AGENT_TAG  & "Setting monitor sample rate to: " &
              time'image(sample_rate));
         com_channel_data.set_param(sample_rate);
         send(channel, C_CAN_AGENT_ID, CAN_AGNT_CMD_MONITOR_SET_SAMPLE_RATE);
-        info(CAN_AGENT_TAG & " monitor sample rate set");
+        info_m(CAN_AGENT_TAG & " monitor sample rate set");
     end procedure;
 
 
@@ -1059,11 +1055,11 @@ package body can_agent_pkg is
         variable    sample_rate : out   time
     ) is
     begin
-        info(CAN_AGENT_TAG  & "Getting monitor sample rate.");
+        info_m(CAN_AGENT_TAG  & "Getting monitor sample rate.");
         send(channel, C_CAN_AGENT_ID, CAN_AGNT_CMD_MONITOR_GET_SAMPLE_RATE);
         wait for 0 ns;
         sample_rate := com_channel_data.get_param;
-        info(CAN_AGENT_TAG & " monitor sample rate got");
+        info_m(CAN_AGENT_TAG & " monitor sample rate got");
     end procedure;
 
 
@@ -1133,9 +1129,9 @@ package body can_agent_pkg is
         signal      channel     : inout t_com_channel
     ) is
     begin
-        info(CAN_AGENT_TAG  & "Checking monitor result!");
+        info_m(CAN_AGENT_TAG  & "Checking monitor result!");
         send(channel, C_CAN_AGENT_ID, CAN_AGNT_CMD_MONITOR_CHECK_RESULT);
-        info(CAN_AGENT_TAG & " Monitor result checked");
+        info_m(CAN_AGENT_TAG & " Monitor result checked");
     end procedure;
 
 
@@ -1144,10 +1140,10 @@ package body can_agent_pkg is
         constant    input_delay : in    time
     ) is
     begin
-        info(CAN_AGENT_TAG  & "Settting input delay");
+        info_m(CAN_AGENT_TAG  & "Settting input delay");
         com_channel_data.set_param(input_delay);
         send(channel, C_CAN_AGENT_ID, CAN_AGNT_CMD_MONITOR_SET_INPUT_DELAY);
-        info(CAN_AGENT_TAG & " Monitor input delay set");
+        info_m(CAN_AGENT_TAG & " Monitor input delay set");
     end procedure;
 
 
@@ -1156,13 +1152,13 @@ package body can_agent_pkg is
         constant    enable      : in    boolean
     ) is
     begin
-        info(CAN_AGENT_TAG  & "Configuring can_tx to can_rx feedback!");
+        info_m(CAN_AGENT_TAG  & "Configuring can_tx to can_rx feedback!");
         if (enable) then
             send(channel, C_CAN_AGENT_ID, CAN_AGNT_CMD_TX_RX_FEEDBACK_ENABLE);
         else
             send(channel, C_CAN_AGENT_ID, CAN_AGNT_CMD_TX_RX_FEEDBACK_DISABLE);
         end if;
-        info(CAN_AGENT_TAG & " Monitor can_tx to can_rx feedback configured!");
+        info_m(CAN_AGENT_TAG & " Monitor can_tx to can_rx feedback configured!");
     end procedure;
 
 end package body;

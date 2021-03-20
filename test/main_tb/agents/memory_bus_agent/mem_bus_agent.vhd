@@ -107,28 +107,24 @@
 --    04.2.2021   Adjusted to work without Vunits COM library.
 --------------------------------------------------------------------------------
 
-Library ieee;
-USE IEEE.std_logic_1164.all;
-USE IEEE.numeric_std.ALL;
-use ieee.math_real.uniform;
-use ieee.math_real.floor;
-
 Library ctu_can_fd_tb;
-use ctu_can_fd_tb.tb_communication_pkg.ALL;
-use ctu_can_fd_tb.tb_report_pkg.ALL;
+context ctu_can_fd_tb.ieee_context;
+context ctu_can_fd_tb.tb_common_context;
 
 use ctu_can_fd_tb.mem_bus_agent_pkg.all;
 
+
 entity mem_bus_agent is
     generic(
-        G_ACCESS_FIFO_DEPTH  : natural := 32
+        G_ACCESS_FIFO_DEPTH  : natural := 32;
+        G_NUM_SLAVES         : natural := 2
     );
     port (
         -- Clock
         clk             : in    std_logic;
 
         -- Memory bus interface
-        scs             : out   std_logic := '0';
+        scs             : out   std_logic_vector(G_NUM_SLAVES - 1 downto 0) := (OTHERS => '0');
         swr             : out   std_logic := 'X';
         srd             : out   std_logic := 'X';
         sbe             : out   std_logic_vector(3 downto 0) := "XXXX";
@@ -164,6 +160,12 @@ architecture tb of mem_bus_agent is
 
     signal read_data_i          :   std_logic_vector(31 downto 0);
     
+    signal scs_i                :   std_logic;
+    
+    -- By default, transactions go to first slave. This is used in compliance
+    -- tests which only talk to DUT node via Memory bus agent.
+    signal slave_index          :   natural := 0;      
+
 begin
     
     --------------------------------------------------------------------------
@@ -228,7 +230,7 @@ begin
             wait for 0 ns;
 
             wait until (fifo_wp = fifo_rp);
-            --info("Read data when pushing response: " & to_hstring(read_data_i));
+            --info_m("Read data when pushing response: " & to_hstring(read_data_i));
             com_channel_data.set_param(read_data_i);
 
         when MEM_BUS_AGNT_CMD_X_MODE_START =>
@@ -253,9 +255,12 @@ begin
             if (fifo_wp /= fifo_rp) then
                 wait until fifo_wp = fifo_rp;
             end if;
+            
+        when MEM_BUS_AGNT_CMD_SET_SLAVE_INDEX =>
+            slave_index <= com_channel_data.get_param;
 
         when others =>
-            info ("Invalid message type: " & integer'image(cmd));
+            info_m("Invalid message type: " & integer'image(cmd));
             reply_code := C_REPLY_CODE_ERR;
         end case;
 
@@ -277,7 +282,7 @@ begin
         begin
             -- Chip select can't have Xs, otherwise we get dummy transactions!
             wait until falling_edge(clk);
-            scs <= '1';
+            scs_i <= '1';
 
             if (is_x_mode) then
                 swr <= 'X';
@@ -316,7 +321,7 @@ begin
                 wait for post_re_time;
 
                 if (post_re_time = x_mode_hold) then
-                    scs <= '0';
+                    scs_i <= '0';
                     swr <= 'X';
                     srd <= 'X';
                     write_data <= (OTHERS => 'X');
@@ -332,7 +337,7 @@ begin
                 if (post_re_time = x_mode_hold) then
                     read_data_i <= read_data;
                 else
-                    scs <= '0';
+                    scs_i <= '0';
                     swr <= 'X';
                     srd <= 'X';
                     write_data <= (OTHERS => 'X');
@@ -347,7 +352,7 @@ begin
                 wait for (period / 2) - 2 ps; -- This will end up just before next falling edge!
                 swr <= '0';
                 srd <= '0';
-                scs <= '0';
+                scs_i <= '0';
                 address <= (OTHERS => '0');
                 write_data <= (OTHERS => '0');
                 sbe <= (OTHERS => '0');
@@ -376,5 +381,13 @@ begin
             wait until mem_bus_agent_ena;
         end if;
     end process;
+    
+    ---------------------------------------------------------------------------
+    -- Propagate chip select to slave which is selected
+    ---------------------------------------------------------------------------
+    cs_gen : for i in 0 to G_NUM_SLAVES - 1 generate
+        scs(i) <= scs_i when (slave_index = i) else
+                  '0';
+    end generate;
     
 end architecture;

@@ -75,18 +75,16 @@
 --    26.1.2021   Created file
 --------------------------------------------------------------------------------
 
-Library ieee;
-USE IEEE.std_logic_1164.all;
-USE IEEE.numeric_std.ALL;
-
+-- Only top level uses Vunit. This allows keeping CTU CAN FD VIP Vunit-less!!
 library vunit_lib;
 context vunit_lib.vunit_context;
 
--- Design libraries
-Library ctu_can_fd_rtl;
-use ctu_can_fd_rtl.cmn_lib.all;
-use ctu_can_fd_rtl.can_types.all;
-use ctu_can_fd_rtl.can_components.all;
+-- Common contexts
+Library ctu_can_fd_tb;
+context ctu_can_fd_tb.ieee_context;
+context ctu_can_fd_tb.tb_common_context;
+context ctu_can_fd_tb.tb_agents_context;
+context ctu_can_fd_tb.rtl_context;
 
 
 entity tb_top_ctu_can_fd is
@@ -98,6 +96,7 @@ entity tb_top_ctu_can_fd is
         stand_alone_vip_mode    : boolean := true; 
 
         iterations              : natural := 1;
+        timeout                 : string := "10 ms";
 
         -- Clock configuration of DUT
         cfg_sys_clk_period      : string := "10 ns";
@@ -177,7 +176,10 @@ architecture tb of tb_top_ctu_can_fd is
        cfg_prop_fd             : natural;
        cfg_ph_1_fd             : natural;
        cfg_ph_2_fd             : natural;
-       cfg_sjw_fd              : natural
+       cfg_sjw_fd              : natural;
+       
+       -- Seed
+       seed                    : natural := 0
     );
     port(
        -- Test control
@@ -272,7 +274,9 @@ begin
         cfg_prop_fd             => cfg_prop_fd,
         cfg_ph_1_fd             => cfg_ph_1_fd,
         cfg_ph_2_fd             => cfg_ph_2_fd,
-        cfg_sjw_fd              => cfg_sjw_fd
+        cfg_sjw_fd              => cfg_sjw_fd,
+        
+        seed                    => seed
     )
     port map(
         -- Test control
@@ -356,7 +360,9 @@ begin
         info("***************************************************************");
 
         for i in 1 to iterations loop
-            info("Iteration nr: " & integer'image(i));
+            info("***************************************************************");
+            info(" Iteration nr: " & integer'image(i));
+            info("***************************************************************");
 
             -- Execute test
             test_start <= '1';
@@ -377,6 +383,13 @@ begin
         -- Finish succesfully
         test_runner_cleanup(runner);
     end process;
+
+    ---------------------------------------------------------------------------
+    -- Spawn watchdog
+    ---------------------------------------------------------------------------
+    watchdog: if time'value(timeout) > 0 ns generate
+        test_runner_watchdog(runner, time'value(timeout));
+    end generate;
 
 end architecture;
 

@@ -67,79 +67,23 @@
 --------------------------------------------------------------------------------
 
 --------------------------------------------------------------------------------
---  @Purpose:
---    Reset generator agent with configurable polarity.  
+-- Purpose:
+--  Common IEEE libraries used within CTU CAN FD TB.
 --
 --------------------------------------------------------------------------------
 -- Revision History:
---    19.1.2020   Created file
---    04.2.2021   Adjusted to work without Vunits COM library.
+--   28.12.2018   Created file - Ondrej Ille
 --------------------------------------------------------------------------------
 
-Library ctu_can_fd_tb;
-context ctu_can_fd_tb.ieee_context;
-context ctu_can_fd_tb.tb_common_context;
+context ieee_context is
 
-use ctu_can_fd_tb.reset_agent_pkg.all;
-
-
-entity reset_agent is
-    port (
-        -- Generated reset output
-        reset   :   out std_logic
-    );
-end entity;
-
-architecture tb of reset_agent is
+    Library ieee;
+    use ieee.std_logic_1164.all;
+    use ieee.numeric_std.ALL;
+    use ieee.math_real.ALL;
+    use ieee.std_logic_textio.all;
     
-    ---------------------------------------------------------------------------
-    -- Parameters configured over communication library
-    ---------------------------------------------------------------------------
-    signal reset_polarity   :   std_logic := '1';
-    signal reset_active     :   boolean := false;
-
-begin
+    -- Should be available in VHDL 2008 by default !!
+    use STD.textio.all;
     
-    ---------------------------------------------------------------------------
-    -- Comunication receiver process
-    ---------------------------------------------------------------------------
-    receiver_proc : process
-        variable cmd : integer;
-        variable reply_code : integer;
-    begin
-        receive_start(default_channel, C_RESET_AGENT_ID);
-
-        -- Command is sent as message type
-        cmd := com_channel_data.get_msg_code;
-        reply_code := C_REPLY_CODE_OK;
-         
-        case cmd is
-        when RST_AGNT_CMD_ASSERT =>
-            reset <= reset_polarity;
-            reset_active <= true;
-
-        when RST_AGNT_CMD_DEASSERT =>
-            reset <= not reset_polarity;
-            reset_active <= false;
-
-        when RST_AGNT_CMD_POLARITY_SET =>
-            reset_polarity <= com_channel_data.get_param;
-            wait for 0 ns;
-            if (reset_active) then
-                reset <= reset_polarity;
-            else
-                reset <= not reset_polarity;
-            end if;
-
-        when RST_AGNT_CMD_POLARITY_GET =>
-            com_channel_data.set_param(reset_polarity);
-            
-        when others =>
-            info_m("Invalid message type: " & integer'image(cmd));
-            reply_code := C_REPLY_CODE_ERR;
-
-        end case;
-        receive_finish(default_channel, reply_code);
-    end process;
-    
-end architecture;
+end context;

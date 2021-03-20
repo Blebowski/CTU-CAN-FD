@@ -67,79 +67,118 @@
 --------------------------------------------------------------------------------
 
 --------------------------------------------------------------------------------
---  @Purpose:
---    Reset generator agent with configurable polarity.  
---
+-- Purpose:
+--    Delay a signal by non-static time.
+--    Maintains a FIFO of (time&value) of event (change) on input signal
+--    and replays it on the delayed signal with the specified delay.
 --------------------------------------------------------------------------------
 -- Revision History:
---    19.1.2020   Created file
---    04.2.2021   Adjusted to work without Vunits COM library.
+--    February 2018   First Implementation - Martin Jerabek
 --------------------------------------------------------------------------------
 
-Library ctu_can_fd_tb;
-context ctu_can_fd_tb.ieee_context;
-context ctu_can_fd_tb.tb_common_context;
+library ieee;
+use ieee.std_logic_1164.all;
 
-use ctu_can_fd_tb.reset_agent_pkg.all;
-
-
-entity reset_agent is
+entity signal_delayer_vec is
+    generic (
+        NSAMPLES : positive;
+        DWIDTH : positive
+    );
     port (
-        -- Generated reset output
-        reset   :   out std_logic
+        input : in std_logic_vector(DWIDTH-1 downto 0);
+        delayed : out std_logic_vector(DWIDTH-1 downto 0);
+        delay : in time
     );
 end entity;
 
-architecture tb of reset_agent is
-    
-    ---------------------------------------------------------------------------
-    -- Parameters configured over communication library
-    ---------------------------------------------------------------------------
-    signal reset_polarity   :   std_logic := '1';
-    signal reset_active     :   boolean := false;
+architecture tb of signal_delayer_vec is
+    type data_type is array(0 to NSAMPLES-1) of time;
+    type dataval_type is array(0 to NSAMPLES-1) of std_logic_vector(DWIDTH-1 downto 0);
+    signal first : boolean := true;
 
+    signal nonempty : boolean;
+    signal pop : boolean;-- sensitive to edge, not level!
+    signal top : time;
+    signal top_val : std_logic_vector(DWIDTH-1 downto 0);
 begin
-    
-    ---------------------------------------------------------------------------
-    -- Comunication receiver process
-    ---------------------------------------------------------------------------
-    receiver_proc : process
-        variable cmd : integer;
-        variable reply_code : integer;
+    p_fifo: process
+        variable data : data_type;
+        variable dataval : dataval_type;
+        variable rdidx : natural := 0;
+        variable wridx : natural := 0;
     begin
-        receive_start(default_channel, C_RESET_AGENT_ID);
-
-        -- Command is sent as message type
-        cmd := com_channel_data.get_msg_code;
-        reply_code := C_REPLY_CODE_OK;
-         
-        case cmd is
-        when RST_AGNT_CMD_ASSERT =>
-            reset <= reset_polarity;
-            reset_active <= true;
-
-        when RST_AGNT_CMD_DEASSERT =>
-            reset <= not reset_polarity;
-            reset_active <= false;
-
-        when RST_AGNT_CMD_POLARITY_SET =>
-            reset_polarity <= com_channel_data.get_param;
-            wait for 0 ns;
-            if (reset_active) then
-                reset <= reset_polarity;
-            else
-                reset <= not reset_polarity;
-            end if;
-
-        when RST_AGNT_CMD_POLARITY_GET =>
-            com_channel_data.set_param(reset_polarity);
-            
-        when others =>
-            info_m("Invalid message type: " & integer'image(cmd));
-            reply_code := C_REPLY_CODE_ERR;
-
-        end case;
-        receive_finish(default_channel, reply_code);
+        if first then
+            first <= false;
+            top_val <= input;
+        end if;
+        wait until (input'event or pop'event);
+        if input'event then
+            assert (wridx - rdidx) < NSAMPLES report "FIFO full!" severity failure;
+            data(wridx mod NSAMPLES) := now;
+            dataval(wridx mod NSAMPLES) := input;
+            wridx := wridx + 1;
+        elsif pop'event then
+            assert (wridx - rdidx) > 0 report "FIFO empty!" severity failure;
+            top_val <= dataval(rdidx mod NSAMPLES);
+            rdidx := rdidx + 1;
+        end if;
+        top <= data(rdidx mod NSAMPLES);
+        nonempty <= (wridx - rdidx) > 0;
+        wait for 0 ns;
     end process;
-    
+
+    p_delay: process
+        variable towait : time;
+        variable first : boolean := true;
+    begin
+        if delay < 0 ns then
+            wait until delay >= 0 ns;
+        end if;
+        if first then
+            first := false;
+            delayed <= input;
+        end if;
+        if not nonempty then
+            wait until nonempty;
+        end if;
+        towait := top + delay - now;
+        --report "Waiting for " & time'image(towait);
+        wait for towait;
+        delayed <= top_val;
+        if not nonempty then
+            wait until nonempty;
+        end if;
+        pop <= not pop;
+    end process;
+end;
+
+library ieee;
+use ieee.std_logic_1164.all;
+
+entity signal_delayer is
+    generic (
+        NSAMPLES : positive
+    );
+    port (
+        input : in std_logic;
+        delayed : out std_logic;
+        delay : in time
+    );
+end entity;
+
+architecture tb of signal_delayer is
+    signal input_v, delayed_v : std_logic_vector(0 downto 0);
+begin
+    i_sdv: entity work.signal_delayer_vec
+    generic map (
+        NSAMPLES => NSAMPLES,
+        DWIDTH => 1
+    )
+    port map (
+        input => input_v,
+        delayed => delayed_v,
+        delay => delay
+    );
+    input_v <= (0 => input);
+    delayed <= delayed_v(0);
 end architecture;

@@ -72,8 +72,7 @@
 --
 --------------------------------------------------------------------------------
 -- Revision History:
---    19.1.2020   Created file
---    04.2.2021   Adjusted to work without Vunits COM library.
+--    12.3.2021   Created file
 --------------------------------------------------------------------------------
 
 Library ctu_can_fd_tb;
@@ -81,64 +80,62 @@ context ctu_can_fd_tb.ieee_context;
 context ctu_can_fd_tb.tb_common_context;
 
 
-package reset_agent_pkg is
+package interrupt_agent_pkg is
 
     ---------------------------------------------------------------------------
-    -- Reset generator component    
+    -- Interrupt agent component    
     ---------------------------------------------------------------------------
-    component reset_agent is
+    component interrupt_agent is
     port (
-        -- Generated reset
-        reset   :   out std_logic
+        int   :   in std_logic
     );
     end component;
 
     ---------------------------------------------------------------------------
     ---------------------------------------------------------------------------
-    -- Reset generator agent API    
+    -- Interrupt agent API    
     ---------------------------------------------------------------------------
     ---------------------------------------------------------------------------
 
     ---------------------------------------------------------------------------
-    -- Assert reset by Reset generator agent.
-    --
-    -- @param channel   Channel on which to send the request
-    ---------------------------------------------------------------------------
-    procedure rst_agent_assert(
-        signal channel  : inout t_com_channel
-    );
-
-    ---------------------------------------------------------------------------
-    -- De-assert reset by Reset generator agent.
-    --
-    -- @param channel   Channel on which to send the request
-    ---------------------------------------------------------------------------
-    procedure rst_agent_deassert(
-        signal channel  : inout t_com_channel
-    );
-
-    ---------------------------------------------------------------------------
-    -- Set polarity of Reset generator agent.
+    -- Set polarity of active Interrupt value.
     --
     -- @param channel   Channel on which to send the request
     -- @param polarity  Polarity to be set.
     ---------------------------------------------------------------------------
-    procedure rst_agent_polarity_set(
+    procedure interrupt_agent_polarity_set(
         signal   channel     : inout t_com_channel;
         constant polarity    : in    std_logic
     );
 
     ---------------------------------------------------------------------------
-    -- Get polarity of Reset generator agent.
+    -- Get polarity of Interrupt value
     --
     -- @param channel   Channel on which to send the request
     -- @param polarity  Obtained polarity.   
     ---------------------------------------------------------------------------
-    procedure rst_agent_polarity_get(
+    procedure interrupt_agent_polarity_get(
         signal   channel     : inout t_com_channel;
         variable polarity    : out   std_logic
     );
 
+    ---------------------------------------------------------------------------
+    -- Checks if interrupt is asserted
+    --
+    -- @param channel   Channel on which to send the request
+    ---------------------------------------------------------------------------
+    procedure interrupt_agent_check_asserted(
+        signal   channel     : inout t_com_channel
+    );
+    
+    ---------------------------------------------------------------------------
+    -- Checks if interrupt is not asserted
+    --
+    -- @param channel   Channel on which to send the request
+    ---------------------------------------------------------------------------
+    procedure interrupt_agent_check_not_asserted(
+        signal   channel     : inout t_com_channel
+    );
    
     ---------------------------------------------------------------------------
     ---------------------------------------------------------------------------
@@ -147,65 +144,66 @@ package reset_agent_pkg is
     ---------------------------------------------------------------------------
 
     -- Supported commands
-    constant RST_AGNT_CMD_ASSERT         : integer := 0;
-    constant RST_AGNT_CMD_DEASSERT       : integer := 1;
-    constant RST_AGNT_CMD_POLARITY_SET   : integer := 2;
-    constant RST_AGNT_CMD_POLARITY_GET   : integer := 3;
+    constant INTERRUPT_AGNT_CMD_POLARITY_SET            : integer := 0;
+    constant INTERRUPT_AGNT_CMD_POLARITY_GET            : integer := 1;
+    constant INTERRUPT_AGNT_CMD_CHECK_ASSERTED          : integer := 2;
+    constant INTERRUPT_AGNT_CMD_CHECK_NOT_ASSERTED      : integer := 3;
     
-    -- Reset agent tag (for messages)
-    constant RESET_AGENT_TAG : string := "Reset Agent: ";
+    -- Tag for messages
+    constant INTERRUPT_AGENT_TAG : string := "Interrupt Agent: ";
 
 end package;
 
 
-package body reset_agent_pkg is
+package body interrupt_agent_pkg is
     
     ---------------------------------------------------------------------------
     ---------------------------------------------------------------------------
-    -- Reset generator agent API
+    -- Interrupt agent API
     ---------------------------------------------------------------------------
     ---------------------------------------------------------------------------
-   
-    procedure rst_agent_assert(
-        signal channel  : inout t_com_channel
+
+    procedure interrupt_agent_polarity_set(
+        signal   channel     : inout t_com_channel;
+        constant polarity    : in    std_logic
     ) is
     begin
-        info_m(RESET_AGENT_TAG & "Asserting reset");
-        send(channel, C_RESET_AGENT_ID, RST_AGNT_CMD_ASSERT);
-        info_m(RESET_AGENT_TAG & "Asserted reset");
-    end procedure;
-
-
-    procedure rst_agent_deassert(
-        signal channel  : inout t_com_channel
-    ) is
-    begin
-        info_m(RESET_AGENT_TAG & "De-Asserting reset");
-        send(channel, C_RESET_AGENT_ID, RST_AGNT_CMD_DEASSERT);
-        info_m(RESET_AGENT_TAG & "De-Asserted reset");
-    end procedure;
-
-
-    procedure rst_agent_polarity_set(
-        signal   channel    : inout t_com_channel;
-        constant polarity   : in    std_logic
-    ) is
-    begin
-        info_m(RESET_AGENT_TAG & "Setting reset polarity to: " & std_logic'image(polarity));
+        info_m(INTERRUPT_AGENT_TAG & "Setting polarity");
         com_channel_data.set_param(polarity);
-        send(channel, C_RESET_AGENT_ID, RST_AGNT_CMD_POLARITY_SET);
-        info_m(RESET_AGENT_TAG & "Polarity set");
+        send(channel, C_INTERRUPT_AGENT_ID, INTERRUPT_AGNT_CMD_POLARITY_SET);
+        info_m(INTERRUPT_AGENT_TAG & "Polarity set");
     end procedure;
 
-    procedure rst_agent_polarity_get(
-        signal   channel    : inout t_com_channel;
-        variable polarity   : out   std_logic
-    ) is
+
+    procedure interrupt_agent_polarity_get(
+        signal   channel     : inout t_com_channel;
+        variable polarity    : out   std_logic
+    )is
     begin
-        info_m(RESET_AGENT_TAG & "Getting reset polarity");
-        send(channel, C_RESET_AGENT_ID, RST_AGNT_CMD_POLARITY_GET);
+        info_m(INTERRUPT_AGENT_TAG & "Getting polarity");
+        send(channel, C_INTERRUPT_AGENT_ID, INTERRUPT_AGNT_CMD_POLARITY_GET);
         polarity := com_channel_data.get_param;
-        info_m(RESET_AGENT_TAG & "Polarity got");
+        info_m(INTERRUPT_AGENT_TAG & "Polarity got");
+    end procedure;
+   
+   
+    procedure interrupt_agent_check_asserted(
+        signal   channel     : inout t_com_channel
+    )is
+    begin
+        info_m(INTERRUPT_AGENT_TAG & "Checking asserted");
+        send(channel, C_INTERRUPT_AGENT_ID, INTERRUPT_AGNT_CMD_CHECK_ASSERTED);
+        info_m(INTERRUPT_AGENT_TAG & "Asserted checked");
+    end procedure;
+
+
+    procedure interrupt_agent_check_not_asserted(
+        signal   channel     : inout t_com_channel
+    )is
+    begin
+        info_m(INTERRUPT_AGENT_TAG & "Checking not asserted");
+        send(channel, C_INTERRUPT_AGENT_ID, INTERRUPT_AGNT_CMD_CHECK_NOT_ASSERTED);
+        info_m(INTERRUPT_AGENT_TAG & "Not asserted checked");
     end procedure;
 
 end package body;

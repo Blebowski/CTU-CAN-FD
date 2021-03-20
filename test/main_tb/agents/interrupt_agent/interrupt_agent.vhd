@@ -67,34 +67,69 @@
 --------------------------------------------------------------------------------
 
 --------------------------------------------------------------------------------
--- Purpose:
---  Definition of context for synthesizable codes of CTU CAN FD.
+--  @Purpose:
+--    Interrupt agent - Can check values of interrupt pin  
 --
---  Context definitions are used for tests only since free version of Quartus
---  does not support context clause for synthesis.
 --------------------------------------------------------------------------------
 -- Revision History:
---   28.12.2018   Created file - Ondrej Ille
+--    12.3.2021   Created file
 --------------------------------------------------------------------------------
 
-context ctu_can_synth_context is
+Library ctu_can_fd_tb;
+context ctu_can_fd_tb.ieee_context;
+context ctu_can_fd_tb.tb_common_context;
 
-    Library ieee;
-    use ieee.std_logic_1164.all;
-    use ieee.numeric_std.ALL;
-    use ieee.math_real.ALL;
-    
-    Library ctu_can_fd_rtl;
-    use ctu_can_fd_rtl.id_transfer.all;
-    use ctu_can_fd_rtl.can_constants.all;
-    use ctu_can_fd_rtl.can_components.all;
-    use ctu_can_fd_rtl.can_types.all;
-    use ctu_can_fd_rtl.cmn_lib.all;
-    use ctu_can_fd_rtl.drv_stat_pkg.all;
-    use ctu_can_fd_rtl.reduce_lib.all;
-    use ctu_can_fd_rtl.can_config.all;
-    
-    use ctu_can_fd_rtl.CAN_FD_register_map.all;
-    use ctu_can_fd_rtl.CAN_FD_frame_format.all;
+use ctu_can_fd_tb.interrupt_agent_pkg.all;
 
-end context;
+
+entity interrupt_agent is
+    port (
+        int   :   in std_logic
+    );
+end entity;
+
+
+architecture tb of interrupt_agent is
+    
+    ---------------------------------------------------------------------------
+    -- Parameters configured over communication library
+    ---------------------------------------------------------------------------
+    signal interrupt_polarity   :   std_logic := '1';
+
+begin
+    
+    ---------------------------------------------------------------------------
+    -- Comunication receiver process
+    ---------------------------------------------------------------------------
+    receiver_proc : process
+        variable cmd : integer;
+        variable reply_code : integer;
+    begin
+        receive_start(default_channel, C_INTERRUPT_AGENT_ID);
+
+        -- Command is sent as message type
+        cmd := com_channel_data.get_msg_code;
+        reply_code := C_REPLY_CODE_OK;
+         
+        case cmd is
+        when INTERRUPT_AGNT_CMD_POLARITY_SET =>
+            interrupt_polarity <= com_channel_data.get_param;
+
+        when INTERRUPT_AGNT_CMD_POLARITY_GET =>
+            com_channel_data.set_param(interrupt_polarity);
+
+        when INTERRUPT_AGNT_CMD_CHECK_ASSERTED =>
+            check_m(int = interrupt_polarity, INTERRUPT_AGENT_TAG &" ** Interrupt asserted **");
+
+        when INTERRUPT_AGNT_CMD_CHECK_NOT_ASSERTED =>
+            check_false_m(int = interrupt_polarity, INTERRUPT_AGENT_TAG &" ** Interrupt NOT asserted **");
+
+        when others =>
+            info_m("Invalid message type: " & integer'image(cmd));
+            reply_code := C_REPLY_CODE_ERR;
+
+        end case;
+        receive_finish(default_channel, reply_code);
+    end process;
+    
+end architecture;
