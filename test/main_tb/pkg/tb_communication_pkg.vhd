@@ -91,7 +91,7 @@ package tb_communication_pkg is
     constant C_CAN_AGENT_ID             : natural := 3;
     constant C_FEATURE_TEST_AGENT_ID    : natural := 4;
     constant C_INTERRUPT_AGENT_ID       : natural := 5;
-    constant C_TIMESTAMP_AGENT_ID       : natural := 5;
+    constant C_TIMESTAMP_AGENT_ID       : natural := 6;
 
     constant COM_PKG_TAG : string := "Communication PKG: ";
 
@@ -288,7 +288,7 @@ package body tb_communication_pkg is
             param       : in  std_logic_vector
         ) is
         begin
-            if (param'length > 128) then
+            if (param'length <= 128) then
                 par_logic_vect(param'length - 1 downto 0) := param;
             else
                 warning_m(COM_PKG_TAG & " Truncating passed parameter!!");

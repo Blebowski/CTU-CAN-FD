@@ -216,16 +216,6 @@ package mem_bus_agent_pkg is
                     hold        : in    time
     );
 
-    ---------------------------------------------------------------------------
-    -- Configure expected clock period by Memory bus agent.
-    --
-    -- @param channel       Channel on which to send the request
-    -- @param period        Hold time to be configured.
-    ---------------------------------------------------------------------------
-    procedure mem_bus_agent_set_period(
-        signal      channel     : inout t_com_channel;
-                    period      : in    time
-    );
 
     ---------------------------------------------------------------------------
     -- Configure data out delay of DUT. During read transactions data are
@@ -372,7 +362,6 @@ package mem_bus_agent_pkg is
     constant MEM_BUS_AGNT_CMD_SET_X_MODE_SETUP      : integer := 7;
     constant MEM_BUS_AGNT_CMD_SET_X_MODE_HOLD       : integer := 8;
 
-    constant MEM_BUS_AGNT_CMD_SET_PERIOD            : integer := 9;
     constant MEM_BUS_AGNT_CMD_SET_OUTPUT_DELAY      : integer := 10;
     constant MEM_BUS_AGNT_CMD_WAIT_DONE             : integer := 11;
     
@@ -514,18 +503,6 @@ package body mem_bus_agent_pkg is
         com_channel_data.set_param(hold);
         send(channel, C_MEM_BUS_AGENT_ID, MEM_BUS_AGNT_CMD_SET_X_MODE_HOLD);
         info_m(MEM_BUS_AGENT_TAG & "X mode hold configured");
-    end procedure;
-
-
-    procedure mem_bus_agent_set_period(
-        signal      channel     : inout t_com_channel;
-                    period      : in    time
-    ) is
-    begin
-        info_m(MEM_BUS_AGENT_TAG & "Setting clock period to: " & time'image(period));
-        com_channel_data.set_param(period);
-        send(channel, C_MEM_BUS_AGENT_ID, MEM_BUS_AGNT_CMD_SET_PERIOD);
-        info_m(MEM_BUS_AGENT_TAG & "clock period configured");
     end procedure;
 
 

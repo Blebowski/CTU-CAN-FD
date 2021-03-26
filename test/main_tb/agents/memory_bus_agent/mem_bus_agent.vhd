@@ -97,10 +97,6 @@
 --    internal FIFO. When it is stopped, transcations are buffered in FIFO and
 --    executed once Memory bus agent is started.
 --
---    For correct operation in X-mode, clock period must be configured in
---    Memory bus agent. Clock signal is provided externally, but for proper
---    measurement of setup and hold times, its period must be provided. 
---
 --------------------------------------------------------------------------------
 -- Revision History:
 --    19.1.2020   Created file
@@ -160,12 +156,13 @@ architecture tb of mem_bus_agent is
 
     signal read_data_i          :   std_logic_vector(31 downto 0);
     
-    signal scs_i                :   std_logic;
+    signal scs_i                :   std_logic := '0';
     
-    -- By default, transactions go to first slave. This is used in compliance
-    -- tests which only talk to DUT node via Memory bus agent.
+    -- By default, transactions go to first slave (DUT). This is used in compliance
+    -- tests which only talk to DUT node via Memory bus agent. 
     signal slave_index          :   natural := 0;      
 
+    signal last_clk_re          :   time := 0 ns;
 begin
     
     --------------------------------------------------------------------------
@@ -245,9 +242,6 @@ begin
         when MEM_BUS_AGNT_CMD_SET_X_MODE_HOLD =>
             x_mode_hold <= com_channel_data.get_param;
 
-        when MEM_BUS_AGNT_CMD_SET_PERIOD =>
-            period <= com_channel_data.get_param;
-
         when MEM_BUS_AGNT_CMD_SET_OUTPUT_DELAY =>
             data_out_delay <= com_channel_data.get_param;
 
@@ -267,6 +261,16 @@ begin
         receive_finish(default_channel, reply_code);
     end process;
 
+    ---------------------------------------------------------------------------
+    -- Measuring period of input clock (for proper calculation in X mode)
+    ---------------------------------------------------------------------------
+    clk_period_meas_proc : process
+    begin
+        wait until rising_edge(clk);
+        period <= NOW - last_clk_re;
+        last_clk_re <= NOW;
+    end process;
+    
     
     ---------------------------------------------------------------------------
     -- Memory bus access process

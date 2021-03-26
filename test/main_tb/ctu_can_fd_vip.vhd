@@ -153,12 +153,32 @@ architecture behav of ctu_can_fd_vip is
     --  1 - Test node of feature tests
     ---------------------------------------------------------------------------
     signal scs_i                    : std_logic_vector(1 downto 0);
+    signal scs_i_reg                : std_logic_vector(1 downto 0);
     
     signal read_data_test_node      : std_logic_vector(31 downto 0);
     signal read_data_muxed          : std_logic_vector(31 downto 0);
     
     signal res_n_i                  : std_logic;
     
+    
+    -- PLI interface for communication with compliance test library
+    signal pli_clk                 : std_logic;
+    signal pli_req                 : std_logic;
+    signal pli_ack                 : std_logic := '0';
+    signal pli_cmd                 : std_logic_vector(7 downto 0);
+    signal pli_dest                : std_logic_vector(7 downto 0);
+    signal pli_data_in             : std_logic_vector(63 downto 0);
+    signal pli_data_in_2           : std_logic_vector(63 downto 0);
+    signal pli_str_buf_in          : std_logic_vector(511 downto 0);
+    signal pli_data_out            : std_logic_vector(63 downto 0);
+
+    -- PLI interface for giving test control to compliance test library
+    signal pli_control_req         : std_logic := '0';
+    signal pli_control_gnt         : std_logic;
+
+    signal pli_test_name_array     : std_logic_vector((test_name'length * 8) - 1 downto 0)
+        := (OTHERS => '0');
+
 begin
     
     ---------------------------------------------------------------------------
@@ -238,9 +258,25 @@ begin
         cfg_sjw_fd              => cfg_sjw_fd
     )
     port map(
+        -- Test control interface (to VIP top)
         test_start              => test_start,
         test_done               => test_done,
-        test_success            => test_success
+        test_success            => test_success,
+        
+        -- PLI communication interface
+        pli_clk                 => pli_clk,
+        pli_req                 => pli_req,
+        pli_ack                 => pli_ack,
+        pli_cmd                 => pli_cmd,
+        pli_dest                => pli_dest,
+        pli_data_in             => pli_data_in,
+        pli_data_in_2           => pli_data_in_2,
+        pli_str_buf_in          => pli_str_buf_in,
+        pli_data_out            => pli_data_out,
+
+        -- PLI interface for giving test control to compliance test library
+        pli_control_req         => pli_control_req,
+        pli_control_gnt         => pli_control_gnt
     );
 
     
@@ -350,9 +386,25 @@ begin
     ---------------------------------------------------------------------------
     scs <= scs_i(0);
     
-    read_data_muxed <= read_data when (scs_i(0) = '1') else
-                       read_data_test_node when (scs_i(1) = '1') else
+    scs_reg_proc : process(ALL)
+    begin
+        if (rising_edge(clk_sys_i)) then
+            scs_i_reg <= scs_i;
+        end if;
+    end process;
+    
+    read_data_muxed <= read_data when (scs_i_reg(0) = '1') else
+                       read_data_test_node when (scs_i_reg(1) = '1') else
                        (OTHERS => '0');
+    
+    ---------------------------------------------------------------------------
+    -- Write test name from generic to PLI interface signal
+    ---------------------------------------------------------------------------
+    test_proc : process
+    begin
+        pli_str_to_logic_vector(test_name, pli_test_name_array);
+        wait;
+    end process;
     
     ---------------------------------------------------------------------------
     -- Checks

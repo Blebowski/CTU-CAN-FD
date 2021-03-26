@@ -113,7 +113,22 @@ package test_controller_agent_pkg is
         -- VPI top test control / status signals
         test_start          : in  std_logic;
         test_done           : out std_logic := '0';
-        test_success        : out std_logic := '0'
+        test_success        : out std_logic := '0';
+        
+        -- PLI interface for communication with compliance test library
+        pli_clk                 : out std_logic;
+        pli_req                 : in  std_logic;
+        pli_ack                 : out std_logic := '0';
+        pli_cmd                 : in  std_logic_vector(7 downto 0);
+        pli_dest                : in  std_logic_vector(7 downto 0);
+        pli_data_in             : in  std_logic_vector(63 downto 0);
+        pli_data_in_2           : in  std_logic_vector(63 downto 0);
+        pli_str_buf_in          : in  std_logic_vector(511 downto 0);
+        pli_data_out            : out std_logic_vector(63 downto 0);
+
+        -- PLI interface for giving test control to compliance test library
+        pli_control_req         : out std_logic := '0';
+        pli_control_gnt         : in  std_logic
     );
     end component;
 
@@ -149,7 +164,6 @@ package test_controller_agent_pkg is
     constant PLI_MEM_BUS_AGNT_X_MODE_STOP           : std_logic_vector(7 downto 0) := x"06";
     constant PLI_MEM_BUS_AGNT_SET_X_MODE_SETUP      : std_logic_vector(7 downto 0) := x"07";
     constant PLI_MEM_BUS_AGNT_SET_X_MODE_HOLD       : std_logic_vector(7 downto 0) := x"08";   
-    constant PLI_MEM_BUS_AGNT_SET_PERIOD            : std_logic_vector(7 downto 0) := x"09";   
     constant PLI_MEM_BUS_AGNT_SET_OUTPUT_DELAY      : std_logic_vector(7 downto 0) := x"0A";
     constant PLI_MEM_BUS_AGNT_WAIT_DONE             : std_logic_vector(7 downto 0) := x"0B";
 
@@ -318,41 +332,6 @@ package test_controller_agent_pkg is
         signal      test_result     : out   std_logic
     );
 
-    ---------------------------------------------------------------------------
-    --
-    ---------------------------------------------------------------------------
-    procedure pli_str_to_logic_vector(
-               input       : in   string;
-        signal output      : out  std_logic_vector
-    );
-    
-    
-    ---------------------------------------------------------------------------
-    --
-    ---------------------------------------------------------------------------
-    procedure pli_logic_vector_to_str(
-                input       : in   std_logic_vector;
-       variable output      : out  string
-    );
-
-
-    ---------------------------------------------------------------------------
-    --
-    ---------------------------------------------------------------------------
-    procedure pli_time_to_logic_vector(
-                 input       : in  time;
-        variable output      : out std_logic_vector(63 downto 0)   
-    );
-
-
-    ---------------------------------------------------------------------------
-    --
-    ---------------------------------------------------------------------------
-    procedure pli_logic_vector_to_time(
-                 input       : in  std_logic_vector(63 downto 0);
-        variable output      : out time
-    );
-
 end package;
 
 
@@ -503,10 +482,6 @@ package body test_controller_agent_pkg is
         when PLI_MEM_BUS_AGNT_SET_X_MODE_HOLD =>
             pli_logic_vector_to_time(pli_data_in, hold);
             mem_bus_agent_set_x_mode_hold(channel, hold);
-
-        when PLI_MEM_BUS_AGNT_SET_PERIOD =>
-            pli_logic_vector_to_time(pli_data_in, period);
-            mem_bus_agent_set_period(channel, period);
 
         when PLI_MEM_BUS_AGNT_SET_OUTPUT_DELAY =>
             pli_logic_vector_to_time(pli_data_in, output_delay);
@@ -817,87 +792,5 @@ package body test_controller_agent_pkg is
             error_m("VPI: Unknown test agent command with code: 0x" & to_hstring(pli_cmd));
         end case;
     end procedure;
-    
-    
-    procedure pli_str_to_logic_vector(
-               input       : in   string;
-        signal output      : out  std_logic_vector
-    ) is
-        variable cropped_length : integer := input'length;
-    begin
-        -- By default null everywhere, no string character
-        output(output'length - 1 downto 0) <= (OTHERS => '0');
-        
-        -- Crop if string is longer
-        if (output'length < cropped_length * 8) then
-            cropped_length := output'length / 8;
-        end if;
-        
-        -- Convert as if ASCII
-        for i in 0 to cropped_length - 1 loop
-            output(i * 8 + 7 downto i * 8) <= std_logic_vector(to_unsigned(
-                    character'pos(input(input'length - i)), 8));
-        end loop;
-    end procedure;
-
-
-    procedure pli_logic_vector_to_str(
-                input       : in   std_logic_vector;
-       variable output      : out  string
-    ) is
-        variable cropped_length : integer := input'length / 8;
-    begin
-        -- By default null everywhere, no string character
-        output(1 to output'high) := (OTHERS => ' ');
-        
-        -- Crop if vector is longer than output string
-        if (cropped_length > output'length) then
-            cropped_length := output'length;
-        end if;
-        
-        -- Convert as if ASCII
-        for i in 0 to cropped_length - 1 loop
-            output(cropped_length - i) := character'val(to_integer(unsigned(
-                            input(i * 8 + 7 downto i * 8))));
-        end loop;    
-    end procedure;
-    
-
-
-    procedure pli_time_to_logic_vector(
-                 input       : in  time;
-        variable output      : out std_logic_vector(63 downto 0)   
-    ) is
-        variable low       : integer;
-        variable high      : integer;
-    begin 
-        high := input / (integer'high * 1 fs);
-        
-        -- If input is higher than integer'high, it will overflow automatically
-        --  performing needed modulo operation.
-        low := input / 1 fs;
-
-        output(30 downto 0) := std_logic_vector(to_unsigned(low, 31));
-        output(61 downto 31) := std_logic_vector(to_unsigned(high, 31));
-        
-        -- Note: Positive integer is up to 2^31 - 1, convert to two integers
-        --       and crop highest two bits. This will effectively overflow
-        --       all time values above 2^62 * 1 fs, but we don't care!
-    end procedure;
-
-
-    procedure pli_logic_vector_to_time(
-                 input       : in  std_logic_vector(63 downto 0);
-        variable output      : out time
-    ) is
-        variable low       : integer;
-        variable high      : integer;
-    begin
-        low := to_integer(unsigned(input(30 downto 0)));
-        high := to_integer(unsigned(input(61 downto 31)));
-
-        output := (low * 1 fs) + (high * (integer'high * 1 fs + 1 fs)); 
-    end;
-
 
 end package body;

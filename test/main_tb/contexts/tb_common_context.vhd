@@ -83,7 +83,9 @@ context tb_common_context is
     use ctu_can_fd_tb.tb_report_pkg.all;
     use ctu_can_fd_tb.tb_communication_pkg.all;
     use ctu_can_fd_tb.tb_random_pkg.all;
-    use ctu_can_fd_tb.tb_reg_map_defs_pkg.all;
-    use ctu_can_fd_tb.can_fd_tb_register_map.all;   
+    use ctu_can_fd_tb.tb_pli_conversion_pkg.all;
     
+    use ctu_can_fd_tb.tb_reg_map_defs_pkg.all;
+    use ctu_can_fd_tb.can_fd_tb_register_map.all;
+
 end context;

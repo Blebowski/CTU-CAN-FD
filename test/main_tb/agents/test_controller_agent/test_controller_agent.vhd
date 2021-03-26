@@ -80,7 +80,7 @@ context ctu_can_fd_tb.ieee_context;
 context ctu_can_fd_tb.tb_common_context;
 
 use ctu_can_fd_tb.test_controller_agent_pkg.all;
-
+use ctu_can_fd_tb.timestamp_agent_pkg.all;
 
 entity test_controller_agent is
     generic(
@@ -107,32 +107,29 @@ entity test_controller_agent is
         cfg_sjw_fd              : natural
     );
     port (
-        -- VPI top test control / status signals
-        test_start          : in  std_logic;
-        test_done           : out std_logic := '0';
-        test_success        : out std_logic := '0'
+        -- VIP test control / status signals
+        test_start              : in  std_logic;
+        test_done               : out std_logic := '0';
+        test_success            : out std_logic := '0';
+        
+        -- PLI interface for communication with compliance test library
+        pli_clk                 : out std_logic;
+        pli_req                 : in  std_logic;
+        pli_ack                 : out std_logic := '0';
+        pli_cmd                 : in  std_logic_vector(7 downto 0);
+        pli_dest                : in  std_logic_vector(7 downto 0);
+        pli_data_in             : in  std_logic_vector(63 downto 0);
+        pli_data_in_2           : in  std_logic_vector(63 downto 0);
+        pli_str_buf_in          : in  std_logic_vector(511 downto 0);
+        pli_data_out            : out std_logic_vector(63 downto 0);
+
+        -- PLI interface for giving test control to compliance test library
+        pli_control_req         : out std_logic := '0';
+        pli_control_gnt         : in  std_logic
     );
 end entity;
 
 architecture tb of test_controller_agent is
-
-    ---------------------------------------------------------------------------
-    -- PLI interface for synchronous communication with compliance test
-    -- library!
-    ---------------------------------------------------------------------------
-    signal pli_clk          : std_logic;
-    signal pli_req          : std_logic;
-    signal pli_ack          : std_logic := '0';
-    signal pli_cmd          : std_logic_vector(7 downto 0);
-    signal pli_dest         : std_logic_vector(7 downto 0);
-    signal pli_data_in      : std_logic_vector(63 downto 0);
-    signal pli_data_in_2    : std_logic_vector(63 downto 0);
-    signal pli_str_buf_in   : std_logic_vector(511 downto 0);
-    signal pli_data_out     : std_logic_vector(63 downto 0);
-
-    -- Test control interface
-    signal pli_control_req  : std_logic := '0';
-    signal pli_control_gnt  : std_logic;
 
 begin
     
@@ -177,6 +174,16 @@ begin
         wait until test_start = '1';
         
         apply_rand_seed(seed);
+        
+        -----------------------------------------------------------------------
+        -- Configure timestamp generation common for all test types. This-way
+        -- each test by default has timestamp ticking. Tests can reconfigure
+        -- the timestamp if desired.
+        ----------------------------------------------------------------------- 
+        timestamp_agent_set_step(default_channel, 1);
+        timestamp_agent_set_prescaler(default_channel, 1);
+        timestamp_agent_timestamp_preset(default_channel, x"0000000000000000");
+        timestamp_agent_start(default_channel);
 
         if (test_type = "compliance") then
             compliance_start <= '1';
@@ -197,8 +204,16 @@ begin
             error_m("Unknown test type!");
         end if;
         
+        compliance_start <= '0';
+        feature_start <= '0';
+        reference_start <= '0';
+        wait for 5 ns;
+
         test_done <= '1';
         test_success <= test_success_i;
+        wait until test_start = '0';
+        test_done <= '0';
+
     end process;
 
 
@@ -228,12 +243,12 @@ begin
             wait for 1 ns;
     
             if (pli_control_gnt /= '1') then
-                wait until pli_control_gnt <= '1' for 10 ns;
+                wait until pli_control_gnt = '1' for 10 ns;
             end if;
     
             wait for 0 ns;
             check_m(pli_control_gnt = '1',
-                  "Compliance test library took over simulation control!");
+                    "Compliance test library took over simulation control!");
             wait for 0 ns;
     
             info_m("Waiting till Compliance test library is done running test...");

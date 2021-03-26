@@ -175,7 +175,7 @@ package body timestamp_agent_pkg is
     ) is
     begin
         info_m(TIMESTAMP_AGENT_TAG & "Starting");
-        send(channel, C_INTERRUPT_AGENT_ID, TIMESTAMP_AGENT_CMD_START);
+        send(channel, C_TIMESTAMP_AGENT_ID, TIMESTAMP_AGENT_CMD_START);
         info_m(TIMESTAMP_AGENT_TAG & "Started");
     end procedure;
 
@@ -185,7 +185,7 @@ package body timestamp_agent_pkg is
     ) is
     begin
         info_m(TIMESTAMP_AGENT_TAG & "Stopping");
-        send(channel, C_INTERRUPT_AGENT_ID, TIMESTAMP_AGENT_CMD_STOP);
+        send(channel, C_TIMESTAMP_AGENT_ID, TIMESTAMP_AGENT_CMD_STOP);
         info_m(TIMESTAMP_AGENT_TAG & "Stopped");
     end procedure;
 
@@ -197,7 +197,7 @@ package body timestamp_agent_pkg is
     begin
         info_m(TIMESTAMP_AGENT_TAG & "Setting step");
         com_channel_data.set_param(step);
-        send(channel, C_INTERRUPT_AGENT_ID, TIMESTAMP_AGENT_CMD_STEP_SET);
+        send(channel, C_TIMESTAMP_AGENT_ID, TIMESTAMP_AGENT_CMD_STEP_SET);
         info_m(TIMESTAMP_AGENT_TAG & "Step set");
     end procedure;
 
@@ -209,7 +209,7 @@ package body timestamp_agent_pkg is
     begin
         info_m(TIMESTAMP_AGENT_TAG & "Setting Prescaler");
         com_channel_data.set_param(prescaler);
-        send(channel, C_INTERRUPT_AGENT_ID, TIMESTAMP_AGENT_CMD_PRESCALER_SET);
+        send(channel, C_TIMESTAMP_AGENT_ID, TIMESTAMP_AGENT_CMD_PRESCALER_SET);
         info_m(TIMESTAMP_AGENT_TAG & "Prescaler set");
     end procedure;
 
@@ -221,7 +221,7 @@ package body timestamp_agent_pkg is
     begin
         info_m(TIMESTAMP_AGENT_TAG & "Presetting timestamp");
         com_channel_data.set_param(timestamp);
-        send(channel, C_INTERRUPT_AGENT_ID, TIMESTAMP_AGENT_CMD_TIMESTAMP_PRESET);
+        send(channel, C_TIMESTAMP_AGENT_ID, TIMESTAMP_AGENT_CMD_TIMESTAMP_PRESET);
         info_m(TIMESTAMP_AGENT_TAG & "Timestamp preset");
     end procedure;
 

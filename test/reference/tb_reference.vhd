@@ -134,6 +134,20 @@ architecture CAN_reference_test of CAN_test is
     signal bit_gen_done     : boolean := false;
     signal bit_gen_out      : std_logic := RECESSIVE;
 
+    -- Longest possible CAN FD Frame is aroud 700 bits. If each bit has opposite
+    -- polarity than previous one, this could use up to 700 entries. Have some
+    -- reserve...
+    constant BS_MAX_LENGTH      :   natural := 1024;
+
+    type bs_durations_type is array (1 to BS_MAX_LENGTH) of natural;
+    type bs_values_type is array (1 to BS_MAX_LENGTH) of std_logic;
+
+    type bit_seq_type is record
+        bit_durations           :   bs_durations_type;
+        bit_values              :   bs_values_type;
+        length                  :   natural;
+    end record;
+
     signal bit_sequence     : bit_seq_type := ((OTHERS => 1), (OTHERS => '0'), 1);
 
     constant ITER_PRESET    : natural := 0;
