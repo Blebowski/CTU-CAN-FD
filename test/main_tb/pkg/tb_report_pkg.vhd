@@ -127,7 +127,7 @@ package body tb_report_pkg is
         if (global_verbosity = verbosity_debug or
             global_verbosity = verbosity_info)
         then
-            report "INFO:" & msg severity note;
+            report "INFO: " & msg severity note;
         end if;
     end procedure;
 

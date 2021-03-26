@@ -744,7 +744,7 @@ package body can_agent_pkg is
         end if;
         send(channel, C_CAN_AGENT_ID, CAN_AGNT_CMD_DRIVER_PUSH_ITEM);
          
-        info_m(CAN_AGENT_TAG & "Item pushed into driver FIFO");
+        debug_m(CAN_AGENT_TAG & "Item pushed into driver FIFO");
     end procedure;
 
 
@@ -952,7 +952,7 @@ package body can_agent_pkg is
         com_channel_data.set_param2(item.sample_rate);
         
         send(channel, C_CAN_AGENT_ID, CAN_AGNT_CMD_MONITOR_PUSH_ITEM);
-        info_m(CAN_AGENT_TAG & " Monitor item pushed");
+        debug_m(CAN_AGENT_TAG & " Monitor item pushed");
     end procedure;
 
     
