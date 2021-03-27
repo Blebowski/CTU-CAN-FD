@@ -22,8 +22,9 @@ jinja_env = Environment(loader=PackageLoader(__package__, 'data'), autoescape=Fa
 
 
 class OptionsDict(dict):
-    # def __getattr__(self, key):
-    #     return self[key]
+    """
+    Custom dictionary for options. Allows merging different option lists.
+    """
 
     def __iadd__(self, upper: dict):
         self.__merge(self, upper)
@@ -58,66 +59,14 @@ class OptionsDict(dict):
             raise TypeError('Cannot merge {} and {}'.format(type(lower), type('upper')))
 
 
-class TestsBase:
-    def __init__(self, ui, lib, config, build, base):
-        self.ui = ui
-        self.lib = lib
-        self.config = config
-        self.build = build
-        self.base = base
-
-    @property
-    def jinja_env(self):
-        return jinja_env
-
-    def add_sources(self) -> None:
-        raise NotImplementedError()
-
-    def configure(self) -> bool:
-        """Configure the tests.
-
-        Return False if there were unconfigured tests found."""
-
-        raise NotImplementedError()
-
-    def get_sim_options(self, config) -> OptionsDict:
-        c, s = get_compile_and_sim_options(config)
-        return s
-
-    def add_psl_cov(self, name) -> OptionsDict:
-        name = re.sub(r'[^a-zA-Z0-9_-]', '_', name)
-        psl_path = self.build / "functional_coverage" / "coverage_data" \
-                    / "psl_cov_{}.json".format(name)
-        sim_flags = ["--psl-report={}".format(psl_path)]
-        return OptionsDict({"ghdl.sim_flags": sim_flags})
-
-    @staticmethod
-    def set_sim_options(tb, options: OptionsDict) -> None:
-        for k, v in options.items():
-            tb.set_sim_option(k, v)
-
-
-def add_sources(lib, patterns) -> None:
-    for pattern in patterns:
-        p = join(str(d.parent), pattern)
-        log.debug('Adding sources matching {}'.format(p))
-        for f in glob(p, recursive=True):
-            if f != "tb_wrappers.vhd":
-                lib.add_source_file(str(f))
-
-
-def add_rtl_sources(lib) -> None:
-    add_sources(lib, ['../src/**/*.vhd'])
-
-
 def get_compile_and_sim_options(config) -> Tuple[OptionsDict, OptionsDict]:
 
     compile_flags = []  # type: List[str]
     elab_flags = ["-Wl,-no-pie"]
 
-    #if ('debug' in config) and config['debug'] == True:
-    compile_flags += ['-g']
-    elab_flags += ['-g']
+    if ('debug' in config) and config['debug'] == True:
+        compile_flags += ['-g']
+        elab_flags += ['-g']
 
     if ('code_coverage' in config) and config['code_coverage'] == True:
         compile_flags += ["-fprofile-arcs", "-ftest-coverage"]
@@ -130,8 +79,6 @@ def get_compile_and_sim_options(config) -> Tuple[OptionsDict, OptionsDict]:
     compile_options = OptionsDict()
     compile_options["ghdl.flags"] = compile_flags
 
-    cmif = ['../lib/test_lib.tcl', 'modelsim_init.tcl']
-    common_modelsim_init_files = [str(d/x) for x in cmif]
     sim_options = OptionsDict({
         "ghdl.elab_flags": elab_flags,
         "ghdl.sim_flags": ["--ieee-asserts=disable"],
@@ -139,9 +86,14 @@ def get_compile_and_sim_options(config) -> Tuple[OptionsDict, OptionsDict]:
     return compile_options, sim_options
 
 
-def get_compile_options(config) -> OptionsDict:
+def get_compile_options(config) -> OptionsDict:    
     c, s = get_compile_and_sim_options(config)
     return c
+
+
+def get_sim_options(config) -> OptionsDict:
+    c, s = get_compile_and_sim_options(config)
+    return s
 
 
 def get_seed(cfg) -> int:
@@ -155,6 +107,124 @@ def get_seed(cfg) -> int:
     else:
         seed = 0
     return seed
+
+
+def add_psl_cov_sim_opt(name, cfg, build) -> OptionsDict:
+    """
+    Returns --psl-report simulation option dictionary with unique name.
+    Needed to allow functional coverage during parallel test runs. 
+    """
+    name = re.sub(r'[^a-zA-Z0-9_-]', '_', name)
+    psl_path = build / "functional_coverage" / "coverage_data" \
+                / "psl_cov_{}.json".format(name)
+
+    sim_flags = []
+    if ('functional_coverage' in cfg) and cfg['functional_coverage']:
+        sim_flags.append("--psl-report={}".format(psl_path))
+
+    return OptionsDict({"ghdl.sim_flags": sim_flags})
+
+
+def add_sources(lib, patterns) -> None:
+    """
+    Adds source files to Vunits lib which are matching pattern (recursively).
+    """
+    for pattern in patterns:
+        p = join(str(d.parent), pattern)
+        log.debug('Adding sources matching {}'.format(p))
+        for f in glob(p, recursive=True):
+            if f != "tb_wrappers.vhd":
+                lib.add_source_file(str(f))
+
+
+def add_rtl_sources(lib) -> None:
+    add_sources(lib, ['../src/**/*.vhd'])
+
+
+def add_main_tb_sources(lib) -> None:
+    sources = [];
+        
+    # Common
+    sources.append('main_tb/pkg/*.vhd');
+    sources.append('main_tb/common/*.vhd');
+    sources.append('main_tb/contexts/*.vhd');
+    
+    # Common Agents
+    sources.append('main_tb/agents/reset_agent/*.vhd');
+    sources.append('main_tb/agents/clock_agent/*.vhd');
+    sources.append('main_tb/agents/memory_bus_agent/*.vhd');
+    sources.append('main_tb/agents/timestamp_agent/*.vhd');
+    sources.append('main_tb/agents/interrupt_agent/*.vhd');
+    sources.append('main_tb/agents/can_agent/*.vhd');
+    sources.append('main_tb/agents/test_probe_agent/*.vhd');
+    sources.append('main_tb/agents/test_controller_agent/*.vhd');
+
+    # Test specific agents
+    sources.append('main_tb/agents/feature_test_agent/*.vhd');
+    sources.append('main_tb/agents/compliance_test_agent/*.vhd');
+    sources.append('main_tb/agents/reference_test_agent/*.vhd');
+
+    # Feature test implementations
+    sources.append('main_tb/feature_tests/*.vhd');
+
+    # VIP top and TB top
+    sources.append('main_tb/ctu_can_fd_vip.vhd');
+    sources.append('main_tb/tb_top_ctu_can_fd.vhd');
+    
+    add_sources(lib, sources)
+
+
+def main_tb_configure(tb, config, build) -> None:
+    def_cfg = config["_default"]
+    def_otps = get_sim_options(def_cfg)
+            
+    for test_type, cfg in config.items():
+        if (test_type != "reference" and test_type != "compliance" and test_type != "feature"):
+            continue;
+
+        # Link compliance test library
+        if (test_type == "compliance"):
+            def_otps['ghdl.sim_flags'] += ["--vpi=../compliance/sw_model/build/Debug/simulator_interface/libSIMULATOR_INTERFACE_LIB.so"]
+
+        for test_name in cfg["tests"]:
+            loc_cfg = dict()
+            loc_opts = OptionsDict()
+
+            dict_merge(loc_cfg, def_cfg)
+            
+            generics = {
+                'test_name'             : test_name,
+                'test_type'             : test_type,
+                'iterations'            : loc_cfg["iterations"],
+                'cfg_sys_clk_period'    : loc_cfg["system_clock_period"],
+
+                'cfg_brp'               : loc_cfg["brp"],
+                'cfg_prop'              : loc_cfg["prop"],
+                'cfg_ph_1'              : loc_cfg["ph_1"],
+                'cfg_ph_2'              : loc_cfg["ph_2"],
+                'cfg_sjw'               : loc_cfg["sjw"],
+                'cfg_brp_fd'            : loc_cfg["brp_fd"],
+                'cfg_prop_fd'           : loc_cfg["prop_fd"],
+                'cfg_ph_1_fd'           : loc_cfg["ph_1_fd"],
+                'cfg_ph_2_fd'           : loc_cfg["ph_2_fd"],
+                'cfg_sjw_fd'            : loc_cfg["sjw_fd"],
+
+                'rx_buffer_size'        : loc_cfg['rx_buffer_size'],
+                'txt_buffer_count'      : loc_cfg['txt_buffer_count'],
+                'sup_filtA'             : loc_cfg['sup_filtA'],
+                'sup_filtB'             : loc_cfg['sup_filtB'],
+                'sup_filtC'             : loc_cfg['sup_filtC'],
+                'sup_range'             : loc_cfg['sup_range'],
+                'sup_traffic_ctrs'      : loc_cfg['sup_traffic_ctrs'],
+                'target_technology'     : loc_cfg['target_technology'],
+
+                'seed'                  : get_seed(loc_cfg)
+            }
+
+            loc_opts += add_psl_cov_sim_opt('{}.{}.{}'.format(tb.name, test_type, test_name), cfg, build)
+            loc_opts += def_otps + loc_opts
+            
+            tb.add_config("{}.{}".format(test_type, test_name), generics=generics, sim_options=loc_opts)
 
 
 def dict_merge(up, *lowers) -> None:

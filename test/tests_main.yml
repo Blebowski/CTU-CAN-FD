@@ -6,6 +6,7 @@ _default: &default
     code_coverage: true
     error_tolerance: 0
     randomize: false
+    debug: false
     # seed: 10
     # In GUI mode, dump all signals, not only these included in layout file.
     dump_all_signals: true
@@ -38,7 +39,6 @@ _default: &default
     system_clock_period: 10 ns
 
 compliance:
-    test_type: "compliance"
     tests:
         demo:
         iso_7_1_1:
@@ -268,3 +268,7 @@ compliance:
 
         iso_9_6_1:
         iso_9_6_2:
+
+feature:
+    tests:
+        device_id:

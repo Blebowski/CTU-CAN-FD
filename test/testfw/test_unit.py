@@ -1,14 +1,14 @@
 import re
 import logging
 from textwrap import dedent
-from .test_common import add_sources, dict_merge, TestsBase, \
+from .test_common import add_sources, dict_merge, \
                          get_seed, OptionsDict
 from pprint import pprint
 
 log = logging.getLogger(__name__)
 
 
-class UnitTests(TestsBase):
+class UnitTests:
     def add_sources(self) -> None:
         add_sources(self.lib, ['unit/**/*.vhd'])
         self._create_wrapper(self.build / "tb_wrappers.vhd")

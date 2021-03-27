@@ -25,9 +25,9 @@ def setup_logging() -> None:
 setup_logging()
 
 from . import vunit_ifc
-from . import test_unit, test_sanity, test_feature, test_reference, test_compliance, test_main
+from . import test_unit
 from vunit.ui import VUnit
-from .test_common import add_rtl_sources, get_compile_options, dict_merge
+from .test_common import add_rtl_sources, add_main_tb_sources, main_tb_configure, get_compile_options, dict_merge
 
 
 #-------------------------------------------------------------------------------
@@ -116,47 +116,33 @@ def test(obj, *, config, vunit_args):
     ui.enable_check_preprocessing()
     ui.enable_location_preprocessing()  # (additional_subprograms=['log'])
 
-    tests_classes = [
-        # key in config, factory
-        ('unit', test_unit.UnitTests),
-        ('sanity', test_sanity.SanityTests),
-        ('compliance', test_main.MainTests),
-        ('feature', test_main.MainTests),
-        ('reference', test_main.MainTests)
-    ]
-
     tests = []
+    
+    ###########################################################################
+    # Main TB
+    ###########################################################################
+    if ("compliance" in config or "feature" in config or "reference" in config):
+        add_main_tb_sources(ctu_can_fd_tb)
 
-    for cfg_key, factory in tests_classes:
-        if cfg_key in config:
-            dict_merge(config[cfg_key], config["_default"])
-            tests.append(factory(ui, ctu_can_fd_tb, config[cfg_key], build, base))
+        # Test-bench object is automatically detected on "tb_top" due to "runner_cfg"
+        tb = ctu_can_fd_tb.get_test_benches()[0]
+        main_tb_configure(tb, config, build)
+
+    ###########################################################################
+    # Unit tests
+    ###########################################################################
+    # TODO
 
     (func_cov_dir / "html").mkdir(parents=True, exist_ok=True)
     (func_cov_dir / "coverage_data").mkdir(parents=True, exist_ok=True)
 
-    for t in tests:
-        t.add_sources()
-
+    # Global compile options
     c = get_compile_options(config['_default'])
     for k, v in c.items():
         ctu_can_fd_tb.set_compile_option(k, v)
         ctu_can_fd_rtl.set_compile_option(k, v)
 
-    conf_ok = [t.configure() for t in tests]
-
-    # check for unknown tests
-    all_benches = ctu_can_fd_tb.get_test_benches('*')
-    pattern = 'tb_.*?_unit_test|tb_top_ctu_can_fd_main'
-    unknown_tests = [tb for tb in all_benches
-                     if not re.match(pattern, tb.name)]
-    if len(unknown_tests):
-        log.warn('Unknown tests (defaults will be used): {}'
-                 .format(', '.join(tb.name for tb in unknown_tests)))
-
     res = vunit_run(ui, build, out_basename)
-    if not all(conf_ok):
-        log.error('Some test cases were discovered but not configured (see above).')
 
     # Move code coverage results to stand-alone directory to avoid overwriting it by runs
     # of other configs
