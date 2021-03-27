@@ -125,7 +125,10 @@ entity feature_test_agent is
         
         -- CAN bus from/to DUT
         dut_can_tx      :   in  std_logic;
-        dut_can_rx      :   out std_logic
+        dut_can_rx      :   out std_logic;
+        
+        -- Test Nodes test probe output
+        test_node_test_probe : out t_ctu_can_fd_test_probe
     );    
 end entity;
 
@@ -307,20 +310,10 @@ begin
     begin
         wait until feature_start = '1';
 
-        -- Configure the reset agent and reset DUT and Test node (common reset)
-        rst_agent_polarity_set(default_channel, '0');
-        rst_agent_assert(default_channel);
-        wait for 10 ns;
-        rst_agent_deassert(default_channel);
-        wait for 10 ns;
-
-        -- Configure clock agent and enable clocks
-        if (stand_alone_vip_mode) then
-            clk_agent_set_period(default_channel, time'value(cfg_sys_clk_period));
-            clk_gen_agent_start(default_channel);
-        end if;
-
         -- Initialize TXT Buffer memories
+        info_m("***************************************************************");
+        info_m("Clearing TXT Buffer memories!");
+        info_m("***************************************************************");
         CAN_init_txtb_mems(DUT_NODE, default_channel);
         CAN_init_txtb_mems(TEST_NODE, default_channel);
         
@@ -342,7 +335,7 @@ begin
         CAN_wait_bus_on(TEST_NODE, default_channel);
 
         -- Execute feature test
-        exec_feature_test(test_name);
+        exec_feature_test(test_name, default_channel);
 
         -- Stop clock agent (not to generate any further events)
         clk_gen_agent_stop(default_channel);

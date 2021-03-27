@@ -92,6 +92,7 @@ package tb_communication_pkg is
     constant C_FEATURE_TEST_AGENT_ID    : natural := 4;
     constant C_INTERRUPT_AGENT_ID       : natural := 5;
     constant C_TIMESTAMP_AGENT_ID       : natural := 6;
+    constant C_TEST_PROBE_AGENT_ID      : natural := 7;
 
     constant COM_PKG_TAG : string := "Communication PKG: ";
 
@@ -394,7 +395,9 @@ package body tb_communication_pkg is
             channel <= C_COM_CHANNEL_ACTIVE;
             wait until channel = C_COM_CHANNEL_ACTIVE;
             channel <= C_COM_CHANNEL_INACTIVE;
-            wait for 0 ns;
+            wait until channel = C_COM_CHANNEL_INACTIVE;
+        else
+            error_m(COM_PKG_TAG & "Attempting to notify over active channel!");
         end if;
     end procedure;
 
@@ -420,6 +423,9 @@ package body tb_communication_pkg is
         if com_channel_data.get_reply_code /= C_REPLY_CODE_OK then
             error_m(COM_PKG_TAG & "Reply code error from " & integer'image(dest));
         end if;
+        
+        wait until channel = C_COM_CHANNEL_INACTIVE;
+        
     end procedure;
 
 

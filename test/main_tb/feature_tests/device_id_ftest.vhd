@@ -67,52 +67,57 @@
 --------------------------------------------------------------------------------
 
 --------------------------------------------------------------------------------
---  Purpose:
---    Lists all feature tests and provides feature test exec function.
+-- @TestInfoStart
 --
---    Replacement for previous automated solution with Python. With manual
---    solution, we have to list each and every feature test here, however,
---    we dont need to include any third-party modules. It was decided to stick
---    with this solution as it minimizes dependencies of the TB!
+-- @Purpose:
+--  Device ID feature test.
 --
---    If VHDL had some sort of intro-spection or reflection, it would be
---    possible to write this code much more nicely!
+-- @Verifies:
+--  @1. Correct device ID is read from DEVICE_ID register.
 --
+-- @Test sequence:
+--  @1. Read device ID and check it.
+--
+-- @TestInfoEnd
 --------------------------------------------------------------------------------
 -- Revision History:
---    12.3.2021     Created file
+--    18.10.2019   Created file
 --------------------------------------------------------------------------------
 
 Library ctu_can_fd_tb;
 context ctu_can_fd_tb.ieee_context;
+context ctu_can_fd_tb.rtl_context;
 context ctu_can_fd_tb.tb_common_context;
 
--- Feature test packages
-use ctu_can_fd_tb.device_id_ftest.all;
+use ctu_can_fd_tb.feature_test_agent_pkg.all;
 
 
-package feature_test_list_pkg is
-    
-    procedure exec_feature_test(
-        constant test_name    : in     string;
-        signal   channel      : inout  t_com_channel
+package device_id_ftest is
+    procedure device_id_ftest_exec(
+        signal      chn             : inout  t_com_channel
     );
-
 end package;
 
 
-package body feature_test_list_pkg is
+package body device_id_ftest is
 
-    procedure exec_feature_test(
-        constant test_name    : in     string;
-        signal   channel      : inout  t_com_channel
+    procedure device_id_ftest_exec(
+        signal      chn             : inout  t_com_channel
     ) is
+        variable r_data : std_logic_vector(31 downto 0) := (OTHERS => '0');
     begin
-        if (test_name = "device_id") then
-            device_id_ftest_exec(channel);
-        else
-            error_m("TODO: Implement calling feature test function based on test name!!");
-        end if;
-    end procedure;
+
+        -----------------------------------------------------------------------
+        -- @1. Read device ID and check it.
+        -----------------------------------------------------------------------
+        info_m("Step 1: Read device ID");
+        CAN_read(r_data, DEVICE_ID_ADR, DUT_NODE, chn);
+        
+        check_m(r_data(DEVICE_ID_H downto DEVICE_ID_L) = CTU_CAN_FD_ID,
+            "CTU CAN FD device ID check");
+
+        wait for 100 ns;
+
+  end procedure;
 
 end package body;

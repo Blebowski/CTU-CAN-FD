@@ -67,52 +67,103 @@
 --------------------------------------------------------------------------------
 
 --------------------------------------------------------------------------------
---  Purpose:
---    Lists all feature tests and provides feature test exec function.
+--  @Purpose:
+--    Test probe agent - Allows checking internal signals of CTU CAN FD which
+--      were brought to "test_probe" top.
 --
---    Replacement for previous automated solution with Python. With manual
---    solution, we have to list each and every feature test here, however,
---    we dont need to include any third-party modules. It was decided to stick
---    with this solution as it minimizes dependencies of the TB!
---
---    If VHDL had some sort of intro-spection or reflection, it would be
---    possible to write this code much more nicely!
+--    TODO: Once GHDL supports external names, we can remove the test-probe
+--          from CTU CAN FD Top, and mirror on internal signal value!  
 --
 --------------------------------------------------------------------------------
 -- Revision History:
---    12.3.2021     Created file
+--    27.3.2021   Created file
 --------------------------------------------------------------------------------
 
 Library ctu_can_fd_tb;
 context ctu_can_fd_tb.ieee_context;
+context ctu_can_fd_tb.rtl_context;
 context ctu_can_fd_tb.tb_common_context;
 
--- Feature test packages
-use ctu_can_fd_tb.device_id_ftest.all;
+use ctu_can_fd_tb.test_probe_agent_pkg.all;
 
 
-package feature_test_list_pkg is
-    
-    procedure exec_feature_test(
-        constant test_name    : in     string;
-        signal   channel      : inout  t_com_channel
+entity test_probe_agent is
+    port (
+        -- VIP test control / status signals
+        dut_test_probe          : in t_ctu_can_fd_test_probe;
+        test_node_test_probe    : in t_ctu_can_fd_test_probe         
     );
+end entity;
 
-end package;
+architecture tb of test_probe_agent is
 
+begin
 
-package body feature_test_list_pkg is
+    ---------------------------------------------------------------------------
+    -- Comunication receiver process
+    ---------------------------------------------------------------------------
+    receiver_proc : process
+        variable cmd : integer;
+        variable reply_code : integer;
+        
+        variable node : integer;
 
-    procedure exec_feature_test(
-        constant test_name    : in     string;
-        signal   channel      : inout  t_com_channel
-    ) is
+        -----------------------------------------------------------------------
+        -- This implemenation suffers from lower performance, than simple
+        -- "wait until", however, it does not exit when signal it waits on
+        -- changes only for delta-cycle since it is output of combinatorial
+        -- logic!
+        -----------------------------------------------------------------------
+        procedure wait_signal_delta_glitch_free(
+            signal sig      : in std_logic
+        ) is
+        begin        
+            while true loop
+                wait until sig = '1';
+                wait for 1 ps;
+                if (sig = '1') then
+                    exit;
+                end if;
+            end loop;
+        end procedure;
     begin
-        if (test_name = "device_id") then
-            device_id_ftest_exec(channel);
-        else
-            error_m("TODO: Implement calling feature test function based on test name!!");
-        end if;
-    end procedure;
+        receive_start(default_channel, C_TEST_PROBE_AGENT_ID);
 
-end package body;
+        -- Command is sent as message type
+        cmd := com_channel_data.get_msg_code;
+        reply_code := C_REPLY_CODE_OK;
+         
+        -- Read node on whose test probe to wait
+        node := com_channel_data.get_param;
+        
+        case cmd is
+        when TEST_PROBE_AGNT_WAIT_SAMPLE_NO_STUFF =>
+            if (node = 0) then
+                wait_signal_delta_glitch_free(dut_test_probe.rx_trigger_nbs);
+            else
+                wait_signal_delta_glitch_free(test_node_test_probe.rx_trigger_nbs);
+            end if;
+                  
+        when TEST_PROBE_AGNT_WAIT_SAMPLE_STUFF =>
+            if (node = 0) then
+                wait_signal_delta_glitch_free(dut_test_probe.rx_trigger_wbs);
+            else
+                wait_signal_delta_glitch_free(test_node_test_probe.rx_trigger_wbs);
+            end if;
+            
+        when TEST_PROBE_AGNT_WAIT_SYNC =>
+            if (node = 0) then
+                wait_signal_delta_glitch_free(dut_test_probe.tx_trigger);
+            else
+                wait_signal_delta_glitch_free(test_node_test_probe.tx_trigger);
+            end if;
+
+        when others =>
+            info_m("Invalid message type: " & integer'image(cmd));
+            reply_code := C_REPLY_CODE_ERR;
+
+        end case;
+        receive_finish(default_channel, reply_code);
+    end process;
+    
+end architecture;

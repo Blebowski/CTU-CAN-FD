@@ -387,7 +387,7 @@ package body mem_bus_agent_pkg is
     begin
         info_m(MEM_BUS_AGENT_TAG & "Starting");
         send(channel, C_MEM_BUS_AGENT_ID, MEM_BUS_AGNT_CMD_START);
-        info_m(MEM_BUS_AGENT_TAG & "Started");
+        debug_m(MEM_BUS_AGENT_TAG & "Started");
     end procedure;
 
 
@@ -397,7 +397,7 @@ package body mem_bus_agent_pkg is
     begin
         info_m(MEM_BUS_AGENT_TAG & "Stopping");
         send(channel, C_MEM_BUS_AGENT_ID, MEM_BUS_AGNT_CMD_STOP);
-        info_m(MEM_BUS_AGENT_TAG & "Stopped");
+        debug_m(MEM_BUS_AGENT_TAG & "Stopped");
     end procedure;
 
 
@@ -417,7 +417,7 @@ package body mem_bus_agent_pkg is
         com_channel_data.set_param(write_data & byte_enable);
         send(channel, C_MEM_BUS_AGENT_ID, MEM_BUS_AGNT_CMD_WRITE_NON_BLOCKING);
 
-        info_m(MEM_BUS_AGENT_TAG & "Mem bus agent non-blocking write posted");
+        debug_m(MEM_BUS_AGENT_TAG & "Mem bus agent non-blocking write posted");
     end procedure;
 
 
@@ -436,7 +436,7 @@ package body mem_bus_agent_pkg is
         com_channel_data.set_param(write_data & byte_enable);
         send(channel, C_MEM_BUS_AGENT_ID, MEM_BUS_AGNT_CMD_WRITE_BLOCKING);
 
-        info_m(MEM_BUS_AGENT_TAG & "Blocking write succesfull");
+        debug_m(MEM_BUS_AGENT_TAG & "Blocking write succesfull");
     end procedure;
 
 
@@ -468,7 +468,7 @@ package body mem_bus_agent_pkg is
     begin
         info_m(MEM_BUS_AGENT_TAG & "Enabling X mode");
         send(channel, C_MEM_BUS_AGENT_ID, MEM_BUS_AGNT_CMD_X_MODE_START);
-        info_m(MEM_BUS_AGENT_TAG & "X mode enabled");
+        debug_m(MEM_BUS_AGENT_TAG & "X mode enabled");
     end procedure;
 
 
@@ -478,7 +478,7 @@ package body mem_bus_agent_pkg is
     begin
         info_m(MEM_BUS_AGENT_TAG & "Disabling X mode");
         send(channel, C_MEM_BUS_AGENT_ID, MEM_BUS_AGNT_CMD_X_MODE_STOP);
-        info_m(MEM_BUS_AGENT_TAG & "X mode disabled");
+        debug_m(MEM_BUS_AGENT_TAG & "X mode disabled");
     end procedure;
 
 
@@ -490,7 +490,7 @@ package body mem_bus_agent_pkg is
         info_m(MEM_BUS_AGENT_TAG & "Setting X mode setup to: " & time'image(setup));
         com_channel_data.set_param(setup);
         send(channel, C_MEM_BUS_AGENT_ID, MEM_BUS_AGNT_CMD_SET_X_MODE_SETUP);
-        info_m(MEM_BUS_AGENT_TAG & "X mode setup configured");
+        debug_m(MEM_BUS_AGENT_TAG & "X mode setup configured");
     end procedure;
 
 
@@ -502,7 +502,7 @@ package body mem_bus_agent_pkg is
         info_m(MEM_BUS_AGENT_TAG & "Setting X mode hold to: " & time'image(hold));
         com_channel_data.set_param(hold);
         send(channel, C_MEM_BUS_AGENT_ID, MEM_BUS_AGNT_CMD_SET_X_MODE_HOLD);
-        info_m(MEM_BUS_AGENT_TAG & "X mode hold configured");
+        debug_m(MEM_BUS_AGENT_TAG & "X mode hold configured");
     end procedure;
 
 
@@ -514,7 +514,7 @@ package body mem_bus_agent_pkg is
         info_m(MEM_BUS_AGENT_TAG & "Setting data out output delay " & time'image(out_delay));
         com_channel_data.set_param(out_delay);
         send(channel, C_MEM_BUS_AGENT_ID, MEM_BUS_AGNT_CMD_SET_OUTPUT_DELAY);
-        info_m(MEM_BUS_AGENT_TAG & "data out output delay set");
+        debug_m(MEM_BUS_AGENT_TAG & "data out output delay set");
     end procedure;
 
 
@@ -533,10 +533,14 @@ package body mem_bus_agent_pkg is
                     node        : in    natural
     ) is
     begin
-        info_m(MEM_BUS_AGENT_TAG & "Setting slave index");
+        if (node = 0) then
+            info_m(MEM_BUS_AGENT_TAG & "Setting slave: DUT");
+        else
+            info_m(MEM_BUS_AGENT_TAG & "Setting slave: Test node");
+        end if;
         com_channel_data.set_param(node);
         send(channel, C_MEM_BUS_AGENT_ID, MEM_BUS_AGNT_CMD_SET_SLAVE_INDEX);
-        info_m(MEM_BUS_AGENT_TAG & "Slave index set");
+        debug_m(MEM_BUS_AGENT_TAG & "Slave set");
     end procedure;
 
 

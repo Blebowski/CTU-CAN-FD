@@ -89,5 +89,6 @@ context tb_agents_context is
     use ctu_can_fd_tb.feature_test_agent_pkg.all;
     use ctu_can_fd_tb.feature_test_list_pkg.all;
     use ctu_can_fd_tb.test_controller_agent_pkg.all;
+    use ctu_can_fd_tb.test_probe_agent_pkg.all;
 
 end context;

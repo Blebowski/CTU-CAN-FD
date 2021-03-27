@@ -171,7 +171,7 @@ package body interrupt_agent_pkg is
         info_m(INTERRUPT_AGENT_TAG & "Setting polarity");
         com_channel_data.set_param(polarity);
         send(channel, C_INTERRUPT_AGENT_ID, INTERRUPT_AGNT_CMD_POLARITY_SET);
-        info_m(INTERRUPT_AGENT_TAG & "Polarity set");
+        debug_m(INTERRUPT_AGENT_TAG & "Polarity set");
     end procedure;
 
 
@@ -183,7 +183,7 @@ package body interrupt_agent_pkg is
         info_m(INTERRUPT_AGENT_TAG & "Getting polarity");
         send(channel, C_INTERRUPT_AGENT_ID, INTERRUPT_AGNT_CMD_POLARITY_GET);
         polarity := com_channel_data.get_param;
-        info_m(INTERRUPT_AGENT_TAG & "Polarity got");
+        debug_m(INTERRUPT_AGENT_TAG & "Polarity got");
     end procedure;
    
    
@@ -193,7 +193,7 @@ package body interrupt_agent_pkg is
     begin
         info_m(INTERRUPT_AGENT_TAG & "Checking asserted");
         send(channel, C_INTERRUPT_AGENT_ID, INTERRUPT_AGNT_CMD_CHECK_ASSERTED);
-        info_m(INTERRUPT_AGENT_TAG & "Asserted checked");
+        debug_m(INTERRUPT_AGENT_TAG & "Asserted checked");
     end procedure;
 
 
@@ -203,7 +203,7 @@ package body interrupt_agent_pkg is
     begin
         info_m(INTERRUPT_AGENT_TAG & "Checking not asserted");
         send(channel, C_INTERRUPT_AGENT_ID, INTERRUPT_AGNT_CMD_CHECK_NOT_ASSERTED);
-        info_m(INTERRUPT_AGENT_TAG & "Not asserted checked");
+        debug_m(INTERRUPT_AGENT_TAG & "Not asserted checked");
     end procedure;
 
 end package body;

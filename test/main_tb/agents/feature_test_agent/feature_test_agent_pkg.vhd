@@ -116,6 +116,7 @@ use ctu_can_fd_tb.mem_bus_agent_pkg.all;
 use ctu_can_fd_tb.interrupt_agent_pkg.all;
 use ctu_can_fd_tb.timestamp_agent_pkg.all;
 use ctu_can_fd_tb.clk_gen_agent_pkg.all;
+use ctu_can_fd_tb.test_probe_agent_pkg.all;
 
 
 package feature_test_agent_pkg is
@@ -1549,13 +1550,17 @@ package feature_test_agent_pkg is
     ----------------------------------------------------------------------------
     -- Wait until sample point.
     --
+    -- Note: Blocks communication channel when waiting.
+    --
     -- Arguments:
     --  node            Node whose sample point to wait on.
     --  skip_stuff_bits Whether stuff bits should be skipped or accounted.
+    --  channel         Channel to use for communcation.
     ----------------------------------------------------------------------------
     procedure CAN_wait_sample_point(
         constant node               : in    t_feature_node;
-        constant skip_stuff_bits    : in    boolean
+        constant skip_stuff_bits    : in    boolean;
+        signal   channel            : inout t_com_channel
     );
 
     ----------------------------------------------------------------------------
@@ -1565,7 +1570,8 @@ package feature_test_agent_pkg is
     --  pc_dbg           State to poll on.
     ----------------------------------------------------------------------------
     procedure CAN_wait_sync_seg(
-        constant node           : in    t_feature_node
+        constant node               : in    t_feature_node;
+        signal   channel            : inout t_com_channel
     );
 
     ----------------------------------------------------------------------------
@@ -1622,7 +1628,10 @@ package feature_test_agent_pkg is
         
         -- CAN bus from/to DUT
         dut_can_tx      :   in  std_logic;
-        dut_can_rx      :   out std_logic
+        dut_can_rx      :   out std_logic;
+        
+        -- Test Nodes test probe output
+        test_node_test_probe : out t_ctu_can_fd_test_probe
     );    
     end component;
    
@@ -1820,7 +1829,7 @@ package body feature_test_agent_pkg is
              "Forcing bus level to: " & std_logic'image(value));
         com_channel_data.set_param(value);
         send(channel, C_FEATURE_TEST_AGENT_ID, FEATURE_TEST_AGNT_FORCE_BUS);
-        info_m("Bus level forced");
+        debug_m("Bus level forced");
     end procedure;
 
 
@@ -1830,7 +1839,7 @@ package body feature_test_agent_pkg is
     begin
         info_m(FEATURE_TEST_AGENT_TAG & "Releasing bus level");
         send(channel, C_FEATURE_TEST_AGENT_ID, FEATURE_TEST_AGNT_RELEASE_BUS);
-        info_m("Bus level released");
+        debug_m("Bus level released");
     end procedure;
 
 
@@ -1851,10 +1860,7 @@ package body feature_test_agent_pkg is
             com_channel_data.set_param(1);
         end if;
         send(channel, C_FEATURE_TEST_AGENT_ID, FEATURE_TEST_AGNT_FORCE_CAN_RX);
-        
-        -- constant FEATURE_TEST_AGNT_RELEASE_CAN_RX           : integer := 3;
-        
-        info_m("CAN RX forced");
+        debug_m("CAN RX forced");
     end procedure;
 
 
@@ -1864,7 +1870,7 @@ package body feature_test_agent_pkg is
     begin
         info_m(FEATURE_TEST_AGENT_TAG & "Releasing CAN RX");
         send(channel, C_FEATURE_TEST_AGENT_ID, FEATURE_TEST_AGNT_RELEASE_CAN_RX);        
-        info_m("CAN RX released");
+        debug_m("CAN RX released");
     end procedure;
 
 
@@ -1938,7 +1944,7 @@ package body feature_test_agent_pkg is
             com_channel_data.set_param(1);
         end if;
         send(channel, C_FEATURE_TEST_AGENT_ID, FEATURE_TEST_AGNT_SET_TRV_DELAY);
-        info_m(FEATURE_TEST_AGENT_TAG & " Transceiver delay set");
+        debug_m(FEATURE_TEST_AGENT_TAG & " Transceiver delay set");
     end procedure;
 
 
@@ -3938,20 +3944,32 @@ package body feature_test_agent_pkg is
     
     procedure CAN_wait_sample_point(
         constant node               : in    t_feature_node;
-        constant skip_stuff_bits    : in    boolean
+        constant skip_stuff_bits    : in    boolean;
+        signal   channel            : inout t_com_channel
     ) is
+        variable node_i  : integer;
     begin
-        -- TODO: Implemente with test_probe
-        error_m("CAN_wait_sample point not implemented");
+        if (node = DUT_NODE) then
+            node_i := 0;
+        else
+            node_i := 1;
+        end if;
+        test_probe_agent_wait_sample(channel, node_i, skip_stuff_bits);
     end procedure;
 
 
     procedure CAN_wait_sync_seg(
-        constant node               : in    t_feature_node
+        constant node               : in    t_feature_node;
+        signal   channel            : inout t_com_channel
     ) is
+        variable node_i  : integer;
     begin
-        -- TODO: Implement with test probe
-        error_m("CAN_wait_sync_seg not implemented");
+        if (node = DUT_NODE) then
+            node_i := 0;
+        else
+            node_i := 1;
+        end if;
+        test_probe_agent_wait_sync(channel, node_i);
     end procedure;
 
 

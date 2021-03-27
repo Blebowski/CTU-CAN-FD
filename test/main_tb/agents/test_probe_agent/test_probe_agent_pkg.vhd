@@ -68,78 +68,55 @@
 
 --------------------------------------------------------------------------------
 --  @Purpose:
---    Package with API for Reset generator agent.
---
+--    Package with API of test controller agent.
 --------------------------------------------------------------------------------
 -- Revision History:
---    19.1.2020   Created file
---    04.2.2021   Adjusted to work without Vunits COM library.
+--    31.1.2020   Created file
 --------------------------------------------------------------------------------
 
 Library ctu_can_fd_tb;
 context ctu_can_fd_tb.ieee_context;
+context ctu_can_fd_tb.rtl_context;
 context ctu_can_fd_tb.tb_common_context;
 
+package test_probe_agent_pkg is
 
-package reset_agent_pkg is
-
-    ---------------------------------------------------------------------------
-    -- Reset generator component    
-    ---------------------------------------------------------------------------
-    component reset_agent is
+    component test_probe_agent is
     port (
-        -- Generated reset
-        reset   :   out std_logic
+        -- VIP test control / status signals
+        dut_test_probe          : in t_ctu_can_fd_test_probe;
+        test_node_test_probe    : in t_ctu_can_fd_test_probe 
     );
     end component;
 
     ---------------------------------------------------------------------------
-    ---------------------------------------------------------------------------
-    -- Reset generator agent API    
-    ---------------------------------------------------------------------------
-    ---------------------------------------------------------------------------
-
-    ---------------------------------------------------------------------------
-    -- Assert reset by Reset generator agent.
+    -- Wait till next sample point of DUT.
     --
-    -- @param channel   Channel on which to send the request
+    -- Note: This function blocks communication channel during waiting!!
+    --
+    -- @param channel           Channel on which to send the request
+    -- @param node              Node index on which to wait (0 - DUT, 1 - Test)
+    -- @param skip_stuff_bits   If true, sample points of stuff bits are
+    --                          ignored.
     ---------------------------------------------------------------------------
-    procedure rst_agent_assert(
-        signal channel  : inout t_com_channel
+    procedure test_probe_agent_wait_sample(
+        signal channel          : inout t_com_channel;
+               node             : in    natural;
+               skip_stuff_bits  : in    boolean
     );
 
     ---------------------------------------------------------------------------
-    -- De-assert reset by Reset generator agent.
+    -- Wait till start of next bit of DUT (Sync segment)
     --
-    -- @param channel   Channel on which to send the request
+    -- Note: This function blocks communication channel during waiting!!
+    --
+    -- @param channel           Channel on which to send the request
     ---------------------------------------------------------------------------
-    procedure rst_agent_deassert(
-        signal channel  : inout t_com_channel
+    procedure test_probe_agent_wait_sync(
+        signal channel          : inout t_com_channel;
+               node             : in    natural
     );
 
-    ---------------------------------------------------------------------------
-    -- Set polarity of Reset generator agent.
-    --
-    -- @param channel   Channel on which to send the request
-    -- @param polarity  Polarity to be set.
-    ---------------------------------------------------------------------------
-    procedure rst_agent_polarity_set(
-        signal   channel     : inout t_com_channel;
-        constant polarity    : in    std_logic
-    );
-
-    ---------------------------------------------------------------------------
-    -- Get polarity of Reset generator agent.
-    --
-    -- @param channel   Channel on which to send the request
-    -- @param polarity  Obtained polarity.   
-    ---------------------------------------------------------------------------
-    procedure rst_agent_polarity_get(
-        signal   channel     : inout t_com_channel;
-        variable polarity    : out   std_logic
-    );
-
-   
     ---------------------------------------------------------------------------
     ---------------------------------------------------------------------------
     -- Private declarations 
@@ -147,65 +124,45 @@ package reset_agent_pkg is
     ---------------------------------------------------------------------------
 
     -- Supported commands
-    constant RST_AGNT_CMD_ASSERT         : integer := 0;
-    constant RST_AGNT_CMD_DEASSERT       : integer := 1;
-    constant RST_AGNT_CMD_POLARITY_SET   : integer := 2;
-    constant RST_AGNT_CMD_POLARITY_GET   : integer := 3;
+    constant TEST_PROBE_AGNT_WAIT_SAMPLE_NO_STUFF         : integer := 0;
+    constant TEST_PROBE_AGNT_WAIT_SAMPLE_STUFF            : integer := 1;
+    constant TEST_PROBE_AGNT_WAIT_SYNC                    : integer := 2;
     
     -- Reset agent tag (for messages)
-    constant RESET_AGENT_TAG : string := "Reset Agent: ";
+    constant TEST_PROBE_AGENT_TAG : string := "Test probe Agent: ";
 
 end package;
 
 
-package body reset_agent_pkg is
-    
-    ---------------------------------------------------------------------------
-    ---------------------------------------------------------------------------
-    -- Reset generator agent API
-    ---------------------------------------------------------------------------
-    ---------------------------------------------------------------------------
-   
-    procedure rst_agent_assert(
-        signal channel  : inout t_com_channel
+package body test_probe_agent_pkg is
+
+    procedure test_probe_agent_wait_sample(
+        signal channel          : inout t_com_channel;
+               node             : in    natural;
+               skip_stuff_bits  : in    boolean
     ) is
     begin
-        info_m(RESET_AGENT_TAG & "Asserting reset");
-        send(channel, C_RESET_AGENT_ID, RST_AGNT_CMD_ASSERT);
-        debug_m(RESET_AGENT_TAG & "Asserted reset");
+        info_m(TEST_PROBE_AGENT_TAG & "Waiting till sample point");
+        com_channel_data.set_param(node);
+        if (skip_stuff_bits) then
+            send(channel, C_TEST_PROBE_AGENT_ID, TEST_PROBE_AGNT_WAIT_SAMPLE_NO_STUFF);
+        else
+            send(channel, C_TEST_PROBE_AGENT_ID, TEST_PROBE_AGNT_WAIT_SAMPLE_STUFF);
+        end if;
+        info_m(TEST_PROBE_AGENT_TAG & "Waited till sample point");
     end procedure;
 
 
-    procedure rst_agent_deassert(
-        signal channel  : inout t_com_channel
+    procedure test_probe_agent_wait_sync(
+        signal channel          : inout t_com_channel;
+               node             : in    natural
     ) is
     begin
-        info_m(RESET_AGENT_TAG & "De-Asserting reset");
-        send(channel, C_RESET_AGENT_ID, RST_AGNT_CMD_DEASSERT);
-        debug_m(RESET_AGENT_TAG & "De-Asserted reset");
-    end procedure;
-
-
-    procedure rst_agent_polarity_set(
-        signal   channel    : inout t_com_channel;
-        constant polarity   : in    std_logic
-    ) is
-    begin
-        info_m(RESET_AGENT_TAG & "Setting reset polarity to: " & std_logic'image(polarity));
-        com_channel_data.set_param(polarity);
-        send(channel, C_RESET_AGENT_ID, RST_AGNT_CMD_POLARITY_SET);
-        debug_m(RESET_AGENT_TAG & "Polarity set");
-    end procedure;
-
-    procedure rst_agent_polarity_get(
-        signal   channel    : inout t_com_channel;
-        variable polarity   : out   std_logic
-    ) is
-    begin
-        info_m(RESET_AGENT_TAG & "Getting reset polarity");
-        send(channel, C_RESET_AGENT_ID, RST_AGNT_CMD_POLARITY_GET);
-        polarity := com_channel_data.get_param;
-        debug_m(RESET_AGENT_TAG & "Polarity got");
+        info_m(TEST_PROBE_AGENT_TAG & "Waiting till SYNC segment");
+        com_channel_data.set_param(node);
+        send(channel, C_TEST_PROBE_AGENT_ID, TEST_PROBE_AGNT_WAIT_SYNC);
+        info_m(TEST_PROBE_AGENT_TAG & "Waited till SYNC segment");
     end procedure;
 
 end package body;
+

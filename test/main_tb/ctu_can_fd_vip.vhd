@@ -179,6 +179,9 @@ architecture behav of ctu_can_fd_vip is
     signal pli_test_name_array     : std_logic_vector((test_name'length * 8) - 1 downto 0)
         := (OTHERS => '0');
 
+    -- Test probe of Test node in feature tests
+    signal test_node_test_probe     : t_ctu_can_fd_test_probe;
+
 begin
     
     ---------------------------------------------------------------------------
@@ -232,6 +235,15 @@ begin
     port map(
         clk_sys         => clk_sys_i,
         timestamp       => timestamp
+    );
+    
+    ---------------------------------------------------------------------------
+    -- Test probe agent - allows peeking signals brought to test-probe.
+    ---------------------------------------------------------------------------
+    test_probe_agent_inst : test_probe_agent
+    port map(
+        dut_test_probe       => test_probe,
+        test_node_test_probe => test_node_test_probe
     );
     
     ---------------------------------------------------------------------------
@@ -343,7 +355,9 @@ begin
             
             -- CAN bus from/to DUT
             dut_can_tx          => can_tx,
-            dut_can_rx          => can_rx_feature_agent
+            dut_can_rx          => can_rx_feature_agent,
+            
+            test_node_test_probe => test_node_test_probe
         );
     end generate;
     

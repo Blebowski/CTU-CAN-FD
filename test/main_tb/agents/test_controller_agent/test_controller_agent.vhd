@@ -81,6 +81,13 @@ context ctu_can_fd_tb.tb_common_context;
 
 use ctu_can_fd_tb.test_controller_agent_pkg.all;
 use ctu_can_fd_tb.timestamp_agent_pkg.all;
+use ctu_can_fd_tb.mem_bus_agent_pkg.all;
+use ctu_can_fd_tb.interrupt_agent_pkg.all;
+use ctu_can_fd_tb.clk_gen_agent_pkg.all;
+use ctu_can_fd_tb.test_probe_agent_pkg.all;
+use ctu_can_fd_tb.reset_agent_pkg.all;
+use ctu_can_fd_tb.can_agent_pkg.all;
+
 
 entity test_controller_agent is
     generic(
@@ -176,14 +183,61 @@ begin
         apply_rand_seed(seed);
         
         -----------------------------------------------------------------------
-        -- Configure timestamp generation common for all test types. This-way
-        -- each test by default has timestamp ticking. Tests can reconfigure
-        -- the timestamp if desired.
-        ----------------------------------------------------------------------- 
+        -- Configure System clock,
+        --  - Period based on generic
+        -----------------------------------------------------------------------
+        if (stand_alone_vip_mode) then
+            info_m("Configuring Clock agent");
+            clk_agent_set_period(default_channel, time'value(cfg_sys_clk_period));
+            clk_agent_set_duty(default_channel, 50);
+            clk_agent_set_jitter(default_channel, 0 ns);
+            clk_gen_agent_start(default_channel);
+        end if;
+        
+        -----------------------------------------------------------------------
+        -- Configure Timestamp generation
+        --  - Step 1
+        --  - Each clock cycle
+        -----------------------------------------------------------------------
+        info_m("Configuring Timestamp agent"); 
         timestamp_agent_set_step(default_channel, 1);
         timestamp_agent_set_prescaler(default_channel, 1);
         timestamp_agent_timestamp_preset(default_channel, x"0000000000000000");
         timestamp_agent_start(default_channel);
+
+        -----------------------------------------------------------------------
+        -- Configure Reset agent and Exectue reset
+        --  - Polarity 0
+        -----------------------------------------------------------------------
+        info_m("Configuring Reset agent, executing reset");
+        rst_agent_polarity_set(default_channel, '0');
+        rst_agent_assert(default_channel);
+        wait for 10 ns;
+        rst_agent_deassert(default_channel);
+
+        -----------------------------------------------------------------------
+        -- Configure Memory bus agent
+        -----------------------------------------------------------------------
+        info_m("Configuring Memory bus agent");
+        mem_bus_agent_x_mode_start(default_channel);
+        mem_bus_agent_set_x_mode_setup(default_channel, 2 ns);
+        mem_bus_agent_set_x_mode_hold(default_channel, 2 ns);
+        mem_bus_agent_set_output_delay(default_channel, 4 ns);
+        mem_bus_agent_start(default_channel);
+
+        -----------------------------------------------------------------------
+        -- Configure CAN agent
+        --
+        -- Present in compliance tests and reference tests only!
+        -----------------------------------------------------------------------
+        if (test_type = "compliance" or test_type = "reference") then
+            info_m("Configuring CAN Agent");
+            can_agent_monitor_flush(default_channel);
+            can_agent_driver_flush(default_channel);
+            can_agent_monitor_stop(default_channel);
+            can_agent_driver_stop(default_channel);    
+            can_agent_monitor_set_input_delay(default_channel, 20 ns);
+        end if;
 
         if (test_type = "compliance") then
             compliance_start <= '1';
@@ -262,24 +316,6 @@ begin
             wait for 50 ns;
         end process;
         
-        
-        -----------------------------------------------------------------------
-        -- PLI clock generation
-        --
-        -- Creatse clock for synchronous communication over PLI interface.
-        -- Although compliance test library executes test in different context,
-        -- it needs to synchronize with simulator context. To do this, 
-        -- compliance test library passes all messages to TB via shared memory,
-        -- which is read synchronously with PLI callbacks!
-        -----------------------------------------------------------------------
-        pli_clk_gen_proc : process
-        begin
-            pli_clk <= '1';
-            wait for 1 ns;
-            pli_clk <= '0';
-            wait for 1 ns;
-        end process;
-        
         -----------------------------------------------------------------------
         -- Listen on PLI commands and send them to individual agents!
         -----------------------------------------------------------------------
@@ -337,7 +373,25 @@ begin
             wait for 1 ps;
 
         end process;
-        
+
+
+        -----------------------------------------------------------------------
+        -- PLI clock generation
+        --
+        -- Creatse clock for synchronous communication over PLI interface.
+        -- Although compliance test library executes test in different context,
+        -- it needs to synchronize with simulator context. To do this, 
+        -- compliance test library passes all messages to TB via shared memory,
+        -- which is read synchronously with PLI callbacks!
+        -----------------------------------------------------------------------
+        pli_clk_gen_proc : process
+        begin
+            pli_clk <= '1';
+            wait for 1 ns;
+            pli_clk <= '0';
+            wait for 1 ns;
+        end process;
+
     end generate;
     
     
