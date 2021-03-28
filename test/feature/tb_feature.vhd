@@ -190,6 +190,8 @@ architecture feature_env_test of CAN_feature_test is
     ));
 
     signal s_bus_level : std_logic := RECESSIVE;
+    
+    
 begin
 
     g_inst: for i in 1 to 2 generate
@@ -443,6 +445,9 @@ architecture tb of tb_feature is
         (OTHERS => '0')
     );
 
+    -- Signals for feature test intialization
+    type t_ftr_tx_delay is array (1 to 2) of time;
+
 begin
     bl_inject <= so.bl_inject;
     bl_force  <= so.bl_force;
@@ -518,16 +523,10 @@ begin
         CAN_init_txtb_mems(ID_1, mem_bus(1));
         CAN_init_txtb_mems(ID_2, mem_bus(2));
 
-        --Execute the controllers configuration
+        -- Execute the controllers configuration
         CAN_turn_controller(true, ID_1, mem_bus(1));
         CAN_turn_controller(true, ID_2, mem_bus(2));
         info("Controllers are ON");
-
-        --Set default retransmitt limit to 0
-        -- Failed frames are not retransmited
-        -- by default!!!
-        CAN_enable_retr_limit(true, 0, ID_1, mem_bus(1));
-        CAN_enable_retr_limit(true, 0, ID_2, mem_bus(2));
 
         -- Wait till integration is over!
         CAN_wait_bus_on(ID_1, mem_bus(1));
