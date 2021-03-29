@@ -89,6 +89,7 @@ context ctu_can_fd_tb.tb_common_context;
 
 -- Feature test packages
 use ctu_can_fd_tb.device_id_ftest.all;
+use ctu_can_fd_tb.dlc_can20_8_64_bytes_ftest.all;
 
 
 package feature_test_list_pkg is
@@ -110,6 +111,8 @@ package body feature_test_list_pkg is
     begin
         if (test_name = "device_id") then
             device_id_ftest_exec(channel);
+        elsif (test_name = "dlc_can20_8_64_bytes") then
+            dlc_can20_8_64_bytes_ftest_exec(channel);
         else
             error_m("TODO: Implement calling feature test function based on test name!!");
         end if;

@@ -163,6 +163,9 @@ architecture tb of mem_bus_agent is
     signal slave_index          :   natural := 0;      
 
     signal last_clk_re          :   time := 0 ns;
+    
+    signal trans_report_en      :   boolean := true;
+
 begin
     
     --------------------------------------------------------------------------
@@ -173,6 +176,7 @@ begin
         variable reply_code     : integer;
         variable transaction    : t_mem_bus_access_item;
         variable tmp            : std_logic_vector(127 downto 0);
+        variable tmp_int        : integer;
     begin
         receive_start(default_channel, C_MEM_BUS_AGENT_ID);
         
@@ -217,6 +221,7 @@ begin
         -- Reads are always blocking
         when MEM_BUS_AGNT_CMD_READ =>
             transaction.write := false;
+            tmp_int := com_channel_data.get_param;
             transaction.address := com_channel_data.get_param;
             tmp := com_channel_data.get_param;
             transaction.byte_enable := tmp(3 DOWNTO 0);
@@ -252,6 +257,13 @@ begin
             
         when MEM_BUS_AGNT_CMD_SET_SLAVE_INDEX =>
             slave_index <= com_channel_data.get_param;
+            wait for 0 ns;
+
+        when MEM_BUS_AGNT_CMD_ENABLE_TRANS_REPORT =>
+            trans_report_en <= true;
+
+        when MEM_BUS_AGNT_CMD_DISABLE_TRANS_REPORT =>
+            trans_report_en <= false;
 
         when others =>
             info_m("Invalid message type: " & integer'image(cmd));
@@ -277,6 +289,32 @@ begin
     ---------------------------------------------------------------------------
     mem_bus_access_proc : process
         variable curr_access   : t_mem_bus_access_item;
+
+        procedure print_access(
+            variable mem_access    : inout t_mem_bus_access_item
+        ) is
+            variable node_str  : string(1 to 10);
+        begin
+            if (slave_index = 0) then
+                node_str := "DUT Node  ";
+            else
+                node_str := "TEST Node ";
+            end if;
+
+            if (trans_report_en) then
+                if (mem_access.write) then
+                    info_m(MEM_BUS_AGENT_TAG & " Write to " & node_str &
+                        "Address: " & to_hstring(std_logic_vector(to_unsigned(curr_access.address, 16))) &
+                        "Data: " & to_hstring(curr_access.write_data)
+                       );
+                else
+                    info_m(MEM_BUS_AGENT_TAG & " Read from " & node_str &
+                        "Address: " & to_hstring(std_logic_vector(to_unsigned(curr_access.address, 16)))
+                       );
+                end if;
+            end if;
+        end procedure;
+
 
         procedure drive_access(
             variable mem_access    : inout t_mem_bus_access_item;
@@ -373,6 +411,8 @@ begin
                 -- There is something in FIFO -> do memory access
                 if (fifo_rp /= fifo_wp) then
                     curr_access := mem_bus_access_fifo(fifo_rp);
+
+                    print_access(curr_access);                    
                     drive_access(curr_access, read_data_i);
 
                     fifo_rp <= (fifo_rp + 1) mod G_ACCESS_FIFO_DEPTH;

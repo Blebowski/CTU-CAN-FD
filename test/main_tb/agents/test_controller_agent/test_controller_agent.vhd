@@ -214,6 +214,7 @@ begin
         rst_agent_assert(default_channel);
         wait for 10 ns;
         rst_agent_deassert(default_channel);
+        wait for 100 ns; -- For reset to internally de-assert!
 
         -----------------------------------------------------------------------
         -- Configure Memory bus agent
@@ -295,7 +296,7 @@ begin
             info_m("Requesting TB control from Compliance test library via PLI...");
             pli_control_req <= '1';
             wait for 1 ns;
-    
+
             if (pli_control_gnt /= '1') then
                 wait until pli_control_gnt = '1' for 10 ns;
             end if;

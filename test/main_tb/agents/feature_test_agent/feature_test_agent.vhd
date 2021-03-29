@@ -279,7 +279,7 @@ begin
     -- Bus level and RX signal of each node
     ---------------------------------------------------------------------------
     bus_level <= force_bus_level_value when force_bus_level_i else
-                 test_node_can_tx_delayed and test_node_can_tx_delayed;
+                 dut_can_tx_delayed and test_node_can_tx_delayed;
 
     dut_can_rx <= force_can_rx_value when force_can_rx_dut else
                   bus_level;
@@ -333,6 +333,7 @@ begin
         -- Wait till integration is over in both nodes
         CAN_wait_bus_on(DUT_NODE, default_channel);
         CAN_wait_bus_on(TEST_NODE, default_channel);
+        info_m("Bus integration finished");
 
         -- Execute feature test
         exec_feature_test(test_name, default_channel);

@@ -272,3 +272,4 @@ compliance:
 feature:
     tests:
         device_id:
+        dlc_can20_8_64_bytes:

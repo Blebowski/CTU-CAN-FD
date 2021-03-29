@@ -323,12 +323,15 @@ package mem_bus_agent_pkg is
     --
     -- @param channel       Channel on which to send the request
     -- @param address       Memory bus address.
-    -- @param read_data     Variable in which output data are read.  
+    -- @param read_data     Variable in which output data are read.
+    -- @param stat_burst    If true, address is not incremented during burst
+    --                      accesses. Usefull for readout of FIFOs
     ---------------------------------------------------------------------------
     procedure mem_bus_agent_read(
         signal      channel     : inout t_com_channel;
                     address     : in    integer;
-        variable    read_data   : out   std_logic_vector
+        variable    read_data   : out   std_logic_vector;
+        constant    stat_burst  : in    boolean := false
     );
    
     
@@ -342,6 +345,26 @@ package mem_bus_agent_pkg is
     procedure mem_bus_agent_set_slave_index(
         signal      channel     : inout t_com_channel;
                     node        : in    natural
+    );
+    
+    ---------------------------------------------------------------------------
+    -- Enable transaction reporting (reports each memory access to console)
+    --
+    -- @param channel       Channel on which to send the request
+    --
+    ---------------------------------------------------------------------------
+    procedure mem_bus_agent_enable_transaction_reporting(
+        signal      channel     : inout t_com_channel
+    );
+
+    ---------------------------------------------------------------------------
+    -- Disable transaction reporting (reports each memory access to console)
+    --
+    -- @param channel       Channel on which to send the request
+    --
+    ---------------------------------------------------------------------------
+    procedure mem_bus_agent_disable_transaction_reporting(
+        signal      channel     : inout t_com_channel
     );
    
     ---------------------------------------------------------------------------
@@ -366,6 +389,9 @@ package mem_bus_agent_pkg is
     constant MEM_BUS_AGNT_CMD_WAIT_DONE             : integer := 11;
     
     constant MEM_BUS_AGNT_CMD_SET_SLAVE_INDEX       : integer := 12;
+    
+    constant MEM_BUS_AGNT_CMD_ENABLE_TRANS_REPORT   : integer := 13;
+    constant MEM_BUS_AGNT_CMD_DISABLE_TRANS_REPORT  : integer := 14;
    
     -- Tag for messages
     constant MEM_BUS_AGENT_TAG : string := "Memory Bus Agent: ";
@@ -408,16 +434,16 @@ package body mem_bus_agent_pkg is
                     byte_enable : in    std_logic_vector(3 downto 0) 
     )  is
     begin
-        info_m(MEM_BUS_AGENT_TAG & "Posting non-blocking write, Address: 0x" &
-               to_hstring(std_logic_vector(to_unsigned(address, 16))) &
-              " " & to_hstring(write_data));
+        --debug_m(MEM_BUS_AGENT_TAG & "Posting non-blocking write, Address: 0x" &
+        --       to_hstring(std_logic_vector(to_unsigned(address, 16))) &
+        --      " " & to_hstring(write_data));
 
         -- Pack the transaction to parameter vector
         com_channel_data.set_param(address);
         com_channel_data.set_param(write_data & byte_enable);
         send(channel, C_MEM_BUS_AGENT_ID, MEM_BUS_AGNT_CMD_WRITE_NON_BLOCKING);
 
-        debug_m(MEM_BUS_AGENT_TAG & "Mem bus agent non-blocking write posted");
+        --debug_m(MEM_BUS_AGENT_TAG & "Mem bus agent non-blocking write posted");
     end procedure;
 
 
@@ -428,15 +454,15 @@ package body mem_bus_agent_pkg is
                     byte_enable : in    std_logic_vector(3 downto 0) 
     )  is
     begin
-        info_m(MEM_BUS_AGENT_TAG & "Blocking write, Address: 0x" &
-               to_hstring(std_logic_vector(to_unsigned(address, 16))) &
-              " " & to_hstring(write_data));
+        --debug_m(MEM_BUS_AGENT_TAG & "Blocking write, Address: 0x" &
+        --       to_hstring(std_logic_vector(to_unsigned(address, 16))) &
+        --      " " & to_hstring(write_data));
         
         com_channel_data.set_param(address);
         com_channel_data.set_param(write_data & byte_enable);
         send(channel, C_MEM_BUS_AGENT_ID, MEM_BUS_AGNT_CMD_WRITE_BLOCKING);
 
-        debug_m(MEM_BUS_AGENT_TAG & "Blocking write succesfull");
+        --debug_m(MEM_BUS_AGENT_TAG & "Blocking write succesfull");
     end procedure;
 
 
@@ -448,8 +474,8 @@ package body mem_bus_agent_pkg is
     ) is
         variable tmp : std_logic_vector(127 downto 0);
     begin
-        info_m(MEM_BUS_AGENT_TAG & "Read, Address: 0x" &
-               to_hstring(std_logic_vector(to_unsigned(address, 16))));
+        --info_m(MEM_BUS_AGENT_TAG & "Read, Address: 0x" &
+        --       to_hstring(std_logic_vector(to_unsigned(address, 16))));
 
         com_channel_data.set_param(address);
         com_channel_data.set_param(byte_enable);
@@ -458,7 +484,7 @@ package body mem_bus_agent_pkg is
         tmp := com_channel_data.get_param;
         read_data := tmp(31 downto 0);
         wait for 0 ns;
-        info_m(MEM_BUS_AGENT_TAG & "Read done, read data: 0x" & to_hstring(read_data));
+        --info_m(MEM_BUS_AGENT_TAG & "Read done, read data: 0x" & to_hstring(read_data));
     end procedure;
 
 
@@ -533,14 +559,8 @@ package body mem_bus_agent_pkg is
                     node        : in    natural
     ) is
     begin
-        if (node = 0) then
-            info_m(MEM_BUS_AGENT_TAG & "Setting slave: DUT");
-        else
-            info_m(MEM_BUS_AGENT_TAG & "Setting slave: Test node");
-        end if;
         com_channel_data.set_param(node);
         send(channel, C_MEM_BUS_AGENT_ID, MEM_BUS_AGNT_CMD_SET_SLAVE_INDEX);
-        debug_m(MEM_BUS_AGENT_TAG & "Slave set");
     end procedure;
 
 
@@ -707,6 +727,8 @@ package body mem_bus_agent_pkg is
         else
             loop_count := write_data'length / 32;
             addr_loop := address;
+            -- For burst accesses, always 32 bit
+            be := x"F";
 
             for i in 0 to loop_count-1 loop
                 data_32 := write_data(i*32+31 downto i*32);
@@ -724,7 +746,8 @@ package body mem_bus_agent_pkg is
     procedure mem_bus_agent_read(
         signal      channel     : inout t_com_channel;
                     address     : in    integer;
-        variable    read_data   : out   std_logic_vector
+        variable    read_data   : out   std_logic_vector;
+        constant    stat_burst  : in    boolean := false
     ) is
         variable addr_aligned   :       integer;
         variable addr_loop      :       integer;
@@ -744,13 +767,36 @@ package body mem_bus_agent_pkg is
         else
             loop_count := read_data'length / 32;
             addr_loop := address;
-
+            -- For burst accesses, always 32 bit
+            be := x"F";
+            
             for i in 0 to loop_count-1 loop
-                mem_bus_agent_read(channel, addr_aligned, data_32, be);
+                mem_bus_agent_read(channel, addr_loop, data_32, be);
                 read_data(i*32+31 downto i*32) := data_32;
-                addr_loop := addr_loop + 4;
+                if (stat_burst = false) then
+                    addr_loop := addr_loop + 4;
+                end if;
             end loop;
         end if;
+    end procedure;
+    
+    procedure mem_bus_agent_enable_transaction_reporting(
+        signal      channel     : inout t_com_channel
+    ) is
+    begin
+        debug_m(MEM_BUS_AGENT_TAG & "Enabling transaction reporting");
+        send(channel, C_MEM_BUS_AGENT_ID, MEM_BUS_AGNT_CMD_ENABLE_TRANS_REPORT);
+        debug_m(MEM_BUS_AGENT_TAG & "Transaction reporting enabled");
+    end procedure;
+
+
+    procedure mem_bus_agent_disable_transaction_reporting(
+        signal      channel     : inout t_com_channel
+    ) is
+    begin
+        debug_m(MEM_BUS_AGENT_TAG & "Disabling transaction reporting");
+        send(channel, C_MEM_BUS_AGENT_ID, MEM_BUS_AGNT_CMD_DISABLE_TRANS_REPORT);
+        debug_m(MEM_BUS_AGENT_TAG & "Transaction reporting disabled");
     end procedure;
 
 end package body;

@@ -597,16 +597,17 @@ package feature_test_agent_pkg is
     --  w_data          Data to write to CTU CAN FD Core.
     --  w_offset        Register or buffer offset (bits 11:0).
     --  node            Node which shall be accessed (Test node or DUT)
-    --  w_size          Write size (8, 16, 32, 64 etc). Should be multiple of 8.
     --  stat_burst      If Burst access is executed, address should not be
-    --                  incremented during the burst. 
+    --                  incremented during the burst.
+    --
+    -- Note: Size of write access is given by size of write data !!
+    --       It should be 8,16,32 or multiple of 32 for bursts 
     ----------------------------------------------------------------------------
     procedure CAN_write(
         constant  w_data        : in    std_logic_vector;
         constant  w_offset      : in    std_logic_vector(11 downto 0);
         constant  node          : in    t_feature_node;
         signal    channel       : inout t_com_channel;
-        constant  w_size        : in    natural := 32;
         constant  stat_burst    : in    boolean := false
     );
 
@@ -627,13 +628,15 @@ package feature_test_agent_pkg is
     --  node            Node which shall be accessed (Test node or DUT)
     --  stat_burst      If Burst access is executed, address should not be
     --                  incremented during the burst.
+    --
+    -- Note: Size of write access is given by size of write data !!
+    --       It should be 8,16,32 or multiple of 32 for bursts
     ----------------------------------------------------------------------------
     procedure CAN_read(
         variable  r_data        : out   std_logic_vector;
         constant  r_offset      : in    std_logic_vector(11 downto 0);
         constant  node          : in    t_feature_node;
         signal    channel       : inout t_com_channel;
-        constant  r_size        : in    natural := 32;
         constant  stat_burst    : in    boolean := false
     );
 
@@ -1559,8 +1562,8 @@ package feature_test_agent_pkg is
     ----------------------------------------------------------------------------
     procedure CAN_wait_sample_point(
         constant node               : in    t_feature_node;
-        constant skip_stuff_bits    : in    boolean;
-        signal   channel            : inout t_com_channel
+        signal   channel            : inout t_com_channel;
+        constant skip_stuff_bits    : in    boolean := true
     );
 
     ----------------------------------------------------------------------------
@@ -1879,7 +1882,6 @@ package body feature_test_agent_pkg is
         constant  w_offset      : in    std_logic_vector(11 downto 0);
         constant  node          : in    t_feature_node;
         signal    channel       : inout t_com_channel;
-        constant  w_size        : in    natural := 32;
         constant  stat_burst    : in    boolean := false
     )is
     begin
@@ -1908,7 +1910,6 @@ package body feature_test_agent_pkg is
         constant  r_offset      : in    std_logic_vector(11 downto 0);
         constant  node          : in    t_feature_node;
         signal    channel       : inout t_com_channel;
-        constant  r_size        : in    natural := 32;
         constant  stat_burst    : in    boolean := false
     )is
     begin
@@ -1921,11 +1922,12 @@ package body feature_test_agent_pkg is
         else
             error_m("Invalid slave node");
         end if;
-        
+
         mem_bus_agent_read(
             channel  => channel,
             address  => to_integer(unsigned(r_offset)),
-            read_data => r_data
+            read_data => r_data,
+            stat_burst => stat_burst
         );
     end procedure;
     
@@ -2099,17 +2101,18 @@ package body feature_test_agent_pkg is
         constant node           : in    t_feature_node;
         signal   channel        : inout t_com_channel
     )is
-        variable data           :       std_logic_vector(31 downto 0) :=
-                                        (OTHERS => '0');
+        variable data : std_logic_vector(15 downto 0) := (OTHERS => '0');
+        variable low : natural := RTRTH_L mod 16;
+        variable high : natural := RTRTH_H mod 16;
     begin
-        CAN_read(data, SETTINGS_ADR, node, channel, 16);
+        CAN_read(data, SETTINGS_ADR, node, channel);
         if enable then
-            data(RTRLE_IND) := '1';
+            data(RTRLE_IND mod 16) := '1';
         else
-            data(RTRLE_IND) := '0';
+            data(RTRLE_IND mod 16) := '0';
         end if;
-        data(RTRTH_H downto RTRTH_L) := std_logic_vector(to_unsigned(limit, 4));
-        CAN_write(data, SETTINGS_ADR, node, channel, 16);
+        data(high downto low) := std_logic_vector(to_unsigned(limit, 4));
+        CAN_write(data, SETTINGS_ADR, node, channel);
     end procedure;
 
 
@@ -2598,7 +2601,7 @@ package body feature_test_agent_pkg is
 
         -- If Burst access is executed read first 4 words all at once!
         if (burst_access) then
-            CAN_read(burst_data, RX_DATA_ADR, node, channel, 32, true);
+            CAN_read(burst_data, RX_DATA_ADR, node, channel, true);
             frm_fmt_word := burst_data(31 downto 0);
             ident_word   := burst_data(63 downto 32);
             ts_low_word  := burst_data(95 downto 64);
@@ -2667,10 +2670,12 @@ package body feature_test_agent_pkg is
                                         (OTHERS => '0');
     begin
         -- Wait until bus is idle
+        mem_bus_agent_disable_transaction_reporting(channel);
         CAN_read(r_data, STATUS_ADR, node, channel);
         while (r_data(IDLE_IND) = '0') loop
             CAN_read(r_data, STATUS_ADR, node, channel);
         end loop;
+        mem_bus_agent_enable_transaction_reporting(channel);
     end procedure;
 
 
@@ -2761,10 +2766,13 @@ package body feature_test_agent_pkg is
     )is
         variable fault_state    :       SW_fault_state;
     begin
+        mem_bus_agent_disable_transaction_reporting(channel);
         get_fault_state(fault_state, node, channel);
         while (fault_state /= fc_error_active) loop
-            get_fault_state(fault_state, node, channel);    
+            get_fault_state(fault_state, node, channel);
+            wait for 200 ns;
         end loop;
+        mem_bus_agent_enable_transaction_reporting(channel);
     end procedure;
 
 
@@ -2911,12 +2919,16 @@ package body feature_test_agent_pkg is
         constant node           : in    t_feature_node;
         signal   channel        : inout t_com_channel
     )is
-        variable data           :       std_logic_vector(31 downto 0);
+        variable data           :       std_logic_vector(15 downto 0);
+        variable low            :       integer;
+        variable high           :       integer;
     begin
-        CAN_read(data, TXTB_INFO_ADR, node, channel, 16);
+        CAN_read(data, TXTB_INFO_ADR, node, channel);
+        low := TXT_BUFFER_COUNT_L mod 16;
+        high := TXT_BUFFER_COUNT_H mod 16;
         warning_m("Number of TXT buffers: " & integer'image(
-                to_integer(unsigned(data(TXT_BUFFER_COUNT_H downto TXT_BUFFER_COUNT_L)))));
-        num_buffers := to_integer(unsigned(data(TXT_BUFFER_COUNT_H downto TXT_BUFFER_COUNT_L)));
+                to_integer(unsigned(data(high downto low)))));
+        num_buffers := to_integer(unsigned(data(high downto low)));
     end procedure;
 
 
@@ -2986,16 +2998,15 @@ package body feature_test_agent_pkg is
         constant node           : in    t_feature_node;
         signal   channel        : inout t_com_channel
     )is
-        variable data           :       std_logic_vector(31 downto 0)
-                                            := (OTHERS => '0');
+        variable data : std_logic_vector(7 downto 0) := (OTHERS => '0');
     begin
         if (options.rx_time_stamp_options) then
-            data(RTSOP_IND) := RTS_BEG;
+            data(RTSOP_IND mod 8) := RTS_BEG;
         else
-            data(RTSOP_IND) := RTS_END;
+            data(RTSOP_IND mod 8) := RTS_END;
         end if;
 
-        CAN_write(data, RX_SETTINGS_ADR, node, channel, 8);
+        CAN_write(data, RX_SETTINGS_ADR, node, channel);
     end procedure;
 
 
@@ -3004,13 +3015,20 @@ package body feature_test_agent_pkg is
         constant node           : in    t_feature_node;
         signal   channel        : inout t_com_channel
     ) is
-        variable data           :       std_logic_vector(31 downto 0);
+        variable data           :       std_logic_vector(15 downto 0);
+        variable low_major      :       integer;
+        variable high_major     :       integer;
+        variable low_minor      :       integer;
+        variable high_minor     :       integer;
     begin
-        CAN_read(data, VERSION_ADR, node, channel, 16);
+        CAN_read(data, VERSION_ADR, node, channel);
 
-        retVal := (10 * to_integer(unsigned(data(VER_MAJOR_H downto
-                                                 VER_MAJOR_L)))) +
-                  to_integer(unsigned(data(VER_MINOR_H downto VER_MINOR_L)));
+        low_major := VER_MAJOR_L mod 16;
+        high_major := VER_MAJOR_H mod 16;
+        low_minor := VER_MINOR_L mod 16;
+        high_minor := VER_MINOR_H mod 16;
+        retVal := (10 * to_integer(unsigned(data(high_major downto low_major)))) +
+                  to_integer(unsigned(data(high_minor downto low_minor)));
     end procedure;
 
 
@@ -3019,79 +3037,79 @@ package body feature_test_agent_pkg is
         constant node           : in    t_feature_node;
         signal   channel        : inout t_com_channel
     )is
-        variable data           :       std_logic_vector(31 downto 0);
+        variable data : std_logic_vector(15 downto 0);
     begin
         data := (OTHERS => '0');
 
         -- Following modes are stored in MODE register
         if (mode.reset) then
-            data(RST_IND)       := '1';
+            data(RST_IND mod 16)       := '1';
         end if;
 
         if (mode.bus_monitoring) then
-            data(BMM_IND)       := '1';
+            data(BMM_IND mod 16)       := '1';
         end if;
 
         if (mode.self_test) then
-            data(STM_IND)       := '1';
+            data(STM_IND mod 16)       := '1';
         end if;
         
         if (mode.test) then
-            data(TSTM_IND)      := '1';
+            data(TSTM_IND mod 16)      := '1';
         end if;
 
         if (mode.acceptance_filter) then
-            data(AFM_IND)       := '1';
+            data(AFM_IND mod 16)       := '1';
         end if;
 
         if (mode.flexible_data_rate) then
-            data(FDE_IND)       := '1';
+            data(FDE_IND mod 16)       := '1';
         end if;
 
         if (mode.restricted_operation) then
-            data(ROM_IND)       := '1';
+            data(ROM_IND mod 16)       := '1';
         end if;
 
         if (mode.acknowledge_forbidden) then
-            data(ACF_IND)       := '1';
+            data(ACF_IND mod 16)       := '1';
         end if;
 
-        CAN_write(data, MODE_ADR, node, channel, 16);
+        CAN_write(data, MODE_ADR, node, channel);
 
         -- Following modes are stored in SETTINGS register
-        CAN_read(data, SETTINGS_ADR, node, channel, 16);
+        CAN_read(data, SETTINGS_ADR, node, channel);
 
         if (mode.iso_fd_support) then
-            data(NISOFD_IND)   := '0';
+            data(NISOFD_IND mod 16)   := '0';
         else
-            data(NISOFD_IND)   := '1';
+            data(NISOFD_IND mod 16)   := '1';
         end if;
 
         if (mode.internal_loopback) then
-            data(ILBP_IND)   := '1';
+            data(ILBP_IND mod 16)   := '1';
         else
-            data(ILBP_IND)   := '0';
+            data(ILBP_IND mod 16)   := '0';
         end if;
         
         if (mode.pex_support) then
-            data(PEX_IND) := '1';
+            data(PEX_IND mod 16) := '1';
         else
-            data(PEX_IND) := '0';
+            data(PEX_IND mod 16) := '0';
         end if;
         
         if (mode.fdrf) then
-            data(FDRF_IND) := '1';
+            data(FDRF_IND mod 16) := '1';
         else
-            data(FDRF_IND) := '0';
+            data(FDRF_IND mod 16) := '0';
         end if;
         
         if (mode.tx_buf_bus_off_failed) then
-            data(TBFBO_IND) := '1';
+            data(TBFBO_IND mod 16) := '1';
         else
-            data(TBFBO_IND) := '0';
+            data(TBFBO_IND mod 16) := '0';
         end if;
 
-        CAN_write(data, SETTINGS_ADR, node, channel, 16);
+        CAN_write(data, SETTINGS_ADR, node, channel);
     end procedure;
 
 
@@ -3102,7 +3120,7 @@ package body feature_test_agent_pkg is
     )is
         variable data           :       std_logic_vector(31 downto 0);
     begin
-        CAN_read(data, MODE_ADR, node, channel, 8);
+        CAN_read(data, MODE_ADR, node, channel);
 
         mode.reset                      := false;
         mode.bus_monitoring             := false;
@@ -3147,7 +3165,8 @@ package body feature_test_agent_pkg is
             mode.test := true;
         end if;
 
-        CAN_read(data, SETTINGS_ADR, node, channel, 8);
+
+        -- SETTINGs part of read data
 
         if (data(NISOFD_IND) = '0') then
             mode.iso_fd_support         := true;
@@ -3230,7 +3249,7 @@ package body feature_test_agent_pkg is
             data(CPEXS_IND)      := '1';
         end if;
         
-        CAN_write(data, COMMAND_ADR, node, channel, 32);
+        CAN_write(data, COMMAND_ADR, node, channel);
     end procedure;
 
 
@@ -3241,7 +3260,7 @@ package body feature_test_agent_pkg is
     ) is
         variable data           :       std_logic_vector(31 downto 0);
     begin
-        CAN_read(data, STATUS_ADR, node, channel, 32);
+        CAN_read(data, STATUS_ADR, node, channel);
 
         status.receive_buffer           := false;
         status.data_overrun             := false;
@@ -3296,20 +3315,22 @@ package body feature_test_agent_pkg is
         constant node           : in    t_feature_node;
         signal   channel        : inout t_com_channel
     ) is
-        variable data           :       std_logic_vector(31 downto 0);
+        variable data : std_logic_vector(15 downto 0);
+        variable low : natural := RTRTH_L mod 16;
+        variable high : natural := RTRTH_H mod 16;
     begin
-        CAN_read(data, SETTINGS_ADR, node, channel, 16);
+        CAN_read(data, SETTINGS_ADR, node, channel);
 
         if (enable) then
-            data(RTRLE_IND)       := '1';
+            data(RTRLE_IND mod 16) := '1';
         else
-            data(RTRLE_IND)       := '0';
+            data(RTRLE_IND mod 16) := '0';
         end if;
 
-        data(RTRTH_H downto RTRTH_L) :=
+        data(high downto low) :=
             std_logic_vector(to_unsigned(limit, RTRTH_H - RTRTH_L + 1));
 
-        CAN_write(data, SETTINGS_ADR, node, channel, 16);
+        CAN_write(data, SETTINGS_ADR, node, channel);
     end procedure;
 
 
@@ -3318,17 +3339,17 @@ package body feature_test_agent_pkg is
         constant node           : in    t_feature_node;
         signal   channel        : inout t_com_channel
     ) is
-        variable data           :       std_logic_vector(31 downto 0);
+        variable data : std_logic_vector(15 downto 0);
     begin
-        CAN_read(data, SETTINGS_ADR, node, channel, 16);
+        CAN_read(data, SETTINGS_ADR, node, channel);
 
         if (enable) then
-            data(ENA_IND) := '1';
+            data(ENA_IND mod 16) := '1';
         else
-            data(ENA_IND) := '0';
+            data(ENA_IND mod 16) := '0';
         end if;
 
-        CAN_write(data, SETTINGS_ADR, node, channel, 16);
+        CAN_write(data, SETTINGS_ADR, node, channel);
     end procedure;
 
 
@@ -3450,7 +3471,7 @@ package body feature_test_agent_pkg is
     ) is
         variable data           :       std_logic_vector(31 downto 0);
     begin
-        CAN_read(data, INT_STAT_ADR, node, channel, 16);
+        CAN_read(data, INT_STAT_ADR, node, channel);
         interrupts := int_reg_to_sw_int(data);
     end procedure;
 
@@ -3463,7 +3484,7 @@ package body feature_test_agent_pkg is
         variable data           :       std_logic_vector(31 downto 0);
     begin
         data := sw_int_to_int_reg(interrupts);
-        CAN_write(data, INT_STAT_ADR, node, channel, 16);
+        CAN_write(data, INT_STAT_ADR, node, channel);
     end procedure;
 
 
@@ -3474,7 +3495,7 @@ package body feature_test_agent_pkg is
     ) is
         variable data           :       std_logic_vector(31 downto 0);
     begin
-        CAN_read(data, INT_ENA_SET_ADR, node, channel, 16);
+        CAN_read(data, INT_ENA_SET_ADR, node, channel);
         interrupts := int_reg_to_sw_int(data);
     end procedure;
 
@@ -3488,11 +3509,11 @@ package body feature_test_agent_pkg is
     begin
         -- Set interrupts which should be set to 1
         data := sw_int_to_int_reg(interrupts);
-        CAN_write(data, INT_ENA_SET_ADR, node, channel, 16);
+        CAN_write(data, INT_ENA_SET_ADR, node, channel);
 
         -- Clear interrupts which should be set to 0
         data := not data;
-        CAN_write(data, INT_ENA_CLR_ADR, node, channel, 16);
+        CAN_write(data, INT_ENA_CLR_ADR, node, channel);
     end procedure;
 
 
@@ -3503,7 +3524,7 @@ package body feature_test_agent_pkg is
     ) is
         variable data           :       std_logic_vector(31 downto 0);
     begin
-        CAN_read(data, INT_MASK_SET_ADR, node, channel, 16);
+        CAN_read(data, INT_MASK_SET_ADR, node, channel);
         interrupts := int_reg_to_sw_int(data);
     end procedure;
 
@@ -3517,11 +3538,11 @@ package body feature_test_agent_pkg is
     begin
         -- Set interrupts which should be set to 1
         data := sw_int_to_int_reg(interrupts);
-        CAN_write(data, INT_MASK_SET_ADR, node, channel, 16);
+        CAN_write(data, INT_MASK_SET_ADR, node, channel);
 
         -- Clear interrupts which should be set to 0
         data := not data;
-        CAN_write(data, INT_MASK_CLR_ADR, node, channel, 16);
+        CAN_write(data, INT_MASK_CLR_ADR, node, channel);
     end procedure;
 
 
@@ -3531,15 +3552,15 @@ package body feature_test_agent_pkg is
         constant node           : in    t_feature_node;
         signal   channel        : inout t_com_channel
     ) is
-        variable data           :       std_logic_vector(31 downto 0);
+        variable data           :       std_logic_vector(15 downto 0);
     begin
-        CAN_read(data, FAULT_STATE_ADR, node, channel, 16);
+        CAN_read(data, FAULT_STATE_ADR, node, channel);
 
-        if (data(ERA_IND) = '1') then
+        if (data(ERA_IND mod 16) = '1') then
             fault_state         := fc_error_active;
-        elsif (data(ERP_IND) = '1') then
+        elsif (data(ERP_IND mod 16) = '1') then
             fault_state         := fc_error_passive;
-        elsif (data(BOF_IND) = '1') then
+        elsif (data(BOF_IND mod 16) = '1') then
             fault_state         := fc_bus_off;
         end if;
     end procedure;
@@ -3550,17 +3571,16 @@ package body feature_test_agent_pkg is
         constant node           : in    t_feature_node;
         signal   channel        : inout t_com_channel
     ) is
-        variable data           :       std_logic_vector(31 downto 0) :=
-                                            (OTHERS => '0');
+        variable data : std_logic_vector(7 downto 0) := (OTHERS => '0');
     begin
-        data(EW_LIMIT_H downto EW_LIMIT_L) :=
+        data((EW_LIMIT_H mod 8) downto (EW_LIMIT_L mod 8)) :=
             std_logic_vector(to_unsigned(fault_th.ewl, 8));
 
-        data(ERP_LIMIT_H downto ERP_LIMIT_L) :=
+        data((ERP_LIMIT_H mod 8) downto (ERP_LIMIT_L mod 8)) :=
             std_logic_vector(to_unsigned(fault_th.erp, 8));
 
-        CAN_write(data, EWL_ADR, node, channel, 8);
-        CAN_write(data, ERP_ADR, node, channel, 8);
+        CAN_write(data, EWL_ADR, node, channel);
+        CAN_write(data, ERP_ADR, node, channel);
     end procedure;
 
 
@@ -3569,16 +3589,19 @@ package body feature_test_agent_pkg is
         constant node           : in    t_feature_node;
         signal   channel        : inout t_com_channel
     ) is
-        variable data           :       std_logic_vector(31 downto 0) :=
-                                            (OTHERS => '0');
+        variable data : std_logic_vector(7 downto 0) := (OTHERS => '0');
+        variable low : integer;
+        variable high : integer;
     begin
-        CAN_read(data, EWL_ADR, node, channel, 16);
-        fault_th.ewl := to_integer(unsigned(
-                          data(EW_LIMIT_H downto EW_LIMIT_L)));
+        CAN_read(data, EWL_ADR, node, channel);
+        low := EW_LIMIT_L mod 8;
+        high := EW_LIMIT_H mod 8;
+        fault_th.ewl := to_integer(unsigned(data(high downto low)));
 
-        CAN_read(data, ERP_ADR, node, channel, 16);
-        fault_th.erp := to_integer(unsigned(
-                          data(ERP_LIMIT_H downto ERP_LIMIT_L)));
+        CAN_read(data, ERP_ADR, node, channel);
+        low := ERP_LIMIT_L mod 8;
+        high := ERP_LIMIT_H mod 8;
+        fault_th.erp := to_integer(unsigned(data(high downto low)));
     end procedure;
 
 
@@ -3587,26 +3610,30 @@ package body feature_test_agent_pkg is
         constant node           : in    t_feature_node;
         signal   channel        : inout t_com_channel
     ) is
-        variable data           :       std_logic_vector(31 downto 0);
+        variable data           :       std_logic_vector(15 downto 0);
         variable msg            :       line;
     begin
         -- Reading separately for possible future separation of REC and TEC!
-        CAN_read(data, REC_ADR, node, channel, 16);
+        CAN_read(data, REC_ADR, node, channel);
 
         err_counters.rx_counter :=
-                to_integer(unsigned(data(REC_VAL_H downto REC_VAL_L)));
+                to_integer(unsigned(data((REC_VAL_H mod 16) downto 
+                                         (REC_VAL_L mod 16) )));
 
-        CAN_read(data, TEC_ADR, node, channel, 16);
+        CAN_read(data, TEC_ADR, node, channel);
         err_counters.tx_counter :=
-                to_integer(unsigned(data(TEC_VAL_H downto TEC_VAL_L)));
+                to_integer(unsigned(data((TEC_VAL_H mod 16) downto 
+                                         (TEC_VAL_L mod 16) )));
 
-        CAN_read(data, ERR_NORM_ADR, node, channel, 16);
+        CAN_read(data, ERR_NORM_ADR, node, channel);
         err_counters.err_norm :=
-                to_integer(unsigned(data(ERR_NORM_VAL_H downto ERR_NORM_VAL_L)));
+                to_integer(unsigned(data((ERR_NORM_VAL_H mod 16) downto
+                                         (ERR_NORM_VAL_L mod 16) )));
 
-        CAN_read(data, ERR_FD_ADR, node, channel, 16);
+        CAN_read(data, ERR_FD_ADR, node, channel);
         err_counters.err_fd :=
-                to_integer(unsigned(data(ERR_FD_VAL_H downto ERR_FD_VAL_L)));
+                to_integer(unsigned(data((ERR_FD_VAL_H mod 16) downto
+                                         (ERR_FD_VAL_L mod 16) )));
     end procedure;
 
 
@@ -3641,37 +3668,43 @@ package body feature_test_agent_pkg is
         constant node           : in    t_feature_node;
         signal   channel        : inout t_com_channel
     ) is
-        variable data           :       std_logic_vector(31 downto 0);
+        variable data           :       std_logic_vector(15 downto 0);
+        variable low            :       integer;
+        variable high           :       integer;
     begin
         data := (OTHERS => '0');
 
+        -- Indices for preset values
+        low := CTPV_L mod 16;
+        high := CTPV_H mod 16;
+        
         -- TX Error counter
-        data(CTPV_H downto CTPV_L) := std_logic_vector(to_unsigned(
-                                        err_counters.tx_counter, 9));
-        data(PTX_IND) := '1';
-        CAN_write(data, CTR_PRES_ADR, node, channel, 16);
-        data(PTX_IND) := '0';
+        data(high downto low) := std_logic_vector(to_unsigned(
+                                    err_counters.tx_counter, 9));
+        data(PTX_IND mod 16) := '1';
+        CAN_write(data, CTR_PRES_ADR, node, channel);
+        data(PTX_IND mod 16) := '0';
 
         -- RX Error counter
-        data(CTPV_H downto CTPV_L) := std_logic_vector(to_unsigned(
-                                        err_counters.rx_counter, 9));
-        data(PRX_IND) := '1';
-        CAN_write(data, CTR_PRES_ADR, node, channel, 16);
-        data(PRX_IND) := '0';
+        data(high downto low) := std_logic_vector(to_unsigned(
+                                    err_counters.rx_counter, 9));
+        data(PRX_IND mod 16) := '1';
+        CAN_write(data, CTR_PRES_ADR, node, channel);
+        data(PRX_IND mod 16) := '0';
 
         -- Nominal bit rate counter
-        data(CTPV_H downto CTPV_L) := std_logic_vector(to_unsigned(
-                                        err_counters.err_norm, 9));
-        data(ENORM_IND) := '1';
-        CAN_write(data, CTR_PRES_ADR, node, channel, 16);
-        data(ENORM_IND) := '0';
+        data(high downto low) := std_logic_vector(to_unsigned(
+                                    err_counters.err_norm, 9));
+        data(ENORM_IND mod 16) := '1';
+        CAN_write(data, CTR_PRES_ADR, node, channel);
+        data(ENORM_IND mod 16) := '0';
 
         -- Data bit rate counter
-        data(CTPV_H downto CTPV_L) := std_logic_vector(to_unsigned(
+        data(high downto low) := std_logic_vector(to_unsigned(
                                         err_counters.err_fd, 9));
-        data(EFD_IND) := '1';
-        CAN_write(data, CTR_PRES_ADR, node, channel, 16);
-        data(EFD_IND) := '0';
+        data(EFD_IND mod 16) := '1';
+        CAN_write(data, CTR_PRES_ADR, node, channel);
+        data(EFD_IND mod 16) := '0';
     end procedure;
 
 
@@ -3680,15 +3713,19 @@ package body feature_test_agent_pkg is
         constant node           : in    t_feature_node;
         signal   channel        : inout t_com_channel
     )is
-        variable data           :       std_logic_vector(31 downto 0);
+        variable data           :       std_logic_vector(7 downto 0);
+        variable low            :       integer;
+        variable high           :       integer;
     begin
-        CAN_read(data, ALC_ADR, node, channel, 8);
+        CAN_read(data, ALC_ADR, node, channel);
 
-        case data(ALC_ID_FIELD_H downto ALC_ID_FIELD_L) is
+        low := ALC_ID_FIELD_L mod 8;
+        high := ALC_ID_FIELD_H mod 8;
+        case data(high downto low) is
         when ALC_BASE_ID =>
-            alc := 11 - to_integer(unsigned(data(ALC_BIT_H downto ALC_BIT_L)));
+            alc := 11 - to_integer(unsigned(data((ALC_BIT_H mod 8) downto (ALC_BIT_L mod 8))));
         when ALC_EXTENSION =>
-            alc := 31 - to_integer(unsigned(data(ALC_BIT_H downto ALC_BIT_L)));
+            alc := 31 - to_integer(unsigned(data((ALC_BIT_H mod 8) downto (ALC_BIT_L mod 8))));
         when ALC_SRR_RTR =>
             alc := 12;
         when ALC_IDE =>
@@ -3756,23 +3793,30 @@ package body feature_test_agent_pkg is
         constant node           : in    t_feature_node;
         signal   channel        : inout t_com_channel
     ) is
-        variable data           :       std_logic_vector(31 downto 0) :=
+        variable data           :       std_logic_vector(15 downto 0) :=
                                             (OTHERS => '0');
+        variable low            :       integer;
+        variable high           :       integer;
     begin
+        low := SSP_SRC_L mod 16;
+        high := SSP_SRC_H mod 16;
+        
         case ssp_source is
             when ssp_meas_n_offset =>
-                data(SSP_SRC_H downto SSP_SRC_L) := SSP_SRC_MEAS_N_OFFSET;
+                data(high downto low) := SSP_SRC_MEAS_N_OFFSET;
             when ssp_no_ssp =>
-               data(SSP_SRC_H downto SSP_SRC_L) := SSP_SRC_NO_SSP;
+               data(high downto low) := SSP_SRC_NO_SSP;
             when ssp_offset =>
-                data(SSP_SRC_H downto SSP_SRC_L) := SSP_SRC_OFFSET;
+                data(high downto low) := SSP_SRC_OFFSET;
             when others =>
                 error_m("Unsupported SSP type.");
             end case;
 
-        data(SSP_OFFSET_H downto SSP_OFFSET_L) := ssp_offset_val;
+        low := SSP_OFFSET_H mod 16;
+        high := SSP_OFFSET_L mod 16;
+        data(high downto low) := ssp_offset_val;
 
-        CAN_write(data, SSP_CFG_ADR, node, channel, 16);
+        CAN_write(data, SSP_CFG_ADR, node, channel);
     end procedure;
     
     
@@ -3824,11 +3868,13 @@ package body feature_test_agent_pkg is
     )is
         variable read_state     :       SW_PC_Debug;
     begin
+        mem_bus_agent_disable_transaction_reporting(channel);
         CAN_read_pc_debug_m(read_state, node, channel);
         while (read_state /= pc_state) loop
             clk_agent_wait_cycle(channel);
             CAN_read_pc_debug_m(read_state, node, channel);
         end loop;
+        mem_bus_agent_enable_transaction_reporting(channel);
     end procedure;
     
     
@@ -3839,11 +3885,13 @@ package body feature_test_agent_pkg is
     )is
         variable read_state     :       SW_PC_Debug;
     begin
+        mem_bus_agent_disable_transaction_reporting(channel);
         CAN_read_pc_debug_m(read_state, node, channel);
         while (read_state = pc_state) loop
             clk_agent_wait_cycle(channel);
             CAN_read_pc_debug_m(read_state, node, channel);
-        end loop;    
+        end loop;
+        mem_bus_agent_enable_transaction_reporting(channel);
     end procedure;
     
 
@@ -3860,7 +3908,7 @@ package body feature_test_agent_pkg is
     begin   
         -- Read current register value to variable
         address := TX_PRIORITY_ADR;
-        CAN_read(data, address, node, channel, 16);
+        CAN_read(data, address, node, channel);
         info_m("Read 'TX_PRIORITY_ADR': 0x" & to_hstring(data) & ".");
         
        -- Select buffer and modify appropriate bits in the register
@@ -3888,7 +3936,7 @@ package body feature_test_agent_pkg is
         -- Write back new value and exit procedure
         info_m("Write 'TX_PRIORITY_ADR': 0x" & to_hstring(data) & ".");
         address := TX_PRIORITY_ADR;
-        CAN_write(data, address, node, channel, 16);
+        CAN_write(data, address, node, channel);
     end procedure;
 
 
@@ -3897,12 +3945,16 @@ package body feature_test_agent_pkg is
         constant node           : in    t_feature_node;
         signal   channel        : inout t_com_channel
     ) is
-        variable data           :       std_logic_vector(31 downto 0) :=
+        variable data           :       std_logic_vector(7 downto 0) :=
                                             (OTHERS => '0');
+        variable low            :       integer;
+        variable high           :       integer;
     begin
-        CAN_read(data, ERR_CAPT_ADR, node, channel, 8);
+        CAN_read(data, ERR_CAPT_ADR, node, channel);
         
-        case data(ERR_TYPE_H downto ERR_TYPE_L) is
+        low := ERR_TYPE_L mod 8;
+        high := ERR_TYPE_H mod 8;
+        case data(high downto low) is
         when ERC_BIT_ERR  => err_capt.err_type := can_err_bit;
         when ERC_CRC_ERR  => err_capt.err_type := can_err_crc;
         when ERC_FRM_ERR  => err_capt.err_type := can_err_form;
@@ -3912,7 +3964,9 @@ package body feature_test_agent_pkg is
             error_m("Unknown Error type in Error code capture register!");
         end case;
         
-        case data(ERR_POS_H downto ERR_POS_L) is
+        low := ERR_POS_L mod 8;
+        high := ERR_POS_H mod 8;
+        case data(high downto low) is
         when ERC_POS_SOF    => err_capt.err_pos := err_pos_sof;
         when ERC_POS_ARB    => err_capt.err_pos := err_pos_arbitration;
         when ERC_POS_CTRL   => err_capt.err_pos := err_pos_ctrl;
@@ -3944,8 +3998,8 @@ package body feature_test_agent_pkg is
     
     procedure CAN_wait_sample_point(
         constant node               : in    t_feature_node;
-        constant skip_stuff_bits    : in    boolean;
-        signal   channel            : inout t_com_channel
+        signal   channel            : inout t_com_channel;
+        constant skip_stuff_bits    : in    boolean := true
     ) is
         variable node_i  : integer;
     begin
@@ -3979,8 +4033,12 @@ package body feature_test_agent_pkg is
     ) is
         variable address : std_logic_vector(11 downto 0);
         variable data    : std_logic_vector(31 downto 0):= (OTHERS => '0');
+        variable num_bufs : integer;
     begin
-        for i in 1 to C_TXT_BUFFER_COUNT loop
+        mem_bus_agent_disable_transaction_reporting(channel);
+        get_tx_buf_count(num_bufs, node, channel);
+
+        for i in 1 to num_bufs loop
             address := std_logic_vector(to_unsigned(
                         to_integer((unsigned(TXTB1_DATA_1_ADR)) * i), 12));
             for j in 0 to 19 loop
@@ -3988,6 +4046,7 @@ package body feature_test_agent_pkg is
                 address := std_logic_vector(unsigned(address) + 4);
             end loop;
         end loop;
+        mem_bus_agent_enable_transaction_reporting(channel);
     end procedure;
 
 end package body;
