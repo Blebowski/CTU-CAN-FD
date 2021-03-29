@@ -1305,6 +1305,7 @@ begin
             align_reg_to_wrd(TXT_BUFFER_COUNT_H, length) downto
             align_reg_to_wrd(TXT_BUFFER_COUNT_L, length)) <=
             std_logic_vector(to_unsigned(G_TXT_BUFFER_COUNT, 4));
+        Control_registers_in.txtb_info(15 DOWNTO 4) <= (OTHERS => '0');
     end block;
 
     ---------------------------------------------------------------------------
