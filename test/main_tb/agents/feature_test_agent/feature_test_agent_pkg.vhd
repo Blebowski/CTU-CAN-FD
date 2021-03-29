@@ -2926,7 +2926,7 @@ package body feature_test_agent_pkg is
         CAN_read(data, TXTB_INFO_ADR, node, channel);
         low := TXT_BUFFER_COUNT_L mod 16;
         high := TXT_BUFFER_COUNT_H mod 16;
-        warning_m("Number of TXT buffers: " & integer'image(
+        info_m("Number of TXT buffers: " & integer'image(
                 to_integer(unsigned(data(high downto low)))));
         num_buffers := to_integer(unsigned(data(high downto low)));
     end procedure;

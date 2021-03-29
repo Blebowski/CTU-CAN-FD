@@ -78,6 +78,12 @@
 Library ctu_can_fd_tb;
 context ctu_can_fd_tb.ieee_context;
 
+-- Only place where Vunit is used. All functions are wrapped so that TB can run
+-- also without Vunit!
+library vunit_lib;
+context vunit_lib.vunit_context;
+
+
 package tb_report_pkg is
 
     type t_log_verbosity is (
@@ -123,11 +129,7 @@ package body tb_report_pkg is
         msg         : in string
     ) is
     begin
-        if (global_verbosity = verbosity_debug or
-            global_verbosity = verbosity_info)
-        then
-            report "INFO: " & msg severity note;
-        end if;
+        info(msg);
     end procedure;
 
     
@@ -135,12 +137,7 @@ package body tb_report_pkg is
                  msg         : in string
     ) is
     begin
-        if (global_verbosity = verbosity_debug or
-            global_verbosity = verbosity_info or
-            global_verbosity = verbosity_warning)
-        then
-            report "WARNING: " & msg severity warning;
-        end if;    
+        warning(msg); 
     end procedure;
 
 
@@ -148,22 +145,14 @@ package body tb_report_pkg is
                  msg         : in string
     ) is
     begin
-        if ((global_verbosity = verbosity_debug or
-            global_verbosity = verbosity_info or
-            global_verbosity = verbosity_warning or
-            global_verbosity = verbosity_error))
-        then
-            report "ERROR: " & msg severity error;
-        end if;
+        error(msg);
     end procedure;
     
     procedure debug_m(
                  msg         : in string
     ) is
     begin
-        if (global_verbosity = verbosity_debug) then
-            report "DEBUG: " & msg severity note;
-        end if;
+        debug(msg);
     end procedure;
 
 
@@ -172,11 +161,7 @@ package body tb_report_pkg is
                  msg         : in string
     ) is
     begin
-        if (cond) then
-            report "PASS: " & msg;
-        else
-            report "FAIL: " & msg severity error;
-        end if;
+        check(cond, msg);
     end procedure;
     
     
@@ -185,11 +170,7 @@ package body tb_report_pkg is
                  msg         : in string
     ) is
     begin
-        if (not cond) then
-            report "PASS: " & msg;
-        else
-            report "FAIL: " & msg severity error;
-        end if;
+        check_false(cond, msg);
     end procedure;
     
 

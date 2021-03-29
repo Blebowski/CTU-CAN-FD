@@ -113,8 +113,8 @@ def test(obj, *, config, vunit_args):
 
     add_rtl_sources(ctu_can_fd_rtl)
 
-    ui.enable_check_preprocessing()
-    ui.enable_location_preprocessing()  # (additional_subprograms=['log'])
+    #ui.enable_check_preprocessing()
+    #ui.enable_location_preprocessing()  # (additional_subprograms=['log'])
 
     tests = []
     
@@ -122,7 +122,7 @@ def test(obj, *, config, vunit_args):
     # Main TB
     ###########################################################################
     if ("compliance" in config or "feature" in config or "reference" in config):
-        add_main_tb_sources(ctu_can_fd_tb)
+        add_main_tb_sources(ctu_can_fd_tb, config)
 
         # Test-bench object is automatically detected on "tb_top" due to "runner_cfg"
         tb = ctu_can_fd_tb.get_test_benches()[0]

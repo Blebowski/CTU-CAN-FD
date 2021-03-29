@@ -141,11 +141,23 @@ def add_rtl_sources(lib) -> None:
     add_sources(lib, ['../src/**/*.vhd'])
 
 
-def add_main_tb_sources(lib) -> None:
+def add_main_tb_sources(lib, config) -> None:
     sources = [];
         
-    # Common
-    sources.append('main_tb/pkg/*.vhd');
+    # Packages named explicitly to allow later switching between own and
+    # Vunit implementation of report_pkg!
+    sources.append('main_tb/pkg/can_fd_tb_register_map.vhd');
+    sources.append('main_tb/pkg/tb_communication_pkg.vhd');
+    sources.append('main_tb/pkg/tb_pli_conversion_pkg.vhd');
+    sources.append('main_tb/pkg/tb_random_pkg.vhd');
+    sources.append('main_tb/pkg/tb_reg_map_defs_pkg.vhd');
+    
+    if (config['_default']['vunit_report_pkg'] == False):
+    	sources.append('main_tb/pkg/tb_report_pkg.vhd')
+    else:
+    	sources.append('main_tb/pkg/tb_report_pkg_vunit.vhd')
+    
+    
     sources.append('main_tb/common/*.vhd');
     sources.append('main_tb/contexts/*.vhd');
     
@@ -182,13 +194,13 @@ def main_tb_configure(tb, config, build) -> None:
         if (test_type != "reference" and test_type != "compliance" and test_type != "feature"):
             continue;
 
-        # Link compliance test library
-        if (test_type == "compliance"):
-            def_otps['ghdl.sim_flags'] += ["--vpi=../compliance/sw_model/build/Debug/simulator_interface/libSIMULATOR_INTERFACE_LIB.so"]
-
         for test_name in cfg["tests"]:
             loc_cfg = dict()
             loc_opts = OptionsDict()
+
+            # Link compliance test library
+            if (test_type == "compliance"):
+                loc_opts['ghdl.sim_flags'] = ["--vpi=../compliance/sw_model/build/Debug/simulator_interface/libSIMULATOR_INTERFACE_LIB.so"]
 
             dict_merge(loc_cfg, def_cfg)
             

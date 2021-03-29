@@ -290,7 +290,7 @@ begin
     mem_bus_access_proc : process
         variable curr_access   : t_mem_bus_access_item;
 
-        procedure print_access(
+        procedure print_write_access(
             variable mem_access    : inout t_mem_bus_access_item
         ) is
             variable node_str  : string(1 to 10);
@@ -302,18 +302,33 @@ begin
             end if;
 
             if (trans_report_en) then
-                if (mem_access.write) then
-                    info_m(MEM_BUS_AGENT_TAG & " Write to " & node_str &
-                        "Address: " & to_hstring(std_logic_vector(to_unsigned(curr_access.address, 16))) &
-                        "Data: " & to_hstring(curr_access.write_data)
-                       );
-                else
-                    info_m(MEM_BUS_AGENT_TAG & " Read from " & node_str &
-                        "Address: " & to_hstring(std_logic_vector(to_unsigned(curr_access.address, 16)))
-                       );
-                end if;
+                info_m(MEM_BUS_AGENT_TAG & "Write to:  " & node_str &
+                    "Address: 0x" & to_hstring(std_logic_vector(to_unsigned(curr_access.address, 32))) &
+                    ", Write Data: 0x" & to_hstring(curr_access.write_data)
+                   );
             end if;
         end procedure;
+
+
+        procedure print_read_access(
+            variable mem_access    : inout t_mem_bus_access_item
+        ) is
+            variable node_str  : string(1 to 10);
+        begin
+            if (slave_index = 0) then
+                node_str := "DUT Node  ";
+            else
+                node_str := "TEST Node ";
+            end if;
+
+            if (trans_report_en) then
+                info_m(MEM_BUS_AGENT_TAG & "Read from: " & node_str &
+                    "Address: " & to_hstring(std_logic_vector(to_unsigned(curr_access.address, 32))) &
+                    ", Read Data: 0x" & to_hstring(curr_access.read_data)
+                    );
+            end if;
+        end procedure;
+        
 
 
         procedure drive_access(
@@ -412,8 +427,16 @@ begin
                 if (fifo_rp /= fifo_wp) then
                     curr_access := mem_bus_access_fifo(fifo_rp);
 
-                    print_access(curr_access);                    
+                    if (curr_access.write) then
+                        print_write_access(curr_access);
+                    end if;
                     drive_access(curr_access, read_data_i);
+                    
+                    wait for 0 ns;
+                    curr_access.read_data := read_data_i;
+                    if (curr_access.write = false) then
+                        print_read_access(curr_access);
+                    end if;
 
                     fifo_rp <= (fifo_rp + 1) mod G_ACCESS_FIFO_DEPTH;
                     wait for 0 ns;
