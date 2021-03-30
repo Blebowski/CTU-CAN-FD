@@ -91,6 +91,10 @@ context ctu_can_fd_tb.tb_common_context;
 use ctu_can_fd_tb.device_id_ftest.all;
 use ctu_can_fd_tb.dlc_can20_8_64_bytes_ftest.all;
 use ctu_can_fd_tb.mode_bus_monitoring_ftest.all;
+use ctu_can_fd_tb.mode_fd_enable_ftest.all;
+use ctu_can_fd_tb.mode_loopback_ftest.all;
+use ctu_can_fd_tb.mode_fdrf_ftest.all;
+use ctu_can_fd_tb.mode_pex_ftest.all;
 
 
 package feature_test_list_pkg is
@@ -116,6 +120,14 @@ package body feature_test_list_pkg is
             dlc_can20_8_64_bytes_ftest_exec(channel);
         elsif (test_name = "mode_bus_monitoring") then
             mode_bus_monitoring_ftest_exec(channel);
+        elsif (test_name = "mode_fd_enable") then
+            mode_fd_enable_ftest_exec(channel);
+        elsif (test_name = "mode_loopback") then
+            mode_loopback_ftest_exec(channel);
+        elsif (test_name = "mode_fdrf") then
+            mode_fdrf_ftest_exec(channel);
+        elsif (test_name = "mode_pex") then
+            mode_pex_ftest_exec(channel);
         else
             error_m("TODO: Implement calling feature test function based on test name!!");
         end if;

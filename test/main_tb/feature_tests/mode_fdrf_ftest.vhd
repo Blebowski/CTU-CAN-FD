@@ -77,13 +77,13 @@
 --  @1. When SETTINGS[FDRF] is NOT set, CTU CAN FD accepts RTR frames.
 --
 -- @Test sequence:
---  @1. Configure frame filters in Node 1. Enable SETTINGS[FDRF]. Configure
+--  @1. Configure frame filters in DUT. Enable SETTINGS[FDRF]. Configure
 --      filter A to accept any identifier (mask = all zeroes).4
---  @2. Send RTR frame by Node 2. Wait until frame is sent and check that there
---      is no frame received by Node 1.
---  @3. Disable SETTINGS[FDRF] in Node 1.
---  @4. Send RTR frame by Node 2. Wait until frame is sent and check that frame
---      is received by Node 1.
+--  @2. Send RTR frame by Test node. Wait until frame is sent and check that there
+--      is no frame received by DUT.
+--  @3. Disable SETTINGS[FDRF] in DUT.
+--  @4. Send RTR frame by Test node. Wait until frame is sent and check that frame
+--      is received by DUT.
 --
 -- @TestInfoEnd
 --------------------------------------------------------------------------------
@@ -92,35 +92,26 @@
 --------------------------------------------------------------------------------
 
 Library ctu_can_fd_tb;
-context ctu_can_fd_tb.ctu_can_synth_context;
-context ctu_can_fd_tb.ctu_can_test_context;
+context ctu_can_fd_tb.ieee_context;
+context ctu_can_fd_tb.rtl_context;
+context ctu_can_fd_tb.tb_common_context;
 
-use ctu_can_fd_tb.pkg_feature_exec_dispath.all;
+use ctu_can_fd_tb.feature_test_agent_pkg.all;
 
-package mode_fdrf_feature is
-    procedure mode_fdrf_feature_exec(
-        signal      so              : out    feature_signal_outputs_t;
-        signal      rand_ctr        : inout  natural range 0 to RAND_POOL_SIZE;
-        signal      iout            : in     instance_outputs_arr_t;
-        signal      mem_bus         : inout  mem_bus_arr_t;
-        signal      bus_level       : in     std_logic
+package mode_fdrf_ftest is
+    procedure mode_fdrf_ftest_exec(
+        signal      chn             : inout  t_com_channel
     );
 end package;
 
 
-package body mode_fdrf_feature is
-    procedure mode_fdrf_feature_exec(
-        signal      so              : out    feature_signal_outputs_t;
-        signal      rand_ctr        : inout  natural range 0 to RAND_POOL_SIZE;
-        signal      iout            : in     instance_outputs_arr_t;
-        signal      mem_bus         : inout  mem_bus_arr_t;
-        signal      bus_level       : in     std_logic
+package body mode_fdrf_ftest is
+    procedure mode_fdrf_ftest_exec(
+        signal      chn             : inout  t_com_channel
     ) is
         variable CAN_TX_frame       :       SW_CAN_frame_type;
         variable CAN_RX_frame       :       SW_CAN_frame_type;
         variable frame_sent         :       boolean := false;
-        variable ID_1           	:       natural := 1;
-        variable ID_2           	:       natural := 2;
         
         variable mode_1             :       SW_mode := SW_mode_rst_val;
         
@@ -132,13 +123,14 @@ package body mode_fdrf_feature is
     begin
 
         ------------------------------------------------------------------------
-        -- @1. Configure frame filters in Node 1. Enable SETTINGS[FDRF].
+        -- @1. Configure frame filters in DUT. Enable SETTINGS[FDRF].
         --     Configure filter A to accept any identifier (mask = all zeroes).
         ------------------------------------------------------------------------
-        info("Step 1: Configure frame filters");
+        info_m("Step 1: Configure frame filters");
+        
         mode_1.acceptance_filter := true;
         mode_1.fdrf := true;
-        set_core_mode(mode_1, ID_1, mem_bus(1));
+        set_core_mode(mode_1, DUT_NODE, chn);
 
         -- Filter A (set mask to 0 - accept all frames)
         filt_A_cfg.ID_value := 0;
@@ -146,47 +138,50 @@ package body mode_fdrf_feature is
         filt_A_cfg.ident_type := BASE;
         filt_A_cfg.acc_CAN_2_0 := true;
         filt_A_cfg.acc_CAN_FD := true;
-        CAN_set_mask_filter(filter_A, filt_A_cfg, ID_1, mem_bus(1));
+        CAN_set_mask_filter(filter_A, filt_A_cfg, DUT_NODE, chn);
 
         ------------------------------------------------------------------------
-        -- @2. Send RTR frame by Node 2. Wait until frame is sent and check that
-        --     there is no frame received by Node 1.
+        -- @2. Send RTR frame by Test node. Wait until frame is sent and check 
+        --     that there is no frame received by DUT.
         ------------------------------------------------------------------------
-        info("Step 2: Check that RTR frame is filtered when FDRF=1.");
-        CAN_generate_frame(rand_ctr, CAN_TX_frame);
+        info_m("Step 2: Check that RTR frame is filtered when FDRF=1.");
+        
+        CAN_generate_frame(CAN_TX_frame);
         CAN_TX_frame.ident_type := BASE;
         CAN_TX_frame.frame_format := NORMAL_CAN;
         CAN_TX_frame.identifier := CAN_TX_frame.identifier mod 2048;
         CAN_TX_frame.rtr := RTR_FRAME;
-        CAN_send_frame(CAN_TX_frame, 1, ID_2, mem_bus(2), frame_sent);
-        CAN_wait_frame_sent(ID_1, mem_bus(1));
         
-        get_rx_buf_state(rx_buf_state, ID_1, mem_bus(1));
-        check(rx_buf_state.rx_frame_count = 0, "Frame filtered out!");
+        CAN_send_frame(CAN_TX_frame, 1, TEST_NODE, chn, frame_sent);
+        CAN_wait_frame_sent(DUT_NODE, chn);
+        
+        get_rx_buf_state(rx_buf_state, DUT_NODE, chn);
+        check_m(rx_buf_state.rx_frame_count = 0, "Frame filtered out!");
 
         ------------------------------------------------------------------------
-        -- @3. Disable SETTINGS[FDRF] in Node 1.
+        -- @3. Disable SETTINGS[FDRF] in DUT.
         ------------------------------------------------------------------------
-        info("Step 3: Disable SETTINGS[FDRF]");
+        info_m("Step 3: Disable SETTINGS[FDRF]");
+        
         mode_1.fdrf := false;
-        set_core_mode(mode_1, ID_1, mem_bus(1));
+        set_core_mode(mode_1, DUT_NODE, chn);
         
         ------------------------------------------------------------------------
-        -- @4. Send RTR frame by Node 2. Wait until frame is sent and check that
-        --     frame is received by Node 1.
+        -- @4. Send RTR frame by Test node. Wait until frame is sent and check 
+        --     that frame is received by DUT.
         ------------------------------------------------------------------------
-        info("Step 2: Check that RTR frame is NOT filtered when FDRF=0.");
-        CAN_generate_frame(rand_ctr, CAN_TX_frame);
+        info_m("Step 4: Check that RTR frame is NOT filtered when FDRF=0.");
+        
+        CAN_generate_frame(CAN_TX_frame);
         CAN_TX_frame.ident_type := BASE;
         CAN_TX_frame.identifier := CAN_TX_frame.identifier mod 2048;
         CAN_TX_frame.rtr := RTR_FRAME;
-        CAN_send_frame(CAN_TX_frame, 1, ID_2, mem_bus(2), frame_sent);
-        CAN_wait_frame_sent(ID_1, mem_bus(1));
         
-        get_rx_buf_state(rx_buf_state, ID_1, mem_bus(1));
-        check(rx_buf_state.rx_frame_count = 1, "Frame NOT filtered out!");
-
-        wait for 1000 ns;
+        CAN_send_frame(CAN_TX_frame, 1, TEST_NODE, chn, frame_sent);
+        CAN_wait_frame_sent(DUT_NODE, chn);
+        
+        get_rx_buf_state(rx_buf_state, DUT_NODE, chn);
+        check_m(rx_buf_state.rx_frame_count = 1, "Frame NOT filtered out!");
         
   end procedure;
 

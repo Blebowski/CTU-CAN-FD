@@ -2733,12 +2733,15 @@ package body feature_test_agent_pkg is
         variable r_data         :       std_logic_vector(31 downto 0) :=
                                         (OTHERS => '0');
     begin
-        -- Wait until bus is idle
+        info_m("Waiting till bus idle in node: " & t_feature_node'image(node));
         mem_bus_agent_disable_transaction_reporting(channel);
+        
         CAN_read(r_data, STATUS_ADR, node, channel);
         while (r_data(IDLE_IND) = '0') loop
             CAN_read(r_data, STATUS_ADR, node, channel);
         end loop;
+        
+        info_m("Done");
         mem_bus_agent_enable_transaction_reporting(channel);
     end procedure;
 
@@ -2750,6 +2753,7 @@ package body feature_test_agent_pkg is
         variable r_data         :       std_logic_vector(31 downto 0) :=
                                         (OTHERS => '0');
     begin
+        info_m("Waiting till error frame in node: " & t_feature_node'image(node));
         mem_bus_agent_disable_transaction_reporting(channel);
         
         -- Wait until unit starts to transmitt or recieve
@@ -2764,6 +2768,7 @@ package body feature_test_agent_pkg is
             CAN_read(r_data, STATUS_ADR, node, channel);
         end loop;
         
+        info_m("Done");
         mem_bus_agent_enable_transaction_reporting(channel);
     end procedure;
 
@@ -2815,6 +2820,10 @@ package body feature_test_agent_pkg is
         variable r_data         :       std_logic_vector(31 downto 0);
     begin
         -- Wait until unit starts to transmitt or recieve
+        info_m("Waiting till TX/RX of frame starts in node: " &
+                t_feature_node'image(node));
+        mem_bus_agent_disable_transaction_reporting(channel);
+        
         while (true) loop
             CAN_read(r_data, STATUS_ADR, node, channel);
             if (exit_trans and r_data(TXS_IND) = '1') then
@@ -2824,7 +2833,9 @@ package body feature_test_agent_pkg is
                 exit;
             end if;
         end loop;
-
+        
+        mem_bus_agent_disable_transaction_reporting(channel);
+        info_m("Done");
     end procedure;
     
     
@@ -2834,13 +2845,17 @@ package body feature_test_agent_pkg is
     )is
         variable fault_state    :       SW_fault_state;
     begin
+        info_m("Waiting till bus is on in node: " & t_feature_node'image(node));
         mem_bus_agent_disable_transaction_reporting(channel);
+        
         get_fault_state(fault_state, node, channel);
         while (fault_state /= fc_error_active) loop
             get_fault_state(fault_state, node, channel);
             wait for 200 ns;
         end loop;
+        
         mem_bus_agent_enable_transaction_reporting(channel);
+        info_m("Bus on in node: " & t_feature_node'image(node));
     end procedure;
 
 
@@ -3936,13 +3951,18 @@ package body feature_test_agent_pkg is
     )is
         variable read_state     :       SW_PC_Debug;
     begin
+        info_m("Waiting till node: " & t_feature_node'image(node) &
+               " is in state: " & SW_PC_Debug'image(pc_state));
         mem_bus_agent_disable_transaction_reporting(channel);
+        
         CAN_read_pc_debug_m(read_state, node, channel);
         while (read_state /= pc_state) loop
             clk_agent_wait_cycle(channel);
             CAN_read_pc_debug_m(read_state, node, channel);
         end loop;
+        
         mem_bus_agent_enable_transaction_reporting(channel);
+        info_m("Done");
     end procedure;
     
     
@@ -3953,12 +3973,16 @@ package body feature_test_agent_pkg is
     )is
         variable read_state     :       SW_PC_Debug;
     begin
+        info_m("Waiting till node: " & t_feature_node'image(node) &
+               " is NOT in state: " & SW_PC_Debug'image(pc_state));
         mem_bus_agent_disable_transaction_reporting(channel);
+        
         CAN_read_pc_debug_m(read_state, node, channel);
         while (read_state = pc_state) loop
             clk_agent_wait_cycle(channel);
             CAN_read_pc_debug_m(read_state, node, channel);
         end loop;
+        
         mem_bus_agent_enable_transaction_reporting(channel);
     end procedure;
     

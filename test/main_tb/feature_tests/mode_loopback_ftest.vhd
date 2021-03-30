@@ -81,21 +81,21 @@
 --      mode was disabled.
 --
 -- @Test sequence:
---  @1. Configure Loopback mode in Node 1.
---  @2. Generate random CAN frame and send it by Node 1.
---  @3. Wait until frame is received. Check that Node 1 has 1 frame in RX Buffer.
---  @4. Read CAN frame from Node 1. Check it is the same as transmitted frame.
---      Check that there are 0 frames in RX Buffer of Node 1. Read also frame
---      from Node 2 not to leave it hanging there!
---  @5. Set Node 2 to Acknowledge forbidden mode. Set Node 1 to one shot mode.
---  @6. Generate random CAN frame and send it by Node 1.
+--  @1. Configure Loopback mode in DUT.
+--  @2. Generate random CAN frame and send it by DUT.
+--  @3. Wait until frame is received. Check that DUT has 1 frame in RX Buffer.
+--  @4. Read CAN frame from DUT. Check it is the same as transmitted frame.
+--      Check that there are 0 frames in RX Buffer of DUT. Read also frame
+--      from Test node not to leave it hanging there!
+--  @5. Set Test node to Acknowledge forbidden mode. Set DUT to one shot mode.
+--  @6. Generate random CAN frame and send it by DUT.
 --  @7. Wait until transmission is over. Check that TXT Buffer used for transmi-
---      ssion is in TX failed. Check that RX Buffer in Node 1 has no frame.
---  @8. Disable Loopback mode in Node 1. Disable Acknowledge forbidden mode in
---      Node 2.
---  @9. Send CAN frame by Node 1. Wait until frame is over.
--- @10. Check that RX Buffer of Node 1 has no CAN frame received. Check that
---      RX Buffer of Node 2 has frame received.
+--      ssion is in TX failed. Check that RX Buffer in DUT has no frame.
+--  @8. Disable Loopback mode in DUT. Disable Acknowledge forbidden mode in
+--      Test node.
+--  @9. Send CAN frame by DUT. Wait until frame is over.
+-- @10. Check that RX Buffer of DUT has no CAN frame received. Check that
+--      RX Buffer of Test node has frame received.
 --
 -- @TestInfoEnd
 --------------------------------------------------------------------------------
@@ -104,35 +104,26 @@
 --------------------------------------------------------------------------------
 
 Library ctu_can_fd_tb;
-context ctu_can_fd_tb.ctu_can_synth_context;
-context ctu_can_fd_tb.ctu_can_test_context;
+context ctu_can_fd_tb.ieee_context;
+context ctu_can_fd_tb.rtl_context;
+context ctu_can_fd_tb.tb_common_context;
 
-use ctu_can_fd_tb.pkg_feature_exec_dispath.all;
+use ctu_can_fd_tb.feature_test_agent_pkg.all;
 
-package mode_loopback_feature is
-    procedure mode_loopback_feature_exec(
-        signal      so              : out    feature_signal_outputs_t;
-        signal      rand_ctr        : inout  natural range 0 to RAND_POOL_SIZE;
-        signal      iout            : in     instance_outputs_arr_t;
-        signal      mem_bus         : inout  mem_bus_arr_t;
-        signal      bus_level       : in     std_logic
+package mode_loopback_ftest is
+    procedure mode_loopback_ftest_exec(
+        signal      chn             : inout  t_com_channel
     );
 end package;
 
 
-package body mode_loopback_feature is
-    procedure mode_loopback_feature_exec(
-        signal      so              : out    feature_signal_outputs_t;
-        signal      rand_ctr        : inout  natural range 0 to RAND_POOL_SIZE;
-        signal      iout            : in     instance_outputs_arr_t;
-        signal      mem_bus         : inout  mem_bus_arr_t;
-        signal      bus_level       : in     std_logic
+package body mode_loopback_ftest is
+    procedure mode_loopback_ftest_exec(
+        signal      chn             : inout  t_com_channel
     ) is
         variable CAN_TX_frame       :       SW_CAN_frame_type;
         variable CAN_RX_frame       :       SW_CAN_frame_type;
         variable frame_sent         :       boolean := false;
-        variable ID_1           	:       natural := 1;
-        variable ID_2           	:       natural := 2;
 
         variable mode_1             :       SW_mode := SW_mode_rst_val;
         variable mode_2             :       SW_mode := SW_mode_rst_val;
@@ -142,103 +133,121 @@ package body mode_loopback_feature is
     begin
 
         ------------------------------------------------------------------------
-        -- @1. Configure Loopback mode in Node 1.
+        -- @1. Configure Loopback mode in DUT.
         ------------------------------------------------------------------------
-        info("Step 1: Configuring Loopback mode in Node 1");
+        info_m("Step 1: Configuring Loopback mode in DUT");
+        
         mode_1.internal_loopback := true;
-        set_core_mode(mode_1, ID_1, mem_bus(1));
+        set_core_mode(mode_1, DUT_NODE, chn);
 
         ------------------------------------------------------------------------
-        -- @2. Generate random CAN frame and send it by Node 1.
+        -- @2. Generate random CAN frame and send it by DUT.
         ------------------------------------------------------------------------
-        info("Step 2: Sending frame by Node 1");
-        CAN_generate_frame(rand_ctr, CAN_TX_frame);
-        CAN_send_frame(CAN_TX_frame, 1, ID_1, mem_bus(1), frame_sent);
+        info_m("Step 2: Sending frame by DUT");
+        
+        CAN_generate_frame(CAN_TX_frame);
+        CAN_send_frame(CAN_TX_frame, 1, DUT_NODE, chn, frame_sent);
         
         ------------------------------------------------------------------------
-        -- @3. Wait until frame is received. Check that Node 1 has 1 frame in 
-        --    RX Buffer.
+        -- @3. Wait until frame is received. Check that DUT has 1 frame in 
+        --     RX Buffer.
         ------------------------------------------------------------------------
-        info("Step 3: Waiting until frame is sent");
-        CAN_wait_frame_sent(ID_1, mem_bus(1));
-        get_rx_buf_state(rx_buf_state, ID_1, mem_bus(1));
-        check(rx_buf_state.rx_frame_count = 1, "Own frame in Loopback received");
+        info_m("Step 3: Waiting until frame is sent");
+        
+        CAN_wait_frame_sent(DUT_NODE, chn);
+        get_rx_buf_state(rx_buf_state, DUT_NODE, chn);
+        check_m(rx_buf_state.rx_frame_count = 1, "Own frame in Loopback received");
 
         ------------------------------------------------------------------------
-        -- @4. Read CAN frame from Node 1. Check it is the same as transmitted 
-        --    frame. Check that there are 0 frames in RX Buffer of Node 1.
+        -- @4. Read CAN frame from DUT. Check it is the same as transmitted 
+        --    frame. Check that there are 0 frames in RX Buffer of DUT.
         ------------------------------------------------------------------------
-        info("Step 4: Read own transmitted frame from RX Buffer");
-        CAN_read_frame(CAN_RX_frame, ID_1, mem_bus(1));
+        info_m("Step 4: Read own transmitted frame from RX Buffer");
+        
+        CAN_read_frame(CAN_RX_frame, DUT_NODE, chn);
         CAN_compare_frames(CAN_RX_frame, CAN_TX_frame, false, frames_equal);
-        check(frames_equal, "Own frame in Loopback is the same as sent!");
-        get_rx_buf_state(rx_buf_state, ID_1, mem_bus(1));
-        check(rx_buf_state.rx_frame_count = 0, "Own frame read from RX Buffer");
-        CAN_read_frame(CAN_RX_frame, ID_2, mem_bus(2));
+        check_m(frames_equal, "Own frame in Loopback is the same as sent!");
+        
+        get_rx_buf_state(rx_buf_state, DUT_NODE, chn);
+        check_m(rx_buf_state.rx_frame_count = 0, "Own frame read from RX Buffer");
+        
+        CAN_read_frame(CAN_RX_frame, TEST_NODE, chn);
         
         ------------------------------------------------------------------------
-        -- @5. Set Node 2 to Acknowledge forbidden mode. Set Node 1 to one shot
+        -- @5. Set Test node to Acknowledge forbidden mode. Set DUT to one shot
         --    mode.
         ------------------------------------------------------------------------
-        info("Step 5: Configure Node 2 to ACF, Node 1 to One shot mode");
+        info_m("Step 5: Configure Test node to ACF, DUT to One shot mode");
+        
         mode_2.acknowledge_forbidden := true;
-        set_core_mode(mode_2, ID_2, mem_bus(2));
-        CAN_enable_retr_limit(true, 0, ID_1, mem_bus(1));
+        set_core_mode(mode_2, TEST_NODE, chn);
+        CAN_enable_retr_limit(true, 0, DUT_NODE, chn);
         
         ------------------------------------------------------------------------
-        -- @6. Generate random CAN frame and send it by Node 1.
+        -- @6. Generate random CAN frame and send it by DUT.
         ------------------------------------------------------------------------
-        info("Step 6: Send frame by Node 1!");
-        CAN_generate_frame(rand_ctr, CAN_TX_frame);
-        CAN_send_frame(CAN_TX_frame, 1, ID_1, mem_bus(1), frame_sent);
+        info_m("Step 6: Send frame by DUT!");
+        
+        CAN_generate_frame(CAN_TX_frame);
+        CAN_send_frame(CAN_TX_frame, 1, DUT_NODE, chn, frame_sent);
         
         ------------------------------------------------------------------------
         -- @7. Wait until transmission is over. Check that TXT Buffer used for 
-        --    transmission is in TX failed. Check that RX Buffer in Node 1 has 
+        --    transmission is in TX failed. Check that RX Buffer in DUT has 
         --    no frame.
         ------------------------------------------------------------------------
-        info("Step 7: Check no own frame received on Error frame!");
-        CAN_wait_error_frame(ID_1, mem_bus(1));
-        CAN_wait_bus_idle(ID_1, mem_bus(1));
-        get_tx_buf_state(1, txt_buf_state, ID_1, mem_bus(1));
-        check(txt_buf_state = buf_failed, "TXT Buffer failed");
-        get_rx_buf_state(rx_buf_state, ID_1, mem_bus(1));
-        check(rx_buf_state.rx_frame_count = 0,
+        info_m("Step 7: Check no own frame received on Error frame!");
+        
+        CAN_wait_error_frame(DUT_NODE, chn);
+        CAN_wait_bus_idle(DUT_NODE, chn);
+        
+        get_tx_buf_state(1, txt_buf_state, DUT_NODE, chn);
+        check_m(txt_buf_state = buf_failed, "TXT Buffer failed");
+        
+        get_rx_buf_state(rx_buf_state, DUT_NODE, chn);
+        check_m(rx_buf_state.rx_frame_count = 0,
             "No own frame received when error frame was received!");
 
         ------------------------------------------------------------------------
-        -- @8. Disable Loopback mode in Node 1. Disable Acknowledge forbidden 
-        --    mode in Node 2.
+        -- @8. Disable Loopback mode in DUT. Disable Acknowledge forbidden 
+        --    mode in Test node.
         ------------------------------------------------------------------------
-        info("Step 8: Disable Loopback in Node 1. Disable ACF in Node 2!");
+        info_m("Step 8: Disable Loopback in DUT. Disable ACF in Test node!");
+        
         mode_1.internal_loopback := false;
-        set_core_mode(mode_1, ID_1, mem_bus(1));
+        set_core_mode(mode_1, DUT_NODE, chn);
+        
         mode_2.acknowledge_forbidden := false;
-        set_core_mode(mode_2, ID_2, mem_bus(2));
+        set_core_mode(mode_2, TEST_NODE, chn);
         
         ------------------------------------------------------------------------
-        -- @9. Send CAN frame by Node 1. Wait until frame is over.
+        -- @9. Send CAN frame by DUT. Wait until frame is over.
         ------------------------------------------------------------------------
-        info("Step 9: Send CAN frame by Node 1.");
-        CAN_generate_frame(rand_ctr, CAN_TX_frame);
-        CAN_send_frame(CAN_TX_frame, 1, ID_1, mem_bus(1), frame_sent);
-        CAN_wait_frame_sent(ID_1, mem_bus(1));
-        CAN_wait_bus_idle(ID_1, mem_bus(1));
+        info_m("Step 9: Send CAN frame by DUT.");
+        
+        CAN_generate_frame(CAN_TX_frame);
+        CAN_send_frame(CAN_TX_frame, 1, DUT_NODE, chn, frame_sent);
+        
+        CAN_wait_frame_sent(DUT_NODE, chn);
+        CAN_wait_bus_idle(DUT_NODE, chn);
         
         ------------------------------------------------------------------------
-        -- @10. Check that RX Buffer of Node 1 has no CAN frame received. Check 
-        --     that RX Buffer of Node 2 has frame received.
+        -- @10. Check that RX Buffer of DUT has no CAN frame received. Check 
+        --     that RX Buffer of Test node has frame received.
         ------------------------------------------------------------------------
-        info("Step 10: Check own frame not received when Loopback is disabled");
-        get_rx_buf_state(rx_buf_state, ID_1, mem_bus(1));
-        check(rx_buf_state.rx_frame_count = 0,
+        info_m("Step 10: Check own frame not received when Loopback is disabled");
+        
+        get_rx_buf_state(rx_buf_state, DUT_NODE, chn);
+        check_m(rx_buf_state.rx_frame_count = 0,
             "Own frame not received when Loopback mode is disabled!");
-        get_rx_buf_state(rx_buf_state, ID_2, mem_bus(2));
-        check(rx_buf_state.rx_frame_count = 1,
-            "Frame received in Node 2!");
-        CAN_read_frame(CAN_RX_frame, ID_2, mem_bus(2));
+        
+        get_rx_buf_state(rx_buf_state, TEST_NODE, chn);
+        check_m(rx_buf_state.rx_frame_count = 1,
+            "Frame received in Test node!");
+        
+        CAN_read_frame(CAN_RX_frame, TEST_NODE, chn);
         CAN_compare_frames(CAN_RX_frame, CAN_TX_frame, false, frames_equal);
-        check(frames_equal, "TX vs. RX frame matching!");
+        check_m(frames_equal, "TX vs. RX frame matching!");
 
         wait for 1000 ns;
         
