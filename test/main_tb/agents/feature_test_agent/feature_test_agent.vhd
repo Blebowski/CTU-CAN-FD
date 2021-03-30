@@ -364,7 +364,7 @@ begin
         feature_result <= '1';
         wait for 0 ns;
         feature_done <= '1';
-        wait for 10 ns;
+        wait until feature_start = '0';
         feature_done <= '0';
         wait for 0 ns;
 

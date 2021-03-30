@@ -194,8 +194,9 @@ def main_tb_configure(tb, config, build) -> None:
         if (test_type != "reference" and test_type != "compliance" and test_type != "feature"):
             continue;
 
-        for test_name in cfg["tests"]:
-            loc_cfg = dict()
+        for test_name, loc_cfg in cfg["tests"].items():
+            if loc_cfg is None:
+                loc_cfg = dict()
             loc_opts = OptionsDict()
 
             # Link compliance test library
@@ -203,7 +204,7 @@ def main_tb_configure(tb, config, build) -> None:
                 loc_opts['ghdl.sim_flags'] = ["--vpi=../compliance/sw_model/build/Debug/simulator_interface/libSIMULATOR_INTERFACE_LIB.so"]
 
             dict_merge(loc_cfg, def_cfg)
-            
+
             generics = {
                 'test_name'             : test_name,
                 'test_type'             : test_type,

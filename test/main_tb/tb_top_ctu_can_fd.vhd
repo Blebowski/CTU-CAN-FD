@@ -378,6 +378,7 @@ begin
             -- Finish handshake
             test_start <= '0';
             wait until test_done = '0';
+            wait for 10 ns;
         end loop;
 
         -- Finish succesfully

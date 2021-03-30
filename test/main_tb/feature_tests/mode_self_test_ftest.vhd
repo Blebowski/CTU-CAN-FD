@@ -76,12 +76,12 @@
 --  @1. In Self test mode, transmitted frame is valid even if ACK was recessive!
 --
 -- @Test sequence:
---  @1. Configures Self Test mode in Node 1. Configure ACK forbidden in Node 2.
---  @2. Send frame by Node 1. Wait till ACK field.
+--  @1. Configures Self Test mode in DUT. Configure ACK forbidden in Test node.
+--  @2. Send frame by DUT. Wait till ACK field.
 --  @3. Monitor during whole ACK field that frame bus is RECESSIVE.
---  @4. Check that after ACK field, Node 1 is NOT transmitting Error frame!
---      Wait till bus is idle and check that TXT Buffer in Node 1 is in TX OK!
---      Check that frame was received by Node 2.
+--  @4. Check that after ACK field, DUT is NOT transmitting Error frame!
+--      Wait till bus is idle and check that TXT Buffer in DUT is in TX OK!
+--      Check that frame was received by Test node.
 --
 -- @TestInfoEnd
 --------------------------------------------------------------------------------
@@ -90,35 +90,26 @@
 --------------------------------------------------------------------------------
 
 Library ctu_can_fd_tb;
-context ctu_can_fd_tb.ctu_can_synth_context;
-context ctu_can_fd_tb.ctu_can_test_context;
+context ctu_can_fd_tb.ieee_context;
+context ctu_can_fd_tb.rtl_context;
+context ctu_can_fd_tb.tb_common_context;
 
-use ctu_can_fd_tb.pkg_feature_exec_dispath.all;
+use ctu_can_fd_tb.feature_test_agent_pkg.all;
 
-package mode_self_test_feature is
-    procedure mode_self_test_feature_exec(
-        signal      so              : out    feature_signal_outputs_t;
-        signal      rand_ctr        : inout  natural range 0 to RAND_POOL_SIZE;
-        signal      iout            : in     instance_outputs_arr_t;
-        signal      mem_bus         : inout  mem_bus_arr_t;
-        signal      bus_level       : in     std_logic
+package mode_self_test_ftest is
+    procedure mode_self_test_ftest_exec(
+        signal      chn             : inout  t_com_channel
     );
 end package;
 
 
-package body mode_self_test_feature is
-    procedure mode_self_test_feature_exec(
-        signal      so              : out    feature_signal_outputs_t;
-        signal      rand_ctr        : inout  natural range 0 to RAND_POOL_SIZE;
-        signal      iout            : in     instance_outputs_arr_t;
-        signal      mem_bus         : inout  mem_bus_arr_t;
-        signal      bus_level       : in     std_logic
+package body mode_self_test_ftest is
+    procedure mode_self_test_ftest_exec(
+        signal      chn             : inout  t_com_channel
     ) is
         variable CAN_TX_frame       :       SW_CAN_frame_type;
         variable CAN_RX_frame       :       SW_CAN_frame_type;
         variable frame_sent         :       boolean := false;
-        variable ID_1           	:       natural := 1;
-        variable ID_2           	:       natural := 2;
         variable mode_1             :       SW_mode := SW_mode_rst_val;
         variable mode_2             :       SW_mode := SW_mode_rst_val;
         
@@ -130,66 +121,72 @@ package body mode_self_test_feature is
     begin
 
         ------------------------------------------------------------------------
-        -- @1. Configures Self Test mode in Node 1. Configure ACK forbidden in
-        --    Node 2.
+        -- @1. Configures Self Test mode in DUT. Configure ACK forbidden in
+        --     Test node.
         ------------------------------------------------------------------------
-        info("Step 1: Configuring STM in Node 1, ACF in Node 2!");
+        info_m("Step 1: Configuring STM in DUT, ACF in Test node!");
+        
         mode_1.self_test := true;
-        set_core_mode(mode_1, ID_1, mem_bus(1));
+        set_core_mode(mode_1, DUT_NODE, chn);
+        
         mode_2.acknowledge_forbidden := true;
-        set_core_mode(mode_2, ID_2, mem_bus(2));
+        set_core_mode(mode_2, TEST_NODE, chn);
 
         ------------------------------------------------------------------------
-        -- @2. Send frame by Node 1. Wait till ACK field.
+        -- @2. Send frame by DUT. Wait till ACK field.
         ------------------------------------------------------------------------
-        info("Step 2: Send frame by Node 1, Wait till ACK");
-        CAN_generate_frame(rand_ctr, CAN_TX_frame);
-        CAN_send_frame(CAN_TX_frame, 1, ID_1, mem_bus(1), frame_sent);
-        CAN_wait_pc_state(pc_deb_ack, ID_1, mem_bus(1));
+        info_m("Step 2: Send frame by DUT, Wait till ACK");
+        
+        CAN_generate_frame(CAN_TX_frame);
+        CAN_send_frame(CAN_TX_frame, 1, DUT_NODE, chn, frame_sent);
+        CAN_wait_pc_state(pc_deb_ack, DUT_NODE, chn);
         
         ------------------------------------------------------------------------
         -- @3. Monitor during whole ACK field that frame bus is RECESSIVE.
         ------------------------------------------------------------------------
-        info("Step 3: Checking ACK field is recessive"); 
-        CAN_read_pc_debug(pc_dbg, ID_1, mem_bus(1));
+        info_m("Step 3: Checking ACK field is recessive"); 
+        
+        CAN_read_pc_debug_m(pc_dbg, DUT_NODE, chn);
         while (pc_dbg = pc_deb_ack) loop
-            check(bus_level = RECESSIVE, "Dominant ACK transmitted!");
-            CAN_read_pc_debug(pc_dbg, ID_1, mem_bus(1));
+            check_bus_level(RECESSIVE, "Dominant ACK transmitted!", chn);
+            CAN_read_pc_debug_m(pc_dbg, DUT_NODE, chn);
             
-            get_controller_status(status, ID_1, mem_bus(1));
-            check(status.transmitter, "Node 1 receiver!");
+            get_controller_status(status, DUT_NODE, chn);
+            check_m(status.transmitter, "DUT receiver!");
             
             wait for 100 ns; -- To make checks more sparse
         end loop;
         
         ------------------------------------------------------------------------
-        -- @4. Check that after ACK field, Node 1 is NOT transmitting Error 
-        --    frame! Wait till bus is idle and check that TXT Buffer in Node 1
-        --    is in TX OK! Check that frame was received by Node 2.
+        -- @4. Check that after ACK field, DUT is NOT transmitting Error 
+        --     frame! Wait till bus is idle and check that TXT Buffer in DUT
+        --     is in TX OK! Check that frame was received by Test node.
         ------------------------------------------------------------------------
-        info("Step 4: Check Error frame is not transmitted!"); 
-        get_controller_status(status, ID_1, mem_bus(1));
-        check_false(status.error_transmission, "Error frame not transmitted!");
-        CAN_read_pc_debug(pc_dbg, ID_1, mem_bus(1));
+        info_m("Step 4: Check Error frame is not transmitted!"); 
+        
+        get_controller_status(status, DUT_NODE, chn);
+        check_false_m(status.error_transmission, "Error frame not transmitted!");
+        
+        CAN_read_pc_debug_m(pc_dbg, DUT_NODE, chn);
         
         -- For CAN FD frames secondary ACK is still marked as ACK to DEBUG
         -- register! From there if this is recessive (it is now, no ACK is sent),
         -- it is interpreted as ACK Delimiter and we move directly to EOF! This
         -- is OK!
-        check(pc_dbg = pc_deb_ack_delim or
-              pc_dbg = pc_deb_eof, "ACK delimiter follows recessive ACK!");
+        check_m(pc_dbg = pc_deb_ack_delim or
+                pc_dbg = pc_deb_eof, "ACK delimiter follows recessive ACK!");
         
-        CAN_wait_bus_idle(ID_2, mem_bus(2));
-        CAN_wait_bus_idle(ID_1, mem_bus(1));
+        CAN_wait_bus_idle(TEST_NODE, chn);
+        CAN_wait_bus_idle(DUT_NODE, chn);
         
-        get_tx_buf_state(1, txt_buf_state, ID_1, mem_bus(1));
-        check(txt_buf_state = buf_done, "Frame transmitted OK");
-        get_rx_buf_state(rx_buf_state, ID_2, mem_bus(2));
-        check(rx_buf_state.rx_frame_count = 1, "Frame received in LOM");
-        CAN_read_frame(CAN_RX_frame, ID_2, mem_bus(2));
+        get_tx_buf_state(1, txt_buf_state, DUT_NODE, chn);
+        check_m(txt_buf_state = buf_done, "Frame transmitted OK");
+        
+        get_rx_buf_state(rx_buf_state, TEST_NODE, chn);
+        check_m(rx_buf_state.rx_frame_count = 1, "Frame received in LOM");
+        
+        CAN_read_frame(CAN_RX_frame, TEST_NODE, chn);
         CAN_compare_frames(CAN_RX_frame, CAN_TX_frame, false, frames_equal);
-        
-        wait for 1000 ns;
         
   end procedure;
 

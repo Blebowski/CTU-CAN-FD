@@ -77,11 +77,11 @@
 --      during Bus idle (it will not interpret them as SOF).
 --
 -- @Test sequence:
---  @1. Read bit timing config from Node 1. Calculate duration of TSEG1.
---      Force CAN RX of Node 1 low for TSEG1-1 Tim quanta Release CAN TX,
---      and check that Node 1 did NOT turn receiver.
---  @2. Force CAN RX of Node 1 low for TSEG1 Time quanta. Release CAN TX and
---      check that Node 1 did turn receiver.
+--  @1. Read bit timing config from DUT. Calculate duration of TSEG1.
+--      Force CAN RX of DUT low for TSEG1-1 Tim quanta Release CAN TX,
+--      and check that DUT did NOT turn receiver.
+--  @2. Force CAN RX of DUT low for TSEG1 Time quanta. Release CAN TX and
+--      check that DUT did turn receiver.
 --
 -- @TestInfoEnd
 --------------------------------------------------------------------------------
@@ -90,33 +90,24 @@
 --------------------------------------------------------------------------------
 
 Library ctu_can_fd_tb;
-context ctu_can_fd_tb.ctu_can_synth_context;
-context ctu_can_fd_tb.ctu_can_test_context;
+context ctu_can_fd_tb.ieee_context;
+context ctu_can_fd_tb.rtl_context;
+context ctu_can_fd_tb.tb_common_context;
 
-use ctu_can_fd_tb.pkg_feature_exec_dispath.all;
+use ctu_can_fd_tb.feature_test_agent_pkg.all;
+use ctu_can_fd_tb.clk_gen_agent_pkg.all;
 
-package glitch_filtering_feature is
-    procedure glitch_filtering_feature_exec(
-        signal      so              : out    feature_signal_outputs_t;
-        signal      rand_ctr        : inout  natural range 0 to RAND_POOL_SIZE;
-        signal      iout            : in     instance_outputs_arr_t;
-        signal      mem_bus         : inout  mem_bus_arr_t;
-        signal      bus_level       : in     std_logic
+package glitch_filtering_ftest is
+    procedure glitch_filtering_ftest_exec(
+        signal      chn             : inout  t_com_channel
     );
 end package;
 
 
-package body glitch_filtering_feature is
-    procedure glitch_filtering_feature_exec(
-        signal      so              : out    feature_signal_outputs_t;
-        signal      rand_ctr        : inout  natural range 0 to RAND_POOL_SIZE;
-        signal      iout            : in     instance_outputs_arr_t;
-        signal      mem_bus         : inout  mem_bus_arr_t;
-        signal      bus_level       : in     std_logic
+package body glitch_filtering_ftest is
+    procedure glitch_filtering_ftest_exec(
+        signal      chn             : inout  t_com_channel
     ) is
-
-        variable ID_1               :     natural := 1;
-        variable ID_2               :     natural := 2;
         variable r_data             :     std_logic_vector(31 downto 0) :=
                                                (OTHERS => '0');
         variable bus_timing         :     bit_time_config_type;
@@ -126,46 +117,46 @@ package body glitch_filtering_feature is
     begin
 
         -----------------------------------------------------------------------
-        -- @1. Read bit timing config from Node 1. Calculate duration of TSEG1.
-        --     Force CAN RX of Node 1 low for TSEG1-1 clock cycles. Release CAN
-        --     TX, and check that Node 1 did NOT turn receiver.
+        -- @1. Read bit timing config from DUT. Calculate duration of TSEG1.
+        --     Force CAN RX of DUT low for TSEG1-1 clock cycles. Release CAN
+        --     TX, and check that DUT did NOT turn receiver.
         -----------------------------------------------------------------------
-        info("Step 1");
+        info_m("Step 1");
         
-        CAN_read_timing_v(bus_timing, ID_1, mem_bus(1));
+        CAN_read_timing_v(bus_timing, DUT_NODE, chn);
         tseg1 := bus_timing.tq_nbt *
                     (1 + bus_timing.prop_nbt + bus_timing.ph1_nbt);
         tseg1_minus_1_tq := bus_timing.tq_nbt *
                                 (bus_timing.prop_nbt + bus_timing.ph1_nbt);
 
-        force_can_rx(DOMINANT, ID_1, so.crx_force, so.crx_inject, so.crx_index);
+        force_can_rx(DOMINANT, DUT_NODE, chn);
         for i in 1 to tseg1_minus_1_tq loop
-            wait until rising_edge(mem_bus(1).clk_sys);
+            clk_agent_wait_cycle(chn);
         end loop;
-        release_can_rx(so.crx_force);
+        release_can_rx(chn);
         wait for 50 ns;
         
-        get_controller_status(stat_1, ID_1, mem_bus(1));
-        check_false(stat_1.receiver, "Node 1 not receiver!");
-        check(stat_1.bus_status, "Node 1 Idle");
+        get_controller_status(stat_1, DUT_NODE, chn);
+        check_false_m(stat_1.receiver, "DUT not receiver!");
+        check_m(stat_1.bus_status, "DUT Idle");
         
         -----------------------------------------------------------------------
-        -- @1. Force CAN RX of Node 1 low for TSEG1 clock cycles. Release CAN
-        --     TX and check that Node 1 did turn receiver.
+        -- @1. Force CAN RX of DUT low for TSEG1 clock cycles. Release CAN
+        --     TX and check that DUT did turn receiver.
         -----------------------------------------------------------------------
-        info("Step 2");
+        info_m("Step 2");
         wait for 100 ns;
         
-        force_can_rx(DOMINANT, ID_1, so.crx_force, so.crx_inject, so.crx_index);
+        force_can_rx(DOMINANT, DUT_NODE, chn);
         for i in 1 to tseg1 loop
-            wait until rising_edge(mem_bus(1).clk_sys);
+            clk_agent_wait_cycle(chn);
         end loop;
-        release_can_rx(so.crx_force);
+        release_can_rx(chn);
         wait for 50 ns;
         
-        get_controller_status(stat_1, ID_1, mem_bus(1));
-        check(stat_1.receiver, "Node 1 receiver!");
-        check_false(stat_1.bus_status, "Node 1 not Idle");
+        get_controller_status(stat_1, DUT_NODE, chn);
+        check_m(stat_1.receiver, "DUT receiver!");
+        check_false_m(stat_1.bus_status, "DUT not Idle");
 
         wait for 100 ns;
 

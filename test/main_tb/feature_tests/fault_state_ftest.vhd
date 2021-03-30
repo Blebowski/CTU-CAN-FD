@@ -80,20 +80,20 @@
 --      reintegration).
 --
 -- @Test sequence:
---  @1. Turn on Test mode in Node 1. Generate random value of Error counters
---      below default value of ERP and set them in Node 1. Check Fault state is
+--  @1. Turn on Test mode in DUT. Generate random value of Error counters
+--      below default value of ERP and set them in DUT. Check Fault state is
 --      Error active.
---  @2. Generate RX counter to be between ERP and 255 included and set it in Node
---      1. Check that Node 1 Fault state is Error Passive.
+--  @2. Generate RX counter to be between ERP and 255 included and set it in DUT.
+--      Check that DUT Fault state is Error Passive.
 --  @3. Generate also TX counter to be between 128 and 255 included and set it
---      in Node 1. Check that Node 1 Fault state is still Error Passive. Lower
---      RX Counter below ERP and check Node 1 is still Error Passive. Lower also
+--      in DUT. Check that DUT Fault state is still Error Passive. Lower
+--      RX Counter below ERP and check DUT is still Error Passive. Lower also
 --      TX Counter below ERP and check that now the node became Error active! 
---  @4. Increment RX Error counter to more than 255 and check that Node 1 is 
+--  @4. Increment RX Error counter to more than 255 and check that DUT is 
 --      Error Passive (should not go to bus-off by RX Counter).
---  @5. Increment TX Counter to go above 255 and check that Node 1 is now bus off.
+--  @5. Increment TX Counter to go above 255 and check that DUT is now bus off.
 --  @6. Issue COMMAND[ERCRST] and wait for 129*11 recessive bits. Check that
---      Node 1 becomes Error Active.
+--      DUT becomes Error Active.
 --
 -- @TestInfoEnd
 --------------------------------------------------------------------------------
@@ -104,32 +104,24 @@
 --------------------------------------------------------------------------------
 
 Library ctu_can_fd_tb;
-context ctu_can_fd_tb.ctu_can_synth_context;
-context ctu_can_fd_tb.ctu_can_test_context;
+context ctu_can_fd_tb.ieee_context;
+context ctu_can_fd_tb.rtl_context;
+context ctu_can_fd_tb.tb_common_context;
 
-use ctu_can_fd_tb.pkg_feature_exec_dispath.all;
+use ctu_can_fd_tb.feature_test_agent_pkg.all;
 
-package fault_state_feature is
-    procedure fault_state_feature_exec(
-        signal      so              : out    feature_signal_outputs_t;
-        signal      rand_ctr        : inout  natural range 0 to RAND_POOL_SIZE;
-        signal      iout            : in     instance_outputs_arr_t;
-        signal      mem_bus         : inout  mem_bus_arr_t;
-        signal      bus_level       : in     std_logic
+package fault_state_ftest is
+    procedure fault_state_ftest_exec(
+        signal      chn             : inout  t_com_channel
     );
 end package;
 
 
-package body fault_state_feature is
-    procedure fault_state_feature_exec(
-        signal      so              : out    feature_signal_outputs_t;
-        signal      rand_ctr        : inout  natural range 0 to RAND_POOL_SIZE;
-        signal      iout            : in     instance_outputs_arr_t;
-        signal      mem_bus         : inout  mem_bus_arr_t;
-        signal      bus_level       : in     std_logic
+package body fault_state_ftest is
+    procedure fault_state_ftest_exec(
+        signal      chn             : inout  t_com_channel
     ) is
         variable frame_sent         :       boolean := false;
-        variable ID_1           	:       natural := 1;
 
         variable err_counters       :       SW_error_counters;
         variable fault_state        :       SW_fault_state;
@@ -148,129 +140,142 @@ package body fault_state_feature is
         -----------------------------------------------------------------------
         -- Pre-generate thresholds
         -----------------------------------------------------------------------
-        rand_int_v(rand_ctr, 127, tx_lt_erp);
-        rand_int_v(rand_ctr, 127, rx_lt_erp);
+        rand_int_v(127, tx_lt_erp);
+        rand_int_v(127, rx_lt_erp);
 
-        rand_int_v(rand_ctr, 127, tx_mt_erp);
+        rand_int_v(127, tx_mt_erp);
         tx_mt_erp := tx_mt_erp + 128;
-        rand_int_v(rand_ctr, 127, rx_mt_erp);
+        rand_int_v(127, rx_mt_erp);
         rx_mt_erp := rx_mt_erp + 128;
 
-        rand_int_v(rand_ctr, 50, tx_mt_bof);
+        rand_int_v(50, tx_mt_bof);
         tx_mt_bof := tx_mt_bof + 256;
-        rand_int_v(rand_ctr, 50, rx_mt_bof);
+        rand_int_v(50, rx_mt_bof);
         rx_mt_bof := rx_mt_bof + 256;
         
-        info("RX less than ERP: " & integer'image(rx_lt_erp));
-        info("TX less than ERP: " & integer'image(tx_lt_erp));
+        info_m("RX less than ERP: " & integer'image(rx_lt_erp));
+        info_m("TX less than ERP: " & integer'image(tx_lt_erp));
         
-        info("RX more than ERP: " & integer'image(rx_mt_erp));
-        info("TX more than ERP: " & integer'image(tx_mt_erp));
+        info_m("RX more than ERP: " & integer'image(rx_mt_erp));
+        info_m("TX more than ERP: " & integer'image(tx_mt_erp));
         
-        info("RX more than Bus off: " & integer'image(rx_mt_bof));
-        info("TX more than Bus off: " & integer'image(tx_mt_bof));
+        info_m("RX more than Bus off: " & integer'image(rx_mt_bof));
+        info_m("TX more than Bus off: " & integer'image(tx_mt_bof));
         
         -----------------------------------------------------------------------
-        -- @1. Turn on Test mode in Node 1. Generate random value of Error
-        --    counters below default value of ERP and set them in Node 1.
-        --    Check Fault state is Error active.
+        -- @1. Turn on Test mode in DUT. Generate random value of Error
+        --     counters below default value of ERP and set them in DUT.
+        --     Check Fault state is Error active.
         -----------------------------------------------------------------------
-        info("Step 1");
+        info_m("Step 1");
+        
         mode_1.test := true;
-        set_core_mode(mode_1, ID_1, mem_bus(1));
+        set_core_mode(mode_1, DUT_NODE, chn);
+        
         err_counters.tx_counter := tx_lt_erp;
         err_counters.rx_counter := rx_lt_erp;
-        set_error_counters(err_counters, ID_1, mem_bus(1));
+        set_error_counters(err_counters, DUT_NODE, chn);
 
-        get_fault_state(fault_state, ID_1, mem_bus(1));
-        check(fault_state = fc_error_active, "Node Error active!");
+        get_fault_state(fault_state, DUT_NODE, chn);
+        check_m(fault_state = fc_error_active, "Node Error active!");
 
         -----------------------------------------------------------------------
         -- @2. Generate RX counter to be between ERP and 255 included and set it
-        --    in Node 1. Check that Node 1 Fault state is Error Passive.
+        --     in DUT. Check that DUT Fault state is Error Passive.
         -----------------------------------------------------------------------
-        info("Step 2");
+        info_m("Step 2");
+        
         err_counters.rx_counter := rx_mt_erp;
-        set_error_counters(err_counters, ID_1, mem_bus(1));
-        get_fault_state(fault_state, ID_1, mem_bus(1));
-        check(fault_state = fc_error_passive, "Node Error passive!");
+        set_error_counters(err_counters, DUT_NODE, chn);
+        
+        get_fault_state(fault_state, DUT_NODE, chn);
+        check_m(fault_state = fc_error_passive, "Node Error passive!");
 
         -----------------------------------------------------------------------
         -- @3. Generate also TX counter to be between 128 and 255 included and
-        --    set it in Node 1. Check that Node 1 Fault state is still Error
-        --    Passive. Lower RX Counter below ERP and check Node 1 is still
-        --    Error Passive. Lower also TX Counter below ERP and check that now
-        --    the node became Error active! 
+        --     set it in DUT. Check that DUT Fault state is still Error
+        --     Passive. Lower RX Counter below ERP and check DUT is still
+        --     Error Passive. Lower also TX Counter below ERP and check that now
+        --     the node became Error active! 
         -----------------------------------------------------------------------
-        info("Step 3");
+        info_m("Step 3");
+        
         err_counters.tx_counter := tx_mt_erp;
-        set_error_counters(err_counters, ID_1, mem_bus(1));
-        get_fault_state(fault_state, ID_1, mem_bus(1));
-        check(fault_state = fc_error_passive, "Node Error passive!");       
+        set_error_counters(err_counters, DUT_NODE, chn);
+        
+        get_fault_state(fault_state, DUT_NODE, chn);
+        check_m(fault_state = fc_error_passive, "Node Error passive!");       
 
         err_counters.rx_counter := rx_lt_erp;
-        set_error_counters(err_counters, ID_1, mem_bus(1));
-        get_fault_state(fault_state, ID_1, mem_bus(1));
-        check(fault_state = fc_error_passive, "Node Error passive!");
+        set_error_counters(err_counters, DUT_NODE, chn);
+        
+        get_fault_state(fault_state, DUT_NODE, chn);
+        check_m(fault_state = fc_error_passive, "Node Error passive!");
         
         err_counters.tx_counter := tx_lt_erp;
-        set_error_counters(err_counters, ID_1, mem_bus(1));
-        get_fault_state(fault_state, ID_1, mem_bus(1));
-        check(fault_state = fc_error_active, "Node Error active!");        
+        set_error_counters(err_counters, DUT_NODE, chn);
+        
+        get_fault_state(fault_state, DUT_NODE, chn);
+        check_m(fault_state = fc_error_active, "Node Error active!");        
 
         -----------------------------------------------------------------------
-        -- @4. Increment RX Error counter to more than 255 and check that Node 1
-        --    is Error Passive (should not go to bus-off by RX Counter).
+        -- @4. Increment RX Error counter to more than 255 and check that DUT
+        --     is Error Passive (should not go to bus-off by RX Counter).
         -----------------------------------------------------------------------
-        info("Step 4");
+        info_m("Step 4");
+        
         err_counters.rx_counter := rx_mt_bof;
-        set_error_counters(err_counters, ID_1, mem_bus(1));
-        get_fault_state(fault_state, ID_1, mem_bus(1));
-        check(fault_state = fc_error_passive, "Node Error passive!");
+        set_error_counters(err_counters, DUT_NODE, chn);
+        
+        get_fault_state(fault_state, DUT_NODE, chn);
+        check_m(fault_state = fc_error_passive, "Node Error passive!");
 
         -----------------------------------------------------------------------
-        -- @5. Increment TX Counter to go above 255 and check that Node 1 is now
-        --    bus off.
+        -- @5. Increment TX Counter to go above 255 and check that DUT is now
+        --     bus off.
         -----------------------------------------------------------------------
-        info("Step 5");
+        info_m("Step 5");
+        
         err_counters.tx_counter := tx_mt_bof;
-        set_error_counters(err_counters, ID_1, mem_bus(1));
-        get_fault_state(fault_state, ID_1, mem_bus(1));
-        check(fault_state = fc_bus_off, "Node Bus off!");
+        set_error_counters(err_counters, DUT_NODE, chn);
+        
+        get_fault_state(fault_state, DUT_NODE, chn);
+        check_m(fault_state = fc_bus_off, "Node Bus off!");
 
         -----------------------------------------------------------------------
         -- @6. Issue COMMAND[ERCRST] and wait for 128*11 recessive bits. Check 
-        --    that Node 1 becomes Error Active.
+        --    that DUT becomes Error Active.
         -----------------------------------------------------------------------
-        info("Step 6");
+        info_m("Step 6");
+        
         command.err_ctrs_rst := true;
-        CAN_wait_sample_point(iout(1).stat_bus, false);
+        CAN_wait_sample_point(DUT_NODE, chn);
         wait for 20 ns; -- To make sure sample point is missed!
-        give_controller_command(command, ID_1, mem_bus(1));
+        give_controller_command(command, DUT_NODE, chn);
 
         -- Wait for 128 * 11 + 10 consecutive recessive bits
         for i in 0 to (128 * 11) - 1 loop
-            CAN_wait_sample_point(iout(1).stat_bus, false);
+            CAN_wait_sample_point(DUT_NODE, chn);
         end loop;
 
         for i in 0 to 10 loop
-            CAN_wait_sample_point(iout(1).stat_bus, false);
+            CAN_wait_sample_point(DUT_NODE, chn);
         end loop;
 
-        get_fault_state(fault_state, ID_1, mem_bus(1));
-        check(fault_state = fc_bus_off,
+        get_fault_state(fault_state, DUT_NODE, chn);
+        check_m(fault_state = fc_bus_off,
             "Node not reintegrated before 129 * 11 bits");
 
-        CAN_wait_sample_point(iout(1).stat_bus, false);
+        CAN_wait_sample_point(DUT_NODE, chn);
         wait for 20 ns;
         
-        get_fault_state(fault_state, ID_1, mem_bus(1));
-        check(fault_state = fc_error_active,
+        get_fault_state(fault_state, DUT_NODE, chn);
+        check_m(fault_state = fc_error_active,
             "Node reintegration finished after 129 * 11 bits");
 
-        read_error_counters(err_counters, ID_1, mem_bus(1));
-        check(err_counters.tx_counter = 0, "TX Error counter erased!");
-        check(err_counters.rx_counter = 0, "RX Error counter erased!");
+        read_error_counters(err_counters, DUT_NODE, chn);
+        check_m(err_counters.tx_counter = 0, "TX Error counter erased!");
+        check_m(err_counters.rx_counter = 0, "RX Error counter erased!");
 
     end procedure;
 

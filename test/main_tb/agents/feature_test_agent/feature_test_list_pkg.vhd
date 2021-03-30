@@ -90,6 +90,9 @@ context ctu_can_fd_tb.tb_common_context;
 -- Feature test packages
 use ctu_can_fd_tb.device_id_ftest.all;
 use ctu_can_fd_tb.dlc_can20_8_64_bytes_ftest.all;
+use ctu_can_fd_tb.fault_state_ftest.all;
+use ctu_can_fd_tb.glitch_filtering_ftest.all;
+
 use ctu_can_fd_tb.mode_bus_monitoring_ftest.all;
 use ctu_can_fd_tb.mode_fd_enable_ftest.all;
 use ctu_can_fd_tb.mode_loopback_ftest.all;
@@ -97,6 +100,12 @@ use ctu_can_fd_tb.mode_fdrf_ftest.all;
 use ctu_can_fd_tb.mode_pex_ftest.all;
 use ctu_can_fd_tb.mode_restr_op_ftest.all;
 use ctu_can_fd_tb.mode_test_ftest.all;
+use ctu_can_fd_tb.mode_self_test_ftest.all;
+use ctu_can_fd_tb.mode_frame_filters_ftest.all;
+
+use ctu_can_fd_tb.one_shot_ftest.all;
+use ctu_can_fd_tb.rec_saturation_ftest.all;
+use ctu_can_fd_tb.rx_counter_ftest.all;
 
 
 package feature_test_list_pkg is
@@ -120,7 +129,11 @@ package body feature_test_list_pkg is
             device_id_ftest_exec(channel);
         elsif (test_name = "dlc_can20_8_64_bytes") then
             dlc_can20_8_64_bytes_ftest_exec(channel);
-        
+        elsif (test_name = "glitch_filtering") then
+            glitch_filtering_ftest_exec(channel);
+        elsif (test_name = "fault_state") then
+            fault_state_ftest_exec(channel);
+                    
         elsif (test_name = "mode_bus_monitoring") then
             mode_bus_monitoring_ftest_exec(channel);
         elsif (test_name = "mode_fd_enable") then
@@ -135,6 +148,17 @@ package body feature_test_list_pkg is
             mode_restr_op_ftest_exec(channel);
         elsif (test_name = "mode_test") then
             mode_test_ftest_exec(channel);
+        elsif (test_name = "mode_self_test") then
+            mode_self_test_ftest_exec(channel);
+        elsif (test_name = "mode_frame_filters") then
+            mode_frame_filters_ftest_exec(channel);
+
+        elsif (test_name = "one_shot") then
+            one_shot_ftest_exec(channel);
+        elsif (test_name = "rec_saturation") then
+            rec_saturation_ftest_exec(channel);
+        elsif (test_name = "rx_counter") then
+            rx_counter_ftest_exec(channel);
             
         else
             error_m("TODO: Implement calling feature test function based on test name!!");

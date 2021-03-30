@@ -77,10 +77,10 @@
 --      will not cause its overflow.
 --
 -- @Test sequence:
---  @1. Set Test mode in Node 1. Disable CAN FD support in Node 1 and Set REC to
---      510 in Node 1. Check that REC is 510.
---  @2. Send CAN FD frame by Node 2 few times. Wait until CAN frame is sent and
---      check that REC in Node 1 is 511 after first frame (was incremented by 1)
+--  @1. Set Test mode in DUT. Disable CAN FD support in DUT and Set REC to
+--      510 in DUT. Check that REC is 510.
+--  @2. Send CAN FD frame by Test node few times. Wait until CAN frame is sent 
+--      andcheck that REC in DUT is 511 after first frame (was incremented by 1)
 --      and also after each next attempt to transmitt a frame.
 --
 -- @TestInfoEnd
@@ -90,32 +90,23 @@
 --------------------------------------------------------------------------------
 
 Library ctu_can_fd_tb;
-context ctu_can_fd_tb.ctu_can_synth_context;
-context ctu_can_fd_tb.ctu_can_test_context;
+context ctu_can_fd_tb.ieee_context;
+context ctu_can_fd_tb.rtl_context;
+context ctu_can_fd_tb.tb_common_context;
 
-use ctu_can_fd_tb.pkg_feature_exec_dispath.all;
+use ctu_can_fd_tb.feature_test_agent_pkg.all;
 
-package rec_saturation_feature is
-    procedure rec_saturation_feature_exec(
-        signal      so              : out    feature_signal_outputs_t;
-        signal      rand_ctr        : inout  natural range 0 to RAND_POOL_SIZE;
-        signal      iout            : in     instance_outputs_arr_t;
-        signal      mem_bus         : inout  mem_bus_arr_t;
-        signal      bus_level       : in     std_logic
+package rec_saturation_ftest is
+    procedure rec_saturation_ftest_exec(
+        signal      chn             : inout  t_com_channel
     );
 end package;
 
 
-package body rec_saturation_feature is
-    procedure rec_saturation_feature_exec(
-        signal      so              : out    feature_signal_outputs_t;
-        signal      rand_ctr        : inout  natural range 0 to RAND_POOL_SIZE;
-        signal      iout            : in     instance_outputs_arr_t;
-        signal      mem_bus         : inout  mem_bus_arr_t;
-        signal      bus_level       : in     std_logic
+package body rec_saturation_ftest is
+    procedure rec_saturation_ftest_exec(
+        signal      chn             : inout  t_com_channel
     ) is
-        variable ID_1               :       natural := 1;
-        variable ID_2               :       natural := 2;
         variable CAN_frame          :       SW_CAN_frame_type;
         variable frame_sent         :       boolean := false;
         variable mode_1             :       SW_mode := SW_mode_rst_val;
@@ -123,47 +114,50 @@ package body rec_saturation_feature is
     begin
 
         ------------------------------------------------------------------------
-        -- @1. Set Test mode in Node 1. Disable CAN FD support in Node 1 and Set
-        --    REC to 510 in Node 1. Check that REC is 510.
+        -- @1. Set Test mode in DUT. Disable CAN FD support in DUT and Set
+        --     REC to 510 in DUT. Check that REC is 510.
         ------------------------------------------------------------------------
-        info("Step 1");
+        info_m("Step 1");
+        
         mode_1.test := true;
         mode_1.flexible_data_rate := false;
-        set_core_mode(mode_1, ID_1, mem_bus(1));
+        set_core_mode(mode_1, DUT_NODE, chn);
 
         err_counters.rx_counter := 510;
-        set_error_counters(err_counters, ID_1, mem_bus(1));
+        set_error_counters(err_counters, DUT_NODE, chn);
+        
         err_counters.rx_counter := 0;
-        read_error_counters(err_counters, ID_1, mem_bus(1));
-        check(err_counters.rx_counter = 510, "REC set properly!");
+        read_error_counters(err_counters, DUT_NODE, chn);
+        
+        check_m(err_counters.rx_counter = 510, "REC set properly!");
 
         ------------------------------------------------------------------------
-        -- @2. Send CAN FD frame by Node 2 few times. Wait until CAN frame is
-        --    sent and check that REC in Node 1 is 511 after first frame (was
-        --    incremented by 1) and also after each next attempt to transmitt a
-        --    frame.
+        -- @2. Send CAN FD frame by Test node few times. Wait until CAN frame is
+        --     sent and check that REC in DUT is 511 after first frame (was
+        --     incremented by 1) and also after each next attempt to transmitt a
+        --     frame.
         ------------------------------------------------------------------------
-        info("Step 2");
+        info_m("Step 2");
         
         -- Set to one shot mode
-        CAN_enable_retr_limit(true, 0, ID_1, mem_bus(1));
+        CAN_enable_retr_limit(true, 0, DUT_NODE, chn);
 
-        CAN_generate_frame(rand_ctr, CAN_frame);
+        CAN_generate_frame(CAN_frame);
         CAN_frame.frame_format := FD_CAN;
 
         for i in 0 to 3 loop
-            CAN_send_frame(CAN_frame, 1, ID_2, mem_bus(2), frame_sent);
-            CAN_wait_frame_sent(ID_2, mem_bus(2));
+            CAN_send_frame(CAN_frame, 1, TEST_NODE, chn, frame_sent);
+            CAN_wait_frame_sent(TEST_NODE, chn);
             
-            CAN_wait_bus_idle(ID_1, mem_bus(1));
-            CAN_wait_bus_idle(ID_2, mem_bus(2));
+            CAN_wait_bus_idle(DUT_NODE, chn);
+            CAN_wait_bus_idle(TEST_NODE, chn);
 
-            read_error_counters(err_counters, ID_1, mem_bus(1));
+            read_error_counters(err_counters, DUT_NODE, chn);
             
             if (i = 0) then
-                check(err_counters.rx_counter = 511, "REC incremented to 511!");
+                check_m(err_counters.rx_counter = 511, "REC incremented to 511!");
             else
-                check(err_counters.rx_counter = 511, "REC remains saturated at 511!");
+                check_m(err_counters.rx_counter = 511, "REC remains saturated at 511!");
             end if;
         end loop;
 
