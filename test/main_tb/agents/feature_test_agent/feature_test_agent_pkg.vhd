@@ -133,6 +133,8 @@ package feature_test_agent_pkg is
     constant FEATURE_TEST_AGNT_FORCE_CAN_RX             : integer := 2;
     constant FEATURE_TEST_AGNT_RELEASE_CAN_RX           : integer := 3;
     constant FEATURE_TEST_AGNT_SET_TRV_DELAY            : integer := 4;
+    constant FEATURE_TEST_AGNT_CHECK_BUS_LEVEL          : integer := 5;
+    constant FEATURE_TEST_AGNT_CHECK_CAN_TX             : integer := 6;
     
     -- Tag for messages
     constant FEATURE_TEST_AGENT_TAG : string := "Feature test Agent: ";
@@ -550,6 +552,20 @@ package feature_test_agent_pkg is
         signal channel                  : inout t_com_channel              
     );
 
+    
+    ---------------------------------------------------------------------------
+    -- Check bus level to be equal to a value.
+    --
+    -- Arguments:
+    --  value       Expected value of bus
+    --  channel     Communication channel
+    ---------------------------------------------------------------------------
+    procedure check_bus_level(
+        constant value                    : in    std_logic;
+        constant msg                      : in    string;
+        signal   channel                  : inout t_com_channel
+    );
+
     ---------------------------------------------------------------------------
     -- Force CAN RX of single controller to given value. This can be used when
     -- only RX value of single node shall be forced to different value
@@ -577,6 +593,22 @@ package feature_test_agent_pkg is
         signal   channel         : inout t_com_channel  
     );
 
+    
+    ---------------------------------------------------------------------------
+    -- Checks value send on CAN_TX by a node.
+    --
+    -- Arguments:
+    --  value       Expected value to be sent
+    --  node        Node whose CAN_TX value ot check
+    --  msg         Message to be printed
+    --  channel     Communication channel
+    ---------------------------------------------------------------------------
+    procedure check_can_tx(
+        constant value              : in    std_logic;
+        constant node               : in    t_feature_node;
+        constant msg                : in    string;
+        signal   channel            : inout t_com_channel
+    );
 
     ----------------------------------------------------------------------------
     -- Memory access routines
@@ -1846,6 +1878,19 @@ package body feature_test_agent_pkg is
     end procedure;
 
 
+    procedure check_bus_level(
+        constant value                    : in    std_logic;
+        constant msg                      : in    string;
+        signal   channel                  : inout t_com_channel
+    ) is
+    begin
+        info_m(FEATURE_TEST_AGENT_TAG & msg);
+        com_channel_data.set_param(value);
+        send(channel, C_FEATURE_TEST_AGENT_ID, FEATURE_TEST_AGNT_CHECK_BUS_LEVEL);
+        debug_m("Bus level checked");
+    end procedure;
+
+
     procedure force_can_rx(
         constant value           : in    std_logic;
         constant node            : in    t_feature_node;
@@ -1874,6 +1919,25 @@ package body feature_test_agent_pkg is
         info_m(FEATURE_TEST_AGENT_TAG & "Releasing CAN RX");
         send(channel, C_FEATURE_TEST_AGENT_ID, FEATURE_TEST_AGNT_RELEASE_CAN_RX);        
         debug_m("CAN RX released");
+    end procedure;
+
+
+    procedure check_can_tx(
+        constant value              : in    std_logic;
+        constant node               : in    t_feature_node;
+        constant msg                : in    string;
+        signal   channel            : inout t_com_channel
+    ) is
+    begin
+        info_m(FEATURE_TEST_AGENT_TAG & msg);
+        if (node = DUT_NODE) then
+            com_channel_data.set_param(0);
+        else
+            com_channel_data.set_param(1);
+        end if;
+        com_channel_data.set_param(value);
+        send(channel, C_FEATURE_TEST_AGENT_ID, FEATURE_TEST_AGNT_CHECK_CAN_TX);
+        debug_m("CAN TX Checked");
     end procedure;
 
 
@@ -2686,6 +2750,8 @@ package body feature_test_agent_pkg is
         variable r_data         :       std_logic_vector(31 downto 0) :=
                                         (OTHERS => '0');
     begin
+        mem_bus_agent_disable_transaction_reporting(channel);
+        
         -- Wait until unit starts to transmitt or recieve
         CAN_read(r_data, STATUS_ADR, node, channel);
         while (r_data(RXS_IND) = '0' and r_data(TXS_IND) = '0') loop
@@ -2697,6 +2763,8 @@ package body feature_test_agent_pkg is
         while (r_data(EFT_IND) = '0') loop
             CAN_read(r_data, STATUS_ADR, node, channel);
         end loop;
+        
+        mem_bus_agent_enable_transaction_reporting(channel);
     end procedure;
 
 

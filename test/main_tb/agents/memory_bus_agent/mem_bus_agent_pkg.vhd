@@ -617,13 +617,15 @@ package body mem_bus_agent_pkg is
                 write_data(31 downto 24) := data_in;
             end case;
         when 16 =>
-            case (address mod 2) is
+            case (address mod 4) is
             when 0 =>
                 be := "0011";
                 write_data(15 downto 0) := data_in;
-            when 1 =>
+            when 2 =>
                 be := "1100";
                 write_data(31 downto 16) := data_in;
+            when others =>
+                error_m("Unsupported 16 bit write at addr: " & to_string(address));
             end case;
         when others =>
             be := "1111";

@@ -93,7 +93,7 @@ feature:
         fault_state:
         glitch_filtering:
         mode_loopback:
-        mode_bus_monitoring:
+
         mode_self_test:
         mode_frame_filters:
             iterations: 6
@@ -180,22 +180,3 @@ reference:
             data_path: reference/data_sets/log_500Kb_2Mb_80p_1K_samples_9
         data_set_10:
             data_path: reference/data_sets/log_500Kb_2Mb_80p_1K_samples_10
-sanity:
-    default:
-        <<: *default
-        iterations: 5
-        timeout: 2 sec
-        gauss_iter: 40
-        wave: sanity/sanity_env_setup.tcl
-        dump_all_signals: false
-    tests:
-        "1Mb/5Mb 20 m Star":
-            topology: star
-            bus_len_v: [10.0, 10.0, 10.0, 10.0, 0.0, 0.0]
-            trv_del_v: [10, 10, 10, 10]
-            osc_tol_v: [0, 5, 10, 15]
-            nw_mean: 70.0
-            nw_var: 5.0
-            ng_mean: 300000.0
-            ng_var:  100000.0
-            timing_config: [1, 1, 33, 33, 33, 4, 4, 8, 7, 3]

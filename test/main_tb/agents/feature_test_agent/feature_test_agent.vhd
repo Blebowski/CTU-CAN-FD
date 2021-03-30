@@ -208,6 +208,7 @@ begin
         variable cmd : integer;
         variable reply_code : integer;
         variable tmp : integer;
+        variable tmp_logic : std_logic;
     begin
         receive_start(default_channel, C_FEATURE_TEST_AGENT_ID);
 
@@ -242,6 +243,20 @@ begin
                 can_tx_delay_dut <= com_channel_data.get_param;
             else
                 can_tx_delay_test_node <= com_channel_data.get_param;
+            end if;
+
+        when FEATURE_TEST_AGNT_CHECK_BUS_LEVEL =>
+            tmp_logic := com_channel_data.get_param; 
+            check_m(tmp_logic = bus_level, FEATURE_TEST_AGENT_TAG &
+                    "Bus level value shoul be:" & std_logic'image(tmp_logic));
+
+        when FEATURE_TEST_AGNT_CHECK_CAN_TX =>
+            tmp := com_channel_data.get_param;
+            tmp_logic := com_channel_data.get_param;
+            if (tmp = 0) then
+                check_m(tmp_logic = dut_can_tx, "DUT CAN TX");
+            else
+                check_m(tmp_logic = test_node_can_tx, "Test node CAN TX");
             end if;
 
         when others =>
@@ -314,7 +329,9 @@ begin
         info_m("***************************************************************");
         info_m("Clearing TXT Buffer memories!");
         info_m("***************************************************************");
+        info_m("DUT node:");
         CAN_init_txtb_mems(DUT_NODE, default_channel);
+        info_m("Test node:");
         CAN_init_txtb_mems(TEST_NODE, default_channel);
         
         -- Configure bit timing
@@ -342,7 +359,8 @@ begin
         clk_gen_agent_stop(default_channel);
 
         -- Signal test is done.
-        -- TODO: Result, test reports error upon mismatch, however, no result is obtained!
+        -- No result is taken from feature tests, failure is detected by Error
+        -- severity and test is always uported then !!!
         feature_result <= '1';
         wait for 0 ns;
         feature_done <= '1';

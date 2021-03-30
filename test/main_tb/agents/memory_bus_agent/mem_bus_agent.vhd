@@ -304,7 +304,8 @@ begin
             if (trans_report_en) then
                 info_m(MEM_BUS_AGENT_TAG & "Write to:  " & node_str &
                     "Address: 0x" & to_hstring(std_logic_vector(to_unsigned(curr_access.address, 32))) &
-                    ", Write Data: 0x" & to_hstring(curr_access.write_data)
+                    ", Write Data: 0x" & to_hstring(curr_access.write_data) &
+                    ", Be: " & to_hstring(curr_access.byte_enable)
                    );
             end if;
         end procedure;
@@ -323,8 +324,9 @@ begin
 
             if (trans_report_en) then
                 info_m(MEM_BUS_AGENT_TAG & "Read from: " & node_str &
-                    "Address: " & to_hstring(std_logic_vector(to_unsigned(curr_access.address, 32))) &
-                    ", Read Data: 0x" & to_hstring(curr_access.read_data)
+                    "Address: 0x" & to_hstring(std_logic_vector(to_unsigned(curr_access.address, 32))) &
+                    ", Read Data: 0x" & to_hstring(curr_access.read_data) &
+                    ", Be: " & to_hstring(curr_access.byte_enable)
                     );
             end if;
         end procedure;
