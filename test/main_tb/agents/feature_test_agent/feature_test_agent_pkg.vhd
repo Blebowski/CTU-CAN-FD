@@ -3658,11 +3658,10 @@ package body feature_test_agent_pkg is
     begin
         data((EW_LIMIT_H mod 8) downto (EW_LIMIT_L mod 8)) :=
             std_logic_vector(to_unsigned(fault_th.ewl, 8));
-
+        CAN_write(data, EWL_ADR, node, channel);
+        
         data((ERP_LIMIT_H mod 8) downto (ERP_LIMIT_L mod 8)) :=
             std_logic_vector(to_unsigned(fault_th.erp, 8));
-
-        CAN_write(data, EWL_ADR, node, channel);
         CAN_write(data, ERP_ADR, node, channel);
     end procedure;
 

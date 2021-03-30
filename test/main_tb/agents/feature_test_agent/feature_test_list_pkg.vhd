@@ -95,6 +95,8 @@ use ctu_can_fd_tb.mode_fd_enable_ftest.all;
 use ctu_can_fd_tb.mode_loopback_ftest.all;
 use ctu_can_fd_tb.mode_fdrf_ftest.all;
 use ctu_can_fd_tb.mode_pex_ftest.all;
+use ctu_can_fd_tb.mode_restr_op_ftest.all;
+use ctu_can_fd_tb.mode_test_ftest.all;
 
 
 package feature_test_list_pkg is
@@ -118,6 +120,7 @@ package body feature_test_list_pkg is
             device_id_ftest_exec(channel);
         elsif (test_name = "dlc_can20_8_64_bytes") then
             dlc_can20_8_64_bytes_ftest_exec(channel);
+        
         elsif (test_name = "mode_bus_monitoring") then
             mode_bus_monitoring_ftest_exec(channel);
         elsif (test_name = "mode_fd_enable") then
@@ -128,6 +131,11 @@ package body feature_test_list_pkg is
             mode_fdrf_ftest_exec(channel);
         elsif (test_name = "mode_pex") then
             mode_pex_ftest_exec(channel);
+        elsif (test_name = "mode_restr_op") then
+            mode_restr_op_ftest_exec(channel);
+        elsif (test_name = "mode_test") then
+            mode_test_ftest_exec(channel);
+            
         else
             error_m("TODO: Implement calling feature test function based on test name!!");
         end if;

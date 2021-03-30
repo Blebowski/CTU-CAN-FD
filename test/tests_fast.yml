@@ -97,9 +97,7 @@ feature:
         mode_frame_filters:
             iterations: 6
         mode_rst:
-        mode_test:
 
-        mode_restr_op:
 
         int_rx:
         int_tx:

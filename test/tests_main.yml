@@ -276,9 +276,13 @@ feature:
     tests:
         device_id:
         dlc_can20_8_64_bytes:
+
         mode_bus_monitoring:
         mode_loopback:
         mode_fd_enable:
         mode_fdrf:
         mode_pex:
-        mode_rst:
+        mode_rst: # Still TODO
+        mode_restr_op:
+        mode_test:
+        
