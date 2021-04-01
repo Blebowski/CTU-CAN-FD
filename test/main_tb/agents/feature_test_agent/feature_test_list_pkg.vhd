@@ -90,6 +90,14 @@ context ctu_can_fd_tb.tb_common_context;
 -- Feature test packages
 use ctu_can_fd_tb.device_id_ftest.all;
 use ctu_can_fd_tb.dlc_can20_8_64_bytes_ftest.all;
+
+use ctu_can_fd_tb.err_capt_ack_ack_ftest.all;
+use ctu_can_fd_tb.err_capt_arb_bit_ftest.all;
+use ctu_can_fd_tb.err_capt_arb_stuff_ftest.all;
+use ctu_can_fd_tb.err_capt_crc_bit_ftest.all;
+use ctu_can_fd_tb.err_capt_crc_err_ftest.all;
+use ctu_can_fd_tb.err_capt_ctrl_bit_ftest.all;
+
 use ctu_can_fd_tb.fault_state_ftest.all;
 use ctu_can_fd_tb.glitch_filtering_ftest.all;
 
@@ -131,6 +139,20 @@ package body feature_test_list_pkg is
             dlc_can20_8_64_bytes_ftest_exec(channel);
         elsif (test_name = "glitch_filtering") then
             glitch_filtering_ftest_exec(channel);
+
+        elsif (test_name = "err_capt_ack_ack") then
+            err_capt_ack_ack_ftest_exec(channel);            
+        elsif (test_name = "err_capt_arb_bit") then
+            err_capt_arb_bit_ftest_exec(channel);
+        elsif (test_name = "err_capt_arb_stuff") then
+            err_capt_arb_stuff_ftest_exec(channel);
+        elsif (test_name = "err_capt_crc_bit") then
+            err_capt_crc_bit_ftest_exec(channel);
+        elsif (test_name = "err_capt_crc_err") then
+            err_capt_crc_err_ftest_exec(channel);
+        elsif (test_name = "err_capt_ctrl_bit") then
+            err_capt_ctrl_bit_ftest_exec(channel);
+                                                
         elsif (test_name = "fault_state") then
             fault_state_ftest_exec(channel);
                     

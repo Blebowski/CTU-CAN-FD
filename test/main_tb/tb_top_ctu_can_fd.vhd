@@ -359,6 +359,8 @@ begin
         info("");
         info("***************************************************************");
 
+        show(get_logger(default_checker), display_handler, pass);
+
         for i in 1 to iterations loop
             info("***************************************************************");
             info(" Iteration nr: " & integer'image(i));

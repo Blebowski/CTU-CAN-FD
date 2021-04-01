@@ -135,6 +135,8 @@ package feature_test_agent_pkg is
     constant FEATURE_TEST_AGNT_SET_TRV_DELAY            : integer := 4;
     constant FEATURE_TEST_AGNT_CHECK_BUS_LEVEL          : integer := 5;
     constant FEATURE_TEST_AGNT_CHECK_CAN_TX             : integer := 6;
+    constant FEATURE_TEST_AGNT_GET_CAN_TX               : integer := 7;
+    constant FEATURE_TEST_AGNT_GET_CAN_RX               : integer := 8;
     
     -- Tag for messages
     constant FEATURE_TEST_AGENT_TAG : string := "Feature test Agent: ";
@@ -607,6 +609,34 @@ package feature_test_agent_pkg is
         constant value              : in    std_logic;
         constant node               : in    t_feature_node;
         constant msg                : in    string;
+        signal   channel            : inout t_com_channel
+    );
+    
+    ---------------------------------------------------------------------------
+    -- Reads value send on CAN_TX by a node.
+    --
+    -- Arguments:
+    --  node        Node whose CAN_TX value ot check
+    --  channel     Communication channel
+    --  value       Read value.
+    ---------------------------------------------------------------------------
+    procedure get_can_tx(
+        constant node               : in    t_feature_node;
+        variable value              : out   std_logic;
+        signal   channel            : inout t_com_channel
+    );
+    
+    ---------------------------------------------------------------------------
+    -- Reads value received on CAN_RX by a node.
+    --
+    -- Arguments:
+    --  node        Node whose CAN_TX value ot check
+    --  channel     Communication channel
+    --  value       Read value.
+    ---------------------------------------------------------------------------
+    procedure get_can_rx(
+        constant node               : in    t_feature_node;
+        variable value              : out   std_logic;
         signal   channel            : inout t_com_channel
     );
 
@@ -1938,6 +1968,39 @@ package body feature_test_agent_pkg is
         com_channel_data.set_param(value);
         send(channel, C_FEATURE_TEST_AGENT_ID, FEATURE_TEST_AGNT_CHECK_CAN_TX);
         debug_m("CAN TX Checked");
+    end procedure;
+
+
+    procedure get_can_tx(
+        constant node               : in    t_feature_node;
+        variable value              : out   std_logic;
+        signal   channel            : inout t_com_channel
+    ) is
+    begin
+        if (node = DUT_NODE) then
+            com_channel_data.set_param(0);
+        else
+            com_channel_data.set_param(1);
+        end if;
+        com_channel_data.set_param(value);
+        send(channel, C_FEATURE_TEST_AGENT_ID, FEATURE_TEST_AGNT_GET_CAN_TX);
+        value := com_channel_data.get_param;
+    end procedure;
+
+
+    procedure get_can_rx(
+        constant node               : in    t_feature_node;
+        variable value              : out   std_logic;
+        signal   channel            : inout t_com_channel
+    ) is
+    begin
+        if (node = DUT_NODE) then
+            com_channel_data.set_param(0);
+        else
+            com_channel_data.set_param(1);
+        end if;
+        send(channel, C_FEATURE_TEST_AGENT_ID, FEATURE_TEST_AGNT_GET_CAN_RX);
+        value := com_channel_data.get_param;
     end procedure;
 
 

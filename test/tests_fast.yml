@@ -69,12 +69,9 @@ feature:
         command_ercrst:
         device_id:
         dlc_can20_8_64_bytes:
-        err_capt_ack_ack:
-        err_capt_arb_bit:
-        err_capt_arb_stuff:
-        err_capt_crc_bit:
-        err_capt_crc_err:
-        err_capt_ctrl_bit:
+        
+
+
         err_capt_ctrl_form:
         err_capt_data_bit:
         err_capt_eof:

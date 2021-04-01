@@ -113,7 +113,7 @@ def test(obj, *, config, vunit_args):
 
     add_rtl_sources(ctu_can_fd_rtl)
 
-    #ui.enable_check_preprocessing()
+    ui.enable_check_preprocessing()
     #ui.enable_location_preprocessing()  # (additional_subprograms=['log'])
 
     tests = []

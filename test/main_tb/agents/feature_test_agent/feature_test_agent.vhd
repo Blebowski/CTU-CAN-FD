@@ -197,7 +197,7 @@ begin
         can_rx      => test_node_can_rx,
 
         -- Test probe, timestamp, not needed for test node!
-        test_probe  => open,
+        test_probe  => test_node_test_probe,
         timestamp   => (OTHERS => '1')
     );
 
@@ -257,6 +257,22 @@ begin
                 check_m(tmp_logic = dut_can_tx, "DUT CAN TX");
             else
                 check_m(tmp_logic = test_node_can_tx, "Test node CAN TX");
+            end if;
+
+        when FEATURE_TEST_AGNT_GET_CAN_TX =>
+            tmp := com_channel_data.get_param;
+            if (tmp = 0) then
+                com_channel_data.set_param(dut_can_tx);
+            else
+                com_channel_data.set_param(test_node_can_tx);
+            end if;
+
+        when FEATURE_TEST_AGNT_GET_CAN_RX =>
+            tmp := com_channel_data.get_param;
+            if (tmp = 0) then
+                com_channel_data.set_param(dut_can_rx);
+            else
+                com_channel_data.set_param(test_node_can_rx);
             end if;
 
         when others =>
