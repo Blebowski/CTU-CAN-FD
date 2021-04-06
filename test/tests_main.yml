@@ -283,6 +283,12 @@ feature:
         err_capt_crc_bit:
         err_capt_crc_err:
         err_capt_ctrl_bit:
+        err_capt_ctrl_form:
+        err_capt_data_bit:
+        err_capt_eof:
+        err_capt_err_frm:
+        err_capt_ovr_frm:
+        err_capt_sof:
         
         fault_state:
 

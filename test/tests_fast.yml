@@ -71,13 +71,11 @@ feature:
         dlc_can20_8_64_bytes:
         
 
-
-        err_capt_ctrl_form:
-        err_capt_data_bit:
-        err_capt_eof:
-        err_capt_err_frm:
+        
+        
+        
         err_capt_sof:
-        err_capt_ovr_frm:
+        
         err_norm_fd:
         error_rules_a:
         error_rules_b:

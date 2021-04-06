@@ -70,20 +70,19 @@
 -- @TestInfoStart
 --
 -- @Purpose:
---  ERR_CAPT[ERR_POS] = ERC_POS_OVRL, Error code capture in Overload frame
---  feature test. 
+--  ERR_CAPT[ERR_POS] = ERC_POS_EOF. Error code capture in End of frame feature
+--  test.
 --
 -- @Verifies:
---  @1. Value of ERR_CAPT register when Error is detected inside Overload frame.
+--  @1. Detection of Form error in End of frame field. Value of ERR_CAPT when
+--      Form Error should have been detected in EOF field.
 --
 -- @Test sequence:
 --  @1. Check that ERR_CAPT contains no error (post reset).
---  @2. Generate CAN frame and send it by Node 1. Wait until intermission field
---      and force bus low (overload condition). Check that Node 1 transmitts
---      Overload frame. Wait for random number of bits (0-4) and force bus high
---      for one bit time. Check that Node 1 is transmitting Error frame. Read
---      Error code capture and check that error occured in Overload frame and
---      it was a bit error!
+--  @2. Generate CAN frame and send it by DUT. Wait until End of frame field
+--      of DUT and wait for random number of bits (between 0 and 4). Force
+--      bus level dominant and wait until sample point. Check that Error frame
+--      is being transmitted and check value of ERR_CAPT.
 --
 -- @TestInfoEnd
 --------------------------------------------------------------------------------
@@ -92,98 +91,80 @@
 --------------------------------------------------------------------------------
 
 Library ctu_can_fd_tb;
-context ctu_can_fd_tb.ctu_can_synth_context;
-context ctu_can_fd_tb.ctu_can_test_context;
+context ctu_can_fd_tb.ieee_context;
+context ctu_can_fd_tb.rtl_context;
+context ctu_can_fd_tb.tb_common_context;
 
-use ctu_can_fd_tb.pkg_feature_exec_dispath.all;
+use ctu_can_fd_tb.feature_test_agent_pkg.all;
 
-package err_capt_ovr_frm_feature is
-    procedure err_capt_ovr_frm_feature_exec(
-        signal      so              : out    feature_signal_outputs_t;
-        signal      rand_ctr        : inout  natural range 0 to RAND_POOL_SIZE;
-        signal      iout            : in     instance_outputs_arr_t;
-        signal      mem_bus         : inout  mem_bus_arr_t;
-        signal      bus_level       : in     std_logic
+package err_capt_eof_ftest is
+    procedure err_capt_eof_ftest_exec(
+        signal      chn             : inout  t_com_channel
     );
 end package;
 
 
-package body err_capt_ovr_frm_feature is
-    procedure err_capt_ovr_frm_feature_exec(
-        signal      so              : out    feature_signal_outputs_t;
-        signal      rand_ctr        : inout  natural range 0 to RAND_POOL_SIZE;
-        signal      iout            : in     instance_outputs_arr_t;
-        signal      mem_bus         : inout  mem_bus_arr_t;
-        signal      bus_level       : in     std_logic
-    ) is
-        variable ID_1               :     natural := 1;
-        variable ID_2               :     natural := 2;
-
+package body err_capt_eof_ftest is
+    procedure err_capt_eof_ftest_exec(
+        signal      chn             : inout  t_com_channel
+    ) is        
         -- Generated frames
         variable frame_1            :     SW_CAN_frame_type;
 
         -- Node status
-        variable stat_1             :     SW_status;    
+        variable stat_1             :     SW_status;
+        variable stat_2             :     SW_status;
 
-        variable wait_time          :     natural;
+        variable pc_dbg             :     SW_PC_Debug;    
+
         variable frame_sent         :     boolean;
-        variable err_capt           :     SW_error_capture;
-        variable mode_2             :     SW_mode;
         
-        variable pc_dbg             :     SW_PC_Debug;
+        variable err_capt           :     SW_error_capture;
+        variable mode_2             :     SW_mode := SW_mode_rst_val;
+        variable wait_time          :     natural;
     begin
 
         -----------------------------------------------------------------------
         -- @1. Check that ERR_CAPT contains no error (post reset).
         -----------------------------------------------------------------------
-        info("Step 1");
+        info_m("Step 1");
         
-        CAN_read_error_code_capture(err_capt, ID_1, mem_bus(1));
-        check(err_capt.err_pos = err_pos_other, "Reset of ERR_CAPT!");
+        CAN_read_error_code_capture(err_capt, DUT_NODE, chn);
+        check_m(err_capt.err_pos = err_pos_other, "Reset of ERR_CAPT!");
         
-        -----------------------------------------------------------------------
-        -- @2. Generate CAN frame and send it by Node 1. Wait until intermission
-        --     field and force bus low (overload condition). Check that Node 1
-        --     transmitts Overload frame. Wait for random number of bits (0-4)
-        --     and force bus high for one bit time. Check that Node 1 is
-        --     transmitting Error frame. Read Error code capture and check that
-        --     error occured in Overload frame and it was a bit error!
         -----------------------------------------------------------------------        
-        CAN_generate_frame(rand_ctr, frame_1);
-        CAN_send_frame(frame_1, 1, ID_1, mem_bus(1), frame_sent);
-        CAN_wait_pc_state(pc_deb_intermission, ID_1, mem_bus(1));
-        wait for 20 ns;
+        -- @2. Generate CAN frame and send it by DUT. Wait until End of
+        --     frame field of DUT and wait for random number of bits
+        --     (between 0 and 4). Force bus level dominant and wait until
+        --     sample point. Check that Error frame is being transmitted and
+        --     check value of ERR_CAPT.
+        -----------------------------------------------------------------------
+        info_m("Step 2");
         
-        -- Cause overload condition
-        force_bus_level(DOMINANT, so.bl_force, so.bl_inject);
-        CAN_wait_sample_point(iout(1).stat_bus, false);
-        wait for 20 ns; -- To be sure that opposite bit is sampled!
-        release_bus_level(so.bl_force);
+        CAN_generate_frame(frame_1);
+        CAN_send_frame(frame_1, 1, DUT_NODE, chn, frame_sent);
         
-        CAN_read_pc_debug(pc_dbg, ID_1, mem_bus(1));
-        check(pc_dbg = pc_deb_overload, "Overload frame transmitted!");
-        
-        rand_int_v(rand_ctr, 4, wait_time);
-        info("Waiting for: " & integer'image(wait_time) & " bits!");
+        CAN_wait_pc_state(pc_deb_eof, DUT_NODE, chn);
+        wait for 30 ns;
+
+        rand_int_v(4, wait_time);
+        info_m("waiting for:" & integer'image(wait_time) & " bits!");
         for i in 1 to wait_time loop
-            CAN_wait_sample_point(iout(1).stat_bus);
-        end loop; 
+            CAN_wait_sync_seg(DUT_NODE, chn);
+        end loop;
+
+        force_bus_level(DOMINANT, chn);
+        CAN_wait_sample_point(DUT_NODE, chn);
         wait for 20 ns;
+        release_bus_level(chn);
 
-        -- Cause bit error in Overload frame!
-        force_bus_level(RECESSIVE, so.bl_force, so.bl_inject);
-        CAN_wait_sample_point(iout(1).stat_bus, false);
-        wait for 20 ns; -- To be sure that opposite bit is sampled!
-        release_bus_level(so.bl_force);
+        CAN_read_error_code_capture(err_capt, DUT_NODE, chn);
+        check_m(err_capt.err_type = can_err_form, "Form error detected!");
+        check_m(err_capt.err_pos = err_pos_eof,
+            "Error detected in EOF field!");
 
-        get_controller_status(stat_1, ID_1, mem_bus(1));
-        check (stat_1.error_transmission, "Error frame is being transmitted!");
-
-        CAN_read_error_code_capture(err_capt, ID_1, mem_bus(1));
-        check(err_capt.err_type = can_err_bit, "Bit error detected!");
-        check(err_capt.err_pos = err_pos_overload_frame,
-                "Error detected in Overload frame!");
-        wait for 100 ns; -- For debug only to see waves properly!
+        CAN_wait_bus_idle(DUT_NODE, chn);
+        CAN_wait_bus_idle(TEST_NODE, chn);
 
   end procedure;
 

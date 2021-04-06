@@ -70,103 +70,125 @@
 -- @TestInfoStart
 --
 -- @Purpose:
---  ERR_CAPT[ERR_POS] = ERC_POS_ERR, Error code capture in Error frame feature
---  test. 
+--  ERR_CAPT[ERR_POS] = ERC_POS_ARB, bit error feature test. 
 --
 -- @Verifies:
---  @1. Value of ERR_CAPT register when Error is detected inside Error frame.
+--  @1. Detection of bit error in Arbitration field. Value of ERR_CAPT[ERR_POS]
+--      when bit error should have been detected in arbitration field.
 --
 -- @Test sequence:
 --  @1. Check that ERR_CAPT contains no error (post reset).
---  @2. Set Node 2 to ACK forbidden mode. Generate random frame and send it by
---      Node 1. Wait until error frame is transmitted by Node 1. Wait for
---      random amount of bits (0-5) and force bus to Recessive. Wait until
---      sample point and check value of Error code capture in Node 1.
+--  @2. Generate CAN frame and send it by DUT. Wait until transmission starts
+--      and wait until arbitration field. Wait for random amount of time until
+--      Dominant bit is sent! Force bus low and wait until sample point. Check
+--      that Error frame is being transmitted. Check value of ERR_CAPT.
 --
 -- @TestInfoEnd
 --------------------------------------------------------------------------------
 -- Revision History:
---    12.01.2020   Created file
+--    03.02.2020   Created file
 --------------------------------------------------------------------------------
 
 Library ctu_can_fd_tb;
-context ctu_can_fd_tb.ctu_can_synth_context;
-context ctu_can_fd_tb.ctu_can_test_context;
+context ctu_can_fd_tb.ieee_context;
+context ctu_can_fd_tb.rtl_context;
+context ctu_can_fd_tb.tb_common_context;
 
-use ctu_can_fd_tb.pkg_feature_exec_dispath.all;
+use ctu_can_fd_tb.feature_test_agent_pkg.all;
 
-package err_capt_err_frm_feature is
-    procedure err_capt_err_frm_feature_exec(
-        signal      so              : out    feature_signal_outputs_t;
-        signal      rand_ctr        : inout  natural range 0 to RAND_POOL_SIZE;
-        signal      iout            : in     instance_outputs_arr_t;
-        signal      mem_bus         : inout  mem_bus_arr_t;
-        signal      bus_level       : in     std_logic
+package err_capt_arb_bit_ftest is
+    procedure err_capt_arb_bit_ftest_exec(
+        signal      chn             : inout  t_com_channel
     );
 end package;
 
 
-package body err_capt_err_frm_feature is
-    procedure err_capt_err_frm_feature_exec(
-        signal      so              : out    feature_signal_outputs_t;
-        signal      rand_ctr        : inout  natural range 0 to RAND_POOL_SIZE;
-        signal      iout            : in     instance_outputs_arr_t;
-        signal      mem_bus         : inout  mem_bus_arr_t;
-        signal      bus_level       : in     std_logic
-    ) is
-        variable ID_1               :     natural := 1;
-        variable ID_2               :     natural := 2;
-
+package body err_capt_arb_bit_ftest is
+    procedure err_capt_arb_bit_ftest_exec(
+        signal      chn             : inout  t_com_channel
+    ) is        
         -- Generated frames
         variable frame_1            :     SW_CAN_frame_type;
 
         -- Node status
-        variable stat_1             :     SW_status;    
+        variable stat_1             :     SW_status;
 
+        variable pc_dbg             :     SW_PC_Debug;    
+
+        variable id_vect            :     std_logic_vector(28 downto 0);
         variable wait_time          :     natural;
+        
         variable frame_sent         :     boolean;
+        
         variable err_capt           :     SW_error_capture;
-        variable mode_2             :     SW_mode;
+        variable can_tx_val         :     std_logic;
     begin
 
         -----------------------------------------------------------------------
         -- @1. Check that ERR_CAPT contains no error (post reset).
         -----------------------------------------------------------------------
-        info("Step 1");
+        info_m("Step 1");
         
-        CAN_read_error_code_capture(err_capt, ID_1, mem_bus(1));
-        check(err_capt.err_pos = err_pos_other, "Reset of ERR_CAPT!");
+        CAN_read_error_code_capture(err_capt, DUT_NODE, chn);
+        check_m(err_capt.err_pos = err_pos_other, "Reset of ERR_CAPT!");
         
+        -----------------------------------------------------------------------        
+        --  @2. Generate CAN frame and send it by DUT. Wait until transmission
+        --      starts and wait until arbitration field. Wait for random amount
+        --      of time until Dominant bit is sent! Force bus low and wait until
+        --      sample point. Check that Error frame is being transmitted. Check
+        --      value of ERR_CAPT.
         -----------------------------------------------------------------------
-        -- @2. Set Node 2 to ACK forbidden mode. Generate random frame and send
-        --     it by Node 1. Wait until error frame is transmitted by Node 1.
-        --     Wait for random amount of bits (0-5) and force bus to Recessive.
-        --     Wait until sample point and check value of Error code capture in
-        --     Node 1.
-        -----------------------------------------------------------------------
-        mode_2.acknowledge_forbidden := true;
-        set_core_mode(mode_2, ID_2, mem_bus(2));
+        info_m("Step 2");
         
-        CAN_generate_frame(rand_ctr, frame_1);
-        CAN_send_frame(frame_1, 1, ID_1, mem_bus(1), frame_sent);
-        CAN_wait_error_frame(ID_1, mem_bus(1));
+        CAN_generate_frame(frame_1);
+        frame_1.ident_type := EXTENDED;
+        CAN_send_frame(frame_1, 1, DUT_NODE, chn, frame_sent);
+        CAN_wait_tx_rx_start(true, false, DUT_NODE, chn);
         
-        rand_int_v(rand_ctr, 5, wait_time);
+        CAN_wait_pc_state(pc_deb_arbitration, DUT_NODE, chn);
+        
+        -- Wait time is adjusted so that we are sure that we will still be in
+        -- arbitration field (of base or extended). After 26 bits, if there are
+        -- all dominant till end of frame, we are sure at least one stuff bit
+        -- will be there!
+        rand_int_v(24, wait_time);
+        -- We need at least 1 bit to wait, otherwise we try to corrupt still in SOF!
+        wait_time := wait_time + 1;
+        info_m("Waiting for:" & integer'image(wait_time) & " bits!");
+
         for i in 1 to wait_time loop
-            CAN_wait_sample_point(iout(1).stat_bus);
-        end loop; 
-        wait for 20 ns;
+            CAN_wait_sync_seg(DUT_NODE, chn);
+            info_m("Wait sync");
+            wait for 20 ns;
+        end loop;
+        info_m("Waiting finished!");
+
+        get_can_tx(DUT_NODE, can_tx_val, chn);
+        while (can_tx_val = RECESSIVE) loop
+            CAN_wait_sync_seg(DUT_NODE, chn);
+            wait for 20 ns;
+            get_can_tx(DUT_NODE, can_tx_val, chn);
+        end loop;
         
-        force_bus_level(RECESSIVE, so.bl_force, so.bl_inject);
-        CAN_wait_sample_point(iout(1).stat_bus, false);
+        -- Force bus for one bit time
+        force_bus_level(RECESSIVE, chn);
+        CAN_wait_sample_point(DUT_NODE, chn);
         wait for 20 ns; -- To be sure that opposite bit is sampled!
-        release_bus_level(so.bl_force);
+        release_bus_level(chn);
         
-        CAN_read_error_code_capture(err_capt, ID_1, mem_bus(1));
-        check(err_capt.err_type = can_err_bit, "Bit error detected!");
-        check(err_capt.err_pos = err_pos_err_frame,
-                "Error detected in Error frame!");
-        wait for 100 ns; -- For debug only to see waves properly!
+        get_controller_status(stat_1, DUT_NODE, chn);
+        check_m(stat_1.error_transmission, "Error frame is being transmitted!");
+        
+        CAN_read_error_code_capture(err_capt, DUT_NODE, chn);
+        --error_m("HOVNO");
+        -- If Dominant stuff bit is sent and recessive is monitored, then this
+        -- can be detected as Stuff Error, not as bit Error!
+        check_m(err_capt.err_type = can_err_bit or err_capt.err_type = can_err_stuff,
+                "Bit or Stuff error detected!");
+        check_m(err_capt.err_pos = err_pos_arbitration, "Error detected in Arbitration!");
+        
+        CAN_wait_bus_idle(DUT_NODE, chn);
 
   end procedure;
 
