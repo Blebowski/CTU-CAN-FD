@@ -70,21 +70,20 @@
 -- @TestInfoStart
 --
 -- @Purpose:
---  STATUS[TXNF] feature test.
+--  STATUS[TXS] feature test.
 --
 -- @Verifies:
---  @1. When no TXT Buffer is in Empty state, STATUS[TXNF] is not set.
---  @2. When at least on TXT Buffer is in Empty state STATUS[TXNF] is set.
+--  @1. STATUS[TXS] is set when unit is transmitter.
+--  @2. STATUS[TXS] is not set when unit is receiver.
 --
 -- @Test sequence:
---  @1. Set BMM mode in Node 1. Check that STATUS[TXNF] is set (all TXT Buffers
---      should be empty).
---  @2. Issue Set ready consecutively to all TXT Buffers. Check that STATUS[TXNF]
---      is set before last buffer. Check that after last buffer STATUS[TXNF] is
---      not set.
---  @3. Check that all TXT Buffers are Failed now. Move always single buffer to
---      empty and check that STATUS[TXNF] is set. Move this buffer to Failed again
---      and check that STATUS[TXNF] is not set. Repeat with each TXT Buffer.
+--  @1. Send frame by DUT. Wait until SOF starts and check that STATUS[TXS] is
+--      not set till SOF. From SOF further monitor STATUS[TXS] and check it set
+--      until the end of Intermission. Check that after the end of intermission,
+--      STATUS[TXS] is not set anymore.
+--  @2. Send frame by Test node. Monitor STATUS[TXS] of DUT until Intermission
+--      and check STATUS[TXS] is not set. Monitor until the end of intermission
+--      and check STATUS[TXS] is not set.
 --
 -- @TestInfoEnd
 --------------------------------------------------------------------------------
@@ -93,103 +92,89 @@
 --------------------------------------------------------------------------------
 
 Library ctu_can_fd_tb;
-context ctu_can_fd_tb.ctu_can_synth_context;
-context ctu_can_fd_tb.ctu_can_test_context;
+context ctu_can_fd_tb.ieee_context;
+context ctu_can_fd_tb.rtl_context;
+context ctu_can_fd_tb.tb_common_context;
 
-use ctu_can_fd_tb.pkg_feature_exec_dispath.all;
+use ctu_can_fd_tb.feature_test_agent_pkg.all;
+use ctu_can_fd_tb.mem_bus_agent_pkg.all;
 
-package status_txnf_feature is
-    procedure status_txnf_feature_exec(
-        signal      so              : out    feature_signal_outputs_t;
-        signal      rand_ctr        : inout  natural range 0 to RAND_POOL_SIZE;
-        signal      iout            : in     instance_outputs_arr_t;
-        signal      mem_bus         : inout  mem_bus_arr_t;
-        signal      bus_level       : in     std_logic
+package status_txs_ftest is
+    procedure status_txs_ftest_exec(
+        signal      chn             : inout  t_com_channel
     );
 end package;
 
 
-package body status_txnf_feature is
-    procedure status_txnf_feature_exec(
-        signal      so              : out    feature_signal_outputs_t;
-        signal      rand_ctr        : inout  natural range 0 to RAND_POOL_SIZE;
-        signal      iout            : in     instance_outputs_arr_t;
-        signal      mem_bus         : inout  mem_bus_arr_t;
-        signal      bus_level       : in     std_logic
+package body status_txs_ftest is
+    procedure status_txs_ftest_exec(
+        signal      chn             : inout  t_com_channel
     ) is
-        variable ID_1               :     natural := 1;
-        variable ID_2               :     natural := 2;
-
         -- Generated frames
         variable frame_1            :     SW_CAN_frame_type;
 
         -- Node status
         variable stat_1             :     SW_status;
-        
-        variable txt_buf_state      :     SW_TXT_Buffer_state_type;
-        variable mode_1             :     SW_mode;
+
+        variable pc_dbg             :     SW_PC_Debug;
+        variable frame_sent         :     boolean;
     begin
 
         -----------------------------------------------------------------------
-        -- @1. Set BMM mode in Node 1. Check that STATUS[TXNF] is set (all TXT
-        --    Buffers should be empty).
+        --  @1. Send frame by DUT. Wait until SOF starts and check that
+        --     STATUS[TXS] is not set till SOF. From SOF further monitor
+        --     STATUS[TXS] and check it set until the end of Intermission.
+        --     Check that after the end of intermission, STATUS[TXS] is not set
+        --     anymore.
         -----------------------------------------------------------------------
-        info("Step 1");
-        mode_1.bus_monitoring := true;
-        set_core_mode(mode_1, ID_1, mem_bus(1));
+        info_m("Step 1");
+        CAN_generate_frame(frame_1);
+        CAN_send_frame(frame_1, 1, DUT_NODE, chn, frame_sent);
 
-        get_controller_status(stat_1, ID_1, mem_bus(1));
-        check(stat_1.tx_buffer_empty, "STATUS[TXNF] set!");
+        CAN_read_pc_debug_m(pc_dbg, DUT_NODE, chn);
+        mem_bus_agent_disable_transaction_reporting(chn);
+        while (pc_dbg /= pc_deb_arbitration) loop
+            CAN_read_pc_debug_m(pc_dbg, DUT_NODE, chn);
+        end loop;
 
-        -----------------------------------------------------------------------
-        -- @2. Issue Set ready consecutively to all TXT Buffers. Check that
-        --     STATUS[TXNF] is set before last buffer. Check that after last
-        --     buffer STATUS[TXNF] is not set.
-        -----------------------------------------------------------------------
-        for i in 1 to C_TXT_BUFFER_COUNT loop
-            send_TXT_buf_cmd(buf_set_ready, i, ID_1, mem_bus(1));
+        while (pc_dbg /= pc_deb_intermission) loop
+            wait for 200 ns;
+            get_controller_status(stat_1, DUT_NODE, chn);
 
-            get_controller_status(stat_1, ID_1, mem_bus(1));
-
-            if (i = C_TXT_BUFFER_COUNT) then
-                check_false(stat_1.tx_buffer_empty,
-                    "STATUS[TXNF] not set after last TXT Buffer");
-            else
-                check(stat_1.tx_buffer_empty,
-                    "STATUS[TXNF] set before last TXT Buffer");
+            CAN_read_pc_debug_m(pc_dbg, DUT_NODE, chn);
+            if (pc_dbg /= pc_deb_intermission) then
+                check_m(stat_1.transmitter, "DUT transmitter!");
             end if;
         end loop;
+        mem_bus_agent_enable_transaction_reporting(chn);
+
+        -- There should be no Suspend, Overload frames, so after intermission
+        -- we should go to idle
+        CAN_wait_not_pc_state(pc_deb_intermission, DUT_NODE, chn);
+        get_controller_status(stat_1, DUT_NODE, chn);
+        check_false_m(stat_1.transmitter, "DUT not transmitter in idle!");
+
+        CAN_wait_bus_idle(DUT_NODE, chn);
+        CAN_wait_bus_idle(TEST_NODE, chn);
 
         -----------------------------------------------------------------------
-        -- @3. Check that all TXT Buffers are Failed now. Move always single
-        --    buffer to empty and check that STATUS[TXNF] is set. Move this
-        --    buffer to Failed again and check that STATUS[TXNF] is not set.
-        --    Repeat with each TXT Buffer.
+        -- @2. Send frame by Test node. Monitor STATUS[TXS] of DUT until Inter-
+        --    mission and check STATUS[TXS] is not set. Monitor until the end
+        --    of intermission and check STATUS[TXS] is not set.
         -----------------------------------------------------------------------
-        info("Step 3");
-        for i in 1 to C_TXT_BUFFER_COUNT loop
-            get_tx_buf_state(i, txt_buf_state, ID_1, mem_bus(1));
-            check(txt_buf_state = buf_failed, "TXT Buffer: " &
-                integer'image(i) & " failed!");
-        end loop;
+        info_m("Step 2");
+        CAN_generate_frame(frame_1);
+        CAN_send_frame(frame_1, 2, TEST_NODE, chn, frame_sent);
 
-        for i in 1 to C_TXT_BUFFER_COUNT loop
-            send_TXT_buf_cmd(buf_set_empty, i, ID_1, mem_bus(1));
-            
-            get_controller_status(stat_1, ID_1, mem_bus(1));
-            check(stat_1.tx_buffer_empty, "STATUS[TXNF] set!");
-            
-            send_TXT_buf_cmd(buf_set_ready, i, ID_1, mem_bus(1));
-            
-            get_controller_status(stat_1, ID_1, mem_bus(1));
-            check_false(stat_1.tx_buffer_empty, "STATUS[TXNF] not set!");
-            
-            get_tx_buf_state(i, txt_buf_state, ID_1, mem_bus(1));
-            check(txt_buf_state = buf_failed, "TXT Buffer: " &
-                integer'image(i) & " ready!");
+        mem_bus_agent_disable_transaction_reporting(chn);
+        while (pc_dbg /= pc_deb_intermission) loop
+            wait for 200 ns;
+            get_controller_status(stat_1, DUT_NODE, chn);
+
+            CAN_read_pc_debug_m(pc_dbg, DUT_NODE, chn);
+            check_false_m(stat_1.transmitter, "DUT not transmitter!");
         end loop;
-        
-        wait for 100 ns;
+        mem_bus_agent_enable_transaction_reporting(chn);
 
   end procedure;
 

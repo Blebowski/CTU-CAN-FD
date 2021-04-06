@@ -99,14 +99,7 @@ feature:
         settings_tbfbo:
         single_bus_node:
         ssp_cfg:
-        status_rxne:
-        status_txnf:
-        status_eft:
-            iterations: 5
         status_txs:
-        status_rxs:
-        status_ewl:
-        status_idle:
         stuff_in_data:
         trv_delay:
         tx_from_intermission:

@@ -315,4 +315,12 @@ feature:
         one_shot:
         rec_saturation:
         rx_counter:
-        
+
+        status_eft:
+            iterations: 5
+        status_ewl:
+        status_idle:
+        status_rxne:
+        status_rxs:
+        status_txnf:
+        status_txs:

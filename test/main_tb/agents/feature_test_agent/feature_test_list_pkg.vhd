@@ -129,6 +129,14 @@ use ctu_can_fd_tb.one_shot_ftest.all;
 use ctu_can_fd_tb.rec_saturation_ftest.all;
 use ctu_can_fd_tb.rx_counter_ftest.all;
 
+use ctu_can_fd_tb.status_eft_ftest.all;
+use ctu_can_fd_tb.status_ewl_ftest.all;
+use ctu_can_fd_tb.status_idle_ftest.all;
+use ctu_can_fd_tb.status_rxne_ftest.all;
+use ctu_can_fd_tb.status_rxs_ftest.all;
+use ctu_can_fd_tb.status_txnf_ftest.all;
+use ctu_can_fd_tb.status_txs_ftest.all;
+
 
 package feature_test_list_pkg is
     
@@ -222,7 +230,21 @@ package body feature_test_list_pkg is
             rec_saturation_ftest_exec(channel);
         elsif (test_name = "rx_counter") then
             rx_counter_ftest_exec(channel);
-            
+        elsif (test_name = "status_eft") then
+            status_eft_ftest_exec(channel);
+        elsif (test_name = "status_ewl") then
+            status_ewl_ftest_exec(channel);
+        elsif (test_name = "status_idle") then
+            status_idle_ftest_exec(channel);
+        elsif (test_name = "status_rxne") then
+            status_rxne_ftest_exec(channel);
+        elsif (test_name = "status_rxs") then
+            status_rxs_ftest_exec(channel);
+        elsif (test_name = "status_txnf") then
+            status_txnf_ftest_exec(channel);
+        elsif (test_name = "status_txs") then
+            status_txs_ftest_exec(channel);
+
         else
             error_m("TODO: Implement calling feature test function based on test name!!");
         end if;

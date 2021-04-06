@@ -70,20 +70,20 @@
 -- @TestInfoStart
 --
 -- @Purpose:
---  STATUS[TXS] feature test.
+--  STATUS[RXS] feature test.
 --
 -- @Verifies:
---  @1. STATUS[TXS] is set when unit is transmitter.
---  @2. STATUS[TXS] is not set when unit is receiver.
+--  @1. STATUS[RXS] is set when unit is receiver.
+--  @2. STATUS[RXS] is not set when unit is transmitter.
 --
 -- @Test sequence:
---  @1. Send frame by Node 1. Wait until SOF starts and check that STATUS[TXS] is
---      not set till SOF. From SOF further monitor STATUS[TXS] and check it set
---      until the end of Intermission. Check that after the end of intermission,
---      STATUS[TXS] is not set anymore.
---  @2. Send frame by Node 2. Monitor STATUS[TXS] of Node 1 until Intermission
---      and check STATUS[TXS] is not set. Monitor until the end of intermission
---      and check STATUS[TXS] is not set.
+--  @1. Send frame by Test node. Wait until SOF starts and check that STATUS[RXS] is
+--      not set till SOF in DUT. From SOF further monitor STATUS[RXS] and
+--      check it set until the end of Intermission. Check that after the end of
+--      intermission, STATUS[RXS] is not set anymore.
+--  @2. Send frame by DUT. Monitor STATUS[RXS] of DUT until Intermission
+--      and check STATUS[RXS] is not set. Monitor until the end of intermission
+--      and check STATUS[RXS] is not set.
 --
 -- @TestInfoEnd
 --------------------------------------------------------------------------------
@@ -92,33 +92,23 @@
 --------------------------------------------------------------------------------
 
 Library ctu_can_fd_tb;
-context ctu_can_fd_tb.ctu_can_synth_context;
-context ctu_can_fd_tb.ctu_can_test_context;
+context ctu_can_fd_tb.ieee_context;
+context ctu_can_fd_tb.rtl_context;
+context ctu_can_fd_tb.tb_common_context;
 
-use ctu_can_fd_tb.pkg_feature_exec_dispath.all;
+use ctu_can_fd_tb.feature_test_agent_pkg.all;
 
-package status_txs_feature is
-    procedure status_txs_feature_exec(
-        signal      so              : out    feature_signal_outputs_t;
-        signal      rand_ctr        : inout  natural range 0 to RAND_POOL_SIZE;
-        signal      iout            : in     instance_outputs_arr_t;
-        signal      mem_bus         : inout  mem_bus_arr_t;
-        signal      bus_level       : in     std_logic
+package status_rxs_ftest is
+    procedure status_rxs_ftest_exec(
+        signal      chn             : inout  t_com_channel
     );
 end package;
 
 
-package body status_txs_feature is
-    procedure status_txs_feature_exec(
-        signal      so              : out    feature_signal_outputs_t;
-        signal      rand_ctr        : inout  natural range 0 to RAND_POOL_SIZE;
-        signal      iout            : in     instance_outputs_arr_t;
-        signal      mem_bus         : inout  mem_bus_arr_t;
-        signal      bus_level       : in     std_logic
+package body status_rxs_ftest is
+    procedure status_rxs_ftest_exec(
+        signal      chn             : inout  t_com_channel
     ) is
-        variable ID_1               :     natural := 1;
-        variable ID_2               :     natural := 2;
-
         -- Generated frames
         variable frame_1            :     SW_CAN_frame_type;
 
@@ -130,58 +120,58 @@ package body status_txs_feature is
     begin
 
         -----------------------------------------------------------------------
-        --  @1. Send frame by Node 1. Wait until SOF starts and check that
-        --     STATUS[TXS] is not set till SOF. From SOF further monitor
-        --     STATUS[TXS] and check it set until the end of Intermission.
-        --     Check that after the end of intermission, STATUS[TXS] is not set
-        --     anymore.
+        --  @1. Send frame by Test node. Wait until SOF starts and check that
+        --     STATUS[RXS] is not set till SOF in DUT. From SOF further
+        --     monitor STATUS[RXS] and check it set until the end of
+        --     Intermission. Check that after the end of intermission, 
+        --     STATUS[TXS] is not set anymore.
         -----------------------------------------------------------------------
-        info("Step 1");
-        CAN_generate_frame(rand_ctr, frame_1);
-        CAN_send_frame(frame_1, 1, ID_1, mem_bus(1), frame_sent);
+        info_m("Step 1");
+        
+        CAN_generate_frame(frame_1);
+        CAN_send_frame(frame_1, 1, TEST_NODE, chn, frame_sent);
 
-        CAN_read_pc_debug(pc_dbg, ID_1, mem_bus(1));
+        CAN_read_pc_debug_m(pc_dbg, DUT_NODE, chn);
         while (pc_dbg /= pc_deb_arbitration) loop
-            CAN_read_pc_debug(pc_dbg, ID_1, mem_bus(1));
+            CAN_read_pc_debug_m(pc_dbg, DUT_NODE, chn);
         end loop;
 
         while (pc_dbg /= pc_deb_intermission) loop
             wait for 200 ns;
-            get_controller_status(stat_1, ID_1, mem_bus(1));
+            get_controller_status(stat_1, DUT_NODE, chn);
 
-            CAN_read_pc_debug(pc_dbg, ID_1, mem_bus(1));
+            CAN_read_pc_debug_m(pc_dbg, DUT_NODE, chn);
             if (pc_dbg /= pc_deb_intermission) then
-                check(stat_1.transmitter, "Node 1 transmitter!");
+                check_m(stat_1.receiver, "DUT receiver");
             end if;
         end loop;
 
         -- There should be no Suspend, Overload frames, so after intermission
         -- we should go to idle
-        CAN_wait_not_pc_state(pc_deb_intermission, ID_1, mem_bus(1));
-        get_controller_status(stat_1, ID_1, mem_bus(1));
-        check_false(stat_1.transmitter, "Node 1 not transmitter in idle!");
+        CAN_wait_not_pc_state(pc_deb_intermission, DUT_NODE, chn);
+        get_controller_status(stat_1, DUT_NODE, chn);
+        check_false_m(stat_1.receiver, "DUT not receiver in idle!");
 
-        CAN_wait_bus_idle(ID_1, mem_bus(1));
-        CAN_wait_bus_idle(ID_2, mem_bus(2));
+        CAN_wait_bus_idle(DUT_NODE, chn);
+        CAN_wait_bus_idle(TEST_NODE, chn);
 
         -----------------------------------------------------------------------
-        -- @2. Send frame by Node 2. Monitor STATUS[TXS] of Node 1 until Inter-
-        --    mission and check STATUS[TXS] is not set. Monitor until the end
-        --    of intermission and check STATUS[TXS] is not set.
+        -- @2. Send frame by Test node. Monitor STATUS[RXS] of DUT until Inter-
+        --    mission and check STATUS[RXS] is not set. Monitor until the end
+        --    of intermission and check STATUS[RXS] is not set.
         -----------------------------------------------------------------------
-        info("Step 2");
-        CAN_generate_frame(rand_ctr, frame_1);
-        CAN_send_frame(frame_1, 2, ID_2, mem_bus(2), frame_sent);
+        info_m("Step 2");
+        
+        CAN_generate_frame(frame_1);
+        CAN_send_frame(frame_1, 4, DUT_NODE, chn, frame_sent);
 
         while (pc_dbg /= pc_deb_intermission) loop
             wait for 200 ns;
-            get_controller_status(stat_1, ID_1, mem_bus(1));
+            get_controller_status(stat_1, DUT_NODE, chn);
 
-            CAN_read_pc_debug(pc_dbg, ID_1, mem_bus(1));
-            check_false(stat_1.transmitter, "Node 1 not transmitter!");
+            CAN_read_pc_debug_m(pc_dbg, DUT_NODE, chn);
+            check_false_m(stat_1.receiver, "DUT not transmitter!");
         end loop;
-
-        wait for 100 ns;
 
   end procedure;
 

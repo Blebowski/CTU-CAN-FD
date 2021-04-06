@@ -78,13 +78,13 @@
 --  @2. STATUS[EFT] is not set when Error frame is not being transmitted.
 --
 -- @Test sequence:
---  @1. Set Node 2 to ACF mode. Enable test mode in Node 1. Send frame by Node 1.
---      Randomize if Node 1 will be error active or error passive. Monitor
+--  @1. Set Test node to ACF mode. Enable test mode in DUT. Send frame by DUT.
+--      Randomize if DUT will be error active or error passive. Monitor
 --      STATUS[EFT] and check that it is not set during whole duration of the
 --      frame. Wait till ACK field.
---  @2. Wait till Node 1 is NOT is ACK field anymore. Now since ACK was recessive,
---      Node 1 should be transmitting error frame! Monitor STATUS[EFT] and check
---      it is set until Node 1 gets to Intermission. Check it is not set after
+--  @2. Wait till DUT is NOT is ACK field anymore. Now since ACK was recessive,
+--      DUT should be transmitting error frame! Monitor STATUS[EFT] and check
+--      it is set until DUT gets to Intermission. Check it is not set after
 --      Intermission has started! Monitor STATUS[EFT] and check it is not set
 --      during whole time until unit is Bus Idle!
 --
@@ -95,33 +95,24 @@
 --------------------------------------------------------------------------------
 
 Library ctu_can_fd_tb;
-context ctu_can_fd_tb.ctu_can_synth_context;
-context ctu_can_fd_tb.ctu_can_test_context;
+context ctu_can_fd_tb.ieee_context;
+context ctu_can_fd_tb.rtl_context;
+context ctu_can_fd_tb.tb_common_context;
 
-use ctu_can_fd_tb.pkg_feature_exec_dispath.all;
+use ctu_can_fd_tb.feature_test_agent_pkg.all;
+use ctu_can_fd_tb.mem_bus_agent_pkg.all;
 
-package status_eft_feature is
-    procedure status_eft_feature_exec(
-        signal      so              : out    feature_signal_outputs_t;
-        signal      rand_ctr        : inout  natural range 0 to RAND_POOL_SIZE;
-        signal      iout            : in     instance_outputs_arr_t;
-        signal      mem_bus         : inout  mem_bus_arr_t;
-        signal      bus_level       : in     std_logic
+package status_eft_ftest is
+    procedure status_eft_ftest_exec(
+        signal      chn             : inout  t_com_channel
     );
 end package;
 
 
-package body status_eft_feature is
-    procedure status_eft_feature_exec(
-        signal      so              : out    feature_signal_outputs_t;
-        signal      rand_ctr        : inout  natural range 0 to RAND_POOL_SIZE;
-        signal      iout            : in     instance_outputs_arr_t;
-        signal      mem_bus         : inout  mem_bus_arr_t;
-        signal      bus_level       : in     std_logic
+package body status_eft_ftest is
+    procedure status_eft_ftest_exec(
+        signal      chn             : inout  t_com_channel
     ) is
-        variable ID_1               :     natural := 1;
-        variable ID_2               :     natural := 2;
-
         -- Generated frames
         variable frame_1            :     SW_CAN_frame_type;
         variable frame_sent         :     boolean;
@@ -140,91 +131,93 @@ package body status_eft_feature is
     begin
 
         -----------------------------------------------------------------------
-        --  @1. Set Node 2 to ACF mode. Enable test mode in Node 1. Send frame
-        --     by Node 1. Randomize if Node 1 will be error active or error
+        --  @1. Set Test node to ACF mode. Enable test mode in DUT. Send frame
+        --     by DUT. Randomize if DUT will be error active or error
         --     passive. Monitor STATUS[EFT] and check that it is not set 
         --     during whole duration of the frame. Wait till ACK field.
         -----------------------------------------------------------------------
-        info("Step 1");
+        info_m("Step 1");
 
         mode_2.acknowledge_forbidden := true;
-        set_core_mode(mode_2, ID_2, mem_bus(2));
+        set_core_mode(mode_2, TEST_NODE, chn);
         mode_1.test := true;
-        set_core_mode(mode_1, ID_1, mem_bus(1));
+        set_core_mode(mode_1, DUT_NODE, chn);
         
         -- Randomize error active or passive!
-        rand_logic_v(rand_ctr, go_err_passive, 0.5);
+        rand_logic_v(go_err_passive, 0.5);
         if (go_err_passive = '1') then
-            info("Going Error passive!");
+            info_m("Going Error passive!");
             err_counters.rx_counter := 140; -- Should be in error passive! 
-            set_error_counters(err_counters, ID_1, mem_bus(1));
-            get_fault_state(fault_state, ID_1, mem_bus(1));
-            check(fault_state = fc_error_passive, "Node 1 Error Passive!");
+            set_error_counters(err_counters, DUT_NODE, chn);
+            get_fault_state(fault_state, DUT_NODE, chn);
+            check_m(fault_state = fc_error_passive, "DUT Error Passive!");
         else
-            info("Going Error active!");
+            info_m("Going Error active!");
             err_counters.rx_counter := 0; -- Should be in error active! 
-            set_error_counters(err_counters, ID_1, mem_bus(1));
-            get_fault_state(fault_state, ID_1, mem_bus(1));
-            check(fault_state = fc_error_active, "Node 1 Error Active!");
+            set_error_counters(err_counters, DUT_NODE, chn);
+            get_fault_state(fault_state, DUT_NODE, chn);
+            check_m(fault_state = fc_error_active, "DUT Error Active!");
         end if;
 
-        CAN_generate_frame(rand_ctr, frame_1);
+        CAN_generate_frame(frame_1);
         -- Needed so that there is no prolonged ACK slot!
         frame_1.frame_format := NORMAL_CAN;
-        CAN_send_frame(frame_1, 1, ID_1, mem_bus(1), frame_sent);
+        CAN_send_frame(frame_1, 1, DUT_NODE, chn, frame_sent);
 
-        CAN_read_pc_debug(pc_dbg, ID_1, mem_bus(1));
+        CAN_read_pc_debug_m(pc_dbg, DUT_NODE, chn);
+        mem_bus_agent_disable_transaction_reporting(chn);
         while (pc_dbg /= pc_deb_ack) loop
             wait for 200 ns; -- To make checks more sparse!
-            CAN_read_pc_debug(pc_dbg, ID_1, mem_bus(1));
+            CAN_read_pc_debug_m(pc_dbg, DUT_NODE, chn);
             
-            get_controller_status(stat_1, ID_1, mem_bus(1));
-            check_false(stat_1.error_transmission,
+            get_controller_status(stat_1, DUT_NODE, chn);
+            check_false_m(stat_1.error_transmission,
                 "STAT[EFT] not set before ACK!");
         end loop;
+        mem_bus_agent_enable_transaction_reporting(chn);
 
         -----------------------------------------------------------------------
-        --  @2. Wait till Node 1 is NOT is ACK field anymore. Now since ACK was
-        --     recessive, Node 1 should be transmitting error frame! Monitor
-        --     STATUS[EFT] and check it is set until Node 1 gets to Intermi-
+        --  @2. Wait till DUT is NOT is ACK field anymore. Now since ACK was
+        --     recessive, DUT should be transmitting error frame! Monitor
+        --     STATUS[EFT] and check it is set until DUT gets to Intermi-
         --     ssion. Check it is not set after Intermission has started!
         --     Monitor STATUS[EFT] and check it is not set during whole time
         --     until unit is Bus Idle!
         -----------------------------------------------------------------------
-        info("Step 2");
+        info_m("Step 2");
 
-        CAN_read_pc_debug(pc_dbg, ID_1, mem_bus(1));
+        CAN_read_pc_debug_m(pc_dbg, DUT_NODE, chn);
+        mem_bus_agent_disable_transaction_reporting(chn);
         while (pc_dbg = pc_deb_ack) loop            
             wait for 100 ns; -- To make checks more sparse!
             
-            get_controller_status(stat_1, ID_1, mem_bus(1));
-            CAN_read_pc_debug(pc_dbg, ID_1, mem_bus(1));
+            get_controller_status(stat_1, DUT_NODE, chn);
+            CAN_read_pc_debug_m(pc_dbg, DUT_NODE, chn);
             
             if (pc_dbg = pc_deb_ack) then
-                check_false(stat_1.error_transmission, "STAT[EFT] not set in ACK!");
+                check_false_m(stat_1.error_transmission, "STAT[EFT] not set in ACK!");
             end if;
         end loop;
 
-        CAN_read_pc_debug(pc_dbg, ID_1, mem_bus(1));
+        CAN_read_pc_debug_m(pc_dbg, DUT_NODE, chn);
         while (pc_dbg /= pc_deb_intermission) loop            
             wait for 100 ns; -- To make checks more sparse!
 
-            get_controller_status(stat_1, ID_1, mem_bus(1));
-            CAN_read_pc_debug(pc_dbg, ID_1, mem_bus(1));
+            get_controller_status(stat_1, DUT_NODE, chn);
+            CAN_read_pc_debug_m(pc_dbg, DUT_NODE, chn);
             if (pc_dbg /= pc_deb_intermission) then
-                check(stat_1.error_transmission, "STAT[EFT] set during Error frame!");
+                check_m(stat_1.error_transmission, "STAT[EFT] set during Error frame!");
             end if;
         end loop;
 
-        get_controller_status(stat_1, ID_1, mem_bus(1));
+        get_controller_status(stat_1, DUT_NODE, chn);
         while (stat_1.bus_status = false) loop -- Loop until bus is idle
             wait for 100 ns; -- To make checks more sparse!
             
-            get_controller_status(stat_1, ID_1, mem_bus(1));
-            check_false(stat_1.error_transmission, "STAT[EFT] not set in Intermission!");
+            get_controller_status(stat_1, DUT_NODE, chn);
+            check_false_m(stat_1.error_transmission, "STAT[EFT] not set in Intermission!");
         end loop;
-        
-        wait for 100 ns;
+        mem_bus_agent_enable_transaction_reporting(chn);
 
   end procedure;
 

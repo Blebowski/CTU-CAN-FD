@@ -70,20 +70,22 @@
 -- @TestInfoStart
 --
 -- @Purpose:
---  STATUS[RXS] feature test.
+--  STATUS[RXNE] feature test.
 --
 -- @Verifies:
---  @1. STATUS[RXS] is set when unit is receiver.
---  @2. STATUS[RXS] is not set when unit is transmitter.
+--  @1. When no frame is stored in RX Buffer, STATUS[RXNE] is not set.
+--  @2. When one or more frames is stored in RX Buffer, STATUS[RXNE] is set.
+--  @3. STATUS[RXNE] is not set when last word of last frame in RX Buffer is
+--      read.
 --
 -- @Test sequence:
---  @1. Send frame by Node 2. Wait until SOF starts and check that STATUS[RXS] is
---      not set till SOF in Node 1. From SOF further monitor STATUS[RXS] and
---      check it set until the end of Intermission. Check that after the end of
---      intermission, STATUS[RXS] is not set anymore.
---  @2. Send frame by Node 1. Monitor STATUS[RXS] of Node 1 until Intermission
---      and check STATUS[RXS] is not set. Monitor until the end of intermission
---      and check STATUS[RXS] is not set.
+--  @1. Read STATUS[RXNE] of DUT and check it is not set. Send random amount
+--      of CAN frames by Test node and wait until they are received. Check that
+--      after each one, STATUS[RXNE] is set.
+--  @2. Read out frame by frame and check that STATUS[RXNE] is still set. Read
+--      all frames but last one.
+--  @3. Read out last frame word by word and check that STATUS[RXNE] is still
+--      set and STATUS[RXNE] is not set after reading out last word.
 --
 -- @TestInfoEnd
 --------------------------------------------------------------------------------
@@ -92,97 +94,92 @@
 --------------------------------------------------------------------------------
 
 Library ctu_can_fd_tb;
-context ctu_can_fd_tb.ctu_can_synth_context;
-context ctu_can_fd_tb.ctu_can_test_context;
+context ctu_can_fd_tb.ieee_context;
+context ctu_can_fd_tb.rtl_context;
+context ctu_can_fd_tb.tb_common_context;
 
-use ctu_can_fd_tb.pkg_feature_exec_dispath.all;
+use ctu_can_fd_tb.feature_test_agent_pkg.all;
 
-package status_rxs_feature is
-    procedure status_rxs_feature_exec(
-        signal      so              : out    feature_signal_outputs_t;
-        signal      rand_ctr        : inout  natural range 0 to RAND_POOL_SIZE;
-        signal      iout            : in     instance_outputs_arr_t;
-        signal      mem_bus         : inout  mem_bus_arr_t;
-        signal      bus_level       : in     std_logic
+package status_rxne_ftest is
+    procedure status_rxne_ftest_exec(
+        signal      chn             : inout  t_com_channel
     );
 end package;
 
 
-package body status_rxs_feature is
-    procedure status_rxs_feature_exec(
-        signal      so              : out    feature_signal_outputs_t;
-        signal      rand_ctr        : inout  natural range 0 to RAND_POOL_SIZE;
-        signal      iout            : in     instance_outputs_arr_t;
-        signal      mem_bus         : inout  mem_bus_arr_t;
-        signal      bus_level       : in     std_logic
+package body status_rxne_ftest is
+    procedure status_rxne_ftest_exec(
+        signal      chn             : inout  t_com_channel
     ) is
-        variable ID_1               :     natural := 1;
-        variable ID_2               :     natural := 2;
+        variable r_data             :     std_logic_vector(31 downto 0) :=
+                                                (OTHERS => '0');
 
         -- Generated frames
         variable frame_1            :     SW_CAN_frame_type;
+        variable frame_rx           :     SW_CAN_frame_type;
 
         -- Node status
         variable stat_1             :     SW_status;
 
-        variable pc_dbg             :     SW_PC_Debug;
-        variable frame_sent         :     boolean;
+        variable num_frames         :     integer;
     begin
 
         -----------------------------------------------------------------------
-        --  @1. Send frame by Node 2. Wait until SOF starts and check that
-        --     STATUS[RXS] is not set till SOF in Node 1. From SOF further
-        --     monitor STATUS[RXS] and check it set until the end of
-        --     Intermission. Check that after the end of intermission, 
-        --     STATUS[TXS] is not set anymore.
+        --  @1. Read STATUS[RXNE] of DUT and check it is not set. Send
+        --      random amount of CAN frames by Test node and wait until they 
+        --      are received. Check that after each one, STATUS[RXNE] is set.
         -----------------------------------------------------------------------
-        info("Step 1");
-        CAN_generate_frame(rand_ctr, frame_1);
-        CAN_send_frame(frame_1, 1, ID_2, mem_bus(2), frame_sent);
-
-        CAN_read_pc_debug(pc_dbg, ID_1, mem_bus(1));
-        while (pc_dbg /= pc_deb_arbitration) loop
-            CAN_read_pc_debug(pc_dbg, ID_1, mem_bus(1));
+        info_m("Step 1");
+        get_controller_status(stat_1, DUT_NODE, chn);
+        check_false_m(stat_1.receive_buffer, "RX Buffer empty");
+        
+        rand_int_v(6, num_frames);
+        num_frames := num_frames + 1;
+        
+        CAN_generate_frame(frame_1);
+        frame_1.rtr := RTR_FRAME;
+        frame_1.frame_format := NORMAL_CAN;
+        CAN_insert_TX_frame(frame_1, 1, TEST_NODE, chn);
+        
+        for i in 0 to num_frames - 1 loop
+            send_TXT_buf_cmd(buf_set_ready, 1, TEST_NODE, chn);
+            CAN_wait_frame_sent(TEST_NODE, chn);
+            
+            CAN_wait_bus_idle(DUT_NODE, chn);
+            CAN_wait_bus_idle(TEST_NODE, chn);
+            
+            get_controller_status(stat_1, DUT_NODE, chn);
+            check_m(stat_1.receive_buffer, "RX Buffer not empty");
         end loop;
 
-        while (pc_dbg /= pc_deb_intermission) loop
-            wait for 200 ns;
-            get_controller_status(stat_1, ID_1, mem_bus(1));
-
-            CAN_read_pc_debug(pc_dbg, ID_1, mem_bus(1));
-            if (pc_dbg /= pc_deb_intermission) then
-                check(stat_1.receiver, "Node 1 receiver");
+        -----------------------------------------------------------------------
+        --  @2. Read out frame by frame and check that STATUS[RXNE] is still set.
+        --     Read all frames but last one.
+        -----------------------------------------------------------------------
+        info_m("Step 2");
+        for i in 0 to num_frames - 2 loop
+            CAN_read_frame(frame_rx, DUT_NODE, chn);
+            get_controller_status(stat_1, DUT_NODE, chn);
+            check_m(stat_1.receive_buffer, "RX Buffer not empty");
+        end loop;
+        
+        -----------------------------------------------------------------------
+        --  @3. Read out last frame word by word and check that STATUS[RXNE] is
+        --     still set and STATUS[RXNE] is not set after reading out last
+        --     word.
+        -----------------------------------------------------------------------
+        for i in 0 to 3 loop -- RTR frame has 4 words in RX Buffer
+            CAN_read(r_data, RX_DATA_ADR, DUT_NODE, chn);
+            get_controller_status(stat_1, DUT_NODE, chn);
+            
+            if (i = 3) then
+                check_false_m(stat_1.receive_buffer,
+                    "STATUS[RXNE] not set after last word was read out!");
+            else
+                check_m(stat_1.receive_buffer,
+                    "STATUS[RXNE] set before last word was read out!");
             end if;
         end loop;
 
-        -- There should be no Suspend, Overload frames, so after intermission
-        -- we should go to idle
-        CAN_wait_not_pc_state(pc_deb_intermission, ID_1, mem_bus(1));
-        get_controller_status(stat_1, ID_1, mem_bus(1));
-        check_false(stat_1.receiver, "Node 1 not receiver in idle!");
-
-        CAN_wait_bus_idle(ID_1, mem_bus(1));
-        CAN_wait_bus_idle(ID_2, mem_bus(2));
-
-        -----------------------------------------------------------------------
-        -- @2. Send frame by Node 2. Monitor STATUS[RXS] of Node 1 until Inter-
-        --    mission and check STATUS[RXS] is not set. Monitor until the end
-        --    of intermission and check STATUS[RXS] is not set.
-        -----------------------------------------------------------------------
-        info("Step 2");
-        CAN_generate_frame(rand_ctr, frame_1);
-        CAN_send_frame(frame_1, 4, ID_1, mem_bus(1), frame_sent);
-
-        while (pc_dbg /= pc_deb_intermission) loop
-            wait for 200 ns;
-            get_controller_status(stat_1, ID_1, mem_bus(1));
-
-            CAN_read_pc_debug(pc_dbg, ID_1, mem_bus(1));
-            check_false(stat_1.receiver, "Node 1 not transmitter!");
-        end loop;
-
-        wait for 100 ns;
-
   end procedure;
-
 end package body;

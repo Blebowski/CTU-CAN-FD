@@ -70,22 +70,21 @@
 -- @TestInfoStart
 --
 -- @Purpose:
---  STATUS[RXNE] feature test.
+--  STATUS[TXNF] feature test.
 --
 -- @Verifies:
---  @1. When no frame is stored in RX Buffer, STATUS[RXNE] is not set.
---  @2. When one or more frames is stored in RX Buffer, STATUS[RXNE] is set.
---  @3. STATUS[RXNE] is not set when last word of last frame in RX Buffer is
---      read.
+--  @1. When no TXT Buffer is in Empty state, STATUS[TXNF] is not set.
+--  @2. When at least on TXT Buffer is in Empty state STATUS[TXNF] is set.
 --
 -- @Test sequence:
---  @1. Read STATUS[RXNE] of Node 1 and check it is not set. Send random amount
---      of CAN frames by Node 2 and wait until they are received. Check that
---      after each one, STATUS[RXNE] is set.
---  @2. Read out frame by frame and check that STATUS[RXNE] is still set. Read
---      all frames but last one.
---  @3. Read out last frame word by word and check that STATUS[RXNE] is still
---      set and STATUS[RXNE] is not set after reading out last word.
+--  @1. Set BMM mode in DUT. Check that STATUS[TXNF] is set (all TXT Buffers
+--      should be empty).
+--  @2. Issue Set ready consecutively to all TXT Buffers. Check that STATUS[TXNF]
+--      is set before last buffer. Check that after last buffer STATUS[TXNF] is
+--      not set.
+--  @3. Check that all TXT Buffers are Failed now. Move always single buffer to
+--      empty and check that STATUS[TXNF] is set. Move this buffer to Failed again
+--      and check that STATUS[TXNF] is not set. Repeat with each TXT Buffer.
 --
 -- @TestInfoEnd
 --------------------------------------------------------------------------------
@@ -94,103 +93,109 @@
 --------------------------------------------------------------------------------
 
 Library ctu_can_fd_tb;
-context ctu_can_fd_tb.ctu_can_synth_context;
-context ctu_can_fd_tb.ctu_can_test_context;
+context ctu_can_fd_tb.ieee_context;
+context ctu_can_fd_tb.rtl_context;
+context ctu_can_fd_tb.tb_common_context;
 
-use ctu_can_fd_tb.pkg_feature_exec_dispath.all;
+use ctu_can_fd_tb.feature_test_agent_pkg.all;
 
-package status_rxne_feature is
-    procedure status_rxne_feature_exec(
-        signal      so              : out    feature_signal_outputs_t;
-        signal      rand_ctr        : inout  natural range 0 to RAND_POOL_SIZE;
-        signal      iout            : in     instance_outputs_arr_t;
-        signal      mem_bus         : inout  mem_bus_arr_t;
-        signal      bus_level       : in     std_logic
+package status_txnf_ftest is
+    procedure status_txnf_ftest_exec(
+        signal      chn             : inout  t_com_channel
     );
 end package;
 
 
-package body status_rxne_feature is
-    procedure status_rxne_feature_exec(
-        signal      so              : out    feature_signal_outputs_t;
-        signal      rand_ctr        : inout  natural range 0 to RAND_POOL_SIZE;
-        signal      iout            : in     instance_outputs_arr_t;
-        signal      mem_bus         : inout  mem_bus_arr_t;
-        signal      bus_level       : in     std_logic
+package body status_txnf_ftest is
+    procedure status_txnf_ftest_exec(
+        signal      chn             : inout  t_com_channel
     ) is
-        variable r_data             :     std_logic_vector(31 downto 0) :=
-                                                (OTHERS => '0');
-        variable ID_1               :     natural := 1;
-        variable ID_2               :     natural := 2;
-
         -- Generated frames
         variable frame_1            :     SW_CAN_frame_type;
-        variable frame_rx           :     SW_CAN_frame_type;
 
         -- Node status
         variable stat_1             :     SW_status;
-
-        variable num_frames         :     integer;
+        
+        variable txt_buf_state      :     SW_TXT_Buffer_state_type;
+        variable mode_1             :     SW_mode;
+        
+        variable num_txt_bufs       :     natural;
     begin
+        
+        -- Read number of TXT buffers to adapt based on number of TXT buffers.
+        get_tx_buf_count(num_txt_bufs, DUT_NODE, chn);
+        
+        -----------------------------------------------------------------------
+        -- @1. Set BMM mode in DUT. Check that STATUS[TXNF] is set (all TXT
+        --    Buffers should be empty).
+        -----------------------------------------------------------------------
+        info_m("Step 1");
+        
+        mode_1.bus_monitoring := true;
+        set_core_mode(mode_1, DUT_NODE, chn);
+
+        get_controller_status(stat_1, DUT_NODE, chn);
+        check_m(stat_1.tx_buffer_empty, "STATUS[TXNF] set!");
 
         -----------------------------------------------------------------------
-        --  @1. Read STATUS[RXNE] of Node 1 and check it is not set. Send
-        --     random amount of CAN frames by Node 2 and wait until they are
-        --     received. Check that after each one, STATUS[RXNE] is set.
+        -- @2. Issue Set ready consecutively to all TXT Buffers. Check that
+        --     STATUS[TXNF] is set before last buffer. Check that after last
+        --     buffer STATUS[TXNF] is not set.
         -----------------------------------------------------------------------
-        info("Step 1");
-        get_controller_status(stat_1, ID_1, mem_bus(1));
-        check_false(stat_1.receive_buffer, "RX Buffer empty");
+        info_m("Step 2");
         
-        rand_int_v(rand_ctr, 6, num_frames);
-        num_frames := num_frames + 1;
-        
-        CAN_generate_frame(rand_ctr, frame_1);
-        frame_1.rtr := RTR_FRAME;
-        frame_1.frame_format := NORMAL_CAN;
-        CAN_insert_TX_frame(frame_1, 1, ID_2, mem_bus(2));
-        
-        for i in 0 to num_frames - 1 loop
-            send_TXT_buf_cmd(buf_set_ready, 1, ID_2, mem_bus(2));
-            CAN_wait_frame_sent(ID_2, mem_bus(2));
+        for i in 1 to num_txt_bufs loop
+            send_TXT_buf_cmd(buf_set_ready, i, DUT_NODE, chn);
             
-            CAN_wait_bus_idle(ID_1, mem_bus(1));
-            CAN_wait_bus_idle(ID_2, mem_bus(2));
+            -- Waiting time for FSM to change state!
+            wait for 20 ns;
             
-            get_controller_status(stat_1, ID_1, mem_bus(1));
-            check(stat_1.receive_buffer, "RX Buffer not empty");
-        end loop;
+            get_controller_status(stat_1, DUT_NODE, chn);
 
-        -----------------------------------------------------------------------
-        --  @2. Read out frame by frame and check that STATUS[RXNE] is still set.
-        --     Read all frames but last one.
-        -----------------------------------------------------------------------
-        info("Step 2");
-        for i in 0 to num_frames - 2 loop
-            CAN_read_frame(frame_rx, ID_1, mem_bus(1));
-            get_controller_status(stat_1, ID_1, mem_bus(1));
-            check(stat_1.receive_buffer, "RX Buffer not empty");
-        end loop;
-        
-        -----------------------------------------------------------------------
-        --  @3. Read out last frame word by word and check that STATUS[RXNE] is
-        --     still set and STATUS[RXNE] is not set after reading out last
-        --     word.
-        -----------------------------------------------------------------------
-        for i in 0 to 3 loop -- RTR frame has 4 words in RX Buffer
-            CAN_read(r_data, RX_DATA_ADR, ID_1, mem_bus(1));
-            get_controller_status(stat_1, ID_1, mem_bus(1));
-            
-            if (i = 3) then
-                check_false(stat_1.receive_buffer,
-                    "STATUS[RXNE] not set after last word was read out!");
+            if (i = num_txt_bufs) then
+                check_false_m(stat_1.tx_buffer_empty,
+                    "STATUS[TXNF] not set after last TXT Buffer");
             else
-                check(stat_1.receive_buffer,
-                    "STATUS[RXNE] set before last word was read out!");
+                check_m(stat_1.tx_buffer_empty,
+                    "STATUS[TXNF] set before last TXT Buffer");
             end if;
         end loop;
+
+        -----------------------------------------------------------------------
+        -- @3. Check that all TXT Buffers are Failed now. Move always single
+        --    buffer to empty and check that STATUS[TXNF] is set. Move this
+        --    buffer to Failed again and check that STATUS[TXNF] is not set.
+        --    Repeat with each TXT Buffer.
+        -----------------------------------------------------------------------
+        info_m("Step 3");
         
-        wait for 100 ns;
+        for i in 1 to num_txt_bufs loop
+            get_tx_buf_state(i, txt_buf_state, DUT_NODE, chn);
+            check_m(txt_buf_state = buf_failed, "TXT Buffer: " &
+                integer'image(i) & " failed!");
+        end loop;
+
+        for i in 1 to num_txt_bufs loop
+            send_TXT_buf_cmd(buf_set_empty, i, DUT_NODE, chn);
+            
+            -- Waiting time for FSM to change state!
+            wait for 20 ns;
+            
+            get_controller_status(stat_1, DUT_NODE, chn);
+            check_m(stat_1.tx_buffer_empty, "STATUS[TXNF] set!");
+            
+            send_TXT_buf_cmd(buf_set_ready, i, DUT_NODE, chn);
+            
+            -- Waiting time for FSM to change state!
+            wait for 20 ns;
+            
+            get_controller_status(stat_1, DUT_NODE, chn);
+            check_false_m(stat_1.tx_buffer_empty, "STATUS[TXNF] not set!");
+            
+            get_tx_buf_state(i, txt_buf_state, DUT_NODE, chn);
+            check_m(txt_buf_state = buf_failed, "TXT Buffer: " &
+                integer'image(i) & " ready!");
+        end loop;
 
   end procedure;
 
