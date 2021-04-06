@@ -70,24 +70,26 @@
 -- @TestInfoStart
 --
 -- @Purpose:
---  Arbitration lost capture - IDE bit feature test.
+--  Arbitration lost capture - RTR/r0 bit (after Identifier Extension) feature
+--  test.
 --
 -- @Verifies:
---  @1. CAN frame with base identifier only wins arbitration over CAN frame with
---      extended identifier when base identifier of both frames is equal.
---  @2. Arbitration lost capture position on IDE bit after Base identifier.
+--  @1. RTR frame with Extended identifier loses arbitration against data frame
+--      with Extended Identifier.
+--  @2. Arbitration lost capture position on RTR/r0 bit after Base identifier.
 --
 -- @Test sequence:
 --  @1. Configure both Nodes to one-shot mode.
---  @2. Generate two CAN frames: Frame 1 with Extended identifier, Frame 2 with
---      Base Identifier only, RTR frame. Base identifier of both CAN frames is 
---      matching!
---  @3. Wait till sample point in Node 1. Send Frame 1 by Node 1 and Frame 2 by
---      Node 2.
---  @4. Wait till arbitration field in Node 1. Wait till sample point 13 times
---      (11 Base ID + RTR/SRR + IDE). Check Node 1 is transmitting recessive, 
---      Check Node 2 is transmitting dominant. Check Node 1 lost arbitration. 
---      Check Node 2 is still transmitter. Read ALC from Node 1 and check it.
+--  @2. Generate two CAN frames: Frame 1 with Extended identifier RTR, Frame 2
+--      with Extended Identifier, Data frame. Identifiers of both CAN 
+--      frames are matching!
+--  @3. Wait till sample point in DUT. Send Frame 1 by DUT and Frame 2 by
+--      Test node.
+--  @4. Wait till arbitration field in DUT. Wait till sample point 32 times
+--      (11 Base ID + RTR/SRR + IDE + 18 ID Extension + RTR/r0). Check DUT
+--      is transmitting recessive, Check Test node is transmitting dominant. Check
+--      DUT lost arbitration. Check Test node is still transmitter. Read ALC
+--      from DUT and check it.
 --
 -- @TestInfoEnd
 --------------------------------------------------------------------------------
@@ -96,34 +98,24 @@
 --------------------------------------------------------------------------------
 
 Library ctu_can_fd_tb;
-context ctu_can_fd_tb.ctu_can_synth_context;
-context ctu_can_fd_tb.ctu_can_test_context;
+context ctu_can_fd_tb.ieee_context;
+context ctu_can_fd_tb.rtl_context;
+context ctu_can_fd_tb.tb_common_context;
 
-use ctu_can_fd_tb.pkg_feature_exec_dispath.all;
+use ctu_can_fd_tb.feature_test_agent_pkg.all;
 
-package alc_ide_feature is
-    procedure alc_ide_feature_exec(
-        signal      so              : out    feature_signal_outputs_t;
-        signal      rand_ctr        : inout  natural range 0 to RAND_POOL_SIZE;
-        signal      iout            : in     instance_outputs_arr_t;
-        signal      mem_bus         : inout  mem_bus_arr_t;
-        signal      bus_level       : in     std_logic
+package alc_rtr_r0_ftest is
+    procedure alc_rtr_r0_ftest_exec(
+        signal      chn             : inout  t_com_channel
     );
 end package;
 
 
-package body alc_ide_feature is
-    procedure alc_ide_feature_exec(
-        signal      so              : out    feature_signal_outputs_t;
-        signal      rand_ctr        : inout  natural range 0 to RAND_POOL_SIZE;
-        signal      iout            : in     instance_outputs_arr_t;
-        signal      mem_bus         : inout  mem_bus_arr_t;
-        signal      bus_level       : in     std_logic
+package body alc_rtr_r0_ftest is
+    procedure alc_rtr_r0_ftest_exec(
+        signal      chn             : inout  t_com_channel
     ) is
         variable alc                :       natural;
-
-        variable ID_1               :     natural := 1;
-        variable ID_2               :     natural := 2;
 
         -- Generated frames
         variable frame_1            :     SW_CAN_frame_type;
@@ -133,83 +125,86 @@ package body alc_ide_feature is
         -- Node status
         variable stat_1             :     SW_status;
         variable stat_2             :     SW_status;
-
-        variable pc_dbg             :     SW_PC_Debug;
         
-        variable txt_buf_state      :     SW_TXT_Buffer_state_type;
         variable rx_buf_info        :     SW_RX_Buffer_info;
         variable frames_equal       :     boolean := false;        
 
-        variable id_vect            :     std_logic_vector(28 downto 0);
     begin
 
         -----------------------------------------------------------------------
         -- @1. Configure both Nodes to one-shot mode.
         -----------------------------------------------------------------------
-        info("Step 1: Configure one -shot mode");
-        CAN_enable_retr_limit(true, 0, ID_1, mem_bus(1));
-        CAN_enable_retr_limit(true, 0, ID_2, mem_bus(2));
+        info_m("Step 1: Configure one -shot mode");
+        
+        CAN_enable_retr_limit(true, 0, DUT_NODE, chn);
+        CAN_enable_retr_limit(true, 0, TEST_NODE, chn);
 
         -----------------------------------------------------------------------
-        -- @2. Generate two CAN frames: Frame 1 with Extended identifier, 
-        --    Frame 2 with Base Identifier only, RTR frame. Base identifier of
-        --    both CAN frames is matching!
+        -- @2. Generate two CAN frames: Frame 1 with Extended identifier RTR,
+        --    Frame 2 with Extended Identifier, Data frame. Identifiers of both
+        --    CAN frames are matching!
         -----------------------------------------------------------------------
-        info("Step 2: Generate CAN frames with matching IDs!");
-        CAN_generate_frame(rand_ctr, frame_1);
-        CAN_generate_frame(rand_ctr, frame_2);
+        info_m("Step 2: Generate CAN frames with matching IDs!");
+        
+        CAN_generate_frame(frame_1);
+        CAN_generate_frame(frame_2);
         
         frame_1.ident_type := EXTENDED;
-        frame_2.ident_type := BASE;
-        frame_2.rtr := RTR_FRAME;
-        frame_2.frame_format := NORMAL_CAN;
-        frame_2.identifier := (frame_2.identifier mod 2**11);
-        id_vect := std_logic_vector(to_unsigned(frame_2.identifier, 29));
+        frame_2.ident_type := EXTENDED;
+        frame_1.rtr := RTR_FRAME;
+        frame_2.rtr := NO_RTR_FRAME;
 
-        -- Shift base ID up for extended id to match Base ID of Node 2!
-        id_vect := id_vect(10 downto 0) & "000000000000000000";
-        frame_1.identifier := to_integer(unsigned(id_vect));
+        frame_1.frame_format := NORMAL_CAN; -- Must be CAN 2.0 for RTR!
+        frame_1.identifier := frame_2.identifier;
 
         ------------------------------------------------------------------------
-        -- @3. Wait till sample point in Node 1. Send Frame 1 by Node 1 and 
-        --    Frame 2 by Node 2.
+        -- @3. Wait till sample point in DUT. Send Frame 1 by DUT and 
+        --    Frame 2 by Test node.
         ------------------------------------------------------------------------
-        info("Step 3: Send frames");
-        CAN_insert_TX_frame(frame_1, 1, ID_1, mem_bus(1));
-        CAN_insert_TX_frame(frame_2, 1, ID_2, mem_bus(2));
-        CAN_wait_sample_point(iout(1).stat_bus);
+        info_m("Step 3: Send frames");
+        
+        CAN_insert_TX_frame(frame_1, 1, DUT_NODE, chn);
+        CAN_insert_TX_frame(frame_2, 1, TEST_NODE, chn);
+        CAN_wait_sample_point(DUT_NODE, chn);
 
-        send_TXT_buf_cmd(buf_set_ready, 1, ID_1, mem_bus(1));
-        send_TXT_buf_cmd(buf_set_ready, 1, ID_2, mem_bus(2));
+        send_TXT_buf_cmd(buf_set_ready, 1, DUT_NODE, chn);
+        send_TXT_buf_cmd(buf_set_ready, 1, TEST_NODE, chn);
 
         -----------------------------------------------------------------------
-         -- @4. Wait till arbitration field in Node 1. Wait till sample point 
-         --    13 times (11 Base ID + RTR/SRR + IDE). Check Node 1 is 
-         --    transmitting recessive, Check Node 2 is transmitting dominant.
-         --    Check Node 1 lost arbitration. Check Node 2 is still transmitter.
-         --    Read ALC from Node 1 and check it.
+        -- @4. Wait till arbitration field in DUT. Wait till sample point 32
+        --    times (11 Base ID + RTR/SRR + IDE + 18 ID Extension + RTR/r0).
+        --    Check DUT is transmitting recessive, Check Test node is 
+        --    transmitting dominant. Check DUT lost arbitration. Check Node
+        --    2 is still transmitter. Read ALC from DUT and check it.
         -----------------------------------------------------------------------
-        info("Step 4: Check arbitration lost on SRR/RTR");
-        CAN_wait_pc_state(pc_deb_arbitration, ID_1, mem_bus(1));
-        for i in 0 to 12 loop
-            CAN_wait_sample_point(iout(1).stat_bus);
+        info_m("Step 4: Check arbitration lost on SRR/RTR");
+        
+        CAN_wait_pc_state(pc_deb_arbitration, DUT_NODE, chn);
+        for i in 0 to 31 loop
+            CAN_wait_sample_point(DUT_NODE, chn);
         end loop;
-        check(iout(1).can_tx = RECESSIVE, "Recessive IDE transmitted!");
-        check(iout(2).can_tx = DOMINANT, "Dominant IDE transmitted!");
+        check_can_tx(RECESSIVE, DUT_NODE, "Recessive RTR transmitted by DUT!", chn);
+        check_can_tx(DOMINANT, TEST_NODE, "Dominant RTR transmitted byt Test node!", chn);
         wait for 20 ns; -- To account for trigger processing
-        
-        get_controller_status(stat_2, ID_2, mem_bus(2));
-        check(stat_2.transmitter, "Node 2 transmitting!");
-        get_controller_status(stat_1, ID_1, mem_bus(1));
-        check(stat_1.receiver, "Node 1 lost arbitration!");
-        
-        read_alc(alc, ID_1, mem_bus(1));
-        check(alc = 13, "Arbitration lost at correct bit by Node 1!");
 
-        CAN_wait_bus_idle(ID_1, mem_bus(1));
-        CAN_wait_bus_idle(ID_2, mem_bus(2));
+        get_controller_status(stat_2, TEST_NODE, chn);
+        check_m(stat_2.transmitter, "Test node transmitting!");
+        get_controller_status(stat_1, DUT_NODE, chn);
+        check_m(stat_1.receiver, "DUT lost arbitration!");
 
-    wait for 1000 ns;
+        read_alc(alc, DUT_NODE, chn);
+        check_m(alc = 32, "Arbitration lost at correct bit by DUT!");
+
+        CAN_wait_bus_idle(DUT_NODE, chn);
+        CAN_wait_bus_idle(TEST_NODE, chn);
+
+        get_rx_buf_state(rx_buf_info, DUT_NODE, chn);
+        check_m(rx_buf_info.rx_frame_count = 1, "Frame received OK!");
+
+        CAN_read_frame(frame_rx, DUT_NODE, chn);
+        CAN_compare_frames(frame_rx, frame_2, false, frames_equal);
+        check_m(frames_equal, "TX vs. RX frames match!");
+
   end procedure;
 
 end package body;

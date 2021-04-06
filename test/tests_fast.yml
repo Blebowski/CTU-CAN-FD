@@ -49,13 +49,8 @@ feature:
         timeout: 100 ms
         wave: feature/feature_env_setup.tcl
     tests:
-        alc_base_id:
-        alc_id_extension:
-        alc_srr_rtr:
-        alc_srr_rtr_2:
-        alc_ide:
-        alc_rtr_r0:
-        alc_rtr_ext_id:
+        
+        
         btr:
         btr_fd:
         btr_minimal:
@@ -74,17 +69,9 @@ feature:
         
         
         
-        err_capt_sof:
+        
         
         err_norm_fd:
-        error_rules_a:
-        error_rules_b:
-        error_rules_c:
-        error_rules_d:
-        error_rules_e:
-        error_rules_f_tx:
-        error_rules_f_rx:
-        error_rules_g:
         fault_state:
 
 

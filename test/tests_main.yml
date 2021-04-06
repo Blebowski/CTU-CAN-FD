@@ -274,6 +274,14 @@ compliance:
 
 feature:
     tests:
+        alc_base_id:
+        alc_ide:
+        alc_id_extension:
+        alc_rtr_ext_id:
+        alc_rtr_r0:
+        alc_srr_rtr:
+        alc_srr_rtr_2:
+
         device_id:
         dlc_can20_8_64_bytes:
         

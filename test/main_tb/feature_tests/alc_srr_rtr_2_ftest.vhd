@@ -82,20 +82,20 @@
 --  @1. Configure both Nodes to one-shot mode.
 --  @2. Generate two CAN frames: Frame 1 - CAN FD Base frame, Frame 2 - CAN 2.0
 --      RTR frame with Base ID. Base identifier of both CAN frames is matching!
---  @3. Wait till sample point in Node 1. Send Frame 1 by Node 1 and Frame 2 by
---      Node 2.
---  @4. Wait till arbitration field in Node 1. Wait till sample point 12 times
---      (11 Base ID + RTR/SRR). Check Node 1 is transmitting dominant, Check
---      Node 2 is transmitting recessive. Check Node 2 lost arbitration. Check
---      Node 1 is still transmitter. Read ALC from Node 2 and check it.
+--  @3. Wait till sample point in DUT. Send Frame 1 by Test Node and Frame 2 by
+--      DUT.
+--  @4. Wait till arbitration field in Test Node. Wait till sample point 12 times
+--      (11 Base ID + RTR/SRR). Check Test Node is transmitting dominant, Check
+--      DUT is transmitting recessive. Check DUT lost arbitration. Check
+--      Test Node is still transmitter. Read ALC from DUT and check it.
 --  @5. Generate two CAN Frames: Frame 1 - CAN FD frame with Base ID. Frame 2 -
 --      Frame with Extended Identifier.
---  @6. Wait till sample point in Node 1. Send Frame 1 by Node 1 and Frame 2 by
---      Node 2.
---  @7. Wait till arbitration field in Node 2. Wait till sample point 12 times
---      (11 Base ID + RTR/SRR). Check Node 2 is transmitting recessive, Check
---      Node 1 is transmitting dominant. Check Node 2 lost arbitration. Check
---      Node 1 is still transmitter. Read ALC from Node 2 and check it.
+--  @6. Wait till sample point in Test Node. Send Frame 1 by Test Node and Frame 2
+--      by DUT.
+--  @7. Wait till arbitration field in DUT. Wait till sample point 12 times
+--      (11 Base ID + RTR/SRR). Check DUT is transmitting recessive, Check
+--      Test Node is transmitting dominant. Check Test node lost arbitration.
+--      Check Test Node is still transmitter. Read ALC from DUT and check it.
 --
 -- @TestInfoEnd
 --------------------------------------------------------------------------------
@@ -104,34 +104,24 @@
 --------------------------------------------------------------------------------
 
 Library ctu_can_fd_tb;
-context ctu_can_fd_tb.ctu_can_synth_context;
-context ctu_can_fd_tb.ctu_can_test_context;
+context ctu_can_fd_tb.ieee_context;
+context ctu_can_fd_tb.rtl_context;
+context ctu_can_fd_tb.tb_common_context;
 
-use ctu_can_fd_tb.pkg_feature_exec_dispath.all;
+use ctu_can_fd_tb.feature_test_agent_pkg.all;
 
-package alc_srr_rtr_2_feature is
-    procedure alc_srr_rtr_2_feature_exec(
-        signal      so              : out    feature_signal_outputs_t;
-        signal      rand_ctr        : inout  natural range 0 to RAND_POOL_SIZE;
-        signal      iout            : in     instance_outputs_arr_t;
-        signal      mem_bus         : inout  mem_bus_arr_t;
-        signal      bus_level       : in     std_logic
+package alc_srr_rtr_2_ftest is
+    procedure alc_srr_rtr_2_ftest_exec(
+        signal      chn             : inout  t_com_channel
     );
 end package;
 
 
-package body alc_srr_rtr_2_feature is
-    procedure alc_srr_rtr_2_feature_exec(
-        signal      so              : out    feature_signal_outputs_t;
-        signal      rand_ctr        : inout  natural range 0 to RAND_POOL_SIZE;
-        signal      iout            : in     instance_outputs_arr_t;
-        signal      mem_bus         : inout  mem_bus_arr_t;
-        signal      bus_level       : in     std_logic
+package body alc_srr_rtr_2_ftest is
+    procedure alc_srr_rtr_2_ftest_exec(
+        signal      chn             : inout  t_com_channel
     ) is
         variable alc                :       natural;
-
-        variable ID_1               :     natural := 1;
-        variable ID_2               :     natural := 2;
 
         -- Generated frames
         variable frame_1            :     SW_CAN_frame_type;
@@ -148,18 +138,20 @@ package body alc_srr_rtr_2_feature is
         -----------------------------------------------------------------------
         -- @1. Configure both Nodes to one-shot mode.
         -----------------------------------------------------------------------
-        info("Step 1: Configure one -shot mode");
-        CAN_enable_retr_limit(true, 0, ID_1, mem_bus(1));
-        CAN_enable_retr_limit(true, 0, ID_2, mem_bus(2));
+        info_m("Step 1: Configure one -shot mode");
+        
+        CAN_enable_retr_limit(true, 0, TEST_NODE, chn);
+        CAN_enable_retr_limit(true, 0, DUT_NODE, chn);
 
         -----------------------------------------------------------------------
         -- @2. Generate two CAN frames: Frame 1 - CAN FD Base frame, Frame 2 - 
         --    CAN 2.0 RTR frame with Base ID. Base identifier of both CAN 
         --    frames is matching!
         -----------------------------------------------------------------------
-        info("Step 2: Generate CAN frames with matching IDs!");
-        CAN_generate_frame(rand_ctr, frame_1);
-        CAN_generate_frame(rand_ctr, frame_2);
+        info_m("Step 2: Generate CAN frames with matching IDs!");
+        
+        CAN_generate_frame(frame_1);
+        CAN_generate_frame(frame_2);
         
         frame_1.ident_type := BASE;
         frame_2.ident_type := BASE;
@@ -170,51 +162,54 @@ package body alc_srr_rtr_2_feature is
         frame_1.identifier := frame_2.identifier;
 
         ------------------------------------------------------------------------
-        -- @3. Wait till sample point in Node 1. Send Frame 1 by Node 1 and 
-        --    Frame 2 by Node 2.
+        -- @3. Wait till sample point in Test Node. Send Frame 1 by Test Node and 
+        --    Frame 2 by DUT.
         ------------------------------------------------------------------------
-        info("Step 3: Send frames");
-        CAN_insert_TX_frame(frame_1, 1, ID_1, mem_bus(1));
-        CAN_insert_TX_frame(frame_2, 1, ID_2, mem_bus(2));
-        CAN_wait_sample_point(iout(1).stat_bus);
+        info_m("Step 3: Send frames");
+        
+        CAN_insert_TX_frame(frame_1, 1, TEST_NODE, chn);
+        CAN_insert_TX_frame(frame_2, 1, DUT_NODE, chn);
+        CAN_wait_sample_point(TEST_NODE, chn);
 
-        send_TXT_buf_cmd(buf_set_ready, 1, ID_1, mem_bus(1));
-        send_TXT_buf_cmd(buf_set_ready, 1, ID_2, mem_bus(2));
+        send_TXT_buf_cmd(buf_set_ready, 1, TEST_NODE, chn);
+        send_TXT_buf_cmd(buf_set_ready, 1, DUT_NODE, chn);
 
         -----------------------------------------------------------------------
-        -- @4. Wait till arbitration field in Node 1. Wait till sample point 12
-        --    times (11 Base ID + RTR/SRR). Check Node 1 is transmitting
-        --    dominant, Check Node 2 is transmitting recessive. Check Node 2 
-        --    lost arbitration. Check Node 1 is still transmitter. Read ALC
-        --    from Node 2 and check it.
+        -- @4. Wait till arbitration field in Test Node. Wait till sample point
+        --    12 times (11 Base ID + RTR/SRR). Check Test Node is transmitting
+        --    dominant, Check DUT is transmitting recessive. Check DUT 
+        --    lost arbitration. Check Test Node is still transmitter. Read ALC
+        --    from DUT and check it.
         -----------------------------------------------------------------------
-        info("Step 4: Check arbitration lost on SRR/RTR");
-        CAN_wait_pc_state(pc_deb_arbitration, ID_2, mem_bus(2));
+        info_m("Step 4: Check arbitration lost on SRR/RTR");
+        
+        CAN_wait_pc_state(pc_deb_arbitration, DUT_NODE, chn);
         for i in 0 to 11 loop
-            CAN_wait_sample_point(iout(2).stat_bus);
+            CAN_wait_sample_point(DUT_NODE, chn);
         end loop;
-        check(iout(1).can_tx = DOMINANT, "Dominant SRR transmitted!");
-        check(iout(2).can_tx = RECESSIVE, "Recessive RTR transmitted!");
+        check_can_tx(DOMINANT, TEST_NODE, "Dominant SRR transmitted!", chn);
+        check_can_tx(RECESSIVE, DUT_NODE, "Recessive RTR transmitted!", chn);
         wait for 20 ns; -- To account for trigger processing
         
-        get_controller_status(stat_2, ID_2, mem_bus(2));
-        check(stat_2.receiver, "Node 2 lost arbitration!");
-        get_controller_status(stat_1, ID_1, mem_bus(1));
-        check(stat_1.transmitter, "Node 1 transmitter!");
+        get_controller_status(stat_2, DUT_NODE, chn);
+        check_m(stat_2.receiver, "DUT lost arbitration!");
+        get_controller_status(stat_1, TEST_NODE, chn);
+        check_m(stat_1.transmitter, "Test Node transmitter!");
         
-        read_alc(alc, ID_2, mem_bus(2));
-        check(alc = 12, "Arbitration lost at correct bit by Node 1!");
+        read_alc(alc, DUT_NODE, chn);
+        check_m(alc = 12, "Arbitration lost at correct bit by DUT!");
 
-        CAN_wait_bus_idle(ID_1, mem_bus(1));
-        CAN_wait_bus_idle(ID_2, mem_bus(2));
+        CAN_wait_bus_idle(TEST_NODE, chn);
+        CAN_wait_bus_idle(DUT_NODE, chn);
 
         -----------------------------------------------------------------------
         -- @5. Generate two CAN Frames: Frame 1 - CAN FD frame with Base ID. 
         --    Frame 2 - Frame with Extended Identifier.
         -----------------------------------------------------------------------
-        info("Step 5: Generate frames");
-        CAN_generate_frame(rand_ctr, frame_1);
-        CAN_generate_frame(rand_ctr, frame_2);
+        info_m("Step 5: Generate frames");
+        
+        CAN_generate_frame(frame_1);
+        CAN_generate_frame(frame_2);
 
         frame_1.identifier := (frame_1.identifier mod 2**11);
         frame_1.frame_format := FD_CAN;
@@ -222,53 +217,54 @@ package body alc_srr_rtr_2_feature is
         
         id_vect := std_logic_vector(to_unsigned(frame_1.identifier, 29));
 
-        -- Shift base ID up for extended id to match Base ID of Node 2!
+        -- Shift base ID up for extended id to match Base ID of Test node!
         id_vect := id_vect(10 downto 0) & "000000000000000000";
         frame_2.identifier := to_integer(unsigned(id_vect));
         frame_2.ident_type := EXTENDED;
 
         -----------------------------------------------------------------------
-        -- @6. Wait till sample point in Node 1. Send Frame 1 by Node 1 and 
-        --    Frame 2 by Node 2.
+        -- @6. Wait till sample point in Test Node. Send Frame 1 by Test node 
+        --     and Frame 2 by DUT.
         -----------------------------------------------------------------------
-        info("Step 6: Send frames");
-        CAN_insert_TX_frame(frame_1, 1, ID_1, mem_bus(1));
-        CAN_insert_TX_frame(frame_2, 1, ID_2, mem_bus(2));
-        CAN_wait_sample_point(iout(1).stat_bus);
+        info_m("Step 6: Send frames");
         
-        send_TXT_buf_cmd(buf_set_ready, 1, ID_1, mem_bus(1));
-        send_TXT_buf_cmd(buf_set_ready, 1, ID_2, mem_bus(2));
+        CAN_insert_TX_frame(frame_1, 1, TEST_NODE, chn);
+        CAN_insert_TX_frame(frame_2, 1, DUT_NODE, chn);
+        CAN_wait_sample_point(TEST_NODE, chn);
+        
+        send_TXT_buf_cmd(buf_set_ready, 1, TEST_NODE, chn);
+        send_TXT_buf_cmd(buf_set_ready, 1, DUT_NODE, chn);
         
         -----------------------------------------------------------------------
-        -- @7. Wait till arbitration field in Node 2. Wait till sample point 12
-        --    times (11 Base ID + RTR/SRR). Check Node 2 is transmitting 
-        --    recessive, Check Node 1 is transmitting dominant. Check Node 2
-        --    lost arbitration. Check Node 1 is still transmitter. Read ALC 
-        --    from Node 2 and check it.
+        -- @7. Wait till arbitration field in DUT. Wait till sample point 12
+        --    times (11 Base ID + RTR/SRR). Check DUT is transmitting 
+        --    recessive, Check Test Node is transmitting dominant. Check DUT
+        --    lost arbitration. Check Test Node is still transmitter. Read ALC 
+        --    from DUT and check it.
         -----------------------------------------------------------------------
-        info("Step 7: Check arbitration lost on SRR/RTR");
-        CAN_wait_pc_state(pc_deb_arbitration, ID_2, mem_bus(2));
+        info_m("Step 7: Check arbitration lost on SRR/RTR");
+        
+        CAN_wait_pc_state(pc_deb_arbitration, DUT_NODE, chn);
         for i in 0 to 11 loop
-            CAN_wait_sample_point(iout(2).stat_bus);
+            CAN_wait_sample_point(DUT_NODE, chn);
         end loop;
-        check(iout(1).can_tx = DOMINANT, "Dominant RTR transmitted!");
-        check(iout(2).can_tx = RECESSIVE, "Recessive RTR transmitted!");
+        check_can_tx(DOMINANT, TEST_NODE, "Dominant RTR transmitted!", chn);
+        check_can_tx(RECESSIVE, DUT_NODE, "Recessive RTR transmitted!", chn);
         
         -- Wait for up to one bit time since triggers can be shifted! 
         wait for 1000 ns;
         
-        get_controller_status(stat_2, ID_2, mem_bus(2));
-        check(stat_2.receiver, "Node 2 lost arbitration!");
-        get_controller_status(stat_1, ID_1, mem_bus(1));
-        check(stat_1.transmitter, "Node 1 transmitter!");
+        get_controller_status(stat_2, DUT_NODE, chn);
+        check_m(stat_2.receiver, "DUT lost arbitration!");
+        get_controller_status(stat_1, TEST_NODE, chn);
+        check_m(stat_1.transmitter, "Test Node transmitter!");
         
-        read_alc(alc, ID_2, mem_bus(2));
-        check(alc = 12, "Arbitration lost at correct bit by Node 2!");
+        read_alc(alc, DUT_NODE, chn);
+        check_m(alc = 12, "Arbitration lost at correct bit by DUT!");
         
-        CAN_wait_bus_idle(ID_1, mem_bus(1));
-        CAN_wait_bus_idle(ID_2, mem_bus(2));
+        CAN_wait_bus_idle(TEST_NODE, chn);
+        CAN_wait_bus_idle(DUT_NODE, chn);
 
-    wait for 1000 ns;
   end procedure;
 
 end package body;

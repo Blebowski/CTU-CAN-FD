@@ -81,22 +81,22 @@
 --  @1. Configure both Nodes to one-shot mode.
 --  @2. Loop by N between 1 and 11: 
 --   @2.1 Generate two CAN frames. Both with base ID only. Both IDs are the
---        same, appart from N-th bit. On N-th bit Node 1 will have Dominant
---        Node 2 Recessive.
---   @2.2 Wait till sample point on Node 1. Send frame 1 by Node 1 and frame 2 
---        by Node 2 right one after another.
---   @2.3 Wait till Arbitration field in Node 2. This is right after sample
---        point of Node 2 in SOF or Intermission (if there is no SOF). Check
---        that Node 2 is Transmitter.
---   @2.4 Wait N-times till sample point in Node 2. After every wait before N
---        is reached, check Node 2 is still transmitter. After N waits we are
---        right after Sample point where Node 2 should have lost arbitration.
---        Check Node 2 is receiver. Read content of ALC, check arbitration was
+--        same, appart from N-th bit. On N-th bit Test Node will have Dominant
+--        DUT Recessive.
+--   @2.2 Wait till sample point in Test Node. Send frame 1 by Test Node and 
+--        frame 2 by DUT right one after another.
+--   @2.3 Wait till Arbitration field in DUT. This is right after sample
+--        point of DUT in SOF or Intermission (if there is no SOF). Check
+--        that DUT is Transmitter.
+--   @2.4 Wait N-times till sample point in Test node. After every wait before N
+--        is reached, check DUT is still transmitter. After N waits we are
+--        right after Sample point where DUT should have lost arbitration.
+--        Check DUT is receiver. Read content of ALC, check arbitration was
 --        lost at correct position.
---   @2.5 Wait till the CRC delimiter in Node 2, and monitor that Node 2 is 
+--   @2.5 Wait till the CRC delimiter in DUT, and monitor that DUT is 
 --        transmitting recessive value.
 --   @2.6 Wait till bus is idle! Check frame was sucessfully transmitted in
---        Node 1. Check it was succesfully received in Node 2!
+--        DUT. Check it was succesfully received in DUT!
 --
 -- @TestInfoEnd
 --------------------------------------------------------------------------------
@@ -109,34 +109,25 @@
 --------------------------------------------------------------------------------
 
 Library ctu_can_fd_tb;
-context ctu_can_fd_tb.ctu_can_synth_context;
-context ctu_can_fd_tb.ctu_can_test_context;
+context ctu_can_fd_tb.ieee_context;
+context ctu_can_fd_tb.rtl_context;
+context ctu_can_fd_tb.tb_common_context;
 
-use ctu_can_fd_tb.pkg_feature_exec_dispath.all;
+use ctu_can_fd_tb.feature_test_agent_pkg.all;
+use ctu_can_fd_tb.mem_bus_agent_pkg.all;
 
-package alc_base_id_feature is
-    procedure alc_base_id_feature_exec(
-        signal      so              : out    feature_signal_outputs_t;
-        signal      rand_ctr        : inout  natural range 0 to RAND_POOL_SIZE;
-        signal      iout            : in     instance_outputs_arr_t;
-        signal      mem_bus         : inout  mem_bus_arr_t;
-        signal      bus_level       : in     std_logic
+package alc_base_id_ftest is
+    procedure alc_base_id_ftest_exec(
+        signal      chn             : inout  t_com_channel
     );
 end package;
 
 
-package body alc_base_id_feature is
-    procedure alc_base_id_feature_exec(
-        signal      so              : out    feature_signal_outputs_t;
-        signal      rand_ctr        : inout  natural range 0 to RAND_POOL_SIZE;
-        signal      iout            : in     instance_outputs_arr_t;
-        signal      mem_bus         : inout  mem_bus_arr_t;
-        signal      bus_level       : in     std_logic
+package body alc_base_id_ftest is
+    procedure alc_base_id_ftest_exec(
+        signal      chn             : inout  t_com_channel
     ) is
         variable alc                :       natural;
-
-        variable ID_1               :     natural := 1;
-        variable ID_2               :     natural := 2;
 
         -- Generated frames
         variable frame_1            :     SW_CAN_frame_type;
@@ -161,139 +152,140 @@ package body alc_base_id_feature is
         ------------------------------------------------------------------------
         -- @1. Configure both Nodes to one-shot mode.
         ------------------------------------------------------------------------
-        info("Step 1: Configure one -shot mode");
-        CAN_enable_retr_limit(true, 0, ID_1, mem_bus(1));
-        CAN_enable_retr_limit(true, 0, ID_2, mem_bus(2));
+        info_m("Step 1: Configure one -shot mode");
+        CAN_enable_retr_limit(true, 0, TEST_NODE, chn);
+        CAN_enable_retr_limit(true, 0, DUT_NODE, chn);
 
         ------------------------------------------------------------------------
         --  @2. Loop by N between 1 and 11: 
         ------------------------------------------------------------------------
-        info("Step 2: Loop over each bit of Base ID!");
+        info_m("Step 2: Loop over each bit of Base ID!");
         for N in 1 to 11 loop
-            info("-----------------------------------------------------------");
-            info("Step 2: Bit " & integer'image(N));
-            info("-----------------------------------------------------------");
+            info_m("-----------------------------------------------------------");
+            info_m("Step 2: Bit " & integer'image(N));
+            info_m("-----------------------------------------------------------");
             
             --------------------------------------------------------------------
             -- @2.1 Generate two CAN frames. Both with base ID only. Both IDs are
-            --     the same, appart from N-th bit. On N-th bit Node 1 will have
-            --     Dominant Node 2 Recessive.
+            --     the same, appart from N-th bit. On N-th bit DUT will have
+            --     Dominant Test node Recessive.
             --------------------------------------------------------------------
-            info("Step 2.1: Generate frames!");
-            CAN_generate_frame(rand_ctr, frame_1);
-            CAN_generate_frame(rand_ctr, frame_2);
+            info_m("Step 2.1: Generate frames!");
+            CAN_generate_frame(frame_1);
+            CAN_generate_frame(frame_2);
             frame_1.ident_type := BASE;        
             frame_2.ident_type := BASE;
             
-            -- Node 1 - Should win -> N-th bit Dominant.
+            -- Test Node, should win -> N-th bit Dominant.
             id_var := id_template;
             id_var(11 - N) := DOMINANT;
             frame_1.identifier := to_integer(unsigned(id_var));
 
-            -- Node 2 - Should loose -> N-th bit Recessive.
+            -- DUT, should loose - Should win -> N-th bit Recessive.
             id_var := id_template;
             id_var(11 - N) := RECESSIVE;
             frame_2.identifier := to_integer(unsigned(id_var));
             
-            CAN_insert_TX_frame(frame_1, 1, ID_1, mem_bus(1));
-            CAN_insert_TX_frame(frame_2, 1, ID_2, mem_bus(2));
+            CAN_insert_TX_frame(frame_1, 1, TEST_NODE, chn);
+            CAN_insert_TX_frame(frame_2, 1, DUT_NODE, chn);
 
             --------------------------------------------------------------------
-            -- @2.2 Wait till sample point on Node 1. Send frame 1 by Node 1 and
-            --     frame 2 by Node 2 right one after another.
+            -- @2.2 Wait till sample point on DUT. Send frame 1 by Test Node and
+            --     frame 2 by DUT right one after another.
             --------------------------------------------------------------------
-            info("Step 2.2: Send frames!");
-            CAN_wait_sample_point(iout(1).stat_bus);
-            send_TXT_buf_cmd(buf_set_ready, 1, ID_1, mem_bus(1));
-            send_TXT_buf_cmd(buf_set_ready, 1, ID_2, mem_bus(2));
+            info_m("Step 2.2: Send frames!");
+            CAN_wait_sample_point(TEST_NODE, chn);
+            send_TXT_buf_cmd(buf_set_ready, 1, TEST_NODE, chn);
+            send_TXT_buf_cmd(buf_set_ready, 1, DUT_NODE, chn);
             
             --------------------------------------------------------------------
-            -- @2.3 Wait till Arbitration field in Node 2. This is right after
-            --     sample point of Node 2 in SOF or Intermission (if there is no
-            --     SOF). Check that Node 2 is Transmitter.
+            -- @2.3 Wait till Arbitration field in DUT. This is right after
+            --     sample point of DUT in SOF or Intermission (if there is no
+            --     SOF). Check that DUT is Transmitter.
             --------------------------------------------------------------------
-            info("Step 2.2: Wait till arbitration!");
-            CAN_wait_pc_state(pc_deb_arbitration, ID_2, mem_bus(2));
-            get_controller_status(stat_2, ID_2, mem_bus(2));
-            check(stat_2.transmitter, "Node 2 transmitting!");
+            info_m("Step 2.2: Wait till arbitration!");
+            CAN_wait_pc_state(pc_deb_arbitration, DUT_NODE, chn);
+            get_controller_status(stat_2, DUT_NODE, chn);
+            check_m(stat_2.transmitter, "Test node transmitting!");
     
             -------------------------------------------------------------------
-            -- @2.4 Wait N-times till sample point in Node 2. After every wait 
-            --     before N is reached, check Node 2 is still transmitter.
-            --     After N waits we are right after Sample point where Node 2
-            --     should have lost arbitration. Check Node 2 is receiver.
+            -- @2.4 Wait N-times till sample point in DUT. After every wait 
+            --     before N is reached, check DUT is still transmitter.
+            --     After N waits we are right after Sample point where DUT
+            --     should have lost arbitration. Check DUT is receiver.
             --     Read content of ALC, check arbitration was lost at correct
             --     position.
             -------------------------------------------------------------------
-            info("Step 2.4: Wait till N-th bit!");
+            info_m("Step 2.4: Wait till N-th bit!");
             for K in 1 to N loop
-                info ("Loop: " & integer'image(K));
-                CAN_wait_sample_point(iout(2).stat_bus);
+                info_m ("Loop: " & integer'image(K));
+                CAN_wait_sample_point(DUT_NODE, chn);
                 wait for 20 ns; -- Wait until RX trigger is processed!
                 
                 -- Arbitration should have been lost!
                 if (K = N) then
-                    get_controller_status(stat_2, ID_2, mem_bus(2));
-                    check(stat_2.receiver, "Node 2 receiver!");
-                    check_false(stat_2.transmitter, "Node 2 not transmitter!");
+                    get_controller_status(stat_2, DUT_NODE, chn);
+                    check_m(stat_2.receiver, "DUT receiver!");
+                    check_false_m(stat_2.transmitter, "DUT not transmitter!");
 
-                    read_alc(alc, ID_2, mem_bus(2));
-                    check(alc = N, "Arbitration lost at correct bit by Node 2!");
+                    read_alc(alc, DUT_NODE, chn);
+                    check_m(alc = N, "Arbitration lost at correct bit by DUT!");
                     
-                    read_alc(alc, ID_1, mem_bus(1));
-                    check(alc = 0, "Arbitration not lost by Node 1!");
+                    read_alc(alc, TEST_NODE, chn);
+                    check_m(alc = 0, "Arbitration not lost by Test node!");
         
-                    check(iout(2).can_tx = RECESSIVE, "Recessive transmitted!");
+                    check_can_tx(RECESSIVE, DUT_NODE, "Recessive transmitted!", chn);
         
                 -- Arbitration should not have been lost yet!
                 else
-                    get_controller_status(stat_2, ID_2, mem_bus(2));
-                    check(stat_2.transmitter, "Node 2 transmitter!");
-                    check_false(stat_2.receiver, "Node 2 not receiver!");
+                    get_controller_status(stat_2, DUT_NODE, chn);
+                    check_m(stat_2.transmitter, "DUT transmitter!");
+                    check_false_m(stat_2.receiver, "DUT not receiver!");
                     
                     if (K mod 2 = 0) then
-                        check(iout(2).can_tx = RECESSIVE, "Recessive transmitted!");
+                        check_can_tx(RECESSIVE, DUT_NODE, "Recessive transmitted!", chn);
                     else
-                        check(iout(2).can_tx = DOMINANT, "Dominant transmitted!");
+                        check_can_tx(DOMINANT, DUT_NODE, "Dominant transmitted!", chn);
                     end if;
                 end if;
 
             end loop;
             
         -----------------------------------------------------------------------
-        -- @2.5 Wait till the CRC delimiter in Node 2, and monitor that Node 2
+        -- @2.5 Wait till the CRC delimiter in DUT, and monitor that DUT
         --     is transmitting recessive value.
         -----------------------------------------------------------------------
-        info("Step 2.5: Wait till end of frame!");
-        CAN_read_pc_debug(pc_dbg, ID_2, mem_bus(2));
+        info_m("Step 2.5: Wait till end of frame!");
+        CAN_read_pc_debug_m(pc_dbg, DUT_NODE, chn);
+        mem_bus_agent_disable_transaction_reporting(chn);
         while (pc_dbg /= pc_deb_crc_delim) loop
-            CAN_read_pc_debug(pc_dbg, ID_2, mem_bus(2));
-            check(iout(2).can_tx = RECESSIVE, "Recessive transmitted!");
+            CAN_read_pc_debug_m(pc_dbg, DUT_NODE, chn);
+            check_can_tx(RECESSIVE, DUT_NODE, "Recessive transmitted!", chn);
             -- To make checks more sparse not to consume simulation time!
-            wait for 100 ns;    
+            wait for 100 ns;
         end loop;
-        
+        mem_bus_agent_enable_transaction_reporting(chn);
+
         -----------------------------------------------------------------------
         -- @2.6 Wait till bus is idle! Check frame was sucessfully transmitted
-        --     in Node 1. Check it was succesfully received in Node 2!
+        --     in Test Node. Check it was succesfully received in DUT!
         -----------------------------------------------------------------------
-        info("Step 2.7: Wait till bus is idle!");
-        CAN_wait_bus_idle(ID_1, mem_bus(1));
-        CAN_wait_bus_idle(ID_2, mem_bus(2));
+        info_m("Step 2.7: Wait till bus is idle!");
+        CAN_wait_bus_idle(TEST_NODE, chn);
+        CAN_wait_bus_idle(DUT_NODE, chn);
 
-        get_tx_buf_state(1, txt_buf_state, ID_1, mem_bus(1));
-        check(txt_buf_state = buf_done, "Frame transmitted OK!");
+        get_tx_buf_state(1, txt_buf_state, TEST_NODE, chn);
+        check_m(txt_buf_state = buf_done, "Frame transmitted OK!");
         
-        get_rx_buf_state(rx_buf_info, ID_2, mem_bus(2));
-        check(rx_buf_info.rx_frame_count = 1, "Frame received OK!");
+        get_rx_buf_state(rx_buf_info, DUT_NODE, chn);
+        check_m(rx_buf_info.rx_frame_count = 1, "Frame received OK!");
         
-        CAN_read_frame(frame_rx, ID_2, mem_bus(2));
+        CAN_read_frame(frame_rx, DUT_NODE, chn);
         CAN_compare_frames(frame_rx, frame_1, false, frames_equal);
-        check(frames_equal, "TX vs. RX frames match!");
+        check_m(frames_equal, "TX vs. RX frames match!");
 
     end loop;
 
-    wait for 1000 ns;
   end procedure;
 
 end package body;

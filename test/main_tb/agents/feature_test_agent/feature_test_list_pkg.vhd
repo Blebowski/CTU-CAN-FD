@@ -88,6 +88,14 @@ context ctu_can_fd_tb.ieee_context;
 context ctu_can_fd_tb.tb_common_context;
 
 -- Feature test packages
+use ctu_can_fd_tb.alc_base_id_ftest.all;
+use ctu_can_fd_tb.alc_ide_ftest.all;
+use ctu_can_fd_tb.alc_id_extension_ftest.all;
+use ctu_can_fd_tb.alc_rtr_ext_id_ftest.all;
+use ctu_can_fd_tb.alc_rtr_r0_ftest.all;
+use ctu_can_fd_tb.alc_srr_rtr_ftest.all;
+use ctu_can_fd_tb.alc_srr_rtr_2_ftest.all;
+
 use ctu_can_fd_tb.device_id_ftest.all;
 use ctu_can_fd_tb.dlc_can20_8_64_bytes_ftest.all;
 
@@ -139,7 +147,22 @@ package body feature_test_list_pkg is
         signal   channel      : inout  t_com_channel
     ) is
     begin
-        if (test_name = "device_id") then
+        if (test_name = "alc_base_id") then
+            alc_base_id_ftest_exec(channel);
+        elsif (test_name = "alc_ide") then
+            alc_ide_ftest_exec(channel);
+        elsif (test_name = "alc_id_extension") then
+            alc_id_extension_ftest_exec(channel);
+        elsif (test_name = "alc_rtr_ext_id") then
+            alc_rtr_ext_id_ftest_exec(channel);
+        elsif (test_name = "alc_rtr_r0") then
+            alc_rtr_r0_ftest_exec(channel);
+        elsif (test_name = "alc_srr_rtr") then
+            alc_srr_rtr_ftest_exec(channel);
+        elsif (test_name = "alc_srr_rtr_2") then
+            alc_srr_rtr_2_ftest_exec(channel);
+             
+        elsif (test_name = "device_id") then
             device_id_ftest_exec(channel);
         elsif (test_name = "dlc_can20_8_64_bytes") then
             dlc_can20_8_64_bytes_ftest_exec(channel);
