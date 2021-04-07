@@ -88,31 +88,24 @@
 --------------------------------------------------------------------------------
 
 Library ctu_can_fd_tb;
-context ctu_can_fd_tb.ctu_can_synth_context;
-context ctu_can_fd_tb.ctu_can_test_context;
+context ctu_can_fd_tb.ieee_context;
+context ctu_can_fd_tb.rtl_context;
+context ctu_can_fd_tb.tb_common_context;
 
-use ctu_can_fd_tb.pkg_feature_exec_dispath.all;
+use ctu_can_fd_tb.feature_test_agent_pkg.all;
+use ctu_can_fd_tb.timestamp_agent_pkg.all;
 
-package timestamp_low_high_feature is
-    procedure timestamp_low_high_feature_exec(
-        signal      so              : out    feature_signal_outputs_t;
-        signal      rand_ctr        : inout  natural range 0 to RAND_POOL_SIZE;
-        signal      iout            : in     instance_outputs_arr_t;
-        signal      mem_bus         : inout  mem_bus_arr_t;
-        signal      bus_level       : in     std_logic
+package timestamp_low_high_ftest is
+    procedure timestamp_low_high_ftest_exec(
+        signal      chn             : inout  t_com_channel
 	);
 end package;
 
 
-package body timestamp_low_high_feature is
-    procedure timestamp_low_high_feature_exec(
-        signal      so              : out    feature_signal_outputs_t;
-        signal      rand_ctr        : inout  natural range 0 to RAND_POOL_SIZE;
-        signal      iout            : in     instance_outputs_arr_t;
-        signal      mem_bus         : inout  mem_bus_arr_t;
-        signal      bus_level       : in     std_logic
+package body timestamp_low_high_ftest is
+    procedure timestamp_low_high_ftest_exec(
+        signal      chn             : inout  t_com_channel
     ) is
-        variable ID_1               :        natural := 1;
         variable diff               :        unsigned(63 downto 0);
 
         variable ts_input           :        std_logic_vector(63 downto 0);
@@ -126,11 +119,11 @@ package body timestamp_low_high_feature is
         --    TIMESTAMP_HIGH registers. Check read value matches value which
         --    was preset.
         -----------------------------------------------------------------------
-        info("Step 1");
+        info_m("Step 1");
 
         -- Force random timestamp so that we are sure that both words of the
         -- timestamp are clocked properly!
-        rand_logic_vect_v(rand_ctr, ts_rand, 0.5);
+        rand_logic_vect_v(ts_rand, 0.5);
         
         -- Keep highest bit 0 to avoid complete overflow during the test!
         ts_rand(63) := '0';
@@ -141,21 +134,17 @@ package body timestamp_low_high_feature is
         -- value is out of scope of natural!
         ts_rand(31) := '0';
 
-        info("Forcing start timestamp in Node 1 to: " & to_hstring(ts_rand));
-        ftr_tb_set_timestamp(ts_rand, ID_1, so.ts_preset, so.ts_preset_val);
+        info_m("Forcing start timestamp in DUT to: " & to_hstring(ts_rand));
+        ftr_tb_set_timestamp(ts_rand, chn);
 
         wait for 100 ns;
 
         for i in 0 to 50 loop
-            -------------------------------------------------------------------
-            -- Read and save timestamp from registers
-            -------------------------------------------------------------------
-            ts_input := iout(1).stat_bus(STAT_TS_HIGH downto STAT_TS_LOW);
+            -- Get timestamp from Timestamp agent
+            timestamp_agent_get_timestamp(chn, ts_input);
 
-            -------------------------------------------------------------------
-            -- Read timestamp with lib function
-            -------------------------------------------------------------------
-            CAN_read_timestamp(ts_read, ID_1, mem_bus(1));
+            -- Get timestamp from DUT
+            CAN_read_timestamp(ts_read, DUT_NODE, chn);
 
             -------------------------------------------------------------------
             -- Compare both values
@@ -168,10 +157,10 @@ package body timestamp_low_high_feature is
                 diff := unsigned(ts_read) - unsigned(ts_input);
             end if;
 
-            info("Timestamp input: 0x" & to_hstring(ts_input));
-            info("Timestamp read: 0x" & to_hstring(ts_read));
+            info_m("Timestamp input: 0x" & to_hstring(ts_input));
+            info_m("Timestamp read: 0x" & to_hstring(ts_read));
 
-            check(to_integer(diff) < 10, "Timestamp difference is too big! " & 
+            check_m(to_integer(diff) < 10, "Timestamp difference is too big! " & 
                   "Difference " & integer'image(to_integer(diff)));
 
             wait for 100 ns;

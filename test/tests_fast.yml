@@ -94,7 +94,6 @@ feature:
         rx_status:
         rx_status_mof:
         rx_buf_empty_read:
-        tx_counter:
 
         settings_tbfbo:
         single_bus_node:
@@ -102,22 +101,13 @@ feature:
         status_txs:
         stuff_in_data:
         trv_delay:
-        tx_from_intermission:
         tx_arb_time_tran:
-        tx_status:
         # message_filter:
         #     iterations: 1
-        timestamp_low_high:
-        txt_buffer_hazard:
-            iterations: 1
-        tx_cmd_set_abort:
-        tx_cmd_set_empty:
-        tx_cmd_set_ready:
         tx_arb_consistency:
         tx_priority:
             iterations: 1
-        tx_priority_change:
-            iterations: 1
+        
 reference:
     default:
         <<: *default

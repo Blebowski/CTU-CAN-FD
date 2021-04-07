@@ -151,6 +151,9 @@ begin
             wait for 0 ns;
             timestamp_preset <= '0';
             wait for 0 ns;
+            
+        when TIMESTAMP_AGENT_CMD_GET_TIMESTAMP =>
+            com_channel_data.set_param(std_logic_vector(timestamp_i));
 
         when others =>
             info_m("Invalid message type: " & integer'image(cmd));

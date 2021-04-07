@@ -324,3 +324,18 @@ feature:
         status_rxs:
         status_txnf:
         status_txs:
+
+        tx_cmd_set_abort:
+            iterations: 5
+        tx_cmd_set_empty:
+            iterations: 5
+        tx_cmd_set_ready:
+            iterations: 5
+        tx_counter:
+        tx_from_intermission:
+        tx_priority_change:
+            iterations: 1
+        tx_priority:
+        tx_status:
+        timestamp_low_high:
+        txt_buffer_hazard:

@@ -166,7 +166,7 @@ begin
     test_node_inst : can_top_level
     generic map(
         -- Keep config hard-coded, it is enough that DUT is configurable!
-        rx_buffer_size      => 64,
+        rx_buffer_size      => 256, -- Size to receive 8 frames is needed
         txt_buffer_count    => 4,
         sup_filtA           => false,
         sup_filtB           => false,

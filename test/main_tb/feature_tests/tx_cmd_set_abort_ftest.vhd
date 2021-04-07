@@ -94,40 +94,31 @@
 --------------------------------------------------------------------------------
 
 Library ctu_can_fd_tb;
-context ctu_can_fd_tb.ctu_can_synth_context;
-context ctu_can_fd_tb.ctu_can_test_context;
+context ctu_can_fd_tb.ieee_context;
+context ctu_can_fd_tb.rtl_context;
+context ctu_can_fd_tb.tb_common_context;
 
-use ctu_can_fd_tb.pkg_feature_exec_dispath.all;
+use ctu_can_fd_tb.feature_test_agent_pkg.all;
 
-package tx_cmd_set_abort_feature is
-    procedure tx_cmd_set_abort_feature_exec(
-        signal      so              : out    feature_signal_outputs_t;
-        signal      rand_ctr        : inout  natural range 0 to RAND_POOL_SIZE;
-        signal      iout            : in     instance_outputs_arr_t;
-        signal      mem_bus         : inout  mem_bus_arr_t;
-        signal      bus_level       : in     std_logic
+package tx_cmd_set_abort_ftest is
+    procedure tx_cmd_set_abort_ftest_exec(
+        signal      chn             : inout  t_com_channel
     );
 end package;
 
 
-package body tx_cmd_set_abort_feature is
-    procedure tx_cmd_set_abort_feature_exec(
-        signal      so              : out    feature_signal_outputs_t;
-        signal      rand_ctr        : inout  natural range 0 to RAND_POOL_SIZE;
-        signal      iout            : in     instance_outputs_arr_t;
-        signal      mem_bus         : inout  mem_bus_arr_t;
-        signal      bus_level       : in     std_logic
+package body tx_cmd_set_abort_ftest is
+    procedure tx_cmd_set_abort_ftest_exec(
+        signal      chn             : inout  t_com_channel
     ) is
-        variable ID_1           	:       natural := 1;
-        variable ID_2           	:       natural := 2;
         variable CAN_frame          :       SW_CAN_frame_type;
         variable txt_state          :       SW_TXT_Buffer_state_type;
         variable buf_nr             :       natural;
     begin
 
         -- For whole test random TXT Buffer will be used!
-        pick_random_txt_buffer(buf_nr, rand_ctr, ID_1, mem_bus(1));
-        info("Testing with TXT Buffer: " & integer'image(buf_nr));
+        pick_random_txt_buffer(buf_nr, DUT_NODE, chn);
+        info_m("Testing with TXT Buffer: " & integer'image(buf_nr));
 
         -----------------------------------------------------------------------
         -- @1. Generate frame and insert it for transmission to random TXT Buffer.
@@ -137,21 +128,21 @@ package body tx_cmd_set_abort_feature is
         --    is enough time to issue two commands and read buffer state ones
         --    before next sample point arrives.
         -----------------------------------------------------------------------
-        info("Step 1");
+        info_m("Step 1");
         
-        CAN_generate_frame(rand_ctr, CAN_frame);
-        CAN_insert_TX_frame(CAN_frame, buf_nr, ID_1, mem_bus(1));
+        CAN_generate_frame(CAN_frame);
+        CAN_insert_TX_frame(CAN_frame, buf_nr, DUT_NODE, chn);
 
-        CAN_wait_sample_point(iout(1).stat_bus);
-        send_TXT_buf_cmd(buf_set_ready, buf_nr, ID_1, mem_bus(1));
+        CAN_wait_sample_point(DUT_NODE, chn);
+        send_TXT_buf_cmd(buf_set_ready, buf_nr, DUT_NODE, chn);
         wait for 11 ns; -- This command is pipelined, delay must be inserted!
-        get_tx_buf_state(buf_nr, txt_state, ID_1, mem_bus(1));
-        check(txt_state = buf_ready, "TXT Buffer ready!");
+        get_tx_buf_state(buf_nr, txt_state, DUT_NODE, chn);
+        check_m(txt_state = buf_ready, "TXT Buffer ready!");
 
-        send_TXT_buf_cmd(buf_set_abort, buf_nr, ID_1, mem_bus(1));
+        send_TXT_buf_cmd(buf_set_abort, buf_nr, DUT_NODE, chn);
         wait for 11 ns; -- This command is pipelined, delay must be inserted!
-        get_tx_buf_state(buf_nr, txt_state, ID_1, mem_bus(1));
-        check(txt_state = buf_aborted, "Set Abort: Ready -> Aborted");
+        get_tx_buf_state(buf_nr, txt_state, DUT_NODE, chn);
+        check_m(txt_state = buf_aborted, "Set Abort: Ready -> Aborted");
 
         -----------------------------------------------------------------------
         -- @2. Issue Set Ready command and wait until transmission starts. Check
@@ -159,20 +150,20 @@ package body tx_cmd_set_abort_feature is
         --    that TXT Buffer moves to Abort in progress. Wait until 
         --    transmission is over.
         -----------------------------------------------------------------------
-        info("Step 2");
+        info_m("Step 2");
 
-        send_TXT_buf_cmd(buf_set_ready, buf_nr, ID_1, mem_bus(1));
-        CAN_wait_tx_rx_start(true, false, ID_1, mem_bus(1));
-        get_tx_buf_state(buf_nr, txt_state, ID_1, mem_bus(1));
-        check(txt_state = buf_tx_progress, "TXT Buffer TX in Progress");
+        send_TXT_buf_cmd(buf_set_ready, buf_nr, DUT_NODE, chn);
+        CAN_wait_tx_rx_start(true, false, DUT_NODE, chn);
+        get_tx_buf_state(buf_nr, txt_state, DUT_NODE, chn);
+        check_m(txt_state = buf_tx_progress, "TXT Buffer TX in Progress");
 
-        send_TXT_buf_cmd(buf_set_abort, buf_nr, ID_1, mem_bus(1));
+        send_TXT_buf_cmd(buf_set_abort, buf_nr, DUT_NODE, chn);
         wait for 11 ns; -- This command is pipelined, delay must be inserted!
-        get_tx_buf_state(buf_nr, txt_state, ID_1, mem_bus(1));
-        check(txt_state = buf_ab_progress,
+        get_tx_buf_state(buf_nr, txt_state, DUT_NODE, chn);
+        check_m(txt_state = buf_ab_progress,
             "Set Abort: TX in Progress -> Abort in Progress");
             
-        CAN_wait_frame_sent(ID_1, mem_bus(1));
+        CAN_wait_frame_sent(DUT_NODE, chn);
 
   end procedure;
 

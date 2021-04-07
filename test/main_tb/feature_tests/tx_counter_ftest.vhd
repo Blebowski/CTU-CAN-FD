@@ -80,21 +80,21 @@
 --  @5. TX Counter is NOT cleared by COMMAND[RXFRCRST].
 --
 -- @Test sequence:
---  @1. Read TX Counter from Node 1. Set One-shot mode (no retransmission) in
---      Node 1.
---  @2. Send frame from Node 1. Wait until EOF field. Read TX counter and check
+--  @1. Read TX Counter from DUT. Set One-shot mode (no retransmission) in
+--      DUT.
+--  @2. Send frame from DUT. Wait until EOF field. Read TX counter and check
 --      it did not change yet.
 --  @3. Wait until the end of EOF. Read TX counter and check it was incremented.
 --      Read RX counter and check it is not incremented!
---  @4. Send Frame from Node 1. Wait till ACK field. Corrupt ACK field to be
---      recessive. Wait till Node 2 is not in ACK field anymore. Check Node 1
+--  @4. Send Frame from DUT. Wait till ACK field. Corrupt ACK field to be
+--      recessive. Wait till Test node is not in ACK field anymore. Check DUT
 --      is transmitting Error frame.
---  @5. Wait until Node 2 also starts transmitting error frame. Wait until bus 
---      is idle, check that TX Counter was not incremented in Node 1.
---  @6. Send random amount of frames by Node 1 and wait until they are sent.
+--  @5. Wait until Test node also starts transmitting error frame. Wait until bus 
+--      is idle, check that TX Counter was not incremented in DUT.
+--  @6. Send random amount of frames by DUT and wait until they are sent.
 --  @7. Check that TX counter was incremented by N!
---  @8. Issue COMMAND[RXFRCRST] and check TX counter was NOT cleared in Node 1.
---  @9. Issue COMMAND[TXFRCRST] and check TX counter was cleared in Node 1.
+--  @8. Issue COMMAND[RXFRCRST] and check TX counter was NOT cleared in DUT.
+--  @9. Issue COMMAND[TXFRCRST] and check TX counter was cleared in DUT.
 --
 -- @TestInfoEnd
 --------------------------------------------------------------------------------
@@ -103,33 +103,24 @@
 --------------------------------------------------------------------------------
 
 Library ctu_can_fd_tb;
-context ctu_can_fd_tb.ctu_can_synth_context;
-context ctu_can_fd_tb.ctu_can_test_context;
+context ctu_can_fd_tb.ieee_context;
+context ctu_can_fd_tb.rtl_context;
+context ctu_can_fd_tb.tb_common_context;
 
-use ctu_can_fd_tb.pkg_feature_exec_dispath.all;
+use ctu_can_fd_tb.feature_test_agent_pkg.all;
 
-package tx_counter_feature is
-    procedure tx_counter_feature_exec(
-        signal      so              : out    feature_signal_outputs_t;
-        signal      rand_ctr        : inout  natural range 0 to RAND_POOL_SIZE;
-        signal      iout            : in     instance_outputs_arr_t;
-        signal      mem_bus         : inout  mem_bus_arr_t;
-        signal      bus_level       : in     std_logic
+package tx_counter_ftest is
+    procedure tx_counter_ftest_exec(
+        signal      chn             : inout  t_com_channel
     );
 
 end package;
 
 
-package body tx_counter_feature is
-    procedure tx_counter_feature_exec(
-        signal      so              : out    feature_signal_outputs_t;
-        signal      rand_ctr        : inout  natural range 0 to RAND_POOL_SIZE;
-        signal      iout            : in     instance_outputs_arr_t;
-        signal      mem_bus         : inout  mem_bus_arr_t;
-        signal      bus_level       : in     std_logic
+package body tx_counter_ftest is
+    procedure tx_counter_ftest_exec(
+        signal      chn             : inout  t_com_channel
     ) is
-        variable ID_1               :       natural := 1;
-        variable ID_2               :       natural := 2;
         variable CAN_frame          :       SW_CAN_frame_type;
         variable frame_sent         :       boolean := false;
         variable rand_value         :       natural;
@@ -145,109 +136,128 @@ package body tx_counter_feature is
     begin
 
         ------------------------------------------------------------------------
-        --  @1. Read TX Counter from Node 1. Set One-shot mode (no retransmission)
-        --     in Node 2.
+        -- @1. Read TX Counter from DUT. Set One-shot mode (no retransmission)
+        --     in Test node.
         ------------------------------------------------------------------------
-        info("Step 1: Read initial counter values.");
-        read_traffic_counters(ctrs_1, ID_1, mem_bus(1));
-        CAN_enable_retr_limit(true, 0, ID_2, mem_bus(2));
+        info_m("Step 1: Read initial counter values.");
+        
+        read_traffic_counters(ctrs_1, DUT_NODE, chn);
+        CAN_enable_retr_limit(true, 0, TEST_NODE, chn);
         
         ------------------------------------------------------------------------
-        --  @2. Send frame from Node 1. Wait until EOF field. Read TX counter and
-        --     check it did not change yet.
+        --  @2. Send frame from DUT. Wait until EOF field. Read TX counter and
+        --      check it did not change yet.
         ------------------------------------------------------------------------
-        info("Step 2: Send frame by Node 1!");
-        CAN_generate_frame(rand_ctr, CAN_frame);
-        CAN_send_frame(CAN_frame, 1, ID_1, mem_bus(1), frame_sent);
-        CAN_wait_pc_state(pc_deb_eof, ID_1, mem_bus(1));
-        read_traffic_counters(ctrs_2, ID_1, mem_bus(1));
-        check(ctrs_1.tx_frames = ctrs_2.tx_frames,
+        info_m("Step 2: Send frame by DUT!");
+        
+        CAN_generate_frame(CAN_frame);
+        CAN_send_frame(CAN_frame, 1, DUT_NODE, chn, frame_sent);
+        
+        CAN_wait_pc_state(pc_deb_eof, DUT_NODE, chn);
+        read_traffic_counters(ctrs_2, DUT_NODE, chn);
+        
+        check_m(ctrs_1.tx_frames = ctrs_2.tx_frames,
             "TX counter unchanged before EOF!");
-        check(ctrs_1.rx_frames = ctrs_2.rx_frames,
+        check_m(ctrs_1.rx_frames = ctrs_2.rx_frames,
             "RX counter unchanged before EOF!");
         
         ------------------------------------------------------------------------
         --  @3. Wait until the end of EOF. Read TX counter and check it was 
         --     incremented. Read RX counter and check it is not incremented!       
         ------------------------------------------------------------------------
-        info("Step 3: Check TX, RX counters after frame.");
-        CAN_wait_not_pc_state(pc_deb_eof, ID_1, mem_bus(1));
-        read_traffic_counters(ctrs_3, ID_1, mem_bus(1));
-        check(ctrs_1.tx_frames + 1 = ctrs_3.tx_frames,
+        info_m("Step 3: Check TX, RX counters after frame.");
+        
+        CAN_wait_not_pc_state(pc_deb_eof, DUT_NODE, chn);
+        read_traffic_counters(ctrs_3, DUT_NODE, chn);
+        
+        check_m(ctrs_1.tx_frames + 1 = ctrs_3.tx_frames,
             "TX counter changed after EOF!");
-        check(ctrs_1.rx_frames = ctrs_3.rx_frames,
+        check_m(ctrs_1.rx_frames = ctrs_3.rx_frames,
             "RX counter unchanged after EOF!");
-        CAN_wait_bus_idle(ID_1, mem_bus(1));
+        
+        CAN_wait_bus_idle(DUT_NODE, chn);
 
         ------------------------------------------------------------------------
-        --  @4. Send Frame from Node 1. Wait till ACK field. Corrupt ACK field to
-        --     be recessive. Wait till Node 1 is not in ACK field anymore. Check
-        --     Node 1 is transmitting Error frame.
+        --  @4. Send Frame from DUT. Wait till ACK field. Corrupt ACK field to
+        --     be recessive. Wait till DUT is not in ACK field anymore. Check
+        --     DUT is transmitting Error frame.
         ------------------------------------------------------------------------
-        info("Step 4: Send frame and force ACK recessive!");
-        CAN_generate_frame(rand_ctr, CAN_frame);
+        info_m("Step 4: Send frame and force ACK recessive!");
+        
+        CAN_generate_frame(CAN_frame);
         CAN_frame.frame_format := NORMAL_CAN;
-        CAN_send_frame(CAN_frame, 1, ID_1, mem_bus(1), frame_sent);
-        CAN_wait_pc_state(pc_deb_ack, ID_1, mem_bus(1));
-
-        force_bus_level(RECESSIVE, so.bl_force, so.bl_inject);
-        CAN_wait_not_pc_state(pc_deb_ack, ID_1, mem_bus(1));
-        get_controller_status(status, ID_1, mem_bus(1));
-        check(status.error_transmission, "Error frame is being transmitted!");
-        release_bus_level(so.bl_force);
+        CAN_send_frame(CAN_frame, 1, DUT_NODE, chn, frame_sent);
+        
+        CAN_wait_pc_state(pc_deb_ack, DUT_NODE, chn);
+        force_bus_level(RECESSIVE, chn);
+        CAN_wait_not_pc_state(pc_deb_ack, DUT_NODE, chn);
+        
+        get_controller_status(status, DUT_NODE, chn);
+        check_m(status.error_transmission, "Error frame is being transmitted!");
+        
+        release_bus_level(chn);
         
         ------------------------------------------------------------------------
-        -- @5. Wait until Node 2 also starts transmitting error frame. Wait until
+        -- @5. Wait until Test node also starts transmitting error frame. Wait until
         --    bus is idle, check that TX Counter was not incremented.
         ------------------------------------------------------------------------
-        info("Step 5: Wait until error frame!");
-        CAN_wait_error_frame(ID_2, mem_bus(2));    
-        CAN_wait_bus_idle(ID_1, mem_bus(1));
-        read_traffic_counters(ctrs_4, ID_1, mem_bus(1));
-        check(ctrs_3.tx_frames = ctrs_4.tx_frames,
+        info_m("Step 5: Wait until error frame!");
+        
+        CAN_wait_error_frame(TEST_NODE, chn);    
+        CAN_wait_bus_idle(DUT_NODE, chn);
+        
+        read_traffic_counters(ctrs_4, DUT_NODE, chn);
+        
+        check_m(ctrs_3.tx_frames = ctrs_4.tx_frames,
             "TX counter unchanged after Error frame!");
-        check(ctrs_3.rx_frames = ctrs_4.rx_frames,
+        check_m(ctrs_3.rx_frames = ctrs_4.rx_frames,
             "RX counter unchanged after Error frame!");
         
         ------------------------------------------------------------------------
-        -- @6. Send random amount of frames by Node 1 and check that TX counter
+        -- @6. Send random amount of frames by DUT and check that TX counter
         --    was incremented by N!
         ------------------------------------------------------------------------
-        info("Step 6: Send N random frames!");
-        rand_int_v(rand_ctr, 6, rand_value);
+        info_m("Step 6: Send N random frames!");
+        
+        rand_int_v(6, rand_value);
         for i in 0 to rand_value - 1 loop
-            CAN_generate_frame(rand_ctr, CAN_frame);
-            CAN_send_frame(CAN_frame, 2, ID_1, mem_bus(1), frame_sent);
-            CAN_wait_frame_sent(ID_1, mem_bus(1));
+            CAN_generate_frame(CAN_frame);
+            CAN_send_frame(CAN_frame, 2, DUT_NODE, chn, frame_sent);
+            CAN_wait_frame_sent(DUT_NODE, chn);
         end loop;
 
         ------------------------------------------------------------------------
         -- @7. Check that TX counter was incremented by N!
         ------------------------------------------------------------------------
-        info("Step 7: Check TX counter was incremented by N!");
-        read_traffic_counters(ctrs_5, ID_1, mem_bus(1));
-        check(ctrs_4.tx_frames + rand_value = ctrs_5.tx_frames,
+        info_m("Step 7: Check TX counter was incremented by N!");
+        
+        read_traffic_counters(ctrs_5, DUT_NODE, chn);
+        check_m(ctrs_4.tx_frames + rand_value = ctrs_5.tx_frames,
               "TX Frames counter incremented by: " & integer'image(rand_value));
 
         ------------------------------------------------------------------------
         --  @8. Issue COMMAND[RXFRCRST] and check TX counter was NOT cleared in 
-        --     Node 1.
+        --      DUT.
         ------------------------------------------------------------------------
+        info_m("Step 8");
+        
         command.rx_frame_ctr_rst := true;
-        give_controller_command(command, ID_1, mem_bus(1));
-        read_traffic_counters(ctrs_1, ID_1, mem_bus(1));
-        check(ctrs_1.tx_frames = ctrs_5.tx_frames,
+        give_controller_command(command, DUT_NODE, chn);
+        read_traffic_counters(ctrs_1, DUT_NODE, chn);
+        check_m(ctrs_1.tx_frames = ctrs_5.tx_frames,
               "TX counter not cleared by COMMAND[RXFRCRST]");
 
         ------------------------------------------------------------------------
-        --  @8. Issue COMMAND[TXFRCRST] and check TX counter was cleared in 
-        --     Node 1.
+        --  @9. Issue COMMAND[TXFRCRST] and check TX counter was cleared in 
+        --      DUT.
         ------------------------------------------------------------------------
+        info_m("Step 9");
+
         command.rx_frame_ctr_rst := false;
         command.tx_frame_ctr_rst := true;
-        give_controller_command(command, ID_1, mem_bus(1));
-        read_traffic_counters(ctrs_1, ID_1, mem_bus(1));
-        check(ctrs_1.tx_frames = 0, "TX counter cleared by COMMAND[TXFRCRST]");
+        give_controller_command(command, DUT_NODE, chn);
+        read_traffic_counters(ctrs_1, DUT_NODE, chn);
+        check_m(ctrs_1.tx_frames = 0, "TX counter cleared by COMMAND[TXFRCRST]");
 
     end procedure;
 

@@ -82,10 +82,10 @@
 --      is selected for transmission.
 --
 -- @Test sequence:
---  @1. Generate random priorities of TXT Buffers and configure them in Node 1.
+--  @1. Generate random priorities of TXT Buffers and configure them in DUT.
 --      Generate random mask of TXT Buffers which will actually be used for
 --      transmission. Generate random frames for transmission and insert them
---      to Node 1.
+--      to DUT.
 --  @2. Send atomic command to TXT Buffer 1 which will set all TX frames to
 --      Ready. Wait until expected amount of frames is received.
 --  @3. Check that frames are received in expected order.
@@ -99,53 +99,44 @@
 --------------------------------------------------------------------------------
 
 Library ctu_can_fd_tb;
-context ctu_can_fd_tb.ctu_can_synth_context;
-context ctu_can_fd_tb.ctu_can_test_context;
+context ctu_can_fd_tb.ieee_context;
+context ctu_can_fd_tb.rtl_context;
+context ctu_can_fd_tb.tb_common_context;
 
-use ctu_can_fd_tb.pkg_feature_exec_dispath.all;
+use ctu_can_fd_tb.feature_test_agent_pkg.all;
 
-package tx_priority_feature is
+package tx_priority_ftest is
 
-    procedure tx_priority_feature_exec(
-        signal      so              : out    feature_signal_outputs_t;
-        signal      rand_ctr        : inout  natural range 0 to RAND_POOL_SIZE;
-        signal      iout            : in     instance_outputs_arr_t;
-        signal      mem_bus         : inout  mem_bus_arr_t;
-        signal      bus_level       : in     std_logic
+    procedure tx_priority_ftest_exec(
+        signal      chn             : inout  t_com_channel
     );
 end package;
 
 
-package body tx_priority_feature is
+package body tx_priority_ftest is
 
-    procedure tx_priority_feature_exec(
-        signal      so              : out    feature_signal_outputs_t;
-        signal      rand_ctr        : inout  natural range 0 to RAND_POOL_SIZE;
-        signal      iout            : in     instance_outputs_arr_t;
-        signal      mem_bus         : inout  mem_bus_arr_t;
-        signal      bus_level       : in     std_logic
+    procedure tx_priority_ftest_exec(
+        signal      chn             : inout  t_com_channel
     ) is
-        type CAN_frame_array_type is array (1 to 4) of SW_CAN_frame_type; 
+        type CAN_frame_array_type is array (1 to 8) of SW_CAN_frame_type; 
 
         type t_txt_buf_priority_pair is record
             priority        :       natural range 0 to 7;
-            index           :       natural range 1 to 4;
+            index           :       natural range 1 to 8;
             buffer_used     :       boolean;
         end record;
 
-        type t_txt_bufs_array is array (1 to 4) of t_txt_buf_priority_pair;
+        type t_txt_bufs_array is array (1 to 8) of t_txt_buf_priority_pair;
 
         variable txt_buf_priorities        :       t_txt_bufs_array;      
         variable tmp_buff                  :       t_txt_buf_priority_pair;
 
-        variable ID_1               :       natural := 1;   -- Transmiter
-        variable ID_2               :       natural := 2;   -- Receiver          
         variable CAN_frame_array_tx :       CAN_frame_array_type;   
         
         variable CAN_frame_rx       :       SW_CAN_frame_type;
         
         variable max_priority_val   :       natural range 0 to 7;	
-        variable max_priority_index :       natural range 0 to 7;
+        variable max_priority_index :       natural range 0 to 8;
 
         variable frame_equal        :       boolean := false;
         variable tmp_int            :       natural := 0;
@@ -157,21 +148,23 @@ package body tx_priority_feature is
     begin
 
         -----------------------------------------------------------------------
-        --  @1. Generate random priorities of TXT Buffers and configure them in
-        --     Node 1. Generate random mask of TXT Buffers which will actually
+        -- @1. Generate random priorities of TXT Buffers and configure them in
+        --     DUT. Generate random mask of TXT Buffers which will actually
         --     be used for transmission. Generate random frames for transmi-
-        --     ssion and insert them to Node 1.
+        --     ssion and insert them to DUT.
         -----------------------------------------------------------------------
-        get_tx_buf_count(num_txt_bufs, ID_1, mem_bus(1));
+        info_m("Step 1");
+
+        get_tx_buf_count(num_txt_bufs, DUT_NODE, chn);
 
         --  Generate random priorities and write it to TX_PRIORITY
         for j in 1 to num_txt_bufs loop
-            rand_int_v(rand_ctr, 7, tmp_int);
+            rand_int_v(7, tmp_int);
             txt_buf_priorities(j).priority := tmp_int;
             txt_buf_priorities(j).index := j;
             
             -- Generate whether buffer will be used!
-            rand_int_v(rand_ctr, 4, tmp_int);
+            rand_int_v(4, tmp_int);
             if (tmp_int < 4) then
                 txt_buf_priorities(j).buffer_used := true;
             else
@@ -179,7 +172,8 @@ package body tx_priority_feature is
             end if;
 
             -- Write generated priority TX_PRIORITY
-            CAN_configure_tx_priority(j, txt_buf_priorities(j).priority, ID_1, mem_bus(1));            
+            CAN_configure_tx_priority(j, txt_buf_priorities(j).priority,
+                DUT_NODE, chn);
         end loop;
 
         -- Count number of used TXT Buffers!
@@ -196,7 +190,7 @@ package body tx_priority_feature is
 
         -- Generate random CAN frames (generate all, some will be skipped)
         for i in 1 to num_txt_bufs loop
-            CAN_generate_frame(rand_ctr, CAN_frame_array_tx(i));
+            CAN_generate_frame(CAN_frame_array_tx(i));
         end loop;
 
         -- Sort TXT Buffers based on priorities
@@ -238,13 +232,13 @@ package body tx_priority_feature is
         -- Now TXT Buffers are sorted!
         for i in 1 to num_txt_bufs loop
             CAN_insert_TX_frame(CAN_frame_array_tx(i), txt_buf_priorities(i).index,
-                                ID_1, mem_bus(1));
+                                DUT_NODE, chn);
         end loop;
         
-        info("Number of used buffers: " & integer'image(buffers_used));
-        info("TXT Buffer configuration (highest priority first):");
+        info_m("Number of used buffers: " & integer'image(buffers_used));
+        info_m("TXT Buffer configuration (highest priority first):");
         for i in 1 to num_txt_bufs loop
-            info("Buffer index: " & integer'image(txt_buf_priorities(i).index) &
+            info_m("Buffer index: " & integer'image(txt_buf_priorities(i).index) &
                  " Priority: " & integer'image(txt_buf_priorities(i).priority) &
                  " Used: " & boolean'image(txt_buf_priorities(i).buffer_used) &
                  " CAN ID: " & to_hstring(std_logic_vector(to_unsigned(CAN_frame_array_tx(i).identifier, 32))));
@@ -258,17 +252,21 @@ package body tx_priority_feature is
         -- @2. Send atomic command to TXT Buffer 1 which will set all TX frames
         --    to Ready. Wait until expected amount of frames is received.
         -----------------------------------------------------------------------
-        info("TXT Buffer mask: " & to_hstring(txt_buf_mask));
+        info_m("Step 2");
+
+        info_m("TXT Buffer mask: " & to_hstring(txt_buf_mask));
         
-        send_TXT_buf_cmd(buf_set_ready, txt_buf_mask, ID_1, mem_bus(1));
+        send_TXT_buf_cmd(buf_set_ready, txt_buf_mask, DUT_NODE, chn);
 
         for i in 1 to buffers_used loop
-            CAN_wait_frame_sent(ID_1, mem_bus(1));
+            CAN_wait_frame_sent(DUT_NODE, chn);
         end loop;
 
         -----------------------------------------------------------------------
         -- @3. Check that frames are received in expected order.
         -----------------------------------------------------------------------
+        info_m("Step 3");
+
         for i in 1 to num_txt_bufs loop
             
             -- Skip Buffer if it should not have been used
@@ -276,18 +274,18 @@ package body tx_priority_feature is
                 next;
             end if;
             
-            info("Reading out frame number: " & integer'image(i));
+            info_m("Reading out frame number: " & integer'image(i));
 
-            CAN_read_frame(CAN_frame_rx, ID_2, mem_bus(2));
+            CAN_read_frame(CAN_frame_rx, TEST_NODE, chn);
             CAN_compare_frames(CAN_frame_rx, CAN_frame_array_tx(i), false, frame_equal);
         
             if(frame_equal = false) then
-                info("FRAMES NOT EQUAL:");
-                info("Received frame:");
+                info_m("FRAMES NOT EQUAL:");
+                info_m("Received frame:");
                 CAN_print_frame_simple(CAN_frame_rx);
-                info("Expected frame:");
+                info_m("Expected frame:");
                 CAN_print_frame_simple(CAN_frame_array_tx(i));         
-                error("Error!");
+                error_m("Error!");
                 exit;
             end if;
 

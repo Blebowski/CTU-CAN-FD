@@ -149,6 +149,18 @@ package timestamp_agent_pkg is
         constant timestamp   : in    std_logic_vector(63 downto 0)
     );
    
+    
+    ---------------------------------------------------------------------------
+    -- Gets current value of timestamp
+    --
+    -- @param channel   Channel on which to send the request
+    -- @param timestamp Return value of timestamp
+    ---------------------------------------------------------------------------
+    procedure timestamp_agent_get_timestamp(
+        signal   channel     : inout t_com_channel;
+        variable timestamp   : out   std_logic_vector(63 downto 0)
+    );
+
     ---------------------------------------------------------------------------
     ---------------------------------------------------------------------------
     -- Private declarations 
@@ -161,6 +173,7 @@ package timestamp_agent_pkg is
     constant TIMESTAMP_AGENT_CMD_STEP_SET               : integer := 2;
     constant TIMESTAMP_AGENT_CMD_PRESCALER_SET          : integer := 3;
     constant TIMESTAMP_AGENT_CMD_TIMESTAMP_PRESET       : integer := 4;
+    constant TIMESTAMP_AGENT_CMD_GET_TIMESTAMP          : integer := 5;
     
     -- Tag for messages
     constant TIMESTAMP_AGENT_TAG : string := "Timestamp Agent: ";
@@ -223,6 +236,19 @@ package body timestamp_agent_pkg is
         com_channel_data.set_param(timestamp);
         send(channel, C_TIMESTAMP_AGENT_ID, TIMESTAMP_AGENT_CMD_TIMESTAMP_PRESET);
         debug_m(TIMESTAMP_AGENT_TAG & "Timestamp preset");
+    end procedure;
+
+    procedure timestamp_agent_get_timestamp(
+        signal   channel     : inout t_com_channel;
+        variable timestamp   : out   std_logic_vector(63 downto 0)
+    ) is
+        variable tmp : std_logic_vector(127 downto 0);
+    begin
+        info_m(TIMESTAMP_AGENT_TAG & "Reading timestamp");
+        send(channel, C_TIMESTAMP_AGENT_ID, TIMESTAMP_AGENT_CMD_GET_TIMESTAMP);
+        tmp := com_channel_data.get_param;
+        timestamp := tmp(63 downto 0);
+        debug_m(TIMESTAMP_AGENT_TAG & "Timestamp read");
     end procedure;
 
 end package body;

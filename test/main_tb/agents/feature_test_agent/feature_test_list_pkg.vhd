@@ -137,6 +137,17 @@ use ctu_can_fd_tb.status_rxs_ftest.all;
 use ctu_can_fd_tb.status_txnf_ftest.all;
 use ctu_can_fd_tb.status_txs_ftest.all;
 
+use ctu_can_fd_tb.tx_cmd_set_abort_ftest.all;
+use ctu_can_fd_tb.tx_cmd_set_empty_ftest.all;
+use ctu_can_fd_tb.tx_cmd_set_ready_ftest.all;
+use ctu_can_fd_tb.tx_counter_ftest.all;
+use ctu_can_fd_tb.tx_from_intermission_ftest.all;
+use ctu_can_fd_tb.tx_priority_change_ftest.all;
+use ctu_can_fd_tb.tx_priority_ftest.all;
+use ctu_can_fd_tb.tx_status_ftest.all;
+use ctu_can_fd_tb.timestamp_low_high_ftest.all;
+use ctu_can_fd_tb.txt_buffer_hazard_ftest.all;
+
 
 package feature_test_list_pkg is
     
@@ -245,6 +256,27 @@ package body feature_test_list_pkg is
         elsif (test_name = "status_txs") then
             status_txs_ftest_exec(channel);
 
+        elsif (test_name = "tx_cmd_set_abort") then
+            tx_cmd_set_abort_ftest_exec(channel);
+        elsif (test_name = "tx_cmd_set_empty") then
+            tx_cmd_set_empty_ftest_exec(channel);
+        elsif (test_name = "tx_cmd_set_ready") then
+            tx_cmd_set_ready_ftest_exec(channel);
+        elsif (test_name = "tx_counter") then
+            tx_counter_ftest_exec(channel);
+        elsif (test_name = "tx_from_intermission") then
+            tx_from_intermission_ftest_exec(channel);
+        elsif (test_name = "tx_priority_change") then
+            tx_priority_change_ftest_exec(channel);
+        elsif (test_name = "tx_priority") then
+            tx_priority_ftest_exec(channel);
+        elsif (test_name = "tx_status") then
+            tx_status_ftest_exec(channel);
+        elsif (test_name = "timestamp_low_high") then
+            timestamp_low_high_ftest_exec(channel);
+        elsif (test_name = "txt_buffer_hazard") then
+            txt_buffer_hazard_ftest_exec(channel);
+            
         else
             error_m("TODO: Implement calling feature test function based on test name!!");
         end if;

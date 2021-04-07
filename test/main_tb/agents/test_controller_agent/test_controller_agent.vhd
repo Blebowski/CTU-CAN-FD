@@ -138,6 +138,8 @@ end entity;
 
 architecture tb of test_controller_agent is
 
+    signal seed_applied : boolean := false;
+
 begin
     
     ---------------------------------------------------------------------------
@@ -180,7 +182,13 @@ begin
         wait for 1 ns;
         wait until test_start = '1';
         
-        apply_rand_seed(seed);
+        -- Apply random seed, but only if it was not applied before.
+        -- If there are multiple iterations, we want different random data
+        -- to be used for each one!
+        if (seed_applied = false) then
+            apply_rand_seed(seed);
+            seed_applied <= true;
+        end if;
         
         -----------------------------------------------------------------------
         -- Configure System clock,

@@ -83,10 +83,10 @@
 --  @1. Reset Node, Enable it, and wait until it integrates. Pick random TXT
 --      Buffer which will be used during this test. Check that TXT Buffer is
 --      empty.
---  @2. Transmitt CAN Frame by Node 1 and wait until it is received in Node 2.
+--  @2. Transmitt CAN Frame by DUT and wait until it is received in Test node.
 --      Check that TXT Buffer is OK.
---  @3. Set ACK Forbidden mode in Node 2. Set One shot mode in Node 1. Send frame
---      by Node 1 and wait until it is sent. Check that TXT Buffer is in TX
+--  @3. Set ACK Forbidden mode in Test node. Set One shot mode in DUT. Send frame
+--      by DUT and wait until it is sent. Check that TXT Buffer is in TX
 --      Failed.
 --  @4. Send CAN frame and when it starts, issue Set Abort Command. Wait until
 --      frame is sent and check that TXT Buffer is in Aborted.
@@ -102,33 +102,23 @@
 --------------------------------------------------------------------------------
 
 Library ctu_can_fd_tb;
-context ctu_can_fd_tb.ctu_can_synth_context;
-context ctu_can_fd_tb.ctu_can_test_context;
+context ctu_can_fd_tb.ieee_context;
+context ctu_can_fd_tb.rtl_context;
+context ctu_can_fd_tb.tb_common_context;
 
-use ctu_can_fd_tb.pkg_feature_exec_dispath.all;
+use ctu_can_fd_tb.feature_test_agent_pkg.all;
 
-package tx_status_feature is
-    procedure tx_status_feature_exec(
-        signal      so              : out    feature_signal_outputs_t;
-        signal      rand_ctr        : inout  natural range 0 to RAND_POOL_SIZE;
-        signal      iout            : in     instance_outputs_arr_t;
-        signal      mem_bus         : inout  mem_bus_arr_t;
-        signal      bus_level       : in     std_logic
+package tx_status_ftest is
+    procedure tx_status_ftest_exec(
+        signal      chn             : inout  t_com_channel
     );
 end package;
 
-package body tx_status_feature is
+package body tx_status_ftest is
 
-    procedure tx_status_feature_exec(
-        signal      so              : out    feature_signal_outputs_t;
-        signal      rand_ctr        : inout  natural range 0 to RAND_POOL_SIZE;
-        signal      iout            : in     instance_outputs_arr_t;
-        signal      mem_bus         : inout  mem_bus_arr_t;
-        signal      bus_level       : in     std_logic
-    ) is
-        variable ID_1               :       natural := 1;   -- Transmiter
-        variable ID_2               :       natural := 2;   -- Receiver          
-        
+    procedure tx_status_ftest_exec(
+        signal      chn             : inout  t_com_channel
+    ) is        
         variable CAN_frame_tx       :       SW_CAN_frame_type;        
         variable mode_2             :       SW_mode := SW_mode_rst_val;
         variable frame_sent         :       boolean := false;
@@ -139,83 +129,83 @@ package body tx_status_feature is
 
         -----------------------------------------------------------------------
         -- @1. Reset Node, Enable it, and wait until it integrates. Pick random
-        --    TXT Buffer which will be used during this test. Check that TXT
-        --    Buffer is empty.
+        --     TXT Buffer which will be used during this test. Check that TXT
+        --     Buffer is empty.
         -----------------------------------------------------------------------
-        info("Step 1");
+        info_m("Step 1");
         
-        pick_random_txt_buffer(txt_buf_num, rand_ctr, ID_1, mem_bus(1));
+        pick_random_txt_buffer(txt_buf_num, DUT_NODE, chn);
 
-        CAN_read_timing_v(bus_timing, ID_1, mem_bus(1));
-        exec_SW_reset(ID_1, mem_bus(1));
-        exec_SW_reset(ID_2, mem_bus(2));
-        CAN_configure_timing(bus_timing, ID_1, mem_bus(1));
-        CAN_configure_timing(bus_timing, ID_2, mem_bus(2));
+        CAN_read_timing_v(bus_timing, DUT_NODE, chn);
+        exec_SW_reset(DUT_NODE, chn);
+        exec_SW_reset(TEST_NODE, chn);
+        CAN_configure_timing(bus_timing, DUT_NODE, chn);
+        CAN_configure_timing(bus_timing, TEST_NODE, chn);
 
-        CAN_turn_controller(true, ID_1, mem_bus(1));
-        CAN_turn_controller(true, ID_2, mem_bus(2));
+        CAN_turn_controller(true, DUT_NODE, chn);
+        CAN_turn_controller(true, TEST_NODE, chn);
 
         -- Wait till integration is over!
-        CAN_wait_bus_on(ID_1, mem_bus(1));
-        CAN_wait_bus_on(ID_2, mem_bus(2));
+        CAN_wait_bus_on(DUT_NODE, chn);
+        CAN_wait_bus_on(TEST_NODE, chn);
 
-        get_tx_buf_state(txt_buf_num, txt_state, ID_1, mem_bus(1));
-        check(txt_state = buf_empty, "TX Empty after reset!");
+        get_tx_buf_state(txt_buf_num, txt_state, DUT_NODE, chn);
+        check_m(txt_state = buf_empty, "TX Empty after reset!");
 
         -----------------------------------------------------------------------
-        -- @2. Transmitt CAN Frame by Node 1 and wait until it is received in
-        --    Node 2. Check that TXT Buffer is OK.
+        -- @2. Transmitt CAN Frame by DUT and wait until it is received in
+        --     Test node. Check that TXT Buffer is OK.
         -----------------------------------------------------------------------
-        info("Step 2");
+        info_m("Step 2");
         
-        CAN_generate_frame(rand_ctr, CAN_frame_tx);
-        CAN_send_frame(CAN_frame_tx, txt_buf_num, ID_1, mem_bus(1), frame_sent);
+        CAN_generate_frame(CAN_frame_tx);
+        CAN_send_frame(CAN_frame_tx, txt_buf_num, DUT_NODE, chn, frame_sent);
 
-        CAN_wait_frame_sent(ID_1, mem_bus(1));
+        CAN_wait_frame_sent(DUT_NODE, chn);
 
-        get_tx_buf_state(txt_buf_num, txt_state, ID_1, mem_bus(1));
-        check(txt_state = buf_done, "TX OK after frame sent!");
+        get_tx_buf_state(txt_buf_num, txt_state, DUT_NODE, chn);
+        check_m(txt_state = buf_done, "TX OK after frame sent!");
 
         -----------------------------------------------------------------------
-        -- @3. Set ACK Forbidden mode in Node 2. Set One shot mode in Node 1. 
-        --    Send frame by Node 1 and wait until it is sent. Check that TXT
-        --    Buffer is in TX Failed.
+        -- @3. Set ACK Forbidden mode in Test node. Set One shot mode in DUT. 
+        --     Send frame by DUT and wait until it is sent. Check that TXT
+        --     Buffer is in TX Failed.
         -----------------------------------------------------------------------
-        info("Step 3");
+        info_m("Step 3");
 
         mode_2.acknowledge_forbidden := true;
-        set_core_mode(mode_2, ID_2, mem_bus(2));
+        set_core_mode(mode_2, TEST_NODE, chn);
 
-        CAN_enable_retr_limit(true, 0, ID_1, mem_bus(1));
+        CAN_enable_retr_limit(true, 0, DUT_NODE, chn);
 
-        CAN_generate_frame(rand_ctr, CAN_frame_tx);
-        CAN_send_frame(CAN_frame_tx, txt_buf_num, ID_1, mem_bus(1), frame_sent);
-        CAN_wait_tx_rx_start(true, false, ID_1, mem_bus(1));
-        CAN_wait_bus_idle(ID_1, mem_bus(1));
+        CAN_generate_frame(CAN_frame_tx);
+        CAN_send_frame(CAN_frame_tx, txt_buf_num, DUT_NODE, chn, frame_sent);
+        CAN_wait_tx_rx_start(true, false, DUT_NODE, chn);
+        CAN_wait_bus_idle(DUT_NODE, chn);
         
-        get_tx_buf_state(txt_buf_num, txt_state, ID_1, mem_bus(1));
-        check(txt_state = buf_failed, "TX Failed after error!");
+        get_tx_buf_state(txt_buf_num, txt_state, DUT_NODE, chn);
+        check_m(txt_state = buf_failed, "TX Failed after error!");
 
         -----------------------------------------------------------------------
-        -- Send CAN frame and when it starts, issue Set Abort Command. Wait
-        -- until frame is sent and check that TXT Buffer is in Aborted.
+        -- @4. Send CAN frame and when it starts, issue Set Abort Command. Wait
+        --     until frame is sent and check that TXT Buffer is in Aborted.
         -----------------------------------------------------------------------
-        info("Step 4");
+        info_m("Step 4");
 
         -- One shot must be disabled now, otherwise this would lead to
         -- TX Failed. We need transmission to be failed, but retransmitt limit
         -- not reached!
-        CAN_enable_retr_limit(false, 5, ID_1, mem_bus(1));
+        CAN_enable_retr_limit(false, 5, DUT_NODE, chn);
 
-        CAN_generate_frame(rand_ctr, CAN_frame_tx);
-        CAN_send_frame(CAN_frame_tx, txt_buf_num, ID_1, mem_bus(1), frame_sent);
+        CAN_generate_frame(CAN_frame_tx);
+        CAN_send_frame(CAN_frame_tx, txt_buf_num, DUT_NODE, chn, frame_sent);
         
-        CAN_wait_tx_rx_start(true, false, ID_1, mem_bus(1));
-        send_TXT_buf_cmd(buf_set_abort, txt_buf_num, ID_1, mem_bus(1));
-        CAN_wait_bus_idle(ID_1, mem_bus(1));
+        CAN_wait_tx_rx_start(true, false, DUT_NODE, chn);
+        send_TXT_buf_cmd(buf_set_abort, txt_buf_num, DUT_NODE, chn);
+        CAN_wait_bus_idle(DUT_NODE, chn);
 
-        get_tx_buf_state(txt_buf_num, txt_state, ID_1, mem_bus(1));
-        check(txt_state = buf_aborted, "TX Aborted after Set Abort!");
+        get_tx_buf_state(txt_buf_num, txt_state, DUT_NODE, chn);
+        check_m(txt_state = buf_aborted, "TX Aborted after Set Abort!");
 
     end procedure;
 end package body;
