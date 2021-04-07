@@ -282,6 +282,12 @@ feature:
         alc_srr_rtr:
         alc_srr_rtr_2:
 
+        command_cdo:
+        command_ercrst:
+        command_frcrst:
+        command_rrb:
+
+        
         device_id:
         dlc_can20_8_64_bytes:
         
@@ -316,6 +322,8 @@ feature:
         rec_saturation:
         rx_counter:
 
+        settings_tbfbo:
+        single_bus_node:
         status_eft:
             iterations: 5
         status_ewl:
@@ -324,6 +332,7 @@ feature:
         status_rxs:
         status_txnf:
         status_txs:
+        stuff_in_data:
 
         tx_cmd_set_abort:
             iterations: 5

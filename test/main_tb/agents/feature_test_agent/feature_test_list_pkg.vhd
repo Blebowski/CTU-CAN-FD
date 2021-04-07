@@ -96,6 +96,11 @@ use ctu_can_fd_tb.alc_rtr_r0_ftest.all;
 use ctu_can_fd_tb.alc_srr_rtr_ftest.all;
 use ctu_can_fd_tb.alc_srr_rtr_2_ftest.all;
 
+use ctu_can_fd_tb.command_cdo_ftest.all;
+use ctu_can_fd_tb.command_ercrst_ftest.all;
+use ctu_can_fd_tb.command_frcrst_ftest.all;
+use ctu_can_fd_tb.command_rrb_ftest.all;
+
 use ctu_can_fd_tb.device_id_ftest.all;
 use ctu_can_fd_tb.dlc_can20_8_64_bytes_ftest.all;
 
@@ -129,6 +134,8 @@ use ctu_can_fd_tb.one_shot_ftest.all;
 use ctu_can_fd_tb.rec_saturation_ftest.all;
 use ctu_can_fd_tb.rx_counter_ftest.all;
 
+use ctu_can_fd_tb.settings_tbfbo_ftest.all;
+use ctu_can_fd_tb.single_bus_node_ftest.all;
 use ctu_can_fd_tb.status_eft_ftest.all;
 use ctu_can_fd_tb.status_ewl_ftest.all;
 use ctu_can_fd_tb.status_idle_ftest.all;
@@ -136,6 +143,7 @@ use ctu_can_fd_tb.status_rxne_ftest.all;
 use ctu_can_fd_tb.status_rxs_ftest.all;
 use ctu_can_fd_tb.status_txnf_ftest.all;
 use ctu_can_fd_tb.status_txs_ftest.all;
+use ctu_can_fd_tb.stuff_in_data_ftest.all;
 
 use ctu_can_fd_tb.tx_cmd_set_abort_ftest.all;
 use ctu_can_fd_tb.tx_cmd_set_empty_ftest.all;
@@ -180,6 +188,15 @@ package body feature_test_list_pkg is
             alc_srr_rtr_ftest_exec(channel);
         elsif (test_name = "alc_srr_rtr_2") then
             alc_srr_rtr_2_ftest_exec(channel);
+        
+        elsif (test_name = "command_cdo") then
+            command_cdo_ftest_exec(channel);
+        elsif (test_name = "command_ercrst") then
+            command_ercrst_ftest_exec(channel);
+        elsif (test_name = "command_frcrst") then
+            command_frcrst_ftest_exec(channel);
+        elsif (test_name = "command_rrb") then
+            command_rrb_ftest_exec(channel);
              
         elsif (test_name = "device_id") then
             device_id_ftest_exec(channel);
@@ -241,6 +258,9 @@ package body feature_test_list_pkg is
             rec_saturation_ftest_exec(channel);
         elsif (test_name = "rx_counter") then
             rx_counter_ftest_exec(channel);
+            
+        elsif (test_name = "settings_tbfbo") then
+            settings_tbfbo_ftest_exec(channel);
         elsif (test_name = "status_eft") then
             status_eft_ftest_exec(channel);
         elsif (test_name = "status_ewl") then
@@ -255,6 +275,10 @@ package body feature_test_list_pkg is
             status_txnf_ftest_exec(channel);
         elsif (test_name = "status_txs") then
             status_txs_ftest_exec(channel);
+        elsif (test_name = "single_bus_node") then
+            single_bus_node_ftest_exec(channel);
+        elsif (test_name = "stuff_in_data") then
+            stuff_in_data_ftest_exec(channel);
 
         elsif (test_name = "tx_cmd_set_abort") then
             tx_cmd_set_abort_ftest_exec(channel);
