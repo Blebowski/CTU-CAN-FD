@@ -124,6 +124,7 @@ package can_fd_register_map is
   constant TXTB_INFO_ADR             : std_logic_vector(11 downto 0) := x"076";
   constant TX_PRIORITY_ADR           : std_logic_vector(11 downto 0) := x"078";
   constant ERR_CAPT_ADR              : std_logic_vector(11 downto 0) := x"07C";
+  constant RETR_CTR_ADR              : std_logic_vector(11 downto 0) := x"07D";
   constant ALC_ADR                   : std_logic_vector(11 downto 0) := x"07E";
   constant TRV_DELAY_ADR             : std_logic_vector(11 downto 0) := x"080";
   constant SSP_CFG_ADR               : std_logic_vector(11 downto 0) := x"082";
@@ -991,6 +992,17 @@ package can_fd_register_map is
   -- ERR_CAPT register reset values
   constant ERR_POS_RSTVAL : std_logic_vector(4 downto 0) := "11111";
   constant ERR_TYPE_RSTVAL : std_logic_vector(2 downto 0) := "000";
+
+  ------------------------------------------------------------------------------
+  -- RETR_CTR register
+  --
+  -- Current value of Retransmit counter.
+  ------------------------------------------------------------------------------
+  constant RETR_CTR_VAL_L         : natural := 8;
+  constant RETR_CTR_VAL_H        : natural := 11;
+
+  -- RETR_CTR register reset values
+  constant RETR_CTR_VAL_RSTVAL : std_logic_vector(3 downto 0) := x"0";
 
   ------------------------------------------------------------------------------
   -- ALC register
