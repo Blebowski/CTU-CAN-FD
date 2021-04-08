@@ -77,8 +77,8 @@
 --
 -- @Test sequence:
 --  @1. Repeat 10 loops of:
---   @1.1 Check that RX_STATUS[MOF] is 0 in Node 1 (no frame stored in RX Buffer).
---        Send frame by Node 2, wait till it is send, and check RX_STATUS[MOF] is
+--   @1.1 Check that RX_STATUS[MOF] is 0 in DUT (no frame stored in RX Buffer).
+--        Send frame by Test node, wait till it is send, and check RX_STATUS[MOF] is
 --        still zero.
 --   @1.2 Read one word from RX_DATA, and check that RX_STATUS[MOF] is set. Read
 --        rest of the frame, word by word and check that RX_STATUS[MOF] is set.
@@ -91,32 +91,23 @@
 --------------------------------------------------------------------------------
 
 Library ctu_can_fd_tb;
-context ctu_can_fd_tb.ctu_can_synth_context;
-context ctu_can_fd_tb.ctu_can_test_context;
+context ctu_can_fd_tb.ieee_context;
+context ctu_can_fd_tb.rtl_context;
+context ctu_can_fd_tb.tb_common_context;
 
-use ctu_can_fd_tb.pkg_feature_exec_dispath.all;
+use ctu_can_fd_tb.feature_test_agent_pkg.all;
 
-package rx_status_mof_feature is
-    procedure rx_status_mof_feature_exec(
-        signal      so              : out    feature_signal_outputs_t;
-        signal      rand_ctr        : inout  natural range 0 to RAND_POOL_SIZE;
-        signal      iout            : in     instance_outputs_arr_t;
-        signal      mem_bus         : inout  mem_bus_arr_t;
-        signal      bus_level       : in     std_logic
+package rx_status_mof_ftest is
+    procedure rx_status_mof_ftest_exec(
+        signal      chn             : inout  t_com_channel
     );
 end package;
 
 
-package body rx_status_mof_feature is
-    procedure rx_status_mof_feature_exec(
-        signal      so              : out    feature_signal_outputs_t;
-        signal      rand_ctr        : inout  natural range 0 to RAND_POOL_SIZE;
-        signal      iout            : in     instance_outputs_arr_t;
-        signal      mem_bus         : inout  mem_bus_arr_t;
-        signal      bus_level       : in     std_logic
+package body rx_status_mof_ftest is
+    procedure rx_status_mof_ftest_exec(
+        signal      chn             : inout  t_com_channel
     ) is
-        variable ID_1           	:       natural range 0 to 15 := 1;
-        variable ID_2           	:       natural range 0 to 15 := 2;
         variable CAN_frame          :       SW_CAN_frame_type;
         variable send_more          :       boolean := true;
         variable in_RX_buf          :       natural range 0 to 1023;
@@ -131,24 +122,25 @@ package body rx_status_mof_feature is
         variable rwcnt              :       natural;   
     begin
 
-        for i in 1 to 10 loop
-            info ("Loop nr:" & integer'image(i));
+        for i in 1 to 5 loop
+            info_m ("Loop nr:" & integer'image(i));
        
             -------------------------------------------------------------------
-            -- @1.1 Check that RX_STATUS[MOF] is 0 in Node 1 (no frame stored
-            --      in RX Buffer). Send frame by Node 2, wait till it is send,
-            --      and check RX_STATUS[MOF] is still zero.
+            -- @1.1 Check that RX_STATUS[MOF] is 0 in DUT (no frame stored
+            --      in RX Buffer). Send frame by Test node, wait till it is
+            --      send and check RX_STATUS[MOF] is still zero.
             -------------------------------------------------------------------
-            info("Step 1.1");
-            get_rx_buf_state(buf_info, ID_1, mem_bus(1));
-            check(buf_info.rx_mof = false, "RX_STATUS[MOF] not set");
+            info_m("Step 1.1");
+
+            get_rx_buf_state(buf_info, DUT_NODE, chn);
+            check_m(buf_info.rx_mof = false, "RX_STATUS[MOF] not set");
             
-            CAN_generate_frame(rand_ctr, CAN_frame);
-            CAN_send_frame(CAN_frame, 1, ID_2, mem_bus(2), frame_sent);
-            CAN_wait_frame_sent(ID_1, mem_bus(1));
+            CAN_generate_frame(CAN_frame);
+            CAN_send_frame(CAN_frame, 1, TEST_NODE, chn, frame_sent);
+            CAN_wait_frame_sent(DUT_NODE, chn);
             
-            get_rx_buf_state(buf_info, ID_1, mem_bus(1));
-            check(buf_info.rx_mof = false, "RX_STATUS[MOF] not set");
+            get_rx_buf_state(buf_info, DUT_NODE, chn);
+            check_m(buf_info.rx_mof = false, "RX_STATUS[MOF] not set");
             
             -------------------------------------------------------------------
             -- @1.2 Read one word from RX_DATA, and check that RX_STATUS[MOF]
@@ -156,24 +148,24 @@ package body rx_status_mof_feature is
             --      RX_STATUS[MOF] is set. Check that after last read, it is
             --      not set anymore.
             -------------------------------------------------------------------
-            info("Step 1.2");
+            info_m("Step 1.2");
             
-            CAN_read(read_data, RX_DATA_ADR, ID_1, mem_bus(1));
-            get_rx_buf_state(buf_info, ID_1, mem_bus(1));
-            check(buf_info.rx_mof = true,
+            CAN_read(read_data, RX_DATA_ADR, DUT_NODE, chn);
+            get_rx_buf_state(buf_info, DUT_NODE, chn);
+            check_m(buf_info.rx_mof = true,
                   "RX_STATUS[MOF] is set after first word!");
             
             rwcnt := to_integer(unsigned(read_data(RWCNT_H downto RWCNT_L)));
             for j in 1 to rwcnt - 1 loop
-                CAN_read(read_data, RX_DATA_ADR, ID_1, mem_bus(1));
-                get_rx_buf_state(buf_info, ID_1, mem_bus(1));
-                check(buf_info.rx_mof = true, "RX_STATUS[MOF] is set after word " &
+                CAN_read(read_data, RX_DATA_ADR, DUT_NODE, chn);
+                get_rx_buf_state(buf_info, DUT_NODE, chn);
+                check_m(buf_info.rx_mof = true, "RX_STATUS[MOF] is set after word " &
                       integer'image(j));
             end loop;
             
-            CAN_read(read_data, RX_DATA_ADR, ID_1, mem_bus(1));
-            get_rx_buf_state(buf_info, ID_1, mem_bus(1));
-            check(buf_info.rx_mof = false,
+            CAN_read(read_data, RX_DATA_ADR, DUT_NODE, chn);
+            get_rx_buf_state(buf_info, DUT_NODE, chn);
+            check_m(buf_info.rx_mof = false,
                   "RX_STATUS[MOF] is not set after last word");
 
         end loop;

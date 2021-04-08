@@ -138,9 +138,20 @@ use ctu_can_fd_tb.mode_test_ftest.all;
 use ctu_can_fd_tb.mode_self_test_ftest.all;
 use ctu_can_fd_tb.mode_frame_filters_ftest.all;
 
+use ctu_can_fd_tb.no_sof_tx_ftest.all;
+
 use ctu_can_fd_tb.one_shot_ftest.all;
+use ctu_can_fd_tb.overload_ftest.all;
+
 use ctu_can_fd_tb.rec_saturation_ftest.all;
+use ctu_can_fd_tb.retr_limit_ftest.all;
+use ctu_can_fd_tb.retr_limit_2_ftest.all;
+use ctu_can_fd_tb.retr_limit_3_ftest.all;
+use ctu_can_fd_tb.rx_buf_empty_read_ftest.all;
 use ctu_can_fd_tb.rx_counter_ftest.all;
+use ctu_can_fd_tb.rx_settings_rtsop_ftest.all;
+use ctu_can_fd_tb.rx_status_ftest.all;
+use ctu_can_fd_tb.rx_status_mof_ftest.all;
 
 use ctu_can_fd_tb.settings_tbfbo_ftest.all;
 use ctu_can_fd_tb.single_bus_node_ftest.all;
@@ -274,13 +285,33 @@ package body feature_test_list_pkg is
             mode_self_test_ftest_exec(channel);
         elsif (test_name = "mode_frame_filters") then
             mode_frame_filters_ftest_exec(channel);
+        
+        elsif (test_name = "no_sof_tx") then
+            no_sof_tx_ftest_exec(channel);
 
         elsif (test_name = "one_shot") then
             one_shot_ftest_exec(channel);
+        elsif (test_name = "overload") then
+            overload_ftest_exec(channel);
+            
         elsif (test_name = "rec_saturation") then
             rec_saturation_ftest_exec(channel);
+        elsif (test_name = "retr_limit") then
+            retr_limit_ftest_exec(channel);
+        elsif (test_name = "retr_limit_2") then
+            retr_limit_2_ftest_exec(channel);
+        elsif (test_name = "retr_limit_3") then
+            retr_limit_3_ftest_exec(channel);
+        elsif (test_name = "rx_buf_empty_read") then
+            rx_buf_empty_read_ftest_exec(channel);
         elsif (test_name = "rx_counter") then
             rx_counter_ftest_exec(channel);
+        elsif (test_name = "rx_settings_rtsop") then
+            rx_settings_rtsop_ftest_exec(channel);
+        elsif (test_name = "rx_status") then
+            rx_status_ftest_exec(channel);
+        elsif (test_name = "rx_status_mof") then
+            rx_status_mof_ftest_exec(channel);
             
         elsif (test_name = "settings_tbfbo") then
             settings_tbfbo_ftest_exec(channel);

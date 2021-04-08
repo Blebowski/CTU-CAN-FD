@@ -81,16 +81,16 @@
 --      last bit of end of frame by transmitter.
 --
 -- @Test sequence:
---  @1. Send frame by Node 1. Wait until first bit of intermission in Node 1 and
---      force bus level Dominant. Check that Node 1 transmitts Overload frame.
---      Wait until the end of overload frame in Node 1.
+--  @1. Send frame by DUT. Wait until first bit of intermission in DUT and
+--      force bus level Dominant. Check that DUT transmitts Overload frame.
+--      Wait until the end of overload frame in DUT.
 --  @2. Check that we are in "Intermission field now". Wait until second bit of
 --      Intermission and force bus low. Wait until sample point and check that
 --      Node has transmitted Overload frame. Wait until the end of Overload frame.
 --      Wait until bus is idle for both Nodes.
---  @3. Send frame by Node 1. Wait until last bit of End of Frame field of Node 1.
---      Force bus low. Check that Node 1 reacts with Error frame. Check that
---      Node 2 reacts with Overload frame.
+--  @3. Send frame by DUT. Wait until last bit of End of Frame field of DUT.
+--      Force bus low. Check that DUT reacts with Error frame. Check that
+--      Test node reacts with Overload frame.
 --
 -- @TestInfoEnd
 --------------------------------------------------------------------------------
@@ -99,33 +99,23 @@
 --------------------------------------------------------------------------------
 
 Library ctu_can_fd_tb;
-context ctu_can_fd_tb.ctu_can_synth_context;
-context ctu_can_fd_tb.ctu_can_test_context;
+context ctu_can_fd_tb.ieee_context;
+context ctu_can_fd_tb.rtl_context;
+context ctu_can_fd_tb.tb_common_context;
 
-use ctu_can_fd_tb.pkg_feature_exec_dispath.all;
+use ctu_can_fd_tb.feature_test_agent_pkg.all;
 
-package overload_feature is
-    procedure overload_feature_exec(
-        signal      so              : out    feature_signal_outputs_t;
-        signal      rand_ctr        : inout  natural range 0 to RAND_POOL_SIZE;
-        signal      iout            : in     instance_outputs_arr_t;
-        signal      mem_bus         : inout  mem_bus_arr_t;
-        signal      bus_level       : in     std_logic
+package overload_ftest is
+    procedure overload_ftest_exec(
+        signal      chn             : inout  t_com_channel
     );
 end package;
 
 
-package body overload_feature is
-    procedure overload_feature_exec(
-        signal      so              : out    feature_signal_outputs_t;
-        signal      rand_ctr        : inout  natural range 0 to RAND_POOL_SIZE;
-        signal      iout            : in     instance_outputs_arr_t;
-        signal      mem_bus         : inout  mem_bus_arr_t;
-        signal      bus_level       : in     std_logic
+package body overload_ftest is
+    procedure overload_ftest_exec(
+        signal      chn             : inout  t_com_channel
     ) is
-        variable ID_1               :     natural := 1;
-        variable ID_2               :     natural := 2;
-
         -- Generated frames
         variable frame_1            :     SW_CAN_frame_type;
 
@@ -136,107 +126,107 @@ package body overload_feature is
     begin
         
         -----------------------------------------------------------------------
-        -- @1. Send frame by Node 1. Wait until first bit of intermission in
-        --    Node 1 and force bus level Dominant. Check that Node 1 transmitts
-        --    Overload frame. Wait until the end of overload frame in Node 1.
+        -- @1. Send frame by DUT. Wait until first bit of intermission in
+        --     DUT and force bus level Dominant. Check that DUT transmitts
+        --     Overload frame. Wait until the end of overload frame in DUT.
         -----------------------------------------------------------------------
-        info("Step 1");
+        info_m("Step 1");
         
-        CAN_generate_frame(rand_ctr, frame_1);
-        CAN_send_frame(frame_1, 1, ID_1, mem_bus(1), frame_sent);
+        CAN_generate_frame(frame_1);
+        CAN_send_frame(frame_1, 1, DUT_NODE, chn, frame_sent);
         
-        CAN_wait_pc_state(pc_deb_intermission, ID_1, mem_bus(1));
+        CAN_wait_pc_state(pc_deb_intermission, DUT_NODE, chn);
         wait for 15 ns;
 
-        force_bus_level(DOMINANT, so.bl_force, so.bl_inject);
-        CAN_wait_sample_point(iout(1).stat_bus, false);
+        force_bus_level(DOMINANT, chn);
+        CAN_wait_sample_point(DUT_NODE, chn, false);
         wait for 15 ns; -- To be sure sample point was processed!
-        release_bus_level(so.bl_force);
+        release_bus_level(chn);
 
-        CAN_read_pc_debug(pc_dbg, ID_1, mem_bus(1));
+        CAN_read_pc_debug_m(pc_dbg, DUT_NODE, chn);
 
         -- Now we check for whole duration of overload flag! Check that
         -- dominant bit is transmitted!
         for i in 0 to 5 loop
-            info("Overload flag index: " & integer'image(i));
-            check(pc_dbg = pc_deb_overload, "Overload frame transmitted!");
-            CAN_wait_sample_point(iout(1).stat_bus, false);
-            check(iout(1).can_tx = DOMINANT, "Dominant Overload flag transmitted!");
+            info_m("Overload flag index: " & integer'image(i));
+            check_m(pc_dbg = pc_deb_overload, "Overload frame transmitted!");
+            CAN_wait_sample_point(DUT_NODE, chn);
+            check_can_tx(DOMINANT, DUT_NODE, "Dominant Overload flag transmitted!", chn);
         end loop;
 
-        CAN_wait_not_pc_state(pc_deb_overload, ID_1, mem_bus(1)); 
+        CAN_wait_not_pc_state(pc_deb_overload, DUT_NODE, chn); 
 
         -----------------------------------------------------------------------
         -- @2. Check that we are in "Intermission field now". Wait until second
-        --    bit of Intermission and force bus low. Wait until sample point
-        --    and check that Node has transmitted Overload frame. Wait until
-        --    the end of Overload frame. Wait until bus is idle for both Nodes.
+        --     bit of Intermission and force bus low. Wait until sample point
+        --     and check that Node has transmitted Overload frame. Wait until
+        --     the end of Overload frame. Wait until bus is idle for both Nodes.
         -----------------------------------------------------------------------
-        info("Step 2");
+        info_m("Step 2");
         
-        CAN_read_pc_debug(pc_dbg, ID_1, mem_bus(1));
-        check(pc_dbg = pc_deb_intermission, "Intermission after Overload frame");
+        CAN_read_pc_debug_m(pc_dbg, DUT_NODE, chn);
+        check_m(pc_dbg = pc_deb_intermission, "Intermission after Overload frame");
 
-        CAN_wait_sample_point(iout(1).stat_bus, false);
+        CAN_wait_sample_point(DUT_NODE, chn, false);
 
         -- Now we are beyond sample point in first bit of intermission!
-        force_bus_level(DOMINANT, so.bl_force, so.bl_inject);
-        CAN_wait_sample_point(iout(1).stat_bus, false);
+        force_bus_level(DOMINANT, chn);
+        CAN_wait_sample_point(DUT_NODE, chn, false);
         wait for 15 ns; -- To be sure sample point was processed!
-        release_bus_level(so.bl_force);
+        release_bus_level(chn);
 
         -- Now we check for whole duration of overload flag! Check that
         -- dominant bit is transmitted!
         for i in 0 to 5 loop
-            info("Overload flag index: " & integer'image(i));
-            CAN_read_pc_debug(pc_dbg, ID_1, mem_bus(1));
-            check(pc_dbg = pc_deb_overload, "Overload frame transmitted!");
-            CAN_wait_sample_point(iout(1).stat_bus, false);
-            check(iout(1).can_tx = DOMINANT, "Dominant Overload flag transmitted!");
+            info_m("Overload flag index: " & integer'image(i));
+            CAN_read_pc_debug_m(pc_dbg, DUT_NODE, chn);
+            check_m(pc_dbg = pc_deb_overload, "Overload frame transmitted!");
+            CAN_wait_sample_point(DUT_NODE, chn, false);
+            check_can_tx(DOMINANT, DUT_NODE, "Dominant Overload flag transmitted!", chn);
         end loop;
 
-        CAN_wait_not_pc_state(pc_deb_overload, ID_1, mem_bus(1)); 
-        CAN_wait_bus_idle(ID_1, mem_bus(1));
-        CAN_wait_bus_idle(ID_1, mem_bus(2));
+        CAN_wait_not_pc_state(pc_deb_overload, DUT_NODE, chn); 
+        CAN_wait_bus_idle(DUT_NODE, chn);
+        CAN_wait_bus_idle(TEST_NODE, chn);
 
         -----------------------------------------------------------------------
-        -- @3. Send frame by Node 1. Wait until last bit of End of Frame field
-        --    of Node 1. Force bus low. Check that Node 1 reacts with Error
-        --    frame. Check that Node 2 reacts with Overload frame.
+        -- @3. Send frame by DUT. Wait until last bit of End of Frame field
+        --     of DUT. Force bus low. Check that DUT reacts with Error
+        --     frame. Check that Test node reacts with Overload frame.
         -----------------------------------------------------------------------
-        info("Step 3");
-        CAN_generate_frame(rand_ctr, frame_1);
-        CAN_send_frame(frame_1, 1, ID_1, mem_bus(1), frame_sent);
+        info_m("Step 3");
+        CAN_generate_frame(frame_1);
+        CAN_send_frame(frame_1, 1, DUT_NODE, chn, frame_sent);
 
-        CAN_wait_pc_state(pc_deb_eof, ID_1, mem_bus(1));
+        CAN_wait_pc_state(pc_deb_eof, DUT_NODE, chn);
         for i in 0 to 5 loop
-            CAN_wait_sample_point(iout(1).stat_bus, false);
+            CAN_wait_sample_point(DUT_NODE, chn, false);
         end loop;
         
         -- This is to cover possibility that sample point of one bit before end
-        -- of EOF in Node 2 did not pass yet! We want to be also in last bit
-        -- of EOF of Node 2, because only then we get Overload frame!
+        -- of EOF in Test node did not pass yet! We want to be also in last bit
+        -- of EOF of Test node, because only then we get Overload frame!
         wait for 400 ns;
 
         -- Now we should be in one bit before the end of EOF!
-        force_bus_level(DOMINANT, so.bl_force, so.bl_inject);
-        CAN_wait_sample_point(iout(1).stat_bus, false);
-        CAN_wait_sample_point(iout(1).stat_bus, false);
+        force_bus_level(DOMINANT, chn);
+        CAN_wait_sample_point(DUT_NODE, chn, false);
+        CAN_wait_sample_point(DUT_NODE, chn, false);
         wait for 25 ns; -- To be sure sample point was processed!
-        release_bus_level(so.bl_force);
+        release_bus_level(chn);
 
-        get_controller_status(status, ID_1, mem_bus(1));
-        check(status.error_transmission,
+        get_controller_status(status, DUT_NODE, chn);
+        check_m(status.error_transmission,
             "Transmitter sends error frame due to dominant bit in last bit of EOF!");
 
-        -- Node 2 is transmitting overload as a result of last bit of EOF
+        -- Test node is transmitting overload as a result of last bit of EOF
         -- dominant during EOF! 
-        CAN_wait_sample_point(iout(1).stat_bus, false);
-        CAN_read_pc_debug(pc_dbg, ID_2, mem_bus(2));
-        check(pc_dbg = pc_deb_overload,
+        CAN_wait_sample_point(DUT_NODE, chn, false);
+        CAN_read_pc_debug_m(pc_dbg, TEST_NODE, chn);
+        check_m(pc_dbg = pc_deb_overload,
             "Receiver sends overload frame due to dominant bit in last bit of EOF!");
 
-        CAN_wait_bus_idle(ID_1, mem_bus(1));
+        CAN_wait_bus_idle(DUT_NODE, chn);
 
   end procedure;
 

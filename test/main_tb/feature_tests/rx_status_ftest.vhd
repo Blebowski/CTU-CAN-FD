@@ -75,7 +75,7 @@
 -- @Test sequence:
 --   @1. RX Buffer size is read and buffer is cleared.
 --   @2. Free memory, buffer status and message count is checked.
---   @3. Random frames are sent on the bus by node 2 and recieved by node 1
+--   @3. Random frames are sent on the bus by Test Node and recieved by DUT.
 --   @4. After each frame amount of remaining memory is checked towards expected
 --       value.
 --   @5. When buffer is filled Data overrun flag is checked and cleared.
@@ -92,32 +92,23 @@
 --------------------------------------------------------------------------------
 
 Library ctu_can_fd_tb;
-context ctu_can_fd_tb.ctu_can_synth_context;
-context ctu_can_fd_tb.ctu_can_test_context;
+context ctu_can_fd_tb.ieee_context;
+context ctu_can_fd_tb.rtl_context;
+context ctu_can_fd_tb.tb_common_context;
 
-use ctu_can_fd_tb.pkg_feature_exec_dispath.all;
+use ctu_can_fd_tb.feature_test_agent_pkg.all;
 
-package rx_status_feature is
-    procedure rx_status_feature_exec(
-        signal      so              : out    feature_signal_outputs_t;
-        signal      rand_ctr        : inout  natural range 0 to RAND_POOL_SIZE;
-        signal      iout            : in     instance_outputs_arr_t;
-        signal      mem_bus         : inout  mem_bus_arr_t;
-        signal      bus_level       : in     std_logic
+package rx_status_ftest is
+    procedure rx_status_ftest_exec(
+        signal      chn             : inout  t_com_channel
     );
 end package;
 
 
-package body rx_status_feature is
-    procedure rx_status_feature_exec(
-        signal      so              : out    feature_signal_outputs_t;
-        signal      rand_ctr        : inout  natural range 0 to RAND_POOL_SIZE;
-        signal      iout            : in     instance_outputs_arr_t;
-        signal      mem_bus         : inout  mem_bus_arr_t;
-        signal      bus_level       : in     std_logic
+package body rx_status_ftest is
+    procedure rx_status_ftest_exec(
+        signal      chn             : inout  t_com_channel
     ) is
-        variable ID_1           	:       natural range 0 to 15 := 1;
-        variable ID_2           	:       natural range 0 to 15 := 2;
         variable CAN_frame          :       SW_CAN_frame_type;
         variable send_more          :       boolean := true;
         variable in_RX_buf          :       natural range 0 to 1023;
@@ -130,44 +121,40 @@ package body rx_status_feature is
     begin
 
         ------------------------------------------------------------------------
-        -- Restart the content of the buffer...
+        -- @1. RX Buffer size is read and buffer is cleared.
         ------------------------------------------------------------------------
+        info_m("Step 1");
+
         command.release_rec_buffer := true;
-        give_controller_command(command, ID_1, mem_bus(1));
+        give_controller_command(command, DUT_NODE, chn);
         command.release_rec_buffer := false;
 
-        ------------------------------------------------------------------------
-        -- Read the size of the synthesized buffer
-        ------------------------------------------------------------------------
-        get_rx_buf_state(buf_info, ID_1, mem_bus(1));
+        get_rx_buf_state(buf_info, DUT_NODE, chn);
 
         ------------------------------------------------------------------------
-        -- Check that buffer is empty
+        -- @2. Free memory, buffer status and message count is checked.
         ------------------------------------------------------------------------
-        check(buf_info.rx_empty,
+        info_m("Step 3");
+
+        check_m(buf_info.rx_empty,
               "RX Buffer is not empty after Release receive Buffer command");
 
-        ------------------------------------------------------------------------
-        -- Check that free memory is equal to buffer size
-        ------------------------------------------------------------------------
-        check(buf_info.rx_buff_size = buf_info.rx_mem_free,
+        check_m(buf_info.rx_buff_size = buf_info.rx_mem_free,
              "Number of free words in RX Buffer after Release Receive " &
              "Buffer command is not equal to buffer size");
 
-        ------------------------------------------------------------------------
-        -- Check that both pointers are 0 as well
-        -- as message count
-        ------------------------------------------------------------------------
-        check(buf_info.rx_frame_count = 0 and
-              buf_info.rx_write_pointer = 0 and
-              buf_info.rx_read_pointer = 0,
-              "RX Buffer pointers are not 0 after Release Receieve Buffer command");
+        check_m(buf_info.rx_frame_count = 0 and
+                buf_info.rx_write_pointer = 0 and
+                buf_info.rx_read_pointer = 0,
+                "RX Buffer pointers are not 0 after Release Receieve Buffer command");
 
         ------------------------------------------------------------------------
-        -- Generate the CAN frames and send them by Node 2
+        -- @3. Random frames are sent on the bus by Test Node and received by DUT.
         ------------------------------------------------------------------------
+        info_m("Step 6");
+
         while send_more loop
-            CAN_generate_frame(rand_ctr, CAN_frame);
+            CAN_generate_frame(CAN_frame);
 
             -- Evaluate if next frame should be sent
             if (CAN_frame.rtr = RTR_FRAME and
@@ -192,47 +179,49 @@ package body rx_status_feature is
                 end if;
             end if;
 
-            CAN_send_frame(CAN_frame, 1, ID_2, mem_bus(2), frame_sent);
-            CAN_wait_frame_sent(ID_1, mem_bus(1));
+            CAN_send_frame(CAN_frame, 1, TEST_NODE, chn, frame_sent);
+            CAN_wait_frame_sent(DUT_NODE, chn);
             
-            CAN_wait_bus_idle(ID_1, mem_bus(1));
-            CAN_wait_bus_idle(ID_2, mem_bus(2));
+            CAN_wait_bus_idle(DUT_NODE, chn);
+            CAN_wait_bus_idle(TEST_NODE, chn);
 
             number_frms_sent := number_frms_sent + 1;
             in_RX_buf := in_RX_buf + CAN_frame.rwcnt + 1;
 
             --------------------------------------------------------------------
-            -- Check that message count was incremented and memfree is correct!
+            -- @4. After each frame amount of remaining memory is checked
+            --     towards expected value.
             --------------------------------------------------------------------
-            get_rx_buf_state(buf_info, ID_1, mem_bus(1));
-            check((number_frms_sent = buf_info.rx_frame_count) or (not send_more),
-                  "Number of frames in RX Buffer not incremented");
+            info_m("Step 4");
+            get_rx_buf_state(buf_info, DUT_NODE, chn);
+            check_m((number_frms_sent = buf_info.rx_frame_count) or (not send_more),
+                    "Number of frames in RX Buffer not incremented");
                   
-            check((buf_info.rx_mem_free + in_RX_buf) = buf_info.rx_buff_size or
-                  (not send_more),
-                  "RX Buffer free memory + Number of stored words does " &
-                  "not equal to RX Buffer size!");
+            check_m((buf_info.rx_mem_free + in_RX_buf) = buf_info.rx_buff_size or
+                    (not send_more),
+                    "RX Buffer free memory + Number of stored words does " &
+                    "not equal to RX Buffer size!");
         end loop;
 
         ------------------------------------------------------------------------
-        -- Check that data overrun status is set (we sent one more frame than
-        -- needed... Overrun should be present
+        -- @5. When buffer is filled Data overrun flag is checked and cleared.
         ------------------------------------------------------------------------
-        get_controller_status(status, ID_1, mem_bus(1));
-        check(status.data_overrun, "Data overrun not ocurred as expected!");
+        info_m("Step 5");
+
+        get_controller_status(status, DUT_NODE, chn);
+        check_m(status.data_overrun, "Data overrun not ocurred as expected!");
 
         ------------------------------------------------------------------------
-        -- Clear the data overrun flag
+        -- @6. After clearing Overrun flag, it is checked it was really cleared.
         ------------------------------------------------------------------------
+        info_m("Step 6");
+        
         command.clear_data_overrun := true;
-        give_controller_command(command, ID_1, mem_bus(1));
+        give_controller_command(command, DUT_NODE, chn);
         command.clear_data_overrun := false;
 
-        ------------------------------------------------------------------------
-        -- Check that overrun flag was cleared
-        ------------------------------------------------------------------------
-        get_controller_status(status, ID_1, mem_bus(1));
-        check_false(status.data_overrun, "Data Overrun flag not cleared!");
+        get_controller_status(status, DUT_NODE, chn);
+        check_false_m(status.data_overrun, "Data Overrun flag not cleared!");
 
     end procedure;
 

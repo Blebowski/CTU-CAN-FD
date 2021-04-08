@@ -82,11 +82,11 @@
 -- @Test sequence:
 --  @1. Configure both Nodes to one-shot mode.
 --  @2. Insert CAN frames which have first 5 bits of identifier equal to zero to
---      both nodes. Check both nodes are Idle. Wait till Sample point in Node 1.
---  @3. Send Set ready command to both nodes. Wait until Node 1 is not in Bus
+--      both nodes. Check both nodes are Idle. Wait till Sample point in DUT.
+--  @3. Send Set ready command to both nodes. Wait until DUT is not in Bus
 --      idle state. Check it is transmitting Base Identifier (NOT SOF)!
---  @4. Wait until sample point 5 times (5th bit of idetifier) in Node 1. Check
---      Node 1 is transmitting Recessive bit (Stuff bit).
+--  @4. Wait until sample point 5 times (5th bit of idetifier) in DUT. Check
+--      DUT is transmitting Recessive bit (Stuff bit).
 --  @5. Wait until frame is over. Check frame was received OK, read it from 
 --      receiving node and verify it was received OK!
 --
@@ -97,33 +97,23 @@
 --------------------------------------------------------------------------------
 
 Library ctu_can_fd_tb;
-context ctu_can_fd_tb.ctu_can_synth_context;
-context ctu_can_fd_tb.ctu_can_test_context;
+context ctu_can_fd_tb.ieee_context;
+context ctu_can_fd_tb.rtl_context;
+context ctu_can_fd_tb.tb_common_context;
 
-use ctu_can_fd_tb.pkg_feature_exec_dispath.all;
+use ctu_can_fd_tb.feature_test_agent_pkg.all;
 
-package no_sof_tx_feature is
-    procedure no_sof_tx_feature_exec(
-        signal      so              : out    feature_signal_outputs_t;
-        signal      rand_ctr        : inout  natural range 0 to RAND_POOL_SIZE;
-        signal      iout            : in     instance_outputs_arr_t;
-        signal      mem_bus         : inout  mem_bus_arr_t;
-        signal      bus_level       : in     std_logic
+package no_sof_tx_ftest is
+    procedure no_sof_tx_ftest_exec(
+        signal      chn             : inout  t_com_channel
     );
 end package;
 
 
-package body no_sof_tx_feature is
-    procedure no_sof_tx_feature_exec(
-        signal      so              : out    feature_signal_outputs_t;
-        signal      rand_ctr        : inout  natural range 0 to RAND_POOL_SIZE;
-        signal      iout            : in     instance_outputs_arr_t;
-        signal      mem_bus         : inout  mem_bus_arr_t;
-        signal      bus_level       : in     std_logic
+package body no_sof_tx_ftest is
+    procedure no_sof_tx_ftest_exec(
+        signal      chn             : inout  t_com_channel
     ) is
-        variable ID_1               :     natural := 1;
-        variable ID_2               :     natural := 2;
-
         -- Generated frames
         variable frame_1            :     SW_CAN_frame_type;
         variable frame_2            :     SW_CAN_frame_type;
@@ -142,18 +132,20 @@ package body no_sof_tx_feature is
         ------------------------------------------------------------------------
         -- @1. Configure both Nodes to one-shot mode.
         ------------------------------------------------------------------------
-        info("Step 1: Configure one -shot mode");
-        CAN_enable_retr_limit(true, 0, ID_1, mem_bus(1));
-        CAN_enable_retr_limit(true, 0, ID_2, mem_bus(2));
+        info_m("Step 1: Configure one -shot mode");
+
+        CAN_enable_retr_limit(true, 0, DUT_NODE, chn);
+        CAN_enable_retr_limit(true, 0, TEST_NODE, chn);
 
         ------------------------------------------------------------------------
         -- @2. Insert CAN frames which have first 5 bits of identifier equal to
         --    zero to both nodes. Check both nodes are Idle. Wait till Sample
-        --    point in Node 2.
+        --    point in Test node.
         ------------------------------------------------------------------------
-        info("Step 2: Insert CAN frames!");
-        CAN_generate_frame(rand_ctr, frame_1);
-        CAN_generate_frame(rand_ctr, frame_2);
+        info_m("Step 2: Insert CAN frames!");
+
+        CAN_generate_frame(frame_1);
+        CAN_generate_frame(frame_2);
         frame_1.ident_type := BASE;
         frame_2.ident_type := BASE;
         frame_1.identifier := 1;
@@ -161,55 +153,59 @@ package body no_sof_tx_feature is
         -- Use FD can frames, they contain stuff count!!
         frame_1.frame_format := FD_CAN;
         frame_2.frame_format := FD_CAN;
-        CAN_insert_TX_frame(frame_1, 1, ID_1, mem_bus(1));
-        CAN_insert_TX_frame(frame_2, 1, ID_2, mem_bus(2));
-        CAN_wait_sample_point(iout(2).stat_bus);
+        CAN_insert_TX_frame(frame_1, 1, DUT_NODE, chn);
+        CAN_insert_TX_frame(frame_2, 1, TEST_NODE, chn);
+        CAN_wait_sample_point(TEST_NODE, chn);
         
         ------------------------------------------------------------------------
-        -- @3. Send Set ready command to both nodes. Wait until Node 1 is not in
+        -- @3. Send Set ready command to both nodes. Wait until DUT is not in
         --    Bus idle state. Check it is transmitting Base Identifier (NOT SOF)!
         ------------------------------------------------------------------------
-        send_TXT_buf_cmd(buf_set_ready, 1, ID_2, mem_bus(2));
-        CAN_wait_sample_point(iout(2).stat_bus);
-        send_TXT_buf_cmd(buf_set_ready, 1, ID_1, mem_bus(1));
+        info_m("Step 3");
+
+        send_TXT_buf_cmd(buf_set_ready, 1, TEST_NODE, chn);
+        CAN_wait_sample_point(TEST_NODE, chn);
+        send_TXT_buf_cmd(buf_set_ready, 1, DUT_NODE, chn);
         
-        -- Wait until bus is not idle by Node 1!
-        get_controller_status(stat_1, ID_1, mem_bus(1));
+        -- Wait until bus is not idle by DUT!
+        get_controller_status(stat_1, DUT_NODE, chn);
         while (stat_1.bus_status) loop
-            get_controller_status(stat_1, ID_1, mem_bus(1));
+            get_controller_status(stat_1, DUT_NODE, chn);
         end loop;
 
-        CAN_read_pc_debug(pc_state, ID_1, mem_bus(1));
-        check(pc_state = pc_deb_arbitration, "Node 1 did not transmitt SOF!");
+        CAN_read_pc_debug_m(pc_state, DUT_NODE, chn);
+        check_m(pc_state = pc_deb_arbitration, "DUT did not transmitt SOF!");
         wait for 20 ns;
 
         ------------------------------------------------------------------------
-        -- @4. Wait until sample point 5 times (5th bit of idetifier) in Node 1.
-        --    Check Node 1 is transmitting Recessive bit (Stuff bit).
+        -- @4. Wait until sample point 5 times (5th bit of idetifier) in DUT.
+        --    Check DUT is transmitting Recessive bit (Stuff bit).
         ------------------------------------------------------------------------
+        info_m("Step 4");
+
         for i in 0 to 4 loop
-            CAN_wait_sample_point(iout(1).stat_bus, skip_stuff_bits => false);
+            CAN_wait_sample_point(DUT_NODE, chn, skip_stuff_bits => false);
         end loop;
-        check(iout(1).can_tx = RECESSIVE, "Stuff bit inserted!");
+        check_can_tx(RECESSIVE, DUT_NODE, "Stuff bit inserted!", chn);
 
         ------------------------------------------------------------------------
         -- @5. Wait until frame is over. Check frame was received OK, read it 
         --    from receiving node and verify it was received OK!
         ------------------------------------------------------------------------
-        CAN_wait_bus_idle(ID_1, mem_bus(1));
-        CAN_wait_bus_idle(ID_2, mem_bus(2));
+        info_m("Step 5");
 
-        get_tx_buf_state(1, txt_buf_state, ID_1, mem_bus(1));
-        check(txt_buf_state = buf_done, "Frame transmitted OK!");
+        CAN_wait_bus_idle(DUT_NODE, chn);
+        CAN_wait_bus_idle(TEST_NODE, chn);
+
+        get_tx_buf_state(1, txt_buf_state, DUT_NODE, chn);
+        check_m(txt_buf_state = buf_done, "Frame transmitted OK!");
         
-        get_rx_buf_state(rx_buf_info, ID_2, mem_bus(2));
-        check(rx_buf_info.rx_frame_count = 1, "Frame received OK!");
+        get_rx_buf_state(rx_buf_info, TEST_NODE, chn);
+        check_m(rx_buf_info.rx_frame_count = 1, "Frame received OK!");
 
-        CAN_read_frame(frame_rx, ID_2, mem_bus(2));
+        CAN_read_frame(frame_rx, TEST_NODE, chn);
         CAN_compare_frames(frame_rx, frame_1, false, frames_equal);
-        check(frames_equal, "TX vs. RX frames match!");
+        check_m(frames_equal, "TX vs. RX frames match!");
 
-    wait for 1000 ns;
-  end procedure;
-
+    end procedure;
 end package body;

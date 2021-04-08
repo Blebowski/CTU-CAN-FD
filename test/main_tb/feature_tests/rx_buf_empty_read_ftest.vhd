@@ -89,33 +89,23 @@
 --------------------------------------------------------------------------------
 
 Library ctu_can_fd_tb;
-context ctu_can_fd_tb.ctu_can_synth_context;
-context ctu_can_fd_tb.ctu_can_test_context;
+context ctu_can_fd_tb.ieee_context;
+context ctu_can_fd_tb.rtl_context;
+context ctu_can_fd_tb.tb_common_context;
 
-use ctu_can_fd_tb.pkg_feature_exec_dispath.all;
+use ctu_can_fd_tb.feature_test_agent_pkg.all;
 
-package rx_buf_empty_read_feature is
-    procedure rx_buf_empty_read_feature_exec(
-        signal      so              : out    feature_signal_outputs_t;
-        signal      rand_ctr        : inout  natural range 0 to RAND_POOL_SIZE;
-        signal      iout            : in     instance_outputs_arr_t;
-        signal      mem_bus         : inout  mem_bus_arr_t;
-        signal      bus_level       : in     std_logic
+package rx_buf_empty_read_ftest is
+    procedure rx_buf_empty_read_ftest_exec(
+        signal      chn             : inout  t_com_channel
     );
 end package;
 
 
-package body rx_buf_empty_read_feature is
-    procedure rx_buf_empty_read_feature_exec(
-        signal      so              : out    feature_signal_outputs_t;
-        signal      rand_ctr        : inout  natural range 0 to RAND_POOL_SIZE;
-        signal      iout            : in     instance_outputs_arr_t;
-        signal      mem_bus         : inout  mem_bus_arr_t;
-        signal      bus_level       : in     std_logic
+package body rx_buf_empty_read_ftest is
+    procedure rx_buf_empty_read_ftest_exec(
+        signal      chn             : inout  t_com_channel
     ) is
-        variable ID_1               :     natural := 1;
-        variable ID_2               :     natural := 2;
-
         -- Generated frames
         variable frame_rx           :     SW_CAN_frame_type;
         variable rx_buf_info        :     SW_RX_Buffer_info;
@@ -123,29 +113,28 @@ package body rx_buf_empty_read_feature is
 
         -----------------------------------------------------------------------
         -- @1. Read pointers from RX Buffer, check pointers are 0 (DUT is post 
-        --    reset).
+        --     reset).
         -----------------------------------------------------------------------
-        info("Step 1: Reading RX buffer pointers for first time");
-        get_rx_buf_state(rx_buf_info, ID_1, mem_bus(1));
-        check(rx_buf_info.rx_read_pointer = 0, "Read pointer 0!");
-        check(rx_buf_info.rx_write_pointer = 0, "Write pointer 0!");
+        info_m("Step 1: Reading RX buffer pointers for first time");
+
+        get_rx_buf_state(rx_buf_info, DUT_NODE, chn);
+        check_m(rx_buf_info.rx_read_pointer = 0, "Read pointer 0!");
+        check_m(rx_buf_info.rx_write_pointer = 0, "Write pointer 0!");
         
         -----------------------------------------------------------------------
         -- @2. Try to read CAN frame from RX Buffer. This should generate at 
-        --    least 4 reads from RX DATA register.
+        --     least 4 reads from RX DATA register.
         -----------------------------------------------------------------------
-        info("Step 2: Try to read frame from empty RX Buffer!");
-        CAN_read_frame(frame_rx, ID_1, mem_bus(1));
+        info_m("Step 2: Try to read frame from empty RX Buffer!");
+        CAN_read_frame(frame_rx, DUT_NODE, chn);
 
         ------------------------------------------------------------------------
         -- @3. Read pointers from RX Buffer, check pointers are still 0.
         ------------------------------------------------------------------------
-        info("Step 3: Read RX Buffer pointers again!");
-        get_rx_buf_state(rx_buf_info, ID_1, mem_bus(1));
-        check(rx_buf_info.rx_read_pointer = 0, "Read pointer 0!");
-        check(rx_buf_info.rx_write_pointer = 0, "Write pointer 0!");
-
-        wait for 1000 ns;
+        info_m("Step 3: Read RX Buffer pointers again!");
+        get_rx_buf_state(rx_buf_info, DUT_NODE, chn);
+        check_m(rx_buf_info.rx_read_pointer = 0, "Read pointer 0!");
+        check_m(rx_buf_info.rx_write_pointer = 0, "Write pointer 0!");
 
   end procedure;
 

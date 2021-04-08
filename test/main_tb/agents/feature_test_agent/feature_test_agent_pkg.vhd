@@ -1601,12 +1601,14 @@ package feature_test_agent_pkg is
     );
     
     ----------------------------------------------------------------------------
-    -- Read current retransmitt counter value .
+    -- Read current retransmitt counter value.
     --
     -- Arguments:
-    --  node            Node whose retransmitt counter value to get.    
+    --  retr_ctr        Return value for retransmitt counter
+    --  node            Node whose retransmitt counter to read
+    --  channel         Communication channel to use
     ----------------------------------------------------------------------------
-    procedure CAN_spy_retr_ctr(
+    procedure CAN_read_retr_ctr(
         variable retr_ctr       : out   natural;
         constant node           : in    t_feature_node;
         signal   channel        : inout t_com_channel
@@ -4138,15 +4140,15 @@ package body feature_test_agent_pkg is
     end procedure;
     
     
-    procedure CAN_spy_retr_ctr(
+    procedure CAN_read_retr_ctr(
         variable retr_ctr       : out   natural;
         constant node           : in    t_feature_node;
         signal   channel        : inout t_com_channel
     ) is
+        variable data : std_logic_vector(7 downto 0);
     begin
-        -- TODO: Read from register when register with current retransmit counter
-        --         is implemented
-        error_m("CAN_spu_retr_ctr not implemented");
+        CAN_read(data, RETR_CTR_ADR, node, channel);
+        retr_ctr := to_integer(unsigned(data));
     end procedure;
     
     

@@ -327,9 +327,19 @@ feature:
         mode_self_test:
         mode_frame_filters:
             iterations: 6
+        no_sof_tx:
         one_shot:
+        overload:
+
         rec_saturation:
+        retr_limit:
+        retr_limit_2:
+        retr_limit_3:
+        rx_buf_empty_read:
         rx_counter:
+        rx_settings_rtsop:
+        rx_status:
+        rx_status_mof:
 
         settings_tbfbo:
         single_bus_node:

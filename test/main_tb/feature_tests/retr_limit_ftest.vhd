@@ -87,37 +87,37 @@
 --      re-transmission and retransmitt counter is incremented.
 --
 -- @Test sequence:
---  @1. Set retransmitt limit to 1 in Node 1. Enable retransmitt limitations.
---      Set Acknowledge forbidden mode in Node 2 (to produce ACK errors). Turn
---      on Test mode in Node 1 (to manipulate error counters).
---  @2. Generate frame and start sending the frame by Node 1. Wait until
+--  @1. Set retransmitt limit to 1 in DUT. Enable retransmitt limitations.
+--      Set Acknowledge forbidden mode in Test node (to produce ACK errors). Turn
+--      on Test mode in DUT (to manipulate error counters).
+--  @2. Generate frame and start sending the frame by DUT. Wait until
 --      error frame occurs and transmission is over two times.
 --  @3. Check transmission failed and transmitting TXT Buffer is "TX Error".
---  @4. Disable retransmitt limitions in Node 1. Start sending a frame by Node 1.
+--  @4. Disable retransmitt limitions in DUT. Start sending a frame by DUT.
 --      Wait until error frame and check that transmitting TXT Buffer is "Ready"
 --      again (hitting current retransmitt limit did not cause stopping
 --      retransmissions when retransmitt limit is disabled).
---  @5. Abort transmission by Node 1. Wait until transmission was aborted.
+--  @5. Abort transmission by DUT. Wait until transmission was aborted.
 --  @6. Generate random retransmitt limit (between 1 and 14). Enable retransmitt
---      limitation in Node 1. Erase TX error counter in Node 1. Erase TX Error
+--      limitation in DUT. Erase TX error counter in DUT. Erase TX Error
 --      counter.
---  @7. Send frame by Node 1. Monitor that after initial transmission and after
---      each next re-transmission sending TXT Buffer in Node 1 is "Ready". After
+--  @7. Send frame by DUT. Monitor that after initial transmission and after
+--      each next re-transmission sending TXT Buffer in DUT is "Ready". After
 --      'retransmitt limit' retransmissions check that sending TXT Buffer in
---      Node 1 is in state "TX Error".
---  @8. Check that value of TX Error counter in Node 1 is equal to:
+--      DUT is in state "TX Error".
+--  @8. Check that value of TX Error counter in DUT is equal to:
 --      (retr_lim + 1) * 8.
---  @9. Set retransmitt limit to 15 and Enable Retransmissions in Node 1.
---      Start Sending frame by Node 1.
+--  @9. Set retransmitt limit to 15 and Enable Retransmissions in DUT.
+--      Start Sending frame by DUT.
 -- @10. Monitor that after initial transmission and after each next
---      re-transmission sending TXT Buffer in Node 1 is "Ready". After
+--      re-transmission sending TXT Buffer in DUT is "Ready". After
 --     'retransmitt limit' retransmissions check that sending TXT Buffer in
---      Node 1 is in state "TX Error".
--- @11. Set retransmitt limit to 0 in Node 1. Insert frames for transmission to
---      Node 1 and Node 2 simultaneously to invoke arbitration. ID of frame in
---      Node 1 is higher than the one in Node 2 (to loose arbitration).
---      Wait until node 1 is in Control field of a frame. Check that Node 1
---      is receiver (arbitration was really lost) and TXT Buffer in Node 1
+--      DUT is in state "TX Error".
+-- @11. Set retransmitt limit to 0 in DUT. Insert frames for transmission to
+--      DUT and Test node simultaneously to invoke arbitration. ID of frame in
+--      DUT is higher than the one in Test node (to loose arbitration).
+--      Wait until node 1 is in Control field of a frame. Check that DUT
+--      is receiver (arbitration was really lost) and TXT Buffer in DUT
 --      ended up in "TX Error" state.
 --
 -- @TestInfoEnd
@@ -132,34 +132,25 @@
 --------------------------------------------------------------------------------
 
 Library ctu_can_fd_tb;
-context ctu_can_fd_tb.ctu_can_synth_context;
-context ctu_can_fd_tb.ctu_can_test_context;
+context ctu_can_fd_tb.ieee_context;
+context ctu_can_fd_tb.rtl_context;
+context ctu_can_fd_tb.tb_common_context;
 
-use ctu_can_fd_tb.pkg_feature_exec_dispath.all;
+use ctu_can_fd_tb.feature_test_agent_pkg.all;
 
-package retr_limit_feature is
-    procedure retr_limit_feature_exec(
-        signal      so              : out    feature_signal_outputs_t;
-        signal      rand_ctr        : inout  natural range 0 to RAND_POOL_SIZE;
-        signal      iout            : in     instance_outputs_arr_t;
-        signal      mem_bus         : inout  mem_bus_arr_t;
-        signal      bus_level       : in     std_logic
+package retr_limit_ftest is
+    procedure retr_limit_ftest_exec(
+        signal      chn             : inout  t_com_channel
     );
 end package;
 
 
-package body retr_limit_feature is
-    procedure retr_limit_feature_exec(
-        signal      so              : out    feature_signal_outputs_t;
-        signal      rand_ctr        : inout  natural range 0 to RAND_POOL_SIZE;
-        signal      iout            : in     instance_outputs_arr_t;
-        signal      mem_bus         : inout  mem_bus_arr_t;
-        signal      bus_level       : in     std_logic
+package body retr_limit_ftest is
+    procedure retr_limit_ftest_exec(
+        signal      chn             : inout  t_com_channel
     ) is
         variable CAN_frame          :       SW_CAN_frame_type;
         variable frame_sent         :       boolean := false;
-        variable ID_1           	:       natural := 1;
-        variable ID_2           	:       natural := 2;
         variable retr_th            :       natural;
         variable mode_1             :       SW_mode := SW_mode_rst_val;
         variable mode_2             :       SW_mode := SW_mode_rst_val;
@@ -173,180 +164,195 @@ package body retr_limit_feature is
         ------------------------------------------------------------------------
         -- Randomize used TXT Buffer
         ------------------------------------------------------------------------
-        rand_int_v(rand_ctr, 3, tmp_int);
+        rand_int_v(3, tmp_int);
         txt_buf_nr := (tmp_int mod 4) + 1;
 
         ------------------------------------------------------------------------
-        -- @1. Set retransmitt limit to 0 in Node 1. Enable retransmitt 
-        --    limitations. Set Acknowledge forbidden mode in Node 2 (to produce
-        --    ACK errors). Turn on Test mode in Node 1 (to manipulate error 
-        --    counters).
+        -- @1. Set retransmitt limit to 0 in DUT. Enable retransmitt 
+        --     limitations. Set Acknowledge forbidden mode in Test node (to
+        --     produce ACK errors). Turn on Test mode in DUT (to manipulate 
+        --     error counters).
         ------------------------------------------------------------------------
-        info("Step 1: Configuring retransmitt limit to 1 (Node 1), ACF (Node 2)");
-        CAN_enable_retr_limit(true, 1, ID_1, mem_bus(1));
+        info_m("Step 1: Configuring retransmitt limit to 1 (DUT), ACF (Test node)");
+
+        CAN_enable_retr_limit(true, 1, DUT_NODE, chn);
+        
         mode_2.acknowledge_forbidden := true;
-        set_core_mode(mode_2, ID_2, mem_bus(2));
+        set_core_mode(mode_2, TEST_NODE, chn);
+        
         mode_1.test := true;
-        set_core_mode(mode_1, ID_1, mem_bus(1));
+        set_core_mode(mode_1, DUT_NODE, chn);
         
         ------------------------------------------------------------------------
-        -- @2. Generate frame and start sending the frame by Node 1. Wait until
-        --    error frame occurs and transmission is over two times.
+        -- @2. Generate frame and start sending the frame by DUT. Wait until
+        --     error frame occurs and transmission is over two times.
         ------------------------------------------------------------------------
-        info("Step 2: Sending frame by Node 1");
-        CAN_generate_frame(rand_ctr, CAN_frame);
-        CAN_send_frame(CAN_frame, txt_buf_nr, ID_1, mem_bus(1), frame_sent);
+        info_m("Step 2: Sending frame by DUT");
+
+        CAN_generate_frame(CAN_frame);
+        CAN_send_frame(CAN_frame, txt_buf_nr, DUT_NODE, chn, frame_sent);
         for i in 0 to 1 loop
-            CAN_wait_error_frame(ID_1, mem_bus(1));
-            CAN_wait_pc_state(pc_deb_intermission, ID_1, mem_bus(1));
+            CAN_wait_error_frame(DUT_NODE, chn);
+            CAN_wait_pc_state(pc_deb_intermission, DUT_NODE, chn);
         end loop;
 
         ------------------------------------------------------------------------
         -- @3. Check transmission failed and transmitting TXT Buffer is
-        --    "TX Error".
+        --     "TX Error".
         ------------------------------------------------------------------------
-        info("Step 3: Checking transmission failed.");
-        get_tx_buf_state(txt_buf_nr, buf_state, ID_1, mem_bus(1));
-        check(buf_state = buf_failed, "TXT Buffer failed!");
+        info_m("Step 3: Checking transmission failed.");
+
+        get_tx_buf_state(txt_buf_nr, buf_state, DUT_NODE, chn);
+        check_m(buf_state = buf_failed, "TXT Buffer failed!");
         
         ------------------------------------------------------------------------
-        -- @4. Disable retransmitt limitions in Node 1. Start sending a frame by
-        --    Node 1. Wait until error frame and check that transmitting TXT
-        --    Buffer is "Ready" again (hitting current retransmitt limit did not
-        --    cause stopping retransmissions when retransmitt limit is disabled).
+        -- @4. Disable retransmitt limitions in DUT. Start sending a frame by
+        --     DUT. Wait until error frame and check that transmitting TXT
+        --     Buffer is "Ready" again (hitting current retransmitt limit did not
+        --     cause stopping retransmissions when retransmitt limit is disabled).
         ------------------------------------------------------------------------
-        info("Step 4: Testing disabled retransmitt limitation");
-        CAN_enable_retr_limit(false, 1, ID_1, mem_bus(1));
-        CAN_send_frame(CAN_frame, txt_buf_nr, ID_1, mem_bus(1), frame_sent);
-        CAN_wait_error_frame(ID_1, mem_bus(1));
-        CAN_wait_pc_state(pc_deb_intermission, ID_1, mem_bus(1));
-        CAN_wait_error_frame(ID_1, mem_bus(1));
-        get_tx_buf_state(txt_buf_nr, buf_state, ID_1, mem_bus(1));
-        check(buf_state = buf_ready, "TXT Buffer ready!");
+        info_m("Step 4: Testing disabled retransmitt limitation");
+
+        CAN_enable_retr_limit(false, 1, DUT_NODE, chn);
+
+        CAN_send_frame(CAN_frame, txt_buf_nr, DUT_NODE, chn, frame_sent);
+        CAN_wait_error_frame(DUT_NODE, chn);
+
+        CAN_wait_pc_state(pc_deb_intermission, DUT_NODE, chn);
+        CAN_wait_error_frame(DUT_NODE, chn);
+
+        get_tx_buf_state(txt_buf_nr, buf_state, DUT_NODE, chn);
+        check_m(buf_state = buf_ready, "TXT Buffer ready!");
         
         ------------------------------------------------------------------------
-        -- @5. Abort transmission by Node 1. Wait until transmission was aborted.
+        -- @5. Abort transmission by DUT. Wait until transmission was aborted.
         ------------------------------------------------------------------------
-        info("Step 5: Aborting transmission");
-        send_TXT_buf_cmd(buf_set_abort, txt_buf_nr, ID_1, mem_bus(1));
-        get_tx_buf_state(txt_buf_nr, buf_state, ID_1, mem_bus(1));
+        info_m("Step 5: Aborting transmission");
+
+        send_TXT_buf_cmd(buf_set_abort, txt_buf_nr, DUT_NODE, chn);
+        get_tx_buf_state(txt_buf_nr, buf_state, DUT_NODE, chn);
         while (buf_state /= buf_aborted) loop
-            get_tx_buf_state(txt_buf_nr, buf_state, ID_1, mem_bus(1));
-        end loop;        
-        CAN_wait_bus_idle(ID_1, mem_bus(1));
+            get_tx_buf_state(txt_buf_nr, buf_state, DUT_NODE, chn);
+        end loop;
+        CAN_wait_bus_idle(DUT_NODE, chn);
 
         ------------------------------------------------------------------------
         -- @6. Generate random retransmitt limit (between 1 and 14). Enable 
-        --    retransmitt limitation in Node 1. Erase TX Error counter.
+        --     retransmitt limitation in DUT. Erase TX Error counter.
         ------------------------------------------------------------------------
-        info("Step 6: Setting random retransmitt limit!");
-        rand_int_v(rand_ctr, 13, retr_th);
+        info_m("Step 6: Setting random retransmitt limit!");
+
+        rand_int_v(13, retr_th);
         retr_th := retr_th + 1;
-        info("Retransmitt threshold: " & Integer'image(retr_th));
-        CAN_enable_retr_limit(true, retr_th, ID_1, mem_bus(1));
+        info_m("Retransmitt threshold: " & Integer'image(retr_th));
+        CAN_enable_retr_limit(true, retr_th, DUT_NODE, chn);
         err_counters.tx_counter := 0;
-        set_error_counters(err_counters, ID_1, mem_bus(1));
+        set_error_counters(err_counters, DUT_NODE, chn);
         
         ------------------------------------------------------------------------
-        -- @7. Send frame by Node 1. Monitor that after initial transmission and
-        --    after each next re-transmission sending TXT Buffer in Node 1 is
-        --    "Ready".
+        -- @7. Send frame by DUT. Monitor that after initial transmission and
+        --     after each next re-transmission sending TXT Buffer in DUT is
+        --     "Ready".
         ------------------------------------------------------------------------
-        info("Step 7: Checking number of re-transmissions: " &
+        info_m("Step 7: Checking number of re-transmissions: " &
                 integer'image(retr_th));
-        CAN_send_frame(CAN_frame, txt_buf_nr, ID_1, mem_bus(1), frame_sent);
+
+        CAN_send_frame(CAN_frame, txt_buf_nr, DUT_NODE, chn, frame_sent);
         for i in 0 to retr_th loop
-            info("Loop: " & integer'image(i));
-            CAN_wait_frame_sent(ID_1, mem_bus(1));
-            get_tx_buf_state(txt_buf_nr, buf_state, ID_1, mem_bus(1));
+            info_m("Loop: " & integer'image(i));
+            CAN_wait_frame_sent(DUT_NODE, chn);
+            get_tx_buf_state(txt_buf_nr, buf_state, DUT_NODE, chn);
             if (i /= retr_th) then
-                check(buf_state = buf_ready, "TXT Buffer ready");
+                check_m(buf_state = buf_ready, "TXT Buffer ready");
             else
-                check(buf_state = buf_failed, "TXT Buffer failed");
+                check_m(buf_state = buf_failed, "TXT Buffer failed");
             end if;
         end loop;
-        CAN_wait_bus_idle(ID_1, mem_bus(1));
+        CAN_wait_bus_idle(DUT_NODE, chn);
 
         ------------------------------------------------------------------------
-        -- @8. Check that value of TX Error counter in Node 1 is equal to:
-        --      (retr_lim + 1) * 8.
+        -- @8. Check that value of TX Error counter in DUT is equal to:
+        --     (retr_lim + 1) * 8.
         ------------------------------------------------------------------------
-        info("Step 8: Checking value of TX Error counter");
-        read_error_counters(err_counters, ID_1, mem_bus(1));
-        check(err_counters.tx_counter = 8 * (retr_th + 1),
+        info_m("Step 8: Checking value of TX Error counter");
+
+        read_error_counters(err_counters, DUT_NODE, chn);
+        check_m(err_counters.tx_counter = 8 * (retr_th + 1),
             "Counters exp: " & Integer'Image(err_counters.tx_counter) &
             " counters real: " & Integer'image(8 * (retr_th + 1)));
         
         ------------------------------------------------------------------------
-        -- @9. Set retransmitt limit to 15 and Enable Re-transmissions in Node 1.
-        --    Start Sending frame by Node 1. Erase error counters so that
-        --    we don't go to bus off (just to be sure).
+        -- @9. Set retransmitt limit to 15 and Enable Re-transmissions in DUT.
+        --     Start Sending frame by DUT. Erase error counters so that
+        --     we don't go to bus off (just to be sure).
         ------------------------------------------------------------------------
-        info("Step 9: Set maximal retransmitt limit (15)");
-        CAN_enable_retr_limit(true, 15, ID_1, mem_bus(1));
-        CAN_send_frame(CAN_frame, txt_buf_nr, ID_1, mem_bus(1), frame_sent);
+        info_m("Step 9: Set maximal retransmitt limit (15)");
+
+        CAN_enable_retr_limit(true, 15, DUT_NODE, chn);
+        CAN_send_frame(CAN_frame, txt_buf_nr, DUT_NODE, chn, frame_sent);
+
         err_counters.tx_counter := 0;
-        set_error_counters(err_counters, ID_1, mem_bus(1));
+        set_error_counters(err_counters, DUT_NODE, chn);
         
         ------------------------------------------------------------------------
         -- @10. Monitor that after initial transmission and after each next
-        --     re-transmission sending TXT Buffer in Node 1 is "Ready". After
-        --     'retransmitt limit' retransmissions check that sending TXT Buffer
-        --     in Node 1 is in state "TX Error".
+        --      re-transmission sending TXT Buffer in DUT is "Ready". After
+        --      'retransmitt limit' retransmissions check that sending TXT
+        --      Buffer in DUT is in state "TX Error".
         ------------------------------------------------------------------------
-        info("Step 10: Checking number of re-transmissions");
+        info_m("Step 10: Checking number of re-transmissions");
+
         for i in 0 to 15 loop
-            CAN_wait_frame_sent(ID_1, mem_bus(1));
-            get_tx_buf_state(txt_buf_nr, buf_state, ID_1, mem_bus(1));
+            CAN_wait_frame_sent(DUT_NODE, chn);
+            get_tx_buf_state(txt_buf_nr, buf_state, DUT_NODE, chn);
             if (i /= 15) then
-                check(buf_state = buf_ready, "TXT Buffer ready");
+                check_m(buf_state = buf_ready, "TXT Buffer ready");
             else
-                check(buf_state = buf_failed, "TXT Buffer failed");
+                check_m(buf_state = buf_failed, "TXT Buffer failed");
             end if;
         end loop;
         
         -- Error counters must be erased because unit is already Error Passive!
         err_counters.tx_counter := 0;
-        set_error_counters(err_counters, ID_1, mem_bus(1));
+        set_error_counters(err_counters, DUT_NODE, chn);
         wait for 100 ns;
 
         ------------------------------------------------------------------------
-        -- @11. Set retransmitt limit to 1 in Node 1. Insert frames for 
-        --     transmission to Node 1 and Node 2 simultaneously to invoke
-        --     arbitration. ID of frame in Node 1 is higher than the one in
-        --     Node 2 (to loose arbitration). Wait until node 1 is in Control
-        --     field of a frame. Check that Node 1 is receiver (arbitration was
-        --     really lost) and TXT Buffer in Node 1 ended up in "TX Error"
-        --     state.
+        -- @11. Set retransmitt limit to 1 in DUT. Insert frames for 
+        --      transmission to DUT and Test node simultaneously to invoke
+        --      arbitration. ID of frame in DUT is higher than the one in
+        --      Test node (to loose arbitration). Wait until node 1 is in Control
+        --      field of a frame. Check that DUT is receiver (arbitration was
+        --      really lost) and TXT Buffer in DUT ended up in "TX Error"
+        --      state.
         ------------------------------------------------------------------------
-        info("Step 11: Testing re-transmitt limit due to arbitration loss!");
-        CAN_enable_retr_limit(true, 1, ID_1, mem_bus(1));
+        info_m("Step 11: Testing re-transmitt limit due to arbitration loss!");
+
+        CAN_enable_retr_limit(true, 1, DUT_NODE, chn);
         CAN_frame.ident_type := BASE;
         CAN_frame.identifier := 10;
-        CAN_insert_TX_frame(CAN_frame, 1, ID_1, mem_bus(1));
+        CAN_insert_TX_frame(CAN_frame, 1, DUT_NODE, chn);
         CAN_frame.identifier := 9;
-        CAN_insert_TX_frame(CAN_frame, 1, ID_2, mem_bus(2));
-        CAN_insert_TX_frame(CAN_frame, 2, ID_2, mem_bus(2));
+        CAN_insert_TX_frame(CAN_frame, 1, TEST_NODE, chn);
+        CAN_insert_TX_frame(CAN_frame, 2, TEST_NODE, chn);
         
-        send_TXT_buf_cmd(buf_set_ready, 1, ID_1, mem_bus(1));
+        send_TXT_buf_cmd(buf_set_ready, 1, DUT_NODE, chn);
         
-        -- Note: There are two frames in Node 2. First one will be transmitted,
-        --       because we have one re-transmission, thus Node 2 needs to
+        -- Note: There are two frames in Test node. First one will be transmitted,
+        --       because we have one re-transmission, thus Test node needs to
         --       send next frame after first one to invoke next arbitration!
-        send_TXT_buf_cmd(buf_set_ready, 1, ID_2, mem_bus(2));
-        send_TXT_buf_cmd(buf_set_ready, 2, ID_2, mem_bus(2));
+        send_TXT_buf_cmd(buf_set_ready, 1, TEST_NODE, chn);
+        send_TXT_buf_cmd(buf_set_ready, 2, TEST_NODE, chn);
         
-        CAN_wait_frame_sent(ID_1, mem_bus(1));
+        CAN_wait_frame_sent(DUT_NODE, chn);
         
-        CAN_wait_pc_state(pc_deb_control, ID_1, mem_bus(1));
-        get_controller_status(status, ID_1, mem_bus(1));
-        check(status.receiver, "Node 1 lost arbitration");
-        get_tx_buf_state(txt_buf_nr, buf_state, ID_1, mem_bus(1));
-        check(buf_state = buf_failed, "TXT Buffer failed");
-        CAN_wait_bus_idle(ID_1, mem_bus(1));
-        
-        wait for 1000 ns;
-        
+        CAN_wait_pc_state(pc_deb_control, DUT_NODE, chn);
+        get_controller_status(status, DUT_NODE, chn);
+        check_m(status.receiver, "DUT lost arbitration");
+        get_tx_buf_state(txt_buf_nr, buf_state, DUT_NODE, chn);
+        check_m(buf_state = buf_failed, "TXT Buffer failed");
+        CAN_wait_bus_idle(DUT_NODE, chn);
+
   end procedure;
 
 end package body;
