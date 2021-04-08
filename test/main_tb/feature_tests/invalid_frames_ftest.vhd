@@ -94,72 +94,62 @@
 --------------------------------------------------------------------------------
 
 Library ctu_can_fd_tb;
-context ctu_can_fd_tb.ctu_can_synth_context;
-context ctu_can_fd_tb.ctu_can_test_context;
+context ctu_can_fd_tb.ieee_context;
+context ctu_can_fd_tb.rtl_context;
+context ctu_can_fd_tb.tb_common_context;
 
-use ctu_can_fd_tb.pkg_feature_exec_dispath.all;
+use ctu_can_fd_tb.feature_test_agent_pkg.all;
 
-package invalid_configs_feature is
-    procedure invalid_configs_feature_exec(
-        signal      so              : out    feature_signal_outputs_t;
-        signal      rand_ctr        : inout  natural range 0 to RAND_POOL_SIZE;
-        signal      iout            : in     instance_outputs_arr_t;
-        signal      mem_bus         : inout  mem_bus_arr_t;
-        signal      bus_level       : in     std_logic
+package invalid_frames_ftest is
+    procedure invalid_frames_ftest_exec(
+        signal      chn             : inout  t_com_channel
     );
 end package;
 
-package body invalid_configs_feature is
-    procedure invalid_configs_feature_exec(
-        signal      so              : out    feature_signal_outputs_t;
-        signal      rand_ctr        : inout  natural range 0 to RAND_POOL_SIZE;
-        signal      iout            : in     instance_outputs_arr_t;
-        signal      mem_bus         : inout  mem_bus_arr_t;
-        signal      bus_level       : in     std_logic
+package body invalid_frames_ftest is
+    procedure invalid_frames_ftest_exec(
+        signal      chn             : inout  t_com_channel
     ) is
         variable tx_frame           :       SW_CAN_frame_type;
         variable rx_frame           :       SW_CAN_frame_type;
         variable frame_sent         :       boolean := false;
-        variable ID_1           	:       natural := 1;
-        variable ID_2           	:       natural := 2;
     begin
 
         ------------------------------------------------------------------------
         -- @1. Send CAN FD frame with RTR bit set and check it is received
-        --    without RTR.
+        --     without RTR.
         ------------------------------------------------------------------------
-        info("Step 1");
+        info_m("Step 1");
 
-        CAN_generate_frame(rand_ctr, tx_frame);
+        CAN_generate_frame(tx_frame);
         tx_frame.frame_format := FD_CAN;
         tx_frame.rtr := RTR_FRAME;
-        CAN_send_frame(tx_frame, 1, ID_1, mem_bus(1), frame_sent);
-        CAN_wait_frame_sent(ID_2, mem_bus(2));
-        CAN_wait_bus_idle(ID_1, mem_bus(1));
-        CAN_wait_bus_idle(ID_2, mem_bus(2));
+        CAN_send_frame(tx_frame, 1, DUT_NODE, chn, frame_sent);
+        CAN_wait_frame_sent(TEST_NODE, chn);
+        CAN_wait_bus_idle(DUT_NODE, chn);
+        CAN_wait_bus_idle(TEST_NODE, chn);
         
-        CAN_read_frame(rx_frame, ID_2, mem_bus(2));
-        check(rx_frame.frame_format = FD_CAN, "FD frame received");
-        check(rx_frame.rtr = NO_RTR_FRAME, "NO RTR received");
+        CAN_read_frame(rx_frame, TEST_NODE, chn);
+        check_m(rx_frame.frame_format = FD_CAN, "FD frame received");
+        check_m(rx_frame.rtr = NO_RTR_FRAME, "NO RTR received");
         
         ------------------------------------------------------------------------
         -- @2. Send CAN 2.0 frame with BRS bit set and check it is received
-        --    without BRS.
+        --     without BRS.
         ------------------------------------------------------------------------
-        info("Step 2");
+        info_m("Step 2");
         
-        CAN_generate_frame(rand_ctr, tx_frame);
+        CAN_generate_frame(tx_frame);
         tx_frame.frame_format := NORMAL_CAN;
         tx_frame.brs := BR_SHIFT;
-        CAN_send_frame(tx_frame, 1, ID_1, mem_bus(1), frame_sent);
-        CAN_wait_frame_sent(ID_2, mem_bus(2));        
-        CAN_wait_bus_idle(ID_1, mem_bus(1));
-        CAN_wait_bus_idle(ID_2, mem_bus(2));
+        CAN_send_frame(tx_frame, 1, DUT_NODE, chn, frame_sent);
+        CAN_wait_frame_sent(TEST_NODE, chn);        
+        CAN_wait_bus_idle(DUT_NODE, chn);
+        CAN_wait_bus_idle(TEST_NODE, chn);
         
-        CAN_read_frame(rx_frame, ID_2, mem_bus(2));
-        check(rx_frame.brs = BR_NO_SHIFT, "Frame with no BRS received!");
-        check(rx_frame.frame_format = NORMAL_CAN, "CAN 2.0 frame received!");        
+        CAN_read_frame(rx_frame, TEST_NODE, chn);
+        check_m(rx_frame.brs = BR_NO_SHIFT, "Frame with no BRS received!");
+        check_m(rx_frame.frame_format = NORMAL_CAN, "CAN 2.0 frame received!");        
 
     end procedure;
-
 end package body;

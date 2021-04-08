@@ -128,6 +128,8 @@ use ctu_can_fd_tb.err_capt_sof_ftest.all;
 use ctu_can_fd_tb.fault_state_ftest.all;
 use ctu_can_fd_tb.glitch_filtering_ftest.all;
 
+use ctu_can_fd_tb.invalid_frames_ftest.all;
+
 use ctu_can_fd_tb.mode_bus_monitoring_ftest.all;
 use ctu_can_fd_tb.mode_fd_enable_ftest.all;
 use ctu_can_fd_tb.mode_loopback_ftest.all;
@@ -240,8 +242,6 @@ package body feature_test_list_pkg is
             device_id_ftest_exec(channel);
         elsif (test_name = "dlc_can20_8_64_bytes") then
             dlc_can20_8_64_bytes_ftest_exec(channel);
-        elsif (test_name = "glitch_filtering") then
-            glitch_filtering_ftest_exec(channel);
 
         elsif (test_name = "err_capt_ack_ack") then
             err_capt_ack_ack_ftest_exec(channel);            
@@ -270,7 +270,11 @@ package body feature_test_list_pkg is
                                                       
         elsif (test_name = "fault_state") then
             fault_state_ftest_exec(channel);
-                    
+        elsif (test_name = "glitch_filtering") then
+            glitch_filtering_ftest_exec(channel);
+        elsif (test_name = "invalid_frames") then
+            invalid_frames_ftest_exec(channel);
+
         elsif (test_name = "mode_bus_monitoring") then
             mode_bus_monitoring_ftest_exec(channel);
         elsif (test_name = "mode_fd_enable") then

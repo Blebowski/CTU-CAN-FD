@@ -59,7 +59,6 @@ feature:
         int_ewl:
         int_do:
         int_fcs:
-        invalid_configs:
         # message_filter:
         #     iterations: 1
         tx_priority:

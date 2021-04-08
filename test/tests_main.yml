@@ -314,8 +314,10 @@ feature:
         err_capt_sof:
         
         fault_state:
-
         glitch_filtering:
+
+        invalid_frames:
+
         mode_bus_monitoring:
         mode_loopback:
         mode_fd_enable:
