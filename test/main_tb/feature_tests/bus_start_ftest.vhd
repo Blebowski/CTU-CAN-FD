@@ -77,17 +77,17 @@
 --      recessive bits!
 --
 -- @Test sequence:
---  @1. Disable both Nodes. Insert 2 frames to Node 1. Check both Nodes are 
---      Bus off. Enable Node 1.
---  @2. Wait till sample point in Node 1 11 times, check that after 11 recesive
---      bits, Node 1 becomes error active. Wait until Node 1 becomes transmitter.
---  @3. Enable Node 2, wait until ACK field in Node 2. Force the bus low so that
---      Node 1 receives ACK. Wait till Node 1 is not in ACK anymore. Check it
+--  @1. Disable both Nodes. Insert 2 frames to DUT. Check both Nodes are 
+--      Bus off. Enable DUT.
+--  @2. Wait till sample point in DUT 11 times, check that after 11 recesive
+--      bits, DUT becomes error active. Wait until DUT becomes transmitter.
+--  @3. Enable Test node, wait until ACK field in Test node. Force the bus low so that
+--      DUT receives ACK. Wait till DUT is not in ACK anymore. Check it
 --      is in ACK Delimiter!
---  @4. Wait for 11 sample points in Node 2. Check that Node 2 became Error
+--  @4. Wait for 11 sample points in Test node. Check that Test node became Error
 --      active (this should have occurred in ACK Delimiter + EOF + Intermission
---      of Node 1).
---  @5. Wait until CAN frame starts in Node 2. Check Node 2 turned receiver!
+--      of DUT).
+--  @5. Wait until CAN frame starts in Test node. Check Test node turned receiver!
 --
 -- @TestInfoEnd
 --------------------------------------------------------------------------------
@@ -98,32 +98,22 @@
 --------------------------------------------------------------------------------
 
 Library ctu_can_fd_tb;
-context ctu_can_fd_tb.ctu_can_synth_context;
-context ctu_can_fd_tb.ctu_can_test_context;
+context ctu_can_fd_tb.ieee_context;
+context ctu_can_fd_tb.rtl_context;
+context ctu_can_fd_tb.tb_common_context;
 
-use ctu_can_fd_tb.pkg_feature_exec_dispath.all;
+use ctu_can_fd_tb.feature_test_agent_pkg.all;
 
-package bus_start_feature is
-    procedure bus_start_feature_exec(
-        signal      so              : out    feature_signal_outputs_t;
-        signal      rand_ctr        : inout  natural range 0 to RAND_POOL_SIZE;
-        signal      iout            : in     instance_outputs_arr_t;
-        signal      mem_bus         : inout  mem_bus_arr_t;
-        signal      bus_level       : in     std_logic
+package bus_start_ftest is
+    procedure bus_start_ftest_exec(
+        signal      chn             : inout  t_com_channel
     );
 end package;
 
-
-package body bus_start_feature is
-    procedure bus_start_feature_exec(
-        signal      so              : out    feature_signal_outputs_t;
-        signal      rand_ctr        : inout  natural range 0 to RAND_POOL_SIZE;
-        signal      iout            : in     instance_outputs_arr_t;
-        signal      mem_bus         : inout  mem_bus_arr_t;
-        signal      bus_level       : in     std_logic
+package body bus_start_ftest is
+    procedure bus_start_ftest_exec(
+        signal      chn             : inout  t_com_channel
     ) is
-        variable ID_1           	:       natural := 1;
-        variable ID_2           	:       natural := 2;
         variable CAN_frame_1        :       SW_CAN_frame_type;
         variable CAN_frame_2        :       SW_CAN_frame_type;
         
@@ -132,101 +122,105 @@ package body bus_start_feature is
         
         variable read_state         :       SW_PC_Debug;
         variable status             :       SW_status;
-
     begin
 
         ------------------------------------------------------------------------
-        -- @1. Disable both Nodes. Insert 2 frames to Node 1. Check both Nodes
-        --    are Bus off. Enable Node 1.
+        -- @1. Disable both Nodes. Insert 2 frames to DUT. Check both Nodes
+        --     are Bus off. Enable DUT.
         ------------------------------------------------------------------------
-        info("Step 1: Disable both nodes!");
-        get_fault_state(fault_state_1, ID_1, mem_bus(1));
-        get_fault_state(fault_state_2, ID_2, mem_bus(2));
-        check(fault_state_1 = fc_error_active, "Node 1 Error active!");
-        check(fault_state_2 = fc_error_active, "Node 2 Error active!");
-        
-        CAN_turn_controller(false, ID_1, mem_bus(1));
-        CAN_turn_controller(false, ID_2, mem_bus(2));
-        CAN_generate_frame(rand_ctr, CAN_frame_1);
-        CAN_generate_frame(rand_ctr, CAN_frame_2);
-        CAN_insert_TX_frame(CAN_frame_1, 1, ID_1, mem_bus(1));
-        CAN_insert_TX_frame(CAN_frame_2, 2, ID_1, mem_bus(1));
+        info_m("Step 1: Disable both nodes!");
 
-        get_fault_state(fault_state_1, ID_1, mem_bus(1));
-        get_fault_state(fault_state_2, ID_2, mem_bus(2));
-        check(fault_state_1 = fc_bus_off, "Node 1 Bus off!");
-        check(fault_state_2 = fc_bus_off, "Node 2 Bus off!");
+        get_fault_state(fault_state_1, DUT_NODE, chn);
+        get_fault_state(fault_state_2, TEST_NODE, chn);
+        check_m(fault_state_1 = fc_error_active, "DUT Error active!");
+        check_m(fault_state_2 = fc_error_active, "Test node Error active!");
         
-        CAN_turn_controller(true, ID_1, mem_bus(1));
+        CAN_turn_controller(false, DUT_NODE, chn);
+        CAN_turn_controller(false, TEST_NODE, chn);
+        CAN_generate_frame(CAN_frame_1);
+        CAN_generate_frame(CAN_frame_2);
+        CAN_insert_TX_frame(CAN_frame_1, 1, DUT_NODE, chn);
+        CAN_insert_TX_frame(CAN_frame_2, 2, DUT_NODE, chn);
+
+        get_fault_state(fault_state_1, DUT_NODE, chn);
+        get_fault_state(fault_state_2, TEST_NODE, chn);
+        check_m(fault_state_1 = fc_bus_off, "DUT Bus off!");
+        check_m(fault_state_2 = fc_bus_off, "Test node Bus off!");
+        
+        CAN_turn_controller(true, DUT_NODE, chn);
 
         ------------------------------------------------------------------------
-        -- @2. Wait till sample point in Node 1 11 times, check that after 11
-        --    recessive bits, Node 1 becomes error active. Wait until Node 1
-        --    becomes transmitter.
+        -- @2. Wait till sample point in DUT 11 times, check that after 11
+        --     recessive bits, DUT becomes error active. Wait until DUT
+        --     becomes transmitter.
         ------------------------------------------------------------------------
-        info("Step 2: Check integration of Node 1");
+        info_m("Step 2: Check integration of DUT");
+
         for i in 0 to 10 loop
-            CAN_wait_sample_point(iout(1).stat_bus);
-            wait for 21 ns; -- For DFF to take place
-            get_fault_state(fault_state_1, ID_1, mem_bus(1));
+            CAN_wait_sample_point(DUT_NODE, chn);
+            wait for 21 ns; -- For DFF to update
+            get_fault_state(fault_state_1, DUT_NODE, chn);
             
             if (i = 10) then
-                check(fault_state_1 = fc_error_active,
+                check_m(fault_state_1 = fc_error_active,
                     "Node error active after 11 bits of integration!");    
             else
-                check(fault_state_1 = fc_bus_off,
+                check_m(fault_state_1 = fc_bus_off,
                     "Node bus off before 11 bits of integration!");    
             end if;
         end loop;
-        send_TXT_buf_cmd(buf_set_ready, 1, ID_1, mem_bus(1));
-        send_TXT_buf_cmd(buf_set_ready, 2, ID_1, mem_bus(1));
-        CAN_wait_tx_rx_start(true, false, ID_1, mem_bus(1));
+
+        send_TXT_buf_cmd(buf_set_ready, 1, DUT_NODE, chn);
+        send_TXT_buf_cmd(buf_set_ready, 2, DUT_NODE, chn);
+        CAN_wait_tx_rx_start(true, false, DUT_NODE, chn);
 
         ------------------------------------------------------------------------
-        -- @3. Enable Node 2, wait until ACK field in Node 2. Force the bus low
-        --    so that Node 1 receives ACK. Wait till Node 1 is not in ACK 
-        --    anymore. Check it is in ACK Delimiter!
+        -- @3. Enable Test node, wait until ACK field in Test node. Force the
+        --     bus low so that DUT receives ACK. Wait till DUT is not in ACK 
+        --     anymore. Check it is in ACK Delimiter!
         ------------------------------------------------------------------------
-        info("Step 3: Enable node 2");
-        CAN_turn_controller(true, ID_2, mem_bus(2));
-        CAN_wait_pc_state(pc_deb_ack, ID_1, mem_bus(1));
-        force_bus_level(DOMINANT, so.bl_force, so.bl_inject);
-        CAN_wait_not_pc_state(pc_deb_ack, ID_1, mem_bus(1));
-        release_bus_level(so.bl_force);
+        info_m("Step 3: Enable node 2");
 
-        CAN_read_pc_debug(read_state, ID_1, mem_bus(1));
-        check(read_state = pc_deb_ack_delim, "Node 2 is in ACK delimiter!");
+        CAN_turn_controller(true, TEST_NODE, chn);
+        CAN_wait_pc_state(pc_deb_ack, DUT_NODE, chn);
+        force_bus_level(DOMINANT, chn);
+        CAN_wait_not_pc_state(pc_deb_ack, DUT_NODE, chn);
+        release_bus_level(chn);
+
+        CAN_read_pc_debug_m(read_state, DUT_NODE, chn);
+        check_m(read_state = pc_deb_ack_delim, "Test node is in ACK delimiter!");
 
         ------------------------------------------------------------------------
-        -- @4. Wait for 11 sample points in Node 2. Check that Node 2 became
+        -- @4. Wait for 11 sample points in Test node. Check that Test node became
         --    Error active (this should have occurred in ACK Delimiter + EOF +
-        --    Intermission of Node 1).
+        --    Intermission of DUT).
         ------------------------------------------------------------------------
-        info("Step 4: Check integration of Node 2");
+        info_m("Step 4: Check integration of Test node");
+
         for i in 0 to 10 loop
-            CAN_wait_sample_point(iout(2).stat_bus);
-            wait for 21 ns; -- For DFF to take place
-            get_fault_state(fault_state_1, ID_2, mem_bus(2));
+            CAN_wait_sample_point(TEST_NODE, chn);
+            wait for 21 ns; -- For DFF to flip
+            get_fault_state(fault_state_1, TEST_NODE, chn);
             
             if (i = 10) then
-                check(fault_state_1 = fc_error_active,
+                check_m(fault_state_1 = fc_error_active,
                     "Node error active after 11 bits of integration!");    
             else
-                check(fault_state_1 = fc_bus_off,
+                check_m(fault_state_1 = fc_bus_off,
                     "Node bus off before 11 bits of integration!");    
             end if;
         end loop;
 
         ------------------------------------------------------------------------
-        -- @5. Wait until CAN frame starts in Node 1. Check Node 1 turned
+        -- @5. Wait until CAN frame starts in DUT. Check DUT turned
         --    transmitter!
         ------------------------------------------------------------------------
-        info("Step 5: Check Node 2 joined bus communication!");
-        CAN_wait_tx_rx_start(true, true, ID_2, mem_bus(2));
-        get_controller_status(status, ID_2, mem_bus(2));
-        
-        check(status.receiver, "Node 2 joined bus communication!");
+        info_m("Step 5: Check Test node joined bus communication!");
 
+        CAN_wait_tx_rx_start(true, true, TEST_NODE, chn);
+        get_controller_status(status, TEST_NODE, chn);
+        
+        check_m(status.receiver, "Test node joined bus communication!");
 
   end procedure;
 

@@ -282,6 +282,15 @@ feature:
         alc_srr_rtr:
         alc_srr_rtr_2:
 
+        btr:
+        btr_fd:
+        btr_maximal:
+            timeout: 100 ms
+        btr_minimal:
+        btr_ssp_access:
+        bus_start:
+        byte_enable:
+
         command_cdo:
         command_ercrst:
         command_frcrst:

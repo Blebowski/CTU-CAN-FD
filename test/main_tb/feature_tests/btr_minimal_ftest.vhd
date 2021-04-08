@@ -82,7 +82,7 @@
 --  @2. Configure small Transmitter delay, so that sampling in nominal bit rate
 --      will not fire an error.
 --  @3. Generate random frame which is FD frame with bit-rate shift. Send the
---      frame by Node 1, receive it by Node 2 and check it.
+--      frame by DUT, receive it by Test node and check it.
 --
 -- @TestInfoEnd
 --------------------------------------------------------------------------------
@@ -91,32 +91,23 @@
 --------------------------------------------------------------------------------
 
 Library ctu_can_fd_tb;
-context ctu_can_fd_tb.ctu_can_synth_context;
-context ctu_can_fd_tb.ctu_can_test_context;
+context ctu_can_fd_tb.ieee_context;
+context ctu_can_fd_tb.rtl_context;
+context ctu_can_fd_tb.tb_common_context;
 
-use ctu_can_fd_tb.pkg_feature_exec_dispath.all;
+use ctu_can_fd_tb.feature_test_agent_pkg.all;
 
-package btr_minimal_feature is
-    procedure btr_minimal_feature_exec(
-        signal      so              : out    feature_signal_outputs_t;
-        signal      rand_ctr        : inout  natural range 0 to RAND_POOL_SIZE;
-        signal      iout            : in     instance_outputs_arr_t;
-        signal      mem_bus         : inout  mem_bus_arr_t;
-        signal      bus_level       : in     std_logic
+package btr_minimal_ftest is
+    procedure btr_minimal_ftest_exec(
+        signal      chn             : inout  t_com_channel
     );
 end package;
 
 
-package body btr_minimal_feature is
-    procedure btr_minimal_feature_exec(
-        signal      so              : out    feature_signal_outputs_t;
-        signal      rand_ctr        : inout  natural range 0 to RAND_POOL_SIZE;
-        signal      iout            : in     instance_outputs_arr_t;
-        signal      mem_bus         : inout  mem_bus_arr_t;
-        signal      bus_level       : in     std_logic
+package body btr_minimal_ftest is
+    procedure btr_minimal_ftest_exec(
+        signal      chn             : inout  t_com_channel
     ) is
-        variable ID_1           	:       natural := 1;
-        variable ID_2           	:       natural := 2;
         variable CAN_frame_1        :       SW_CAN_frame_type;
         variable CAN_frame_2        :       SW_CAN_frame_type;
         variable frame_sent         :       boolean := false;
@@ -135,9 +126,10 @@ package body btr_minimal_feature is
         -- @1. Configure highest possible bit-rate as given by datasheet in
         --     both nodes. Disable Secondary sampling point.
         -----------------------------------------------------------------------
-        info("Step 1");
-        CAN_turn_controller(false, ID_1, mem_bus(1));
-        CAN_turn_controller(false, ID_2, mem_bus(2));
+        info_m("Step 1");
+
+        CAN_turn_controller(false, DUT_NODE, chn);
+        CAN_turn_controller(false, TEST_NODE, chn);
 
         bus_timing.prop_nbt := 3;
         bus_timing.ph1_nbt := 2;
@@ -151,57 +143,57 @@ package body btr_minimal_feature is
         bus_timing.sjw_nbt := 1;
         bus_timing.tq_dbt := 1;
 
-        CAN_configure_timing(bus_timing, ID_1, mem_bus(1));
-        CAN_configure_timing(bus_timing, ID_2, mem_bus(2));
+        CAN_configure_timing(bus_timing, DUT_NODE, chn);
+        CAN_configure_timing(bus_timing, TEST_NODE, chn);
 
-        CAN_configure_ssp(ssp_no_ssp, x"00", ID_1, mem_bus(1));
-        CAN_configure_ssp(ssp_no_ssp, x"00", ID_2, mem_bus(2));
+        CAN_configure_ssp(ssp_no_ssp, x"00", DUT_NODE, chn);
+        CAN_configure_ssp(ssp_no_ssp, x"00", TEST_NODE, chn);
 
-        CAN_turn_controller(true, ID_1, mem_bus(1));
-        CAN_turn_controller(true, ID_2, mem_bus(2));
+        CAN_turn_controller(true, DUT_NODE, chn);
+        CAN_turn_controller(true, TEST_NODE, chn);
 
-        CAN_wait_bus_on(ID_1, mem_bus(1));
-        CAN_wait_bus_on(ID_2, mem_bus(2));
+        CAN_wait_bus_on(DUT_NODE, chn);
+        CAN_wait_bus_on(TEST_NODE, chn);
 
-        info("CAN bus nominal bit-rate:");
-        info("PROP: " & integer'image(bus_timing.prop_nbt));
-        info("PH1: " & integer'image(bus_timing.ph1_nbt));
-        info("PH2: " & integer'image(bus_timing.ph2_nbt));
-        info("SJW: " & integer'image(bus_timing.sjw_nbt));
+        info_m("CAN bus nominal bit-rate:");
+        info_m("PROP: " & integer'image(bus_timing.prop_nbt));
+        info_m("PH1: " & integer'image(bus_timing.ph1_nbt));
+        info_m("PH2: " & integer'image(bus_timing.ph2_nbt));
+        info_m("SJW: " & integer'image(bus_timing.sjw_nbt));
 
-        info("CAN bus data bit-rate:");
-        info("PROP: " & integer'image(bus_timing.prop_dbt));
-        info("PH1: " & integer'image(bus_timing.ph1_dbt));
-        info("PH2: " & integer'image(bus_timing.ph2_dbt));
-        info("SJW: " & integer'image(bus_timing.sjw_dbt));
+        info_m("CAN bus data bit-rate:");
+        info_m("PROP: " & integer'image(bus_timing.prop_dbt));
+        info_m("PH1: " & integer'image(bus_timing.ph1_dbt));
+        info_m("PH2: " & integer'image(bus_timing.ph2_dbt));
+        info_m("SJW: " & integer'image(bus_timing.sjw_dbt));
 
         -----------------------------------------------------------------------
         -- @2. Configure small Transmitter delay, so that sampling in nominal
         --     bit rate will not fire an error.
         -----------------------------------------------------------------------
-        info("Step 2");
+        info_m("Step 2");
 
-        ftr_tb_set_tran_delay(1 ns, ID_1, so.ftr_tb_trv_delay);
-        ftr_tb_set_tran_delay(1 ns, ID_2, so.ftr_tb_trv_delay);
+        ftr_tb_set_tran_delay(1 ns, DUT_NODE, chn);
+        ftr_tb_set_tran_delay(1 ns, TEST_NODE, chn);
 
         -----------------------------------------------------------------------
         -- @3. Generate random frame which is FD frame with bit-rate shift.
-        --     Send the frame by Node 1, receive it by Node 2 and check it.
+        --     Send the frame by DUT, receive it by Test node and check it.
         -----------------------------------------------------------------------
-        info("Step 3");
+        info_m("Step 3");
         
-        CAN_generate_frame(rand_ctr, CAN_frame_1);
-        info("Generated frame");
+        CAN_generate_frame(CAN_frame_1);
+        info_m("Generated frame");
         CAN_frame_1.frame_format := FD_CAN;
         CAN_frame_1.brs := BR_SHIFT;
         CAN_frame_1.rtr := NO_RTR_FRAME;
         
-        CAN_send_frame(CAN_frame_1, 1, ID_1, mem_bus(1), frame_sent);
-        CAN_wait_frame_sent(ID_2, mem_bus(2));
-        CAN_read_frame(CAN_frame_2, ID_2, mem_bus(2));
+        CAN_send_frame(CAN_frame_1, 1, DUT_NODE, chn, frame_sent);
+        CAN_wait_frame_sent(TEST_NODE, chn);
+        CAN_read_frame(CAN_frame_2, TEST_NODE, chn);
         
         CAN_compare_frames(CAN_frame_1, CAN_frame_2, false, frames_equal);
-        check(frames_equal, "TX/RX frame equal!");
+        check_m(frames_equal, "TX/RX frame equal!");
 
   end procedure;
 

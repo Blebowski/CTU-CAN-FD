@@ -48,17 +48,7 @@ feature:
         iterations: 1
         timeout: 100 ms
         wave: feature/feature_env_setup.tcl
-    tests:
-        
-        
-        btr:
-        btr_fd:
-        btr_minimal:
-        btr_maximal:
-        btr_ssp_access:
-        bus_start:
-        byte_enable:        
-        
+    tests: 
         err_norm_fd:
 
         mode_rst:

@@ -77,7 +77,7 @@
 --  @2. 8/16/32 bit write access.
 --
 -- @Test sequence:
---  @1. Disable Node 1 (so that BTR, BTR_FD are writable). Read 32-bit register
+--  @1. Disable DUT (so that BTR, BTR_FD are writable). Read 32-bit register
 --      via 32-bit access. Check correct value.
 --  @2. Read 32-bit register via 2 16 bit accesses. Check correct values.
 --  @3. Read 32-bit register via 4 8 bit accesses. Check correct values.
@@ -96,185 +96,160 @@
 --------------------------------------------------------------------------------
 
 Library ctu_can_fd_tb;
-context ctu_can_fd_tb.ctu_can_synth_context;
-context ctu_can_fd_tb.ctu_can_test_context;
+context ctu_can_fd_tb.ieee_context;
+context ctu_can_fd_tb.rtl_context;
+context ctu_can_fd_tb.tb_common_context;
 
-use ctu_can_fd_tb.pkg_feature_exec_dispath.all;
+use ctu_can_fd_tb.feature_test_agent_pkg.all;
 
-package byte_enable_feature is
-    procedure byte_enable_feature_exec(
-        signal      so              : out    feature_signal_outputs_t;
-        signal      rand_ctr        : inout  natural range 0 to RAND_POOL_SIZE;
-        signal      iout            : in     instance_outputs_arr_t;
-        signal      mem_bus         : inout  mem_bus_arr_t;
-        signal      bus_level       : in     std_logic
+package byte_enable_ftest is
+    procedure byte_enable_ftest_exec(
+        signal      chn             : inout  t_com_channel
 	);
 end package;
 
+package body byte_enable_ftest is
 
-package body byte_enable_feature is
-
-    procedure byte_enable_feature_exec(
-        signal      so              : out    feature_signal_outputs_t;
-        signal      rand_ctr        : inout  natural range 0 to RAND_POOL_SIZE;
-        signal      iout            : in     instance_outputs_arr_t;
-        signal      mem_bus         : inout  mem_bus_arr_t;
-        signal      bus_level       : in     std_logic
+    procedure byte_enable_ftest_exec(
+        signal      chn             : inout  t_com_channel
     ) is
-        variable data               :        std_logic_vector(31 downto 0) :=
-                                                (OTHERS => '0');
-        variable address			:		 std_logic_vector(11 downto 0) :=
-                                                (OTHERS => '0');
-        variable ID                 :        natural := 1;
+        variable data_32  : std_logic_vector(31 downto 0) := (OTHERS => '0');
+        variable data_16  : std_logic_vector(15 downto 0) := (OTHERS => '0');
+        variable data_8   : std_logic_vector(7 downto 0) := (OTHERS => '0');
+
+        variable exp_8    : std_logic_vector(7 downto 0);
+        variable exp_16   : std_logic_vector(15 downto 0);
+        variable address  : std_logic_vector(11 downto 0) := (OTHERS => '0');
+        variable ID       : natural := 1;
     begin
 
         ------------------------------------------------------------------------
-        -- @1. Disable Node 1 (so that BTR, BTR_FD are writable). Read 32-bit 
-        --    register via 32-bit access. Check correct value.
+        -- @1. Disable DUT (so that BTR, BTR_FD are writable). Read 32-bit 
+        --     register via 32-bit access. Check correct value.
         ------------------------------------------------------------------------
-        info("Step 1: 32-bit read");
-        CAN_turn_controller(false, ID, mem_bus(1));
+        info_m("Step 1: 32-bit read");
+
+        CAN_turn_controller(false, DUT_NODE, chn);
         address := YOLO_REG_ADR;
-        CAN_read(data, address, ID, mem_bus(1), BIT_32);
-        check(data = x"DEADBEEF", "32 bit read error");
+        CAN_read(data_32, address, DUT_NODE, chn);
+        check_m(data_32 = x"DEADBEEF", "32 bit read error");
 
         ------------------------------------------------------------------------
         -- @2. Read 32-bit register via 2 16 bit accesses. Check correct values.
         ------------------------------------------------------------------------
-        info("Step 2: 16-bit read");
+        info_m("Step 2: 16-bit read");
+
         for i in 0 to 1 loop        
-            data := (OTHERS => '0');
+            data_16 := (OTHERS => '0');
             address := std_logic_vector(to_unsigned(
 		            (to_integer(unsigned(YOLO_REG_ADR)) + i * 2), 12));
-            CAN_read(data, address, ID, mem_bus(1), BIT_16);
+            CAN_read(data_16, address, DUT_NODE, chn);
 
-            -- Checking if valid 2 bytes match register value
-            check(data(16 * i + 15 downto 16 * i) = 
-	              YOLO_VAL_RSTVAL(16 * i + 15 downto 16 * i),
-	              "Read error - 16 bit access (valid byte), Index:");
-
-            -- Checking invalid 2 bytes are 0
-            check(data(16 * (1 - i) + 15 downto 16 * (1 - i)) = x"0000",
-                 "Read error -16 bit access (empty byte), Index :");
+            exp_16 := YOLO_VAL_RSTVAL(16 * i + 15 downto 16 * i);
+            if (i = 0) then
+                check_m(data_16 = exp_16, "16 bit access - lower half word");
+            else
+                check_m(data_16 = exp_16, "16 bit access - upper half word");
+            end if;
         end loop;
 
         ------------------------------------------------------------------------
         -- @3. Read 32-bit register via 4 8 bit accesses. Check correct values.
         ------------------------------------------------------------------------
-        info("Step 3: 8-bit read");
-        for i in 0 to 3 loop        
-            data := (OTHERS => '0');
+        info_m("Step 3: 8-bit read");
+
+        for i in 0 to 3 loop
+            data_8 := (OTHERS => '0');
             address := std_logic_vector(to_unsigned(
 		            (to_integer(unsigned(YOLO_REG_ADR)) + i), 12));
-            CAN_read(data, address, ID, mem_bus(1), BIT_8);
+            CAN_read(data_8, address, DUT_NODE, chn);
 
             -- Checking if valid 1 byte matches register value
-            check(data(8 * i + 7 downto 8 * i) = 
-	              YOLO_VAL_RSTVAL(8 * i + 7 downto 8 * i),
-	              "Read error - 8 bit access (valid byte), Index :");
-
-            -- Checking if other bytes are 0
-            case i is
-            when 0 =>
-                check(data(31 downto 8) = x"000000",
-                      "Read error - 8 bit (Empty byte 0)");
-            when 1 =>
-                check(data(31 downto 16) = x"0000" and
-                      data(7 downto 0) = x"00",
-                      "Read error - 8 bit (Empty byte 1)");
-            when 2 =>
-                check(data(31 downto 24) = x"00" and
-                      data(15 downto 0) = x"0000",
-                      "Read error - 8 bit (Empty byte 2)");
-            when 3 =>
-                check(data(23 downto 0) = x"000000",
-                "Read error - 8 bit (Empty byte 3)");
-                
-            when others =>
-                error("Invalid byte index"); -- LCOV_EXCL_LINE
-            end case;
+            exp_8 := YOLO_VAL_RSTVAL(8 * i + 7 downto 8 * i);
+            check_m (exp_8 = data_8, "8 bit access, byte: " & integer'image(i));
         end loop;
 
         ------------------------------------------------------------------------
         -- @4. Erase 32-bit R/W register. Write pattern to a single byte. Read 
-        --    32-bit check that pattern was written to single byte only and 
-        --    rest are zeroes. Repeat with each byte!
+        --     32-bit check that pattern was written to single byte only and 
+        --     rest are zeroes. Repeat with each byte!
         ------------------------------------------------------------------------
-        info("Step 4: 8-bit write");
+        info_m("Step 4: 8-bit write");
+
         for i in 0 to 3 loop
             address := BTR_FD_ADR;
-            data := (OTHERS => '0');
-            CAN_write(data, address, ID, mem_bus(1));
+            data_32 := (OTHERS => '0');
+            CAN_write(data_32, address, DUT_NODE, chn);
 
             address := std_logic_vector(to_unsigned(
 		            (to_integer(unsigned(BTR_FD_ADR)) + i), 12));
-            data(8 * i + 7 downto 8 * i) := x"AA";
-            CAN_write(data, address, ID, mem_bus(1), BIT_8);
-            data := (OTHERS => '0');
-
-            CAN_read(data, BTR_FD_ADR, ID, mem_bus(1), BIT_32);
+            data_8 := x"AA";
+            CAN_write(data_8, address, DUT_NODE, chn);
             
+            CAN_read(data_32, BTR_FD_ADR, DUT_NODE, chn);
+
             -- Checking if one written byte was written OK!
-            check(data(8 * i + 7 downto 8 * i) = x"AA",
-                  "Write access - 8 bit (valid byte), Index :" & integer'image(i));
+            check_m(data_32(8 * i + 7 downto 8 * i) = x"AA",
+                    "Write access - 8 bit (valid byte), Index :" & integer'image(i));
 
             -- Checking if other bytes are 0
             case i is
             when 0 =>
-                check(data(31 downto 8) = x"000000",
-                     "Write access - 8 bit (Empty byte 0)");
+                check_m(data_32(31 downto 8) = x"000000",
+                       "Write access - 8 bit (Empty byte 0)");
             when 1 =>
-                check(data(31 downto 16) = x"0000" and
-                      data(7 downto 0) = x"00",
-                      "Write access - 8 bit (Empty byte 1)");
+                check_m(data_32(31 downto 16) = x"0000" and
+                        data_32(7 downto 0) = x"00",
+                        "Write access - 8 bit (Empty byte 1)");
             when 2 =>
-                check(data(31 downto 24) = x"00" and
-                      data(15 downto 0) = x"0000",
-                      "Write access - 8 bit (Empty byte 2)");
+                check_m(data_32(31 downto 24) = x"00" and
+                        data_32(15 downto 0) = x"0000",
+                        "Write access - 8 bit (Empty byte 2)");
 
             when 3 =>
-                check(data(23 downto 0) = x"000000",
-                      "Write access - 8 bit (Empty byte 3)");
-                      
+                check_m(data_32(23 downto 0) = x"000000",
+                        "Write access - 8 bit (Empty byte 3)");
+
             when others =>
-                error("Invalid byte index"); -- LCOV_EXCL_LINE
+                error_m("Invalid byte index"); -- LCOV_EXCL_LINE
             end case;
         end loop;
         
         ------------------------------------------------------------------------
         --  @5. Erase 32-bit R/W register. Write pattern to lower half word. Read
-        --     32-bit, check that pattern was written to half word only and rest
-        --     are zeroes. Repeat with upper half word!
+        --      32-bit, check that pattern was written to half word only and rest
+        --      are zeroes. Repeat with upper half word!
         ------------------------------------------------------------------------
-        info("Step 4: 16-bit write");
+        info_m("Step 4: 16-bit write");
+
         for i in 0 to 1 loop
             address := BTR_FD_ADR;
-            data := (OTHERS => '0');
-            CAN_write(data, address, ID, mem_bus(1));
+            data_32 := (OTHERS => '0');
+            CAN_write(data_32, address, DUT_NODE, chn);
 
             address := std_logic_vector(to_unsigned(
                         (to_integer(unsigned(BTR_FD_ADR)) + (i * 2)), 12));
-            data(16 * i + 15 downto 16 * i) := x"AAAA";
-            CAN_write(data, address, ID, mem_bus(1), BIT_16);
-            data := (OTHERS => '0');
-
-            CAN_read(data, BTR_FD_ADR, ID, mem_bus(1), BIT_32);
+            data_16 := x"AAAA";
+            CAN_write(data_16, address, DUT_NODE, chn);
+            
+            data_32 := (OTHERS => '0');
+            CAN_read(data_32, BTR_FD_ADR, DUT_NODE, chn);
             
             -- Checking if one written byte was written OK!
-            check(data(16 * i + 15 downto 16 * i) = x"AAAA",
+            check_m(data_32(16 * i + 15 downto 16 * i) = x"AAAA",
                   "Write access - 16 bit (valid half word), Index :" & integer'image(i));
 
             -- Checking if other half word is 0
             case i is
             when 0 =>
-                check(data(31 downto 16) = x"0000",
-                     "Write access - 16 bit (Empty half word 0)");
+                check_m(data_32(31 downto 16) = x"0000",
+                        "Write access - 16 bit (Empty half word 0)");
             when 1 =>
-                check(data(15 downto 0) = x"0000",
-                      "Write access - 16 bit (Empty half word 1)");
+                check_m(data_32(15 downto 0) = x"0000",
+                        "Write access - 16 bit (Empty half word 1)");
 
             when others =>
-                error("Invalid half word index"); -- LCOV_EXCL_LINE
+                error_m("Invalid half word index"); -- LCOV_EXCL_LINE
             end case;
         end loop;       
 

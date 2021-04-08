@@ -81,10 +81,10 @@
 --      bit-rate! Nominal bit-rate remains the default one which was set by
 --      testbench.
 --  @2. Enable both Nodes and send CAN FD frame where bit-rate is shifted by
---      Node 1. Wait until data field in Node 1 and measure duration till next
+--      DUT. Wait until data field in DUT and measure duration till next
 --      sample point! Transmitter during Data phase shall no re-synchronize
 --      therefore, bit time will always have nominal length!
---  @3. Wait until frame is sent and check it is correctly received by Node 2.
+--  @3. Wait until frame is sent and check it is correctly received by Test node.
 --
 -- @TestInfoEnd
 --------------------------------------------------------------------------------
@@ -93,32 +93,24 @@
 --------------------------------------------------------------------------------
 
 Library ctu_can_fd_tb;
-context ctu_can_fd_tb.ctu_can_synth_context;
-context ctu_can_fd_tb.ctu_can_test_context;
+context ctu_can_fd_tb.ieee_context;
+context ctu_can_fd_tb.rtl_context;
+context ctu_can_fd_tb.tb_common_context;
 
-use ctu_can_fd_tb.pkg_feature_exec_dispath.all;
+use ctu_can_fd_tb.feature_test_agent_pkg.all;
+use ctu_can_fd_tb.clk_gen_agent_pkg.all;
 
-package btr_fd_feature is
-    procedure btr_fd_feature_exec(
-        signal      so              : out    feature_signal_outputs_t;
-        signal      rand_ctr        : inout  natural range 0 to RAND_POOL_SIZE;
-        signal      iout            : in     instance_outputs_arr_t;
-        signal      mem_bus         : inout  mem_bus_arr_t;
-        signal      bus_level       : in     std_logic
+package btr_fd_ftest is
+    procedure btr_fd_ftest_exec(
+        signal      chn             : inout  t_com_channel
     );
 end package;
 
 
-package body btr_fd_feature is
-    procedure btr_fd_feature_exec(
-        signal      so              : out    feature_signal_outputs_t;
-        signal      rand_ctr        : inout  natural range 0 to RAND_POOL_SIZE;
-        signal      iout            : in     instance_outputs_arr_t;
-        signal      mem_bus         : inout  mem_bus_arr_t;
-        signal      bus_level       : in     std_logic
+package body btr_fd_ftest is
+    procedure btr_fd_ftest_exec(
+        signal      chn             : inout  t_com_channel
     ) is
-        variable ID_1           	:       natural := 1;
-        variable ID_2           	:       natural := 2;
         variable CAN_frame_1        :       SW_CAN_frame_type;
         variable CAN_frame_2        :       SW_CAN_frame_type;
         variable frame_sent         :       boolean := false;
@@ -130,6 +122,10 @@ package body btr_fd_feature is
         variable clock_meas         :       natural := 0;
         variable frames_equal       :       boolean;
         variable ssp_pos            :       std_logic_vector(7 downto 0);
+        
+        variable t_meas_start       :       time;
+        variable t_meas_stop        :       time;
+        variable clk_sys_period     :       time;
     begin
 
         -----------------------------------------------------------------------
@@ -137,22 +133,23 @@ package body btr_fd_feature is
         --    Data bit-rate! Nominal bit-rate remains the default one which was
         --    set by testbench.
         -----------------------------------------------------------------------
-        info("Step 1");
-        CAN_turn_controller(false, ID_1, mem_bus(1));
-        CAN_turn_controller(false, ID_2, mem_bus(2));
+        info_m("Step 1");
+
+        CAN_turn_controller(false, DUT_NODE, chn);
+        CAN_turn_controller(false, TEST_NODE, chn);
 
         -- Read timing so that NBT values are kept!
-        CAN_read_timing_v(bus_timing, ID_1, mem_bus(1));
+        CAN_read_timing_v(bus_timing, DUT_NODE, chn);
 
         -- Generate random Nominal bit rate!
-        rand_int_v(rand_ctr, 63, bus_timing.prop_dbt);
-        rand_int_v(rand_ctr, 31, bus_timing.ph1_dbt);
-        rand_int_v(rand_ctr, 31, bus_timing.ph2_dbt);
+        rand_int_v(63, bus_timing.prop_dbt);
+        rand_int_v(31, bus_timing.ph1_dbt);
+        rand_int_v(31, bus_timing.ph2_dbt);
         
         -- Constrain time quanta to something realistinc for data phase so
         -- that we don't have too long run times!
-        rand_int_v(rand_ctr, 16, bus_timing.tq_dbt);
-        rand_int_v(rand_ctr, 33, bus_timing.sjw_dbt);
+        rand_int_v(16, bus_timing.tq_dbt);
+        rand_int_v(33, bus_timing.sjw_dbt);
 
         -- SJW should be at least one because clocks differ by some value so
         -- there should be chance to compensate
@@ -210,42 +207,43 @@ package body btr_fd_feature is
         clock_per_bit := (1 + bus_timing.prop_dbt + bus_timing.ph1_dbt +
                           bus_timing.ph2_dbt) * bus_timing.tq_dbt;
 
-        CAN_configure_timing(bus_timing, ID_1, mem_bus(1));
-        CAN_configure_timing(bus_timing, ID_2, mem_bus(2));
+        CAN_configure_timing(bus_timing, DUT_NODE, chn);
+        CAN_configure_timing(bus_timing, TEST_NODE, chn);
 
         -- Configure SSP so that it samples in Data-bit rate and in 50 % of
-        -- expected received bit! We need it only for Node 1!
+        -- expected received bit! We need it only for DUT!
         ssp_pos := std_logic_vector(to_unsigned(clock_per_bit/2, 8));
-        CAN_configure_ssp(ssp_meas_n_offset, ssp_pos, ID_1, mem_bus(1));
+        CAN_configure_ssp(ssp_meas_n_offset, ssp_pos, DUT_NODE, chn);
 
         -----------------------------------------------------------------------
         -- @2. Enable both Nodes and send CAN FD frame where bit-rate is shifted
-        --    by Node 1. Wait until data field in Node 1 and measure duration
+        --    by DUT. Wait until data field in DUT and measure duration
         --    till next sample point! Transmitter during Data phase shall no
         --    re-synchronize therefore, bit time will always have nominal length!
         -----------------------------------------------------------------------
-        info("Step 2");
-        CAN_turn_controller(true, ID_1, mem_bus(1));
-        CAN_turn_controller(true, ID_2, mem_bus(2));
+        info_m("Step 2");
 
-        CAN_wait_bus_on(ID_1, mem_bus(1));
-        CAN_wait_bus_on(ID_2, mem_bus(2));
+        CAN_turn_controller(true, DUT_NODE, chn);
+        CAN_turn_controller(true, TEST_NODE, chn);
 
-        info("CAN bus nominal bit-rate:");
-        info("BRP: " & integer'image(bus_timing.tq_nbt));
-        info("PROP: " & integer'image(bus_timing.prop_nbt));
-        info("PH1: " & integer'image(bus_timing.ph1_nbt));
-        info("PH2: " & integer'image(bus_timing.ph2_nbt));
-        info("SJW: " & integer'image(bus_timing.sjw_nbt));
+        CAN_wait_bus_on(DUT_NODE, chn);
+        CAN_wait_bus_on(TEST_NODE, chn);
 
-        info("CAN bus Data bit-rate:");
-        info("BRP: " & integer'image(bus_timing.tq_dbt));
-        info("PROP: " & integer'image(bus_timing.prop_dbt));
-        info("PH1: " & integer'image(bus_timing.ph1_dbt));
-        info("PH2: " & integer'image(bus_timing.ph2_dbt));
-        info("SJW: " & integer'image(bus_timing.sjw_dbt));
+        info_m("CAN bus nominal bit-rate:");
+        info_m("BRP: " & integer'image(bus_timing.tq_nbt));
+        info_m("PROP: " & integer'image(bus_timing.prop_nbt));
+        info_m("PH1: " & integer'image(bus_timing.ph1_nbt));
+        info_m("PH2: " & integer'image(bus_timing.ph2_nbt));
+        info_m("SJW: " & integer'image(bus_timing.sjw_nbt));
 
-        CAN_generate_frame(rand_ctr, CAN_frame_1);
+        info_m("CAN bus Data bit-rate:");
+        info_m("BRP: " & integer'image(bus_timing.tq_dbt));
+        info_m("PROP: " & integer'image(bus_timing.prop_dbt));
+        info_m("PH1: " & integer'image(bus_timing.ph1_dbt));
+        info_m("PH2: " & integer'image(bus_timing.ph2_dbt));
+        info_m("SJW: " & integer'image(bus_timing.sjw_dbt));
+
+        CAN_generate_frame(CAN_frame_1);
         CAN_frame_1.brs := BR_SHIFT;
         CAN_frame_1.frame_format := FD_CAN;
 
@@ -267,33 +265,33 @@ package body btr_fd_feature is
         CAN_frame_1.data(2) := x"CC";
         CAN_frame_1.data(3) := x"DD";
     
-        CAN_send_frame(CAN_frame_1, 1, ID_1, mem_bus(1), frame_sent);
-        CAN_wait_pc_state(pc_deb_data, ID_1, mem_bus(1));
+        CAN_send_frame(CAN_frame_1, 1, DUT_NODE, chn, frame_sent);
+        CAN_wait_pc_state(pc_deb_data, DUT_NODE, chn);
 
-        CAN_wait_sample_point(iout(1).stat_bus, false);
+        CAN_wait_sample_point(DUT_NODE, chn, false);
+        t_meas_start := now;
+        CAN_wait_sample_point(DUT_NODE, chn, false);
+        t_meas_stop := now;
+
+        clk_agent_get_period(chn, clk_sys_period);
+
+        clock_meas := ((t_meas_stop - t_meas_start) / clk_sys_period);
         
-        wait for 11 ns;
-
-        -- Measure duration till next Sample point!
-        while (iout(1).stat_bus(STAT_RX_TRIGGER) = '0') loop
-            clock_meas := clock_meas + 1;
-            wait until rising_edge(mem_bus(1).clk_sys);
-        end loop;
-
-        check(clock_per_bit = clock_meas,
+        check_m(clock_per_bit = clock_meas,
             " Expected clock per bit: " & integer'image(clock_per_bit) &
             " Measured clock per bit: " & integer'image(clock_meas));        
 
         -----------------------------------------------------------------------
         -- @3. Wait until frame is sent and check it is correctly received by
-        --    Node 2.
+        --    Test node.
         -----------------------------------------------------------------------
-        info("Step 3");
-        CAN_wait_bus_idle(ID_2, mem_bus(2));
-        CAN_read_frame(CAN_frame_2, ID_2, mem_bus(2));
+        info_m("Step 3");
+
+        CAN_wait_bus_idle(TEST_NODE, chn);
+        CAN_read_frame(CAN_frame_2, TEST_NODE, chn);
 
         CAN_compare_frames(CAN_frame_1, CAN_frame_2, false, frames_equal);
-        check(frames_equal, "TX/RX frame equal!");
+        check_m(frames_equal, "TX/RX frame equal!");
 
   end procedure;
 

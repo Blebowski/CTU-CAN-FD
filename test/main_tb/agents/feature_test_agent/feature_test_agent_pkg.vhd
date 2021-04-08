@@ -3957,8 +3957,8 @@ package body feature_test_agent_pkg is
                 error_m("Unsupported SSP type.");
             end case;
 
-        low := SSP_OFFSET_H mod 16;
-        high := SSP_OFFSET_L mod 16;
+        low := SSP_OFFSET_L mod 16;
+        high := SSP_OFFSET_H mod 16;
         data(high downto low) := ssp_offset_val;
 
         CAN_write(data, SSP_CFG_ADR, node, channel);

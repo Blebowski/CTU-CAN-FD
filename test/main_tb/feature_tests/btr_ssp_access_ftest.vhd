@@ -78,8 +78,8 @@
 --
 -- @Test sequence:
 --  @1. Read values in BTR, BTR_FD and SSP_CFG registers. Try to write them,
---      read them back and check that value has not changed! Node 1 is enabled!
---  @2. Disable Node 1 and try to write BTR, BTR_FD and SSP_CFG registers. Read
+--      read them back and check that value has not changed! DUT is enabled!
+--  @2. Disable DUT and try to write BTR, BTR_FD and SSP_CFG registers. Read
 --      them back and check that value was written!
 --
 -- @TestInfoEnd
@@ -89,105 +89,102 @@
 --------------------------------------------------------------------------------
 
 Library ctu_can_fd_tb;
-context ctu_can_fd_tb.ctu_can_synth_context;
-context ctu_can_fd_tb.ctu_can_test_context;
+context ctu_can_fd_tb.ieee_context;
+context ctu_can_fd_tb.rtl_context;
+context ctu_can_fd_tb.tb_common_context;
 
-use ctu_can_fd_tb.pkg_feature_exec_dispath.all;
+use ctu_can_fd_tb.feature_test_agent_pkg.all;
 
-package btr_ssp_access_feature is
-    procedure btr_ssp_access_feature_exec(
-        signal      so              : out    feature_signal_outputs_t;
-        signal      rand_ctr        : inout  natural range 0 to RAND_POOL_SIZE;
-        signal      iout            : in     instance_outputs_arr_t;
-        signal      mem_bus         : inout  mem_bus_arr_t;
-        signal      bus_level       : in     std_logic
+package btr_ssp_access_ftest is
+    procedure btr_ssp_access_ftest_exec(
+        signal      chn             : inout  t_com_channel
     );
 end package;
 
 
-package body btr_ssp_access_feature is
-    procedure btr_ssp_access_feature_exec(
-        signal      so              : out    feature_signal_outputs_t;
-        signal      rand_ctr        : inout  natural range 0 to RAND_POOL_SIZE;
-        signal      iout            : in     instance_outputs_arr_t;
-        signal      mem_bus         : inout  mem_bus_arr_t;
-        signal      bus_level       : in     std_logic
+package body btr_ssp_access_ftest is
+    procedure btr_ssp_access_ftest_exec(
+        signal      chn             : inout  t_com_channel
     ) is
-        constant ID_1               :        natural := 1;
-        constant ID_2               :        natural := 2;
-
         variable btr                :        std_logic_vector(31 downto 0) :=
                                                 (OTHERS => '0');
         variable btr_fd             :        std_logic_vector(31 downto 0) :=
                                                 (OTHERS => '0');
-        variable ssp_cfg            :        std_logic_vector(31 downto 0) :=
+        variable ssp_cfg            :        std_logic_vector(15 downto 0) :=
                                                 (OTHERS => '0');
         variable btr_2              :        std_logic_vector(31 downto 0) :=
                                                 (OTHERS => '0');
         variable btr_fd_2           :        std_logic_vector(31 downto 0) :=
                                                 (OTHERS => '0');
-        variable ssp_cfg_2          :        std_logic_vector(31 downto 0) :=
+        variable ssp_cfg_2          :        std_logic_vector(15 downto 0) :=
                                                 (OTHERS => '0');
         variable rand_value         :        std_logic_vector(31 downto 0) :=
+                                                (OTHERS => '0');
+        variable rand_value_16      :        std_logic_vector(15 downto 0) :=
                                                 (OTHERS => '0');
     begin
 
         ----------------------------------------------------------------------
         -- @1. Read values in BTR, BTR_FD and SSP_CFG registers. Try to write 
-        --    them, read them back and check that value has not changed!
-        --    Node 1 is enabled!
+        --     them, read them back and check that value has not changed!
+        --     DUT is enabled!
         ----------------------------------------------------------------------
-        info("Step 1");
+        info_m("Step 1");
 
-        CAN_read(btr, BTR_ADR, ID_1, mem_bus(1), BIT_32);
-        CAN_read(btr_fd, BTR_FD_ADR, ID_1, mem_bus(1), BIT_32);
-        CAN_read(ssp_cfg, SSP_CFG_ADR, ID_1, mem_bus(1), BIT_16);
+        CAN_read(btr, BTR_ADR, DUT_NODE, chn);
+        CAN_read(btr_fd, BTR_FD_ADR, DUT_NODE, chn);
+        CAN_read(ssp_cfg, SSP_CFG_ADR, DUT_NODE, chn);
 
-        rand_logic_vect_v(rand_ctr, rand_value, 0.5);
-        CAN_write(rand_value, BTR_ADR, ID_1, mem_bus(1), BIT_32);
-        rand_logic_vect_v(rand_ctr, rand_value, 0.5);
-        CAN_write(rand_value, BTR_FD_ADR, ID_1, mem_bus(1), BIT_32);
-        rand_logic_vect_v(rand_ctr, rand_value, 0.5);
-        CAN_write(rand_value, SSP_CFG_ADR, ID_1, mem_bus(1), BIT_16);
+        rand_logic_vect_v(rand_value, 0.5);
+        rand_logic_vect_v(rand_value_16, 0.5);
+
+        CAN_write(rand_value, BTR_ADR, DUT_NODE, chn);
+        rand_logic_vect_v(rand_value, 0.5);
+        CAN_write(rand_value, BTR_FD_ADR, DUT_NODE, chn);
+        rand_logic_vect_v(rand_value, 0.5);
+        CAN_write(rand_value_16, SSP_CFG_ADR, DUT_NODE, chn);
         
-        CAN_read(btr_2, BTR_ADR, ID_1, mem_bus(1), BIT_32);
-        CAN_read(btr_fd_2, BTR_FD_ADR, ID_1, mem_bus(1), BIT_32);
-        CAN_read(ssp_cfg_2, SSP_CFG_ADR, ID_1, mem_bus(1), BIT_16);
+        CAN_read(btr_2, BTR_ADR, DUT_NODE, chn);
+        CAN_read(btr_fd_2, BTR_FD_ADR, DUT_NODE, chn);
+        CAN_read(ssp_cfg_2, SSP_CFG_ADR, DUT_NODE, chn);
 
-        check(btr = btr_2, "BTR register not written!");
-        check(btr_fd = btr_fd_2, "BTR FD register not written!");
-        check(ssp_cfg = ssp_cfg_2, "SSP_CFG register not written!");
+        check_m(btr = btr_2, "BTR register not written!");
+        check_m(btr_fd = btr_fd_2, "BTR FD register not written!");
+        check_m(ssp_cfg = ssp_cfg_2, "SSP_CFG register not written!");
 
         ----------------------------------------------------------------------
-        -- @2. Disable Node 1 and try to write BTR, BTR_FD and SSP_CFG
-        --    registers. Read them back and check that value was written!
+        -- @2. Disable DUT and try to write BTR, BTR_FD and SSP_CFG
+        --     registers. Read them back and check that value was written!
         ----------------------------------------------------------------------
-        info("Step 2");
-        
-        CAN_turn_controller(false, ID_1, mem_bus(1));
-        CAN_turn_controller(false, ID_2, mem_bus(2));
-        
-        rand_logic_vect_v(rand_ctr, rand_value, 0.5);
-        CAN_write(rand_value, BTR_ADR, ID_1, mem_bus(1), BIT_32);
-        CAN_read(btr, BTR_ADR, ID_1, mem_bus(1), BIT_32);
-        check(btr = rand_value, "BTR register written!");
+        info_m("Step 2");
 
-        rand_logic_vect_v(rand_ctr, rand_value, 0.5);
+        CAN_turn_controller(false, DUT_NODE, chn);
+        CAN_turn_controller(false, TEST_NODE, chn);
+        
+        rand_logic_vect_v(rand_value, 0.5);
+        rand_logic_vect_v(rand_value_16, 0.5);
+
+        CAN_write(rand_value, BTR_ADR, DUT_NODE, chn);
+        
+        CAN_read(btr, BTR_ADR, DUT_NODE, chn);
+        check_m(btr = rand_value, "BTR register written!");
+
+        rand_logic_vect_v(rand_value, 0.5);
         rand_value(18) := '0';
         rand_value(12) := '0';
         rand_value(6) := '0'; -- These bits are not implemented!
-        CAN_write(rand_value, BTR_FD_ADR, ID_1, mem_bus(1), BIT_32);
-        CAN_read(btr, BTR_FD_ADR, ID_1, mem_bus(1), BIT_32);
-        check(btr = rand_value, "BTR FD register written!");
+        CAN_write(rand_value, BTR_FD_ADR, DUT_NODE, chn);
+        
+        CAN_read(btr, BTR_FD_ADR, DUT_NODE, chn);
+        check_m(btr = rand_value, "BTR FD register written!");
 
-        rand_logic_vect_v(rand_ctr, rand_value, 0.5);
-        rand_value(15 downto 0) := (OTHERS => '0');
-        rand_value(31 downto 26) := (OTHERS => '0');
-        CAN_write(rand_value, SSP_CFG_ADR, ID_1, mem_bus(1), BIT_16);
-        CAN_read(btr, SSP_CFG_ADR, ID_1, mem_bus(1), BIT_16);
-        btr(15 downto 0) := (OTHERS => '0');  -- @16 LSBs are other register!
-        btr(31 downto 26) := (OTHERS => '0'); -- These are not implemented!
-        check(btr = rand_value, "SSP CFG register written!");
+        rand_logic_vect_v(rand_value, 0.5);
+        rand_value_16(15 downto 10) := (OTHERS => '0');
+        CAN_write(rand_value_16, SSP_CFG_ADR, DUT_NODE, chn);
+        
+        CAN_read(ssp_cfg, SSP_CFG_ADR, DUT_NODE, chn);
+       
+        check_m(ssp_cfg = rand_value_16, "SSP CFG register written!");
 
   end procedure;
   
