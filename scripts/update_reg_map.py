@@ -278,7 +278,7 @@ if __name__ == '__main__':
 									   licensePath=MIT_LICENSE_PATH,
 									   memMap="CAN_Registers",
 									   wordWidthBit=32,
-									   outPath="../test/lib/can_fd_tb_register_map.vhd",
+									   outPath="../test/main_tb/pkg/can_fd_tb_register_map.vhd",
 									   packName="can_fd_tb_register_map")
 		print("\nDone\n")
 		
