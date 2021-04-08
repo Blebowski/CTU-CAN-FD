@@ -60,12 +60,8 @@ feature:
         int_do:
         int_fcs:
         invalid_configs:
-        ssp_cfg:
-        trv_delay:
-        tx_arb_time_tran:
         # message_filter:
         #     iterations: 1
-        tx_arb_consistency:
         tx_priority:
             iterations: 1
         

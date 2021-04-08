@@ -155,6 +155,7 @@ use ctu_can_fd_tb.rx_status_mof_ftest.all;
 
 use ctu_can_fd_tb.settings_tbfbo_ftest.all;
 use ctu_can_fd_tb.single_bus_node_ftest.all;
+use ctu_can_fd_tb.ssp_cfg_ftest.all;
 use ctu_can_fd_tb.status_eft_ftest.all;
 use ctu_can_fd_tb.status_ewl_ftest.all;
 use ctu_can_fd_tb.status_idle_ftest.all;
@@ -164,6 +165,9 @@ use ctu_can_fd_tb.status_txnf_ftest.all;
 use ctu_can_fd_tb.status_txs_ftest.all;
 use ctu_can_fd_tb.stuff_in_data_ftest.all;
 
+use ctu_can_fd_tb.trv_delay_ftest.all;
+use ctu_can_fd_tb.tx_arb_consistency_ftest.all;
+use ctu_can_fd_tb.tx_arb_time_tran_ftest.all;
 use ctu_can_fd_tb.tx_cmd_set_abort_ftest.all;
 use ctu_can_fd_tb.tx_cmd_set_empty_ftest.all;
 use ctu_can_fd_tb.tx_cmd_set_ready_ftest.all;
@@ -315,6 +319,10 @@ package body feature_test_list_pkg is
             
         elsif (test_name = "settings_tbfbo") then
             settings_tbfbo_ftest_exec(channel);
+        elsif (test_name = "single_bus_node") then
+            single_bus_node_ftest_exec(channel);
+        elsif (test_name = "ssp_cfg") then
+            ssp_cfg_ftest_exec(channel);
         elsif (test_name = "status_eft") then
             status_eft_ftest_exec(channel);
         elsif (test_name = "status_ewl") then
@@ -329,11 +337,15 @@ package body feature_test_list_pkg is
             status_txnf_ftest_exec(channel);
         elsif (test_name = "status_txs") then
             status_txs_ftest_exec(channel);
-        elsif (test_name = "single_bus_node") then
-            single_bus_node_ftest_exec(channel);
         elsif (test_name = "stuff_in_data") then
             stuff_in_data_ftest_exec(channel);
 
+        elsif (test_name = "trv_delay") then
+            trv_delay_ftest_exec(channel);
+        elsif (test_name = "tx_arb_consistency") then
+            tx_arb_consistency_ftest_exec(channel);
+        elsif (test_name = "tx_arb_time_tran") then
+            tx_arb_time_tran_ftest_exec(channel);
         elsif (test_name = "tx_cmd_set_abort") then
             tx_cmd_set_abort_ftest_exec(channel);
         elsif (test_name = "tx_cmd_set_empty") then

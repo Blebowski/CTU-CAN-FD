@@ -112,6 +112,8 @@ architecture tb of timestamp_agent is
     signal timestamp_preset     : std_logic;
     
     signal prescaler_ctr        : natural := 0;
+    signal last_clk_event       : time;
+    
 begin
 
     ---------------------------------------------------------------------------
@@ -172,11 +174,11 @@ begin
             wait until running = true;
         end if;
 
-        -- TODO: Check last_event will catch previous event not the one that we just waited on!
-        if (timestamp_preset'last_event < clk_sys'last_event) then
+        if (timestamp_preset'last_event < (now - last_clk_event)) then
             timestamp_i <= unsigned(timestamp_preset_val);
         end if;
     
+        last_clk_event <= now;
         wait until rising_edge(clk_sys);
 
         if (prescaler > 1) then

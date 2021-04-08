@@ -343,6 +343,8 @@ feature:
 
         settings_tbfbo:
         single_bus_node:
+        ssp_cfg:
+            iterations: 5
         status_eft:
             iterations: 5
         status_ewl:
@@ -353,6 +355,9 @@ feature:
         status_txs:
         stuff_in_data:
 
+        trv_delay:
+        tx_arb_consistency:
+        tx_arb_time_tran:
         tx_cmd_set_abort:
             iterations: 5
         tx_cmd_set_empty:
