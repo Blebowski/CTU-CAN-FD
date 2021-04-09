@@ -318,6 +318,8 @@ feature:
         glitch_filtering:
 
         invalid_frames:
+        int_al:
+        int_be:
         int_do:
         int_ewl:
         int_fcs:
