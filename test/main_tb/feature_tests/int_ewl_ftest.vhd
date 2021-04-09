@@ -91,7 +91,7 @@
 --
 -- @Test sequence:
 --  @1. Unmask and enable EWL Interrupt, disable and mask all other interrupts on
---      Node 1. Turn on Test mode (to manipulate error counters via CTR_PRES).
+--      DUT. Turn on Test mode (to manipulate error counters via CTR_PRES).
 --      Leave default value of EWL (96).
 --  @2. Set TX Error counter to 96. Check that EWL Interrupt was set. Check that
 --      EWL Interrupt is set and INT pin is high.
@@ -120,33 +120,25 @@
 --------------------------------------------------------------------------------
 
 Library ctu_can_fd_tb;
-context ctu_can_fd_tb.ctu_can_synth_context;
-context ctu_can_fd_tb.ctu_can_test_context;
+context ctu_can_fd_tb.ieee_context;
+context ctu_can_fd_tb.rtl_context;
+context ctu_can_fd_tb.tb_common_context;
 
-use ctu_can_fd_tb.pkg_feature_exec_dispath.all;
+use ctu_can_fd_tb.feature_test_agent_pkg.all;
+use ctu_can_fd_tb.interrupt_agent_pkg.all;
 
-package int_ewl_feature is
-    procedure int_ewl_feature_exec(
-        signal      so              : out    feature_signal_outputs_t;
-        signal      rand_ctr        : inout  natural range 0 to RAND_POOL_SIZE;
-        signal      iout            : in     instance_outputs_arr_t;
-        signal      mem_bus         : inout  mem_bus_arr_t;
-        signal      bus_level       : in     std_logic
+package int_ewl_ftest is
+    procedure int_ewl_ftest_exec(
+        signal      chn             : inout  t_com_channel
     );
 end package;
 
-package body int_ewl_feature is
-    procedure int_ewl_feature_exec(
-        signal      so              : out    feature_signal_outputs_t;
-        signal      rand_ctr        : inout  natural range 0 to RAND_POOL_SIZE;
-        signal      iout            : in     instance_outputs_arr_t;
-        signal      mem_bus         : inout  mem_bus_arr_t;
-        signal      bus_level       : in     std_logic
+package body int_ewl_ftest is
+    procedure int_ewl_ftest_exec(
+        signal      chn             : inout  t_com_channel
     ) is
         variable CAN_frame          :     SW_CAN_frame_type;
         variable frame_sent         :     boolean := false;
-        variable ID_1           	:     natural := 1;
-        variable ID_2           	:     natural := 2;
 
         variable int_mask           :     SW_interrupts := SW_interrupts_rst_val;
         variable int_ena            :     SW_interrupts := SW_interrupts_rst_val;
@@ -158,166 +150,195 @@ package body int_ewl_feature is
 
         -----------------------------------------------------------------------
         -- @1. Unmask and enable EWL Interrupt, disable and mask all other 
-        --    interrupts on Node 1. Turn on Test mode (to manipulate error
-        --    counters via CTR_PRES). Leave default value of EWL (96).
+        --     interrupts on DUT. Turn on Test mode (to manipulate error
+        --     counters via CTR_PRES). Leave default value of EWL (96).
         -----------------------------------------------------------------------
-        info("Step 1: Setting EWL Interrupt");
+        info_m("Step 1: Setting EWL Interrupt");
+
         int_mask.error_warning_int := false;
+        write_int_mask(int_mask, DUT_NODE, chn);
+
         int_ena.error_warning_int := true;
-        write_int_mask(int_mask, ID_1, mem_bus(1));
-        write_int_enable(int_ena, ID_1, mem_bus(1));
+        write_int_enable(int_ena, DUT_NODE, chn);
+
         mode.test := true;
-        set_core_mode(mode, ID_1, mem_bus(1));
+        set_core_mode(mode, DUT_NODE, chn);
 
         -----------------------------------------------------------------------
         -- @2. Set TX Error counter to 96. Check that EWL Interrupt was set. 
-        -- Check that EWL Interrupt is set and INT pin is high.
+        --     Check that EWL Interrupt is set and INT pin is high.
         -----------------------------------------------------------------------
-        info("Step 2: Check EWL from TX Error counter");
-        read_error_counters(err_ctrs, ID_1, mem_bus(1));
+        info_m("Step 2: Check EWL from TX Error counter");
+
+        read_error_counters(err_ctrs, DUT_NODE, chn);
         err_ctrs.tx_counter := 96;
-        set_error_counters(err_ctrs, ID_1, mem_bus(1));
-        read_int_status(int_stat, ID_1, mem_bus(1));
-        check(int_stat.error_warning_int, "EWL Interrupt set when RX Error counter >= EWL!");
-        check(iout(1).irq = '1', "INT pin should be high!");
+        set_error_counters(err_ctrs, DUT_NODE, chn);
+
+        read_int_status(int_stat, DUT_NODE, chn);
+        check_m(int_stat.error_warning_int,
+                "EWL Interrupt set when RX Error counter >= EWL!");
+        interrupt_agent_check_asserted(chn);
 
         -----------------------------------------------------------------------
         -- @3. Disable EWL Interrupt and check INT pin goes low. Enable EWL 
-        --    Interrupt and check INT pin goes high. 
+        --     Interrupt and check INT pin goes high. 
         -----------------------------------------------------------------------
-        info("Step 3: Check EWL from TX counter toggles INT pin.");
+        info_m("Step 3: Check EWL from TX counter toggles INT pin.");
+
         int_ena.error_warning_int := false;
-        write_int_enable(int_ena, ID_1, mem_bus(1));
+        write_int_enable(int_ena, DUT_NODE, chn);
         wait for 10 ns;
-        check(iout(1).irq = '0', "INT pin should be low!");
+        interrupt_agent_check_not_asserted(chn);
+
         int_ena.error_warning_int := true;
-        write_int_enable(int_ena, ID_1, mem_bus(1));
+        write_int_enable(int_ena, DUT_NODE, chn);
         wait for 10 ns;
-        check(iout(1).irq = '1', "INT pin should be high!");
+        interrupt_agent_check_asserted(chn);
 
         -----------------------------------------------------------------------
         -- @4. Clear EWL Interrupt and check it not set. Set TX Error
-        --    counter to 95. Check EWL is set. Clear EWL Interrupt. Check EWL
-        --    interrupt is cleared.
+        --     counter to 95. Check EWL is set. Clear EWL Interrupt. Check EWL
+        --     interrupt is cleared.
         -----------------------------------------------------------------------
-        info("Step 4: Check EWL is set again.");
+        info_m("Step 4: Check EWL is set again.");
+
         int_stat.error_warning_int := true;
-        clear_int_status(int_stat, ID_1, mem_bus(1));
-        read_int_status(int_stat, ID_1, mem_bus(1));
-        check_false(int_stat.error_warning_int,
+        clear_int_status(int_stat, DUT_NODE, chn);
+
+        read_int_status(int_stat, DUT_NODE, chn);
+        check_false_m(int_stat.error_warning_int,
             "EWL Interrupt set again when RX Error counter >= EWL!");
+
         err_ctrs.tx_counter := 95;
-        set_error_counters(err_ctrs, ID_1, mem_bus(1));
-        read_int_status(int_stat, ID_1, mem_bus(1));
-        check(int_stat.error_warning_int,
+        set_error_counters(err_ctrs, DUT_NODE, chn);
+
+        read_int_status(int_stat, DUT_NODE, chn);
+        check_m(int_stat.error_warning_int,
             "EWL Interrupt set when TX Error counter < EWL!");
-        check(iout(1).irq = '1', "INT pin should be high!");
+        interrupt_agent_check_asserted(chn);
         
         int_stat.error_warning_int := true;
-        clear_int_status(int_stat, ID_1, mem_bus(1));
-        read_int_status(int_stat, ID_1, mem_bus(1));
-        check_false(int_stat.error_warning_int,
+        clear_int_status(int_stat, DUT_NODE, chn);
+
+        read_int_status(int_stat, DUT_NODE, chn);
+        check_false_m(int_stat.error_warning_int,
             "EWL Interrupt cleared!");
 
         -----------------------------------------------------------------------
         -- @5. Set RX Error counter to 96. Check that EWL Interrupt was set. 
-        -- Check that INT pin goes high. 
+        --     Check that INT pin goes high. 
         -----------------------------------------------------------------------
-        info("Step 5: Check EWL from RX Error counter");
+        info_m("Step 5: Check EWL from RX Error counter");
+
         err_ctrs.rx_counter := 96;
-        set_error_counters(err_ctrs, ID_1, mem_bus(1));
-        read_int_status(int_stat, ID_1, mem_bus(1));
-        check(int_stat.error_warning_int, "EWL Interrupt set when TX Error counter >= EWL!");
-        check(iout(1).irq = '1', "INT pin should be high!");
+        set_error_counters(err_ctrs, DUT_NODE, chn);
+
+        read_int_status(int_stat, DUT_NODE, chn);
+        check_m(int_stat.error_warning_int, "EWL Interrupt set when TX Error counter >= EWL!");
+        interrupt_agent_check_asserted(chn);
 
         -----------------------------------------------------------------------
         -- @6. Disable EWL Interrupt and check INT pin goes low. Enable EWL 
-        --    Interrupt and check INT pin goes high again. 
+        --     Interrupt and check INT pin goes high again. 
         -----------------------------------------------------------------------
-        info("Step 6: Check EWL from RX counter toggles INT pin.");
+        info_m("Step 6: Check EWL from RX counter toggles INT pin.");
+
         int_ena.error_warning_int := false;
-        write_int_enable(int_ena, ID_1, mem_bus(1));
+        write_int_enable(int_ena, DUT_NODE, chn);
         wait for 10 ns;
-        check(iout(1).irq = '0', "INT pin should be low!");
+        interrupt_agent_check_not_asserted(chn);
+
         int_ena.error_warning_int := true;
-        write_int_enable(int_ena, ID_1, mem_bus(1));
+        write_int_enable(int_ena, DUT_NODE, chn);
         wait for 10 ns;
-        check(iout(1).irq = '1', "INT pin should be high!");
+        interrupt_agent_check_asserted(chn);
 
         -----------------------------------------------------------------------
         -- @7. Clear EWL Interrupt. Check that EWL Interrupt is not set. Set RX
-        --    Error counter to 95. Check EWL is set. Check INT pin goes high
-        --    and Interrupt is set. Clear the interrupt and check.
+        --     Error counter to 95. Check EWL is set. Check INT pin goes high
+        --     and Interrupt is set. Clear the interrupt and check.
         -----------------------------------------------------------------------
-        info("Step 7: Check EWL from RX counter is set again.");
+        info_m("Step 7: Check EWL from RX counter is set again.");
+
         int_stat.error_warning_int := true;
-        clear_int_status(int_stat, ID_1, mem_bus(1));
-        read_int_status(int_stat, ID_1, mem_bus(1));
-        check_false(int_stat.error_warning_int,
+        clear_int_status(int_stat, DUT_NODE, chn);
+
+        read_int_status(int_stat, DUT_NODE, chn);
+        check_false_m(int_stat.error_warning_int,
             "EWL Interrupt not set again when TX Error counter >= EWL!");
         
         err_ctrs.rx_counter := 95;
-        set_error_counters(err_ctrs, ID_1, mem_bus(1));
-        read_int_status(int_stat, ID_1, mem_bus(1));
-        check(int_stat.error_warning_int,
+        set_error_counters(err_ctrs, DUT_NODE, chn);
+
+        read_int_status(int_stat, DUT_NODE, chn);
+        check_m(int_stat.error_warning_int,
             "EWL Interrupt set when RX Error counter < EWL!");
-        check(iout(1).irq = '1', "INT pin should be low!");
+        interrupt_agent_check_asserted(chn);
 
         int_stat.error_warning_int := true;
-        clear_int_status(int_stat, ID_1, mem_bus(1));
-        read_int_status(int_stat, ID_1, mem_bus(1));
-        check_false(int_stat.error_warning_int,
-            "EWL Interrupt cleared!");
+        clear_int_status(int_stat, DUT_NODE, chn);
+        
+        read_int_status(int_stat, DUT_NODE, chn);
+        check_false_m(int_stat.error_warning_int, "EWL Interrupt cleared!");
 
         -----------------------------------------------------------------------
         -- @8. Mask EWL Interrupt. Set TX Error counter to 96. Check that EWL 
-        --    interrupt was not set.
+        --     interrupt was not set.
         -----------------------------------------------------------------------
-        info("Step 8: Check EWL is not set when masked!");
+        info_m("Step 8: Check EWL is not set when masked!");
+
         int_mask.error_warning_int := true;
-        write_int_mask(int_mask, ID_1, mem_bus(1));
+        write_int_mask(int_mask, DUT_NODE, chn);
+
         err_ctrs.tx_counter := 96;
-        set_error_counters(err_ctrs, ID_1, mem_bus(1));
-        read_int_status(int_stat, ID_1, mem_bus(1));
-        check_false(int_stat.error_warning_int, "EWL Interrupt not set when masked!");
-        check(iout(1).irq = '0', "INT pin should be low!");
+        set_error_counters(err_ctrs, DUT_NODE, chn);
+
+        read_int_status(int_stat, DUT_NODE, chn);
+        check_false_m(int_stat.error_warning_int, "EWL Interrupt not set when masked!");
+        interrupt_agent_check_not_asserted(chn);
 
         -----------------------------------------------------------------------
         -- @9. Disable EWL Interrupt and check it was disabled. Enable EWL 
-        -- Interrupt and check it was enabled.
+        --     Interrupt and check it was enabled.
         -----------------------------------------------------------------------
-        info("Step 9: Check EWL Interrupt enable works OK!");
+        info_m("Step 9: Check EWL Interrupt enable works OK!");
+
         int_ena.error_warning_int := false;
-        write_int_enable(int_ena, ID_1, mem_bus(1));
-        int_ena.error_warning_int := true;
-        read_int_enable(int_ena, ID_1, mem_bus(1));
-        check_false(int_ena.error_warning_int, "EWL Interrupt enabled!");
+        write_int_enable(int_ena, DUT_NODE, chn);
 
         int_ena.error_warning_int := true;
-        write_int_enable(int_ena, ID_1, mem_bus(1));
+        read_int_enable(int_ena, DUT_NODE, chn);
+
+        check_false_m(int_ena.error_warning_int, "EWL Interrupt enabled!");
+
+        int_ena.error_warning_int := true;
+        write_int_enable(int_ena, DUT_NODE, chn);
         int_ena.error_warning_int := false;
-        read_int_enable(int_ena, ID_1, mem_bus(1));
-        check(int_ena.error_warning_int, "EWL Interrupt disabled!");
+
+        read_int_enable(int_ena, DUT_NODE, chn);
+        check_m(int_ena.error_warning_int, "EWL Interrupt disabled!");
 
         -----------------------------------------------------------------------
         -- @10. Mask EWL Interrupt and check it was masked. Un-mask EWL 
-        -- Interrupt and check it was un-masked.
+        --      Interrupt and check it was un-masked.
         -----------------------------------------------------------------------
-        info("Step 10: Check EWL Interrupt mask works OK!");
+        info_m("Step 10: Check EWL Interrupt mask works OK!");
+
         int_mask.error_warning_int := true;
-        write_int_mask(int_mask, ID_1, mem_bus(1));
+        write_int_mask(int_mask, DUT_NODE, chn);
         int_mask.error_warning_int := false;
-        read_int_mask(int_mask, ID_1, mem_bus(1));
-        check(int_mask.error_warning_int, "EWL Interrupt masked!");
+
+        read_int_mask(int_mask, DUT_NODE, chn);
+        check_m(int_mask.error_warning_int, "EWL Interrupt masked!");
 
         int_mask.error_warning_int := false;
-        write_int_mask(int_mask, ID_1, mem_bus(1));
+        write_int_mask(int_mask, DUT_NODE, chn);
         int_mask.error_warning_int := true;
-        read_int_mask(int_mask, ID_1, mem_bus(1));
-        check_false(int_mask.error_warning_int, "EWL Interrupt masked!");
 
-        info("Finished EWL interrupt test");
-        wait for 1000 ns;
+        read_int_mask(int_mask, DUT_NODE, chn);
+        check_false_m(int_mask.error_warning_int, "EWL Interrupt masked!");
+
+        info_m("Finished EWL interrupt test");
 
     end procedure;
 end package body;

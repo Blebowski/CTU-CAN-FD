@@ -87,26 +87,26 @@
 
 -- @Test sequence:
 --  @1. Unmask and enable RX Interrupt, disable and mask all other interrupts on
---      Node 1.
---  @2. Set Retransmitt limit to 0 on Node 2 (One shot-mode). Enable Retransmitt
---      limitations on Node 2. Send frame by Node 2.
---  @3. Monitor Node 1 frame, check that in the beginning of EOF, Interrupt is
+--      DUT.
+--  @2. Set Retransmitt limit to 0 on Test node (One shot-mode). Enable Retransmitt
+--      limitations on Test node. Send frame by Test node.
+--  @3. Monitor DUT frame, check that in the beginning of EOF, Interrupt is
 --      Not set, after EOF it is set.
 --  @4. Check that INT pin is high. Disable RX Interrupt and check that INT pin
 --      goes low. Enable Interrupt and check it goes high again.
 --  @5. Clear RX Interrupt, check it is cleared and INT pin goes low.
---  @6. Send Frame by Node 2. Force bus level during ACK to recessive, check that
+--  @6. Send Frame by Test node. Force bus level during ACK to recessive, check that
 --      error frame is transmitted by both nodes. Wait till bus is idle, check
 --      that no RX Interrupt was set, INT pin is low.
---  @7. Mask RX Interrupt. Send frame by Node 2. Check that after frame RX
+--  @7. Mask RX Interrupt. Send frame by Test node. Check that after frame RX
 --      Interrupt was not set. Check that INT pin is low.
---  @8. Unmask RX Interrupt. Send frame by Node 2. Check that after frame RX
+--  @8. Unmask RX Interrupt. Send frame by Test node. Check that after frame RX
 --      Interrupt was set. Check INT pin is high.
 --  @9. Disable RX Interrupt, check that RX interrupt was disabled.
 -- @10. Enable RX Interrupt, check that RX interrupt was enabled.
 -- @11. Mask RX Interrupt, check RX Interrupt is Masked.
 -- @12. Un-Mask RX Interrupt, check RX Interrupt is Un-masked.
--- @13. Send frame by Node 1. Check that after frame RX Interrupt is not set and
+-- @13. Send frame by DUT. Check that after frame RX Interrupt is not set and
 --      Interrupt pin remains low.
 --
 -- @TestInfoEnd
@@ -116,35 +116,27 @@
 --------------------------------------------------------------------------------
 
 Library ctu_can_fd_tb;
-context ctu_can_fd_tb.ctu_can_synth_context;
-context ctu_can_fd_tb.ctu_can_test_context;
+context ctu_can_fd_tb.ieee_context;
+context ctu_can_fd_tb.rtl_context;
+context ctu_can_fd_tb.tb_common_context;
 
-use ctu_can_fd_tb.pkg_feature_exec_dispath.all;
+use ctu_can_fd_tb.feature_test_agent_pkg.all;
+use ctu_can_fd_tb.interrupt_agent_pkg.all;
 
-package int_rx_feature is
-    procedure int_rx_feature_exec(
-        signal      so              : out    feature_signal_outputs_t;
-        signal      rand_ctr        : inout  natural range 0 to RAND_POOL_SIZE;
-        signal      iout            : in     instance_outputs_arr_t;
-        signal      mem_bus         : inout  mem_bus_arr_t;
-        signal      bus_level       : in     std_logic
+package int_rx_ftest is
+    procedure int_rx_ftest_exec(
+        signal      chn             : inout  t_com_channel
     );
 end package;
 
-package body int_rx_feature is
-    procedure int_rx_feature_exec(
-        signal      so              : out    feature_signal_outputs_t;
-        signal      rand_ctr        : inout  natural range 0 to RAND_POOL_SIZE;
-        signal      iout            : in     instance_outputs_arr_t;
-        signal      mem_bus         : inout  mem_bus_arr_t;
-        signal      bus_level       : in     std_logic
+package body int_rx_ftest is
+    procedure int_rx_ftest_exec(
+        signal      chn             : inout  t_com_channel
     ) is
         variable CAN_frame          :     SW_CAN_frame_type;
         variable CAN_frame_rx       :     SW_CAN_frame_type;
         variable frame_sent         :     boolean := false;
         variable frames_equal       :     boolean := false;
-        variable ID_1           	:     natural := 1;
-        variable ID_2           	:     natural := 2;
 
         variable int_mask           :     SW_interrupts := SW_interrupts_rst_val;
         variable int_ena            :     SW_interrupts := SW_interrupts_rst_val;
@@ -154,203 +146,225 @@ package body int_rx_feature is
 
         -----------------------------------------------------------------------
         -- @1. Unmask and enable RX Interrupt, disable and mask all other 
-        --    interrupts on Node 1.
+        --    interrupts on DUT.
         -----------------------------------------------------------------------
-        info("Step 1: Setting RX Interrupt");
+        info_m("Step 1: Setting RX Interrupt");
+
         int_mask.receive_int := false;
+        write_int_mask(int_mask, DUT_NODE, chn);
+
         int_ena.receive_int := true;
-        write_int_mask(int_mask, ID_1, mem_bus(1));
-        write_int_enable(int_ena, ID_1, mem_bus(1));
+        write_int_enable(int_ena, DUT_NODE, chn);
         
         -----------------------------------------------------------------------
-        --  @2. Set Retransmitt limit to 0 on Node 2 (One shot-mode). Enable 
-        --     Retransmitt limitations on Node 2. Send frame by Node 2.
+        --  @2. Set Retransmitt limit to 0 on Test node (One shot-mode). Enable 
+        --      Retransmitt limitations on Test node. Send frame by Test node.
         -----------------------------------------------------------------------
-        info("Step 2: Sending frame");
-        CAN_enable_retr_limit(true, 0, ID_2, mem_bus(2));
-        CAN_generate_frame(rand_ctr, CAN_frame);
-        CAN_send_frame(CAN_frame, 1, ID_2, mem_bus(2), frame_sent);
+        info_m("Step 2: Sending frame");
+
+        CAN_enable_retr_limit(true, 0, TEST_NODE, chn);
+        CAN_generate_frame(CAN_frame);
+        CAN_send_frame(CAN_frame, 1, TEST_NODE, chn, frame_sent);
         
         -----------------------------------------------------------------------
-        --  @3. Monitor Node 1 frame, check that in the beginning of EOF, 
+        -- @3. Monitor DUT frame, check that in the beginning of EOF, 
         --     Interrupt is Not set, after EOF it is set.
         -----------------------------------------------------------------------  
-        info("Step 3: Check RX Interrupt is set in EOF!"); 
-        CAN_wait_pc_state(pc_deb_eof, ID_1, mem_bus(1));
-        read_int_status(int_stat, ID_1, mem_bus(1));
-        check_false(int_stat.receive_int,
+        info_m("Step 3: Check RX Interrupt is set in EOF!");
+
+        CAN_wait_pc_state(pc_deb_eof, DUT_NODE, chn);
+        read_int_status(int_stat, DUT_NODE, chn);
+        check_false_m(int_stat.receive_int,
             "RX Interrupt not set in beginning of EOF");
-        CAN_wait_not_pc_state(pc_deb_eof, ID_1, mem_bus(1));
-        read_int_status(int_stat, ID_1, mem_bus(1));
+        CAN_wait_not_pc_state(pc_deb_eof, DUT_NODE, chn);
+        read_int_status(int_stat, DUT_NODE, chn);
         
-        check(int_stat.receive_int, "RX Interrupt set at the end of EOF");
+        check_m(int_stat.receive_int, "RX Interrupt set at the end of EOF");
         
         -- Wait till bus is idle, read-out received frame so that there is
-        -- nothing in RX Buffer of Node 1.
-        CAN_wait_bus_idle(ID_2, mem_bus(2));
-        CAN_wait_bus_idle(ID_1, mem_bus(1));
-        CAN_read_frame(CAN_frame_rx, ID_1, mem_bus(1));
+        -- nothing in RX Buffer of DUT.
+        CAN_wait_bus_idle(TEST_NODE, chn);
+        CAN_wait_bus_idle(DUT_NODE, chn);
+        CAN_read_frame(CAN_frame_rx, DUT_NODE, chn);
         CAN_compare_frames(CAN_frame, CAN_frame_rx, false, frames_equal);
         
-        check(frames_equal, "TX, RX frames should be equal!");
+        check_m(frames_equal, "TX, RX frames should be equal!");
         
         -----------------------------------------------------------------------
-        --  @4. Check that INT pin is high. Disable RX Interrupt and check that
+        -- @4. Check that INT pin is high. Disable RX Interrupt and check that
         --     INT pin goes low. Enable Interrupt and check it goes high again.
         -----------------------------------------------------------------------
-        info("Step 4: Check INT pin toggles");
-        check(iout(1).irq = '1', "INT pin should be high!");
+        info_m("Step 4: Check INT pin toggles");
+
+        interrupt_agent_check_asserted(chn);
         int_ena.receive_int := false;
-        write_int_enable(int_ena, ID_1, mem_bus(1));
+        write_int_enable(int_ena, DUT_NODE, chn);
         wait for 10 ns;
         
-        check(iout(1).irq = '0', "INT pin should be low!");
+        interrupt_agent_check_not_asserted(chn);
         
         int_ena.receive_int := true;
-        write_int_enable(int_ena, ID_1, mem_bus(1));
+        write_int_enable(int_ena, DUT_NODE, chn);
         wait for 10 ns;
         
-        check(iout(1).irq = '1', "INT pin should be high!");
+        interrupt_agent_check_asserted(chn);
 
         -----------------------------------------------------------------------
         --  @5. Clear RX Interrupt, check it is cleared and INT pin goes low.
         -----------------------------------------------------------------------
-        info("Step 4: Clear RX Interrupt, Check INT pin toggles");
+        info_m("Step 4: Clear RX Interrupt, Check INT pin toggles");
+
         int_stat.receive_int := true;
-        clear_int_status(int_stat, ID_1, mem_bus(1));
-        read_int_status(int_stat, ID_1, mem_bus(1));
+        clear_int_status(int_stat, DUT_NODE, chn);
+        read_int_status(int_stat, DUT_NODE, chn);
         
-        check_false(int_mask.receive_int, "RX Interrupt status should be 0!");
-        check(iout(1).irq = '0', "INT pin should be low!");
+        check_false_m(int_mask.receive_int, "RX Interrupt status should be 0!");
+        interrupt_agent_check_not_asserted(chn);
         
         -----------------------------------------------------------------------
-        --  @6. Send Frame by Node 2. Force bus level during ACK to recessive, 
-        --     check that error frame is transmitted by both nodes. Wait till
-        --     bus is idle, check.
+        --  @6. Send Frame by Test node. Force bus level during ACK to recessive, 
+        --      check that error frame is transmitted by both nodes. Wait till
+        --      bus is idle, check.
         -----------------------------------------------------------------------
-        info("Step 6: Check RX Interrupt is not set upon Error Frame!");
-        CAN_generate_frame(rand_ctr, CAN_frame);
-        CAN_send_frame(CAN_frame, 1, ID_2, mem_bus(2), frame_sent);
-        CAN_wait_pc_state(pc_deb_ack, ID_1, mem_bus(1));
-        force_bus_level(RECESSIVE, so.bl_force, so.bl_inject);
-        CAN_wait_not_pc_state(pc_deb_ack, ID_1, mem_bus(1));
-        CAN_read_pc_debug(pc_dbg, ID_1, mem_bus(1));
-        -- TODO: Check error frame is being transmitted!
-        release_bus_level(so.bl_force);
-        
-        CAN_wait_bus_idle(ID_2, mem_bus(2));
-        CAN_wait_bus_idle(ID_1, mem_bus(1));
+        info_m("Step 6: Check RX Interrupt is not set upon Error Frame!");
 
-        read_int_status(int_stat, ID_1, mem_bus(1));
+        CAN_generate_frame(CAN_frame);
+        CAN_send_frame(CAN_frame, 1, TEST_NODE, chn, frame_sent);
+
+        CAN_wait_pc_state(pc_deb_ack, DUT_NODE, chn);
+        force_bus_level(RECESSIVE, chn);
+        CAN_wait_not_pc_state(pc_deb_ack, DUT_NODE, chn);
+        CAN_read_pc_debug_m(pc_dbg, DUT_NODE, chn);
+        release_bus_level(chn);
         
-        check_false(int_stat.receive_int, "RX Interrupt status should be 0!");
-        check(iout(1).irq = '0', "INT pin should be low!");
+        CAN_wait_bus_idle(TEST_NODE, chn);
+        CAN_wait_bus_idle(DUT_NODE, chn);
+
+        read_int_status(int_stat, DUT_NODE, chn);
+        
+        check_false_m(int_stat.receive_int, "RX Interrupt status should be 0!");
+        interrupt_agent_check_not_asserted(chn);
 
         -----------------------------------------------------------------------
-        --  @7. Mask RX Interrupt. Send frame by Node 2. Check that after frame
-        --     RX Interrupt was not set. Check that INT pin is low.
+        --  @7. Mask RX Interrupt. Send frame by Test node. Check that after
+        --      frame RX Interrupt was not set. Check that INT pin is low.
         -----------------------------------------------------------------------
-        info("Step 7: Check Masked RX Interrupt is not captured");
+        info_m("Step 7: Check Masked RX Interrupt is not captured");
+
         int_mask.receive_int := true;
         int_ena.receive_int := true;
-        write_int_mask(int_mask, ID_1, mem_bus(1));
-        CAN_generate_frame(rand_ctr, CAN_frame);
-        CAN_send_frame(CAN_frame, 1, ID_2, mem_bus(2), frame_sent);
-        CAN_wait_frame_sent(ID_2, mem_bus(2));
-        CAN_read_frame(CAN_frame_rx, ID_1, mem_bus(1));
+        write_int_mask(int_mask, DUT_NODE, chn);
+
+        CAN_generate_frame(CAN_frame);
+        CAN_send_frame(CAN_frame, 1, TEST_NODE, chn, frame_sent);
+        CAN_wait_frame_sent(TEST_NODE, chn);
+
+        CAN_read_frame(CAN_frame_rx, DUT_NODE, chn);
         CAN_compare_frames(CAN_frame, CAN_frame_rx, false, frames_equal);
-        check(frames_equal, "TX, RX frames should be equal!");
-        read_int_status(int_stat, ID_1, mem_bus(1));
-        
-        check_false(int_stat.receive_int, "RX Interrupt status should be 0!");
-        check(iout(1).irq = '0', "INT pin should be low!");
+        check_m(frames_equal, "TX, RX frames should be equal!");
+
+        read_int_status(int_stat, DUT_NODE, chn);        
+        check_false_m(int_stat.receive_int, "RX Interrupt status should be 0!");
+        interrupt_agent_check_not_asserted(chn);
 
         -----------------------------------------------------------------------
-        --  @8. Unmask RX Interrupt. Send frame by Node 2. Check that after 
-        --     frame RX Interrupt was set. Check INT pin is high.
+        --  @8. Unmask RX Interrupt. Send frame by Test node. Check that after 
+        --      frame RX Interrupt was set. Check INT pin is high.
         -----------------------------------------------------------------------
-        info("Step 8: Check Un-Masked RX Interrupt is captured");
+        info_m("Step 8: Check Un-Masked RX Interrupt is captured");
+
         int_mask.receive_int := false;
         int_ena.receive_int := true;
-        write_int_mask(int_mask, ID_1, mem_bus(1));
-        CAN_generate_frame(rand_ctr, CAN_frame);
-        CAN_send_frame(CAN_frame, 1, ID_2, mem_bus(2), frame_sent);
-        CAN_wait_frame_sent(ID_2, mem_bus(2));
-        CAN_read_frame(CAN_frame_rx, ID_1, mem_bus(1));
+        write_int_mask(int_mask, DUT_NODE, chn);
+
+        CAN_generate_frame(CAN_frame);
+        CAN_send_frame(CAN_frame, 1, TEST_NODE, chn, frame_sent);
+        CAN_wait_frame_sent(TEST_NODE, chn);
+
+        CAN_read_frame(CAN_frame_rx, DUT_NODE, chn);
         CAN_compare_frames(CAN_frame, CAN_frame_rx, false, frames_equal);
-        check(frames_equal, "TX, RX frames should be equal!");
-        read_int_status(int_stat, ID_1, mem_bus(1));
-        
-        check(int_stat.receive_int, "RX Interrupt status should be 1!");
-        check(iout(1).irq = '1', "INT pin should be high");
+        check_m(frames_equal, "TX, RX frames should be equal!");
+
+        read_int_status(int_stat, DUT_NODE, chn);        
+        check_m(int_stat.receive_int, "RX Interrupt status should be 1!");
+        interrupt_agent_check_asserted(chn);
         
         -----------------------------------------------------------------------
         --  @9. Disable RX Interrupt, check that RX interrupt was disabled.
         -----------------------------------------------------------------------
-        info("Step 9: Check RX Interrupt Enable Set");
+        info_m("Step 9: Check RX Interrupt Enable Set");
+
         int_ena.receive_int := false;
-        write_int_enable(int_ena, ID_1, mem_bus(1));
+        write_int_enable(int_ena, DUT_NODE, chn);
         int_ena.receive_int := true;
-        read_int_enable(int_ena, ID_1, mem_bus(1));
-        check_false(int_ena.receive_int, "RX Interrupt should be disabled!");
+
+        read_int_enable(int_ena, DUT_NODE, chn);
+        check_false_m(int_ena.receive_int, "RX Interrupt should be disabled!");
         
         -----------------------------------------------------------------------
         -- @10. Enable RX Interrupt, check that RX interrupt was enabled.
         -----------------------------------------------------------------------
-        info("Step 10: Check RX Interrupt Enable Clear");
+        info_m("Step 10: Check RX Interrupt Enable Clear");
+
         int_ena.receive_int := true;
-        write_int_enable(int_ena, ID_1, mem_bus(1));
+        write_int_enable(int_ena, DUT_NODE, chn);
         int_ena.receive_int := false;
-        read_int_enable(int_ena, ID_1, mem_bus(1));
-        
-        check(int_ena.receive_int, "RX Interrupt should be enabled!");        
+
+        read_int_enable(int_ena, DUT_NODE, chn);        
+        check_m(int_ena.receive_int, "RX Interrupt should be enabled!");        
         
         -----------------------------------------------------------------------
         -- @11. Mask RX Interrupt, check RX Interrupt is Masked.
         -----------------------------------------------------------------------
-        info("Step 11: Check RX Interrupt Mask Set");
+        info_m("Step 11: Check RX Interrupt Mask Set");
+
         int_mask.receive_int := true;
-        write_int_mask(int_mask, ID_1, mem_bus(1));
+        write_int_mask(int_mask, DUT_NODE, chn);
         int_mask.receive_int := false;
-        read_int_mask(int_mask, ID_1, mem_bus(1));
+        read_int_mask(int_mask, DUT_NODE, chn);
         
-        check(int_ena.receive_int, "RX Interrupt should be masked!");        
+        check_m(int_ena.receive_int, "RX Interrupt should be masked!");        
         
         -----------------------------------------------------------------------
         -- @12. Un-Mask RX Interrupt, check RX Interrupt is Un-masked.
         -----------------------------------------------------------------------
-        info("Step 12: Check RX Interrupt Mask Clear");
+        info_m("Step 12: Check RX Interrupt Mask Clear");
+
         int_mask.receive_int := false;
-        write_int_mask(int_mask, ID_1, mem_bus(1));
+        write_int_mask(int_mask, DUT_NODE, chn);
         int_mask.receive_int := true;
-        read_int_mask(int_mask, ID_1, mem_bus(1));
+        read_int_mask(int_mask, DUT_NODE, chn);
         
-        check_false(int_mask.receive_int, "RX Interrupt should be unmasked!");
+        check_false_m(int_mask.receive_int, "RX Interrupt should be unmasked!");
         
         -----------------------------------------------------------------------
-        -- @13. Send frame by Node 1. Check that after frame RX Interrupt is 
+        -- @13. Send frame by DUT. Check that after frame RX Interrupt is 
         --     not set and INT pin remains low.
         -----------------------------------------------------------------------
-        info("Step 13: Check TX does not cause RX Interrupt to be captured!");
+        info_m("Step 13: Check TX does not cause RX Interrupt to be captured!");
+
         int_stat.receive_int := true;
-        clear_int_status(int_stat, ID_1, mem_bus(1));
+        clear_int_status(int_stat, DUT_NODE, chn);
+        
         int_mask.receive_int := false;
-        write_int_mask(int_mask, ID_1, mem_bus(1));
+        write_int_mask(int_mask, DUT_NODE, chn);
+        
         int_ena.receive_int := true;
-        write_int_enable(int_ena, ID_1, mem_bus(1));
-        CAN_generate_frame(rand_ctr, CAN_frame);
-        CAN_send_frame(CAN_frame, 1, ID_1, mem_bus(1), frame_sent);
-        CAN_wait_frame_sent(ID_1, mem_bus(1));
-        CAN_read_frame(CAN_frame_rx, ID_2, mem_bus(2));
+        write_int_enable(int_ena, DUT_NODE, chn);
+
+        CAN_generate_frame(CAN_frame);
+        CAN_send_frame(CAN_frame, 1, DUT_NODE, chn, frame_sent);
+        CAN_wait_frame_sent(DUT_NODE, chn);
+        
+        CAN_read_frame(CAN_frame_rx, TEST_NODE, chn);
         CAN_compare_frames(CAN_frame, CAN_frame_rx, false, frames_equal);
-        read_int_status(int_stat, ID_1, mem_bus(1));
+        check_m(frames_equal, "TX, RX frames should be equal!");
         
-        check(frames_equal, "TX, RX frames should be equal!");
-        check_false(int_stat.receive_int, "RX Interrupt should not be set after TX!");
-        check(iout(1).irq = '0', "INT pins should not be high after TX!");
+        read_int_status(int_stat, DUT_NODE, chn);
+        check_false_m(int_stat.receive_int, "RX Interrupt should not be set after TX!");
+        interrupt_agent_check_not_asserted(chn);
         
-        info("Finished RX interrupt test");
-        wait for 1000 ns;
+        info_m("Finished RX interrupt test");
 
     end procedure;
 end package body;

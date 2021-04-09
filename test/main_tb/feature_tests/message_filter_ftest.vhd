@@ -75,42 +75,42 @@
 --
 -- @Test sequence:
 --      Part 1 (Message filter disabled):
---          1. Disable message filters in Node 1.
---          2. Set all filters in Node 1 to not to pass any frame/identifier.
---          3. Send CAN frame by Node 2.
---          4. Verify it was received by Node 1 and can be read out of RX Buffer.
---          5. Enable message filters in Node 1.
---          6. Send CAN frame by Node 2.
+--          1. Disable message filters in DUT.
+--          2. Set all filters in DUT to not to pass any frame/identifier.
+--          3. Send CAN frame by Test node.
+--          4. Verify it was received by DUT and can be read out of RX Buffer.
+--          5. Enable message filters in DUT.
+--          6. Send CAN frame by Test node.
 --          7. Verify that frame is not received, since filters are enabled and
 --             configured not to pass any frame!
 --      Part 2 (Mask filter):
---          1. Enable mask filter in Node 1.
+--          1. Enable mask filter in DUT.
 --          2. Configure random mask filter value, mask and accepted frame types.
---          3. Send CAN frames by Node 2, one for each combination of frame type
+--          3. Send CAN frames by Test node, one for each combination of frame type
 --             / Identifier type. Identifier of the frame should be set so that
 --             it passes the filter.
 --          4. Check that frame is received if frame format is matching.
---          5. Send CAN frames by Node 2, which are matching the CAN frame
+--          5. Send CAN frames by Test node, which are matching the CAN frame
 --             type / Identifier type and not matching bit filter value.
---          6. Verify that frames are not received in Node 1.
+--          6. Verify that frames are not received in DUT.
 --          7. Repeat part 2, for remaining bit filters from A, B, C.
 --      Part 3 (Range filter - Base frame):
---          1. Enable Range filter in Node 1. Set frame acceptance for Base
+--          1. Enable Range filter in DUT. Set frame acceptance for Base
 --             Identifier.
 --          2. Send CAN frame whose ID decimal value is lower than Low threshold
---             by Node 2.
+--             by Test node.
 --          3. Verify that CAN frame is not received.
 --          4. Send CAN frame with ID decimal value equal to Low threshold by
---             Node 2.
---          5. Verify that frame was received by Node 1.
+--             Test node.
+--          5. Verify that frame was received by DUT.
 --          6. Send CAN frame whose decimal value of ID is between low threshold
 --             and high threshold.
---          7. Verify that frame is received by Node 2.
+--          7. Verify that frame is received by Test node.
 --          8. Send CAN frame whose decimal value of ID is equal to High 
 --             threshold of range filter.
---          9. Verify that frame was received by Node 1.
---         10. Send frame which is higher than high threshold by Node 2.
---             Verify that frame is not received by CAN Node 1.
+--          9. Verify that frame was received by DUT.
+--         10. Send frame which is higher than high threshold by Test node.
+--             Verify that frame is not received by CAN DUT.
 --
 -- @TestInfoEnd
 --------------------------------------------------------------------------------
@@ -119,32 +119,23 @@
 --------------------------------------------------------------------------------
 
 Library ctu_can_fd_tb;
-context ctu_can_fd_tb.ctu_can_synth_context;
-context ctu_can_fd_tb.ctu_can_test_context;
+context ctu_can_fd_tb.ieee_context;
+context ctu_can_fd_tb.rtl_context;
+context ctu_can_fd_tb.tb_common_context;
 
-use ctu_can_fd_tb.pkg_feature_exec_dispath.all;
+use ctu_can_fd_tb.feature_test_agent_pkg.all;
 
-package message_filter_feature is
-    procedure message_filter_feature_exec(
-        signal      so              : out    feature_signal_outputs_t;
-        signal      rand_ctr        : inout  natural range 0 to RAND_POOL_SIZE;
-        signal      iout            : in     instance_outputs_arr_t;
-        signal      mem_bus         : inout  mem_bus_arr_t;
-        signal      bus_level       : in     std_logic
+package message_filter_ftest is
+    procedure message_filter_ftest_exec(
+        signal      chn             : inout  t_com_channel
     );
 end package;
 
 
-package body message_filter_feature is
-    procedure message_filter_feature_exec(
-        signal      so              : out    feature_signal_outputs_t;
-        signal      rand_ctr        : inout  natural range 0 to RAND_POOL_SIZE;
-        signal      iout            : in     instance_outputs_arr_t;
-        signal      mem_bus         : inout  mem_bus_arr_t;
-        signal      bus_level       : in     std_logic
+package body message_filter_ftest is
+    procedure message_filter_ftest_exec(
+        signal      chn             : inout  t_com_channel
     ) is
-        variable ID_1           	:       natural := 1;
-        variable ID_2           	:       natural := 2;
         variable CAN_frame          :       SW_CAN_frame_type;
         variable frame_sent         :       boolean := false;
         variable mode               :       SW_mode := SW_mode_rst_val;
@@ -162,33 +153,36 @@ package body message_filter_feature is
         variable l_th               :       natural := 0;
         variable h_th               :       natural := 0;
     begin
-        CAN_generate_frame(rand_ctr, CAN_frame);
+        CAN_generate_frame(CAN_frame);
         CAN_frame.brs := '0';
 
         ------------------------------------------------------------------------
         -- Part 1 (Message filters disabled)
         ------------------------------------------------------------------------
         ------------------------------------------------------------------------
-        -- Disable filter usage in Node 1. Set configuration of all filters
+        -- Disable filter usage in DUT. Set configuration of all filters
         -- not to pass any frame (to make sure that frame does not pass filter
         -- by chance).
         ------------------------------------------------------------------------
-        CAN_set_mask_filter(filter_A, mask_filt_config, ID_1, mem_bus(1));
-        CAN_set_mask_filter(filter_B, mask_filt_config, ID_1, mem_bus(1));
-        CAN_set_mask_filter(filter_C, mask_filt_config, ID_1, mem_bus(1));
-        CAN_set_range_filter(range_filt_config, ID_1, mem_bus(1));
+        CAN_set_mask_filter(filter_A, mask_filt_config, DUT_NODE, chn);
+        CAN_set_mask_filter(filter_B, mask_filt_config, DUT_NODE, chn);
+        CAN_set_mask_filter(filter_C, mask_filt_config, DUT_NODE, chn);
+        CAN_set_range_filter(range_filt_config, DUT_NODE, chn);
+
         mode.acceptance_filter := false;
-        set_core_mode(mode, ID_1, mem_bus(1));
+        set_core_mode(mode, DUT_NODE, chn);
 
         ------------------------------------------------------------------------
-        -- Send frame by Node 2. Check that frame was received!
+        -- Send frame by Test node. Check that frame was received!
         ------------------------------------------------------------------------
         command.release_rec_buffer := true;
-        give_controller_command(command, ID_1, mem_bus(1));
-        CAN_send_frame(CAN_frame, 1, ID_2, mem_bus(2), frame_sent);
-        CAN_wait_frame_sent(ID_1, mem_bus(1));
-        get_rx_buf_state(rx_state, ID_1, mem_bus(1));
-        check_false(rx_state.rx_empty,
+        give_controller_command(command, DUT_NODE, chn);
+        
+        CAN_send_frame(CAN_frame, 1, TEST_NODE, chn, frame_sent);
+        CAN_wait_frame_sent(DUT_NODE, chn);
+        
+        get_rx_buf_state(rx_state, DUT_NODE, chn);
+        check_false_m(rx_state.rx_empty,
             "Frame is not received when Message filters are disabled!");
 
         ------------------------------------------------------------------------
@@ -198,14 +192,16 @@ package body message_filter_feature is
         -- any filter and frame should be dropped!
         ------------------------------------------------------------------------
         command.release_rec_buffer := true;
-        give_controller_command(command, ID_1, mem_bus(1));
+        give_controller_command(command, DUT_NODE, chn);
+        
         mode.acceptance_filter := true;
-        set_core_mode(mode, ID_1, mem_bus(1));
+        set_core_mode(mode, DUT_NODE, chn);
 
-        CAN_send_frame(CAN_frame, 1, ID_2, mem_bus(2), frame_sent);
-        CAN_wait_frame_sent(ID_1, mem_bus(1));
-        get_rx_buf_state(rx_state, ID_1, mem_bus(1));
-        check(rx_state.rx_empty,
+        CAN_send_frame(CAN_frame, 1, TEST_NODE, chn, frame_sent);
+        CAN_wait_frame_sent(DUT_NODE, chn);
+        
+        get_rx_buf_state(rx_state, DUT_NODE, chn);
+        check_m(rx_state.rx_empty,
             "Frame passed Message filters when all filters are disabled!");
 
 
@@ -229,9 +225,9 @@ package body message_filter_feature is
             mask_filt_config.acc_CAN_FD := false;
             mask_filt_config.ID_mask := 0;
             mask_filt_config.ID_value := 0;
-            CAN_set_mask_filter(filter_A, mask_filt_config, ID_1, mem_bus(1));
-            CAN_set_mask_filter(filter_B, mask_filt_config, ID_1, mem_bus(1));
-            CAN_set_mask_filter(filter_C, mask_filt_config, ID_1, mem_bus(1));
+            CAN_set_mask_filter(filter_A, mask_filt_config, DUT_NODE, chn);
+            CAN_set_mask_filter(filter_B, mask_filt_config, DUT_NODE, chn);
+            CAN_set_mask_filter(filter_C, mask_filt_config, DUT_NODE, chn);
 
             --------------------------------------------------------------------
             -- Configure several settings for one mask filter. Bit Matching
@@ -255,7 +251,7 @@ package body message_filter_feature is
                 mask_filt_config.acc_CAN_FD := false;
                 mask_filt_config.ident_type := CAN_frame.ident_type;
 
-                info("Starting scenario: " & integer'image(i) & "."); 
+                info_m("Starting scenario: " & integer'image(i) & "."); 
 
                 -- Set accepted frame type based on scenario:
                 if (j < 4) then
@@ -277,23 +273,23 @@ package body message_filter_feature is
                 -- Generate random mask with one bit set, use only
                 tmp_log_vect := (OTHERS => '0');
                 if (CAN_frame.ident_type = BASE) then
-                    rand_int_v(rand_ctr, 10, tmp_int);
+                    rand_int_v(10, tmp_int);
                 else
-                    rand_int_v(rand_ctr, 28, tmp_int);
+                    rand_int_v(28, tmp_int);
                 end if;
                 tmp_log_vect(tmp_int) := '1';
                 mask_filt_config.ID_mask :=
                     to_integer(unsigned(tmp_log_vect));
-                info("Filter mask: " & integer'image(mask_filt_config.ID_mask));
+                info_m("Filter mask: " & integer'image(mask_filt_config.ID_mask));
 
                 -- Generate bit value which will either match or not match
                 -- this mask depending on scenario.
                 tmp_log_vect := (OTHERS => '0');
-                rand_logic_v(rand_ctr, tmp_log, 0.5);
+                rand_logic_v(tmp_log, 0.5);
                 tmp_log_vect(tmp_int) := tmp_log;
                 mask_filt_config.ID_value := 
                         to_integer(unsigned(tmp_log_vect));
-                info("Filter value: " & integer'image(mask_filt_config.ID_value));
+                info_m("Filter value: " & integer'image(mask_filt_config.ID_value));
 
                 -- Set equal for scenarios wher Bit mask is match, set
                 -- opposite where it is not equal!
@@ -310,7 +306,7 @@ package body message_filter_feature is
                 end if;
                 id_hw_to_sw(tmp_log_vect, CAN_frame.ident_type,
                             CAN_frame.identifier);
-                info("CAN ID: " & integer'image(CAN_frame.identifier));
+                info_m("CAN ID: " & integer'image(CAN_frame.identifier));
 
                 -- Calculate whether frame should pass or not
                 should_pass := false;
@@ -319,23 +315,23 @@ package body message_filter_feature is
                 end if;
 
                 -- Set filter settings
-                CAN_set_mask_filter(mask_filter, mask_filt_config, ID_1, mem_bus(1));
+                CAN_set_mask_filter(mask_filter, mask_filt_config, DUT_NODE, chn);
 
-                -- Send Frame by Node 2 and check if frame is received as
+                -- Send Frame by Test node and check if frame is received as
                 -- expected or not! Flush RX Buffer first!
                 command.release_rec_buffer := true;
-                give_controller_command(command, ID_1, mem_bus(1));
-                CAN_send_frame(CAN_frame, 1, ID_2, mem_bus(2), frame_sent);
-                CAN_wait_frame_sent(ID_1, mem_bus(1));
+                give_controller_command(command, DUT_NODE, chn);
+                CAN_send_frame(CAN_frame, 1, TEST_NODE, chn, frame_sent);
+                CAN_wait_frame_sent(DUT_NODE, chn);
 
                 wait for 100 ns;
-                get_rx_buf_state(rx_state, ID_1, mem_bus(1));
+                get_rx_buf_state(rx_state, DUT_NODE, chn);
 
                 -- Check!
-               check_false((rx_state.rx_empty = true) and (should_pass = true),
+               check_false_m((rx_state.rx_empty = true) and (should_pass = true),
                     "Frame should have passed but did NOT!");
                     
-               check_false((rx_state.rx_empty = false) and (should_pass = false),
+               check_false_m((rx_state.rx_empty = false) and (should_pass = false),
                     "Frame should NOT have passed but did!");
             end loop;
         end loop;
@@ -350,19 +346,19 @@ package body message_filter_feature is
         mask_filt_config.acc_CAN_FD := false;
         mask_filt_config.ID_mask := 0;
         mask_filt_config.ID_value := 0;
-        CAN_set_mask_filter(filter_A, mask_filt_config, ID_1, mem_bus(1));
-        CAN_set_mask_filter(filter_B, mask_filt_config, ID_1, mem_bus(1));
-        CAN_set_mask_filter(filter_C, mask_filt_config, ID_1, mem_bus(1));
+        CAN_set_mask_filter(filter_A, mask_filt_config, DUT_NODE, chn);
+        CAN_set_mask_filter(filter_B, mask_filt_config, DUT_NODE, chn);
+        CAN_set_mask_filter(filter_C, mask_filt_config, DUT_NODE, chn);
 
         ------------------------------------------------------------------------
         -- Generate random thresholds for identifier!
         ------------------------------------------------------------------------
         if (CAN_frame.ident_type = BASE) then
-            rand_int_v(rand_ctr, (2 ** 6), l_th);
-            rand_int_v(rand_ctr, (2 ** 11) - 1, h_th);
+            rand_int_v((2 ** 6), l_th);
+            rand_int_v((2 ** 11) - 1, h_th);
         else
-            rand_int_v(rand_ctr, (2 ** 14), l_th);
-            rand_int_v(rand_ctr, (2 ** 28) - 1, h_th);
+            rand_int_v((2 ** 14), l_th);
+            rand_int_v((2 ** 28) - 1, h_th);
         end if;
 
         -- Make sure upper threshold is not lower then low threshold!
@@ -380,14 +376,14 @@ package body message_filter_feature is
         range_filt_config.acc_CAN_FD := true;
         range_filt_config.ID_th_high := h_th;
         range_filt_config.ID_th_low := l_th;
-        CAN_set_range_filter(range_filt_config, ID_1, mem_bus(1));
-        CAN_generate_frame(rand_ctr, CAN_frame);
+        CAN_set_range_filter(range_filt_config, DUT_NODE, chn);
+        CAN_generate_frame(CAN_frame);
         CAN_frame.ident_type := BASE;
         CAN_frame.rtr := RTR_FRAME;
  
-        info("ID value: " & integer'image(CAN_frame.identifier));
-        info("Low threshold: " & integer'image(l_th));
-        info("High threshold: " & integer'image(h_th));
+        info_m("ID value: " & integer'image(CAN_frame.identifier));
+        info_m("Low threshold: " & integer'image(l_th));
+        info_m("High threshold: " & integer'image(h_th));
 
         ------------------------------------------------------------------------
         -- Execute test of range fitlers. Following scenarios are tested:
@@ -414,10 +410,11 @@ package body message_filter_feature is
             end if;
 
             command.release_rec_buffer := true;
-            give_controller_command(command, ID_1, mem_bus(1));
-            CAN_send_frame(CAN_frame, 1, ID_2, mem_bus(2), frame_sent);
-            CAN_wait_frame_sent(ID_1, mem_bus(1));
-            get_rx_buf_state(rx_state, ID_1, mem_bus(1));
+            give_controller_command(command, DUT_NODE, chn);
+
+            CAN_send_frame(CAN_frame, 1, TEST_NODE, chn, frame_sent);
+            CAN_wait_frame_sent(DUT_NODE, chn);
+            get_rx_buf_state(rx_state, DUT_NODE, chn);
 
             if ((rx_state.rx_empty and should_pass) or
                 ((not rx_state.rx_empty) and (not should_pass)))
@@ -425,19 +422,19 @@ package body message_filter_feature is
                 -- LCOV_EXCL_START
                 case i is
                     when 1 =>
-                        error("Frame with ID lower than Low threshold passed," &
+                        error_m("Frame with ID lower than Low threshold passed," &
                               "but should NOT!");
                     when 2 =>
-                        error("Frame with ID equal to Low threshold didnt pass," &
+                        error_m("Frame with ID equal to Low threshold didnt pass," &
                               "but should!");
                     when 3 =>                        
-                        error("Frame with ID betwen Low and High threshold did" &
+                        error_m("Frame with ID betwen Low and High threshold did" &
                               "not pass, but should!");
                     when 4 =>                        
-                        error("Frame with ID equal to Hig threshold did not," &
+                        error_m("Frame with ID equal to Hig threshold did not," &
                               "pass, but should!");
                     when 5 =>
-                        error("Frame with ID higher than High threshold did," &
+                        error_m("Frame with ID higher than High threshold did," &
                               "pass, but should NOT!");
                 end case;
                 -- LCOV_EXCL_STOP

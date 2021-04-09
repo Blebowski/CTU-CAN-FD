@@ -42,27 +42,6 @@ unit:
             iterations: 0
         tx_buf:
             wave: unit/TX_Buffer/txbf_unit.tcl
-feature:
-    default:
-        <<: *default
-        iterations: 1
-        timeout: 100 ms
-        wave: feature/feature_env_setup.tcl
-    tests: 
-        err_norm_fd:
-
-        mode_rst:
-
-
-        int_rx:
-        int_tx:
-        int_ewl:
-        int_do:
-        int_fcs:
-        # message_filter:
-        #     iterations: 1
-        tx_priority:
-            iterations: 1
         
 reference:
     default:

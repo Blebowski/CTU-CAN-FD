@@ -124,12 +124,19 @@ use ctu_can_fd_tb.err_capt_eof_ftest.all;
 use ctu_can_fd_tb.err_capt_err_frm_ftest.all;
 use ctu_can_fd_tb.err_capt_ovr_frm_ftest.all;
 use ctu_can_fd_tb.err_capt_sof_ftest.all;
+use ctu_can_fd_tb.err_norm_fd_ftest.all;
 
 use ctu_can_fd_tb.fault_state_ftest.all;
 use ctu_can_fd_tb.glitch_filtering_ftest.all;
 
 use ctu_can_fd_tb.invalid_frames_ftest.all;
+use ctu_can_fd_tb.int_do_ftest.all;
+use ctu_can_fd_tb.int_ewl_ftest.all;
+use ctu_can_fd_tb.int_fcs_ftest.all;
+use ctu_can_fd_tb.int_rx_ftest.all;
+use ctu_can_fd_tb.int_tx_ftest.all;
 
+use ctu_can_fd_tb.message_filter_ftest.all;
 use ctu_can_fd_tb.mode_bus_monitoring_ftest.all;
 use ctu_can_fd_tb.mode_fd_enable_ftest.all;
 use ctu_can_fd_tb.mode_loopback_ftest.all;
@@ -139,6 +146,7 @@ use ctu_can_fd_tb.mode_restr_op_ftest.all;
 use ctu_can_fd_tb.mode_test_ftest.all;
 use ctu_can_fd_tb.mode_self_test_ftest.all;
 use ctu_can_fd_tb.mode_frame_filters_ftest.all;
+use ctu_can_fd_tb.mode_rst_ftest.all;
 
 use ctu_can_fd_tb.no_sof_tx_ftest.all;
 
@@ -267,14 +275,29 @@ package body feature_test_list_pkg is
             err_capt_ovr_frm_ftest_exec(channel);
         elsif (test_name = "err_capt_sof") then
             err_capt_sof_ftest_exec(channel);
+        elsif (test_name = "err_norm_fd") then
+            err_norm_fd_ftest_exec(channel);
                                                       
         elsif (test_name = "fault_state") then
             fault_state_ftest_exec(channel);
         elsif (test_name = "glitch_filtering") then
             glitch_filtering_ftest_exec(channel);
+            
         elsif (test_name = "invalid_frames") then
             invalid_frames_ftest_exec(channel);
+        elsif (test_name = "int_do") then
+            int_do_ftest_exec(channel);
+        elsif (test_name = "int_ewl") then
+            int_ewl_ftest_exec(channel);
+        elsif (test_name = "int_fcs") then
+            int_fcs_ftest_exec(channel);
+        elsif (test_name = "int_rx") then
+            int_rx_ftest_exec(channel);
+        elsif (test_name = "int_tx") then
+            int_tx_ftest_exec(channel);
 
+        elsif (test_name = "message_filter") then
+            message_filter_ftest_exec(channel);
         elsif (test_name = "mode_bus_monitoring") then
             mode_bus_monitoring_ftest_exec(channel);
         elsif (test_name = "mode_fd_enable") then
@@ -293,6 +316,8 @@ package body feature_test_list_pkg is
             mode_self_test_ftest_exec(channel);
         elsif (test_name = "mode_frame_filters") then
             mode_frame_filters_ftest_exec(channel);
+        elsif (test_name = "mode_rst") then
+            mode_rst_ftest_exec(channel);
         
         elsif (test_name = "no_sof_tx") then
             no_sof_tx_ftest_exec(channel);

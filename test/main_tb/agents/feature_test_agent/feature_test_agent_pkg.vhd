@@ -1867,7 +1867,7 @@ package body feature_test_agent_pkg is
         if (id_type = EXTENDED) then
             check_m(id_in < 536870912,
                   "Extended Identifier: " & integer'image(id_in) &
-                  " Exceeds the maximal value!");
+                  " In range for Extended Identifier");
             id_vect := std_logic_vector(to_unsigned(id_in, 29));
 
             id_out(IDENTIFIER_BASE_H downto IDENTIFIER_BASE_L) :=
@@ -1877,7 +1877,7 @@ package body feature_test_agent_pkg is
         else
             check_m(id_in < 2048,
                   "Base Identifier: " & integer'image(id_in) &
-                  " Exceeds the maximal value!");
+                  " In range for Base Identifier");
             id_vect := "000000000000000000" &
                            std_logic_vector(to_unsigned(id_in, 11));
             id_out(IDENTIFIER_BASE_H downto IDENTIFIER_BASE_L) :=

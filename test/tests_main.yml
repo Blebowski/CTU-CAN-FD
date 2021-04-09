@@ -312,12 +312,19 @@ feature:
         err_capt_err_frm:
         err_capt_ovr_frm:
         err_capt_sof:
-        
+        err_norm_fd:
+
         fault_state:
         glitch_filtering:
 
         invalid_frames:
+        int_do:
+        int_ewl:
+        int_fcs:
+        int_rx:
+        int_tx:
 
+        message_filter:
         mode_bus_monitoring:
         mode_loopback:
         mode_fd_enable:
@@ -325,8 +332,10 @@ feature:
         mode_pex:
         mode_rst: # Still TODO
         mode_restr_op:
-        mode_test:
+        mode_rst:
         mode_self_test:
+        mode_test:
+
         mode_frame_filters:
             iterations: 6
         no_sof_tx:
