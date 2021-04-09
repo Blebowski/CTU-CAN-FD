@@ -216,11 +216,12 @@ package feature_test_agent_pkg is
         bit_rate_shift_int      :   boolean;
         rx_buffer_not_empty_int :   boolean;
         tx_buffer_hw_cmd        :   boolean;
+        overload_frame          :   boolean;
     end record;
     
     constant SW_interrupts_rst_val : SW_interrupts := (
         false, false, false, false, false, false, false, false,
-        false, false, false, false);
+        false, false, false, false, false);
 
     -- Fault confinement states
     type SW_fault_state is (
@@ -3509,15 +3510,15 @@ package body feature_test_agent_pkg is
         tmp := (OTHERS => '0');
 
         if (interrupts.receive_int) then
-            tmp(RXI_IND)         :=  '1';
+            tmp(RXI_IND)        :=  '1';
         end if;
 
         if (interrupts.transmitt_int) then
-            tmp(TXI_IND)         :=  '1';
+            tmp(TXI_IND)        :=  '1';
         end if;
 
         if (interrupts.error_warning_int) then
-            tmp(EWLI_IND)         :=  '1';
+            tmp(EWLI_IND)       :=  '1';
         end if;
 
         if (interrupts.data_overrun_int) then
@@ -3525,7 +3526,7 @@ package body feature_test_agent_pkg is
         end if;
 
         if (interrupts.fcs_changed_int) then
-            tmp(FCSI_IND)        :=  '1';
+            tmp(FCSI_IND)       :=  '1';
         end if;
 
         if (interrupts.arb_lost_int) then
@@ -3537,7 +3538,7 @@ package body feature_test_agent_pkg is
         end if;
 
         if (interrupts.rx_buffer_full_int) then
-            tmp(RXFI_IND)        :=  '1';
+            tmp(RXFI_IND)       :=  '1';
         end if;
 
         if (interrupts.bit_rate_shift_int) then
@@ -3545,11 +3546,15 @@ package body feature_test_agent_pkg is
         end if;
 
         if (interrupts.rx_buffer_not_empty_int) then
-            tmp(RBNEI_IND)       :=  '1';
+            tmp(RBNEI_IND)      :=  '1';
         end if;
 
         if (interrupts.tx_buffer_hw_cmd) then
             tmp(TXBHCI_IND)     :=  '1';
+        end if;
+        
+        if (interrupts.overload_frame) then
+            tmp(OFI_IND)        := '1';
         end if;
 
         return tmp;
@@ -3562,7 +3567,7 @@ package body feature_test_agent_pkg is
         variable tmp            :       SW_interrupts;
     begin
         tmp := (false, false, false, false, false, false,
-                false, false, false, false, false, false);
+                false, false, false, false, false, false, false);
 
         if (int_reg(RXI_IND) = '1') then
             tmp.receive_int              :=  true;
@@ -3606,6 +3611,10 @@ package body feature_test_agent_pkg is
 
         if (int_reg(TXBHCI_IND) = '1') then
             tmp.tx_buffer_hw_cmd         :=  true;
+        end if;
+
+        if (int_reg(OFI_IND) = '1') then
+            tmp.overload_frame           := true;
         end if;
 
         return tmp;

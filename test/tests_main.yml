@@ -325,6 +325,7 @@ feature:
         int_fcs:
         int_rx:
         int_tx:
+        int_of:
 
         message_filter:
         mode_bus_monitoring:
