@@ -454,7 +454,7 @@ static void ctucan_err_interrupt(struct net_device *ndev,
 	struct sk_buff *skb;
 	enum can_state state;
 	struct can_berr_counter berr;
-	union ctu_can_fd_err_capt_alc err_capt_alc;
+	union ctu_can_fd_err_capt_retr_ctr_alc err_capt_alc;
 	int dologerr = net_ratelimit();
 
 	ctucan_hw_read_err_ctrs(&priv->p, &berr);

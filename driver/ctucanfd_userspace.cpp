@@ -424,7 +424,7 @@ int main(int argc, char *argv[])
         reg.u32 = ctucan_hw_read32(priv, CTU_CAN_FD_RX_MEM_INFO);
         u32 rxsz = reg.s.rx_buff_size - reg.s.rx_mem_free;
         union ctu_can_fd_status status = ctu_can_get_status(priv);
-        union ctu_can_fd_err_capt_alc err_capt_alc;
+        union ctu_can_fd_err_capt_retr_ctr_alc err_capt_alc;
         union ctu_can_fd_int_stat int_stat = ctu_can_fd_int_sts(priv);
         ctucan_hw_int_clr(priv, int_stat);
 
