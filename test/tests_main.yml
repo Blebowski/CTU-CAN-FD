@@ -1,5 +1,7 @@
 _default: &default
 
+    # TODO: Cross-check options
+
     # Test-bench configuration
     log_level: info
     functional_coverage: true
@@ -333,7 +335,7 @@ feature:
         mode_fd_enable:
         mode_fdrf:
         mode_pex:
-        mode_rst: # Still TODO
+        mode_rst:
         mode_restr_op:
         mode_rst:
         mode_self_test:
@@ -386,3 +388,17 @@ feature:
         tx_status:
         timestamp_low_high:
         txt_buffer_hazard:
+
+reference:
+    tests:
+        data_set_1:
+        data_set_2:
+        data_set_3:
+        data_set_4:
+        data_set_5:
+        data_set_6:
+        data_set_7:
+        data_set_8:
+        data_set_9:
+        data_set_10:
+

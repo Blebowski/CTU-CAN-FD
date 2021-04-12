@@ -371,9 +371,6 @@ begin
         -- Execute feature test
         exec_feature_test(test_name, default_channel);
 
-        -- Stop clock agent (not to generate any further events)
-        clk_gen_agent_stop(default_channel);
-
         -- Signal test is done.
         -- No result is taken from feature tests, failure is detected by Error
         -- severity and test is always uported then !!!

@@ -179,6 +179,9 @@ def add_main_tb_sources(lib, config) -> None:
     # Feature test implementations
     sources.append('main_tb/feature_tests/*.vhd');
 
+    # Reference tests
+    sources.append('main_tb/reference_test_data_sets/*.vhd');
+
     # VIP top and TB top
     sources.append('main_tb/ctu_can_fd_vip.vhd');
     sources.append('main_tb/tb_top_ctu_can_fd.vhd');

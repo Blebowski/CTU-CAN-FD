@@ -362,8 +362,15 @@ begin
     end generate;
     
     ---------------------------------------------------------------------------
-    -- TODO: Reference test agent
+    -- Reference test agent
     ---------------------------------------------------------------------------
+    reference_test_agent_inst : reference_test_agent
+    generic map(
+        test_name            => test_name,
+        test_type            => test_type,
+        stand_alone_vip_mode => stand_alone_vip_mode
+    );
+
 
     
     ---------------------------------------------------------------------------

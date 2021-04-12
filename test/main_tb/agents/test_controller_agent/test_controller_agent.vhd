@@ -267,6 +267,9 @@ begin
             error_m("Unknown test type!");
         end if;
         
+        -- Stop clock agent (not to generate any further simulation events)
+        clk_gen_agent_stop(default_channel);
+        
         compliance_start <= '0';
         feature_start <= '0';
         reference_start <= '0';
