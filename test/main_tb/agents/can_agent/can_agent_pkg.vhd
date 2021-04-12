@@ -123,6 +123,16 @@ package can_agent_pkg is
         msg             :   string(1 to C_MAX_MSG_LENGTH);
     end record;
 
+    -- Simple driver entry (no message)
+    type t_can_driver_entry_simple is record
+    
+        -- Value to be driven
+        value           :   std_logic;
+        
+        -- Time for which to drive this value
+        drive_time      :   time;
+    end record;
+
     -- Monitor FIFO entry
     type t_can_monitor_entry is record
     
