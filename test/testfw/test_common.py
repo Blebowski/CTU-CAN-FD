@@ -86,6 +86,24 @@ def get_compile_and_sim_options(config) -> Tuple[OptionsDict, OptionsDict]:
     return compile_options, sim_options
 
 
+def create_unit_wrapper(lib, fname) -> None:
+        fname = str(fname)
+        files = lib.get_source_files()
+        tests = []
+        r = re.compile(r'^architecture\s+(\S+)\s+of\s+CAN_test\s+is$')
+        for file in files:
+            with open(file.name, 'rt', encoding='utf-8') as f:
+                for l in f:
+                    m = r.match(l)
+                    if m:
+                        tests.append(m.group(1))
+        c = jinja_env.get_template('unit_wrappers.vhd').render(tests=tests)
+        with open(fname, "wt", encoding='utf-8') as f:
+            f.write(c)
+
+        lib.add_source_file(fname)
+
+
 def get_compile_options(config) -> OptionsDict:    
     c, s = get_compile_and_sim_options(config)
     return c
@@ -94,6 +112,11 @@ def get_compile_options(config) -> OptionsDict:
 def get_sim_options(config) -> OptionsDict:
     c, s = get_compile_and_sim_options(config)
     return s
+
+
+def set_sim_options(tb, options: OptionsDict) -> None:
+    for k, v in options.items():
+        tb.set_sim_option(k, v)
 
 
 def get_seed(cfg) -> int:
@@ -139,6 +162,46 @@ def add_sources(lib, patterns) -> None:
 
 def add_rtl_sources(lib) -> None:
     add_sources(lib, ['../src/**/*.vhd'])
+
+
+def add_unit_sources(lib, build) -> None:
+	add_sources(lib, ['unit/**/*.vhd'])
+	create_unit_wrapper(lib, build / "tb_wrappers.vhd")
+
+
+def unit_configure(lib, config, build):
+	default = config['_default']
+	unit_tests = lib.get_test_benches('*_unit_test')
+
+	for ut in unit_tests:
+		ut.scan_tests_from_file(str(build / "../unit/lib/vunittb_wrapper.vhd"))
+
+	for test_type, cfg in config.items():
+		if (test_type != "unit"):
+			continue;
+
+		for name, loc_cfg in cfg['tests'].items():
+			dict_merge(loc_cfg, default)
+			tb = lib.get_test_benches('*tb_{}_unit_test'.format(name),
+						              allow_empty=True)
+			if not len(tb):
+				pprint([x.name for x in unit_tests])
+				raise RuntimeError('Testbench {}_unit_test does not exist'
+						           + ' (but specified in config).'.format(name))
+			elif len(tb) != 1:
+				raise RuntimeError('Multiple tests matching "{}"'.format(name))
+			tb = tb[0]
+			tb.set_generic('timeout', loc_cfg['timeout'])
+			tb.set_generic('iterations', loc_cfg['iterations'])
+			tb.set_generic('log_level', loc_cfg['log_level'] + '_l')
+			tb.set_generic('error_tol', loc_cfg['error_tolerance'])
+			tb.set_generic('seed', get_seed(loc_cfg))
+
+			sim_options = get_sim_options(default)
+			if ('functional_coverage' in loc_cfg) and loc_cfg['functional_coverage'] == True:
+				sim_options += add_psl_cov_sim_opt('{}.{}.{}'.format(tb.name, test_type, name), cfg, build)
+
+			set_sim_options(tb, sim_options)
 
 
 def add_main_tb_sources(lib, config) -> None:

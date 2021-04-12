@@ -102,7 +102,7 @@ USE IEEE.std_logic_1164.all;
 USE IEEE.numeric_std.ALL;
 USE ieee.math_real.ALL;
 
-package randomLib is
+package random_unit_pkg is
  	
     ----------------------------------------------------------------------------
     ----------------------------------------------------------------------------
@@ -1190,7 +1190,7 @@ end package;
 
 
 
-package body randomLib is
+package body random_unit_pkg is
 
 
     procedure rand_real_s(

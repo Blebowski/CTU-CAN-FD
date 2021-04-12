@@ -25,9 +25,8 @@ def setup_logging() -> None:
 setup_logging()
 
 from . import vunit_ifc
-from . import test_unit
 from vunit.ui import VUnit
-from .test_common import add_rtl_sources, add_main_tb_sources, main_tb_configure, get_compile_options, dict_merge
+from .test_common import add_rtl_sources, unit_configure, add_unit_sources, add_main_tb_sources, main_tb_configure, get_compile_options, dict_merge
 
 
 #-------------------------------------------------------------------------------
@@ -110,6 +109,7 @@ def test(obj, *, config, vunit_args):
 
     ctu_can_fd_rtl = ui.add_library("ctu_can_fd_rtl")
     ctu_can_fd_tb = ui.add_library("ctu_can_fd_tb")
+    ctu_can_fd_tb_unit = ui.add_library("ctu_can_fd_tb_unit")
 
     add_rtl_sources(ctu_can_fd_rtl)
 
@@ -131,7 +131,10 @@ def test(obj, *, config, vunit_args):
     ###########################################################################
     # Unit tests
     ###########################################################################
-    # TODO
+    if ("unit" in config):
+        add_unit_sources(ctu_can_fd_tb_unit, build)
+        unit_configure(ctu_can_fd_tb_unit, config, build)
+
 
     (func_cov_dir / "html").mkdir(parents=True, exist_ok=True)
     (func_cov_dir / "coverage_data").mkdir(parents=True, exist_ok=True)
