@@ -94,10 +94,14 @@ entity tb_top_ctu_can_fd is
         test_name               : string := "demo";
         test_type               : string := "compliance"; -- "feature", "compliance" or "reference"
         stand_alone_vip_mode    : boolean := true; 
+        log_level               : t_log_verbosity := verbosity_info;
 
         iterations              : natural := 1;
         timeout                 : string := "10 ms";
 
+        -- Reference test iterations
+        reference_iterations    : natural range 1 to 1000 := 1000;
+        
         -- Clock configuration of DUT
         cfg_sys_clk_period      : string := "10 ns";
         
@@ -179,7 +183,10 @@ architecture tb of tb_top_ctu_can_fd is
        cfg_sjw_fd              : natural;
        
        -- Seed
-       seed                    : natural := 0
+       seed                    : natural := 0;
+       
+       -- Reference test iterations
+        reference_iterations   : natural range 1 to 1000 := 1000
     );
     port(
        -- Test control
@@ -276,7 +283,8 @@ begin
         cfg_ph_2_fd             => cfg_ph_2_fd,
         cfg_sjw_fd              => cfg_sjw_fd,
         
-        seed                    => seed
+        seed                    => seed,
+        reference_iterations    => reference_iterations
     )
     port map(
         -- Test control
@@ -332,6 +340,9 @@ begin
         info("  No. of iterations: " & integer'image(iterations));
         info("  Stand-alone VIP: " & boolean'image(stand_alone_vip_mode));
         info("  System clock period: " & cfg_sys_clk_period);
+        info("  Log level: " & t_log_verbosity'image(log_level));
+        info("  Seed: " & integer'image(seed));
+        info("  Reference test iterations: " & integer'image(reference_iterations));
         info("");
         info("DUT configuration:");
         info("  RX buffer size: " & integer'image(rx_buffer_size));
@@ -360,6 +371,7 @@ begin
         info("***************************************************************");
 
         show(get_logger(default_checker), display_handler, pass);
+        set_log_verbosity(log_level, global_verbosity);
 
         for i in 1 to iterations loop
             info("***************************************************************");

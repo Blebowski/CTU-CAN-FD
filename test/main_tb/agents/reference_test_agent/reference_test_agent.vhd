@@ -108,7 +108,8 @@ entity reference_test_agent is
         -- Test details
         test_name               : string;
         test_type               : string;
-        stand_alone_vip_mode    : boolean
+        stand_alone_vip_mode    : boolean;
+        reference_iterations    : natural range 1 to 1000
     );
 end entity;
 
@@ -174,7 +175,7 @@ begin
         -----------------------------------------------------------------------
         -- Test sequence itself
         -----------------------------------------------------------------------
-        for frame_index in 1 to 1000 loop
+        for frame_index in 1 to reference_iterations loop
             
             info_m("Testing frame nr: " & integer'image(frame_index));
 

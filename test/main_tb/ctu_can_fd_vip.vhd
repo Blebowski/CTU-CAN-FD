@@ -106,7 +106,10 @@ entity ctu_can_fd_vip is
         cfg_sjw_fd              : natural;
         
         -- Seed
-        seed                    : natural := 0
+        seed                    : natural := 0;
+        
+        -- Reference test iterations
+        reference_iterations    : natural range 1 to 1000 := 1000
     );
     port(
         -- Test control
@@ -368,7 +371,8 @@ begin
     generic map(
         test_name            => test_name,
         test_type            => test_type,
-        stand_alone_vip_mode => stand_alone_vip_mode
+        stand_alone_vip_mode => stand_alone_vip_mode,
+        reference_iterations => reference_iterations
     );
 
 

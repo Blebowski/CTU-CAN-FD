@@ -89,6 +89,11 @@ package tb_report_pkg is
     
     signal global_verbosity : t_log_verbosity := verbosity_info;
     
+    procedure set_log_verbosity(
+        constant value                : in  t_log_verbosity;
+        signal verbosity            : out t_log_verbosity
+    );
+    
     procedure debug_m(
                  msg         : in string
     );
@@ -118,6 +123,16 @@ package tb_report_pkg is
 end package;
 
 package body tb_report_pkg is
+
+    
+    procedure set_log_verbosity(
+        constant value                : in  t_log_verbosity;
+        signal verbosity            : out t_log_verbosity
+    ) is
+    begin
+        verbosity <= value;
+    end procedure;
+
     
     procedure info_m(
         msg         : in string

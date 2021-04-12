@@ -1228,7 +1228,7 @@ package body tb_random_pkg is
     ) is
     begin
         info_m("Random initialized with seed " & natural'image(seed));
-        rand_ctr.set(seed);
+        rand_ctr.set(seed mod RAND_POOL_SIZE);
     end procedure;
 
 

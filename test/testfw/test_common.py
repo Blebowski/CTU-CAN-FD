@@ -120,7 +120,7 @@ def set_sim_options(tb, options: OptionsDict) -> None:
 
 
 def get_seed(cfg) -> int:
-    if 'seed' in cfg and 'randomize' in cfg:
+    if 'seed' in cfg and 'randomize' in cfg and cfg['randomize'] == True:
         log.warning('Both "seed" and "randomize" are set - seed takes precedence')
     if 'seed' in cfg:
         seed = int(str(cfg['seed']), 0)
@@ -275,6 +275,7 @@ def main_tb_configure(tb, config, build) -> None:
                 'test_name'             : test_name,
                 'test_type'             : test_type,
                 'iterations'            : loc_cfg["iterations"],
+                'reference_iterations'  : loc_cfg["reference_iterations"],
                 'cfg_sys_clk_period'    : loc_cfg["system_clock_period"],
 
                 'cfg_brp'               : loc_cfg["brp"],
@@ -297,6 +298,7 @@ def main_tb_configure(tb, config, build) -> None:
                 'sup_traffic_ctrs'      : loc_cfg['sup_traffic_ctrs'],
                 'target_technology'     : loc_cfg['target_technology'],
 
+				'log_level'             : "verbosity_" + loc_cfg['log_level'],
                 'seed'                  : get_seed(loc_cfg)
             }
 
