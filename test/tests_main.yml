@@ -1,21 +1,18 @@
 _default: &default
 
-    # TODO: Cross-check options
-
     # Test-bench configuration
     log_level: info
     functional_coverage: true
     code_coverage: true
     error_tolerance: 0
-    randomize: false
+    randomize: true
+    #seed: 20
     debug: false
-    # seed: 10
-    # In GUI mode, dump all signals, not only these included in layout file.
-    dump_all_signals: true
     iterations: 1
     timeout: 100 ms
 
-    # If true, use Vunits report package. If false, uses own implementation.
+    # If true, use Vunits report package in Main testbench.
+    # If false, uses own implementation.
     vunit_report_pkg: true
 
     # DUT generics
@@ -29,6 +26,7 @@ _default: &default
     target_technology: 0 # C_TECH_ASIC
 
     # DUT Bit timing settings
+    # Applies for compliance tests and feature tests!
     brp: 5
     prop: 10
     ph_1: 10
