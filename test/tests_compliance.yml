@@ -41,6 +41,9 @@ _default: &default
     # Clock configuration
     system_clock_period: 10 ns
 
+    # Not relevant for compliance tests..., ignore it
+    reference_iterations: 1000
+
 compliance:
     tests:
         demo:
