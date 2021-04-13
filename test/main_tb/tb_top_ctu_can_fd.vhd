@@ -343,6 +343,7 @@ begin
         info("  Log level: " & t_log_verbosity'image(log_level));
         info("  Seed: " & integer'image(seed));
         info("  Reference test iterations: " & integer'image(reference_iterations));
+        info("  Timeout: " & timeout);
         info("");
         info("DUT configuration:");
         info("  RX buffer size: " & integer'image(rx_buffer_size));

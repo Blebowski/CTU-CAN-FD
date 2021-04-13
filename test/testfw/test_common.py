@@ -277,6 +277,7 @@ def main_tb_configure(tb, config, build) -> None:
                 'iterations'            : loc_cfg["iterations"],
                 'reference_iterations'  : loc_cfg["reference_iterations"],
                 'cfg_sys_clk_period'    : loc_cfg["system_clock_period"],
+                'timeout'               : loc_cfg["timeout"],
 
                 'cfg_brp'               : loc_cfg["brp"],
                 'cfg_prop'              : loc_cfg["prop"],
@@ -298,7 +299,7 @@ def main_tb_configure(tb, config, build) -> None:
                 'sup_traffic_ctrs'      : loc_cfg['sup_traffic_ctrs'],
                 'target_technology'     : loc_cfg['target_technology'],
 
-				'log_level'             : "verbosity_" + loc_cfg['log_level'],
+                'log_level'             : "verbosity_" + loc_cfg['log_level'],
                 'seed'                  : get_seed(loc_cfg)
             }
 

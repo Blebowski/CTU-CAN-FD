@@ -83,7 +83,6 @@ feature:
         btr:
         btr_fd:
         btr_maximal:
-            timeout: 100 ms
         btr_minimal:
         btr_ssp_access:
         bus_start:
