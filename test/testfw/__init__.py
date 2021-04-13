@@ -65,6 +65,10 @@ def cli(ctx, compile):
     pass
 
 
+def remove_prefix(text, prefix):
+    return text[text.startswith(prefix) and len(prefix):]
+
+
 @cli.command()
 def create():
     pass
@@ -154,6 +158,40 @@ def test(obj, *, config, vunit_args):
         code_coverage.mkdir(exist_ok=True)
         os.system("mv *.gcda {}".format(code_coverage))
         os.system("mv *.gcno {}".format(code_coverage))
+
+    # Dump source file lists for RTL and main TB
+    rtl_sources = ui.get_source_files(library_name="ctu_can_fd_rtl")
+    tb_sources = ui.get_source_files(library_name="ctu_can_fd_tb")
+    rtl_sources_ordered = ui.get_compile_order(rtl_sources)
+    tb_sources_ordered = ui.get_compile_order(tb_sources)
+
+    rtl_lf = open(base / "rtl_lst.txt", 'w')
+    tb_lf = open(base / "tb_lst.txt", 'w')
+
+    # Correct list files to match file layout in export package
+    rtl_names = []
+    for item in rtl_sources_ordered:
+        file_name = "rtl/{}".format(remove_prefix(item.name, "../../src/"))
+        rtl_names.append(file_name)
+
+    tb_names = []
+    for item in tb_sources_ordered:
+        # Skip Vunit internals and files from RTL added also to TB lib
+        if item.name.startswith("../.."):
+            continue;
+
+        file_name = "tb/{}".format(remove_prefix(
+                        item.name, "vunit_out/preprocessed/ctu_can_fd_tb/"))
+        tb_names.append(file_name)
+
+    # Dump to files
+    for item in rtl_names:
+        rtl_lf.write(item)
+        rtl_lf.write("\n")
+
+    for item in tb_names:     
+        tb_lf.write(item)
+        tb_lf.write("\n")
 
     sys.exit(res)
 
