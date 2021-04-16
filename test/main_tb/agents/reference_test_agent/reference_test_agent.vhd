@@ -137,6 +137,9 @@ begin
     begin
         wait until reference_start = '1';
 
+        -- Pre-set test to be "passed", any error will make it fail
+        ctu_vip_test_result.set_result(true);
+
         -- Configure bit timing
         CAN_configure_timing(bus_timing, DUT_NODE, default_channel);
 
@@ -204,7 +207,7 @@ begin
         end loop; 
 
         -- Signal test is done.
-        reference_result <= '1';
+        reference_result <= ctu_vip_test_result.get_result;
         wait for 0 ns;
         reference_done <= '1';
         wait until reference_start = '0';

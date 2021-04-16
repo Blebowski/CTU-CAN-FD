@@ -94,7 +94,7 @@ package tb_report_pkg is
     );
     
     signal global_verbosity : t_log_verbosity := verbosity_info;
-    
+
     procedure set_log_verbosity(
         constant value                : in  t_log_verbosity;
         signal verbosity            : out t_log_verbosity
@@ -126,10 +126,42 @@ package tb_report_pkg is
                  msg         : in string
     );
 
+    type t_ctu_test_result is protected
+        procedure set_result(result : boolean);
+        impure function get_result return boolean;
+        impure function get_result return std_logic;
+    end protected;
+
+    shared variable ctu_vip_test_result : t_ctu_test_result;
+
 end package;
 
 package body tb_report_pkg is
 
+    type t_ctu_test_result is protected body
+        
+        variable result_i : boolean;
+
+        procedure set_result(result : boolean) is
+        begin
+            result_i := result;
+        end procedure;
+        
+        impure function get_result return boolean is
+        begin
+            return result_i;
+        end function;
+        
+        impure function get_result return std_logic is
+        begin
+            if result_i then
+                return '1';
+            else
+                return '0';
+            end if;
+        end function;
+
+    end protected body;
 
     procedure set_log_verbosity(
         constant value              : in  t_log_verbosity;
@@ -185,6 +217,7 @@ package body tb_report_pkg is
                  msg         : in string
     ) is
     begin
+        ctu_vip_test_result.set_result(false);
         error(msg);
     end procedure;
     
@@ -201,6 +234,9 @@ package body tb_report_pkg is
                  msg         : in string
     ) is
     begin
+        if (not cond) then
+            ctu_vip_test_result.set_result(false);
+        end if;
         check(cond, msg);
     end procedure;
     
@@ -210,6 +246,9 @@ package body tb_report_pkg is
                  msg         : in string
     ) is
     begin
+        if (cond) then
+            ctu_vip_test_result.set_result(false);
+        end if;
         check_false(cond, msg);
     end procedure;
     

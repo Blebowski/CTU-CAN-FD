@@ -341,6 +341,9 @@ begin
     begin
         wait until feature_start = '1';
 
+        -- Pre-set test to be "passed", any error will make it fail
+        ctu_vip_test_result.set_result(true);
+        
         -- Initialize TXT Buffer memories
         info_m("***************************************************************");
         info_m("Clearing TXT Buffer memories!");
@@ -372,9 +375,7 @@ begin
         exec_feature_test(test_name, default_channel);
 
         -- Signal test is done.
-        -- No result is taken from feature tests, failure is detected by Error
-        -- severity and test is always uported then !!!
-        feature_result <= '1';
+        feature_result <= ctu_vip_test_result.get_result;
         wait for 0 ns;
         feature_done <= '1';
         wait until feature_start = '0';

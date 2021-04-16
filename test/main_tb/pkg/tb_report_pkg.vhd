@@ -86,7 +86,15 @@ package tb_report_pkg is
         verbosity_warning,
         verbosity_error
     );
+
+    type t_ctu_test_result is protected
+        procedure set_result(result : boolean);
+        impure function get_result return boolean;
+        impure function get_result return std_logic;
+    end protected;
     
+    shared variable ctu_vip_test_result : t_ctu_test_result;
+
     signal global_verbosity : t_log_verbosity := verbosity_info;
     
     procedure set_log_verbosity(
@@ -124,7 +132,31 @@ end package;
 
 package body tb_report_pkg is
 
-    
+    type t_ctu_test_result is protected body
+        
+        variable result_i : boolean;
+
+        procedure set_result(result : boolean) is
+        begin
+            result_i := result;
+        end procedure;
+        
+        impure function get_result return boolean is
+        begin
+            return result_i;
+        end function;
+        
+        impure function get_result return std_logic is
+        begin
+            if result_i then
+                return '1';
+            else
+                return '0';
+            end if;
+        end function;
+
+    end protected body;
+
     procedure set_log_verbosity(
         constant value                : in  t_log_verbosity;
         signal verbosity            : out t_log_verbosity
@@ -168,6 +200,7 @@ package body tb_report_pkg is
             global_verbosity = verbosity_warning or
             global_verbosity = verbosity_error))
         then
+            ctu_vip_test_result.set_result(false);
             report "ERROR: " & msg severity error;
         end if;
     end procedure;
@@ -190,6 +223,7 @@ package body tb_report_pkg is
         if (cond) then
             report "PASS: " & msg;
         else
+            ctu_vip_test_result.set_result(false);
             report "FAIL: " & msg severity error;
         end if;
     end procedure;
@@ -203,6 +237,7 @@ package body tb_report_pkg is
         if (not cond) then
             report "PASS: " & msg;
         else
+            ctu_vip_test_result.set_result(false);
             report "FAIL: " & msg severity error;
         end if;
     end procedure;
