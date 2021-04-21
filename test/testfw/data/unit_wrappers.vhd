@@ -80,7 +80,7 @@ end configuration;
 {% for test in tests %}
 
 library work;
-use work.CANtestLib.all;
+use work.can_unit_test_pkg.all;
 library vunit_lib;
 context vunit_lib.vunit_context;
 

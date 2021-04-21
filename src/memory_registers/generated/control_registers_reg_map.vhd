@@ -902,7 +902,7 @@ begin
     control_registers_out_i.ssp_cfg & control_registers_in.trv_delay &
 
     -- Adress:124
-    "00000000" & control_registers_in.alc & "00000000" & control_registers_in.err_capt &
+    "00000000" & control_registers_in.alc & control_registers_in.retr_ctr & control_registers_in.err_capt &
 
     -- Adress:120
     control_registers_out_i.tx_priority &
@@ -1195,6 +1195,9 @@ begin
 
     -- psl err_capt_read_access_cov : cover
     -- {((cs='1') and (read='1') and (reg_sel(31)='1') and ((be(0)='1')))};
+
+    -- psl retr_ctr_read_access_cov : cover
+    -- {((cs='1') and (read='1') and (reg_sel(31)='1') and ((be(1)='1')))};
 
     -- psl alc_read_access_cov : cover
     -- {((cs='1') and (read='1') and (reg_sel(31)='1') and ((be(2)='1')))};

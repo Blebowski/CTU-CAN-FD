@@ -127,6 +127,7 @@ package can_registers_pkg is
      tx_status                   : std_logic_vector(31 downto 0);
      txtb_info                   : std_logic_vector(15 downto 0);
      err_capt                    : std_logic_vector(7 downto 0);
+     retr_ctr                    : std_logic_vector(7 downto 0);
      alc                         : std_logic_vector(7 downto 0);
      trv_delay                   : std_logic_vector(15 downto 0);
      rx_fr_ctr                   : std_logic_vector(31 downto 0);

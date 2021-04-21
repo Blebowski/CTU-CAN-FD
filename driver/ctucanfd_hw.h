@@ -538,10 +538,10 @@ void ctucan_hw_set_err_ctrs(struct ctucan_hw_priv *priv,
  * @priv: Private info
  * Return: Error state of the CTU CAN FD.
  */
-static inline union ctu_can_fd_err_capt_alc
+static inline union ctu_can_fd_err_capt_retr_ctr_alc
 		ctu_can_fd_read_err_capt_alc(struct ctucan_hw_priv *priv)
 {
-	union ctu_can_fd_err_capt_alc res;
+	union ctu_can_fd_err_capt_retr_ctr_alc res;
 
 	res.u32 = priv->read_reg(priv, CTU_CAN_FD_ERR_CAPT);
 	return res;

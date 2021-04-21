@@ -1305,6 +1305,7 @@ begin
             align_reg_to_wrd(TXT_BUFFER_COUNT_H, length) downto
             align_reg_to_wrd(TXT_BUFFER_COUNT_L, length)) <=
             std_logic_vector(to_unsigned(G_TXT_BUFFER_COUNT, 4));
+        Control_registers_in.txtb_info(15 DOWNTO 4) <= (OTHERS => '0');
     end block;
 
     ---------------------------------------------------------------------------
@@ -1328,6 +1329,21 @@ begin
 
     end block err_capt_block;
 
+    ---------------------------------------------------------------------------
+    -- RETR_CTR register
+    ---------------------------------------------------------------------------
+    retr_ctr_block : block
+        constant length : natural := Control_registers_in.retr_ctr'length;
+    begin
+
+        -- ERR_POS - Error position field
+        Control_registers_in.retr_ctr(
+            align_reg_to_wrd(RETR_CTR_VAL_H, length) downto
+            align_reg_to_wrd(RETR_CTR_VAL_L, length)) <=
+            stat_bus(STAT_RETR_CTR_HIGH downto STAT_RETR_CTR_LOW);
+        Control_registers_in.retr_ctr(7 downto 4) <= (OTHERS => '0');
+
+    end block retr_ctr_block;
 
     ---------------------------------------------------------------------------
     -- ALC register

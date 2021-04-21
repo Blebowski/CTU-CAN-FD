@@ -2925,6 +2925,29 @@
 						<ipxact:access>read-only</ipxact:access>
 					</ipxact:field>
 				</ipxact:register>
+				<ipxact:register>
+					<ipxact:name>RETR_CTR</ipxact:name>
+					<ipxact:displayName>RETR_CTR</ipxact:displayName>
+					<ipxact:description>Current value of Retransmit counter.</ipxact:description>
+					<ipxact:dim>0</ipxact:dim>
+					<ipxact:addressOffset>'h7D</ipxact:addressOffset>
+					<ipxact:size>8</ipxact:size>
+					<ipxact:volatile>true</ipxact:volatile>
+					<ipxact:access>read-only</ipxact:access>
+					<ipxact:field>
+						<ipxact:name>RETR_CTR_VAL</ipxact:name>
+						<ipxact:displayName>RETR_CTR_VAL</ipxact:displayName>
+						<ipxact:description>Current value of retransmitt counter.</ipxact:description>
+						<ipxact:bitOffset>0</ipxact:bitOffset>
+						<ipxact:resets>
+							<ipxact:reset>
+								<ipxact:value>0</ipxact:value>
+							</ipxact:reset>
+						</ipxact:resets>
+						<ipxact:bitWidth>4</ipxact:bitWidth>
+						<ipxact:access>read-only</ipxact:access>
+					</ipxact:field>
+				</ipxact:register>
 			</ipxact:addressBlock>
 			<ipxact:addressBlock>
 				<ipxact:name>TX_Buffer_1</ipxact:name>

@@ -509,7 +509,7 @@ filename "version.tex"
 \noindent
 \align center
 \begin_inset Tabular
-<lyxtabular version="3" rows="20" columns="4">
+<lyxtabular version="3" rows="21" columns="4">
 <features tabularvalignment="middle">
 <column alignment="center" valignment="top" width="1.5cm">
 <column alignment="center" valignment="top" width="2cm">
@@ -1249,11 +1249,49 @@ Added MODE[ROM] - Restricted operation mode.
 </cell>
 </row>
 <row>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
 2.3.1
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Ondrej Ille
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+23-2-2021
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Add TXTB_INFO and mention generic number of TXT buffers.
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+2.3.2
 \end_layout
 
 \end_inset
@@ -1271,7 +1309,7 @@ Ondrej Ille
 \begin_inset Text
 
 \begin_layout Plain Layout
-23-2-2021
+9-4-2021
 \end_layout
 
 \end_inset
@@ -1280,7 +1318,7 @@ Ondrej Ille
 \begin_inset Text
 
 \begin_layout Plain Layout
-Add TXTB_INFO and mention generic number of TXT buffers.
+Add RETR_CTR register.
 \end_layout
 
 \end_inset
@@ -4361,6 +4399,8 @@ Aborted
  state, internal counter of retransmissions is also erased.
  If such TXT buffer moves to Ready state again, CTU CAN FD attempts to transmitt
  it SETTINGS[RTRTH]+1 times.
+ Current number of transmission attempts of a single frame is held in an
+ internal counter which is readable via RETR_CTR register.
 \end_layout
 
 \begin_layout Subsection

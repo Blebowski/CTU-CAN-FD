@@ -75,6 +75,7 @@ enum ctu_can_fd_can_registers {
 	CTU_CAN_FD_TXTB_INFO            = 0x76,
 	CTU_CAN_FD_TX_PRIORITY          = 0x78,
 	CTU_CAN_FD_ERR_CAPT             = 0x7c,
+	CTU_CAN_FD_RETR_CTR             = 0x7d,
 	CTU_CAN_FD_ALC                  = 0x7e,
 	CTU_CAN_FD_TRV_DELAY            = 0x80,
 	CTU_CAN_FD_SSP_CFG              = 0x82,
@@ -880,14 +881,16 @@ union ctu_can_fd_tx_priority {
 	} s;
 };
 
-union ctu_can_fd_err_capt_alc {
+union ctu_can_fd_err_capt_retr_ctr_alc {
 	uint32_t u32;
-	struct ctu_can_fd_err_capt_alc_s {
+	struct ctu_can_fd_err_capt_retr_ctr_alc_s {
 #ifdef __LITTLE_ENDIAN_BITFIELD
   /* ERR_CAPT */
 		uint32_t err_pos                 : 5;
 		uint32_t err_type                : 3;
-		uint32_t reserved_15_8           : 8;
+  /* RETR_CTR */
+		uint32_t retr_ctr_val            : 4;
+		uint32_t reserved_15_12          : 4;
   /* ALC */
 		uint32_t alc_bit                 : 5;
 		uint32_t alc_id_field            : 3;
@@ -896,7 +899,8 @@ union ctu_can_fd_err_capt_alc {
 		uint32_t reserved_31_24          : 8;
 		uint32_t alc_id_field            : 3;
 		uint32_t alc_bit                 : 5;
-		uint32_t reserved_15_8           : 8;
+		uint32_t reserved_15_12          : 4;
+		uint32_t retr_ctr_val            : 4;
 		uint32_t err_type                : 3;
 		uint32_t err_pos                 : 5;
 #endif

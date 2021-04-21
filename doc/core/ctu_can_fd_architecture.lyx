@@ -5502,6 +5502,33 @@ name "tab:clock-signal-names"
 \end_layout
 
 \begin_layout Section
+Test probe
+\end_layout
+
+\begin_layout Standard
+CTU CAN FD contains 
+\series bold
+\shape italic
+test_probe
+\series default
+\shape default
+ record output.
+ This signal is used by CTU CAN FD test-bench to peek inside the design
+ of CTU CAN FD.
+ When integrating CTU CAN FD, this output can remain un-connected.
+ Reffer to 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "key-5"
+literal "false"
+
+\end_inset
+
+ for description of how to connect test-probe if integrating CTU CAN FD
+ VIP.
+\end_layout
+
+\begin_layout Section
 Configuration options
 \end_layout
 
@@ -36894,6 +36921,16 @@ https://github.com/Blebowski/Reg_Map_Gen
 \end_inset
 
 
+\end_layout
+
+\begin_layout Bibliography
+\begin_inset CommandInset bibitem
+LatexCommand bibitem
+key "key-5"
+
+\end_inset
+
+CTU CAN FD - Testbench architecture
 \end_layout
 
 \end_body

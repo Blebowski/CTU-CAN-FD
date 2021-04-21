@@ -1,17 +1,50 @@
 _default: &default
-    log_level: info
 
-    # If tests_fast run in pipeline parallel to other tests, functional coverage or code coverage
-    # cant be enabled!!
+    # Test-bench configuration
+    log_level: info
     functional_coverage: false
     code_coverage: false
-
     error_tolerance: 0
     randomize: false
-    # seed:0
+    seed: 0
+    debug: false
+    iterations: 1
+    timeout: 100 ms
 
-    # In GUI mode, dump all signals, not only these included in layout file.
-    dump_all_signals: true
+    # If true, use Vunits report package in Main testbench.
+    # If false, uses own implementation.
+    vunit_report_pkg: true
+
+    # DUT generics
+    rx_buffer_size: 64
+    txt_buffer_count: 8
+    sup_filtA: true
+    sup_filtB: true
+    sup_filtC: true
+    sup_range: true
+    sup_traffic_ctrs: true
+    target_technology: 0 # C_TECH_ASIC
+
+    # DUT Bit timing settings
+    # (Applies for compliance tests and feature tests!)
+    brp: 5
+    prop: 10
+    ph_1: 10
+    ph_2: 10
+    sjw: 5
+    brp_fd: 1
+    prop_fd: 5
+    ph_1_fd: 5
+    ph_2_fd: 5
+    sjw_fd: 4
+
+    # Clock configuration
+    # (Applies for compliance tests and feature tests!)
+    system_clock_period: 10 ns
+    
+    # Number of frames used from each dataset, 1000 means whole dataset
+    reference_iterations: 50
+
 unit:
     default:
         <<: *default
@@ -21,54 +54,49 @@ unit:
     tests:
         bit_stuffing:
             iterations: 20
-            wave: unit/Bit_Stuffing/bsdt_unit.tcl
         apb:
             iterations: 1
-            wave: unit/APB/dummy.tcl
         crc:
-            wave: unit/CRC/crct_unit.tcl
+            iterations: 50
         int_man:
-            wave: unit/Int_Manager/intm_unit.tcl
+            iterations: 50
         mess_filt:
-            wave: unit/Message_filter/msft_unit.tcl
-        protocol_control:
-            wave: unit/Protocol_Control/pctl_unit.tcl
-            iterations: 100
+            iterations: 50
         rx_buf:
-            wave: unit/RX_Buffer/rxbf_unit.tcl
             iterations: 10
         tx_arb:
-            wave: unit/TX_Arbitrator/txar_unit.tcl
+            # TODO: Fix TX Arbitrator unit test
             iterations: 0
         tx_buf:
-            wave: unit/TX_Buffer/txbf_unit.tcl
+            iterations: 50
+
 feature:
-    default:
-        <<: *default
-        iterations: 1
-        timeout: 100 ms
-        wave: feature/feature_env_setup.tcl
     tests:
         alc_base_id:
+        alc_ide:
         alc_id_extension:
+        alc_rtr_ext_id:
+        alc_rtr_r0:
         alc_srr_rtr:
         alc_srr_rtr_2:
-        alc_ide:
-        alc_rtr_r0:
-        alc_rtr_ext_id:
+
         btr:
         btr_fd:
-        btr_minimal:
         btr_maximal:
+        btr_minimal:
         btr_ssp_access:
         bus_start:
         byte_enable:
-        command_rrb:
+
         command_cdo:
-        command_frcrst:
         command_ercrst:
+        command_frcrst:
+        command_rrb:
+
+        
         device_id:
         dlc_can20_8_64_bytes:
+        
         err_capt_ack_ack:
         err_capt_arb_bit:
         err_capt_arb_stuff:
@@ -79,123 +107,93 @@ feature:
         err_capt_data_bit:
         err_capt_eof:
         err_capt_err_frm:
-        err_capt_sof:
         err_capt_ovr_frm:
+        err_capt_sof:
         err_norm_fd:
-        error_rules_a:
-        error_rules_b:
-        error_rules_c:
-        error_rules_d:
-        error_rules_e:
-        error_rules_f_tx:
-        error_rules_f_rx:
-        error_rules_g:
+
         fault_state:
         glitch_filtering:
-        mode_loopback:
-        mode_bus_monitoring:
-        mode_self_test:
-        mode_frame_filters:
-            iterations: 6
-        mode_fd_enable:
-        mode_rst:
-        mode_test:
-        mode_fdrf:
-        mode_restr_op:
-        mode_pex:
+
+        invalid_frames:
+        int_al:
+        int_be:
+        int_do:
+        int_ewl:
+        int_fcs:
         int_rx:
         int_tx:
-        int_ewl:
-        int_do:
-        int_fcs:
-        invalid_configs:
+        int_of:
+
+        message_filter:
+        mode_bus_monitoring:
+        mode_loopback:
+        mode_fd_enable:
+        mode_fdrf:
+        mode_pex:
+        mode_rst:
+        mode_restr_op:
+        mode_rst:
+        mode_self_test:
+        mode_test:
+
+        mode_frame_filters:
+            iterations: 6
+        no_sof_tx:
+        one_shot:
+        overload:
+
+        rec_saturation:
         retr_limit:
         retr_limit_2:
         retr_limit_3:
-        one_shot:
-        overload:
-        no_sof_tx:
-        rec_saturation:
+        rx_buf_empty_read:
+        rx_counter:
         rx_settings_rtsop:
         rx_status:
         rx_status_mof:
-        rx_buf_empty_read:
-        tx_counter:
-        rx_counter:
+
         settings_tbfbo:
         single_bus_node:
         ssp_cfg:
-        status_rxne:
-        status_txnf:
+            iterations: 5
         status_eft:
             iterations: 5
-        status_txs:
-        status_rxs:
         status_ewl:
         status_idle:
+        status_rxne:
+        status_rxs:
+        status_txnf:
+        status_txs:
         stuff_in_data:
+
         trv_delay:
-        tx_from_intermission:
-        tx_arb_time_tran:
-        tx_status:
-        # message_filter:
-        #     iterations: 1
-        timestamp_low_high:
-        txt_buffer_hazard:
-            iterations: 1
-        tx_cmd_set_abort:
-        tx_cmd_set_empty:
-        tx_cmd_set_ready:
         tx_arb_consistency:
-        tx_priority:
-            iterations: 1
+        tx_arb_time_tran:
+        tx_cmd_set_abort:
+            iterations: 5
+        tx_cmd_set_empty:
+            iterations: 5
+        tx_cmd_set_ready:
+            iterations: 5
+        tx_counter:
+        tx_from_intermission:
         tx_priority_change:
             iterations: 1
+        tx_priority:
+        tx_status:
+        timestamp_low_high:
+        txt_buffer_hazard:
+
 reference:
-    default:
-        <<: *default
-        log_level: warning
-        iterations: 20
-        timeout: 1000 ms
-        wave: reference/reference_env_setup.tcl
-        error_tolerance: 0
     tests:
         data_set_1:
-            data_path: reference/data_sets/log_500Kb_2Mb_80p_1K_samples_1
         data_set_2:
-            data_path: reference/data_sets/log_500Kb_2Mb_80p_1K_samples_2
         data_set_3:
-            data_path: reference/data_sets/log_500Kb_2Mb_80p_1K_samples_3
         data_set_4:
-            data_path: reference/data_sets/log_500Kb_2Mb_80p_1K_samples_4
         data_set_5:
-            data_path: reference/data_sets/log_500Kb_2Mb_80p_1K_samples_5
         data_set_6:
-            data_path: reference/data_sets/log_500Kb_2Mb_80p_1K_samples_6
         data_set_7:
-            data_path: reference/data_sets/log_500Kb_2Mb_80p_1K_samples_7
         data_set_8:
-            data_path: reference/data_sets/log_500Kb_2Mb_80p_1K_samples_8
         data_set_9:
-            data_path: reference/data_sets/log_500Kb_2Mb_80p_1K_samples_9
         data_set_10:
-            data_path: reference/data_sets/log_500Kb_2Mb_80p_1K_samples_10
-sanity:
-    default:
-        <<: *default
-        iterations: 5
-        timeout: 2 sec
-        gauss_iter: 40
-        wave: sanity/sanity_env_setup.tcl
-        dump_all_signals: false
-    tests:
-        "1Mb/5Mb 20 m Star":
-            topology: star
-            bus_len_v: [10.0, 10.0, 10.0, 10.0, 0.0, 0.0]
-            trv_del_v: [10, 10, 10, 10]
-            osc_tol_v: [0, 5, 10, 15]
-            nw_mean: 70.0
-            nw_var: 5.0
-            ng_mean: 300000.0
-            ng_var:  100000.0
-            timing_config: [1, 1, 33, 33, 33, 4, 4, 8, 7, 3]
+

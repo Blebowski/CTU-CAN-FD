@@ -1,35 +1,50 @@
 _default: &default
+
+    # Test-bench configuration
     log_level: info
     functional_coverage: true
     code_coverage: true
     error_tolerance: 0
-    randomize: false
-    # seed: 10
-    # In GUI mode, dump all signals, not only these included in layout file.
-    dump_all_signals: true
+    randomize: true
+    #seed: 20
+    debug: false
+    iterations: 1
+    timeout: 100 ms
+
+    # If true, use Vunits report package in Main testbench.
+    # If false, uses own implementation.
+    vunit_report_pkg: true
+
+    # DUT generics
+    rx_buffer_size: 64
+    txt_buffer_count: 8
+    sup_filtA: true
+    sup_filtB: true
+    sup_filtC: true
+    sup_range: true
+    sup_traffic_ctrs: true
+    target_technology: 0 # C_TECH_ASIC
+
+    # DUT Bit timing settings
+    # Applies for compliance tests and feature tests!
+    brp: 5
+    prop: 10
+    ph_1: 10
+    ph_2: 10
+    sjw: 5
+    brp_fd: 1
+    prop_fd: 5
+    ph_1_fd: 5
+    ph_2_fd: 5
+    sjw_fd: 4
+
+    # Clock configuration
+    system_clock_period: 10 ns
+
+    # Not relevant for compliance tests..., ignore it
+    reference_iterations: 1000
 
 compliance:
-    default:
-        <<: *default
-        iterations: 1
-        timeout: 100 ms
-
-        # Clock configuration. Applied to TB, SW test picks it up and configures
-        # DUT, and clock generator agent
-        clock_period: 10 ns
-        brp: 5
-        prop: 10
-        ph_1: 10
-        ph_2: 10
-        sjw: 5
-
-        brp_fd: 1
-        prop_fd: 5
-        ph_1_fd: 5
-        ph_2_fd: 5
-        sjw_fd: 4
-
-
     tests:
         demo:
         iso_7_1_1:
@@ -49,6 +64,7 @@ compliance:
         iso_7_2_2:
         iso_7_2_3:
         iso_7_2_4:
+            timeout: 200 ms
         iso_7_2_5:
         iso_7_2_6:
         iso_7_2_7:
@@ -173,6 +189,7 @@ compliance:
         iso_8_2_6:
         iso_8_2_7:
         iso_8_2_8:
+            timeout: 200 ms
 
         iso_8_3_1:
         iso_8_3_2:

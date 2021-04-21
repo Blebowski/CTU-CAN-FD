@@ -25,9 +25,8 @@ def setup_logging() -> None:
 setup_logging()
 
 from . import vunit_ifc
-from . import test_unit, test_sanity, test_feature, test_reference, test_compliance
 from vunit.ui import VUnit
-from .test_common import add_rtl_sources, add_tb_sources, get_compile_options
+from .test_common import add_rtl_sources, unit_configure, add_unit_sources, add_main_tb_sources, main_tb_configure, get_compile_options, dict_merge
 
 
 #-------------------------------------------------------------------------------
@@ -64,6 +63,10 @@ def cli(ctx, compile):
     ctx.obj = {'compile': compile}
     sys.argv[0] = abspath(sys.argv[0])
     pass
+
+
+def remove_prefix(text, prefix):
+    return text[text.startswith(prefix) and len(prefix):]
 
 
 @cli.command()
@@ -110,52 +113,43 @@ def test(obj, *, config, vunit_args):
 
     ctu_can_fd_rtl = ui.add_library("ctu_can_fd_rtl")
     ctu_can_fd_tb = ui.add_library("ctu_can_fd_tb")
+    ctu_can_fd_tb_unit = ui.add_library("ctu_can_fd_tb_unit")
 
     add_rtl_sources(ctu_can_fd_rtl)
-    add_tb_sources(ctu_can_fd_tb)
 
     ui.enable_check_preprocessing()
-    ui.enable_location_preprocessing()  # (additional_subprograms=['log'])
-
-    tests_classes = [
-        # key in config, factory
-        ('unit', test_unit.UnitTests),
-        ('sanity', test_sanity.SanityTests),
-        ('feature', test_feature.FeatureTests),
-        ('reference', test_reference.ReferenceTests),
-        ('compliance', test_compliance.ComplianceTests)
-    ]
+    #ui.enable_location_preprocessing()  # (additional_subprograms=['log'])
 
     tests = []
-    for cfg_key, factory in tests_classes:
-        if cfg_key in config:
-            tests.append(factory(ui, ctu_can_fd_tb, config[cfg_key], build, base))
+    
+    ###########################################################################
+    # Main TB
+    ###########################################################################
+    if ("compliance" in config or "feature" in config or "reference" in config):
+        add_main_tb_sources(ctu_can_fd_tb, config)
+
+        # Test-bench object is automatically detected on "tb_top" due to "runner_cfg"
+        tb = ctu_can_fd_tb.get_test_benches()[0]
+        main_tb_configure(tb, config, build)
+
+    ###########################################################################
+    # Unit tests
+    ###########################################################################
+    if ("unit" in config):
+        add_unit_sources(ctu_can_fd_tb_unit, build)
+        unit_configure(ctu_can_fd_tb_unit, config, build)
+
 
     (func_cov_dir / "html").mkdir(parents=True, exist_ok=True)
     (func_cov_dir / "coverage_data").mkdir(parents=True, exist_ok=True)
 
-    for t in tests:
-        t.add_sources()
-
+    # Global compile options
     c = get_compile_options(config['_default'])
     for k, v in c.items():
         ctu_can_fd_tb.set_compile_option(k, v)
         ctu_can_fd_rtl.set_compile_option(k, v)
 
-    conf_ok = [t.configure() for t in tests]
-
-    # check for unknown tests
-    all_benches = ctu_can_fd_tb.get_test_benches('*')
-    pattern = 'tb_.*?_unit_test|tb_sanity|tb_feature|tb_reference_wrapper'
-    unknown_tests = [tb for tb in all_benches
-                     if not re.match(pattern, tb.name)]
-    if len(unknown_tests):
-        log.warn('Unknown tests (defaults will be used): {}'
-                 .format(', '.join(tb.name for tb in unknown_tests)))
-
     res = vunit_run(ui, build, out_basename)
-    if not all(conf_ok):
-        log.error('Some test cases were discovered but not configured (see above).')
 
     # Move code coverage results to stand-alone directory to avoid overwriting it by runs
     # of other configs
@@ -164,6 +158,40 @@ def test(obj, *, config, vunit_args):
         code_coverage.mkdir(exist_ok=True)
         os.system("mv *.gcda {}".format(code_coverage))
         os.system("mv *.gcno {}".format(code_coverage))
+
+    # Dump source file lists for RTL and main TB
+    rtl_sources = ui.get_source_files(library_name="ctu_can_fd_rtl")
+    tb_sources = ui.get_source_files(library_name="ctu_can_fd_tb")
+    rtl_sources_ordered = ui.get_compile_order(rtl_sources)
+    tb_sources_ordered = ui.get_compile_order(tb_sources)
+
+    rtl_lf = open(base / "rtl_lst.txt", 'w')
+    tb_lf = open(base / "tb_lst.txt", 'w')
+
+    # Correct list files to match file layout in export package
+    rtl_names = []
+    for item in rtl_sources_ordered:
+        file_name = "rtl/{}".format(remove_prefix(item.name, "../../src/"))
+        rtl_names.append(file_name)
+
+    tb_names = []
+    for item in tb_sources_ordered:
+        # Skip Vunit internals and files from RTL added also to TB lib
+        if item.name.startswith("../.."):
+            continue;
+
+        file_name = "tb/{}".format(remove_prefix(
+                        item.name, "vunit_out/preprocessed/ctu_can_fd_tb/"))
+        tb_names.append(file_name)
+
+    # Dump to files
+    for item in rtl_names:
+        rtl_lf.write(item)
+        rtl_lf.write("\n")
+
+    for item in tb_names:     
+        tb_lf.write(item)
+        tb_lf.write("\n")
 
     sys.exit(res)
 
@@ -176,7 +204,6 @@ def create_vunit(obj, vunit_args, out_basename):
         args += ['--compile']
     args += ['--xunit-xml', '../{}.xml1'.format(out_basename)] + list(vunit_args)
     ui = VUnit.from_argv(args)
-    ui.add_com()
     return ui
 
 

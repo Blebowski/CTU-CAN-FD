@@ -64,6 +64,7 @@ build_doc:
         paths:
             - doc/core/Progdokum.pdf
             - doc/core/ctu_can_fd_architecture.pdf
+            - doc/core/tb_architecture.pdf
             - doc/driver/build
 
 build_linux_driver:
@@ -168,24 +169,51 @@ pages:
     stage: deploy
     when: always
     script:
-        - mkdir -p public
-        - cp test/xunit.xsl public/
-        - cp test/tests_*.xml public/
-        - mv test/code_html public/coverage || true
-        - cp doc/core/Progdokum.pdf public/ || true
-        - cp doc/core/ctu_can_fd_architecture.pdf public/ || true
-        - cp -R doc/driver/build public/driver_doc || true
+        - echo "Creating delivery package..."
 
-        # Copy only functional coverage HTML reports
-        - mkdir public/functional_coverage
-        - cp test/build/functional_coverage/*.html public/functional_coverage || true
-        - cp -R test/build/functional_coverage/html public/functional_coverage || true
+        # Create directory structure for release
+        - mkdir -p delivery_package
+        - mkdir -p delivery_package/rtl
+        - mkdir -p delivery_package/tb
+        - mkdir -p delivery_package/doc
+        - mkdir -p delivery_package/doc/linux_driver
+        - mkdir -p delivery_package/regression_results
+
+        # Copy RTL
+        - cp src/*.vhd delivery_package/rtl/
+        - cp src/**/*.vhd delivery_package/rtl/
+        - cp test/rtl_lst.txt delivery_package/
+
+        # Copy TB
+        - cp test/main_tb/*.vhd delivery_package/tb/
+        - cp test/main_tb/**/*.vhd delivery_package/tb/
+        - cp test/main_tb/**/**/*.vhd delivery_package/tb/
+        - cp test/tb_lst.txt delivery_package/
+        
+        # Compliance test library
+        - cp test/main_tb/compliance_library/libSIMULATOR_INTERFACE_LIB.so delivery_package/
+
+        # Copy regression results
+        - cp test/xunit.xsl delivery_package/regression_results/
+        - cp test/tests_*.xml delivery_package/regression_results/
+        - mv test/code_html delivery_package/regression_results/coverage || true
+        
+        # Copy documentation
+        - mv doc/core/Progdokum.pdf delivery_package/doc/Datasheet.pdf || true
+        - cp doc/core/ctu_can_fd_architecture.pdf delivery_package/doc/System_Architecture.pdf || true
+        - cp doc/core/tb_architecture.pdf delivery_package/doc/Testbench.pdf || true
+        - cp -R doc/driver/build delivery_package/doc/linux_driver || true
+
+        # Copy functional coverage HTML reports
+        - mkdir delivery_package/regression_results/functional_coverage
+        - cp test/build/functional_coverage/*.html delivery_package/regression_results/functional_coverage || true
+        - cp -R test/build/functional_coverage/html delivery_package/regression_results/functional_coverage || true
 
         # VRM result
-        - cp scripts/VRM.html public/ || true
+        - cp scripts/VRM.html delivery_package/regression_results/ || true
 
         # Check size
-        - du -skh public/*
+        - du -skh delivery_package/*
     only:
         - master
     artifacts:

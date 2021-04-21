@@ -1,6 +1,4 @@
 # Ignore Modelsim generated files
-*.bak
-/modelsim_project/work
 *__pycache__*
 *.swp
 *.orig
@@ -13,3 +11,4 @@ debian/*.substvars
 debian/debhelper-build-stamp
 debian/*.debhelper
 debian/files
+venv/*

@@ -1,0 +1,367 @@
+[*]
+[*] GTKWave Analyzer v3.3.98 (w)1999-2019 BSI
+[*] Thu Apr  8 14:17:24 2021
+[*]
+[dumpfile] "/build/test/build/vunit_out/test_output/ctu_can_fd_tb.tb_top_ctu_can_fd.feature.tx_arb_time_tran_8873c4f6c0958fd26a5d0e1ef517ecfa68f43123/ghdl/wave.ghw"
+[dumpfile_mtime] "Thu Apr  8 14:03:58 2021"
+[dumpfile_size] 1011570
+[savefile] "/build/test/wave_files/feature_tests.gtkw"
+[timestart] 19271000000
+[size] 1848 1016
+[pos] -1 -1
+*-24.934155 137034000000 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+[treeopen] top.
+[treeopen] top.tb_top_ctu_can_fd.
+[treeopen] top.tb_top_ctu_can_fd.ctu_can_fd_vip_inst.
+[treeopen] top.tb_top_ctu_can_fd.ctu_can_fd_vip_inst.feature_test_agent_gen.
+[treeopen] top.tb_top_ctu_can_fd.ctu_can_fd_vip_inst.feature_test_agent_gen.feature_test_agent_inst.test_node_inst.
+[treeopen] top.tb_top_ctu_can_fd.ctu_can_fd_vip_inst.feature_test_agent_gen.feature_test_agent_inst.test_node_inst.txt_buf_comp_gen[0].txt_buffer_inst.
+[treeopen] top.tb_top_ctu_can_fd.ctu_can_fd_vip_inst.feature_test_agent_gen.feature_test_agent_inst.test_node_inst.txt_buf_comp_gen[1].txt_buffer_inst.
+[treeopen] top.tb_top_ctu_can_fd.dut.
+[treeopen] top.tb_top_ctu_can_fd.dut.memory_registers_inst.control_registers_reg_map_comp.
+[treeopen] top.tb_top_ctu_can_fd.dut.memory_registers_inst.control_registers_reg_map_comp.control_registers_in.
+[treeopen] top.tb_top_ctu_can_fd.dut.txt_buf_comp_gen[0].txt_buffer_inst.
+[treeopen] top.tb_top_ctu_can_fd.dut.txt_buf_comp_gen[0].txt_buffer_inst.txt_buffer_ram_inst.txt_buf_ram_inst.ram_memory.
+[treeopen] top.tb_top_ctu_can_fd.dut.txt_buf_comp_gen[1].txt_buffer_inst.
+[treeopen] top.tb_top_ctu_can_fd.dut.txt_buf_comp_gen[2].txt_buffer_inst.
+[treeopen] top.tb_top_ctu_can_fd.dut.txt_buf_comp_gen[3].txt_buffer_inst.
+[treeopen] top.tb_top_ctu_can_fd.dut.txt_buf_comp_gen[3].txt_buffer_inst.txt_buffer_fsm_inst.
+[treeopen] top.tb_top_ctu_can_fd.dut.txt_buf_comp_gen[4].
+[treeopen] top.tb_top_ctu_can_fd.dut.txt_buf_comp_gen[4].txt_buffer_inst.
+[treeopen] top.tb_top_ctu_can_fd.dut.txt_buf_comp_gen[5].
+[treeopen] top.tb_top_ctu_can_fd.dut.txt_buf_comp_gen[5].txt_buffer_inst.
+[treeopen] top.tb_top_ctu_can_fd.dut.txt_buf_comp_gen[6].
+[treeopen] top.tb_top_ctu_can_fd.dut.txt_buf_comp_gen[6].txt_buffer_inst.
+[treeopen] top.tb_top_ctu_can_fd.dut.txt_buf_comp_gen[7].
+[treeopen] top.tb_top_ctu_can_fd.dut.txt_buf_comp_gen[7].txt_buffer_inst.
+[sst_width] 434
+[signals_width] 317
+[sst_expanded] 1
+[sst_vpaned_height] 623
+@800200
+-Test status
+@28
+top.tb_top_ctu_can_fd.ctu_can_fd_vip_inst.test_done
+top.tb_top_ctu_can_fd.ctu_can_fd_vip_inst.test_success
+top.tb_top_ctu_can_fd.ctu_can_fd_vip_inst.test_start
+top.test_controller_agent_pkg.compliance_done
+top.test_controller_agent_pkg.compliance_start
+top.test_controller_agent_pkg.feature_start
+top.test_controller_agent_pkg.feature_done
+top.test_controller_agent_pkg.feature_result
+@1000200
+-Test status
+@c00200
+-Clock agent
+@80000024
+top.tb_top_ctu_can_fd.ctu_can_fd_vip_inst.clk_gen_agent_inst.period
+@28
+top.tb_top_ctu_can_fd.ctu_can_fd_vip_inst.clk_gen_agent_inst.clock_in
+top.tb_top_ctu_can_fd.ctu_can_fd_vip_inst.clk_gen_agent_inst.clock_out
+top.tb_top_ctu_can_fd.ctu_can_fd_vip_inst.clk_gen_agent_inst.clock_in
+@420
+top.tb_top_ctu_can_fd.ctu_can_fd_vip_inst.clk_gen_agent_inst.jitter
+@1401200
+-Clock agent
+@c00200
+-Reset agent
+@420
+top.tb_top_ctu_can_fd.ctu_can_fd_vip_inst.reset_agent_inst.reset_active
+@28
+top.tb_top_ctu_can_fd.ctu_can_fd_vip_inst.reset_agent_inst.reset_polarity
+top.tb_top_ctu_can_fd.ctu_can_fd_vip_inst.reset_agent_inst.reset
+@1401200
+-Reset agent
+@c00200
+-Memory bus agent
+@80000024
+top.tb_top_ctu_can_fd.ctu_can_fd_vip_inst.mem_bus_agent_inst.period
+@28
+top.tb_top_ctu_can_fd.ctu_can_fd_vip_inst.mem_bus_agent_inst.clk
+@80000024
+top.tb_top_ctu_can_fd.ctu_can_fd_vip_inst.mem_bus_agent_inst.data_out_delay
+top.tb_top_ctu_can_fd.ctu_can_fd_vip_inst.mem_bus_agent_inst.x_mode_hold
+top.tb_top_ctu_can_fd.ctu_can_fd_vip_inst.mem_bus_agent_inst.x_mode_setup
+@420
+top.tb_top_ctu_can_fd.ctu_can_fd_vip_inst.mem_bus_agent_inst.is_x_mode
+top.tb_top_ctu_can_fd.ctu_can_fd_vip_inst.mem_bus_agent_inst.mem_bus_agent_ena
+top.tb_top_ctu_can_fd.ctu_can_fd_vip_inst.mem_bus_agent_inst.fifo_wp
+top.tb_top_ctu_can_fd.ctu_can_fd_vip_inst.mem_bus_agent_inst.fifo_rp
+@c00028
+#{top.tb_top_ctu_can_fd.ctu_can_fd_vip_inst.mem_bus_agent_inst.scs[1:0]} top.tb_top_ctu_can_fd.ctu_can_fd_vip_inst.mem_bus_agent_inst.scs[1] top.tb_top_ctu_can_fd.ctu_can_fd_vip_inst.mem_bus_agent_inst.scs[0]
+@28
+top.tb_top_ctu_can_fd.ctu_can_fd_vip_inst.mem_bus_agent_inst.scs[1]
+top.tb_top_ctu_can_fd.ctu_can_fd_vip_inst.mem_bus_agent_inst.scs[0]
+@420
+top.tb_top_ctu_can_fd.ctu_can_fd_vip_inst.mem_bus_agent_inst.slave_index
+@1401200
+-group_end
+@28
+top.tb_top_ctu_can_fd.ctu_can_fd_vip_inst.mem_bus_agent_inst.scs_i
+@22
+#{top.tb_top_ctu_can_fd.ctu_can_fd_vip_inst.mem_bus_agent_inst.sbe[3:0]} top.tb_top_ctu_can_fd.ctu_can_fd_vip_inst.mem_bus_agent_inst.sbe[3] top.tb_top_ctu_can_fd.ctu_can_fd_vip_inst.mem_bus_agent_inst.sbe[2] top.tb_top_ctu_can_fd.ctu_can_fd_vip_inst.mem_bus_agent_inst.sbe[1] top.tb_top_ctu_can_fd.ctu_can_fd_vip_inst.mem_bus_agent_inst.sbe[0]
+#{top.tb_top_ctu_can_fd.ctu_can_fd_vip_inst.mem_bus_agent_inst.write_data[31:0]} top.tb_top_ctu_can_fd.ctu_can_fd_vip_inst.mem_bus_agent_inst.write_data[31] top.tb_top_ctu_can_fd.ctu_can_fd_vip_inst.mem_bus_agent_inst.write_data[30] top.tb_top_ctu_can_fd.ctu_can_fd_vip_inst.mem_bus_agent_inst.write_data[29] top.tb_top_ctu_can_fd.ctu_can_fd_vip_inst.mem_bus_agent_inst.write_data[28] top.tb_top_ctu_can_fd.ctu_can_fd_vip_inst.mem_bus_agent_inst.write_data[27] top.tb_top_ctu_can_fd.ctu_can_fd_vip_inst.mem_bus_agent_inst.write_data[26] top.tb_top_ctu_can_fd.ctu_can_fd_vip_inst.mem_bus_agent_inst.write_data[25] top.tb_top_ctu_can_fd.ctu_can_fd_vip_inst.mem_bus_agent_inst.write_data[24] top.tb_top_ctu_can_fd.ctu_can_fd_vip_inst.mem_bus_agent_inst.write_data[23] top.tb_top_ctu_can_fd.ctu_can_fd_vip_inst.mem_bus_agent_inst.write_data[22] top.tb_top_ctu_can_fd.ctu_can_fd_vip_inst.mem_bus_agent_inst.write_data[21] top.tb_top_ctu_can_fd.ctu_can_fd_vip_inst.mem_bus_agent_inst.write_data[20] top.tb_top_ctu_can_fd.ctu_can_fd_vip_inst.mem_bus_agent_inst.write_data[19] top.tb_top_ctu_can_fd.ctu_can_fd_vip_inst.mem_bus_agent_inst.write_data[18] top.tb_top_ctu_can_fd.ctu_can_fd_vip_inst.mem_bus_agent_inst.write_data[17] top.tb_top_ctu_can_fd.ctu_can_fd_vip_inst.mem_bus_agent_inst.write_data[16] top.tb_top_ctu_can_fd.ctu_can_fd_vip_inst.mem_bus_agent_inst.write_data[15] top.tb_top_ctu_can_fd.ctu_can_fd_vip_inst.mem_bus_agent_inst.write_data[14] top.tb_top_ctu_can_fd.ctu_can_fd_vip_inst.mem_bus_agent_inst.write_data[13] top.tb_top_ctu_can_fd.ctu_can_fd_vip_inst.mem_bus_agent_inst.write_data[12] top.tb_top_ctu_can_fd.ctu_can_fd_vip_inst.mem_bus_agent_inst.write_data[11] top.tb_top_ctu_can_fd.ctu_can_fd_vip_inst.mem_bus_agent_inst.write_data[10] top.tb_top_ctu_can_fd.ctu_can_fd_vip_inst.mem_bus_agent_inst.write_data[9] top.tb_top_ctu_can_fd.ctu_can_fd_vip_inst.mem_bus_agent_inst.write_data[8] top.tb_top_ctu_can_fd.ctu_can_fd_vip_inst.mem_bus_agent_inst.write_data[7] top.tb_top_ctu_can_fd.ctu_can_fd_vip_inst.mem_bus_agent_inst.write_data[6] top.tb_top_ctu_can_fd.ctu_can_fd_vip_inst.mem_bus_agent_inst.write_data[5] top.tb_top_ctu_can_fd.ctu_can_fd_vip_inst.mem_bus_agent_inst.write_data[4] top.tb_top_ctu_can_fd.ctu_can_fd_vip_inst.mem_bus_agent_inst.write_data[3] top.tb_top_ctu_can_fd.ctu_can_fd_vip_inst.mem_bus_agent_inst.write_data[2] top.tb_top_ctu_can_fd.ctu_can_fd_vip_inst.mem_bus_agent_inst.write_data[1] top.tb_top_ctu_can_fd.ctu_can_fd_vip_inst.mem_bus_agent_inst.write_data[0]
+#{top.tb_top_ctu_can_fd.ctu_can_fd_vip_inst.mem_bus_agent_inst.read_data[31:0]} top.tb_top_ctu_can_fd.ctu_can_fd_vip_inst.mem_bus_agent_inst.read_data[31] top.tb_top_ctu_can_fd.ctu_can_fd_vip_inst.mem_bus_agent_inst.read_data[30] top.tb_top_ctu_can_fd.ctu_can_fd_vip_inst.mem_bus_agent_inst.read_data[29] top.tb_top_ctu_can_fd.ctu_can_fd_vip_inst.mem_bus_agent_inst.read_data[28] top.tb_top_ctu_can_fd.ctu_can_fd_vip_inst.mem_bus_agent_inst.read_data[27] top.tb_top_ctu_can_fd.ctu_can_fd_vip_inst.mem_bus_agent_inst.read_data[26] top.tb_top_ctu_can_fd.ctu_can_fd_vip_inst.mem_bus_agent_inst.read_data[25] top.tb_top_ctu_can_fd.ctu_can_fd_vip_inst.mem_bus_agent_inst.read_data[24] top.tb_top_ctu_can_fd.ctu_can_fd_vip_inst.mem_bus_agent_inst.read_data[23] top.tb_top_ctu_can_fd.ctu_can_fd_vip_inst.mem_bus_agent_inst.read_data[22] top.tb_top_ctu_can_fd.ctu_can_fd_vip_inst.mem_bus_agent_inst.read_data[21] top.tb_top_ctu_can_fd.ctu_can_fd_vip_inst.mem_bus_agent_inst.read_data[20] top.tb_top_ctu_can_fd.ctu_can_fd_vip_inst.mem_bus_agent_inst.read_data[19] top.tb_top_ctu_can_fd.ctu_can_fd_vip_inst.mem_bus_agent_inst.read_data[18] top.tb_top_ctu_can_fd.ctu_can_fd_vip_inst.mem_bus_agent_inst.read_data[17] top.tb_top_ctu_can_fd.ctu_can_fd_vip_inst.mem_bus_agent_inst.read_data[16] top.tb_top_ctu_can_fd.ctu_can_fd_vip_inst.mem_bus_agent_inst.read_data[15] top.tb_top_ctu_can_fd.ctu_can_fd_vip_inst.mem_bus_agent_inst.read_data[14] top.tb_top_ctu_can_fd.ctu_can_fd_vip_inst.mem_bus_agent_inst.read_data[13] top.tb_top_ctu_can_fd.ctu_can_fd_vip_inst.mem_bus_agent_inst.read_data[12] top.tb_top_ctu_can_fd.ctu_can_fd_vip_inst.mem_bus_agent_inst.read_data[11] top.tb_top_ctu_can_fd.ctu_can_fd_vip_inst.mem_bus_agent_inst.read_data[10] top.tb_top_ctu_can_fd.ctu_can_fd_vip_inst.mem_bus_agent_inst.read_data[9] top.tb_top_ctu_can_fd.ctu_can_fd_vip_inst.mem_bus_agent_inst.read_data[8] top.tb_top_ctu_can_fd.ctu_can_fd_vip_inst.mem_bus_agent_inst.read_data[7] top.tb_top_ctu_can_fd.ctu_can_fd_vip_inst.mem_bus_agent_inst.read_data[6] top.tb_top_ctu_can_fd.ctu_can_fd_vip_inst.mem_bus_agent_inst.read_data[5] top.tb_top_ctu_can_fd.ctu_can_fd_vip_inst.mem_bus_agent_inst.read_data[4] top.tb_top_ctu_can_fd.ctu_can_fd_vip_inst.mem_bus_agent_inst.read_data[3] top.tb_top_ctu_can_fd.ctu_can_fd_vip_inst.mem_bus_agent_inst.read_data[2] top.tb_top_ctu_can_fd.ctu_can_fd_vip_inst.mem_bus_agent_inst.read_data[1] top.tb_top_ctu_can_fd.ctu_can_fd_vip_inst.mem_bus_agent_inst.read_data[0]
+#{top.tb_top_ctu_can_fd.ctu_can_fd_vip_inst.mem_bus_agent_inst.address[15:0]} top.tb_top_ctu_can_fd.ctu_can_fd_vip_inst.mem_bus_agent_inst.address[15] top.tb_top_ctu_can_fd.ctu_can_fd_vip_inst.mem_bus_agent_inst.address[14] top.tb_top_ctu_can_fd.ctu_can_fd_vip_inst.mem_bus_agent_inst.address[13] top.tb_top_ctu_can_fd.ctu_can_fd_vip_inst.mem_bus_agent_inst.address[12] top.tb_top_ctu_can_fd.ctu_can_fd_vip_inst.mem_bus_agent_inst.address[11] top.tb_top_ctu_can_fd.ctu_can_fd_vip_inst.mem_bus_agent_inst.address[10] top.tb_top_ctu_can_fd.ctu_can_fd_vip_inst.mem_bus_agent_inst.address[9] top.tb_top_ctu_can_fd.ctu_can_fd_vip_inst.mem_bus_agent_inst.address[8] top.tb_top_ctu_can_fd.ctu_can_fd_vip_inst.mem_bus_agent_inst.address[7] top.tb_top_ctu_can_fd.ctu_can_fd_vip_inst.mem_bus_agent_inst.address[6] top.tb_top_ctu_can_fd.ctu_can_fd_vip_inst.mem_bus_agent_inst.address[5] top.tb_top_ctu_can_fd.ctu_can_fd_vip_inst.mem_bus_agent_inst.address[4] top.tb_top_ctu_can_fd.ctu_can_fd_vip_inst.mem_bus_agent_inst.address[3] top.tb_top_ctu_can_fd.ctu_can_fd_vip_inst.mem_bus_agent_inst.address[2] top.tb_top_ctu_can_fd.ctu_can_fd_vip_inst.mem_bus_agent_inst.address[1] top.tb_top_ctu_can_fd.ctu_can_fd_vip_inst.mem_bus_agent_inst.address[0]
+@420
+top.tb_top_ctu_can_fd.ctu_can_fd_vip_inst.mem_bus_agent_inst.slave_index
+@22
+#{top.tb_top_ctu_can_fd.dut.memory_registers_inst.control_registers_reg_map_comp.control_registers_in.txtb_info[15:0]} top.tb_top_ctu_can_fd.dut.memory_registers_inst.control_registers_reg_map_comp.control_registers_in.txtb_info[15] top.tb_top_ctu_can_fd.dut.memory_registers_inst.control_registers_reg_map_comp.control_registers_in.txtb_info[14] top.tb_top_ctu_can_fd.dut.memory_registers_inst.control_registers_reg_map_comp.control_registers_in.txtb_info[13] top.tb_top_ctu_can_fd.dut.memory_registers_inst.control_registers_reg_map_comp.control_registers_in.txtb_info[12] top.tb_top_ctu_can_fd.dut.memory_registers_inst.control_registers_reg_map_comp.control_registers_in.txtb_info[11] top.tb_top_ctu_can_fd.dut.memory_registers_inst.control_registers_reg_map_comp.control_registers_in.txtb_info[10] top.tb_top_ctu_can_fd.dut.memory_registers_inst.control_registers_reg_map_comp.control_registers_in.txtb_info[9] top.tb_top_ctu_can_fd.dut.memory_registers_inst.control_registers_reg_map_comp.control_registers_in.txtb_info[8] top.tb_top_ctu_can_fd.dut.memory_registers_inst.control_registers_reg_map_comp.control_registers_in.txtb_info[7] top.tb_top_ctu_can_fd.dut.memory_registers_inst.control_registers_reg_map_comp.control_registers_in.txtb_info[6] top.tb_top_ctu_can_fd.dut.memory_registers_inst.control_registers_reg_map_comp.control_registers_in.txtb_info[5] top.tb_top_ctu_can_fd.dut.memory_registers_inst.control_registers_reg_map_comp.control_registers_in.txtb_info[4] top.tb_top_ctu_can_fd.dut.memory_registers_inst.control_registers_reg_map_comp.control_registers_in.txtb_info[3] top.tb_top_ctu_can_fd.dut.memory_registers_inst.control_registers_reg_map_comp.control_registers_in.txtb_info[2] top.tb_top_ctu_can_fd.dut.memory_registers_inst.control_registers_reg_map_comp.control_registers_in.txtb_info[1] top.tb_top_ctu_can_fd.dut.memory_registers_inst.control_registers_reg_map_comp.control_registers_in.txtb_info[0]
+#{top.tb_top_ctu_can_fd.dut.memory_registers_inst.control_registers_reg_map_comp.control_registers_in.trv_delay[15:0]} top.tb_top_ctu_can_fd.dut.memory_registers_inst.control_registers_reg_map_comp.control_registers_in.trv_delay[15] top.tb_top_ctu_can_fd.dut.memory_registers_inst.control_registers_reg_map_comp.control_registers_in.trv_delay[14] top.tb_top_ctu_can_fd.dut.memory_registers_inst.control_registers_reg_map_comp.control_registers_in.trv_delay[13] top.tb_top_ctu_can_fd.dut.memory_registers_inst.control_registers_reg_map_comp.control_registers_in.trv_delay[12] top.tb_top_ctu_can_fd.dut.memory_registers_inst.control_registers_reg_map_comp.control_registers_in.trv_delay[11] top.tb_top_ctu_can_fd.dut.memory_registers_inst.control_registers_reg_map_comp.control_registers_in.trv_delay[10] top.tb_top_ctu_can_fd.dut.memory_registers_inst.control_registers_reg_map_comp.control_registers_in.trv_delay[9] top.tb_top_ctu_can_fd.dut.memory_registers_inst.control_registers_reg_map_comp.control_registers_in.trv_delay[8] top.tb_top_ctu_can_fd.dut.memory_registers_inst.control_registers_reg_map_comp.control_registers_in.trv_delay[7] top.tb_top_ctu_can_fd.dut.memory_registers_inst.control_registers_reg_map_comp.control_registers_in.trv_delay[6] top.tb_top_ctu_can_fd.dut.memory_registers_inst.control_registers_reg_map_comp.control_registers_in.trv_delay[5] top.tb_top_ctu_can_fd.dut.memory_registers_inst.control_registers_reg_map_comp.control_registers_in.trv_delay[4] top.tb_top_ctu_can_fd.dut.memory_registers_inst.control_registers_reg_map_comp.control_registers_in.trv_delay[3] top.tb_top_ctu_can_fd.dut.memory_registers_inst.control_registers_reg_map_comp.control_registers_in.trv_delay[2] top.tb_top_ctu_can_fd.dut.memory_registers_inst.control_registers_reg_map_comp.control_registers_in.trv_delay[1] top.tb_top_ctu_can_fd.dut.memory_registers_inst.control_registers_reg_map_comp.control_registers_in.trv_delay[0]
+@c00022
+#{top.tb_top_ctu_can_fd.dut.memory_registers_inst.control_registers_reg_map_comp.control_registers_in.txtb_info[15:0]} top.tb_top_ctu_can_fd.dut.memory_registers_inst.control_registers_reg_map_comp.control_registers_in.txtb_info[15] top.tb_top_ctu_can_fd.dut.memory_registers_inst.control_registers_reg_map_comp.control_registers_in.txtb_info[14] top.tb_top_ctu_can_fd.dut.memory_registers_inst.control_registers_reg_map_comp.control_registers_in.txtb_info[13] top.tb_top_ctu_can_fd.dut.memory_registers_inst.control_registers_reg_map_comp.control_registers_in.txtb_info[12] top.tb_top_ctu_can_fd.dut.memory_registers_inst.control_registers_reg_map_comp.control_registers_in.txtb_info[11] top.tb_top_ctu_can_fd.dut.memory_registers_inst.control_registers_reg_map_comp.control_registers_in.txtb_info[10] top.tb_top_ctu_can_fd.dut.memory_registers_inst.control_registers_reg_map_comp.control_registers_in.txtb_info[9] top.tb_top_ctu_can_fd.dut.memory_registers_inst.control_registers_reg_map_comp.control_registers_in.txtb_info[8] top.tb_top_ctu_can_fd.dut.memory_registers_inst.control_registers_reg_map_comp.control_registers_in.txtb_info[7] top.tb_top_ctu_can_fd.dut.memory_registers_inst.control_registers_reg_map_comp.control_registers_in.txtb_info[6] top.tb_top_ctu_can_fd.dut.memory_registers_inst.control_registers_reg_map_comp.control_registers_in.txtb_info[5] top.tb_top_ctu_can_fd.dut.memory_registers_inst.control_registers_reg_map_comp.control_registers_in.txtb_info[4] top.tb_top_ctu_can_fd.dut.memory_registers_inst.control_registers_reg_map_comp.control_registers_in.txtb_info[3] top.tb_top_ctu_can_fd.dut.memory_registers_inst.control_registers_reg_map_comp.control_registers_in.txtb_info[2] top.tb_top_ctu_can_fd.dut.memory_registers_inst.control_registers_reg_map_comp.control_registers_in.txtb_info[1] top.tb_top_ctu_can_fd.dut.memory_registers_inst.control_registers_reg_map_comp.control_registers_in.txtb_info[0]
+@28
+top.tb_top_ctu_can_fd.dut.memory_registers_inst.control_registers_reg_map_comp.control_registers_in.txtb_info[15]
+top.tb_top_ctu_can_fd.dut.memory_registers_inst.control_registers_reg_map_comp.control_registers_in.txtb_info[14]
+top.tb_top_ctu_can_fd.dut.memory_registers_inst.control_registers_reg_map_comp.control_registers_in.txtb_info[13]
+top.tb_top_ctu_can_fd.dut.memory_registers_inst.control_registers_reg_map_comp.control_registers_in.txtb_info[12]
+top.tb_top_ctu_can_fd.dut.memory_registers_inst.control_registers_reg_map_comp.control_registers_in.txtb_info[11]
+top.tb_top_ctu_can_fd.dut.memory_registers_inst.control_registers_reg_map_comp.control_registers_in.txtb_info[10]
+top.tb_top_ctu_can_fd.dut.memory_registers_inst.control_registers_reg_map_comp.control_registers_in.txtb_info[9]
+top.tb_top_ctu_can_fd.dut.memory_registers_inst.control_registers_reg_map_comp.control_registers_in.txtb_info[8]
+top.tb_top_ctu_can_fd.dut.memory_registers_inst.control_registers_reg_map_comp.control_registers_in.txtb_info[7]
+top.tb_top_ctu_can_fd.dut.memory_registers_inst.control_registers_reg_map_comp.control_registers_in.txtb_info[6]
+top.tb_top_ctu_can_fd.dut.memory_registers_inst.control_registers_reg_map_comp.control_registers_in.txtb_info[5]
+top.tb_top_ctu_can_fd.dut.memory_registers_inst.control_registers_reg_map_comp.control_registers_in.txtb_info[4]
+top.tb_top_ctu_can_fd.dut.memory_registers_inst.control_registers_reg_map_comp.control_registers_in.txtb_info[3]
+top.tb_top_ctu_can_fd.dut.memory_registers_inst.control_registers_reg_map_comp.control_registers_in.txtb_info[2]
+top.tb_top_ctu_can_fd.dut.memory_registers_inst.control_registers_reg_map_comp.control_registers_in.txtb_info[1]
+top.tb_top_ctu_can_fd.dut.memory_registers_inst.control_registers_reg_map_comp.control_registers_in.txtb_info[0]
+@1401200
+-group_end
+@22
+#{top.tb_top_ctu_can_fd.dut.memory_registers_inst.control_registers_reg_map_comp.control_registers_in.tx_status[31:0]} top.tb_top_ctu_can_fd.dut.memory_registers_inst.control_registers_reg_map_comp.control_registers_in.tx_status[31] top.tb_top_ctu_can_fd.dut.memory_registers_inst.control_registers_reg_map_comp.control_registers_in.tx_status[30] top.tb_top_ctu_can_fd.dut.memory_registers_inst.control_registers_reg_map_comp.control_registers_in.tx_status[29] top.tb_top_ctu_can_fd.dut.memory_registers_inst.control_registers_reg_map_comp.control_registers_in.tx_status[28] top.tb_top_ctu_can_fd.dut.memory_registers_inst.control_registers_reg_map_comp.control_registers_in.tx_status[27] top.tb_top_ctu_can_fd.dut.memory_registers_inst.control_registers_reg_map_comp.control_registers_in.tx_status[26] top.tb_top_ctu_can_fd.dut.memory_registers_inst.control_registers_reg_map_comp.control_registers_in.tx_status[25] top.tb_top_ctu_can_fd.dut.memory_registers_inst.control_registers_reg_map_comp.control_registers_in.tx_status[24] top.tb_top_ctu_can_fd.dut.memory_registers_inst.control_registers_reg_map_comp.control_registers_in.tx_status[23] top.tb_top_ctu_can_fd.dut.memory_registers_inst.control_registers_reg_map_comp.control_registers_in.tx_status[22] top.tb_top_ctu_can_fd.dut.memory_registers_inst.control_registers_reg_map_comp.control_registers_in.tx_status[21] top.tb_top_ctu_can_fd.dut.memory_registers_inst.control_registers_reg_map_comp.control_registers_in.tx_status[20] top.tb_top_ctu_can_fd.dut.memory_registers_inst.control_registers_reg_map_comp.control_registers_in.tx_status[19] top.tb_top_ctu_can_fd.dut.memory_registers_inst.control_registers_reg_map_comp.control_registers_in.tx_status[18] top.tb_top_ctu_can_fd.dut.memory_registers_inst.control_registers_reg_map_comp.control_registers_in.tx_status[17] top.tb_top_ctu_can_fd.dut.memory_registers_inst.control_registers_reg_map_comp.control_registers_in.tx_status[16] top.tb_top_ctu_can_fd.dut.memory_registers_inst.control_registers_reg_map_comp.control_registers_in.tx_status[15] top.tb_top_ctu_can_fd.dut.memory_registers_inst.control_registers_reg_map_comp.control_registers_in.tx_status[14] top.tb_top_ctu_can_fd.dut.memory_registers_inst.control_registers_reg_map_comp.control_registers_in.tx_status[13] top.tb_top_ctu_can_fd.dut.memory_registers_inst.control_registers_reg_map_comp.control_registers_in.tx_status[12] top.tb_top_ctu_can_fd.dut.memory_registers_inst.control_registers_reg_map_comp.control_registers_in.tx_status[11] top.tb_top_ctu_can_fd.dut.memory_registers_inst.control_registers_reg_map_comp.control_registers_in.tx_status[10] top.tb_top_ctu_can_fd.dut.memory_registers_inst.control_registers_reg_map_comp.control_registers_in.tx_status[9] top.tb_top_ctu_can_fd.dut.memory_registers_inst.control_registers_reg_map_comp.control_registers_in.tx_status[8] top.tb_top_ctu_can_fd.dut.memory_registers_inst.control_registers_reg_map_comp.control_registers_in.tx_status[7] top.tb_top_ctu_can_fd.dut.memory_registers_inst.control_registers_reg_map_comp.control_registers_in.tx_status[6] top.tb_top_ctu_can_fd.dut.memory_registers_inst.control_registers_reg_map_comp.control_registers_in.tx_status[5] top.tb_top_ctu_can_fd.dut.memory_registers_inst.control_registers_reg_map_comp.control_registers_in.tx_status[4] top.tb_top_ctu_can_fd.dut.memory_registers_inst.control_registers_reg_map_comp.control_registers_in.tx_status[3] top.tb_top_ctu_can_fd.dut.memory_registers_inst.control_registers_reg_map_comp.control_registers_in.tx_status[2] top.tb_top_ctu_can_fd.dut.memory_registers_inst.control_registers_reg_map_comp.control_registers_in.tx_status[1] top.tb_top_ctu_can_fd.dut.memory_registers_inst.control_registers_reg_map_comp.control_registers_in.tx_status[0]
+@c00022
+#{top.tb_top_ctu_can_fd.dut.memory_registers_inst.control_registers_reg_map_comp.control_registers_in.rx_pointers[31:0]} top.tb_top_ctu_can_fd.dut.memory_registers_inst.control_registers_reg_map_comp.control_registers_in.rx_pointers[31] top.tb_top_ctu_can_fd.dut.memory_registers_inst.control_registers_reg_map_comp.control_registers_in.rx_pointers[30] top.tb_top_ctu_can_fd.dut.memory_registers_inst.control_registers_reg_map_comp.control_registers_in.rx_pointers[29] top.tb_top_ctu_can_fd.dut.memory_registers_inst.control_registers_reg_map_comp.control_registers_in.rx_pointers[28] top.tb_top_ctu_can_fd.dut.memory_registers_inst.control_registers_reg_map_comp.control_registers_in.rx_pointers[27] top.tb_top_ctu_can_fd.dut.memory_registers_inst.control_registers_reg_map_comp.control_registers_in.rx_pointers[26] top.tb_top_ctu_can_fd.dut.memory_registers_inst.control_registers_reg_map_comp.control_registers_in.rx_pointers[25] top.tb_top_ctu_can_fd.dut.memory_registers_inst.control_registers_reg_map_comp.control_registers_in.rx_pointers[24] top.tb_top_ctu_can_fd.dut.memory_registers_inst.control_registers_reg_map_comp.control_registers_in.rx_pointers[23] top.tb_top_ctu_can_fd.dut.memory_registers_inst.control_registers_reg_map_comp.control_registers_in.rx_pointers[22] top.tb_top_ctu_can_fd.dut.memory_registers_inst.control_registers_reg_map_comp.control_registers_in.rx_pointers[21] top.tb_top_ctu_can_fd.dut.memory_registers_inst.control_registers_reg_map_comp.control_registers_in.rx_pointers[20] top.tb_top_ctu_can_fd.dut.memory_registers_inst.control_registers_reg_map_comp.control_registers_in.rx_pointers[19] top.tb_top_ctu_can_fd.dut.memory_registers_inst.control_registers_reg_map_comp.control_registers_in.rx_pointers[18] top.tb_top_ctu_can_fd.dut.memory_registers_inst.control_registers_reg_map_comp.control_registers_in.rx_pointers[17] top.tb_top_ctu_can_fd.dut.memory_registers_inst.control_registers_reg_map_comp.control_registers_in.rx_pointers[16] top.tb_top_ctu_can_fd.dut.memory_registers_inst.control_registers_reg_map_comp.control_registers_in.rx_pointers[15] top.tb_top_ctu_can_fd.dut.memory_registers_inst.control_registers_reg_map_comp.control_registers_in.rx_pointers[14] top.tb_top_ctu_can_fd.dut.memory_registers_inst.control_registers_reg_map_comp.control_registers_in.rx_pointers[13] top.tb_top_ctu_can_fd.dut.memory_registers_inst.control_registers_reg_map_comp.control_registers_in.rx_pointers[12] top.tb_top_ctu_can_fd.dut.memory_registers_inst.control_registers_reg_map_comp.control_registers_in.rx_pointers[11] top.tb_top_ctu_can_fd.dut.memory_registers_inst.control_registers_reg_map_comp.control_registers_in.rx_pointers[10] top.tb_top_ctu_can_fd.dut.memory_registers_inst.control_registers_reg_map_comp.control_registers_in.rx_pointers[9] top.tb_top_ctu_can_fd.dut.memory_registers_inst.control_registers_reg_map_comp.control_registers_in.rx_pointers[8] top.tb_top_ctu_can_fd.dut.memory_registers_inst.control_registers_reg_map_comp.control_registers_in.rx_pointers[7] top.tb_top_ctu_can_fd.dut.memory_registers_inst.control_registers_reg_map_comp.control_registers_in.rx_pointers[6] top.tb_top_ctu_can_fd.dut.memory_registers_inst.control_registers_reg_map_comp.control_registers_in.rx_pointers[5] top.tb_top_ctu_can_fd.dut.memory_registers_inst.control_registers_reg_map_comp.control_registers_in.rx_pointers[4] top.tb_top_ctu_can_fd.dut.memory_registers_inst.control_registers_reg_map_comp.control_registers_in.rx_pointers[3] top.tb_top_ctu_can_fd.dut.memory_registers_inst.control_registers_reg_map_comp.control_registers_in.rx_pointers[2] top.tb_top_ctu_can_fd.dut.memory_registers_inst.control_registers_reg_map_comp.control_registers_in.rx_pointers[1] top.tb_top_ctu_can_fd.dut.memory_registers_inst.control_registers_reg_map_comp.control_registers_in.rx_pointers[0]
+@28
+top.tb_top_ctu_can_fd.dut.memory_registers_inst.control_registers_reg_map_comp.control_registers_in.rx_pointers[31]
+top.tb_top_ctu_can_fd.dut.memory_registers_inst.control_registers_reg_map_comp.control_registers_in.rx_pointers[30]
+top.tb_top_ctu_can_fd.dut.memory_registers_inst.control_registers_reg_map_comp.control_registers_in.rx_pointers[29]
+top.tb_top_ctu_can_fd.dut.memory_registers_inst.control_registers_reg_map_comp.control_registers_in.rx_pointers[28]
+top.tb_top_ctu_can_fd.dut.memory_registers_inst.control_registers_reg_map_comp.control_registers_in.rx_pointers[27]
+top.tb_top_ctu_can_fd.dut.memory_registers_inst.control_registers_reg_map_comp.control_registers_in.rx_pointers[26]
+top.tb_top_ctu_can_fd.dut.memory_registers_inst.control_registers_reg_map_comp.control_registers_in.rx_pointers[25]
+top.tb_top_ctu_can_fd.dut.memory_registers_inst.control_registers_reg_map_comp.control_registers_in.rx_pointers[24]
+top.tb_top_ctu_can_fd.dut.memory_registers_inst.control_registers_reg_map_comp.control_registers_in.rx_pointers[23]
+top.tb_top_ctu_can_fd.dut.memory_registers_inst.control_registers_reg_map_comp.control_registers_in.rx_pointers[22]
+top.tb_top_ctu_can_fd.dut.memory_registers_inst.control_registers_reg_map_comp.control_registers_in.rx_pointers[21]
+top.tb_top_ctu_can_fd.dut.memory_registers_inst.control_registers_reg_map_comp.control_registers_in.rx_pointers[20]
+top.tb_top_ctu_can_fd.dut.memory_registers_inst.control_registers_reg_map_comp.control_registers_in.rx_pointers[19]
+top.tb_top_ctu_can_fd.dut.memory_registers_inst.control_registers_reg_map_comp.control_registers_in.rx_pointers[18]
+top.tb_top_ctu_can_fd.dut.memory_registers_inst.control_registers_reg_map_comp.control_registers_in.rx_pointers[17]
+top.tb_top_ctu_can_fd.dut.memory_registers_inst.control_registers_reg_map_comp.control_registers_in.rx_pointers[16]
+top.tb_top_ctu_can_fd.dut.memory_registers_inst.control_registers_reg_map_comp.control_registers_in.rx_pointers[15]
+top.tb_top_ctu_can_fd.dut.memory_registers_inst.control_registers_reg_map_comp.control_registers_in.rx_pointers[14]
+top.tb_top_ctu_can_fd.dut.memory_registers_inst.control_registers_reg_map_comp.control_registers_in.rx_pointers[13]
+top.tb_top_ctu_can_fd.dut.memory_registers_inst.control_registers_reg_map_comp.control_registers_in.rx_pointers[12]
+top.tb_top_ctu_can_fd.dut.memory_registers_inst.control_registers_reg_map_comp.control_registers_in.rx_pointers[11]
+top.tb_top_ctu_can_fd.dut.memory_registers_inst.control_registers_reg_map_comp.control_registers_in.rx_pointers[10]
+top.tb_top_ctu_can_fd.dut.memory_registers_inst.control_registers_reg_map_comp.control_registers_in.rx_pointers[9]
+top.tb_top_ctu_can_fd.dut.memory_registers_inst.control_registers_reg_map_comp.control_registers_in.rx_pointers[8]
+top.tb_top_ctu_can_fd.dut.memory_registers_inst.control_registers_reg_map_comp.control_registers_in.rx_pointers[7]
+top.tb_top_ctu_can_fd.dut.memory_registers_inst.control_registers_reg_map_comp.control_registers_in.rx_pointers[6]
+top.tb_top_ctu_can_fd.dut.memory_registers_inst.control_registers_reg_map_comp.control_registers_in.rx_pointers[5]
+top.tb_top_ctu_can_fd.dut.memory_registers_inst.control_registers_reg_map_comp.control_registers_in.rx_pointers[4]
+top.tb_top_ctu_can_fd.dut.memory_registers_inst.control_registers_reg_map_comp.control_registers_in.rx_pointers[3]
+top.tb_top_ctu_can_fd.dut.memory_registers_inst.control_registers_reg_map_comp.control_registers_in.rx_pointers[2]
+top.tb_top_ctu_can_fd.dut.memory_registers_inst.control_registers_reg_map_comp.control_registers_in.rx_pointers[1]
+top.tb_top_ctu_can_fd.dut.memory_registers_inst.control_registers_reg_map_comp.control_registers_in.rx_pointers[0]
+@1401200
+-group_end
+-Memory bus agent
+@c00200
+-Interrupt agent
+@28
+top.tb_top_ctu_can_fd.ctu_can_fd_vip_inst.interrupt_agent_inst.interrupt_polarity
+top.tb_top_ctu_can_fd.ctu_can_fd_vip_inst.interrupt_agent_inst.int
+@1401200
+-Interrupt agent
+@c00200
+-Timestamp agent
+@420
+top.tb_top_ctu_can_fd.ctu_can_fd_vip_inst.timestamp_agent_inst.prescaler_ctr
+@28
+top.tb_top_ctu_can_fd.ctu_can_fd_vip_inst.timestamp_agent_inst.clk_sys
+top.tb_top_ctu_can_fd.ctu_can_fd_vip_inst.timestamp_agent_inst.timestamp_preset
+@420
+top.tb_top_ctu_can_fd.ctu_can_fd_vip_inst.timestamp_agent_inst.running
+top.tb_top_ctu_can_fd.ctu_can_fd_vip_inst.timestamp_agent_inst.prescaler
+@24
+#{top.tb_top_ctu_can_fd.ctu_can_fd_vip_inst.timestamp_agent_inst.timestamp_i[63:0]} top.tb_top_ctu_can_fd.ctu_can_fd_vip_inst.timestamp_agent_inst.timestamp_i[63] top.tb_top_ctu_can_fd.ctu_can_fd_vip_inst.timestamp_agent_inst.timestamp_i[62] top.tb_top_ctu_can_fd.ctu_can_fd_vip_inst.timestamp_agent_inst.timestamp_i[61] top.tb_top_ctu_can_fd.ctu_can_fd_vip_inst.timestamp_agent_inst.timestamp_i[60] top.tb_top_ctu_can_fd.ctu_can_fd_vip_inst.timestamp_agent_inst.timestamp_i[59] top.tb_top_ctu_can_fd.ctu_can_fd_vip_inst.timestamp_agent_inst.timestamp_i[58] top.tb_top_ctu_can_fd.ctu_can_fd_vip_inst.timestamp_agent_inst.timestamp_i[57] top.tb_top_ctu_can_fd.ctu_can_fd_vip_inst.timestamp_agent_inst.timestamp_i[56] top.tb_top_ctu_can_fd.ctu_can_fd_vip_inst.timestamp_agent_inst.timestamp_i[55] top.tb_top_ctu_can_fd.ctu_can_fd_vip_inst.timestamp_agent_inst.timestamp_i[54] top.tb_top_ctu_can_fd.ctu_can_fd_vip_inst.timestamp_agent_inst.timestamp_i[53] top.tb_top_ctu_can_fd.ctu_can_fd_vip_inst.timestamp_agent_inst.timestamp_i[52] top.tb_top_ctu_can_fd.ctu_can_fd_vip_inst.timestamp_agent_inst.timestamp_i[51] top.tb_top_ctu_can_fd.ctu_can_fd_vip_inst.timestamp_agent_inst.timestamp_i[50] top.tb_top_ctu_can_fd.ctu_can_fd_vip_inst.timestamp_agent_inst.timestamp_i[49] top.tb_top_ctu_can_fd.ctu_can_fd_vip_inst.timestamp_agent_inst.timestamp_i[48] top.tb_top_ctu_can_fd.ctu_can_fd_vip_inst.timestamp_agent_inst.timestamp_i[47] top.tb_top_ctu_can_fd.ctu_can_fd_vip_inst.timestamp_agent_inst.timestamp_i[46] top.tb_top_ctu_can_fd.ctu_can_fd_vip_inst.timestamp_agent_inst.timestamp_i[45] top.tb_top_ctu_can_fd.ctu_can_fd_vip_inst.timestamp_agent_inst.timestamp_i[44] top.tb_top_ctu_can_fd.ctu_can_fd_vip_inst.timestamp_agent_inst.timestamp_i[43] top.tb_top_ctu_can_fd.ctu_can_fd_vip_inst.timestamp_agent_inst.timestamp_i[42] top.tb_top_ctu_can_fd.ctu_can_fd_vip_inst.timestamp_agent_inst.timestamp_i[41] top.tb_top_ctu_can_fd.ctu_can_fd_vip_inst.timestamp_agent_inst.timestamp_i[40] top.tb_top_ctu_can_fd.ctu_can_fd_vip_inst.timestamp_agent_inst.timestamp_i[39] top.tb_top_ctu_can_fd.ctu_can_fd_vip_inst.timestamp_agent_inst.timestamp_i[38] top.tb_top_ctu_can_fd.ctu_can_fd_vip_inst.timestamp_agent_inst.timestamp_i[37] top.tb_top_ctu_can_fd.ctu_can_fd_vip_inst.timestamp_agent_inst.timestamp_i[36] top.tb_top_ctu_can_fd.ctu_can_fd_vip_inst.timestamp_agent_inst.timestamp_i[35] top.tb_top_ctu_can_fd.ctu_can_fd_vip_inst.timestamp_agent_inst.timestamp_i[34] top.tb_top_ctu_can_fd.ctu_can_fd_vip_inst.timestamp_agent_inst.timestamp_i[33] top.tb_top_ctu_can_fd.ctu_can_fd_vip_inst.timestamp_agent_inst.timestamp_i[32] top.tb_top_ctu_can_fd.ctu_can_fd_vip_inst.timestamp_agent_inst.timestamp_i[31] top.tb_top_ctu_can_fd.ctu_can_fd_vip_inst.timestamp_agent_inst.timestamp_i[30] top.tb_top_ctu_can_fd.ctu_can_fd_vip_inst.timestamp_agent_inst.timestamp_i[29] top.tb_top_ctu_can_fd.ctu_can_fd_vip_inst.timestamp_agent_inst.timestamp_i[28] top.tb_top_ctu_can_fd.ctu_can_fd_vip_inst.timestamp_agent_inst.timestamp_i[27] top.tb_top_ctu_can_fd.ctu_can_fd_vip_inst.timestamp_agent_inst.timestamp_i[26] top.tb_top_ctu_can_fd.ctu_can_fd_vip_inst.timestamp_agent_inst.timestamp_i[25] top.tb_top_ctu_can_fd.ctu_can_fd_vip_inst.timestamp_agent_inst.timestamp_i[24] top.tb_top_ctu_can_fd.ctu_can_fd_vip_inst.timestamp_agent_inst.timestamp_i[23] top.tb_top_ctu_can_fd.ctu_can_fd_vip_inst.timestamp_agent_inst.timestamp_i[22] top.tb_top_ctu_can_fd.ctu_can_fd_vip_inst.timestamp_agent_inst.timestamp_i[21] top.tb_top_ctu_can_fd.ctu_can_fd_vip_inst.timestamp_agent_inst.timestamp_i[20] top.tb_top_ctu_can_fd.ctu_can_fd_vip_inst.timestamp_agent_inst.timestamp_i[19] top.tb_top_ctu_can_fd.ctu_can_fd_vip_inst.timestamp_agent_inst.timestamp_i[18] top.tb_top_ctu_can_fd.ctu_can_fd_vip_inst.timestamp_agent_inst.timestamp_i[17] top.tb_top_ctu_can_fd.ctu_can_fd_vip_inst.timestamp_agent_inst.timestamp_i[16] top.tb_top_ctu_can_fd.ctu_can_fd_vip_inst.timestamp_agent_inst.timestamp_i[15] top.tb_top_ctu_can_fd.ctu_can_fd_vip_inst.timestamp_agent_inst.timestamp_i[14] top.tb_top_ctu_can_fd.ctu_can_fd_vip_inst.timestamp_agent_inst.timestamp_i[13] top.tb_top_ctu_can_fd.ctu_can_fd_vip_inst.timestamp_agent_inst.timestamp_i[12] top.tb_top_ctu_can_fd.ctu_can_fd_vip_inst.timestamp_agent_inst.timestamp_i[11] top.tb_top_ctu_can_fd.ctu_can_fd_vip_inst.timestamp_agent_inst.timestamp_i[10] top.tb_top_ctu_can_fd.ctu_can_fd_vip_inst.timestamp_agent_inst.timestamp_i[9] top.tb_top_ctu_can_fd.ctu_can_fd_vip_inst.timestamp_agent_inst.timestamp_i[8] top.tb_top_ctu_can_fd.ctu_can_fd_vip_inst.timestamp_agent_inst.timestamp_i[7] top.tb_top_ctu_can_fd.ctu_can_fd_vip_inst.timestamp_agent_inst.timestamp_i[6] top.tb_top_ctu_can_fd.ctu_can_fd_vip_inst.timestamp_agent_inst.timestamp_i[5] top.tb_top_ctu_can_fd.ctu_can_fd_vip_inst.timestamp_agent_inst.timestamp_i[4] top.tb_top_ctu_can_fd.ctu_can_fd_vip_inst.timestamp_agent_inst.timestamp_i[3] top.tb_top_ctu_can_fd.ctu_can_fd_vip_inst.timestamp_agent_inst.timestamp_i[2] top.tb_top_ctu_can_fd.ctu_can_fd_vip_inst.timestamp_agent_inst.timestamp_i[1] top.tb_top_ctu_can_fd.ctu_can_fd_vip_inst.timestamp_agent_inst.timestamp_i[0]
+@1401200
+-Timestamp agent
+@420
+top.tb_top_ctu_can_fd.ctu_can_fd_vip_inst.feature_test_agent_gen.feature_test_agent_inst.force_can_rx_dut
+top.tb_top_ctu_can_fd.ctu_can_fd_vip_inst.feature_test_agent_gen.feature_test_agent_inst.force_can_rx_test_node
+@800200
+-DUT
+@28
+top.tb_top_ctu_can_fd.dut.can_rx
+top.tb_top_ctu_can_fd.dut.can_tx
+@800200
+-DUTs Memory bus
+@28
+top.tb_top_ctu_can_fd.dut.swr
+top.tb_top_ctu_can_fd.dut.srd
+top.tb_top_ctu_can_fd.dut.scs
+top.tb_top_ctu_can_fd.dut.clk_sys
+top.tb_top_ctu_can_fd.dut.res_n
+top.tb_top_ctu_can_fd.dut.int
+top.tb_top_ctu_can_fd.ctu_can_fd_vip_inst.timestamp_agent_inst.timestamp_preset
+@c00025
+#{top.tb_top_ctu_can_fd.dut.timestamp[63:0]} top.tb_top_ctu_can_fd.dut.timestamp[63] top.tb_top_ctu_can_fd.dut.timestamp[62] top.tb_top_ctu_can_fd.dut.timestamp[61] top.tb_top_ctu_can_fd.dut.timestamp[60] top.tb_top_ctu_can_fd.dut.timestamp[59] top.tb_top_ctu_can_fd.dut.timestamp[58] top.tb_top_ctu_can_fd.dut.timestamp[57] top.tb_top_ctu_can_fd.dut.timestamp[56] top.tb_top_ctu_can_fd.dut.timestamp[55] top.tb_top_ctu_can_fd.dut.timestamp[54] top.tb_top_ctu_can_fd.dut.timestamp[53] top.tb_top_ctu_can_fd.dut.timestamp[52] top.tb_top_ctu_can_fd.dut.timestamp[51] top.tb_top_ctu_can_fd.dut.timestamp[50] top.tb_top_ctu_can_fd.dut.timestamp[49] top.tb_top_ctu_can_fd.dut.timestamp[48] top.tb_top_ctu_can_fd.dut.timestamp[47] top.tb_top_ctu_can_fd.dut.timestamp[46] top.tb_top_ctu_can_fd.dut.timestamp[45] top.tb_top_ctu_can_fd.dut.timestamp[44] top.tb_top_ctu_can_fd.dut.timestamp[43] top.tb_top_ctu_can_fd.dut.timestamp[42] top.tb_top_ctu_can_fd.dut.timestamp[41] top.tb_top_ctu_can_fd.dut.timestamp[40] top.tb_top_ctu_can_fd.dut.timestamp[39] top.tb_top_ctu_can_fd.dut.timestamp[38] top.tb_top_ctu_can_fd.dut.timestamp[37] top.tb_top_ctu_can_fd.dut.timestamp[36] top.tb_top_ctu_can_fd.dut.timestamp[35] top.tb_top_ctu_can_fd.dut.timestamp[34] top.tb_top_ctu_can_fd.dut.timestamp[33] top.tb_top_ctu_can_fd.dut.timestamp[32] top.tb_top_ctu_can_fd.dut.timestamp[31] top.tb_top_ctu_can_fd.dut.timestamp[30] top.tb_top_ctu_can_fd.dut.timestamp[29] top.tb_top_ctu_can_fd.dut.timestamp[28] top.tb_top_ctu_can_fd.dut.timestamp[27] top.tb_top_ctu_can_fd.dut.timestamp[26] top.tb_top_ctu_can_fd.dut.timestamp[25] top.tb_top_ctu_can_fd.dut.timestamp[24] top.tb_top_ctu_can_fd.dut.timestamp[23] top.tb_top_ctu_can_fd.dut.timestamp[22] top.tb_top_ctu_can_fd.dut.timestamp[21] top.tb_top_ctu_can_fd.dut.timestamp[20] top.tb_top_ctu_can_fd.dut.timestamp[19] top.tb_top_ctu_can_fd.dut.timestamp[18] top.tb_top_ctu_can_fd.dut.timestamp[17] top.tb_top_ctu_can_fd.dut.timestamp[16] top.tb_top_ctu_can_fd.dut.timestamp[15] top.tb_top_ctu_can_fd.dut.timestamp[14] top.tb_top_ctu_can_fd.dut.timestamp[13] top.tb_top_ctu_can_fd.dut.timestamp[12] top.tb_top_ctu_can_fd.dut.timestamp[11] top.tb_top_ctu_can_fd.dut.timestamp[10] top.tb_top_ctu_can_fd.dut.timestamp[9] top.tb_top_ctu_can_fd.dut.timestamp[8] top.tb_top_ctu_can_fd.dut.timestamp[7] top.tb_top_ctu_can_fd.dut.timestamp[6] top.tb_top_ctu_can_fd.dut.timestamp[5] top.tb_top_ctu_can_fd.dut.timestamp[4] top.tb_top_ctu_can_fd.dut.timestamp[3] top.tb_top_ctu_can_fd.dut.timestamp[2] top.tb_top_ctu_can_fd.dut.timestamp[1] top.tb_top_ctu_can_fd.dut.timestamp[0]
+@28
+top.tb_top_ctu_can_fd.dut.timestamp[63]
+top.tb_top_ctu_can_fd.dut.timestamp[62]
+top.tb_top_ctu_can_fd.dut.timestamp[61]
+top.tb_top_ctu_can_fd.dut.timestamp[60]
+top.tb_top_ctu_can_fd.dut.timestamp[59]
+top.tb_top_ctu_can_fd.dut.timestamp[58]
+top.tb_top_ctu_can_fd.dut.timestamp[57]
+top.tb_top_ctu_can_fd.dut.timestamp[56]
+top.tb_top_ctu_can_fd.dut.timestamp[55]
+top.tb_top_ctu_can_fd.dut.timestamp[54]
+top.tb_top_ctu_can_fd.dut.timestamp[53]
+top.tb_top_ctu_can_fd.dut.timestamp[52]
+top.tb_top_ctu_can_fd.dut.timestamp[51]
+top.tb_top_ctu_can_fd.dut.timestamp[50]
+top.tb_top_ctu_can_fd.dut.timestamp[49]
+top.tb_top_ctu_can_fd.dut.timestamp[48]
+top.tb_top_ctu_can_fd.dut.timestamp[47]
+top.tb_top_ctu_can_fd.dut.timestamp[46]
+top.tb_top_ctu_can_fd.dut.timestamp[45]
+top.tb_top_ctu_can_fd.dut.timestamp[44]
+top.tb_top_ctu_can_fd.dut.timestamp[43]
+top.tb_top_ctu_can_fd.dut.timestamp[42]
+top.tb_top_ctu_can_fd.dut.timestamp[41]
+top.tb_top_ctu_can_fd.dut.timestamp[40]
+top.tb_top_ctu_can_fd.dut.timestamp[39]
+top.tb_top_ctu_can_fd.dut.timestamp[38]
+top.tb_top_ctu_can_fd.dut.timestamp[37]
+top.tb_top_ctu_can_fd.dut.timestamp[36]
+top.tb_top_ctu_can_fd.dut.timestamp[35]
+top.tb_top_ctu_can_fd.dut.timestamp[34]
+top.tb_top_ctu_can_fd.dut.timestamp[33]
+top.tb_top_ctu_can_fd.dut.timestamp[32]
+top.tb_top_ctu_can_fd.dut.timestamp[31]
+top.tb_top_ctu_can_fd.dut.timestamp[30]
+top.tb_top_ctu_can_fd.dut.timestamp[29]
+top.tb_top_ctu_can_fd.dut.timestamp[28]
+top.tb_top_ctu_can_fd.dut.timestamp[27]
+top.tb_top_ctu_can_fd.dut.timestamp[26]
+top.tb_top_ctu_can_fd.dut.timestamp[25]
+top.tb_top_ctu_can_fd.dut.timestamp[24]
+top.tb_top_ctu_can_fd.dut.timestamp[23]
+top.tb_top_ctu_can_fd.dut.timestamp[22]
+top.tb_top_ctu_can_fd.dut.timestamp[21]
+top.tb_top_ctu_can_fd.dut.timestamp[20]
+top.tb_top_ctu_can_fd.dut.timestamp[19]
+top.tb_top_ctu_can_fd.dut.timestamp[18]
+top.tb_top_ctu_can_fd.dut.timestamp[17]
+top.tb_top_ctu_can_fd.dut.timestamp[16]
+top.tb_top_ctu_can_fd.dut.timestamp[15]
+top.tb_top_ctu_can_fd.dut.timestamp[14]
+top.tb_top_ctu_can_fd.dut.timestamp[13]
+top.tb_top_ctu_can_fd.dut.timestamp[12]
+top.tb_top_ctu_can_fd.dut.timestamp[11]
+top.tb_top_ctu_can_fd.dut.timestamp[10]
+top.tb_top_ctu_can_fd.dut.timestamp[9]
+top.tb_top_ctu_can_fd.dut.timestamp[8]
+top.tb_top_ctu_can_fd.dut.timestamp[7]
+top.tb_top_ctu_can_fd.dut.timestamp[6]
+top.tb_top_ctu_can_fd.dut.timestamp[5]
+top.tb_top_ctu_can_fd.dut.timestamp[4]
+top.tb_top_ctu_can_fd.dut.timestamp[3]
+top.tb_top_ctu_can_fd.dut.timestamp[2]
+top.tb_top_ctu_can_fd.dut.timestamp[1]
+top.tb_top_ctu_can_fd.dut.timestamp[0]
+@1401201
+-group_end
+@22
+#{top.tb_top_ctu_can_fd.dut.sbe[3:0]} top.tb_top_ctu_can_fd.dut.sbe[3] top.tb_top_ctu_can_fd.dut.sbe[2] top.tb_top_ctu_can_fd.dut.sbe[1] top.tb_top_ctu_can_fd.dut.sbe[0]
+#{top.tb_top_ctu_can_fd.dut.adress[15:0]} top.tb_top_ctu_can_fd.dut.adress[15] top.tb_top_ctu_can_fd.dut.adress[14] top.tb_top_ctu_can_fd.dut.adress[13] top.tb_top_ctu_can_fd.dut.adress[12] top.tb_top_ctu_can_fd.dut.adress[11] top.tb_top_ctu_can_fd.dut.adress[10] top.tb_top_ctu_can_fd.dut.adress[9] top.tb_top_ctu_can_fd.dut.adress[8] top.tb_top_ctu_can_fd.dut.adress[7] top.tb_top_ctu_can_fd.dut.adress[6] top.tb_top_ctu_can_fd.dut.adress[5] top.tb_top_ctu_can_fd.dut.adress[4] top.tb_top_ctu_can_fd.dut.adress[3] top.tb_top_ctu_can_fd.dut.adress[2] top.tb_top_ctu_can_fd.dut.adress[1] top.tb_top_ctu_can_fd.dut.adress[0]
+#{top.tb_top_ctu_can_fd.dut.data_out[31:0]} top.tb_top_ctu_can_fd.dut.data_out[31] top.tb_top_ctu_can_fd.dut.data_out[30] top.tb_top_ctu_can_fd.dut.data_out[29] top.tb_top_ctu_can_fd.dut.data_out[28] top.tb_top_ctu_can_fd.dut.data_out[27] top.tb_top_ctu_can_fd.dut.data_out[26] top.tb_top_ctu_can_fd.dut.data_out[25] top.tb_top_ctu_can_fd.dut.data_out[24] top.tb_top_ctu_can_fd.dut.data_out[23] top.tb_top_ctu_can_fd.dut.data_out[22] top.tb_top_ctu_can_fd.dut.data_out[21] top.tb_top_ctu_can_fd.dut.data_out[20] top.tb_top_ctu_can_fd.dut.data_out[19] top.tb_top_ctu_can_fd.dut.data_out[18] top.tb_top_ctu_can_fd.dut.data_out[17] top.tb_top_ctu_can_fd.dut.data_out[16] top.tb_top_ctu_can_fd.dut.data_out[15] top.tb_top_ctu_can_fd.dut.data_out[14] top.tb_top_ctu_can_fd.dut.data_out[13] top.tb_top_ctu_can_fd.dut.data_out[12] top.tb_top_ctu_can_fd.dut.data_out[11] top.tb_top_ctu_can_fd.dut.data_out[10] top.tb_top_ctu_can_fd.dut.data_out[9] top.tb_top_ctu_can_fd.dut.data_out[8] top.tb_top_ctu_can_fd.dut.data_out[7] top.tb_top_ctu_can_fd.dut.data_out[6] top.tb_top_ctu_can_fd.dut.data_out[5] top.tb_top_ctu_can_fd.dut.data_out[4] top.tb_top_ctu_can_fd.dut.data_out[3] top.tb_top_ctu_can_fd.dut.data_out[2] top.tb_top_ctu_can_fd.dut.data_out[1] top.tb_top_ctu_can_fd.dut.data_out[0]
+#{top.tb_top_ctu_can_fd.dut.data_in[31:0]} top.tb_top_ctu_can_fd.dut.data_in[31] top.tb_top_ctu_can_fd.dut.data_in[30] top.tb_top_ctu_can_fd.dut.data_in[29] top.tb_top_ctu_can_fd.dut.data_in[28] top.tb_top_ctu_can_fd.dut.data_in[27] top.tb_top_ctu_can_fd.dut.data_in[26] top.tb_top_ctu_can_fd.dut.data_in[25] top.tb_top_ctu_can_fd.dut.data_in[24] top.tb_top_ctu_can_fd.dut.data_in[23] top.tb_top_ctu_can_fd.dut.data_in[22] top.tb_top_ctu_can_fd.dut.data_in[21] top.tb_top_ctu_can_fd.dut.data_in[20] top.tb_top_ctu_can_fd.dut.data_in[19] top.tb_top_ctu_can_fd.dut.data_in[18] top.tb_top_ctu_can_fd.dut.data_in[17] top.tb_top_ctu_can_fd.dut.data_in[16] top.tb_top_ctu_can_fd.dut.data_in[15] top.tb_top_ctu_can_fd.dut.data_in[14] top.tb_top_ctu_can_fd.dut.data_in[13] top.tb_top_ctu_can_fd.dut.data_in[12] top.tb_top_ctu_can_fd.dut.data_in[11] top.tb_top_ctu_can_fd.dut.data_in[10] top.tb_top_ctu_can_fd.dut.data_in[9] top.tb_top_ctu_can_fd.dut.data_in[8] top.tb_top_ctu_can_fd.dut.data_in[7] top.tb_top_ctu_can_fd.dut.data_in[6] top.tb_top_ctu_can_fd.dut.data_in[5] top.tb_top_ctu_can_fd.dut.data_in[4] top.tb_top_ctu_can_fd.dut.data_in[3] top.tb_top_ctu_can_fd.dut.data_in[2] top.tb_top_ctu_can_fd.dut.data_in[1] top.tb_top_ctu_can_fd.dut.data_in[0]
+@1000200
+-DUTs Memory bus
+@c00200
+-Test probe
+@28
+top.tb_top_ctu_can_fd.dut.test_probe.tx_trigger
+top.tb_top_ctu_can_fd.dut.test_probe.rx_trigger_wbs
+top.tb_top_ctu_can_fd.dut.test_probe.rx_trigger_nbs
+@1401200
+-Test probe
+@800200
+-CAN Core
+@420
+top.tb_top_ctu_can_fd.dut.can_core_inst.protocol_control_inst.protocol_control_fsm_inst.curr_state
+top.tb_top_ctu_can_fd.dut.prescaler_inst.bt_fsm
+top.tb_top_ctu_can_fd.dut.can_core_inst.fault_confinement_inst.fault_confinement_fsm_inst.curr_state
+top.tb_top_ctu_can_fd.dut.can_core_inst.operation_control_inst.curr_state
+@1000200
+-CAN Core
+@22
+#{top.tb_top_ctu_can_fd.dut.memory_registers_inst.control_registers_reg_map_comp.control_registers_in.txtb_info[15:0]} top.tb_top_ctu_can_fd.dut.memory_registers_inst.control_registers_reg_map_comp.control_registers_in.txtb_info[15] top.tb_top_ctu_can_fd.dut.memory_registers_inst.control_registers_reg_map_comp.control_registers_in.txtb_info[14] top.tb_top_ctu_can_fd.dut.memory_registers_inst.control_registers_reg_map_comp.control_registers_in.txtb_info[13] top.tb_top_ctu_can_fd.dut.memory_registers_inst.control_registers_reg_map_comp.control_registers_in.txtb_info[12] top.tb_top_ctu_can_fd.dut.memory_registers_inst.control_registers_reg_map_comp.control_registers_in.txtb_info[11] top.tb_top_ctu_can_fd.dut.memory_registers_inst.control_registers_reg_map_comp.control_registers_in.txtb_info[10] top.tb_top_ctu_can_fd.dut.memory_registers_inst.control_registers_reg_map_comp.control_registers_in.txtb_info[9] top.tb_top_ctu_can_fd.dut.memory_registers_inst.control_registers_reg_map_comp.control_registers_in.txtb_info[8] top.tb_top_ctu_can_fd.dut.memory_registers_inst.control_registers_reg_map_comp.control_registers_in.txtb_info[7] top.tb_top_ctu_can_fd.dut.memory_registers_inst.control_registers_reg_map_comp.control_registers_in.txtb_info[6] top.tb_top_ctu_can_fd.dut.memory_registers_inst.control_registers_reg_map_comp.control_registers_in.txtb_info[5] top.tb_top_ctu_can_fd.dut.memory_registers_inst.control_registers_reg_map_comp.control_registers_in.txtb_info[4] top.tb_top_ctu_can_fd.dut.memory_registers_inst.control_registers_reg_map_comp.control_registers_in.txtb_info[3] top.tb_top_ctu_can_fd.dut.memory_registers_inst.control_registers_reg_map_comp.control_registers_in.txtb_info[2] top.tb_top_ctu_can_fd.dut.memory_registers_inst.control_registers_reg_map_comp.control_registers_in.txtb_info[1] top.tb_top_ctu_can_fd.dut.memory_registers_inst.control_registers_reg_map_comp.control_registers_in.txtb_info[0]
+@800200
+-TXT Buffers
+@420
+top.tb_top_ctu_can_fd.dut.txt_buf_comp_gen[3].txt_buffer_inst.txt_buffer_fsm_inst.curr_state
+top.tb_top_ctu_can_fd.dut.txt_buf_comp_gen[2].txt_buffer_inst.txt_buffer_fsm_inst.curr_state
+top.tb_top_ctu_can_fd.dut.txt_buf_comp_gen[1].txt_buffer_inst.txt_buffer_fsm_inst.curr_state
+top.tb_top_ctu_can_fd.dut.txt_buf_comp_gen[0].txt_buffer_inst.txt_buffer_fsm_inst.curr_state
+top.tb_top_ctu_can_fd.dut.txt_buf_comp_gen[4].txt_buffer_inst.txt_buffer_fsm_inst.curr_state
+top.tb_top_ctu_can_fd.dut.txt_buf_comp_gen[5].txt_buffer_inst.txt_buffer_fsm_inst.curr_state
+top.tb_top_ctu_can_fd.dut.txt_buf_comp_gen[6].txt_buffer_inst.txt_buffer_fsm_inst.curr_state
+top.tb_top_ctu_can_fd.dut.txt_buf_comp_gen[7].txt_buffer_inst.txt_buffer_fsm_inst.curr_state
+top.tb_top_ctu_can_fd.dut.tx_arbitrator_inst.tx_arbitrator_fsm_inst.curr_state
+@28
+top.tb_top_ctu_can_fd.dut.tx_arbitrator_inst.tran_frame_valid
+@1000200
+-TXT Buffers
+-DUT
+@800200
+-Test Node
+@28
+>-10000000
+top.tb_top_ctu_can_fd.ctu_can_fd_vip_inst.feature_test_agent_gen.feature_test_agent_inst.test_node_inst.can_rx
+>0
+top.tb_top_ctu_can_fd.ctu_can_fd_vip_inst.feature_test_agent_gen.feature_test_agent_inst.test_node_inst.can_tx
+top.tb_top_ctu_can_fd.ctu_can_fd_vip_inst.feature_test_agent_gen.feature_test_agent_inst.test_node_inst.scs
+top.tb_top_ctu_can_fd.ctu_can_fd_vip_inst.feature_test_agent_gen.feature_test_agent_inst.test_node_inst.swr
+top.tb_top_ctu_can_fd.ctu_can_fd_vip_inst.feature_test_agent_gen.feature_test_agent_inst.test_node_inst.srd
+@22
+#{top.tb_top_ctu_can_fd.ctu_can_fd_vip_inst.feature_test_agent_gen.feature_test_agent_inst.test_node_inst.adress[15:0]} top.tb_top_ctu_can_fd.ctu_can_fd_vip_inst.feature_test_agent_gen.feature_test_agent_inst.test_node_inst.adress[15] top.tb_top_ctu_can_fd.ctu_can_fd_vip_inst.feature_test_agent_gen.feature_test_agent_inst.test_node_inst.adress[14] top.tb_top_ctu_can_fd.ctu_can_fd_vip_inst.feature_test_agent_gen.feature_test_agent_inst.test_node_inst.adress[13] top.tb_top_ctu_can_fd.ctu_can_fd_vip_inst.feature_test_agent_gen.feature_test_agent_inst.test_node_inst.adress[12] top.tb_top_ctu_can_fd.ctu_can_fd_vip_inst.feature_test_agent_gen.feature_test_agent_inst.test_node_inst.adress[11] top.tb_top_ctu_can_fd.ctu_can_fd_vip_inst.feature_test_agent_gen.feature_test_agent_inst.test_node_inst.adress[10] top.tb_top_ctu_can_fd.ctu_can_fd_vip_inst.feature_test_agent_gen.feature_test_agent_inst.test_node_inst.adress[9] top.tb_top_ctu_can_fd.ctu_can_fd_vip_inst.feature_test_agent_gen.feature_test_agent_inst.test_node_inst.adress[8] top.tb_top_ctu_can_fd.ctu_can_fd_vip_inst.feature_test_agent_gen.feature_test_agent_inst.test_node_inst.adress[7] top.tb_top_ctu_can_fd.ctu_can_fd_vip_inst.feature_test_agent_gen.feature_test_agent_inst.test_node_inst.adress[6] top.tb_top_ctu_can_fd.ctu_can_fd_vip_inst.feature_test_agent_gen.feature_test_agent_inst.test_node_inst.adress[5] top.tb_top_ctu_can_fd.ctu_can_fd_vip_inst.feature_test_agent_gen.feature_test_agent_inst.test_node_inst.adress[4] top.tb_top_ctu_can_fd.ctu_can_fd_vip_inst.feature_test_agent_gen.feature_test_agent_inst.test_node_inst.adress[3] top.tb_top_ctu_can_fd.ctu_can_fd_vip_inst.feature_test_agent_gen.feature_test_agent_inst.test_node_inst.adress[2] top.tb_top_ctu_can_fd.ctu_can_fd_vip_inst.feature_test_agent_gen.feature_test_agent_inst.test_node_inst.adress[1] top.tb_top_ctu_can_fd.ctu_can_fd_vip_inst.feature_test_agent_gen.feature_test_agent_inst.test_node_inst.adress[0]
+#{top.tb_top_ctu_can_fd.ctu_can_fd_vip_inst.feature_test_agent_gen.feature_test_agent_inst.test_node_inst.data_out[31:0]} top.tb_top_ctu_can_fd.ctu_can_fd_vip_inst.feature_test_agent_gen.feature_test_agent_inst.test_node_inst.data_out[31] top.tb_top_ctu_can_fd.ctu_can_fd_vip_inst.feature_test_agent_gen.feature_test_agent_inst.test_node_inst.data_out[30] top.tb_top_ctu_can_fd.ctu_can_fd_vip_inst.feature_test_agent_gen.feature_test_agent_inst.test_node_inst.data_out[29] top.tb_top_ctu_can_fd.ctu_can_fd_vip_inst.feature_test_agent_gen.feature_test_agent_inst.test_node_inst.data_out[28] top.tb_top_ctu_can_fd.ctu_can_fd_vip_inst.feature_test_agent_gen.feature_test_agent_inst.test_node_inst.data_out[27] top.tb_top_ctu_can_fd.ctu_can_fd_vip_inst.feature_test_agent_gen.feature_test_agent_inst.test_node_inst.data_out[26] top.tb_top_ctu_can_fd.ctu_can_fd_vip_inst.feature_test_agent_gen.feature_test_agent_inst.test_node_inst.data_out[25] top.tb_top_ctu_can_fd.ctu_can_fd_vip_inst.feature_test_agent_gen.feature_test_agent_inst.test_node_inst.data_out[24] top.tb_top_ctu_can_fd.ctu_can_fd_vip_inst.feature_test_agent_gen.feature_test_agent_inst.test_node_inst.data_out[23] top.tb_top_ctu_can_fd.ctu_can_fd_vip_inst.feature_test_agent_gen.feature_test_agent_inst.test_node_inst.data_out[22] top.tb_top_ctu_can_fd.ctu_can_fd_vip_inst.feature_test_agent_gen.feature_test_agent_inst.test_node_inst.data_out[21] top.tb_top_ctu_can_fd.ctu_can_fd_vip_inst.feature_test_agent_gen.feature_test_agent_inst.test_node_inst.data_out[20] top.tb_top_ctu_can_fd.ctu_can_fd_vip_inst.feature_test_agent_gen.feature_test_agent_inst.test_node_inst.data_out[19] top.tb_top_ctu_can_fd.ctu_can_fd_vip_inst.feature_test_agent_gen.feature_test_agent_inst.test_node_inst.data_out[18] top.tb_top_ctu_can_fd.ctu_can_fd_vip_inst.feature_test_agent_gen.feature_test_agent_inst.test_node_inst.data_out[17] top.tb_top_ctu_can_fd.ctu_can_fd_vip_inst.feature_test_agent_gen.feature_test_agent_inst.test_node_inst.data_out[16] top.tb_top_ctu_can_fd.ctu_can_fd_vip_inst.feature_test_agent_gen.feature_test_agent_inst.test_node_inst.data_out[15] top.tb_top_ctu_can_fd.ctu_can_fd_vip_inst.feature_test_agent_gen.feature_test_agent_inst.test_node_inst.data_out[14] top.tb_top_ctu_can_fd.ctu_can_fd_vip_inst.feature_test_agent_gen.feature_test_agent_inst.test_node_inst.data_out[13] top.tb_top_ctu_can_fd.ctu_can_fd_vip_inst.feature_test_agent_gen.feature_test_agent_inst.test_node_inst.data_out[12] top.tb_top_ctu_can_fd.ctu_can_fd_vip_inst.feature_test_agent_gen.feature_test_agent_inst.test_node_inst.data_out[11] top.tb_top_ctu_can_fd.ctu_can_fd_vip_inst.feature_test_agent_gen.feature_test_agent_inst.test_node_inst.data_out[10] top.tb_top_ctu_can_fd.ctu_can_fd_vip_inst.feature_test_agent_gen.feature_test_agent_inst.test_node_inst.data_out[9] top.tb_top_ctu_can_fd.ctu_can_fd_vip_inst.feature_test_agent_gen.feature_test_agent_inst.test_node_inst.data_out[8] top.tb_top_ctu_can_fd.ctu_can_fd_vip_inst.feature_test_agent_gen.feature_test_agent_inst.test_node_inst.data_out[7] top.tb_top_ctu_can_fd.ctu_can_fd_vip_inst.feature_test_agent_gen.feature_test_agent_inst.test_node_inst.data_out[6] top.tb_top_ctu_can_fd.ctu_can_fd_vip_inst.feature_test_agent_gen.feature_test_agent_inst.test_node_inst.data_out[5] top.tb_top_ctu_can_fd.ctu_can_fd_vip_inst.feature_test_agent_gen.feature_test_agent_inst.test_node_inst.data_out[4] top.tb_top_ctu_can_fd.ctu_can_fd_vip_inst.feature_test_agent_gen.feature_test_agent_inst.test_node_inst.data_out[3] top.tb_top_ctu_can_fd.ctu_can_fd_vip_inst.feature_test_agent_gen.feature_test_agent_inst.test_node_inst.data_out[2] top.tb_top_ctu_can_fd.ctu_can_fd_vip_inst.feature_test_agent_gen.feature_test_agent_inst.test_node_inst.data_out[1] top.tb_top_ctu_can_fd.ctu_can_fd_vip_inst.feature_test_agent_gen.feature_test_agent_inst.test_node_inst.data_out[0]
+#{top.tb_top_ctu_can_fd.ctu_can_fd_vip_inst.feature_test_agent_gen.feature_test_agent_inst.test_node_inst.data_in[31:0]} top.tb_top_ctu_can_fd.ctu_can_fd_vip_inst.feature_test_agent_gen.feature_test_agent_inst.test_node_inst.data_in[31] top.tb_top_ctu_can_fd.ctu_can_fd_vip_inst.feature_test_agent_gen.feature_test_agent_inst.test_node_inst.data_in[30] top.tb_top_ctu_can_fd.ctu_can_fd_vip_inst.feature_test_agent_gen.feature_test_agent_inst.test_node_inst.data_in[29] top.tb_top_ctu_can_fd.ctu_can_fd_vip_inst.feature_test_agent_gen.feature_test_agent_inst.test_node_inst.data_in[28] top.tb_top_ctu_can_fd.ctu_can_fd_vip_inst.feature_test_agent_gen.feature_test_agent_inst.test_node_inst.data_in[27] top.tb_top_ctu_can_fd.ctu_can_fd_vip_inst.feature_test_agent_gen.feature_test_agent_inst.test_node_inst.data_in[26] top.tb_top_ctu_can_fd.ctu_can_fd_vip_inst.feature_test_agent_gen.feature_test_agent_inst.test_node_inst.data_in[25] top.tb_top_ctu_can_fd.ctu_can_fd_vip_inst.feature_test_agent_gen.feature_test_agent_inst.test_node_inst.data_in[24] top.tb_top_ctu_can_fd.ctu_can_fd_vip_inst.feature_test_agent_gen.feature_test_agent_inst.test_node_inst.data_in[23] top.tb_top_ctu_can_fd.ctu_can_fd_vip_inst.feature_test_agent_gen.feature_test_agent_inst.test_node_inst.data_in[22] top.tb_top_ctu_can_fd.ctu_can_fd_vip_inst.feature_test_agent_gen.feature_test_agent_inst.test_node_inst.data_in[21] top.tb_top_ctu_can_fd.ctu_can_fd_vip_inst.feature_test_agent_gen.feature_test_agent_inst.test_node_inst.data_in[20] top.tb_top_ctu_can_fd.ctu_can_fd_vip_inst.feature_test_agent_gen.feature_test_agent_inst.test_node_inst.data_in[19] top.tb_top_ctu_can_fd.ctu_can_fd_vip_inst.feature_test_agent_gen.feature_test_agent_inst.test_node_inst.data_in[18] top.tb_top_ctu_can_fd.ctu_can_fd_vip_inst.feature_test_agent_gen.feature_test_agent_inst.test_node_inst.data_in[17] top.tb_top_ctu_can_fd.ctu_can_fd_vip_inst.feature_test_agent_gen.feature_test_agent_inst.test_node_inst.data_in[16] top.tb_top_ctu_can_fd.ctu_can_fd_vip_inst.feature_test_agent_gen.feature_test_agent_inst.test_node_inst.data_in[15] top.tb_top_ctu_can_fd.ctu_can_fd_vip_inst.feature_test_agent_gen.feature_test_agent_inst.test_node_inst.data_in[14] top.tb_top_ctu_can_fd.ctu_can_fd_vip_inst.feature_test_agent_gen.feature_test_agent_inst.test_node_inst.data_in[13] top.tb_top_ctu_can_fd.ctu_can_fd_vip_inst.feature_test_agent_gen.feature_test_agent_inst.test_node_inst.data_in[12] top.tb_top_ctu_can_fd.ctu_can_fd_vip_inst.feature_test_agent_gen.feature_test_agent_inst.test_node_inst.data_in[11] top.tb_top_ctu_can_fd.ctu_can_fd_vip_inst.feature_test_agent_gen.feature_test_agent_inst.test_node_inst.data_in[10] top.tb_top_ctu_can_fd.ctu_can_fd_vip_inst.feature_test_agent_gen.feature_test_agent_inst.test_node_inst.data_in[9] top.tb_top_ctu_can_fd.ctu_can_fd_vip_inst.feature_test_agent_gen.feature_test_agent_inst.test_node_inst.data_in[8] top.tb_top_ctu_can_fd.ctu_can_fd_vip_inst.feature_test_agent_gen.feature_test_agent_inst.test_node_inst.data_in[7] top.tb_top_ctu_can_fd.ctu_can_fd_vip_inst.feature_test_agent_gen.feature_test_agent_inst.test_node_inst.data_in[6] top.tb_top_ctu_can_fd.ctu_can_fd_vip_inst.feature_test_agent_gen.feature_test_agent_inst.test_node_inst.data_in[5] top.tb_top_ctu_can_fd.ctu_can_fd_vip_inst.feature_test_agent_gen.feature_test_agent_inst.test_node_inst.data_in[4] top.tb_top_ctu_can_fd.ctu_can_fd_vip_inst.feature_test_agent_gen.feature_test_agent_inst.test_node_inst.data_in[3] top.tb_top_ctu_can_fd.ctu_can_fd_vip_inst.feature_test_agent_gen.feature_test_agent_inst.test_node_inst.data_in[2] top.tb_top_ctu_can_fd.ctu_can_fd_vip_inst.feature_test_agent_gen.feature_test_agent_inst.test_node_inst.data_in[1] top.tb_top_ctu_can_fd.ctu_can_fd_vip_inst.feature_test_agent_gen.feature_test_agent_inst.test_node_inst.data_in[0]
+@c00022
+#{top.tb_top_ctu_can_fd.ctu_can_fd_vip_inst.feature_test_agent_gen.feature_test_agent_inst.test_node_inst.sbe[3:0]} top.tb_top_ctu_can_fd.ctu_can_fd_vip_inst.feature_test_agent_gen.feature_test_agent_inst.test_node_inst.sbe[3] top.tb_top_ctu_can_fd.ctu_can_fd_vip_inst.feature_test_agent_gen.feature_test_agent_inst.test_node_inst.sbe[2] top.tb_top_ctu_can_fd.ctu_can_fd_vip_inst.feature_test_agent_gen.feature_test_agent_inst.test_node_inst.sbe[1] top.tb_top_ctu_can_fd.ctu_can_fd_vip_inst.feature_test_agent_gen.feature_test_agent_inst.test_node_inst.sbe[0]
+@28
+top.tb_top_ctu_can_fd.ctu_can_fd_vip_inst.feature_test_agent_gen.feature_test_agent_inst.test_node_inst.sbe[3]
+top.tb_top_ctu_can_fd.ctu_can_fd_vip_inst.feature_test_agent_gen.feature_test_agent_inst.test_node_inst.sbe[2]
+top.tb_top_ctu_can_fd.ctu_can_fd_vip_inst.feature_test_agent_gen.feature_test_agent_inst.test_node_inst.sbe[1]
+top.tb_top_ctu_can_fd.ctu_can_fd_vip_inst.feature_test_agent_gen.feature_test_agent_inst.test_node_inst.sbe[0]
+@1401200
+-group_end
+@420
+top.tb_top_ctu_can_fd.ctu_can_fd_vip_inst.feature_test_agent_gen.feature_test_agent_inst.test_node_inst.can_core_inst.protocol_control_inst.protocol_control_fsm_inst.curr_state
+top.tb_top_ctu_can_fd.ctu_can_fd_vip_inst.feature_test_agent_gen.feature_test_agent_inst.test_node_inst.txt_buf_comp_gen[0].txt_buffer_inst.txt_buffer_fsm_inst.curr_state
+top.tb_top_ctu_can_fd.ctu_can_fd_vip_inst.feature_test_agent_gen.feature_test_agent_inst.test_node_inst.txt_buf_comp_gen[1].txt_buffer_inst.txt_buffer_fsm_inst.curr_state
+top.tb_top_ctu_can_fd.ctu_can_fd_vip_inst.feature_test_agent_gen.feature_test_agent_inst.test_node_inst.can_core_inst.operation_control_inst.curr_state
+@28
+top.tb_top_ctu_can_fd.ctu_can_fd_vip_inst.feature_test_agent_gen.feature_test_agent_inst.test_node_inst.can_core_inst.protocol_control_inst.drv_bus_mon_ena
+top.tb_top_ctu_can_fd.ctu_can_fd_vip_inst.feature_test_agent_gen.feature_test_agent_inst.test_node_inst.can_core_inst.operation_control_inst.is_bus_off
+top.tb_top_ctu_can_fd.ctu_can_fd_vip_inst.feature_test_agent_gen.feature_test_agent_inst.test_node_inst.txt_buf_comp_gen[0].txt_buffer_inst.txt_buffer_fsm_inst.hw_cbs
+top.tb_top_ctu_can_fd.ctu_can_fd_vip_inst.feature_test_agent_gen.feature_test_agent_inst.test_node_inst.txt_buf_comp_gen[0].txt_buffer_inst.txt_buffer_fsm_inst.txtb_hw_cmd.unlock
+top.tb_top_ctu_can_fd.ctu_can_fd_vip_inst.feature_test_agent_gen.feature_test_agent_inst.test_node_inst.txt_buf_comp_gen[0].txt_buffer_inst.txt_buffer_fsm_inst.txtb_hw_cmd.lock
+top.tb_top_ctu_can_fd.ctu_can_fd_vip_inst.feature_test_agent_gen.feature_test_agent_inst.test_node_inst.txt_buf_comp_gen[0].txt_buffer_inst.txt_buffer_fsm_inst.txtb_hw_cmd.failed
+top.tb_top_ctu_can_fd.ctu_can_fd_vip_inst.feature_test_agent_gen.feature_test_agent_inst.test_node_inst.txt_buf_comp_gen[0].txt_buffer_inst.txt_buffer_fsm_inst.txtb_hw_cmd.arbl
+top.tb_top_ctu_can_fd.ctu_can_fd_vip_inst.feature_test_agent_gen.feature_test_agent_inst.test_node_inst.txt_buf_comp_gen[0].txt_buffer_inst.txt_buffer_fsm_inst.txtb_hw_cmd.err
+top.tb_top_ctu_can_fd.ctu_can_fd_vip_inst.feature_test_agent_gen.feature_test_agent_inst.test_node_inst.txt_buf_comp_gen[0].txt_buffer_inst.txt_buffer_fsm_inst.go_to_failed
+top.tb_top_ctu_can_fd.ctu_can_fd_vip_inst.feature_test_agent_gen.feature_test_agent_inst.test_node_inst.txt_buf_comp_gen[0].txt_buffer_inst.txt_buffer_fsm_inst.is_bus_off
+top.tb_top_ctu_can_fd.ctu_can_fd_vip_inst.feature_test_agent_gen.feature_test_agent_inst.test_node_inst.txt_buf_comp_gen[0].txt_buffer_inst.txt_buffer_fsm_inst.drv_bus_mon_ena
+top.tb_top_ctu_can_fd.ctu_can_fd_vip_inst.feature_test_agent_gen.feature_test_agent_inst.test_node_inst.txt_buf_comp_gen[0].txt_buffer_inst.txt_buffer_fsm_inst.drv_rom_ena
+@1000200
+-Test Node
+[pattern_trace] 1
+[pattern_trace] 0
