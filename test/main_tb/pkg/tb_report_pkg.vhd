@@ -221,7 +221,10 @@ package body tb_report_pkg is
     ) is
     begin
         if (cond) then
-            report "PASS: " & msg;
+            if (global_verbosity = verbosity_debug or
+                global_verbosity = verbosity_info) then
+                report "PASS: " & msg;
+            end if;
         else
             ctu_vip_test_result.set_result(false);
             report "FAIL: " & msg severity error;
@@ -235,7 +238,10 @@ package body tb_report_pkg is
     ) is
     begin
         if (not cond) then
-            report "PASS: " & msg;
+            if (global_verbosity = verbosity_debug or
+                global_verbosity = verbosity_info) then
+                report "PASS: " & msg;
+            end if;
         else
             ctu_vip_test_result.set_result(false);
             report "FAIL: " & msg severity error;
