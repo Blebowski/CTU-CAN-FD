@@ -189,6 +189,9 @@ pages:
         - cp test/main_tb/**/*.vhd delivery_package/tb/
         - cp test/main_tb/**/**/*.vhd delivery_package/tb/
         - cp test/tb_lst.txt delivery_package/
+        
+        # Compliance test library
+        - cp test/main_tb/compliance_library/libSIMULATOR_INTERFACE_LIB.so delivery_package/
 
         # Copy regression results
         - cp test/xunit.xsl delivery_package/regression_results/

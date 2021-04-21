@@ -62,13 +62,13 @@ Download delivery package from: [![Delivery package](https://img.shields.io/badg
 
 Delivery package contains:  
 - RTL design
-- VIP and demo of compliance test library.
+- VIP and binary of compliance test library.
 - Documentation
 - Regression results and functional coverage results
 
 RTL CAN be easily integrated into a design with help of [![System architecture](https://img.shields.io/badge/System_architecture--blue.svg)]( http://canbus.pages.fel.cvut.cz/ctucanfd_ip_core/System_architecture.pdf) document.
 
-VIP can be easily integrated into other test-bench with help of [![Testbench architecture](https://img.shields.io/badge/Testbench--blue.svg)]( http://canbus.pages.fel.cvut.cz/ctucanfd_ip_core/Testbench.pdf). Note that running compliance tests requires access to Compliance test library which is
+VIP can be easily integrated into other test-bench with help of [![Testbench architecture](https://img.shields.io/badge/Testbench--blue.svg)]( http://canbus.pages.fel.cvut.cz/ctucanfd_ip_core/Testbench.pdf) document. Note that running compliance tests requires access to Compliance test library which is
 only available with commercial agreement.
 
 ## Development tools
@@ -89,12 +89,12 @@ Python 3 and following modules: pyvcd attrs jinja2 parsy pyyaml click yattag jso
 There is a docker image which contains all dependencies needed available at:  
 [Simulation docker](https://gitlab.com/canfd/server-tools/container_registry).
 
-## Continous integration
+## Continuous integration
 
 All tests are automated into several regression runs:  
-- Fast - no randomization (seed=0), must pass before merge request is merged (basic sanity)
-- Nightly - randomized, runs every night.
-- Compliance - runs ISO 11845-1 2016 compliance test sequence
+- Fast - No randomization (seed=0), must pass before merge request is merged (basic sanity)
+- Nightly - Randomized, runs every night.
+- Compliance - Runs ISO 11845-1 2016 compliance test sequence, runs every night
 
 Results of latest test run + logs are available under:  
 [![pipeline status](https://gitlab.fel.cvut.cz/canbus/ctucanfd_ip_core/badges/master/pipeline.svg)](http://canbus.pages.fel.cvut.cz/ctucanfd_ip_core/tests_fast.xml)
