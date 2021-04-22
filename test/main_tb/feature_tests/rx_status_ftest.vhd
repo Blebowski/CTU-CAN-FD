@@ -111,9 +111,9 @@ package body rx_status_ftest is
     ) is
         variable CAN_frame          :       SW_CAN_frame_type;
         variable send_more          :       boolean := true;
-        variable in_RX_buf          :       natural range 0 to 1023;
+        variable in_RX_buf          :       natural;
         variable frame_sent         :       boolean := false;
-        variable number_frms_sent   :       natural range 0 to 1023;
+        variable number_frms_sent   :       natural;
 
         variable buf_info           :       SW_RX_Buffer_info;
         variable command            :       SW_command := SW_command_rst_val;

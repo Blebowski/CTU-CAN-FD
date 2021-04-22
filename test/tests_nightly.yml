@@ -52,16 +52,16 @@ unit:
             iterations: 1
         crc:
             iterations: 500
-        int_man:
+        int_manager:
             iterations: 500
-        mess_filt:
+        message_filter:
             iterations: 500
-        rx_buf:
+        rx_buffer:
             iterations: 500
-        tx_arb:
+        tx_arbitrator:
             # TODO: Fix TX Arbitrator unit test
             iterations: 0
-        tx_buf:
+        tx_buffer:
             iterations: 500
 
 feature:
@@ -102,7 +102,10 @@ feature:
         err_capt_arb_bit:
         err_capt_arb_stuff:
         err_capt_crc_bit:
+        
+        # Following test is susceptible to hanging!
         err_capt_crc_err:
+            timeout: 10 ms
         err_capt_ctrl_bit:
         err_capt_ctrl_form:
         err_capt_data_bit:
@@ -158,9 +161,9 @@ feature:
         rx_settings_rtsop:
         rx_status:
             rx_buffer_size: 64
-        rx_status:
+        rx_status@:
             rx_buffer_size: 128
-        rx_status:
+        rx_status@@:
             rx_buffer_size: 4096
         rx_status_mof:
 
@@ -177,11 +180,11 @@ feature:
 
         status_txnf:
             txt_buffer_count: 2
-        status_txnf:
+        status_txnf@:
             txt_buffer_count: 4
-        status_txnf:
+        status_txnf@@:
             txt_buffer_count: 6
-        status_txnf:
+        status_txnf@@@:
             txt_buffer_count: 8
         
         status_txs:
@@ -191,16 +194,16 @@ feature:
 
         tx_arb_consistency:
             txt_buffer_count: 2
-        tx_arb_consistency:
+        tx_arb_consistency@:
             txt_buffer_count: 4
-        tx_arb_consistency:
+        tx_arb_consistency@@:
             txt_buffer_count: 8
 
         tx_arb_time_tran:
             txt_buffer_count: 2
-        tx_arb_time_tran:
+        tx_arb_time_tran@:
             txt_buffer_count: 4
-        tx_arb_time_tran:
+        tx_arb_time_tran@@:
             txt_buffer_count: 8
 
         tx_cmd_set_abort:
@@ -217,42 +220,53 @@ feature:
 
         tx_priority:
             txt_buffer_count: 2
-        tx_priority:
+        tx_priority@:
             txt_buffer_count: 3
-        tx_priority:
+        tx_priority@@:
             txt_buffer_count: 4
-        tx_priority:
+        tx_priority@@@:
             txt_buffer_count: 5
-        tx_priority:
+        tx_priority@@@@:
             txt_buffer_count: 6
-        tx_priority:
+        tx_priority@@@@@:
             txt_buffer_count: 8
 
         tx_status:
-            iterations: 5
             txt_buffer_count: 2
-        tx_status:
             iterations: 5
+        tx_status@:
             txt_buffer_count: 4
-        tx_status:
             iterations: 5
+        tx_status@@:
             txt_buffer_count: 6
-        tx_status:
             iterations: 5
+        tx_status@@@:
             txt_buffer_count: 8
+            iterations: 5
+
+
         timestamp_low_high:
         txt_buffer_hazard:
 
 reference:
     tests:
         data_set_1:
+            timeout: 200 ms
         data_set_2:
+            timeout: 200 ms
         data_set_3:
+            timeout: 200 ms
         data_set_4:
+            timeout: 200 ms
         data_set_5:
+            timeout: 200 ms
         data_set_6:
+            timeout: 200 ms
         data_set_7:
+            timeout: 200 ms
         data_set_8:
+            timeout: 200 ms
         data_set_9:
+            timeout: 200 ms
         data_set_10:
-
+            timeout: 200 ms

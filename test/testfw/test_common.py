@@ -265,14 +265,17 @@ def main_tb_configure(tb, config, build) -> None:
                 loc_cfg = dict()
             loc_opts = OptionsDict()
 
+            test_name_stripped = test_name.strip('@')
+
             # Link compliance test library
             if (test_type == "compliance"):
                 loc_opts['ghdl.sim_flags'] = ["--vpi=../main_tb/compliance_library/libSIMULATOR_INTERFACE_LIB.so"]
 
+            test_cfg = loc_cfg.copy()
             dict_merge(loc_cfg, def_cfg)
 
             generics = {
-                'test_name'             : test_name,
+                'test_name'             : test_name_stripped,
                 'test_type'             : test_type,
                 'iterations'            : loc_cfg["iterations"],
                 'reference_iterations'  : loc_cfg["reference_iterations"],
@@ -305,8 +308,16 @@ def main_tb_configure(tb, config, build) -> None:
 
             loc_opts += add_psl_cov_sim_opt('{}.{}.{}'.format(tb.name, test_type, test_name), cfg, build)
             loc_opts += def_otps + loc_opts
-            
-            tb.add_config("{}.{}".format(test_type, test_name), generics=generics, sim_options=loc_opts)
+
+            config_name = test_name_stripped
+            if (test_name_stripped != test_name):
+                #print(test_cfg.items())
+                par_name = list(test_cfg.keys())[0]
+                par_val = list(test_cfg.values())[0]
+                config_name += "@{}_{}".format(par_name, par_val)
+
+            # Check if such test was not added, if yes, add local_config as suffix
+            tb.add_config("{}.{}".format(test_type, config_name), generics=generics, sim_options=loc_opts)
 
 
 def dict_merge(up, *lowers) -> None:

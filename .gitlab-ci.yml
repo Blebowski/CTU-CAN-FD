@@ -109,12 +109,14 @@ test_ip_nightly:
             - test/build/code_coverage_tests_nightly
             - test/build/functional_coverage
             - test/build/vunit_out/preprocessed
+            - test/rtl_lst.txt
+            - test/tb_lst.txt
         reports:
             junit: [test/tests_nightly.xml]
 
     # Nightly tests might fail due to randomization. It is not preffered to
     # kill whole follow-up coverage processing due to this failure!
-    # Fast pipeline on the other hand can't fail because it must pass before merge!
+    # OTOH, fast pipeline can't fail because it must pass before merge!
     allow_failure: true
 
 test_ip_compliance:

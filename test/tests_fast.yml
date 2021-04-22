@@ -58,16 +58,16 @@ unit:
             iterations: 1
         crc:
             iterations: 50
-        int_man:
+        int_manager:
             iterations: 50
-        mess_filt:
+        message_filter:
             iterations: 50
-        rx_buf:
+        rx_buffer:
             iterations: 10
-        tx_arb:
+        tx_arbitrator:
             # TODO: Fix TX Arbitrator unit test
             iterations: 0
-        tx_buf:
+        tx_buffer:
             iterations: 50
 
 feature:

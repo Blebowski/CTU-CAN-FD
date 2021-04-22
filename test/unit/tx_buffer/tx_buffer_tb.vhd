@@ -116,7 +116,7 @@ library vunit_lib;
 context vunit_lib.vunit_context;
 
 
-architecture tx_buf_unit_test of CAN_test is
+architecture tx_buffer_unit_test of CAN_test is
 
     -- Clocking and reset
     signal clk_sys                :   std_logic:='0';
