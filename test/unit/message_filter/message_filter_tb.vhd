@@ -116,7 +116,7 @@ use ctu_can_fd_tb_unit.random_unit_pkg.all;
 library vunit_lib;
 context vunit_lib.vunit_context;
 
-architecture mess_filt_unit_test of CAN_test is
+architecture message_filter_unit_test of CAN_test is
 
     -- Clock and reset
     signal clk_sys            : std_logic;

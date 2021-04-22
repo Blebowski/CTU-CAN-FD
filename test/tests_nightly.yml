@@ -52,16 +52,16 @@ unit:
             iterations: 1
         crc:
             iterations: 500
-        int_man:
+        int_manager:
             iterations: 500
-        mess_filt:
+        message_filter:
             iterations: 500
-        rx_buf:
+        rx_buffer:
             iterations: 500
-        tx_arb:
+        tx_arbitrator:
             # TODO: Fix TX Arbitrator unit test
             iterations: 0
-        tx_buf:
+        tx_buffer:
             iterations: 500
 
 feature:
@@ -102,7 +102,10 @@ feature:
         err_capt_arb_bit:
         err_capt_arb_stuff:
         err_capt_crc_bit:
+        
+        # Following test is susceptible to hanging!
         err_capt_crc_err:
+            timeout: 10 ms
         err_capt_ctrl_bit:
         err_capt_ctrl_form:
         err_capt_data_bit:
@@ -246,13 +249,22 @@ feature:
 reference:
     tests:
         data_set_1:
+            timeout: 200 ms
         data_set_2:
+            timeout: 200 ms
         data_set_3:
+            timeout: 200 ms
         data_set_4:
+            timeout: 200 ms
         data_set_5:
+            timeout: 200 ms
         data_set_6:
+            timeout: 200 ms
         data_set_7:
+            timeout: 200 ms
         data_set_8:
+            timeout: 200 ms
         data_set_9:
+            timeout: 200 ms
         data_set_10:
-
+            timeout: 200 ms

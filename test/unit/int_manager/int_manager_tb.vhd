@@ -124,7 +124,7 @@ use ctu_can_fd_tb_unit.random_unit_pkg.all;
 library vunit_lib;
 context vunit_lib.vunit_context;
 
-architecture int_man_unit_test of CAN_test is
+architecture int_manager_unit_test of CAN_test is
 
     -- System Clock and reset
     signal clk_sys                :   std_logic := '0';
