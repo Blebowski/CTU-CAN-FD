@@ -51,8 +51,7 @@ def read_config(configPath):
 		cfg = yaml.safe_load(f);
 
 	test_dir = Path("../test")
-	ftr_dir = test_dir / "feature"
-	san_dir = test_dir / "sanity"
+	ftr_dir = test_dir / "main_tb" / "feature_tests"
 	unit_dir = test_dir / "unit"
 	ref_dir = test_dir / "reference"
 	fileList = []
@@ -61,23 +60,19 @@ def read_config(configPath):
 		ftr = cfg['feature']
 		for ftr_tst in ftr['tests'].items():
 			print("Processing feature test: {}".format(ftr_tst[0]));
-			fileList.append(ftr_dir / "{}_feature_tb.vhd".format(ftr_tst[0]))
-
-	if ("sanity" in cfg):
-		print("Processing sanity test!")
-		fileList.append(san_dir / "sanity_test.vhd")
+			fileList.append(ftr_dir / "{}_ftest.vhd".format(ftr_tst[0]))
 
 	if ("unit" in cfg):
 		uni = cfg['unit']
 		for unit_tst in uni['tests'].items():
 			t_dict = list(unit_tst)[1]
-			print("Processing unit test {}".format(list(unit_tst)[0]))
-			tst_dir = Path(os.path.dirname(t_dict['wave']))
-			tst_name = test_dir / tst_dir / "{}_tb.vhd".format(str(tst_dir).split("/")[-1])
+			test_name = list(unit_tst)[0]
+			print("Processing unit test {}".format(test_name))
+			tst_name = unit_dir / test_name / "{}_tb.vhd".format(str(test_name).split("/")[-1])
 			fileList.append(tst_name)
 
-	if ("reference" in cfg):
-		fileList.append(ref_dir / "tb_reference.vhd")
+#	if ("reference" in cfg):
+#		fileList.append(ref_dir / "tb_reference.vhd")
 
 	print(fileList)
 	return fileList
