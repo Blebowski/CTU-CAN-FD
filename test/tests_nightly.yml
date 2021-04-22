@@ -42,7 +42,9 @@ _default: &default
     system_clock_period: 10 ns
 
     # Number of frames used from each dataset, 1000 means whole dataset
-    reference_iterations: 1000
+    # With unified TB architecture, these run quite long! Therefore we
+    # run only sub-set. This is a temporary solution!
+    reference_iterations: 300
     
 unit:
     tests:
