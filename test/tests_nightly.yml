@@ -43,8 +43,10 @@ _default: &default
 
     # Number of frames used from each dataset, 1000 means whole dataset
     # With unified TB architecture, these run quite long! Therefore we
-    # run only sub-set. This is a temporary solution!
-    reference_iterations: 300
+    # run only sub-set. Then agent will randomize starting position within
+    # the data-set, so all-together we pick random:
+    #   100 * 10 = 1000 (out of 10000) frames
+    reference_iterations: 100
     
 unit:
     tests:
