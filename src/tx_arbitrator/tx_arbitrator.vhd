@@ -611,31 +611,54 @@ begin
   -- psl txt_unlock_cov : cover
   --    {txtb_hw_cmd.unlock = '1'};
   --
+  --
+  -- Lock Commands
+  --
   -- psl txt_lock_buf_1_cov : cover
   --    {txtb_hw_cmd_index = 0 and txtb_hw_cmd.lock = '1'};
-  --
   -- psl txt_lock_buf_2_cov : cover
   --    {txtb_hw_cmd_index = 1 and txtb_hw_cmd.lock = '1'};
-  --
   -- psl txt_lock_buf_3_cov : cover
   --    {txtb_hw_cmd_index = 2 and txtb_hw_cmd.lock = '1'};
-  --
   -- psl txt_lock_buf_4_cov : cover
   --    {txtb_hw_cmd_index = 3 and txtb_hw_cmd.lock = '1'};
+  -- psl txt_lock_buf_5_cov : cover
+  --    {txtb_hw_cmd_index = 4 and txtb_hw_cmd.lock = '1'};
+  -- psl txt_lock_buf_6_cov : cover
+  --    {txtb_hw_cmd_index = 5 and txtb_hw_cmd.lock = '1'};
+  -- psl txt_lock_buf_7_cov : cover
+  --    {txtb_hw_cmd_index = 6 and txtb_hw_cmd.lock = '1'};
+  -- psl txt_lock_buf_8_cov : cover
+  --    {txtb_hw_cmd_index = 7 and txtb_hw_cmd.lock = '1'};
+  
+  -- Unlock Commands
+  --
+  -- psl txt_unlock_buf_1_cov : cover
+  --    {txtb_hw_cmd_index = 0 and txtb_hw_cmd.unlock = '1'};
+  -- psl txt_unlock_buf_2_cov : cover
+  --    {txtb_hw_cmd_index = 1 and txtb_hw_cmd.unlock = '1'};
+  -- psl txt_unlock_buf_3_cov : cover
+  --    {txtb_hw_cmd_index = 2 and txtb_hw_cmd.unlock = '1'};
+  -- psl txt_unlock_buf_4_cov : cover
+  --    {txtb_hw_cmd_index = 3 and txtb_hw_cmd.unlock = '1'};
+  -- psl txt_unlock_buf_5_cov : cover
+  --    {txtb_hw_cmd_index = 4 and txtb_hw_cmd.unlock = '1'};
+  -- psl txt_unlock_buf_6_cov : cover
+  --    {txtb_hw_cmd_index = 5 and txtb_hw_cmd.unlock = '1'};
+  -- psl txt_unlock_buf_7_cov : cover
+  --    {txtb_hw_cmd_index = 6 and txtb_hw_cmd.unlock = '1'};
+  -- psl txt_unlock_buf_8_cov : cover
+  --    {txtb_hw_cmd_index = 7 and txtb_hw_cmd.unlock = '1'};
+
+
+  -- Change of priority when there is validated TXT buffer
   --
   -- psl txt_prio_change_cov : cover
   --    {select_buf_avail = '1';
   --     select_buf_avail = '1' and (select_buf_index /= select_buf_index'LAST_VALUE);
   --     select_buf_avail = '1'};
-  --
-  -- Here it is enough to make sure that two concrete buffers with the
-  -- same priority are available! Here we only test the proper index selection
-  -- in case of equal priorities!
-  -- psl txt_buf_eq_priority_cov : cover
-  --    {txtb_available(0) = '1' and txtb_available(1) = '1' and
-  --     txtb_prorities(0) = txtb_prorities(1)}
-  --    report "Selected Buffer index changed while buffer selected";
-  --
+  
+
   -- Change of buffer from available to not available but not due to lock 
   --  (e.g. set abort). Again one buffer is enough!
   -- psl buf_ready_to_not_ready_cov : cover
@@ -643,9 +666,6 @@ begin
   --     txtb_hw_cmd.lock = '0'; txtb_available(0) = '0'}
   --    report "Buffer became non-ready but not due to lock command"; 
   --
-  -- psl txt_buf_all_available_cov : cover
-  --    {txtb_available(0) = '1' and txtb_available(1) = '1' and
-  --     txtb_available(2) = '1' and txtb_available(3) = '1'};
   --
   -- psl txt_buf_change_cov : cover
   --    {txtb_changed = '1' and txtb_hw_cmd.lock = '1'}
@@ -654,52 +674,131 @@ begin
   -- psl txt_buf_sim_chng_and_lock_cov : cover
   --    {select_index_changed = '1' and txtb_hw_cmd.lock = '1'};
 
+
   ----------------------------------------------------------------------------
   -- Functional coverage for Priority decoder!
   --
-  -- Following functional coverage takes into accoount only 4 TXT Buffers!
+  -- Cover points for each combination of inputs in first stage
   ----------------------------------------------------------------------------
 
-  -- Combinations in first comparator!
-    
-  -- psl prio_dec_stage_1_cov_1 : cover
-  --  {(unsigned(txtb_prorities(0)) > unsigned(txtb_prorities(1))) and
-  --   txtb_available(0) = '1' and txtb_available(1) = '1'};
-    
-  -- psl prio_dec_stage_1_cov_2 : cover
-  --  {(unsigned(txtb_prorities(0)) < unsigned(txtb_prorities(1))) and
-  --   txtb_available(0) = '1' and txtb_available(1) = '1'};
-    
-  -- psl prio_dec_stage_1_cov_3 : cover
-  --  {(unsigned(txtb_prorities(0)) = unsigned(txtb_prorities(1))) and
-  --   txtb_available(0) = '1' and txtb_available(1) = '1'};
-    
-  -- psl prio_dec_stage_1_cov_4 : cover
-  --  {txtb_available(0) = '0' and txtb_available(1) = '1'};
-    
-  -- psl prio_dec_stage_1_cov_5 : cover
-  --  {txtb_available(0) = '1' and txtb_available(1) = '0'};
+  -- First comparator cell
+  txtb_stage_1_cell_1_gen : if G_TXT_BUFFER_COUNT > 1 generate
+      -- psl prio_dec_stage_1_cell_1_cov_1 : cover
+      --  {(unsigned(txtb_prorities(0)) > unsigned(txtb_prorities(1))) and
+      --   txtb_available(0) = '1' and txtb_available(1) = '1'};
         
-  -- Combinations in second comparator!
-    
-  -- psl prio_dec_stage_2_cov_1 : cover
-  --  {(unsigned(txtb_prorities(2)) > unsigned(txtb_prorities(3))) and
-  --   txtb_available(2) = '1' and txtb_available(3) = '1'};
-    
-  -- psl prio_dec_stage_2_cov_2 : cover
-  --  {(unsigned(txtb_prorities(2)) < unsigned(txtb_prorities(3))) and
-  --   txtb_available(2) = '1' and txtb_available(3) = '1'};
-    
-  -- psl prio_dec_stage_2_cov_3 : cover
-  --  {(unsigned(txtb_prorities(2)) = unsigned(txtb_prorities(3))) and
-  --   txtb_available(2) = '1' and txtb_available(3) = '1'};
-   
-  -- psl prio_dec_stage_2_cov_4 : cover
-  --  {txtb_available(2) = '0' and txtb_available(3) = '1'};
-    
-  -- psl prio_dec_stage_2_cov_5 : cover
-  --  {txtb_available(2) = '1' and txtb_available(3) = '0'};
+      -- psl prio_dec_stage_1_cell_1_cov_2 : cover
+      --  {(unsigned(txtb_prorities(0)) < unsigned(txtb_prorities(1))) and
+      --   txtb_available(0) = '1' and txtb_available(1) = '1'};
+        
+      -- psl prio_dec_stage_1_cell_1_cov_3 : cover
+      --  {(unsigned(txtb_prorities(0)) = unsigned(txtb_prorities(1))) and
+      --   txtb_available(0) = '1' and txtb_available(1) = '1'};
+        
+      -- psl prio_dec_stage_1_cell_1_cov_4 : cover
+      --  {txtb_available(0) = '0' and txtb_available(1) = '1'};
+        
+      -- psl prio_dec_stage_1_cell_1_cov_5 : cover
+      --  {txtb_available(0) = '1' and txtb_available(1) = '0'};
+      
+      -- psl txt_buf_eq_priority_stage_1_cell_1_cov : cover
+      --    {txtb_available(0) = '1' and txtb_available(1) = '1' and
+      --     txtb_prorities(0) = txtb_prorities(1)};
+      
+      -- psl txt_buf_all_available_stage_1_cov : cover
+      --    {txtb_available(0) = '1' and txtb_available(1) = '1'};
+  
+  end generate txtb_stage_1_cell_1_gen;
 
+  -- Second comparator cell
+  txtb_stage_1_cell_2_gen : if G_TXT_BUFFER_COUNT > 3 generate
+      -- psl prio_dec_stage_1_cell_2_cov_1 : cover
+      --  {(unsigned(txtb_prorities(2)) > unsigned(txtb_prorities(3))) and
+      --   txtb_available(2) = '1' and txtb_available(3) = '1'};
+        
+      -- psl prio_dec_stage_1_cell_2_cov_2 : cover
+      --  {(unsigned(txtb_prorities(2)) < unsigned(txtb_prorities(3))) and
+      --   txtb_available(2) = '1' and txtb_available(3) = '1'};
+        
+      -- psl prio_dec_stage_1_cell_2_cov_3 : cover
+      --  {(unsigned(txtb_prorities(2)) = unsigned(txtb_prorities(3))) and
+      --   txtb_available(2) = '1' and txtb_available(3) = '1'};
+        
+      -- psl prio_dec_stage_1_cell_2_cov_4 : cover
+      --  {txtb_available(2) = '0' and txtb_available(3) = '1'};
+        
+      -- psl prio_dec_stage_1_cell_2_cov_5 : cover
+      --  {txtb_available(2) = '1' and txtb_available(3) = '0'};
+
+      -- psl txt_buf_eq_priority_stage_1_cell_2_cov : cover
+      --    {txtb_available(2) = '1' and txtb_available(3) = '1' and
+      --     txtb_prorities(2) = txtb_prorities(3)};
+      
+      -- psl txt_buf_all_available_stage_2_cov : cover
+      --    {txtb_available(0) = '1' and txtb_available(1) = '1' and
+      --     txtb_available(2) = '1' and txtb_available(3) = '1'};
+  end generate txtb_stage_1_cell_2_gen;
+
+  -- Third comparator cell
+  txtb_stage_1_cell_3_gen : if G_TXT_BUFFER_COUNT > 5 generate
+      -- psl prio_dec_stage_1_cell_3_cov_1 : cover
+      --  {(unsigned(txtb_prorities(4)) > unsigned(txtb_prorities(5))) and
+      --   txtb_available(4) = '1' and txtb_available(5) = '1'};
+        
+      -- psl prio_dec_stage_1_cell_3_cov_2 : cover
+      --  {(unsigned(txtb_prorities(4)) < unsigned(txtb_prorities(5))) and
+      --   txtb_available(4) = '1' and txtb_available(5) = '1'};
+        
+      -- psl prio_dec_stage_1_cell_3_cov_3 : cover
+      --  {(unsigned(txtb_prorities(4)) = unsigned(txtb_prorities(5))) and
+      --   txtb_available(4) = '1' and txtb_available(5) = '1'};
+        
+      -- psl prio_dec_stage_1_cell_3_cov_4 : cover
+      --  {txtb_available(4) = '0' and txtb_available(5) = '1'};
+        
+      -- psl prio_dec_stage_1_cell_3_cov_5 : cover
+      --  {txtb_available(4) = '1' and txtb_available(5) = '0'};
+      
+      -- psl txt_buf_eq_priority_stage_1_cell_3_cov : cover
+      --    {txtb_available(4) = '1' and txtb_available(5) = '1' and
+      --     txtb_prorities(4) = txtb_prorities(5)};
+      
+      -- psl txt_buf_all_available_stage_3_cov : cover
+      --    {txtb_available(0) = '1' and txtb_available(1) = '1' and
+      --     txtb_available(2) = '1' and txtb_available(3) = '1' and
+      --     txtb_available(4) = '1' and txtb_available(5) = '1'};
+  end generate txtb_stage_1_cell_3_gen;
+
+  -- Fourth comparator cell
+  txtb_stage_1_cell_4_gen : if G_TXT_BUFFER_COUNT > 7 generate
+      -- psl prio_dec_stage_1_cell_4_cov_1 : cover
+      --  {(unsigned(txtb_prorities(6)) > unsigned(txtb_prorities(7))) and
+      --   txtb_available(6) = '1' and txtb_available(7) = '1'};
+        
+      -- psl prio_dec_stage_1_cell_4_cov_2 : cover
+      --  {(unsigned(txtb_prorities(6)) < unsigned(txtb_prorities(7))) and
+      --   txtb_available(6) = '1' and txtb_available(7) = '1'};
+        
+      -- psl prio_dec_stage_1_cell_4_cov_3 : cover
+      --  {(unsigned(txtb_prorities(6)) = unsigned(txtb_prorities(7))) and
+      --   txtb_available(6) = '1' and txtb_available(7) = '1'};
+        
+      -- psl prio_dec_stage_1_cell_4_cov_4 : cover
+      --  {txtb_available(6) = '0' and txtb_available(7) = '1'};
+        
+      -- psl prio_dec_stage_1_cell_4_cov_5 : cover
+      --  {txtb_available(6) = '1' and txtb_available(7) = '0'};
+      
+      -- psl txt_buf_eq_priority_stage_1_cell_4_cov : cover
+      --    {txtb_available(6) = '1' and txtb_available(7) = '1' and
+      --     txtb_prorities(6) = txtb_prorities(7)};
+      
+      -- psl txt_buf_all_available_stage_4_cov : cover
+      --    {txtb_available(0) = '1' and txtb_available(1) = '1' and
+      --     txtb_available(2) = '1' and txtb_available(3) = '1' and
+      --     txtb_available(4) = '1' and txtb_available(5) = '1' and
+      --     txtb_available(6) = '1' and txtb_available(7) = '1'};
+  end generate txtb_stage_1_cell_4_gen;
 
   -----------------------------------------------------------------------------
   -- Assertions
