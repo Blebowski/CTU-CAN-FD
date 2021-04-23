@@ -133,7 +133,8 @@ begin
         variable driver_item : t_can_driver_entry :=
             ('0', 0 ns, false, (OTHERS => '0'));
         variable rx_frame : SW_CAN_frame_type;
-        variable result : boolean;          
+        variable result : boolean;
+        variable reference_offset : natural;
     begin
         wait until reference_start = '1';
 
@@ -178,9 +179,12 @@ begin
         -----------------------------------------------------------------------
         -- Test sequence itself
         -----------------------------------------------------------------------
-        for frame_index in 1 to reference_iterations loop
+        rand_int_v(899, reference_offset);
+
+        for frame_index in reference_offset to reference_offset + reference_iterations loop
             
-            info_m("Testing frame nr: " & integer'image(frame_index));
+            info_m("Testing frame nr: " & integer'image(frame_index - reference_offset));
+            info_m("Frame position in dataset: " & integer'image(frame_index));
 
             info_m("Pushing frame to CAN agent...");
             can_agent_driver_flush(default_channel);
