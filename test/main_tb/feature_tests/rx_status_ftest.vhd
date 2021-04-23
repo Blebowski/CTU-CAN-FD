@@ -118,6 +118,7 @@ package body rx_status_ftest is
         variable buf_info           :       SW_RX_Buffer_info;
         variable command            :       SW_command := SW_command_rst_val;
         variable status             :       SW_status;
+        variable frame_counter      :       natural;
     begin
 
         ------------------------------------------------------------------------
@@ -153,7 +154,11 @@ package body rx_status_ftest is
         ------------------------------------------------------------------------
         info_m("Step 6");
 
+        frame_counter := 1;
         while send_more loop
+            info_m("Sending frame nr. : " & integer'image(frame_counter));
+            frame_counter := frame_counter + 1;
+
             CAN_generate_frame(CAN_frame);
 
             -- Evaluate if next frame should be sent

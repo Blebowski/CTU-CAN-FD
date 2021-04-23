@@ -167,6 +167,7 @@ feature:
             rx_buffer_size: 128
         rx_status@@:
             rx_buffer_size: 4096
+            timeout: 200 ms
         rx_status_mof:
 
         settings_tbfbo:
