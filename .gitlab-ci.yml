@@ -220,7 +220,7 @@ pages:
         - master
     artifacts:
         paths:
-            - delivery_package
+            - public
 
 variables:
     GIT_SUBMODULE_STRATEGY: recursive
