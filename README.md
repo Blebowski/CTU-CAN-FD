@@ -1,6 +1,6 @@
 # CTU CAN FD
 
-CTU CAN FD is soft IP-Core written in VHDL. Supports ISO and NON-ISO versions
+CTU CAN FD is soft IP-Core written in VHDL which supports ISO and NON-ISO versions
 of CAN FD protocol.
 
 CTU CAN FD is **NOT a prototype**. RTL is compliant with ISO 1198-1:2015.
@@ -26,13 +26,12 @@ purposes has to obtain CAN protocol license from Bosch.
 
 RTL design of CTU CAN FD is independent from vendor specific libraries or macros. It is fully-synchronous design (single clock domain).
 
-FPGA / ASIC target can be selected by top level generic. ASIC target implements clock gating for memories to achieve low dynamic power
-consumption. Additionally, clock enables are used frequently to allow inferred clock gating on ASIC.
+FPGA / ASIC target can be selected by top level generic. ASIC target implements clock gating for memories to achieve low dynamic power consumption. Additionally, clock enables are used frequently to allow inferred clock gating on ASIC.
 
 Architecture of CTU CAN FD is described in:  
 [![System architecture](https://img.shields.io/badge/System_architecture--blue.svg)]( http://canbus.pages.fel.cvut.cz/ctucanfd_ip_core/doc/System_Architecture.pdf)
 
-Functional description of CTU CAN FD is in datasheet:  
+Functional description of CTU CAN FD is described in:  
 [![Datasheet](https://img.shields.io/badge/Datasheet--blue.svg)]( http://canbus.pages.fel.cvut.cz/ctucanfd_ip_core/doc/Datasheet.pdf)
 
 ## Test-bench
@@ -58,7 +57,7 @@ CTU CAN FD is simulated on RTL (no gate level simulations so far).
 
 ## How to use it ?
 
-Download delivery package from: [![Delivery package](https://img.shields.io/badge/Delivery-package--blue.svg)]( http://canbus.pages.fel.cvut.cz/ctucanfd_ip_core). Package is created by daily regression on master branch.
+Download delivery package ("public" directory) from: [![Delivery package](https://img.shields.io/badge/Delivery-package--blue.svg)]( https://gitlab.fel.cvut.cz/canbus/ctucanfd_ip_core/-/jobs/artifacts/master/browse?job=pages). Package is created by daily regression on master branch.
 
 Delivery package contains:  
 - RTL design
@@ -68,12 +67,11 @@ Delivery package contains:
 
 RTL CAN be easily integrated into a design with help of [![System architecture](https://img.shields.io/badge/System_architecture--blue.svg)]( http://canbus.pages.fel.cvut.cz/ctucanfd_ip_core/doc/System_Architecture.pdf) document.
 
-VIP can be easily integrated into other test-bench with help of [![Testbench architecture](https://img.shields.io/badge/Testbench--blue.svg)]( http://canbus.pages.fel.cvut.cz/ctucanfd_ip_core/doc/Testbench.pdf) document. Note that running compliance tests requires access to Compliance test library which is
-only available with commercial agreement.
+VIP can be easily integrated into other test-bench with help of [![Testbench architecture](https://img.shields.io/badge/Testbench--blue.svg)]( http://canbus.pages.fel.cvut.cz/ctucanfd_ip_core/doc/Testbench.pdf) document. Note that running compliance tests requires access to Compliance test library which is only available with commercial agreement.
 
 ## Development tools
 
-To simulate CTU CAN FD following tools are used:
+To simulate CTU CAN FD, following tools are used:
 
 GHDL, VHDL simulator:  
 [GHDL](https://github.com/Blebowski/ghdl).
