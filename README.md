@@ -61,9 +61,11 @@ Download delivery package ("public" directory) from: [![Delivery package](https:
 
 Delivery package contains:  
 - RTL design
-- VIP and binary of compliance test library.
-- Documentation
-- Regression results and functional coverage results
+- Tesbench (VIP + Feature and Reference Tests)
+- Binary of compliance test library.
+- Documentation (Datasheet, System Architecture, Testbench)
+- Regression results (with Compliance test results)
+- Functional coverage results from regression
 
 RTL CAN be easily integrated into a design with help of [![System architecture](https://img.shields.io/badge/System_architecture--blue.svg)]( http://canbus.pages.fel.cvut.cz/ctucanfd_ip_core/doc/System_Architecture.pdf) document.
 
