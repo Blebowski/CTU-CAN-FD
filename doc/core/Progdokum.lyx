@@ -509,27 +509,17 @@ filename "version.tex"
 \noindent
 \align center
 \begin_inset Tabular
-<lyxtabular version="3" rows="21" columns="4">
+<lyxtabular version="3" rows="22" columns="3">
 <features tabularvalignment="middle">
 <column alignment="center" valignment="top" width="1.5cm">
 <column alignment="center" valignment="top" width="2cm">
-<column alignment="center" valignment="top" width="2cm">
-<column alignment="center" valignment="top" width="10cm">
+<column alignment="center" valignment="top" width="12cm">
 <row>
 <cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
 Document Version
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-Author
 \end_layout
 
 \end_inset
@@ -567,15 +557,6 @@ Change description
 \begin_inset Text
 
 \begin_layout Plain Layout
-Ondrej Ille
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
 07-2015
 \end_layout
 
@@ -597,15 +578,6 @@ Initial version describing release 1.0
 
 \begin_layout Plain Layout
 2.0
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-Ondrej Ille
 \end_layout
 
 \end_inset
@@ -636,15 +608,6 @@ Added test framework description.
 
 \begin_layout Plain Layout
 2.0.1
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-Ondrej Ille
 \end_layout
 
 \end_inset
@@ -685,15 +648,6 @@ Updated register map description, external references to generated maps.
 \begin_inset Text
 
 \begin_layout Plain Layout
-Martin Jerabek
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
 10-2018
 \end_layout
 
@@ -715,15 +669,6 @@ Added Linux driver description
 
 \begin_layout Plain Layout
 2.1.1
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-Ondrej Ille
 \end_layout
 
 \end_inset
@@ -762,15 +707,6 @@ Added Register map block diagram after re-implementation of registers via
 \begin_inset Text
 
 \begin_layout Plain Layout
-Ondrej Ille
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
 12-2018
 \end_layout
 
@@ -801,15 +737,6 @@ Added CRC Wrapper.
 \begin_inset Text
 
 \begin_layout Plain Layout
-Ondrej Ille
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
 01-2019
 \end_layout
 
@@ -831,15 +758,6 @@ Added TIMESTAMP_LOW, TIMESTAMP_HIGH registers.
 
 \begin_layout Plain Layout
 2.1.4
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-Ondrej Ille
 \end_layout
 
 \end_inset
@@ -878,15 +796,6 @@ Re-worked Prescaler.
 \begin_inset Text
 
 \begin_layout Plain Layout
-Ondrej Ille
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
 26-09-2019
 \end_layout
 
@@ -908,15 +817,6 @@ Split functional descripion and register map from original document.
 
 \begin_layout Plain Layout
 2.2.1
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-Ondrej Ille
 \end_layout
 
 \end_inset
@@ -954,15 +854,6 @@ Clarify TXT buffer behaviour when node goes bus-off.
 \begin_inset Text
 
 \begin_layout Plain Layout
-Ondrej Ille
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
 31-10-2019
 \end_layout
 
@@ -985,15 +876,6 @@ Clarify Bus-off behaviour aftet Start-up.
 
 \begin_layout Plain Layout
 2.2.3
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-Ondrej Ille
 \end_layout
 
 \end_inset
@@ -1033,15 +915,6 @@ Clarify behaviour of Transmitter delay measurement.
 \begin_inset Text
 
 \begin_layout Plain Layout
-Ondrej Ille
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
 13-12-2019
 \end_layout
 
@@ -1071,15 +944,6 @@ Clarify that only TEC above 255 will cause node to go Bus off.
 \begin_inset Text
 
 \begin_layout Plain Layout
-Ondrej Ille
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
 30-4-2020
 \end_layout
 
@@ -1101,15 +965,6 @@ Add SETTING[PEX] and Protocol exception support.
 
 \begin_layout Plain Layout
 2.2.6
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-Ondrej Ille
 \end_layout
 
 \end_inset
@@ -1148,15 +1003,6 @@ Add frame filters examples, add TBFBO and FDRF bits in SETTINGS registers,
 \begin_inset Text
 
 \begin_layout Plain Layout
-Ondrej Ille
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
 05-11-2020
 \end_layout
 
@@ -1178,15 +1024,6 @@ Add general overview and TX frame type description.
 
 \begin_layout Plain Layout
 2.2.8
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-Ondrej Ille
 \end_layout
 
 \end_inset
@@ -1224,15 +1061,6 @@ Change license
 \begin_inset Text
 
 \begin_layout Plain Layout
-Ondrej Ille
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
 4-2-2021
 \end_layout
 
@@ -1262,15 +1090,6 @@ Added MODE[ROM] - Restricted operation mode.
 \begin_inset Text
 
 \begin_layout Plain Layout
-Ondrej Ille
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
 23-2-2021
 \end_layout
 
@@ -1287,7 +1106,7 @@ Add TXTB_INFO and mention generic number of TXT buffers.
 </cell>
 </row>
 <row>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -1296,16 +1115,7 @@ Add TXTB_INFO and mention generic number of TXT buffers.
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-Ondrej Ille
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -1314,11 +1124,40 @@ Ondrej Ille
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
 Add RETR_CTR register.
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+2.3.3
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+26-4-2021
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Add chapter about memory testability.
 \end_layout
 
 \end_inset
@@ -5875,6 +5714,24 @@ Debug register
 \begin_layout Standard
 CTU CAN FD contains debug register (DEBUG_REGISTER) which can be used to
  determine which part of CAN frame is currently being transmitted / received.
+\end_layout
+
+\begin_layout Subsection
+Memory testability
+\end_layout
+
+\begin_layout Standard
+CTU CAN FD supports manufacturing testability of its internal memories (TXT
+ buffers and RX buffer) via Test Registers memory region.
+ For details on memory testing reffer to 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "key-1"
+literal "false"
+
+\end_inset
+
+.
 \end_layout
 
 \begin_layout Standard
