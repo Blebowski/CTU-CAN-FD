@@ -66,9 +66,9 @@ Delivery package contains:
 - Documentation
 - Regression results and functional coverage results
 
-RTL CAN be easily integrated into a design with help of [![System architecture](https://img.shields.io/badge/System_architecture--blue.svg)]( http://canbus.pages.fel.cvut.cz/ctucanfd_ip_core/System_architecture.pdf) document.
+RTL CAN be easily integrated into a design with help of [![System architecture](https://img.shields.io/badge/System_architecture--blue.svg)]( http://canbus.pages.fel.cvut.cz/ctucanfd_ip_core/doc/System_architecture.pdf) document.
 
-VIP can be easily integrated into other test-bench with help of [![Testbench architecture](https://img.shields.io/badge/Testbench--blue.svg)]( http://canbus.pages.fel.cvut.cz/ctucanfd_ip_core/Testbench.pdf) document. Note that running compliance tests requires access to Compliance test library which is
+VIP can be easily integrated into other test-bench with help of [![Testbench architecture](https://img.shields.io/badge/Testbench--blue.svg)]( http://canbus.pages.fel.cvut.cz/ctucanfd_ip_core/doc/Testbench.pdf) document. Note that running compliance tests requires access to Compliance test library which is
 only available with commercial agreement.
 
 ## Development tools
@@ -97,7 +97,7 @@ All tests are automated into several regression runs:
 - Compliance - Runs ISO 11845-1 2016 compliance test sequence, runs every night
 
 Results of latest test run + logs are available under:  
-[![pipeline status](https://gitlab.fel.cvut.cz/canbus/ctucanfd_ip_core/badges/master/pipeline.svg)](http://canbus.pages.fel.cvut.cz/ctucanfd_ip_core/tests_fast.xml)
+[![pipeline status](https://gitlab.fel.cvut.cz/canbus/ctucanfd_ip_core/badges/master/pipeline.svg)](http://canbus.pages.fel.cvut.cz/ctucanfd_ip_core/regression_results/tests_fast.xml)
 
 ## Synthesis
 
@@ -110,7 +110,7 @@ TODO: Show synthesis benchmark.
 ## Linux driver
 
 CTU CAN FD has SocketCAN Linux driver which is described in:  
-[![Linux driver](https://img.shields.io/badge/Linux_driver--blue.svg)](http://canbus.pages.fel.cvut.cz/ctucanfd_ip_core/driver_doc/ctucanfd-driver.html)
+[![Linux driver](https://img.shields.io/badge/Linux_driver--blue.svg)](http://canbus.pages.fel.cvut.cz/ctucanfd_ip_core/doc/linux_driver/build/ctucanfd-driver.html)
 
 Driver consists from 3 parts:  
 - Network
