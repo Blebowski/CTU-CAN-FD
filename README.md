@@ -30,10 +30,10 @@ FPGA / ASIC target can be selected by top level generic. ASIC target implements 
 consumption. Additionally, clock enables are used frequently to allow inferred clock gating on ASIC.
 
 Architecture of CTU CAN FD is described in:  
-[![System architecture](https://img.shields.io/badge/System_architecture--blue.svg)]( http://canbus.pages.fel.cvut.cz/ctucanfd_ip_core/System_architecture.pdf)
+[![System architecture](https://img.shields.io/badge/System_architecture--blue.svg)]( http://canbus.pages.fel.cvut.cz/ctucanfd_ip_core/doc/System_Architecture.pdf)
 
 Functional description of CTU CAN FD is in datasheet:  
-[![Datasheet](https://img.shields.io/badge/Datasheet--blue.svg)]( http://canbus.pages.fel.cvut.cz/ctucanfd_ip_core/Datasheet.pdf)
+[![Datasheet](https://img.shields.io/badge/Datasheet--blue.svg)]( http://canbus.pages.fel.cvut.cz/ctucanfd_ip_core/doc/Datasheet.pdf)
 
 ## Test-bench
 
@@ -46,13 +46,13 @@ There are 3 types of tests available:
 - Compliance tests (only binary open-source, source code available upon agreement).
 
 TB has extensive PSL functional coverage, see regression coverage in:
-[![Functional coverage](https://img.shields.io/badge/functional%20coverage--orange.svg)](http://canbus.pages.fel.cvut.cz/ctucanfd_ip_core/functional_coverage/functional_coverage_report.html)
+[![Functional coverage](https://img.shields.io/badge/functional%20coverage--orange.svg)](http://canbus.pages.fel.cvut.cz/ctucanfd_ip_core/regression_results/functional_coverage/functional_coverage_report.html)
 
 GCov is used to collect (rudimentary) code coverage. See regression coverage in:  
-[![Code coverage](https://gitlab.fel.cvut.cz/canbus/ctucanfd_ip_core/badges/master/coverage.svg)](http://canbus.pages.fel.cvut.cz/ctucanfd_ip_core/coverage/)
+[![Code coverage](https://gitlab.fel.cvut.cz/canbus/ctucanfd_ip_core/badges/master/coverage.svg)](http://canbus.pages.fel.cvut.cz/ctucanfd_ip_core/regression_results/coverage/)
 
 Detailed description of test-bench and CTU CAN FD VIP is in:  
-[![Testbench architecture](https://img.shields.io/badge/Testbench--blue.svg)]( http://canbus.pages.fel.cvut.cz/ctucanfd_ip_core/Testbench.pdf)
+[![Testbench architecture](https://img.shields.io/badge/Testbench--blue.svg)]( http://canbus.pages.fel.cvut.cz/ctucanfd_ip_core/doc/Testbench.pdf)
 
 CTU CAN FD is simulated on RTL (no gate level simulations so far).
 
