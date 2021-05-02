@@ -197,6 +197,28 @@ feature:
 
         trv_delay:
 
+        tst_mem_acc_rx:
+            rx_buffer_size: 32
+        tst_mem_acc_rx@:
+            rx_buffer_size: 64
+        tst_mem_acc_rx@@:
+            rx_buffer_size: 128
+        tst_mem_acc_rx@@@:
+            rx_buffer_size: 512
+        tst_mem_acc_rx@@@@:
+            rx_buffer_size: 4096
+
+        tst_mem_acc_txt:
+            txt_buffer_count: 2
+        tst_mem_acc_txt@:
+            txt_buffer_count: 3
+        tst_mem_acc_txt@@:
+            txt_buffer_count: 4
+        tst_mem_acc_txt@@@:
+            txt_buffer_count: 6
+        tst_mem_acc_txt@@@@:
+            txt_buffer_count: 8
+            
         tx_arb_consistency:
             txt_buffer_count: 2
         tx_arb_consistency@:

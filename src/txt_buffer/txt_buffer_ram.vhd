@@ -100,10 +100,15 @@ use ctu_can_fd_rtl.reduce_lib.all;
 use ctu_can_fd_rtl.CAN_FD_register_map.all;
 use ctu_can_fd_rtl.CAN_FD_frame_format.all;
 
+use ctu_can_fd_rtl.can_registers_pkg.all;
+
 entity txt_buffer_ram is
     generic(
         -- Reset polarity
-        G_RESET_POLARITY       :     std_logic := '0'
+        G_RESET_POLARITY       :     std_logic := '0';
+
+        -- TXT buffer ID
+        G_ID                   :     natural
     );
     port(
         ------------------------------------------------------------------------
@@ -114,6 +119,15 @@ entity txt_buffer_ram is
         
         -- Asynchronous reset
         res_n                  :in   std_logic;
+
+        ------------------------------------------------------------------------
+        -- Memory Testability
+        ------------------------------------------------------------------------
+        -- Test registers
+        test_registers_out     :in   test_registers_out_t;
+        
+        -- TXT buffer RAM test output
+        tst_rdata_txt_buf      :out  std_logic_vector(31 downto 0);
 
         ------------------------------------------------------------------------
         -- Port A - Write (from Memory registers)
@@ -139,7 +153,16 @@ entity txt_buffer_ram is
 end entity;
 
 architecture rtl of txt_buffer_ram is
+    
+    signal port_a_address_i      : std_logic_vector(4 downto 0);
+    signal port_a_write_i        : std_logic;
+    signal port_a_data_in_i      : std_logic_vector(31 downto 0);
 
+    signal port_b_address_i      : std_logic_vector(4 downto 0);
+    signal port_b_data_out_i     : std_logic_vector(31 downto 0);
+    
+    signal tst_ena               : std_logic;
+    signal tst_addr              : std_logic_vector(15 downto 0);
 begin
     
     ---------------------------------------------------------------------------
@@ -159,12 +182,66 @@ begin
         clk_sys              => clk_sys,
         res_n                => res_n,
         
-        addr_A               => port_a_address,
-        write                => port_a_write, 
-        data_in              => port_a_data_in,
+        addr_A               => port_a_address_i,
+        write                => port_a_write_i, 
+        data_in              => port_a_data_in_i,
         
-        addr_B               => port_b_address,
-        data_out             => port_b_data_out
+        addr_B               => port_b_address_i,
+        data_out             => port_b_data_out_i
     );
-  
+    port_b_data_out <= port_b_data_out_i;
+
+    ---------------------------------------------------------------------------
+    -- Memory testability
+    ---------------------------------------------------------------------------
+    tst_ena <=
+        '1' when (test_registers_out.tst_control(TMAENA_IND) = '1') and
+                 (test_registers_out.tst_dest(TST_MTGT_H downto TST_MTGT_L) = 
+                  std_logic_vector(to_unsigned(G_ID + 2, 4)))
+            else
+        '0';
+
+    tst_addr <= test_registers_out.tst_dest(TST_ADDR_H downto TST_ADDR_L);
+
+    -- Write port
+    port_a_address_i <= port_a_address when (tst_ena = '0') else
+                        tst_addr(4 downto 0);
+
+    port_a_write_i <= port_a_write when (tst_ena = '0') else
+                      test_registers_out.tst_control(TWRSTB_IND);
+
+    port_a_data_in_i <= port_a_data_in when (tst_ena = '0') else
+                        test_registers_out.tst_wdata;
+
+    -- Read port
+    port_b_address_i <= port_b_address when (tst_ena = '0') else
+                        tst_addr(4 downto 0);
+
+    tst_rdata_txt_buf <= port_b_data_out_i when (tst_ena = '1') else
+                         (OTHERS => '0');
+
+    ---------------------------------------------------------------------------
+    -- Assertions and functional coverage
+    ---------------------------------------------------------------------------
+
+    -- psl default clock is rising_edge(clk_sys);
+
+    -- psl txt_ram_0_test_cov : cover
+    --   {tst_ena = '0' and test_registers_out.tst_control(TWRSTB_IND) = '1' and G_ID = 0};
+    -- psl txt_ram_1_test_cov : cover
+    --   {tst_ena = '0' and test_registers_out.tst_control(TWRSTB_IND) = '1' and G_ID = 1};
+    -- psl txt_ram_2_test_cov : cover
+    --   {tst_ena = '0' and test_registers_out.tst_control(TWRSTB_IND) = '1' and G_ID = 2};
+    -- psl txt_ram_3_test_cov : cover
+    --   {tst_ena = '0' and test_registers_out.tst_control(TWRSTB_IND) = '1' and G_ID = 3};
+    -- psl txt_ram_4_test_cov : cover
+    --   {tst_ena = '0' and test_registers_out.tst_control(TWRSTB_IND) = '1' and G_ID = 4};
+    -- psl txt_ram_5_test_cov : cover
+    --   {tst_ena = '0' and test_registers_out.tst_control(TWRSTB_IND) = '1' and G_ID = 5};
+    -- psl txt_ram_6_test_cov : cover
+    --   {tst_ena = '0' and test_registers_out.tst_control(TWRSTB_IND) = '1' and G_ID = 6};
+    -- psl txt_ram_7_test_cov : cover
+    --   {tst_ena = '0' and test_registers_out.tst_control(TWRSTB_IND) = '1' and G_ID = 7};
+    
+
 end architecture;

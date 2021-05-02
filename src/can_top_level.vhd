@@ -100,6 +100,8 @@ use ctu_can_fd_rtl.can_config.all;
 use ctu_can_fd_rtl.CAN_FD_register_map.all;
 use ctu_can_fd_rtl.CAN_FD_frame_format.all;
 
+use ctu_can_fd_rtl.can_registers_pkg.all;
+
 entity can_top_level is
     generic(
         -- RX Buffer RAM size (32 bit words)
@@ -108,17 +110,20 @@ entity can_top_level is
         -- Number of supported TXT buffers
         txt_buffer_count    : natural range 2 to 8   := C_TXT_BUFFER_COUNT; 
 
-        -- Insert Filter A
+        -- Synthesize Filter A
         sup_filtA           : boolean                := true;
         
-        -- Insert Filter B
+        -- Synthesize Filter B
         sup_filtB           : boolean                := true;
         
-        -- Insert Filter C
+        -- Synthesize Filter C
         sup_filtC           : boolean                := true;
         
-        -- Insert Range Filter
+        -- Synthesize Range Filter
         sup_range           : boolean                := true;
+        
+        -- Synthesize Test registers
+        sup_test_registers  : boolean                := true;
         
         -- Insert Traffic counters
         sup_traffic_ctrs    : boolean                := true;
@@ -510,6 +515,18 @@ architecture rtl of can_top_level is
     -- Time quanta edge
     signal tq_edge              :   std_logic;
 
+    ------------------------------------------------------------------------
+    -- Memory testability
+    ------------------------------------------------------------------------
+    -- Test registers
+    signal test_registers_out   :   test_registers_out_t;
+
+    -- RX buffer RAM test output
+    signal tst_rdata_rx_buf     :   std_logic_vector(31 downto 0);
+
+    -- TXT Buffer outputs
+    signal tst_rdata_txt_bufs   :   t_txt_bufs_output(txt_buffer_count - 1 downto 0);
+
 begin
 
     -- Test probe for observation
@@ -540,6 +557,7 @@ begin
         G_SUP_FILTB             => sup_filtB,
         G_SUP_FILTC             => sup_filtC,
         G_SUP_RANGE             => sup_range,
+        G_SUP_TEST_REGISTERS    => sup_test_registers,
         G_SUP_TRAFFIC_CTRS      => sup_traffic_ctrs,
         G_TXT_BUFFER_COUNT      => txt_buffer_count, 
         G_INT_COUNT             => C_INT_COUNT,
@@ -567,6 +585,11 @@ begin
         -- Buses to/from rest of CTU CAN FD
         drv_bus                 => drv_bus,                 -- OUT
         stat_bus                => stat_bus,                -- IN
+
+        -- Manufacturing testability
+        test_registers_out      => test_registers_out,      -- OUT
+        tst_rdata_rx_buf        => tst_rdata_rx_buf,        -- IN
+        tst_rdata_txt_bufs      => tst_rdata_txt_bufs,      -- IN
 
         -- RX Buffer Interface
         rx_read_buff            => rx_read_buff,            -- OUT
@@ -646,7 +669,9 @@ begin
 
         -- Memory registers interface
         rx_read_buff            => rx_read_buff,            -- IN
-        drv_bus                 => drv_bus                  -- IN
+        drv_bus                 => drv_bus,                 -- IN
+        test_registers_out      => test_registers_out,      -- IN        
+        tst_rdata_rx_buf        => tst_rdata_rx_buf         -- OUT
     );
 
     ---------------------------------------------------------------------------
@@ -675,6 +700,10 @@ begin
             txt_buf_failed_bof  => txt_buf_failed_bof,              -- IN
             drv_rom_ena         => drv_bus(DRV_ROM_ENA_INDEX),      -- IN
             drv_bus_mon_ena     => drv_bus(DRV_BUS_MON_ENA_INDEX),  -- IN
+    
+            -- Memory testability
+            test_registers_out  => test_registers_out,              -- IN
+            tst_rdata_txt_buf   => tst_rdata_txt_bufs(i),           -- OUT
     
             -- Interrupt Manager Interface
             txtb_hw_cmd_int     => txtb_hw_cmd_int(i),              -- OUT
@@ -980,12 +1009,12 @@ begin
     
     -- psl default clock is rising_edge(clk_sys);
 
-    -- psl no_tx_dominant_when_disabled : assert never
+    -- psl no_tx_dominant_when_disabled_asrt : assert never
     --  (drv_bus(DRV_ENA_INDEX) = '0' and can_tx = DOMINANT)
     --  report "Dominant bit can't be transmitted when Node is disabled!"
     --  severity error;
 
-    -- psl no_tx_dominant_when_bus_monitoring : assert never
+    -- psl no_tx_dominant_when_bus_monitoring_asrt : assert never
     --  (drv_bus(DRV_BUS_MON_ENA_INDEX) = '1' and can_tx = DOMINANT)
     --  report "Dominant bit can't be transmitted in Bus monitoring mode!"
     --  severity error;
@@ -996,13 +1025,19 @@ begin
      
     txtb_asr_gen : for i in 0 to txt_buffer_count - 1 generate
     
-    -- psl no_tx_buf_transmitting_in_overload : assert never
+    -- psl no_tx_buf_transmitting_in_overload_asrt : assert never
     --  (((txtb_state(i) = TXT_TRAN) or (txtb_state(i) = TXT_ABTP))) and
     --   (is_overload = '1')
     --   report "TXT Buffer should have been unlocked when node is in Overload frame!"
     --   severity error;
     
     end generate;
+
+    -- Memory testability shall not be used when CTU CAN FD is enabled
+    -- and operating!!
+    -- psl no_mem_test_when_operating_asrt : assert never
+    --  (drv_bus(DRV_ENA_INDEX) = '1' and test_registers_out.tst_control(TMAENA_IND) = '1')
+    --  report "Memory testability shall not be enabled when CTU CAN FD is running!";
 
     -- <RELEASE_ON>
     

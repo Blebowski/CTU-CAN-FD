@@ -3317,6 +3317,145 @@
 					</ipxact:field>
 				</ipxact:register>
 			</ipxact:addressBlock>
+			<ipxact:addressBlock>
+				<ipxact:name>Test_registers</ipxact:name>
+				<ipxact:displayName>Test registers</ipxact:displayName>
+				<ipxact:description>Test registers memory region. Contains registers with manufacturing testability features.</ipxact:description>
+				<ipxact:isPresent>uuid_2e48bf3e_bb4b_4bc7_90b5_6938b1203f7e</ipxact:isPresent>
+				<ipxact:baseAddress>'h900</ipxact:baseAddress>
+				<ipxact:range>256</ipxact:range>
+				<ipxact:width>32</ipxact:width>
+				<ipxact:usage>register</ipxact:usage>
+				<ipxact:volatile>true</ipxact:volatile>
+				<ipxact:register>
+					<ipxact:name>TST_CONTROL</ipxact:name>
+					<ipxact:displayName>TST_CONTROL</ipxact:displayName>
+					<ipxact:description>Testability control register. Contains configuration of test functions.</ipxact:description>
+					<ipxact:addressOffset>'h00</ipxact:addressOffset>
+					<ipxact:size>32</ipxact:size>
+					<ipxact:volatile>true</ipxact:volatile>
+					<ipxact:access>read-write</ipxact:access>
+					<ipxact:field>
+						<ipxact:name>TWRSTB</ipxact:name>
+						<ipxact:displayName>TWRSTB</ipxact:displayName>
+						<ipxact:description>Writing 1 executes write acess to a memory/address given by TST_DEST register.</ipxact:description>
+						<ipxact:bitOffset>1</ipxact:bitOffset>
+						<ipxact:bitWidth>1</ipxact:bitWidth>
+						<ipxact:modifiedWriteValue>clear</ipxact:modifiedWriteValue>
+					</ipxact:field>
+					<ipxact:field>
+						<ipxact:name>TMAENA</ipxact:name>
+						<ipxact:displayName>TMAENA</ipxact:displayName>
+						<ipxact:description>Enable test access to CTU CAN FD memories.</ipxact:description>
+						<ipxact:bitOffset>0</ipxact:bitOffset>
+						<ipxact:bitWidth>1</ipxact:bitWidth>
+					</ipxact:field>
+				</ipxact:register>
+				<ipxact:register>
+					<ipxact:name>TST_DEST</ipxact:name>
+					<ipxact:displayName>TST_DEST</ipxact:displayName>
+					<ipxact:addressOffset>'h4</ipxact:addressOffset>
+					<ipxact:size>32</ipxact:size>
+					<ipxact:volatile>true</ipxact:volatile>
+					<ipxact:access>read-write</ipxact:access>
+					<ipxact:field>
+						<ipxact:name>TST_ADDR</ipxact:name>
+						<ipxact:displayName>TST_ADDR</ipxact:displayName>
+						<ipxact:description>Address for test memory access within tested memory.</ipxact:description>
+						<ipxact:bitOffset>0</ipxact:bitOffset>
+						<ipxact:bitWidth>16</ipxact:bitWidth>
+					</ipxact:field>
+					<ipxact:field>
+						<ipxact:name>TST_MTGT</ipxact:name>
+						<ipxact:displayName>TST_MTGT</ipxact:displayName>
+						<ipxact:description>Target memory to be accessed.</ipxact:description>
+						<ipxact:bitOffset>16</ipxact:bitOffset>
+						<ipxact:bitWidth>4</ipxact:bitWidth>
+						<ipxact:enumeratedValues>
+							<ipxact:enumeratedValue>
+								<ipxact:name>TMTGT_TXTBUF1</ipxact:name>
+								<ipxact:description>TXT buffer 1 memory is selected for test access.</ipxact:description>
+								<ipxact:value>2</ipxact:value>
+							</ipxact:enumeratedValue>
+							<ipxact:enumeratedValue>
+								<ipxact:name>TMTGT_RXBUF</ipxact:name>
+								<ipxact:description>RX buffer memory is selected for test access.</ipxact:description>
+								<ipxact:value>1</ipxact:value>
+							</ipxact:enumeratedValue>
+							<ipxact:enumeratedValue>
+								<ipxact:name>TMTGT_NONE</ipxact:name>
+								<ipxact:description>No target memory is selected for test access.</ipxact:description>
+								<ipxact:value>0</ipxact:value>
+							</ipxact:enumeratedValue>
+							<ipxact:enumeratedValue>
+								<ipxact:name>TMTGT_TXTBUF3</ipxact:name>
+								<ipxact:description>TXT buffer 3 memory is selected for test access.</ipxact:description>
+								<ipxact:value>4</ipxact:value>
+							</ipxact:enumeratedValue>
+							<ipxact:enumeratedValue>
+								<ipxact:name>TMTGT_TXTBUF2</ipxact:name>
+								<ipxact:description>TXT buffer 2 memory is selected for test access.</ipxact:description>
+								<ipxact:value>3</ipxact:value>
+							</ipxact:enumeratedValue>
+							<ipxact:enumeratedValue>
+								<ipxact:name>TMTGT_TXTBUF7</ipxact:name>
+								<ipxact:description>TXT buffer 7 memory is selected for test access.</ipxact:description>
+								<ipxact:value>8</ipxact:value>
+							</ipxact:enumeratedValue>
+							<ipxact:enumeratedValue>
+								<ipxact:name>TMTGT_TXTBUF8</ipxact:name>
+								<ipxact:description>TXT buffer 8 memory is selected for test access.</ipxact:description>
+								<ipxact:value>9</ipxact:value>
+							</ipxact:enumeratedValue>
+							<ipxact:enumeratedValue>
+								<ipxact:name>TMTGT_TXTBUF6</ipxact:name>
+								<ipxact:description>TXT buffer 6 memory is selected for test access.</ipxact:description>
+								<ipxact:value>7</ipxact:value>
+							</ipxact:enumeratedValue>
+							<ipxact:enumeratedValue>
+								<ipxact:name>TMTGT_TXTBUF5</ipxact:name>
+								<ipxact:description>TXT buffer 5 memory is selected for test access.</ipxact:description>
+								<ipxact:value>6</ipxact:value>
+							</ipxact:enumeratedValue>
+							<ipxact:enumeratedValue>
+								<ipxact:name>TMTGT_TXTBUF4</ipxact:name>
+								<ipxact:description>TXT buffer 4 memory is selected for test access.</ipxact:description>
+								<ipxact:value>5</ipxact:value>
+							</ipxact:enumeratedValue>
+						</ipxact:enumeratedValues>
+					</ipxact:field>
+				</ipxact:register>
+				<ipxact:register>
+					<ipxact:name>TST_WDATA</ipxact:name>
+					<ipxact:displayName>TST_WDATA</ipxact:displayName>
+					<ipxact:addressOffset>'h8</ipxact:addressOffset>
+					<ipxact:size>32</ipxact:size>
+					<ipxact:volatile>true</ipxact:volatile>
+					<ipxact:access>read-write</ipxact:access>
+					<ipxact:field>
+						<ipxact:name>TST_WDATA</ipxact:name>
+						<ipxact:displayName>TST_WDATA</ipxact:displayName>
+						<ipxact:description>Write data for test access.</ipxact:description>
+						<ipxact:bitOffset>0</ipxact:bitOffset>
+						<ipxact:bitWidth>32</ipxact:bitWidth>
+					</ipxact:field>
+				</ipxact:register>
+				<ipxact:register>
+					<ipxact:name>TST_RDATA</ipxact:name>
+					<ipxact:displayName>TST_RDATA</ipxact:displayName>
+					<ipxact:addressOffset>'hc</ipxact:addressOffset>
+					<ipxact:size>32</ipxact:size>
+					<ipxact:volatile>true</ipxact:volatile>
+					<ipxact:access>read-only</ipxact:access>
+					<ipxact:field>
+						<ipxact:name>TST_RDATA</ipxact:name>
+						<ipxact:displayName>TST_RDATA</ipxact:displayName>
+						<ipxact:description>Read data for test access.</ipxact:description>
+						<ipxact:bitOffset>0</ipxact:bitOffset>
+						<ipxact:bitWidth>32</ipxact:bitWidth>
+					</ipxact:field>
+				</ipxact:register>
+			</ipxact:addressBlock>
 			<ipxact:addressUnitBits>8</ipxact:addressUnitBits>
 		</ipxact:memoryMap>
 		<ipxact:memoryMap>
@@ -3633,6 +3772,11 @@
 			<ipxact:displayName>txt_buffer_count</ipxact:displayName>
 			<ipxact:value>4</ipxact:value>
 		</ipxact:parameter>
+		<ipxact:parameter kactus2:usageCount="1" parameterId="uuid_2e48bf3e_bb4b_4bc7_90b5_6938b1203f7e" type="bit">
+			<ipxact:name>sup_test_registers</ipxact:name>
+			<ipxact:displayName>sup_test_registers</ipxact:displayName>
+			<ipxact:value>1</ipxact:value>
+		</ipxact:parameter>
 	</ipxact:parameters>
 	<ipxact:vendorExtensions>
 		<kactus2:author>Ondrej Ille</kactus2:author>
@@ -3643,12 +3787,15 @@
 			<kactus2:kts_firmness>Mutable</kactus2:kts_firmness>
 		</kactus2:kts_attributes>
 		<ipxact:regLocks>
-			<ipxact:regLock description="Register can be only written when MODE[TSTM] = 1, otherwise write has no effect." lock_signal="lock_1" reg_name="CTR_PRES"/>
-			<ipxact:regLock description="Register can be only written when MODE[TSTM] = 1, otherwise write has no effect." lock_signal="lock_1" reg_name="EWL"/>
-			<ipxact:regLock description="Register can be only written when MODE[TSTM] = 1, otherwise write has no effect." lock_signal="lock_1" reg_name="ERP"/>
-			<ipxact:regLock description="Register can be only written when SETTINGS[ENA] = 0, otherwise write has no effect." lock_signal="lock_2" reg_name="BTR"/>
-			<ipxact:regLock description="Register can be only written when SETTINGS[ENA] = 0, otherwise write has no effect." lock_signal="lock_2" reg_name="BTR_FD"/>
-			<ipxact:regLock description="Register can be only written when SETTINGS[ENA] = 0, otherwise write has no effect." lock_signal="lock_2" reg_name="SSP_CFG"/>
+			<ipxact:regLock lock_signal="lock_1" reg_name="CTR_PRES" description="Register can be only written when MODE[TSTM] = 1, otherwise write has no effect."/>
+			<ipxact:regLock lock_signal="lock_1" reg_name="EWL" description="Register can be only written when MODE[TSTM] = 1, otherwise write has no effect."/>
+			<ipxact:regLock lock_signal="lock_1" reg_name="ERP" description="Register can be only written when MODE[TSTM] = 1, otherwise write has no effect."/>
+			<ipxact:regLock lock_signal="lock_2" reg_name="BTR" description="Register can be only written when SETTINGS[ENA] = 0, otherwise write has no effect."/>
+			<ipxact:regLock lock_signal="lock_2" reg_name="BTR_FD" description="Register can be only written when SETTINGS[ENA] = 0, otherwise write has no effect."/>
+			<ipxact:regLock lock_signal="lock_2" reg_name="SSP_CFG" description="Register can be only written when SETTINGS[ENA] = 0, otherwise write has no effect."/>
+			<ipxact:regLock lock_signal="lock_1" reg_name="TST_CONTROL" description="Register can be only written when MODE[TSTM] = 1, otherwise write has no effect."/>
+			<ipxact:regLock lock_signal="lock_1" reg_name="TST_DEST" description="Register can be only written when MODE[TSTM] = 1, otherwise write has no effect."/>
+			<ipxact:regLock lock_signal="lock_1" reg_name="TST_WDATA" description="Register can be only written when MODE[TSTM] = 1, otherwise write has no effect."/>
 		</ipxact:regLocks>
 		<kactus2:license>Proprietary</kactus2:license>
 	</ipxact:vendorExtensions>

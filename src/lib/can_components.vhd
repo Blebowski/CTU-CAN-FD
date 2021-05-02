@@ -96,17 +96,20 @@ package can_components is
             -- Number of supported TXT buffers
             txt_buffer_count    : natural range 2 to 8   := C_TXT_BUFFER_COUNT; 
         
-            -- Insert Filter A
+            -- Synthesize Filter A
             sup_filtA      : boolean                := true;
             
-            -- Insert Filter B
+            -- Synthesize Filter B
             sup_filtB      : boolean                := true;
             
-            -- Insert Filter C
+            -- Synthesize Filter C
             sup_filtC      : boolean                := true;
             
-            -- Insert Range Filter
+            -- Synthesize Range Filter
             sup_range      : boolean                := true;
+            
+            -- Synthesize Test registers
+            sup_test_registers  : boolean           := true;
             
             -- Support traffic counters
             sup_traffic_ctrs : boolean              := true;
@@ -3129,6 +3132,9 @@ package can_components is
         -- Support Range Filter
         G_SUP_RANGE         : boolean                         := true;
 
+        -- Support Test registers
+        G_SUP_TEST_REGISTERS: boolean                         := true;
+
         -- Support Traffic counters
         G_SUP_TRAFFIC_CTRS  : boolean                         := true;
         
@@ -3201,6 +3207,18 @@ package can_components is
         
         -- Status Bus
         stat_bus             :in   std_logic_vector(511 downto 0);
+        
+        ------------------------------------------------------------------------
+        -- Manufacturing testability
+        ------------------------------------------------------------------------
+        -- Test registers outputs
+        test_registers_out   :out  test_registers_out_t;
+        
+        -- RX buffer test data in
+        tst_rdata_rx_buf     :in   std_logic_vector(31 downto 0);
+        
+        -- TXT buffers test data input
+        tst_rdata_txt_bufs   :in   t_txt_bufs_output(G_TXT_BUFFER_COUNT - 1 downto 0);
 
         ------------------------------------------------------------------------
         -- RX Buffer Interface
@@ -3923,6 +3941,15 @@ package can_components is
         res_n                :in     std_logic;
 
         ------------------------------------------------------------------------
+        -- Memory testability
+        ------------------------------------------------------------------------
+        -- Test registers
+        test_registers_out   :in     test_registers_out_t;
+
+        -- Test output
+        tst_rdata_rx_buf     :out    std_logic_vector(31 downto 0);
+
+        ------------------------------------------------------------------------
         -- Port A - Write (from CAN Core)
         ------------------------------------------------------------------------
         -- Address
@@ -4059,7 +4086,13 @@ package can_components is
         rx_read_buff         :out    std_logic_vector(31 downto 0);
         
         -- Driving bus from registers
-        drv_bus              :in     std_logic_vector(1023 downto 0)
+        drv_bus              :in     std_logic_vector(1023 downto 0);
+        
+        -- Test registers
+        test_registers_out   :in     test_registers_out_t;
+        
+        -- RX buffer RAM test output
+        tst_rdata_rx_buf     :out    std_logic_vector(31 downto 0)
     );
     end component;
 
@@ -4332,7 +4365,10 @@ package can_components is
     component txt_buffer_ram is
     generic(
         -- Reset polarity
-        G_RESET_POLARITY       :     std_logic := '0'
+        G_RESET_POLARITY       :     std_logic := '0';
+        
+        -- TXT buffer ID
+        G_ID                   :     natural
     );
     port(
         ------------------------------------------------------------------------
@@ -4343,6 +4379,15 @@ package can_components is
         
         -- Asynchronous reset
         res_n                  :in   std_logic;
+        
+        ------------------------------------------------------------------------
+        -- Memory Testability
+        ------------------------------------------------------------------------
+        -- Test registers
+        test_registers_out     :in   test_registers_out_t;
+        
+        -- TXT buffer RAM test output
+        tst_rdata_txt_buf      :out  std_logic_vector(31 downto 0);
 
         ------------------------------------------------------------------------
         -- Port A - Write (from Memory registers)
@@ -4420,7 +4465,16 @@ package can_components is
 
         -- Bus monitoring mode
         drv_bus_mon_ena        :in   std_logic;
-
+        
+        ------------------------------------------------------------------------
+        -- Memory Testability
+        ------------------------------------------------------------------------
+        -- Test registers
+        test_registers_out     :in   test_registers_out_t;
+        
+        -- TXT buffer RAM test output
+        tst_rdata_txt_buf      :out  std_logic_vector(31 downto 0);
+        
         ------------------------------------------------------------------------   
         -- Interrupt Manager Interface
         ------------------------------------------------------------------------
@@ -4531,6 +4585,30 @@ package can_components is
     );
     end component control_registers_reg_map;
 
+    component test_registers_reg_map is
+    generic (
+        constant DATA_WIDTH          : natural := 32;
+        constant ADDRESS_WIDTH       : natural := 8;
+        constant REGISTERED_READ     : boolean := true;
+        constant CLEAR_READ_DATA     : boolean := true;
+        constant RESET_POLARITY      : std_logic := '0'
+    );
+    port (
+        signal clk_sys               :in std_logic;
+        signal res_n                 :in std_logic;
+        signal address               :in std_logic_vector(address_width - 1 downto 0);
+        signal w_data                :in std_logic_vector(data_width - 1 downto 0);
+        signal r_data                :out std_logic_vector(data_width - 1 downto 0);
+        signal cs                    :in std_logic;
+        signal read                  :in std_logic;
+        signal write                 :in std_logic;
+        signal be                    :in std_logic_vector(data_width / 8 - 1 downto 0);
+        signal lock_1                :in std_logic;
+        signal lock_2                :in std_logic;
+        signal test_registers_out    :out Test_registers_out_t;
+        signal test_registers_in     :in Test_registers_in_t
+    );
+    end component test_registers_reg_map;
 
     component CTU_CAN_FD_v1_0 is
     generic(

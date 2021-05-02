@@ -92,6 +92,8 @@ use ctu_can_fd_rtl.reduce_lib.all;
 use ctu_can_fd_rtl.CAN_FD_register_map.all;
 use ctu_can_fd_rtl.CAN_FD_frame_format.all;
 
+use ctu_can_fd_rtl.can_registers_pkg.all;
+
 entity txt_buffer is
     generic(
         -- Reset polarity
@@ -145,6 +147,15 @@ entity txt_buffer is
 
         -- Bus monitoring mode
         drv_bus_mon_ena        :in   std_logic;
+        
+        ------------------------------------------------------------------------
+        -- Memory Testability
+        ------------------------------------------------------------------------
+        -- Test registers
+        test_registers_out     :in   test_registers_out_t;
+        
+        -- TXT buffer RAM test output
+        tst_rdata_txt_buf      :out  std_logic_vector(31 downto 0);
 
         ------------------------------------------------------------------------   
         -- Interrupt Manager Interface
@@ -257,10 +268,14 @@ begin
                            (OTHERS => '0');
 
     ----------------------------------------------------------------------------
-    -- Clock gating for TXT Buffer RAM
-    -- We must un-gate the clocks either for read access or write access.
+    -- Clock gating for TXT Buffer RAM. Enable when:
+    --  1. Read access from CAN core
+    --  2. Write access from user
+    --  3. Always in test mode
     ----------------------------------------------------------------------------
     txtb_ram_clk_en <= '1' when (txtb_port_b_clk_en = '1' or ram_write = '1')
+                           else
+                       '1' when (test_registers_out.tst_control(TMAENA_IND) = '1')
                            else
                        '0';
 
@@ -280,12 +295,17 @@ begin
     ----------------------------------------------------------------------------
     txt_buffer_ram_inst : txt_buffer_ram
     generic map(
-        G_RESET_POLARITY     => G_RESET_POLARITY
+        G_RESET_POLARITY     => G_RESET_POLARITY,
+        G_ID                 => G_ID
     )
     port map(
         -- Clock and Asynchronous reset
         clk_sys              => clk_ram,                -- IN
         res_n                => res_n,                  -- IN
+
+        -- Memory testability
+        test_registers_out   => test_registers_out,     -- IN
+        tst_rdata_txt_buf    => tst_rdata_txt_buf,      -- OUT
 
         -- Port A - Write (from Memory registers)
         port_a_address       => txtb_port_a_address,    -- IN
@@ -296,7 +316,6 @@ begin
         port_b_address       => ram_read_address,       -- IN
         port_b_data_out      => txtb_port_b_data_i      -- OUT
     );
-
     
     ----------------------------------------------------------------------------
     -- TXT Buffer FSM

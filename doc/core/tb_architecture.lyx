@@ -918,7 +918,7 @@ status open
 \noindent
 \align center
 \begin_inset Graphics
-	filename /DOKUMENTY/Projekty/ctu_can_fd/doc/pics/test-bench/Generated/tb_top_diagram.pdf
+	filename ../pics/test-bench/Generated/tb_top_diagram.pdf
 	scale 25
 
 \end_inset
@@ -2678,7 +2678,7 @@ status open
 \noindent
 \align center
 \begin_inset Graphics
-	filename /DOKUMENTY/Projekty/ctu_can_fd/doc/pics/Timing_diagrams/PDFs/ram_like.pdf
+	filename ../pics/Timing_diagrams/PDFs/ram_like.pdf
 	scale 75
 
 \end_inset
@@ -2918,7 +2918,7 @@ status open
 \noindent
 \align center
 \begin_inset Graphics
-	filename /DOKUMENTY/Projekty/ctu_can_fd/doc/pics/Timing_diagrams/CAN_agent_example.png
+	filename ../pics/Timing_diagrams/CAN_agent_example.png
 	scale 32
 
 \end_inset
@@ -3160,7 +3160,7 @@ status open
 \noindent
 \align center
 \begin_inset Graphics
-	filename /DOKUMENTY/Projekty/ctu_can_fd/doc/pics/test-bench/tb_top_compliance.pdf
+	filename ../pics/test-bench/tb_top_compliance.pdf
 	scale 25
 
 \end_inset
@@ -3731,7 +3731,7 @@ status open
 \noindent
 \align center
 \begin_inset Graphics
-	filename /DOKUMENTY/Projekty/ctu_can_fd/doc/pics/test-bench/tb_top_feature.pdf
+	filename ../pics/test-bench/tb_top_feature.pdf
 	scale 25
 
 \end_inset

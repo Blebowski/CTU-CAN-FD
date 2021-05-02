@@ -555,4 +555,35 @@ package can_fd_tb_register_map is
      is_implem => "11111111111111111111111111111111")
   );
 
+
+  ------------------------------------------------------------------------------
+  -- Register list
+  ------------------------------------------------------------------------------
+
+  type t_Test_registers_list is array (0 to 3) of t_memory_reg;
+
+  constant Test_registers_list : t_Test_registers_list :=(
+
+    (address   => TST_CONTROL_ADR,
+     size      => 32,
+     reg_type  => reg_read_write,
+     reset_val => "00000000000000000000000000000000",
+     is_implem => "00000000000000000000000000000011"),
+    (address   => TST_DEST_ADR,
+     size      => 32,
+     reg_type  => reg_read_write,
+     reset_val => "00000000000000000000000000000000",
+     is_implem => "00000000000011111111111111111111"),
+    (address   => TST_WDATA_ADR,
+     size      => 32,
+     reg_type  => reg_read_write,
+     reset_val => "00000000000000000000000000000000",
+     is_implem => "11111111111111111111111111111111"),
+    (address   => TST_RDATA_ADR,
+     size      => 32,
+     reg_type  => reg_read_only,
+     reset_val => "00000000000000000000000000000000",
+     is_implem => "11111111111111111111111111111111")
+  );
+
 end package;

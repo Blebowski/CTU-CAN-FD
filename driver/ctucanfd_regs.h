@@ -109,6 +109,10 @@ enum ctu_can_fd_can_registers {
 	CTU_CAN_FD_TXTB8_DATA_1        = 0x800,
 	CTU_CAN_FD_TXTB8_DATA_2        = 0x804,
 	CTU_CAN_FD_TXTB8_DATA_20       = 0x84c,
+	CTU_CAN_FD_TST_CONTROL         = 0x900,
+	CTU_CAN_FD_TST_DEST            = 0x904,
+	CTU_CAN_FD_TST_WDATA           = 0x908,
+	CTU_CAN_FD_TST_RDATA           = 0x90c,
 };
 
 
@@ -1043,6 +1047,67 @@ union ctu_can_fd_timestamp_high {
 	struct ctu_can_fd_timestamp_high_s {
   /* TIMESTAMP_HIGH */
 		uint32_t timestamp_high         : 32;
+	} s;
+};
+
+union ctu_can_fd_tst_control {
+	uint32_t u32;
+	struct ctu_can_fd_tst_control_s {
+#ifdef __LITTLE_ENDIAN_BITFIELD
+  /* TST_CONTROL */
+		uint32_t tmaena                  : 1;
+		uint32_t twrstb                  : 1;
+		uint32_t reserved_31_2          : 30;
+#else
+		uint32_t reserved_31_2          : 30;
+		uint32_t twrstb                  : 1;
+		uint32_t tmaena                  : 1;
+#endif
+	} s;
+};
+
+union ctu_can_fd_tst_dest {
+	uint32_t u32;
+	struct ctu_can_fd_tst_dest_s {
+#ifdef __LITTLE_ENDIAN_BITFIELD
+  /* TST_DEST */
+		uint32_t tst_addr               : 16;
+		uint32_t tst_mtgt                : 4;
+		uint32_t reserved_31_20         : 12;
+#else
+		uint32_t reserved_31_20         : 12;
+		uint32_t tst_mtgt                : 4;
+		uint32_t tst_addr               : 16;
+#endif
+	} s;
+};
+
+enum ctu_can_fd_tst_dest_tst_mtgt {
+	TMTGT_NONE          = 0x0,
+	TMTGT_RXBUF         = 0x1,
+	TMTGT_TXTBUF1       = 0x2,
+	TMTGT_TXTBUF2       = 0x3,
+	TMTGT_TXTBUF3       = 0x4,
+	TMTGT_TXTBUF4       = 0x5,
+	TMTGT_TXTBUF5       = 0x6,
+	TMTGT_TXTBUF6       = 0x7,
+	TMTGT_TXTBUF7       = 0x8,
+	TMTGT_TXTBUF8       = 0x9,
+};
+
+union ctu_can_fd_tst_wdata {
+	uint32_t u32;
+	struct ctu_can_fd_tst_wdata_s {
+  /* TST_WDATA */
+		uint32_t tst_wdata              : 32;
+	} s;
+};
+
+union ctu_can_fd_tst_rdata {
+	uint32_t u32;
+	struct ctu_can_fd_tst_rdata_s {
+  /* TST_RDATA */
+		uint32_t tst_rdata              : 32;
 	} s;
 };
 
