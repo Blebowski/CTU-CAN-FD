@@ -142,6 +142,8 @@ library ctu_can_fd_tb_unit;
 use ctu_can_fd_tb_unit.can_unit_test_pkg.all;
 use ctu_can_fd_tb_unit.random_unit_pkg.all;
 
+use ctu_can_fd_rtl.can_registers_pkg.all;
+
 library vunit_lib;
 context vunit_lib.vunit_context;
 
@@ -216,6 +218,9 @@ architecture rx_buffer_unit_test of CAN_test is
 
     -- Additional random counter
     signal rand_ctr_3               :    natural range 0 to RAND_POOL_SIZE := 0;
+
+    signal test_registers_out       :    test_registers_out_t :=
+        ((OTHERS => '0'), (OTHERS => '0'), (OTHERS => '0'));
 
     ----------------------------------------------------------------------------
     -- Memory declarations for memories where data are read out
@@ -621,7 +626,9 @@ begin
         rx_read_pointer          => rx_read_pointer,
         rx_write_pointer         => rx_write_pointer,
         rx_data_overrun          => rx_data_overrun,
-        rx_read_buff             => rx_read_buff
+        rx_read_buff             => rx_read_buff,
+        test_registers_out       => test_registers_out,
+        tst_rdata_rx_buf         => open
     );
 
 

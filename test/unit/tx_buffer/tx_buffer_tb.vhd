@@ -109,6 +109,8 @@ use ctu_can_fd_rtl.can_config.all;
 use ctu_can_fd_rtl.CAN_FD_register_map.all;
 use ctu_can_fd_rtl.CAN_FD_frame_format.all;
 
+use ctu_can_fd_rtl.can_registers_pkg.all;
+
 library ctu_can_fd_tb_unit;
 use ctu_can_fd_tb_unit.random_unit_pkg.all;
 
@@ -163,6 +165,9 @@ architecture tx_buffer_unit_test of CAN_test is
 
     -- Signals that immediate transition to Bus-off state occurred!
     signal is_bus_off          :     std_logic := '0';
+
+    signal test_registers_out       :    test_registers_out_t :=
+        ((OTHERS => '0'), (OTHERS => '0'), (OTHERS => '0'));
 
     ------------------------------------
     -- Internal testbench signals
@@ -298,7 +303,9 @@ begin
         txtb_port_b_data        => txtb_port_b_data,
         txtb_port_b_address     => txtb_port_b_address,
         txtb_port_b_clk_en      => '1',
-        txtb_available          => txtb_available
+        txtb_available          => txtb_available,
+        test_registers_out      => test_registers_out,
+        tst_rdata_txt_buf       => open
     );
 
 
