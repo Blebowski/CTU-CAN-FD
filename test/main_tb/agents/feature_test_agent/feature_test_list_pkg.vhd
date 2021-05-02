@@ -179,6 +179,8 @@ use ctu_can_fd_tb.status_txs_ftest.all;
 use ctu_can_fd_tb.stuff_in_data_ftest.all;
 
 use ctu_can_fd_tb.trv_delay_ftest.all;
+use ctu_can_fd_tb.tst_mem_acc_rx_ftest.all;
+use ctu_can_fd_tb.tst_mem_acc_txt_ftest.all;
 use ctu_can_fd_tb.tx_arb_consistency_ftest.all;
 use ctu_can_fd_tb.tx_arb_time_tran_ftest.all;
 use ctu_can_fd_tb.tx_cmd_set_abort_ftest.all;
@@ -380,6 +382,10 @@ package body feature_test_list_pkg is
 
         elsif (test_name = "trv_delay") then
             trv_delay_ftest_exec(channel);
+        elsif (test_name = "tst_mem_acc_rx") then
+            tst_mem_acc_rx_ftest_exec(channel);
+        elsif (test_name = "tst_mem_acc_txt") then
+            tst_mem_acc_txt_ftest_exec(channel);
         elsif (test_name = "tx_arb_consistency") then
             tx_arb_consistency_ftest_exec(channel);
         elsif (test_name = "tx_arb_time_tran") then

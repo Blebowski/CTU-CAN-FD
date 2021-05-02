@@ -437,6 +437,18 @@ package feature_test_agent_pkg is
         DUT_NODE,
         TEST_NODE
     );
+    
+    type t_tgt_test_mem is(
+        TST_TGT_RX_BUF,
+        TST_TGT_TXT_BUF_1,
+        TST_TGT_TXT_BUF_2,
+        TST_TGT_TXT_BUF_3,
+        TST_TGT_TXT_BUF_4,
+        TST_TGT_TXT_BUF_5,
+        TST_TGT_TXT_BUF_6,
+        TST_TGT_TXT_BUF_7,
+        TST_TGT_TXT_BUF_8
+    );
 
 
     ----------------------------------------------------------------------------
@@ -1413,6 +1425,59 @@ package feature_test_agent_pkg is
     ----------------------------------------------------------------------------
     procedure read_error_counters(
         variable err_counters   : out   SW_error_counters;
+        constant node           : in    t_feature_node;
+        signal   channel        : inout t_com_channel
+    );
+    
+    ----------------------------------------------------------------------------
+    -- Configure test memory access in CTU CAN FD Core.
+    -- Note: To use this function, Test mode must be enabled (MODE[TSTM])
+    --
+    -- Arguments:
+    --  enable          True - Enable test memory access.
+    --                  False - Disable test memory access.
+    --  node            Target node (DUT or Test node)
+    --  channel         Communication channel
+    ----------------------------------------------------------------------------
+    procedure set_test_mem_access(
+        constant enable         : in    boolean;
+        constant node           : in    t_feature_node;
+        signal   channel        : inout t_com_channel
+    );
+
+    ----------------------------------------------------------------------------
+    -- Execute Write test access via Test registers to target memory
+    -- Note: Test memory access must be enabled
+    --
+    -- Arguments:
+    --  data            Write data
+    --  address         Address to write into
+    --  tgt_mem         Target memory
+    --  node            Target node (DUT or Test node)
+    --  channel         Communication channel
+    ----------------------------------------------------------------------------
+    procedure test_mem_write(
+        constant data           : in    std_logic_vector(31 downto 0);
+        constant address        : in    natural;
+        constant tgt_mem        : in    t_tgt_test_mem;
+        constant node           : in    t_feature_node;
+        signal   channel        : inout t_com_channel
+    );
+    
+    ----------------------------------------------------------------------------
+    -- Execute Read test access via Test registers to target memory
+    -- Note: Test memory access must be enabled
+    --
+    -- Arguments:
+    --  data            Read data
+    --  address         Address to write into
+    --  node            Target node (DUT or Test node)
+    --  channel         Communication channel
+    ----------------------------------------------------------------------------
+    procedure test_mem_read(
+        variable data           : out   std_logic_vector(31 downto 0);
+        constant address        : in    natural;
+        constant tgt_mem        : in    t_tgt_test_mem;
         constant node           : in    t_feature_node;
         signal   channel        : inout t_com_channel
     );
@@ -3790,6 +3855,105 @@ package body feature_test_agent_pkg is
         err_counters.err_fd :=
                 to_integer(unsigned(data((ERR_FD_VAL_H mod 16) downto
                                          (ERR_FD_VAL_L mod 16) )));
+    end procedure;
+
+
+    procedure set_test_mem_access(
+        constant enable         : in    boolean;
+        constant node           : in    t_feature_node;
+        signal   channel        : inout t_com_channel
+    ) is
+        variable mode : SW_mode;
+        variable data : std_logic_vector(31 downto 0) := (OTHERS => '0');
+    begin
+        -- Check test mode is set, throw error otherwise
+        get_core_mode(mode, node, channel);
+        check_m(mode.test, "Test mode must be set when enabling Test memory access");
+
+        -- Enable access
+        if (enable) then
+            data(TMAENA_IND) := '1';
+        else
+            data(TMAENA_IND) := '0';
+        end if;
+        CAN_write(data, TST_CONTROL_ADR, node, channel);
+    end procedure;
+
+    
+    function tgt_test_mem_to_reg(
+        constant tgt_mem        : in  t_tgt_test_mem
+    ) return std_logic_vector is
+    begin
+        case tgt_mem is
+        when TST_TGT_RX_BUF =>
+            return TMTGT_RXBUF;
+        when TST_TGT_TXT_BUF_1 =>
+            return TMTGT_TXTBUF1;
+        when TST_TGT_TXT_BUF_2 =>
+            return TMTGT_TXTBUF2;
+        when TST_TGT_TXT_BUF_3 =>
+            return TMTGT_TXTBUF3;
+        when TST_TGT_TXT_BUF_4 =>
+            return TMTGT_TXTBUF4;
+        when TST_TGT_TXT_BUF_5 =>
+            return TMTGT_TXTBUF5;
+        when TST_TGT_TXT_BUF_6 =>
+            return TMTGT_TXTBUF6;
+        when TST_TGT_TXT_BUF_7 =>
+            return TMTGT_TXTBUF7;
+        when TST_TGT_TXT_BUF_8 =>
+            return TMTGT_TXTBUF8;
+        end case;
+    end function;
+
+
+    procedure test_mem_write(
+        constant data           : in    std_logic_vector(31 downto 0);
+        constant address        : in    natural;
+        constant tgt_mem        : in    t_tgt_test_mem;
+        constant node           : in    t_feature_node;
+        signal   channel        : inout t_com_channel
+    ) is
+        variable data_i : std_logic_vector(31 downto 0) := (OTHERS => '0');
+    begin
+        -- Set address
+        data_i(TST_ADDR_H downto TST_ADDR_L) :=
+            std_logic_vector(to_unsigned(address, 16));
+        data_i(TST_MTGT_H downto TST_MTGT_L) := tgt_test_mem_to_reg(tgt_mem);
+        CAN_write(data_i, TST_DEST_ADR, node, channel);
+        
+        -- Set data
+        data_i := data;
+        CAN_write(data_i, TST_WDATA_ADR, node, channel);
+
+        -- Execute write
+        data_i := (OTHERS => '0');
+        data_i(TMAENA_IND) := '1';
+        data_i(TWRSTB_IND) := '1';
+        CAN_write(data_i, TST_CONTROL_ADR, node, channel);        
+    end procedure;
+
+
+    procedure test_mem_read(
+        variable data           : out   std_logic_vector(31 downto 0);
+        constant address        : in    natural;
+        constant tgt_mem        : in    t_tgt_test_mem;
+        constant node           : in    t_feature_node;
+        signal   channel        : inout t_com_channel
+    ) is
+        variable data_i : std_logic_vector(31 downto 0) := (OTHERS => '0');
+    begin
+        -- Set address
+        data_i(TST_ADDR_H downto TST_ADDR_L) :=
+            std_logic_vector(to_unsigned(address, 16));
+        data_i(TST_MTGT_H downto TST_MTGT_L) := tgt_test_mem_to_reg(tgt_mem);
+        CAN_write(data_i, TST_DEST_ADR, node, channel);
+        
+        -- Wait for one clock cycle
+        clk_agent_wait_cycle(channel);
+
+        -- Read data
+        CAN_read(data, TST_RDATA_ADR, node, channel);   
     end procedure;
 
 
