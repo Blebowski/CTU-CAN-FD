@@ -105,13 +105,16 @@ entity memory_registers is
 
         -- Support Filter B
         G_SUP_FILTB         : boolean                         := true;
-        
+
         -- Support Filter C
         G_SUP_FILTC         : boolean                         := true;
-        
+
         -- Support Range Filter
         G_SUP_RANGE         : boolean                         := true;
-        
+
+        -- Support Test registers
+        G_SUP_TEST_REGISTERS: boolean                         := true;
+
         -- Support Traffic counters
         G_SUP_TRAFFIC_CTRS  : boolean                         := true;
 
@@ -184,6 +187,18 @@ entity memory_registers is
         
         -- Status Bus
         stat_bus             :in   std_logic_vector(511 downto 0);
+
+        ------------------------------------------------------------------------
+        -- Manufacturing testability
+        ------------------------------------------------------------------------
+        -- Test registers outputs
+        test_registers_out   :out  test_registers_out_t;
+        
+        -- RX buffer test data in
+        tst_rdata_rx_buf     :in   std_logic_vector(31 downto 0);
+        
+        -- TXT buffers test data input
+        tst_rdata_txt_bufs   :in   t_txt_bufs_output(G_TXT_BUFFER_COUNT - 1 downto 0);
 
         ------------------------------------------------------------------------
         -- RX Buffer Interface
@@ -267,15 +282,18 @@ end entity;
 
 architecture rtl of memory_registers is
 
-    -- Control registers output
+    -- Generated register maps inputs/outputs
     signal Control_registers_out    : Control_registers_out_t;
-
-    -- Control registers input
     signal Control_registers_in     : Control_registers_in_t;
-
+    signal test_registers_in        : test_registers_in_t;
+    signal test_registers_out_i     : test_registers_out_t;
+    
     -- Status register - combinational decoder
     signal status_comb              : std_logic_vector(31 downto 0);
     
+    -- TXT buffer outputs - padded
+    signal tst_rdata_txt_bufs_i     : t_txt_bufs_output(7 downto 0);
+
     -- Padding for interrupt read data
     constant INT_PAD_H_IND          : natural :=
         Control_registers_in.int_stat'length - G_INT_COUNT;
@@ -289,9 +307,13 @@ architecture rtl of memory_registers is
     -- Chip select signals for each memory sub-block
     signal control_registers_cs       : std_logic;
     signal control_registers_cs_reg   : std_logic;
-
-    -- Read data from register sub-modules
+    
+    signal test_registers_cs          : std_logic;
+    signal test_registers_cs_reg      : std_logic;
+    
+    -- Read data from generated register modules
     signal control_registers_rdata    : std_logic_vector(31 downto 0);
+    signal test_registers_rdata       : std_logic_vector(31 downto 0);
    
     -- Fault confinement State Indication
     signal is_err_active          :     std_logic;
@@ -319,8 +341,11 @@ architecture rtl of memory_registers is
     signal ewl_padded             :     std_logic_vector(8 downto 0);
 
     -- Clock gating for register map
-    signal reg_map_clk_en         :     std_logic;
-    signal clk_reg_map            :     std_logic;
+    signal control_regs_clk_en    :     std_logic;
+    signal test_regs_clk_en       :     std_logic;
+    
+    signal clk_control_regs       :     std_logic;
+    signal clk_test_regs          :     std_logic;
 
     ---------------------------------------------------------------------------
     -- 
@@ -397,14 +422,18 @@ begin
     can_core_cs <= '1' when (scs = ACT_CSC) else
                    '0';
 
-
     ----------------------------------------------------------------------------
-    -- Control registers chip select signals
+    -- Chip selects for register map blocks
     ----------------------------------------------------------------------------
     control_registers_cs <= '1' when (adress(11 downto 8) = CONTROL_REGISTERS_BLOCK)
                                       and (can_core_cs = '1')
                                 else
                             '0';
+
+    test_registers_cs <= '1' when (adress(11 downto 8) = TEST_REGISTERS_BLOCK)
+                                   and (can_core_cs = '1')
+                             else
+                         '0';
 
     ----------------------------------------------------------------------------
     -- Registering control registers chip select
@@ -413,8 +442,10 @@ begin
     begin
         if (res_n = G_RESET_POLARITY) then
             control_registers_cs_reg  <= '0';
+            test_registers_cs_reg <= '0';
         elsif (rising_edge(clk_sys)) then
             control_registers_cs_reg  <= control_registers_cs;
+            test_registers_cs_reg <= test_registers_cs;
         end if;
     end process;
 
@@ -422,29 +453,45 @@ begin
     -- Read data multiplexor. Use registered version of chip select signals
     -- since read data are returned one clock cycle later!
     ----------------------------------------------------------------------------
-    data_out <= control_registers_rdata when (control_registers_cs_reg = '1')
-                                        else
-                (OTHERS => '0');
+    data_out <= control_registers_rdata when (control_registers_cs_reg = '1') else
+                   test_registers_rdata when (test_registers_cs_reg = '1') else
+                        (OTHERS => '0');
 
     ----------------------------------------------------------------------------
     -- Clock gating - Ungate clocks for read or write.
     -- Note that write enable / read enable is still brought also to register
     -- map! This is for FPGA implementation where clock gate is transparent!
     ----------------------------------------------------------------------------
-    reg_map_clk_en <= '1' when (srd = '1' or swr = '1') and
-                               (control_registers_cs = '1')
-                          else
-                      '0'; 
+    control_regs_clk_en <= '1' when (srd = '1' or swr = '1') and
+                                    (control_registers_cs = '1')
+                               else
+                           '0';
+    
+    test_regs_clk_en <= '1' when (srd = '1' or swr = '1') and
+                                 (test_registers_cs = '1')
+                            else
+                        '0';
 
-    clk_gate_reg_map_comp : clk_gate
+    clk_gate_control_regs_comp : clk_gate
     generic map(
         G_TECHNOLOGY       => G_TECHNOLOGY
     )
     port map(
         clk_in             => clk_sys,
-        clk_en             => reg_map_clk_en,
+        clk_en             => control_regs_clk_en,
 
-        clk_out            => clk_reg_map
+        clk_out            => clk_control_regs
+    );
+
+    clk_gate_test_regs_comp : clk_gate
+    generic map(
+        G_TECHNOLOGY       => G_TECHNOLOGY
+    )
+    port map(
+        clk_in             => clk_sys,
+        clk_en             => test_regs_clk_en,
+
+        clk_out            => clk_test_regs
     );
 
     ----------------------------------------------------------------------------
@@ -464,7 +511,7 @@ begin
         SUP_TRAFFIC_CTRS      => G_SUP_TRAFFIC_CTRS
     )
     port map(
-        clk_sys               => clk_reg_map,
+        clk_sys               => clk_control_regs,
         res_n                 => res_out_i,
         address               => adress,
         w_data                => data_in,
@@ -478,6 +525,71 @@ begin
         control_registers_out => control_registers_out,
         control_registers_in  => control_registers_in
     );
+    
+    ----------------------------------------------------------------------------
+    -- Test registers instance
+    ----------------------------------------------------------------------------
+    test_registers_gen_true : if (G_SUP_TEST_REGISTERS) generate
+        test_registers_reg_map_comp : test_registers_reg_map
+        generic map (
+            DATA_WIDTH          => 32,
+            ADDRESS_WIDTH       => 16,
+            REGISTERED_READ     => true,
+            CLEAR_READ_DATA     => false,
+            RESET_POLARITY      => G_RESET_POLARITY
+        )
+        port map(
+            clk_sys             => clk_test_regs,
+            res_n               => res_out_i,
+            address             => adress,
+            w_data              => data_in,
+            r_data              => test_registers_rdata,
+            cs                  => test_registers_cs,
+            read                => srd,
+            write               => swr,
+            be                  => sbe,
+            lock_1              => reg_lock_1_active,
+            lock_2              => reg_lock_2_active,
+            test_registers_out  => test_registers_out_i,
+            test_registers_in   => test_registers_in
+        );
+
+        -- Padding to full width of possible TXT Buffers
+        txt_buf_test_data_padding_gen : for i in 0 to 7 generate
+            
+            txt_buf_padding_index_gen_true : if (i < G_TXT_BUFFER_COUNT) generate 
+                tst_rdata_txt_bufs_i(i) <= tst_rdata_txt_bufs(i);
+            end generate txt_buf_padding_index_gen_true;
+            
+            txt_buf_padding_index_gen_false : if (i >= G_TXT_BUFFER_COUNT) generate 
+                tst_rdata_txt_bufs_i(i) <= (OTHERS => '0');
+            end generate txt_buf_padding_index_gen_false;
+            
+        end generate;
+
+        -- Select test read data from RX buffer and TXT buffers
+        with test_registers_out_i.tst_dest(TST_MTGT_H downto TST_MTGT_L)
+        select test_registers_in.tst_rdata <=
+            tst_rdata_rx_buf when TMTGT_RXBUF,
+            tst_rdata_txt_bufs_i(0) when TMTGT_TXTBUF1,
+            tst_rdata_txt_bufs_i(1) when TMTGT_TXTBUF2,
+            tst_rdata_txt_bufs_i(2) when TMTGT_TXTBUF3,
+            tst_rdata_txt_bufs_i(3) when TMTGT_TXTBUF4,
+            tst_rdata_txt_bufs_i(4) when TMTGT_TXTBUF5,
+            tst_rdata_txt_bufs_i(5) when TMTGT_TXTBUF6,
+            tst_rdata_txt_bufs_i(6) when TMTGT_TXTBUF7,
+            tst_rdata_txt_bufs_i(7) when TMTGT_TXTBUF8,
+                    (OTHERS => '0') when others;
+
+    end generate test_registers_gen_true;
+    
+    test_registers_gen_false : if (not G_SUP_TEST_REGISTERS) generate
+        test_registers_rdata <= (OTHERS => '0');
+        test_registers_in.tst_rdata <= (OTHERS => '0');
+        test_registers_out_i <= ((OTHERS => '0'), (OTHERS => '0'), (OTHERS => '0'));
+    end generate;
+
+    test_registers_out <= test_registers_out_i;
 
     ----------------------------------------------------------------------------
     -- Several registers are locked and accessible only in Test mode!
@@ -1578,5 +1690,15 @@ begin
     drv_bus(366)            <= '0';
     drv_bus(357)            <= '0';
     drv_bus(356)            <= '0';
+
+    ----------------------------------------------------------------------------
+    -- Assertions / Functional coverage
+    ----------------------------------------------------------------------------
+    
+    -- psl default clock is rising_edge(clk_sys);
+
+    -- psl no_simul_two_reg_block_access_asrt : assert never
+    --   (control_registers_cs_reg = '1' and test_registers_cs_reg = '1')
+    --   report "Control registers and test registers can't be accessed at once!";
 
 end architecture;

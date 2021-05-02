@@ -95,6 +95,8 @@ use ctu_can_fd_rtl.reduce_lib.all;
 use ctu_can_fd_rtl.CAN_FD_register_map.all;
 use ctu_can_fd_rtl.CAN_FD_frame_format.all;
 
+use ctu_can_fd_rtl.can_registers_pkg.all;
+
 entity rx_buffer is
     generic(
         -- Reset polarity
@@ -208,7 +210,13 @@ entity rx_buffer is
         rx_read_buff         :out    std_logic_vector(31 downto 0);
         
         -- Driving bus from registers
-        drv_bus              :in     std_logic_vector(1023 downto 0)
+        drv_bus              :in     std_logic_vector(1023 downto 0);
+        
+        -- Test registers
+        test_registers_out   :in     test_registers_out_t;
+        
+        -- RX buffer RAM test output
+        tst_rdata_rx_buf     :out    std_logic_vector(31 downto 0)
     );
 end entity;
 
@@ -797,13 +805,17 @@ begin
     end process;
 
     ----------------------------------------------------------------------------
-    -- Clock gating for RAM
-    -- Ungate when CAN Core is writing or when reading occurs from register map. 
+    -- Clock gating for RAM. Enable when:
+    -- 1. CAN Core is writing
+    -- 2. Reading occurs from register map.
+    -- 3. Permanently when Memory testing is enabled 
     ----------------------------------------------------------------------------
     rx_buf_ram_clk_en <= '1' when (RAM_write = '1' or drv_read_start = '1')
                              else
+                         '1' when (test_registers_out.tst_control(TMAENA_IND) = '1')
+                             else
                          '0';
-    
+
     clk_gate_rx_buffer_ram_comp : clk_gate
     generic map(
         G_TECHNOLOGY       => G_TECHNOLOGY
@@ -827,6 +839,10 @@ begin
         -- Clocks and Asynchronous reset 
         clk_sys              => clk_ram,                -- IN
         res_n                => res_n,                  -- IN
+
+        -- Memory testability
+        test_registers_out   => test_registers_out,     -- IN
+        tst_rdata_rx_buf     => tst_rdata_rx_buf,       -- OUT
 
         -- Port A - Write (from CAN Core)
         port_a_address       => RAM_write_address,      -- IN

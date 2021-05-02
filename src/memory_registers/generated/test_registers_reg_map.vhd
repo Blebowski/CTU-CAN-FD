@@ -145,7 +145,7 @@ begin
         reset_polarity                  => RESET_POLARITY ,
         reset_value                     => "00000000000000000000000000000000" ,
         auto_clear                      => "00000000000000000000000000000010" ,
-        is_lockable                     => false 
+        is_lockable                     => true 
     )
     port map(
         clk_sys                         => clk_sys ,-- in
@@ -154,7 +154,7 @@ begin
         write                           => write ,-- in
         cs                              => reg_sel(0) ,-- in
         w_be                            => be(3 downto 0) ,-- in
-        lock                            => '0' ,-- in
+        lock                            => lock_1 ,-- in
         reg_value                       => test_registers_out_i.tst_control -- out
     );
 
@@ -169,7 +169,7 @@ begin
         reset_polarity                  => RESET_POLARITY ,
         reset_value                     => "00000000000000000000000000000000" ,
         auto_clear                      => "00000000000000000000000000000000" ,
-        is_lockable                     => false 
+        is_lockable                     => true 
     )
     port map(
         clk_sys                         => clk_sys ,-- in
@@ -178,7 +178,7 @@ begin
         write                           => write ,-- in
         cs                              => reg_sel(1) ,-- in
         w_be                            => be(3 downto 0) ,-- in
-        lock                            => '0' ,-- in
+        lock                            => lock_1 ,-- in
         reg_value                       => test_registers_out_i.tst_dest -- out
     );
 
@@ -193,7 +193,7 @@ begin
         reset_polarity                  => RESET_POLARITY ,
         reset_value                     => "00000000000000000000000000000000" ,
         auto_clear                      => "00000000000000000000000000000000" ,
-        is_lockable                     => false 
+        is_lockable                     => true 
     )
     port map(
         clk_sys                         => clk_sys ,-- in
@@ -202,7 +202,7 @@ begin
         write                           => write ,-- in
         cs                              => reg_sel(2) ,-- in
         w_be                            => be(3 downto 0) ,-- in
-        lock                            => '0' ,-- in
+        lock                            => lock_1 ,-- in
         reg_value                       => test_registers_out_i.tst_wdata -- out
     );
 
