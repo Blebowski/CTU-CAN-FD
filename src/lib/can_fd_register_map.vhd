@@ -224,6 +224,18 @@ package can_fd_register_map is
   constant TXTB8_DATA_20_ADR         : std_logic_vector(11 downto 0) := x"84C";
 
   ------------------------------------------------------------------------------
+  ------------------------------------------------------------------------------
+  -- Address block: Test_registers
+  ------------------------------------------------------------------------------
+  ------------------------------------------------------------------------------
+  constant TEST_REGISTERS_BLOCK         : std_logic_vector(3 downto 0) := x"9";
+
+  constant TST_CONTROL_ADR           : std_logic_vector(11 downto 0) := x"900";
+  constant TST_DEST_ADR              : std_logic_vector(11 downto 0) := x"904";
+  constant TST_WDATA_ADR             : std_logic_vector(11 downto 0) := x"908";
+  constant TST_RDATA_ADR             : std_logic_vector(11 downto 0) := x"90C";
+
+  ------------------------------------------------------------------------------
   -- DEVICE_ID register
   --
   -- Identifer of CTU CAN FD. Can be used to check if CTU CAN FD is accessible c
@@ -1398,5 +1410,56 @@ package can_fd_register_map is
   constant TXTB8_DATA_20_H       : natural := 31;
 
   -- TXTB8_DATA_20 register reset values
+
+  ------------------------------------------------------------------------------
+  -- TST_CONTROL register
+  --
+  -- Testability control register. Contains configuration of test functions.
+  ------------------------------------------------------------------------------
+  constant TMAENA_IND             : natural := 0;
+  constant TWRSTB_IND             : natural := 1;
+
+  -- TST_CONTROL register reset values
+
+  ------------------------------------------------------------------------------
+  -- TST_DEST register
+  --
+  ------------------------------------------------------------------------------
+  constant TST_ADDR_L             : natural := 0;
+  constant TST_ADDR_H            : natural := 15;
+  constant TST_MTGT_L            : natural := 16;
+  constant TST_MTGT_H            : natural := 19;
+
+  -- "TST_MTGT" field enumerated values
+  constant TMTGT_NONE : std_logic_vector(3 downto 0) := x"0";
+  constant TMTGT_RXBUF : std_logic_vector(3 downto 0) := x"1";
+  constant TMTGT_TXTBUF1 : std_logic_vector(3 downto 0) := x"2";
+  constant TMTGT_TXTBUF2 : std_logic_vector(3 downto 0) := x"3";
+  constant TMTGT_TXTBUF3 : std_logic_vector(3 downto 0) := x"4";
+  constant TMTGT_TXTBUF4 : std_logic_vector(3 downto 0) := x"5";
+  constant TMTGT_TXTBUF5 : std_logic_vector(3 downto 0) := x"6";
+  constant TMTGT_TXTBUF6 : std_logic_vector(3 downto 0) := x"7";
+  constant TMTGT_TXTBUF7 : std_logic_vector(3 downto 0) := x"8";
+  constant TMTGT_TXTBUF8 : std_logic_vector(3 downto 0) := x"9";
+
+  -- TST_DEST register reset values
+
+  ------------------------------------------------------------------------------
+  -- TST_WDATA register
+  --
+  ------------------------------------------------------------------------------
+  constant TST_WDATA_L            : natural := 0;
+  constant TST_WDATA_H           : natural := 31;
+
+  -- TST_WDATA register reset values
+
+  ------------------------------------------------------------------------------
+  -- TST_RDATA register
+  --
+  ------------------------------------------------------------------------------
+  constant TST_RDATA_L            : natural := 0;
+  constant TST_RDATA_H           : natural := 31;
+
+  -- TST_RDATA register reset values
 
 end package;

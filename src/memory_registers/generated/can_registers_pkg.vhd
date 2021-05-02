@@ -138,4 +138,16 @@ package can_registers_pkg is
      timestamp_high              : std_logic_vector(31 downto 0);
   end record;
 
+
+  type Test_registers_out_t is record
+     tst_control                 : std_logic_vector(31 downto 0);
+     tst_dest                    : std_logic_vector(31 downto 0);
+     tst_wdata                   : std_logic_vector(31 downto 0);
+  end record;
+
+
+  type Test_registers_in_t is record
+     tst_rdata                   : std_logic_vector(31 downto 0);
+  end record;
+
 end package;
