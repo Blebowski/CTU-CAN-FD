@@ -183,14 +183,14 @@ if __name__ == '__main__':
 									licensePath=MIT_LICENSE_PATH,
 									memMap="CAN_Registers",
 									wordWidthBit=32,
-									outPath="../src/lib/can_fd_register_map.vhd",
+									outPath="../src/packages/can_fd_register_map.vhd",
 									packName="can_fd_register_map")
 
 		ctu_can_update_vhdl_package(specPath=args.xactSpec,
 									licensePath=MIT_LICENSE_PATH,
 									memMap="CAN_Frame_format",
 									wordWidthBit=32,
-									outPath="../src/lib/can_fd_frame_format.vhd",
+									outPath="../src/packages/can_fd_frame_format.vhd",
 									packName="can_fd_frame_format")
 
 		print("\nDone\n")
