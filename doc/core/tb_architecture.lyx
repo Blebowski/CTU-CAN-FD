@@ -984,7 +984,7 @@ status open
 \noindent
 \align center
 \begin_inset Tabular
-<lyxtabular version="3" rows="18" columns="4">
+<lyxtabular version="3" rows="19" columns="4">
 <features tabularvalignment="middle">
 <column alignment="left" valignment="middle" width="2cm">
 <column alignment="left" valignment="top" width="2cm">
@@ -1160,6 +1160,44 @@ Clock agent
 
 \begin_layout Plain Layout
 Control of DUTs clock.
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+DFT support
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+scan_enable
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Test port agent
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Control of DUTs scan mode.
 \end_layout
 
 \end_inset
@@ -1921,6 +1959,16 @@ test_probe
 \end_layout
 
 \begin_layout Itemize
+VIP drives 
+\series bold
+\shape italic
+scan_enable
+\series default
+\shape default
+ pin of DUT.
+\end_layout
+
+\begin_layout Itemize
 VIP is integrated in TB as on Figure 
 \begin_inset CommandInset ref
 LatexCommand ref
@@ -1981,6 +2029,13 @@ res_n
  output of VIP (e.g.
  via combination of mirror and force/release statements available in System
  verilog and VHDL 2008).
+ Note that 
+\series bold
+\shape italic
+res_n
+\series default
+\shape default
+ is active low.
 \end_layout
 
 \begin_layout Itemize
@@ -2098,6 +2153,36 @@ test_probe
 \series default
 \shape default
  output.
+\end_layout
+
+\begin_layout Itemize
+VIP does not directly drive 
+\series bold
+\shape italic
+scan_enable
+\series default
+\shape default
+ pin of DUT.
+ 
+\series bold
+\shape italic
+scan_enable
+\series default
+\shape default
+ pin is likely driven by SoC level DFT controller.
+ Test-bench which integrates VIP shall watch 
+\series bold
+\shape italic
+VIPs scan_enable
+\series default
+\shape default
+ output, and assert 
+\series bold
+\shape italic
+scan_enable
+\series default
+\shape default
+ input of DUT if this signal goes high.
 \end_layout
 
 \begin_layout Itemize
@@ -3009,6 +3094,13 @@ test_probe
  Test-probe agent provides functions for synchronizing with DUTs start of
  bit or sample point.
  Test probe agent is used by feature tests.
+ Test probe agent also drives 
+\series bold
+\shape italic
+scan_enable
+\series default
+\shape default
+ input of DUT.
 \end_layout
 
 \begin_layout Subsection
