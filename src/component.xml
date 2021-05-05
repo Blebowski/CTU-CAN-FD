@@ -720,6 +720,12 @@
       </spirit:file>
 
       <spirit:file>
+        <spirit:name>common/mux2.vhd</spirit:name>
+        <spirit:fileType>vhdlSource</spirit:fileType>
+        <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
+      </spirit:file>
+
+      <spirit:file>
         <spirit:name>common/rst_sync.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
         <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
@@ -1277,6 +1283,13 @@
 
       <spirit:file>
         <spirit:name>common/majority_decoder_3.vhd</spirit:name>
+        <spirit:fileType>vhdlSource</spirit:fileType>
+        <spirit:userFileType>USED_IN_ipstatic</spirit:userFileType>
+        <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
+      </spirit:file>
+
+      <spirit:file>
+        <spirit:name>common/mux2.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
         <spirit:userFileType>USED_IN_ipstatic</spirit:userFileType>
         <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
