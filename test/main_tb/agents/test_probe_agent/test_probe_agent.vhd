@@ -91,12 +91,19 @@ entity test_probe_agent is
     port (
         -- VIP test control / status signals
         dut_test_probe          : in t_ctu_can_fd_test_probe;
-        test_node_test_probe    : in t_ctu_can_fd_test_probe         
+        test_node_test_probe    : in t_ctu_can_fd_test_probe ;
+        
+        -- DFT support of VIP
+        dut_scan_enable         : out std_logic;
+        test_node_scan_enable   : out std_logic
     );
 end entity;
 
 architecture tb of test_probe_agent is
-
+    
+    signal dut_scan_enable_i         : std_logic := '0';
+    signal test_node_scan_enable_i   : std_logic := '0';
+    
 begin
 
     ---------------------------------------------------------------------------
@@ -107,6 +114,9 @@ begin
         variable reply_code : integer;
         
         variable node : integer;
+        
+        variable tmp_bool : boolean;
+        variable tmp_logic : std_logic;
 
         -----------------------------------------------------------------------
         -- This implemenation suffers from lower performance, than simple
@@ -158,6 +168,21 @@ begin
                 wait_signal_delta_glitch_free(test_node_test_probe.tx_trigger);
             end if;
 
+        when TEST_PROBE_AGNT_SCAN_CONFIGURE =>
+            tmp_bool := com_channel_data.get_param;
+            
+            if tmp_bool then
+                tmp_logic := '1';
+            else
+                tmp_logic := '0';
+            end if;
+
+            if (node = 0) then
+                dut_scan_enable_i <= tmp_logic;
+            else
+                test_node_scan_enable_i <= tmp_logic;
+            end if;
+
         when others =>
             info_m("Invalid message type: " & integer'image(cmd));
             reply_code := C_REPLY_CODE_ERR;
@@ -165,5 +190,8 @@ begin
         end case;
         receive_finish(default_channel, reply_code);
     end process;
+    
+    dut_scan_enable <= dut_scan_enable_i;
+    test_node_scan_enable <= test_node_scan_enable_i;
     
 end architecture;

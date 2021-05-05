@@ -166,6 +166,7 @@ use ctu_can_fd_tb.rx_settings_rtsop_ftest.all;
 use ctu_can_fd_tb.rx_status_ftest.all;
 use ctu_can_fd_tb.rx_status_mof_ftest.all;
 
+use ctu_can_fd_tb.scan_mode_ftest.all;
 use ctu_can_fd_tb.settings_tbfbo_ftest.all;
 use ctu_can_fd_tb.single_bus_node_ftest.all;
 use ctu_can_fd_tb.ssp_cfg_ftest.all;
@@ -356,7 +357,9 @@ package body feature_test_list_pkg is
             rx_status_ftest_exec(channel);
         elsif (test_name = "rx_status_mof") then
             rx_status_mof_ftest_exec(channel);
-            
+
+        elsif (test_name = "scan_mode") then
+            scan_mode_ftest_exec(channel);
         elsif (test_name = "settings_tbfbo") then
             settings_tbfbo_ftest_exec(channel);
         elsif (test_name = "single_bus_node") then

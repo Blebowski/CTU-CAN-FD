@@ -121,6 +121,9 @@ entity ctu_can_fd_vip is
         clk_sys             : inout std_logic;
         res_n               : inout std_logic;
         
+        -- DFT support
+        scan_enable         : out   std_logic;
+        
         write_data          : out   std_logic_vector(31 DOWNTO 0);
         read_data           : in    std_logic_vector(31 DOWNTO 0);
         adress              : out   std_logic_vector(15 DOWNTO 0);
@@ -183,7 +186,10 @@ architecture behav of ctu_can_fd_vip is
         := (OTHERS => '0');
 
     -- Test probe of Test node in feature tests
-    signal test_node_test_probe     : t_ctu_can_fd_test_probe;
+    signal test_node_test_probe    : t_ctu_can_fd_test_probe;
+
+    -- DFT control for test node
+    signal test_node_scan_enable   : std_logic;
 
 begin
     
@@ -246,7 +252,10 @@ begin
     test_probe_agent_inst : test_probe_agent
     port map(
         dut_test_probe       => test_probe,
-        test_node_test_probe => test_node_test_probe
+        test_node_test_probe => test_node_test_probe,
+        
+        dut_scan_enable      => scan_enable,
+        test_node_scan_enable=> test_node_scan_enable
     );
     
     ---------------------------------------------------------------------------
@@ -360,7 +369,8 @@ begin
             dut_can_tx          => can_tx,
             dut_can_rx          => can_rx_feature_agent,
             
-            test_node_test_probe => test_node_test_probe
+            test_node_test_probe  => test_node_test_probe,
+            test_node_scan_enable => test_node_scan_enable
         );
     end generate;
     

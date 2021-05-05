@@ -152,6 +152,7 @@ feature:
         rx_status:
         rx_status_mof:
 
+        scan_mode:
         settings_tbfbo:
         single_bus_node:
         ssp_cfg:

@@ -1764,7 +1764,8 @@ package feature_test_agent_pkg is
         dut_can_rx      :   out std_logic;
         
         -- Test Nodes test probe output
-        test_node_test_probe : out t_ctu_can_fd_test_probe
+        test_node_test_probe  : out t_ctu_can_fd_test_probe;
+        test_node_scan_enable : in  std_logic
     );    
     end component;
    

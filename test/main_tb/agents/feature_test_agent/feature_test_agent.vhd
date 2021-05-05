@@ -128,8 +128,9 @@ entity feature_test_agent is
         dut_can_rx      :   out std_logic;
         
         -- Test Nodes test probe output
-        test_node_test_probe : out t_ctu_can_fd_test_probe
-    );    
+        test_node_test_probe  : out t_ctu_can_fd_test_probe;
+        test_node_scan_enable : in  std_logic
+    );
 end entity;
 
 
@@ -180,8 +181,8 @@ begin
         clk_sys     => clk_sys,
         res_n       => res_n,
         
-        -- No need to verify scan of Test node
-        scan_enable => '0',
+        -- DFT support
+        scan_enable => test_node_scan_enable,
 
         -- Memory interface
         data_in     => write_data,
