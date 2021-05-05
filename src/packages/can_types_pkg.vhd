@@ -78,10 +78,10 @@ Library ieee;
 use ieee.std_logic_1164.all;
 
 Library ctu_can_fd_rtl;
-use ctu_can_fd_rtl.can_constants.all;
-use ctu_can_fd_rtl.can_config.all;
+use ctu_can_fd_rtl.can_constants_pkg.all;
+use ctu_can_fd_rtl.can_config_pkg.all;
 
-package can_types is
+package can_types_pkg is
 
     ----------------------------------------------------------------------------
     -- State Machine types

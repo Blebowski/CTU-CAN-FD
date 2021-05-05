@@ -78,7 +78,7 @@ Library ieee;
 use ieee.std_logic_1164.all;
 
 Library ctu_can_fd_rtl;
-use ctu_can_fd_rtl.cmn_lib.all;
+use ctu_can_fd_rtl.common_blocks_pkg.all;
 
 entity clk_gate is
     generic (

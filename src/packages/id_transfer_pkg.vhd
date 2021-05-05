@@ -81,7 +81,7 @@ USE IEEE.numeric_std.ALL;
 Library ctu_can_fd_rtl;
 use ctu_can_fd_rtl.CAN_FD_frame_format.all;
 
-package id_transfer is
+package id_transfer_pkg is
 
     -- Register value to decimal value
     procedure ID_reg_to_decimal(
@@ -95,9 +95,9 @@ package id_transfer is
         signal ID_reg   : out   std_logic_vector(28 downto 0)
     );
 
-end package id_transfer;
+end package id_transfer_pkg;
 
-package body id_transfer is
+package body id_transfer_pkg is
 
 
     procedure ID_reg_to_decimal(
@@ -128,4 +128,4 @@ package body id_transfer is
               <= vector(17 downto 0);
     end procedure ID_decimal_to_reg;
 
-end id_transfer;
+end id_transfer_pkg;

@@ -77,7 +77,7 @@
 Library ieee;
 use ieee.std_logic_1164.all;
 
-package cmn_lib is
+package common_blocks_pkg is
 
     -- Technology variants
     constant C_TECH_ASIC : natural := 0;
@@ -429,4 +429,4 @@ package cmn_lib is
     );
     end component mux2;
 
-end package cmn_lib;
+end package common_blocks_pkg;

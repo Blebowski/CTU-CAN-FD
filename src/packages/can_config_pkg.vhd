@@ -78,7 +78,7 @@
 Library ieee;
 use ieee.std_logic_1164.all;
 
-package can_config is
+package can_config_pkg is
 
     -- IP Core version
     constant C_CTU_CAN_FD_VERSION_MINOR : std_logic_vector(7 downto 0) := x"03";
