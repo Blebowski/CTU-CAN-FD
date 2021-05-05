@@ -237,6 +237,9 @@ begin
         clk_sys     => clk_sys,
         res_n       => res_n,
 
+        -- DFT support, TODO: drive by VIP!
+        scan_enable => '0',
+
         -- Memory interface
         data_in     => write_data,
         data_out    => read_data,

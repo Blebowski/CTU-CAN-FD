@@ -179,6 +179,9 @@ begin
         -- Clock and Asynchronous reset
         clk_sys     => clk_sys,
         res_n       => res_n,
+        
+        -- No need to verify scan of Test node
+        scan_enable => '0',
 
         -- Memory interface
         data_in     => write_data,

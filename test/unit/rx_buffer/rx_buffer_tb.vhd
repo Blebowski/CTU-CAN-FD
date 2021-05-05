@@ -603,6 +603,8 @@ begin
     port map(
         clk_sys                  => clk_sys,
         res_n                    => res_n,
+        scan_enable              => '0',
+
         rec_ident                => rec_ident,
         rec_dlc                  => rec_dlc,
         rec_ident_type           => rec_ident_type,

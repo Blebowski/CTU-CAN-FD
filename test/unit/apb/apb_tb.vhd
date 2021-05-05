@@ -114,17 +114,20 @@ context vunit_lib.vunit_context;
 architecture apb_unit_test of CAN_test is
     component can_top_apb is
         generic(
-            rx_buffer_size   : natural range 32 to 4098 := 128;
-            txt_buffer_count : natural range 2 to 8     := 4; 
-            sup_filtA        : boolean                  := true;
-            sup_filtB        : boolean                  := true;
-            sup_filtC        : boolean                  := true;
-            sup_range        : boolean                  := true;
-            sup_traffic_ctrs : boolean                  := true
+            rx_buffer_size     : natural range 32 to 4098 := 128;
+            txt_buffer_count   : natural range 2 to 8     := 4; 
+            sup_filtA          : boolean                  := true;
+            sup_filtB          : boolean                  := true;
+            sup_filtC          : boolean                  := true;
+            sup_range          : boolean                  := true;
+            sup_traffic_ctrs   : boolean                  := true;
+            sup_test_registers : boolean                  := true
         );
         port(
             aclk             : in  std_logic;
             arstn            : in  std_logic;
+
+            scan_enable      : in  std_logic;
 
             irq              : out std_logic;
             CAN_tx           : out std_logic;
@@ -164,18 +167,21 @@ architecture apb_unit_test of CAN_test is
 begin
     can_inst : can_top_apb
         generic map (
-            rx_buffer_size   => 128,
-            txt_buffer_count => 4, 
-            sup_filtA        => false,
-            sup_filtB        => false,
-            sup_filtC        => false,
-            sup_range        => false
+            rx_buffer_size      => 128,
+            txt_buffer_count    => 4, 
+            sup_filtA           => false,
+            sup_filtB           => false,
+            sup_filtC           => false,
+            sup_range           => false,
+            sup_test_registers  => true
         )
         port map (
             CAN_rx           => '1',
             timestamp        => (others => '0'),
             aclk             => aclk,
             arstn            => arstn,
+
+            scan_enable      => '0',
 
             -- APB ports
             s_apb_paddr    => s_apb_paddr,

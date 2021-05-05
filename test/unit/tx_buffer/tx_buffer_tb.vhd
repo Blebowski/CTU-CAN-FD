@@ -287,6 +287,8 @@ begin
     port map(
         clk_sys                 => clk_sys,
         res_n                   => res_n,
+        scan_enable             => '0',
+        
         txtb_port_a_data        => txtb_port_a_data,
         txtb_port_a_address     => txtb_port_a_address,
         txtb_port_a_cs          => txtb_port_a_cs,
