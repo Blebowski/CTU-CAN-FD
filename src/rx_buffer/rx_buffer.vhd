@@ -118,6 +118,11 @@ entity rx_buffer is
         -- Async. reset
         res_n                :in     std_logic;
 
+        -----------------------------------------------------------------------
+        -- DFT support
+        -----------------------------------------------------------------------
+        scan_enable         : in     std_logic;
+
         ------------------------------------------------------------------------
         -- Metadata from CAN Core
         ------------------------------------------------------------------------
@@ -402,8 +407,9 @@ architecture rtl of rx_buffer is
     ----------------------------------------------------------------------------
     -- Common reset signal
     ----------------------------------------------------------------------------
-    signal rx_buf_res_d             :       std_logic;
-    signal rx_buf_res_q             :       std_logic;
+    signal rx_buf_res_n_d           :       std_logic;
+    signal rx_buf_res_n_q           :       std_logic;
+    signal rx_buf_res_n_q_scan      :       std_logic;
 
     ----------------------------------------------------------------------------
     -- Clock gating for memory
@@ -411,6 +417,8 @@ architecture rtl of rx_buffer is
     signal rx_buf_ram_clk_en        :       std_logic;
     signal clk_ram                  :       std_logic;
 
+    constant C_RESET_POLARITY_N     :       std_logic := not G_RESET_POLARITY;
+    
 begin
 
     ----------------------------------------------------------------------------
@@ -446,11 +454,13 @@ begin
     -- Common reset signal. Whole buffer can be reset by two ways:
     --  1. Asynchronous reset - res_n
     --  2. Release Receive Buffer command - drv_erase_rx.
-    -- To avoid glitches a DFF is inserted after the reset!
     ----------------------------------------------------------------------------
-    rx_buf_res_d <= G_RESET_POLARITY when (drv_erase_rx = '1') else
-                    (not G_RESET_POLARITY);
+    rx_buf_res_n_d <= G_RESET_POLARITY when (drv_erase_rx = '1') else
+                      (not G_RESET_POLARITY);
 
+    ----------------------------------------------------------------------------
+    -- Register reset to avoid glitches
+    ----------------------------------------------------------------------------
     res_reg_inst : dff_arst
     generic map(
         G_RESET_POLARITY   => G_RESET_POLARITY,
@@ -462,11 +472,24 @@ begin
     port map(
         arst               => res_n,                -- IN
         clk                => clk_sys,              -- IN
-        input              => rx_buf_res_d,         -- IN
+        input              => rx_buf_res_n_d,       -- IN
 
-        output             => rx_buf_res_q          -- OUT
+        output             => rx_buf_res_n_q        -- OUT
     );
     
+    ----------------------------------------------------------------------------
+    -- Mux for gating reset in scan mode
+    ----------------------------------------------------------------------------
+    mux2_res_tst_inst : mux2
+    port map(
+        a                  => rx_buf_res_n_q, 
+        b                  => C_RESET_POLARITY_N,
+        sel                => scan_enable,
+
+        -- Output
+        z                  => rx_buf_res_n_q_scan
+    );
+
 
     ----------------------------------------------------------------------------
     -- RX Buffer FSM component
@@ -503,7 +526,8 @@ begin
     )
     port map(
         clk_sys                 => clk_sys,                 -- IN
-        rx_buf_res_q            => rx_buf_res_q,            -- IN
+        rx_buf_res_n_q_scan     => rx_buf_res_n_q_scan,     -- IN
+
         rec_abort_f             => rec_abort_f,             -- IN
         commit_rx_frame         => commit_rx_frame,         -- IN
         write_raw_OK            => write_raw_OK,            -- IN
@@ -544,8 +568,8 @@ begin
     -- in the buffer, nor any previous data were lost due to overrun)
     ----------------------------------------------------------------------------
     write_raw_OK         <= '1' when (write_raw_intent = '1' and
-                                       overrun_condition = '0' and
-                                       data_overrun_i = '0')
+                                      overrun_condition = '0' and
+                                      data_overrun_i = '0')
                                 else
                             '0';
 
@@ -672,9 +696,9 @@ begin
     read_counter_d <= read_counter_q - 1 when (read_counter_q > "00000") else
                       unsigned(RAM_data_out(RWCNT_H downto RWCNT_L));
     
-    read_frame_proc : process(clk_sys, rx_buf_res_q)
+    read_frame_proc : process(clk_sys, rx_buf_res_n_q_scan)
     begin
-        if (rx_buf_res_q = G_RESET_POLARITY) then
+        if (rx_buf_res_n_q_scan = G_RESET_POLARITY) then
             read_counter_q <= (OTHERS => '0');
 
         elsif (rising_edge(clk_sys)) then
@@ -697,9 +721,9 @@ begin
     -- If both at the same time, no change since one frame is added, next is 
     -- removed!
     ---------------------------------------------------------------------------
-    frame_count_ctr_proc : process(clk_sys, rx_buf_res_q)
+    frame_count_ctr_proc : process(clk_sys, rx_buf_res_n_q_scan)
     begin
-        if (rx_buf_res_q = G_RESET_POLARITY) then
+        if (rx_buf_res_n_q_scan = G_RESET_POLARITY) then
             frame_count <= 0;
 
         elsif (rising_edge(clk_sys)) then
@@ -723,9 +747,9 @@ begin
     -- Commit RX Frame when last word was written and overrun did not occur!
     -- This can be either from "rxb_store_data" state or "rxb_store_end_ts_high"
     ----------------------------------------------------------------------------
-    commit_proc : process(clk_sys, rx_buf_res_q)
+    commit_proc : process(clk_sys, rx_buf_res_n_q_scan)
     begin
-        if (rx_buf_res_q = G_RESET_POLARITY) then
+        if (rx_buf_res_n_q_scan = G_RESET_POLARITY) then
             commit_rx_frame       <= '0';
             commit_overrun_abort  <= '0';
 
@@ -752,9 +776,9 @@ begin
     -- set, and no further writes will be executed. Data Overrun flag can be
     -- cleared from Memory registers via Driving bus.
     ----------------------------------------------------------------------------
-    sw_dor_proc : process(clk_sys, rx_buf_res_q)
+    sw_dor_proc : process(clk_sys, rx_buf_res_n_q_scan)
     begin
-        if (rx_buf_res_q = G_RESET_POLARITY) then
+        if (rx_buf_res_n_q_scan = G_RESET_POLARITY) then
             data_overrun_flg      <= '0';
             
         elsif (rising_edge(clk_sys)) then
@@ -808,11 +832,12 @@ begin
     -- Clock gating for RAM. Enable when:
     -- 1. CAN Core is writing
     -- 2. Reading occurs from register map.
-    -- 3. Permanently when Memory testing is enabled 
+    -- 3. Permanently when Memory testing is enabled, or in scan mode
     ----------------------------------------------------------------------------
     rx_buf_ram_clk_en <= '1' when (RAM_write = '1' or drv_read_start = '1')
                              else
-                         '1' when (test_registers_out.tst_control(TMAENA_IND) = '1')
+                         '1' when (test_registers_out.tst_control(TMAENA_IND) = '1' or
+                                   scan_enable = '1')
                              else
                          '0';
 
@@ -826,7 +851,7 @@ begin
 
         clk_out            => clk_ram
     );
-    
+
     ----------------------------------------------------------------------------
     -- RAM Memory of RX Buffer
     ----------------------------------------------------------------------------

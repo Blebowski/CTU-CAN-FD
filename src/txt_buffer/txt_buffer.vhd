@@ -118,6 +118,11 @@ entity txt_buffer is
         -- Asynchronous reset
         res_n                  :in   std_logic;
 
+        -----------------------------------------------------------------------
+        -- DFT support
+        -----------------------------------------------------------------------
+        scan_enable            :in   std_logic;
+
         ------------------------------------------------------------------------
         -- Memory Registers Interface
         ------------------------------------------------------------------------
@@ -161,7 +166,7 @@ entity txt_buffer is
         -- Interrupt Manager Interface
         ------------------------------------------------------------------------
         -- HW Command applied
-        txtb_hw_cmd_int         :out  std_logic;
+        txtb_hw_cmd_int        :out  std_logic;
 
         ------------------------------------------------------------------------
         -- CAN Core and TX Arbitrator Interface
@@ -271,11 +276,12 @@ begin
     -- Clock gating for TXT Buffer RAM. Enable when:
     --  1. Read access from CAN core
     --  2. Write access from user
-    --  3. Always in test mode
+    --  3. Always in memory test mode, or in scan mode
     ----------------------------------------------------------------------------
     txtb_ram_clk_en <= '1' when (txtb_port_b_clk_en = '1' or ram_write = '1')
                            else
-                       '1' when (test_registers_out.tst_control(TMAENA_IND) = '1')
+                       '1' when (test_registers_out.tst_control(TMAENA_IND) = '1' or
+                                 scan_enable = '1')
                            else
                        '0';
 

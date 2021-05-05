@@ -152,6 +152,11 @@ entity memory_registers is
         -- Reset output (input reset + Software Reset)
         res_out              :out  std_logic;
 
+        -----------------------------------------------------------------------
+        -- DFT support
+        -----------------------------------------------------------------------
+        scan_enable          :in   std_logic;
+
         ------------------------------------------------------------------------
         -- Memory Interface
         ------------------------------------------------------------------------
@@ -465,10 +470,14 @@ begin
     control_regs_clk_en <= '1' when (srd = '1' or swr = '1') and
                                     (control_registers_cs = '1')
                                else
+                           '1' when (scan_enable = '1')
+                               else
                            '0';
-    
+
     test_regs_clk_en <= '1' when (srd = '1' or swr = '1') and
                                  (test_registers_cs = '1')
+                            else
+                        '1' when (scan_enable = '1')
                             else
                         '0';
 

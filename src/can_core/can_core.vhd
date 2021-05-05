@@ -136,7 +136,12 @@ entity can_core is
         
         -- Asynchronous reset
         res_n                  :in   std_logic;
-        
+
+        ------------------------------------------------------------------------
+        -- DFT support
+        ------------------------------------------------------------------------
+        scan_enable            :in   std_logic;
+
         ------------------------------------------------------------------------    
         -- Memory registers interface
         ------------------------------------------------------------------------
@@ -511,6 +516,9 @@ begin
         clk_sys                 => clk_sys,             -- IN
         res_n                   => res_n,               -- IN
         
+        -- DFT support
+        scan_enable             => scan_enable,         -- IN
+        
         -- Memory registers interface
         drv_bus                 => drv_bus,             -- IN
         alc                     => alc,                 -- OUT
@@ -677,6 +685,9 @@ begin
         clk_sys                 => clk_sys,                 -- IN
         res_n                   => res_n,                   -- IN
 
+        -- DFT support
+        scan_enable             => scan_enable,             -- IN
+
         -- Memory registers interface
         drv_bus                 => drv_bus,                 -- IN
           
@@ -823,19 +834,20 @@ begin
         port map(
             clk_sys             => clk_sys,                 -- IN
             res_n               => res_n,                   -- IN
+            scan_enable         => scan_enable,             -- IN
     
             -- Control signals
             clear_rx_ctr        => drv_clr_rx_ctr,          -- IN
             clear_tx_ctr        => drv_clr_tx_ctr,          -- IN
             inc_tx_ctr          => tran_valid_i,            -- IN
             inc_rx_ctr          => rec_valid_i,             -- IN
-    
+
             -- Counter outputs
             tx_ctr              => tx_ctr,                  -- OUT
             rx_ctr              => rx_ctr                   -- OUT
         );
     end generate bus_traffic_ctrs_gen;
-    
+
     no_bus_traffic_ctrs_gen : if (G_SUP_TRAFFIC_CTRS = false) generate
         tx_ctr <= (OTHERS => '0');
         rx_ctr <= (OTHERS => '0');

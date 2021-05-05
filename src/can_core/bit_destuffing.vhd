@@ -449,7 +449,7 @@ begin
     -- Previously processed value - next value:
     --  1. Set to RECESSIVE upon edge on enable
     --  2. Set to RECESSIVE when non-fixed bit stuffing changes to fixed
-    --     bit stuffing. TODO: IS THIS OK???
+    --     bit stuffing.
     ---------------------------------------------------------------------------
     prev_val_d <= RECESSIVE when (bds_trigger = '1' and non_fix_to_fix_chng = '1') else
                   data_in   when (bds_trigger = '1') else

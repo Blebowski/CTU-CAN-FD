@@ -114,6 +114,11 @@ entity err_counters is
         res_n                  :in   std_logic;
 
         -----------------------------------------------------------------------
+        -- DFT support
+        -----------------------------------------------------------------------
+        scan_enable            : in  std_logic;
+
+        -----------------------------------------------------------------------
         -- Control inputs
         -----------------------------------------------------------------------
         -- Sample control (Nominal, Data, Secondary)
@@ -128,8 +133,9 @@ entity err_counters is
         -- Decrement error counter by 1
         dec_one                :in   std_logic;
         
-        -- Reset error counters (asynchronously)
-        reset_err_counters     :in   std_logic;
+        -- Set unit to error active (after re-integration). Erases error
+        -- counters to 0!
+        set_err_active         :in   std_logic;
         
         -- Preload TX Error counter
         tx_err_ctr_pload       :in   std_logic;
@@ -175,8 +181,8 @@ architecture rtl of err_counters is
     signal rx_err_ctr_sat   : unsigned(8 downto 0);
 
     -- Clock enables for error counter registers
-    signal tx_err_ctr_ce : std_logic;
-    signal rx_err_ctr_ce : std_logic;
+    signal tx_err_ctr_ce    : std_logic;
+    signal rx_err_ctr_ce    : std_logic;
 
     -- Selected error counter
     signal err_ctr_selected : unsigned(8 downto 0);
@@ -194,9 +200,9 @@ architecture rtl of err_counters is
     
     -- Error counters for nominal bit errors, data bit errors
     signal nom_err_ctr_d     : unsigned(15 downto 0);
-    signal data_err_ctr_d     : unsigned(15 downto 0);
+    signal data_err_ctr_d    : unsigned(15 downto 0);
     signal nom_err_ctr_q     : unsigned(15 downto 0);
-    signal data_err_ctr_q     : unsigned(15 downto 0);
+    signal data_err_ctr_q    : unsigned(15 downto 0);
     
     -- Selected value of counter
     signal nom_dat_sel_ctr   : unsigned(15 downto 0);
@@ -205,9 +211,15 @@ architecture rtl of err_counters is
     signal nom_dat_sel_ctr_add : unsigned(15 downto 0);
     
     -- Clock enables for error counter registers
-    signal nom_err_ctr_ce : std_logic;
+    signal nom_err_ctr_ce  : std_logic;
     signal data_err_ctr_ce : std_logic;
     
+    signal res_err_ctrs_d       : std_logic;
+    signal res_err_ctrs_q       : std_logic;
+    signal res_err_ctrs_q_scan  : std_logic;
+
+    constant C_RESET_POLARITY_N : std_logic := not G_RESET_POLARITY;
+
 begin
 
     modif_tx_ctr <= '1' when (inc_eight = '1' or dec_one = '1') else
@@ -242,12 +254,49 @@ begin
                     '1' when (tx_err_ctr_pload = '1') else
                     '0';
 
+    ---------------------------------------------------------------------------
+    -- Registering counter reset (to avoid glitches)
+    ---------------------------------------------------------------------------
+    res_err_ctrs_d <= G_RESET_POLARITY when (res_n = G_RESET_POLARITY or
+                                             set_err_active = '1')
+                                       else
+                      (not G_RESET_POLARITY);
+
+    rst_reg_inst : dff_arst
+    generic map(
+        G_RESET_POLARITY   => G_RESET_POLARITY,
+        
+        -- Reset to the same value as is polarity of reset so that other DFFs
+        -- which are reset by output of this one will be reset too!
+        G_RST_VAL          => G_RESET_POLARITY
+    )
+    port map(
+        arst               => res_n,                -- IN
+        clk                => clk_sys,              -- IN
+        input              => res_err_ctrs_d,       -- IN
+
+        output             => res_err_ctrs_q        -- OUT
+    );
+    
+    ---------------------------------------------------------------------------
+    -- Gate reset in scan mode
+    ---------------------------------------------------------------------------
+    mux2_res_tst_inst : mux2
+    port map(
+        a                  => res_err_ctrs_q, 
+        b                  => C_RESET_POLARITY_N,
+        sel                => scan_enable,
+
+        -- Output
+        z                  => res_err_ctrs_q_scan
+    );
+
    ----------------------------------------------------------------------------
    -- TX Error counter register
    ----------------------------------------------------------------------------
-   tx_err_ctr_reg_proc : process(clk_sys, res_n, reset_err_counters)
+   tx_err_ctr_reg_proc : process(clk_sys, res_err_ctrs_q_scan)
    begin
-       if (res_n = G_RESET_POLARITY or reset_err_counters = '1') then
+       if (res_err_ctrs_q_scan = G_RESET_POLARITY) then
            tx_err_ctr_q <= (OTHERS => '0');
        elsif (rising_edge(clk_sys)) then
            if (tx_err_ctr_ce = '1') then
@@ -291,9 +340,9 @@ begin
    ----------------------------------------------------------------------------
    -- RX Error counter register
    ----------------------------------------------------------------------------
-   rx_err_ctr_reg_proc : process(clk_sys, res_n, reset_err_counters)
+   rx_err_ctr_reg_proc : process(clk_sys, res_err_ctrs_q_scan)
    begin
-       if (res_n = G_RESET_POLARITY or reset_err_counters = '1') then
+       if (res_err_ctrs_q_scan = G_RESET_POLARITY) then
            rx_err_ctr_q <= (OTHERS => '0');
        elsif (rising_edge(clk_sys)) then
            if (rx_err_ctr_ce = '1') then
@@ -333,9 +382,9 @@ begin
    ----------------------------------------------------------------------------
    -- Nominal / Data Bit rate error counters registers
    ----------------------------------------------------------------------------
-   nom_err_ctr_proc : process(clk_sys, res_n, reset_err_counters)
+   nom_err_ctr_proc : process(clk_sys, res_err_ctrs_q_scan)
    begin
-       if (res_n = G_RESET_POLARITY or reset_err_counters = '1') then
+       if (res_err_ctrs_q_scan = G_RESET_POLARITY) then
            nom_err_ctr_q <= (OTHERS => '0');
        elsif (rising_edge(clk_sys)) then
            if (nom_err_ctr_ce = '1') then
@@ -344,9 +393,9 @@ begin
        end if;
    end process;
 
-   dat_err_ctr_proc : process(clk_sys, res_n, reset_err_counters)
+   dat_err_ctr_proc : process(clk_sys, res_err_ctrs_q_scan)
    begin
-       if (res_n = G_RESET_POLARITY or reset_err_counters = '1') then
+       if (res_err_ctrs_q_scan = G_RESET_POLARITY) then
            data_err_ctr_q <= (OTHERS => '0');
        elsif (rising_edge(clk_sys)) then
            if (data_err_ctr_ce = '1') then
@@ -384,4 +433,5 @@ begin
    -- severity error;
    
    -- <RELEASE_ON>
+
 end architecture;

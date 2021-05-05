@@ -120,6 +120,11 @@ entity protocol_control is
         -- Asynchronous reset
         res_n                   :in   std_logic;
         
+        ------------------------------------------------------------------------
+        -- DFT support
+        ------------------------------------------------------------------------
+        scan_enable             :in   std_logic;
+        
         -----------------------------------------------------------------------
         -- Memory registers interface
         -----------------------------------------------------------------------
@@ -1038,6 +1043,10 @@ begin
     port map(
         clk_sys                 => clk_sys,             -- IN
         res_n                   => res_n,               -- IN
+
+        -- DFT support
+        scan_enable             => scan_enable,         -- IN
+
         rx_trigger              => rx_trigger,          -- IN
 
         -- Data-path interface

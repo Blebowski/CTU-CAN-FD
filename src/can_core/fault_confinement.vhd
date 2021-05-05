@@ -108,6 +108,11 @@ entity fault_confinement is
         res_n                   :in   std_logic;
 
         -----------------------------------------------------------------------
+        -- DFT support
+        -----------------------------------------------------------------------
+        scan_enable            : in   std_logic;
+
+        -----------------------------------------------------------------------
         -- Memory registers interface
         -----------------------------------------------------------------------
         -- Driving Bus
@@ -210,9 +215,7 @@ architecture rtl of fault_confinement is
 
     -- Internal TX/RX Error counter values
     signal tx_err_ctr_i          :     std_logic_vector(8 downto 0);
-    signal rx_err_ctr_i          :     std_logic_vector(8 downto 0);
-
-    signal set_err_active_q      :     std_logic;
+    signal rx_err_ctr_i          :     std_logic_vector(8 downto 0);    
     
     -- Increment decrement commands
     signal inc_one               :     std_logic;
@@ -233,19 +236,6 @@ begin
     drv_ctr_sel         <=  drv_bus(DRV_CTR_SEL_HIGH downto DRV_CTR_SEL_LOW);
     drv_ena             <=  drv_bus(DRV_ENA_INDEX);
     drv_rom_ena         <=  drv_bus(DRV_ROM_ENA_INDEX);
-
-    dff_arst_inst : dff_arst
-    generic map(
-        G_RESET_POLARITY   => G_RESET_POLARITY,
-        G_RST_VAL          => '0'
-    )
-    port map(
-        arst               => res_n,                -- IN
-        clk                => clk_sys,              -- IN
-        input              => set_err_active,       -- IN
-        
-        output             => set_err_active_q      -- OUT
-    );
     
     ---------------------------------------------------------------------------
     -- Fault confinement FSM
@@ -261,7 +251,7 @@ begin
         ewl                    => drv_ewl,                  -- IN
         erp                    => drv_erp,                  -- IN
 
-        set_err_active         => set_err_active_q,         -- IN
+        set_err_active         => set_err_active,           -- IN
         tx_err_ctr             => tx_err_ctr_i,             -- IN
         rx_err_ctr             => rx_err_ctr_i,             -- IN
         drv_ena                => drv_ena,                  -- IN
@@ -285,11 +275,12 @@ begin
     port map(
         clk_sys                => clk_sys,              -- IN
         res_n                  => res_n,                -- IN
+        scan_enable            => scan_enable,          -- IN
         sp_control             => sp_control,           -- IN
         inc_one                => inc_one,              -- IN
         inc_eight              => inc_eight,            -- IN
         dec_one                => dec_one,              -- IN
-        reset_err_counters     => set_err_active_q,     -- IN
+        set_err_active         => set_err_active,       -- IN
         tx_err_ctr_pload       => drv_ctr_sel(0),       -- IN
         rx_err_ctr_pload       => drv_ctr_sel(1),       -- IN
         drv_ctr_val            => drv_ctr_val,          -- IN

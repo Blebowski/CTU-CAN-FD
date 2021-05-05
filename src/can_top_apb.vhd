@@ -90,17 +90,19 @@ use ctu_can_fd_rtl.CAN_FD_frame_format.all;
 
 entity can_top_apb is
     generic(
-        rx_buffer_size   : natural range 32 to 4098 := 128;
-        txt_buffer_count : natural range 2 to 8     := 4; 
-        sup_filtA        : boolean                  := true;
-        sup_filtB        : boolean                  := true;
-        sup_filtC        : boolean                  := true;
-        sup_range        : boolean                  := true;
-        sup_traffic_ctrs : boolean                  := true
+        rx_buffer_size      : natural range 32 to 4098 := 128;
+        txt_buffer_count    : natural range 2 to 8     := 4; 
+        sup_filtA           : boolean                  := true;
+        sup_filtB           : boolean                  := true;
+        sup_filtC           : boolean                  := true;
+        sup_range           : boolean                  := true;
+        sup_traffic_ctrs    : boolean                  := true;
+        sup_test_registers  : boolean                  := true
     );
     port(
         aclk             : in  std_logic;
         arstn            : in  std_logic;
+        scan_enable      : in  std_logic;
 
         irq              : out std_logic;
         CAN_tx           : out std_logic;
@@ -145,6 +147,8 @@ begin
         port map (
             clk_sys         => aclk,
             res_n           => arstn,
+            
+            scan_enable     => scan_enable,
 
             data_in         => reg_data_in,
             data_out        => reg_data_out,

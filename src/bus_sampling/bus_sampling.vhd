@@ -128,6 +128,11 @@ entity bus_sampling is
         
         -- Asynchronous reset
         res_n                :in   std_logic;
+        
+        -----------------------------------------------------------------------
+        -- DFT support
+        -----------------------------------------------------------------------
+        scan_enable          :in   std_logic;
 
         ------------------------------------------------------------------------
         --  Physical layer interface
@@ -258,9 +263,12 @@ architecture rtl of bus_sampling is
     ---------------------------------------------------------------------------
     signal shift_regs_res_d     : std_logic;
     signal shift_regs_res_q     : std_logic;
+    signal shift_regs_res_q_scan: std_logic;
     
     -- Enable for secondary sampling point shift register
-    signal ssp_enable            : std_logic;
+    signal ssp_enable           : std_logic;
+
+    constant C_RESET_POLARITY_N : std_logic := not G_RESET_POLARITY;
 
 begin
     
@@ -304,6 +312,8 @@ begin
     port map(
         clk_sys                => clk_sys,                  -- IN
         res_n                  => res_n,                    -- IN
+
+        scan_enable            => scan_enable,              -- IN
 
         edge_tx_valid          => edge_tx_valid,            -- IN
         edge_rx_valid          => edge_rx_valid,            -- IN
@@ -360,6 +370,19 @@ begin
         input              => shift_regs_res_d,     -- IN
         
         output             => shift_regs_res_q      -- OUT
+    );
+    
+    ----------------------------------------------------------------------------
+    -- Mux for gating reset in scan mode
+    ----------------------------------------------------------------------------
+    mux2_res_tst_inst : mux2
+    port map(
+        a                  => shift_regs_res_q, 
+        b                  => C_RESET_POLARITY_N,
+        sel                => scan_enable,
+
+        -- Output
+        z                  => shift_regs_res_q_scan
     );
     
     ----------------------------------------------------------------------------
@@ -432,7 +455,7 @@ begin
     )
     port map(
         clk_sys           => clk_sys,               -- IN
-        res_n             => shift_regs_res_q,      -- IN
+        res_n             => shift_regs_res_q_scan, -- IN
         write             => tx_trigger_ssp,        -- IN
         read              => sample_sec_i,          -- IN
         data_in           => tx_data_wbs,           -- IN

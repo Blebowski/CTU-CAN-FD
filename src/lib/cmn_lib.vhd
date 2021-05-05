@@ -416,5 +416,17 @@ package cmn_lib is
             clk_out            : out   std_logic
         );
     end component clk_gate;
+    
+    component mux2 is
+    port (
+        -- Inputs
+        a         : in  std_logic;
+        b         : in  std_logic;
+        sel       : in  std_logic;
+
+        -- Output
+        z         : out std_logic
+    );
+    end component mux2;
 
 end package cmn_lib;

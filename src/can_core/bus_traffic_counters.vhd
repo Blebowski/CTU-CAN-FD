@@ -105,6 +105,11 @@ entity bus_traffic_counters is
         -- Asynchronous Reset
         res_n                  :in   std_logic;
 
+        -----------------------------------------------------------------------
+        -- DFT support
+        -----------------------------------------------------------------------
+        scan_enable            :in   std_logic;
+
         ------------------------------------------------------------------------
         -- Control signals
         ------------------------------------------------------------------------
@@ -145,9 +150,13 @@ architecture rtl of bus_traffic_counters is
     -- Reset signals for counters (registered, to avoid glitches)
     signal tx_ctr_rst_d        :     std_logic;
     signal tx_ctr_rst_q        :     std_logic;
+    signal tx_ctr_rst_q_scan   :     std_logic;
     
     signal rx_ctr_rst_d        :     std_logic;
     signal rx_ctr_rst_q        :     std_logic;
+    signal rx_ctr_rst_q_scan   :     std_logic;
+
+    constant C_RESET_POLARITY_N : std_logic := not G_RESET_POLARITY;
 
 begin
 
@@ -169,7 +178,10 @@ begin
     
     rx_ctr_rst_d <= G_RESET_POLARITY when (clear_rx_ctr = '1') else
                     (not G_RESET_POLARITY);                
-    
+
+    ----------------------------------------------------------------------------
+    -- Reset pipeline registers
+    ----------------------------------------------------------------------------
     tx_ctr_res_inst : dff_arst
     generic map(
         G_RESET_POLARITY   => G_RESET_POLARITY,
@@ -203,11 +215,34 @@ begin
     );
 
     ----------------------------------------------------------------------------
+    -- Muxes for gating reset in scan mode
+    ----------------------------------------------------------------------------
+    mux2_tx_rst_tst_inst : mux2
+    port map(
+        a                  => tx_ctr_rst_q, 
+        b                  => C_RESET_POLARITY_N,
+        sel                => scan_enable,
+
+        -- Output
+        z                  => tx_ctr_rst_q_scan
+    );
+
+    mux2_rx_rst_tst_inst : mux2
+    port map(
+        a                  => rx_ctr_rst_q, 
+        b                  => C_RESET_POLARITY_N,
+        sel                => scan_enable,
+
+        -- Output
+        z                  => rx_ctr_rst_q_scan
+    );
+
+    ----------------------------------------------------------------------------
     -- TX Counter register
     ----------------------------------------------------------------------------
-    tx_ctr_proc : process(clk_sys, tx_ctr_rst_q)
+    tx_ctr_proc : process(clk_sys, tx_ctr_rst_q_scan)
     begin
-        if (tx_ctr_rst_q = G_RESET_POLARITY) then
+        if (tx_ctr_rst_q_scan = G_RESET_POLARITY) then
             tx_ctr_i        <= (OTHERS => '0');
 
         elsif rising_edge(clk_sys) then
@@ -217,13 +252,12 @@ begin
         end if;
     end process;
 
-
     ----------------------------------------------------------------------------
     -- RX Counter register
     ----------------------------------------------------------------------------
-    rx_ctr_proc : process(clk_sys, rx_ctr_rst_q)
+    rx_ctr_proc : process(clk_sys, rx_ctr_rst_q_scan)
     begin
-        if (rx_ctr_rst_q = G_RESET_POLARITY) then
+        if (rx_ctr_rst_q_scan = G_RESET_POLARITY) then
             rx_ctr_i        <= (OTHERS => '0');
 
         elsif rising_edge(clk_sys) then
@@ -232,6 +266,7 @@ begin
             end if;
         end if;
     end process;
+
 
     -- <RELEASE_OFF>
     ---------------------------------------------------------------------------
@@ -245,4 +280,5 @@ begin
     -- severity error;
 
     -- <RELEASE_ON>
+
 end architecture;

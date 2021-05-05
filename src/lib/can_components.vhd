@@ -126,7 +126,12 @@ package can_components is
             
             -- Asynchronous reset
             res_n       : in std_logic;
-    
+            
+            -----------------------------------------------------------------------
+            -- DFT support
+            -----------------------------------------------------------------------
+            scan_enable : in std_logic;
+        
             -----------------------------------------------------------------------
             -- Memory interface
             -----------------------------------------------------------------------
@@ -244,7 +249,12 @@ package can_components is
             
             -- Asynchronous reset
             res_n                :in   std_logic;
-    
+
+            ------------------------------------------------------------------------
+            -- DFT support
+            ------------------------------------------------------------------------
+            scan_enable          :in   std_logic;
+            
             ------------------------------------------------------------------------
             --  Physical layer interface
             ------------------------------------------------------------------------
@@ -528,6 +538,11 @@ package can_components is
         res_n               :in   std_logic;
 
         ------------------------------------------------------------------------
+        -- DFT support
+        ------------------------------------------------------------------------
+        scan_enable         :in   std_logic;
+
+        ------------------------------------------------------------------------
         -- Transceiver Delay measurement control
         ------------------------------------------------------------------------
         -- Start measurement (on TX Edge)
@@ -728,6 +743,11 @@ package can_components is
         res_n                  :in   std_logic;
 
         ------------------------------------------------------------------------
+        -- DFT support
+        ------------------------------------------------------------------------
+        scan_enable            :in   std_logic;
+
+        ------------------------------------------------------------------------
         -- Control signals
         ------------------------------------------------------------------------
         -- Clear RX Traffic counter (Glitch free)
@@ -907,6 +927,11 @@ package can_components is
         res_n                  :in   std_logic;
 
         -----------------------------------------------------------------------
+        -- DFT support
+        -----------------------------------------------------------------------
+        scan_enable            :in   std_logic;
+
+        -----------------------------------------------------------------------
         -- Control inputs
         -----------------------------------------------------------------------
         -- Sample control (Nominal, Data, Secondary)
@@ -921,8 +946,9 @@ package can_components is
         -- Decrement error counter by 1
         dec_one                :in   std_logic;
         
-        -- Reset error counters (asynchronously)
-        reset_err_counters     :in   std_logic;
+        -- Set unit to error active (after re-integration). Erases error
+        -- counters to 0!
+        set_err_active         :in   std_logic;
         
         -- Preload TX Error counter
         tx_err_ctr_pload       :in   std_logic;
@@ -1092,6 +1118,11 @@ package can_components is
         
         -- Asynchronous reset
         res_n                   :in   std_logic;
+
+        -----------------------------------------------------------------------
+        -- DFT support
+        -----------------------------------------------------------------------
+        scan_enable             :in   std_logic;
 
         -----------------------------------------------------------------------
         -- Memory registers interface
@@ -1998,6 +2029,11 @@ package can_components is
         -- Asynchronous reset
         res_n                   :in   std_logic;
         
+        ------------------------------------------------------------------------
+        -- DFT support
+        ------------------------------------------------------------------------
+        scan_enable             :in   std_logic;
+        
         -----------------------------------------------------------------------
         -- Memory registers interface
         -----------------------------------------------------------------------
@@ -2428,6 +2464,11 @@ package can_components is
         -- Asynchronous reset
         res_n                   :in   std_logic;
 
+        ------------------------------------------------------------------------
+        -- DFT support
+        ------------------------------------------------------------------------
+        scan_enable             :in   std_logic;
+
         -----------------------------------------------------------------------
         -- Trigger signals
         -----------------------------------------------------------------------
@@ -2662,6 +2703,11 @@ package can_components is
         
         -- Asynchronous reset
         res_n                  :in   std_logic;
+        
+        ------------------------------------------------------------------------
+        -- DFT support
+        ------------------------------------------------------------------------
+        scan_enable            :in   std_logic;
         
         ------------------------------------------------------------------------    
         -- Memory registers interface
@@ -3171,6 +3217,11 @@ package can_components is
         
         -- Reset output (input reset + Software Reset)
         res_out              :out  std_logic;
+
+        ------------------------------------------------------------------------
+        -- DFT support
+        ------------------------------------------------------------------------
+        scan_enable          :in   std_logic;
 
         ------------------------------------------------------------------------
         -- Memory Interface
@@ -3868,7 +3919,7 @@ package can_components is
         clk_sys              :in     std_logic;
         
         -- RX Buffer Reset (External + Release receive Buffer)
-        rx_buf_res_q         :in     std_logic;
+        rx_buf_res_n_q_scan  :in     std_logic;
 
         ------------------------------------------------------------------------
         -- Control signals
@@ -3993,6 +4044,11 @@ package can_components is
         
         -- Async. reset
         res_n                :in     std_logic;
+
+        ------------------------------------------------------------------------
+        -- DFT support
+        ------------------------------------------------------------------------
+        scan_enable          :in     std_logic;
 
         ------------------------------------------------------------------------
         -- Metadata from CAN Core
@@ -4435,6 +4491,11 @@ package can_components is
         
         -- Asynchronous reset
         res_n                  :in   std_logic;
+
+        -----------------------------------------------------------------------
+        -- DFT support
+        -----------------------------------------------------------------------
+        scan_enable            :in   std_logic;
 
         ------------------------------------------------------------------------
         -- Memory Registers Interface

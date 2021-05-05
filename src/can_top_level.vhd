@@ -142,6 +142,11 @@ entity can_top_level is
         res_n       : in std_logic;
 
         -----------------------------------------------------------------------
+        -- DFT support
+        -----------------------------------------------------------------------
+        scan_enable : in std_logic;
+
+        -----------------------------------------------------------------------
         -- Memory interface
         -----------------------------------------------------------------------
         -- Input data
@@ -572,6 +577,9 @@ begin
         res_n                   => res_n_sync,              -- IN
         res_out                 => res_n_i,                 -- OUT
 
+        -- DFT support
+        scan_enable             => scan_enable,             -- IN
+
         -- Memory Interface
         data_in                 => data_in,                 -- IN
         data_out                => data_out,                -- OUT
@@ -635,6 +643,9 @@ begin
         clk_sys                 => clk_sys,                 -- IN
         res_n                   => res_n_i,                 -- IN
 
+        -- DFT support
+        scan_enable             => scan_enable,             -- IN
+
         -- Metadata from CAN Core
         rec_ident               => rec_ident,               -- IN
         rec_dlc                 => rec_dlc,                 -- IN
@@ -689,6 +700,10 @@ begin
         port map(
             clk_sys             => clk_sys,                         -- IN
             res_n               => res_n_i,                         -- IN
+
+            -- DFT support
+            scan_enable         => scan_enable,                     -- IN
+
 
             -- Memory Registers Interface
             txtb_port_a_data    => txtb_port_a_data,                -- IN
@@ -846,6 +861,9 @@ begin
         clk_sys                 => clk_sys,                 -- IN
         res_n                   => res_n_i,                 -- IN
         
+        -- DFT support
+        scan_enable             => scan_enable,             -- IN
+        
         -- Memory registers interface
         drv_bus                 => drv_bus,                 -- IN
         stat_bus                => stat_bus,                -- OUT
@@ -972,6 +990,9 @@ begin
     port map(
         clk_sys                 => clk_sys,                 -- IN
         res_n                   => res_n_i,                 -- IN
+
+        -- DFT support
+        scan_enable             => scan_enable,             -- IN
 
         -- Physical layer interface
         can_rx                  => can_rx,                  -- IN
