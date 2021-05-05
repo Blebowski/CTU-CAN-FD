@@ -89,22 +89,18 @@ use ieee.std_logic_1164.all;
 use ieee.numeric_std.ALL;
 
 Library ctu_can_fd_rtl;
-use ctu_can_fd_rtl.id_transfer.all;
-use ctu_can_fd_rtl.can_constants.all;
-use ctu_can_fd_rtl.can_components.all;
-use ctu_can_fd_rtl.can_types.all;
-use ctu_can_fd_rtl.cmn_lib.all;
+use ctu_can_fd_rtl.id_transfer_pkg.all;
+use ctu_can_fd_rtl.can_constants_pkg.all;
+use ctu_can_fd_rtl.can_components_pkg.all;
+use ctu_can_fd_rtl.can_types_pkg.all;
+use ctu_can_fd_rtl.common_blocks_pkg.all;
 use ctu_can_fd_rtl.drv_stat_pkg.all;
-use ctu_can_fd_rtl.reduce_lib.all;
+use ctu_can_fd_rtl.unary_ops_pkg.all;
 
 use ctu_can_fd_rtl.CAN_FD_register_map.all;
 use ctu_can_fd_rtl.CAN_FD_frame_format.all;
 
 entity bit_destuffing is
-    generic(
-        -- Reset polarity
-        G_RESET_POLARITY     :     std_logic := '0'
-    );
     port(
         ------------------------------------------------------------------------
         -- Clock and Asynchronous reset
@@ -219,7 +215,7 @@ begin
     ---------------------------------------------------------------------------
     dff_ena_reg : dff_arst
     generic map(
-        G_RESET_POLARITY   => G_RESET_POLARITY,
+        G_RESET_POLARITY   => '0',
         G_RST_VAL          => '0'
     )
     port map(
@@ -293,7 +289,7 @@ begin
     ---------------------------------------------------------------------------
     dff_fixed_stuff_reg : dff_arst_ce
     generic map(
-        G_RESET_POLARITY   => G_RESET_POLARITY,
+        G_RESET_POLARITY   => '0',
         G_RST_VAL          => '0'
     )
     port map(
@@ -331,7 +327,7 @@ begin
     ---------------------------------------------------------------------------
     dst_ctr_proc : process(clk_sys, res_n)
     begin
-        if (res_n = G_RESET_POLARITY) then
+        if (res_n = '0') then
             dst_ctr_q         <= (OTHERS => '0');
 
         elsif (rising_edge(clk_sys)) then
@@ -379,7 +375,7 @@ begin
     ---------------------------------------------------------------------------
     same_bits_ctr_proc : process(clk_sys, res_n)
     begin
-        if (res_n = G_RESET_POLARITY) then
+        if (res_n = '0') then
             same_bits_q <= "001";
 
         elsif (rising_edge(clk_sys)) then
@@ -407,7 +403,7 @@ begin
     ---------------------------------------------------------------------------
     dff_destuffed_flag_reg : dff_arst
     generic map(
-        G_RESET_POLARITY   => G_RESET_POLARITY,
+        G_RESET_POLARITY   => '0',
         G_RST_VAL          => '0'
     )
     port map(
@@ -433,7 +429,7 @@ begin
     ---------------------------------------------------------------------------
     dff_err_reg : dff_arst
     generic map(
-        G_RESET_POLARITY   => G_RESET_POLARITY,
+        G_RESET_POLARITY   => '0',
         G_RST_VAL          => '0'
     )
     port map(
@@ -449,7 +445,7 @@ begin
     -- Previously processed value - next value:
     --  1. Set to RECESSIVE upon edge on enable
     --  2. Set to RECESSIVE when non-fixed bit stuffing changes to fixed
-    --     bit stuffing. TODO: IS THIS OK???
+    --     bit stuffing.
     ---------------------------------------------------------------------------
     prev_val_d <= RECESSIVE when (bds_trigger = '1' and non_fix_to_fix_chng = '1') else
                   data_in   when (bds_trigger = '1') else
@@ -461,7 +457,7 @@ begin
     ---------------------------------------------------------------------------
     dff_prev_val_reg : dff_arst
     generic map(
-        G_RESET_POLARITY   => G_RESET_POLARITY,
+        G_RESET_POLARITY   => '0',
         G_RST_VAL          => RECESSIVE
     )
     port map(
@@ -480,7 +476,7 @@ begin
     ---------------------------------------------------------------------------
     dff_data_out_val_reg : dff_arst_ce
     generic map(
-        G_RESET_POLARITY   => G_RESET_POLARITY,
+        G_RESET_POLARITY   => '0',
         G_RST_VAL          => RECESSIVE
     )
     port map(

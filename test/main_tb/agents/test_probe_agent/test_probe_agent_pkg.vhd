@@ -85,7 +85,11 @@ package test_probe_agent_pkg is
     port (
         -- VIP test control / status signals
         dut_test_probe          : in t_ctu_can_fd_test_probe;
-        test_node_test_probe    : in t_ctu_can_fd_test_probe 
+        test_node_test_probe    : in t_ctu_can_fd_test_probe;
+        
+        -- DFT support of VIP
+        dut_scan_enable         : out std_logic;
+        test_node_scan_enable   : out std_logic
     );
     end component;
 
@@ -118,6 +122,18 @@ package test_probe_agent_pkg is
     );
 
     ---------------------------------------------------------------------------
+    -- Enable/Disable scan mode in DUT (toggles scan_enable input)
+    --
+    -- @param channel           Channel on which to send the request
+    -- @param node              Node index on which to wait (0 - DUT, 1 - Test)
+    ---------------------------------------------------------------------------
+    procedure test_probe_agent_configure_scan(
+        constant enable         : in    boolean;
+        signal   channel        : inout t_com_channel;
+                 node           : in    natural
+    );
+
+    ---------------------------------------------------------------------------
     ---------------------------------------------------------------------------
     -- Private declarations 
     ---------------------------------------------------------------------------
@@ -127,6 +143,7 @@ package test_probe_agent_pkg is
     constant TEST_PROBE_AGNT_WAIT_SAMPLE_NO_STUFF         : integer := 0;
     constant TEST_PROBE_AGNT_WAIT_SAMPLE_STUFF            : integer := 1;
     constant TEST_PROBE_AGNT_WAIT_SYNC                    : integer := 2;
+    constant TEST_PROBE_AGNT_SCAN_CONFIGURE               : integer := 3;
     
     -- Reset agent tag (for messages)
     constant TEST_PROBE_AGENT_TAG : string := "Test probe Agent: ";
@@ -162,6 +179,30 @@ package body test_probe_agent_pkg is
         com_channel_data.set_param(node);
         send(channel, C_TEST_PROBE_AGENT_ID, TEST_PROBE_AGNT_WAIT_SYNC);
         info_m(TEST_PROBE_AGENT_TAG & "Waited till SYNC segment");
+    end procedure;
+
+    
+    procedure test_probe_agent_configure_scan(
+        constant enable         : in    boolean;
+        signal   channel        : inout t_com_channel;
+                 node           : in    natural
+    ) is
+    begin
+        if enable then
+            info_m(TEST_PROBE_AGENT_TAG & "Enabling scan mode");
+        else
+            info_m(TEST_PROBE_AGENT_TAG & "Disabling scan mode");
+        end if;
+        
+        com_channel_data.set_param(enable);
+        com_channel_data.set_param(node);
+        send(channel, C_TEST_PROBE_AGENT_ID, TEST_PROBE_AGNT_SCAN_CONFIGURE);
+
+        if enable then
+            info_m(TEST_PROBE_AGENT_TAG & "Scan mode enabled");
+        else
+            info_m(TEST_PROBE_AGENT_TAG & "Scan mode disabled");
+        end if;
     end procedure;
 
 end package body;

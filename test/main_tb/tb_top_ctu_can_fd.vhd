@@ -159,6 +159,7 @@ architecture tb of tb_top_ctu_can_fd is
    signal test_done     : std_logic := '0';
    signal test_success  : std_logic := '0'; -- 0 fail / 1 success  
 
+   signal scan_enable   : std_logic;
 
    component ctu_can_fd_vip is
    generic(
@@ -197,7 +198,9 @@ architecture tb of tb_top_ctu_can_fd is
        -- DUT interface
        clk_sys             : inout std_logic;
        res_n               : out   std_logic;
-        
+
+       scan_enable         : out   std_logic;
+
        write_data          : out   std_logic_vector(31 DOWNTO 0);
        read_data           : in    std_logic_vector(31 DOWNTO 0);
        adress              : out   std_logic_vector(15 DOWNTO 0);
@@ -236,6 +239,9 @@ begin
         -- Clock and Asynchronous reset
         clk_sys     => clk_sys,
         res_n       => res_n,
+
+        -- DFT support
+        scan_enable => scan_enable,
 
         -- Memory interface
         data_in     => write_data,
@@ -299,6 +305,9 @@ begin
         -- Clock, reset
         clk_sys     => clk_sys,
         res_n       => res_n,
+        
+        -- DFT support
+        scan_enable => scan_enable,
         
         -- Memory bus
         write_data  => write_data,

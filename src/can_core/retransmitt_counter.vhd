@@ -82,22 +82,19 @@ use ieee.std_logic_1164.all;
 use ieee.numeric_std.ALL;
 
 Library ctu_can_fd_rtl;
-use ctu_can_fd_rtl.id_transfer.all;
-use ctu_can_fd_rtl.can_constants.all;
-use ctu_can_fd_rtl.can_components.all;
-use ctu_can_fd_rtl.can_types.all;
-use ctu_can_fd_rtl.cmn_lib.all;
+use ctu_can_fd_rtl.id_transfer_pkg.all;
+use ctu_can_fd_rtl.can_constants_pkg.all;
+use ctu_can_fd_rtl.can_components_pkg.all;
+use ctu_can_fd_rtl.can_types_pkg.all;
+use ctu_can_fd_rtl.common_blocks_pkg.all;
 use ctu_can_fd_rtl.drv_stat_pkg.all;
-use ctu_can_fd_rtl.reduce_lib.all;
+use ctu_can_fd_rtl.unary_ops_pkg.all;
 
 use ctu_can_fd_rtl.CAN_FD_register_map.all;
 use ctu_can_fd_rtl.CAN_FD_frame_format.all;
 
 entity retransmitt_counter is
-    generic(
-        -- Reset polarity
-        G_RESET_POLARITY        :     std_logic := '0';
-        
+    generic(        
         -- Width of Retransmitt limit counter
         G_RETR_LIM_CTR_WIDTH    :     natural := 4 
     );
@@ -166,7 +163,7 @@ begin
     ---------------------------------------------------------------------------                   
     retr_ctr_reg_proc : process(clk_sys, res_n)
     begin
-        if (res_n = G_RESET_POLARITY) then
+        if (res_n = '0') then
             retr_ctr_q <= (OTHERS => '0');
         elsif (rising_edge(clk_sys)) then
             if (retr_ctr_ce = '1') then

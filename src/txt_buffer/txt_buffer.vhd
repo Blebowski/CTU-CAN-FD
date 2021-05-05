@@ -81,13 +81,13 @@ use ieee.numeric_std.ALL;
 use ieee.math_real.ALL;
 
 Library ctu_can_fd_rtl;
-use ctu_can_fd_rtl.id_transfer.all;
-use ctu_can_fd_rtl.can_constants.all;
-use ctu_can_fd_rtl.can_components.all;
-use ctu_can_fd_rtl.can_types.all;
-use ctu_can_fd_rtl.cmn_lib.all;
+use ctu_can_fd_rtl.id_transfer_pkg.all;
+use ctu_can_fd_rtl.can_constants_pkg.all;
+use ctu_can_fd_rtl.can_components_pkg.all;
+use ctu_can_fd_rtl.can_types_pkg.all;
+use ctu_can_fd_rtl.common_blocks_pkg.all;
 use ctu_can_fd_rtl.drv_stat_pkg.all;
-use ctu_can_fd_rtl.reduce_lib.all;
+use ctu_can_fd_rtl.unary_ops_pkg.all;
 
 use ctu_can_fd_rtl.CAN_FD_register_map.all;
 use ctu_can_fd_rtl.CAN_FD_frame_format.all;
@@ -96,9 +96,6 @@ use ctu_can_fd_rtl.can_registers_pkg.all;
 
 entity txt_buffer is
     generic(
-        -- Reset polarity
-        G_RESET_POLARITY       :     std_logic := '0';
-        
         -- Number of TXT Buffers
         G_TXT_BUFFER_COUNT     :     natural range 2 to 8;
         
@@ -117,6 +114,11 @@ entity txt_buffer is
         
         -- Asynchronous reset
         res_n                  :in   std_logic;
+
+        -----------------------------------------------------------------------
+        -- DFT support
+        -----------------------------------------------------------------------
+        scan_enable            :in   std_logic;
 
         ------------------------------------------------------------------------
         -- Memory Registers Interface
@@ -161,7 +163,7 @@ entity txt_buffer is
         -- Interrupt Manager Interface
         ------------------------------------------------------------------------
         -- HW Command applied
-        txtb_hw_cmd_int         :out  std_logic;
+        txtb_hw_cmd_int        :out  std_logic;
 
         ------------------------------------------------------------------------
         -- CAN Core and TX Arbitrator Interface
@@ -271,11 +273,12 @@ begin
     -- Clock gating for TXT Buffer RAM. Enable when:
     --  1. Read access from CAN core
     --  2. Write access from user
-    --  3. Always in test mode
+    --  3. Always in memory test mode, or in scan mode
     ----------------------------------------------------------------------------
     txtb_ram_clk_en <= '1' when (txtb_port_b_clk_en = '1' or ram_write = '1')
                            else
-                       '1' when (test_registers_out.tst_control(TMAENA_IND) = '1')
+                       '1' when (test_registers_out.tst_control(TMAENA_IND) = '1' or
+                                 scan_enable = '1')
                            else
                        '0';
 
@@ -295,7 +298,6 @@ begin
     ----------------------------------------------------------------------------
     txt_buffer_ram_inst : txt_buffer_ram
     generic map(
-        G_RESET_POLARITY     => G_RESET_POLARITY,
         G_ID                 => G_ID
     )
     port map(
@@ -322,7 +324,6 @@ begin
     ----------------------------------------------------------------------------
     txt_buffer_fsm_inst : txt_buffer_fsm
     generic map(
-        G_RESET_POLARITY       => G_RESET_POLARITY, 
         G_ID                   => G_ID
     )
     port map(

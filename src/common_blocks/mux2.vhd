@@ -67,77 +67,44 @@
 --------------------------------------------------------------------------------
 
 --------------------------------------------------------------------------------
---  Purpose:
---    Library with "reduce" functions to support generic OR between elements
---    of std_logic_vector. Unary logic operators are not well supported by
---    synthesis tools, thus this workaround is used!
+-- Module:
+--  Simple two input multi-plexor.
 --
+--  Logic function:
+--
+--    -------------------
+--    | a | b | sel | z |
+--    -------------------
+--    | 0 | - |  0  | 0 |
+--    | 1 | - |  0  | 1 |
+--    | - | 0 |  1  | 0 |
+--    | - | 1 |  1  | 1 |
+--    -------------------
+
 --------------------------------------------------------------------------------
 
 Library ieee;
-USE IEEE.std_logic_1164.all;
-USE IEEE.numeric_std.ALL;
+use ieee.std_logic_1164.all;
 
-package reduce_lib is
+entity mux2 is
+    port (
+        -- Inputs
+        a         : in  std_logic;
+        b         : in  std_logic;
+        
+        -- Selector
+        sel       : in  std_logic;
 
-    ----------------------------------------------------------------------------
-    -- Performs OR operation between all elements of vector
-    --
-    -- Arguments:
-    --  period          Period of generated clock in picoseconds.
-    -- Returns: OR of all elements of vector
-    ----------------------------------------------------------------------------
-    function or_reduce(
-        constant input         : in    std_logic_vector
-    ) return std_logic;
+        -- Output
+        z         : out std_logic
+    );
+end mux2;
 
-    ----------------------------------------------------------------------------
-    -- Performs AND operation between all elements of vector
-    --
-    -- Arguments:
-    --  period          Period of generated clock in picoseconds.
-    -- Returns: AND of all elements of vector
-    ----------------------------------------------------------------------------
-    function and_reduce(
-        constant input         : in    std_logic_vector
-    ) return std_logic;
+architecture rtl of mux2 is
+begin
 
-end package;
+    with sel select z <=
+        a when '0',
+        b when others;
 
-
-
-
---------------------------------------------------------------------------------
---------------------------------------------------------------------------------
---------------------------------------------------------------------------------
--- Library implementation
---------------------------------------------------------------------------------
---------------------------------------------------------------------------------
---------------------------------------------------------------------------------
-
-package body reduce_lib is
-
-
-    function or_reduce(
-        constant input         : in    std_logic_vector
-    ) return std_logic is
-        variable tmp           :       std_logic := '0';
-    begin
-        for i in input'range loop
-            tmp := tmp or input(i);
-        end loop;
-        return tmp;
-    end function;
-
-    function and_reduce(
-        constant input         : in    std_logic_vector
-    ) return std_logic is
-        variable tmp           :       std_logic := '1';
-    begin
-        for i in input'range loop
-            tmp := tmp and input(i);
-        end loop;
-        return tmp;
-    end function;
-
-end package body;
+end rtl;

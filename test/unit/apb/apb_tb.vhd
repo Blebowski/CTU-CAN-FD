@@ -92,14 +92,14 @@ use ieee.std_logic_textio.all;
 use STD.textio.all;
 
 library ctu_can_fd_rtl;
-use ctu_can_fd_rtl.id_transfer.all;
-use ctu_can_fd_rtl.can_constants.all;
-use ctu_can_fd_rtl.can_components.all;
-use ctu_can_fd_rtl.can_types.all;
-use ctu_can_fd_rtl.cmn_lib.all;
+use ctu_can_fd_rtl.id_transfer_pkg.all;
+use ctu_can_fd_rtl.can_constants_pkg.all;
+use ctu_can_fd_rtl.can_components_pkg.all;
+use ctu_can_fd_rtl.can_types_pkg.all;
+use ctu_can_fd_rtl.common_blocks_pkg.all;
 use ctu_can_fd_rtl.drv_stat_pkg.all;
-use ctu_can_fd_rtl.reduce_lib.all;
-use ctu_can_fd_rtl.can_config.all;
+use ctu_can_fd_rtl.unary_ops_pkg.all;
+use ctu_can_fd_rtl.can_config_pkg.all;
 use ctu_can_fd_rtl.CAN_FD_register_map.all;
 use ctu_can_fd_rtl.CAN_FD_frame_format.all;
 
@@ -114,17 +114,20 @@ context vunit_lib.vunit_context;
 architecture apb_unit_test of CAN_test is
     component can_top_apb is
         generic(
-            rx_buffer_size   : natural range 32 to 4098 := 128;
-            txt_buffer_count : natural range 2 to 8     := 4; 
-            sup_filtA        : boolean                  := true;
-            sup_filtB        : boolean                  := true;
-            sup_filtC        : boolean                  := true;
-            sup_range        : boolean                  := true;
-            sup_traffic_ctrs : boolean                  := true
+            rx_buffer_size     : natural range 32 to 4098 := 128;
+            txt_buffer_count   : natural range 2 to 8     := 4; 
+            sup_filtA          : boolean                  := true;
+            sup_filtB          : boolean                  := true;
+            sup_filtC          : boolean                  := true;
+            sup_range          : boolean                  := true;
+            sup_traffic_ctrs   : boolean                  := true;
+            sup_test_registers : boolean                  := true
         );
         port(
             aclk             : in  std_logic;
             arstn            : in  std_logic;
+
+            scan_enable      : in  std_logic;
 
             irq              : out std_logic;
             CAN_tx           : out std_logic;
@@ -164,18 +167,21 @@ architecture apb_unit_test of CAN_test is
 begin
     can_inst : can_top_apb
         generic map (
-            rx_buffer_size   => 128,
-            txt_buffer_count => 4, 
-            sup_filtA        => false,
-            sup_filtB        => false,
-            sup_filtC        => false,
-            sup_range        => false
+            rx_buffer_size      => 128,
+            txt_buffer_count    => 4, 
+            sup_filtA           => false,
+            sup_filtB           => false,
+            sup_filtC           => false,
+            sup_range           => false,
+            sup_test_registers  => true
         )
         port map (
             CAN_rx           => '1',
             timestamp        => (others => '0'),
             aclk             => aclk,
             arstn            => arstn,
+
+            scan_enable      => '0',
 
             -- APB ports
             s_apb_paddr    => s_apb_paddr,

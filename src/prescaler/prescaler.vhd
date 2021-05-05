@@ -87,22 +87,19 @@ use ieee.std_logic_1164.all;
 use ieee.numeric_std.ALL;
 
 Library ctu_can_fd_rtl;
-use ctu_can_fd_rtl.id_transfer.all;
-use ctu_can_fd_rtl.can_constants.all;
-use ctu_can_fd_rtl.can_components.all;
-use ctu_can_fd_rtl.can_types.all;
-use ctu_can_fd_rtl.cmn_lib.all;
+use ctu_can_fd_rtl.id_transfer_pkg.all;
+use ctu_can_fd_rtl.can_constants_pkg.all;
+use ctu_can_fd_rtl.can_components_pkg.all;
+use ctu_can_fd_rtl.can_types_pkg.all;
+use ctu_can_fd_rtl.common_blocks_pkg.all;
 use ctu_can_fd_rtl.drv_stat_pkg.all;
-use ctu_can_fd_rtl.reduce_lib.all;
+use ctu_can_fd_rtl.unary_ops_pkg.all;
 
 use ctu_can_fd_rtl.CAN_FD_register_map.all;
 use ctu_can_fd_rtl.CAN_FD_frame_format.all;
 
 entity prescaler is
     generic(
-        -- Reset polarity
-        G_RESET_POLARITY        :   std_logic := '0';
-
         -- TSEG1 Width - Nominal Bit Time
         G_TSEG1_NBT_WIDTH       :   natural := 8;
         
@@ -284,7 +281,6 @@ begin
     ---------------------------------------------------------------------------
     bit_time_cfg_capture_inst : bit_time_cfg_capture
     generic map (
-        G_RESET_POLARITY    => G_RESET_POLARITY,
         G_TSEG1_NBT_WIDTH   => G_TSEG1_NBT_WIDTH,
         G_TSEG2_NBT_WIDTH   => G_TSEG2_NBT_WIDTH,
         G_BRP_NBT_WIDTH     => G_BRP_NBT_WIDTH,
@@ -314,9 +310,6 @@ begin
     -- Synchronisation checker
     ---------------------------------------------------------------------------
     synchronisation_checker_inst : synchronisation_checker
-    generic map(
-        G_RESET_POLARITY    => G_RESET_POLARITY
-    )
     port map(
         clk_sys           => clk_sys,               -- IN
         res_n             => res_n,                 -- IN
@@ -337,7 +330,6 @@ begin
     ---------------------------------------------------------------------------
     bit_segment_meter_nbt_inst : bit_segment_meter
     generic map(
-        G_RESET_POLARITY       => G_RESET_POLARITY,
         G_SJW_WIDTH            => G_SJW_NBT_WIDTH,
         G_TSEG1_WIDTH          => G_TSEG1_NBT_WIDTH,
         G_TSEG2_WIDTH          => G_TSEG2_NBT_WIDTH,
@@ -366,7 +358,6 @@ begin
     ---------------------------------------------------------------------------
     bit_time_counters_nbt_inst : bit_time_counters
     generic map(
-        G_RESET_POLARITY  => G_RESET_POLARITY,
         G_BT_WIDTH        => C_BT_NBT_WIDTH,
         G_BRP_WIDTH       => G_BRP_NBT_WIDTH
     )
@@ -389,7 +380,6 @@ begin
     ---------------------------------------------------------------------------
     bit_segment_meter_dbt_inst : bit_segment_meter
     generic map(
-        G_RESET_POLARITY       => G_RESET_POLARITY,
         G_SJW_WIDTH            => G_SJW_DBT_WIDTH,
         G_TSEG1_WIDTH          => G_TSEG1_DBT_WIDTH,
         G_TSEG2_WIDTH          => G_TSEG2_DBT_WIDTH,
@@ -418,7 +408,6 @@ begin
     ---------------------------------------------------------------------------
     bit_time_counters_dbt_inst : bit_time_counters
     generic map(
-        g_reset_polarity  => G_RESET_POLARITY,
         G_BT_WIDTH        => C_BT_DBT_WIDTH,
         G_BRP_WIDTH       => G_BRP_DBT_WIDTH
     )
@@ -439,9 +428,6 @@ begin
     -- End of Segment detector
     ---------------------------------------------------------------------------
     segment_end_detector_inst : segment_end_detector
-    generic map(
-        g_reset_polarity   => G_RESET_POLARITY
-    )
     port map(
         clk_sys            => clk_sys,              -- IN
         res_n              => res_n,                -- IN
@@ -464,9 +450,6 @@ begin
     -- Bit time FSM
     ---------------------------------------------------------------------------
     bit_time_fsm_inst : bit_time_fsm
-    generic map(
-        G_RESET_POLARITY => G_RESET_POLARITY
-    )
     port map(
         clk_sys          => clk_sys,            -- IN
         res_n            => res_n,              -- IN
@@ -484,7 +467,6 @@ begin
     ---------------------------------------------------------------------------
     trigger_generator_inst : trigger_generator
     generic map(
-        G_RESET_POLARITY        => G_RESET_POLARITY,
         G_SAMPLE_TRIGGER_COUNT  => G_SAMPLE_TRIGGER_COUNT
     )
     port map(

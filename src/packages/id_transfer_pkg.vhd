@@ -68,52 +68,64 @@
 
 --------------------------------------------------------------------------------
 -- Purpose:
---  Two Flip-flop asynchronous signal synchroniser.
+--  Package for converting between Register format of CAN Identifier and decimal
+--  format of Identifier. Needed by TX arbitrator and message filter when fil-
+--  tering data based on identifier decimal value. When acessing CAN Controller
+--  from software driver should take care of this conversion!
 --------------------------------------------------------------------------------
 
 Library ieee;
-use ieee.std_logic_1164.all;
+USE IEEE.std_logic_1164.all;
+USE IEEE.numeric_std.ALL;
 
-entity sig_sync is
-    generic(
-        -- Reset polarity
-        G_RESET_POLARITY     : std_logic := '0';
-        
-        -- Reset value
-        G_RESET_VALUE        : std_logic := '1'
+Library ctu_can_fd_rtl;
+use ctu_can_fd_rtl.CAN_FD_frame_format.all;
+
+package id_transfer_pkg is
+
+    -- Register value to decimal value
+    procedure ID_reg_to_decimal(
+        signal ID_reg   : in    std_logic_vector(28 downto 0);
+        signal ID_dec   : out   natural
     );
-    port (
-        -- Reset
-        res_n                : in    std_logic;
-        
-        -- Clock
-        clk                  : in    std_logic;
-        
-        -- Asychronous signal
-        async                : in    std_logic;
-        
-        -- Synchronous signal
-        sync                 : out   std_logic
+
+    -- Decimal value to register value
+    procedure ID_decimal_to_reg(
+        signal ID_dec   : in    natural;
+        signal ID_reg   : out   std_logic_vector(28 downto 0)
     );
-end sig_sync;
 
-architecture rtl of sig_sync is
+end package id_transfer_pkg;
 
-    -- Synchroniser registers
-    signal rff               :       std_logic;
+package body id_transfer_pkg is
 
-begin
 
-    -- Signal synchroniser process.
-    sig_sync_proc : process (clk, res_n)
+    procedure ID_reg_to_decimal(
+        signal ID_reg   : in  std_logic_vector(28 downto 0);
+        signal ID_dec   : out natural
+    ) is
+        variable base : std_logic_vector(10 downto 0);
+        variable ext  : std_logic_vector(17 downto 0);
+        variable conc : std_logic_vector(28 downto 0);
     begin
-        if (res_n = G_RESET_POLARITY) then
-            rff     <= G_RESET_VALUE;
-            sync    <= G_RESET_VALUE;
-        elsif (rising_edge(clk)) then
-            rff     <= async;
-            sync    <= rff;
-        end if;
-    end process;
+        base   := ID_reg(IDENTIFIER_BASE_H downto IDENTIFIER_BASE_L);
+        ext    := ID_reg(IDENTIFIER_EXT_H downto IDENTIFIER_EXT_L);
+        conc   := base&ext;
+        ID_dec <= to_integer(unsigned(conc));
+    end procedure ID_reg_to_decimal;
 
-end rtl;
+
+    procedure ID_decimal_to_reg(
+        signal ID_dec : in  natural;
+        signal ID_reg : out std_logic_vector(28 downto 0)
+    ) is
+        variable vector : std_logic_vector(28 downto 0);
+    begin
+        vector := std_logic_vector(to_unsigned(ID_dec, 29));
+        ID_reg(IDENTIFIER_BASE_H downto IDENTIFIER_BASE_L) 
+              <= vector(28 downto 18);    
+        ID_reg(IDENTIFIER_EXT_H downto IDENTIFIER_EXT_L) 
+              <= vector(17 downto 0);
+    end procedure ID_decimal_to_reg;
+
+end id_transfer_pkg;

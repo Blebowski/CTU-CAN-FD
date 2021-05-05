@@ -96,14 +96,14 @@ use ieee.std_logic_textio.all;
 use STD.textio.all;
 
 library ctu_can_fd_rtl;
-use ctu_can_fd_rtl.id_transfer.all;
-use ctu_can_fd_rtl.can_constants.all;
-use ctu_can_fd_rtl.can_components.all;
-use ctu_can_fd_rtl.can_types.all;
-use ctu_can_fd_rtl.cmn_lib.all;
+use ctu_can_fd_rtl.id_transfer_pkg.all;
+use ctu_can_fd_rtl.can_constants_pkg.all;
+use ctu_can_fd_rtl.can_components_pkg.all;
+use ctu_can_fd_rtl.can_types_pkg.all;
+use ctu_can_fd_rtl.common_blocks_pkg.all;
 use ctu_can_fd_rtl.drv_stat_pkg.all;
-use ctu_can_fd_rtl.reduce_lib.all;
-use ctu_can_fd_rtl.can_config.all;
+use ctu_can_fd_rtl.unary_ops_pkg.all;
+use ctu_can_fd_rtl.can_config_pkg.all;
 use ctu_can_fd_rtl.CAN_FD_register_map.all;
 use ctu_can_fd_rtl.CAN_FD_frame_format.all;
 
@@ -120,7 +120,7 @@ architecture tx_arbitrator_unit_test of CAN_test is
     -- DUT signals
     ------------------------
     signal clk_sys                :  std_logic;
-    signal res_n                  :  std_logic := C_RESET_POLARITY;
+    signal res_n                  :  std_logic := '0';
     signal txtb_port_b_data       :  t_txt_bufs_output(C_TXT_BUFFER_COUNT - 1 downto 0) :=
                                         (OTHERS => (OTHERS => '0'));
 
@@ -290,7 +290,7 @@ begin
         wait for wait_time;
         wait until rising_edge(clk_sys);
 
-        if (res_n = C_RESET_POLARITY) then
+        if (res_n = '0') then
             apply_rand_seed(seed, 3, rand_ctr_1);
         end if;
 
@@ -327,7 +327,7 @@ begin
         variable buf_index      : real;
     begin
 
-        if (res_n = C_RESET_POLARITY) then
+        if (res_n = '0') then
             apply_rand_seed(seed, 2, rand_ctr_4);
         end if;
 
@@ -374,7 +374,7 @@ begin
     ------------------------------------------------------------------------------
     buf_access_emu_proc : process (res_n, clk_sys)
     begin
-        if (res_n = C_RESET_POLARITY) then
+        if (res_n = '0') then
              txtb_port_b_data <= (OTHERS => (OTHERS => 'U'));
         elsif (rising_edge(clk_sys)) then
              for i in 0 to C_TXT_BUFFER_COUNT - 1 loop
@@ -525,7 +525,7 @@ begin
     begin
 
         -- Wait till test start
-        while res_n = C_RESET_POLARITY loop
+        while res_n = '0' loop
             wait until rising_edge(clk_sys);
             apply_rand_seed(seed, 1, rand_ctr_3);
         end loop;

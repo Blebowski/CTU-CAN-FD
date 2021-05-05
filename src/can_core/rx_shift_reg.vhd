@@ -85,22 +85,18 @@ use ieee.std_logic_1164.all;
 use ieee.numeric_std.ALL;
 
 Library ctu_can_fd_rtl;
-use ctu_can_fd_rtl.id_transfer.all;
-use ctu_can_fd_rtl.can_constants.all;
-use ctu_can_fd_rtl.can_components.all;
-use ctu_can_fd_rtl.can_types.all;
-use ctu_can_fd_rtl.cmn_lib.all;
+use ctu_can_fd_rtl.id_transfer_pkg.all;
+use ctu_can_fd_rtl.can_constants_pkg.all;
+use ctu_can_fd_rtl.can_components_pkg.all;
+use ctu_can_fd_rtl.can_types_pkg.all;
+use ctu_can_fd_rtl.common_blocks_pkg.all;
 use ctu_can_fd_rtl.drv_stat_pkg.all;
-use ctu_can_fd_rtl.reduce_lib.all;
+use ctu_can_fd_rtl.unary_ops_pkg.all;
 
 use ctu_can_fd_rtl.CAN_FD_register_map.all;
 use ctu_can_fd_rtl.CAN_FD_frame_format.all;
 
 entity rx_shift_reg is
-    generic(
-        -- Reset polarity
-        G_RESET_POLARITY        :     std_logic := '0'
-    );
     port(
         -----------------------------------------------------------------------
         -- Clock and Asynchronous Reset
@@ -110,6 +106,11 @@ entity rx_shift_reg is
 
         -- Asynchronous reset
         res_n                   :in   std_logic;
+
+        ------------------------------------------------------------------------
+        -- DFT support
+        ------------------------------------------------------------------------
+        scan_enable             :in   std_logic;
 
         -----------------------------------------------------------------------
         -- Trigger signals
@@ -208,8 +209,9 @@ end entity;
 architecture rtl of rx_shift_reg is
 
     -- Internal reset
-    signal res_n_i      : std_logic;
-    signal res_n_i_d    : std_logic;
+    signal res_n_i_d        : std_logic;
+    signal res_n_i_q        : std_logic;
+    signal res_n_i_q_scan   : std_logic;
 
     -- Shift register status
     signal rx_shift_reg_q : std_logic_vector(31 downto 0);
@@ -226,25 +228,40 @@ architecture rtl of rx_shift_reg is
 begin
 
      -- Internal reset: Async reset + reset by design!
-    res_n_i_d <= G_RESET_POLARITY when (rx_clear = '1') else
-                 not (G_RESET_POLARITY);
+    res_n_i_d <= '0' when (rx_clear = '1' or res_n = '0') else
+                 '1';
 
+    ---------------------------------------------------------------------------
+    -- Registering reset to avoid glitches
+    ---------------------------------------------------------------------------
     rx_shift_res_reg_inst : dff_arst
     generic map(
-        G_RESET_POLARITY   => G_RESET_POLARITY,
-        
+        G_RESET_POLARITY   => '0',
+
         -- Reset to the same value as is polarity of reset so that other DFFs
         -- which are reset by output of this one will be reset too!
-        G_RST_VAL          => G_RESET_POLARITY
+        G_RST_VAL          => '0'
     )
     port map(
         arst               => res_n,          -- IN
         clk                => clk_sys,        -- IN
         input              => res_n_i_d,      -- IN
 
-        output             => res_n_i         -- OUT
+        output             => res_n_i_q       -- OUT
     );
 
+    ---------------------------------------------------------------------------
+    -- Registering reset to avoid glitches
+    ---------------------------------------------------------------------------
+    mux2_res_tst_inst : mux2
+    port map(
+        a                  => res_n_i_q, 
+        b                  => '1',
+        sel                => scan_enable,
+
+        -- Output
+        z                  => res_n_i_q_scan
+    );
 
     ---------------------------------------------------------------------------
     -- Shift the register when it is enabled and RX Trigger is active!
@@ -272,13 +289,13 @@ begin
     ---------------------------------------------------------------------------
     shift_reg_byte_inst : shift_reg_byte
     generic map(
-        G_RESET_POLARITY     => G_RESET_POLARITY,
+        G_RESET_POLARITY     => '0',
         G_RESET_VALUE        => x"00000000",
         G_NUM_BYTES          => 4
     )
     port map(
         clk                  => clk_sys,
-        res_n                => res_n_i,
+        res_n                => res_n_i_q_scan,
         input                => rx_data_nbs,
         byte_clock_ena       => rx_shift_cmd,
         byte_input_sel       => rx_shift_in_sel_demuxed,
@@ -288,9 +305,9 @@ begin
     ---------------------------------------------------------------------------
     -- Store Identifier
     ---------------------------------------------------------------------------
-    id_store_proc : process(clk_sys, res_n_i)
+    id_store_proc : process(clk_sys, res_n_i_q_scan)
     begin
-        if (res_n_i = G_RESET_POLARITY) then
+        if (res_n_i_q_scan = '0') then
             rec_ident <= (OTHERS => '0');    
         elsif (rising_edge(clk_sys)) then
             if (rx_store_base_id = '1') then
@@ -308,9 +325,9 @@ begin
     ---------------------------------------------------------------------------
     -- Store IDE bit (Identifier type)
     ---------------------------------------------------------------------------
-    ide_store_proc : process(clk_sys, res_n_i)
+    ide_store_proc : process(clk_sys, res_n_i_q_scan)
     begin
-        if (res_n_i = G_RESET_POLARITY) then
+        if (res_n_i_q_scan = '0') then
             rec_ident_type <= '0';    
         elsif (rising_edge(clk_sys)) then
             if (rx_store_ide = '1') then
@@ -322,9 +339,9 @@ begin
     ---------------------------------------------------------------------------
     -- RX Store RTR bit (Remote transmission request bit)
     ---------------------------------------------------------------------------
-    rx_store_proc : process(clk_sys, res_n_i)
+    rx_store_proc : process(clk_sys, res_n_i_q_scan)
     begin
-        if (res_n_i = G_RESET_POLARITY) then
+        if (res_n_i_q_scan = '0') then
             rec_is_rtr_i <= '0';    
         elsif (rising_edge(clk_sys)) then
             if (rx_store_rtr = '1') then
@@ -340,9 +357,9 @@ begin
     ---------------------------------------------------------------------------
     -- Store EDL/FDF bit (Extended data length or Flexible data-rate format)
     ---------------------------------------------------------------------------
-    edl_store_proc : process(clk_sys, res_n_i)
+    edl_store_proc : process(clk_sys, res_n_i_q_scan)
     begin
-        if (res_n_i = G_RESET_POLARITY) then
+        if (res_n_i_q_scan = '0') then
             rec_frame_type_i <= '0';    
         elsif (rising_edge(clk_sys)) then
             if (rx_store_edl = '1') then
@@ -357,9 +374,9 @@ begin
     ---------------------------------------------------------------------------
     -- Store ESI bit (Error state indicator)
     ---------------------------------------------------------------------------
-    esi_store_proc : process(clk_sys, res_n_i)
+    esi_store_proc : process(clk_sys, res_n_i_q_scan)
     begin
-        if (res_n_i = G_RESET_POLARITY) then
+        if (res_n_i_q_scan = '0') then
             rec_esi <= '0';    
         elsif (rising_edge(clk_sys)) then
             if (rx_store_esi = '1') then
@@ -371,9 +388,9 @@ begin
     ---------------------------------------------------------------------------
     -- Store BRS bit (Bit rate shift)
     ---------------------------------------------------------------------------
-    brs_store_proc : process(clk_sys, res_n_i)
+    brs_store_proc : process(clk_sys, res_n_i_q_scan)
     begin
-        if (res_n_i = G_RESET_POLARITY) then
+        if (res_n_i_q_scan = '0') then
             rec_brs <= '0';    
         elsif (rising_edge(clk_sys)) then
             if (rx_store_brs = '1') then
@@ -385,9 +402,9 @@ begin
     ---------------------------------------------------------------------------
     -- Store DLC (Data length code)
     ---------------------------------------------------------------------------
-    dlc_store_proc : process(clk_sys, res_n_i)
+    dlc_store_proc : process(clk_sys, res_n_i_q_scan)
     begin
-        if (res_n_i = G_RESET_POLARITY) then
+        if (res_n_i_q_scan = '0') then
             rec_dlc <= (OTHERS => '0');    
         elsif (rising_edge(clk_sys)) then
             if (rx_store_dlc = '1') then
@@ -399,9 +416,9 @@ begin
     ---------------------------------------------------------------------------
     -- Store RX Stuff Count
     ---------------------------------------------------------------------------
-    stuff_count_store_proc : process(clk_sys, res_n_i)
+    stuff_count_store_proc : process(clk_sys, res_n_i_q_scan)
     begin
-        if (res_n_i = G_RESET_POLARITY) then
+        if (res_n_i_q_scan = '0') then
             rx_stuff_count <= (OTHERS => '0');
         elsif (rising_edge(clk_sys)) then
             if (rx_store_stuff_count = '1') then
@@ -445,7 +462,7 @@ begin
     --  severity error;
     
     -- psl no_simul_capture_and_clear : assert never
-    --  (res_n_i = G_RESET_POLARITY) and
+    --  (res_n_i_q_scan = '0') and
     --  (rx_store_base_id = '1' or rx_store_ext_id = '1' or 
     --   rx_store_ide = '1' or rx_store_rtr = '1' or rx_store_edl = '1' or
     --   rx_store_dlc = '1' or rx_store_esi = '1' or rx_store_brs = '1' or

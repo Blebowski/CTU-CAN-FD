@@ -81,22 +81,19 @@ use ieee.std_logic_1164.all;
 use ieee.numeric_std.ALL;
 
 Library ctu_can_fd_rtl;
-use ctu_can_fd_rtl.id_transfer.all;
-use ctu_can_fd_rtl.can_constants.all;
-use ctu_can_fd_rtl.can_components.all;
-use ctu_can_fd_rtl.can_types.all;
-use ctu_can_fd_rtl.cmn_lib.all;
+use ctu_can_fd_rtl.id_transfer_pkg.all;
+use ctu_can_fd_rtl.can_constants_pkg.all;
+use ctu_can_fd_rtl.can_components_pkg.all;
+use ctu_can_fd_rtl.can_types_pkg.all;
+use ctu_can_fd_rtl.common_blocks_pkg.all;
 use ctu_can_fd_rtl.drv_stat_pkg.all;
-use ctu_can_fd_rtl.reduce_lib.all;
+use ctu_can_fd_rtl.unary_ops_pkg.all;
 
 use ctu_can_fd_rtl.CAN_FD_register_map.all;
 use ctu_can_fd_rtl.CAN_FD_frame_format.all;
 
 entity ssp_generator is
     generic(
-        -- Reset polarity
-        G_RESET_POLARITY     :      std_logic := '0';
-
         -- Width of SSP generator counters (BTMC, SSPC)
         G_SSP_CTRS_WIDTH     :      natural := 15
     );
@@ -190,7 +187,7 @@ begin
 
     btmc_meas_flag_proc : process(clk_sys, res_n)
     begin
-        if (res_n = G_RESET_POLARITY) then
+        if (res_n = '0') then
             btmc_meas_running_q <= '0';
         elsif (rising_edge(clk_sys)) then
             btmc_meas_running_q <= btmc_meas_running_d;
@@ -214,7 +211,7 @@ begin
 
     btmc_proc : process(clk_sys, res_n)
     begin
-        if (res_n = G_RESET_POLARITY) then
+        if (res_n = '0') then
             btmc_q <= (OTHERS => '0');    
         elsif (rising_edge(clk_sys)) then
             if (btmc_ce = '1') then
@@ -234,7 +231,7 @@ begin
                    
     first_ssp_flag_proc : process(clk_sys, res_n)
     begin
-        if (res_n = G_RESET_POLARITY) then
+        if (res_n = '0') then
             first_ssp_q <= '0'; 
         elsif (rising_edge(clk_sys)) then
             first_ssp_q <= first_ssp_d;
@@ -253,7 +250,7 @@ begin
 
     sspc_run_flag_proc : process(clk_sys, res_n)
     begin
-        if (res_n = G_RESET_POLARITY) then
+        if (res_n = '0') then
             sspc_ena_q <= '0';
         elsif (rising_edge(clk_sys)) then
             sspc_ena_q <= sspc_ena_d;
@@ -298,7 +295,7 @@ begin
 
     sspc_proc : process(clk_sys, res_n)
     begin
-        if (res_n = G_RESET_POLARITY) then
+        if (res_n = '0') then
             sspc_q <= C_SSPC_RST_VAL;
         elsif (rising_edge(clk_sys)) then
             if (sspc_ce = '1') then

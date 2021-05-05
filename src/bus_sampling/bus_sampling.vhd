@@ -85,22 +85,19 @@ use ieee.std_logic_1164.all;
 use ieee.numeric_std.ALL;
 
 Library ctu_can_fd_rtl;
-use ctu_can_fd_rtl.id_transfer.all;
-use ctu_can_fd_rtl.can_constants.all;
-use ctu_can_fd_rtl.can_components.all;
-use ctu_can_fd_rtl.can_types.all;
-use ctu_can_fd_rtl.cmn_lib.all;
+use ctu_can_fd_rtl.id_transfer_pkg.all;
+use ctu_can_fd_rtl.can_constants_pkg.all;
+use ctu_can_fd_rtl.can_components_pkg.all;
+use ctu_can_fd_rtl.can_types_pkg.all;
+use ctu_can_fd_rtl.common_blocks_pkg.all;
 use ctu_can_fd_rtl.drv_stat_pkg.all;
-use ctu_can_fd_rtl.reduce_lib.all;
+use ctu_can_fd_rtl.unary_ops_pkg.all;
 
 use ctu_can_fd_rtl.CAN_FD_register_map.all;
 use ctu_can_fd_rtl.CAN_FD_frame_format.all;
 
 entity bus_sampling is 
     generic(        
-        -- Reset polarity
-        G_RESET_POLARITY        :     std_logic := '0';
-        
         -- Secondary sampling point Shift registers length
         G_SSP_DELAY_SAT_VAL     :     natural := 255;
 
@@ -128,6 +125,11 @@ entity bus_sampling is
         
         -- Asynchronous reset
         res_n                :in   std_logic;
+        
+        -----------------------------------------------------------------------
+        -- DFT support
+        -----------------------------------------------------------------------
+        scan_enable          :in   std_logic;
 
         ------------------------------------------------------------------------
         --  Physical layer interface
@@ -258,9 +260,10 @@ architecture rtl of bus_sampling is
     ---------------------------------------------------------------------------
     signal shift_regs_res_d     : std_logic;
     signal shift_regs_res_q     : std_logic;
+    signal shift_regs_res_q_scan: std_logic;
     
     -- Enable for secondary sampling point shift register
-    signal ssp_enable            : std_logic;
+    signal ssp_enable           : std_logic;
 
 begin
     
@@ -279,11 +282,11 @@ begin
     ----------------------------------------------------------------------------
     can_rx_sig_sync_inst : sig_sync
     generic map(
-        G_RESET_POLARITY     => G_RESET_POLARITY,
+        G_RESET_POLARITY     => '0',
         G_RESET_VALUE        => RECESSIVE
     )
     port map(
-        res_n   => res_n,
+        arst    => res_n,
         clk     => clk_sys,
         async   => can_rx,
         sync    => data_rx_synced
@@ -295,7 +298,6 @@ begin
     ---------------------------------------------------------------------------
     trv_delay_measurement_inst : trv_delay_measurement
     generic map(
-        G_RESET_POLARITY         => G_RESET_POLARITY,
         G_TRV_CTR_WIDTH          => G_TRV_CTR_WIDTH,
         G_SSP_POS_WIDTH          => G_SSP_POS_WIDTH,
         G_USE_SSP_SATURATION     => G_USE_SSP_SATURATION,
@@ -304,6 +306,8 @@ begin
     port map(
         clk_sys                => clk_sys,                  -- IN
         res_n                  => res_n,                    -- IN
+
+        scan_enable            => scan_enable,              -- IN
 
         edge_tx_valid          => edge_tx_valid,            -- IN
         edge_rx_valid          => edge_rx_valid,            -- IN
@@ -320,9 +324,6 @@ begin
     -- Edge detector on TX, RX Data
     ---------------------------------------------------------------------------
     data_edge_detector_inst : data_edge_detector
-    generic map(
-        G_RESET_POLARITY    => G_RESET_POLARITY
-    )
     port map(
         clk_sys             => clk_sys,         -- IN
         res_n               => res_n,           -- IN
@@ -340,19 +341,19 @@ begin
     ----------------------------------------------------------------------------
     -- Reset for shift registers for secondary sampling point
     ----------------------------------------------------------------------------
-    shift_regs_res_d <= G_RESET_POLARITY when (ssp_reset = '1') else
-                        (not G_RESET_POLARITY);
+    shift_regs_res_d <= '0' when (ssp_reset = '1') else
+                        '1';
 
     ----------------------------------------------------------------------------
     -- Pipeline reset for shift registers to avoid glitches!
     ----------------------------------------------------------------------------
     shift_regs_rst_reg_inst : dff_arst
     generic map(
-        G_RESET_POLARITY   => G_RESET_POLARITY,
+        G_RESET_POLARITY   => '0',
         
         -- Reset to the same value as is polarity of reset so that other DFFs
         -- which are reset by output of this one will be reset too!
-        G_RST_VAL          => G_RESET_POLARITY
+        G_RST_VAL          => '0'
     )
     port map(
         arst               => res_n,                -- IN
@@ -363,11 +364,24 @@ begin
     );
     
     ----------------------------------------------------------------------------
+    -- Mux for gating reset in scan mode
+    ----------------------------------------------------------------------------
+    mux2_res_tst_inst : mux2
+    port map(
+        a                  => shift_regs_res_q, 
+        b                  => '1',
+        sel                => scan_enable,
+
+        -- Output
+        z                  => shift_regs_res_q_scan
+    );
+    
+    ----------------------------------------------------------------------------
     -- Create delayed TX Trigger one clock cycle after Stuff pipeline stage.
     ----------------------------------------------------------------------------
     tx_trigger_reg_inst : dff_arst
     generic map(
-        G_RESET_POLARITY   => G_RESET_POLARITY,
+        G_RESET_POLARITY   => '0',
         G_RST_VAL          => '0'
     )
     port map(
@@ -383,7 +397,6 @@ begin
     ----------------------------------------------------------------------------
     ssp_generator_inst : ssp_generator
     generic map(
-        G_RESET_POLARITY    => G_RESET_POLARITY,
         G_SSP_CTRS_WIDTH    => G_SSP_CTRS_WIDTH
     )
     port map(
@@ -426,13 +439,12 @@ begin
     ----------------------------------------------------------------------------
     tx_data_cache_inst : tx_data_cache
     generic map(
-        G_RESET_POLARITY    => G_RESET_POLARITY,
         G_TX_CACHE_DEPTH    => G_TX_CACHE_DEPTH,
         G_TX_CACHE_RST_VAL  => RECESSIVE
     )
     port map(
         clk_sys           => clk_sys,               -- IN
-        res_n             => shift_regs_res_q,      -- IN
+        res_n             => shift_regs_res_q_scan, -- IN
         write             => tx_trigger_ssp,        -- IN
         read              => sample_sec_i,          -- IN
         data_in           => tx_data_wbs,           -- IN
@@ -445,9 +457,6 @@ begin
     -- Bit error detector
     ---------------------------------------------------------------------------
     bit_err_detector_inst : bit_err_detector
-    generic map(
-         G_RESET_POLARITY   => G_RESET_POLARITY
-    )
     port map(
         clk_sys             => clk_sys,             -- IN
         res_n               => res_n,               -- IN
@@ -466,9 +475,6 @@ begin
     -- Sampling of bus value
     ----------------------------------------------------------------------------
     sample_mux_inst : sample_mux
-    generic map(
-        G_RESET_POLARITY       => G_RESET_POLARITY
-    )
     port map(
         clk_sys                => clk_sys,          -- IN
         res_n                  => res_n,            -- IN

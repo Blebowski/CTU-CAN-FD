@@ -108,7 +108,7 @@ Generics\end_layout
 \noindent
 \align center
 \begin_inset Tabular
-<lyxtabular columns="4" rows="3" version="3">
+<lyxtabular columns="4" rows="2" version="3">
 <features islongtable="true" longtabularalignment="center">
 <column alignment="center" valignment="top" width="4cm">
 <column alignment="center" valignment="top" width="3.5cm">
@@ -177,40 +177,6 @@ cellcolor{cyan}
 </cell>
 </row>
 <row>
-<cell alignment="center" leftline="true" topline="true" usebox="none" valignment="top">
-\begin_inset Text
-
-\begin_layout Plain Layout
-G_RESET_POLARITY\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" leftline="true" topline="true" usebox="none" valignment="top">
-\begin_inset Text
-
-\begin_layout Plain Layout
-std_logic\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" leftline="true" topline="true" usebox="none" valignment="top">
-\begin_inset Text
-
-\begin_layout Plain Layout
-'0'\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" leftline="true" rightline="true" topline="true" usebox="none" valignment="top">
-\begin_inset Text
-
-\begin_layout Plain Layout
-Reset polarity\end_layout
-
-\end_inset
-</cell>
-</row>
-<row>
 <cell alignment="center" bottomline="true" leftline="true" topline="true" usebox="none" valignment="top">
 \begin_inset Text
 
@@ -256,7 +222,7 @@ Ports\end_layout
 \noindent
 \align center
 \begin_inset Tabular
-<lyxtabular columns="4" rows="24" version="3">
+<lyxtabular columns="4" rows="26" version="3">
 <features islongtable="true" longtabularalignment="center">
 <column alignment="center" valignment="top" width="4cm">
 <column alignment="center" valignment="top" width="1.2cm">
@@ -537,7 +503,11 @@ in\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-t_txt_bufs_output\end_layout
+t_txt_bufs_output 
+\begin_inset Newline newline
+\end_inset
+
+(G_TXT_BUFFER_COUNT - 1 downto 0)\end_layout
 
 \end_inset
 </cell>
@@ -618,6 +588,40 @@ natural range 0 to 19\end_layout
 
 \begin_layout Plain Layout
 Pointer to TXT Buffer\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" leftline="true" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+txtb_port_b_clk_en\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+out\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+std_logic\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" rightline="true" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Clock enable to TXT Buffer port B\end_layout
 
 \end_inset
 </cell>
@@ -1105,6 +1109,40 @@ Pointer to TXT Buffer given by CAN Core. Used for reading data words\end_layout
 </cell>
 </row>
 <row>
+<cell alignment="center" leftline="true" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+txtb_clk_en\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+in\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+std_logic\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" rightline="true" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+TXT Buffer clock enable (from Protocol control)\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
 <cell alignment="center" leftline="true" multicolumn="1" rightline="true" topline="true" usebox="none" valignment="top">
 \begin_inset Text
 
@@ -1187,7 +1225,11 @@ in\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-t_txt_bufs_priorities\end_layout
+t_txt_bufs_priorities 
+\begin_inset Newline newline
+\end_inset
+
+(G_TXT_BUFFER_COUNT - 1 downto 0)\end_layout
 
 \end_inset
 </cell>

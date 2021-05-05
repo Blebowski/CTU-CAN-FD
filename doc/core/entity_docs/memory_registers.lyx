@@ -108,7 +108,7 @@ Generics\end_layout
 \noindent
 \align center
 \begin_inset Tabular
-<lyxtabular columns="4" rows="13" version="3">
+<lyxtabular columns="4" rows="14" version="3">
 <features islongtable="true" longtabularalignment="center">
 <column alignment="center" valignment="top" width="4cm">
 <column alignment="center" valignment="top" width="3.5cm">
@@ -172,40 +172,6 @@ cellcolor{cyan}
 \end_layout
 \end_inset
 \end_layout
-
-\end_inset
-</cell>
-</row>
-<row>
-<cell alignment="center" leftline="true" topline="true" usebox="none" valignment="top">
-\begin_inset Text
-
-\begin_layout Plain Layout
-G_RESET_POLARITY\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" leftline="true" topline="true" usebox="none" valignment="top">
-\begin_inset Text
-
-\begin_layout Plain Layout
-std_logic\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" leftline="true" topline="true" usebox="none" valignment="top">
-\begin_inset Text
-
-\begin_layout Plain Layout
-'0'\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" leftline="true" rightline="true" topline="true" usebox="none" valignment="top">
-\begin_inset Text
-
-\begin_layout Plain Layout
-Reset polarity\end_layout
 
 \end_inset
 </cell>
@@ -351,6 +317,40 @@ Support Range Filter\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
+G_SUP_TEST_REGISTERS\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+boolean\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+true\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" rightline="true" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Support Test registers\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" leftline="true" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
 G_SUP_TRAFFIC_CTRS\end_layout
 
 \end_inset
@@ -393,7 +393,7 @@ G_TXT_BUFFER_COUNT\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-natural range 0 to 7\end_layout
+natural range 2 to 8\end_layout
 
 \end_inset
 </cell>
@@ -551,7 +551,7 @@ MINOR Design version\end_layout
 </cell>
 </row>
 <row>
-<cell alignment="center" bottomline="true" leftline="true" topline="true" usebox="none" valignment="top">
+<cell alignment="center" leftline="true" topline="true" usebox="none" valignment="top">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -559,7 +559,7 @@ G_VERSION_MAJOR\end_layout
 
 \end_inset
 </cell>
-<cell alignment="center" bottomline="true" leftline="true" topline="true" usebox="none" valignment="top">
+<cell alignment="center" leftline="true" topline="true" usebox="none" valignment="top">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -567,7 +567,7 @@ std_logic_vector\end_layout
 
 \end_inset
 </cell>
-<cell alignment="center" bottomline="true" leftline="true" topline="true" usebox="none" valignment="top">
+<cell alignment="center" leftline="true" topline="true" usebox="none" valignment="top">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -575,11 +575,45 @@ x"02"\end_layout
 
 \end_inset
 </cell>
-<cell alignment="center" bottomline="true" leftline="true" rightline="true" topline="true" usebox="none" valignment="top">
+<cell alignment="center" leftline="true" rightline="true" topline="true" usebox="none" valignment="top">
 \begin_inset Text
 
 \begin_layout Plain Layout
 MAJOR Design version\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" bottomline="true" leftline="true" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+G_TECHNOLOGY\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" bottomline="true" leftline="true" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+natural\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" bottomline="true" leftline="true" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+C_TECH_ASIC\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" bottomline="true" leftline="true" rightline="true" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Technology type\end_layout
 
 \end_inset
 </cell>
@@ -596,7 +630,7 @@ Ports\end_layout
 \noindent
 \align center
 \begin_inset Tabular
-<lyxtabular columns="4" rows="41" version="3">
+<lyxtabular columns="4" rows="49" version="3">
 <features islongtable="true" longtabularalignment="center">
 <column alignment="center" valignment="top" width="4cm">
 <column alignment="center" valignment="top" width="1.2cm">
@@ -824,6 +858,102 @@ std_logic\end_layout
 
 \begin_layout Plain Layout
 Reset output (input reset + Software Reset)\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" leftline="true" multicolumn="1" rightline="true" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+DFT support\begin_inset ERT
+status open
+\begin_layout Plain Layout
+\backslash
+cellcolor{gray}
+\end_layout
+\end_inset
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" multicolumn="2" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+DFT support\begin_inset ERT
+status open
+\begin_layout Plain Layout
+\backslash
+cellcolor{gray}
+\end_layout
+\end_inset
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" multicolumn="2" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+DFT support\begin_inset ERT
+status open
+\begin_layout Plain Layout
+\backslash
+cellcolor{gray}
+\end_layout
+\end_inset
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" multicolumn="2" rightline="true" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+DFT support\begin_inset ERT
+status open
+\begin_layout Plain Layout
+\backslash
+cellcolor{gray}
+\end_layout
+\end_inset
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" leftline="true" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+scan_enable\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+in\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+std_logic\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" rightline="true" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\end_layout
 
 \end_inset
 </cell>
@@ -1325,6 +1455,178 @@ Status Bus\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
+Manufacturing testability\begin_inset ERT
+status open
+\begin_layout Plain Layout
+\backslash
+cellcolor{gray}
+\end_layout
+\end_inset
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" multicolumn="2" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Manufacturing testability\begin_inset ERT
+status open
+\begin_layout Plain Layout
+\backslash
+cellcolor{gray}
+\end_layout
+\end_inset
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" multicolumn="2" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Manufacturing testability\begin_inset ERT
+status open
+\begin_layout Plain Layout
+\backslash
+cellcolor{gray}
+\end_layout
+\end_inset
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" multicolumn="2" rightline="true" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Manufacturing testability\begin_inset ERT
+status open
+\begin_layout Plain Layout
+\backslash
+cellcolor{gray}
+\end_layout
+\end_inset
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" leftline="true" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+test_registers_out\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+out\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+test_registers_out_t\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" rightline="true" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Test registers outputs\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" leftline="true" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+tst_rdata_rx_buf\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+in\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+std_logic_vector 
+\begin_inset Newline newline
+\end_inset
+
+(31 downto 0)\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" rightline="true" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+RX buffer test data in\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" leftline="true" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+tst_rdata_txt_bufs\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+in\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+t_txt_bufs_output 
+\begin_inset Newline newline
+\end_inset
+
+(G_TXT_BUFFER_COUNT - 1 downto 0)\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" rightline="true" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+TXT buffers test data input\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" leftline="true" multicolumn="1" rightline="true" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
 RX Buffer Interface\begin_inset ERT
 status open
 \begin_layout Plain Layout
@@ -1713,6 +2015,40 @@ Data overrun Flag\end_layout
 </cell>
 </row>
 <row>
+<cell alignment="center" leftline="true" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+rx_mof\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+in\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+std_logic\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" rightline="true" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Middle of frame indication\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
 <cell alignment="center" leftline="true" multicolumn="1" rightline="true" topline="true" usebox="none" valignment="top">
 \begin_inset Text
 
@@ -1909,7 +2245,11 @@ in\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-t_txt_bufs_state\end_layout
+t_txt_bufs_state 
+\begin_inset Newline newline
+\end_inset
+
+(G_TXT_BUFFER_COUNT - 1 downto 0)\end_layout
 
 \end_inset
 </cell>
@@ -2015,7 +2355,11 @@ out\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-t_txt_bufs_priorities\end_layout
+t_txt_bufs_priorities 
+\begin_inset Newline newline
+\end_inset
+
+(G_TXT_BUFFER_COUNT - 1 downto 0)\end_layout
 
 \end_inset
 </cell>
@@ -2024,6 +2368,40 @@ t_txt_bufs_priorities\end_layout
 
 \begin_layout Plain Layout
 TXT Buffer priorities\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" leftline="true" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+txt_buf_failed_bof\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+out\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+std_logic\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" rightline="true" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+TXT Buffer bus-off behavior\end_layout
 
 \end_inset
 </cell>

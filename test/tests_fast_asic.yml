@@ -2,12 +2,12 @@ _default: &default
 
     # Test-bench configuration
     log_level: info
-    functional_coverage: true
-    code_coverage: true
+    functional_coverage: false
+    code_coverage: false
     error_tolerance: 0
-    randomize: true
-    #seed: 20
-    debug: true
+    randomize: false
+    seed: 0
+    debug: false
     iterations: 1
     timeout: 100 ms
 
@@ -23,10 +23,14 @@ _default: &default
     sup_filtC: true
     sup_range: true
     sup_traffic_ctrs: true
-    target_technology: 0 # C_TECH_ASIC
+    
+    ###########################################################################
+    # C_TECH_ASIC
+    ###########################################################################
+    target_technology: 0
 
     # DUT Bit timing settings
-    # Applies for compliance tests and feature tests!
+    # (Applies for compliance tests and feature tests!)
     brp: 5
     prop: 10
     ph_1: 10
@@ -39,34 +43,36 @@ _default: &default
     sjw_fd: 4
 
     # Clock configuration
+    # (Applies for compliance tests and feature tests!)
     system_clock_period: 10 ns
-
-    # Number of frames used from each dataset, 1000 means whole dataset
-    # With unified TB architecture, these run quite long! Therefore we
-    # run only sub-set. Then agent will randomize starting position within
-    # the data-set, so all-together we pick random:
-    #   100 * 10 = 1000 (out of 10000) frames
-    reference_iterations: 100
     
+    # Number of frames used from each dataset, 1000 means whole dataset
+    reference_iterations: 50
+
 unit:
+    default:
+        <<: *default
+        log_level: info
+        iterations: 50
+        timeout: 100 ms
     tests:
         bit_stuffing:
-            iterations: 100
+            iterations: 20
         apb:
             iterations: 1
         crc:
-            iterations: 500
+            iterations: 50
         int_manager:
-            iterations: 500
+            iterations: 50
         message_filter:
-            iterations: 500
+            iterations: 50
         rx_buffer:
-            iterations: 500
+            iterations: 10
         tx_arbitrator:
             # TODO: Fix TX Arbitrator unit test
             iterations: 0
         tx_buffer:
-            iterations: 500
+            iterations: 50
 
 feature:
     tests:
@@ -79,14 +85,8 @@ feature:
         alc_srr_rtr_2:
 
         btr:
-            timeout: 200 ms
-            iterations: 1
         btr_fd:
-            timeout: 200 ms
-            iterations: 1
         btr_maximal:
-            timeout: 200 ms
-            iterations: 1
         btr_minimal:
         btr_ssp_access:
         bus_start:
@@ -96,9 +96,7 @@ feature:
         command_ercrst:
         command_frcrst:
         command_rrb:
-            iterations: 20
 
-        
         device_id:
         dlc_can20_8_64_bytes:
         
@@ -106,10 +104,7 @@ feature:
         err_capt_arb_bit:
         err_capt_arb_stuff:
         err_capt_crc_bit:
-        
-        # Following test is susceptible to hanging!
         err_capt_crc_err:
-            timeout: 10 ms
         err_capt_ctrl_bit:
         err_capt_ctrl_form:
         err_capt_data_bit:
@@ -118,13 +113,11 @@ feature:
         err_capt_ovr_frm:
         err_capt_sof:
         err_norm_fd:
-            iterations: 5
 
         fault_state:
         glitch_filtering:
 
         invalid_frames:
-            iterations: 5
         int_al:
         int_be:
         int_do:
@@ -137,21 +130,17 @@ feature:
         message_filter:
         mode_bus_monitoring:
         mode_loopback:
-            iterations: 10
         mode_fd_enable:
-            iterations: 2
         mode_fdrf:
         mode_pex:
-            iterations: 5
         mode_rst:
         mode_restr_op:
-            iterations: 5
         mode_rst:
         mode_self_test:
         mode_test:
 
         mode_frame_filters:
-            iterations: 15
+            iterations: 6
         no_sof_tx:
         one_shot:
         overload:
@@ -164,12 +153,6 @@ feature:
         rx_counter:
         rx_settings_rtsop:
         rx_status:
-            rx_buffer_size: 64
-        rx_status@:
-            rx_buffer_size: 128
-        rx_status@@:
-            rx_buffer_size: 4096
-            timeout: 200 ms
         rx_status_mof:
 
         scan_mode:
@@ -183,118 +166,40 @@ feature:
         status_idle:
         status_rxne:
         status_rxs:
-
         status_txnf:
-            txt_buffer_count: 2
-        status_txnf@:
-            txt_buffer_count: 4
-        status_txnf@@:
-            txt_buffer_count: 6
-        status_txnf@@@:
-            txt_buffer_count: 8
-        
         status_txs:
         stuff_in_data:
 
         trv_delay:
-
         tst_mem_acc_rx:
-            rx_buffer_size: 32
-        tst_mem_acc_rx@:
-            rx_buffer_size: 64
-        tst_mem_acc_rx@@:
-            rx_buffer_size: 128
-        tst_mem_acc_rx@@@:
-            rx_buffer_size: 512
-        tst_mem_acc_rx@@@@:
-            rx_buffer_size: 4096
-
         tst_mem_acc_txt:
-            txt_buffer_count: 2
-        tst_mem_acc_txt@:
-            txt_buffer_count: 3
-        tst_mem_acc_txt@@:
-            txt_buffer_count: 4
-        tst_mem_acc_txt@@@:
-            txt_buffer_count: 6
-        tst_mem_acc_txt@@@@:
-            txt_buffer_count: 8
-            
         tx_arb_consistency:
-            txt_buffer_count: 2
-        tx_arb_consistency@:
-            txt_buffer_count: 4
-        tx_arb_consistency@@:
-            txt_buffer_count: 8
-
         tx_arb_time_tran:
-            txt_buffer_count: 2
-        tx_arb_time_tran@:
-            txt_buffer_count: 4
-        tx_arb_time_tran@@:
-            txt_buffer_count: 8
-
         tx_cmd_set_abort:
             iterations: 5
         tx_cmd_set_empty:
             iterations: 5
         tx_cmd_set_ready:
             iterations: 5
-
         tx_counter:
         tx_from_intermission:
         tx_priority_change:
             iterations: 1
-
         tx_priority:
-            txt_buffer_count: 2
-        tx_priority@:
-            txt_buffer_count: 3
-        tx_priority@@:
-            txt_buffer_count: 4
-        tx_priority@@@:
-            txt_buffer_count: 5
-        tx_priority@@@@:
-            txt_buffer_count: 6
-        tx_priority@@@@@:
-            txt_buffer_count: 8
-
         tx_status:
-            txt_buffer_count: 2
-            iterations: 5
-        tx_status@:
-            txt_buffer_count: 4
-            iterations: 5
-        tx_status@@:
-            txt_buffer_count: 6
-            iterations: 5
-        tx_status@@@:
-            txt_buffer_count: 8
-            iterations: 5
-
-
         timestamp_low_high:
         txt_buffer_hazard:
 
 reference:
     tests:
         data_set_1:
-            timeout: 200 ms
         data_set_2:
-            timeout: 200 ms
         data_set_3:
-            timeout: 200 ms
         data_set_4:
-            timeout: 200 ms
         data_set_5:
-            timeout: 200 ms
         data_set_6:
-            timeout: 200 ms
         data_set_7:
-            timeout: 200 ms
         data_set_8:
-            timeout: 200 ms
         data_set_9:
-            timeout: 200 ms
         data_set_10:
-            timeout: 200 ms
+

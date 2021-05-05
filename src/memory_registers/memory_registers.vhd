@@ -82,13 +82,13 @@ use ieee.std_logic_1164.all;
 use ieee.numeric_std.ALL;
 
 Library ctu_can_fd_rtl;
-use ctu_can_fd_rtl.id_transfer.all;
-use ctu_can_fd_rtl.can_constants.all;
-use ctu_can_fd_rtl.can_components.all;
-use ctu_can_fd_rtl.can_types.all;
-use ctu_can_fd_rtl.cmn_lib.all;
+use ctu_can_fd_rtl.id_transfer_pkg.all;
+use ctu_can_fd_rtl.can_constants_pkg.all;
+use ctu_can_fd_rtl.can_components_pkg.all;
+use ctu_can_fd_rtl.can_types_pkg.all;
+use ctu_can_fd_rtl.common_blocks_pkg.all;
 use ctu_can_fd_rtl.drv_stat_pkg.all;
-use ctu_can_fd_rtl.reduce_lib.all;
+use ctu_can_fd_rtl.unary_ops_pkg.all;
 
 use ctu_can_fd_rtl.CAN_FD_register_map.all;
 use ctu_can_fd_rtl.CAN_FD_frame_format.all;
@@ -97,9 +97,6 @@ use ctu_can_fd_rtl.can_registers_pkg.all;
 
 entity memory_registers is
     generic(
-        -- Reset polarity
-        G_RESET_POLARITY    : std_logic    := '0';
-
         -- Support Filter A
         G_SUP_FILTA         : boolean                         := true;
 
@@ -151,6 +148,11 @@ entity memory_registers is
         
         -- Reset output (input reset + Software Reset)
         res_out              :out  std_logic;
+
+        -----------------------------------------------------------------------
+        -- DFT support
+        -----------------------------------------------------------------------
+        scan_enable          :in   std_logic;
 
         ------------------------------------------------------------------------
         -- Memory Interface
@@ -336,8 +338,6 @@ architecture rtl of memory_registers is
     signal soft_res_q             :     std_logic;
     signal soft_res_q_n           :     std_logic;
 
-    constant C_NOT_RESET_POLARITY :     std_logic := not G_RESET_POLARITY;
-
     signal ewl_padded             :     std_logic_vector(8 downto 0);
 
     -- Clock gating for register map
@@ -440,7 +440,7 @@ begin
     ----------------------------------------------------------------------------
     chip_sel_reg_proc : process(res_n, clk_sys)
     begin
-        if (res_n = G_RESET_POLARITY) then
+        if (res_n = '0') then
             control_registers_cs_reg  <= '0';
             test_registers_cs_reg <= '0';
         elsif (rising_edge(clk_sys)) then
@@ -465,10 +465,14 @@ begin
     control_regs_clk_en <= '1' when (srd = '1' or swr = '1') and
                                     (control_registers_cs = '1')
                                else
+                           '1' when (scan_enable = '1')
+                               else
                            '0';
-    
+
     test_regs_clk_en <= '1' when (srd = '1' or swr = '1') and
                                  (test_registers_cs = '1')
+                            else
+                        '1' when (scan_enable = '1')
                             else
                         '0';
 
@@ -503,7 +507,7 @@ begin
         ADDRESS_WIDTH         => 16,
         REGISTERED_READ       => true,
         CLEAR_READ_DATA       => false,
-        RESET_POLARITY        => G_RESET_POLARITY,
+        RESET_POLARITY        => '0',
         SUP_FILT_A            => G_SUP_FILTA,
         SUP_RANGE             => G_SUP_RANGE,
         SUP_FILT_C            => G_SUP_FILTC,
@@ -536,7 +540,7 @@ begin
             ADDRESS_WIDTH       => 16,
             REGISTERED_READ     => true,
             CLEAR_READ_DATA     => false,
-            RESET_POLARITY      => G_RESET_POLARITY
+            RESET_POLARITY      => '0'
         )
         port map(
             clk_sys             => clk_test_regs,
@@ -602,7 +606,7 @@ begin
     ----------------------------------------------------------------------------
     soft_res_reg_inst : dff_arst
     generic map(
-        G_RESET_POLARITY   => G_RESET_POLARITY,
+        G_RESET_POLARITY   => '0',
         
         -- Reset to oposite value as polarity of soft reset! Since Soft reset
         -- DFF is ANDed with res_n itself, res_n will cause system reset to be
@@ -625,16 +629,8 @@ begin
     -- Reset propagation to output
     -- Note: this works only for reset active in logic zero
     ----------------------------------------------------------------------------
-    res_pol_0_gen : if (G_RESET_POLARITY = '0') generate
-        soft_res_q_n <= NOT soft_res_q;
-        res_out_i <= res_n AND soft_res_q_n;
-    end generate;
-
-    res_pol_1_gen : if (G_RESET_POLARITY = '1') generate
-        soft_res_q_n <= '0';
-        res_out_i <= res_n OR soft_res_q;
-    end generate;
-    
+    soft_res_q_n <= NOT soft_res_q;
+    res_out_i <= res_n AND soft_res_q_n;
     res_out <= res_out_i;
 
     ----------------------------------------------------------------------------
@@ -1014,7 +1010,7 @@ begin
     
     tx_cmd_reg_proc : process(clk_sys, res_out_i)
     begin
-        if (res_out_i = G_RESET_POLARITY) then
+        if (res_out_i = '0') then
             txtb_sw_cmd.set_rdy <= '0';
             txtb_sw_cmd.set_ety <= '0';
             txtb_sw_cmd.set_abt <= '0';
@@ -1036,7 +1032,7 @@ begin
     txtb_cmd_index_gen : for txtb_index in 0 to G_TXT_BUFFER_COUNT - 1 generate
         tx_cmd_in_reg_proc : process(clk_sys, res_out_i)
         begin
-            if (res_out_i = G_RESET_POLARITY) then
+            if (res_out_i = '0') then
                 txtb_sw_cmd_index(txtb_index) <= '0';
             elsif (rising_edge(clk_sys)) then
                 txtb_sw_cmd_index(txtb_index)  <= align_wrd_to_reg(

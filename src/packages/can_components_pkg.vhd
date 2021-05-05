@@ -80,13 +80,13 @@ use ieee.std_logic_1164.all;
 use ieee.numeric_std.ALL;
 
 Library ctu_can_fd_rtl;
-use ctu_can_fd_rtl.can_types.all;
-use ctu_can_fd_rtl.can_constants.all;
-use ctu_can_fd_rtl.can_config.all;
-use ctu_can_fd_rtl.cmn_lib.all;
+use ctu_can_fd_rtl.can_types_pkg.all;
+use ctu_can_fd_rtl.can_constants_pkg.all;
+use ctu_can_fd_rtl.can_config_pkg.all;
+use ctu_can_fd_rtl.common_blocks_pkg.all;
 use ctu_can_fd_rtl.can_registers_pkg.all;
 
-package can_components is
+package can_components_pkg is
 
     component can_top_level is
         generic(
@@ -126,7 +126,12 @@ package can_components is
             
             -- Asynchronous reset
             res_n       : in std_logic;
-    
+            
+            -----------------------------------------------------------------------
+            -- DFT support
+            -----------------------------------------------------------------------
+            scan_enable : in std_logic;
+        
             -----------------------------------------------------------------------
             -- Memory interface
             -----------------------------------------------------------------------
@@ -214,9 +219,6 @@ package can_components is
    
     component bus_sampling is 
         generic(        
-            -- Reset polarity
-            G_RESET_POLARITY        :     std_logic := '0';
-            
             -- Secondary sampling point Shift registers length
             G_SSP_DELAY_SAT_VAL     :     natural := 255;
     
@@ -244,7 +246,12 @@ package can_components is
             
             -- Asynchronous reset
             res_n                :in   std_logic;
-    
+
+            ------------------------------------------------------------------------
+            -- DFT support
+            ------------------------------------------------------------------------
+            scan_enable          :in   std_logic;
+            
             ------------------------------------------------------------------------
             --  Physical layer interface
             ------------------------------------------------------------------------
@@ -314,10 +321,6 @@ package can_components is
     end component bus_sampling;
    
     component bit_err_detector is
-        generic(
-            -- Reset polarity
-            G_RESET_POLARITY         :     std_logic
-        );
         port(
             ------------------------------------------------------------------------
             -- Clock and Async reset
@@ -365,10 +368,6 @@ package can_components is
    
    
     component data_edge_detector is
-        generic(
-            -- Reset polarity
-            G_RESET_POLARITY         :     std_logic
-        );
         port(
             ------------------------------------------------------------------------
             -- Clock and Asynchronous reset
@@ -410,10 +409,6 @@ package can_components is
    
    
     component sample_mux is
-    generic(
-        -- Reset polarity
-        G_RESET_POLARITY     :     std_logic := '0'    
-    );
     port(
         ------------------------------------------------------------------------
         -- Clock and Async reset
@@ -453,9 +448,6 @@ package can_components is
   
     component ssp_generator is
     generic(
-        -- Reset polarity
-        G_RESET_POLARITY     :      std_logic := '0';
-
         -- Width of SSP generator counters (BTMC, SSPC)
         G_SSP_CTRS_WIDTH     :      natural := 14
     );
@@ -500,9 +492,6 @@ package can_components is
    
     component trv_delay_measurement is
     generic(
-        -- Reset polarity
-        G_RESET_POLARITY         :     std_logic;
-        
         -- Width (number of bits) in transceiver delay measurement counter
         G_TRV_CTR_WIDTH          :     natural := 7;
 
@@ -526,6 +515,11 @@ package can_components is
         
         -- Asynchronous reset        
         res_n               :in   std_logic;
+
+        ------------------------------------------------------------------------
+        -- DFT support
+        ------------------------------------------------------------------------
+        scan_enable         :in   std_logic;
 
         ------------------------------------------------------------------------
         -- Transceiver Delay measurement control
@@ -562,9 +556,6 @@ package can_components is
    
     component tx_data_cache is
     generic(
-        -- Reset polarity
-        G_RESET_POLARITY        :     std_logic := '0';
-        
         -- Depth of FIFO (Number of bits that can be stored)
         G_TX_CACHE_DEPTH        :     natural range 4 to 32 := 8;
         
@@ -603,10 +594,6 @@ package can_components is
     
     
     component bit_destuffing is
-    generic(
-        -- Reset polarity
-        G_RESET_POLARITY     :     std_logic := '0'
-    );
     port(
         ------------------------------------------------------------------------
         -- Clock and Asynchronous reset
@@ -658,10 +645,6 @@ package can_components is
    
    
     component bit_stuffing is
-    generic(
-        -- Reset polarity
-        G_RESET_POLARITY     :     std_logic := '0'
-    );
     port(
         ------------------------------------------------------------------------
         -- Clock and Asynchronous reset
@@ -713,10 +696,6 @@ package can_components is
 
 
     component bus_traffic_counters is
-    generic(
-        -- Reset polarity
-        G_RESET_POLARITY       : std_logic := '0'
-    );
     port(
         ------------------------------------------------------------------------
         -- System clock and Asynchronous Reset
@@ -726,6 +705,11 @@ package can_components is
         
         -- Asynchronous Reset
         res_n                  :in   std_logic;
+
+        ------------------------------------------------------------------------
+        -- DFT support
+        ------------------------------------------------------------------------
+        scan_enable            :in   std_logic;
 
         ------------------------------------------------------------------------
         -- Control signals
@@ -756,9 +740,6 @@ package can_components is
 
     component can_crc is
     generic(
-        -- Reset polarity
-        G_RESET_POLARITY    :     std_logic := '0';
-        
         -- CRC 15 polynomial
         G_CRC15_POL         :     std_logic_vector(15 downto 0) := x"C599";
         
@@ -846,9 +827,6 @@ package can_components is
 
     component crc_calc is
     generic(
-        -- Reset polarity
-        G_RESET_POLARITY    : std_logic := '0';
-        
         -- Width of CRC sequence
         G_CRC_WIDTH         : natural;
 
@@ -892,10 +870,6 @@ package can_components is
 
 
     component err_counters is
-    generic(
-        -- Reset polarity
-        G_RESET_POLARITY       :     std_logic := '0'
-    );
     port(
         -----------------------------------------------------------------------
         -- System clock and Asynchronous Reset
@@ -905,6 +879,11 @@ package can_components is
 
         -- Asynchronous reset
         res_n                  :in   std_logic;
+
+        -----------------------------------------------------------------------
+        -- DFT support
+        -----------------------------------------------------------------------
+        scan_enable            :in   std_logic;
 
         -----------------------------------------------------------------------
         -- Control inputs
@@ -921,8 +900,9 @@ package can_components is
         -- Decrement error counter by 1
         dec_one                :in   std_logic;
         
-        -- Reset error counters (asynchronously)
-        reset_err_counters     :in   std_logic;
+        -- Set unit to error active (after re-integration). Erases error
+        -- counters to 0!
+        set_err_active         :in   std_logic;
         
         -- Preload TX Error counter
         tx_err_ctr_pload       :in   std_logic;
@@ -958,10 +938,6 @@ package can_components is
 
 
     component fault_confinement_fsm is
-    generic(
-        -- Reset polarity
-        G_RESET_POLARITY        :     std_logic := '0'
-    );
     port(
         -----------------------------------------------------------------------
         -- Clock and Asynchronous Reset
@@ -1080,9 +1056,6 @@ package can_components is
 
 
     component fault_confinement is
-    generic(
-        G_RESET_POLARITY        :     std_logic := '0'
-    );
     port(
         -----------------------------------------------------------------------
         -- Clock and Asynchronous Reset
@@ -1092,6 +1065,11 @@ package can_components is
         
         -- Asynchronous reset
         res_n                   :in   std_logic;
+
+        -----------------------------------------------------------------------
+        -- DFT support
+        -----------------------------------------------------------------------
+        scan_enable             :in   std_logic;
 
         -----------------------------------------------------------------------
         -- Memory registers interface
@@ -1185,10 +1163,6 @@ package can_components is
 
 
     component operation_control is
-    generic(
-        -- Reset polarity
-        G_RESET_POLARITY     :     std_logic    
-    );
     port(
         ------------------------------------------------------------------------
         -- Clock and Asynchronous reset
@@ -1245,9 +1219,6 @@ package can_components is
 
     component control_counter is
     generic(
-        -- Reset polarity
-        G_RESET_POLARITY        :     std_logic := '0';
-        
         -- Width of control counter
         G_CTRL_CTR_WIDTH        :     natural := 9 
     );
@@ -1310,9 +1281,6 @@ package can_components is
 
     component err_detector is
     generic(
-        -- Reset polarity
-        G_RESET_POLARITY        :     std_logic := '0';
-        
         -- Pipeline should be inserted on Error signalling
         G_ERR_VALID_PIPELINE    :     boolean
     );
@@ -1432,9 +1400,6 @@ package can_components is
 
     component trigger_mux is
     generic(
-        -- Reset polarity
-        G_RESET_POLARITY        :    std_logic := '0';
-        
         -- Number of Sample Triggers
         G_SAMPLE_TRIGGER_COUNT  :    natural := 2
     );
@@ -1509,10 +1474,6 @@ package can_components is
     end component;
 
     component protocol_control_fsm is
-    generic(
-        -- Reset polarity
-        G_RESET_POLARITY        :    std_logic := '0'
-    );
     port(
         -----------------------------------------------------------------------
         -- Clock and Asynchronous Reset
@@ -1976,9 +1937,6 @@ package can_components is
 
     component protocol_control is
     generic(
-        -- Reset polarity
-        G_RESET_POLARITY        :     std_logic := '0';
-        
         -- Control counter width
         G_CTRL_CTR_WIDTH        :     natural := 9;
         
@@ -1997,6 +1955,11 @@ package can_components is
         
         -- Asynchronous reset
         res_n                   :in   std_logic;
+        
+        ------------------------------------------------------------------------
+        -- DFT support
+        ------------------------------------------------------------------------
+        scan_enable             :in   std_logic;
         
         -----------------------------------------------------------------------
         -- Memory registers interface
@@ -2333,10 +2296,6 @@ package can_components is
 
 
     component reintegration_counter is
-    generic(
-        -- Reset polarity
-        G_RESET_POLARITY        :     std_logic := '0'
-    );
     port(
         -----------------------------------------------------------------------
         -- Clock and Asynchronous Reset
@@ -2370,9 +2329,6 @@ package can_components is
 
     component retransmitt_counter is
     generic(
-        -- Reset polarity
-        G_RESET_POLARITY        :     std_logic := '0';
-        
         -- Width of Retransmitt limit counter
         G_RETR_LIM_CTR_WIDTH    :     natural := 4 
     );
@@ -2414,10 +2370,6 @@ package can_components is
 
 
     component rx_shift_reg is
-    generic(
-        -- Reset polarity
-        G_RESET_POLARITY        :     std_logic := '0'
-    );
     port(
         -----------------------------------------------------------------------
         -- Clock and Asynchronous Reset
@@ -2427,6 +2379,11 @@ package can_components is
 
         -- Asynchronous reset
         res_n                   :in   std_logic;
+
+        ------------------------------------------------------------------------
+        -- DFT support
+        ------------------------------------------------------------------------
+        scan_enable             :in   std_logic;
 
         -----------------------------------------------------------------------
         -- Trigger signals
@@ -2523,10 +2480,6 @@ package can_components is
     end component;
 
     component tx_shift_reg is
-    generic(
-        -- Reset polarity
-        G_RESET_POLARITY        :     std_logic := '0'
-    );
     port(
         -----------------------------------------------------------------------
         -- Clock and Asynchronous Reset
@@ -2626,9 +2579,6 @@ package can_components is
 
     component can_core is
     generic(
-        -- Reset polarity
-        G_RESET_POLARITY        :    std_logic := '0';
-        
         -- Number of signals in Sample trigger
         G_SAMPLE_TRIGGER_COUNT  :   natural range 2 to 8 := 2;
         
@@ -2662,6 +2612,11 @@ package can_components is
         
         -- Asynchronous reset
         res_n                  :in   std_logic;
+        
+        ------------------------------------------------------------------------
+        -- DFT support
+        ------------------------------------------------------------------------
+        scan_enable            :in   std_logic;
         
         ------------------------------------------------------------------------    
         -- Memory registers interface
@@ -2876,9 +2831,6 @@ package can_components is
   
    component frame_filters is
     generic(
-        -- Reset polarity
-        G_RESET_POLARITY     : std_logic := '0';
-        
         -- Support filter A
         G_SUP_FILTA          : boolean := true;
         
@@ -2984,9 +2936,6 @@ package can_components is
 
     component int_manager is
     generic(
-        -- Reset polarity
-        G_RESET_POLARITY     : std_logic := '0';
-        
         -- Number of supported interrupts
         G_INT_COUNT          : natural  := 11;
         
@@ -3064,9 +3013,6 @@ package can_components is
 
     component int_module is
     generic(        
-        -- Reset polarity
-        G_RESET_POLARITY        :    std_logic := '0';
-
         -- If true, Interrupt status clear has priority over write.
         G_CLEAR_PRIORITY         :    boolean := true
     );
@@ -3117,9 +3063,6 @@ package can_components is
 
     component memory_registers is
     generic(
-        -- Reset polarity
-        G_RESET_POLARITY    : std_logic    := '0';
-        
         -- Support Filter A
         G_SUP_FILTA         : boolean                         := true;
 
@@ -3171,6 +3114,11 @@ package can_components is
         
         -- Reset output (input reset + Software Reset)
         res_out              :out  std_logic;
+
+        ------------------------------------------------------------------------
+        -- DFT support
+        ------------------------------------------------------------------------
+        scan_enable          :in   std_logic;
 
         ------------------------------------------------------------------------
         -- Memory Interface
@@ -3303,9 +3251,6 @@ package can_components is
 
     component bit_time_cfg_capture is
     generic (
-        -- Reset polarity
-        G_RESET_POLARITY   : std_logic := '0';
-        
         -- TSEG1 Width - Nominal Bit Time
         G_TSEG1_NBT_WIDTH  : natural := 8;
         
@@ -3381,9 +3326,6 @@ package can_components is
 
     component bit_time_counters is
     generic (
-        -- Reset polarity
-        G_RESET_POLARITY  : std_logic := '0';
-        
         -- Bit Time counter width
         G_BT_WIDTH        : natural := 8;
         
@@ -3431,10 +3373,6 @@ package can_components is
 
 
     component bit_time_fsm is
-    generic (
-        -- Reset polarity
-        G_RESET_POLARITY    : std_logic := '0'
-    );
     port(
         -----------------------------------------------------------------------
         -- Clock and Asynchronous reset
@@ -3477,9 +3415,6 @@ package can_components is
 
     component prescaler is
     generic(
-        -- Reset polarity
-        G_RESET_POLARITY        :   std_logic := '0';
-
         -- TSEG1 Width - Nominal Bit Time
         G_TSEG1_NBT_WIDTH       :   natural := 8;
         
@@ -3570,9 +3505,6 @@ package can_components is
 
     component bit_segment_meter is
     generic (
-        -- Reset polarity
-        G_RESET_POLARITY          :       std_logic := '0';
-        
         -- SJW width
         G_SJW_WIDTH               :       natural := 4;
         
@@ -3650,10 +3582,6 @@ package can_components is
 
 
     component segment_end_detector is
-    generic (
-        -- Reset polarity
-        G_RESET_POLARITY   :       std_logic := '0'
-    );
     port(
         -----------------------------------------------------------------------
         -- Clock and Asynchronous reset
@@ -3707,10 +3635,6 @@ package can_components is
 
 
     component synchronisation_checker is
-    generic (
-        -- Reset polarity
-        G_RESET_POLARITY        :       std_logic := '0'
-    );
     port(
         -----------------------------------------------------------------------
         -- Clock and Asynchronous reset
@@ -3758,9 +3682,6 @@ package can_components is
 
     component trigger_generator is
     generic (
-        -- Reset polarity
-        G_RESET_POLARITY          : std_logic := '0';
-
         -- Number of signals in Sample trigger
         G_SAMPLE_TRIGGER_COUNT    : natural range 2 to 8 := 3
     );
@@ -3796,9 +3717,6 @@ package can_components is
 
 
     component rx_buffer_fsm is
-    generic(
-        G_RESET_POLARITY     :       std_logic := '0'
-    );
     port(
         ------------------------------------------------------------------------
         -- Clocks and Asynchronouts reset 
@@ -3854,9 +3772,6 @@ package can_components is
 
     component rx_buffer_pointers is
     generic(
-        -- Reset polarity
-        G_RESET_POLARITY      :       std_logic := '0';
-        
         -- RX Buffer size
         G_RX_BUFF_SIZE        :       natural range 32 to 4096 := 32
     );
@@ -3868,7 +3783,7 @@ package can_components is
         clk_sys              :in     std_logic;
         
         -- RX Buffer Reset (External + Release receive Buffer)
-        rx_buf_res_q         :in     std_logic;
+        rx_buf_res_n_q_scan  :in     std_logic;
 
         ------------------------------------------------------------------------
         -- Control signals
@@ -3924,9 +3839,6 @@ package can_components is
 
     component rx_buffer_ram is
     generic(
-        -- Reset polarity
-        G_RESET_POLARITY      :       std_logic := '0';
-        
         -- RX Buffer size
         G_RX_BUFF_SIZE        :       natural range 32 to 4096 := 32
     );
@@ -3975,9 +3887,6 @@ package can_components is
 
     component rx_buffer is
     generic(
-        -- Reset polarity
-        G_RESET_POLARITY            :       std_logic := '0';
-        
         -- RX Buffer size
         G_RX_BUFF_SIZE              :       natural range 32 to 4096 := 32;
         
@@ -3993,6 +3902,11 @@ package can_components is
         
         -- Async. reset
         res_n                :in     std_logic;
+
+        ------------------------------------------------------------------------
+        -- DFT support
+        ------------------------------------------------------------------------
+        scan_enable          :in     std_logic;
 
         ------------------------------------------------------------------------
         -- Metadata from CAN Core
@@ -4126,10 +4040,6 @@ package can_components is
 
 
     component tx_arbitrator_fsm is
-    generic(
-        -- Reset polarity
-        G_RESET_POLARITY       :in  std_logic := '0'
-    );
     port( 
         -----------------------------------------------------------------------
         -- Clock and Asynchronous reset
@@ -4209,9 +4119,6 @@ package can_components is
 
     component tx_arbitrator is
     generic(
-        -- Reset polarity
-        G_RESET_POLARITY        : std_logic := '0';
-        
         -- Number of TXT Buffers
         G_TXT_BUFFER_COUNT      : natural range 2 to 8
     );
@@ -4296,9 +4203,6 @@ package can_components is
 
     component txt_buffer_fsm is
     generic(
-        -- Reset polarity
-        G_RESET_POLARITY       :     std_logic := '0';
-        
         -- TXT Buffer ID
         G_ID                   :     natural
     );
@@ -4364,9 +4268,6 @@ package can_components is
 
     component txt_buffer_ram is
     generic(
-        -- Reset polarity
-        G_RESET_POLARITY       :     std_logic := '0';
-        
         -- TXT buffer ID
         G_ID                   :     natural
     );
@@ -4414,9 +4315,6 @@ package can_components is
 
     component txt_buffer is
     generic(
-        -- Reset polarity
-        G_RESET_POLARITY       :     std_logic := '0';
-        
         -- Number of TXT Buffers
         G_TXT_BUFFER_COUNT     :     natural range 2 to 8;
         
@@ -4435,6 +4333,11 @@ package can_components is
         
         -- Asynchronous reset
         res_n                  :in   std_logic;
+
+        -----------------------------------------------------------------------
+        -- DFT support
+        -----------------------------------------------------------------------
+        scan_enable            :in   std_logic;
 
         ------------------------------------------------------------------------
         -- Memory Registers Interface
@@ -4504,54 +4407,6 @@ package can_components is
 
         -- TXT Buffer is available to be locked by CAN Core for transmission
         txtb_available         :out  std_logic
-    );
-    end component;
-
-
-    component inf_ram_wrapper is
-    generic(
-        -- Reset polarity
-        G_RESET_POLARITY       :     std_logic := '1';
-        
-        -- Width of memory word (in bits)
-        G_WORD_WIDTH           :     natural := 32;
-
-        -- Memory depth (in words)
-        G_DEPTH                :     natural := 32;
-
-        -- Address width (in bits)
-        G_ADDRESS_WIDTH        :     natural := 8;
-
-        -- Synchronous read
-        G_SYNC_READ            :     boolean := true
-    );
-  port(
-        ------------------------------------------------------------------------
-        -- Clock and Reset
-        ------------------------------------------------------------------------
-        clk_sys     :in   std_logic;
-        res_n       :in   std_logic;
-
-        ------------------------------------------------------------------------
-        -- Port A - Data input
-        ------------------------------------------------------------------------
-        -- Address
-        addr_A      :in   std_logic_vector(G_ADDRESS_WIDTH - 1 downto 0);
-        
-        -- Write signal
-        write       :in   std_logic;
-        
-        -- Data input
-        data_in     :in   std_logic_vector(G_WORD_WIDTH - 1 downto 0);
-
-        ------------------------------------------------------------------------   
-        -- Port B - Data output
-        ------------------------------------------------------------------------
-        -- Address
-        addr_B      :in   std_logic_vector(G_ADDRESS_WIDTH - 1 downto 0);
-        
-        -- Data output
-        data_out    :out  std_logic_vector(G_WORD_WIDTH - 1 downto 0)
     );
     end component;
 

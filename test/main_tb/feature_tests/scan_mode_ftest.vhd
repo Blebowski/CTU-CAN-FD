@@ -67,76 +67,56 @@
 --------------------------------------------------------------------------------
 
 --------------------------------------------------------------------------------
--- Module:
---  Bit Filter for CAN identifiers.
+-- @TestInfoStart
 --
--- Purpose:
---  Filters out CAN identifier based on bit mask.
+-- @Purpose:
+--  Scan mode feature tests
+--
+-- @Verifies:
+--  @1. Checks that scan mode of DUT can be enabled, disabled. Does not truly
+--      verify scan mode operation (gating resets, ungating clocks)
+--
+-- @Test sequence:
+--  @1. Enable and disable DUT scan mode.
+--
+-- @TestInfoEnd
+--------------------------------------------------------------------------------
+-- Revision History:
+--    18.10.2019   Created file
 --------------------------------------------------------------------------------
 
-Library ieee;
-use ieee.std_logic_1164.all;
-use ieee.numeric_std.ALL;
+Library ctu_can_fd_tb;
+context ctu_can_fd_tb.ieee_context;
+context ctu_can_fd_tb.rtl_context;
+context ctu_can_fd_tb.tb_common_context;
 
-Library ctu_can_fd_rtl;
-use ctu_can_fd_rtl.id_transfer_pkg.all;
-use ctu_can_fd_rtl.can_constants_pkg.all;
-use ctu_can_fd_rtl.can_components_pkg.all;
-use ctu_can_fd_rtl.can_types_pkg.all;
-use ctu_can_fd_rtl.common_blocks_pkg.all;
-use ctu_can_fd_rtl.drv_stat_pkg.all;
-use ctu_can_fd_rtl.unary_ops_pkg.all;
+use ctu_can_fd_tb.feature_test_agent_pkg.all;
+use ctu_can_fd_tb.test_probe_agent_pkg.all;
 
-use ctu_can_fd_rtl.CAN_FD_register_map.all;
-use ctu_can_fd_rtl.CAN_FD_frame_format.all;
-
-entity bit_filter is
-    generic(
-        -- Filter width
-        G_WIDTH              :   natural;
-
-        -- Filter presence
-        G_IS_PRESENT         :   boolean
+package scan_mode_ftest is
+    procedure scan_mode_ftest_exec(
+        signal      chn             : inout  t_com_channel
     );
-    port(
-        -- Filter mask
-        filter_mask          : in  std_logic_vector(G_WIDTH - 1 downto 0);
+end package;
 
-        -- Filter value
-        filter_value         : in  std_logic_vector(G_WIDTH - 1 downto 0);
 
-        -- Filter input
-        filter_input         : in  std_logic_vector(G_WIDTH - 1 downto 0);
+package body scan_mode_ftest is
 
-        -- Filter enable (output is stuck at zero when disabled)
-        enable               : in  std_logic;
+    procedure scan_mode_ftest_exec(
+        signal      chn             : inout  t_com_channel
+    ) is
+        variable r_data : std_logic_vector(31 downto 0) := (OTHERS => '0');
+    begin
 
-        -- '1' when Filter input passes the filter
-        valid                : out std_logic
-    );
-end entity;
-  
-architecture rtl of bit_filter is
+        -----------------------------------------------------------------------
+        -- @1. Enable and disable DUT scan mode.
+        -----------------------------------------------------------------------
+        info_m("Step 1");
+        
+        test_probe_agent_configure_scan(true, chn, 0);
+        wait for 100 ns;
+        test_probe_agent_configure_scan(false, chn, 0);
 
-    signal masked_input             :   std_logic_vector(G_WIDTH - 1 downto 0);
-    signal masked_value             :   std_logic_vector(G_WIDTH - 1 downto 0);
+    end procedure;
 
-begin
-
-    masked_input <= filter_input and filter_mask;
-    masked_value <= filter_value and filter_mask;
-
-    -- Filter A input frame type filtering 
-    gen_filt_pos : if (G_IS_PRESENT = true) generate
-        valid <= '1' when (masked_input = masked_value) 
-                          AND
-                          (enable = '1')
-                     else
-                 '0';
-    end generate;
-    
-    gen_filt_neg : if (G_IS_PRESENT = false) generate
-        valid <= '0';
-    end generate;  
-  
-end architecture;
+end package body;

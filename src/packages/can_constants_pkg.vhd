@@ -78,7 +78,7 @@ Library ieee;
 use ieee.std_logic_1164.all;
 use ieee.numeric_std.ALL;
 
-package can_constants is
+package can_constants_pkg is
 
     -- Definition of basic logic levels for CAN bus
     constant DOMINANT  : std_logic := '0';

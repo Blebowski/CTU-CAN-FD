@@ -97,22 +97,18 @@ use ieee.std_logic_1164.all;
 use ieee.numeric_std.ALL;
 
 Library ctu_can_fd_rtl;
-use ctu_can_fd_rtl.id_transfer.all;
-use ctu_can_fd_rtl.can_constants.all;
-use ctu_can_fd_rtl.can_components.all;
-use ctu_can_fd_rtl.can_types.all;
-use ctu_can_fd_rtl.cmn_lib.all;
+use ctu_can_fd_rtl.id_transfer_pkg.all;
+use ctu_can_fd_rtl.can_constants_pkg.all;
+use ctu_can_fd_rtl.can_components_pkg.all;
+use ctu_can_fd_rtl.can_types_pkg.all;
+use ctu_can_fd_rtl.common_blocks_pkg.all;
 use ctu_can_fd_rtl.drv_stat_pkg.all;
-use ctu_can_fd_rtl.reduce_lib.all;
+use ctu_can_fd_rtl.unary_ops_pkg.all;
 
 use ctu_can_fd_rtl.CAN_FD_register_map.all;
 use ctu_can_fd_rtl.CAN_FD_frame_format.all;
 
 entity protocol_control_fsm is
-    generic(
-        -- Reset polarity
-        G_RESET_POLARITY        :    std_logic := '0'
-    );
     port(
         -----------------------------------------------------------------------
         -- Clock and Asynchronous Reset
@@ -972,7 +968,7 @@ begin
     ---------------------------------------------------------------------------
     bus_off_req_capt_proc : process(res_n, clk_sys)
     begin
-        if (res_n = G_RESET_POLARITY) then
+        if (res_n = '0') then
             drv_bus_off_reset_q <= '0';
         elsif (rising_edge(clk_sys)) then
             if (drv_bus_off_reset = '1') then
@@ -2904,7 +2900,7 @@ begin
 
     fsm_state_reg_proc : process(clk_sys, res_n)
     begin
-        if (res_n = G_RESET_POLARITY) then
+        if (res_n = '0') then
             curr_state <= s_pc_off;
         elsif (rising_edge(clk_sys)) then
             if (state_reg_ce = '1') then
@@ -2936,7 +2932,7 @@ begin
     -----------------------------------------------------------------------
     rx_buf_cmds_proc : process(clk_sys, res_n)
     begin
-        if (res_n = G_RESET_POLARITY) then
+        if (res_n = '0') then
             store_metadata     <= '0';
             store_data         <= '0';
             rec_valid          <= '0';
@@ -2971,7 +2967,7 @@ begin
     -----------------------------------------------------------------------
     txtb_hw_cmd_proc : process(clk_sys, res_n)
     begin
-        if (res_n = G_RESET_POLARITY) then
+        if (res_n = '0') then
             txtb_hw_cmd_q.lock    <= '0';
             txtb_hw_cmd_q.unlock  <= '0';
             txtb_hw_cmd_q.valid   <= '0';
@@ -3052,7 +3048,7 @@ begin
 
     sp_control_reg_proc : process(clk_sys, res_n)
     begin
-        if (res_n = G_RESET_POLARITY) then
+        if (res_n = '0') then
             sp_control_q_i <= NOMINAL_SAMPLE;
         elsif (rising_edge(clk_sys)) then
             if (sp_control_ce = '1') then
@@ -3075,7 +3071,7 @@ begin
 
     first_err_delim_flag_reg : process(clk_sys, res_n)
     begin
-        if (res_n = G_RESET_POLARITY) then
+        if (res_n = '0') then
             first_err_delim_q <= '0';
         elsif (rising_edge(clk_sys)) then
             if (rx_trigger = '1') then
@@ -3147,7 +3143,7 @@ begin
     ---------------------------------------------------------------------------
     retr_ctr_add_block_proc : process(clk_sys, res_n)
     begin
-        if (res_n = G_RESET_POLARITY) then
+        if (res_n = '0') then
             retr_ctr_add_block <= '0';
         elsif (rising_edge(clk_sys)) then
             if (retr_ctr_add_i = '1') then
@@ -3215,7 +3211,7 @@ begin
     ---------------------------------------------------------------------------
     stuff_ena_reg_proc : process(clk_sys, res_n)
     begin
-        if (res_n = G_RESET_POLARITY) then
+        if (res_n = '0') then
             stuff_enable <= '0';
         elsif (rising_edge(clk_sys)) then
             if (ctrl_signal_upd = '1') then
@@ -3233,7 +3229,7 @@ begin
     ---------------------------------------------------------------------------
     destuff_ena_reg_proc : process(clk_sys, res_n)
     begin
-        if (res_n = G_RESET_POLARITY) then
+        if (res_n = '0') then
             destuff_enable <= '0';
         elsif (rising_edge(clk_sys)) then
             if (ctrl_signal_upd = '1') then
@@ -3261,7 +3257,7 @@ begin
     
     sync_control_reg_proc : process(clk_sys, res_n)
     begin
-        if (res_n = G_RESET_POLARITY) then
+        if (res_n = '0') then
             sync_control_q <= HARD_SYNC;
         elsif (rising_edge(clk_sys)) then
             sync_control_q <= sync_control_d;
@@ -3273,7 +3269,7 @@ begin
     -----------------------------------------------------------------------
     txtb_ptr_reg_proc : process(clk_sys, res_n)
     begin
-        if (res_n = G_RESET_POLARITY) then
+        if (res_n = '0') then
             txtb_ptr_q <= 0;
         elsif (rising_edge(clk_sys)) then
             if (txtb_clk_en_d = '1') then
@@ -3293,7 +3289,7 @@ begin
     -----------------------------------------------------------------------
     txtb_ce_reg_proc : process(clk_sys, res_n)
     begin
-        if (res_n = G_RESET_POLARITY) then
+        if (res_n = '0') then
             txtb_clk_en_q <= '0';
         elsif (rising_edge(clk_sys)) then
             txtb_clk_en_q <= txtb_clk_en_d;
@@ -3305,7 +3301,7 @@ begin
     -----------------------------------------------------------------------
     tx_frame_no_sof_proc : process(clk_sys, res_n)
     begin
-        if (res_n = G_RESET_POLARITY) then
+        if (res_n = '0') then
             tx_frame_no_sof_q <= '0';
         elsif (rising_edge(clk_sys)) then
             if (rx_trigger = '1') then
@@ -3319,7 +3315,7 @@ begin
     -----------------------------------------------------------------------
     prev_rx_data_reg_proc : process(res_n, clk_sys)
     begin
-        if (res_n = G_RESET_POLARITY) then
+        if (res_n = '0') then
             rx_data_nbs_prev <= RECESSIVE;
         elsif (rising_edge(clk_sys)) then
             if (rx_trigger = '1') then
@@ -3334,7 +3330,7 @@ begin
     -----------------------------------------------------------------------
     ack_err_flag_proc : process(clk_sys, res_n)
     begin
-        if (res_n = G_RESET_POLARITY) then
+        if (res_n = '0') then
             ack_err_flag <= '0';
         elsif (rising_edge(clk_sys)) then
             if (ack_err_i = '1' and rx_trigger = '1') then
@@ -3350,7 +3346,7 @@ begin
     -----------------------------------------------------------------------
     pexs_proc : process(clk_sys, res_n)
     begin
-        if (res_n = G_RESET_POLARITY) then
+        if (res_n = '0') then
             is_pexs <= '0';
         elsif (rising_edge(clk_sys)) then
             if (pexs_set = '1') then

@@ -67,76 +67,77 @@
 --------------------------------------------------------------------------------
 
 --------------------------------------------------------------------------------
--- Module:
---  Bit Filter for CAN identifiers.
+--  Purpose:
+--    Library with "reduce" functions to support generic OR between elements
+--    of std_logic_vector. Unary logic operators are not well supported by
+--    synthesis tools, thus this workaround is used!
 --
--- Purpose:
---  Filters out CAN identifier based on bit mask.
 --------------------------------------------------------------------------------
 
 Library ieee;
-use ieee.std_logic_1164.all;
-use ieee.numeric_std.ALL;
+USE IEEE.std_logic_1164.all;
+USE IEEE.numeric_std.ALL;
 
-Library ctu_can_fd_rtl;
-use ctu_can_fd_rtl.id_transfer_pkg.all;
-use ctu_can_fd_rtl.can_constants_pkg.all;
-use ctu_can_fd_rtl.can_components_pkg.all;
-use ctu_can_fd_rtl.can_types_pkg.all;
-use ctu_can_fd_rtl.common_blocks_pkg.all;
-use ctu_can_fd_rtl.drv_stat_pkg.all;
-use ctu_can_fd_rtl.unary_ops_pkg.all;
+package unary_ops_pkg is
 
-use ctu_can_fd_rtl.CAN_FD_register_map.all;
-use ctu_can_fd_rtl.CAN_FD_frame_format.all;
+    ----------------------------------------------------------------------------
+    -- Performs OR operation between all elements of vector
+    --
+    -- Arguments:
+    --  period          Period of generated clock in picoseconds.
+    -- Returns: OR of all elements of vector
+    ----------------------------------------------------------------------------
+    function or_reduce(
+        constant input         : in    std_logic_vector
+    ) return std_logic;
 
-entity bit_filter is
-    generic(
-        -- Filter width
-        G_WIDTH              :   natural;
+    ----------------------------------------------------------------------------
+    -- Performs AND operation between all elements of vector
+    --
+    -- Arguments:
+    --  period          Period of generated clock in picoseconds.
+    -- Returns: AND of all elements of vector
+    ----------------------------------------------------------------------------
+    function and_reduce(
+        constant input         : in    std_logic_vector
+    ) return std_logic;
 
-        -- Filter presence
-        G_IS_PRESENT         :   boolean
-    );
-    port(
-        -- Filter mask
-        filter_mask          : in  std_logic_vector(G_WIDTH - 1 downto 0);
+end package;
 
-        -- Filter value
-        filter_value         : in  std_logic_vector(G_WIDTH - 1 downto 0);
 
-        -- Filter input
-        filter_input         : in  std_logic_vector(G_WIDTH - 1 downto 0);
 
-        -- Filter enable (output is stuck at zero when disabled)
-        enable               : in  std_logic;
 
-        -- '1' when Filter input passes the filter
-        valid                : out std_logic
-    );
-end entity;
-  
-architecture rtl of bit_filter is
+--------------------------------------------------------------------------------
+--------------------------------------------------------------------------------
+--------------------------------------------------------------------------------
+-- Package implementation
+--------------------------------------------------------------------------------
+--------------------------------------------------------------------------------
+--------------------------------------------------------------------------------
 
-    signal masked_input             :   std_logic_vector(G_WIDTH - 1 downto 0);
-    signal masked_value             :   std_logic_vector(G_WIDTH - 1 downto 0);
+package body unary_ops_pkg is
 
-begin
 
-    masked_input <= filter_input and filter_mask;
-    masked_value <= filter_value and filter_mask;
+    function or_reduce(
+        constant input         : in    std_logic_vector
+    ) return std_logic is
+        variable tmp           :       std_logic := '0';
+    begin
+        for i in input'range loop
+            tmp := tmp or input(i);
+        end loop;
+        return tmp;
+    end function;
 
-    -- Filter A input frame type filtering 
-    gen_filt_pos : if (G_IS_PRESENT = true) generate
-        valid <= '1' when (masked_input = masked_value) 
-                          AND
-                          (enable = '1')
-                     else
-                 '0';
-    end generate;
-    
-    gen_filt_neg : if (G_IS_PRESENT = false) generate
-        valid <= '0';
-    end generate;  
-  
-end architecture;
+    function and_reduce(
+        constant input         : in    std_logic_vector
+    ) return std_logic is
+        variable tmp           :       std_logic := '1';
+    begin
+        for i in input'range loop
+            tmp := tmp and input(i);
+        end loop;
+        return tmp;
+    end function;
+
+end package body;

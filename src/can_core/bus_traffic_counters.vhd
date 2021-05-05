@@ -79,22 +79,18 @@ use ieee.std_logic_1164.all;
 use ieee.numeric_std.ALL;
 
 Library ctu_can_fd_rtl;
-use ctu_can_fd_rtl.id_transfer.all;
-use ctu_can_fd_rtl.can_constants.all;
-use ctu_can_fd_rtl.can_components.all;
-use ctu_can_fd_rtl.can_types.all;
-use ctu_can_fd_rtl.cmn_lib.all;
+use ctu_can_fd_rtl.id_transfer_pkg.all;
+use ctu_can_fd_rtl.can_constants_pkg.all;
+use ctu_can_fd_rtl.can_components_pkg.all;
+use ctu_can_fd_rtl.can_types_pkg.all;
+use ctu_can_fd_rtl.common_blocks_pkg.all;
 use ctu_can_fd_rtl.drv_stat_pkg.all;
-use ctu_can_fd_rtl.reduce_lib.all;
+use ctu_can_fd_rtl.unary_ops_pkg.all;
 
 use ctu_can_fd_rtl.CAN_FD_register_map.all;
 use ctu_can_fd_rtl.CAN_FD_frame_format.all;
 
 entity bus_traffic_counters is
-    generic(
-        -- Reset polarity
-        G_RESET_POLARITY       : std_logic := '0'
-    );
     port(
         ------------------------------------------------------------------------
         -- System clock and Asynchronous Reset
@@ -104,6 +100,11 @@ entity bus_traffic_counters is
         
         -- Asynchronous Reset
         res_n                  :in   std_logic;
+
+        -----------------------------------------------------------------------
+        -- DFT support
+        -----------------------------------------------------------------------
+        scan_enable            :in   std_logic;
 
         ------------------------------------------------------------------------
         -- Control signals
@@ -143,11 +144,13 @@ architecture rtl of bus_traffic_counters is
     signal inc_value           :     unsigned(31 downto 0);
     
     -- Reset signals for counters (registered, to avoid glitches)
-    signal tx_ctr_rst_d        :     std_logic;
-    signal tx_ctr_rst_q        :     std_logic;
+    signal tx_ctr_rst_n_d        :     std_logic;
+    signal tx_ctr_rst_n_q        :     std_logic;
+    signal tx_ctr_rst_n_q_scan   :     std_logic;
     
-    signal rx_ctr_rst_d        :     std_logic;
-    signal rx_ctr_rst_q        :     std_logic;
+    signal rx_ctr_rst_n_d        :     std_logic;
+    signal rx_ctr_rst_n_q        :     std_logic;
+    signal rx_ctr_rst_n_q_scan   :     std_logic;
 
 begin
 
@@ -164,50 +167,76 @@ begin
     ----------------------------------------------------------------------------
     -- Reset registers
     ----------------------------------------------------------------------------
-    tx_ctr_rst_d <= G_RESET_POLARITY when (clear_tx_ctr = '1') else
-                    (not G_RESET_POLARITY);
+    tx_ctr_rst_n_d <= '0' when (clear_tx_ctr = '1') else
+                      '1';
     
-    rx_ctr_rst_d <= G_RESET_POLARITY when (clear_rx_ctr = '1') else
-                    (not G_RESET_POLARITY);                
-    
+    rx_ctr_rst_n_d <= '0' when (clear_rx_ctr = '1') else
+                      '1';
+
+    ----------------------------------------------------------------------------
+    -- Reset pipeline registers
+    ----------------------------------------------------------------------------
     tx_ctr_res_inst : dff_arst
     generic map(
-        G_RESET_POLARITY   => G_RESET_POLARITY,
+        G_RESET_POLARITY   => '0',
         
         -- Reset to the same value as is polarity of reset so that other DFFs
         -- which are reset by output of this one will be reset too!
-        G_RST_VAL          => G_RESET_POLARITY
+        G_RST_VAL          => '0'
     )
     port map(
         arst               => res_n,                -- IN
         clk                => clk_sys,              -- IN
-        input              => tx_ctr_rst_d,         -- IN
+        input              => tx_ctr_rst_n_d,       -- IN
 
-        output             => tx_ctr_rst_q          -- OUT
+        output             => tx_ctr_rst_n_q        -- OUT
     );
     
     rx_ctr_res_inst : dff_arst
     generic map(
-        G_RESET_POLARITY   => G_RESET_POLARITY,
+        G_RESET_POLARITY   => '0',
         
         -- Reset to the same value as is polarity of reset so that other DFFs
         -- which are reset by output of this one will be reset too!
-        G_RST_VAL          => G_RESET_POLARITY
+        G_RST_VAL          => '0'
     )
     port map(
         arst               => res_n,                -- IN
         clk                => clk_sys,              -- IN
-        input              => rx_ctr_rst_d,         -- IN
+        input              => rx_ctr_rst_n_d,       -- IN
         
-        output             => rx_ctr_rst_q          -- OUT
+        output             => rx_ctr_rst_n_q        -- OUT
+    );
+
+    ----------------------------------------------------------------------------
+    -- Muxes for gating reset in scan mode
+    ----------------------------------------------------------------------------
+    mux2_tx_rst_tst_inst : mux2
+    port map(
+        a                  => tx_ctr_rst_n_q, 
+        b                  => '1',
+        sel                => scan_enable,
+
+        -- Output
+        z                  => tx_ctr_rst_n_q_scan
+    );
+
+    mux2_rx_rst_tst_inst : mux2
+    port map(
+        a                  => rx_ctr_rst_n_q, 
+        b                  => '1',
+        sel                => scan_enable,
+
+        -- Output
+        z                  => rx_ctr_rst_n_q_scan
     );
 
     ----------------------------------------------------------------------------
     -- TX Counter register
     ----------------------------------------------------------------------------
-    tx_ctr_proc : process(clk_sys, tx_ctr_rst_q)
+    tx_ctr_proc : process(clk_sys, tx_ctr_rst_n_q_scan)
     begin
-        if (tx_ctr_rst_q = G_RESET_POLARITY) then
+        if (tx_ctr_rst_n_q_scan = '0') then
             tx_ctr_i        <= (OTHERS => '0');
 
         elsif rising_edge(clk_sys) then
@@ -217,13 +246,12 @@ begin
         end if;
     end process;
 
-
     ----------------------------------------------------------------------------
     -- RX Counter register
     ----------------------------------------------------------------------------
-    rx_ctr_proc : process(clk_sys, rx_ctr_rst_q)
+    rx_ctr_proc : process(clk_sys, rx_ctr_rst_n_q_scan)
     begin
-        if (rx_ctr_rst_q = G_RESET_POLARITY) then
+        if (rx_ctr_rst_n_q_scan = '0') then
             rx_ctr_i        <= (OTHERS => '0');
 
         elsif rising_edge(clk_sys) then
@@ -232,6 +260,7 @@ begin
             end if;
         end if;
     end process;
+
 
     -- <RELEASE_OFF>
     ---------------------------------------------------------------------------
@@ -245,4 +274,5 @@ begin
     -- severity error;
 
     -- <RELEASE_ON>
+
 end architecture;

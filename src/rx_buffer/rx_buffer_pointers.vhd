@@ -88,22 +88,19 @@ use ieee.numeric_std.ALL;
 use ieee.math_real.ALL;
 
 Library ctu_can_fd_rtl;
-use ctu_can_fd_rtl.id_transfer.all;
-use ctu_can_fd_rtl.can_constants.all;
-use ctu_can_fd_rtl.can_components.all;
-use ctu_can_fd_rtl.can_types.all;
-use ctu_can_fd_rtl.cmn_lib.all;
+use ctu_can_fd_rtl.id_transfer_pkg.all;
+use ctu_can_fd_rtl.can_constants_pkg.all;
+use ctu_can_fd_rtl.can_components_pkg.all;
+use ctu_can_fd_rtl.can_types_pkg.all;
+use ctu_can_fd_rtl.common_blocks_pkg.all;
 use ctu_can_fd_rtl.drv_stat_pkg.all;
-use ctu_can_fd_rtl.reduce_lib.all;
+use ctu_can_fd_rtl.unary_ops_pkg.all;
 
 use ctu_can_fd_rtl.CAN_FD_register_map.all;
 use ctu_can_fd_rtl.CAN_FD_frame_format.all;
 
 entity rx_buffer_pointers is
     generic(
-        -- Reset polarity
-        G_RESET_POLARITY      :       std_logic := '0';
-        
         -- RX Buffer size
         G_RX_BUFF_SIZE        :       natural range 32 to 4096 := 32
     );
@@ -115,7 +112,7 @@ entity rx_buffer_pointers is
         clk_sys              :in     std_logic;
         
         -- RX Buffer Reset (External + Release receive Buffer)
-        rx_buf_res_q         :in     std_logic;
+        rx_buf_res_n_q_scan  :in     std_logic;
 
         ------------------------------------------------------------------------
         -- Control signals
@@ -241,9 +238,9 @@ begin
     -- Read pointer, incremented during read from RX Buffer FIFO.
     -- Moving to next word by reading (if there is sth to read).
     ----------------------------------------------------------------------------
-    read_pointer_proc : process(clk_sys, rx_buf_res_q)
+    read_pointer_proc : process(clk_sys, rx_buf_res_n_q_scan)
     begin
-        if (rx_buf_res_q = G_RESET_POLARITY) then
+        if (rx_buf_res_n_q_scan = '0') then
             read_pointer_i         <= (OTHERS => '0');
         elsif (rising_edge(clk_sys)) then
             if (read_increment = '1') then
@@ -256,9 +253,9 @@ begin
     -- Write pointers available to the user manipulation. Loading 
     -- "write_pointer_raw_int" to  "write_pointer_int" when frame is committed.
     ----------------------------------------------------------------------------
-    write_pointer_proc : process(clk_sys, rx_buf_res_q)
+    write_pointer_proc : process(clk_sys, rx_buf_res_n_q_scan)
     begin
-        if (rx_buf_res_q = G_RESET_POLARITY) then
+        if (rx_buf_res_n_q_scan = '0') then
             write_pointer_i       <= (OTHERS => '0');
         elsif (rising_edge(clk_sys)) then
             if (commit_rx_frame = '1') then
@@ -284,9 +281,9 @@ begin
                             '1' when (commit_overrun_abort = '1') else
                             '0';
     
-    write_pointer_raw_proc : process(clk_sys, rx_buf_res_q)
+    write_pointer_raw_proc : process(clk_sys, rx_buf_res_n_q_scan)
     begin
-        if (rx_buf_res_q = G_RESET_POLARITY) then
+        if (rx_buf_res_n_q_scan = '0') then
            write_pointer_raw_i   <= (OTHERS => '0');
         elsif (rising_edge(clk_sys)) then
             if (write_pointer_raw_ce = '1') then
@@ -307,9 +304,9 @@ begin
                            '1' when (inc_ts_wr_ptr = '1') else
                            '0';
 
-    timestamp_write_ptr_proc : process(clk_sys, rx_buf_res_q)
+    timestamp_write_ptr_proc : process(clk_sys, rx_buf_res_n_q_scan)
     begin
-        if (rx_buf_res_q = G_RESET_POLARITY) then
+        if (rx_buf_res_n_q_scan = '0') then
             write_pointer_ts_i  <= (OTHERS => '0');
         elsif (rising_edge(clk_sys)) then
             if (write_pointer_ts_ce = '1') then
@@ -322,9 +319,9 @@ begin
     ----------------------------------------------------------------------------
     -- Calculating amount of free memory.
     ----------------------------------------------------------------------------
-    mem_free_proc : process(clk_sys, rx_buf_res_q)
+    mem_free_proc : process(clk_sys, rx_buf_res_n_q_scan)
     begin
-        if (rx_buf_res_q = G_RESET_POLARITY) then
+        if (rx_buf_res_n_q_scan = '0') then
             rx_mem_free_i_i <= to_unsigned(G_RX_BUFF_SIZE, C_FREE_MEM_WIDTH);
             rx_mem_free_raw <= to_unsigned(G_RX_BUFF_SIZE, C_FREE_MEM_WIDTH);
 

@@ -98,14 +98,14 @@ use ieee.std_logic_textio.all;
 use STD.textio.all;
 
 library ctu_can_fd_rtl;
-use ctu_can_fd_rtl.id_transfer.all;
-use ctu_can_fd_rtl.can_constants.all;
-use ctu_can_fd_rtl.can_components.all;
-use ctu_can_fd_rtl.can_types.all;
-use ctu_can_fd_rtl.cmn_lib.all;
+use ctu_can_fd_rtl.id_transfer_pkg.all;
+use ctu_can_fd_rtl.can_constants_pkg.all;
+use ctu_can_fd_rtl.can_components_pkg.all;
+use ctu_can_fd_rtl.can_types_pkg.all;
+use ctu_can_fd_rtl.common_blocks_pkg.all;
 use ctu_can_fd_rtl.drv_stat_pkg.all;
-use ctu_can_fd_rtl.reduce_lib.all;
-use ctu_can_fd_rtl.can_config.all;
+use ctu_can_fd_rtl.unary_ops_pkg.all;
+use ctu_can_fd_rtl.can_config_pkg.all;
 use ctu_can_fd_rtl.CAN_FD_register_map.all;
 use ctu_can_fd_rtl.CAN_FD_frame_format.all;
 
@@ -287,6 +287,8 @@ begin
     port map(
         clk_sys                 => clk_sys,
         res_n                   => res_n,
+        scan_enable             => '0',
+        
         txtb_port_a_data        => txtb_port_a_data,
         txtb_port_a_address     => txtb_port_a_address,
         txtb_port_a_cs          => txtb_port_a_cs,
@@ -323,7 +325,7 @@ begin
         variable buf_fsm : std_logic_vector(3 downto 0);
     begin
         txtb_port_a_cs      <= '0';
-        while res_n = C_RESET_POLARITY loop
+        while res_n = '0' loop
             wait until rising_edge(clk_sys);
             apply_rand_seed(seed, 3, rand_gen_ctr);
         end loop;
@@ -365,7 +367,7 @@ begin
         variable tmp   : std_logic_vector(4 downto 0);
         constant C_DATA_ZEROES : std_logic_vector(31 downto 0) := (OTHERS => '0');
     begin
-        while res_n = C_RESET_POLARITY loop
+        while res_n = '0' loop
             wait until rising_edge(clk_sys);
             apply_rand_seed(seed, 2, rand_read_ctr);
         end loop;
@@ -399,7 +401,7 @@ begin
         variable tmp_real : real;
     begin
 
-        while res_n = C_RESET_POLARITY loop
+        while res_n = '0' loop
             wait until rising_edge(clk_sys);
             apply_rand_seed(seed, 1, rand_com_gen_ctr);
         end loop;

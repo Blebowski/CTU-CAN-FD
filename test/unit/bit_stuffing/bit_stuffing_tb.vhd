@@ -140,14 +140,14 @@ use ieee.std_logic_textio.all;
 use STD.textio.all;
 
 library ctu_can_fd_rtl;
-use ctu_can_fd_rtl.id_transfer.all;
-use ctu_can_fd_rtl.can_constants.all;
-use ctu_can_fd_rtl.can_components.all;
-use ctu_can_fd_rtl.can_types.all;
-use ctu_can_fd_rtl.cmn_lib.all;
+use ctu_can_fd_rtl.id_transfer_pkg.all;
+use ctu_can_fd_rtl.can_constants_pkg.all;
+use ctu_can_fd_rtl.can_components_pkg.all;
+use ctu_can_fd_rtl.can_types_pkg.all;
+use ctu_can_fd_rtl.common_blocks_pkg.all;
 use ctu_can_fd_rtl.drv_stat_pkg.all;
-use ctu_can_fd_rtl.reduce_lib.all;
-use ctu_can_fd_rtl.can_config.all;
+use ctu_can_fd_rtl.unary_ops_pkg.all;
+use ctu_can_fd_rtl.can_config_pkg.all;
 use ctu_can_fd_rtl.CAN_FD_register_map.all;
 use ctu_can_fd_rtl.CAN_FD_frame_format.all;
 
@@ -686,9 +686,6 @@ architecture bit_stuffing_unit_test of CAN_test is
 begin
 
     bit_stuffing_comp : bit_stuffing
-    generic map(
-        G_RESET_POLARITY   => '0'
-    )
     port map(
         clk_sys            =>  clk_sys,
         res_n              =>  res_n,
@@ -705,9 +702,6 @@ begin
 
 
     bit_destuffing_comp : bit_destuffing
-    generic map(
-        G_RESET_POLARITY   => '0'
-    )
     port map(
         clk_sys            =>  clk_sys,
         res_n              =>  res_n,

@@ -103,126 +103,12 @@ customHeadersFooters
 
 \begin_body
 \begin_layout Description
-Generics\end_layout
-\begin_layout Standard
-\noindent
-\align center
-\begin_inset Tabular
-<lyxtabular columns="4" rows="2" version="3">
-<features islongtable="true" longtabularalignment="center">
-<column alignment="center" valignment="top" width="4cm">
-<column alignment="center" valignment="top" width="3.5cm">
-<column alignment="center" valignment="top" width="1.2cm">
-<column alignment="center" valignment="top" width="7cm">
-<row>
-<cell alignment="center" leftline="true" topline="true" usebox="none" valignment="top">
-\begin_inset Text
-
-\begin_layout Plain Layout
-Name\begin_inset ERT
-status open
-\begin_layout Plain Layout
-\backslash
-cellcolor{cyan}
-\end_layout
-\end_inset
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" leftline="true" topline="true" usebox="none" valignment="top">
-\begin_inset Text
-
-\begin_layout Plain Layout
-Type\begin_inset ERT
-status open
-\begin_layout Plain Layout
-\backslash
-cellcolor{cyan}
-\end_layout
-\end_inset
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" leftline="true" topline="true" usebox="none" valignment="top">
-\begin_inset Text
-
-\begin_layout Plain Layout
-Default value\begin_inset ERT
-status open
-\begin_layout Plain Layout
-\backslash
-cellcolor{cyan}
-\end_layout
-\end_inset
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" leftline="true" rightline="true" topline="true" usebox="none" valignment="top">
-\begin_inset Text
-
-\begin_layout Plain Layout
-Description\begin_inset ERT
-status open
-\begin_layout Plain Layout
-\backslash
-cellcolor{cyan}
-\end_layout
-\end_inset
-\end_layout
-
-\end_inset
-</cell>
-</row>
-<row>
-<cell alignment="center" bottomline="true" leftline="true" topline="true" usebox="none" valignment="top">
-\begin_inset Text
-
-\begin_layout Plain Layout
-G_RESET_POLARITY\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" bottomline="true" leftline="true" topline="true" usebox="none" valignment="top">
-\begin_inset Text
-
-\begin_layout Plain Layout
-std_logic\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" bottomline="true" leftline="true" topline="true" usebox="none" valignment="top">
-\begin_inset Text
-
-\begin_layout Plain Layout
-'0'\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" bottomline="true" leftline="true" rightline="true" topline="true" usebox="none" valignment="top">
-\begin_inset Text
-
-\begin_layout Plain Layout
-Reset polarity\end_layout
-
-\end_inset
-</cell>
-</row>
-</lyxtabular>
-
-\end_inset
-
-
-\end_layout
-\begin_layout Description
 Ports\end_layout
 \begin_layout Standard
 \noindent
 \align center
 \begin_inset Tabular
-<lyxtabular columns="4" rows="149" version="3">
+<lyxtabular columns="4" rows="153" version="3">
 <features islongtable="true" longtabularalignment="center">
 <column alignment="center" valignment="top" width="4cm">
 <column alignment="center" valignment="top" width="1.2cm">
@@ -995,6 +881,74 @@ Protocol exception handling\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
+drv_cpexs\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+in\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+std_logic\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" rightline="true" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Protocol exception status clear\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" leftline="true" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+drv_rom_ena\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+in\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+std_logic\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" rightline="true" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+ROM mode enabled\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" leftline="true" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
 is_control\end_layout
 
 \end_inset
@@ -1428,6 +1382,40 @@ std_logic\end_layout
 
 \begin_layout Plain Layout
 Start of Frame\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" leftline="true" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+is_pexs\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+out\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+std_logic\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" rightline="true" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Protocol exception status\end_layout
 
 \end_inset
 </cell>
@@ -1954,6 +1942,40 @@ natural range 0 to 19\end_layout
 
 \begin_layout Plain Layout
 Pointer to TXT Buffer memory\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" leftline="true" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+txtb_clk_en\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+out\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+std_logic\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" rightline="true" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Clock enable for TXT Buffer memory\end_layout
 
 \end_inset
 </cell>

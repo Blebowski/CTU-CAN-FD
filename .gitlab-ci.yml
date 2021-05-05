@@ -79,20 +79,35 @@ build_linux_driver:
         paths:
             - driver/linux/ctucanfd.ko
 
-test_ip_fast:
+test_ip_fast_asic:
     stage: test
     only: *only
     dependencies: [build_ip_and_tests]
     script:
         - cd test
-        - make test_fast
+        - make test_fast_asic
     artifacts:
         when: always
         paths:
-            - test/tests_fast.xml
+            - test/tests_fast_asic.xml
             - test/xunit.xsl
         reports:
-            junit: [test/tests_fast.xml]
+            junit: [test/tests_fast_asic.xml]
+
+test_ip_fast_fpga:
+    stage: test
+    only: *only
+    dependencies: [build_ip_and_tests]
+    script:
+        - cd test
+        - make test_fast_fpga
+    artifacts:
+        when: always
+        paths:
+            - test/tests_fast_fpga.xml
+            - test/xunit.xsl
+        reports:
+            junit: [test/tests_fast_fpga.xml]
 
 test_ip_nightly:
     stage: test

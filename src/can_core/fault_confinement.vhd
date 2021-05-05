@@ -81,22 +81,18 @@ use ieee.std_logic_1164.all;
 use ieee.numeric_std.ALL;
 
 Library ctu_can_fd_rtl;
-use ctu_can_fd_rtl.id_transfer.all;
-use ctu_can_fd_rtl.can_constants.all;
-use ctu_can_fd_rtl.can_components.all;
-use ctu_can_fd_rtl.can_types.all;
-use ctu_can_fd_rtl.cmn_lib.all;
+use ctu_can_fd_rtl.id_transfer_pkg.all;
+use ctu_can_fd_rtl.can_constants_pkg.all;
+use ctu_can_fd_rtl.can_components_pkg.all;
+use ctu_can_fd_rtl.can_types_pkg.all;
+use ctu_can_fd_rtl.common_blocks_pkg.all;
 use ctu_can_fd_rtl.drv_stat_pkg.all;
-use ctu_can_fd_rtl.reduce_lib.all;
+use ctu_can_fd_rtl.unary_ops_pkg.all;
 
 use ctu_can_fd_rtl.CAN_FD_register_map.all;
 use ctu_can_fd_rtl.CAN_FD_frame_format.all;
 
 entity fault_confinement is
-    generic(
-        -- Reset polarity
-        G_RESET_POLARITY        :     std_logic := '0'
-    );
     port(
         -----------------------------------------------------------------------
         -- Clock and Asynchronous Reset
@@ -106,6 +102,11 @@ entity fault_confinement is
         
         -- Asynchronous reset
         res_n                   :in   std_logic;
+
+        -----------------------------------------------------------------------
+        -- DFT support
+        -----------------------------------------------------------------------
+        scan_enable            : in   std_logic;
 
         -----------------------------------------------------------------------
         -- Memory registers interface
@@ -210,9 +211,7 @@ architecture rtl of fault_confinement is
 
     -- Internal TX/RX Error counter values
     signal tx_err_ctr_i          :     std_logic_vector(8 downto 0);
-    signal rx_err_ctr_i          :     std_logic_vector(8 downto 0);
-
-    signal set_err_active_q      :     std_logic;
+    signal rx_err_ctr_i          :     std_logic_vector(8 downto 0);    
     
     -- Increment decrement commands
     signal inc_one               :     std_logic;
@@ -233,27 +232,11 @@ begin
     drv_ctr_sel         <=  drv_bus(DRV_CTR_SEL_HIGH downto DRV_CTR_SEL_LOW);
     drv_ena             <=  drv_bus(DRV_ENA_INDEX);
     drv_rom_ena         <=  drv_bus(DRV_ROM_ENA_INDEX);
-
-    dff_arst_inst : dff_arst
-    generic map(
-        G_RESET_POLARITY   => G_RESET_POLARITY,
-        G_RST_VAL          => '0'
-    )
-    port map(
-        arst               => res_n,                -- IN
-        clk                => clk_sys,              -- IN
-        input              => set_err_active,       -- IN
-        
-        output             => set_err_active_q      -- OUT
-    );
     
     ---------------------------------------------------------------------------
     -- Fault confinement FSM
     ---------------------------------------------------------------------------
     fault_confinement_fsm_inst : fault_confinement_fsm
-    generic map(
-        G_RESET_POLARITY       => G_RESET_POLARITY
-    )
     port map(
         clk_sys                => clk_sys,                  -- IN
         res_n                  => res_n,                    -- IN
@@ -261,7 +244,7 @@ begin
         ewl                    => drv_ewl,                  -- IN
         erp                    => drv_erp,                  -- IN
 
-        set_err_active         => set_err_active_q,         -- IN
+        set_err_active         => set_err_active,           -- IN
         tx_err_ctr             => tx_err_ctr_i,             -- IN
         rx_err_ctr             => rx_err_ctr_i,             -- IN
         drv_ena                => drv_ena,                  -- IN
@@ -279,17 +262,15 @@ begin
     -- Error counters
     ---------------------------------------------------------------------------
     err_counters_inst : err_counters
-    generic map(
-        G_RESET_POLARITY       => G_RESET_POLARITY
-    )
     port map(
         clk_sys                => clk_sys,              -- IN
         res_n                  => res_n,                -- IN
+        scan_enable            => scan_enable,          -- IN
         sp_control             => sp_control,           -- IN
         inc_one                => inc_one,              -- IN
         inc_eight              => inc_eight,            -- IN
         dec_one                => dec_one,              -- IN
-        reset_err_counters     => set_err_active_q,     -- IN
+        set_err_active         => set_err_active,       -- IN
         tx_err_ctr_pload       => drv_ctr_sel(0),       -- IN
         rx_err_ctr_pload       => drv_ctr_sel(1),       -- IN
         drv_ctr_val            => drv_ctr_val,          -- IN

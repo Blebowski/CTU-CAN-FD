@@ -67,94 +67,89 @@
 --------------------------------------------------------------------------------
 
 --------------------------------------------------------------------------------
--- Module:
---  Endian swapper
+-- Package:
+--  CAN Configuration
 -- 
 -- Purpose:
---  Swaps endianity of input vector. Size of byte (group) is configurable. Word
---  size and selection by generic or input signal is configurable. Output is
---  combinatorial.
+--  Package with Configuration of CTU CAN FD. Contains all contstants which
+--  drive top level generics.
 --------------------------------------------------------------------------------
 
 Library ieee;
 use ieee.std_logic_1164.all;
-use ieee.numeric_std.ALL;
-use ieee.math_real.ALL;
 
-Library ctu_can_fd_rtl;
-use ctu_can_fd_rtl.id_transfer.all;
-use ctu_can_fd_rtl.can_constants.all;
-use ctu_can_fd_rtl.can_components.all;
-use ctu_can_fd_rtl.can_types.all;
-use ctu_can_fd_rtl.cmn_lib.all;
-use ctu_can_fd_rtl.drv_stat_pkg.all;
-use ctu_can_fd_rtl.reduce_lib.all;
+package can_config_pkg is
 
-use ctu_can_fd_rtl.CAN_FD_register_map.all;
-use ctu_can_fd_rtl.CAN_FD_frame_format.all;
+    -- IP Core version
+    constant C_CTU_CAN_FD_VERSION_MINOR : std_logic_vector(7 downto 0) := x"03";
+    constant C_CTU_CAN_FD_VERSION_MAJOR : std_logic_vector(7 downto 0) := x"02";
 
-entity endian_swapper is 
-    generic (
-
-        -- When true, output word is endian swapped as long as "swap_by_signal"
-        -- is true. Otherwise it has no meaning.
-        G_SWAP_GEN              :     boolean := false;
-
-        -- Size of word (in groups)
-        G_WORD_SIZE             :     natural := 4;
+    -- Number of TXT Buffers
+    constant C_TXT_BUFFER_COUNT     : natural := 4;
+    
+    -- Number of Interrupts
+    constant C_INT_COUNT            : natural := 12;  
+  
+    -- Number of Sample Triggers
+    constant C_SAMPLE_TRIGGER_COUNT : natural range 2 to 8 := 2;
+    
+    -- Width of control counter
+    constant C_CTRL_CTR_WIDTH       : natural := 9;
+    
+    -- Width of retransmitt counter
+    constant C_RETR_LIM_CTR_WIDTH   : natural := 4;
+    
+    -- Insert pipeline on Error valid signal
+    constant C_ERR_VALID_PIPELINE   : boolean := true;
+    
+    -- TSEG1 Width - Nominal Bit Time
+    constant C_TSEG1_NBT_WIDTH      : natural := 8;
         
-        -- Size of group (in bits)
-        G_GROUP_SIZE            :     natural := 8  
-    );  
-    port (
-        -- Data input
-        input   : in  std_logic_vector(G_WORD_SIZE * G_GROUP_SIZE - 1 downto 0);
+    -- TSEG2 Width - Nominal Bit Time
+    constant C_TSEG2_NBT_WIDTH      : natural := 8;
         
-        -- Data output
-        output  : out std_logic_vector(G_WORD_SIZE * G_GROUP_SIZE - 1 downto 0)
-    );
-end entity;
-
-architecture rtl of endian_swapper is
+    -- Baud rate prescaler Width - Nominal Bit Time
+    constant C_BRP_NBT_WIDTH        : natural := 8;
+        
+    -- Synchronisation Jump width Width - Nominal Bit Time
+    constant C_SJW_NBT_WIDTH        : natural := 5;
+        
+    -- TSEG1 Width - Data Bit Time
+    constant C_TSEG1_DBT_WIDTH      : natural := 8;
+        
+    -- TSEG2 Width - Data Bit Time
+    constant C_TSEG2_DBT_WIDTH      : natural := 8;
+        
+    -- Baud rate prescaler width - Data Bit Time
+    constant C_BRP_DBT_WIDTH        : natural := 8;
+        
+    -- Synchronisation Jump Width width - Data Bit Time
+    constant C_SJW_DBT_WIDTH        : natural := 5;
     
-    -- Endian swapped input word
-    signal swapped :  std_logic_vector(G_WORD_SIZE * G_GROUP_SIZE - 1 downto 0);
+    -- Secondary sampling point Shift registers length
+    constant C_SSP_DELAY_SAT_VAL    : natural := 255;
 
-begin
+    -- Depth of FIFO Cache for TX Data
+    constant C_TX_CACHE_DEPTH       : natural := 8;
+        
+    -- Width (number of bits) in transceiver delay measurement counter
+    constant C_TRV_CTR_WIDTH        : natural := 7;
     
-    ---------------------------------------------------------------------------
-    -- Endian swap implementation
-    ---------------------------------------------------------------------------
-    swap_proc : process(input)
-        variable l_ind_orig  : natural;
-        variable u_ind_orig  : natural;
-        variable l_ind_swap  : natural;
-        variable u_ind_swap  : natural;
-        variable i_inv       : natural;
-    begin
-        for i in 0 to G_WORD_SIZE - 1 loop
-            l_ind_orig := i * G_GROUP_SIZE;
-            u_ind_orig := (i + 1) * G_GROUP_SIZE - 1;
-            i_inv := G_WORD_SIZE - i - 1;
-            l_ind_swap := i_inv * G_GROUP_SIZE;
-            u_ind_swap := (i_inv + 1) * G_GROUP_SIZE - 1;
-            swapped(u_ind_swap downto l_ind_swap) <=
-                input(u_ind_orig downto l_ind_orig);
-        end loop;
-    end process;
+    -- Secondary sample point position width
+    constant C_SSP_POS_WIDTH        : natural := 8;
 
-    ---------------------------------------------------------------------------
-    -- Swapping by generic
-    ---------------------------------------------------------------------------
+    -- Optional usage of saturated value of ssp_delay 
+    constant C_USE_SSP_SATURATION   : boolean := true;
 
-    -- Swap
-    swap_by_generic_true_gen : if (G_SWAP_GEN) generate
-        output <= swapped;    
-    end generate swap_by_generic_true_gen;
+    -- Width of SSP counters
+    constant C_SSP_CTRS_WIDTH       : natural := 15;
+
+    -- CRC polynomials
+    constant C_CRC15_POL : std_logic_vector(15 downto 0) := x"C599";
+    constant C_CRC17_POL : std_logic_vector(19 downto 0) := x"3685B";
+    constant C_CRC21_POL : std_logic_vector(23 downto 0) := x"302899";
     
-    -- Don't Swap
-    swap_by_generic_false_gen : if (not G_SWAP_GEN) generate
-        output <= input;    
-    end generate swap_by_generic_false_gen;
-
-end architecture;
+    -- Device ID
+    constant C_CAN_DEVICE_ID : std_logic_vector(15 downto 0) := x"CAFD";
+  
+end package;

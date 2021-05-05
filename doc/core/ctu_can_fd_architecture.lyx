@@ -5472,6 +5472,80 @@ literal "false"
 
  for description of how to connect test-probe if integrating CTU CAN FD
  VIP.
+ This signal has no effect on design functionality, and if 
+\end_layout
+
+\begin_layout Section
+Scan enable
+\begin_inset CommandInset label
+LatexCommand label
+name "sec:Scan-enable"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+CTU CAN FD is implemented to ease DFT insertion during ASIC design via 
+\series bold
+\shape italic
+scan_enable
+\series default
+\shape default
+ input.
+ When 
+\series bold
+\shape italic
+scan_enable
+\series default
+\shape default
+ = 1, CTU CAN FD is in scan mode.
+ In scan mode following is valid:
+\end_layout
+
+\begin_layout Itemize
+All clock gates within CTU CAN FD are un-gated (to make sure that scan chain
+ is always clocked).
+\end_layout
+
+\begin_layout Itemize
+All resets which depend on value of other flip-flops are gated (to avoid
+ reseting part of scan chain during scan operation).
+\end_layout
+
+\begin_layout Standard
+
+\series bold
+\shape italic
+scan_enable
+\series default
+\shape default
+ input shall be controlled by SoC level DFT controller, and it shall be
+ connected to the same signal which enables scan mode on inserted scan flip-flop
+s.
+ Purpose of scan mode in CTU CAN FD, is to reduce number of violations/warnings
+ during DFT insertion.
+ If CTU CAN FD is used in FPGA (
+\series bold
+\shape italic
+target_technology
+\series default
+\shape default
+ = 1), 
+\series bold
+\shape italic
+scan_enable
+\series default
+\shape default
+ shall be tied low.
+ 
+\series bold
+\shape italic
+scan_enable
+\series default
+\shape default
+ signal shall be driven synchronous to System clock.
 \end_layout
 
 \begin_layout Section
@@ -6717,6 +6791,17 @@ target_technology
  = 0), as synthesis for FPGA implementations makes no sense.
 \end_layout
 
+\begin_layout Enumerate
+Scan mode (via 
+\series bold
+\shape italic
+scan_enable
+\series default
+\shape default
+ input) - In scan mode, all clock gates are enabled, and all reset signals
+ which depend on outputs of combinatorial logic are gated.
+\end_layout
+
 \begin_layout Subsection
 Memory testability
 \end_layout
@@ -7082,7 +7167,7 @@ noprefix "false"
  without set and reset are used.
  All DFFs are active on positive clock edge (to mitigate effects of clock
  duty-cycle).
- CTU CAN FD is latch free.
+ CTU CAN FD is latch free (apart from latches within clock gate cells).
  These facts can be used as a sanity check that there should be no DFFs
  without Set and Reset within CTU CAN FD after synthesis (apart from TXT
  Buffer / RX Buffer RAMs, if they are synthesized, not inferred, nor replaced
@@ -10093,7 +10178,7 @@ status open
 \noindent
 \align center
 \begin_inset Tabular
-<lyxtabular version="3" rows="4" columns="2">
+<lyxtabular version="3" rows="5" columns="2">
 <features tabularvalignment="middle">
 <column alignment="left" valignment="top" width="10text%">
 <column alignment="left" valignment="top" width="82text%">
@@ -10193,7 +10278,7 @@ In test mode EWL register is read-write therefore Error warning limit is
 </cell>
 </row>
 <row>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -10202,7 +10287,7 @@ ERP
 
 \end_inset
 </cell>
-<cell alignment="left" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -10221,6 +10306,34 @@ receive error counter
 error passive
 \color inherit
 .
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+TST_CONTROL, TST_DEST, TST_WDATA, TST_RDATA
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+In test mode Test registers are writable, therefore it is possible to directly
+ read/write RX buffer RAM and TXT buffer RAMs.
+ This feature is available only when 
+\series bold
+\shape italic
+sup_test_registers
+\series default
+\shape default
+ = true.
 \end_layout
 
 \end_inset

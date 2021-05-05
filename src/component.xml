@@ -678,73 +678,79 @@
       </spirit:file>
 
       <spirit:file>
-        <spirit:name>common/clk_gate.vhd</spirit:name>
+        <spirit:name>common_blocks/clk_gate.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
         <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
       </spirit:file>
 
       <spirit:file>
-        <spirit:name>common/dff_arst.vhd</spirit:name>
+        <spirit:name>common_blocks/dff_arst.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
         <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
       </spirit:file>
 
       <spirit:file>
-        <spirit:name>common/dff_arst_ce.vhd</spirit:name>
+        <spirit:name>common_blocks/dff_arst_ce.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
         <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
       </spirit:file>
 
       <spirit:file>
-        <spirit:name>common/dlc_decoder.vhd</spirit:name>
+        <spirit:name>common_blocks/dlc_decoder.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
         <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
       </spirit:file>
 
       <spirit:file>
-        <spirit:name>common/endian_swapper.vhd</spirit:name>
+        <spirit:name>common_blocks/endian_swapper.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
         <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
       </spirit:file>
 
       <spirit:file>
-        <spirit:name>common/inf_ram_wrapper.vhd</spirit:name>
+        <spirit:name>common_blocks/inf_ram_wrapper.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
         <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
       </spirit:file>
 
       <spirit:file>
-        <spirit:name>common/majority_decoder_3.vhd</spirit:name>
+        <spirit:name>common_blocks/majority_decoder_3.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
         <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
       </spirit:file>
 
       <spirit:file>
-        <spirit:name>common/rst_sync.vhd</spirit:name>
+        <spirit:name>common_blocks/mux2.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
         <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
       </spirit:file>
 
       <spirit:file>
-        <spirit:name>common/shift_reg.vhd</spirit:name>
+        <spirit:name>common_blocks/rst_sync.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
         <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
       </spirit:file>
 
       <spirit:file>
-        <spirit:name>common/shift_reg_byte.vhd</spirit:name>
+        <spirit:name>common_blocks/shift_reg.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
         <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
       </spirit:file>
 
       <spirit:file>
-        <spirit:name>common/shift_reg_preload.vhd</spirit:name>
+        <spirit:name>common_blocks/shift_reg_byte.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
         <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
       </spirit:file>
 
       <spirit:file>
-        <spirit:name>common/sig_sync.vhd</spirit:name>
+        <spirit:name>common_blocks/shift_reg_preload.vhd</spirit:name>
+        <spirit:fileType>vhdlSource</spirit:fileType>
+        <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
+      </spirit:file>
+
+      <spirit:file>
+        <spirit:name>common_blocks/sig_sync.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
         <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
       </spirit:file>
@@ -780,73 +786,13 @@
       </spirit:file>
 
       <spirit:file>
-        <spirit:name>interrupts/int_manager.vhd</spirit:name>
+        <spirit:name>interrupt_manager/int_manager.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
         <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
       </spirit:file>
 
       <spirit:file>
-        <spirit:name>interrupts/int_module.vhd</spirit:name>
-        <spirit:fileType>vhdlSource</spirit:fileType>
-        <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
-      </spirit:file>
-
-      <spirit:file>
-        <spirit:name>lib/can_components.vhd</spirit:name>
-        <spirit:fileType>vhdlSource</spirit:fileType>
-        <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
-      </spirit:file>
-
-      <spirit:file>
-        <spirit:name>lib/can_config.vhd</spirit:name>
-        <spirit:fileType>vhdlSource</spirit:fileType>
-        <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
-      </spirit:file>
-
-      <spirit:file>
-        <spirit:name>lib/can_constants.vhd</spirit:name>
-        <spirit:fileType>vhdlSource</spirit:fileType>
-        <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
-      </spirit:file>
-
-      <spirit:file>
-        <spirit:name>lib/can_fd_frame_format.vhd</spirit:name>
-        <spirit:fileType>vhdlSource</spirit:fileType>
-        <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
-      </spirit:file>
-
-      <spirit:file>
-        <spirit:name>lib/can_fd_register_map.vhd</spirit:name>
-        <spirit:fileType>vhdlSource</spirit:fileType>
-        <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
-      </spirit:file>
-
-      <spirit:file>
-        <spirit:name>lib/can_types.vhd</spirit:name>
-        <spirit:fileType>vhdlSource</spirit:fileType>
-        <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
-      </spirit:file>
-
-      <spirit:file>
-        <spirit:name>lib/cmn_lib.vhd</spirit:name>
-        <spirit:fileType>vhdlSource</spirit:fileType>
-        <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
-      </spirit:file>
-
-      <spirit:file>
-        <spirit:name>lib/drv_stat_pkg.vhd</spirit:name>
-        <spirit:fileType>vhdlSource</spirit:fileType>
-        <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
-      </spirit:file>
-
-      <spirit:file>
-        <spirit:name>lib/id_transfer.vhd</spirit:name>
-        <spirit:fileType>vhdlSource</spirit:fileType>
-        <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
-      </spirit:file>
-
-      <spirit:file>
-        <spirit:name>lib/reduce_lib.vhd</spirit:name>
+        <spirit:name>interrupt_manager/int_module.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
         <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
       </spirit:file>
@@ -907,6 +853,66 @@
 
       <spirit:file>
         <spirit:name>memory_registers/memory_registers.vhd</spirit:name>
+        <spirit:fileType>vhdlSource</spirit:fileType>
+        <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
+      </spirit:file>
+
+      <spirit:file>
+        <spirit:name>packages/can_components_pkg.vhd</spirit:name>
+        <spirit:fileType>vhdlSource</spirit:fileType>
+        <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
+      </spirit:file>
+
+      <spirit:file>
+        <spirit:name>packages/can_config_pkg.vhd</spirit:name>
+        <spirit:fileType>vhdlSource</spirit:fileType>
+        <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
+      </spirit:file>
+
+      <spirit:file>
+        <spirit:name>packages/can_constants_pkg.vhd</spirit:name>
+        <spirit:fileType>vhdlSource</spirit:fileType>
+        <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
+      </spirit:file>
+
+      <spirit:file>
+        <spirit:name>packages/can_fd_frame_format.vhd</spirit:name>
+        <spirit:fileType>vhdlSource</spirit:fileType>
+        <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
+      </spirit:file>
+
+      <spirit:file>
+        <spirit:name>packages/can_fd_register_map.vhd</spirit:name>
+        <spirit:fileType>vhdlSource</spirit:fileType>
+        <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
+      </spirit:file>
+
+      <spirit:file>
+        <spirit:name>packages/can_types_pkg.vhd</spirit:name>
+        <spirit:fileType>vhdlSource</spirit:fileType>
+        <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
+      </spirit:file>
+
+      <spirit:file>
+        <spirit:name>packages/common_blocks_pkg.vhd</spirit:name>
+        <spirit:fileType>vhdlSource</spirit:fileType>
+        <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
+      </spirit:file>
+
+      <spirit:file>
+        <spirit:name>packages/drv_stat_pkg.vhd</spirit:name>
+        <spirit:fileType>vhdlSource</spirit:fileType>
+        <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
+      </spirit:file>
+
+      <spirit:file>
+        <spirit:name>packages/id_transfer_pkg.vhd</spirit:name>
+        <spirit:fileType>vhdlSource</spirit:fileType>
+        <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
+      </spirit:file>
+
+      <spirit:file>
+        <spirit:name>packages/unary_ops_pkg.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
         <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
       </spirit:file>
@@ -1234,84 +1240,91 @@
       </spirit:file>
 
       <spirit:file>
-        <spirit:name>common/clk_gate.vhd</spirit:name>
+        <spirit:name>common_blocks/clk_gate.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
         <spirit:userFileType>USED_IN_ipstatic</spirit:userFileType>
         <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
       </spirit:file>
 
       <spirit:file>
-        <spirit:name>common/dff_arst.vhd</spirit:name>
+        <spirit:name>common_blocks/dff_arst.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
         <spirit:userFileType>USED_IN_ipstatic</spirit:userFileType>
         <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
       </spirit:file>
 
       <spirit:file>
-        <spirit:name>common/dff_arst_ce.vhd</spirit:name>
+        <spirit:name>common_blocks/dff_arst_ce.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
         <spirit:userFileType>USED_IN_ipstatic</spirit:userFileType>
         <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
       </spirit:file>
 
       <spirit:file>
-        <spirit:name>common/dlc_decoder.vhd</spirit:name>
+        <spirit:name>common_blocks/dlc_decoder.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
         <spirit:userFileType>USED_IN_ipstatic</spirit:userFileType>
         <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
       </spirit:file>
 
       <spirit:file>
-        <spirit:name>common/endian_swapper.vhd</spirit:name>
+        <spirit:name>common_blocks/endian_swapper.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
         <spirit:userFileType>USED_IN_ipstatic</spirit:userFileType>
         <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
       </spirit:file>
 
       <spirit:file>
-        <spirit:name>common/inf_ram_wrapper.vhd</spirit:name>
+        <spirit:name>common_blocks/inf_ram_wrapper.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
         <spirit:userFileType>USED_IN_ipstatic</spirit:userFileType>
         <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
       </spirit:file>
 
       <spirit:file>
-        <spirit:name>common/majority_decoder_3.vhd</spirit:name>
+        <spirit:name>common_blocks/majority_decoder_3.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
         <spirit:userFileType>USED_IN_ipstatic</spirit:userFileType>
         <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
       </spirit:file>
 
       <spirit:file>
-        <spirit:name>common/rst_sync.vhd</spirit:name>
+        <spirit:name>common_blocks/mux2.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
         <spirit:userFileType>USED_IN_ipstatic</spirit:userFileType>
         <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
       </spirit:file>
 
       <spirit:file>
-        <spirit:name>common/shift_reg.vhd</spirit:name>
+        <spirit:name>common_blocks/rst_sync.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
         <spirit:userFileType>USED_IN_ipstatic</spirit:userFileType>
         <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
       </spirit:file>
 
       <spirit:file>
-        <spirit:name>common/shift_reg_byte.vhd</spirit:name>
+        <spirit:name>common_blocks/shift_reg.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
         <spirit:userFileType>USED_IN_ipstatic</spirit:userFileType>
         <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
       </spirit:file>
 
       <spirit:file>
-        <spirit:name>common/shift_reg_preload.vhd</spirit:name>
+        <spirit:name>common_blocks/shift_reg_byte.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
         <spirit:userFileType>USED_IN_ipstatic</spirit:userFileType>
         <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
       </spirit:file>
 
       <spirit:file>
-        <spirit:name>common/sig_sync.vhd</spirit:name>
+        <spirit:name>common_blocks/shift_reg_preload.vhd</spirit:name>
+        <spirit:fileType>vhdlSource</spirit:fileType>
+        <spirit:userFileType>USED_IN_ipstatic</spirit:userFileType>
+        <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
+      </spirit:file>
+
+      <spirit:file>
+        <spirit:name>common_blocks/sig_sync.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
         <spirit:userFileType>USED_IN_ipstatic</spirit:userFileType>
         <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
@@ -1353,84 +1366,14 @@
       </spirit:file>
 
       <spirit:file>
-        <spirit:name>interrupts/int_manager.vhd</spirit:name>
+        <spirit:name>interrupt_manager/int_manager.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
         <spirit:userFileType>USED_IN_ipstatic</spirit:userFileType>
         <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
       </spirit:file>
 
       <spirit:file>
-        <spirit:name>interrupts/int_module.vhd</spirit:name>
-        <spirit:fileType>vhdlSource</spirit:fileType>
-        <spirit:userFileType>USED_IN_ipstatic</spirit:userFileType>
-        <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
-      </spirit:file>
-
-      <spirit:file>
-        <spirit:name>lib/can_components.vhd</spirit:name>
-        <spirit:fileType>vhdlSource</spirit:fileType>
-        <spirit:userFileType>USED_IN_ipstatic</spirit:userFileType>
-        <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
-      </spirit:file>
-
-      <spirit:file>
-        <spirit:name>lib/can_config.vhd</spirit:name>
-        <spirit:fileType>vhdlSource</spirit:fileType>
-        <spirit:userFileType>USED_IN_ipstatic</spirit:userFileType>
-        <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
-      </spirit:file>
-
-      <spirit:file>
-        <spirit:name>lib/can_constants.vhd</spirit:name>
-        <spirit:fileType>vhdlSource</spirit:fileType>
-        <spirit:userFileType>USED_IN_ipstatic</spirit:userFileType>
-        <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
-      </spirit:file>
-
-      <spirit:file>
-        <spirit:name>lib/can_fd_frame_format.vhd</spirit:name>
-        <spirit:fileType>vhdlSource</spirit:fileType>
-        <spirit:userFileType>USED_IN_ipstatic</spirit:userFileType>
-        <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
-      </spirit:file>
-
-      <spirit:file>
-        <spirit:name>lib/can_fd_register_map.vhd</spirit:name>
-        <spirit:fileType>vhdlSource</spirit:fileType>
-        <spirit:userFileType>USED_IN_ipstatic</spirit:userFileType>
-        <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
-      </spirit:file>
-
-      <spirit:file>
-        <spirit:name>lib/can_types.vhd</spirit:name>
-        <spirit:fileType>vhdlSource</spirit:fileType>
-        <spirit:userFileType>USED_IN_ipstatic</spirit:userFileType>
-        <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
-      </spirit:file>
-
-      <spirit:file>
-        <spirit:name>lib/cmn_lib.vhd</spirit:name>
-        <spirit:fileType>vhdlSource</spirit:fileType>
-        <spirit:userFileType>USED_IN_ipstatic</spirit:userFileType>
-        <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
-      </spirit:file>
-
-      <spirit:file>
-        <spirit:name>lib/drv_stat_pkg.vhd</spirit:name>
-        <spirit:fileType>vhdlSource</spirit:fileType>
-        <spirit:userFileType>USED_IN_ipstatic</spirit:userFileType>
-        <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
-      </spirit:file>
-
-      <spirit:file>
-        <spirit:name>lib/id_transfer.vhd</spirit:name>
-        <spirit:fileType>vhdlSource</spirit:fileType>
-        <spirit:userFileType>USED_IN_ipstatic</spirit:userFileType>
-        <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
-      </spirit:file>
-
-      <spirit:file>
-        <spirit:name>lib/reduce_lib.vhd</spirit:name>
+        <spirit:name>interrupt_manager/int_module.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
         <spirit:userFileType>USED_IN_ipstatic</spirit:userFileType>
         <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
@@ -1501,6 +1444,76 @@
 
       <spirit:file>
         <spirit:name>memory_registers/memory_registers.vhd</spirit:name>
+        <spirit:fileType>vhdlSource</spirit:fileType>
+        <spirit:userFileType>USED_IN_ipstatic</spirit:userFileType>
+        <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
+      </spirit:file>
+
+      <spirit:file>
+        <spirit:name>packages/can_components_pkg.vhd</spirit:name>
+        <spirit:fileType>vhdlSource</spirit:fileType>
+        <spirit:userFileType>USED_IN_ipstatic</spirit:userFileType>
+        <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
+      </spirit:file>
+
+      <spirit:file>
+        <spirit:name>packages/can_config_pkg.vhd</spirit:name>
+        <spirit:fileType>vhdlSource</spirit:fileType>
+        <spirit:userFileType>USED_IN_ipstatic</spirit:userFileType>
+        <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
+      </spirit:file>
+
+      <spirit:file>
+        <spirit:name>packages/can_constants_pkg.vhd</spirit:name>
+        <spirit:fileType>vhdlSource</spirit:fileType>
+        <spirit:userFileType>USED_IN_ipstatic</spirit:userFileType>
+        <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
+      </spirit:file>
+
+      <spirit:file>
+        <spirit:name>packages/can_fd_frame_format.vhd</spirit:name>
+        <spirit:fileType>vhdlSource</spirit:fileType>
+        <spirit:userFileType>USED_IN_ipstatic</spirit:userFileType>
+        <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
+      </spirit:file>
+
+      <spirit:file>
+        <spirit:name>packages/can_fd_register_map.vhd</spirit:name>
+        <spirit:fileType>vhdlSource</spirit:fileType>
+        <spirit:userFileType>USED_IN_ipstatic</spirit:userFileType>
+        <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
+      </spirit:file>
+
+      <spirit:file>
+        <spirit:name>packages/can_types_pkg.vhd</spirit:name>
+        <spirit:fileType>vhdlSource</spirit:fileType>
+        <spirit:userFileType>USED_IN_ipstatic</spirit:userFileType>
+        <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
+      </spirit:file>
+
+      <spirit:file>
+        <spirit:name>packages/common_blocks_pkg.vhd</spirit:name>
+        <spirit:fileType>vhdlSource</spirit:fileType>
+        <spirit:userFileType>USED_IN_ipstatic</spirit:userFileType>
+        <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
+      </spirit:file>
+
+      <spirit:file>
+        <spirit:name>packages/drv_stat_pkg.vhd</spirit:name>
+        <spirit:fileType>vhdlSource</spirit:fileType>
+        <spirit:userFileType>USED_IN_ipstatic</spirit:userFileType>
+        <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
+      </spirit:file>
+
+      <spirit:file>
+        <spirit:name>packages/id_transfer_pkg.vhd</spirit:name>
+        <spirit:fileType>vhdlSource</spirit:fileType>
+        <spirit:userFileType>USED_IN_ipstatic</spirit:userFileType>
+        <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
+      </spirit:file>
+
+      <spirit:file>
+        <spirit:name>packages/unary_ops_pkg.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
         <spirit:userFileType>USED_IN_ipstatic</spirit:userFileType>
         <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>

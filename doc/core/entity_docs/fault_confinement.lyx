@@ -103,126 +103,12 @@ customHeadersFooters
 
 \begin_body
 \begin_layout Description
-Generics\end_layout
-\begin_layout Standard
-\noindent
-\align center
-\begin_inset Tabular
-<lyxtabular columns="4" rows="2" version="3">
-<features islongtable="true" longtabularalignment="center">
-<column alignment="center" valignment="top" width="4cm">
-<column alignment="center" valignment="top" width="3.5cm">
-<column alignment="center" valignment="top" width="1.2cm">
-<column alignment="center" valignment="top" width="7cm">
-<row>
-<cell alignment="center" leftline="true" topline="true" usebox="none" valignment="top">
-\begin_inset Text
-
-\begin_layout Plain Layout
-Name\begin_inset ERT
-status open
-\begin_layout Plain Layout
-\backslash
-cellcolor{cyan}
-\end_layout
-\end_inset
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" leftline="true" topline="true" usebox="none" valignment="top">
-\begin_inset Text
-
-\begin_layout Plain Layout
-Type\begin_inset ERT
-status open
-\begin_layout Plain Layout
-\backslash
-cellcolor{cyan}
-\end_layout
-\end_inset
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" leftline="true" topline="true" usebox="none" valignment="top">
-\begin_inset Text
-
-\begin_layout Plain Layout
-Default value\begin_inset ERT
-status open
-\begin_layout Plain Layout
-\backslash
-cellcolor{cyan}
-\end_layout
-\end_inset
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" leftline="true" rightline="true" topline="true" usebox="none" valignment="top">
-\begin_inset Text
-
-\begin_layout Plain Layout
-Description\begin_inset ERT
-status open
-\begin_layout Plain Layout
-\backslash
-cellcolor{cyan}
-\end_layout
-\end_inset
-\end_layout
-
-\end_inset
-</cell>
-</row>
-<row>
-<cell alignment="center" bottomline="true" leftline="true" topline="true" usebox="none" valignment="top">
-\begin_inset Text
-
-\begin_layout Plain Layout
-G_RESET_POLARITY\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" bottomline="true" leftline="true" topline="true" usebox="none" valignment="top">
-\begin_inset Text
-
-\begin_layout Plain Layout
-std_logic\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" bottomline="true" leftline="true" topline="true" usebox="none" valignment="top">
-\begin_inset Text
-
-\begin_layout Plain Layout
-'0'\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" bottomline="true" leftline="true" rightline="true" topline="true" usebox="none" valignment="top">
-\begin_inset Text
-
-\begin_layout Plain Layout
-Reset polarity\end_layout
-
-\end_inset
-</cell>
-</row>
-</lyxtabular>
-
-\end_inset
-
-
-\end_layout
-\begin_layout Description
 Ports\end_layout
 \begin_layout Standard
 \noindent
 \align center
 \begin_inset Tabular
-<lyxtabular columns="4" rows="33" version="3">
+<lyxtabular columns="4" rows="35" version="3">
 <features islongtable="true" longtabularalignment="center">
 <column alignment="center" valignment="top" width="4cm">
 <column alignment="center" valignment="top" width="1.2cm">
@@ -416,6 +302,102 @@ std_logic\end_layout
 
 \begin_layout Plain Layout
 Asynchronous reset\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" leftline="true" multicolumn="1" rightline="true" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+DFT support\begin_inset ERT
+status open
+\begin_layout Plain Layout
+\backslash
+cellcolor{gray}
+\end_layout
+\end_inset
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" multicolumn="2" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+DFT support\begin_inset ERT
+status open
+\begin_layout Plain Layout
+\backslash
+cellcolor{gray}
+\end_layout
+\end_inset
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" multicolumn="2" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+DFT support\begin_inset ERT
+status open
+\begin_layout Plain Layout
+\backslash
+cellcolor{gray}
+\end_layout
+\end_inset
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" multicolumn="2" rightline="true" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+DFT support\begin_inset ERT
+status open
+\begin_layout Plain Layout
+\backslash
+cellcolor{gray}
+\end_layout
+\end_inset
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" leftline="true" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+scan_enable\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+in   std_logic\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" rightline="true" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\end_layout
 
 \end_inset
 </cell>

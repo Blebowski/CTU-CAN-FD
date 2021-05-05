@@ -84,22 +84,19 @@ use ieee.std_logic_1164.all;
 use ieee.numeric_std.ALL;
 
 Library ctu_can_fd_rtl;
-use ctu_can_fd_rtl.id_transfer.all;
-use ctu_can_fd_rtl.can_constants.all;
-use ctu_can_fd_rtl.can_components.all;
-use ctu_can_fd_rtl.can_types.all;
-use ctu_can_fd_rtl.cmn_lib.all;
+use ctu_can_fd_rtl.id_transfer_pkg.all;
+use ctu_can_fd_rtl.can_constants_pkg.all;
+use ctu_can_fd_rtl.can_components_pkg.all;
+use ctu_can_fd_rtl.can_types_pkg.all;
+use ctu_can_fd_rtl.common_blocks_pkg.all;
 use ctu_can_fd_rtl.drv_stat_pkg.all;
-use ctu_can_fd_rtl.reduce_lib.all;
+use ctu_can_fd_rtl.unary_ops_pkg.all;
 
 use ctu_can_fd_rtl.CAN_FD_register_map.all;
 use ctu_can_fd_rtl.CAN_FD_frame_format.all;
 
 entity err_detector is
     generic(
-        -- Reset polarity
-        G_RESET_POLARITY        :     std_logic := '0';
-        
         -- Pipeline should be inserted on Error signalling
         G_ERR_VALID_PIPELINE    :     boolean
     );
@@ -278,7 +275,7 @@ begin
     begin
         err_valid_reg_proc : process(res_n, clk_sys)
         begin
-            if (res_n = G_RESET_POLARITY) then
+            if (res_n = '0') then
                 err_frm_req <= '0';
             elsif (rising_edge(clk_sys)) then
                 err_frm_req <= err_frm_req_i;
@@ -353,7 +350,7 @@ begin
     
     crc_err_reg_proc : process(clk_sys, res_n)
     begin
-        if (res_n = G_RESET_POLARITY) then
+        if (res_n = '0') then
             crc_match_q <= '0';
         elsif (rising_edge(clk_sys)) then
             crc_match_q <= crc_match_d;
@@ -397,7 +394,7 @@ begin
     ---------------------------------------------------------------------------
     err_type_reg_proc : process(clk_sys, res_n)
     begin
-        if (res_n = G_RESET_POLARITY) then
+        if (res_n = '0') then
             err_type_q <= "000";
             err_pos_q <= "11111";
         elsif (rising_edge(clk_sys)) then

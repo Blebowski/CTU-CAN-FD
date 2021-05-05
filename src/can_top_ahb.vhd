@@ -77,26 +77,27 @@ use ieee.numeric_std.ALL;
 use ieee.math_real.ALL;
 
 Library ctu_can_fd_rtl;
-use ctu_can_fd_rtl.id_transfer.all;
-use ctu_can_fd_rtl.can_constants.all;
-use ctu_can_fd_rtl.can_components.all;
-use ctu_can_fd_rtl.can_types.all;
-use ctu_can_fd_rtl.cmn_lib.all;
+use ctu_can_fd_rtl.id_transfer_pkg.all;
+use ctu_can_fd_rtl.can_constants_pkg.all;
+use ctu_can_fd_rtl.can_components_pkg.all;
+use ctu_can_fd_rtl.can_types_pkg.all;
+use ctu_can_fd_rtl.common_blocks_pkg.all;
 use ctu_can_fd_rtl.drv_stat_pkg.all;
-use ctu_can_fd_rtl.reduce_lib.all;
+use ctu_can_fd_rtl.unary_ops_pkg.all;
 
 use ctu_can_fd_rtl.CAN_FD_register_map.all;
 use ctu_can_fd_rtl.CAN_FD_frame_format.all;
 
 entity can_top_ahb is
     generic(
-        rx_buffer_size   : natural range 32 to 4098 := 128;
-        txt_buffer_count : natural range 2 to 8     := 4;
-        sup_filtA        : boolean                  := true;
-        sup_filtB        : boolean                  := true;
-        sup_filtC        : boolean                  := true;
-        sup_range        : boolean                  := true;
-        sup_traffic_ctrs : boolean                  := true
+        rx_buffer_size      : natural range 32 to 4098 := 128;
+        txt_buffer_count    : natural range 2 to 8     := 4;
+        sup_filtA           : boolean                  := true;
+        sup_filtB           : boolean                  := true;
+        sup_filtC           : boolean                  := true;
+        sup_range           : boolean                  := true;
+        sup_traffic_ctrs    : boolean                  := true;
+        sup_test_registers  : boolean                  := true
     );
     port(
         -----------------------------------------------------------------------
@@ -130,6 +131,11 @@ entity can_top_ahb is
         timestamp        : in  std_logic_vector(63 downto 0);
 
         -----------------------------------------------------------------------
+        -- DFT support 
+        -----------------------------------------------------------------------
+        scan_enable      : in  std_logic;
+
+        -----------------------------------------------------------------------
         -- Interrupt
         -----------------------------------------------------------------------
         int              : out std_logic      
@@ -157,12 +163,15 @@ begin
         sup_filtB           => sup_filtB,
         sup_filtC           => sup_filtC,
         sup_range           => sup_range,
-        sup_traffic_ctrs    => sup_traffic_ctrs
+        sup_traffic_ctrs    => sup_traffic_ctrs,
+        sup_test_registers  => sup_test_registers 
     )
     port map (
         clk_sys         => hclk,
         res_n           => hresetn,
-
+        
+        scan_enable     => scan_enable,
+        
         data_in         => ctu_can_data_in,
         data_out        => ctu_can_data_out,
         adress          => ctu_can_adress,

@@ -183,22 +183,19 @@ use ieee.std_logic_1164.all;
 use ieee.numeric_std.ALL;
 
 Library ctu_can_fd_rtl;
-use ctu_can_fd_rtl.id_transfer.all;
-use ctu_can_fd_rtl.can_constants.all;
-use ctu_can_fd_rtl.can_components.all;
-use ctu_can_fd_rtl.can_types.all;
-use ctu_can_fd_rtl.cmn_lib.all;
+use ctu_can_fd_rtl.id_transfer_pkg.all;
+use ctu_can_fd_rtl.can_constants_pkg.all;
+use ctu_can_fd_rtl.can_components_pkg.all;
+use ctu_can_fd_rtl.can_types_pkg.all;
+use ctu_can_fd_rtl.common_blocks_pkg.all;
 use ctu_can_fd_rtl.drv_stat_pkg.all;
-use ctu_can_fd_rtl.reduce_lib.all;
+use ctu_can_fd_rtl.unary_ops_pkg.all;
 
 use ctu_can_fd_rtl.CAN_FD_register_map.all;
 use ctu_can_fd_rtl.CAN_FD_frame_format.all;
 
 entity bit_segment_meter is
     generic (
-        -- Reset polarity
-        G_RESET_POLARITY          :       std_logic := '0';
-        
         -- SJW width
         G_SJW_WIDTH               :       natural := 4;
         
@@ -423,7 +420,7 @@ begin
 
     exp_seg_length_proc : process(res_n, clk_sys)
     begin
-        if (res_n = g_reset_polarity) then
+        if (res_n = '0') then
             exp_seg_length_q <= (others => '1');
         elsif (rising_edge(clk_sys)) then
             if (exp_seg_length_ce = '1') then

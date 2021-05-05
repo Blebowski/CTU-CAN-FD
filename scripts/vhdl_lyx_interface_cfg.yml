@@ -49,7 +49,7 @@ source_list:
         vhdl_file: "../src/tx_arbitrator/tx_arbitrator.vhd"
         lyx_output: "../doc/core/entity_docs/tx_arbitrator.lyx"
     int_manager:
-        vhdl_file: "../src/interrupts/int_manager.vhd"
+        vhdl_file: "../src/interrupt_manager/int_manager.vhd"
         lyx_output: "../doc/core/entity_docs/int_manager.lyx"
     trigger_mux:
         vhdl_file: "../src/can_core/trigger_mux.vhd"

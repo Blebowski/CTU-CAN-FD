@@ -23,7 +23,11 @@ _default: &default
     sup_filtC: true
     sup_range: true
     sup_traffic_ctrs: true
-    target_technology: 0 # C_TECH_ASIC
+    
+    ###########################################################################
+    # C_TECH_FPGA
+    ###########################################################################
+    target_technology: 1
 
     # DUT Bit timing settings
     # (Applies for compliance tests and feature tests!)
@@ -93,7 +97,6 @@ feature:
         command_frcrst:
         command_rrb:
 
-        
         device_id:
         dlc_can20_8_64_bytes:
         
@@ -152,6 +155,7 @@ feature:
         rx_status:
         rx_status_mof:
 
+        scan_mode:
         settings_tbfbo:
         single_bus_node:
         ssp_cfg:

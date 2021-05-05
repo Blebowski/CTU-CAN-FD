@@ -84,22 +84,19 @@ use ieee.std_logic_1164.all;
 use ieee.numeric_std.ALL;
 
 Library ctu_can_fd_rtl;
-use ctu_can_fd_rtl.id_transfer.all;
-use ctu_can_fd_rtl.can_constants.all;
-use ctu_can_fd_rtl.can_components.all;
-use ctu_can_fd_rtl.can_types.all;
-use ctu_can_fd_rtl.cmn_lib.all;
+use ctu_can_fd_rtl.id_transfer_pkg.all;
+use ctu_can_fd_rtl.can_constants_pkg.all;
+use ctu_can_fd_rtl.can_components_pkg.all;
+use ctu_can_fd_rtl.can_types_pkg.all;
+use ctu_can_fd_rtl.common_blocks_pkg.all;
 use ctu_can_fd_rtl.drv_stat_pkg.all;
-use ctu_can_fd_rtl.reduce_lib.all;
+use ctu_can_fd_rtl.unary_ops_pkg.all;
 
 use ctu_can_fd_rtl.CAN_FD_register_map.all;
 use ctu_can_fd_rtl.CAN_FD_frame_format.all;
 
 entity int_manager is
     generic(
-        -- Reset polarity
-        G_RESET_POLARITY     : std_logic := '0';
-        
         -- Number of supported interrupts
         G_INT_COUNT          : natural  := 11;
         
@@ -277,7 +274,6 @@ begin
         
         int_module_inst : int_module
         generic map(        
-            G_RESET_POLARITY       => G_RESET_POLARITY,
             G_CLEAR_PRIORITY       => int_clear_priority(i)
         )
         port map(
@@ -305,7 +301,7 @@ begin
     ---------------------------------------------------------------------------
     dff_int_output_reg : dff_arst
     generic map(
-        G_RESET_POLARITY   => G_RESET_POLARITY,
+        G_RESET_POLARITY   => '0',
         G_RST_VAL          => '0'
     )
     port map(

@@ -90,22 +90,19 @@ use ieee.std_logic_1164.all;
 use ieee.numeric_std.ALL;
 
 Library ctu_can_fd_rtl;
-use ctu_can_fd_rtl.id_transfer.all;
-use ctu_can_fd_rtl.can_constants.all;
-use ctu_can_fd_rtl.can_components.all;
-use ctu_can_fd_rtl.can_types.all;
-use ctu_can_fd_rtl.cmn_lib.all;
+use ctu_can_fd_rtl.id_transfer_pkg.all;
+use ctu_can_fd_rtl.can_constants_pkg.all;
+use ctu_can_fd_rtl.can_components_pkg.all;
+use ctu_can_fd_rtl.can_types_pkg.all;
+use ctu_can_fd_rtl.common_blocks_pkg.all;
 use ctu_can_fd_rtl.drv_stat_pkg.all;
-use ctu_can_fd_rtl.reduce_lib.all;
+use ctu_can_fd_rtl.unary_ops_pkg.all;
 
 use ctu_can_fd_rtl.CAN_FD_register_map.all;
 use ctu_can_fd_rtl.CAN_FD_frame_format.all;
 
 entity int_module is
     generic(        
-        -- Reset polarity
-        G_RESET_POLARITY        :    std_logic := '0';
-
         -- If true, Interrupt status clear has priority over write.
         G_CLEAR_PRIORITY         :    boolean := true
     );
@@ -172,7 +169,7 @@ begin
     set_priority_gen : if (G_CLEAR_PRIORITY = false) generate    
         int_stat_proc : process(res_n, clk_sys)
         begin
-            if (res_n = G_RESET_POLARITY) then
+            if (res_n = '0') then
                 int_status <= '0';
 
             elsif rising_edge(clk_sys) then
@@ -197,7 +194,7 @@ begin
     clear_priority_gen : if (G_CLEAR_PRIORITY = true) generate    
         int_stat_proc : process(res_n, clk_sys)
         begin
-            if (res_n = G_RESET_POLARITY) then
+            if (res_n = '0') then
                 int_status <= '0';
 
             elsif rising_edge(clk_sys) then
@@ -222,7 +219,7 @@ begin
 
     int_mask_proc : process(res_n, clk_sys)
     begin
-        if (res_n = G_RESET_POLARITY) then
+        if (res_n = '0') then
             int_mask_i <= '0';
 
         elsif rising_edge(clk_sys) then
@@ -245,7 +242,7 @@ begin
     ------------------------------------------------------------------------
     int_ena_proc : process(res_n, clk_sys)
     begin
-        if (res_n = G_RESET_POLARITY) then
+        if (res_n = '0') then
             int_ena_i <= '0';
 
         elsif rising_edge(clk_sys) then

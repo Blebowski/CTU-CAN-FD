@@ -77,7 +77,7 @@
 Library ieee;
 use ieee.std_logic_1164.all;
 
-package cmn_lib is
+package common_blocks_pkg is
 
     -- Technology variants
     constant C_TECH_ASIC : natural := 0;
@@ -172,7 +172,7 @@ package cmn_lib is
     );
     end component;
 
-    component g_inf_ram_wrapper is
+    component inf_ram_wrapper is
     generic(
         -- Reset polarity
         G_RESET_POLARITY       :     std_logic := '1';
@@ -388,7 +388,7 @@ package cmn_lib is
     );
     port (
         -- Reset
-        res_n                : in    std_logic;
+        arst                 : in    std_logic;
         
         -- Clock
         clk                  : in    std_logic;
@@ -416,5 +416,17 @@ package cmn_lib is
             clk_out            : out   std_logic
         );
     end component clk_gate;
+    
+    component mux2 is
+    port (
+        -- Inputs
+        a         : in  std_logic;
+        b         : in  std_logic;
+        sel       : in  std_logic;
 
-end package cmn_lib;
+        -- Output
+        z         : out std_logic
+    );
+    end component mux2;
+
+end package common_blocks_pkg;
