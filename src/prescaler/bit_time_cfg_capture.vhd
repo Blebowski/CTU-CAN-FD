@@ -96,9 +96,6 @@ use ctu_can_fd_rtl.CAN_FD_frame_format.all;
 
 entity bit_time_cfg_capture is
     generic (
-        -- Reset polarity
-        G_RESET_POLARITY   : std_logic := '0';
-        
         -- TSEG1 Width - Nominal Bit Time
         G_TSEG1_NBT_WIDTH  : natural := 8;
         
@@ -231,7 +228,7 @@ begin
     ---------------------------------------------------------------------------
     drv_ena_reg_proc : process(res_n, clk_sys)
     begin
-        if (res_n = G_RESET_POLARITY) then
+        if (res_n = '0') then
             drv_ena_reg     <= '0';
             drv_ena_reg_2   <= '0';
         elsif (rising_edge(clk_sys)) then
@@ -285,7 +282,7 @@ begin
     ---------------------------------------------------------------------------
     brp_capt_proc : process(res_n, clk_sys)
     begin
-        if (res_n = G_RESET_POLARITY) then
+        if (res_n = '0') then
             tseg1_nbt <= (OTHERS => '0');
             tseg1_dbt <= (OTHERS => '0');
         elsif (rising_edge(clk_sys)) then

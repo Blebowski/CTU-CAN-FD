@@ -597,7 +597,6 @@ begin
     ----------------------------------------------------------------------------
     rx_buffer_inst : rx_buffer
     generic map(
-        G_RESET_POLARITY       => '0',
         G_RX_BUFF_SIZE         => C_RX_BUFF_SIZE
     )
     port map(
@@ -736,7 +735,7 @@ begin
             wait for 5 ns;
         end if;
 
-        if (res_n = C_RESET_POLARITY) then
+        if (res_n = '0') then
             apply_rand_seed(seed, 1, rand_ctr_3);
         end if;
 

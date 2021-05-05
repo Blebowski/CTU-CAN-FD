@@ -92,10 +92,6 @@ use ctu_can_fd_rtl.CAN_FD_register_map.all;
 use ctu_can_fd_rtl.CAN_FD_frame_format.all;
 
 entity sample_mux is
-    generic(
-        -- Reset polarity
-        G_RESET_POLARITY     :     std_logic := '0'    
-    );
     port(
         ------------------------------------------------------------------------
         -- Clock and Async reset
@@ -157,7 +153,7 @@ begin
 
     sample_prev_req_proc : process(clk_sys, res_n)
     begin
-        if (res_n = G_RESET_POLARITY) then
+        if (res_n = '0') then
             prev_sample_q <= RECESSIVE;
         elsif (rising_edge(clk_sys)) then
             if (drv_ena = '1') then

@@ -325,7 +325,7 @@ begin
         variable buf_fsm : std_logic_vector(3 downto 0);
     begin
         txtb_port_a_cs      <= '0';
-        while res_n = C_RESET_POLARITY loop
+        while res_n = '0' loop
             wait until rising_edge(clk_sys);
             apply_rand_seed(seed, 3, rand_gen_ctr);
         end loop;
@@ -367,7 +367,7 @@ begin
         variable tmp   : std_logic_vector(4 downto 0);
         constant C_DATA_ZEROES : std_logic_vector(31 downto 0) := (OTHERS => '0');
     begin
-        while res_n = C_RESET_POLARITY loop
+        while res_n = '0' loop
             wait until rising_edge(clk_sys);
             apply_rand_seed(seed, 2, rand_read_ctr);
         end loop;
@@ -401,7 +401,7 @@ begin
         variable tmp_real : real;
     begin
 
-        while res_n = C_RESET_POLARITY loop
+        while res_n = '0' loop
             wait until rising_edge(clk_sys);
             apply_rand_seed(seed, 1, rand_com_gen_ctr);
         end loop;

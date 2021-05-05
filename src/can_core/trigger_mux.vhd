@@ -108,9 +108,6 @@ use ctu_can_fd_rtl.CAN_FD_frame_format.all;
 
 entity trigger_mux is
     generic(
-        -- Reset polarity
-        G_RESET_POLARITY        :    std_logic := '0';
-        
         -- Number of Sample Triggers
         G_SAMPLE_TRIGGER_COUNT  :    natural := 2
     );
@@ -245,7 +242,7 @@ begin
     ---------------------------------------------------------------------------
     crc_trig_tx_wbs_reg : dff_arst
     generic map(
-        G_RESET_POLARITY   => G_RESET_POLARITY,
+        G_RESET_POLARITY   => '0',
         G_RST_VAL          => '0'
     )
     port map(
@@ -269,7 +266,7 @@ begin
     ---------------------------------------------------------------------------
     crc_data_rx_wbs_reg : dff_arst_ce
     generic map(
-        G_RESET_POLARITY   => G_RESET_POLARITY,
+        G_RESET_POLARITY   => '0',
         G_RST_VAL          => '0'
     )
     port map(

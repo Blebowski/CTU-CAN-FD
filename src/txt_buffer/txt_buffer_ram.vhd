@@ -104,9 +104,6 @@ use ctu_can_fd_rtl.can_registers_pkg.all;
 
 entity txt_buffer_ram is
     generic(
-        -- Reset polarity
-        G_RESET_POLARITY       :     std_logic := '0';
-
         -- TXT buffer ID
         G_ID                   :     natural
     );
@@ -170,12 +167,12 @@ begin
     -- Synchronous RAM is chosen since some FPGA families does not provide
     -- inferred RAM for asynchronously read data (in the same clock cycle).
     ---------------------------------------------------------------------------
-    txt_buf_ram_inst : inf_RAM_wrapper 
+    txt_buf_ram_inst : inf_ram_wrapper 
     generic map (
         G_WORD_WIDTH           => 32,
         G_DEPTH                => 20,
         G_ADDRESS_WIDTH        => port_a_address'length,
-        G_RESET_POLARITY       => G_RESET_POLARITY,
+        G_RESET_POLARITY       => '0',
         G_SYNC_READ            => true
     )
     port map(

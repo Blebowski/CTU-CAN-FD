@@ -101,9 +101,6 @@ use ctu_can_fd_rtl.CAN_FD_frame_format.all;
 
 entity frame_filters is
     generic(
-        -- Reset polarity
-        G_RESET_POLARITY     : std_logic := '0';
-        
         -- Support filter A
         G_SUP_FILTA          : boolean := true;
         
@@ -426,7 +423,7 @@ begin
     ----------------------------------------------------------------------------
     valid_reg_proc : process(res_n, clk_sys)
     begin
-        if (res_n = G_RESET_POLARITY) then
+        if (res_n = '0') then
             ident_valid_q <= '0';
         elsif rising_edge(clk_sys) then
             ident_valid_q   <= ident_valid_d;

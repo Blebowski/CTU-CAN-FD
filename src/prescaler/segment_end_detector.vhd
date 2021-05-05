@@ -95,10 +95,6 @@ use ctu_can_fd_rtl.CAN_FD_register_map.all;
 use ctu_can_fd_rtl.CAN_FD_frame_format.all;
 
 entity segment_end_detector is
-    generic (
-        -- Reset polarity
-        G_RESET_POLARITY   :       std_logic := '0'
-    );
     port(
         -----------------------------------------------------------------------
         -- Clock and Asynchronous reset
@@ -223,7 +219,7 @@ begin
         
         end_of_segm_req_proc : process(clk_sys, res_n)
         begin
-            if (res_n = G_RESET_POLARITY) then
+            if (res_n = '0') then
                 segm_end_req_capt_q(i) <= '0';
             elsif (rising_edge(clk_sys)) then
                 if (segm_end_req_capt_ce(i) = '1') then

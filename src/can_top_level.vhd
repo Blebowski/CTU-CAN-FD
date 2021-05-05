@@ -544,7 +544,7 @@ begin
     ---------------------------------------------------------------------------
     rst_sync_inst : rst_sync
     generic map(
-        G_RESET_POLARITY  => C_RESET_POLARITY
+        G_RESET_POLARITY  => '0'
     )
     port map(
         clk             => clk_sys,
@@ -557,7 +557,6 @@ begin
     ---------------------------------------------------------------------------
     memory_registers_inst : memory_registers
     generic map(
-        G_RESET_POLARITY        => C_RESET_POLARITY,
         G_SUP_FILTA             => sup_filtA,
         G_SUP_FILTB             => sup_filtB,
         G_SUP_FILTC             => sup_filtC,
@@ -635,7 +634,6 @@ begin
     ---------------------------------------------------------------------------
     rx_buffer_inst : rx_buffer
     generic map(
-        G_RESET_POLARITY        => C_RESET_POLARITY,
         G_RX_BUFF_SIZE          => rx_buffer_size,
         G_TECHNOLOGY            => target_technology
     )
@@ -692,7 +690,6 @@ begin
     begin
         txt_buffer_inst : txt_buffer
         generic map(
-            G_RESET_POLARITY    => C_RESET_POLARITY,
             G_TXT_BUFFER_COUNT  => txt_buffer_count,
             G_ID                => i,
             G_TECHNOLOGY        => target_technology
@@ -739,7 +736,6 @@ begin
     ---------------------------------------------------------------------------
     tx_arbitrator_inst : tx_arbitrator
     generic map(
-        G_RESET_POLARITY        => C_RESET_POLARITY,
         G_TXT_BUFFER_COUNT      => txt_buffer_count
     )
     port map( 
@@ -777,7 +773,6 @@ begin
     ---------------------------------------------------------------------------
     frame_filters_inst : frame_filters
     generic map(
-        G_RESET_POLARITY        => C_RESET_POLARITY,
         G_SUP_FILTA             => sup_filtA,
         G_SUP_FILTB             => sup_filtB,
         G_SUP_FILTC             => sup_filtC,
@@ -813,7 +808,6 @@ begin
     ---------------------------------------------------------------------------
     int_manager_inst : int_manager
     generic map(
-        G_RESET_POLARITY        => C_RESET_POLARITY,
         G_INT_COUNT             => C_INT_COUNT,
         G_TXT_BUFFER_COUNT      => txt_buffer_count
     )
@@ -848,7 +842,6 @@ begin
     ---------------------------------------------------------------------------
     can_core_inst : can_core
     generic map(
-        G_RESET_POLARITY        => C_RESET_POLARITY,
         G_SAMPLE_TRIGGER_COUNT  => C_SAMPLE_TRIGGER_COUNT,
         G_CTRL_CTR_WIDTH        => C_CTRL_CTR_WIDTH,
         G_RETR_LIM_CTR_WIDTH    => C_RETR_LIM_CTR_WIDTH,
@@ -938,7 +931,6 @@ begin
     ---------------------------------------------------------------------------
     prescaler_inst : prescaler
     generic map(
-        G_RESET_POLARITY        => C_RESET_POLARITY,
         G_TSEG1_NBT_WIDTH       => C_TSEG1_NBT_WIDTH,
         G_TSEG2_NBT_WIDTH       => C_TSEG2_NBT_WIDTH,
         G_BRP_NBT_WIDTH         => C_BRP_NBT_WIDTH,
@@ -979,7 +971,6 @@ begin
     ---------------------------------------------------------------------------
     bus_sampling_inst : bus_sampling 
     generic map(
-        G_RESET_POLARITY        => C_RESET_POLARITY,
         G_SSP_DELAY_SAT_VAL     => C_SSP_DELAY_SAT_VAL,
         G_TX_CACHE_DEPTH        => C_TX_CACHE_DEPTH,
         G_TRV_CTR_WIDTH         => C_TRV_CTR_WIDTH,

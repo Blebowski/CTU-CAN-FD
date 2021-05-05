@@ -99,9 +99,6 @@ use ctu_can_fd_rtl.can_registers_pkg.all;
 
 entity rx_buffer is
     generic(
-        -- Reset polarity
-        G_RESET_POLARITY            :       std_logic := '0';
-        
         -- RX Buffer size
         G_RX_BUFF_SIZE              :       natural range 32 to 4096 := 32;
         
@@ -417,8 +414,6 @@ architecture rtl of rx_buffer is
     signal rx_buf_ram_clk_en        :       std_logic;
     signal clk_ram                  :       std_logic;
 
-    constant C_RESET_POLARITY_N     :       std_logic := not G_RESET_POLARITY;
-    
 begin
 
     ----------------------------------------------------------------------------
@@ -455,19 +450,19 @@ begin
     --  1. Asynchronous reset - res_n
     --  2. Release Receive Buffer command - drv_erase_rx.
     ----------------------------------------------------------------------------
-    rx_buf_res_n_d <= G_RESET_POLARITY when (drv_erase_rx = '1') else
-                      (not G_RESET_POLARITY);
+    rx_buf_res_n_d <= '0' when (drv_erase_rx = '1' or res_n = '0') else
+                      '1';
 
     ----------------------------------------------------------------------------
     -- Register reset to avoid glitches
     ----------------------------------------------------------------------------
     res_reg_inst : dff_arst
     generic map(
-        G_RESET_POLARITY   => G_RESET_POLARITY,
+        G_RESET_POLARITY   => '0',
         
         -- Reset to the same value as is polarity of reset so that other DFFs
         -- which are reset by output of this one will be reset too!
-        G_RST_VAL          => G_RESET_POLARITY
+        G_RST_VAL          => '0'
     )
     port map(
         arst               => res_n,                -- IN
@@ -483,7 +478,7 @@ begin
     mux2_res_tst_inst : mux2
     port map(
         a                  => rx_buf_res_n_q, 
-        b                  => C_RESET_POLARITY_N,
+        b                  => '1',
         sel                => scan_enable,
 
         -- Output
@@ -495,9 +490,6 @@ begin
     -- RX Buffer FSM component
     ----------------------------------------------------------------------------
     rx_buffer_fsm_inst : rx_buffer_fsm
-    generic map(
-        G_RESET_POLARITY    => G_RESET_POLARITY
-    )
     port map(
         clk_sys             => clk_sys,             -- IN
         res_n               => res_n,               -- IN
@@ -521,7 +513,6 @@ begin
     ----------------------------------------------------------------------------
     rx_buffer_pointers_inst : rx_buffer_pointers
     generic map(
-        G_RESET_POLARITY        => G_RESET_POLARITY,
         G_RX_BUFF_SIZE          => G_RX_BUFF_SIZE
     )
     port map(
@@ -670,7 +661,7 @@ begin
                             
     capt_ts_proc : process(clk_sys, res_n)
     begin
-        if (res_n = G_RESET_POLARITY) then
+        if (res_n = '0') then
             timestamp_capture       <= (OTHERS => '0');
         elsif (rising_edge(clk_sys)) then
             if (timestamp_capture_ce = '1') then
@@ -698,7 +689,7 @@ begin
     
     read_frame_proc : process(clk_sys, rx_buf_res_n_q_scan)
     begin
-        if (rx_buf_res_n_q_scan = G_RESET_POLARITY) then
+        if (rx_buf_res_n_q_scan = '0') then
             read_counter_q <= (OTHERS => '0');
 
         elsif (rising_edge(clk_sys)) then
@@ -723,7 +714,7 @@ begin
     ---------------------------------------------------------------------------
     frame_count_ctr_proc : process(clk_sys, rx_buf_res_n_q_scan)
     begin
-        if (rx_buf_res_n_q_scan = G_RESET_POLARITY) then
+        if (rx_buf_res_n_q_scan = '0') then
             frame_count <= 0;
 
         elsif (rising_edge(clk_sys)) then
@@ -749,7 +740,7 @@ begin
     ----------------------------------------------------------------------------
     commit_proc : process(clk_sys, rx_buf_res_n_q_scan)
     begin
-        if (rx_buf_res_n_q_scan = G_RESET_POLARITY) then
+        if (rx_buf_res_n_q_scan = '0') then
             commit_rx_frame       <= '0';
             commit_overrun_abort  <= '0';
 
@@ -778,7 +769,7 @@ begin
     ----------------------------------------------------------------------------
     sw_dor_proc : process(clk_sys, rx_buf_res_n_q_scan)
     begin
-        if (rx_buf_res_n_q_scan = G_RESET_POLARITY) then
+        if (rx_buf_res_n_q_scan = '0') then
             data_overrun_flg      <= '0';
             
         elsif (rising_edge(clk_sys)) then
@@ -815,7 +806,7 @@ begin
     ----------------------------------------------------------------------------
     internal_dor_proc : process(clk_sys, res_n)
     begin
-        if (res_n = G_RESET_POLARITY) then
+        if (res_n = '0') then
             data_overrun_i        <= '0';
         elsif (rising_edge(clk_sys)) then
             if (overrun_condition = '1' or drv_erase_rx = '1') then
@@ -857,7 +848,6 @@ begin
     ----------------------------------------------------------------------------
     rx_buffer_ram_inst : rx_buffer_ram
     generic map(
-        G_RESET_POLARITY     => G_RESET_POLARITY,
         G_RX_BUFF_SIZE       => G_RX_BUFF_SIZE
     )
     port map(

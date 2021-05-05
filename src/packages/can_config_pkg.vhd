@@ -84,9 +84,6 @@ package can_config_pkg is
     constant C_CTU_CAN_FD_VERSION_MINOR : std_logic_vector(7 downto 0) := x"03";
     constant C_CTU_CAN_FD_VERSION_MAJOR : std_logic_vector(7 downto 0) := x"02";
 
-    -- Active value of asynchronous reset 
-    constant C_RESET_POLARITY       : std_logic := '0';
-
     -- Number of TXT Buffers
     constant C_TXT_BUFFER_COUNT     : natural := 4;
     

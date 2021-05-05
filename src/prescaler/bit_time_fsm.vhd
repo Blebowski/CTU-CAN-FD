@@ -94,10 +94,6 @@ use ctu_can_fd_rtl.CAN_FD_register_map.all;
 use ctu_can_fd_rtl.CAN_FD_frame_format.all;
 
 entity bit_time_fsm is
-    generic (
-        -- Reset polarity
-        G_RESET_POLARITY    : std_logic := '0'
-    );
     port(
         -----------------------------------------------------------------------
         -- Clock and Asynchronous reset
@@ -210,7 +206,7 @@ begin
     ----------------------------------------------------------------------------
     state_reg_proc : process(clk_sys, res_n)
     begin
-        if (res_n = G_RESET_POLARITY) then
+        if (res_n = '0') then
             current_state <= s_bt_reset;
         elsif (rising_edge(clk_sys)) then
             if (bt_fsm_ce = '1') then

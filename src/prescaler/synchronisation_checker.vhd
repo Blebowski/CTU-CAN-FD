@@ -93,10 +93,6 @@ use ctu_can_fd_rtl.CAN_FD_register_map.all;
 use ctu_can_fd_rtl.CAN_FD_frame_format.all;
 
 entity synchronisation_checker is
-    generic (
-        -- Reset polarity
-        G_RESET_POLARITY        :       std_logic := '0'
-    );
     port(
         -----------------------------------------------------------------------
         -- Clock and Asynchronous reset
@@ -183,7 +179,7 @@ begin
     
     sync_flag_proc : process(res_n, clk_sys)
     begin
-        if (res_n = G_RESET_POLARITY) then
+        if (res_n = '0') then
             sync_flag <= '0';
         elsif (rising_edge(clk_sys)) then
             if (sync_flag_ce = '1') then

@@ -108,10 +108,6 @@ use ctu_can_fd_rtl.CAN_FD_register_map.all;
 use ctu_can_fd_rtl.CAN_FD_frame_format.all;
 
 entity data_edge_detector is
-    generic(
-        -- Reset polarity
-        G_RESET_POLARITY         :     std_logic
-    );
     port(
         ------------------------------------------------------------------------
         -- Clock and Asynchronous reset
@@ -171,7 +167,7 @@ begin
     ----------------------------------------------------------------------------
     data_reg_proc : process(clk_sys, res_n)
     begin
-        if (res_n = G_RESET_POLARITY) then
+        if (res_n = '0') then
             rx_data_prev        <= RECESSIVE;
             tx_data_prev        <= RECESSIVE;
             rx_data_sync_prev   <= RECESSIVE;

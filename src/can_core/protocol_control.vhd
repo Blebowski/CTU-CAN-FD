@@ -98,9 +98,6 @@ use ctu_can_fd_rtl.CAN_FD_frame_format.all;
 
 entity protocol_control is
     generic(
-        -- Reset polarity
-        G_RESET_POLARITY        :     std_logic := '0';
-        
         -- Control counter width
         G_CTRL_CTR_WIDTH        :     natural := 9;
         
@@ -696,9 +693,6 @@ begin
     -- Protocol control FSM
     ---------------------------------------------------------------------------
     protocol_control_fsm_inst : protocol_control_fsm
-    generic map(
-        G_RESET_POLARITY        => G_RESET_POLARITY
-    )
     port map(
         clk_sys                 => clk_sys,             -- IN
         res_n                   => res_n,               -- IN
@@ -873,7 +867,6 @@ begin
     ---------------------------------------------------------------------------
     control_counter_inst : control_counter
     generic map(
-        G_RESET_POLARITY       => G_RESET_POLARITY,
         G_CTRL_CTR_WIDTH       => G_CTRL_CTR_WIDTH
     )
     port map(
@@ -903,9 +896,6 @@ begin
     -- Reintegration counter
     ---------------------------------------------------------------------------
     reintegration_counter_inst : reintegration_counter
-    generic map(
-        G_RESET_POLARITY        => G_RESET_POLARITY
-    )
     port map(
         clk_sys                 => clk_sys,             -- IN
         res_n                   => res_n,               -- IN
@@ -925,7 +915,6 @@ begin
     ---------------------------------------------------------------------------
     retransmitt_counter_inst : retransmitt_counter
     generic map(
-        G_RESET_POLARITY        => G_RESET_POLARITY,
         G_RETR_LIM_CTR_WIDTH    => G_RETR_LIM_CTR_WIDTH
     )
     port map(
@@ -949,7 +938,6 @@ begin
     ---------------------------------------------------------------------------
     err_detector_inst : err_detector
     generic map(
-        G_RESET_POLARITY        => G_RESET_POLARITY,
         G_ERR_VALID_PIPELINE    => G_ERR_VALID_PIPELINE
     )
     port map(
@@ -1037,9 +1025,6 @@ begin
     -- RX Shift register
     ---------------------------------------------------------------------------
     rx_shift_reg_inst : rx_shift_reg
-    generic map(
-        G_RESET_POLARITY        => G_RESET_POLARITY
-    )
     port map(
         clk_sys                 => clk_sys,             -- IN
         res_n                   => res_n,               -- IN

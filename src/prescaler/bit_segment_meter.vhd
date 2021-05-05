@@ -196,9 +196,6 @@ use ctu_can_fd_rtl.CAN_FD_frame_format.all;
 
 entity bit_segment_meter is
     generic (
-        -- Reset polarity
-        G_RESET_POLARITY          :       std_logic := '0';
-        
         -- SJW width
         G_SJW_WIDTH               :       natural := 4;
         
@@ -423,7 +420,7 @@ begin
 
     exp_seg_length_proc : process(res_n, clk_sys)
     begin
-        if (res_n = g_reset_polarity) then
+        if (res_n = '0') then
             exp_seg_length_q <= (others => '1');
         elsif (rising_edge(clk_sys)) then
             if (exp_seg_length_ce = '1') then

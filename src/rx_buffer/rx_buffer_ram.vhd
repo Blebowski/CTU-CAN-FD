@@ -105,9 +105,6 @@ use ctu_can_fd_rtl.can_registers_pkg.all;
 
 entity rx_buffer_ram is
     generic(
-        -- Reset polarity
-        G_RESET_POLARITY      :       std_logic := '0';
-        
         -- RX Buffer size
         G_RX_BUFF_SIZE        :       natural range 32 to 4096 := 32
     );
@@ -170,12 +167,12 @@ begin
     -- Synchronous RAM is chosen since some FPGA families does not provide
     -- inferred RAM for asynchronously read data (in the same clock cycle).
     ---------------------------------------------------------------------------
-    rx_buf_RAM_inst : inf_RAM_wrapper 
+    rx_buf_RAM_inst : inf_ram_wrapper 
     generic map (
         G_WORD_WIDTH           => 32,
         G_DEPTH                => G_RX_BUFF_SIZE,
         G_ADDRESS_WIDTH        => port_a_address'length,
-        G_RESET_POLARITY       => G_RESET_POLARITY,
+        G_RESET_POLARITY       => '0',
         G_SYNC_READ            => true
     )
     port map(

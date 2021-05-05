@@ -172,7 +172,7 @@ package common_blocks_pkg is
     );
     end component;
 
-    component g_inf_ram_wrapper is
+    component inf_ram_wrapper is
     generic(
         -- Reset polarity
         G_RESET_POLARITY       :     std_logic := '1';
@@ -388,7 +388,7 @@ package common_blocks_pkg is
     );
     port (
         -- Reset
-        res_n                : in    std_logic;
+        arst                 : in    std_logic;
         
         -- Clock
         clk                  : in    std_logic;

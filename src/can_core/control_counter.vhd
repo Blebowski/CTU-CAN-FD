@@ -97,9 +97,6 @@ use ctu_can_fd_rtl.CAN_FD_frame_format.all;
 
 entity control_counter is
     generic(
-        -- Reset polarity
-        G_RESET_POLARITY        :     std_logic := '0';
-        
         -- Width of control counter
         G_CTRL_CTR_WIDTH        :     natural := 9 
     );
@@ -203,7 +200,7 @@ begin
     ---------------------------------------------------------------------------                   
     retr_ctr_reg_proc : process(clk_sys, res_n)
     begin
-        if (res_n = G_RESET_POLARITY) then
+        if (res_n = '0') then
             ctrl_ctr_q <= (OTHERS => '0');
         elsif (rising_edge(clk_sys)) then
             if (ctrl_ctr_ce = '1') then
@@ -231,7 +228,7 @@ begin
 
     compl_reg_proc : process(clk_sys, res_n)
     begin
-        if (res_n = G_RESET_POLARITY) then
+        if (res_n = '0') then
             compl_ctr_q <= (OTHERS => '0');
         elsif (rising_edge(clk_sys)) then
             if (compl_ctr_ce = '1') then
@@ -279,7 +276,7 @@ begin
     ---------------------------------------------------------------------------
     alc_capt_reg_proc : process(res_n, clk_sys)
     begin
-        if (res_n = G_RESET_POLARITY) then
+        if (res_n = '0') then
             alc <= (OTHERS => '0');
         elsif (rising_edge(clk_sys)) then
             if (arbitration_lost = '1') then

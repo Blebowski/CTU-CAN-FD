@@ -441,7 +441,7 @@ begin
     src_gen : process
     begin
         wait for 195 ns;
-        if (res_n = C_RESET_POLARITY) then
+        if (res_n = '0') then
             apply_rand_seed(seed, 1, rand_ctr_1);
         end if;
 

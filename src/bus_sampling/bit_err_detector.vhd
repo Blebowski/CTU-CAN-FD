@@ -95,10 +95,6 @@ use ctu_can_fd_rtl.CAN_FD_register_map.all;
 use ctu_can_fd_rtl.CAN_FD_frame_format.all;
 
 entity bit_err_detector is
-    generic(
-        -- Reset polarity
-        G_RESET_POLARITY         :     std_logic
-    );
     port(
         ------------------------------------------------------------------------
         -- Clock and Async reset
@@ -183,7 +179,7 @@ begin
 
     bit_error_ssp_capt_reg_proc : process(clk_sys, res_n)
     begin
-        if (res_n = G_RESET_POLARITY) then
+        if (res_n = '0') then
             bit_err_ssp_capt_q <= '0';
         elsif (rising_edge(clk_sys)) then
             bit_err_ssp_capt_q <= bit_err_ssp_capt_d;
@@ -223,7 +219,7 @@ begin
     ----------------------------------------------------------------------------
     bit_err_reg_proc : process(clk_sys, res_n)
     begin
-        if (res_n = G_RESET_POLARITY) then
+        if (res_n = '0') then
             bit_err_q <= '0';
         elsif (rising_edge(clk_sys)) then
             bit_err_q <= bit_err_d;

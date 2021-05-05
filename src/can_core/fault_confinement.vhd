@@ -93,10 +93,6 @@ use ctu_can_fd_rtl.CAN_FD_register_map.all;
 use ctu_can_fd_rtl.CAN_FD_frame_format.all;
 
 entity fault_confinement is
-    generic(
-        -- Reset polarity
-        G_RESET_POLARITY        :     std_logic := '0'
-    );
     port(
         -----------------------------------------------------------------------
         -- Clock and Asynchronous Reset
@@ -241,9 +237,6 @@ begin
     -- Fault confinement FSM
     ---------------------------------------------------------------------------
     fault_confinement_fsm_inst : fault_confinement_fsm
-    generic map(
-        G_RESET_POLARITY       => G_RESET_POLARITY
-    )
     port map(
         clk_sys                => clk_sys,                  -- IN
         res_n                  => res_n,                    -- IN
@@ -269,9 +262,6 @@ begin
     -- Error counters
     ---------------------------------------------------------------------------
     err_counters_inst : err_counters
-    generic map(
-        G_RESET_POLARITY       => G_RESET_POLARITY
-    )
     port map(
         clk_sys                => clk_sys,              -- IN
         res_n                  => res_n,                -- IN

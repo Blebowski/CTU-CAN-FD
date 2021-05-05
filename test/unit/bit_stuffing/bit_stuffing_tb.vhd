@@ -686,9 +686,6 @@ architecture bit_stuffing_unit_test of CAN_test is
 begin
 
     bit_stuffing_comp : bit_stuffing
-    generic map(
-        G_RESET_POLARITY   => '0'
-    )
     port map(
         clk_sys            =>  clk_sys,
         res_n              =>  res_n,
@@ -705,9 +702,6 @@ begin
 
 
     bit_destuffing_comp : bit_destuffing
-    generic map(
-        G_RESET_POLARITY   => '0'
-    )
     port map(
         clk_sys            =>  clk_sys,
         res_n              =>  res_n,

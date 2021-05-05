@@ -96,9 +96,6 @@ use ctu_can_fd_rtl.can_registers_pkg.all;
 
 entity txt_buffer is
     generic(
-        -- Reset polarity
-        G_RESET_POLARITY       :     std_logic := '0';
-        
         -- Number of TXT Buffers
         G_TXT_BUFFER_COUNT     :     natural range 2 to 8;
         
@@ -301,7 +298,6 @@ begin
     ----------------------------------------------------------------------------
     txt_buffer_ram_inst : txt_buffer_ram
     generic map(
-        G_RESET_POLARITY     => G_RESET_POLARITY,
         G_ID                 => G_ID
     )
     port map(
@@ -328,7 +324,6 @@ begin
     ----------------------------------------------------------------------------
     txt_buffer_fsm_inst : txt_buffer_fsm
     generic map(
-        G_RESET_POLARITY       => G_RESET_POLARITY, 
         G_ID                   => G_ID
     )
     port map(

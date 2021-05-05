@@ -84,7 +84,7 @@ entity sig_sync is
     );
     port (
         -- Reset
-        res_n                : in    std_logic;
+        arst                 : in    std_logic;
         
         -- Clock
         clk                  : in    std_logic;
@@ -105,9 +105,9 @@ architecture rtl of sig_sync is
 begin
 
     -- Signal synchroniser process.
-    sig_sync_proc : process (clk, res_n)
+    sig_sync_proc : process (clk, arst)
     begin
-        if (res_n = G_RESET_POLARITY) then
+        if (arst = G_RESET_POLARITY) then
             rff     <= G_RESET_VALUE;
             sync    <= G_RESET_VALUE;
         elsif (rising_edge(clk)) then

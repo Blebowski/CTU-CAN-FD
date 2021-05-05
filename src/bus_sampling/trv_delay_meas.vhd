@@ -141,10 +141,7 @@ use ctu_can_fd_rtl.CAN_FD_register_map.all;
 use ctu_can_fd_rtl.CAN_FD_frame_format.all;
 
 entity trv_delay_measurement is
-    generic(
-        -- Reset polarity
-        G_RESET_POLARITY         :     std_logic;
-        
+    generic(        
         -- Width (number of bits) in transceiver delay measurement counter
         G_TRV_CTR_WIDTH          :     natural := 7;
         
@@ -258,8 +255,6 @@ architecture rtl of trv_delay_measurement is
     -- Measured transceiver value + trv_offset
     signal trv_delay_sum        :  std_logic_vector(G_SSP_POS_WIDTH downto 0);
 
-    constant C_RESET_POLARITY_N : std_logic := not G_RESET_POLARITY;
-
 begin
     
     ----------------------------------------------------------------------------
@@ -279,7 +274,7 @@ begin
     ----------------------------------------------------------------------------
     trv_delay_prog_proc : process(res_n, clk_sys)
     begin
-        if (res_n = G_RESET_POLARITY) then
+        if (res_n = '0') then
             trv_meas_progress_q     <= '0';
             trv_meas_progress_del   <= '0';
         elsif (rising_edge(clk_sys)) then
@@ -291,18 +286,17 @@ begin
     ----------------------------------------------------------------------------
     -- Reset counter for transceiver delay upon start of measurement.
     ----------------------------------------------------------------------------
-    trv_delay_ctr_rst_d <= G_RESET_POLARITY when (tran_delay_meas = '1' and
-                                                  edge_tx_valid = '1')
-                                            else
-                           not G_RESET_POLARITY; 
+    trv_delay_ctr_rst_d <= '0' when (tran_delay_meas = '1' and edge_tx_valid = '1')
+                               else
+                           '1'; 
     
     trv_delay_rst_reg_inst : dff_arst
     generic map(
-        G_RESET_POLARITY   => G_RESET_POLARITY,
+        G_RESET_POLARITY   => '0',
         
         -- Reset to the same value as is polarity of reset so that other DFFs
         -- which are reset by output of this one will be reset too!
-        G_RST_VAL          => G_RESET_POLARITY
+        G_RST_VAL          => '0'
     )
     port map(
         arst               => res_n,                -- IN
@@ -318,7 +312,7 @@ begin
     mux2_res_tst_inst : mux2
     port map(
         a                  => trv_delay_ctr_rst_q, 
-        b                  => C_RESET_POLARITY_N,
+        b                  => '1',
         sel                => scan_enable,
 
         -- Output
@@ -340,7 +334,7 @@ begin
     ----------------------------------------------------------------------------
     trv_del_ctr_proc : process(clk_sys, trv_delay_ctr_rst_q_scan)
     begin
-        if (trv_delay_ctr_rst_q_scan = G_RESET_POLARITY) then
+        if (trv_delay_ctr_rst_q_scan = '0') then
             trv_delay_ctr_q(0) <= '1'; 
             trv_delay_ctr_q(G_TRV_CTR_WIDTH - 1 downto 1) <= (OTHERS => '0');
 
@@ -412,7 +406,7 @@ begin
     ---------------------------------------------------------------------------
     ssp_shadow_reg_proc : process(res_n, clk_sys)
     begin
-        if (res_n = G_RESET_POLARITY) then
+        if (res_n = '0') then
             ssp_delay_shadowed   <= (OTHERS => '0');
             trv_delay_shadowed   <= (OTHERS => '0');
             

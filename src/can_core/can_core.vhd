@@ -100,9 +100,6 @@ use ctu_can_fd_rtl.CAN_FD_frame_format.all;
 
 entity can_core is
     generic(
-        -- Reset polarity
-        G_RESET_POLARITY        :    std_logic := '0';
-        
         -- Number of signals in Sample trigger
         G_SAMPLE_TRIGGER_COUNT  :   natural range 2 to 8 := 2;
         
@@ -507,7 +504,6 @@ begin
     ----------------------------------------------------------------------------
     protocol_control_inst : protocol_control
     generic map(
-        G_RESET_POLARITY        => G_RESET_POLARITY,
         G_CTRL_CTR_WIDTH        => G_CTRL_CTR_WIDTH,
         G_RETR_LIM_CTR_WIDTH    => G_RETR_LIM_CTR_WIDTH,
         G_ERR_VALID_PIPELINE    => G_ERR_VALID_PIPELINE
@@ -647,9 +643,6 @@ begin
     -- Operation control FSM
     ---------------------------------------------------------------------------
     operation_control_inst : operation_control
-    generic map(
-        G_RESET_POLARITY     => G_RESET_POLARITY    
-    )
     port map(
         clk_sys              => clk_sys,                -- IN
         res_n                => res_n,                  -- IN
@@ -678,9 +671,6 @@ begin
     -- Fault confinement
     ---------------------------------------------------------------------------
     fault_confinement_inst : fault_confinement
-    generic map(
-        G_RESET_POLARITY     => G_RESET_POLARITY
-    )
     port map(
         clk_sys                 => clk_sys,                 -- IN
         res_n                   => res_n,                   -- IN
@@ -730,7 +720,6 @@ begin
     ---------------------------------------------------------------------------
     can_crc_inst : can_crc
     generic map(
-        G_RESET_POLARITY    => G_RESET_POLARITY,
         G_CRC15_POL         => G_CRC15_POL,
         G_CRC17_POL         => G_CRC17_POL,
         G_CRC21_POL         => G_CRC21_POL
@@ -771,9 +760,6 @@ begin
     -- Bit Stuffing
     ---------------------------------------------------------------------------
     bit_stuffing_inst : bit_stuffing
-    generic map(
-        G_RESET_POLARITY    => G_RESET_POLARITY
-    )
     port map(
         clk_sys             => clk_sys,                 -- IN
         res_n               => res_n,                   -- IN
@@ -799,9 +785,6 @@ begin
     -- Bit Destuffing
     ---------------------------------------------------------------------------
     bit_destuffing_inst : bit_destuffing
-    generic map(
-        G_RESET_POLARITY    => G_RESET_POLARITY
-    )
     port map(
         clk_sys             => clk_sys,                 -- IN
         res_n               => res_n,                   -- IN
@@ -827,10 +810,8 @@ begin
     -- Bus traffic counters
     ---------------------------------------------------------------------------
     bus_traffic_ctrs_gen : if (G_SUP_TRAFFIC_CTRS = true) generate
+        
         bus_traffic_counters_inst : bus_traffic_counters
-        generic map(
-            G_RESET_POLARITY    => G_RESET_POLARITY
-        )
         port map(
             clk_sys             => clk_sys,                 -- IN
             res_n               => res_n,                   -- IN
@@ -846,6 +827,7 @@ begin
             tx_ctr              => tx_ctr,                  -- OUT
             rx_ctr              => rx_ctr                   -- OUT
         );
+
     end generate bus_traffic_ctrs_gen;
 
     no_bus_traffic_ctrs_gen : if (G_SUP_TRAFFIC_CTRS = false) generate
@@ -858,7 +840,6 @@ begin
     ---------------------------------------------------------------------------
     trigger_mux_inst : trigger_mux
     generic map(
-        G_RESET_POLARITY        => G_RESET_POLARITY,
         G_SAMPLE_TRIGGER_COUNT  => G_SAMPLE_TRIGGER_COUNT
     )
     port map(

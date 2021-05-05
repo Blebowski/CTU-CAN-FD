@@ -101,9 +101,6 @@ use ctu_can_fd_rtl.CAN_FD_frame_format.all;
 
 entity rx_buffer_pointers is
     generic(
-        -- Reset polarity
-        G_RESET_POLARITY      :       std_logic := '0';
-        
         -- RX Buffer size
         G_RX_BUFF_SIZE        :       natural range 32 to 4096 := 32
     );
@@ -243,7 +240,7 @@ begin
     ----------------------------------------------------------------------------
     read_pointer_proc : process(clk_sys, rx_buf_res_n_q_scan)
     begin
-        if (rx_buf_res_n_q_scan = G_RESET_POLARITY) then
+        if (rx_buf_res_n_q_scan = '0') then
             read_pointer_i         <= (OTHERS => '0');
         elsif (rising_edge(clk_sys)) then
             if (read_increment = '1') then
@@ -258,7 +255,7 @@ begin
     ----------------------------------------------------------------------------
     write_pointer_proc : process(clk_sys, rx_buf_res_n_q_scan)
     begin
-        if (rx_buf_res_n_q_scan = G_RESET_POLARITY) then
+        if (rx_buf_res_n_q_scan = '0') then
             write_pointer_i       <= (OTHERS => '0');
         elsif (rising_edge(clk_sys)) then
             if (commit_rx_frame = '1') then
@@ -286,7 +283,7 @@ begin
     
     write_pointer_raw_proc : process(clk_sys, rx_buf_res_n_q_scan)
     begin
-        if (rx_buf_res_n_q_scan = G_RESET_POLARITY) then
+        if (rx_buf_res_n_q_scan = '0') then
            write_pointer_raw_i   <= (OTHERS => '0');
         elsif (rising_edge(clk_sys)) then
             if (write_pointer_raw_ce = '1') then
@@ -309,7 +306,7 @@ begin
 
     timestamp_write_ptr_proc : process(clk_sys, rx_buf_res_n_q_scan)
     begin
-        if (rx_buf_res_n_q_scan = G_RESET_POLARITY) then
+        if (rx_buf_res_n_q_scan = '0') then
             write_pointer_ts_i  <= (OTHERS => '0');
         elsif (rising_edge(clk_sys)) then
             if (write_pointer_ts_ce = '1') then
@@ -324,7 +321,7 @@ begin
     ----------------------------------------------------------------------------
     mem_free_proc : process(clk_sys, rx_buf_res_n_q_scan)
     begin
-        if (rx_buf_res_n_q_scan = G_RESET_POLARITY) then
+        if (rx_buf_res_n_q_scan = '0') then
             rx_mem_free_i_i <= to_unsigned(G_RX_BUFF_SIZE, C_FREE_MEM_WIDTH);
             rx_mem_free_raw <= to_unsigned(G_RX_BUFF_SIZE, C_FREE_MEM_WIDTH);
 

@@ -94,9 +94,6 @@ use ctu_can_fd_rtl.CAN_FD_frame_format.all;
 
 entity txt_buffer_fsm is
     generic(
-        -- Reset polarity
-        G_RESET_POLARITY       :     std_logic := '0';
-        
         -- TXT Buffer ID
         G_ID                   :     natural
     );
@@ -350,7 +347,7 @@ begin
     ----------------------------------------------------------------------------
     tx_buf_fsm_state_reg_proc : process(res_n, clk_sys)
     begin
-        if (res_n = G_RESET_POLARITY) then
+        if (res_n = '0') then
             curr_state <= s_txt_empty;
         elsif (rising_edge(clk_sys)) then
             if (txt_fsm_ce = '1') then

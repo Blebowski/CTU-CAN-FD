@@ -94,9 +94,6 @@ use ctu_can_fd_rtl.CAN_FD_frame_format.all;
 
 entity tx_data_cache is
     generic(
-        -- Reset polarity
-        G_RESET_POLARITY        :     std_logic := '0';
-        
         -- Depth of FIFO (Number of bits that can be stored)
         G_TX_CACHE_DEPTH        :     natural range 4 to 32 := 8;
         
@@ -163,7 +160,7 @@ begin
     ----------------------------------------------------------------------------
     write_ptr_proc : process(clk_sys, res_n)
     begin
-        if (res_n = G_RESET_POLARITY) then
+        if (res_n = '0') then
             write_pointer_q        <= 0;
         elsif (rising_edge(clk_sys)) then
             if (write = '1') then
@@ -175,7 +172,7 @@ begin
 
     read_ptr_proc : process(clk_sys, res_n)
     begin
-        if (res_n = G_RESET_POLARITY) then
+        if (res_n = '0') then
             read_pointer_q         <= 0;
         elsif (rising_edge(clk_sys)) then
             if (read = '1') then
@@ -190,7 +187,7 @@ begin
     ----------------------------------------------------------------------------
     tx_cache_mem_proc : process(clk_sys, res_n)
     begin
-        if (res_n = G_RESET_POLARITY) then
+        if (res_n = '0') then
             tx_cache_mem <= (OTHERS => G_TX_CACHE_RST_VAL);
         elsif (rising_edge(clk_sys)) then
             if (write = '1') then

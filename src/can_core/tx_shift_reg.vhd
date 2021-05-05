@@ -94,10 +94,6 @@ use ctu_can_fd_rtl.CAN_FD_register_map.all;
 use ctu_can_fd_rtl.CAN_FD_frame_format.all;
 
 entity tx_shift_reg is
-    generic(
-        -- Reset polarity
-        G_RESET_POLARITY        :     std_logic := '0'
-    );
     port(
         -----------------------------------------------------------------------
         -- Clock and Asynchronous Reset
@@ -285,7 +281,7 @@ begin
     ---------------------------------------------------------------------------
     tx_shift_reg_inst : shift_reg_preload
     generic map(
-        G_RESET_POLARITY     => G_RESET_POLARITY,
+        G_RESET_POLARITY     => '0',
         G_RESET_VALUE        => C_RX_SHIFT_REG_RST_VAL,
         G_WIDTH              => 32,
         G_SHIFT_DOWN         => false

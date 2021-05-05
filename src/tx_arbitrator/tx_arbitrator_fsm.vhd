@@ -97,10 +97,6 @@ use ctu_can_fd_rtl.CAN_FD_register_map.all;
 use ctu_can_fd_rtl.CAN_FD_frame_format.all;
 
 entity tx_arbitrator_fsm is
-    generic(
-        -- Reset polarity
-        G_RESET_POLARITY       :in  std_logic := '0'
-    );
     port( 
         -----------------------------------------------------------------------
         -- Clock and Asynchronous reset
@@ -458,7 +454,7 @@ begin
     ---------------------------------------------------------------------------
     tx_arb_fsm_state_reg : process(clk_sys, res_n)
     begin
-        if (res_n = G_RESET_POLARITY) then
+        if (res_n = '0') then
             curr_state <= s_arb_sel_low_ts;
         elsif (rising_edge(clk_sys)) then
             if (tx_arb_fsm_ce = '1') then
@@ -478,7 +474,7 @@ begin
     ---------------------------------------------------------------------------
     fsm_wait_state_proc : process(clk_sys, res_n)
     begin
-        if (res_n = G_RESET_POLARITY) then
+        if (res_n = '0') then
             fsm_wait_state_q <= '1';
         elsif (rising_edge(clk_sys)) then
             fsm_wait_state_q <= fsm_wait_state_d;

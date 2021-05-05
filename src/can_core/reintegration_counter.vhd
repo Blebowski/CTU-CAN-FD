@@ -92,10 +92,6 @@ use ctu_can_fd_rtl.CAN_FD_register_map.all;
 use ctu_can_fd_rtl.CAN_FD_frame_format.all;
 
 entity reintegration_counter is
-    generic(
-        -- Reset polarity
-        G_RESET_POLARITY        :     std_logic := '0'
-    );
     port(
         -----------------------------------------------------------------------
         -- Clock and Asynchronous Reset
@@ -156,7 +152,7 @@ begin
     ---------------------------------------------------------------------------                   
     retr_ctr_reg_proc : process(clk_sys, res_n)
     begin
-        if (res_n = G_RESET_POLARITY) then
+        if (res_n = '0') then
             reinteg_ctr_q <= (OTHERS => '0');
         elsif (rising_edge(clk_sys)) then
             if (reinteg_ctr_ce = '1') then

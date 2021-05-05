@@ -100,9 +100,6 @@ use ctu_can_fd_rtl.CAN_FD_frame_format.all;
 
 entity tx_arbitrator is
     generic(
-        -- Reset polarity
-        G_RESET_POLARITY        : std_logic := '0';
-        
         -- Number of TXT Buffers
         G_TXT_BUFFER_COUNT      : natural range 1 to 8
     );
@@ -335,11 +332,7 @@ begin
   -- TX Arbitrator FSM
   ------------------------------------------------------------------------------
   tx_arbitrator_fsm_inst : tx_arbitrator_fsm
-  generic map(
-    G_RESET_POLARITY     => G_RESET_POLARITY
-  )
   port map(
-
     clk_sys                => clk_sys,                  -- IN
     res_n                  => res_n,                    -- IN
     select_buf_avail       => select_buf_avail,         -- IN
@@ -437,7 +430,7 @@ begin
   ------------------------------------------------------------------------------
   low_ts_reg_proc : process(res_n, clk_sys)
   begin
-    if (res_n = G_RESET_POLARITY) then
+    if (res_n = '0') then
         ts_low_internal             <= (OTHERS => '0');
     elsif (rising_edge(clk_sys)) then
         if (store_ts_l_w = '1') then
@@ -451,7 +444,7 @@ begin
   ------------------------------------------------------------------------------
   dbl_buf_reg_proc : process(clk_sys, res_n)
   begin
-    if (res_n = G_RESET_POLARITY) then    
+    if (res_n = '0') then    
       tran_dlc_dbl_buf           <= (OTHERS => '0');
       tran_is_rtr_dbl_buf        <= '0';
       tran_ident_type_dbl_buf    <= '0';
@@ -475,7 +468,7 @@ begin
   ------------------------------------------------------------------------------
   meta_data_reg_proc : process(clk_sys, res_n)
   begin
-    if (res_n = G_RESET_POLARITY) then
+    if (res_n = '0') then
         tran_dlc_com                <= (OTHERS => '0');
         tran_is_rtr_com             <= '0';
         tran_ident_type_com         <= '0';
@@ -498,7 +491,7 @@ begin
   ------------------------------------------------------------------------------
   identifier_reg_proc : process(clk_sys, res_n)
   begin
-    if (res_n = G_RESET_POLARITY) then
+    if (res_n = '0') then
         tran_identifier_com <= (OTHERS => '0');
     elsif (rising_edge(clk_sys)) then
         if (store_ident_w = '1') then
@@ -513,7 +506,7 @@ begin
   ------------------------------------------------------------------------------
   tran_frame_valid_com_proc : process(clk_sys, res_n)
   begin
-    if (res_n = G_RESET_POLARITY) then
+    if (res_n = '0') then
         tran_frame_valid_com        <= '0';
     elsif (rising_edge(clk_sys)) then
         if (frame_valid_com_set = '1') then
@@ -533,7 +526,7 @@ begin
   ------------------------------------------------------------------------------
   store_indices_proc : process(clk_sys, res_n)
   begin
-    if (res_n = G_RESET_POLARITY) then
+    if (res_n = '0') then
         last_txtb_index             <= 0;
         int_txtb_index              <= 0;
 
@@ -567,7 +560,7 @@ begin
   ------------------------------------------------------------------------------
   sel_index_change_proc : process(clk_sys, res_n)
   begin
-    if (res_n = G_RESET_POLARITY) then
+    if (res_n = '0') then
         select_buf_index_reg  <= 0;
     elsif (rising_edge(clk_sys)) then
         select_buf_index_reg <= select_buf_index;
@@ -591,7 +584,7 @@ begin
  
   store_meta_data_ptr_proc : process(clk_sys, res_n)
   begin
-    if (res_n = G_RESET_POLARITY) then
+    if (res_n = '0') then
         txtb_pointer_meta_q <= to_integer(unsigned(TIMESTAMP_L_W_ADR(11 downto 2)));
     elsif (rising_edge(clk_sys)) then
         txtb_pointer_meta_q <= txtb_pointer_meta_d;

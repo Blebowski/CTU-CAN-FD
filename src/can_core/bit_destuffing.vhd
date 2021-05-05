@@ -101,10 +101,6 @@ use ctu_can_fd_rtl.CAN_FD_register_map.all;
 use ctu_can_fd_rtl.CAN_FD_frame_format.all;
 
 entity bit_destuffing is
-    generic(
-        -- Reset polarity
-        G_RESET_POLARITY     :     std_logic := '0'
-    );
     port(
         ------------------------------------------------------------------------
         -- Clock and Asynchronous reset
@@ -219,7 +215,7 @@ begin
     ---------------------------------------------------------------------------
     dff_ena_reg : dff_arst
     generic map(
-        G_RESET_POLARITY   => G_RESET_POLARITY,
+        G_RESET_POLARITY   => '0',
         G_RST_VAL          => '0'
     )
     port map(
@@ -293,7 +289,7 @@ begin
     ---------------------------------------------------------------------------
     dff_fixed_stuff_reg : dff_arst_ce
     generic map(
-        G_RESET_POLARITY   => G_RESET_POLARITY,
+        G_RESET_POLARITY   => '0',
         G_RST_VAL          => '0'
     )
     port map(
@@ -331,7 +327,7 @@ begin
     ---------------------------------------------------------------------------
     dst_ctr_proc : process(clk_sys, res_n)
     begin
-        if (res_n = G_RESET_POLARITY) then
+        if (res_n = '0') then
             dst_ctr_q         <= (OTHERS => '0');
 
         elsif (rising_edge(clk_sys)) then
@@ -379,7 +375,7 @@ begin
     ---------------------------------------------------------------------------
     same_bits_ctr_proc : process(clk_sys, res_n)
     begin
-        if (res_n = G_RESET_POLARITY) then
+        if (res_n = '0') then
             same_bits_q <= "001";
 
         elsif (rising_edge(clk_sys)) then
@@ -407,7 +403,7 @@ begin
     ---------------------------------------------------------------------------
     dff_destuffed_flag_reg : dff_arst
     generic map(
-        G_RESET_POLARITY   => G_RESET_POLARITY,
+        G_RESET_POLARITY   => '0',
         G_RST_VAL          => '0'
     )
     port map(
@@ -433,7 +429,7 @@ begin
     ---------------------------------------------------------------------------
     dff_err_reg : dff_arst
     generic map(
-        G_RESET_POLARITY   => G_RESET_POLARITY,
+        G_RESET_POLARITY   => '0',
         G_RST_VAL          => '0'
     )
     port map(
@@ -461,7 +457,7 @@ begin
     ---------------------------------------------------------------------------
     dff_prev_val_reg : dff_arst
     generic map(
-        G_RESET_POLARITY   => G_RESET_POLARITY,
+        G_RESET_POLARITY   => '0',
         G_RST_VAL          => RECESSIVE
     )
     port map(
@@ -480,7 +476,7 @@ begin
     ---------------------------------------------------------------------------
     dff_data_out_val_reg : dff_arst_ce
     generic map(
-        G_RESET_POLARITY   => G_RESET_POLARITY,
+        G_RESET_POLARITY   => '0',
         G_RST_VAL          => RECESSIVE
     )
     port map(

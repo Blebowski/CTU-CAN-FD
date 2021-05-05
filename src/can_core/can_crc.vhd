@@ -104,9 +104,6 @@ use ctu_can_fd_rtl.CAN_FD_frame_format.all;
 
 entity can_crc is
     generic(
-        -- Reset polarity
-        G_RESET_POLARITY    :     std_logic := '0';
-        
         -- CRC 15 polynomial
         G_CRC15_POL         :     std_logic_vector(15 downto 0) := x"C599";
         
@@ -290,7 +287,6 @@ begin
     crc_calc_15_inst : crc_calc
     generic map(
         G_CRC_WIDTH       => 15,
-        G_RESET_POLARITY  => G_RESET_POLARITY,
         G_POLYNOMIAL      => G_CRC15_POL
     )
     port map(
@@ -312,7 +308,6 @@ begin
     crc_calc_17_rx_inst : crc_calc
     generic map(
         G_CRC_WIDTH       => 17,
-        G_RESET_POLARITY  => G_RESET_POLARITY,
         G_POLYNOMIAL      => G_CRC17_POL
     )
     port map(
@@ -335,7 +330,6 @@ begin
     crc_calc_21_rx_inst : crc_calc
     generic map(
         G_CRC_WIDTH       => 21,
-        G_RESET_POLARITY  => G_RESET_POLARITY,
         G_POLYNOMIAL      => G_CRC21_POL
     )
     port map(

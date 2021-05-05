@@ -94,10 +94,7 @@ use ctu_can_fd_rtl.CAN_FD_register_map.all;
 use ctu_can_fd_rtl.CAN_FD_frame_format.all;
 
 entity crc_calc is
-    generic(
-        -- Reset polarity
-        G_RESET_POLARITY    : std_logic := '0';
-        
+    generic(        
         -- Width of CRC sequence
         G_CRC_WIDTH         : natural;
 
@@ -186,7 +183,7 @@ begin
     ----------------------------------------------------------------------------
     crc_calc_proc : process(res_n, clk_sys)
     begin 
-        if (res_n = G_RESET_POLARITY) then
+        if (res_n = '0') then
             crc_q             <= (OTHERS => '0');
         elsif rising_edge(clk_sys) then 
             if (crc_ce = '1') then

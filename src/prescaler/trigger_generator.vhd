@@ -122,9 +122,6 @@ use ctu_can_fd_rtl.CAN_FD_frame_format.all;
 
 entity trigger_generator is
     generic (
-        -- Reset polarity
-        G_RESET_POLARITY          : std_logic := '0';
-
         -- Number of signals in Sample trigger
         G_SAMPLE_TRIGGER_COUNT    : natural range 2 to 8 := 3
     );
@@ -182,7 +179,7 @@ begin
 
     tx_trig_req_flag_proc : process(clk_sys, res_n)
     begin
-        if (res_n = G_RESET_POLARITY) then
+        if (res_n = '0') then
             tx_trig_req_flag_q <= '0';
         elsif (rising_edge(clk_sys)) then
             tx_trig_req_flag_q <= tx_trig_req_flag_d;
@@ -197,7 +194,7 @@ begin
     ---------------------------------------------------------------------------
     rx_trig_reg_proc : process(clk_sys, res_n)
     begin
-        if (res_n = G_RESET_POLARITY) then
+        if (res_n = '0') then
             rx_trig_req_q <= '0';
         elsif (rising_edge(clk_sys)) then
             rx_trig_req_q <= rx_trig_req;

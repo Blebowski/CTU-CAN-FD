@@ -103,9 +103,6 @@ use ctu_can_fd_rtl.CAN_FD_frame_format.all;
 
 entity int_module is
     generic(        
-        -- Reset polarity
-        G_RESET_POLARITY        :    std_logic := '0';
-
         -- If true, Interrupt status clear has priority over write.
         G_CLEAR_PRIORITY         :    boolean := true
     );
@@ -172,7 +169,7 @@ begin
     set_priority_gen : if (G_CLEAR_PRIORITY = false) generate    
         int_stat_proc : process(res_n, clk_sys)
         begin
-            if (res_n = G_RESET_POLARITY) then
+            if (res_n = '0') then
                 int_status <= '0';
 
             elsif rising_edge(clk_sys) then
@@ -197,7 +194,7 @@ begin
     clear_priority_gen : if (G_CLEAR_PRIORITY = true) generate    
         int_stat_proc : process(res_n, clk_sys)
         begin
-            if (res_n = G_RESET_POLARITY) then
+            if (res_n = '0') then
                 int_status <= '0';
 
             elsif rising_edge(clk_sys) then
@@ -222,7 +219,7 @@ begin
 
     int_mask_proc : process(res_n, clk_sys)
     begin
-        if (res_n = G_RESET_POLARITY) then
+        if (res_n = '0') then
             int_mask_i <= '0';
 
         elsif rising_edge(clk_sys) then
@@ -245,7 +242,7 @@ begin
     ------------------------------------------------------------------------
     int_ena_proc : process(res_n, clk_sys)
     begin
-        if (res_n = G_RESET_POLARITY) then
+        if (res_n = '0') then
             int_ena_i <= '0';
 
         elsif rising_edge(clk_sys) then

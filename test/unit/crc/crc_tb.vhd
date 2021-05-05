@@ -315,7 +315,6 @@ begin
     ----------------------------------------------------------------------------
     can_crc_comp : can_crc
     generic map(
-        G_RESET_POLARITY    => '0',
         G_CRC15_POL         => C_CRC15_POL,
         G_CRC17_POL         => C_CRC17_POL,
         G_CRC21_POL         => C_CRC21_POL
@@ -370,7 +369,7 @@ begin
     sample_gen : process
         variable min_diff : natural := 0;
     begin
-        if (res_n = C_RESET_POLARITY) then
+        if (res_n = '0') then
             apply_rand_seed(seed, 1, rnd_ctr_tr);
         end if;
         generate_simple_trig(rnd_ctr_tr, tx_trig, rx_trig, clk_sys, min_diff);

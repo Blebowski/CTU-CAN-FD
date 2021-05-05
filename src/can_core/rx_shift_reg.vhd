@@ -97,10 +97,6 @@ use ctu_can_fd_rtl.CAN_FD_register_map.all;
 use ctu_can_fd_rtl.CAN_FD_frame_format.all;
 
 entity rx_shift_reg is
-    generic(
-        -- Reset polarity
-        G_RESET_POLARITY        :     std_logic := '0'
-    );
     port(
         -----------------------------------------------------------------------
         -- Clock and Asynchronous Reset
@@ -229,25 +225,22 @@ architecture rtl of rx_shift_reg is
     signal rec_is_rtr_i : std_logic;
     signal rec_frame_type_i : std_logic;
 
-    constant C_RESET_POLARITY_N : std_logic := not G_RESET_POLARITY;
-
 begin
 
      -- Internal reset: Async reset + reset by design!
-    res_n_i_d <= G_RESET_POLARITY when (rx_clear = '1' or res_n = G_RESET_POLARITY)
-                                  else
-                 not (G_RESET_POLARITY);
+    res_n_i_d <= '0' when (rx_clear = '1' or res_n = '0') else
+                 '1';
 
     ---------------------------------------------------------------------------
     -- Registering reset to avoid glitches
     ---------------------------------------------------------------------------
     rx_shift_res_reg_inst : dff_arst
     generic map(
-        G_RESET_POLARITY   => G_RESET_POLARITY,
-        
+        G_RESET_POLARITY   => '0',
+
         -- Reset to the same value as is polarity of reset so that other DFFs
         -- which are reset by output of this one will be reset too!
-        G_RST_VAL          => G_RESET_POLARITY
+        G_RST_VAL          => '0'
     )
     port map(
         arst               => res_n,          -- IN
@@ -263,7 +256,7 @@ begin
     mux2_res_tst_inst : mux2
     port map(
         a                  => res_n_i_q, 
-        b                  => C_RESET_POLARITY_N,
+        b                  => '1',
         sel                => scan_enable,
 
         -- Output
@@ -296,7 +289,7 @@ begin
     ---------------------------------------------------------------------------
     shift_reg_byte_inst : shift_reg_byte
     generic map(
-        G_RESET_POLARITY     => G_RESET_POLARITY,
+        G_RESET_POLARITY     => '0',
         G_RESET_VALUE        => x"00000000",
         G_NUM_BYTES          => 4
     )
@@ -314,7 +307,7 @@ begin
     ---------------------------------------------------------------------------
     id_store_proc : process(clk_sys, res_n_i_q_scan)
     begin
-        if (res_n_i_q_scan = G_RESET_POLARITY) then
+        if (res_n_i_q_scan = '0') then
             rec_ident <= (OTHERS => '0');    
         elsif (rising_edge(clk_sys)) then
             if (rx_store_base_id = '1') then
@@ -334,7 +327,7 @@ begin
     ---------------------------------------------------------------------------
     ide_store_proc : process(clk_sys, res_n_i_q_scan)
     begin
-        if (res_n_i_q_scan = G_RESET_POLARITY) then
+        if (res_n_i_q_scan = '0') then
             rec_ident_type <= '0';    
         elsif (rising_edge(clk_sys)) then
             if (rx_store_ide = '1') then
@@ -348,7 +341,7 @@ begin
     ---------------------------------------------------------------------------
     rx_store_proc : process(clk_sys, res_n_i_q_scan)
     begin
-        if (res_n_i_q_scan = G_RESET_POLARITY) then
+        if (res_n_i_q_scan = '0') then
             rec_is_rtr_i <= '0';    
         elsif (rising_edge(clk_sys)) then
             if (rx_store_rtr = '1') then
@@ -366,7 +359,7 @@ begin
     ---------------------------------------------------------------------------
     edl_store_proc : process(clk_sys, res_n_i_q_scan)
     begin
-        if (res_n_i_q_scan = G_RESET_POLARITY) then
+        if (res_n_i_q_scan = '0') then
             rec_frame_type_i <= '0';    
         elsif (rising_edge(clk_sys)) then
             if (rx_store_edl = '1') then
@@ -383,7 +376,7 @@ begin
     ---------------------------------------------------------------------------
     esi_store_proc : process(clk_sys, res_n_i_q_scan)
     begin
-        if (res_n_i_q_scan = G_RESET_POLARITY) then
+        if (res_n_i_q_scan = '0') then
             rec_esi <= '0';    
         elsif (rising_edge(clk_sys)) then
             if (rx_store_esi = '1') then
@@ -397,7 +390,7 @@ begin
     ---------------------------------------------------------------------------
     brs_store_proc : process(clk_sys, res_n_i_q_scan)
     begin
-        if (res_n_i_q_scan = G_RESET_POLARITY) then
+        if (res_n_i_q_scan = '0') then
             rec_brs <= '0';    
         elsif (rising_edge(clk_sys)) then
             if (rx_store_brs = '1') then
@@ -411,7 +404,7 @@ begin
     ---------------------------------------------------------------------------
     dlc_store_proc : process(clk_sys, res_n_i_q_scan)
     begin
-        if (res_n_i_q_scan = G_RESET_POLARITY) then
+        if (res_n_i_q_scan = '0') then
             rec_dlc <= (OTHERS => '0');    
         elsif (rising_edge(clk_sys)) then
             if (rx_store_dlc = '1') then
@@ -425,7 +418,7 @@ begin
     ---------------------------------------------------------------------------
     stuff_count_store_proc : process(clk_sys, res_n_i_q_scan)
     begin
-        if (res_n_i_q_scan = G_RESET_POLARITY) then
+        if (res_n_i_q_scan = '0') then
             rx_stuff_count <= (OTHERS => '0');
         elsif (rising_edge(clk_sys)) then
             if (rx_store_stuff_count = '1') then
@@ -469,7 +462,7 @@ begin
     --  severity error;
     
     -- psl no_simul_capture_and_clear : assert never
-    --  (res_n_i_q_scan = G_RESET_POLARITY) and
+    --  (res_n_i_q_scan = '0') and
     --  (rx_store_base_id = '1' or rx_store_ext_id = '1' or 
     --   rx_store_ide = '1' or rx_store_rtr = '1' or rx_store_edl = '1' or
     --   rx_store_dlc = '1' or rx_store_esi = '1' or rx_store_brs = '1' or

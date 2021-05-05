@@ -98,9 +98,6 @@ use ctu_can_fd_rtl.CAN_FD_frame_format.all;
 
 entity bit_time_counters is
     generic (
-        -- Reset polarity
-        G_RESET_POLARITY  : std_logic := '0';
-        
         -- Bit Time counter width
         G_BT_WIDTH        : natural := 8;
         
@@ -198,7 +195,7 @@ begin
 
     tq_proc : process(clk_sys, res_n)
     begin
-        if (res_n = G_RESET_POLARITY) then
+        if (res_n = '0') then
             tq_counter_q <= (OTHERS => '0');
         elsif (rising_edge(clk_sys)) then
             if (tq_counter_ce = '1') then
@@ -230,7 +227,7 @@ begin
 
     segm_counter_proc : process(clk_sys, res_n)
     begin
-        if (res_n = G_RESET_POLARITY) then
+        if (res_n = '0') then
             segm_counter_q <= (OTHERS => '0');
         elsif (rising_edge(clk_sys)) then
             if (segm_counter_ce = '1') then

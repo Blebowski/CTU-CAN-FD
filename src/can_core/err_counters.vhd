@@ -99,10 +99,6 @@ use ctu_can_fd_rtl.CAN_FD_register_map.all;
 use ctu_can_fd_rtl.CAN_FD_frame_format.all;
 
 entity err_counters is
-    generic(
-        -- Reset polarity
-        G_RESET_POLARITY       :     std_logic := '0'
-    );
     port(
         -----------------------------------------------------------------------
         -- System clock and Asynchronous Reset
@@ -218,8 +214,6 @@ architecture rtl of err_counters is
     signal res_err_ctrs_q       : std_logic;
     signal res_err_ctrs_q_scan  : std_logic;
 
-    constant C_RESET_POLARITY_N : std_logic := not G_RESET_POLARITY;
-
 begin
 
     modif_tx_ctr <= '1' when (inc_eight = '1' or dec_one = '1') else
@@ -257,18 +251,17 @@ begin
     ---------------------------------------------------------------------------
     -- Registering counter reset (to avoid glitches)
     ---------------------------------------------------------------------------
-    res_err_ctrs_d <= G_RESET_POLARITY when (res_n = G_RESET_POLARITY or
-                                             set_err_active = '1')
-                                       else
-                      (not G_RESET_POLARITY);
+    res_err_ctrs_d <= '0' when (res_n = '0' or set_err_active = '1')
+                          else
+                      '1';
 
     rst_reg_inst : dff_arst
     generic map(
-        G_RESET_POLARITY   => G_RESET_POLARITY,
+        G_RESET_POLARITY   => '0',
         
         -- Reset to the same value as is polarity of reset so that other DFFs
         -- which are reset by output of this one will be reset too!
-        G_RST_VAL          => G_RESET_POLARITY
+        G_RST_VAL          => '0'
     )
     port map(
         arst               => res_n,                -- IN
@@ -284,7 +277,7 @@ begin
     mux2_res_tst_inst : mux2
     port map(
         a                  => res_err_ctrs_q, 
-        b                  => C_RESET_POLARITY_N,
+        b                  => '1',
         sel                => scan_enable,
 
         -- Output
@@ -296,7 +289,7 @@ begin
    ----------------------------------------------------------------------------
    tx_err_ctr_reg_proc : process(clk_sys, res_err_ctrs_q_scan)
    begin
-       if (res_err_ctrs_q_scan = G_RESET_POLARITY) then
+       if (res_err_ctrs_q_scan = '0') then
            tx_err_ctr_q <= (OTHERS => '0');
        elsif (rising_edge(clk_sys)) then
            if (tx_err_ctr_ce = '1') then
@@ -342,7 +335,7 @@ begin
    ----------------------------------------------------------------------------
    rx_err_ctr_reg_proc : process(clk_sys, res_err_ctrs_q_scan)
    begin
-       if (res_err_ctrs_q_scan = G_RESET_POLARITY) then
+       if (res_err_ctrs_q_scan = '0') then
            rx_err_ctr_q <= (OTHERS => '0');
        elsif (rising_edge(clk_sys)) then
            if (rx_err_ctr_ce = '1') then
@@ -384,7 +377,7 @@ begin
    ----------------------------------------------------------------------------
    nom_err_ctr_proc : process(clk_sys, res_err_ctrs_q_scan)
    begin
-       if (res_err_ctrs_q_scan = G_RESET_POLARITY) then
+       if (res_err_ctrs_q_scan = '0') then
            nom_err_ctr_q <= (OTHERS => '0');
        elsif (rising_edge(clk_sys)) then
            if (nom_err_ctr_ce = '1') then
@@ -395,7 +388,7 @@ begin
 
    dat_err_ctr_proc : process(clk_sys, res_err_ctrs_q_scan)
    begin
-       if (res_err_ctrs_q_scan = G_RESET_POLARITY) then
+       if (res_err_ctrs_q_scan = '0') then
            data_err_ctr_q <= (OTHERS => '0');
        elsif (rising_edge(clk_sys)) then
            if (data_err_ctr_ce = '1') then
