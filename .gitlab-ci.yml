@@ -145,8 +145,7 @@ test_ip_nightly:
 test_ip_compliance_short:
     stage: test
     dependencies: [build_ip_and_tests]
-    only:
-        - branches
+    only: *only
     script:
         - cd test
         - make test_compliance_short
