@@ -156,7 +156,7 @@ test_ip_compliance:
 
 process_coverage:
     stage: coverage
-    dependencies: [build_ip_and_tests, test_ip_compliance, test_ip_nightly]
+    dependencies: [test_ip_compliance, test_ip_nightly]
     only:
         - schedules
     script:
