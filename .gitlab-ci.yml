@@ -32,7 +32,7 @@ build_ip_and_tests:
     artifacts:
         paths: &vunit_build_paths
             - test/build
-        expire_in: 5 hrs
+        expire_in: 12 hrs
     script:
         - cd test
         - make elaborate
@@ -156,7 +156,7 @@ test_ip_compliance:
 
 process_coverage:
     stage: coverage
-    dependencies: [test_ip_compliance, test_ip_nightly]
+    dependencies: [build_ip_and_tests, test_ip_compliance, test_ip_nightly]
     only:
         - schedules
     script:
