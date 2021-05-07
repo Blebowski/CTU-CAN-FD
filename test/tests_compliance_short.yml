@@ -7,6 +7,9 @@
 ## config are not randomized. Code coverage or functional coverage are not
 ## collected.
 ##
+## Randomization: No
+## Coverage: No
+##
 ## Parameters:
 ##   System clock: 40 MHz
 ##   Nominal bit-rate: 1 Mbit/s (65 % sample point)

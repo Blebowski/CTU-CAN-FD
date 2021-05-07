@@ -3,6 +3,9 @@
 ## This test-case list contains all ISO16845-1 2016 tests in minimal scenario
 ## (minimal possible bit-rate, maximal bit-time).
 ##
+## Randomization: Yes
+## Coverage: No
+##
 ## Note that bit-time of CTU CAN FD can be configured up to:
 ##   255 * (63 + 63 + 127 + 1) = 64770 clock cycles!
 ## It is not feasible trying to simulate whole compliance test suite at such
@@ -33,14 +36,14 @@ _default: &default
 
     # Test-bench configuration
     log_level: info
-    functional_coverage: true
-    code_coverage: true
+    functional_coverage: false
+    code_coverage: false
     error_tolerance: 0
     randomize: true
     #seed: 20
     debug: false
     iterations: 1
-    timeout: 500 ms
+    timeout: 800 ms
 
     # If true, use Vunits report package in Main testbench.
     # If false, uses own implementation.

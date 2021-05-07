@@ -117,7 +117,7 @@ test_ip_nightly:
     stage: test
     dependencies: [build_ip_and_tests]
     only:
-        - schedules
+        - master
     script:
         - cd test
         - make test_nightly
@@ -145,7 +145,8 @@ test_ip_nightly:
 test_ip_compliance_short:
     stage: test
     dependencies: [build_ip_and_tests]
-    only: *only
+    only:
+        - branches
     script:
         - cd test
         - make test_compliance_short
@@ -153,7 +154,7 @@ test_ip_compliance_short:
         when: always
         paths:
             - test/tests_compliance_short.xml
-            - test/build/vunit_out/preprocessed
+            - test/xunit.xsl
         reports:
             junit: [test/tests_compliance_short.xml]
 
@@ -163,7 +164,8 @@ test_ip_compliance_short:
 test_ip_compliance_full_typ:
     stage: test
     dependencies: [build_ip_and_tests]
-    only: *only
+    only:
+        - master
     script:
         - cd test
         - make test_compliance_full_typ
@@ -171,6 +173,8 @@ test_ip_compliance_full_typ:
         when: always
         paths:
             - test/tests_compliance_full_typ.xml
+            - test/build/code_coverage_tests_compliance_full_typ
+            - test/build/functional_coverage
             - test/build/vunit_out/preprocessed
         reports:
             junit: [test/tests_compliance_full_typ.xml]
@@ -181,10 +185,11 @@ test_ip_compliance_full_typ:
 test_ip_compliance_full_max:
     stage: test
     dependencies: [build_ip_and_tests]
-    only: *only
+    only:
+        - master
     script:
         - cd test
-        - make test_compliance_full_typ
+        - make test_compliance_full_max
     artifacts:
         when: always
         paths:
@@ -196,16 +201,22 @@ test_ip_compliance_full_max:
     # For now not all compliance tests are debugged, allow failure...
     allow_failure: true
 
+# TODO: Add min run if we find reasonable compromise for run time
+
+
+###############################################################################
+# Results processing
+###############################################################################
+
 process_coverage:
     stage: coverage
-    dependencies: [build_ip_and_tests, test_ip_compliance_full_typ, test_ip_compliance_full_max, test_ip_nightly]
+    dependencies: [build_ip_and_tests, test_ip_compliance_full_typ, test_ip_nightly]
     only:
-        - schedules
+        - master
     script:
         # Merge code coverage outputs from nightly and compliance stages, process code coverage
         - cd test/build
-        - gcov-tool merge -o code_coverage_merged code_coverage_tests_nightly code_coverage_tests_compliance
-        - mv code_coverage_tests_compliance/*.gcno code_coverage_merged
+        - gcov-tool merge -o code_coverage_merged code_coverage_tests_nightly code_coverage_tests_compliance_full_typ
         - mv code_coverage_tests_nightly/*.gcno code_coverage_merged
         - cd ..
 

@@ -3,6 +3,9 @@
 ## This test-case list contains all ISO16845-1 2016 tests in typical scenario
 ## (typical bit-rate).
 ##
+## Randomization: Yes
+## Coverage: Yes
+##
 ## This test-case list is randomized and coverage is collected on it.
 ##
 ## Parameters:

@@ -3,7 +3,8 @@
 ## This test-case list contains all ISO16845-1 2016 tests in maximal scenario
 ## (maximal possible bit-rate, minimal bit-time).
 ##
-## This test-case list is randomized and coverage is collected on it.
+## Randomization: Yes
+## Coverage: No
 ##
 ## Parameters:
 ##   System clock: 40 MHz
@@ -16,8 +17,8 @@ _default: &default
 
     # Test-bench configuration
     log_level: info
-    functional_coverage: true
-    code_coverage: true
+    functional_coverage: false
+    code_coverage: false
     error_tolerance: 0
     randomize: true
     #seed: 20
