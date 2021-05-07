@@ -1,2 +1,2 @@
 #!/bin/bash
-python3 gen_vrm.py --configPath=../test/tests_fast.yml
+python3 gen_vrm.py --configPath=../test/tests_fast_asic.yml
