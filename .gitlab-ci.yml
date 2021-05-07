@@ -79,6 +79,10 @@ build_linux_driver:
         paths:
             - driver/linux/ctucanfd.ko
 
+
+###############################################################################
+# Test runs (fast, nightly)
+###############################################################################
 test_ip_fast_asic:
     stage: test
     only: *only
@@ -134,29 +138,67 @@ test_ip_nightly:
     # OTOH, fast pipeline can't fail because it must pass before merge!
     allow_failure: true
 
-test_ip_compliance:
+
+###############################################################################
+# Compliance test runs
+###############################################################################
+test_ip_compliance_short:
     stage: test
     dependencies: [build_ip_and_tests]
     only: *only
     script:
         - cd test
-        - make test_compliance
+        - make test_compliance_short
     artifacts:
         when: always
         paths:
-            - test/tests_compliance.xml
-            - test/build/code_coverage_tests_compliance
-            - test/build/functional_coverage
+            - test/tests_compliance_short.xml
             - test/build/vunit_out/preprocessed
         reports:
-            junit: [test/tests_compliance.xml]
+            junit: [test/tests_compliance_short.xml]
+
+    # For now not all compliance tests are debugged, allow failure...
+    allow_failure: true
+    
+test_ip_compliance_full_typ:
+    stage: test
+    dependencies: [build_ip_and_tests]
+    only: *only
+    script:
+        - cd test
+        - make test_compliance_full_typ
+    artifacts:
+        when: always
+        paths:
+            - test/tests_compliance_full_typ.xml
+            - test/build/vunit_out/preprocessed
+        reports:
+            junit: [test/tests_compliance_full_typ.xml]
+
+    # For now not all compliance tests are debugged, allow failure...
+    allow_failure: true
+
+test_ip_compliance_full_max:
+    stage: test
+    dependencies: [build_ip_and_tests]
+    only: *only
+    script:
+        - cd test
+        - make test_compliance_full_typ
+    artifacts:
+        when: always
+        paths:
+            - test/tests_compliance_full_max.xml
+            - test/build/vunit_out/preprocessed
+        reports:
+            junit: [test/tests_compliance_full_max.xml]
 
     # For now not all compliance tests are debugged, allow failure...
     allow_failure: true
 
 process_coverage:
     stage: coverage
-    dependencies: [build_ip_and_tests, test_ip_compliance, test_ip_nightly]
+    dependencies: [build_ip_and_tests, test_ip_compliance_full_typ, test_ip_compliance_full_max, test_ip_nightly]
     only:
         - schedules
     script:
