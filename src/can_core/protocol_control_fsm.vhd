@@ -3205,7 +3205,8 @@ begin
     ---------------------------------------------------------------------------
     -- Synchronisation type
     ---------------------------------------------------------------------------
-    sync_control_d <= NO_SYNC when (sp_control_switch_data = '1' or
+    sync_control_d <= NO_SYNC when ((sp_control_switch_data = '1' and
+                                     is_transmitter = '1') or                                    
                                     sp_control_q_i = SECONDARY_SAMPLE or
                                     (sp_control_q_i = DATA_SAMPLE and
                                      is_transmitter = '1'))
