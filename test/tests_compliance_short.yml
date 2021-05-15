@@ -12,7 +12,7 @@
 ##
 ## Parameters:
 ##   System clock: 40 MHz
-##   Nominal bit-rate: 1 Mbit/s (65 % sample point)
+##   Nominal bit-rate: 2 Mbit/s (65 % sample point)
 ##   Data bit-rate: 4 Mbit/s (70 % sample point)
 ##
 ## Following tests from compliance suite are left out:
@@ -27,11 +27,11 @@ _default: &default
 
     # Test-bench configuration
     log_level: info
-    functional_coverage: false
+    functional_coverage: true
     code_coverage: false
     error_tolerance: 0
     randomize: false
-    #seed: 20
+    seed: 570098552
     debug: false
     iterations: 1
     timeout: 100 ms
@@ -52,17 +52,17 @@ _default: &default
 
     # DUT Bit timing settings
     # Applies for compliance tests and feature tests!
-    brp: 2
+    brp: 1
     prop: 5
     ph_1: 7
     ph_2: 7
-    sjw: 5
+    sjw: 4
 
     brp_fd: 1
     prop_fd: 3
     ph_1_fd: 3
     ph_2_fd: 3
-    sjw_fd: 2
+    sjw_fd: 2 
 
     # Clock configuration
     system_clock_period: 25 ns
@@ -156,18 +156,24 @@ compliance:
         iso_7_7_9_2:
         iso_7_7_10:
         iso_7_7_11:
-
+            # In this test, BRP must be equal to or higher than 2! This is due to
+            # input delay of CTU CAN FD.
+            brp: 2
         iso_7_8_1_1:
         iso_7_8_1_2:
         iso_7_8_1_3:
         iso_7_8_2_1:
         iso_7_8_2_2:
+            # In this test, BRP must be equal to or higher than 3. This is due
+            # to Hard synchronization in EDL (it is pipelined), therefore it
+            # reacts only two cycles after sample point. This might be a problem!
+            brp: 3
         iso_7_8_3_1:
             # In this test, BRP must be equal to BRP_FD! It is necessary since
             # huge time quanta difference will cause mismatch during first
             # resynchronisation (in ESI bit) during Data bit phase!
-            brp: 2
-            brp_fd: 2
+            brp: 1
+            brp_fd: 1
         iso_7_8_3_2:
         iso_7_8_3_3:
         iso_7_8_4_1:
@@ -210,7 +216,7 @@ compliance:
         iso_8_2_1:
         iso_8_2_2:
 #        iso_8_2_3:
-#        iso_8_2_4:
+        iso_8_2_4:
         iso_8_2_5:
         iso_8_2_6:
         iso_8_2_7:
@@ -267,11 +273,16 @@ compliance:
         iso_8_6_21:
 
         iso_8_7_1:
+            brp: 2
         iso_8_7_2:
+            brp: 3
         iso_8_7_3:
         iso_8_7_4:
+            brp: 3
         iso_8_7_5:
+            brp: 3
         iso_8_7_6:
+            brp: 3
         iso_8_7_7:
         iso_8_7_8:
         iso_8_7_9:

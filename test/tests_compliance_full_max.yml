@@ -146,12 +146,19 @@ compliance:
         iso_7_7_9_2:
         iso_7_7_10:
         iso_7_7_11:
+            # In this test, BRP must be equal to or higher than 2! This is due to
+            # input delay of CTU CAN FD.
+            brp: 2
 
         iso_7_8_1_1:
         iso_7_8_1_2:
         iso_7_8_1_3:
         iso_7_8_2_1:
         iso_7_8_2_2:
+            # In this test, BRP must be equal to or higher than 3. This is due
+            # to Hard synchronization in EDL (it is pipelined), therefore it
+            # reacts only two cycles after sample point. This might be a problem!
+            brp: 3
         iso_7_8_3_1:
             # In this test, BRP must be equal to BRP_FD! It is necessary since
             # huge time quanta difference will cause mismatch during first
@@ -257,11 +264,16 @@ compliance:
         iso_8_6_21:
 
         iso_8_7_1:
+            brp: 2
         iso_8_7_2:
+            brp: 3
         iso_8_7_3:
         iso_8_7_4:
+            brp: 3
         iso_8_7_5:
+            brp: 3
         iso_8_7_6:
+            brp: 3
         iso_8_7_7:
         iso_8_7_8:
         iso_8_7_9:
