@@ -206,7 +206,7 @@ package body overload_ftest is
         -- This is to cover possibility that sample point of one bit before end
         -- of EOF in Test node did not pass yet! We want to be also in last bit
         -- of EOF of Test node, because only then we get Overload frame!
-        wait for 400 ns;
+        wait for 100 ns;
 
         -- Now we should be in one bit before the end of EOF!
         force_bus_level(DOMINANT, chn);
