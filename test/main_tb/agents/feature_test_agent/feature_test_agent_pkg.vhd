@@ -1717,6 +1717,18 @@ package feature_test_agent_pkg is
         constant node           : in    t_feature_node;
         signal   channel        : inout t_com_channel
     );
+    
+    ----------------------------------------------------------------------------
+    -- Generate random bit-rate.
+    --
+    -- Arguments:
+    --  bt              Bit timing config
+    --  node            Node which shall be accessed (Test node or DUT).
+    ----------------------------------------------------------------------------
+    procedure CAN_generate_random_bit_timing(
+        variable bt         : inout   bit_time_config_type;
+        signal   channel    : inout t_com_channel
+    );
 
 
     ----------------------------------------------------------------------------
@@ -4379,5 +4391,66 @@ package body feature_test_agent_pkg is
         mem_bus_agent_enable_transaction_reporting(channel);
     end procedure;
 
-end package body;
+    procedure CAN_generate_random_bit_timing(
+        variable bt         : inout   bit_time_config_type;
+        signal   channel    : inout t_com_channel
+    ) is
+    begin
+        -- Generate random Nominal bit rate!
+        rand_int_v(127, bt.prop_nbt);
+        rand_int_v(63, bt.ph1_nbt);
+        rand_int_v(63, bt.ph2_nbt);
+        -- Longer TQ is possible but test run-time is killing us!
+        rand_int_v(32, bt.tq_nbt);
+        rand_int_v(33, bt.sjw_nbt);
 
+        -- Generate random Nominal bit rate!
+        rand_int_v(63, bt.prop_dbt);
+        rand_int_v(31, bt.ph1_dbt);
+        rand_int_v(31, bt.ph2_dbt);        
+        -- Constrain time quanta to something realistinc for data phase so
+        -- that we don't have too long run times!
+        rand_int_v(16, bt.tq_dbt);
+        rand_int_v(33, bt.sjw_dbt);
+        
+        -- Constrain minimal BRP (0 is not allowed)!
+        if (bt.tq_nbt = 0) then
+            bt.tq_nbt := 1;
+        end if;
+        if (bt.tq_dbt = 0) then
+            bt.tq_dbt := 1;
+        end if;
+
+        -- Make sure we have at least 10 cycles in nominal bit-rate
+        -- (TSEG1=6 and TSEG2=4). This is what we have described as
+        -- recommended minimum in datasheet!
+        if (bt.tq_nbt * (bt.prop_nbt + bt.ph1_dbt + 1) < 6) then
+            bt.prop_nbt := 3;
+            bt.ph1_nbt := 3;
+        end if;
+        if (bt.tq_nbt * bt.ph2_nbt < 4) then
+            bt.ph2_nbt := 4;
+        end if;
+
+        -- Make sure we have at least 5 clock cycles in data bit-rate
+        -- (TSEG1 = 3 and TSEG2 = 2), this is absolute minimum!
+        if (bt.tq_dbt * (bt.prop_dbt + bt.ph1_dbt + 1) < 3) then
+            bt.prop_dbt := 1;
+            bt.ph1_dbt := 1;
+        end if;
+        if (bt.tq_dbt * bt.ph2_dbt < 2) then
+            bt.ph2_dbt := 2;
+        end if;
+        
+        -- Make sure we have SJW at least 1
+        if (bt.sjw_nbt = 0) then
+            bt.sjw_dbt := 1;
+        end if;
+        if (bt.sjw_dbt = 0) then
+            bt.sjw_dbt := 1;
+        end if;
+        
+
+    end procedure;
+
+end package body;
