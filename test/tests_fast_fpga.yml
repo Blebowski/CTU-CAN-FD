@@ -48,7 +48,8 @@ _default: &default
     system_clock_period: 10 ns
     
     # Number of frames used from each dataset, 1000 means whole dataset
-    reference_iterations: 50
+    # These take really long time, so we run only few frames here!
+    reference_iterations: 10
 
 unit:
     default:
