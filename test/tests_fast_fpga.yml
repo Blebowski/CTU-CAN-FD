@@ -2,7 +2,7 @@ _default: &default
 
     # Test-bench configuration
     log_level: info
-    functional_coverage: false
+    functional_coverage: true
     code_coverage: false
     error_tolerance: 0
     randomize: false
@@ -31,23 +31,25 @@ _default: &default
 
     # DUT Bit timing settings
     # (Applies for compliance tests and feature tests!)
-    brp: 5
-    prop: 10
-    ph_1: 10
-    ph_2: 10
+    brp: 2
+    prop: 5
+    ph_1: 7
+    ph_2: 7
     sjw: 5
+
     brp_fd: 1
     prop_fd: 5
-    ph_1_fd: 5
-    ph_2_fd: 5
-    sjw_fd: 4
-
+    ph_1_fd: 7
+    ph_2_fd: 7
+    sjw_fd: 5
+    
     # Clock configuration
     # (Applies for compliance tests and feature tests!)
     system_clock_period: 10 ns
     
     # Number of frames used from each dataset, 1000 means whole dataset
-    reference_iterations: 50
+    # These take really long time, so we run only few frames here!
+    reference_iterations: 10
 
 unit:
     default:
@@ -86,7 +88,8 @@ feature:
 
         btr:
         btr_fd:
-        btr_maximal:
+        # Do not run to decrease duration of fast regression!
+        #btr_maximal:
         btr_minimal:
         btr_ssp_access:
         bus_start:

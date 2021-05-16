@@ -491,6 +491,26 @@ begin
 
     -- psl default clock is rising_edge(clk_sys);
 
+    -- psl min_lenght_ph1_nbt_asrt : assert always
+    --  {drv_ena = '1'} |=>
+    --      {to_integer(unsigned(tseg1_nbt)) * to_integer(unsigned(brp_nbt)) > 2}
+    --  report "Lenght of TSEG1(NBT) must be more than 2 clock cycles!";
+
+    -- psl min_lenght_ph2_nbt_asrt : assert always
+    --  {drv_ena = '1'} |=>
+    --      {to_integer(unsigned(tseg2_nbt)) * to_integer(unsigned(brp_nbt)) > 1}
+    --  report "Lenght of TSEG2(NBT) must be more than 1 clock cycle!";
+    
+    -- psl min_lenght_ph1_dbt_asrt : assert always
+    --  {drv_ena = '1'} |=>
+    --      {to_integer(unsigned(tseg1_dbt)) * to_integer(unsigned(brp_dbt)) > 2}
+    --  report "Lenght of TSEG1(DBT) must be more than 2 clock cycles!";
+
+    -- psl min_lenght_ph2_dbt_asrt : assert always
+    --  {drv_ena = '1'} |=>
+    --      {to_integer(unsigned(tseg2_dbt)) * to_integer(unsigned(brp_dbt)) > 1}
+    --  report "Lenght of TSEG2(DBT) must be more than 1 clock cycle!";
+    
     -- psl nominal_sample_cov : cover
     --  {sp_control = NOMINAL_SAMPLE};
 

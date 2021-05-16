@@ -20,75 +20,105 @@ def connect_to_server():
     print("Gitlab version: {}".format(gl.version))
 
 
-def cleanup_artifacts(older_than : int):
+def get_abs_day(year, month, day):
+    """
+    Calculates absolute day from year 0
+    """
+    return (int(year) - 1) * 365 + (int(month) - 1) * 31 + int(day)
+
+
+def get_all_jobs_or_pipelines(input_type : str):
+    assert(input_type == "jobs" or input_type == "pipelines")
+    print("Collecting {}...".format(input_type))
     project = gl.projects.get(proj_id)
+    result_list = []
+    
     page = 1
-    jobs = project.jobs.list(page=page)
+    while True:
+        print("Collecting {} from page: {}".format(input_type, page))
+        type_attr = getattr(project, input_type)
+        page_list = type_attr.list(page=page)
+        if len(page_list) <= 0:
+            break
 
-    while (len(jobs) > 0):
-        print("Cleaning jobs on page: {}".format(page))
-
-        # Absolute number of days - today
-        td = date.today()
-        cur_day = (td.year - 1) * 365 + (td.month - 1) * 31 + td.day
-
-        for job in jobs:
-            if (job.finished_at == None):
-                continue
-            
-            # Absolute number of days when job finished
-            [art_year, art_month, art_day] = job.finished_at.split('T')[0].split('-')
-            art_days = (int(art_year) - 1) * 365 + (int(art_month) - 1) * 31 + int(art_day)
-
-            # TODO: Check that artifacts actually exist before trying to erase them!
-            if ((art_days + older_than) < cur_day):
-                print("Erasing artifacts of job: {} from: {}".format(job.id, job.finished_at))
-                job.delete_artifacts()
-
+        result_list += page_list
         page += 1
-        jobs = project.jobs.list(page=page)
+
+    print("Done! Total {} collected: {}".format(input_type, len(result_list)))
+    return result_list
+
+
+def cleanup_artifacts(older_than : int):
+    print("Cleaning artifacts...")
+    td = date.today()
+    cur_day = get_abs_day(td.year, td.month, td.day)
+
+    for job in get_all_jobs_or_pipelines("jobs"):
+        print("Cleaning artifacts of job: {}".format(job.id))
+        # Avoid erasing unfinished jobs
+        if job.finished_at is None:
+            continue
+
+        # Absolute number of days when job finished
+        [art_year, art_month, art_day] = job.finished_at.split('T')[0].split('-')
+        art_days = get_abs_day(art_year, art_month, art_day)
+
+        if (art_days + older_than) < cur_day:
+            print("Erasing artifacts of job: {} from: {}".format(job.id, job.finished_at))
+            job.delete_artifacts()
 
 
 def cleanup_pipelines(older_than : int):
-    project = gl.projects.get(proj_id)
-    page = 1
-    pipelines = project.pipelines.list(page=page)
-
-    while (len(pipelines) > 0):
-        print("Cleaning pipelines on page: {}".format(page))
-    
-        # Absolute number of days - today
+    for pipeline in get_all_jobs_or_pipelines("pipelines"):
+        print("Cleaning pipeline of job: {}".format(pipeline.id))
         td = date.today()
-        cur_day = (td.year - 1) * 365 + (td.month - 1) * 31 + td.day
+        cur_day = get_abs_day(td.year, td.month, td.day)
 
-        for pipeline in pipelines:
-            if (pipeline.created_at == None):
-                continue
-            
-            # Absolute number of days when job finished
-            [art_year, art_month, art_day] = pipeline.created_at.split('T')[0].split('-')
-            art_days = (int(art_year) - 1) * 365 + (int(art_month) - 1) * 31 + int(art_day)
+        if pipeline.created_at is None:
+            continue
 
-            if ((art_days + older_than) < cur_day):
-                print("Erasing pipeline: {} from: {}".format(pipeline.id, pipeline.created_at))
-                pipeline.delete()
+        # Absolute number of days when job finished
+        [art_year, art_month, art_day] = pipeline.created_at.split('T')[0].split('-')
+        art_days = get_abs_day(art_year, art_month, art_day)
 
-        page += 1
-        pipelines = project.pipelines.list(page=page)
+        if (art_days + older_than) < cur_day:
+            print("Erasing pipeline: {} from: {}".format(pipeline.id, pipeline.created_at))
+            pipeline.delete()
+
+
+def cleanup_jobs(older_than : int):
+    all_jobs = get_all_jobs_or_pipelines("jobs")
+    td = date.today()
+    cur_day = get_abs_day(td.year, td.month, td.day)
+
+    for job in all_jobs:
+        # Avoid erasing unfinished jobs
+        if job.finished_at is None:
+            continue
+
+        # Absolute number of days when job finished
+        [art_year, art_month, art_day] = job.finished_at.split('T')[0].split('-')
+        print("Year: {}, Month: {}, Day: {}".format(art_year, art_month, art_day))
+        art_days = get_abs_day(art_year, art_month, art_day)
+
+        if (art_days + older_than) < cur_day:
+            print("Erasing job: {}".format(job.id))
+            job.erase()
 
 
 if __name__ == "__main__":
 
     print(sys.argv)
-    if (len(sys.argv) != 4):
+    if len(sys.argv) != 4:
         print("The script shall be called with arguments: <TOKEN> <OLDER_THAN> <CLEAN_MASK>")
         print("     <TOKEN> Gitlab access token")
         print("     <OLDER_THAN> Items older than <OLDER_THAN> days will be cleaned")
-        print("     <CLEAN_MASK> Items to be erased")
+        print("     <CLEAN_MASK> Items to be erased (decimal number)")
         print("         Bit 0   - Erase artifacts")
         print("         Bit 1   - Erase pipelines")
+        print("         Bit 2   - Erase jobs")
 
-        sys.exit();
+        sys.exit()
 
     token = sys.argv[1]
     older_than = sys.argv[2]
@@ -96,25 +126,30 @@ if __name__ == "__main__":
 
     clean_artifacts = False
     clean_pipelines = False
+    clean_jobs = False
 
-    if (int(mask, 16) & 0x1):
+    if int(mask, 16) & 0x1:
         clean_artifacts = True
         print("Script will erase artifacts older than: {} days".format(older_than))
-    if (int(mask, 16) & 0x2):
+    if int(mask, 16) & 0x2:
         clean_pipelines = True
         print("Script will erase pipelines older than: {} days".format(older_than))
+    if int(mask, 16) & 0x4:
+        clean_jobs = True
+        print("Script will erase jobs older than: {} days".format(older_than))
 
-    if ((older_than.isdigit() == False)):
+    if not older_than.isdigit():
         print("<OLDER_THAN> should be integer!")
-        sys.exit();
+        sys.exit()
 
     connect_to_server()
 
-    if (clean_artifacts):
+    if clean_artifacts:
         cleanup_artifacts(int(older_than))
-
-    if (clean_pipelines):
+    if clean_pipelines:
         cleanup_pipelines(int(older_than))
+    if cleanup_jobs:
+        cleanup_jobs(int(older_than))
 
     sys.exit()
 

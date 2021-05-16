@@ -106,6 +106,8 @@ end package;
 
 
 package body btr_ftest is
+
+
     procedure btr_ftest_exec(
         signal      chn             : inout  t_com_channel
     ) is
@@ -137,82 +139,21 @@ package body btr_ftest is
         CAN_turn_controller(false, DUT_NODE, chn);
         CAN_turn_controller(false, TEST_NODE, chn);
 
-        -- Generate random Nominal bit rate!
-        rand_int_v(127, bus_timing.prop_nbt);
-        rand_int_v(63, bus_timing.ph1_nbt);
-        rand_int_v(63, bus_timing.ph2_nbt);
+        CAN_generate_random_bit_timing(bus_timing, chn);
         
-        -- Longer TQ is possible but test run-time is killing us!
-        rand_int_v(32, bus_timing.tq_nbt);
-        rand_int_v(33, bus_timing.sjw_nbt);
-        
+        -----------------------------------------------------------------------
         -- Configure delay of TX -> RX so that for any generated bit-rate, it
         -- is not too high! Otherwise, roundtrip will be too high and Node will
         -- not manage to receive ACK in time!
         -- Before sample point, whole roundtrip must be made (and 2 more clock
         -- cycles due to input delay!). Lets take the delay as one third of
         -- TSEG1. Roundtrip will take two thirds and we should be safe!
-        
+        -----------------------------------------------------------------------
         tx_delay := (((1 + bus_timing.prop_nbt + bus_timing.ph1_nbt) *
                        bus_timing.tq_nbt) / 3) * 10 ns;
         info_m("TX delay is: " & time'image(tx_delay));
         ftr_tb_set_tran_delay(tx_delay, DUT_NODE, chn);
         ftr_tb_set_tran_delay(tx_delay, TEST_NODE, chn);
-
-        -----------------------------------------------------------------------
-        -- Leave Data bit rate unconfigured! This will result in XXXs in register
-        -- map, and XXXs in prescaler (we will see about warnings), but in this
-        -- test we will NOT use data bit-rate, therefore all logic operating
-        -- on XXXs should be ignored! So it will be a nice experiment that
-        -- even crazy things in DBT does not ruin NBT operation...
-        -- This test will never have chance to pass at any "X pesimistic"
-        -- simulation. But who has money for X pessimism simulator? :(
-        -----------------------------------------------------------------------
-
-        -- SJW should be at least one because clocks differ by some value so
-        -- there should be chance to compensate
-        if (bus_timing.sjw_nbt = 0) then
-            bus_timing.sjw_nbt := 1;
-        end if;
-
-        -- Constrain minimal BRP (0 is not allowed)!
-        if (bus_timing.tq_nbt = 0) then
-            bus_timing.tq_nbt := 1;
-        end if;
-
-        -- Pre-calculate expected number of clock cycles
-        clock_per_bit := (1 + bus_timing.prop_nbt + bus_timing.ph1_nbt +
-                          bus_timing.ph2_nbt) * bus_timing.tq_nbt;
-
-        -- It has no sense to test frequencies above 5 MHz for Nominal Bit-rate
-        -- lets constrain it to something reasonable.
-        while (clock_per_bit < 20) loop
-
-            if (bus_timing.prop_nbt < 127) then
-                bus_timing.prop_nbt := bus_timing.prop_nbt + 1;
-            end if;
-
-            if (bus_timing.ph1_nbt < 63) then
-                bus_timing.ph1_nbt := bus_timing.ph1_nbt + 1;
-            end if;
-
-            if (bus_timing.ph2_nbt < 63) then
-                bus_timing.ph2_nbt := bus_timing.ph2_nbt + 1;
-            end if;
-
-            clock_per_bit := (1 + bus_timing.prop_nbt + bus_timing.ph1_nbt +
-                              bus_timing.ph2_nbt) * bus_timing.tq_nbt;
-        end loop;
-
-        -- Constrain minimal duration of PH2 to be 2 clock cycles!
-        if (bus_timing.ph2_nbt * bus_timing.prop_nbt < 2) then
-            bus_timing.ph2_nbt := 2;
-        end if;
-
-        -- Constrain minimal duration of TSEG1 to be 2 clock cycles!
-        if ((bus_timing.prop_nbt + bus_timing.ph1_nbt + 1) * bus_timing.tq_nbt < 2) then
-            bus_timing.prop_nbt := 1;
-        end if;
 
         -- Pre-calculate expected number of clock cycles after all corrections!
         clock_per_bit := (1 + bus_timing.prop_nbt + bus_timing.ph1_nbt +

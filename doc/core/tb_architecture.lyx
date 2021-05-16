@@ -5379,7 +5379,36 @@ BTR[BRP]>2 Prescaler for nominal bit rate must be higher than 2.
 \series bold
 iso_8_8_1_2
 \series default
-.
+, 
+\series bold
+iso_7_7_11
+\series default
+, 
+\series bold
+iso_8_7_1
+\series default
+, 
+\series bold
+iso_8_7_2
+\series default
+, 
+\series bold
+iso_8_7_4
+\series default
+, 
+\series bold
+iso_8_7_5
+\series default
+, 
+\series bold
+iso_8_7_6.
+\end_layout
+
+\begin_layout Description
+BTR[BRP]>1 Prescaler for nominal bit rate must be higher than 1.
+ This condition must be met for following tests: 
+\series bold
+iso_8_7_1
 \end_layout
 
 \begin_layout Description
@@ -5417,6 +5446,11 @@ iso_8_8_4_1
 iso_8_8_4_2
 \series default
 .
+\end_layout
+
+\begin_layout Standard
+These limitations occur due to lack of input delay compensation in compliance
+ test library implementation.
 \end_layout
 
 \begin_layout Bibliography

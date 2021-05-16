@@ -399,7 +399,7 @@ begin
         -----------------------------------------------------------------------
         -- PLI clock generation
         --
-        -- Creatse clock for synchronous communication over PLI interface.
+        -- Create clock for synchronous communication over PLI interface.
         -- Although compliance test library executes test in different context,
         -- it needs to synchronize with simulator context. To do this, 
         -- compliance test library passes all messages to TB via shared memory,
@@ -408,9 +408,9 @@ begin
         pli_clk_gen_proc : process
         begin
             pli_clk <= '1';
-            wait for 1 ns;
+            wait for 5 ns;
             pli_clk <= '0';
-            wait for 1 ns;
+            wait for 5 ns;
         end process;
 
     end generate;

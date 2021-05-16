@@ -1514,7 +1514,7 @@ begin
         load_init_vect_i <= '0';
         
         -- Bit time counters enabling
-        nbt_ctrs_en <= '0';
+        nbt_ctrs_en <= '1';
         dbt_ctrs_en <= '0';
 
         -- Clear block register for retransmitt counter add signal.
@@ -1576,7 +1576,6 @@ begin
             
             -- Keep both counters enabled to make sure that Error frame starts
             -- at proper time when error occurred in Data Bit-rate.
-            nbt_ctrs_en <= '1';
             dbt_ctrs_en <= '1';
 
         else
@@ -1586,6 +1585,7 @@ begin
             -- Unit is Off (drv_ena = '0')
             -------------------------------------------------------------------
             when s_pc_off =>
+                nbt_ctrs_en <= '0';
                 if (drv_ena = CTU_CAN_ENABLED) then
                     ctrl_ctr_pload_i <= '1';
                     ctrl_ctr_pload_val <= C_INTEGRATION_DURATION;
@@ -1598,7 +1598,6 @@ begin
                 bit_err_disable <= '1';
                 ctrl_ctr_ena <= '1';
                 perform_hsync <= '1';
-                nbt_ctrs_en <= '1';
                 
                 -- Restart integration upon reception of DOMINANT bit or upon
                 -- synchronization edge detected!
@@ -1648,7 +1647,6 @@ begin
                 tx_dominant <= '1';
                 err_pos <= ERC_POS_SOF;
                 crc_enable <= '1';
-                nbt_ctrs_en <= '1';
                 is_sof <= '1';
                 
                 -- If we have transmission pending, FSM goes to SOF in sample
@@ -1678,7 +1676,6 @@ begin
                 err_pos <= ERC_POS_ARB;
                 crc_enable <= '1';
                 alc_id_field <= ALC_BASE_ID;
-                nbt_ctrs_en <= '1';
                 
                 if (arbitration_lost_condition = '1') then
                     txtb_hw_cmd_d.unlock <= '1';
@@ -1711,7 +1708,6 @@ begin
                 rx_store_rtr_i <= '1';
                 err_pos <= ERC_POS_ARB;
                 alc_id_field <= ALC_SRR_RTR;
-                nbt_ctrs_en <= '1';
                 
                 if (arbitration_lost_condition = '1') then
                     txtb_hw_cmd_d.unlock <= '1';
@@ -1744,7 +1740,6 @@ begin
                 rx_store_ide_i <= '1';
                 crc_enable <= '1';
                 alc_id_field <= ALC_IDE;
-                nbt_ctrs_en <= '1';
                 
                 if (rx_data_nbs = RECESSIVE) then
                     ctrl_ctr_pload_i <= '1';
@@ -1796,7 +1791,6 @@ begin
                 bit_err_disable <= '1';
                 crc_enable <= '1';
                 alc_id_field <= ALC_EXTENSION;
-                nbt_ctrs_en <= '1';
                 
                 if (arbitration_lost_condition = '1') then
                     txtb_hw_cmd_d.unlock <= '1';
@@ -1829,7 +1823,6 @@ begin
                 rx_store_rtr_i <= '1';
                 err_pos <= ERC_POS_ARB;
                 alc_id_field <= ALC_RTR;
-                nbt_ctrs_en <= '1';
                 
                 if (arbitration_lost_condition = '1') then
                     txtb_hw_cmd_d.unlock <= '1';
@@ -1864,7 +1857,6 @@ begin
                 crc_enable <= '1';
                 is_control <= '1';
                 bit_err_disable_receiver <= '1';
-                nbt_ctrs_en <= '1';
                 
                 if (is_transmitter = '1') then
                     if (tran_frame_type_i = NORMAL_CAN) then
@@ -1918,7 +1910,6 @@ begin
                 crc_enable <= '1';
                 is_control <= '1';
                 bit_err_disable_receiver <= '1';
-                nbt_ctrs_en <= '1';
                 
                 if (is_transmitter = '1') then
                     tx_dominant <= '1';
@@ -1935,7 +1926,6 @@ begin
                 crc_enable <= '1';
                 is_control <= '1';
                 bit_err_disable_receiver <= '1';
-                nbt_ctrs_en <= '1';
                 
                 if (is_transmitter = '1') then
                     tx_dominant <= '1';
@@ -1982,7 +1972,6 @@ begin
                 crc_enable <= '1';
                 is_control <= '1';
                 bit_err_disable_receiver <= '1';
-                nbt_ctrs_en <= '1';
             
                 if (rx_data_nbs = DOMINANT) then
                     ctrl_ctr_pload_i <= '1';
@@ -2037,7 +2026,6 @@ begin
                 crc_enable <= '1';
                 is_control <= '1';
                 bit_err_disable_receiver <= '1';
-                nbt_ctrs_en <= '1';
                 dbt_ctrs_en <= '1';
                 btmc_reset  <= '1';
 
@@ -2063,7 +2051,6 @@ begin
                 crc_enable <= '1';
                 is_control <= '1';
                 bit_err_disable_receiver <= '1';
-                nbt_ctrs_en <= '1';
                 dbt_ctrs_en <= '1';
                 
                 if (is_transmitter = '1' and is_err_active = '1') then
@@ -2088,9 +2075,7 @@ begin
                 is_control <= '1';
                 bit_err_disable_receiver <= '1';
                 
-                if (sp_control_q_i = NOMINAL_SAMPLE) then
-                    nbt_ctrs_en <= '1';
-                else
+                if (sp_control_q_i /= NOMINAL_SAMPLE) then
                     dbt_ctrs_en <= '1';
                 end if;
                 
@@ -2137,9 +2122,7 @@ begin
                 compl_ctr_ena_i <= '1';
                 bit_err_disable_receiver <= '1';
                 
-                if (sp_control_q_i = NOMINAL_SAMPLE) then
-                    nbt_ctrs_en <= '1';
-                else
+                if (sp_control_q_i /= NOMINAL_SAMPLE) then
                     dbt_ctrs_en <= '1';
                 end if;
                 
@@ -2190,9 +2173,7 @@ begin
                 is_stuff_count <= '1';
                 bit_err_disable_receiver <= '1';
                 
-                if (sp_control_q_i = NOMINAL_SAMPLE) then
-                    nbt_ctrs_en <= '1';
-                else
+                if (sp_control_q_i /= NOMINAL_SAMPLE) then
                     dbt_ctrs_en <= '1';
                 end if;
                 
@@ -2220,9 +2201,7 @@ begin
                 is_crc <= '1';
                 bit_err_disable_receiver <= '1';
                 
-                if (sp_control_q_i = NOMINAL_SAMPLE) then
-                    nbt_ctrs_en <= '1';
-                else
+                if (sp_control_q_i /= NOMINAL_SAMPLE) then
                     dbt_ctrs_en <= '1';
                 end if;
 
@@ -2242,7 +2221,6 @@ begin
                 tick_state_reg <= '1';
                 err_pos <= ERC_POS_ACK;
                 is_crc_delim  <= '1';
-                nbt_ctrs_en <= '1';
                 dbt_ctrs_en <= '1';
                 bit_err_disable <= '1';
                 destuff_enable_clear <= '1';
@@ -2272,7 +2250,6 @@ begin
                 tick_state_reg <= '1';
                 err_pos <= ERC_POS_ACK;
                 is_ack_field  <= '1';
-                nbt_ctrs_en <= '1';
                 dbt_ctrs_en <= '1';
                 
                 if (is_receiver = '1' and crc_match = '1' and
@@ -2305,7 +2282,6 @@ begin
                 tick_state_reg <= '1';
                 err_pos <= ERC_POS_ACK;
                 is_ack_field  <= '1';
-                nbt_ctrs_en <= '1';
                 dbt_ctrs_en <= '1';
 
                 if (is_receiver = '1' and crc_match = '1' and
@@ -2332,7 +2308,6 @@ begin
                 tick_state_reg <= '1';
                 err_pos <= ERC_POS_ACK;
                 is_ack_field  <= '1';
-                nbt_ctrs_en <= '1';
                 dbt_ctrs_en <= '1';
                 
                 -- No ACK sent now, but dominant or recessive should be tolerated.
@@ -2355,7 +2330,6 @@ begin
                 ctrl_ctr_pload_val <= C_EOF_DURATION;
                 err_pos <= ERC_POS_ACK;
                 is_ack_delim  <= '1';
-                nbt_ctrs_en <= '1';
                 bit_err_disable <= '1';
                 
                 if (rx_data_nbs = DOMINANT) then
@@ -2374,7 +2348,6 @@ begin
                 ctrl_ctr_ena <= '1';
                 is_eof <= '1';
                 err_pos <= ERC_POS_EOF;
-                nbt_ctrs_en <= '1';
                 bit_err_disable <= '1';
 
                 if (ctrl_ctr_zero = '1') then
@@ -2427,7 +2400,6 @@ begin
             when s_pc_intermission =>
                 ctrl_ctr_ena <= '1';
                 is_intermission <= '1';
-                nbt_ctrs_en <= '1';
                 retr_ctr_add_block_clr <= '1';
                 bit_err_disable <= '1';
                 
@@ -2521,7 +2493,6 @@ begin
                 crc_spec_enable_i <= '1';
                 bit_err_disable <= '1';
                 is_suspend <= '1';
-                nbt_ctrs_en <= '1';
                 
                 if (rx_data_nbs = DOMINANT) then
                     tick_state_reg <= '1';
@@ -2555,7 +2526,6 @@ begin
                 perform_hsync <= '1';
                 crc_spec_enable_i <= '1';
                 bit_err_disable <= '1';
-                nbt_ctrs_en <= '1';
                 
                 if (is_bus_off = '0') then
                     if (rx_data_nbs = DOMINANT) then
@@ -2598,7 +2568,6 @@ begin
             -------------------------------------------------------------------
             when s_pc_reintegrating_wait =>
                 bit_err_disable <= '1';
-                nbt_ctrs_en <= '1';
                 
                 if (drv_bus_off_reset_q = '1') then
                     tick_state_reg <= '1';
@@ -2616,7 +2585,6 @@ begin
                 ctrl_ctr_ena <= '1';
                 perform_hsync <= '1';
                 bit_err_disable <= '1';
-                nbt_ctrs_en <= '1';
 
                 -- Restart integration upon reception of DOMINANT bit or upon
                 -- synchronization edge detected!
@@ -2664,7 +2632,6 @@ begin
                 is_err_frm <= '1';
                 tx_dominant <= '1';
                 err_pos <= ERC_POS_ERR;
-                nbt_ctrs_en <= '1';
 
                 if (ctrl_ctr_zero = '1') then
                     tick_state_reg <= '1';
@@ -2680,7 +2647,6 @@ begin
                 ctrl_ctr_ena <= '1';
                 is_err_frm <= '1';
                 err_pos <= ERC_POS_ERR;
-                nbt_ctrs_en <= '1';
                 
                 -- Node sending Passive error flag may receive RECESSIVE or
                 -- DOMINANT, and DOMINANT shall not be treated as bit error!
@@ -2712,7 +2678,6 @@ begin
             when s_pc_err_delim_wait =>
                 is_err_frm <= '1';
                 err_pos <= ERC_POS_ERR;
-                nbt_ctrs_en <= '1';
                 ack_err_flag_clr <= '1';
                 
                 -- When waiting for RECESSIVE bit after Error flag, unit
@@ -2746,7 +2711,6 @@ begin
             when s_pc_err_flag_too_long =>
                 is_err_frm <= '1';
                 err_pos <= ERC_POS_ERR;
-                nbt_ctrs_en <= '1';
                 bit_err_disable <= '1';
                 ctrl_ctr_ena <= '1';
 
@@ -2771,7 +2735,6 @@ begin
             when s_pc_ovr_flag_too_long =>
                 is_overload <= '1';
                 err_pos <= ERC_POS_OVRL;
-                nbt_ctrs_en <= '1';
                 bit_err_disable <= '1';
                 ctrl_ctr_ena <= '1';
 
@@ -2796,7 +2759,6 @@ begin
                 is_err_frm <= '1';
                 ctrl_ctr_ena <= '1';
                 err_pos <= ERC_POS_ERR;
-                nbt_ctrs_en <= '1';
                 bit_err_disable <= '1';
                                 
                 if (ctrl_ctr_zero = '1') then
@@ -2820,7 +2782,6 @@ begin
                 ctrl_ctr_ena <= '1';
                 tx_dominant <= '1';
                 err_pos <= ERC_POS_OVRL;
-                nbt_ctrs_en <= '1';
                 
                 if (ctrl_ctr_zero = '1') then
                     tick_state_reg <= '1';
@@ -2834,7 +2795,6 @@ begin
             when s_pc_ovr_delim_wait =>
                 is_overload <= '1';
                 err_pos <= ERC_POS_OVRL;
-                nbt_ctrs_en <= '1';
                 
                 if (ctrl_ctr_zero = '0') then
                     ctrl_ctr_ena <= '1';
@@ -2859,7 +2819,6 @@ begin
                 ctrl_ctr_ena <= '1';
                 is_overload <= '1';
                 err_pos <= ERC_POS_OVRL;
-                nbt_ctrs_en <= '1';
                 bit_err_disable <= '1';
 
                 if (ctrl_ctr_zero = '1') then
@@ -3246,7 +3205,8 @@ begin
     ---------------------------------------------------------------------------
     -- Synchronisation type
     ---------------------------------------------------------------------------
-    sync_control_d <= NO_SYNC when (sp_control_switch_data = '1' or
+    sync_control_d <= NO_SYNC when ((sp_control_switch_data = '1' and
+                                     is_transmitter = '1') or                                    
                                     sp_control_q_i = SECONDARY_SAMPLE or
                                     (sp_control_q_i = DATA_SAMPLE and
                                      is_transmitter = '1'))

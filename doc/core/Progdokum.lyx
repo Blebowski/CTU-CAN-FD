@@ -3409,12 +3409,12 @@ System clock period is equal to minimal time quanta, therefore it affects
 \end_layout
 
 \begin_layout Itemize
-If bit rate prescaler = 1, then Phase_Seg2 >= 2.
+Phase_Seg2 >= 2 minimal time quanta.
  This is valid for both nominal and data bit rate.
 \end_layout
 
 \begin_layout Itemize
-Sync_Seg + Prop_Seg + Phase_Seg1 > 2.
+Sync_Seg + Prop_Seg + Phase_Seg1 > 2 minimal time quanta.
  This is valid for both nominal and data bit rate.
 \end_layout
 

@@ -511,7 +511,7 @@ filename "version.tex"
 \noindent
 \align center
 \begin_inset Tabular
-<lyxtabular version="3" rows="12" columns="4">
+<lyxtabular version="3" rows="13" columns="4">
 <features tabularvalignment="middle">
 <column alignment="center" valignment="top" width="1.5cm">
 <column alignment="center" valignment="top" width="3cm">
@@ -948,7 +948,7 @@ Add notes on clock gating.
 </cell>
 </row>
 <row>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -957,7 +957,7 @@ Add notes on clock gating.
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -966,7 +966,7 @@ Add notes on clock gating.
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -975,11 +975,51 @@ Add notes on clock gating.
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
 Add description of memory testability.
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+0.12
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+2.3.4
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+10-05-2021
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Keep NBTM counter enabled always even in data bit rate.
+ Fixes bug with improper PH2 lenght if error is detected during data bit
+ rate with BRP=1
 \end_layout
 
 \end_inset
@@ -1306,12 +1346,10 @@ When CTU CAN FD GIT repository is clonned, register map can be generated
 \end_layout
 
 \begin_layout Verbatim
-
 cd scripts
 \end_layout
 
 \begin_layout Verbatim
-
 ./update_reg_map
 \end_layout
 
@@ -1324,12 +1362,10 @@ Documentation can be exported from VHDL RTL codes by following script:
 \end_layout
 
 \begin_layout Verbatim
-
 cd scripts
 \end_layout
 
 \begin_layout Verbatim
-
 python gen_lyx_tables.py --configPath vhdl_lyx_interface_cfg.yml
 \end_layout
 
@@ -1362,12 +1398,10 @@ CTU CAN FD contains release tags in GIT repository.
 \end_layout
 
 \begin_layout Verbatim
-
 cd scripts
 \end_layout
 
 \begin_layout Verbatim
-
 python create_release.py --output_dir ../release_directory_name
 \end_layout
 
@@ -1389,12 +1423,10 @@ src/component.xml
 \end_layout
 
 \begin_layout Verbatim
-
 cd scripts
 \end_layout
 
 \begin_layout Verbatim
-
 python gen_vivado_component.py
 \end_layout
 
@@ -32772,12 +32804,11 @@ literal "false"
 \end_layout
 
 \begin_layout Standard
-NBTCM is enabled during 
-\color red
-nominal bit rate
-\color inherit
-.
- DBTCM is enabled during 
+NBTCM is enabled always, apart from situations when CTU CAN FD is disabled.
+ This is to make sure, that if error is detected during data bit rate (DBTCM
+ is being used), Nominal bit time counter will be available for measuring
+ duration of Ph2 ASAP after error was detected.
+ DBTCM is enabled only during 
 \color red
 data bit rate
 \color inherit
@@ -32786,11 +32817,7 @@ data bit rate
 \color red
 bit rate
 \color inherit
- is switched (
-\color red
-BRS
-\color inherit
- and CRC delimiter), both NBTCM and DBTCM are running.
+ is switched, both NBTCM and DBTCM are running.
  When NBTCM or DBTCM are disabled, none of its both counters are running
  (to save power).
  Both counters are erased when bit time segment ends to force alignment

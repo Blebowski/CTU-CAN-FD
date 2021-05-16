@@ -27,16 +27,17 @@ _default: &default
 
     # DUT Bit timing settings
     # Applies for compliance tests and feature tests!
-    brp: 5
-    prop: 10
-    ph_1: 10
-    ph_2: 10
+    brp: 2
+    prop: 5
+    ph_1: 7
+    ph_2: 7
     sjw: 5
+
     brp_fd: 1
     prop_fd: 5
     ph_1_fd: 5
     ph_2_fd: 5
-    sjw_fd: 4
+    sjw_fd: 3
 
     # Clock configuration
     system_clock_period: 10 ns

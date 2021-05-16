@@ -283,8 +283,11 @@ begin
     brp_capt_proc : process(res_n, clk_sys)
     begin
         if (res_n = '0') then
-            tseg1_nbt <= (OTHERS => '0');
-            tseg1_dbt <= (OTHERS => '0');
+            -- Matching reset values to what is in Memory registers.
+            -- This is to make assertions which check valid bit time config
+            -- happy, no impact on functionality!
+            tseg1_nbt <= std_logic_vector(to_unsigned(9, G_TSEG1_NBT_WIDTH));
+            tseg1_dbt <= std_logic_vector(to_unsigned(7, G_TSEG1_NBT_WIDTH));
         elsif (rising_edge(clk_sys)) then
             if (capture = '1') then
                 tseg1_nbt <= tseg1_nbt_d;

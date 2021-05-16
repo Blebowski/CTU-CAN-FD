@@ -118,7 +118,9 @@ package body btr_fd_ftest is
         variable bus_timing         :       bit_time_config_type;
 
         variable clock_per_bit      :       natural := 0;
-
+        
+        variable tx_delay           :       time;
+        
         variable clock_meas         :       natural := 0;
         variable frames_equal       :       boolean;
         variable ssp_pos            :       std_logic_vector(7 downto 0);
@@ -129,7 +131,7 @@ package body btr_fd_ftest is
     begin
 
         -----------------------------------------------------------------------
-        -- @1. Disable both Nodes. Generate random bit-rate and configure it sa 
+        -- @1. Disable both Nodes. Generate random bit-rate and configure it as 
         --    Data bit-rate! Nominal bit-rate remains the default one which was
         --    set by testbench.
         -----------------------------------------------------------------------
@@ -141,67 +143,39 @@ package body btr_fd_ftest is
         -- Read timing so that NBT values are kept!
         CAN_read_timing_v(bus_timing, DUT_NODE, chn);
 
-        -- Generate random Nominal bit rate!
-        rand_int_v(63, bus_timing.prop_dbt);
-        rand_int_v(31, bus_timing.ph1_dbt);
-        rand_int_v(31, bus_timing.ph2_dbt);
-        
-        -- Constrain time quanta to something realistinc for data phase so
-        -- that we don't have too long run times!
-        rand_int_v(16, bus_timing.tq_dbt);
-        rand_int_v(33, bus_timing.sjw_dbt);
+        CAN_generate_random_bit_timing(bus_timing, chn);
 
-        -- SJW should be at least one because clocks differ by some value so
-        -- there should be chance to compensate
-        if (bus_timing.sjw_dbt = 0) then
-            bus_timing.sjw_dbt := 1;
+        -- Constrain nominal bit-timing to reduce test time!
+        -- This is test which verifies data bit-rate so we can afford some
+        -- relaxations in nominal bit rate.
+        if (bus_timing.tq_nbt > 10) then
+            bus_timing.tq_nbt := 10;
         end if;
-
-        -- Constrain minimal BRP (0 is not allowed)!
-        if (bus_timing.tq_dbt = 0) then
-            bus_timing.tq_dbt := 1;
+        if (bus_timing.prop_nbt > 20) then
+            bus_timing.prop_nbt := 20;
         end if;
-        
-        -- Make sure there is not too big difference between BRP nominal and BRP data,
-        -- otherwise frame might not be received correctly!
-        if (abs(bus_timing.tq_nbt - bus_timing.tq_dbt) > 5) then
-            bus_timing.tq_nbt := 2;
-            bus_timing.tq_dbt := 1;
+        if (bus_timing.ph1_nbt > 15) then
+            bus_timing.ph1_nbt := 15;
         end if;
-
-        -- Pre-calculate expected number of clock cycles
-        clock_per_bit := (1 + bus_timing.prop_dbt + bus_timing.ph1_dbt +
-                          bus_timing.ph2_dbt) * bus_timing.tq_dbt;
-
-        -- It has no sense to test bit times where there is less than 5 clocks per bit!
-        -- lets constrain it to something reasonable.
-        while (clock_per_bit < 6) loop
-
-            if (bus_timing.prop_dbt < 127) then
-                bus_timing.prop_dbt := bus_timing.prop_dbt + 1;
-            end if;
-
-            if (bus_timing.ph1_dbt < 63) then
-                bus_timing.ph1_dbt := bus_timing.ph1_dbt + 1;
-            end if;
-
-            if (bus_timing.ph2_dbt < 63) then
-                bus_timing.ph2_dbt := bus_timing.ph2_dbt + 1;
-            end if;
-
-            clock_per_bit := (1 + bus_timing.prop_dbt + bus_timing.ph1_dbt +
-                              bus_timing.ph2_dbt) * bus_timing.tq_dbt;
-        end loop;
-
-        -- Constrain minimal duration of PH2 to be 2 clock cycles!
-        if (bus_timing.ph2_dbt * bus_timing.prop_dbt < 2) then
-            bus_timing.ph2_dbt := 2;
+        if (bus_timing.ph2_nbt > 15) then
+            bus_timing.ph2_nbt := 15;
         end if;
+        CAN_print_timing(bus_timing);
 
-        -- Constrain minimal duration of TSEG1 to be 2 clock cycles!
-        if ((bus_timing.prop_dbt + bus_timing.ph1_dbt + 1) * bus_timing.tq_dbt < 2) then
-            bus_timing.prop_dbt := 1;
-        end if;
+        -----------------------------------------------------------------------
+        -- Configure delay of TX -> RX so that for any generated bit-rate, it
+        -- is not too high! Otherwise, roundtrip will be too high and Node will
+        -- not manage to receive ACK in time!
+        -- Before sample point, whole roundtrip must be made (and 2 more clock
+        -- cycles due to input delay!). Lets take the delay as one third of
+        -- TSEG1. Roundtrip will take two thirds and we should be safe!
+        -----------------------------------------------------------------------
+        tx_delay := (((1 + bus_timing.prop_nbt + bus_timing.ph1_nbt) *
+                       bus_timing.tq_nbt) / 3) * 10 ns;
+        info_m("TX delay is: " & time'image(tx_delay));
+        ftr_tb_set_tran_delay(tx_delay, DUT_NODE, chn);
+        ftr_tb_set_tran_delay(tx_delay, TEST_NODE, chn);
+
 
         -- Pre-calculate expected number of clock cycles after all corrections!
         clock_per_bit := (1 + bus_timing.prop_dbt + bus_timing.ph1_dbt +
