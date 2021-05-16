@@ -10,7 +10,7 @@ all: test coverage functional_coverage
 
 elaborate:
 	$(PYTHON) run.py test tests_fast_asic.yml -- --elaborate $(TEST_FLAGS)
-	$(PYTHON) run.py test tests_fast_fpga.yml -- --elaborate $(TEST_FLAGS)
+	#$(PYTHON) run.py test tests_fast_fpga.yml -- --elaborate $(TEST_FLAGS)
 
 test_%: tests_%.yml FORCE
 	$(PYTHON) run.py test $(TEST_OPTS_$@) $< -- $(TEST_FLAGS)
