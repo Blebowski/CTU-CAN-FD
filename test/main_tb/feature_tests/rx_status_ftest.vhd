@@ -119,6 +119,8 @@ package body rx_status_ftest is
         variable command            :       SW_command := SW_command_rst_val;
         variable status             :       SW_status;
         variable frame_counter      :       natural;
+        
+        variable big_rx_buffer      :       boolean;
     begin
 
         ------------------------------------------------------------------------
@@ -135,7 +137,7 @@ package body rx_status_ftest is
         ------------------------------------------------------------------------
         -- @2. Free memory, buffer status and message count is checked.
         ------------------------------------------------------------------------
-        info_m("Step 3");
+        info_m("Step 2");
 
         check_m(buf_info.rx_empty,
               "RX Buffer is not empty after Release receive Buffer command");
@@ -149,10 +151,17 @@ package body rx_status_ftest is
                 buf_info.rx_read_pointer = 0,
                 "RX Buffer pointers are not 0 after Release Receieve Buffer command");
 
+        -- Check RX buffer size. If it is more than 512, mark it as big.
+        -- This is used further to reduce lenght of test
+        big_rx_buffer := false;
+        if (buf_info.rx_buff_size > 511) then
+            big_rx_buffer := true;
+        end if;
+
         ------------------------------------------------------------------------
         -- @3. Random frames are sent on the bus by Test Node and received by DUT.
         ------------------------------------------------------------------------
-        info_m("Step 6");
+        info_m("Step 3");
 
         frame_counter := 1;
         while send_more loop
@@ -160,6 +169,21 @@ package body rx_status_ftest is
             frame_counter := frame_counter + 1;
 
             CAN_generate_frame(CAN_frame);
+
+            -- If RX buffer of DUT is "big" send only frames with 64 bytes
+            -- to reduce total number of sent frames and therefore duration of
+            -- the test!
+            if big_rx_buffer then
+                info_m("Using BIG RX Buffer settings (long frame) to reduce test time...");
+                CAN_frame.identifier := CAN_frame.identifier mod (2 ** 11);
+                CAN_frame.ident_type := BASE;
+                CAN_frame.frame_format := FD_CAN;
+                CAN_frame.brs := BR_SHIFT;
+                CAN_frame.data_length := 64;
+                -- We dont care about the data content, they are zeroes!
+                decode_length(CAN_frame.data_length, CAN_frame.dlc);
+                decode_dlc_rx_buff(CAN_frame.dlc, CAN_frame.rwcnt);
+            end if;
 
             -- Evaluate if next frame should be sent
             if (CAN_frame.rtr = RTR_FRAME and
