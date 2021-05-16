@@ -237,9 +237,9 @@ begin
     --  {h_sync_edge_valid = '1' and is_tseg2 = '1'}
     --  report "Hard synchronization in TSEG2";
 
+    -- Hard synchronization in TSEG1
     -- psl re_sync_in_tseg_1_cov : cover
-    --  {resync_edge_valid = '1' and is_tseg1 = '1'}
-    --  report "Hard synchronization in TSEG1"; 
+    --  {resync_edge_valid = '1' and is_tseg1 = '1'};
 
     -- psl re_sync_in_tseg_2_cov : cover
     --  {resync_edge_valid = '1' and is_tseg2 = '1'}
