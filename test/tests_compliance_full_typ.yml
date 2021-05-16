@@ -81,7 +81,7 @@ compliance:
         iso_7_2_2:
         iso_7_2_3:
         iso_7_2_4:
-            timeout: 200 ms
+            timeout: 300 ms
         iso_7_2_5:
         iso_7_2_6:
         iso_7_2_7:

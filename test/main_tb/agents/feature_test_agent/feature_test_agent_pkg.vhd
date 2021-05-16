@@ -3173,6 +3173,7 @@ package body feature_test_agent_pkg is
             tmp := 1;
         end if;
         txt_buf := tmp;
+        check_m(txt_buf <= num_buffers, "Non-existing TXT buffer chosen!");
     end procedure;
 
 

@@ -511,7 +511,7 @@ filename "version.tex"
 \noindent
 \align center
 \begin_inset Tabular
-<lyxtabular version="3" rows="13" columns="4">
+<lyxtabular version="3" rows="14" columns="4">
 <features tabularvalignment="middle">
 <column alignment="center" valignment="top" width="1.5cm">
 <column alignment="center" valignment="top" width="3cm">
@@ -986,7 +986,7 @@ Add description of memory testability.
 </cell>
 </row>
 <row>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -995,7 +995,7 @@ Add description of memory testability.
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -1004,7 +1004,7 @@ Add description of memory testability.
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -1013,13 +1013,57 @@ Add description of memory testability.
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
 Keep NBTM counter enabled always even in data bit rate.
  Fixes bug with improper PH2 lenght if error is detected during data bit
  rate with BRP=1
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+0.13
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+2.3.5
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+16-05-2021
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Add 
+\series bold
+\shape italic
+res_n_out
+\series default
+\shape default
+ synchronized reset output.
 \end_layout
 
 \end_inset
@@ -1346,10 +1390,12 @@ When CTU CAN FD GIT repository is clonned, register map can be generated
 \end_layout
 
 \begin_layout Verbatim
+
 cd scripts
 \end_layout
 
 \begin_layout Verbatim
+
 ./update_reg_map
 \end_layout
 
@@ -1362,10 +1408,12 @@ Documentation can be exported from VHDL RTL codes by following script:
 \end_layout
 
 \begin_layout Verbatim
+
 cd scripts
 \end_layout
 
 \begin_layout Verbatim
+
 python gen_lyx_tables.py --configPath vhdl_lyx_interface_cfg.yml
 \end_layout
 
@@ -1398,10 +1446,12 @@ CTU CAN FD contains release tags in GIT repository.
 \end_layout
 
 \begin_layout Verbatim
+
 cd scripts
 \end_layout
 
 \begin_layout Verbatim
+
 python create_release.py --output_dir ../release_directory_name
 \end_layout
 
@@ -1423,10 +1473,12 @@ src/component.xml
 \end_layout
 
 \begin_layout Verbatim
+
 cd scripts
 \end_layout
 
 \begin_layout Verbatim
+
 python gen_vivado_component.py
 \end_layout
 
@@ -2522,9 +2574,9 @@ Memory Bus
 \end_layout
 
 \begin_layout Standard
-CTU CAN FD is accessible as a slave device via 3 memory buses: RAM-like
- interface, APB and AHB.
- Each interface CAN be used via dedicated wrapper.
+CTU CAN FD is accessible as a slave device via one of three memory buses:
+ RAM-like interface, APB and AHB.
+ Each interface can be used via dedicated wrapper.
  CTU CAN FD shall not be accessed sooner than two clock cycles after external
  reset was released (due to reset synchronisation) (see Table 
 \begin_inset CommandInset ref
@@ -2541,7 +2593,8 @@ noprefix "false"
  return zeroes.
  If external reset is executed via SW driver (e.g.
  at driver load time), it is recomended to add corresponding delay before
- driver executes any access to the device.
+ driver executes any access to the device (e.g.
+ via usleep, nanosleep, dummy NOPs, or similar mechanism).
 \end_layout
 
 \begin_layout Subsection
@@ -5243,8 +5296,8 @@ noprefix "false"
 \end_inset
 
 .
- CTU CAN FD has single external reset which is treated as asynchronous reset
- and is internally synchronized by reset synchronizer (see 
+ CTU CAN FD has single external reset which is treated as asynchronous reset,
+ and it is internally synchronized by reset synchronizer (see 
 \begin_inset CommandInset ref
 LatexCommand ref
 reference "fig:Reset-operation"
@@ -5255,6 +5308,48 @@ noprefix "false"
 \end_inset
 
 ).
+ Note that AHB bus specifications requires 
+\series bold
+\shape italic
+hresetn 
+\series default
+\shape default
+to be synchronous to 
+\series bold
+\shape italic
+hclk
+\series default
+\shape default
+.
+ CTU CAN FD implemenation is more relaxed, and does not require these signals
+ to be synchronous to 
+\series bold
+\shape italic
+hclk
+\series default
+\shape default
+ (System clock), since it handles reset synchronisation internally.
+ 
+\series bold
+\shape italic
+res_n_out
+\series default
+\shape default
+ signal output contains synchronized version of 
+\series bold
+\shape italic
+res_n
+\series default
+\shape default
+/
+\series bold
+\shape italic
+arstn/hresetn
+\series default
+\shape default
+ input.
+ It can be left unconnected, or it can be used as an indication that reset
+ has been completed and CTU CAN FD can be accessed on its memory bus.
 \end_layout
 
 \begin_layout Standard
@@ -5504,7 +5599,8 @@ literal "false"
 
  for description of how to connect test-probe if integrating CTU CAN FD
  VIP.
- This signal has no effect on design functionality, and if 
+ This signal has no effect on design functionality, and it can remain unconnecte
+d in design to which CTU CAN FD is integrated.
 \end_layout
 
 \begin_layout Section
@@ -6424,7 +6520,7 @@ status open
 \noindent
 \align center
 \begin_inset Tabular
-<lyxtabular version="3" rows="3" columns="3">
+<lyxtabular version="3" rows="5" columns="3">
 <features tabularvalignment="middle">
 <column alignment="left" valignment="top" width="15text%">
 <column alignment="left" valignment="top" width="25text%">
@@ -6456,7 +6552,7 @@ cellcolor{gray}
 \begin_inset Text
 
 \begin_layout Plain Layout
-Invoked by
+Asserted by
 \begin_inset ERT
 status open
 
@@ -6498,7 +6594,7 @@ cellcolor{gray}
 </cell>
 </row>
 <row>
-<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+<cell multirow="3" alignment="left" valignment="middle" topline="true" leftline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -6511,40 +6607,116 @@ External Reset
 \begin_inset Text
 
 \begin_layout Plain Layout
-Pulling 
+RAM like interface:
 \series bold
 \shape italic
+
+\begin_inset Newline newline
+\end_inset
+
 res_n
 \series default
 \shape default
-, 
-\series bold
-\shape italic
-arstn
-\series default
-\shape default
-, 
-\series bold
-\shape italic
-hresetn
-\series default
-\shape default
- input low.
+ = 0.
+ 
 \end_layout
 
 \end_inset
 </cell>
-<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+<cell multirow="3" alignment="left" valignment="middle" topline="true" leftline="true" rightline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
 To be used by HW reset structure integrating CTU CAN FD (e.g.
- POR).
- When this reset is asserted, it takes two clock cycles of System clock
- before this reset is de-asserted.
- This reset allows resetting CTU CAN FD even when System clock is not running.
- System clock is needed only for reset de-assertion.
- Reset is active low.
+ POR, System level reset controller).
+ CTU CAN FD shall not be accessed for two System clock periods after External
+ reset was de-asserted (or until 
+\series bold
+\shape italic
+res_n_out
+\series default
+\shape default
+ = 1).
+ Asserting External reset does not require System clock to be running.
+ De-asserting reset requires System clock to be running.
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell multirow="4" alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+AHB interface: 
+\series bold
+\shape italic
+
+\begin_inset Newline newline
+\end_inset
+
+hresetn
+\series default
+\shape default
+ = 0.
+\end_layout
+
+\end_inset
+</cell>
+<cell multirow="4" alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell multirow="4" alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+APB interface:
+\series bold
+\shape italic
+ 
+\begin_inset Newline newline
+\end_inset
+
+aresetn
+\series default
+\shape default
+ = 0.
+\end_layout
+
+\end_inset
+</cell>
+<cell multirow="4" alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
 \end_layout
 
 \end_inset

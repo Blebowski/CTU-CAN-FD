@@ -141,6 +141,9 @@ entity can_top_level is
         -- Asynchronous reset
         res_n       : in std_logic;
 
+        -- Synchronized reset
+        res_n_out   : out std_logic;
+
         -----------------------------------------------------------------------
         -- DFT support
         -----------------------------------------------------------------------
@@ -551,6 +554,7 @@ begin
         arst            => res_n,
         rst             => res_n_sync
     );
+    res_n_out <= res_n_sync;
 
     ---------------------------------------------------------------------------
     -- Memory registers

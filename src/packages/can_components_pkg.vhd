@@ -127,6 +127,9 @@ package can_components_pkg is
             -- Asynchronous reset
             res_n       : in std_logic;
             
+            -- Synchronized reset
+            res_n_out   : out std_logic;
+        
             -----------------------------------------------------------------------
             -- DFT support
             -----------------------------------------------------------------------
