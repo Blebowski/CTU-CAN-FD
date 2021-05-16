@@ -103,6 +103,7 @@ entity can_top_apb is
         aclk             : in  std_logic;
         arstn            : in  std_logic;
         scan_enable      : in  std_logic;
+        res_n_out        : out std_logic;
 
         irq              : out std_logic;
         CAN_tx           : out std_logic;
@@ -147,7 +148,7 @@ begin
         port map (
             clk_sys         => aclk,
             res_n           => arstn,
-            
+            res_n_out       => res_n_out,
             scan_enable     => scan_enable,
 
             data_in         => reg_data_in,

@@ -120,6 +120,11 @@ entity can_top_ahb is
         hrdata           : out std_logic_vector(31 downto 0);
         
         -----------------------------------------------------------------------
+        -- Synchronized reset 
+        -----------------------------------------------------------------------
+        res_n_out        : out std_logic;
+        
+        -----------------------------------------------------------------------
         -- CAN Bus 
         -----------------------------------------------------------------------
         can_tx           : out std_logic;
@@ -153,6 +158,8 @@ architecture rtl of can_top_ahb is
     signal ctu_can_swr       : std_logic;
     signal ctu_can_sbe       : std_logic_vector(3 downto 0);
     
+    signal res_n_out_i       : std_logic;
+
 begin
 
     can_inst : CAN_top_level
@@ -169,7 +176,8 @@ begin
     port map (
         clk_sys         => hclk,
         res_n           => hresetn,
-        
+        res_n_out       => res_n_out_i,
+
         scan_enable     => scan_enable,
         
         data_in         => ctu_can_data_in,
@@ -200,7 +208,7 @@ begin
         srd              => ctu_can_srd,
 
         -- AHB interface 
-        hresetn          => hresetn,
+        hresetn          => res_n_out_i,
         hclk             => hclk,
         haddr            => haddr,
         hwdata           => hwdata,
@@ -216,5 +224,7 @@ begin
         hresp            => hresp,
         hrdata           => hrdata
     );
+    
+    res_n_out <= res_n_out_i;
   
 end architecture rtl;
