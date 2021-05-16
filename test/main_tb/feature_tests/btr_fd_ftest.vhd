@@ -145,6 +145,23 @@ package body btr_fd_ftest is
 
         CAN_generate_random_bit_timing(bus_timing, chn);
 
+        -- Constrain nominal bit-timing to reduce test time!
+        -- This is test which verifies data bit-rate so we can afford some
+        -- relaxations in nominal bit rate.
+        if (bus_timing.tq_nbt > 10) then
+            bus_timing.tq_nbt := 10;
+        end if;
+        if (bus_timing.prop_nbt > 20) then
+            bus_timing.prop_nbt := 20;
+        end if;
+        if (bus_timing.ph1_nbt > 15) then
+            bus_timing.ph1_nbt := 15;
+        end if;
+        if (bus_timing.ph2_nbt > 15) then
+            bus_timing.ph2_nbt := 15;
+        end if;
+        CAN_print_timing(bus_timing);
+
         -----------------------------------------------------------------------
         -- Configure delay of TX -> RX so that for any generated bit-rate, it
         -- is not too high! Otherwise, roundtrip will be too high and Node will
