@@ -198,7 +198,7 @@ def unit_configure(lib, config, build):
 			tb.set_generic('seed', get_seed(loc_cfg))
 
 			sim_options = get_sim_options(default)
-			if ('functional_coverage' in loc_cfg) and loc_cfg['functional_coverage'] == True:
+			if ('functional_coverage' in default) and default['functional_coverage'] == True:
 				sim_options += add_psl_cov_sim_opt('{}.{}.{}'.format(tb.name, test_type, name), cfg, build)
 
 			set_sim_options(tb, sim_options)
@@ -306,8 +306,8 @@ def main_tb_configure(tb, config, build) -> None:
                 'seed'                  : get_seed(loc_cfg)
             }
 
-            loc_opts += add_psl_cov_sim_opt('{}.{}.{}'.format(tb.name, test_type, test_name), cfg, build)
-            loc_opts += def_otps + loc_opts
+            loc_opts += add_psl_cov_sim_opt('{}.{}.{}'.format(tb.name, test_type, test_name), def_cfg, build)
+            loc_opts += def_otps
 
             config_name = test_name_stripped
             if (test_name_stripped != test_name):
