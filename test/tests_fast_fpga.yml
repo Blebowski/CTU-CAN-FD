@@ -88,7 +88,8 @@ feature:
 
         btr:
         btr_fd:
-        btr_maximal:
+        # Do not run to decrease duration of fast regression!
+        #btr_maximal:
         btr_minimal:
         btr_ssp_access:
         bus_start:
