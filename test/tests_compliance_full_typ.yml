@@ -212,7 +212,7 @@ compliance:
         iso_8_2_6:
         iso_8_2_7:
         iso_8_2_8:
-            timeout: 200 ms
+            timeout: 300 ms
 
         iso_8_3_1:
         iso_8_3_2:
