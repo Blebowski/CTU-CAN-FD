@@ -258,6 +258,9 @@ package body tx_arb_time_tran_ftest is
         
         CAN_wait_frame_sent(DUT_NODE, chn);
         
+        CAN_wait_bus_idle(DUT_NODE, chn);
+        CAN_wait_bus_idle(TEST_NODE, chn);
+        
         -- Read two dummy frames to empty RX Buffer for further reads!
         CAN_read_frame(CAN_frame_rx_1, TEST_NODE, chn);
         CAN_read_frame(CAN_frame_rx_1, TEST_NODE, chn);
@@ -274,7 +277,7 @@ package body tx_arb_time_tran_ftest is
         pick_random_txt_buffer(buf_1_index, DUT_NODE, chn);
         buf_2_index := buf_1_index;
         while (buf_2_index = buf_1_index) loop
-            pick_random_txt_buffer(buf_2_index, TEST_NODE, chn);         
+            pick_random_txt_buffer(buf_2_index, DUT_NODE, chn);         
         end loop;
 
         CAN_configure_tx_priority(buf_2_index, 1, DUT_NODE, chn);
