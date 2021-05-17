@@ -72,7 +72,7 @@ def get_compile_and_sim_options(config) -> Tuple[OptionsDict, OptionsDict]:
         compile_flags += ["-fprofile-arcs", "-ftest-coverage"]
         elab_flags += ["-Wl,-lgcov", "-Wl,--coverage"]
 
-    if ('functional_coverage' in config) and config['functional_coverage'] == True:
+    if ('enable_psl' in config) and config['enable_psl'] == True:
         compile_flags += ['-fpsl']
         elab_flags += ['-fpsl']
 
@@ -142,7 +142,7 @@ def add_psl_cov_sim_opt(name, cfg, build) -> OptionsDict:
                 / "psl_cov_{}.json".format(name)
 
     sim_flags = []
-    if ('functional_coverage' in cfg) and cfg['functional_coverage']:
+    if ('functional_coverage_report' in cfg) and cfg['functional_coverage_report']:
         sim_flags.append("--psl-report={}".format(psl_path))
 
     return OptionsDict({"ghdl.sim_flags": sim_flags})
@@ -198,8 +198,8 @@ def unit_configure(lib, config, build):
 			tb.set_generic('seed', get_seed(loc_cfg))
 
 			sim_options = get_sim_options(default)
-			if ('functional_coverage' in default) and default['functional_coverage'] == True:
-				sim_options += add_psl_cov_sim_opt('{}.{}.{}'.format(tb.name, test_type, name), cfg, build)
+			if ('functional_coverage_report' in default) and default['functional_coverage_report'] == True:
+				sim_options += add_psl_cov_sim_opt('{}.{}.{}'.format(tb.name, test_type, name), default, build)
 
 			set_sim_options(tb, sim_options)
 
