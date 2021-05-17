@@ -36,7 +36,8 @@ _default: &default
 
     # Test-bench configuration
     log_level: info
-    functional_coverage: false
+    enable_psl: true
+    functional_coverage_report: false
     code_coverage: false
     error_tolerance: 0
     randomize: true
