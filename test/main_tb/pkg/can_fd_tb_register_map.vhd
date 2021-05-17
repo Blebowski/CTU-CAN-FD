@@ -114,7 +114,7 @@ package can_fd_tb_register_map is
      size      => 32,
      reg_type  => reg_read_only,
      reset_val => "00000000000000000000000010000100",
-     is_implem => "00000000000000000000000111111111"),
+     is_implem => "00000000000000110000000111111111"),
     (address   => COMMAND_ADR,
      size      => 32,
      reg_type  => reg_write_only,

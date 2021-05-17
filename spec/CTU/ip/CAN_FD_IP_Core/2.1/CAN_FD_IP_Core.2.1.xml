@@ -443,6 +443,20 @@
 						</ipxact:resets>
 						<ipxact:bitWidth>1</ipxact:bitWidth>
 					</ipxact:field>
+					<ipxact:field>
+						<ipxact:name>STRGS</ipxact:name>
+						<ipxact:displayName>STRGS</ipxact:displayName>
+						<ipxact:description>Support of Test Registers for memory testability. When this bit is 1, Test Registers are present. </ipxact:description>
+						<ipxact:bitOffset>17</ipxact:bitOffset>
+						<ipxact:bitWidth>1</ipxact:bitWidth>
+					</ipxact:field>
+					<ipxact:field>
+						<ipxact:name>STCNT</ipxact:name>
+						<ipxact:displayName>STCNT</ipxact:displayName>
+						<ipxact:description>Support of Traffic counters. When this bit is 1, Traffic counters are present. </ipxact:description>
+						<ipxact:bitOffset>16</ipxact:bitOffset>
+						<ipxact:bitWidth>1</ipxact:bitWidth>
+					</ipxact:field>
 				</ipxact:register>
 				<ipxact:register>
 					<ipxact:name>SETTINGS</ipxact:name>

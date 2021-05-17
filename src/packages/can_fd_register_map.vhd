@@ -374,6 +374,8 @@ package can_fd_register_map is
   constant EWL_IND                : natural := 6;
   constant IDLE_IND               : natural := 7;
   constant PEXS_IND               : natural := 8;
+  constant STCNT_IND             : natural := 16;
+  constant STRGS_IND             : natural := 17;
 
   -- STATUS register reset values
   constant RXNE_RSTVAL        : std_logic := '0';
