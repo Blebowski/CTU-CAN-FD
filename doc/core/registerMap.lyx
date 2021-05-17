@@ -55810,7 +55810,7 @@ X\end_layout
 TMAENA Enable test access to CTU CAN FD memories.
 \end_layout
 \begin_layout Description
-TWRSTB Writing 1 executes write acess to a memory/address given by TST_DEST register.
+TWRSTB Writing 1 executes write acess to a memory/address given by TST_DEST register. 0 does not need to be written, this bit is cleared automatically.
 \end_layout
 \begin_layout Standard
 \begin_inset VSpace bigskip
