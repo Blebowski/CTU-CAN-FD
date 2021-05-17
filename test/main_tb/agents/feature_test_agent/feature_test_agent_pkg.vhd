@@ -1726,8 +1726,24 @@ package feature_test_agent_pkg is
     --  node            Node which shall be accessed (Test node or DUT).
     ----------------------------------------------------------------------------
     procedure CAN_generate_random_bit_timing(
-        variable bt         : inout   bit_time_config_type;
-        signal   channel    : inout t_com_channel
+        variable bt             : inout   bit_time_config_type;
+        signal   channel        : inout t_com_channel
+    );
+
+    ----------------------------------------------------------------------------
+    -- Check if Test registers are present
+    --
+    -- Arguments:
+    --  regs_present    True - Test registers are present, False otherwise.
+    --  node            Node which shall be accessed (Test node or DUT).
+    --  channel         Channel to use for access
+    -- Returns:
+    --  True if test registers are present / False otherwise
+    ----------------------------------------------------------------------------
+    procedure CAN_check_test_registers(
+        variable regs_present   : inout boolean;
+        constant node           : in    t_feature_node;
+        signal   channel        : inout t_com_channel
     );
 
 
@@ -4451,7 +4467,24 @@ package body feature_test_agent_pkg is
             bt.sjw_dbt := 1;
         end if;
         
-
     end procedure;
+
+
+    procedure CAN_check_test_registers(
+        variable regs_present   : inout boolean;
+        constant node           : in    t_feature_node;
+        signal   channel        : inout t_com_channel
+    ) is
+        variable data           :       std_logic_vector(31 downto 0);
+    begin
+        -- Status register
+        CAN_read(data, STATUS_ADR, node, channel);
+        if (data(STRGS_IND) = '1') then
+            regs_present := true;
+        else
+            regs_present := false;
+        end if;
+    end procedure;
+
 
 end package body;

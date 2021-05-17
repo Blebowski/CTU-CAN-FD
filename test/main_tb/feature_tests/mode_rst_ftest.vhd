@@ -79,7 +79,9 @@
 -- @Test sequence:
 --  @1. Write all RW registers to random value. Check they were written.
 --  @2. Execute SW reset via MODE[RST].
---  @3. Read all registers and check they return their reset value.
+--  @3. Read all Control registers and check they return their reset value.
+--  @4. Check if Test registers are present and test all read write registers
+--      in test registers
 --
 -- @TestInfoEnd
 --------------------------------------------------------------------------------
@@ -222,6 +224,10 @@ package body mode_rst_ftest is
         variable reg_rst_val_8  : std_logic_vector(7 downto 0) := (OTHERS => '0');
 
         variable num_txt_bufs   : natural;
+        
+        variable test_regs_present : boolean;
+        
+        variable mode           : SW_mode := SW_mode_rst_val;
     begin
 
         -----------------------------------------------------------------------
@@ -271,9 +277,10 @@ package body mode_rst_ftest is
         exec_SW_reset(DUT_NODE, chn);
 
         -----------------------------------------------------------------------
-        -- @3. Read all registers and check they return their reset value.
+        -- @3. Read all Control registers and check they return their reset
+        --     value.
         -----------------------------------------------------------------------
-        info_m("Step 3");
+        info_m("Step 3 - Control registers");
         for i in 0 to Control_registers_list'length - 1 loop
 
             if (Control_registers_list(i).size = 8) then
@@ -332,10 +339,16 @@ package body mode_rst_ftest is
 
                 -- Timestamp High/Low registers reflect current value of external
                 -- input -> skip them!
-                if (Control_registers_list(i).address = x"094" or
-                    Control_registers_list(i).address = x"098")
+                if (Control_registers_list(i).address = TIMESTAMP_LOW_ADR or
+                    Control_registers_list(i).address = TIMESTAMP_HIGH_ADR)
                 then
                     next;
+                end if;
+                
+                -- STATUS register -> Mask STCNT, STRGS bits
+                if (Control_registers_list(i).address = STATUS_ADR) then
+                    r_data_32(STCNT_IND) := '0';
+                    r_data_32(STRGS_IND) := '0';
                 end if;
                 
                 check_m(r_data_32 = reg_rst_val_32, "Address: 0x" &
@@ -349,6 +362,63 @@ package body mode_rst_ftest is
             end if;
 
         end loop;
+        
+        -----------------------------------------------------------------------
+        -- @4. Check if Test registers are present and test all read write 
+        --     registers in test registers.
+        -----------------------------------------------------------------------
+        info_m("Step 4 - Test Test registers");
+        
+        CAN_check_test_registers(test_regs_present, DUT_NODE, chn);
+
+        if (test_regs_present) then
+            
+            -- Enable Test mode since test registers are accessible only in
+            -- Test mode
+            mode.test := true;
+            set_core_mode(mode, DUT_NODE, chn);
+            
+            for i in 0 to Test_registers_list'length - 1 loop
+                if (Test_registers_list(i).reg_type = reg_read_write) then
+                    rand_logic_vect_v(rand_data_8, 0.5);
+                    rand_logic_vect_v(rand_data_16, 0.5);
+                    rand_logic_vect_v(rand_data_32, 0.5);
+                    
+                    -- Do not write Write strobe. It is auto-clear, so it cant
+                    -- be read back!
+                    if (Test_registers_list(i).address = TST_CONTROL_ADR) then
+                        rand_data_32(TWRSTB_IND) := '0';
+                    end if;
+                
+                    -----------------------------------------------------------
+                    -- 8 bit register size
+                    -----------------------------------------------------------
+                    if (Test_registers_list(i).size = 8) then
+                        test_rw_reg(Test_registers_list(i),
+                                    rand_data_8, r_data_8, chn);
+    
+                    -----------------------------------------------------------
+                    -- 16 bit register size
+                    -----------------------------------------------------------
+                    elsif (Test_registers_list(i).size = 16) then
+                        test_rw_reg(Test_registers_list(i),
+                                    rand_data_16, r_data_16, chn);
+    
+                    -----------------------------------------------------------
+                    -- 32 bit register size
+                    -----------------------------------------------------------                    
+                    elsif (Test_registers_list(i).size = 32) then
+                        test_rw_reg(Test_registers_list(i),
+                                    rand_data_32, r_data_32, chn);
+    
+                    else
+                        error_m("Unsupported register size: " &
+                                    integer'image(Test_registers_list(i).size));
+                    end if;
+                end if;
+            end loop;
+        end if;
+        
   end procedure;
 
 end package body;
