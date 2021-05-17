@@ -3510,7 +3510,17 @@ Sync_Seg + Prop_Seg + Phase_Seg1 > 2 minimal time quanta.
 \begin_layout Standard
 With these conditions, it is possible to reach bit lenght of 5 time quanta.
  Note that for nominal bit rate this is possible, however, at least 8 time
- quantas per bit time are recommended.
+ quantas per bit time are recommended (see 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "tab: implementation-parameters"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+).
  For data bit rate, 5 time quantas per bit time can be used.
 \end_layout
 
