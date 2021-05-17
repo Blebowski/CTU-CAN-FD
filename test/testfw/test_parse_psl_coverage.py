@@ -30,7 +30,7 @@ def merge_psl_coverage_files(out_file: str, in_file_prefix: str) -> None:
     json_out_path = func_cov_dir / out_file
     json_out_list = []  # type: List[TPslPoint]
     for in_filename in psl_dir.glob('{}*.json'.format(in_file_prefix)):
-        log.info("Merging JSON PSL coverage from: {}\n".format(in_filename))
+        print("Merging JSON PSL coverage from: {}\n".format(in_filename))
         with in_filename.open('rt') as f:
             json_obj = json.load(f)
 

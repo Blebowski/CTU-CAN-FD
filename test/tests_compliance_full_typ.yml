@@ -265,8 +265,10 @@ compliance:
 
         iso_8_7_1:
             brp: 2
-        iso_8_7_2:
-            brp: 3
+        # Temporary disabled since latest compliance model has memory leak in this test!
+        # TODO: Fix it!
+        #iso_8_7_2:
+        #    brp: 3
         iso_8_7_3:
         iso_8_7_4:
             brp: 3
@@ -286,7 +288,9 @@ compliance:
         iso_8_8_1_4:
             brp_fd: 3
         iso_8_8_2_1:
-        iso_8_8_2_2:
+        # Temporary disabled since latest compliance model has memory leak in this test!
+        # TODO: Fix it!
+        #iso_8_8_2_2:
         iso_8_8_2_3:
             brp_fd: 3
         iso_8_8_2_4:
