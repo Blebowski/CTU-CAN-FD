@@ -27,6 +27,19 @@ check_component:
             - driver/ctucanfd_frame.h
             - src/lib/can_fd_register_map.vhd
 
+run_synthesis:
+    stage: build
+    tags:
+        - vps
+    script:
+        - source /opt/xilinx/vivado-2018.2/settings.sh
+        - cd synthesis/Vivado/ci_benchmark
+        - vivado -mode tcl -source vivado_bechmark_script.tcl
+    artifacts:
+        paths:
+            - synthesis/Vivado/ci_benchmark/*_design_config
+
+
 build_ip_and_tests:
     stage: build
     artifacts:
@@ -78,18 +91,6 @@ build_linux_driver:
     artifacts:
         paths:
             - driver/linux/ctucanfd.ko
-
-run_synthesis:
-    stage: build
-    only: *only
-    tags:
-        - vps
-    script:
-        - cd synthesis/Vivado/ci_benchmark
-        - run_benchmark
-    artifacts:
-        paths:
-            - synthesis/Vivado/ci_benchmark/*_design_config
 
 
 ###############################################################################
