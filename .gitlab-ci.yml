@@ -83,7 +83,7 @@ run_synthesis:
     stage: build
     only: *only
     tags:
-        - vivado
+        - vps
     script:
         - cd synthesis/Vivado/ci_benchmark
         - run_benchmark
