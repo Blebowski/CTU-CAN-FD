@@ -79,6 +79,18 @@ build_linux_driver:
         paths:
             - driver/linux/ctucanfd.ko
 
+run_synthesis:
+    stage: build
+    only: *only
+    tags:
+        - vivado
+    script:
+        - cd synthesis/Vivado/ci_benchmark
+        - run_benchmark
+    artifacts:
+        paths:
+            - synthesis/Vivado/ci_benchmark/*_design_config
+
 
 ###############################################################################
 # Test runs (fast, nightly)
