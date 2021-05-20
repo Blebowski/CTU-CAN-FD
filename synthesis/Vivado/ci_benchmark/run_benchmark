@@ -1,0 +1,8 @@
+#!/bin/bash
+
+# First run the synthesis
+/mnt/nas/sw/squashed/mnt/vivado-2018.2/vivado-2018.2/Vivado/2018.2/bin/vivado -mode tcl -source run_vivado_benchmark.tcl
+
+
+
+
