@@ -56,6 +56,9 @@ _default: &default
     ph_2_fd: 7
     sjw_fd: 5
 
+    # Run simulations on gate level (post-syn)
+    gate_level: false
+
     # Clock configuration
     system_clock_period: 25 ns
 

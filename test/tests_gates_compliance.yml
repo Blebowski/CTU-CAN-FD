@@ -1,15 +1,22 @@
 ###############################################################################
 ##
-## This test-case list contains all ISO16845-1 2016 tests in maximal scenario
-## (maximal possible bit-rate, minimal bit-time).
+## This test-case list contains sub-set from ISO 16845-1 2016 compliance tests.
+## It is run in CTU CAN FD CI, on post synthesis gate level netlist. It should
+## check that Synthesis in Vivado does not affect compliance functionality.
 ##
-## Randomization: Yes
+## Randomization: No
 ## Coverage: No
 ##
 ## Parameters:
 ##   System clock: 40 MHz
-##   Nominal bit-rate: 5 Mbit/s (62.5 % sample point)
-##   Data bit-rate: 8 Mbit/s (60 % sample point)
+##   Nominal bit-rate: 2 Mbit/s (65 % sample point)
+##   Data bit-rate: 4 Mbit/s (70 % sample point)
+##
+## Following tests from compliance suite are left out:
+##   8.2.4
+##   7.2.4
+##   8.2.8
+##   8.2.3
 ##
 ###############################################################################
 
@@ -21,8 +28,8 @@ _default: &default
     functional_coverage_report: false
     code_coverage: false
     error_tolerance: 0
-    randomize: true
-    #seed: 20
+    randomize: false
+    #seed: 570098552
     debug: false
     iterations: 1
     timeout: 100 ms
@@ -44,19 +51,19 @@ _default: &default
     # DUT Bit timing settings
     # Applies for compliance tests and feature tests!
     brp: 1
-    prop: 1
-    ph_1: 3
-    ph_2: 3
-    sjw: 2
+    prop: 5
+    ph_1: 7
+    ph_2: 7
+    sjw: 4
 
     brp_fd: 1
-    prop_fd: 1
-    ph_1_fd: 1
-    ph_2_fd: 2
-    sjw_fd: 4
-    
+    prop_fd: 3
+    ph_1_fd: 3
+    ph_2_fd: 3
+    sjw_fd: 2 
+
     # Run simulations on gate level (post-syn)
-    gate_level: false
+    gate_level: true
 
     # Clock configuration
     system_clock_period: 25 ns
@@ -83,8 +90,8 @@ compliance:
         iso_7_2_1:
         iso_7_2_2:
         iso_7_2_3:
-        iso_7_2_4:
-            timeout: 200 ms
+#        iso_7_2_4:
+#            timeout: 200 ms
         iso_7_2_5:
         iso_7_2_6:
         iso_7_2_7:
@@ -153,7 +160,6 @@ compliance:
             # In this test, BRP must be equal to or higher than 2! This is due to
             # input delay of CTU CAN FD.
             brp: 2
-
         iso_7_8_1_1:
         iso_7_8_1_2:
         iso_7_8_1_3:
@@ -167,8 +173,8 @@ compliance:
             # In this test, BRP must be equal to BRP_FD! It is necessary since
             # huge time quanta difference will cause mismatch during first
             # resynchronisation (in ESI bit) during Data bit phase!
-            brp: 2
-            brp_fd: 2
+            brp: 1
+            brp_fd: 1
         iso_7_8_3_2:
         iso_7_8_3_3:
         iso_7_8_4_1:
@@ -210,13 +216,13 @@ compliance:
 
         iso_8_2_1:
         iso_8_2_2:
-        iso_8_2_3:
+#        iso_8_2_3:
         iso_8_2_4:
         iso_8_2_5:
         iso_8_2_6:
         iso_8_2_7:
-        iso_8_2_8:
-            timeout: 200 ms
+#        iso_8_2_8:
+#            timeout: 200 ms
 
         iso_8_3_1:
         iso_8_3_2:

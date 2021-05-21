@@ -68,11 +68,11 @@
 
 --------------------------------------------------------------------------------
 --  @Purpose:
---    CTU CAN FD main testbench top
+--    CTU CAN FD main testbench top - Gate level variant!
 --  
 --------------------------------------------------------------------------------
 -- Revision History:
---    26.1.2021   Created file
+--    20.5.2021   Created file
 --------------------------------------------------------------------------------
 
 -- Only top level uses Vunit. This allows keeping CTU CAN FD VIP Vunit-less,
@@ -86,6 +86,8 @@ context ctu_can_fd_tb.ieee_context;
 context ctu_can_fd_tb.tb_common_context;
 context ctu_can_fd_tb.tb_agents_context;
 context ctu_can_fd_tb.rtl_context;
+
+library ctu_can_fd_gates;
 
 entity tb_top_ctu_can_fd is
     generic(
@@ -154,12 +156,12 @@ architecture tb of tb_top_ctu_can_fd is
    signal timestamp     : std_logic_vector(63 DOWNTO 0);
    signal test_probe    : t_ctu_can_fd_test_probe;
 
+   signal scan_enable   : std_logic;
+
    -- Test control
    signal test_start    : std_logic := '0';
    signal test_done     : std_logic := '0';
    signal test_success  : std_logic := '0'; -- 0 fail / 1 success  
-
-   signal scan_enable   : std_logic;
 
    component ctu_can_fd_vip is
    generic(
@@ -219,67 +221,12 @@ architecture tb of tb_top_ctu_can_fd is
     );
     end component;
 
-    component vunit_manager is
-    generic(
-        -- Test-bench specific stuff
-        runner_cfg              : string := runner_cfg_default;
-        test_name               : string := "demo";
-        test_type               : string := "compliance"; -- "feature", "compliance" or "reference"
-        stand_alone_vip_mode    : boolean := true; 
-        log_level               : t_log_verbosity := verbosity_info;
-
-        iterations              : natural := 1;
-        timeout                 : string := "10 ms";
-
-        -- Reference test iterations
-        reference_iterations    : natural range 1 to 1000 := 1000;
-        
-        -- Clock configuration of DUT
-        cfg_sys_clk_period      : string := "10 ns";
-        
-        -- Bit timing config of DUT on CAN bus (used by compliance tests)
-        cfg_brp                 : natural := 4;  
-        cfg_prop                : natural := 0;
-        cfg_ph_1                : natural := 1;
-        cfg_ph_2                : natural := 1;
-        cfg_sjw                 : natural := 2;
-        cfg_brp_fd              : natural := 1;
-        cfg_prop_fd             : natural := 3;
-        cfg_ph_1_fd             : natural := 1;
-        cfg_ph_2_fd             : natural := 2;
-        cfg_sjw_fd              : natural := 2;
-        
-        -- DUT configuration
-        rx_buffer_size          : natural := 64;
-        txt_buffer_count        : natural range 2 to 8 := 4;
-        sup_filtA               : boolean := true;
-        sup_filtB               : boolean := true;
-        sup_filtC               : boolean := true;
-        sup_range               : boolean := true;
-        sup_traffic_ctrs        : boolean := true;
-        target_technology       : natural := C_TECH_ASIC;
-
-        -- Seed
-        seed                    : natural := 0
-    );
-    end component;
-
 begin
 
     ---------------------------------------------------------------------------
     -- DUT (Use RAM-like memory bus)
     ---------------------------------------------------------------------------
-    dut : entity ctu_can_fd_rtl.can_top_level
-    generic map(
-        rx_buffer_size      => rx_buffer_size,
-        txt_buffer_count    => txt_buffer_count,
-        sup_filtA           => sup_filtA,
-        sup_filtB           => sup_filtB,
-        sup_filtC           => sup_filtC,
-        sup_range           => sup_range,
-        sup_traffic_ctrs    => sup_traffic_ctrs,
-        target_technology   => target_technology
-    )
+    dut : entity ctu_can_fd_gates.can_top_level
     port map(
         -- Clock and Asynchronous reset
         clk_sys     => clk_sys,
@@ -305,8 +252,10 @@ begin
         can_rx      => can_rx,
 
         -- Test probe
-        test_probe  => test_probe,
-
+        \test_probe[rx_trigger_nbs]\    => test_probe.rx_trigger_nbs,
+        \test_probe[rx_trigger_wbs]\    => test_probe.rx_trigger_wbs,
+        \test_probe[tx_trigger]\        => test_probe.tx_trigger,
+    
         -- Timestamp for time based transmission / reception
         timestamp   => timestamp
     );
@@ -381,48 +330,85 @@ begin
     ---------------------------------------------------------------------------
     -- Vunit manager - controls CTU CAN FD VIP
     ---------------------------------------------------------------------------
-    vunit_manager_inst : vunit_manager
-    generic map(
-        -- Test-bench specific stuff
-        runner_cfg              => runner_cfg,
-        test_name               => test_name,
-        test_type               => test_type,
-        stand_alone_vip_mode    => standalone_vip_mode,
-        log_level               => log_level,
+    vunit_manager_proc : process
+    begin
+        test_runner_setup(runner, runner_cfg);
+        wait for 10 ns;
 
-        iterations              => iterations,
-        timeout                 => timeout,
+        info("***************************************************************");
+        info("CTU CAN FD main testbench");
+        info("");
+        info("Test configuration:");
+        info("  Test type: " & test_type);
+        info("  Test name: " & test_name);
+        info("  No. of iterations: " & integer'image(iterations));
+        info("  Stand-alone VIP: " & boolean'image(stand_alone_vip_mode));
+        info("  System clock period: " & cfg_sys_clk_period);
+        info("  Log level: " & t_log_verbosity'image(log_level));
+        info("  Seed: " & integer'image(seed));
+        info("  Reference test iterations: " & integer'image(reference_iterations));
+        info("  Timeout: " & timeout);
+        info("");
+        info("DUT configuration:");
+        info("  RX buffer size: " & integer'image(rx_buffer_size));
+        info("  TXT Buffer count: " & integer'image(txt_buffer_count));
+        info("  Filter A: " & boolean'image(sup_filtA));
+        info("  Filter B: " & boolean'image(sup_filtB));
+        info("  Filter C: " & boolean'image(sup_filtC));
+        info("  Range filter: " & boolean'image(sup_range));
+        info("  Traffic counters: " & boolean'image(sup_traffic_ctrs));
+        info("  Target technology: " & integer'image(target_technology));
+        info("");
+        info("Bit timing settings (Nominal):");
+        info("  BRP: " & integer'image(cfg_brp));
+        info("  PH1: " & integer'image(cfg_ph_1));
+        info("  PROP: " & integer'image(cfg_prop));
+        info("  PH2: " & integer'image(cfg_ph_2));
+        info("  SJW: " & integer'image(cfg_sjw));
+        info("");
+        info("Bit timing settings (Data):");
+        info("  BRP: " & integer'image(cfg_brp));
+        info("  PH1: " & integer'image(cfg_ph_1));
+        info("  PROP: " & integer'image(cfg_prop));
+        info("  PH2: " & integer'image(cfg_ph_2));
+        info("  SJW: " & integer'image(cfg_sjw));
+        info("");
+        info("***************************************************************");
 
-        -- Reference test iterations
-        reference_iterations    => reference_iterations,
-        
-        -- Clock configuration of DUT
-        cfg_sys_clk_period      => cfg_sys_clk_period,
-        
-        -- Bit timing config of DUT on CAN bus (used by compliance tests)
-        cfg_brp                 => cfg_brp,
-        cfg_prop                => cfg_prop,
-        cfg_ph_1                => cfg_ph_1,
-        cfg_ph_2                => cfg_ph_2,
-        cfg_sjw                 => cfg_sjw,
-        cfg_brp_fd              => cfg_brp_fd,
-        cfg_prop_fd             => cfg_prop_fd,
-        cfg_ph_1_fd             => cfg_ph_1_fd,
-        cfg_ph_2_fd             => cfg_ph_2_fd,
-        cfg_sjw_fd              => cfg_sjw_fd,
-        
-        -- DUT configuration
-        rx_buffer_size          => rx_buffer_size,
-        txt_buffer_count        => txt_buffer_count,
-        sup_filtA               => sup_filtA,
-        sup_filtB               => sup_filtB,
-        sup_filtC               => sup_filtC,
-        sup_range               => sup_range,
-        sup_traffic_ctrs        => sup_traffic_ctrs,
-        target_technology       => target_technology,
+        show(get_logger(default_checker), display_handler, pass);
+        set_log_verbosity(log_level, global_verbosity);
 
-        -- Seed
-        seed                    => seed
-    );
+        for i in 1 to iterations loop
+            info("***************************************************************");
+            info(" Iteration nr: " & integer'image(i));
+            info("***************************************************************");
+
+            -- Execute test
+            test_start <= '1';
+            wait until test_done = '1';
+            wait for 1 ns;
+
+            -- Propagate fail to Vunit if test signals it failed
+            -- true indicates fail (exit code 1)
+            if (test_success = '0') then
+                test_runner_cleanup(runner, true);
+            end if;
+            
+            -- Finish handshake
+            test_start <= '0';
+            wait until test_done = '0';
+            wait for 10 ns;
+        end loop;
+
+        -- Finish succesfully
+        test_runner_cleanup(runner);
+    end process;
+
+    ---------------------------------------------------------------------------
+    -- Spawn watchdog
+    ---------------------------------------------------------------------------
+    watchdog: if time'value(timeout) > 0 ns generate
+        test_runner_watchdog(runner, time'value(timeout));
+    end generate;
 
 end architecture;

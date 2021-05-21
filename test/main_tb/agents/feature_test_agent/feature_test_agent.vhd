@@ -85,7 +85,6 @@ context ctu_can_fd_tb.tb_common_context;
 context ctu_can_fd_tb.rtl_context;
 context ctu_can_fd_tb.tb_agents_context;
 
-
 entity feature_test_agent is
     generic(
         -- Test details
@@ -164,7 +163,7 @@ begin
     ---------------------------------------------------------------------------
     -- Test node
     ---------------------------------------------------------------------------
-    test_node_inst : can_top_level
+    test_node_inst : entity ctu_can_fd_rtl.can_top_level
     generic map(
         -- Keep config hard-coded, it is enough that DUT is configurable!
         rx_buffer_size      => 256, -- Size to receive 8 frames is needed
