@@ -8,7 +8,8 @@ before_script:
 stages:
     - precheck
     - build
-    - test
+    - test_rtl
+    - test_gates
     - coverage
     - deploy
 
@@ -35,9 +36,12 @@ run_synthesis:
         - source /opt/xilinx/vivado-2018.2/settings.sh
         - cd synthesis/Vivado/ci_benchmark
         - vivado -mode tcl -source vivado_bechmark_script.tcl
+        # Remove reference to UNISIM library, all cell models are included in netlist!
+        - sed -i 's\library UNISIM;\\g' typical_design_config/can_top_level.vhd
     artifacts:
         paths:
             - synthesis/Vivado/ci_benchmark/*_design_config
+        expire_in: 12 hrs
 
 
 build_ip_and_tests:
@@ -96,8 +100,8 @@ build_linux_driver:
 ###############################################################################
 # Test runs (fast, nightly)
 ###############################################################################
-test_ip_fast_asic:
-    stage: test
+test_fast_asic:
+    stage: test_rtl
     only: *only
     dependencies: [build_ip_and_tests]
     script:
@@ -111,8 +115,8 @@ test_ip_fast_asic:
         reports:
             junit: [test/tests_fast_asic.xml]
 
-test_ip_fast_fpga:
-    stage: test
+test_fast_fpga:
+    stage: test_rtl
     only: *only
     dependencies: [build_ip_and_tests]
     script:
@@ -126,8 +130,8 @@ test_ip_fast_fpga:
         reports:
             junit: [test/tests_fast_fpga.xml]
 
-test_ip_nightly:
-    stage: test
+test_nightly:
+    stage: test_rtl
     dependencies: [build_ip_and_tests]
     only:
         - master
@@ -155,8 +159,8 @@ test_ip_nightly:
 ###############################################################################
 # Compliance test runs
 ###############################################################################
-test_ip_compliance_short:
-    stage: test
+test_compliance_short:
+    stage: test_rtl
     dependencies: [build_ip_and_tests]
     only: *only
     script:
@@ -173,8 +177,8 @@ test_ip_compliance_short:
     # For now not all compliance tests are debugged, allow failure...
     allow_failure: true
     
-test_ip_compliance_full_typ:
-    stage: test
+test_compliance_full_typ:
+    stage: test_rtl
     dependencies: [build_ip_and_tests]
     only:
         - master
@@ -194,8 +198,8 @@ test_ip_compliance_full_typ:
     # For now not all compliance tests are debugged, allow failure...
     allow_failure: true
 
-test_ip_compliance_full_max:
-    stage: test
+test_compliance_full_max:
+    stage: test_rtl
     dependencies: [build_ip_and_tests]
     only:
         - master
@@ -217,12 +221,53 @@ test_ip_compliance_full_max:
 
 
 ###############################################################################
+# Gate level simulation on post synthesis netlist
+###############################################################################
+test_gates_simple:
+    stage: test_gates
+    dependencies: [build_ip_and_tests, run_synthesis]
+    #only: *only
+    script:
+        - cd test
+        - make test_gates_simple
+    artifacts:
+        when: always
+        paths:
+            - test/test_gates_simple.xml
+            - test/xunit.xsl
+        reports:
+            junit: [test/test_gates_simple.xml]
+
+    # Some gates might fail, TODO: Debug
+    allow_failure: true
+
+test_gates_compliance:
+    stage: test_gates
+    dependencies: [build_ip_and_tests, run_synthesis]
+    #only: *only
+    script:
+        - cd test
+        - make test_gates_compliance
+    artifacts:
+        when: always
+        paths:
+            - test/test_gates_compliance.xml
+            - test/xunit.xsl
+        reports:
+            junit: [test/test_gates_compliance.xml]
+
+    # Still some compliance tests are not yet fully debugged!
+    allow_failure: true
+
+
+
+###############################################################################
 # Results processing
 ###############################################################################
 
 process_coverage:
     stage: coverage
-    dependencies: [build_ip_and_tests, test_ip_compliance_full_typ, test_ip_nightly]
+    dependencies: [build_ip_and_tests, test_compliance_full_typ, test_nightly]
     only:
         - master
     script:

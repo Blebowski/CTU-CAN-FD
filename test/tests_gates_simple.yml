@@ -65,11 +65,10 @@ feature:
         alc_srr_rtr:
         alc_srr_rtr_2:
 
-        # Not run on gate level to save time
         #btr:
-	btr_fd:
-	
-	# Not run on gate level to save time
+        btr_fd:
+
+        # Not run on gate level to save time
         #btr_maximal:
 
         btr_minimal:
@@ -174,6 +173,6 @@ feature:
         tx_status:
         timestamp_low_high:
 
-	# Not run on gate level to save time
+        # Not run on gate level to save time
         #txt_buffer_hazard:
 
