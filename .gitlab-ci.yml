@@ -28,21 +28,9 @@ check_component:
             - driver/ctucanfd_frame.h
             - src/lib/can_fd_register_map.vhd
 
-run_synthesis:
-    stage: build
-    tags:
-        - vps
-    script:
-        - source /opt/xilinx/vivado-2018.2/settings.sh
-        - cd synthesis/Vivado/ci_benchmark
-        - vivado -mode tcl -source vivado_bechmark_script.tcl
-        # Remove reference to UNISIM library, all cell models are included in netlist!
-        - sed -i 's\library UNISIM;\\g' typical_design_config/can_top_level.vhd
-    artifacts:
-        paths:
-            - synthesis/Vivado/ci_benchmark/*_design_config
-        expire_in: 12 hrs
-
+###############################################################################
+# Build stage
+###############################################################################
 
 build_ip_and_tests:
     stage: build
@@ -96,9 +84,25 @@ build_linux_driver:
         paths:
             - driver/linux/ctucanfd.ko
 
+run_synthesis:
+    stage: build
+    only: *only
+    tags:
+        - vps
+    script:
+        - source /opt/xilinx/vivado-2018.2/settings.sh
+        - cd synthesis/Vivado/ci_benchmark
+        - vivado -mode tcl -source vivado_bechmark_script.tcl
+        # Remove reference to UNISIM library, all cell models are included in netlist!
+        - sed -i 's\library UNISIM;\\g' typical_design_config/can_top_level.vhd
+    artifacts:
+        paths:
+            - synthesis/Vivado/ci_benchmark/*_design_config
+        expire_in: 12 hrs
+
 
 ###############################################################################
-# Test runs (fast, nightly)
+# Test RTL stage (fast + nightly)
 ###############################################################################
 test_fast_asic:
     stage: test_rtl
@@ -157,7 +161,7 @@ test_nightly:
 
 
 ###############################################################################
-# Compliance test runs
+# Test RTL stage (Compliance test runs)
 ###############################################################################
 test_compliance_short:
     stage: test_rtl
@@ -221,12 +225,13 @@ test_compliance_full_max:
 
 
 ###############################################################################
-# Gate level simulation on post synthesis netlist
+# Test gates (Gate level simulation on post synthesis netlist)
 ###############################################################################
 test_gates_simple:
     stage: test_gates
     dependencies: [build_ip_and_tests, run_synthesis]
-    #only: *only
+    only:
+        - master
     script:
         - cd test
         - make test_gates_simple
@@ -244,7 +249,8 @@ test_gates_simple:
 test_gates_compliance:
     stage: test_gates
     dependencies: [build_ip_and_tests, run_synthesis]
-    #only: *only
+    only:
+        - master
     script:
         - cd test
         - make test_gates_compliance
@@ -305,6 +311,7 @@ pages:
         - mkdir -p public/doc
         - mkdir -p public/doc/linux_driver
         - mkdir -p public/regression_results
+        - mkdir -p public/synthesis
 
         # Copy RTL
         - cp src/*.vhd public/rtl/
@@ -335,6 +342,10 @@ pages:
         - mkdir public/regression_results/functional_coverage
         - cp test/build/functional_coverage/*.html public/regression_results/functional_coverage || true
         - cp -R test/build/functional_coverage/html public/regression_results/functional_coverage || true
+
+        # Copy synthesis results + constraints
+        - cp -R synthesis/Vivado/ci_benchmark/*_design_config public/synthesis
+        - cp synthesis/Constraints/ctu_can_fd.sdc public/synthesis
 
         # VRM result
         - cp scripts/VRM.html public/regression_results/ || true

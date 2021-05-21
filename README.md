@@ -53,7 +53,42 @@ GCov is used to collect (rudimentary) code coverage. See regression coverage in:
 Detailed description of test-bench and CTU CAN FD VIP is in:  
 [![Testbench architecture](https://img.shields.io/badge/Testbench--blue.svg)]( http://canbus.pages.fel.cvut.cz/ctucanfd_ip_core/doc/Testbench.pdf)
 
-CTU CAN FD is simulated on RTL (no gate level simulations so far).
+CTU CAN FD is also simulated on post-synthesis gate-level netlist (see Synthesis further) with UNISIM library.
+See results in:  
+[Gate level - Simple](http://canbus.pages.fel.cvut.cz/ctucanfd_ip_core/regression_results/tests_gate_simple.xml)  
+[Gate level - Compliance](http://canbus.pages.fel.cvut.cz/ctucanfd_ip_core/regression_results/tests_gate_compliance.xml)
+
+## Synthesis
+
+CTU CAN FD has been synthesized into Xilinx and Intel FPGAs on several FPGA families
+(Zynq, Cyclone IV/V, Spartan). BRAMs are inferred for TX and RX buffers memories.
+Maximal reachable frequency is around 100 MHz on Cyclone V/IV and Xilinx Zynq devices.
+
+Daily CI pipeline executes example synthesis on Xilinx Zynq device with 3 different
+device configurations:
+
+#### Minimal:
+
+2 TXT Buffers, 32 word RX Buffer, no frame filters  
+Results: [Area](http://canbus.pages.fel.cvut.cz/ctucanfd_ip_core/synthesis/minimal_design_config/utilization.rpt) 
+[Timing](http://canbus.pages.fel.cvut.cz/ctucanfd_ip_core/synthesis/minimal_design_config/timing_summary.rpt)
+
+#### Typical:
+
+4 TXT Buffers, 128 word RX Buffer, only one bit filter  
+Results: [Area](http://canbus.pages.fel.cvut.cz/ctucanfd_ip_core/synthesis/typical_design_config/utilization.rpt) 
+[Timing](http://canbus.pages.fel.cvut.cz/ctucanfd_ip_core/synthesis/typical_design_config/timing_summary.rpt)
+
+#### Maximal:
+
+8 TXT Buffers, 4096 word RX Buffer, all frame filters  
+Results: [Area](http://canbus.pages.fel.cvut.cz/ctucanfd_ip_core/synthesis/maximal_design_config/utilization.rpt) 
+[Timing](http://canbus.pages.fel.cvut.cz/ctucanfd_ip_core/synthesis/maximal_design_config/timing_summary.rpt)
+
+
+Note that design is constrained to 100 MHz with no timing violations, combinatorial loops
+or latches inferred (FPGA config without clock gate is used). These results together with
+gate level simulations (see "Test-bench" above), provide good indicator of high-quality RTL design.
 
 ## How to use it ?
 
@@ -99,13 +134,6 @@ All tests are automated into several regression runs:
 Results of latest test run + logs are available under:  
 [![pipeline status](https://gitlab.fel.cvut.cz/canbus/ctucanfd_ip_core/badges/master/pipeline.svg)](http://canbus.pages.fel.cvut.cz/ctucanfd_ip_core/regression_results/tests_fast.xml)
 
-## Synthesis
-
-CTU CAN FD has been synthesized into Xilinx and Intel FPGAs. BRAMs were inferred for
-TX and RX buffers memories. CTU CAN FD reached around 100 MHz of maximal frequency on
-Cyclone V/IV and Xilinx Zynq devices.
-
-TODO: Show synthesis benchmark.
 
 ## Linux driver
 
