@@ -14,7 +14,7 @@ elaborate:
 
 # Run test config, convert results to HTML and pack, publish textual summary
 tests_%: tests_%.yml FORCE
-	$(PYTHON) run.py test $(TEST_OPTS_$@) $< -- $(TEST_FLAGS) ctu_can_fd_tb.tb_top_ctu_can_fd.compliance.iso_7_4_*
+	$(PYTHON) run.py test $(TEST_OPTS_$@) $< -- $(TEST_FLAGS)
 	junit2html --report-matrix $@.html $@.xml
 	tar -czvf $@.gz $@.html $@.xml.html
 	junit2html --summary-matrix $@.xml > $@_summary
