@@ -54,10 +54,10 @@ GCov is used to collect (rudimentary) code coverage. See regression coverage in:
 Detailed description of test-bench and CTU CAN FD VIP is in:  
 [![Testbench architecture](https://img.shields.io/badge/Testbench--blue.svg)]( http://canbus.pages.fel.cvut.cz/ctucanfd_ip_core/doc/Testbench.pdf)
 
-CTU CAN FD is also simulated on post-synthesis gate-level netlist (see Synthesis further) with UNISIM library.
-See results in:  
-[Gate level - Simple](http://canbus.pages.fel.cvut.cz/ctucanfd_ip_core/regression_results/tests_gate_simple.xml)  
-[Gate level - Compliance](http://canbus.pages.fel.cvut.cz/ctucanfd_ip_core/regression_results/tests_gate_compliance.xml)
+CTU CAN FD is also simulated on post-synthesis gate-level netlist with UNISIM library.
+
+Results and logs from latest regression (including all test types) run can be downloaded from:  
+[Regression results](http://canbus.pages.fel.cvut.cz/ctucanfd_ip_core/regression_results/compressed_logs.gz)
 
 ## Synthesis
 
@@ -134,12 +134,19 @@ There is a docker image which contains all dependencies needed available at:
 ## Continuous integration
 
 All tests are automated into several regression runs:  
-- Fast - No randomization (seed=0), must pass before merge request is merged (basic sanity)
-- Nightly - Randomized, runs every night.
-- Compliance - Runs ISO 11845-1 2016 compliance test sequence, runs every night
+- Fast ASIC - No randomization (DUT configuration for ASIC)
+- Fast FPGA - No randomization (DUT configuration for FPGA)
+- Compliance short - Runs majority of ISO 11845-1 compliance test sequence
+
+- Nightly - Randomized (DUT configuration for ASIC), all DUT configurations are tested (buffer counts, sizes, generics...)
+- Compliance typ - Runs all ISO 11845-1 tests with "typical" bit-rate on CAN bus.
+- Compliance max - Runs all ISO 11845-1 tests with "maximal" bit-rate on CAN bus.
+
+- Gate level simple - Runs most of feature tests on gate level netlist as DUT
+- Gate level compliance - Runs most of ISO 11845-1 tests on gate level netlist as DUT.
 
 Results of latest test run + logs are available under:  
-[![pipeline status](https://gitlab.fel.cvut.cz/canbus/ctucanfd_ip_core/badges/master/pipeline.svg)](http://canbus.pages.fel.cvut.cz/ctucanfd_ip_core/regression_results/tests_fast.xml)
+[Regression results](http://canbus.pages.fel.cvut.cz/ctucanfd_ip_core/regression_results/compressed_logs.gz)
 
 
 ## Linux driver

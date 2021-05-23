@@ -350,8 +350,14 @@ pages:
         # VRM result
         - cp scripts/VRM.html public/regression_results/ || true
 
-        # Check size
+        # Check size, compress, check again
+        - echo "Size of artifacts before compression:"
         - du -skh public/*
+        - tar -czvf public/regression_results/compressed_logs.gz public/regression_results/tests_*.xml
+        - rm -f public/regression_results/tests_*.xml
+        - echo "Size of artifacts after compression:"
+        - du -skh public/*
+        
     only:
         - master
     artifacts:
