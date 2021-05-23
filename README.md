@@ -26,7 +26,8 @@ purposes has to obtain CAN protocol license from Bosch.
 
 RTL design of CTU CAN FD is independent from vendor specific libraries or macros. It is fully-synchronous design (single clock domain).
 
-FPGA / ASIC target can be selected by top level generic. ASIC target implements clock gating for memories to achieve low dynamic power consumption. Additionally, clock enables are used frequently to allow inferred clock gating on ASIC.
+FPGA / ASIC target can be selected by top level generic. ASIC target implements clock gating for memories to achieve low dynamic power consumption. Additionally, clock enables are used frequently to allow inferred clock gating on ASIC. Last but not least, RTL is DFT insertion ready and contains
+additional support for manufacturing testability.
 
 Architecture of CTU CAN FD is described in:  
 [![System architecture](https://img.shields.io/badge/System_architecture--blue.svg)]( http://canbus.pages.fel.cvut.cz/ctucanfd_ip_core/doc/System_Architecture.pdf)
@@ -85,10 +86,10 @@ Results: [Area](http://canbus.pages.fel.cvut.cz/ctucanfd_ip_core/synthesis/typic
 Results: [Area](http://canbus.pages.fel.cvut.cz/ctucanfd_ip_core/synthesis/maximal_design_config/utilization.rpt) 
 [Timing](http://canbus.pages.fel.cvut.cz/ctucanfd_ip_core/synthesis/maximal_design_config/timing_summary.rpt)
 
-
 Note that design is constrained to 100 MHz with no timing violations, combinatorial loops
 or latches inferred (FPGA config without clock gate is used). These results together with
 gate level simulations (see "Test-bench" above), provide good indicator of high-quality RTL design.
+
 
 ## How to use it ?
 
@@ -101,10 +102,16 @@ Delivery package contains:
 - Documentation (Datasheet, System Architecture, Testbench)
 - Regression results (with Compliance test results)
 - Functional coverage results from regression
+- Synthesis constraints + results of Synthesis benchmarks.
 
-RTL CAN be easily integrated into a design with help of [![System architecture](https://img.shields.io/badge/System_architecture--blue.svg)]( http://canbus.pages.fel.cvut.cz/ctucanfd_ip_core/doc/System_Architecture.pdf) document.
+RTL CAN be easily integrated with help of [![System architecture](https://img.shields.io/badge/System_architecture--blue.svg)]( http://canbus.pages.fel.cvut.cz/ctucanfd_ip_core/doc/System_Architecture.pdf) document.
 
 VIP can be easily integrated into other test-bench with help of [![Testbench architecture](https://img.shields.io/badge/Testbench--blue.svg)]( http://canbus.pages.fel.cvut.cz/ctucanfd_ip_core/doc/Testbench.pdf) document. Note that running compliance tests requires access to Compliance test library which is only available with commercial agreement.
+
+If you like the design, and would like to use-it, let us know. We are looking for co-operation,
+especially on ISO certification which is a big step which we would need partners for. Please,
+respect the license, and dont use the design in your commercial device without asking first.
+
 
 ## Development tools
 
@@ -163,4 +170,14 @@ However, there are no written tests for the driver itself (apart from compiling 
 ## QEMU emulation
 
 The CTU CAN FD IP core functional model is part of QEMU mainline. QEMU CAN documentation [docs/can.txt](https://git.qemu.org/?p=qemu.git;a=blob;f=docs/can.txt) describes CTU CAN FD emulation setup.
+
+## Roadmap
+
+There are several options for further development:  
+- Integrations of Linux driver to mainline Linux
+- Linux driver testing (QEMU + VPCIE)
+- Splitting design into two clock domains
+- Support of TTCAN protocol
+- Support of CAN XL protocol
+- Other features
 
