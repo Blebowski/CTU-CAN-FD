@@ -115,18 +115,16 @@ def test(obj, *, config, vunit_args):
     ctu_can_fd_tb = ui.add_library("ctu_can_fd_tb")
     ctu_can_fd_tb_unit = ui.add_library("ctu_can_fd_tb_unit")
 
-    # We need separate library to compile in synthesized can_top_level
-    # to avoid name clash and different interface!!
-    ctu_can_fd_gates = ui.add_library("ctu_can_fd_gates")
-
     add_rtl_sources(ctu_can_fd_rtl)
     
     # Compile gate level netlist to stand-alone library to avoid name conflict
     # with RTL version. If running gate, only DUT is gate level TEST_NODE in
     # feature tests is still on RTL, so we need whole RTL too!!
     if config["_default"]["gate_level"]:
+        # We need separate library to compile in synthesized can_top_level
+        # to avoid name clash and different interface!!
+        ctu_can_fd_gates = ui.add_library("ctu_can_fd_gates")
         add_post_syn_netlist(ctu_can_fd_gates)
-        ctu_can_fd_gates.set_compile_option(k, v)
 
     ui.enable_check_preprocessing()
     #ui.enable_location_preprocessing()  # (additional_subprograms=['log'])
@@ -159,6 +157,8 @@ def test(obj, *, config, vunit_args):
     for k, v in c.items():
         ctu_can_fd_tb.set_compile_option(k, v)
         ctu_can_fd_rtl.set_compile_option(k, v)
+        if config["_default"]["gate_level"]:
+            ctu_can_fd_gates.set_compile_option(k, v)
 
     res = vunit_run(ui, build, out_basename)
 
