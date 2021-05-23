@@ -1,5 +1,0 @@
-<?xml version="1.0"?>
-<Runs Version="1" Minor="0">
-	<Run Id="Benchmark:Minimal_configuration" LaunchDir="/DOKUMENTY/Skola/CVUT-FEL/ctu_can_fd_2/synthesis/Vivado/xilinx_benchmark/xilinx_benchmark.runs/Benchmark:Minimal_configuration" FlowId="Vivado_Synthesis" FromStepId="vivado" ToStepId="vivado"/>
-</Runs>
-

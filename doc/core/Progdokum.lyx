@@ -509,7 +509,7 @@ filename "version.tex"
 \noindent
 \align center
 \begin_inset Tabular
-<lyxtabular version="3" rows="22" columns="3">
+<lyxtabular version="3" rows="23" columns="3">
 <features tabularvalignment="middle">
 <column alignment="center" valignment="top" width="1.5cm">
 <column alignment="center" valignment="top" width="2cm">
@@ -1135,7 +1135,7 @@ Add RETR_CTR register.
 </cell>
 </row>
 <row>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -1144,7 +1144,7 @@ Add RETR_CTR register.
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -1153,11 +1153,40 @@ Add RETR_CTR register.
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
 Add chapter about memory testability.
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+2.3.4
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+17-05-2021
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Add STATUS[STCNT] and STATUS[STRGS] bits.
 \end_layout
 
 \end_inset
@@ -1852,7 +1881,7 @@ status open
 \noindent
 \align center
 \begin_inset Tabular
-<lyxtabular version="3" rows="7" columns="3">
+<lyxtabular version="3" rows="9" columns="3">
 <features tabularvalignment="middle">
 <column alignment="left" valignment="top" width="3cm">
 <column alignment="left" valignment="top" width="2.5cm">
@@ -2077,7 +2106,7 @@ Range fitler is / is not present.
 </cell>
 </row>
 <row>
-<cell alignment="left" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -2086,7 +2115,7 @@ sup_traffic_ctrs
 
 \end_inset
 </cell>
-<cell alignment="left" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -2095,13 +2124,73 @@ true/false
 
 \end_inset
 </cell>
-<cell alignment="left" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
 Traffic counters are / are not present.
- Reading non-zero value from TX_COUNTER/ RX_COUNTER register after transmission/
-reception of CAN frame indicates that traffic counters are present.
+ If present, STATUS[STCNT] = 1.
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+txt_buffer_count
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+2-8
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Number of TXT buffers available.
+ Can be read from TXTB_INFO register.
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+sup_test_registers
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+true/false
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Test registers for memory testability (Test Registers memory region) are
+ / are not present .
+ If present, STATUS[STRCNT] = 1.
 \end_layout
 
 \end_inset
@@ -3421,7 +3510,17 @@ Sync_Seg + Prop_Seg + Phase_Seg1 > 2 minimal time quanta.
 \begin_layout Standard
 With these conditions, it is possible to reach bit lenght of 5 time quanta.
  Note that for nominal bit rate this is possible, however, at least 8 time
- quantas per bit time are recommended.
+ quantas per bit time are recommended (see 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "tab: implementation-parameters"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+).
  For data bit rate, 5 time quantas per bit time can be used.
 \end_layout
 
@@ -5696,7 +5795,7 @@ Traffic counters
 \end_layout
 
 \begin_layout Standard
-CTU CAN FD can measure CAN frames transmitted, received on CAN bus.
+CTU CAN FD can measure CAN frames transmitted/received on CAN bus.
  Upon every succesfully transmitted CAN frame, TX_COUNTER register is incremente
 d by 1.
  Upon every successfully received CAN frame, RX_COUNTER register is incremented
@@ -5705,6 +5804,9 @@ d by 1.
  RX_COUNTER register can be cleared by writing COMMAND[RXFCRST]=1.
  When CTU CAN FD is in Loopback mode and own transmitted frame is stored
  to RX buffer, RX_COUNTER is also incremented.
+ Traffic counters are optional in CTU CAN FD.
+ Presence of traffic counters can be determined by reading STATUS[STCNT]
+ bit.
 \end_layout
 
 \begin_layout Subsection

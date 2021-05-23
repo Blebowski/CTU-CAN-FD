@@ -68,11 +68,11 @@
 
 --------------------------------------------------------------------------------
 --  @Purpose:
---    CTU CAN FD main testbench top
+--    CTU CAN FD main testbench top - Gate level variant!
 --  
 --------------------------------------------------------------------------------
 -- Revision History:
---    26.1.2021   Created file
+--    20.5.2021   Created file
 --------------------------------------------------------------------------------
 
 -- Only top level uses Vunit. This allows keeping CTU CAN FD VIP Vunit-less,
@@ -86,6 +86,8 @@ context ctu_can_fd_tb.ieee_context;
 context ctu_can_fd_tb.tb_common_context;
 context ctu_can_fd_tb.tb_agents_context;
 context ctu_can_fd_tb.rtl_context;
+
+library ctu_can_fd_gates;
 
 entity tb_top_ctu_can_fd is
     generic(
@@ -154,12 +156,12 @@ architecture tb of tb_top_ctu_can_fd is
    signal timestamp     : std_logic_vector(63 DOWNTO 0);
    signal test_probe    : t_ctu_can_fd_test_probe;
 
+   signal scan_enable   : std_logic;
+
    -- Test control
    signal test_start    : std_logic := '0';
    signal test_done     : std_logic := '0';
    signal test_success  : std_logic := '0'; -- 0 fail / 1 success  
-
-   signal scan_enable   : std_logic;
 
    component ctu_can_fd_vip is
    generic(
@@ -224,17 +226,7 @@ begin
     ---------------------------------------------------------------------------
     -- DUT (Use RAM-like memory bus)
     ---------------------------------------------------------------------------
-    dut : entity ctu_can_fd_rtl.can_top_level
-    generic map(
-        rx_buffer_size      => rx_buffer_size,
-        txt_buffer_count    => txt_buffer_count,
-        sup_filtA           => sup_filtA,
-        sup_filtB           => sup_filtB,
-        sup_filtC           => sup_filtC,
-        sup_range           => sup_range,
-        sup_traffic_ctrs    => sup_traffic_ctrs,
-        target_technology   => target_technology
-    )
+    dut : entity ctu_can_fd_gates.can_top_level
     port map(
         -- Clock and Asynchronous reset
         clk_sys     => clk_sys,
@@ -260,8 +252,10 @@ begin
         can_rx      => can_rx,
 
         -- Test probe
-        test_probe  => test_probe,
-
+        \test_probe[rx_trigger_nbs]\    => test_probe.rx_trigger_nbs,
+        \test_probe[rx_trigger_wbs]\    => test_probe.rx_trigger_wbs,
+        \test_probe[tx_trigger]\        => test_probe.tx_trigger,
+    
         -- Timestamp for time based transmission / reception
         timestamp   => timestamp
     );

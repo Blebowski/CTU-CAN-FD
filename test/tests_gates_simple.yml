@@ -26,9 +26,9 @@ _default: &default
     sup_traffic_ctrs: true
     
     ###########################################################################
-    # C_TECH_ASIC
+    # C_TECH_FPGA
     ###########################################################################
-    target_technology: 0
+    target_technology: 1
 
     # DUT Bit timing settings
     # (Applies for compliance tests and feature tests!)
@@ -45,7 +45,7 @@ _default: &default
     sjw_fd: 5
 
     # Run simulations on gate level (post-syn)
-    gate_level: false
+    gate_level: true
 
     # Clock configuration
     # (Applies for compliance tests and feature tests!)
@@ -54,31 +54,6 @@ _default: &default
     # Number of frames used from each dataset, 1000 means whole dataset
     # These take really long time, so we run only few frames here!
     reference_iterations: 10
-
-unit:
-    default:
-        <<: *default
-        log_level: info
-        iterations: 50
-        timeout: 100 ms
-    tests:
-        bit_stuffing:
-            iterations: 20
-        apb:
-            iterations: 1
-        crc:
-            iterations: 50
-        int_manager:
-            iterations: 50
-        message_filter:
-            iterations: 50
-        rx_buffer:
-            iterations: 10
-        tx_arbitrator:
-            # TODO: Fix TX Arbitrator unit test
-            iterations: 0
-        tx_buffer:
-            iterations: 50
 
 feature:
     tests:
@@ -90,10 +65,12 @@ feature:
         alc_srr_rtr:
         alc_srr_rtr_2:
 
-        btr:
+        #btr:
         btr_fd:
-        # Do not run to decrease duration of fast regression!
+
+        # Not run on gate level to save time
         #btr_maximal:
+
         btr_minimal:
         btr_ssp_access:
         bus_start:
@@ -195,18 +172,7 @@ feature:
         tx_priority:
         tx_status:
         timestamp_low_high:
-        txt_buffer_hazard:
 
-reference:
-    tests:
-        data_set_1:
-        data_set_2:
-        data_set_3:
-        data_set_4:
-        data_set_5:
-        data_set_6:
-        data_set_7:
-        data_set_8:
-        data_set_9:
-        data_set_10:
+        # Not run on gate level to save time
+        #txt_buffer_hazard:
 

@@ -266,9 +266,15 @@ union ctu_can_fd_status {
 		uint32_t ewl                     : 1;
 		uint32_t idle                    : 1;
 		uint32_t pexs                    : 1;
-		uint32_t reserved_31_9          : 23;
+		uint32_t reserved_15_9           : 7;
+		uint32_t stcnt                   : 1;
+		uint32_t strgs                   : 1;
+		uint32_t reserved_31_18         : 14;
 #else
-		uint32_t reserved_31_9          : 23;
+		uint32_t reserved_31_18         : 14;
+		uint32_t strgs                   : 1;
+		uint32_t stcnt                   : 1;
+		uint32_t reserved_15_9           : 7;
 		uint32_t pexs                    : 1;
 		uint32_t idle                    : 1;
 		uint32_t ewl                     : 1;

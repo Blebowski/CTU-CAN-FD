@@ -585,12 +585,17 @@ begin
             tst_rdata_txt_bufs_i(7) when TMTGT_TXTBUF8,
                     (OTHERS => '0') when others;
 
+
+        -- Indicate to register map that Test registers are present
+        status_comb(STRGS_IND) <= '1';
+        
     end generate test_registers_gen_true;
     
     test_registers_gen_false : if (not G_SUP_TEST_REGISTERS) generate
         test_registers_rdata <= (OTHERS => '0');
         test_registers_in.tst_rdata <= (OTHERS => '0');
         test_registers_out_i <= ((OTHERS => '0'), (OTHERS => '0'), (OTHERS => '0'));
+        status_comb(STRGS_IND) <= '0';
     end generate;
 
     test_registers_out <= test_registers_out_i;
@@ -690,7 +695,16 @@ begin
 
     status_comb(PEXS_IND) <= stat_bus(STAT_PEXS_INDEX);
 
-    status_comb(31 downto 9) <= (others => '0');
+    traffic_ctrs_gen_true : if G_SUP_TRAFFIC_CTRS generate
+        status_comb(STCNT_IND) <= '1';
+    end generate traffic_ctrs_gen_true;
+    
+    traffic_ctrs_gen_false : if not G_SUP_TRAFFIC_CTRS generate
+        status_comb(STCNT_IND) <= '0';
+    end generate traffic_ctrs_gen_false;
+    
+    status_comb(31 downto 18) <= (others => '0');
+    status_comb(15 downto 9) <= (others => '0');
 
     ----------------------------------------------------------------------------
     ----------------------------------------------------------------------------

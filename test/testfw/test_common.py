@@ -76,6 +76,11 @@ def get_compile_and_sim_options(config) -> Tuple[OptionsDict, OptionsDict]:
         compile_flags += ['-fpsl']
         elab_flags += ['-fpsl']
 
+    # VITAL compilation with VHDL 2008 requires relaxed rules
+    if ('gate_level' in config) and config['gate_level'] == True:
+        compile_flags += ['-frelaxed-rules', '--ieee=synopsys']
+        elab_flags += ['-frelaxed-rules', '--ieee=synopsys']  
+
     compile_options = OptionsDict()
     compile_options["ghdl.flags"] = compile_flags
 
@@ -163,6 +168,8 @@ def add_sources(lib, patterns) -> None:
 def add_rtl_sources(lib) -> None:
     add_sources(lib, ['../src/**/*.vhd'])
 
+def add_post_syn_netlist(lib) -> None:    
+    add_sources(lib, ['../synthesis/Vivado/ci_benchmark/typical_design_config/can_top_level.vhd'])
 
 def add_unit_sources(lib, build) -> None:
 	add_sources(lib, ['unit/**/*.vhd'])
@@ -220,7 +227,6 @@ def add_main_tb_sources(lib, config) -> None:
     else:
     	sources.append('main_tb/pkg/tb_report_pkg_vunit.vhd')
     
-    
     sources.append('main_tb/common/*.vhd');
     sources.append('main_tb/contexts/*.vhd');
     
@@ -247,7 +253,12 @@ def add_main_tb_sources(lib, config) -> None:
 
     # VIP top and TB top
     sources.append('main_tb/ctu_can_fd_vip.vhd');
-    sources.append('main_tb/tb_top_ctu_can_fd.vhd');
+    #sources.append('main_tb/vunit_manager.vhd');
+    
+    if (config['_default']['gate_level'] == False):
+        sources.append('main_tb/tb_top_ctu_can_fd.vhd');
+    else:
+        sources.append('main_tb/tb_top_gates_ctu_can_fd.vhd');
     
     add_sources(lib, sources)
 

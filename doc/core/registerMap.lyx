@@ -6246,67 +6246,67 @@ cellcolor{cyan}
 
 \end_inset
 </cell>
+<cell alignment="center" leftline="true" multicolumn="1" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Reserved\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" multicolumn="2" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Reserved\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" multicolumn="2" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Reserved\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" multicolumn="2" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Reserved\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" multicolumn="2" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Reserved\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" multicolumn="2" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Reserved\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" multicolumn="1" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+STRGS\end_layout
+
+\end_inset
+</cell>
 <cell alignment="center" leftline="true" multicolumn="1" rightline="true" topline="true" usebox="none" valignment="top">
 \begin_inset Text
 
 \begin_layout Plain Layout
-Reserved\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" leftline="true" multicolumn="2" topline="true" usebox="none" valignment="top">
-\begin_inset Text
-
-\begin_layout Plain Layout
-Reserved\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" leftline="true" multicolumn="2" topline="true" usebox="none" valignment="top">
-\begin_inset Text
-
-\begin_layout Plain Layout
-Reserved\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" leftline="true" multicolumn="2" topline="true" usebox="none" valignment="top">
-\begin_inset Text
-
-\begin_layout Plain Layout
-Reserved\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" leftline="true" multicolumn="2" topline="true" usebox="none" valignment="top">
-\begin_inset Text
-
-\begin_layout Plain Layout
-Reserved\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" leftline="true" multicolumn="2" topline="true" usebox="none" valignment="top">
-\begin_inset Text
-
-\begin_layout Plain Layout
-Reserved\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" leftline="true" multicolumn="2" topline="true" usebox="none" valignment="top">
-\begin_inset Text
-
-\begin_layout Plain Layout
-Reserved\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" leftline="true" multicolumn="2" rightline="true" topline="true" usebox="none" valignment="top">
-\begin_inset Text
-
-\begin_layout Plain Layout
-Reserved\end_layout
+STCNT\end_layout
 
 \end_inset
 </cell>
@@ -6379,7 +6379,7 @@ cellcolor{cyan}
 \begin_inset Text
 
 \begin_layout Plain Layout
--\end_layout
+X\end_layout
 
 \end_inset
 </cell>
@@ -6387,7 +6387,7 @@ cellcolor{cyan}
 \begin_inset Text
 
 \begin_layout Plain Layout
--\end_layout
+X\end_layout
 
 \end_inset
 </cell>
@@ -7064,6 +7064,12 @@ IDLE Bus is idle (no frame is being transmitted/received) or CTU CAN FD is bus-o
 \end_layout
 \begin_layout Description
 PEXS Protocol exception status (flag). Set when Protocol exception occurs. Cleared by writing COMMAND[CPEXS]=1.
+\end_layout
+\begin_layout Description
+STCNT Support of Traffic counters. When this bit is 1, Traffic counters are present. 
+\end_layout
+\begin_layout Description
+STRGS Support of Test Registers for memory testability. When this bit is 1, Test Registers are present. 
 \end_layout
 \begin_layout Standard
 \begin_inset VSpace bigskip
@@ -55804,7 +55810,7 @@ X\end_layout
 TMAENA Enable test access to CTU CAN FD memories.
 \end_layout
 \begin_layout Description
-TWRSTB Writing 1 executes write acess to a memory/address given by TST_DEST register.
+TWRSTB Writing 1 executes write acess to a memory/address given by TST_DEST register. 0 does not need to be written, this bit is cleared automatically.
 \end_layout
 \begin_layout Standard
 \begin_inset VSpace bigskip

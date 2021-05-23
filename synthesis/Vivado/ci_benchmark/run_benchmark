@@ -1,0 +1,7 @@
+#!/bin/bash
+
+vivado -mode tcl -source run_vivado_benchmark.tcl
+
+
+
+

@@ -131,12 +131,12 @@ package body btr_minimal_ftest is
         CAN_turn_controller(false, DUT_NODE, chn);
         CAN_turn_controller(false, TEST_NODE, chn);
 
-        bus_timing.prop_nbt := 3;
-        bus_timing.ph1_nbt := 2;
-        bus_timing.ph2_nbt := 2;
+        bus_timing.prop_nbt := 1;
+        bus_timing.ph1_nbt := 3;
+        bus_timing.ph2_nbt := 3;
         bus_timing.sjw_nbt := 2;
         bus_timing.tq_nbt := 1;
-        
+
         bus_timing.prop_dbt := 0;
         bus_timing.ph1_dbt := 2;
         bus_timing.ph2_dbt := 2;
