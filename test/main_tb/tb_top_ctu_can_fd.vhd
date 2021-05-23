@@ -387,7 +387,7 @@ begin
         runner_cfg              => runner_cfg,
         test_name               => test_name,
         test_type               => test_type,
-        stand_alone_vip_mode    => standalone_vip_mode,
+        stand_alone_vip_mode    => stand_alone_vip_mode,
         log_level               => log_level,
 
         iterations              => iterations,

@@ -126,6 +126,7 @@ def test(obj, *, config, vunit_args):
     # feature tests is still on RTL, so we need whole RTL too!!
     if config["_default"]["gate_level"]:
         add_post_syn_netlist(ctu_can_fd_gates)
+        ctu_can_fd_gates.set_compile_option(k, v)
 
     ui.enable_check_preprocessing()
     #ui.enable_location_preprocessing()  # (additional_subprograms=['log'])
@@ -158,7 +159,6 @@ def test(obj, *, config, vunit_args):
     for k, v in c.items():
         ctu_can_fd_tb.set_compile_option(k, v)
         ctu_can_fd_rtl.set_compile_option(k, v)
-        ctu_can_fd_gates.set_compile_option(k, v)
 
     res = vunit_run(ui, build, out_basename)
 
