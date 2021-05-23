@@ -745,6 +745,13 @@ package body test_controller_agent_pkg is
             pli_logic_vector_to_str(pli_str_buf_in, param_name);
             pli_data_out(pli_data_out'length - 1 downto 0) <= (OTHERS => '0');
 
+            -- Replace '\0' by ' ' to avoid invalid characters in generated XML. This then
+            -- prevents conversion of Junit XML to e.g. HTML !!
+            for i in 1 to 64 loop
+                if (param_name(i) = character'val(0)) then
+                    param_name(i) := ' ';
+                end if;
+            end loop;
             info_m("SW test queries parameter: " & param_name(1 to 64));
 
             if (param_name(45 to 64) = "CFG_DUT_CLOCK_PERIOD") then

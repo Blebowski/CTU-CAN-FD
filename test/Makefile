@@ -12,15 +12,29 @@ elaborate:
 	$(PYTHON) run.py test tests_fast_asic.yml -- --elaborate $(TEST_FLAGS)
 	#$(PYTHON) run.py test tests_fast_fpga.yml -- --elaborate $(TEST_FLAGS)
 
-test_%: tests_%.yml FORCE
-	$(PYTHON) run.py test $(TEST_OPTS_$@) $< -- $(TEST_FLAGS)
+# Run test config, convert results to HTML and pack, publish textual summary
+tests_%: tests_%.yml FORCE
+	$(PYTHON) run.py test $(TEST_OPTS_$@) $< -- $(TEST_FLAGS) ctu_can_fd_tb.tb_top_ctu_can_fd.compliance.iso_7_4_*
+	junit2html --report-matrix $@.html $@.xml
+	tar -czvf $@.gz $@.html $@.xml.html
+	junit2html --summary-matrix $@.xml > $@_summary
+	rm -f $@.html
+	rm -f $@.xml.html
+	rm -f $@.xml
 
+
+######################################################################################
 # For debugging purposes of pipelines only
+######################################################################################
 test_compliance_demo: tests_compliance.yml FORCE
 	$(PYTHON) run.py test tests_compliance.yml -- ctu_can_fd_tb.can_compliance_tb.demo
 test_nightly_demo: tests_nightly.yml FORCE
 	$(PYTHON) run.py test tests_nightly.yml -- ctu_can_fd_tb.tb_feature.device_id
 
+
+######################################################################################
+# Coverage processing
+######################################################################################
 coverage:
 	lcov --capture --gcov-tool=/opt/ghdl/bin/gcov --directory $(BUILD_DIR) --output-file code_coverage.info
 	genhtml code_coverage.info --output-directory code_html

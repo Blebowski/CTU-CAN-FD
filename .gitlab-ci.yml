@@ -110,14 +110,12 @@ test_fast_asic:
     dependencies: [build_ip_and_tests]
     script:
         - cd test
-        - make test_fast_asic
+        - make tests_fast_asic
     artifacts:
         when: always
         paths:
-            - test/tests_fast_asic.xml
-            - test/xunit.xsl
-        reports:
-            junit: [test/tests_fast_asic.xml]
+            - test/tests_fast_asic.gz
+            - test/tests_fast_asic_summary
 
 test_fast_fpga:
     stage: test_rtl
@@ -125,14 +123,12 @@ test_fast_fpga:
     dependencies: [build_ip_and_tests]
     script:
         - cd test
-        - make test_fast_fpga
+        - make tests_fast_fpga
     artifacts:
         when: always
         paths:
-            - test/tests_fast_fpga.xml
-            - test/xunit.xsl
-        reports:
-            junit: [test/tests_fast_fpga.xml]
+            - test/tests_fast_fpga.gz
+            - test/tests_fast_fpga_summary
 
 test_nightly:
     stage: test_rtl
@@ -141,18 +137,17 @@ test_nightly:
         - master
     script:
         - cd test
-        - make test_nightly
+        - make tests_nightly
     artifacts:
         when: always
         paths:
-            - test/tests_nightly.xml
+            - test/tests_nightly.gz
+            - test/tests_nightly_summary
             - test/build/code_coverage_tests_nightly
             - test/build/functional_coverage
             - test/build/vunit_out/preprocessed
             - test/rtl_lst.txt
             - test/tb_lst.txt
-        reports:
-            junit: [test/tests_nightly.xml]
 
     # Nightly tests might fail due to randomization. It is not preffered to
     # kill whole follow-up coverage processing due to this failure!
@@ -169,14 +164,12 @@ test_compliance_short:
     only: *only
     script:
         - cd test
-        - make test_compliance_short
+        - make tests_compliance_short
     artifacts:
         when: always
         paths:
-            - test/tests_compliance_short.xml
-            - test/xunit.xsl
-        reports:
-            junit: [test/tests_compliance_short.xml]
+            - test/tests_compliance_short.gz
+            - test/tests_compliance_short_summary
 
     # For now not all compliance tests are debugged, allow failure...
     allow_failure: true
@@ -188,16 +181,15 @@ test_compliance_full_typ:
         - master
     script:
         - cd test
-        - make test_compliance_full_typ
+        - make tests_compliance_full_typ
     artifacts:
         when: always
         paths:
-            - test/tests_compliance_full_typ.xml
+            - test/tests_compliance_full_typ.gz
+            - test/tests_compliance_full_typ_summary
             - test/build/code_coverage_tests_compliance_full_typ
             - test/build/functional_coverage
             - test/build/vunit_out/preprocessed
-        reports:
-            junit: [test/tests_compliance_full_typ.xml]
 
     # For now not all compliance tests are debugged, allow failure...
     allow_failure: true
@@ -209,17 +201,16 @@ test_compliance_full_max:
         - master
     script:
         - cd test
-        - make test_compliance_full_max
+        - make tests_compliance_full_max
     artifacts:
         when: always
         paths:
-            - test/tests_compliance_full_max.xml
-            - test/build/vunit_out/preprocessed
-        reports:
-            junit: [test/tests_compliance_full_max.xml]
+            - test/tests_compliance_full_max.gz
+            - test/tests_compliance_full_max_summary
 
     # For now not all compliance tests are debugged, allow failure...
     allow_failure: true
+
 
 # TODO: Add min run if we find reasonable compromise for run time
 
@@ -234,14 +225,12 @@ test_gates_simple:
         - master
     script:
         - cd test
-        - make test_gates_simple
+        - make tests_gates_simple
     artifacts:
         when: always
         paths:
-            - test/test_gates_simple.xml
-            - test/xunit.xsl
-        reports:
-            junit: [test/test_gates_simple.xml]
+            - test/tests_gates_simple.gz
+            - test/tests_gates_simple_summary
 
     # Some gates might fail, TODO: Debug
     allow_failure: true
@@ -253,14 +242,12 @@ test_gates_compliance:
         - master
     script:
         - cd test
-        - make test_gates_compliance
+        - make tests_gates_compliance
     artifacts:
         when: always
         paths:
-            - test/test_gates_compliance.xml
-            - test/xunit.xsl
-        reports:
-            junit: [test/test_gates_compliance.xml]
+            - test/tests_gates_compliance.gz
+            - test/tests_gates_compliance_summary
 
     # Still some compliance tests are not yet fully debugged!
     allow_failure: true
@@ -327,9 +314,11 @@ pages:
         # Compliance test library
         - cp test/main_tb/compliance_library/libSIMULATOR_INTERFACE_LIB.so public/
 
-        # Copy regression results
-        - cp test/xunit.xsl public/regression_results/
-        - cp test/tests_*.xml public/regression_results/
+        # Copy regression results and code coverage
+        - cp test/tests_*.gz public/regression_results/
+        - cp test/*_summary public/regression_results/
+        - tar -czvf public/regression_results/regression_summary.gz public/regression_results/*_summary
+        
         - mv test/code_html public/regression_results/coverage || true
         
         # Copy documentation
@@ -351,11 +340,7 @@ pages:
         - cp scripts/VRM.html public/regression_results/ || true
 
         # Check size, compress, check again
-        - echo "Size of artifacts before compression:"
-        - du -skh public/*
-        - tar -czvf public/regression_results/compressed_logs.gz public/regression_results/tests_*.xml
-        - rm -f public/regression_results/tests_*.xml
-        - echo "Size of artifacts after compression:"
+        - echo "Size of artifacts:"
         - du -skh public/*
         
     only:

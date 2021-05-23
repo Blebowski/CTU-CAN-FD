@@ -9,6 +9,7 @@ It is tested by ISO 16845-1 2016 sequence in regression run **every day**.
 RTL is implemented with VHDL-93, synthesizable with most FPGA and ASIC flows.
 TB is implemented with VHDL 2008.
 
+
 ## License
 
 CTU CAN FD RTL and TB are published under following license :  
@@ -22,6 +23,7 @@ The CAN protocol is developed by Robert Bosch GmbH and protected by patents.
 Anybody who wants to implement this IP core on silicon or FPGA for commercial
 purposes has to obtain CAN protocol license from Bosch.
 
+
 ## Design
 
 RTL design of CTU CAN FD is independent from vendor specific libraries or macros. It is fully-synchronous design (single clock domain).
@@ -34,6 +36,7 @@ Architecture of CTU CAN FD is described in:
 
 Functional description of CTU CAN FD is described in:  
 [![Datasheet](https://img.shields.io/badge/Datasheet--blue.svg)]( http://canbus.pages.fel.cvut.cz/ctucanfd_ip_core/doc/Datasheet.pdf)
+
 
 ## Test-bench
 
@@ -54,10 +57,28 @@ GCov is used to collect (rudimentary) code coverage. See regression coverage in:
 Detailed description of test-bench and CTU CAN FD VIP is in:  
 [![Testbench architecture](https://img.shields.io/badge/Testbench--blue.svg)]( http://canbus.pages.fel.cvut.cz/ctucanfd_ip_core/doc/Testbench.pdf)
 
-CTU CAN FD is also simulated on post-synthesis gate-level netlist with UNISIM library.
+CTU CAN FD is also simulated on post-synthesis gate-level netlist with UNISIM library (unit delay simulation).
 
-Results and logs from latest regression (including all test types) run can be downloaded from:  
-[Regression results](http://canbus.pages.fel.cvut.cz/ctucanfd_ip_core/regression_results/compressed_logs.gz)
+
+## Regressions (Continuous integration)
+
+All tests are automated into several regression runs:  
+- Fast ASIC - No randomization (DUT configuration for ASIC)
+- Fast FPGA - No randomization (DUT configuration for FPGA)
+- Compliance short - Runs majority of ISO 11845-1 compliance test sequence
+
+- Nightly - Randomized (DUT configuration for ASIC), all DUT configurations are tested (buffer counts, sizes, generics...)
+- Compliance typ - Runs all ISO 11845-1 tests with "typical" bit-rate on CAN bus.
+- Compliance max - Runs all ISO 11845-1 tests with "maximal" bit-rate on CAN bus.
+
+- Gate level simple - Runs most of feature tests on gate level netlist as DUT
+- Gate level compliance - Runs most of ISO 11845-1 tests on gate level netlist as DUT.
+
+Short summary of results from last regression (including all test types) can be downloaded from:  
+[Regression summary](http://canbus.pages.fel.cvut.cz/ctucanfd_ip_core/regression_results/regression_summary.gz)
+
+Detailed logs are available in zipped format in "Delivery package" at: [![Delivery package](https://img.shields.io/badge/Delivery-package--blue.svg)]( https://gitlab.fel.cvut.cz/canbus/ctucanfd_ip_core/-/jobs/artifacts/master/browse?job=pages).
+
 
 ## Synthesis
 
@@ -131,23 +152,6 @@ Python 3 and following modules: pyvcd attrs jinja2 parsy pyyaml click yattag jso
 There is a docker image which contains all dependencies needed available at:  
 [Simulation docker](https://gitlab.com/canfd/server-tools/container_registry).
 
-## Continuous integration
-
-All tests are automated into several regression runs:  
-- Fast ASIC - No randomization (DUT configuration for ASIC)
-- Fast FPGA - No randomization (DUT configuration for FPGA)
-- Compliance short - Runs majority of ISO 11845-1 compliance test sequence
-
-- Nightly - Randomized (DUT configuration for ASIC), all DUT configurations are tested (buffer counts, sizes, generics...)
-- Compliance typ - Runs all ISO 11845-1 tests with "typical" bit-rate on CAN bus.
-- Compliance max - Runs all ISO 11845-1 tests with "maximal" bit-rate on CAN bus.
-
-- Gate level simple - Runs most of feature tests on gate level netlist as DUT
-- Gate level compliance - Runs most of ISO 11845-1 tests on gate level netlist as DUT.
-
-Results of latest test run + logs are available under:  
-[Regression results](http://canbus.pages.fel.cvut.cz/ctucanfd_ip_core/regression_results/compressed_logs.gz)
-
 
 ## Linux driver
 
@@ -166,6 +170,7 @@ Driver has been tested on three boards:
 
 Operation up to 5 Mbits was tested (depending on physical layer transceiver type).
 
+
 ## Linux driver tests
 
 Linux driver was debugged and tested manually against Kvaser devices, CANoe and other CAN FD controllers. Regular communication
@@ -174,9 +179,11 @@ and handling of Error states were debugged manually. Automated test for latest I
 
 However, there are no written tests for the driver itself (apart from compiling it without error and passing Linux kernels checkpatch which is required for pipeline to pass). In future QEMU + VPCIE + GHDL cosimulation is planned.
 
+
 ## QEMU emulation
 
 The CTU CAN FD IP core functional model is part of QEMU mainline. QEMU CAN documentation [docs/can.txt](https://git.qemu.org/?p=qemu.git;a=blob;f=docs/can.txt) describes CTU CAN FD emulation setup.
+
 
 ## Roadmap
 
