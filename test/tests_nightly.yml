@@ -125,6 +125,7 @@ feature:
         err_capt_sof:
         err_norm_fd:
             iterations: 5
+            timeout: 5 ms
 
         fault_state:
         glitch_filtering:
