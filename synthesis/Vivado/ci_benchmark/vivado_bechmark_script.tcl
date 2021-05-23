@@ -29,9 +29,19 @@ proc run_synth {cfg_name} {
     
     puts "Running synthesis of design configuration: ${cfg_name} ..."
     set GENERICS [form_generics $cfg_name]
-    set CMD "synth_design -top ${TOP} -part ${PART} ${GENERICS}"    
+
+    # First run only elaboration
+    set CMD "synth_design -top ${TOP} -part ${PART} ${GENERICS} -rtl"
     eval $CMD
     
+    # Needs to be configured post elaboration and prior to synthesis!
+    config_timing_analysis -enable_preset_clear_arcs true
+    set_property MAX_FANOUT 100 [get_cells *]
+
+    # Now run full synthesis
+    set CMD "synth_design -top ${TOP} -part ${PART} ${GENERICS}"
+    eval $CMD
+
     # Do optimize to get also better results
     opt_design -resynth_seq_area
 }
@@ -41,8 +51,10 @@ proc write_outputs {cfg_name} {
 
     exec rm -rf $cfg_name
     exec mkdir $cfg_name
-    
-    config_timing_analysis -enable_preset_clear_arcs true
+
+    # Clock latency needed to do ideal clocks STA, needed for post-syn, as there is high
+    # fanout from res_n, which 
+    set_clock_latency 2 [all_clocks]
     #udpate_timing
 
     report_timing_summary > $cfg_name/timing_summary.rpt
@@ -67,6 +79,9 @@ source benchmark_configs.tcl
 
 load_rtl
 read_xdc ../../Constraints/ctu_can_fd.sdc
+
+# Enable preset clear arcs right away to allow synthesis use this timing information!
+#config_timing_analysis -enable_preset_clear_arcs true
 
 # Run through all design configurations
 global DESIGN_CONFIGS

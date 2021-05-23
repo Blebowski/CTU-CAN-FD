@@ -74,12 +74,23 @@ create_clock -period $SYS_CLK_PERIOD -name SYS_CLK -waveform { 0.000 5.000 } [ge
 # Asynchronous input from CAN bus
 set_false_path -from [get_ports can_rx]
 
+# Reset is defined as asynchronous, it is internally synced!
+set_false_path -from [get_ports res_n]
+
+# Only for ASICs, synchronous to clk_sys
+set_input_delay -clock SYS_CLK [expr $SYS_CLK_PERIOD/2] [get_ports scan_enable]
+
+# This is for TB only, in design this can be left unconnected!
+set_false_path -to [get_ports test_probe*]
+
 # Set IO delays to half of cycle to get realistic logic inside of CTU CAN FD
 set_input_delay -clock SYS_CLK [expr $SYS_CLK_PERIOD/2] [get_ports timestamp*]
 set_input_delay -clock SYS_CLK [expr $SYS_CLK_PERIOD/2] [get_ports data_in*]
 set_input_delay -clock SYS_CLK [expr $SYS_CLK_PERIOD/2] [get_ports adress*]
 set_input_delay -clock SYS_CLK [expr $SYS_CLK_PERIOD/2] [get_ports scs]
 set_input_delay -clock SYS_CLK [expr $SYS_CLK_PERIOD/2] [get_ports swr]
+set_input_delay -clock SYS_CLK [expr $SYS_CLK_PERIOD/2] [get_ports srd]
+set_input_delay -clock SYS_CLK [expr $SYS_CLK_PERIOD/2] [get_ports sbe*]
 
 set_output_delay -clock SYS_CLK [expr $SYS_CLK_PERIOD/2] [get_ports data_out*]
 set_output_delay -clock SYS_CLK [expr $SYS_CLK_PERIOD/2] [get_ports can_tx]
