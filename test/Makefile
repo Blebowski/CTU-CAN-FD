@@ -12,15 +12,18 @@ elaborate:
 	$(PYTHON) run.py test tests_fast_asic.yml -- --elaborate $(TEST_FLAGS)
 	#$(PYTHON) run.py test tests_fast_fpga.yml -- --elaborate $(TEST_FLAGS)
 
-# Run test config, convert results to HTML and pack, publish textual summary
+# Run test config
 tests_%: tests_%.yml FORCE
-	$(PYTHON) run.py test $(TEST_OPTS_$@) $< -- $(TEST_FLAGS) || true
-	junit2html --report-matrix $@.html $@.xml
-	tar -czvf $@.gz $@.html $@.xml.html
-	junit2html --summary-matrix $@.xml > $@_summary
-	rm -f $@.html
-	rm -f $@.xml.html
-	rm -f $@.xml
+	$(PYTHON) run.py test $(TEST_OPTS_$@) $< -- $(TEST_FLAGS)
+	
+# Convert results to HTML, pack and publish textual summary
+%_logs:
+	junit2html --report-matrix $*.html $*.xml 
+	tar -czvf $*.gz $*.html $*.xml.html
+	junit2html --summary-matrix $*.xml > $*_summary
+	rm -f $*.html
+	rm -f $*.xml.html
+	rm -f $*.xml
 
 
 ######################################################################################
