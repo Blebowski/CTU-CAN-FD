@@ -14,7 +14,7 @@ elaborate:
 
 # Run test config, convert results to HTML and pack, publish textual summary
 tests_%: tests_%.yml FORCE
-	$(PYTHON) run.py test $(TEST_OPTS_$@) $< -- $(TEST_FLAGS)
+	$(PYTHON) run.py test $(TEST_OPTS_$@) $< -- $(TEST_FLAGS) || true
 	junit2html --report-matrix $@.html $@.xml
 	tar -czvf $@.gz $@.html $@.xml.html
 	junit2html --summary-matrix $@.xml > $@_summary
