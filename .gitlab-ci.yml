@@ -323,6 +323,7 @@ pages:
         - mkdir -p public/doc/linux_driver
         - mkdir -p public/regression_results
         - mkdir -p public/synthesis
+        - mkdir -p public/vivado_component
 
         # Copy RTL
         - cp src/*.vhd public/rtl/
@@ -359,6 +360,9 @@ pages:
         # Copy synthesis results + constraints
         - cp -R synthesis/Vivado/ci_benchmark/*_design_config public/synthesis
         - cp synthesis/Constraints/ctu_can_fd.sdc public/synthesis
+
+        # Copy Vivado component
+        - cp src/component.xml public/vivado_component
 
         # VRM result
         - cp scripts/VRM.html public/regression_results/ || true
