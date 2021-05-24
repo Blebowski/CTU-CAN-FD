@@ -112,6 +112,7 @@ test_fast_asic:
         - cd test
         - make tests_fast_asic
     after_script:
+        - cd test
         - make tests_fast_asic_logs
     artifacts:
         when: always
@@ -127,6 +128,7 @@ test_fast_fpga:
         - cd test
         - make tests_fast_fpga
     after_script:
+        - cd test
         - make tests_fast_fpga_logs
     artifacts:
         when: always
@@ -143,6 +145,7 @@ test_nightly:
         - cd test
         - make tests_nightly
     after_script:
+        - cd test
         - make tests_nightly_logs
     artifacts:
         when: always
@@ -172,6 +175,7 @@ test_compliance_short:
         - cd test
         - make tests_compliance_short
     after_script:
+        - cd test
         - make tests_compliance_short_logs
     artifacts:
         when: always
@@ -191,6 +195,7 @@ test_compliance_full_typ:
         - cd test
         - make tests_compliance_full_typ
     after_script:
+        - cd test
         - make tests_compliance_full_typ_logs
     artifacts:
         when: always
@@ -213,6 +218,7 @@ test_compliance_full_max:
         - cd test
         - make tests_compliance_full_max
     after_script:
+        - cd test
         - make tests_compliance_full_max_logs
     artifacts:
         when: always
@@ -239,6 +245,7 @@ test_gates_simple:
         - cd test
         - make tests_gates_simple
     after_script:
+        - cd test
         - make tests_gates_simple_logs
     artifacts:
         when: always
@@ -258,6 +265,7 @@ test_gates_compliance:
         - cd test
         - make tests_gates_compliance
     after_script:
+        - cd test
         - make tests_gates_compliance_logs
     artifacts:
         when: always
