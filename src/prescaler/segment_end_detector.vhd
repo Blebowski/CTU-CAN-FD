@@ -165,9 +165,6 @@ architecture rtl of segment_end_detector is
     signal segm_end_nbt_valid       : std_logic;
     signal segm_end_dbt_valid       : std_logic;
     signal segm_end_nbt_dbt_valid   : std_logic;
-    
-    -- Internally generated sample point
-    signal sample_point             : std_logic;
  
     -- Combinational requests to finish segment.
     signal tseg1_end_req_valid      : std_logic;

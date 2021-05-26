@@ -596,6 +596,7 @@ begin
         test_registers_in.tst_rdata <= (OTHERS => '0');
         test_registers_out_i <= ((OTHERS => '0'), (OTHERS => '0'), (OTHERS => '0'));
         status_comb(STRGS_IND) <= '0';
+        tst_rdata_txt_bufs_i <= (OTHERS => (OTHERS => '0'));
     end generate;
 
     test_registers_out <= test_registers_out_i;

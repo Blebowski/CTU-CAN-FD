@@ -150,11 +150,11 @@ architecture rtl of priority_decoder is
     ----------------------------------------------------------------------------
     type level2_priority_type  is array (1 downto 0) of
           std_logic_vector(2 downto 0);
-    type level2_comp_valid_type is array (3 downto 0) of
+    type level2_comp_valid_type is array (1 downto 0) of
           std_logic_vector(1 downto 0);
-    signal l2_prio        : level1_priority_type;
+    signal l2_prio        : level2_priority_type;
     signal l2_valid       : std_logic_vector(1 downto 0);
-    signal l2_winner      : std_logic_vector(3 downto 0);
+    signal l2_winner      : std_logic_vector(1 downto 0);
 
     ----------------------------------------------------------------------------
     -- Level 3, we dont need the priorities, we only need the
@@ -173,16 +173,17 @@ begin
     ----------------------------------------------------------------------------
     l0_gen : for i in 0 to G_TXT_BUFFER_COUNT - 1 generate
 
+        -- pragma translate_off
+        
         -- Since we cover "00" as inactive value, instead of active values 
         -- "01", "10" or "11", rather make sure that input values are defined
-        l0_val_proc : process(prio_valid)
+        l0_val_proc : process(prio_valid(i))
         begin
-            -- pragma translate_off
             if (prio_valid(i) /= '0' and prio_valid(i) /= '1' and now /= 0 fs) then
                 report "Input values not exactly defined" severity error;
             end if;
-            -- pragma translate_on
         end process;
+        -- pragma translate_on
 
         l0_prio(i)  <= prio(i);
         l0_valid(i) <= prio_valid(i);

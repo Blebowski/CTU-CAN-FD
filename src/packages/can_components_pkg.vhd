@@ -1898,10 +1898,7 @@ package can_components_pkg is
         ssp_reset               :out   std_logic;
 
         -- Enable measurement of transmitter delay
-        tran_delay_meas         :out   std_logic; 
-
-        -- Protocol control FSM state output
-        pc_state                :out   t_protocol_control_state;
+        tran_delay_meas         :out   std_logic;
 
         -- Transmitted frame is valid
         tran_valid              :out   std_logic;

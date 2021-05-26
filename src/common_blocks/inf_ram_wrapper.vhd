@@ -145,7 +145,7 @@ begin
     ----------------------------------------------------------------------------
     -- Memory Write access process 
     ----------------------------------------------------------------------------
-    ram_write_process : process(res_n, clk_sys)
+    ram_write_process : process(clk_sys)
     begin
         if (rising_edge(clk_sys)) then
             if (write = '1') then

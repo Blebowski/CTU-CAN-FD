@@ -120,8 +120,11 @@ begin
 
     g_tech_fpga : if (G_TECHNOLOGY = C_TECH_FPGA) generate
         
-        -- Connect directly
+        -- Connect directly (always enabled, no gating)
         clk_out <= clk_in;
+        
+        -- Drive just to avoid un-driven signals warning by Synplify
+        clk_en_q <= '1';
         
     end generate g_tech_fpga;
 

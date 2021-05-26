@@ -532,9 +532,6 @@ entity protocol_control_fsm is
         -- Enable measurement of Transmitter delay
         tran_delay_meas         :out   std_logic;
 
-        -- Protocol control FSM state output
-        pc_state                :out   t_protocol_control_state;
-
         -- Transmitted frame is valid
         tran_valid              :out   std_logic;
 
@@ -984,7 +981,7 @@ begin
     ---------------------------------------------------------------------------
     next_state_proc : process(
         curr_state, drv_ena, err_frm_req, ctrl_ctr_zero, no_data_field,
-        drv_fd_type, is_receiver, is_fd_frame,
+        is_receiver, is_fd_frame,
         is_bus_off, go_to_suspend, tx_frame_ready, drv_bus_off_reset_q,
         reinteg_ctr_expired, rx_data_nbs, is_err_active, go_to_stuff_count,
         pex_on_fdf_enable, pex_on_res_enable, drv_rom_ena)
@@ -1390,12 +1387,12 @@ begin
         ctrl_ctr_zero, arbitration_lost_condition, tx_data_wbs, is_transmitter,
         tran_ident_type, tran_frame_type_i, tran_is_rtr, ide_is_arbitration,
         drv_can_fd_ena, tran_brs, rx_trigger, is_err_active, no_data_field,
-        drv_fd_type, ctrl_counted_byte, ctrl_counted_byte_index, is_fd_frame,
+        ctrl_counted_byte, ctrl_counted_byte_index, is_fd_frame,
         is_receiver, crc_match, drv_ack_forb, drv_self_test_ena, tx_frame_ready,
         go_to_suspend, frame_start, ctrl_ctr_one, drv_bus_off_reset_q,
-        reinteg_ctr_expired, first_err_delim_q, go_to_stuff_count,
+        reinteg_ctr_expired, first_err_delim_q, go_to_stuff_count, ack_err_flag,
         crc_length_i, data_length_bits_c, ctrl_ctr_mem_index, is_bus_off,
-        block_txtb_unlock, drv_pex, rx_data_nbs_prev, sync_edge)
+        block_txtb_unlock, drv_pex, rx_data_nbs_prev, sync_edge, drv_rom_ena)
     begin
 
         -----------------------------------------------------------------------
@@ -3285,7 +3282,7 @@ begin
     end process;
     
     -----------------------------------------------------------------------
-    -- Remembering ACK error. Needed by transmitted sending passive error
+    -- Remembering ACK error. Needed by transmitter sending passive error
     -- frame due to ACK error.
     -----------------------------------------------------------------------
     ack_err_flag_proc : process(clk_sys, res_n)
@@ -3326,7 +3323,6 @@ begin
     ssp_reset <= ssp_reset_i; 
     sync_control <= sync_control_q;
     txtb_ptr <= txtb_ptr_q;
-    pc_state <= curr_state;
     br_shifted <= br_shifted_i;
     sp_control_q <= sp_control_q_i;
     is_arbitration <= is_arbitration_i;
