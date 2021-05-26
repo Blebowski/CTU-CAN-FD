@@ -258,16 +258,22 @@ feature:
 
         tx_priority:
             txt_buffer_count: 2
+            iterations: 7
         tx_priority@:
             txt_buffer_count: 3
+            iterations: 7            
         tx_priority@@:
             txt_buffer_count: 4
+            iterations: 7
         tx_priority@@@:
             txt_buffer_count: 5
+            iterations: 7
         tx_priority@@@@:
             txt_buffer_count: 6
+            iterations: 7
         tx_priority@@@@@:
             txt_buffer_count: 8
+            iterations: 7
 
         tx_status:
             txt_buffer_count: 2
