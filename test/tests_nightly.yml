@@ -229,10 +229,13 @@ feature:
             
         tx_arb_consistency:
             txt_buffer_count: 2
+            iterations: 10
         tx_arb_consistency@:
             txt_buffer_count: 4
+            iterations: 10
         tx_arb_consistency@@:
             txt_buffer_count: 8
+            iterations: 10
 
         tx_arb_time_tran:
             txt_buffer_count: 2

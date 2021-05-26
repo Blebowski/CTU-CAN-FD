@@ -171,11 +171,16 @@ package body tx_arb_consistency_ftest is
 
         CAN_wait_sync_seg(DUT_NODE, chn);
         
-        rand_int_v(10, wait_cycles);
-        wait_cycles := wait_cycles - 1 + bus_timing.tq_nbt *
-                        (bus_timing.prop_nbt + bus_timing.ph1_nbt);
+        -- Wait for "PH1 - 7 cycles" always, plus up to 12 cycles random.
+        -- This will cause that set ready is issued between - 7 cycles before
+        -- up to 5 cycles after sample point! Therefore TX Arbitrator should
+        -- be in process of TXT buffer validation!!   
+        rand_int_v(12, wait_cycles);
+        wait_cycles := wait_cycles +
+                       bus_timing.tq_nbt * (bus_timing.prop_nbt + bus_timing.ph1_nbt) -
+                       7;
 
-        for i in 0 to wait_cycles loop
+        for i in 1 to wait_cycles loop
             clk_agent_wait_cycle(chn);
         end loop;
         
