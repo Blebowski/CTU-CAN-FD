@@ -319,11 +319,9 @@ package body mode_rst_ftest is
                 get_reg_rst_val(Control_registers_list(i), reg_rst_val_32);
                 mask_reg_val(Control_registers_list(i), reg_rst_val_32);
 
-                -- RX_MEM_INFO register is generic dependant -> Do it manually!
+                -- RX_MEM_INFO register, all bits generic dependant -> Skip!
                 if (Control_registers_list(i).address = RX_MEM_INFO_ADR) then
-                    reg_rst_val_32 := (OTHERS => '0');
-                    reg_rst_val_32(6) := '1';  -- RX Buffer size = 32
-                    reg_rst_val_32(22) := '1'; -- RX Mem free = 32
+                    next;
                 end if;
     
                 -- TXTB_INFO is generic dependant -> Get number of TXT Buffers
