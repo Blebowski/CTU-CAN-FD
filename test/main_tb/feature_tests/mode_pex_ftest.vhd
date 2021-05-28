@@ -82,31 +82,31 @@
 --  @1. First part - CAN 2.0 - no protocol exception.
 --      @1.1 Configure SETTINGS[PEX]=0 and MODE[FDE]=0 in DUT. Send CAN FD
 --           frame by Test node.
---      @1.2 Wait until start of r0/FDF bit. Wait one more bit and check that
---           DUT is sending error frame. Wait till end of frame.
+--      @1.2 Wait until sample poing of r0/FDF bit. Check that DUT sends error frame.
+--           Wait till end of frame.
 --      @1.3 Check that STATUS[PEXS] is not set (no Protocol exception occured).
 --  @2. Second part - CAN FD Tolerant
 --      @2.1 Configure SETTINGS[PEX]=1 and MODE[FDE]=0 in DUT. Send CAN FD
 --           frame by Test node.
---      @2.2 Wait until start of r0/FDF bit. Wait one more bit and check that
---           DUT is NOT sending error frame. Check that node is idle (in inte
---           gration state). Wait till end of frame.
+--      @2.2 Wait until sample point of r0/FDF bit. Check that DUT is NOT sending
+--           error frame. Check that node is idle (in integration state).
+--           Wait till end of frame.
 --      @2.3 Check that STATUS[PEXS] is set. Clear it via COMMAND[CPEXS] and
 --           check that it has been cleared.
 --  @3. Third part - CAN FD Enabled - no protocol exception
 --      @3.1 Configure SETTINGS[PEX]=0 and MODE[FDE]=1 in DUT. Send CAN FD
 --           frame by Test node.
---      @3.2 Wait till start of r0 bit (after FDF) in Test node and force CAN RX of
---           DUT to Recessive value.
---      @3.3 Wait till start of next bit, release the force, and check that
---           DUT is transmitting Error frame. Wait till end of frame.
+--      @3.2 Wait till sample point of FD in Test node and force CAN RX of DUT
+--           to Recessive value.
+--      @3.3 Wait till sample point of next bit (r0), release the force, and check
+--           that DUT is transmitting Error frame. Wait till end of frame.
 --      @3.4 Check that STATUS[PEXS] is not set.
 --  @4. Fourth part - CAN FD Enabled - protocol exception
 --      @4.1 Configure SETTINGS[PEX]=1 and MODE[FDE]=1 in DUT. Send CAN FD
 --           frame by Test node.
---      @4.2 Wait till start of r0 bit (after FDF) in Test node and force CAN RX of
+--      @4.2 Wait till sample point of FDF in Test node and force CAN RX of
 --           DUT to Recessive value.
---      @4.3 Wait till start of next bit, release the force, and check that
+--      @4.3 Wait till next sample point (R0), release the force, and check that
 --           DUT is NOT transmitting Error frame and that it is idle.
 --           Wait till end of frame.
 --      @4.4 Check that STATUS[PEXS] is set. Clear it via COMMAND[CPEXS] and
@@ -171,8 +171,9 @@ package body mode_pex_ftest is
         end if;
         
         CAN_wait_tx_rx_start(false, true, node, chn);
+        wait for 15 ns;
         for i in 1 to num_bits_to_wait loop
-            CAN_wait_sync_seg(node, chn);
+            CAN_wait_sample_point(node, chn);
         end loop;
     end procedure;
 
@@ -228,13 +229,13 @@ package body mode_pex_ftest is
             CAN_send_frame(CAN_TX_frame, 1, TEST_NODE, chn, frame_sent);
 
             --------------------------------------------------------------------
-            -- @1.2 Wait until start of r0/FDF bit. Wait one more bit and check
-            --      that DUT is sending error frame. Wait till end of frame.
+            -- @1.2 Wait until sample poing of r0/FDF bit. Check that DUT sends
+            --      error frame. Wait till end of frame.
             --------------------------------------------------------------------
             info_m("Step 1.2");
             
             wait_till_fdf(CAN_TX_frame, DUT_NODE, chn);
-            CAN_wait_sync_seg(DUT_NODE, chn);
+            wait for 20 ns;
             get_controller_status(status, DUT_NODE, chn);
             check_m(status.error_transmission, "Error frame being transmitted");
             
@@ -271,7 +272,7 @@ package body mode_pex_ftest is
             info_m("Step 2.2");
             
             wait_till_fdf(CAN_TX_frame, DUT_NODE, chn);
-            CAN_wait_sync_seg(DUT_NODE, chn);
+            wait for 20 ns;
             get_controller_status(status, DUT_NODE, chn);
             check_false_m(status.error_transmission, "Error frame not transmitted");
             
@@ -303,23 +304,23 @@ package body mode_pex_ftest is
             CAN_send_frame(CAN_TX_frame, 1, TEST_NODE, chn, frame_sent);
             
             -------------------------------------------------------------------
-            -- @3.2 Wait till start of r0 bit (after FDF) in Test node and force
-            --      CAN RX of DUT to Recessive value.
+            -- @3.2 Wait till sample point of FDF in Test node and force CAN RX
+            --      of DUT to Recessive value.
             -------------------------------------------------------------------
             info_m("Step 3.2");
             
             wait_till_fdf(CAN_TX_frame, DUT_NODE, chn);
-            CAN_wait_sync_seg(DUT_NODE, chn);
             force_can_rx(RECESSIVE, DUT_NODE, chn);
 
             -------------------------------------------------------------------
-            -- @3.3 Wait till start of next bit, release the force, and check
-            --      that DUT is transmitting Error frame. Wait till end of
-            --      frame.
+            -- @3.3 Wait till sample point of next bit (R0), release the force,
+            --      and check that DUT is transmitting Error frame. Wait till
+            --      end of frame.
             -------------------------------------------------------------------
             info_m("Step 3.3");
             
-            CAN_wait_sync_seg(DUT_NODE, chn);
+            CAN_wait_sample_point(DUT_NODE, chn);
+            wait for 20 ns;
             release_can_rx(chn);
             get_controller_status(status, DUT_NODE, chn);
             check_m(status.error_transmission, "Error frame transmitted");
@@ -348,25 +349,27 @@ package body mode_pex_ftest is
             CAN_send_frame(CAN_TX_frame, 1, TEST_NODE, chn, frame_sent);
             
             --------------------------------------------------------------------
-            -- @4.2 Wait till start of r0 bit (after FDF) in Test node and force
-            --      CAN RX of DUT to Recessive value.
+            -- @4.2 Wait till sample point of FDF in Test node and force CAN RX
+            --      of DUT to Recessive value.
             --------------------------------------------------------------------
             info_m("Part 4.2");
             
             wait_till_fdf(CAN_TX_frame, DUT_NODE, chn);
-            CAN_wait_sync_seg(DUT_NODE, chn);
             force_can_rx(RECESSIVE, DUT_NODE, chn);
 
             --------------------------------------------------------------------
-            -- @4.3 Wait till start of next bit, release the force, and check
-            --      that DUT is NOT transmitting Error frame and that it is
-            ---     idle. Wait till end of frame.
+            -- @4.3 Wait till sample point of next bit, release the force, and
+            --      check that DUT is NOT transmitting Error frame and that it
+            ---     is idle. Wait till end of frame.
             --------------------------------------------------------------------
-            info_m("Step 3.3");
-            CAN_wait_sync_seg(DUT_NODE, chn);
+            info_m("Step 4.3");
+
+            CAN_wait_sample_point(DUT_NODE, chn);
+            wait for 20 ns;
             release_can_rx(chn);
             get_controller_status(status, DUT_NODE, chn);
             check_false_m(status.error_transmission, "Error frame NOT transmitted");
+            
             -- TODO: Check integration status bit if added!
             
             CAN_wait_bus_idle(DUT_NODE, chn);
