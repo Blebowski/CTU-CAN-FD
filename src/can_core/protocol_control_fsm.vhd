@@ -1871,22 +1871,8 @@ begin
                     if (drv_pex = PROTOCOL_EXCEPTION_DISABLED) then
                         form_err_i <= '1';
                     
-                    -----------------------------------------------------------
-                    -- Detect protocol exception. Disable bit stuffing, and
-                    -- unlock TXT Buffer if needed in case user attempted to
-                    -- transmitt frame on which its own protocol exception is
-                    -- detected!
-                    -----------------------------------------------------------
+                    -- Detect protocol exception. Disable bit stuffing.
                     else
-                        if (is_transmitter = '1') then
-                            txtb_hw_cmd_d.unlock <= '1';
-                            stuff_enable_clear <= '1';
-                            if (tx_failed = '1') then
-                                txtb_hw_cmd_d.failed  <= '1';
-                            else
-                                txtb_hw_cmd_d.arbl    <= '1';
-                            end if;
-                        end if;
                         destuff_enable_clear <= '1';
                         ctrl_ctr_pload_i <= '1';
                         ctrl_ctr_pload_val <= C_INTEGRATION_DURATION;
@@ -1935,22 +1921,8 @@ begin
                     if (drv_pex = PROTOCOL_EXCEPTION_DISABLED) then
                         form_err_i <= '1';
 
-                    -----------------------------------------------------------
-                    -- Detect protocol exception. Disable bit stuffing, and
-                    -- unlock TXT Buffer if needed in case user attempted to
-                    -- transmitt frame on which its own protocol exception is
-                    -- detected!
-                    -----------------------------------------------------------
+                    -- Detect protocol exception. Disable bit stuffing.
                     else
-                        if (is_transmitter = '1') then
-                            txtb_hw_cmd_d.unlock <= '1';
-                            stuff_enable_clear <= '1';
-                            if (tx_failed = '1') then
-                                txtb_hw_cmd_d.failed  <= '1';
-                            else
-                                txtb_hw_cmd_d.arbl    <= '1';
-                            end if;
-                        end if;
                         destuff_enable_clear <= '1';
                         ctrl_ctr_pload_i <= '1';
                         ctrl_ctr_pload_val <= C_INTEGRATION_DURATION;
@@ -1990,22 +1962,8 @@ begin
                     if (drv_pex = PROTOCOL_EXCEPTION_DISABLED) then
                         form_err_i <= '1';
 
-                    -----------------------------------------------------------
-                    -- Detect protocol exception. Disable bit stuffing, and
-                    -- unlock TXT Buffer if needed in case user attempted to
-                    -- transmitt frame on which its own protocol exception is
-                    -- detected!
-                    -----------------------------------------------------------
+                    -- Detect protocol exception. Disable bit stuffing.
                     else
-                        if (is_transmitter = '1') then
-                            txtb_hw_cmd_d.unlock <= '1';
-                            stuff_enable_clear <= '1';
-                            if (tx_failed = '1') then
-                                txtb_hw_cmd_d.failed  <= '1';
-                            else
-                                txtb_hw_cmd_d.arbl    <= '1';
-                            end if;
-                        end if;
                         destuff_enable_clear <= '1';
                         ctrl_ctr_pload_i <= '1';
                         ctrl_ctr_pload_val <= C_INTEGRATION_DURATION;
