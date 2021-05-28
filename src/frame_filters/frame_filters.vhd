@@ -241,10 +241,6 @@ architecture rtl of frame_filters is
     -- Concat of types of data on input
     signal int_data_ctrl            :       std_logic_vector(1 downto 0);
 
-    -- Decimal values of identifiers
-    signal id_1_dec                 :       natural;
-    signal id_2_dec                 :       natural;
-
     -- Enable signal for filters
     signal filter_A_enable          :       std_logic;
     signal filter_B_enable          :       std_logic;
@@ -392,6 +388,8 @@ begin
     filt_sup_gen_false : if (G_SUP_FILTA = false and G_SUP_FILTB = false and
                              G_SUP_FILTC = false and G_SUP_RANGE = false) generate
         ident_valid_d <= '1';
+        filter_result <= '0';
+        drop_rtr_frame <= '0';
     end generate;
 
 

@@ -237,9 +237,6 @@ architecture rtl of bus_sampling is
     -- Edge appeared at transcieved data
     signal edge_tx_valid        : std_logic;
 
-    -- Tripple sampling shift register
-    signal trs_reg              : std_logic_vector(2 downto 0);
-
     --Note: Bit Error is set up at sample point for whole bit 
     -- time until next sample point!!!!!
     

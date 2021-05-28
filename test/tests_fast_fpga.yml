@@ -167,6 +167,7 @@ feature:
         single_bus_node:
         ssp_cfg:
             iterations: 5
+        ssp_4_bits_flying:
         status_eft:
             iterations: 5
         status_ewl:

@@ -231,12 +231,7 @@ architecture rtl of trv_delay_measurement is
 
     constant C_TRV_DEL_SAT  :  std_logic_vector(G_TRV_CTR_WIDTH - 1 downto 0) :=
         std_logic_vector(to_unsigned(127, G_TRV_CTR_WIDTH));
-
-    ---------------------------------------------------------------------------
-    -- SSP Shadowed register
-    ---------------------------------------------------------------------------
-    signal ssp_shadowed_nxt    :  std_logic;
-
+    
     -- Load shadow register to output
     signal ssp_shadow_ce     :  std_logic;
 

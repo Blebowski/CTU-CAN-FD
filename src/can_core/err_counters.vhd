@@ -180,9 +180,6 @@ architecture rtl of err_counters is
     signal tx_err_ctr_ce    : std_logic;
     signal rx_err_ctr_ce    : std_logic;
 
-    -- Selected error counter
-    signal err_ctr_selected : unsigned(8 downto 0);
-
     -- Modify TX/RX Error counter
     signal modif_tx_ctr   : std_logic;
     signal modif_rx_ctr   : std_logic;

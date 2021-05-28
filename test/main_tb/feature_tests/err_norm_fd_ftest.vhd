@@ -75,7 +75,7 @@
 -- @Verifies:
 --  @1. ERR_NORM is incremented by 1 when error occurs for trasmitter/receiver
 --      during nominal bit-rate.
---  @2. ERR_FD is not increented by 1 when error occurs for transmitter/receiver
+--  @2. ERR_FD is not incremented by 1 when error occurs for transmitter/receiver
 --      during nominal bit-rate.
 --  @3. ERR_NORM is not incremented by 1 when error occurs for trasmitter/receiver
 --      during data bit-rate.
@@ -157,9 +157,9 @@ package body err_norm_fd_ftest is
         CAN_send_frame(frame_1, 1, DUT_NODE, chn, frame_sent);
         CAN_wait_tx_rx_start(true, false, DUT_NODE, chn);
 
-        -- Should be enough to cover many parts of CAN frame but go beyond
+        -- Should be enough to cover many parts of CAN frame but not go beyond
         -- frame!
-        rand_int_v(4500, rand_val);
+        rand_int_v(1000, rand_val);
         for i in 0 to rand_val loop
             clk_agent_wait_cycle(chn);
         end loop;
@@ -213,7 +213,7 @@ package body err_norm_fd_ftest is
         CAN_wait_not_pc_state(pc_deb_control, DUT_NODE, chn);
         
         -- Now we should be in Data bit rate! This is either CRC or data field!
-        rand_int_v(500, rand_val);
+        rand_int_v(250, rand_val);
         for i in 0 to rand_val loop
             clk_agent_wait_cycle(chn);
         end loop;
@@ -223,17 +223,11 @@ package body err_norm_fd_ftest is
             wait for 10 ns;
             get_can_tx(DUT_NODE, can_tx_val, chn);
         end loop;
+        
         force_bus_level(DOMINANT, chn);
-
-        -- Wait for some time, unit should sample the forced dominant bus
-        -- value. This can be later due to SSP, so we must wait for sufficient
-        -- time of SSP! If bit-rate is fast enough, we might wait till Error
-        -- frame. We don't mind since node is error active and value that
-        -- we forced will be DOMINANT which is the same as during Error flag.
-        -- Sowe release the bus during the error flag!
-        -- Here we assume that Error flag will last less than 2500 ns. With
-        -- max 1 us of Nominal bit-rate we should be fine!
-        wait for 2550 ns; -- SSP could be up to 255!
+        CAN_wait_sample_point(DUT_NODE, chn);
+        CAN_wait_sample_point(DUT_NODE, chn);
+        wait for 20 ns;
         release_bus_level(chn);
 
         CAN_wait_bus_idle(DUT_NODE, chn);

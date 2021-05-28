@@ -170,6 +170,7 @@ use ctu_can_fd_tb.scan_mode_ftest.all;
 use ctu_can_fd_tb.settings_tbfbo_ftest.all;
 use ctu_can_fd_tb.single_bus_node_ftest.all;
 use ctu_can_fd_tb.ssp_cfg_ftest.all;
+use ctu_can_fd_tb.ssp_4_bits_flying_ftest.all;
 use ctu_can_fd_tb.status_eft_ftest.all;
 use ctu_can_fd_tb.status_ewl_ftest.all;
 use ctu_can_fd_tb.status_idle_ftest.all;
@@ -366,6 +367,8 @@ package body feature_test_list_pkg is
             single_bus_node_ftest_exec(channel);
         elsif (test_name = "ssp_cfg") then
             ssp_cfg_ftest_exec(channel);
+        elsif (test_name = "ssp_4_bits_flying") then
+            ssp_4_bits_flying_ftest_exec(channel);
         elsif (test_name = "status_eft") then
             status_eft_ftest_exec(channel);
         elsif (test_name = "status_ewl") then
