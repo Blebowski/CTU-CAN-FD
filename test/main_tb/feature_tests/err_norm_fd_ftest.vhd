@@ -213,7 +213,7 @@ package body err_norm_fd_ftest is
         CAN_wait_not_pc_state(pc_deb_control, DUT_NODE, chn);
         
         -- Now we should be in Data bit rate! This is either CRC or data field!
-        rand_int_v(500, rand_val);
+        rand_int_v(250, rand_val);
         for i in 0 to rand_val loop
             clk_agent_wait_cycle(chn);
         end loop;
@@ -225,6 +225,7 @@ package body err_norm_fd_ftest is
         end loop;
         
         force_bus_level(DOMINANT, chn);
+        CAN_wait_sample_point(DUT_NODE, chn);
         CAN_wait_sample_point(DUT_NODE, chn);
         wait for 20 ns;
         release_bus_level(chn);

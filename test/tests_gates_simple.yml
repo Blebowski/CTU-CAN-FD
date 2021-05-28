@@ -155,8 +155,11 @@ feature:
         stuff_in_data:
 
         trv_delay:
-        tst_mem_acc_rx:
-        tst_mem_acc_txt:
+
+        # Not synthesized with test registers, no need to test them!!
+        #tst_mem_acc_rx:
+        #tst_mem_acc_txt:
+
         tx_arb_consistency:
         tx_arb_time_tran:
         tx_cmd_set_abort:
