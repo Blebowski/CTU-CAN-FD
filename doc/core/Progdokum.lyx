@@ -3324,7 +3324,8 @@ Classical CAN
 \begin_inset Text
 
 \begin_layout Plain Layout
-When CTU CAN FD detects recessive FDF bit, it responds with error frame.
+When CTU CAN FD detects recessive FDF bit (bit after IDE in Base frame,
+ bit after RTR/r1 in Extended frame), it responds with error frame.
 \end_layout
 
 \end_inset
@@ -3501,8 +3502,8 @@ name "tab:can-implementation-type"
 
 \begin_layout Description
 Note When CTU CAN FD is configured as Classical CAN / CAN FD tolerant node
- (MODE[FDE] = 0) and user attempts to send CAN FD frame (FRAME_FORMAT_W[FDF_BIT]
- = 1 in TXT buffer), frame type in TXT buffer will be ignored and CAN 2.0
+ (MODE[FDE] = 0), and user attempts to send CAN FD frame (FRAME_FORMAT_W[FDF_BIT
+] = 1 in TXT buffer), frame type in TXT buffer will be ignored and CAN 2.0
  frame will be sent.
 \end_layout
 
@@ -3516,6 +3517,15 @@ Note According to 10.9.10 of ISO11898-1 2015, CAN FD Enabled implementation
  shall not be set to a mode where it behaves as CAN FD tolerant implementation.
  It is therefore users responsibility to use this option only for evaluation
  / debugging purposes!
+\end_layout
+
+\begin_layout Description
+Note According original CAN 2.0 specification, R0 and R1 bits of any value
+ shall be accepted by receivers, however ISO119898-1 2015 states (Table
+ A.1) that Error frames shall be sent by Classical CAN implementation upon
+ such event.
+ This inconsisency in CAN specifications is resolved to meet ISO11898-1
+ 2015.
 \end_layout
 
 \begin_layout Subsection
