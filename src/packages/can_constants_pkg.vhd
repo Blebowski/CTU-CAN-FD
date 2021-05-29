@@ -118,6 +118,9 @@ package can_constants_pkg is
     constant C_INTEGRATION_DURATION : std_logic_vector(8 downto 0) :=
         std_logic_vector(to_unsigned(10, 9));
 
+    constant C_FIRST_INTEGRATION_DURATION : std_logic_vector(8 downto 0) :=
+        std_logic_vector(to_unsigned(9, 9));
+
     constant C_BASE_ID_DURATION : std_logic_vector(8 downto 0) :=
         std_logic_vector(to_unsigned(10, 9));
 

@@ -1582,7 +1582,16 @@ begin
                     nbt_ctrs_en <= '1';
                     tick_state_reg <= '1';
                     ctrl_ctr_pload_i <= '1';
-                    ctrl_ctr_pload_val <= C_INTEGRATION_DURATION;
+                    bit_err_disable <= '1';
+
+                    -- If we receive recessive, then set reintegration counter
+                    -- only to 10 (already one bit was measured)! During this
+                    -- state, whole TSEG1 already elapsed!
+                    if (rx_data_nbs = DOMINANT) then
+                        ctrl_ctr_pload_val <= C_INTEGRATION_DURATION;
+                    else
+                        ctrl_ctr_pload_val <= C_FIRST_INTEGRATION_DURATION;
+                    end if;
                 end if;
 
             -------------------------------------------------------------------
