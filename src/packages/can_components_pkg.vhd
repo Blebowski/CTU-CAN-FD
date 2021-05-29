@@ -3012,10 +3012,6 @@ package can_components_pkg is
 
 
     component int_module is
-    generic(        
-        -- If true, Interrupt status clear has priority over write.
-        G_CLEAR_PRIORITY         :    boolean := true
-    );
     port(
         ------------------------------------------------------------------------
         -- Clock and Asynchronous reset
