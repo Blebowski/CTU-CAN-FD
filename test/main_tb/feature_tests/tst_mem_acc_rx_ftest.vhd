@@ -156,6 +156,8 @@ package body tst_mem_acc_rx_ftest is
         -- @4. Read whole RX buffer RAM back and compare read values with
         --     written ones.
         -----------------------------------------------------------------------
+        info_m("Step 4");
+
         for i in 0 to rx_info.rx_mem_free - 1 loop
             test_mem_read(r_data, i, TST_TGT_RX_BUF, DUT_NODE, chn);
             check_m(r_data = w_content(i), "RX RAM data at address: " &
