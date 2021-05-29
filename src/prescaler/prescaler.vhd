@@ -367,7 +367,6 @@ begin
         brp             => brp_nbt,         -- IN
         tq_reset        => bt_ctr_clear,    -- IN
         bt_reset        => bt_ctr_clear,    -- IN
-        drv_ena         => drv_ena,         -- IN
         ctrs_en         => nbt_ctrs_en,     -- IN
         
         tq_edge         => tq_edge_nbt,     -- OUT     
@@ -417,7 +416,6 @@ begin
         brp             => brp_dbt,         -- IN
         tq_reset        => bt_ctr_clear,    -- IN
         bt_reset        => bt_ctr_clear,    -- IN
-        drv_ena         => drv_ena,         -- IN
         ctrs_en         => dbt_ctrs_en,     -- IN
         
         tq_edge         => tq_edge_dbt,     -- OUT

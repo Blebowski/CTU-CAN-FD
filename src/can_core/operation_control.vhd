@@ -103,12 +103,6 @@ entity operation_control is
         res_n                :in   std_logic;
 
         ------------------------------------------------------------------------
-        -- Memory registers Interface
-        ------------------------------------------------------------------------
-        -- Driving bus
-        drv_bus              :in   std_logic_vector(1023 downto 0);
-
-        ------------------------------------------------------------------------
         -- Prescaler Interface
         ------------------------------------------------------------------------
         -- RX Trigger
@@ -163,13 +157,9 @@ begin
     -- Unit should go to off when it turned Error Passive or when it is disabled.
     -- Gated by RX Trigger (delayed till next sample point) to avoid transiting
     -- back to off directly after end of integration/reintegration.
-    go_to_off <= '1' when (is_bus_off = '1' or drv_ena = CTU_CAN_DISABLED) and
-                          (rx_trigger = '1')
+    go_to_off <= '1' when (is_bus_off = '1') and (rx_trigger = '1')
                      else
                  '0';
-
-    -- Driving bus aliases
-    drv_ena <= drv_bus(DRV_ENA_INDEX);
 
     ---------------------------------------------------------------------------
     -- Next state
