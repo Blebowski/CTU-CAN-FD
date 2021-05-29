@@ -509,7 +509,7 @@ filename "version.tex"
 \noindent
 \align center
 \begin_inset Tabular
-<lyxtabular version="3" rows="24" columns="3">
+<lyxtabular version="3" rows="25" columns="3">
 <features tabularvalignment="middle">
 <column alignment="center" valignment="top" width="1.5cm">
 <column alignment="center" valignment="top" width="2cm">
@@ -1193,7 +1193,7 @@ Add STATUS[STCNT] and STATUS[STRGS] bits.
 </cell>
 </row>
 <row>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -1202,7 +1202,7 @@ Add STATUS[STCNT] and STATUS[STRGS] bits.
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -1211,11 +1211,40 @@ Add STATUS[STCNT] and STATUS[STRGS] bits.
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
 Reduce maximal number of bits on the fly during secondary sampling to 4.
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+2.3.6
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+29-05-2021
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Add detailed description of disabling node by SETTINGS[ENA].
 \end_layout
 
 \end_inset
@@ -2323,7 +2352,7 @@ CTU CAN FD is disabled, it is not communicating on CAN bus, it is bus-off.
 \end_layout
 
 \begin_layout Itemize
-All memory registers within CTU CAN FD are reset.
+All memory registers within CTU CAN FD contain reset value.
 \end_layout
 
 \begin_layout Itemize
@@ -2466,11 +2495,58 @@ When CTU CAN FD is error-active, it takes part in CAN bus communication.
 \begin_layout Standard
 CTU CAN FD can be at any time disabled by writing logic 0 to SETTINGS[ENA]
  register.
- In this case, CTU CAN FD immediately stops communication on CAN bus and
- starts transmiting only recessive bits.
- It is recommended for CTU CAN FD not to be transmitting any frame at this
- time, as this would result in transmission of error frame by other nodes
- on CAN bus.
+ In such case:
+\end_layout
+
+\begin_layout Itemize
+CTU CAN FD immediately stops communication on CAN bus, and transmits only
+ recessive bits.
+\end_layout
+
+\begin_layout Itemize
+TEC/REC counters are reset to 0, CTU CAN FD becomes bus-off.
+\end_layout
+
+\begin_layout Itemize
+All TXT buffers move to 
+\begin_inset Quotes eld
+\end_inset
+
+Empty
+\begin_inset Quotes erd
+\end_inset
+
+ state (see 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:txt-buffer-user"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+), content of TXT buffer RAMs remains valid (memories are not reset).
+\end_layout
+
+\begin_layout Itemize
+RX buffer is flushed (see 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "subsec:Flush"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+).
+\end_layout
+
+\begin_layout Standard
+It is recommended for CTU CAN FD not to be transmitting any frame when it
+ is disabled by writing SETTINGS[ENA] = 0, as this would result in transmission
+ of error frame by other nodes on CAN bus.
  Therefore SW driver operating on CTU CAN FD shall ensure that none of TXT
  buffers within CTU CAN FD is in 
 \begin_inset Quotes eld
@@ -4839,6 +4915,13 @@ If during reception of CAN frame there is not enough free space in RX buffer
 
 \begin_layout Subsection
 Flush
+\begin_inset CommandInset label
+LatexCommand label
+name "subsec:Flush"
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
