@@ -646,9 +646,6 @@ begin
     port map(
         clk_sys              => clk_sys,                -- IN
         res_n                => res_n,                  -- IN
-
-        -- Memory registers Interface
-        drv_bus              => drv_bus,                -- IN
         
         -- Prescaler Interface
         rx_trigger           => pc_rx_trigger,          -- IN

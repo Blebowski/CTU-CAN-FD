@@ -102,10 +102,6 @@ use ctu_can_fd_rtl.CAN_FD_register_map.all;
 use ctu_can_fd_rtl.CAN_FD_frame_format.all;
 
 entity int_module is
-    generic(        
-        -- If true, Interrupt status clear has priority over write.
-        G_CLEAR_PRIORITY         :    boolean := true
-    );
     port(
         ------------------------------------------------------------------------
         -- Clock and Asynchronous reset
@@ -166,51 +162,24 @@ begin
     ------------------------------------------------------------------------
     -- Interrupt status - Set priority 
     ------------------------------------------------------------------------
-    set_priority_gen : if (G_CLEAR_PRIORITY = false) generate    
-        int_stat_proc : process(res_n, clk_sys)
-        begin
-            if (res_n = '0') then
+    int_stat_proc : process(res_n, clk_sys)
+    begin
+        if (res_n = '0') then
+            int_status <= '0';
+
+        elsif rising_edge(clk_sys) then
+          
+            -- Setting Interrupt
+            if (int_status_set = '1' and int_mask_i = '0') then
+                int_status <= '1';
+
+            -- Clearing Interrupt
+            elsif (int_status_clear = '1') then
                 int_status <= '0';
 
-            elsif rising_edge(clk_sys) then
-              
-                -- Setting Interrupt
-                if (int_status_set = '1' and int_mask_i = '0') then
-                    int_status <= '1';
-
-                -- Clearing Interrupt
-                elsif (int_status_clear = '1') then
-                    int_status <= '0';
-
-                end if;
             end if;
-        end process;
-    end generate set_priority_gen;
-
-
-    ------------------------------------------------------------------------
-    -- Interrupt status - Clear priority 
-    ------------------------------------------------------------------------
-    clear_priority_gen : if (G_CLEAR_PRIORITY = true) generate    
-        int_stat_proc : process(res_n, clk_sys)
-        begin
-            if (res_n = '0') then
-                int_status <= '0';
-
-            elsif rising_edge(clk_sys) then
-              
-                -- Clearing Interrupt
-                if (int_status_clear = '1') then
-                    int_status <= '0';
-
-                -- Setting Interrupt
-                elsif (int_status_set = '1' and int_mask_i = '0') then
-                    int_status <= '1';
-
-                end if;
-            end if;
-        end process;
-    end generate clear_priority_gen;
+        end if;
+    end process;
 
 
     ------------------------------------------------------------------------

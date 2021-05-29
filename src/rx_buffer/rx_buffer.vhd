@@ -593,7 +593,8 @@ begin
 
     ----------------------------------------------------------------------------
     -- When buffer is empty the word on address of read pointer is not valid,
-    -- provide zeroes instead
+    -- provide zeroes instead. This guarantees that zeroes are read even if
+    -- memory content is not defined ater power-up!
     ----------------------------------------------------------------------------
     rx_read_buff <= RAM_data_out when (rx_empty_i = '0') else
                     (OTHERS => '0');

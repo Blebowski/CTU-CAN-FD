@@ -742,7 +742,6 @@ architecture rtl of protocol_control_fsm is
     signal compl_ctr_ena_i           :  std_logic;
     
     -- Logic for clocking FSM state register
-    signal tick_state_reg_on_off     :  std_logic;
     signal tick_state_reg            :  std_logic;
     
     -- Bit-rate shifted (internal value)
@@ -988,10 +987,7 @@ begin
     begin
         next_state <= curr_state;
 
-        if (drv_ena = CTU_CAN_DISABLED) then
-            next_state <= s_pc_off;
-            
-        elsif (err_frm_req = '1') then
+        if (err_frm_req = '1') then
             if (drv_rom_ena = ROM_DISABLED) then
                 if (is_err_active = '1') then
                     next_state <= s_pc_act_err_flag;
@@ -1582,10 +1578,20 @@ begin
             -- Unit is Off (drv_ena = '0')
             -------------------------------------------------------------------
             when s_pc_off =>
-                nbt_ctrs_en <= '0';
                 if (drv_ena = CTU_CAN_ENABLED) then
+                    nbt_ctrs_en <= '1';
+                    tick_state_reg <= '1';
                     ctrl_ctr_pload_i <= '1';
-                    ctrl_ctr_pload_val <= C_INTEGRATION_DURATION;
+                    bit_err_disable <= '1';
+
+                    -- If we receive recessive, then set reintegration counter
+                    -- only to 10 (already one bit was measured)! During this
+                    -- state, whole TSEG1 already elapsed!
+                    if (rx_data_nbs = DOMINANT) then
+                        ctrl_ctr_pload_val <= C_INTEGRATION_DURATION;
+                    else
+                        ctrl_ctr_pload_val <= C_FIRST_INTEGRATION_DURATION;
+                    end if;
                 end if;
 
             -------------------------------------------------------------------
@@ -2793,23 +2799,12 @@ begin
         end if;
 
     end process;
-    
-    -----------------------------------------------------------------------
-    -- Turn on/off of whole controller is not synchronized with any
-    -- other event! Therefore it creates separate clock enable condition
-    -- for FSM state register
-    -----------------------------------------------------------------------
-    tick_state_reg_on_off <=
-        '1' when (curr_state = s_pc_off and drv_ena = CTU_CAN_ENABLED) else
-        '1' when (curr_state /= s_pc_off and drv_ena = CTU_CAN_DISABLED) else
-        '0';
 
     -----------------------------------------------------------------------
     -- FSM State register
     -----------------------------------------------------------------------
     state_reg_ce <=
         '1' when (tick_state_reg = '1' and ctrl_signal_upd = '1') else
-        '1' when (tick_state_reg_on_off = '1') else
         '0';
 
     fsm_state_reg_proc : process(clk_sys, res_n)
@@ -3053,7 +3048,8 @@ begin
 
     ---------------------------------------------------------------------------
     -- Retransmitt counter must be modified only once if multiple Error frames
-    -- are requested during single frame.
+    -- are requested during single frame. This flag is set upon first Error
+    -- frame, and it blocks increments upon next error frames!
     ---------------------------------------------------------------------------
     retr_ctr_add_block_proc : process(clk_sys, res_n)
     begin

@@ -105,6 +105,7 @@ feature:
 
         
         device_id:
+        disable_in_tx:
         dlc_can20_8_64_bytes:
         
         err_capt_ack_ack:

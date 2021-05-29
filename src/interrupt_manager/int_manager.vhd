@@ -205,21 +205,6 @@ architecture rtl of int_manager is
     -- Reset over set priority assignment
     ----------------------------------------------------------------------------
     type int_s_r_priority_type is array(0 to G_INT_COUNT - 1) of boolean;
-    
-    constant int_clear_priority     :     int_s_r_priority_type :=
-        (false,  -- RXI_IND
-         false,  -- TXI_IND
-         false,  -- EWLI_IND
-         false,  -- DOI_IND
-         false,  -- EPI_IND
-         false,  -- ALI_IND
-         false,  -- BEI_IND
-         false,  -- LFI_IND
-         false,  -- RXFI_IND
-         false,  -- BSI_IND
-         false,  -- RBNEI_IND
-         false   -- TXBHCI_IND
-        );
 
     -- Internal value of an interrupt
     signal int_i                : std_logic;
@@ -273,9 +258,6 @@ begin
     int_module_gen : for i in 0 to G_INT_COUNT - 1 generate
         
         int_module_inst : int_module
-        generic map(        
-            G_CLEAR_PRIORITY       => int_clear_priority(i)
-        )
         port map(
             clk_sys                => clk_sys,              -- IN
             res_n                  => res_n,                -- IN

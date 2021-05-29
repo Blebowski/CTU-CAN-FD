@@ -104,7 +104,6 @@ entity inf_ram_wrapper is
         -- Clock and Reset
         ------------------------------------------------------------------------
         clk_sys     :in   std_logic;
-        res_n       :in   std_logic;
 
         ------------------------------------------------------------------------
         -- Port A - Data input
@@ -162,11 +161,9 @@ begin
 
     -- Synchronous read
     sync_read_gen : if (G_SYNC_READ) generate
-        ram_read_process : process(res_n, clk_sys)
+        ram_read_process : process(clk_sys)
         begin
-            if (res_n = G_RESET_POLARITY) then                        
-                data_out <= (OTHERS => '0');
-            elsif (rising_edge(clk_sys)) then
+            if (rising_edge(clk_sys)) then
                 data_out <= int_read_data;
             end if;
         end process;

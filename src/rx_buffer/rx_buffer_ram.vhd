@@ -177,7 +177,6 @@ begin
     )
     port map(
         clk_sys              => clk_sys,                -- IN
-        res_n                => res_n,                  -- IN
         
         addr_A               => port_a_address_i,       -- IN
         write                => port_a_write_i,         -- IN

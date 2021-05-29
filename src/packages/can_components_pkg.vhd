@@ -1175,12 +1175,6 @@ package can_components_pkg is
         
         -- Asynchronous reset
         res_n                :in   std_logic;
-
-        ------------------------------------------------------------------------
-        -- Memory registers Interface
-        ------------------------------------------------------------------------
-        -- Driving bus
-        drv_bus              :in   std_logic_vector(1023 downto 0);
         
         ------------------------------------------------------------------------
         -- Prescaler Interface
@@ -3012,10 +3006,6 @@ package can_components_pkg is
 
 
     component int_module is
-    generic(        
-        -- If true, Interrupt status clear has priority over write.
-        G_CLEAR_PRIORITY         :    boolean := true
-    );
     port(
         ------------------------------------------------------------------------
         -- Clock and Asynchronous reset
@@ -3353,9 +3343,6 @@ package can_components_pkg is
         
         -- Bit Time counter reset (synchronous)
         bt_reset         : in    std_logic;
-        
-        -- CTU CAN FD is enabled
-        drv_ena          : in    std_logic;
 
         -- Counters enabled
         ctrs_en          : in    std_logic;

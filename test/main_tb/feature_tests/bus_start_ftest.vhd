@@ -147,6 +147,7 @@ package body bus_start_ftest is
         check_m(fault_state_1 = fc_bus_off, "DUT Bus off!");
         check_m(fault_state_2 = fc_bus_off, "Test node Bus off!");
         
+        wait for 1000 ns;
         CAN_turn_controller(true, DUT_NODE, chn);
 
         ------------------------------------------------------------------------

@@ -126,9 +126,6 @@ entity bit_time_counters is
         -- Bit Time counter reset (synchronous)
         bt_reset         : in    std_logic;
         
-        -- CTU CAN FD is enabled
-        drv_ena          : in    std_logic;
-        
         -- Counters enabled
         ctrs_en          : in    std_logic;
         
@@ -173,7 +170,7 @@ begin
     -- If prescaler is defined as 0 or 1, there is no need to run the counter!
     -- Run it only when Prescaler is higher than 1! 
     ---------------------------------------------------------------------------
-    tq_counter_allow <= '1' when (brp > tq_run_th and drv_ena = '1') else
+    tq_counter_allow <= '1' when (brp > tq_run_th) else
                         '0';
 
     tq_counter_ce <= '1' when (tq_counter_allow = '1' and ctrs_en = '1')
@@ -220,8 +217,7 @@ begin
 
     segm_counter_ce <= '1' when (bt_reset = '1')
                            else
-                       '1' when (tq_edge_i = '1' and drv_ena = '1' and
-                                 ctrs_en = '1')
+                       '1' when (tq_edge_i = '1' and ctrs_en = '1')
                            else
                        '0';
 
