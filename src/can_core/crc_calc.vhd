@@ -207,5 +207,8 @@ begin
     -- report "Can't load CRC init vector and execute CRC calculation at once!"
     -- severity error;
     
+    -- psl crc_load_init_vec_cov : cover
+    --  {load_init_vect = '1'};
+    
     -- <RELEASE_ON>
 end architecture;

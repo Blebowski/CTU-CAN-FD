@@ -273,6 +273,12 @@ begin
     -- report "Simultaneous increment of TX and RX error traffic counter"
     -- severity error;
 
+    -- psl traffic_ctrs_tx_inc_cov : cover
+    --  {inc_tx_ctr = '1'};
+
+    -- psl traffic_ctrs_rx_inc_cov : cover
+    --  {inc_rx_ctr = '1'};
+
     -- <RELEASE_ON>
 
 end architecture;

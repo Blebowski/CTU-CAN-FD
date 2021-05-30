@@ -262,6 +262,12 @@ begin
     --  (set_transmitter = '1' and set_idle = '1')
     -- report "Unit can't be set to transmitter and idle simultaneously!"
     -- severity error;
+    
+    -- psl op_fsm_transmitter_cov : cover
+    --  {curr_state = s_oc_transmitter};
+
+    -- psl op_fsm_received_cov : cover
+    --  {curr_state = s_oc_receiver};
 
     -- <RELEASE_ON>
 end architecture;

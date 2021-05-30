@@ -216,34 +216,34 @@ begin
     modif_tx_ctr <= '1' when (inc_eight = '1' or dec_one = '1') else
                     '0';
 
-   -- Counters are modified either +1. +8 or -1
-   modif_rx_ctr <= '1' when (inc_one = '1' or inc_eight = '1' or dec_one = '1')
-                       else
-                   '0';
-
-   -- Increment by 1 or 8
-   err_ctr_inc <= "000000001" when (inc_one = '1') else
-                  "000001000";
-
-   ----------------------------------------------------------------------------
-   -- TX Error counter, next value calculation
-   ----------------------------------------------------------------------------
-   tx_err_ctr_dec <=  (tx_err_ctr_q - 1) when (tx_err_ctr_q > 0) else
-                      tx_err_ctr_q;
-
-   -- Next value for error counter inctement when any of "inc" commands is
-   -- valid. Decrement otherwise!
-   tx_err_ctr_d <=                 
-             unsigned(drv_ctr_val) when (tx_err_ctr_pload = '1') else
-                  tx_err_ctr_q + 8 when (inc_eight = '1')
-                                   else
-                    tx_err_ctr_dec;
-
-   -- Clock enable: Tick error counter register when unit is transmitter and
-   -- one of commands is valid!
-   tx_err_ctr_ce <= '1' when (modif_tx_ctr = '1' and is_transmitter = '1') else
-                    '1' when (tx_err_ctr_pload = '1') else
+    -- Counters are modified either +1. +8 or -1
+    modif_rx_ctr <= '1' when (inc_one = '1' or inc_eight = '1' or dec_one = '1')
+                        else
                     '0';
+
+    -- Increment by 1 or 8
+    err_ctr_inc <= "000000001" when (inc_one = '1') else
+                   "000001000";
+
+    ----------------------------------------------------------------------------
+    -- TX Error counter, next value calculation
+    ----------------------------------------------------------------------------
+    tx_err_ctr_dec <=  (tx_err_ctr_q - 1) when (tx_err_ctr_q > 0) else
+                       tx_err_ctr_q;
+
+    -- Next value for error counter inctement when any of "inc" commands is
+    -- valid. Decrement otherwise!
+    tx_err_ctr_d <=                 
+              unsigned(drv_ctr_val) when (tx_err_ctr_pload = '1') else
+                   tx_err_ctr_q + 8 when (inc_eight = '1')
+                                    else
+                     tx_err_ctr_dec;
+
+    -- Clock enable: Tick error counter register when unit is transmitter and
+    -- one of commands is valid!
+    tx_err_ctr_ce <= '1' when (modif_tx_ctr = '1' and is_transmitter = '1') else
+                     '1' when (tx_err_ctr_pload = '1') else
+                     '0';
 
     ---------------------------------------------------------------------------
     -- Registering counter reset (to avoid glitches)
@@ -422,6 +422,18 @@ begin
    -- report "Unit can't be transmitter and receiver at once"
    -- severity error;
    
+   -- psl err_ctrs_inc_one_cov : cover
+   --   {inc_one = '1'};
+   
+   -- psl err_ctrs_inc_eight_cov : cover
+   --   {inc_eight = '1'};
+   
+   -- psl err_ctrs_dec_one_cov : cover
+   --   {dec_one = '1'};
+
+   -- psl err_ctrs_rec_saturation : cover
+   --   {(rx_err_ctr_inc < rx_err_ctr_q) and rx_err_ctr_ce = '1'};
+
    -- <RELEASE_ON>
 
 end architecture;

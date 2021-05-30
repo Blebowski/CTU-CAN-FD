@@ -538,10 +538,7 @@ begin
 
     -- psl brp_bin_4_1_cov : cover
     --  {to_integer(unsigned(brp_nbt)) = 4 and to_integer(unsigned(brp_dbt)) = 1};
-    
-    -- psl brp_bin_4_2_cov : cover
-    --  {to_integer(unsigned(brp_nbt)) = 4 and to_integer(unsigned(brp_dbt)) = 2};
-    
+        
     -- psl brp_bin_4_3_cov : cover
     --  {to_integer(unsigned(brp_nbt)) = 4 and to_integer(unsigned(brp_dbt)) = 3};
     
