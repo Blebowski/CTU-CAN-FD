@@ -127,15 +127,6 @@ end entity;
 
 architecture rtl of apb_ifc is
 
-    function to_std_logic(a : boolean) return std_logic is
-    begin
-        if a then
-            return '1';
-        else
-            return '0';
-        end if;
-    end function to_std_logic;
-    
 begin
     
     reg_data_in_o <= s_apb_pwdata;
