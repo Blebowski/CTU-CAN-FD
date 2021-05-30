@@ -322,4 +322,60 @@ begin
 
     end generate asrt_per_index_gen;
 
+    -- psl default clock is rising_edge(clk_sys);
+    
+    -- psl no_sim_tx_shift_reg_load_1_asrt : assert never
+    --  (tx_load_base_id = '1' and
+    --   (tx_load_ext_id = '1' or tx_load_dlc = '1' or tx_load_data_word = '1'
+    --    or tx_load_stuff_count = '1' or tx_load_crc = '1'))
+    --  report "TX SHIFT REG: Base Identifier shall not be loaded simultaneously with other data!";
+
+    -- psl no_sim_tx_shift_reg_load_2_asrt : assert never
+    --  (tx_load_ext_id = '1' and
+    --   (tx_load_base_id = '1' or tx_load_dlc = '1' or tx_load_data_word = '1'
+    --    or tx_load_stuff_count = '1' or tx_load_crc = '1'))
+    --  report "TX SHIFT REG: Extended Identifier shall not be loaded simultaneously with other data!";
+
+    -- psl no_sim_tx_shift_reg_load_3_asrt : assert never
+    --  (tx_load_dlc = '1' and
+    --   (tx_load_base_id = '1' or tx_load_ext_id = '1' or tx_load_data_word = '1'
+    --    or tx_load_stuff_count = '1' or tx_load_crc = '1'))
+    --  report "TX SHIFT REG: DLC shall not be loaded simultaneously with other data!";
+
+    -- psl no_sim_tx_shift_reg_load_4_asrt : assert never
+    --  (tx_load_data_word = '1' and
+    --   (tx_load_base_id = '1' or tx_load_ext_id = '1' or tx_load_dlc = '1'
+    --    or tx_load_stuff_count = '1' or tx_load_crc = '1'))
+    --  report "TX SHIFT REG: DLC shall not be loaded simultaneously with other data!";
+
+    -- psl no_sim_tx_shift_reg_load_5_asrt : assert never
+    --  (tx_load_stuff_count = '1' and
+    --   (tx_load_base_id = '1' or tx_load_ext_id = '1' or tx_load_dlc = '1'
+    --    or tx_load_data_word = '1' or tx_load_crc = '1'))
+    --  report "TX SHIFT REG: Stuff count shall not be loaded simultaneously with other data!";
+
+    -- psl no_sim_tx_shift_reg_load_6_asrt : assert never
+    --  (tx_load_crc = '1' and
+    --   (tx_load_base_id = '1' or tx_load_ext_id = '1' or tx_load_dlc = '1'
+    --    or tx_load_data_word = '1' or tx_load_stuff_count = '1'))
+    --  report "TX SHIFT REG: CRC shall not be loaded simultaneously with other data!";
+
+    -- psl tx_shift_reg_load_base_id_cov : cover
+    --  {tx_load_base_id = '1'};
+
+    -- psl tx_shift_reg_load_extended_id_cov : cover
+    --  {tx_load_ext_id = '1'};
+
+    -- psl tx_shift_reg_load_dlc_cov : cover
+    --  {tx_load_dlc = '1'};
+
+    -- psl tx_shift_reg_load_data_word_cov : cover
+    --  {tx_load_data_word = '1'};
+
+    -- psl tx_shift_reg_load_stuff_count_cov : cover
+    --  {tx_load_stuff_count = '1'};
+    
+    -- psl tx_shift_reg_load_crc_cov : cover
+    --  {tx_load_crc = '1'};
+
 end architecture;

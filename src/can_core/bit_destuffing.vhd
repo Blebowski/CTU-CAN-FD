@@ -329,7 +329,6 @@ begin
     begin
         if (res_n = '0') then
             dst_ctr_q         <= (OTHERS => '0');
-
         elsif (rising_edge(clk_sys)) then
             if (destuff_enable = '1') then
                 dst_ctr_q     <= dst_ctr_d;
@@ -377,7 +376,6 @@ begin
     begin
         if (res_n = '0') then
             same_bits_q <= "001";
-
         elsif (rising_edge(clk_sys)) then
             same_bits_q <= same_bits_d;
         end if;
@@ -507,6 +505,18 @@ begin
     -- psl valid_stuff_length_setting_asrt : assert never
     --   ((destuff_length = "000" or destuff_length = "001") and (destuff_enable = '1'))
     -- report "0 and 1 bit stuffing length is invalid!" severity error;
+
+    -- psl bds_non_fix_to_fixed_change_cov : cover
+    --  {bds_trigger = '1' and non_fix_to_fix_chng = '1'};
+
+    -- psl bds_stuff_err_detect_cov : cover
+    --  {stuff_err_q = '1'};
+
+    -- psl bds_stuff_lvl_reached_regular_cov : cover
+    --  {stuff_lvl_reached = '1' and fixed_stuff = '0'};
+
+    -- psl bds_stuff_lvl_reached_fixed_cov : cover
+    --  {stuff_lvl_reached = '1' and fixed_stuff = '1'};
 
     -- <RELEASE_ON>
 
