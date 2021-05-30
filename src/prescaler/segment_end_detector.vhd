@@ -152,14 +152,14 @@ architecture rtl of segment_end_detector is
     -- Registers to capture requests for Hard-sync (0),
     -- NBT end of segment (1), DBT end of segment (2)
     ---------------------------------------------------------------------------
-    signal req_input                : std_logic_vector(2 downto 0);
-    signal segm_end_req_capt_d      : std_logic_vector(2 downto 0);
-    signal segm_end_req_capt_q      : std_logic_vector(2 downto 0);
-    signal segm_end_req_capt_ce     : std_logic_vector(2 downto 0);
-    signal segm_end_req_capt_clr    : std_logic_vector(2 downto 0);
+    signal req_input                : std_logic_vector(2 downto 1);
+    signal segm_end_req_capt_d      : std_logic_vector(2 downto 1);
+    signal segm_end_req_capt_q      : std_logic_vector(2 downto 1);
+    signal segm_end_req_capt_ce     : std_logic_vector(2 downto 1);
+    signal segm_end_req_capt_clr    : std_logic_vector(2 downto 1);
 
     -- ORed flags and combinational requests
-    signal segm_end_req_capt_dq     : std_logic_vector(2 downto 0);
+    signal segm_end_req_capt_dq     : std_logic_vector(2 downto 1);
     
     -- Valid requests to end segment for each Sample type (Nominal, Data)
     signal segm_end_nbt_valid       : std_logic;
@@ -185,25 +185,21 @@ begin
 
     ----------------------------------------------------------------------------
     -- End of segment request capturing:
-    --  1. Due to Hard sync.
-    --  2. NBT Resynchronisation requests segment end
-    --  3. DBT Resynchronisation requests segment end
+    --  1. NBT Resynchronisation requests segment end
+    --  2. DBT Resynchronisation requests segment end
     ----------------------------------------------------------------------------
-    req_input(0) <= h_sync_edge_valid;
     req_input(1) <= exit_segm_req_nbt;
     req_input(2) <= exit_segm_req_dbt;
     
     ----------------------------------------------------------------------------
     -- Clearing requests:
-    --  1. Upon any bit time clear (which is either Segment end or Hard-sync).
     --  2. Segment end.
     --  3. Segment end.
     ----------------------------------------------------------------------------
-    segm_end_req_capt_clr(0) <= bt_ctr_clear_i;
     segm_end_req_capt_clr(1) <= segment_end_i;
     segm_end_req_capt_clr(2) <= segment_end_i;
 
-    segm_end_req_capture : for i in 0 to 2 generate
+    segm_end_req_capture : for i in 1 to 2 generate
     begin
         
         -- Clear the flag upon real end of segment!
@@ -226,14 +222,6 @@ begin
         end process;
         
     end generate;
- 
-    ---------------------------------------------------------------------------
-    -- Hard synchronisation induced end of segment request is valid when
-    -- both: combinational and captured requests are valid. This accounts
-    -- for h-sync edge in the same clock cycle as well as captured from
-    -- previous clock cycles in last time quanta!
-    ---------------------------------------------------------------------------
-    segm_end_req_capt_dq(0) <= req_input(0) OR segm_end_req_capt_q(0);
     
     ---------------------------------------------------------------------------
     -- Segment end request from NBT and DBT resynchronisation is valid
@@ -303,7 +291,7 @@ begin
     -- is only allowed in Nominal Bit-rat, thus use only Nominal Time Quanta edge!
     ---------------------------------------------------------------------------
     h_sync_valid_i <=
-        '1' when ((segm_end_req_capt_dq(0) = '1') and
+        '1' when ((h_sync_edge_valid = '1') and
                   (nbt_tq_active = '1'))
             else
         '0';
@@ -349,8 +337,8 @@ begin
 
     -- psl default clock is rising_edge(clk_sys);
 
-    -- psl segm_end_req_0_capt_cov : cover
-    --  {segm_end_req_capt_q(0) = '1'};
+    -- psl no_h_sync_not_in_time_quanta : assert never
+    --  (h_sync_edge_valid = '1' and tq_edge_nbt = '0');
 
     -- psl segm_end_req_1_capt_cov : cover
     --  {segm_end_req_capt_q(1) = '1'};
