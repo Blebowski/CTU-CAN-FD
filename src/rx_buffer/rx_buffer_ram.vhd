@@ -114,9 +114,6 @@ entity rx_buffer_ram is
         ------------------------------------------------------------------------
         -- System clock
         clk_sys              :in     std_logic;
-        
-        -- Asynchronous reset
-        res_n                :in     std_logic;
 
         ------------------------------------------------------------------------
         -- Memory testability

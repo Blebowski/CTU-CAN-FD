@@ -3835,9 +3835,6 @@ package can_components_pkg is
         ------------------------------------------------------------------------
         -- System clock
         clk_sys              :in     std_logic;
-        
-        -- Asynchronous reset
-        res_n                :in     std_logic;
 
         ------------------------------------------------------------------------
         -- Memory testability
@@ -4264,9 +4261,6 @@ package can_components_pkg is
         ------------------------------------------------------------------------
         -- System clock
         clk_sys                :in   std_logic;
-        
-        -- Asynchronous reset
-        res_n                  :in   std_logic;
         
         ------------------------------------------------------------------------
         -- Memory Testability
