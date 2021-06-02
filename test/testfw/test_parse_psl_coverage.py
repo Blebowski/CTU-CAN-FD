@@ -85,7 +85,7 @@ def collapse_psl_coverage_files(non_collapsed):
             # If any of colapsed points is covered -> whole point is covered
             if (psl_in["status"] == "covered"):
                 psl_out["status"] = "covered"
-                psl_out["count"] += psl_in["count"]
+                psl_out["finished-count"] += psl_in["finished-count"]
 
             # If any of colapsed points is failed -> whole point is failed
             if (psl_in["status"] == "failed"):
@@ -93,7 +93,7 @@ def collapse_psl_coverage_files(non_collapsed):
 
             # Assertion hits add up for both failed and passed
             if (psl_out["directive"] == "assertion"):
-                psl_out["count"] += psl_in["count"]
+                psl_out["finished-count"] += psl_in["finished-count"]
 
             found = True
             break
@@ -268,7 +268,7 @@ def add_non_colapsed_psl_table_entry(doc, tag, text, psl_point: TPslPoint,
     with tag('td'):
         text(psl_point["line"])
     with tag('td'):
-        text(psl_point["count"])
+        text(psl_point["finished-count"])
 
     if (psl_point["status"] == "covered" or \
         psl_point["status"] == "passed"):
@@ -298,7 +298,7 @@ def add_colapsed_psl_table_entry(doc, tag, text, psl_point: TPslPoint,
     with tag('td'):
         text(psl_point["line"])
     with tag('td'):
-        text(psl_point["count"])
+        text(psl_point["finished-count"])
 
     if (psl_point["status"] == "covered" or \
         psl_point["status"] == "passed"):
