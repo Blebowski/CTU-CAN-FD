@@ -303,7 +303,6 @@ begin
     port map(
         -- Clock and Asynchronous reset
         clk_sys              => clk_ram,                -- IN
-        res_n                => res_n,                  -- IN
 
         -- Memory testability
         test_registers_out   => test_registers_out,     -- IN

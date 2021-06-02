@@ -194,9 +194,7 @@ begin
             end if;
             
         when s_oc_receiver =>
-            if (go_to_off = '1') then
-                next_state <= s_oc_off;
-            elsif (set_idle = '1') then
+            if (set_idle = '1') then
                 next_state <= s_oc_idle;
             elsif (set_transmitter = '1') then
                 next_state <= s_oc_transmitter;
@@ -262,6 +260,10 @@ begin
     --  (set_transmitter = '1' and set_idle = '1')
     -- report "Unit can't be set to transmitter and idle simultaneously!"
     -- severity error;
+    
+    -- psl never_to_off_as_receiver_asrt : assert never
+    --  (go_to_off = '1' and curr_state = s_oc_receiver)
+    --  report "Unit should not become Bus off while receiver!";
     
     -- psl op_fsm_transmitter_cov : cover
     --  {curr_state = s_oc_transmitter};
