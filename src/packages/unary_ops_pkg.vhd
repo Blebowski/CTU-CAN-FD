@@ -98,9 +98,9 @@ package unary_ops_pkg is
     --  period          Period of generated clock in picoseconds.
     -- Returns: AND of all elements of vector
     ----------------------------------------------------------------------------
-    function and_reduce(
-        constant input         : in    std_logic_vector
-    ) return std_logic;
+    --function and_reduce(
+    --    constant input         : in    std_logic_vector
+    --) return std_logic;
 
 end package;
 
@@ -129,15 +129,16 @@ package body unary_ops_pkg is
         return tmp;
     end function;
 
-    function and_reduce(
-        constant input         : in    std_logic_vector
-    ) return std_logic is
-        variable tmp           :       std_logic := '1';
-    begin
-        for i in input'range loop
-            tmp := tmp and input(i);
-        end loop;
-        return tmp;
-    end function;
+    -- Commented out to clean code coverage, uncomment if needed.
+    --function and_reduce(
+    --    constant input         : in    std_logic_vector
+    --) return std_logic is
+    --    variable tmp           :       std_logic := '1';
+    --begin
+    --    for i in input'range loop
+    --        tmp := tmp and input(i);
+    --    end loop;
+    --    return tmp;
+    --end function;
 
 end package body;
