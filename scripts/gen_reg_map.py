@@ -70,7 +70,7 @@ def parse_args():
 	parser.add_argument('--outDir', dest='outDir', help=""" Output directory 
                          where to write VHDL register map implementation.""")
 
-	return parser.parse_args();
+	return parser.parse_args()
 
 
 def write_reg_map_package(vhdlGen, dir_path):
