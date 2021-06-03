@@ -296,10 +296,7 @@ package common_blocks_pkg is
         G_RESET_VALUE        :       std_logic_vector;
         
         -- Shift register width
-        G_WIDTH              :       natural;
-
-        -- True - Shift from Highest index, False - Shift from lowest Index
-        G_SHIFT_DOWN         :       boolean
+        G_WIDTH              :       natural
     );
     port (
         -----------------------------------------------------------------------

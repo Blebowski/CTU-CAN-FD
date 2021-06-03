@@ -283,8 +283,7 @@ begin
     generic map(
         G_RESET_POLARITY     => '0',
         G_RESET_VALUE        => C_RX_SHIFT_REG_RST_VAL,
-        G_WIDTH              => 32,
-        G_SHIFT_DOWN         => false
+        G_WIDTH              => 32
     )
     port map(
         clk                  => clk_sys,
