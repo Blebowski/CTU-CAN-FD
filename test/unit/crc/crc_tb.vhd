@@ -105,9 +105,8 @@ use STD.textio.all;
 library ctu_can_fd_rtl;
 use ctu_can_fd_rtl.id_transfer_pkg.all;
 use ctu_can_fd_rtl.can_constants_pkg.all;
-use ctu_can_fd_rtl.can_components_pkg.all;
+
 use ctu_can_fd_rtl.can_types_pkg.all;
-use ctu_can_fd_rtl.common_blocks_pkg.all;
 use ctu_can_fd_rtl.drv_stat_pkg.all;
 use ctu_can_fd_rtl.unary_ops_pkg.all;
 use ctu_can_fd_rtl.can_config_pkg.all;
@@ -313,7 +312,7 @@ begin
     ----------------------------------------------------------------------------
     -- DUT
     ----------------------------------------------------------------------------
-    can_crc_comp : can_crc
+    can_crc_comp : entity ctu_can_fd_rtl.can_crc
     generic map(
         G_CRC15_POL         => C_CRC15_POL,
         G_CRC17_POL         => C_CRC17_POL,

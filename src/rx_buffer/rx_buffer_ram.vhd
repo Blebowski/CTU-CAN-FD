@@ -92,9 +92,8 @@ use ieee.math_real.ALL;
 Library ctu_can_fd_rtl;
 use ctu_can_fd_rtl.id_transfer_pkg.all;
 use ctu_can_fd_rtl.can_constants_pkg.all;
-use ctu_can_fd_rtl.can_components_pkg.all;
+
 use ctu_can_fd_rtl.can_types_pkg.all;
-use ctu_can_fd_rtl.common_blocks_pkg.all;
 use ctu_can_fd_rtl.drv_stat_pkg.all;
 use ctu_can_fd_rtl.unary_ops_pkg.all;
 
@@ -164,7 +163,7 @@ begin
     -- Synchronous RAM is chosen since some FPGA families does not provide
     -- inferred RAM for asynchronously read data (in the same clock cycle).
     ---------------------------------------------------------------------------
-    rx_buf_RAM_inst : inf_ram_wrapper 
+    rx_buf_RAM_inst : entity ctu_can_fd_rtl.inf_ram_wrapper 
     generic map (
         G_WORD_WIDTH           => 32,
         G_DEPTH                => G_RX_BUFF_SIZE,

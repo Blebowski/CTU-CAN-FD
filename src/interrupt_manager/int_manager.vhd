@@ -86,9 +86,8 @@ use ieee.numeric_std.ALL;
 Library ctu_can_fd_rtl;
 use ctu_can_fd_rtl.id_transfer_pkg.all;
 use ctu_can_fd_rtl.can_constants_pkg.all;
-use ctu_can_fd_rtl.can_components_pkg.all;
+
 use ctu_can_fd_rtl.can_types_pkg.all;
-use ctu_can_fd_rtl.common_blocks_pkg.all;
 use ctu_can_fd_rtl.drv_stat_pkg.all;
 use ctu_can_fd_rtl.unary_ops_pkg.all;
 
@@ -257,7 +256,7 @@ begin
     ---------------------------------------------------------------------------
     int_module_gen : for i in 0 to G_INT_COUNT - 1 generate
         
-        int_module_inst : int_module
+        int_module_inst : entity ctu_can_fd_rtl.int_module
         port map(
             clk_sys                => clk_sys,              -- IN
             res_n                  => res_n,                -- IN
@@ -281,7 +280,7 @@ begin
     -- Output interrupt DFF to make sure that interrupt output will be
     -- glitch free!
     ---------------------------------------------------------------------------
-    dff_int_output_reg : dff_arst
+    dff_int_output_reg : entity ctu_can_fd_rtl.dff_arst
     generic map(
         G_RESET_POLARITY   => '0',
         G_RST_VAL          => '0'

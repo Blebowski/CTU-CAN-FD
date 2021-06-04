@@ -131,9 +131,8 @@ use ieee.numeric_std.ALL;
 Library ctu_can_fd_rtl;
 use ctu_can_fd_rtl.id_transfer_pkg.all;
 use ctu_can_fd_rtl.can_constants_pkg.all;
-use ctu_can_fd_rtl.can_components_pkg.all;
+
 use ctu_can_fd_rtl.can_types_pkg.all;
-use ctu_can_fd_rtl.common_blocks_pkg.all;
 use ctu_can_fd_rtl.drv_stat_pkg.all;
 use ctu_can_fd_rtl.unary_ops_pkg.all;
 
@@ -285,7 +284,7 @@ begin
                                else
                            '1'; 
     
-    trv_delay_rst_reg_inst : dff_arst
+    trv_delay_rst_reg_inst : entity ctu_can_fd_rtl.dff_arst
     generic map(
         G_RESET_POLARITY   => '0',
         
@@ -304,7 +303,7 @@ begin
     ----------------------------------------------------------------------------
     -- Mux for gating reset in scan mode
     ----------------------------------------------------------------------------
-    mux2_res_tst_inst : mux2
+    mux2_res_tst_inst : entity ctu_can_fd_rtl.mux2
     port map(
         a                  => trv_delay_ctr_rst_q, 
         b                  => '1',

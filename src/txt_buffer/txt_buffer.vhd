@@ -83,9 +83,8 @@ use ieee.math_real.ALL;
 Library ctu_can_fd_rtl;
 use ctu_can_fd_rtl.id_transfer_pkg.all;
 use ctu_can_fd_rtl.can_constants_pkg.all;
-use ctu_can_fd_rtl.can_components_pkg.all;
+
 use ctu_can_fd_rtl.can_types_pkg.all;
-use ctu_can_fd_rtl.common_blocks_pkg.all;
 use ctu_can_fd_rtl.drv_stat_pkg.all;
 use ctu_can_fd_rtl.unary_ops_pkg.all;
 
@@ -282,7 +281,7 @@ begin
                            else
                        '0';
 
-    clk_gate_txt_buffer_ram_comp : clk_gate
+    clk_gate_txt_buffer_ram_comp : entity ctu_can_fd_rtl.clk_gate
     generic map(
         G_TECHNOLOGY       => G_TECHNOLOGY
     )
@@ -296,7 +295,7 @@ begin
     ----------------------------------------------------------------------------
     -- RAM Memory of TXT Buffer
     ----------------------------------------------------------------------------
-    txt_buffer_ram_inst : txt_buffer_ram
+    txt_buffer_ram_inst : entity ctu_can_fd_rtl.txt_buffer_ram
     generic map(
         G_ID                 => G_ID
     )
@@ -321,7 +320,7 @@ begin
     ----------------------------------------------------------------------------
     -- TXT Buffer FSM
     ----------------------------------------------------------------------------
-    txt_buffer_fsm_inst : txt_buffer_fsm
+    txt_buffer_fsm_inst : entity ctu_can_fd_rtl.txt_buffer_fsm
     generic map(
         G_ID                   => G_ID
     )

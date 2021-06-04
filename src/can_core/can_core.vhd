@@ -89,9 +89,8 @@ use ieee.numeric_std.ALL;
 Library ctu_can_fd_rtl;
 use ctu_can_fd_rtl.id_transfer_pkg.all;
 use ctu_can_fd_rtl.can_constants_pkg.all;
-use ctu_can_fd_rtl.can_components_pkg.all;
+
 use ctu_can_fd_rtl.can_types_pkg.all;
-use ctu_can_fd_rtl.common_blocks_pkg.all;
 use ctu_can_fd_rtl.drv_stat_pkg.all;
 use ctu_can_fd_rtl.unary_ops_pkg.all;
 
@@ -502,7 +501,7 @@ begin
     ----------------------------------------------------------------------------
     -- Protocol control
     ----------------------------------------------------------------------------
-    protocol_control_inst : protocol_control
+    protocol_control_inst : entity ctu_can_fd_rtl.protocol_control
     generic map(
         G_CTRL_CTR_WIDTH        => G_CTRL_CTR_WIDTH,
         G_RETR_LIM_CTR_WIDTH    => G_RETR_LIM_CTR_WIDTH,
@@ -642,7 +641,7 @@ begin
     ---------------------------------------------------------------------------
     -- Operation control FSM
     ---------------------------------------------------------------------------
-    operation_control_inst : operation_control
+    operation_control_inst : entity ctu_can_fd_rtl.operation_control
     port map(
         clk_sys              => clk_sys,                -- IN
         res_n                => res_n,                  -- IN
@@ -667,7 +666,7 @@ begin
     ---------------------------------------------------------------------------
     -- Fault confinement
     ---------------------------------------------------------------------------
-    fault_confinement_inst : fault_confinement
+    fault_confinement_inst : entity ctu_can_fd_rtl.fault_confinement
     port map(
         clk_sys                 => clk_sys,                 -- IN
         res_n                   => res_n,                   -- IN
@@ -715,7 +714,7 @@ begin
     ---------------------------------------------------------------------------
     -- CAN CRC
     ---------------------------------------------------------------------------
-    can_crc_inst : can_crc
+    can_crc_inst : entity ctu_can_fd_rtl.can_crc
     generic map(
         G_CRC15_POL         => G_CRC15_POL,
         G_CRC17_POL         => G_CRC17_POL,
@@ -756,7 +755,7 @@ begin
     ---------------------------------------------------------------------------
     -- Bit Stuffing
     ---------------------------------------------------------------------------
-    bit_stuffing_inst : bit_stuffing
+    bit_stuffing_inst : entity ctu_can_fd_rtl.bit_stuffing
     port map(
         clk_sys             => clk_sys,                 -- IN
         res_n               => res_n,                   -- IN
@@ -781,7 +780,7 @@ begin
     ---------------------------------------------------------------------------
     -- Bit Destuffing
     ---------------------------------------------------------------------------
-    bit_destuffing_inst : bit_destuffing
+    bit_destuffing_inst : entity ctu_can_fd_rtl.bit_destuffing
     port map(
         clk_sys             => clk_sys,                 -- IN
         res_n               => res_n,                   -- IN
@@ -808,7 +807,7 @@ begin
     ---------------------------------------------------------------------------
     bus_traffic_ctrs_gen : if (G_SUP_TRAFFIC_CTRS = true) generate
         
-        bus_traffic_counters_inst : bus_traffic_counters
+        bus_traffic_counters_inst : entity ctu_can_fd_rtl.bus_traffic_counters
         port map(
             clk_sys             => clk_sys,                 -- IN
             res_n               => res_n,                   -- IN
@@ -835,7 +834,7 @@ begin
     ---------------------------------------------------------------------------
     -- Trigger multiplexor    
     ---------------------------------------------------------------------------
-    trigger_mux_inst : trigger_mux
+    trigger_mux_inst : entity ctu_can_fd_rtl.trigger_mux
     generic map(
         G_SAMPLE_TRIGGER_COUNT  => G_SAMPLE_TRIGGER_COUNT
     )

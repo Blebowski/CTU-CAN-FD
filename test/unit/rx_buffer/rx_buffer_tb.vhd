@@ -129,9 +129,8 @@ use STD.textio.all;
 library ctu_can_fd_rtl;
 use ctu_can_fd_rtl.id_transfer_pkg.all;
 use ctu_can_fd_rtl.can_constants_pkg.all;
-use ctu_can_fd_rtl.can_components_pkg.all;
+
 use ctu_can_fd_rtl.can_types_pkg.all;
-use ctu_can_fd_rtl.common_blocks_pkg.all;
 use ctu_can_fd_rtl.drv_stat_pkg.all;
 use ctu_can_fd_rtl.unary_ops_pkg.all;
 use ctu_can_fd_rtl.can_config_pkg.all;
@@ -588,14 +587,12 @@ architecture rx_buffer_unit_test of CAN_test is
         end loop;
     end procedure;
 
-  for rx_Buffer_inst : rx_buffer use entity ctu_can_fd_rtl.rx_buffer(rtl);
-
 begin
 
     ----------------------------------------------------------------------------
     -- Buffer component
     ----------------------------------------------------------------------------
-    rx_buffer_inst : rx_buffer
+    rx_buffer_inst : entity ctu_can_fd_rtl.rx_buffer
     generic map(
         G_RX_BUFF_SIZE         => C_RX_BUFF_SIZE
     )

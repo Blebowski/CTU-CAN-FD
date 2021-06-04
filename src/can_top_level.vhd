@@ -90,9 +90,7 @@ use ieee.math_real.ALL;
 Library ctu_can_fd_rtl;
 use ctu_can_fd_rtl.id_transfer_pkg.all;
 use ctu_can_fd_rtl.can_constants_pkg.all;
-use ctu_can_fd_rtl.can_components_pkg.all;
 use ctu_can_fd_rtl.can_types_pkg.all;
-use ctu_can_fd_rtl.common_blocks_pkg.all;
 use ctu_can_fd_rtl.drv_stat_pkg.all;
 use ctu_can_fd_rtl.unary_ops_pkg.all;
 use ctu_can_fd_rtl.can_config_pkg.all;
@@ -105,31 +103,31 @@ use ctu_can_fd_rtl.can_registers_pkg.all;
 entity can_top_level is
     generic(
         -- RX Buffer RAM size (32 bit words)
-        rx_buffer_size      : natural range 32 to 4096 := 128;
+        rx_buffer_size      : natural range 32 to 4096 := 32;
 
         -- Number of supported TXT buffers
-        txt_buffer_count    : natural range 2 to 8   := C_TXT_BUFFER_COUNT; 
+        txt_buffer_count    : natural range 2 to 8   := 2; 
 
         -- Synthesize Filter A
-        sup_filtA           : boolean                := true;
+        sup_filtA           : boolean                := false;
         
         -- Synthesize Filter B
-        sup_filtB           : boolean                := true;
+        sup_filtB           : boolean                := false;
         
         -- Synthesize Filter C
-        sup_filtC           : boolean                := true;
+        sup_filtC           : boolean                := false;
         
         -- Synthesize Range Filter
-        sup_range           : boolean                := true;
+        sup_range           : boolean                := false;
         
         -- Synthesize Test registers
         sup_test_registers  : boolean                := true;
         
         -- Insert Traffic counters
-        sup_traffic_ctrs    : boolean                := true;
+        sup_traffic_ctrs    : boolean                := false;
         
         -- Target technology (ASIC or FPGA)
-        target_technology   : natural                := C_TECH_ASIC
+        target_technology   : natural                := C_TECH_FPGA
     );
     port(
         -----------------------------------------------------------------------
@@ -545,7 +543,7 @@ begin
     ---------------------------------------------------------------------------
     -- Reset synchroniser
     ---------------------------------------------------------------------------
-    rst_sync_inst : rst_sync
+    rst_sync_inst : entity ctu_can_fd_rtl.rst_sync
     generic map(
         G_RESET_POLARITY  => '0'
     )
@@ -559,7 +557,7 @@ begin
     ---------------------------------------------------------------------------
     -- Memory registers
     ---------------------------------------------------------------------------
-    memory_registers_inst : memory_registers
+    memory_registers_inst : entity ctu_can_fd_rtl.memory_registers
     generic map(
         G_SUP_FILTA             => sup_filtA,
         G_SUP_FILTB             => sup_filtB,
@@ -636,7 +634,7 @@ begin
     ---------------------------------------------------------------------------
     -- RX Buffer
     ---------------------------------------------------------------------------
-    rx_buffer_inst : rx_buffer
+    rx_buffer_inst : entity ctu_can_fd_rtl.rx_buffer
     generic map(
         G_RX_BUFF_SIZE          => rx_buffer_size,
         G_TECHNOLOGY            => target_technology
@@ -692,7 +690,7 @@ begin
     ---------------------------------------------------------------------------
     txt_buf_comp_gen : for i in 0 to txt_buffer_count - 1 generate
     begin
-        txt_buffer_inst : txt_buffer
+        txt_buffer_inst : entity ctu_can_fd_rtl.txt_buffer
         generic map(
             G_TXT_BUFFER_COUNT  => txt_buffer_count,
             G_ID                => i,
@@ -738,7 +736,7 @@ begin
     ---------------------------------------------------------------------------
     -- TX Arbitrator
     ---------------------------------------------------------------------------
-    tx_arbitrator_inst : tx_arbitrator
+    tx_arbitrator_inst : entity ctu_can_fd_rtl.tx_arbitrator
     generic map(
         G_TXT_BUFFER_COUNT      => txt_buffer_count
     )
@@ -775,7 +773,7 @@ begin
     ---------------------------------------------------------------------------
     -- Frame Filters
     ---------------------------------------------------------------------------
-    frame_filters_inst : frame_filters
+    frame_filters_inst : entity ctu_can_fd_rtl.frame_filters
     generic map(
         G_SUP_FILTA             => sup_filtA,
         G_SUP_FILTB             => sup_filtB,
@@ -810,7 +808,7 @@ begin
     ---------------------------------------------------------------------------
     -- Interrrupt Manager
     ---------------------------------------------------------------------------
-    int_manager_inst : int_manager
+    int_manager_inst : entity ctu_can_fd_rtl.int_manager
     generic map(
         G_INT_COUNT             => C_INT_COUNT,
         G_TXT_BUFFER_COUNT      => txt_buffer_count
@@ -844,7 +842,7 @@ begin
     ---------------------------------------------------------------------------
     -- CAN Core
     ---------------------------------------------------------------------------
-    can_core_inst : can_core
+    can_core_inst : entity ctu_can_fd_rtl.can_core
     generic map(
         G_SAMPLE_TRIGGER_COUNT  => C_SAMPLE_TRIGGER_COUNT,
         G_CTRL_CTR_WIDTH        => C_CTRL_CTR_WIDTH,
@@ -933,7 +931,7 @@ begin
     ---------------------------------------------------------------------------
     -- Prescaler
     ---------------------------------------------------------------------------
-    prescaler_inst : prescaler
+    prescaler_inst : entity ctu_can_fd_rtl.prescaler
     generic map(
         G_TSEG1_NBT_WIDTH       => C_TSEG1_NBT_WIDTH,
         G_TSEG2_NBT_WIDTH       => C_TSEG2_NBT_WIDTH,
@@ -973,7 +971,7 @@ begin
     ---------------------------------------------------------------------------
     -- Bus Sampling
     ---------------------------------------------------------------------------
-    bus_sampling_inst : bus_sampling 
+    bus_sampling_inst : entity ctu_can_fd_rtl.bus_sampling 
     generic map(
         G_SSP_DELAY_SAT_VAL     => C_SSP_DELAY_SAT_VAL,
         G_TX_CACHE_DEPTH        => C_TX_CACHE_DEPTH,

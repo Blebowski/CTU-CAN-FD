@@ -93,9 +93,8 @@ use ieee.numeric_std.ALL;
 Library ctu_can_fd_rtl;
 use ctu_can_fd_rtl.id_transfer_pkg.all;
 use ctu_can_fd_rtl.can_constants_pkg.all;
-use ctu_can_fd_rtl.can_components_pkg.all;
+
 use ctu_can_fd_rtl.can_types_pkg.all;
-use ctu_can_fd_rtl.common_blocks_pkg.all;
 use ctu_can_fd_rtl.drv_stat_pkg.all;
 use ctu_can_fd_rtl.unary_ops_pkg.all;
 
@@ -284,7 +283,7 @@ begin
     ----------------------------------------------------------------------------
     -- CRC 15 (from RX Data, no Bit Stuffing)
     ----------------------------------------------------------------------------
-    crc_calc_15_inst : crc_calc
+    crc_calc_15_inst : entity ctu_can_fd_rtl.crc_calc
     generic map(
         G_CRC_WIDTH       => 15,
         G_POLYNOMIAL      => G_CRC15_POL
@@ -305,7 +304,7 @@ begin
     ----------------------------------------------------------------------------
     -- CRC 17 (from TX or RX Data, with Bit Stuffing)
     ----------------------------------------------------------------------------
-    crc_calc_17_rx_inst : crc_calc
+    crc_calc_17_rx_inst : entity ctu_can_fd_rtl.crc_calc
     generic map(
         G_CRC_WIDTH       => 17,
         G_POLYNOMIAL      => G_CRC17_POL
@@ -327,7 +326,7 @@ begin
     ----------------------------------------------------------------------------
     -- CRC 21 (from TX or RX Data, with Bit Stuffing)
     ----------------------------------------------------------------------------
-    crc_calc_21_rx_inst : crc_calc
+    crc_calc_21_rx_inst : entity ctu_can_fd_rtl.crc_calc
     generic map(
         G_CRC_WIDTH       => 21,
         G_POLYNOMIAL      => G_CRC21_POL

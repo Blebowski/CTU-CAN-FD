@@ -85,9 +85,8 @@ use ieee.numeric_std.ALL;
 Library ctu_can_fd_rtl;
 use ctu_can_fd_rtl.id_transfer_pkg.all;
 use ctu_can_fd_rtl.can_constants_pkg.all;
-use ctu_can_fd_rtl.can_components_pkg.all;
+
 use ctu_can_fd_rtl.can_types_pkg.all;
-use ctu_can_fd_rtl.common_blocks_pkg.all;
 use ctu_can_fd_rtl.drv_stat_pkg.all;
 use ctu_can_fd_rtl.unary_ops_pkg.all;
 
@@ -222,7 +221,7 @@ begin
     -- Reset DFF, keep Bus-off when disabled!
     fc_fsm_res_d <= drv_ena;
     
-    dff_fc_reset_inst : dff_arst
+    dff_fc_reset_inst : entity ctu_can_fd_rtl.dff_arst
     generic map(
         G_RESET_POLARITY   => '0',
         

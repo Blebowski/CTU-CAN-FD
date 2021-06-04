@@ -142,9 +142,8 @@ use STD.textio.all;
 library ctu_can_fd_rtl;
 use ctu_can_fd_rtl.id_transfer_pkg.all;
 use ctu_can_fd_rtl.can_constants_pkg.all;
-use ctu_can_fd_rtl.can_components_pkg.all;
+
 use ctu_can_fd_rtl.can_types_pkg.all;
-use ctu_can_fd_rtl.common_blocks_pkg.all;
 use ctu_can_fd_rtl.drv_stat_pkg.all;
 use ctu_can_fd_rtl.unary_ops_pkg.all;
 use ctu_can_fd_rtl.can_config_pkg.all;
@@ -685,7 +684,7 @@ architecture bit_stuffing_unit_test of CAN_test is
 
 begin
 
-    bit_stuffing_comp : bit_stuffing
+    bit_stuffing_comp : entity ctu_can_fd_rtl.bit_stuffing
     port map(
         clk_sys            =>  clk_sys,
         res_n              =>  res_n,
@@ -701,7 +700,7 @@ begin
     );
 
 
-    bit_destuffing_comp : bit_destuffing
+    bit_destuffing_comp : entity ctu_can_fd_rtl.bit_destuffing
     port map(
         clk_sys            =>  clk_sys,
         res_n              =>  res_n,

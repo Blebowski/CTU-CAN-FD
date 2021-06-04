@@ -79,9 +79,7 @@ use ieee.math_real.ALL;
 Library ctu_can_fd_rtl;
 use ctu_can_fd_rtl.id_transfer_pkg.all;
 use ctu_can_fd_rtl.can_constants_pkg.all;
-use ctu_can_fd_rtl.can_components_pkg.all;
 use ctu_can_fd_rtl.can_types_pkg.all;
-use ctu_can_fd_rtl.common_blocks_pkg.all;
 use ctu_can_fd_rtl.drv_stat_pkg.all;
 use ctu_can_fd_rtl.unary_ops_pkg.all;
 
@@ -135,7 +133,7 @@ architecture rtl of can_top_apb is
     
 begin
 
-    can_inst: CAN_top_level
+    can_inst: entity ctu_can_fd_rtl.can_top_level
         generic map (
             rx_buffer_size      => rx_buffer_size,
             txt_buffer_count    => txt_buffer_count,
@@ -167,7 +165,7 @@ begin
             timestamp       => timestamp
         );
 
-    apb_inst : apb_ifc
+    apb_inst : entity ctu_can_fd_rtl.apb_ifc
         port map (
             aclk           => aclk,
 

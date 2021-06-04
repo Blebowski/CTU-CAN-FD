@@ -94,9 +94,8 @@ use STD.textio.all;
 library ctu_can_fd_rtl;
 use ctu_can_fd_rtl.id_transfer_pkg.all;
 use ctu_can_fd_rtl.can_constants_pkg.all;
-use ctu_can_fd_rtl.can_components_pkg.all;
+
 use ctu_can_fd_rtl.can_types_pkg.all;
-use ctu_can_fd_rtl.common_blocks_pkg.all;
 use ctu_can_fd_rtl.drv_stat_pkg.all;
 use ctu_can_fd_rtl.unary_ops_pkg.all;
 use ctu_can_fd_rtl.can_config_pkg.all;
@@ -162,10 +161,8 @@ architecture apb_unit_test of CAN_test is
     signal aclk : std_logic := '0';
     signal arstn : std_logic := '0';
     
-    for can_inst : can_top_apb use entity ctu_can_fd_rtl.can_top_apb(rtl);
-    
 begin
-    can_inst : can_top_apb
+    can_inst : entity ctu_can_fd_rtl.can_top_apb
         generic map (
             rx_buffer_size      => 128,
             txt_buffer_count    => 4, 
