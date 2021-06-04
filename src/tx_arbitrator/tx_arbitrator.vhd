@@ -89,9 +89,8 @@ use ieee.math_real.ALL;
 Library ctu_can_fd_rtl;
 use ctu_can_fd_rtl.id_transfer_pkg.all;
 use ctu_can_fd_rtl.can_constants_pkg.all;
-use ctu_can_fd_rtl.can_components_pkg.all;
+
 use ctu_can_fd_rtl.can_types_pkg.all;
-use ctu_can_fd_rtl.common_blocks_pkg.all;
 use ctu_can_fd_rtl.drv_stat_pkg.all;
 use ctu_can_fd_rtl.unary_ops_pkg.all;
 
@@ -315,7 +314,7 @@ begin
   ------------------------------------------------------------------------------
   -- Priority decoder on TXT Buffers
   ------------------------------------------------------------------------------
-  priority_decoder_inst : priority_decoder 
+  priority_decoder_inst : entity ctu_can_fd_rtl.priority_decoder 
   generic map(
      G_TXT_BUFFER_COUNT    => G_TXT_BUFFER_COUNT
   )
@@ -331,7 +330,7 @@ begin
   ------------------------------------------------------------------------------
   -- TX Arbitrator FSM
   ------------------------------------------------------------------------------
-  tx_arbitrator_fsm_inst : tx_arbitrator_fsm
+  tx_arbitrator_fsm_inst : entity ctu_can_fd_rtl.tx_arbitrator_fsm
   port map(
     clk_sys                => clk_sys,                  -- IN
     res_n                  => res_n,                    -- IN

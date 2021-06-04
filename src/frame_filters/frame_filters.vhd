@@ -90,9 +90,8 @@ use ieee.numeric_std.ALL;
 Library ctu_can_fd_rtl;
 use ctu_can_fd_rtl.id_transfer_pkg.all;
 use ctu_can_fd_rtl.can_constants_pkg.all;
-use ctu_can_fd_rtl.can_components_pkg.all;
+
 use ctu_can_fd_rtl.can_types_pkg.all;
-use ctu_can_fd_rtl.common_blocks_pkg.all;
 use ctu_can_fd_rtl.drv_stat_pkg.all;
 use ctu_can_fd_rtl.unary_ops_pkg.all;
 
@@ -322,7 +321,7 @@ begin
     ---------------------------------------------------------------------------
     -- Filter instances
     ---------------------------------------------------------------------------
-    bit_filter_A_inst : bit_filter
+    bit_filter_A_inst : entity ctu_can_fd_rtl.bit_filter
     generic map(
         G_WIDTH           => 29,
         G_IS_PRESENT      => G_SUP_FILTA
@@ -336,7 +335,7 @@ begin
         valid           => int_filter_A_valid       -- OUT
     );
 
-    bit_filter_B_inst : bit_filter
+    bit_filter_B_inst : entity ctu_can_fd_rtl.bit_filter
     generic map(
         G_WIDTH           => 29,
         G_IS_PRESENT      => G_SUP_FILTB
@@ -350,7 +349,7 @@ begin
         valid           => int_filter_B_valid       -- OUT
     );
 
-    bit_filter_C_inst : bit_filter
+    bit_filter_C_inst : entity ctu_can_fd_rtl.bit_filter
     generic map(
         G_WIDTH           => 29,
         G_IS_PRESENT      => G_SUP_FILTC
@@ -365,7 +364,7 @@ begin
     );
    
                  
-    range_filter_inst : range_filter
+    range_filter_inst : entity ctu_can_fd_rtl.range_filter
     generic map(
         G_WIDTH           => 29,
         G_IS_PRESENT      => G_SUP_RANGE

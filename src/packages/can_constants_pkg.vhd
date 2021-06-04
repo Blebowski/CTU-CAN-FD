@@ -172,4 +172,10 @@ package can_constants_pkg is
     constant C_DOMINANT_REPEAT_DURATION : std_logic_vector(8 downto 0) :=
         std_logic_vector(to_unsigned(7, 9));
 
+    ----------------------------------------------------------------------------
+    -- Technology variants constants
+    ----------------------------------------------------------------------------
+    constant C_TECH_ASIC : natural := 0;
+    constant C_TECH_FPGA : natural := 1;
+
 end package;

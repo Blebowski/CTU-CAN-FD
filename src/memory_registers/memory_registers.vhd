@@ -84,9 +84,8 @@ use ieee.numeric_std.ALL;
 Library ctu_can_fd_rtl;
 use ctu_can_fd_rtl.id_transfer_pkg.all;
 use ctu_can_fd_rtl.can_constants_pkg.all;
-use ctu_can_fd_rtl.can_components_pkg.all;
+
 use ctu_can_fd_rtl.can_types_pkg.all;
-use ctu_can_fd_rtl.common_blocks_pkg.all;
 use ctu_can_fd_rtl.drv_stat_pkg.all;
 use ctu_can_fd_rtl.unary_ops_pkg.all;
 
@@ -473,7 +472,7 @@ begin
                             else
                         '0';
 
-    clk_gate_control_regs_comp : clk_gate
+    clk_gate_control_regs_comp : entity ctu_can_fd_rtl.clk_gate
     generic map(
         G_TECHNOLOGY       => G_TECHNOLOGY
     )
@@ -484,7 +483,7 @@ begin
         clk_out            => clk_control_regs
     );
 
-    clk_gate_test_regs_comp : clk_gate
+    clk_gate_test_regs_comp : entity ctu_can_fd_rtl.clk_gate
     generic map(
         G_TECHNOLOGY       => G_TECHNOLOGY
     )
@@ -498,7 +497,7 @@ begin
     ----------------------------------------------------------------------------
     -- Control registers instance
     ----------------------------------------------------------------------------
-    control_registers_reg_map_comp : control_registers_reg_map
+    control_registers_reg_map_comp : entity ctu_can_fd_rtl.control_registers_reg_map
     generic map(
         DATA_WIDTH            => 32,
         ADDRESS_WIDTH         => 16,
@@ -531,7 +530,7 @@ begin
     -- Test registers instance
     ----------------------------------------------------------------------------
     test_registers_gen_true : if (G_SUP_TEST_REGISTERS) generate
-        test_registers_reg_map_comp : test_registers_reg_map
+        test_registers_reg_map_comp : entity ctu_can_fd_rtl.test_registers_reg_map
         generic map (
             DATA_WIDTH          => 32,
             ADDRESS_WIDTH       => 16,

@@ -83,9 +83,8 @@ use ieee.numeric_std.ALL;
 Library ctu_can_fd_rtl;
 use ctu_can_fd_rtl.id_transfer_pkg.all;
 use ctu_can_fd_rtl.can_constants_pkg.all;
-use ctu_can_fd_rtl.can_components_pkg.all;
+
 use ctu_can_fd_rtl.can_types_pkg.all;
-use ctu_can_fd_rtl.common_blocks_pkg.all;
 use ctu_can_fd_rtl.drv_stat_pkg.all;
 use ctu_can_fd_rtl.unary_ops_pkg.all;
 
@@ -236,7 +235,7 @@ begin
     ---------------------------------------------------------------------------
     -- Fault confinement FSM
     ---------------------------------------------------------------------------
-    fault_confinement_fsm_inst : fault_confinement_fsm
+    fault_confinement_fsm_inst : entity ctu_can_fd_rtl.fault_confinement_fsm
     port map(
         clk_sys                => clk_sys,                  -- IN
         res_n                  => res_n,                    -- IN
@@ -261,7 +260,7 @@ begin
     ---------------------------------------------------------------------------
     -- Error counters
     ---------------------------------------------------------------------------
-    err_counters_inst : err_counters
+    err_counters_inst : entity ctu_can_fd_rtl.err_counters
     port map(
         clk_sys                => clk_sys,              -- IN
         res_n                  => res_n,                -- IN
@@ -286,7 +285,7 @@ begin
     ---------------------------------------------------------------------------
     -- Fault confinement rules
     ---------------------------------------------------------------------------
-    fault_confinement_rules_inst : fault_confinement_rules
+    fault_confinement_rules_inst : entity ctu_can_fd_rtl.fault_confinement_rules
     port map(
         is_transmitter         => is_transmitter,           -- IN
         is_receiver            => is_receiver,              -- IN

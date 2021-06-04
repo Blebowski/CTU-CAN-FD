@@ -87,9 +87,8 @@ use ieee.numeric_std.ALL;
 Library ctu_can_fd_rtl;
 use ctu_can_fd_rtl.id_transfer_pkg.all;
 use ctu_can_fd_rtl.can_constants_pkg.all;
-use ctu_can_fd_rtl.can_components_pkg.all;
+
 use ctu_can_fd_rtl.can_types_pkg.all;
-use ctu_can_fd_rtl.common_blocks_pkg.all;
 use ctu_can_fd_rtl.drv_stat_pkg.all;
 use ctu_can_fd_rtl.unary_ops_pkg.all;
 
@@ -234,7 +233,7 @@ begin
     ---------------------------------------------------------------------------
     -- Registering reset to avoid glitches
     ---------------------------------------------------------------------------
-    rx_shift_res_reg_inst : dff_arst
+    rx_shift_res_reg_inst : entity ctu_can_fd_rtl.dff_arst
     generic map(
         G_RESET_POLARITY   => '0',
 
@@ -253,7 +252,7 @@ begin
     ---------------------------------------------------------------------------
     -- Registering reset to avoid glitches
     ---------------------------------------------------------------------------
-    mux2_res_tst_inst : mux2
+    mux2_res_tst_inst : entity ctu_can_fd_rtl.mux2
     port map(
         a                  => res_n_i_q, 
         b                  => '1',
@@ -287,7 +286,7 @@ begin
     ---------------------------------------------------------------------------
     -- RX Shift register
     ---------------------------------------------------------------------------
-    shift_reg_byte_inst : shift_reg_byte
+    shift_reg_byte_inst : entity ctu_can_fd_rtl.shift_reg_byte
     generic map(
         G_RESET_POLARITY     => '0',
         G_RESET_VALUE        => x"00000000",

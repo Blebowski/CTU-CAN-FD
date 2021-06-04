@@ -99,9 +99,8 @@ use ieee.numeric_std.ALL;
 Library ctu_can_fd_rtl;
 use ctu_can_fd_rtl.id_transfer_pkg.all;
 use ctu_can_fd_rtl.can_constants_pkg.all;
-use ctu_can_fd_rtl.can_components_pkg.all;
+
 use ctu_can_fd_rtl.can_types_pkg.all;
-use ctu_can_fd_rtl.common_blocks_pkg.all;
 use ctu_can_fd_rtl.drv_stat_pkg.all;
 use ctu_can_fd_rtl.unary_ops_pkg.all;
 
@@ -916,7 +915,7 @@ begin
     ---------------------------------------------------------------------------
     -- DLC to Data length decoders
     ---------------------------------------------------------------------------
-    dlc_decoder_tx_inst : dlc_decoder
+    dlc_decoder_tx_inst : entity ctu_can_fd_rtl.dlc_decoder
     port map(
         dlc           => tran_dlc,
         frame_type    => tran_frame_type_i,
@@ -925,7 +924,7 @@ begin
         is_valid      => open
     );
 
-    dlc_decoder_rx_inst : dlc_decoder
+    dlc_decoder_rx_inst : entity ctu_can_fd_rtl.dlc_decoder
     port map(
         dlc           => rec_dlc_q,
         frame_type    => rec_frame_type,
@@ -934,7 +933,7 @@ begin
         is_valid      => open
     );
     
-    dlc_decoder_rx_inst_comb : dlc_decoder
+    dlc_decoder_rx_inst_comb : entity ctu_can_fd_rtl.dlc_decoder
     port map(
         dlc           => rec_dlc_d,
         frame_type    => rec_frame_type,

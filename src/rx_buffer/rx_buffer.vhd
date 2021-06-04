@@ -86,9 +86,8 @@ use ieee.math_real.ALL;
 Library ctu_can_fd_rtl;
 use ctu_can_fd_rtl.id_transfer_pkg.all;
 use ctu_can_fd_rtl.can_constants_pkg.all;
-use ctu_can_fd_rtl.can_components_pkg.all;
+
 use ctu_can_fd_rtl.can_types_pkg.all;
-use ctu_can_fd_rtl.common_blocks_pkg.all;
 use ctu_can_fd_rtl.drv_stat_pkg.all;
 use ctu_can_fd_rtl.unary_ops_pkg.all;
 
@@ -456,7 +455,7 @@ begin
     ----------------------------------------------------------------------------
     -- Register reset to avoid glitches
     ----------------------------------------------------------------------------
-    res_reg_inst : dff_arst
+    res_reg_inst : entity ctu_can_fd_rtl.dff_arst
     generic map(
         G_RESET_POLARITY   => '0',
         
@@ -475,7 +474,7 @@ begin
     ----------------------------------------------------------------------------
     -- Mux for gating reset in scan mode
     ----------------------------------------------------------------------------
-    mux2_res_tst_inst : mux2
+    mux2_res_tst_inst : entity ctu_can_fd_rtl.mux2
     port map(
         a                  => rx_buf_res_n_q, 
         b                  => '1',
@@ -489,7 +488,7 @@ begin
     ----------------------------------------------------------------------------
     -- RX Buffer FSM component
     ----------------------------------------------------------------------------
-    rx_buffer_fsm_inst : rx_buffer_fsm
+    rx_buffer_fsm_inst : entity ctu_can_fd_rtl.rx_buffer_fsm
     port map(
         clk_sys             => clk_sys,             -- IN
         res_n               => res_n,               -- IN
@@ -511,7 +510,7 @@ begin
     ----------------------------------------------------------------------------
     -- RX Buffer Memory pointers
     ----------------------------------------------------------------------------
-    rx_buffer_pointers_inst : rx_buffer_pointers
+    rx_buffer_pointers_inst : entity ctu_can_fd_rtl.rx_buffer_pointers
     generic map(
         G_RX_BUFF_SIZE          => G_RX_BUFF_SIZE
     )
@@ -833,7 +832,7 @@ begin
                              else
                          '0';
 
-    clk_gate_rx_buffer_ram_comp : clk_gate
+    clk_gate_rx_buffer_ram_comp : entity ctu_can_fd_rtl.clk_gate
     generic map(
         G_TECHNOLOGY       => G_TECHNOLOGY
     )
@@ -847,7 +846,7 @@ begin
     ----------------------------------------------------------------------------
     -- RAM Memory of RX Buffer
     ----------------------------------------------------------------------------
-    rx_buffer_ram_inst : rx_buffer_ram
+    rx_buffer_ram_inst : entity ctu_can_fd_rtl.rx_buffer_ram
     generic map(
         G_RX_BUFF_SIZE       => G_RX_BUFF_SIZE
     )

@@ -81,9 +81,8 @@ use ieee.numeric_std.ALL;
 Library ctu_can_fd_rtl;
 use ctu_can_fd_rtl.id_transfer_pkg.all;
 use ctu_can_fd_rtl.can_constants_pkg.all;
-use ctu_can_fd_rtl.can_components_pkg.all;
+
 use ctu_can_fd_rtl.can_types_pkg.all;
-use ctu_can_fd_rtl.common_blocks_pkg.all;
 use ctu_can_fd_rtl.drv_stat_pkg.all;
 use ctu_can_fd_rtl.unary_ops_pkg.all;
 
@@ -176,7 +175,7 @@ begin
     ----------------------------------------------------------------------------
     -- Reset pipeline registers
     ----------------------------------------------------------------------------
-    tx_ctr_res_inst : dff_arst
+    tx_ctr_res_inst : entity ctu_can_fd_rtl.dff_arst
     generic map(
         G_RESET_POLARITY   => '0',
         
@@ -192,7 +191,7 @@ begin
         output             => tx_ctr_rst_n_q        -- OUT
     );
     
-    rx_ctr_res_inst : dff_arst
+    rx_ctr_res_inst : entity ctu_can_fd_rtl.dff_arst
     generic map(
         G_RESET_POLARITY   => '0',
         
@@ -211,7 +210,7 @@ begin
     ----------------------------------------------------------------------------
     -- Muxes for gating reset in scan mode
     ----------------------------------------------------------------------------
-    mux2_tx_rst_tst_inst : mux2
+    mux2_tx_rst_tst_inst : entity ctu_can_fd_rtl.mux2
     port map(
         a                  => tx_ctr_rst_n_q, 
         b                  => '1',
@@ -221,7 +220,7 @@ begin
         z                  => tx_ctr_rst_n_q_scan
     );
 
-    mux2_rx_rst_tst_inst : mux2
+    mux2_rx_rst_tst_inst : entity ctu_can_fd_rtl.mux2
     port map(
         a                  => rx_ctr_rst_n_q, 
         b                  => '1',

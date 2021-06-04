@@ -89,9 +89,8 @@ use ieee.numeric_std.ALL;
 Library ctu_can_fd_rtl;
 use ctu_can_fd_rtl.id_transfer_pkg.all;
 use ctu_can_fd_rtl.can_constants_pkg.all;
-use ctu_can_fd_rtl.can_components_pkg.all;
+
 use ctu_can_fd_rtl.can_types_pkg.all;
-use ctu_can_fd_rtl.common_blocks_pkg.all;
 use ctu_can_fd_rtl.drv_stat_pkg.all;
 use ctu_can_fd_rtl.unary_ops_pkg.all;
 
@@ -279,7 +278,7 @@ begin
     ---------------------------------------------------------------------------
     -- Bit time config capture
     ---------------------------------------------------------------------------
-    bit_time_cfg_capture_inst : bit_time_cfg_capture
+    bit_time_cfg_capture_inst : entity ctu_can_fd_rtl.bit_time_cfg_capture
     generic map (
         G_TSEG1_NBT_WIDTH   => G_TSEG1_NBT_WIDTH,
         G_TSEG2_NBT_WIDTH   => G_TSEG2_NBT_WIDTH,
@@ -309,7 +308,7 @@ begin
     ---------------------------------------------------------------------------
     -- Synchronisation checker
     ---------------------------------------------------------------------------
-    synchronisation_checker_inst : synchronisation_checker
+    synchronisation_checker_inst : entity ctu_can_fd_rtl.synchronisation_checker
     port map(
         clk_sys           => clk_sys,               -- IN
         res_n             => res_n,                 -- IN
@@ -328,7 +327,7 @@ begin
     ---------------------------------------------------------------------------
     -- Bit segment meter (Nominal Bit Time)
     ---------------------------------------------------------------------------
-    bit_segment_meter_nbt_inst : bit_segment_meter
+    bit_segment_meter_nbt_inst : entity ctu_can_fd_rtl.bit_segment_meter
     generic map(
         G_SJW_WIDTH            => G_SJW_NBT_WIDTH,
         G_TSEG1_WIDTH          => G_TSEG1_NBT_WIDTH,
@@ -356,7 +355,7 @@ begin
     ---------------------------------------------------------------------------
     -- Bit Time counter (Nominal Bit Time)
     ---------------------------------------------------------------------------
-    bit_time_counters_nbt_inst : bit_time_counters
+    bit_time_counters_nbt_inst : entity ctu_can_fd_rtl.bit_time_counters
     generic map(
         G_BT_WIDTH        => C_BT_NBT_WIDTH,
         G_BRP_WIDTH       => G_BRP_NBT_WIDTH
@@ -377,7 +376,7 @@ begin
     ---------------------------------------------------------------------------
     -- Bit segment meter (Data Bit Time)
     ---------------------------------------------------------------------------
-    bit_segment_meter_dbt_inst : bit_segment_meter
+    bit_segment_meter_dbt_inst : entity ctu_can_fd_rtl.bit_segment_meter
     generic map(
         G_SJW_WIDTH            => G_SJW_DBT_WIDTH,
         G_TSEG1_WIDTH          => G_TSEG1_DBT_WIDTH,
@@ -405,7 +404,7 @@ begin
     ---------------------------------------------------------------------------
     -- Bit Time counter (Data Bit Time)
     ---------------------------------------------------------------------------
-    bit_time_counters_dbt_inst : bit_time_counters
+    bit_time_counters_dbt_inst : entity ctu_can_fd_rtl.bit_time_counters
     generic map(
         G_BT_WIDTH        => C_BT_DBT_WIDTH,
         G_BRP_WIDTH       => G_BRP_DBT_WIDTH
@@ -425,7 +424,7 @@ begin
     ---------------------------------------------------------------------------
     -- End of Segment detector
     ---------------------------------------------------------------------------
-    segment_end_detector_inst : segment_end_detector
+    segment_end_detector_inst : entity ctu_can_fd_rtl.segment_end_detector
     port map(
         clk_sys            => clk_sys,              -- IN
         res_n              => res_n,                -- IN
@@ -447,7 +446,7 @@ begin
     ---------------------------------------------------------------------------
     -- Bit time FSM
     ---------------------------------------------------------------------------
-    bit_time_fsm_inst : bit_time_fsm
+    bit_time_fsm_inst : entity ctu_can_fd_rtl.bit_time_fsm
     port map(
         clk_sys          => clk_sys,            -- IN
         res_n            => res_n,              -- IN
@@ -463,7 +462,7 @@ begin
     ---------------------------------------------------------------------------
     -- Trigger generator
     ---------------------------------------------------------------------------
-    trigger_generator_inst : trigger_generator
+    trigger_generator_inst : entity ctu_can_fd_rtl.trigger_generator
     generic map(
         G_SAMPLE_TRIGGER_COUNT  => G_SAMPLE_TRIGGER_COUNT
     )
