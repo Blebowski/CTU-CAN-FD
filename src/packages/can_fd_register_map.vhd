@@ -905,12 +905,12 @@ package can_fd_register_map is
   --
   -- Command register for TXT buffers. Command is activated by writing logic 1 t
   -- o TXC(E|R|A) bit. TXT buffer that receives the command is selected by setti
-  -- ng bit TXB[1-8] to logic 1. Command and index must be set by single access.
-  --  Register is automatically erased upon the command completion. Reffer to de
-  -- scription of TXT buffer for meaning of commands. If TXCE and TXCR are appli
-  -- ed simultaneously, only TXCE command is applied. If multiple commands are a
-  -- pplied at once, only those which have effect in immediate state of TXT buff
-  -- er are applied to the buffer.
+  -- ng bit TXB[1-8] to logic 1. Command and index can be set by single access, 
+  -- or index can be set in advance. TXC(E|R|A) bits are automatically erased up
+  -- on the command completion. Reffer to description of TXT buffer for meaning 
+  -- of commands. If TXCE and TXCR are applied simultaneously, only TXCE command
+  --  is applied. If multiple commands are applied at once, only those which hav
+  -- e effect in immediate state of TXT buffer are applied to the buffer.
   ------------------------------------------------------------------------------
   constant TXCE_IND               : natural := 0;
   constant TXCR_IND               : natural := 1;

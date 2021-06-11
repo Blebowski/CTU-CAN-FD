@@ -38021,7 +38021,7 @@ Offset: 0x74
 Size: 2 bytes
 \end_layout
 \begin_layout Standard
-Command register for TXT buffers. Command is activated by writing logic 1 to TXC(E|R|A) bit. TXT buffer that receives the command is selected by setting bit TXB[1-8] to logic 1. Command and index must be set by single access. Register is automatically erased upon the command completion. Reffer to description of TXT buffer for meaning of commands. If TXCE and TXCR are applied simultaneously, only TXCE command is applied. If multiple commands are applied at once, only those which have effect in immediate state of TXT buffer are applied to the buffer.
+Command register for TXT buffers. Command is activated by writing logic 1 to TXC(E|R|A) bit. TXT buffer that receives the command is selected by setting bit TXB[1-8] to logic 1. Command and index can be set by single access, or index can be set in advance. TXC(E|R|A) bits are automatically erased upon the command completion. Reffer to description of TXT buffer for meaning of commands. If TXCE and TXCR are applied simultaneously, only TXCE command is applied. If multiple commands are applied at once, only those which have effect in immediate state of TXT buffer are applied to the buffer.
 \end_layout
 \begin_layout Standard
 \noindent

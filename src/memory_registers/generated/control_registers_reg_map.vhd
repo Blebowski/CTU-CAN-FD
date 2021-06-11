@@ -781,7 +781,7 @@ begin
         data_mask                       => "1111111100000111" ,
         reset_polarity                  => RESET_POLARITY ,
         reset_value                     => "0000000000000000" ,
-        auto_clear                      => "1111111100000111" ,
+        auto_clear                      => "0000000000000111" ,
         is_lockable                     => false 
     )
     port map(
