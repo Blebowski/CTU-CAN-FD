@@ -1011,9 +1011,21 @@ begin
     -- RX_DATA
     ---------------------------------------------------------------------------
 
-    -- Not writable, only read is signalled!
-    drv_bus(DRV_READ_START_INDEX) <= control_registers_out.rx_data_read;
-
+    -- Signal increment of RX buffer pointer when:
+    --  1. Automated mode - we read from RX_DATA register
+    --  2. Manual mode - we issue COMMAND[RXRPMV].
+    rxb_incr_block : block
+        signal rx_buf_mode : std_logic;
+        signal rx_move_cmd : std_logic;
+    begin
+        rx_buf_mode <= align_wrd_to_reg(control_registers_out.mode, RXBAM_IND);
+        rx_move_cmd <= align_wrd_to_reg(control_registers_out.command, RXRPMV_IND);
+        
+        drv_bus(DRV_READ_START_INDEX) <=
+            control_registers_out.rx_data_read when (rx_buf_mode = RXBAM_ENABLED)
+                                               else
+                                   rx_move_cmd;
+    end block rxb_incr_block;
 
     --------------------------------------------------------------------------
     -- TX_COMMAND
