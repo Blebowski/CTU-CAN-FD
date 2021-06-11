@@ -1058,18 +1058,13 @@ begin
         end if;
     end process;
     
+    -- TX Command index is regular register, it is therefore pipeline
+    -- internally in generated register block!
+    
     txtb_cmd_index_gen : for txtb_index in 0 to G_TXT_BUFFER_COUNT - 1 generate
-        tx_cmd_in_reg_proc : process(clk_sys, soft_res_q_n)
-        begin
-            if (soft_res_q_n = '0') then
-                txtb_sw_cmd_index(txtb_index) <= '0';
-            elsif (rising_edge(clk_sys)) then
-                txtb_sw_cmd_index(txtb_index)  <= align_wrd_to_reg(
+        txtb_sw_cmd_index(txtb_index)  <= align_wrd_to_reg(
                 control_registers_out.tx_command, TXB1_IND + txtb_index);
-            end if;
-        end process;
     end generate;
-
 
     ---------------------------------------------------------------------------
     -- TX_PRIORITY
