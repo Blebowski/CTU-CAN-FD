@@ -7634,10 +7634,11 @@ uninitalized
 Memories are not initialized, nor reset.
  Each memory is synchronous memory with one clock cycle latency on data
  read and one cycle write access latency.
- Both memories are dual port memories with write-only port A and read-only
- port B and the same clock signal is used to clock both ports.
+ Both memories are dual port memories with write-only port A, read-only
+ port B, and the same clock signal is used to clock both ports.
  If true dual port memories are used, write data/enable of Port B shall
  be driven to 0.
+ Memory word width is 32 bits, and it must support byte-enable capability.
  An example of memory access is shown in Figure 
 \begin_inset CommandInset ref
 LatexCommand ref
