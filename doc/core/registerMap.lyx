@@ -4568,11 +4568,11 @@ Reserved\end_layout
 
 \end_inset
 </cell>
-<cell alignment="center" leftline="true" multicolumn="2" topline="true" usebox="none" valignment="top">
+<cell alignment="center" leftline="true" multicolumn="1" topline="true" usebox="none" valignment="top">
 \begin_inset Text
 
 \begin_layout Plain Layout
-Reserved\end_layout
+RXBAM\end_layout
 
 \end_inset
 </cell>
@@ -4653,7 +4653,7 @@ cellcolor{cyan}
 \begin_inset Text
 
 \begin_layout Plain Layout
--\end_layout
+1\end_layout
 
 \end_inset
 </cell>
@@ -5027,6 +5027,11 @@ ACF Acknowledge Forbidden Mode. When enabled, acknowledge is not sent even if re
 \end_layout
 \begin_layout Description
 TSTM Test Mode. In test mode several registers have special features. Reffer to description of Test mode for further details.
+\end_layout
+\begin_layout Description
+RXBAM RX Buffer automatic mode.\begin_inset Newline newline\end_inset
+		0b0  - RXBAM_DISABLED - \begin_inset Newline newline\end_inset
+		0b1  - RXBAM_ENABLED - 
 \end_layout
 \begin_layout Standard
 \begin_inset VSpace bigskip
@@ -8273,15 +8278,15 @@ RRB\end_layout
 
 \end_inset
 </cell>
-<cell alignment="center" leftline="true" multicolumn="1" rightline="true" topline="true" usebox="none" valignment="top">
+<cell alignment="center" leftline="true" multicolumn="1" topline="true" usebox="none" valignment="top">
 \begin_inset Text
 
 \begin_layout Plain Layout
-Reserved\end_layout
+RXRPMV\end_layout
 
 \end_inset
 </cell>
-<cell alignment="center" leftline="true" multicolumn="2" rightline="true" topline="true" usebox="none" valignment="top">
+<cell alignment="center" leftline="true" multicolumn="1" rightline="true" topline="true" usebox="none" valignment="top">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -8358,7 +8363,7 @@ cellcolor{cyan}
 \begin_inset Text
 
 \begin_layout Plain Layout
--\end_layout
+X\end_layout
 
 \end_inset
 </cell>
@@ -8376,6 +8381,9 @@ cellcolor{cyan}
 \end_inset
 
 
+\end_layout
+\begin_layout Description
+RXRPMV RX Buffer read pointer move.
 \end_layout
 \begin_layout Description
 RRB Release RX Buffer. This command flushes RX buffer and resets its memory pointers.

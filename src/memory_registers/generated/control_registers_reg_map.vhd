@@ -146,9 +146,9 @@ begin
     mode_reg_comp : memory_reg
     generic map(
         data_width                      => 16 ,
-        data_mask                       => "0000000111011111" ,
+        data_mask                       => "0000001111011111" ,
         reset_polarity                  => RESET_POLARITY ,
-        reset_value                     => "0000000000010000" ,
+        reset_value                     => "0000001000010000" ,
         auto_clear                      => "0000000000000001" ,
         is_lockable                     => false 
     )
@@ -194,10 +194,10 @@ begin
     command_reg_comp : memory_reg
     generic map(
         data_width                      => 32 ,
-        data_mask                       => "00000000000000000000000011111100" ,
+        data_mask                       => "00000000000000000000000011111110" ,
         reset_polarity                  => RESET_POLARITY ,
         reset_value                     => "00000000000000000000000000000000" ,
-        auto_clear                      => "00000000000000000000000011111100" ,
+        auto_clear                      => "00000000000000000000000011111110" ,
         is_lockable                     => false 
     )
     port map(
