@@ -195,6 +195,7 @@ use ctu_can_fd_tb.tx_priority_change_ftest.all;
 use ctu_can_fd_tb.tx_priority_ftest.all;
 use ctu_can_fd_tb.tx_status_ftest.all;
 use ctu_can_fd_tb.timestamp_low_high_ftest.all;
+use ctu_can_fd_tb.txt_buffer_byte_access_ftest.all;
 use ctu_can_fd_tb.txt_buffer_hazard_ftest.all;
 
 
@@ -417,6 +418,8 @@ package body feature_test_list_pkg is
             tx_status_ftest_exec(channel);
         elsif (test_name = "timestamp_low_high") then
             timestamp_low_high_ftest_exec(channel);
+        elsif (test_name = "txt_buffer_byte_access") then
+            txt_buffer_byte_access_ftest_exec(channel);
         elsif (test_name = "txt_buffer_hazard") then
             txt_buffer_hazard_ftest_exec(channel);
             

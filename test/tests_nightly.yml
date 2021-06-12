@@ -290,8 +290,8 @@ feature:
             txt_buffer_count: 8
             iterations: 5
 
-
         timestamp_low_high:
+        txt_buffer_byte_access:
         txt_buffer_hazard:
 
 reference:
