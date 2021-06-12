@@ -291,6 +291,7 @@ begin
         txtb_port_a_data        => txtb_port_a_data,
         txtb_port_a_address     => txtb_port_a_address,
         txtb_port_a_cs          => txtb_port_a_cs,
+        txtb_port_a_be          => "1111",
         txtb_sw_cmd             => txtb_sw_cmd,
         txtb_sw_cmd_index       => txtb_sw_cmd_index,
         txtb_state              => txtb_state,
