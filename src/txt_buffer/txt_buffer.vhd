@@ -130,6 +130,9 @@ entity txt_buffer is
 
         -- TXT Buffer RAM chip select
         txtb_port_a_cs         :in   std_logic;
+        
+        -- TXT Buffer port A - Byte enable
+        txtb_port_a_be         :in   std_logic_vector(3 downto 0);
 
         -- SW commands
         txtb_sw_cmd            :in   t_txtb_sw_cmd;
@@ -311,6 +314,7 @@ begin
         port_a_address       => txtb_port_a_address,    -- IN
         port_a_data_in       => txtb_port_a_data,       -- IN
         port_a_write         => ram_write,              -- IN
+        port_a_be            => txtb_port_a_be,         -- IN
 
         -- Port B - Read (from CAN Core)
         port_b_address       => ram_read_address,       -- IN

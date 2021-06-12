@@ -133,6 +133,9 @@ entity txt_buffer_ram is
         
         -- Write signal
         port_a_write         :in     std_logic;
+        
+        -- Byte enable
+        port_a_be            :in     std_logic_vector(3 downto 0);
 
         -----------------------------------------------------------------------
         -- Port B - Read (from CAN Core)
@@ -177,6 +180,7 @@ begin
         addr_A               => port_a_address_i,
         write                => port_a_write_i, 
         data_in              => port_a_data_in_i,
+        be                   => port_a_be,
         
         addr_B               => port_b_address_i,
         data_out             => port_b_data_out_i

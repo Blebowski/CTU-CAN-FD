@@ -245,6 +245,9 @@ entity memory_registers is
         
         -- TXT Buffer chip select
         txtb_port_a_cs       :out  std_logic_vector(G_TXT_BUFFER_COUNT - 1 downto 0);
+        
+        -- TXT Buffer - byte enable
+        txtb_port_a_be       :out  std_logic_vector(3 downto 0);
 
         -- TXT Buffer status
         txtb_state           :in   t_txt_bufs_state(G_TXT_BUFFER_COUNT - 1 downto 0);
@@ -414,6 +417,8 @@ begin
                                  else
                              '0';
     end generate txtb_port_a_cs_gen;
+
+    txtb_port_a_be <= sbe;
 
     can_core_cs <= '1' when (scs = ACT_CSC) else
                    '0';

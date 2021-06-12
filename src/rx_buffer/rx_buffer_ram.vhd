@@ -177,6 +177,7 @@ begin
         addr_A               => port_a_address_i,       -- IN
         write                => port_a_write_i,         -- IN
         data_in              => port_a_data_in_i,       -- IN
+        be                   => "1111",                 -- IN
         
         addr_B               => port_b_address_i,       -- IN
         data_out             => port_b_data_out_i       -- OUT
