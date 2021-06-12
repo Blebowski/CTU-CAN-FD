@@ -170,10 +170,11 @@ package feature_test_agent_pkg is
         fdrf                    :   boolean;
         restricted_operation    :   boolean;
         tx_buf_bus_off_failed   :   boolean;
+        rx_buffer_automatic     :   boolean;
     end record;
     
     constant SW_mode_rst_val : SW_mode := (false, false, false, false, false,
-        true, false, false, false, true, false, false, false, true);
+        true, false, false, false, true, false, false, false, true, true);
 
     -- Controller commands
     type SW_command is record
@@ -183,10 +184,11 @@ package feature_test_agent_pkg is
         rx_frame_ctr_rst        :   boolean;
         tx_frame_ctr_rst        :   boolean;
         clear_pexs_flag         :   boolean;
+        rx_buf_rdptr_move       :   boolean;
     end record;
 
     constant SW_command_rst_val : SW_command :=
-        (false, false, false, false, false, false);
+        (false, false, false, false, false, false, false);
 
     -- Controller status
     type SW_status is record
@@ -3318,6 +3320,10 @@ package body feature_test_agent_pkg is
             data(ACF_IND mod 16)       := '1';
         end if;
 
+        if (mode.rx_buffer_automatic) then
+            data(RXBAM_IND mod 16)         := '1';
+        end if;
+
         CAN_write(data, MODE_ADR, node, channel);
 
         -- Following modes are stored in SETTINGS register
@@ -3376,6 +3382,7 @@ package body feature_test_agent_pkg is
         mode.test                       := false;
         mode.fdrf                       := false;
         mode.restricted_operation       := false;
+        mode.rx_buffer_automatic        := false;
 
         if (data(RST_IND) = '1') then
             mode.reset                  := true;
@@ -3406,7 +3413,11 @@ package body feature_test_agent_pkg is
         end if;
         
         if (data(TSTM_IND) = '1') then
-            mode.test := true;
+            mode.test                   := true;
+        end if;
+        
+        if (data(RXBAM_IND) = '1') then
+            mode.rx_buffer_automatic    := true;
         end if;
 
 
@@ -3491,6 +3502,10 @@ package body feature_test_agent_pkg is
 
         if (command.clear_pexs_flag) then
             data(CPEXS_IND)      := '1';
+        end if;
+        
+        if (command.rx_buf_rdptr_move) then
+            data(RXRPMV_IND)     := '1';
         end if;
         
         CAN_write(data, COMMAND_ADR, node, channel);
