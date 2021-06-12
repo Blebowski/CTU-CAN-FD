@@ -5153,7 +5153,7 @@ Note When using Range filter to filter frames with Base identifiers only,
 \end_layout
 
 \begin_layout Subsection
-Sample code 1 - Frame reception in automated mode (32-bit access)
+Sample code 1 - Frame reception in automatic mode (32-bit access)
 \end_layout
 
 \begin_layout LyX-Code
