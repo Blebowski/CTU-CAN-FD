@@ -120,6 +120,7 @@ feature:
         mode_rst:
         mode_restr_op:
         mode_rst:
+        mode_rxbam:
         mode_self_test:
         mode_test:
 

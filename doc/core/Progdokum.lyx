@@ -4833,6 +4833,7 @@ CTU CAN FD contains single RX buffer to which received CAN frames are stored.
 Automatic mode - When RX_DATA register is read, read pointer of RX buffer
  FIFO is automatically incremented.
  This mode shall be used only when RX_DATA is read by 32-bit accesses.
+ Writes to COMMAND[RXRPMV] = 1 have no effect in this mode.
 \end_layout
 
 \begin_layout Itemize

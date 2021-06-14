@@ -155,6 +155,7 @@ feature:
         mode_restr_op:
             iterations: 5
         mode_rst:
+        mode_rxbam:
         mode_self_test:
         mode_test:
 
