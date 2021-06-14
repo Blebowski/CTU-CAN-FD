@@ -350,6 +350,8 @@ architecture rtl of memory_registers is
     signal rx_buf_mode : std_logic;
     signal rx_move_cmd : std_logic;
 
+    signal ctr_pres_sel_q : std_logic_vector(3 downto 0);
+
     ---------------------------------------------------------------------------
     -- 
     ---------------------------------------------------------------------------
@@ -921,13 +923,23 @@ begin
     -- CTR_PRES - Counter preset
     ---------------------------------------------------------------------------
 
-    -- Counter preset value    
+    -- Counter preset value
     drv_bus(DRV_CTR_VAL_HIGH downto DRV_CTR_VAL_LOW) <= align_wrd_to_reg(
             control_registers_out.ctr_pres, CTPV_H, CTPV_L); 
     
-    -- Counter preset mask
-    drv_bus(DRV_CTR_SEL_HIGH downto DRV_CTR_SEL_LOW) <= align_wrd_to_reg(
-            control_registers_out.ctr_pres, EFD_IND, PTX_IND);
+    -- Counter preset mask - must be registered, since value is also registered!
+    -- This allows setting both by a single access!
+    ctr_pres_sel_reg_proc : process(res_n, clk_sys)
+    begin
+        if (res_n = '0') then
+            ctr_pres_sel_q <= (OTHERS => '0');
+        elsif rising_edge(clk_sys) then
+            ctr_pres_sel_q <= align_wrd_to_reg(control_registers_out.ctr_pres,
+                                               EFD_IND, PTX_IND);
+        end if;
+    end process;
+    
+    drv_bus(DRV_CTR_SEL_HIGH downto DRV_CTR_SEL_LOW) <= ctr_pres_sel_q;
 
 
     ---------------------------------------------------------------------------
