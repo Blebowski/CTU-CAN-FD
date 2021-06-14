@@ -4568,11 +4568,11 @@ Reserved\end_layout
 
 \end_inset
 </cell>
-<cell alignment="center" leftline="true" multicolumn="2" topline="true" usebox="none" valignment="top">
+<cell alignment="center" leftline="true" multicolumn="1" topline="true" usebox="none" valignment="top">
 \begin_inset Text
 
 \begin_layout Plain Layout
-Reserved\end_layout
+RXBAM\end_layout
 
 \end_inset
 </cell>
@@ -4653,7 +4653,7 @@ cellcolor{cyan}
 \begin_inset Text
 
 \begin_layout Plain Layout
--\end_layout
+1\end_layout
 
 \end_inset
 </cell>
@@ -5027,6 +5027,11 @@ ACF Acknowledge Forbidden Mode. When enabled, acknowledge is not sent even if re
 \end_layout
 \begin_layout Description
 TSTM Test Mode. In test mode several registers have special features. Reffer to description of Test mode for further details.
+\end_layout
+\begin_layout Description
+RXBAM RX Buffer automatic mode.\begin_inset Newline newline\end_inset
+		0b0  - RXBAM_DISABLED - \begin_inset Newline newline\end_inset
+		0b1  - RXBAM_ENABLED - 
 \end_layout
 \begin_layout Standard
 \begin_inset VSpace bigskip
@@ -8273,15 +8278,15 @@ RRB\end_layout
 
 \end_inset
 </cell>
-<cell alignment="center" leftline="true" multicolumn="1" rightline="true" topline="true" usebox="none" valignment="top">
+<cell alignment="center" leftline="true" multicolumn="1" topline="true" usebox="none" valignment="top">
 \begin_inset Text
 
 \begin_layout Plain Layout
-Reserved\end_layout
+RXRPMV\end_layout
 
 \end_inset
 </cell>
-<cell alignment="center" leftline="true" multicolumn="2" rightline="true" topline="true" usebox="none" valignment="top">
+<cell alignment="center" leftline="true" multicolumn="1" rightline="true" topline="true" usebox="none" valignment="top">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -8358,7 +8363,7 @@ cellcolor{cyan}
 \begin_inset Text
 
 \begin_layout Plain Layout
--\end_layout
+X\end_layout
 
 \end_inset
 </cell>
@@ -8376,6 +8381,9 @@ cellcolor{cyan}
 \end_inset
 
 
+\end_layout
+\begin_layout Description
+RXRPMV RX Buffer read pointer move.
 \end_layout
 \begin_layout Description
 RRB Release RX Buffer. This command flushes RX buffer and resets its memory pointers.
@@ -38013,7 +38021,7 @@ Offset: 0x74
 Size: 2 bytes
 \end_layout
 \begin_layout Standard
-Command register for TXT buffers. Command is activated by writing logic 1 to TXC(E|R|A) bit. TXT buffer that receives the command is selected by setting bit TXB[1-8] to logic 1. Command and index must be set by single access. Register is automatically erased upon the command completion. Reffer to description of TXT buffer for meaning of commands. If TXCE and TXCR are applied simultaneously, only TXCE command is applied. If multiple commands are applied at once, only those which have effect in immediate state of TXT buffer are applied to the buffer.
+Command register for TXT buffers. Command is activated by writing logic 1 to TXC(E|R|A) bit. TXT buffer that receives the command is selected by setting bit TXB[1-8] to logic 1. Command and index can be set by single access, or index can be set in advance. TXC(E|R|A) bits are automatically erased upon the command completion. Reffer to description of TXT buffer for meaning of commands. If TXCE and TXCR are applied simultaneously, only TXCE command is applied. If multiple commands are applied at once, only those which have effect in immediate state of TXT buffer are applied to the buffer.
 \end_layout
 \begin_layout Standard
 \noindent
@@ -51021,7 +51029,7 @@ TIMESTAMP_HIGH Bits 63:32 of time base.
 TXT Buffer 1
 \end_layout
 \begin_layout Standard
-Access to this memory region is mapped to TXT buffer 1.  CAN FD frame for transmittion can be inserted to this buffer. The frame layout corresponds to the layout described in Chapter "CAN FD frame format". First adress in this region (TXTB1_DATA_1) corresponds to FRAME_FORMAT_W, second address (TXTB1_DATA_2) corresponds to IDENTIFIER_W etc. The last address (TXTB1_DATA_20) corresponds to DATA_61_64_W. The adresses in between correspond linearly. This memory region is write only and read access will return all zeroes. This region supports only 32 bit access. This region is write only.\end_layout
+Access to this memory region is mapped to TXT buffer 1.  CAN FD frame for transmittion can be inserted to this buffer. The frame layout corresponds to the layout described in Chapter "CAN FD frame format". First adress in this region (TXTB1_DATA_1) corresponds to FRAME_FORMAT_W, second address (TXTB1_DATA_2) corresponds to IDENTIFIER_W etc. The last address (TXTB1_DATA_20) corresponds to DATA_61_64_W. The adresses in between correspond linearly. This memory region is write only and read access will return all zeroes. This region is write only.\end_layout
 \begin_layout Standard
 \noindent
 \align center
@@ -51406,7 +51414,7 @@ Reserved\end_layout
 TXT Buffer 2
 \end_layout
 \begin_layout Standard
-Access to this memory region is mapped to TXT buffer 2.  CAN FD frame for transmittion can be inserted to this buffer. The frame layout corresponds to the layout described in Chapter "CAN FD frame format". First adress in this region (TXTB2_DATA_1) corresponds to FRAME_FORMAT_W, second address (TXTB2_DATA_2) corresponds to IDENTIFIER_W etc. The last address (TXTB2_DATA_20) corresponds to DATA_61_64_W. The adresses in between correspond linearly. This memory region is write only and read access will return all zeroes. This region supports only 32 bit access. This region is write only.\end_layout
+Access to this memory region is mapped to TXT buffer 2.  CAN FD frame for transmittion can be inserted to this buffer. The frame layout corresponds to the layout described in Chapter "CAN FD frame format". First adress in this region (TXTB2_DATA_1) corresponds to FRAME_FORMAT_W, second address (TXTB2_DATA_2) corresponds to IDENTIFIER_W etc. The last address (TXTB2_DATA_20) corresponds to DATA_61_64_W. The adresses in between correspond linearly. This memory region is write only and read access will return all zeroes. This region is write only.\end_layout
 \begin_layout Standard
 \noindent
 \align center
@@ -51791,7 +51799,7 @@ Reserved\end_layout
 TXT Buffer 3
 \end_layout
 \begin_layout Standard
-Access to this memory region is mapped to TXT buffer 3.  CAN FD frame for transmittion can be inserted to this buffer. The frame layout corresponds to the layout described in Chapter "CAN FD frame format". First adress in this region (TXTB3_DATA_1) corresponds to FRAME_FORMAT_W, second address (TXTB3_DATA_2) corresponds to IDENTIFIER_W etc. The last address (TXTB3_DATA_20) corresponds to DATA_61_64_W. The adresses in between correspond linearly. This memory region is write only and read access will return all zeroes. This region supports only 32 bit access. This region is write only.\end_layout
+Access to this memory region is mapped to TXT buffer 3.  CAN FD frame for transmittion can be inserted to this buffer. The frame layout corresponds to the layout described in Chapter "CAN FD frame format". First adress in this region (TXTB3_DATA_1) corresponds to FRAME_FORMAT_W, second address (TXTB3_DATA_2) corresponds to IDENTIFIER_W etc. The last address (TXTB3_DATA_20) corresponds to DATA_61_64_W. The adresses in between correspond linearly. This memory region is write only and read access will return all zeroes. This region is write only.\end_layout
 \begin_layout Standard
 \noindent
 \align center
@@ -52176,7 +52184,7 @@ Reserved\end_layout
 TXT Buffer 4
 \end_layout
 \begin_layout Standard
-Access to this memory region is mapped to TXT buffer 4.  CAN FD frame for transmittion can be inserted to this buffer. The frame layout corresponds to the layout described in Chapter "CAN FD frame format". First adress in this region (TXTB4_DATA_1) corresponds to FRAME_FORMAT_W, second address (TXTB4_DATA_2) corresponds to IDENTIFIER_W etc. The last address (TXTB4_DATA_20) corresponds to DATA_61_64_W. The adresses in between correspond linearly. This memory region is write only and read access will return all zeroes. This region supports only 32 bit access. This region is write only.\end_layout
+Access to this memory region is mapped to TXT buffer 4.  CAN FD frame for transmittion can be inserted to this buffer. The frame layout corresponds to the layout described in Chapter "CAN FD frame format". First adress in this region (TXTB4_DATA_1) corresponds to FRAME_FORMAT_W, second address (TXTB4_DATA_2) corresponds to IDENTIFIER_W etc. The last address (TXTB4_DATA_20) corresponds to DATA_61_64_W. The adresses in between correspond linearly. This memory region is write only and read access will return all zeroes. This region is write only.\end_layout
 \begin_layout Standard
 \noindent
 \align center
@@ -52561,7 +52569,7 @@ Reserved\end_layout
 TXT Buffer 5
 \end_layout
 \begin_layout Standard
-Access to this memory region is mapped to TXT buffer 5.  CAN FD frame for transmittion can be inserted to this buffer. The frame layout corresponds to the layout described in Chapter "CAN FD frame format". First adress in this region (TXTB5_DATA_1) corresponds to FRAME_FORMAT_W, second address (TXTB5_DATA_2) corresponds to IDENTIFIER_W etc. The last address (TXTB5_DATA_20) corresponds to DATA_61_64_W. The adresses in between correspond linearly. This memory region is write only and read access will return all zeroes. This region supports only 32 bit access. This region is write only.\end_layout
+Access to this memory region is mapped to TXT buffer 5.  CAN FD frame for transmittion can be inserted to this buffer. The frame layout corresponds to the layout described in Chapter "CAN FD frame format". First adress in this region (TXTB5_DATA_1) corresponds to FRAME_FORMAT_W, second address (TXTB5_DATA_2) corresponds to IDENTIFIER_W etc. The last address (TXTB5_DATA_20) corresponds to DATA_61_64_W. The adresses in between correspond linearly. This memory region is write only and read access will return all zeroes. This region is write only.\end_layout
 \begin_layout Standard
 \noindent
 \align center
@@ -52946,7 +52954,7 @@ Reserved\end_layout
 TXT Buffer 6
 \end_layout
 \begin_layout Standard
-Access to this memory region is mapped to TXT buffer 6.  CAN FD frame for transmittion can be inserted to this buffer. The frame layout corresponds to the layout described in Chapter "CAN FD frame format". First adress in this region (TXTB6_DATA_1) corresponds to FRAME_FORMAT_W, second address (TXTB6_DATA_2) corresponds to IDENTIFIER_W etc. The last address (TXTB6_DATA_20) corresponds to DATA_61_64_W. The adresses in between correspond linearly. This memory region is write only and read access will return all zeroes. This region supports only 32 bit access. This region is write only.\end_layout
+Access to this memory region is mapped to TXT buffer 6.  CAN FD frame for transmittion can be inserted to this buffer. The frame layout corresponds to the layout described in Chapter "CAN FD frame format". First adress in this region (TXTB6_DATA_1) corresponds to FRAME_FORMAT_W, second address (TXTB6_DATA_2) corresponds to IDENTIFIER_W etc. The last address (TXTB6_DATA_20) corresponds to DATA_61_64_W. The adresses in between correspond linearly. This memory region is write only and read access will return all zeroes. This region is write only.\end_layout
 \begin_layout Standard
 \noindent
 \align center
@@ -53331,7 +53339,7 @@ Reserved\end_layout
 TXT Buffer 7
 \end_layout
 \begin_layout Standard
-Access to this memory region is mapped to TXT buffer 7.  CAN FD frame for transmittion can be inserted to this buffer. The frame layout corresponds to the layout described in Chapter "CAN FD frame format". First adress in this region (TXTB7_DATA_1) corresponds to FRAME_FORMAT_W, second address (TXTB7_DATA_2) corresponds to IDENTIFIER_W etc. The last address (TXTB7_DATA_20) corresponds to DATA_61_64_W. The adresses in between correspond linearly. This memory region is write only and read access will return all zeroes. This region supports only 32 bit access. This region is write only.\end_layout
+Access to this memory region is mapped to TXT buffer 7.  CAN FD frame for transmittion can be inserted to this buffer. The frame layout corresponds to the layout described in Chapter "CAN FD frame format". First adress in this region (TXTB7_DATA_1) corresponds to FRAME_FORMAT_W, second address (TXTB7_DATA_2) corresponds to IDENTIFIER_W etc. The last address (TXTB7_DATA_20) corresponds to DATA_61_64_W. The adresses in between correspond linearly. This memory region is write only and read access will return all zeroes. This region is write only.\end_layout
 \begin_layout Standard
 \noindent
 \align center
@@ -53716,7 +53724,7 @@ Reserved\end_layout
 TXT Buffer 8
 \end_layout
 \begin_layout Standard
-Access to this memory region is mapped to TXT buffer 8.  CAN FD frame for transmittion can be inserted to this buffer. The frame layout corresponds to the layout described in Chapter "CAN FD frame format". First adress in this region (TXTB8_DATA_1) corresponds to FRAME_FORMAT_W, second address (TXTB8_DATA_2) corresponds to IDENTIFIER_W etc. The last address (TXTB8_DATA_20) corresponds to DATA_61_64_W. The adresses in between correspond linearly. This memory region is write only and read access will return all zeroes. This region supports only 32 bit access. This region is write only.\end_layout
+Access to this memory region is mapped to TXT buffer 8.  CAN FD frame for transmittion can be inserted to this buffer. The frame layout corresponds to the layout described in Chapter "CAN FD frame format". First adress in this region (TXTB8_DATA_1) corresponds to FRAME_FORMAT_W, second address (TXTB8_DATA_2) corresponds to IDENTIFIER_W etc. The last address (TXTB8_DATA_20) corresponds to DATA_61_64_W. The adresses in between correspond linearly. This memory region is write only and read access will return all zeroes. This region is write only.\end_layout
 \begin_layout Standard
 \noindent
 \align center

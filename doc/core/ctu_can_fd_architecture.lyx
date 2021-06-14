@@ -1390,12 +1390,10 @@ When CTU CAN FD GIT repository is clonned, register map can be generated
 \end_layout
 
 \begin_layout Verbatim
-
 cd scripts
 \end_layout
 
 \begin_layout Verbatim
-
 ./update_reg_map
 \end_layout
 
@@ -1408,12 +1406,10 @@ Documentation can be exported from VHDL RTL codes by following script:
 \end_layout
 
 \begin_layout Verbatim
-
 cd scripts
 \end_layout
 
 \begin_layout Verbatim
-
 python gen_lyx_tables.py --configPath vhdl_lyx_interface_cfg.yml
 \end_layout
 
@@ -1446,12 +1442,10 @@ CTU CAN FD contains release tags in GIT repository.
 \end_layout
 
 \begin_layout Verbatim
-
 cd scripts
 \end_layout
 
 \begin_layout Verbatim
-
 python create_release.py --output_dir ../release_directory_name
 \end_layout
 
@@ -1473,12 +1467,10 @@ src/component.xml
 \end_layout
 
 \begin_layout Verbatim
-
 cd scripts
 \end_layout
 
 \begin_layout Verbatim
-
 python gen_vivado_component.py
 \end_layout
 
@@ -7642,10 +7634,11 @@ uninitalized
 Memories are not initialized, nor reset.
  Each memory is synchronous memory with one clock cycle latency on data
  read and one cycle write access latency.
- Both memories are dual port memories with write-only port A and read-only
- port B and the same clock signal is used to clock both ports.
+ Both memories are dual port memories with write-only port A, read-only
+ port B, and the same clock signal is used to clock both ports.
  If true dual port memories are used, write data/enable of Port B shall
  be driven to 0.
+ Memory word width is 32 bits, and it must support byte-enable capability.
  An example of memory access is shown in Figure 
 \begin_inset CommandInset ref
 LatexCommand ref
@@ -25044,7 +25037,35 @@ name "subsec:Reading-protocol"
 
 \begin_layout Standard
 CAN frame from RX buffer is read out by SW word by word by reading RX_DATA
- register as described in Table 
+ register.
+ There are two modes (distuiguished by MODE[RXBAM] bit) in which RX buffer
+ can be read:
+\end_layout
+
+\begin_layout Itemize
+Automated mode (default) - SW must read via 32 bit accesses.
+ When RX_DATA register is read, RX buffer read pointer automatically moves
+ to next word.
+\end_layout
+
+\begin_layout Itemize
+Manual mode - SW can read via 8/16/32 bit accesses.
+ When RX_DATA register is read, RX buffer read pointer is NOT moved automaticall
+y to next word.
+ To move RX buffer to next word, use must issue COMMAND[RXRPMV]).
+ This mode can be used in systems which are incapable of executing 
+\begin_inset Quotes eld
+\end_inset
+
+atomic
+\begin_inset Quotes erd
+\end_inset
+
+ 32 bit accesses, and require reading by 8 or 16 bit accesses.
+\end_layout
+
+\begin_layout Standard
+Behavior of RX buffer during reads is described in 
 \begin_inset CommandInset ref
 LatexCommand ref
 reference "tab:rx-buffer-read-protocol"
@@ -25055,8 +25076,8 @@ noprefix "false"
 \end_inset
 
 .
- Read pointer is incremented after each word is read (an exception to this
- rule is when FIFO is empty).
+ Read pointer is incremented after each word is read, either manually or
+ automatically (an exception to this rule is when FIFO is empty).
  RX buffer supports single reads (Read indication asserted for one clock
  cycle) and also continous burst read (Read indication asserted for several
  consecutive clock cycles).

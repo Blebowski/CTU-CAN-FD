@@ -144,6 +144,7 @@ feature:
         mode_rst:
         mode_restr_op:
         mode_rst:
+        mode_rxbam:
         mode_self_test:
         mode_test:
 
@@ -197,6 +198,7 @@ feature:
         tx_priority:
         tx_status:
         timestamp_low_high:
+        txt_buffer_byte_access:
         txt_buffer_hazard:
 
 reference:

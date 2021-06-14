@@ -509,7 +509,7 @@ filename "version.tex"
 \noindent
 \align center
 \begin_inset Tabular
-<lyxtabular version="3" rows="25" columns="3">
+<lyxtabular version="3" rows="26" columns="3">
 <features tabularvalignment="middle">
 <column alignment="center" valignment="top" width="1.5cm">
 <column alignment="center" valignment="top" width="2cm">
@@ -1222,7 +1222,7 @@ Reduce maximal number of bits on the fly during secondary sampling to 4.
 </cell>
 </row>
 <row>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -1231,7 +1231,7 @@ Reduce maximal number of bits on the fly during secondary sampling to 4.
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -1240,11 +1240,40 @@ Reduce maximal number of bits on the fly during secondary sampling to 4.
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
 Add detailed description of disabling node by SETTINGS[ENA].
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+2.3.7
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+11-06-2021
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Add MODE[RXBAM] and COMMAND[RXRPMV] bits, describe RX buffer modes.
 \end_layout
 
 \end_inset
@@ -2360,6 +2389,19 @@ Memories in CTU CAN FD (TXT buffer and RX buffer) are not reset.
 \end_layout
 
 \begin_layout Section
+Memory organization
+\end_layout
+
+\begin_layout Standard
+CTU CAN FDs memory map is organized as little-endian (e.g.
+ EWL register is at address 0x2C, ERP register at address 0x2D, and FAULT_STATE
+ register at address 0x2E).
+ Memory within CTU CAN FD is organized as 32-bit memory, but all functionality
+ of CTU CAN FD can be used by accessing the core by 8/16 bit accesses (with
+ proper configuration, see TODO).
+\end_layout
+
+\begin_layout Section
 Time base
 \begin_inset CommandInset label
 LatexCommand label
@@ -2877,7 +2919,7 @@ btr |= (3 << 27);    // SJW: 3
 \end_layout
 
 \begin_layout LyX-Code
-CAN_write_32(BTR_ADDR, btr); // (29+10+10+1)*4=200*10ns=2us=500Kbit
+can_write_32(BTR_ADDR, btr); // (29+10+10+1)*4=200*10ns=2us=500Kbit
 \end_layout
 
 \begin_layout Standard
@@ -2912,7 +2954,7 @@ btr_fd |= (3 << 27);    // SJW: 3
 \end_layout
 
 \begin_layout LyX-Code
-CAN_write_32(BTR_FD_ADDR, btr_fd); // (29+10+10+1)*1=50*10ns=0.5us=2Mbit
+can_write_32(BTR_FD_ADDR, btr_fd); // (29+10+10+1)*1=50*10ns=0.5us=2Mbit
 \end_layout
 
 \begin_layout Subsection
@@ -4668,7 +4710,7 @@ frame_format_word |= (1 << 9);                        // Switch bit-rate
 \end_layout
 
 \begin_layout LyX-Code
-CAN_write_32(TXT_BUFFER_1_BASE, frame_format_word);   // Store frame format
+can_write_32(TXT_BUFFER_1_BASE, frame_format_word);   // Store frame format
  word
 \end_layout
 
@@ -4684,21 +4726,21 @@ uint32_t id_word = (55 << 18);                        // Identifier: 55
 \end_layout
 
 \begin_layout LyX-Code
-CAN_write_32(TXT_BUFFER_1_BASE + 0x4, id_word);         // Store identifier
+can_write_32(TXT_BUFFER_1_BASE + 0x4, id_word);         // Store identifier
  word
 \end_layout
 
 \begin_layout LyX-Code
-CAN_write_32(TXT_BUFFER_1_BASE + 0x8, 1000);
+can_write_32(TXT_BUFFER_1_BASE + 0x8, 1000);
 \end_layout
 
 \begin_layout LyX-Code
-CAN_write_32(TXT_BUFFER_1_BASE + 0xC, 0);               // Transmitt at
+can_write_32(TXT_BUFFER_1_BASE + 0xC, 0);               // Transmitt at
  time 1000
 \end_layout
 
 \begin_layout LyX-Code
-CAN_write_32(TXT_BUFFER_1_BASE + 0x10, 0xAABBCCDD);     // Data: 0xAA 0xBB
+can_write_32(TXT_BUFFER_1_BASE + 0x10, 0xAABBCCDD);     // Data: 0xAA 0xBB
  0xCC 0xDD
 \end_layout
 
@@ -4727,7 +4769,7 @@ command |= (1 << 8);                                  // Choose TXT Buffer
 \end_layout
 
 \begin_layout LyX-Code
-CAN_write_32(TX_COMMAND_ADDR, command);               // Issue the command
+can_write_32(TX_COMMAND_ADDR, command);               // Issue the command
 \end_layout
 
 \begin_layout Description
@@ -4783,13 +4825,30 @@ CTU CAN FD contains single RX buffer to which received CAN frames are stored.
  bus (no error frames occurred).
  CAN frame is read by SW from RX buffer by consecutive reads from RX_DATA
  register.
- Single read from RX_DATA register reads one word from RX buffer and automatical
-ly increments read pointer in the RX buffer.
+ Single read from RX_DATA register reads one word from RX buffer.
+ RX buffer can operate in one of two modes:
+\end_layout
+
+\begin_layout Itemize
+Automatic mode - When RX_DATA register is read, read pointer of RX buffer
+ FIFO is automatically incremented.
+ This mode shall be used only when RX_DATA is read by 32-bit accesses.
+ Writes to COMMAND[RXRPMV] = 1 have no effect in this mode.
+\end_layout
+
+\begin_layout Itemize
+Manual mode - When RX_DATA register is read, read pointer of RX buffer FIFO
+ is NOT incremented.
+ To increment read pointer, SW shall write COMMAND[RXRPMV] = 1.
+ This mode can be used when RX buffer is read via 8/16/32-bit accesses,
+ since it allows reading single RX buffer memory word via 4x8 bit or 2x16
+ bit accesses.
 \end_layout
 
 \begin_layout Standard
-CAN frame format within RX buffer is described in Chapter 3 and it is visualized
- in Figure 
+Mode of RX buffer is configured by MODE[RXBAM] bit.
+ CAN frame format within RX buffer is described in Chapter 3, and it is
+ visualized in Figure 
 \begin_inset CommandInset ref
 LatexCommand ref
 reference "fig:rx-buffer-frame-visualization"
@@ -5095,7 +5154,7 @@ Note When using Range filter to filter frames with Base identifiers only,
 \end_layout
 
 \begin_layout Subsection
-Sample code 1 - Frame reception
+Sample code 1 - Frame reception in automatic mode (32-bit access)
 \end_layout
 
 \begin_layout LyX-Code
@@ -5130,7 +5189,7 @@ do {
 \end_layout
 
 \begin_layout LyX-Code
-    rx_status = CAN_read_32(RX_STATUS_ADDR);
+    rx_status = can_read_32(RX_STATUS_ADDR);
 \end_layout
 
 \begin_layout LyX-Code
@@ -5157,19 +5216,19 @@ uint32_t tmp;
 \end_layout
 
 \begin_layout LyX-Code
-uint32_t ffw = CAN_read_32(RX_DATA_ADDR);
+uint32_t ffw = can_read_32(RX_DATA_ADDR);
 \end_layout
 
 \begin_layout LyX-Code
-uint32_t id = CAN_read_32(RX_DATA_ADDR);
+uint32_t id = can_read_32(RX_DATA_ADDR);
 \end_layout
 
 \begin_layout LyX-Code
-uint32_t ts_l = CAN_read_32(RX_DATA_ADDR);
+uint32_t ts_l = can_read_32(RX_DATA_ADDR);
 \end_layout
 
 \begin_layout LyX-Code
-uint32_t ts_h = CAN_read_32(RX_DATA_ADDR);
+uint32_t ts_h = can_read_32(RX_DATA_ADDR);
 \end_layout
 
 \begin_layout Standard
@@ -5188,7 +5247,7 @@ for(int i = 0; i < rwcnt; i++){
 \end_layout
 
 \begin_layout LyX-Code
-    tmp = CAN_read_32(RX_DATA_ADDR);
+    tmp = can_read_32(RX_DATA_ADDR);
 \end_layout
 
 \begin_layout LyX-Code
@@ -5212,7 +5271,163 @@ for(int i = 0; i < rwcnt; i++){
 \end_layout
 
 \begin_layout Subsection
-Sample code 2 - Bit filter configuration
+Sample code 2 - Frame reception in manual mode (8-bit access)
+\end_layout
+
+\begin_layout LyX-Code
+#define CTU_CAN_FD_BASE 0x12000000
+\end_layout
+
+\begin_layout LyX-Code
+#define RX_DATA_ADDR (CTU_CAN_FD_BASE + 0x6C)
+\end_layout
+
+\begin_layout LyX-Code
+#define RX_STATUS_ADDR (CTU_CAN_FD_BASE + 0x68)
+\end_layout
+
+\begin_layout LyX-Code
+#define COMMAND_ADDR (CTU_CAN_FD_BASE + 0xC)
+\end_layout
+
+\begin_layout LyX-Code
+#define MOVE_RX_BUF_READ_PTR() can_write_8(COMMAND_ADDR, 1 << 2)
+\end_layout
+
+\begin_layout Standard
+\begin_inset Separator plain
+\end_inset
+
+
+\end_layout
+
+\begin_layout LyX-Code
+/* Poll on RX Buffer until there is a frame in it */
+\end_layout
+
+\begin_layout LyX-Code
+uint8_t rx_status;
+\end_layout
+
+\begin_layout LyX-Code
+do {
+\end_layout
+
+\begin_layout LyX-Code
+    rx_status = can_read_8(RX_STATUS_ADDR);
+\end_layout
+
+\begin_layout LyX-Code
+} while ((rx_status & 0x1) == 0)
+\end_layout
+
+\begin_layout Standard
+\begin_inset Separator plain
+\end_inset
+
+
+\end_layout
+
+\begin_layout LyX-Code
+/* Read frame format word and move to RX pointer */
+\end_layout
+
+\begin_layout LyX-Code
+uint8_t data[64];
+\end_layout
+
+\begin_layout LyX-Code
+uint16_t ffw = (uint16_t)can_read_8(RX_DATA_ADDR);
+\end_layout
+
+\begin_layout LyX-Code
+ffw |= (((uint16_t)can_read_8(RX_DATA_ADDR + 0x1)) << 8);
+\end_layout
+
+\begin_layout LyX-Code
+MOVE_RX_BUF_READ_PTR();
+\end_layout
+
+\begin_layout Standard
+\begin_inset Separator plain
+\end_inset
+
+
+\end_layout
+
+\begin_layout LyX-Code
+/* Read CAN identifier and move RX pointer up to first data word */
+\end_layout
+
+\begin_layout LyX-Code
+uint32_t id = (uint32_t)can_read_8(RX_DATA_ADDR);
+\end_layout
+
+\begin_layout LyX-Code
+id |= ((uint32_t)can_read_8(RX_DATA_ADDR + 0x1)) << 8;
+\end_layout
+
+\begin_layout LyX-Code
+id |= ((uint32_t)can_read_8(RX_DATA_ADDR + 0x2)) << 16;
+\end_layout
+
+\begin_layout LyX-Code
+id |= ((uint32_t)can_read_8(RX_DATA_ADDR + 0x3)) << 24;
+\end_layout
+
+\begin_layout LyX-Code
+for (int i = 0; i < 3; i++)
+\end_layout
+
+\begin_layout LyX-Code
+    MOVE_RX_BUF_READ_PTR();
+\end_layout
+
+\begin_layout Standard
+\begin_inset Separator plain
+\end_inset
+
+
+\end_layout
+
+\begin_layout LyX-Code
+/* Read data bytes */
+\end_layout
+
+\begin_layout LyX-Code
+uint16_t rwcnt = (ffw >> 11) & 0x1F;
+\end_layout
+
+\begin_layout LyX-Code
+for(int i = 0; i < rwcnt; i++){
+\end_layout
+
+\begin_layout LyX-Code
+    data[i*4] = can_read_8(RX_DATA_ADDR);
+\end_layout
+
+\begin_layout LyX-Code
+    data[i*4+1] = can_read_8(RX_DATA_ADDR + 0x1);
+\end_layout
+
+\begin_layout LyX-Code
+    data[i*4+2] = can_read_8(RX_DATA_ADDR + 0x2);
+\end_layout
+
+\begin_layout LyX-Code
+    data[i*4+3] = can_read_8(RX_DATA_ADDR + 0x3);
+\end_layout
+
+\begin_layout LyX-Code
+    MOVE_RX_BUF_READ_PTR();
+\end_layout
+
+\begin_layout LyX-Code
+}
+\end_layout
+
+\begin_layout Subsection
+Sample code 3 - Bit filter configuration
 \end_layout
 
 \begin_layout LyX-Code
@@ -5258,11 +5473,11 @@ uint32_t filter_val = 0x2 << 18; // Must be equal to 0x2 (0010)
 \end_layout
 
 \begin_layout LyX-Code
-CAN_write_32(FILTER_A_VAL_ADDR, filter_val);
+can_write_32(FILTER_A_VAL_ADDR, filter_val);
 \end_layout
 
 \begin_layout LyX-Code
-CAN_write_32(FILTER_A_MASK_ADDR, filter_mask);
+can_write_32(FILTER_A_MASK_ADDR, filter_mask);
 \end_layout
 
 \begin_layout Standard
@@ -5282,7 +5497,7 @@ uint32_t filter_control = 0x5; // FANB, FAFB
 \end_layout
 
 \begin_layout LyX-Code
-CAN_write_32(FILTER_CONTROL_ADDR, filter_control);
+can_write_32(FILTER_CONTROL_ADDR, filter_control);
 \end_layout
 
 \begin_layout Section

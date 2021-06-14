@@ -151,6 +151,7 @@ use ctu_can_fd_tb.mode_test_ftest.all;
 use ctu_can_fd_tb.mode_self_test_ftest.all;
 use ctu_can_fd_tb.mode_frame_filters_ftest.all;
 use ctu_can_fd_tb.mode_rst_ftest.all;
+use ctu_can_fd_tb.mode_rxbam_ftest.all;
 
 use ctu_can_fd_tb.no_sof_tx_ftest.all;
 
@@ -195,6 +196,7 @@ use ctu_can_fd_tb.tx_priority_change_ftest.all;
 use ctu_can_fd_tb.tx_priority_ftest.all;
 use ctu_can_fd_tb.tx_status_ftest.all;
 use ctu_can_fd_tb.timestamp_low_high_ftest.all;
+use ctu_can_fd_tb.txt_buffer_byte_access_ftest.all;
 use ctu_can_fd_tb.txt_buffer_hazard_ftest.all;
 
 
@@ -334,7 +336,9 @@ package body feature_test_list_pkg is
             mode_frame_filters_ftest_exec(channel);
         elsif (test_name = "mode_rst") then
             mode_rst_ftest_exec(channel);
-        
+        elsif (test_name = "mode_rxbam") then
+            mode_rxbam_ftest_exec(channel);            
+
         elsif (test_name = "no_sof_tx") then
             no_sof_tx_ftest_exec(channel);
 
@@ -417,6 +421,8 @@ package body feature_test_list_pkg is
             tx_status_ftest_exec(channel);
         elsif (test_name = "timestamp_low_high") then
             timestamp_low_high_ftest_exec(channel);
+        elsif (test_name = "txt_buffer_byte_access") then
+            txt_buffer_byte_access_ftest_exec(channel);
         elsif (test_name = "txt_buffer_hazard") then
             txt_buffer_hazard_ftest_exec(channel);
             

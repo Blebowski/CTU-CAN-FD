@@ -238,6 +238,30 @@
 							</ipxact:enumeratedValue>
 						</ipxact:enumeratedValues>
 					</ipxact:field>
+					<ipxact:field>
+						<ipxact:name>RXBAM</ipxact:name>
+						<ipxact:displayName>RXBAM</ipxact:displayName>
+						<ipxact:description>RX Buffer automatic mode.</ipxact:description>
+						<ipxact:bitOffset>9</ipxact:bitOffset>
+						<ipxact:resets>
+							<ipxact:reset>
+								<ipxact:value>1</ipxact:value>
+							</ipxact:reset>
+						</ipxact:resets>
+						<ipxact:bitWidth>1</ipxact:bitWidth>
+						<ipxact:enumeratedValues>
+							<ipxact:enumeratedValue>
+								<ipxact:name>RXBAM_DISABLED</ipxact:name>
+								<ipxact:displayName>RXBAM_DISABLED</ipxact:displayName>
+								<ipxact:value>0</ipxact:value>
+							</ipxact:enumeratedValue>
+							<ipxact:enumeratedValue>
+								<ipxact:name>RXBAM_ENABLED</ipxact:name>
+								<ipxact:displayName>RXBAM_ENABLED</ipxact:displayName>
+								<ipxact:value>1</ipxact:value>
+							</ipxact:enumeratedValue>
+						</ipxact:enumeratedValues>
+					</ipxact:field>
 				</ipxact:register>
 				<ipxact:register>
 					<ipxact:name>COMMAND</ipxact:name>
@@ -323,6 +347,14 @@
 								<ipxact:value>0</ipxact:value>
 							</ipxact:reset>
 						</ipxact:resets>
+						<ipxact:bitWidth>1</ipxact:bitWidth>
+						<ipxact:modifiedWriteValue>clear</ipxact:modifiedWriteValue>
+					</ipxact:field>
+					<ipxact:field>
+						<ipxact:name>RXRPMV</ipxact:name>
+						<ipxact:displayName>RXRPMV</ipxact:displayName>
+						<ipxact:description>RX Buffer read pointer move.</ipxact:description>
+						<ipxact:bitOffset>1</ipxact:bitOffset>
 						<ipxact:bitWidth>1</ipxact:bitWidth>
 						<ipxact:modifiedWriteValue>clear</ipxact:modifiedWriteValue>
 					</ipxact:field>
@@ -1453,7 +1485,7 @@
 				<ipxact:register>
 					<ipxact:name>TX_COMMAND</ipxact:name>
 					<ipxact:displayName>TX_COMMAND</ipxact:displayName>
-					<ipxact:description>Command register for TXT buffers. Command is activated by writing logic 1 to TXC(E|R|A) bit. TXT buffer that receives the command is selected by setting bit TXB[1-8] to logic 1. Command and index must be set by single access. Register is automatically erased upon the command completion. Reffer to description of TXT buffer for meaning of commands. If TXCE and TXCR are applied simultaneously, only TXCE command is applied. If multiple commands are applied at once, only those which have effect in immediate state of TXT buffer are applied to the buffer.</ipxact:description>
+					<ipxact:description>Command register for TXT buffers. Command is activated by writing logic 1 to TXC(E|R|A) bit. TXT buffer that receives the command is selected by setting bit TXB[1-8] to logic 1. Command and index can be set by single access, or index can be set in advance. TXC(E|R|A) bits are automatically erased upon the command completion. Reffer to description of TXT buffer for meaning of commands. If TXCE and TXCR are applied simultaneously, only TXCE command is applied. If multiple commands are applied at once, only those which have effect in immediate state of TXT buffer are applied to the buffer.</ipxact:description>
 					<ipxact:dim>0</ipxact:dim>
 					<ipxact:addressOffset>'h74</ipxact:addressOffset>
 					<ipxact:size>16</ipxact:size>
@@ -1509,7 +1541,6 @@
 							</ipxact:reset>
 						</ipxact:resets>
 						<ipxact:bitWidth>1</ipxact:bitWidth>
-						<ipxact:modifiedWriteValue>clear</ipxact:modifiedWriteValue>
 					</ipxact:field>
 					<ipxact:field>
 						<ipxact:name>TXB2</ipxact:name>
@@ -1522,7 +1553,6 @@
 							</ipxact:reset>
 						</ipxact:resets>
 						<ipxact:bitWidth>1</ipxact:bitWidth>
-						<ipxact:modifiedWriteValue>clear</ipxact:modifiedWriteValue>
 					</ipxact:field>
 					<ipxact:field>
 						<ipxact:name>TXB3</ipxact:name>
@@ -1536,7 +1566,6 @@
 							</ipxact:reset>
 						</ipxact:resets>
 						<ipxact:bitWidth>1</ipxact:bitWidth>
-						<ipxact:modifiedWriteValue>clear</ipxact:modifiedWriteValue>
 					</ipxact:field>
 					<ipxact:field>
 						<ipxact:name>TXB4</ipxact:name>
@@ -1550,7 +1579,6 @@
 							</ipxact:reset>
 						</ipxact:resets>
 						<ipxact:bitWidth>1</ipxact:bitWidth>
-						<ipxact:modifiedWriteValue>clear</ipxact:modifiedWriteValue>
 					</ipxact:field>
 					<ipxact:field>
 						<ipxact:name>TXB5</ipxact:name>
@@ -1564,7 +1592,6 @@
 							</ipxact:reset>
 						</ipxact:resets>
 						<ipxact:bitWidth>1</ipxact:bitWidth>
-						<ipxact:modifiedWriteValue>clear</ipxact:modifiedWriteValue>
 					</ipxact:field>
 					<ipxact:field>
 						<ipxact:name>TXB6</ipxact:name>
@@ -1578,7 +1605,6 @@
 							</ipxact:reset>
 						</ipxact:resets>
 						<ipxact:bitWidth>1</ipxact:bitWidth>
-						<ipxact:modifiedWriteValue>clear</ipxact:modifiedWriteValue>
 					</ipxact:field>
 					<ipxact:field>
 						<ipxact:name>TXB7</ipxact:name>
@@ -1592,7 +1618,6 @@
 							</ipxact:reset>
 						</ipxact:resets>
 						<ipxact:bitWidth>1</ipxact:bitWidth>
-						<ipxact:modifiedWriteValue>clear</ipxact:modifiedWriteValue>
 					</ipxact:field>
 					<ipxact:field>
 						<ipxact:name>TXB8</ipxact:name>
@@ -1606,7 +1631,6 @@
 							</ipxact:reset>
 						</ipxact:resets>
 						<ipxact:bitWidth>1</ipxact:bitWidth>
-						<ipxact:modifiedWriteValue>clear</ipxact:modifiedWriteValue>
 					</ipxact:field>
 				</ipxact:register>
 				<ipxact:register>
@@ -2799,7 +2823,6 @@
 							</ipxact:reset>
 						</ipxact:resets>
 						<ipxact:bitWidth>9</ipxact:bitWidth>
-						<ipxact:modifiedWriteValue>clear</ipxact:modifiedWriteValue>
 					</ipxact:field>
 					<ipxact:field>
 						<ipxact:name>PTX</ipxact:name>
@@ -2966,7 +2989,7 @@
 			<ipxact:addressBlock>
 				<ipxact:name>TX_Buffer_1</ipxact:name>
 				<ipxact:displayName>TXT Buffer 1</ipxact:displayName>
-				<ipxact:description>Access to this memory region is mapped to TXT buffer 1.  CAN FD frame for transmittion can be inserted to this buffer. The frame layout corresponds to the layout described in Chapter &quot;CAN FD frame format&quot;. First adress in this region (TXTB1_DATA_1) corresponds to FRAME_FORMAT_W, second address (TXTB1_DATA_2) corresponds to IDENTIFIER_W etc. The last address (TXTB1_DATA_20) corresponds to DATA_61_64_W. The adresses in between correspond linearly. This memory region is write only and read access will return all zeroes. This region supports only 32 bit access. This region is write only.</ipxact:description>
+				<ipxact:description>Access to this memory region is mapped to TXT buffer 1.  CAN FD frame for transmittion can be inserted to this buffer. The frame layout corresponds to the layout described in Chapter &quot;CAN FD frame format&quot;. First adress in this region (TXTB1_DATA_1) corresponds to FRAME_FORMAT_W, second address (TXTB1_DATA_2) corresponds to IDENTIFIER_W etc. The last address (TXTB1_DATA_20) corresponds to DATA_61_64_W. The adresses in between correspond linearly. This memory region is write only and read access will return all zeroes. This region is write only.</ipxact:description>
 				<ipxact:baseAddress>'h100</ipxact:baseAddress>
 				<ipxact:range>256</ipxact:range>
 				<ipxact:width>32</ipxact:width>
@@ -3015,7 +3038,7 @@
 			<ipxact:addressBlock>
 				<ipxact:name>TX_Buffer_2</ipxact:name>
 				<ipxact:displayName>TXT Buffer 2</ipxact:displayName>
-				<ipxact:description>Access to this memory region is mapped to TXT buffer 2.  CAN FD frame for transmittion can be inserted to this buffer. The frame layout corresponds to the layout described in Chapter &quot;CAN FD frame format&quot;. First adress in this region (TXTB2_DATA_1) corresponds to FRAME_FORMAT_W, second address (TXTB2_DATA_2) corresponds to IDENTIFIER_W etc. The last address (TXTB2_DATA_20) corresponds to DATA_61_64_W. The adresses in between correspond linearly. This memory region is write only and read access will return all zeroes. This region supports only 32 bit access. This region is write only.</ipxact:description>
+				<ipxact:description>Access to this memory region is mapped to TXT buffer 2.  CAN FD frame for transmittion can be inserted to this buffer. The frame layout corresponds to the layout described in Chapter &quot;CAN FD frame format&quot;. First adress in this region (TXTB2_DATA_1) corresponds to FRAME_FORMAT_W, second address (TXTB2_DATA_2) corresponds to IDENTIFIER_W etc. The last address (TXTB2_DATA_20) corresponds to DATA_61_64_W. The adresses in between correspond linearly. This memory region is write only and read access will return all zeroes. This region is write only.</ipxact:description>
 				<ipxact:baseAddress>'h200</ipxact:baseAddress>
 				<ipxact:range>256</ipxact:range>
 				<ipxact:width>32</ipxact:width>
@@ -3061,7 +3084,7 @@
 			<ipxact:addressBlock>
 				<ipxact:name>TX_Buffer_3</ipxact:name>
 				<ipxact:displayName>TXT Buffer 3</ipxact:displayName>
-				<ipxact:description>Access to this memory region is mapped to TXT buffer 3.  CAN FD frame for transmittion can be inserted to this buffer. The frame layout corresponds to the layout described in Chapter &quot;CAN FD frame format&quot;. First adress in this region (TXTB3_DATA_1) corresponds to FRAME_FORMAT_W, second address (TXTB3_DATA_2) corresponds to IDENTIFIER_W etc. The last address (TXTB3_DATA_20) corresponds to DATA_61_64_W. The adresses in between correspond linearly. This memory region is write only and read access will return all zeroes. This region supports only 32 bit access. This region is write only.</ipxact:description>
+				<ipxact:description>Access to this memory region is mapped to TXT buffer 3.  CAN FD frame for transmittion can be inserted to this buffer. The frame layout corresponds to the layout described in Chapter &quot;CAN FD frame format&quot;. First adress in this region (TXTB3_DATA_1) corresponds to FRAME_FORMAT_W, second address (TXTB3_DATA_2) corresponds to IDENTIFIER_W etc. The last address (TXTB3_DATA_20) corresponds to DATA_61_64_W. The adresses in between correspond linearly. This memory region is write only and read access will return all zeroes. This region is write only.</ipxact:description>
 				<ipxact:isPresent>uuid_64debd51_3bf7_42e3_a590_0a22e668b9af &gt; 2</ipxact:isPresent>
 				<ipxact:baseAddress>'h300</ipxact:baseAddress>
 				<ipxact:range>256</ipxact:range>
@@ -3108,7 +3131,7 @@
 			<ipxact:addressBlock>
 				<ipxact:name>TX_Buffer_4</ipxact:name>
 				<ipxact:displayName>TXT Buffer 4</ipxact:displayName>
-				<ipxact:description>Access to this memory region is mapped to TXT buffer 4.  CAN FD frame for transmittion can be inserted to this buffer. The frame layout corresponds to the layout described in Chapter &quot;CAN FD frame format&quot;. First adress in this region (TXTB4_DATA_1) corresponds to FRAME_FORMAT_W, second address (TXTB4_DATA_2) corresponds to IDENTIFIER_W etc. The last address (TXTB4_DATA_20) corresponds to DATA_61_64_W. The adresses in between correspond linearly. This memory region is write only and read access will return all zeroes. This region supports only 32 bit access. This region is write only.</ipxact:description>
+				<ipxact:description>Access to this memory region is mapped to TXT buffer 4.  CAN FD frame for transmittion can be inserted to this buffer. The frame layout corresponds to the layout described in Chapter &quot;CAN FD frame format&quot;. First adress in this region (TXTB4_DATA_1) corresponds to FRAME_FORMAT_W, second address (TXTB4_DATA_2) corresponds to IDENTIFIER_W etc. The last address (TXTB4_DATA_20) corresponds to DATA_61_64_W. The adresses in between correspond linearly. This memory region is write only and read access will return all zeroes. This region is write only.</ipxact:description>
 				<ipxact:isPresent>uuid_64debd51_3bf7_42e3_a590_0a22e668b9af &gt; 3</ipxact:isPresent>
 				<ipxact:baseAddress>'h400</ipxact:baseAddress>
 				<ipxact:range>256</ipxact:range>
@@ -3155,7 +3178,7 @@
 			<ipxact:addressBlock>
 				<ipxact:name>TX_Buffer_5</ipxact:name>
 				<ipxact:displayName>TXT Buffer 5</ipxact:displayName>
-				<ipxact:description>Access to this memory region is mapped to TXT buffer 5.  CAN FD frame for transmittion can be inserted to this buffer. The frame layout corresponds to the layout described in Chapter &quot;CAN FD frame format&quot;. First adress in this region (TXTB5_DATA_1) corresponds to FRAME_FORMAT_W, second address (TXTB5_DATA_2) corresponds to IDENTIFIER_W etc. The last address (TXTB5_DATA_20) corresponds to DATA_61_64_W. The adresses in between correspond linearly. This memory region is write only and read access will return all zeroes. This region supports only 32 bit access. This region is write only.</ipxact:description>
+				<ipxact:description>Access to this memory region is mapped to TXT buffer 5.  CAN FD frame for transmittion can be inserted to this buffer. The frame layout corresponds to the layout described in Chapter &quot;CAN FD frame format&quot;. First adress in this region (TXTB5_DATA_1) corresponds to FRAME_FORMAT_W, second address (TXTB5_DATA_2) corresponds to IDENTIFIER_W etc. The last address (TXTB5_DATA_20) corresponds to DATA_61_64_W. The adresses in between correspond linearly. This memory region is write only and read access will return all zeroes. This region is write only.</ipxact:description>
 				<ipxact:isPresent>uuid_64debd51_3bf7_42e3_a590_0a22e668b9af &gt; 4</ipxact:isPresent>
 				<ipxact:baseAddress>'h500</ipxact:baseAddress>
 				<ipxact:range>256</ipxact:range>
@@ -3202,7 +3225,7 @@
 			<ipxact:addressBlock>
 				<ipxact:name>TX_Buffer_6</ipxact:name>
 				<ipxact:displayName>TXT Buffer 6</ipxact:displayName>
-				<ipxact:description>Access to this memory region is mapped to TXT buffer 6.  CAN FD frame for transmittion can be inserted to this buffer. The frame layout corresponds to the layout described in Chapter &quot;CAN FD frame format&quot;. First adress in this region (TXTB6_DATA_1) corresponds to FRAME_FORMAT_W, second address (TXTB6_DATA_2) corresponds to IDENTIFIER_W etc. The last address (TXTB6_DATA_20) corresponds to DATA_61_64_W. The adresses in between correspond linearly. This memory region is write only and read access will return all zeroes. This region supports only 32 bit access. This region is write only.</ipxact:description>
+				<ipxact:description>Access to this memory region is mapped to TXT buffer 6.  CAN FD frame for transmittion can be inserted to this buffer. The frame layout corresponds to the layout described in Chapter &quot;CAN FD frame format&quot;. First adress in this region (TXTB6_DATA_1) corresponds to FRAME_FORMAT_W, second address (TXTB6_DATA_2) corresponds to IDENTIFIER_W etc. The last address (TXTB6_DATA_20) corresponds to DATA_61_64_W. The adresses in between correspond linearly. This memory region is write only and read access will return all zeroes. This region is write only.</ipxact:description>
 				<ipxact:isPresent>uuid_64debd51_3bf7_42e3_a590_0a22e668b9af &gt; 5</ipxact:isPresent>
 				<ipxact:baseAddress>'h600</ipxact:baseAddress>
 				<ipxact:range>256</ipxact:range>
@@ -3246,7 +3269,7 @@
 			<ipxact:addressBlock>
 				<ipxact:name>TX_Buffer_7</ipxact:name>
 				<ipxact:displayName>TXT Buffer 7</ipxact:displayName>
-				<ipxact:description>Access to this memory region is mapped to TXT buffer 7.  CAN FD frame for transmittion can be inserted to this buffer. The frame layout corresponds to the layout described in Chapter &quot;CAN FD frame format&quot;. First adress in this region (TXTB7_DATA_1) corresponds to FRAME_FORMAT_W, second address (TXTB7_DATA_2) corresponds to IDENTIFIER_W etc. The last address (TXTB7_DATA_20) corresponds to DATA_61_64_W. The adresses in between correspond linearly. This memory region is write only and read access will return all zeroes. This region supports only 32 bit access. This region is write only.</ipxact:description>
+				<ipxact:description>Access to this memory region is mapped to TXT buffer 7.  CAN FD frame for transmittion can be inserted to this buffer. The frame layout corresponds to the layout described in Chapter &quot;CAN FD frame format&quot;. First adress in this region (TXTB7_DATA_1) corresponds to FRAME_FORMAT_W, second address (TXTB7_DATA_2) corresponds to IDENTIFIER_W etc. The last address (TXTB7_DATA_20) corresponds to DATA_61_64_W. The adresses in between correspond linearly. This memory region is write only and read access will return all zeroes. This region is write only.</ipxact:description>
 				<ipxact:isPresent>uuid_64debd51_3bf7_42e3_a590_0a22e668b9af &gt; 6</ipxact:isPresent>
 				<ipxact:baseAddress>'h700</ipxact:baseAddress>
 				<ipxact:range>256</ipxact:range>
@@ -3290,7 +3313,7 @@
 			<ipxact:addressBlock>
 				<ipxact:name>TX_Buffer_8</ipxact:name>
 				<ipxact:displayName>TXT Buffer 8</ipxact:displayName>
-				<ipxact:description>Access to this memory region is mapped to TXT buffer 8.  CAN FD frame for transmittion can be inserted to this buffer. The frame layout corresponds to the layout described in Chapter &quot;CAN FD frame format&quot;. First adress in this region (TXTB8_DATA_1) corresponds to FRAME_FORMAT_W, second address (TXTB8_DATA_2) corresponds to IDENTIFIER_W etc. The last address (TXTB8_DATA_20) corresponds to DATA_61_64_W. The adresses in between correspond linearly. This memory region is write only and read access will return all zeroes. This region supports only 32 bit access. This region is write only.</ipxact:description>
+				<ipxact:description>Access to this memory region is mapped to TXT buffer 8.  CAN FD frame for transmittion can be inserted to this buffer. The frame layout corresponds to the layout described in Chapter &quot;CAN FD frame format&quot;. First adress in this region (TXTB8_DATA_1) corresponds to FRAME_FORMAT_W, second address (TXTB8_DATA_2) corresponds to IDENTIFIER_W etc. The last address (TXTB8_DATA_20) corresponds to DATA_61_64_W. The adresses in between correspond linearly. This memory region is write only and read access will return all zeroes. This region is write only.</ipxact:description>
 				<ipxact:isPresent>uuid_64debd51_3bf7_42e3_a590_0a22e668b9af &gt; 7</ipxact:isPresent>
 				<ipxact:baseAddress>'h800</ipxact:baseAddress>
 				<ipxact:range>256</ipxact:range>
@@ -3801,15 +3824,15 @@
 			<kactus2:kts_firmness>Mutable</kactus2:kts_firmness>
 		</kactus2:kts_attributes>
 		<ipxact:regLocks>
-			<ipxact:regLock lock_signal="lock_1" reg_name="CTR_PRES" description="Register can be only written when MODE[TSTM] = 1, otherwise write has no effect."/>
-			<ipxact:regLock lock_signal="lock_1" reg_name="EWL" description="Register can be only written when MODE[TSTM] = 1, otherwise write has no effect."/>
-			<ipxact:regLock lock_signal="lock_1" reg_name="ERP" description="Register can be only written when MODE[TSTM] = 1, otherwise write has no effect."/>
-			<ipxact:regLock lock_signal="lock_2" reg_name="BTR" description="Register can be only written when SETTINGS[ENA] = 0, otherwise write has no effect."/>
-			<ipxact:regLock lock_signal="lock_2" reg_name="BTR_FD" description="Register can be only written when SETTINGS[ENA] = 0, otherwise write has no effect."/>
-			<ipxact:regLock lock_signal="lock_2" reg_name="SSP_CFG" description="Register can be only written when SETTINGS[ENA] = 0, otherwise write has no effect."/>
-			<ipxact:regLock lock_signal="lock_1" reg_name="TST_CONTROL" description="Register can be only written when MODE[TSTM] = 1, otherwise write has no effect."/>
-			<ipxact:regLock lock_signal="lock_1" reg_name="TST_DEST" description="Register can be only written when MODE[TSTM] = 1, otherwise write has no effect."/>
-			<ipxact:regLock lock_signal="lock_1" reg_name="TST_WDATA" description="Register can be only written when MODE[TSTM] = 1, otherwise write has no effect."/>
+			<ipxact:regLock reg_name="CTR_PRES" description="Register can be only written when MODE[TSTM] = 1, otherwise write has no effect." lock_signal="lock_1"/>
+			<ipxact:regLock reg_name="EWL" description="Register can be only written when MODE[TSTM] = 1, otherwise write has no effect." lock_signal="lock_1"/>
+			<ipxact:regLock reg_name="ERP" description="Register can be only written when MODE[TSTM] = 1, otherwise write has no effect." lock_signal="lock_1"/>
+			<ipxact:regLock reg_name="BTR" description="Register can be only written when SETTINGS[ENA] = 0, otherwise write has no effect." lock_signal="lock_2"/>
+			<ipxact:regLock reg_name="BTR_FD" description="Register can be only written when SETTINGS[ENA] = 0, otherwise write has no effect." lock_signal="lock_2"/>
+			<ipxact:regLock reg_name="SSP_CFG" description="Register can be only written when SETTINGS[ENA] = 0, otherwise write has no effect." lock_signal="lock_2"/>
+			<ipxact:regLock reg_name="TST_CONTROL" description="Register can be only written when MODE[TSTM] = 1, otherwise write has no effect." lock_signal="lock_1"/>
+			<ipxact:regLock reg_name="TST_DEST" description="Register can be only written when MODE[TSTM] = 1, otherwise write has no effect." lock_signal="lock_1"/>
+			<ipxact:regLock reg_name="TST_WDATA" description="Register can be only written when MODE[TSTM] = 1, otherwise write has no effect." lock_signal="lock_1"/>
 		</ipxact:regLocks>
 		<kactus2:license>Proprietary</kactus2:license>
 	</ipxact:vendorExtensions>

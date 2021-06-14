@@ -155,6 +155,7 @@ feature:
         mode_restr_op:
             iterations: 5
         mode_rst:
+        mode_rxbam:
         mode_self_test:
         mode_test:
 
@@ -290,8 +291,8 @@ feature:
             txt_buffer_count: 8
             iterations: 5
 
-
         timestamp_low_high:
+        txt_buffer_byte_access:
         txt_buffer_hazard:
 
 reference:

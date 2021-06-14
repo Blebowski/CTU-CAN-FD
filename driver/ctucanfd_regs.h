@@ -152,7 +152,8 @@ union ctu_can_fd_mode_settings {
 		uint32_t rom                     : 1;
 		uint32_t acf                     : 1;
 		uint32_t tstm                    : 1;
-		uint32_t reserved_15_9           : 7;
+		uint32_t rxbam                   : 1;
+		uint32_t reserved_15_10          : 6;
   /* SETTINGS */
 		uint32_t rtrle                   : 1;
 		uint32_t rtrth                   : 4;
@@ -173,7 +174,8 @@ union ctu_can_fd_mode_settings {
 		uint32_t ilbp                    : 1;
 		uint32_t rtrth                   : 4;
 		uint32_t rtrle                   : 1;
-		uint32_t reserved_15_9           : 7;
+		uint32_t reserved_15_10          : 6;
+		uint32_t rxbam                   : 1;
 		uint32_t tstm                    : 1;
 		uint32_t acf                     : 1;
 		uint32_t rom                     : 1;
@@ -215,6 +217,11 @@ enum ctu_can_fd_mode_rom {
 enum ctu_can_fd_mode_acf {
 	ACF_DISABLED       = 0x0,
 	ACF_ENABLED        = 0x1,
+};
+
+enum ctu_can_fd_mode_rxbam {
+	RXBAM_DISABLED       = 0x0,
+	RXBAM_ENABLED        = 0x1,
 };
 
 enum ctu_can_fd_settings_rtrle {
@@ -292,8 +299,9 @@ union ctu_can_fd_command {
 	uint32_t u32;
 	struct ctu_can_fd_command_s {
 #ifdef __LITTLE_ENDIAN_BITFIELD
-		uint32_t reserved_1_0            : 2;
+		uint32_t reserved_0              : 1;
   /* COMMAND */
+		uint32_t rxrpmv                  : 1;
 		uint32_t rrb                     : 1;
 		uint32_t cdo                     : 1;
 		uint32_t ercrst                  : 1;
@@ -309,7 +317,8 @@ union ctu_can_fd_command {
 		uint32_t ercrst                  : 1;
 		uint32_t cdo                     : 1;
 		uint32_t rrb                     : 1;
-		uint32_t reserved_1_0            : 2;
+		uint32_t rxrpmv                  : 1;
+		uint32_t reserved_0              : 1;
 #endif
 	} s;
 };

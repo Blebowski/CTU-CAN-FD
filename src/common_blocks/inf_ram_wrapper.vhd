@@ -116,6 +116,9 @@ entity inf_ram_wrapper is
         
         -- Data input
         data_in     :in   std_logic_vector(G_WORD_WIDTH - 1 downto 0);
+        
+        -- Byte enable (for write)
+        be          :in   std_logic_vector(G_WORD_WIDTH/8 - 1 downto 0);
 
         ------------------------------------------------------------------------   
         -- Port B - Data output
@@ -139,20 +142,31 @@ architecture rtl of inf_RAM_wrapper is
 
     signal int_read_data     :     std_logic_vector(G_WORD_WIDTH - 1 downto 0);
 
+    signal byte_we           :     std_logic_vector(G_WORD_WIDTH/8 - 1 downto 0);
+
 begin
 
     ----------------------------------------------------------------------------
-    -- Memory Write access process 
+    -- Memory Write access process - per byte
     ----------------------------------------------------------------------------
+    byte_gen : for i in 0 to G_WORD_WIDTH/8 - 1 generate
+        byte_we(i) <= '1' when (write = '1' and be(i) = '1')
+                          else
+                      '0';   
+    end generate;
+    
     ram_write_process : process(clk_sys)
     begin
         if (rising_edge(clk_sys)) then
-            if (write = '1') then
-                ram_memory(to_integer(unsigned(addr_A))) <= data_in;
-            end if;
+            for i in 0 to G_WORD_WIDTH/8 - 1 loop
+                if (byte_we(i) = '1') then
+                    ram_memory(to_integer(unsigned(addr_A)))(i * 8 + 7 downto i * 8)
+                        <= data_in(i * 8 + 7 downto i * 8);
+                end if;
+            end loop;
         end if;
     end process;
-
+    
 
     ----------------------------------------------------------------------------
     -- Memory read access

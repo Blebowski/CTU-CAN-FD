@@ -245,6 +245,9 @@ entity memory_registers is
         
         -- TXT Buffer chip select
         txtb_port_a_cs       :out  std_logic_vector(G_TXT_BUFFER_COUNT - 1 downto 0);
+        
+        -- TXT Buffer - byte enable
+        txtb_port_a_be       :out  std_logic_vector(3 downto 0);
 
         -- TXT Buffer status
         txtb_state           :in   t_txt_bufs_state(G_TXT_BUFFER_COUNT - 1 downto 0);
@@ -343,6 +346,12 @@ architecture rtl of memory_registers is
     signal clk_control_regs       :     std_logic;
     signal clk_test_regs          :     std_logic;
 
+    -- RX buffer control signals
+    signal rx_buf_mode : std_logic;
+    signal rx_move_cmd : std_logic;
+
+    signal ctr_pres_sel_q : std_logic_vector(3 downto 0);
+
     ---------------------------------------------------------------------------
     -- 
     ---------------------------------------------------------------------------
@@ -414,6 +423,8 @@ begin
                                  else
                              '0';
     end generate txtb_port_a_cs_gen;
+
+    txtb_port_a_be <= sbe;
 
     can_core_cs <= '1' when (scs = ACT_CSC) else
                    '0';
@@ -912,13 +923,23 @@ begin
     -- CTR_PRES - Counter preset
     ---------------------------------------------------------------------------
 
-    -- Counter preset value    
+    -- Counter preset value
     drv_bus(DRV_CTR_VAL_HIGH downto DRV_CTR_VAL_LOW) <= align_wrd_to_reg(
             control_registers_out.ctr_pres, CTPV_H, CTPV_L); 
     
-    -- Counter preset mask
-    drv_bus(DRV_CTR_SEL_HIGH downto DRV_CTR_SEL_LOW) <= align_wrd_to_reg(
-            control_registers_out.ctr_pres, EFD_IND, PTX_IND);
+    -- Counter preset mask - must be registered, since value is also registered!
+    -- This allows setting both by a single access!
+    ctr_pres_sel_reg_proc : process(res_n, clk_sys)
+    begin
+        if (res_n = '0') then
+            ctr_pres_sel_q <= (OTHERS => '0');
+        elsif rising_edge(clk_sys) then
+            ctr_pres_sel_q <= align_wrd_to_reg(control_registers_out.ctr_pres,
+                                               EFD_IND, PTX_IND);
+        end if;
+    end process;
+    
+    drv_bus(DRV_CTR_SEL_HIGH downto DRV_CTR_SEL_LOW) <= ctr_pres_sel_q;
 
 
     ---------------------------------------------------------------------------
@@ -1010,10 +1031,16 @@ begin
     --------------------------------------------------------------------------
     -- RX_DATA
     ---------------------------------------------------------------------------
-
-    -- Not writable, only read is signalled!
-    drv_bus(DRV_READ_START_INDEX) <= control_registers_out.rx_data_read;
-
+    -- Signal increment of RX buffer pointer when:
+    --  1. Automated mode - we read from RX_DATA register
+    --  2. Manual mode - we issue COMMAND[RXRPMV].
+    rx_buf_mode <= align_wrd_to_reg(control_registers_out.mode, RXBAM_IND);
+    rx_move_cmd <= align_wrd_to_reg(control_registers_out.command, RXRPMV_IND);
+    
+    drv_bus(DRV_READ_START_INDEX) <=
+        control_registers_out.rx_data_read when (rx_buf_mode = RXBAM_ENABLED)
+                                           else
+                               rx_move_cmd;
 
     --------------------------------------------------------------------------
     -- TX_COMMAND
@@ -1046,18 +1073,13 @@ begin
         end if;
     end process;
     
+    -- TX Command index is regular register, it is therefore pipeline
+    -- internally in generated register block!
+    
     txtb_cmd_index_gen : for txtb_index in 0 to G_TXT_BUFFER_COUNT - 1 generate
-        tx_cmd_in_reg_proc : process(clk_sys, soft_res_q_n)
-        begin
-            if (soft_res_q_n = '0') then
-                txtb_sw_cmd_index(txtb_index) <= '0';
-            elsif (rising_edge(clk_sys)) then
-                txtb_sw_cmd_index(txtb_index)  <= align_wrd_to_reg(
+        txtb_sw_cmd_index(txtb_index)  <= align_wrd_to_reg(
                 control_registers_out.tx_command, TXB1_IND + txtb_index);
-            end if;
-        end process;
     end generate;
-
 
     ---------------------------------------------------------------------------
     -- TX_PRIORITY
@@ -1713,5 +1735,12 @@ begin
     -- psl no_simul_two_reg_block_access_asrt : assert never
     --   (control_registers_cs_reg = '1' and test_registers_cs_reg = '1')
     --   report "Control registers and test registers can't be accessed at once!";
+
+    -- psl rx_buf_automatic_mode_cov : cover
+    --   {rx_buf_mode = RXBAM_ENABLED};
+    
+    -- psl rx_buf_manual_mode_cov : cover
+    --   {rx_buf_mode = RXBAM_DISABLED};
+    
 
 end architecture;

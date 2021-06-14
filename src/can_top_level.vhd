@@ -270,6 +270,9 @@ architecture rtl of can_top_level is
     
     -- TXT Buffer chip select
     signal txtb_port_a_cs       :    std_logic_vector(txt_buffer_count - 1 downto 0);
+    
+    -- TXT Buffer Port A byte enable
+    signal txtb_port_a_be       :    std_logic_vector(3 downto 0);
 
     -- TXT Buffer status
     signal txtb_state           :    t_txt_bufs_state(txt_buffer_count - 1 downto 0);
@@ -616,6 +619,7 @@ begin
         txtb_port_a_data        => txtb_port_a_data,        -- OUT
         txtb_port_a_address     => txtb_port_a_address,     -- OUT
         txtb_port_a_cs          => txtb_port_a_cs,          -- OUT
+        txtb_port_a_be          => txtb_port_a_be,          -- OUT
         txtb_state              => txtb_state,              -- IN
         txtb_sw_cmd             => txtb_sw_cmd,             -- OUT
         txtb_sw_cmd_index       => txtb_sw_cmd_index,       -- OUT
@@ -708,6 +712,7 @@ begin
             txtb_port_a_data    => txtb_port_a_data,                -- IN
             txtb_port_a_address => txtb_port_a_address,             -- IN
             txtb_port_a_cs      => txtb_port_a_cs(i),               -- IN
+            txtb_port_a_be      => txtb_port_a_be,                  -- IN
             txtb_sw_cmd         => txtb_sw_cmd,                     -- IN
             txtb_sw_cmd_index   => txtb_sw_cmd_index,               -- IN
             txtb_state          => txtb_state(i),                   -- OUT
