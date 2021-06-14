@@ -251,7 +251,7 @@ package mem_bus_agent_pkg is
     procedure mem_bus_agent_read(
         signal      channel     : inout t_com_channel;
                     address     : in    integer;
-        variable    read_data   : out   std_logic_vector(31 downto 0);
+        variable    read_data   : inout std_logic_vector(31 downto 0);
                     byte_enable : in    std_logic_vector(3 downto 0) 
     );
 
@@ -330,7 +330,7 @@ package mem_bus_agent_pkg is
     procedure mem_bus_agent_read(
         signal      channel     : inout t_com_channel;
                     address     : in    integer;
-        variable    read_data   : out   std_logic_vector;
+        variable    read_data   : inout std_logic_vector;
         constant    stat_burst  : in    boolean := false
     );
    
@@ -469,7 +469,7 @@ package body mem_bus_agent_pkg is
     procedure mem_bus_agent_read(
         signal      channel     : inout t_com_channel;
                     address     : in    integer;
-        variable    read_data   : out   std_logic_vector(31 downto 0);
+        variable    read_data   : inout std_logic_vector(31 downto 0);
                     byte_enable : in    std_logic_vector(3 downto 0) 
     ) is
         variable tmp : std_logic_vector(127 downto 0);
@@ -636,7 +636,7 @@ package body mem_bus_agent_pkg is
 
     procedure convert_be(
                  address     : in    natural;
-                 data_in     : in    std_logic_vector(31 downto 0);
+                 data_in     : in    std_logic_vector;
         variable be          : out   std_logic_vector(3 downto 0)
     )is
     begin
@@ -654,11 +654,13 @@ package body mem_bus_agent_pkg is
                 be := "1000";
             end case;
         when 16 =>
-            case (address mod 2) is
+            case (address mod 4) is
             when 0 =>
                 be := "0011";
-            when 1 =>
+            when 2 =>
                 be := "1100";
+            when others =>
+                error_m("16 bit access must be half-word aligned!");
             end case;
         when others =>
             be := "1111";
@@ -748,7 +750,7 @@ package body mem_bus_agent_pkg is
     procedure mem_bus_agent_read(
         signal      channel     : inout t_com_channel;
                     address     : in    integer;
-        variable    read_data   : out   std_logic_vector;
+        variable    read_data   : inout std_logic_vector;
         constant    stat_burst  : in    boolean := false
     ) is
         variable addr_aligned   :       integer;
@@ -763,7 +765,7 @@ package body mem_bus_agent_pkg is
 
         if (read_data'length = 8 or read_data'length = 16 or read_data'length = 32) then
             addr_aligned := address - (address mod 4);
-            convert_be(address, data_32, be);
+            convert_be(address, read_data, be);
             mem_bus_agent_read(channel, addr_aligned, data_32, be);
             convert_read_data(address, read_data'length, data_32, read_data);
         else

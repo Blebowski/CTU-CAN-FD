@@ -710,6 +710,27 @@ package feature_test_agent_pkg is
         signal    channel       : inout t_com_channel
     );
 
+    ----------------------------------------------------------------------------
+    -- Execute read access from CTU CAN FD Core (via memory bus agent). Read
+    -- 32-bit word by 4 byte accesses.
+    --
+    -- Address bits meaning is following:
+    --  [15:12]     Identifier (Index) of core. Allows to distinguish between
+    --              up to 16 instances of CTU CAN FD Core.
+    --  [11:0]      Register or Buffer offset within a the core.
+    --
+    -- Arguments:
+    --  r_data          Data read from CTU CAN FD Core.
+    --  w_offset        Register or buffer offset (bits 11:0).
+    --  node            Node which shall be accessed (Test node or DUT)
+    ----------------------------------------------------------------------------
+    procedure CAN_read_by_byte(
+        variable  r_data        : out   std_logic_vector(31 downto 0);
+        constant  r_offset      : in    std_logic_vector(11 downto 0);
+        constant  node          : in    t_feature_node;
+        signal    channel       : inout t_com_channel
+    );
+
 
     ----------------------------------------------------------------------------
     -- Execute read access from CTU CAN FD Core via memory bsu agent. If size is
@@ -996,11 +1017,15 @@ package feature_test_agent_pkg is
     -- Arguments:
     --  frame           Output variable where CAN FD Frame will be stored
     --  node            Node which shall be accessed (Test node or DUT).
+    --  channel         Communication channel to use
+    --  automatic_mode  Assume device is in RX Buffer automatic mode, and
+    --                  read pointer is incremented automatically upon red!
     ----------------------------------------------------------------------------
     procedure CAN_read_frame(
         variable frame          : inout SW_CAN_frame_type;
         constant node           : in    t_feature_node;
-        signal   channel        : inout t_com_channel
+        signal   channel        : inout t_com_channel;
+        constant automatic_mode : in    boolean := true
     );
 
 
@@ -2174,6 +2199,28 @@ package body feature_test_agent_pkg is
     end procedure;
 
 
+    procedure CAN_read_by_byte(
+        variable  r_data        : out   std_logic_vector(31 downto 0);
+        constant  r_offset      : in    std_logic_vector(11 downto 0);
+        constant  node          : in    t_feature_node;
+        signal    channel       : inout t_com_channel
+    )is
+        variable data : std_logic_vector(7 downto 0);
+    begin
+        CAN_read(data, r_offset, node, channel);
+        r_data(7 downto 0) := data;
+
+        CAN_read(data, CAN_add_unsigned(r_offset, x"001"), node, channel);
+        r_data(15 downto 8) := data;
+
+        CAN_read(data, CAN_add_unsigned(r_offset, x"002"), node, channel);
+        r_data(23 downto 16) := data;
+
+        CAN_read(data, CAN_add_unsigned(r_offset, x"003"), node, channel);
+        r_data(31 downto 24) := data;
+    end procedure;
+
+
     procedure CAN_read(
         variable  r_data        : out   std_logic_vector;
         constant  r_offset      : in    std_logic_vector(11 downto 0);
@@ -2870,7 +2917,8 @@ package body feature_test_agent_pkg is
     procedure CAN_read_frame(
         variable frame          : inout SW_CAN_frame_type;
         constant node           : in    t_feature_node;
-        signal   channel        : inout t_com_channel
+        signal   channel        : inout t_com_channel;
+        constant automatic_mode : in    boolean := true
     )is
         variable r_data         :       std_logic_vector(31 downto 0) :=
                                         (OTHERS => '0');
@@ -2887,20 +2935,44 @@ package body feature_test_agent_pkg is
         variable ts_high_word   :       std_logic_vector(31 downto 0) :=
                                             (OTHERS => '0');
         constant burst_access   :       boolean := true;
+        variable command        :       SW_command := SW_command_rst_val;
+        
     begin
 
-        -- If Burst access is executed read first 4 words all at once!
-        if (burst_access) then
-            CAN_read(burst_data, RX_DATA_ADR, node, channel, true);
-            frm_fmt_word := burst_data(31 downto 0);
-            ident_word   := burst_data(63 downto 32);
-            ts_low_word  := burst_data(95 downto 64);
-            ts_high_word := burst_data(127 downto 96);
+        if (automatic_mode) then
+            -- If Burst access is executed read first 4 words all at once!
+            if (burst_access) then
+                CAN_read(burst_data, RX_DATA_ADR, node, channel, true);
+                frm_fmt_word := burst_data(31 downto 0);
+                ident_word   := burst_data(63 downto 32);
+                ts_low_word  := burst_data(95 downto 64);
+                ts_high_word := burst_data(127 downto 96);
+                
+            else
+                CAN_read(frm_fmt_word, RX_DATA_ADR, node, channel);
+                CAN_read(ident_word, RX_DATA_ADR, node, channel);
+                CAN_read(ts_low_word, RX_DATA_ADR, node, channel);
+                CAN_read(ts_high_word, RX_DATA_ADR, node, channel);
+            end if;
         else
-            CAN_read(frm_fmt_word, RX_DATA_ADR, node, channel);
-            CAN_read(ident_word, RX_DATA_ADR, node, channel);
-            CAN_read(ts_low_word, RX_DATA_ADR, node, channel);
-            CAN_read(ts_high_word, RX_DATA_ADR, node, channel);
+            -- Use 8-bit accesses to prove multiple accesses can be done without
+            -- side effect!
+            command.rx_buf_rdptr_move := true;
+            
+            -- Frame format word
+            CAN_read_by_byte(frm_fmt_word, RX_DATA_ADR, node, channel);
+            give_controller_command(command, node, channel);
+
+            -- Identifier word
+            CAN_read_by_byte(ident_word, RX_DATA_ADR, node, channel);
+            give_controller_command(command, node, channel);            
+
+            -- Timestamp low word
+            CAN_read_by_byte(ts_low_word, RX_DATA_ADR, node, channel);
+            give_controller_command(command, node, channel);
+            
+            CAN_read_by_byte(ts_high_word, RX_DATA_ADR, node, channel);
+            give_controller_command(command, node, channel);
         end if;
 
         -- Parse frame format word
@@ -2927,7 +2999,12 @@ package body feature_test_agent_pkg is
              and frame.data_length /= 0)
         then
             for i in 0 to (frame.data_length - 1) / 4 loop
-                CAN_read(r_data, RX_DATA_ADR, node, channel);
+                if (automatic_mode) then
+                    CAN_read(r_data, RX_DATA_ADR, node, channel);
+                else
+                    CAN_read_by_byte(r_data, RX_DATA_ADR, node, channel);
+                    give_controller_command(command, node, channel);
+                end if;
                 frame.data(i * 4)       := r_data(7 downto 0);
                 frame.data((i * 4) + 1) := r_data(15 downto 8);
                 frame.data((i * 4) + 2) := r_data(23 downto 16);
