@@ -346,6 +346,10 @@ architecture rtl of memory_registers is
     signal clk_control_regs       :     std_logic;
     signal clk_test_regs          :     std_logic;
 
+    -- RX buffer control signals
+    signal rx_buf_mode : std_logic;
+    signal rx_move_cmd : std_logic;
+
     ---------------------------------------------------------------------------
     -- 
     ---------------------------------------------------------------------------
@@ -1015,22 +1019,16 @@ begin
     --------------------------------------------------------------------------
     -- RX_DATA
     ---------------------------------------------------------------------------
-
     -- Signal increment of RX buffer pointer when:
     --  1. Automated mode - we read from RX_DATA register
     --  2. Manual mode - we issue COMMAND[RXRPMV].
-    rxb_incr_block : block
-        signal rx_buf_mode : std_logic;
-        signal rx_move_cmd : std_logic;
-    begin
-        rx_buf_mode <= align_wrd_to_reg(control_registers_out.mode, RXBAM_IND);
-        rx_move_cmd <= align_wrd_to_reg(control_registers_out.command, RXRPMV_IND);
-        
-        drv_bus(DRV_READ_START_INDEX) <=
-            control_registers_out.rx_data_read when (rx_buf_mode = RXBAM_ENABLED)
-                                               else
-                                   rx_move_cmd;
-    end block rxb_incr_block;
+    rx_buf_mode <= align_wrd_to_reg(control_registers_out.mode, RXBAM_IND);
+    rx_move_cmd <= align_wrd_to_reg(control_registers_out.command, RXRPMV_IND);
+    
+    drv_bus(DRV_READ_START_INDEX) <=
+        control_registers_out.rx_data_read when (rx_buf_mode = RXBAM_ENABLED)
+                                           else
+                               rx_move_cmd;
 
     --------------------------------------------------------------------------
     -- TX_COMMAND
@@ -1725,5 +1723,12 @@ begin
     -- psl no_simul_two_reg_block_access_asrt : assert never
     --   (control_registers_cs_reg = '1' and test_registers_cs_reg = '1')
     --   report "Control registers and test registers can't be accessed at once!";
+
+    -- psl rx_buf_automatic_mode_cov : cover
+    --   {rx_buf_mode = RXBAM_ENABLED};
+    
+    -- psl rx_buf_manual_mode_cov : cover
+    --   {rx_buf_mode = RXBAM_DISABLED};
+    
 
 end architecture;
