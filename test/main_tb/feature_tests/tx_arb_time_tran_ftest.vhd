@@ -220,7 +220,7 @@ package body tx_arb_time_tran_ftest is
         -- If it happends that RX trigger occurs just after timestamp matches,
         -- but frame validation is still in progress, then diff can be actually
         -- higher than one bit time by the length of validation!
-        check_m(diff < clk_per_bit + 6, "Time of transmission correct!" &
+        check_m(diff < clk_per_bit + 8, "Time of transmission correct!" &
             " Diff: " & integer'image(diff) &
             " Time per bit: " & integer'image(clk_per_bit));
 
