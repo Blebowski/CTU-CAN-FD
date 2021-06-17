@@ -88,7 +88,7 @@
 --      until DUT transmits Dominant bit. Force the bus-level Recessive for one
 --      bit time! This should invoke bit error in DUT. Wait until bus is idle.
 --      Check that ERR_NORM in DUT and 2 incremented by 1. Check that ERR_FD
---      in DUT and 2 remained the same!
+--      in DUT and Test Node remained the same!
 --  @2. Generate random frame where bit rate shall be switched. Wait until data
 --      portion of that frame. Wait until Recessive bit is transmitted. Force
 --      bus Dominant for 1 bit time! Wait until bus is idle. Check that ERR_FD
@@ -132,6 +132,7 @@ package body err_norm_fd_ftest is
         variable frame_sent         :     boolean;
         variable rand_val           :     integer;
         variable can_tx_val         :     std_logic;
+        variable wait_time          :     natural;
     begin
 
         -----------------------------------------------------------------------
@@ -140,7 +141,7 @@ package body err_norm_fd_ftest is
         --     random time until DUT transmits Dominant bit. Force the bus-
         --     level Recessive for one bit time! This should invoke bit error in
         --     DUT. Wait until bus is idle. Check that ERR_NORM in DUT and
-        --     2 incremented by 1. Check that ERR_FD in DUT and 2 remained
+        --     2 incremented by 1. Check that ERR_FD in DUT and Test Node remained
         --     the same!
         -----------------------------------------------------------------------
         info_m("Step 1");
@@ -159,10 +160,17 @@ package body err_norm_fd_ftest is
 
         -- Should be enough to cover many parts of CAN frame but not go beyond
         -- frame!
-        rand_int_v(1000, rand_val);
-        for i in 0 to rand_val loop
-            clk_agent_wait_cycle(chn);
+        rand_int_v(20, wait_time);
+        -- We need at least 1 bit to wait, otherwise we try to corrupt still in SOF!
+        wait_time := wait_time + 1;
+        info_m("Waiting for:" & integer'image(wait_time) & " bits!");
+        
+        for i in 1 to wait_time loop
+            CAN_wait_sync_seg(DUT_NODE, chn);
+            info_m("Wait sync");
+            wait for 20 ns;
         end loop;
+        info_m("Waiting finished!");
         
         get_can_tx(DUT_NODE, can_tx_val, chn);
         while (can_tx_val = RECESSIVE) loop
@@ -213,10 +221,17 @@ package body err_norm_fd_ftest is
         CAN_wait_not_pc_state(pc_deb_control, DUT_NODE, chn);
         
         -- Now we should be in Data bit rate! This is either CRC or data field!
-        rand_int_v(250, rand_val);
-        for i in 0 to rand_val loop
-            clk_agent_wait_cycle(chn);
+        rand_int_v(15, wait_time);
+        -- We need at least 1 bit to wait, otherwise we try to corrupt still in SOF!
+        wait_time := wait_time + 1;
+        info_m("Waiting for:" & integer'image(wait_time) & " bits!");
+        
+        for i in 1 to wait_time loop
+            CAN_wait_sync_seg(DUT_NODE, chn);
+            info_m("Wait sync");
+            wait for 20 ns;
         end loop;
+        info_m("Waiting finished!");
 
         get_can_tx(DUT_NODE, can_tx_val, chn);
         while (can_tx_val = DOMINANT) loop

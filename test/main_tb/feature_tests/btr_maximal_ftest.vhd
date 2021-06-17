@@ -166,7 +166,7 @@ package body btr_maximal_ftest is
         -- @2. Generate random frame which is FD frame with bit-rate shift.
         --     Send the frame by DUT, receive it by Test node and check it.
         -----------------------------------------------------------------------
-        info_m("Step 3");
+        info_m("Step 2");
         
         CAN_generate_frame(CAN_frame_1);
         info_m("Generated frame");
@@ -176,6 +176,7 @@ package body btr_maximal_ftest is
         CAN_frame_1.rtr := NO_RTR_FRAME;
         CAN_frame_1.ident_type := BASE;
         CAN_frame_1.data_length := 0;
+        CAN_frame_1.identifier := CAN_frame_1.identifier mod (2 ** 11);
         CAN_frame_1.dlc := "0000";
         decode_dlc_rx_buff(CAN_frame_1.dlc, CAN_frame_1.rwcnt);
         

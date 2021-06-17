@@ -113,10 +113,12 @@ feature:
         err_capt_arb_stuff:
         err_capt_crc_bit:
         
-        # Following test is susceptible to hanging due to unhandled
-        # condition by test itself!
-        err_capt_crc_err:
-            timeout: 1 ms
+        # Do not run this test because it cannot handle properly
+        # corrupting CRC at each randomization! CRC error detection
+        # is intensively tested in compliance tests! Purpose of this
+        # test is only to verify that ERR_CAPT shows CRC error. This
+        # is enoguh in "fast" test run without randomization!
+        #err_capt_crc_err:
         err_capt_ctrl_bit:
         err_capt_ctrl_form:
         err_capt_data_bit:

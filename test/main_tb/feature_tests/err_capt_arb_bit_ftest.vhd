@@ -173,7 +173,7 @@ package body err_capt_arb_bit_ftest is
         
         -- Force bus for one bit time
         force_bus_level(RECESSIVE, chn);
-        CAN_wait_sample_point(DUT_NODE, chn);
+        CAN_wait_sample_point(DUT_NODE, chn, skip_stuff_bits => false);
         wait for 20 ns; -- To be sure that opposite bit is sampled!
         release_bus_level(chn);
         
