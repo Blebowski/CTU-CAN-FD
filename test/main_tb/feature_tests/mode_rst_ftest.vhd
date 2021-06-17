@@ -191,8 +191,12 @@ package body mode_rst_ftest is
         mask_reg_val(reg, rand_data);
         info_m ("Testing RW register at address: " & to_hstring(reg.address) &
                 " size: " & integer'image(reg.size));
+        -- When testing MODE register, exceptions:
+        --  1. Do not issue soft reset
+        --  2. Keep Test mode always on!
         if (reg.address = MODE_ADR) then
-            rand_data(0) := '0';
+            rand_data(RST_IND) := '0';
+            rand_data(TSTM_IND) := '1';
         end if;
         CAN_write(rand_data, reg.address, DUT_NODE, channel);
         CAN_read(read_data, reg.address, DUT_NODE, channel);
@@ -382,9 +386,12 @@ package body mode_rst_ftest is
                     rand_logic_vect_v(rand_data_32, 0.5);
                     
                     -- Do not write Write strobe. It is auto-clear, so it cant
-                    -- be read back!
+                    -- be read back! Also, disable test mode access, since
+                    -- random address which overflows memory boundary can be
+                    -- set by this test!
                     if (Test_registers_list(i).address = TST_CONTROL_ADR) then
                         rand_data_32(TWRSTB_IND) := '0';
+                        rand_data_32(TMAENA_IND) := '0';
                     end if;
                 
                     -----------------------------------------------------------
