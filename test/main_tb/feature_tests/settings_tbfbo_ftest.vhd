@@ -147,8 +147,7 @@ package body settings_tbfbo_ftest is
         -----------------------------------------------------------------------
         info_m("Step 1");
 
-        -- Choose random TXT Buffer
-        rand_int_v(4, buf_index);
+        pick_random_txt_buffer(buf_index, DUT_NODE, chn);
 
         mode_1.tx_buf_bus_off_failed := true;
         mode_1.test := true; -- Needed to set TEC!  
