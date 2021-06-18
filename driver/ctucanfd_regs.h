@@ -148,7 +148,7 @@ union ctu_can_fd_mode_settings {
 		uint32_t stm                     : 1;
 		uint32_t afm                     : 1;
 		uint32_t fde                     : 1;
-		uint32_t reserved_5              : 1;
+		uint32_t tttm                    : 1;
 		uint32_t rom                     : 1;
 		uint32_t acf                     : 1;
 		uint32_t tstm                    : 1;
@@ -179,7 +179,7 @@ union ctu_can_fd_mode_settings {
 		uint32_t tstm                    : 1;
 		uint32_t acf                     : 1;
 		uint32_t rom                     : 1;
-		uint32_t reserved_5              : 1;
+		uint32_t tttm                    : 1;
 		uint32_t fde                     : 1;
 		uint32_t afm                     : 1;
 		uint32_t stm                     : 1;
@@ -207,6 +207,11 @@ enum ctu_can_fd_mode_afm {
 enum ctu_can_fd_mode_fde {
 	FDE_DISABLE       = 0x0,
 	FDE_ENABLE        = 0x1,
+};
+
+enum ctu_can_fd_mode_tttm {
+	TTTM_DISABLED       = 0x0,
+	TTTM_ENABLED        = 0x1,
 };
 
 enum ctu_can_fd_mode_rom {
