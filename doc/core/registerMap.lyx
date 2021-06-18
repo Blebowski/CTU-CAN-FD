@@ -4860,7 +4860,7 @@ ROM\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-Reserved\end_layout
+TTTM\end_layout
 
 \end_inset
 </cell>
@@ -4941,7 +4941,7 @@ cellcolor{cyan}
 \begin_inset Text
 
 \begin_layout Plain Layout
--\end_layout
+0\end_layout
 
 \end_inset
 </cell>
@@ -5014,6 +5014,11 @@ AFM Acceptance Filters Mode. If enabled, only RX frames which pass Frame filters
 FDE Flexible data rate enable. When flexible data rate is enabled CTU CAN FD recognizes CAN FD frames (FDF bit = 1).\begin_inset Newline newline\end_inset
 		0b0  - FDE_DISABLE - Flexible data-rate support disabled.\begin_inset Newline newline\end_inset
 		0b1  - FDE_ENABLE - Flexible data-rate support enabled.
+\end_layout
+\begin_layout Description
+TTTM Time triggered transmission mode.\begin_inset Newline newline\end_inset
+		0b0  - TTTM_DISABLED - \begin_inset Newline newline\end_inset
+		0b1  - TTTM_ENABLED - 
 \end_layout
 \begin_layout Description
 ROM Restricted operation mode.\begin_inset Newline newline\end_inset

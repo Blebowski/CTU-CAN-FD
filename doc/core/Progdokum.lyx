@@ -509,7 +509,7 @@ filename "version.tex"
 \noindent
 \align center
 \begin_inset Tabular
-<lyxtabular version="3" rows="26" columns="3">
+<lyxtabular version="3" rows="27" columns="3">
 <features tabularvalignment="middle">
 <column alignment="center" valignment="top" width="1.5cm">
 <column alignment="center" valignment="top" width="2cm">
@@ -1251,7 +1251,7 @@ Add detailed description of disabling node by SETTINGS[ENA].
 </cell>
 </row>
 <row>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -1260,7 +1260,7 @@ Add detailed description of disabling node by SETTINGS[ENA].
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -1269,11 +1269,40 @@ Add detailed description of disabling node by SETTINGS[ENA].
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
 Add MODE[RXBAM] and COMMAND[RXRPMV] bits, describe RX buffer modes.
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+2.3.8
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+18-06-2021
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Add MODE[TTTM] bit to enable time-triggered transmission.
 \end_layout
 
 \end_inset
@@ -3836,8 +3865,7 @@ Aborted
  states.
  CAN frame is stored to TXT buffers via TXT Buffer 1 - TXT Buffer 8 memory
  regions described in Chapter 3.
- TXT buffers support only 32 bit access (8 and 16 bit accesses are not supported
-).
+ T
 \end_layout
 
 \begin_layout Standard
@@ -3917,8 +3945,8 @@ Ready
 
  state if it samples dominant bit during third bit of intermission (SOF
  bit is skipped in this case), or as soon as bus is idle.
- Note that for CTU CAN FD to start transmitting frame, its time of transmission
- must be met (see 
+ Note that in Time triggered transmission mode, the behavior differs (see
+ 
 \begin_inset CommandInset ref
 LatexCommand ref
 reference "subsec:Time-triggered-transmission"
@@ -3999,10 +4027,65 @@ Ready
  Priority of TXT buffers is configured in TX_PRIORITY register.
  If two TXT buffers have equal priority, TXT buffer with lower index has
  precedence.
+ The overall flow of transmission is shown in Figure 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:txt-buffer-selection"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+placement h
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\noindent
+\align center
+\begin_inset Graphics
+	filename ../pics/Visio_generated/TXT_Buffer_validation.pdf
+	lyxscale 20
+	scale 80
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+TXT Buffer selection
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:txt-buffer-selection"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Subsection
-Time triggered transmission
+Time triggered transmission mode
 \begin_inset CommandInset label
 LatexCommand label
 name "subsec:Time-triggered-transmission"
@@ -4013,8 +4096,10 @@ name "subsec:Time-triggered-transmission"
 \end_layout
 
 \begin_layout Standard
-CTU CAN FD only transmitts a frame after specific moment in time with respect
- to its Time base (see 
+CTU CAN FD supports time-triggered transmission mode.
+ This mode is enabled when MODE[TTTM] = 1.
+ In this mode, CTU CAN FD will attempt to transmitt frame from highest priority
+ TXT buffer only when value of Time-Base (see 
 \begin_inset CommandInset ref
 LatexCommand ref
 reference "sec:Time-base"
@@ -4024,9 +4109,8 @@ noprefix "false"
 
 \end_inset
 
-).
- Moment in time when frame is allowed to be transmitted is configured via
- TIMESTAMP_L_W, TIMESTAMP_U_W words in TXT buffer.
+) reaches Timestamp stored in TIMESTAMP_L_W and TIMESTAMP_U_W words of this
+ TXT Buffer.
  It is assumed that Time base is up-counting unsigned counter.
  When Time base reaches value stored in TIMESTAMP_L_W, TIMESTAMP_U_W, frame
  stored in TXT buffer is allowed for transmission (assuming that it is in

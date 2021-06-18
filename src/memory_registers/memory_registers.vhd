@@ -753,6 +753,10 @@ begin
     -- ROM - Restricted operation mode
     drv_bus(DRV_ROM_ENA_INDEX) <= align_wrd_to_reg(
         control_registers_out.mode, ROM_IND);
+        
+    -- TTTM - Time Triggered transmission mode
+    drv_bus(DRV_TTTM_ENA_INDEX) <= align_wrd_to_reg(
+        control_registers_out.mode, TTTM_IND);
 
     ---------------------------------------------------------------------------
     -- COMMAND Register
@@ -1718,7 +1722,6 @@ begin
     drv_bus(569 downto 552) <= (OTHERS => '0');
     drv_bus(551 downto 520) <= (OTHERS => '0');
 
-    drv_bus(472)            <= '0';
     drv_bus(372)            <= '0';
     drv_bus(461)            <= '0';
     drv_bus(367)            <= '0';

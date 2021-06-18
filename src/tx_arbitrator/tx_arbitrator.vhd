@@ -174,7 +174,10 @@ entity tx_arbitrator is
         -----------------------------------------------------------------------
         -- Priorities of TXT Buffers
         txtb_prorities          :in t_txt_bufs_priorities(G_TXT_BUFFER_COUNT - 1 downto 0);
-    
+
+        -- Driving bus
+        drv_bus                 :in std_logic_vector(1023 downto 0);
+
         -- TimeStamp value
         timestamp               :in std_logic_vector(63 downto 0)
   );
@@ -291,6 +294,9 @@ architecture rtl of tx_arbitrator is
 
     -- TXT Buffer clock enable for reading metadata
     signal txtb_meta_clk_en           : std_logic;
+    
+    -- Time triggered transmission mode enabled
+    signal drv_tttm_ena               : std_logic;                   
 
     ---------------------------------------------------------------------------
     -- Comparing procedure for two 64 bit std logic vectors
@@ -355,12 +361,16 @@ begin
     frame_valid_com_clear  => frame_valid_com_clear     -- OUT
   );
 
+  drv_tttm_ena <= drv_bus(DRV_TTTM_ENA_INDEX);
+
   ------------------------------------------------------------------------------
   -- Comparing timestamp with external timestamp. This assumes that Upper 
   -- timestamp is on the output of buffer and lower timestamp is stored in
   -- "ts_low_internal".
   ------------------------------------------------------------------------------
-  timestamp_valid <= less_than(txtb_timestamp, timestamp);
+  timestamp_valid <= less_than(txtb_timestamp, timestamp) when (drv_tttm_ena = TTTM_ENABLED)
+                                                          else
+                                                      '1';
 
   ------------------------------------------------------------------------------
   -- When TXT Buffer which is currently "Validated" suddenly becomes 

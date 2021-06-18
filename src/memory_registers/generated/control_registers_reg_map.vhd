@@ -146,7 +146,7 @@ begin
     mode_reg_comp : memory_reg
     generic map(
         data_width                      => 16 ,
-        data_mask                       => "0000001111011111" ,
+        data_mask                       => "0000001111111111" ,
         reset_polarity                  => RESET_POLARITY ,
         reset_value                     => "0000001000010000" ,
         auto_clear                      => "0000000000000001" ,
