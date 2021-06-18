@@ -171,10 +171,11 @@ package feature_test_agent_pkg is
         restricted_operation    :   boolean;
         tx_buf_bus_off_failed   :   boolean;
         rx_buffer_automatic     :   boolean;
+        time_triggered_transm   :   boolean;
     end record;
     
     constant SW_mode_rst_val : SW_mode := (false, false, false, false, false,
-        true, false, false, false, true, false, false, false, true, true);
+        true, false, false, false, true, false, false, false, true, true, false);
 
     -- Controller commands
     type SW_command is record
@@ -3462,7 +3463,11 @@ package body feature_test_agent_pkg is
         end if;
 
         if (mode.rx_buffer_automatic) then
-            data(RXBAM_IND mod 16)         := '1';
+            data(RXBAM_IND mod 16)     := '1';
+        end if;
+
+        if (mode.time_triggered_transm) then
+            data(TTTM_IND mod 16)      := '1';
         end if;
 
         CAN_write(data, MODE_ADR, node, channel);
@@ -3524,6 +3529,7 @@ package body feature_test_agent_pkg is
         mode.fdrf                       := false;
         mode.restricted_operation       := false;
         mode.rx_buffer_automatic        := false;
+        mode.time_triggered_transm      := false;
 
         if (data(RST_IND) = '1') then
             mode.reset                  := true;
@@ -3559,6 +3565,10 @@ package body feature_test_agent_pkg is
         
         if (data(RXBAM_IND) = '1') then
             mode.rx_buffer_automatic    := true;
+        end if;
+
+        if (data(TTTM_IND) = '1') then
+            mode.time_triggered_transm  := true;
         end if;
 
 

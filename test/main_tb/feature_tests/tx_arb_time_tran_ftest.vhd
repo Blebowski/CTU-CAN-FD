@@ -74,7 +74,7 @@
 --
 -- @Verifies:
 --  @1. Frame is transmitted from TXT Buffer at time given by Timestamp in
---      TIMESTAMP_U_W and TIMESTAMP_L_W words.
+--      TIMESTAMP_U_W and TIMESTAMP_L_W words when MODE[TTTM] is enabled.
 --  @2. When timestamp in TIMESTAMP_U_W and TIMESTAMP_L_W is lower than actual
 --      timestamp input of CTU CAN FD, frame is transmitted immediately.
 --  @3. When timestamp of a frame in higher priority TXT buffer is not yet elapsed,
@@ -83,7 +83,8 @@
 --      higher priority buffer.
 --
 -- @Test sequence:
---  @1. Configure random timestamp to testbench. Generate random frame and insert
+--  @1. Enable Time triggered transmission in DUT.
+--  @2. Configure random timestamp to testbench. Generate random frame and insert
 --      it for transmission from TXT Buffer 1 of DUT. Generate random time of
 --      transmission for the frame and Issue "set ready" command for TXT Buffer 1.
 --      Wait until node turns transmitter! Read current timestamp from TB and
@@ -91,13 +92,13 @@
 --      time when transmission started is less than 1 bit time (transmission
 --      is not processed immediately, but in each sample point). Wait until
 --      frame is sent.
---  @2. Generate CAN frame for transmission with timestamp lower than actual
+--  @3. Generate CAN frame for transmission with timestamp lower than actual
 --      value of timestamp input of CTU CAN FD. Insert it for transmission and
 --      issue "set ready" command to this TXT Buffer. Wait until transmission
 --      starts and check that difference between start of transmission and time
 --      when "set ready" command was sent is less than 1 bit time. Wait until
 --      frame is sent.
---  @3. Configure TXT Buffer 1 to higher priority than TXT Buffer 2. Insert CAN
+--  @4. Configure TXT Buffer 1 to higher priority than TXT Buffer 2. Insert CAN
 --      frame with earlier time of transmission to TXT Buffer 1. Mark both frames
 --      as ready. Wait until both frames are transmitted! Check that first frame
 --      from DUT was transmitted!
@@ -157,10 +158,20 @@ package body tx_arb_time_tran_ftest is
         
         variable buf_1_index        :       natural;
         variable buf_2_index        :       natural;
+        
+        variable mode               :       SW_mode := SW_mode_rst_val;
     begin
 
         -------------------------------------------------------------------------
-        -- @1. Configure random timestamp to testbench. Generate random frame and
+        -- @1. Enable Time triggered transmission in DUT.
+        -------------------------------------------------------------------------
+        info_m("Step 1");
+
+        mode.time_triggered_transm := true;
+        set_core_mode(mode, DUT_NODE, chn);
+
+        -------------------------------------------------------------------------
+        -- @2. Configure random timestamp to testbench. Generate random frame and
         --     insert it for transmission from TXT Buffer 1 of DUT. Generate
         --     random time of transmission for the frame and Issue "set ready" 
         --     command for TXT Buffer 1. Wait until node turns transmitter! Read
@@ -169,7 +180,7 @@ package body tx_arb_time_tran_ftest is
         --     less than 1 bit time (transmission is not processed immediately, but
         --     in each sample point). Wait until frame is sent.
         -------------------------------------------------------------------------
-        info_m("Step 1");
+        info_m("Step 2");
 
         -- Force random timestamp so that we are sure that both words of the
         -- timestamp are clocked properly!
@@ -198,7 +209,6 @@ package body tx_arb_time_tran_ftest is
         CAN_frame.timestamp := ts_expected;
         info_m("Expected time of transmission: " & to_hstring(ts_expected));
 
-        
         CAN_insert_TX_frame(CAN_frame, 1, DUT_NODE, chn);
         send_TXT_buf_cmd(buf_set_ready, 1, DUT_NODE, chn);
 
@@ -227,14 +237,14 @@ package body tx_arb_time_tran_ftest is
         CAN_wait_bus_idle(DUT_NODE, chn);
 
         ------------------------------------------------------------------------
-        -- @2. Generate CAN frame for transmission with timestamp lower than
-        --    actual value of timestamp input of CTU CAN FD. Insert it for
-        --    transmission and issue "set ready" command to this TXT Buffer.
-        --    Wait until transmission starts and check that difference between
-        --    start of transmission and time when "set ready" command was sent
-        --    is less than 1 bit time. Wait until frame is sent.
+        -- @3. Generate CAN frame for transmission with timestamp lower than
+        --     actual value of timestamp input of CTU CAN FD. Insert it for
+        --     transmission and issue "set ready" command to this TXT Buffer.
+        --     Wait until transmission starts and check that difference between
+        --     start of transmission and time when "set ready" command was sent
+        --     is less than 1 bit time. Wait until frame is sent.
         ------------------------------------------------------------------------
-        info_m("Step 2");
+        info_m("Step 3");
 
         timestamp_agent_get_timestamp(chn, ts_actual);
         CAN_generate_frame(CAN_frame);
@@ -266,12 +276,12 @@ package body tx_arb_time_tran_ftest is
         CAN_read_frame(CAN_frame_rx_1, TEST_NODE, chn);
         
         ------------------------------------------------------------------------
-        -- @3. Configure TXT Buffer 1 to higher priority than TXT Buffer 2. Insert
-        --    CAN frame with earlier time of transmission to TXT Buffer 2. Mark
-        --    both frames as ready. Wait until both frames are transmitted! Check
-        --    that first frame from Test node was transmitted!
+        -- @4. Configure TXT Buffer 1 to higher priority than TXT Buffer 2. Insert
+        --     CAN frame with earlier time of transmission to TXT Buffer 2. Mark
+        --     both frames as ready. Wait until both frames are transmitted! Check
+        --     that first frame from Test node was transmitted!
         ------------------------------------------------------------------------
-        info_m("Step 3");
+        info_m("Step 4");
         
         -- Generate buffers random!
         pick_random_txt_buffer(buf_1_index, DUT_NODE, chn);
