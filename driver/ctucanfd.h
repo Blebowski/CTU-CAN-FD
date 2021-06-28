@@ -34,16 +34,17 @@
 #include <linux/can/dev.h>
 #include <linux/list.h>
 
-#include "ctucanfd_hw.h"
-
 struct ctucan_priv {
 	struct can_priv can; /* must be first member! */
-	struct ctucan_hw_priv p;
+
+	void __iomem *mem_base;
+	unsigned int (*read_reg)(void __iomem *addr);
+	void (*write_reg)(u32 val, void __iomem *addr);
 
 	unsigned int txb_head;
 	unsigned int txb_tail;
 	u32 txb_prio;
-	unsigned int txb_mask;
+	unsigned int ntxbufs;
 	spinlock_t tx_lock; /* spinlock to serialize allocation and processing of TX buffers */
 
 	struct napi_struct napi;
@@ -53,7 +54,7 @@ struct ctucan_priv {
 	int irq_flags;
 	unsigned long drv_flags;
 
-	union ctu_can_fd_frame_format_w rxfrm_first_word;
+	u32 rxfrm_first_word;
 
 	struct list_head peers_on_pdev;
 };

@@ -41,6 +41,31 @@
 /sys/devices/pci0000:00/0000:00:1c.4/0000:05:00.0
 */
 
+
+const struct can_bittiming_const ctu_can_fd_bit_timing_max = {
+	"ctu_can_fd",
+	2,
+	190,
+	1,
+	63,
+	31,
+	1,
+	8,
+	1
+};
+
+const struct can_bittiming_const ctu_can_fd_bit_timing_data_max = {
+	"ctu_can_fd",
+	2,
+	94,
+	1,
+	31,
+	31,
+	1,
+	2,
+	1
+};
+
 typedef struct find_dir_chain {
     char *dir_name;
     DIR *dir;
