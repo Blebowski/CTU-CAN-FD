@@ -487,7 +487,7 @@ CTU CAN FD IP Core - System Architecture
 \begin_inset Text
 
 \begin_layout Plain Layout
-Version 0.9, Commit: 
+Version 0.13, Commit: 
 \begin_inset CommandInset include
 LatexCommand input
 filename "version.tex"
