@@ -456,8 +456,7 @@ begin
     --   rx_store_ide = '1' or rx_store_rtr = '1' or rx_store_edl = '1' or
     --   rx_store_dlc = '1' or rx_store_esi = '1' or rx_store_brs = '1' or
     --   rx_store_stuff_count = '1')
-    --  report "RX Shift register should be configured as Byte shift " &
-    --  "register only during DATA phase of CAN frame";
+    --  report "RX Shift register should be configured as Byte shift register only during DATA phase of CAN frame";
     
     -- psl no_simul_capture_and_clear : assert never
     --  (res_n_i_q_scan = '0') and
@@ -465,8 +464,7 @@ begin
     --   rx_store_ide = '1' or rx_store_rtr = '1' or rx_store_edl = '1' or
     --   rx_store_dlc = '1' or rx_store_esi = '1' or rx_store_brs = '1' or
     --   rx_store_stuff_count = '1')
-    --  report "RX Shift register should not be cleared when RX Data should" &
-    --         " be stored!";
+    --  report "RX Shift register should not be cleared when RX Data should be stored!";
 
     -- psl rx_shift_reg_clear_cov : cover
     --  {rx_clear = '1'};

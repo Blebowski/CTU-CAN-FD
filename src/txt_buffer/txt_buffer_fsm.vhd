@@ -452,7 +452,7 @@ begin
     -- psl txtb_unlock_only_in_tx_prog_asrt : assert always
     --  ((txtb_hw_cmd.unlock = '1' and hw_cbs = '1') ->
     --   (curr_state = s_txt_tx_prog or curr_state = s_txt_ab_prog))
-    --  report "TXT Buffer " & integer'image(G_ID) & "not TX in progress or Abort in progress";
+    --  report "TXT Buffer not TX in progress or Abort in progress when unlock received!";
     ----------------------------------------------------------------------------
     -- HW Lock command should never occur when there was abort in previous cycle!
     --
