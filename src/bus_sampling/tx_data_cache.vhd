@@ -212,13 +212,11 @@ begin
     -- in the FIFO!
     -- psl no_fifo_overflow_asrt : assert never
     --  ((read_pointer_q - 1 = write_pointer_q) and (write = '1'))
-    -- report "TX Cache is full, there should be less than 4 bits on the fly!"
-    -- severity error;
+    -- report "TX Cache is full, there should be less than 4 bits on the fly!";
     
     -- psl no_empty_read : assert never
     --  (read = '1' and write_pointer_q = read_pointer_q)
-    -- report "Read from empty TX CACHE"
-    -- severity error;
+    -- report "Read from empty TX CACHE";
     --
     -- Note: When read pointer is equal to write pointer, FIFO is for sure
     -- empty, because we detect error when it is almost full. So we never get

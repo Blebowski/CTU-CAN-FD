@@ -981,8 +981,7 @@ begin
     
     -- psl read_counter_lt_rwcnt_asrt : assert never
     --  (read_counter_q > 19)
-    -- report "Read counter higher than longest RWCNT!"
-    -- severity error;
+    -- report "Read counter higher than longest RWCNT!";
     
     ----------------------------------------------------------------------------
     ----------------------------------------------------------------------------
@@ -1088,8 +1087,7 @@ begin
     
     -- psl sof_pulse_asrt_asrt : assert never
     --   (sof_pulse = '1' and reset_overrun_flag = '0')
-    -- report "RX Buffer: SOF pulse should come when RX Buffer is idle!"
-    -- severity error;
+    -- report "RX Buffer: SOF pulse should come when RX Buffer is idle!";
 
     -- <RELEASE_ON>
 

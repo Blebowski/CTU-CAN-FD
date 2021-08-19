@@ -503,7 +503,7 @@ begin
 
     -- psl valid_stuff_length_setting_asrt : assert never
     --   ((destuff_length = "000" or destuff_length = "001") and (destuff_enable = '1'))
-    -- report "0 and 1 bit stuffing length is invalid!" severity error;
+    -- report "0 and 1 bit stuffing length is invalid!";
 
     -- psl bds_non_fix_to_fixed_change_cov : cover
     --  {bds_trigger = '1' and non_fix_to_fix_chng = '1'};

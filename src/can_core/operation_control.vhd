@@ -242,23 +242,19 @@ begin
     
     -- psl valid_arb_lost_asrt : assert never
     --  (arbitration_lost = '1' and curr_state /= s_oc_transmitter)
-    -- report "Unit which is not transmitter lost arbitration"
-    -- severity error;
+    -- report "Unit which is not transmitter lost arbitration";
     
     -- psl no_tx_rx_req_in_idle_asrt : assert never
     --  (set_transmitter = '1' or set_receiver = '1') and (curr_state = s_oc_off)
-    -- report "Unit which is OFF can't be set to Transmitter or Receiver"
-    -- severity error;
+    -- report "Unit which is OFF can't be set to Transmitter or Receiver";
     
     -- psl no_simul_tx_rx_set_asrt : assert never
     --  (set_transmitter = '1' and set_receiver = '1')
-    -- report "Unit can't be set to transmitter and receiver simultaneously!"
-    -- severity error;
+    -- report "Unit can't be set to transmitter and receiver simultaneously!";
     
     -- psl no_simul_tx_idle_set_asrt : assert never
     --  (set_transmitter = '1' and set_idle = '1')
-    -- report "Unit can't be set to transmitter and idle simultaneously!"
-    -- severity error;
+    -- report "Unit can't be set to transmitter and idle simultaneously!";
     
     -- psl never_to_off_as_receiver_asrt : assert never
     --  (go_to_off = '1' and curr_state = s_oc_receiver)

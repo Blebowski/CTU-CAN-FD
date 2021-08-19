@@ -1031,13 +1031,11 @@ begin
 
     -- psl no_tx_dominant_when_disabled_asrt : assert never
     --  (drv_bus(DRV_ENA_INDEX) = '0' and can_tx = DOMINANT)
-    --  report "Dominant bit can't be transmitted when Node is disabled!"
-    --  severity error;
+    --  report "Dominant bit can't be transmitted when Node is disabled!";
 
     -- psl no_tx_dominant_when_bus_monitoring_asrt : assert never
     --  (drv_bus(DRV_BUS_MON_ENA_INDEX) = '1' and can_tx = DOMINANT)
-    --  report "Dominant bit can't be transmitted in Bus monitoring mode!"
-    --  severity error;
+    --  report "Dominant bit can't be transmitted in Bus monitoring mode!";
     
     -- Each TXT Buffer should have been unlocked already when unit is
     -- transmitting overload frame! This-way we can be sure that no we can
@@ -1048,8 +1046,7 @@ begin
     -- psl no_tx_buf_transmitting_in_overload_asrt : assert never
     --  (((txtb_state(i) = TXT_TRAN) or (txtb_state(i) = TXT_ABTP))) and
     --   (is_overload = '1')
-    --   report "TXT Buffer should have been unlocked when node is in Overload frame!"
-    --   severity error;
+    --   report "TXT Buffer should have been unlocked when node is in Overload frame!";
     
     end generate;
 
