@@ -332,13 +332,11 @@ begin
     
     -- psl store_metadata_in_idle_asrt : assert never
     --  (store_metadata_f = '1' and (curr_state /= s_rxb_idle))
-    -- report "RX Buffer: Store metadata command did NOT come when RX buffer " &
-    --        "is idle!";
+    -- report "RX Buffer: Store metadata command did NOT come when RX buffer is idle!";
     
     -- psl commit_or_store_data_asrt : assert never
     --  ((rec_valid_f = '1' or store_data_f = '1') and curr_state /= s_rxb_store_data)
-    -- report "RX Buffer: Store data or frame commit commands did not come " &
-    --        "when RX Buffer is receiving data!";
+    -- report "RX Buffer: Store data or frame commit commands did not come when RX Buffer is receiving data!";
     
     -- psl rx_buf_cmds_one_hot_asrt : assert always
     --   (now > 0 ps) -> (cmd_join = "0000" or cmd_join = "0001" or 

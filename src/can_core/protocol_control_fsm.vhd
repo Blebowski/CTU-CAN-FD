@@ -3301,8 +3301,7 @@ begin
     
     -- psl no_simul_rx_trigger_err_req_asrt : assert never
     --  (rx_trigger = '1' and err_frm_req = '1')
-    --  report "RX Trigger and Error frame request can't be active at once " &
-    --  " since they should occur in different pipeline stages!";
+    --  report "RX Trigger and Error frame request can't be active at once since they should occur in different pipeline stages!";
 
     -- psl no_simul_rx_rtr_and_fd_frame_asrt : assert never
     --  (rec_is_rtr = RTR_FRAME and rec_frame_type = FD_CAN)
