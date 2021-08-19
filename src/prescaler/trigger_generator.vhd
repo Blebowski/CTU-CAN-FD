@@ -232,8 +232,7 @@ begin
     --
     -- psl sync_sample_trig_no_simul_asrt : assert never
     --  (rx_trig_req = '1' and tx_trig_req = '1')
-    --  report "Sync and Sample trigger should no be requested at once!"
-    --  severity error;
+    --  report "Sync and Sample trigger should no be requested at once!";
     ---------------------------------------------------------------------------
     
     -- psl tx_trigger_throttling_cov : cover

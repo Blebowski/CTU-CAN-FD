@@ -173,8 +173,7 @@ begin
     -- psl default clock is rising_edge (aclk);
     
     -- psl onecycle_rden_asrt : assert always reg_rden_o = '1' -> next reg_rden_o = '0'
-    --  report "Read enable shall be active only for one clock cycle"
-    --  severity error;
+    --  report "Read enable shall be active only for one clock cycle";
       
     -- <RELEASE_ON>
     

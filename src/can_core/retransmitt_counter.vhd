@@ -187,13 +187,11 @@ begin
 
     -- psl retr_ctr_simul_set_and_clear_asrt : assert never
     --  (retr_ctr_add = '1' and retr_ctr_clear = '1');
-    -- report "Retransmitt counter, simultaneous increment and clear!"
-    -- severity error;
+    -- report "Retransmitt counter, simultaneous increment and clear!";
     
     -- psl_retr_ctr_no_overflow : assert never
     --  (retr_limit_reached = '1' and retr_ctr_add = '1')
-    -- report "Retransmitt counter overflow"
-    -- severity error;
+    -- report "Retransmitt counter overflow";
     
     -- <RELEASE_ON>
 end architecture;

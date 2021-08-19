@@ -413,13 +413,11 @@ begin
    --  (inc_one = '1' and inc_eight = '1') or
    --  (inc_one = '1' and dec_one = '1') or
    --  (dec_one = '1' and inc_eight = '1')
-   -- report "Can't manipulate Error counters by multiple commands at once"
-   -- severity error;
+   -- report "Can't manipulate Error counters by multiple commands at once";
 
    -- psl no_simul_transm_rec_asrt : assert never
    --   (is_transmitter = '1' and is_receiver = '1')
-   -- report "Unit can't be transmitter and receiver at once"
-   -- severity error;
+   -- report "Unit can't be transmitter and receiver at once";
    
    -- psl err_ctrs_inc_one_cov : cover
    --   {inc_one = '1'};

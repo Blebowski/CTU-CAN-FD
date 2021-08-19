@@ -333,28 +333,24 @@ begin
     -- psl store_metadata_in_idle_asrt : assert never
     --  (store_metadata_f = '1' and (curr_state /= s_rxb_idle))
     -- report "RX Buffer: Store metadata command did NOT come when RX buffer " &
-    --        "is idle!"
-    -- severity error;
+    --        "is idle!";
     
     -- psl commit_or_store_data_asrt : assert never
     --  ((rec_valid_f = '1' or store_data_f = '1') and curr_state /= s_rxb_store_data)
     -- report "RX Buffer: Store data or frame commit commands did not come " &
-    --        "when RX Buffer is receiving data!"
-    -- severity error;
+    --        "when RX Buffer is receiving data!";
     
     -- psl rx_buf_cmds_one_hot_asrt : assert always
     --   (now > 0 ps) -> (cmd_join = "0000" or cmd_join = "0001" or 
     --    cmd_join = "0010" or cmd_join = "0100" or cmd_join = "1000")
-    -- report "RX Buffer: RX Buffer commands should be one-hot encoded!"
-    -- severity error;
+    -- report "RX Buffer: RX Buffer commands should be one-hot encoded!";
     
     -- psl rx_no_abort_after_metadata : assert never
     --  (rec_abort_f = '1') and
     --  (curr_state = s_rxb_store_identifier or curr_state = s_rxb_skip_ts_low or
     --   curr_state = s_rxb_skip_ts_high or curr_state = s_rxb_store_end_ts_low or
     --   curr_state = s_rxb_store_end_ts_high)
-    --  report "RX Buffer abort not supported storing of Identifier and Timestamp"
-    --  severity error;
+    --  report "RX Buffer abort not supported storing of Identifier and Timestamp";
 
     -- <RELEASE_ON>
 end architecture;

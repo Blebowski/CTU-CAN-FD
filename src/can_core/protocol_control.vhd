@@ -1090,33 +1090,27 @@ begin
     -- psl no_invalid_ack_err_asrt : assert never
     --  ((ack_err = '1' or crc_err = '1' or stuff_err = '1') and
     --   (is_err_frm = '1'))
-    -- report "ACK, Stuff, CRC Errors can't occur during Error or overload flag"
-    --  severity error;
+    -- report "ACK, Stuff, CRC Errors can't occur during Error or overload flag";
     
     -- psl sample_sec_proper_asrt : assert never
     --  (sp_control = SECONDARY_SAMPLE and is_transmitter = '0')
-    --  report "Secondary sampling is allowed only for transmitter!"
-    --  severity error;
+    --  report "Secondary sampling is allowed only for transmitter!";
     
     -- psl no_simul_tx_rx_trigger_asrt : assert never
     --  (tx_trigger = '1' and rx_trigger = '1')
-    --  report "RX Trigger and TX Trigger can't be active at once!"
-    --  severity error;
+    --  report "RX Trigger and TX Trigger can't be active at once!";
     
     -- psl no_simul_transmitter_receiver_asrt : assert never
     --  (is_transmitter = '1' and is_receiver = '1')
-    --  report "Unit can't be transmitter and receiver simultaneously!"
-    --  severity error;
+    --  report "Unit can't be transmitter and receiver simultaneously!";
     
     -- psl no_h_sync_in_data_bit_rate_asrt : assert always
     --  (sync_control = HARD_SYNC) -> (sp_control = NOMINAL_SAMPLE)
-    --  report "Hard synchronisation shall be used in Nominal bit rate only!"
-    --  severity error;
+    --  report "Hard synchronisation shall be used in Nominal bit rate only!";
     
     -- psl no_simul_err_req_asrt : assert never
     --  (tran_valid = '1' and err_frm_req = '1')
-    -- report "Tranmission OK and Error frame request can't occur at once!"
-    -- severity error;
+    -- report "Tranmission OK and Error frame request can't occur at once!";
     
     -- <RELEASE_ON>
 end architecture;

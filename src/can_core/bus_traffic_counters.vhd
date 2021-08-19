@@ -269,8 +269,7 @@ begin
     
     -- psl no_simul_inc_tx_rx_asrt : assert never
     -- (inc_tx_ctr = '1' and inc_rx_ctr = '1')
-    -- report "Simultaneous increment of TX and RX error traffic counter"
-    -- severity error;
+    -- report "Simultaneous increment of TX and RX error traffic counter";
 
     -- psl traffic_ctrs_tx_inc_cov : cover
     --  {inc_tx_ctr = '1'};

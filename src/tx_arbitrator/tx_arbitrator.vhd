@@ -814,7 +814,7 @@ begin
   -- psl txtb_no_lock_when_not_ready_asrt : assert never
   --   {tran_frame_valid = '0';
   --    tran_frame_valid = '0' and txtb_hw_cmd.lock = '1'}
-  --   report "NO TXT Buffer ready and lock occurs!" severity error;
+  --   report "NO TXT Buffer ready and lock occurs!";
   -----------------------------------------------------------------------------
   -- <RELEASE_ON>
   
