@@ -86,7 +86,7 @@ package id_transfer_pkg is
     -- Register value to decimal value
     procedure ID_reg_to_decimal(
         signal ID_reg   : in    std_logic_vector(28 downto 0);
-        signal ID_dec   : out   natural
+        signal ID_dec   : out   natural range 0 to (2 ** 29 - 1)
     );
 
 end package id_transfer_pkg;
@@ -94,8 +94,8 @@ end package id_transfer_pkg;
 package body id_transfer_pkg is
 
     procedure ID_reg_to_decimal(
-        signal ID_reg   : in  std_logic_vector(28 downto 0);
-        signal ID_dec   : out natural
+        signal ID_reg   : in    std_logic_vector(28 downto 0);
+        signal ID_dec   : out   natural range 0 to (2 ** 29 - 1)
     ) is
         variable base : std_logic_vector(10 downto 0);
         variable ext  : std_logic_vector(17 downto 0);
