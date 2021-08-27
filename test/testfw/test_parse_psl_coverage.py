@@ -73,26 +73,26 @@ def collapse_psl_coverage_files(non_collapsed):
             # "dut_top" entity down. Skip if not
             in_name = psl_in["name"].split(dut_top)[-1]
             out_name = psl_out["name"].split(dut_top)[-1]
-            if (out_name != in_name):
+            if out_name != in_name:
                 continue
 
-            if (not ("colapsed_points" in psl_out)):
+            if not ("colapsed_points" in psl_out):
                 psl_out["colapsed_name"] = str(dut_top + in_name)
                 psl_out["colapsed_points"] = []
 
             psl_out["colapsed_points"].append(psl_in)
 
             # If any of colapsed points is covered -> whole point is covered
-            if (psl_in["status"] == "covered"):
+            if psl_in["status"] == "covered":
                 psl_out["status"] = "covered"
                 psl_out["finished-count"] += psl_in["finished-count"]
 
             # If any of colapsed points is failed -> whole point is failed
-            if (psl_in["status"] == "failed"):
+            if psl_in["status"] == "failed":
                 psl_out["status"] = "failed"
 
             # Assertion hits add up for both failed and passed
-            if (psl_out["directive"] == "assertion"):
+            if psl_out["directive"] == "assertion":
                 psl_out["finished-count"] += psl_in["finished-count"]
 
             found = True
@@ -166,10 +166,9 @@ def calc_coverage_results(psl_points: List[TPslPoint], psl_type) -> Tuple[int, i
     ok = 0
     nok = 0
     for psl_point in psl_points:
-        if (psl_point["directive"] != psl_type):
+        if psl_point["directive"] != psl_type:
             continue
-        if (psl_point["status"] == "passed" or
-            psl_point["status"] == "covered"):
+        if (psl_point["status"] == "passed") or (psl_point["status"] == "covered"):
             ok += 1
         else:
             nok += 1
@@ -180,21 +179,23 @@ def calc_coverage_color(coverage: float) -> str:
     """
     Return color based on coverage result.
     """
-    if (coverage < 0 or coverage > 100):
+    if (coverage < 0) or (coverage > 100):
         raise ValueError("Invalid coverage input should be between 0 - 100 %")
 
-    if (coverage > 90):
-        return "Lime"
-    elif (coverage > 80):
+    if coverage == 100:
+        return "Green"
+    elif coverage > 90:
+        return "Gold"
+    elif coverage > 80:
         return "Orange"
-    elif (coverage > 70):
+    elif coverage > 70:
         return "OrangeRed"
     else:
         return "Red"
 
 
-def print_cov_cell_percentage(doc, tag, text, psl_points: List[TPslPoint],
-                              coverage_type, merge_abs_vals) -> None:
+def print_cov_cell_percentage(doc, tag, text, psl_points: List[TPslPoint], coverage_type,
+                              merge_abs_vals) -> None:
     """
     """
     ok, nok = calc_coverage_results(psl_points, coverage_type)
@@ -202,8 +203,8 @@ def print_cov_cell_percentage(doc, tag, text, psl_points: List[TPslPoint],
     percents = ok/summ * 100
     color = calc_coverage_color(percents)
 
-    if (merge_abs_vals):
-        if (ok + nok > 0):
+    if merge_abs_vals:
+        if (ok + nok) > 0:
             with tag('td', bgcolor=color):
                 text("({}/{}) {:.1f}%".format(ok, summ, percents))
         else:
@@ -215,7 +216,7 @@ def print_cov_cell_percentage(doc, tag, text, psl_points: List[TPslPoint],
         with tag('td'):
             text(nok)
 
-        if (ok + nok > 0):
+        if (ok + nok) > 0:
             with tag('td', bgcolor=color):
                 text("{:.1f}%".format(percents))
         else:
@@ -234,13 +235,8 @@ def add_psl_html_header(doc, tag, text, filename, psl_points: List[TPslPoint]):
                 with tag('font', size=10):
                     text("GHDL PSL Functional coverage report")
             with tag('table', width='100%', border="1px solid black"):
-                headers = ["Filename"]
-                headers.append("Covered")
-                headers.append("Not-Covered")
-                headers.append("Functional coverage")
-                headers.append("Passed")
-                headers.append("Failed")
-                headers.append("Assertions passed")
+                headers = ["Filename", "Covered", "Not-Covered", "Functional coverage", "Passed",
+                           "Failed", "Assertions passed"]
                 add_html_table_header(doc, tag, text, headers, back_color="Aquamarine")
 
                 with tag('td'):
@@ -249,12 +245,11 @@ def add_psl_html_header(doc, tag, text, filename, psl_points: List[TPslPoint]):
                 # Calculate results for each type
                 coverage_types = ["cover", "assertion"]
                 for coverage_type in coverage_types:
-                    print_cov_cell_percentage(doc, tag, text, psl_points, \
-                        coverage_type, merge_abs_vals=False)
+                    print_cov_cell_percentage(doc, tag, text, psl_points, coverage_type,
+                                              merge_abs_vals=False)
 
 
-def add_non_colapsed_psl_table_entry(doc, tag, text, psl_point: TPslPoint,
-                                     def_bg_color="White"):
+def add_non_colapsed_psl_table_entry(doc, tag, text, psl_point: TPslPoint):
     """
     Add HTML table entry for non-collapsed PSL functional coverage point.
 
@@ -270,18 +265,16 @@ def add_non_colapsed_psl_table_entry(doc, tag, text, psl_point: TPslPoint,
     with tag('td'):
         text(psl_point["finished-count"])
 
-    if (psl_point["status"] == "covered" or \
-        psl_point["status"] == "passed"):
+    if (psl_point["status"] == "covered") or (psl_point["status"] == "passed"):
         color = "Lime"
     else:
-        color = "red"
+        color = "Red"
 
     with tag('td', ('bgcolor',color)):
         text(psl_point["status"])
 
 
-def add_colapsed_psl_table_entry(doc, tag, text, psl_point: TPslPoint,
-                                 def_bg_color="White"):
+def add_colapsed_psl_table_entry(doc, tag, text, psl_point: TPslPoint):
     """
     Add HTML table entry for collapsed PSL functional coverage point. Adds
     llink reference to collapsed entries on separate site.
@@ -300,11 +293,10 @@ def add_colapsed_psl_table_entry(doc, tag, text, psl_point: TPslPoint,
     with tag('td'):
         text(psl_point["finished-count"])
 
-    if (psl_point["status"] == "covered" or \
-        psl_point["status"] == "passed"):
-        color = "Lime"
+    if (psl_point["status"] == "covered") or (psl_point["status"] == "passed"):
+        color = "Green"
     else:
-        color = "red"
+        color = "Red"
 
     with tag('td', ('bgcolor',color)):
         text(psl_point["status"])
@@ -318,14 +310,14 @@ def add_psl_table_entry(doc, tag, text, psl_point: TPslPoint,
     """
     # Add default entry (single or collapsed)
     with tag('tr', ('bgcolor',def_bg_color)):
-        if ("colapsed_points" in psl_point):
-            add_colapsed_psl_table_entry(doc, tag, text, psl_point, def_bg_color="White")
+        if "colapsed_points" in psl_point:
+            add_colapsed_psl_table_entry(doc, tag, text, psl_point)
         else:
-            add_non_colapsed_psl_table_entry(doc, tag, text, psl_point, def_bg_color="White")
+            add_non_colapsed_psl_table_entry(doc, tag, text, psl_point)
 
     # Create separate page with collapsed PSL points for this PSL statement
     # Add unique filename
-    if ("colapsed_points" in psl_point):
+    if "colapsed_points" in psl_point:
         file_name = html_dir / get_collapsed_file_name(psl_point)
         create_psl_file_page(file_name, psl_point["colapsed_points"])
 
@@ -354,7 +346,7 @@ def create_psl_file_page(filename: Path, psl_points: List[TPslPoint]) -> None:
                 titles = ["PSL Point Name", "Test name", "Full Path Name", "Line", "Count", "Status"]
                 add_html_table_header(doc, tag, text, titles, back_color="Peru")
                 for psl_point in psl_points:
-                    if (psl_point["directive"] == psl_type["type"]):
+                    if psl_point["directive"] == psl_type["type"]:
                         add_psl_table_entry(doc, tag, text, psl_point)
 
     with html_cov_path.open('wt', encoding='utf-8') as html_file:
@@ -374,8 +366,8 @@ def create_psl_file_refs_table(doc, tag, text, psl_by_files: Dict[Path, List[TPs
                     text(name)
             coverage_types = ["cover", "assertion"]
             for coverage_type in coverage_types:
-                print_cov_cell_percentage(doc, tag, text, psl_list, \
-                        coverage_type, merge_abs_vals=True)
+                print_cov_cell_percentage(doc, tag, text, psl_list, coverage_type,
+                                          merge_abs_vals=True)
 
 
 def create_psl_report(psl_by_files: Dict[Path, List[TPslPoint]], psl_orig) -> None:
