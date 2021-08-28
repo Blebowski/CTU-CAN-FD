@@ -81,7 +81,7 @@ use ieee.std_logic_1164.all;
 package can_config_pkg is
 
     -- IP Core version
-    constant C_CTU_CAN_FD_VERSION_MINOR : std_logic_vector(7 downto 0) := x"03";
+    constant C_CTU_CAN_FD_VERSION_MINOR : std_logic_vector(7 downto 0) := x"04";
     constant C_CTU_CAN_FD_VERSION_MAJOR : std_logic_vector(7 downto 0) := x"02";
 
     -- Number of TXT Buffers
