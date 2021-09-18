@@ -65,7 +65,10 @@ def cleanup_artifacts(older_than : int):
 
         if (art_days + older_than) < cur_day:
             print("Erasing artifacts of job: {} from: {}".format(job.id, job.finished_at))
-            job.delete_artifacts()
+            try:
+                job.delete_artifacts()
+            except:
+                print("Could not erase artifacts of job: {}".format(job.id))
 
 
 def cleanup_pipelines(older_than : int):
@@ -83,7 +86,10 @@ def cleanup_pipelines(older_than : int):
 
         if (art_days + older_than) < cur_day:
             print("Erasing pipeline: {} from: {}".format(pipeline.id, pipeline.created_at))
-            pipeline.delete()
+            try:
+                pipeline.delete()
+            except:
+                print("Could not erase pipeline: {}".format(pipeline.id))
 
 
 def cleanup_jobs(older_than : int):
@@ -103,7 +109,10 @@ def cleanup_jobs(older_than : int):
 
         if (art_days + older_than) < cur_day:
             print("Erasing job: {}".format(job.id))
-            job.erase()
+            try:
+                job.erase()
+            except:
+                print("Could not erase a job: {}".format(job.id))
 
 
 if __name__ == "__main__":

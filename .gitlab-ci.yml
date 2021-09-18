@@ -84,6 +84,17 @@ build_linux_driver:
         paths:
             - driver/linux/ctucanfd.ko
 
+export_available_tests:
+    stage: build
+    only:
+        - master
+    script:
+        - cd scripts
+        - python3 export_test_names.py
+    artifacts:
+        paths:
+            - test/test_list.txt
+
 run_synthesis:
     stage: build
     only: *only
@@ -328,6 +339,7 @@ pages:
         # Copy RTL
         - cp src/*.vhd public/rtl/
         - cp src/**/*.vhd public/rtl/
+        - cp src/**/**/*.vhd public/rtl/
         - cp test/rtl_lst.txt public/
 
         # Copy TB
@@ -335,7 +347,10 @@ pages:
         - cp test/main_tb/**/*.vhd public/tb/
         - cp test/main_tb/**/**/*.vhd public/tb/
         - cp test/tb_lst.txt public/
-        
+
+        # Copy test list
+        - cp test/test_list.txt public/
+
         # Compliance test library
         - cp test/main_tb/compliance_library/libSIMULATOR_INTERFACE_LIB.so public/
 
