@@ -328,6 +328,7 @@ pages:
         # Copy RTL
         - cp src/*.vhd public/rtl/
         - cp src/**/*.vhd public/rtl/
+        - cp src/**/**/*.vhd public/rtl/
         - cp test/rtl_lst.txt public/
 
         # Copy TB
