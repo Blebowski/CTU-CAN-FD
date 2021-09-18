@@ -275,7 +275,7 @@ begin
     sspc_threshold <= ssp_delay_padded when (first_ssp_q = '1') else
                       btmc_q;
 
-    sspc_expired <= '1' when (sspc_q >= sspc_threshold) else
+    sspc_expired <= '1' when (unsigned(sspc_q) >= unsigned(sspc_threshold)) else
                     '0';
 
     sspc_add <= std_logic_vector(unsigned(sspc_q) + 1);

@@ -150,17 +150,15 @@ architecture rtl of bit_time_counters is
 
     signal tq_edge_i            : std_logic;
 
-    constant tq_zeroes : std_logic_vector(G_BRP_WIDTH - 1 downto 0) :=
-        (OTHERS => '0');
-    constant tq_run_th : std_logic_vector(G_BRP_WIDTH - 1 downto 0) :=
-        std_logic_vector(to_unsigned(1, G_BRP_WIDTH));
+    constant C_TQ_RUN_TH : unsigned(G_BRP_WIDTH - 1 downto 0) :=
+        to_unsigned(1, G_BRP_WIDTH);
     
     -- Bit Time counter
     signal segm_counter_d         : std_logic_vector(G_BT_WIDTH - 1 downto 0);
     signal segm_counter_q         : std_logic_vector(G_BT_WIDTH - 1 downto 0);
     signal segm_counter_ce        : std_logic;
     
-    constant bt_zeroes : std_logic_vector(G_BT_WIDTH - 1 downto 0) :=
+    constant C_BT_ZEROES : std_logic_vector(G_BT_WIDTH - 1 downto 0) :=
         (OTHERS => '0');
 
 begin
@@ -169,7 +167,7 @@ begin
     -- If prescaler is defined as 0 or 1, there is no need to run the counter!
     -- Run it only when Prescaler is higher than 1! 
     ---------------------------------------------------------------------------
-    tq_counter_allow <= '1' when (brp > tq_run_th) else
+    tq_counter_allow <= '1' when (unsigned(brp) > C_TQ_RUN_TH) else
                         '0';
 
     tq_counter_ce <= '1' when (tq_counter_allow = '1' and ctrs_en = '1')
@@ -211,8 +209,8 @@ begin
     ---------------------------------------------------------------------------
     -- Segment counter
     ---------------------------------------------------------------------------
-    segm_counter_d <= bt_zeroes when (bt_reset = '1') else
-                    std_logic_vector(unsigned(segm_counter_q) + 1);
+    segm_counter_d <= C_BT_ZEROES when (bt_reset = '1') else
+                      std_logic_vector(unsigned(segm_counter_q) + 1);
 
     segm_counter_ce <= '1' when (bt_reset = '1')
                            else
