@@ -1471,5 +1471,7 @@ err_free:
 EXPORT_SYMBOL(ctucan_probe_common);
 
 MODULE_LICENSE("GPL");
-MODULE_AUTHOR("Martin Jerabek");
+MODULE_AUTHOR("Martin Jerabek <martin.jerabek01@gmail.com>");
+MODULE_AUTHOR("Pavel Pisa <pisa@cmp.felk.cvut.cz>");
+MODULE_AUTHOR("Ondrej Ille <ondrej.ille@gmail.com>");
 MODULE_DESCRIPTION("CTU CAN FD interface");
