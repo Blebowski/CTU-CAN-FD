@@ -120,21 +120,45 @@ static const char * const ctucan_state_strings[CAN_STATE_MAX] = {
 	CTUCAN_STATE_TO_TEXT_ENTRY(CAN_STATE_SLEEPING)
 };
 
+static void ctucan_write32_le(struct ctucan_priv *priv,
+		       enum ctu_can_fd_can_registers reg, u32 val)
+{
+	iowrite32(val, priv->mem_base + reg);
+}
+
+static void ctucan_write32_be(struct ctucan_priv *priv,
+			  enum ctu_can_fd_can_registers reg, u32 val)
+{
+	iowrite32be(val, priv->mem_base + reg);
+}
+
+static u32 ctucan_read32_le(struct ctucan_priv *priv,
+		     enum ctu_can_fd_can_registers reg)
+{
+	return ioread32(priv->mem_base + reg);
+}
+
+static u32 ctucan_read32_be(struct ctucan_priv *priv,
+			enum ctu_can_fd_can_registers reg)
+{
+	return ioread32be(priv->mem_base + reg);
+}
+
 static inline void ctucan_write32(struct ctucan_priv *priv, enum ctu_can_fd_can_registers reg,
 				  u32 val)
 {
-	priv->write_reg(val, priv->mem_base + reg);
+	priv->write_reg(priv, reg, val);
 }
 
 static inline u32 ctucan_read32(struct ctucan_priv *priv, enum ctu_can_fd_can_registers reg)
 {
-	return priv->read_reg(priv->mem_base + reg);
+	return priv->read_reg(priv, reg);
 }
 
 static void ctucan_write_txt_buf(struct ctucan_priv *priv, enum ctu_can_fd_can_registers buf_base,
 				 u32 offset, u32 val)
 {
-	priv->write_reg(val, priv->mem_base + buf_base + offset);
+	priv->write_reg(priv, buf_base + offset, val);
 }
 
 #define CTU_CAN_FD_TXTNF(priv) (!!FIELD_GET(REG_STATUS_TXNF, ctucan_read32(priv, CTUCANFD_STATUS)))
@@ -489,7 +513,7 @@ static inline enum ctucan_txtb_status ctucan_get_tx_status(struct ctucan_priv *p
  * Return: True - Frame can be inserted to TXT Buffer, False - If attempted, frame will not be
  * 	   inserted to TXT Buffer
  */
-bool ctucan_is_txt_buf_writable(struct ctucan_priv *priv, u8 buf)
+static bool ctucan_is_txt_buf_writable(struct ctucan_priv *priv, u8 buf)
 {
 	enum ctucan_txtb_status buf_status;
 
@@ -646,7 +670,7 @@ static netdev_tx_t ctucan_start_xmit(struct sk_buff *skb, struct net_device *nde
  *
  * Note: Frame format word must be read separately and provided in 'ffw'.
  */
-void ctucan_read_rx_frame(struct ctucan_priv *priv, struct canfd_frame *cf, u32 ffw)
+static void ctucan_read_rx_frame(struct ctucan_priv *priv, struct canfd_frame *cf, u32 ffw)
 {
 	u32 idw;
 	unsigned int i;
@@ -1411,8 +1435,8 @@ int ctucan_probe_common(struct device *dev, void __iomem *addr, int irq, unsigne
 		can_clk_rate = clk_get_rate(priv->can_clk);
 	}
 
-	priv->write_reg = iowrite32;
-	priv->read_reg = ioread32;
+	priv->write_reg = ctucan_write32_le;
+	priv->read_reg = ctucan_read32_le;
 
 	if (pm_enable_call)
 		pm_runtime_enable(dev);
@@ -1426,8 +1450,8 @@ int ctucan_probe_common(struct device *dev, void __iomem *addr, int irq, unsigne
 
 	/* Check for big-endianity and set according IO-accessors */
 	if ((ctucan_read32(priv, CTUCANFD_DEVICE_ID) & 0xFFFF) != CTUCANFD_ID) {
-		priv->write_reg = iowrite32be;
-		priv->read_reg = ioread32be;
+		priv->write_reg = ctucan_write32_be;
+		priv->read_reg = ctucan_read32_be;
 		if ((ctucan_read32(priv, CTUCANFD_DEVICE_ID) & 0xFFFF) != CTUCANFD_ID) {
 			netdev_err(ndev, "CTU_CAN_FD signature not found\n");
 			ret = -ENODEV;

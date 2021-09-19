@@ -34,12 +34,16 @@
 #include <linux/can/dev.h>
 #include <linux/list.h>
 
+enum ctu_can_fd_can_registers;
+
 struct ctucan_priv {
 	struct can_priv can; /* must be first member! */
 
 	void __iomem *mem_base;
-	unsigned int (*read_reg)(void __iomem *addr);
-	void (*write_reg)(u32 val, void __iomem *addr);
+	u32 (*read_reg)(struct ctucan_priv *priv,
+				 enum ctu_can_fd_can_registers reg);
+	void (*write_reg)(struct ctucan_priv *priv,
+			  enum ctu_can_fd_can_registers reg, u32 val);
 
 	unsigned int txb_head;
 	unsigned int txb_tail;
