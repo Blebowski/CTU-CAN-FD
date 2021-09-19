@@ -1425,10 +1425,10 @@ int ctucan_probe_common(struct device *dev, void __iomem *addr, int irq, unsigne
 	}
 
 	/* Check for big-endianity and set according IO-accessors */
-	if ((priv->read_reg(CTUCANFD_DEVICE_ID) & 0xFFFF) != CTUCANFD_ID) {
+	if ((ctucan_read32(priv, CTUCANFD_DEVICE_ID) & 0xFFFF) != CTUCANFD_ID) {
 		priv->write_reg = iowrite32be;
 		priv->read_reg = ioread32be;
-		if ((priv->read_reg(CTUCANFD_DEVICE_ID) & 0xFFFF) != CTUCANFD_ID) {
+		if ((ctucan_read32(priv, CTUCANFD_DEVICE_ID) & 0xFFFF) != CTUCANFD_ID) {
 			netdev_err(ndev, "CTU_CAN_FD signature not found\n");
 			ret = -ENODEV;
 			goto err_deviceoff;
