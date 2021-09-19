@@ -678,7 +678,11 @@ static void ctucan_read_rx_frame(struct ctucan_priv *priv, struct canfd_frame *c
 	unsigned int len;
 
 	idw = ctucan_read32(priv, CTUCANFD_RX_DATA);
-	cf->can_id = (FIELD_GET(REG_FRAME_FORMAT_W_IDE, ffw)) ? idw : ((idw >> 18) & CAN_SFF_MASK);
+	if (FIELD_GET(REG_FRAME_FORMAT_W_IDE, ffw)) {
+		cf->can_id = (idw & CAN_EFF_MASK) | CAN_EFF_FLAG;
+	} else {
+		cf->can_id = (idw >> 18) & CAN_SFF_MASK;
+	}
 
 	/* BRS, ESI, RTR Flags */
 	cf->flags = 0;
