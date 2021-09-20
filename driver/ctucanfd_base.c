@@ -197,6 +197,7 @@ static int ctucan_reset(struct net_device *ndev)
 
 	do {
 		u16 device_id = FIELD_GET(REG_DEVICE_ID_DEVICE_ID, ctucan_read32(priv, CTUCANFD_DEVICE_ID));
+
 		if (device_id == 0xCAFD)
 			return 0;
 		if (!i--) {
@@ -243,8 +244,7 @@ static int ctucan_set_btr(struct net_device *ndev, struct can_bittiming *bt, boo
 		bt->phase_seg1 = phase_seg1;
 	}
 
-	if (nominal)
-	{
+	if (nominal) {
 		btr = FIELD_PREP(REG_BTR_PROP, prop_seg);
 		btr |= FIELD_PREP(REG_BTR_PH1, phase_seg1);
 		btr |= FIELD_PREP(REG_BTR_PH2, bt->phase_seg2);
@@ -428,7 +428,7 @@ static int ctucan_chip_start(struct net_device *ndev)
 
 	/* Configure interrupts */
 	int_ena = REG_INT_STAT_RBNEI |
-	          REG_INT_STAT_TXBHCI |
+		  REG_INT_STAT_TXBHCI |
 		  REG_INT_STAT_EWLI |
 		  REG_INT_STAT_FCSI;
 
@@ -460,7 +460,7 @@ static int ctucan_chip_start(struct net_device *ndev)
  * @ndev:	Pointer to net_device structure
  * @mode:	Tells the mode of the driver
  *
- * This check the drivers state and calls the the corresponding modes to set.
+ * This check the drivers state and calls the corresponding modes to set.
  *
  * Return: 0 on success and failure value on error
  */
@@ -511,7 +511,7 @@ static inline enum ctucan_txtb_status ctucan_get_tx_status(struct ctucan_priv *p
  * @buf:	Buffer index (0-based)
  *
  * Return: True - Frame can be inserted to TXT Buffer, False - If attempted, frame will not be
- * 	   inserted to TXT Buffer
+ *	   inserted to TXT Buffer
  */
 static bool ctucan_is_txt_buf_writable(struct ctucan_priv *priv, u8 buf)
 {
@@ -526,16 +526,16 @@ static bool ctucan_is_txt_buf_writable(struct ctucan_priv *priv, u8 buf)
 
 /**
  * ctucan_insert_frame() - Inserts frame to TXT buffer
- * @priv: 	Pointer to private data
+ * @priv:	Pointer to private data
  * @cf:		Pointer to CAN frame to be inserted
  * @buf:	TXT Buffer index to which frame is inserted (0-based)
  * @isfdf:	True - CAN FD Frame, False - CAN 2.0 Frame
  *
  * Return: True - Frame inserted successfully
- * 	   False - Frame was not inserted due to one of:
- * 			1. TXT Buffer is not writable (it is in wrong state)
- * 			2. Invalid TXT buffer index
- * 			3. Invalid frame lenght
+ *	   False - Frame was not inserted due to one of:
+ *			1. TXT Buffer is not writable (it is in wrong state)
+ *			2. Invalid TXT buffer index
+ *			3. Invalid frame lenght
  */
 static bool ctucan_insert_frame(struct ctucan_priv *priv, const struct canfd_frame *cf, u8 buf,
 				bool isfdf)
@@ -570,11 +570,10 @@ static bool ctucan_insert_frame(struct ctucan_priv *priv, const struct canfd_fra
 	ffw |= FIELD_PREP(REG_FRAME_FORMAT_W_DLC, can_len2dlc(cf->len));
 
 	/* Prepare identifier */
-	if (cf->can_id & CAN_EFF_FLAG) {
+	if (cf->can_id & CAN_EFF_FLAG)
 		idw = cf->can_id & CAN_EFF_MASK;
-	} else {
+	else
 		idw = FIELD_PREP(REG_IDENTIFIER_W_IDENTIFIER_BASE, cf->can_id & CAN_SFF_MASK);
-	}
 
 	/* Write ID, Frame format, Don't write timestamp -> Time triggered transmission disabled */
 	buf_base = (buf + 1) * 0x100;
@@ -585,6 +584,7 @@ static bool ctucan_insert_frame(struct ctucan_priv *priv, const struct canfd_fra
 	if (!(cf->can_id & CAN_RTR_FLAG)) {
 		for (i = 0; i < cf->len; i += 4) {
 			u32 data = le32_to_cpu(*(__le32 *)(cf->data + i));
+
 			ctucan_write_txt_buf(priv, buf_base, CTUCANFD_DATA_1_4_W + i, data);
 		}
 	}
@@ -595,12 +595,13 @@ static bool ctucan_insert_frame(struct ctucan_priv *priv, const struct canfd_fra
 /**
  * ctucan_give_txtb_cmd() - Applies command on TXT buffer
  * @priv:	Pointer to private data
- * @cmd: 	Command to give
+ * @cmd:	Command to give
  * @buf:	Buffer index (0-based)
  */
 static void ctucan_give_txtb_cmd(struct ctucan_priv *priv, enum ctucan_txtb_command cmd, u8 buf)
 {
 	u32 tx_cmd = cmd;
+
 	tx_cmd |= 1 << (buf + 8);
 	ctucan_write32(priv, CTUCANFD_TX_COMMAND, tx_cmd);
 }
@@ -678,11 +679,10 @@ static void ctucan_read_rx_frame(struct ctucan_priv *priv, struct canfd_frame *c
 	unsigned int len;
 
 	idw = ctucan_read32(priv, CTUCANFD_RX_DATA);
-	if (FIELD_GET(REG_FRAME_FORMAT_W_IDE, ffw)) {
+	if (FIELD_GET(REG_FRAME_FORMAT_W_IDE, ffw))
 		cf->can_id = (idw & CAN_EFF_MASK) | CAN_EFF_FLAG;
-	} else {
+	else
 		cf->can_id = (idw >> 18) & CAN_SFF_MASK;
-	}
 
 	/* BRS, ESI, RTR Flags */
 	cf->flags = 0;
@@ -732,7 +732,7 @@ static void ctucan_read_rx_frame(struct ctucan_priv *priv, struct canfd_frame *c
  * This function is invoked from the CAN isr(poll) to process the Rx frames. It does minimal
  * processing and invokes "netif_receive_skb" to complete further processing.
  * Return: 1 when frame is passed to the network layer, 0 when the first frame word is read but
- * 	   system is out of free SKBs temporally and left code to resolve SKB allocation later,
+ *	   system is out of free SKBs temporally and left code to resolve SKB allocation later,
  *         -%EAGAIN in a case of empty Rx FIFO.
  */
 static int ctucan_rx(struct net_device *ndev)
@@ -824,7 +824,7 @@ static void ctucan_get_rec_tec(struct ctucan_priv *priv, struct can_berr_counter
  * @ndev:	net_device pointer
  * @isr:	interrupt status register value
  *
- * This is the CAN error interrupt and it will check the the type of error and forward the error
+ * This is the CAN error interrupt and it will check the type of error and forward the error
  * frame to upper layers.
  */
 static void ctucan_err_interrupt(struct net_device *ndev, u32 isr)
@@ -843,8 +843,7 @@ static void ctucan_err_interrupt(struct net_device *ndev, u32 isr)
 	err_capt_alc = ctucan_read32(priv, CTUCANFD_ERR_CAPT);
 
 	if (dologerr)
-		netdev_info(ndev, "%s: ISR = 0x%08x, rxerr %d, txerr %d,"
-			" error type %lu, pos %lu, ALC id_field %lu, bit %lu\n",
+		netdev_info(ndev, "%s: ISR = 0x%08x, rxerr %d, txerr %d, error type %lu, pos %lu, ALC id_field %lu, bit %lu\n",
 			__func__, isr, bec.rxerr, bec.txerr,
 			FIELD_GET(REG_ERR_CAPT_ERR_TYPE, err_capt_alc),
 			FIELD_GET(REG_ERR_CAPT_ERR_POS, err_capt_alc),
@@ -1189,6 +1188,7 @@ static irqreturn_t ctucan_interrupt(int irq, void *dev_id)
 			   priv->txb_head, priv->txb_tail);
 		for (i = 0; i < priv->ntxbufs; i++) {
 			u32 status = ctucan_get_tx_status(priv, i);
+
 			netdev_err(ndev, "txb[%d] txb status=0x%08x\n", i, status);
 		}
 	}
