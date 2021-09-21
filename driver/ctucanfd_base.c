@@ -41,6 +41,7 @@
 #include <linux/can/error.h>
 #include <linux/can/led.h>
 #include <linux/pm_runtime.h>
+#include <linux/version.h>
 
 #include "ctucanfd.h"
 #include "ctucanfd_kregs.h"
@@ -53,6 +54,10 @@
 		netdev_dbg(ndev, args)
 #else
 #define ctucan_netdev_dbg(...) do { } while (0)
+#endif
+
+#if LINUX_VERSION_CODE < KERNEL_VERSION(5, 11, 0)
+#define can_fd_len2dlc can_len2dlc
 #endif
 
 #define CTUCANFD_ID 0xCAFD
@@ -567,7 +572,7 @@ static bool ctucan_insert_frame(struct ctucan_priv *priv, const struct canfd_fra
 			ffw |= REG_FRAME_FORMAT_W_BRS;
 	}
 
-	ffw |= FIELD_PREP(REG_FRAME_FORMAT_W_DLC, can_len2dlc(cf->len));
+	ffw |= FIELD_PREP(REG_FRAME_FORMAT_W_DLC, can_fd_len2dlc(cf->len));
 
 	/* Prepare identifier */
 	if (cf->can_id & CAN_EFF_FLAG)
@@ -645,7 +650,12 @@ static netdev_tx_t ctucan_start_xmit(struct sk_buff *skb, struct net_device *nde
 		ndev->stats.tx_dropped++;
 		return NETDEV_TX_OK;
 	}
+
+#if LINUX_VERSION_CODE >= KERNEL_VERSION(5, 12, 0)
+	can_put_echo_skb(skb, ndev, txtb_id, 0);
+#else /* < 5.12.0 */
 	can_put_echo_skb(skb, ndev, txtb_id);
+#endif /* < 5.12.0 */
 
 	if (!(cf->can_id & CAN_RTR_FLAG))
 		stats->tx_bytes += cf->len;
@@ -1050,7 +1060,11 @@ static void ctucan_tx_interrupt(struct net_device *ndev)
 			switch (txtb_status) {
 			case TXT_TOK:
 				ctucan_netdev_dbg(ndev, "TXT_OK\n");
+#if LINUX_VERSION_CODE >= KERNEL_VERSION(5, 12, 0)
+				can_get_echo_skb(ndev, txtb_id, NULL);
+#else /* < 5.12.0 */
 				can_get_echo_skb(ndev, txtb_id);
+#endif /* < 5.12.0 */
 				stats->tx_packets++;
 				break;
 			case TXT_ERR:
@@ -1060,7 +1074,11 @@ static void ctucan_tx_interrupt(struct net_device *ndev)
 				 * times) on each arbitration lost.
 				 */
 				netdev_warn(ndev, "TXB in Error state\n");
+#if LINUX_VERSION_CODE >= KERNEL_VERSION(5, 12, 0)
+				can_free_echo_skb(ndev, txtb_id, NULL);
+#else /* < 5.12.0 */
 				can_free_echo_skb(ndev, txtb_id);
+#endif /* < 5.12.0 */
 				stats->tx_dropped++;
 				break;
 			case TXT_ABT:
@@ -1069,7 +1087,11 @@ static void ctucan_tx_interrupt(struct net_device *ndev)
 				 * anyway.
 				 */
 				netdev_warn(ndev, "TXB in Aborted state\n");
+#if LINUX_VERSION_CODE >= KERNEL_VERSION(5, 12, 0)
+				can_free_echo_skb(ndev, txtb_id, NULL);
+#else /* < 5.12.0 */
 				can_free_echo_skb(ndev, txtb_id);
+#endif /* < 5.12.0 */
 				stats->tx_dropped++;
 				break;
 			default:
