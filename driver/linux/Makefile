@@ -37,7 +37,7 @@ ifneq ($(INSTALL_DIR),)
 	cp ctucanfd_platform.ko $(INSTALL_DIR)/
 endif
 
-CTUCANFD_SOURCES = ctucanfd_base.c ctucanfd_hw.c ctucanfd_frame.h ctucanfd_hw.h ctucanfd_regs.h ctucanfd_platform.c ctucanfd_pci.c
+CTUCANFD_SOURCES = ctucanfd_base.c ctucanfd_kframe.h ctucanfd_kregs.h ctucanfd_platform.c ctucanfd_pci.c
 
 checkpatch:
 	cd $(KDIR) && (! $(KDIR)/source/scripts/checkpatch.pl -f --no-tree $(CTUCANFD_SOURCES:%=$(PWD)/%) | grep ERROR:)

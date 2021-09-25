@@ -46,6 +46,7 @@
 #include "ctucanfd_frame.h"
 #include "ctucanfd_hw.h"
 
+
 void ctucan_hw_write32(struct ctucan_hw_priv *priv,
 		       enum ctu_can_fd_can_registers reg, u32 val)
 {
@@ -261,30 +262,6 @@ void ctucan_hw_set_mode(struct ctucan_hw_priv *priv,
 		ctucan_hw_int_ena(priv, ena, mask);
 	}
 }
-
-const struct can_bittiming_const ctu_can_fd_bit_timing_max = {
-	.name = "ctu_can_fd",
-	.tseg1_min = 2,
-	.tseg1_max = 190,
-	.tseg2_min = 1,
-	.tseg2_max = 63,
-	.sjw_max = 31,
-	.brp_min = 1,
-	.brp_max = 8,
-	.brp_inc = 1,
-};
-
-const struct can_bittiming_const ctu_can_fd_bit_timing_data_max = {
-	.name = "ctu_can_fd",
-	.tseg1_min = 2,
-	.tseg1_max = 94,
-	.tseg2_min = 1,
-	.tseg2_max = 31,
-	.sjw_max = 31,
-	.brp_min = 1,
-	.brp_max = 2,
-	.brp_inc = 1,
-};
 
 void ctucan_hw_set_nom_bittiming(struct ctucan_hw_priv *priv,
 				 struct can_bittiming *nbt)
@@ -625,8 +602,7 @@ bool ctucan_hw_is_txt_buf_accessible(struct ctucan_hw_priv *priv, u8 buf)
 	enum ctu_can_fd_tx_status_tx1s buf_status;
 
 	buf_status = ctucan_hw_get_tx_status(priv, buf);
-	if (buf_status == TXT_RDY || buf_status == TXT_TRAN ||
-	    buf_status == TXT_ABTP)
+	if (buf_status == TXT_RDY || buf_status == TXT_TRAN || buf_status == TXT_ABTP)
 		return false;
 
 	return true;

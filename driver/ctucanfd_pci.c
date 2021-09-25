@@ -312,5 +312,5 @@ static struct pci_driver ctucan_pci_driver = {
 module_pci_driver(ctucan_pci_driver);
 
 MODULE_LICENSE("GPL");
-MODULE_AUTHOR("Pavel Pisa");
+MODULE_AUTHOR("Pavel Pisa <pisa@cmp.felk.cvut.cz>");
 MODULE_DESCRIPTION("CTU CAN FD for PCI bus");

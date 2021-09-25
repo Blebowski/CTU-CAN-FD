@@ -17,6 +17,7 @@
 ##						(../doc/core)
 ##      updRegMap   - Whether register map VHDL RTL should be generated. 
 ##                      (../src/Registers_Memory_Interface)
+##      useKernStyle - If Kernel Style should be used for C header
 ##
 ##	Revision history:
 ##		06.02.2018	Implemented the script
@@ -73,12 +74,11 @@ def parse_args():
 										package with register list should be generated
 										(../test/lib)""")
 
-	return parser.parse_args();
+	return parser.parse_args()
 
 
 
-def ctu_can_update_vhdl_package(specPath, licensePath, memMap, 
-								wordWidthBit, outPath, packName):
+def ctu_can_update_vhdl_package(specPath, licensePath, memMap, wordWidthBit, outPath, packName):
 	"""
 	Update VHDL packages of CTU CAN FD register maps.
 	"""
@@ -94,8 +94,8 @@ def ctu_can_update_vhdl_package(specPath, licensePath, memMap,
 	addrGeneratorWrapper.do_update()
 
 
-def ctu_can_update_header(specPath, licensePath, memMap, 
-								wordWidthBit, outPath, headName):
+def ctu_can_update_header(specPath, licensePath, memMap, wordWidthBit, outPath, headName,
+						  useKernStyle):
 	"""
 	Update header files of CTU CAN FD register maps.
 	"""
@@ -107,6 +107,7 @@ def ctu_can_update_header(specPath, licensePath, memMap,
 	headerGeneratorWrapper.wordWidth = wordWidthBit
 	headerGeneratorWrapper.outFile = outPath
 	headerGeneratorWrapper.headName = headName
+	headerGeneratorWrapper.use_kern_style = useKernStyle
 
 	headerGeneratorWrapper.do_update()
 
@@ -201,21 +202,41 @@ if __name__ == '__main__':
 	###########################################################################	
 	if (str_arg_to_bool(args.updHeaderFile)):
 
-		print("Generating CAN FD memory registers Header file...\n")
+		print("Generating CAN FD memory registers Header file (bit-field style) ...\n")
 
 		ctu_can_update_header(specPath=args.xactSpec,
 									licensePath=GPL2_LICENSE_PATH,
 									memMap="CAN_Registers",
 									wordWidthBit=32,
 									outPath="../driver/ctucanfd_regs.h",
-									headName="CAN_FD_register_map")
+									headName="CAN_FD_register_map",
+							  		useKernStyle=False)
 
 		ctu_can_update_header(specPath=args.xactSpec,
 									licensePath=GPL2_LICENSE_PATH,
 									memMap="CAN_Frame_format",
 									wordWidthBit=32,
 									outPath="../driver/ctucanfd_frame.h",
-									headName="CAN_FD_frame_format")
+									headName="CAN_FD_frame_format",
+							  		useKernStyle=False)
+
+		print("Generating CAN FD memory registers Header file (bit-field style) ...\n")
+
+		ctu_can_update_header(specPath=args.xactSpec,
+									licensePath=GPL2_LICENSE_PATH,
+									memMap="CAN_Registers",
+									wordWidthBit=32,
+									outPath="../driver/ctucanfd_kregs.h",
+									headName="CAN_FD_register_map",
+							  		useKernStyle=True)
+
+		ctu_can_update_header(specPath=args.xactSpec,
+									licensePath=GPL2_LICENSE_PATH,
+									memMap="CAN_Frame_format",
+									wordWidthBit=32,
+									outPath="../driver/ctucanfd_kframe.h",
+									headName="CAN_FD_frame_format",
+							  		useKernStyle=True)
 
 		print("\nDone\n")
 
