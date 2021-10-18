@@ -47,13 +47,13 @@ _default: &default
     prop: 1
     ph_1: 3
     ph_2: 3
-    sjw: 2
+    sjw: 3
 
     brp_fd: 1
-    prop_fd: 1
-    ph_1_fd: 1
+    prop_fd: 0
+    ph_1_fd: 2
     ph_2_fd: 2
-    sjw_fd: 4
+    sjw_fd: 2
     
     # Run simulations on gate level (post-syn)
     gate_level: false
@@ -281,6 +281,7 @@ compliance:
         iso_8_7_7:
         iso_8_7_8:
         iso_8_7_9:
+            brp: 3
 
         iso_8_8_1_1:
         iso_8_8_1_2:
@@ -290,11 +291,19 @@ compliance:
         iso_8_8_1_4:
             brp_fd: 3
         iso_8_8_2_1:
+            prop: 6
+            ph_1: 6
         iso_8_8_2_2:
+            prop: 6
+            ph_1: 6
         iso_8_8_2_3:
             brp_fd: 3
+            prop: 16
+            ph_1: 16
         iso_8_8_2_4:
             brp_fd: 3
+            prop: 16
+            ph_1: 16
         iso_8_8_3_1:
             brp_fd: 3
         iso_8_8_3_2:
