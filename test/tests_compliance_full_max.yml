@@ -47,13 +47,13 @@ _default: &default
     prop: 1
     ph_1: 3
     ph_2: 3
-    sjw: 2
+    sjw: 3
 
     brp_fd: 1
-    prop_fd: 1
-    ph_1_fd: 1
+    prop_fd: 0
+    ph_1_fd: 2
     ph_2_fd: 2
-    sjw_fd: 4
+    sjw_fd: 2
     
     # Run simulations on gate level (post-syn)
     gate_level: false
