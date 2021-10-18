@@ -290,6 +290,7 @@ compliance:
         iso_8_7_7:
         iso_8_7_8:
         iso_8_7_9:
+            brp: 3
 
         iso_8_8_1_1:
         iso_8_8_1_2:
@@ -298,12 +299,28 @@ compliance:
             brp_fd: 3
         iso_8_8_1_4:
             brp_fd: 3
+        
+        # In following tests we lengthen SOF by up to 2 data bit times. Thus TSEG1(N)
+        # must be longer than 2 data bit times. If not, we loose arbitration right
+        # away and test fails! This is not DUT problem, nor issue of model/test
+        # implementation! It is constrain imposed by principle of test operation! 
         iso_8_8_2_1:
+            prop: 11
+            ph_1: 11
         iso_8_8_2_2:
+            prop: 11
+            ph_1: 11
         iso_8_8_2_3:
             brp_fd: 3
+            brp: 2
+            prop: 16
+            ph_1: 16
         iso_8_8_2_4:
             brp_fd: 3
+            brp: 2
+            prop: 16
+            ph_1: 16
+
         iso_8_8_3_1:
             brp_fd: 3
         iso_8_8_3_2:
