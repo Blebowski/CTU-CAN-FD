@@ -294,6 +294,7 @@ compliance:
         iso_8_7_7:
         iso_8_7_8:
         iso_8_7_9:
+            brp: 3
 
         iso_8_8_1_1:
         iso_8_8_1_2:
