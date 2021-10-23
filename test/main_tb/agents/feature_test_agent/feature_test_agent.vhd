@@ -141,18 +141,22 @@ architecture tb of feature_test_agent is
     signal test_node_can_tx : std_logic;
     signal test_node_can_rx : std_logic;
 
+    -- Signals with 1 ps delay (close to delta celay only)
+    signal dut_can_tx_delta_delay : std_logic;
+    signal test_node_can_tx_delta_delay : std_logic;
+
     -- Delayed CAN bus signals
-    signal dut_can_tx_delayed : std_logic;
-    signal test_node_can_tx_delayed : std_logic;
+    signal dut_can_tx_delayed : std_logic := '1';
+    signal test_node_can_tx_delayed : std_logic := '1';
 
     -- Forcing bus level value (ANDed bus level)
     signal force_bus_level_i        : boolean := false;
-    signal force_bus_level_value    : std_logic;
+    signal force_bus_level_value    : std_logic := '0';
 
     -- Forcing CAN RX of only single node
     signal force_can_rx_dut         : boolean := false;
     signal force_can_rx_test_node   : boolean := false;
-    signal force_can_rx_value       : std_logic;
+    signal force_can_rx_value       : std_logic := '0';
 
     -- Transceiver delays (on can_tx signal)
     signal can_tx_delay_dut         : time := 1 ns;
@@ -294,7 +298,7 @@ begin
         NSAMPLES    => 32
     )
     port map (
-        input       => dut_can_tx,
+        input       => dut_can_tx_delta_delay,
         delay       => can_tx_delay_dut,
         delayed     => dut_can_tx_delayed
     );
@@ -304,11 +308,25 @@ begin
         NSAMPLES    => 32
     )
     port map (
-        input       => test_node_can_tx,
+        input       => test_node_can_tx_delta_delay,
         delay       => can_tx_delay_test_node,
         delayed     => test_node_can_tx_delayed
     );
     
+    ---------------------------------------------------------------------------
+    -- On RTL, can_tx is 'U' at time zero, and it gets defined value when
+    -- res_n is asserted. Thus 'U' -> 1 event occurs in non-zero time.
+    -- On Xilinx gate level sims, having res_n = 'U' first few nanoseconds of
+    -- simulation does cause output of flop in reset synchronizer to be '0', 
+    -- not 'U'. Thus synchronized reset is '0' from time 0, and there is no
+    -- event on it when res_n input gets asserted non-'U' value! This causes
+    -- can_tx to be set to '1' from time 0 of simulation. As consequence of
+    -- this, signal delayer will ignore the first event on can_tx in time 0,
+    -- and will keep its output at 0!
+    ---------------------------------------------------------------------------
+    dut_can_tx_delta_delay <= dut_can_tx after 1 ps;
+    test_node_can_tx_delta_delay <= test_node_can_tx after 1 ps;
+
     ---------------------------------------------------------------------------
     -- Bus level and RX signal of each node
     ---------------------------------------------------------------------------
