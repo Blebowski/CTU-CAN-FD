@@ -17,18 +17,16 @@ _default: &default
     vunit_report_pkg: true
 
     # DUT generics
-    rx_buffer_size: 64
-    txt_buffer_count: 8
+    rx_buffer_size: 128
+    txt_buffer_count: 4
     sup_filtA: true
-    sup_filtB: true
-    sup_filtC: true
-    sup_range: true
+    sup_filtB: false
+    sup_filtC: false
+    sup_range: false
     sup_traffic_ctrs: true
     
-    ###########################################################################
-    # C_TECH_FPGA
-    ###########################################################################
-    target_technology: 1
+    # Target technology is don't care is Gate config
+    target_technology: 0
 
     # DUT Bit timing settings
     # (Applies for compliance tests and feature tests!)
