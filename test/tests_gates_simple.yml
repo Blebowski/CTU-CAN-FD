@@ -7,7 +7,7 @@ _default: &default
     code_coverage: false
     error_tolerance: 0
     randomize: false
-    seed: 0
+    # seed: 0
     debug: false
     iterations: 1
     timeout: 100 ms
