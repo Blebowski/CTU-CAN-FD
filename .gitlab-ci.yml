@@ -128,6 +128,7 @@ test_fast_asic:
     artifacts:
         when: always
         paths:
+            - test/tests_fast_asic.sim_time
             - test/tests_fast_asic.gz
             - test/tests_fast_asic_summary
 
@@ -144,6 +145,7 @@ test_fast_fpga:
     artifacts:
         when: always
         paths:
+            - test/tests_fast_fpga.sim_time
             - test/tests_fast_fpga.gz
             - test/tests_fast_fpga_summary
 
@@ -161,6 +163,7 @@ test_nightly:
     artifacts:
         when: always
         paths:
+            - test/tests_nightly.sim_time
             - test/tests_nightly.gz
             - test/tests_nightly_summary
             - test/build/code_coverage_tests_nightly
@@ -191,6 +194,7 @@ test_compliance_short:
     artifacts:
         when: always
         paths:
+            - test/tests_compliance_short.sim_time
             - test/tests_compliance_short.gz
             - test/tests_compliance_short_summary
 
@@ -211,6 +215,7 @@ test_compliance_full_typ:
     artifacts:
         when: always
         paths:
+            - test/tests_compliance_full_typ.sim_time
             - test/tests_compliance_full_typ.gz
             - test/tests_compliance_full_typ_summary
             - test/build/code_coverage_tests_compliance_full_typ
@@ -234,6 +239,7 @@ test_compliance_full_max:
     artifacts:
         when: always
         paths:
+            - test/tests_compliance_full_max.sim_time
             - test/tests_compliance_full_max.gz
             - test/tests_compliance_full_max_summary
 
@@ -261,6 +267,7 @@ test_gates_simple:
     artifacts:
         when: always
         paths:
+            - test/tests_gates_simple.sim_time
             - test/tests_gates_simple.gz
             - test/tests_gates_simple_summary
 
@@ -281,6 +288,7 @@ test_gates_compliance:
     artifacts:
         when: always
         paths:
+            - test/tests_gates_compliance.sim_time
             - test/tests_gates_compliance.gz
             - test/tests_gates_compliance_summary
 
@@ -361,6 +369,10 @@ pages:
         
         - mv test/code_html public/regression_results/coverage || true
         
+        # Measure total simulation time
+        - cat *.sim_time | paste -sd+ | bc > total.sim_time
+        - echo "Total simulation time is `cat total.sim_time` ps."
+
         # Copy documentation
         - mv doc/core/Progdokum.pdf public/doc/Datasheet.pdf || true
         - cp doc/core/ctu_can_fd_architecture.pdf public/doc/System_Architecture.pdf || true

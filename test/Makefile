@@ -18,9 +18,17 @@ tests_%: tests_%.yml FORCE
 	
 # Convert results to HTML, pack and publish textual summary
 %_logs:
+
+# Process reports
 	junit2html --report-matrix $*.html $*.xml 
 	tar -czvf $*.gz $*.html $*.xml.html
 	junit2html --summary-matrix $*.xml > $*_summary
+
+# Sum simulation time from all tests
+	cat build/vunit_out/test_output/*/output.txt | grep "simulation stopped" | grep -Eo "[0-9]+ps" | grep -Eo "[0-9]+" | paste -sd+ | bc > $*.sim_time
+	echo "Total simulated time is `cat tmp_sim_time` ps"
+
+# Cleanup
 	rm -f $*.html
 	rm -f $*.xml.html
 	rm -f $*.xml
