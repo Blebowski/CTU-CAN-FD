@@ -25,8 +25,14 @@ tests_%: tests_%.yml FORCE
 	junit2html --summary-matrix $*.xml > $*_summary
 
 # Sum simulation time from all tests
-	cat build/vunit_out/test_output/*/output.txt | grep "simulation stopped" | grep -Eo "[0-9]+ps" | grep -Eo "[0-9]+" | paste -sd+ | bc > $*.sim_time
-	echo "Total simulated time is `cat tmp_sim_time` ps"
+	cat build/vunit_out/test_output/*/output.txt | \
+		grep "simulation stopped" | \
+		grep -Eo "[0-9]+(us|ns|ps)" | \
+		sed 's/ps/000/g' | \
+		sed 's/ns/000000/g' | \
+		sed 's/us/000000000/g' | \
+		paste -sd+ | bc > $*.sim_time
+	echo "Total simulated time is `cat $*.sim_time` fs"
 
 # Cleanup
 	rm -f $*.html
