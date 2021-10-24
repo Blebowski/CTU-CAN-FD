@@ -309,11 +309,14 @@ process_coverage:
     script:
         # Merge code coverage outputs from nightly and compliance stages, process code coverage
         - cd test/build
-        - gcov-tool merge -o code_coverage_merged code_coverage_tests_nightly code_coverage_tests_compliance_full_typ
-        - mv code_coverage_tests_nightly/*.gcno code_coverage_merged
+
+        # Coverage collection temporarily disabled, gcov-tool merge NOT WORKING!
+        #
+        #- gcov-tool merge -o code_coverage_merged code_coverage_tests_nightly code_coverage_tests_compliance_full_typ
+        #- mv code_coverage_tests_nightly/*.gcno code_coverage_merged
         - cd ..
 
-        - make coverage_merged
+        #- make coverage_merged
         - make functional_coverage
 
         - cd ../scripts
@@ -367,7 +370,8 @@ pages:
         - cp test/*_summary public/regression_results/
         - tar -czvf public/regression_results/regression_summary.gz public/regression_results/*_summary
         
-        - mv test/code_html public/regression_results/coverage || true
+        # Coverage collection temporarily disabled!
+        #- mv test/code_html public/regression_results/coverage || true
         
         # Measure total simulation time
         - cat *.sim_time | paste -sd+ | bc > total.sim_time
