@@ -374,7 +374,7 @@ pages:
         #- mv test/code_html public/regression_results/coverage || true
         
         # Measure total simulation time
-        - cat *.sim_time | paste -sd+ | bc > total.sim_time
+        - cat test/*.sim_time | paste -sd+ | bc > total.sim_time
         - echo "Total simulation time is `cat total.sim_time` fs."
 
         # Copy documentation
