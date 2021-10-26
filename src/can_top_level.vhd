@@ -218,8 +218,11 @@ architecture rtl of can_top_level is
     -- Synchronised reset
     signal res_n_sync           :    std_logic;
     
-    -- Internal reset (Synchronised reset + Soft Reset)
-    signal res_n_i              :    std_logic;
+    -- Core reset (Synchronised reset + Soft Reset + Active when disabled)
+    signal res_core_n           :    std_logic;
+
+    -- Soft reset ((Synchronised reset + Soft Reset)
+    signal res_soft_n           :    std_logic;
     
     -- Sample control (Nominal, Data, Secondary)
     signal sp_control           :    std_logic_vector(1 downto 0);
@@ -579,7 +582,10 @@ begin
     port map(
         clk_sys                 => clk_sys,                 -- IN
         res_n                   => res_n_sync,              -- IN
-        res_out                 => res_n_i,                 -- OUT
+        
+        -- Generated resets
+        res_core_n              => res_core_n,              -- OUT
+        res_soft_n              => res_soft_n,              -- OUT
 
         -- DFT support
         scan_enable             => scan_enable,             -- IN
@@ -645,7 +651,7 @@ begin
     )
     port map(
         clk_sys                 => clk_sys,                 -- IN
-        res_n                   => res_n_i,                 -- IN
+        res_n                   => res_core_n,              -- IN
 
         -- DFT support
         scan_enable             => scan_enable,             -- IN
@@ -702,7 +708,7 @@ begin
         )
         port map(
             clk_sys             => clk_sys,                         -- IN
-            res_n               => res_n_i,                         -- IN
+            res_n               => res_core_n,                      -- IN
 
             -- DFT support
             scan_enable         => scan_enable,                     -- IN
@@ -747,7 +753,7 @@ begin
     )
     port map( 
         clk_sys                 => clk_sys,                 -- IN
-        res_n                   => res_n_i,                 -- IN
+        res_n                   => res_core_n,              -- IN
 
         -- TXT Buffers interface
         txtb_port_b_data        => txtb_port_b_data,        -- IN
@@ -788,7 +794,7 @@ begin
     )
     port map(
         clk_sys                 => clk_sys,                 -- IN
-        res_n                   => res_n_i,                 -- IN
+        res_n                   => res_core_n,              -- IN
 
         -- Memory registers interface
         drv_bus                 => drv_bus,                 -- IN
@@ -821,7 +827,13 @@ begin
     )
     port map(
         clk_sys                 => clk_sys,                 -- IN
-        res_n                   => res_n_i,                 -- IN
+
+        -- WARNING: 
+        --      Interrupt manager MUST be reset by Soft reset, not by Core
+        --      reset since it holds the actual values of Interrupt Enable
+        --      and Interrupt Mask. These are considered as registers and
+        --      they must be settable when the core is disabled!
+        res_n                   => res_soft_n,              -- IN
 
         -- Interrupt sources
         err_detected            => err_detected,            -- IN
@@ -860,7 +872,7 @@ begin
     )
     port map(
         clk_sys                 => clk_sys,                 -- IN
-        res_n                   => res_n_i,                 -- IN
+        res_n                   => res_core_n,              -- IN
         
         -- DFT support
         scan_enable             => scan_enable,             -- IN
@@ -951,7 +963,7 @@ begin
     )
     port map(
         clk_sys                 => clk_sys,                 -- IN
-        res_n                   => res_n_i,                 -- IN
+        res_n                   => res_core_n,              -- IN
         
         -- Memory registers interface
         drv_bus                 => drv_bus,                 -- IN
@@ -988,7 +1000,7 @@ begin
     )
     port map(
         clk_sys                 => clk_sys,                 -- IN
-        res_n                   => res_n_i,                 -- IN
+        res_n                   => res_core_n,              -- IN
 
         -- DFT support
         scan_enable             => scan_enable,             -- IN
