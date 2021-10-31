@@ -7,7 +7,7 @@ before_script:
 
 stages:
     - precheck
-    - test_driver
+    #- test_driver
     - build
     - test_rtl
     - test_gates
@@ -116,11 +116,15 @@ run_synthesis:
 ###############################################################################
 # Run emulator tests (on ZynQ MZ_APO board)
 ###############################################################################
-run_emulator_tests:
-    stage: test_driver
-    only:
-        - master
 
+# Disable for now. Multi-project pipelines are available only in Premium Gitlab
+# Edition!
+
+#run_emulator_tests:
+#    stage: test_driver
+#    only:
+#        - master
+#
     # Trigger pipeline in MZ_APO Zynq top repo. This will:
     #   1. Update sub-modules (CTU CAN FDs latest master is taken in Zynq build).
     #   2. Build Vivado design with CTU CAN FD, SJA1000, Zlogan etc...
@@ -130,9 +134,9 @@ run_emulator_tests:
     #       2. Sends frames over SocketCAN between CTU CAN FD and SJA100 in various
     #          combinations. This is sort-of driver sanity check, not its full
     #          verification!
-    trigger:
-        project: canbus/zynq/zynq-can-sja1000-top
-        strategy: depend
+    #trigger:
+    #    project: canbus/zynq/zynq-can-sja1000-top
+    #    strategy: depend
 
 
 ###############################################################################
