@@ -131,7 +131,7 @@ run_emulator_tests:
     #          combinations. This is sort-of driver sanity check, not its full
     #          verification!
     trigger:
-        project: canbus/zynq/zynq-can-sja1000-top
+        project: git@gitlab.fel.cvut.cz:canbus/zynq/zynq-can-sja1000-top.git
         strategy: depend
 
 
