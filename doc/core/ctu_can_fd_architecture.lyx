@@ -511,7 +511,7 @@ filename "version.tex"
 \noindent
 \align center
 \begin_inset Tabular
-<lyxtabular version="3" rows="14" columns="4">
+<lyxtabular version="3" rows="15" columns="4">
 <features tabularvalignment="middle">
 <column alignment="center" valignment="top" width="1.5cm">
 <column alignment="center" valignment="top" width="3cm">
@@ -1026,7 +1026,7 @@ Keep NBTM counter enabled always even in data bit rate.
 </cell>
 </row>
 <row>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -1035,7 +1035,7 @@ Keep NBTM counter enabled always even in data bit rate.
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -1044,7 +1044,7 @@ Keep NBTM counter enabled always even in data bit rate.
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -1053,7 +1053,7 @@ Keep NBTM counter enabled always even in data bit rate.
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -1064,6 +1064,44 @@ res_n_out
 \series default
 \shape default
  synchronized reset output.
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+0.14
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+2.4 and higher
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+22-12-2021
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Clarify implications of connecting core to 8/16/32 bit buses.
 \end_layout
 
 \end_inset
@@ -1390,10 +1428,12 @@ When CTU CAN FD GIT repository is clonned, register map can be generated
 \end_layout
 
 \begin_layout Verbatim
+
 cd scripts
 \end_layout
 
 \begin_layout Verbatim
+
 ./update_reg_map
 \end_layout
 
@@ -1406,10 +1446,12 @@ Documentation can be exported from VHDL RTL codes by following script:
 \end_layout
 
 \begin_layout Verbatim
+
 cd scripts
 \end_layout
 
 \begin_layout Verbatim
+
 python gen_lyx_tables.py --configPath vhdl_lyx_interface_cfg.yml
 \end_layout
 
@@ -1442,10 +1484,12 @@ CTU CAN FD contains release tags in GIT repository.
 \end_layout
 
 \begin_layout Verbatim
+
 cd scripts
 \end_layout
 
 \begin_layout Verbatim
+
 python create_release.py --output_dir ../release_directory_name
 \end_layout
 
@@ -1467,10 +1511,12 @@ src/component.xml
 \end_layout
 
 \begin_layout Verbatim
+
 cd scripts
 \end_layout
 
 \begin_layout Verbatim
+
 python gen_vivado_component.py
 \end_layout
 
@@ -1643,10 +1689,28 @@ literal "false"
 \end_layout
 
 \begin_layout Standard
-Support of optional features is described in Table 
+Support of optional features from 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "key-1"
+literal "false"
+
+\end_inset
+
+ is described in Table 
 \begin_inset CommandInset ref
 LatexCommand ref
 reference "tab:iso-optional-features"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+ and Table 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "tab:iso-optional-features-1"
 plural "false"
 caps "false"
 noprefix "false"
@@ -2115,7 +2179,7 @@ timestamp
 \series default
 \shape default
  input.
- The reason behind this, is to share single Time base between multiple instances
+ The reason for this, is to share single Time base between multiple instances
  of CTU CAN FD.
  
 \series bold
@@ -5147,6 +5211,69 @@ name "fig:ahb-interface-access"
 
 \end_layout
 
+\begin_layout Subsection
+Limitations on 8/16 bit buses
+\end_layout
+
+\begin_layout Standard
+CTU CAN FD is 32-bit peripheral, however, it is possible to integrate it
+ to 8/16 bit systems thanks to 
+\begin_inset Quotes eld
+\end_inset
+
+byte enable
+\begin_inset Quotes erd
+\end_inset
+
+ capabilities of each bus interface wrapper.
+ If core is accessed via 8/16 bit bus, access to simple 32-bit R/W register
+ can be split into 4/2 consecutive accesses without affecting the functionality.
+ However, due to side-effects on several registers, there are following
+ limitations when accessing CTU CAN FD from 8/16 bit buses:
+\end_layout
+
+\begin_layout Itemize
+CTU CAN FD must be operated in RX Buffer manual mode (MODE[RXBAM] = 0).
+ This is necessary since read of single word from RX Buffer can not be done
+ by single read access to RX_DATA register.
+ On 8 bit systems, it will require 4 reads (addresses RX_DATA ..
+ RX_DATA + 0x3), on 16 bit systems it will require 2 reads (addresses RX_DATA
+ and RX_DATA + 0x2).
+ Since each read from RX_DATA register in RX Buffer automated mode (MODE[RXBAM]
+ = 1), will move RX Buffer read pointer, the rest of the memory word would
+ be lost without being read out.
+ Thus it would be impossible to correctly read out received frames.
+ Reading out RX Buffer on 8/16 bit systems thus requires operation in MODE[RXBAM
+] = 0 and manually moving RX Buffer read pointer by COMMAND[RXRPMV] bit.
+\end_layout
+
+\begin_layout Itemize
+On 8 bit systems, TX_PRIORITY register is only able to change priority of
+ TXT Buffers atomically if number of TXT Buffers is 2.
+ On 16 bit systems, TX_PRIORITY register is only able to change priority
+ of TXT Buffers atomically, if number of TXT Buffers is 2-4.
+ Atomic change of TXT Buffer priorities is required if TXT Buffers are used
+ like a FIFOs by priority rotation (such approach is used by CTU CAN FD
+ Linux driver).
+ Thus, if TXT buffer priorities need to be rotated atomically, following
+ restrictions apply:
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+On 8 bit systems, only 2 TXT Buffers must be used.
+\end_layout
+
+\begin_layout Itemize
+On 16 bit systems, only up to 4 TXT Buffers must be used.
+\end_layout
+
+\begin_layout Itemize
+If atomic rotation of priorities is not required, number of TXT Buffers
+ is not restricted.
+\end_layout
+
+\end_deeper
 \begin_layout Section
 CAN Bus
 \end_layout
