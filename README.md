@@ -182,7 +182,7 @@ However, there are no written tests for the driver itself (apart from compiling 
 
 ## QEMU emulation
 
-The CTU CAN FD IP core functional model is part of QEMU mainline. QEMU CAN documentation [docs/can.txt](https://git.qemu.org/?p=qemu.git;a=blob;f=docs/can.txt) describes CTU CAN FD emulation setup.
+The CTU CAN FD IP core functional model is part of QEMU mainline. QEMU CAN documentation [docs/system/devices/can.rst](https://www.qemu.org/docs/master/system/devices/can.html) includes section about CTU CAN FD emulation setup.
 
 
 ## Roadmap
