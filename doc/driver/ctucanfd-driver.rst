@@ -13,7 +13,7 @@ About CTU CAN FD IP Core
 is an open source soft core written in VHDL.
 It originated in 2015 as Ondrej Ille's project
 at the `Department of Measurement <https://meas.fel.cvut.cz/>`_
-of `FEE <http://www.fel.cvut.cz/en/>`_ at `CTU <http://www.fel.cvut.cz/en/>`_.
+of `FEE <http://www.fel.cvut.cz/en/>`_ at `CTU <https://www.cvut.cz/en>`_.
 
 The SocketCAN driver for Xilinx Zynq SoC based MicroZed board
 `Vivado integration <https://gitlab.fel.cvut.cz/canbus/zynq/zynq-can-sja1000-top>`_
@@ -28,7 +28,7 @@ This kind of devices is called platform device in the kernel and is
 handled by a platform device driver.
 
 The basic functional model of the CTU CAN FD peripheral has been
-accepted into QEMU mainline. See QEMU `CAN emulation support <https://git.qemu.org/?p=qemu.git;a=blob;f=docs/can.txt>`_
+accepted into QEMU mainline. See QEMU `CAN emulation support <https://www.qemu.org/docs/master/system/devices/can.html>`_
 for CAN FD buses, host connection and CTU CAN FD core emulation. The development
 version of emulation support can be cloned from ctu-canfd branch of QEMU local
 development `repository <https://gitlab.fel.cvut.cz/canbus/qemu-canbus>`_.
@@ -40,7 +40,7 @@ About SocketCAN
 SocketCAN is a standard common interface for CAN devices in the Linux
 kernel. As the name suggests, the bus is accessed via sockets, similarly
 to common network devices. The reasoning behind this is in depth
-described in `Linux SocketCAN <https://git.kernel.org/cgit/linux/kernel/git/torvalds/linux.git/tree/Documentation/networking/can.rst>`_.
+described in `Linux SocketCAN <https://www.kernel.org/doc/html/latest/networking/can.html>`_.
 In short, it offers a
 natural way to implement and work with higher layer protocols over CAN,
 in the same way as, e.g., UDP/IP over Ethernet.
@@ -236,10 +236,11 @@ Integrating the core to Xilinx Zynq
 -----------------------------------
 
 The core interfaces a simple subset of the Avalon
-`Avalon Interface Specifications <https://www.intel.com/content/dam/www/programmable/us/en/pdfs/literature/manual/mnl_avalon_spec.pdf>`_
+(search for Intel **Avalon Interface Specifications**)
 bus as it was originally used on
 Alterra FPGA chips, yet Xilinx natively interfaces with AXI
-`AMBA AXI and ACE Protocol Specification AXI3, AXI4, and AXI4-Lite, ACE and ACE-Lite <https://static.docs.arm.com/ihi0022/d/IHI0022D_amba_axi_protocol_spec.pdf>`_.
+(search for ARM **AMBA AXI and ACE Protocol Specification AXI3,
+AXI4, and AXI4-Lite, ACE and ACE-Lite**).
 The most obvious solution would be to use
 an Avalon/AXI bridge or implement some simple conversion entity.
 However, the core’s interface is half-duplex with no handshake
@@ -248,7 +249,7 @@ even AXI-Lite slave interface is quite resource-intensive, and the
 flexibility and speed of AXI are not required for a CAN core.
 
 Thus a much simpler bus was chosen – APB (Advanced Peripheral Bus)
-`AMBA APB Protocol Specification v2.0 <https://static.docs.arm.com/ihi0024/c/IHI0024C_amba_apb_protocol_spec.pdf>`_.
+(search for ARM **AMBA APB Protocol Specification**).
 APB-AXI bridge is directly available in
 Xilinx Vivado, and the interface adaptor entity is just a few simple
 combinatorial assignments.
@@ -520,7 +521,7 @@ detected to be *Error Passive*, *Error Passive* should be reported.
 CTU CAN FD Driver Sources Reference
 -----------------------------------
 
-.. kernel-doc:: ../../driver/ctucanfd_hw.h
+.. kernel-doc:: ../../driver/ctucanfd.h
    :internal:
 
 .. kernel-doc:: ../../driver/ctucanfd_base.c
@@ -554,7 +555,7 @@ CTU CAN FD IP Core and Driver Development Acknowledgment
   * negotiated and paid CTU to allow public access to the project
   * provided additional funding of the work
 
-* `Department of Control Engineering <https://dce.fel.cvut.cz/en>`_,
+* `Department of Control Engineering <https://control.fel.cvut.cz/en>`_,
   `Faculty of Electrical Engineering <http://www.fel.cvut.cz/en/>`_,
   `Czech Technical University <https://www.cvut.cz/en>`_
 
@@ -601,7 +602,7 @@ CTU CAN FD IP Core and Driver Development Acknowledgment
 
 * Jan Charvat
 
- * implemented CTU CAN FD functional model for QEMU which has been integrated into QEMU mainline (`docs/can.txt <https://git.qemu.org/?p=qemu.git;a=blob;f=docs/can.txt>`_)
+ * implemented CTU CAN FD functional model for QEMU which has been integrated into QEMU mainline (`docs/system/devices/can.rst <https://www.qemu.org/docs/master/system/devices/can.html>`_)
  * Bachelor theses Model of CAN FD Communication Controller for QEMU Emulator
 
 Notes
@@ -617,7 +618,7 @@ Notes
    ``CAN_ERR_FLAG`` set and some error info in its ``data`` field.
 
 .. [3]
-   Available in in CTU CAN FD repository
+   Available in CTU CAN FD repository
    `<https://gitlab.fel.cvut.cz/canbus/ctucanfd_ip_core>`_
 
 .. [4]
