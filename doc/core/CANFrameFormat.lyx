@@ -1232,11 +1232,35 @@ cellcolor{cyan}
 
 \end_inset
 </cell>
+<cell alignment="center" leftline="true" multicolumn="1" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+SDLC\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" multicolumn="1" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+FCRC\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" multicolumn="1" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+FSTC\end_layout
+
+\end_inset
+</cell>
 <cell alignment="center" leftline="true" multicolumn="1" rightline="true" topline="true" usebox="none" valignment="top">
 \begin_inset Text
 
 \begin_layout Plain Layout
-Reserved\end_layout
+CPRM\end_layout
 
 \end_inset
 </cell>
@@ -1244,7 +1268,7 @@ Reserved\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-Reserved\end_layout
+CPRM\end_layout
 
 \end_inset
 </cell>
@@ -1252,7 +1276,7 @@ Reserved\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-Reserved\end_layout
+CPRM\end_layout
 
 \end_inset
 </cell>
@@ -1260,31 +1284,7 @@ Reserved\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-Reserved\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" leftline="true" multicolumn="2" topline="true" usebox="none" valignment="top">
-\begin_inset Text
-
-\begin_layout Plain Layout
-Reserved\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" leftline="true" multicolumn="2" topline="true" usebox="none" valignment="top">
-\begin_inset Text
-
-\begin_layout Plain Layout
-Reserved\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" leftline="true" multicolumn="2" topline="true" usebox="none" valignment="top">
-\begin_inset Text
-
-\begin_layout Plain Layout
-Reserved\end_layout
+CPRM\end_layout
 
 \end_inset
 </cell>
@@ -1292,7 +1292,7 @@ Reserved\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-Reserved\end_layout
+CPRM\end_layout
 
 \end_inset
 </cell>
@@ -1317,7 +1317,7 @@ cellcolor{cyan}
 \begin_inset Text
 
 \begin_layout Plain Layout
--\end_layout
+X\end_layout
 
 \end_inset
 </cell>
@@ -1325,7 +1325,7 @@ cellcolor{cyan}
 \begin_inset Text
 
 \begin_layout Plain Layout
--\end_layout
+X\end_layout
 
 \end_inset
 </cell>
@@ -1333,7 +1333,7 @@ cellcolor{cyan}
 \begin_inset Text
 
 \begin_layout Plain Layout
--\end_layout
+X\end_layout
 
 \end_inset
 </cell>
@@ -1341,7 +1341,7 @@ cellcolor{cyan}
 \begin_inset Text
 
 \begin_layout Plain Layout
--\end_layout
+X\end_layout
 
 \end_inset
 </cell>
@@ -1349,7 +1349,7 @@ cellcolor{cyan}
 \begin_inset Text
 
 \begin_layout Plain Layout
--\end_layout
+X\end_layout
 
 \end_inset
 </cell>
@@ -1357,7 +1357,7 @@ cellcolor{cyan}
 \begin_inset Text
 
 \begin_layout Plain Layout
--\end_layout
+X\end_layout
 
 \end_inset
 </cell>
@@ -1365,7 +1365,7 @@ cellcolor{cyan}
 \begin_inset Text
 
 \begin_layout Plain Layout
--\end_layout
+X\end_layout
 
 \end_inset
 </cell>
@@ -1373,7 +1373,7 @@ cellcolor{cyan}
 \begin_inset Text
 
 \begin_layout Plain Layout
--\end_layout
+X\end_layout
 
 \end_inset
 </cell>
@@ -2054,6 +2054,24 @@ ESI_RSV Error State Indicator bit for received CAN FD frames. Bit has no meaning
 \end_layout
 \begin_layout Description
 RWCNT Size of CAN frame in RX buffer without FRAME_FORMAT WORD. (E.g RTR frame RWCNT=3, 64 Byte FD frame RWCNT=19). In TXT buffer this field has no meaning.
+\end_layout
+\begin_layout Description
+CPRM Parameter for corruption of transmitted CAN frames. 
+\end_layout
+\begin_layout Description
+FSTC Flip Stuff count field bit when this frame is transmitted. This field has effect only in transmitted frames.\begin_inset Newline newline\end_inset
+		0b0  - FSTC_NO_FLIP - Do not flip any Stuff count field bits.\begin_inset Newline newline\end_inset
+		0b1  - FSTC_FLIP - Flip Stuff count field bit given by FRAME_FORMAT_W[FIND] when this frame is transmitted.
+\end_layout
+\begin_layout Description
+FCRC Flip CRC field bit when this frame is transmitted. This field has effect only in transmitted frames.\begin_inset Newline newline\end_inset
+		0b0  - FCRC_FLIP - Flip CRC field bit given by FRAME_FORMAT_W[FIND] when this frame is transmitted.\begin_inset Newline newline\end_inset
+		0b1  - FCRC_NO_FLIP - Do not flip CRC field bit when this frame is transmitted.
+\end_layout
+\begin_layout Description
+SDLC Swap DLC in transmitted frame.\begin_inset Newline newline\end_inset
+		0b0  - SDLC_NO_SWAP - Do not swap DLC when transmitting frame.\begin_inset Newline newline\end_inset
+		0b1  - SLDC_SWAP - Swap DLC of transmitted frame with FRAME_FORMAT_W[SVAL].
 \end_layout
 \begin_layout Standard
 \begin_inset VSpace bigskip

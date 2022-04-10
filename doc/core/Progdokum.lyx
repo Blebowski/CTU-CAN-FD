@@ -509,7 +509,7 @@ filename "version.tex"
 \noindent
 \align center
 \begin_inset Tabular
-<lyxtabular version="3" rows="28" columns="3">
+<lyxtabular version="3" rows="29" columns="3">
 <features tabularvalignment="middle">
 <column alignment="center" valignment="top" width="1.5cm">
 <column alignment="center" valignment="top" width="2cm">
@@ -1309,7 +1309,7 @@ Add MODE[TTTM] bit to enable time-triggered transmission.
 </cell>
 </row>
 <row>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -1318,7 +1318,7 @@ Add MODE[TTTM] bit to enable time-triggered transmission.
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -1327,12 +1327,43 @@ Add MODE[TTTM] bit to enable time-triggered transmission.
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
 Move to new release of CTU CAN FD.
  Bump document version accordingly.
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+2.4.1
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+1-4-2022
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Add MODE[TXBBM], MODE[SAM], STATUS[RXPE], STATUS[TXPE], COMMAND [CTPXE]
+ and COMMAND[CRPXE].
+ Add FRAME_FORMAT_W bits which allow flipping of CRC or Stuff count.
 \end_layout
 
 \end_inset
@@ -1475,11 +1506,12 @@ Features
 \end_layout
 
 \begin_layout Itemize
-Designed to be compliant with ISO11898-1 2015
+Compliant with ISO11898-1 2015
 \end_layout
 
 \begin_layout Itemize
-RX buffer FIFO of 32 - 4096 words (1-204 CAN FD frames with 64 byte of data)
+RX buffer FIFO with 32 - 4096 words (1-204 CAN FD frames with 64 byte of
+ data)
 \end_layout
 
 \begin_layout Itemize
@@ -2027,10 +2059,10 @@ status open
 \noindent
 \align center
 \begin_inset Tabular
-<lyxtabular version="3" rows="9" columns="3">
+<lyxtabular version="3" rows="10" columns="3">
 <features tabularvalignment="middle">
-<column alignment="left" valignment="top" width="3cm">
-<column alignment="left" valignment="top" width="2.5cm">
+<column alignment="left" valignment="top" width="3.1cm">
+<column alignment="left" valignment="top" width="2.4cm">
 <column alignment="left" valignment="top" width="10.5cm">
 <row>
 <cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
@@ -2105,6 +2137,9 @@ cellcolor{gray}
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\series bold
+\shape italic
 rx_buffer_size
 \end_layout
 
@@ -2135,6 +2170,9 @@ Size of RX buffer (number of 32bit words it can store).
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\series bold
+\shape italic
 sup_filt_A
 \end_layout
 
@@ -2166,6 +2204,9 @@ Filter A is / is not present.
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\series bold
+\shape italic
 sup_filt_B
 \end_layout
 
@@ -2196,6 +2237,9 @@ Filter B is / is not present.
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\series bold
+\shape italic
 sup_filt_C
 \end_layout
 
@@ -2226,6 +2270,9 @@ Filter C is / is not present.
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\series bold
+\shape italic
 sup_range
 \end_layout
 
@@ -2256,6 +2303,9 @@ Range fitler is / is not present.
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\series bold
+\shape italic
 sup_traffic_ctrs
 \end_layout
 
@@ -2282,16 +2332,19 @@ Traffic counters are / are not present.
 </cell>
 </row>
 <row>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\series bold
+\shape italic
 txt_buffer_count
 \end_layout
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -2312,16 +2365,53 @@ Number of TXT buffers available.
 </cell>
 </row>
 <row>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\series bold
+\shape italic
 sup_test_registers
 \end_layout
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+true/false
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Test registers for memory testability (Test Registers memory region) are
+ / are not present .
+ If present, STATUS[STRCNT] = 1.
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="left" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\series bold
+\shape italic
+sup_parity
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -2334,9 +2424,8 @@ true/false
 \begin_inset Text
 
 \begin_layout Plain Layout
-Test registers for memory testability (Test Registers memory region) are
- / are not present .
- If present, STATUS[STRCNT] = 1.
+Add parity bits to each word of TXT Buffer and RX Buffer RAMs.
+ If Parity protection is present, STATUS[SPRT] = 1.
 \end_layout
 
 \end_inset
@@ -2436,7 +2525,7 @@ literal "false"
 \end_layout
 
 \begin_layout Itemize
-CTU CAN FD is disabled, it is not communicating on CAN bus, it is bus-off.
+CTU CAN FD is disabled, it is not communicating on CAN bus (bus-off state).
 \end_layout
 
 \begin_layout Itemize
@@ -2455,9 +2544,9 @@ Memory organization
 CTU CAN FDs memory map is organized as little-endian (e.g.
  EWL register is at address 0x2C, ERP register at address 0x2D, and FAULT_STATE
  register at address 0x2E).
- Memory within CTU CAN FD is organized as 32-bit memory, but all functionality
- of CTU CAN FD can be used by accessing the core by 8/16 bit accesses (with
- proper configuration, see TODO).
+ Memory within CTU CAN FD is 32-bit memory, but all functionality of CTU
+ CAN FD can be used by accessing the core by 8/16 bit accesses (with proper
+ configuration, see settings MODE[RXBAM] - RX Buffer Automatic Mode).
 \end_layout
 
 \begin_layout Section
@@ -2778,11 +2867,7 @@ CTU CAN FD de-initialization sequence shall consist of following steps:
 \end_layout
 
 \begin_layout Enumerate
-Write SETTINGS[ENA]=0.
-\end_layout
-
-\begin_layout Enumerate
-SW shall ensure that no TXT buffer is in any of 
+Ensures that no TXT buffer is in any of 
 \begin_inset Quotes eld
 \end_inset
 
@@ -2821,7 +2906,12 @@ noprefix "false"
 
 \end_inset
 
-) to TXT buffers, and by not issuing next frames for transmission.
+) to TXT buffers, and by not inserting next frames for transmission into
+ TXT Buffers.
+\end_layout
+
+\begin_layout Enumerate
+Write SETTINGS[ENA]=0.
 \end_layout
 
 \begin_layout Section
@@ -3796,8 +3886,8 @@ noprefix "false"
 
 .
  State of each TXT buffer can be read from TX_STATUS register.
- TXT buffer state can be controled via TX_COMMAND register and three types
- of commands can be issued:
+ SW can control TXT buffer state via TX_COMMAND register, and issue three
+ types of commands:
 \end_layout
 
 \begin_layout Description
@@ -4274,12 +4364,12 @@ Ready
 \end_layout
 
 \begin_layout Subsection
-TX frame type
+Type of transmitted CAN frame
 \end_layout
 
 \begin_layout Standard
-Type of CAN frame transmitted by CTU CAN FD is determined by content of
- FRAME_FORMAT_W in TXT buffer, and settings of CTU CAN FD as show in Table
+Type of transmitted CAN frame by CTU CAN FD is determined by content of
+ FRAME_FORMAT_W in TXT buffer, and settings of CTU CAN FD as show in Figure
  
 \begin_inset CommandInset ref
 LatexCommand ref
@@ -5903,6 +5993,651 @@ When CTU CAN FD switches bit rate on CAN bus, it generates Bit rate switch
  (INT_STAT[ALI]).
 \end_layout
 
+\begin_layout Standard
+\begin_inset Newpage pagebreak
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section
+Fault Tolerance
+\end_layout
+
+\begin_layout Standard
+CTU CAN FD implements following fault tolerance mechanisms:
+\end_layout
+
+\begin_layout Itemize
+Parity protection on RX Buffer RAM
+\end_layout
+
+\begin_layout Itemize
+Parity Protection on TXT Buffer RAMs
+\end_layout
+
+\begin_layout Itemize
+TXT Buffer Backup Mode (MODE[TXBBM]).
+\end_layout
+
+\begin_layout Standard
+Parity protection on RX Buffer RAM and TXT Buffer RAMs is present in CTU
+ CAN FD when STATUS[SPRT]=1.
+ If STATUS[SPRT]=0, CTU CAN FD contains no parity protection (since it was
+ not synthesized with it), and parity handling described in following two
+ sub-sections can not be applied.
+\end_layout
+
+\begin_layout Subsection
+Parity protection on RX Buffer RAM
+\end_layout
+
+\begin_layout Standard
+When CTU CAN FD receives CAN Frame and stores it to RX Buffer RAM, it adds
+ single parity bit to each word of RX Buffer RAM.
+ When SW driver is reading the frame from RX Buffer RAM, it can check for
+ data consistency by reading STATUS[RXPRT] bit.
+ CTU CAN FD sets STATUS[RXPRT] upon each read of RX_DATA register by SW
+ driver, if parity bit in the word read from RX Buffer RAM is not matching
+ calculated parity bit.
+\end_layout
+
+\begin_layout Standard
+Since a spurious bit-flip in RX Buffer RAM can potentially modify FRAME_FORMAT_W
+[DLC] word of received frame in RX Buffer RAM, it may hamper the length
+ of the RX frame as seen by SW driver, and therefore get RX Buffer into
+ inconsistent state where SW driver has read only part of a received frame.
+ In such situation, all further read frames from RX Buffer would be corrupted.
+ To avoid this situation, following procedure can be applied when reading
+ RX frames from RX Buffer with focus on parity checking:
+\end_layout
+
+\begin_layout LyX-Code
+#define CTU_CAN_FD_BASE 0x12000000
+\end_layout
+
+\begin_layout LyX-Code
+#define STATUS_ADDR (CTU_CAN_FD_BASE + 0x8)
+\end_layout
+
+\begin_layout LyX-Code
+#define COMMAND_ADDR (CTU_CAN_FD_BASE + 0xC)
+\end_layout
+
+\begin_layout LyX-Code
+#define RX_STATUS_ADDR (CTU_CAN_FD_BASE + 0x68)
+\end_layout
+
+\begin_layout LyX-Code
+#define RX_DATA_ADDR (CTU_CAN_FD_BASE + 0x6C)
+\end_layout
+
+\begin_layout Standard
+\begin_inset Separator plain
+\end_inset
+
+
+\end_layout
+
+\begin_layout LyX-Code
+/* Read frame from RX Buffer RAM, and check parity error.*/
+\end_layout
+
+\begin_layout LyX-Code
+uint8_t data[64];
+\end_layout
+
+\begin_layout LyX-Code
+uint32_t tmp;
+\end_layout
+
+\begin_layout LyX-Code
+uint32_t ffw = can_read_32(RX_DATA_ADDR);
+\end_layout
+
+\begin_layout LyX-Code
+uint32_t id = can_read_32(RX_DATA_ADDR);
+\end_layout
+
+\begin_layout LyX-Code
+uint32_t ts_l = can_read_32(RX_DATA_ADDR);
+\end_layout
+
+\begin_layout LyX-Code
+uint32_t ts_h = can_read_32(RX_DATA_ADDR);
+\end_layout
+
+\begin_layout LyX-Code
+
+\end_layout
+
+\begin_layout LyX-Code
+if (can_read_32(STATUS_ADDR) >> 10) & 0x1)
+\end_layout
+
+\begin_deeper
+\begin_layout LyX-Code
+goto parity_err_handler;
+\end_layout
+
+\end_deeper
+\begin_layout Standard
+\begin_inset Separator plain
+\end_inset
+
+
+\end_layout
+
+\begin_layout LyX-Code
+uint32_t rwcnt = (ffw >> 11) & 0x1F;
+\end_layout
+
+\begin_layout LyX-Code
+for(int i = 0; i < rwcnt; i++){
+\end_layout
+
+\begin_layout LyX-Code
+    tmp = can_read_32(RX_DATA_ADDR);
+\end_layout
+
+\begin_layout LyX-Code
+    data[i*4] = tmp & 0xFF;
+\end_layout
+
+\begin_layout LyX-Code
+    data[i*4+1] = (tmp >> 8) & 0xFF;
+\end_layout
+
+\begin_layout LyX-Code
+    data[i*4+2] = (tmp >> 16) & 0xFF;
+\end_layout
+
+\begin_layout LyX-Code
+    data[i*4+3] = (tmp >> 24) & 0xFF;
+\end_layout
+
+\begin_deeper
+\begin_layout LyX-Code
+if (can_read_32(STATUS_ADDR) >> 10) & 0x1)
+\end_layout
+
+\begin_deeper
+\begin_layout LyX-Code
+goto parity_err_handler;
+\end_layout
+
+\end_deeper
+\end_deeper
+\begin_layout LyX-Code
+}
+\end_layout
+
+\begin_layout LyX-Code
+
+\end_layout
+
+\begin_layout LyX-Code
+return RX_FRAME_READ_OK;
+\end_layout
+
+\begin_layout Standard
+\begin_inset Separator plain
+\end_inset
+
+
+\end_layout
+
+\begin_layout LyX-Code
+/* Read out corrupted RX frame until start of new frame.
+ */
+\end_layout
+
+\begin_layout LyX-Code
+parity_err_handler:
+\end_layout
+
+\begin_deeper
+\begin_layout LyX-Code
+int i=0;
+\end_layout
+
+\begin_layout LyX-Code
+while (i < 16) {
+\end_layout
+
+\begin_deeper
+\begin_layout LyX-Code
+if (((can_read_32(RX_STATUS_ADDR) >> 2) & 0x1) == 0){
+\end_layout
+
+\begin_deeper
+\begin_layout LyX-Code
+can_write_32(COMMAND_ADDR, 0x200);
+\end_layout
+
+\begin_layout LyX-Code
+return RX_FRAME_DROPPED;
+\end_layout
+
+\end_deeper
+\begin_layout LyX-Code
+}
+\end_layout
+
+\begin_layout LyX-Code
+i++;
+\end_layout
+
+\begin_layout LyX-Code
+can_read_32(RX_DATA_ADDR);
+\end_layout
+
+\end_deeper
+\begin_layout LyX-Code
+}
+\end_layout
+
+\begin_layout LyX-Code
+/* If we get here, RX_STATUS[RX_MOF] is not signalling new frame even after
+\end_layout
+
+\begin_layout LyX-Code
+   largest possible data payload (16 words) must have been read out from
+\end_layout
+
+\begin_layout LyX-Code
+   RX Buffer, something is very wrong -> Flush RX Buffer */
+\end_layout
+
+\begin_layout LyX-Code
+can_write_32(COMMAND_ADDR, 0x202);
+\end_layout
+
+\begin_layout LyX-Code
+return RX_BUFFER_RESET;
+\end_layout
+
+\end_deeper
+\begin_layout Description
+Note The example above assumes that RX Buffer is read in Automatic mode
+ (MODE[RXBAM]=1).
+ However if single word from RX Buffer is read via e.g.
+ 4 x 8-bit accesses in MODE[RXBAM]=0, CTU CAN FD sets STATUS[RXPE] upon
+ each read from a RX_DATA which contains parity error.
+\end_layout
+
+\begin_layout Description
+Note Writing COMMAND[CRXPE]=1 by SW clears STATUS[RXPE] bit.
+\end_layout
+
+\begin_layout Subsection
+Parity protection on TXT Buffer RAMs
+\begin_inset CommandInset label
+LatexCommand label
+name "subsec:Parity-protection-on"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+When SW stores a CAN frame to TXT Buffer, CTU CAN FD appends a parity bit
+ to each word in the TXT Buffer RAM.
+ When CTU CAN FD attempts to transmit a frame from TXT Buffer and it detects
+ parity error in TXT Buffer RAM, it behaves like so:
+\end_layout
+
+\begin_layout Enumerate
+If CTU CAN FD detects parity error in FRAME_FORMAT_W, IDENTIFIER_W, TIMESTAMP_U_
+W or TIMESTAMP_L_W it does not attempt to transmit the CAN Frame.
+\end_layout
+
+\begin_layout Enumerate
+If CTU CAN FD does not detect parity error in any of TXT Buffer words mentioned
+ in previous point, it attempts to transmit the CAN Frame.
+\end_layout
+
+\begin_layout Enumerate
+If during transmission of CAN frame CTU CAN FD detects parity error in any
+ of DATA_1_4_W - DATA_61_64_W words from which it transmits CAN frame data
+ payload, it starts transmitting an error frame.
+\end_layout
+
+\begin_layout Standard
+If CTU CAN FD detects a parity error in TXT Buffer RAM as described in Steps
+ 1 or 3, such TXT Buffer moves to 
+\begin_inset Quotes eld
+\end_inset
+
+Parity Error
+\begin_inset Quotes erd
+\end_inset
+
+ state as shown in 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:txt-buffer-user"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+ and STATUS[TXPE] bit is set.
+\end_layout
+
+\begin_layout Description
+Note If CTU CAN FD detects a parity error in TXT Buffer, SW shall write
+ the whole CAN frame to TXT Buffer again before it attempts to use it for
+ further transmissions.
+\end_layout
+
+\begin_layout Subsection
+TXT Buffer Backup mode
+\end_layout
+
+\begin_layout Standard
+When MODE[TXBBM]=1, CTU CAN FD operates in TXT Buffer Backup mode.
+ In TXT Buffer Backup mode, TXT Buffers with adjacent indices form pairs
+ (e.g.
+ if TXTB_INFO[TXT_BUFFER_COUNT]=8 (CTU CAN FD contains 8 TXT Buffers) there
+ are 4 TXT Buffer pairs: 1-2, 3-4, 5-6, 7-8) as is shown in Figure 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:txt-buffer-pairs"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+placement H
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\noindent
+\align center
+\begin_inset Graphics
+	filename ../pics/Visio_generated/TXT_buffer_pairs.pdf
+	lyxscale 20
+	scale 90
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+TXT Buffer pairs
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:txt-buffer-pairs"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Operation of CTU CAN FD in TXT Buffer Backup mode provides additional fault
+ tolerance since TXT Buffer with higher index within TXT Buffer pair serves
+ as 
+\begin_inset Quotes eld
+\end_inset
+
+backup
+\begin_inset Quotes erd
+\end_inset
+
+ in case of parity error in 
+\begin_inset Quotes eld
+\end_inset
+
+original
+\begin_inset Quotes erd
+\end_inset
+
+ TXT Buffer.
+ The operation of CTU CAN FD in TXT Buffer Backup mode is in detail explained
+ in Figure 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:txt-buffer-backup-mode"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+placement H
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\noindent
+\align center
+\begin_inset Graphics
+	filename ../pics/Visio_generated/TXT_Buffer_Backup_mode.pdf
+	lyxscale 20
+	scale 70
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Operation in TXT Buffer Backup Mode
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:txt-buffer-backup-mode"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+When operating in TXT Buffer Backup mode, and CTU CAN FD detects a parity
+ error in 
+\begin_inset Quotes eld
+\end_inset
+
+original
+\begin_inset Quotes erd
+\end_inset
+
+ TXT Buffer RAM, such TXT Buffer moves to 
+\begin_inset Quotes eld
+\end_inset
+
+Parity Error
+\begin_inset Quotes erd
+\end_inset
+
+ state, and CTU CAN FD attempts to transmit frame from its 
+\begin_inset Quotes eld
+\end_inset
+
+backup
+\begin_inset Quotes erd
+\end_inset
+
+ TXT Buffer (e.g.
+ if CTU CAN FD detects parity error in TXT Buffer 2, it attempts to transmit
+ a frame from TXT Buffer 3).
+ If CTU CAN FD succesfully transmit a frame from TXT Buffer, its 
+\begin_inset Quotes eld
+\end_inset
+
+backup
+\begin_inset Quotes erd
+\end_inset
+
+ Buffer moves to 
+\begin_inset Quotes eld
+\end_inset
+
+Aborted
+\begin_inset Quotes erd
+\end_inset
+
+ state (thus transmission from 
+\begin_inset Quotes eld
+\end_inset
+
+backup
+\begin_inset Quotes erd
+\end_inset
+
+ Buffer is not executed).
+\end_layout
+
+\begin_layout Standard
+When CTU CAN FD is transmitting a frame from a 
+\begin_inset Quotes eld
+\end_inset
+
+backup
+\begin_inset Quotes erd
+\end_inset
+
+ TXT Buffer due to parity error in 
+\begin_inset Quotes eld
+\end_inset
+
+original
+\begin_inset Quotes erd
+\end_inset
+
+ TXT Buffer, and it detects parity error also in 
+\begin_inset Quotes eld
+\end_inset
+
+backup
+\begin_inset Quotes erd
+\end_inset
+
+ TXT Buffer RAM, CTU CAN FD sets STATUS[TXDPE] bit.
+\end_layout
+
+\begin_layout Standard
+When SW uses CTU CAN FD in TXT Buffer Backup mode, it must meet following
+ conditions:
+\end_layout
+
+\begin_layout Itemize
+Priority of TXT Buffers which form a pair (TX_PRIORITY register) must be
+ equal (e.g.
+ if CTU CAN FD contains 4 TXT Buffers, then at any time following must be
+ valid: TX_PRIORITY[TXT1P] = TX_PRIORITY[TXT2P], TX_PRIORITY[TXT3P] = TX_PRIORIT
+Y[TXT4P]).
+\end_layout
+
+\begin_layout Itemize
+When issuing a command to TXT Buffer (via TX_COMMAND register), SW shall
+ issue the command simultaneously to both TXT Buffers which form a TXT Buffer
+ pair (e.g.
+ TX_COMMAND[TXB1] = TX_COMMAND[TXB2] = 1, when issuing command to TXT Buffer
+ 1 and TXT Buffer 2).
+\end_layout
+
+\begin_layout Standard
+It is assumed that SW stores equal CAN frames to both TXT Buffers from TXT
+ Buffer pair when attempting to send CAN frame.
+ When this condition is met, the effect of TXT Buffer Backup mode is following:
+ If parity error occurs in 
+\begin_inset Quotes eld
+\end_inset
+
+original
+\begin_inset Quotes erd
+\end_inset
+
+ TXT Buffer RAM, the same frame is transmitted from 
+\begin_inset Quotes eld
+\end_inset
+
+backup
+\begin_inset Quotes erd
+\end_inset
+
+ TXT buffer.
+\end_layout
+
+\begin_layout Description
+Note Storing equal frames to both TXT Buffers by separate memory accesses
+ is intended by design.
+ CTU CAN FD does not automatically store this frame to both TXT Buffers
+ to avoid effect of potential SEU in the moment of storing the frame to
+ TXT Buffer.
+ If such SEU occured, it could happend that frame is stored to both TXT
+ Buffers with parity error already in it.
+\end_layout
+
+\begin_layout Description
+Note SW does not necessarily need to store equal frames to both TXT Buffers
+ from a TXT Buffer pair.
+ It may simply store any frame which shall be transmitted if parity error
+ occurs in 
+\begin_inset Quotes eld
+\end_inset
+
+original
+\begin_inset Quotes erd
+\end_inset
+
+ TXT Buffer to 
+\begin_inset Quotes eld
+\end_inset
+
+backup
+\begin_inset Quotes erd
+\end_inset
+
+ TXT Buffer.
+\end_layout
+
 \begin_layout Section
 Special modes
 \end_layout
@@ -5949,6 +6684,17 @@ When Acknowledge forbidden mode is enabled, CTU CAN FD acting as receiver
  Acknowledge forbidden mode is enabled when MODE[ACF] = 1.
  MODE[ACF] shall be modified only when CTU CAN FD is disabled (SETTINGS[ENA]
  = 0).
+\end_layout
+
+\begin_layout Subsection
+Self acknowledge mode
+\end_layout
+
+\begin_layout Standard
+When Self acknowledge mode is enabled, CTU CAN FD sends dominant ACK bit
+ even when it transmitts CAN frame.
+ Self acknowledge mode is enabled when MODE[SAM] = 1.
+ MODE[SAM] shall be modified only when SETTINGS[ENA] = 0.
 \end_layout
 
 \begin_layout Subsection
@@ -6039,6 +6785,139 @@ CTR_PRES register is writable, therefore all error counters can be modified
 Note Test mode shall be used for debugging / development purpose only (e.g.
  testing of higher layers behavior during error-passive state).
  It shall not be used during regular operation of CTU CAN FD.
+\end_layout
+
+\begin_layout Section
+Corrupting transmitted CAN frames
+\end_layout
+
+\begin_layout Standard
+CTU CAN FD provides following means for corrupting/modifying transmitted
+ CAN frame:
+\end_layout
+
+\begin_layout Itemize
+Invert a bit of CRC field.
+\end_layout
+
+\begin_layout Itemize
+Invert a bit of Stuff count field or Stuff Parity field.
+\end_layout
+
+\begin_layout Itemize
+Replace DLC with arbitrary value.
+\end_layout
+
+\begin_layout Standard
+All features for corrupting transmitted CAN frames are configured per each
+ transmitted frame in FRAME_FORMAT_W memory word in TXT Buffer, details
+ are explained in following subsections.
+ These features are available only in Test mode (MODE[TSTM]=1).
+ If MODE[TSTM]=0 , CTU CAN FD ignores this configuration and transmitts
+ uncorrupted frames (as in regular operation).
+ Corrupting applies only to transmitted frames, if CTU CAN FD is a receiver
+ of a frame, it does not corrupt frames such frame (It does not corrupt
+ frames transmitted by other CAN nodes on the network).
+\end_layout
+
+\begin_layout Description
+Note Corrupting a bit or replacing a bit field with alternative value applies
+ before bit-stuffing, therefore effect of flipping the bit may alternate
+ length of the frame due to additional/removed stuff bit.
+\end_layout
+
+\begin_layout Description
+Note To repeat transmission of a frame multiple times with corrupted bit,
+ use standar d 
+\begin_inset Quotes eld
+\end_inset
+
+Retransmit limitation
+\begin_inset Quotes erd
+\end_inset
+
+ mechanism, reffer to 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "tab:retransmitt-counter-configurations"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Subsection
+Flip a bit of CRC field
+\end_layout
+
+\begin_layout Standard
+When FRAME_FORMAT_W[FCRC] = 1, CTU CAN FD transmitts inverted bit at CRC
+ field bit position given by FRAME_FORMAT_W[CPRM].
+ E.g.
+ :
+\end_layout
+
+\begin_layout Itemize
+FRAME_FORMAT_W[CPRM] = 0x0 -> Bit at position 0 in CRC field (first bit
+ of CRC field) is transmitted with opposite value.
+\end_layout
+
+\begin_layout Itemize
+FRAME_FORMAT_W[CPRM] = 0xE -> Bit at position 14 in CRC field (15-th bit
+ of CRC filed) is transmitted with opposite value.
+\end_layout
+
+\begin_layout Description
+Note If FRAME_FORMAT_W[FIND] is bigger than length of CRC field, not bit
+ is flipped.
+\end_layout
+
+\begin_layout Subsection
+Flip a bit of Stuff count field
+\end_layout
+
+\begin_layout Standard
+When FRAME_FORMAT_W[FSTC] = 1, CTU CAN FD transmitts inverted bit at Stuf
+ count field bit position given by FRAME_FORMAT_W[CPRM].
+ E.g.
+ :
+\end_layout
+
+\begin_layout Itemize
+FRAME_FORMAT_W[CPRM] = 0x0 -> First bit of Stuff count field is transmitted
+ with opposite value.
+\end_layout
+
+\begin_layout Itemize
+FRAME_FORMAT_W[CPRM] = 0x2 -> Third bit of Stuff count field is transmitted
+ with opposite value.
+\end_layout
+
+\begin_layout Itemize
+FRAME_FORMAT_W[CPRM] = 0x3 -> Stuff Parity bit is transmitted with opposite
+ value.
+\end_layout
+
+\begin_layout Subsection
+Replace DLC with arbitrary value
+\end_layout
+
+\begin_layout Standard
+When FRAME_FORMAT_W[SDLC] = 1, FRAME_FORMAT_W[CPRM][3:0] bits are transmitted
+ instead of 
+\begin_inset Newline newline
+\end_inset
+
+FRAME_FORMAT_W[DLC] in Data Lenght Code field of CAN frame.
+ Number of data bytes transmitted is still derived from FRAME_FORMAT_W[DLC]
+ field.
+\end_layout
+
+\begin_layout Description
+Note CRC transmitted is calculated from FRAME_FORMAT_W[CPRM] (swapped value).
 \end_layout
 
 \begin_layout Section
@@ -6267,8 +7146,8 @@ Debug register
 \end_layout
 
 \begin_layout Standard
-CTU CAN FD contains debug register (DEBUG_REGISTER) which can be used to
- determine which part of CAN frame is currently being transmitted / received.
+CTU CAN FD contains debug register (DEBUG_REGISTER) which directly reflects
+ part/field of CAN frame which is currently being transmitted / received.
 \end_layout
 
 \begin_layout Subsection
@@ -6277,7 +7156,7 @@ Memory testability
 
 \begin_layout Standard
 CTU CAN FD supports manufacturing testability of its internal memories (TXT
- buffers and RX buffer) via Test Registers memory region.
+ buffer RAMs and RX buffer RAM) via Test Registers memory region.
  For details on memory testing reffer to 
 \begin_inset CommandInset citation
 LatexCommand cite

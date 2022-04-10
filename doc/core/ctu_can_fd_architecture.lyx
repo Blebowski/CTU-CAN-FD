@@ -511,7 +511,7 @@ filename "version.tex"
 \noindent
 \align center
 \begin_inset Tabular
-<lyxtabular version="3" rows="15" columns="4">
+<lyxtabular version="3" rows="16" columns="4">
 <features tabularvalignment="middle">
 <column alignment="center" valignment="top" width="1.5cm">
 <column alignment="center" valignment="top" width="3cm">
@@ -1070,7 +1070,7 @@ res_n_out
 </cell>
 </row>
 <row>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -1079,7 +1079,7 @@ res_n_out
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -1088,7 +1088,7 @@ res_n_out
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -1097,11 +1097,56 @@ res_n_out
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
 Clarify implications of connecting core to 8/16/32 bit buses.
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+0.15
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+2.4.1
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+10-4-2022
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Add Parity Check use-case in TXT Buffer.
+ Add 
+\series bold
+\shape italic
+sup_parity
+\series default
+\shape default
+ generic.
 \end_layout
 
 \end_inset
@@ -1428,12 +1473,10 @@ When CTU CAN FD GIT repository is clonned, register map can be generated
 \end_layout
 
 \begin_layout Verbatim
-
 cd scripts
 \end_layout
 
 \begin_layout Verbatim
-
 ./update_reg_map
 \end_layout
 
@@ -1446,12 +1489,10 @@ Documentation can be exported from VHDL RTL codes by following script:
 \end_layout
 
 \begin_layout Verbatim
-
 cd scripts
 \end_layout
 
 \begin_layout Verbatim
-
 python gen_lyx_tables.py --configPath vhdl_lyx_interface_cfg.yml
 \end_layout
 
@@ -1484,12 +1525,10 @@ CTU CAN FD contains release tags in GIT repository.
 \end_layout
 
 \begin_layout Verbatim
-
 cd scripts
 \end_layout
 
 \begin_layout Verbatim
-
 python create_release.py --output_dir ../release_directory_name
 \end_layout
 
@@ -1511,12 +1550,10 @@ src/component.xml
 \end_layout
 
 \begin_layout Verbatim
-
 cd scripts
 \end_layout
 
 \begin_layout Verbatim
-
 python gen_vivado_component.py
 \end_layout
 
@@ -2141,7 +2178,14 @@ The MAC sub-layer shall store the whole message to be transmitted in a temporary
 \begin_inset Quotes erd
 \end_inset
 
- CTU CAN FD implements no ECC, parity checks on TXT Buffer RAMs.
+ Additionally, CTU CAN FD implements parity protection on each word of TXT
+ Buffer and RX Buffer if 
+\series bold
+\shape italic
+sup_parity
+\series default
+\shape default
+=true.
 \end_layout
 
 \end_inset
@@ -5825,7 +5869,7 @@ status open
 \noindent
 \align center
 \begin_inset Tabular
-<lyxtabular version="3" rows="10" columns="5">
+<lyxtabular version="3" rows="11" columns="5">
 <features tabularvalignment="middle">
 <column alignment="left" valignment="top" width="0pt">
 <column alignment="left" valignment="top" width="0pt">
@@ -6415,7 +6459,57 @@ natural
 \begin_inset Text
 
 \begin_layout Plain Layout
-Target technology (set 0 for ASIC, set 1 for FPGA)
+Target technology (set 0 for ASIC, set 1 for FPGA).
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\series bold
+\shape italic
+sup_test_registers
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+boolean
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+true
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+true/false
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Synthesize test registers.
 \end_layout
 
 \end_inset
@@ -6429,7 +6523,7 @@ Target technology (set 0 for ASIC, set 1 for FPGA)
 
 \series bold
 \shape italic
-sup_test_registers
+sup_parity
 \end_layout
 
 \end_inset
@@ -6447,7 +6541,7 @@ boolean
 \begin_inset Text
 
 \begin_layout Plain Layout
-true
+false
 \end_layout
 
 \end_inset
@@ -6465,7 +6559,7 @@ true/false
 \begin_inset Text
 
 \begin_layout Plain Layout
-Synthesize test registers.
+Add parity protection to TXT Buffers / RX Buffer.
 \end_layout
 
 \end_inset
@@ -26795,7 +26889,7 @@ noprefix "false"
  If SW command is applied to TXT buffer FSM in state for which it is not
  valid, it has no effect.
  HW command is never applied in TXT buffer FSM state for which it is not
- valid (there are design assertions to prove that).
+ valid (there are design assertions to check that).
 \end_layout
 
 \begin_layout Standard
@@ -28942,6 +29036,11 @@ Load CAN frame metadata and Identifier from TXT buffer and provide them
 \end_layout
 
 \begin_layout Itemize
+Check parity of Metadata, Identifier and Timestamp words read from TXT Buffer,
+ and signal to TXT Buffer that it contains corrupted data.
+\end_layout
+
+\begin_layout Itemize
 Execute comparison of 
 \series bold
 \shape italic
@@ -29177,7 +29276,25 @@ noprefix "false"
 
 \end_inset
 
-)
+).
+\end_layout
+
+\begin_layout Standard
+If during TXT buffer validation process, TX Arbitrator detects parity error
+ in Metadata, Identifier or Timestamp words, it immediately aborts validation
+ of such TXT buffer, and signals this to TXT Buffer.
+ If TXT Buffer is 
+\begin_inset Quotes eld
+\end_inset
+
+Used
+\begin_inset Quotes erd
+\end_inset
+
+ (transmission is being executed from it), and TX Arbitrator detects that
+ parity is corrupted on a data word which is being transmitted, it also
+ signals this to TXT Buffer.
+ 
 \end_layout
 
 \begin_layout Standard
@@ -30602,6 +30719,215 @@ tran_frame_valid
 \shape default
  did not drop low immediately, it could happend that Protocol control would
  issue Lock command on a TXT buffer which was Unavailable (in Aborted state).
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float table
+placement H
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\noindent
+\align center
+\begin_inset Tabular
+<lyxtabular version="3" rows="4" columns="3">
+<features tabularvalignment="middle">
+<column alignment="left" valignment="top" width="5line%">
+<column alignment="left" valignment="top" width="30line%">
+<column alignment="left" valignment="top" width="56line%">
+<row>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Step 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+cellcolor{gray}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+External action (SW or external components)
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+cellcolor{gray}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+HW Action
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+cellcolor{gray}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+1
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+SW stores a frame to a TXT Buffer 1 and issues Set ready command.
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+TXT Buffer 1 becomes available from TX Arbitrator point of view.
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+2
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+TX Arbitrator starts validating TXT Buffer 1.
+ It reads out Metadata, Identifier, Timestamp Low/High words.
+ During each of these words, it checks that parity of word being read is
+ correct.
+ If not, it stops validation of this TXT Buffer, and it signals this to
+ TXT Buffer 1.
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="left" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+3
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+TXT Buffer 1 moves to Parity Error state.
+\end_layout
+
+\end_inset
+</cell>
+</row>
+</lyxtabular>
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\noindent
+\align center
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+TX arbitrator - use-case 3
+\begin_inset CommandInset label
+LatexCommand label
+name "tab:tx-arbitrator-usecase-1-3"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Subsection

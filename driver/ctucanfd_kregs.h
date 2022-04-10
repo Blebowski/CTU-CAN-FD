@@ -134,6 +134,8 @@ enum ctu_can_fd_can_registers {
 #define REG_MODE_ACF BIT(7)
 #define REG_MODE_TSTM BIT(8)
 #define REG_MODE_RXBAM BIT(9)
+#define REG_MODE_TXBBM BIT(10)
+#define REG_MODE_SAM BIT(11)
 #define REG_MODE_RTRLE BIT(16)
 #define REG_MODE_RTRTH GENMASK(20, 17)
 #define REG_MODE_ILBP BIT(21)
@@ -153,8 +155,12 @@ enum ctu_can_fd_can_registers {
 #define REG_STATUS_EWL BIT(6)
 #define REG_STATUS_IDLE BIT(7)
 #define REG_STATUS_PEXS BIT(8)
+#define REG_STATUS_RXPE BIT(9)
+#define REG_STATUS_TXPE BIT(10)
+#define REG_STATUS_TXDPE BIT(11)
 #define REG_STATUS_STCNT BIT(16)
 #define REG_STATUS_STRGS BIT(17)
+#define REG_STATUS_SPRT BIT(18)
 
 /*  COMMAND registers */
 #define REG_COMMAND_RXRPMV BIT(1)
@@ -164,6 +170,9 @@ enum ctu_can_fd_can_registers {
 #define REG_COMMAND_RXFCRST BIT(5)
 #define REG_COMMAND_TXFCRST BIT(6)
 #define REG_COMMAND_CPEXS BIT(7)
+#define REG_COMMAND_CRXPE BIT(8)
+#define REG_COMMAND_CTXPE BIT(9)
+#define REG_COMMAND_CTXDPE BIT(10)
 
 /*  INT_STAT registers */
 #define REG_INT_STAT_RXI BIT(0)

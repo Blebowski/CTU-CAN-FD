@@ -153,7 +153,9 @@ union ctu_can_fd_mode_settings {
 		uint32_t acf                     : 1;
 		uint32_t tstm                    : 1;
 		uint32_t rxbam                   : 1;
-		uint32_t reserved_15_10          : 6;
+		uint32_t txbbm                   : 1;
+		uint32_t sam                     : 1;
+		uint32_t reserved_15_12          : 4;
   /* SETTINGS */
 		uint32_t rtrle                   : 1;
 		uint32_t rtrth                   : 4;
@@ -174,7 +176,9 @@ union ctu_can_fd_mode_settings {
 		uint32_t ilbp                    : 1;
 		uint32_t rtrth                   : 4;
 		uint32_t rtrle                   : 1;
-		uint32_t reserved_15_10          : 6;
+		uint32_t reserved_15_12          : 4;
+		uint32_t sam                     : 1;
+		uint32_t txbbm                   : 1;
 		uint32_t rxbam                   : 1;
 		uint32_t tstm                    : 1;
 		uint32_t acf                     : 1;
@@ -229,6 +233,16 @@ enum ctu_can_fd_mode_rxbam {
 	RXBAM_ENABLED        = 0x1,
 };
 
+enum ctu_can_fd_mode_txbbm {
+	TXBBM_DISABLED       = 0x0,
+	TXBBM_ENABLED        = 0x1,
+};
+
+enum ctu_can_fd_mode_sam {
+	SAM_DISABLE       = 0x0,
+	SAM_ENABLE        = 0x1,
+};
+
 enum ctu_can_fd_settings_rtrle {
 	RTRLE_DISABLED       = 0x0,
 	RTRLE_ENABLED        = 0x1,
@@ -278,15 +292,23 @@ union ctu_can_fd_status {
 		uint32_t ewl                     : 1;
 		uint32_t idle                    : 1;
 		uint32_t pexs                    : 1;
-		uint32_t reserved_15_9           : 7;
+		uint32_t rxpe                    : 1;
+		uint32_t txpe                    : 1;
+		uint32_t txdpe                   : 1;
+		uint32_t reserved_15_12          : 4;
 		uint32_t stcnt                   : 1;
 		uint32_t strgs                   : 1;
-		uint32_t reserved_31_18         : 14;
+		uint32_t sprt                    : 1;
+		uint32_t reserved_31_19         : 13;
 #else
-		uint32_t reserved_31_18         : 14;
+		uint32_t reserved_31_19         : 13;
+		uint32_t sprt                    : 1;
 		uint32_t strgs                   : 1;
 		uint32_t stcnt                   : 1;
-		uint32_t reserved_15_9           : 7;
+		uint32_t reserved_15_12          : 4;
+		uint32_t txdpe                   : 1;
+		uint32_t txpe                    : 1;
+		uint32_t rxpe                    : 1;
 		uint32_t pexs                    : 1;
 		uint32_t idle                    : 1;
 		uint32_t ewl                     : 1;
@@ -313,9 +335,15 @@ union ctu_can_fd_command {
 		uint32_t rxfcrst                 : 1;
 		uint32_t txfcrst                 : 1;
 		uint32_t cpexs                   : 1;
-		uint32_t reserved_31_8          : 24;
+		uint32_t crxpe                   : 1;
+		uint32_t ctxpe                   : 1;
+		uint32_t ctxdpe                  : 1;
+		uint32_t reserved_31_11         : 21;
 #else
-		uint32_t reserved_31_8          : 24;
+		uint32_t reserved_31_11         : 21;
+		uint32_t ctxdpe                  : 1;
+		uint32_t ctxpe                   : 1;
+		uint32_t crxpe                   : 1;
 		uint32_t cpexs                   : 1;
 		uint32_t txfcrst                 : 1;
 		uint32_t rxfcrst                 : 1;
@@ -822,6 +850,7 @@ enum ctu_can_fd_tx_status_tx1s {
 	TXT_ERR             = 0x6,
 	TXT_ABT             = 0x7,
 	TXT_ETY             = 0x8,
+	TXT_PER             = 0x9,
 };
 
 union ctu_can_fd_tx_command_txtb_info {

@@ -105,6 +105,11 @@ package can_fd_frame_format is
   constant ESI_RSV_IND           : natural := 10;
   constant RWCNT_L               : natural := 11;
   constant RWCNT_H               : natural := 15;
+  constant CPRM_L                : natural := 16;
+  constant CPRM_H                : natural := 20;
+  constant FSTC_IND              : natural := 21;
+  constant FCRC_IND              : natural := 22;
+  constant SDLC_IND              : natural := 23;
 
   -- "RTR" field enumerated values
   constant NO_RTR_FRAME       : std_logic := '0';
@@ -125,6 +130,18 @@ package can_fd_frame_format is
   -- "ESI_RSV" field enumerated values
   constant ESI_ERR_ACTIVE     : std_logic := '0';
   constant ESI_ERR_PASIVE     : std_logic := '1';
+
+  -- "FSTC" field enumerated values
+  constant FSTC_NO_FLIP       : std_logic := '0';
+  constant FSTC_FLIP          : std_logic := '1';
+
+  -- "FCRC" field enumerated values
+  constant FCRC_FLIP          : std_logic := '0';
+  constant FCRC_NO_FLIP       : std_logic := '1';
+
+  -- "SDLC" field enumerated values
+  constant SDLC_NO_SWAP       : std_logic := '0';
+  constant SLDC_SWAP          : std_logic := '1';
 
   -- FRAME_FORMAT_W register reset values
 

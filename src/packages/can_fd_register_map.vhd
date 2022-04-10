@@ -276,6 +276,8 @@ package can_fd_register_map is
   constant ACF_IND                : natural := 7;
   constant TSTM_IND               : natural := 8;
   constant RXBAM_IND              : natural := 9;
+  constant TXBBM_IND             : natural := 10;
+  constant SAM_IND               : natural := 11;
 
   -- "FDE" field enumerated values
   constant FDE_DISABLE        : std_logic := '0';
@@ -305,9 +307,17 @@ package can_fd_register_map is
   constant TTTM_DISABLED      : std_logic := '0';
   constant TTTM_ENABLED       : std_logic := '1';
 
+  -- "TXBBM" field enumerated values
+  constant TXBBM_DISABLED     : std_logic := '0';
+  constant TXBBM_ENABLED      : std_logic := '1';
+
   -- "RXBAM" field enumerated values
   constant RXBAM_DISABLED     : std_logic := '0';
   constant RXBAM_ENABLED      : std_logic := '1';
+
+  -- "SAM" field enumerated values
+  constant SAM_DISABLE        : std_logic := '0';
+  constant SAM_ENABLE         : std_logic := '1';
 
   -- MODE register reset values
   constant RST_RSTVAL         : std_logic := '0';
@@ -319,7 +329,9 @@ package can_fd_register_map is
   constant TSTM_RSTVAL        : std_logic := '0';
   constant ROM_RSTVAL         : std_logic := '0';
   constant TTTM_RSTVAL        : std_logic := '0';
+  constant TXBBM_RSTVAL       : std_logic := '0';
   constant RXBAM_RSTVAL       : std_logic := '1';
+  constant SAM_RSTVAL         : std_logic := '0';
 
   ------------------------------------------------------------------------------
   -- SETTINGS register
@@ -386,8 +398,12 @@ package can_fd_register_map is
   constant EWL_IND                : natural := 6;
   constant IDLE_IND               : natural := 7;
   constant PEXS_IND               : natural := 8;
+  constant RXPE_IND               : natural := 9;
+  constant TXPE_IND              : natural := 10;
+  constant TXDPE_IND             : natural := 11;
   constant STCNT_IND             : natural := 16;
   constant STRGS_IND             : natural := 17;
+  constant SPRT_IND              : natural := 18;
 
   -- STATUS register reset values
   constant RXNE_RSTVAL        : std_logic := '0';
@@ -398,7 +414,10 @@ package can_fd_register_map is
   constant TXS_RSTVAL         : std_logic := '0';
   constant EWL_RSTVAL         : std_logic := '0';
   constant IDLE_RSTVAL        : std_logic := '1';
+  constant RXPE_RSTVAL        : std_logic := '0';
+  constant TXPE_RSTVAL        : std_logic := '0';
   constant PEXS_RSTVAL        : std_logic := '0';
+  constant TXDPE_RSTVAL       : std_logic := '0';
 
   ------------------------------------------------------------------------------
   -- COMMAND register
@@ -414,6 +433,9 @@ package can_fd_register_map is
   constant RXFCRST_IND            : natural := 5;
   constant TXFCRST_IND            : natural := 6;
   constant CPEXS_IND              : natural := 7;
+  constant CRXPE_IND              : natural := 8;
+  constant CTXPE_IND              : natural := 9;
+  constant CTXDPE_IND            : natural := 10;
 
   -- COMMAND register reset values
   constant RRB_RSTVAL         : std_logic := '0';
@@ -422,6 +444,9 @@ package can_fd_register_map is
   constant RXFCRST_RSTVAL     : std_logic := '0';
   constant TXFCRST_RSTVAL     : std_logic := '0';
   constant CPEXS_RSTVAL       : std_logic := '0';
+  constant CRXPE_RSTVAL       : std_logic := '0';
+  constant CTXDPE_RSTVAL      : std_logic := '0';
+  constant CTXPE_RSTVAL       : std_logic := '0';
 
   ------------------------------------------------------------------------------
   -- INT_STAT register
@@ -895,6 +920,7 @@ package can_fd_register_map is
   constant TXT_ERR : std_logic_vector(3 downto 0) := x"6";
   constant TXT_ABT : std_logic_vector(3 downto 0) := x"7";
   constant TXT_ETY : std_logic_vector(3 downto 0) := x"8";
+  constant TXT_PER : std_logic_vector(3 downto 0) := x"9";
 
   -- TX_STATUS register reset values
   constant TX2S_RSTVAL : std_logic_vector(3 downto 0) := x"8";

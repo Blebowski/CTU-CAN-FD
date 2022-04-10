@@ -4552,19 +4552,19 @@ Reserved\end_layout
 
 \end_inset
 </cell>
-<cell alignment="center" leftline="true" multicolumn="2" topline="true" usebox="none" valignment="top">
+<cell alignment="center" leftline="true" multicolumn="1" topline="true" usebox="none" valignment="top">
 \begin_inset Text
 
 \begin_layout Plain Layout
-Reserved\end_layout
+SAM\end_layout
 
 \end_inset
 </cell>
-<cell alignment="center" leftline="true" multicolumn="2" topline="true" usebox="none" valignment="top">
+<cell alignment="center" leftline="true" multicolumn="1" topline="true" usebox="none" valignment="top">
 \begin_inset Text
 
 \begin_layout Plain Layout
-Reserved\end_layout
+TXBBM\end_layout
 
 \end_inset
 </cell>
@@ -4637,7 +4637,7 @@ cellcolor{cyan}
 \begin_inset Text
 
 \begin_layout Plain Layout
--\end_layout
+0\end_layout
 
 \end_inset
 </cell>
@@ -4645,7 +4645,7 @@ cellcolor{cyan}
 \begin_inset Text
 
 \begin_layout Plain Layout
--\end_layout
+0\end_layout
 
 \end_inset
 </cell>
@@ -5034,9 +5034,19 @@ ACF Acknowledge Forbidden Mode. When enabled, acknowledge is not sent even if re
 TSTM Test Mode. In test mode several registers have special features. Reffer to description of Test mode for further details.
 \end_layout
 \begin_layout Description
-RXBAM RX Buffer automatic mode.\begin_inset Newline newline\end_inset
-		0b0  - RXBAM_DISABLED - \begin_inset Newline newline\end_inset
-		0b1  - RXBAM_ENABLED - 
+RXBAM RX Buffer Automatic mode.\begin_inset Newline newline\end_inset
+		0b0  - RXBAM_DISABLED - RX Buffer Automatic mode Disabled.\begin_inset Newline newline\end_inset
+		0b1  - RXBAM_ENABLED - RX Buffer Automatic mode Enabled.
+\end_layout
+\begin_layout Description
+TXBBM TXT Buffer Backup mode.\begin_inset Newline newline\end_inset
+		0b0  - TXBBM_DISABLED - TXT Buffer Backup mode disabled.\begin_inset Newline newline\end_inset
+		0b1  - TXBBM_ENABLED - TXT Buffer Backup mode enabled.
+\end_layout
+\begin_layout Description
+SAM Self-acknowledge mode.\begin_inset Newline newline\end_inset
+		0b0  - SAM_DISABLE - Do not send dominant ACK bit when CTU CAN FD sends Acknowledge bit.\begin_inset Newline newline\end_inset
+		0b1  - SAM_ENABLE - Send dominant ACK bit when CTU CAN FD transmits CAN frame.
 \end_layout
 \begin_layout Standard
 \begin_inset VSpace bigskip
@@ -6296,11 +6306,11 @@ Reserved\end_layout
 
 \end_inset
 </cell>
-<cell alignment="center" leftline="true" multicolumn="2" topline="true" usebox="none" valignment="top">
+<cell alignment="center" leftline="true" multicolumn="1" topline="true" usebox="none" valignment="top">
 \begin_inset Text
 
 \begin_layout Plain Layout
-Reserved\end_layout
+SPRT\end_layout
 
 \end_inset
 </cell>
@@ -6381,7 +6391,7 @@ cellcolor{cyan}
 \begin_inset Text
 
 \begin_layout Plain Layout
--\end_layout
+X\end_layout
 
 \end_inset
 </cell>
@@ -6608,27 +6618,27 @@ Reserved\end_layout
 
 \end_inset
 </cell>
-<cell alignment="center" leftline="true" multicolumn="2" topline="true" usebox="none" valignment="top">
+<cell alignment="center" leftline="true" multicolumn="1" topline="true" usebox="none" valignment="top">
 \begin_inset Text
 
 \begin_layout Plain Layout
-Reserved\end_layout
+TXDPE\end_layout
 
 \end_inset
 </cell>
-<cell alignment="center" leftline="true" multicolumn="2" topline="true" usebox="none" valignment="top">
+<cell alignment="center" leftline="true" multicolumn="1" topline="true" usebox="none" valignment="top">
 \begin_inset Text
 
 \begin_layout Plain Layout
-Reserved\end_layout
+TXPE\end_layout
 
 \end_inset
 </cell>
-<cell alignment="center" leftline="true" multicolumn="2" topline="true" usebox="none" valignment="top">
+<cell alignment="center" leftline="true" multicolumn="1" topline="true" usebox="none" valignment="top">
 \begin_inset Text
 
 \begin_layout Plain Layout
-Reserved\end_layout
+RXPE\end_layout
 
 \end_inset
 </cell>
@@ -6693,7 +6703,7 @@ cellcolor{cyan}
 \begin_inset Text
 
 \begin_layout Plain Layout
--\end_layout
+0\end_layout
 
 \end_inset
 </cell>
@@ -6701,7 +6711,7 @@ cellcolor{cyan}
 \begin_inset Text
 
 \begin_layout Plain Layout
--\end_layout
+0\end_layout
 
 \end_inset
 </cell>
@@ -6709,7 +6719,7 @@ cellcolor{cyan}
 \begin_inset Text
 
 \begin_layout Plain Layout
--\end_layout
+0\end_layout
 
 \end_inset
 </cell>
@@ -7076,10 +7086,22 @@ IDLE Bus is idle (no frame is being transmitted/received) or CTU CAN FD is bus-o
 PEXS Protocol exception status (flag). Set when Protocol exception occurs. Cleared by writing COMMAND[CPEXS]=1.
 \end_layout
 \begin_layout Description
+RXPE Set when parity error is detected during read of CAN frame from RX Buffer via RX_DATA register.
+\end_layout
+\begin_layout Description
+TXPE TXT Buffers Parity Error flag. Set When Parity Error is detected in a TXT Buffer during transmission from this buffer.
+\end_layout
+\begin_layout Description
+TXDPE 
+\end_layout
+\begin_layout Description
 STCNT Support of Traffic counters. When this bit is 1, Traffic counters are present. 
 \end_layout
 \begin_layout Description
 STRGS Support of Test Registers for memory testability. When this bit is 1, Test Registers are present. 
+\end_layout
+\begin_layout Description
+SPRT Support of Parity protection on each word of TXT Buffer RAM and RX Buffer RAM.
 \end_layout
 \begin_layout Standard
 \begin_inset VSpace bigskip
@@ -7915,67 +7937,67 @@ cellcolor{cyan}
 
 \end_inset
 </cell>
+<cell alignment="center" leftline="true" multicolumn="1" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Reserved\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" multicolumn="2" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Reserved\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" multicolumn="2" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Reserved\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" multicolumn="2" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Reserved\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" multicolumn="2" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Reserved\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" multicolumn="1" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+CTXDPE\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" multicolumn="1" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+CTXPE\end_layout
+
+\end_inset
+</cell>
 <cell alignment="center" leftline="true" multicolumn="1" rightline="true" topline="true" usebox="none" valignment="top">
 \begin_inset Text
 
 \begin_layout Plain Layout
-Reserved\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" leftline="true" multicolumn="2" topline="true" usebox="none" valignment="top">
-\begin_inset Text
-
-\begin_layout Plain Layout
-Reserved\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" leftline="true" multicolumn="2" topline="true" usebox="none" valignment="top">
-\begin_inset Text
-
-\begin_layout Plain Layout
-Reserved\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" leftline="true" multicolumn="2" topline="true" usebox="none" valignment="top">
-\begin_inset Text
-
-\begin_layout Plain Layout
-Reserved\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" leftline="true" multicolumn="2" topline="true" usebox="none" valignment="top">
-\begin_inset Text
-
-\begin_layout Plain Layout
-Reserved\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" leftline="true" multicolumn="2" topline="true" usebox="none" valignment="top">
-\begin_inset Text
-
-\begin_layout Plain Layout
-Reserved\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" leftline="true" multicolumn="2" topline="true" usebox="none" valignment="top">
-\begin_inset Text
-
-\begin_layout Plain Layout
-Reserved\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" leftline="true" multicolumn="2" rightline="true" topline="true" usebox="none" valignment="top">
-\begin_inset Text
-
-\begin_layout Plain Layout
-Reserved\end_layout
+CRXPE\end_layout
 
 \end_inset
 </cell>
@@ -8040,7 +8062,7 @@ cellcolor{cyan}
 \begin_inset Text
 
 \begin_layout Plain Layout
--\end_layout
+0\end_layout
 
 \end_inset
 </cell>
@@ -8048,7 +8070,7 @@ cellcolor{cyan}
 \begin_inset Text
 
 \begin_layout Plain Layout
--\end_layout
+0\end_layout
 
 \end_inset
 </cell>
@@ -8056,7 +8078,7 @@ cellcolor{cyan}
 \begin_inset Text
 
 \begin_layout Plain Layout
--\end_layout
+0\end_layout
 
 \end_inset
 </cell>
@@ -8407,6 +8429,15 @@ TXFCRST Clear TX bus traffic counter (TX_COUNTER register).
 \end_layout
 \begin_layout Description
 CPEXS Clear Protocol exception status (STATUS[PEXS]).
+\end_layout
+\begin_layout Description
+CRXPE Clear STATUS[CRXPE] flag.
+\end_layout
+\begin_layout Description
+CTXPE Clear STATUS[CTXPE] flag.
+\end_layout
+\begin_layout Description
+CTXDPE Clear STATUS[CTXDPE] flag.
 \end_layout
 \begin_layout Standard
 \begin_inset VSpace bigskip
@@ -37979,7 +38010,8 @@ TX1S Status of TXT buffer 1.\begin_inset Newline newline\end_inset
 		0b0100  - TXT_TOK - TXT buffer is in "TX OK" state.\begin_inset Newline newline\end_inset
 		0b0110  - TXT_ERR - TXT buffer is in "Failed" state.\begin_inset Newline newline\end_inset
 		0b0111  - TXT_ABT - TXT buffer is in "Aborted" state.\begin_inset Newline newline\end_inset
-		0b1000  - TXT_ETY - TXT buffer is in "Empty" state.
+		0b1000  - TXT_ETY - TXT buffer is in "Empty" state.\begin_inset Newline newline\end_inset
+		0b1001  - TXT_PER - TXT Buffer is in "Parity Error" state. CTU CAN FD detected parity error on this buffer.
 \end_layout
 \begin_layout Description
 TX2S Status of TXT buffer 2. Bit field meaning is analogous to TX1S.

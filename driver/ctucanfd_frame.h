@@ -59,9 +59,17 @@ union ctu_can_fd_frame_format_w {
 		uint32_t brs                     : 1;
 		uint32_t esi_rsv                 : 1;
 		uint32_t rwcnt                   : 5;
-		uint32_t reserved_31_16         : 16;
+		uint32_t cprm                    : 5;
+		uint32_t fstc                    : 1;
+		uint32_t fcrc                    : 1;
+		uint32_t sdlc                    : 1;
+		uint32_t reserved_31_24          : 8;
 #else
-		uint32_t reserved_31_16         : 16;
+		uint32_t reserved_31_24          : 8;
+		uint32_t sdlc                    : 1;
+		uint32_t fcrc                    : 1;
+		uint32_t fstc                    : 1;
+		uint32_t cprm                    : 5;
 		uint32_t rwcnt                   : 5;
 		uint32_t esi_rsv                 : 1;
 		uint32_t brs                     : 1;
@@ -98,6 +106,21 @@ enum ctu_can_fd_frame_format_w_brs {
 enum ctu_can_fd_frame_format_w_esi_rsv {
 	ESI_ERR_ACTIVE       = 0x0,
 	ESI_ERR_PASIVE       = 0x1,
+};
+
+enum ctu_can_fd_frame_format_w_fstc {
+	FSTC_NO_FLIP       = 0x0,
+	FSTC_FLIP          = 0x1,
+};
+
+enum ctu_can_fd_frame_format_w_fcrc {
+	FCRC_FLIP          = 0x0,
+	FCRC_NO_FLIP       = 0x1,
+};
+
+enum ctu_can_fd_frame_format_w_sdlc {
+	SDLC_NO_SWAP       = 0x0,
+	SLDC_SWAP          = 0x1,
 };
 
 union ctu_can_fd_identifier_w {
