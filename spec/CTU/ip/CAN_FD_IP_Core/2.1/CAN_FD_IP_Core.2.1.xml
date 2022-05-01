@@ -3160,7 +3160,7 @@
 				<ipxact:volatile>true</ipxact:volatile>
 				<ipxact:register>
 					<ipxact:name>TXTB1_DATA_1</ipxact:name>
-					<ipxact:displayName>TX_DATA_1</ipxact:displayName>
+					<ipxact:displayName>TXTB1_DATA_1</ipxact:displayName>
 					<ipxact:description>This adress word corresponds to FRAME_FORM word</ipxact:description>
 					<ipxact:dim>0</ipxact:dim>
 					<ipxact:addressOffset>'h0</ipxact:addressOffset>
@@ -3173,7 +3173,7 @@
 				</ipxact:register>
 				<ipxact:register>
 					<ipxact:name>TXTB1_DATA_2</ipxact:name>
-					<ipxact:displayName>TX_DATA_2</ipxact:displayName>
+					<ipxact:displayName>TXTB1_DATA_2</ipxact:displayName>
 					<ipxact:description>This adress word corresponds to IDENTIFIER word.</ipxact:description>
 					<ipxact:dim>0</ipxact:dim>
 					<ipxact:addressOffset>'h4</ipxact:addressOffset>
@@ -3185,14 +3185,219 @@
 					</ipxact:field>
 				</ipxact:register>
 				<ipxact:register>
+					<ipxact:name>TXTB1_DATA_18</ipxact:name>
+					<ipxact:displayName>TXTB1_DATA_18</ipxact:displayName>
+					<ipxact:dim>0</ipxact:dim>
+					<ipxact:addressOffset>'h44</ipxact:addressOffset>
+					<ipxact:size>32</ipxact:size>
+					<ipxact:field>
+						<ipxact:name>TXTB1_DATA_18</ipxact:name>
+						<ipxact:bitOffset>0</ipxact:bitOffset>
+						<ipxact:bitWidth>32</ipxact:bitWidth>
+					</ipxact:field>
+				</ipxact:register>
+				<ipxact:register>
 					<ipxact:name>TXTB1_DATA_20</ipxact:name>
-					<ipxact:displayName>TX_DATA_20</ipxact:displayName>
+					<ipxact:displayName>TXTB1_DATA_20</ipxact:displayName>
 					<ipxact:description>This adress word corresponds to DATA_61_64 word.</ipxact:description>
 					<ipxact:dim>0</ipxact:dim>
 					<ipxact:addressOffset>'h4C</ipxact:addressOffset>
 					<ipxact:size>32</ipxact:size>
 					<ipxact:field>
 						<ipxact:name>TXTB1_DATA_20</ipxact:name>
+						<ipxact:displayName>TXTB1_DATA_20</ipxact:displayName>
+						<ipxact:bitOffset>0</ipxact:bitOffset>
+						<ipxact:bitWidth>32</ipxact:bitWidth>
+					</ipxact:field>
+				</ipxact:register>
+				<ipxact:register>
+					<ipxact:name>TXTB1_DATA_19</ipxact:name>
+					<ipxact:displayName>TXTB1_DATA_19</ipxact:displayName>
+					<ipxact:dim>0</ipxact:dim>
+					<ipxact:addressOffset>'h48</ipxact:addressOffset>
+					<ipxact:size>32</ipxact:size>
+					<ipxact:field>
+						<ipxact:name>TXTB1_DATA_19</ipxact:name>
+						<ipxact:bitOffset>0</ipxact:bitOffset>
+						<ipxact:bitWidth>32</ipxact:bitWidth>
+					</ipxact:field>
+				</ipxact:register>
+				<ipxact:register>
+					<ipxact:name>TXTB1_DATA_17</ipxact:name>
+					<ipxact:displayName>TXTB1_DATA_17</ipxact:displayName>
+					<ipxact:dim>0</ipxact:dim>
+					<ipxact:addressOffset>'h40</ipxact:addressOffset>
+					<ipxact:size>32</ipxact:size>
+					<ipxact:field>
+						<ipxact:name>TXTB1_DATA_17</ipxact:name>
+						<ipxact:bitOffset>0</ipxact:bitOffset>
+						<ipxact:bitWidth>32</ipxact:bitWidth>
+					</ipxact:field>
+				</ipxact:register>
+				<ipxact:register>
+					<ipxact:name>TXTB1_DATA_3</ipxact:name>
+					<ipxact:displayName>TXTB1_DATA_3</ipxact:displayName>
+					<ipxact:dim>0</ipxact:dim>
+					<ipxact:addressOffset>'h8</ipxact:addressOffset>
+					<ipxact:size>32</ipxact:size>
+					<ipxact:field>
+						<ipxact:name>TXTB1_DATA_3</ipxact:name>
+						<ipxact:bitOffset>0</ipxact:bitOffset>
+						<ipxact:bitWidth>32</ipxact:bitWidth>
+					</ipxact:field>
+				</ipxact:register>
+				<ipxact:register>
+					<ipxact:name>TXTB1_DATA_4</ipxact:name>
+					<ipxact:displayName>TXTB1_DATA_4</ipxact:displayName>
+					<ipxact:dim>0</ipxact:dim>
+					<ipxact:addressOffset>'hC</ipxact:addressOffset>
+					<ipxact:size>32</ipxact:size>
+					<ipxact:field>
+						<ipxact:name>TXTB1_DATA_4</ipxact:name>
+						<ipxact:bitOffset>0</ipxact:bitOffset>
+						<ipxact:bitWidth>32</ipxact:bitWidth>
+					</ipxact:field>
+				</ipxact:register>
+				<ipxact:register>
+					<ipxact:name>TXTB1_DATA_7</ipxact:name>
+					<ipxact:displayName>TXTB1_DATA_7</ipxact:displayName>
+					<ipxact:dim>0</ipxact:dim>
+					<ipxact:addressOffset>'h18</ipxact:addressOffset>
+					<ipxact:size>32</ipxact:size>
+					<ipxact:field>
+						<ipxact:name>TXTB1_DATA_7</ipxact:name>
+						<ipxact:bitOffset>0</ipxact:bitOffset>
+						<ipxact:bitWidth>32</ipxact:bitWidth>
+					</ipxact:field>
+				</ipxact:register>
+				<ipxact:register>
+					<ipxact:name>TXTB1_DATA_5</ipxact:name>
+					<ipxact:displayName>TXTB1_DATA_5</ipxact:displayName>
+					<ipxact:dim>0</ipxact:dim>
+					<ipxact:addressOffset>'h10</ipxact:addressOffset>
+					<ipxact:size>32</ipxact:size>
+					<ipxact:field>
+						<ipxact:name>TXTB1_DATA_5</ipxact:name>
+						<ipxact:bitOffset>0</ipxact:bitOffset>
+						<ipxact:bitWidth>32</ipxact:bitWidth>
+					</ipxact:field>
+				</ipxact:register>
+				<ipxact:register>
+					<ipxact:name>TXTB1_DATA_6</ipxact:name>
+					<ipxact:displayName>TXTB1_DATA_6</ipxact:displayName>
+					<ipxact:dim>0</ipxact:dim>
+					<ipxact:addressOffset>'h14</ipxact:addressOffset>
+					<ipxact:size>32</ipxact:size>
+					<ipxact:field>
+						<ipxact:name>TXTB1_DATA_6</ipxact:name>
+						<ipxact:bitOffset>0</ipxact:bitOffset>
+						<ipxact:bitWidth>32</ipxact:bitWidth>
+					</ipxact:field>
+				</ipxact:register>
+				<ipxact:register>
+					<ipxact:name>TXTB1_DATA_8</ipxact:name>
+					<ipxact:displayName>TXTB1_DATA_8</ipxact:displayName>
+					<ipxact:dim>0</ipxact:dim>
+					<ipxact:addressOffset>'h1C</ipxact:addressOffset>
+					<ipxact:size>32</ipxact:size>
+					<ipxact:field>
+						<ipxact:name>TXTB1_DATA_8</ipxact:name>
+						<ipxact:bitOffset>0</ipxact:bitOffset>
+						<ipxact:bitWidth>32</ipxact:bitWidth>
+					</ipxact:field>
+				</ipxact:register>
+				<ipxact:register>
+					<ipxact:name>TXTB1_DATA_9</ipxact:name>
+					<ipxact:displayName>TXTB1_DATA_9</ipxact:displayName>
+					<ipxact:dim>0</ipxact:dim>
+					<ipxact:addressOffset>'h20</ipxact:addressOffset>
+					<ipxact:size>32</ipxact:size>
+					<ipxact:field>
+						<ipxact:name>TXTB1_DATA_9</ipxact:name>
+						<ipxact:bitOffset>0</ipxact:bitOffset>
+						<ipxact:bitWidth>32</ipxact:bitWidth>
+					</ipxact:field>
+				</ipxact:register>
+				<ipxact:register>
+					<ipxact:name>TXTB1_DATA_10</ipxact:name>
+					<ipxact:displayName>TXTB1_DATA_10</ipxact:displayName>
+					<ipxact:dim>0</ipxact:dim>
+					<ipxact:addressOffset>'h24</ipxact:addressOffset>
+					<ipxact:size>32</ipxact:size>
+					<ipxact:field>
+						<ipxact:name>TXTB1_DATA_10</ipxact:name>
+						<ipxact:bitOffset>0</ipxact:bitOffset>
+						<ipxact:bitWidth>32</ipxact:bitWidth>
+					</ipxact:field>
+				</ipxact:register>
+				<ipxact:register>
+					<ipxact:name>TXTB1_DATA_11</ipxact:name>
+					<ipxact:displayName>TXTB1_DATA_11</ipxact:displayName>
+					<ipxact:dim>0</ipxact:dim>
+					<ipxact:addressOffset>'h28</ipxact:addressOffset>
+					<ipxact:size>32</ipxact:size>
+					<ipxact:field>
+						<ipxact:name>TXTB1_DATA_11</ipxact:name>
+						<ipxact:bitOffset>0</ipxact:bitOffset>
+						<ipxact:bitWidth>32</ipxact:bitWidth>
+					</ipxact:field>
+				</ipxact:register>
+				<ipxact:register>
+					<ipxact:name>TXTB1_DATA_12</ipxact:name>
+					<ipxact:displayName>TXTB1_DATA_12</ipxact:displayName>
+					<ipxact:dim>0</ipxact:dim>
+					<ipxact:addressOffset>'h2C</ipxact:addressOffset>
+					<ipxact:size>32</ipxact:size>
+					<ipxact:field>
+						<ipxact:name>TXTB1_DATA_12</ipxact:name>
+						<ipxact:bitOffset>0</ipxact:bitOffset>
+						<ipxact:bitWidth>32</ipxact:bitWidth>
+					</ipxact:field>
+				</ipxact:register>
+				<ipxact:register>
+					<ipxact:name>TXTB1_DATA_13</ipxact:name>
+					<ipxact:displayName>TXTB1_DATA_13</ipxact:displayName>
+					<ipxact:dim>0</ipxact:dim>
+					<ipxact:addressOffset>'h30</ipxact:addressOffset>
+					<ipxact:size>32</ipxact:size>
+					<ipxact:field>
+						<ipxact:name>TXTB1_DATA_13</ipxact:name>
+						<ipxact:bitOffset>0</ipxact:bitOffset>
+						<ipxact:bitWidth>32</ipxact:bitWidth>
+					</ipxact:field>
+				</ipxact:register>
+				<ipxact:register>
+					<ipxact:name>TXTB1_DATA_14</ipxact:name>
+					<ipxact:displayName>TXTB1_DATA_14</ipxact:displayName>
+					<ipxact:dim>0</ipxact:dim>
+					<ipxact:addressOffset>'h34</ipxact:addressOffset>
+					<ipxact:size>32</ipxact:size>
+					<ipxact:field>
+						<ipxact:name>TXTB1_DATA_14</ipxact:name>
+						<ipxact:bitOffset>0</ipxact:bitOffset>
+						<ipxact:bitWidth>32</ipxact:bitWidth>
+					</ipxact:field>
+				</ipxact:register>
+				<ipxact:register>
+					<ipxact:name>TXTB1_DATA_15</ipxact:name>
+					<ipxact:displayName>TXTB1_DATA_15</ipxact:displayName>
+					<ipxact:dim>0</ipxact:dim>
+					<ipxact:addressOffset>'h38</ipxact:addressOffset>
+					<ipxact:size>32</ipxact:size>
+					<ipxact:field>
+						<ipxact:name>TXTB1_DATA_15</ipxact:name>
+						<ipxact:bitOffset>0</ipxact:bitOffset>
+						<ipxact:bitWidth>32</ipxact:bitWidth>
+					</ipxact:field>
+				</ipxact:register>
+				<ipxact:register>
+					<ipxact:name>TXTB1_DATA_16</ipxact:name>
+					<ipxact:displayName>TXTB1_DATA_16</ipxact:displayName>
+					<ipxact:dim>0</ipxact:dim>
+					<ipxact:addressOffset>'h3C</ipxact:addressOffset>
+					<ipxact:size>32</ipxact:size>
+					<ipxact:field>
+						<ipxact:name>TXTB1_DATA_16</ipxact:name>
 						<ipxact:bitOffset>0</ipxact:bitOffset>
 						<ipxact:bitWidth>32</ipxact:bitWidth>
 					</ipxact:field>
@@ -3209,6 +3414,7 @@
 				<ipxact:volatile>true</ipxact:volatile>
 				<ipxact:register>
 					<ipxact:name>TXTB2_DATA_1</ipxact:name>
+					<ipxact:displayName>TXTB2_DATA_1</ipxact:displayName>
 					<ipxact:description>This adress word corresponds to FRAME_FORM word</ipxact:description>
 					<ipxact:dim>0</ipxact:dim>
 					<ipxact:addressOffset>'h0</ipxact:addressOffset>
@@ -3221,6 +3427,7 @@
 				</ipxact:register>
 				<ipxact:register>
 					<ipxact:name>TXTB2_DATA_2</ipxact:name>
+					<ipxact:displayName>TXTB2_DATA_2</ipxact:displayName>
 					<ipxact:description>This adress word corresponds to IDENTIFIER word.</ipxact:description>
 					<ipxact:dim>0</ipxact:dim>
 					<ipxact:addressOffset>'h4</ipxact:addressOffset>
@@ -3232,13 +3439,218 @@
 					</ipxact:field>
 				</ipxact:register>
 				<ipxact:register>
+					<ipxact:name>TXTB2_DATA_19</ipxact:name>
+					<ipxact:displayName>TXTB2_DATA_19</ipxact:displayName>
+					<ipxact:dim>0</ipxact:dim>
+					<ipxact:addressOffset>'h48</ipxact:addressOffset>
+					<ipxact:size>32</ipxact:size>
+					<ipxact:field>
+						<ipxact:name>TXTB2_DATA_19</ipxact:name>
+						<ipxact:bitOffset>0</ipxact:bitOffset>
+						<ipxact:bitWidth>32</ipxact:bitWidth>
+					</ipxact:field>
+				</ipxact:register>
+				<ipxact:register>
 					<ipxact:name>TXTB2_DATA_20</ipxact:name>
+					<ipxact:displayName>TXTB2_DATA_20</ipxact:displayName>
 					<ipxact:description>This adress word corresponds to DATA_61_64 word.</ipxact:description>
 					<ipxact:dim>0</ipxact:dim>
 					<ipxact:addressOffset>'h4C</ipxact:addressOffset>
 					<ipxact:size>32</ipxact:size>
 					<ipxact:field>
 						<ipxact:name>TXTB2_DATA_20</ipxact:name>
+						<ipxact:bitOffset>0</ipxact:bitOffset>
+						<ipxact:bitWidth>32</ipxact:bitWidth>
+					</ipxact:field>
+				</ipxact:register>
+				<ipxact:register>
+					<ipxact:name>TXTB2_DATA_18</ipxact:name>
+					<ipxact:displayName>TXTB2_DATA_18</ipxact:displayName>
+					<ipxact:dim>0</ipxact:dim>
+					<ipxact:addressOffset>'h44</ipxact:addressOffset>
+					<ipxact:size>32</ipxact:size>
+					<ipxact:field>
+						<ipxact:name>TXTB2_DATA_18</ipxact:name>
+						<ipxact:bitOffset>0</ipxact:bitOffset>
+						<ipxact:bitWidth>32</ipxact:bitWidth>
+					</ipxact:field>
+				</ipxact:register>
+				<ipxact:register>
+					<ipxact:name>TXTB2_DATA_3</ipxact:name>
+					<ipxact:displayName>TXTB2_DATA_3</ipxact:displayName>
+					<ipxact:dim>0</ipxact:dim>
+					<ipxact:addressOffset>'h8</ipxact:addressOffset>
+					<ipxact:size>32</ipxact:size>
+					<ipxact:field>
+						<ipxact:name>TXTB2_DATA_3</ipxact:name>
+						<ipxact:bitOffset>0</ipxact:bitOffset>
+						<ipxact:bitWidth>32</ipxact:bitWidth>
+					</ipxact:field>
+				</ipxact:register>
+				<ipxact:register>
+					<ipxact:name>TXTB2_DATA_4</ipxact:name>
+					<ipxact:displayName>TXTB2_DATA_4</ipxact:displayName>
+					<ipxact:dim>0</ipxact:dim>
+					<ipxact:addressOffset>'hC</ipxact:addressOffset>
+					<ipxact:size>32</ipxact:size>
+					<ipxact:field>
+						<ipxact:name>TXTB2_DATA_4</ipxact:name>
+						<ipxact:bitOffset>0</ipxact:bitOffset>
+						<ipxact:bitWidth>32</ipxact:bitWidth>
+					</ipxact:field>
+				</ipxact:register>
+				<ipxact:register>
+					<ipxact:name>TXTB2_DATA_5</ipxact:name>
+					<ipxact:displayName>TXTB2_DATA_5</ipxact:displayName>
+					<ipxact:dim>0</ipxact:dim>
+					<ipxact:addressOffset>'h10</ipxact:addressOffset>
+					<ipxact:size>32</ipxact:size>
+					<ipxact:field>
+						<ipxact:name>TXTB2_DATA_5</ipxact:name>
+						<ipxact:bitOffset>0</ipxact:bitOffset>
+						<ipxact:bitWidth>32</ipxact:bitWidth>
+					</ipxact:field>
+				</ipxact:register>
+				<ipxact:register>
+					<ipxact:name>TXTB2_DATA_6</ipxact:name>
+					<ipxact:displayName>TXTB2_DATA_6</ipxact:displayName>
+					<ipxact:dim>0</ipxact:dim>
+					<ipxact:addressOffset>'h14</ipxact:addressOffset>
+					<ipxact:size>32</ipxact:size>
+					<ipxact:field>
+						<ipxact:name>TXTB2_DATA_6</ipxact:name>
+						<ipxact:bitOffset>0</ipxact:bitOffset>
+						<ipxact:bitWidth>32</ipxact:bitWidth>
+					</ipxact:field>
+				</ipxact:register>
+				<ipxact:register>
+					<ipxact:name>TXTB2_DATA_7</ipxact:name>
+					<ipxact:displayName>TXTB2_DATA_7</ipxact:displayName>
+					<ipxact:dim>0</ipxact:dim>
+					<ipxact:addressOffset>'h18</ipxact:addressOffset>
+					<ipxact:size>32</ipxact:size>
+					<ipxact:field>
+						<ipxact:name>TXTB2_DATA_7</ipxact:name>
+						<ipxact:bitOffset>0</ipxact:bitOffset>
+						<ipxact:bitWidth>32</ipxact:bitWidth>
+					</ipxact:field>
+				</ipxact:register>
+				<ipxact:register>
+					<ipxact:name>TXTB2_DATA_8</ipxact:name>
+					<ipxact:displayName>TXTB2_DATA_8</ipxact:displayName>
+					<ipxact:dim>0</ipxact:dim>
+					<ipxact:addressOffset>'h1C</ipxact:addressOffset>
+					<ipxact:size>32</ipxact:size>
+					<ipxact:field>
+						<ipxact:name>TXTB2_DATA_8</ipxact:name>
+						<ipxact:bitOffset>0</ipxact:bitOffset>
+						<ipxact:bitWidth>32</ipxact:bitWidth>
+					</ipxact:field>
+				</ipxact:register>
+				<ipxact:register>
+					<ipxact:name>TXTB2_DATA_9</ipxact:name>
+					<ipxact:displayName>TXTB2_DATA_9</ipxact:displayName>
+					<ipxact:dim>0</ipxact:dim>
+					<ipxact:addressOffset>'h20</ipxact:addressOffset>
+					<ipxact:size>32</ipxact:size>
+					<ipxact:field>
+						<ipxact:name>TXTB2_DATA_9</ipxact:name>
+						<ipxact:bitOffset>0</ipxact:bitOffset>
+						<ipxact:bitWidth>32</ipxact:bitWidth>
+					</ipxact:field>
+				</ipxact:register>
+				<ipxact:register>
+					<ipxact:name>TXTB2_DATA_10</ipxact:name>
+					<ipxact:displayName>TXTB2_DATA_10</ipxact:displayName>
+					<ipxact:dim>0</ipxact:dim>
+					<ipxact:addressOffset>'h24</ipxact:addressOffset>
+					<ipxact:size>32</ipxact:size>
+					<ipxact:field>
+						<ipxact:name>TXTB2_DATA_10</ipxact:name>
+						<ipxact:bitOffset>0</ipxact:bitOffset>
+						<ipxact:bitWidth>32</ipxact:bitWidth>
+					</ipxact:field>
+				</ipxact:register>
+				<ipxact:register>
+					<ipxact:name>TXTB2_DATA_11</ipxact:name>
+					<ipxact:displayName>TXTB2_DATA_11</ipxact:displayName>
+					<ipxact:dim>0</ipxact:dim>
+					<ipxact:addressOffset>'h28</ipxact:addressOffset>
+					<ipxact:size>32</ipxact:size>
+					<ipxact:field>
+						<ipxact:name>TXTB2_DATA_11</ipxact:name>
+						<ipxact:bitOffset>0</ipxact:bitOffset>
+						<ipxact:bitWidth>32</ipxact:bitWidth>
+					</ipxact:field>
+				</ipxact:register>
+				<ipxact:register>
+					<ipxact:name>TXTB2_DATA_17</ipxact:name>
+					<ipxact:displayName>TXTB2_DATA_17</ipxact:displayName>
+					<ipxact:dim>0</ipxact:dim>
+					<ipxact:addressOffset>'h40</ipxact:addressOffset>
+					<ipxact:size>32</ipxact:size>
+					<ipxact:field>
+						<ipxact:name>TXTB2_DATA_17</ipxact:name>
+						<ipxact:bitOffset>0</ipxact:bitOffset>
+						<ipxact:bitWidth>32</ipxact:bitWidth>
+					</ipxact:field>
+				</ipxact:register>
+				<ipxact:register>
+					<ipxact:name>TXTB2_DATA_12</ipxact:name>
+					<ipxact:displayName>TXTB2_DATA_12</ipxact:displayName>
+					<ipxact:dim>0</ipxact:dim>
+					<ipxact:addressOffset>'h2C</ipxact:addressOffset>
+					<ipxact:size>32</ipxact:size>
+					<ipxact:field>
+						<ipxact:name>TXTB2_DATA_12</ipxact:name>
+						<ipxact:bitOffset>0</ipxact:bitOffset>
+						<ipxact:bitWidth>32</ipxact:bitWidth>
+					</ipxact:field>
+				</ipxact:register>
+				<ipxact:register>
+					<ipxact:name>TXTB2_DATA_13</ipxact:name>
+					<ipxact:displayName>TXTB2_DATA_13</ipxact:displayName>
+					<ipxact:dim>0</ipxact:dim>
+					<ipxact:addressOffset>'h30</ipxact:addressOffset>
+					<ipxact:size>32</ipxact:size>
+					<ipxact:field>
+						<ipxact:name>TXTB2_DATA_13</ipxact:name>
+						<ipxact:bitOffset>0</ipxact:bitOffset>
+						<ipxact:bitWidth>32</ipxact:bitWidth>
+					</ipxact:field>
+				</ipxact:register>
+				<ipxact:register>
+					<ipxact:name>TXTB2_DATA_14</ipxact:name>
+					<ipxact:displayName>TXTB2_DATA_14</ipxact:displayName>
+					<ipxact:dim>0</ipxact:dim>
+					<ipxact:addressOffset>'h34</ipxact:addressOffset>
+					<ipxact:size>32</ipxact:size>
+					<ipxact:field>
+						<ipxact:name>TXTB2_DATA_14</ipxact:name>
+						<ipxact:bitOffset>0</ipxact:bitOffset>
+						<ipxact:bitWidth>32</ipxact:bitWidth>
+					</ipxact:field>
+				</ipxact:register>
+				<ipxact:register>
+					<ipxact:name>TXTB2_DATA_15</ipxact:name>
+					<ipxact:displayName>TXTB2_DATA_15</ipxact:displayName>
+					<ipxact:dim>0</ipxact:dim>
+					<ipxact:addressOffset>'h38</ipxact:addressOffset>
+					<ipxact:size>32</ipxact:size>
+					<ipxact:field>
+						<ipxact:name>TXTB2_DATA_15</ipxact:name>
+						<ipxact:bitOffset>0</ipxact:bitOffset>
+						<ipxact:bitWidth>32</ipxact:bitWidth>
+					</ipxact:field>
+				</ipxact:register>
+				<ipxact:register>
+					<ipxact:name>TXTB2_DATA_16</ipxact:name>
+					<ipxact:displayName>TXTB2_DATA_16</ipxact:displayName>
+					<ipxact:dim>0</ipxact:dim>
+					<ipxact:addressOffset>'h3C</ipxact:addressOffset>
+					<ipxact:size>32</ipxact:size>
+					<ipxact:field>
+						<ipxact:name>TXTB2_DATA_16</ipxact:name>
 						<ipxact:bitOffset>0</ipxact:bitOffset>
 						<ipxact:bitWidth>32</ipxact:bitWidth>
 					</ipxact:field>
@@ -3256,6 +3668,7 @@
 				<ipxact:volatile>true</ipxact:volatile>
 				<ipxact:register>
 					<ipxact:name>TXTB3_DATA_1</ipxact:name>
+					<ipxact:displayName>TXTB3_DATA_1</ipxact:displayName>
 					<ipxact:description>This adress word corresponds to FRAME_FORM word</ipxact:description>
 					<ipxact:dim>0</ipxact:dim>
 					<ipxact:addressOffset>'h0</ipxact:addressOffset>
@@ -3268,6 +3681,7 @@
 				</ipxact:register>
 				<ipxact:register>
 					<ipxact:name>TXTB3_DATA_2</ipxact:name>
+					<ipxact:displayName>TXTB3_DATA_2</ipxact:displayName>
 					<ipxact:description>This adress word corresponds to IDENTIFIER word.</ipxact:description>
 					<ipxact:dim>0</ipxact:dim>
 					<ipxact:addressOffset>'h4</ipxact:addressOffset>
@@ -3280,12 +3694,200 @@
 				</ipxact:register>
 				<ipxact:register>
 					<ipxact:name>TXTB3_DATA_20</ipxact:name>
+					<ipxact:displayName>TXTB3_DATA_20</ipxact:displayName>
 					<ipxact:description>This adress word corresponds to DATA_61_64 word.</ipxact:description>
 					<ipxact:dim>0</ipxact:dim>
 					<ipxact:addressOffset>'h4C</ipxact:addressOffset>
 					<ipxact:size>32</ipxact:size>
 					<ipxact:field>
 						<ipxact:name>TXTB3_DATA_20</ipxact:name>
+						<ipxact:bitOffset>0</ipxact:bitOffset>
+						<ipxact:bitWidth>32</ipxact:bitWidth>
+					</ipxact:field>
+				</ipxact:register>
+				<ipxact:register>
+					<ipxact:name>TXTB3_DATA_3</ipxact:name>
+					<ipxact:dim>0</ipxact:dim>
+					<ipxact:addressOffset>'h8</ipxact:addressOffset>
+					<ipxact:size>32</ipxact:size>
+					<ipxact:field>
+						<ipxact:name>TXTB3_DATA_3</ipxact:name>
+						<ipxact:bitOffset>0</ipxact:bitOffset>
+						<ipxact:bitWidth>32</ipxact:bitWidth>
+					</ipxact:field>
+				</ipxact:register>
+				<ipxact:register>
+					<ipxact:name>TXTB3_DATA_4</ipxact:name>
+					<ipxact:dim>0</ipxact:dim>
+					<ipxact:addressOffset>'hC</ipxact:addressOffset>
+					<ipxact:size>32</ipxact:size>
+					<ipxact:field>
+						<ipxact:name>TXTB3_DATA_4</ipxact:name>
+						<ipxact:bitOffset>0</ipxact:bitOffset>
+						<ipxact:bitWidth>32</ipxact:bitWidth>
+					</ipxact:field>
+				</ipxact:register>
+				<ipxact:register>
+					<ipxact:name>TXTB3_DATA_5</ipxact:name>
+					<ipxact:dim>0</ipxact:dim>
+					<ipxact:addressOffset>'h10</ipxact:addressOffset>
+					<ipxact:size>32</ipxact:size>
+					<ipxact:field>
+						<ipxact:name>TXTB3_DATA_5</ipxact:name>
+						<ipxact:bitOffset>0</ipxact:bitOffset>
+						<ipxact:bitWidth>32</ipxact:bitWidth>
+					</ipxact:field>
+				</ipxact:register>
+				<ipxact:register>
+					<ipxact:name>TXTB3_DATA_6</ipxact:name>
+					<ipxact:dim>0</ipxact:dim>
+					<ipxact:addressOffset>'h14</ipxact:addressOffset>
+					<ipxact:size>32</ipxact:size>
+					<ipxact:field>
+						<ipxact:name>TXTB3_DATA_6</ipxact:name>
+						<ipxact:bitOffset>0</ipxact:bitOffset>
+						<ipxact:bitWidth>32</ipxact:bitWidth>
+					</ipxact:field>
+				</ipxact:register>
+				<ipxact:register>
+					<ipxact:name>TXTB3_DATA_7</ipxact:name>
+					<ipxact:dim>0</ipxact:dim>
+					<ipxact:addressOffset>'h18</ipxact:addressOffset>
+					<ipxact:size>32</ipxact:size>
+					<ipxact:field>
+						<ipxact:name>TXTB3_DATA_7</ipxact:name>
+						<ipxact:bitOffset>0</ipxact:bitOffset>
+						<ipxact:bitWidth>32</ipxact:bitWidth>
+					</ipxact:field>
+				</ipxact:register>
+				<ipxact:register>
+					<ipxact:name>TXTB3_DATA_8</ipxact:name>
+					<ipxact:dim>0</ipxact:dim>
+					<ipxact:addressOffset>'h1C</ipxact:addressOffset>
+					<ipxact:size>32</ipxact:size>
+					<ipxact:field>
+						<ipxact:name>TXTB3_DATA_8</ipxact:name>
+						<ipxact:bitOffset>0</ipxact:bitOffset>
+						<ipxact:bitWidth>32</ipxact:bitWidth>
+					</ipxact:field>
+				</ipxact:register>
+				<ipxact:register>
+					<ipxact:name>TXTB3_DATA_9</ipxact:name>
+					<ipxact:dim>0</ipxact:dim>
+					<ipxact:addressOffset>'h20</ipxact:addressOffset>
+					<ipxact:size>32</ipxact:size>
+					<ipxact:field>
+						<ipxact:name>TXTB3_DATA_9</ipxact:name>
+						<ipxact:bitOffset>0</ipxact:bitOffset>
+						<ipxact:bitWidth>32</ipxact:bitWidth>
+					</ipxact:field>
+				</ipxact:register>
+				<ipxact:register>
+					<ipxact:name>TXTB3_DATA_10</ipxact:name>
+					<ipxact:dim>0</ipxact:dim>
+					<ipxact:addressOffset>'h24</ipxact:addressOffset>
+					<ipxact:size>32</ipxact:size>
+					<ipxact:field>
+						<ipxact:name>TXTB3_DATA_10</ipxact:name>
+						<ipxact:bitOffset>0</ipxact:bitOffset>
+						<ipxact:bitWidth>32</ipxact:bitWidth>
+					</ipxact:field>
+				</ipxact:register>
+				<ipxact:register>
+					<ipxact:name>TXTB3_DATA_11</ipxact:name>
+					<ipxact:dim>0</ipxact:dim>
+					<ipxact:addressOffset>'h28</ipxact:addressOffset>
+					<ipxact:size>32</ipxact:size>
+					<ipxact:field>
+						<ipxact:name>TXTB3_DATA_11</ipxact:name>
+						<ipxact:bitOffset>0</ipxact:bitOffset>
+						<ipxact:bitWidth>32</ipxact:bitWidth>
+					</ipxact:field>
+				</ipxact:register>
+				<ipxact:register>
+					<ipxact:name>TXTB3_DATA_12</ipxact:name>
+					<ipxact:dim>0</ipxact:dim>
+					<ipxact:addressOffset>'h2C</ipxact:addressOffset>
+					<ipxact:size>32</ipxact:size>
+					<ipxact:field>
+						<ipxact:name>TXTB3_DATA_12</ipxact:name>
+						<ipxact:bitOffset>0</ipxact:bitOffset>
+						<ipxact:bitWidth>32</ipxact:bitWidth>
+					</ipxact:field>
+				</ipxact:register>
+				<ipxact:register>
+					<ipxact:name>TXTB3_DATA_13</ipxact:name>
+					<ipxact:dim>0</ipxact:dim>
+					<ipxact:addressOffset>'h30</ipxact:addressOffset>
+					<ipxact:size>32</ipxact:size>
+					<ipxact:field>
+						<ipxact:name>TXTB3_DATA_13</ipxact:name>
+						<ipxact:bitOffset>0</ipxact:bitOffset>
+						<ipxact:bitWidth>32</ipxact:bitWidth>
+					</ipxact:field>
+				</ipxact:register>
+				<ipxact:register>
+					<ipxact:name>TXTB3_DATA_19</ipxact:name>
+					<ipxact:dim>0</ipxact:dim>
+					<ipxact:addressOffset>'h48</ipxact:addressOffset>
+					<ipxact:size>32</ipxact:size>
+					<ipxact:field>
+						<ipxact:name>TXTB3_DATA_19</ipxact:name>
+						<ipxact:bitOffset>0</ipxact:bitOffset>
+						<ipxact:bitWidth>32</ipxact:bitWidth>
+					</ipxact:field>
+				</ipxact:register>
+				<ipxact:register>
+					<ipxact:name>TXTB3_DATA_17</ipxact:name>
+					<ipxact:dim>0</ipxact:dim>
+					<ipxact:addressOffset>'h40</ipxact:addressOffset>
+					<ipxact:size>32</ipxact:size>
+					<ipxact:field>
+						<ipxact:name>TXTB3_DATA_17</ipxact:name>
+						<ipxact:bitOffset>0</ipxact:bitOffset>
+						<ipxact:bitWidth>32</ipxact:bitWidth>
+					</ipxact:field>
+				</ipxact:register>
+				<ipxact:register>
+					<ipxact:name>TXTB3_DATA_16</ipxact:name>
+					<ipxact:dim>0</ipxact:dim>
+					<ipxact:addressOffset>'h3C</ipxact:addressOffset>
+					<ipxact:size>32</ipxact:size>
+					<ipxact:field>
+						<ipxact:name>TXTB3_DATA_16</ipxact:name>
+						<ipxact:bitOffset>0</ipxact:bitOffset>
+						<ipxact:bitWidth>32</ipxact:bitWidth>
+					</ipxact:field>
+				</ipxact:register>
+				<ipxact:register>
+					<ipxact:name>TXTB3_DATA_14</ipxact:name>
+					<ipxact:dim>0</ipxact:dim>
+					<ipxact:addressOffset>'h34</ipxact:addressOffset>
+					<ipxact:size>32</ipxact:size>
+					<ipxact:field>
+						<ipxact:name>TXTB3_DATA_14</ipxact:name>
+						<ipxact:bitOffset>0</ipxact:bitOffset>
+						<ipxact:bitWidth>32</ipxact:bitWidth>
+					</ipxact:field>
+				</ipxact:register>
+				<ipxact:register>
+					<ipxact:name>TXTB3_DATA_18</ipxact:name>
+					<ipxact:dim>0</ipxact:dim>
+					<ipxact:addressOffset>'h44</ipxact:addressOffset>
+					<ipxact:size>32</ipxact:size>
+					<ipxact:field>
+						<ipxact:name>TXTB3_DATA_18</ipxact:name>
+						<ipxact:bitOffset>0</ipxact:bitOffset>
+						<ipxact:bitWidth>32</ipxact:bitWidth>
+					</ipxact:field>
+				</ipxact:register>
+				<ipxact:register>
+					<ipxact:name>TXTB3_DATA_15</ipxact:name>
+					<ipxact:dim>0</ipxact:dim>
+					<ipxact:addressOffset>'h38</ipxact:addressOffset>
+					<ipxact:size>32</ipxact:size>
+					<ipxact:field>
+						<ipxact:name>TXTB3_DATA_19</ipxact:name>
 						<ipxact:bitOffset>0</ipxact:bitOffset>
 						<ipxact:bitWidth>32</ipxact:bitWidth>
 					</ipxact:field>
@@ -3303,6 +3905,7 @@
 				<ipxact:volatile>true</ipxact:volatile>
 				<ipxact:register>
 					<ipxact:name>TXTB4_DATA_1</ipxact:name>
+					<ipxact:displayName>TXTB4_DATA_1</ipxact:displayName>
 					<ipxact:description>This adress word corresponds to FRAME_FORM word</ipxact:description>
 					<ipxact:dim>0</ipxact:dim>
 					<ipxact:addressOffset>'h0</ipxact:addressOffset>
@@ -3314,13 +3917,38 @@
 					</ipxact:field>
 				</ipxact:register>
 				<ipxact:register>
+					<ipxact:name>TXTB4_DATA_4</ipxact:name>
+					<ipxact:displayName>TXTB4_DATA_4</ipxact:displayName>
+					<ipxact:dim>0</ipxact:dim>
+					<ipxact:addressOffset>'hC</ipxact:addressOffset>
+					<ipxact:size>32</ipxact:size>
+					<ipxact:field>
+						<ipxact:name>TXTB4_DATA_4</ipxact:name>
+						<ipxact:bitOffset>0</ipxact:bitOffset>
+						<ipxact:bitWidth>32</ipxact:bitWidth>
+					</ipxact:field>
+				</ipxact:register>
+				<ipxact:register>
 					<ipxact:name>TXTB4_DATA_2</ipxact:name>
+					<ipxact:displayName>TXTB4_DATA_2</ipxact:displayName>
 					<ipxact:description>This adress word corresponds to IDENTIFIER word.</ipxact:description>
 					<ipxact:dim>0</ipxact:dim>
 					<ipxact:addressOffset>'h4</ipxact:addressOffset>
 					<ipxact:size>32</ipxact:size>
 					<ipxact:field>
 						<ipxact:name>TXTB4_DATA_2</ipxact:name>
+						<ipxact:bitOffset>0</ipxact:bitOffset>
+						<ipxact:bitWidth>32</ipxact:bitWidth>
+					</ipxact:field>
+				</ipxact:register>
+				<ipxact:register>
+					<ipxact:name>TXTB4_DATA_3</ipxact:name>
+					<ipxact:displayName>TXTB4_DATA_3</ipxact:displayName>
+					<ipxact:dim>0</ipxact:dim>
+					<ipxact:addressOffset>'h8</ipxact:addressOffset>
+					<ipxact:size>32</ipxact:size>
+					<ipxact:field>
+						<ipxact:name>TXTB4_DATA_3</ipxact:name>
 						<ipxact:bitOffset>0</ipxact:bitOffset>
 						<ipxact:bitWidth>32</ipxact:bitWidth>
 					</ipxact:field>
@@ -3333,6 +3961,171 @@
 					<ipxact:size>32</ipxact:size>
 					<ipxact:field>
 						<ipxact:name>TXTB4_DATA_20</ipxact:name>
+						<ipxact:bitOffset>0</ipxact:bitOffset>
+						<ipxact:bitWidth>32</ipxact:bitWidth>
+					</ipxact:field>
+				</ipxact:register>
+				<ipxact:register>
+					<ipxact:name>TXTB4_DATA_18</ipxact:name>
+					<ipxact:dim>0</ipxact:dim>
+					<ipxact:addressOffset>'h44</ipxact:addressOffset>
+					<ipxact:size>32</ipxact:size>
+					<ipxact:field>
+						<ipxact:name>TXTB4_DATA_18</ipxact:name>
+						<ipxact:bitOffset>0</ipxact:bitOffset>
+						<ipxact:bitWidth>32</ipxact:bitWidth>
+					</ipxact:field>
+				</ipxact:register>
+				<ipxact:register>
+					<ipxact:name>TXTB4_DATA_19</ipxact:name>
+					<ipxact:dim>0</ipxact:dim>
+					<ipxact:addressOffset>'h48</ipxact:addressOffset>
+					<ipxact:size>32</ipxact:size>
+					<ipxact:field>
+						<ipxact:name>TXTB4_DATA_19</ipxact:name>
+						<ipxact:bitOffset>0</ipxact:bitOffset>
+						<ipxact:bitWidth>32</ipxact:bitWidth>
+					</ipxact:field>
+				</ipxact:register>
+				<ipxact:register>
+					<ipxact:name>TXTB4_DATA_5</ipxact:name>
+					<ipxact:dim>0</ipxact:dim>
+					<ipxact:addressOffset>'h10</ipxact:addressOffset>
+					<ipxact:size>32</ipxact:size>
+					<ipxact:field>
+						<ipxact:name>TXTB4_DATA_5</ipxact:name>
+						<ipxact:bitOffset>0</ipxact:bitOffset>
+						<ipxact:bitWidth>32</ipxact:bitWidth>
+					</ipxact:field>
+				</ipxact:register>
+				<ipxact:register>
+					<ipxact:name>TXTB4_DATA_6</ipxact:name>
+					<ipxact:dim>0</ipxact:dim>
+					<ipxact:addressOffset>'h14</ipxact:addressOffset>
+					<ipxact:size>32</ipxact:size>
+					<ipxact:field>
+						<ipxact:name>TXTB4_DATA_6</ipxact:name>
+						<ipxact:bitOffset>0</ipxact:bitOffset>
+						<ipxact:bitWidth>32</ipxact:bitWidth>
+					</ipxact:field>
+				</ipxact:register>
+				<ipxact:register>
+					<ipxact:name>TXTB4_DATA_7</ipxact:name>
+					<ipxact:dim>0</ipxact:dim>
+					<ipxact:addressOffset>'h18</ipxact:addressOffset>
+					<ipxact:size>32</ipxact:size>
+					<ipxact:field>
+						<ipxact:name>TXTB4_DATA_7</ipxact:name>
+						<ipxact:bitOffset>0</ipxact:bitOffset>
+						<ipxact:bitWidth>32</ipxact:bitWidth>
+					</ipxact:field>
+				</ipxact:register>
+				<ipxact:register>
+					<ipxact:name>TXTB4_DATA_8</ipxact:name>
+					<ipxact:dim>0</ipxact:dim>
+					<ipxact:addressOffset>'h1C</ipxact:addressOffset>
+					<ipxact:size>32</ipxact:size>
+					<ipxact:field>
+						<ipxact:name>TXTB4_DATA_8</ipxact:name>
+						<ipxact:bitOffset>0</ipxact:bitOffset>
+						<ipxact:bitWidth>32</ipxact:bitWidth>
+					</ipxact:field>
+				</ipxact:register>
+				<ipxact:register>
+					<ipxact:name>TXTB4_DATA_9</ipxact:name>
+					<ipxact:dim>0</ipxact:dim>
+					<ipxact:addressOffset>'h20</ipxact:addressOffset>
+					<ipxact:size>32</ipxact:size>
+					<ipxact:field>
+						<ipxact:name>TXTB4_DATA_9</ipxact:name>
+						<ipxact:bitOffset>0</ipxact:bitOffset>
+						<ipxact:bitWidth>32</ipxact:bitWidth>
+					</ipxact:field>
+				</ipxact:register>
+				<ipxact:register>
+					<ipxact:name>TXTB4_DATA_10</ipxact:name>
+					<ipxact:dim>0</ipxact:dim>
+					<ipxact:addressOffset>'h24</ipxact:addressOffset>
+					<ipxact:size>32</ipxact:size>
+					<ipxact:field>
+						<ipxact:name>TXTB4_DATA_10</ipxact:name>
+						<ipxact:bitOffset>0</ipxact:bitOffset>
+						<ipxact:bitWidth>32</ipxact:bitWidth>
+					</ipxact:field>
+				</ipxact:register>
+				<ipxact:register>
+					<ipxact:name>TXTB4_DATA_11</ipxact:name>
+					<ipxact:dim>0</ipxact:dim>
+					<ipxact:addressOffset>'h28</ipxact:addressOffset>
+					<ipxact:size>32</ipxact:size>
+					<ipxact:field>
+						<ipxact:name>TXTB4_DATA_11</ipxact:name>
+						<ipxact:bitOffset>0</ipxact:bitOffset>
+						<ipxact:bitWidth>32</ipxact:bitWidth>
+					</ipxact:field>
+				</ipxact:register>
+				<ipxact:register>
+					<ipxact:name>TXTB4_DATA_12</ipxact:name>
+					<ipxact:dim>0</ipxact:dim>
+					<ipxact:addressOffset>'h2C</ipxact:addressOffset>
+					<ipxact:size>32</ipxact:size>
+					<ipxact:field>
+						<ipxact:name>TXTB4_DATA_12</ipxact:name>
+						<ipxact:bitOffset>0</ipxact:bitOffset>
+						<ipxact:bitWidth>32</ipxact:bitWidth>
+					</ipxact:field>
+				</ipxact:register>
+				<ipxact:register>
+					<ipxact:name>TXTB4_DATA_17</ipxact:name>
+					<ipxact:dim>0</ipxact:dim>
+					<ipxact:addressOffset>'h40</ipxact:addressOffset>
+					<ipxact:size>32</ipxact:size>
+					<ipxact:field>
+						<ipxact:name>TXTB4_DATA_17</ipxact:name>
+						<ipxact:bitOffset>0</ipxact:bitOffset>
+						<ipxact:bitWidth>32</ipxact:bitWidth>
+					</ipxact:field>
+				</ipxact:register>
+				<ipxact:register>
+					<ipxact:name>TXTB4_DATA_15</ipxact:name>
+					<ipxact:dim>0</ipxact:dim>
+					<ipxact:addressOffset>'h38</ipxact:addressOffset>
+					<ipxact:size>32</ipxact:size>
+					<ipxact:field>
+						<ipxact:name>TXTB4_DATA_15</ipxact:name>
+						<ipxact:bitOffset>0</ipxact:bitOffset>
+						<ipxact:bitWidth>32</ipxact:bitWidth>
+					</ipxact:field>
+				</ipxact:register>
+				<ipxact:register>
+					<ipxact:name>TXTB4_DATA_13</ipxact:name>
+					<ipxact:dim>0</ipxact:dim>
+					<ipxact:addressOffset>'h30</ipxact:addressOffset>
+					<ipxact:size>32</ipxact:size>
+					<ipxact:field>
+						<ipxact:name>TXTB4_DATA_13</ipxact:name>
+						<ipxact:bitOffset>0</ipxact:bitOffset>
+						<ipxact:bitWidth>32</ipxact:bitWidth>
+					</ipxact:field>
+				</ipxact:register>
+				<ipxact:register>
+					<ipxact:name>TXTB4_DATA_16</ipxact:name>
+					<ipxact:dim>0</ipxact:dim>
+					<ipxact:addressOffset>'h3C</ipxact:addressOffset>
+					<ipxact:size>32</ipxact:size>
+					<ipxact:field>
+						<ipxact:name>TXTB4_DATA_16</ipxact:name>
+						<ipxact:bitOffset>0</ipxact:bitOffset>
+						<ipxact:bitWidth>32</ipxact:bitWidth>
+					</ipxact:field>
+				</ipxact:register>
+				<ipxact:register>
+					<ipxact:name>TXTB4_DATA_14</ipxact:name>
+					<ipxact:dim>0</ipxact:dim>
+					<ipxact:addressOffset>'h34</ipxact:addressOffset>
+					<ipxact:size>32</ipxact:size>
+					<ipxact:field>
+						<ipxact:name>TXTB4_DATA_14</ipxact:name>
 						<ipxact:bitOffset>0</ipxact:bitOffset>
 						<ipxact:bitWidth>32</ipxact:bitWidth>
 					</ipxact:field>
@@ -3350,7 +4143,6 @@
 				<ipxact:volatile>true</ipxact:volatile>
 				<ipxact:register>
 					<ipxact:name>TXTB5_DATA_20</ipxact:name>
-					<ipxact:description>This adress word corresponds to DATA_61_64 word.</ipxact:description>
 					<ipxact:dim>0</ipxact:dim>
 					<ipxact:addressOffset>'h4C</ipxact:addressOffset>
 					<ipxact:size>32</ipxact:size>
@@ -3361,7 +4153,53 @@
 					</ipxact:field>
 				</ipxact:register>
 				<ipxact:register>
+					<ipxact:name>TXTB5_DATA_18</ipxact:name>
+					<ipxact:dim>0</ipxact:dim>
+					<ipxact:addressOffset>'h44</ipxact:addressOffset>
+					<ipxact:size>32</ipxact:size>
+					<ipxact:field>
+						<ipxact:name>TXTB5_DATA_18</ipxact:name>
+						<ipxact:bitOffset>0</ipxact:bitOffset>
+						<ipxact:bitWidth>32</ipxact:bitWidth>
+					</ipxact:field>
+				</ipxact:register>
+				<ipxact:register>
+					<ipxact:name>TXTB5_DATA_16</ipxact:name>
+					<ipxact:description>This adress word corresponds to DATA_61_64 word.</ipxact:description>
+					<ipxact:dim>0</ipxact:dim>
+					<ipxact:addressOffset>'h3C</ipxact:addressOffset>
+					<ipxact:size>32</ipxact:size>
+					<ipxact:field>
+						<ipxact:name>TXTB5_DATA_16</ipxact:name>
+						<ipxact:bitOffset>0</ipxact:bitOffset>
+						<ipxact:bitWidth>32</ipxact:bitWidth>
+					</ipxact:field>
+				</ipxact:register>
+				<ipxact:register>
+					<ipxact:name>TXTB5_DATA_19</ipxact:name>
+					<ipxact:dim>0</ipxact:dim>
+					<ipxact:addressOffset>'h48</ipxact:addressOffset>
+					<ipxact:size>32</ipxact:size>
+					<ipxact:field>
+						<ipxact:name>TXTB5_DATA_19</ipxact:name>
+						<ipxact:bitOffset>0</ipxact:bitOffset>
+						<ipxact:bitWidth>32</ipxact:bitWidth>
+					</ipxact:field>
+				</ipxact:register>
+				<ipxact:register>
+					<ipxact:name>TXTB5_DATA_17</ipxact:name>
+					<ipxact:dim>0</ipxact:dim>
+					<ipxact:addressOffset>'h40</ipxact:addressOffset>
+					<ipxact:size>32</ipxact:size>
+					<ipxact:field>
+						<ipxact:name>TXTB5_DATA_17</ipxact:name>
+						<ipxact:bitOffset>0</ipxact:bitOffset>
+						<ipxact:bitWidth>32</ipxact:bitWidth>
+					</ipxact:field>
+				</ipxact:register>
+				<ipxact:register>
 					<ipxact:name>TXTB5_DATA_1</ipxact:name>
+					<ipxact:displayName>TXTB5_DATA_1</ipxact:displayName>
 					<ipxact:description>This adress word corresponds to FRAME_FORM word</ipxact:description>
 					<ipxact:dim>0</ipxact:dim>
 					<ipxact:addressOffset>'h0</ipxact:addressOffset>
@@ -3374,12 +4212,157 @@
 				</ipxact:register>
 				<ipxact:register>
 					<ipxact:name>TXTB5_DATA_2</ipxact:name>
+					<ipxact:displayName>TXTB5_DATA_2</ipxact:displayName>
 					<ipxact:description>This adress word corresponds to IDENTIFIER word.</ipxact:description>
 					<ipxact:dim>0</ipxact:dim>
 					<ipxact:addressOffset>'h4</ipxact:addressOffset>
 					<ipxact:size>32</ipxact:size>
 					<ipxact:field>
 						<ipxact:name>TXTB5_DATA_2</ipxact:name>
+						<ipxact:bitOffset>0</ipxact:bitOffset>
+						<ipxact:bitWidth>32</ipxact:bitWidth>
+					</ipxact:field>
+				</ipxact:register>
+				<ipxact:register>
+					<ipxact:name>TXTB5_DATA_3</ipxact:name>
+					<ipxact:displayName>TXTB5_DATA_3</ipxact:displayName>
+					<ipxact:dim>0</ipxact:dim>
+					<ipxact:addressOffset>'h8</ipxact:addressOffset>
+					<ipxact:size>32</ipxact:size>
+					<ipxact:field>
+						<ipxact:name>TXTB5_DATA_3</ipxact:name>
+						<ipxact:bitOffset>0</ipxact:bitOffset>
+						<ipxact:bitWidth>32</ipxact:bitWidth>
+					</ipxact:field>
+				</ipxact:register>
+				<ipxact:register>
+					<ipxact:name>TXTB5_DATA_4</ipxact:name>
+					<ipxact:dim>0</ipxact:dim>
+					<ipxact:addressOffset>'hC</ipxact:addressOffset>
+					<ipxact:size>32</ipxact:size>
+					<ipxact:field>
+						<ipxact:name>TXTB5_DATA_4</ipxact:name>
+						<ipxact:bitOffset>0</ipxact:bitOffset>
+						<ipxact:bitWidth>32</ipxact:bitWidth>
+					</ipxact:field>
+				</ipxact:register>
+				<ipxact:register>
+					<ipxact:name>TXTB5_DATA_5</ipxact:name>
+					<ipxact:dim>0</ipxact:dim>
+					<ipxact:addressOffset>'h10</ipxact:addressOffset>
+					<ipxact:size>32</ipxact:size>
+					<ipxact:field>
+						<ipxact:name>TXTB5_DATA_5</ipxact:name>
+						<ipxact:bitOffset>0</ipxact:bitOffset>
+						<ipxact:bitWidth>32</ipxact:bitWidth>
+					</ipxact:field>
+				</ipxact:register>
+				<ipxact:register>
+					<ipxact:name>TXTB5_DATA_6</ipxact:name>
+					<ipxact:dim>0</ipxact:dim>
+					<ipxact:addressOffset>'h14</ipxact:addressOffset>
+					<ipxact:size>32</ipxact:size>
+					<ipxact:field>
+						<ipxact:name>TXTB5_DATA_6</ipxact:name>
+						<ipxact:bitOffset>0</ipxact:bitOffset>
+						<ipxact:bitWidth>32</ipxact:bitWidth>
+					</ipxact:field>
+				</ipxact:register>
+				<ipxact:register>
+					<ipxact:name>TXTB5_DATA_7</ipxact:name>
+					<ipxact:dim>0</ipxact:dim>
+					<ipxact:addressOffset>'h18</ipxact:addressOffset>
+					<ipxact:size>32</ipxact:size>
+					<ipxact:field>
+						<ipxact:name>TXTB5_DATA_7</ipxact:name>
+						<ipxact:bitOffset>0</ipxact:bitOffset>
+						<ipxact:bitWidth>32</ipxact:bitWidth>
+					</ipxact:field>
+				</ipxact:register>
+				<ipxact:register>
+					<ipxact:name>TXTB5_DATA_8</ipxact:name>
+					<ipxact:dim>0</ipxact:dim>
+					<ipxact:addressOffset>'h1C</ipxact:addressOffset>
+					<ipxact:size>32</ipxact:size>
+					<ipxact:field>
+						<ipxact:name>TXTB5_DATA_8</ipxact:name>
+						<ipxact:bitOffset>0</ipxact:bitOffset>
+						<ipxact:bitWidth>32</ipxact:bitWidth>
+					</ipxact:field>
+				</ipxact:register>
+				<ipxact:register>
+					<ipxact:name>TXTB5_DATA_9</ipxact:name>
+					<ipxact:dim>0</ipxact:dim>
+					<ipxact:addressOffset>'h20</ipxact:addressOffset>
+					<ipxact:size>32</ipxact:size>
+					<ipxact:field>
+						<ipxact:name>TXTB5_DATA_9</ipxact:name>
+						<ipxact:bitOffset>0</ipxact:bitOffset>
+						<ipxact:bitWidth>32</ipxact:bitWidth>
+					</ipxact:field>
+				</ipxact:register>
+				<ipxact:register>
+					<ipxact:name>TXTB5_DATA_12</ipxact:name>
+					<ipxact:dim>0</ipxact:dim>
+					<ipxact:addressOffset>'h2C</ipxact:addressOffset>
+					<ipxact:size>32</ipxact:size>
+					<ipxact:field>
+						<ipxact:name>TXTB5_DATA_12</ipxact:name>
+						<ipxact:bitOffset>0</ipxact:bitOffset>
+						<ipxact:bitWidth>32</ipxact:bitWidth>
+					</ipxact:field>
+				</ipxact:register>
+				<ipxact:register>
+					<ipxact:name>TXTB5_DATA_10</ipxact:name>
+					<ipxact:dim>0</ipxact:dim>
+					<ipxact:addressOffset>'h24</ipxact:addressOffset>
+					<ipxact:size>32</ipxact:size>
+					<ipxact:field>
+						<ipxact:name>TXTB5_DATA_10</ipxact:name>
+						<ipxact:bitOffset>0</ipxact:bitOffset>
+						<ipxact:bitWidth>32</ipxact:bitWidth>
+					</ipxact:field>
+				</ipxact:register>
+				<ipxact:register>
+					<ipxact:name>TXTB5_DATA_11</ipxact:name>
+					<ipxact:dim>0</ipxact:dim>
+					<ipxact:addressOffset>'h28</ipxact:addressOffset>
+					<ipxact:size>32</ipxact:size>
+					<ipxact:field>
+						<ipxact:name>TXTB5_DATA_11</ipxact:name>
+						<ipxact:bitOffset>0</ipxact:bitOffset>
+						<ipxact:bitWidth>32</ipxact:bitWidth>
+					</ipxact:field>
+				</ipxact:register>
+				<ipxact:register>
+					<ipxact:name>TXTB5_DATA_15</ipxact:name>
+					<ipxact:dim>0</ipxact:dim>
+					<ipxact:addressOffset>'h38</ipxact:addressOffset>
+					<ipxact:size>32</ipxact:size>
+					<ipxact:field>
+						<ipxact:name>TXTB5_DATA_15</ipxact:name>
+						<ipxact:bitOffset>0</ipxact:bitOffset>
+						<ipxact:bitWidth>32</ipxact:bitWidth>
+					</ipxact:field>
+				</ipxact:register>
+				<ipxact:register>
+					<ipxact:name>TXTB5_DATA_13</ipxact:name>
+					<ipxact:dim>0</ipxact:dim>
+					<ipxact:addressOffset>'h30</ipxact:addressOffset>
+					<ipxact:size>32</ipxact:size>
+					<ipxact:field>
+						<ipxact:name>TXTB5_DATA_13</ipxact:name>
+						<ipxact:bitOffset>0</ipxact:bitOffset>
+						<ipxact:bitWidth>32</ipxact:bitWidth>
+					</ipxact:field>
+				</ipxact:register>
+				<ipxact:register>
+					<ipxact:name>TXTB5_DATA_14</ipxact:name>
+					<ipxact:dim>0</ipxact:dim>
+					<ipxact:addressOffset>'h34</ipxact:addressOffset>
+					<ipxact:size>32</ipxact:size>
+					<ipxact:field>
+						<ipxact:name>TXTB5_DATA_14</ipxact:name>
 						<ipxact:bitOffset>0</ipxact:bitOffset>
 						<ipxact:bitWidth>32</ipxact:bitWidth>
 					</ipxact:field>
@@ -3396,13 +4379,22 @@
 				<ipxact:usage>memory</ipxact:usage>
 				<ipxact:volatile>true</ipxact:volatile>
 				<ipxact:register>
-					<ipxact:name>TXTB6_DATA_20</ipxact:name>
-					<ipxact:description>This adress word corresponds to DATA_61_64 word.</ipxact:description>
-					<ipxact:addressOffset>'h4C</ipxact:addressOffset>
+					<ipxact:name>TXTB6_DATA_19</ipxact:name>
+					<ipxact:addressOffset>'h48</ipxact:addressOffset>
 					<ipxact:size>32</ipxact:size>
 					<ipxact:field>
-						<ipxact:name>TXTB6_DATA_20</ipxact:name>
-						<ipxact:bitOffset>'h0</ipxact:bitOffset>
+						<ipxact:name>TXTB6_DATA_19</ipxact:name>
+						<ipxact:bitOffset>0</ipxact:bitOffset>
+						<ipxact:bitWidth>32</ipxact:bitWidth>
+					</ipxact:field>
+				</ipxact:register>
+				<ipxact:register>
+					<ipxact:name>TXTB6_DATA_18</ipxact:name>
+					<ipxact:addressOffset>'h44</ipxact:addressOffset>
+					<ipxact:size>32</ipxact:size>
+					<ipxact:field>
+						<ipxact:name>TXTB6_DATA_18</ipxact:name>
+						<ipxact:bitOffset>0</ipxact:bitOffset>
 						<ipxact:bitWidth>32</ipxact:bitWidth>
 					</ipxact:field>
 				</ipxact:register>
@@ -3428,6 +4420,167 @@
 						<ipxact:bitWidth>32</ipxact:bitWidth>
 					</ipxact:field>
 				</ipxact:register>
+				<ipxact:register>
+					<ipxact:name>TXTB6_DATA_3</ipxact:name>
+					<ipxact:addressOffset>'h8</ipxact:addressOffset>
+					<ipxact:size>32</ipxact:size>
+					<ipxact:field>
+						<ipxact:name>TXTB6_DATA_3</ipxact:name>
+						<ipxact:bitOffset>0</ipxact:bitOffset>
+						<ipxact:bitWidth>32</ipxact:bitWidth>
+					</ipxact:field>
+				</ipxact:register>
+				<ipxact:register>
+					<ipxact:name>TXTB6_DATA_4</ipxact:name>
+					<ipxact:addressOffset>'hC</ipxact:addressOffset>
+					<ipxact:size>32</ipxact:size>
+					<ipxact:field>
+						<ipxact:name>TXTB6_DATA_4</ipxact:name>
+						<ipxact:bitOffset>0</ipxact:bitOffset>
+						<ipxact:bitWidth>32</ipxact:bitWidth>
+					</ipxact:field>
+				</ipxact:register>
+				<ipxact:register>
+					<ipxact:name>TXTB6_DATA_5</ipxact:name>
+					<ipxact:addressOffset>'h10</ipxact:addressOffset>
+					<ipxact:size>32</ipxact:size>
+					<ipxact:field>
+						<ipxact:name>TXTB6_DATA_5</ipxact:name>
+						<ipxact:bitOffset>0</ipxact:bitOffset>
+						<ipxact:bitWidth>32</ipxact:bitWidth>
+					</ipxact:field>
+				</ipxact:register>
+				<ipxact:register>
+					<ipxact:name>TXTB6_DATA_6</ipxact:name>
+					<ipxact:addressOffset>'h14</ipxact:addressOffset>
+					<ipxact:size>32</ipxact:size>
+					<ipxact:field>
+						<ipxact:name>TXTB6_DATA_6</ipxact:name>
+						<ipxact:bitOffset>0</ipxact:bitOffset>
+						<ipxact:bitWidth>32</ipxact:bitWidth>
+					</ipxact:field>
+				</ipxact:register>
+				<ipxact:register>
+					<ipxact:name>TXTB6_DATA_7</ipxact:name>
+					<ipxact:addressOffset>'h18</ipxact:addressOffset>
+					<ipxact:size>32</ipxact:size>
+					<ipxact:field>
+						<ipxact:name>TXTB6_DATA_7</ipxact:name>
+						<ipxact:bitOffset>0</ipxact:bitOffset>
+						<ipxact:bitWidth>32</ipxact:bitWidth>
+					</ipxact:field>
+				</ipxact:register>
+				<ipxact:register>
+					<ipxact:name>TXTB6_DATA_8</ipxact:name>
+					<ipxact:addressOffset>'h1C</ipxact:addressOffset>
+					<ipxact:size>32</ipxact:size>
+					<ipxact:field>
+						<ipxact:name>TXTB6_DATA_8</ipxact:name>
+						<ipxact:bitOffset>0</ipxact:bitOffset>
+						<ipxact:bitWidth>32</ipxact:bitWidth>
+					</ipxact:field>
+				</ipxact:register>
+				<ipxact:register>
+					<ipxact:name>TXTB6_DATA_9</ipxact:name>
+					<ipxact:addressOffset>'h20</ipxact:addressOffset>
+					<ipxact:size>32</ipxact:size>
+					<ipxact:field>
+						<ipxact:name>TXTB6_DATA_9</ipxact:name>
+						<ipxact:bitOffset>0</ipxact:bitOffset>
+						<ipxact:bitWidth>32</ipxact:bitWidth>
+					</ipxact:field>
+				</ipxact:register>
+				<ipxact:register>
+					<ipxact:name>TXTB6_DATA_10</ipxact:name>
+					<ipxact:addressOffset>'h24</ipxact:addressOffset>
+					<ipxact:size>32</ipxact:size>
+					<ipxact:field>
+						<ipxact:name>TXTB6_DATA_10</ipxact:name>
+						<ipxact:bitOffset>0</ipxact:bitOffset>
+						<ipxact:bitWidth>32</ipxact:bitWidth>
+					</ipxact:field>
+				</ipxact:register>
+				<ipxact:register>
+					<ipxact:name>TXTB6_DATA_11</ipxact:name>
+					<ipxact:addressOffset>'h28</ipxact:addressOffset>
+					<ipxact:size>32</ipxact:size>
+					<ipxact:field>
+						<ipxact:name>TXTB6_DATA_11</ipxact:name>
+						<ipxact:bitOffset>0</ipxact:bitOffset>
+						<ipxact:bitWidth>32</ipxact:bitWidth>
+					</ipxact:field>
+				</ipxact:register>
+				<ipxact:register>
+					<ipxact:name>TXTB6_DATA_20</ipxact:name>
+					<ipxact:description>This adress word corresponds to DATA_61_64 word.</ipxact:description>
+					<ipxact:addressOffset>'h4C</ipxact:addressOffset>
+					<ipxact:size>32</ipxact:size>
+					<ipxact:field>
+						<ipxact:name>TXTB6_DATA_20</ipxact:name>
+						<ipxact:bitOffset>0</ipxact:bitOffset>
+						<ipxact:bitWidth>32</ipxact:bitWidth>
+					</ipxact:field>
+				</ipxact:register>
+				<ipxact:register>
+					<ipxact:name>TXTB6_DATA_15</ipxact:name>
+					<ipxact:addressOffset>'h38</ipxact:addressOffset>
+					<ipxact:size>32</ipxact:size>
+					<ipxact:field>
+						<ipxact:name>TXTB6_DATA_15</ipxact:name>
+						<ipxact:bitOffset>0</ipxact:bitOffset>
+						<ipxact:bitWidth>32</ipxact:bitWidth>
+					</ipxact:field>
+				</ipxact:register>
+				<ipxact:register>
+					<ipxact:name>TXTB6_DATA_12</ipxact:name>
+					<ipxact:addressOffset>'h2C</ipxact:addressOffset>
+					<ipxact:size>32</ipxact:size>
+					<ipxact:field>
+						<ipxact:name>TXTB6_DATA_12</ipxact:name>
+						<ipxact:bitOffset>0</ipxact:bitOffset>
+						<ipxact:bitWidth>32</ipxact:bitWidth>
+					</ipxact:field>
+				</ipxact:register>
+				<ipxact:register>
+					<ipxact:name>TXTB6_DATA_17</ipxact:name>
+					<ipxact:addressOffset>'h40</ipxact:addressOffset>
+					<ipxact:size>32</ipxact:size>
+					<ipxact:field>
+						<ipxact:name>TXTB6_DATA_17</ipxact:name>
+						<ipxact:bitOffset>0</ipxact:bitOffset>
+						<ipxact:bitWidth>32</ipxact:bitWidth>
+					</ipxact:field>
+				</ipxact:register>
+				<ipxact:register>
+					<ipxact:name>TXTB6_DATA_13</ipxact:name>
+					<ipxact:addressOffset>'h30</ipxact:addressOffset>
+					<ipxact:size>32</ipxact:size>
+					<ipxact:field>
+						<ipxact:name>TXTB6_DATA_13</ipxact:name>
+						<ipxact:bitOffset>0</ipxact:bitOffset>
+						<ipxact:bitWidth>32</ipxact:bitWidth>
+					</ipxact:field>
+				</ipxact:register>
+				<ipxact:register>
+					<ipxact:name>TXTB6_DATA_14</ipxact:name>
+					<ipxact:addressOffset>'h34</ipxact:addressOffset>
+					<ipxact:size>32</ipxact:size>
+					<ipxact:field>
+						<ipxact:name>TXTB6_DATA_14</ipxact:name>
+						<ipxact:bitOffset>0</ipxact:bitOffset>
+						<ipxact:bitWidth>32</ipxact:bitWidth>
+					</ipxact:field>
+				</ipxact:register>
+				<ipxact:register>
+					<ipxact:name>TXTB6_DATA_16</ipxact:name>
+					<ipxact:addressOffset>'h3C</ipxact:addressOffset>
+					<ipxact:size>32</ipxact:size>
+					<ipxact:field>
+						<ipxact:name>TXTB6_DATA_16</ipxact:name>
+						<ipxact:bitOffset>0</ipxact:bitOffset>
+						<ipxact:bitWidth>32</ipxact:bitWidth>
+					</ipxact:field>
+				</ipxact:register>
 			</ipxact:addressBlock>
 			<ipxact:addressBlock>
 				<ipxact:name>TX_Buffer_7</ipxact:name>
@@ -3440,12 +4593,11 @@
 				<ipxact:usage>memory</ipxact:usage>
 				<ipxact:volatile>true</ipxact:volatile>
 				<ipxact:register>
-					<ipxact:name>TXTB7_DATA_20</ipxact:name>
-					<ipxact:description>This adress word corresponds to DATA_61_64 word.</ipxact:description>
-					<ipxact:addressOffset>'h4C</ipxact:addressOffset>
+					<ipxact:name>TXTB7_DATA_8</ipxact:name>
+					<ipxact:addressOffset>'h1C</ipxact:addressOffset>
 					<ipxact:size>32</ipxact:size>
 					<ipxact:field>
-						<ipxact:name>TXTB7_DATA_20</ipxact:name>
+						<ipxact:name>TXTB7_DATA_8</ipxact:name>
 						<ipxact:bitOffset>0</ipxact:bitOffset>
 						<ipxact:bitWidth>32</ipxact:bitWidth>
 					</ipxact:field>
@@ -3462,12 +4614,183 @@
 					</ipxact:field>
 				</ipxact:register>
 				<ipxact:register>
+					<ipxact:name>TXTB7_DATA_4</ipxact:name>
+					<ipxact:addressOffset>'hC</ipxact:addressOffset>
+					<ipxact:size>32</ipxact:size>
+					<ipxact:field>
+						<ipxact:name>TXTB7_DATA_4</ipxact:name>
+						<ipxact:bitOffset>0</ipxact:bitOffset>
+						<ipxact:bitWidth>32</ipxact:bitWidth>
+					</ipxact:field>
+				</ipxact:register>
+				<ipxact:register>
 					<ipxact:name>TXTB7_DATA_2</ipxact:name>
 					<ipxact:description>This adress word corresponds to IDENTIFIER word.</ipxact:description>
 					<ipxact:addressOffset>'h4</ipxact:addressOffset>
 					<ipxact:size>32</ipxact:size>
 					<ipxact:field>
 						<ipxact:name>TXTB7_DATA_2</ipxact:name>
+						<ipxact:bitOffset>0</ipxact:bitOffset>
+						<ipxact:bitWidth>32</ipxact:bitWidth>
+					</ipxact:field>
+				</ipxact:register>
+				<ipxact:register>
+					<ipxact:name>TXTB7_DATA_3</ipxact:name>
+					<ipxact:addressOffset>'h8</ipxact:addressOffset>
+					<ipxact:size>32</ipxact:size>
+					<ipxact:field>
+						<ipxact:name>TXTB7_DATA_3</ipxact:name>
+						<ipxact:bitOffset>0</ipxact:bitOffset>
+						<ipxact:bitWidth>32</ipxact:bitWidth>
+					</ipxact:field>
+				</ipxact:register>
+				<ipxact:register>
+					<ipxact:name>TXTB7_DATA_5</ipxact:name>
+					<ipxact:addressOffset>'h10</ipxact:addressOffset>
+					<ipxact:size>32</ipxact:size>
+					<ipxact:field>
+						<ipxact:name>TXTB7_DATA_5</ipxact:name>
+						<ipxact:bitOffset>0</ipxact:bitOffset>
+						<ipxact:bitWidth>32</ipxact:bitWidth>
+					</ipxact:field>
+				</ipxact:register>
+				<ipxact:register>
+					<ipxact:name>TXTB7_DATA_6</ipxact:name>
+					<ipxact:addressOffset>'h14</ipxact:addressOffset>
+					<ipxact:size>32</ipxact:size>
+					<ipxact:field>
+						<ipxact:name>TXTB7_DATA_6</ipxact:name>
+						<ipxact:bitOffset>0</ipxact:bitOffset>
+						<ipxact:bitWidth>32</ipxact:bitWidth>
+					</ipxact:field>
+				</ipxact:register>
+				<ipxact:register>
+					<ipxact:name>TXTB7_DATA_7</ipxact:name>
+					<ipxact:addressOffset>'h18</ipxact:addressOffset>
+					<ipxact:size>32</ipxact:size>
+					<ipxact:field>
+						<ipxact:name>TXTB7_DATA_7</ipxact:name>
+						<ipxact:bitOffset>0</ipxact:bitOffset>
+						<ipxact:bitWidth>32</ipxact:bitWidth>
+					</ipxact:field>
+				</ipxact:register>
+				<ipxact:register>
+					<ipxact:name>TXTB7_DATA_9</ipxact:name>
+					<ipxact:addressOffset>'h20</ipxact:addressOffset>
+					<ipxact:size>32</ipxact:size>
+					<ipxact:field>
+						<ipxact:name>TXTB7_DATA_9</ipxact:name>
+						<ipxact:bitOffset>0</ipxact:bitOffset>
+						<ipxact:bitWidth>32</ipxact:bitWidth>
+					</ipxact:field>
+				</ipxact:register>
+				<ipxact:register>
+					<ipxact:name>TXTB7_DATA_10</ipxact:name>
+					<ipxact:addressOffset>'h24</ipxact:addressOffset>
+					<ipxact:size>32</ipxact:size>
+					<ipxact:field>
+						<ipxact:name>TXTB7_DATA_10</ipxact:name>
+						<ipxact:bitOffset>0</ipxact:bitOffset>
+						<ipxact:bitWidth>32</ipxact:bitWidth>
+					</ipxact:field>
+				</ipxact:register>
+				<ipxact:register>
+					<ipxact:name>TXTB7_DATA_11</ipxact:name>
+					<ipxact:addressOffset>'h28</ipxact:addressOffset>
+					<ipxact:size>32</ipxact:size>
+					<ipxact:field>
+						<ipxact:name>TXTB7_DATA_11</ipxact:name>
+						<ipxact:bitOffset>0</ipxact:bitOffset>
+						<ipxact:bitWidth>32</ipxact:bitWidth>
+					</ipxact:field>
+				</ipxact:register>
+				<ipxact:register>
+					<ipxact:name>TXTB7_DATA_12</ipxact:name>
+					<ipxact:addressOffset>'h2C</ipxact:addressOffset>
+					<ipxact:size>32</ipxact:size>
+					<ipxact:field>
+						<ipxact:name>TXTB7_DATA_12</ipxact:name>
+						<ipxact:bitOffset>0</ipxact:bitOffset>
+						<ipxact:bitWidth>32</ipxact:bitWidth>
+					</ipxact:field>
+				</ipxact:register>
+				<ipxact:register>
+					<ipxact:name>TXTB7_DATA_13</ipxact:name>
+					<ipxact:addressOffset>'h30</ipxact:addressOffset>
+					<ipxact:size>32</ipxact:size>
+					<ipxact:field>
+						<ipxact:name>TXTB7_DATA_13</ipxact:name>
+						<ipxact:bitOffset>0</ipxact:bitOffset>
+						<ipxact:bitWidth>32</ipxact:bitWidth>
+					</ipxact:field>
+				</ipxact:register>
+				<ipxact:register>
+					<ipxact:name>TXTB7_DATA_14</ipxact:name>
+					<ipxact:addressOffset>'h34</ipxact:addressOffset>
+					<ipxact:size>32</ipxact:size>
+					<ipxact:field>
+						<ipxact:name>TXTB7_DATA_14</ipxact:name>
+						<ipxact:bitOffset>0</ipxact:bitOffset>
+						<ipxact:bitWidth>32</ipxact:bitWidth>
+					</ipxact:field>
+				</ipxact:register>
+				<ipxact:register>
+					<ipxact:name>TXTB7_DATA_15</ipxact:name>
+					<ipxact:addressOffset>'h38</ipxact:addressOffset>
+					<ipxact:size>32</ipxact:size>
+					<ipxact:field>
+						<ipxact:name>TXTB7_DATA_15</ipxact:name>
+						<ipxact:bitOffset>0</ipxact:bitOffset>
+						<ipxact:bitWidth>32</ipxact:bitWidth>
+					</ipxact:field>
+				</ipxact:register>
+				<ipxact:register>
+					<ipxact:name>TXTB7_DATA_20</ipxact:name>
+					<ipxact:description>This adress word corresponds to DATA_61_64 word.</ipxact:description>
+					<ipxact:addressOffset>'h4C</ipxact:addressOffset>
+					<ipxact:size>32</ipxact:size>
+					<ipxact:field>
+						<ipxact:name>TXTB7_DATA_20</ipxact:name>
+						<ipxact:bitOffset>0</ipxact:bitOffset>
+						<ipxact:bitWidth>32</ipxact:bitWidth>
+					</ipxact:field>
+				</ipxact:register>
+				<ipxact:register>
+					<ipxact:name>TXTB7_DATA_18</ipxact:name>
+					<ipxact:addressOffset>'h44</ipxact:addressOffset>
+					<ipxact:size>32</ipxact:size>
+					<ipxact:field>
+						<ipxact:name>TXTB7_DATA_18</ipxact:name>
+						<ipxact:bitOffset>0</ipxact:bitOffset>
+						<ipxact:bitWidth>32</ipxact:bitWidth>
+					</ipxact:field>
+				</ipxact:register>
+				<ipxact:register>
+					<ipxact:name>TXTB7_DATA_16</ipxact:name>
+					<ipxact:addressOffset>'h3C</ipxact:addressOffset>
+					<ipxact:size>32</ipxact:size>
+					<ipxact:field>
+						<ipxact:name>TXTB7_DATA_16</ipxact:name>
+						<ipxact:bitOffset>0</ipxact:bitOffset>
+						<ipxact:bitWidth>32</ipxact:bitWidth>
+					</ipxact:field>
+				</ipxact:register>
+				<ipxact:register>
+					<ipxact:name>TXTB7_DATA_19</ipxact:name>
+					<ipxact:addressOffset>'h48</ipxact:addressOffset>
+					<ipxact:size>32</ipxact:size>
+					<ipxact:field>
+						<ipxact:name>TXTB7_DATA_19</ipxact:name>
+						<ipxact:bitOffset>0</ipxact:bitOffset>
+						<ipxact:bitWidth>32</ipxact:bitWidth>
+					</ipxact:field>
+				</ipxact:register>
+				<ipxact:register>
+					<ipxact:name>TXTB7_DATA_17</ipxact:name>
+					<ipxact:addressOffset>'h40</ipxact:addressOffset>
+					<ipxact:size>32</ipxact:size>
+					<ipxact:field>
+						<ipxact:name>TXTB7_DATA_17</ipxact:name>
 						<ipxact:bitOffset>0</ipxact:bitOffset>
 						<ipxact:bitWidth>32</ipxact:bitWidth>
 					</ipxact:field>
@@ -3484,9 +4807,9 @@
 				<ipxact:usage>memory</ipxact:usage>
 				<ipxact:volatile>true</ipxact:volatile>
 				<ipxact:register>
-					<ipxact:name>TXTB8_DATA_20</ipxact:name>
+					<ipxact:name>TXTB8_DATA_16</ipxact:name>
 					<ipxact:description>This adress word corresponds to DATA_61_64 word.</ipxact:description>
-					<ipxact:addressOffset>'h4C</ipxact:addressOffset>
+					<ipxact:addressOffset>'h3C</ipxact:addressOffset>
 					<ipxact:size>32</ipxact:size>
 					<ipxact:field>
 						<ipxact:name>TXTB8_DATA_20</ipxact:name>
@@ -3512,6 +4835,176 @@
 					<ipxact:size>32</ipxact:size>
 					<ipxact:field>
 						<ipxact:name>TXTB8_DATA_2</ipxact:name>
+						<ipxact:bitOffset>0</ipxact:bitOffset>
+						<ipxact:bitWidth>32</ipxact:bitWidth>
+					</ipxact:field>
+				</ipxact:register>
+				<ipxact:register>
+					<ipxact:name>TXTB8_DATA_3</ipxact:name>
+					<ipxact:addressOffset>'h8</ipxact:addressOffset>
+					<ipxact:size>32</ipxact:size>
+					<ipxact:field>
+						<ipxact:name>TXTB8_DATA_3</ipxact:name>
+						<ipxact:bitOffset>0</ipxact:bitOffset>
+						<ipxact:bitWidth>32</ipxact:bitWidth>
+					</ipxact:field>
+				</ipxact:register>
+				<ipxact:register>
+					<ipxact:name>TXTB8_DATA_4</ipxact:name>
+					<ipxact:addressOffset>'hC</ipxact:addressOffset>
+					<ipxact:size>32</ipxact:size>
+					<ipxact:field>
+						<ipxact:name>TXTB8_DATA_4</ipxact:name>
+						<ipxact:bitOffset>0</ipxact:bitOffset>
+						<ipxact:bitWidth>32</ipxact:bitWidth>
+					</ipxact:field>
+				</ipxact:register>
+				<ipxact:register>
+					<ipxact:name>TXTB8_DATA_5</ipxact:name>
+					<ipxact:addressOffset>'h10</ipxact:addressOffset>
+					<ipxact:size>32</ipxact:size>
+					<ipxact:field>
+						<ipxact:name>TXTB8_DATA_5</ipxact:name>
+						<ipxact:bitOffset>0</ipxact:bitOffset>
+						<ipxact:bitWidth>32</ipxact:bitWidth>
+					</ipxact:field>
+				</ipxact:register>
+				<ipxact:register>
+					<ipxact:name>TXTB8_DATA_8</ipxact:name>
+					<ipxact:addressOffset>'h1C</ipxact:addressOffset>
+					<ipxact:size>32</ipxact:size>
+					<ipxact:field>
+						<ipxact:name>TXTB8_DATA_8</ipxact:name>
+						<ipxact:bitOffset>0</ipxact:bitOffset>
+						<ipxact:bitWidth>32</ipxact:bitWidth>
+					</ipxact:field>
+				</ipxact:register>
+				<ipxact:register>
+					<ipxact:name>TXTB8_DATA_6</ipxact:name>
+					<ipxact:addressOffset>'h14</ipxact:addressOffset>
+					<ipxact:size>32</ipxact:size>
+					<ipxact:field>
+						<ipxact:name>TXTB8_DATA_6</ipxact:name>
+						<ipxact:bitOffset>0</ipxact:bitOffset>
+						<ipxact:bitWidth>32</ipxact:bitWidth>
+					</ipxact:field>
+				</ipxact:register>
+				<ipxact:register>
+					<ipxact:name>TXTB8_DATA_7</ipxact:name>
+					<ipxact:addressOffset>'h18</ipxact:addressOffset>
+					<ipxact:size>32</ipxact:size>
+					<ipxact:field>
+						<ipxact:name>TXTB8_DATA_7</ipxact:name>
+						<ipxact:bitOffset>0</ipxact:bitOffset>
+						<ipxact:bitWidth>32</ipxact:bitWidth>
+					</ipxact:field>
+				</ipxact:register>
+				<ipxact:register>
+					<ipxact:name>TXTB8_DATA_11</ipxact:name>
+					<ipxact:addressOffset>'h28</ipxact:addressOffset>
+					<ipxact:size>32</ipxact:size>
+					<ipxact:field>
+						<ipxact:name>TXTB8_DATA_11</ipxact:name>
+						<ipxact:bitOffset>0</ipxact:bitOffset>
+						<ipxact:bitWidth>32</ipxact:bitWidth>
+					</ipxact:field>
+				</ipxact:register>
+				<ipxact:register>
+					<ipxact:name>TXTB8_DATA_9</ipxact:name>
+					<ipxact:addressOffset>'h20</ipxact:addressOffset>
+					<ipxact:size>32</ipxact:size>
+					<ipxact:field>
+						<ipxact:name>TXTB8_DATA_9</ipxact:name>
+						<ipxact:bitOffset>0</ipxact:bitOffset>
+						<ipxact:bitWidth>32</ipxact:bitWidth>
+					</ipxact:field>
+				</ipxact:register>
+				<ipxact:register>
+					<ipxact:name>TXTB8_DATA_10</ipxact:name>
+					<ipxact:addressOffset>'h24</ipxact:addressOffset>
+					<ipxact:size>32</ipxact:size>
+					<ipxact:field>
+						<ipxact:name>TXTB8_DATA_10</ipxact:name>
+						<ipxact:bitOffset>0</ipxact:bitOffset>
+						<ipxact:bitWidth>32</ipxact:bitWidth>
+					</ipxact:field>
+				</ipxact:register>
+				<ipxact:register>
+					<ipxact:name>TXTB8_DATA_12</ipxact:name>
+					<ipxact:addressOffset>'h2C</ipxact:addressOffset>
+					<ipxact:size>32</ipxact:size>
+					<ipxact:field>
+						<ipxact:name>TXTB8_DATA_12</ipxact:name>
+						<ipxact:bitOffset>0</ipxact:bitOffset>
+						<ipxact:bitWidth>32</ipxact:bitWidth>
+					</ipxact:field>
+				</ipxact:register>
+				<ipxact:register>
+					<ipxact:name>TXTB8_DATA_20</ipxact:name>
+					<ipxact:addressOffset>'h4C</ipxact:addressOffset>
+					<ipxact:size>32</ipxact:size>
+					<ipxact:field>
+						<ipxact:name>TXTB8_DATA_20</ipxact:name>
+						<ipxact:bitOffset>0</ipxact:bitOffset>
+						<ipxact:bitWidth>32</ipxact:bitWidth>
+					</ipxact:field>
+				</ipxact:register>
+				<ipxact:register>
+					<ipxact:name>TXTB8_DATA_18</ipxact:name>
+					<ipxact:addressOffset>'h44</ipxact:addressOffset>
+					<ipxact:size>32</ipxact:size>
+					<ipxact:field>
+						<ipxact:name>TXTB8_DATA_18</ipxact:name>
+						<ipxact:bitOffset>0</ipxact:bitOffset>
+						<ipxact:bitWidth>32</ipxact:bitWidth>
+					</ipxact:field>
+				</ipxact:register>
+				<ipxact:register>
+					<ipxact:name>TXTB8_DATA_15</ipxact:name>
+					<ipxact:addressOffset>'h38</ipxact:addressOffset>
+					<ipxact:size>32</ipxact:size>
+					<ipxact:field>
+						<ipxact:name>TXTB8_DATA_15</ipxact:name>
+						<ipxact:bitOffset>0</ipxact:bitOffset>
+						<ipxact:bitWidth>32</ipxact:bitWidth>
+					</ipxact:field>
+				</ipxact:register>
+				<ipxact:register>
+					<ipxact:name>TXTB8_DATA_13</ipxact:name>
+					<ipxact:addressOffset>'h30</ipxact:addressOffset>
+					<ipxact:size>32</ipxact:size>
+					<ipxact:field>
+						<ipxact:name>TXTB8_DATA_13</ipxact:name>
+						<ipxact:bitOffset>0</ipxact:bitOffset>
+						<ipxact:bitWidth>32</ipxact:bitWidth>
+					</ipxact:field>
+				</ipxact:register>
+				<ipxact:register>
+					<ipxact:name>TXTB8_DATA_19</ipxact:name>
+					<ipxact:addressOffset>'h48</ipxact:addressOffset>
+					<ipxact:size>32</ipxact:size>
+					<ipxact:field>
+						<ipxact:name>TXTB8_DATA_19</ipxact:name>
+						<ipxact:bitOffset>0</ipxact:bitOffset>
+						<ipxact:bitWidth>32</ipxact:bitWidth>
+					</ipxact:field>
+				</ipxact:register>
+				<ipxact:register>
+					<ipxact:name>TXTB8_DATA_17</ipxact:name>
+					<ipxact:addressOffset>'h40</ipxact:addressOffset>
+					<ipxact:size>32</ipxact:size>
+					<ipxact:field>
+						<ipxact:name>TXTB8_DATA_17</ipxact:name>
+						<ipxact:bitOffset>0</ipxact:bitOffset>
+						<ipxact:bitWidth>32</ipxact:bitWidth>
+					</ipxact:field>
+				</ipxact:register>
+				<ipxact:register>
+					<ipxact:name>TXTB8_DATA_14</ipxact:name>
+					<ipxact:addressOffset>'h34</ipxact:addressOffset>
+					<ipxact:size>32</ipxact:size>
+					<ipxact:field>
+						<ipxact:name>TXTB8_DATA_14</ipxact:name>
 						<ipxact:bitOffset>0</ipxact:bitOffset>
 						<ipxact:bitWidth>32</ipxact:bitWidth>
 					</ipxact:field>

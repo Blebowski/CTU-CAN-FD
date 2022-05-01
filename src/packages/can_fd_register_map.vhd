@@ -144,6 +144,23 @@ package can_fd_register_map is
 
   constant TXTB1_DATA_1_ADR          : std_logic_vector(11 downto 0) := x"100";
   constant TXTB1_DATA_2_ADR          : std_logic_vector(11 downto 0) := x"104";
+  constant TXTB1_DATA_3_ADR          : std_logic_vector(11 downto 0) := x"108";
+  constant TXTB1_DATA_4_ADR          : std_logic_vector(11 downto 0) := x"10C";
+  constant TXTB1_DATA_5_ADR          : std_logic_vector(11 downto 0) := x"110";
+  constant TXTB1_DATA_6_ADR          : std_logic_vector(11 downto 0) := x"114";
+  constant TXTB1_DATA_7_ADR          : std_logic_vector(11 downto 0) := x"118";
+  constant TXTB1_DATA_8_ADR          : std_logic_vector(11 downto 0) := x"11C";
+  constant TXTB1_DATA_9_ADR          : std_logic_vector(11 downto 0) := x"120";
+  constant TXTB1_DATA_10_ADR         : std_logic_vector(11 downto 0) := x"124";
+  constant TXTB1_DATA_11_ADR         : std_logic_vector(11 downto 0) := x"128";
+  constant TXTB1_DATA_12_ADR         : std_logic_vector(11 downto 0) := x"12C";
+  constant TXTB1_DATA_13_ADR         : std_logic_vector(11 downto 0) := x"130";
+  constant TXTB1_DATA_14_ADR         : std_logic_vector(11 downto 0) := x"134";
+  constant TXTB1_DATA_15_ADR         : std_logic_vector(11 downto 0) := x"138";
+  constant TXTB1_DATA_16_ADR         : std_logic_vector(11 downto 0) := x"13C";
+  constant TXTB1_DATA_17_ADR         : std_logic_vector(11 downto 0) := x"140";
+  constant TXTB1_DATA_18_ADR         : std_logic_vector(11 downto 0) := x"144";
+  constant TXTB1_DATA_19_ADR         : std_logic_vector(11 downto 0) := x"148";
   constant TXTB1_DATA_20_ADR         : std_logic_vector(11 downto 0) := x"14C";
 
   ------------------------------------------------------------------------------
@@ -155,6 +172,23 @@ package can_fd_register_map is
 
   constant TXTB2_DATA_1_ADR          : std_logic_vector(11 downto 0) := x"200";
   constant TXTB2_DATA_2_ADR          : std_logic_vector(11 downto 0) := x"204";
+  constant TXTB2_DATA_3_ADR          : std_logic_vector(11 downto 0) := x"208";
+  constant TXTB2_DATA_4_ADR          : std_logic_vector(11 downto 0) := x"20C";
+  constant TXTB2_DATA_5_ADR          : std_logic_vector(11 downto 0) := x"210";
+  constant TXTB2_DATA_6_ADR          : std_logic_vector(11 downto 0) := x"214";
+  constant TXTB2_DATA_7_ADR          : std_logic_vector(11 downto 0) := x"218";
+  constant TXTB2_DATA_8_ADR          : std_logic_vector(11 downto 0) := x"21C";
+  constant TXTB2_DATA_9_ADR          : std_logic_vector(11 downto 0) := x"220";
+  constant TXTB2_DATA_10_ADR         : std_logic_vector(11 downto 0) := x"224";
+  constant TXTB2_DATA_11_ADR         : std_logic_vector(11 downto 0) := x"228";
+  constant TXTB2_DATA_12_ADR         : std_logic_vector(11 downto 0) := x"22C";
+  constant TXTB2_DATA_13_ADR         : std_logic_vector(11 downto 0) := x"230";
+  constant TXTB2_DATA_14_ADR         : std_logic_vector(11 downto 0) := x"234";
+  constant TXTB2_DATA_15_ADR         : std_logic_vector(11 downto 0) := x"238";
+  constant TXTB2_DATA_16_ADR         : std_logic_vector(11 downto 0) := x"23C";
+  constant TXTB2_DATA_17_ADR         : std_logic_vector(11 downto 0) := x"240";
+  constant TXTB2_DATA_18_ADR         : std_logic_vector(11 downto 0) := x"244";
+  constant TXTB2_DATA_19_ADR         : std_logic_vector(11 downto 0) := x"248";
   constant TXTB2_DATA_20_ADR         : std_logic_vector(11 downto 0) := x"24C";
 
   ------------------------------------------------------------------------------
@@ -166,6 +200,23 @@ package can_fd_register_map is
 
   constant TXTB3_DATA_1_ADR          : std_logic_vector(11 downto 0) := x"300";
   constant TXTB3_DATA_2_ADR          : std_logic_vector(11 downto 0) := x"304";
+  constant TXTB3_DATA_3_ADR          : std_logic_vector(11 downto 0) := x"308";
+  constant TXTB3_DATA_4_ADR          : std_logic_vector(11 downto 0) := x"30C";
+  constant TXTB3_DATA_5_ADR          : std_logic_vector(11 downto 0) := x"310";
+  constant TXTB3_DATA_6_ADR          : std_logic_vector(11 downto 0) := x"314";
+  constant TXTB3_DATA_7_ADR          : std_logic_vector(11 downto 0) := x"318";
+  constant TXTB3_DATA_8_ADR          : std_logic_vector(11 downto 0) := x"31C";
+  constant TXTB3_DATA_9_ADR          : std_logic_vector(11 downto 0) := x"320";
+  constant TXTB3_DATA_10_ADR         : std_logic_vector(11 downto 0) := x"324";
+  constant TXTB3_DATA_11_ADR         : std_logic_vector(11 downto 0) := x"328";
+  constant TXTB3_DATA_12_ADR         : std_logic_vector(11 downto 0) := x"32C";
+  constant TXTB3_DATA_13_ADR         : std_logic_vector(11 downto 0) := x"330";
+  constant TXTB3_DATA_14_ADR         : std_logic_vector(11 downto 0) := x"334";
+  constant TXTB3_DATA_15_ADR         : std_logic_vector(11 downto 0) := x"338";
+  constant TXTB3_DATA_16_ADR         : std_logic_vector(11 downto 0) := x"33C";
+  constant TXTB3_DATA_17_ADR         : std_logic_vector(11 downto 0) := x"340";
+  constant TXTB3_DATA_18_ADR         : std_logic_vector(11 downto 0) := x"344";
+  constant TXTB3_DATA_19_ADR         : std_logic_vector(11 downto 0) := x"348";
   constant TXTB3_DATA_20_ADR         : std_logic_vector(11 downto 0) := x"34C";
 
   ------------------------------------------------------------------------------
@@ -177,6 +228,23 @@ package can_fd_register_map is
 
   constant TXTB4_DATA_1_ADR          : std_logic_vector(11 downto 0) := x"400";
   constant TXTB4_DATA_2_ADR          : std_logic_vector(11 downto 0) := x"404";
+  constant TXTB4_DATA_3_ADR          : std_logic_vector(11 downto 0) := x"408";
+  constant TXTB4_DATA_4_ADR          : std_logic_vector(11 downto 0) := x"40C";
+  constant TXTB4_DATA_5_ADR          : std_logic_vector(11 downto 0) := x"410";
+  constant TXTB4_DATA_6_ADR          : std_logic_vector(11 downto 0) := x"414";
+  constant TXTB4_DATA_7_ADR          : std_logic_vector(11 downto 0) := x"418";
+  constant TXTB4_DATA_8_ADR          : std_logic_vector(11 downto 0) := x"41C";
+  constant TXTB4_DATA_9_ADR          : std_logic_vector(11 downto 0) := x"420";
+  constant TXTB4_DATA_10_ADR         : std_logic_vector(11 downto 0) := x"424";
+  constant TXTB4_DATA_11_ADR         : std_logic_vector(11 downto 0) := x"428";
+  constant TXTB4_DATA_12_ADR         : std_logic_vector(11 downto 0) := x"42C";
+  constant TXTB4_DATA_13_ADR         : std_logic_vector(11 downto 0) := x"430";
+  constant TXTB4_DATA_14_ADR         : std_logic_vector(11 downto 0) := x"434";
+  constant TXTB4_DATA_15_ADR         : std_logic_vector(11 downto 0) := x"438";
+  constant TXTB4_DATA_16_ADR         : std_logic_vector(11 downto 0) := x"43C";
+  constant TXTB4_DATA_17_ADR         : std_logic_vector(11 downto 0) := x"440";
+  constant TXTB4_DATA_18_ADR         : std_logic_vector(11 downto 0) := x"444";
+  constant TXTB4_DATA_19_ADR         : std_logic_vector(11 downto 0) := x"448";
   constant TXTB4_DATA_20_ADR         : std_logic_vector(11 downto 0) := x"44C";
 
   ------------------------------------------------------------------------------
@@ -188,6 +256,23 @@ package can_fd_register_map is
 
   constant TXTB5_DATA_1_ADR          : std_logic_vector(11 downto 0) := x"500";
   constant TXTB5_DATA_2_ADR          : std_logic_vector(11 downto 0) := x"504";
+  constant TXTB5_DATA_3_ADR          : std_logic_vector(11 downto 0) := x"508";
+  constant TXTB5_DATA_4_ADR          : std_logic_vector(11 downto 0) := x"50C";
+  constant TXTB5_DATA_5_ADR          : std_logic_vector(11 downto 0) := x"510";
+  constant TXTB5_DATA_6_ADR          : std_logic_vector(11 downto 0) := x"514";
+  constant TXTB5_DATA_7_ADR          : std_logic_vector(11 downto 0) := x"518";
+  constant TXTB5_DATA_8_ADR          : std_logic_vector(11 downto 0) := x"51C";
+  constant TXTB5_DATA_9_ADR          : std_logic_vector(11 downto 0) := x"520";
+  constant TXTB5_DATA_10_ADR         : std_logic_vector(11 downto 0) := x"524";
+  constant TXTB5_DATA_11_ADR         : std_logic_vector(11 downto 0) := x"528";
+  constant TXTB5_DATA_12_ADR         : std_logic_vector(11 downto 0) := x"52C";
+  constant TXTB5_DATA_13_ADR         : std_logic_vector(11 downto 0) := x"530";
+  constant TXTB5_DATA_14_ADR         : std_logic_vector(11 downto 0) := x"534";
+  constant TXTB5_DATA_15_ADR         : std_logic_vector(11 downto 0) := x"538";
+  constant TXTB5_DATA_16_ADR         : std_logic_vector(11 downto 0) := x"53C";
+  constant TXTB5_DATA_17_ADR         : std_logic_vector(11 downto 0) := x"540";
+  constant TXTB5_DATA_18_ADR         : std_logic_vector(11 downto 0) := x"544";
+  constant TXTB5_DATA_19_ADR         : std_logic_vector(11 downto 0) := x"548";
   constant TXTB5_DATA_20_ADR         : std_logic_vector(11 downto 0) := x"54C";
 
   ------------------------------------------------------------------------------
@@ -199,6 +284,23 @@ package can_fd_register_map is
 
   constant TXTB6_DATA_1_ADR          : std_logic_vector(11 downto 0) := x"600";
   constant TXTB6_DATA_2_ADR          : std_logic_vector(11 downto 0) := x"604";
+  constant TXTB6_DATA_3_ADR          : std_logic_vector(11 downto 0) := x"608";
+  constant TXTB6_DATA_4_ADR          : std_logic_vector(11 downto 0) := x"60C";
+  constant TXTB6_DATA_5_ADR          : std_logic_vector(11 downto 0) := x"610";
+  constant TXTB6_DATA_6_ADR          : std_logic_vector(11 downto 0) := x"614";
+  constant TXTB6_DATA_7_ADR          : std_logic_vector(11 downto 0) := x"618";
+  constant TXTB6_DATA_8_ADR          : std_logic_vector(11 downto 0) := x"61C";
+  constant TXTB6_DATA_9_ADR          : std_logic_vector(11 downto 0) := x"620";
+  constant TXTB6_DATA_10_ADR         : std_logic_vector(11 downto 0) := x"624";
+  constant TXTB6_DATA_11_ADR         : std_logic_vector(11 downto 0) := x"628";
+  constant TXTB6_DATA_12_ADR         : std_logic_vector(11 downto 0) := x"62C";
+  constant TXTB6_DATA_13_ADR         : std_logic_vector(11 downto 0) := x"630";
+  constant TXTB6_DATA_14_ADR         : std_logic_vector(11 downto 0) := x"634";
+  constant TXTB6_DATA_15_ADR         : std_logic_vector(11 downto 0) := x"638";
+  constant TXTB6_DATA_16_ADR         : std_logic_vector(11 downto 0) := x"63C";
+  constant TXTB6_DATA_17_ADR         : std_logic_vector(11 downto 0) := x"640";
+  constant TXTB6_DATA_18_ADR         : std_logic_vector(11 downto 0) := x"644";
+  constant TXTB6_DATA_19_ADR         : std_logic_vector(11 downto 0) := x"648";
   constant TXTB6_DATA_20_ADR         : std_logic_vector(11 downto 0) := x"64C";
 
   ------------------------------------------------------------------------------
@@ -210,6 +312,23 @@ package can_fd_register_map is
 
   constant TXTB7_DATA_1_ADR          : std_logic_vector(11 downto 0) := x"700";
   constant TXTB7_DATA_2_ADR          : std_logic_vector(11 downto 0) := x"704";
+  constant TXTB7_DATA_3_ADR          : std_logic_vector(11 downto 0) := x"708";
+  constant TXTB7_DATA_4_ADR          : std_logic_vector(11 downto 0) := x"70C";
+  constant TXTB7_DATA_5_ADR          : std_logic_vector(11 downto 0) := x"710";
+  constant TXTB7_DATA_6_ADR          : std_logic_vector(11 downto 0) := x"714";
+  constant TXTB7_DATA_7_ADR          : std_logic_vector(11 downto 0) := x"718";
+  constant TXTB7_DATA_8_ADR          : std_logic_vector(11 downto 0) := x"71C";
+  constant TXTB7_DATA_9_ADR          : std_logic_vector(11 downto 0) := x"720";
+  constant TXTB7_DATA_10_ADR         : std_logic_vector(11 downto 0) := x"724";
+  constant TXTB7_DATA_11_ADR         : std_logic_vector(11 downto 0) := x"728";
+  constant TXTB7_DATA_12_ADR         : std_logic_vector(11 downto 0) := x"72C";
+  constant TXTB7_DATA_13_ADR         : std_logic_vector(11 downto 0) := x"730";
+  constant TXTB7_DATA_14_ADR         : std_logic_vector(11 downto 0) := x"734";
+  constant TXTB7_DATA_15_ADR         : std_logic_vector(11 downto 0) := x"738";
+  constant TXTB7_DATA_16_ADR         : std_logic_vector(11 downto 0) := x"73C";
+  constant TXTB7_DATA_17_ADR         : std_logic_vector(11 downto 0) := x"740";
+  constant TXTB7_DATA_18_ADR         : std_logic_vector(11 downto 0) := x"744";
+  constant TXTB7_DATA_19_ADR         : std_logic_vector(11 downto 0) := x"748";
   constant TXTB7_DATA_20_ADR         : std_logic_vector(11 downto 0) := x"74C";
 
   ------------------------------------------------------------------------------
@@ -221,6 +340,23 @@ package can_fd_register_map is
 
   constant TXTB8_DATA_1_ADR          : std_logic_vector(11 downto 0) := x"800";
   constant TXTB8_DATA_2_ADR          : std_logic_vector(11 downto 0) := x"804";
+  constant TXTB8_DATA_3_ADR          : std_logic_vector(11 downto 0) := x"808";
+  constant TXTB8_DATA_4_ADR          : std_logic_vector(11 downto 0) := x"80C";
+  constant TXTB8_DATA_5_ADR          : std_logic_vector(11 downto 0) := x"810";
+  constant TXTB8_DATA_6_ADR          : std_logic_vector(11 downto 0) := x"814";
+  constant TXTB8_DATA_7_ADR          : std_logic_vector(11 downto 0) := x"818";
+  constant TXTB8_DATA_8_ADR          : std_logic_vector(11 downto 0) := x"81C";
+  constant TXTB8_DATA_9_ADR          : std_logic_vector(11 downto 0) := x"820";
+  constant TXTB8_DATA_10_ADR         : std_logic_vector(11 downto 0) := x"824";
+  constant TXTB8_DATA_11_ADR         : std_logic_vector(11 downto 0) := x"828";
+  constant TXTB8_DATA_12_ADR         : std_logic_vector(11 downto 0) := x"82C";
+  constant TXTB8_DATA_13_ADR         : std_logic_vector(11 downto 0) := x"830";
+  constant TXTB8_DATA_14_ADR         : std_logic_vector(11 downto 0) := x"834";
+  constant TXTB8_DATA_15_ADR         : std_logic_vector(11 downto 0) := x"838";
+  constant TXTB8_DATA_16_ADR         : std_logic_vector(11 downto 0) := x"83C";
+  constant TXTB8_DATA_17_ADR         : std_logic_vector(11 downto 0) := x"840";
+  constant TXTB8_DATA_18_ADR         : std_logic_vector(11 downto 0) := x"844";
+  constant TXTB8_DATA_19_ADR         : std_logic_vector(11 downto 0) := x"848";
   constant TXTB8_DATA_20_ADR         : std_logic_vector(11 downto 0) := x"84C";
 
   ------------------------------------------------------------------------------
@@ -1233,6 +1369,159 @@ package can_fd_register_map is
   -- TXTB1_DATA_2 register reset values
 
   ------------------------------------------------------------------------------
+  -- TXTB1_DATA_3 register
+  --
+  ------------------------------------------------------------------------------
+  constant TXTB1_DATA_3_L         : natural := 0;
+  constant TXTB1_DATA_3_H        : natural := 31;
+
+  -- TXTB1_DATA_3 register reset values
+
+  ------------------------------------------------------------------------------
+  -- TXTB1_DATA_4 register
+  --
+  ------------------------------------------------------------------------------
+  constant TXTB1_DATA_4_L         : natural := 0;
+  constant TXTB1_DATA_4_H        : natural := 31;
+
+  -- TXTB1_DATA_4 register reset values
+
+  ------------------------------------------------------------------------------
+  -- TXTB1_DATA_5 register
+  --
+  ------------------------------------------------------------------------------
+  constant TXTB1_DATA_5_L         : natural := 0;
+  constant TXTB1_DATA_5_H        : natural := 31;
+
+  -- TXTB1_DATA_5 register reset values
+
+  ------------------------------------------------------------------------------
+  -- TXTB1_DATA_6 register
+  --
+  ------------------------------------------------------------------------------
+  constant TXTB1_DATA_6_L         : natural := 0;
+  constant TXTB1_DATA_6_H        : natural := 31;
+
+  -- TXTB1_DATA_6 register reset values
+
+  ------------------------------------------------------------------------------
+  -- TXTB1_DATA_7 register
+  --
+  ------------------------------------------------------------------------------
+  constant TXTB1_DATA_7_L         : natural := 0;
+  constant TXTB1_DATA_7_H        : natural := 31;
+
+  -- TXTB1_DATA_7 register reset values
+
+  ------------------------------------------------------------------------------
+  -- TXTB1_DATA_8 register
+  --
+  ------------------------------------------------------------------------------
+  constant TXTB1_DATA_8_L         : natural := 0;
+  constant TXTB1_DATA_8_H        : natural := 31;
+
+  -- TXTB1_DATA_8 register reset values
+
+  ------------------------------------------------------------------------------
+  -- TXTB1_DATA_9 register
+  --
+  ------------------------------------------------------------------------------
+  constant TXTB1_DATA_9_L         : natural := 0;
+  constant TXTB1_DATA_9_H        : natural := 31;
+
+  -- TXTB1_DATA_9 register reset values
+
+  ------------------------------------------------------------------------------
+  -- TXTB1_DATA_10 register
+  --
+  ------------------------------------------------------------------------------
+  constant TXTB1_DATA_10_L        : natural := 0;
+  constant TXTB1_DATA_10_H       : natural := 31;
+
+  -- TXTB1_DATA_10 register reset values
+
+  ------------------------------------------------------------------------------
+  -- TXTB1_DATA_11 register
+  --
+  ------------------------------------------------------------------------------
+  constant TXTB1_DATA_11_L        : natural := 0;
+  constant TXTB1_DATA_11_H       : natural := 31;
+
+  -- TXTB1_DATA_11 register reset values
+
+  ------------------------------------------------------------------------------
+  -- TXTB1_DATA_12 register
+  --
+  ------------------------------------------------------------------------------
+  constant TXTB1_DATA_12_L        : natural := 0;
+  constant TXTB1_DATA_12_H       : natural := 31;
+
+  -- TXTB1_DATA_12 register reset values
+
+  ------------------------------------------------------------------------------
+  -- TXTB1_DATA_13 register
+  --
+  ------------------------------------------------------------------------------
+  constant TXTB1_DATA_13_L        : natural := 0;
+  constant TXTB1_DATA_13_H       : natural := 31;
+
+  -- TXTB1_DATA_13 register reset values
+
+  ------------------------------------------------------------------------------
+  -- TXTB1_DATA_14 register
+  --
+  ------------------------------------------------------------------------------
+  constant TXTB1_DATA_14_L        : natural := 0;
+  constant TXTB1_DATA_14_H       : natural := 31;
+
+  -- TXTB1_DATA_14 register reset values
+
+  ------------------------------------------------------------------------------
+  -- TXTB1_DATA_15 register
+  --
+  ------------------------------------------------------------------------------
+  constant TXTB1_DATA_15_L        : natural := 0;
+  constant TXTB1_DATA_15_H       : natural := 31;
+
+  -- TXTB1_DATA_15 register reset values
+
+  ------------------------------------------------------------------------------
+  -- TXTB1_DATA_16 register
+  --
+  ------------------------------------------------------------------------------
+  constant TXTB1_DATA_16_L        : natural := 0;
+  constant TXTB1_DATA_16_H       : natural := 31;
+
+  -- TXTB1_DATA_16 register reset values
+
+  ------------------------------------------------------------------------------
+  -- TXTB1_DATA_17 register
+  --
+  ------------------------------------------------------------------------------
+  constant TXTB1_DATA_17_L        : natural := 0;
+  constant TXTB1_DATA_17_H       : natural := 31;
+
+  -- TXTB1_DATA_17 register reset values
+
+  ------------------------------------------------------------------------------
+  -- TXTB1_DATA_18 register
+  --
+  ------------------------------------------------------------------------------
+  constant TXTB1_DATA_18_L        : natural := 0;
+  constant TXTB1_DATA_18_H       : natural := 31;
+
+  -- TXTB1_DATA_18 register reset values
+
+  ------------------------------------------------------------------------------
+  -- TXTB1_DATA_19 register
+  --
+  ------------------------------------------------------------------------------
+  constant TXTB1_DATA_19_L        : natural := 0;
+  constant TXTB1_DATA_19_H       : natural := 31;
+
+  -- TXTB1_DATA_19 register reset values
+
+  ------------------------------------------------------------------------------
   -- TXTB1_DATA_20 register
   --
   -- This adress word corresponds to DATA_61_64 word.
@@ -1261,6 +1550,159 @@ package can_fd_register_map is
   constant TXTB2_DATA_2_H        : natural := 31;
 
   -- TXTB2_DATA_2 register reset values
+
+  ------------------------------------------------------------------------------
+  -- TXTB2_DATA_3 register
+  --
+  ------------------------------------------------------------------------------
+  constant TXTB2_DATA_3_L         : natural := 0;
+  constant TXTB2_DATA_3_H        : natural := 31;
+
+  -- TXTB2_DATA_3 register reset values
+
+  ------------------------------------------------------------------------------
+  -- TXTB2_DATA_4 register
+  --
+  ------------------------------------------------------------------------------
+  constant TXTB2_DATA_4_L         : natural := 0;
+  constant TXTB2_DATA_4_H        : natural := 31;
+
+  -- TXTB2_DATA_4 register reset values
+
+  ------------------------------------------------------------------------------
+  -- TXTB2_DATA_5 register
+  --
+  ------------------------------------------------------------------------------
+  constant TXTB2_DATA_5_L         : natural := 0;
+  constant TXTB2_DATA_5_H        : natural := 31;
+
+  -- TXTB2_DATA_5 register reset values
+
+  ------------------------------------------------------------------------------
+  -- TXTB2_DATA_6 register
+  --
+  ------------------------------------------------------------------------------
+  constant TXTB2_DATA_6_L         : natural := 0;
+  constant TXTB2_DATA_6_H        : natural := 31;
+
+  -- TXTB2_DATA_6 register reset values
+
+  ------------------------------------------------------------------------------
+  -- TXTB2_DATA_7 register
+  --
+  ------------------------------------------------------------------------------
+  constant TXTB2_DATA_7_L         : natural := 0;
+  constant TXTB2_DATA_7_H        : natural := 31;
+
+  -- TXTB2_DATA_7 register reset values
+
+  ------------------------------------------------------------------------------
+  -- TXTB2_DATA_8 register
+  --
+  ------------------------------------------------------------------------------
+  constant TXTB2_DATA_8_L         : natural := 0;
+  constant TXTB2_DATA_8_H        : natural := 31;
+
+  -- TXTB2_DATA_8 register reset values
+
+  ------------------------------------------------------------------------------
+  -- TXTB2_DATA_9 register
+  --
+  ------------------------------------------------------------------------------
+  constant TXTB2_DATA_9_L         : natural := 0;
+  constant TXTB2_DATA_9_H        : natural := 31;
+
+  -- TXTB2_DATA_9 register reset values
+
+  ------------------------------------------------------------------------------
+  -- TXTB2_DATA_10 register
+  --
+  ------------------------------------------------------------------------------
+  constant TXTB2_DATA_10_L        : natural := 0;
+  constant TXTB2_DATA_10_H       : natural := 31;
+
+  -- TXTB2_DATA_10 register reset values
+
+  ------------------------------------------------------------------------------
+  -- TXTB2_DATA_11 register
+  --
+  ------------------------------------------------------------------------------
+  constant TXTB2_DATA_11_L        : natural := 0;
+  constant TXTB2_DATA_11_H       : natural := 31;
+
+  -- TXTB2_DATA_11 register reset values
+
+  ------------------------------------------------------------------------------
+  -- TXTB2_DATA_12 register
+  --
+  ------------------------------------------------------------------------------
+  constant TXTB2_DATA_12_L        : natural := 0;
+  constant TXTB2_DATA_12_H       : natural := 31;
+
+  -- TXTB2_DATA_12 register reset values
+
+  ------------------------------------------------------------------------------
+  -- TXTB2_DATA_13 register
+  --
+  ------------------------------------------------------------------------------
+  constant TXTB2_DATA_13_L        : natural := 0;
+  constant TXTB2_DATA_13_H       : natural := 31;
+
+  -- TXTB2_DATA_13 register reset values
+
+  ------------------------------------------------------------------------------
+  -- TXTB2_DATA_14 register
+  --
+  ------------------------------------------------------------------------------
+  constant TXTB2_DATA_14_L        : natural := 0;
+  constant TXTB2_DATA_14_H       : natural := 31;
+
+  -- TXTB2_DATA_14 register reset values
+
+  ------------------------------------------------------------------------------
+  -- TXTB2_DATA_15 register
+  --
+  ------------------------------------------------------------------------------
+  constant TXTB2_DATA_15_L        : natural := 0;
+  constant TXTB2_DATA_15_H       : natural := 31;
+
+  -- TXTB2_DATA_15 register reset values
+
+  ------------------------------------------------------------------------------
+  -- TXTB2_DATA_16 register
+  --
+  ------------------------------------------------------------------------------
+  constant TXTB2_DATA_16_L        : natural := 0;
+  constant TXTB2_DATA_16_H       : natural := 31;
+
+  -- TXTB2_DATA_16 register reset values
+
+  ------------------------------------------------------------------------------
+  -- TXTB2_DATA_17 register
+  --
+  ------------------------------------------------------------------------------
+  constant TXTB2_DATA_17_L        : natural := 0;
+  constant TXTB2_DATA_17_H       : natural := 31;
+
+  -- TXTB2_DATA_17 register reset values
+
+  ------------------------------------------------------------------------------
+  -- TXTB2_DATA_18 register
+  --
+  ------------------------------------------------------------------------------
+  constant TXTB2_DATA_18_L        : natural := 0;
+  constant TXTB2_DATA_18_H       : natural := 31;
+
+  -- TXTB2_DATA_18 register reset values
+
+  ------------------------------------------------------------------------------
+  -- TXTB2_DATA_19 register
+  --
+  ------------------------------------------------------------------------------
+  constant TXTB2_DATA_19_L        : natural := 0;
+  constant TXTB2_DATA_19_H       : natural := 31;
+
+  -- TXTB2_DATA_19 register reset values
 
   ------------------------------------------------------------------------------
   -- TXTB2_DATA_20 register
@@ -1293,6 +1735,159 @@ package can_fd_register_map is
   -- TXTB3_DATA_2 register reset values
 
   ------------------------------------------------------------------------------
+  -- TXTB3_DATA_3 register
+  --
+  ------------------------------------------------------------------------------
+  constant TXTB3_DATA_3_L         : natural := 0;
+  constant TXTB3_DATA_3_H        : natural := 31;
+
+  -- TXTB3_DATA_3 register reset values
+
+  ------------------------------------------------------------------------------
+  -- TXTB3_DATA_4 register
+  --
+  ------------------------------------------------------------------------------
+  constant TXTB3_DATA_4_L         : natural := 0;
+  constant TXTB3_DATA_4_H        : natural := 31;
+
+  -- TXTB3_DATA_4 register reset values
+
+  ------------------------------------------------------------------------------
+  -- TXTB3_DATA_5 register
+  --
+  ------------------------------------------------------------------------------
+  constant TXTB3_DATA_5_L         : natural := 0;
+  constant TXTB3_DATA_5_H        : natural := 31;
+
+  -- TXTB3_DATA_5 register reset values
+
+  ------------------------------------------------------------------------------
+  -- TXTB3_DATA_6 register
+  --
+  ------------------------------------------------------------------------------
+  constant TXTB3_DATA_6_L         : natural := 0;
+  constant TXTB3_DATA_6_H        : natural := 31;
+
+  -- TXTB3_DATA_6 register reset values
+
+  ------------------------------------------------------------------------------
+  -- TXTB3_DATA_7 register
+  --
+  ------------------------------------------------------------------------------
+  constant TXTB3_DATA_7_L         : natural := 0;
+  constant TXTB3_DATA_7_H        : natural := 31;
+
+  -- TXTB3_DATA_7 register reset values
+
+  ------------------------------------------------------------------------------
+  -- TXTB3_DATA_8 register
+  --
+  ------------------------------------------------------------------------------
+  constant TXTB3_DATA_8_L         : natural := 0;
+  constant TXTB3_DATA_8_H        : natural := 31;
+
+  -- TXTB3_DATA_8 register reset values
+
+  ------------------------------------------------------------------------------
+  -- TXTB3_DATA_9 register
+  --
+  ------------------------------------------------------------------------------
+  constant TXTB3_DATA_9_L         : natural := 0;
+  constant TXTB3_DATA_9_H        : natural := 31;
+
+  -- TXTB3_DATA_9 register reset values
+
+  ------------------------------------------------------------------------------
+  -- TXTB3_DATA_10 register
+  --
+  ------------------------------------------------------------------------------
+  constant TXTB3_DATA_10_L        : natural := 0;
+  constant TXTB3_DATA_10_H       : natural := 31;
+
+  -- TXTB3_DATA_10 register reset values
+
+  ------------------------------------------------------------------------------
+  -- TXTB3_DATA_11 register
+  --
+  ------------------------------------------------------------------------------
+  constant TXTB3_DATA_11_L        : natural := 0;
+  constant TXTB3_DATA_11_H       : natural := 31;
+
+  -- TXTB3_DATA_11 register reset values
+
+  ------------------------------------------------------------------------------
+  -- TXTB3_DATA_12 register
+  --
+  ------------------------------------------------------------------------------
+  constant TXTB3_DATA_12_L        : natural := 0;
+  constant TXTB3_DATA_12_H       : natural := 31;
+
+  -- TXTB3_DATA_12 register reset values
+
+  ------------------------------------------------------------------------------
+  -- TXTB3_DATA_13 register
+  --
+  ------------------------------------------------------------------------------
+  constant TXTB3_DATA_13_L        : natural := 0;
+  constant TXTB3_DATA_13_H       : natural := 31;
+
+  -- TXTB3_DATA_13 register reset values
+
+  ------------------------------------------------------------------------------
+  -- TXTB3_DATA_14 register
+  --
+  ------------------------------------------------------------------------------
+  constant TXTB3_DATA_14_L        : natural := 0;
+  constant TXTB3_DATA_14_H       : natural := 31;
+
+  -- TXTB3_DATA_14 register reset values
+
+  ------------------------------------------------------------------------------
+  -- TXTB3_DATA_15 register
+  --
+  ------------------------------------------------------------------------------
+  constant TXTB3_DATA_19_L        : natural := 0;
+  constant TXTB3_DATA_19_H       : natural := 31;
+
+  -- TXTB3_DATA_15 register reset values
+
+  ------------------------------------------------------------------------------
+  -- TXTB3_DATA_16 register
+  --
+  ------------------------------------------------------------------------------
+  constant TXTB3_DATA_16_L        : natural := 0;
+  constant TXTB3_DATA_16_H       : natural := 31;
+
+  -- TXTB3_DATA_16 register reset values
+
+  ------------------------------------------------------------------------------
+  -- TXTB3_DATA_17 register
+  --
+  ------------------------------------------------------------------------------
+  constant TXTB3_DATA_17_L        : natural := 0;
+  constant TXTB3_DATA_17_H       : natural := 31;
+
+  -- TXTB3_DATA_17 register reset values
+
+  ------------------------------------------------------------------------------
+  -- TXTB3_DATA_18 register
+  --
+  ------------------------------------------------------------------------------
+  constant TXTB3_DATA_18_L        : natural := 0;
+  constant TXTB3_DATA_18_H       : natural := 31;
+
+  -- TXTB3_DATA_18 register reset values
+
+  ------------------------------------------------------------------------------
+  -- TXTB3_DATA_19 register
+  --
+  ------------------------------------------------------------------------------
+  constant TXTB3_DATA_19_L        : natural := 0;
+  constant TXTB3_DATA_19_H       : natural := 31;
+
+  -- TXTB3_DATA_19 register reset values
+
+  ------------------------------------------------------------------------------
   -- TXTB3_DATA_20 register
   --
   -- This adress word corresponds to DATA_61_64 word.
@@ -1321,6 +1916,159 @@ package can_fd_register_map is
   constant TXTB4_DATA_2_H        : natural := 31;
 
   -- TXTB4_DATA_2 register reset values
+
+  ------------------------------------------------------------------------------
+  -- TXTB4_DATA_3 register
+  --
+  ------------------------------------------------------------------------------
+  constant TXTB4_DATA_3_L         : natural := 0;
+  constant TXTB4_DATA_3_H        : natural := 31;
+
+  -- TXTB4_DATA_3 register reset values
+
+  ------------------------------------------------------------------------------
+  -- TXTB4_DATA_4 register
+  --
+  ------------------------------------------------------------------------------
+  constant TXTB4_DATA_4_L         : natural := 0;
+  constant TXTB4_DATA_4_H        : natural := 31;
+
+  -- TXTB4_DATA_4 register reset values
+
+  ------------------------------------------------------------------------------
+  -- TXTB4_DATA_5 register
+  --
+  ------------------------------------------------------------------------------
+  constant TXTB4_DATA_5_L         : natural := 0;
+  constant TXTB4_DATA_5_H        : natural := 31;
+
+  -- TXTB4_DATA_5 register reset values
+
+  ------------------------------------------------------------------------------
+  -- TXTB4_DATA_6 register
+  --
+  ------------------------------------------------------------------------------
+  constant TXTB4_DATA_6_L         : natural := 0;
+  constant TXTB4_DATA_6_H        : natural := 31;
+
+  -- TXTB4_DATA_6 register reset values
+
+  ------------------------------------------------------------------------------
+  -- TXTB4_DATA_7 register
+  --
+  ------------------------------------------------------------------------------
+  constant TXTB4_DATA_7_L         : natural := 0;
+  constant TXTB4_DATA_7_H        : natural := 31;
+
+  -- TXTB4_DATA_7 register reset values
+
+  ------------------------------------------------------------------------------
+  -- TXTB4_DATA_8 register
+  --
+  ------------------------------------------------------------------------------
+  constant TXTB4_DATA_8_L         : natural := 0;
+  constant TXTB4_DATA_8_H        : natural := 31;
+
+  -- TXTB4_DATA_8 register reset values
+
+  ------------------------------------------------------------------------------
+  -- TXTB4_DATA_9 register
+  --
+  ------------------------------------------------------------------------------
+  constant TXTB4_DATA_9_L         : natural := 0;
+  constant TXTB4_DATA_9_H        : natural := 31;
+
+  -- TXTB4_DATA_9 register reset values
+
+  ------------------------------------------------------------------------------
+  -- TXTB4_DATA_10 register
+  --
+  ------------------------------------------------------------------------------
+  constant TXTB4_DATA_10_L        : natural := 0;
+  constant TXTB4_DATA_10_H       : natural := 31;
+
+  -- TXTB4_DATA_10 register reset values
+
+  ------------------------------------------------------------------------------
+  -- TXTB4_DATA_11 register
+  --
+  ------------------------------------------------------------------------------
+  constant TXTB4_DATA_11_L        : natural := 0;
+  constant TXTB4_DATA_11_H       : natural := 31;
+
+  -- TXTB4_DATA_11 register reset values
+
+  ------------------------------------------------------------------------------
+  -- TXTB4_DATA_12 register
+  --
+  ------------------------------------------------------------------------------
+  constant TXTB4_DATA_12_L        : natural := 0;
+  constant TXTB4_DATA_12_H       : natural := 31;
+
+  -- TXTB4_DATA_12 register reset values
+
+  ------------------------------------------------------------------------------
+  -- TXTB4_DATA_13 register
+  --
+  ------------------------------------------------------------------------------
+  constant TXTB4_DATA_13_L        : natural := 0;
+  constant TXTB4_DATA_13_H       : natural := 31;
+
+  -- TXTB4_DATA_13 register reset values
+
+  ------------------------------------------------------------------------------
+  -- TXTB4_DATA_14 register
+  --
+  ------------------------------------------------------------------------------
+  constant TXTB4_DATA_14_L        : natural := 0;
+  constant TXTB4_DATA_14_H       : natural := 31;
+
+  -- TXTB4_DATA_14 register reset values
+
+  ------------------------------------------------------------------------------
+  -- TXTB4_DATA_15 register
+  --
+  ------------------------------------------------------------------------------
+  constant TXTB4_DATA_15_L        : natural := 0;
+  constant TXTB4_DATA_15_H       : natural := 31;
+
+  -- TXTB4_DATA_15 register reset values
+
+  ------------------------------------------------------------------------------
+  -- TXTB4_DATA_16 register
+  --
+  ------------------------------------------------------------------------------
+  constant TXTB4_DATA_16_L        : natural := 0;
+  constant TXTB4_DATA_16_H       : natural := 31;
+
+  -- TXTB4_DATA_16 register reset values
+
+  ------------------------------------------------------------------------------
+  -- TXTB4_DATA_17 register
+  --
+  ------------------------------------------------------------------------------
+  constant TXTB4_DATA_17_L        : natural := 0;
+  constant TXTB4_DATA_17_H       : natural := 31;
+
+  -- TXTB4_DATA_17 register reset values
+
+  ------------------------------------------------------------------------------
+  -- TXTB4_DATA_18 register
+  --
+  ------------------------------------------------------------------------------
+  constant TXTB4_DATA_18_L        : natural := 0;
+  constant TXTB4_DATA_18_H       : natural := 31;
+
+  -- TXTB4_DATA_18 register reset values
+
+  ------------------------------------------------------------------------------
+  -- TXTB4_DATA_19 register
+  --
+  ------------------------------------------------------------------------------
+  constant TXTB4_DATA_19_L        : natural := 0;
+  constant TXTB4_DATA_19_H       : natural := 31;
+
+  -- TXTB4_DATA_19 register reset values
 
   ------------------------------------------------------------------------------
   -- TXTB4_DATA_20 register
@@ -1353,9 +2101,162 @@ package can_fd_register_map is
   -- TXTB5_DATA_2 register reset values
 
   ------------------------------------------------------------------------------
-  -- TXTB5_DATA_20 register
+  -- TXTB5_DATA_3 register
+  --
+  ------------------------------------------------------------------------------
+  constant TXTB5_DATA_3_L         : natural := 0;
+  constant TXTB5_DATA_3_H        : natural := 31;
+
+  -- TXTB5_DATA_3 register reset values
+
+  ------------------------------------------------------------------------------
+  -- TXTB5_DATA_4 register
+  --
+  ------------------------------------------------------------------------------
+  constant TXTB5_DATA_4_L         : natural := 0;
+  constant TXTB5_DATA_4_H        : natural := 31;
+
+  -- TXTB5_DATA_4 register reset values
+
+  ------------------------------------------------------------------------------
+  -- TXTB5_DATA_5 register
+  --
+  ------------------------------------------------------------------------------
+  constant TXTB5_DATA_5_L         : natural := 0;
+  constant TXTB5_DATA_5_H        : natural := 31;
+
+  -- TXTB5_DATA_5 register reset values
+
+  ------------------------------------------------------------------------------
+  -- TXTB5_DATA_6 register
+  --
+  ------------------------------------------------------------------------------
+  constant TXTB5_DATA_6_L         : natural := 0;
+  constant TXTB5_DATA_6_H        : natural := 31;
+
+  -- TXTB5_DATA_6 register reset values
+
+  ------------------------------------------------------------------------------
+  -- TXTB5_DATA_7 register
+  --
+  ------------------------------------------------------------------------------
+  constant TXTB5_DATA_7_L         : natural := 0;
+  constant TXTB5_DATA_7_H        : natural := 31;
+
+  -- TXTB5_DATA_7 register reset values
+
+  ------------------------------------------------------------------------------
+  -- TXTB5_DATA_8 register
+  --
+  ------------------------------------------------------------------------------
+  constant TXTB5_DATA_8_L         : natural := 0;
+  constant TXTB5_DATA_8_H        : natural := 31;
+
+  -- TXTB5_DATA_8 register reset values
+
+  ------------------------------------------------------------------------------
+  -- TXTB5_DATA_9 register
+  --
+  ------------------------------------------------------------------------------
+  constant TXTB5_DATA_9_L         : natural := 0;
+  constant TXTB5_DATA_9_H        : natural := 31;
+
+  -- TXTB5_DATA_9 register reset values
+
+  ------------------------------------------------------------------------------
+  -- TXTB5_DATA_10 register
+  --
+  ------------------------------------------------------------------------------
+  constant TXTB5_DATA_10_L        : natural := 0;
+  constant TXTB5_DATA_10_H       : natural := 31;
+
+  -- TXTB5_DATA_10 register reset values
+
+  ------------------------------------------------------------------------------
+  -- TXTB5_DATA_11 register
+  --
+  ------------------------------------------------------------------------------
+  constant TXTB5_DATA_11_L        : natural := 0;
+  constant TXTB5_DATA_11_H       : natural := 31;
+
+  -- TXTB5_DATA_11 register reset values
+
+  ------------------------------------------------------------------------------
+  -- TXTB5_DATA_12 register
+  --
+  ------------------------------------------------------------------------------
+  constant TXTB5_DATA_12_L        : natural := 0;
+  constant TXTB5_DATA_12_H       : natural := 31;
+
+  -- TXTB5_DATA_12 register reset values
+
+  ------------------------------------------------------------------------------
+  -- TXTB5_DATA_13 register
+  --
+  ------------------------------------------------------------------------------
+  constant TXTB5_DATA_13_L        : natural := 0;
+  constant TXTB5_DATA_13_H       : natural := 31;
+
+  -- TXTB5_DATA_13 register reset values
+
+  ------------------------------------------------------------------------------
+  -- TXTB5_DATA_14 register
+  --
+  ------------------------------------------------------------------------------
+  constant TXTB5_DATA_14_L        : natural := 0;
+  constant TXTB5_DATA_14_H       : natural := 31;
+
+  -- TXTB5_DATA_14 register reset values
+
+  ------------------------------------------------------------------------------
+  -- TXTB5_DATA_15 register
+  --
+  ------------------------------------------------------------------------------
+  constant TXTB5_DATA_15_L        : natural := 0;
+  constant TXTB5_DATA_15_H       : natural := 31;
+
+  -- TXTB5_DATA_15 register reset values
+
+  ------------------------------------------------------------------------------
+  -- TXTB5_DATA_16 register
   --
   -- This adress word corresponds to DATA_61_64 word.
+  ------------------------------------------------------------------------------
+  constant TXTB5_DATA_16_L        : natural := 0;
+  constant TXTB5_DATA_16_H       : natural := 31;
+
+  -- TXTB5_DATA_16 register reset values
+
+  ------------------------------------------------------------------------------
+  -- TXTB5_DATA_17 register
+  --
+  ------------------------------------------------------------------------------
+  constant TXTB5_DATA_17_L        : natural := 0;
+  constant TXTB5_DATA_17_H       : natural := 31;
+
+  -- TXTB5_DATA_17 register reset values
+
+  ------------------------------------------------------------------------------
+  -- TXTB5_DATA_18 register
+  --
+  ------------------------------------------------------------------------------
+  constant TXTB5_DATA_18_L        : natural := 0;
+  constant TXTB5_DATA_18_H       : natural := 31;
+
+  -- TXTB5_DATA_18 register reset values
+
+  ------------------------------------------------------------------------------
+  -- TXTB5_DATA_19 register
+  --
+  ------------------------------------------------------------------------------
+  constant TXTB5_DATA_19_L        : natural := 0;
+  constant TXTB5_DATA_19_H       : natural := 31;
+
+  -- TXTB5_DATA_19 register reset values
+
+  ------------------------------------------------------------------------------
+  -- TXTB5_DATA_20 register
+  --
   ------------------------------------------------------------------------------
   constant TXTB5_DATA_20_L        : natural := 0;
   constant TXTB5_DATA_20_H       : natural := 31;
@@ -1381,6 +2282,159 @@ package can_fd_register_map is
   constant TXTB6_DATA_2_H        : natural := 31;
 
   -- TXTB6_DATA_2 register reset values
+
+  ------------------------------------------------------------------------------
+  -- TXTB6_DATA_3 register
+  --
+  ------------------------------------------------------------------------------
+  constant TXTB6_DATA_3_L         : natural := 0;
+  constant TXTB6_DATA_3_H        : natural := 31;
+
+  -- TXTB6_DATA_3 register reset values
+
+  ------------------------------------------------------------------------------
+  -- TXTB6_DATA_4 register
+  --
+  ------------------------------------------------------------------------------
+  constant TXTB6_DATA_4_L         : natural := 0;
+  constant TXTB6_DATA_4_H        : natural := 31;
+
+  -- TXTB6_DATA_4 register reset values
+
+  ------------------------------------------------------------------------------
+  -- TXTB6_DATA_5 register
+  --
+  ------------------------------------------------------------------------------
+  constant TXTB6_DATA_5_L         : natural := 0;
+  constant TXTB6_DATA_5_H        : natural := 31;
+
+  -- TXTB6_DATA_5 register reset values
+
+  ------------------------------------------------------------------------------
+  -- TXTB6_DATA_6 register
+  --
+  ------------------------------------------------------------------------------
+  constant TXTB6_DATA_6_L         : natural := 0;
+  constant TXTB6_DATA_6_H        : natural := 31;
+
+  -- TXTB6_DATA_6 register reset values
+
+  ------------------------------------------------------------------------------
+  -- TXTB6_DATA_7 register
+  --
+  ------------------------------------------------------------------------------
+  constant TXTB6_DATA_7_L         : natural := 0;
+  constant TXTB6_DATA_7_H        : natural := 31;
+
+  -- TXTB6_DATA_7 register reset values
+
+  ------------------------------------------------------------------------------
+  -- TXTB6_DATA_8 register
+  --
+  ------------------------------------------------------------------------------
+  constant TXTB6_DATA_8_L         : natural := 0;
+  constant TXTB6_DATA_8_H        : natural := 31;
+
+  -- TXTB6_DATA_8 register reset values
+
+  ------------------------------------------------------------------------------
+  -- TXTB6_DATA_9 register
+  --
+  ------------------------------------------------------------------------------
+  constant TXTB6_DATA_9_L         : natural := 0;
+  constant TXTB6_DATA_9_H        : natural := 31;
+
+  -- TXTB6_DATA_9 register reset values
+
+  ------------------------------------------------------------------------------
+  -- TXTB6_DATA_10 register
+  --
+  ------------------------------------------------------------------------------
+  constant TXTB6_DATA_10_L        : natural := 0;
+  constant TXTB6_DATA_10_H       : natural := 31;
+
+  -- TXTB6_DATA_10 register reset values
+
+  ------------------------------------------------------------------------------
+  -- TXTB6_DATA_11 register
+  --
+  ------------------------------------------------------------------------------
+  constant TXTB6_DATA_11_L        : natural := 0;
+  constant TXTB6_DATA_11_H       : natural := 31;
+
+  -- TXTB6_DATA_11 register reset values
+
+  ------------------------------------------------------------------------------
+  -- TXTB6_DATA_12 register
+  --
+  ------------------------------------------------------------------------------
+  constant TXTB6_DATA_12_L        : natural := 0;
+  constant TXTB6_DATA_12_H       : natural := 31;
+
+  -- TXTB6_DATA_12 register reset values
+
+  ------------------------------------------------------------------------------
+  -- TXTB6_DATA_13 register
+  --
+  ------------------------------------------------------------------------------
+  constant TXTB6_DATA_13_L        : natural := 0;
+  constant TXTB6_DATA_13_H       : natural := 31;
+
+  -- TXTB6_DATA_13 register reset values
+
+  ------------------------------------------------------------------------------
+  -- TXTB6_DATA_14 register
+  --
+  ------------------------------------------------------------------------------
+  constant TXTB6_DATA_14_L        : natural := 0;
+  constant TXTB6_DATA_14_H       : natural := 31;
+
+  -- TXTB6_DATA_14 register reset values
+
+  ------------------------------------------------------------------------------
+  -- TXTB6_DATA_15 register
+  --
+  ------------------------------------------------------------------------------
+  constant TXTB6_DATA_15_L        : natural := 0;
+  constant TXTB6_DATA_15_H       : natural := 31;
+
+  -- TXTB6_DATA_15 register reset values
+
+  ------------------------------------------------------------------------------
+  -- TXTB6_DATA_16 register
+  --
+  ------------------------------------------------------------------------------
+  constant TXTB6_DATA_16_L        : natural := 0;
+  constant TXTB6_DATA_16_H       : natural := 31;
+
+  -- TXTB6_DATA_16 register reset values
+
+  ------------------------------------------------------------------------------
+  -- TXTB6_DATA_17 register
+  --
+  ------------------------------------------------------------------------------
+  constant TXTB6_DATA_17_L        : natural := 0;
+  constant TXTB6_DATA_17_H       : natural := 31;
+
+  -- TXTB6_DATA_17 register reset values
+
+  ------------------------------------------------------------------------------
+  -- TXTB6_DATA_18 register
+  --
+  ------------------------------------------------------------------------------
+  constant TXTB6_DATA_18_L        : natural := 0;
+  constant TXTB6_DATA_18_H       : natural := 31;
+
+  -- TXTB6_DATA_18 register reset values
+
+  ------------------------------------------------------------------------------
+  -- TXTB6_DATA_19 register
+  --
+  ------------------------------------------------------------------------------
+  constant TXTB6_DATA_19_L        : natural := 0;
+  constant TXTB6_DATA_19_H       : natural := 31;
+
+  -- TXTB6_DATA_19 register reset values
 
   ------------------------------------------------------------------------------
   -- TXTB6_DATA_20 register
@@ -1413,6 +2467,159 @@ package can_fd_register_map is
   -- TXTB7_DATA_2 register reset values
 
   ------------------------------------------------------------------------------
+  -- TXTB7_DATA_3 register
+  --
+  ------------------------------------------------------------------------------
+  constant TXTB7_DATA_3_L         : natural := 0;
+  constant TXTB7_DATA_3_H        : natural := 31;
+
+  -- TXTB7_DATA_3 register reset values
+
+  ------------------------------------------------------------------------------
+  -- TXTB7_DATA_4 register
+  --
+  ------------------------------------------------------------------------------
+  constant TXTB7_DATA_4_L         : natural := 0;
+  constant TXTB7_DATA_4_H        : natural := 31;
+
+  -- TXTB7_DATA_4 register reset values
+
+  ------------------------------------------------------------------------------
+  -- TXTB7_DATA_5 register
+  --
+  ------------------------------------------------------------------------------
+  constant TXTB7_DATA_5_L         : natural := 0;
+  constant TXTB7_DATA_5_H        : natural := 31;
+
+  -- TXTB7_DATA_5 register reset values
+
+  ------------------------------------------------------------------------------
+  -- TXTB7_DATA_6 register
+  --
+  ------------------------------------------------------------------------------
+  constant TXTB7_DATA_6_L         : natural := 0;
+  constant TXTB7_DATA_6_H        : natural := 31;
+
+  -- TXTB7_DATA_6 register reset values
+
+  ------------------------------------------------------------------------------
+  -- TXTB7_DATA_7 register
+  --
+  ------------------------------------------------------------------------------
+  constant TXTB7_DATA_7_L         : natural := 0;
+  constant TXTB7_DATA_7_H        : natural := 31;
+
+  -- TXTB7_DATA_7 register reset values
+
+  ------------------------------------------------------------------------------
+  -- TXTB7_DATA_8 register
+  --
+  ------------------------------------------------------------------------------
+  constant TXTB7_DATA_8_L         : natural := 0;
+  constant TXTB7_DATA_8_H        : natural := 31;
+
+  -- TXTB7_DATA_8 register reset values
+
+  ------------------------------------------------------------------------------
+  -- TXTB7_DATA_9 register
+  --
+  ------------------------------------------------------------------------------
+  constant TXTB7_DATA_9_L         : natural := 0;
+  constant TXTB7_DATA_9_H        : natural := 31;
+
+  -- TXTB7_DATA_9 register reset values
+
+  ------------------------------------------------------------------------------
+  -- TXTB7_DATA_10 register
+  --
+  ------------------------------------------------------------------------------
+  constant TXTB7_DATA_10_L        : natural := 0;
+  constant TXTB7_DATA_10_H       : natural := 31;
+
+  -- TXTB7_DATA_10 register reset values
+
+  ------------------------------------------------------------------------------
+  -- TXTB7_DATA_11 register
+  --
+  ------------------------------------------------------------------------------
+  constant TXTB7_DATA_11_L        : natural := 0;
+  constant TXTB7_DATA_11_H       : natural := 31;
+
+  -- TXTB7_DATA_11 register reset values
+
+  ------------------------------------------------------------------------------
+  -- TXTB7_DATA_12 register
+  --
+  ------------------------------------------------------------------------------
+  constant TXTB7_DATA_12_L        : natural := 0;
+  constant TXTB7_DATA_12_H       : natural := 31;
+
+  -- TXTB7_DATA_12 register reset values
+
+  ------------------------------------------------------------------------------
+  -- TXTB7_DATA_13 register
+  --
+  ------------------------------------------------------------------------------
+  constant TXTB7_DATA_13_L        : natural := 0;
+  constant TXTB7_DATA_13_H       : natural := 31;
+
+  -- TXTB7_DATA_13 register reset values
+
+  ------------------------------------------------------------------------------
+  -- TXTB7_DATA_14 register
+  --
+  ------------------------------------------------------------------------------
+  constant TXTB7_DATA_14_L        : natural := 0;
+  constant TXTB7_DATA_14_H       : natural := 31;
+
+  -- TXTB7_DATA_14 register reset values
+
+  ------------------------------------------------------------------------------
+  -- TXTB7_DATA_15 register
+  --
+  ------------------------------------------------------------------------------
+  constant TXTB7_DATA_15_L        : natural := 0;
+  constant TXTB7_DATA_15_H       : natural := 31;
+
+  -- TXTB7_DATA_15 register reset values
+
+  ------------------------------------------------------------------------------
+  -- TXTB7_DATA_16 register
+  --
+  ------------------------------------------------------------------------------
+  constant TXTB7_DATA_16_L        : natural := 0;
+  constant TXTB7_DATA_16_H       : natural := 31;
+
+  -- TXTB7_DATA_16 register reset values
+
+  ------------------------------------------------------------------------------
+  -- TXTB7_DATA_17 register
+  --
+  ------------------------------------------------------------------------------
+  constant TXTB7_DATA_17_L        : natural := 0;
+  constant TXTB7_DATA_17_H       : natural := 31;
+
+  -- TXTB7_DATA_17 register reset values
+
+  ------------------------------------------------------------------------------
+  -- TXTB7_DATA_18 register
+  --
+  ------------------------------------------------------------------------------
+  constant TXTB7_DATA_18_L        : natural := 0;
+  constant TXTB7_DATA_18_H       : natural := 31;
+
+  -- TXTB7_DATA_18 register reset values
+
+  ------------------------------------------------------------------------------
+  -- TXTB7_DATA_19 register
+  --
+  ------------------------------------------------------------------------------
+  constant TXTB7_DATA_19_L        : natural := 0;
+  constant TXTB7_DATA_19_H       : natural := 31;
+
+  -- TXTB7_DATA_19 register reset values
+
+  ------------------------------------------------------------------------------
   -- TXTB7_DATA_20 register
   --
   -- This adress word corresponds to DATA_61_64 word.
@@ -1443,9 +2650,162 @@ package can_fd_register_map is
   -- TXTB8_DATA_2 register reset values
 
   ------------------------------------------------------------------------------
-  -- TXTB8_DATA_20 register
+  -- TXTB8_DATA_3 register
+  --
+  ------------------------------------------------------------------------------
+  constant TXTB8_DATA_3_L         : natural := 0;
+  constant TXTB8_DATA_3_H        : natural := 31;
+
+  -- TXTB8_DATA_3 register reset values
+
+  ------------------------------------------------------------------------------
+  -- TXTB8_DATA_4 register
+  --
+  ------------------------------------------------------------------------------
+  constant TXTB8_DATA_4_L         : natural := 0;
+  constant TXTB8_DATA_4_H        : natural := 31;
+
+  -- TXTB8_DATA_4 register reset values
+
+  ------------------------------------------------------------------------------
+  -- TXTB8_DATA_5 register
+  --
+  ------------------------------------------------------------------------------
+  constant TXTB8_DATA_5_L         : natural := 0;
+  constant TXTB8_DATA_5_H        : natural := 31;
+
+  -- TXTB8_DATA_5 register reset values
+
+  ------------------------------------------------------------------------------
+  -- TXTB8_DATA_6 register
+  --
+  ------------------------------------------------------------------------------
+  constant TXTB8_DATA_6_L         : natural := 0;
+  constant TXTB8_DATA_6_H        : natural := 31;
+
+  -- TXTB8_DATA_6 register reset values
+
+  ------------------------------------------------------------------------------
+  -- TXTB8_DATA_7 register
+  --
+  ------------------------------------------------------------------------------
+  constant TXTB8_DATA_7_L         : natural := 0;
+  constant TXTB8_DATA_7_H        : natural := 31;
+
+  -- TXTB8_DATA_7 register reset values
+
+  ------------------------------------------------------------------------------
+  -- TXTB8_DATA_8 register
+  --
+  ------------------------------------------------------------------------------
+  constant TXTB8_DATA_8_L         : natural := 0;
+  constant TXTB8_DATA_8_H        : natural := 31;
+
+  -- TXTB8_DATA_8 register reset values
+
+  ------------------------------------------------------------------------------
+  -- TXTB8_DATA_9 register
+  --
+  ------------------------------------------------------------------------------
+  constant TXTB8_DATA_9_L         : natural := 0;
+  constant TXTB8_DATA_9_H        : natural := 31;
+
+  -- TXTB8_DATA_9 register reset values
+
+  ------------------------------------------------------------------------------
+  -- TXTB8_DATA_10 register
+  --
+  ------------------------------------------------------------------------------
+  constant TXTB8_DATA_10_L        : natural := 0;
+  constant TXTB8_DATA_10_H       : natural := 31;
+
+  -- TXTB8_DATA_10 register reset values
+
+  ------------------------------------------------------------------------------
+  -- TXTB8_DATA_11 register
+  --
+  ------------------------------------------------------------------------------
+  constant TXTB8_DATA_11_L        : natural := 0;
+  constant TXTB8_DATA_11_H       : natural := 31;
+
+  -- TXTB8_DATA_11 register reset values
+
+  ------------------------------------------------------------------------------
+  -- TXTB8_DATA_12 register
+  --
+  ------------------------------------------------------------------------------
+  constant TXTB8_DATA_12_L        : natural := 0;
+  constant TXTB8_DATA_12_H       : natural := 31;
+
+  -- TXTB8_DATA_12 register reset values
+
+  ------------------------------------------------------------------------------
+  -- TXTB8_DATA_13 register
+  --
+  ------------------------------------------------------------------------------
+  constant TXTB8_DATA_13_L        : natural := 0;
+  constant TXTB8_DATA_13_H       : natural := 31;
+
+  -- TXTB8_DATA_13 register reset values
+
+  ------------------------------------------------------------------------------
+  -- TXTB8_DATA_14 register
+  --
+  ------------------------------------------------------------------------------
+  constant TXTB8_DATA_14_L        : natural := 0;
+  constant TXTB8_DATA_14_H       : natural := 31;
+
+  -- TXTB8_DATA_14 register reset values
+
+  ------------------------------------------------------------------------------
+  -- TXTB8_DATA_15 register
+  --
+  ------------------------------------------------------------------------------
+  constant TXTB8_DATA_15_L        : natural := 0;
+  constant TXTB8_DATA_15_H       : natural := 31;
+
+  -- TXTB8_DATA_15 register reset values
+
+  ------------------------------------------------------------------------------
+  -- TXTB8_DATA_16 register
   --
   -- This adress word corresponds to DATA_61_64 word.
+  ------------------------------------------------------------------------------
+  constant TXTB8_DATA_20_L        : natural := 0;
+  constant TXTB8_DATA_20_H       : natural := 31;
+
+  -- TXTB8_DATA_16 register reset values
+
+  ------------------------------------------------------------------------------
+  -- TXTB8_DATA_17 register
+  --
+  ------------------------------------------------------------------------------
+  constant TXTB8_DATA_17_L        : natural := 0;
+  constant TXTB8_DATA_17_H       : natural := 31;
+
+  -- TXTB8_DATA_17 register reset values
+
+  ------------------------------------------------------------------------------
+  -- TXTB8_DATA_18 register
+  --
+  ------------------------------------------------------------------------------
+  constant TXTB8_DATA_18_L        : natural := 0;
+  constant TXTB8_DATA_18_H       : natural := 31;
+
+  -- TXTB8_DATA_18 register reset values
+
+  ------------------------------------------------------------------------------
+  -- TXTB8_DATA_19 register
+  --
+  ------------------------------------------------------------------------------
+  constant TXTB8_DATA_19_L        : natural := 0;
+  constant TXTB8_DATA_19_H       : natural := 31;
+
+  -- TXTB8_DATA_19 register reset values
+
+  ------------------------------------------------------------------------------
+  -- TXTB8_DATA_20 register
+  --
   ------------------------------------------------------------------------------
   constant TXTB8_DATA_20_L        : natural := 0;
   constant TXTB8_DATA_20_H       : natural := 31;
