@@ -97,10 +97,11 @@ customHeadersFooters
 \papersides 1
 \paperpagestyle headings
 \tracking_changes true
-\output_changes false
+\output_changes true
 \html_math_output 0
 \html_css_as_file 0
 \html_be_strict false
+\author -937042393 "Ondrej"
 \end_header
 
 \begin_body
@@ -4158,6 +4159,55 @@ noprefix "false"
 \end_inset
 
 .
+\change_inserted -937042393 1651396281
+
+\end_layout
+
+\begin_layout Description
+
+\change_inserted -937042393 1651410756
+Note Higher value of TX_PRIORITY[TX*P] means TXT Buffer * has higher priority
+ (e.g.
+ if TX_PRIORITY[TX1P] = 2 and TX_PRIORITY[TX2P]=5, then TXT Buffer 2 has
+ priority 5, and TXT Buffer 1 has priority 2.
+ When both TXT Buffers are in ready state, CTU CAN FD will pick TXT Buffer
+ 2 before TXT Buffer 1).
+\end_layout
+
+\begin_layout Description
+
+\change_inserted -937042393 1651397972
+Note Priority of 
+\begin_inset Quotes eld
+\end_inset
+
+backup
+\begin_inset Quotes erd
+\end_inset
+
+ TXT Buffers when MODE[TXBBM] = 1 is not configurable by a TX_PRIORITY[TX*P]
+ corresponding to them, but it is configured by a bit corresponding to 
+\begin_inset Quotes eld
+\end_inset
+
+original
+\begin_inset Quotes erd
+\end_inset
+
+ TXT Buffer.
+ See 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "subsec:TXT-Buffer-Backup"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+.
+\change_unchanged
+
 \end_layout
 
 \begin_layout Standard
@@ -6036,10 +6086,21 @@ Parity protection on RX Buffer RAM
 When CTU CAN FD receives CAN Frame and stores it to RX Buffer RAM, it adds
  single parity bit to each word of RX Buffer RAM.
  When SW driver is reading the frame from RX Buffer RAM, it can check for
- data consistency by reading STATUS[RXPRT] bit.
- CTU CAN FD sets STATUS[RXPRT] upon each read of RX_DATA register by SW
- driver, if parity bit in the word read from RX Buffer RAM is not matching
- calculated parity bit.
+ data consistency by reading STATUS[RXPR
+\change_inserted -937042393 1651400167
+E
+\change_deleted -937042393 1651400166
+T
+\change_unchanged
+] bit.
+ CTU CAN FD sets STATUS[RXPR
+\change_inserted -937042393 1651400170
+E
+\change_deleted -937042393 1651400170
+T
+\change_unchanged
+] upon each read of RX_DATA register by SW driver, if parity bit in the
+ word read from RX Buffer RAM is not matching calculated parity bit.
 \end_layout
 
 \begin_layout Standard
@@ -6335,6 +6396,17 @@ Note If CTU CAN FD detects a parity error in TXT Buffer, SW shall write
 
 \begin_layout Subsection
 TXT Buffer Backup mode
+\change_inserted -937042393 1651397950
+
+\begin_inset CommandInset label
+LatexCommand label
+name "subsec:TXT-Buffer-Backup"
+
+\end_inset
+
+
+\change_unchanged
+
 \end_layout
 
 \begin_layout Standard
@@ -6559,25 +6631,59 @@ backup
 \end_inset
 
  TXT Buffer RAM, CTU CAN FD sets STATUS[TXDPE] bit.
+\change_inserted -937042393 1651397543
+
+\end_layout
+
+\begin_layout Standard
+
+\change_inserted -937042393 1651397792
+When CTU CAN FD operates in TXT Buffer Backup mode, priorities of both TXT
+ Buffers are equal, and they are given by TX_PRIORITY[TX*P] of 
+\begin_inset Quotes eld
+\end_inset
+
+original
+\begin_inset Quotes erd
+\end_inset
+
+ TXT Buffer (e.g.
+ priority of TXT Buffers 1 and 2 are given by TX_PRIORITY[TX1P], and TX_PRIORITY
+[TX2P] has no effect).
+\change_unchanged
+
 \end_layout
 
 \begin_layout Standard
 When SW uses CTU CAN FD in TXT Buffer Backup mode, it must meet following
  conditions:
+\change_deleted -937042393 1651397483
+
 \end_layout
 
 \begin_layout Itemize
+
+\change_deleted -937042393 1651397415
 Priority of TXT Buffers which form a pair (TX_PRIORITY register) must be
  equal (e.g.
  if CTU CAN FD contains 4 TXT Buffers, then at any time following must be
  valid: TX_PRIORITY[TXT1P] = TX_PRIORITY[TXT2P], TX_PRIORITY[TXT3P] = TX_PRIORIT
 Y[TXT4P]).
+\change_inserted -937042393 1651397479
+
 \end_layout
 
 \begin_layout Itemize
-When issuing a command to TXT Buffer (via TX_COMMAND register), SW shall
- issue the command simultaneously to both TXT Buffers which form a TXT Buffer
- pair (e.g.
+When issuing a 
+\change_inserted -937042393 1651397687
+
+\series bold
+Set Ready
+\series default
+ 
+\change_unchanged
+command to TXT Buffer (via TX_COMMAND register), SW shall issue the command
+ simultaneously to both TXT Buffers which form a TXT Buffer pair (e.g.
  TX_COMMAND[TXB1] = TX_COMMAND[TXB2] = 1, when issuing command to TXT Buffer
  1 and TXT Buffer 2).
 \end_layout
@@ -6735,9 +6841,12 @@ Restricted operation mode
 \begin_layout Standard
 In Restricted operation mode, CTU CAN FD is able to receive frames on CAN
  bus, but it does not transmit any frames.
- If CAN frame is inserted to TXT buffer and Set ready command is issued,
- frame will not be transmitted, and TXT buffer will immediately move to
- 
+ If CAN frame is inserted to TXT buffer and 
+\series bold
+Set ready
+\series default
+ command is issued, frame will not be transmitted, and TXT buffer will immediate
+ly move to 
 \begin_inset Quotes eld
 \end_inset
 
