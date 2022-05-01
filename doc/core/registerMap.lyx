@@ -7092,7 +7092,7 @@ RXPE Set when parity error is detected during read of CAN frame from RX Buffer v
 TXPE TXT Buffers Parity Error flag. Set When Parity Error is detected in a TXT Buffer during transmission from this buffer.
 \end_layout
 \begin_layout Description
-TXDPE 
+TXDPE TXT Buffer double parity error. Set in TXT Buffer Backup mode when parity error is detected in "backup" TXT Buffer.
 \end_layout
 \begin_layout Description
 STCNT Support of Traffic counters. When this bit is 1, Traffic counters are present. 
@@ -8431,13 +8431,13 @@ TXFCRST Clear TX bus traffic counter (TX_COUNTER register).
 CPEXS Clear Protocol exception status (STATUS[PEXS]).
 \end_layout
 \begin_layout Description
-CRXPE Clear STATUS[CRXPE] flag.
+CRXPE Clear STATUS[RXPE] flag.
 \end_layout
 \begin_layout Description
-CTXPE Clear STATUS[CTXPE] flag.
+CTXPE Clear STATUS[TXPE] flag.
 \end_layout
 \begin_layout Description
-CTXDPE Clear STATUS[CTXDPE] flag.
+CTXDPE Clear STATUS[TXDPE] flag.
 \end_layout
 \begin_layout Standard
 \begin_inset VSpace bigskip
@@ -36693,7 +36693,7 @@ cellcolor{cyan}
 
 \end_layout
 \begin_layout Description
-RX_DATA RX buffer data at read pointer position in FIFO. By reading from this register, read pointer is automatically increased, as long as there is next data word stored in RX buffer. First stored word in the buffer is FRAME_FORMAT_W, next IDENTIFIER_W etc. This register shall be read by 32 bit access.
+RX_DATA RX buffer data at read pointer position in FIFO. By reading from this register, read pointer is automatically incremented if MODES[RXBAM]=1 and RX Buffer is not empty. If MODE[RXBAM]=1, this register must be read by 32 bit access. Upon read from this register, STATUS[RXPE] is set if there is parity error detected in RX Buffer word which is being read.
 \end_layout
 \begin_layout Standard
 \begin_inset VSpace bigskip

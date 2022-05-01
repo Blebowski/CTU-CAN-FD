@@ -437,7 +437,7 @@
 					<ipxact:field>
 						<ipxact:name>CRXPE</ipxact:name>
 						<ipxact:displayName>CRXPE</ipxact:displayName>
-						<ipxact:description>Clear STATUS[CRXPE] flag.</ipxact:description>
+						<ipxact:description>Clear STATUS[RXPE] flag.</ipxact:description>
 						<ipxact:bitOffset>8</ipxact:bitOffset>
 						<ipxact:resets>
 							<ipxact:reset>
@@ -449,7 +449,7 @@
 					</ipxact:field>
 					<ipxact:field>
 						<ipxact:name>CTXDPE</ipxact:name>
-						<ipxact:description>Clear STATUS[CTXDPE] flag.</ipxact:description>
+						<ipxact:description>Clear STATUS[TXDPE] flag.</ipxact:description>
 						<ipxact:bitOffset>10</ipxact:bitOffset>
 						<ipxact:resets>
 							<ipxact:reset>
@@ -462,7 +462,7 @@
 					<ipxact:field>
 						<ipxact:name>CTXPE</ipxact:name>
 						<ipxact:displayName>CTXPE</ipxact:displayName>
-						<ipxact:description>Clear STATUS[CTXPE] flag.</ipxact:description>
+						<ipxact:description>Clear STATUS[TXPE] flag.</ipxact:description>
 						<ipxact:bitOffset>9</ipxact:bitOffset>
 						<ipxact:resets>
 							<ipxact:reset>
@@ -622,6 +622,8 @@
 					</ipxact:field>
 					<ipxact:field>
 						<ipxact:name>TXDPE</ipxact:name>
+						<ipxact:displayName>TXDPE</ipxact:displayName>
+						<ipxact:description>TXT Buffer double parity error. Set in TXT Buffer Backup mode when parity error is detected in &quot;backup&quot; TXT Buffer.</ipxact:description>
 						<ipxact:bitOffset>11</ipxact:bitOffset>
 						<ipxact:resets>
 							<ipxact:reset>
@@ -2479,7 +2481,7 @@
 					<ipxact:field>
 						<ipxact:name>RX_DATA</ipxact:name>
 						<ipxact:displayName>RX_DATA</ipxact:displayName>
-						<ipxact:description>RX buffer data at read pointer position in FIFO. By reading from this register, read pointer is automatically increased, as long as there is next data word stored in RX buffer. First stored word in the buffer is FRAME_FORMAT_W, next IDENTIFIER_W etc. This register shall be read by 32 bit access.</ipxact:description>
+						<ipxact:description>RX buffer data at read pointer position in FIFO. By reading from this register, read pointer is automatically incremented if MODES[RXBAM]=1 and RX Buffer is not empty. If MODE[RXBAM]=1, this register must be read by 32 bit access. Upon read from this register, STATUS[RXPE] is set if there is parity error detected in RX Buffer word which is being read.</ipxact:description>
 						<ipxact:bitOffset>0</ipxact:bitOffset>
 						<ipxact:resets>
 							<ipxact:reset>
@@ -3919,25 +3921,64 @@
 					<ipxact:size>32</ipxact:size>
 					<ipxact:field>
 						<ipxact:name>DATA_1</ipxact:name>
+						<ipxact:displayName>DATA_1</ipxact:displayName>
 						<ipxact:description>Data byte 1 of CAN Frame.</ipxact:description>
 						<ipxact:bitOffset>0</ipxact:bitOffset>
 						<ipxact:bitWidth>8</ipxact:bitWidth>
 					</ipxact:field>
 					<ipxact:field>
 						<ipxact:name>DATA_2</ipxact:name>
+						<ipxact:displayName>DATA_2</ipxact:displayName>
 						<ipxact:description>Data byte 2 of CAN Frame.</ipxact:description>
 						<ipxact:bitOffset>8</ipxact:bitOffset>
 						<ipxact:bitWidth>8</ipxact:bitWidth>
 					</ipxact:field>
 					<ipxact:field>
 						<ipxact:name>DATA_3</ipxact:name>
+						<ipxact:displayName>DATA_3</ipxact:displayName>
 						<ipxact:description>Data byte 3 of CAN Frame.</ipxact:description>
 						<ipxact:bitOffset>16</ipxact:bitOffset>
 						<ipxact:bitWidth>8</ipxact:bitWidth>
 					</ipxact:field>
 					<ipxact:field>
 						<ipxact:name>DATA_4</ipxact:name>
+						<ipxact:displayName>DATA_4</ipxact:displayName>
 						<ipxact:description>Data byte 4 of CAN Frame.</ipxact:description>
+						<ipxact:bitOffset>24</ipxact:bitOffset>
+						<ipxact:bitWidth>8</ipxact:bitWidth>
+					</ipxact:field>
+				</ipxact:register>
+				<ipxact:register>
+					<ipxact:name>DATA_57_60_W</ipxact:name>
+					<ipxact:displayName>DATA_57_60_W</ipxact:displayName>
+					<ipxact:dim>0</ipxact:dim>
+					<ipxact:addressOffset>'h48</ipxact:addressOffset>
+					<ipxact:size>32</ipxact:size>
+					<ipxact:field>
+						<ipxact:name>DATA_57</ipxact:name>
+						<ipxact:displayName>DATA_57</ipxact:displayName>
+						<ipxact:description>Data byte 57 of CAN Frame.</ipxact:description>
+						<ipxact:bitOffset>0</ipxact:bitOffset>
+						<ipxact:bitWidth>8</ipxact:bitWidth>
+					</ipxact:field>
+					<ipxact:field>
+						<ipxact:name>DATA_58</ipxact:name>
+						<ipxact:displayName>DATA_58</ipxact:displayName>
+						<ipxact:description>Data byte 58 of CAN Frame.</ipxact:description>
+						<ipxact:bitOffset>8</ipxact:bitOffset>
+						<ipxact:bitWidth>8</ipxact:bitWidth>
+					</ipxact:field>
+					<ipxact:field>
+						<ipxact:name>DATA_59</ipxact:name>
+						<ipxact:displayName>DATA_59</ipxact:displayName>
+						<ipxact:description>Data byte 59 of CAN Frame.</ipxact:description>
+						<ipxact:bitOffset>16</ipxact:bitOffset>
+						<ipxact:bitWidth>8</ipxact:bitWidth>
+					</ipxact:field>
+					<ipxact:field>
+						<ipxact:name>DATA_60</ipxact:name>
+						<ipxact:displayName>DATA_60</ipxact:displayName>
+						<ipxact:description>Data byte 60 of CAN Frame.</ipxact:description>
 						<ipxact:bitOffset>24</ipxact:bitOffset>
 						<ipxact:bitWidth>8</ipxact:bitWidth>
 					</ipxact:field>
@@ -3950,26 +3991,100 @@
 					<ipxact:size>32</ipxact:size>
 					<ipxact:field>
 						<ipxact:name>DATA_61</ipxact:name>
+						<ipxact:displayName>DATA_61</ipxact:displayName>
 						<ipxact:description>Data byte 61 of CAN Frame.</ipxact:description>
 						<ipxact:bitOffset>0</ipxact:bitOffset>
 						<ipxact:bitWidth>8</ipxact:bitWidth>
 					</ipxact:field>
 					<ipxact:field>
 						<ipxact:name>DATA_62</ipxact:name>
+						<ipxact:displayName>DATA_62</ipxact:displayName>
 						<ipxact:description>Data byte 62 of CAN Frame.</ipxact:description>
 						<ipxact:bitOffset>8</ipxact:bitOffset>
 						<ipxact:bitWidth>8</ipxact:bitWidth>
 					</ipxact:field>
 					<ipxact:field>
 						<ipxact:name>DATA_63</ipxact:name>
+						<ipxact:displayName>DATA_63</ipxact:displayName>
 						<ipxact:description>Data byte 63 of CAN Frame.</ipxact:description>
 						<ipxact:bitOffset>16</ipxact:bitOffset>
 						<ipxact:bitWidth>8</ipxact:bitWidth>
 					</ipxact:field>
 					<ipxact:field>
 						<ipxact:name>DATA_64</ipxact:name>
+						<ipxact:displayName>DATA_64</ipxact:displayName>
 						<ipxact:description>Data byte 64 of CAN Frame.</ipxact:description>
 						<ipxact:bitOffset>24</ipxact:bitOffset>
+						<ipxact:bitWidth>8</ipxact:bitWidth>
+					</ipxact:field>
+				</ipxact:register>
+				<ipxact:register>
+					<ipxact:name>DATA_49_52_W</ipxact:name>
+					<ipxact:displayName>DATA_49_52_W</ipxact:displayName>
+					<ipxact:dim>0</ipxact:dim>
+					<ipxact:addressOffset>'h40</ipxact:addressOffset>
+					<ipxact:size>32</ipxact:size>
+					<ipxact:field>
+						<ipxact:name>DATA_49</ipxact:name>
+						<ipxact:displayName>DATA_49</ipxact:displayName>
+						<ipxact:description>Data byte 49 of CAN Frame.</ipxact:description>
+						<ipxact:bitOffset>0</ipxact:bitOffset>
+						<ipxact:bitWidth>8</ipxact:bitWidth>
+					</ipxact:field>
+					<ipxact:field>
+						<ipxact:name>DATA_52</ipxact:name>
+						<ipxact:displayName>DATA_52</ipxact:displayName>
+						<ipxact:description>Data byte 52 of CAN Frame.</ipxact:description>
+						<ipxact:bitOffset>24</ipxact:bitOffset>
+						<ipxact:bitWidth>8</ipxact:bitWidth>
+					</ipxact:field>
+					<ipxact:field>
+						<ipxact:name>DATA_51</ipxact:name>
+						<ipxact:displayName>DATA_51</ipxact:displayName>
+						<ipxact:description>Data byte 51 of CAN Frame.</ipxact:description>
+						<ipxact:bitOffset>16</ipxact:bitOffset>
+						<ipxact:bitWidth>8</ipxact:bitWidth>
+					</ipxact:field>
+					<ipxact:field>
+						<ipxact:name>DATA_50</ipxact:name>
+						<ipxact:displayName>DATA_50</ipxact:displayName>
+						<ipxact:description>Data byte 50 of CAN Frame.</ipxact:description>
+						<ipxact:bitOffset>8</ipxact:bitOffset>
+						<ipxact:bitWidth>8</ipxact:bitWidth>
+					</ipxact:field>
+				</ipxact:register>
+				<ipxact:register>
+					<ipxact:name>DATA_53_56_W</ipxact:name>
+					<ipxact:displayName>DATA_53_56_W</ipxact:displayName>
+					<ipxact:dim>0</ipxact:dim>
+					<ipxact:addressOffset>'h44</ipxact:addressOffset>
+					<ipxact:size>32</ipxact:size>
+					<ipxact:field>
+						<ipxact:name>DATA_53</ipxact:name>
+						<ipxact:displayName>DATA_53</ipxact:displayName>
+						<ipxact:description>Data byte 53 of CAN Frame.</ipxact:description>
+						<ipxact:bitOffset>0</ipxact:bitOffset>
+						<ipxact:bitWidth>8</ipxact:bitWidth>
+					</ipxact:field>
+					<ipxact:field>
+						<ipxact:name>DATA_54</ipxact:name>
+						<ipxact:displayName>DATA_54</ipxact:displayName>
+						<ipxact:description>Data byte 54 of CAN Frame.</ipxact:description>
+						<ipxact:bitOffset>24</ipxact:bitOffset>
+						<ipxact:bitWidth>8</ipxact:bitWidth>
+					</ipxact:field>
+					<ipxact:field>
+						<ipxact:name>DATA_55</ipxact:name>
+						<ipxact:displayName>DATA_55</ipxact:displayName>
+						<ipxact:description>Data byte 55 of CAN Frame.</ipxact:description>
+						<ipxact:bitOffset>16</ipxact:bitOffset>
+						<ipxact:bitWidth>8</ipxact:bitWidth>
+					</ipxact:field>
+					<ipxact:field>
+						<ipxact:name>DATA_56</ipxact:name>
+						<ipxact:displayName>DATA_56</ipxact:displayName>
+						<ipxact:description>Data byte 56 of CAN Frame.</ipxact:description>
+						<ipxact:bitOffset>8</ipxact:bitOffset>
 						<ipxact:bitWidth>8</ipxact:bitWidth>
 					</ipxact:field>
 				</ipxact:register>
@@ -3981,26 +4096,380 @@
 					<ipxact:size>32</ipxact:size>
 					<ipxact:field>
 						<ipxact:name>DATA_5</ipxact:name>
+						<ipxact:displayName>DATA_5</ipxact:displayName>
 						<ipxact:description>Data byte 5 of CAN Frame.</ipxact:description>
 						<ipxact:bitOffset>0</ipxact:bitOffset>
 						<ipxact:bitWidth>8</ipxact:bitWidth>
 					</ipxact:field>
 					<ipxact:field>
 						<ipxact:name>DATA_6</ipxact:name>
+						<ipxact:displayName>DATA_6</ipxact:displayName>
 						<ipxact:description>Data byte 6 of CAN Frame.</ipxact:description>
 						<ipxact:bitOffset>8</ipxact:bitOffset>
 						<ipxact:bitWidth>8</ipxact:bitWidth>
 					</ipxact:field>
 					<ipxact:field>
 						<ipxact:name>DATA_7</ipxact:name>
+						<ipxact:displayName>DATA_7</ipxact:displayName>
 						<ipxact:description>Data byte 7 of CAN Frame.</ipxact:description>
 						<ipxact:bitOffset>16</ipxact:bitOffset>
 						<ipxact:bitWidth>8</ipxact:bitWidth>
 					</ipxact:field>
 					<ipxact:field>
 						<ipxact:name>DATA_8</ipxact:name>
+						<ipxact:displayName>DATA_8</ipxact:displayName>
 						<ipxact:description>Data byte 8 of CAN Frame.</ipxact:description>
 						<ipxact:bitOffset>24</ipxact:bitOffset>
+						<ipxact:bitWidth>8</ipxact:bitWidth>
+					</ipxact:field>
+				</ipxact:register>
+				<ipxact:register>
+					<ipxact:name>DATA_9_12_W</ipxact:name>
+					<ipxact:displayName>DATA_9_12_W</ipxact:displayName>
+					<ipxact:dim>0</ipxact:dim>
+					<ipxact:addressOffset>'h18</ipxact:addressOffset>
+					<ipxact:size>32</ipxact:size>
+					<ipxact:field>
+						<ipxact:name>DATA_12</ipxact:name>
+						<ipxact:displayName>DATA_12</ipxact:displayName>
+						<ipxact:description>Data byte 12 of CAN Frame.</ipxact:description>
+						<ipxact:bitOffset>24</ipxact:bitOffset>
+						<ipxact:bitWidth>8</ipxact:bitWidth>
+					</ipxact:field>
+					<ipxact:field>
+						<ipxact:name>DATA_11</ipxact:name>
+						<ipxact:displayName>DATA_11</ipxact:displayName>
+						<ipxact:description>Data byte 11 of CAN Frame.</ipxact:description>
+						<ipxact:bitOffset>16</ipxact:bitOffset>
+						<ipxact:bitWidth>8</ipxact:bitWidth>
+					</ipxact:field>
+					<ipxact:field>
+						<ipxact:name>DATA_10</ipxact:name>
+						<ipxact:displayName>DATA_10</ipxact:displayName>
+						<ipxact:description>Data byte 10 of CAN Frame.</ipxact:description>
+						<ipxact:bitOffset>8</ipxact:bitOffset>
+						<ipxact:bitWidth>8</ipxact:bitWidth>
+					</ipxact:field>
+					<ipxact:field>
+						<ipxact:name>DATA_9</ipxact:name>
+						<ipxact:displayName>DATA_9</ipxact:displayName>
+						<ipxact:description>Data byte 9 of CAN Frame.</ipxact:description>
+						<ipxact:bitOffset>0</ipxact:bitOffset>
+						<ipxact:bitWidth>8</ipxact:bitWidth>
+					</ipxact:field>
+				</ipxact:register>
+				<ipxact:register>
+					<ipxact:name>DATA_13_16_W</ipxact:name>
+					<ipxact:displayName>DATA_13_16_W</ipxact:displayName>
+					<ipxact:dim>0</ipxact:dim>
+					<ipxact:addressOffset>'h1C</ipxact:addressOffset>
+					<ipxact:size>32</ipxact:size>
+					<ipxact:field>
+						<ipxact:name>DATA_13</ipxact:name>
+						<ipxact:displayName>DATA_13</ipxact:displayName>
+						<ipxact:description>Data byte 13 of CAN Frame.</ipxact:description>
+						<ipxact:bitOffset>0</ipxact:bitOffset>
+						<ipxact:bitWidth>8</ipxact:bitWidth>
+					</ipxact:field>
+					<ipxact:field>
+						<ipxact:name>DATA_16</ipxact:name>
+						<ipxact:displayName>DATA_16</ipxact:displayName>
+						<ipxact:description>Data byte 16 of CAN Frame.</ipxact:description>
+						<ipxact:bitOffset>24</ipxact:bitOffset>
+						<ipxact:bitWidth>8</ipxact:bitWidth>
+					</ipxact:field>
+					<ipxact:field>
+						<ipxact:name>DATA_15</ipxact:name>
+						<ipxact:displayName>DATA_15</ipxact:displayName>
+						<ipxact:description>Data byte 15 of CAN Frame.</ipxact:description>
+						<ipxact:bitOffset>16</ipxact:bitOffset>
+						<ipxact:bitWidth>8</ipxact:bitWidth>
+					</ipxact:field>
+					<ipxact:field>
+						<ipxact:name>DATA_14</ipxact:name>
+						<ipxact:displayName>DATA_14</ipxact:displayName>
+						<ipxact:description>Data byte 14 of CAN Frame.</ipxact:description>
+						<ipxact:bitOffset>8</ipxact:bitOffset>
+						<ipxact:bitWidth>8</ipxact:bitWidth>
+					</ipxact:field>
+				</ipxact:register>
+				<ipxact:register>
+					<ipxact:name>DATA_17_20_W</ipxact:name>
+					<ipxact:displayName>DATA_17_20_W</ipxact:displayName>
+					<ipxact:dim>0</ipxact:dim>
+					<ipxact:addressOffset>'h20</ipxact:addressOffset>
+					<ipxact:size>32</ipxact:size>
+					<ipxact:field>
+						<ipxact:name>DATA_17</ipxact:name>
+						<ipxact:displayName>DATA_17</ipxact:displayName>
+						<ipxact:description>Data byte 17 of CAN Frame.</ipxact:description>
+						<ipxact:bitOffset>0</ipxact:bitOffset>
+						<ipxact:bitWidth>8</ipxact:bitWidth>
+					</ipxact:field>
+					<ipxact:field>
+						<ipxact:name>DATA_19</ipxact:name>
+						<ipxact:displayName>DATA_19</ipxact:displayName>
+						<ipxact:description>Data byte 19 of CAN Frame.</ipxact:description>
+						<ipxact:bitOffset>16</ipxact:bitOffset>
+						<ipxact:bitWidth>8</ipxact:bitWidth>
+					</ipxact:field>
+					<ipxact:field>
+						<ipxact:name>DATA_18</ipxact:name>
+						<ipxact:displayName>DATA_18</ipxact:displayName>
+						<ipxact:description>Data byte 18 of CAN Frame.</ipxact:description>
+						<ipxact:bitOffset>8</ipxact:bitOffset>
+						<ipxact:bitWidth>8</ipxact:bitWidth>
+					</ipxact:field>
+					<ipxact:field>
+						<ipxact:name>DATA_20</ipxact:name>
+						<ipxact:displayName>DATA_20</ipxact:displayName>
+						<ipxact:description>Data byte 20 of CAN Frame.</ipxact:description>
+						<ipxact:bitOffset>24</ipxact:bitOffset>
+						<ipxact:bitWidth>8</ipxact:bitWidth>
+					</ipxact:field>
+				</ipxact:register>
+				<ipxact:register>
+					<ipxact:name>DATA_21_24_W</ipxact:name>
+					<ipxact:displayName>DATA_21_24_W</ipxact:displayName>
+					<ipxact:dim>0</ipxact:dim>
+					<ipxact:addressOffset>'h24</ipxact:addressOffset>
+					<ipxact:size>32</ipxact:size>
+					<ipxact:field>
+						<ipxact:name>DATA_21</ipxact:name>
+						<ipxact:displayName>DATA_21</ipxact:displayName>
+						<ipxact:description>Data byte 21 of CAN Frame.</ipxact:description>
+						<ipxact:bitOffset>0</ipxact:bitOffset>
+						<ipxact:bitWidth>8</ipxact:bitWidth>
+					</ipxact:field>
+					<ipxact:field>
+						<ipxact:name>DATA_24</ipxact:name>
+						<ipxact:displayName>DATA_24</ipxact:displayName>
+						<ipxact:description>Data byte 24 of CAN Frame.</ipxact:description>
+						<ipxact:bitOffset>24</ipxact:bitOffset>
+						<ipxact:bitWidth>8</ipxact:bitWidth>
+					</ipxact:field>
+					<ipxact:field>
+						<ipxact:name>DATA_23</ipxact:name>
+						<ipxact:displayName>DATA_23</ipxact:displayName>
+						<ipxact:description>Data byte 23 of CAN Frame.</ipxact:description>
+						<ipxact:bitOffset>16</ipxact:bitOffset>
+						<ipxact:bitWidth>8</ipxact:bitWidth>
+					</ipxact:field>
+					<ipxact:field>
+						<ipxact:name>DATA_22</ipxact:name>
+						<ipxact:displayName>DATA_22</ipxact:displayName>
+						<ipxact:description>Data byte 22 of CAN Frame.</ipxact:description>
+						<ipxact:bitOffset>8</ipxact:bitOffset>
+						<ipxact:bitWidth>8</ipxact:bitWidth>
+					</ipxact:field>
+				</ipxact:register>
+				<ipxact:register>
+					<ipxact:name>DATA_25_28_W</ipxact:name>
+					<ipxact:displayName>DATA_25_28_W</ipxact:displayName>
+					<ipxact:dim>0</ipxact:dim>
+					<ipxact:addressOffset>'h28</ipxact:addressOffset>
+					<ipxact:size>32</ipxact:size>
+					<ipxact:field>
+						<ipxact:name>DATA_25</ipxact:name>
+						<ipxact:displayName>DATA_25</ipxact:displayName>
+						<ipxact:description>Data byte 25 of CAN Frame.</ipxact:description>
+						<ipxact:bitOffset>0</ipxact:bitOffset>
+						<ipxact:bitWidth>8</ipxact:bitWidth>
+					</ipxact:field>
+					<ipxact:field>
+						<ipxact:name>DATA_28</ipxact:name>
+						<ipxact:displayName>DATA_28</ipxact:displayName>
+						<ipxact:description>Data byte 28 of CAN Frame.</ipxact:description>
+						<ipxact:bitOffset>24</ipxact:bitOffset>
+						<ipxact:bitWidth>8</ipxact:bitWidth>
+					</ipxact:field>
+					<ipxact:field>
+						<ipxact:name>DATA_27</ipxact:name>
+						<ipxact:displayName>DATA_27</ipxact:displayName>
+						<ipxact:description>Data byte 27 of CAN Frame.</ipxact:description>
+						<ipxact:bitOffset>16</ipxact:bitOffset>
+						<ipxact:bitWidth>8</ipxact:bitWidth>
+					</ipxact:field>
+					<ipxact:field>
+						<ipxact:name>DATA_26</ipxact:name>
+						<ipxact:displayName>DATA_26</ipxact:displayName>
+						<ipxact:description>Data byte 26 of CAN Frame.</ipxact:description>
+						<ipxact:bitOffset>8</ipxact:bitOffset>
+						<ipxact:bitWidth>8</ipxact:bitWidth>
+					</ipxact:field>
+				</ipxact:register>
+				<ipxact:register>
+					<ipxact:name>DATA_37_40_W</ipxact:name>
+					<ipxact:displayName>DATA_37_40_W</ipxact:displayName>
+					<ipxact:dim>0</ipxact:dim>
+					<ipxact:addressOffset>'h34</ipxact:addressOffset>
+					<ipxact:size>32</ipxact:size>
+					<ipxact:field>
+						<ipxact:name>DATA_37</ipxact:name>
+						<ipxact:displayName>DATA_37</ipxact:displayName>
+						<ipxact:description>Data byte 37 of CAN Frame.</ipxact:description>
+						<ipxact:bitOffset>0</ipxact:bitOffset>
+						<ipxact:bitWidth>8</ipxact:bitWidth>
+					</ipxact:field>
+					<ipxact:field>
+						<ipxact:name>DATA_40</ipxact:name>
+						<ipxact:displayName>DATA_40</ipxact:displayName>
+						<ipxact:description>Data byte 40 of CAN Frame.</ipxact:description>
+						<ipxact:bitOffset>24</ipxact:bitOffset>
+						<ipxact:bitWidth>8</ipxact:bitWidth>
+					</ipxact:field>
+					<ipxact:field>
+						<ipxact:name>DATA_39</ipxact:name>
+						<ipxact:displayName>DATA_39</ipxact:displayName>
+						<ipxact:description>Data byte 39 of CAN Frame.</ipxact:description>
+						<ipxact:bitOffset>16</ipxact:bitOffset>
+						<ipxact:bitWidth>8</ipxact:bitWidth>
+					</ipxact:field>
+					<ipxact:field>
+						<ipxact:name>DATA_38</ipxact:name>
+						<ipxact:displayName>DATA_38</ipxact:displayName>
+						<ipxact:description>Data byte 38 of CAN Frame.</ipxact:description>
+						<ipxact:bitOffset>8</ipxact:bitOffset>
+						<ipxact:bitWidth>8</ipxact:bitWidth>
+					</ipxact:field>
+				</ipxact:register>
+				<ipxact:register>
+					<ipxact:name>DATA_29_32_W</ipxact:name>
+					<ipxact:displayName>DATA_29_32_W</ipxact:displayName>
+					<ipxact:dim>0</ipxact:dim>
+					<ipxact:addressOffset>'h2C</ipxact:addressOffset>
+					<ipxact:size>32</ipxact:size>
+					<ipxact:field>
+						<ipxact:name>DATA_29</ipxact:name>
+						<ipxact:displayName>DATA_29</ipxact:displayName>
+						<ipxact:description>Data byte 29 of CAN Frame.</ipxact:description>
+						<ipxact:bitOffset>0</ipxact:bitOffset>
+						<ipxact:bitWidth>8</ipxact:bitWidth>
+					</ipxact:field>
+					<ipxact:field>
+						<ipxact:name>DATA_32</ipxact:name>
+						<ipxact:displayName>DATA_32</ipxact:displayName>
+						<ipxact:description>Data byte 32 of CAN Frame.</ipxact:description>
+						<ipxact:bitOffset>24</ipxact:bitOffset>
+						<ipxact:bitWidth>8</ipxact:bitWidth>
+					</ipxact:field>
+					<ipxact:field>
+						<ipxact:name>DATA_31</ipxact:name>
+						<ipxact:displayName>DATA_31</ipxact:displayName>
+						<ipxact:description>Data byte 31 of CAN Frame.</ipxact:description>
+						<ipxact:bitOffset>16</ipxact:bitOffset>
+						<ipxact:bitWidth>8</ipxact:bitWidth>
+					</ipxact:field>
+					<ipxact:field>
+						<ipxact:name>DATA_30</ipxact:name>
+						<ipxact:displayName>DATA_30</ipxact:displayName>
+						<ipxact:description>Data byte 30 of CAN Frame.</ipxact:description>
+						<ipxact:bitOffset>8</ipxact:bitOffset>
+						<ipxact:bitWidth>8</ipxact:bitWidth>
+					</ipxact:field>
+				</ipxact:register>
+				<ipxact:register>
+					<ipxact:name>DATA_33_36_W</ipxact:name>
+					<ipxact:displayName>DATA_33_36_W</ipxact:displayName>
+					<ipxact:dim>0</ipxact:dim>
+					<ipxact:addressOffset>'h30</ipxact:addressOffset>
+					<ipxact:size>32</ipxact:size>
+					<ipxact:field>
+						<ipxact:name>DATA_33</ipxact:name>
+						<ipxact:displayName>DATA_33</ipxact:displayName>
+						<ipxact:description>Data byte 33 of CAN Frame.</ipxact:description>
+						<ipxact:bitOffset>0</ipxact:bitOffset>
+						<ipxact:bitWidth>8</ipxact:bitWidth>
+					</ipxact:field>
+					<ipxact:field>
+						<ipxact:name>DATA_36</ipxact:name>
+						<ipxact:displayName>DATA_36</ipxact:displayName>
+						<ipxact:description>Data byte 36 of CAN Frame.</ipxact:description>
+						<ipxact:bitOffset>24</ipxact:bitOffset>
+						<ipxact:bitWidth>8</ipxact:bitWidth>
+					</ipxact:field>
+					<ipxact:field>
+						<ipxact:name>DATA_35</ipxact:name>
+						<ipxact:displayName>DATA_35</ipxact:displayName>
+						<ipxact:description>Data byte 35 of CAN Frame.</ipxact:description>
+						<ipxact:bitOffset>16</ipxact:bitOffset>
+						<ipxact:bitWidth>8</ipxact:bitWidth>
+					</ipxact:field>
+					<ipxact:field>
+						<ipxact:name>DATA_34</ipxact:name>
+						<ipxact:displayName>DATA_34</ipxact:displayName>
+						<ipxact:description>Data byte 34 of CAN Frame.</ipxact:description>
+						<ipxact:bitOffset>8</ipxact:bitOffset>
+						<ipxact:bitWidth>8</ipxact:bitWidth>
+					</ipxact:field>
+				</ipxact:register>
+				<ipxact:register>
+					<ipxact:name>DATA_41_44_W</ipxact:name>
+					<ipxact:displayName>DATA_41_44_W</ipxact:displayName>
+					<ipxact:dim>0</ipxact:dim>
+					<ipxact:addressOffset>'h38</ipxact:addressOffset>
+					<ipxact:size>32</ipxact:size>
+					<ipxact:field>
+						<ipxact:name>DATA_41</ipxact:name>
+						<ipxact:displayName>DATA_41</ipxact:displayName>
+						<ipxact:description>Data byte 41 of CAN Frame.</ipxact:description>
+						<ipxact:bitOffset>0</ipxact:bitOffset>
+						<ipxact:bitWidth>8</ipxact:bitWidth>
+					</ipxact:field>
+					<ipxact:field>
+						<ipxact:name>DATA_44</ipxact:name>
+						<ipxact:displayName>DATA_44</ipxact:displayName>
+						<ipxact:description>Data byte 44 of CAN Frame.</ipxact:description>
+						<ipxact:bitOffset>24</ipxact:bitOffset>
+						<ipxact:bitWidth>8</ipxact:bitWidth>
+					</ipxact:field>
+					<ipxact:field>
+						<ipxact:name>DATA_43</ipxact:name>
+						<ipxact:displayName>DATA_43</ipxact:displayName>
+						<ipxact:description>Data byte 43 of CAN Frame.</ipxact:description>
+						<ipxact:bitOffset>16</ipxact:bitOffset>
+						<ipxact:bitWidth>8</ipxact:bitWidth>
+					</ipxact:field>
+					<ipxact:field>
+						<ipxact:name>DATA_42</ipxact:name>
+						<ipxact:displayName>DATA_42</ipxact:displayName>
+						<ipxact:description>Data byte 42 of CAN Frame.</ipxact:description>
+						<ipxact:bitOffset>8</ipxact:bitOffset>
+						<ipxact:bitWidth>8</ipxact:bitWidth>
+					</ipxact:field>
+				</ipxact:register>
+				<ipxact:register>
+					<ipxact:name>DATA_45_48_W</ipxact:name>
+					<ipxact:displayName>DATA_45_48_W</ipxact:displayName>
+					<ipxact:dim>0</ipxact:dim>
+					<ipxact:addressOffset>'h3C</ipxact:addressOffset>
+					<ipxact:size>32</ipxact:size>
+					<ipxact:field>
+						<ipxact:name>DATA_45</ipxact:name>
+						<ipxact:displayName>DATA_45</ipxact:displayName>
+						<ipxact:description>Data byte 45 of CAN Frame.</ipxact:description>
+						<ipxact:bitOffset>0</ipxact:bitOffset>
+						<ipxact:bitWidth>8</ipxact:bitWidth>
+					</ipxact:field>
+					<ipxact:field>
+						<ipxact:name>DATA_48</ipxact:name>
+						<ipxact:displayName>DATA_48</ipxact:displayName>
+						<ipxact:description>Data byte 48 of CAN Frame.</ipxact:description>
+						<ipxact:bitOffset>24</ipxact:bitOffset>
+						<ipxact:bitWidth>8</ipxact:bitWidth>
+					</ipxact:field>
+					<ipxact:field>
+						<ipxact:name>DATA_47</ipxact:name>
+						<ipxact:displayName>DATA_47</ipxact:displayName>
+						<ipxact:description>Data byte 47 of CAN Frame.</ipxact:description>
+						<ipxact:bitOffset>16</ipxact:bitOffset>
+						<ipxact:bitWidth>8</ipxact:bitWidth>
+					</ipxact:field>
+					<ipxact:field>
+						<ipxact:name>DATA_46</ipxact:name>
+						<ipxact:displayName>DATA_46</ipxact:displayName>
+						<ipxact:description>Data byte 46 of CAN Frame.</ipxact:description>
+						<ipxact:bitOffset>8</ipxact:bitOffset>
 						<ipxact:bitWidth>8</ipxact:bitWidth>
 					</ipxact:field>
 				</ipxact:register>
@@ -4055,15 +4524,15 @@
 			<kactus2:kts_firmness>Mutable</kactus2:kts_firmness>
 		</kactus2:kts_attributes>
 		<ipxact:regLocks>
-			<ipxact:regLock lock_signal="lock_1" description="Register can be only written when MODE[TSTM] = 1, otherwise write has no effect." reg_name="CTR_PRES"/>
-			<ipxact:regLock lock_signal="lock_1" description="Register can be only written when MODE[TSTM] = 1, otherwise write has no effect." reg_name="EWL"/>
-			<ipxact:regLock lock_signal="lock_1" description="Register can be only written when MODE[TSTM] = 1, otherwise write has no effect." reg_name="ERP"/>
-			<ipxact:regLock lock_signal="lock_2" description="Register can be only written when SETTINGS[ENA] = 0, otherwise write has no effect." reg_name="BTR"/>
-			<ipxact:regLock lock_signal="lock_2" description="Register can be only written when SETTINGS[ENA] = 0, otherwise write has no effect." reg_name="BTR_FD"/>
-			<ipxact:regLock lock_signal="lock_2" description="Register can be only written when SETTINGS[ENA] = 0, otherwise write has no effect." reg_name="SSP_CFG"/>
-			<ipxact:regLock lock_signal="lock_1" description="Register can be only written when MODE[TSTM] = 1, otherwise write has no effect." reg_name="TST_CONTROL"/>
-			<ipxact:regLock lock_signal="lock_1" description="Register can be only written when MODE[TSTM] = 1, otherwise write has no effect." reg_name="TST_DEST"/>
-			<ipxact:regLock lock_signal="lock_1" description="Register can be only written when MODE[TSTM] = 1, otherwise write has no effect." reg_name="TST_WDATA"/>
+			<ipxact:regLock description="Register can be only written when MODE[TSTM] = 1, otherwise write has no effect." reg_name="CTR_PRES" lock_signal="lock_1"/>
+			<ipxact:regLock description="Register can be only written when MODE[TSTM] = 1, otherwise write has no effect." reg_name="EWL" lock_signal="lock_1"/>
+			<ipxact:regLock description="Register can be only written when MODE[TSTM] = 1, otherwise write has no effect." reg_name="ERP" lock_signal="lock_1"/>
+			<ipxact:regLock description="Register can be only written when SETTINGS[ENA] = 0, otherwise write has no effect." reg_name="BTR" lock_signal="lock_2"/>
+			<ipxact:regLock description="Register can be only written when SETTINGS[ENA] = 0, otherwise write has no effect." reg_name="BTR_FD" lock_signal="lock_2"/>
+			<ipxact:regLock description="Register can be only written when SETTINGS[ENA] = 0, otherwise write has no effect." reg_name="SSP_CFG" lock_signal="lock_2"/>
+			<ipxact:regLock description="Register can be only written when MODE[TSTM] = 1, otherwise write has no effect." reg_name="TST_CONTROL" lock_signal="lock_1"/>
+			<ipxact:regLock description="Register can be only written when MODE[TSTM] = 1, otherwise write has no effect." reg_name="TST_DEST" lock_signal="lock_1"/>
+			<ipxact:regLock description="Register can be only written when MODE[TSTM] = 1, otherwise write has no effect." reg_name="TST_WDATA" lock_signal="lock_1"/>
 		</ipxact:regLocks>
 		<kactus2:license>Proprietary</kactus2:license>
 	</ipxact:vendorExtensions>
