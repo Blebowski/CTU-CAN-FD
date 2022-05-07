@@ -1872,8 +1872,8 @@ package can_fd_register_map is
   -- TXTB3_DATA_15 register
   --
   ------------------------------------------------------------------------------
-  constant TXTB3_DATA_19_L        : natural := 0;
-  constant TXTB3_DATA_19_H       : natural := 31;
+  constant TXTB3_DATA_15_L        : natural := 0;
+  constant TXTB3_DATA_15_H       : natural := 31;
 
   -- TXTB3_DATA_15 register reset values
 
@@ -2842,8 +2842,8 @@ package can_fd_register_map is
   --
   -- This adress word corresponds to DATA_61_64 word.
   ------------------------------------------------------------------------------
-  constant TXTB8_DATA_20_L        : natural := 0;
-  constant TXTB8_DATA_20_H       : natural := 31;
+  constant TXTB8_DATA_16_L        : natural := 0;
+  constant TXTB8_DATA_16_H       : natural := 31;
 
   -- TXTB8_DATA_16 register reset values
 

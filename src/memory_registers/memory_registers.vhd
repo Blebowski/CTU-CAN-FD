@@ -290,8 +290,9 @@ end entity;
 architecture rtl of memory_registers is
 
     -- Generated register maps inputs/outputs
-    signal Control_registers_out    : Control_registers_out_t;
-    signal Control_registers_in     : Control_registers_in_t;
+    signal control_registers_out    : control_registers_out_t;
+    signal control_registers_in     : control_registers_in_t;
+
     signal test_registers_in        : test_registers_in_t;
     signal test_registers_out_i     : test_registers_out_t;
     
