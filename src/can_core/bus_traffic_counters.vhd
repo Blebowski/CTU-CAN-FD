@@ -133,14 +133,14 @@ end entity;
 
 architecture rtl of bus_traffic_counters is
 
-    signal tx_ctr_i          :     std_logic_vector(31 downto 0);
-    signal rx_ctr_i          :     std_logic_vector(31 downto 0);
+    signal tx_ctr_i              :     std_logic_vector(31 downto 0);
+    signal rx_ctr_i              :     std_logic_vector(31 downto 0);
 
     -- Selected value to increment
-    signal sel_value           :     unsigned(31 downto 0);
+    signal sel_value             :     unsigned(31 downto 0);
 
     -- Incremented value by 1
-    signal inc_value           :     unsigned(31 downto 0);
+    signal inc_value             :     unsigned(31 downto 0);
     
     -- Reset signals for counters (registered, to avoid glitches)
     signal tx_ctr_rst_n_d        :     std_logic;
@@ -151,13 +151,30 @@ architecture rtl of bus_traffic_counters is
     signal rx_ctr_rst_n_q        :     std_logic;
     signal rx_ctr_rst_n_q_scan   :     std_logic;
 
+    signal inc_tx_ctr_q          :     std_logic;
+    signal inc_rx_ctr_q          :     std_logic;
+
 begin
+
+    ----------------------------------------------------------------------------
+    -- 
+    ----------------------------------------------------------------------------
+    increment_reg_proc : process(clk_sys, res_n)
+    begin
+        if (res_n = '0') then
+            inc_tx_ctr_q <= '0';
+            inc_rx_ctr_q <= '0';
+        elsif rising_edge(clk_sys) then
+            inc_tx_ctr_q <= inc_tx_ctr;
+            inc_rx_ctr_q <= inc_rx_ctr;
+        end if;
+    end process;
 
     tx_ctr <= tx_ctr_i;
     rx_ctr <= rx_ctr_i;
 
     -- Multiplexor between TX and RX value to increment
-    sel_value <= unsigned(tx_ctr_i) when (inc_tx_ctr = '1') else
+    sel_value <= unsigned(tx_ctr_i) when (inc_tx_ctr_q = '1') else
                  unsigned(rx_ctr_i);
 
     -- Incremented value of either TX or RX counter
@@ -239,7 +256,7 @@ begin
             tx_ctr_i        <= (OTHERS => '0');
 
         elsif rising_edge(clk_sys) then
-            if (inc_tx_ctr = '1') then
+            if (inc_tx_ctr_q = '1') then
                 tx_ctr_i <= std_logic_vector(inc_value);
             end if;
         end if;
@@ -254,7 +271,7 @@ begin
             rx_ctr_i        <= (OTHERS => '0');
 
         elsif rising_edge(clk_sys) then
-            if (inc_rx_ctr = '1') then
+            if (inc_rx_ctr_q = '1') then
                 rx_ctr_i <= std_logic_vector(inc_value);
             end if;
         end if;
