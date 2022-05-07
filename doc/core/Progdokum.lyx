@@ -6919,8 +6919,13 @@ Replace DLC with arbitrary value.
 
 \begin_layout Standard
 All features for corrupting transmitted CAN frames are configured per each
- transmitted frame in FRAME_FORMAT_W memory word in TXT Buffer, details
- are explained in following subsections.
+ transmitted frame in FRAME_
+\change_inserted -937042393 1651924143
+TEST
+\change_deleted -937042393 1651924143
+FORMAT
+\change_unchanged
+_W memory word in TXT Buffer, details are explained in following subsections.
  These features are available only in Test mode (MODE[TSTM]=1).
  If MODE[TSTM]=0 , CTU CAN FD ignores this configuration and transmitts
  uncorrupted frames (as in regular operation).
@@ -6930,14 +6935,22 @@ All features for corrupting transmitted CAN frames are configured per each
 \end_layout
 
 \begin_layout Description
-Note Corrupting a bit or replacing a bit field with alternative value applies
- before bit-stuffing, therefore effect of flipping the bit may alternate
- length of the frame due to additional/removed stuff bit.
+Note Corrupting a bit
+\change_inserted -937042393 1651924184
+,
+\change_unchanged
+ or replacing a bit field with alternative value applies before bit-stuffing,
+ therefore effect of flipping the bit may alternate length of the frame
+ due to additional/removed stuff bit.
 \end_layout
 
 \begin_layout Description
 Note To repeat transmission of a frame multiple times with corrupted bit,
- use standar d 
+ use standar
+\change_deleted -937042393 1651924199
+ 
+\change_unchanged
+d 
 \begin_inset Quotes eld
 \end_inset
 
@@ -6963,25 +6976,76 @@ Flip a bit of CRC field
 \end_layout
 
 \begin_layout Standard
-When FRAME_FORMAT_W[FCRC] = 1, CTU CAN FD transmitts inverted bit at CRC
- field bit position given by FRAME_FORMAT_W[CPRM].
+When FRAME_
+\change_deleted -937042393 1651924206
+FORMAT
+\change_inserted -937042393 1651924206
+TEST
+\change_unchanged
+_W[FCRC] = 1, CTU CAN FD transmitts inverted bit at CRC field bit position
+ given by FRAME_
+\change_deleted -937042393 1651924215
+FORMAT
+\change_inserted -937042393 1651924216
+TEST
+\change_unchanged
+_W[
+\change_deleted -937042393 1651924218
+C
+\change_inserted -937042393 1651924218
+T
+\change_unchanged
+PRM].
  E.g.
  :
 \end_layout
 
 \begin_layout Itemize
-FRAME_FORMAT_W[CPRM] = 0x0 -> Bit at position 0 in CRC field (first bit
- of CRC field) is transmitted with opposite value.
+FRAME_
+\change_deleted -937042393 1651924230
+FORMAT
+\change_inserted -937042393 1651924231
+TEST
+\change_unchanged
+_W[
+\change_deleted -937042393 1651924221
+C
+\change_inserted -937042393 1651924221
+T
+\change_unchanged
+PRM] = 0x0 -> Bit at position 0 in CRC field (first bit of CRC field) is
+ transmitted with opposite value.
 \end_layout
 
 \begin_layout Itemize
-FRAME_FORMAT_W[CPRM] = 0xE -> Bit at position 14 in CRC field (15-th bit
- of CRC filed) is transmitted with opposite value.
+FRAME_
+\change_deleted -937042393 1651924232
+FORMAT
+\change_inserted -937042393 1651924232
+TEST
+\change_unchanged
+_W[
+\change_deleted -937042393 1651924222
+C
+\change_inserted -937042393 1651924222
+T
+\change_unchanged
+PRM] = 0xE -> Bit at position 14 in CRC field (15-th bit of CRC filed) is
+ transmitted with opposite value.
 \end_layout
 
 \begin_layout Description
-Note If FRAME_FORMAT_W[FIND] is bigger than length of CRC field, not bit
- is flipped.
+Note If FRAME_
+\change_deleted -937042393 1651924234
+FORMAT
+\change_inserted -937042393 1651924235
+TEST
+\change_unchanged
+_W[FIND] is bigger than length of CRC field, no
+\change_deleted -937042393 1651924241
+t
+\change_unchanged
+ bit is flipped.
 \end_layout
 
 \begin_layout Subsection
@@ -6989,25 +7053,60 @@ Flip a bit of Stuff count field
 \end_layout
 
 \begin_layout Standard
-When FRAME_FORMAT_W[FSTC] = 1, CTU CAN FD transmitts inverted bit at Stuf
- count field bit position given by FRAME_FORMAT_W[CPRM].
+When FRAME_
+\change_deleted -937042393 1651924245
+FORMAT
+\change_inserted -937042393 1651924246
+TEST
+\change_unchanged
+_W[FSTC] = 1, CTU CAN FD transmitts inverted bit at Stuf count field bit
+ position given by FRAME_
+\change_deleted -937042393 1651924249
+FORMAT
+\change_inserted -937042393 1651924250
+TEST
+\change_unchanged
+_W[
+\change_deleted -937042393 1651924252
+C
+\change_inserted -937042393 1651924252
+T
+\change_unchanged
+PRM].
  E.g.
  :
 \end_layout
 
 \begin_layout Itemize
-FRAME_FORMAT_W[CPRM] = 0x0 -> First bit of Stuff count field is transmitted
- with opposite value.
-\end_layout
-
-\begin_layout Itemize
-FRAME_FORMAT_W[CPRM] = 0x2 -> Third bit of Stuff count field is transmitted
- with opposite value.
-\end_layout
-
-\begin_layout Itemize
-FRAME_FORMAT_W[CPRM] = 0x3 -> Stuff Parity bit is transmitted with opposite
+FRAME_FORMAT_W[
+\change_deleted -937042393 1651924254
+C
+\change_inserted -937042393 1651924254
+T
+\change_unchanged
+PRM] = 0x0 -> First bit of Stuff count field is transmitted with opposite
  value.
+\end_layout
+
+\begin_layout Itemize
+FRAME_FORMAT_W[
+\change_deleted -937042393 1651924256
+C
+\change_inserted -937042393 1651924256
+T
+\change_unchanged
+PRM] = 0x2 -> Third bit of Stuff count field is transmitted with opposite
+ value.
+\end_layout
+
+\begin_layout Itemize
+FRAME_FORMAT_W[
+\change_deleted -937042393 1651924257
+C
+\change_inserted -937042393 1651924257
+T
+\change_unchanged
+PRM] = 0x3 -> Stuff Parity bit is transmitted with opposite value.
 \end_layout
 
 \begin_layout Subsection
@@ -7015,18 +7114,52 @@ Replace DLC with arbitrary value
 \end_layout
 
 \begin_layout Standard
-When FRAME_FORMAT_W[SDLC] = 1, FRAME_FORMAT_W[CPRM][3:0] bits are transmitted
- instead of 
+When FRAME_
+\change_deleted -937042393 1651924267
+FORMAT
+\change_inserted -937042393 1651924268
+TEST
+\change_unchanged
+_W[SDLC] = 1, FRAME_
+\change_deleted -937042393 1651924270
+FORMAT
+\change_inserted -937042393 1651924270
+TEST
+\change_unchanged
+_W[CPRM][3:0] bits are transmitted instead of 
 \begin_inset Newline newline
 \end_inset
 
-FRAME_FORMAT_W[DLC] in Data Lenght Code field of CAN frame.
- Number of data bytes transmitted is still derived from FRAME_FORMAT_W[DLC]
- field.
+FRAME_
+\change_deleted -937042393 1651924274
+FORMAT
+\change_inserted -937042393 1651924274
+TEST
+\change_unchanged
+_W[DLC] in Data Lenght Code field of CAN frame.
+ Number of data bytes transmitted is still derived from FRAME_
+\change_deleted -937042393 1651924283
+FORMAT
+\change_inserted -937042393 1651924284
+TEST
+\change_unchanged
+_W[DLC] field.
 \end_layout
 
 \begin_layout Description
-Note CRC transmitted is calculated from FRAME_FORMAT_W[CPRM] (swapped value).
+Note CRC transmitted is calculated from FRAME_
+\change_deleted -937042393 1651924290
+FORMAT
+\change_inserted -937042393 1651924290
+TEST
+\change_unchanged
+_W[
+\change_deleted -937042393 1651924297
+C
+\change_inserted -937042393 1651924297
+T
+\change_unchanged
+PRM] (swapped value).
 \end_layout
 
 \begin_layout Section
