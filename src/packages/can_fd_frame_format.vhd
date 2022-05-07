@@ -103,6 +103,7 @@ package can_fd_frame_format is
   constant DATA_53_56_W_ADR          : std_logic_vector(11 downto 0) := x"044";
   constant DATA_57_60_W_ADR          : std_logic_vector(11 downto 0) := x"048";
   constant DATA_61_64_W_ADR          : std_logic_vector(11 downto 0) := x"04C";
+  constant FRAME_TEST_W_ADR          : std_logic_vector(11 downto 0) := x"050";
 
   ------------------------------------------------------------------------------
   -- FRAME_FORMAT_W register
@@ -118,11 +119,6 @@ package can_fd_frame_format is
   constant ESI_RSV_IND           : natural := 10;
   constant RWCNT_L               : natural := 11;
   constant RWCNT_H               : natural := 15;
-  constant CPRM_L                : natural := 16;
-  constant CPRM_H                : natural := 20;
-  constant FSTC_IND              : natural := 21;
-  constant FCRC_IND              : natural := 22;
-  constant SDLC_IND              : natural := 23;
 
   -- "RTR" field enumerated values
   constant NO_RTR_FRAME       : std_logic := '0';
@@ -143,18 +139,6 @@ package can_fd_frame_format is
   -- "ESI_RSV" field enumerated values
   constant ESI_ERR_ACTIVE     : std_logic := '0';
   constant ESI_ERR_PASIVE     : std_logic := '1';
-
-  -- "FSTC" field enumerated values
-  constant FSTC_NO_FLIP       : std_logic := '0';
-  constant FSTC_FLIP          : std_logic := '1';
-
-  -- "FCRC" field enumerated values
-  constant FCRC_FLIP          : std_logic := '0';
-  constant FCRC_NO_FLIP       : std_logic := '1';
-
-  -- "SDLC" field enumerated values
-  constant SDLC_NO_SWAP       : std_logic := '0';
-  constant SLDC_SWAP          : std_logic := '1';
 
   -- FRAME_FORMAT_W register reset values
 
@@ -427,5 +411,17 @@ package can_fd_frame_format is
   constant DATA_64_H             : natural := 31;
 
   -- DATA_61_64_W register reset values
+
+  ------------------------------------------------------------------------------
+  -- FRAME_TEST_W register
+  --
+  ------------------------------------------------------------------------------
+  constant FSTC_IND               : natural := 0;
+  constant FCRC_IND               : natural := 1;
+  constant SDLC_IND               : natural := 2;
+  constant TPRM_L                 : natural := 8;
+  constant TPRM_H                : natural := 12;
+
+  -- FRAME_TEST_W register reset values
 
 end package;

@@ -56,6 +56,7 @@ enum ctu_can_fd_can_frame_format {
 	CTUCANFD_DATA_53_56_W        = 0x44,
 	CTUCANFD_DATA_57_60_W        = 0x48,
 	CTUCANFD_DATA_61_64_W        = 0x4c,
+	CTUCANFD_FRAME_TEST_W        = 0x50,
 };
 /* CAN_FD_Frame_format memory region */
 
@@ -67,10 +68,6 @@ enum ctu_can_fd_can_frame_format {
 #define REG_FRAME_FORMAT_W_BRS BIT(9)
 #define REG_FRAME_FORMAT_W_ESI_RSV BIT(10)
 #define REG_FRAME_FORMAT_W_RWCNT GENMASK(15, 11)
-#define REG_FRAME_FORMAT_W_CPRM GENMASK(20, 16)
-#define REG_FRAME_FORMAT_W_FSTC BIT(21)
-#define REG_FRAME_FORMAT_W_FCRC BIT(22)
-#define REG_FRAME_FORMAT_W_SDLC BIT(23)
 
 /*  IDENTIFIER_W registers */
 #define REG_IDENTIFIER_W_IDENTIFIER_EXT GENMASK(17, 0)
@@ -177,5 +174,11 @@ enum ctu_can_fd_can_frame_format {
 #define REG_DATA_61_64_W_DATA_62 GENMASK(15, 8)
 #define REG_DATA_61_64_W_DATA_63 GENMASK(23, 16)
 #define REG_DATA_61_64_W_DATA_64 GENMASK(31, 24)
+
+/*  FRAME_TEST_W registers */
+#define REG_FRAME_TEST_W_FSTC BIT(0)
+#define REG_FRAME_TEST_W_FCRC BIT(1)
+#define REG_FRAME_TEST_W_SDLC BIT(2)
+#define REG_FRAME_TEST_W_TPRM GENMASK(12, 8)
 
 #endif

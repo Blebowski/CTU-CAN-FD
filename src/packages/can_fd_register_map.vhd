@@ -162,6 +162,7 @@ package can_fd_register_map is
   constant TXTB1_DATA_18_ADR         : std_logic_vector(11 downto 0) := x"144";
   constant TXTB1_DATA_19_ADR         : std_logic_vector(11 downto 0) := x"148";
   constant TXTB1_DATA_20_ADR         : std_logic_vector(11 downto 0) := x"14C";
+  constant TXTB1_DATA_21_ADR         : std_logic_vector(11 downto 0) := x"150";
 
   ------------------------------------------------------------------------------
   ------------------------------------------------------------------------------
@@ -190,6 +191,7 @@ package can_fd_register_map is
   constant TXTB2_DATA_18_ADR         : std_logic_vector(11 downto 0) := x"244";
   constant TXTB2_DATA_19_ADR         : std_logic_vector(11 downto 0) := x"248";
   constant TXTB2_DATA_20_ADR         : std_logic_vector(11 downto 0) := x"24C";
+  constant TXTB2_DATA_21_ADR         : std_logic_vector(11 downto 0) := x"250";
 
   ------------------------------------------------------------------------------
   ------------------------------------------------------------------------------
@@ -218,6 +220,7 @@ package can_fd_register_map is
   constant TXTB3_DATA_18_ADR         : std_logic_vector(11 downto 0) := x"344";
   constant TXTB3_DATA_19_ADR         : std_logic_vector(11 downto 0) := x"348";
   constant TXTB3_DATA_20_ADR         : std_logic_vector(11 downto 0) := x"34C";
+  constant TXTB3_DATA_21_ADR         : std_logic_vector(11 downto 0) := x"350";
 
   ------------------------------------------------------------------------------
   ------------------------------------------------------------------------------
@@ -246,6 +249,7 @@ package can_fd_register_map is
   constant TXTB4_DATA_18_ADR         : std_logic_vector(11 downto 0) := x"444";
   constant TXTB4_DATA_19_ADR         : std_logic_vector(11 downto 0) := x"448";
   constant TXTB4_DATA_20_ADR         : std_logic_vector(11 downto 0) := x"44C";
+  constant TXTB4_DATA_21_ADR         : std_logic_vector(11 downto 0) := x"450";
 
   ------------------------------------------------------------------------------
   ------------------------------------------------------------------------------
@@ -274,6 +278,7 @@ package can_fd_register_map is
   constant TXTB5_DATA_18_ADR         : std_logic_vector(11 downto 0) := x"544";
   constant TXTB5_DATA_19_ADR         : std_logic_vector(11 downto 0) := x"548";
   constant TXTB5_DATA_20_ADR         : std_logic_vector(11 downto 0) := x"54C";
+  constant TXTB5_DATA_21_ADR         : std_logic_vector(11 downto 0) := x"550";
 
   ------------------------------------------------------------------------------
   ------------------------------------------------------------------------------
@@ -302,6 +307,7 @@ package can_fd_register_map is
   constant TXTB6_DATA_18_ADR         : std_logic_vector(11 downto 0) := x"644";
   constant TXTB6_DATA_19_ADR         : std_logic_vector(11 downto 0) := x"648";
   constant TXTB6_DATA_20_ADR         : std_logic_vector(11 downto 0) := x"64C";
+  constant TXTB6_DATA_21_ADR         : std_logic_vector(11 downto 0) := x"650";
 
   ------------------------------------------------------------------------------
   ------------------------------------------------------------------------------
@@ -330,6 +336,7 @@ package can_fd_register_map is
   constant TXTB7_DATA_18_ADR         : std_logic_vector(11 downto 0) := x"744";
   constant TXTB7_DATA_19_ADR         : std_logic_vector(11 downto 0) := x"748";
   constant TXTB7_DATA_20_ADR         : std_logic_vector(11 downto 0) := x"74C";
+  constant TXTB7_DATA_21_ADR         : std_logic_vector(11 downto 0) := x"750";
 
   ------------------------------------------------------------------------------
   ------------------------------------------------------------------------------
@@ -358,6 +365,7 @@ package can_fd_register_map is
   constant TXTB8_DATA_18_ADR         : std_logic_vector(11 downto 0) := x"844";
   constant TXTB8_DATA_19_ADR         : std_logic_vector(11 downto 0) := x"848";
   constant TXTB8_DATA_20_ADR         : std_logic_vector(11 downto 0) := x"84C";
+  constant TXTB8_DATA_21_ADR         : std_logic_vector(11 downto 0) := x"850";
 
   ------------------------------------------------------------------------------
   ------------------------------------------------------------------------------
@@ -1532,6 +1540,15 @@ package can_fd_register_map is
   -- TXTB1_DATA_20 register reset values
 
   ------------------------------------------------------------------------------
+  -- TXTB1_DATA_21 register
+  --
+  ------------------------------------------------------------------------------
+  constant TXTB1_DATA_21_L        : natural := 0;
+  constant TXTB1_DATA_21_H       : natural := 31;
+
+  -- TXTB1_DATA_21 register reset values
+
+  ------------------------------------------------------------------------------
   -- TXTB2_DATA_1 register
   --
   -- This adress word corresponds to FRAME_FORM word
@@ -1713,6 +1730,15 @@ package can_fd_register_map is
   constant TXTB2_DATA_20_H       : natural := 31;
 
   -- TXTB2_DATA_20 register reset values
+
+  ------------------------------------------------------------------------------
+  -- TXTB2_DATA_21 register
+  --
+  ------------------------------------------------------------------------------
+  constant TXTB2_DATA_21_L        : natural := 0;
+  constant TXTB2_DATA_21_H       : natural := 31;
+
+  -- TXTB2_DATA_21 register reset values
 
   ------------------------------------------------------------------------------
   -- TXTB3_DATA_1 register
@@ -1898,6 +1924,15 @@ package can_fd_register_map is
   -- TXTB3_DATA_20 register reset values
 
   ------------------------------------------------------------------------------
+  -- TXTB3_DATA_21 register
+  --
+  ------------------------------------------------------------------------------
+  constant TXTB3_DATA_21_L        : natural := 0;
+  constant TXTB3_DATA_21_H       : natural := 31;
+
+  -- TXTB3_DATA_21 register reset values
+
+  ------------------------------------------------------------------------------
   -- TXTB4_DATA_1 register
   --
   -- This adress word corresponds to FRAME_FORM word
@@ -2079,6 +2114,15 @@ package can_fd_register_map is
   constant TXTB4_DATA_20_H       : natural := 31;
 
   -- TXTB4_DATA_20 register reset values
+
+  ------------------------------------------------------------------------------
+  -- TXTB4_DATA_21 register
+  --
+  ------------------------------------------------------------------------------
+  constant TXTB4_DATA_21_L        : natural := 0;
+  constant TXTB4_DATA_21_H       : natural := 31;
+
+  -- TXTB4_DATA_21 register reset values
 
   ------------------------------------------------------------------------------
   -- TXTB5_DATA_1 register
@@ -2264,6 +2308,15 @@ package can_fd_register_map is
   -- TXTB5_DATA_20 register reset values
 
   ------------------------------------------------------------------------------
+  -- TXTB5_DATA_21 register
+  --
+  ------------------------------------------------------------------------------
+  constant TXTB5_DATA_21_L        : natural := 0;
+  constant TXTB5_DATA_21_H       : natural := 31;
+
+  -- TXTB5_DATA_21 register reset values
+
+  ------------------------------------------------------------------------------
   -- TXTB6_DATA_1 register
   --
   -- This adress word corresponds to FRAME_FORM word
@@ -2445,6 +2498,15 @@ package can_fd_register_map is
   constant TXTB6_DATA_20_H       : natural := 31;
 
   -- TXTB6_DATA_20 register reset values
+
+  ------------------------------------------------------------------------------
+  -- TXTB6_DATA_21 register
+  --
+  ------------------------------------------------------------------------------
+  constant TXTB6_DATA_21_L        : natural := 0;
+  constant TXTB6_DATA_21_H       : natural := 31;
+
+  -- TXTB6_DATA_21 register reset values
 
   ------------------------------------------------------------------------------
   -- TXTB7_DATA_1 register
@@ -2630,6 +2692,15 @@ package can_fd_register_map is
   -- TXTB7_DATA_20 register reset values
 
   ------------------------------------------------------------------------------
+  -- TXTB7_DATA_21 register
+  --
+  ------------------------------------------------------------------------------
+  constant TXTB7_DATA_21_L        : natural := 0;
+  constant TXTB7_DATA_21_H       : natural := 31;
+
+  -- TXTB7_DATA_21 register reset values
+
+  ------------------------------------------------------------------------------
   -- TXTB8_DATA_1 register
   --
   -- This adress word corresponds to FRAME_FORM word
@@ -2811,6 +2882,15 @@ package can_fd_register_map is
   constant TXTB8_DATA_20_H       : natural := 31;
 
   -- TXTB8_DATA_20 register reset values
+
+  ------------------------------------------------------------------------------
+  -- TXTB8_DATA_21 register
+  --
+  ------------------------------------------------------------------------------
+  constant TXTB8_DATA_21_L        : natural := 0;
+  constant TXTB8_DATA_21_H       : natural := 31;
+
+  -- TXTB8_DATA_21 register reset values
 
   ------------------------------------------------------------------------------
   -- TST_CONTROL register

@@ -51071,7 +51071,7 @@ Access to this memory region is mapped to TXT buffer 1.  CAN FD frame for transm
 \noindent
 \align center
 \begin_inset Tabular
-<lyxtabular columns="5" rows="22" version="3">
+<lyxtabular columns="5" rows="23" version="3">
 <features islongtable="true" longtabularalignment="center">
 <column alignment="center" valignment="top" width="3cm">
 <column alignment="center" valignment="top" width="3cm">
@@ -52476,6 +52476,72 @@ hyperref[TXTB1_DATA_20]{TXTB1\backslash textunderscore DATA\backslash textunders
 </cell>
 </row>
 <row>
+<cell alignment="center" leftline="true" multicolumn="1" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset ERT
+status open
+\begin_layout Plain Layout
+\backslash
+hyperref[TXTB1_DATA_21]{TXTB1\backslash textunderscore DATA\backslash textunderscore 21}\end_layout
+\end_inset
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" multicolumn="2" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset ERT
+status open
+\begin_layout Plain Layout
+\backslash
+hyperref[TXTB1_DATA_21]{TXTB1\backslash textunderscore DATA\backslash textunderscore 21}\end_layout
+\end_inset
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" multicolumn="2" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset ERT
+status open
+\begin_layout Plain Layout
+\backslash
+hyperref[TXTB1_DATA_21]{TXTB1\backslash textunderscore DATA\backslash textunderscore 21}\end_layout
+\end_inset
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" multicolumn="2" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset ERT
+status open
+\begin_layout Plain Layout
+\backslash
+hyperref[TXTB1_DATA_21]{TXTB1\backslash textunderscore DATA\backslash textunderscore 21}\end_layout
+\end_inset
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" multicolumn="1" rightline="true" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+0x150\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
 <cell alignment="center" bottomline="true" leftline="true" multicolumn="1" topline="true" usebox="none" valignment="top">
 \begin_inset Text
 
@@ -52536,7 +52602,7 @@ Access to this memory region is mapped to TXT buffer 2.  CAN FD frame for transm
 \noindent
 \align center
 \begin_inset Tabular
-<lyxtabular columns="5" rows="22" version="3">
+<lyxtabular columns="5" rows="23" version="3">
 <features islongtable="true" longtabularalignment="center">
 <column alignment="center" valignment="top" width="3cm">
 <column alignment="center" valignment="top" width="3cm">
@@ -53941,6 +54007,72 @@ hyperref[TXTB2_DATA_20]{TXTB2\backslash textunderscore DATA\backslash textunders
 </cell>
 </row>
 <row>
+<cell alignment="center" leftline="true" multicolumn="1" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset ERT
+status open
+\begin_layout Plain Layout
+\backslash
+hyperref[TXTB2_DATA_21]{TXTB2\backslash textunderscore DATA\backslash textunderscore 21}\end_layout
+\end_inset
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" multicolumn="2" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset ERT
+status open
+\begin_layout Plain Layout
+\backslash
+hyperref[TXTB2_DATA_21]{TXTB2\backslash textunderscore DATA\backslash textunderscore 21}\end_layout
+\end_inset
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" multicolumn="2" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset ERT
+status open
+\begin_layout Plain Layout
+\backslash
+hyperref[TXTB2_DATA_21]{TXTB2\backslash textunderscore DATA\backslash textunderscore 21}\end_layout
+\end_inset
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" multicolumn="2" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset ERT
+status open
+\begin_layout Plain Layout
+\backslash
+hyperref[TXTB2_DATA_21]{TXTB2\backslash textunderscore DATA\backslash textunderscore 21}\end_layout
+\end_inset
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" multicolumn="1" rightline="true" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+0x250\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
 <cell alignment="center" bottomline="true" leftline="true" multicolumn="1" topline="true" usebox="none" valignment="top">
 \begin_inset Text
 
@@ -54001,7 +54133,7 @@ Access to this memory region is mapped to TXT buffer 3.  CAN FD frame for transm
 \noindent
 \align center
 \begin_inset Tabular
-<lyxtabular columns="5" rows="22" version="3">
+<lyxtabular columns="5" rows="23" version="3">
 <features islongtable="true" longtabularalignment="center">
 <column alignment="center" valignment="top" width="3cm">
 <column alignment="center" valignment="top" width="3cm">
@@ -55406,6 +55538,72 @@ hyperref[TXTB3_DATA_20]{TXTB3\backslash textunderscore DATA\backslash textunders
 </cell>
 </row>
 <row>
+<cell alignment="center" leftline="true" multicolumn="1" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset ERT
+status open
+\begin_layout Plain Layout
+\backslash
+hyperref[TXTB3_DATA_21]{TXTB3\backslash textunderscore DATA\backslash textunderscore 21}\end_layout
+\end_inset
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" multicolumn="2" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset ERT
+status open
+\begin_layout Plain Layout
+\backslash
+hyperref[TXTB3_DATA_21]{TXTB3\backslash textunderscore DATA\backslash textunderscore 21}\end_layout
+\end_inset
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" multicolumn="2" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset ERT
+status open
+\begin_layout Plain Layout
+\backslash
+hyperref[TXTB3_DATA_21]{TXTB3\backslash textunderscore DATA\backslash textunderscore 21}\end_layout
+\end_inset
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" multicolumn="2" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset ERT
+status open
+\begin_layout Plain Layout
+\backslash
+hyperref[TXTB3_DATA_21]{TXTB3\backslash textunderscore DATA\backslash textunderscore 21}\end_layout
+\end_inset
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" multicolumn="1" rightline="true" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+0x350\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
 <cell alignment="center" bottomline="true" leftline="true" multicolumn="1" topline="true" usebox="none" valignment="top">
 \begin_inset Text
 
@@ -55466,7 +55664,7 @@ Access to this memory region is mapped to TXT buffer 4.  CAN FD frame for transm
 \noindent
 \align center
 \begin_inset Tabular
-<lyxtabular columns="5" rows="22" version="3">
+<lyxtabular columns="5" rows="23" version="3">
 <features islongtable="true" longtabularalignment="center">
 <column alignment="center" valignment="top" width="3cm">
 <column alignment="center" valignment="top" width="3cm">
@@ -56871,6 +57069,72 @@ hyperref[TXTB4_DATA_20]{TXTB4\backslash textunderscore DATA\backslash textunders
 </cell>
 </row>
 <row>
+<cell alignment="center" leftline="true" multicolumn="1" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset ERT
+status open
+\begin_layout Plain Layout
+\backslash
+hyperref[TXTB4_DATA_21]{TXTB4\backslash textunderscore DATA\backslash textunderscore 21}\end_layout
+\end_inset
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" multicolumn="2" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset ERT
+status open
+\begin_layout Plain Layout
+\backslash
+hyperref[TXTB4_DATA_21]{TXTB4\backslash textunderscore DATA\backslash textunderscore 21}\end_layout
+\end_inset
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" multicolumn="2" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset ERT
+status open
+\begin_layout Plain Layout
+\backslash
+hyperref[TXTB4_DATA_21]{TXTB4\backslash textunderscore DATA\backslash textunderscore 21}\end_layout
+\end_inset
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" multicolumn="2" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset ERT
+status open
+\begin_layout Plain Layout
+\backslash
+hyperref[TXTB4_DATA_21]{TXTB4\backslash textunderscore DATA\backslash textunderscore 21}\end_layout
+\end_inset
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" multicolumn="1" rightline="true" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+0x450\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
 <cell alignment="center" bottomline="true" leftline="true" multicolumn="1" topline="true" usebox="none" valignment="top">
 \begin_inset Text
 
@@ -56931,7 +57195,7 @@ Access to this memory region is mapped to TXT buffer 5.  CAN FD frame for transm
 \noindent
 \align center
 \begin_inset Tabular
-<lyxtabular columns="5" rows="22" version="3">
+<lyxtabular columns="5" rows="23" version="3">
 <features islongtable="true" longtabularalignment="center">
 <column alignment="center" valignment="top" width="3cm">
 <column alignment="center" valignment="top" width="3cm">
@@ -58336,6 +58600,72 @@ hyperref[TXTB5_DATA_20]{TXTB5\backslash textunderscore DATA\backslash textunders
 </cell>
 </row>
 <row>
+<cell alignment="center" leftline="true" multicolumn="1" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset ERT
+status open
+\begin_layout Plain Layout
+\backslash
+hyperref[TXTB5_DATA_21]{TXTB5\backslash textunderscore DATA\backslash textunderscore 21}\end_layout
+\end_inset
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" multicolumn="2" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset ERT
+status open
+\begin_layout Plain Layout
+\backslash
+hyperref[TXTB5_DATA_21]{TXTB5\backslash textunderscore DATA\backslash textunderscore 21}\end_layout
+\end_inset
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" multicolumn="2" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset ERT
+status open
+\begin_layout Plain Layout
+\backslash
+hyperref[TXTB5_DATA_21]{TXTB5\backslash textunderscore DATA\backslash textunderscore 21}\end_layout
+\end_inset
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" multicolumn="2" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset ERT
+status open
+\begin_layout Plain Layout
+\backslash
+hyperref[TXTB5_DATA_21]{TXTB5\backslash textunderscore DATA\backslash textunderscore 21}\end_layout
+\end_inset
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" multicolumn="1" rightline="true" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+0x550\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
 <cell alignment="center" bottomline="true" leftline="true" multicolumn="1" topline="true" usebox="none" valignment="top">
 \begin_inset Text
 
@@ -58396,7 +58726,7 @@ Access to this memory region is mapped to TXT buffer 6.  CAN FD frame for transm
 \noindent
 \align center
 \begin_inset Tabular
-<lyxtabular columns="5" rows="22" version="3">
+<lyxtabular columns="5" rows="23" version="3">
 <features islongtable="true" longtabularalignment="center">
 <column alignment="center" valignment="top" width="3cm">
 <column alignment="center" valignment="top" width="3cm">
@@ -59801,6 +60131,72 @@ hyperref[TXTB6_DATA_20]{TXTB6\backslash textunderscore DATA\backslash textunders
 </cell>
 </row>
 <row>
+<cell alignment="center" leftline="true" multicolumn="1" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset ERT
+status open
+\begin_layout Plain Layout
+\backslash
+hyperref[TXTB6_DATA_21]{TXTB6\backslash textunderscore DATA\backslash textunderscore 21}\end_layout
+\end_inset
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" multicolumn="2" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset ERT
+status open
+\begin_layout Plain Layout
+\backslash
+hyperref[TXTB6_DATA_21]{TXTB6\backslash textunderscore DATA\backslash textunderscore 21}\end_layout
+\end_inset
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" multicolumn="2" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset ERT
+status open
+\begin_layout Plain Layout
+\backslash
+hyperref[TXTB6_DATA_21]{TXTB6\backslash textunderscore DATA\backslash textunderscore 21}\end_layout
+\end_inset
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" multicolumn="2" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset ERT
+status open
+\begin_layout Plain Layout
+\backslash
+hyperref[TXTB6_DATA_21]{TXTB6\backslash textunderscore DATA\backslash textunderscore 21}\end_layout
+\end_inset
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" multicolumn="1" rightline="true" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+0x650\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
 <cell alignment="center" bottomline="true" leftline="true" multicolumn="1" topline="true" usebox="none" valignment="top">
 \begin_inset Text
 
@@ -59861,7 +60257,7 @@ Access to this memory region is mapped to TXT buffer 7.  CAN FD frame for transm
 \noindent
 \align center
 \begin_inset Tabular
-<lyxtabular columns="5" rows="22" version="3">
+<lyxtabular columns="5" rows="23" version="3">
 <features islongtable="true" longtabularalignment="center">
 <column alignment="center" valignment="top" width="3cm">
 <column alignment="center" valignment="top" width="3cm">
@@ -61266,6 +61662,72 @@ hyperref[TXTB7_DATA_20]{TXTB7\backslash textunderscore DATA\backslash textunders
 </cell>
 </row>
 <row>
+<cell alignment="center" leftline="true" multicolumn="1" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset ERT
+status open
+\begin_layout Plain Layout
+\backslash
+hyperref[TXTB7_DATA_21]{TXTB7\backslash textunderscore DATA\backslash textunderscore 21}\end_layout
+\end_inset
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" multicolumn="2" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset ERT
+status open
+\begin_layout Plain Layout
+\backslash
+hyperref[TXTB7_DATA_21]{TXTB7\backslash textunderscore DATA\backslash textunderscore 21}\end_layout
+\end_inset
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" multicolumn="2" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset ERT
+status open
+\begin_layout Plain Layout
+\backslash
+hyperref[TXTB7_DATA_21]{TXTB7\backslash textunderscore DATA\backslash textunderscore 21}\end_layout
+\end_inset
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" multicolumn="2" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset ERT
+status open
+\begin_layout Plain Layout
+\backslash
+hyperref[TXTB7_DATA_21]{TXTB7\backslash textunderscore DATA\backslash textunderscore 21}\end_layout
+\end_inset
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" multicolumn="1" rightline="true" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+0x750\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
 <cell alignment="center" bottomline="true" leftline="true" multicolumn="1" topline="true" usebox="none" valignment="top">
 \begin_inset Text
 
@@ -61326,7 +61788,7 @@ Access to this memory region is mapped to TXT buffer 8.  CAN FD frame for transm
 \noindent
 \align center
 \begin_inset Tabular
-<lyxtabular columns="5" rows="22" version="3">
+<lyxtabular columns="5" rows="23" version="3">
 <features islongtable="true" longtabularalignment="center">
 <column alignment="center" valignment="top" width="3cm">
 <column alignment="center" valignment="top" width="3cm">
@@ -62726,6 +63188,72 @@ hyperref[TXTB8_DATA_20]{TXTB8\backslash textunderscore DATA\backslash textunders
 
 \begin_layout Plain Layout
 0x84C\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" leftline="true" multicolumn="1" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset ERT
+status open
+\begin_layout Plain Layout
+\backslash
+hyperref[TXTB8_DATA_21]{TXTB8\backslash textunderscore DATA\backslash textunderscore 21}\end_layout
+\end_inset
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" multicolumn="2" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset ERT
+status open
+\begin_layout Plain Layout
+\backslash
+hyperref[TXTB8_DATA_21]{TXTB8\backslash textunderscore DATA\backslash textunderscore 21}\end_layout
+\end_inset
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" multicolumn="2" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset ERT
+status open
+\begin_layout Plain Layout
+\backslash
+hyperref[TXTB8_DATA_21]{TXTB8\backslash textunderscore DATA\backslash textunderscore 21}\end_layout
+\end_inset
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" multicolumn="2" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset ERT
+status open
+\begin_layout Plain Layout
+\backslash
+hyperref[TXTB8_DATA_21]{TXTB8\backslash textunderscore DATA\backslash textunderscore 21}\end_layout
+\end_inset
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" multicolumn="1" rightline="true" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+0x850\end_layout
 
 \end_inset
 </cell>

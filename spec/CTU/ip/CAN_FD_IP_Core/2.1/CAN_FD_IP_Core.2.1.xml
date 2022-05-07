@@ -3211,6 +3211,18 @@
 					</ipxact:field>
 				</ipxact:register>
 				<ipxact:register>
+					<ipxact:name>TXTB1_DATA_21</ipxact:name>
+					<ipxact:displayName>TXTB1_DATA_21</ipxact:displayName>
+					<ipxact:dim>0</ipxact:dim>
+					<ipxact:addressOffset>'h50</ipxact:addressOffset>
+					<ipxact:size>32</ipxact:size>
+					<ipxact:field>
+						<ipxact:name>TXTB1_DATA_21</ipxact:name>
+						<ipxact:bitOffset>0</ipxact:bitOffset>
+						<ipxact:bitWidth>32</ipxact:bitWidth>
+					</ipxact:field>
+				</ipxact:register>
+				<ipxact:register>
 					<ipxact:name>TXTB1_DATA_19</ipxact:name>
 					<ipxact:displayName>TXTB1_DATA_19</ipxact:displayName>
 					<ipxact:dim>0</ipxact:dim>
@@ -3464,6 +3476,18 @@
 					</ipxact:field>
 				</ipxact:register>
 				<ipxact:register>
+					<ipxact:name>TXTB2_DATA_21</ipxact:name>
+					<ipxact:displayName>TXTB2_DATA_21</ipxact:displayName>
+					<ipxact:dim>0</ipxact:dim>
+					<ipxact:addressOffset>'h50</ipxact:addressOffset>
+					<ipxact:size>32</ipxact:size>
+					<ipxact:field>
+						<ipxact:name>TXTB2_DATA_21</ipxact:name>
+						<ipxact:bitOffset>0</ipxact:bitOffset>
+						<ipxact:bitWidth>32</ipxact:bitWidth>
+					</ipxact:field>
+				</ipxact:register>
+				<ipxact:register>
 					<ipxact:name>TXTB2_DATA_18</ipxact:name>
 					<ipxact:displayName>TXTB2_DATA_18</ipxact:displayName>
 					<ipxact:dim>0</ipxact:dim>
@@ -3701,6 +3725,18 @@
 					<ipxact:size>32</ipxact:size>
 					<ipxact:field>
 						<ipxact:name>TXTB3_DATA_20</ipxact:name>
+						<ipxact:bitOffset>0</ipxact:bitOffset>
+						<ipxact:bitWidth>32</ipxact:bitWidth>
+					</ipxact:field>
+				</ipxact:register>
+				<ipxact:register>
+					<ipxact:name>TXTB3_DATA_21</ipxact:name>
+					<ipxact:displayName>TXTB3_DATA_21</ipxact:displayName>
+					<ipxact:dim>0</ipxact:dim>
+					<ipxact:addressOffset>'h50</ipxact:addressOffset>
+					<ipxact:size>32</ipxact:size>
+					<ipxact:field>
+						<ipxact:name>TXTB3_DATA_21</ipxact:name>
 						<ipxact:bitOffset>0</ipxact:bitOffset>
 						<ipxact:bitWidth>32</ipxact:bitWidth>
 					</ipxact:field>
@@ -3966,6 +4002,17 @@
 					</ipxact:field>
 				</ipxact:register>
 				<ipxact:register>
+					<ipxact:name>TXTB4_DATA_21</ipxact:name>
+					<ipxact:dim>0</ipxact:dim>
+					<ipxact:addressOffset>'h50</ipxact:addressOffset>
+					<ipxact:size>32</ipxact:size>
+					<ipxact:field>
+						<ipxact:name>TXTB4_DATA_21</ipxact:name>
+						<ipxact:bitOffset>0</ipxact:bitOffset>
+						<ipxact:bitWidth>32</ipxact:bitWidth>
+					</ipxact:field>
+				</ipxact:register>
+				<ipxact:register>
 					<ipxact:name>TXTB4_DATA_18</ipxact:name>
 					<ipxact:dim>0</ipxact:dim>
 					<ipxact:addressOffset>'h44</ipxact:addressOffset>
@@ -4148,6 +4195,18 @@
 					<ipxact:size>32</ipxact:size>
 					<ipxact:field>
 						<ipxact:name>TXTB5_DATA_20</ipxact:name>
+						<ipxact:bitOffset>0</ipxact:bitOffset>
+						<ipxact:bitWidth>32</ipxact:bitWidth>
+					</ipxact:field>
+				</ipxact:register>
+				<ipxact:register>
+					<ipxact:name>TXTB5_DATA_21</ipxact:name>
+					<ipxact:displayName>TXTB5_DATA_21</ipxact:displayName>
+					<ipxact:dim>0</ipxact:dim>
+					<ipxact:addressOffset>'h50</ipxact:addressOffset>
+					<ipxact:size>32</ipxact:size>
+					<ipxact:field>
+						<ipxact:name>TXTB5_DATA_21</ipxact:name>
 						<ipxact:bitOffset>0</ipxact:bitOffset>
 						<ipxact:bitWidth>32</ipxact:bitWidth>
 					</ipxact:field>
@@ -4522,6 +4581,16 @@
 					</ipxact:field>
 				</ipxact:register>
 				<ipxact:register>
+					<ipxact:name>TXTB6_DATA_21</ipxact:name>
+					<ipxact:addressOffset>'h50</ipxact:addressOffset>
+					<ipxact:size>32</ipxact:size>
+					<ipxact:field>
+						<ipxact:name>TXTB6_DATA_21</ipxact:name>
+						<ipxact:bitOffset>0</ipxact:bitOffset>
+						<ipxact:bitWidth>32</ipxact:bitWidth>
+					</ipxact:field>
+				</ipxact:register>
+				<ipxact:register>
 					<ipxact:name>TXTB6_DATA_15</ipxact:name>
 					<ipxact:addressOffset>'h38</ipxact:addressOffset>
 					<ipxact:size>32</ipxact:size>
@@ -4756,6 +4825,16 @@
 					</ipxact:field>
 				</ipxact:register>
 				<ipxact:register>
+					<ipxact:name>TXTB7_DATA_21</ipxact:name>
+					<ipxact:addressOffset>'h50</ipxact:addressOffset>
+					<ipxact:size>32</ipxact:size>
+					<ipxact:field>
+						<ipxact:name>TXTB7_DATA_21</ipxact:name>
+						<ipxact:bitOffset>0</ipxact:bitOffset>
+						<ipxact:bitWidth>32</ipxact:bitWidth>
+					</ipxact:field>
+				</ipxact:register>
+				<ipxact:register>
 					<ipxact:name>TXTB7_DATA_18</ipxact:name>
 					<ipxact:addressOffset>'h44</ipxact:addressOffset>
 					<ipxact:size>32</ipxact:size>
@@ -4945,6 +5024,16 @@
 					<ipxact:size>32</ipxact:size>
 					<ipxact:field>
 						<ipxact:name>TXTB8_DATA_20</ipxact:name>
+						<ipxact:bitOffset>0</ipxact:bitOffset>
+						<ipxact:bitWidth>32</ipxact:bitWidth>
+					</ipxact:field>
+				</ipxact:register>
+				<ipxact:register>
+					<ipxact:name>TXTB8_DATA_21</ipxact:name>
+					<ipxact:addressOffset>'h50</ipxact:addressOffset>
+					<ipxact:size>32</ipxact:size>
+					<ipxact:field>
+						<ipxact:name>TXTB8_DATA_21</ipxact:name>
 						<ipxact:bitOffset>0</ipxact:bitOffset>
 						<ipxact:bitWidth>32</ipxact:bitWidth>
 					</ipxact:field>
@@ -5159,7 +5248,7 @@
 				<ipxact:name>CAN_FD_Frame_format</ipxact:name>
 				<ipxact:displayName>CAN FD Frame format</ipxact:displayName>
 				<ipxact:baseAddress>'h0</ipxact:baseAddress>
-				<ipxact:range>80</ipxact:range>
+				<ipxact:range>84</ipxact:range>
 				<ipxact:width>32</ipxact:width>
 				<ipxact:register>
 					<ipxact:name>FRAME_FORMAT_W</ipxact:name>
@@ -5286,76 +5375,6 @@
 						<ipxact:description>Size of CAN frame in RX buffer without FRAME_FORMAT WORD. (E.g RTR frame RWCNT=3, 64 Byte FD frame RWCNT=19). In TXT buffer this field has no meaning.</ipxact:description>
 						<ipxact:bitOffset>11</ipxact:bitOffset>
 						<ipxact:bitWidth>5</ipxact:bitWidth>
-					</ipxact:field>
-					<ipxact:field>
-						<ipxact:name>FSTC</ipxact:name>
-						<ipxact:displayName>FSTC</ipxact:displayName>
-						<ipxact:description>Flip Stuff count field bit when this frame is transmitted. This field has effect only in transmitted frames.</ipxact:description>
-						<ipxact:bitOffset>21</ipxact:bitOffset>
-						<ipxact:bitWidth>1</ipxact:bitWidth>
-						<ipxact:enumeratedValues>
-							<ipxact:enumeratedValue>
-								<ipxact:name>FSTC_FLIP</ipxact:name>
-								<ipxact:displayName>FSTC_FLIP</ipxact:displayName>
-								<ipxact:description>Flip Stuff count field bit given by FRAME_FORMAT_W[FIND] when this frame is transmitted.</ipxact:description>
-								<ipxact:value>1</ipxact:value>
-							</ipxact:enumeratedValue>
-							<ipxact:enumeratedValue>
-								<ipxact:name>FSTC_NO_FLIP</ipxact:name>
-								<ipxact:displayName>FSTC_NO_FLIP</ipxact:displayName>
-								<ipxact:description>Do not flip any Stuff count field bits.</ipxact:description>
-								<ipxact:value>0</ipxact:value>
-							</ipxact:enumeratedValue>
-						</ipxact:enumeratedValues>
-					</ipxact:field>
-					<ipxact:field>
-						<ipxact:name>FCRC</ipxact:name>
-						<ipxact:displayName>FCRC</ipxact:displayName>
-						<ipxact:description>Flip CRC field bit when this frame is transmitted. This field has effect only in transmitted frames.</ipxact:description>
-						<ipxact:bitOffset>22</ipxact:bitOffset>
-						<ipxact:bitWidth>1</ipxact:bitWidth>
-						<ipxact:enumeratedValues>
-							<ipxact:enumeratedValue>
-								<ipxact:name>FCRC_FLIP</ipxact:name>
-								<ipxact:displayName>FCRC_FLIP</ipxact:displayName>
-								<ipxact:description>Flip CRC field bit given by FRAME_FORMAT_W[FIND] when this frame is transmitted.</ipxact:description>
-								<ipxact:value>0</ipxact:value>
-							</ipxact:enumeratedValue>
-							<ipxact:enumeratedValue>
-								<ipxact:name>FCRC_NO_FLIP</ipxact:name>
-								<ipxact:displayName>FCRC_NO_FLIP</ipxact:displayName>
-								<ipxact:description>Do not flip CRC field bit when this frame is transmitted.</ipxact:description>
-								<ipxact:value>1</ipxact:value>
-							</ipxact:enumeratedValue>
-						</ipxact:enumeratedValues>
-					</ipxact:field>
-					<ipxact:field>
-						<ipxact:name>CPRM</ipxact:name>
-						<ipxact:displayName>CPRM</ipxact:displayName>
-						<ipxact:description>Parameter for corruption of transmitted CAN frames. </ipxact:description>
-						<ipxact:bitOffset>16</ipxact:bitOffset>
-						<ipxact:bitWidth>5</ipxact:bitWidth>
-					</ipxact:field>
-					<ipxact:field>
-						<ipxact:name>SDLC</ipxact:name>
-						<ipxact:displayName>SDLC</ipxact:displayName>
-						<ipxact:description>Swap DLC in transmitted frame.</ipxact:description>
-						<ipxact:bitOffset>23</ipxact:bitOffset>
-						<ipxact:bitWidth>1</ipxact:bitWidth>
-						<ipxact:enumeratedValues>
-							<ipxact:enumeratedValue>
-								<ipxact:name>SLDC_SWAP</ipxact:name>
-								<ipxact:displayName>SDLC_SWAP</ipxact:displayName>
-								<ipxact:description>Swap DLC of transmitted frame with FRAME_FORMAT_W[SVAL].</ipxact:description>
-								<ipxact:value>1</ipxact:value>
-							</ipxact:enumeratedValue>
-							<ipxact:enumeratedValue>
-								<ipxact:name>SDLC_NO_SWAP</ipxact:name>
-								<ipxact:displayName>SDLC_NO_SWAP</ipxact:displayName>
-								<ipxact:description>Do not swap DLC when transmitting frame.</ipxact:description>
-								<ipxact:value>0</ipxact:value>
-							</ipxact:enumeratedValue>
-						</ipxact:enumeratedValues>
 					</ipxact:field>
 				</ipxact:register>
 				<ipxact:register>
@@ -5509,6 +5528,41 @@
 						<ipxact:description>Data byte 64 of CAN Frame.</ipxact:description>
 						<ipxact:bitOffset>24</ipxact:bitOffset>
 						<ipxact:bitWidth>8</ipxact:bitWidth>
+					</ipxact:field>
+				</ipxact:register>
+				<ipxact:register>
+					<ipxact:name>FRAME_TEST_W</ipxact:name>
+					<ipxact:displayName>FRAME_TEST_W</ipxact:displayName>
+					<ipxact:dim>0</ipxact:dim>
+					<ipxact:addressOffset>'h50</ipxact:addressOffset>
+					<ipxact:size>32</ipxact:size>
+					<ipxact:field>
+						<ipxact:name>TPRM</ipxact:name>
+						<ipxact:displayName>TPRM</ipxact:displayName>
+						<ipxact:description>Test Parameter</ipxact:description>
+						<ipxact:bitOffset>8</ipxact:bitOffset>
+						<ipxact:bitWidth>5</ipxact:bitWidth>
+					</ipxact:field>
+					<ipxact:field>
+						<ipxact:name>SDLC</ipxact:name>
+						<ipxact:displayName>SDLC</ipxact:displayName>
+						<ipxact:description>Swap DLC in transmitted frame.</ipxact:description>
+						<ipxact:bitOffset>2</ipxact:bitOffset>
+						<ipxact:bitWidth>1</ipxact:bitWidth>
+					</ipxact:field>
+					<ipxact:field>
+						<ipxact:name>FCRC</ipxact:name>
+						<ipxact:displayName>FCRC</ipxact:displayName>
+						<ipxact:description>Flip CRC field bit when this frame is transmitted. This field has effect only in transmitted frames.</ipxact:description>
+						<ipxact:bitOffset>1</ipxact:bitOffset>
+						<ipxact:bitWidth>1</ipxact:bitWidth>
+					</ipxact:field>
+					<ipxact:field>
+						<ipxact:name>FSTC</ipxact:name>
+						<ipxact:displayName>FSTC</ipxact:displayName>
+						<ipxact:description>Flip Stuff count field bit when this frame is transmitted. This field has effect only in transmitted frames.</ipxact:description>
+						<ipxact:bitOffset>0</ipxact:bitOffset>
+						<ipxact:bitWidth>1</ipxact:bitWidth>
 					</ipxact:field>
 				</ipxact:register>
 				<ipxact:register>
@@ -6017,15 +6071,15 @@
 			<kactus2:kts_firmness>Mutable</kactus2:kts_firmness>
 		</kactus2:kts_attributes>
 		<ipxact:regLocks>
-			<ipxact:regLock description="Register can be only written when MODE[TSTM] = 1, otherwise write has no effect." reg_name="CTR_PRES" lock_signal="lock_1"/>
-			<ipxact:regLock description="Register can be only written when MODE[TSTM] = 1, otherwise write has no effect." reg_name="EWL" lock_signal="lock_1"/>
-			<ipxact:regLock description="Register can be only written when MODE[TSTM] = 1, otherwise write has no effect." reg_name="ERP" lock_signal="lock_1"/>
-			<ipxact:regLock description="Register can be only written when SETTINGS[ENA] = 0, otherwise write has no effect." reg_name="BTR" lock_signal="lock_2"/>
-			<ipxact:regLock description="Register can be only written when SETTINGS[ENA] = 0, otherwise write has no effect." reg_name="BTR_FD" lock_signal="lock_2"/>
-			<ipxact:regLock description="Register can be only written when SETTINGS[ENA] = 0, otherwise write has no effect." reg_name="SSP_CFG" lock_signal="lock_2"/>
-			<ipxact:regLock description="Register can be only written when MODE[TSTM] = 1, otherwise write has no effect." reg_name="TST_CONTROL" lock_signal="lock_1"/>
-			<ipxact:regLock description="Register can be only written when MODE[TSTM] = 1, otherwise write has no effect." reg_name="TST_DEST" lock_signal="lock_1"/>
-			<ipxact:regLock description="Register can be only written when MODE[TSTM] = 1, otherwise write has no effect." reg_name="TST_WDATA" lock_signal="lock_1"/>
+			<ipxact:regLock lock_signal="lock_1" description="Register can be only written when MODE[TSTM] = 1, otherwise write has no effect." reg_name="CTR_PRES"/>
+			<ipxact:regLock lock_signal="lock_1" description="Register can be only written when MODE[TSTM] = 1, otherwise write has no effect." reg_name="EWL"/>
+			<ipxact:regLock lock_signal="lock_1" description="Register can be only written when MODE[TSTM] = 1, otherwise write has no effect." reg_name="ERP"/>
+			<ipxact:regLock lock_signal="lock_2" description="Register can be only written when SETTINGS[ENA] = 0, otherwise write has no effect." reg_name="BTR"/>
+			<ipxact:regLock lock_signal="lock_2" description="Register can be only written when SETTINGS[ENA] = 0, otherwise write has no effect." reg_name="BTR_FD"/>
+			<ipxact:regLock lock_signal="lock_2" description="Register can be only written when SETTINGS[ENA] = 0, otherwise write has no effect." reg_name="SSP_CFG"/>
+			<ipxact:regLock lock_signal="lock_1" description="Register can be only written when MODE[TSTM] = 1, otherwise write has no effect." reg_name="TST_CONTROL"/>
+			<ipxact:regLock lock_signal="lock_1" description="Register can be only written when MODE[TSTM] = 1, otherwise write has no effect." reg_name="TST_DEST"/>
+			<ipxact:regLock lock_signal="lock_1" description="Register can be only written when MODE[TSTM] = 1, otherwise write has no effect." reg_name="TST_WDATA"/>
 		</ipxact:regLocks>
 		<kactus2:license>Proprietary</kactus2:license>
 	</ipxact:vendorExtensions>

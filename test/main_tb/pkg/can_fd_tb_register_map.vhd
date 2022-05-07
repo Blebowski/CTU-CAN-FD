@@ -352,7 +352,7 @@ package can_fd_tb_register_map is
   -- Register list
   ------------------------------------------------------------------------------
 
-  type t_TX_Buffer_1_list is array (0 to 19) of t_memory_reg;
+  type t_TX_Buffer_1_list is array (0 to 20) of t_memory_reg;
 
   constant TX_Buffer_1_list : t_TX_Buffer_1_list :=(
 
@@ -455,6 +455,11 @@ package can_fd_tb_register_map is
      size      => 32,
      reg_type  => reg_none,
      reset_val => "00000000000000000000000000000000",
+     is_implem => "11111111111111111111111111111111"),
+    (address   => TXTB1_DATA_21_ADR,
+     size      => 32,
+     reg_type  => reg_none,
+     reset_val => "00000000000000000000000000000000",
      is_implem => "11111111111111111111111111111111")
   );
 
@@ -463,7 +468,7 @@ package can_fd_tb_register_map is
   -- Register list
   ------------------------------------------------------------------------------
 
-  type t_TX_Buffer_2_list is array (0 to 19) of t_memory_reg;
+  type t_TX_Buffer_2_list is array (0 to 20) of t_memory_reg;
 
   constant TX_Buffer_2_list : t_TX_Buffer_2_list :=(
 
@@ -566,6 +571,11 @@ package can_fd_tb_register_map is
      size      => 32,
      reg_type  => reg_none,
      reset_val => "00000000000000000000000000000000",
+     is_implem => "11111111111111111111111111111111"),
+    (address   => TXTB2_DATA_21_ADR,
+     size      => 32,
+     reg_type  => reg_none,
+     reset_val => "00000000000000000000000000000000",
      is_implem => "11111111111111111111111111111111")
   );
 
@@ -574,7 +584,7 @@ package can_fd_tb_register_map is
   -- Register list
   ------------------------------------------------------------------------------
 
-  type t_TX_Buffer_3_list is array (0 to 19) of t_memory_reg;
+  type t_TX_Buffer_3_list is array (0 to 20) of t_memory_reg;
 
   constant TX_Buffer_3_list : t_TX_Buffer_3_list :=(
 
@@ -677,6 +687,11 @@ package can_fd_tb_register_map is
      size      => 32,
      reg_type  => reg_none,
      reset_val => "00000000000000000000000000000000",
+     is_implem => "11111111111111111111111111111111"),
+    (address   => TXTB3_DATA_21_ADR,
+     size      => 32,
+     reg_type  => reg_none,
+     reset_val => "00000000000000000000000000000000",
      is_implem => "11111111111111111111111111111111")
   );
 
@@ -685,7 +700,7 @@ package can_fd_tb_register_map is
   -- Register list
   ------------------------------------------------------------------------------
 
-  type t_TX_Buffer_4_list is array (0 to 19) of t_memory_reg;
+  type t_TX_Buffer_4_list is array (0 to 20) of t_memory_reg;
 
   constant TX_Buffer_4_list : t_TX_Buffer_4_list :=(
 
@@ -788,6 +803,11 @@ package can_fd_tb_register_map is
      size      => 32,
      reg_type  => reg_none,
      reset_val => "00000000000000000000000000000000",
+     is_implem => "11111111111111111111111111111111"),
+    (address   => TXTB4_DATA_21_ADR,
+     size      => 32,
+     reg_type  => reg_none,
+     reset_val => "00000000000000000000000000000000",
      is_implem => "11111111111111111111111111111111")
   );
 
@@ -796,7 +816,7 @@ package can_fd_tb_register_map is
   -- Register list
   ------------------------------------------------------------------------------
 
-  type t_TX_Buffer_5_list is array (0 to 19) of t_memory_reg;
+  type t_TX_Buffer_5_list is array (0 to 20) of t_memory_reg;
 
   constant TX_Buffer_5_list : t_TX_Buffer_5_list :=(
 
@@ -899,6 +919,11 @@ package can_fd_tb_register_map is
      size      => 32,
      reg_type  => reg_none,
      reset_val => "00000000000000000000000000000000",
+     is_implem => "11111111111111111111111111111111"),
+    (address   => TXTB5_DATA_21_ADR,
+     size      => 32,
+     reg_type  => reg_none,
+     reset_val => "00000000000000000000000000000000",
      is_implem => "11111111111111111111111111111111")
   );
 
@@ -907,7 +932,7 @@ package can_fd_tb_register_map is
   -- Register list
   ------------------------------------------------------------------------------
 
-  type t_TX_Buffer_6_list is array (0 to 19) of t_memory_reg;
+  type t_TX_Buffer_6_list is array (0 to 20) of t_memory_reg;
 
   constant TX_Buffer_6_list : t_TX_Buffer_6_list :=(
 
@@ -1010,6 +1035,11 @@ package can_fd_tb_register_map is
      size      => 32,
      reg_type  => reg_none,
      reset_val => "00000000000000000000000000000000",
+     is_implem => "11111111111111111111111111111111"),
+    (address   => TXTB6_DATA_21_ADR,
+     size      => 32,
+     reg_type  => reg_none,
+     reset_val => "00000000000000000000000000000000",
      is_implem => "11111111111111111111111111111111")
   );
 
@@ -1018,7 +1048,7 @@ package can_fd_tb_register_map is
   -- Register list
   ------------------------------------------------------------------------------
 
-  type t_TX_Buffer_7_list is array (0 to 19) of t_memory_reg;
+  type t_TX_Buffer_7_list is array (0 to 20) of t_memory_reg;
 
   constant TX_Buffer_7_list : t_TX_Buffer_7_list :=(
 
@@ -1121,6 +1151,11 @@ package can_fd_tb_register_map is
      size      => 32,
      reg_type  => reg_none,
      reset_val => "00000000000000000000000000000000",
+     is_implem => "11111111111111111111111111111111"),
+    (address   => TXTB7_DATA_21_ADR,
+     size      => 32,
+     reg_type  => reg_none,
+     reset_val => "00000000000000000000000000000000",
      is_implem => "11111111111111111111111111111111")
   );
 
@@ -1129,7 +1164,7 @@ package can_fd_tb_register_map is
   -- Register list
   ------------------------------------------------------------------------------
 
-  type t_TX_Buffer_8_list is array (0 to 19) of t_memory_reg;
+  type t_TX_Buffer_8_list is array (0 to 20) of t_memory_reg;
 
   constant TX_Buffer_8_list : t_TX_Buffer_8_list :=(
 
@@ -1229,6 +1264,11 @@ package can_fd_tb_register_map is
      reset_val => "00000000000000000000000000000000",
      is_implem => "11111111111111111111111111111111"),
     (address   => TXTB8_DATA_20_ADR,
+     size      => 32,
+     reg_type  => reg_none,
+     reset_val => "00000000000000000000000000000000",
+     is_implem => "11111111111111111111111111111111"),
+    (address   => TXTB8_DATA_21_ADR,
      size      => 32,
      reg_type  => reg_none,
      reset_val => "00000000000000000000000000000000",
