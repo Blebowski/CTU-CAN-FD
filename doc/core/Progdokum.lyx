@@ -1365,6 +1365,11 @@ Move to new release of CTU CAN FD.
 Add MODE[TXBBM], MODE[SAM], STATUS[RXPE], STATUS[TXPE], COMMAND [CTPXE]
  and COMMAND[CRPXE].
  Add FRAME_FORMAT_W bits which allow flipping of CRC or Stuff count.
+
+\change_inserted -937042393 1651927851
+ Add section on parity mechanism testing.
+\change_unchanged
+
 \end_layout
 
 \end_inset
@@ -6329,6 +6334,35 @@ Note The example above assumes that RX Buffer is read in Automatic mode
 
 \begin_layout Description
 Note Writing COMMAND[CRXPE]=1 by SW clears STATUS[RXPE] bit.
+\change_inserted -937042393 1651927297
+
+\end_layout
+
+\begin_layout Description
+
+\change_inserted -937042393 1651927832
+Note When writing RX Buffer RAM via Test Registers (see 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "subsec:Memory-testability"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+), parity bit of corresponding word of RX Buffer RAM is not updated.
+ See 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "subsec:Parity-mechanism-testing"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+ 
 \end_layout
 
 \begin_layout Subsection
@@ -6392,6 +6426,37 @@ noprefix "false"
 Note If CTU CAN FD detects a parity error in TXT Buffer, SW shall write
  the whole CAN frame to TXT Buffer again before it attempts to use it for
  further transmissions.
+\change_inserted -937042393 1651927745
+
+\end_layout
+
+\begin_layout Description
+
+\change_inserted -937042393 1651927838
+Note When writing TXT Buffer RAM via Test Registers (see 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "subsec:Memory-testability"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+), parity bit of corresponding word in TXT Buffer RAM is not updated.
+ See 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "subsec:Parity-mechanism-testing"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+
+\change_unchanged
+
 \end_layout
 
 \begin_layout Subsection
@@ -6742,6 +6807,134 @@ backup
 \end_inset
 
  TXT Buffer.
+\change_inserted -937042393 1651927782
+
+\end_layout
+
+\begin_layout Subsection
+
+\change_inserted -937042393 1651927858
+Parity mechanism testing
+\begin_inset CommandInset label
+LatexCommand label
+name "subsec:Parity-mechanism-testing"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+
+\change_inserted -937042393 1651928066
+When Test registers memory region is present in CTU CAN FD (STATUS[STRGS]
+ = 1), write to TXT Buffer / RX Buffer RAMs via this memory region does
+ not update parity bit value stored per each memory word of TXT Buffer /
+ RX Buffer RAMs.
+ This allows on-chip verification of parity detection capabilites on both
+ TXT Buffer / RX Buffer RAMs.
+ An example sequence of parity detection capabilities testing on RX Buffer
+ RAM:
+\end_layout
+
+\begin_layout Enumerate
+
+\change_inserted -937042393 1651928077
+CTU CAN FD receives CAN frame to RX Buffer RAM.
+\end_layout
+
+\begin_layout Enumerate
+
+\change_inserted -937042393 1651928196
+SW reads RX Buffer RAM memory via Test Registers memory region (reffer to
+ 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "key-1"
+literal "false"
+
+\end_inset
+
+ for details of such procedure).
+ SW obtains memory words which correspond to CAN Frame in RX Buffer RAM.
+\end_layout
+
+\begin_layout Enumerate
+
+\change_inserted -937042393 1651928263
+SW modifies a bit in a memory word of its choice, and stores such frame
+ back to RX Buffer RAM via Test Registers memory region.
+\end_layout
+
+\begin_layout Enumerate
+
+\change_inserted -937042393 1651928368
+SW reads a frame from RX Buffer via RX_DATA register, and checks that STATUS[RXP
+E] = 1 after reading memory word with bit flipped in previous step, If yes,
+ then parity error detection mechanism works correctly.
+\end_layout
+
+\begin_layout Standard
+
+\change_inserted -937042393 1651928668
+Following sequence checks parity detection capabilities on TXT Buffer RAM:
+\end_layout
+
+\begin_layout Enumerate
+
+\change_inserted -937042393 1651928799
+SW inserts CAN frame for transmission to TXT Buffer.
+\end_layout
+
+\begin_layout Enumerate
+
+\change_inserted -937042393 1651928741
+SW reads such frame via Test Registers memory region, modifies a bit in
+ random word and stores back such word via Test Registers memory region.
+\end_layout
+
+\begin_layout Enumerate
+
+\change_inserted -937042393 1651928901
+SW sends 
+\series bold
+Set ready
+\series default
+ (via TX_COMMAND register) command to a TXT Buffer where CAN frame was stored
+ in previous two steps.
+\end_layout
+
+\begin_layout Enumerate
+
+\change_inserted -937042393 1651928971
+CTU CAN FD attempts to transmit a frame from this TXT Buffer (assuming no
+ other TXT Buffer is in 
+\begin_inset Quotes eld
+\end_inset
+
+Ready
+\begin_inset Quotes erd
+\end_inset
+
+ state).
+ When reading a memory word which contains bit-flip, CTU CAN FD sends error
+ frame, and sets STATUS[TXPE]=1.
+\end_layout
+
+\begin_layout Enumerate
+
+\change_inserted -937042393 1651929104
+SW checks that STATUS[TXPE]=1, and it checks that state of TXT Buffer from
+ previous points is 
+\begin_inset Quotes eld
+\end_inset
+
+Parity Error
+\begin_inset Quotes erd
+\end_inset
+
+ (in TX_STATUS register).
+ If yes, parity detection mechanism works correctly.
 \end_layout
 
 \begin_layout Section
@@ -7394,6 +7587,17 @@ CTU CAN FD contains debug register (DEBUG_REGISTER) which directly reflects
 
 \begin_layout Subsection
 Memory testability
+\change_inserted -937042393 1651927405
+
+\begin_inset CommandInset label
+LatexCommand label
+name "subsec:Memory-testability"
+
+\end_inset
+
+
+\change_unchanged
+
 \end_layout
 
 \begin_layout Standard
