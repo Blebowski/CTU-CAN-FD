@@ -3990,7 +3990,13 @@ Aborted
 
  states.
  CAN frame is stored to TXT buffers via TXT Buffer 1 - TXT Buffer 8 memory
- regions described in Chapter 3.
+ regions described in 
+\change_deleted -937042393 1651932857
+Chapter
+\change_inserted -937042393 1651932858
+Section
+\change_unchanged
+ 3.
  T
 \end_layout
 
@@ -5106,8 +5112,13 @@ Manual mode - When RX_DATA register is read, read pointer of RX buffer FIFO
 
 \begin_layout Standard
 Mode of RX buffer is configured by MODE[RXBAM] bit.
- CAN frame format within RX buffer is described in Chapter 3, and it is
- visualized in Figure 
+ CAN frame format within RX buffer is described in 
+\change_deleted -937042393 1651932852
+Chapter
+\change_inserted -937042393 1651932852
+Section
+\change_unchanged
+ 3, and it is visualized in Figure 
 \begin_inset CommandInset ref
 LatexCommand ref
 reference "fig:rx-buffer-frame-visualization"
@@ -6355,7 +6366,7 @@ noprefix "false"
  See 
 \begin_inset CommandInset ref
 LatexCommand ref
-reference "subsec:Parity-mechanism-testing"
+reference "subsec:Parity-protection-testing"
 plural "false"
 caps "false"
 noprefix "false"
@@ -6447,7 +6458,7 @@ noprefix "false"
  See 
 \begin_inset CommandInset ref
 LatexCommand ref
-reference "subsec:Parity-mechanism-testing"
+reference "subsec:Parity-protection-testing"
 plural "false"
 caps "false"
 noprefix "false"
@@ -6813,11 +6824,11 @@ backup
 
 \begin_layout Subsection
 
-\change_inserted -937042393 1651927858
-Parity mechanism testing
+\change_inserted -937042393 1651932752
+Parity protection testing
 \begin_inset CommandInset label
 LatexCommand label
-name "subsec:Parity-mechanism-testing"
+name "subsec:Parity-protection-testing"
 
 \end_inset
 
@@ -6826,15 +6837,14 @@ name "subsec:Parity-mechanism-testing"
 
 \begin_layout Standard
 
-\change_inserted -937042393 1651928066
-When Test registers memory region is present in CTU CAN FD (STATUS[STRGS]
- = 1), write to TXT Buffer / RX Buffer RAMs via this memory region does
- not update parity bit value stored per each memory word of TXT Buffer /
- RX Buffer RAMs.
+\change_inserted -937042393 1651932926
+When Test registers memory region (see Section 3) is present in CTU CAN
+ FD (STATUS[STRGS] = 1), write to TXT Buffer / RX Buffer RAMs via this memory
+ region does not update parity bit value stored per each memory word of
+ TXT Buffer / RX Buffer RAMs.
  This allows on-chip verification of parity detection capabilites on both
  TXT Buffer / RX Buffer RAMs.
- An example sequence of parity detection capabilities testing on RX Buffer
- RAM:
+ Following sequence checks parity detection capabilities on RX Buffer RAM:
 \end_layout
 
 \begin_layout Enumerate
@@ -6856,22 +6866,22 @@ literal "false"
 \end_inset
 
  for details of such procedure).
- SW obtains memory words which correspond to CAN Frame in RX Buffer RAM.
 \end_layout
 
 \begin_layout Enumerate
 
-\change_inserted -937042393 1651928263
-SW modifies a bit in a memory word of its choice, and stores such frame
- back to RX Buffer RAM via Test Registers memory region.
+\change_inserted -937042393 1651933033
+SW modifies a bit in memory word of CAN frame read in previous step, and
+ stores such modified frame back to RX Buffer RAM via Test Registers memory
+ region.
 \end_layout
 
 \begin_layout Enumerate
 
-\change_inserted -937042393 1651928368
-SW reads a frame from RX Buffer via RX_DATA register, and checks that STATUS[RXP
-E] = 1 after reading memory word with bit flipped in previous step, If yes,
- then parity error detection mechanism works correctly.
+\change_inserted -937042393 1651933487
+SW reads a frame from RX Buffer via RX_DATA register and then reads STATUS[RXPE].
+ If STATUS[RXPE] = 1, then parity error detection mechanism on RX Buffer
+ RAM works correctly.
 \end_layout
 
 \begin_layout Standard
@@ -6883,14 +6893,14 @@ Following sequence checks parity detection capabilities on TXT Buffer RAM:
 \begin_layout Enumerate
 
 \change_inserted -937042393 1651928799
-SW inserts CAN frame for transmission to TXT Buffer.
+SW inserts CAN frame to TXT Buffer.
 \end_layout
 
 \begin_layout Enumerate
 
-\change_inserted -937042393 1651928741
+\change_inserted -937042393 1651933193
 SW reads such frame via Test Registers memory region, modifies a bit in
- random word and stores back such word via Test Registers memory region.
+ random word, and stores back such word via Test Registers memory region.
 \end_layout
 
 \begin_layout Enumerate
@@ -6923,18 +6933,23 @@ Ready
 
 \begin_layout Enumerate
 
-\change_inserted -937042393 1651929104
-SW checks that STATUS[TXPE]=1, and it checks that state of TXT Buffer from
- previous points is 
-\begin_inset Quotes eld
-\end_inset
+\change_inserted -937042393 1651933492
+SW reads STATUS[TXPE].
+ If yes STATUS[TXPE]=1, parity detection mechanism on TXT Buffer RAM works
+ correctly.
+\end_layout
 
-Parity Error
-\begin_inset Quotes erd
-\end_inset
+\begin_layout Description
 
- (in TX_STATUS register).
- If yes, parity detection mechanism works correctly.
+\change_inserted -937042393 1651933449
+Note When SW flips a random bit in TXT Buffer RAM, it must flip a bit in
+ memory words which will be read by CTU CAN FD when it attempts to transmit
+ the frame.
+ E.g.
+ if SW flips a bit in DATA_61_64_W, but inserted CAN frame only contains
+ 8 data bytes (FRAME_FORMAT_W[DLC]=1000), CTU CAN FD will not attempt to
+ read DATA_61_64_W word from TXT Buffer RAM (it will only read DATA_1_4_W
+ and DATA_5_8_W), and therefore it will not set STATUS[TXPE] bit.
 \end_layout
 
 \begin_layout Section
