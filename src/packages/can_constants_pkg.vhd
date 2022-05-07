@@ -99,6 +99,9 @@ package can_constants_pkg is
     constant C_CRC17_SRC : std_logic_vector(1 downto 0) := "01";
     constant C_CRC21_SRC : std_logic_vector(1 downto 0) := "10";
 
+    -- Parity type
+    constant C_PARITY_TYPE : std_logic := '1';
+
     ----------------------------------------------------------------------------
     -- Memory Access
     ----------------------------------------------------------------------------

@@ -237,6 +237,9 @@ entity memory_registers is
         -- Middle of frame indication
         rx_mof               :in   std_logic;
 
+        -- RX Buffer parity error flag
+        rx_parity_error      :in   std_logic;
+
         ------------------------------------------------------------------------
         -- Interface to TXT Buffers
         ------------------------------------------------------------------------
@@ -712,6 +715,8 @@ begin
 
     status_comb(PEXS_IND) <= stat_bus(STAT_PEXS_INDEX);
 
+    status_comb(RXPE_IND) <= rx_parity_error;
+
     traffic_ctrs_gen_true : if G_SUP_TRAFFIC_CTRS generate
         status_comb(STCNT_IND) <= '1';
     end generate traffic_ctrs_gen_true;
@@ -721,7 +726,7 @@ begin
     end generate traffic_ctrs_gen_false;
     
     status_comb(31 downto 18) <= (others => '0');
-    status_comb(15 downto 9) <= (others => '0');
+    status_comb(15 downto 10) <= (others => '0');
 
     ----------------------------------------------------------------------------
     ----------------------------------------------------------------------------
@@ -788,6 +793,10 @@ begin
     -- CPEXS - Clear protocol exception status (flag)
     drv_bus(DRV_PEXS_CLR_INDEX) <= align_wrd_to_reg(
         control_registers_out.command, CPEXS_IND);
+
+    -- CRXPE - Clear RX Buffer parity error
+    drv_bus(DRV_CLR_RXPE_INDEX) <= align_wrd_to_reg(
+        control_registers_out.command, CRXPE_IND);
 
     ---------------------------------------------------------------------------
     -- SETTINGS Register
@@ -1698,7 +1707,6 @@ begin
     -- Note:  All unused signals indices are assigned to zero!
     drv_bus(80 downto 61)   <= (OTHERS => '0');
     drv_bus(349 downto 331) <= (OTHERS => '0');
-    drv_bus(355 downto 354) <= (OTHERS => '0');
     drv_bus(360 downto 358) <= (OTHERS => '0');
     drv_bus(362 downto 361) <= (OTHERS => '0');
     drv_bus(365 downto 363) <= (OTHERS => '0');
@@ -1731,6 +1739,7 @@ begin
     drv_bus(366)            <= '0';
     drv_bus(357)            <= '0';
     drv_bus(356)            <= '0';
+    drv_bus(355)            <= '0';
 
     ----------------------------------------------------------------------------
     -- Assertions / Functional coverage

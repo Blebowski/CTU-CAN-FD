@@ -101,6 +101,9 @@ entity rx_buffer is
         -- RX Buffer size
         G_RX_BUFF_SIZE              :       natural range 32 to 4096 := 32;
         
+        -- Add parity to RX Buffer RAM
+        G_SUP_PARITY                :       boolean := false;
+
         -- Technology type
         G_TECHNOLOGY                :       natural := C_TECH_ASIC
     );
@@ -195,12 +198,16 @@ entity rx_buffer is
         rx_write_pointer     :out    std_logic_vector(11 downto 0);
         
         -- Overrun occurred, data were discarded!
-        -- (This is a flag and persists until it is cleared by SW)! 
+        -- (This is a flag and persists until it is cleared by SW).
         rx_data_overrun      :out    std_logic;
         
         -- Middle of frame indication
         rx_mof               :out    std_logic;
         
+        -- RX Buffer Parity error
+        -- (This is a flag and persists until it is cleared by SW).
+        rx_parity_error      :out    std_logic;
+
         -- External timestamp input
         timestamp            :in     std_logic_vector(63 downto 0);
 
@@ -232,6 +239,7 @@ architecture rtl of rx_buffer is
 
     -- Command to load increase the reading pointer
     signal drv_read_start           :       std_logic;
+    signal drv_read_start_q         :       std_logic;
 
     -- Clear data OverRun Flag
     signal drv_clr_ovr              :       std_logic;
@@ -239,6 +247,8 @@ architecture rtl of rx_buffer is
     -- Receive Timestamp options
     signal drv_rtsopt               :       std_logic;
 
+    -- Clear RX Buffer parity error
+    signal drv_clr_rxpe             :       std_logic;
 
     ----------------------------------------------------------------------------
     -- FIFO  Memory - Pointers
@@ -413,6 +423,11 @@ architecture rtl of rx_buffer is
     signal rx_buf_ram_clk_en        :       std_logic;
     signal clk_ram                  :       std_logic;
 
+    ----------------------------------------------------------------------------
+    -- Parity error detection
+    ----------------------------------------------------------------------------
+    signal rx_parity_error_comb     :       std_logic;
+
 begin
 
     ----------------------------------------------------------------------------
@@ -422,7 +437,7 @@ begin
     drv_read_start        <= drv_bus(DRV_READ_START_INDEX);
     drv_clr_ovr           <= drv_bus(DRV_CLR_OVR_INDEX);
     drv_rtsopt            <= drv_bus(DRV_RTSOPT_INDEX);
-
+    drv_clr_rxpe          <= drv_bus(DRV_CLR_RXPE_INDEX);
 
     ----------------------------------------------------------------------------
     -- Propagating status registers on output
@@ -853,6 +868,7 @@ begin
     port map(
         -- Clocks and Asynchronous reset 
         clk_sys              => clk_ram,                -- IN
+        res_n                => res_n,                  -- IN
 
         -- Memory testability
         test_registers_out   => test_registers_out,     -- IN
@@ -865,7 +881,10 @@ begin
 
         -- Port B - Read (from Memory registers)
         port_b_address       => RAM_read_address,       -- IN
-        port_b_data_out      => RAM_data_out            -- OUT
+        port_b_data_out      => RAM_data_out,           -- OUT
+
+        -- Parity error detection
+        parity_error         => rx_parity_error_comb    -- OUT
     );
 
     -- Memory written either on regular write or timestamp write
@@ -897,6 +916,29 @@ begin
     ----------------------------------------------------------------------------
     rx_mof <= '0' when (read_counter_q = "00000") else
               '1';
+
+    ----------------------------------------------------------------------------
+    -- Parity error flag
+    -- Set after read (parity error is valid with read data, one cycle after
+    -- read was initiated).
+    ----------------------------------------------------------------------------
+    parity_flag_proc : process(res_n, clk_sys)
+    begin
+        if (res_n = '0') then
+            drv_read_start_q <= '0';
+            rx_parity_error <= '0';
+        elsif (rising_edge(clk_sys)) then
+            drv_read_start_q <= drv_read_start;
+
+            if (drv_read_start_q = '1' and rx_parity_error_comb = '1') then
+                rx_parity_error <= '1';
+            elsif (drv_clr_rxpe = '1') then
+                rx_parity_error <= '0';
+            end if;
+
+        end if;
+    end process;
+              
     
     ----------------------------------------------------------------------------
     ----------------------------------------------------------------------------

@@ -176,6 +176,7 @@ package drv_stat_pkg is
     constant DRV_RTSOPT_INDEX     : natural := 351;
     constant DRV_READ_START_INDEX : natural := 352;
     constant DRV_CLR_OVR_INDEX    : natural := 353;
+    constant DRV_CLR_RXPE_INDEX   : natural := 354;
 
     -- TXT Buffer
     constant DRV_TXT1_WR          : natural := 357;

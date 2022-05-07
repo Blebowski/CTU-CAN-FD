@@ -125,7 +125,10 @@ entity can_top_level is
         
         -- Insert Traffic counters
         sup_traffic_ctrs    : boolean                := false;
-        
+
+        -- Add parity bit to TXT Buffer and RX Buffer RAMs
+        sup_parity          : boolean                := false;
+
         -- Target technology (ASIC or FPGA)
         target_technology   : natural                := C_TECH_FPGA
     );
@@ -260,6 +263,9 @@ architecture rtl of can_top_level is
 
     -- RX buffer middle of frame
     signal rx_mof               :    std_logic;
+
+    -- RX Buffer parity error flag
+    signal rx_parity_error      :    std_logic;
 
     ----------------------------------------------------------------------------
     -- TXT Buffer <-> Memory registers Interface
@@ -620,6 +626,7 @@ begin
         rx_write_pointer        => rx_write_pointer,        -- IN
         rx_data_overrun         => rx_data_overrun,         -- IN
         rx_mof                  => rx_mof,                  -- IN
+        rx_parity_error         => rx_parity_error,         -- IN
 
         -- Interface to TXT Buffers
         txtb_port_a_data        => txtb_port_a_data,        -- OUT
@@ -647,6 +654,7 @@ begin
     rx_buffer_inst : entity ctu_can_fd_rtl.rx_buffer
     generic map(
         G_RX_BUFF_SIZE          => rx_buffer_size,
+        G_SUP_PARITY            => sup_parity,
         G_TECHNOLOGY            => target_technology
     )
     port map(
@@ -684,6 +692,7 @@ begin
         rx_write_pointer        => rx_write_pointer,        -- OUT
         rx_data_overrun         => rx_data_overrun,         -- OUT
         rx_mof                  => rx_mof,                  -- OUT
+        rx_parity_error         => rx_parity_error,         -- OUT
         
         -- External timestamp input
         timestamp               => timestamp,               -- IN
