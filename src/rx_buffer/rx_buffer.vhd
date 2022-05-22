@@ -239,7 +239,6 @@ architecture rtl of rx_buffer is
 
     -- Command to load increase the reading pointer
     signal drv_read_start           :       std_logic;
-    signal drv_read_start_q         :       std_logic;
 
     -- Clear data OverRun Flag
     signal drv_clr_ovr              :       std_logic;
@@ -863,7 +862,8 @@ begin
     ----------------------------------------------------------------------------
     rx_buffer_ram_inst : entity ctu_can_fd_rtl.rx_buffer_ram
     generic map(
-        G_RX_BUFF_SIZE       => G_RX_BUFF_SIZE
+        G_RX_BUFF_SIZE       => G_RX_BUFF_SIZE,
+        G_SUP_PARITY         => G_SUP_PARITY
     )
     port map(
         -- Clocks and Asynchronous reset 
@@ -905,7 +905,7 @@ begin
     -- RAM read address is given by read pointers. If no transaction for read
     -- of RX DATA is in progress, read pointer is given by its real value.
     -- During transaction, Incremented Read pointer is chosen to avoid one clock
-    -- cycle delay caused by increment on read pointer!
+    -- cycle delay caused by increment on read pointer.
     ----------------------------------------------------------------------------
     RAM_read_address <= read_pointer_inc_1 when (read_increment = '1') else
                               read_pointer;
@@ -919,23 +919,20 @@ begin
 
     ----------------------------------------------------------------------------
     -- Parity error flag
-    -- Set after read (parity error is valid with read data, one cycle after
-    -- read was initiated).
+    -- Set when reading RX Buffer RAM. When drv_read_start is set, then RX
+    -- Buffer RAM already has read data available on output, therefore, RX
+    -- parity error detection is valid! 
     ----------------------------------------------------------------------------
     parity_flag_proc : process(res_n, clk_sys)
     begin
         if (res_n = '0') then
-            drv_read_start_q <= '0';
             rx_parity_error <= '0';
         elsif (rising_edge(clk_sys)) then
-            drv_read_start_q <= drv_read_start;
-
-            if (drv_read_start_q = '1' and rx_parity_error_comb = '1') then
+            if (drv_read_start = '1' and rx_parity_error_comb = '1') then
                 rx_parity_error <= '1';
             elsif (drv_clr_rxpe = '1') then
                 rx_parity_error <= '0';
             end if;
-
         end if;
     end process;
               
@@ -1121,6 +1118,12 @@ begin
     --
     -- psl rx_buf_store_64_byte_frame_cov :
     --      cover {rec_dlc = "1111" and rec_is_rtr = '0' and commit_rx_frame = '1'};
+    --
+    -- psl rx_parity_err_cov :
+    --      cover {rx_parity_error = '1'};
+    --
+    -- psl rx_parity_err_clr_cov :
+    --      cover {rx_parity_error = '1' and drv_clr_rxpe = '1'};
 
     ---------------------------------------------------------------------------
     -- "reset_overrun_flag = '1'" only in "s_rxb_idle" state. Therefore we can
