@@ -6115,16 +6115,43 @@ E
 \change_deleted -937042393 1651400170
 T
 \change_unchanged
-] upon each read of RX_DATA register by SW driver, if parity bit in the
- word read from RX Buffer RAM is not matching calculated parity bit.
+] upon each read 
+\change_deleted -937042393 1653245559
+of
+\change_inserted -937042393 1653245559
+from
+\change_unchanged
+ RX_DATA register 
+\change_deleted -937042393 1653245563
+by SW driver
+\change_unchanged
+, if parity bit in the word 
+\change_inserted -937042393 1653245569
+being 
+\change_unchanged
+read from RX Buffer RAM is not matching calculated parity bit.
 \end_layout
 
 \begin_layout Standard
-Since a spurious bit-flip in RX Buffer RAM can potentially modify FRAME_FORMAT_W
-[DLC] word of received frame in RX Buffer RAM, it may hamper the length
- of the RX frame as seen by SW driver, and therefore get RX Buffer into
- inconsistent state where SW driver has read only part of a received frame.
- In such situation, all further read frames from RX Buffer would be corrupted.
+Since a 
+\change_deleted -937042393 1653245586
+spurious bit-flip
+\change_inserted -937042393 1653245602
+a spurious single-event upset (SEU)
+\change_unchanged
+ in RX Buffer RAM can potentially modify FRAME_FORMAT_W[DLC] word of received
+ frame in RX Buffer RAM, it may hamper the length of the RX frame as seen
+ by SW driver, and therefore get RX Buffer into inconsistent state where
+ SW driver has read only part of a received frame.
+ In such situation, all further 
+\change_deleted -937042393 1653245653
+read 
+\change_unchanged
+frames
+\change_inserted -937042393 1653245655
+ read
+\change_unchanged
+ from RX Buffer would be corrupted.
  To avoid this situation, following procedure can be applied when reading
  RX frames from RX Buffer with focus on parity checking:
 \end_layout
