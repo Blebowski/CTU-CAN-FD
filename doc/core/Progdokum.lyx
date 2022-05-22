@@ -6182,9 +6182,22 @@ uint32_t ts_l = can_read_32(RX_DATA_ADDR);
 
 \begin_layout LyX-Code
 uint32_t ts_h = can_read_32(RX_DATA_ADDR);
+\change_inserted -937042393 1653241970
+
 \end_layout
 
 \begin_layout LyX-Code
+
+\change_inserted -937042393 1653241772
+
+\end_layout
+
+\begin_layout LyX-Code
+
+\change_inserted -937042393 1653241798
+/* If Parity error is in FRAME_FORMAT_W, RWCNT might be unreliable.
+ */
+\change_unchanged
 
 \end_layout
 
@@ -6194,7 +6207,13 @@ if (can_read_32(STATUS_ADDR) >> 10) & 0x1)
 
 \begin_deeper
 \begin_layout LyX-Code
-goto parity_err_handler;
+goto 
+\change_deleted -937042393 1653241928
+parity_err_handler
+\change_inserted -937042393 1653241928
+rx_buffer_flush
+\change_unchanged
+;
 \end_layout
 
 \end_deeper
@@ -6312,18 +6331,44 @@ can_read_32(RX_DATA_ADDR);
 \end_deeper
 \begin_layout LyX-Code
 }
+\change_inserted -937042393 1653241845
+
+\end_layout
+
+\end_deeper
+\begin_layout LyX-Code
+
+\change_inserted -937042393 1653241901
+/* If we get here, there is a danger that RX Buffer is not in consistent
+ state.
+ */
 \end_layout
 
 \begin_layout LyX-Code
+
+\change_inserted -937042393 1653241831
+rx_buffer_flush:
+\end_layout
+
+\begin_deeper
+\begin_layout LyX-Code
+
+\change_deleted -937042393 1653241849
 /* If we get here, RX_STATUS[RX_MOF] is not signalling new frame even after
 \end_layout
 
 \begin_layout LyX-Code
+
+\change_deleted -937042393 1653241849
    largest possible data payload (16 words) must have been read out from
 \end_layout
 
 \begin_layout LyX-Code
+
+\change_deleted -937042393 1653241849
    RX Buffer, something is very wrong -> Flush RX Buffer */
+\change_unchanged
+
 \end_layout
 
 \begin_layout LyX-Code
