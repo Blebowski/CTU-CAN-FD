@@ -106,7 +106,7 @@ entity can_top_level is
         rx_buffer_size      : natural range 32 to 4096 := 32;
 
         -- Number of supported TXT buffers
-        txt_buffer_count    : natural range 2 to 8   := 2; 
+        txt_buffer_count    : natural range 2 to 8   := 4; 
 
         -- Synthesize Filter A
         sup_filtA           : boolean                := false;
