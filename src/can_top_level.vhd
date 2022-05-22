@@ -1071,13 +1071,6 @@ begin
     
     end generate;
 
-    -- Memory testability shall not be used when CTU CAN FD is enabled
-    -- and operating!!
-    -- psl no_mem_test_when_operating_asrt : assert never
-    --  (drv_bus(DRV_ENA_INDEX) = '1' and test_registers_out.tst_control(TMAENA_IND) = '1')
-    --  report "Memory testability shall not be enabled when CTU CAN FD is running!";
-
-    -- <RELEASE_ON>
-    
+    -- <RELEASE_ON>    
 
 end architecture;
