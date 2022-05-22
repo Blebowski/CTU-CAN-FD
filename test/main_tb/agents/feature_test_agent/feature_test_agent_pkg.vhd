@@ -186,10 +186,13 @@ package feature_test_agent_pkg is
         tx_frame_ctr_rst        :   boolean;
         clear_pexs_flag         :   boolean;
         rx_buf_rdptr_move       :   boolean;
+        clear_rxpe              :   boolean;
+        clear_txpe              :   boolean;
+        clear_txdpe             :   boolean;
     end record;
 
     constant SW_command_rst_val : SW_command :=
-        (false, false, false, false, false, false, false);
+        (false, false, false, false, false, false, false, false, false, false);
 
     -- Controller status
     type SW_status is record
@@ -202,6 +205,9 @@ package feature_test_agent_pkg is
         error_warning           :   boolean;
         bus_status              :   boolean;
         protocol_exception      :   boolean;
+        rx_parity_error         :   boolean;
+        tx_parity_error         :   boolean;
+        tx_double_parity_error  :   boolean;
     end record;
 
 
@@ -3658,6 +3664,18 @@ package body feature_test_agent_pkg is
         if (command.rx_buf_rdptr_move) then
             data(RXRPMV_IND)     := '1';
         end if;
+
+        if (command.clear_rxpe) then
+            data(CRXPE_IND)     := '1';
+        end if;
+
+        if (command.clear_txpe) then
+            data(CTXPE_IND)     := '1';
+        end if;
+
+        if (command.clear_txdpe) then
+            data(CTXDPE_IND)     := '1';
+        end if;
         
         CAN_write(data, COMMAND_ADR, node, channel);
     end procedure;
@@ -3680,6 +3698,9 @@ package body feature_test_agent_pkg is
         status.transmitter              := false;
         status.error_warning            := false;
         status.bus_status               := false;
+        status.rx_parity_error          := false;
+        status.tx_parity_error          := false;
+        status.tx_double_parity_error   := false;
 
         if (data(RXNE_IND) = '1') then
             status.receive_buffer       := true;
@@ -3715,6 +3736,18 @@ package body feature_test_agent_pkg is
         
         if (data(PEXS_IND) = '1') then
             status.protocol_exception   := true;
+        end if;
+
+        if (data(RXPE_IND) = '1') then
+            status.rx_parity_error      := true;
+        end if;
+
+        if (data(TXPE_IND) = '1') then
+            status.tx_parity_error      := true;
+        end if;
+
+        if (data(TXDPE_IND) = '1') then
+            status.tx_double_parity_error := true;
         end if;
     end procedure;
 
@@ -4139,6 +4172,7 @@ package body feature_test_agent_pkg is
     ) is
         variable data_i : std_logic_vector(31 downto 0) := (OTHERS => '0');
     begin
+        data_i := (OTHERS => '0');
         -- Set address
         data_i(TST_ADDR_H downto TST_ADDR_L) :=
             std_logic_vector(to_unsigned(address, 16));

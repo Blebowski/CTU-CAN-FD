@@ -24,6 +24,7 @@ _default: &default
     sup_filtC: false
     sup_range: false
     sup_traffic_ctrs: true
+    sup_parity: true
     
     # Target technology is don't care is Gate config
     target_technology: 0

@@ -24,6 +24,7 @@ _default: &default
     sup_filtC: true
     sup_range: true
     sup_traffic_ctrs: true
+    sup_parity: true
     
     ###########################################################################
     # C_TECH_FPGA
@@ -178,6 +179,7 @@ feature:
         status_rxs:
         status_txnf:
         status_txs:
+        status_rxpe:
         stuff_in_data:
 
         trv_delay:

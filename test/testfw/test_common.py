@@ -311,6 +311,7 @@ def main_tb_configure(tb, config, build) -> None:
                 'sup_filtC'             : loc_cfg['sup_filtC'],
                 'sup_range'             : loc_cfg['sup_range'],
                 'sup_traffic_ctrs'      : loc_cfg['sup_traffic_ctrs'],
+                'sup_parity'            : loc_cfg['sup_parity'],
                 'target_technology'     : loc_cfg['target_technology'],
 
                 'log_level'             : "verbosity_" + loc_cfg['log_level'],
