@@ -188,7 +188,8 @@ package can_types_pkg is
         s_txt_ab_prog,
         s_txt_ok,
         s_txt_failed,
-        s_txt_aborted
+        s_txt_aborted,
+        s_txt_parity_err
     );
 
     ----------------------------------------------------------------------------

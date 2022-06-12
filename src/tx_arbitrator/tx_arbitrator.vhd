@@ -127,6 +127,12 @@ entity tx_arbitrator is
         -- Clock enable to TXT Buffer port B
         txtb_port_b_clk_en      :out std_logic;
 
+        -- Parity check valid
+        txtb_parity_check_valid :out std_logic;
+
+        -- Parity Error occured in TXT Buffer
+        txtb_parity_error_valid :in  std_logic_vector(G_TXT_BUFFER_COUNT - 1 downto 0);
+
         -----------------------------------------------------------------------
         -- CAN Core Interface
         -----------------------------------------------------------------------
@@ -153,6 +159,9 @@ entity tx_arbitrator is
     
         -- There is valid frame selected, can be locked for transmission
         tran_frame_valid        :out std_logic;
+
+        -- Parity error occured during read of data words from TXT Buffer
+        tran_frame_parity_error :out std_logic;
 
         -- HW Commands from CAN Core for manipulation with TXT Buffers 
         txtb_hw_cmd             :in t_txtb_hw_cmd;
@@ -209,7 +218,13 @@ architecture rtl of tx_arbitrator is
     signal select_index_changed       : std_logic;
     
     -- Signal that there is "Validated" TXT Buffer
-    signal validated_buffer           : std_logic;    
+    signal validated_buffer           : std_logic;
+
+    -- TXT Buffer clock enable (one cycle later)
+    signal txtb_clk_en_q              : std_logic;
+
+    -- Metadata words read by TX Arbitrator are valid
+    signal tx_arb_parity_check_valid  : std_logic;
 
     ---------------------------------------------------------------------------
     -- Internal registers
@@ -338,27 +353,28 @@ begin
   ------------------------------------------------------------------------------
   tx_arbitrator_fsm_inst : entity ctu_can_fd_rtl.tx_arbitrator_fsm
   port map(
-    clk_sys                => clk_sys,                  -- IN
-    res_n                  => res_n,                    -- IN
-    select_buf_avail       => select_buf_avail,         -- IN
-    select_index_changed   => select_index_changed,     -- IN
-    timestamp_valid        => timestamp_valid,          -- IN
-    txtb_hw_cmd            => txtb_hw_cmd,              -- IN
+    clk_sys                     => clk_sys,                     -- IN
+    res_n                       => res_n,                       -- IN
+    select_buf_avail            => select_buf_avail,            -- IN
+    select_index_changed        => select_index_changed,        -- IN
+    timestamp_valid             => timestamp_valid,             -- IN
+    txtb_hw_cmd                 => txtb_hw_cmd,                 -- IN
 
-    load_ts_lw_addr        => load_ts_lw_addr,          -- OUT
-    load_ts_uw_addr        => load_ts_uw_addr,          -- OUT
-    load_ffmt_w_addr       => load_ffmt_w_addr,         -- OUT
-    load_ident_w_addr      => load_ident_w_addr,        -- OUT
-    txtb_meta_clk_en       => txtb_meta_clk_en,         -- OUT
+    load_ts_lw_addr             => load_ts_lw_addr,             -- OUT
+    load_ts_uw_addr             => load_ts_uw_addr,             -- OUT
+    load_ffmt_w_addr            => load_ffmt_w_addr,            -- OUT
+    load_ident_w_addr           => load_ident_w_addr,           -- OUT
+    txtb_meta_clk_en            => txtb_meta_clk_en,            -- OUT
     
-    store_ts_l_w           => store_ts_l_w,             -- OUT
-    store_md_w             => store_md_w,               -- OUT
-    store_ident_w          => store_ident_w,            -- OUT
-    buffer_md_w            => buffer_md_w,              -- OUT
-    tx_arb_locked          => tx_arb_locked,            -- OUT
-    store_last_txtb_index  => store_last_txtb_index,    -- OUT
-    frame_valid_com_set    => frame_valid_com_set,      -- OUT
-    frame_valid_com_clear  => frame_valid_com_clear     -- OUT
+    store_ts_l_w                => store_ts_l_w,                -- OUT
+    store_md_w                  => store_md_w,                  -- OUT
+    store_ident_w               => store_ident_w,               -- OUT
+    buffer_md_w                 => buffer_md_w,                 -- OUT
+    tx_arb_locked               => tx_arb_locked,               -- OUT
+    store_last_txtb_index       => store_last_txtb_index,       -- OUT
+    frame_valid_com_set         => frame_valid_com_set,         -- OUT
+    frame_valid_com_clear       => frame_valid_com_clear,       -- OUT
+    tx_arb_parity_check_valid   => tx_arb_parity_check_valid    -- OUT
   );
 
   drv_tttm_ena <= drv_bus(DRV_TTTM_ENA_INDEX);
@@ -388,6 +404,11 @@ begin
                           else
                       '0';
 
+  tran_frame_parity_error <= '1' when (txtb_parity_error_valid(int_txtb_index) = '1' and
+                                       txtb_clk_en_q = '1')
+                                 else
+                             '0';
+
   ------------------------------------------------------------------------------
   -- Selecting TXT Buffer output word based on TXT Buffer index. During transmi
   -- ssion, use last stored TXT buffer. Otherwise use combinatorially selected
@@ -396,6 +417,14 @@ begin
   buffer_index_muxed <= int_txtb_index when (tx_arb_locked = '1')
                                        else
                       select_buf_index;
+
+  -- Parity check. When Protocol controller wants to enable clock for TXT Buffer,
+  -- it reads data words from it for transmission. When this occurs, data will
+  -- we available on the output of TXT Buffer RAM one clock cycle later. At this
+  -- cycle, TXT Buffer needs to check for parity error.
+  txtb_parity_check_valid <= txtb_clk_en_q when (tx_arb_locked = '1')
+                                           else
+                             tx_arb_parity_check_valid;
 
   -- Select read data based on index of TXT buffer which should be accessed
   txtb_selected_input <= txtb_port_b_data(buffer_index_muxed);

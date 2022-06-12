@@ -193,6 +193,9 @@ entity err_detector is
         -- Unit is error passive
         is_err_passive          :in   std_logic;
 
+        -- Parity Error in TXT Buffer RAM data words
+        tran_frame_parity_error :in   std_logic;
+
         -----------------------------------------------------------------------
         -- Status output
         -----------------------------------------------------------------------
@@ -263,6 +266,7 @@ begin
                      '1' when (form_err = '1' or ack_err = '1') else
                      '1' when (crc_err = '1') else
                      '1' when (bit_err_arb = '1') else
+                     '1' when (tran_frame_parity_error = '1') else
                      '0';
 
     -- Fixed stuff error shall be reported as Form Error!
@@ -386,6 +390,7 @@ begin
                   ERC_CRC_ERR when (crc_err = '1') else
                   ERC_ACK_ERR when (ack_err = '1') else
                   ERC_STUF_ERR when (stuff_err = '1') else
+                  ERC_PRT_ERR when (tran_frame_parity_error = '1') else
                   err_type_q;
                   
     ---------------------------------------------------------------------------

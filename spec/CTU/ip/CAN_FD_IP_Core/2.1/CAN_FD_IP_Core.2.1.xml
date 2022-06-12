@@ -2278,6 +2278,12 @@
 								<ipxact:description>Stuff Error</ipxact:description>
 								<ipxact:value>4</ipxact:value>
 							</ipxact:enumeratedValue>
+							<ipxact:enumeratedValue>
+								<ipxact:name>ERC_PRT_ERR</ipxact:name>
+								<ipxact:displayName>ERC_PRT_ERR</ipxact:displayName>
+								<ipxact:description>Parity Error in TXT Buffer RAM DATA_1_4_W ... DATA_61_64_W words.</ipxact:description>
+								<ipxact:value>5</ipxact:value>
+							</ipxact:enumeratedValue>
 						</ipxact:enumeratedValues>
 					</ipxact:field>
 				</ipxact:register>

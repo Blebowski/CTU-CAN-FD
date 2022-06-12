@@ -267,6 +267,7 @@ begin
         txtb_hw_cmd_index      => txtb_hw_cmd_index,
         txtb_ptr               => txtb_ptr,
         txtb_clk_en            => '1',
+        txtb_parity_error_valid => (others => '0'),
         drv_bus                => (others => '0'),
         txtb_prorities         => txtb_prorities,
         timestamp              => timestamp

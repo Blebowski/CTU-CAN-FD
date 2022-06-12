@@ -102,7 +102,10 @@ entity txt_buffer is
         G_ID                   :     natural := 1;
         
         -- Technology type
-        G_TECHNOLOGY           :     natural := C_TECH_ASIC
+        G_TECHNOLOGY           :     natural := C_TECH_ASIC;
+
+        -- Support Parity Error
+        G_SUP_PARITY           :     boolean := false
     );
     port(
         ------------------------------------------------------------------------
@@ -123,73 +126,79 @@ entity txt_buffer is
         -- Memory Registers Interface
         ------------------------------------------------------------------------
         -- Data to be written to TXT Buffer RAM
-        txtb_port_a_data       :in   std_logic_vector(31 downto 0);
+        txtb_port_a_data        :in   std_logic_vector(31 downto 0);
         
         -- Address in TXT Buffer RAM
-        txtb_port_a_address    :in   std_logic_vector(4 downto 0);
+        txtb_port_a_address     :in   std_logic_vector(4 downto 0);
 
         -- TXT Buffer RAM chip select
-        txtb_port_a_cs         :in   std_logic;
+        txtb_port_a_cs          :in   std_logic;
         
         -- TXT Buffer port A - Byte enable
-        txtb_port_a_be         :in   std_logic_vector(3 downto 0);
+        txtb_port_a_be          :in   std_logic_vector(3 downto 0);
 
         -- SW commands
-        txtb_sw_cmd            :in   t_txtb_sw_cmd;
+        txtb_sw_cmd             :in   t_txtb_sw_cmd;
         
         -- TXT Buffer index for which SW command is valid
-        txtb_sw_cmd_index      :in   std_logic_vector(G_TXT_BUFFER_COUNT - 1 downto 0);
+        txtb_sw_cmd_index       :in   std_logic_vector(G_TXT_BUFFER_COUNT - 1 downto 0);
 
         -- Buffer State (encoded for Memory registers)
-        txtb_state             :out  std_logic_vector(3 downto 0);
+        txtb_state              :out  std_logic_vector(3 downto 0);
 
         -- TXT Buffer bus-off behavior
-        txt_buf_failed_bof     :in   std_logic;
+        txt_buf_failed_bof      :in   std_logic;
         
         -- Restricted operation mode
-        drv_rom_ena            :in   std_logic;
+        drv_rom_ena             :in   std_logic;
 
         -- Bus monitoring mode
-        drv_bus_mon_ena        :in   std_logic;
+        drv_bus_mon_ena         :in   std_logic;
         
         ------------------------------------------------------------------------
         -- Memory Testability
         ------------------------------------------------------------------------
         -- Test registers
-        test_registers_out     :in   test_registers_out_t;
+        test_registers_out      :in   test_registers_out_t;
         
         -- TXT buffer RAM test output
-        tst_rdata_txt_buf      :out  std_logic_vector(31 downto 0);
+        tst_rdata_txt_buf       :out  std_logic_vector(31 downto 0);
 
         ------------------------------------------------------------------------   
         -- Interrupt Manager Interface
         ------------------------------------------------------------------------
         -- HW Command applied
-        txtb_hw_cmd_int        :out  std_logic;
+        txtb_hw_cmd_int         :out  std_logic;
 
         ------------------------------------------------------------------------
         -- CAN Core and TX Arbitrator Interface
         ------------------------------------------------------------------------
         -- HW Commands 
-        txtb_hw_cmd            :in   t_txtb_hw_cmd;
+        txtb_hw_cmd             :in   t_txtb_hw_cmd;
         
         -- Index of TXT Buffer for which HW commands is valid          
-        txtb_hw_cmd_index      :in   natural range 0 to G_TXT_BUFFER_COUNT - 1;
+        txtb_hw_cmd_index       :in   natural range 0 to G_TXT_BUFFER_COUNT - 1;
 
         -- TXT Buffer RAM data output
-        txtb_port_b_data       :out  std_logic_vector(31 downto 0);
+        txtb_port_b_data        :out  std_logic_vector(31 downto 0);
         
         -- TXT Buffer RAM address
-        txtb_port_b_address    :in   natural range 0 to 19;
+        txtb_port_b_address     :in   natural range 0 to 19;
 
         -- Clock enable to TXT Buffer port B
-        txtb_port_b_clk_en     :in   std_logic;
+        txtb_port_b_clk_en      :in   std_logic;
 
         -- Unit just turned bus off.
-        is_bus_off             :in   std_logic;
+        is_bus_off              :in   std_logic;
 
         -- TXT Buffer is available to be locked by CAN Core for transmission
-        txtb_available         :out  std_logic
+        txtb_available          :out  std_logic;
+
+        -- Parity check valid
+        txtb_parity_check_valid :in   std_logic;
+        
+        -- Parity error really occured
+        txtb_parity_error_valid :out  std_logic
     );
 end entity;
 
@@ -235,6 +244,9 @@ architecture rtl of txt_buffer is
     
     -- RAM clocks
     signal clk_ram                : std_logic;
+
+    -- Parity check
+    signal parity_error           : std_logic;
 
 begin
         
@@ -284,6 +296,12 @@ begin
                            else
                        '0';
 
+    txtb_parity_error_valid <= '1' when (parity_error = '1' and
+                                         txtb_parity_check_valid = '1' and
+                                         hw_cbs = '1')
+                                   else 
+                               '0';
+
     clk_gate_txt_buffer_ram_comp : entity ctu_can_fd_rtl.clk_gate
     generic map(
         G_TECHNOLOGY       => G_TECHNOLOGY
@@ -300,25 +318,30 @@ begin
     ----------------------------------------------------------------------------
     txt_buffer_ram_inst : entity ctu_can_fd_rtl.txt_buffer_ram
     generic map(
-        G_ID                 => G_ID
+        G_ID                    => G_ID,
+        G_SUP_PARITY            => G_SUP_PARITY
     )
     port map(
         -- Clock and Asynchronous reset
-        clk_sys              => clk_ram,                -- IN
+        clk_sys                 => clk_ram,                -- IN
+        res_n                   => res_n,                  -- IN
 
         -- Memory testability
-        test_registers_out   => test_registers_out,     -- IN
-        tst_rdata_txt_buf    => tst_rdata_txt_buf,      -- OUT
+        test_registers_out      => test_registers_out,     -- IN
+        tst_rdata_txt_buf       => tst_rdata_txt_buf,      -- OUT
 
         -- Port A - Write (from Memory registers)
-        port_a_address       => txtb_port_a_address,    -- IN
-        port_a_data_in       => txtb_port_a_data,       -- IN
-        port_a_write         => ram_write,              -- IN
-        port_a_be            => txtb_port_a_be,         -- IN
+        port_a_address          => txtb_port_a_address,    -- IN
+        port_a_data_in          => txtb_port_a_data,       -- IN
+        port_a_write            => ram_write,              -- IN
+        port_a_be               => txtb_port_a_be,         -- IN
 
         -- Port B - Read (from CAN Core)
-        port_b_address       => ram_read_address,       -- IN
-        port_b_data_out      => txtb_port_b_data_i      -- OUT
+        port_b_address          => ram_read_address,       -- IN
+        port_b_data_out         => txtb_port_b_data_i,     -- OUT
+
+        -- Parity check
+        parity_error            => parity_error            -- OUT
     );
     
     ----------------------------------------------------------------------------
@@ -326,27 +349,28 @@ begin
     ----------------------------------------------------------------------------
     txt_buffer_fsm_inst : entity ctu_can_fd_rtl.txt_buffer_fsm
     generic map(
-        G_ID                   => G_ID
+        G_ID                    => G_ID
     )
     port map(
-        clk_sys                => clk_sys,                  -- IN
-        res_n                  => res_n,                    -- IN
+        clk_sys                 => clk_sys,                  -- IN
+        res_n                   => res_n,                    -- IN
 
-        txtb_sw_cmd            => txtb_sw_cmd,              -- IN
-        sw_cbs                 => sw_cbs,                   -- IN
-        txt_buf_failed_bof     => txt_buf_failed_bof,       -- IN
+        txtb_sw_cmd             => txtb_sw_cmd,              -- IN
+        sw_cbs                  => sw_cbs,                   -- IN
+        txt_buf_failed_bof      => txt_buf_failed_bof,       -- IN
 
-        txtb_hw_cmd            => txtb_hw_cmd,              -- IN
-        hw_cbs                 => hw_cbs,                   -- IN
-        is_bus_off             => is_bus_off,               -- IN
-        drv_rom_ena            => drv_rom_ena,              -- IN
-        drv_bus_mon_ena        => drv_bus_mon_ena,          -- IN
+        txtb_hw_cmd             => txtb_hw_cmd,              -- IN
+        hw_cbs                  => hw_cbs,                   -- IN
+        is_bus_off              => is_bus_off,               -- IN
+        txtb_parity_error_valid => txtb_parity_error_valid,  -- IN
+        drv_rom_ena             => drv_rom_ena,              -- IN
+        drv_bus_mon_ena         => drv_bus_mon_ena,          -- IN
 
-        txtb_user_accessible   => txtb_user_accessible,     -- OUT
-        txtb_hw_cmd_int        => txtb_hw_cmd_int,          -- OUT
-        txtb_state             => txtb_state,               -- OUT
-        txtb_available         => txtb_available,           -- OUT
-        txtb_unmask_data_ram   => txtb_unmask_data_ram      -- OUT
+        txtb_user_accessible    => txtb_user_accessible,     -- OUT
+        txtb_hw_cmd_int         => txtb_hw_cmd_int,          -- OUT
+        txtb_state              => txtb_state,               -- OUT
+        txtb_available          => txtb_available,           -- OUT
+        txtb_unmask_data_ram    => txtb_unmask_data_ram      -- OUT
     );
 
     -- <RELEASE_OFF>

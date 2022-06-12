@@ -101,74 +101,77 @@ entity tx_arbitrator_fsm is
         -- Clock and Asynchronous reset
         -----------------------------------------------------------------------
         -- System clock
-        clk_sys                :in  std_logic;
+        clk_sys                     :in  std_logic;
         
         -- Asynchronous reset
-        res_n                  :in  std_logic;
+        res_n                       :in  std_logic;
         
         -----------------------------------------------------------------------
         -- Priority decoder interface
         -----------------------------------------------------------------------
         -- TXT Buffer is valid and selected for transmission
-        select_buf_avail       :in  std_logic;
+        select_buf_avail            :in  std_logic;
         
         -- Priority decoder output has changed. TXT Arbitrator FSM has to restart
         -- selection process.
-        select_index_changed   :in  std_logic;
+        select_index_changed        :in  std_logic;
         
         -----------------------------------------------------------------------
         -- Timestamp comparison interface
         -----------------------------------------------------------------------
-        timestamp_valid        :in  std_logic;
+        timestamp_valid             :in  std_logic;
         
         -----------------------------------------------------------------------
         -- CAN Core Interface
         -----------------------------------------------------------------------
         -- HW Commands from CAN Core for manipulation with TXT Buffers 
-        txtb_hw_cmd             :in t_txtb_hw_cmd;  
+        txtb_hw_cmd                 :in t_txtb_hw_cmd;  
         
         ---------------------------------------------------------------------------
         -- TX Arbitrator FSM outputs
         ---------------------------------------------------------------------------
         -- Load Timestamp lower word to metadata pointer
-        load_ts_lw_addr        :out std_logic;
+        load_ts_lw_addr             :out std_logic;
         
         -- Load Timestamp upper word to metadata pointer
-        load_ts_uw_addr        :out std_logic;
+        load_ts_uw_addr             :out std_logic;
         
         -- Load Frame format word to metadata pointer
-        load_ffmt_w_addr       :out std_logic;
+        load_ffmt_w_addr            :out std_logic;
 
         -- Load identifier word to metadata pointer
-        load_ident_w_addr      :out std_logic;
+        load_ident_w_addr           :out std_logic;
 
         -- Clock enable for TXT Buffer RAM
-        txtb_meta_clk_en       :out std_logic;
+        txtb_meta_clk_en            :out std_logic;
 
         -- Store timestamp lower word
-        store_ts_l_w           :out std_logic;
+        store_ts_l_w                :out std_logic;
         
         -- Store metadata (Frame format word) on the output of TX Arbitrator
-        store_md_w             :out std_logic;
+        store_md_w                  :out std_logic;
         
         -- Store identifier (Identifier word) on the output of TX Arbitrator
-        store_ident_w          :out std_logic;
+        store_ident_w               :out std_logic;
 
         -- Store metadata (Frame format word) to double buffer registers.
-        buffer_md_w            :out std_logic; 
+        buffer_md_w                 :out std_logic; 
         
         -- Signals that TX Arbitrator is locked (CAN Core is transmitting from TXT
         -- Buffer)
-        tx_arb_locked          :out std_logic;
+        tx_arb_locked               :out std_logic;
         
         -- Store last locked TXT Buffer index
-        store_last_txtb_index  :out std_logic;
+        store_last_txtb_index       :out std_logic;
         
         -- Set valid selected buffer on TX Arbitrator output.
-        frame_valid_com_set    :out std_logic;    
+        frame_valid_com_set         :out std_logic;    
         
         -- Clear valid selected buffer on TX Arbitrator output.
-        frame_valid_com_clear  :out std_logic 
+        frame_valid_com_clear       :out std_logic;
+
+        -- TXT Buffer output data are valid 
+        tx_arb_parity_check_valid   :out std_logic
     );
 end entity;
 
@@ -316,6 +319,8 @@ begin
         
         fsm_wait_state_d       <= '0';
     
+        tx_arb_parity_check_valid <= '0';
+
         case curr_state is   
         
         --------------------------------------------------------------------
@@ -348,6 +353,7 @@ begin
                 fsm_wait_state_d <= '1';
                 load_ts_uw_addr  <= '1';
                 store_ts_l_w     <= '1';
+                tx_arb_parity_check_valid <= '1';
             end if;
         
         --------------------------------------------------------------------
@@ -373,6 +379,7 @@ begin
                     fsm_wait_state_d <= '1';
                     load_ffmt_w_addr <= '1';
                 end if;
+                tx_arb_parity_check_valid <= '1';
             end if;
         
         --------------------------------------------------------------------
@@ -395,6 +402,7 @@ begin
                 fsm_wait_state_d  <= '1';
                 load_ident_w_addr <= '1';
                 buffer_md_w       <= '1';
+                tx_arb_parity_check_valid <= '1';
             end if;
         
         --------------------------------------------------------------------
@@ -417,6 +425,7 @@ begin
                 store_ident_w       <= '1';
                 store_md_w          <= '1';
                 frame_valid_com_set <= '1';
+                tx_arb_parity_check_valid <= '1';
             end if;
 
         --------------------------------------------------------------------

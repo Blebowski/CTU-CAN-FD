@@ -104,7 +104,10 @@ use ctu_can_fd_rtl.can_registers_pkg.all;
 entity txt_buffer_ram is
     generic(
         -- TXT buffer ID
-        G_ID                   :     natural
+        G_ID                   :     natural;
+
+        -- TXT Buffer parity
+        G_SUP_PARITY           :     boolean
     );
     port(
         ------------------------------------------------------------------------
@@ -112,6 +115,9 @@ entity txt_buffer_ram is
         ------------------------------------------------------------------------
         -- System clock
         clk_sys                :in   std_logic;
+
+        -- Reset
+        res_n                  :in   std_logic;
 
         ------------------------------------------------------------------------
         -- Memory Testability
@@ -144,12 +150,19 @@ entity txt_buffer_ram is
         port_b_address       :in     std_logic_vector(4 downto 0);
         
         -- Data
-        port_b_data_out      :out    std_logic_vector(31 downto 0)
+        port_b_data_out      :out    std_logic_vector(31 downto 0);
+
+        -----------------------------------------------------------------------
+        -- Parity error
+        -----------------------------------------------------------------------
+        parity_error         :out    std_logic
     );
 end entity;
 
 architecture rtl of txt_buffer_ram is
     
+    constant C_TXT_BUF_DEPTH     : natural := 20;
+
     signal port_a_address_i      : std_logic_vector(4 downto 0);
     signal port_a_write_i        : std_logic;
     signal port_a_data_in_i      : std_logic_vector(31 downto 0);
@@ -159,6 +172,12 @@ architecture rtl of txt_buffer_ram is
     
     signal tst_ena               : std_logic;
     signal tst_addr              : std_logic_vector(15 downto 0);
+
+    signal parity_word           : std_logic_vector(C_TXT_BUF_DEPTH - 1 downto 0);
+    signal parity_write          : std_logic;
+    signal parity_read_real      : std_logic;
+    signal parity_read_exp       : std_logic;
+
 begin
     
     ---------------------------------------------------------------------------
@@ -169,7 +188,7 @@ begin
     txt_buf_ram_inst : entity ctu_can_fd_rtl.inf_ram_wrapper 
     generic map (
         G_WORD_WIDTH           => 32,
-        G_DEPTH                => 20,
+        G_DEPTH                => C_TXT_BUF_DEPTH,
         G_ADDRESS_WIDTH        => port_a_address'length,
         G_RESET_POLARITY       => '0',
         G_SYNC_READ            => true
@@ -186,6 +205,83 @@ begin
         data_out             => port_b_data_out_i
     );
     port_b_data_out <= port_b_data_out_i;
+
+    ---------------------------------------------------------------------------
+    ---------------------------------------------------------------------------
+    -- Parity protection
+    ---------------------------------------------------------------------------
+    ---------------------------------------------------------------------------
+    parity_true_gen : if (G_SUP_PARITY) generate
+
+        -----------------------------------------------------------------------
+        -- Parity encoding
+        -----------------------------------------------------------------------
+        parity_calculator_write_inst : entity ctu_can_fd_rtl.parity_calculator
+        generic map (
+            G_WIDTH         => 32,
+            G_PARITY_TYPE   => C_PARITY_TYPE
+        )
+        port map(
+            data_in         => port_a_data_in,
+            parity          => parity_write
+        );
+
+        -----------------------------------------------------------------------
+        -- Storing Parity word
+        -----------------------------------------------------------------------
+        parity_word_proc : process(res_n, clk_sys)
+        begin
+            if (res_n = '0') then
+                parity_word <= (others => '0');
+            elsif rising_edge(clk_sys) then
+                if (port_a_write = '1') then
+                    parity_word(to_integer(unsigned(port_a_address))) <=
+                        parity_write;
+                end if;
+            end if;
+        end process;
+
+        -----------------------------------------------------------------------
+        -- Parity decoding
+        -----------------------------------------------------------------------
+        parity_calculator_read_inst : entity ctu_can_fd_rtl.parity_calculator
+        generic map (
+            G_WIDTH         => 32,
+            G_PARITY_TYPE   => C_PARITY_TYPE
+        )
+        port map(
+            data_in         => port_b_data_out,
+            parity          => parity_read_real
+        );
+
+        -----------------------------------------------------------------------
+        -- Parity check
+        --
+        -- When reading from TXT Buffer RAM, read data are obtained one clock
+        -- cycle later!
+        -----------------------------------------------------------------------
+        parity_check_proc : process(clk_sys, res_n)
+        begin
+            if (res_n = '0') then
+                parity_read_exp <= '0';
+            elsif (rising_edge(clk_sys)) then
+                parity_read_exp <= parity_word(to_integer(unsigned(port_b_address)));
+            end if;
+        end process;
+
+        parity_error <= '1' when (parity_read_real /= parity_read_exp)
+                            else
+                        '0';
+
+    end generate;
+
+    parity_false_gen : if (not G_SUP_PARITY) generate
+        parity_error <= '0';
+        parity_read_exp <= '0';
+        parity_read_real <= '0';
+        parity_write <= '0';
+    end generate;
+    
 
     ---------------------------------------------------------------------------
     -- Memory testability

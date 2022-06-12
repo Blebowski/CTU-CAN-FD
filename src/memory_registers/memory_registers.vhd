@@ -270,6 +270,9 @@ entity memory_registers is
         -- TXT Buffer bus-off behavior
         txt_buf_failed_bof   :out  std_logic;
 
+        -- TXT Buffer Parity Error
+        txtb_parity_error_valid :in std_logic_vector(G_TXT_BUFFER_COUNT - 1 downto 0);
+
         ------------------------------------------------------------------------
         -- Bus synchroniser interface
         ------------------------------------------------------------------------
@@ -357,6 +360,8 @@ architecture rtl of memory_registers is
     signal rx_move_cmd : std_logic;
 
     signal ctr_pres_sel_q : std_logic_vector(3 downto 0);
+
+    signal tx_parity_error : std_logic;
 
     ---------------------------------------------------------------------------
     -- 
@@ -717,6 +722,27 @@ begin
 
     status_comb(RXPE_IND) <= rx_parity_error;
 
+    status_comb(TXPE_IND) <= tx_parity_error;
+
+    -- TXT Buffer parity error status
+    txpe_flag_proc : process(res_n, clk_sys)
+    begin
+        if (res_n = '0') then
+            tx_parity_error <= '0';
+        elsif rising_edge(clk_sys) then
+            for i in 0 to G_TXT_BUFFER_COUNT - 1 loop
+                if (txtb_parity_error_valid(i) = '1') then
+                    tx_parity_error <= '1';
+                end if;
+            end loop;
+
+            if (align_wrd_to_reg(control_registers_out.command, CTXPE_IND) = '1') then
+                tx_parity_error <= '0';
+            end if;
+
+        end if;
+    end process;
+
     traffic_ctrs_gen_true : if G_SUP_TRAFFIC_CTRS generate
         status_comb(STCNT_IND) <= '1';
     end generate traffic_ctrs_gen_true;
@@ -726,7 +752,7 @@ begin
     end generate traffic_ctrs_gen_false;
     
     status_comb(31 downto 18) <= (others => '0');
-    status_comb(15 downto 10) <= (others => '0');
+    status_comb(15 downto 11) <= (others => '0');
 
     ----------------------------------------------------------------------------
     ----------------------------------------------------------------------------

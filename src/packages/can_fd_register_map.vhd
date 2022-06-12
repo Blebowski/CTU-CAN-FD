@@ -1185,6 +1185,7 @@ package can_fd_register_map is
   constant ERC_FRM_ERR : std_logic_vector(2 downto 0) := "010";
   constant ERC_ACK_ERR : std_logic_vector(2 downto 0) := "011";
   constant ERC_STUF_ERR : std_logic_vector(2 downto 0) := "100";
+  constant ERC_PRT_ERR : std_logic_vector(2 downto 0) := "101";
 
   -- ERR_CAPT register reset values
   constant ERR_POS_RSTVAL : std_logic_vector(4 downto 0) := "11111";

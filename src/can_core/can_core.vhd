@@ -172,7 +172,10 @@ entity can_core is
         tran_identifier        :in   std_logic_vector(28 downto 0);
         
         -- Frame in TXT Buffer is valid any can be transmitted.
-        tran_frame_valid       :in   std_logic; 
+        tran_frame_valid       :in   std_logic;
+
+        -- Parity Error occurred in TXT Buffer RAMs during transmission of data words
+        tran_frame_parity_error:in   std_logic;
 
         -- HW Commands for TX Arbitrator and TXT Buffers
         txtb_hw_cmd            :out  t_txtb_hw_cmd;
@@ -535,18 +538,19 @@ begin
         is_pexs                 => is_pexs,             -- OUT
         
         -- TXT Buffers interface
-        tran_word               => tran_word,           -- IN
-        tran_dlc                => tran_dlc,            -- IN
-        tran_is_rtr             => tran_is_rtr,         -- IN
-        tran_ident_type         => tran_ident_type,     -- IN
-        tran_frame_type         => tran_frame_type,     -- IN
-        tran_brs                => tran_brs,            -- IN
-        tran_identifier         => tran_identifier,     -- IN
-        tran_frame_valid        => tran_frame_valid,    -- IN
-        txtb_hw_cmd             => txtb_hw_cmd_i,       -- IN
-        txtb_ptr                => txtb_ptr,            -- OUT
-        txtb_clk_en             => txtb_clk_en,         -- OUT
-        txtb_changed            => txtb_changed,        -- IN
+        tran_word               => tran_word,               -- IN
+        tran_dlc                => tran_dlc,                -- IN
+        tran_is_rtr             => tran_is_rtr,             -- IN
+        tran_ident_type         => tran_ident_type,         -- IN
+        tran_frame_type         => tran_frame_type,         -- IN
+        tran_brs                => tran_brs,                -- IN
+        tran_identifier         => tran_identifier,         -- IN
+        tran_frame_valid        => tran_frame_valid,        -- IN
+        tran_frame_parity_error => tran_frame_parity_error, --IN
+        txtb_hw_cmd             => txtb_hw_cmd_i,           -- IN
+        txtb_ptr                => txtb_ptr,                -- OUT
+        txtb_clk_en             => txtb_clk_en,             -- OUT
+        txtb_changed            => txtb_changed,            -- IN
         
         -- RX Buffer interface
         rec_ident               => rec_ident_i,         -- OUT

@@ -136,6 +136,12 @@ entity txt_buffer_fsm is
         -- Unit is Bus off
         is_bus_off              :in   std_logic;
 
+        ------------------------------------------------------------------------   
+        -- Parity checking logic
+        ------------------------------------------------------------------------ 
+        -- Parity Error
+        txtb_parity_error_valid :in   std_logic;
+
         ------------------------------------------------------------------------
         -- Status signals
         ------------------------------------------------------------------------
@@ -195,7 +201,7 @@ begin
     -- Next state process
     ----------------------------------------------------------------------------
     tx_buf_fsm_next_state_proc : process(curr_state, txtb_sw_cmd, sw_cbs, 
-        txtb_hw_cmd, hw_cbs, abort_applied, go_to_failed)
+        txtb_hw_cmd, hw_cbs, abort_applied, go_to_failed, txtb_parity_error_valid)
     begin
         next_state <= curr_state;
 
@@ -216,8 +222,12 @@ begin
         --------------------------------------------------------------------
         when s_txt_ready =>
           
+            -- Parity Error occured
+            if (txtb_parity_error_valid = '1') then
+                next_state <= s_txt_parity_err;
+
             -- Locking for transmission
-            if (txtb_hw_cmd.lock = '1' and hw_cbs = '1') then
+            elsif (txtb_hw_cmd.lock = '1' and hw_cbs = '1') then
 
                 -- Simultaneous "lock" and abort -> transmit, but
                 -- with abort pending
@@ -237,8 +247,12 @@ begin
         --------------------------------------------------------------------
         when s_txt_tx_prog =>
           
+            -- Parity Error occured
+            if (txtb_parity_error_valid = '1') then
+                next_state <= s_txt_parity_err;
+
             -- Unlock the buffer
-            if (txtb_hw_cmd.unlock = '1' and hw_cbs = '1') then
+            elsif (txtb_hw_cmd.unlock = '1' and hw_cbs = '1') then
 
                 -- Retransmitt reached, transmitt OK, or try again...
                 if (txtb_hw_cmd.failed         = '1') then
@@ -264,8 +278,12 @@ begin
         --------------------------------------------------------------------
         when s_txt_ab_prog =>
           
+            -- Parity Error occured
+            if (txtb_parity_error_valid = '1') then
+                next_state <= s_txt_parity_err;
+            
             -- Unlock the buffer
-            if (txtb_hw_cmd.unlock = '1' and hw_cbs = '1') then
+            elsif (txtb_hw_cmd.unlock = '1' and hw_cbs = '1') then
 
                 -- Retransmitt reached, transmitt OK, or try again... 
                 if (txtb_hw_cmd.failed         = '1') then
@@ -313,6 +331,21 @@ begin
         --------------------------------------------------------------------
         when s_txt_ok =>
           
+            -- "Set_ready"
+            if (txtb_sw_cmd.set_rdy = '1' and sw_cbs = '1') then
+                next_state       <= s_txt_ready;
+            end if;
+
+            -- "Set_empty"
+            if (txtb_sw_cmd.set_ety = '1' and sw_cbs = '1') then
+                next_state       <= s_txt_empty;
+            end if;
+
+        --------------------------------------------------------------------
+        -- Parity Error
+        --------------------------------------------------------------------
+        when s_txt_parity_err =>
+
             -- "Set_ready"
             if (txtb_sw_cmd.set_rdy = '1' and sw_cbs = '1') then
                 next_state       <= s_txt_ready;
@@ -396,7 +429,8 @@ begin
         TXT_TOK   when s_txt_ok,
         TXT_ERR   when s_txt_failed,
         TXT_ABT   when s_txt_aborted,
-        TXT_ETY   when s_txt_empty;
+        TXT_ETY   when s_txt_empty,
+        TXT_PER   when s_txt_parity_err;
         
     ---------------------------------------------------------------------------
     -- Unmask content of TXT Buffer RAM (make it available for CAN Core and

@@ -41097,7 +41097,8 @@ ERR_TYPE Type of last error.\begin_inset Newline newline\end_inset
 		0b001  - ERC_CRC_ERR - CRC Error\begin_inset Newline newline\end_inset
 		0b010  - ERC_FRM_ERR - Form Error\begin_inset Newline newline\end_inset
 		0b011  - ERC_ACK_ERR - Acknowledge Error\begin_inset Newline newline\end_inset
-		0b100  - ERC_STUF_ERR - Stuff Error
+		0b100  - ERC_STUF_ERR - Stuff Error\begin_inset Newline newline\end_inset
+		0b101  - ERC_PRT_ERR - Parity Error in TXT Buffer RAM DATA_1_4_W ... DATA_61_64_W words.
 \end_layout
 \begin_layout Standard
 \begin_inset VSpace bigskip

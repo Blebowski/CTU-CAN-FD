@@ -401,7 +401,13 @@ architecture rtl of can_top_level is
     
     -- Clock enable to TXT Buffer port B
     signal txtb_port_b_clk_en  :   std_logic;
-    
+
+    -- Parity check valid
+    signal txtb_parity_check_valid  :   std_logic;
+
+    -- Parity error valid
+    signal txtb_parity_error_valid  :   std_logic_vector(txt_buffer_count - 1 downto 0);
+
     ------------------------------------------------------------------------
     -- CAN Core <-> TX Arbitrator
     ------------------------------------------------------------------------    
@@ -429,6 +435,9 @@ architecture rtl of can_top_level is
     -- Valid frame is selected from transmission on output of TX Arbitrator.
     -- CAN Core may lock TXT Buffer for transmission!
     signal tran_frame_valid    :   std_logic;
+
+    -- Parity error occured in TXT Buffer RAM during transmission of data words.
+    signal tran_frame_parity_error : std_logic;
     
     -- Selected TXT Buffer index changed
     signal txtb_changed        :   std_logic;
@@ -638,7 +647,8 @@ begin
         txtb_sw_cmd_index       => txtb_sw_cmd_index,       -- OUT
         txtb_prorities          => txtb_prorities,          -- OUT
         txt_buf_failed_bof      => txt_buf_failed_bof,      -- OUT
-         
+        txtb_parity_error_valid => txtb_parity_error_valid, -- IN
+
         -- Bus synchroniser interface
         trv_delay               => trv_delay,               -- IN
 
@@ -713,43 +723,45 @@ begin
         generic map(
             G_TXT_BUFFER_COUNT  => txt_buffer_count,
             G_ID                => i,
-            G_TECHNOLOGY        => target_technology
+            G_TECHNOLOGY        => target_technology,
+            G_SUP_PARITY        => sup_parity
         )
         port map(
-            clk_sys             => clk_sys,                         -- IN
-            res_n               => res_core_n,                      -- IN
+            clk_sys                 => clk_sys,                         -- IN
+            res_n                   => res_core_n,                      -- IN
 
             -- DFT support
-            scan_enable         => scan_enable,                     -- IN
-
+            scan_enable             => scan_enable,                     -- IN
 
             -- Memory Registers Interface
-            txtb_port_a_data    => txtb_port_a_data,                -- IN
-            txtb_port_a_address => txtb_port_a_address,             -- IN
-            txtb_port_a_cs      => txtb_port_a_cs(i),               -- IN
-            txtb_port_a_be      => txtb_port_a_be,                  -- IN
-            txtb_sw_cmd         => txtb_sw_cmd,                     -- IN
-            txtb_sw_cmd_index   => txtb_sw_cmd_index,               -- IN
-            txtb_state          => txtb_state(i),                   -- OUT
-            txt_buf_failed_bof  => txt_buf_failed_bof,              -- IN
-            drv_rom_ena         => drv_bus(DRV_ROM_ENA_INDEX),      -- IN
-            drv_bus_mon_ena     => drv_bus(DRV_BUS_MON_ENA_INDEX),  -- IN
+            txtb_port_a_data        => txtb_port_a_data,                -- IN
+            txtb_port_a_address     => txtb_port_a_address,             -- IN
+            txtb_port_a_cs          => txtb_port_a_cs(i),               -- IN
+            txtb_port_a_be          => txtb_port_a_be,                  -- IN
+            txtb_sw_cmd             => txtb_sw_cmd,                     -- IN
+            txtb_sw_cmd_index       => txtb_sw_cmd_index,               -- IN
+            txtb_state              => txtb_state(i),                   -- OUT
+            txt_buf_failed_bof      => txt_buf_failed_bof,              -- IN
+            drv_rom_ena             => drv_bus(DRV_ROM_ENA_INDEX),      -- IN
+            drv_bus_mon_ena         => drv_bus(DRV_BUS_MON_ENA_INDEX),  -- IN
     
             -- Memory testability
-            test_registers_out  => test_registers_out,              -- IN
-            tst_rdata_txt_buf   => tst_rdata_txt_bufs(i),           -- OUT
+            test_registers_out      => test_registers_out,              -- IN
+            tst_rdata_txt_buf       => tst_rdata_txt_bufs(i),           -- OUT
     
             -- Interrupt Manager Interface
-            txtb_hw_cmd_int     => txtb_hw_cmd_int(i),              -- OUT
+            txtb_hw_cmd_int         => txtb_hw_cmd_int(i),              -- OUT
     
             -- CAN Core and TX Arbitrator Interface
-            txtb_hw_cmd         => txtb_hw_cmd,                     -- IN
-            txtb_hw_cmd_index   => txtb_hw_cmd_index,               -- IN
-            txtb_port_b_data    => txtb_port_b_data(i),             -- OUT
-            txtb_port_b_address => txtb_port_b_address,             -- IN
-            txtb_port_b_clk_en  => txtb_port_b_clk_en,              -- IN
-            is_bus_off          => is_bus_off,                      -- IN
-            txtb_available      => txtb_available(i)                -- OUT
+            txtb_hw_cmd             => txtb_hw_cmd,                     -- IN
+            txtb_hw_cmd_index       => txtb_hw_cmd_index,               -- IN
+            txtb_port_b_data        => txtb_port_b_data(i),             -- OUT
+            txtb_port_b_address     => txtb_port_b_address,             -- IN
+            txtb_port_b_clk_en      => txtb_port_b_clk_en,              -- IN
+            is_bus_off              => is_bus_off,                      -- IN
+            txtb_available          => txtb_available(i),               -- OUT
+            txtb_parity_check_valid => txtb_parity_check_valid,         -- IN
+            txtb_parity_error_valid => txtb_parity_error_valid(i)       -- OUT
         );
     end generate;
 
@@ -769,6 +781,8 @@ begin
         txtb_available          => txtb_available,          -- IN
         txtb_port_b_address     => txtb_port_b_address,     -- OUT
         txtb_port_b_clk_en      => txtb_port_b_clk_en,      -- OUT
+        txtb_parity_check_valid => txtb_parity_check_valid, -- OUT
+        txtb_parity_error_valid => txtb_parity_error_valid, -- IN
 
         -- CAN Core Interface
         tran_word               => tran_word,               -- OUT
@@ -779,6 +793,7 @@ begin
         tran_brs                => tran_brs,                -- OUT
         tran_identifier         => tran_identifier,         -- OUT
         tran_frame_valid        => tran_frame_valid,        -- OUT
+        tran_frame_parity_error => tran_frame_parity_error, -- OUT
         txtb_hw_cmd             => txtb_hw_cmd,             -- IN
         txtb_changed            => txtb_changed,            -- OUT
         txtb_hw_cmd_index       => txtb_hw_cmd_index,       -- IN
@@ -899,6 +914,7 @@ begin
         tran_brs                => tran_brs,                -- IN
         tran_identifier         => tran_identifier,         -- IN
         tran_frame_valid        => tran_frame_valid,        -- IN
+        tran_frame_parity_error => tran_frame_parity_error, -- IN
         txtb_hw_cmd             => txtb_hw_cmd,             -- OUT
         txtb_changed            => txtb_changed,            -- IN
         txtb_ptr                => txtb_ptr,                -- OUT
