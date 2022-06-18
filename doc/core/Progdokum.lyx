@@ -1365,11 +1365,7 @@ Move to new release of CTU CAN FD.
 Add MODE[TXBBM], MODE[SAM], STATUS[RXPE], STATUS[TXPE], COMMAND [CTPXE]
  and COMMAND[CRPXE].
  Add FRAME_FORMAT_W bits which allow flipping of CRC or Stuff count.
-
-\change_inserted -937042393 1651927851
  Add section on parity mechanism testing.
-\change_unchanged
-
 \end_layout
 
 \end_inset
@@ -1593,7 +1589,11 @@ This program is free software; you can redistribute it and/or * modify it
  You should have received a copy of the GNU General Public License along
  with this program; if not, write to the Free Software Foundation, Inc.,
  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+
+\change_deleted -937042393 1655596097
  
+\change_unchanged
+
 \end_layout
 
 \begin_layout Section
@@ -2199,7 +2199,11 @@ true/false
 \begin_layout Plain Layout
 Filter A is / is not present.
  If present, FILTER_STATUS[SFA] = 1.
+
+\change_deleted -937042393 1655596097
  
+\change_unchanged
+
 \end_layout
 
 \end_inset
@@ -3990,13 +3994,7 @@ Aborted
 
  states.
  CAN frame is stored to TXT buffers via TXT Buffer 1 - TXT Buffer 8 memory
- regions described in 
-\change_deleted -937042393 1651932857
-Chapter
-\change_inserted -937042393 1651932858
-Section
-\change_unchanged
- 3.
+ regions described in Section 3.
  T
 \end_layout
 
@@ -4170,13 +4168,9 @@ noprefix "false"
 \end_inset
 
 .
-\change_inserted -937042393 1651396281
-
 \end_layout
 
 \begin_layout Description
-
-\change_inserted -937042393 1651410756
 Note Higher value of TX_PRIORITY[TX*P] means TXT Buffer * has higher priority
  (e.g.
  if TX_PRIORITY[TX1P] = 2 and TX_PRIORITY[TX2P]=5, then TXT Buffer 2 has
@@ -4186,8 +4180,6 @@ Note Higher value of TX_PRIORITY[TX*P] means TXT Buffer * has higher priority
 \end_layout
 
 \begin_layout Description
-
-\change_inserted -937042393 1651397972
 Note Priority of 
 \begin_inset Quotes eld
 \end_inset
@@ -4217,8 +4209,6 @@ noprefix "false"
 \end_inset
 
 .
-\change_unchanged
-
 \end_layout
 
 \begin_layout Standard
@@ -4692,7 +4682,11 @@ Frame transmission is attempted only once, there are no retransmission attempts
 \begin_layout Plain Layout
 Frame transmission is attempted SETTINGS[RTRTH] + 1 times (initial transmission
  + SETTINGS[RTRTH] retransmissions).
+
+\change_deleted -937042393 1655596097
  
+\change_unchanged
+
 \end_layout
 
 \end_inset
@@ -5112,13 +5106,8 @@ Manual mode - When RX_DATA register is read, read pointer of RX buffer FIFO
 
 \begin_layout Standard
 Mode of RX buffer is configured by MODE[RXBAM] bit.
- CAN frame format within RX buffer is described in 
-\change_deleted -937042393 1651932852
-Chapter
-\change_inserted -937042393 1651932852
-Section
-\change_unchanged
- 3, and it is visualized in Figure 
+ CAN frame format within RX buffer is described in Section 3, and it is
+ visualized in Figure 
 \begin_inset CommandInset ref
 LatexCommand ref
 reference "fig:rx-buffer-frame-visualization"
@@ -6102,56 +6091,19 @@ Parity protection on RX Buffer RAM
 When CTU CAN FD receives CAN Frame and stores it to RX Buffer RAM, it adds
  single parity bit to each word of RX Buffer RAM.
  When SW driver is reading the frame from RX Buffer RAM, it can check for
- data consistency by reading STATUS[RXPR
-\change_inserted -937042393 1651400167
-E
-\change_deleted -937042393 1651400166
-T
-\change_unchanged
-] bit.
- CTU CAN FD sets STATUS[RXPR
-\change_inserted -937042393 1651400170
-E
-\change_deleted -937042393 1651400170
-T
-\change_unchanged
-] upon each read 
-\change_deleted -937042393 1653245559
-of
-\change_inserted -937042393 1653245559
-from
-\change_unchanged
- RX_DATA register 
-\change_deleted -937042393 1653245563
-by SW driver
-\change_unchanged
-, if parity bit in the word 
-\change_inserted -937042393 1653245569
-being 
-\change_unchanged
-read from RX Buffer RAM is not matching calculated parity bit.
+ data consistency by reading STATUS[RXPRE] bit.
+ CTU CAN FD sets STATUS[RXPRE] upon each read from RX_DATA register , if
+ parity bit in the word being read from RX Buffer RAM is not matching calculated
+ parity bit.
 \end_layout
 
 \begin_layout Standard
-Since a 
-\change_deleted -937042393 1653245586
-spurious bit-flip
-\change_inserted -937042393 1653245602
-a spurious single-event upset (SEU)
-\change_unchanged
- in RX Buffer RAM can potentially modify FRAME_FORMAT_W[DLC] word of received
- frame in RX Buffer RAM, it may hamper the length of the RX frame as seen
- by SW driver, and therefore get RX Buffer into inconsistent state where
- SW driver has read only part of a received frame.
- In such situation, all further 
-\change_deleted -937042393 1653245653
-read 
-\change_unchanged
-frames
-\change_inserted -937042393 1653245655
- read
-\change_unchanged
- from RX Buffer would be corrupted.
+Since a a spurious single-event upset (SEU) in RX Buffer RAM can potentially
+ modify FRAME_FORMAT_W[DLC] word of received frame in RX Buffer RAM, it
+ may hamper the length of the RX frame as seen by SW driver, and therefore
+ get RX Buffer into inconsistent state where SW driver has read only part
+ of a received frame.
+ In such situation, all further frames read from RX Buffer would be corrupted.
  To avoid this situation, following procedure can be applied when reading
  RX frames from RX Buffer with focus on parity checking:
 \end_layout
@@ -6209,23 +6161,15 @@ uint32_t ts_l = can_read_32(RX_DATA_ADDR);
 
 \begin_layout LyX-Code
 uint32_t ts_h = can_read_32(RX_DATA_ADDR);
-\change_inserted -937042393 1653241970
-
 \end_layout
 
 \begin_layout LyX-Code
 
-\change_inserted -937042393 1653241772
-
 \end_layout
 
 \begin_layout LyX-Code
-
-\change_inserted -937042393 1653241798
 /* If Parity error is in FRAME_FORMAT_W, RWCNT might be unreliable.
  */
-\change_unchanged
-
 \end_layout
 
 \begin_layout LyX-Code
@@ -6234,13 +6178,7 @@ if (can_read_32(STATUS_ADDR) >> 10) & 0x1)
 
 \begin_deeper
 \begin_layout LyX-Code
-goto 
-\change_deleted -937042393 1653241928
-parity_err_handler
-\change_inserted -937042393 1653241928
-rx_buffer_flush
-\change_unchanged
-;
+goto rx_buffer_flush;
 \end_layout
 
 \end_deeper
@@ -6358,43 +6296,21 @@ can_read_32(RX_DATA_ADDR);
 \end_deeper
 \begin_layout LyX-Code
 }
-\change_inserted -937042393 1653241845
-
 \end_layout
 
 \end_deeper
 \begin_layout LyX-Code
-
-\change_inserted -937042393 1653241901
 /* If we get here, there is a danger that RX Buffer is not in consistent
  state.
  */
 \end_layout
 
 \begin_layout LyX-Code
-
-\change_inserted -937042393 1653241831
 rx_buffer_flush:
 \end_layout
 
 \begin_deeper
 \begin_layout LyX-Code
-
-\change_deleted -937042393 1653241849
-/* If we get here, RX_STATUS[RX_MOF] is not signalling new frame even after
-\end_layout
-
-\begin_layout LyX-Code
-
-\change_deleted -937042393 1653241849
-   largest possible data payload (16 words) must have been read out from
-\end_layout
-
-\begin_layout LyX-Code
-
-\change_deleted -937042393 1653241849
-   RX Buffer, something is very wrong -> Flush RX Buffer */
-\change_unchanged
 
 \end_layout
 
@@ -6417,13 +6333,9 @@ Note The example above assumes that RX Buffer is read in Automatic mode
 
 \begin_layout Description
 Note Writing COMMAND[CRXPE]=1 by SW clears STATUS[RXPE] bit.
-\change_inserted -937042393 1651927297
-
 \end_layout
 
 \begin_layout Description
-
-\change_inserted -937042393 1651927832
 Note When writing RX Buffer RAM via Test Registers (see 
 \begin_inset CommandInset ref
 LatexCommand ref
@@ -6445,7 +6357,11 @@ noprefix "false"
 
 \end_inset
 
+
+\change_deleted -937042393 1655596097
  
+\change_unchanged
+
 \end_layout
 
 \begin_layout Subsection
@@ -6509,13 +6425,9 @@ noprefix "false"
 Note If CTU CAN FD detects a parity error in TXT Buffer, SW shall write
  the whole CAN frame to TXT Buffer again before it attempts to use it for
  further transmissions.
-\change_inserted -937042393 1651927745
-
 \end_layout
 
 \begin_layout Description
-
-\change_inserted -937042393 1651927838
 Note When writing TXT Buffer RAM via Test Registers (see 
 \begin_inset CommandInset ref
 LatexCommand ref
@@ -6538,22 +6450,16 @@ noprefix "false"
 \end_inset
 
 
-\change_unchanged
-
 \end_layout
 
 \begin_layout Subsection
 TXT Buffer Backup mode
-\change_inserted -937042393 1651397950
-
 \begin_inset CommandInset label
 LatexCommand label
 name "subsec:TXT-Buffer-Backup"
 
 \end_inset
 
-
-\change_unchanged
 
 \end_layout
 
@@ -6779,13 +6685,9 @@ backup
 \end_inset
 
  TXT Buffer RAM, CTU CAN FD sets STATUS[TXDPE] bit.
-\change_inserted -937042393 1651397543
-
 \end_layout
 
 \begin_layout Standard
-
-\change_inserted -937042393 1651397792
 When CTU CAN FD operates in TXT Buffer Backup mode, priorities of both TXT
  Buffers are equal, and they are given by TX_PRIORITY[TX*P] of 
 \begin_inset Quotes eld
@@ -6798,39 +6700,19 @@ original
  TXT Buffer (e.g.
  priority of TXT Buffers 1 and 2 are given by TX_PRIORITY[TX1P], and TX_PRIORITY
 [TX2P] has no effect).
-\change_unchanged
-
 \end_layout
 
 \begin_layout Standard
 When SW uses CTU CAN FD in TXT Buffer Backup mode, it must meet following
  conditions:
-\change_deleted -937042393 1651397483
-
-\end_layout
-
-\begin_layout Itemize
-
-\change_deleted -937042393 1651397415
-Priority of TXT Buffers which form a pair (TX_PRIORITY register) must be
- equal (e.g.
- if CTU CAN FD contains 4 TXT Buffers, then at any time following must be
- valid: TX_PRIORITY[TXT1P] = TX_PRIORITY[TXT2P], TX_PRIORITY[TXT3P] = TX_PRIORIT
-Y[TXT4P]).
-\change_inserted -937042393 1651397479
-
 \end_layout
 
 \begin_layout Itemize
 When issuing a 
-\change_inserted -937042393 1651397687
-
 \series bold
 Set Ready
 \series default
- 
-\change_unchanged
-command to TXT Buffer (via TX_COMMAND register), SW shall issue the command
+ command to TXT Buffer (via TX_COMMAND register), SW shall issue the command
  simultaneously to both TXT Buffers which form a TXT Buffer pair (e.g.
  TX_COMMAND[TXB1] = TX_COMMAND[TXB2] = 1, when issuing command to TXT Buffer
  1 and TXT Buffer 2).
@@ -6890,13 +6772,9 @@ backup
 \end_inset
 
  TXT Buffer.
-\change_inserted -937042393 1651927782
-
 \end_layout
 
 \begin_layout Subsection
-
-\change_inserted -937042393 1651932752
 Parity protection testing
 \begin_inset CommandInset label
 LatexCommand label
@@ -6908,8 +6786,6 @@ name "subsec:Parity-protection-testing"
 \end_layout
 
 \begin_layout Standard
-
-\change_inserted -937042393 1651932926
 When Test registers memory region (see Section 3) is present in CTU CAN
  FD (STATUS[STRGS] = 1), write to TXT Buffer / RX Buffer RAMs via this memory
  region does not update parity bit value stored per each memory word of
@@ -6920,14 +6796,10 @@ When Test registers memory region (see Section 3) is present in CTU CAN
 \end_layout
 
 \begin_layout Enumerate
-
-\change_inserted -937042393 1651928077
 CTU CAN FD receives CAN frame to RX Buffer RAM.
 \end_layout
 
 \begin_layout Enumerate
-
-\change_inserted -937042393 1651928196
 SW reads RX Buffer RAM memory via Test Registers memory region (reffer to
  
 \begin_inset CommandInset citation
@@ -6941,43 +6813,31 @@ literal "false"
 \end_layout
 
 \begin_layout Enumerate
-
-\change_inserted -937042393 1651933033
 SW modifies a bit in memory word of CAN frame read in previous step, and
  stores such modified frame back to RX Buffer RAM via Test Registers memory
  region.
 \end_layout
 
 \begin_layout Enumerate
-
-\change_inserted -937042393 1651933487
 SW reads a frame from RX Buffer via RX_DATA register and then reads STATUS[RXPE].
  If STATUS[RXPE] = 1, then parity error detection mechanism on RX Buffer
  RAM works correctly.
 \end_layout
 
 \begin_layout Standard
-
-\change_inserted -937042393 1651928668
 Following sequence checks parity detection capabilities on TXT Buffer RAM:
 \end_layout
 
 \begin_layout Enumerate
-
-\change_inserted -937042393 1651928799
 SW inserts CAN frame to TXT Buffer.
 \end_layout
 
 \begin_layout Enumerate
-
-\change_inserted -937042393 1651933193
 SW reads such frame via Test Registers memory region, modifies a bit in
  random word, and stores back such word via Test Registers memory region.
 \end_layout
 
 \begin_layout Enumerate
-
-\change_inserted -937042393 1651928901
 SW sends 
 \series bold
 Set ready
@@ -6987,8 +6847,6 @@ Set ready
 \end_layout
 
 \begin_layout Enumerate
-
-\change_inserted -937042393 1651928971
 CTU CAN FD attempts to transmit a frame from this TXT Buffer (assuming no
  other TXT Buffer is in 
 \begin_inset Quotes eld
@@ -7004,16 +6862,12 @@ Ready
 \end_layout
 
 \begin_layout Enumerate
-
-\change_inserted -937042393 1651933492
 SW reads STATUS[TXPE].
  If yes STATUS[TXPE]=1, parity detection mechanism on TXT Buffer RAM works
  correctly.
 \end_layout
 
 \begin_layout Description
-
-\change_inserted -937042393 1655569581
 Note When SW flips a random bit in TXT Buffer RAM, it must flip a bit in
  memory words which will be read by CTU CAN FD when it attempts to transmit
  the frame.
@@ -7025,8 +6879,6 @@ Note When SW flips a random bit in TXT Buffer RAM, it must flip a bit in
 \end_layout
 
 \begin_layout Description
-
-\change_inserted -937042393 1655569700
 Note When accessing RX Buffer / TXT Buffer RAMs via Test Registers Memory
  region, TSTCTRL[TMENA] (test access enable bit) must be set only when the
  access is executed, not during operation of the core.
@@ -7034,24 +6886,16 @@ Note When accessing RX Buffer / TXT Buffer RAMs via Test Registers Memory
 \end_layout
 
 \begin_layout Enumerate
-
-\change_inserted -937042393 1655595833
 Set TSTCTRL[TMENA]=1.
 \end_layout
 
 \begin_layout Enumerate
-
-\change_inserted -937042393 1655569789
 Read / Write RX Buffer / TXT Buffer RAM via TST_DEST, TST_WDATA, TSTCTRL,
  TST_RDATA registers.
 \end_layout
 
 \begin_layout Enumerate
-
-\change_inserted -937042393 1655595835
 Set TSTCTRL[TMENA]=0.
-\change_unchanged
-
 \end_layout
 
 \begin_layout Section
@@ -7229,13 +7073,8 @@ Replace DLC with arbitrary value.
 
 \begin_layout Standard
 All features for corrupting transmitted CAN frames are configured per each
- transmitted frame in FRAME_
-\change_inserted -937042393 1651924143
-TEST
-\change_deleted -937042393 1651924143
-FORMAT
-\change_unchanged
-_W memory word in TXT Buffer, details are explained in following subsections.
+ transmitted frame in FRAME_TEST_W memory word in TXT Buffer, details are
+ explained in following subsections.
  These features are available only in Test mode (MODE[TSTM]=1).
  If MODE[TSTM]=0 , CTU CAN FD ignores this configuration and transmitts
  uncorrupted frames (as in regular operation).
@@ -7245,22 +7084,14 @@ _W memory word in TXT Buffer, details are explained in following subsections.
 \end_layout
 
 \begin_layout Description
-Note Corrupting a bit
-\change_inserted -937042393 1651924184
-,
-\change_unchanged
- or replacing a bit field with alternative value applies before bit-stuffing,
- therefore effect of flipping the bit may alternate length of the frame
- due to additional/removed stuff bit.
+Note Corrupting a bit, or replacing a bit field with alternative value applies
+ before bit-stuffing, therefore effect of flipping the bit may alternate
+ length of the frame due to additional/removed stuff bit.
 \end_layout
 
 \begin_layout Description
 Note To repeat transmission of a frame multiple times with corrupted bit,
- use standar
-\change_deleted -937042393 1651924199
- 
-\change_unchanged
-d 
+ use standard 
 \begin_inset Quotes eld
 \end_inset
 
@@ -7286,76 +7117,25 @@ Flip a bit of CRC field
 \end_layout
 
 \begin_layout Standard
-When FRAME_
-\change_deleted -937042393 1651924206
-FORMAT
-\change_inserted -937042393 1651924206
-TEST
-\change_unchanged
-_W[FCRC] = 1, CTU CAN FD transmitts inverted bit at CRC field bit position
- given by FRAME_
-\change_deleted -937042393 1651924215
-FORMAT
-\change_inserted -937042393 1651924216
-TEST
-\change_unchanged
-_W[
-\change_deleted -937042393 1651924218
-C
-\change_inserted -937042393 1651924218
-T
-\change_unchanged
-PRM].
+When FRAME_TEST_W[FCRC] = 1, CTU CAN FD transmitts inverted bit at CRC field
+ bit position given by FRAME_TEST_W[TPRM].
  E.g.
  :
 \end_layout
 
 \begin_layout Itemize
-FRAME_
-\change_deleted -937042393 1651924230
-FORMAT
-\change_inserted -937042393 1651924231
-TEST
-\change_unchanged
-_W[
-\change_deleted -937042393 1651924221
-C
-\change_inserted -937042393 1651924221
-T
-\change_unchanged
-PRM] = 0x0 -> Bit at position 0 in CRC field (first bit of CRC field) is
- transmitted with opposite value.
+FRAME_TEST_W[TPRM] = 0x0 -> Bit at position 0 in CRC field (first bit of
+ CRC field) is transmitted with opposite value.
 \end_layout
 
 \begin_layout Itemize
-FRAME_
-\change_deleted -937042393 1651924232
-FORMAT
-\change_inserted -937042393 1651924232
-TEST
-\change_unchanged
-_W[
-\change_deleted -937042393 1651924222
-C
-\change_inserted -937042393 1651924222
-T
-\change_unchanged
-PRM] = 0xE -> Bit at position 14 in CRC field (15-th bit of CRC filed) is
- transmitted with opposite value.
+FRAME_TEST_W[TPRM] = 0xE -> Bit at position 14 in CRC field (15-th bit of
+ CRC filed) is transmitted with opposite value.
 \end_layout
 
 \begin_layout Description
-Note If FRAME_
-\change_deleted -937042393 1651924234
-FORMAT
-\change_inserted -937042393 1651924235
-TEST
-\change_unchanged
-_W[FIND] is bigger than length of CRC field, no
-\change_deleted -937042393 1651924241
-t
-\change_unchanged
- bit is flipped.
+Note If FRAME_TEST_W[FIND] is bigger than length of CRC field, no bit is
+ flipped.
 \end_layout
 
 \begin_layout Subsection
@@ -7363,60 +7143,25 @@ Flip a bit of Stuff count field
 \end_layout
 
 \begin_layout Standard
-When FRAME_
-\change_deleted -937042393 1651924245
-FORMAT
-\change_inserted -937042393 1651924246
-TEST
-\change_unchanged
-_W[FSTC] = 1, CTU CAN FD transmitts inverted bit at Stuf count field bit
- position given by FRAME_
-\change_deleted -937042393 1651924249
-FORMAT
-\change_inserted -937042393 1651924250
-TEST
-\change_unchanged
-_W[
-\change_deleted -937042393 1651924252
-C
-\change_inserted -937042393 1651924252
-T
-\change_unchanged
-PRM].
+When FRAME_TEST_W[FSTC] = 1, CTU CAN FD transmitts inverted bit at Stuf
+ count field bit position given by FRAME_TEST_W[TPRM].
  E.g.
  :
 \end_layout
 
 \begin_layout Itemize
-FRAME_FORMAT_W[
-\change_deleted -937042393 1651924254
-C
-\change_inserted -937042393 1651924254
-T
-\change_unchanged
-PRM] = 0x0 -> First bit of Stuff count field is transmitted with opposite
- value.
+FRAME_FORMAT_W[TPRM] = 0x0 -> First bit of Stuff count field is transmitted
+ with opposite value.
 \end_layout
 
 \begin_layout Itemize
-FRAME_FORMAT_W[
-\change_deleted -937042393 1651924256
-C
-\change_inserted -937042393 1651924256
-T
-\change_unchanged
-PRM] = 0x2 -> Third bit of Stuff count field is transmitted with opposite
- value.
+FRAME_FORMAT_W[TPRM] = 0x2 -> Third bit of Stuff count field is transmitted
+ with opposite value.
 \end_layout
 
 \begin_layout Itemize
-FRAME_FORMAT_W[
-\change_deleted -937042393 1651924257
-C
-\change_inserted -937042393 1651924257
-T
-\change_unchanged
-PRM] = 0x3 -> Stuff Parity bit is transmitted with opposite value.
+FRAME_FORMAT_W[TPRM] = 0x3 -> Stuff Parity bit is transmitted with opposite
+ value.
 \end_layout
 
 \begin_layout Subsection
@@ -7424,52 +7169,18 @@ Replace DLC with arbitrary value
 \end_layout
 
 \begin_layout Standard
-When FRAME_
-\change_deleted -937042393 1651924267
-FORMAT
-\change_inserted -937042393 1651924268
-TEST
-\change_unchanged
-_W[SDLC] = 1, FRAME_
-\change_deleted -937042393 1651924270
-FORMAT
-\change_inserted -937042393 1651924270
-TEST
-\change_unchanged
-_W[CPRM][3:0] bits are transmitted instead of 
+When FRAME_TEST_W[SDLC] = 1, FRAME_TEST_W[CPRM][3:0] bits are transmitted
+ instead of 
 \begin_inset Newline newline
 \end_inset
 
-FRAME_
-\change_deleted -937042393 1651924274
-FORMAT
-\change_inserted -937042393 1651924274
-TEST
-\change_unchanged
-_W[DLC] in Data Lenght Code field of CAN frame.
- Number of data bytes transmitted is still derived from FRAME_
-\change_deleted -937042393 1651924283
-FORMAT
-\change_inserted -937042393 1651924284
-TEST
-\change_unchanged
-_W[DLC] field.
+FRAME_TEST_W[DLC] in Data Lenght Code field of CAN frame.
+ Number of data bytes transmitted is still derived from FRAME_TEST_W[DLC]
+ field.
 \end_layout
 
 \begin_layout Description
-Note CRC transmitted is calculated from FRAME_
-\change_deleted -937042393 1651924290
-FORMAT
-\change_inserted -937042393 1651924290
-TEST
-\change_unchanged
-_W[
-\change_deleted -937042393 1651924297
-C
-\change_inserted -937042393 1651924297
-T
-\change_unchanged
-PRM] (swapped value).
+Note CRC transmitted is calculated from FRAME_TEST_W[TPRM] (swapped value).
 \end_layout
 
 \begin_layout Section
@@ -7704,16 +7415,12 @@ CTU CAN FD contains debug register (DEBUG_REGISTER) which directly reflects
 
 \begin_layout Subsection
 Memory testability
-\change_inserted -937042393 1651927405
-
 \begin_inset CommandInset label
 LatexCommand label
 name "subsec:Memory-testability"
 
 \end_inset
 
-
-\change_unchanged
 
 \end_layout
 
