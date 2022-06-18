@@ -7013,7 +7013,7 @@ SW reads STATUS[TXPE].
 
 \begin_layout Description
 
-\change_inserted -937042393 1651933449
+\change_inserted -937042393 1655569581
 Note When SW flips a random bit in TXT Buffer RAM, it must flip a bit in
  memory words which will be read by CTU CAN FD when it attempts to transmit
  the frame.
@@ -7022,6 +7022,36 @@ Note When SW flips a random bit in TXT Buffer RAM, it must flip a bit in
  8 data bytes (FRAME_FORMAT_W[DLC]=1000), CTU CAN FD will not attempt to
  read DATA_61_64_W word from TXT Buffer RAM (it will only read DATA_1_4_W
  and DATA_5_8_W), and therefore it will not set STATUS[TXPE] bit.
+\end_layout
+
+\begin_layout Description
+
+\change_inserted -937042393 1655569700
+Note When accessing RX Buffer / TXT Buffer RAMs via Test Registers Memory
+ region, TSTCTRL[TMENA] (test access enable bit) must be set only when the
+ access is executed, not during operation of the core.
+ Typically, such access consists of:
+\end_layout
+
+\begin_layout Enumerate
+
+\change_inserted -937042393 1655595833
+Set TSTCTRL[TMENA]=1.
+\end_layout
+
+\begin_layout Enumerate
+
+\change_inserted -937042393 1655569789
+Read / Write RX Buffer / TXT Buffer RAM via TST_DEST, TST_WDATA, TSTCTRL,
+ TST_RDATA registers.
+\end_layout
+
+\begin_layout Enumerate
+
+\change_inserted -937042393 1655595835
+Set TSTCTRL[TMENA]=0.
+\change_unchanged
+
 \end_layout
 
 \begin_layout Section
