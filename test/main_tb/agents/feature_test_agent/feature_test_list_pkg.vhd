@@ -181,6 +181,7 @@ use ctu_can_fd_tb.status_rxs_ftest.all;
 use ctu_can_fd_tb.status_txnf_ftest.all;
 use ctu_can_fd_tb.status_txs_ftest.all;
 use ctu_can_fd_tb.status_rxpe_ftest.all;
+use ctu_can_fd_tb.status_txpe_ftest.all;
 use ctu_can_fd_tb.stuff_in_data_ftest.all;
 
 use ctu_can_fd_tb.trv_delay_ftest.all;
@@ -393,6 +394,8 @@ package body feature_test_list_pkg is
             status_txs_ftest_exec(channel);
         elsif (test_name = "status_rxpe") then
             status_rxpe_ftest_exec(channel);
+        elsif (test_name = "status_txpe") then
+            status_txpe_ftest_exec(channel);
         elsif (test_name = "stuff_in_data") then
             stuff_in_data_ftest_exec(channel);
 

@@ -206,6 +206,8 @@ feature:
             txt_buffer_count: 8
         
         status_txs:
+        status_rxpe:
+        status_txpe:
         stuff_in_data:
 
         trv_delay:

@@ -338,7 +338,8 @@ package feature_test_agent_pkg is
         buf_ab_progress,
         buf_aborted,
         buf_failed,
-        buf_done
+        buf_done,
+        buf_parity_err
     );
 
     -- TXT Buffer commands (used in test access, not synthesizable code)
@@ -1500,6 +1501,19 @@ package feature_test_agent_pkg is
         constant node           : in    t_feature_node;
         signal   channel        : inout t_com_channel
     );
+
+    ----------------------------------------------------------------------------
+    -- Convert TXT Buffer index to Test Memory location
+    --
+    -- Arguments:
+    --  txt_buf         TXT Buffer index
+    --
+    -- Returns:
+    --  Test memory location
+    ----------------------------------------------------------------------------
+    function txt_buf_to_test_mem_tgt(
+        constant txt_buf        : in  SW_TXT_index_type
+    ) return t_tgt_test_mem;
 
     ----------------------------------------------------------------------------
     -- Execute Write test access via Test registers to target memory
@@ -3298,6 +3312,7 @@ package body feature_test_agent_pkg is
         when TXT_ERR  => retVal := buf_failed;
         when TXT_ABT  => retVal := buf_aborted;
         when TXT_ETY  => retVal := buf_empty;
+        when TXT_PER  => retVal := buf_parity_err;
         when TXT_NOT_EXIST => retVal := buf_not_exist;
         when others =>
         error_m("Invalid TXT Buffer state: " &
@@ -4132,6 +4147,23 @@ package body feature_test_agent_pkg is
             return TMTGT_TXTBUF7;
         when TST_TGT_TXT_BUF_8 =>
             return TMTGT_TXTBUF8;
+        end case;
+    end function;
+
+
+    function txt_buf_to_test_mem_tgt(
+        constant txt_buf        : in  SW_TXT_index_type
+    ) return t_tgt_test_mem is
+    begin
+        case txt_buf is
+        when 1 => return TST_TGT_TXT_BUF_1;
+        when 2 => return TST_TGT_TXT_BUF_2;
+        when 3 => return TST_TGT_TXT_BUF_3;
+        when 4 => return TST_TGT_TXT_BUF_4;
+        when 5 => return TST_TGT_TXT_BUF_5;
+        when 6 => return TST_TGT_TXT_BUF_6;
+        when 7 => return TST_TGT_TXT_BUF_7;
+        when 8 => return TST_TGT_TXT_BUF_8;
         end case;
     end function;
 

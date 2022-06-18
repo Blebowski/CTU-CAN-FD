@@ -6,7 +6,7 @@ _default: &default
     functional_coverage_report: false
     code_coverage: false
     error_tolerance: 0
-    randomize: false
+    randomize: true
     seed: 0
     debug: false
     iterations: 1
@@ -180,6 +180,7 @@ feature:
         status_txnf:
         status_txs:
         status_rxpe:
+        status_txpe:
         stuff_in_data:
 
         trv_delay:

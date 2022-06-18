@@ -1,0 +1,360 @@
+--------------------------------------------------------------------------------
+-- 
+-- CTU CAN FD IP Core 
+-- Copyright (C) 2021-present Ondrej Ille
+-- 
+-- Permission is hereby granted, free of charge, to any person obtaining a copy
+-- of this VHDL component and associated documentation files (the "Component"),
+-- to use, copy, modify, merge, publish, distribute the Component for
+-- educational, research, evaluation, self-interest purposes. Using the
+-- Component for commercial purposes is forbidden unless previously agreed with
+-- Copyright holder.
+-- 
+-- The above copyright notice and this permission notice shall be included in
+-- all copies or substantial portions of the Component.
+-- 
+-- THE COMPONENT IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+-- IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+-- FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+-- AUTHORS OR COPYRIGHTHOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+-- LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+-- FROM, OUT OF OR IN CONNECTION WITH THE COMPONENT OR THE USE OR OTHER DEALINGS
+-- IN THE COMPONENT.
+-- 
+-- The CAN protocol is developed by Robert Bosch GmbH and protected by patents.
+-- Anybody who wants to implement this IP core on silicon has to obtain a CAN
+-- protocol license from Bosch.
+-- 
+-- -------------------------------------------------------------------------------
+-- 
+-- CTU CAN FD IP Core 
+-- Copyright (C) 2015-2020 MIT License
+-- 
+-- Authors:
+--     Ondrej Ille <ondrej.ille@gmail.com>
+--     Martin Jerabek <martin.jerabek01@gmail.com>
+-- 
+-- Project advisors: 
+-- 	Jiri Novak <jnovak@fel.cvut.cz>
+-- 	Pavel Pisa <pisa@cmp.felk.cvut.cz>
+-- 
+-- Department of Measurement         (http://meas.fel.cvut.cz/)
+-- Faculty of Electrical Engineering (http://www.fel.cvut.cz)
+-- Czech Technical University        (http://www.cvut.cz/)
+-- 
+-- Permission is hereby granted, free of charge, to any person obtaining a copy
+-- of this VHDL component and associated documentation files (the "Component"),
+-- to deal in the Component without restriction, including without limitation
+-- the rights to use, copy, modify, merge, publish, distribute, sublicense,
+-- and/or sell copies of the Component, and to permit persons to whom the
+-- Component is furnished to do so, subject to the following conditions:
+-- 
+-- The above copyright notice and this permission notice shall be included in
+-- all copies or substantial portions of the Component.
+-- 
+-- THE COMPONENT IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+-- IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+-- FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+-- AUTHORS OR COPYRIGHTHOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+-- LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+-- FROM, OUT OF OR IN CONNECTION WITH THE COMPONENT OR THE USE OR OTHER DEALINGS
+-- IN THE COMPONENT.
+-- 
+-- The CAN protocol is developed by Robert Bosch GmbH and protected by patents.
+-- Anybody who wants to implement this IP core on silicon has to obtain a CAN
+-- protocol license from Bosch.
+-- 
+--------------------------------------------------------------------------------
+
+--------------------------------------------------------------------------------
+-- @TestInfoStart
+--
+-- @Purpose:
+--  STATUS[TXPE] feature test.
+--
+-- @Verifies:
+--  @1. STATUS[TXPE] is set when there is a parity error detected in TXT Buffer
+--      RAM.
+--  @2. STATUS[TXPE] is cleared by COMMAND[CTXPE].
+--
+-- @Test sequence:
+--  @1. Set DUT to test mode.
+--  @2. Loop 4 times:
+--      @2.1 Generate Random CAN frame.
+--      @2.2 Insert the CAN frame for transmission into random TXT Buffer.
+--      @2.3 Generate random bit-flip in FRAME_FORMAT_W (loop 1), IDENTIFIER_W
+--           (loop 2), TIMESTAMP_L_W (loop 3), TIMESTAMP_U_W (loop 4) and
+--           corrupt this word in the TXT Buffer memory via test interface.
+--      @2.4 Send Set Ready command to this TXT Buffer. Wait for some time, and
+--           check that TXT Buffer ended up in "Parity Error" state.
+--      @2.5 Read STATUS[TXPE] and check it is 1. Write COMMAND[CTXPE], and
+--           check that STATUS[TXPE] = 0.
+--      @2.6 Insert the frame again, send Set Ready command.
+--      @2.7 Wait until frame is transmitted. Read frame from Test Node and
+--           check it is equal to transmitted frame.
+--  @3. Generate random CAN frame and make sure it has some data words. Insert
+--      it into random TXT Buffer.
+--  @4. Flip random bit within the data word, and write this flipped bit into
+--      TXT Buffer via test access to bypass parity encoding.
+--  @5. Send Set Ready command to TXT Buffer, wait until frame transmission
+--      starts. Wait until data field.
+--  @6. Wait until CAN frame is not in the data field, check that Error frame
+--      is being transmitted. Check that TXT Buffer ended up in Parity Error
+--      state.
+--  @7. Insert CAN frame into the TXT Buffer again.
+--  @8. Send Set Ready command. Wait until CAN frame is transmitted. Read it
+--      from Test Node and check that it matches original CAN frame.
+--
+-- @TestInfoEnd
+--------------------------------------------------------------------------------
+-- Revision History:
+--    15.6.2022   Created file
+--------------------------------------------------------------------------------
+
+Library ctu_can_fd_tb;
+context ctu_can_fd_tb.ieee_context;
+context ctu_can_fd_tb.rtl_context;
+context ctu_can_fd_tb.tb_common_context;
+
+use ctu_can_fd_tb.feature_test_agent_pkg.all;
+use ctu_can_fd_tb.mem_bus_agent_pkg.all;
+
+package status_txpe_ftest is
+    procedure status_txpe_ftest_exec(
+        signal      chn             : inout  t_com_channel
+    );
+end package;
+
+
+package body status_txpe_ftest is
+    procedure status_txpe_ftest_exec(
+        signal      chn             : inout  t_com_channel
+    ) is
+        -- Generated frames
+        variable frame_1            :     SW_CAN_frame_type;
+        variable frame_2            :     SW_CAN_frame_type;
+
+        variable stat_1             :     SW_status;
+        variable command_1          :     SW_command := SW_command_rst_val;
+        variable mode_1             :     SW_mode := SW_mode_rst_val;
+        variable rx_buf_status      :     SW_RX_Buffer_info;
+
+        variable pc_dbg             :     SW_PC_Debug;
+        variable frame_sent         :     boolean;
+        variable frames_equal       :     boolean;
+
+        variable rptr_pos           :     integer := 0;
+        variable r_data             :     std_logic_vector(31 downto 0);
+        type t_raw_can_frame is
+            array (0 to 19) of std_logic_vector(31 downto 0);
+        variable rx_frame_buffer    :     t_raw_can_frame;
+        variable rwcnt              :     integer;
+        variable corrupt_wrd_index  :     integer;
+        variable corrupt_bit_index  :     integer;
+        variable corrupt_insert     :     std_logic;
+
+        variable txt_buf            :     SW_TXT_index_type;
+        variable tst_mem            :     t_tgt_test_mem;
+        variable txt_buf_state      :     SW_TXT_Buffer_state_type;
+    begin
+
+        -----------------------------------------------------------------------
+        -- @1. Set DUT to test mode.
+        -----------------------------------------------------------------------
+        info_m("Step 1");
+        mode_1.test := true;
+        set_core_mode(mode_1, DUT_NODE, chn);
+
+        -----------------------------------------------------------------------
+        -- @2. Loop 4 times
+        -----------------------------------------------------------------------
+        info_m("Step 2");
+        for i in 0 to 3 loop
+
+            -------------------------------------------------------------------
+            -- @2.1 Generate Random CAN frame.
+            -------------------------------------------------------------------
+            info_m("Step 2.1");
+            CAN_generate_frame(frame_1);
+
+            -------------------------------------------------------------------
+            -- @2.2 Insert the CAN frame for transmission into random TXT Buffer.
+            -------------------------------------------------------------------
+            info_m("Step 2.2");
+            pick_random_txt_buffer(txt_buf, DUT_NODE, chn);
+            CAN_insert_TX_frame(frame_1, txt_buf, DUT_NODE, chn);
+            
+            -------------------------------------------------------------------
+            -- @2.3 Generate random bit-flip in FRAME_FORMAT_W (loop 1),
+            --      IDENTIFIER_W (loop 2), TIMESTAMP_L_W (loop 3), TIMESTAMP_U_W
+            --      (loop 4) and corrupt this word in the TXT Buffer memory via
+            --      test interface.
+            -------------------------------------------------------------------
+            info_m("Step 2.3");
+
+            -- Enable test access
+            set_test_mem_access(true, DUT_NODE, chn);
+            tst_mem := txt_buf_to_test_mem_tgt(txt_buf);
+
+            -- Read, flip, and write back
+            test_mem_read(r_data, i, tst_mem, DUT_NODE, chn);
+            rand_int_v(32, corrupt_bit_index);
+            r_data(corrupt_bit_index) := not r_data(corrupt_bit_index);
+            test_mem_write(r_data, i, tst_mem, DUT_NODE, chn);
+
+            -- Disable test mem access
+            set_test_mem_access(false, DUT_NODE, chn);
+
+            -------------------------------------------------------------------
+            -- @2.4 Send Set Ready command to this TXT Buffer. Wait for some time,
+            --      and check that TXT Buffer ended up in "Parity Error" state.
+            -------------------------------------------------------------------
+            info_m("Step 2.4");
+
+            send_TXT_buf_cmd(buf_set_ready, txt_buf, DUT_NODE, chn);
+            wait for 1 us;
+            
+            get_tx_buf_state(txt_buf, txt_buf_state, DUT_NODE, chn);
+            check_m(txt_buf_state = buf_parity_err, "TXT Buffer in parity error state!");
+
+            get_controller_status(stat_1, DUT_NODE, chn);
+            check_false_m(stat_1.transmitter, "DUT is not transmitter.");
+
+            -------------------------------------------------------------------
+            -- @2.5 Read STATUS[TXPE] and check it is 1. Write COMMAND[CTXPE],
+            --      and check that STATUS[TXPE] = 0.
+            -------------------------------------------------------------------
+            info_m("Step 2.5");
+
+            get_controller_status(stat_1, DUT_NODE, chn);
+            check_m(stat_1.tx_parity_error, "STATUS[TXPE] = 1");
+            
+            command_1.clear_txpe := true;
+            give_controller_command(command_1, DUT_NODE, chn);
+            
+            get_controller_status(stat_1, DUT_NODE, chn);
+            check_false_m(stat_1.tx_parity_error, "STATUS[TXPE] = 0");
+
+            -------------------------------------------------------------------
+            -- @2.6 Insert the frame again, send Set Ready command.
+            -------------------------------------------------------------------
+            info_m("Step 2.6");
+
+            CAN_insert_TX_frame(frame_1, txt_buf, DUT_NODE, chn);
+            send_TXT_buf_cmd(buf_set_ready, txt_buf, DUT_NODE, chn);
+
+            -------------------------------------------------------------------
+            -- @2.7 Wait until frame is transmitted. Read frame from Test Node
+            --      and check it is equal to transmitted frame.
+            -------------------------------------------------------------------
+            info_m("Step 2.7");
+
+            CAN_wait_frame_sent(DUT_NODE, chn);
+            CAN_read_frame(frame_2, TEST_NODE, chn);
+            
+            CAN_compare_frames(frame_1, frame_2, false, frames_equal);
+            check_m(frames_equal, "Frames are equal.");
+
+        end loop;
+
+    ---------------------------------------------------------------------------
+    -- @3. Generate random CAN frame and make sure it has some data words.
+    --     Insert it into random TXT Buffer.
+    ---------------------------------------------------------------------------
+    info_m("Step 3");
+
+    pick_random_txt_buffer(txt_buf, DUT_NODE, chn);
+
+    CAN_generate_frame(frame_1);
+    frame_1.rtr := NO_RTR_FRAME;
+    if frame_1.data_length = 0 then
+        frame_1.data_length := 1;
+    end if;
+    decode_length(frame_1.data_length, frame_1.dlc);
+
+    CAN_insert_TX_frame(frame_1, txt_buf, DUT_NODE, chn);
+
+    ---------------------------------------------------------------------------
+    --  @4. Flip random bit within the data word, and write this flipped bit 
+    --      into TXT Buffer via test access to bypass parity encoding.
+    ---------------------------------------------------------------------------
+    info_m("Step 4");
+
+    -- Generate random word / bit index to flip
+    rand_int_v(32, corrupt_bit_index);
+    decode_dlc_rx_buff(frame_1.dlc, rwcnt);
+    rand_int_v(rwcnt - 3, corrupt_wrd_index);
+    corrupt_wrd_index := corrupt_wrd_index + 3;
+
+    -- Enable test access
+    set_test_mem_access(true, DUT_NODE, chn);
+    tst_mem := txt_buf_to_test_mem_tgt(txt_buf);
+
+    -- Read, flip, and write back
+    test_mem_read(r_data, corrupt_wrd_index, tst_mem, DUT_NODE, chn);
+    r_data(corrupt_bit_index) := not r_data(corrupt_bit_index);
+    test_mem_write(r_data, corrupt_wrd_index, tst_mem, DUT_NODE, chn);
+
+    -- Disable test mem access
+    set_test_mem_access(false, DUT_NODE, chn);
+
+    ---------------------------------------------------------------------------
+    --  @5. Send Set Ready command to TXT Buffer, wait until frame transmission
+    --      starts. Wait until data field.
+    ---------------------------------------------------------------------------
+    info_m("Step 5");
+
+    send_TXT_buf_cmd(buf_set_ready, txt_buf, DUT_NODE, chn);
+
+    CAN_wait_tx_rx_start(true, false, DUT_NODE, chn);
+    CAN_wait_pc_state(pc_deb_data, DUT_NODE, chn);
+
+    ---------------------------------------------------------------------------
+    -- @6. Wait until CAN frame is not in the data field, check that Error
+    --     frame is being transmitted. Check that TXT Buffer ended up in
+    --     Parity Error state.
+    ---------------------------------------------------------------------------
+    info_m("Step 6");
+
+    CAN_wait_not_pc_state(pc_deb_data, DUT_NODE, chn);
+    get_controller_status(stat_1, DUT_NODE, chn);
+
+    check_m(stat_1.error_transmission, "Error frame is being transmitted");
+
+    get_tx_buf_state(txt_buf, txt_buf_state, DUT_NODE, chn);
+    check_m(txt_buf_state = buf_parity_err, "TXT Buffer in parity error state!");
+
+    -- Check that parity flag was set, clear it!
+    get_controller_status(stat_1, DUT_NODE, chn);
+    check_m(stat_1.tx_parity_error, "STATUS[TXPE] = 1");
+    
+    command_1.clear_txpe := true;
+    give_controller_command(command_1, DUT_NODE, chn);
+    
+    get_controller_status(stat_1, DUT_NODE, chn);
+    check_false_m(stat_1.tx_parity_error, "STATUS[TXPE] = 0");
+
+    ---------------------------------------------------------------------------
+    -- @7. Insert CAN frame into the TXT Buffer again.
+    ---------------------------------------------------------------------------
+    info_m("Step 7");
+
+    CAN_insert_TX_frame(frame_1, txt_buf, DUT_NODE, chn);
+
+    ---------------------------------------------------------------------------
+    -- @8. Send Set Ready command. Wait until CAN frame is transmitted. Read
+    --      it from Test Node and check that it matches original CAN frame.
+    ---------------------------------------------------------------------------
+    info_m("Step 8");
+
+    send_TXT_buf_cmd(buf_set_ready, txt_buf, DUT_NODE, chn);
+
+    CAN_wait_frame_sent(DUT_NODE, chn);
+    CAN_read_frame(frame_2, TEST_NODE, chn);
+    
+    CAN_compare_frames(frame_1, frame_2, false, frames_equal);
+    check_m(frames_equal, "Frames are equal.");
+    
+  end procedure;
+
+end package body;

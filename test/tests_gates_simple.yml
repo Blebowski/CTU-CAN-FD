@@ -150,6 +150,8 @@ feature:
         status_idle:
         status_rxne:
         status_rxs:
+        status_rxpe:
+        status_txpe:
         status_txnf:
         status_txs:
         stuff_in_data:
