@@ -385,28 +385,34 @@ architecture rtl of can_top_level is
     -- TXT Buffers <-> TX Arbitrator
     ------------------------------------------------------------------------    
     -- Index of TXT Buffer for which HW commands is valid          
-    signal txtb_hw_cmd_index   :   natural range 0 to txt_buffer_count - 1;
+    signal txtb_hw_cmd_index        :   natural range 0 to txt_buffer_count - 1;
     
     -- TXT Buffers are available, can be selected by TX Arbitrator
-    signal txtb_available      :   std_logic_vector(txt_buffer_count - 1 downto 0);
+    signal txtb_available           :   std_logic_vector(txt_buffer_count - 1 downto 0);
         
     -- Pointer to TXT Buffer
-    signal txtb_ptr            :   natural range 0 to 19;
+    signal txtb_ptr                 :   natural range 0 to 19;
     
     -- TXT Buffer RAM data outputs
-    signal txtb_port_b_data    :   t_txt_bufs_output(txt_buffer_count - 1 downto 0);
+    signal txtb_port_b_data         :   t_txt_bufs_output(txt_buffer_count - 1 downto 0);
     
     -- TXT Buffer RAM address
-    signal txtb_port_b_address :   natural range 0 to 19;
+    signal txtb_port_b_address      :   natural range 0 to 19;
     
     -- Clock enable to TXT Buffer port B
-    signal txtb_port_b_clk_en  :   std_logic;
+    signal txtb_port_b_clk_en       :   std_logic;
 
     -- Parity check valid
     signal txtb_parity_check_valid  :   std_logic;
 
+    -- Parity mismatch
+    signal txtb_parity_mismatch     :   std_logic_vector(txt_buffer_count - 1 downto 0);
+
     -- Parity error valid
     signal txtb_parity_error_valid  :   std_logic_vector(txt_buffer_count - 1 downto 0);
+
+    -- TXT Buffer index selected by TX Arbitrator of CAN Core
+    signal txtb_index_muxed         :   natural range 0 to txt_buffer_count - 1;
 
     ------------------------------------------------------------------------
     -- CAN Core <-> TX Arbitrator
@@ -761,7 +767,9 @@ begin
             is_bus_off              => is_bus_off,                      -- IN
             txtb_available          => txtb_available(i),               -- OUT
             txtb_parity_check_valid => txtb_parity_check_valid,         -- IN
-            txtb_parity_error_valid => txtb_parity_error_valid(i)       -- OUT
+            txtb_parity_error_valid => txtb_parity_error_valid(i),      -- OUT
+            txtb_parity_mismatch    => txtb_parity_mismatch(i),         -- OUT
+            txtb_index_muxed        => txtb_index_muxed                 -- OUT
         );
     end generate;
 
@@ -782,7 +790,8 @@ begin
         txtb_port_b_address     => txtb_port_b_address,     -- OUT
         txtb_port_b_clk_en      => txtb_port_b_clk_en,      -- OUT
         txtb_parity_check_valid => txtb_parity_check_valid, -- OUT
-        txtb_parity_error_valid => txtb_parity_error_valid, -- IN
+        txtb_parity_mismatch    => txtb_parity_mismatch,    -- IN 
+        txtb_index_muxed        => txtb_index_muxed,        -- OUT
 
         -- CAN Core Interface
         tran_word               => tran_word,               -- OUT

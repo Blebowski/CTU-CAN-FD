@@ -153,9 +153,9 @@ entity txt_buffer_ram is
         port_b_data_out      :out    std_logic_vector(31 downto 0);
 
         -----------------------------------------------------------------------
-        -- Parity error
+        -- Parity mismatch
         -----------------------------------------------------------------------
-        parity_error         :out    std_logic
+        parity_mismatch      :out    std_logic
     );
 end entity;
 
@@ -269,14 +269,14 @@ begin
             end if;
         end process;
 
-        parity_error <= '1' when (parity_read_real /= parity_read_exp)
-                            else
-                        '0';
+        parity_mismatch <= '1' when (parity_read_real /= parity_read_exp)
+                               else
+                           '0';
 
     end generate;
 
     parity_false_gen : if (not G_SUP_PARITY) generate
-        parity_error <= '0';
+        parity_mismatch <= '0';
         parity_read_exp <= '0';
         parity_read_real <= '0';
         parity_write <= '0';

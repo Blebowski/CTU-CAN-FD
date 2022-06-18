@@ -130,8 +130,11 @@ entity tx_arbitrator is
         -- Parity check valid
         txtb_parity_check_valid :out std_logic;
 
-        -- Parity Error occured in TXT Buffer
-        txtb_parity_error_valid :in  std_logic_vector(G_TXT_BUFFER_COUNT - 1 downto 0);
+        -- Parity Mismatch in TXT Buffer
+        txtb_parity_mismatch    :in  std_logic_vector(G_TXT_BUFFER_COUNT - 1 downto 0);
+
+        -- TXT Buffer index
+        txtb_index_muxed        :out natural range 0 to G_TXT_BUFFER_COUNT - 1;
 
         -----------------------------------------------------------------------
         -- CAN Core Interface
@@ -233,9 +236,6 @@ architecture rtl of tx_arbitrator is
     -- Registered values for detection of change
     signal select_buf_index_reg       : natural range 0 to G_TXT_BUFFER_COUNT - 1;
   
-    -- TXT Buffer index
-    signal buffer_index_muxed         : natural range 0 to G_TXT_BUFFER_COUNT - 1;
-  
     -- Lower timestamp loaded from TXT Buffer
     signal ts_low_internal            : std_logic_vector(31 downto 0);
   
@@ -313,6 +313,12 @@ architecture rtl of tx_arbitrator is
     -- Time triggered transmission mode enabled
     signal drv_tttm_ena               : std_logic;                   
 
+    -- Parity mismatches in TXT Buffers:
+    --  1. Mismatch during TXT Buffer validation
+    --  2. Mismatch during transmission
+    signal txtb_parity_mismatch_vld   : std_logic;
+    signal txtb_parity_mismatch_tx    : std_logic;
+
     ---------------------------------------------------------------------------
     -- Comparing procedure for two 64 bit std logic vectors
     ---------------------------------------------------------------------------
@@ -359,6 +365,7 @@ begin
     select_index_changed        => select_index_changed,        -- IN
     timestamp_valid             => timestamp_valid,             -- IN
     txtb_hw_cmd                 => txtb_hw_cmd,                 -- IN
+    txtb_parity_mismatch_vld    => txtb_parity_mismatch_vld,    -- IN
 
     load_ts_lw_addr             => load_ts_lw_addr,             -- OUT
     load_ts_uw_addr             => load_ts_uw_addr,             -- OUT
@@ -404,7 +411,26 @@ begin
                           else
                       '0';
 
-  tran_frame_parity_error <= '1' when (txtb_parity_error_valid(int_txtb_index) = '1' and
+  ------------------------------------------------------------------------------
+  -- Parity mismatch during validation of TXT Buffer, must be indexed using
+  -- "raw" / "combinatorial" index of buffer which is currently being validated.
+  ------------------------------------------------------------------------------
+  txtb_parity_mismatch_vld <= '1' when (txtb_parity_mismatch(select_buf_index) = '1')
+                                  else
+                              '0';
+
+  ------------------------------------------------------------------------------
+  -- Protocol controller reads from TXT Buffer, so if there is parity mismatch
+  -- one clock cycle later, this means there was error in data word. In such
+  -- case, signal to Protocol controller to start error frame! Buffer one which
+  -- parity mismatch is checked, must be selected by registered index of
+  -- TXT Buffer which is used for transmission.
+  ------------------------------------------------------------------------------
+  txtb_parity_mismatch_tx <= '1' when (txtb_parity_mismatch(int_txtb_index) = '1')
+                                 else
+                             '0';
+
+  tran_frame_parity_error <= '1' when (txtb_parity_mismatch_tx = '1' and
                                        txtb_clk_en_q = '1')
                                  else
                              '0';
@@ -414,8 +440,8 @@ begin
   -- ssion, use last stored TXT buffer. Otherwise use combinatorially selected
   -- TXT buffer (during validation).
   ------------------------------------------------------------------------------
-  buffer_index_muxed <= int_txtb_index when (tx_arb_locked = '1')
-                                       else
+  txtb_index_muxed <= int_txtb_index when (tx_arb_locked = '1')
+                                     else
                       select_buf_index;
 
   -- Parity check. When Protocol controller wants to enable clock for TXT Buffer,
@@ -427,7 +453,7 @@ begin
                              tx_arb_parity_check_valid;
 
   -- Select read data based on index of TXT buffer which should be accessed
-  txtb_selected_input <= txtb_port_b_data(buffer_index_muxed);
+  txtb_selected_input <= txtb_port_b_data(txtb_index_muxed);
   
   -- Transmitted data word taken from TXT Buffer output
   tran_word <= txtb_selected_input;
@@ -462,6 +488,20 @@ begin
                         txtb_meta_clk_en;
 
   txtb_hw_cmd_index <= int_txtb_index;
+
+
+  ------------------------------------------------------------------------------
+  -- Register for TXT Buffer clock enable
+  ------------------------------------------------------------------------------
+  txtb_clk_en_reg_proc : process(clk_sys, res_n)
+  begin
+    if (res_n = '0') then
+        txtb_clk_en_q <= '0';
+    elsif (rising_edge(clk_sys)) then
+        txtb_clk_en_q <= txtb_clk_en;
+    end if;
+  end process;
+
 
   ------------------------------------------------------------------------------
   -- Register for loading lower 32 bits of CAN Frame timestamp

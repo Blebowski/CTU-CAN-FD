@@ -125,8 +125,13 @@ entity tx_arbitrator_fsm is
         -- CAN Core Interface
         -----------------------------------------------------------------------
         -- HW Commands from CAN Core for manipulation with TXT Buffers 
-        txtb_hw_cmd                 :in t_txtb_hw_cmd;  
+        txtb_hw_cmd                 :in  t_txtb_hw_cmd;  
         
+        -----------------------------------------------------------------------
+        -- Parity mismatch on currently validated TXT Buffer
+        -----------------------------------------------------------------------
+        txtb_parity_mismatch_vld    :in  std_logic;
+
         ---------------------------------------------------------------------------
         -- TX Arbitrator FSM outputs
         ---------------------------------------------------------------------------
@@ -186,13 +191,22 @@ architecture rtl of tx_arbitrator_fsm is
   signal fsm_wait_state_d         : std_logic;
   signal fsm_wait_state_q         : std_logic;
 
+  -- Parity error in TXT Buffer being validated
+  signal parity_error_vld         : std_logic;
+
 begin
+
+    parity_error_vld <= '1' when (txtb_parity_mismatch_vld = '1' and
+                                  fsm_wait_state_q = '0')
+                            else
+                        '0';
 
     ----------------------------------------------------------------------------
     -- Next state process
     ----------------------------------------------------------------------------
     tx_arb_fsm_proc : process(curr_state, txtb_hw_cmd, select_buf_avail, 
-        select_index_changed, timestamp_valid, fsm_wait_state_q)
+        select_index_changed, timestamp_valid, fsm_wait_state_q,
+        parity_error_vld)
     begin
         -- Keeping signals values to avoid latch inference
         next_state                <= curr_state;
@@ -205,8 +219,8 @@ begin
         --------------------------------------------------------------------
         when s_arb_idle =>
             if (select_buf_avail = '1') then
-            next_state <= s_arb_sel_low_ts;
-        end if;
+                next_state <= s_arb_sel_low_ts;
+            end if;
         
         --------------------------------------------------------------------
         -- Read Low timestamp word of Selected TXT buffer.
@@ -214,7 +228,7 @@ begin
         when s_arb_sel_low_ts =>
             if (txtb_hw_cmd.lock = '1') then
                 next_state         <= s_arb_locked;
-            elsif (select_buf_avail = '0') then
+            elsif (select_buf_avail = '0' or parity_error_vld = '1') then
                 next_state         <= s_arb_idle;
             elsif (select_index_changed = '1') then
                 next_state         <= s_arb_sel_low_ts;
@@ -230,7 +244,7 @@ begin
         when s_arb_sel_upp_ts =>
             if (txtb_hw_cmd.lock = '1') then
                 next_state         <= s_arb_locked;
-            elsif (select_buf_avail = '0') then
+            elsif (select_buf_avail = '0' or parity_error_vld = '1') then
                 next_state         <= s_arb_idle;
             elsif (select_index_changed = '1') then
                 next_state         <= s_arb_sel_low_ts;
@@ -246,7 +260,7 @@ begin
         when s_arb_sel_ffw =>
              if (txtb_hw_cmd.lock = '1') then
                 next_state         <= s_arb_locked;
-            elsif (select_buf_avail = '0') then
+            elsif (select_buf_avail = '0' or parity_error_vld = '1') then
                 next_state         <= s_arb_idle;
             elsif (select_index_changed = '1') then
                 next_state         <= s_arb_sel_low_ts;
@@ -260,7 +274,7 @@ begin
         when s_arb_sel_idw =>
              if (txtb_hw_cmd.lock = '1') then
                 next_state         <= s_arb_locked;
-            elsif (select_buf_avail = '0') then
+            elsif (select_buf_avail = '0' or parity_error_vld = '1') then
                 next_state         <= s_arb_idle;
             elsif (select_index_changed = '1') then
                 next_state         <= s_arb_sel_low_ts;
@@ -550,6 +564,20 @@ begin
   -- psl txtb_changed_arb_validated_cov : cover
   --  {curr_state = s_arb_validated and select_index_changed = '0'};  
 
+
+  -- Parity errors
+
+  -- psl txtb_ffw_parity_error_cov : cover
+  --  {curr_state = s_arb_sel_ffw and parity_error_vld = '1'};
+
+  -- psl txtb_idw_parity_error_cov : cover
+  --  {curr_state = s_arb_sel_idw and parity_error_vld = '1'};
+
+  -- psl txtb_lts_parity_error_cov : cover
+  --  {curr_state = s_arb_sel_low_ts and parity_error_vld = '1'};
+
+  -- psl txtb_uts_parity_error_cov : cover
+  --  {curr_state = s_arb_sel_upp_ts and parity_error_vld = '1'};
 
   -- Waiting till timestamp will be ready (transmission at given time)
 

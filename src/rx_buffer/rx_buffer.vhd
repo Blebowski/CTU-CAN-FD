@@ -425,7 +425,7 @@ architecture rtl of rx_buffer is
     ----------------------------------------------------------------------------
     -- Parity error detection
     ----------------------------------------------------------------------------
-    signal rx_parity_error_comb     :       std_logic;
+    signal rx_parity_mismatch_comb  :       std_logic;
 
 begin
 
@@ -884,7 +884,7 @@ begin
         port_b_data_out      => RAM_data_out,           -- OUT
 
         -- Parity error detection
-        parity_error         => rx_parity_error_comb    -- OUT
+        parity_mismatch      => rx_parity_mismatch_comb -- OUT
     );
 
     -- Memory written either on regular write or timestamp write
@@ -928,7 +928,7 @@ begin
         if (res_n = '0') then
             rx_parity_error <= '0';
         elsif (rising_edge(clk_sys)) then
-            if (drv_read_start = '1' and rx_parity_error_comb = '1') then
+            if (drv_read_start = '1' and rx_parity_mismatch_comb = '1') then
                 rx_parity_error <= '1';
             elsif (drv_clr_rxpe = '1') then
                 rx_parity_error <= '0';

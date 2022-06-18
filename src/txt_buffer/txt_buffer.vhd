@@ -197,8 +197,14 @@ entity txt_buffer is
         -- Parity check valid
         txtb_parity_check_valid :in   std_logic;
         
+        -- Parity error detected
+        txtb_parity_mismatch    :out  std_logic;
+
         -- Parity error really occured
-        txtb_parity_error_valid :out  std_logic
+        txtb_parity_error_valid :out  std_logic;
+
+        -- Index of TXT Buffer which is being read
+        txtb_index_muxed        :in   natural range 0 to G_TXT_BUFFER_COUNT - 1
     );
 end entity;
 
@@ -246,7 +252,7 @@ architecture rtl of txt_buffer is
     signal clk_ram                : std_logic;
 
     -- Parity check
-    signal parity_error           : std_logic;
+    signal parity_mismatch        : std_logic;
 
 begin
         
@@ -296,9 +302,14 @@ begin
                            else
                        '0';
 
-    txtb_parity_error_valid <= '1' when (parity_error = '1' and
+    ----------------------------------------------------------------------------
+    -- Parity error really occured (and STATUS[TXPE] can be set), only when
+    -- TX Arbitrator or CAN Core have really read from the TXT Buffer, otherwise
+    -- the output might be rubbish (uninited data, previous value).
+    ----------------------------------------------------------------------------
+    txtb_parity_error_valid <= '1' when (parity_mismatch = '1' and
                                          txtb_parity_check_valid = '1' and
-                                         hw_cbs = '1')
+                                         txtb_index_muxed = G_ID)
                                    else 
                                '0';
 
@@ -341,7 +352,7 @@ begin
         port_b_data_out         => txtb_port_b_data_i,     -- OUT
 
         -- Parity check
-        parity_error            => parity_error            -- OUT
+        parity_mismatch         => parity_mismatch         -- OUT
     );
     
     ----------------------------------------------------------------------------
@@ -372,6 +383,8 @@ begin
         txtb_available          => txtb_available,           -- OUT
         txtb_unmask_data_ram    => txtb_unmask_data_ram      -- OUT
     );
+
+    txtb_parity_mismatch <= parity_mismatch;
 
     -- <RELEASE_OFF>
     ----------------------------------------------------------------------------

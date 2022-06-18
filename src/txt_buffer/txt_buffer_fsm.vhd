@@ -459,6 +459,7 @@ begin
     -- psl txtb_fsm_error_cov : cover {curr_state = s_txt_failed};
     -- psl txtb_fsm_aborted_cov : cover {curr_state = s_txt_aborted};
     -- psl txtb_fsm_tx_ok_cov : cover {curr_state = s_txt_ok};
+    -- psl txtb_fsm_parity_err_cov : cover {curr_state = s_txt_parity_err};
     
     -- Simultaneous HW and SW Commands
     --
@@ -485,8 +486,8 @@ begin
     --
     -- psl txtb_unlock_only_in_tx_prog_asrt : assert always
     --  ((txtb_hw_cmd.unlock = '1' and hw_cbs = '1') ->
-    --   (curr_state = s_txt_tx_prog or curr_state = s_txt_ab_prog))
-    --  report "TXT Buffer not TX in progress or Abort in progress when unlock received!";
+    --   (curr_state = s_txt_tx_prog or curr_state = s_txt_ab_prog or curr_state = s_txt_parity_err))
+    --  report "TXT Buffer not TX in progress, Abort in progress or Parity Error when unlock received!";
     ----------------------------------------------------------------------------
     -- HW Lock command should never occur when there was abort in previous cycle!
     --
