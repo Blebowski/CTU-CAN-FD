@@ -234,7 +234,7 @@ package tb_random_pkg is
     --                  executing: "wait for 0 ns"
     ----------------------------------------------------------------------------
     procedure rand_int_s(
-        constant max            : in    positive;
+        constant max            : in    natural;
         signal   retval         : out   natural;
         constant refresh        : in    boolean := true
     );
@@ -249,7 +249,7 @@ package tb_random_pkg is
     --                  executing: "wait for 0 ns"
     ----------------------------------------------------------------------------
     procedure rand_int_v(
-        constant max            : in    positive;
+        constant max            : in    natural;
         variable retval         : out   natural
     );
 
@@ -1268,7 +1268,7 @@ package body tb_random_pkg is
   
 
     procedure rand_int_s(
-        constant max            : in    positive;
+        constant max            : in    natural;
         signal   retval         : out   natural;
         constant refresh        : in    boolean := true
     )is
@@ -1286,7 +1286,7 @@ package body tb_random_pkg is
   
 
     procedure rand_int_v(
-        constant max            : in    positive;
+        constant max            : in    natural;
         variable retval         : out   natural
     ) is
         variable tmp            :       real;

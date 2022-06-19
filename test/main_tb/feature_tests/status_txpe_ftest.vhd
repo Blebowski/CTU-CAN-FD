@@ -97,10 +97,9 @@
 --  @4. Flip random bit within the data word, and write this flipped bit into
 --      TXT Buffer via test access to bypass parity encoding.
 --  @5. Send Set Ready command to TXT Buffer, wait until frame transmission
---      starts. Wait until data field.
---  @6. Wait until CAN frame is not in the data field, check that Error frame
---      is being transmitted. Check that TXT Buffer ended up in Parity Error
---      state.
+--      starts.
+--  @6. Wait until error frame, check its transmission from status bit
+--      Check that TXT Buffer ended up in Parity Error state.
 --  @7. Insert CAN frame into the TXT Buffer again.
 --  @8. Send Set Ready command. Wait until CAN frame is transmitted. Read it
 --      from Test Node and check that it matches original CAN frame.
@@ -198,7 +197,7 @@ package body status_txpe_ftest is
 
             -- Read, flip, and write back
             test_mem_read(r_data, i, tst_mem, DUT_NODE, chn);
-            rand_int_v(32, corrupt_bit_index);
+            rand_int_v(31, corrupt_bit_index);
             r_data(corrupt_bit_index) := not r_data(corrupt_bit_index);
             test_mem_write(r_data, i, tst_mem, DUT_NODE, chn);
 
@@ -271,6 +270,7 @@ package body status_txpe_ftest is
         frame_1.data_length := 1;
     end if;
     decode_length(frame_1.data_length, frame_1.dlc);
+    decode_dlc_rx_buff(frame_1.dlc, frame_1.rwcnt);
 
     CAN_insert_TX_frame(frame_1, txt_buf, DUT_NODE, chn);
 
@@ -281,10 +281,12 @@ package body status_txpe_ftest is
     info_m("Step 4");
 
     -- Generate random word / bit index to flip
-    rand_int_v(32, corrupt_bit_index);
+    rand_int_v(31, corrupt_bit_index);
     decode_dlc_rx_buff(frame_1.dlc, rwcnt);
-    rand_int_v(rwcnt - 3, corrupt_wrd_index);
-    corrupt_wrd_index := corrupt_wrd_index + 3;
+    rand_int_v(rwcnt - 4, corrupt_wrd_index);
+    corrupt_wrd_index := corrupt_wrd_index + 4;
+    info_m("Flipping word index: " & integer'image(corrupt_wrd_index));
+    info_m("Flipping bit  index: " & integer'image(corrupt_bit_index));
 
     -- Enable test access
     set_test_mem_access(true, DUT_NODE, chn);
@@ -300,23 +302,25 @@ package body status_txpe_ftest is
 
     ---------------------------------------------------------------------------
     --  @5. Send Set Ready command to TXT Buffer, wait until frame transmission
-    --      starts. Wait until data field.
+    --      starts.
     ---------------------------------------------------------------------------
     info_m("Step 5");
 
     send_TXT_buf_cmd(buf_set_ready, txt_buf, DUT_NODE, chn);
 
     CAN_wait_tx_rx_start(true, false, DUT_NODE, chn);
-    CAN_wait_pc_state(pc_deb_data, DUT_NODE, chn);
 
     ---------------------------------------------------------------------------
-    -- @6. Wait until CAN frame is not in the data field, check that Error
-    --     frame is being transmitted. Check that TXT Buffer ended up in
-    --     Parity Error state.
+    -- @6. Wait until error frame, check it is being transmitted. Check that
+    --     TXT Buffer ended up in Parity Error state.
     ---------------------------------------------------------------------------
     info_m("Step 6");
 
-    CAN_wait_not_pc_state(pc_deb_data, DUT_NODE, chn);
+    -- Note: Despite the fact that we flipped bit of data field, we can't
+    --       wait till data field. If we flipped bit in first data word, it
+    --       will be read out during control field, and thus protocol control
+    --       will never get to data field!
+    CAN_wait_error_frame(DUT_NODE, chn);
     get_controller_status(stat_1, DUT_NODE, chn);
 
     check_m(stat_1.error_transmission, "Error frame is being transmitted");
