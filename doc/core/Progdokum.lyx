@@ -6438,7 +6438,7 @@ Note If CTU CAN FD detects a parity error in TXT Buffer, SW shall write
 \end_layout
 
 \begin_layout Description
-Note When writing TXT Buffer RAM via Test Registers (see 
+Note When SW writes TXT Buffer RAM via Test Registers (see 
 \begin_inset CommandInset ref
 LatexCommand ref
 reference "subsec:Memory-testability"
@@ -6555,8 +6555,8 @@ original
 \end_inset
 
  TXT Buffer.
- The operation of CTU CAN FD in TXT Buffer Backup mode is in detail explained
- in Figure 
+ The operation of CTU CAN FD in TXT Buffer Backup mode is shown in Figure
+ 
 \begin_inset CommandInset ref
 LatexCommand ref
 reference "fig:txt-buffer-backup-mode"
@@ -6566,7 +6566,163 @@ noprefix "false"
 
 \end_inset
 
-.
+ and explained in this section.
+\end_layout
+
+\begin_layout Standard
+When MODE[TXBBM]=1, and CTU CAN FD detects a parity error in 
+\begin_inset Quotes eld
+\end_inset
+
+original
+\begin_inset Quotes erd
+\end_inset
+
+ TXT Buffer RAM, such TXT Buffer moves to 
+\begin_inset Quotes eld
+\end_inset
+
+Parity Error
+\begin_inset Quotes erd
+\end_inset
+
+ state, and CTU CAN FD attempts to transmit frame from its 
+\begin_inset Quotes eld
+\end_inset
+
+backup
+\begin_inset Quotes erd
+\end_inset
+
+ TXT Buffer (e.g.
+ if CTU CAN FD detects parity error in TXT Buffer 3, it attempts to transmit
+ a frame from TXT Buffer 4).
+ If CTU CAN FD succesfully transmits a frame from 
+\begin_inset Quotes eld
+\end_inset
+
+original
+\begin_inset Quotes erd
+\end_inset
+
+ TXT Buffer, its 
+\begin_inset Quotes eld
+\end_inset
+
+backup
+\begin_inset Quotes erd
+\end_inset
+
+ Buffer moves to 
+\begin_inset Quotes eld
+\end_inset
+
+Aborted
+\begin_inset Quotes erd
+\end_inset
+
+ state (CTU CAN FD does not transmit frame in the 
+\begin_inset Quotes eld
+\end_inset
+
+backup
+\begin_inset Quotes erd
+\end_inset
+
+ TXT Buffer).
+\end_layout
+
+\begin_layout Standard
+When CTU CAN FD is transmitting a frame from a 
+\begin_inset Quotes eld
+\end_inset
+
+backup
+\begin_inset Quotes erd
+\end_inset
+
+ TXT Buffer due to parity error in 
+\begin_inset Quotes eld
+\end_inset
+
+original
+\begin_inset Quotes erd
+\end_inset
+
+ TXT Buffer, and it detects parity error also in 
+\begin_inset Quotes eld
+\end_inset
+
+backup
+\begin_inset Quotes erd
+\end_inset
+
+ TXT Buffer RAM, CTU CAN FD sets STATUS[TXDPE] bit (Double parity error).
+\end_layout
+
+\begin_layout Standard
+When CTU CAN FD operates in TXT Buffer Backup mode, SW control of TXT Buffers
+ has following differences compared to MODE[TXBBM]=0 scenario:
+\end_layout
+
+\begin_layout Itemize
+Priorities of both TXT Buffers within TXT Buffer pair are equal, and they
+ are given by TX_PRIORITY[TX*P] of 
+\begin_inset Quotes eld
+\end_inset
+
+original
+\begin_inset Quotes erd
+\end_inset
+
+ TXT Buffer (e.g.
+ priority of TXT Buffers 1 and 2 is given by TX_PRIORITY[TX1P], and TX_PRIORITY[
+TX2P] has no effect).
+\end_layout
+
+\begin_layout Itemize
+CTU CAN FD automatically applies commands issued by SW to each 
+\begin_inset Quotes eld
+\end_inset
+
+original
+\begin_inset Quotes erd
+\end_inset
+
+ TXT Buffer also to its corresponding 
+\begin_inset Quotes eld
+\end_inset
+
+backup
+\begin_inset Quotes erd
+\end_inset
+
+ TXT buffer (e.g.
+ if SW gives command to TXT Buffer 1 (TX_COMMAND[TXB1] = 1), CTU CAN FD
+ automatically applies it to TXT Buffer 2, and TX_COMMAND[TXB2] has no effect).
+\end_layout
+
+\begin_layout Standard
+It is assumed that SW stores equal CAN frames to both TXT Buffers from TXT
+ Buffer pair when attempting to send CAN frame.
+ In such case, the effect of TXT Buffer Backup mode is following: If parity
+ error occurs in 
+\begin_inset Quotes eld
+\end_inset
+
+original
+\begin_inset Quotes erd
+\end_inset
+
+ TXT Buffer RAM, the same frame is transmitted from 
+\begin_inset Quotes eld
+\end_inset
+
+backup
+\begin_inset Quotes erd
+\end_inset
+
+ TXT buffer.
 \end_layout
 
 \begin_layout Standard
@@ -6611,154 +6767,6 @@ name "fig:txt-buffer-backup-mode"
 \end_inset
 
 
-\end_layout
-
-\begin_layout Standard
-When MODE[TXBBM]=1, and CTU CAN FD detects a parity error in 
-\begin_inset Quotes eld
-\end_inset
-
-original
-\begin_inset Quotes erd
-\end_inset
-
- TXT Buffer RAM, such TXT Buffer moves to 
-\begin_inset Quotes eld
-\end_inset
-
-Parity Error
-\begin_inset Quotes erd
-\end_inset
-
- state, and CTU CAN FD attempts to transmit frame from its 
-\begin_inset Quotes eld
-\end_inset
-
-backup
-\begin_inset Quotes erd
-\end_inset
-
- TXT Buffer (e.g.
- if CTU CAN FD detects parity error in TXT Buffer 3, it attempts to transmit
- a frame from TXT Buffer 4).
- If CTU CAN FD succesfully transmits a frame from TXT Buffer, its 
-\begin_inset Quotes eld
-\end_inset
-
-backup
-\begin_inset Quotes erd
-\end_inset
-
- Buffer moves to 
-\begin_inset Quotes eld
-\end_inset
-
-Aborted
-\begin_inset Quotes erd
-\end_inset
-
- state (CTU CAN FD does not transmit frame 
-\begin_inset Quotes eld
-\end_inset
-
-backup
-\begin_inset Quotes erd
-\end_inset
-
- TXT Buffer).
-\end_layout
-
-\begin_layout Standard
-When CTU CAN FD is transmitting a frame from a 
-\begin_inset Quotes eld
-\end_inset
-
-backup
-\begin_inset Quotes erd
-\end_inset
-
- TXT Buffer due to parity error in 
-\begin_inset Quotes eld
-\end_inset
-
-original
-\begin_inset Quotes erd
-\end_inset
-
- TXT Buffer, and it detects parity error also in 
-\begin_inset Quotes eld
-\end_inset
-
-backup
-\begin_inset Quotes erd
-\end_inset
-
- TXT Buffer RAM, CTU CAN FD sets STATUS[TXDPE] bit.
-\end_layout
-
-\begin_layout Standard
-When CTU CAN FD operates in TXT Buffer Backup mode, SW control of TXT Buffers
- has following differences:
-\end_layout
-
-\begin_layout Itemize
-Priorities of both TXT Buffers are equal, and they are given by TX_PRIORITY[TX*P
-] of 
-\begin_inset Quotes eld
-\end_inset
-
-original
-\begin_inset Quotes erd
-\end_inset
-
- TXT Buffer (e.g.
- priority of TXT Buffers 1 and 2 are given by TX_PRIORITY[TX1P], and TX_PRIORITY
-[TX2P] has no effect).
-\end_layout
-
-\begin_layout Itemize
-CTU CAN FD automatically applies commands from SW to 
-\begin_inset Quotes eld
-\end_inset
-
-original
-\begin_inset Quotes erd
-\end_inset
-
- TXT Buffers also to 
-\begin_inset Quotes eld
-\end_inset
-
-backup
-\begin_inset Quotes erd
-\end_inset
-
- TXT buffers (e.g.
- if SW gives command to TXT Buffer 1 (TX_COMMAND[TXB1] = 1), CTU CAN FD
- automatically applies it to TXT Buffer 2, and TX_COMMAND[TXB2] has no effect).
-\end_layout
-
-\begin_layout Standard
-It is assumed that SW stores equal CAN frames to both TXT Buffers from TXT
- Buffer pair when attempting to send CAN frame.
- When this condition is met, the effect of TXT Buffer Backup mode is following:
- If parity error occurs in 
-\begin_inset Quotes eld
-\end_inset
-
-original
-\begin_inset Quotes erd
-\end_inset
-
- TXT Buffer RAM, the same frame is transmitted from 
-\begin_inset Quotes eld
-\end_inset
-
-backup
-\begin_inset Quotes erd
-\end_inset
-
- TXT buffer.
 \end_layout
 
 \begin_layout Description
