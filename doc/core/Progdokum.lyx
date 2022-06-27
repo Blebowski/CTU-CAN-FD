@@ -96,12 +96,11 @@ customHeadersFooters
 \papercolumns 1
 \papersides 1
 \paperpagestyle headings
-\tracking_changes true
+\tracking_changes false
 \output_changes true
 \html_math_output 0
 \html_css_as_file 0
 \html_be_strict false
-\author -937042393 "Ondrej"
 \end_header
 
 \begin_body
@@ -510,7 +509,7 @@ filename "version.tex"
 \noindent
 \align center
 \begin_inset Tabular
-<lyxtabular version="3" rows="29" columns="3">
+<lyxtabular version="3" rows="30" columns="3">
 <features tabularvalignment="middle">
 <column alignment="center" valignment="top" width="1.5cm">
 <column alignment="center" valignment="top" width="2cm">
@@ -1340,7 +1339,7 @@ Move to new release of CTU CAN FD.
 </cell>
 </row>
 <row>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -1349,7 +1348,7 @@ Move to new release of CTU CAN FD.
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -1358,7 +1357,7 @@ Move to new release of CTU CAN FD.
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -1366,6 +1365,36 @@ Add MODE[TXBBM], MODE[SAM], STATUS[RXPE], STATUS[TXPE], COMMAND [CTPXE]
  and COMMAND[CRPXE].
  Add FRAME_FORMAT_W bits which allow flipping of CRC or Stuff count.
  Add section on parity mechanism testing.
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+2.4.2
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+27-6-2022
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+SW commands on TXT Buffers in MODE[TXBBM] are automatically applied to Backup
+ Buffers.
 \end_layout
 
 \end_inset
@@ -1589,11 +1618,6 @@ This program is free software; you can redistribute it and/or * modify it
  You should have received a copy of the GNU General Public License along
  with this program; if not, write to the Free Software Foundation, Inc.,
  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
-
-\change_deleted -937042393 1655596097
- 
-\change_unchanged
-
 \end_layout
 
 \begin_layout Section
@@ -2199,11 +2223,6 @@ true/false
 \begin_layout Plain Layout
 Filter A is / is not present.
  If present, FILTER_STATUS[SFA] = 1.
-
-\change_deleted -937042393 1655596097
- 
-\change_unchanged
-
 \end_layout
 
 \end_inset
@@ -4682,11 +4701,6 @@ Frame transmission is attempted only once, there are no retransmission attempts
 \begin_layout Plain Layout
 Frame transmission is attempted SETTINGS[RTRTH] + 1 times (initial transmission
  + SETTINGS[RTRTH] retransmissions).
-
-\change_deleted -937042393 1655596097
- 
-\change_unchanged
-
 \end_layout
 
 \end_inset
@@ -6358,10 +6372,6 @@ noprefix "false"
 \end_inset
 
 
-\change_deleted -937042393 1655596097
- 
-\change_unchanged
-
 \end_layout
 
 \begin_layout Subsection
@@ -6604,8 +6614,7 @@ name "fig:txt-buffer-backup-mode"
 \end_layout
 
 \begin_layout Standard
-When operating in TXT Buffer Backup mode, and CTU CAN FD detects a parity
- error in 
+When MODE[TXBBM]=1, and CTU CAN FD detects a parity error in 
 \begin_inset Quotes eld
 \end_inset
 
@@ -6630,9 +6639,9 @@ backup
 \end_inset
 
  TXT Buffer (e.g.
- if CTU CAN FD detects parity error in TXT Buffer 2, it attempts to transmit
- a frame from TXT Buffer 3).
- If CTU CAN FD succesfully transmit a frame from TXT Buffer, its 
+ if CTU CAN FD detects parity error in TXT Buffer 3, it attempts to transmit
+ a frame from TXT Buffer 4).
+ If CTU CAN FD succesfully transmits a frame from TXT Buffer, its 
 \begin_inset Quotes eld
 \end_inset
 
@@ -6648,7 +6657,7 @@ Aborted
 \begin_inset Quotes erd
 \end_inset
 
- state (thus transmission from 
+ state (CTU CAN FD does not transmit frame 
 \begin_inset Quotes eld
 \end_inset
 
@@ -6656,7 +6665,7 @@ backup
 \begin_inset Quotes erd
 \end_inset
 
- Buffer is not executed).
+ TXT Buffer).
 \end_layout
 
 \begin_layout Standard
@@ -6688,8 +6697,13 @@ backup
 \end_layout
 
 \begin_layout Standard
-When CTU CAN FD operates in TXT Buffer Backup mode, priorities of both TXT
- Buffers are equal, and they are given by TX_PRIORITY[TX*P] of 
+When CTU CAN FD operates in TXT Buffer Backup mode, SW control of TXT Buffers
+ has following differences:
+\end_layout
+
+\begin_layout Itemize
+Priorities of both TXT Buffers are equal, and they are given by TX_PRIORITY[TX*P
+] of 
 \begin_inset Quotes eld
 \end_inset
 
@@ -6702,20 +6716,26 @@ original
 [TX2P] has no effect).
 \end_layout
 
-\begin_layout Standard
-When SW uses CTU CAN FD in TXT Buffer Backup mode, it must meet following
- conditions:
-\end_layout
-
 \begin_layout Itemize
-When issuing a 
-\series bold
-Set Ready
-\series default
- command to TXT Buffer (via TX_COMMAND register), SW shall issue the command
- simultaneously to both TXT Buffers which form a TXT Buffer pair (e.g.
- TX_COMMAND[TXB1] = TX_COMMAND[TXB2] = 1, when issuing command to TXT Buffer
- 1 and TXT Buffer 2).
+CTU CAN FD automatically applies commands from SW to 
+\begin_inset Quotes eld
+\end_inset
+
+original
+\begin_inset Quotes erd
+\end_inset
+
+ TXT Buffers also to 
+\begin_inset Quotes eld
+\end_inset
+
+backup
+\begin_inset Quotes erd
+\end_inset
+
+ TXT buffers (e.g.
+ if SW gives command to TXT Buffer 1 (TX_COMMAND[TXB1] = 1), CTU CAN FD
+ automatically applies it to TXT Buffer 2, and TX_COMMAND[TXB2] has no effect).
 \end_layout
 
 \begin_layout Standard
