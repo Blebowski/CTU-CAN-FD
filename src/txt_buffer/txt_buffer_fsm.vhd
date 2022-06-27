@@ -119,10 +119,13 @@ entity txt_buffer_fsm is
         txt_buf_failed_bof      :in   std_logic;
 
         -- Restricted operation mode
-        drv_rom_ena            :in   std_logic;
+        drv_rom_ena             :in   std_logic;
 
         -- Bus monitoring mode
-        drv_bus_mon_ena        :in   std_logic;
+        drv_bus_mon_ena         :in   std_logic;
+
+        -- TXT Buffer is now Backup buffer
+        txtb_is_bb              :in   std_logic;
 
         ------------------------------------------------------------------------   
         -- CAN Core interface
@@ -170,6 +173,9 @@ architecture rtl of txt_buffer_fsm is
 
     -- Abort command applied
     signal abort_applied       : std_logic;
+
+    -- TXT Buffer is skipped due to
+    signal buffer_skipped      : std_logic;
     
     -- TXT Buffer clock enable
     signal txt_fsm_ce          : std_logic;
@@ -182,6 +188,12 @@ begin
 
     abort_applied <= '1' when (txtb_sw_cmd.set_abt = '1' and sw_cbs = '1') else
                      '0';
+
+    buffer_skipped <= '1' when (txtb_hw_cmd.unlock = '1' and
+                               (txtb_hw_cmd.failed = '1' or txtb_hw_cmd.valid = '1') and
+                               (txtb_is_bb = '1'))
+                          else
+                      '0';
 
     transient_state <= '1' when ((curr_state = s_txt_ab_prog) or
                                  (curr_state = s_txt_tx_prog) or
@@ -237,8 +249,9 @@ begin
                     next_state     <= s_txt_tx_prog;
                 end if;
 
-            -- Abort the ready buffer
-            elsif (abort_applied = '1') then
+            -- Abort the ready buffer or Skip the original TXT Buffer getting
+            -- "failed" or "OK".
+            elsif (abort_applied = '1' or buffer_skipped = '1') then
                 next_state       <= s_txt_aborted;
             end if;
 
@@ -260,7 +273,8 @@ begin
                 elsif (txtb_hw_cmd.valid       = '1') then
                     next_state     <= s_txt_ok;
                 elsif (txtb_hw_cmd.err         = '1' or 
-                       txtb_hw_cmd.arbl        = '1') then
+                       txtb_hw_cmd.arbl        = '1')
+                then
                     if (abort_applied = '1') then
                         next_state     <= s_txt_aborted;
                     else
@@ -461,6 +475,19 @@ begin
     -- psl txtb_fsm_tx_ok_cov : cover {curr_state = s_txt_ok};
     -- psl txtb_fsm_parity_err_cov : cover {curr_state = s_txt_parity_err};
     
+    -- Parity error during each possible state
+    -- psl txtb_perr_txt_ready_cov : cover
+    --  {curr_state = s_txt_ready and txtb_parity_error_valid = '1'};
+    -- psl txtb_perr_txt_tx_prog_cov : cover
+    --  {curr_state = s_txt_tx_prog and txtb_parity_error_valid = '1'};
+    -- psl txtb_perr_txt_ab_prog_cov : cover
+    --  {curr_state = s_txt_ab_prog and txtb_parity_error_valid = '1'};
+
+    -- Aborting due to being "Backup" buffer and transmission from first
+    -- TXT Buffer finished without any parity error
+    -- psl txtb_skip_backup_buffers : cover
+    --  {curr_state = s_txt_ready and buffer_skipped = '1' and abort_applied = '0'};
+
     -- Simultaneous HW and SW Commands
     --
     -- psl txtb_hw_sw_cmd_txt_ready_hazard_cov : cover
@@ -494,6 +521,14 @@ begin
     -- psl txtb_no_lock_after_abort : assert never
     --  {abort_applied = '1';txtb_hw_cmd.lock = '1' and hw_cbs = '1'}
     --  report "LOCK command after ABORT was applied!";
+    ----------------------------------------------------------------------------
+    -- Skipped shall never occur when TXT Buffer backup is not ready. It should
+    -- be satisfied by equal priority of "original" and "backup" buffer, and the
+    -- fact that SW commands are mirrored for Backup buffers.
+    --
+    -- psl txtb_no_skip_when_not_ready : assert always
+    --  (buffer_skipped = '1') -> (curr_state = s_txt_ready)
+    --  report "Backup TXT Buffer skipped when not in 'Ready' state.";
     ----------------------------------------------------------------------------
 
     -- <RELEASE_ON>

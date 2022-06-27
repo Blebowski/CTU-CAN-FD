@@ -273,6 +273,9 @@ entity memory_registers is
         -- TXT Buffer Parity Error
         txtb_parity_error_valid :in std_logic_vector(G_TXT_BUFFER_COUNT - 1 downto 0);
 
+        -- Parity Error in Backup buffer during TXT Buffer backup mode
+        txtb_bb_parity_error :in   std_logic_vector(G_TXT_BUFFER_COUNT - 1 downto 0);
+
         ------------------------------------------------------------------------
         -- Bus synchroniser interface
         ------------------------------------------------------------------------
@@ -356,12 +359,13 @@ architecture rtl of memory_registers is
     signal clk_test_regs          :     std_logic;
 
     -- RX buffer control signals
-    signal rx_buf_mode : std_logic;
-    signal rx_move_cmd : std_logic;
+    signal rx_buf_mode              : std_logic;
+    signal rx_move_cmd              : std_logic;
 
-    signal ctr_pres_sel_q : std_logic_vector(3 downto 0);
+    signal ctr_pres_sel_q           : std_logic_vector(3 downto 0);
 
-    signal tx_parity_error : std_logic;
+    signal tx_parity_error          : std_logic;
+    signal tx_double_parity_error   : std_logic;
 
     ---------------------------------------------------------------------------
     -- 
@@ -724,15 +728,22 @@ begin
 
     status_comb(TXPE_IND) <= tx_parity_error;
 
-    -- TXT Buffer parity error status
+    status_comb(TXDPE_IND) <= tx_double_parity_error;
+
+    -- TXT Buffer parity error and double parity error
     txpe_flag_proc : process(res_n, clk_sys)
     begin
         if (res_n = '0') then
             tx_parity_error <= '0';
+            tx_double_parity_error <= '0';
         elsif rising_edge(clk_sys) then
             for i in 0 to G_TXT_BUFFER_COUNT - 1 loop
                 if (txtb_parity_error_valid(i) = '1') then
                     tx_parity_error <= '1';
+                end if;
+
+                if (txtb_bb_parity_error(i) = '1') then
+                    tx_double_parity_error <= '1';
                 end if;
             end loop;
 
@@ -740,6 +751,9 @@ begin
                 tx_parity_error <= '0';
             end if;
 
+            if (align_wrd_to_reg(control_registers_out.command, CTXDPE_IND) = '1') then
+                tx_double_parity_error <= '0';
+            end if;
         end if;
     end process;
 
@@ -752,7 +766,7 @@ begin
     end generate traffic_ctrs_gen_false;
     
     status_comb(31 downto 18) <= (others => '0');
-    status_comb(15 downto 11) <= (others => '0');
+    status_comb(15 downto 12) <= (others => '0');
 
     ----------------------------------------------------------------------------
     ----------------------------------------------------------------------------
@@ -791,6 +805,10 @@ begin
     -- TTTM - Time Triggered transmission mode
     drv_bus(DRV_TTTM_ENA_INDEX) <= align_wrd_to_reg(
         control_registers_out.mode, TTTM_IND);
+
+    -- TXBBM - TXT Buffer Backup mode
+    drv_bus(DRV_TXBBM_ENA_INDEX) <= align_wrd_to_reg(
+        control_registers_out.mode, TXBBM_IND);
 
     ---------------------------------------------------------------------------
     -- COMMAND Register
@@ -1118,9 +1136,22 @@ begin
     -- TX Command index is regular register, it is therefore pipeline
     -- internally in generated register block!
     
-    txtb_cmd_index_gen : for txtb_index in 0 to G_TXT_BUFFER_COUNT - 1 generate
-        txtb_sw_cmd_index(txtb_index)  <= align_wrd_to_reg(
-                control_registers_out.tx_command, TXB1_IND + txtb_index);
+    txtb_cmd_index_gen : for i in 0 to G_TXT_BUFFER_COUNT - 1 generate
+    begin
+        -- Original TXT Buffers
+        txtb_priority_even_gen : if ((i mod 2) = 0) generate
+            txtb_sw_cmd_index(i)  <= align_wrd_to_reg(
+                control_registers_out.tx_command, TXB1_IND + i);
+        end generate;
+
+        -- Backup TXT Buffers
+        txtb_priority_odd_gen : if ((i mod 2) = 1) generate
+            txtb_sw_cmd_index(i)  <= 
+                align_wrd_to_reg(control_registers_out.tx_command, TXB1_IND + i) when (drv_bus(DRV_TXBBM_ENA_INDEX) = '0')
+                                                                                 else
+                align_wrd_to_reg(control_registers_out.tx_command, TXB1_IND + i - 1);
+        end generate;
+        
     end generate;
 
     ---------------------------------------------------------------------------
@@ -1743,7 +1774,7 @@ begin
     drv_bus(609 downto 601) <= (OTHERS => '0');
     drv_bus(579 downto 570) <= (OTHERS => '0');
     drv_bus(519 downto 514) <= (OTHERS => '0');
-    drv_bus(506 downto 475) <= (OTHERS => '0');
+    drv_bus(506 downto 476) <= (OTHERS => '0');
     drv_bus(444 downto 430) <= (OTHERS => '0');
 
     drv_bus(1023 downto 876)<= (OTHERS => '0');

@@ -181,6 +181,9 @@ entity tx_arbitrator is
         -- TXT Buffer clock enable (from Protocol control)
         txtb_clk_en             :in  std_logic;
 
+        -- TXT Buffer is operating as backup buffer
+        txtb_is_bb              :out std_logic_vector(G_TXT_BUFFER_COUNT - 1 downto 0);
+
         -----------------------------------------------------------------------
         -- Memory registers interface
         -----------------------------------------------------------------------
@@ -311,7 +314,11 @@ architecture rtl of tx_arbitrator is
     signal txtb_meta_clk_en           : std_logic;
     
     -- Time triggered transmission mode enabled
-    signal drv_tttm_ena               : std_logic;                   
+    signal drv_tttm_ena               : std_logic;
+
+    -- TXT Buffer Backup mode enable
+    signal drv_txbbm_ena              : std_logic;
+    signal txtb_prorities_txbbm       : t_txt_bufs_priorities(G_TXT_BUFFER_COUNT - 1 downto 0);
 
     -- Parity mismatches in TXT Buffers:
     --  1. Mismatch during TXT Buffer validation
@@ -346,11 +353,11 @@ begin
      G_TXT_BUFFER_COUNT    => G_TXT_BUFFER_COUNT
   )
   port map( 
-     prio           => txtb_prorities,      -- IN
-     prio_valid     => txtb_available,      -- IN
+     prio           => txtb_prorities_txbbm,    -- IN
+     prio_valid     => txtb_available,          -- IN
      
-     output_valid   => select_buf_avail,    -- OUT
-     output_index   => select_buf_index     -- OUT
+     output_valid   => select_buf_avail,        -- OUT
+     output_index   => select_buf_index         -- OUT
   );
   
 
@@ -385,6 +392,32 @@ begin
   );
 
   drv_tttm_ena <= drv_bus(DRV_TTTM_ENA_INDEX);
+  drv_txbbm_ena <= drv_bus(DRV_TXBBM_ENA_INDEX);
+
+  ------------------------------------------------------------------------------
+  -- TXT Buffer differences fo
+  -- Shuffle priorites of TXT Buffers, in TXT Buffer Backup mode, replace
+  -- priority of "Backup" buffer with priority of "original" buffer
+  ------------------------------------------------------------------------------
+  txtb_priority_gen : for i in 0 to G_TXT_BUFFER_COUNT - 1 generate
+    
+    -- Original Buffers
+    txtb_priority_even_gen : if ((i mod 2) = 0) generate
+        txtb_prorities_txbbm(i) <= txtb_prorities(i);
+        txtb_is_bb(i) <= '0';
+    end generate;
+
+    -- Backup buffers
+    txtb_priority_odd_gen : if ((i mod 2) = 1) generate
+
+        txtb_prorities_txbbm(i) <= txtb_prorities(i) when (drv_txbbm_ena = '0') else
+                                   txtb_prorities(i - 1);
+
+        txtb_is_bb(i) <= '1' when (drv_txbbm_ena = '1' and int_txtb_index = i-1) else
+                         '0';
+    end generate;
+  end generate;
+
 
   ------------------------------------------------------------------------------
   -- Comparing timestamp with external timestamp. This assumes that Upper 
@@ -720,6 +753,20 @@ begin
   --    {txtb_hw_cmd_index = 6 and txtb_hw_cmd.unlock = '1'};
   -- psl txt_unlock_buf_8_cov : cover
   --    {txtb_hw_cmd_index = 7 and txtb_hw_cmd.unlock = '1'};
+
+  -- Modes 
+  -- Note: We use gating by tran_frame_valid to avoid falsly covered scenarios,
+  --       where reset value has the mode disabled!
+  --
+  -- psl txtb_ttm_ena_cov : cover
+  --    {drv_tttm_ena = '1' and tran_frame_valid = '1'};
+  -- psl txtb_ttm_dis_cov : cover
+  --    {drv_tttm_ena = '0' and tran_frame_valid = '1'};
+
+  -- psl txtb_txbbm_ena_cov : cover
+  --    {drv_txbbm_ena = '1' and tran_frame_valid = '1'};
+  -- psl txtb_txbbm_dis_cov : cover
+  --    {drv_txbbm_ena = '0' and tran_frame_valid = '1'};
 
 
   -- Change of priority when there is validated TXT buffer

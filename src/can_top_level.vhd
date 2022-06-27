@@ -295,6 +295,9 @@ architecture rtl of can_top_level is
     -- TXT Buffer priorities
     signal txtb_prorities       :    t_txt_bufs_priorities(txt_buffer_count - 1 downto 0);
     
+    -- TXT Buffer is operating in Backup buffer
+    signal txtb_is_bb           :    std_logic_vector(txt_buffer_count - 1 downto 0);
+
     -- TXT Buffer bus-off behavior
     signal txt_buf_failed_bof   :    std_logic;
     
@@ -410,6 +413,9 @@ architecture rtl of can_top_level is
 
     -- Parity error valid
     signal txtb_parity_error_valid  :   std_logic_vector(txt_buffer_count - 1 downto 0);
+
+    -- TXT Buffer
+    signal txtb_bb_parity_error     :   std_logic_vector(txt_buffer_count - 1 downto 0);
 
     -- TXT Buffer index selected by TX Arbitrator of CAN Core
     signal txtb_index_muxed         :   natural range 0 to txt_buffer_count - 1;
@@ -654,6 +660,7 @@ begin
         txtb_prorities          => txtb_prorities,          -- OUT
         txt_buf_failed_bof      => txt_buf_failed_bof,      -- OUT
         txtb_parity_error_valid => txtb_parity_error_valid, -- IN
+        txtb_bb_parity_error    => txtb_bb_parity_error,    -- IN
 
         -- Bus synchroniser interface
         trv_delay               => trv_delay,               -- IN
@@ -750,6 +757,8 @@ begin
             txt_buf_failed_bof      => txt_buf_failed_bof,              -- IN
             drv_rom_ena             => drv_bus(DRV_ROM_ENA_INDEX),      -- IN
             drv_bus_mon_ena         => drv_bus(DRV_BUS_MON_ENA_INDEX),  -- IN
+            drv_txbbm_ena           => drv_bus(DRV_TXBBM_ENA_INDEX),    -- IN
+            txtb_is_bb              => txtb_is_bb(i),                   -- IN
     
             -- Memory testability
             test_registers_out      => test_registers_out,              -- IN
@@ -768,6 +777,7 @@ begin
             txtb_available          => txtb_available(i),               -- OUT
             txtb_parity_check_valid => txtb_parity_check_valid,         -- IN
             txtb_parity_error_valid => txtb_parity_error_valid(i),      -- OUT
+            txtb_bb_parity_error    => txtb_bb_parity_error(i),         -- OUT   
             txtb_parity_mismatch    => txtb_parity_mismatch(i),         -- OUT
             txtb_index_muxed        => txtb_index_muxed                 -- OUT
         );
@@ -792,6 +802,7 @@ begin
         txtb_parity_check_valid => txtb_parity_check_valid, -- OUT
         txtb_parity_mismatch    => txtb_parity_mismatch,    -- IN 
         txtb_index_muxed        => txtb_index_muxed,        -- OUT
+        txtb_is_bb              => txtb_is_bb,              -- OUT
 
         -- CAN Core Interface
         tran_word               => tran_word,               -- OUT
@@ -1094,6 +1105,24 @@ begin
     --   (is_overload = '1')
     --   report "TXT Buffer should have been unlocked when node is in Overload frame!";
     
+    end generate;
+
+    -----------------------------------------------------------------------
+    -----------------------------------------------------------------------
+    -- Functional coverage
+    -----------------------------------------------------------------------
+    -----------------------------------------------------------------------
+
+    -- Parity error in each TXT Buffer
+
+    txtb_func_cov_gen : for i in 0 to txt_buffer_count - 1 generate
+    
+    -- psl txtb_parity_buf_cov : cover
+    --    {txtb_parity_error_valid(i) = '1'};
+    
+    -- psl txtb_double_parity_buf_1_cov : cover
+    --    {txtb_bb_parity_error(i) = '1'};
+
     end generate;
 
     -- <RELEASE_ON>    

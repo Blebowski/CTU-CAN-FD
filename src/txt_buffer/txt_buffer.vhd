@@ -154,7 +154,13 @@ entity txt_buffer is
 
         -- Bus monitoring mode
         drv_bus_mon_ena         :in   std_logic;
+
+        -- TXT Buffer Backup mode
+        drv_txbbm_ena           :in   std_logic;
         
+        -- TXT Buffer is current backup buffer
+        txtb_is_bb              :in   std_logic;
+
         ------------------------------------------------------------------------
         -- Memory Testability
         ------------------------------------------------------------------------
@@ -203,6 +209,9 @@ entity txt_buffer is
         -- Parity error really occured
         txtb_parity_error_valid :out  std_logic;
 
+        -- Parity error in Backup buffer
+        txtb_bb_parity_error    :out  std_logic;
+
         -- Index of TXT Buffer which is being read
         txtb_index_muxed        :in   natural range 0 to G_TXT_BUFFER_COUNT - 1
     );
@@ -220,18 +229,21 @@ architecture rtl of txt_buffer is
     ----------------------------------------------------------------------------
 
     -- TXT Buffer memory protection
-    signal txtb_user_accessible   : std_logic;
+    signal txtb_user_accessible     : std_logic;
 
     -- Internal buffer selects for commands. Commands are shared across the
     -- buffers so we need unique identifier
-    signal hw_cbs                 : std_logic;
-    signal sw_cbs                 : std_logic;
+    signal hw_cbs                   : std_logic;
+    signal sw_cbs                   : std_logic;
 
     -- Unmask TXT Buffer RAM output
-    signal txtb_unmask_data_ram   : std_logic;
+    signal txtb_unmask_data_ram     : std_logic;
 
     -- Output of TXT Buffer RAM
-    signal txtb_port_b_data_i     : std_logic_vector(31 downto 0);
+    signal txtb_port_b_data_i       : std_logic_vector(31 downto 0);
+
+    -- TXT Buffer parity error
+    signal txtb_parity_error_valid_i: std_logic;
 
     ----------------------------------------------------------------------------
     ----------------------------------------------------------------------------
@@ -240,22 +252,22 @@ architecture rtl of txt_buffer is
     ---------------------------------------------------------------------------
     
     -- Write control signal    
-    signal ram_write              : std_logic;
+    signal ram_write                : std_logic;
 
     -- Read address (connected to read pointer)
-    signal ram_read_address       : std_logic_vector(4 downto 0);
+    signal ram_read_address         : std_logic_vector(4 downto 0);
 
     -- Clock enabled
-    signal txtb_ram_clk_en        : std_logic;
+    signal txtb_ram_clk_en          : std_logic;
     
     -- RAM clocks
-    signal clk_ram                : std_logic;
+    signal clk_ram                  : std_logic;
 
     -- Parity check
-    signal parity_mismatch        : std_logic;
+    signal parity_mismatch          : std_logic;
 
 begin
-        
+    
     -- Command buffer select signals
     hw_cbs <= '1' when (txtb_hw_cmd_index = G_ID)
                   else
@@ -264,7 +276,7 @@ begin
     sw_cbs <= '1' when (txtb_sw_cmd_index(G_ID) = '1') 
                   else
               '0';
-    
+
     -- TXT Buffer RAM write signal
     ram_write <= '1' when (txtb_port_a_cs = '1' and txtb_user_accessible = '1')
                      else
@@ -307,11 +319,24 @@ begin
     -- TX Arbitrator or CAN Core have really read from the TXT Buffer, otherwise
     -- the output might be rubbish (uninited data, previous value).
     ----------------------------------------------------------------------------
-    txtb_parity_error_valid <= '1' when (parity_mismatch = '1' and
-                                         txtb_parity_check_valid = '1' and
-                                         txtb_index_muxed = G_ID)
-                                   else 
-                               '0';
+    txtb_parity_error_valid_i <= '1' when (parity_mismatch = '1' and
+                                           txtb_parity_check_valid = '1' and
+                                           txtb_index_muxed = G_ID)
+                                     else 
+                                 '0';
+
+    txtb_parity_error_valid <= txtb_parity_error_valid_i;
+
+    ----------------------------------------------------------------------------
+    -- If parity error occurs in Backup Buffer during TXTB modes, then set
+    -- STATUS[TXDPE] = 1.
+    ----------------------------------------------------------------------------
+    txtb_bb_parity_error <= '1' when (txtb_parity_error_valid_i = '1' and
+                                      (G_ID mod 2) = 1 and
+                                      drv_txbbm_ena = '1')
+                                else
+                            '0';
+
 
     clk_gate_txt_buffer_ram_comp : entity ctu_can_fd_rtl.clk_gate
     generic map(
@@ -376,6 +401,7 @@ begin
         txtb_parity_error_valid => txtb_parity_error_valid,  -- IN
         drv_rom_ena             => drv_rom_ena,              -- IN
         drv_bus_mon_ena         => drv_bus_mon_ena,          -- IN
+        txtb_is_bb              => txtb_is_bb,               -- IN
 
         txtb_user_accessible    => txtb_user_accessible,     -- OUT
         txtb_hw_cmd_int         => txtb_hw_cmd_int,          -- OUT
@@ -409,7 +435,7 @@ begin
     -- psl txtb_hw_err : cover {txtb_hw_cmd.err = '1' and hw_cbs = '1'};
     -- psl txtb_hw_arbl : cover {txtb_hw_cmd.arbl = '1' and hw_cbs = '1'};
     -- psl txtb_hw_failed : cover {txtb_hw_cmd.failed = '1' and hw_cbs = '1'};
-    
+
     end block;
 
     -- <RELEASE_ON>

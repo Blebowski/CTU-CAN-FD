@@ -242,6 +242,8 @@ package drv_stat_pkg is
     constant DRV_CLR_RX_CTR_INDEX : natural := 473;
     constant DRV_CLR_TX_CTR_INDEX : natural := 474;
 
+    constant DRV_TXBBM_ENA_INDEX : natural := 475;
+
     constant DRV_ACK_FORB_INDEX        : natural := 507;
     constant DRV_INT_LOOBACK_ENA_INDEX : natural := 508;
 
