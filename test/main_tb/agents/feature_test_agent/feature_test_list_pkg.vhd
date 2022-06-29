@@ -152,6 +152,7 @@ use ctu_can_fd_tb.mode_self_test_ftest.all;
 use ctu_can_fd_tb.mode_frame_filters_ftest.all;
 use ctu_can_fd_tb.mode_rst_ftest.all;
 use ctu_can_fd_tb.mode_rxbam_ftest.all;
+use ctu_can_fd_tb.mode_txbbm_ftest.all;
 
 use ctu_can_fd_tb.no_sof_tx_ftest.all;
 
@@ -339,7 +340,9 @@ package body feature_test_list_pkg is
         elsif (test_name = "mode_rst") then
             mode_rst_ftest_exec(channel);
         elsif (test_name = "mode_rxbam") then
-            mode_rxbam_ftest_exec(channel);            
+            mode_rxbam_ftest_exec(channel);
+        elsif (test_name = "mode_txbbm") then
+            mode_txbbm_ftest_exec(channel);
 
         elsif (test_name = "no_sof_tx") then
             no_sof_tx_ftest_exec(channel);

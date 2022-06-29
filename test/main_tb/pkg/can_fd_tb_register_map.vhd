@@ -86,7 +86,7 @@ package can_fd_tb_register_map is
   -- Register list
   ------------------------------------------------------------------------------
 
-  type t_Control_registers_list is array (0 to 50) of t_memory_reg;
+  type t_Control_registers_list is array (0 to 51) of t_memory_reg;
 
   constant Control_registers_list : t_Control_registers_list :=(
 
@@ -301,6 +301,11 @@ package can_fd_tb_register_map is
      reset_val => "00000000000000000000000000000000",
      is_implem => "00000000000000000000000000000000"),
     (address   => ALC_ADR,
+     size      => 8,
+     reg_type  => reg_read_only,
+     reset_val => "00000000000000000000000000000000",
+     is_implem => "00000000000000000000000000000000"),
+    (address   => TS_INFO_ADR,
      size      => 8,
      reg_type  => reg_read_only,
      reset_val => "00000000000000000000000000000000",

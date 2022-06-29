@@ -160,6 +160,7 @@ feature:
         mode_rxbam:
         mode_self_test:
         mode_test:
+        mode_txbmm:
 
         mode_frame_filters:
             iterations: 15
