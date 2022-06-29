@@ -123,6 +123,7 @@ feature:
         mode_self_test:
         mode_test:
         mode_txbbm:
+        mode_txbbm_2:
 
         mode_frame_filters:
             iterations: 6
