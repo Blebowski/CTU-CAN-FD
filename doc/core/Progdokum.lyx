@@ -6890,6 +6890,29 @@ backup
  TXT Buffer.
 \end_layout
 
+\begin_layout Description
+Note If CTU CAN FD detects parity error in 
+\begin_inset Quotes eld
+\end_inset
+
+original
+\begin_inset Quotes erd
+\end_inset
+
+ TXT Buffer during CAN frame transmission, and another TXT Buffer with Higher
+ priority than currently selected TXT buffer pair moved to Ready state (due
+ to SW issuing Set Ready command), CTU CAN FD will attempt to transmit frame
+ from higher priority TXT Buffer during next transmission (ignoring 
+\begin_inset Quotes eld
+\end_inset
+
+backup
+\begin_inset Quotes erd
+\end_inset
+
+ TXT Buffer).
+\end_layout
+
 \begin_layout Subsection
 Parity protection testing
 \begin_inset CommandInset label
