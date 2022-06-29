@@ -79,6 +79,7 @@ enum ctu_can_fd_can_registers {
 	CTUCANFD_ERR_CAPT             = 0x7c,
 	CTUCANFD_RETR_CTR             = 0x7d,
 	CTUCANFD_ALC                  = 0x7e,
+	CTUCANFD_TS_INFO              = 0x7f,
 	CTUCANFD_TRV_DELAY            = 0x80,
 	CTUCANFD_SSP_CFG              = 0x82,
 	CTUCANFD_RX_FR_CTR            = 0x84,
@@ -478,12 +479,13 @@ enum ctu_can_fd_can_registers {
 #define REG_TX_PRIORITY_TXT7P GENMASK(26, 24)
 #define REG_TX_PRIORITY_TXT8P GENMASK(30, 28)
 
-/*  ERR_CAPT RETR_CTR ALC registers */
+/*  ERR_CAPT RETR_CTR ALC TS_INFO registers */
 #define REG_ERR_CAPT_ERR_POS GENMASK(4, 0)
 #define REG_ERR_CAPT_ERR_TYPE GENMASK(7, 5)
 #define REG_ERR_CAPT_RETR_CTR_VAL GENMASK(11, 8)
 #define REG_ERR_CAPT_ALC_BIT GENMASK(20, 16)
 #define REG_ERR_CAPT_ALC_ID_FIELD GENMASK(23, 21)
+#define REG_ERR_CAPT_TS_BITS GENMASK(29, 24)
 
 /*  TRV_DELAY SSP_CFG registers */
 #define REG_TRV_DELAY_TRV_DELAY_VALUE GENMASK(6, 0)

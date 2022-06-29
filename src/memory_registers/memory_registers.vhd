@@ -123,6 +123,9 @@ entity memory_registers is
         -- Width (number of bits) in transceiver delay measurement counter
         G_TRV_CTR_WIDTH     : natural                         := 7;
 
+        -- Number of active timestamp bits
+        G_TS_BITS           : natural range 0 to 63           := 63;
+
         -- DEVICE_ID (read from register)
         G_DEVICE_ID         : std_logic_vector(15 downto 0)   := x"CAFD";
 
@@ -1586,6 +1589,20 @@ begin
 
     end block alc_block;
 
+    ---------------------------------------------------------------------------
+    -- TS_INFO register
+    ---------------------------------------------------------------------------
+    ts_info_block : block
+        constant length : natural := Control_registers_in.ts_info'length;
+    begin
+
+        -- TS_BITS - Number of active timestamp bits
+        Control_registers_in.ts_info(
+            align_reg_to_wrd(TS_BITS_H, length) downto
+            align_reg_to_wrd(TS_BITS_L, length)) <=
+                std_logic_vector(to_unsigned(G_TS_BITS, 6));
+
+    end block ts_info_block;
 
     ---------------------------------------------------------------------------
     -- TRV_DELAY register

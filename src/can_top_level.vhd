@@ -103,34 +103,37 @@ use ctu_can_fd_rtl.can_registers_pkg.all;
 entity can_top_level is
     generic(
         -- RX Buffer RAM size (32 bit words)
-        rx_buffer_size      : natural range 32 to 4096 := 32;
+        rx_buffer_size          : natural range 32 to 4096  := 32;
 
         -- Number of supported TXT buffers
-        txt_buffer_count    : natural range 2 to 8   := 4; 
+        txt_buffer_count        : natural range 2 to 8      := 4; 
 
         -- Synthesize Filter A
-        sup_filtA           : boolean                := false;
+        sup_filtA               : boolean                   := false;
         
         -- Synthesize Filter B
-        sup_filtB           : boolean                := false;
+        sup_filtB               : boolean                   := false;
         
         -- Synthesize Filter C
-        sup_filtC           : boolean                := false;
+        sup_filtC               : boolean                   := false;
         
         -- Synthesize Range Filter
-        sup_range           : boolean                := false;
+        sup_range               : boolean                   := false;
         
         -- Synthesize Test registers
-        sup_test_registers  : boolean                := true;
+        sup_test_registers      : boolean                   := true;
         
         -- Insert Traffic counters
-        sup_traffic_ctrs    : boolean                := false;
+        sup_traffic_ctrs        : boolean                   := false;
 
         -- Add parity bit to TXT Buffer and RX Buffer RAMs
-        sup_parity          : boolean                := false;
+        sup_parity              : boolean                   := false;
+
+        -- Number of active timestamp bits
+        active_timestamp_bits   : natural range 0 to 63     := 63;
 
         -- Target technology (ASIC or FPGA)
-        target_technology   : natural                := C_TECH_FPGA
+        target_technology       : natural                   := C_TECH_FPGA
     );
     port(
         -----------------------------------------------------------------------
@@ -601,6 +604,7 @@ begin
         G_TXT_BUFFER_COUNT      => txt_buffer_count, 
         G_INT_COUNT             => C_INT_COUNT,
         G_TRV_CTR_WIDTH         => C_TRV_CTR_WIDTH,
+        G_TS_BITS               => active_timestamp_bits,
         G_DEVICE_ID             => C_CAN_DEVICE_ID,
         G_VERSION_MINOR         => C_CTU_CAN_FD_VERSION_MINOR,
         G_VERSION_MAJOR         => C_CTU_CAN_FD_VERSION_MAJOR,

@@ -126,6 +126,7 @@ package can_fd_register_map is
   constant ERR_CAPT_ADR              : std_logic_vector(11 downto 0) := x"07C";
   constant RETR_CTR_ADR              : std_logic_vector(11 downto 0) := x"07D";
   constant ALC_ADR                   : std_logic_vector(11 downto 0) := x"07E";
+  constant TS_INFO_ADR               : std_logic_vector(11 downto 0) := x"07F";
   constant TRV_DELAY_ADR             : std_logic_vector(11 downto 0) := x"080";
   constant SSP_CFG_ADR               : std_logic_vector(11 downto 0) := x"082";
   constant RX_FR_CTR_ADR             : std_logic_vector(11 downto 0) := x"084";
@@ -1224,6 +1225,16 @@ package can_fd_register_map is
   -- ALC register reset values
   constant ALC_BIT_RSTVAL : std_logic_vector(4 downto 0) := "00000";
   constant ALC_ID_FIELD_RSTVAL : std_logic_vector(2 downto 0) := "000";
+
+  ------------------------------------------------------------------------------
+  -- TS_INFO register
+  --
+  -- Timestamp integration information
+  ------------------------------------------------------------------------------
+  constant TS_BITS_L             : natural := 24;
+  constant TS_BITS_H             : natural := 29;
+
+  -- TS_INFO register reset values
 
   ------------------------------------------------------------------------------
   -- TRV_DELAY register
