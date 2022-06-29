@@ -154,6 +154,7 @@ use ctu_can_fd_tb.mode_rst_ftest.all;
 use ctu_can_fd_tb.mode_rxbam_ftest.all;
 use ctu_can_fd_tb.mode_txbbm_ftest.all;
 use ctu_can_fd_tb.mode_txbbm_2_ftest.all;
+use ctu_can_fd_tb.mode_txbbm_3_ftest.all;
 
 use ctu_can_fd_tb.no_sof_tx_ftest.all;
 
@@ -346,6 +347,8 @@ package body feature_test_list_pkg is
             mode_txbbm_ftest_exec(channel);
         elsif (test_name = "mode_txbbm_2") then
             mode_txbbm_2_ftest_exec(channel);
+        elsif (test_name = "mode_txbbm_3") then
+            mode_txbbm_3_ftest_exec(channel);
 
         elsif (test_name = "no_sof_tx") then
             no_sof_tx_ftest_exec(channel);
