@@ -108,7 +108,10 @@ entity rx_buffer_ram is
         G_RX_BUFF_SIZE          :       natural range 32 to 4096 := 32;
 
         -- Add parity to RX Buffer RAM
-        G_SUP_PARITY            :       boolean := false
+        G_SUP_PARITY            :       boolean := false;
+
+        -- Reset RX Buffer RAM
+        G_RESET_RX_BUF_RAM      :       boolean := false
     );
     port(
         ------------------------------------------------------------------------
@@ -185,12 +188,13 @@ begin
         G_WORD_WIDTH           => 32,
         G_DEPTH                => G_RX_BUFF_SIZE,
         G_ADDRESS_WIDTH        => port_a_address'length,
-        G_RESET_POLARITY       => '0',
-        G_SYNC_READ            => true
+        G_SYNC_READ            => true,
+        G_RESETABLE            => G_RESET_RX_BUF_RAM
     )
     port map(
         clk_sys              => clk_sys,                -- IN
-        
+        res_n                => res_n,                  -- IN
+
         addr_A               => port_a_address_i,       -- IN
         write                => port_a_write_i,         -- IN
         data_in              => port_a_data_in_i,       -- IN

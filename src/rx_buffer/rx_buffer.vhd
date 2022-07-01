@@ -104,6 +104,9 @@ entity rx_buffer is
         -- Add parity to RX Buffer RAM
         G_SUP_PARITY                :       boolean := false;
 
+        -- Reset RX Buffer RAM
+        G_RESET_RX_BUF_RAM          :       boolean := false;
+
         -- Technology type
         G_TECHNOLOGY                :       natural := C_TECH_ASIC
     );
@@ -863,7 +866,8 @@ begin
     rx_buffer_ram_inst : entity ctu_can_fd_rtl.rx_buffer_ram
     generic map(
         G_RX_BUFF_SIZE       => G_RX_BUFF_SIZE,
-        G_SUP_PARITY         => G_SUP_PARITY
+        G_SUP_PARITY         => G_SUP_PARITY,
+        G_RESET_RX_BUF_RAM   => G_RESET_RX_BUF_RAM
     )
     port map(
         -- Clocks and Asynchronous reset 

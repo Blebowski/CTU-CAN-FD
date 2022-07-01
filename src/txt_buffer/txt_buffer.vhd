@@ -105,7 +105,10 @@ entity txt_buffer is
         G_TECHNOLOGY           :     natural := C_TECH_ASIC;
 
         -- Support Parity Error
-        G_SUP_PARITY           :     boolean := false
+        G_SUP_PARITY           :     boolean := false;
+
+        -- TXT Buffer RAMs are resetable
+        G_RESET_TXT_BUF_RAM    :     boolean := false
     );
     port(
         ------------------------------------------------------------------------
@@ -358,7 +361,8 @@ begin
     txt_buffer_ram_inst : entity ctu_can_fd_rtl.txt_buffer_ram
     generic map(
         G_ID                    => G_ID,
-        G_SUP_PARITY            => G_SUP_PARITY
+        G_SUP_PARITY            => G_SUP_PARITY,
+        G_RESET_TXT_BUF_RAM     => G_RESET_TXT_BUF_RAM
     )
     port map(
         -- Clock and Asynchronous reset

@@ -104,10 +104,13 @@ use ctu_can_fd_rtl.can_registers_pkg.all;
 entity txt_buffer_ram is
     generic(
         -- TXT buffer ID
-        G_ID                   :     natural;
+        G_ID                    :     natural;
 
         -- TXT Buffer parity
-        G_SUP_PARITY           :     boolean
+        G_SUP_PARITY            :     boolean;
+
+        -- TXT Buffer RAM is resettable
+        G_RESET_TXT_BUF_RAM     :     boolean
     );
     port(
         ------------------------------------------------------------------------
@@ -190,11 +193,12 @@ begin
         G_WORD_WIDTH           => 32,
         G_DEPTH                => C_TXT_BUF_DEPTH,
         G_ADDRESS_WIDTH        => port_a_address'length,
-        G_RESET_POLARITY       => '0',
-        G_SYNC_READ            => true
+        G_SYNC_READ            => true,
+        G_RESETABLE            => G_RESET_TXT_BUF_RAM
     )
     port map(
         clk_sys              => clk_sys,
+        res_n                => res_n,
 
         addr_A               => port_a_address_i,
         write                => port_a_write_i, 

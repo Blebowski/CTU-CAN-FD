@@ -84,9 +84,6 @@ USE IEEE.numeric_std.ALL;
 
 entity inf_ram_wrapper is
     generic(
-        -- Reset polarity
-        G_RESET_POLARITY       :     std_logic := '1';
-        
         -- Width of memory word (in bits)
         G_WORD_WIDTH           :     natural := 32;
 
@@ -97,13 +94,18 @@ entity inf_ram_wrapper is
         G_ADDRESS_WIDTH        :     natural := 8;
 
         -- Synchronous read
-        G_SYNC_READ            :     boolean := true
+        G_SYNC_READ            :     boolean := true;
+
+        -- If true, res_n causes RAM to be reset
+        G_RESETABLE            :     boolean := false
     );
   port(
         ------------------------------------------------------------------------
         -- Clock and Reset
         ------------------------------------------------------------------------
         clk_sys     :in   std_logic;
+        
+        res_n       :in   std_logic;
 
         ------------------------------------------------------------------------
         -- Port A - Data input
@@ -155,18 +157,45 @@ begin
                       '0';   
     end generate;
     
-    ram_write_process : process(clk_sys)
-    begin
-        if (rising_edge(clk_sys)) then
-            for i in 0 to G_WORD_WIDTH/8 - 1 loop
-                if (byte_we(i) = '1') then
-                    ram_memory(to_integer(unsigned(addr_A)))(i * 8 + 7 downto i * 8)
-                        <= data_in(i * 8 + 7 downto i * 8);
-                end if;
-            end loop;
-        end if;
-    end process;
-    
+    ----------------------------------------------------------------------------
+    -- RAM memory (non-resetable version)
+    ----------------------------------------------------------------------------
+    ram_rst_false_gen : if (not G_RESETABLE) generate
+        
+        ram_write_process : process(clk_sys)
+        begin
+            if (rising_edge(clk_sys)) then
+                for i in 0 to G_WORD_WIDTH/8 - 1 loop
+                    if (byte_we(i) = '1') then
+                        ram_memory(to_integer(unsigned(addr_A)))(i * 8 + 7 downto i * 8)
+                            <= data_in(i * 8 + 7 downto i * 8);
+                    end if;
+                end loop;
+            end if;
+        end process;
+
+    end generate;
+
+    ----------------------------------------------------------------------------
+    -- RAM memory (resetable version)
+    ----------------------------------------------------------------------------
+    ram_rst_true_gen : if (G_RESETABLE) generate
+        
+        ram_write_process : process(clk_sys)
+        begin
+            if (res_n = '0') then
+                ram_memory <= (others => (others => '0'));
+            elsif (rising_edge(clk_sys)) then
+                for i in 0 to G_WORD_WIDTH/8 - 1 loop
+                    if (byte_we(i) = '1') then
+                        ram_memory(to_integer(unsigned(addr_A)))(i * 8 + 7 downto i * 8)
+                            <= data_in(i * 8 + 7 downto i * 8);
+                    end if;
+                end loop;
+            end if;
+        end process;
+
+    end generate;
 
     ----------------------------------------------------------------------------
     -- Memory read access

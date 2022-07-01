@@ -132,6 +132,9 @@ entity can_top_level is
         -- Number of active timestamp bits
         active_timestamp_bits   : natural range 0 to 63     := 63;
 
+        -- Reset TXT / RX Buffer RAMs
+        reset_buffer_rams       : boolean                   := false;
+
         -- Target technology (ASIC or FPGA)
         target_technology       : natural                   := C_TECH_FPGA
     );
@@ -685,6 +688,7 @@ begin
     generic map(
         G_RX_BUFF_SIZE          => rx_buffer_size,
         G_SUP_PARITY            => sup_parity,
+        G_RESET_RX_BUF_RAM      => reset_buffer_rams,
         G_TECHNOLOGY            => target_technology
     )
     port map(
@@ -744,7 +748,8 @@ begin
             G_TXT_BUFFER_COUNT  => txt_buffer_count,
             G_ID                => i,
             G_TECHNOLOGY        => target_technology,
-            G_SUP_PARITY        => sup_parity
+            G_SUP_PARITY        => sup_parity,
+            G_RESET_TXT_BUF_RAM => reset_buffer_rams
         )
         port map(
             clk_sys                 => clk_sys,                         -- IN
