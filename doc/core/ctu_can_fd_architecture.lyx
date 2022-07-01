@@ -511,7 +511,7 @@ filename "version.tex"
 \noindent
 \align center
 \begin_inset Tabular
-<lyxtabular version="3" rows="16" columns="4">
+<lyxtabular version="3" rows="17" columns="4">
 <features tabularvalignment="middle">
 <column alignment="center" valignment="top" width="1.5cm">
 <column alignment="center" valignment="top" width="3cm">
@@ -1108,7 +1108,7 @@ Clarify implications of connecting core to 8/16/32 bit buses.
 </cell>
 </row>
 <row>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -1117,7 +1117,7 @@ Clarify implications of connecting core to 8/16/32 bit buses.
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -1126,7 +1126,7 @@ Clarify implications of connecting core to 8/16/32 bit buses.
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -1135,7 +1135,7 @@ Clarify implications of connecting core to 8/16/32 bit buses.
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -1147,6 +1147,57 @@ sup_parity
 \series default
 \shape default
  generic.
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+0.16
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+2.4.2
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+27-6-2022
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Add 
+\series bold
+\shape italic
+reset_buffer_rams
+\series default
+\shape default
+ and 
+\series bold
+\shape italic
+active_timestamp_bits
+\series default
+\shape default
+ generic.
+ Remove interfaces of each sub-block.
 \end_layout
 
 \end_inset
@@ -1473,10 +1524,12 @@ When CTU CAN FD GIT repository is clonned, register map can be generated
 \end_layout
 
 \begin_layout Verbatim
+
 cd scripts
 \end_layout
 
 \begin_layout Verbatim
+
 ./update_reg_map
 \end_layout
 
@@ -1489,10 +1542,12 @@ Documentation can be exported from VHDL RTL codes by following script:
 \end_layout
 
 \begin_layout Verbatim
+
 cd scripts
 \end_layout
 
 \begin_layout Verbatim
+
 python gen_lyx_tables.py --configPath vhdl_lyx_interface_cfg.yml
 \end_layout
 
@@ -1525,10 +1580,12 @@ CTU CAN FD contains release tags in GIT repository.
 \end_layout
 
 \begin_layout Verbatim
+
 cd scripts
 \end_layout
 
 \begin_layout Verbatim
+
 python create_release.py --output_dir ../release_directory_name
 \end_layout
 
@@ -1550,10 +1607,12 @@ src/component.xml
 \end_layout
 
 \begin_layout Verbatim
+
 cd scripts
 \end_layout
 
 \begin_layout Verbatim
+
 python gen_vivado_component.py
 \end_layout
 
@@ -1768,7 +1827,7 @@ status open
 \noindent
 \align center
 \begin_inset Tabular
-<lyxtabular version="3" rows="6" columns="3">
+<lyxtabular version="3" rows="14" columns="3">
 <features tabularvalignment="middle">
 <column alignment="left" valignment="middle" width="15.5line%">
 <column alignment="left" valignment="top" width="10line%">
@@ -1958,7 +2017,7 @@ No padding is inserted since full sized frames are supported.
 </cell>
 </row>
 <row>
-<cell alignment="left" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -1967,7 +2026,7 @@ LLC Abort Interface
 
 \end_inset
 </cell>
-<cell alignment="left" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -1976,7 +2035,7 @@ Supported
 
 \end_inset
 </cell>
-<cell alignment="left" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -1990,6 +2049,291 @@ LData.Abort_Request
  LRemote.Abort_Request
 \color inherit
  primitive.
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+ESI and BRS values
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Supported
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+BRS value can be specified for each transmitted CAN frame.
+ ESI value can't be specified for transmitted CAN frames, it is always derived
+ from current Fault confinement state of CTU CAN FD.
+ ESI value can be read for each received frame.
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Method to provide MAC data consistency
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Partially Supported
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+CTU CAN FD implements TXT Buffer RAMs which stores whole CAN frame for transmiss
+ion before the transmission is started.
+ This corresponds to: 
+\begin_inset Quotes eld
+\end_inset
+
+The MAC sub-layer shall store the whole message to be transmitted in a temporary
+ buffer that is filled before the transmission is started.
+\begin_inset Quotes erd
+\end_inset
+
+ Additionally, CTU CAN FD implements parity protection on each word of TXT
+ Buffer and RX Buffer if 
+\series bold
+\shape italic
+sup_parity
+\series default
+\shape default
+=true.
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Time and time triggering
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Partially Supported
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Time triggerred transmission is available in TX Arbitrator module.
+ CTU CAN FD does not support time base by itself, it is left up to integrator
+ to provide Time base via 
+\series bold
+\shape italic
+timestamp
+\series default
+\shape default
+ input.
+ The reason for this, is to share single Time base between multiple instances
+ of CTU CAN FD.
+ 
+\series bold
+\shape italic
+timestamp
+\series default
+\shape default
+ input is readable from CTU CAN FD.
+ No event generation is provided from 
+\series bold
+\shape italic
+timestamp
+\series default
+\shape default
+ input.
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Time stamping
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Supported
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Timestamping of RX frames is supported in SOF or EOF bit.
+ Time Base counter must be provided by integrator and must be connected
+ to 
+\series bold
+\shape italic
+timestamp
+\series default
+\shape default
+ input.
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Bus Monitoring mode
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Supported
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Supported via MODE[LOM].
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Handle
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Supported
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Handle corresponds to TXT Buffer.
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Restricted operation
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Supported
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Supported via MODE[ROM].
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Separate prescalers for Nominal and Data Bit Rate
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Supported
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Prescalers are separate in BTR[BRP] and BTR_FD[BRP_FD] registers.
 \end_layout
 
 \end_inset
@@ -2039,7 +2383,7 @@ status open
 \noindent
 \align center
 \begin_inset Tabular
-<lyxtabular version="3" rows="16" columns="3">
+<lyxtabular version="3" rows="8" columns="3">
 <features tabularvalignment="middle">
 <column alignment="left" valignment="middle" width="15.5line%">
 <column alignment="left" valignment="top" width="10line%">
@@ -2107,291 +2451,6 @@ cellcolor{gray}
 \end_inset
 
 
-\end_layout
-
-\end_inset
-</cell>
-</row>
-<row>
-<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-ESI and BRS values
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-Supported
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-BRS value can be specified for each transmitted CAN frame.
- ESI value can't be specified for transmitted CAN frames, it is always derived
- from current Fault confinement state of CTU CAN FD.
- ESI value can be read for each received frame.
-\end_layout
-
-\end_inset
-</cell>
-</row>
-<row>
-<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-Method to provide MAC data consistency
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-Partially Supported
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-CTU CAN FD implements TXT Buffer RAMs which stores whole CAN frame for transmiss
-ion before the transmission is started.
- This corresponds to: 
-\begin_inset Quotes eld
-\end_inset
-
-The MAC sub-layer shall store the whole message to be transmitted in a temporary
- buffer that is filled before the transmission is started.
-\begin_inset Quotes erd
-\end_inset
-
- Additionally, CTU CAN FD implements parity protection on each word of TXT
- Buffer and RX Buffer if 
-\series bold
-\shape italic
-sup_parity
-\series default
-\shape default
-=true.
-\end_layout
-
-\end_inset
-</cell>
-</row>
-<row>
-<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-Time and time triggering
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-Partially Supported
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-Time triggerred transmission is available in TX Arbitrator module.
- CTU CAN FD does not support time base by itself, it is left up to integrator
- to provide Time base via 
-\series bold
-\shape italic
-timestamp
-\series default
-\shape default
- input.
- The reason for this, is to share single Time base between multiple instances
- of CTU CAN FD.
- 
-\series bold
-\shape italic
-timestamp
-\series default
-\shape default
- input is readable from CTU CAN FD.
- No event generation is provided from 
-\series bold
-\shape italic
-timestamp
-\series default
-\shape default
- input.
-\end_layout
-
-\end_inset
-</cell>
-</row>
-<row>
-<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-Time stamping
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-Supported
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-Timestamping of RX frames is supported in SOF or EOF bit.
- Time Base counter must be provided by integrator and must be connected
- to 
-\series bold
-\shape italic
-timestamp
-\series default
-\shape default
- input.
-\end_layout
-
-\end_inset
-</cell>
-</row>
-<row>
-<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-Bus Monitoring mode
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-Supported
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-Supported via MODE[LOM].
-\end_layout
-
-\end_inset
-</cell>
-</row>
-<row>
-<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-Handle
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-Supported
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-Handle corresponds to TXT Buffer.
-\end_layout
-
-\end_inset
-</cell>
-</row>
-<row>
-<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-Restricted operation
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-Supported
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-Supported via MODE[ROM].
-\end_layout
-
-\end_inset
-</cell>
-</row>
-<row newpage="true">
-<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-Separate prescalers for Nominal and Data Bit Rate
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-Supported
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-Prescalers are separate in BTR[BRP] and BTR_FD[BRP_FD] registers.
 \end_layout
 
 \end_inset
@@ -2675,9 +2734,23 @@ Memory Bus
 
 \begin_layout Standard
 CTU CAN FD is accessible as a slave device via one of three memory buses:
- RAM-like interface, APB and AHB.
- Each interface can be used via dedicated wrapper.
- CTU CAN FD shall not be accessed sooner than two clock cycles after external
+\end_layout
+
+\begin_layout Itemize
+RAM-like interface,
+\end_layout
+
+\begin_layout Itemize
+APB
+\end_layout
+
+\begin_layout Itemize
+AHB.
+\end_layout
+
+\begin_layout Standard
+Each interface can be used via dedicated wrapper.
+ SW shall not access CTU CAN FD sooner than two clock cycles after external
  reset was released (due to reset synchronisation) (see Table 
 \begin_inset CommandInset ref
 LatexCommand ref
@@ -2689,8 +2762,8 @@ noprefix "false"
 \end_inset
 
 ).
- If CTU CAN FD is accessed earlier, writes have no effect and reads will
- return zeroes.
+ If CTU CAN FD is accessed earlier, writes accesses have no effect and read
+ accesses return zeroes.
  If external reset is executed via SW driver (e.g.
  at driver load time), it is recomended to add corresponding delay before
  driver executes any access to the device (e.g.
@@ -2738,9 +2811,8 @@ noprefix "false"
 
 .
  Note that RAM-like interface does not contain any Ready/ACK signal.
- This indicates that CTU CAN FD is always able to process written data in
- one clock cycle (write access) and return read data in the next clock cycle
- (read access).
+ CTU CAN FD is always able to process written data in one clock cycle (write
+ access) and return read data in the next clock cycle (read access).
  Accesses on RAM-like interface shall be 4 byte aligned (lower 2 bits of
  address shall be equal to 0).
  If access is not 4 byte aligned, lower 2 bits of address are ignored.
@@ -2752,7 +2824,7 @@ noprefix "false"
 sbe
 \series default
 \shape default
-), therefore 8-bit and 16-bit accesses are also possible.
+), therefore 8-bit and 16-bit accesses are supported.
  If 
 \series bold
 \shape italic
@@ -3397,8 +3469,8 @@ noprefix "false"
 
 .
  When connected to Avalon MM master, write access to reserved address has
- no effect and read returns all zeroes instead of responding with DECODEERROR
- response.
+ no effect and read access returns all zeroes instead of responding with
+ DECODEERROR response.
  
 \series bold
 \shape italic
@@ -3820,7 +3892,7 @@ noprefix "false"
 .
  Note that every access on APB Interface lasts two clock cycles, no bursts
  can be executed by nature of this interface.
- CTU CAN FD does not prolong transfers on APB interface via 
+ CTU CAN FD does not stall transfers on APB interface via 
 \series bold
 \shape italic
 s_apb_pready
@@ -3840,13 +3912,13 @@ s_apb_pslverr
 \series default
 \shape default
  on any access.
- If access is executed to an invalid location within CTU CAN FD, it is simply
+ If SW executes access to an invalid location within CTU CAN FD, it is simply
  ignored.
- This is done to enable taking snapshot of CTU CAN FD registers without
- memory access errors.
+ This allows dumping whole CTU CAN FD memory space without memory access
+ errors.
  Accesses on APB Interface shall be 4 byte aligned.
  If access is not 4 byte aligned, lowest 2 bits of address are ignored.
- 8/16 bit write accesses are realized via write strobe signal (
+ 8/16 bit write accesses are supported via write strobe signal (
 \series bold
 \shape italic
 s_apb_pstrb
@@ -4498,11 +4570,11 @@ noprefix "false"
 .
  CTU CAN FD accepts all transfer types (Non-sequential, Sequential, Idle,
  Busy) on AHB bus.
- CTU CAN FD treats burst accesses the same way as regular accesses (no internal
+ CTU CAN FD treats burst accesses equally as regular accesses (no internal
  caching is done).
  If read transfer occurs after write transfer (directly one after another),
- CTU CAN FD inserts one wait cycle in access phase of AHB transaction, as
- is shown in Figure 
+ CTU CAN FD inserts one wait cycle into AHB transaction, as is shown in
+ Figure 
 \begin_inset CommandInset ref
 LatexCommand ref
 reference "fig:ahb-interface-access"
@@ -4520,11 +4592,11 @@ hresp
 \series default
 \shape default
  on any accesses.
- If access is executed to an invalid location within CTU CAN FD, it is simply
+ If SW executes access to an invalid location within CTU CAN FD, it is simply
  ignored.
- This is done to enable taking snapshot of CTU CAN FD registers without
- memory access errors.
- Unaligned accesses are not supported by CTU CAN FD on AHB Bus.
+ This allows dumping whole CTU CAN FD memory space without memory access
+ errors.
+ CTU CAN FD does not support unaligned accesses on AHB Bus.
  Each access shall be aligned to its own size (8-bit access can have arbitrary
  address, 16 bit access must have address 2-byte aligned, 32-bit access
  must have address 4-byte aligned).
@@ -5261,7 +5333,7 @@ Limitations on 8/16 bit buses
 
 \begin_layout Standard
 CTU CAN FD is 32-bit peripheral, however, it is possible to integrate it
- to 8/16 bit systems thanks to 
+ to systems with 8/16 bit bus thanks to 
 \begin_inset Quotes eld
 \end_inset
 
@@ -5270,14 +5342,15 @@ byte enable
 \end_inset
 
  capabilities of each bus interface wrapper.
- If core is accessed via 8/16 bit bus, access to simple 32-bit R/W register
- can be split into 4/2 consecutive accesses without affecting the functionality.
+ If SW accesses CTU CAN FD via 8/16 bit bus, access to simple 32-bit R/W
+ register can be split into 4/2 consecutive accesses without affecting the
+ functionality.
  However, due to side-effects on several registers, there are following
  limitations when accessing CTU CAN FD from 8/16 bit buses:
 \end_layout
 
 \begin_layout Itemize
-CTU CAN FD must be operated in RX Buffer manual mode (MODE[RXBAM] = 0).
+CTU CAN FD must be used in RX Buffer manual mode (MODE[RXBAM] = 0).
  This is necessary since read of single word from RX Buffer can not be done
  by single read access to RX_DATA register.
  On 8 bit systems, it will require 4 reads (addresses RX_DATA ..
@@ -5397,14 +5470,14 @@ timestamp
 \series default
 \shape default
  is unused (no Timestamping / Time Triggering capability), it shall be driven
- High.
+ to 0xFFFF FFFF FFFF FFFF.
  If 
 \series bold
 \shape italic
 timestamp
 \series default
 \shape default
- is used, it shall be connected to unsigned up-counting counter which measures
+ is used, it shall be driven by unsigned up-counting counter which measures
  flow of time within a system to which CTU CAN FD is being integrated.
  
 \series bold
@@ -5415,22 +5488,34 @@ timestamp
  does not need to be incremented every clock cycle of System clock, nor
  there is a constraint on step that it is incremented with, it only needs
  to be synchronous to System clock.
- If system level time counter has lower width than 64 bits, it is up to
- application to which bits of 
+ If system level time counter has lower width than 64 bits, integrating
+ system shall connect such counter to lower bits of 
 \series bold
 \shape italic
 timestamp
 \series default
 \shape default
- input this counter will be connected.
- In such situation, SW driver operating on CTU CAN FD must be aware of such
- a connection to understand interpretation of 
+ input, and drive unused high bits to zero.
+ Integrating system shall also set 
 \series bold
 \shape italic
-timestamp
+active_timestamp_bits 
 \series default
 \shape default
- in TX/RX CAN frames.
+to width of such counter - 1 (e.g.
+ when system has 32 bit timestamp, it shall be connected to 
+\series bold
+\shape italic
+timestamp[31:0]
+\series default
+\shape default
+ and 
+\series bold
+\shape italic
+active_timestamp_bits=
+\series default
+\shape default
+31).
 \end_layout
 
 \begin_layout Section
@@ -5869,7 +5954,7 @@ status open
 \noindent
 \align center
 \begin_inset Tabular
-<lyxtabular version="3" rows="11" columns="5">
+<lyxtabular version="3" rows="13" columns="5">
 <features tabularvalignment="middle">
 <column alignment="left" valignment="top" width="0pt">
 <column alignment="left" valignment="top" width="0pt">
@@ -6516,7 +6601,7 @@ Synthesize test registers.
 </cell>
 </row>
 <row>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -6528,7 +6613,7 @@ sup_parity
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -6537,7 +6622,7 @@ boolean
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -6546,7 +6631,7 @@ false
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -6555,11 +6640,117 @@ true/false
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
 Add parity protection to TXT Buffers / RX Buffer.
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\series bold
+\shape italic
+reset_buffer_rams
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+boolean
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+false
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+true/false
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+When true, TXT Buffer and RX Buffer RAMs are reset by 
+\series bold
+\shape italic
+res_n
+\series default
+\shape default
+.
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\series bold
+\shape italic
+active_timestamp_bits
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+integer
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+63
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+0-63
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Number of active timestamp bits minus - 1.
 \end_layout
 
 \end_inset
@@ -7183,21 +7374,20 @@ Testability
 \end_layout
 
 \begin_layout Standard
-CTU CAN FD contains following special support for manufacturing testability:
+CTU CAN FD contains following features for manufacturing testability:
 \end_layout
 
 \begin_layout Enumerate
 Memory testability - Allows direct read/write access to TXT Buffer RAMs
- and RX Buffer RAMs.
+ and RX Buffer RAM.
  This approach is supported only when Test registers memory region is synthesize
-d.
- Test registers are synthesized when 
+d (
 \series bold
 \shape italic
 sup_test_registers
 \series default
 \shape default
-=true.
+ = true).
  In general, it is recommended to synthesize Test registers only for ASIC
  implementations (
 \series bold
@@ -7205,7 +7395,9 @@ sup_test_registers
 target_technology
 \series default
 \shape default
- = 0), as synthesis for FPGA implementations makes no sense.
+ = 0), as synthesis for FPGA implementations is usefull only for testing
+ parity protection of RX / TXT Buffer RAMs, since test access bypasses parity
+ encoding mechanism.
 \end_layout
 
 \begin_layout Enumerate
@@ -7224,7 +7416,9 @@ Memory testability
 \end_layout
 
 \begin_layout Standard
-Each memory within CTU CAN FD can be tested at production via Test Registers.
+Each memory within CTU CAN FD can be tested at production via Test Registers
+ (e.g.
+ executing march pattern test).
  Any data can be written to any address inside each memory.
  Memory testability is available only in Test Mode (MODE[TSTM] = 1).
  If device is not in Test mode, accesses to whole Test registers block are
@@ -7239,8 +7433,6 @@ enable
 
  bit (TSTCTRL[TMENA]), which must be set to enable memory testing via Test
  registers.
- When Memory testing is in progress, CTU CAN FD shall be disabled (SETTINGS[ENA]
- = '0').
  An example of memory testing is shown in Table 
 \begin_inset CommandInset ref
 LatexCommand ref
@@ -7481,7 +7673,7 @@ Wait for 1 System clock clock cycle (read from RAMs is pipelined).
 \begin_layout Plain Layout
 Read value from TST_RDATA.
  Check that value read from this register matches what has been written
- to the same address in steps 2,3 and 4.
+ TST_WDATA register in Step 3.
  If value does not match, test fails.
 \end_layout
 
@@ -7580,8 +7772,14 @@ noprefix "false"
 
 \end_inset
 
-) are implemented from DFFs (not inferred, nor replaced by hard RAMs), DFFs
- without set and reset are used.
+) are implemented from DFFs (not inferred, nor replaced by hard RAMs) and
+ 
+\series bold
+\shape italic
+reset_buffer_rams
+\series default
+\shape default
+ = false, DFFs without set and reset are used.
  All DFFs are active on positive clock edge (to mitigate effects of clock
  duty-cycle).
  CTU CAN FD is latch free (apart from latches within clock gate cells).
@@ -7824,7 +8022,6 @@ noprefix "false"
 \end_inset
 
 ).
- Each memory is implemented in a dedicated wrapper.
  List of memories is shown in Table 
 \begin_inset CommandInset ref
 LatexCommand ref
@@ -7838,8 +8035,8 @@ noprefix "false"
 .
  Memories are designed to automatically infer dedicated synchronous RAM
  resources on FPGA.
- ASIC implementation can either replace these memories by hard macros, or
- leave memory implementation to synthesis tool.
+ When integrating CTU CAN FD to ASIC, integrator can either replace these
+ memories by hard macros, or leave memory implementation to synthesis tool.
  In such case, memory consists of DFFs without set or reset (memory is 
 \begin_inset Quotes eld
 \end_inset
@@ -7849,12 +8046,31 @@ uninitalized
 \end_inset
 
 ).
+ If it is desirable for RAMs to be reset, set 
+\series bold
+\shape italic
+reset_buffer_rams 
+\series default
+\shape default
+= true.
+ When 
+\series bold
+\shape italic
+reset_buffer_rams 
+\series default
+\shape default
+= true, 
+\series bold
+\shape italic
+res_n
+\series default
+\shape default
+ RAMs to zeroes.
 \end_layout
 
 \begin_layout Standard
-Memories are not initialized, nor reset.
- Each memory is synchronous memory with one clock cycle latency on data
- read and one cycle write access latency.
+Each memory is synchronous memory with one clock cycle latency on data read
+ and one cycle write access latency.
  Both memories are dual port memories with write-only port A, read-only
  port B, and the same clock signal is used to clock both ports.
  If true dual port memories are used, write data/enable of Port B shall
