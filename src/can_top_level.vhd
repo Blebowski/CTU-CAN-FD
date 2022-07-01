@@ -390,12 +390,15 @@ architecture rtl of can_top_level is
     ------------------------------------------------------------------------
     -- TXT Buffers <-> TX Arbitrator
     ------------------------------------------------------------------------    
-    -- Index of TXT Buffer for which HW commands is valid          
+    -- Index of TXT Buffer for which HW commands is valid
     signal txtb_hw_cmd_index        :   natural range 0 to txt_buffer_count - 1;
-    
+
     -- TXT Buffers are available, can be selected by TX Arbitrator
     signal txtb_available           :   std_logic_vector(txt_buffer_count - 1 downto 0);
-        
+
+    -- TXT Buffer is in state for which its backup buffer can be used
+    signal txtb_allow_bb            :   std_logic_vector(txt_buffer_count - 1 downto 0);
+
     -- Pointer to TXT Buffer
     signal txtb_ptr                 :   natural range 0 to 19;
     
@@ -779,6 +782,7 @@ begin
             txtb_port_b_clk_en      => txtb_port_b_clk_en,              -- IN
             is_bus_off              => is_bus_off,                      -- IN
             txtb_available          => txtb_available(i),               -- OUT
+            txtb_allow_bb           => txtb_allow_bb(i),                -- OUT
             txtb_parity_check_valid => txtb_parity_check_valid,         -- IN
             txtb_parity_error_valid => txtb_parity_error_valid(i),      -- OUT
             txtb_bb_parity_error    => txtb_bb_parity_error(i),         -- OUT   
@@ -801,6 +805,7 @@ begin
         -- TXT Buffers interface
         txtb_port_b_data        => txtb_port_b_data,        -- IN
         txtb_available          => txtb_available,          -- IN
+        txtb_allow_bb           => txtb_allow_bb,           -- OUT
         txtb_port_b_address     => txtb_port_b_address,     -- OUT
         txtb_port_b_clk_en      => txtb_port_b_clk_en,      -- OUT
         txtb_parity_check_valid => txtb_parity_check_valid, -- OUT

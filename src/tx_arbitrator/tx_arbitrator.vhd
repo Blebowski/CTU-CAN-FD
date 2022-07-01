@@ -120,6 +120,9 @@ entity tx_arbitrator is
         
         -- TXT Buffers are available, can be selected by TX Arbitrator
         txtb_available          :in std_logic_vector(G_TXT_BUFFER_COUNT - 1 downto 0);
+
+        -- TXT Buffer is in state in which it can have backup buffer
+        txtb_allow_bb           :in std_logic_vector(G_TXT_BUFFER_COUNT - 1 downto 0);
         
         -- Pointer to TXT Buffer
         txtb_port_b_address     :out natural range 0 to 19;
@@ -413,7 +416,9 @@ begin
         txtb_prorities_txbbm(i) <= txtb_prorities(i) when (drv_txbbm_ena = '0') else
                                    txtb_prorities(i - 1);
 
-        txtb_is_bb(i) <= '1' when (drv_txbbm_ena = '1' and int_txtb_index = i-1) else
+        txtb_is_bb(i) <= '1' when (drv_txbbm_ena = '1' and int_txtb_index = i-1 and
+                                   txtb_allow_bb(i - 1) = '1')
+                             else
                          '0';
     end generate;
   end generate;

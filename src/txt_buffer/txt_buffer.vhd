@@ -200,6 +200,9 @@ entity txt_buffer is
         -- TXT Buffer is available to be locked by CAN Core for transmission
         txtb_available          :out  std_logic;
 
+        -- TXT Buffer is in state for which its backup buffer can be used
+        txtb_allow_bb           :out  std_logic;
+
         -- Parity check valid
         txtb_parity_check_valid :in   std_logic;
         
@@ -403,6 +406,7 @@ begin
         drv_bus_mon_ena         => drv_bus_mon_ena,          -- IN
         txtb_is_bb              => txtb_is_bb,               -- IN
 
+        txtb_allow_bb           => txtb_allow_bb,            -- OUT
         txtb_user_accessible    => txtb_user_accessible,     -- OUT
         txtb_hw_cmd_int         => txtb_hw_cmd_int,          -- OUT
         txtb_state              => txtb_state,               -- OUT

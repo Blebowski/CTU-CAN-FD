@@ -151,6 +151,9 @@ entity txt_buffer_fsm is
         -- Buffer accessible from SW
         txtb_user_accessible    :out  std_logic;
 
+        -- TXT Buffer is in state for which its backup buffer can be used
+        txtb_allow_bb           :out  std_logic;
+
         -- HW Command applied on TXT Buffer.
         txtb_hw_cmd_int         :out  std_logic;
 
@@ -208,6 +211,8 @@ begin
                              drv_rom_ena = ROM_ENABLED)
                         else
                     '0';
+
+    txtb_allow_bb <= transient_state;
 
     ----------------------------------------------------------------------------
     -- Next state process
