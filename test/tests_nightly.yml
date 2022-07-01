@@ -160,11 +160,45 @@ feature:
         mode_rxbam:
         mode_self_test:
         mode_test:
+        
         mode_txbbm:
         mode_txbbm_2:
         mode_txbbm_3:
         mode_txbbm_4:
         mode_txbbm_5:
+
+        mode_txbbm@:
+            txt_buffer_count: 2
+        mode_txbbm_2@:
+            txt_buffer_count: 2
+        mode_txbbm_3@:
+            txt_buffer_count: 2
+        mode_txbbm_4@:
+            txt_buffer_count: 2
+        mode_txbbm_5@:
+            txt_buffer_count: 2
+
+        mode_txbbm@@:
+            txt_buffer_count: 4
+        mode_txbbm_2@@:
+            txt_buffer_count: 4
+        mode_txbbm_3@@:
+            txt_buffer_count: 4
+        mode_txbbm_4@@:
+            txt_buffer_count: 4
+        mode_txbbm_5@@:
+            txt_buffer_count: 4
+
+        mode_txbbm@@@:
+            txt_buffer_count: 6
+        mode_txbbm_2@@@:
+            txt_buffer_count: 6
+        mode_txbbm_3@@@:
+            txt_buffer_count: 6
+        mode_txbbm_4@@@:
+            txt_buffer_count: 6
+        mode_txbbm_5@@@:
+            txt_buffer_count: 6
 
         mode_frame_filters:
             iterations: 15
