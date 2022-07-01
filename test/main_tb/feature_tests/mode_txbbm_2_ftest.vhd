@@ -93,7 +93,7 @@
 -- @TestInfoEnd
 --------------------------------------------------------------------------------
 -- Revision History:
---    29.06.2021   Created file
+--    28.06.2022   Created file
 --------------------------------------------------------------------------------
 
 Library ctu_can_fd_tb;
@@ -192,7 +192,6 @@ package body mode_txbbm_2_ftest is
 
             txt_buf_vector := x"00";
             txt_buf_vector(txt_buf_index - 1) := '1';
-            txt_buf_vector(txt_buf_index) := '1';
 
             send_TXT_buf_cmd(buf_set_ready, txt_buf_vector, DUT_NODE, chn);
 

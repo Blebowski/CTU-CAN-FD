@@ -126,6 +126,7 @@ feature:
         mode_txbbm_2:
         mode_txbbm_3:
         mode_txbbm_4:
+        mode_txbbm_5:
 
         mode_frame_filters:
             iterations: 6
