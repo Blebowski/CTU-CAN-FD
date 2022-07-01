@@ -169,7 +169,7 @@ def add_rtl_sources(lib) -> None:
     add_sources(lib, ['../src/**/*.vhd'])
 
 def add_post_syn_netlist(lib) -> None:    
-    add_sources(lib, ['../synthesis/Vivado/ci_benchmark/typical_design_config/can_top_level.vhd'])
+    add_sources(lib, ['../synthesis/Vivado/ci_benchmark/maximal_design_config/can_top_level.vhd'])
 
 def add_unit_sources(lib, build) -> None:
 	add_sources(lib, ['unit/**/*.vhd'])
