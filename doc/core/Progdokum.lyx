@@ -6913,6 +6913,32 @@ backup
  TXT Buffer).
 \end_layout
 
+\begin_layout Description
+Note TXT Buffer Backup mode is supported only when CTU CAN FD contains even
+ number of TXT Buffers.
+ If CTU CAN FD contains odd number of TXT Buffers, there exists one TXT
+ Buffer which has no 
+\begin_inset Quotes eld
+\end_inset
+
+backup
+\begin_inset Quotes erd
+\end_inset
+
+ buffer.
+ In such case SW shall not use this spare 
+\begin_inset Quotes eld
+\end_inset
+
+original
+\begin_inset Quotes erd
+\end_inset
+
+ TXT Buffer when MODE[TXBBM] = 1.
+ If this TXT Buffer is available used when MODE[TXBBM], behavior of CTU
+ CAN FD is undefined.
+\end_layout
+
 \begin_layout Subsection
 Parity protection testing
 \begin_inset CommandInset label
