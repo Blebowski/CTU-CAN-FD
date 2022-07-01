@@ -14,9 +14,9 @@ set DESIGN_CONFIGS [list \
         [ dict create \
          rx_buffer_size         32 \
          txt_buffer_count       2 \
-         sup_filt_A             "1'b0" \
-         sup_filt_B             "1'b0" \
-         sup_filt_C             "1'b0" \
+         sup_filtA              "1'b0" \
+         sup_filtB              "1'b0" \
+         sup_filtC              "1'b0" \
          sup_range              "1'b0" \
          target_technology      1 \
          sup_traffic_ctrs       "1'b0" \
@@ -29,9 +29,9 @@ set DESIGN_CONFIGS [list \
         [ dict create \
          rx_buffer_size         128 \
          txt_buffer_count       4 \
-         sup_filt_A             "1'b1" \
-         sup_filt_B             "1'b0" \
-         sup_filt_C             "1'b0" \
+         sup_filtA              "1'b1" \
+         sup_filtB              "1'b0" \
+         sup_filtC              "1'b0" \
          sup_range              "1'b1" \
          target_technology      1 \
          sup_traffic_ctrs       "1'b1" \
@@ -44,9 +44,9 @@ set DESIGN_CONFIGS [list \
         [ dict create \
          rx_buffer_size         4096 \
          txt_buffer_count       8 \
-         sup_filt_A             "1'b1" \
-         sup_filt_B             "1'b1" \
-         sup_filt_C             "1'b1" \
+         sup_filtA              "1'b1" \
+         sup_filtB              "1'b1" \
+         sup_filtC              "1'b1" \
          sup_range              "1'b1" \
          target_technology      1 \
          sup_traffic_ctrs       "1'b1" \
