@@ -7251,6 +7251,12 @@ noprefix "false"
 .
 \end_layout
 
+\begin_layout Description
+Note FRAME_TEST_W word of CAN frame is present only in TXT Buffers, it does
+ not exist in RX Buffer (longest CAN frame in RX Buffer still has 20 words,
+ not 21).
+\end_layout
+
 \begin_layout Subsection
 Flip a bit of CRC field
 \end_layout
