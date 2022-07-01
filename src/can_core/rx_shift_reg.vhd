@@ -209,7 +209,6 @@ architecture rtl of rx_shift_reg is
 
     -- Internal reset
     signal res_n_i_d        : std_logic;
-    signal res_n_i_q        : std_logic;
     signal res_n_i_q_scan   : std_logic;
 
     -- Shift register status
@@ -233,33 +232,21 @@ begin
     ---------------------------------------------------------------------------
     -- Registering reset to avoid glitches
     ---------------------------------------------------------------------------
-    rx_shift_res_reg_inst : entity ctu_can_fd_rtl.dff_arst
-    generic map(
-        G_RESET_POLARITY   => '0',
-
-        -- Reset to the same value as is polarity of reset so that other DFFs
-        -- which are reset by output of this one will be reset too!
-        G_RST_VAL          => '0'
+    rx_shift_res_reg_inst : entity ctu_can_fd_rtl.rst_reg
+    generic map (
+        G_RESET_POLARITY    => '0'
     )
     port map(
-        arst               => res_n,          -- IN
-        clk                => clk_sys,        -- IN
-        input              => res_n_i_d,      -- IN
+        -- Clock and Reset
+        clk                 => clk_sys,
+        arst                => res_n,
 
-        output             => res_n_i_q       -- OUT
-    );
+        -- Flip flop input / output
+        d                   => res_n_i_d,
+        q                   => res_n_i_q_scan,
 
-    ---------------------------------------------------------------------------
-    -- Registering reset to avoid glitches
-    ---------------------------------------------------------------------------
-    mux2_res_tst_inst : entity ctu_can_fd_rtl.mux2
-    port map(
-        a                  => res_n_i_q, 
-        b                  => '1',
-        sel                => scan_enable,
-
-        -- Output
-        z                  => res_n_i_q_scan
+        -- Scan mode control
+        scan_enable         => scan_enable
     );
 
     ---------------------------------------------------------------------------

@@ -68,10 +68,9 @@
 
 --------------------------------------------------------------------------------
 -- Module:
---  Clock gate - Latch + AND based clock gate
+--  Register which is used to drive asynchronous reset of another flip-flop.
 --
---  If ASIC technology is chosen, gate clocks. Otherwise, do not gate. Latch is
---  without reset since ICGs do not usually have reset. 
+--  Output is gated into inactive value in scan mode.
 --------------------------------------------------------------------------------
 
 Library ieee;
@@ -80,57 +79,65 @@ use ieee.std_logic_1164.all;
 Library ctu_can_fd_rtl;
 use ctu_can_fd_rtl.can_constants_pkg.all;
 
-entity clk_gate is
+entity rst_reg is
     generic (
-        G_TECHNOLOGY        :       natural := 0
-    );    
-    port (
-        -- Clock input
-        clk_in              : in    std_logic;
-        
-        -- Clock Enable
-        clk_en              : in    std_logic;
-
-        -- Scan Enable
-        scan_enable         : in    std_logic;
-        
-        -- Gated clocks
-        clk_out             : out   std_logic
+        G_RESET_POLARITY    : std_logic := '0'
     );
-end clk_gate;
+    port (
+        -----------------------------------------------------------------------
+        -- Clock and Reset
+        -----------------------------------------------------------------------
+        clk         : in    std_logic;
+        arst        : in    std_logic;
 
-architecture rtl of clk_gate is
+        -----------------------------------------------------------------------
+        -- Flip flop input / output
+        -----------------------------------------------------------------------
+        d           : in    std_logic;
+        q           : out   std_logic;
+
+        -----------------------------------------------------------------------
+        -- Scan mode control
+        -----------------------------------------------------------------------
+        scan_enable : in    std_logic
+    );
+end rst_reg;
+
+architecture rtl of rst_reg is
     
-    signal clk_en_q        :       std_logic;
-    
+    signal q_i : std_logic;
+
+    constant C_NOT_RESET_POLARITY : std_logic := not G_RESET_POLARITY;
+
 begin
 
-    g_tech_asic : if (G_TECHNOLOGY = C_TECH_ASIC) generate
-        
-        -- Latching enable - transparent in zero since we use AND gating
-        clk_en_latch_proc : process(clk_in, clk_en)
-        begin
-            if (clk_in = '0') then
-                clk_en_q <= clk_en or scan_enable;
-            end if;
-        end process;
+    rx_shift_res_reg_inst : entity ctu_can_fd_rtl.dff_arst
+    generic map(
+        G_RESET_POLARITY   => G_RESET_POLARITY,
 
-        -- Gating
-        clk_out <= clk_in AND clk_en_q;
-        
-    end generate g_tech_asic;
+        -- Reset to the same value as is polarity of reset so that other DFFs
+        -- which are reset by output of this one will be reset too!
+        G_RST_VAL          => G_RESET_POLARITY
+    )
+    port map(
+        arst               => arst,         -- IN
+        clk                => clk,          -- IN
+        input              => d,            -- IN
 
+        output             => q_i           -- OUT
+    );
 
-    g_tech_fpga : if (G_TECHNOLOGY = C_TECH_FPGA) generate
-        
-        -- Connect directly (always enabled, no gating)
-        clk_out <= clk_in;
-        
-        -- Drive just to avoid un-driven signals warning by Synplify
-        clk_en_q <= '1';
-        
-    end generate g_tech_fpga;
+    ---------------------------------------------------------------------------
+    -- Registering reset to avoid glitches
+    ---------------------------------------------------------------------------
+    mux2_res_tst_inst : entity ctu_can_fd_rtl.mux2
+    port map(
+        a                  => q_i, 
+        b                  => C_NOT_RESET_POLARITY,
+        sel                => scan_enable,
 
-    assert (G_TECHNOLOGY = C_TECH_ASIC or G_TECHNOLOGY = C_TECH_FPGA);
+        -- Output
+        z                  => q
+    );
 
 end rtl;

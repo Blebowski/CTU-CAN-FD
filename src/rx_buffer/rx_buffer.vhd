@@ -416,7 +416,6 @@ architecture rtl of rx_buffer is
     -- Common reset signal
     ----------------------------------------------------------------------------
     signal rx_buf_res_n_d           :       std_logic;
-    signal rx_buf_res_n_q           :       std_logic;
     signal rx_buf_res_n_q_scan      :       std_logic;
 
     ----------------------------------------------------------------------------
@@ -472,35 +471,22 @@ begin
     ----------------------------------------------------------------------------
     -- Register reset to avoid glitches
     ----------------------------------------------------------------------------
-    res_reg_inst : entity ctu_can_fd_rtl.dff_arst
-    generic map(
-        G_RESET_POLARITY   => '0',
-        
-        -- Reset to the same value as is polarity of reset so that other DFFs
-        -- which are reset by output of this one will be reset too!
-        G_RST_VAL          => '0'
+    rst_reg_inst : entity ctu_can_fd_rtl.rst_reg
+    generic map (
+        G_RESET_POLARITY    => '0'
     )
     port map(
-        arst               => res_n,                -- IN
-        clk                => clk_sys,              -- IN
-        input              => rx_buf_res_n_d,       -- IN
+        -- Clock and Reset
+        clk                 => clk_sys,
+        arst                => res_n,
 
-        output             => rx_buf_res_n_q        -- OUT
+        -- Flip flop input / output
+        d                   => rx_buf_res_n_d,
+        q                   => rx_buf_res_n_q_scan,
+
+        -- Scan mode control
+        scan_enable         => scan_enable
     );
-    
-    ----------------------------------------------------------------------------
-    -- Mux for gating reset in scan mode
-    ----------------------------------------------------------------------------
-    mux2_res_tst_inst : entity ctu_can_fd_rtl.mux2
-    port map(
-        a                  => rx_buf_res_n_q, 
-        b                  => '1',
-        sel                => scan_enable,
-
-        -- Output
-        z                  => rx_buf_res_n_q_scan
-    );
-
 
     ----------------------------------------------------------------------------
     -- RX Buffer FSM component
@@ -844,8 +830,7 @@ begin
     ----------------------------------------------------------------------------
     rx_buf_ram_clk_en <= '1' when (RAM_write = '1' or drv_read_start = '1')
                              else
-                         '1' when (test_registers_out.tst_control(TMAENA_IND) = '1' or
-                                   scan_enable = '1')
+                         '1' when (test_registers_out.tst_control(TMAENA_IND) = '1')
                              else
                          '0';
 
@@ -856,6 +841,7 @@ begin
     port map(
         clk_in             => clk_sys,
         clk_en             => rx_buf_ram_clk_en,
+        scan_enable        => scan_enable,
 
         clk_out            => clk_ram
     );

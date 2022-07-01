@@ -167,47 +167,46 @@ end entity;
 architecture rtl of err_counters is
 
     -- Error counter registers
-    signal tx_err_ctr_d     : unsigned(8 downto 0);
-    signal rx_err_ctr_d     : unsigned(8 downto 0);
-    signal tx_err_ctr_q     : unsigned(8 downto 0);
-    signal rx_err_ctr_q     : unsigned(8 downto 0);
+    signal tx_err_ctr_d         : unsigned(8 downto 0);
+    signal rx_err_ctr_d         : unsigned(8 downto 0);
+    signal tx_err_ctr_q         : unsigned(8 downto 0);
+    signal rx_err_ctr_q         : unsigned(8 downto 0);
     
-    signal rx_err_ctr_inc   : unsigned(8 downto 0);
-    signal rx_err_ctr_sat   : unsigned(8 downto 0);
+    signal rx_err_ctr_inc       : unsigned(8 downto 0);
+    signal rx_err_ctr_sat       : unsigned(8 downto 0);
 
     -- Clock enables for error counter registers
-    signal tx_err_ctr_ce    : std_logic;
-    signal rx_err_ctr_ce    : std_logic;
+    signal tx_err_ctr_ce        : std_logic;
+    signal rx_err_ctr_ce        : std_logic;
 
     -- Modify TX/RX Error counter
-    signal modif_tx_ctr   : std_logic;
-    signal modif_rx_ctr   : std_logic;
+    signal modif_tx_ctr         : std_logic;
+    signal modif_rx_ctr         : std_logic;
 
     -- Error counters increment
-    signal err_ctr_inc      : unsigned(8 downto 0);
+    signal err_ctr_inc          : unsigned(8 downto 0);
     
     -- TX/RX Error counter decremented value
-    signal tx_err_ctr_dec   : unsigned(8 downto 0);
-    signal rx_err_ctr_dec   : unsigned(8 downto 0);
+    signal tx_err_ctr_dec       : unsigned(8 downto 0);
+    signal rx_err_ctr_dec       : unsigned(8 downto 0);
     
     -- Error counters for nominal bit errors, data bit errors
-    signal nom_err_ctr_d     : unsigned(15 downto 0);
-    signal data_err_ctr_d    : unsigned(15 downto 0);
-    signal nom_err_ctr_q     : unsigned(15 downto 0);
-    signal data_err_ctr_q    : unsigned(15 downto 0);
+    signal nom_err_ctr_d        : unsigned(15 downto 0);
+    signal data_err_ctr_d       : unsigned(15 downto 0);
+    signal nom_err_ctr_q        : unsigned(15 downto 0);
+    signal data_err_ctr_q       : unsigned(15 downto 0);
     
     -- Selected value of counter
-    signal nom_dat_sel_ctr   : unsigned(15 downto 0);
+    signal nom_dat_sel_ctr      : unsigned(15 downto 0);
     
     -- Combinationally added value
-    signal nom_dat_sel_ctr_add : unsigned(15 downto 0);
+    signal nom_dat_sel_ctr_add  : unsigned(15 downto 0);
     
     -- Clock enables for error counter registers
-    signal nom_err_ctr_ce  : std_logic;
-    signal data_err_ctr_ce : std_logic;
+    signal nom_err_ctr_ce       : std_logic;
+    signal data_err_ctr_ce      : std_logic;
     
     signal res_err_ctrs_d       : std_logic;
-    signal res_err_ctrs_q       : std_logic;
     signal res_err_ctrs_q_scan  : std_logic;
 
 begin
@@ -251,33 +250,21 @@ begin
                           else
                       '1';
 
-    rst_reg_inst : entity ctu_can_fd_rtl.dff_arst
-    generic map(
-        G_RESET_POLARITY   => '0',
-        
-        -- Reset to the same value as is polarity of reset so that other DFFs
-        -- which are reset by output of this one will be reset too!
-        G_RST_VAL          => '0'
+    rst_reg_inst : entity ctu_can_fd_rtl.rst_reg
+    generic map (
+        G_RESET_POLARITY    => '0'
     )
     port map(
-        arst               => res_n,                -- IN
-        clk                => clk_sys,              -- IN
-        input              => res_err_ctrs_d,       -- IN
+        -- Clock and Reset
+        clk                 => clk_sys,
+        arst                => res_n,
 
-        output             => res_err_ctrs_q        -- OUT
-    );
-    
-    ---------------------------------------------------------------------------
-    -- Gate reset in scan mode
-    ---------------------------------------------------------------------------
-    mux2_res_tst_inst : entity ctu_can_fd_rtl.mux2
-    port map(
-        a                  => res_err_ctrs_q, 
-        b                  => '1',
-        sel                => scan_enable,
+        -- Flip flop input / output
+        d                   => res_err_ctrs_d,
+        q                   => res_err_ctrs_q_scan,
 
-        -- Output
-        z                  => res_err_ctrs_q_scan
+        -- Scan mode control
+        scan_enable         => scan_enable
     );
 
    ----------------------------------------------------------------------------
@@ -286,7 +273,7 @@ begin
    tx_err_ctr_reg_proc : process(clk_sys, res_err_ctrs_q_scan)
    begin
        if (res_err_ctrs_q_scan = '0') then
-           tx_err_ctr_q <= (OTHERS => '0');
+           tx_err_ctr_q <= (others => '0');
        elsif (rising_edge(clk_sys)) then
            if (tx_err_ctr_ce = '1') then
                tx_err_ctr_q <= tx_err_ctr_d;
@@ -308,7 +295,7 @@ begin
    
    -- Saturate RX counter when overflow would occur according to 12.1.4.3
    -- of CAN FD ISO spec
-   rx_err_ctr_sat <= (OTHERS => '1') when (rx_err_ctr_inc < rx_err_ctr_q) else
+   rx_err_ctr_sat <= (others => '1') when (rx_err_ctr_inc < rx_err_ctr_q) else
                       rx_err_ctr_inc;
 
    ----------------------------------------------------------------------------
@@ -332,7 +319,7 @@ begin
    rx_err_ctr_reg_proc : process(clk_sys, res_err_ctrs_q_scan)
    begin
        if (res_err_ctrs_q_scan = '0') then
-           rx_err_ctr_q <= (OTHERS => '0');
+           rx_err_ctr_q <= (others => '0');
        elsif (rising_edge(clk_sys)) then
            if (rx_err_ctr_ce = '1') then
                rx_err_ctr_q <= rx_err_ctr_d;
@@ -374,7 +361,7 @@ begin
    nom_err_ctr_proc : process(clk_sys, res_err_ctrs_q_scan)
    begin
        if (res_err_ctrs_q_scan = '0') then
-           nom_err_ctr_q <= (OTHERS => '0');
+           nom_err_ctr_q <= (others => '0');
        elsif (rising_edge(clk_sys)) then
            if (nom_err_ctr_ce = '1') then
                nom_err_ctr_q <= nom_err_ctr_d;
@@ -385,7 +372,7 @@ begin
    dat_err_ctr_proc : process(clk_sys, res_err_ctrs_q_scan)
    begin
        if (res_err_ctrs_q_scan = '0') then
-           data_err_ctr_q <= (OTHERS => '0');
+           data_err_ctr_q <= (others => '0');
        elsif (rising_edge(clk_sys)) then
            if (data_err_ctr_ce = '1') then
                data_err_ctr_q <= data_err_ctr_d;

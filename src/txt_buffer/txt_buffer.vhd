@@ -315,8 +315,7 @@ begin
     ----------------------------------------------------------------------------
     txtb_ram_clk_en <= '1' when (txtb_port_b_clk_en = '1' or ram_write = '1')
                            else
-                       '1' when (test_registers_out.tst_control(TMAENA_IND) = '1' or
-                                 scan_enable = '1')
+                       '1' when (test_registers_out.tst_control(TMAENA_IND) = '1')
                            else
                        '0';
 
@@ -351,6 +350,7 @@ begin
     port map(
         clk_in             => clk_sys,
         clk_en             => txtb_ram_clk_en,
+        scan_enable        => scan_enable,
 
         clk_out            => clk_ram
     );

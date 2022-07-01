@@ -225,7 +225,6 @@ architecture rtl of trv_delay_measurement is
 
     -- Reset for the counter
     signal trv_delay_ctr_rst_d        :  std_logic;
-    signal trv_delay_ctr_rst_q        :  std_logic;
     signal trv_delay_ctr_rst_q_scan   :  std_logic;
 
     constant C_TRV_DEL_SAT  :  std_logic_vector(G_TRV_CTR_WIDTH - 1 downto 0) :=
@@ -284,33 +283,24 @@ begin
                                else
                            '1'; 
     
-    trv_delay_rst_reg_inst : entity ctu_can_fd_rtl.dff_arst
-    generic map(
-        G_RESET_POLARITY   => '0',
-        
-        -- Reset to the same value as is polarity of reset so that other DFFs
-        -- which are reset by output of this one will be reset too!
-        G_RST_VAL          => '0'
+    ----------------------------------------------------------------------------
+    -- Pipeline reset for shift registers to avoid glitches!
+    ----------------------------------------------------------------------------
+    trv_delay_rst_reg_inst : entity ctu_can_fd_rtl.rst_reg
+    generic map (
+        G_RESET_POLARITY    => '0'
     )
     port map(
-        arst               => res_n,                -- IN
-        clk                => clk_sys,              -- IN
-        input              => trv_delay_ctr_rst_d,  -- IN
+        -- Clock and Reset
+        clk                 => clk_sys,
+        arst                => res_n,
 
-        output             => trv_delay_ctr_rst_q   -- OUT
-    );
-    
-    ----------------------------------------------------------------------------
-    -- Mux for gating reset in scan mode
-    ----------------------------------------------------------------------------
-    mux2_res_tst_inst : entity ctu_can_fd_rtl.mux2
-    port map(
-        a                  => trv_delay_ctr_rst_q, 
-        b                  => '1',
-        sel                => scan_enable,
+        -- Flip flop input / output
+        d                   => trv_delay_ctr_rst_d,
+        q                   => trv_delay_ctr_rst_q_scan,
 
-        -- Output
-        z                  => trv_delay_ctr_rst_q_scan
+        -- Scan mode control
+        scan_enable         => scan_enable
     );
     
     ----------------------------------------------------------------------------

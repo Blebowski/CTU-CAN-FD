@@ -144,11 +144,9 @@ architecture rtl of bus_traffic_counters is
     
     -- Reset signals for counters (registered, to avoid glitches)
     signal tx_ctr_rst_n_d        :     std_logic;
-    signal tx_ctr_rst_n_q        :     std_logic;
     signal tx_ctr_rst_n_q_scan   :     std_logic;
     
     signal rx_ctr_rst_n_d        :     std_logic;
-    signal rx_ctr_rst_n_q        :     std_logic;
     signal rx_ctr_rst_n_q_scan   :     std_logic;
 
     signal inc_tx_ctr_q          :     std_logic;
@@ -192,59 +190,38 @@ begin
     ----------------------------------------------------------------------------
     -- Reset pipeline registers
     ----------------------------------------------------------------------------
-    tx_ctr_res_inst : entity ctu_can_fd_rtl.dff_arst
-    generic map(
-        G_RESET_POLARITY   => '0',
-        
-        -- Reset to the same value as is polarity of reset so that other DFFs
-        -- which are reset by output of this one will be reset too!
-        G_RST_VAL          => '0'
+    tx_ctr_reg_rst_inst : entity ctu_can_fd_rtl.rst_reg
+    generic map (
+        G_RESET_POLARITY    => '0'
     )
     port map(
-        arst               => res_n,                -- IN
-        clk                => clk_sys,              -- IN
-        input              => tx_ctr_rst_n_d,       -- IN
+        -- Clock and Reset
+        clk                 => clk_sys,
+        arst                => res_n,
 
-        output             => tx_ctr_rst_n_q        -- OUT
+        -- Flip flop input / output
+        d                   => tx_ctr_rst_n_d,
+        q                   => tx_ctr_rst_n_q_scan,
+
+        -- Scan mode control
+        scan_enable         => scan_enable
     );
-    
-    rx_ctr_res_inst : entity ctu_can_fd_rtl.dff_arst
-    generic map(
-        G_RESET_POLARITY   => '0',
-        
-        -- Reset to the same value as is polarity of reset so that other DFFs
-        -- which are reset by output of this one will be reset too!
-        G_RST_VAL          => '0'
+
+    rx_ctr_reg_rst_inst : entity ctu_can_fd_rtl.rst_reg
+    generic map (
+        G_RESET_POLARITY    => '0'
     )
     port map(
-        arst               => res_n,                -- IN
-        clk                => clk_sys,              -- IN
-        input              => rx_ctr_rst_n_d,       -- IN
-        
-        output             => rx_ctr_rst_n_q        -- OUT
-    );
+        -- Clock and Reset
+        clk                 => clk_sys,
+        arst                => res_n,
 
-    ----------------------------------------------------------------------------
-    -- Muxes for gating reset in scan mode
-    ----------------------------------------------------------------------------
-    mux2_tx_rst_tst_inst : entity ctu_can_fd_rtl.mux2
-    port map(
-        a                  => tx_ctr_rst_n_q, 
-        b                  => '1',
-        sel                => scan_enable,
+        -- Flip flop input / output
+        d                   => rx_ctr_rst_n_d,
+        q                   => rx_ctr_rst_n_q_scan,
 
-        -- Output
-        z                  => tx_ctr_rst_n_q_scan
-    );
-
-    mux2_rx_rst_tst_inst : entity ctu_can_fd_rtl.mux2
-    port map(
-        a                  => rx_ctr_rst_n_q, 
-        b                  => '1',
-        sel                => scan_enable,
-
-        -- Output
-        z                  => rx_ctr_rst_n_q_scan
+        -- Scan mode control
+        scan_enable         => scan_enable
     );
 
     ----------------------------------------------------------------------------
