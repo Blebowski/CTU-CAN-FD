@@ -21,6 +21,9 @@ set DESIGN_CONFIGS [list \
          target_technology      1 \
          sup_traffic_ctrs       "1'b0" \
          sup_test_registers     "1'b0" \
+         sup_parity             "1'b0" \
+         active_timestamp_bits  16 \
+         reset_buffer_rams      "1'b0" \
         ]
     ] \
     [ dict create \
@@ -36,6 +39,9 @@ set DESIGN_CONFIGS [list \
          target_technology      1 \
          sup_traffic_ctrs       "1'b1" \
          sup_test_registers     "1'b0" \
+         sup_parity             "1'b1" \
+         active_timestamp_bits  32 \
+         reset_buffer_rams      "1'b0" \
         ]
     ] \
     [ dict create \
@@ -51,6 +57,9 @@ set DESIGN_CONFIGS [list \
          target_technology      1 \
          sup_traffic_ctrs       "1'b1" \
          sup_test_registers     "1'b1" \
+         sup_parity             "1'b1" \
+         active_timestamp_bits  64 \
+         reset_buffer_rams      "1'b0" \
         ]
     ] \
 ]
