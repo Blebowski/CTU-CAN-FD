@@ -262,6 +262,7 @@ begin
         tran_frame_type        => tran_frame_type,
         tran_brs               => tran_brs,
         tran_frame_valid       => tran_frame_valid,
+        txtb_allow_bb          => (others => '0'),
         txtb_hw_cmd            => txtb_hw_cmd,
         txtb_changed           => txtb_changed,
         txtb_hw_cmd_index      => txtb_hw_cmd_index,
