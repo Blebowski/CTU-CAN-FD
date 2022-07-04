@@ -58,7 +58,7 @@ set DESIGN_CONFIGS [list \
          sup_traffic_ctrs       "1'b1" \
          sup_test_registers     "1'b1" \
          sup_parity             "1'b1" \
-         active_timestamp_bits  64 \
+         active_timestamp_bits  63 \
          reset_buffer_rams      "1'b0" \
         ]
     ] \
