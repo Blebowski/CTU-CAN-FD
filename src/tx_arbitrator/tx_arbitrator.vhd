@@ -251,7 +251,10 @@ architecture rtl of tx_arbitrator is
     -- TXT Buffer internal index of last buffer that was locked
     -- From buffer change, Protocol control can erase retransmitt counter
     signal last_txtb_index            : natural range 0 to G_TXT_BUFFER_COUNT - 1;
-  
+
+    -- TXT Buffer index validated or used for transmission
+    signal txtb_index_muxed_i         : natural range 0 to G_TXT_BUFFER_COUNT - 1;
+    
     -- Pointer to TXT Buffer for loading CAN frame metadata and
     -- timstamp during the selection of TXT Buffer.
     signal txtb_pointer_meta_q        : natural range 0 to 19;
@@ -478,9 +481,9 @@ begin
   -- ssion, use last stored TXT buffer. Otherwise use combinatorially selected
   -- TXT buffer (during validation).
   ------------------------------------------------------------------------------
-  txtb_index_muxed <= int_txtb_index when (tx_arb_locked = '1')
-                                     else
-                      select_buf_index;
+  txtb_index_muxed_i <= int_txtb_index when (tx_arb_locked = '1')
+                                       else
+                        select_buf_index;
 
   -- Parity check. When Protocol controller wants to enable clock for TXT Buffer,
   -- it reads data words from it for transmission. When this occurs, data will
@@ -491,10 +494,11 @@ begin
                              tx_arb_parity_check_valid;
 
   -- Select read data based on index of TXT buffer which should be accessed
-  txtb_selected_input <= txtb_port_b_data(txtb_index_muxed);
+  txtb_selected_input <= txtb_port_b_data(txtb_index_muxed_i);
   
   -- Transmitted data word taken from TXT Buffer output
   tran_word <= txtb_selected_input;
+  txtb_index_muxed <= txtb_index_muxed_i;
 
   ------------------------------------------------------------------------------
   -- Joined timestamp from TXT Buffer. Note that it is not always valid!

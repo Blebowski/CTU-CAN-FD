@@ -373,6 +373,8 @@ architecture rtl of memory_registers is
     signal tx_parity_error          : std_logic;
     signal tx_double_parity_error   : std_logic;
 
+    signal drv_txbbm_ena            : std_logic;
+
     ---------------------------------------------------------------------------
     -- 
     ---------------------------------------------------------------------------
@@ -832,8 +834,8 @@ begin
         control_registers_out.mode, TTTM_IND);
 
     -- TXBBM - TXT Buffer Backup mode
-    drv_bus(DRV_TXBBM_ENA_INDEX) <= align_wrd_to_reg(
-        control_registers_out.mode, TXBBM_IND);
+    drv_txbbm_ena <= align_wrd_to_reg(control_registers_out.mode, TXBBM_IND);
+    drv_bus(DRV_TXBBM_ENA_INDEX) <= drv_txbbm_ena;
 
     ---------------------------------------------------------------------------
     -- COMMAND Register
@@ -1172,7 +1174,7 @@ begin
         -- Backup TXT Buffers
         txtb_priority_odd_gen : if ((i mod 2) = 1) generate
             txtb_sw_cmd_index(i)  <= 
-                align_wrd_to_reg(control_registers_out.tx_command, TXB1_IND + i) when (drv_bus(DRV_TXBBM_ENA_INDEX) = '0')
+                align_wrd_to_reg(control_registers_out.tx_command, TXB1_IND + i) when (drv_txbbm_ena = '0')
                                                                                  else
                 align_wrd_to_reg(control_registers_out.tx_command, TXB1_IND + i - 1);
         end generate;

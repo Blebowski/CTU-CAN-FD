@@ -254,7 +254,7 @@ begin
             G_PARITY_TYPE   => C_PARITY_TYPE
         )
         port map(
-            data_in         => port_b_data_out,
+            data_in         => port_b_data_out_i,
             parity          => parity_read_real
         );
 

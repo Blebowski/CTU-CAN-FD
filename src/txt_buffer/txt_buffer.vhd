@@ -395,27 +395,27 @@ begin
         G_ID                    => G_ID
     )
     port map(
-        clk_sys                 => clk_sys,                  -- IN
-        res_n                   => res_n,                    -- IN
+        clk_sys                 => clk_sys,                     -- IN
+        res_n                   => res_n,                       -- IN
 
-        txtb_sw_cmd             => txtb_sw_cmd,              -- IN
-        sw_cbs                  => sw_cbs,                   -- IN
-        txt_buf_failed_bof      => txt_buf_failed_bof,       -- IN
+        txtb_sw_cmd             => txtb_sw_cmd,                 -- IN
+        sw_cbs                  => sw_cbs,                      -- IN
+        txt_buf_failed_bof      => txt_buf_failed_bof,          -- IN
 
-        txtb_hw_cmd             => txtb_hw_cmd,              -- IN
-        hw_cbs                  => hw_cbs,                   -- IN
-        is_bus_off              => is_bus_off,               -- IN
-        txtb_parity_error_valid => txtb_parity_error_valid,  -- IN
-        drv_rom_ena             => drv_rom_ena,              -- IN
-        drv_bus_mon_ena         => drv_bus_mon_ena,          -- IN
-        txtb_is_bb              => txtb_is_bb,               -- IN
+        txtb_hw_cmd             => txtb_hw_cmd,                 -- IN
+        hw_cbs                  => hw_cbs,                      -- IN
+        is_bus_off              => is_bus_off,                  -- IN
+        txtb_parity_error_valid => txtb_parity_error_valid_i,   -- IN
+        drv_rom_ena             => drv_rom_ena,                 -- IN
+        drv_bus_mon_ena         => drv_bus_mon_ena,             -- IN
+        txtb_is_bb              => txtb_is_bb,                  -- IN
 
-        txtb_allow_bb           => txtb_allow_bb,            -- OUT
-        txtb_user_accessible    => txtb_user_accessible,     -- OUT
-        txtb_hw_cmd_int         => txtb_hw_cmd_int,          -- OUT
-        txtb_state              => txtb_state,               -- OUT
-        txtb_available          => txtb_available,           -- OUT
-        txtb_unmask_data_ram    => txtb_unmask_data_ram      -- OUT
+        txtb_allow_bb           => txtb_allow_bb,               -- OUT
+        txtb_user_accessible    => txtb_user_accessible,        -- OUT
+        txtb_hw_cmd_int         => txtb_hw_cmd_int,             -- OUT
+        txtb_state              => txtb_state,                  -- OUT
+        txtb_available          => txtb_available,              -- OUT
+        txtb_unmask_data_ram    => txtb_unmask_data_ram         -- OUT
     );
 
     txtb_parity_mismatch <= parity_mismatch;
