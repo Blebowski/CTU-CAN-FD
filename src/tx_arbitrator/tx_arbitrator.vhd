@@ -326,6 +326,9 @@ architecture rtl of tx_arbitrator is
     signal drv_txbbm_ena              : std_logic;
     signal txtb_prorities_txbbm       : t_txt_bufs_priorities(G_TXT_BUFFER_COUNT - 1 downto 0);
 
+    -- Parity check enable
+    signal drv_pchk_ena               : std_logic;
+
     -- Parity mismatches in TXT Buffers:
     --  1. Mismatch during TXT Buffer validation
     --  2. Mismatch during transmission
@@ -399,6 +402,7 @@ begin
 
   drv_tttm_ena <= drv_bus(DRV_TTTM_ENA_INDEX);
   drv_txbbm_ena <= drv_bus(DRV_TXBBM_ENA_INDEX);
+  drv_pchk_ena <= drv_bus(DRV_PCHK_ENA_INDEX);
 
   ------------------------------------------------------------------------------
   -- TXT Buffer differences fo
@@ -456,7 +460,8 @@ begin
   -- Parity mismatch during validation of TXT Buffer, must be indexed using
   -- "raw" / "combinatorial" index of buffer which is currently being validated.
   ------------------------------------------------------------------------------
-  txtb_parity_mismatch_vld <= '1' when (txtb_parity_mismatch(select_buf_index) = '1')
+  txtb_parity_mismatch_vld <= '1' when (txtb_parity_mismatch(select_buf_index) = '1' and
+                                        drv_pchk_ena = '1')
                                   else
                               '0';
 
@@ -467,7 +472,8 @@ begin
   -- parity mismatch is checked, must be selected by registered index of
   -- TXT Buffer which is used for transmission.
   ------------------------------------------------------------------------------
-  txtb_parity_mismatch_tx <= '1' when (txtb_parity_mismatch(int_txtb_index) = '1')
+  txtb_parity_mismatch_tx <= '1' when (txtb_parity_mismatch(int_txtb_index) = '1' and
+                                       drv_pchk_ena = '1')
                                  else
                              '0';
 
