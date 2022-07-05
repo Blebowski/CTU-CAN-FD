@@ -437,6 +437,27 @@ begin
     -- psl err_detect_crc_err_cov : cover
     --  {crc_err = '1'};
 
+    -- psl err_detect_parity_err_cov : cover
+    --  {tran_frame_parity_error = '1'};
+
+    -- psl err_capt_q_form_err_cov : cover
+    --  {err_type_q = ERC_FRM_ERR};
+
+    -- psl err_capt_q_bit_err_cov : cover
+    --  {err_type_q = ERC_BIT_ERR};
+
+    -- psl err_capt_q_crc_err_cov : cover
+    --  {err_type_q = ERC_CRC_ERR};
+
+    -- psl err_capt_q_ack_err_cov : cover
+    --  {err_type_q = ERC_ACK_ERR};
+
+    -- psl err_capt_q_stuff_err_cov : cover
+    --  {err_type_q = ERC_STUF_ERR};
+
+    -- psl err_capt_q_prt_err_cov : cover
+    --  {err_type_q = ERC_PRT_ERR};
+
     -- <RELEASE_ON>
 
 end architecture;

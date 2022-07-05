@@ -94,6 +94,12 @@ use ctu_can_fd_rtl.CAN_FD_frame_format.all;
 entity fault_confinement_rules is
     port(
         -----------------------------------------------------------------------
+        -- Clock
+        ------------------------------------------------------------------------
+        -- System clock, only for PSL assertions
+        clk_sys                 :in   std_logic;
+
+        -----------------------------------------------------------------------
         -- Operation control interface
         ------------------------------------------------------------------------
         -- Unit is transmitter
@@ -201,5 +207,40 @@ begin
                '0';
     inc_eight <= '1' when (inc_eight_i = '1' and drv_rom_ena = ROM_DISABLED) else
                  '0';
+
+
+    -- <RELEASE_OFF>
+    ---------------------------------------------------------------------------
+    -- Functional coverage
+    ---------------------------------------------------------------------------
+
+    -- psl default clock is rising_edge(clk_sys);
+
+    -- psl err_ctr_inc_eight_A : cover
+    --  {primary_err = '1' and is_receiver = '1'};
+
+    -- psl err_ctr_inc_eight_B : cover
+    --  {(act_err_ovr_flag = '1' and err_detected = '1') and
+    --    (not(primary_err = '1' and is_receiver = '1'))};
+
+    -- psl err_ctr_inc_eight_C : cover
+    --  {(is_transmitter = '1' and err_detected = '1' and err_ctrs_unchanged = '0') and
+    --    (not(act_err_ovr_flag = '1' and err_detected = '1')) and
+    --    (not(primary_err = '1' and is_receiver = '1'))};
+
+    -- psl err_ctr_inc_eight_D : cover
+    --  { (err_delim_late = '1' or bit_err_after_ack_err = '1') and
+    --    (not(is_transmitter = '1' and err_detected = '1' and err_ctrs_unchanged = '0')) and
+    --    (not(act_err_ovr_flag = '1' and err_detected = '1')) and
+    --    (not(primary_err = '1' and is_receiver = '1'))};
+
+    -- psl err_ctr_dec_one_A : cover
+    --  {decrement_rec = '1' and tran_valid = '0'};
+
+    -- psl err_ctr_dec_one_B : cover
+    --  {decrement_rec = '0' and tran_valid = '1'};
+
+    -- <RELEASE_ON>
+
 
 end architecture;
