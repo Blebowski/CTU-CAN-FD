@@ -303,6 +303,7 @@ begin
         drv_rom_ena             => '0',
         drv_bus_mon_ena         => '0',
         drv_txbbm_ena           => '0',
+        drv_pchk_ena            => '0',
         txt_buf_failed_bof      => '1',
         txtb_is_bb              => '0',
         is_bus_off              => is_bus_off,

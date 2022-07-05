@@ -74,7 +74,7 @@
 --
 -- @Verifies:
 --  @1. STATUS[RXPE] is set when there is a parity error detected in RX Buffer
---      RAM.
+--      RAM and SETTINGS[PCHKE] = 1.
 --  @2. STATUS[RXPE] is cleared by COMMAND[CRXPE].
 --
 -- @Test sequence:
@@ -141,6 +141,7 @@ package body status_rxpe_ftest is
         -- @1. Set DUT to test mode.
         -----------------------------------------------------------------------
         mode_1.test := true;
+        mode_1.parity_check := true;
         set_core_mode(mode_1, DUT_NODE, chn);
         get_rx_buf_state(rx_buf_status, DUT_NODE, chn);
 

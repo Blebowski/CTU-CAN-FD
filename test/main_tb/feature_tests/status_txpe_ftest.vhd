@@ -74,11 +74,11 @@
 --
 -- @Verifies:
 --  @1. STATUS[TXPE] is set when there is a parity error detected in TXT Buffer
---      RAM.
+--      RAM and SETTINGS[PCHKE] = 1.
 --  @2. STATUS[TXPE] is cleared by COMMAND[CTXPE].
 --
 -- @Test sequence:
---  @1. Set DUT to test mode.
+--  @1. Set DUT to test mode and set SETTINGS[PCHKE] = 1.
 --  @2. Loop 4 times:
 --      @2.1 Generate Random CAN frame.
 --      @2.2 Insert the CAN frame for transmission into random TXT Buffer.
@@ -162,6 +162,7 @@ package body status_txpe_ftest is
         -----------------------------------------------------------------------
         info_m("Step 1");
         mode_1.test := true;
+        mode_1.parity_check := true;
         set_core_mode(mode_1, DUT_NODE, chn);
 
         -----------------------------------------------------------------------

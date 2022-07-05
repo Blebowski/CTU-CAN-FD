@@ -145,6 +145,7 @@ package body mode_txbbm_ftest is
         info_m("Step 1");
 
         mode_1.tx_buf_backup := true;
+        mode_1.parity_check := true;
         set_core_mode(mode_1, DUT_NODE, chn);
 
         get_tx_buf_count(txt_buf_count, DUT_NODE, chn);

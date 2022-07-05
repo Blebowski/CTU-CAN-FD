@@ -173,10 +173,12 @@ package feature_test_agent_pkg is
         rx_buffer_automatic     :   boolean;
         time_triggered_transm   :   boolean;
         tx_buf_backup           :   boolean;
+        parity_check            :   boolean;
     end record;
     
     constant SW_mode_rst_val : SW_mode := (false, false, false, false, false,
-        true, false, false, false, true, false, false, false, true, true, false, false);
+        true, false, false, false, true, false, false, false, true, true,
+        false, false, false);
 
     -- Controller commands
     type SW_command is record
@@ -3531,6 +3533,12 @@ package body feature_test_agent_pkg is
             data(TBFBO_IND mod 16) := '0';
         end if;
 
+        if (mode.parity_check) then
+            data(PCHKE_IND mod 16) := '1';
+        else
+            data(PCHKE_IND mod 16) := '0';
+        end if;
+
         CAN_write(data, SETTINGS_ADR, node, channel);
     end procedure;
 
@@ -3557,6 +3565,7 @@ package body feature_test_agent_pkg is
         mode.rx_buffer_automatic        := false;
         mode.time_triggered_transm      := false;
         mode.tx_buf_backup              := false;
+        mode.parity_check               := false;
 
         if (data(RST_IND) = '1') then
             mode.reset                  := true;
@@ -3633,6 +3642,12 @@ package body feature_test_agent_pkg is
             mode.tx_buf_bus_off_failed  := true;
         else
             mode.tx_buf_bus_off_failed  := false;
+        end if;
+
+        if (data(PCHKE_IND) = '1') then
+            mode.parity_check           := true; 
+        else
+            mode.parity_check           := false;
         end if;
 
     end procedure;
