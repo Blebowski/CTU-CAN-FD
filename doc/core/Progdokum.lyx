@@ -509,7 +509,7 @@ filename "version.tex"
 \noindent
 \align center
 \begin_inset Tabular
-<lyxtabular version="3" rows="30" columns="3">
+<lyxtabular version="3" rows="31" columns="3">
 <features tabularvalignment="middle">
 <column alignment="center" valignment="top" width="1.5cm">
 <column alignment="center" valignment="top" width="2cm">
@@ -1371,7 +1371,7 @@ Add MODE[TXBBM], MODE[SAM], STATUS[RXPE], STATUS[TXPE], COMMAND [CTPXE]
 </cell>
 </row>
 <row>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -1380,7 +1380,7 @@ Add MODE[TXBBM], MODE[SAM], STATUS[RXPE], STATUS[TXPE], COMMAND [CTPXE]
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -1389,7 +1389,7 @@ Add MODE[TXBBM], MODE[SAM], STATUS[RXPE], STATUS[TXPE], COMMAND [CTPXE]
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -1415,6 +1415,35 @@ active_timestamp_bits
 \series default
 \shape default
  configuration parameters.
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+2.4.3
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+5-7-2022
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Add SETTINGS[PCHKE] bit to control enable / disable of parity checking.
 \end_layout
 
 \end_inset
@@ -6178,11 +6207,19 @@ TXT Buffer Backup Mode (MODE[TXBBM]).
 \end_layout
 
 \begin_layout Standard
-Parity protection on RX Buffer RAM and TXT Buffer RAMs is present in CTU
- CAN FD when STATUS[SPRT]=1.
+Following conditions must be met for these mechanisms to operate:
+\end_layout
+
+\begin_layout Itemize
+CTU CAN FD must contain support for parity protection (STATUS[SPRT]=1).
  If STATUS[SPRT]=0, CTU CAN FD contains no parity protection (since it was
- not synthesized with it), and parity handling described in following two
- sub-sections can not be applied.
+ not synthesized with it), and this section is not applicable.
+\end_layout
+
+\begin_layout Itemize
+SW drivers sets SETTINGS[PCHKE] = 1.
+ This bit enables parity error detection.
+ SW shall modify SETTINGS[PCHKE] only when SETTINGS[ENA] = 0.
 \end_layout
 
 \begin_layout Subsection
@@ -6193,7 +6230,7 @@ Parity protection on RX Buffer RAM
 When CTU CAN FD receives CAN Frame and stores it to RX Buffer RAM, it adds
  single parity bit to each word of RX Buffer RAM.
  When SW driver is reading the frame from RX Buffer RAM, it can check for
- data consistency by reading STATUS[RXPRE] bit.
+ if parity error occured in the frame by reading STATUS[RXPRE] bit.
  CTU CAN FD sets STATUS[RXPRE] upon each read from RX_DATA register , if
  parity bit in the word being read from RX Buffer RAM is not matching calculated
  parity bit.
@@ -6438,6 +6475,11 @@ Note Writing COMMAND[CRXPE]=1 by SW clears STATUS[RXPE] bit.
 \end_layout
 
 \begin_layout Description
+Note When SETTINGS[PCHKE] = 0, CTU CAN FD ignores parity error detected
+ in RX buffer (STATUS[RXPE] is not set, and COMMAND[CRXPE] has no effect).
+\end_layout
+
+\begin_layout Description
 Note When writing RX Buffer RAM via Test Registers (see 
 \begin_inset CommandInset ref
 LatexCommand ref
@@ -6523,6 +6565,17 @@ noprefix "false"
 Note If CTU CAN FD detects a parity error in TXT Buffer, SW shall write
  the whole CAN frame to TXT Buffer again before it attempts to use it for
  further transmissions.
+\end_layout
+
+\begin_layout Description
+Note Writing COMMAND[CTXPE]=1 by SW clears STATUS[TXPE] bit.
+\end_layout
+
+\begin_layout Description
+Note When SETTINGS[PCHKE] = 0, CTU CAN FD ignores parity error detected
+ in TXT buffers (STATUS[TXPE] is not set, COMMAND[CTXPE] has no effect and
+ TXT Buffers do not move to Parity Error state).
+ 
 \end_layout
 
 \begin_layout Description
@@ -6888,6 +6941,28 @@ backup
 \end_inset
 
  TXT Buffer.
+\end_layout
+
+\begin_layout Description
+Note SW shall set MODE[TXBBM] = 1 together with SETTINGS[PCHKE] = 1.
+ If MODE[TXBBM] = 1 together with SETTINGS[PCHKE] = 0, CTU CAN FD ignores
+ parity errors in 
+\begin_inset Quotes eld
+\end_inset
+
+original
+\begin_inset Quotes erd
+\end_inset
+
+ TXT Buffers and never transmits frame from 
+\begin_inset Quotes eld
+\end_inset
+
+backup
+\begin_inset Quotes erd
+\end_inset
+
+ TXT Buffers.
 \end_layout
 
 \begin_layout Description

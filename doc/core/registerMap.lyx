@@ -5280,11 +5280,11 @@ Reserved\end_layout
 
 \end_inset
 </cell>
-<cell alignment="center" leftline="true" multicolumn="2" topline="true" usebox="none" valignment="top">
+<cell alignment="center" leftline="true" multicolumn="1" topline="true" usebox="none" valignment="top">
 \begin_inset Text
 
 \begin_layout Plain Layout
-Reserved\end_layout
+PCHKE\end_layout
 
 \end_inset
 </cell>
@@ -5365,7 +5365,7 @@ cellcolor{cyan}
 \begin_inset Text
 
 \begin_layout Plain Layout
--\end_layout
+X\end_layout
 
 \end_inset
 </cell>
@@ -5757,6 +5757,9 @@ TBFBO All TXT buffers shall go to "TX failed" state when CTU CAN FD becomes bus-
 FDRF Frame filters drop Remote frames.\begin_inset Newline newline\end_inset
 		0b0  - DROP_RF_DISABLED - Frame filters accept RTR frames.\begin_inset Newline newline\end_inset
 		0b1  - DROP_RF_ENABLED - Frame filters drop RTR frames.
+\end_layout
+\begin_layout Description
+PCHKE Enable Parity checks in TXT Buffers and RX Buffer.
 \end_layout
 \begin_layout Standard
 \begin_inset VSpace bigskip

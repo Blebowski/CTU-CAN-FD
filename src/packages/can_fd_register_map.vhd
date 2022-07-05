@@ -491,6 +491,7 @@ package can_fd_register_map is
   constant PEX_IND               : natural := 24;
   constant TBFBO_IND             : natural := 25;
   constant FDRF_IND              : natural := 26;
+  constant PCHKE_IND             : natural := 27;
 
   -- "RTRLE" field enumerated values
   constant RTRLE_DISABLED     : std_logic := '0';

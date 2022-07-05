@@ -289,6 +289,7 @@ enum ctu_can_fd_can_registers {
 #define REG_MODE_PEX BIT(24)
 #define REG_MODE_TBFBO BIT(25)
 #define REG_MODE_FDRF BIT(26)
+#define REG_MODE_PCHKE BIT(27)
 
 /*  STATUS registers */
 #define REG_STATUS_RXNE BIT(0)

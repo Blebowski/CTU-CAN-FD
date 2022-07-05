@@ -310,9 +310,11 @@ union ctu_can_fd_mode_settings {
 		uint32_t pex                     : 1;
 		uint32_t tbfbo                   : 1;
 		uint32_t fdrf                    : 1;
-		uint32_t reserved_31_27          : 5;
+		uint32_t pchke                   : 1;
+		uint32_t reserved_31_28          : 4;
 #else
-		uint32_t reserved_31_27          : 5;
+		uint32_t reserved_31_28          : 4;
+		uint32_t pchke                   : 1;
 		uint32_t fdrf                    : 1;
 		uint32_t tbfbo                   : 1;
 		uint32_t pex                     : 1;
