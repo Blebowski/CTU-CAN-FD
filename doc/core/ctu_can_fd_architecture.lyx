@@ -1524,12 +1524,10 @@ When CTU CAN FD GIT repository is clonned, register map can be generated
 \end_layout
 
 \begin_layout Verbatim
-
 cd scripts
 \end_layout
 
 \begin_layout Verbatim
-
 ./update_reg_map
 \end_layout
 
@@ -1542,12 +1540,10 @@ Documentation can be exported from VHDL RTL codes by following script:
 \end_layout
 
 \begin_layout Verbatim
-
 cd scripts
 \end_layout
 
 \begin_layout Verbatim
-
 python gen_lyx_tables.py --configPath vhdl_lyx_interface_cfg.yml
 \end_layout
 
@@ -1580,12 +1576,10 @@ CTU CAN FD contains release tags in GIT repository.
 \end_layout
 
 \begin_layout Verbatim
-
 cd scripts
 \end_layout
 
 \begin_layout Verbatim
-
 python create_release.py --output_dir ../release_directory_name
 \end_layout
 
@@ -1607,12 +1601,10 @@ src/component.xml
 \end_layout
 
 \begin_layout Verbatim
-
 cd scripts
 \end_layout
 
 \begin_layout Verbatim
-
 python gen_vivado_component.py
 \end_layout
 
@@ -9965,6 +9957,13 @@ name "tab:Internal-buses"
 
 \end_layout
 
+\begin_layout Description
+Note When synthesizing CTU CAN FD in ASIC toolchains, Driving bus (drv_bus)
+ and Status bus (stat_bus) contain many signals which are driven to zero.
+ Typically, ASIC synthesis toolchains report LINT messages on such signals.
+ All LINT warnings from drv_bus and stat_bus can be waived.
+\end_layout
+
 \begin_layout Section
 CAN Frame metadata
 \end_layout
@@ -10435,8 +10434,8 @@ name "sec:CAN-frame-format"
 \end_layout
 
 \begin_layout Standard
-CAN frame spans multiple 32-bit words within TXT Buffers and within RX Buffer
- memories (see 
+CAN frame spans multiple 32-bit words in TXT Buffers and within RX Buffer
+ RAMs (see 
 \begin_inset CommandInset ref
 LatexCommand ref
 reference "sec:TXT-Buffer"
@@ -10459,23 +10458,36 @@ noprefix "false"
 ).
  One TXT Buffer always contains single frame.
  RX Buffer contains multiple frames one after another in a RX Buffer RAM.
- Format of CAN frame within these memories is the same with exception of
+ Format of CAN frame within these memories is the same with following exceptions
+:
+\end_layout
+
+\begin_layout Itemize
+
+\color red
+ESI
+\color inherit
+ bit in TXT Buffer has no meaning while in RX Buffer ESI has value of received
  
 \color red
 ESI
 \color inherit
- bit (in TXT Buffer
-\color red
- ESI
-\color inherit
- has no meaning, in RX Buffer ESI has value of received 
-\color red
-ESI
-\color inherit
- bit on CAN bus) and RWCNT (in TXT Buffer RWCNT field has no meaning, in
- RX Buffer it contains number of words that current frame takes in RX Buffer
- without Frame Format word).
- Meaning of memory words within CAN frame is described in Table 
+ bit on CAN bus
+\end_layout
+
+\begin_layout Itemize
+RWCNT field in TXT Buffer has no meaning while in RX Buffer it contains
+ number of words that current frame takes in RX Buffer without Frame Format
+ word).
+\end_layout
+
+\begin_layout Itemize
+FRAME_TEST_W word is available only in TXT Buffer RAM, not in RX Buffer
+ RAM.
+\end_layout
+
+\begin_layout Standard
+Meaning of memory words within CAN frame is described in Table 
 \begin_inset CommandInset ref
 LatexCommand ref
 reference "tab:CAN-frame-format-memory-words"
@@ -10508,7 +10520,7 @@ status open
 \noindent
 \align center
 \begin_inset Tabular
-<lyxtabular version="3" rows="6" columns="3">
+<lyxtabular version="3" rows="7" columns="3">
 <features tabularvalignment="middle">
 <column alignment="left" valignment="top" width="15text%">
 <column alignment="left" valignment="top" width="17text%">
@@ -10716,7 +10728,7 @@ Contains upper 32-bits of CAN frame Timestamp (in RX Buffer as sampled during
 </cell>
 </row>
 <row>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -10725,7 +10737,7 @@ Data words
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -10734,7 +10746,7 @@ DATA_X_Y_W
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -10743,6 +10755,35 @@ Contain CAN frame data payload transmitted/received during
 data frame
 \color inherit
  field.
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Frame Test
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+FRAME_TEST_W
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Contains metadata for intentional corruption of transmitted CAN frames.
 \end_layout
 
 \end_inset
@@ -10786,8 +10827,7 @@ Test mode
 \end_layout
 
 \begin_layout Standard
-CTU CAN FD has test mode.
- Test mode is active when MODE[TSTM] = '1'.
+CTU CAN FD is in Test mode when MODE[TSTM] = '1'.
  Features of test mode are listed in Table 
 \begin_inset CommandInset ref
 LatexCommand ref
@@ -10812,7 +10852,7 @@ status open
 \noindent
 \align center
 \begin_inset Tabular
-<lyxtabular version="3" rows="5" columns="2">
+<lyxtabular version="3" rows="6" columns="2">
 <features tabularvalignment="middle">
 <column alignment="left" valignment="top" width="10text%">
 <column alignment="left" valignment="top" width="82text%">
@@ -10946,7 +10986,7 @@ error passive
 </cell>
 </row>
 <row>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -10955,7 +10995,7 @@ TST_CONTROL, TST_DEST, TST_WDATA, TST_RDATA
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -10968,6 +11008,27 @@ sup_test_registers
 \series default
 \shape default
  = true.
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+FRAME_TEST_W
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+CTU CAN FD uses bits in FRAME_TEST_W to intentionally corrupt transmitted
+ CAN frames.
 \end_layout
 
 \end_inset
@@ -11031,9 +11092,9 @@ literal "false"
 ).
  By default ISO CAN FD is selected.
  Selection between ISO FD and NON-ISO FD is done by SETTINGS[NISOFD] register.
- This configuration shall be changed only when device is disabled (SETTINGS[ENA]
- = '0').
- There are following diferences in NON-ISO version of CTU CAN FD:
+ This bit shall be changed only when device is disabled (SETTINGS[ENA] =
+ '0').
+ Differences between ISO and NON-ISO FD are following:
 \end_layout
 
 \begin_layout Itemize
@@ -11247,7 +11308,7 @@ bus monitoring mode
 can_rx
 \series default
 \shape default
- input is taken.
+ input is used.
  When 
 \color red
 secondary sample point
@@ -11331,16 +11392,6 @@ name "fig:CAN-Core-Block-diagam-1"
 \end_layout
 
 \begin_layout Standard
-\begin_inset CommandInset include
-LatexCommand input
-filename "entity_docs/can_core.lyx"
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Standard
 \begin_inset Newpage pagebreak
 \end_inset
 
@@ -11368,7 +11419,7 @@ Handling of
 \color red
 content-based arbitration
 \color inherit
- (from now on only 
+ (further in this document reffered to only as 
 \color red
 arbitration
 \color inherit
@@ -11505,16 +11556,6 @@ name "fig:Protocol-Control-Block-diagam"
 
 
 \end_layout
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Standard
-\begin_inset CommandInset include
-LatexCommand input
-filename "entity_docs/protocol_control.lyx"
 
 \end_inset
 
@@ -11688,7 +11729,7 @@ status open
 \noindent
 \align center
 \begin_inset Tabular
-<lyxtabular version="3" rows="4" columns="3">
+<lyxtabular version="3" rows="3" columns="3">
 <features tabularvalignment="middle">
 <column alignment="left" valignment="top" width="15text%">
 <column alignment="left" valignment="top" width="17text%">
@@ -11801,7 +11842,7 @@ CRC
 </cell>
 </row>
 <row>
-<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+<cell alignment="left" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -11810,7 +11851,7 @@ Error frame request
 
 \end_inset
 </cell>
-<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+<cell alignment="left" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -11819,7 +11860,7 @@ One clock cycle after Process
 
 \end_inset
 </cell>
-<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+<cell alignment="left" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -11832,35 +11873,6 @@ active error flag
 passive error flag
 \color inherit
  and can occur from any state of Protocol control FSM.
-\end_layout
-
-\end_inset
-</cell>
-</row>
-<row>
-<cell alignment="left" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-CTU CAN FD disabled
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="left" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-Anytime
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="left" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-When CTU CAN FD is disabled, Protocol control FSM is held in reset state.
 \end_layout
 
 \end_inset
@@ -11966,16 +11978,16 @@ noprefix "false"
 \end_inset
 
 .
- Control counter is preloaded in Process pipeline stage.
- Control counter counts towards zero.
+ Control counter is preloaded in Process pipeline stage and it counts towards
+ zero.
  Control counter counting is controlled by Protocol control FSM.
- Control counter is decremented by 1 in each bit of CAN frame field in Process
- pipeline stage.
+ It is decremented by 1 in each bit of CAN frame field in Process pipeline
+ stage.
  When Control counter is equal to 1 and 0, this is signalled to Protocol
  control FSM.
  This situation indicates one bit before end of CAN frame field or last
  bit of CAN frame field.
- A current CAN frame field ends when Control counter reaches zero.
+ A current CAN frame field ends when Control counter is zero.
  Control counter is not counting during CAN frame fields which last only
  1 bit (e.g.
  
@@ -12406,17 +12418,16 @@ name "fig:control-counter-operation"
 Control counter module contains a complementary counter which counts from
  0.
  Complementary counter is incremented by 1 each bit time in Process pipeline
- stage.
- Complementary counter counts only during 
+ stage and it counts only during 
 \color red
 data field
 \color inherit
 .
- Complementary counter provides information that data byte has elapsed (counter
- is divisible by 8), or whole memory word has elapsed (counter is divisible
- by 32).
- Complementary counter is capable of addressing memory words at addresses
- 4 (DATA_1_4_W) till 19 (DATA_61_64_W) in TXT Buffer.
+ Complementary counter provides information that data byte has elapsed (when
+ counter mod 8 == 0), or whole memory word has elapsed (when counter mod
+ 32 == 0).
+ Complementary counter addresses memory words between addresses 4 (DATA_1_4_W)
+ and 19 (DATA_61_64_W) in TXT Buffer.
  Complementary counter decodes address of Data memory word within TXT Buffer
  according to following equation:
 \end_layout
@@ -13062,8 +13073,8 @@ bus-off
 bus integration
 \color inherit
 .
- Reintegration counter is controlled by Protocol control FSM.
- Reintegration counter counts from zero and it is cleared when unit is 
+ It is controlled by Protocol control FSM, it counts from zero and it is
+ cleared when unit is 
 \color red
 bus-off
 \color inherit
@@ -19385,16 +19396,6 @@ idle
 \end_layout
 
 \begin_layout Standard
-\begin_inset CommandInset include
-LatexCommand input
-filename "entity_docs/operation_control.lyx"
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Standard
 Operation control implements a FSM whose state transition diagram is shown
  in Figure 
 \begin_inset CommandInset ref
@@ -19407,8 +19408,7 @@ noprefix "false"
 \end_inset
 
 .
- Operation control FSM is controlled by Protocol control FSM and Fault confineme
-nt FSM.
+ It is controlled by Protocol control FSM and Fault confinement FSM.
  Rules for control of Operation control FSM are described in Table 
 \begin_inset CommandInset ref
 LatexCommand ref
@@ -20294,16 +20294,6 @@ name "fig:fault-confinement-block-diagram"
 \end_layout
 
 \begin_layout Standard
-\begin_inset CommandInset include
-LatexCommand input
-filename "entity_docs/fault_confinement.lyx"
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Standard
 TEC and REC counters are controlled by Protocol control FSM via interface
  standardized in 12.1.3.3 of 
 \begin_inset CommandInset citation
@@ -20836,16 +20826,6 @@ stuff count field
 CRC field
 \color inherit
  of CAN FD Frame.
-\end_layout
-
-\begin_layout Standard
-\begin_inset CommandInset include
-LatexCommand input
-filename "entity_docs/bit_stuffing.lyx"
-
-\end_inset
-
-
 \end_layout
 
 \begin_layout Standard
@@ -21683,16 +21663,6 @@ stuff error
 \end_layout
 
 \begin_layout Standard
-\begin_inset CommandInset include
-LatexCommand input
-filename "entity_docs/bit_destuffing.lyx"
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Standard
 Bit destuffing module processes received data on CAN bus as provided by
  multiplexor in Figure 
 \begin_inset CommandInset ref
@@ -22500,16 +22470,6 @@ name "fig:can-crc-block-diagram"
 
 
 \end_layout
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Standard
-\begin_inset CommandInset include
-LatexCommand input
-filename "entity_docs/can_crc.lyx"
 
 \end_inset
 
@@ -23348,16 +23308,6 @@ Gating of trigger signals (clock enables for pipeline stages)
 \end_layout
 
 \begin_layout Standard
-\begin_inset CommandInset include
-LatexCommand input
-filename "entity_docs/trigger_mux.lyx"
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Standard
 Trigger multiplexor creates trigger signals for other blocks within CAN
  core from trigger signals generated by Prescaler as described in Table
  
@@ -23962,16 +23912,6 @@ name "fig:rx-buffer-block-diagram"
 
 
 \end_layout
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Standard
-\begin_inset CommandInset include
-LatexCommand input
-filename "entity_docs/rx_buffer.lyx"
 
 \end_inset
 
@@ -26052,16 +25992,6 @@ identifier
 \end_layout
 
 \begin_layout Standard
-\begin_inset CommandInset include
-LatexCommand input
-filename "entity_docs/frame_filters.lyx"
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Standard
 Frame filters implement two types of filters: Bit filter and Range filter.
  There are three instances of Bit filter (A, B, C) and one instance of Range
  filter.
@@ -26942,16 +26872,6 @@ Manages access from HW and SW to this RAM memory.
 
 \begin_layout Itemize
 Provide status of frame transmission for SW.
-\end_layout
-
-\begin_layout Standard
-\begin_inset CommandInset include
-LatexCommand input
-filename "entity_docs/txt_buffer.lyx"
-
-\end_inset
-
-
 \end_layout
 
 \begin_layout Standard
@@ -29332,23 +29252,6 @@ name "fig:tx-arbitrator-block-diagram"
 
 
 \end_layout
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Standard
-\begin_inset Newpage pagebreak
-\end_inset
-
-
-\end_layout
-
-\begin_layout Standard
-\begin_inset CommandInset include
-LatexCommand input
-filename "entity_docs/tx_arbitrator.lyx"
 
 \end_inset
 
@@ -32736,16 +32639,6 @@ name "fig:prescaler-block-diagram"
 \end_layout
 
 \begin_layout Standard
-\begin_inset CommandInset include
-LatexCommand input
-filename "entity_docs/prescaler.lyx"
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Standard
 CAN FD standard (
 \begin_inset CommandInset citation
 LatexCommand cite
@@ -35740,16 +35633,6 @@ name "fig:bus-sampling"
 \end_layout
 
 \begin_layout Standard
-\begin_inset CommandInset include
-LatexCommand input
-filename "entity_docs/bus_sampling.lyx"
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Standard
 Bus sampling implements 2 DFF synchronizer to synchronize asynchronous 
 \series bold
 can_rx
@@ -37621,16 +37504,6 @@ name "fig:memory-registers-block-diagram"
 
 
 \end_layout
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Standard
-\begin_inset CommandInset include
-LatexCommand input
-filename "entity_docs/memory_registers.lyx"
 
 \end_inset
 
