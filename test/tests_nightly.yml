@@ -24,6 +24,7 @@ _default: &default
     sup_filtC: true
     sup_range: true
     sup_traffic_ctrs: true
+    sup_parity: true
     target_technology: 0 # C_TECH_ASIC
 
     # DUT Bit timing settings
@@ -304,22 +305,22 @@ feature:
 
         tx_priority:
             txt_buffer_count: 2
-            iterations: 7
+            iterations: 15
         tx_priority@:
             txt_buffer_count: 3
-            iterations: 7            
+            iterations: 15           
         tx_priority@@:
             txt_buffer_count: 4
-            iterations: 7
+            iterations: 15
         tx_priority@@@:
             txt_buffer_count: 5
-            iterations: 7
+            iterations: 15
         tx_priority@@@@:
             txt_buffer_count: 6
-            iterations: 7
+            iterations: 15
         tx_priority@@@@@:
             txt_buffer_count: 8
-            iterations: 7
+            iterations: 15
 
         tx_status:
             txt_buffer_count: 2
