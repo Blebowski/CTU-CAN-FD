@@ -252,6 +252,9 @@ architecture rtl of rx_buffer is
     -- Clear RX Buffer parity error
     signal drv_clr_rxpe             :       std_logic;
 
+    -- Parity check enabled
+    signal drv_pchk_ena             :       std_logic;
+
     ----------------------------------------------------------------------------
     -- FIFO  Memory - Pointers
     ----------------------------------------------------------------------------
@@ -439,6 +442,7 @@ begin
     drv_clr_ovr           <= drv_bus(DRV_CLR_OVR_INDEX);
     drv_rtsopt            <= drv_bus(DRV_RTSOPT_INDEX);
     drv_clr_rxpe          <= drv_bus(DRV_CLR_RXPE_INDEX);
+    drv_pchk_ena          <= drv_bus(DRV_PCHK_ENA_INDEX);
 
     ----------------------------------------------------------------------------
     -- Propagating status registers on output
@@ -918,7 +922,9 @@ begin
         if (res_n = '0') then
             rx_parity_error <= '0';
         elsif (rising_edge(clk_sys)) then
-            if (drv_read_start = '1' and rx_parity_mismatch_comb = '1') then
+            if (drv_read_start = '1' and rx_parity_mismatch_comb = '1' and
+                drv_pchk_ena = '1')
+            then
                 rx_parity_error <= '1';
             elsif (drv_clr_rxpe = '1') then
                 rx_parity_error <= '0';

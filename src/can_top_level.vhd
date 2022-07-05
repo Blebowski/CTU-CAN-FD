@@ -770,6 +770,7 @@ begin
             drv_rom_ena             => drv_bus(DRV_ROM_ENA_INDEX),      -- IN
             drv_bus_mon_ena         => drv_bus(DRV_BUS_MON_ENA_INDEX),  -- IN
             drv_txbbm_ena           => drv_bus(DRV_TXBBM_ENA_INDEX),    -- IN
+            drv_pchk_ena            => drv_bus(DRV_PCHK_ENA_INDEX),     -- IN
             txtb_is_bb              => txtb_is_bb(i),                   -- IN
     
             -- Memory testability
@@ -1139,6 +1140,6 @@ begin
 
     end generate;
 
-    -- <RELEASE_ON>    
+    -- <RELEASE_ON>
 
 end architecture;

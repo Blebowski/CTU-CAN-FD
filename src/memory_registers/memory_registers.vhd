@@ -905,6 +905,10 @@ begin
     drv_bus(DRV_FILTER_DROP_RF_INDEX) <= align_wrd_to_reg(
         control_registers_out.settings, FDRF_IND);
 
+    -- Parity check enable
+    drv_bus(DRV_PCHK_ENA_INDEX) <= align_wrd_to_reg(
+        control_registers_out.settings, PCHKE_IND);
+
     ---------------------------------------------------------------------------
     -- INT_STAT - Clearing interrupt vector by write
     ---------------------------------------------------------------------------
@@ -1817,7 +1821,7 @@ begin
     drv_bus(609 downto 601) <= (OTHERS => '0');
     drv_bus(579 downto 570) <= (OTHERS => '0');
     drv_bus(519 downto 514) <= (OTHERS => '0');
-    drv_bus(506 downto 476) <= (OTHERS => '0');
+    drv_bus(506 downto 477) <= (OTHERS => '0');
     drv_bus(444 downto 430) <= (OTHERS => '0');
 
     drv_bus(1023 downto 876)<= (OTHERS => '0');
@@ -1841,6 +1845,7 @@ begin
     drv_bus(356)            <= '0';
     drv_bus(355)            <= '0';
 
+    -- <RELEASE_OFF>
     ----------------------------------------------------------------------------
     -- Assertions / Functional coverage
     ----------------------------------------------------------------------------
@@ -1851,11 +1856,32 @@ begin
     --   (control_registers_cs_reg = '1' and test_registers_cs_reg = '1')
     --   report "Control registers and test registers can't be accessed at once!";
 
+    -- psl no_rxpe_when_parity_disabled_cov : assert never
+    --  (drv_bus(DRV_PCHK_ENA_INDEX) = '0' and rx_parity_error = '1')
+    --  report "RX Parity error generated when SETTINGS[PCHKE] is disabled.";
+
+    -- psl no_txpe_when_parity_disabled_cov : assert never
+    --  (drv_bus(DRV_PCHK_ENA_INDEX) = '0' and tx_parity_error = '1')
+    --  report "TX Parity error generated when SETTINGS[PCHKE] is disabled.";
+
+    -- psl no_txdpe_when_parity_disabled_cov : assert never
+    --  (drv_bus(DRV_PCHK_ENA_INDEX) = '0' and tx_double_parity_error = '1')
+    --  report "TX Double parity error generated when SETTINGS[PCHKE] is disabled.";
+
+    txtb_func_cov_gen : for i in 0 to G_TXT_BUFFER_COUNT - 1 generate
+    
+    -- psl txtb_in_parit_error_when_parity_disabled_asrt : assert never
+    --    {drv_bus(DRV_PCHK_ENA_INDEX) = '0' and txtb_state(i) = TXT_PER}
+    --    report "TXT Buffer in 'Parity error' state when SETTINGS[PCHKE] is disabled.";
+    
+    end generate;
+
     -- psl rx_buf_automatic_mode_cov : cover
     --   {rx_buf_mode = RXBAM_ENABLED};
     
     -- psl rx_buf_manual_mode_cov : cover
     --   {rx_buf_mode = RXBAM_DISABLED};
     
+    -- <RELEASE_ON>
 
 end architecture;

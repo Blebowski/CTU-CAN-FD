@@ -160,6 +160,9 @@ entity txt_buffer is
 
         -- TXT Buffer Backup mode
         drv_txbbm_ena           :in   std_logic;
+
+        -- Parity check enabled
+        drv_pchk_ena            :in   std_logic;
         
         -- TXT Buffer is current backup buffer
         txtb_is_bb              :in   std_logic;
@@ -326,7 +329,8 @@ begin
     ----------------------------------------------------------------------------
     txtb_parity_error_valid_i <= '1' when (parity_mismatch = '1' and
                                            txtb_parity_check_valid = '1' and
-                                           txtb_index_muxed = G_ID)
+                                           txtb_index_muxed = G_ID and
+                                           drv_pchk_ena = '1')
                                      else 
                                  '0';
 
