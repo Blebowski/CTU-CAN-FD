@@ -32362,16 +32362,6 @@ Generation of level-based Interrupt output.
 \end_layout
 
 \begin_layout Standard
-\begin_inset CommandInset include
-LatexCommand input
-filename "entity_docs/int_manager.lyx"
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Standard
 Occurence of events within CTU CAN FD is captured to Interrupt status register
  (INT_STAT) register when corresponding interrupt is unmasked.
  When Interrupt is masked, correponding event is ignored.
