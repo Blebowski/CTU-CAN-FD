@@ -195,7 +195,7 @@ entity txt_buffer is
         txtb_port_b_data        :out  std_logic_vector(31 downto 0);
         
         -- TXT Buffer RAM address
-        txtb_port_b_address     :in   natural range 0 to 19;
+        txtb_port_b_address     :in   natural range 0 to 20;
 
         -- Clock enable to TXT Buffer port B
         txtb_port_b_clk_en      :in   std_logic;

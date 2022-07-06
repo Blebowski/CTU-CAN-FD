@@ -105,7 +105,7 @@ entity tx_arbitrator_fsm is
         
         -- Asynchronous reset
         res_n                       :in  std_logic;
-        
+
         -----------------------------------------------------------------------
         -- Priority decoder interface
         -----------------------------------------------------------------------
@@ -147,17 +147,20 @@ entity tx_arbitrator_fsm is
         -- Load identifier word to metadata pointer
         load_ident_w_addr           :out std_logic;
 
+        -- Load frame test word to metadata pointer
+        load_frame_test_w_addr      :out std_logic;
+
         -- Clock enable for TXT Buffer RAM
         txtb_meta_clk_en            :out std_logic;
 
         -- Store timestamp lower word
         store_ts_l_w                :out std_logic;
         
-        -- Store metadata (Frame format word) on the output of TX Arbitrator
-        store_md_w                  :out std_logic;
-        
-        -- Store identifier (Identifier word) on the output of TX Arbitrator
-        store_ident_w               :out std_logic;
+        -- Commit double buffers to output registers
+        commit_dbl_bufs             :out std_logic;
+
+        -- Store frame test word to double buffer registers
+        buffer_frame_test_w          :out std_logic;
 
         -- Store metadata (Frame format word) to double buffer registers.
         buffer_md_w                 :out std_logic; 
@@ -250,8 +253,22 @@ begin
                 next_state         <= s_arb_sel_low_ts;
             elsif (fsm_wait_state_q = '0') then
                 if (timestamp_valid = '1') then
-                    next_state     <= s_arb_sel_ffw;
+                    next_state     <= s_arb_sel_ftw;
                 end if;
+            end if;
+
+        --------------------------------------------------------------------
+        -- Read FRAME_TEST_W from Selected TXT Buffer.
+        --------------------------------------------------------------------  
+        when s_arb_sel_ftw =>
+            if (txtb_hw_cmd.lock = '1') then
+                next_state         <= s_arb_locked;
+            elsif (select_buf_avail = '0' or parity_error_vld = '1') then
+                next_state         <= s_arb_idle;
+            elsif (select_index_changed = '1') then
+                next_state         <= s_arb_sel_low_ts;
+            elsif (fsm_wait_state_q = '0') then
+                next_state         <= s_arb_sel_ffw;
             end if;
         
         --------------------------------------------------------------------
@@ -318,13 +335,15 @@ begin
         load_ts_uw_addr        <= '0';
         load_ffmt_w_addr       <= '0';
         load_ident_w_addr      <= '0';
+        load_frame_test_w_addr <= '0';
         
         -- By default, clocks for memories are gated
         txtb_meta_clk_en       <= '0';
         
         store_ts_l_w           <= '0';
-        store_md_w             <= '0';
-        store_ident_w          <= '0';
+        commit_dbl_bufs        <= '0';
+        buffer_frame_test_w    <= '0';
+
         buffer_md_w            <= '0'; 
         tx_arb_locked          <= '0';
         frame_valid_com_set    <= '0';
@@ -390,9 +409,32 @@ begin
                 
             elsif (fsm_wait_state_q = '0') then
                 if (timestamp_valid = '1') then
-                    fsm_wait_state_d <= '1';
-                    load_ffmt_w_addr <= '1';
+                    fsm_wait_state_d       <= '1';
+                    load_frame_test_w_addr <= '1';
                 end if;
+                tx_arb_parity_check_valid <= '1';
+            end if;
+
+        --------------------------------------------------------------------
+        -- Read Frame test word
+        --------------------------------------------------------------------  
+        when s_arb_sel_ftw =>
+            txtb_meta_clk_en <= '1';
+
+            if (txtb_hw_cmd.lock = '1') then
+                store_last_txtb_index <= '1';
+
+            elsif (select_buf_avail = '0') then
+                frame_valid_com_clear <= '1';
+
+            elsif (select_index_changed = '1') then
+                fsm_wait_state_d <= '1';
+                load_ts_lw_addr  <= '1';
+                
+            elsif (fsm_wait_state_q = '0') then
+                fsm_wait_state_d <= '1';
+                buffer_frame_test_w <= '1';
+                load_ffmt_w_addr <= '1';
                 tx_arb_parity_check_valid <= '1';
             end if;
         
@@ -436,8 +478,7 @@ begin
                 load_ts_lw_addr  <= '1';
 
             elsif (fsm_wait_state_q = '0') then
-                store_ident_w       <= '1';
-                store_md_w          <= '1';
+                commit_dbl_bufs     <= '1';
                 frame_valid_com_set <= '1';
                 tx_arb_parity_check_valid <= '1';
             end if;
@@ -477,7 +518,7 @@ begin
     tx_arb_fsm_state_reg : process(clk_sys, res_n)
     begin
         if (res_n = '0') then
-            curr_state <= s_arb_sel_low_ts;
+            curr_state <= s_arb_idle;
         elsif (rising_edge(clk_sys)) then
             if (tx_arb_fsm_ce = '1') then
                 curr_state <= next_state;
@@ -519,6 +560,9 @@ begin
   -- psl txtb_lock_arb_sel_hi_cov : cover
   --  {curr_state = s_arb_sel_upp_ts and txtb_hw_cmd.lock = '1'};
   --
+  -- psl txtb_lock_arb_sel_ftw_cov : cover
+  --  {curr_state = s_arb_sel_ftw and txtb_hw_cmd.lock = '1'};
+  --
   -- psl txtb_lock_arb_sel_ffw_cov : cover
   --  {curr_state = s_arb_sel_ffw and txtb_hw_cmd.lock = '1'};
   --
@@ -527,6 +571,7 @@ begin
   --
   -- psl txtb_lock_arb_sel_validated_cov : cover
   --  {curr_state = s_arb_validated and txtb_hw_cmd.lock = '1'};
+  
 
 
   -- TXT Buffer becoming suddenly unavailable during TXT Buffer validation
@@ -539,6 +584,9 @@ begin
   --
   -- psl txtb_not_available_arb_sel_ffw_cov : cover
   --  {curr_state = s_arb_sel_ffw and select_buf_avail = '0'};
+  --
+  -- psl txtb_not_available_arb_sel_ftw_cov : cover
+  --  {curr_state = s_arb_sel_ftw and select_buf_avail = '0'};
   --
   -- psl txtb_not_available_arb_sel_idw_cov : cover
   --  {curr_state = s_arb_sel_idw and select_buf_avail = '0'};
@@ -558,6 +606,9 @@ begin
   -- psl txtb_changed_arb_sel_ffw_cov : cover
   --  {curr_state = s_arb_sel_ffw and select_index_changed = '0'};
   --
+  -- psl txtb_changed_arb_sel_ftw_cov : cover
+  --  {curr_state = s_arb_sel_ffw and select_index_changed = '0'};
+  --
   -- psl txtb_changed_arb_sel_idw_cov : cover
   --  {curr_state = s_arb_sel_idw and select_index_changed = '0'};
   --
@@ -569,6 +620,9 @@ begin
 
   -- psl txtb_ffw_parity_error_cov : cover
   --  {curr_state = s_arb_sel_ffw and parity_error_vld = '1'};
+
+  -- psl txtb_ftw_parity_error_cov : cover
+  --  {curr_state = s_arb_sel_ftw and parity_error_vld = '1'};
 
   -- psl txtb_idw_parity_error_cov : cover
   --  {curr_state = s_arb_sel_idw and parity_error_vld = '1'};

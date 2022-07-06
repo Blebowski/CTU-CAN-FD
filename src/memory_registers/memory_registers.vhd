@@ -837,6 +837,10 @@ begin
     drv_txbbm_ena <= align_wrd_to_reg(control_registers_out.mode, TXBBM_IND);
     drv_bus(DRV_TXBBM_ENA_INDEX) <= drv_txbbm_ena;
 
+    -- TSTM - Test mode
+    drv_bus(DRV_TSTM_ENA_INDEX) <= align_wrd_to_reg(
+        control_registers_out.mode, TSTM_IND);
+
     ---------------------------------------------------------------------------
     -- COMMAND Register
     ---------------------------------------------------------------------------
@@ -1821,7 +1825,7 @@ begin
     drv_bus(609 downto 601) <= (OTHERS => '0');
     drv_bus(579 downto 570) <= (OTHERS => '0');
     drv_bus(519 downto 514) <= (OTHERS => '0');
-    drv_bus(506 downto 477) <= (OTHERS => '0');
+    drv_bus(506 downto 478) <= (OTHERS => '0');
     drv_bus(444 downto 430) <= (OTHERS => '0');
 
     drv_bus(1023 downto 876)<= (OTHERS => '0');

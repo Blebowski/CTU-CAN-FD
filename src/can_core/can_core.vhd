@@ -170,6 +170,9 @@ entity can_core is
         
         -- TX Identifier
         tran_identifier        :in   std_logic_vector(28 downto 0);
+
+        -- TX frame test word
+        tran_frame_test        :in   t_frame_test_w;
         
         -- Frame in TXT Buffer is valid any can be transmitted.
         tran_frame_valid       :in   std_logic;
@@ -184,7 +187,7 @@ entity can_core is
         txtb_changed           :in   std_logic;
 
         -- Pointer to TXT buffer memory
-        txtb_ptr               :out  natural range 0 to 19;
+        txtb_ptr               :out  natural range 0 to 20;
 
         -- Clock enable for TXT Buffer memory
         txtb_clk_en            :out  std_logic;
@@ -545,6 +548,7 @@ begin
         tran_frame_type         => tran_frame_type,         -- IN
         tran_brs                => tran_brs,                -- IN
         tran_identifier         => tran_identifier,         -- IN
+        tran_frame_test         => tran_frame_test,         -- IN
         tran_frame_valid        => tran_frame_valid,        -- IN
         tran_frame_parity_error => tran_frame_parity_error, --IN
         txtb_hw_cmd             => txtb_hw_cmd_i,           -- IN

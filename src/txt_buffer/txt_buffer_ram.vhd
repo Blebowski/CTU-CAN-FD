@@ -164,7 +164,15 @@ end entity;
 
 architecture rtl of txt_buffer_ram is
     
-    constant C_TXT_BUF_DEPTH     : natural := 20;
+    ---------------------------------------------------------------------------
+    -- FRAME_FORMAT_W
+    -- IDENTIFIER_W
+    -- TIMESTAMP_U_W
+    -- TIMESTAMP_L_W
+    -- DATA_*_*  (16 words)
+    -- FRAME_TEST_W
+    ---------------------------------------------------------------------------
+    constant C_TXT_BUF_DEPTH     : natural := 21;
 
     signal port_a_address_i      : std_logic_vector(4 downto 0);
     signal port_a_write_i        : std_logic;

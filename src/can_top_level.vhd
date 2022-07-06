@@ -403,13 +403,13 @@ architecture rtl of can_top_level is
     signal txtb_allow_bb            :   std_logic_vector(txt_buffer_count - 1 downto 0);
 
     -- Pointer to TXT Buffer
-    signal txtb_ptr                 :   natural range 0 to 19;
+    signal txtb_ptr                 :   natural range 0 to 20;
     
     -- TXT Buffer RAM data outputs
     signal txtb_port_b_data         :   t_txt_bufs_output(txt_buffer_count - 1 downto 0);
     
     -- TXT Buffer RAM address
-    signal txtb_port_b_address      :   natural range 0 to 19;
+    signal txtb_port_b_address      :   natural range 0 to 20;
     
     -- Clock enable to TXT Buffer port B
     signal txtb_port_b_clk_en       :   std_logic;
@@ -449,7 +449,10 @@ architecture rtl of can_top_level is
     
     -- TX Identifier
     signal tran_identifier     :   std_logic_vector(28 downto 0);
-        
+
+    -- TX Frame test word
+    signal tran_frame_test     :   t_frame_test_w;
+
     -- Word from TXT Buffer RAM selected by TX Arbitrator
     signal tran_word           :   std_logic_vector(31 downto 0);
     
@@ -827,6 +830,7 @@ begin
         tran_frame_type         => tran_frame_type,         -- OUT
         tran_brs                => tran_brs,                -- OUT
         tran_identifier         => tran_identifier,         -- OUT
+        tran_frame_test         => tran_frame_test,         -- OUT
         tran_frame_valid        => tran_frame_valid,        -- OUT
         tran_frame_parity_error => tran_frame_parity_error, -- OUT
         txtb_hw_cmd             => txtb_hw_cmd,             -- IN
@@ -948,6 +952,7 @@ begin
         tran_frame_type         => tran_frame_type,         -- IN
         tran_brs                => tran_brs,                -- IN
         tran_identifier         => tran_identifier,         -- IN
+        tran_frame_test         => tran_frame_test,         -- IN
         tran_frame_valid        => tran_frame_valid,        -- IN
         tran_frame_parity_error => tran_frame_parity_error, -- IN
         txtb_hw_cmd             => txtb_hw_cmd,             -- OUT

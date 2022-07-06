@@ -248,7 +248,7 @@ entity protocol_control_fsm is
         txtb_hw_cmd             :out  t_txtb_hw_cmd;
         
         -- Pointer to TXT Buffer memory
-        txtb_ptr                :out  natural range 0 to 19;
+        txtb_ptr                :out  natural range 0 to 20;
         
         -- Clock enable for TXT Buffer memory
         txtb_clk_en             :out  std_logic;
@@ -732,8 +732,8 @@ architecture rtl of protocol_control_fsm is
     signal bit_err_disable_receiver  :  std_logic;
     
     -- TXT Buffer pointer
-    signal txtb_ptr_d                :  natural range 0 to 19;
-    signal txtb_ptr_q                :  natural range 0 to 19;
+    signal txtb_ptr_d                :  natural range 0 to 20;
+    signal txtb_ptr_q                :  natural range 0 to 20;
     
     -- Start of frame pulse
     signal sof_pulse_i               :  std_logic;

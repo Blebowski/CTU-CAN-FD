@@ -201,6 +201,9 @@ entity protocol_control is
         
         -- TX Identifier
         tran_identifier         :in   std_logic_vector(28 downto 0);
+
+        -- TX frame test word
+        tran_frame_test         :in   t_frame_test_w;
                 
         -- Frame in TXT Buffer is valid any can be transmitted.
         tran_frame_valid        :in   std_logic;
@@ -212,7 +215,7 @@ entity protocol_control is
         txtb_hw_cmd             :out  t_txtb_hw_cmd;
         
         -- Pointer to TXT buffer memory
-        txtb_ptr                :out  natural range 0 to 19;
+        txtb_ptr                :out  natural range 0 to 20;
         
         -- Clock enable for TXT Buffer memory
         txtb_clk_en             :out  std_logic;
@@ -499,6 +502,9 @@ architecture rtl of protocol_control is
   -- Protocol exception
   signal drv_pex                  :     std_logic;
   signal drv_cpexs                :     std_logic;
+
+  -- Test mode
+  signal drv_tstm_ena             :     std_logic;
   
   -----------------------------------------------------------------------------
   -- Internal signals
@@ -675,6 +681,7 @@ begin
     drv_pex               <=  drv_bus(DRV_PEX_INDEX);
     drv_cpexs             <=  drv_bus(DRV_PEXS_CLR_INDEX);
     drv_rom_ena           <=  drv_bus(DRV_ROM_ENA_INDEX);
+    drv_tstm_ena          <=  drv_bus(DRV_TSTM_ENA_INDEX);
 
     ---------------------------------------------------------------------------
     -- TX Data word endian swapper
@@ -996,6 +1003,8 @@ begin
         clk_sys                 => clk_sys,             -- IN
         res_n                   => res_n,               -- IN
 
+        drv_tstm_ena            => drv_tstm_ena,        -- IN
+
         tx_trigger              => tx_trigger,          -- IN
         tx_data_nbs             => tx_data_nbs_i,       -- OUT
 
@@ -1019,6 +1028,7 @@ begin
         is_err_active           => is_err_active,           -- IN
         bst_ctr                 => bst_ctr,                 -- IN
         tran_identifier         => tran_identifier,         -- IN
+        tran_frame_test         => tran_frame_test,         -- IN
         tran_word_swapped       => tran_word_swapped,       -- IN
         tran_dlc                => tran_dlc                 -- IN
     );

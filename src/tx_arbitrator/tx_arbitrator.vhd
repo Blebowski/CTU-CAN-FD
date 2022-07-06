@@ -125,7 +125,7 @@ entity tx_arbitrator is
         txtb_allow_bb           :in std_logic_vector(G_TXT_BUFFER_COUNT - 1 downto 0);
         
         -- Pointer to TXT Buffer
-        txtb_port_b_address     :out natural range 0 to 19;
+        txtb_port_b_address     :out natural range 0 to 20;
         
         -- Clock enable to TXT Buffer port B
         txtb_port_b_clk_en      :out std_logic;
@@ -163,6 +163,9 @@ entity tx_arbitrator is
         -- TX Identifier
         tran_identifier         :out std_logic_vector(28 downto 0);
     
+        -- TX Frame test
+        tran_frame_test         :out t_frame_test_w;
+
         -- There is valid frame selected, can be locked for transmission
         tran_frame_valid        :out std_logic;
 
@@ -178,8 +181,8 @@ entity tx_arbitrator is
         -- Index of the TXT Buffer for which the actual HW command is valid
         txtb_hw_cmd_index       :out natural range 0 to G_TXT_BUFFER_COUNT - 1;
 
-        -- Pointer to TXT Buffer given by CAN Core. Used for reading data words
-        txtb_ptr                :in natural range 0 to 19;
+        -- Pointer to TXT Buffer given by CAN Core. Used for reading data words.
+        txtb_ptr                :in natural range 0 to 20;
 
         -- TXT Buffer clock enable (from Protocol control)
         txtb_clk_en             :in  std_logic;
@@ -257,8 +260,8 @@ architecture rtl of tx_arbitrator is
     
     -- Pointer to TXT Buffer for loading CAN frame metadata and
     -- timstamp during the selection of TXT Buffer.
-    signal txtb_pointer_meta_q        : natural range 0 to 19;
-    signal txtb_pointer_meta_d        : natural range 0 to 19;
+    signal txtb_pointer_meta_q        : natural range 0 to 20;
+    signal txtb_pointer_meta_d        : natural range 0 to 20;
 
     -- Double buffer registers for metadata
     signal tran_dlc_dbl_buf           : std_logic_vector(3 downto 0);
@@ -266,6 +269,9 @@ architecture rtl of tx_arbitrator is
     signal tran_ident_type_dbl_buf    : std_logic;
     signal tran_frame_type_dbl_buf    : std_logic;
     signal tran_brs_dbl_buf           : std_logic;
+
+    -- Double buffer register for frame testability
+    signal tran_frame_test_dbl_buf   : t_frame_test_w;
     
     -- Comitted values of internal signals
     signal tran_dlc_com               : std_logic_vector(3 downto 0);
@@ -292,17 +298,20 @@ architecture rtl of tx_arbitrator is
     -- Load identifier word to metadata pointer
     signal load_ident_w_addr          : std_logic;
 
+    -- Load frame test word to metadata pointer
+    signal load_frame_test_w_addr     : std_logic;
+
     -- Store timestamp lower word
     signal store_ts_l_w               : std_logic;
 
-    -- Store metadata (Frame format word) on the output of TX Arbitrator
-    signal store_md_w                 : std_logic;
-    
-    -- Store identifier (Identifier word) on the output of TX Arbitrator
-    signal store_ident_w              : std_logic;
+    -- Commit content of double buffer registers to registers visible by CAN Core
+    signal commit_dbl_bufs            : std_logic;
 
     -- Store metadata (Frame format word) to double buffer registers.
     signal buffer_md_w                : std_logic;
+
+    -- Store frame test word to double buffer registers
+    signal buffer_frame_test_w        : std_logic;
 
     -- Store last locked TXT Buffer index
     signal store_last_txtb_index      : std_logic;
@@ -377,6 +386,7 @@ begin
   port map(
     clk_sys                     => clk_sys,                     -- IN
     res_n                       => res_n,                       -- IN
+
     select_buf_avail            => select_buf_avail,            -- IN
     select_index_changed        => select_index_changed,        -- IN
     timestamp_valid             => timestamp_valid,             -- IN
@@ -387,11 +397,12 @@ begin
     load_ts_uw_addr             => load_ts_uw_addr,             -- OUT
     load_ffmt_w_addr            => load_ffmt_w_addr,            -- OUT
     load_ident_w_addr           => load_ident_w_addr,           -- OUT
+    load_frame_test_w_addr      => load_frame_test_w_addr,      -- OUT
     txtb_meta_clk_en            => txtb_meta_clk_en,            -- OUT
     
     store_ts_l_w                => store_ts_l_w,                -- OUT
-    store_md_w                  => store_md_w,                  -- OUT
-    store_ident_w               => store_ident_w,               -- OUT
+    commit_dbl_bufs             => commit_dbl_bufs,             -- OUT
+    buffer_frame_test_w         => buffer_frame_test_w,         -- OUT
     buffer_md_w                 => buffer_md_w,                 -- OUT
     tx_arb_locked               => tx_arb_locked,               -- OUT
     store_last_txtb_index       => store_last_txtb_index,       -- OUT
@@ -568,7 +579,7 @@ begin
   ------------------------------------------------------------------------------
   -- Double buffer registers for Metadata.
   ------------------------------------------------------------------------------
-  dbl_buf_reg_proc : process(clk_sys, res_n)
+  dbl_buf_reg_ffmt_proc : process(clk_sys, res_n)
   begin
     if (res_n = '0') then    
       tran_dlc_dbl_buf           <= (OTHERS => '0');
@@ -587,6 +598,26 @@ begin
     end if;
   end process;
 
+  ------------------------------------------------------------------------------
+  -- Double buffer registers for Frame test word
+  ------------------------------------------------------------------------------
+  dbl_buf_reg_ftw_proc : process(clk_sys, res_n)
+  begin
+    if (res_n = '0') then
+        tran_frame_test_dbl_buf.fstc <= '0';
+        tran_frame_test_dbl_buf.fcrc <= '0';
+        tran_frame_test_dbl_buf.sdlc <= '0';
+        tran_frame_test_dbl_buf.tprm <= (others => '0');
+    elsif (rising_edge(clk_sys)) then
+        if (buffer_frame_test_w = '1') then
+            tran_frame_test_dbl_buf.fstc <= txtb_selected_input(FSTC_IND);
+            tran_frame_test_dbl_buf.fcrc <= txtb_selected_input(FCRC_IND);
+            tran_frame_test_dbl_buf.sdlc <= txtb_selected_input(SDLC_IND);
+            tran_frame_test_dbl_buf.tprm <= txtb_selected_input(TPRM_H downto TPRM_L);
+        end if;
+    end if;
+  end process;
+
 
   ------------------------------------------------------------------------------
   -- Capture registers for metadata commited to output of TX Arbitrator. Taken
@@ -601,7 +632,7 @@ begin
         tran_frame_type_com         <= '0';
         tran_brs_com                <= '0';
     elsif (rising_edge(clk_sys)) then
-        if (store_md_w = '1') then
+        if (commit_dbl_bufs = '1') then
             tran_frame_type_com     <= tran_frame_type_dbl_buf;
             tran_ident_type_com     <= tran_ident_type_dbl_buf;
             tran_dlc_com            <= tran_dlc_dbl_buf;
@@ -620,12 +651,28 @@ begin
     if (res_n = '0') then
         tran_identifier_com <= (OTHERS => '0');
     elsif (rising_edge(clk_sys)) then
-        if (store_ident_w = '1') then
+        if (commit_dbl_bufs = '1') then
             tran_identifier_com <= txtb_selected_input(28 downto 0);
         end if;
     end if;
   end process;
 
+  ------------------------------------------------------------------------------
+  -- Capture registers for Frame test word commited to output of TX Arbitrator.
+  ------------------------------------------------------------------------------
+  frame_test_w_reg_proc : process(clk_sys, res_n)
+  begin
+    if (res_n = '0') then
+        tran_frame_test.fstc <= '0';
+        tran_frame_test.fcrc <= '0';
+        tran_frame_test.sdlc <= '0';
+        tran_frame_test.tprm <= (others => '0');
+    elsif (rising_edge(clk_sys)) then
+        if (commit_dbl_bufs = '1') then
+            tran_frame_test <= tran_frame_test_dbl_buf;
+        end if;
+    end if;
+  end process;
 
   ------------------------------------------------------------------------------
   -- Register for "committed" valid frame output for CAN Core
@@ -666,7 +713,7 @@ begin
 
         -- Combinationally selected index (select_buf_index) is stored when
         -- metadata are stored.
-        if (store_md_w = '1') then
+        if (commit_dbl_bufs = '1') then
             int_txtb_index          <= select_buf_index;
         end if;
 
@@ -706,6 +753,7 @@ begin
     to_integer(unsigned(TIMESTAMP_U_W_ADR(11 downto 2))) when (load_ts_uw_addr = '1') else
     to_integer(unsigned(FRAME_FORMAT_W_ADR(11 downto 2))) when (load_ffmt_w_addr = '1') else
     to_integer(unsigned(IDENTIFIER_W_ADR(11 downto 2))) when (load_ident_w_addr = '1') else
+    to_integer(unsigned(FRAME_TEST_W_ADR(11 downto 2))) when (load_frame_test_w_addr = '1') else
     txtb_pointer_meta_q;
  
   store_meta_data_ptr_proc : process(clk_sys, res_n)
