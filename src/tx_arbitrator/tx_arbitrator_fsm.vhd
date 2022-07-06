@@ -263,7 +263,9 @@ begin
         when s_arb_sel_ftw =>
             if (txtb_hw_cmd.lock = '1') then
                 next_state         <= s_arb_locked;
-            elsif (select_buf_avail = '0' or parity_error_vld = '1') then
+
+            -- Note: Parity error is not detected in FRAME_FORMAT_W
+            elsif (select_buf_avail = '0') then
                 next_state         <= s_arb_idle;
             elsif (select_index_changed = '1') then
                 next_state         <= s_arb_sel_low_ts;
@@ -435,7 +437,6 @@ begin
                 fsm_wait_state_d <= '1';
                 buffer_frame_test_w <= '1';
                 load_ffmt_w_addr <= '1';
-                tx_arb_parity_check_valid <= '1';
             end if;
         
         --------------------------------------------------------------------
@@ -620,9 +621,6 @@ begin
 
   -- psl txtb_ffw_parity_error_cov : cover
   --  {curr_state = s_arb_sel_ffw and parity_error_vld = '1'};
-
-  -- psl txtb_ftw_parity_error_cov : cover
-  --  {curr_state = s_arb_sel_ftw and parity_error_vld = '1'};
 
   -- psl txtb_idw_parity_error_cov : cover
   --  {curr_state = s_arb_sel_idw and parity_error_vld = '1'};

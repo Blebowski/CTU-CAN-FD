@@ -6572,8 +6572,8 @@ Note Writing COMMAND[CTXPE]=1 by SW clears STATUS[TXPE] bit.
 \end_layout
 
 \begin_layout Description
-Note When SETTINGS[PCHKE] = 0, CTU CAN FD ignores parity error detected
- in TXT buffers (STATUS[TXPE] is not set, COMMAND[CTXPE] has no effect and
+Note When SETTINGS[PCHKE]=0, CTU CAN FD ignores parity error detected in
+ TXT buffers (STATUS[TXPE] is not set, COMMAND[CTXPE] has no effect and
  TXT Buffers do not move to Parity Error state).
  
 \end_layout
@@ -6601,6 +6601,14 @@ noprefix "false"
 \end_inset
 
 
+\end_layout
+
+\begin_layout Description
+Note CTU CAN FD does not detect parity errors in FRAME_TEST_W.
+ Purpose of FRAME_TEST_W is to intentionally corrupt transmitted frame (e.g.
+ for testing of error scenarios on CAN bus).
+ Such feature is most likely not usefull in applications which require parity
+ protection (high reliability application which aim for fault tolerance).
 \end_layout
 
 \begin_layout Subsection
