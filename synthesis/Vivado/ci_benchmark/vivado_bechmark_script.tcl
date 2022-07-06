@@ -36,7 +36,7 @@ proc run_synth {cfg_name} {
     
     # Needs to be configured post elaboration and prior to synthesis!
     config_timing_analysis -enable_preset_clear_arcs true
-    set_property MAX_FANOUT 100 [get_cells *]
+    set_property MAX_FANOUT 120 [get_cells *]
 
     # Now run full synthesis
     set CMD "synth_design -top ${TOP} -part ${PART} ${GENERICS}"
