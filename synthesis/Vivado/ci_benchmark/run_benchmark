@@ -1,7 +1,10 @@
 #!/bin/bash
 
-vivado -mode tcl -source run_vivado_benchmark.tcl
+echo "Running minimal configuration..."
+vivado -mode tcl -source vivado_benchmark_minimal.tcl
 
+echo "Running typical configuration..."
+vivado -mode tcl -source vivado_benchmark_typical.tcl
 
-
-
+echo "Running maximal configuration..."
+vivado -mode tcl -source vivado_benchmark_maximal.tcl
