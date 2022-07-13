@@ -248,7 +248,7 @@ entity protocol_control_fsm is
         txtb_hw_cmd             :out  t_txtb_hw_cmd;
         
         -- Pointer to TXT Buffer memory
-        txtb_ptr                :out  natural range 0 to 19;
+        txtb_ptr                :out  natural range 0 to 20;
         
         -- Clock enable for TXT Buffer memory
         txtb_clk_en             :out  std_logic;
@@ -602,6 +602,7 @@ architecture rtl of protocol_control_fsm is
 
     -- Length of data field (decoded from DLC, does not take RTR into account)
     signal tran_data_length          :  std_logic_vector(6 downto 0);
+    signal tran_data_length_i        :  natural range 0 to 64;
     signal rec_data_length           :  std_logic_vector(6 downto 0);
     signal rec_data_length_c         :  std_logic_vector(6 downto 0);
 
@@ -731,8 +732,8 @@ architecture rtl of protocol_control_fsm is
     signal bit_err_disable_receiver  :  std_logic;
     
     -- TXT Buffer pointer
-    signal txtb_ptr_d                :  natural range 0 to 19;
-    signal txtb_ptr_q                :  natural range 0 to 19;
+    signal txtb_ptr_d                :  natural range 0 to 20;
+    signal txtb_ptr_q                :  natural range 0 to 20;
     
     -- Start of frame pulse
     signal sof_pulse_i               :  std_logic;
@@ -799,6 +800,12 @@ architecture rtl of protocol_control_fsm is
     -- Clock enable for TXT Buffer RAM
     signal txtb_clk_en_d             :  std_logic;
     signal txtb_clk_en_q             :  std_logic;
+
+    -- When reading from TXT Buffer RAM, we can't read beyond the last word in
+    -- the TXT Buffer memory since this might cause spurious false-positive
+    -- parity errors
+    signal txtb_num_words_gate       :  natural range 0 to 19;
+    signal txtb_gate_mem_read        :  std_logic;
 
 begin
 
@@ -883,6 +890,28 @@ begin
                                    drv_pex = PROTOCOL_EXCEPTION_ENABLED)
                              else
                          '0';
+
+    ---------------------------------------------------------------------------
+    -- Decode maximal address in TXT Buffer on which valid data word is
+    -- located.
+    ---------------------------------------------------------------------------
+    tran_data_length_i <= to_integer(unsigned(tran_data_length));
+
+    with tran_data_length_i select txtb_num_words_gate <=
+        4  when 1 | 2 | 3 | 4,
+        5  when 5 | 6 | 7 | 8,
+        6  when 12,
+        7  when 16,
+        8  when 20,
+        9  when 24,
+        11 when 32,
+        15 when 48,
+        19 when 64,
+        0  when others;
+    
+    txtb_gate_mem_read <= '1' when (txtb_ptr_d > txtb_num_words_gate)
+                              else
+                          '0';
 
     ---------------------------------------------------------------------------
     -- CRC sequence selection
@@ -3190,7 +3219,7 @@ begin
     
     -- Enable memory only when pointer changes. This allows clocking the
     -- memory only when new read data are to be read!
-    txtb_clk_en_d <= '1' when (txtb_ptr_q /= txtb_ptr_d) else
+    txtb_clk_en_d <= '1' when (txtb_ptr_q /= txtb_ptr_d and txtb_gate_mem_read = '0') else
                      '0';
 
     -----------------------------------------------------------------------

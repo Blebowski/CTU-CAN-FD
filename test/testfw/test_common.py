@@ -169,7 +169,7 @@ def add_rtl_sources(lib) -> None:
     add_sources(lib, ['../src/**/*.vhd'])
 
 def add_post_syn_netlist(lib) -> None:    
-    add_sources(lib, ['../synthesis/Vivado/ci_benchmark/typical_design_config/can_top_level.vhd'])
+    add_sources(lib, ['../synthesis/Vivado/ci_benchmark/maximal_design_config/can_top_level.vhd'])
 
 def add_unit_sources(lib, build) -> None:
 	add_sources(lib, ['unit/**/*.vhd'])
@@ -311,6 +311,7 @@ def main_tb_configure(tb, config, build) -> None:
                 'sup_filtC'             : loc_cfg['sup_filtC'],
                 'sup_range'             : loc_cfg['sup_range'],
                 'sup_traffic_ctrs'      : loc_cfg['sup_traffic_ctrs'],
+                'sup_parity'            : loc_cfg['sup_parity'],
                 'target_technology'     : loc_cfg['target_technology'],
 
                 'log_level'             : "verbosity_" + loc_cfg['log_level'],

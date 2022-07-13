@@ -133,31 +133,46 @@ end entity;
 
 architecture rtl of bus_traffic_counters is
 
-    signal tx_ctr_i          :     std_logic_vector(31 downto 0);
-    signal rx_ctr_i          :     std_logic_vector(31 downto 0);
+    signal tx_ctr_i              :     std_logic_vector(31 downto 0);
+    signal rx_ctr_i              :     std_logic_vector(31 downto 0);
 
     -- Selected value to increment
-    signal sel_value           :     unsigned(31 downto 0);
+    signal sel_value             :     unsigned(31 downto 0);
 
     -- Incremented value by 1
-    signal inc_value           :     unsigned(31 downto 0);
+    signal inc_value             :     unsigned(31 downto 0);
     
     -- Reset signals for counters (registered, to avoid glitches)
     signal tx_ctr_rst_n_d        :     std_logic;
-    signal tx_ctr_rst_n_q        :     std_logic;
     signal tx_ctr_rst_n_q_scan   :     std_logic;
     
     signal rx_ctr_rst_n_d        :     std_logic;
-    signal rx_ctr_rst_n_q        :     std_logic;
     signal rx_ctr_rst_n_q_scan   :     std_logic;
 
+    signal inc_tx_ctr_q          :     std_logic;
+    signal inc_rx_ctr_q          :     std_logic;
+
 begin
+
+    ----------------------------------------------------------------------------
+    -- 
+    ----------------------------------------------------------------------------
+    increment_reg_proc : process(clk_sys, res_n)
+    begin
+        if (res_n = '0') then
+            inc_tx_ctr_q <= '0';
+            inc_rx_ctr_q <= '0';
+        elsif rising_edge(clk_sys) then
+            inc_tx_ctr_q <= inc_tx_ctr;
+            inc_rx_ctr_q <= inc_rx_ctr;
+        end if;
+    end process;
 
     tx_ctr <= tx_ctr_i;
     rx_ctr <= rx_ctr_i;
 
     -- Multiplexor between TX and RX value to increment
-    sel_value <= unsigned(tx_ctr_i) when (inc_tx_ctr = '1') else
+    sel_value <= unsigned(tx_ctr_i) when (inc_tx_ctr_q = '1') else
                  unsigned(rx_ctr_i);
 
     -- Incremented value of either TX or RX counter
@@ -175,59 +190,38 @@ begin
     ----------------------------------------------------------------------------
     -- Reset pipeline registers
     ----------------------------------------------------------------------------
-    tx_ctr_res_inst : entity ctu_can_fd_rtl.dff_arst
-    generic map(
-        G_RESET_POLARITY   => '0',
-        
-        -- Reset to the same value as is polarity of reset so that other DFFs
-        -- which are reset by output of this one will be reset too!
-        G_RST_VAL          => '0'
+    tx_ctr_reg_rst_inst : entity ctu_can_fd_rtl.rst_reg
+    generic map (
+        G_RESET_POLARITY    => '0'
     )
     port map(
-        arst               => res_n,                -- IN
-        clk                => clk_sys,              -- IN
-        input              => tx_ctr_rst_n_d,       -- IN
+        -- Clock and Reset
+        clk                 => clk_sys,
+        arst                => res_n,
 
-        output             => tx_ctr_rst_n_q        -- OUT
+        -- Flip flop input / output
+        d                   => tx_ctr_rst_n_d,
+        q                   => tx_ctr_rst_n_q_scan,
+
+        -- Scan mode control
+        scan_enable         => scan_enable
     );
-    
-    rx_ctr_res_inst : entity ctu_can_fd_rtl.dff_arst
-    generic map(
-        G_RESET_POLARITY   => '0',
-        
-        -- Reset to the same value as is polarity of reset so that other DFFs
-        -- which are reset by output of this one will be reset too!
-        G_RST_VAL          => '0'
+
+    rx_ctr_reg_rst_inst : entity ctu_can_fd_rtl.rst_reg
+    generic map (
+        G_RESET_POLARITY    => '0'
     )
     port map(
-        arst               => res_n,                -- IN
-        clk                => clk_sys,              -- IN
-        input              => rx_ctr_rst_n_d,       -- IN
-        
-        output             => rx_ctr_rst_n_q        -- OUT
-    );
+        -- Clock and Reset
+        clk                 => clk_sys,
+        arst                => res_n,
 
-    ----------------------------------------------------------------------------
-    -- Muxes for gating reset in scan mode
-    ----------------------------------------------------------------------------
-    mux2_tx_rst_tst_inst : entity ctu_can_fd_rtl.mux2
-    port map(
-        a                  => tx_ctr_rst_n_q, 
-        b                  => '1',
-        sel                => scan_enable,
+        -- Flip flop input / output
+        d                   => rx_ctr_rst_n_d,
+        q                   => rx_ctr_rst_n_q_scan,
 
-        -- Output
-        z                  => tx_ctr_rst_n_q_scan
-    );
-
-    mux2_rx_rst_tst_inst : entity ctu_can_fd_rtl.mux2
-    port map(
-        a                  => rx_ctr_rst_n_q, 
-        b                  => '1',
-        sel                => scan_enable,
-
-        -- Output
-        z                  => rx_ctr_rst_n_q_scan
+        -- Scan mode control
+        scan_enable         => scan_enable
     );
 
     ----------------------------------------------------------------------------
@@ -239,7 +233,7 @@ begin
             tx_ctr_i        <= (OTHERS => '0');
 
         elsif rising_edge(clk_sys) then
-            if (inc_tx_ctr = '1') then
+            if (inc_tx_ctr_q = '1') then
                 tx_ctr_i <= std_logic_vector(inc_value);
             end if;
         end if;
@@ -254,7 +248,7 @@ begin
             rx_ctr_i        <= (OTHERS => '0');
 
         elsif rising_edge(clk_sys) then
-            if (inc_rx_ctr = '1') then
+            if (inc_rx_ctr_q = '1') then
                 rx_ctr_i <= std_logic_vector(inc_value);
             end if;
         end if;

@@ -172,10 +172,13 @@ package feature_test_agent_pkg is
         tx_buf_bus_off_failed   :   boolean;
         rx_buffer_automatic     :   boolean;
         time_triggered_transm   :   boolean;
+        tx_buf_backup           :   boolean;
+        parity_check            :   boolean;
     end record;
     
     constant SW_mode_rst_val : SW_mode := (false, false, false, false, false,
-        true, false, false, false, true, false, false, false, true, true, false);
+        true, false, false, false, true, false, false, false, true, true,
+        false, false, false);
 
     -- Controller commands
     type SW_command is record
@@ -186,10 +189,13 @@ package feature_test_agent_pkg is
         tx_frame_ctr_rst        :   boolean;
         clear_pexs_flag         :   boolean;
         rx_buf_rdptr_move       :   boolean;
+        clear_rxpe              :   boolean;
+        clear_txpe              :   boolean;
+        clear_txdpe             :   boolean;
     end record;
 
     constant SW_command_rst_val : SW_command :=
-        (false, false, false, false, false, false, false);
+        (false, false, false, false, false, false, false, false, false, false);
 
     -- Controller status
     type SW_status is record
@@ -202,6 +208,9 @@ package feature_test_agent_pkg is
         error_warning           :   boolean;
         bus_status              :   boolean;
         protocol_exception      :   boolean;
+        rx_parity_error         :   boolean;
+        tx_parity_error         :   boolean;
+        tx_double_parity_error  :   boolean;
     end record;
 
 
@@ -332,7 +341,8 @@ package feature_test_agent_pkg is
         buf_ab_progress,
         buf_aborted,
         buf_failed,
-        buf_done
+        buf_done,
+        buf_parity_err
     );
 
     -- TXT Buffer commands (used in test access, not synthesizable code)
@@ -990,6 +1000,30 @@ package feature_test_agent_pkg is
 
 
     ----------------------------------------------------------------------------
+    -- Configures FRAME_TEST_W of transmitted frame in TXT Buffer RAM.
+    --
+    -- Arguments:
+    --  buf_nr          Number of TXT Buffer from which the frame should be
+    --                  sent (1:4)
+    --  tprm            Test parameter index
+    --  fstc            Flip Stuff count bit
+    --  fcrc            Flip CRC bit
+    --  sdlc            Swap transmitted DLC
+    --  node            Node which shall be accessed (Test node or DUT).
+    --  channel         Communication channel
+    ----------------------------------------------------------------------------
+    procedure CAN_set_frame_test(
+        constant buf_nr         : in    SW_TXT_index_type;
+        constant tprm           : in    natural range 0 to 31;
+        constant fstc           : in    boolean;
+        constant fcrc           : in    boolean;
+        constant sdlc           : in    boolean;
+        constant node           : in    t_feature_node;
+        signal   channel        : inout t_com_channel
+    );
+
+
+    ----------------------------------------------------------------------------
     -- Check whether TXT Buffer is accessible (Empty, Aborted, TX Failed or Done)
     -- If yes, insert the frame to TXT Buffer and give "set_ready" command.
     -- The function does not wait until the frame is transmitted.
@@ -1494,6 +1528,19 @@ package feature_test_agent_pkg is
         constant node           : in    t_feature_node;
         signal   channel        : inout t_com_channel
     );
+
+    ----------------------------------------------------------------------------
+    -- Convert TXT Buffer index to Test Memory location
+    --
+    -- Arguments:
+    --  txt_buf         TXT Buffer index
+    --
+    -- Returns:
+    --  Test memory location
+    ----------------------------------------------------------------------------
+    function txt_buf_to_test_mem_tgt(
+        constant txt_buf        : in  SW_TXT_index_type
+    ) return t_tgt_test_mem;
 
     ----------------------------------------------------------------------------
     -- Execute Write test access via Test registers to target memory
@@ -2882,6 +2929,55 @@ package body feature_test_agent_pkg is
     end procedure;
 
 
+    procedure CAN_set_frame_test(
+        constant buf_nr         : in    SW_TXT_index_type;
+        constant tprm           : in    natural range 0 to 31;
+        constant fstc           : in    boolean;
+        constant fcrc           : in    boolean;
+        constant sdlc           : in    boolean;
+        constant node           : in    t_feature_node;
+        signal   channel        : inout t_com_channel
+    ) is
+        variable w_data         :       std_logic_vector(31 downto 0) :=
+                                        (OTHERS => '0');
+        variable buf_offset     :       std_logic_vector(11 downto 0);
+    begin
+
+        -- Set Buffer address
+        case buf_nr is
+        when 1 => buf_offset := TXTB1_DATA_1_ADR;
+        when 2 => buf_offset := TXTB2_DATA_1_ADR;
+        when 3 => buf_offset := TXTB3_DATA_1_ADR;
+        when 4 => buf_offset := TXTB4_DATA_1_ADR;
+        when 5 => buf_offset := TXTB5_DATA_1_ADR;
+        when 6 => buf_offset := TXTB6_DATA_1_ADR;
+        when 7 => buf_offset := TXTB7_DATA_1_ADR;
+        when 8 => buf_offset := TXTB8_DATA_1_ADR;     
+        when others =>
+            error_m("Unsupported TX buffer number");
+        end case;
+
+        w_data := (others => '0');
+
+        w_data(TPRM_H downto TPRM_L) := std_logic_vector(to_unsigned(tprm, 5));
+
+        if (fstc) then
+            w_data(FSTC_IND) := '1';
+        end if;
+
+        if (fcrc) then
+            w_data(FCRC_IND) := '1';
+        end if;
+
+        if (sdlc) then
+            w_data(SDLC_IND) := '1';
+        end if;
+
+        CAN_write(w_data, CAN_add_unsigned(buf_offset, FRAME_TEST_W_ADR), node, channel);
+
+    end procedure;
+
+
     procedure CAN_send_frame(
         constant frame          : in    SW_CAN_frame_type;
         constant buf_nr         : in    SW_TXT_index_type;
@@ -3292,6 +3388,7 @@ package body feature_test_agent_pkg is
         when TXT_ERR  => retVal := buf_failed;
         when TXT_ABT  => retVal := buf_aborted;
         when TXT_ETY  => retVal := buf_empty;
+        when TXT_PER  => retVal := buf_parity_err;
         when TXT_NOT_EXIST => retVal := buf_not_exist;
         when others =>
         error_m("Invalid TXT Buffer state: " &
@@ -3470,6 +3567,10 @@ package body feature_test_agent_pkg is
             data(TTTM_IND mod 16)      := '1';
         end if;
 
+        if (mode.tx_buf_backup) then
+            data(TXBBM_IND mod 16)     := '1';
+        end if;
+
         CAN_write(data, MODE_ADR, node, channel);
 
         -- Following modes are stored in SETTINGS register
@@ -3505,6 +3606,12 @@ package body feature_test_agent_pkg is
             data(TBFBO_IND mod 16) := '0';
         end if;
 
+        if (mode.parity_check) then
+            data(PCHKE_IND mod 16) := '1';
+        else
+            data(PCHKE_IND mod 16) := '0';
+        end if;
+
         CAN_write(data, SETTINGS_ADR, node, channel);
     end procedure;
 
@@ -3530,6 +3637,8 @@ package body feature_test_agent_pkg is
         mode.restricted_operation       := false;
         mode.rx_buffer_automatic        := false;
         mode.time_triggered_transm      := false;
+        mode.tx_buf_backup              := false;
+        mode.parity_check               := false;
 
         if (data(RST_IND) = '1') then
             mode.reset                  := true;
@@ -3571,6 +3680,10 @@ package body feature_test_agent_pkg is
             mode.time_triggered_transm  := true;
         end if;
 
+        if (data(TXBBM_IND) = '1') then
+            mode.tx_buf_backup          := true;
+        end if;
+
 
         -- SETTINGs part of read data
 
@@ -3602,6 +3715,12 @@ package body feature_test_agent_pkg is
             mode.tx_buf_bus_off_failed  := true;
         else
             mode.tx_buf_bus_off_failed  := false;
+        end if;
+
+        if (data(PCHKE_IND) = '1') then
+            mode.parity_check           := true; 
+        else
+            mode.parity_check           := false;
         end if;
 
     end procedure;
@@ -3658,6 +3777,18 @@ package body feature_test_agent_pkg is
         if (command.rx_buf_rdptr_move) then
             data(RXRPMV_IND)     := '1';
         end if;
+
+        if (command.clear_rxpe) then
+            data(CRXPE_IND)     := '1';
+        end if;
+
+        if (command.clear_txpe) then
+            data(CTXPE_IND)     := '1';
+        end if;
+
+        if (command.clear_txdpe) then
+            data(CTXDPE_IND)     := '1';
+        end if;
         
         CAN_write(data, COMMAND_ADR, node, channel);
     end procedure;
@@ -3680,6 +3811,9 @@ package body feature_test_agent_pkg is
         status.transmitter              := false;
         status.error_warning            := false;
         status.bus_status               := false;
+        status.rx_parity_error          := false;
+        status.tx_parity_error          := false;
+        status.tx_double_parity_error   := false;
 
         if (data(RXNE_IND) = '1') then
             status.receive_buffer       := true;
@@ -3715,6 +3849,18 @@ package body feature_test_agent_pkg is
         
         if (data(PEXS_IND) = '1') then
             status.protocol_exception   := true;
+        end if;
+
+        if (data(RXPE_IND) = '1') then
+            status.rx_parity_error      := true;
+        end if;
+
+        if (data(TXPE_IND) = '1') then
+            status.tx_parity_error      := true;
+        end if;
+
+        if (data(TXDPE_IND) = '1') then
+            status.tx_double_parity_error := true;
         end if;
     end procedure;
 
@@ -4103,6 +4249,23 @@ package body feature_test_agent_pkg is
     end function;
 
 
+    function txt_buf_to_test_mem_tgt(
+        constant txt_buf        : in  SW_TXT_index_type
+    ) return t_tgt_test_mem is
+    begin
+        case txt_buf is
+        when 1 => return TST_TGT_TXT_BUF_1;
+        when 2 => return TST_TGT_TXT_BUF_2;
+        when 3 => return TST_TGT_TXT_BUF_3;
+        when 4 => return TST_TGT_TXT_BUF_4;
+        when 5 => return TST_TGT_TXT_BUF_5;
+        when 6 => return TST_TGT_TXT_BUF_6;
+        when 7 => return TST_TGT_TXT_BUF_7;
+        when 8 => return TST_TGT_TXT_BUF_8;
+        end case;
+    end function;
+
+
     procedure test_mem_write(
         constant data           : in    std_logic_vector(31 downto 0);
         constant address        : in    natural;
@@ -4139,6 +4302,7 @@ package body feature_test_agent_pkg is
     ) is
         variable data_i : std_logic_vector(31 downto 0) := (OTHERS => '0');
     begin
+        data_i := (OTHERS => '0');
         -- Set address
         data_i(TST_ADDR_H downto TST_ADDR_L) :=
             std_logic_vector(to_unsigned(address, 16));
@@ -4566,7 +4730,7 @@ package body feature_test_agent_pkg is
         for i in 1 to num_bufs loop
             address := std_logic_vector(to_unsigned(
                         to_integer((unsigned(TXTB1_DATA_1_ADR)) * i), 12));
-            for j in 0 to 19 loop
+            for j in 0 to 20 loop
                 CAN_write(data, address, node, channel);
                 address := std_logic_vector(unsigned(address) + 4);
             end loop;

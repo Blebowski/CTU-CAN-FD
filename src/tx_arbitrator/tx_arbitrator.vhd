@@ -120,12 +120,24 @@ entity tx_arbitrator is
         
         -- TXT Buffers are available, can be selected by TX Arbitrator
         txtb_available          :in std_logic_vector(G_TXT_BUFFER_COUNT - 1 downto 0);
+
+        -- TXT Buffer is in state in which it can have backup buffer
+        txtb_allow_bb           :in std_logic_vector(G_TXT_BUFFER_COUNT - 1 downto 0);
         
         -- Pointer to TXT Buffer
-        txtb_port_b_address     :out natural range 0 to 19;
+        txtb_port_b_address     :out natural range 0 to 20;
         
         -- Clock enable to TXT Buffer port B
         txtb_port_b_clk_en      :out std_logic;
+
+        -- Parity check valid
+        txtb_parity_check_valid :out std_logic;
+
+        -- Parity Mismatch in TXT Buffer
+        txtb_parity_mismatch    :in  std_logic_vector(G_TXT_BUFFER_COUNT - 1 downto 0);
+
+        -- TXT Buffer index
+        txtb_index_muxed        :out natural range 0 to G_TXT_BUFFER_COUNT - 1;
 
         -----------------------------------------------------------------------
         -- CAN Core Interface
@@ -151,8 +163,14 @@ entity tx_arbitrator is
         -- TX Identifier
         tran_identifier         :out std_logic_vector(28 downto 0);
     
+        -- TX Frame test
+        tran_frame_test         :out t_frame_test_w;
+
         -- There is valid frame selected, can be locked for transmission
         tran_frame_valid        :out std_logic;
+
+        -- Parity error occured during read of data words from TXT Buffer
+        tran_frame_parity_error :out std_logic;
 
         -- HW Commands from CAN Core for manipulation with TXT Buffers 
         txtb_hw_cmd             :in t_txtb_hw_cmd;
@@ -163,11 +181,14 @@ entity tx_arbitrator is
         -- Index of the TXT Buffer for which the actual HW command is valid
         txtb_hw_cmd_index       :out natural range 0 to G_TXT_BUFFER_COUNT - 1;
 
-        -- Pointer to TXT Buffer given by CAN Core. Used for reading data words
-        txtb_ptr                :in natural range 0 to 19;
+        -- Pointer to TXT Buffer given by CAN Core. Used for reading data words.
+        txtb_ptr                :in natural range 0 to 20;
 
         -- TXT Buffer clock enable (from Protocol control)
         txtb_clk_en             :in  std_logic;
+
+        -- TXT Buffer is operating as backup buffer
+        txtb_is_bb              :out std_logic_vector(G_TXT_BUFFER_COUNT - 1 downto 0);
 
         -----------------------------------------------------------------------
         -- Memory registers interface
@@ -209,7 +230,13 @@ architecture rtl of tx_arbitrator is
     signal select_index_changed       : std_logic;
     
     -- Signal that there is "Validated" TXT Buffer
-    signal validated_buffer           : std_logic;    
+    signal validated_buffer           : std_logic;
+
+    -- TXT Buffer clock enable (one cycle later)
+    signal txtb_clk_en_q              : std_logic;
+
+    -- Metadata words read by TX Arbitrator are valid
+    signal tx_arb_parity_check_valid  : std_logic;
 
     ---------------------------------------------------------------------------
     -- Internal registers
@@ -217,9 +244,6 @@ architecture rtl of tx_arbitrator is
   
     -- Registered values for detection of change
     signal select_buf_index_reg       : natural range 0 to G_TXT_BUFFER_COUNT - 1;
-  
-    -- TXT Buffer index
-    signal buffer_index_muxed         : natural range 0 to G_TXT_BUFFER_COUNT - 1;
   
     -- Lower timestamp loaded from TXT Buffer
     signal ts_low_internal            : std_logic_vector(31 downto 0);
@@ -230,11 +254,14 @@ architecture rtl of tx_arbitrator is
     -- TXT Buffer internal index of last buffer that was locked
     -- From buffer change, Protocol control can erase retransmitt counter
     signal last_txtb_index            : natural range 0 to G_TXT_BUFFER_COUNT - 1;
-  
+
+    -- TXT Buffer index validated or used for transmission
+    signal txtb_index_muxed_i         : natural range 0 to G_TXT_BUFFER_COUNT - 1;
+    
     -- Pointer to TXT Buffer for loading CAN frame metadata and
     -- timstamp during the selection of TXT Buffer.
-    signal txtb_pointer_meta_q        : natural range 0 to 19;
-    signal txtb_pointer_meta_d        : natural range 0 to 19;
+    signal txtb_pointer_meta_q        : natural range 0 to 20;
+    signal txtb_pointer_meta_d        : natural range 0 to 20;
 
     -- Double buffer registers for metadata
     signal tran_dlc_dbl_buf           : std_logic_vector(3 downto 0);
@@ -242,6 +269,9 @@ architecture rtl of tx_arbitrator is
     signal tran_ident_type_dbl_buf    : std_logic;
     signal tran_frame_type_dbl_buf    : std_logic;
     signal tran_brs_dbl_buf           : std_logic;
+
+    -- Double buffer register for frame testability
+    signal tran_frame_test_dbl_buf   : t_frame_test_w;
     
     -- Comitted values of internal signals
     signal tran_dlc_com               : std_logic_vector(3 downto 0);
@@ -268,17 +298,20 @@ architecture rtl of tx_arbitrator is
     -- Load identifier word to metadata pointer
     signal load_ident_w_addr          : std_logic;
 
+    -- Load frame test word to metadata pointer
+    signal load_frame_test_w_addr     : std_logic;
+
     -- Store timestamp lower word
     signal store_ts_l_w               : std_logic;
 
-    -- Store metadata (Frame format word) on the output of TX Arbitrator
-    signal store_md_w                 : std_logic;
-    
-    -- Store identifier (Identifier word) on the output of TX Arbitrator
-    signal store_ident_w              : std_logic;
+    -- Commit content of double buffer registers to registers visible by CAN Core
+    signal commit_dbl_bufs            : std_logic;
 
     -- Store metadata (Frame format word) to double buffer registers.
     signal buffer_md_w                : std_logic;
+
+    -- Store frame test word to double buffer registers
+    signal buffer_frame_test_w        : std_logic;
 
     -- Store last locked TXT Buffer index
     signal store_last_txtb_index      : std_logic;
@@ -296,7 +329,20 @@ architecture rtl of tx_arbitrator is
     signal txtb_meta_clk_en           : std_logic;
     
     -- Time triggered transmission mode enabled
-    signal drv_tttm_ena               : std_logic;                   
+    signal drv_tttm_ena               : std_logic;
+
+    -- TXT Buffer Backup mode enable
+    signal drv_txbbm_ena              : std_logic;
+    signal txtb_prorities_txbbm       : t_txt_bufs_priorities(G_TXT_BUFFER_COUNT - 1 downto 0);
+
+    -- Parity check enable
+    signal drv_pchk_ena               : std_logic;
+
+    -- Parity mismatches in TXT Buffers:
+    --  1. Mismatch during TXT Buffer validation
+    --  2. Mismatch during transmission
+    signal txtb_parity_mismatch_vld   : std_logic;
+    signal txtb_parity_mismatch_tx    : std_logic;
 
     ---------------------------------------------------------------------------
     -- Comparing procedure for two 64 bit std logic vectors
@@ -325,11 +371,11 @@ begin
      G_TXT_BUFFER_COUNT    => G_TXT_BUFFER_COUNT
   )
   port map( 
-     prio           => txtb_prorities,      -- IN
-     prio_valid     => txtb_available,      -- IN
+     prio           => txtb_prorities_txbbm,    -- IN
+     prio_valid     => txtb_available,          -- IN
      
-     output_valid   => select_buf_avail,    -- OUT
-     output_index   => select_buf_index     -- OUT
+     output_valid   => select_buf_avail,        -- OUT
+     output_index   => select_buf_index         -- OUT
   );
   
 
@@ -338,30 +384,63 @@ begin
   ------------------------------------------------------------------------------
   tx_arbitrator_fsm_inst : entity ctu_can_fd_rtl.tx_arbitrator_fsm
   port map(
-    clk_sys                => clk_sys,                  -- IN
-    res_n                  => res_n,                    -- IN
-    select_buf_avail       => select_buf_avail,         -- IN
-    select_index_changed   => select_index_changed,     -- IN
-    timestamp_valid        => timestamp_valid,          -- IN
-    txtb_hw_cmd            => txtb_hw_cmd,              -- IN
+    clk_sys                     => clk_sys,                     -- IN
+    res_n                       => res_n,                       -- IN
 
-    load_ts_lw_addr        => load_ts_lw_addr,          -- OUT
-    load_ts_uw_addr        => load_ts_uw_addr,          -- OUT
-    load_ffmt_w_addr       => load_ffmt_w_addr,         -- OUT
-    load_ident_w_addr      => load_ident_w_addr,        -- OUT
-    txtb_meta_clk_en       => txtb_meta_clk_en,         -- OUT
+    select_buf_avail            => select_buf_avail,            -- IN
+    select_index_changed        => select_index_changed,        -- IN
+    timestamp_valid             => timestamp_valid,             -- IN
+    txtb_hw_cmd                 => txtb_hw_cmd,                 -- IN
+    txtb_parity_mismatch_vld    => txtb_parity_mismatch_vld,    -- IN
+
+    load_ts_lw_addr             => load_ts_lw_addr,             -- OUT
+    load_ts_uw_addr             => load_ts_uw_addr,             -- OUT
+    load_ffmt_w_addr            => load_ffmt_w_addr,            -- OUT
+    load_ident_w_addr           => load_ident_w_addr,           -- OUT
+    load_frame_test_w_addr      => load_frame_test_w_addr,      -- OUT
+    txtb_meta_clk_en            => txtb_meta_clk_en,            -- OUT
     
-    store_ts_l_w           => store_ts_l_w,             -- OUT
-    store_md_w             => store_md_w,               -- OUT
-    store_ident_w          => store_ident_w,            -- OUT
-    buffer_md_w            => buffer_md_w,              -- OUT
-    tx_arb_locked          => tx_arb_locked,            -- OUT
-    store_last_txtb_index  => store_last_txtb_index,    -- OUT
-    frame_valid_com_set    => frame_valid_com_set,      -- OUT
-    frame_valid_com_clear  => frame_valid_com_clear     -- OUT
+    store_ts_l_w                => store_ts_l_w,                -- OUT
+    commit_dbl_bufs             => commit_dbl_bufs,             -- OUT
+    buffer_frame_test_w         => buffer_frame_test_w,         -- OUT
+    buffer_md_w                 => buffer_md_w,                 -- OUT
+    tx_arb_locked               => tx_arb_locked,               -- OUT
+    store_last_txtb_index       => store_last_txtb_index,       -- OUT
+    frame_valid_com_set         => frame_valid_com_set,         -- OUT
+    frame_valid_com_clear       => frame_valid_com_clear,       -- OUT
+    tx_arb_parity_check_valid   => tx_arb_parity_check_valid    -- OUT
   );
 
   drv_tttm_ena <= drv_bus(DRV_TTTM_ENA_INDEX);
+  drv_txbbm_ena <= drv_bus(DRV_TXBBM_ENA_INDEX);
+  drv_pchk_ena <= drv_bus(DRV_PCHK_ENA_INDEX);
+
+  ------------------------------------------------------------------------------
+  -- TXT Buffer differences fo
+  -- Shuffle priorites of TXT Buffers, in TXT Buffer Backup mode, replace
+  -- priority of "Backup" buffer with priority of "original" buffer
+  ------------------------------------------------------------------------------
+  txtb_priority_gen : for i in 0 to G_TXT_BUFFER_COUNT - 1 generate
+    
+    -- Original Buffers
+    txtb_priority_even_gen : if ((i mod 2) = 0) generate
+        txtb_prorities_txbbm(i) <= txtb_prorities(i);
+        txtb_is_bb(i) <= '0';
+    end generate;
+
+    -- Backup buffers
+    txtb_priority_odd_gen : if ((i mod 2) = 1) generate
+
+        txtb_prorities_txbbm(i) <= txtb_prorities(i) when (drv_txbbm_ena = '0') else
+                                   txtb_prorities(i - 1);
+
+        txtb_is_bb(i) <= '1' when (drv_txbbm_ena = '1' and int_txtb_index = i-1 and
+                                   txtb_allow_bb(i - 1) = '1')
+                             else
+                         '0';
+    end generate;
+  end generate;
+
 
   ------------------------------------------------------------------------------
   -- Comparing timestamp with external timestamp. This assumes that Upper 
@@ -389,19 +468,54 @@ begin
                       '0';
 
   ------------------------------------------------------------------------------
+  -- Parity mismatch during validation of TXT Buffer, must be indexed using
+  -- "raw" / "combinatorial" index of buffer which is currently being validated.
+  ------------------------------------------------------------------------------
+  txtb_parity_mismatch_vld <= '1' when (txtb_parity_mismatch(select_buf_index) = '1' and
+                                        drv_pchk_ena = '1')
+                                  else
+                              '0';
+
+  ------------------------------------------------------------------------------
+  -- Protocol controller reads from TXT Buffer, so if there is parity mismatch
+  -- one clock cycle later, this means there was error in data word. In such
+  -- case, signal to Protocol controller to start error frame! Buffer one which
+  -- parity mismatch is checked, must be selected by registered index of
+  -- TXT Buffer which is used for transmission.
+  ------------------------------------------------------------------------------
+  txtb_parity_mismatch_tx <= '1' when (txtb_parity_mismatch(int_txtb_index) = '1' and
+                                       drv_pchk_ena = '1')
+                                 else
+                             '0';
+
+  tran_frame_parity_error <= '1' when (txtb_parity_mismatch_tx = '1' and
+                                       txtb_clk_en_q = '1')
+                                 else
+                             '0';
+
+  ------------------------------------------------------------------------------
   -- Selecting TXT Buffer output word based on TXT Buffer index. During transmi
   -- ssion, use last stored TXT buffer. Otherwise use combinatorially selected
   -- TXT buffer (during validation).
   ------------------------------------------------------------------------------
-  buffer_index_muxed <= int_txtb_index when (tx_arb_locked = '1')
+  txtb_index_muxed_i <= int_txtb_index when (tx_arb_locked = '1')
                                        else
-                      select_buf_index;
+                        select_buf_index;
+
+  -- Parity check. When Protocol controller wants to enable clock for TXT Buffer,
+  -- it reads data words from it for transmission. When this occurs, data will
+  -- we available on the output of TXT Buffer RAM one clock cycle later. At this
+  -- cycle, TXT Buffer needs to check for parity error.
+  txtb_parity_check_valid <= txtb_clk_en_q when (tx_arb_locked = '1')
+                                           else
+                             tx_arb_parity_check_valid;
 
   -- Select read data based on index of TXT buffer which should be accessed
-  txtb_selected_input <= txtb_port_b_data(buffer_index_muxed);
+  txtb_selected_input <= txtb_port_b_data(txtb_index_muxed_i);
   
   -- Transmitted data word taken from TXT Buffer output
   tran_word <= txtb_selected_input;
+  txtb_index_muxed <= txtb_index_muxed_i;
 
   ------------------------------------------------------------------------------
   -- Joined timestamp from TXT Buffer. Note that it is not always valid!
@@ -434,6 +548,20 @@ begin
 
   txtb_hw_cmd_index <= int_txtb_index;
 
+
+  ------------------------------------------------------------------------------
+  -- Register for TXT Buffer clock enable
+  ------------------------------------------------------------------------------
+  txtb_clk_en_reg_proc : process(clk_sys, res_n)
+  begin
+    if (res_n = '0') then
+        txtb_clk_en_q <= '0';
+    elsif (rising_edge(clk_sys)) then
+        txtb_clk_en_q <= txtb_clk_en;
+    end if;
+  end process;
+
+
   ------------------------------------------------------------------------------
   -- Register for loading lower 32 bits of CAN Frame timestamp
   ------------------------------------------------------------------------------
@@ -451,7 +579,7 @@ begin
   ------------------------------------------------------------------------------
   -- Double buffer registers for Metadata.
   ------------------------------------------------------------------------------
-  dbl_buf_reg_proc : process(clk_sys, res_n)
+  dbl_buf_reg_ffmt_proc : process(clk_sys, res_n)
   begin
     if (res_n = '0') then    
       tran_dlc_dbl_buf           <= (OTHERS => '0');
@@ -470,6 +598,26 @@ begin
     end if;
   end process;
 
+  ------------------------------------------------------------------------------
+  -- Double buffer registers for Frame test word
+  ------------------------------------------------------------------------------
+  dbl_buf_reg_ftw_proc : process(clk_sys, res_n)
+  begin
+    if (res_n = '0') then
+        tran_frame_test_dbl_buf.fstc <= '0';
+        tran_frame_test_dbl_buf.fcrc <= '0';
+        tran_frame_test_dbl_buf.sdlc <= '0';
+        tran_frame_test_dbl_buf.tprm <= (others => '0');
+    elsif (rising_edge(clk_sys)) then
+        if (buffer_frame_test_w = '1') then
+            tran_frame_test_dbl_buf.fstc <= txtb_selected_input(FSTC_IND);
+            tran_frame_test_dbl_buf.fcrc <= txtb_selected_input(FCRC_IND);
+            tran_frame_test_dbl_buf.sdlc <= txtb_selected_input(SDLC_IND);
+            tran_frame_test_dbl_buf.tprm <= txtb_selected_input(TPRM_H downto TPRM_L);
+        end if;
+    end if;
+  end process;
+
 
   ------------------------------------------------------------------------------
   -- Capture registers for metadata commited to output of TX Arbitrator. Taken
@@ -484,7 +632,7 @@ begin
         tran_frame_type_com         <= '0';
         tran_brs_com                <= '0';
     elsif (rising_edge(clk_sys)) then
-        if (store_md_w = '1') then
+        if (commit_dbl_bufs = '1') then
             tran_frame_type_com     <= tran_frame_type_dbl_buf;
             tran_ident_type_com     <= tran_ident_type_dbl_buf;
             tran_dlc_com            <= tran_dlc_dbl_buf;
@@ -503,12 +651,28 @@ begin
     if (res_n = '0') then
         tran_identifier_com <= (OTHERS => '0');
     elsif (rising_edge(clk_sys)) then
-        if (store_ident_w = '1') then
+        if (commit_dbl_bufs = '1') then
             tran_identifier_com <= txtb_selected_input(28 downto 0);
         end if;
     end if;
   end process;
 
+  ------------------------------------------------------------------------------
+  -- Capture registers for Frame test word commited to output of TX Arbitrator.
+  ------------------------------------------------------------------------------
+  frame_test_w_reg_proc : process(clk_sys, res_n)
+  begin
+    if (res_n = '0') then
+        tran_frame_test.fstc <= '0';
+        tran_frame_test.fcrc <= '0';
+        tran_frame_test.sdlc <= '0';
+        tran_frame_test.tprm <= (others => '0');
+    elsif (rising_edge(clk_sys)) then
+        if (commit_dbl_bufs = '1') then
+            tran_frame_test <= tran_frame_test_dbl_buf;
+        end if;
+    end if;
+  end process;
 
   ------------------------------------------------------------------------------
   -- Register for "committed" valid frame output for CAN Core
@@ -549,7 +713,7 @@ begin
 
         -- Combinationally selected index (select_buf_index) is stored when
         -- metadata are stored.
-        if (store_md_w = '1') then
+        if (commit_dbl_bufs = '1') then
             int_txtb_index          <= select_buf_index;
         end if;
 
@@ -589,6 +753,7 @@ begin
     to_integer(unsigned(TIMESTAMP_U_W_ADR(11 downto 2))) when (load_ts_uw_addr = '1') else
     to_integer(unsigned(FRAME_FORMAT_W_ADR(11 downto 2))) when (load_ffmt_w_addr = '1') else
     to_integer(unsigned(IDENTIFIER_W_ADR(11 downto 2))) when (load_ident_w_addr = '1') else
+    to_integer(unsigned(FRAME_TEST_W_ADR(11 downto 2))) when (load_frame_test_w_addr = '1') else
     txtb_pointer_meta_q;
  
   store_meta_data_ptr_proc : process(clk_sys, res_n)
@@ -651,6 +816,20 @@ begin
   --    {txtb_hw_cmd_index = 6 and txtb_hw_cmd.unlock = '1'};
   -- psl txt_unlock_buf_8_cov : cover
   --    {txtb_hw_cmd_index = 7 and txtb_hw_cmd.unlock = '1'};
+
+  -- Modes 
+  -- Note: We use gating by tran_frame_valid to avoid falsly covered scenarios,
+  --       where reset value has the mode disabled!
+  --
+  -- psl txtb_ttm_ena_cov : cover
+  --    {drv_tttm_ena = '1' and tran_frame_valid = '1'};
+  -- psl txtb_ttm_dis_cov : cover
+  --    {drv_tttm_ena = '0' and tran_frame_valid = '1'};
+
+  -- psl txtb_txbbm_ena_cov : cover
+  --    {drv_txbbm_ena = '1' and tran_frame_valid = '1'};
+  -- psl txtb_txbbm_dis_cov : cover
+  --    {drv_txbbm_ena = '0' and tran_frame_valid = '1'};
 
 
   -- Change of priority when there is validated TXT buffer

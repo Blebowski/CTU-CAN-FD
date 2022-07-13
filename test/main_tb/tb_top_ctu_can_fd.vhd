@@ -125,6 +125,7 @@ entity tb_top_ctu_can_fd is
         sup_filtC               : boolean := true;
         sup_range               : boolean := true;
         sup_traffic_ctrs        : boolean := true;
+        sup_parity              : boolean := true;
         target_technology       : natural := C_TECH_ASIC;
 
         -- Seed
@@ -233,6 +234,7 @@ begin
         sup_filtC           => sup_filtC,
         sup_range           => sup_range,
         sup_traffic_ctrs    => sup_traffic_ctrs,
+        sup_parity          => sup_parity,
         target_technology   => target_technology
     )
     port map(

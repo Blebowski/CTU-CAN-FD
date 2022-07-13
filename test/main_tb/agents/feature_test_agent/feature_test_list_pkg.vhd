@@ -128,6 +128,12 @@ use ctu_can_fd_tb.err_capt_sof_ftest.all;
 use ctu_can_fd_tb.err_norm_fd_ftest.all;
 
 use ctu_can_fd_tb.fault_state_ftest.all;
+
+use ctu_can_fd_tb.frame_test_fstc_ftest.all;
+use ctu_can_fd_tb.frame_test_fcrc_ftest.all;
+use ctu_can_fd_tb.frame_test_sdlc_ftest.all;
+use ctu_can_fd_tb.frame_test_ignore_ftest.all;
+
 use ctu_can_fd_tb.glitch_filtering_ftest.all;
 
 use ctu_can_fd_tb.invalid_frames_ftest.all;
@@ -152,6 +158,11 @@ use ctu_can_fd_tb.mode_self_test_ftest.all;
 use ctu_can_fd_tb.mode_frame_filters_ftest.all;
 use ctu_can_fd_tb.mode_rst_ftest.all;
 use ctu_can_fd_tb.mode_rxbam_ftest.all;
+use ctu_can_fd_tb.mode_txbbm_ftest.all;
+use ctu_can_fd_tb.mode_txbbm_2_ftest.all;
+use ctu_can_fd_tb.mode_txbbm_3_ftest.all;
+use ctu_can_fd_tb.mode_txbbm_4_ftest.all;
+use ctu_can_fd_tb.mode_txbbm_5_ftest.all;
 
 use ctu_can_fd_tb.no_sof_tx_ftest.all;
 
@@ -180,6 +191,8 @@ use ctu_can_fd_tb.status_rxne_ftest.all;
 use ctu_can_fd_tb.status_rxs_ftest.all;
 use ctu_can_fd_tb.status_txnf_ftest.all;
 use ctu_can_fd_tb.status_txs_ftest.all;
+use ctu_can_fd_tb.status_rxpe_ftest.all;
+use ctu_can_fd_tb.status_txpe_ftest.all;
 use ctu_can_fd_tb.stuff_in_data_ftest.all;
 
 use ctu_can_fd_tb.trv_delay_ftest.all;
@@ -292,6 +305,16 @@ package body feature_test_list_pkg is
                                                       
         elsif (test_name = "fault_state") then
             fault_state_ftest_exec(channel);
+
+        elsif (test_name = "frame_test_fstc") then
+            frame_test_fstc_ftest_exec(channel);
+        elsif (test_name = "frame_test_fcrc") then
+            frame_test_fcrc_ftest_exec(channel);
+        elsif (test_name = "frame_test_sdlc") then
+            frame_test_sdlc_ftest_exec(channel);
+        elsif (test_name = "frame_test_ignore") then
+            frame_test_ignore_ftest_exec(channel);
+            
         elsif (test_name = "glitch_filtering") then
             glitch_filtering_ftest_exec(channel);
             
@@ -337,7 +360,17 @@ package body feature_test_list_pkg is
         elsif (test_name = "mode_rst") then
             mode_rst_ftest_exec(channel);
         elsif (test_name = "mode_rxbam") then
-            mode_rxbam_ftest_exec(channel);            
+            mode_rxbam_ftest_exec(channel);
+        elsif (test_name = "mode_txbbm") then
+            mode_txbbm_ftest_exec(channel);
+        elsif (test_name = "mode_txbbm_2") then
+            mode_txbbm_2_ftest_exec(channel);
+        elsif (test_name = "mode_txbbm_3") then
+            mode_txbbm_3_ftest_exec(channel);
+        elsif (test_name = "mode_txbbm_4") then
+            mode_txbbm_4_ftest_exec(channel);
+        elsif (test_name = "mode_txbbm_5") then
+            mode_txbbm_5_ftest_exec(channel);
 
         elsif (test_name = "no_sof_tx") then
             no_sof_tx_ftest_exec(channel);
@@ -390,6 +423,10 @@ package body feature_test_list_pkg is
             status_txnf_ftest_exec(channel);
         elsif (test_name = "status_txs") then
             status_txs_ftest_exec(channel);
+        elsif (test_name = "status_rxpe") then
+            status_rxpe_ftest_exec(channel);
+        elsif (test_name = "status_txpe") then
+            status_txpe_ftest_exec(channel);
         elsif (test_name = "stuff_in_data") then
             stuff_in_data_ftest_exec(channel);
 

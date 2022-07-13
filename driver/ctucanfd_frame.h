@@ -40,7 +40,21 @@ enum ctu_can_fd_can_frame_format {
 	CTU_CAN_FD_TIMESTAMP_U_W        = 0xc,
 	CTU_CAN_FD_DATA_1_4_W          = 0x10,
 	CTU_CAN_FD_DATA_5_8_W          = 0x14,
+	CTU_CAN_FD_DATA_9_12_W         = 0x18,
+	CTU_CAN_FD_DATA_13_16_W        = 0x1c,
+	CTU_CAN_FD_DATA_17_20_W        = 0x20,
+	CTU_CAN_FD_DATA_21_24_W        = 0x24,
+	CTU_CAN_FD_DATA_25_28_W        = 0x28,
+	CTU_CAN_FD_DATA_29_32_W        = 0x2c,
+	CTU_CAN_FD_DATA_33_36_W        = 0x30,
+	CTU_CAN_FD_DATA_37_40_W        = 0x34,
+	CTU_CAN_FD_DATA_41_44_W        = 0x38,
+	CTU_CAN_FD_DATA_45_48_W        = 0x3c,
+	CTU_CAN_FD_DATA_49_52_W        = 0x40,
+	CTU_CAN_FD_DATA_53_56_W        = 0x44,
+	CTU_CAN_FD_DATA_57_60_W        = 0x48,
 	CTU_CAN_FD_DATA_61_64_W        = 0x4c,
+	CTU_CAN_FD_FRAME_TEST_W        = 0x50,
 };
 
 
@@ -168,6 +182,240 @@ union ctu_can_fd_data_5_8_w {
 	} s;
 };
 
+union ctu_can_fd_data_9_12_w {
+	uint32_t u32;
+	struct ctu_can_fd_data_9_12_w_s {
+#ifdef __LITTLE_ENDIAN_BITFIELD
+  /* DATA_9_12_W */
+		uint32_t data_9                  : 8;
+		uint32_t data_10                 : 8;
+		uint32_t data_11                 : 8;
+		uint32_t data_12                 : 8;
+#else
+		uint32_t data_12                 : 8;
+		uint32_t data_11                 : 8;
+		uint32_t data_10                 : 8;
+		uint32_t data_9                  : 8;
+#endif
+	} s;
+};
+
+union ctu_can_fd_data_13_16_w {
+	uint32_t u32;
+	struct ctu_can_fd_data_13_16_w_s {
+#ifdef __LITTLE_ENDIAN_BITFIELD
+  /* DATA_13_16_W */
+		uint32_t data_13                 : 8;
+		uint32_t data_14                 : 8;
+		uint32_t data_15                 : 8;
+		uint32_t data_16                 : 8;
+#else
+		uint32_t data_16                 : 8;
+		uint32_t data_15                 : 8;
+		uint32_t data_14                 : 8;
+		uint32_t data_13                 : 8;
+#endif
+	} s;
+};
+
+union ctu_can_fd_data_17_20_w {
+	uint32_t u32;
+	struct ctu_can_fd_data_17_20_w_s {
+#ifdef __LITTLE_ENDIAN_BITFIELD
+  /* DATA_17_20_W */
+		uint32_t data_17                 : 8;
+		uint32_t data_18                 : 8;
+		uint32_t data_19                 : 8;
+		uint32_t data_20                 : 8;
+#else
+		uint32_t data_20                 : 8;
+		uint32_t data_19                 : 8;
+		uint32_t data_18                 : 8;
+		uint32_t data_17                 : 8;
+#endif
+	} s;
+};
+
+union ctu_can_fd_data_21_24_w {
+	uint32_t u32;
+	struct ctu_can_fd_data_21_24_w_s {
+#ifdef __LITTLE_ENDIAN_BITFIELD
+  /* DATA_21_24_W */
+		uint32_t data_21                 : 8;
+		uint32_t data_22                 : 8;
+		uint32_t data_23                 : 8;
+		uint32_t data_24                 : 8;
+#else
+		uint32_t data_24                 : 8;
+		uint32_t data_23                 : 8;
+		uint32_t data_22                 : 8;
+		uint32_t data_21                 : 8;
+#endif
+	} s;
+};
+
+union ctu_can_fd_data_25_28_w {
+	uint32_t u32;
+	struct ctu_can_fd_data_25_28_w_s {
+#ifdef __LITTLE_ENDIAN_BITFIELD
+  /* DATA_25_28_W */
+		uint32_t data_25                 : 8;
+		uint32_t data_26                 : 8;
+		uint32_t data_27                 : 8;
+		uint32_t data_28                 : 8;
+#else
+		uint32_t data_28                 : 8;
+		uint32_t data_27                 : 8;
+		uint32_t data_26                 : 8;
+		uint32_t data_25                 : 8;
+#endif
+	} s;
+};
+
+union ctu_can_fd_data_29_32_w {
+	uint32_t u32;
+	struct ctu_can_fd_data_29_32_w_s {
+#ifdef __LITTLE_ENDIAN_BITFIELD
+  /* DATA_29_32_W */
+		uint32_t data_29                 : 8;
+		uint32_t data_30                 : 8;
+		uint32_t data_31                 : 8;
+		uint32_t data_32                 : 8;
+#else
+		uint32_t data_32                 : 8;
+		uint32_t data_31                 : 8;
+		uint32_t data_30                 : 8;
+		uint32_t data_29                 : 8;
+#endif
+	} s;
+};
+
+union ctu_can_fd_data_33_36_w {
+	uint32_t u32;
+	struct ctu_can_fd_data_33_36_w_s {
+#ifdef __LITTLE_ENDIAN_BITFIELD
+  /* DATA_33_36_W */
+		uint32_t data_33                 : 8;
+		uint32_t data_34                 : 8;
+		uint32_t data_35                 : 8;
+		uint32_t data_36                 : 8;
+#else
+		uint32_t data_36                 : 8;
+		uint32_t data_35                 : 8;
+		uint32_t data_34                 : 8;
+		uint32_t data_33                 : 8;
+#endif
+	} s;
+};
+
+union ctu_can_fd_data_37_40_w {
+	uint32_t u32;
+	struct ctu_can_fd_data_37_40_w_s {
+#ifdef __LITTLE_ENDIAN_BITFIELD
+  /* DATA_37_40_W */
+		uint32_t data_37                 : 8;
+		uint32_t data_38                 : 8;
+		uint32_t data_39                 : 8;
+		uint32_t data_40                 : 8;
+#else
+		uint32_t data_40                 : 8;
+		uint32_t data_39                 : 8;
+		uint32_t data_38                 : 8;
+		uint32_t data_37                 : 8;
+#endif
+	} s;
+};
+
+union ctu_can_fd_data_41_44_w {
+	uint32_t u32;
+	struct ctu_can_fd_data_41_44_w_s {
+#ifdef __LITTLE_ENDIAN_BITFIELD
+  /* DATA_41_44_W */
+		uint32_t data_41                 : 8;
+		uint32_t data_42                 : 8;
+		uint32_t data_43                 : 8;
+		uint32_t data_44                 : 8;
+#else
+		uint32_t data_44                 : 8;
+		uint32_t data_43                 : 8;
+		uint32_t data_42                 : 8;
+		uint32_t data_41                 : 8;
+#endif
+	} s;
+};
+
+union ctu_can_fd_data_45_48_w {
+	uint32_t u32;
+	struct ctu_can_fd_data_45_48_w_s {
+#ifdef __LITTLE_ENDIAN_BITFIELD
+  /* DATA_45_48_W */
+		uint32_t data_45                 : 8;
+		uint32_t data_46                 : 8;
+		uint32_t data_47                 : 8;
+		uint32_t data_48                 : 8;
+#else
+		uint32_t data_48                 : 8;
+		uint32_t data_47                 : 8;
+		uint32_t data_46                 : 8;
+		uint32_t data_45                 : 8;
+#endif
+	} s;
+};
+
+union ctu_can_fd_data_49_52_w {
+	uint32_t u32;
+	struct ctu_can_fd_data_49_52_w_s {
+#ifdef __LITTLE_ENDIAN_BITFIELD
+  /* DATA_49_52_W */
+		uint32_t data_49                 : 8;
+		uint32_t data_50                 : 8;
+		uint32_t data_51                 : 8;
+		uint32_t data_52                 : 8;
+#else
+		uint32_t data_52                 : 8;
+		uint32_t data_51                 : 8;
+		uint32_t data_50                 : 8;
+		uint32_t data_49                 : 8;
+#endif
+	} s;
+};
+
+union ctu_can_fd_data_53_56_w {
+	uint32_t u32;
+	struct ctu_can_fd_data_53_56_w_s {
+#ifdef __LITTLE_ENDIAN_BITFIELD
+  /* DATA_53_56_W */
+		uint32_t data_53                 : 8;
+		uint32_t data_56                 : 8;
+		uint32_t data_55                 : 8;
+		uint32_t data_54                 : 8;
+#else
+		uint32_t data_54                 : 8;
+		uint32_t data_55                 : 8;
+		uint32_t data_56                 : 8;
+		uint32_t data_53                 : 8;
+#endif
+	} s;
+};
+
+union ctu_can_fd_data_57_60_w {
+	uint32_t u32;
+	struct ctu_can_fd_data_57_60_w_s {
+#ifdef __LITTLE_ENDIAN_BITFIELD
+  /* DATA_57_60_W */
+		uint32_t data_57                 : 8;
+		uint32_t data_58                 : 8;
+		uint32_t data_59                 : 8;
+		uint32_t data_60                 : 8;
+#else
+		uint32_t data_60                 : 8;
+		uint32_t data_59                 : 8;
+		uint32_t data_58                 : 8;
+		uint32_t data_57                 : 8;
+#endif
+	} s;
+};
+
 union ctu_can_fd_data_61_64_w {
 	uint32_t u32;
 	struct ctu_can_fd_data_61_64_w_s {
@@ -182,6 +430,28 @@ union ctu_can_fd_data_61_64_w {
 		uint32_t data_63                 : 8;
 		uint32_t data_62                 : 8;
 		uint32_t data_61                 : 8;
+#endif
+	} s;
+};
+
+union ctu_can_fd_frame_test_w {
+	uint32_t u32;
+	struct ctu_can_fd_frame_test_w_s {
+#ifdef __LITTLE_ENDIAN_BITFIELD
+  /* FRAME_TEST_W */
+		uint32_t fstc                    : 1;
+		uint32_t fcrc                    : 1;
+		uint32_t sdlc                    : 1;
+		uint32_t reserved_7_3            : 5;
+		uint32_t tprm                    : 5;
+		uint32_t reserved_31_13         : 19;
+#else
+		uint32_t reserved_31_13         : 19;
+		uint32_t tprm                    : 5;
+		uint32_t reserved_7_3            : 5;
+		uint32_t sdlc                    : 1;
+		uint32_t fcrc                    : 1;
+		uint32_t fstc                    : 1;
 #endif
 	} s;
 };

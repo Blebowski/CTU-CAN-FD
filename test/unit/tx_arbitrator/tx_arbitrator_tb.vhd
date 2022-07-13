@@ -126,7 +126,7 @@ architecture tx_arbitrator_unit_test of CAN_test is
     signal txtb_available         :  std_logic_vector(C_TXT_BUFFER_COUNT - 1 downto 0)
                                         := (OTHERS => '0');
 
-    signal txtb_port_b_address               :  natural range 0 to 19;
+    signal txtb_port_b_address    :  natural range 0 to 20;
     signal tran_word     :  std_logic_vector(31 downto 0);
     signal tran_dlc           :  std_logic_vector(3 downto 0);
     signal tran_is_rtr            :  std_logic;
@@ -262,11 +262,13 @@ begin
         tran_frame_type        => tran_frame_type,
         tran_brs               => tran_brs,
         tran_frame_valid       => tran_frame_valid,
+        txtb_allow_bb          => (others => '0'),
         txtb_hw_cmd            => txtb_hw_cmd,
         txtb_changed           => txtb_changed,
         txtb_hw_cmd_index      => txtb_hw_cmd_index,
         txtb_ptr               => txtb_ptr,
         txtb_clk_en            => '1',
+        txtb_parity_mismatch   => (others => '0'),
         drv_bus                => (others => '0'),
         txtb_prorities         => txtb_prorities,
         timestamp              => timestamp

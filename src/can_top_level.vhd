@@ -103,31 +103,40 @@ use ctu_can_fd_rtl.can_registers_pkg.all;
 entity can_top_level is
     generic(
         -- RX Buffer RAM size (32 bit words)
-        rx_buffer_size      : natural range 32 to 4096 := 32;
+        rx_buffer_size          : natural range 32 to 4096  := 32;
 
         -- Number of supported TXT buffers
-        txt_buffer_count    : natural range 2 to 8   := 2; 
+        txt_buffer_count        : natural range 2 to 8      := C_TXT_BUFFER_COUNT; 
 
         -- Synthesize Filter A
-        sup_filtA           : boolean                := false;
+        sup_filtA               : boolean                   := false;
         
         -- Synthesize Filter B
-        sup_filtB           : boolean                := false;
+        sup_filtB               : boolean                   := false;
         
         -- Synthesize Filter C
-        sup_filtC           : boolean                := false;
+        sup_filtC               : boolean                   := false;
         
         -- Synthesize Range Filter
-        sup_range           : boolean                := false;
+        sup_range               : boolean                   := false;
         
         -- Synthesize Test registers
-        sup_test_registers  : boolean                := true;
+        sup_test_registers      : boolean                   := true;
         
         -- Insert Traffic counters
-        sup_traffic_ctrs    : boolean                := false;
-        
+        sup_traffic_ctrs        : boolean                   := false;
+
+        -- Add parity bit to TXT Buffer and RX Buffer RAMs
+        sup_parity              : boolean                   := false;
+
+        -- Number of active timestamp bits
+        active_timestamp_bits   : natural range 0 to 63     := 63;
+
+        -- Reset TXT / RX Buffer RAMs
+        reset_buffer_rams       : boolean                   := false;
+
         -- Target technology (ASIC or FPGA)
-        target_technology   : natural                := C_TECH_FPGA
+        target_technology       : natural                   := C_TECH_FPGA
     );
     port(
         -----------------------------------------------------------------------
@@ -261,6 +270,9 @@ architecture rtl of can_top_level is
     -- RX buffer middle of frame
     signal rx_mof               :    std_logic;
 
+    -- RX Buffer parity error flag
+    signal rx_parity_error      :    std_logic;
+
     ----------------------------------------------------------------------------
     -- TXT Buffer <-> Memory registers Interface
     ----------------------------------------------------------------------------
@@ -289,6 +301,9 @@ architecture rtl of can_top_level is
     -- TXT Buffer priorities
     signal txtb_prorities       :    t_txt_bufs_priorities(txt_buffer_count - 1 downto 0);
     
+    -- TXT Buffer is operating in Backup buffer
+    signal txtb_is_bb           :    std_logic_vector(txt_buffer_count - 1 downto 0);
+
     -- TXT Buffer bus-off behavior
     signal txt_buf_failed_bof   :    std_logic;
     
@@ -378,24 +393,42 @@ architecture rtl of can_top_level is
     ------------------------------------------------------------------------
     -- TXT Buffers <-> TX Arbitrator
     ------------------------------------------------------------------------    
-    -- Index of TXT Buffer for which HW commands is valid          
-    signal txtb_hw_cmd_index   :   natural range 0 to txt_buffer_count - 1;
-    
+    -- Index of TXT Buffer for which HW commands is valid
+    signal txtb_hw_cmd_index        :   natural range 0 to txt_buffer_count - 1;
+
     -- TXT Buffers are available, can be selected by TX Arbitrator
-    signal txtb_available      :   std_logic_vector(txt_buffer_count - 1 downto 0);
-        
+    signal txtb_available           :   std_logic_vector(txt_buffer_count - 1 downto 0);
+
+    -- TXT Buffer is in state for which its backup buffer can be used
+    signal txtb_allow_bb            :   std_logic_vector(txt_buffer_count - 1 downto 0);
+
     -- Pointer to TXT Buffer
-    signal txtb_ptr            :   natural range 0 to 19;
+    signal txtb_ptr                 :   natural range 0 to 20;
     
     -- TXT Buffer RAM data outputs
-    signal txtb_port_b_data    :   t_txt_bufs_output(txt_buffer_count - 1 downto 0);
+    signal txtb_port_b_data         :   t_txt_bufs_output(txt_buffer_count - 1 downto 0);
     
     -- TXT Buffer RAM address
-    signal txtb_port_b_address :   natural range 0 to 19;
+    signal txtb_port_b_address      :   natural range 0 to 20;
     
     -- Clock enable to TXT Buffer port B
-    signal txtb_port_b_clk_en  :   std_logic;
-    
+    signal txtb_port_b_clk_en       :   std_logic;
+
+    -- Parity check valid
+    signal txtb_parity_check_valid  :   std_logic;
+
+    -- Parity mismatch
+    signal txtb_parity_mismatch     :   std_logic_vector(txt_buffer_count - 1 downto 0);
+
+    -- Parity error valid
+    signal txtb_parity_error_valid  :   std_logic_vector(txt_buffer_count - 1 downto 0);
+
+    -- TXT Buffer
+    signal txtb_bb_parity_error     :   std_logic_vector(txt_buffer_count - 1 downto 0);
+
+    -- TXT Buffer index selected by TX Arbitrator of CAN Core
+    signal txtb_index_muxed         :   natural range 0 to txt_buffer_count - 1;
+
     ------------------------------------------------------------------------
     -- CAN Core <-> TX Arbitrator
     ------------------------------------------------------------------------    
@@ -416,13 +449,19 @@ architecture rtl of can_top_level is
     
     -- TX Identifier
     signal tran_identifier     :   std_logic_vector(28 downto 0);
-        
+
+    -- TX Frame test word
+    signal tran_frame_test     :   t_frame_test_w;
+
     -- Word from TXT Buffer RAM selected by TX Arbitrator
     signal tran_word           :   std_logic_vector(31 downto 0);
     
     -- Valid frame is selected from transmission on output of TX Arbitrator.
     -- CAN Core may lock TXT Buffer for transmission!
     signal tran_frame_valid    :   std_logic;
+
+    -- Parity error occured in TXT Buffer RAM during transmission of data words.
+    signal tran_frame_parity_error : std_logic;
     
     -- Selected TXT Buffer index changed
     signal txtb_changed        :   std_logic;
@@ -574,6 +613,7 @@ begin
         G_TXT_BUFFER_COUNT      => txt_buffer_count, 
         G_INT_COUNT             => C_INT_COUNT,
         G_TRV_CTR_WIDTH         => C_TRV_CTR_WIDTH,
+        G_TS_BITS               => active_timestamp_bits,
         G_DEVICE_ID             => C_CAN_DEVICE_ID,
         G_VERSION_MINOR         => C_CTU_CAN_FD_VERSION_MINOR,
         G_VERSION_MAJOR         => C_CTU_CAN_FD_VERSION_MAJOR,
@@ -620,6 +660,7 @@ begin
         rx_write_pointer        => rx_write_pointer,        -- IN
         rx_data_overrun         => rx_data_overrun,         -- IN
         rx_mof                  => rx_mof,                  -- IN
+        rx_parity_error         => rx_parity_error,         -- IN
 
         -- Interface to TXT Buffers
         txtb_port_a_data        => txtb_port_a_data,        -- OUT
@@ -631,7 +672,9 @@ begin
         txtb_sw_cmd_index       => txtb_sw_cmd_index,       -- OUT
         txtb_prorities          => txtb_prorities,          -- OUT
         txt_buf_failed_bof      => txt_buf_failed_bof,      -- OUT
-         
+        txtb_parity_error_valid => txtb_parity_error_valid, -- IN
+        txtb_bb_parity_error    => txtb_bb_parity_error,    -- IN
+
         -- Bus synchroniser interface
         trv_delay               => trv_delay,               -- IN
 
@@ -647,6 +690,8 @@ begin
     rx_buffer_inst : entity ctu_can_fd_rtl.rx_buffer
     generic map(
         G_RX_BUFF_SIZE          => rx_buffer_size,
+        G_SUP_PARITY            => sup_parity,
+        G_RESET_RX_BUF_RAM      => reset_buffer_rams,
         G_TECHNOLOGY            => target_technology
     )
     port map(
@@ -684,6 +729,7 @@ begin
         rx_write_pointer        => rx_write_pointer,        -- OUT
         rx_data_overrun         => rx_data_overrun,         -- OUT
         rx_mof                  => rx_mof,                  -- OUT
+        rx_parity_error         => rx_parity_error,         -- OUT
         
         -- External timestamp input
         timestamp               => timestamp,               -- IN
@@ -704,43 +750,53 @@ begin
         generic map(
             G_TXT_BUFFER_COUNT  => txt_buffer_count,
             G_ID                => i,
-            G_TECHNOLOGY        => target_technology
+            G_TECHNOLOGY        => target_technology,
+            G_SUP_PARITY        => sup_parity,
+            G_RESET_TXT_BUF_RAM => reset_buffer_rams
         )
         port map(
-            clk_sys             => clk_sys,                         -- IN
-            res_n               => res_core_n,                      -- IN
+            clk_sys                 => clk_sys,                         -- IN
+            res_n                   => res_core_n,                      -- IN
 
             -- DFT support
-            scan_enable         => scan_enable,                     -- IN
-
+            scan_enable             => scan_enable,                     -- IN
 
             -- Memory Registers Interface
-            txtb_port_a_data    => txtb_port_a_data,                -- IN
-            txtb_port_a_address => txtb_port_a_address,             -- IN
-            txtb_port_a_cs      => txtb_port_a_cs(i),               -- IN
-            txtb_port_a_be      => txtb_port_a_be,                  -- IN
-            txtb_sw_cmd         => txtb_sw_cmd,                     -- IN
-            txtb_sw_cmd_index   => txtb_sw_cmd_index,               -- IN
-            txtb_state          => txtb_state(i),                   -- OUT
-            txt_buf_failed_bof  => txt_buf_failed_bof,              -- IN
-            drv_rom_ena         => drv_bus(DRV_ROM_ENA_INDEX),      -- IN
-            drv_bus_mon_ena     => drv_bus(DRV_BUS_MON_ENA_INDEX),  -- IN
+            txtb_port_a_data        => txtb_port_a_data,                -- IN
+            txtb_port_a_address     => txtb_port_a_address,             -- IN
+            txtb_port_a_cs          => txtb_port_a_cs(i),               -- IN
+            txtb_port_a_be          => txtb_port_a_be,                  -- IN
+            txtb_sw_cmd             => txtb_sw_cmd,                     -- IN
+            txtb_sw_cmd_index       => txtb_sw_cmd_index,               -- IN
+            txtb_state              => txtb_state(i),                   -- OUT
+            txt_buf_failed_bof      => txt_buf_failed_bof,              -- IN
+            drv_rom_ena             => drv_bus(DRV_ROM_ENA_INDEX),      -- IN
+            drv_bus_mon_ena         => drv_bus(DRV_BUS_MON_ENA_INDEX),  -- IN
+            drv_txbbm_ena           => drv_bus(DRV_TXBBM_ENA_INDEX),    -- IN
+            drv_pchk_ena            => drv_bus(DRV_PCHK_ENA_INDEX),     -- IN
+            txtb_is_bb              => txtb_is_bb(i),                   -- IN
     
             -- Memory testability
-            test_registers_out  => test_registers_out,              -- IN
-            tst_rdata_txt_buf   => tst_rdata_txt_bufs(i),           -- OUT
+            test_registers_out      => test_registers_out,              -- IN
+            tst_rdata_txt_buf       => tst_rdata_txt_bufs(i),           -- OUT
     
             -- Interrupt Manager Interface
-            txtb_hw_cmd_int     => txtb_hw_cmd_int(i),              -- OUT
+            txtb_hw_cmd_int         => txtb_hw_cmd_int(i),              -- OUT
     
             -- CAN Core and TX Arbitrator Interface
-            txtb_hw_cmd         => txtb_hw_cmd,                     -- IN
-            txtb_hw_cmd_index   => txtb_hw_cmd_index,               -- IN
-            txtb_port_b_data    => txtb_port_b_data(i),             -- OUT
-            txtb_port_b_address => txtb_port_b_address,             -- IN
-            txtb_port_b_clk_en  => txtb_port_b_clk_en,              -- IN
-            is_bus_off          => is_bus_off,                      -- IN
-            txtb_available      => txtb_available(i)                -- OUT
+            txtb_hw_cmd             => txtb_hw_cmd,                     -- IN
+            txtb_hw_cmd_index       => txtb_hw_cmd_index,               -- IN
+            txtb_port_b_data        => txtb_port_b_data(i),             -- OUT
+            txtb_port_b_address     => txtb_port_b_address,             -- IN
+            txtb_port_b_clk_en      => txtb_port_b_clk_en,              -- IN
+            is_bus_off              => is_bus_off,                      -- IN
+            txtb_available          => txtb_available(i),               -- OUT
+            txtb_allow_bb           => txtb_allow_bb(i),                -- OUT
+            txtb_parity_check_valid => txtb_parity_check_valid,         -- IN
+            txtb_parity_error_valid => txtb_parity_error_valid(i),      -- OUT
+            txtb_bb_parity_error    => txtb_bb_parity_error(i),         -- OUT   
+            txtb_parity_mismatch    => txtb_parity_mismatch(i),         -- OUT
+            txtb_index_muxed        => txtb_index_muxed                 -- OUT
         );
     end generate;
 
@@ -758,8 +814,13 @@ begin
         -- TXT Buffers interface
         txtb_port_b_data        => txtb_port_b_data,        -- IN
         txtb_available          => txtb_available,          -- IN
+        txtb_allow_bb           => txtb_allow_bb,           -- OUT
         txtb_port_b_address     => txtb_port_b_address,     -- OUT
         txtb_port_b_clk_en      => txtb_port_b_clk_en,      -- OUT
+        txtb_parity_check_valid => txtb_parity_check_valid, -- OUT
+        txtb_parity_mismatch    => txtb_parity_mismatch,    -- IN 
+        txtb_index_muxed        => txtb_index_muxed,        -- OUT
+        txtb_is_bb              => txtb_is_bb,              -- OUT
 
         -- CAN Core Interface
         tran_word               => tran_word,               -- OUT
@@ -769,7 +830,9 @@ begin
         tran_frame_type         => tran_frame_type,         -- OUT
         tran_brs                => tran_brs,                -- OUT
         tran_identifier         => tran_identifier,         -- OUT
+        tran_frame_test         => tran_frame_test,         -- OUT
         tran_frame_valid        => tran_frame_valid,        -- OUT
+        tran_frame_parity_error => tran_frame_parity_error, -- OUT
         txtb_hw_cmd             => txtb_hw_cmd,             -- IN
         txtb_changed            => txtb_changed,            -- OUT
         txtb_hw_cmd_index       => txtb_hw_cmd_index,       -- IN
@@ -889,7 +952,9 @@ begin
         tran_frame_type         => tran_frame_type,         -- IN
         tran_brs                => tran_brs,                -- IN
         tran_identifier         => tran_identifier,         -- IN
+        tran_frame_test         => tran_frame_test,         -- IN
         tran_frame_valid        => tran_frame_valid,        -- IN
+        tran_frame_parity_error => tran_frame_parity_error, -- IN
         txtb_hw_cmd             => txtb_hw_cmd,             -- OUT
         txtb_changed            => txtb_changed,            -- IN
         txtb_ptr                => txtb_ptr,                -- OUT
@@ -1062,13 +1127,24 @@ begin
     
     end generate;
 
-    -- Memory testability shall not be used when CTU CAN FD is enabled
-    -- and operating!!
-    -- psl no_mem_test_when_operating_asrt : assert never
-    --  (drv_bus(DRV_ENA_INDEX) = '1' and test_registers_out.tst_control(TMAENA_IND) = '1')
-    --  report "Memory testability shall not be enabled when CTU CAN FD is running!";
+    -----------------------------------------------------------------------
+    -----------------------------------------------------------------------
+    -- Functional coverage
+    -----------------------------------------------------------------------
+    -----------------------------------------------------------------------
+
+    -- Parity error in each TXT Buffer
+
+    txtb_func_cov_gen : for i in 0 to txt_buffer_count - 1 generate
+    
+    -- psl txtb_parity_buf_cov : cover
+    --    {txtb_parity_error_valid(i) = '1'};
+    
+    -- psl txtb_double_parity_buf_1_cov : cover
+    --    {txtb_bb_parity_error(i) = '1'};
+
+    end generate;
 
     -- <RELEASE_ON>
-    
 
 end architecture;

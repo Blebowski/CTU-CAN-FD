@@ -101,6 +101,12 @@ entity rx_buffer is
         -- RX Buffer size
         G_RX_BUFF_SIZE              :       natural range 32 to 4096 := 32;
         
+        -- Add parity to RX Buffer RAM
+        G_SUP_PARITY                :       boolean := false;
+
+        -- Reset RX Buffer RAM
+        G_RESET_RX_BUF_RAM          :       boolean := false;
+
         -- Technology type
         G_TECHNOLOGY                :       natural := C_TECH_ASIC
     );
@@ -195,12 +201,16 @@ entity rx_buffer is
         rx_write_pointer     :out    std_logic_vector(11 downto 0);
         
         -- Overrun occurred, data were discarded!
-        -- (This is a flag and persists until it is cleared by SW)! 
+        -- (This is a flag and persists until it is cleared by SW).
         rx_data_overrun      :out    std_logic;
         
         -- Middle of frame indication
         rx_mof               :out    std_logic;
         
+        -- RX Buffer Parity error
+        -- (This is a flag and persists until it is cleared by SW).
+        rx_parity_error      :out    std_logic;
+
         -- External timestamp input
         timestamp            :in     std_logic_vector(63 downto 0);
 
@@ -239,6 +249,11 @@ architecture rtl of rx_buffer is
     -- Receive Timestamp options
     signal drv_rtsopt               :       std_logic;
 
+    -- Clear RX Buffer parity error
+    signal drv_clr_rxpe             :       std_logic;
+
+    -- Parity check enabled
+    signal drv_pchk_ena             :       std_logic;
 
     ----------------------------------------------------------------------------
     -- FIFO  Memory - Pointers
@@ -404,7 +419,6 @@ architecture rtl of rx_buffer is
     -- Common reset signal
     ----------------------------------------------------------------------------
     signal rx_buf_res_n_d           :       std_logic;
-    signal rx_buf_res_n_q           :       std_logic;
     signal rx_buf_res_n_q_scan      :       std_logic;
 
     ----------------------------------------------------------------------------
@@ -412,6 +426,11 @@ architecture rtl of rx_buffer is
     ----------------------------------------------------------------------------
     signal rx_buf_ram_clk_en        :       std_logic;
     signal clk_ram                  :       std_logic;
+
+    ----------------------------------------------------------------------------
+    -- Parity error detection
+    ----------------------------------------------------------------------------
+    signal rx_parity_mismatch_comb  :       std_logic;
 
 begin
 
@@ -422,7 +441,8 @@ begin
     drv_read_start        <= drv_bus(DRV_READ_START_INDEX);
     drv_clr_ovr           <= drv_bus(DRV_CLR_OVR_INDEX);
     drv_rtsopt            <= drv_bus(DRV_RTSOPT_INDEX);
-
+    drv_clr_rxpe          <= drv_bus(DRV_CLR_RXPE_INDEX);
+    drv_pchk_ena          <= drv_bus(DRV_PCHK_ENA_INDEX);
 
     ----------------------------------------------------------------------------
     -- Propagating status registers on output
@@ -455,35 +475,22 @@ begin
     ----------------------------------------------------------------------------
     -- Register reset to avoid glitches
     ----------------------------------------------------------------------------
-    res_reg_inst : entity ctu_can_fd_rtl.dff_arst
-    generic map(
-        G_RESET_POLARITY   => '0',
-        
-        -- Reset to the same value as is polarity of reset so that other DFFs
-        -- which are reset by output of this one will be reset too!
-        G_RST_VAL          => '0'
+    rst_reg_inst : entity ctu_can_fd_rtl.rst_reg
+    generic map (
+        G_RESET_POLARITY    => '0'
     )
     port map(
-        arst               => res_n,                -- IN
-        clk                => clk_sys,              -- IN
-        input              => rx_buf_res_n_d,       -- IN
+        -- Clock and Reset
+        clk                 => clk_sys,
+        arst                => res_n,
 
-        output             => rx_buf_res_n_q        -- OUT
+        -- Flip flop input / output
+        d                   => rx_buf_res_n_d,
+        q                   => rx_buf_res_n_q_scan,
+
+        -- Scan mode control
+        scan_enable         => scan_enable
     );
-    
-    ----------------------------------------------------------------------------
-    -- Mux for gating reset in scan mode
-    ----------------------------------------------------------------------------
-    mux2_res_tst_inst : entity ctu_can_fd_rtl.mux2
-    port map(
-        a                  => rx_buf_res_n_q, 
-        b                  => '1',
-        sel                => scan_enable,
-
-        -- Output
-        z                  => rx_buf_res_n_q_scan
-    );
-
 
     ----------------------------------------------------------------------------
     -- RX Buffer FSM component
@@ -827,8 +834,7 @@ begin
     ----------------------------------------------------------------------------
     rx_buf_ram_clk_en <= '1' when (RAM_write = '1' or drv_read_start = '1')
                              else
-                         '1' when (test_registers_out.tst_control(TMAENA_IND) = '1' or
-                                   scan_enable = '1')
+                         '1' when (test_registers_out.tst_control(TMAENA_IND) = '1')
                              else
                          '0';
 
@@ -839,6 +845,7 @@ begin
     port map(
         clk_in             => clk_sys,
         clk_en             => rx_buf_ram_clk_en,
+        scan_enable        => scan_enable,
 
         clk_out            => clk_ram
     );
@@ -848,11 +855,14 @@ begin
     ----------------------------------------------------------------------------
     rx_buffer_ram_inst : entity ctu_can_fd_rtl.rx_buffer_ram
     generic map(
-        G_RX_BUFF_SIZE       => G_RX_BUFF_SIZE
+        G_RX_BUFF_SIZE       => G_RX_BUFF_SIZE,
+        G_SUP_PARITY         => G_SUP_PARITY,
+        G_RESET_RX_BUF_RAM   => G_RESET_RX_BUF_RAM
     )
     port map(
         -- Clocks and Asynchronous reset 
         clk_sys              => clk_ram,                -- IN
+        res_n                => res_n,                  -- IN
 
         -- Memory testability
         test_registers_out   => test_registers_out,     -- IN
@@ -865,7 +875,10 @@ begin
 
         -- Port B - Read (from Memory registers)
         port_b_address       => RAM_read_address,       -- IN
-        port_b_data_out      => RAM_data_out            -- OUT
+        port_b_data_out      => RAM_data_out,           -- OUT
+
+        -- Parity error detection
+        parity_mismatch      => rx_parity_mismatch_comb -- OUT
     );
 
     -- Memory written either on regular write or timestamp write
@@ -886,7 +899,7 @@ begin
     -- RAM read address is given by read pointers. If no transaction for read
     -- of RX DATA is in progress, read pointer is given by its real value.
     -- During transaction, Incremented Read pointer is chosen to avoid one clock
-    -- cycle delay caused by increment on read pointer!
+    -- cycle delay caused by increment on read pointer.
     ----------------------------------------------------------------------------
     RAM_read_address <= read_pointer_inc_1 when (read_increment = '1') else
                               read_pointer;
@@ -897,6 +910,28 @@ begin
     ----------------------------------------------------------------------------
     rx_mof <= '0' when (read_counter_q = "00000") else
               '1';
+
+    ----------------------------------------------------------------------------
+    -- Parity error flag
+    -- Set when reading RX Buffer RAM. When drv_read_start is set, then RX
+    -- Buffer RAM already has read data available on output, therefore, RX
+    -- parity error detection is valid! 
+    ----------------------------------------------------------------------------
+    parity_flag_proc : process(res_n, clk_sys)
+    begin
+        if (res_n = '0') then
+            rx_parity_error <= '0';
+        elsif (rising_edge(clk_sys)) then
+            if (drv_read_start = '1' and rx_parity_mismatch_comb = '1' and
+                drv_pchk_ena = '1')
+            then
+                rx_parity_error <= '1';
+            elsif (drv_clr_rxpe = '1') then
+                rx_parity_error <= '0';
+            end if;
+        end if;
+    end process;
+              
     
     ----------------------------------------------------------------------------
     ----------------------------------------------------------------------------
@@ -1079,6 +1114,12 @@ begin
     --
     -- psl rx_buf_store_64_byte_frame_cov :
     --      cover {rec_dlc = "1111" and rec_is_rtr = '0' and commit_rx_frame = '1'};
+    --
+    -- psl rx_parity_err_cov :
+    --      cover {rx_parity_error = '1'};
+    --
+    -- psl rx_parity_err_clr_cov :
+    --      cover {rx_parity_error = '1' and drv_clr_rxpe = '1'};
 
     ---------------------------------------------------------------------------
     -- "reset_overrun_flag = '1'" only in "s_rxb_idle" state. Therefore we can

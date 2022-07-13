@@ -119,10 +119,13 @@ entity txt_buffer_fsm is
         txt_buf_failed_bof      :in   std_logic;
 
         -- Restricted operation mode
-        drv_rom_ena            :in   std_logic;
+        drv_rom_ena             :in   std_logic;
 
         -- Bus monitoring mode
-        drv_bus_mon_ena        :in   std_logic;
+        drv_bus_mon_ena         :in   std_logic;
+
+        -- TXT Buffer is now Backup buffer
+        txtb_is_bb              :in   std_logic;
 
         ------------------------------------------------------------------------   
         -- CAN Core interface
@@ -136,11 +139,20 @@ entity txt_buffer_fsm is
         -- Unit is Bus off
         is_bus_off              :in   std_logic;
 
+        ------------------------------------------------------------------------   
+        -- Parity checking logic
+        ------------------------------------------------------------------------ 
+        -- Parity Error
+        txtb_parity_error_valid :in   std_logic;
+
         ------------------------------------------------------------------------
         -- Status signals
         ------------------------------------------------------------------------
         -- Buffer accessible from SW
         txtb_user_accessible    :out  std_logic;
+
+        -- TXT Buffer is in state for which its backup buffer can be used
+        txtb_allow_bb           :out  std_logic;
 
         -- HW Command applied on TXT Buffer.
         txtb_hw_cmd_int         :out  std_logic;
@@ -164,6 +176,9 @@ architecture rtl of txt_buffer_fsm is
 
     -- Abort command applied
     signal abort_applied       : std_logic;
+
+    -- TXT Buffer is skipped due to
+    signal buffer_skipped      : std_logic;
     
     -- TXT Buffer clock enable
     signal txt_fsm_ce          : std_logic;
@@ -176,6 +191,12 @@ begin
 
     abort_applied <= '1' when (txtb_sw_cmd.set_abt = '1' and sw_cbs = '1') else
                      '0';
+
+    buffer_skipped <= '1' when (txtb_hw_cmd.unlock = '1' and
+                               (txtb_hw_cmd.failed = '1' or txtb_hw_cmd.valid = '1') and
+                               (txtb_is_bb = '1'))
+                          else
+                      '0';
 
     transient_state <= '1' when ((curr_state = s_txt_ab_prog) or
                                  (curr_state = s_txt_tx_prog) or
@@ -191,11 +212,14 @@ begin
                         else
                     '0';
 
+    txtb_allow_bb <= transient_state;
+
     ----------------------------------------------------------------------------
     -- Next state process
     ----------------------------------------------------------------------------
     tx_buf_fsm_next_state_proc : process(curr_state, txtb_sw_cmd, sw_cbs, 
-        txtb_hw_cmd, hw_cbs, abort_applied, go_to_failed)
+        txtb_hw_cmd, hw_cbs, abort_applied, go_to_failed, txtb_parity_error_valid,
+        buffer_skipped)
     begin
         next_state <= curr_state;
 
@@ -216,8 +240,12 @@ begin
         --------------------------------------------------------------------
         when s_txt_ready =>
           
+            -- Parity Error occured
+            if (txtb_parity_error_valid = '1') then
+                next_state <= s_txt_parity_err;
+
             -- Locking for transmission
-            if (txtb_hw_cmd.lock = '1' and hw_cbs = '1') then
+            elsif (txtb_hw_cmd.lock = '1' and hw_cbs = '1') then
 
                 -- Simultaneous "lock" and abort -> transmit, but
                 -- with abort pending
@@ -227,8 +255,9 @@ begin
                     next_state     <= s_txt_tx_prog;
                 end if;
 
-            -- Abort the ready buffer
-            elsif (abort_applied = '1') then
+            -- Abort the ready buffer or Skip the original TXT Buffer getting
+            -- "failed" or "OK".
+            elsif (abort_applied = '1' or buffer_skipped = '1') then
                 next_state       <= s_txt_aborted;
             end if;
 
@@ -237,8 +266,12 @@ begin
         --------------------------------------------------------------------
         when s_txt_tx_prog =>
           
+            -- Parity Error occured
+            if (txtb_parity_error_valid = '1') then
+                next_state <= s_txt_parity_err;
+
             -- Unlock the buffer
-            if (txtb_hw_cmd.unlock = '1' and hw_cbs = '1') then
+            elsif (txtb_hw_cmd.unlock = '1' and hw_cbs = '1') then
 
                 -- Retransmitt reached, transmitt OK, or try again...
                 if (txtb_hw_cmd.failed         = '1') then
@@ -246,7 +279,8 @@ begin
                 elsif (txtb_hw_cmd.valid       = '1') then
                     next_state     <= s_txt_ok;
                 elsif (txtb_hw_cmd.err         = '1' or 
-                       txtb_hw_cmd.arbl        = '1') then
+                       txtb_hw_cmd.arbl        = '1')
+                then
                     if (abort_applied = '1') then
                         next_state     <= s_txt_aborted;
                     else
@@ -264,8 +298,12 @@ begin
         --------------------------------------------------------------------
         when s_txt_ab_prog =>
           
+            -- Parity Error occured
+            if (txtb_parity_error_valid = '1') then
+                next_state <= s_txt_parity_err;
+            
             -- Unlock the buffer
-            if (txtb_hw_cmd.unlock = '1' and hw_cbs = '1') then
+            elsif (txtb_hw_cmd.unlock = '1' and hw_cbs = '1') then
 
                 -- Retransmitt reached, transmitt OK, or try again... 
                 if (txtb_hw_cmd.failed         = '1') then
@@ -313,6 +351,21 @@ begin
         --------------------------------------------------------------------
         when s_txt_ok =>
           
+            -- "Set_ready"
+            if (txtb_sw_cmd.set_rdy = '1' and sw_cbs = '1') then
+                next_state       <= s_txt_ready;
+            end if;
+
+            -- "Set_empty"
+            if (txtb_sw_cmd.set_ety = '1' and sw_cbs = '1') then
+                next_state       <= s_txt_empty;
+            end if;
+
+        --------------------------------------------------------------------
+        -- Parity Error
+        --------------------------------------------------------------------
+        when s_txt_parity_err =>
+
             -- "Set_ready"
             if (txtb_sw_cmd.set_rdy = '1' and sw_cbs = '1') then
                 next_state       <= s_txt_ready;
@@ -396,7 +449,8 @@ begin
         TXT_TOK   when s_txt_ok,
         TXT_ERR   when s_txt_failed,
         TXT_ABT   when s_txt_aborted,
-        TXT_ETY   when s_txt_empty;
+        TXT_ETY   when s_txt_empty,
+        TXT_PER   when s_txt_parity_err;
         
     ---------------------------------------------------------------------------
     -- Unmask content of TXT Buffer RAM (make it available for CAN Core and
@@ -425,7 +479,21 @@ begin
     -- psl txtb_fsm_error_cov : cover {curr_state = s_txt_failed};
     -- psl txtb_fsm_aborted_cov : cover {curr_state = s_txt_aborted};
     -- psl txtb_fsm_tx_ok_cov : cover {curr_state = s_txt_ok};
+    -- psl txtb_fsm_parity_err_cov : cover {curr_state = s_txt_parity_err};
     
+    -- Parity error during each possible state
+    -- psl txtb_perr_txt_ready_cov : cover
+    --  {curr_state = s_txt_ready and txtb_parity_error_valid = '1'};
+    -- psl txtb_perr_txt_tx_prog_cov : cover
+    --  {curr_state = s_txt_tx_prog and txtb_parity_error_valid = '1'};
+    -- psl txtb_perr_txt_ab_prog_cov : cover
+    --  {curr_state = s_txt_ab_prog and txtb_parity_error_valid = '1'};
+
+    -- Aborting due to being "Backup" buffer and transmission from first
+    -- TXT Buffer finished without any parity error
+    -- psl txtb_skip_backup_buffers : cover
+    --  {curr_state = s_txt_ready and buffer_skipped = '1' and abort_applied = '0'};
+
     -- Simultaneous HW and SW Commands
     --
     -- psl txtb_hw_sw_cmd_txt_ready_hazard_cov : cover
@@ -451,14 +519,22 @@ begin
     --
     -- psl txtb_unlock_only_in_tx_prog_asrt : assert always
     --  ((txtb_hw_cmd.unlock = '1' and hw_cbs = '1') ->
-    --   (curr_state = s_txt_tx_prog or curr_state = s_txt_ab_prog))
-    --  report "TXT Buffer not TX in progress or Abort in progress when unlock received!";
+    --   (curr_state = s_txt_tx_prog or curr_state = s_txt_ab_prog or curr_state = s_txt_parity_err))
+    --  report "TXT Buffer not TX in progress, Abort in progress or Parity Error when unlock received!";
     ----------------------------------------------------------------------------
     -- HW Lock command should never occur when there was abort in previous cycle!
     --
     -- psl txtb_no_lock_after_abort : assert never
     --  {abort_applied = '1';txtb_hw_cmd.lock = '1' and hw_cbs = '1'}
     --  report "LOCK command after ABORT was applied!";
+    ----------------------------------------------------------------------------
+    -- Skipped shall never occur when TXT Buffer backup is not ready. It should
+    -- be satisfied by equal priority of "original" and "backup" buffer, and the
+    -- fact that SW commands are mirrored for Backup buffers.
+    --
+    -- psl txtb_no_skip_when_not_ready : assert always
+    --  (buffer_skipped = '1') -> (curr_state = s_txt_ready)
+    --  report "Backup TXT Buffer skipped when not in 'Ready' state.";
     ----------------------------------------------------------------------------
 
     -- <RELEASE_ON>

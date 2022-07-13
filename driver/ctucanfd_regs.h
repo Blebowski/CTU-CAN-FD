@@ -77,6 +77,7 @@ enum ctu_can_fd_can_registers {
 	CTU_CAN_FD_ERR_CAPT             = 0x7c,
 	CTU_CAN_FD_RETR_CTR             = 0x7d,
 	CTU_CAN_FD_ALC                  = 0x7e,
+	CTU_CAN_FD_TS_INFO              = 0x7f,
 	CTU_CAN_FD_TRV_DELAY            = 0x80,
 	CTU_CAN_FD_SSP_CFG              = 0x82,
 	CTU_CAN_FD_RX_FR_CTR            = 0x84,
@@ -87,28 +88,172 @@ enum ctu_can_fd_can_registers {
 	CTU_CAN_FD_TIMESTAMP_HIGH       = 0x98,
 	CTU_CAN_FD_TXTB1_DATA_1        = 0x100,
 	CTU_CAN_FD_TXTB1_DATA_2        = 0x104,
+	CTU_CAN_FD_TXTB1_DATA_3        = 0x108,
+	CTU_CAN_FD_TXTB1_DATA_4        = 0x10c,
+	CTU_CAN_FD_TXTB1_DATA_5        = 0x110,
+	CTU_CAN_FD_TXTB1_DATA_6        = 0x114,
+	CTU_CAN_FD_TXTB1_DATA_7        = 0x118,
+	CTU_CAN_FD_TXTB1_DATA_8        = 0x11c,
+	CTU_CAN_FD_TXTB1_DATA_9        = 0x120,
+	CTU_CAN_FD_TXTB1_DATA_10       = 0x124,
+	CTU_CAN_FD_TXTB1_DATA_11       = 0x128,
+	CTU_CAN_FD_TXTB1_DATA_12       = 0x12c,
+	CTU_CAN_FD_TXTB1_DATA_13       = 0x130,
+	CTU_CAN_FD_TXTB1_DATA_14       = 0x134,
+	CTU_CAN_FD_TXTB1_DATA_15       = 0x138,
+	CTU_CAN_FD_TXTB1_DATA_16       = 0x13c,
+	CTU_CAN_FD_TXTB1_DATA_17       = 0x140,
+	CTU_CAN_FD_TXTB1_DATA_18       = 0x144,
+	CTU_CAN_FD_TXTB1_DATA_19       = 0x148,
 	CTU_CAN_FD_TXTB1_DATA_20       = 0x14c,
+	CTU_CAN_FD_TXTB1_DATA_21       = 0x150,
 	CTU_CAN_FD_TXTB2_DATA_1        = 0x200,
 	CTU_CAN_FD_TXTB2_DATA_2        = 0x204,
+	CTU_CAN_FD_TXTB2_DATA_3        = 0x208,
+	CTU_CAN_FD_TXTB2_DATA_4        = 0x20c,
+	CTU_CAN_FD_TXTB2_DATA_5        = 0x210,
+	CTU_CAN_FD_TXTB2_DATA_6        = 0x214,
+	CTU_CAN_FD_TXTB2_DATA_7        = 0x218,
+	CTU_CAN_FD_TXTB2_DATA_8        = 0x21c,
+	CTU_CAN_FD_TXTB2_DATA_9        = 0x220,
+	CTU_CAN_FD_TXTB2_DATA_10       = 0x224,
+	CTU_CAN_FD_TXTB2_DATA_11       = 0x228,
+	CTU_CAN_FD_TXTB2_DATA_12       = 0x22c,
+	CTU_CAN_FD_TXTB2_DATA_13       = 0x230,
+	CTU_CAN_FD_TXTB2_DATA_14       = 0x234,
+	CTU_CAN_FD_TXTB2_DATA_15       = 0x238,
+	CTU_CAN_FD_TXTB2_DATA_16       = 0x23c,
+	CTU_CAN_FD_TXTB2_DATA_17       = 0x240,
+	CTU_CAN_FD_TXTB2_DATA_18       = 0x244,
+	CTU_CAN_FD_TXTB2_DATA_19       = 0x248,
 	CTU_CAN_FD_TXTB2_DATA_20       = 0x24c,
+	CTU_CAN_FD_TXTB2_DATA_21       = 0x250,
 	CTU_CAN_FD_TXTB3_DATA_1        = 0x300,
 	CTU_CAN_FD_TXTB3_DATA_2        = 0x304,
+	CTU_CAN_FD_TXTB3_DATA_3        = 0x308,
+	CTU_CAN_FD_TXTB3_DATA_4        = 0x30c,
+	CTU_CAN_FD_TXTB3_DATA_5        = 0x310,
+	CTU_CAN_FD_TXTB3_DATA_6        = 0x314,
+	CTU_CAN_FD_TXTB3_DATA_7        = 0x318,
+	CTU_CAN_FD_TXTB3_DATA_8        = 0x31c,
+	CTU_CAN_FD_TXTB3_DATA_9        = 0x320,
+	CTU_CAN_FD_TXTB3_DATA_10       = 0x324,
+	CTU_CAN_FD_TXTB3_DATA_11       = 0x328,
+	CTU_CAN_FD_TXTB3_DATA_12       = 0x32c,
+	CTU_CAN_FD_TXTB3_DATA_13       = 0x330,
+	CTU_CAN_FD_TXTB3_DATA_14       = 0x334,
+	CTU_CAN_FD_TXTB3_DATA_15       = 0x338,
+	CTU_CAN_FD_TXTB3_DATA_16       = 0x33c,
+	CTU_CAN_FD_TXTB3_DATA_17       = 0x340,
+	CTU_CAN_FD_TXTB3_DATA_18       = 0x344,
+	CTU_CAN_FD_TXTB3_DATA_19       = 0x348,
 	CTU_CAN_FD_TXTB3_DATA_20       = 0x34c,
+	CTU_CAN_FD_TXTB3_DATA_21       = 0x350,
 	CTU_CAN_FD_TXTB4_DATA_1        = 0x400,
 	CTU_CAN_FD_TXTB4_DATA_2        = 0x404,
+	CTU_CAN_FD_TXTB4_DATA_3        = 0x408,
+	CTU_CAN_FD_TXTB4_DATA_4        = 0x40c,
+	CTU_CAN_FD_TXTB4_DATA_5        = 0x410,
+	CTU_CAN_FD_TXTB4_DATA_6        = 0x414,
+	CTU_CAN_FD_TXTB4_DATA_7        = 0x418,
+	CTU_CAN_FD_TXTB4_DATA_8        = 0x41c,
+	CTU_CAN_FD_TXTB4_DATA_9        = 0x420,
+	CTU_CAN_FD_TXTB4_DATA_10       = 0x424,
+	CTU_CAN_FD_TXTB4_DATA_11       = 0x428,
+	CTU_CAN_FD_TXTB4_DATA_12       = 0x42c,
+	CTU_CAN_FD_TXTB4_DATA_13       = 0x430,
+	CTU_CAN_FD_TXTB4_DATA_14       = 0x434,
+	CTU_CAN_FD_TXTB4_DATA_15       = 0x438,
+	CTU_CAN_FD_TXTB4_DATA_16       = 0x43c,
+	CTU_CAN_FD_TXTB4_DATA_17       = 0x440,
+	CTU_CAN_FD_TXTB4_DATA_18       = 0x444,
+	CTU_CAN_FD_TXTB4_DATA_19       = 0x448,
 	CTU_CAN_FD_TXTB4_DATA_20       = 0x44c,
+	CTU_CAN_FD_TXTB4_DATA_21       = 0x450,
 	CTU_CAN_FD_TXTB5_DATA_1        = 0x500,
 	CTU_CAN_FD_TXTB5_DATA_2        = 0x504,
+	CTU_CAN_FD_TXTB5_DATA_3        = 0x508,
+	CTU_CAN_FD_TXTB5_DATA_4        = 0x50c,
+	CTU_CAN_FD_TXTB5_DATA_5        = 0x510,
+	CTU_CAN_FD_TXTB5_DATA_6        = 0x514,
+	CTU_CAN_FD_TXTB5_DATA_7        = 0x518,
+	CTU_CAN_FD_TXTB5_DATA_8        = 0x51c,
+	CTU_CAN_FD_TXTB5_DATA_9        = 0x520,
+	CTU_CAN_FD_TXTB5_DATA_10       = 0x524,
+	CTU_CAN_FD_TXTB5_DATA_11       = 0x528,
+	CTU_CAN_FD_TXTB5_DATA_12       = 0x52c,
+	CTU_CAN_FD_TXTB5_DATA_13       = 0x530,
+	CTU_CAN_FD_TXTB5_DATA_14       = 0x534,
+	CTU_CAN_FD_TXTB5_DATA_15       = 0x538,
+	CTU_CAN_FD_TXTB5_DATA_16       = 0x53c,
+	CTU_CAN_FD_TXTB5_DATA_17       = 0x540,
+	CTU_CAN_FD_TXTB5_DATA_18       = 0x544,
+	CTU_CAN_FD_TXTB5_DATA_19       = 0x548,
 	CTU_CAN_FD_TXTB5_DATA_20       = 0x54c,
+	CTU_CAN_FD_TXTB5_DATA_21       = 0x550,
 	CTU_CAN_FD_TXTB6_DATA_1        = 0x600,
 	CTU_CAN_FD_TXTB6_DATA_2        = 0x604,
+	CTU_CAN_FD_TXTB6_DATA_3        = 0x608,
+	CTU_CAN_FD_TXTB6_DATA_4        = 0x60c,
+	CTU_CAN_FD_TXTB6_DATA_5        = 0x610,
+	CTU_CAN_FD_TXTB6_DATA_6        = 0x614,
+	CTU_CAN_FD_TXTB6_DATA_7        = 0x618,
+	CTU_CAN_FD_TXTB6_DATA_8        = 0x61c,
+	CTU_CAN_FD_TXTB6_DATA_9        = 0x620,
+	CTU_CAN_FD_TXTB6_DATA_10       = 0x624,
+	CTU_CAN_FD_TXTB6_DATA_11       = 0x628,
+	CTU_CAN_FD_TXTB6_DATA_12       = 0x62c,
+	CTU_CAN_FD_TXTB6_DATA_13       = 0x630,
+	CTU_CAN_FD_TXTB6_DATA_14       = 0x634,
+	CTU_CAN_FD_TXTB6_DATA_15       = 0x638,
+	CTU_CAN_FD_TXTB6_DATA_16       = 0x63c,
+	CTU_CAN_FD_TXTB6_DATA_17       = 0x640,
+	CTU_CAN_FD_TXTB6_DATA_18       = 0x644,
+	CTU_CAN_FD_TXTB6_DATA_19       = 0x648,
 	CTU_CAN_FD_TXTB6_DATA_20       = 0x64c,
+	CTU_CAN_FD_TXTB6_DATA_21       = 0x650,
 	CTU_CAN_FD_TXTB7_DATA_1        = 0x700,
 	CTU_CAN_FD_TXTB7_DATA_2        = 0x704,
+	CTU_CAN_FD_TXTB7_DATA_3        = 0x708,
+	CTU_CAN_FD_TXTB7_DATA_4        = 0x70c,
+	CTU_CAN_FD_TXTB7_DATA_5        = 0x710,
+	CTU_CAN_FD_TXTB7_DATA_6        = 0x714,
+	CTU_CAN_FD_TXTB7_DATA_7        = 0x718,
+	CTU_CAN_FD_TXTB7_DATA_8        = 0x71c,
+	CTU_CAN_FD_TXTB7_DATA_9        = 0x720,
+	CTU_CAN_FD_TXTB7_DATA_10       = 0x724,
+	CTU_CAN_FD_TXTB7_DATA_11       = 0x728,
+	CTU_CAN_FD_TXTB7_DATA_12       = 0x72c,
+	CTU_CAN_FD_TXTB7_DATA_13       = 0x730,
+	CTU_CAN_FD_TXTB7_DATA_14       = 0x734,
+	CTU_CAN_FD_TXTB7_DATA_15       = 0x738,
+	CTU_CAN_FD_TXTB7_DATA_16       = 0x73c,
+	CTU_CAN_FD_TXTB7_DATA_17       = 0x740,
+	CTU_CAN_FD_TXTB7_DATA_18       = 0x744,
+	CTU_CAN_FD_TXTB7_DATA_19       = 0x748,
 	CTU_CAN_FD_TXTB7_DATA_20       = 0x74c,
+	CTU_CAN_FD_TXTB7_DATA_21       = 0x750,
 	CTU_CAN_FD_TXTB8_DATA_1        = 0x800,
 	CTU_CAN_FD_TXTB8_DATA_2        = 0x804,
+	CTU_CAN_FD_TXTB8_DATA_3        = 0x808,
+	CTU_CAN_FD_TXTB8_DATA_4        = 0x80c,
+	CTU_CAN_FD_TXTB8_DATA_5        = 0x810,
+	CTU_CAN_FD_TXTB8_DATA_6        = 0x814,
+	CTU_CAN_FD_TXTB8_DATA_7        = 0x818,
+	CTU_CAN_FD_TXTB8_DATA_8        = 0x81c,
+	CTU_CAN_FD_TXTB8_DATA_9        = 0x820,
+	CTU_CAN_FD_TXTB8_DATA_10       = 0x824,
+	CTU_CAN_FD_TXTB8_DATA_11       = 0x828,
+	CTU_CAN_FD_TXTB8_DATA_12       = 0x82c,
+	CTU_CAN_FD_TXTB8_DATA_13       = 0x830,
+	CTU_CAN_FD_TXTB8_DATA_14       = 0x834,
+	CTU_CAN_FD_TXTB8_DATA_15       = 0x838,
+	CTU_CAN_FD_TXTB8_DATA_16       = 0x83c,
+	CTU_CAN_FD_TXTB8_DATA_17       = 0x840,
+	CTU_CAN_FD_TXTB8_DATA_18       = 0x844,
+	CTU_CAN_FD_TXTB8_DATA_19       = 0x848,
 	CTU_CAN_FD_TXTB8_DATA_20       = 0x84c,
+	CTU_CAN_FD_TXTB8_DATA_21       = 0x850,
 	CTU_CAN_FD_TST_CONTROL         = 0x900,
 	CTU_CAN_FD_TST_DEST            = 0x904,
 	CTU_CAN_FD_TST_WDATA           = 0x908,
@@ -153,7 +298,9 @@ union ctu_can_fd_mode_settings {
 		uint32_t acf                     : 1;
 		uint32_t tstm                    : 1;
 		uint32_t rxbam                   : 1;
-		uint32_t reserved_15_10          : 6;
+		uint32_t txbbm                   : 1;
+		uint32_t sam                     : 1;
+		uint32_t reserved_15_12          : 4;
   /* SETTINGS */
 		uint32_t rtrle                   : 1;
 		uint32_t rtrth                   : 4;
@@ -163,9 +310,11 @@ union ctu_can_fd_mode_settings {
 		uint32_t pex                     : 1;
 		uint32_t tbfbo                   : 1;
 		uint32_t fdrf                    : 1;
-		uint32_t reserved_31_27          : 5;
+		uint32_t pchke                   : 1;
+		uint32_t reserved_31_28          : 4;
 #else
-		uint32_t reserved_31_27          : 5;
+		uint32_t reserved_31_28          : 4;
+		uint32_t pchke                   : 1;
 		uint32_t fdrf                    : 1;
 		uint32_t tbfbo                   : 1;
 		uint32_t pex                     : 1;
@@ -174,7 +323,9 @@ union ctu_can_fd_mode_settings {
 		uint32_t ilbp                    : 1;
 		uint32_t rtrth                   : 4;
 		uint32_t rtrle                   : 1;
-		uint32_t reserved_15_10          : 6;
+		uint32_t reserved_15_12          : 4;
+		uint32_t sam                     : 1;
+		uint32_t txbbm                   : 1;
 		uint32_t rxbam                   : 1;
 		uint32_t tstm                    : 1;
 		uint32_t acf                     : 1;
@@ -229,6 +380,16 @@ enum ctu_can_fd_mode_rxbam {
 	RXBAM_ENABLED        = 0x1,
 };
 
+enum ctu_can_fd_mode_txbbm {
+	TXBBM_DISABLED       = 0x0,
+	TXBBM_ENABLED        = 0x1,
+};
+
+enum ctu_can_fd_mode_sam {
+	SAM_DISABLE       = 0x0,
+	SAM_ENABLE        = 0x1,
+};
+
 enum ctu_can_fd_settings_rtrle {
 	RTRLE_DISABLED       = 0x0,
 	RTRLE_ENABLED        = 0x1,
@@ -278,15 +439,23 @@ union ctu_can_fd_status {
 		uint32_t ewl                     : 1;
 		uint32_t idle                    : 1;
 		uint32_t pexs                    : 1;
-		uint32_t reserved_15_9           : 7;
+		uint32_t rxpe                    : 1;
+		uint32_t txpe                    : 1;
+		uint32_t txdpe                   : 1;
+		uint32_t reserved_15_12          : 4;
 		uint32_t stcnt                   : 1;
 		uint32_t strgs                   : 1;
-		uint32_t reserved_31_18         : 14;
+		uint32_t sprt                    : 1;
+		uint32_t reserved_31_19         : 13;
 #else
-		uint32_t reserved_31_18         : 14;
+		uint32_t reserved_31_19         : 13;
+		uint32_t sprt                    : 1;
 		uint32_t strgs                   : 1;
 		uint32_t stcnt                   : 1;
-		uint32_t reserved_15_9           : 7;
+		uint32_t reserved_15_12          : 4;
+		uint32_t txdpe                   : 1;
+		uint32_t txpe                    : 1;
+		uint32_t rxpe                    : 1;
 		uint32_t pexs                    : 1;
 		uint32_t idle                    : 1;
 		uint32_t ewl                     : 1;
@@ -313,9 +482,15 @@ union ctu_can_fd_command {
 		uint32_t rxfcrst                 : 1;
 		uint32_t txfcrst                 : 1;
 		uint32_t cpexs                   : 1;
-		uint32_t reserved_31_8          : 24;
+		uint32_t crxpe                   : 1;
+		uint32_t ctxpe                   : 1;
+		uint32_t ctxdpe                  : 1;
+		uint32_t reserved_31_11         : 21;
 #else
-		uint32_t reserved_31_8          : 24;
+		uint32_t reserved_31_11         : 21;
+		uint32_t ctxdpe                  : 1;
+		uint32_t ctxpe                   : 1;
+		uint32_t crxpe                   : 1;
 		uint32_t cpexs                   : 1;
 		uint32_t txfcrst                 : 1;
 		uint32_t rxfcrst                 : 1;
@@ -822,6 +997,7 @@ enum ctu_can_fd_tx_status_tx1s {
 	TXT_ERR             = 0x6,
 	TXT_ABT             = 0x7,
 	TXT_ETY             = 0x8,
+	TXT_PER             = 0x9,
 };
 
 union ctu_can_fd_tx_command_txtb_info {
@@ -905,9 +1081,9 @@ union ctu_can_fd_tx_priority {
 	} s;
 };
 
-union ctu_can_fd_err_capt_retr_ctr_alc {
+union ctu_can_fd_err_capt_retr_ctr_alc_ts_info {
 	uint32_t u32;
-	struct ctu_can_fd_err_capt_retr_ctr_alc_s {
+	struct ctu_can_fd_err_capt_retr_ctr_alc_ts_info_s {
 #ifdef __LITTLE_ENDIAN_BITFIELD
   /* ERR_CAPT */
 		uint32_t err_pos                 : 5;
@@ -918,9 +1094,12 @@ union ctu_can_fd_err_capt_retr_ctr_alc {
   /* ALC */
 		uint32_t alc_bit                 : 5;
 		uint32_t alc_id_field            : 3;
-		uint32_t reserved_31_24          : 8;
+  /* TS_INFO */
+		uint32_t ts_bits                 : 6;
+		uint32_t reserved_31_30          : 2;
 #else
-		uint32_t reserved_31_24          : 8;
+		uint32_t reserved_31_30          : 2;
+		uint32_t ts_bits                 : 6;
 		uint32_t alc_id_field            : 3;
 		uint32_t alc_bit                 : 5;
 		uint32_t reserved_15_12          : 4;
@@ -950,6 +1129,7 @@ enum ctu_can_fd_err_capt_err_type {
 	ERC_FRM_ERR        = 0x2,
 	ERC_ACK_ERR        = 0x3,
 	ERC_STUF_ERR       = 0x4,
+	ERC_PRT_ERR        = 0x5,
 };
 
 enum ctu_can_fd_alc_alc_id_field {

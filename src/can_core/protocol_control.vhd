@@ -201,15 +201,21 @@ entity protocol_control is
         
         -- TX Identifier
         tran_identifier         :in   std_logic_vector(28 downto 0);
+
+        -- TX frame test word
+        tran_frame_test         :in   t_frame_test_w;
                 
         -- Frame in TXT Buffer is valid any can be transmitted.
         tran_frame_valid        :in   std_logic;
+
+        -- Transmission frame
+        tran_frame_parity_error :in   std_logic;
         
         -- HW Commands for TX Arbitrator and TXT Buffers
         txtb_hw_cmd             :out  t_txtb_hw_cmd;
         
         -- Pointer to TXT buffer memory
-        txtb_ptr                :out  natural range 0 to 19;
+        txtb_ptr                :out  natural range 0 to 20;
         
         -- Clock enable for TXT Buffer memory
         txtb_clk_en             :out  std_logic;
@@ -496,6 +502,9 @@ architecture rtl of protocol_control is
   -- Protocol exception
   signal drv_pex                  :     std_logic;
   signal drv_cpexs                :     std_logic;
+
+  -- Test mode
+  signal drv_tstm_ena             :     std_logic;
   
   -----------------------------------------------------------------------------
   -- Internal signals
@@ -672,6 +681,7 @@ begin
     drv_pex               <=  drv_bus(DRV_PEX_INDEX);
     drv_cpexs             <=  drv_bus(DRV_PEXS_CLR_INDEX);
     drv_rom_ena           <=  drv_bus(DRV_ROM_ENA_INDEX);
+    drv_tstm_ena          <=  drv_bus(DRV_TSTM_ENA_INDEX);
 
     ---------------------------------------------------------------------------
     -- TX Data word endian swapper
@@ -940,28 +950,29 @@ begin
         G_ERR_VALID_PIPELINE    => G_ERR_VALID_PIPELINE
     )
     port map(
-        clk_sys                 => clk_sys,             -- IN
-        res_n                   => res_n,               -- IN
+        clk_sys                 => clk_sys,                 -- IN
+        res_n                   => res_n,                   -- IN
 
         -- Data-path interface
-        tx_data                 => tx_data_wbs,         -- IN
-        rx_data                 => rx_data_nbs,         -- IN
+        tx_data                 => tx_data_wbs,             -- IN
+        rx_data                 => rx_data_nbs,             -- IN
         
         -- Error sources
-        bit_err                 => bit_err,             -- IN
-        bit_err_arb             => bit_err_arb,         -- IN
-        stuff_err               => stuff_err,           -- IN
-        form_err                => form_err_i,          -- IN
-        ack_err                 => ack_err_i,           -- IN
-        crc_err                 => crc_err_i,           -- IN
+        bit_err                 => bit_err,                 -- IN
+        bit_err_arb             => bit_err_arb,             -- IN
+        stuff_err               => stuff_err,               -- IN
+        form_err                => form_err_i,              -- IN
+        ack_err                 => ack_err_i,               -- IN
+        crc_err                 => crc_err_i,               -- IN
+        tran_frame_parity_error => tran_frame_parity_error, -- IN
         
         -- CRC comparison data
-        rx_crc                  => rx_crc,              -- IN
-        crc_15                  => crc_15,              -- IN
-        crc_17                  => crc_17,              -- IN
-        crc_21                  => crc_21,              -- IN
-        rx_stuff_count          => rx_stuff_count,      -- IN
-        dst_ctr                 => dst_ctr,             -- IN
+        rx_crc                  => rx_crc,                  -- IN
+        crc_15                  => crc_15,                  -- IN
+        crc_17                  => crc_17,                  -- IN
+        crc_21                  => crc_21,                  -- IN
+        rx_stuff_count          => rx_stuff_count,          -- IN
+        dst_ctr                 => dst_ctr,                 -- IN
 
         -- Control signals
         bit_err_enable          => bit_err_enable,          -- IN
@@ -976,11 +987,11 @@ begin
         is_err_passive          => is_err_passive,          -- IN
 
         -- Status output
-        err_frm_req             => err_frm_req,         -- OUT
-        err_detected            => err_detected,        -- OUT
-        erc_capture             => erc_capture,         -- OUT
-        crc_match               => crc_match,           -- OUT
-        err_ctrs_unchanged      => err_ctrs_unchanged   -- OUT
+        err_frm_req             => err_frm_req,             -- OUT
+        err_detected            => err_detected,            -- OUT
+        erc_capture             => erc_capture,             -- OUT
+        crc_match               => crc_match,               -- OUT
+        err_ctrs_unchanged      => err_ctrs_unchanged       -- OUT
     );
 
     
@@ -991,6 +1002,8 @@ begin
     port map(
         clk_sys                 => clk_sys,             -- IN
         res_n                   => res_n,               -- IN
+
+        drv_tstm_ena            => drv_tstm_ena,        -- IN
 
         tx_trigger              => tx_trigger,          -- IN
         tx_data_nbs             => tx_data_nbs_i,       -- OUT
@@ -1015,6 +1028,7 @@ begin
         is_err_active           => is_err_active,           -- IN
         bst_ctr                 => bst_ctr,                 -- IN
         tran_identifier         => tran_identifier,         -- IN
+        tran_frame_test         => tran_frame_test,         -- IN
         tran_word_swapped       => tran_word_swapped,       -- IN
         tran_dlc                => tran_dlc                 -- IN
     );

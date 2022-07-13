@@ -287,6 +287,8 @@ begin
     ---------------------------------------------------------------------------
     fault_confinement_rules_inst : entity ctu_can_fd_rtl.fault_confinement_rules
     port map(
+        clk_sys                => clk_sys,                  -- IN
+
         is_transmitter         => is_transmitter,           -- IN
         is_receiver            => is_receiver,              -- IN
         err_detected           => err_detected,             -- IN

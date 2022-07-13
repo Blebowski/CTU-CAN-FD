@@ -775,6 +775,18 @@
       </spirit:file>
 
       <spirit:file>
+        <spirit:name>common_blocks/parity_calculator.vhd</spirit:name>
+        <spirit:fileType>vhdlSource</spirit:fileType>
+        <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
+      </spirit:file>
+
+      <spirit:file>
+        <spirit:name>common_blocks/rst_reg.vhd</spirit:name>
+        <spirit:fileType>vhdlSource</spirit:fileType>
+        <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
+      </spirit:file>
+
+      <spirit:file>
         <spirit:name>common_blocks/rst_sync.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
         <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
@@ -1327,6 +1339,20 @@
 
       <spirit:file>
         <spirit:name>common_blocks/mux2.vhd</spirit:name>
+        <spirit:fileType>vhdlSource</spirit:fileType>
+        <spirit:userFileType>USED_IN_ipstatic</spirit:userFileType>
+        <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
+      </spirit:file>
+
+      <spirit:file>
+        <spirit:name>common_blocks/parity_calculator.vhd</spirit:name>
+        <spirit:fileType>vhdlSource</spirit:fileType>
+        <spirit:userFileType>USED_IN_ipstatic</spirit:userFileType>
+        <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
+      </spirit:file>
+
+      <spirit:file>
+        <spirit:name>common_blocks/rst_reg.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
         <spirit:userFileType>USED_IN_ipstatic</spirit:userFileType>
         <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>

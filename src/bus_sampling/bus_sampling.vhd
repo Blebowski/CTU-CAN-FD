@@ -254,7 +254,6 @@ architecture rtl of bus_sampling is
     -- same value can be merged into just resetting by OR of sources
     ---------------------------------------------------------------------------
     signal shift_regs_res_d     : std_logic;
-    signal shift_regs_res_q     : std_logic;
     signal shift_regs_res_q_scan: std_logic;
     
     -- Enable for secondary sampling point shift register
@@ -342,33 +341,21 @@ begin
     ----------------------------------------------------------------------------
     -- Pipeline reset for shift registers to avoid glitches!
     ----------------------------------------------------------------------------
-    shift_regs_rst_reg_inst : entity ctu_can_fd_rtl.dff_arst
-    generic map(
-        G_RESET_POLARITY   => '0',
-        
-        -- Reset to the same value as is polarity of reset so that other DFFs
-        -- which are reset by output of this one will be reset too!
-        G_RST_VAL          => '0'
+    shift_regs_rst_reg_inst : entity ctu_can_fd_rtl.rst_reg
+    generic map (
+        G_RESET_POLARITY    => '0'
     )
     port map(
-        arst               => res_n,                -- IN
-        clk                => clk_sys,              -- IN
-        input              => shift_regs_res_d,     -- IN
-        
-        output             => shift_regs_res_q      -- OUT
-    );
-    
-    ----------------------------------------------------------------------------
-    -- Mux for gating reset in scan mode
-    ----------------------------------------------------------------------------
-    mux2_res_tst_inst : entity ctu_can_fd_rtl.mux2
-    port map(
-        a                  => shift_regs_res_q, 
-        b                  => '1',
-        sel                => scan_enable,
+        -- Clock and Reset
+        clk                 => clk_sys,
+        arst                => res_n,
 
-        -- Output
-        z                  => shift_regs_res_q_scan
+        -- Flip flop input / output
+        d                   => shift_regs_res_d,
+        q                   => shift_regs_res_q_scan,
+
+        -- Scan mode control
+        scan_enable         => scan_enable
     );
     
     ----------------------------------------------------------------------------

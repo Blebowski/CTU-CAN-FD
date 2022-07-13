@@ -82,17 +82,20 @@ use ctu_can_fd_rtl.can_constants_pkg.all;
 
 entity clk_gate is
     generic (
-        G_TECHNOLOGY       :       natural := 0
+        G_TECHNOLOGY        :       natural := 0
     );    
     port (
         -- Clock input
-        clk_in             : in    std_logic;
+        clk_in              : in    std_logic;
         
         -- Clock Enable
-        clk_en             : in    std_logic;
+        clk_en              : in    std_logic;
 
+        -- Scan Enable
+        scan_enable         : in    std_logic;
+        
         -- Gated clocks
-        clk_out            : out   std_logic
+        clk_out             : out   std_logic
     );
 end clk_gate;
 
@@ -108,7 +111,7 @@ begin
         clk_en_latch_proc : process(clk_in, clk_en)
         begin
             if (clk_in = '0') then
-                clk_en_q <= clk_en;
+                clk_en_q <= clk_en or scan_enable;
             end if;
         end process;
 

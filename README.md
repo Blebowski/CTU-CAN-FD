@@ -188,7 +188,6 @@ The CTU CAN FD IP core functional model is part of QEMU mainline. QEMU CAN docum
 ## Roadmap
 
 There are several options for further development:  
-- Integrations of Linux driver to mainline Linux
 - Linux driver testing (QEMU + VPCIE)
 - Splitting design into two clock domains
 - Support of TTCAN protocol

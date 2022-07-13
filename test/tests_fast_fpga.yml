@@ -6,7 +6,7 @@ _default: &default
     functional_coverage_report: false
     code_coverage: false
     error_tolerance: 0
-    randomize: false
+    #randomize: true
     seed: 0
     debug: false
     iterations: 1
@@ -24,6 +24,7 @@ _default: &default
     sup_filtC: true
     sup_range: true
     sup_traffic_ctrs: true
+    sup_parity: true
     
     ###########################################################################
     # C_TECH_FPGA
@@ -123,6 +124,12 @@ feature:
         err_norm_fd:
 
         fault_state:
+
+        frame_test_fstc:
+        frame_test_fcrc:
+        frame_test_sdlc:
+        frame_test_ignore:
+
         glitch_filtering:
 
         invalid_frames:
@@ -143,10 +150,14 @@ feature:
         mode_pex:
         mode_rst:
         mode_restr_op:
-        mode_rst:
         mode_rxbam:
         mode_self_test:
         mode_test:
+        mode_txbbm:
+        mode_txbbm_2:
+        mode_txbbm_3:
+        mode_txbbm_4:
+        mode_txbbm_5:
 
         mode_frame_filters:
             iterations: 6
@@ -178,6 +189,8 @@ feature:
         status_rxs:
         status_txnf:
         status_txs:
+        status_rxpe:
+        status_txpe:
         stuff_in_data:
 
         trv_delay:

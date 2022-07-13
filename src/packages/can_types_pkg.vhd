@@ -176,6 +176,7 @@ package can_types_pkg is
         s_arb_sel_upp_ts,
         s_arb_sel_ffw,
         s_arb_sel_idw,
+        s_arb_sel_ftw,
         s_arb_validated,
         s_arb_locked
     );
@@ -188,7 +189,8 @@ package can_types_pkg is
         s_txt_ab_prog,
         s_txt_ok,
         s_txt_failed,
-        s_txt_aborted
+        s_txt_aborted,
+        s_txt_parity_err
     );
 
     ----------------------------------------------------------------------------
@@ -202,6 +204,14 @@ package can_types_pkg is
     -- Memory outputs of TXT Buffers
     type t_txt_bufs_output is array (integer range <>) of
         std_logic_vector(31 downto 0);
+
+    -- Frame manipulation information
+    type t_frame_test_w is record
+        fstc      : std_logic;
+        fcrc      : std_logic;
+        sdlc      : std_logic;
+        tprm      : std_logic_vector(4 downto 0);
+    end record;
 
     -- States of Buffers
     type t_txt_bufs_state is array (integer range <>) of

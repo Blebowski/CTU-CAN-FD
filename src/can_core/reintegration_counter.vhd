@@ -166,5 +166,18 @@ begin
     ---------------------------------------------------------------------------
     -- psl default clock is rising_edge(clk_sys);
 
+    -- psl reinteg_ctr_clr_cov : cover
+    --  {reinteg_ctr_clr = '1'};
+
+    -- psl reinteg_ctr_expired_cov : cover
+    --  {reinteg_ctr_expired = '1'};
+    
+    -- psl reinteg_ctr_ce_A : cover
+    --  {(reinteg_ctr_clr = '1') and (not(reinteg_ctr_enable = '1' and rx_trigger = '1'))};
+
+    -- psl reinteg_ctr_ce_B : cover
+    --  {(not(reinteg_ctr_clr = '1')) and (reinteg_ctr_enable = '1' and rx_trigger = '1')};
+
     -- <RELEASE_ON>
+
 end architecture;

@@ -104,6 +104,12 @@ entity tx_shift_reg is
         res_n                   :in   std_logic;
 
         -----------------------------------------------------------------------
+        -- Memory registers 
+        -----------------------------------------------------------------------
+        -- Test mode enable
+        drv_tstm_ena            :in   std_logic;
+
+        -----------------------------------------------------------------------
         -- Trigger signals
         -----------------------------------------------------------------------
         -- RX Trigger
@@ -180,6 +186,9 @@ entity tx_shift_reg is
         -----------------------------------------------------------------------
         -- TX Identifier
         tran_identifier         :in   std_logic_vector(28 downto 0);
+
+        -- TX Frame test
+        tran_frame_test         :in   t_frame_test_w;
         
         -- TXT Buffer RAM word (byte endianity swapped)
         tran_word_swapped       :in   std_logic_vector(31 downto 0);
@@ -192,30 +201,42 @@ end entity;
 architecture rtl of tx_shift_reg is
    
     -- Shift register output 
-    signal tx_sr_output : std_logic;
+    signal tx_sr_output             : std_logic;
 
     -- Shift register clock enable
-    signal tx_sr_ce     : std_logic;
+    signal tx_sr_ce                 : std_logic;
     
     -- Shift register preload
-    signal tx_sr_pload      : std_logic;
-    signal tx_sr_pload_val  : std_logic_vector(31 downto 0);
+    signal tx_sr_pload              : std_logic;
+    signal tx_sr_pload_val          : std_logic_vector(31 downto 0);
 
     -- ID Loaded from TXT Buffer RAM
-    signal tx_base_id : std_logic_vector(10 downto 0);
-    signal tx_ext_id : std_logic_vector(17 downto 0);
+    signal tx_base_id               : std_logic_vector(10 downto 0);
+    signal tx_ext_id                : std_logic_vector(17 downto 0);
 
     -- Selected CRC to be transmitted
-    signal tx_crc : std_logic_vector(20 downto 0);
+    signal tx_crc                   : std_logic_vector(20 downto 0);
+
+    -- CRC with some bit flipped
+    signal tx_crc_flipped           : std_logic_vector(20 downto 0);
 
     -- Stuff counter (grey coded)
-    signal bst_ctr_grey : std_logic_vector(2 downto 0);
-    signal bst_parity   : std_logic;
-    signal stuff_count  : std_logic_vector(3 downto 0);
+    signal bst_ctr_grey             : std_logic_vector(2 downto 0);
+    signal bst_parity               : std_logic;
+    signal stuff_count              : std_logic_vector(3 downto 0);
     
     constant C_RX_SHIFT_REG_RST_VAL : std_logic_vector(31 downto 0) :=
         x"00000000";
     
+    -- TX Frame corruption / bit flips
+    signal flip_mask                : std_logic_vector(20 downto 0);
+
+    -- Stuff count field with single bit flipped
+    signal stuff_count_flipped      : std_logic_vector(3 downto 0); 
+
+    -- TX DLC swapped with FRAME_TEST_W[TPRM]
+    signal tran_dlc_swapped         : std_logic_vector(3 downto 0);
+
 begin
     
     -- Tick shift register in Sync (TX Trigger)!
@@ -259,6 +280,33 @@ begin
     tx_ext_id <= tran_identifier(IDENTIFIER_EXT_H downto IDENTIFIER_EXT_L);
 
     ---------------------------------------------------------------------------
+    -- Corruption features for transmitted frames
+    ---------------------------------------------------------------------------
+    flip_mask_compute_proc : process(tran_frame_test)
+    begin
+        flip_mask <= (others => '0');
+        if (drv_tstm_ena = '1') then
+            flip_mask(20 - to_integer(unsigned(tran_frame_test.tprm))) <= '1';
+        end if;
+    end process;
+
+    -- Flip a bit in CRC on TPRM index
+    tx_crc_flipped <= (tx_crc xor flip_mask) when (tran_frame_test.fcrc = '1')
+                                             else 
+                                      tx_crc;
+
+    -- Flip bit of Stuff count on TPRM index
+    stuff_count_flipped <= (stuff_count xor flip_mask(20 downto 17)) when (tran_frame_test.fstc = '1')
+                                                                     else
+                                                         stuff_count;
+
+    -- Swap transmitted DLC with arbtirary value
+    tran_dlc_swapped <= tran_frame_test.tprm(3 downto 0) when (tran_frame_test.sdlc = '1' and 
+                                                               drv_tstm_ena = '1')
+                                                         else
+                                                tran_dlc;
+
+    ---------------------------------------------------------------------------
     -- Shift register pre-load value:
     --  1. Base ID is loaded from TXT Buffer memory.
     --  2. Extended ID is loaded from TXT Buffer memory;
@@ -267,13 +315,13 @@ begin
     --  5. Calculated CRC is loaded from output of CAN CRC.
     ---------------------------------------------------------------------------
     tx_sr_pload_val <=
-          tx_base_id & "000000000000000000000" when (tx_load_base_id = '1') else
-                  tx_ext_id & "00000000000000" when (tx_load_ext_id = '1') else
-     tran_dlc & "0000000000000000000000000000" when (tx_load_dlc = '1') else
-                             tran_word_swapped when (tx_load_data_word = '1') else
-  stuff_count & "0000000000000000000000000000" when (tx_load_stuff_count = '1') else         
-                        tx_crc & "00000000000" when (tx_load_crc = '1') else
-                               (OTHERS => '0');
+                    tx_base_id & "000000000000000000000" when (tx_load_base_id = '1') else
+                            tx_ext_id & "00000000000000" when (tx_load_ext_id = '1') else
+       tran_dlc_swapped & "0000000000000000000000000000" when (tx_load_dlc = '1') else
+                                       tran_word_swapped when (tx_load_data_word = '1') else
+    stuff_count_flipped & "0000000000000000000000000000" when (tx_load_stuff_count = '1') else         
+                          tx_crc_flipped & "00000000000" when (tx_load_crc = '1') else
+                                        (OTHERS => '0');
 
     ---------------------------------------------------------------------------
     -- TX Shift register instance
@@ -375,5 +423,23 @@ begin
     
     -- psl tx_shift_reg_load_crc_cov : cover
     --  {tx_load_crc = '1'};
+
+    -- psl tx_shift_flip_fstc_cov : cover
+    --  {tran_frame_test.fstc = '1' and drv_tstm_ena = '1'};
+
+    -- psl tx_shift_flip_fcrc_cov : cover
+    --  {tran_frame_test.fcrc = '1' and drv_tstm_ena = '1'};
+
+    -- psl tx_shift_flip_sdlc_cov : cover
+    --  {tran_frame_test.sdlc = '1' and drv_tstm_ena = '1'};
+
+    -- psl tx_shift_flip_fstc_disable_cov : cover
+    --  {tran_frame_test.fstc = '1' and drv_tstm_ena = '0'};
+
+    -- psl tx_shift_flip_fcrc_disable_cov : cover
+    --  {tran_frame_test.fcrc = '1' and drv_tstm_ena = '0'};
+
+    -- psl tx_shift_flip_sdlc_disable_cov : cover
+    --  {tran_frame_test.sdlc = '1' and drv_tstm_ena = '0'};
 
 end architecture;
