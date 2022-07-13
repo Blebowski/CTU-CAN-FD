@@ -1,6 +1,8 @@
 source synth_core.tcl
 source benchmark_configs.tcl
 
+set_msg_config -id "Synth 8-6426" -new_severity "INFO"
+
 load_rtl
 read_xdc ../../Constraints/ctu_can_fd.sdc
 
