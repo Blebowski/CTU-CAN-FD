@@ -1815,9 +1815,7 @@ begin
     -- Note:  All unused signals indices are assigned to zero!
     drv_bus(80 downto 61)   <= (OTHERS => '0');
     drv_bus(349 downto 331) <= (OTHERS => '0');
-    drv_bus(360 downto 358) <= (OTHERS => '0');
-    drv_bus(362 downto 361) <= (OTHERS => '0');
-    drv_bus(365 downto 363) <= (OTHERS => '0');
+    drv_bus(365 downto 358) <= (OTHERS => '0');
     drv_bus(371 downto 368) <= (OTHERS => '0');
     drv_bus(399 downto 383) <= (OTHERS => '0');
     drv_bus(459 downto 445) <= (OTHERS => '0');
