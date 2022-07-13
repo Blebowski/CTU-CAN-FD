@@ -128,6 +128,7 @@ feature:
         frame_test_fstc:
         frame_test_fcrc:
         frame_test_sdlc:
+        frame_test_ignore:
 
         glitch_filtering:
 
