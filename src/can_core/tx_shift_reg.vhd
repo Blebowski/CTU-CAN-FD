@@ -282,7 +282,7 @@ begin
     ---------------------------------------------------------------------------
     -- Corruption features for transmitted frames
     ---------------------------------------------------------------------------
-    flip_mask_compute_proc : process(tran_frame_test)
+    flip_mask_compute_proc : process(tran_frame_test, drv_tstm_ena)
     begin
         flip_mask <= (others => '0');
         if (drv_tstm_ena = '1') then
