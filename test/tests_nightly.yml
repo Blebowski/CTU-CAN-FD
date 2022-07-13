@@ -137,6 +137,8 @@ feature:
             iterations: 10
         frame_test_fcrc:
             iterations: 10
+        frame_test_sdlc:
+            iterations: 10
 
         glitch_filtering:
 
