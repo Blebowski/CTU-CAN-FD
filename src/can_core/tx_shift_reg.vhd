@@ -433,4 +433,13 @@ begin
     -- psl tx_shift_flip_sdlc_cov : cover
     --  {tran_frame_test.sdlc = '1' and drv_tstm_ena = '1'};
 
+    -- psl tx_shift_flip_fstc_disable_cov : cover
+    --  {tran_frame_test.fstc = '1' and drv_tstm_ena = '0'};
+
+    -- psl tx_shift_flip_fcrc_disable_cov : cover
+    --  {tran_frame_test.fcrc = '1' and drv_tstm_ena = '0'};
+
+    -- psl tx_shift_flip_sdlc_disable_cov : cover
+    --  {tran_frame_test.sdlc = '1' and drv_tstm_ena = '0'};
+
 end architecture;
