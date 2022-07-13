@@ -6,8 +6,8 @@ _default: &default
     functional_coverage_report: true
     code_coverage: true
     error_tolerance: 0
-    randomize: true
-    #seed: 20
+    #randomize: true
+    seed: 0
     debug: true
     iterations: 1
     timeout: 100 ms
@@ -132,6 +132,10 @@ feature:
             timeout: 5 ms
 
         fault_state:
+
+        frame_test_fstc:
+            iterations: 10
+
         glitch_filtering:
 
         invalid_frames:
@@ -248,6 +252,7 @@ feature:
         status_txs:
         status_rxpe:
         status_txpe:
+            timeout: 1 ms
         stuff_in_data:
 
         trv_delay:

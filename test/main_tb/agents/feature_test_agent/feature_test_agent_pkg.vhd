@@ -1000,6 +1000,30 @@ package feature_test_agent_pkg is
 
 
     ----------------------------------------------------------------------------
+    -- Configures FRAME_TEST_W of transmitted frame in TXT Buffer RAM.
+    --
+    -- Arguments:
+    --  buf_nr          Number of TXT Buffer from which the frame should be
+    --                  sent (1:4)
+    --  tprm            Test parameter index
+    --  fstc            Flip Stuff count bit
+    --  fcrc            Flip CRC bit
+    --  sdlc            Swap transmitted DLC
+    --  node            Node which shall be accessed (Test node or DUT).
+    --  channel         Communication channel
+    ----------------------------------------------------------------------------
+    procedure CAN_set_frame_test(
+        constant buf_nr         : in    SW_TXT_index_type;
+        constant tprm           : in    natural range 0 to 31;
+        constant fstc           : in    boolean;
+        constant fcrc           : in    boolean;
+        constant sdlc           : in    boolean;
+        constant node           : in    t_feature_node;
+        signal   channel        : inout t_com_channel
+    );
+
+
+    ----------------------------------------------------------------------------
     -- Check whether TXT Buffer is accessible (Empty, Aborted, TX Failed or Done)
     -- If yes, insert the frame to TXT Buffer and give "set_ready" command.
     -- The function does not wait until the frame is transmitted.
@@ -2905,6 +2929,55 @@ package body feature_test_agent_pkg is
     end procedure;
 
 
+    procedure CAN_set_frame_test(
+        constant buf_nr         : in    SW_TXT_index_type;
+        constant tprm           : in    natural range 0 to 31;
+        constant fstc           : in    boolean;
+        constant fcrc           : in    boolean;
+        constant sdlc           : in    boolean;
+        constant node           : in    t_feature_node;
+        signal   channel        : inout t_com_channel
+    ) is
+        variable w_data         :       std_logic_vector(31 downto 0) :=
+                                        (OTHERS => '0');
+        variable buf_offset     :       std_logic_vector(11 downto 0);
+    begin
+
+        -- Set Buffer address
+        case buf_nr is
+        when 1 => buf_offset := TXTB1_DATA_1_ADR;
+        when 2 => buf_offset := TXTB2_DATA_1_ADR;
+        when 3 => buf_offset := TXTB3_DATA_1_ADR;
+        when 4 => buf_offset := TXTB4_DATA_1_ADR;
+        when 5 => buf_offset := TXTB5_DATA_1_ADR;
+        when 6 => buf_offset := TXTB6_DATA_1_ADR;
+        when 7 => buf_offset := TXTB7_DATA_1_ADR;
+        when 8 => buf_offset := TXTB8_DATA_1_ADR;     
+        when others =>
+            error_m("Unsupported TX buffer number");
+        end case;
+
+        w_data := (others => '0');
+
+        w_data(TPRM_H downto TPRM_L) := std_logic_vector(to_unsigned(tprm, 5));
+
+        if (fstc) then
+            w_data(FSTC_IND) := '1';
+        end if;
+
+        if (fcrc) then
+            w_data(FCRC_IND) := '1';
+        end if;
+
+        if (sdlc) then
+            w_data(SDLC_IND) := '1';
+        end if;
+
+        CAN_write(w_data, CAN_add_unsigned(buf_offset, FRAME_TEST_W_ADR), node, channel);
+
+    end procedure;
+
+
     procedure CAN_send_frame(
         constant frame          : in    SW_CAN_frame_type;
         constant buf_nr         : in    SW_TXT_index_type;
@@ -4657,7 +4730,7 @@ package body feature_test_agent_pkg is
         for i in 1 to num_bufs loop
             address := std_logic_vector(to_unsigned(
                         to_integer((unsigned(TXTB1_DATA_1_ADR)) * i), 12));
-            for j in 0 to 19 loop
+            for j in 0 to 20 loop
                 CAN_write(data, address, node, channel);
                 address := std_logic_vector(unsigned(address) + 4);
             end loop;

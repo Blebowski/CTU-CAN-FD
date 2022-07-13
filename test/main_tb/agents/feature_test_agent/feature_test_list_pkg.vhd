@@ -128,6 +128,9 @@ use ctu_can_fd_tb.err_capt_sof_ftest.all;
 use ctu_can_fd_tb.err_norm_fd_ftest.all;
 
 use ctu_can_fd_tb.fault_state_ftest.all;
+
+use ctu_can_fd_tb.frame_test_fstc_ftest.all;
+
 use ctu_can_fd_tb.glitch_filtering_ftest.all;
 
 use ctu_can_fd_tb.invalid_frames_ftest.all;
@@ -299,6 +302,10 @@ package body feature_test_list_pkg is
                                                       
         elsif (test_name = "fault_state") then
             fault_state_ftest_exec(channel);
+
+        elsif (test_name = "frame_test_fstc") then
+            frame_test_fstc_ftest_exec(channel);
+            
         elsif (test_name = "glitch_filtering") then
             glitch_filtering_ftest_exec(channel);
             

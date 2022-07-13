@@ -98,6 +98,9 @@ feature:
         err_norm_fd:
 
         fault_state:
+
+        frame_test_fstc:
+        
         glitch_filtering:
 
         invalid_frames:
