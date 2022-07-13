@@ -424,4 +424,13 @@ begin
     -- psl tx_shift_reg_load_crc_cov : cover
     --  {tx_load_crc = '1'};
 
+    -- psl tx_shift_flip_fstc_cov : cover
+    --  {tran_frame_test.fstc = '1' and drv_tstm_ena = '1'};
+
+    -- psl tx_shift_flip_fcrc_cov : cover
+    --  {tran_frame_test.fcrc = '1' and drv_tstm_ena = '1'};
+
+    -- psl tx_shift_flip_sdlc_cov : cover
+    --  {tran_frame_test.sdlc = '1' and drv_tstm_ena = '1'};
+
 end architecture;
