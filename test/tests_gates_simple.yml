@@ -100,7 +100,8 @@ feature:
         fault_state:
 
         frame_test_fstc:
-        
+        frame_test_fcrc:
+
         glitch_filtering:
 
         invalid_frames:
