@@ -291,6 +291,7 @@ test_compliance_full_max:
 test_gates_simple:
     stage: test_gates
     dependencies: [build_ip_and_tests, run_synthesis]
+    timeout: 3h
     only:
         - master
     script:
@@ -312,6 +313,7 @@ test_gates_simple:
 test_gates_compliance:
     stage: test_gates
     dependencies: [build_ip_and_tests, run_synthesis]
+    timeout: 3h
     only:
         - master
     script:
