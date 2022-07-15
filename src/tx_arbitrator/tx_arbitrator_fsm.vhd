@@ -329,7 +329,7 @@ begin
     -- TX Arbitrator FSM outputs
     ------------------------------------------------------------------------------
     tx_arb_fsm_out_proc : process(curr_state, fsm_wait_state_q, timestamp_valid,
-        select_index_changed, select_buf_avail, txtb_hw_cmd)
+        select_index_changed, select_buf_avail, txtb_hw_cmd, parity_error_vld)
     begin
         
         -- By default all outputs are inactive
@@ -479,8 +479,11 @@ begin
                 load_ts_lw_addr  <= '1';
 
             elsif (fsm_wait_state_q = '0') then
-                commit_dbl_bufs     <= '1';
-                frame_valid_com_set <= '1';
+                if (parity_error_vld = '0') then
+                    commit_dbl_bufs     <= '1';
+                    frame_valid_com_set <= '1';
+                end if;
+
                 tx_arb_parity_check_valid <= '1';
             end if;
 

@@ -233,7 +233,7 @@ package body mode_txbbm_5_ftest is
 
             send_TXT_buf_cmd(buf_set_ready, txt_buf_vector, DUT_NODE, chn);
 
-            wait for 200 ns;
+            wait for 300 ns;
 
             -- Check transmission from "original" TXT Buffer
             get_tx_buf_state(txt_buf_index, txt_buf_state, DUT_NODE, chn);
