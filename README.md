@@ -103,7 +103,7 @@ Results: [Area](http://canbus.pages.fel.cvut.cz/ctucanfd_ip_core/synthesis/typic
 
 #### Maximal:
 
-8 TXT Buffers, 4096 word RX Buffer, all frame filters  
+8 TXT Buffers, 1024 word RX Buffer, all frame filters  
 Results: [Area](http://canbus.pages.fel.cvut.cz/ctucanfd_ip_core/synthesis/maximal_design_config/utilization.rpt) 
 [Timing](http://canbus.pages.fel.cvut.cz/ctucanfd_ip_core/synthesis/maximal_design_config/timing_summary.rpt)
 
