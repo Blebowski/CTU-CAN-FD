@@ -48,7 +48,7 @@ set DESIGN_CONFIGS [list \
      name "maximal_design_config" \
      generics \
         [ dict create \
-         rx_buffer_size         4096 \
+         rx_buffer_size         1024 \
          txt_buffer_count       8 \
          sup_filtA              "1'b1" \
          sup_filtB              "1'b1" \
