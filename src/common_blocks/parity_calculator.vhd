@@ -92,8 +92,6 @@ end parity_calculator;
 
 architecture rtl of parity_calculator is
 
-    signal parity_raw   : std_logic;
-
 begin
 
     ---------------------------------------------------------------------------

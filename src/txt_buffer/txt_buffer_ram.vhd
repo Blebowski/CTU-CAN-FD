@@ -292,6 +292,7 @@ begin
         parity_read_exp <= '0';
         parity_read_real <= '0';
         parity_write <= '0';
+        parity_word <= (others => '0');
     end generate;
     
 

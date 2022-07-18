@@ -181,7 +181,7 @@ begin
     ----------------------------------------------------------------------------
     ram_rst_true_gen : if (G_RESETABLE) generate
         
-        ram_write_process : process(clk_sys)
+        ram_write_process : process(clk_sys, res_n)
         begin
             if (res_n = '0') then
                 ram_memory <= (others => (others => '0'));
