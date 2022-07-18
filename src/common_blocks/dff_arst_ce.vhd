@@ -90,13 +90,13 @@ entity dff_arst_ce is
         clk                : in    std_logic;
 
         -- Data input (D)
-        input              : in    std_logic;
+        reg_d              : in    std_logic;
         
         -- Clock enable (CE)
         ce                 : in    std_logic;
         
         -- Data output (Q)
-        output             : out   std_logic
+        reg_q              : out   std_logic
     );
 end dff_arst_ce;
 
@@ -107,11 +107,11 @@ begin
     dff_proc : process (clk, arst)
     begin
         if (arst = G_RESET_POLARITY) then
-            output     <= G_RST_VAL;
+            reg_q     <= G_RST_VAL;
 
         elsif (rising_edge(clk)) then
             if (ce = '1') then
-                output <= input;
+                reg_q <= reg_d;
             end if;
         end if;
     end process;

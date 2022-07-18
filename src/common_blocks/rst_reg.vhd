@@ -122,9 +122,9 @@ begin
     port map(
         arst               => arst,         -- IN
         clk                => clk,          -- IN
-        input              => d,            -- IN
+        reg_d              => d,            -- IN
 
-        output             => q_i           -- OUT
+        reg_q              => q_i           -- OUT
     );
 
     ---------------------------------------------------------------------------

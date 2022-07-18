@@ -247,9 +247,9 @@ begin
     port map(
         arst               => res_n,            -- IN
         clk                => clk_sys,          -- IN
-        input              => tx_trigger,       -- IN
+        reg_d              => tx_trigger,       -- IN
         
-        output             => tx_trigger_q      -- OUT
+        reg_q              => tx_trigger_q      -- OUT
     );
 
     crc_trig_tx_wbs <= '0' when (fixed_stuff = '1' and data_halt = '1') else
@@ -271,10 +271,10 @@ begin
     port map(
         arst               => res_n,            -- IN
         clk                => clk_sys,          -- IN
-        input              => bds_data_in,      -- IN
+        reg_d              => bds_data_in,      -- IN
         ce                 => rx_triggers(1),   -- IN
         
-        output             => crc_data_rx_wbs   -- OUT
+        reg_q              => crc_data_rx_wbs   -- OUT
     );
     
     crc_trig_rx_wbs <= '0' when (fixed_stuff = '1' and destuffed = '1') else

@@ -112,7 +112,7 @@ entity shift_reg is
         reg_stat             : out   std_logic_vector(G_WIDTH - 1 downto 0);
 
         -- Register output
-        output               : out   std_logic
+        reg_output           : out   std_logic
     );
 end shift_reg;
 
@@ -130,12 +130,12 @@ begin
     ---------------------------------------------------------------------------
     shift_down_gen : if (G_SHIFT_DOWN) generate
         next_shift_reg_val  <= input & shift_regs(G_WIDTH - 1 downto 1);
-        output              <= shift_regs(0);
+        reg_output          <= shift_regs(0);
     end generate shift_down_gen;
 
     shift_up_gen : if (not G_SHIFT_DOWN) generate
         next_shift_reg_val  <= shift_regs(G_WIDTH - 2 downto 0) & input;
-        output              <= shift_regs(G_WIDTH - 1);
+        reg_output          <= shift_regs(G_WIDTH - 1);
     end generate shift_up_gen;
 
 

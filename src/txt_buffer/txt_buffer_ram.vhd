@@ -188,7 +188,6 @@ architecture rtl of txt_buffer_ram is
     signal tst_addr              : std_logic_vector(15 downto 0);
 
     signal parity_word           : std_logic_vector(C_TXT_BUF_DEPTH - 1 downto 0);
-    signal parity_write          : std_logic;
     signal parity_read_real      : std_logic;
     signal parity_read_exp       : std_logic;
 
@@ -281,7 +280,6 @@ begin
         parity_mismatch <= '0';
         parity_read_exp <= '0';
         parity_read_real <= '0';
-        parity_write <= '0';
         parity_word <= (others => '0');
     end generate;
     
