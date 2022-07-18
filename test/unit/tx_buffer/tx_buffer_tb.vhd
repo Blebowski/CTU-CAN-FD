@@ -299,6 +299,7 @@ begin
         txtb_hw_cmd_int         => txtb_hw_cmd_int,
         txtb_hw_cmd_index       => txtb_hw_cmd_index,
         txtb_index_muxed        => 0,
+        txtb_port_a_parity      => '0',
         txtb_parity_check_valid => '0',
         drv_rom_ena             => '0',
         drv_bus_mon_ena         => '0',
