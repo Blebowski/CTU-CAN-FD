@@ -288,9 +288,9 @@ begin
     port map(
         arst               => res_n,        -- IN
         clk                => clk_sys,      -- IN
-        input              => int_i,        -- IN
+        reg_d              => int_i,        -- IN
 
-        output             => int           -- OUT
+        reg_q              => int           -- OUT
     );
 
     -- <RELEASE_OFF>

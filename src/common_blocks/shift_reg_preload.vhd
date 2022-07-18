@@ -115,7 +115,7 @@ entity shift_reg_preload is
         reg_stat             : out   std_logic_vector(G_WIDTH - 1 downto 0);
 
         -- Shift register output
-        output               : out   std_logic
+        reg_output           : out   std_logic
     );
 end shift_reg_preload;
 
@@ -132,7 +132,7 @@ begin
     -- Calculation of next shift register value
     ---------------------------------------------------------------------------
     next_shift_reg_val  <= shift_regs(G_WIDTH - 2 downto 0) & input;
-    output              <= shift_regs(G_WIDTH - 1);
+    reg_output          <= shift_regs(G_WIDTH - 1);
 
     ---------------------------------------------------------------------------
     -- Implementation of a shift register

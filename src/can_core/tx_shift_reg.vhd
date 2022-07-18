@@ -341,7 +341,7 @@ begin
         input                => '0',
         
         reg_stat             => open,
-        output               => tx_sr_output
+        reg_output           => tx_sr_output
     );
 
     ---------------------------------------------------------------------------

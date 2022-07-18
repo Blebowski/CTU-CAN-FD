@@ -280,6 +280,9 @@ architecture rtl of can_top_level is
     -- TXT Buffer RAM - Data input
     signal txtb_port_a_data     :    std_logic_vector(31 downto 0);
     
+    -- TXT Buffer RAM - Parity input
+    signal txtb_port_a_parity   :    std_logic;
+
     -- TXT Buffer RAM - Address
     signal txtb_port_a_address  :    std_logic_vector(4 downto 0);
     
@@ -741,6 +744,26 @@ begin
         tst_rdata_rx_buf        => tst_rdata_rx_buf         -- OUT
     );
 
+    -----------------------------------------------------------------------
+    -- TXT Buffer port A parity encoding
+    -----------------------------------------------------------------------
+    txtb_parity_true_gen : if (sup_parity) generate
+        txtb_port_a_parity_calculator_inst : entity ctu_can_fd_rtl.parity_calculator
+        generic map (
+            G_WIDTH         => 32,
+            G_PARITY_TYPE   => C_PARITY_TYPE
+        )
+        port map(
+            data_in         => txtb_port_a_data,
+            parity          => txtb_port_a_parity
+        );
+    end generate;
+
+    txtb_parity_false_gen : if (not sup_parity) generate
+        txtb_port_a_parity <= '0';
+    end generate;
+    
+
     ---------------------------------------------------------------------------
     -- TXT Buffers
     ---------------------------------------------------------------------------
@@ -763,6 +786,7 @@ begin
 
             -- Memory Registers Interface
             txtb_port_a_data        => txtb_port_a_data,                -- IN
+            txtb_port_a_parity      => txtb_port_a_parity,              -- IN
             txtb_port_a_address     => txtb_port_a_address,             -- IN
             txtb_port_a_cs          => txtb_port_a_cs(i),               -- IN
             txtb_port_a_be          => txtb_port_a_be,                  -- IN

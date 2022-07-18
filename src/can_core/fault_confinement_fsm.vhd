@@ -232,9 +232,9 @@ begin
     port map(
         arst               => res_n,                -- IN
         clk                => clk_sys,              -- IN
-        input              => fc_fsm_res_d,         -- IN
+        reg_d              => fc_fsm_res_d,         -- IN
 
-        output             => fc_fsm_res_q          -- OUT
+        reg_q              => fc_fsm_res_q          -- OUT
     );
     
     ---------------------------------------------------------------------------

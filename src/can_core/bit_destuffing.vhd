@@ -220,9 +220,9 @@ begin
     port map(
         arst               => res_n,            -- IN
         clk                => clk_sys,          -- IN
-        input              => destuff_enable,   -- IN
+        reg_d              => destuff_enable,   -- IN
         
-        output             => enable_prev       -- OUT
+        reg_q              => enable_prev       -- OUT
     );
 
     ---------------------------------------------------------------------------
@@ -294,10 +294,10 @@ begin
     port map(
         arst               => res_n,            -- IN
         clk                => clk_sys,          -- IN
-        input              => fixed_prev_d,     -- IN
+        reg_d              => fixed_prev_d,     -- IN
         ce                 => destuff_enable,   -- IN
         
-        output             => fixed_prev_q      -- OUT
+        reg_q              => fixed_prev_q      -- OUT
     );
 
 
@@ -406,9 +406,9 @@ begin
     port map(
         arst               => res_n,            -- IN
         clk                => clk_sys,          -- IN
-        input              => destuffed_d,      -- IN
+        reg_d              => destuffed_d,      -- IN
         
-        output             => destuffed_q       -- OUT
+        reg_q              => destuffed_q       -- OUT
     );
 
 
@@ -432,9 +432,9 @@ begin
     port map(
         arst               => res_n,            -- IN
         clk                => clk_sys,          -- IN
-        input              => stuff_err_d,      -- IN
+        reg_d              => stuff_err_d,      -- IN
         
-        output             => stuff_err_q       -- OUT
+        reg_q              => stuff_err_q       -- OUT
     );
 
 
@@ -460,9 +460,9 @@ begin
     port map(
         arst               => res_n,            -- IN
         clk                => clk_sys,          -- IN
-        input              => prev_val_d,       -- IN
+        reg_d              => prev_val_d,       -- IN
         
-        output             => prev_val_q        -- OUT
+        reg_q              => prev_val_q        -- OUT
     );
 
 
@@ -480,9 +480,9 @@ begin
         arst               => res_n,
         clk                => clk_sys,
 
-        input              => data_in,
+        reg_d              => data_in,
         ce                 => bds_trigger,
-        output             => data_out
+        reg_q              => data_out
     );
 
     ---------------------------------------------------------------------------

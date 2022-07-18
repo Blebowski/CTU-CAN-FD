@@ -79,6 +79,7 @@ use ieee.math_real.ALL;
 Library ctu_can_fd_rtl;
 use ctu_can_fd_rtl.id_transfer_pkg.all;
 use ctu_can_fd_rtl.can_constants_pkg.all;
+use ctu_can_fd_rtl.can_config_pkg.all;
 use ctu_can_fd_rtl.can_types_pkg.all;
 use ctu_can_fd_rtl.drv_stat_pkg.all;
 use ctu_can_fd_rtl.unary_ops_pkg.all;
@@ -88,14 +89,41 @@ use ctu_can_fd_rtl.CAN_FD_frame_format.all;
 
 entity can_top_ahb is
     generic(
-        rx_buffer_size      : natural range 32 to 4098 := 128;
-        txt_buffer_count    : natural range 2 to 8     := 4;
-        sup_filtA           : boolean                  := true;
-        sup_filtB           : boolean                  := true;
-        sup_filtC           : boolean                  := true;
-        sup_range           : boolean                  := true;
-        sup_traffic_ctrs    : boolean                  := true;
-        sup_test_registers  : boolean                  := true
+        -- RX Buffer RAM size (32 bit words)
+        rx_buffer_size          : natural range 32 to 4096  := 32;
+
+        -- Number of supported TXT buffers
+        txt_buffer_count        : natural range 2 to 8      := C_TXT_BUFFER_COUNT; 
+
+        -- Synthesize Filter A
+        sup_filtA               : boolean                   := false;
+        
+        -- Synthesize Filter B
+        sup_filtB               : boolean                   := false;
+        
+        -- Synthesize Filter C
+        sup_filtC               : boolean                   := false;
+        
+        -- Synthesize Range Filter
+        sup_range               : boolean                   := false;
+        
+        -- Synthesize Test registers
+        sup_test_registers      : boolean                   := true;
+        
+        -- Insert Traffic counters
+        sup_traffic_ctrs        : boolean                   := false;
+
+        -- Add parity bit to TXT Buffer and RX Buffer RAMs
+        sup_parity              : boolean                   := false;
+
+        -- Number of active timestamp bits
+        active_timestamp_bits   : natural range 0 to 63     := 63;
+
+        -- Reset TXT / RX Buffer RAMs
+        reset_buffer_rams       : boolean                   := false;
+
+        -- Target technology (ASIC or FPGA)
+        target_technology       : natural                   := C_TECH_FPGA
     );
     port(
         -----------------------------------------------------------------------
@@ -162,14 +190,18 @@ begin
 
     can_inst : entity ctu_can_fd_rtl.can_top_level
     generic map (
-        rx_buffer_size      => rx_buffer_size,
-        txt_buffer_count    => txt_buffer_count,
-        sup_filtA           => sup_filtA,
-        sup_filtB           => sup_filtB,
-        sup_filtC           => sup_filtC,
-        sup_range           => sup_range,
-        sup_traffic_ctrs    => sup_traffic_ctrs,
-        sup_test_registers  => sup_test_registers 
+        rx_buffer_size          => rx_buffer_size,
+        txt_buffer_count        => txt_buffer_count,
+        sup_filtA               => sup_filtA,
+        sup_filtB               => sup_filtB,
+        sup_filtC               => sup_filtC,
+        sup_range               => sup_range,
+        sup_test_registers      => sup_test_registers,
+        sup_traffic_ctrs        => sup_traffic_ctrs,
+        sup_parity              => sup_parity,
+        active_timestamp_bits   => active_timestamp_bits,
+        reset_buffer_rams       => reset_buffer_rams,
+        target_technology       => target_technology
     )
     port map (
         clk_sys         => hclk,

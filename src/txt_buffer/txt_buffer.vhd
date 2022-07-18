@@ -131,6 +131,9 @@ entity txt_buffer is
         -- Data to be written to TXT Buffer RAM
         txtb_port_a_data        :in   std_logic_vector(31 downto 0);
         
+        -- Parity bit
+        txtb_port_a_parity      :in   std_logic;
+
         -- Address in TXT Buffer RAM
         txtb_port_a_address     :in   std_logic_vector(4 downto 0);
 
@@ -375,6 +378,7 @@ begin
         -- Port A - Write (from Memory registers)
         port_a_address          => txtb_port_a_address,    -- IN
         port_a_data_in          => txtb_port_a_data,       -- IN
+        port_a_parity           => txtb_port_a_parity,     -- IN
         port_a_write            => ram_write,              -- IN
         port_a_be               => txtb_port_a_be,         -- IN
 

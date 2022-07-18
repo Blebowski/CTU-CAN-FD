@@ -369,9 +369,9 @@ begin
     port map(
         arst               => res_n,                -- IN
         clk                => clk_sys,              -- IN
-        input              => tx_trigger,           -- IN
+        reg_d              => tx_trigger,           -- IN
         
-        output             => tx_trigger_q          -- OUT
+        reg_q              => tx_trigger_q          -- OUT
     );
 
     ----------------------------------------------------------------------------

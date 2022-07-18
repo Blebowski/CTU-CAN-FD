@@ -140,10 +140,7 @@ entity operation_control is
 end entity;
 
 architecture rtl of operation_control is
-    
-    -- CTU CAN FD is enabled
-    signal drv_ena           :     std_logic;
-    
+
     -- Operation control FSM
     signal curr_state        :     t_operation_control_state;
     signal next_state        :     t_operation_control_state;

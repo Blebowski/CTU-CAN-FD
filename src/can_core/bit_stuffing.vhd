@@ -245,9 +245,9 @@ begin
     port map(
         arst               => res_n,            -- IN
         clk                => clk_sys,          -- IN
-        input              => stuff_enable,     -- IN
+        reg_d              => stuff_enable,     -- IN
         
-        output             => enable_prev       -- OUT
+        reg_q              => enable_prev       -- OUT
     );
 
     ---------------------------------------------------------------------------
@@ -280,10 +280,10 @@ begin
     port map(
         arst               => res_n,            -- IN
         clk                => clk_sys,          -- IN
-        input              => fixed_reg_d,      -- IN
+        reg_d              => fixed_reg_d,      -- IN
         ce                 => stuff_enable,     -- IN
         
-        output             => fixed_reg_q       -- OUT
+        reg_q              => fixed_reg_q       -- OUT
     );
 
     ---------------------------------------------------------------------------    
@@ -447,10 +447,10 @@ begin
     port map(
         arst               => res_n,            -- IN
         clk                => clk_sys,          -- IN
-        input              => data_out_d,       -- IN
+        reg_d              => data_out_d,       -- IN
         ce                 => data_out_ce,      -- IN
         
-        output             => data_out_i        -- OUT
+        reg_q              => data_out_i        -- OUT
     );
 
 
@@ -489,9 +489,9 @@ begin
     port map(
         arst               => res_n,            -- IN
         clk                => clk_sys,          -- IN
-        input              => data_halt_d,      -- IN
+        reg_d              => data_halt_d,      -- IN
         
-        output             => data_halt_q       -- OUT
+        reg_q              => data_halt_q       -- OUT
     );
 
 

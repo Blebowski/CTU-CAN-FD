@@ -139,6 +139,9 @@ entity txt_buffer_ram is
         
         -- Data
         port_a_data_in       :in     std_logic_vector(31 downto 0);
+
+        -- Parity bit
+        port_a_parity        :in     std_logic;
         
         -- Write signal
         port_a_write         :in     std_logic;
@@ -185,7 +188,6 @@ architecture rtl of txt_buffer_ram is
     signal tst_addr              : std_logic_vector(15 downto 0);
 
     signal parity_word           : std_logic_vector(C_TXT_BUF_DEPTH - 1 downto 0);
-    signal parity_write          : std_logic;
     signal parity_read_real      : std_logic;
     signal parity_read_exp       : std_logic;
 
@@ -226,19 +228,6 @@ begin
     parity_true_gen : if (G_SUP_PARITY) generate
 
         -----------------------------------------------------------------------
-        -- Parity encoding
-        -----------------------------------------------------------------------
-        parity_calculator_write_inst : entity ctu_can_fd_rtl.parity_calculator
-        generic map (
-            G_WIDTH         => 32,
-            G_PARITY_TYPE   => C_PARITY_TYPE
-        )
-        port map(
-            data_in         => port_a_data_in,
-            parity          => parity_write
-        );
-
-        -----------------------------------------------------------------------
         -- Storing Parity word
         -----------------------------------------------------------------------
         parity_word_proc : process(res_n, clk_sys)
@@ -248,7 +237,7 @@ begin
             elsif rising_edge(clk_sys) then
                 if (port_a_write = '1') then
                     parity_word(to_integer(unsigned(port_a_address))) <=
-                        parity_write;
+                        port_a_parity;
                 end if;
             end if;
         end process;
@@ -291,7 +280,7 @@ begin
         parity_mismatch <= '0';
         parity_read_exp <= '0';
         parity_read_real <= '0';
-        parity_write <= '0';
+        parity_word <= (others => '0');
     end generate;
     
 

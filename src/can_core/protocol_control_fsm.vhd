@@ -1007,7 +1007,7 @@ begin
     -- Next state process
     ---------------------------------------------------------------------------
     next_state_proc : process(
-        curr_state, drv_ena, err_frm_req, ctrl_ctr_zero, no_data_field,
+        curr_state, err_frm_req, ctrl_ctr_zero, no_data_field,
         is_receiver, is_fd_frame,
         is_bus_off, go_to_suspend, tx_frame_ready, drv_bus_off_reset_q,
         reinteg_ctr_expired, rx_data_nbs, is_err_active, go_to_stuff_count,
@@ -1030,7 +1030,7 @@ begin
             case curr_state is
     
             -------------------------------------------------------------------
-            -- Unit is Off (drv_ena = '0')
+            -- Unit is Off
             -------------------------------------------------------------------
             when s_pc_off =>
                 next_state <= s_pc_integrating;
@@ -1603,7 +1603,7 @@ begin
             case curr_state is
 
             -------------------------------------------------------------------
-            -- Unit is Off (drv_ena = '0')
+            -- Unit is Off
             -------------------------------------------------------------------
             when s_pc_off =>
                 if (drv_ena = CTU_CAN_ENABLED) then
