@@ -1,3 +1,6 @@
 [submodule "pyXact_generator"]
 	path = scripts/pyXact_generator
 	url = https://github.com/Blebowski/Reg_Map_Gen
+[submodule "test/main_tb/iso-16845-compliance-tests"]
+	path = test/main_tb/iso-16845-compliance-tests
+	url = https://gitlab.com/Ondrej_Ille/iso-16845-compliance-tests.git
