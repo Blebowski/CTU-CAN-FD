@@ -280,7 +280,7 @@ def main_tb_configure(tb, config, build) -> None:
 
             # Link compliance test library
             if (test_type == "compliance"):
-                loc_opts['ghdl.sim_flags'] = ["--vpi=../main_tb/compliance_library/libSIMULATOR_INTERFACE_LIB.so"]
+                loc_opts['ghdl.sim_flags'] = ["--vpi=../main_tb/iso-16845-compliance-tests/build/Release/src/simulator_interface/libSIMULATOR_INTERFACE_LIB.so"]
 
             test_cfg = loc_cfg.copy()
             dict_merge(loc_cfg, def_cfg)
