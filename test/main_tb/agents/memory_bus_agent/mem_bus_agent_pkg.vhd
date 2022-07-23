@@ -615,6 +615,8 @@ package body mem_bus_agent_pkg is
             when 3 =>
                 be := "1000";
                 write_data(31 downto 24) := data_in;
+            when others =>
+                error_m("Unreachable code -> Simulator bug?");
             end case;
         when 16 =>
             case (address mod 4) is
@@ -652,6 +654,8 @@ package body mem_bus_agent_pkg is
                 be := "0100";
             when 3 =>
                 be := "1000";
+            when others =>
+                error_m("Unreachable code -> Simulator bug?");
             end case;
         when 16 =>
             case (address mod 4) is

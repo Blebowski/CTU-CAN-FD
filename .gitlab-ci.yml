@@ -50,6 +50,19 @@ build_ip_and_tests:
         - triggers   # Run by trigger (on merge request)
         - web        # Run by manual request from web UI
 
+
+build_compliance_lib:
+    stage: build
+    script:
+        - cd test/main_tb/iso-16845-compliance-tests/
+        - source ./build.sh
+    artifacts:
+        paths:
+            - test/main_tb/iso-16845-compliance-tests/build/Release/src/simulator_interface/libSIMULATOR_INTERFACE_LIB.so
+            - test/main_tb/iso-16845-compliance-tests/build/Debug/src/simulator_interface/libSIMULATOR_INTERFACE_LIB.so
+    only: *only
+
+
 build_driver:
     stage: build
     only: *only
@@ -218,7 +231,7 @@ test_nightly:
 ###############################################################################
 test_compliance_short:
     stage: test_rtl
-    dependencies: [build_ip_and_tests]
+    dependencies: [build_ip_and_tests, build_compliance_lib]
     only: *only
     script:
         - cd test
@@ -238,7 +251,7 @@ test_compliance_short:
     
 test_compliance_full_typ:
     stage: test_rtl
-    dependencies: [build_ip_and_tests]
+    dependencies: [build_ip_and_tests, build_compliance_lib]
     only:
         - master
     script:
@@ -262,7 +275,7 @@ test_compliance_full_typ:
 
 test_compliance_full_max:
     stage: test_rtl
-    dependencies: [build_ip_and_tests]
+    dependencies: [build_ip_and_tests, build_compliance_lib]
     only:
         - master
     script:
@@ -312,7 +325,7 @@ test_gates_simple:
 
 test_gates_compliance:
     stage: test_gates
-    dependencies: [build_ip_and_tests, run_synthesis]
+    dependencies: [build_ip_and_tests, run_synthesis, build_compliance_lib]
     timeout: 6h
     only:
         - master
@@ -400,7 +413,7 @@ pages:
         - cp test/test_list.txt public/
 
         # Compliance test library
-        - cp test/main_tb/compliance_library/libSIMULATOR_INTERFACE_LIB.so public/
+        - cp test/main_tb/iso-16845-compliance-tests/build/Release/src/simulator_interface/libSIMULATOR_INTERFACE_LIB.so public/
 
         # Copy regression results and code coverage
         - cp test/tests_*.gz public/regression_results/
