@@ -198,19 +198,20 @@ begin
     -- Clock generation process
     ---------------------------------------------------------------------------
     clk_gen_proc : process
-        variable t_high_with_jitter : time := t_high;
-        variable t_low_with_jitter : time := t_low;
+        variable t_high_with_jitter : time;
+        variable t_low_with_jitter : time;
         variable rand_real : real;
         variable rand_jitter : time;
         variable seed1 : positive := 1;
         variable seed2 : positive := 1;
-        variable jitter_div_2 : time := jitter / 2;
+        variable jitter_div_2 : time;
     begin
         if (enabled) then
             
             if (jitter > 0 fs) then
                 uniform(seed1, seed2, rand_real);
                 rand_jitter := jitter * rand_real;
+                jitter_div_2 := jitter / 2;
                 t_high_with_jitter := (period + rand_jitter - jitter_div_2) * (real(duty) / 100.0);
                 t_low_with_jitter := (period + rand_jitter - jitter_div_2) * (1.0 - (real(duty) / 100.0));
 
