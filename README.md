@@ -40,13 +40,14 @@ Functional description of CTU CAN FD is described in:
 
 ## Test-bench
 
-CTU CAN FD has its own VIP (verification IP) with ISO 16845-1 2016 compliance sequence, which is easy to integrate to other
-system level test-bench. In addition to ISO 11898-1 compliance, all other features of CTU CAN FD are verified.
+CTU CAN FD has itw own Test-bench and VIP (verification IP) with ISO 16845-1 2016 compliance sequence, which is easy
+to integrate to other system level test-bench. In addition to ISO 11898-1 compliance, all other features of
+CTU CAN FD are verified.
 
-There are 3 types of tests available:
-- Feature tests (open-source)
-- Reference tests (open-source)
-- Compliance tests (only binary open-source, source code available upon agreement).
+There are 3 types of tests available in CTU CAN FD testbench:
+- Feature tests (open-source, VHDL)
+- Reference tests (open-source, VHDL)
+- Compliance tests (open-source, C++ library linked to simulation, [ISO16845 Compliance library](https://gitlab.com/Ondrej_Ille/iso-16845-compliance-tests)).
 
 TB has extensive PSL functional coverage, see regression coverage in:
 [![Functional coverage](https://img.shields.io/badge/functional%20coverage--orange.svg)](http://canbus.pages.fel.cvut.cz/ctucanfd_ip_core/regression_results/functional_coverage/functional_coverage_report.html)
@@ -127,7 +128,7 @@ Delivery package contains:
 
 RTL CAN be easily integrated with help of [![System architecture](https://img.shields.io/badge/System_architecture--blue.svg)]( http://canbus.pages.fel.cvut.cz/ctucanfd_ip_core/doc/System_Architecture.pdf) document.
 
-VIP can be easily integrated into other test-bench with help of [![Testbench architecture](https://img.shields.io/badge/Testbench--blue.svg)]( http://canbus.pages.fel.cvut.cz/ctucanfd_ip_core/doc/Testbench.pdf) document. Note that running compliance tests requires access to Compliance test library which is only available with commercial agreement.
+VIP can be easily integrated into other test-bench with help of [![Testbench architecture](https://img.shields.io/badge/Testbench--blue.svg)]( http://canbus.pages.fel.cvut.cz/ctucanfd_ip_core/doc/Testbench.pdf) document.
 
 If you like the design, and would like to use-it, let us know. We are looking for co-operation,
 especially on ISO certification which is a big step which we would need partners for. Please,
