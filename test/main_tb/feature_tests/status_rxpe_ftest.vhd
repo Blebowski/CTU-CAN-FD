@@ -73,20 +73,23 @@
 --  STATUS[RXPE] feature test.
 --
 -- @Verifies:
---  @1. STATUS[RXPE] is set when there is a parity error detected in RX Buffer
+--  @1. STATUS[RXPE] is set when there is a parity error inserted in RX Buffer
 --      RAM and SETTINGS[PCHKE] = 1.
 --  @2. STATUS[RXPE] is cleared by COMMAND[CRXPE].
+--  @3. STATUS[RXPE] is not set when SETTINGS[PCHKE] = 0, and there is parity
+--      error inserted in RX Buffer RAM.
 --
 -- @Test sequence:
 --  @1. Set DUT to test mode.
 --  @2. Loop 10 times.
---      @2.1. Generate random CAN Frame, and send it by Test node. Wait until
---            frame is received by DUT.
---      @2.2 Read CAN frame from DUT via Test registers. Flip random bit in the
+--      @2.1 Randomly enable/disable parity enable!
+--      @2.2 Generate random CAN Frame, and send it by Test node. Wait until
+--           frame is received by DUT.
+--      @2.3 Read CAN frame from DUT via Test registers. Flip random bit in the
 --           CAN frame, and store it right back. This should corrupt parity
 --           bit value and cause parity error.
---      @2.3 Read CAN frame via RX_DATA register. Check that STATUS[RXPE]=1.
---      @2.4 Write COMMAND[CRXPE]=1, then read STATUS register and check that
+--      @2.4 Read CAN frame via RX_DATA register. Check that STATUS[RXPE]=1.
+--      @2.5 Write COMMAND[CRXPE]=1, then read STATUS register and check that
 --           STATUS[RXPE]=0.
 --
 -- @TestInfoEnd
@@ -135,13 +138,13 @@ package body status_rxpe_ftest is
         variable corrupt_wrd_index  :     integer;
         variable corrupt_bit_index  :     integer;
         variable corrupt_insert     :     std_logic;
+        variable prt_en             :     std_logic;
     begin
 
         -----------------------------------------------------------------------
         -- @1. Set DUT to test mode.
         -----------------------------------------------------------------------
         mode_1.test := true;
-        mode_1.parity_check := true;
         set_core_mode(mode_1, DUT_NODE, chn);
         get_rx_buf_state(rx_buf_status, DUT_NODE, chn);
 
@@ -149,10 +152,23 @@ package body status_rxpe_ftest is
             info_m("Loop nr.: " & integer'image(i));
 
             -------------------------------------------------------------------
-            -- @2.1. Generate random CAN Frame, and send it by Test node. Wait 
-            --       until frame is received by DUT.
+            -- @2.1 
             -------------------------------------------------------------------
             info_m("Step 2.1");
+
+            rand_logic_v(prt_en, 0.5);
+            if (prt_en = '1') then
+                mode_1.parity_check := true;
+            else
+                mode_1.parity_check := false;
+            end if;
+            set_core_mode(mode_1, DUT_NODE, chn);
+
+            -------------------------------------------------------------------
+            -- @2.2. Generate random CAN Frame, and send it by Test node. Wait 
+            --       until frame is received by DUT.
+            -------------------------------------------------------------------
+            info_m("Step 2.2");
 
             CAN_generate_frame(frame_1);
             CAN_send_frame(frame_1, 1, TEST_NODE, chn, frame_sent);
@@ -162,11 +178,11 @@ package body status_rxpe_ftest is
             mem_bus_agent_disable_transaction_reporting(chn);
 
             -------------------------------------------------------------------
-            -- @2.2. Read CAN frame from DUT via Test registers. Flip random
+            -- @2.3. Read CAN frame from DUT via Test registers. Flip random
             --       bit in the CAN frame, and store it right back. This should
             --       corrupt parity bit value and cause parity error.
             -------------------------------------------------------------------
-            info_m("Step 2.2");
+            info_m("Step 2.3");
 
             -- Read FRAME_FORMAT_W and Decode number of remaining words in
             -- the frame
@@ -209,10 +225,10 @@ package body status_rxpe_ftest is
             set_test_mem_access(false, DUT_NODE, chn);
 
             -------------------------------------------------------------------
-            -- @2.3 Read CAN frame via RX_DATA register.
+            -- @2.4 Read CAN frame via RX_DATA register.
             --      Check that STATUS[RXPE]=1.
             -------------------------------------------------------------------
-            info_m("Step 2.3");
+            info_m("Step 2.4");
 
             -- Frame is corrupted, but we got RWCNT uncorrupted due to original
             -- read. Get it from RX Buffer. Note that if we read more words
@@ -225,16 +241,28 @@ package body status_rxpe_ftest is
             get_controller_status(stat_1, DUT_NODE, chn);
 
             if (corrupt_insert = '1') then
-                check_m(stat_1.rx_parity_error, "DUT: STATUS[RXPE] not set, but parity error was inserted!");
+                if (mode_1.parity_check) then
+                    check_m(stat_1.rx_parity_error,
+                        "MODE[PCHKE]=1 -> STATUS[RXPE]=1 when parity error was inserted!");
+                else
+                    check_false_m(stat_1.rx_parity_error,
+                        "MODE[PCHKE]=0 -> STATUS[RXPE]=0 when parity error was inserted!");
+                end if;
             else
-                check_false_m(stat_1.rx_parity_error, "DUT: STATUS[RXPE] set, but parity error was NOT inserted!");
+                if (mode_1.parity_check) then
+                    check_false_m(stat_1.rx_parity_error,
+                        "MODE[PCHKE]=1 -> STATUS[RXPE]=0 when parity error was NOT inserted!");
+                else
+                    check_false_m(stat_1.rx_parity_error,
+                        "MODE[PCHKE]=0 -> STATUS[RXPE]=0 when parity error was NOT inserted!");
+                end if;
             end if;
 
             -------------------------------------------------------------------
-            -- @2.4 Write COMMAND[CRXPE]=1, then read STATUS register and check
+            -- @2.5 Write COMMAND[CRXPE]=1, then read STATUS register and check
             --      that STATUS[RXPE]=0.
             -------------------------------------------------------------------
-            info_m("Step 2.4");
+            info_m("Step 2.5");
 
             command_1.clear_rxpe := true;
             give_controller_command(command_1, DUT_NODE, chn);
@@ -265,7 +293,8 @@ package body status_rxpe_ftest is
             command_1.clear_rxpe := false;
             command_1.release_rec_buffer := true;
             give_controller_command(command_1, DUT_NODE, chn);
-            rptr_pos := 0; 
+            rptr_pos := 0;
+
         end loop;
 
   end procedure;
