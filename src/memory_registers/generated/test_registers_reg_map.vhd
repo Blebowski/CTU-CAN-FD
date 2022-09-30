@@ -83,8 +83,7 @@ generic (
     constant DATA_WIDTH          : natural := 32;
     constant ADDRESS_WIDTH       : natural := 8;
     constant REGISTERED_READ     : boolean := true;
-    constant CLEAR_READ_DATA     : boolean := true;
-    constant RESET_POLARITY      : std_logic := '0'
+    constant CLEAR_READ_DATA     : boolean := true
 );
 port (
     signal clk_sys               :in std_logic;
@@ -111,7 +110,7 @@ architecture rtl of test_registers_reg_map is
   signal read_data_mux_in : std_logic_vector(127 downto 0);
   signal read_data_mask_n : std_logic_vector(31 downto 0);
   signal test_registers_out_i : Test_registers_out_t;
-  signal read_mux_ena                : std_logic;
+  signal write_en : std_logic_vector(3 downto 0);
 begin
 
     ----------------------------------------------------------------------------
@@ -123,8 +122,7 @@ begin
         address_width                   => 6 ,
         address_entries                 => 4 ,
         addr_vect                       => ADDR_VECT ,
-        registered_out                  => false ,
-        reset_polarity                  => RESET_POLARITY 
+        registered_out                  => false 
     )
     port map(
         clk_sys                         => clk_sys ,-- in
@@ -135,87 +133,184 @@ begin
     );
 
     ----------------------------------------------------------------------------
-    -- TST_CONTROL register
+    -- TST_CONTROL[TMAENA]
     ----------------------------------------------------------------------------
 
-    tst_control_reg_comp : memory_reg
+    tst_control_tmaena_reg_comp : memory_reg_lockable
     generic map(
-        data_width                      => 32 ,
-        data_mask                       => "00000000000000000000000000000011" ,
-        reset_polarity                  => RESET_POLARITY ,
-        reset_value                     => "00000000000000000000000000000000" ,
-        auto_clear                      => "00000000000000000000000000000010" ,
-        is_lockable                     => true 
+        data_width                      => 1 ,
+        reset_value                     => "0" ,
+        modified_write_val_clear        => false 
     )
     port map(
         clk_sys                         => clk_sys ,-- in
         res_n                           => res_n ,-- in
-        data_in                         => w_data(31 downto 0) ,-- in
-        write                           => write ,-- in
+        data_in                         => w_data(0 downto 0) ,-- in
+        write                           => write_en(0) ,-- in
         cs                              => reg_sel(0) ,-- in
-        w_be                            => be(3 downto 0) ,-- in
         lock                            => lock_1 ,-- in
-        reg_value                       => test_registers_out_i.tst_control -- out
+        reg_value                       => test_registers_out_i.tst_control_tmaena(0 downto 0) -- out
     );
 
     ----------------------------------------------------------------------------
-    -- TST_DEST register
+    -- TST_CONTROL[TWRSTB]
     ----------------------------------------------------------------------------
 
-    tst_dest_reg_comp : memory_reg
+    tst_control_twrstb_reg_comp : memory_reg_lockable
     generic map(
-        data_width                      => 32 ,
-        data_mask                       => "00000000000011111111111111111111" ,
-        reset_polarity                  => RESET_POLARITY ,
-        reset_value                     => "00000000000000000000000000000000" ,
-        auto_clear                      => "00000000000000000000000000000000" ,
-        is_lockable                     => true 
+        data_width                      => 1 ,
+        reset_value                     => "0" ,
+        modified_write_val_clear        => true 
     )
     port map(
         clk_sys                         => clk_sys ,-- in
         res_n                           => res_n ,-- in
-        data_in                         => w_data(31 downto 0) ,-- in
-        write                           => write ,-- in
+        data_in                         => w_data(1 downto 1) ,-- in
+        write                           => write_en(0) ,-- in
+        cs                              => reg_sel(0) ,-- in
+        lock                            => lock_1 ,-- in
+        reg_value                       => test_registers_out_i.tst_control_twrstb(0 downto 0) -- out
+    );
+
+    ----------------------------------------------------------------------------
+    -- TST_DEST[TST_ADDR_SLICE_1]
+    ----------------------------------------------------------------------------
+
+    tst_dest_tst_addr_slice_1_reg_comp : memory_reg_lockable
+    generic map(
+        data_width                      => 8 ,
+        reset_value                     => "00000000" ,
+        modified_write_val_clear        => false 
+    )
+    port map(
+        clk_sys                         => clk_sys ,-- in
+        res_n                           => res_n ,-- in
+        data_in                         => w_data(7 downto 0) ,-- in
+        write                           => write_en(0) ,-- in
         cs                              => reg_sel(1) ,-- in
-        w_be                            => be(3 downto 0) ,-- in
         lock                            => lock_1 ,-- in
-        reg_value                       => test_registers_out_i.tst_dest -- out
+        reg_value                       => test_registers_out_i.tst_dest_tst_addr(7 downto 0) -- out
     );
 
     ----------------------------------------------------------------------------
-    -- TST_WDATA register
+    -- TST_DEST[TST_ADDR_SLICE_2]
     ----------------------------------------------------------------------------
 
-    tst_wdata_reg_comp : memory_reg
+    tst_dest_tst_addr_slice_2_reg_comp : memory_reg_lockable
     generic map(
-        data_width                      => 32 ,
-        data_mask                       => "11111111111111111111111111111111" ,
-        reset_polarity                  => RESET_POLARITY ,
-        reset_value                     => "00000000000000000000000000000000" ,
-        auto_clear                      => "00000000000000000000000000000000" ,
-        is_lockable                     => true 
+        data_width                      => 8 ,
+        reset_value                     => "00000000" ,
+        modified_write_val_clear        => false 
     )
     port map(
         clk_sys                         => clk_sys ,-- in
         res_n                           => res_n ,-- in
-        data_in                         => w_data(31 downto 0) ,-- in
-        write                           => write ,-- in
-        cs                              => reg_sel(2) ,-- in
-        w_be                            => be(3 downto 0) ,-- in
+        data_in                         => w_data(15 downto 8) ,-- in
+        write                           => write_en(1) ,-- in
+        cs                              => reg_sel(1) ,-- in
         lock                            => lock_1 ,-- in
-        reg_value                       => test_registers_out_i.tst_wdata -- out
+        reg_value                       => test_registers_out_i.tst_dest_tst_addr(15 downto 8) -- out
     );
 
     ----------------------------------------------------------------------------
-    -- Read data multiplexor enable 
+    -- TST_DEST[TST_MTGT]
     ----------------------------------------------------------------------------
-    read_data_keep_gen : if (CLEAR_READ_DATA = false) generate
-        read_mux_ena <= read and cs;
-    end generate read_data_keep_gen;
 
-    read_data_clear_gen : if (CLEAR_READ_DATA = true) generate
-        read_mux_ena <= '1';
-    end generate read_data_clear_gen;
+    tst_dest_tst_mtgt_reg_comp : memory_reg_lockable
+    generic map(
+        data_width                      => 4 ,
+        reset_value                     => "0000" ,
+        modified_write_val_clear        => false 
+    )
+    port map(
+        clk_sys                         => clk_sys ,-- in
+        res_n                           => res_n ,-- in
+        data_in                         => w_data(19 downto 16) ,-- in
+        write                           => write_en(2) ,-- in
+        cs                              => reg_sel(1) ,-- in
+        lock                            => lock_1 ,-- in
+        reg_value                       => test_registers_out_i.tst_dest_tst_mtgt(3 downto 0) -- out
+    );
+
+    ----------------------------------------------------------------------------
+    -- TST_WDATA[TST_WDATA_SLICE_1]
+    ----------------------------------------------------------------------------
+
+    tst_wdata_tst_wdata_slice_1_reg_comp : memory_reg_lockable
+    generic map(
+        data_width                      => 8 ,
+        reset_value                     => "00000000" ,
+        modified_write_val_clear        => false 
+    )
+    port map(
+        clk_sys                         => clk_sys ,-- in
+        res_n                           => res_n ,-- in
+        data_in                         => w_data(7 downto 0) ,-- in
+        write                           => write_en(0) ,-- in
+        cs                              => reg_sel(2) ,-- in
+        lock                            => lock_1 ,-- in
+        reg_value                       => test_registers_out_i.tst_wdata_tst_wdata(7 downto 0) -- out
+    );
+
+    ----------------------------------------------------------------------------
+    -- TST_WDATA[TST_WDATA_SLICE_2]
+    ----------------------------------------------------------------------------
+
+    tst_wdata_tst_wdata_slice_2_reg_comp : memory_reg_lockable
+    generic map(
+        data_width                      => 8 ,
+        reset_value                     => "00000000" ,
+        modified_write_val_clear        => false 
+    )
+    port map(
+        clk_sys                         => clk_sys ,-- in
+        res_n                           => res_n ,-- in
+        data_in                         => w_data(15 downto 8) ,-- in
+        write                           => write_en(1) ,-- in
+        cs                              => reg_sel(2) ,-- in
+        lock                            => lock_1 ,-- in
+        reg_value                       => test_registers_out_i.tst_wdata_tst_wdata(15 downto 8) -- out
+    );
+
+    ----------------------------------------------------------------------------
+    -- TST_WDATA[TST_WDATA_SLICE_3]
+    ----------------------------------------------------------------------------
+
+    tst_wdata_tst_wdata_slice_3_reg_comp : memory_reg_lockable
+    generic map(
+        data_width                      => 8 ,
+        reset_value                     => "00000000" ,
+        modified_write_val_clear        => false 
+    )
+    port map(
+        clk_sys                         => clk_sys ,-- in
+        res_n                           => res_n ,-- in
+        data_in                         => w_data(23 downto 16) ,-- in
+        write                           => write_en(2) ,-- in
+        cs                              => reg_sel(2) ,-- in
+        lock                            => lock_1 ,-- in
+        reg_value                       => test_registers_out_i.tst_wdata_tst_wdata(15 downto 8) -- out
+    );
+
+    ----------------------------------------------------------------------------
+    -- TST_WDATA[TST_WDATA_SLICE_4]
+    ----------------------------------------------------------------------------
+
+    tst_wdata_tst_wdata_slice_4_reg_comp : memory_reg_lockable
+    generic map(
+        data_width                      => 8 ,
+        reset_value                     => "00000000" ,
+        modified_write_val_clear        => false 
+    )
+    port map(
+        clk_sys                         => clk_sys ,-- in
+        res_n                           => res_n ,-- in
+        data_in                         => w_data(31 downto 24) ,-- in
+        write                           => write_en(3) ,-- in
+        cs                              => reg_sel(2) ,-- in
+        lock                            => lock_1 ,-- in
+        reg_value                       => test_registers_out_i.tst_wdata_tst_wdata(15 downto 8) -- out
+    );
 
     ----------------------------------------------------------------------------
     -- Read data multiplexor
@@ -226,8 +321,7 @@ begin
         data_out_width                  => 32 ,
         data_in_width                   => 128 ,
         sel_width                       => 6 ,
-        registered_out                  => REGISTERED_READ ,
-        reset_polarity                  => RESET_POLARITY 
+        registered_out                  => REGISTERED_READ 
     )
     port map(
         clk_sys                         => clk_sys ,-- in
@@ -235,7 +329,7 @@ begin
         data_selector                   => address(7 downto 2) ,-- in
         data_in                         => read_data_mux_in ,-- in
         data_mask_n                     => read_data_mask_n ,-- in
-        enable                          => read_mux_ena ,-- in
+        enable                          => '1' ,-- in
         data_out                        => r_data -- out
     );
 
@@ -244,16 +338,61 @@ begin
   ------------------------------------------------------------------------------
   read_data_mux_in <=
     -- Adress:12
-    test_registers_in.tst_rdata &
+	test_registers_in.tst_rdata_tst_rdata	&
 
     -- Adress:8
-    test_registers_out_i.tst_wdata &
+	test_registers_out_i.tst_wdata_tst_wdata	&
 
     -- Adress:4
-    test_registers_out_i.tst_dest &
+	'0'	&
+	'0'	&
+	'0'	&
+	'0'	&
+	'0'	&
+	'0'	&
+	'0'	&
+	'0'	&
+	'0'	&
+	'0'	&
+	'0'	&
+	'0'	&
+	test_registers_out_i.tst_dest_tst_mtgt	&
+	test_registers_out_i.tst_dest_tst_addr	&
 
     -- Adress:0
-    test_registers_out_i.tst_control;
+	'0'	&
+	'0'	&
+	'0'	&
+	'0'	&
+	'0'	&
+	'0'	&
+	'0'	&
+	'0'	&
+	'0'	&
+	'0'	&
+	'0'	&
+	'0'	&
+	'0'	&
+	'0'	&
+	'0'	&
+	'0'	&
+	'0'	&
+	'0'	&
+	'0'	&
+	'0'	&
+	'0'	&
+	'0'	&
+	'0'	&
+	'0'	&
+	'0'	&
+	'0'	&
+	'0'	&
+	'0'	&
+	'0'	&
+	'0'	&
+	test_registers_out_i.tst_control_twrstb	&
+	test_registers_out_i.tst_control_tmaena
+;
 
     ----------------------------------------------------------------------------
     -- Read data mask - Byte enables
