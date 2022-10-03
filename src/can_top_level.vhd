@@ -613,6 +613,7 @@ begin
         G_SUP_RANGE             => sup_range,
         G_SUP_TEST_REGISTERS    => sup_test_registers,
         G_SUP_TRAFFIC_CTRS      => sup_traffic_ctrs,
+        G_SUP_PARITY            => sup_parity,
         G_TXT_BUFFER_COUNT      => txt_buffer_count, 
         G_INT_COUNT             => C_INT_COUNT,
         G_TRV_CTR_WIDTH         => C_TRV_CTR_WIDTH,

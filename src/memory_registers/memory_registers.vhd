@@ -114,6 +114,9 @@ entity memory_registers is
         -- Support Traffic counters
         G_SUP_TRAFFIC_CTRS  : boolean                         := true;
 
+        -- Support Parity
+        G_SUP_PARITY        : boolean                         := true;
+
         -- Number of TXT Buffers
         G_TXT_BUFFER_COUNT  : natural range 2 to 8            := 4;
 
@@ -792,7 +795,9 @@ begin
         status_comb(STCNT_IND) <= '0';
     end generate traffic_ctrs_gen_false;
     
-    status_comb(31 downto 18) <= (others => '0');
+    status_comb(SPRT_IND) <= G_SUP_PARITY;
+
+    status_comb(31 downto 19) <= (others => '0');
     status_comb(15 downto 12) <= (others => '0');
 
     ----------------------------------------------------------------------------
