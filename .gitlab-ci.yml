@@ -35,6 +35,8 @@ check_component:
 
 build_ip_and_tests:
     stage: build
+    tags:
+        - simulation
     artifacts:
         paths: &vunit_build_paths
             - test/build
@@ -53,6 +55,8 @@ build_ip_and_tests:
 
 build_compliance_lib:
     stage: build
+    tags:
+        - simulation
     script:
         - cd test/main_tb/iso-16845-compliance-tests/
         - source ./build.sh
@@ -65,6 +69,8 @@ build_compliance_lib:
 
 build_driver:
     stage: build
+    tags:
+        - simulation
     only: *only
     script:
         - cd driver
@@ -72,6 +78,8 @@ build_driver:
 
 build_doc:
     stage: build
+    tags:
+        - simulation
     only: *only
     image: registry.gitlab.com/canfd/server-tools/lyx
     script:
@@ -88,6 +96,8 @@ build_doc:
 
 build_linux_driver:
     stage: build
+    tags:
+        - simulation
     only: *only
     image: registry.gitlab.com/canfd/server-tools/ctucanfd_drvtest
     script:
@@ -111,6 +121,8 @@ export_available_tests:
 
 run_synthesis:
     stage: build
+    tags:
+        - synthesis
     only: *only
     tags:
         - vps
@@ -165,6 +177,8 @@ run_synthesis:
 ###############################################################################
 test_fast_asic:
     stage: test_rtl
+    tags:
+        - simulation
     only: *only
     dependencies: [build_ip_and_tests]
     script:
@@ -182,6 +196,8 @@ test_fast_asic:
 
 test_fast_fpga:
     stage: test_rtl
+    tags:
+        - simulation
     only: *only
     dependencies: [build_ip_and_tests]
     script:
@@ -199,6 +215,8 @@ test_fast_fpga:
 
 test_nightly:
     stage: test_rtl
+    tags:
+        - simulation
     dependencies: [build_ip_and_tests]
     only:
         - master
@@ -231,6 +249,8 @@ test_nightly:
 ###############################################################################
 test_compliance_short:
     stage: test_rtl
+    tags:
+        - simulation
     dependencies: [build_ip_and_tests, build_compliance_lib]
     only: *only
     script:
@@ -251,6 +271,8 @@ test_compliance_short:
     
 test_compliance_full_typ:
     stage: test_rtl
+    tags:
+        - simulation
     dependencies: [build_ip_and_tests, build_compliance_lib]
     only:
         - master
@@ -275,6 +297,8 @@ test_compliance_full_typ:
 
 test_compliance_full_max:
     stage: test_rtl
+    tags:
+        - simulation
     dependencies: [build_ip_and_tests, build_compliance_lib]
     only:
         - master
@@ -303,6 +327,8 @@ test_compliance_full_max:
 ###############################################################################
 test_gates_simple:
     stage: test_gates
+    tags:
+        - simulation
     dependencies: [build_ip_and_tests, run_synthesis]
     timeout: 6h
     only:
@@ -325,6 +351,8 @@ test_gates_simple:
 
 test_gates_compliance:
     stage: test_gates
+    tags:
+        - simulation
     dependencies: [build_ip_and_tests, run_synthesis, build_compliance_lib]
     timeout: 6h
     only:
@@ -353,6 +381,8 @@ test_gates_compliance:
 
 process_coverage:
     stage: coverage
+    tags:
+        - simulation
     dependencies: [build_ip_and_tests, test_compliance_full_typ, test_nightly]
     only:
         - master
