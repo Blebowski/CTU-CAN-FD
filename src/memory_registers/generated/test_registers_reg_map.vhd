@@ -149,7 +149,7 @@ begin
         write                           => write_en(0) ,-- in
         cs                              => reg_sel(0) ,-- in
         lock                            => lock_1 ,-- in
-        reg_value                       => test_registers_out_i.tst_control_tmaena(0 downto 0) -- out
+        reg_value(0)                    => test_registers_out_i.tst_control_tmaena -- out
     );
 
     ----------------------------------------------------------------------------
@@ -169,7 +169,7 @@ begin
         write                           => write_en(0) ,-- in
         cs                              => reg_sel(0) ,-- in
         lock                            => lock_1 ,-- in
-        reg_value                       => test_registers_out_i.tst_control_twrstb(0 downto 0) -- out
+        reg_value(0)                    => test_registers_out_i.tst_control_twrstb -- out
     );
 
     ----------------------------------------------------------------------------
@@ -229,7 +229,7 @@ begin
         write                           => write_en(2) ,-- in
         cs                              => reg_sel(1) ,-- in
         lock                            => lock_1 ,-- in
-        reg_value                       => test_registers_out_i.tst_dest_tst_mtgt(3 downto 0) -- out
+        reg_value                       => test_registers_out_i.tst_dest_tst_mtgt -- out
     );
 
     ----------------------------------------------------------------------------

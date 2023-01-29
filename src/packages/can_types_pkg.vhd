@@ -1,18 +1,18 @@
 --------------------------------------------------------------------------------
--- 
--- CTU CAN FD IP Core 
+--
+-- CTU CAN FD IP Core
 -- Copyright (C) 2021-present Ondrej Ille
--- 
+--
 -- Permission is hereby granted, free of charge, to any person obtaining a copy
 -- of this VHDL component and associated documentation files (the "Component"),
 -- to use, copy, modify, merge, publish, distribute the Component for
 -- educational, research, evaluation, self-interest purposes. Using the
 -- Component for commercial purposes is forbidden unless previously agreed with
 -- Copyright holder.
--- 
+--
 -- The above copyright notice and this permission notice shall be included in
 -- all copies or substantial portions of the Component.
--- 
+--
 -- THE COMPONENT IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 -- IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 -- FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -20,38 +20,38 @@
 -- LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
 -- FROM, OUT OF OR IN CONNECTION WITH THE COMPONENT OR THE USE OR OTHER DEALINGS
 -- IN THE COMPONENT.
--- 
+--
 -- The CAN protocol is developed by Robert Bosch GmbH and protected by patents.
 -- Anybody who wants to implement this IP core on silicon has to obtain a CAN
 -- protocol license from Bosch.
--- 
+--
 -- -------------------------------------------------------------------------------
--- 
--- CTU CAN FD IP Core 
+--
+-- CTU CAN FD IP Core
 -- Copyright (C) 2015-2020 MIT License
--- 
+--
 -- Authors:
 --     Ondrej Ille <ondrej.ille@gmail.com>
 --     Martin Jerabek <martin.jerabek01@gmail.com>
--- 
--- Project advisors: 
+--
+-- Project advisors:
 -- 	Jiri Novak <jnovak@fel.cvut.cz>
 -- 	Pavel Pisa <pisa@cmp.felk.cvut.cz>
--- 
+--
 -- Department of Measurement         (http://meas.fel.cvut.cz/)
 -- Faculty of Electrical Engineering (http://www.fel.cvut.cz)
 -- Czech Technical University        (http://www.cvut.cz/)
--- 
+--
 -- Permission is hereby granted, free of charge, to any person obtaining a copy
 -- of this VHDL component and associated documentation files (the "Component"),
 -- to deal in the Component without restriction, including without limitation
 -- the rights to use, copy, modify, merge, publish, distribute, sublicense,
 -- and/or sell copies of the Component, and to permit persons to whom the
 -- Component is furnished to do so, subject to the following conditions:
--- 
+--
 -- The above copyright notice and this permission notice shall be included in
 -- all copies or substantial portions of the Component.
--- 
+--
 -- THE COMPONENT IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 -- IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 -- FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -59,17 +59,17 @@
 -- LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
 -- FROM, OUT OF OR IN CONNECTION WITH THE COMPONENT OR THE USE OR OTHER DEALINGS
 -- IN THE COMPONENT.
--- 
+--
 -- The CAN protocol is developed by Robert Bosch GmbH and protected by patents.
 -- Anybody who wants to implement this IP core on silicon has to obtain a CAN
 -- protocol license from Bosch.
--- 
+--
 --------------------------------------------------------------------------------
 
 --------------------------------------------------------------------------------
 -- Package:
 --  CAN types
--- 
+--
 -- Purpose:
 --  Package with type definitions for CTU CAN FD.
 --------------------------------------------------------------------------------
@@ -150,7 +150,7 @@ package can_types_pkg is
         s_bt_reset
     );
 
-    -- Logger state machine type 
+    -- Logger state machine type
     type logger_state_type is (
         config,
         ready,
@@ -180,7 +180,7 @@ package can_types_pkg is
         s_arb_validated,
         s_arb_locked
     );
-  
+
     -- TXT buffer state type
     type t_txt_buf_state is (
         s_txt_empty,
@@ -196,7 +196,7 @@ package can_types_pkg is
     ----------------------------------------------------------------------------
     -- TXT Buffer types
     ----------------------------------------------------------------------------
-    
+
     -- Priorities of TXT Buffers
     type t_txt_bufs_priorities is array (integer range <>) of
         std_logic_vector(2 downto 0);
@@ -216,13 +216,6 @@ package can_types_pkg is
     -- States of Buffers
     type t_txt_bufs_state is array (integer range <>) of
         std_logic_vector(3 downto 0);
-    
-    -- SW commands
-    type t_txtb_sw_cmd is record
-        set_rdy   : std_logic;
-        set_ety   : std_logic;
-        set_abt   : std_logic;
-    end record;
 
     -- HW commands
     type t_txtb_hw_cmd is record
@@ -234,8 +227,52 @@ package can_types_pkg is
         failed    : std_logic;
     end record;
 
+    -- Status record from CAN Core
+    type t_can_core_stat is record
+        is_err_active           : std_logic;
+        is_err_passive          : std_logic;
+        is_bus_off              : std_logic;
+        is_transmitter          : std_logic;
+        is_receiver             : std_logic;
+        is_idle                 : std_logic;
+        tx_err_ctr              : std_logic_vector(8 downto 0);
+        rx_err_ctr              : std_logic_vector(8 downto 0);
+        is_err_frm              : std_logic;
+        status_pexs             : std_logic;
+        norm_err_ctr            : std_logic_vector(15 downto 0);
+        data_err_ctr            : std_logic_vector(15 downto 0);
+        err_type                : std_logic_vector(2 downto 0);
+        err_pos                 : std_logic_vector(4 downto 0);
+        retr_ctr                : std_logic_vector(3 downto 0);
+        alc_bit                 : std_logic_vector(4 downto 0);
+        alc_id_field            : std_logic_vector(2 downto 0);
+        rx_frame_ctr            : std_logic_vector(31 downto 0);
+        tx_frame_ctr            : std_logic_vector(31 downto 0);
+        bst_ctr                 : std_logic_vector(2 downto 0);
+        dst_ctr                 : std_logic_vector(2 downto 0);
+        status_ewl              : std_logic;
+    end record;
 
-    ---------------------------------------------------------------------------- 
+    -- Protocol control debug type
+    type t_protocol_control_dbg is record
+        is_sof               : std_logic;
+        is_arbitration       : std_logic;
+        is_control           : std_logic;
+        is_data              : std_logic;
+        is_stuff_count       : std_logic;
+        is_crc               : std_logic;
+        is_crc_delim         : std_logic;
+        is_ack               : std_logic;
+        is_ack_delim         : std_logic;
+        is_eof               : std_logic;
+        is_overload          : std_logic;
+        is_err               : std_logic;
+        is_intermission      : std_logic;
+        is_suspend           : std_logic;
+    end record;
+
+
+    ----------------------------------------------------------------------------
     -- DLC Types
     ----------------------------------------------------------------------------
     type dlc_type is array (0 to 15) of std_logic_vector(3 downto 0);
@@ -247,7 +284,7 @@ package can_types_pkg is
     constant dlc_length : length_type := (0, 1, 2, 3, 4, 5, 6, 7, 8,
                                           12, 16, 20, 24, 32, 48, 64);
 
-    ---------------------------------------------------------------------------- 
+    ----------------------------------------------------------------------------
     -- Debug types
     ----------------------------------------------------------------------------
     type t_ctu_can_fd_test_probe is record

@@ -153,7 +153,7 @@ begin
         data_in                         => w_data(0 downto 0) ,-- in
         write                           => write_en(0) ,-- in
         cs                              => reg_sel(1) ,-- in
-        reg_value                       => control_registers_out_i.mode_rst(0 downto 0) -- out
+        reg_value(0)                    => control_registers_out_i.mode_rst -- out
     );
 
     ----------------------------------------------------------------------------
@@ -172,7 +172,7 @@ begin
         data_in                         => w_data(1 downto 1) ,-- in
         write                           => write_en(0) ,-- in
         cs                              => reg_sel(1) ,-- in
-        reg_value                       => control_registers_out_i.mode_bmm(0 downto 0) -- out
+        reg_value(0)                    => control_registers_out_i.mode_bmm -- out
     );
 
     ----------------------------------------------------------------------------
@@ -191,7 +191,7 @@ begin
         data_in                         => w_data(2 downto 2) ,-- in
         write                           => write_en(0) ,-- in
         cs                              => reg_sel(1) ,-- in
-        reg_value                       => control_registers_out_i.mode_stm(0 downto 0) -- out
+        reg_value(0)                    => control_registers_out_i.mode_stm -- out
     );
 
     ----------------------------------------------------------------------------
@@ -210,7 +210,7 @@ begin
         data_in                         => w_data(3 downto 3) ,-- in
         write                           => write_en(0) ,-- in
         cs                              => reg_sel(1) ,-- in
-        reg_value                       => control_registers_out_i.mode_afm(0 downto 0) -- out
+        reg_value(0)                    => control_registers_out_i.mode_afm -- out
     );
 
     ----------------------------------------------------------------------------
@@ -229,7 +229,7 @@ begin
         data_in                         => w_data(4 downto 4) ,-- in
         write                           => write_en(0) ,-- in
         cs                              => reg_sel(1) ,-- in
-        reg_value                       => control_registers_out_i.mode_fde(0 downto 0) -- out
+        reg_value(0)                    => control_registers_out_i.mode_fde -- out
     );
 
     ----------------------------------------------------------------------------
@@ -248,7 +248,7 @@ begin
         data_in                         => w_data(5 downto 5) ,-- in
         write                           => write_en(0) ,-- in
         cs                              => reg_sel(1) ,-- in
-        reg_value                       => control_registers_out_i.mode_tttm(0 downto 0) -- out
+        reg_value(0)                    => control_registers_out_i.mode_tttm -- out
     );
 
     ----------------------------------------------------------------------------
@@ -267,7 +267,7 @@ begin
         data_in                         => w_data(6 downto 6) ,-- in
         write                           => write_en(0) ,-- in
         cs                              => reg_sel(1) ,-- in
-        reg_value                       => control_registers_out_i.mode_rom(0 downto 0) -- out
+        reg_value(0)                    => control_registers_out_i.mode_rom -- out
     );
 
     ----------------------------------------------------------------------------
@@ -286,7 +286,7 @@ begin
         data_in                         => w_data(7 downto 7) ,-- in
         write                           => write_en(0) ,-- in
         cs                              => reg_sel(1) ,-- in
-        reg_value                       => control_registers_out_i.mode_acf(0 downto 0) -- out
+        reg_value(0)                    => control_registers_out_i.mode_acf -- out
     );
 
     ----------------------------------------------------------------------------
@@ -305,7 +305,7 @@ begin
         data_in                         => w_data(8 downto 8) ,-- in
         write                           => write_en(1) ,-- in
         cs                              => reg_sel(1) ,-- in
-        reg_value                       => control_registers_out_i.mode_tstm(0 downto 0) -- out
+        reg_value(0)                    => control_registers_out_i.mode_tstm -- out
     );
 
     ----------------------------------------------------------------------------
@@ -324,7 +324,7 @@ begin
         data_in                         => w_data(9 downto 9) ,-- in
         write                           => write_en(1) ,-- in
         cs                              => reg_sel(1) ,-- in
-        reg_value                       => control_registers_out_i.mode_rxbam(0 downto 0) -- out
+        reg_value(0)                    => control_registers_out_i.mode_rxbam -- out
     );
 
     ----------------------------------------------------------------------------
@@ -343,7 +343,7 @@ begin
         data_in                         => w_data(10 downto 10) ,-- in
         write                           => write_en(1) ,-- in
         cs                              => reg_sel(1) ,-- in
-        reg_value                       => control_registers_out_i.mode_txbbm(0 downto 0) -- out
+        reg_value(0)                    => control_registers_out_i.mode_txbbm -- out
     );
 
     ----------------------------------------------------------------------------
@@ -362,7 +362,7 @@ begin
         data_in                         => w_data(11 downto 11) ,-- in
         write                           => write_en(1) ,-- in
         cs                              => reg_sel(1) ,-- in
-        reg_value                       => control_registers_out_i.mode_sam(0 downto 0) -- out
+        reg_value(0)                    => control_registers_out_i.mode_sam -- out
     );
 
     ----------------------------------------------------------------------------
@@ -381,7 +381,7 @@ begin
         data_in                         => w_data(0 downto 0) ,-- in
         write                           => write_en(0) ,-- in
         cs                              => reg_sel(1) ,-- in
-        reg_value                       => control_registers_out_i.settings_rtrle(0 downto 0) -- out
+        reg_value(0)                    => control_registers_out_i.settings_rtrle -- out
     );
 
     ----------------------------------------------------------------------------
@@ -400,7 +400,7 @@ begin
         data_in                         => w_data(4 downto 1) ,-- in
         write                           => write_en(0) ,-- in
         cs                              => reg_sel(1) ,-- in
-        reg_value                       => control_registers_out_i.settings_rtrth(3 downto 0) -- out
+        reg_value                       => control_registers_out_i.settings_rtrth -- out
     );
 
     ----------------------------------------------------------------------------
@@ -419,7 +419,7 @@ begin
         data_in                         => w_data(5 downto 5) ,-- in
         write                           => write_en(0) ,-- in
         cs                              => reg_sel(1) ,-- in
-        reg_value                       => control_registers_out_i.settings_ilbp(0 downto 0) -- out
+        reg_value(0)                    => control_registers_out_i.settings_ilbp -- out
     );
 
     ----------------------------------------------------------------------------
@@ -438,7 +438,7 @@ begin
         data_in                         => w_data(6 downto 6) ,-- in
         write                           => write_en(0) ,-- in
         cs                              => reg_sel(1) ,-- in
-        reg_value                       => control_registers_out_i.settings_ena(0 downto 0) -- out
+        reg_value(0)                    => control_registers_out_i.settings_ena -- out
     );
 
     ----------------------------------------------------------------------------
@@ -457,7 +457,7 @@ begin
         data_in                         => w_data(7 downto 7) ,-- in
         write                           => write_en(0) ,-- in
         cs                              => reg_sel(1) ,-- in
-        reg_value                       => control_registers_out_i.settings_nisofd(0 downto 0) -- out
+        reg_value(0)                    => control_registers_out_i.settings_nisofd -- out
     );
 
     ----------------------------------------------------------------------------
@@ -476,7 +476,7 @@ begin
         data_in                         => w_data(8 downto 8) ,-- in
         write                           => write_en(1) ,-- in
         cs                              => reg_sel(1) ,-- in
-        reg_value                       => control_registers_out_i.settings_pex(0 downto 0) -- out
+        reg_value(0)                    => control_registers_out_i.settings_pex -- out
     );
 
     ----------------------------------------------------------------------------
@@ -495,7 +495,7 @@ begin
         data_in                         => w_data(9 downto 9) ,-- in
         write                           => write_en(1) ,-- in
         cs                              => reg_sel(1) ,-- in
-        reg_value                       => control_registers_out_i.settings_tbfbo(0 downto 0) -- out
+        reg_value(0)                    => control_registers_out_i.settings_tbfbo -- out
     );
 
     ----------------------------------------------------------------------------
@@ -514,7 +514,7 @@ begin
         data_in                         => w_data(10 downto 10) ,-- in
         write                           => write_en(1) ,-- in
         cs                              => reg_sel(1) ,-- in
-        reg_value                       => control_registers_out_i.settings_fdrf(0 downto 0) -- out
+        reg_value(0)                    => control_registers_out_i.settings_fdrf -- out
     );
 
     ----------------------------------------------------------------------------
@@ -533,7 +533,7 @@ begin
         data_in                         => w_data(11 downto 11) ,-- in
         write                           => write_en(1) ,-- in
         cs                              => reg_sel(1) ,-- in
-        reg_value                       => control_registers_out_i.settings_pchke(0 downto 0) -- out
+        reg_value(0)                    => control_registers_out_i.settings_pchke -- out
     );
 
     ----------------------------------------------------------------------------
@@ -552,7 +552,7 @@ begin
         data_in                         => w_data(1 downto 1) ,-- in
         write                           => write_en(0) ,-- in
         cs                              => reg_sel(3) ,-- in
-        reg_value                       => control_registers_out_i.command_rxrpmv(0 downto 0) -- out
+        reg_value(0)                    => control_registers_out_i.command_rxrpmv -- out
     );
 
     ----------------------------------------------------------------------------
@@ -571,7 +571,7 @@ begin
         data_in                         => w_data(2 downto 2) ,-- in
         write                           => write_en(0) ,-- in
         cs                              => reg_sel(3) ,-- in
-        reg_value                       => control_registers_out_i.command_rrb(0 downto 0) -- out
+        reg_value(0)                    => control_registers_out_i.command_rrb -- out
     );
 
     ----------------------------------------------------------------------------
@@ -590,7 +590,7 @@ begin
         data_in                         => w_data(3 downto 3) ,-- in
         write                           => write_en(0) ,-- in
         cs                              => reg_sel(3) ,-- in
-        reg_value                       => control_registers_out_i.command_cdo(0 downto 0) -- out
+        reg_value(0)                    => control_registers_out_i.command_cdo -- out
     );
 
     ----------------------------------------------------------------------------
@@ -609,7 +609,7 @@ begin
         data_in                         => w_data(4 downto 4) ,-- in
         write                           => write_en(0) ,-- in
         cs                              => reg_sel(3) ,-- in
-        reg_value                       => control_registers_out_i.command_ercrst(0 downto 0) -- out
+        reg_value(0)                    => control_registers_out_i.command_ercrst -- out
     );
 
     ----------------------------------------------------------------------------
@@ -628,7 +628,7 @@ begin
         data_in                         => w_data(5 downto 5) ,-- in
         write                           => write_en(0) ,-- in
         cs                              => reg_sel(3) ,-- in
-        reg_value                       => control_registers_out_i.command_rxfcrst(0 downto 0) -- out
+        reg_value(0)                    => control_registers_out_i.command_rxfcrst -- out
     );
 
     ----------------------------------------------------------------------------
@@ -647,7 +647,7 @@ begin
         data_in                         => w_data(6 downto 6) ,-- in
         write                           => write_en(0) ,-- in
         cs                              => reg_sel(3) ,-- in
-        reg_value                       => control_registers_out_i.command_txfcrst(0 downto 0) -- out
+        reg_value(0)                    => control_registers_out_i.command_txfcrst -- out
     );
 
     ----------------------------------------------------------------------------
@@ -666,7 +666,7 @@ begin
         data_in                         => w_data(7 downto 7) ,-- in
         write                           => write_en(0) ,-- in
         cs                              => reg_sel(3) ,-- in
-        reg_value                       => control_registers_out_i.command_cpexs(0 downto 0) -- out
+        reg_value(0)                    => control_registers_out_i.command_cpexs -- out
     );
 
     ----------------------------------------------------------------------------
@@ -685,7 +685,7 @@ begin
         data_in                         => w_data(8 downto 8) ,-- in
         write                           => write_en(1) ,-- in
         cs                              => reg_sel(3) ,-- in
-        reg_value                       => control_registers_out_i.command_crxpe(0 downto 0) -- out
+        reg_value(0)                    => control_registers_out_i.command_crxpe -- out
     );
 
     ----------------------------------------------------------------------------
@@ -704,7 +704,7 @@ begin
         data_in                         => w_data(9 downto 9) ,-- in
         write                           => write_en(1) ,-- in
         cs                              => reg_sel(3) ,-- in
-        reg_value                       => control_registers_out_i.command_ctxpe(0 downto 0) -- out
+        reg_value(0)                    => control_registers_out_i.command_ctxpe -- out
     );
 
     ----------------------------------------------------------------------------
@@ -723,7 +723,7 @@ begin
         data_in                         => w_data(10 downto 10) ,-- in
         write                           => write_en(1) ,-- in
         cs                              => reg_sel(3) ,-- in
-        reg_value                       => control_registers_out_i.command_ctxdpe(0 downto 0) -- out
+        reg_value(0)                    => control_registers_out_i.command_ctxdpe -- out
     );
 
     ----------------------------------------------------------------------------
@@ -742,7 +742,7 @@ begin
         data_in                         => w_data(0 downto 0) ,-- in
         write                           => write_en(0) ,-- in
         cs                              => reg_sel(4) ,-- in
-        reg_value                       => control_registers_out_i.int_stat_rxi(0 downto 0) -- out
+        reg_value(0)                    => control_registers_out_i.int_stat_rxi -- out
     );
 
     ----------------------------------------------------------------------------
@@ -761,7 +761,7 @@ begin
         data_in                         => w_data(1 downto 1) ,-- in
         write                           => write_en(0) ,-- in
         cs                              => reg_sel(4) ,-- in
-        reg_value                       => control_registers_out_i.int_stat_txi(0 downto 0) -- out
+        reg_value(0)                    => control_registers_out_i.int_stat_txi -- out
     );
 
     ----------------------------------------------------------------------------
@@ -780,7 +780,7 @@ begin
         data_in                         => w_data(2 downto 2) ,-- in
         write                           => write_en(0) ,-- in
         cs                              => reg_sel(4) ,-- in
-        reg_value                       => control_registers_out_i.int_stat_ewli(0 downto 0) -- out
+        reg_value(0)                    => control_registers_out_i.int_stat_ewli -- out
     );
 
     ----------------------------------------------------------------------------
@@ -799,7 +799,7 @@ begin
         data_in                         => w_data(3 downto 3) ,-- in
         write                           => write_en(0) ,-- in
         cs                              => reg_sel(4) ,-- in
-        reg_value                       => control_registers_out_i.int_stat_doi(0 downto 0) -- out
+        reg_value(0)                    => control_registers_out_i.int_stat_doi -- out
     );
 
     ----------------------------------------------------------------------------
@@ -818,7 +818,7 @@ begin
         data_in                         => w_data(4 downto 4) ,-- in
         write                           => write_en(0) ,-- in
         cs                              => reg_sel(4) ,-- in
-        reg_value                       => control_registers_out_i.int_stat_fcsi(0 downto 0) -- out
+        reg_value(0)                    => control_registers_out_i.int_stat_fcsi -- out
     );
 
     ----------------------------------------------------------------------------
@@ -837,7 +837,7 @@ begin
         data_in                         => w_data(5 downto 5) ,-- in
         write                           => write_en(0) ,-- in
         cs                              => reg_sel(4) ,-- in
-        reg_value                       => control_registers_out_i.int_stat_ali(0 downto 0) -- out
+        reg_value(0)                    => control_registers_out_i.int_stat_ali -- out
     );
 
     ----------------------------------------------------------------------------
@@ -856,7 +856,7 @@ begin
         data_in                         => w_data(6 downto 6) ,-- in
         write                           => write_en(0) ,-- in
         cs                              => reg_sel(4) ,-- in
-        reg_value                       => control_registers_out_i.int_stat_bei(0 downto 0) -- out
+        reg_value(0)                    => control_registers_out_i.int_stat_bei -- out
     );
 
     ----------------------------------------------------------------------------
@@ -875,7 +875,7 @@ begin
         data_in                         => w_data(7 downto 7) ,-- in
         write                           => write_en(0) ,-- in
         cs                              => reg_sel(4) ,-- in
-        reg_value                       => control_registers_out_i.int_stat_ofi(0 downto 0) -- out
+        reg_value(0)                    => control_registers_out_i.int_stat_ofi -- out
     );
 
     ----------------------------------------------------------------------------
@@ -894,7 +894,7 @@ begin
         data_in                         => w_data(8 downto 8) ,-- in
         write                           => write_en(1) ,-- in
         cs                              => reg_sel(4) ,-- in
-        reg_value                       => control_registers_out_i.int_stat_rxfi(0 downto 0) -- out
+        reg_value(0)                    => control_registers_out_i.int_stat_rxfi -- out
     );
 
     ----------------------------------------------------------------------------
@@ -913,7 +913,7 @@ begin
         data_in                         => w_data(9 downto 9) ,-- in
         write                           => write_en(1) ,-- in
         cs                              => reg_sel(4) ,-- in
-        reg_value                       => control_registers_out_i.int_stat_bsi(0 downto 0) -- out
+        reg_value(0)                    => control_registers_out_i.int_stat_bsi -- out
     );
 
     ----------------------------------------------------------------------------
@@ -932,7 +932,7 @@ begin
         data_in                         => w_data(10 downto 10) ,-- in
         write                           => write_en(1) ,-- in
         cs                              => reg_sel(4) ,-- in
-        reg_value                       => control_registers_out_i.int_stat_rbnei(0 downto 0) -- out
+        reg_value(0)                    => control_registers_out_i.int_stat_rbnei -- out
     );
 
     ----------------------------------------------------------------------------
@@ -951,7 +951,7 @@ begin
         data_in                         => w_data(11 downto 11) ,-- in
         write                           => write_en(1) ,-- in
         cs                              => reg_sel(4) ,-- in
-        reg_value                       => control_registers_out_i.int_stat_txbhci(0 downto 0) -- out
+        reg_value(0)                    => control_registers_out_i.int_stat_txbhci -- out
     );
 
     ----------------------------------------------------------------------------
@@ -1123,7 +1123,7 @@ begin
         write                           => write_en(0) ,-- in
         cs                              => reg_sel(9) ,-- in
         lock                            => lock_2 ,-- in
-        reg_value                       => control_registers_out_i.btr_prop(6 downto 0) -- out
+        reg_value                       => control_registers_out_i.btr_prop -- out
     );
 
     ----------------------------------------------------------------------------
@@ -1143,7 +1143,7 @@ begin
         write                           => write_en(0) ,-- in
         cs                              => reg_sel(9) ,-- in
         lock                            => lock_2 ,-- in
-        reg_value                       => control_registers_out_i.btr_ph1(0 downto 0) -- out
+        reg_value(0)                    => control_registers_out_i.btr_ph1(0) -- out
     );
 
     ----------------------------------------------------------------------------
@@ -1263,7 +1263,7 @@ begin
         write                           => write_en(3) ,-- in
         cs                              => reg_sel(9) ,-- in
         lock                            => lock_2 ,-- in
-        reg_value                       => control_registers_out_i.btr_sjw(4 downto 0) -- out
+        reg_value                       => control_registers_out_i.btr_sjw -- out
     );
 
     ----------------------------------------------------------------------------
@@ -1283,7 +1283,7 @@ begin
         write                           => write_en(0) ,-- in
         cs                              => reg_sel(10) ,-- in
         lock                            => lock_2 ,-- in
-        reg_value                       => control_registers_out_i.btr_fd_prop_fd(5 downto 0) -- out
+        reg_value                       => control_registers_out_i.btr_fd_prop_fd -- out
     );
 
     ----------------------------------------------------------------------------
@@ -1303,7 +1303,7 @@ begin
         write                           => write_en(0) ,-- in
         cs                              => reg_sel(10) ,-- in
         lock                            => lock_2 ,-- in
-        reg_value                       => control_registers_out_i.btr_fd_ph1_fd(0 downto 0) -- out
+        reg_value(0)                    => control_registers_out_i.btr_fd_ph1_fd(0) -- out
     );
 
     ----------------------------------------------------------------------------
@@ -1423,7 +1423,7 @@ begin
         write                           => write_en(3) ,-- in
         cs                              => reg_sel(10) ,-- in
         lock                            => lock_2 ,-- in
-        reg_value                       => control_registers_out_i.btr_fd_sjw_fd(4 downto 0) -- out
+        reg_value                       => control_registers_out_i.btr_fd_sjw_fd -- out
     );
 
     ----------------------------------------------------------------------------
@@ -1443,7 +1443,7 @@ begin
         write                           => write_en(0) ,-- in
         cs                              => reg_sel(11) ,-- in
         lock                            => lock_1 ,-- in
-        reg_value                       => control_registers_out_i.ewl_ew_limit(7 downto 0) -- out
+        reg_value                       => control_registers_out_i.ewl_ew_limit -- out
     );
 
     ----------------------------------------------------------------------------
@@ -1463,7 +1463,7 @@ begin
         write                           => write_en(0) ,-- in
         cs                              => reg_sel(11) ,-- in
         lock                            => lock_1 ,-- in
-        reg_value                       => control_registers_out_i.erp_erp_limit(7 downto 0) -- out
+        reg_value                       => control_registers_out_i.erp_erp_limit -- out
     );
 
     ----------------------------------------------------------------------------
@@ -1503,7 +1503,7 @@ begin
         write                           => write_en(1) ,-- in
         cs                              => reg_sel(14) ,-- in
         lock                            => lock_1 ,-- in
-        reg_value                       => control_registers_out_i.ctr_pres_ctpv(8 downto 8) -- out
+        reg_value(0)                    => control_registers_out_i.ctr_pres_ctpv(8) -- out
     );
 
     ----------------------------------------------------------------------------
@@ -1523,7 +1523,7 @@ begin
         write                           => write_en(1) ,-- in
         cs                              => reg_sel(14) ,-- in
         lock                            => lock_1 ,-- in
-        reg_value                       => control_registers_out_i.ctr_pres_ptx(0 downto 0) -- out
+        reg_value(0)                    => control_registers_out_i.ctr_pres_ptx -- out
     );
 
     ----------------------------------------------------------------------------
@@ -1543,7 +1543,7 @@ begin
         write                           => write_en(1) ,-- in
         cs                              => reg_sel(14) ,-- in
         lock                            => lock_1 ,-- in
-        reg_value                       => control_registers_out_i.ctr_pres_prx(0 downto 0) -- out
+        reg_value(0)                    => control_registers_out_i.ctr_pres_prx -- out
     );
 
     ----------------------------------------------------------------------------
@@ -1563,7 +1563,7 @@ begin
         write                           => write_en(1) ,-- in
         cs                              => reg_sel(14) ,-- in
         lock                            => lock_1 ,-- in
-        reg_value                       => control_registers_out_i.ctr_pres_enorm(0 downto 0) -- out
+        reg_value(0)                    => control_registers_out_i.ctr_pres_enorm -- out
     );
 
     ----------------------------------------------------------------------------
@@ -1583,7 +1583,7 @@ begin
         write                           => write_en(1) ,-- in
         cs                              => reg_sel(14) ,-- in
         lock                            => lock_1 ,-- in
-        reg_value                       => control_registers_out_i.ctr_pres_efd(0 downto 0) -- out
+        reg_value(0)                    => control_registers_out_i.ctr_pres_efd -- out
     );
 
     FILTER_A_MASK_present_gen_t : if (SUP_FILT_A = true) generate
@@ -2266,7 +2266,7 @@ begin
         data_in                         => w_data(0 downto 0) ,-- in
         write                           => write_en(0) ,-- in
         cs                              => reg_sel(23) ,-- in
-        reg_value                       => control_registers_out_i.filter_control_fanb(0 downto 0) -- out
+        reg_value(0)                    => control_registers_out_i.filter_control_fanb -- out
     );
 
     ----------------------------------------------------------------------------
@@ -2285,7 +2285,7 @@ begin
         data_in                         => w_data(1 downto 1) ,-- in
         write                           => write_en(0) ,-- in
         cs                              => reg_sel(23) ,-- in
-        reg_value                       => control_registers_out_i.filter_control_fane(0 downto 0) -- out
+        reg_value(0)                    => control_registers_out_i.filter_control_fane -- out
     );
 
     ----------------------------------------------------------------------------
@@ -2304,7 +2304,7 @@ begin
         data_in                         => w_data(2 downto 2) ,-- in
         write                           => write_en(0) ,-- in
         cs                              => reg_sel(23) ,-- in
-        reg_value                       => control_registers_out_i.filter_control_fafb(0 downto 0) -- out
+        reg_value(0)                    => control_registers_out_i.filter_control_fafb -- out
     );
 
     ----------------------------------------------------------------------------
@@ -2323,7 +2323,7 @@ begin
         data_in                         => w_data(3 downto 3) ,-- in
         write                           => write_en(0) ,-- in
         cs                              => reg_sel(23) ,-- in
-        reg_value                       => control_registers_out_i.filter_control_fafe(0 downto 0) -- out
+        reg_value(0)                    => control_registers_out_i.filter_control_fafe -- out
     );
 
     ----------------------------------------------------------------------------
@@ -2342,7 +2342,7 @@ begin
         data_in                         => w_data(4 downto 4) ,-- in
         write                           => write_en(0) ,-- in
         cs                              => reg_sel(23) ,-- in
-        reg_value                       => control_registers_out_i.filter_control_fbnb(0 downto 0) -- out
+        reg_value(0)                    => control_registers_out_i.filter_control_fbnb -- out
     );
 
     ----------------------------------------------------------------------------
@@ -2361,7 +2361,7 @@ begin
         data_in                         => w_data(5 downto 5) ,-- in
         write                           => write_en(0) ,-- in
         cs                              => reg_sel(23) ,-- in
-        reg_value                       => control_registers_out_i.filter_control_fbne(0 downto 0) -- out
+        reg_value(0)                    => control_registers_out_i.filter_control_fbne -- out
     );
 
     ----------------------------------------------------------------------------
@@ -2380,7 +2380,7 @@ begin
         data_in                         => w_data(6 downto 6) ,-- in
         write                           => write_en(0) ,-- in
         cs                              => reg_sel(23) ,-- in
-        reg_value                       => control_registers_out_i.filter_control_fbfb(0 downto 0) -- out
+        reg_value(0)                    => control_registers_out_i.filter_control_fbfb -- out
     );
 
     ----------------------------------------------------------------------------
@@ -2399,7 +2399,7 @@ begin
         data_in                         => w_data(7 downto 7) ,-- in
         write                           => write_en(0) ,-- in
         cs                              => reg_sel(23) ,-- in
-        reg_value                       => control_registers_out_i.filter_control_fbfe(0 downto 0) -- out
+        reg_value(0)                    => control_registers_out_i.filter_control_fbfe -- out
     );
 
     ----------------------------------------------------------------------------
@@ -2418,7 +2418,7 @@ begin
         data_in                         => w_data(8 downto 8) ,-- in
         write                           => write_en(1) ,-- in
         cs                              => reg_sel(23) ,-- in
-        reg_value                       => control_registers_out_i.filter_control_fcnb(0 downto 0) -- out
+        reg_value(0)                    => control_registers_out_i.filter_control_fcnb -- out
     );
 
     ----------------------------------------------------------------------------
@@ -2437,7 +2437,7 @@ begin
         data_in                         => w_data(9 downto 9) ,-- in
         write                           => write_en(1) ,-- in
         cs                              => reg_sel(23) ,-- in
-        reg_value                       => control_registers_out_i.filter_control_fcne(0 downto 0) -- out
+        reg_value(0)                    => control_registers_out_i.filter_control_fcne -- out
     );
 
     ----------------------------------------------------------------------------
@@ -2456,7 +2456,7 @@ begin
         data_in                         => w_data(10 downto 10) ,-- in
         write                           => write_en(1) ,-- in
         cs                              => reg_sel(23) ,-- in
-        reg_value                       => control_registers_out_i.filter_control_fcfb(0 downto 0) -- out
+        reg_value(0)                    => control_registers_out_i.filter_control_fcfb -- out
     );
 
     ----------------------------------------------------------------------------
@@ -2475,7 +2475,7 @@ begin
         data_in                         => w_data(11 downto 11) ,-- in
         write                           => write_en(1) ,-- in
         cs                              => reg_sel(23) ,-- in
-        reg_value                       => control_registers_out_i.filter_control_fcfe(0 downto 0) -- out
+        reg_value(0)                    => control_registers_out_i.filter_control_fcfe -- out
     );
 
     ----------------------------------------------------------------------------
@@ -2494,7 +2494,7 @@ begin
         data_in                         => w_data(12 downto 12) ,-- in
         write                           => write_en(1) ,-- in
         cs                              => reg_sel(23) ,-- in
-        reg_value                       => control_registers_out_i.filter_control_frnb(0 downto 0) -- out
+        reg_value(0)                    => control_registers_out_i.filter_control_frnb -- out
     );
 
     ----------------------------------------------------------------------------
@@ -2513,7 +2513,7 @@ begin
         data_in                         => w_data(13 downto 13) ,-- in
         write                           => write_en(1) ,-- in
         cs                              => reg_sel(23) ,-- in
-        reg_value                       => control_registers_out_i.filter_control_frne(0 downto 0) -- out
+        reg_value(0)                    => control_registers_out_i.filter_control_frne -- out
     );
 
     ----------------------------------------------------------------------------
@@ -2532,7 +2532,7 @@ begin
         data_in                         => w_data(14 downto 14) ,-- in
         write                           => write_en(1) ,-- in
         cs                              => reg_sel(23) ,-- in
-        reg_value                       => control_registers_out_i.filter_control_frfb(0 downto 0) -- out
+        reg_value(0)                    => control_registers_out_i.filter_control_frfb -- out
     );
 
     ----------------------------------------------------------------------------
@@ -2551,7 +2551,7 @@ begin
         data_in                         => w_data(15 downto 15) ,-- in
         write                           => write_en(1) ,-- in
         cs                              => reg_sel(23) ,-- in
-        reg_value                       => control_registers_out_i.filter_control_frfe(0 downto 0) -- out
+        reg_value(0)                    => control_registers_out_i.filter_control_frfe -- out
     );
 
     ----------------------------------------------------------------------------
@@ -2570,7 +2570,7 @@ begin
         data_in                         => w_data(0 downto 0) ,-- in
         write                           => write_en(0) ,-- in
         cs                              => reg_sel(26) ,-- in
-        reg_value                       => control_registers_out_i.rx_settings_rtsop(0 downto 0) -- out
+        reg_value(0)                    => control_registers_out_i.rx_settings_rtsop -- out
     );
 
     ----------------------------------------------------------------------------
@@ -2612,7 +2612,7 @@ begin
         data_in                         => w_data(0 downto 0) ,-- in
         write                           => write_en(0) ,-- in
         cs                              => reg_sel(29) ,-- in
-        reg_value                       => control_registers_out_i.tx_command_txce(0 downto 0) -- out
+        reg_value(0)                    => control_registers_out_i.tx_command_txce -- out
     );
 
     ----------------------------------------------------------------------------
@@ -2631,7 +2631,7 @@ begin
         data_in                         => w_data(1 downto 1) ,-- in
         write                           => write_en(0) ,-- in
         cs                              => reg_sel(29) ,-- in
-        reg_value                       => control_registers_out_i.tx_command_txcr(0 downto 0) -- out
+        reg_value(0)                    => control_registers_out_i.tx_command_txcr -- out
     );
 
     ----------------------------------------------------------------------------
@@ -2650,7 +2650,7 @@ begin
         data_in                         => w_data(2 downto 2) ,-- in
         write                           => write_en(0) ,-- in
         cs                              => reg_sel(29) ,-- in
-        reg_value                       => control_registers_out_i.tx_command_txca(0 downto 0) -- out
+        reg_value(0)                    => control_registers_out_i.tx_command_txca -- out
     );
 
     ----------------------------------------------------------------------------
@@ -2669,7 +2669,7 @@ begin
         data_in                         => w_data(8 downto 8) ,-- in
         write                           => write_en(1) ,-- in
         cs                              => reg_sel(29) ,-- in
-        reg_value                       => control_registers_out_i.tx_command_txb1(0 downto 0) -- out
+        reg_value(0)                    => control_registers_out_i.tx_command_txb1 -- out
     );
 
     ----------------------------------------------------------------------------
@@ -2688,7 +2688,7 @@ begin
         data_in                         => w_data(9 downto 9) ,-- in
         write                           => write_en(1) ,-- in
         cs                              => reg_sel(29) ,-- in
-        reg_value                       => control_registers_out_i.tx_command_txb2(0 downto 0) -- out
+        reg_value(0)                    => control_registers_out_i.tx_command_txb2 -- out
     );
 
     ----------------------------------------------------------------------------
@@ -2707,7 +2707,7 @@ begin
         data_in                         => w_data(10 downto 10) ,-- in
         write                           => write_en(1) ,-- in
         cs                              => reg_sel(29) ,-- in
-        reg_value                       => control_registers_out_i.tx_command_txb3(0 downto 0) -- out
+        reg_value(0)                    => control_registers_out_i.tx_command_txb3 -- out
     );
 
     ----------------------------------------------------------------------------
@@ -2726,7 +2726,7 @@ begin
         data_in                         => w_data(11 downto 11) ,-- in
         write                           => write_en(1) ,-- in
         cs                              => reg_sel(29) ,-- in
-        reg_value                       => control_registers_out_i.tx_command_txb4(0 downto 0) -- out
+        reg_value(0)                    => control_registers_out_i.tx_command_txb4 -- out
     );
 
     ----------------------------------------------------------------------------
@@ -2745,7 +2745,7 @@ begin
         data_in                         => w_data(12 downto 12) ,-- in
         write                           => write_en(1) ,-- in
         cs                              => reg_sel(29) ,-- in
-        reg_value                       => control_registers_out_i.tx_command_txb5(0 downto 0) -- out
+        reg_value(0)                    => control_registers_out_i.tx_command_txb5 -- out
     );
 
     ----------------------------------------------------------------------------
@@ -2764,7 +2764,7 @@ begin
         data_in                         => w_data(13 downto 13) ,-- in
         write                           => write_en(1) ,-- in
         cs                              => reg_sel(29) ,-- in
-        reg_value                       => control_registers_out_i.tx_command_txb6(0 downto 0) -- out
+        reg_value(0)                    => control_registers_out_i.tx_command_txb6 -- out
     );
 
     ----------------------------------------------------------------------------
@@ -2783,7 +2783,7 @@ begin
         data_in                         => w_data(14 downto 14) ,-- in
         write                           => write_en(1) ,-- in
         cs                              => reg_sel(29) ,-- in
-        reg_value                       => control_registers_out_i.tx_command_txb7(0 downto 0) -- out
+        reg_value(0)                    => control_registers_out_i.tx_command_txb7 -- out
     );
 
     ----------------------------------------------------------------------------
@@ -2802,7 +2802,7 @@ begin
         data_in                         => w_data(15 downto 15) ,-- in
         write                           => write_en(1) ,-- in
         cs                              => reg_sel(29) ,-- in
-        reg_value                       => control_registers_out_i.tx_command_txb8(0 downto 0) -- out
+        reg_value(0)                    => control_registers_out_i.tx_command_txb8 -- out
     );
 
     ----------------------------------------------------------------------------
@@ -2821,7 +2821,7 @@ begin
         data_in                         => w_data(2 downto 0) ,-- in
         write                           => write_en(0) ,-- in
         cs                              => reg_sel(30) ,-- in
-        reg_value                       => control_registers_out_i.tx_priority_txt1p(2 downto 0) -- out
+        reg_value                       => control_registers_out_i.tx_priority_txt1p -- out
     );
 
     ----------------------------------------------------------------------------
@@ -2840,7 +2840,7 @@ begin
         data_in                         => w_data(6 downto 4) ,-- in
         write                           => write_en(0) ,-- in
         cs                              => reg_sel(30) ,-- in
-        reg_value                       => control_registers_out_i.tx_priority_txt2p(2 downto 0) -- out
+        reg_value                       => control_registers_out_i.tx_priority_txt2p -- out
     );
 
     ----------------------------------------------------------------------------
@@ -2859,7 +2859,7 @@ begin
         data_in                         => w_data(10 downto 8) ,-- in
         write                           => write_en(1) ,-- in
         cs                              => reg_sel(30) ,-- in
-        reg_value                       => control_registers_out_i.tx_priority_txt3p(2 downto 0) -- out
+        reg_value                       => control_registers_out_i.tx_priority_txt3p -- out
     );
 
     ----------------------------------------------------------------------------
@@ -2878,7 +2878,7 @@ begin
         data_in                         => w_data(14 downto 12) ,-- in
         write                           => write_en(1) ,-- in
         cs                              => reg_sel(30) ,-- in
-        reg_value                       => control_registers_out_i.tx_priority_txt4p(2 downto 0) -- out
+        reg_value                       => control_registers_out_i.tx_priority_txt4p -- out
     );
 
     ----------------------------------------------------------------------------
@@ -2897,7 +2897,7 @@ begin
         data_in                         => w_data(18 downto 16) ,-- in
         write                           => write_en(2) ,-- in
         cs                              => reg_sel(30) ,-- in
-        reg_value                       => control_registers_out_i.tx_priority_txt5p(2 downto 0) -- out
+        reg_value                       => control_registers_out_i.tx_priority_txt5p -- out
     );
 
     ----------------------------------------------------------------------------
@@ -2916,7 +2916,7 @@ begin
         data_in                         => w_data(22 downto 20) ,-- in
         write                           => write_en(2) ,-- in
         cs                              => reg_sel(30) ,-- in
-        reg_value                       => control_registers_out_i.tx_priority_txt6p(2 downto 0) -- out
+        reg_value                       => control_registers_out_i.tx_priority_txt6p -- out
     );
 
     ----------------------------------------------------------------------------
@@ -2935,7 +2935,7 @@ begin
         data_in                         => w_data(26 downto 24) ,-- in
         write                           => write_en(3) ,-- in
         cs                              => reg_sel(30) ,-- in
-        reg_value                       => control_registers_out_i.tx_priority_txt7p(2 downto 0) -- out
+        reg_value                       => control_registers_out_i.tx_priority_txt7p -- out
     );
 
     ----------------------------------------------------------------------------
@@ -2954,7 +2954,7 @@ begin
         data_in                         => w_data(30 downto 28) ,-- in
         write                           => write_en(3) ,-- in
         cs                              => reg_sel(30) ,-- in
-        reg_value                       => control_registers_out_i.tx_priority_txt8p(2 downto 0) -- out
+        reg_value                       => control_registers_out_i.tx_priority_txt8p -- out
     );
 
     ----------------------------------------------------------------------------
@@ -2974,7 +2974,7 @@ begin
         write                           => write_en(0) ,-- in
         cs                              => reg_sel(32) ,-- in
         lock                            => lock_2 ,-- in
-        reg_value                       => control_registers_out_i.ssp_cfg_ssp_offset(7 downto 0) -- out
+        reg_value                       => control_registers_out_i.ssp_cfg_ssp_offset -- out
     );
 
     ----------------------------------------------------------------------------
@@ -2994,7 +2994,7 @@ begin
         write                           => write_en(1) ,-- in
         cs                              => reg_sel(32) ,-- in
         lock                            => lock_2 ,-- in
-        reg_value                       => control_registers_out_i.ssp_cfg_ssp_src(1 downto 0) -- out
+        reg_value                       => control_registers_out_i.ssp_cfg_ssp_src -- out
     );
 
     ----------------------------------------------------------------------------

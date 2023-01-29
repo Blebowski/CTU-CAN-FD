@@ -1,18 +1,18 @@
 --------------------------------------------------------------------------------
--- 
--- CTU CAN FD IP Core 
+--
+-- CTU CAN FD IP Core
 -- Copyright (C) 2021-present Ondrej Ille
--- 
+--
 -- Permission is hereby granted, free of charge, to any person obtaining a copy
 -- of this VHDL component and associated documentation files (the "Component"),
 -- to use, copy, modify, merge, publish, distribute the Component for
 -- educational, research, evaluation, self-interest purposes. Using the
 -- Component for commercial purposes is forbidden unless previously agreed with
 -- Copyright holder.
--- 
+--
 -- The above copyright notice and this permission notice shall be included in
 -- all copies or substantial portions of the Component.
--- 
+--
 -- THE COMPONENT IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 -- IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 -- FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -20,38 +20,38 @@
 -- LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
 -- FROM, OUT OF OR IN CONNECTION WITH THE COMPONENT OR THE USE OR OTHER DEALINGS
 -- IN THE COMPONENT.
--- 
+--
 -- The CAN protocol is developed by Robert Bosch GmbH and protected by patents.
 -- Anybody who wants to implement this IP core on silicon has to obtain a CAN
 -- protocol license from Bosch.
--- 
+--
 -- -------------------------------------------------------------------------------
--- 
--- CTU CAN FD IP Core 
+--
+-- CTU CAN FD IP Core
 -- Copyright (C) 2015-2020 MIT License
--- 
+--
 -- Authors:
 --     Ondrej Ille <ondrej.ille@gmail.com>
 --     Martin Jerabek <martin.jerabek01@gmail.com>
--- 
--- Project advisors: 
+--
+-- Project advisors:
 -- 	Jiri Novak <jnovak@fel.cvut.cz>
 -- 	Pavel Pisa <pisa@cmp.felk.cvut.cz>
--- 
+--
 -- Department of Measurement         (http://meas.fel.cvut.cz/)
 -- Faculty of Electrical Engineering (http://www.fel.cvut.cz)
 -- Czech Technical University        (http://www.cvut.cz/)
--- 
+--
 -- Permission is hereby granted, free of charge, to any person obtaining a copy
 -- of this VHDL component and associated documentation files (the "Component"),
 -- to deal in the Component without restriction, including without limitation
 -- the rights to use, copy, modify, merge, publish, distribute, sublicense,
 -- and/or sell copies of the Component, and to permit persons to whom the
 -- Component is furnished to do so, subject to the following conditions:
--- 
+--
 -- The above copyright notice and this permission notice shall be included in
 -- all copies or substantial portions of the Component.
--- 
+--
 -- THE COMPONENT IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 -- IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 -- FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -59,11 +59,11 @@
 -- LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
 -- FROM, OUT OF OR IN CONNECTION WITH THE COMPONENT OR THE USE OR OTHER DEALINGS
 -- IN THE COMPONENT.
--- 
+--
 -- The CAN protocol is developed by Robert Bosch GmbH and protected by patents.
 -- Anybody who wants to implement this IP core on silicon has to obtain a CAN
 -- protocol license from Bosch.
--- 
+--
 --------------------------------------------------------------------------------
 
 --------------------------------------------------------------------------------
@@ -96,7 +96,6 @@ use ctu_can_fd_rtl.id_transfer_pkg.all;
 use ctu_can_fd_rtl.can_constants_pkg.all;
 
 use ctu_can_fd_rtl.can_types_pkg.all;
-use ctu_can_fd_rtl.drv_stat_pkg.all;
 use ctu_can_fd_rtl.unary_ops_pkg.all;
 use ctu_can_fd_rtl.can_config_pkg.all;
 use ctu_can_fd_rtl.CAN_FD_register_map.all;
@@ -114,7 +113,7 @@ architecture apb_unit_test of CAN_test is
     component can_top_apb is
         generic(
             rx_buffer_size     : natural range 32 to 4098 := 128;
-            txt_buffer_count   : natural range 2 to 8     := 4; 
+            txt_buffer_count   : natural range 2 to 8     := 4;
             sup_filtA          : boolean                  := true;
             sup_filtB          : boolean                  := true;
             sup_filtC          : boolean                  := true;
@@ -160,12 +159,12 @@ architecture apb_unit_test of CAN_test is
 
     signal aclk : std_logic := '0';
     signal arstn : std_logic := '0';
-    
+
 begin
     can_inst : entity ctu_can_fd_rtl.can_top_apb
         generic map (
             rx_buffer_size      => 128,
-            txt_buffer_count    => 4, 
+            txt_buffer_count    => 4,
             sup_filtA           => false,
             sup_filtB           => false,
             sup_filtC           => false,
@@ -307,10 +306,10 @@ begin
         arstn     <= '0';
         wait until rising_edge(aclk);
         arstn     <= '1';
-        
+
         wait until rising_edge(aclk);
         wait until rising_edge(aclk);
-        
+
         apb_write(BTR_ADR, x"DEADBEEF", b"1111");
         apb_read(BTR_ADR);
         check(s_apb_prdata = x"DEADBEEF", "Readback for write-after-HW-reset mismatch.");

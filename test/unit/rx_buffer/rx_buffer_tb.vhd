@@ -1,18 +1,18 @@
 --------------------------------------------------------------------------------
--- 
--- CTU CAN FD IP Core 
+--
+-- CTU CAN FD IP Core
 -- Copyright (C) 2021-present Ondrej Ille
--- 
+--
 -- Permission is hereby granted, free of charge, to any person obtaining a copy
 -- of this VHDL component and associated documentation files (the "Component"),
 -- to use, copy, modify, merge, publish, distribute the Component for
 -- educational, research, evaluation, self-interest purposes. Using the
 -- Component for commercial purposes is forbidden unless previously agreed with
 -- Copyright holder.
--- 
+--
 -- The above copyright notice and this permission notice shall be included in
 -- all copies or substantial portions of the Component.
--- 
+--
 -- THE COMPONENT IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 -- IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 -- FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -20,38 +20,38 @@
 -- LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
 -- FROM, OUT OF OR IN CONNECTION WITH THE COMPONENT OR THE USE OR OTHER DEALINGS
 -- IN THE COMPONENT.
--- 
+--
 -- The CAN protocol is developed by Robert Bosch GmbH and protected by patents.
 -- Anybody who wants to implement this IP core on silicon has to obtain a CAN
 -- protocol license from Bosch.
--- 
+--
 -- -------------------------------------------------------------------------------
--- 
--- CTU CAN FD IP Core 
+--
+-- CTU CAN FD IP Core
 -- Copyright (C) 2015-2020 MIT License
--- 
+--
 -- Authors:
 --     Ondrej Ille <ondrej.ille@gmail.com>
 --     Martin Jerabek <martin.jerabek01@gmail.com>
--- 
--- Project advisors: 
+--
+-- Project advisors:
 -- 	Jiri Novak <jnovak@fel.cvut.cz>
 -- 	Pavel Pisa <pisa@cmp.felk.cvut.cz>
--- 
+--
 -- Department of Measurement         (http://meas.fel.cvut.cz/)
 -- Faculty of Electrical Engineering (http://www.fel.cvut.cz)
 -- Czech Technical University        (http://www.cvut.cz/)
--- 
+--
 -- Permission is hereby granted, free of charge, to any person obtaining a copy
 -- of this VHDL component and associated documentation files (the "Component"),
 -- to deal in the Component without restriction, including without limitation
 -- the rights to use, copy, modify, merge, publish, distribute, sublicense,
 -- and/or sell copies of the Component, and to permit persons to whom the
 -- Component is furnished to do so, subject to the following conditions:
--- 
+--
 -- The above copyright notice and this permission notice shall be included in
 -- all copies or substantial portions of the Component.
--- 
+--
 -- THE COMPONENT IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 -- IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 -- FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -59,11 +59,11 @@
 -- LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
 -- FROM, OUT OF OR IN CONNECTION WITH THE COMPONENT OR THE USE OR OTHER DEALINGS
 -- IN THE COMPONENT.
--- 
+--
 -- The CAN protocol is developed by Robert Bosch GmbH and protected by patents.
 -- Anybody who wants to implement this IP core on silicon has to obtain a CAN
 -- protocol license from Bosch.
--- 
+--
 --------------------------------------------------------------------------------
 
 --------------------------------------------------------------------------------
@@ -75,7 +75,7 @@
 -- @Verifies:
 --  @1. Storing protocol to RX Buffer (store metadata, store data word, reception
 --      valid, reception abort).
---  @2. Storing of Metadata, Identifier and Data words to RX Buffer. 
+--  @2. Storing of Metadata, Identifier and Data words to RX Buffer.
 --  @2. Reading protocol from RX Buffer. Reading of CAN frame from RX Buffer.
 --  @3. Over-run detection by RX Buffer (frame is discarded when overrun is
 --      detected).
@@ -97,7 +97,7 @@
 --      Wait until all frames are read from RX Buffer and compare contents of
 --      Input memory and Output memory (everything what was succesfully stored
 --      to RX Buffer must be also in the same order read from RX Buffer). This
---      verifies proper pointer handling.  
+--      verifies proper pointer handling.
 
 -- @Notes:
 --  Following test instantiates RX Buffer. Stimuli generator generates input
@@ -131,7 +131,6 @@ use ctu_can_fd_rtl.id_transfer_pkg.all;
 use ctu_can_fd_rtl.can_constants_pkg.all;
 
 use ctu_can_fd_rtl.can_types_pkg.all;
-use ctu_can_fd_rtl.drv_stat_pkg.all;
 use ctu_can_fd_rtl.unary_ops_pkg.all;
 use ctu_can_fd_rtl.can_config_pkg.all;
 use ctu_can_fd_rtl.CAN_FD_register_map.all;
@@ -149,77 +148,77 @@ context vunit_lib.vunit_context;
 architecture rx_buffer_unit_test of CAN_test is
 
     -- System clock and reset
-    signal clk_sys                  :    std_logic := '0';
-    signal res_n                    :    std_logic := '0';
+    signal clk_sys                  : std_logic := '0';
+    signal res_n                    : std_logic := '0';
 
     -- Metadata and idntifier
-    signal rec_ident             :    std_logic_vector(28 downto 0) :=
-                                            (OTHERS => '0');
-    signal rec_dlc               :    std_logic_vector(3 downto 0) :=
-                                            (OTHERS => '0');
-    signal rec_ident_type        :    std_logic := '0';
-    signal rec_frame_type        :    std_logic := '0';
-    signal rec_is_rtr               :    std_logic := '0';
-    signal rec_brs                  :    std_logic := '0';
-    signal rec_esi                  :    std_logic := '0';
+    signal rec_ident                : std_logic_vector(28 downto 0) := (others => '0');
+    signal rec_dlc                  : std_logic_vector(3 downto 0) := (OTHERS => '0');
+    signal rec_ident_type           : std_logic := '0';
+    signal rec_frame_type           : std_logic := '0';
+    signal rec_is_rtr               : std_logic := '0';
+    signal rec_brs                  : std_logic := '0';
+    signal rec_esi                  : std_logic := '0';
 
     -- Control signals from CAN Core
-    signal store_metadata_f           :    std_logic := '0';
-    signal store_data_f               :    std_logic := '0';
-    signal store_data_word          :    std_logic_vector(31 downto 0) :=
-                                            (OTHERS => '0');
-    signal rec_valid_f        :    std_logic := '0';
-    signal rec_abort_f                :    std_logic := '0';
-    signal sof_pulse                :    std_logic := '0';
+    signal store_metadata_f         : std_logic := '0';
+    signal store_data_f             : std_logic := '0';
+    signal store_data_word          : std_logic_vector(31 downto 0) := (OTHERS => '0');
+    signal rec_valid_f              : std_logic := '0';
+    signal rec_abort_f              : std_logic := '0';
+    signal sof_pulse                : std_logic := '0';
 
-    signal timestamp                :    std_logic_vector(63 downto 0) :=
-                                            (OTHERS => '0');
+    signal timestamp                : std_logic_vector(63 downto 0) := (OTHERS => '0');
 
-    -- Control and status signals to/from SW
-    signal drv_bus                  :    std_logic_vector(1023 downto 0) :=
-                                            (OTHERS => '0');
+    signal rx_full                  : std_logic;
+    signal rx_empty                 : std_logic;
+    signal rx_frame_count           : std_logic_vector(10 downto 0);
+    signal rx_mem_free              : std_logic_vector(12 downto 0);
+    signal rx_read_pointer          : std_logic_vector(11 downto 0);
+    signal rx_write_pointer         : std_logic_vector(11 downto 0);
+    signal rx_data_overrun          : std_logic;
 
-    signal rx_buf_size              :    std_logic_vector(12 downto 0);
-    signal rx_full                  :    std_logic;
-    signal rx_empty                 :    std_logic;
-    signal rx_frame_count           :    std_logic_vector(10 downto 0);
-    signal rx_mem_free              :    std_logic_vector(12 downto 0);
-    signal rx_read_pointer          :    std_logic_vector(11 downto 0);
-    signal rx_write_pointer         :    std_logic_vector(11 downto 0);
-    signal rx_data_overrun          :    std_logic;
+    signal rxb_port_b_data_out      : std_logic_vector(31 downto 0);
 
-    signal rx_read_buff             :    std_logic_vector(31 downto 0);
+    -- Memory registers signals
+    signal mr_mode_rxbam            : std_logic;
+    signal mr_command_cdo           : std_logic;
+    signal mr_command_crxpe         : std_logic;
+    signal mr_command_rrb           : std_logic;
+    signal mr_command_rxrpmv        : std_logic;
+    signal mr_rx_data_read          : std_logic;
+    signal mr_rx_settings_rtsop     : std_logic;
+    signal mr_settings_pchke        : std_logic;
 
-    -- Driving bus aliases
-    signal drv_rtsopt               :    std_logic   := RTS_END;
-    signal drv_read_start           :    std_logic   := '0';
-    signal drv_clr_ovr              :    std_logic   := '0';
-
+    -- Memory testability
+    signal mr_tst_control_tmaena    : std_logic;
+    signal mr_tst_control_twrstb    : std_logic;
+    signal mr_tst_dest_tst_addr     : std_logic_vector(15 downto 0);
+    signal mr_tst_dest_tst_mtgt     : std_logic_vector(3 downto 0);
+    signal mr_tst_wdata_tst_wdata   : std_logic_vector(31 downto 0);
+    signal mr_tst_rdata_tst_rdata   : std_logic_vector(31 downto 0);
 
     ----------------------------------------------------------------------------
     -- Test specific signals
     ----------------------------------------------------------------------------
 
-    signal iteration_done           :    boolean     := false;
-    signal in_mem_full              :    boolean     := false;
-    signal out_mem_full             :    boolean     := false;
+    signal iteration_done           : boolean     := false;
+    signal in_mem_full              : boolean     := false;
+    signal out_mem_full             : boolean     := false;
 
     -- Error counters
-    signal stim_errs                :    natural     := 0;
-    signal read_errs                :    natural     := 0;
-    signal status_errs              :    natural     := 0;
-    signal cons_errs                :    natural     := 0;
+    signal stim_errs                : natural     := 0;
+    signal read_errs                : natural     := 0;
+    signal status_errs              : natural     := 0;
+    signal cons_errs                : natural     := 0;
 
     -- Dummy signals
-    signal exit_imm_d               :    boolean     := false;
-    signal exit_imm_d_2             :    boolean     := false;
-    signal exit_imm_d_3             :    boolean     := false;
+    signal exit_imm_d               : boolean     := false;
+    signal exit_imm_d_2             : boolean     := false;
+    signal exit_imm_d_3             : boolean     := false;
 
     -- Additional random counter
-    signal rand_ctr_3               :    natural range 0 to RAND_POOL_SIZE := 0;
-
-    signal test_registers_out       :    test_registers_out_t :=
-        ((OTHERS => '0'), (OTHERS => '0'), (OTHERS => '0'));
+    signal rand_ctr_3               : natural range 0 to RAND_POOL_SIZE := 0;
 
     ----------------------------------------------------------------------------
     -- Memory declarations for memories where data are read out
@@ -227,20 +226,17 @@ architecture rx_buffer_unit_test of CAN_test is
     type eval_mem_test is array (0 to 1023) of
         std_logic_vector(31 downto 0);
 
-    signal in_mem                   :    eval_mem_test :=
-                                         (OTHERS => (OTHERS => '0'));
+    signal in_mem                   : eval_mem_test := (OTHERS => (OTHERS => '0'));
+    signal out_mem                  : eval_mem_test := (OTHERS => (OTHERS => '0'));
 
-    signal out_mem                  :    eval_mem_test :=
-                                         (OTHERS => (OTHERS => '0'));
+    signal in_pointer               : natural := 0;
+    signal out_pointer              : natural := 0;
+    signal mod_pointer              : natural := 0;
 
-    signal in_pointer               :    natural := 0;
-    signal out_pointer              :    natural := 0;
-    signal mod_pointer              :    natural := 0;
+    constant C_RX_BUFF_SIZE         : natural := 32;
 
-    constant C_RX_BUFF_SIZE              :    natural := 32;
-    
-    signal ts_preset        : std_logic_vector(2 downto 1) := "00";
-    signal ts_preset_val    : std_logic_vector(63 downto 0) := (OTHERS => '0');
+    signal ts_preset                : std_logic_vector(2 downto 1) := "00";
+    signal ts_preset_val            : std_logic_vector(63 downto 0) := (OTHERS => '0');
 
 
     ----------------------------------------------------------------------------
@@ -349,33 +345,33 @@ architecture rx_buffer_unit_test of CAN_test is
     --     are stored to "input memory"!
     ----------------------------------------------------------------------------
     procedure insert_frame_to_RX_Buffer(
-        signal   rand_ctr           :inout  natural range 0 to RAND_POOL_SIZE;
-        signal   clk_sys            :in     std_logic;
+        signal   rand_ctr               :inout  natural range 0 to RAND_POOL_SIZE;
+        signal   clk_sys                :in     std_logic;
 
         -- Received Metadata and identifier
-        signal   rec_ident       :out    std_logic_vector(28 downto 0);
-        signal   rec_dlc         :out    std_logic_vector(3 downto 0);
-        signal   rec_frame_type     :out    std_logic;
-        signal   rec_ident_type     :out    std_logic;
-        signal   rec_brs            :out    std_logic;
-        signal   rec_esi            :out    std_logic;
-        signal   rec_rtr            :out    std_logic;
+        signal   rec_ident              :out    std_logic_vector(28 downto 0);
+        signal   rec_dlc                :out    std_logic_vector(3 downto 0);
+        signal   rec_frame_type         :out    std_logic;
+        signal   rec_ident_type         :out    std_logic;
+        signal   rec_brs                :out    std_logic;
+        signal   rec_esi                :out    std_logic;
+        signal   rec_rtr                :out    std_logic;
 
         -- Storing protocol between RX Buffer and CAN Core
-        signal   sof_pulse          :out    std_logic;
-        signal   store_metadata_f     :out    std_logic;
-        signal   store_data_f         :out    std_logic;
-        signal   store_data_word    :out    std_logic_vector(31 downto 0);
-        signal   rec_abort_f          :out    std_logic;
-        signal   rec_valid_f  :out    std_logic;
+        signal   sof_pulse              :out    std_logic;
+        signal   store_metadata_f       :out    std_logic;
+        signal   store_data_f           :out    std_logic;
+        signal   store_data_word        :out    std_logic_vector(31 downto 0);
+        signal   rec_abort_f            :out    std_logic;
+        signal   rec_valid_f            :out    std_logic;
 
-        signal   drv_rtsopt         :in     std_logic;
-        signal   drv_clr_ovr        :inout  std_logic;
+        signal   mr_rx_settings_rtsop   :in     std_logic;
+        signal   mr_command_cdo         :inout  std_logic;
 
-        signal   memory             :inout  eval_mem_test;
-        signal   in_pointer         :inout  natural;
-        signal   timestamp          :in     std_logic_vector(63 downto 0);
-        signal   log_level          :in     log_lvl_type
+        signal   memory                 :inout  eval_mem_test;
+        signal   in_pointer             :inout  natural;
+        signal   timestamp              :in     std_logic_vector(63 downto 0);
+        signal   log_level              :in     log_lvl_type
    )is
         variable CAN_frame          :       SW_CAN_frame_type;
         variable stored_ts          :       std_logic_vector(63 downto 0);
@@ -395,9 +391,9 @@ architecture rx_buffer_unit_test of CAN_test is
         -- next frame then evaluated overrun as present and did not store the
         -- frame to input memory!
         ------------------------------------------------------------------------
-        drv_clr_ovr <= '1';
+        mr_command_cdo <= '1';
         wait until rising_edge(clk_sys);
-        drv_clr_ovr <= '0';
+        mr_command_cdo <= '0';
         wait for 1 ns;
 
         -- Check that overrun was cleared
@@ -407,7 +403,7 @@ architecture rx_buffer_unit_test of CAN_test is
         -- Initiate Frame by SOF pulse and store timestamp!
         ------------------------------------------------------------------------
         sof_pulse           <= '1';
-        if (drv_rtsopt = RTS_BEG) then
+        if (mr_rx_settings_rtsop = RTS_BEG) then
             stored_ts   := std_logic_vector(to_unsigned(
                             to_integer(unsigned(timestamp)) + 1, 64));
         end if;
@@ -498,7 +494,7 @@ architecture rx_buffer_unit_test of CAN_test is
         -- Timestamp must be marked, if we are interested in END OF Frame
         -- Timestamp!
         ------------------------------------------------------------------------
-        if (drv_rtsopt = RTS_END) then
+        if (mr_rx_settings_rtsop = RTS_END) then
             CAN_frame.timestamp  := timestamp;
         else
             CAN_frame.timestamp  := stored_ts;
@@ -532,7 +528,7 @@ architecture rx_buffer_unit_test of CAN_test is
     ----------------------------------------------------------------------------
     procedure read_frame(
         signal buff_out        :in    std_logic_vector(31 downto 0);
-        signal drv_read_start  :inout std_logic;
+        signal mr_rx_data_read :inout std_logic;
         signal clk_sys         :in    std_logic;
         signal out_mem         :out   eval_mem_test;
         signal in_mem          :in    eval_mem_test;
@@ -547,7 +543,7 @@ architecture rx_buffer_unit_test of CAN_test is
 
         -- Reading all words in cycle and storing to output memory!
         for i in 0 to rwcnt loop
-            drv_read_start        <= '1';
+            mr_rx_data_read       <= '1';
             out_mem(out_pointer)  <= buff_out;
 
             -------------------------------------------------------------------
@@ -562,7 +558,7 @@ architecture rx_buffer_unit_test of CAN_test is
 
             out_pointer           <= out_pointer + 1;
             wait until rising_edge(clk_sys);
-            drv_read_start        <= '0';
+            mr_rx_data_read       <= '0';
             wait until rising_edge(clk_sys);
         end loop;
 
@@ -594,7 +590,10 @@ begin
     ----------------------------------------------------------------------------
     rx_buffer_inst : entity ctu_can_fd_rtl.rx_buffer
     generic map(
-        G_RX_BUFF_SIZE         => C_RX_BUFF_SIZE
+        G_RX_BUFF_SIZE         => C_RX_BUFF_SIZE,
+        G_SUP_PARITY           => true,
+        G_RESET_RX_BUF_RAM     => false,
+        G_TECHNOLOGY           => C_TECH_FPGA
     )
     port map(
         clk_sys                  => clk_sys,
@@ -615,18 +614,35 @@ begin
         rec_abort_f              => rec_abort_f,
         sof_pulse                => sof_pulse,
         timestamp                => timestamp,
-        drv_bus                  => drv_bus,
-        rx_buf_size              => rx_buf_size,
+
+        -- TODO: Connect here!
+        mr_mode_rxbam            => mr_mode_rxbam,
+        mr_command_cdo           => mr_command_cdo,
+        mr_command_crxpe         => mr_command_crxpe,
+        mr_command_rrb           => mr_command_rrb,
+        mr_command_rxrpmv        => mr_command_rxrpmv,
+        mr_rx_data_read          => mr_rx_data_read,
+        mr_rx_settings_rtsop     => mr_rx_settings_rtsop,
+        mr_settings_pchke        => mr_settings_pchke,
+
+        -- Actually loaded data for reading
+        rxb_port_b_data_out     => rxb_port_b_data_out,
+
+        -- Memory testability
+        mr_tst_control_tmaena   => '0',
+        mr_tst_control_twrstb   => '0',
+        mr_tst_dest_tst_addr    => (others => '0'),
+        mr_tst_dest_tst_mtgt    => (others => '0'),
+        mr_tst_wdata_tst_wdata  => (others => '0'),
+        mr_tst_rdata_tst_rdata  => open,
+
         rx_full                  => rx_full,
         rx_empty                 => rx_empty,
         rx_frame_count           => rx_frame_count,
         rx_mem_free              => rx_mem_free,
         rx_read_pointer          => rx_read_pointer,
         rx_write_pointer         => rx_write_pointer,
-        rx_data_overrun          => rx_data_overrun,
-        rx_read_buff             => rx_read_buff,
-        test_registers_out       => test_registers_out,
-        tst_rdata_rx_buf         => open
+        rx_data_overrun          => rx_data_overrun
     );
 
 
@@ -647,11 +663,6 @@ begin
 
     out_mem_full <= true when out_pointer + C_RX_BUFF_SIZE + 1 > 300 else
                  false;
-
-    drv_bus(DRV_READ_START_INDEX)   <= drv_read_start;
-    drv_bus(DRV_RTSOPT_INDEX)       <= drv_rtsopt;
-    drv_bus(DRV_CLR_OVR_INDEX)      <= drv_clr_ovr;
-
 
     ----------------------------------------------------------------------------
     -- Stimuli generator - Main test process
@@ -681,10 +692,10 @@ begin
             -- Change setting for timestamp options (store timestamp
             --  at beginning or end of frame)
             --------------------------------------------------------------------
-            if (drv_rtsopt = RTS_BEG) then
-                drv_rtsopt <= RTS_END;
+            if (mr_rx_settings_rtsop = RTS_BEG) then
+                mr_rx_settings_rtsop <= RTS_END;
             else
-                drv_rtsopt <= RTS_BEG;
+                mr_rx_settings_rtsop <= RTS_BEG;
             end if;
 
             --------------------------------------------------------------------
@@ -697,8 +708,8 @@ begin
                 insert_frame_to_RX_Buffer(rand_ctr, clk_sys, rec_ident,
                     rec_dlc, rec_frame_type, rec_ident_type, rec_brs,
                     rec_esi, rec_is_rtr, sof_pulse, store_metadata_f, store_data_f,
-                    store_data_word, rec_abort_f, rec_valid_f, drv_rtsopt,
-                    drv_clr_ovr, in_mem, in_pointer, timestamp, log_level);
+                    store_data_word, rec_abort_f, rec_valid_f, mr_rx_settings_rtsop,
+                    mr_command_cdo, in_mem, in_pointer, timestamp, log_level);
             end loop;
 
             -- Now input memory is full
@@ -742,7 +753,7 @@ begin
         ------------------------------------------------------------------------
         while (out_mem_full = false) loop
             if (rx_empty = '0') then
-                read_frame(rx_read_buff, drv_read_start, clk_sys, out_mem,
+                read_frame(rxb_port_b_data_out, mr_rx_data_read, clk_sys, out_mem,
                            in_mem, out_pointer);
                 wait_rand_cycles(rand_ctr_3, clk_sys, 200, 250);
             end if;

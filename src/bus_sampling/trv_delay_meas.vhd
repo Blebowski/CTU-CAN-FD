@@ -1,18 +1,18 @@
 --------------------------------------------------------------------------------
--- 
--- CTU CAN FD IP Core 
+--
+-- CTU CAN FD IP Core
 -- Copyright (C) 2021-present Ondrej Ille
--- 
+--
 -- Permission is hereby granted, free of charge, to any person obtaining a copy
 -- of this VHDL component and associated documentation files (the "Component"),
 -- to use, copy, modify, merge, publish, distribute the Component for
 -- educational, research, evaluation, self-interest purposes. Using the
 -- Component for commercial purposes is forbidden unless previously agreed with
 -- Copyright holder.
--- 
+--
 -- The above copyright notice and this permission notice shall be included in
 -- all copies or substantial portions of the Component.
--- 
+--
 -- THE COMPONENT IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 -- IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 -- FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -20,38 +20,38 @@
 -- LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
 -- FROM, OUT OF OR IN CONNECTION WITH THE COMPONENT OR THE USE OR OTHER DEALINGS
 -- IN THE COMPONENT.
--- 
+--
 -- The CAN protocol is developed by Robert Bosch GmbH and protected by patents.
 -- Anybody who wants to implement this IP core on silicon has to obtain a CAN
 -- protocol license from Bosch.
--- 
+--
 -- -------------------------------------------------------------------------------
--- 
--- CTU CAN FD IP Core 
+--
+-- CTU CAN FD IP Core
 -- Copyright (C) 2015-2020 MIT License
--- 
+--
 -- Authors:
 --     Ondrej Ille <ondrej.ille@gmail.com>
 --     Martin Jerabek <martin.jerabek01@gmail.com>
--- 
--- Project advisors: 
+--
+-- Project advisors:
 -- 	Jiri Novak <jnovak@fel.cvut.cz>
 -- 	Pavel Pisa <pisa@cmp.felk.cvut.cz>
--- 
+--
 -- Department of Measurement         (http://meas.fel.cvut.cz/)
 -- Faculty of Electrical Engineering (http://www.fel.cvut.cz)
 -- Czech Technical University        (http://www.cvut.cz/)
--- 
+--
 -- Permission is hereby granted, free of charge, to any person obtaining a copy
 -- of this VHDL component and associated documentation files (the "Component"),
 -- to deal in the Component without restriction, including without limitation
 -- the rights to use, copy, modify, merge, publish, distribute, sublicense,
 -- and/or sell copies of the Component, and to permit persons to whom the
 -- Component is furnished to do so, subject to the following conditions:
--- 
+--
 -- The above copyright notice and this permission notice shall be included in
 -- all copies or substantial portions of the Component.
--- 
+--
 -- THE COMPONENT IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 -- IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 -- FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -59,11 +59,11 @@
 -- LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
 -- FROM, OUT OF OR IN CONNECTION WITH THE COMPONENT OR THE USE OR OTHER DEALINGS
 -- IN THE COMPONENT.
--- 
+--
 -- The CAN protocol is developed by Robert Bosch GmbH and protected by patents.
 -- Anybody who wants to implement this IP core on silicon has to obtain a CAN
 -- protocol license from Bosch.
--- 
+--
 --------------------------------------------------------------------------------
 
 --------------------------------------------------------------------------------
@@ -73,17 +73,17 @@
 -- Purpose:
 --  Measures Transceiver delay and calculates position of secondary sampling
 --  point.
--- 
---  Measurement is started by and edge on TX Data and Stopped by an edge on 
+--
+--  Measurement is started by and edge on TX Data and Stopped by an edge on
 --  RX Data. Measurement is performed only when it is enabled by Protocol
 --  Control, otherwise measured values remain unchanged.
--- 
---  Secondary sampling point is shadowed during measurement and propagated to 
---  output after the measurement. Data are loaded to output register upon the 
+--
+--  Secondary sampling point is shadowed during measurement and propagated to
+--  output after the measurement. Data are loaded to output register upon the
 --  end of transceiver delay measurement and kept stable till the end of next
 --  measurement. Configurable offset "ssp_offset" is implemented.
 --
---  Shadowed value is muxed based on "ssp_delay_select":
+--  Shadowed value is muxed based on "mr_ssp_cfg_ssp_src":
 --    1. Measured value + configured offset.
 --    2. Configured offset only.
 --
@@ -91,7 +91,7 @@
 --
 --            SSP Delay select
 --  ------------------------------------+
---                                      |   
+--                                      |
 --  Start Measurement                   |
 --  ------------|                       |
 --              |                       |
@@ -118,9 +118,9 @@
 --  -------------------> |  +  +--> |    X+-| Saturation |->+ register |------->
 --                       |     |    |    X  |            |  |          |
 --                       +-----+    |   X   |------------|  |----------|
---                                  |  X                    
---                                  | X                     
---                                  XX 
+--                                  |  X
+--                                  | X
+--                                  XX
 --
 --------------------------------------------------------------------------------
 
@@ -133,138 +133,131 @@ use ctu_can_fd_rtl.id_transfer_pkg.all;
 use ctu_can_fd_rtl.can_constants_pkg.all;
 
 use ctu_can_fd_rtl.can_types_pkg.all;
-use ctu_can_fd_rtl.drv_stat_pkg.all;
 use ctu_can_fd_rtl.unary_ops_pkg.all;
 
 use ctu_can_fd_rtl.CAN_FD_register_map.all;
 use ctu_can_fd_rtl.CAN_FD_frame_format.all;
 
 entity trv_delay_measurement is
-    generic(        
+    generic (
         -- Width (number of bits) in transceiver delay measurement counter
-        G_TRV_CTR_WIDTH          :     natural := 7;
-        
-        -- Width of SSP position
-        G_SSP_POS_WIDTH          :     natural := 8;
+        G_TRV_CTR_WIDTH          :     natural;
 
-        -- Optional usage of saturated value of ssp_delay 
-        G_USE_SSP_SATURATION     :     boolean := true;
-        
-        -- Saturation level for size of SSP_delay. This is to make sure that
-        -- if there is smaller shift register for secondary sampling point we
-        -- don't address outside of this register.
+        -- Width of SSP position
+        G_SSP_POS_WIDTH          :     natural;
+
+        -- Optional usage of saturated value of ssp_delay
+        G_USE_SSP_SATURATION     :     boolean;
+
+        -- Saturation level for size of SSP_delay. This is to make sure that if there is smaller
+        -- shift register for secondary sampling point we don't address outside of this register.
         G_SSP_SATURATION_LVL     :     natural
     );
-    port(
-        ------------------------------------------------------------------------
+    port (
+        -------------------------------------------------------------------------------------------
         -- Clock and Asynchronous reset
-        ------------------------------------------------------------------------
-        -- System clock
-        clk_sys             :in   std_logic;
-        
-        -- Asynchronous reset        
-        res_n               :in   std_logic;
+        -------------------------------------------------------------------------------------------
+        clk_sys                 :in   std_logic;
+        res_n                   :in   std_logic;
 
-        -----------------------------------------------------------------------
+        -------------------------------------------------------------------------------------------
         -- DFT support
-        -----------------------------------------------------------------------
-        scan_enable         :in   std_logic;
+        -------------------------------------------------------------------------------------------
+        scan_enable             :in   std_logic;
 
-        ------------------------------------------------------------------------
+        -------------------------------------------------------------------------------------------
         -- Transceiver Delay measurement control
-        ------------------------------------------------------------------------
+        -------------------------------------------------------------------------------------------
         -- Start measurement (on TX Edge)
-        edge_tx_valid       :in   std_logic;
-        
+        edge_tx_valid           :in   std_logic;
+
         -- Stop measurement (on RX Edge)
-        edge_rx_valid       :in   std_logic;
-        
+        edge_rx_valid           :in   std_logic;
+
         -- Transmitter delay measurement enabled (by Protocol control)
-        tran_delay_meas     :in   std_logic;
+        tran_delay_meas         :in   std_logic;
 
-        ------------------------------------------------------------------------
+        -------------------------------------------------------------------------------------------
         -- Memory registers interface
-        ------------------------------------------------------------------------
+        -------------------------------------------------------------------------------------------
         -- Secondary sampling point offset
-        ssp_offset          :in   std_logic_vector(G_SSP_POS_WIDTH - 1 downto 0);
+        mr_ssp_cfg_ssp_offset   :in   std_logic_vector(G_SSP_POS_WIDTH - 1 downto 0);
 
-        -- Source of secondary sampling point 
-        -- (Measured, Offset, Measured and Offset)
-        ssp_delay_select    :in   std_logic_vector(1 downto 0);
+        -- Source of secondary sampling point (Measured, Offset, Measured and Offset)
+        mr_ssp_cfg_ssp_src      :in   std_logic_vector(1 downto 0);
 
-        ------------------------------------------------------------------------
+        -------------------------------------------------------------------------------------------
         -- Status outputs
-        ------------------------------------------------------------------------
-        
+        -------------------------------------------------------------------------------------------
         -- Shadowed value of Transceiver delay. Updated when measurement ends.
-        trv_delay_shadowed  :out  std_logic_vector(G_TRV_CTR_WIDTH - 1 downto 0);
-                                               
+        trv_delay_shadowed      :out  std_logic_vector(G_TRV_CTR_WIDTH - 1 downto 0);
+
         -- Shadowed value of SSP configuration. Updated when measurement ends.
-        ssp_delay_shadowed  :out  std_logic_vector(G_SSP_POS_WIDTH - 1 downto 0)
+        ssp_delay_shadowed      :out  std_logic_vector(G_SSP_POS_WIDTH - 1 downto 0)
     );
 end entity;
 
 architecture rtl of trv_delay_measurement is
-    
+
     -- Transceiver delay measurement progress register
-    signal trv_meas_progress_d    :    std_logic;
-    signal trv_meas_progress_q    :    std_logic;
-    
+    signal trv_meas_progress_d          : std_logic;
+    signal trv_meas_progress_q          : std_logic;
+
     -- Delayed value of trv_meas_progress to detect when measurement has ended
     -- and load ssp_offset shadow register.
-    signal trv_meas_progress_del  :    std_logic;
+    signal trv_meas_progress_del        : std_logic;
 
-    ---------------------------------------------------------------------------
+    -------------------------------------------------------------------------------------------
     -- Transceiver delay counter
-    ---------------------------------------------------------------------------
-    signal trv_delay_ctr_q        :  std_logic_vector(G_TRV_CTR_WIDTH - 1 downto 0);
-    signal trv_delay_ctr_d        :  std_logic_vector(G_TRV_CTR_WIDTH - 1 downto 0);
-    signal trv_delay_ctr_add      :  std_logic_vector(G_TRV_CTR_WIDTH - 1 downto 0);
-    
-    signal trv_delay_ctr_q_padded : std_logic_vector(G_SSP_POS_WIDTH downto 0);
+    -------------------------------------------------------------------------------------------
+    signal trv_delay_ctr_q              : std_logic_vector(G_TRV_CTR_WIDTH - 1 downto 0);
+    signal trv_delay_ctr_d              : std_logic_vector(G_TRV_CTR_WIDTH - 1 downto 0);
+    signal trv_delay_ctr_add            : std_logic_vector(G_TRV_CTR_WIDTH - 1 downto 0);
+
+    signal trv_delay_ctr_q_padded       : std_logic_vector(G_SSP_POS_WIDTH downto 0);
 
     -- Reset for the counter
-    signal trv_delay_ctr_rst_d        :  std_logic;
-    signal trv_delay_ctr_rst_q_scan   :  std_logic;
+    signal trv_delay_ctr_rst_d          : std_logic;
+    signal trv_delay_ctr_rst_q_scan     : std_logic;
 
-    constant C_TRV_DEL_SAT  :  std_logic_vector(G_TRV_CTR_WIDTH - 1 downto 0) :=
+    constant C_TRV_DEL_SAT              : std_logic_vector(G_TRV_CTR_WIDTH - 1 downto 0) :=
         std_logic_vector(to_unsigned(127, G_TRV_CTR_WIDTH));
-    
-    -- Load shadow register to output
-    signal ssp_shadow_ce     :  std_logic;
 
-    ---------------------------------------------------------------------------
+    -- Load shadow register to output
+    signal ssp_shadow_ce                : std_logic;
+
+    -------------------------------------------------------------------------------------------
     -- Shadowed value of transceiver delay counter
-    ---------------------------------------------------------------------------
+    -------------------------------------------------------------------------------------------
     -- Note that output counter is one bit wider than width of counter since
     -- output value can be addition of two values of trv_ctr_width size and
     -- we want to avoid overflow.
-    signal ssp_delay_raw        :  std_logic_vector(G_SSP_POS_WIDTH downto 0);
+    signal ssp_delay_raw                : std_logic_vector(G_SSP_POS_WIDTH downto 0);
 
     -- Saturated value of ssp_delay. If saturation is not used, ssp_delay_raw
     -- is connected directly
-    signal ssp_delay_saturated  :  std_logic_vector(G_SSP_POS_WIDTH - 1 downto 0);
-                                           
+    signal ssp_delay_saturated          : std_logic_vector(G_SSP_POS_WIDTH - 1 downto 0);
+
     -- Measured transceiver value + trv_offset
-    signal trv_delay_sum        :  std_logic_vector(G_SSP_POS_WIDTH downto 0);
+    signal trv_delay_sum                : std_logic_vector(G_SSP_POS_WIDTH downto 0);
 
 begin
-    
-    ----------------------------------------------------------------------------
+
+    -------------------------------------------------------------------------------------------
     -- Next value of transceiver delay measurment flag:
     --  1. Clear immediately when measurement is disabled.
     --  2. Start measurement when enabled and "edge_tx_valid"
     --  3. Stop measurement when enabled  and "edge_rx_valid"
     --  4. Keep value otherwise.
-    ----------------------------------------------------------------------------
+    -------------------------------------------------------------------------------------------
     trv_meas_progress_d <= '0' when (tran_delay_meas = '0') else
-                             '1' when (edge_tx_valid = '1') else
-                             '0' when (edge_rx_valid = '1') else
-                             trv_meas_progress_q;
+                           '1' when (edge_tx_valid = '1') else
+                           '0' when (edge_rx_valid = '1') else
+                           trv_meas_progress_q;
 
-    ----------------------------------------------------------------------------
+    -------------------------------------------------------------------------------------------
     -- Register for transceiver delay measurement progress flag.
-    ----------------------------------------------------------------------------
+    -------------------------------------------------------------------------------------------
     trv_delay_prog_proc : process(res_n, clk_sys)
     begin
         if (res_n = '0') then
@@ -275,37 +268,37 @@ begin
             trv_meas_progress_del   <= trv_meas_progress_q;
         end if;
     end process;
-    
-    ----------------------------------------------------------------------------
+
+    -------------------------------------------------------------------------------------------
     -- Reset counter for transceiver delay upon start of measurement.
-    ----------------------------------------------------------------------------
+    -------------------------------------------------------------------------------------------
     trv_delay_ctr_rst_d <= '0' when (tran_delay_meas = '1' and edge_tx_valid = '1')
                                else
-                           '1'; 
-    
-    ----------------------------------------------------------------------------
+                           '1';
+
+    -------------------------------------------------------------------------------------------
     -- Pipeline reset for shift registers to avoid glitches!
-    ----------------------------------------------------------------------------
+    -------------------------------------------------------------------------------------------
     trv_delay_rst_reg_inst : entity ctu_can_fd_rtl.rst_reg
     generic map (
         G_RESET_POLARITY    => '0'
     )
     port map(
         -- Clock and Reset
-        clk                 => clk_sys,
-        arst                => res_n,
+        clk                 => clk_sys,                         -- IN
+        arst                => res_n,                           -- IN
 
         -- Flip flop input / output
-        d                   => trv_delay_ctr_rst_d,
-        q                   => trv_delay_ctr_rst_q_scan,
+        d                   => trv_delay_ctr_rst_d,             -- IN
+        q                   => trv_delay_ctr_rst_q_scan,        -- OUT
 
         -- Scan mode control
-        scan_enable         => scan_enable
+        scan_enable         => scan_enable                      -- IN
     );
-    
-    ----------------------------------------------------------------------------
+
+    -------------------------------------------------------------------------------------------
     -- Combinationally incremented value of trv_delay counter by 1.
-    ----------------------------------------------------------------------------                                             
+    -------------------------------------------------------------------------------------------
     trv_delay_ctr_add <= std_logic_vector(unsigned(trv_delay_ctr_q) + 1);
 
     -- Saturate when counter reaches 127, do not add anymore to avoid overflow!
@@ -313,17 +306,17 @@ begin
                                      else
                       trv_delay_ctr_add;
 
-    ----------------------------------------------------------------------------
+    -------------------------------------------------------------------------------------------
     -- Register for transceiver delay measurement progress flag.
-    ----------------------------------------------------------------------------
+    -------------------------------------------------------------------------------------------
     trv_del_ctr_proc : process(clk_sys, trv_delay_ctr_rst_q_scan)
     begin
         if (trv_delay_ctr_rst_q_scan = '0') then
-            trv_delay_ctr_q(0) <= '1'; 
-            trv_delay_ctr_q(G_TRV_CTR_WIDTH - 1 downto 1) <= (OTHERS => '0');
+            trv_delay_ctr_q(0) <= '1';
+            trv_delay_ctr_q(G_TRV_CTR_WIDTH - 1 downto 1) <= (others => '0');
 
         elsif (rising_edge(clk_sys)) then
-            
+
             -- Increment the counter if the measurement is in progress
             if (trv_meas_progress_q = '1') then
                 trv_delay_ctr_q <= trv_delay_ctr_d;
@@ -331,35 +324,33 @@ begin
         end if;
     end process;
 
-    ---------------------------------------------------------------------------
+    -------------------------------------------------------------------------------------------
     -- Padding to width of SSP position width + 1 (for addition calculation)
-    ---------------------------------------------------------------------------
+    -------------------------------------------------------------------------------------------
     trv_delay_ctr_q_padded(G_TRV_CTR_WIDTH - 1 downto 0) <= trv_delay_ctr_q;
-
-    trv_delay_ctr_q_padded(G_SSP_POS_WIDTH downto G_TRV_CTR_WIDTH) <=
-        (OTHERS => '0');
+    trv_delay_ctr_q_padded(G_SSP_POS_WIDTH downto G_TRV_CTR_WIDTH) <= (others => '0');
 
 
-    ---------------------------------------------------------------------------
-    -- Combinationally adding ssp_offset and trv_delay_ctr_q.
-    -- These are one bit wider to cover possible overflow!
-    ---------------------------------------------------------------------------
+    -------------------------------------------------------------------------------------------
+    -- Combinationally adding ssp_offset and trv_delay_ctr_q. These are one bit wider to cover
+    -- possible overflow!
+    -------------------------------------------------------------------------------------------
     trv_delay_sum <= std_logic_vector(unsigned(trv_delay_ctr_q_padded) +
-                                      ('0' & unsigned(ssp_offset)));
+                                      ('0' & unsigned(mr_ssp_cfg_ssp_offset)));
 
-    ----------------------------------------------------------------------------
+    -------------------------------------------------------------------------------------------
     -- Multiplexor for selected secondary sampling point delay. Selects:
     --  1. Measured trv_delay + ssp_offset
     --  2. ssp_offset only.
-    ----------------------------------------------------------------------------
-    with ssp_delay_select select ssp_delay_raw <=
+    -------------------------------------------------------------------------------------------
+    with mr_ssp_cfg_ssp_src select ssp_delay_raw <=
                   trv_delay_sum when SSP_SRC_MEAS_N_OFFSET,
-               '0' & ssp_offset when SSP_SRC_OFFSET,
-                (OTHERS => '0') when others;
+    '0' & mr_ssp_cfg_ssp_offset when SSP_SRC_OFFSET,
+                (others => '0') when others;
 
-    ----------------------------------------------------------------------------
+    -------------------------------------------------------------------------------------------
     -- SSP Delay saturation
-    ----------------------------------------------------------------------------
+    -------------------------------------------------------------------------------------------
     ssp_delay_sat_block : block
         constant C_SSP_SAT_LVL_VECT : std_logic_vector(G_SSP_POS_WIDTH - 1 downto 0) :=
             std_logic_vector(to_unsigned(G_SSP_SATURATION_LVL, G_SSP_POS_WIDTH));
@@ -378,22 +369,21 @@ begin
         ssp_sat_false : if (not G_USE_SSP_SATURATION) generate
             ssp_delay_saturated <= ssp_delay_raw(G_SSP_POS_WIDTH - 1 downto 0);
         end generate ssp_sat_false;
-        
+
     end block ssp_delay_sat_block;
 
 
-    ---------------------------------------------------------------------------
+    -------------------------------------------------------------------------------------------
     -- SSP Shadow register. Both values are captured at the end of measurement.
     --  1. Transceiver Delay - Only measured value
-    --  2. SSP Offset - Selected between measured, measured + offset,
-    --                  offset.
-    ---------------------------------------------------------------------------
+    --  2. SSP Offset - Selected between measured, measured + offset, offset.
+    -------------------------------------------------------------------------------------------
     ssp_shadow_reg_proc : process(res_n, clk_sys)
     begin
         if (res_n = '0') then
-            ssp_delay_shadowed   <= (OTHERS => '0');
-            trv_delay_shadowed   <= (OTHERS => '0');
-            
+            ssp_delay_shadowed <= (others => '0');
+            trv_delay_shadowed <= (others => '0');
+
         elsif (rising_edge(clk_sys)) then
             if (ssp_shadow_ce = '1') then
                 ssp_delay_shadowed <= ssp_delay_saturated;
@@ -402,26 +392,24 @@ begin
         end if;
     end process;
 
-    ---------------------------------------------------------------------------
-    -- Load shadow register for secondary sampling point after the end of
-    -- secondary sampling point measurement. This must be after the measurement
-    -- has already ended so that last value is taken, not the value decremented
-    -- by 1!
-    ---------------------------------------------------------------------------
-    ssp_shadow_ce <= '1' when (trv_meas_progress_del = '1') and
-                                (trv_meas_progress_q = '0')
+    -------------------------------------------------------------------------------------------
+    -- Load shadow register for secondary sampling point after the end of secondary sampling
+    -- point measurement. This must be after the measurement has already ended so that last
+    -- value is taken, not the value decremented by 1!
+    -------------------------------------------------------------------------------------------
+    ssp_shadow_ce <= '1' when (trv_meas_progress_del = '1') and (trv_meas_progress_q = '0')
                          else
                      '0';
 
     -- <RELEASE_OFF>
-    
+
     assert (G_TRV_CTR_WIDTH <= G_SSP_POS_WIDTH)
         report "SSP Position width must be higher or equal to trv counter width!"
         severity error;
-    
-    ----------------------------------------------------------------------------
+
+    -------------------------------------------------------------------------------------------
     -- Assertions and Functional coverge
-    ----------------------------------------------------------------------------
+    -------------------------------------------------------------------------------------------
     -- psl default clock is rising_edge(clk_sys);
 
     -- psl trv_delay_ctr_sat_asrt : assert never
@@ -429,24 +417,24 @@ begin
 
     -- psl ssp_offset_sat_asrt : assert never
     -- (unsigned(ssp_delay_shadowed) > to_unsigned(G_SSP_SATURATION_LVL, G_SSP_POS_WIDTH));
-    
+
     -- psl trv_measurement_cov : cover
     --  {tran_delay_meas = '1'};
-    
+
     -- psl ssp_meas_n_offset_cov : cover
-    --  {ssp_delay_select = SSP_SRC_MEAS_N_OFFSET and tran_delay_meas = '1'};
-    
+    --  {mr_ssp_cfg_ssp_src = SSP_SRC_MEAS_N_OFFSET and tran_delay_meas = '1'};
+
     -- psl ssp_offset_cov : cover
-    --  {ssp_delay_select = SSP_SRC_OFFSET and tran_delay_meas = '1'};
-    
+    --  {mr_ssp_cfg_ssp_src = SSP_SRC_OFFSET and tran_delay_meas = '1'};
+
     -- psl ssp_no_ssp_cov : cover
-    --  {ssp_delay_select = SSP_SRC_NO_SSP and tran_delay_meas = '1'};
+    --  {mr_ssp_cfg_ssp_src = SSP_SRC_NO_SSP and tran_delay_meas = '1'};
     -- Note: Protocol control FSM actually requests the measurement of TRV delay
     --       even if SSP is not used!
-    
+
     -- psl ssp_offset_sat_cov : cover
     --  {ssp_delay_saturated = std_logic_vector(to_unsigned(G_SSP_SATURATION_LVL, G_SSP_POS_WIDTH))};
-    
+
     -- <RELEASE_ON>
 
 end architecture;

@@ -25,7 +25,7 @@ _default: &default
     sup_range: false
     sup_traffic_ctrs: true
     sup_parity: true
-    
+
     # Target technology is don't care is Gate config
     target_technology: 0
 
@@ -49,7 +49,7 @@ _default: &default
     # Clock configuration
     # (Applies for compliance tests and feature tests!)
     system_clock_period: 10 ns
-    
+
     # Number of frames used from each dataset, 1000 means whole dataset
     # These take really long time, so we run only few frames here!
     reference_iterations: 10
@@ -82,7 +82,7 @@ feature:
 
         device_id:
         dlc_can20_8_64_bytes:
-        
+
         err_capt_ack_ack:
         err_capt_arb_bit:
         err_capt_arb_stuff:

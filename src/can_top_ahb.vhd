@@ -1,18 +1,18 @@
 --------------------------------------------------------------------------------
--- 
--- CTU CAN FD IP Core 
+--
+-- CTU CAN FD IP Core
 -- Copyright (C) 2021-present Ondrej Ille
--- 
+--
 -- Permission is hereby granted, free of charge, to any person obtaining a copy
 -- of this VHDL component and associated documentation files (the "Component"),
 -- to use, copy, modify, merge, publish, distribute the Component for
 -- educational, research, evaluation, self-interest purposes. Using the
 -- Component for commercial purposes is forbidden unless previously agreed with
 -- Copyright holder.
--- 
+--
 -- The above copyright notice and this permission notice shall be included in
 -- all copies or substantial portions of the Component.
--- 
+--
 -- THE COMPONENT IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 -- IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 -- FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -20,38 +20,38 @@
 -- LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
 -- FROM, OUT OF OR IN CONNECTION WITH THE COMPONENT OR THE USE OR OTHER DEALINGS
 -- IN THE COMPONENT.
--- 
+--
 -- The CAN protocol is developed by Robert Bosch GmbH and protected by patents.
 -- Anybody who wants to implement this IP core on silicon has to obtain a CAN
 -- protocol license from Bosch.
--- 
+--
 -- -------------------------------------------------------------------------------
--- 
--- CTU CAN FD IP Core 
+--
+-- CTU CAN FD IP Core
 -- Copyright (C) 2015-2020 MIT License
--- 
+--
 -- Authors:
 --     Ondrej Ille <ondrej.ille@gmail.com>
 --     Martin Jerabek <martin.jerabek01@gmail.com>
--- 
--- Project advisors: 
+--
+-- Project advisors:
 -- 	Jiri Novak <jnovak@fel.cvut.cz>
 -- 	Pavel Pisa <pisa@cmp.felk.cvut.cz>
--- 
+--
 -- Department of Measurement         (http://meas.fel.cvut.cz/)
 -- Faculty of Electrical Engineering (http://www.fel.cvut.cz)
 -- Czech Technical University        (http://www.cvut.cz/)
--- 
+--
 -- Permission is hereby granted, free of charge, to any person obtaining a copy
 -- of this VHDL component and associated documentation files (the "Component"),
 -- to deal in the Component without restriction, including without limitation
 -- the rights to use, copy, modify, merge, publish, distribute, sublicense,
 -- and/or sell copies of the Component, and to permit persons to whom the
 -- Component is furnished to do so, subject to the following conditions:
--- 
+--
 -- The above copyright notice and this permission notice shall be included in
 -- all copies or substantial portions of the Component.
--- 
+--
 -- THE COMPONENT IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 -- IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 -- FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -59,11 +59,11 @@
 -- LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
 -- FROM, OUT OF OR IN CONNECTION WITH THE COMPONENT OR THE USE OR OTHER DEALINGS
 -- IN THE COMPONENT.
--- 
+--
 -- The CAN protocol is developed by Robert Bosch GmbH and protected by patents.
 -- Anybody who wants to implement this IP core on silicon has to obtain a CAN
 -- protocol license from Bosch.
--- 
+--
 --------------------------------------------------------------------------------
 
 --------------------------------------------------------------------------------
@@ -81,7 +81,6 @@ use ctu_can_fd_rtl.id_transfer_pkg.all;
 use ctu_can_fd_rtl.can_constants_pkg.all;
 use ctu_can_fd_rtl.can_config_pkg.all;
 use ctu_can_fd_rtl.can_types_pkg.all;
-use ctu_can_fd_rtl.drv_stat_pkg.all;
 use ctu_can_fd_rtl.unary_ops_pkg.all;
 
 use ctu_can_fd_rtl.CAN_FD_register_map.all;
@@ -93,23 +92,23 @@ entity can_top_ahb is
         rx_buffer_size          : natural range 32 to 4096  := 32;
 
         -- Number of supported TXT buffers
-        txt_buffer_count        : natural range 2 to 8      := C_TXT_BUFFER_COUNT; 
+        txt_buffer_count        : natural range 2 to 8      := C_TXT_BUFFER_COUNT;
 
         -- Synthesize Filter A
         sup_filtA               : boolean                   := false;
-        
+
         -- Synthesize Filter B
         sup_filtB               : boolean                   := false;
-        
+
         -- Synthesize Filter C
         sup_filtC               : boolean                   := false;
-        
+
         -- Synthesize Range Filter
         sup_range               : boolean                   := false;
-        
+
         -- Synthesize Test registers
         sup_test_registers      : boolean                   := true;
-        
+
         -- Insert Traffic counters
         sup_traffic_ctrs        : boolean                   := false;
 
@@ -127,7 +126,7 @@ entity can_top_ahb is
     );
     port(
         -----------------------------------------------------------------------
-        -- AHB interface 
+        -- AHB interface
         -----------------------------------------------------------------------
         hresetn          : in std_logic;
         hclk             : in std_logic;
@@ -144,46 +143,46 @@ entity can_top_ahb is
         hreadyout        : out std_logic;
         hresp            : out std_logic;
         hrdata           : out std_logic_vector(31 downto 0);
-        
+
         -----------------------------------------------------------------------
-        -- Synchronized reset 
+        -- Synchronized reset
         -----------------------------------------------------------------------
         res_n_out        : out std_logic;
-        
+
         -----------------------------------------------------------------------
-        -- CAN Bus 
+        -- CAN Bus
         -----------------------------------------------------------------------
         can_tx           : out std_logic;
         can_rx           : in  std_logic;
-        
+
         -----------------------------------------------------------------------
-        -- Timestamp 
+        -- Timestamp
         -----------------------------------------------------------------------
         timestamp        : in  std_logic_vector(63 downto 0);
 
         -----------------------------------------------------------------------
-        -- DFT support 
+        -- DFT support
         -----------------------------------------------------------------------
         scan_enable      : in  std_logic;
 
         -----------------------------------------------------------------------
         -- Interrupt
         -----------------------------------------------------------------------
-        int              : out std_logic      
+        int              : out std_logic
     );
 end entity can_top_ahb;
 
 architecture rtl of can_top_ahb is
- 
+
     signal ctu_can_data_in   : std_logic_vector(31 downto 0);
     signal ctu_can_data_out  : std_logic_vector(31 downto 0);
     signal ctu_can_adress    : std_logic_vector(15 downto 0);
-    
+
     signal ctu_can_scs       : std_logic;
     signal ctu_can_srd       : std_logic;
     signal ctu_can_swr       : std_logic;
     signal ctu_can_sbe       : std_logic_vector(3 downto 0);
-    
+
     signal res_n_out_i       : std_logic;
 
 begin
@@ -209,7 +208,7 @@ begin
         res_n_out       => res_n_out_i,
 
         scan_enable     => scan_enable,
-        
+
         data_in         => ctu_can_data_in,
         data_out        => ctu_can_data_out,
         adress          => ctu_can_adress,
@@ -237,7 +236,7 @@ begin
         swr              => ctu_can_swr,
         srd              => ctu_can_srd,
 
-        -- AHB interface 
+        -- AHB interface
         hresetn          => res_n_out_i,
         hclk             => hclk,
         haddr            => haddr,
@@ -254,7 +253,7 @@ begin
         hresp            => hresp,
         hrdata           => hrdata
     );
-    
+
     res_n_out <= res_n_out_i;
-  
+
 end architecture rtl;

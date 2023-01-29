@@ -1,18 +1,18 @@
 --------------------------------------------------------------------------------
--- 
--- CTU CAN FD IP Core 
+--
+-- CTU CAN FD IP Core
 -- Copyright (C) 2021-present Ondrej Ille
--- 
+--
 -- Permission is hereby granted, free of charge, to any person obtaining a copy
 -- of this VHDL component and associated documentation files (the "Component"),
 -- to use, copy, modify, merge, publish, distribute the Component for
 -- educational, research, evaluation, self-interest purposes. Using the
 -- Component for commercial purposes is forbidden unless previously agreed with
 -- Copyright holder.
--- 
+--
 -- The above copyright notice and this permission notice shall be included in
 -- all copies or substantial portions of the Component.
--- 
+--
 -- THE COMPONENT IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 -- IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 -- FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -20,38 +20,38 @@
 -- LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
 -- FROM, OUT OF OR IN CONNECTION WITH THE COMPONENT OR THE USE OR OTHER DEALINGS
 -- IN THE COMPONENT.
--- 
+--
 -- The CAN protocol is developed by Robert Bosch GmbH and protected by patents.
 -- Anybody who wants to implement this IP core on silicon has to obtain a CAN
 -- protocol license from Bosch.
--- 
+--
 -- -------------------------------------------------------------------------------
--- 
--- CTU CAN FD IP Core 
+--
+-- CTU CAN FD IP Core
 -- Copyright (C) 2015-2020 MIT License
--- 
+--
 -- Authors:
 --     Ondrej Ille <ondrej.ille@gmail.com>
 --     Martin Jerabek <martin.jerabek01@gmail.com>
--- 
--- Project advisors: 
+--
+-- Project advisors:
 -- 	Jiri Novak <jnovak@fel.cvut.cz>
 -- 	Pavel Pisa <pisa@cmp.felk.cvut.cz>
--- 
+--
 -- Department of Measurement         (http://meas.fel.cvut.cz/)
 -- Faculty of Electrical Engineering (http://www.fel.cvut.cz)
 -- Czech Technical University        (http://www.cvut.cz/)
--- 
+--
 -- Permission is hereby granted, free of charge, to any person obtaining a copy
 -- of this VHDL component and associated documentation files (the "Component"),
 -- to deal in the Component without restriction, including without limitation
 -- the rights to use, copy, modify, merge, publish, distribute, sublicense,
 -- and/or sell copies of the Component, and to permit persons to whom the
 -- Component is furnished to do so, subject to the following conditions:
--- 
+--
 -- The above copyright notice and this permission notice shall be included in
 -- all copies or substantial portions of the Component.
--- 
+--
 -- THE COMPONENT IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 -- IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 -- FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -59,11 +59,11 @@
 -- LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
 -- FROM, OUT OF OR IN CONNECTION WITH THE COMPONENT OR THE USE OR OTHER DEALINGS
 -- IN THE COMPONENT.
--- 
+--
 -- The CAN protocol is developed by Robert Bosch GmbH and protected by patents.
 -- Anybody who wants to implement this IP core on silicon has to obtain a CAN
 -- protocol license from Bosch.
--- 
+--
 --------------------------------------------------------------------------------
 
 --------------------------------------------------------------------------------
@@ -94,7 +94,7 @@
 --  @4. Stuffed sequence is destuffed with bit destuffing and compared with
 --      original generated sequence. Random stuff error is inserted. A check
 --      if bit error is detected is executed.
--- 
+--
 -- @Notes:
 --  Unit test makes use of bit stuffing/destuffing symmetry. Random data are
 --  generated on input of bit stuffing. Data are stuffed and compared with
@@ -144,7 +144,6 @@ use ctu_can_fd_rtl.id_transfer_pkg.all;
 use ctu_can_fd_rtl.can_constants_pkg.all;
 
 use ctu_can_fd_rtl.can_types_pkg.all;
-use ctu_can_fd_rtl.drv_stat_pkg.all;
 use ctu_can_fd_rtl.unary_ops_pkg.all;
 use ctu_can_fd_rtl.can_config_pkg.all;
 use ctu_can_fd_rtl.CAN_FD_register_map.all;
@@ -331,7 +330,7 @@ architecture bit_stuffing_unit_test of CAN_test is
 
         -- Set previous bit to actual input of Bit stuffing. This corresponds
         -- to previously propagated bit value when bit stuffing was not yet
-        -- enabled! 
+        -- enabled!
         prev_bit := tx_data;
 
         --------------------------------------
@@ -766,7 +765,7 @@ begin
         exp_stuffed         <= set.stuffed_data_seq(wbs_index);
         should_be_stuffed   <= set.stuffed_bits_mark(wbs_index);
     end process;
-    
+
     ----------------------------------------------------------------------------
     -- When bit stuff occurs, value of next bit should be oposite of previous
     -- one! Bit destuffing is thus expecting bit of opposite polarity that
@@ -779,12 +778,12 @@ begin
     gen_st_error : process
         variable tmp        : real := 0.0;
     begin
-        
+
         -- Wait until bit was stuffed
         while (data_halt /= '1') loop
             wait until rising_edge(clk_sys);
         end loop;
-            
+
         -- Generate random stuff error;
         rand_real_v(rand_st_err_ctr, tmp);
         if (tmp < 0.02) then
@@ -812,7 +811,7 @@ begin
             wait until rising_edge(clk_sys);
             err_data <= '0';
         end if;
-        
+
         while (data_halt /= '0') loop
             wait until rising_edge(clk_sys);
         end loop;

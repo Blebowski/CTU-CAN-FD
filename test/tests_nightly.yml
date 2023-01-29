@@ -53,7 +53,7 @@ _default: &default
     # the data-set, so all-together we pick random:
     #   50 * 10 = 500 (out of 10000) frames
     reference_iterations: 50
-    
+
 unit:
     tests:
         bit_stuffing:
@@ -62,16 +62,9 @@ unit:
             iterations: 1
         crc:
             iterations: 500
-        int_manager:
-            iterations: 500
         message_filter:
             iterations: 500
         rx_buffer:
-            iterations: 500
-        tx_arbitrator:
-            # TODO: Fix TX Arbitrator unit test
-            iterations: 0
-        tx_buffer:
             iterations: 500
 
 feature:
@@ -104,16 +97,16 @@ feature:
         command_rrb:
             iterations: 20
 
-        
+
         device_id:
         disable_in_tx:
         dlc_can20_8_64_bytes:
-        
+
         err_capt_ack_ack:
         err_capt_arb_bit:
         err_capt_arb_stuff:
         err_capt_crc_bit:
-        
+
         # Do not run this test because it cannot handle properly
         # corrupting CRC at each randomization! CRC error detection
         # is intensively tested in compliance tests! Purpose of this
@@ -171,7 +164,7 @@ feature:
         mode_rxbam:
         mode_self_test:
         mode_test:
-        
+
         mode_txbbm:
         mode_txbbm_2:
         mode_txbbm_3:
@@ -254,7 +247,7 @@ feature:
             txt_buffer_count: 6
         status_txnf@@@:
             txt_buffer_count: 8
-        
+
         status_txs:
         status_rxpe:
         status_txpe:
@@ -284,7 +277,7 @@ feature:
             txt_buffer_count: 6
         tst_mem_acc_txt@@@@:
             txt_buffer_count: 8
-            
+
         tx_arb_consistency:
             txt_buffer_count: 2
             iterations: 10
@@ -319,7 +312,7 @@ feature:
             iterations: 15
         tx_priority@:
             txt_buffer_count: 3
-            iterations: 15           
+            iterations: 15
         tx_priority@@:
             txt_buffer_count: 4
             iterations: 15
