@@ -184,9 +184,6 @@ entity prescaler is
         -------------------------------------------------------------------------------------------
         -- Status outputs
         -------------------------------------------------------------------------------------------
-        -- Bit Time FSM state
-        bt_fsm                  : out t_bit_time;
-
         -- Time quanta edge
         tq_edge                 : out std_logic
     );
@@ -466,9 +463,7 @@ begin
         is_tseg2                => is_tseg2,            -- OUT
 
         rx_trig_req             => rx_trig_req,         -- IN
-        tx_trig_req             => tx_trig_req,         -- IN
-
-        bt_fsm                  => bt_fsm               -- OUT
+        tx_trig_req             => tx_trig_req          -- IN
     );
 
     -----------------------------------------------------------------------------------------------

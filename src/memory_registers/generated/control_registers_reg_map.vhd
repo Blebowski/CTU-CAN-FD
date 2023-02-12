@@ -118,6 +118,8 @@ architecture rtl of control_registers_reg_map is
   signal write_en : std_logic_vector(3 downto 0);
 begin
 
+    write_en <= be when (write = '1' and cs = '1') else (others => '0');
+
     ----------------------------------------------------------------------------
     -- Write address to One-hot decoder
     ----------------------------------------------------------------------------
@@ -378,7 +380,7 @@ begin
     port map(
         clk_sys                         => clk_sys ,-- in
         res_n                           => res_n ,-- in
-        data_in                         => w_data(0 downto 0) ,-- in
+        data_in                         => w_data(16 downto 16) ,-- in
         write                           => write_en(0) ,-- in
         cs                              => reg_sel(1) ,-- in
         reg_value(0)                    => control_registers_out_i.settings_rtrle -- out
@@ -397,7 +399,7 @@ begin
     port map(
         clk_sys                         => clk_sys ,-- in
         res_n                           => res_n ,-- in
-        data_in                         => w_data(4 downto 1) ,-- in
+        data_in                         => w_data(20 downto 17) ,-- in
         write                           => write_en(0) ,-- in
         cs                              => reg_sel(1) ,-- in
         reg_value                       => control_registers_out_i.settings_rtrth -- out
@@ -416,7 +418,7 @@ begin
     port map(
         clk_sys                         => clk_sys ,-- in
         res_n                           => res_n ,-- in
-        data_in                         => w_data(5 downto 5) ,-- in
+        data_in                         => w_data(21 downto 21) ,-- in
         write                           => write_en(0) ,-- in
         cs                              => reg_sel(1) ,-- in
         reg_value(0)                    => control_registers_out_i.settings_ilbp -- out
@@ -435,7 +437,7 @@ begin
     port map(
         clk_sys                         => clk_sys ,-- in
         res_n                           => res_n ,-- in
-        data_in                         => w_data(6 downto 6) ,-- in
+        data_in                         => w_data(22 downto 22) ,-- in
         write                           => write_en(0) ,-- in
         cs                              => reg_sel(1) ,-- in
         reg_value(0)                    => control_registers_out_i.settings_ena -- out
@@ -454,7 +456,7 @@ begin
     port map(
         clk_sys                         => clk_sys ,-- in
         res_n                           => res_n ,-- in
-        data_in                         => w_data(7 downto 7) ,-- in
+        data_in                         => w_data(23 downto 23) ,-- in
         write                           => write_en(0) ,-- in
         cs                              => reg_sel(1) ,-- in
         reg_value(0)                    => control_registers_out_i.settings_nisofd -- out
@@ -473,7 +475,7 @@ begin
     port map(
         clk_sys                         => clk_sys ,-- in
         res_n                           => res_n ,-- in
-        data_in                         => w_data(8 downto 8) ,-- in
+        data_in                         => w_data(24 downto 24) ,-- in
         write                           => write_en(1) ,-- in
         cs                              => reg_sel(1) ,-- in
         reg_value(0)                    => control_registers_out_i.settings_pex -- out
@@ -492,7 +494,7 @@ begin
     port map(
         clk_sys                         => clk_sys ,-- in
         res_n                           => res_n ,-- in
-        data_in                         => w_data(9 downto 9) ,-- in
+        data_in                         => w_data(25 downto 25) ,-- in
         write                           => write_en(1) ,-- in
         cs                              => reg_sel(1) ,-- in
         reg_value(0)                    => control_registers_out_i.settings_tbfbo -- out
@@ -511,7 +513,7 @@ begin
     port map(
         clk_sys                         => clk_sys ,-- in
         res_n                           => res_n ,-- in
-        data_in                         => w_data(10 downto 10) ,-- in
+        data_in                         => w_data(26 downto 26) ,-- in
         write                           => write_en(1) ,-- in
         cs                              => reg_sel(1) ,-- in
         reg_value(0)                    => control_registers_out_i.settings_fdrf -- out
@@ -530,7 +532,7 @@ begin
     port map(
         clk_sys                         => clk_sys ,-- in
         res_n                           => res_n ,-- in
-        data_in                         => w_data(11 downto 11) ,-- in
+        data_in                         => w_data(27 downto 27) ,-- in
         write                           => write_en(1) ,-- in
         cs                              => reg_sel(1) ,-- in
         reg_value(0)                    => control_registers_out_i.settings_pchke -- out
@@ -1459,7 +1461,7 @@ begin
     port map(
         clk_sys                         => clk_sys ,-- in
         res_n                           => res_n ,-- in
-        data_in                         => w_data(7 downto 0) ,-- in
+        data_in                         => w_data(15 downto 8) ,-- in
         write                           => write_en(0) ,-- in
         cs                              => reg_sel(11) ,-- in
         lock                            => lock_1 ,-- in
@@ -1641,7 +1643,7 @@ begin
         data_in                         => w_data(23 downto 16) ,-- in
         write                           => write_en(2) ,-- in
         cs                              => reg_sel(15) ,-- in
-        reg_value                       => control_registers_out_i.filter_a_mask_bit_mask_a_val(15 downto 8) -- out
+        reg_value                       => control_registers_out_i.filter_a_mask_bit_mask_a_val(23 downto 16) -- out
     );
 
     ----------------------------------------------------------------------------
@@ -1660,7 +1662,7 @@ begin
         data_in                         => w_data(28 downto 24) ,-- in
         write                           => write_en(3) ,-- in
         cs                              => reg_sel(15) ,-- in
-        reg_value                       => control_registers_out_i.filter_a_mask_bit_mask_a_val(12 downto 8) -- out
+        reg_value                       => control_registers_out_i.filter_a_mask_bit_mask_a_val(28 downto 24) -- out
     );
 
     end generate FILTER_A_MASK_present_gen_t;
@@ -1724,7 +1726,7 @@ begin
         data_in                         => w_data(23 downto 16) ,-- in
         write                           => write_en(2) ,-- in
         cs                              => reg_sel(16) ,-- in
-        reg_value                       => control_registers_out_i.filter_a_val_bit_val_a_val(15 downto 8) -- out
+        reg_value                       => control_registers_out_i.filter_a_val_bit_val_a_val(23 downto 16) -- out
     );
 
     ----------------------------------------------------------------------------
@@ -1743,7 +1745,7 @@ begin
         data_in                         => w_data(28 downto 24) ,-- in
         write                           => write_en(3) ,-- in
         cs                              => reg_sel(16) ,-- in
-        reg_value                       => control_registers_out_i.filter_a_val_bit_val_a_val(12 downto 8) -- out
+        reg_value                       => control_registers_out_i.filter_a_val_bit_val_a_val(28 downto 24) -- out
     );
 
     end generate FILTER_A_VAL_present_gen_t;
@@ -1807,7 +1809,7 @@ begin
         data_in                         => w_data(23 downto 16) ,-- in
         write                           => write_en(2) ,-- in
         cs                              => reg_sel(17) ,-- in
-        reg_value                       => control_registers_out_i.filter_b_mask_bit_mask_b_val(15 downto 8) -- out
+        reg_value                       => control_registers_out_i.filter_b_mask_bit_mask_b_val(23 downto 16) -- out
     );
 
     ----------------------------------------------------------------------------
@@ -1826,7 +1828,7 @@ begin
         data_in                         => w_data(28 downto 24) ,-- in
         write                           => write_en(3) ,-- in
         cs                              => reg_sel(17) ,-- in
-        reg_value                       => control_registers_out_i.filter_b_mask_bit_mask_b_val(12 downto 8) -- out
+        reg_value                       => control_registers_out_i.filter_b_mask_bit_mask_b_val(28 downto 24) -- out
     );
 
     end generate FILTER_B_MASK_present_gen_t;
@@ -1890,7 +1892,7 @@ begin
         data_in                         => w_data(23 downto 16) ,-- in
         write                           => write_en(2) ,-- in
         cs                              => reg_sel(18) ,-- in
-        reg_value                       => control_registers_out_i.filter_b_val_bit_val_b_val(15 downto 8) -- out
+        reg_value                       => control_registers_out_i.filter_b_val_bit_val_b_val(23 downto 16) -- out
     );
 
     ----------------------------------------------------------------------------
@@ -1909,7 +1911,7 @@ begin
         data_in                         => w_data(28 downto 24) ,-- in
         write                           => write_en(3) ,-- in
         cs                              => reg_sel(18) ,-- in
-        reg_value                       => control_registers_out_i.filter_b_val_bit_val_b_val(12 downto 8) -- out
+        reg_value                       => control_registers_out_i.filter_b_val_bit_val_b_val(28 downto 24) -- out
     );
 
     end generate FILTER_B_VAL_present_gen_t;
@@ -1973,7 +1975,7 @@ begin
         data_in                         => w_data(23 downto 16) ,-- in
         write                           => write_en(2) ,-- in
         cs                              => reg_sel(19) ,-- in
-        reg_value                       => control_registers_out_i.filter_c_mask_bit_mask_c_val(15 downto 8) -- out
+        reg_value                       => control_registers_out_i.filter_c_mask_bit_mask_c_val(23 downto 16) -- out
     );
 
     ----------------------------------------------------------------------------
@@ -1992,7 +1994,7 @@ begin
         data_in                         => w_data(28 downto 24) ,-- in
         write                           => write_en(3) ,-- in
         cs                              => reg_sel(19) ,-- in
-        reg_value                       => control_registers_out_i.filter_c_mask_bit_mask_c_val(12 downto 8) -- out
+        reg_value                       => control_registers_out_i.filter_c_mask_bit_mask_c_val(28 downto 24) -- out
     );
 
     end generate FILTER_C_MASK_present_gen_t;
@@ -2056,7 +2058,7 @@ begin
         data_in                         => w_data(23 downto 16) ,-- in
         write                           => write_en(2) ,-- in
         cs                              => reg_sel(20) ,-- in
-        reg_value                       => control_registers_out_i.filter_c_val_bit_val_c_val(15 downto 8) -- out
+        reg_value                       => control_registers_out_i.filter_c_val_bit_val_c_val(23 downto 16) -- out
     );
 
     ----------------------------------------------------------------------------
@@ -2075,7 +2077,7 @@ begin
         data_in                         => w_data(28 downto 24) ,-- in
         write                           => write_en(3) ,-- in
         cs                              => reg_sel(20) ,-- in
-        reg_value                       => control_registers_out_i.filter_c_val_bit_val_c_val(12 downto 8) -- out
+        reg_value                       => control_registers_out_i.filter_c_val_bit_val_c_val(28 downto 24) -- out
     );
 
     end generate FILTER_C_VAL_present_gen_t;
@@ -2139,7 +2141,7 @@ begin
         data_in                         => w_data(23 downto 16) ,-- in
         write                           => write_en(2) ,-- in
         cs                              => reg_sel(21) ,-- in
-        reg_value                       => control_registers_out_i.filter_ran_low_bit_ran_low_val(15 downto 8) -- out
+        reg_value                       => control_registers_out_i.filter_ran_low_bit_ran_low_val(23 downto 16) -- out
     );
 
     ----------------------------------------------------------------------------
@@ -2158,7 +2160,7 @@ begin
         data_in                         => w_data(28 downto 24) ,-- in
         write                           => write_en(3) ,-- in
         cs                              => reg_sel(21) ,-- in
-        reg_value                       => control_registers_out_i.filter_ran_low_bit_ran_low_val(12 downto 8) -- out
+        reg_value                       => control_registers_out_i.filter_ran_low_bit_ran_low_val(28 downto 24) -- out
     );
 
     end generate FILTER_RAN_LOW_present_gen_t;
@@ -2222,7 +2224,7 @@ begin
         data_in                         => w_data(23 downto 16) ,-- in
         write                           => write_en(2) ,-- in
         cs                              => reg_sel(22) ,-- in
-        reg_value                       => control_registers_out_i.filter_ran_high_bit_ran_high_val(15 downto 8) -- out
+        reg_value                       => control_registers_out_i.filter_ran_high_bit_ran_high_val(23 downto 16) -- out
     );
 
     ----------------------------------------------------------------------------
@@ -2241,7 +2243,7 @@ begin
         data_in                         => w_data(28 downto 24) ,-- in
         write                           => write_en(3) ,-- in
         cs                              => reg_sel(22) ,-- in
-        reg_value                       => control_registers_out_i.filter_ran_high_bit_ran_high_val(12 downto 8) -- out
+        reg_value                       => control_registers_out_i.filter_ran_high_bit_ran_high_val(28 downto 24) -- out
     );
 
     end generate FILTER_RAN_HIGH_present_gen_t;
@@ -2567,7 +2569,7 @@ begin
     port map(
         clk_sys                         => clk_sys ,-- in
         res_n                           => res_n ,-- in
-        data_in                         => w_data(0 downto 0) ,-- in
+        data_in                         => w_data(16 downto 16) ,-- in
         write                           => write_en(0) ,-- in
         cs                              => reg_sel(26) ,-- in
         reg_value(0)                    => control_registers_out_i.rx_settings_rtsop -- out
@@ -2970,7 +2972,7 @@ begin
     port map(
         clk_sys                         => clk_sys ,-- in
         res_n                           => res_n ,-- in
-        data_in                         => w_data(7 downto 0) ,-- in
+        data_in                         => w_data(23 downto 16) ,-- in
         write                           => write_en(0) ,-- in
         cs                              => reg_sel(32) ,-- in
         lock                            => lock_2 ,-- in
@@ -2990,7 +2992,7 @@ begin
     port map(
         clk_sys                         => clk_sys ,-- in
         res_n                           => res_n ,-- in
-        data_in                         => w_data(9 downto 8) ,-- in
+        data_in                         => w_data(25 downto 24) ,-- in
         write                           => write_en(1) ,-- in
         cs                              => reg_sel(32) ,-- in
         lock                            => lock_2 ,-- in

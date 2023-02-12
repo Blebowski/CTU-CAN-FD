@@ -113,6 +113,8 @@ architecture rtl of test_registers_reg_map is
   signal write_en : std_logic_vector(3 downto 0);
 begin
 
+    write_en <= be when (write = '1' and cs = '1') else (others => '0');
+
     ----------------------------------------------------------------------------
     -- Write address to One-hot decoder
     ----------------------------------------------------------------------------
@@ -289,7 +291,7 @@ begin
         write                           => write_en(2) ,-- in
         cs                              => reg_sel(2) ,-- in
         lock                            => lock_1 ,-- in
-        reg_value                       => test_registers_out_i.tst_wdata_tst_wdata(15 downto 8) -- out
+        reg_value                       => test_registers_out_i.tst_wdata_tst_wdata(23 downto 16) -- out
     );
 
     ----------------------------------------------------------------------------
@@ -309,7 +311,7 @@ begin
         write                           => write_en(3) ,-- in
         cs                              => reg_sel(2) ,-- in
         lock                            => lock_1 ,-- in
-        reg_value                       => test_registers_out_i.tst_wdata_tst_wdata(15 downto 8) -- out
+        reg_value                       => test_registers_out_i.tst_wdata_tst_wdata(31 downto 24) -- out
     );
 
     ----------------------------------------------------------------------------

@@ -123,10 +123,7 @@ entity bit_time_fsm is
         rx_trig_req         : out std_logic;
 
         -- Sync signal request
-        tx_trig_req         : out std_logic;
-
-        -- Bit Tim FSM Output
-        bt_fsm              : out t_bit_time
+        tx_trig_req         : out std_logic
     );
 end entity;
 
@@ -214,7 +211,5 @@ begin
 
     bt_fsm_ce <= '1' when (next_state /= current_state) else
                  '0';
-
-    bt_fsm <= current_state;
 
 end architecture rtl;

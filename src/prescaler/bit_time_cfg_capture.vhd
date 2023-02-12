@@ -179,44 +179,43 @@ architecture rtl of bit_time_cfg_capture is
     -----------------------------------------------------------------------------------------------
     -- Next values for configuration.
     -----------------------------------------------------------------------------------------------
-    signal tseg1_nbt_d      : std_logic_vector(G_TSEG1_NBT_WIDTH - 1 downto 0);
-    signal tseg1_dbt_d      : std_logic_vector(G_TSEG1_DBT_WIDTH - 1 downto 0);
+    signal tseg1_nbt_d              : std_logic_vector(G_TSEG1_NBT_WIDTH - 1 downto 0);
+    signal tseg1_dbt_d              : std_logic_vector(G_TSEG1_DBT_WIDTH - 1 downto 0);
 
-    constant sync_length    : unsigned(7 downto 0) := x"01";
+    constant sync_length            : unsigned(7 downto 0) := x"01";
 
     -----------------------------------------------------------------------------------------------
-    -- Drv ena edge detection
+    -- Edge detection after enabling the core
     -----------------------------------------------------------------------------------------------
-    signal drv_ena          : std_logic;
-    signal drv_ena_reg      : std_logic;
-    signal drv_ena_reg_2    : std_logic;
+    signal mr_settings_ena_reg      : std_logic;
+    signal mr_settings_ena_reg_2    : std_logic;
 
     -- Capture signal
-    signal capture          : std_logic;
+    signal capture                  : std_logic;
 
 begin
 
     -----------------------------------------------------------------------------------------------
     -- SETTINGS[ENA] edge detection
     -----------------------------------------------------------------------------------------------
-    drv_ena_reg_proc : process(res_n, clk_sys)
+    settings_ena_reg_proc : process(res_n, clk_sys)
     begin
         if (res_n = '0') then
-            drv_ena_reg     <= '0';
-            drv_ena_reg_2   <= '0';
+            mr_settings_ena_reg     <= '0';
+            mr_settings_ena_reg_2   <= '0';
         elsif (rising_edge(clk_sys)) then
-            drv_ena_reg     <= drv_ena;
-            drv_ena_reg_2   <= drv_ena_reg;
+            mr_settings_ena_reg     <= mr_settings_ena;
+            mr_settings_ena_reg_2   <= mr_settings_ena_reg;
         end if;
     end process;
 
     -- Capture the configuration upon enabbling of the core.
-    capture <= '1' when (drv_ena = '1' and drv_ena_reg = '0') else
+    capture <= '1' when (mr_settings_ena = '1' and mr_settings_ena_reg = '0') else
                '0';
 
     -- Start edge is generated one clock cycle after the capture so that resynchronisation will
     -- capture correct values already!
-    start_edge <= '1' when (drv_ena_reg_2 = '0' and drv_ena_reg = '1') else
+    start_edge <= '1' when (mr_settings_ena_reg_2 = '0' and mr_settings_ena_reg = '1') else
                   '0';
 
     -----------------------------------------------------------------------------------------------

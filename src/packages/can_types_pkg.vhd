@@ -237,7 +237,6 @@ package can_types_pkg is
         is_idle                 : std_logic;
         tx_err_ctr              : std_logic_vector(8 downto 0);
         rx_err_ctr              : std_logic_vector(8 downto 0);
-        is_err_frm              : std_logic;
         status_pexs             : std_logic;
         norm_err_ctr            : std_logic_vector(15 downto 0);
         data_err_ctr            : std_logic_vector(15 downto 0);

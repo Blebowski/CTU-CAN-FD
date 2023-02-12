@@ -212,9 +212,6 @@ entity memory_registers is
         -------------------------------------------------------------------------------------------
         -- RX Buffer Interface
         -------------------------------------------------------------------------------------------
-        -- Size of RX buffer (in words)
-        rx_buf_size                     : in std_logic_vector(12 downto 0);
-
         -- RX Buffer is full
         rx_full                         : in std_logic;
 
@@ -253,6 +250,12 @@ entity memory_registers is
         txtb_port_a_address             : out std_logic_vector(4 downto 0);
         txtb_port_a_cs                  : out std_logic_vector(G_TXT_BUFFER_COUNT - 1 downto 0);
         txtb_port_a_be                  : out std_logic_vector(3 downto 0);
+
+        -- Prioriy of buffers
+        mr_tx_priority                  : out t_txt_bufs_priorities(G_TXT_BUFFER_COUNT - 1 downto 0);
+
+        -- Command indices (chip selects)
+        mr_tx_command_txbi              : out std_logic_vector(G_TXT_BUFFER_COUNT - 1 downto 0);
 
         -- TXT Buffer status
         txtb_state                      : in t_txt_bufs_state(G_TXT_BUFFER_COUNT - 1 downto 0);
@@ -338,8 +341,6 @@ architecture rtl of memory_registers is
     signal clk_test_regs                : std_logic;
 
     -- RX buffer control signals
-    signal rx_buf_mode                  : std_logic;
-    signal rx_move_cmd                  : std_logic;
 
     signal ctr_pres_sel_q               : std_logic_vector(3 downto 0);
 
@@ -620,8 +621,41 @@ begin
     -----------------------------------------------------------------------------------------------
     -----------------------------------------------------------------------------------------------
 
-    -- TODO: Register TXT Buffer command (set empty, set ready, set abort)
+    mr_tx_priority(0)       <= mr_ctrl_out_i.tx_priority_txt1p;
+    mr_tx_command_txbi(0)   <= mr_ctrl_out_i.tx_command_txb1;
 
+    mr_tx_priority(1)       <= mr_ctrl_out_i.tx_priority_txt2p;
+    mr_tx_command_txbi(1)   <= mr_ctrl_out_i.tx_command_txb2;
+
+    mt_2_txt_buffs : if (G_TXT_BUFFER_COUNT > 2) generate
+        mr_tx_priority(2)       <= mr_ctrl_out_i.tx_priority_txt3p;
+        mr_tx_command_txbi(2)   <= mr_ctrl_out_i.tx_command_txb3;
+    end generate;
+
+    mt_3_txt_buffs : if (G_TXT_BUFFER_COUNT > 3) generate
+        mr_tx_priority(3)       <= mr_ctrl_out_i.tx_priority_txt4p;
+        mr_tx_command_txbi(3)   <= mr_ctrl_out_i.tx_command_txb4;
+    end generate;
+
+    mt_4_txt_buffs : if (G_TXT_BUFFER_COUNT > 4) generate
+        mr_tx_priority(4)       <= mr_ctrl_out_i.tx_priority_txt5p;
+        mr_tx_command_txbi(4)   <= mr_ctrl_out_i.tx_command_txb5;
+    end generate;
+
+    mt_5_txt_buffs : if (G_TXT_BUFFER_COUNT > 5) generate
+        mr_tx_priority(5)       <= mr_ctrl_out_i.tx_priority_txt6p;
+        mr_tx_command_txbi(5)   <= mr_ctrl_out_i.tx_command_txb6;
+    end generate;
+
+    mt_6_txt_buffs : if (G_TXT_BUFFER_COUNT > 6) generate
+        mr_tx_priority(6)       <= mr_ctrl_out_i.tx_priority_txt7p;
+        mr_tx_command_txbi(6)   <= mr_ctrl_out_i.tx_command_txb7;
+    end generate;
+
+    mt_7_txt_buffs : if (G_TXT_BUFFER_COUNT > 7) generate
+        mr_tx_priority(7)       <= mr_ctrl_out_i.tx_priority_txt8p;
+        mr_tx_command_txbi(7)   <= mr_ctrl_out_i.tx_command_txb8;
+    end generate;
 
     -----------------------------------------------------------------------------------------------
     -----------------------------------------------------------------------------------------------
@@ -768,7 +802,7 @@ begin
         variable txtb_state_padded : t_txt_bufs_state(7 downto 0);
     begin
         txtb_state_padded := (others => (others => '0'));
-        txtb_state_padded(G_TXT_BUFFER_COUNT downto 0) := txtb_state;
+        txtb_state_padded(G_TXT_BUFFER_COUNT - 1 downto 0) := txtb_state;
 
         mr_ctrl_in.tx_status_tx1s <= txtb_state_padded(0);
         mr_ctrl_in.tx_status_tx2s <= txtb_state_padded(1);
@@ -862,10 +896,10 @@ begin
     end generate;
 
     -- psl rx_buf_automatic_mode_cov : cover
-    --   {rx_buf_mode = RXBAM_ENABLED};
+    --   {mr_ctrl_out_i.mode_rxbam = RXBAM_ENABLED};
 
     -- psl rx_buf_manual_mode_cov : cover
-    --   {rx_buf_mode = RXBAM_DISABLED};
+    --   {mr_ctrl_out_i.mode_rxbam = RXBAM_DISABLED};
 
     -- <RELEASE_ON>
 
