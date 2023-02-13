@@ -3441,7 +3441,7 @@ begin
 	'0'	&
 	'0'	&
 	'0'	&
-	control_registers_out_i.int_mask_set_int_mask_set	&
+	control_registers_in.int_mask_set_int_mask_set	&
 
     -- Adress:24
 	'0'	&
@@ -3498,7 +3498,7 @@ begin
 	'0'	&
 	'0'	&
 	'0'	&
-	control_registers_out_i.int_ena_set_int_ena_set	&
+	control_registers_in.int_ena_set_int_ena_set	&
 
     -- Adress:16
 	'0'	&
@@ -3521,18 +3521,18 @@ begin
 	'0'	&
 	'0'	&
 	'0'	&
-	control_registers_out_i.int_stat_txbhci	&
-	control_registers_out_i.int_stat_rbnei	&
-	control_registers_out_i.int_stat_bsi	&
-	control_registers_out_i.int_stat_rxfi	&
-	control_registers_out_i.int_stat_ofi	&
-	control_registers_out_i.int_stat_bei	&
-	control_registers_out_i.int_stat_ali	&
-	control_registers_out_i.int_stat_fcsi	&
-	control_registers_out_i.int_stat_doi	&
-	control_registers_out_i.int_stat_ewli	&
-	control_registers_out_i.int_stat_txi	&
-	control_registers_out_i.int_stat_rxi	&
+	control_registers_in.int_stat_txbhci	&
+	control_registers_in.int_stat_rbnei	&
+	control_registers_in.int_stat_bsi	&
+	control_registers_in.int_stat_rxfi	&
+	control_registers_in.int_stat_ofi	&
+	control_registers_in.int_stat_bei	&
+	control_registers_in.int_stat_ali	&
+	control_registers_in.int_stat_fcsi	&
+	control_registers_in.int_stat_doi	&
+	control_registers_in.int_stat_ewli	&
+	control_registers_in.int_stat_txi	&
+	control_registers_in.int_stat_rxi	&
 
     -- Adress:12
 	'0'	&
