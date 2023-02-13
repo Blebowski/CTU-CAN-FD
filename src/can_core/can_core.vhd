@@ -318,8 +318,6 @@ entity can_core is
         -------------------------------------------------------------------------------------------
         -- Others
         -------------------------------------------------------------------------------------------
-        timestamp               : in  std_logic_vector(63 downto 0);
-
         -- Secondary sample point reset
         ssp_reset               : out std_logic;
 
@@ -328,9 +326,6 @@ entity can_core is
 
         -- Bit Error detected
         bit_err                 : in  std_logic;
-
-        -- Secondary sample signal
-        sample_sec              : in  std_logic;
 
         -- Reset Bit time measurement counter
         btmc_reset              : out std_logic;

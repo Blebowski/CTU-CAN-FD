@@ -72,10 +72,8 @@
 --
 -- Purpose:
 --  Decode DLC to byte length of Data field in CAN Frame. Support both CAN 2.0
---  and CAN FD. Output signal 'is_valid' shows if the DLC value is meaningful
---  for given frame type, ie. values greater than '1000' are also valid for
---  CAN 2.0 but the value is marked in any case as 8 bytes. Decoder simply
---  returns '0' if frame type is 'CAN_2_0' and DLC is greater than 8.
+--  and CAN FD. Decoder returns '0' if frame type is 'CAN_2_0' and DLC is
+--  greater than 8.
 --------------------------------------------------------------------------------
 
 Library ieee;
@@ -94,10 +92,7 @@ entity dlc_decoder is
         frame_type          : in  std_logic;
 
         -- Data length (decoded)
-        data_length         : out std_logic_vector(6 downto 0);
-
-        -- Validity indication (0 for CAN 2.0 frames with dlc > 0)
-        is_valid            : out std_logic
+        data_length         : out std_logic_vector(6 downto 0)
     );
 end dlc_decoder;
 
@@ -153,12 +148,4 @@ begin
                                     else
                    data_len_can_fd;
 
-    -----------------------------------------------------------------------------------------------
-    -- DLC is valid:
-    --  1. in every case for CAN FD
-    --  2. only for values <= 8 for CAN 2.0
-    -----------------------------------------------------------------------------------------------
-    is_valid <= '1' when ((dlc_int <= 8) and (frame_type = NORMAL_CAN)) else
-                '1' when (frame_type = FD_CAN) else
-                '0';
 end rtl;

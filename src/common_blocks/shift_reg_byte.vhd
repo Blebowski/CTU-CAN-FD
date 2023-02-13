@@ -111,7 +111,7 @@ entity shift_reg_byte is
 
         -- Input source selector for each byte
         -- (0-Previous byte output, 1- Shift reg input)
-        byte_input_sel      : in  std_logic_vector(G_NUM_BYTES - 1 downto 0);
+        byte_input_sel      : in  std_logic_vector(G_NUM_BYTES - 1 downto 1);
 
         -------------------------------------------------------------------------------------------
         -- Status signals

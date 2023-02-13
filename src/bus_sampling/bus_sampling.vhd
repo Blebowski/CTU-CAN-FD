@@ -177,9 +177,6 @@ entity bus_sampling is
         -- Measure transmitter delay
         tran_delay_meas         :in   std_logic;
 
-        -- Secondary sampling RX trigger
-        sample_sec              :out  std_logic;
-
         -- Bit error detected
         bit_err                 :out  std_logic;
 
@@ -206,7 +203,7 @@ architecture rtl of bus_sampling is
     signal prev_sample              : std_logic;
 
     -- Secondary sampling signal (sampling with transciever delay compensation)
-    signal sample_sec_i             : std_logic;
+    signal sample_sec               : std_logic;
 
     -- Delayed TX Data from TX Data shift register at position of secondary
     -- sampling point.
@@ -369,7 +366,7 @@ begin
 
         -- Trigger signals
         tx_trigger                  => tx_trigger,              -- (IN)
-        sample_sec                  => sample_sec_i             -- (OUT)
+        sample_sec                  => sample_sec               -- (OUT)
     );
 
     -- Secondary sampling point shift register clock enable
@@ -399,7 +396,7 @@ begin
         clk_sys                     => clk_sys,                 -- IN
         res_n                       => shift_regs_res_q_scan,   -- IN
         write                       => tx_trigger_ssp,          -- IN
-        read                        => sample_sec_i,            -- IN
+        read                        => sample_sec,              -- IN
         data_in                     => tx_data_wbs,             -- IN
 
         data_out                    => data_tx_delayed          -- OUT
@@ -416,7 +413,7 @@ begin
         mr_settings_ena             => mr_settings_ena,         -- IN
         sp_control                  => sp_control,              -- IN
         rx_trigger                  => rx_trigger,              -- IN
-        sample_sec                  => sample_sec_i,            -- IN
+        sample_sec                  => sample_sec,              -- IN
         data_tx                     => tx_data_wbs,             -- IN
         data_tx_delayed             => data_tx_delayed,         -- IN
         data_rx_synced              => data_rx_synced,          -- IN
@@ -434,7 +431,7 @@ begin
         mr_settings_ena             => mr_settings_ena,         -- IN
         sp_control                  => sp_control,              -- IN
         rx_trigger                  => rx_trigger,              -- IN
-        sample_sec                  => sample_sec_i,            -- IN
+        sample_sec                  => sample_sec,              -- IN
         data_rx_synced              => data_rx_synced,          -- IN
 
         prev_sample                 => prev_sample              -- OUT
@@ -445,9 +442,6 @@ begin
 
     -- RX Data for bit destuffing - Output of re-synchroniser.
     rx_data_wbs <= data_rx_synced;
-
-    -- Registers to output propagation
-    sample_sec  <= sample_sec_i;
 
     -- <RELEASE_OFF>
     -------------------------------------------------------------------------------------------

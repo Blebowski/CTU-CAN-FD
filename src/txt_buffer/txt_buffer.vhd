@@ -138,7 +138,7 @@ entity txt_buffer is
         -- Memory Testability
         mr_tst_control_tmaena   : in  std_logic;
         mr_tst_control_twrstb   : in  std_logic;
-        mr_tst_dest_tst_addr    : in  std_logic_vector(15 downto 0);
+        mr_tst_dest_tst_addr    : in  std_logic_vector(4 downto 0);
         mr_tst_dest_tst_mtgt    : in  std_logic_vector(3 downto 0);
         mr_tst_wdata_tst_wdata  : in  std_logic_vector(31 downto 0);
         mr_tst_rdata_tst_rdata  : out std_logic_vector(31 downto 0);

@@ -500,9 +500,6 @@ architecture rtl of can_top_level is
     -- Bit Error detected
     signal bit_err                      :   std_logic;
 
-    -- Secondary sample signal
-    signal sample_sec                   :   std_logic;
-
     -- Reset Bit time measurement counter
     signal btmc_reset                   :   std_logic;
 
@@ -797,56 +794,56 @@ begin
         )
         port map (
             -- Clock and Asynchronous reset
-            clk_sys                     => clk_sys,                         -- IN
-            res_n                       => res_core_n,                      -- IN
+            clk_sys                     => clk_sys,                                     -- IN
+            res_n                       => res_core_n,                                  -- IN
 
             -- DFT support
-            scan_enable                 => scan_enable,                     -- IN
+            scan_enable                 => scan_enable,                                 -- IN
 
             -- Memory Registers Interface
-            mr_mode_bmm                 => mr_ctrl_out.mode_bmm,            -- IN
-            mr_mode_rom                 => mr_ctrl_out.mode_rom,            -- IN
-            mr_mode_txbbm               => mr_ctrl_out.mode_txbbm,          -- IN
-            mr_settings_tbfbo           => mr_ctrl_out.settings_tbfbo,      -- IN
-            mr_settings_pchke           => mr_ctrl_out.settings_pchke,      -- IN
-            mr_tx_command_txce          => mr_ctrl_out.tx_command_txce,     -- IN
-            mr_tx_command_txcr          => mr_ctrl_out.tx_command_txcr,     -- IN
-            mr_tx_command_txca          => mr_ctrl_out.tx_command_txca,     -- IN
-            mr_tx_command_txbi          => mr_tx_command_txbi(i),           -- IN
+            mr_mode_bmm                 => mr_ctrl_out.mode_bmm,                        -- IN
+            mr_mode_rom                 => mr_ctrl_out.mode_rom,                        -- IN
+            mr_mode_txbbm               => mr_ctrl_out.mode_txbbm,                      -- IN
+            mr_settings_tbfbo           => mr_ctrl_out.settings_tbfbo,                  -- IN
+            mr_settings_pchke           => mr_ctrl_out.settings_pchke,                  -- IN
+            mr_tx_command_txce          => mr_ctrl_out.tx_command_txce,                 -- IN
+            mr_tx_command_txcr          => mr_ctrl_out.tx_command_txcr,                 -- IN
+            mr_tx_command_txca          => mr_ctrl_out.tx_command_txca,                 -- IN
+            mr_tx_command_txbi          => mr_tx_command_txbi(i),                       -- IN
 
-            mr_tst_control_tmaena       => mr_tst_out.tst_control_tmaena,   -- IN
-            mr_tst_control_twrstb       => mr_tst_out.tst_control_twrstb,   -- IN
-            mr_tst_dest_tst_addr        => mr_tst_out.tst_dest_tst_addr,    -- IN
-            mr_tst_dest_tst_mtgt        => mr_tst_out.tst_dest_tst_mtgt,    -- IN
-            mr_tst_wdata_tst_wdata      => mr_tst_out.tst_wdata_tst_wdata,  -- IN
-            mr_tst_rdata_tst_rdata      => mr_tst_rdata_tst_rdata_txb(i),   -- OUT
+            mr_tst_control_tmaena       => mr_tst_out.tst_control_tmaena,               -- IN
+            mr_tst_control_twrstb       => mr_tst_out.tst_control_twrstb,               -- IN
+            mr_tst_dest_tst_addr        => mr_tst_out.tst_dest_tst_addr(4 downto 0),    -- IN
+            mr_tst_dest_tst_mtgt        => mr_tst_out.tst_dest_tst_mtgt,                -- IN
+            mr_tst_wdata_tst_wdata      => mr_tst_out.tst_wdata_tst_wdata,              -- IN
+            mr_tst_rdata_tst_rdata      => mr_tst_rdata_tst_rdata_txb(i),               -- OUT
 
-            txtb_port_a_data_in         => txtb_port_a_data_in,             -- IN
-            txtb_port_a_parity          => txtb_port_a_parity,              -- IN
-            txtb_port_a_address         => txtb_port_a_address,             -- IN
-            txtb_port_a_cs              => txtb_port_a_cs(i),               -- IN
-            txtb_port_a_be              => txtb_port_a_be,                  -- IN
+            txtb_port_a_data_in         => txtb_port_a_data_in,                         -- IN
+            txtb_port_a_parity          => txtb_port_a_parity,                          -- IN
+            txtb_port_a_address         => txtb_port_a_address,                         -- IN
+            txtb_port_a_cs              => txtb_port_a_cs(i),                           -- IN
+            txtb_port_a_be              => txtb_port_a_be,                              -- IN
 
-            txtb_state                  => txtb_state(i),                   -- OUT
-            txtb_is_bb                  => txtb_is_bb(i),                   -- IN
+            txtb_state                  => txtb_state(i),                               -- OUT
+            txtb_is_bb                  => txtb_is_bb(i),                               -- IN
 
             -- Interrupt Manager Interface
-            txtb_hw_cmd_int             => txtb_hw_cmd_int(i),              -- OUT
+            txtb_hw_cmd_int             => txtb_hw_cmd_int(i),                          -- OUT
 
             -- CAN Core and TX Arbitrator Interface
-            txtb_hw_cmd                 => txtb_hw_cmd,                     -- IN
-            txtb_hw_cmd_index           => txtb_hw_cmd_index,               -- IN
-            txtb_port_b_data_out        => txtb_port_b_data_out(i),         -- OUT
-            txtb_port_b_address         => txtb_port_b_address,             -- IN
-            txtb_port_b_clk_en          => txtb_port_b_clk_en,              -- IN
-            is_bus_off                  => cc_stat.is_bus_off,              -- IN
-            txtb_available              => txtb_available(i),               -- OUT
-            txtb_allow_bb               => txtb_allow_bb(i),                -- OUT
-            txtb_parity_check_valid     => txtb_parity_check_valid,         -- IN
-            txtb_parity_mismatch        => txtb_parity_mismatch(i),         -- OUT
-            txtb_parity_error_valid     => txtb_parity_error_valid(i),      -- OUT
-            txtb_bb_parity_error        => txtb_bb_parity_error(i),         -- OUT
-            txtb_index_muxed            => txtb_index_muxed                 -- OUT
+            txtb_hw_cmd                 => txtb_hw_cmd,                                 -- IN
+            txtb_hw_cmd_index           => txtb_hw_cmd_index,                           -- IN
+            txtb_port_b_data_out        => txtb_port_b_data_out(i),                     -- OUT
+            txtb_port_b_address         => txtb_port_b_address,                         -- IN
+            txtb_port_b_clk_en          => txtb_port_b_clk_en,                          -- IN
+            is_bus_off                  => cc_stat.is_bus_off,                          -- IN
+            txtb_available              => txtb_available(i),                           -- OUT
+            txtb_allow_bb               => txtb_allow_bb(i),                            -- OUT
+            txtb_parity_check_valid     => txtb_parity_check_valid,                     -- IN
+            txtb_parity_mismatch        => txtb_parity_mismatch(i),                     -- OUT
+            txtb_parity_error_valid     => txtb_parity_error_valid(i),                  -- OUT
+            txtb_bb_parity_error        => txtb_bb_parity_error(i),                     -- OUT
+            txtb_index_muxed            => txtb_index_muxed                             -- OUT
         );
     end generate;
 
@@ -1148,11 +1145,9 @@ begin
         tx_data_wbs                     => tx_data_wbs,                             -- OUT
 
         -- Others
-        timestamp                       => timestamp,                               -- IN
         ssp_reset                       => ssp_reset,                               -- OUT
         tran_delay_meas                 => tran_delay_meas,                         -- OUT
         bit_err                         => bit_err,                                 -- IN
-        sample_sec                      => sample_sec,                              -- IN
         btmc_reset                      => btmc_reset,                              -- OUT
         dbt_measure_start               => dbt_measure_start,                       -- OUT
         gen_first_ssp                   => gen_first_ssp,                           -- OUT
@@ -1256,7 +1251,6 @@ begin
         sp_control                      => sp_control,                              -- IN
         ssp_reset                       => ssp_reset,                               -- IN
         tran_delay_meas                 => tran_delay_meas,                         -- IN
-        sample_sec                      => sample_sec,                              -- OUT
         bit_err                         => bit_err,                                 -- OUT
         btmc_reset                      => btmc_reset,                              -- IN
         dbt_measure_start               => dbt_measure_start,                       -- IN

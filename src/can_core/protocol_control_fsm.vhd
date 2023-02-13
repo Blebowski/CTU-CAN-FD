@@ -878,8 +878,7 @@ begin
         dlc           => tran_dlc,                          -- IN
         frame_type    => tran_frame_type_i,                 -- IN
 
-        data_length   => tran_data_length,                  -- OUT
-        is_valid      => open                               -- OUT
+        data_length   => tran_data_length                   -- OUT
     );
 
     dlc_decoder_rx_inst : entity ctu_can_fd_rtl.dlc_decoder
@@ -887,8 +886,7 @@ begin
         dlc           => rec_dlc_q,                         -- IN
         frame_type    => rec_frame_type,                    -- IN
 
-        data_length   => rec_data_length,                   -- OUT
-        is_valid      => open                               -- OUT
+        data_length   => rec_data_length                    -- OUT
     );
 
     dlc_decoder_rx_inst_comb : entity ctu_can_fd_rtl.dlc_decoder
@@ -896,8 +894,7 @@ begin
         dlc           => rec_dlc_d,                         -- IN
         frame_type    => rec_frame_type,                    -- IN
 
-        data_length   => rec_data_length_c,                 -- OUT
-        is_valid      => open                               -- OUT
+        data_length   => rec_data_length_c                  -- OUT
     );
 
     -- Data field length (valid only in Sample point of last bit of DLC)

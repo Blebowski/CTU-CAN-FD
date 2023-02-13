@@ -214,7 +214,7 @@ architecture rtl of rx_shift_reg is
     signal rx_shift_cmd             : std_logic_vector(3 downto 0);
 
     -- Shift register input selector demuxed
-    signal rx_shift_in_sel_demuxed  : std_logic_vector(3 downto 0);
+    signal rx_shift_in_sel_demuxed  : std_logic_vector(3 downto 1);
 
     signal rec_is_rtr_i             : std_logic;
     signal rec_frame_type_i         : std_logic;
@@ -263,7 +263,7 @@ begin
     rec_dlc_d <= rx_shift_reg_q(2 downto 0) & rx_data_nbs;
 
     rx_shift_in_sel_demuxed <= rx_shift_in_sel & rx_shift_in_sel &
-                               rx_shift_in_sel & rx_shift_in_sel;
+                               rx_shift_in_sel;
 
     -----------------------------------------------------------------------------------------------
     -- RX Shift register
