@@ -195,21 +195,24 @@ end entity;
 
 architecture rtl of int_manager is
 
-    signal int_input_active     : std_logic_vector(G_INT_COUNT - 1 downto 0);
-    signal int_status_i         : std_logic_vector(G_INT_COUNT - 1 downto 0);
-    signal int_status_clr_i     : std_logic_vector(G_INT_COUNT - 1 downto 0);
+    signal int_input_active                 : std_logic_vector(G_INT_COUNT - 1 downto 0);
+    signal int_status_i                     : std_logic_vector(G_INT_COUNT - 1 downto 0);
+    signal int_status_clr_i                 : std_logic_vector(G_INT_COUNT - 1 downto 0);
 
-    constant C_ZERO_MASK        : std_logic_vector(G_INT_COUNT - 1 downto 0) := (others => '0');
+    constant C_ZERO_MASK                    : std_logic_vector(G_INT_COUNT - 1 downto 0) := (others => '0');
 
     -- Internal value of an interrupt
-    signal int_i                : std_logic;
+    signal int_i                            : std_logic;
+
+    -- Internal value of INT_ENA
+    signal mr_int_ena_set_int_ena_set_o_i   : std_logic_vector(G_INT_COUNT - 1 downto 0);
 
 begin
 
     -----------------------------------------------------------------------------------------------
     -- Driving Interrupt output when there is at least one active interrupt enabled.
     -----------------------------------------------------------------------------------------------
-    int_i  <= '0' when ((int_status_i and mr_int_ena_set_int_ena_set) = C_ZERO_MASK)
+    int_i  <= '0' when ((int_status_i and mr_int_ena_set_int_ena_set_o_i) = C_ZERO_MASK)
                   else
               '1';
 
@@ -279,7 +282,7 @@ begin
 
             int_status          => int_status_i(i),                          -- OUT
             int_mask            => mr_int_mask_set_int_mask_set_o(i),        -- OUT
-            int_ena             => mr_int_ena_set_int_ena_set_o(i)           -- OUT
+            int_ena             => mr_int_ena_set_int_ena_set_o_i(i)         -- OUT
         );
 
     end generate int_module_gen;
@@ -299,6 +302,10 @@ begin
 
         reg_q                   => int                                      -- OUT
     );
+
+    -- Propagation to output
+    mr_int_ena_set_int_ena_set_o <= mr_int_ena_set_int_ena_set_o_i;
+
 
     -- <RELEASE_OFF>
     -----------------------------------------------------------------------------------------------
