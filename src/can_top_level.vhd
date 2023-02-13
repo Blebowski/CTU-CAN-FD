@@ -354,9 +354,6 @@ architecture rtl of can_top_level is
     -- HW Commands
     signal txtb_hw_cmd                  :    t_txtb_hw_cmd;
 
-    -- Unit just turned bus off.
-    signal is_bus_off                   :    std_logic;
-
     -----------------------------------------------------------------------------------------------
     -- TXT Buffers <-> TX Arbitrator
     -----------------------------------------------------------------------------------------------
@@ -842,7 +839,7 @@ begin
             txtb_port_b_data_out        => txtb_port_b_data_out(i),         -- OUT
             txtb_port_b_address         => txtb_port_b_address,             -- IN
             txtb_port_b_clk_en          => txtb_port_b_clk_en,              -- IN
-            is_bus_off                  => is_bus_off,                      -- IN
+            is_bus_off                  => cc_stat.is_bus_off,              -- IN
             txtb_available              => txtb_available(i),               -- OUT
             txtb_allow_bb               => txtb_allow_bb(i),                -- OUT
             txtb_parity_check_valid     => txtb_parity_check_valid,         -- IN
@@ -1113,7 +1110,6 @@ begin
         txtb_changed                    => txtb_changed,                            -- IN
         txtb_ptr                        => txtb_ptr,                                -- OUT
         txtb_clk_en                     => txtb_clk_en,                             -- OUT
-        is_bus_off                      => is_bus_off,                              -- OUT
 
         -- Recieve Buffer and Message Filter Interface
         rec_ident                       => rec_ident,                               -- OUT

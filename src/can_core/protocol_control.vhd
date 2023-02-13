@@ -581,6 +581,9 @@ architecture rtl of protocol_control is
     -- Part of arbitration currently transmitted
     signal arbitration_part        :      std_logic_vector(2 downto 0);
 
+    -- Debug status of protocol controller
+    signal pc_dbg_i                :      t_protocol_control_dbg;
+
 begin
 
     -----------------------------------------------------------------------------------------------
@@ -626,7 +629,7 @@ begin
 
         mr_status_pexs          => mr_status_pexs,          -- OUT
 
-        pc_dbg                  => pc_dbg,                  -- OUT
+        pc_dbg                  => pc_dbg_i,                -- OUT
 
         -- Data-path interface
         tx_data_wbs             => tx_data_wbs,             -- IN
@@ -875,7 +878,7 @@ begin
         crc_check               => crc_check,               -- IN
         crc_clear_match_flag    => crc_clear_match_flag,    -- IN
         crc_src                 => crc_src,                 -- IN
-        is_arbitration          => pc_dbg.is_arbitration,   -- IN
+        is_arbitration          => pc_dbg_i.is_arbitration, -- IN
         is_transmitter          => is_transmitter,          -- IN
         is_err_passive          => is_err_passive,          -- IN
 
@@ -982,6 +985,8 @@ begin
     crc_err <= crc_err_i;
     fixed_stuff <= fixed_stuff_i;
     arbitration_lost <= arbitration_lost_i;
+    pc_dbg <= pc_dbg_i;
+
 
     -- <RELEASE_OFF>
     -----------------------------------------------------------------------------------------------
@@ -990,7 +995,7 @@ begin
     -- psl default clock is rising_edge(clk_sys);
 
     -- psl no_invalid_ack_err_asrt : assert never
-    --  ((ack_err = '1' or crc_err = '1' or stuff_err = '1') and (pc_dbg.is_err = '1'))
+    --  ((ack_err = '1' or crc_err = '1' or stuff_err = '1') and (pc_dbg_i.is_err = '1'))
     -- report "ACK, Stuff, CRC Errors can't occur during Error or overload flag";
 
     -- psl sample_sec_proper_asrt : assert never

@@ -218,9 +218,6 @@ entity can_core is
         -- Clock enable for TXT Buffer memory
         txtb_clk_en             : out std_logic;
 
-        -- Transition to bus off has occurred
-        is_bus_off              : out std_logic;
-
         -------------------------------------------------------------------------------------------
         -- Recieve Buffer and Message Filter Interface
         -------------------------------------------------------------------------------------------
@@ -950,7 +947,7 @@ begin
     -----------------------------------------------------------------------------------------------
     cc_stat.is_err_active   <= is_err_active;
     cc_stat.is_err_passive  <= is_err_passive;
-    cc_stat.is_bus_off      <= is_bus_off;
+    cc_stat.is_bus_off      <= is_bus_off_i;
     cc_stat.is_transmitter  <= is_transmitter;
     cc_stat.is_receiver     <= is_receiver;
     cc_stat.is_idle         <= is_idle;
@@ -992,7 +989,6 @@ begin
     sp_control              <= sp_control_i;
     ssp_reset               <= ssp_reset_i;
     tran_delay_meas         <= tran_delay_meas_i;
-    is_bus_off              <= is_bus_off_i;
     sof_pulse               <= sof_pulse_i;
 
     -- Test signals observation
