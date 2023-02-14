@@ -292,7 +292,7 @@ architecture rtl of rx_buffer is
     signal frame_count_q                : unsigned(10 downto 0);
     signal frame_count_plus_one         : unsigned(10 downto 0);
     signal frame_count_minus_one        : unsigned(10 downto 0);
-    signal frame_count_is_zero          : unsigned(10 downto 0);
+    signal frame_count_is_zero          : std_logic;
 
     -- Frame read counter. When whole frame is read, number of frames must be decremented.
     signal read_counter_dec             : unsigned(4 downto 0);
@@ -660,7 +660,7 @@ begin
 
     frame_count_plus_one <= frame_count_q + 1;
 
-    frame_count_is_zero <= '1' when (frame_count = "00000000000")
+    frame_count_is_zero <= '1' when (frame_count_q = "00000000000")
                                else
                            '0';
 
@@ -887,7 +887,7 @@ begin
                             else
                         '0';
 
-    rx_frame_count   <= frame_count_q;
+    rx_frame_count   <= std_logic_vector(frame_count_q);
     rx_mem_free      <= rx_mem_free_i;
     rx_empty         <= rx_empty_i;
 
