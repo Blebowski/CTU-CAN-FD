@@ -625,7 +625,9 @@ begin
     mr_tx_command_txbi(0)   <= mr_ctrl_out_i.tx_command_txb1;
 
     mr_tx_priority(1)       <= mr_ctrl_out_i.tx_priority_txt2p;
-    mr_tx_command_txbi(1)   <= mr_ctrl_out_i.tx_command_txb2;
+    mr_tx_command_txbi(1)   <= mr_ctrl_out_i.tx_command_txb2 when (mr_ctrl_out_i.mode_txbbm = '0')
+                                                             else
+                               mr_ctrl_out_i.tx_command_txb1 or mr_ctrl_out_i.tx_command_txb2;
 
     mt_2_txt_buffs : if (G_TXT_BUFFER_COUNT > 2) generate
         mr_tx_priority(2)       <= mr_ctrl_out_i.tx_priority_txt3p;
@@ -634,7 +636,9 @@ begin
 
     mt_3_txt_buffs : if (G_TXT_BUFFER_COUNT > 3) generate
         mr_tx_priority(3)       <= mr_ctrl_out_i.tx_priority_txt4p;
-        mr_tx_command_txbi(3)   <= mr_ctrl_out_i.tx_command_txb4;
+        mr_tx_command_txbi(3)   <= mr_ctrl_out_i.tx_command_txb4 when (mr_ctrl_out_i.mode_txbbm = '0')
+                                                                 else
+                                   mr_ctrl_out_i.tx_command_txb3 or mr_ctrl_out_i.tx_command_txb4;
     end generate;
 
     mt_4_txt_buffs : if (G_TXT_BUFFER_COUNT > 4) generate
@@ -644,7 +648,9 @@ begin
 
     mt_5_txt_buffs : if (G_TXT_BUFFER_COUNT > 5) generate
         mr_tx_priority(5)       <= mr_ctrl_out_i.tx_priority_txt6p;
-        mr_tx_command_txbi(5)   <= mr_ctrl_out_i.tx_command_txb6;
+        mr_tx_command_txbi(5)   <= mr_ctrl_out_i.tx_command_txb6 when (mr_ctrl_out_i.mode_txbbm = '0')
+                                                                 else
+                                   mr_ctrl_out_i.tx_command_txb5 or mr_ctrl_out_i.tx_command_txb6;
     end generate;
 
     mt_6_txt_buffs : if (G_TXT_BUFFER_COUNT > 6) generate
@@ -654,7 +660,9 @@ begin
 
     mt_7_txt_buffs : if (G_TXT_BUFFER_COUNT > 7) generate
         mr_tx_priority(7)       <= mr_ctrl_out_i.tx_priority_txt8p;
-        mr_tx_command_txbi(7)   <= mr_ctrl_out_i.tx_command_txb8;
+        mr_tx_command_txbi(7)   <= mr_ctrl_out_i.tx_command_txb8 when (mr_ctrl_out_i.mode_txbbm = '0')
+                                                                 else
+                                   mr_ctrl_out_i.tx_command_txb7 or mr_ctrl_out_i.tx_command_txb8;
     end generate;
 
     -----------------------------------------------------------------------------------------------
