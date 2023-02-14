@@ -338,8 +338,8 @@ begin
             if (now > 0 ps) then
                 if (cmd_join /= "0000" and cmd_join /= "0001" and
                     cmd_join /= "0010" and cmd_join /= "0100" and
-                    cmd_join /= "1000") then
-                else
+                    cmd_join /= "1000")
+                then
                     report "RX Buffer: RX Buffer commands should be one-hot encoded!"
                     severity error;
                 end if;
