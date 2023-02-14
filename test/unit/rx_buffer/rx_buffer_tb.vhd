@@ -181,14 +181,14 @@ architecture rx_buffer_unit_test of CAN_test is
     signal rxb_port_b_data_out      : std_logic_vector(31 downto 0);
 
     -- Memory registers signals
-    signal mr_mode_rxbam            : std_logic;
-    signal mr_command_cdo           : std_logic;
-    signal mr_command_crxpe         : std_logic;
-    signal mr_command_rrb           : std_logic;
-    signal mr_command_rxrpmv        : std_logic;
-    signal mr_rx_data_read          : std_logic;
-    signal mr_rx_settings_rtsop     : std_logic;
-    signal mr_settings_pchke        : std_logic;
+    signal mr_mode_rxbam            : std_logic := '1';
+    signal mr_command_cdo           : std_logic := '0';
+    signal mr_command_crxpe         : std_logic := '0';
+    signal mr_command_rrb           : std_logic := '0';
+    signal mr_command_rxrpmv        : std_logic := '0';
+    signal mr_rx_data_read          : std_logic := '0';
+    signal mr_rx_settings_rtsop     : std_logic := RTS_END;
+    signal mr_settings_pchke        : std_logic := '0';
 
     -- Memory testability
     signal mr_tst_control_tmaena    : std_logic;
@@ -615,7 +615,6 @@ begin
         sof_pulse                => sof_pulse,
         timestamp                => timestamp,
 
-        -- TODO: Connect here!
         mr_mode_rxbam            => mr_mode_rxbam,
         mr_command_cdo           => mr_command_cdo,
         mr_command_crxpe         => mr_command_crxpe,

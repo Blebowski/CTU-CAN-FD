@@ -339,8 +339,8 @@ begin
         mr_filter_b_val_bit_val_b_val       => drv_settings.drv_filter_b_bits,
         mr_filter_c_mask_bit_mask_c_val     => drv_settings.drv_filter_c_mask,
         mr_filter_c_val_bit_val_c_val       => drv_settings.drv_filter_c_bits,
-        mr_filter_ran_high_bit_ran_high_val => drv_settings.drv_filter_ran_lo_th,
-        mr_filter_ran_low_bit_ran_low_val   => drv_settings.drv_filter_ran_hi_th,
+        mr_filter_ran_high_bit_ran_high_val => drv_settings.drv_filter_ran_hi_th,
+        mr_filter_ran_low_bit_ran_low_val   => drv_settings.drv_filter_ran_lo_th,
         mr_settings_fdrf                    => '0',
         mr_mode_afm                         => drv_settings.drv_filters_ena,
 
