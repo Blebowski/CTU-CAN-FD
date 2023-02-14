@@ -865,6 +865,7 @@ begin
     mr_ctrl_in.timestamp_high_timestamp_high <= timestamp(63 downto 32);
 
     -- <RELEASE_OFF>
+    -- pragma translate_off
     -----------------------------------------------------------------------------------------------
     -- Assertions / Functional coverage
     -----------------------------------------------------------------------------------------------
@@ -888,10 +889,15 @@ begin
     --  report "TX Double parity error generated when SETTINGS[PCHKE] is disabled.";
 
     txtb_func_cov_gen : for i in 0 to G_TXT_BUFFER_COUNT - 1 generate
+    begin
 
-    -- psl txtb_in_parit_error_when_parity_disabled_asrt : assert never
-    --    {mr_ctrl_out_i.settings_pchke = '0' and txtb_state(i) = TXT_PER}
-    --    report "TXT Buffer in 'Parity error' state when SETTINGS[PCHKE] is disabled.";
+        process (txtb_state, mr_ctrl_out_i.settings_pchke)
+        begin
+            if (mr_ctrl_out_i.settings_pchke = '0' and txtb_state(i) = TXT_PER) then
+                report "TXT Buffer in 'Parity error' state when SETTINGS[PCHKE] is disabled."
+                severity error;
+            end if;
+        end process;
 
     end generate;
 
@@ -901,6 +907,7 @@ begin
     -- psl rx_buf_manual_mode_cov : cover
     --   {mr_ctrl_out_i.mode_rxbam = RXBAM_DISABLED};
 
+    -- pragma translate_on
     -- <RELEASE_ON>
 
 end architecture;

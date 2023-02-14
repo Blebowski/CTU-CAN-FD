@@ -149,11 +149,6 @@ architecture rtl of rx_buffer_fsm is
     -- Clock enable for state register
     signal rx_fsm_ce    : std_logic;
 
-    -- <RELEASE_OFF>
-    -- Joined commands (for assertions only)
-    signal cmd_join     : std_logic_vector(3 downto 0);
-    -- <RELEASE_ON>
-
 begin
 
     -----------------------------------------------------------------------------------------------
@@ -315,33 +310,52 @@ begin
                  '0';
 
     -- <RELEASE_OFF>
+    -- pragma translate_off
+
     -----------------------------------------------------------------------------------------------
     -- Assertions
     -----------------------------------------------------------------------------------------------
-    -- psl default clock is rising_edge(clk_sys);
 
-    -- Joined commands, for assertions only
-    cmd_join <= store_metadata_f & store_data_f & rec_valid_f & rec_abort_f;
+    assertions_block : block
+        -- Joined commands
+        signal cmd_join     : std_logic_vector(3 downto 0);
+    begin
+        -- psl default clock is rising_edge(clk_sys);
 
-    -- psl store_metadata_in_idle_asrt : assert never
-    --  (store_metadata_f = '1' and (curr_state /= s_rxb_idle))
-    -- report "RX Buffer: Store metadata command did NOT come when RX buffer is idle!";
+        -- Joined commands, for assertions only
+        cmd_join <= store_metadata_f & store_data_f & rec_valid_f & rec_abort_f;
 
-    -- psl commit_or_store_data_asrt : assert never
-    --  ((rec_valid_f = '1' or store_data_f = '1') and curr_state /= s_rxb_store_data)
-    -- report "RX Buffer: Store data or frame commit commands did not come when RX Buffer is receiving data!";
+        -- psl store_metadata_in_idle_asrt : assert never
+        --  (store_metadata_f = '1' and (curr_state /= s_rxb_idle))
+        -- report "RX Buffer: Store metadata command did NOT come when RX buffer is idle!";
 
-    -- psl rx_buf_cmds_one_hot_asrt : assert always
-    --   (now > 0 ps) -> (cmd_join = "0000" or cmd_join = "0001" or
-    --    cmd_join = "0010" or cmd_join = "0100" or cmd_join = "1000")
-    -- report "RX Buffer: RX Buffer commands should be one-hot encoded!";
+        -- psl commit_or_store_data_asrt : assert never
+        --  ((rec_valid_f = '1' or store_data_f = '1') and curr_state /= s_rxb_store_data)
+        -- report "RX Buffer: Store data or frame commit commands did not come when RX Buffer is receiving data!";
 
-    -- psl rx_no_abort_after_metadata : assert never
-    --  (rec_abort_f = '1') and
-    --  (curr_state = s_rxb_store_identifier or curr_state = s_rxb_skip_ts_low or
-    --   curr_state = s_rxb_skip_ts_high or curr_state = s_rxb_store_end_ts_low or
-    --   curr_state = s_rxb_store_end_ts_high)
-    --  report "RX Buffer abort not supported storing of Identifier and Timestamp";
+        process (cmd_join)
+        begin
+            if (now > 0 ps) then
+                if (cmd_join /= "0000" and cmd_join /= "0001" and
+                    cmd_join /= "0010" and cmd_join /= "0100" and
+                    cmd_join /= "1000") then
+                else
+                    report "RX Buffer: RX Buffer commands should be one-hot encoded!"
+                    severity error;
+                end if;
+            end if;
+        end process;
 
+        -- psl rx_no_abort_after_metadata : assert never
+        --  (rec_abort_f = '1') and
+        --  (curr_state = s_rxb_store_identifier or curr_state = s_rxb_skip_ts_low or
+        --   curr_state = s_rxb_skip_ts_high or curr_state = s_rxb_store_end_ts_low or
+        --   curr_state = s_rxb_store_end_ts_high)
+        --  report "RX Buffer abort not supported storing of Identifier and Timestamp";
+
+    end block assertions_block;
+
+    -- pragma translate_on
     -- <RELEASE_ON>
+
 end architecture;

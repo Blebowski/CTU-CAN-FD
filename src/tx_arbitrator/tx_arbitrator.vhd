@@ -836,6 +836,7 @@ begin
 
     -- First comparator cell
     txtb_stage_1_cell_1_gen : if G_TXT_BUFFER_COUNT > 1 generate
+    begin
         -- psl prio_dec_stage_1_cell_1_cov_1 : cover
         --  {(unsigned(mr_tx_priority(0)) > unsigned(mr_tx_priority(1))) and
         --   txtb_available(0) = '1' and txtb_available(1) = '1'};
@@ -865,6 +866,7 @@ begin
 
     -- Second comparator cell
     txtb_stage_1_cell_2_gen : if G_TXT_BUFFER_COUNT > 3 generate
+    begin
         -- psl prio_dec_stage_1_cell_2_cov_1 : cover
         --  {(unsigned(mr_tx_priority(2)) > unsigned(mr_tx_priority(3))) and
         --   txtb_available(2) = '1' and txtb_available(3) = '1'};
@@ -894,6 +896,7 @@ begin
 
     -- Third comparator cell
     txtb_stage_1_cell_3_gen : if G_TXT_BUFFER_COUNT > 5 generate
+    begin
         -- psl prio_dec_stage_1_cell_3_cov_1 : cover
         --  {(unsigned(mr_tx_priority(4)) > unsigned(mr_tx_priority(5))) and
         --   txtb_available(4) = '1' and txtb_available(5) = '1'};
@@ -924,6 +927,7 @@ begin
 
     -- Fourth comparator cell
     txtb_stage_1_cell_4_gen : if G_TXT_BUFFER_COUNT > 7 generate
+    begin
         -- psl prio_dec_stage_1_cell_4_cov_1 : cover
         --  {(unsigned(mr_tx_priority(6)) > unsigned(mr_tx_priority(7))) and
         --   txtb_available(6) = '1' and txtb_available(7) = '1'};

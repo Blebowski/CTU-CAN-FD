@@ -1258,6 +1258,7 @@ begin
     );
 
     -- <RELEASE_OFF>
+    -- pragma translate_off
     -----------------------------------------------------------------------------------------------
     -----------------------------------------------------------------------------------------------
     -- Assertions
@@ -1279,32 +1280,20 @@ begin
     -- block unlock command in Protocol control FSM in overload frames!
 
     txtb_asr_gen : for i in 0 to txt_buffer_count - 1 generate
+    begin
 
-    -- psl no_tx_buf_transmitting_in_overload_asrt : assert never
-    --  (((txtb_state(i) = TXT_TRAN) or (txtb_state(i) = TXT_ABTP))) and
-    --   (pc_dbg.is_overload = '1')
-    --   report "TXT Buffer should have been unlocked when node is in Overload frame!";
-
-    end generate;
-
-    -----------------------------------------------------------------------
-    -----------------------------------------------------------------------
-    -- Functional coverage
-    -----------------------------------------------------------------------
-    -----------------------------------------------------------------------
-
-    -- Parity error in each TXT Buffer
-
-    txtb_func_cov_gen : for i in 0 to txt_buffer_count - 1 generate
-
-    -- psl txtb_parity_buf_cov : cover
-    --    {txtb_parity_error_valid(i) = '1'};
-
-    -- psl txtb_double_parity_buf_1_cov : cover
-    --    {txtb_bb_parity_error(i) = '1'};
+        process (txtb_state, pc_dbg.is_overload)
+        begin
+            if ((((txtb_state(i) = TXT_TRAN) or (txtb_state(i) = TXT_ABTP))) and
+                  (pc_dbg.is_overload = '1')) then
+                report "TXT Buffer should have been unlocked when node is in Overload frame!"
+                severity error;
+            end if;
+        end process;
 
     end generate;
 
+    -- pragma translate_on
     -- <RELEASE_ON>
 
 end architecture;

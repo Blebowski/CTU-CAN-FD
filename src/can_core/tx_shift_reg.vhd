@@ -351,15 +351,45 @@ begin
     -- Assertions
     -----------------------------------------------------------------------------------------------
 
-    asrt_per_index_gen : for i in 0 to 31 generate
+    -- <RELEASE_OFF>
 
     -- psl no_tx_undefined_data_asrt : assert never
-    --  (tran_word_swapped(i) = 'U') @rising_edge(tx_load_data_word)
+    --  (tran_word_swapped(0) = 'U' or
+    --   tran_word_swapped(1) = 'U' or
+    --   tran_word_swapped(2) = 'U' or
+    --   tran_word_swapped(3) = 'U' or
+    --   tran_word_swapped(4) = 'U' or
+    --   tran_word_swapped(5) = 'U' or
+    --   tran_word_swapped(6) = 'U' or
+    --   tran_word_swapped(7) = 'U' or
+    --   tran_word_swapped(8) = 'U' or
+    --   tran_word_swapped(9) = 'U' or
+    --   tran_word_swapped(10) = 'U' or
+    --   tran_word_swapped(11) = 'U' or
+    --   tran_word_swapped(12) = 'U' or
+    --   tran_word_swapped(13) = 'U' or
+    --   tran_word_swapped(14) = 'U' or
+    --   tran_word_swapped(15) = 'U' or
+    --   tran_word_swapped(16) = 'U' or
+    --   tran_word_swapped(17) = 'U' or
+    --   tran_word_swapped(18) = 'U' or
+    --   tran_word_swapped(19) = 'U' or
+    --   tran_word_swapped(20) = 'U' or
+    --   tran_word_swapped(21) = 'U' or
+    --   tran_word_swapped(22) = 'U' or
+    --   tran_word_swapped(23) = 'U' or
+    --   tran_word_swapped(24) = 'U' or
+    --   tran_word_swapped(25) = 'U' or
+    --   tran_word_swapped(26) = 'U' or
+    --   tran_word_swapped(27) = 'U' or
+    --   tran_word_swapped(28) = 'U' or
+    --   tran_word_swapped(29) = 'U' or
+    --   tran_word_swapped(30) = 'U' or
+    --   tran_word_swapped(31) = 'U') @rising_edge(tx_load_data_word)
     --  report "Data word for transmission shall not be undefined!";
 
     -- Note: It is OK to clock it by tx_load_data_word to save simulation performance!
 
-    end generate asrt_per_index_gen;
 
     -- psl default clock is rising_edge(clk_sys);
 
@@ -434,5 +464,7 @@ begin
 
     -- psl tx_shift_flip_sdlc_disable_cov : cover
     --  {tran_frame_test.sdlc = '1' and mr_mode_tstm = '0'};
+
+    -- <RELEASE_ON>
 
 end architecture;

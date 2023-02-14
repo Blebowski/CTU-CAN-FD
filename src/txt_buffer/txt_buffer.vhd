@@ -413,6 +413,12 @@ begin
     -- psl txtb_hw_arbl     : cover {txtb_hw_cmd.arbl = '1'     and hw_cbs = '1'};
     -- psl txtb_hw_failed   : cover {txtb_hw_cmd.failed = '1'   and hw_cbs = '1'};
 
+    -- psl txtb_double_parity_buf_1_cov : cover
+    --    {txtb_bb_parity_error = '1'};
+
+    -- psl txtb_parity_buf_cov : cover
+    --    {txtb_parity_error_valid = '1'};
+
     end block;
 
     -- <RELEASE_ON>
