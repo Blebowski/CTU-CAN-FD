@@ -1,0 +1,28 @@
+#
+# Synopsys tools
+scl 2021.03
+vcs T-2022.06-SP1-1
+verdi S-2021.09-SP1
+dc_shell T-2022.03-SP2
+lc_shell S-2021.06-SP3
+svt-amba T-2022.03
+formality R-2020.09-SP5-1
+primetime S-2021.06-SP5
+#
+# Tropic flow tools
+ts-latex-lib development
+ts-hw-scripts v0.23
+ts-synthesis-flow v1.3
+ts-sta-flow v0.2
+ts-common-blocks v0.18
+ts-common-ver v0.9
+tropic01-csp development
+#
+# PDK
+# For now UMC55 PDK MUST be below ts-synthesis flow to override value of TS_PDK_ROOT!!!
+umc55-pdk 0v1
+#
+# Python environment packages
+ts-python-env 0.2
+tve 0.1
+#

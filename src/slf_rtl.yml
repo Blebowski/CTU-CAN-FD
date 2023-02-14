@@ -1,0 +1,106 @@
+library: ctu_can_fd_rtl
+
+source_list:
+    - file: packages/can_fd_frame_format.vhd
+    - file: packages/can_constants_pkg.vhd
+    - file: packages/can_fd_register_map.vhd
+    - file: packages/can_config_pkg.vhd
+    - file: packages/can_types_pkg.vhd
+    - file: packages/id_transfer_pkg.vhd
+    - file: packages/unary_ops_pkg.vhd
+
+    - file: common_blocks/mux2.vhd
+    - file: common_blocks/dff_arst.vhd
+    - file: common_blocks/rst_reg.vhd
+    - file: common_blocks/clk_gate.vhd
+    - file: common_blocks/inf_ram_wrapper.vhd
+    - file: common_blocks/shift_reg_byte.vhd
+    - file: common_blocks/majority_decoder_3.vhd
+    - file: common_blocks/shift_reg_preload.vhd
+    - file: common_blocks/sig_sync.vhd
+    - file: common_blocks/dlc_decoder.vhd
+    - file: common_blocks/endian_swapper.vhd
+    - file: common_blocks/dff_arst_ce.vhd
+    - file: common_blocks/parity_calculator.vhd
+    - file: common_blocks/rst_sync.vhd
+    - file: common_blocks/shift_reg.vhd
+
+    - file: interrupt_manager/int_module.vhd
+    - file: interrupt_manager/int_manager.vhd
+
+    - file: interface/ahb_ifc.vhd
+    - file: interface/apb_ifc.vhd
+
+    - file: frame_filters/bit_filter.vhd
+    - file: frame_filters/range_filter.vhd
+    - file: frame_filters/frame_filters.vhd
+
+    - file: bus_sampling/data_edge_detector.vhd
+    - file: bus_sampling/ssp_generator.vhd
+    - file: bus_sampling/trv_delay_meas.vhd
+    - file: bus_sampling/bit_err_detector.vhd
+    - file: bus_sampling/tx_data_cache.vhd
+    - file: bus_sampling/sample_mux.vhd
+    - file: bus_sampling/bus_sampling.vhd
+
+    - file: prescaler/bit_time_fsm.vhd
+    - file: prescaler/segment_end_detector.vhd
+    - file: prescaler/trigger_generator.vhd
+    - file: prescaler/bit_segment_meter.vhd
+    - file: prescaler/synchronisation_checker.vhd
+    - file: prescaler/bit_time_cfg_capture.vhd
+    - file: prescaler/bit_time_counters.vhd
+    - file: prescaler/prescaler.vhd
+
+    - file: can_core/bus_traffic_counters.vhd
+    - file: can_core/crc_calc.vhd
+    - file: can_core/can_crc.vhd
+    - file: can_core/err_counters.vhd
+    - file: can_core/fault_confinement_rules.vhd
+    - file: can_core/fault_confinement_fsm.vhd
+    - file: can_core/fault_confinement.vhd
+    - file: can_core/operation_control.vhd
+    - file: can_core/bit_destuffing.vhd
+    - file: can_core/bit_stuffing.vhd
+    - file: can_core/rx_shift_reg.vhd
+    - file: can_core/err_detector.vhd
+    - file: can_core/reintegration_counter.vhd
+    - file: can_core/tx_shift_reg.vhd
+    - file: can_core/retransmitt_counter.vhd
+    - file: can_core/control_counter.vhd
+    - file: can_core/trigger_mux.vhd
+    - file: can_core/protocol_control_fsm.vhd
+    - file: can_core/protocol_control.vhd
+    - file: can_core/can_core.vhd
+
+    - file: tx_arbitrator/tx_arbitrator_fsm.vhd
+    - file: tx_arbitrator/priority_decoder.vhd
+    - file: tx_arbitrator/tx_arbitrator.vhd
+
+    - file: memory_registers/generated/data_mux.vhd
+    - file: memory_registers/generated/memory_bus.vhd
+    - file: memory_registers/generated/address_decoder.vhd
+    - file: memory_registers/generated/memory_reg_lockable.vhd
+    - file: memory_registers/generated/can_registers_pkg.vhd
+    - file: memory_registers/generated/access_signaler.vhd
+    - file: memory_registers/generated/cmn_reg_map_pkg.vhd
+    - file: memory_registers/generated/memory_reg.vhd
+    - file: memory_registers/generated/control_registers_reg_map.vhd
+    - file: memory_registers/generated/test_registers_reg_map.vhd
+    - file: memory_registers/memory_registers.vhd
+
+    - file: rx_buffer/rx_buffer_pointers.vhd
+    - file: rx_buffer/rx_buffer_fsm.vhd
+    - file: rx_buffer/rx_buffer_ram.vhd
+    - file: rx_buffer/rx_buffer.vhd
+
+    - file: txt_buffer/txt_buffer_fsm.vhd
+    - file: txt_buffer/txt_buffer_ram.vhd
+    - file: txt_buffer/txt_buffer.vhd
+
+    - file: can_top_level.vhd
+    - file: can_top_ahb.vhd
+    - file: can_top_apb.vhd
+
+
+
