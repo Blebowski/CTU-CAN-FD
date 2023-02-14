@@ -381,7 +381,7 @@ begin
         clk_sys                         => clk_sys ,-- in
         res_n                           => res_n ,-- in
         data_in                         => w_data(16 downto 16) ,-- in
-        write                           => write_en(0) ,-- in
+        write                           => write_en(2) ,-- in
         cs                              => reg_sel(1) ,-- in
         reg_value(0)                    => control_registers_out_i.settings_rtrle -- out
     );
@@ -400,7 +400,7 @@ begin
         clk_sys                         => clk_sys ,-- in
         res_n                           => res_n ,-- in
         data_in                         => w_data(20 downto 17) ,-- in
-        write                           => write_en(0) ,-- in
+        write                           => write_en(2) ,-- in
         cs                              => reg_sel(1) ,-- in
         reg_value                       => control_registers_out_i.settings_rtrth -- out
     );
@@ -419,7 +419,7 @@ begin
         clk_sys                         => clk_sys ,-- in
         res_n                           => res_n ,-- in
         data_in                         => w_data(21 downto 21) ,-- in
-        write                           => write_en(0) ,-- in
+        write                           => write_en(2) ,-- in
         cs                              => reg_sel(1) ,-- in
         reg_value(0)                    => control_registers_out_i.settings_ilbp -- out
     );
@@ -438,7 +438,7 @@ begin
         clk_sys                         => clk_sys ,-- in
         res_n                           => res_n ,-- in
         data_in                         => w_data(22 downto 22) ,-- in
-        write                           => write_en(0) ,-- in
+        write                           => write_en(2) ,-- in
         cs                              => reg_sel(1) ,-- in
         reg_value(0)                    => control_registers_out_i.settings_ena -- out
     );
@@ -457,7 +457,7 @@ begin
         clk_sys                         => clk_sys ,-- in
         res_n                           => res_n ,-- in
         data_in                         => w_data(23 downto 23) ,-- in
-        write                           => write_en(0) ,-- in
+        write                           => write_en(2) ,-- in
         cs                              => reg_sel(1) ,-- in
         reg_value(0)                    => control_registers_out_i.settings_nisofd -- out
     );
@@ -476,7 +476,7 @@ begin
         clk_sys                         => clk_sys ,-- in
         res_n                           => res_n ,-- in
         data_in                         => w_data(24 downto 24) ,-- in
-        write                           => write_en(1) ,-- in
+        write                           => write_en(3) ,-- in
         cs                              => reg_sel(1) ,-- in
         reg_value(0)                    => control_registers_out_i.settings_pex -- out
     );
@@ -495,7 +495,7 @@ begin
         clk_sys                         => clk_sys ,-- in
         res_n                           => res_n ,-- in
         data_in                         => w_data(25 downto 25) ,-- in
-        write                           => write_en(1) ,-- in
+        write                           => write_en(3) ,-- in
         cs                              => reg_sel(1) ,-- in
         reg_value(0)                    => control_registers_out_i.settings_tbfbo -- out
     );
@@ -514,7 +514,7 @@ begin
         clk_sys                         => clk_sys ,-- in
         res_n                           => res_n ,-- in
         data_in                         => w_data(26 downto 26) ,-- in
-        write                           => write_en(1) ,-- in
+        write                           => write_en(3) ,-- in
         cs                              => reg_sel(1) ,-- in
         reg_value(0)                    => control_registers_out_i.settings_fdrf -- out
     );
@@ -533,7 +533,7 @@ begin
         clk_sys                         => clk_sys ,-- in
         res_n                           => res_n ,-- in
         data_in                         => w_data(27 downto 27) ,-- in
-        write                           => write_en(1) ,-- in
+        write                           => write_en(3) ,-- in
         cs                              => reg_sel(1) ,-- in
         reg_value(0)                    => control_registers_out_i.settings_pchke -- out
     );
@@ -1462,7 +1462,7 @@ begin
         clk_sys                         => clk_sys ,-- in
         res_n                           => res_n ,-- in
         data_in                         => w_data(15 downto 8) ,-- in
-        write                           => write_en(0) ,-- in
+        write                           => write_en(1) ,-- in
         cs                              => reg_sel(11) ,-- in
         lock                            => lock_1 ,-- in
         reg_value                       => control_registers_out_i.erp_erp_limit -- out
@@ -2570,7 +2570,7 @@ begin
         clk_sys                         => clk_sys ,-- in
         res_n                           => res_n ,-- in
         data_in                         => w_data(16 downto 16) ,-- in
-        write                           => write_en(0) ,-- in
+        write                           => write_en(2) ,-- in
         cs                              => reg_sel(26) ,-- in
         reg_value(0)                    => control_registers_out_i.rx_settings_rtsop -- out
     );
@@ -2973,7 +2973,7 @@ begin
         clk_sys                         => clk_sys ,-- in
         res_n                           => res_n ,-- in
         data_in                         => w_data(23 downto 16) ,-- in
-        write                           => write_en(0) ,-- in
+        write                           => write_en(2) ,-- in
         cs                              => reg_sel(32) ,-- in
         lock                            => lock_2 ,-- in
         reg_value                       => control_registers_out_i.ssp_cfg_ssp_offset -- out
@@ -2993,7 +2993,7 @@ begin
         clk_sys                         => clk_sys ,-- in
         res_n                           => res_n ,-- in
         data_in                         => w_data(25 downto 24) ,-- in
-        write                           => write_en(1) ,-- in
+        write                           => write_en(3) ,-- in
         cs                              => reg_sel(32) ,-- in
         lock                            => lock_2 ,-- in
         reg_value                       => control_registers_out_i.ssp_cfg_ssp_src -- out
