@@ -288,17 +288,15 @@ architecture rtl of rx_buffer is
     -- Indicator of at least one free word in RX FIFO!
     signal is_free_word                 : std_logic;
 
-    -- Number of frames currently stored in RX Buffer.
-    signal frame_count_q                : unsigned(10 downto 0);
-    signal frame_count_plus_one         : unsigned(10 downto 0);
-    signal frame_count_minus_one        : unsigned(10 downto 0);
-    signal frame_count_is_zero          : unsigned(10 downto 0);
+    -- Number of frames currently stored in RX Buffer. Smallest frame length stored is 4
+    -- (FRAME_FORMAT +  IDENTIFIER + 2 * TIMESTAMP). Since we need to store 0 and also
+    -- G_RX_BUFF_SIZE / 4 values we need one value more than can fit into G_RX_BUFF_SIZE / 4 width
+    -- counter. Use one bit wider counter.
+    signal frame_count                  : natural range 0 to (G_RX_BUFF_SIZE / 2) - 1;
 
     -- Frame read counter. When whole frame is read, number of frames must be decremented.
-    signal read_counter_dec             : unsigned(4 downto 0);
     signal read_counter_d               : unsigned(4 downto 0);
     signal read_counter_q               : unsigned(4 downto 0);
-    signal read_counter_q_is_zero       : std_logic;
 
 
     -----------------------------------------------------------------------------------------------
@@ -518,7 +516,7 @@ begin
     -- stored and pointers are equal, then memory is empty! If there is at least one frame and
     -- pointers are equal, then memory must be full!
     -----------------------------------------------------------------------------------------------
-    is_free_word <= '0' when (read_pointer = write_pointer_raw and frame_count_is_zero = '0')
+    is_free_word <= '0' when (read_pointer = write_pointer_raw and frame_count > 0)
                         else
                     '1';
 
@@ -622,18 +620,12 @@ begin
     -- same time , "frame_count" does not change.
     -----------------------------------------------------------------------------------------------
 
-    read_counter_dec <= read_counter_q - 1;
-
-    read_counter_q_is_zero <= '1' when (read_counter_q = "00000")
-                                  else
-                              '0';
-
     -----------------------------------------------------------------------------------------------
     -- During the read of FRAME_FORMAT word store the length of the frame to "read_counter", thus
     -- we know how much we have to read before decrementing the "frame_count".
     -----------------------------------------------------------------------------------------------
-    read_counter_d <= read_counter_dec when (read_counter_q_is_zero = '0')
-                                       else
+    read_counter_d <= read_counter_q - 1 when (read_counter_q > "00000")
+                                         else
                       unsigned(rxb_port_b_data_out_i(RWCNT_H downto RWCNT_L));
 
     read_frame_proc : process(clk_sys, rx_buf_res_n_q_scan)
@@ -655,28 +647,21 @@ begin
     -- read_increment), "frame_count" is decreased, when new frame is committed, message count is
     -- increased. If both at the same time, no change since one frame is added, next is removed!
     -----------------------------------------------------------------------------------------------
-
-    frame_count_minus_one <= frame_count_q - 1;
-
-    frame_count_plus_one <= frame_count_q + 1;
-
-    frame_count_is_zero <= '1' when (frame_count = "00000000000")
-                               else
-                           '0';
-
     frame_count_ctr_proc : process(clk_sys, rx_buf_res_n_q_scan)
     begin
         if (rx_buf_res_n_q_scan = '0') then
-            frame_count_q <= (others => '0');
+            frame_count <= 0;
         elsif (rising_edge(clk_sys)) then
 
             -- Read of last word, but no new commit
-            if (read_increment = '1' and read_counter_q = "00001" and commit_rx_frame = '0') then
-                frame_count_q <= frame_count_minus_one;
+            if ((read_increment = '1') and (read_counter_q = "00001")) then
+                if (commit_rx_frame = '0') then
+                    frame_count <= frame_count - 1;
+                end if;
 
             -- Commit of new frame
             elsif (commit_rx_frame = '1') then
-                frame_count_q <= frame_count_plus_one;
+                frame_count <= frame_count + 1;
             end if;
 
         end if;
@@ -850,7 +835,7 @@ begin
     -----------------------------------------------------------------------------------------------
     -- RX buffer middle of frame
     -----------------------------------------------------------------------------------------------
-    rx_mof <= '0' when (read_counter_q_is_zero = '1')
+    rx_mof <= '0' when (read_counter_q = "00000")
                   else
               '1';
 
@@ -881,13 +866,15 @@ begin
     rx_write_pointer <= write_pointer;
     rx_data_overrun  <= data_overrun_flg;
 
-    rx_empty_i       <= frame_count_is_zero;
+    rx_empty_i       <= '1' when (frame_count = 0)
+                            else
+                        '0';
 
     rx_full          <= '1' when (rx_mem_free_i = C_RX_BUF_MEM_FREE_ZEROES)
                             else
                         '0';
 
-    rx_frame_count   <= frame_count_q;
+    rx_frame_count   <= std_logic_vector(to_unsigned(frame_count, 11));
     rx_mem_free      <= rx_mem_free_i;
     rx_empty         <= rx_empty_i;
 
