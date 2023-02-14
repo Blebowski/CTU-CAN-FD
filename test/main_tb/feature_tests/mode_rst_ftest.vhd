@@ -345,10 +345,11 @@ package body mode_rst_ftest is
                     next;
                 end if;
 
-                -- STATUS register -> Mask STCNT, STRGS bits
+                -- STATUS register -> Mask STCNT, STRGS and SPRT bits
                 if (Control_registers_list(i).address = STATUS_ADR) then
                     r_data_32(STCNT_IND) := '0';
                     r_data_32(STRGS_IND) := '0';
+                    r_data_32(SPRT_IND)  := '0';
                 end if;
 
                 check_m(r_data_32 = reg_rst_val_32, "Address: 0x" &
