@@ -1,7 +1,9 @@
 tb/signal_delayer.vhd
 tb/ieee_context.vhd
-tb/tb_report_pkg_vunit.vhd
 tb/tb_reg_map_defs_pkg.vhd
+tb/tb_prot_types_pkg.vhd
+tb/tb_shared_vars_pkg.vhd
+tb/tb_report_pkg_vunit.vhd
 tb/tb_random_pkg.vhd
 tb/tb_pli_conversion_pkg.vhd
 tb/tb_communication_pkg.vhd

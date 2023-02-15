@@ -1,18 +1,18 @@
 --------------------------------------------------------------------------------
--- 
--- CTU CAN FD IP Core 
+--
+-- CTU CAN FD IP Core
 -- Copyright (C) 2021-present Ondrej Ille
--- 
+--
 -- Permission is hereby granted, free of charge, to any person obtaining a copy
 -- of this VHDL component and associated documentation files (the "Component"),
 -- to use, copy, modify, merge, publish, distribute the Component for
 -- educational, research, evaluation, self-interest purposes. Using the
 -- Component for commercial purposes is forbidden unless previously agreed with
 -- Copyright holder.
--- 
+--
 -- The above copyright notice and this permission notice shall be included in
 -- all copies or substantial portions of the Component.
--- 
+--
 -- THE COMPONENT IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 -- IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 -- FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -20,38 +20,38 @@
 -- LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
 -- FROM, OUT OF OR IN CONNECTION WITH THE COMPONENT OR THE USE OR OTHER DEALINGS
 -- IN THE COMPONENT.
--- 
+--
 -- The CAN protocol is developed by Robert Bosch GmbH and protected by patents.
 -- Anybody who wants to implement this IP core on silicon has to obtain a CAN
 -- protocol license from Bosch.
--- 
+--
 -- -------------------------------------------------------------------------------
--- 
--- CTU CAN FD IP Core 
+--
+-- CTU CAN FD IP Core
 -- Copyright (C) 2015-2020 MIT License
--- 
+--
 -- Authors:
 --     Ondrej Ille <ondrej.ille@gmail.com>
 --     Martin Jerabek <martin.jerabek01@gmail.com>
--- 
--- Project advisors: 
+--
+-- Project advisors:
 -- 	Jiri Novak <jnovak@fel.cvut.cz>
 -- 	Pavel Pisa <pisa@cmp.felk.cvut.cz>
--- 
+--
 -- Department of Measurement         (http://meas.fel.cvut.cz/)
 -- Faculty of Electrical Engineering (http://www.fel.cvut.cz)
 -- Czech Technical University        (http://www.cvut.cz/)
--- 
+--
 -- Permission is hereby granted, free of charge, to any person obtaining a copy
 -- of this VHDL component and associated documentation files (the "Component"),
 -- to deal in the Component without restriction, including without limitation
 -- the rights to use, copy, modify, merge, publish, distribute, sublicense,
 -- and/or sell copies of the Component, and to permit persons to whom the
 -- Component is furnished to do so, subject to the following conditions:
--- 
+--
 -- The above copyright notice and this permission notice shall be included in
 -- all copies or substantial portions of the Component.
--- 
+--
 -- THE COMPONENT IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 -- IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 -- FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -59,11 +59,11 @@
 -- LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
 -- FROM, OUT OF OR IN CONNECTION WITH THE COMPONENT OR THE USE OR OTHER DEALINGS
 -- IN THE COMPONENT.
--- 
+--
 -- The CAN protocol is developed by Robert Bosch GmbH and protected by patents.
 -- Anybody who wants to implement this IP core on silicon has to obtain a CAN
 -- protocol license from Bosch.
--- 
+--
 --------------------------------------------------------------------------------
 
 --------------------------------------------------------------------------------
@@ -80,11 +80,13 @@ Library ctu_can_fd_tb;
 context ctu_can_fd_tb.ieee_context;
 context ctu_can_fd_tb.tb_common_context;
 
+use ctu_can_fd_tb.tb_shared_vars_pkg.all;
+
 
 package mem_bus_agent_pkg is
 
     ---------------------------------------------------------------------------
-    -- Memory bus agent component    
+    -- Memory bus agent component
     ---------------------------------------------------------------------------
     component mem_bus_agent is
     generic(
@@ -105,7 +107,7 @@ package mem_bus_agent_pkg is
 
     ---------------------------------------------------------------------------
     ---------------------------------------------------------------------------
-    -- Memory bus agent API    
+    -- Memory bus agent API
     ---------------------------------------------------------------------------
     ---------------------------------------------------------------------------
 
@@ -125,7 +127,7 @@ package mem_bus_agent_pkg is
     procedure mem_bus_agent_start(
         signal channel  : inout t_com_channel
     );
-    
+
     ---------------------------------------------------------------------------
     -- Stop memory bus agent.
     --
@@ -134,7 +136,7 @@ package mem_bus_agent_pkg is
     procedure mem_bus_agent_stop(
         signal channel  : inout t_com_channel
     );
-    
+
     ---------------------------------------------------------------------------
     -- Push write transaction to Memory bus agent FIFO. Function returns
     -- immediately after transaction is inserted and does not wait until
@@ -152,7 +154,7 @@ package mem_bus_agent_pkg is
         signal      channel     : inout t_com_channel;
                     address     : in    integer;
                     write_data  : in    std_logic_vector(31 downto 0);
-                    byte_enable : in    std_logic_vector(3 downto 0) 
+                    byte_enable : in    std_logic_vector(3 downto 0)
     );
 
     ---------------------------------------------------------------------------
@@ -169,7 +171,7 @@ package mem_bus_agent_pkg is
         signal      channel     : inout t_com_channel;
                     address     : in    integer;
                     write_data  : in    std_logic_vector(31 downto 0);
-                    byte_enable : in    std_logic_vector(3 downto 0) 
+                    byte_enable : in    std_logic_vector(3 downto 0)
     );
 
     ---------------------------------------------------------------------------
@@ -229,7 +231,7 @@ package mem_bus_agent_pkg is
                     out_delay   : in    time
     );
 
-    
+
     ---------------------------------------------------------------------------
     -- Wait till all transactions executed by memory bus agent are over.
     --
@@ -252,7 +254,7 @@ package mem_bus_agent_pkg is
         signal      channel     : inout t_com_channel;
                     address     : in    integer;
         variable    read_data   : inout std_logic_vector(31 downto 0);
-                    byte_enable : in    std_logic_vector(3 downto 0) 
+                    byte_enable : in    std_logic_vector(3 downto 0)
     );
 
     ---------------------------------------------------------------------------
@@ -279,7 +281,7 @@ package mem_bus_agent_pkg is
     --  First burst cell:       31 downto 0
     --  Second burst cell:      63 downto 32
     --  Third burst cell:       95 downto 64
-    --  Fourth burst cell:      127 downto 96    
+    --  Fourth burst cell:      127 downto 96
     --
     -- @param channel       Channel on which to send the request
     -- @param address       Memory bus address.
@@ -294,7 +296,7 @@ package mem_bus_agent_pkg is
                     write_data  : in    std_logic_vector;
                     blocking    : in    boolean := true
     );
-    
+
     ---------------------------------------------------------------------------
     -- Insert Read transaction to Memory bus agent FIFO.
     --
@@ -319,7 +321,7 @@ package mem_bus_agent_pkg is
     --  First burst cell:       31 downto 0
     --  Second burst cell:      63 downto 32
     --  Third burst cell:       95 downto 64
-    --  Fourth burst cell:      127 downto 96    
+    --  Fourth burst cell:      127 downto 96
     --
     -- @param channel       Channel on which to send the request
     -- @param address       Memory bus address.
@@ -333,8 +335,8 @@ package mem_bus_agent_pkg is
         variable    read_data   : inout std_logic_vector;
         constant    stat_burst  : in    boolean := false
     );
-   
-    
+
+
     ---------------------------------------------------------------------------
     -- Changes slave node to which the transaction will be routed. Slave nodes
     -- are distuiguished by chip select.
@@ -346,7 +348,7 @@ package mem_bus_agent_pkg is
         signal      channel     : inout t_com_channel;
                     node        : in    natural
     );
-    
+
     ---------------------------------------------------------------------------
     -- Enable transaction reporting (reports each memory access to console)
     --
@@ -366,10 +368,10 @@ package mem_bus_agent_pkg is
     procedure mem_bus_agent_disable_transaction_reporting(
         signal      channel     : inout t_com_channel
     );
-   
+
     ---------------------------------------------------------------------------
     ---------------------------------------------------------------------------
-    -- Private declarations 
+    -- Private declarations
     ---------------------------------------------------------------------------
     ---------------------------------------------------------------------------
 
@@ -387,12 +389,12 @@ package mem_bus_agent_pkg is
 
     constant MEM_BUS_AGNT_CMD_SET_OUTPUT_DELAY      : integer := 10;
     constant MEM_BUS_AGNT_CMD_WAIT_DONE             : integer := 11;
-    
+
     constant MEM_BUS_AGNT_CMD_SET_SLAVE_INDEX       : integer := 12;
-    
+
     constant MEM_BUS_AGNT_CMD_ENABLE_TRANS_REPORT   : integer := 13;
     constant MEM_BUS_AGNT_CMD_DISABLE_TRANS_REPORT  : integer := 14;
-   
+
     -- Tag for messages
     constant MEM_BUS_AGENT_TAG : string := "Memory Bus Agent: ";
 
@@ -400,13 +402,13 @@ end package;
 
 
 package body mem_bus_agent_pkg is
-    
+
     ---------------------------------------------------------------------------
     ---------------------------------------------------------------------------
     -- Memory bus agent API
     ---------------------------------------------------------------------------
     ---------------------------------------------------------------------------
-   
+
     procedure mem_bus_agent_start(
         signal      channel     : inout t_com_channel
     ) is
@@ -431,7 +433,7 @@ package body mem_bus_agent_pkg is
         signal      channel     : inout t_com_channel;
                     address     : in    integer;
                     write_data  : in    std_logic_vector(31 downto 0);
-                    byte_enable : in    std_logic_vector(3 downto 0) 
+                    byte_enable : in    std_logic_vector(3 downto 0)
     )  is
     begin
         --debug_m(MEM_BUS_AGENT_TAG & "Posting non-blocking write, Address: 0x" &
@@ -451,13 +453,13 @@ package body mem_bus_agent_pkg is
         signal      channel     : inout t_com_channel;
                     address     : in    integer;
                     write_data  : in    std_logic_vector(31 downto 0);
-                    byte_enable : in    std_logic_vector(3 downto 0) 
+                    byte_enable : in    std_logic_vector(3 downto 0)
     )  is
     begin
         --debug_m(MEM_BUS_AGENT_TAG & "Blocking write, Address: 0x" &
         --       to_hstring(std_logic_vector(to_unsigned(address, 16))) &
         --      " " & to_hstring(write_data));
-        
+
         com_channel_data.set_param(address);
         com_channel_data.set_param(write_data & byte_enable);
         send(channel, C_MEM_BUS_AGENT_ID, MEM_BUS_AGNT_CMD_WRITE_BLOCKING);
@@ -470,7 +472,7 @@ package body mem_bus_agent_pkg is
         signal      channel     : inout t_com_channel;
                     address     : in    integer;
         variable    read_data   : inout std_logic_vector(31 downto 0);
-                    byte_enable : in    std_logic_vector(3 downto 0) 
+                    byte_enable : in    std_logic_vector(3 downto 0)
     ) is
         variable tmp : std_logic_vector(127 downto 0);
     begin
@@ -552,8 +554,8 @@ package body mem_bus_agent_pkg is
         send(channel, C_MEM_BUS_AGENT_ID, MEM_BUS_AGNT_CMD_WAIT_DONE);
         info_m(MEM_BUS_AGENT_TAG & "All accesses are executed!");
     end procedure;
-    
-    
+
+
     procedure mem_bus_agent_set_slave_index(
         signal      channel     : inout t_com_channel;
                     node        : in    natural
@@ -749,7 +751,7 @@ package body mem_bus_agent_pkg is
             end loop;
         end if;
     end procedure;
-    
+
 
     procedure mem_bus_agent_read(
         signal      channel     : inout t_com_channel;
@@ -777,7 +779,7 @@ package body mem_bus_agent_pkg is
             addr_loop := address;
             -- For burst accesses, always 32 bit
             be := x"F";
-            
+
             for i in 0 to loop_count-1 loop
                 mem_bus_agent_read(channel, addr_loop, data_32, be);
                 read_data(i*32+31 downto i*32) := data_32;
@@ -787,7 +789,7 @@ package body mem_bus_agent_pkg is
             end loop;
         end if;
     end procedure;
-    
+
     procedure mem_bus_agent_enable_transaction_reporting(
         signal      channel     : inout t_com_channel
     ) is

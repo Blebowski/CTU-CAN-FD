@@ -79,7 +79,7 @@ def get_compile_and_sim_options(config) -> Tuple[OptionsDict, OptionsDict]:
     # VITAL compilation with VHDL 2008 requires relaxed rules
     if ('gate_level' in config) and config['gate_level'] == True:
         compile_flags += ['-frelaxed-rules', '--ieee=synopsys']
-        elab_flags += ['-frelaxed-rules', '--ieee=synopsys']  
+        elab_flags += ['-frelaxed-rules', '--ieee=synopsys']
 
     compile_options = OptionsDict()
     compile_options["ghdl.flags"] = compile_flags
@@ -109,7 +109,7 @@ def create_unit_wrapper(lib, fname) -> None:
         lib.add_source_file(fname)
 
 
-def get_compile_options(config) -> OptionsDict:    
+def get_compile_options(config) -> OptionsDict:
     c, s = get_compile_and_sim_options(config)
     return c
 
@@ -140,7 +140,7 @@ def get_seed(cfg) -> int:
 def add_psl_cov_sim_opt(name, cfg, build) -> OptionsDict:
     """
     Returns --psl-report simulation option dictionary with unique name.
-    Needed to allow functional coverage during parallel test runs. 
+    Needed to allow functional coverage during parallel test runs.
     """
     name = re.sub(r'[^a-zA-Z0-9_-]', '_', name)
     psl_path = build / "functional_coverage" / "coverage_data" \
@@ -168,7 +168,7 @@ def add_sources(lib, patterns) -> None:
 def add_rtl_sources(lib) -> None:
     add_sources(lib, ['../src/**/*.vhd'])
 
-def add_post_syn_netlist(lib) -> None:    
+def add_post_syn_netlist(lib) -> None:
     add_sources(lib, ['../synthesis/Vivado/ci_benchmark/maximal_design_config/can_top_level.vhd'])
 
 def add_unit_sources(lib, build) -> None:
@@ -212,24 +212,29 @@ def unit_configure(lib, config, build):
 
 
 def add_main_tb_sources(lib, config) -> None:
-    sources = [];
-        
+    sources = []
+
+    sources.append('main_tb/contexts/*.vhd')
+
+    sources.append('main_tb/pkg/tb_prot_types_pkg.vhd')
+    sources.append('main_tb/pkg/tb_shared_vars_pkg.vhd')
+
     # Packages named explicitly to allow later switching between own and
-    # Vunit implementation of report_pkg!
-    sources.append('main_tb/pkg/can_fd_tb_register_map.vhd');
-    sources.append('main_tb/pkg/tb_communication_pkg.vhd');
-    sources.append('main_tb/pkg/tb_pli_conversion_pkg.vhd');
-    sources.append('main_tb/pkg/tb_random_pkg.vhd');
-    sources.append('main_tb/pkg/tb_reg_map_defs_pkg.vhd');
-    
+    # Vunit implementation of report_pkg
     if (config['_default']['vunit_report_pkg'] == False):
-    	sources.append('main_tb/pkg/tb_report_pkg.vhd')
+        sources.append('main_tb/pkg/tb_report_pkg.vhd')
     else:
-    	sources.append('main_tb/pkg/tb_report_pkg_vunit.vhd')
-    
-    sources.append('main_tb/common/*.vhd');
-    sources.append('main_tb/contexts/*.vhd');
-    
+        sources.append('main_tb/pkg/tb_report_pkg_vunit.vhd')
+
+    sources.append('main_tb/pkg/tb_communication_pkg.vhd')
+    sources.append('main_tb/pkg/tb_reg_map_defs_pkg.vhd')
+    sources.append('main_tb/pkg/tb_random_pkg.vhd')
+    sources.append('main_tb/pkg/tb_pli_conversion_pkg.vhd')
+
+    sources.append('main_tb/pkg/can_fd_tb_register_map.vhd')
+
+    sources.append('main_tb/common/*.vhd')
+
     # Common Agents
     sources.append('main_tb/agents/reset_agent/*.vhd');
     sources.append('main_tb/agents/clock_agent/*.vhd');
@@ -254,19 +259,19 @@ def add_main_tb_sources(lib, config) -> None:
     # VIP top and TB top
     sources.append('main_tb/ctu_can_fd_vip.vhd');
     #sources.append('main_tb/vunit_manager.vhd');
-    
+
     if (config['_default']['gate_level'] == False):
         sources.append('main_tb/tb_top_ctu_can_fd.vhd');
     else:
         sources.append('main_tb/tb_top_gates_ctu_can_fd.vhd');
-    
+
     add_sources(lib, sources)
 
 
 def main_tb_configure(tb, config, build) -> None:
     def_cfg = config["_default"]
     def_otps = get_sim_options(def_cfg)
-            
+
     for test_type, cfg in config.items():
         if (test_type != "reference" and test_type != "compliance" and test_type != "feature"):
             continue;

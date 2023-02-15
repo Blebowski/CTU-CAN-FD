@@ -1,18 +1,18 @@
 --------------------------------------------------------------------------------
--- 
--- CTU CAN FD IP Core 
+--
+-- CTU CAN FD IP Core
 -- Copyright (C) 2021-present Ondrej Ille
--- 
+--
 -- Permission is hereby granted, free of charge, to any person obtaining a copy
 -- of this VHDL component and associated documentation files (the "Component"),
 -- to use, copy, modify, merge, publish, distribute the Component for
 -- educational, research, evaluation, self-interest purposes. Using the
 -- Component for commercial purposes is forbidden unless previously agreed with
 -- Copyright holder.
--- 
+--
 -- The above copyright notice and this permission notice shall be included in
 -- all copies or substantial portions of the Component.
--- 
+--
 -- THE COMPONENT IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 -- IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 -- FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -20,38 +20,38 @@
 -- LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
 -- FROM, OUT OF OR IN CONNECTION WITH THE COMPONENT OR THE USE OR OTHER DEALINGS
 -- IN THE COMPONENT.
--- 
+--
 -- The CAN protocol is developed by Robert Bosch GmbH and protected by patents.
 -- Anybody who wants to implement this IP core on silicon has to obtain a CAN
 -- protocol license from Bosch.
--- 
+--
 -- -------------------------------------------------------------------------------
--- 
--- CTU CAN FD IP Core 
+--
+-- CTU CAN FD IP Core
 -- Copyright (C) 2015-2020 MIT License
--- 
+--
 -- Authors:
 --     Ondrej Ille <ondrej.ille@gmail.com>
 --     Martin Jerabek <martin.jerabek01@gmail.com>
--- 
--- Project advisors: 
+--
+-- Project advisors:
 -- 	Jiri Novak <jnovak@fel.cvut.cz>
 -- 	Pavel Pisa <pisa@cmp.felk.cvut.cz>
--- 
+--
 -- Department of Measurement         (http://meas.fel.cvut.cz/)
 -- Faculty of Electrical Engineering (http://www.fel.cvut.cz)
 -- Czech Technical University        (http://www.cvut.cz/)
--- 
+--
 -- Permission is hereby granted, free of charge, to any person obtaining a copy
 -- of this VHDL component and associated documentation files (the "Component"),
 -- to deal in the Component without restriction, including without limitation
 -- the rights to use, copy, modify, merge, publish, distribute, sublicense,
 -- and/or sell copies of the Component, and to permit persons to whom the
 -- Component is furnished to do so, subject to the following conditions:
--- 
+--
 -- The above copyright notice and this permission notice shall be included in
 -- all copies or substantial portions of the Component.
--- 
+--
 -- THE COMPONENT IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 -- IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 -- FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -59,11 +59,11 @@
 -- LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
 -- FROM, OUT OF OR IN CONNECTION WITH THE COMPONENT OR THE USE OR OTHER DEALINGS
 -- IN THE COMPONENT.
--- 
+--
 -- The CAN protocol is developed by Robert Bosch GmbH and protected by patents.
 -- Anybody who wants to implement this IP core on silicon has to obtain a CAN
 -- protocol license from Bosch.
--- 
+--
 --------------------------------------------------------------------------------
 
 --------------------------------------------------------------------------------
@@ -78,6 +78,7 @@ Library ctu_can_fd_tb;
 context ctu_can_fd_tb.ieee_context;
 context ctu_can_fd_tb.rtl_context;
 context ctu_can_fd_tb.tb_common_context;
+use ctu_can_fd_tb.tb_shared_vars_pkg.all;
 
 package test_probe_agent_pkg is
 
@@ -86,7 +87,7 @@ package test_probe_agent_pkg is
         -- VIP test control / status signals
         dut_test_probe          : in t_ctu_can_fd_test_probe;
         test_node_test_probe    : in t_ctu_can_fd_test_probe;
-        
+
         -- DFT support of VIP
         dut_scan_enable         : out std_logic;
         test_node_scan_enable   : out std_logic
@@ -135,7 +136,7 @@ package test_probe_agent_pkg is
 
     ---------------------------------------------------------------------------
     ---------------------------------------------------------------------------
-    -- Private declarations 
+    -- Private declarations
     ---------------------------------------------------------------------------
     ---------------------------------------------------------------------------
 
@@ -144,7 +145,7 @@ package test_probe_agent_pkg is
     constant TEST_PROBE_AGNT_WAIT_SAMPLE_STUFF            : integer := 1;
     constant TEST_PROBE_AGNT_WAIT_SYNC                    : integer := 2;
     constant TEST_PROBE_AGNT_SCAN_CONFIGURE               : integer := 3;
-    
+
     -- Reset agent tag (for messages)
     constant TEST_PROBE_AGENT_TAG : string := "Test probe Agent: ";
 
@@ -181,7 +182,7 @@ package body test_probe_agent_pkg is
         info_m(TEST_PROBE_AGENT_TAG & "Waited till SYNC segment");
     end procedure;
 
-    
+
     procedure test_probe_agent_configure_scan(
         constant enable         : in    boolean;
         signal   channel        : inout t_com_channel;
@@ -193,7 +194,7 @@ package body test_probe_agent_pkg is
         else
             info_m(TEST_PROBE_AGENT_TAG & "Disabling scan mode");
         end if;
-        
+
         com_channel_data.set_param(enable);
         com_channel_data.set_param(node);
         send(channel, C_TEST_PROBE_AGENT_ID, TEST_PROBE_AGNT_SCAN_CONFIGURE);

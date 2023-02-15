@@ -1,18 +1,18 @@
 --------------------------------------------------------------------------------
--- 
--- CTU CAN FD IP Core 
+--
+-- CTU CAN FD IP Core
 -- Copyright (C) 2021-present Ondrej Ille
--- 
+--
 -- Permission is hereby granted, free of charge, to any person obtaining a copy
 -- of this VHDL component and associated documentation files (the "Component"),
 -- to use, copy, modify, merge, publish, distribute the Component for
 -- educational, research, evaluation, self-interest purposes. Using the
 -- Component for commercial purposes is forbidden unless previously agreed with
 -- Copyright holder.
--- 
+--
 -- The above copyright notice and this permission notice shall be included in
 -- all copies or substantial portions of the Component.
--- 
+--
 -- THE COMPONENT IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 -- IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 -- FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -20,38 +20,38 @@
 -- LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
 -- FROM, OUT OF OR IN CONNECTION WITH THE COMPONENT OR THE USE OR OTHER DEALINGS
 -- IN THE COMPONENT.
--- 
+--
 -- The CAN protocol is developed by Robert Bosch GmbH and protected by patents.
 -- Anybody who wants to implement this IP core on silicon has to obtain a CAN
 -- protocol license from Bosch.
--- 
+--
 ----------------------------------------------------------------------------------
--- 
--- CTU CAN FD IP Core 
+--
+-- CTU CAN FD IP Core
 -- Copyright (C) 2015-2020 MIT License
--- 
+--
 -- Authors:
 --     Ondrej Ille <ondrej.ille@gmail.com>
 --     Martin Jerabek <martin.jerabek01@gmail.com>
--- 
--- Project advisors: 
+--
+-- Project advisors:
 -- 	Jiri Novak <jnovak@fel.cvut.cz>
 -- 	Pavel Pisa <pisa@cmp.felk.cvut.cz>
--- 
+--
 -- Department of Measurement         (http://meas.fel.cvut.cz/)
 -- Faculty of Electrical Engineering (http://www.fel.cvut.cz)
 -- Czech Technical University        (http://www.cvut.cz/)
--- 
+--
 -- Permission is hereby granted, free of charge, to any person obtaining a copy
 -- of this VHDL component and associated documentation files (the "Component"),
 -- to deal in the Component without restriction, including without limitation
 -- the rights to use, copy, modify, merge, publish, distribute, sublicense,
 -- and/or sell copies of the Component, and to permit persons to whom the
 -- Component is furnished to do so, subject to the following conditions:
--- 
+--
 -- The above copyright notice and this permission notice shall be included in
 -- all copies or substantial portions of the Component.
--- 
+--
 -- THE COMPONENT IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 -- IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 -- FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -59,11 +59,11 @@
 -- LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
 -- FROM, OUT OF OR IN CONNECTION WITH THE COMPONENT OR THE USE OR OTHER DEALINGS
 -- IN THE COMPONENT.
--- 
+--
 -- The CAN protocol is developed by Robert Bosch GmbH and protected by patents.
 -- Anybody who wants to implement this IP core on silicon has to obtain a CAN
 -- protocol license from Bosch.
--- 
+--
 --------------------------------------------------------------------------------
 
 --------------------------------------------------------------------------------
@@ -106,13 +106,13 @@ use ctu_can_fd_tb.tb_report_pkg.all;
 
 
 package tb_random_pkg is
- 	
+
     ----------------------------------------------------------------------------
     ----------------------------------------------------------------------------
     -- Probability distributions
-    -- 
-    -- Distribution parameters are different for every distribution. Each of 
-    -- the following subsections contains one 
+    --
+    -- Distribution parameters are different for every distribution. Each of
+    -- the following subsections contains one
     ----------------------------------------------------------------------------
     ----------------------------------------------------------------------------
 
@@ -124,7 +124,7 @@ package tb_random_pkg is
 
     -- Distribution parameters
     constant DISTR_PAR_COUNT	:	natural := 5;
-    type rand_distribution_par_type is 
+    type rand_distribution_par_type is
         array (0 to DISTR_PAR_COUNT - 1) of real;
 
 
@@ -134,7 +134,7 @@ package tb_random_pkg is
     -- GAUS_mean                    Mean value of Normal distribution
     -- GAUS_vairance                Variance of Normal distribution
     -- GAUS_iterations              Number of summations in central limit
-    --                              theorem, to calculate the result.	
+    --                              theorem, to calculate the result.
     ----------------------------------------------------------------------------
 	constant GAUSS_mean			:	natural := 0;
 	constant GAUSS_variance		:   natural := 1;
@@ -145,10 +145,10 @@ package tb_random_pkg is
     -- Exponential distribution
     --
     -- EXPONENTIAL_mean             Mean value of Exponential distribution
-    --                              (or so called, "scale" parameter)	
+    --                              (or so called, "scale" parameter)
     ----------------------------------------------------------------------------
     constant EXPONENTIAL_mean   :	natural := 0;
-	
+
 
     ----------------------------------------------------------------------------
     ----------------------------------------------------------------------------
@@ -161,18 +161,16 @@ package tb_random_pkg is
 
         -- Returns value of random counter
         impure function get return natural;
-        
+
         -- Presets value of random counter (e.g. as seed aplication)
         procedure set(
             value             : in    natural range 0 to RAND_POOL_SIZE
         );
-        
+
         -- Increments by 1 mod RAND_POOL_SIZE. Guarantess atomic increment
         -- even if multiple processes use random number generation!
         procedure increment;
     end protected;
-    
-    shared variable rand_ctr : t_rand_ctr;
 
 
     ----------------------------------------------------------------------------
@@ -201,7 +199,7 @@ package tb_random_pkg is
 
     ----------------------------------------------------------------------------
     -- Get random value of type "real" from random pool. Signal output.
-    -- 
+    --
     -- Arguments:
     --  retval          Return value.
     --  refresh         If signal change should be processed by simulator by
@@ -215,7 +213,7 @@ package tb_random_pkg is
 
     ----------------------------------------------------------------------------
     -- Get random value of type "real" from random pool. Variable output.
-    -- 
+    --
     -- Arguments:
     --  retval          Return value (variable)
     ----------------------------------------------------------------------------
@@ -226,7 +224,7 @@ package tb_random_pkg is
 
     ----------------------------------------------------------------------------
     -- Get random value of type "natural" from random pool. Signal output.
-    -- 
+    --
     -- Arguments:
     --  max             Upper threshold on generated value.
     --  retval          Return value
@@ -241,7 +239,7 @@ package tb_random_pkg is
 
     ----------------------------------------------------------------------------
     -- Get random value of type "natural" from random pool. Variable output.
-    -- 
+    --
     -- Arguments:
     --  max             Upper threshold on generated value.
     --  retval          Return value (signal)
@@ -256,7 +254,7 @@ package tb_random_pkg is
 
     ----------------------------------------------------------------------------
     -- Get random value of type "std_logic" from random pool. Signal output.
-    -- 
+    --
     -- Arguments:
     --  retval          Return value (signal)
     --  chances         Probabilty (between 0 and 1) that returned value will
@@ -273,7 +271,7 @@ package tb_random_pkg is
 
     ----------------------------------------------------------------------------
     -- Get random value of type "std_logic" from random pool. Variable output.
-    -- 
+    --
     -- Arguments:
     --  retval          Return value (variable)
     --  chances         Probabilty (between 0 and 1) that returned value will
@@ -288,7 +286,7 @@ package tb_random_pkg is
     ----------------------------------------------------------------------------
     -- Get random value of type "std_logic_vector" from random pool. Signal
     -- output.
-    -- 
+    --
     -- Arguments:
     --  retval          Return value.
     --  chances         Probabilty (between 0 and 1) that returned value will
@@ -306,7 +304,7 @@ package tb_random_pkg is
     ----------------------------------------------------------------------------
     -- Get random value of type "std_logic_vector" from random pool. Unsigned
     -- value of returned value is bigger than low threshold. Variable output.
-    -- 
+    --
     -- Arguments:
     --  retval          Return value (variable)
     --  chances         Probabilty (between 0 and 1) that returned value will
@@ -321,7 +319,7 @@ package tb_random_pkg is
     ----------------------------------------------------------------------------
     -- Get random value of type "std_logic_vector" from random pool. Unsigned
     -- value of returned value is bigger than low threshold. Signal output.
-    -- 
+    --
     -- Arguments:
     --  retval          Return value
     --  bt              Low threshold for unsigned value of logic vector.
@@ -341,7 +339,7 @@ package tb_random_pkg is
     ----------------------------------------------------------------------------
     -- Get random value of type "std_logic_vector" from random pool. Unsigned
     -- value of returned value is bigger than low threshold. Variable output.
-    -- 
+    --
     -- Arguments:
     --  retval          Return value
     --  bt              Low threshold for unsigned value of logic vector.
@@ -359,7 +357,7 @@ package tb_random_pkg is
     -- Get random value of type "std_logic_vector" from random pool with given
     -- probability that bit at position "n+1" will have the same value as
     -- bit on position "n". Intention to use for bit-stuffing. Signal output.
-    -- 
+    --
     -- Arguments:
     --  retval          Return value
     --  cons_chance     Probability that next bit will be the same as previous!
@@ -376,7 +374,7 @@ package tb_random_pkg is
     -- Get random value of type "std_logic_vector" from random pool with given
     -- probability that bit at position "n+1" will have the same value as
     -- bit on position "n". Intention to use for bit-stuffing. Variable output.
-    -- 
+    --
     -- Arguments:
     --  retval          Return value
     --  cons_chance     Probability that next bit will be the same as previous!
@@ -390,7 +388,7 @@ package tb_random_pkg is
     ----------------------------------------------------------------------------
     -- Waits for random number of clock cycles with minimum and maximum amount
     -- of cycles to wait.
-    -- 
+    --
     -- Arguments:
     --  clk             Clock on which wait should be executed!
     --  min             Minimum amount of cycles to wait
@@ -410,10 +408,10 @@ package tb_random_pkg is
     -- Arguments:
     --  retval          Variable in which returned value will be stored
     --  distribution    Probability distribution of successive returned values.
-    --	parameters      Parameters of probability distribution. Reffer to 
+    --	parameters      Parameters of probability distribution. Reffer to
     --	                description of "rand_distribution_type" for further
     --                  explanation.
-    --  
+    --
     ----------------------------------------------------------------------------
     procedure rand_real_distr_v(
     	variable retVal         : out   real;
@@ -1192,8 +1190,8 @@ package tb_random_pkg is
 		0.28946,0.67682,0.45704,0.49922,0.058478,
 		0.073606,0.33788,0.33607,0.98496,0.75166,
 		0.64653,0.88287,0.51189,0.3762,0.88376
-	);  
-  
+	);
+
 end package;
 
 
@@ -1214,13 +1212,15 @@ package body tb_random_pkg is
         begin
             counter := value;
         end procedure;
-        
+
         procedure increment is
         begin
             counter := (counter + 1) mod RAND_POOL_SIZE;
         end procedure;
 
     end protected body;
+
+	shared variable rand_ctr : t_rand_ctr;
 
 
     procedure apply_rand_seed(
@@ -1246,12 +1246,12 @@ package body tb_random_pkg is
     procedure rand_real_s(
         signal   retval           : out   real;
         constant refresh          : in    boolean := true
-    ) is 
+    ) is
     begin
         rand_ctr.increment;
-     
+
         retVal <= randomLibData(rand_ctr.get);
-        if (refresh) then        
+        if (refresh) then
             wait for 0 ns;
         end if;
     end procedure;
@@ -1262,10 +1262,10 @@ package body tb_random_pkg is
     ) is
     begin
         rand_ctr.increment;
-     
+
         retVal := randomLibData(rand_ctr.get);
     end procedure;
-  
+
 
     procedure rand_int_s(
         constant max            : in    natural;
@@ -1283,7 +1283,7 @@ package body tb_random_pkg is
             wait for 0 ns;
         end if;
     end procedure;
-  
+
 
     procedure rand_int_v(
         constant max            : in    natural;
@@ -1305,13 +1305,13 @@ package body tb_random_pkg is
     )is
     begin
         rand_ctr.increment;
-        
+
         if (randomLibData(rand_ctr.get) < chances) then
             retVal <= '1';
         else
             retVal <= '0';
         end if;
-        
+
         if (refresh) then
             wait for 0 ns;
         end if;
@@ -1325,14 +1325,14 @@ package body tb_random_pkg is
     begin
         rand_ctr.increment;
         wait for 0 ns;
-    
+
         if (randomLibData(rand_ctr.get) < chances) then
             retVal := '1';
         else
             retVal := '0';
         end if;
     end procedure;
-  
+
 
 
     procedure rand_logic_vect_s(
@@ -1375,7 +1375,7 @@ package body tb_random_pkg is
             end if;
 
         end loop;
-    end procedure;  
+    end procedure;
 
 
     procedure rand_logic_vect_cons_s(
@@ -1389,14 +1389,14 @@ package body tb_random_pkg is
         retVal(0) <= tmp;
 
         for i in 1 to retVal'length - 1 loop
-     
+
             -- Swap value with "p(1 - cons_chance)"
             rand_real_v(tmp_real);
             wait for 0 ns;
             if (tmp_real > cons_chance) then
                 tmp := not tmp;
             end if;
-            
+
             retVal(i) <= tmp;
         end loop;
 
@@ -1415,18 +1415,18 @@ package body tb_random_pkg is
         retVal(0) := tmp;
 
         for i in 1 to retVal'length - 1 loop
-      
+
             -- Swap value with "p(1 - cons_chance)"
             rand_real_v(tmp_real);
             wait for 0 ns;
             if (tmp_real > cons_chance) then
                 tmp := not tmp;
             end if;
-            
+
             retVal(i) := tmp;
         end loop;
     end procedure;
-  
+
 
     procedure rand_logic_vect_bt_s(
         signal   retVal         : inout std_logic_vector;
@@ -1446,7 +1446,7 @@ package body tb_random_pkg is
             end if;
 
         end loop;
-        
+
         if (unsigned(retVal) <= bt) then
           retval <= std_logic_vector(to_unsigned(bt + 1, retval'length));
         end if;
@@ -1470,7 +1470,7 @@ package body tb_random_pkg is
         else
             rand_int_v(max - min, rand_val);
             rand_val := rand_val + min;
-            
+
             for i in 0 to rand_val loop
                 wait until rising_edge(clk);
             end loop;
@@ -1485,7 +1485,7 @@ package body tb_random_pkg is
     )is
     begin
         for i in 0 to retVal'length - 1 loop
-          
+
             rand_ctr.increment;
             wait for 0 ns;
 
@@ -1496,14 +1496,14 @@ package body tb_random_pkg is
             end if;
 
         end loop;
-        
+
         if (unsigned(retVal) <= bt) then
           retval := std_logic_vector(to_unsigned(bt + 1, retval'length));
         end if;
     end procedure;
 
 
-    procedure rand_gauss( 
+    procedure rand_gauss(
         constant iter_amount       : in    natural;
         constant mean              : in    real;
         constant variance          : in    real;
@@ -1513,24 +1513,24 @@ package body tb_random_pkg is
         variable aux               :       real;
     begin
         accum := 0.0;
-        
-        -- Sum up "iter_amount" numbers which have uniform distribution 
+
+        -- Sum up "iter_amount" numbers which have uniform distribution
         -- from (0,1) interval with 1/12 variance.
         for i in 0 to iter_amount - 1 loop
             rand_real_v(aux);
             accum := accum + aux;
         end loop;
-         
-        -- Now accum has mean equal to iter_amount/2. Variance is now 
+
+        -- Now accum has mean equal to iter_amount/2. Variance is now
         -- "sqrt(1/12) / iter_amount". Transform it to mean equal zero.
         accum := accum - (real(iter_amount) / 2.0);
         accum := accum / SQRT (real(iter_amount) / 12.0);
-        
-        -- Now we have standard normal distribution we just scale it to the 
+
+        -- Now we have standard normal distribution we just scale it to the
         -- given mean and variance.
         accum := accum * variance;
         accum := accum + mean;
-        
+
         if (accum < 0.0) then
             accum   := 0.0;
         end if;
@@ -1575,5 +1575,5 @@ package body tb_random_pkg is
         end case;
     end procedure;
 
-  
+
 end package body;

@@ -85,6 +85,8 @@ context ctu_can_fd_tb.tb_common_context;
 context ctu_can_fd_tb.rtl_context;
 context ctu_can_fd_tb.tb_agents_context;
 
+use ctu_can_fd_tb.tb_shared_vars_pkg.all;
+
 entity feature_test_agent is
     generic(
         -- Test details

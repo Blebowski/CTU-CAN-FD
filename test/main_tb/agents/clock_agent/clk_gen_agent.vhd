@@ -1,18 +1,18 @@
 --------------------------------------------------------------------------------
--- 
--- CTU CAN FD IP Core 
+--
+-- CTU CAN FD IP Core
 -- Copyright (C) 2021-present Ondrej Ille
--- 
+--
 -- Permission is hereby granted, free of charge, to any person obtaining a copy
 -- of this VHDL component and associated documentation files (the "Component"),
 -- to use, copy, modify, merge, publish, distribute the Component for
 -- educational, research, evaluation, self-interest purposes. Using the
 -- Component for commercial purposes is forbidden unless previously agreed with
 -- Copyright holder.
--- 
+--
 -- The above copyright notice and this permission notice shall be included in
 -- all copies or substantial portions of the Component.
--- 
+--
 -- THE COMPONENT IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 -- IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 -- FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -20,38 +20,38 @@
 -- LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
 -- FROM, OUT OF OR IN CONNECTION WITH THE COMPONENT OR THE USE OR OTHER DEALINGS
 -- IN THE COMPONENT.
--- 
+--
 -- The CAN protocol is developed by Robert Bosch GmbH and protected by patents.
 -- Anybody who wants to implement this IP core on silicon has to obtain a CAN
 -- protocol license from Bosch.
--- 
+--
 -- -------------------------------------------------------------------------------
--- 
--- CTU CAN FD IP Core 
+--
+-- CTU CAN FD IP Core
 -- Copyright (C) 2015-2020 MIT License
--- 
+--
 -- Authors:
 --     Ondrej Ille <ondrej.ille@gmail.com>
 --     Martin Jerabek <martin.jerabek01@gmail.com>
--- 
--- Project advisors: 
+--
+-- Project advisors:
 -- 	Jiri Novak <jnovak@fel.cvut.cz>
 -- 	Pavel Pisa <pisa@cmp.felk.cvut.cz>
--- 
+--
 -- Department of Measurement         (http://meas.fel.cvut.cz/)
 -- Faculty of Electrical Engineering (http://www.fel.cvut.cz)
 -- Czech Technical University        (http://www.cvut.cz/)
--- 
+--
 -- Permission is hereby granted, free of charge, to any person obtaining a copy
 -- of this VHDL component and associated documentation files (the "Component"),
 -- to deal in the Component without restriction, including without limitation
 -- the rights to use, copy, modify, merge, publish, distribute, sublicense,
 -- and/or sell copies of the Component, and to permit persons to whom the
 -- Component is furnished to do so, subject to the following conditions:
--- 
+--
 -- The above copyright notice and this permission notice shall be included in
 -- all copies or substantial portions of the Component.
--- 
+--
 -- THE COMPONENT IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 -- IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 -- FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -59,11 +59,11 @@
 -- LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
 -- FROM, OUT OF OR IN CONNECTION WITH THE COMPONENT OR THE USE OR OTHER DEALINGS
 -- IN THE COMPONENT.
--- 
+--
 -- The CAN protocol is developed by Robert Bosch GmbH and protected by patents.
 -- Anybody who wants to implement this IP core on silicon has to obtain a CAN
 -- protocol license from Bosch.
--- 
+--
 --------------------------------------------------------------------------------
 
 --------------------------------------------------------------------------------
@@ -71,11 +71,11 @@
 --    Clock generator agent.
 
 --    Clock generator agent generates clock (whoooa thats surprise right).
---    
+--
 --    Clock generator agent only generates clock when it is enabled. When it is
---    disabled, its clock output remains in value which clock output had at 
+--    disabled, its clock output remains in value which clock output had at
 --    time when it was disabled.
---    
+--
 --    Clock generator agent has following configurable parameters:
 --      Clock period        Obvious who does not know what clock period is should
 --                          not be reading this text.
@@ -84,7 +84,7 @@
 --                          or equal to jitter.
 --      Duty cycle          Again, obvious, if you don't know what duty cycle
 --                          is, seriously, stop reading!
---  
+--
 --------------------------------------------------------------------------------
 -- Revision History:
 --    19.1.2020   Created file
@@ -96,7 +96,7 @@ context ctu_can_fd_tb.ieee_context;
 context ctu_can_fd_tb.tb_common_context;
 
 use ctu_can_fd_tb.clk_gen_agent_pkg.all;
-
+use ctu_can_fd_tb.tb_shared_vars_pkg.all;
 
 entity clk_gen_agent is
     port (
@@ -107,19 +107,19 @@ entity clk_gen_agent is
 end entity;
 
 architecture tb of clk_gen_agent is
-    
+
     ---------------------------------------------------------------------------
     -- Parameters configured over communication library
     ---------------------------------------------------------------------------
-    
+
     -- Clock generator is enabled, clocks are being generated!
-    -- Note: This must be enabled by default when testbench is controlled from 
+    -- Note: This must be enabled by default when testbench is controlled from
     --       SW, otherwise simulator will run out of events and timeout!
     signal enabled          :    boolean := false;
-    
+
     -- Generated clock period
     signal period           :    time := 10 ns;
-    
+
     -- Duty cycle of generated clock (in %)
     signal duty             :    integer range 0 to 100 := 50;
 
@@ -142,7 +142,7 @@ architecture tb of clk_gen_agent is
     end;
 
 begin
-    
+
     ---------------------------------------------------------------------------
     -- Comunication receiver process
     ---------------------------------------------------------------------------
@@ -151,7 +151,7 @@ begin
         variable reply_code : integer;
     begin
         receive_start(default_channel, C_CLOCK_AGENT_ID);
-        
+
         -- Command is sent as message type
         reply_code := C_REPLY_CODE_OK;
         cmd := com_channel_data.get_msg_code;
@@ -182,7 +182,7 @@ begin
 
         when CLK_AGNT_CMD_DUTY_GET =>
             com_channel_data.set_param(duty);
-            
+
         when CLK_AGNT_CMD_WAIT_CYCLE =>
             wait until rising_edge(clock_in) for 1 us;
 
@@ -207,7 +207,7 @@ begin
         variable jitter_div_2 : time;
     begin
         if (enabled) then
-            
+
             if (jitter > 0 fs) then
                 uniform(seed1, seed2, rand_real);
                 rand_jitter := jitter * rand_real;

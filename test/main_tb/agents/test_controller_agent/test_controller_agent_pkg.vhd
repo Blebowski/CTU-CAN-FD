@@ -1,18 +1,18 @@
 --------------------------------------------------------------------------------
--- 
--- CTU CAN FD IP Core 
+--
+-- CTU CAN FD IP Core
 -- Copyright (C) 2021-present Ondrej Ille
--- 
+--
 -- Permission is hereby granted, free of charge, to any person obtaining a copy
 -- of this VHDL component and associated documentation files (the "Component"),
 -- to use, copy, modify, merge, publish, distribute the Component for
 -- educational, research, evaluation, self-interest purposes. Using the
 -- Component for commercial purposes is forbidden unless previously agreed with
 -- Copyright holder.
--- 
+--
 -- The above copyright notice and this permission notice shall be included in
 -- all copies or substantial portions of the Component.
--- 
+--
 -- THE COMPONENT IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 -- IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 -- FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -20,38 +20,38 @@
 -- LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
 -- FROM, OUT OF OR IN CONNECTION WITH THE COMPONENT OR THE USE OR OTHER DEALINGS
 -- IN THE COMPONENT.
--- 
+--
 -- The CAN protocol is developed by Robert Bosch GmbH and protected by patents.
 -- Anybody who wants to implement this IP core on silicon has to obtain a CAN
 -- protocol license from Bosch.
--- 
+--
 -- -------------------------------------------------------------------------------
--- 
--- CTU CAN FD IP Core 
+--
+-- CTU CAN FD IP Core
 -- Copyright (C) 2015-2020 MIT License
--- 
+--
 -- Authors:
 --     Ondrej Ille <ondrej.ille@gmail.com>
 --     Martin Jerabek <martin.jerabek01@gmail.com>
--- 
--- Project advisors: 
+--
+-- Project advisors:
 -- 	Jiri Novak <jnovak@fel.cvut.cz>
 -- 	Pavel Pisa <pisa@cmp.felk.cvut.cz>
--- 
+--
 -- Department of Measurement         (http://meas.fel.cvut.cz/)
 -- Faculty of Electrical Engineering (http://www.fel.cvut.cz)
 -- Czech Technical University        (http://www.cvut.cz/)
--- 
+--
 -- Permission is hereby granted, free of charge, to any person obtaining a copy
 -- of this VHDL component and associated documentation files (the "Component"),
 -- to deal in the Component without restriction, including without limitation
 -- the rights to use, copy, modify, merge, publish, distribute, sublicense,
 -- and/or sell copies of the Component, and to permit persons to whom the
 -- Component is furnished to do so, subject to the following conditions:
--- 
+--
 -- The above copyright notice and this permission notice shall be included in
 -- all copies or substantial portions of the Component.
--- 
+--
 -- THE COMPONENT IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 -- IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 -- FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -59,11 +59,11 @@
 -- LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
 -- FROM, OUT OF OR IN CONNECTION WITH THE COMPONENT OR THE USE OR OTHER DEALINGS
 -- IN THE COMPONENT.
--- 
+--
 -- The CAN protocol is developed by Robert Bosch GmbH and protected by patents.
 -- Anybody who wants to implement this IP core on silicon has to obtain a CAN
 -- protocol license from Bosch.
--- 
+--
 --------------------------------------------------------------------------------
 
 --------------------------------------------------------------------------------
@@ -83,6 +83,7 @@ use ctu_can_fd_tb.clk_gen_agent_pkg.all;
 use ctu_can_fd_tb.interrupt_agent_pkg.all;
 use ctu_can_fd_tb.mem_bus_agent_pkg.all;
 use ctu_can_fd_tb.reset_agent_pkg.all;
+use ctu_can_fd_tb.tb_shared_vars_pkg.all;
 
 
 package test_controller_agent_pkg is
@@ -94,7 +95,7 @@ package test_controller_agent_pkg is
         test_type               : string;
         stand_alone_vip_mode    : boolean;
         seed                    : natural;
-        
+
         -- DUT configuration
         cfg_sys_clk_period      : string;
 
@@ -114,7 +115,7 @@ package test_controller_agent_pkg is
         test_start          : in  std_logic;
         test_done           : out std_logic := '0';
         test_success        : out std_logic := '0';
-        
+
         -- PLI interface for communication with compliance test library
         pli_clk                 : out std_logic;
         pli_req                 : in  std_logic;
@@ -163,7 +164,7 @@ package test_controller_agent_pkg is
     constant PLI_MEM_BUS_AGNT_X_MODE_START          : std_logic_vector(7 downto 0) := x"05";
     constant PLI_MEM_BUS_AGNT_X_MODE_STOP           : std_logic_vector(7 downto 0) := x"06";
     constant PLI_MEM_BUS_AGNT_SET_X_MODE_SETUP      : std_logic_vector(7 downto 0) := x"07";
-    constant PLI_MEM_BUS_AGNT_SET_X_MODE_HOLD       : std_logic_vector(7 downto 0) := x"08";   
+    constant PLI_MEM_BUS_AGNT_SET_X_MODE_HOLD       : std_logic_vector(7 downto 0) := x"08";
     constant PLI_MEM_BUS_AGNT_SET_OUTPUT_DELAY      : std_logic_vector(7 downto 0) := x"0A";
     constant PLI_MEM_BUS_AGNT_WAIT_DONE             : std_logic_vector(7 downto 0) := x"0B";
 
@@ -194,12 +195,12 @@ package test_controller_agent_pkg is
     constant PLI_CAN_AGNT_MONITOR_GET_TRIGGER           : std_logic_vector(7 downto 0) := x"16";
 
     constant PLI_CAN_AGNT_MONITOR_CHECK_RESULT          : std_logic_vector(7 downto 0) := x"19";
-    
+
     constant PLI_CAN_AGNT_MONITOR_SET_INPUT_DELAY       : std_logic_vector(7 downto 0) := x"1A";
 
     constant PLI_CAN_AGNT_TX_RX_FEEDBACK_ENABLE         : std_logic_vector(7 downto 0) := x"1B";
     constant PLI_CAN_AGNT_TX_RX_FEEDBACK_DISABLE        : std_logic_vector(7 downto 0) := x"1C";
-    
+
     constant PLI_CAN_AGNT_DRIVER_SET_WAIT_FOR_MONITOR   : std_logic_vector(7 downto 0) := x"1D";
 
     -- PLI commands for Test controller agent
@@ -212,21 +213,21 @@ package test_controller_agent_pkg is
     -- Common signals
     -- Need to be accessed by procedures!
     ---------------------------------------------------------------------------
-    
+
     -- Interface between test controller agent and
     signal feature_start    : std_logic := '0';
     signal feature_done     : std_logic := '0';
     signal feature_result   : std_logic := '0';
-    
+
     -- Interface between main test controller process and compliance test
     -- process (within test controller agent)
     signal compliance_start : std_logic := '0';
     signal compliance_done  : std_logic := '0';
-    
+
     -- Interface between test controller agent and compliance library
     signal pli_test_end     : std_logic := '0';
     signal pli_test_result  : std_logic := '0';
-    
+
     -- Interface between test controller agent and reference test agent
     signal reference_start  : std_logic := '0';
     signal reference_done   : std_logic := '0';
@@ -253,7 +254,7 @@ package test_controller_agent_pkg is
     -- @param pli_cmd      PLI command signal
     -- @param pli_data_out PLI data out signal
     -- @param pli_data_in  PLI data input
-    -- @param channel      Communication channel    
+    -- @param channel      Communication channel
     ---------------------------------------------------------------------------
     procedure pli_process_rst_agnt(
         signal      pli_cmd         : in    std_logic_vector(7 downto 0);
@@ -283,7 +284,7 @@ package test_controller_agent_pkg is
     -- @param pli_cmd      PLI command signal
     -- @param pli_data_out PLI data out signal
     -- @param pli_data_in  PLI data input
-    -- @param channel      Communication channel  
+    -- @param channel      Communication channel
     ---------------------------------------------------------------------------
     procedure pli_process_mem_bus_agent(
         signal      pli_cmd         : in    std_logic_vector(7 downto 0);
@@ -300,7 +301,7 @@ package test_controller_agent_pkg is
     -- @param pli_data_in       PLI data input
     -- @param pli_data_in       PLI data input 2
     -- @param pli_str_buf_in    PLI string buffer input
-    -- @param channel           Communication channel  
+    -- @param channel           Communication channel
     ---------------------------------------------------------------------------
     procedure pli_process_can_agent(
         signal      pli_cmd         : in    std_logic_vector(7 downto 0);
@@ -312,7 +313,7 @@ package test_controller_agent_pkg is
     );
 
     ---------------------------------------------------------------------------
-    -- Process test agent 
+    -- Process test agent
     --
     -- @param pli_cmd           PLI command signal
     -- @param pli_data_out      PLI data out signal
@@ -337,7 +338,7 @@ end package;
 
 package body test_controller_agent_pkg is
 
-    
+
     procedure pli_process_rst_agnt(
         signal      pli_cmd         : in    std_logic_vector(7 downto 0);
         signal      pli_data_out    : out   std_logic_vector;
@@ -403,8 +404,8 @@ package body test_controller_agent_pkg is
             error_m("VPI: Unknown Clock generator agent command with code: 0x" & to_hstring(pli_cmd));
         end case;
     end procedure;
-    
-    
+
+
     procedure pli_process_mem_bus_agent(
         signal      pli_cmd         : in    std_logic_vector(7 downto 0);
         signal      pli_data_out    : out   std_logic_vector;
@@ -431,7 +432,7 @@ package body test_controller_agent_pkg is
             data_16 := pli_data_in(15 downto 0);
             data_32 := pli_data_in(31 downto 0);
             address := to_integer(unsigned(pli_data_in(47 downto 32)));
-            
+
             -- Blocking tag enconded in bit 50
             if (pli_data_in(50) = '1') then
                 blocking := true;
@@ -444,7 +445,7 @@ package body test_controller_agent_pkg is
                 mem_bus_agent_write(channel, address, data_8, blocking);
             elsif (pli_data_in(49 downto 48) = "01") then
                 mem_bus_agent_write(channel, address, data_16, blocking);
-            elsif (pli_data_in(49 downto 48) = "10") then                
+            elsif (pli_data_in(49 downto 48) = "10") then
                 mem_bus_agent_write(channel, address, data_32, blocking);
             else
                 error_m("VPI: Invalid memory bus agent write access size: " &
@@ -494,8 +495,8 @@ package body test_controller_agent_pkg is
             error_m("VPI: Unknown Memory bus agent command with code: 0x" & to_hstring(pli_cmd));
         end case;
     end procedure;
-    
-    
+
+
     procedure pli_process_can_agent(
         signal      pli_cmd         : in    std_logic_vector(7 downto 0);
         signal      pli_data_out    : out   std_logic_vector;
@@ -518,7 +519,7 @@ package body test_controller_agent_pkg is
         variable input_delay    : time;
     begin
         case pli_cmd is
-            
+
         when PLI_CAN_AGNT_DRIVER_START =>
             can_agent_driver_start(channel);
 
@@ -541,7 +542,7 @@ package body test_controller_agent_pkg is
             pli_data_out(0) <= driven_val;
 
         when PLI_CAN_AGNT_DRIVER_PUSH_ITEM =>
-            
+
             -- Time conversion from 64 bits truly uses only 62 bits, stuff
             -- remaining information for driven item into remaining two
             -- bits so that we don't need to declare next signal via VPI.
@@ -553,7 +554,7 @@ package body test_controller_agent_pkg is
                 driver_item.print_msg := false;
             end if;
             pli_logic_vector_to_time(pli_data_in, driver_item.drive_time);
-            
+
             can_agent_driver_push_item(channel, driver_item);
 
         when PLI_CAN_AGNT_DRIVER_SET_WAIT_TIMEOUT =>
@@ -562,9 +563,9 @@ package body test_controller_agent_pkg is
 
         when PLI_CAN_AGNT_DRIVER_WAIT_FINISH =>
             can_agent_driver_wait_finish(channel);
-            
+
         when PLI_CAN_AGNT_DRIVER_DRIVE_SINGLE_ITEM =>
-            
+
             -- Time conversion from 64 bits truly uses only 62 bits, stuff
             -- remaining information for driven item into remaining two
             -- bits so that we don't need to declare next signal via VPI.
@@ -636,7 +637,7 @@ package body test_controller_agent_pkg is
         when PLI_CAN_AGNT_MONITOR_SET_WAIT_TIMEOUT =>
             pli_logic_vector_to_time(pli_data_in, timeout);
             can_agent_monitor_set_wait_timeout(channel, timeout);
-            
+
         when PLI_CAN_AGNT_MONITOR_WAIT_FINISH =>
             can_agent_monitor_wait_finish(channel);
 
@@ -659,7 +660,7 @@ package body test_controller_agent_pkg is
 
         when PLI_CAN_AGNT_MONITOR_MONITOR_ALL_ITEMS =>
             can_agent_monitor_all_items(channel);
-    
+
         when PLI_CAN_AGNT_MONITOR_SET_TRIGGER =>
             case pli_data_in(2 downto 0) is
             when "000" =>
@@ -711,19 +712,19 @@ package body test_controller_agent_pkg is
         when PLI_CAN_AGNT_MONITOR_SET_INPUT_DELAY =>
             pli_logic_vector_to_time(pli_data_in, input_delay);
             can_agent_monitor_set_input_delay(channel, input_delay);
-            
+
         when PLI_CAN_AGNT_TX_RX_FEEDBACK_ENABLE =>
             can_agent_configure_tx_to_rx_feedback(channel, true);
-            
+
         when PLI_CAN_AGNT_TX_RX_FEEDBACK_DISABLE =>
             can_agent_configure_tx_to_rx_feedback(channel, false);
-            
+
         when others =>
             error_m("VPI: Unknown CAN agent command with code: 0x" & to_hstring(pli_cmd));
         end case;
     end procedure;
-    
-    
+
+
     procedure pli_process_test_agent(
         signal      pli_cmd         : in    std_logic_vector(7 downto 0);
         signal      pli_data_out    : out   std_logic_vector;

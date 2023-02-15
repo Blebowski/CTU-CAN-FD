@@ -1,18 +1,18 @@
 --------------------------------------------------------------------------------
--- 
--- CTU CAN FD IP Core 
+--
+-- CTU CAN FD IP Core
 -- Copyright (C) 2021-present Ondrej Ille
--- 
+--
 -- Permission is hereby granted, free of charge, to any person obtaining a copy
 -- of this VHDL component and associated documentation files (the "Component"),
 -- to use, copy, modify, merge, publish, distribute the Component for
 -- educational, research, evaluation, self-interest purposes. Using the
 -- Component for commercial purposes is forbidden unless previously agreed with
 -- Copyright holder.
--- 
+--
 -- The above copyright notice and this permission notice shall be included in
 -- all copies or substantial portions of the Component.
--- 
+--
 -- THE COMPONENT IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 -- IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 -- FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -20,38 +20,38 @@
 -- LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
 -- FROM, OUT OF OR IN CONNECTION WITH THE COMPONENT OR THE USE OR OTHER DEALINGS
 -- IN THE COMPONENT.
--- 
+--
 -- The CAN protocol is developed by Robert Bosch GmbH and protected by patents.
 -- Anybody who wants to implement this IP core on silicon has to obtain a CAN
 -- protocol license from Bosch.
--- 
+--
 -- -------------------------------------------------------------------------------
--- 
--- CTU CAN FD IP Core 
+--
+-- CTU CAN FD IP Core
 -- Copyright (C) 2015-2020 MIT License
--- 
+--
 -- Authors:
 --     Ondrej Ille <ondrej.ille@gmail.com>
 --     Martin Jerabek <martin.jerabek01@gmail.com>
--- 
--- Project advisors: 
+--
+-- Project advisors:
 -- 	Jiri Novak <jnovak@fel.cvut.cz>
 -- 	Pavel Pisa <pisa@cmp.felk.cvut.cz>
--- 
+--
 -- Department of Measurement         (http://meas.fel.cvut.cz/)
 -- Faculty of Electrical Engineering (http://www.fel.cvut.cz)
 -- Czech Technical University        (http://www.cvut.cz/)
--- 
+--
 -- Permission is hereby granted, free of charge, to any person obtaining a copy
 -- of this VHDL component and associated documentation files (the "Component"),
 -- to deal in the Component without restriction, including without limitation
 -- the rights to use, copy, modify, merge, publish, distribute, sublicense,
 -- and/or sell copies of the Component, and to permit persons to whom the
 -- Component is furnished to do so, subject to the following conditions:
--- 
+--
 -- The above copyright notice and this permission notice shall be included in
 -- all copies or substantial portions of the Component.
--- 
+--
 -- THE COMPONENT IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 -- IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 -- FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -59,16 +59,16 @@
 -- LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
 -- FROM, OUT OF OR IN CONNECTION WITH THE COMPONENT OR THE USE OR OTHER DEALINGS
 -- IN THE COMPONENT.
--- 
+--
 -- The CAN protocol is developed by Robert Bosch GmbH and protected by patents.
 -- Anybody who wants to implement this IP core on silicon has to obtain a CAN
 -- protocol license from Bosch.
--- 
+--
 --------------------------------------------------------------------------------
 
 --------------------------------------------------------------------------------
 --  @Purpose:
---    Test controller agent - Controls rest of CTU CAN FD VIP  
+--    Test controller agent - Controls rest of CTU CAN FD VIP
 --
 --------------------------------------------------------------------------------
 -- Revision History:
@@ -87,7 +87,7 @@ use ctu_can_fd_tb.clk_gen_agent_pkg.all;
 use ctu_can_fd_tb.test_probe_agent_pkg.all;
 use ctu_can_fd_tb.reset_agent_pkg.all;
 use ctu_can_fd_tb.can_agent_pkg.all;
-
+use ctu_can_fd_tb.tb_shared_vars_pkg.all;
 
 entity test_controller_agent is
     generic(
@@ -96,7 +96,7 @@ entity test_controller_agent is
         test_type               : string;
         stand_alone_vip_mode    : boolean;
         seed                    : natural;
-        
+
         -- DUT configuration
         -- DUT Clock period
         cfg_sys_clk_period      : string;
@@ -118,7 +118,7 @@ entity test_controller_agent is
         test_start              : in  std_logic;
         test_done               : out std_logic := '0';
         test_success            : out std_logic := '0';
-        
+
         -- PLI interface for communication with compliance test library
         pli_clk                 : out std_logic;
         pli_req                 : in  std_logic;
@@ -141,7 +141,7 @@ architecture tb of test_controller_agent is
     signal seed_applied : boolean := false;
 
 begin
-    
+
     ---------------------------------------------------------------------------
     -- Connect configuration internally to shared signal so that packages
     -- can read it (avoid generic packages since not all simulators support
@@ -159,7 +159,7 @@ begin
     cfg_sjw_fd_i <= cfg_sjw_fd;
     cfg_sys_clk_period_i <= time'value(cfg_sys_clk_period);
     cfg_seed_i <= seed;
-    
+
     ---------------------------------------------------------------------------
     ---------------------------------------------------------------------------
     -- Main test process
@@ -181,7 +181,7 @@ begin
     begin
         wait for 1 ns;
         wait until test_start = '1';
-        
+
         -- Apply random seed, but only if it was not applied before.
         -- If there are multiple iterations, we want different random data
         -- to be used for each one!
@@ -189,7 +189,7 @@ begin
             apply_rand_seed(seed);
             seed_applied <= true;
         end if;
-        
+
         -----------------------------------------------------------------------
         -- Configure System clock,
         --  - Period based on generic
@@ -201,13 +201,13 @@ begin
             clk_agent_set_jitter(default_channel, 0 ns);
             clk_gen_agent_start(default_channel);
         end if;
-        
+
         -----------------------------------------------------------------------
         -- Configure Timestamp generation
         --  - Step 1
         --  - Each clock cycle
         -----------------------------------------------------------------------
-        info_m("Configuring Timestamp agent"); 
+        info_m("Configuring Timestamp agent");
         timestamp_agent_set_step(default_channel, 1);
         timestamp_agent_set_prescaler(default_channel, 1);
         timestamp_agent_timestamp_preset(default_channel, x"0000000000000000");
@@ -244,7 +244,7 @@ begin
             can_agent_monitor_flush(default_channel);
             can_agent_driver_flush(default_channel);
             can_agent_monitor_stop(default_channel);
-            can_agent_driver_stop(default_channel);    
+            can_agent_driver_stop(default_channel);
             can_agent_monitor_set_input_delay(default_channel, 20 ns);
         end if;
 
@@ -263,13 +263,13 @@ begin
             wait until reference_done = '1';
             test_success_i := reference_result;
 
-        else 
+        else
             error_m("Unknown test type!");
         end if;
-        
+
         -- Stop clock agent (not to generate any further simulation events)
         clk_gen_agent_stop(default_channel);
-        
+
         compliance_start <= '0';
         feature_start <= '0';
         reference_start <= '0';
@@ -277,7 +277,7 @@ begin
 
         test_done <= '1';
         test_success <= test_success_i;
-        
+
         info_m("******************************************");
         if (test_success_i = '1') then
             info_m("CTU CAN FD VIP: Test PASSED");
@@ -298,7 +298,7 @@ begin
     ---------------------------------------------------------------------------
     ---------------------------------------------------------------------------
     compliance_tests_gen : if (test_type = "compliance") generate
-        
+
         ---------------------------------------------------------------------------
         -- Compliance test handling process
         --
@@ -308,7 +308,7 @@ begin
         compliance_test_proc : process
         begin
             wait until compliance_start = '1';
-            
+
             -----------------------------------------------------------------------
             -- Give control over the TB to compliance test library which runs the
             -- test and operates on other agents.
@@ -320,35 +320,35 @@ begin
             if (pli_control_gnt /= '1') then
                 wait until pli_control_gnt = '1' for 10 ns;
             end if;
-    
+
             wait for 0 ns;
             check_m(pli_control_gnt = '1',
                     "Compliance test library took over simulation control!");
             wait for 0 ns;
-    
+
             info_m("Waiting till Compliance test library is done running test...");
             wait until (pli_test_end = '1');
             compliance_done <= '1';
             info_m("Compliance test library signals test has ended");
-    
+
             wait for 50 ns;
             pli_control_req <= '0';
             compliance_done <= '0';
             wait for 50 ns;
         end process;
-        
+
         -----------------------------------------------------------------------
         -- Listen on PLI commands and send them to individual agents!
         -----------------------------------------------------------------------
         pli_listener_process : process
         begin
-            
+
             -------------------------------------------------------------------
             -- Poll on for pli_req = '1'
             -------------------------------------------------------------------
             wait until (pli_req = '1');
             wait for 1 ps;
-            
+
             -------------------------------------------------------------------
             -- Process command (and get answer in case of read)
             -------------------------------------------------------------------
@@ -376,15 +376,15 @@ begin
             when OTHERS =>
                 error_m("Unknown agent destination: " & to_hstring(pli_dest));
             end case;
-    
+
             wait for 1 ps;
-    
+
             -------------------------------------------------------------------
             -- Issue pli_ack = '1'
             -------------------------------------------------------------------
             pli_ack <= '1';
             wait for 1 ps;
-    
+
             -------------------------------------------------------------------
             -- Finish the PLI handshake
             -------------------------------------------------------------------
@@ -401,7 +401,7 @@ begin
         --
         -- Create clock for synchronous communication over PLI interface.
         -- Although compliance test library executes test in different context,
-        -- it needs to synchronize with simulator context. To do this, 
+        -- it needs to synchronize with simulator context. To do this,
         -- compliance test library passes all messages to TB via shared memory,
         -- which is read synchronously with PLI callbacks!
         -----------------------------------------------------------------------
@@ -414,6 +414,6 @@ begin
         end process;
 
     end generate;
-    
-    
+
+
 end architecture;
