@@ -25,7 +25,7 @@ _default: &default
     sup_range: true
     sup_traffic_ctrs: true
     sup_parity: true
-    
+
     ###########################################################################
     # C_TECH_ASIC
     ###########################################################################
@@ -51,7 +51,7 @@ _default: &default
     # Clock configuration
     # (Applies for compliance tests and feature tests!)
     system_clock_period: 10 ns
-    
+
     # Number of frames used from each dataset, 1000 means whole dataset
     # These take really long time, so we run only few frames here!
     reference_iterations: 10
@@ -67,19 +67,10 @@ unit:
             iterations: 20
         apb:
             iterations: 1
-        crc:
-            iterations: 50
-        int_manager:
-            iterations: 50
         message_filter:
             iterations: 50
         rx_buffer:
             iterations: 10
-        tx_arbitrator:
-            # TODO: Fix TX Arbitrator unit test
-            iterations: 0
-        tx_buffer:
-            iterations: 50
 
 feature:
     tests:
@@ -108,7 +99,7 @@ feature:
         device_id:
         disable_in_tx:
         dlc_can20_8_64_bytes:
-        
+
         err_capt_ack_ack:
         err_capt_arb_bit:
         err_capt_arb_stuff:

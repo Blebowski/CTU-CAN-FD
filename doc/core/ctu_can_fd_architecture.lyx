@@ -487,7 +487,7 @@ CTU CAN FD IP Core - System Architecture
 \begin_inset Text
 
 \begin_layout Plain Layout
-Version 0.13, Commit: 
+Version 0.17, Commit: 
 \begin_inset CommandInset include
 LatexCommand input
 filename "version.tex"
@@ -511,7 +511,7 @@ filename "version.tex"
 \noindent
 \align center
 \begin_inset Tabular
-<lyxtabular version="3" rows="17" columns="4">
+<lyxtabular version="3" rows="18" columns="4">
 <features tabularvalignment="middle">
 <column alignment="center" valignment="top" width="1.5cm">
 <column alignment="center" valignment="top" width="3cm">
@@ -1153,7 +1153,7 @@ sup_parity
 </cell>
 </row>
 <row>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -1162,7 +1162,7 @@ sup_parity
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -1171,7 +1171,7 @@ sup_parity
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -1180,7 +1180,7 @@ sup_parity
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -1198,6 +1198,44 @@ active_timestamp_bits
 \shape default
  generic.
  Remove interfaces of each sub-block.
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+0.17
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+2.4.3
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+18-2-2023
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Remove drv_bus and stat_bus.
 \end_layout
 
 \end_inset
@@ -1334,10 +1372,8 @@ Introduction
 \end_layout
 
 \begin_layout Standard
-This document describes architecture of CTU CAN FD IP Core along with its
- implementation details.
- It describes most important interfaces within the core and function of
- each module.
+This document describes architecture of CTU CAN FD IP Core.
+ It describes interfaces within the core and function of each module.
  This document is not written in specification format (device shall behave
  like so), rather in description format (device behaves like so).
  Nevertheless, this document alogn with CTU CAN FD Datasheet (
@@ -1560,30 +1596,6 @@ vhdl_lyx_interface_cfg.yml
 \end_layout
 
 \begin_layout Subsection
-RTL release
-\end_layout
-
-\begin_layout Standard
-CTU CAN FD contains release tags in GIT repository.
- These tags correspond to important milestones within CTU CAN FD project.
- As RTL contains PSL cover/assert points used in verification of CTU CAN
- FD, RTLs can be post-processed by a script, which removes all text between
- <RELEASE_OFF> and <RELEASE_ON> tags within VHDL comments.
- This is done to reduce simulation time of integrated CTU CAN FD into a
- custom system (goal of such an integration is not to verify functionality
- of CTU CAN FD itself).
- RTL release can be created by following script:
-\end_layout
-
-\begin_layout Verbatim
-cd scripts
-\end_layout
-
-\begin_layout Verbatim
-python create_release.py --output_dir ../release_directory_name
-\end_layout
-
-\begin_layout Subsection
 Xilinx Vivado component
 \end_layout
 
@@ -1752,7 +1764,7 @@ ISO11898-1 2015 compliance
 \end_layout
 
 \begin_layout Standard
-CTU CAN FD is designed to be compliant with 
+CTU CAN FD is compliant with 
 \begin_inset CommandInset citation
 LatexCommand cite
 key "key-1"
@@ -1763,8 +1775,8 @@ literal "false"
 .
  With regards to this document, CTU CAN FD supports all implementation options
  (Classical CAN, CAN FD Tolerant, CAN FD enabled).
- Compliance to each of these options can be configured via dedicated register
- (therefore behavior can be changed for and existing CTU CAN FD instance).
+ Compliance to each of these options can be configured via a register (run-time
+ configurable).
  Reffer to 
 \begin_inset CommandInset citation
 LatexCommand cite
@@ -2725,7 +2737,7 @@ Memory Bus
 \end_layout
 
 \begin_layout Standard
-CTU CAN FD is accessible as a slave device via one of three memory buses:
+CTU CAN FD is a slave device accessible via one of three memory buses:
 \end_layout
 
 \begin_layout Itemize
@@ -5855,7 +5867,8 @@ name "sec:Scan-enable"
 \end_layout
 
 \begin_layout Standard
-CTU CAN FD is implemented to ease DFT insertion during ASIC design via 
+CTU CAN FD is designed to simplify DFT insertion during ASIC design via
+ 
 \series bold
 \shape italic
 scan_enable
@@ -9708,260 +9721,6 @@ name "tab:pipeline-stages-algorithm"
 \end_inset
 
 
-\end_layout
-
-\begin_layout Section
-Internal Buses
-\end_layout
-
-\begin_layout Standard
-CTU CAN FD contains two parallel buses to reduce number of signals in the
- design and maintain code readability.
- These two buses are described in Table 
-\begin_inset CommandInset ref
-LatexCommand ref
-reference "tab:Internal-buses"
-plural "false"
-caps "false"
-noprefix "false"
-
-\end_inset
-
-.
- Unused signals within these buses are driven to zero.
- Meaning of signals in these buses can be derived from 
-\begin_inset Quotes eld
-\end_inset
-
-src/lib/drv_stat_pkg.vhd
-\begin_inset Quotes erd
-\end_inset
-
-.
-\end_layout
-
-\begin_layout Standard
-\begin_inset Float table
-placement H
-wide false
-sideways false
-status open
-
-\begin_layout Plain Layout
-\noindent
-\align center
-\begin_inset Tabular
-<lyxtabular version="3" rows="3" columns="4">
-<features tabularvalignment="middle">
-<column alignment="left" valignment="top" width="10text%">
-<column alignment="left" valignment="top" width="10text%">
-<column alignment="left" valignment="top" width="10text%">
-<column alignment="left" valignment="top" width="60text%">
-<row>
-<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-Bus Name
-\begin_inset ERT
-status open
-
-\begin_layout Plain Layout
-
-
-\backslash
-cellcolor{gray}
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-Width
-\begin_inset ERT
-status open
-
-\begin_layout Plain Layout
-
-
-\backslash
-cellcolor{gray}
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-Module of origin
-\begin_inset ERT
-status open
-
-\begin_layout Plain Layout
-
-
-\backslash
-cellcolor{gray}
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-Bus function
-\begin_inset ERT
-status open
-
-\begin_layout Plain Layout
-
-
-\backslash
-cellcolor{gray}
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
-\end_inset
-</cell>
-</row>
-<row>
-<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-Driving Bus
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-1024
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-Memory Registers
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-Distribute configuration values from Memory registers to the rest of the
- design.
-\end_layout
-
-\end_inset
-</cell>
-</row>
-<row>
-<cell alignment="left" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-Status Bus
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="left" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-512
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="left" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-CAN Core
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="left" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-Provide status information about CAN Core to Memory Registers.
-\end_layout
-
-\end_inset
-</cell>
-</row>
-</lyxtabular>
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Plain Layout
-\noindent
-\align center
-\begin_inset Caption Standard
-
-\begin_layout Plain Layout
-Internal buses
-\begin_inset CommandInset label
-LatexCommand label
-name "tab:Internal-buses"
-
-\end_inset
-
-
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Description
-Note When synthesizing CTU CAN FD in ASIC toolchains, Driving bus (drv_bus)
- and Status bus (stat_bus) contain many signals which are driven to zero.
- Typically, ASIC synthesis toolchains report LINT messages on such signals.
- All LINT warnings from drv_bus and stat_bus can be waived.
 \end_layout
 
 \begin_layout Section
@@ -37544,14 +37303,6 @@ noprefix "false"
  Output record (signals going from Control registers module to rest of CTU
  CAN FD) and Input record (signals going from rest of CTU CAN FD to Control
  registers module).
- Outputs from Control registers module is converted to Driving bus and other
- control signals.
- Inputs to Control registers module is driven by Status bus and other status
- signals.
- Driving and Status buses are kept from legacy resons, instead of directly
- bringing Input/Output records to the rest of CTU CAN FD.
- It has an additional advantage: synthesis does not mess up the names through
- the whole design as it is common with records.
 \end_layout
 
 \begin_layout Standard

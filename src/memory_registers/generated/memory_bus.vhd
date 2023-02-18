@@ -1,5 +1,5 @@
 --------------------------------------------------------------------------------
--- 
+--
 -- Register map generation tool
 --
 -- Copyright (C) 2018 Ondrej Ille <ondrej.ille@gmail.com>
@@ -27,7 +27,7 @@
 --------------------------------------------------------------------------------
 -- Purpose:
 --  Template with entity with of basic memory interface.
---  
+--
 --  WARNING:
 --    Ports and generics must be declared on single line for parser to work
 --    properly
@@ -54,10 +54,7 @@ entity memory_bus_template is
 
         -- Clear / Keep r_data signal after read. When true, data are cleared.
         -- When false, data are kept.
-        constant clear_read_data      :     boolean := true;
-
-        -- Reset polarity
-        constant reset_polarity       :     std_logic := '0'
+        constant clear_read_data      :     boolean := true
     );
     port(
         ------------------------------------------------------------------------

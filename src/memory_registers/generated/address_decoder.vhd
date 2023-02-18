@@ -1,5 +1,5 @@
 --------------------------------------------------------------------------------
--- 
+--
 -- Register map generation tool
 --
 -- Copyright (C) 2018 Ondrej Ille <ondrej.ille@gmail.com>
@@ -26,7 +26,7 @@
 
 --------------------------------------------------------------------------------
 -- Purpose:
---   Generic address decoder! 
+--   Generic address decoder!
 --------------------------------------------------------------------------------
 -- Revision History:
 --    14.10.2018   Created file
@@ -52,10 +52,7 @@ entity address_decoder is
         constant addr_vect             :     std_logic_vector;
 
         -- Choose betweed registered/ non-registered output
-        constant registered_out        :     boolean := false;
-
-        -- Reset polarity
-        constant reset_polarity        :     std_logic := '0'
+        constant registered_out        :     boolean := false
     );
     port(
         ------------------------------------------------------------------------
@@ -88,7 +85,7 @@ architecture rtl of address_decoder is
     -- Internal one-hot coded signal of address decoder
     signal addr_dec_i                 :   std_logic_vector(
                                                 address_entries - 1 downto 0);
-    
+
     -- Address after masking by enable input
     signal addr_dec_enabled_i          :   std_logic_vector(
                                                 address_entries - 1 downto 0);
@@ -121,7 +118,7 @@ begin
     addr_dec_reg_true_gen : if (registered_out) generate
         addr_dec_reg_proc : process(res_n, clk_sys)
         begin
-            if (res_n = reset_polarity) then
+            if (res_n = '0') then
                 addr_dec <= (OTHERS => '0');
 
             elsif (rising_edge(clk_sys)) then
@@ -138,12 +135,12 @@ begin
 
     ---------------------------------------------------------------------------
     -- Check that input vector length is correct.
-    ---------------------------------------------------------------------------    
+    ---------------------------------------------------------------------------
     assert (addr_vect'length = address_width * address_entries)
         report "Invalid length of address vector: " &
                 integer'image(addr_vect'length) &
                " Length should be: " &
                 integer'image(address_width * address_entries)
         severity failure;
-    
+
 end architecture;

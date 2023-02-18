@@ -1,0 +1,20 @@
+simulator: vcs
+test_list_file: test/tlf_dummy.yml
+simulation_resolution: ps
+
+targets:
+
+    rtl_ctu_can_fd:
+        top_entity: ctu_can_fd_rtl.can_top_level
+        source_list_files:
+            - src/slf_rtl.yml
+
+    tb_ctu_can_fd_rtl:
+        top_entity: ctu_can_fd_tb.tb_top_ctu_can_fd
+        source_list_files:
+            - rtl_ctu_can_fd
+            - test/slf_tb.yml
+
+check_severity: error
+
+license_wait: true

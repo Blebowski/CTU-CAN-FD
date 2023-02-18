@@ -1,18 +1,18 @@
 --------------------------------------------------------------------------------
--- 
--- CTU CAN FD IP Core 
+--
+-- CTU CAN FD IP Core
 -- Copyright (C) 2021-present Ondrej Ille
--- 
+--
 -- Permission is hereby granted, free of charge, to any person obtaining a copy
 -- of this VHDL component and associated documentation files (the "Component"),
 -- to use, copy, modify, merge, publish, distribute the Component for
 -- educational, research, evaluation, self-interest purposes. Using the
 -- Component for commercial purposes is forbidden unless previously agreed with
 -- Copyright holder.
--- 
+--
 -- The above copyright notice and this permission notice shall be included in
 -- all copies or substantial portions of the Component.
--- 
+--
 -- THE COMPONENT IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 -- IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 -- FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -20,38 +20,38 @@
 -- LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
 -- FROM, OUT OF OR IN CONNECTION WITH THE COMPONENT OR THE USE OR OTHER DEALINGS
 -- IN THE COMPONENT.
--- 
+--
 -- The CAN protocol is developed by Robert Bosch GmbH and protected by patents.
 -- Anybody who wants to implement this IP core on silicon has to obtain a CAN
 -- protocol license from Bosch.
--- 
+--
 -- -------------------------------------------------------------------------------
--- 
--- CTU CAN FD IP Core 
+--
+-- CTU CAN FD IP Core
 -- Copyright (C) 2015-2020 MIT License
--- 
+--
 -- Authors:
 --     Ondrej Ille <ondrej.ille@gmail.com>
 --     Martin Jerabek <martin.jerabek01@gmail.com>
--- 
--- Project advisors: 
+--
+-- Project advisors:
 -- 	Jiri Novak <jnovak@fel.cvut.cz>
 -- 	Pavel Pisa <pisa@cmp.felk.cvut.cz>
--- 
+--
 -- Department of Measurement         (http://meas.fel.cvut.cz/)
 -- Faculty of Electrical Engineering (http://www.fel.cvut.cz)
 -- Czech Technical University        (http://www.cvut.cz/)
--- 
+--
 -- Permission is hereby granted, free of charge, to any person obtaining a copy
 -- of this VHDL component and associated documentation files (the "Component"),
 -- to deal in the Component without restriction, including without limitation
 -- the rights to use, copy, modify, merge, publish, distribute, sublicense,
 -- and/or sell copies of the Component, and to permit persons to whom the
 -- Component is furnished to do so, subject to the following conditions:
--- 
+--
 -- The above copyright notice and this permission notice shall be included in
 -- all copies or substantial portions of the Component.
--- 
+--
 -- THE COMPONENT IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 -- IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 -- FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -59,11 +59,11 @@
 -- LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
 -- FROM, OUT OF OR IN CONNECTION WITH THE COMPONENT OR THE USE OR OTHER DEALINGS
 -- IN THE COMPONENT.
--- 
+--
 -- The CAN protocol is developed by Robert Bosch GmbH and protected by patents.
 -- Anybody who wants to implement this IP core on silicon has to obtain a CAN
 -- protocol license from Bosch.
--- 
+--
 --------------------------------------------------------------------------------
 
 --------------------------------------------------------------------------------
@@ -85,42 +85,39 @@ use ieee.std_logic_1164.all;
 entity shift_reg_byte is
     generic (
         -- Reset polarity
-        G_RESET_POLARITY     :       std_logic;
-        
+        G_RESET_POLARITY    : std_logic;
+
         -- Reset value
-        G_RESET_VALUE        :       std_logic_vector;
-        
+        G_RESET_VALUE       : std_logic_vector;
+
         -- Shift register width
-        G_NUM_BYTES          :       natural
+        G_NUM_BYTES         : natural
     );
     port (
-        -----------------------------------------------------------------------
+        -------------------------------------------------------------------------------------------
         -- Clock and Asyncrhonous reset
-        -----------------------------------------------------------------------
-        -- Clock
-        clk             : in    std_logic;
+        -------------------------------------------------------------------------------------------
+        clk                 : in  std_logic;
+        res_n               : in  std_logic;
 
-        -- Asynchronous reset
-        res_n           : in    std_logic;
-
-        -----------------------------------------------------------------------
+        -------------------------------------------------------------------------------------------
         -- Control signals
-        -----------------------------------------------------------------------
-        -- Shift register input        
-        input           : in    std_logic;
+        -------------------------------------------------------------------------------------------
+        -- Shift register input
+        input               : in  std_logic;
 
         -- Clock enable for shifting each byte of the shift register.
-        byte_clock_ena  : in    std_logic_vector(G_NUM_BYTES - 1 downto 0);
+        byte_clock_ena      : in  std_logic_vector(G_NUM_BYTES - 1 downto 0);
 
         -- Input source selector for each byte
         -- (0-Previous byte output, 1- Shift reg input)
-        byte_input_sel  : in    std_logic_vector(G_NUM_BYTES - 1 downto 0);
+        byte_input_sel      : in  std_logic_vector(G_NUM_BYTES - 1 downto 1);
 
-        -----------------------------------------------------------------------
+        -------------------------------------------------------------------------------------------
         -- Status signals
-        -----------------------------------------------------------------------
+        -------------------------------------------------------------------------------------------
         -- Shift register status
-        reg_stat        : out   std_logic_vector(8 * G_NUM_BYTES - 1 downto 0)
+        reg_stat            : out std_logic_vector(8 * G_NUM_BYTES - 1 downto 0)
     );
 end shift_reg_byte;
 
@@ -131,7 +128,7 @@ architecture rtl of shift_reg_byte is
 
     signal shift_reg_q : t_byte_shift_reg;
     signal shift_reg_in   : std_logic_vector(G_NUM_BYTES - 1 downto 0);
-    
+
 begin
 
     byte_shift_reg_gen : for i in 0 to G_NUM_BYTES - 1 generate
@@ -148,13 +145,13 @@ begin
                                                input;
         end generate;
 
-        -----------------------------------------------------------------------
+        -------------------------------------------------------------------------------------------
         -- Shift register assignment
-        -----------------------------------------------------------------------
+        -------------------------------------------------------------------------------------------
         shift_reg_proc : process(clk, res_n)
         begin
             if (res_n = G_RESET_POLARITY) then
-                shift_reg_q(i) <= (OTHERS => '0'); -- G_RESET_VALUE(i * 8 + 7 downto i * 8);
+                shift_reg_q(i) <= (others => '0'); -- G_RESET_VALUE(i * 8 + 7 downto i * 8);
             elsif (rising_edge(clk)) then
                 if (byte_clock_ena(i) = '1') then
                     shift_reg_q(i) <= shift_reg_q(i)(6 downto 0) &
@@ -162,10 +159,10 @@ begin
                 end if;
             end if;
         end process;
-        
+
         -- Propagation to output
         reg_stat(i * 8 + 7 downto i * 8) <= shift_reg_q(i);
-        
+
     end generate;
 
 end rtl;

@@ -1,5 +1,5 @@
 --------------------------------------------------------------------------------
--- 
+--
 -- Register map generation tool
 --
 -- Copyright (C) 2018 Ondrej Ille <ondrej.ille@gmail.com>
@@ -45,15 +45,15 @@
 --                    | (saturated index)
 --                    V
 --                |-------|                                Output register
---            --->|*      |                                  (optional) 
---             .  |  *    |                                   
---             .  |    *  |  sel_data  |-----|               |--------| 
+--            --->|*      |                                  (optional)
+--             .  |  *    |
+--             .  |    *  |  sel_data  |-----|               |--------|
 --   data_in   .  |      *|----------->|     |  masked_data  |        | data_out
 --             .  |    *  |            | AND |-------------->| D    Q |-------->
 --             .  |  *    |      ----->|     |               |        |
 --            --->|*      |      |     |-----|               |        |
 --                |-------|      |                clk_sys ---|>       |
---                               |                           |        |   
+--                               |                           |        |
 --     data_mask                 |                           |--------|
 --   ----------------------------|
 --
@@ -85,10 +85,7 @@ entity data_mux is
         constant sel_width             :     natural := 8;
 
         -- Choose betweed registered / non-registered output
-        constant registered_out        :     boolean := false;
-
-        -- Reset polarity
-        constant reset_polarity        :     std_logic := '0'
+        constant registered_out        :     boolean := false
     );
     port(
         ------------------------------------------------------------------------
@@ -114,12 +111,12 @@ entity data_mux is
         -- data_mask(i) = '0' -> i-th bit is not propagated to the output.
         ------------------------------------------------------------------------
         signal data_mask_n            :in  std_logic_vector(data_out_width - 1 downto 0);
-        
+
         ------------------------------------------------------------------------
         -- Enables data propagation to the output.
         ------------------------------------------------------------------------
         signal enable                 :in   std_logic;
-        
+
         ------------------------------------------------------------------------
         -- Output, one-hot coded. In logic 1 for each valid address
         ------------------------------------------------------------------------
@@ -134,7 +131,7 @@ architecture rtl of data_mux is
     -- Data output from data mux (before masking)
     signal sel_data                    :    std_logic_vector(data_out_width - 1 downto 0);
 
-    -- Data after saturation. Saturated data return all zeroes when address overflow 
+    -- Data after saturation. Saturated data return all zeroes when address overflow
     -- and read beyond last address of register block occurs.
     signal saturated_data             :    std_logic_vector(data_out_width - 1 downto 0);
 
@@ -144,13 +141,13 @@ architecture rtl of data_mux is
     -- Internal data select converted to natural to avoid ugly code in
     -- selection
     signal index                      :    natural;
-    
+
     -- Index saturation
     constant INDEX_MAX                :    natural := (data_in_width / data_out_width - 1);
 
     -- Saturated value of internal index.
     signal index_sat                  :    natural range 0 to INDEX_MAX;
-    
+
 begin
 
     ---------------------------------------------------------------------------
@@ -162,13 +159,13 @@ begin
     ---------------------------------------------------------------------------
     -- Data selector saturation, we need to saturate data selector in case
     -- we don't have 2^N inputs. Address conversion of n bit vector to index
-    -- of less than 2^N - 1 would result in overflow in simulator. Using 
+    -- of less than 2^N - 1 would result in overflow in simulator. Using
     -- modulo is not effective, modulo by non 2^N number results in extra
     -- shitty logic...
     ---------------------------------------------------------------------------
     index_sat <= index when (index <= INDEX_MAX) else
                  INDEX_MAX;
-    
+
 
     ---------------------------------------------------------------------------
     -- Data mux -> Row given by index, column given by generic
@@ -202,7 +199,7 @@ begin
     data_mux_reg_true_gen : if (registered_out) generate
         data_mux_reg_proc : process(res_n, clk_sys)
         begin
-            if (res_n = reset_polarity) then
+            if (res_n = '0') then
                 data_out <= (OTHERS => '0');
 
             elsif (rising_edge(clk_sys)) then

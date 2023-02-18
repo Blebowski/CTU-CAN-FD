@@ -1,5 +1,5 @@
 --------------------------------------------------------------------------------
--- 
+--
 -- Register map generation tool
 --
 -- Copyright (C) 2018 Ondrej Ille <ondrej.ille@gmail.com>
@@ -39,10 +39,6 @@ USE IEEE.numeric_std.ALL;
 
 entity access_signaller is
     generic(
-
-        -- Reset polarity
-        constant reset_polarity       :     std_logic := '0';
-
         -- Width of memory register whose access is being signalled
         constant data_width           :     natural := 32;
 
@@ -136,13 +132,13 @@ begin
 
             res_sign_proc : process(res_n, clk_sys)
             begin
-                if (res_n = reset_polarity) then
+                if (res_n = '0') then
                     access_active_reg(i) <= '0';
                 elsif (rising_edge(clk_sys)) then
 
                     -----------------------------------------------------------
-                    -- Mark signalling to a DFF when it is active. Clear when 
-                    -- it was activated. Thisway DFF won't tick every clock 
+                    -- Mark signalling to a DFF when it is active. Clear when
+                    -- it was activated. Thisway DFF won't tick every clock
                     -- cycle but only upon set-clear!
                     -----------------------------------------------------------
                     if (access_active(i) = '1') then

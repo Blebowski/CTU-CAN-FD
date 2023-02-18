@@ -1,18 +1,18 @@
 --------------------------------------------------------------------------------
--- 
--- CTU CAN FD IP Core 
+--
+-- CTU CAN FD IP Core
 -- Copyright (C) 2021-present Ondrej Ille
--- 
+--
 -- Permission is hereby granted, free of charge, to any person obtaining a copy
 -- of this VHDL component and associated documentation files (the "Component"),
 -- to use, copy, modify, merge, publish, distribute the Component for
 -- educational, research, evaluation, self-interest purposes. Using the
 -- Component for commercial purposes is forbidden unless previously agreed with
 -- Copyright holder.
--- 
+--
 -- The above copyright notice and this permission notice shall be included in
 -- all copies or substantial portions of the Component.
--- 
+--
 -- THE COMPONENT IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 -- IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 -- FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -20,38 +20,38 @@
 -- LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
 -- FROM, OUT OF OR IN CONNECTION WITH THE COMPONENT OR THE USE OR OTHER DEALINGS
 -- IN THE COMPONENT.
--- 
+--
 -- The CAN protocol is developed by Robert Bosch GmbH and protected by patents.
 -- Anybody who wants to implement this IP core on silicon has to obtain a CAN
 -- protocol license from Bosch.
--- 
+--
 -- -------------------------------------------------------------------------------
--- 
--- CTU CAN FD IP Core 
+--
+-- CTU CAN FD IP Core
 -- Copyright (C) 2015-2020 MIT License
--- 
+--
 -- Authors:
 --     Ondrej Ille <ondrej.ille@gmail.com>
 --     Martin Jerabek <martin.jerabek01@gmail.com>
--- 
--- Project advisors: 
+--
+-- Project advisors:
 -- 	Jiri Novak <jnovak@fel.cvut.cz>
 -- 	Pavel Pisa <pisa@cmp.felk.cvut.cz>
--- 
+--
 -- Department of Measurement         (http://meas.fel.cvut.cz/)
 -- Faculty of Electrical Engineering (http://www.fel.cvut.cz)
 -- Czech Technical University        (http://www.cvut.cz/)
--- 
+--
 -- Permission is hereby granted, free of charge, to any person obtaining a copy
 -- of this VHDL component and associated documentation files (the "Component"),
 -- to deal in the Component without restriction, including without limitation
 -- the rights to use, copy, modify, merge, publish, distribute, sublicense,
 -- and/or sell copies of the Component, and to permit persons to whom the
 -- Component is furnished to do so, subject to the following conditions:
--- 
+--
 -- The above copyright notice and this permission notice shall be included in
 -- all copies or substantial portions of the Component.
--- 
+--
 -- THE COMPONENT IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 -- IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 -- FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -59,11 +59,11 @@
 -- LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
 -- FROM, OUT OF OR IN CONNECTION WITH THE COMPONENT OR THE USE OR OTHER DEALINGS
 -- IN THE COMPONENT.
--- 
+--
 -- The CAN protocol is developed by Robert Bosch GmbH and protected by patents.
 -- Anybody who wants to implement this IP core on silicon has to obtain a CAN
 -- protocol license from Bosch.
--- 
+--
 --------------------------------------------------------------------------------
 
 --------------------------------------------------------------------------------
@@ -77,6 +77,8 @@
 
 Library ctu_can_fd_tb;
 context ctu_can_fd_tb.ieee_context;
+
+use ctu_can_fd_tb.tb_shared_vars_pkg.all;
 
 -- Only place where Vunit is used. All functions are wrapped so that TB can run
 -- also without Vunit!
@@ -92,18 +94,18 @@ package tb_report_pkg is
         verbosity_warning,
         verbosity_error
     );
-    
+
     signal global_verbosity : t_log_verbosity := verbosity_info;
 
     procedure set_log_verbosity(
         constant value                : in  t_log_verbosity;
         signal verbosity            : out t_log_verbosity
     );
-    
+
     procedure debug_m(
                  msg         : in string
     );
-    
+
     procedure info_m(
         msg         : in string
     );
@@ -111,7 +113,7 @@ package tb_report_pkg is
     procedure warning_m(
                  msg         : in string
     );
-    
+
     procedure error_m(
                  msg         : in string
     );
@@ -120,48 +122,15 @@ package tb_report_pkg is
                  cond        : in boolean;
                  msg         : in string
     );
-    
+
     procedure check_false_m(
                  cond        : in boolean;
                  msg         : in string
     );
 
-    type t_ctu_test_result is protected
-        procedure set_result(result : boolean);
-        impure function get_result return boolean;
-        impure function get_result return std_logic;
-    end protected;
-
-    shared variable ctu_vip_test_result : t_ctu_test_result;
-
 end package;
 
 package body tb_report_pkg is
-
-    type t_ctu_test_result is protected body
-        
-        variable result_i : boolean;
-
-        procedure set_result(result : boolean) is
-        begin
-            result_i := result;
-        end procedure;
-        
-        impure function get_result return boolean is
-        begin
-            return result_i;
-        end function;
-        
-        impure function get_result return std_logic is
-        begin
-            if result_i then
-                return '1';
-            else
-                return '0';
-            end if;
-        end function;
-
-    end protected body;
 
     procedure set_log_verbosity(
         constant value              : in  t_log_verbosity;
@@ -183,7 +152,7 @@ package body tb_report_pkg is
             hide(display_handler, info);
             hide(display_handler, pass);
             hide(display_handler, trace);
-            
+
         end if;
 
         if value >= verbosity_error then
@@ -196,7 +165,7 @@ package body tb_report_pkg is
         verbosity <= value;
     end procedure;
 
-    
+
     procedure info_m(
         msg         : in string
     ) is
@@ -204,12 +173,12 @@ package body tb_report_pkg is
         info(msg);
     end procedure;
 
-    
+
     procedure warning_m(
                  msg         : in string
     ) is
     begin
-        warning(msg); 
+        warning(msg);
     end procedure;
 
 
@@ -220,7 +189,7 @@ package body tb_report_pkg is
         ctu_vip_test_result.set_result(false);
         error(msg);
     end procedure;
-    
+
     procedure debug_m(
                  msg         : in string
     ) is
@@ -239,8 +208,8 @@ package body tb_report_pkg is
         end if;
         check(cond, msg);
     end procedure;
-    
-    
+
+
     procedure check_false_m(
                  cond        : in boolean;
                  msg         : in string
@@ -251,6 +220,6 @@ package body tb_report_pkg is
         end if;
         check_false(cond, msg);
     end procedure;
-    
+
 
 end package body;

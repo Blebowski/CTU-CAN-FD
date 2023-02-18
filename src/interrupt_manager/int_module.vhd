@@ -1,18 +1,18 @@
 --------------------------------------------------------------------------------
--- 
--- CTU CAN FD IP Core 
+--
+-- CTU CAN FD IP Core
 -- Copyright (C) 2021-present Ondrej Ille
--- 
+--
 -- Permission is hereby granted, free of charge, to any person obtaining a copy
 -- of this VHDL component and associated documentation files (the "Component"),
 -- to use, copy, modify, merge, publish, distribute the Component for
 -- educational, research, evaluation, self-interest purposes. Using the
 -- Component for commercial purposes is forbidden unless previously agreed with
 -- Copyright holder.
--- 
+--
 -- The above copyright notice and this permission notice shall be included in
 -- all copies or substantial portions of the Component.
--- 
+--
 -- THE COMPONENT IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 -- IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 -- FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -20,38 +20,38 @@
 -- LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
 -- FROM, OUT OF OR IN CONNECTION WITH THE COMPONENT OR THE USE OR OTHER DEALINGS
 -- IN THE COMPONENT.
--- 
+--
 -- The CAN protocol is developed by Robert Bosch GmbH and protected by patents.
 -- Anybody who wants to implement this IP core on silicon has to obtain a CAN
 -- protocol license from Bosch.
--- 
+--
 -- -------------------------------------------------------------------------------
--- 
--- CTU CAN FD IP Core 
+--
+-- CTU CAN FD IP Core
 -- Copyright (C) 2015-2020 MIT License
--- 
+--
 -- Authors:
 --     Ondrej Ille <ondrej.ille@gmail.com>
 --     Martin Jerabek <martin.jerabek01@gmail.com>
--- 
--- Project advisors: 
+--
+-- Project advisors:
 -- 	Jiri Novak <jnovak@fel.cvut.cz>
 -- 	Pavel Pisa <pisa@cmp.felk.cvut.cz>
--- 
+--
 -- Department of Measurement         (http://meas.fel.cvut.cz/)
 -- Faculty of Electrical Engineering (http://www.fel.cvut.cz)
 -- Czech Technical University        (http://www.cvut.cz/)
--- 
+--
 -- Permission is hereby granted, free of charge, to any person obtaining a copy
 -- of this VHDL component and associated documentation files (the "Component"),
 -- to deal in the Component without restriction, including without limitation
 -- the rights to use, copy, modify, merge, publish, distribute, sublicense,
 -- and/or sell copies of the Component, and to permit persons to whom the
 -- Component is furnished to do so, subject to the following conditions:
--- 
+--
 -- The above copyright notice and this permission notice shall be included in
 -- all copies or substantial portions of the Component.
--- 
+--
 -- THE COMPONENT IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 -- IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 -- FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -59,11 +59,11 @@
 -- LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
 -- FROM, OUT OF OR IN CONNECTION WITH THE COMPONENT OR THE USE OR OTHER DEALINGS
 -- IN THE COMPONENT.
--- 
+--
 -- The CAN protocol is developed by Robert Bosch GmbH and protected by patents.
 -- Anybody who wants to implement this IP core on silicon has to obtain a CAN
 -- protocol license from Bosch.
--- 
+--
 --------------------------------------------------------------------------------
 
 --------------------------------------------------------------------------------
@@ -94,61 +94,57 @@ use ctu_can_fd_rtl.id_transfer_pkg.all;
 use ctu_can_fd_rtl.can_constants_pkg.all;
 
 use ctu_can_fd_rtl.can_types_pkg.all;
-use ctu_can_fd_rtl.drv_stat_pkg.all;
 use ctu_can_fd_rtl.unary_ops_pkg.all;
 
 use ctu_can_fd_rtl.CAN_FD_register_map.all;
 use ctu_can_fd_rtl.CAN_FD_frame_format.all;
 
 entity int_module is
-    port(
-        ------------------------------------------------------------------------
+    port (
+        -------------------------------------------------------------------------------------------
         -- Clock and Asynchronous reset
-        ------------------------------------------------------------------------
-        -- System Clock
+        -------------------------------------------------------------------------------------------
         clk_sys                :in   std_logic;
-        
-        -- Asynchronous Reset
         res_n                  :in   std_logic;
 
-        ------------------------------------------------------------------------
+        -------------------------------------------------------------------------------------------
         -- Control control signals
-        ------------------------------------------------------------------------
+        -------------------------------------------------------------------------------------------
         -- Interrupt Status Set
         int_status_set         :in   std_logic;
-        
+
         -- Interrupt Status Clear
         int_status_clear       :in   std_logic;
 
         -- Interrupt Mask Set
         int_mask_set           :in   std_logic;
-        
+
         -- Interrupt Mask Clear
         int_mask_clear         :in   std_logic;
 
         -- Interrupt Enable Set
         int_ena_set            :in   std_logic;
-        
+
         -- Interrupt Enable Clear
         int_ena_clear          :in   std_logic;
 
-        ------------------------------------------------------------------------
+        -------------------------------------------------------------------------------------------
         -- Interrupt output signals
-        ------------------------------------------------------------------------
+        -------------------------------------------------------------------------------------------
         -- Interrupt status (Interrupt vector)
         int_status             :out  std_logic;
-        
+
         -- Interrupt mask
         int_mask               :out  std_logic;
-        
+
         -- Interrupt enable
         int_ena                :out  std_logic
-    );  
+    );
 end entity;
 
 architecture rtl of int_module is
 
-    -- Internal values 
+    -- Internal values
     signal int_mask_i               : std_logic;
     signal int_ena_i                : std_logic;
 
@@ -158,16 +154,16 @@ architecture rtl of int_module is
 
 begin
 
-    ------------------------------------------------------------------------
-    -- Interrupt status - Set priority 
-    ------------------------------------------------------------------------
+    -----------------------------------------------------------------------------------------------
+    -- Interrupt status - Set priority
+    -----------------------------------------------------------------------------------------------
     int_stat_proc : process(res_n, clk_sys)
     begin
         if (res_n = '0') then
             int_status <= '0';
 
         elsif rising_edge(clk_sys) then
-          
+
             -- Setting Interrupt
             if (int_status_set = '1' and int_mask_i = '0') then
                 int_status <= '1';
@@ -181,9 +177,9 @@ begin
     end process;
 
 
-    ------------------------------------------------------------------------
+    -----------------------------------------------------------------------------------------------
     -- Interrupt mask
-    ------------------------------------------------------------------------
+    -----------------------------------------------------------------------------------------------
 
     int_mask_proc : process(res_n, clk_sys)
     begin
@@ -191,7 +187,7 @@ begin
             int_mask_i <= '0';
 
         elsif rising_edge(clk_sys) then
-          
+
             -- Setting / Clearing Interrupt Mask
             if (int_mask_load = '1') then
                 int_mask_i <= int_mask_next;
@@ -200,21 +196,21 @@ begin
         end if;
     end process;
 
-    int_mask_load        <= int_mask_set or int_mask_clear;
-    int_mask_next        <= '1' when (int_mask_set = '1')
-                                else
-                            '0';
+    int_mask_load <= int_mask_set or int_mask_clear;
+    int_mask_next <= '1' when (int_mask_set = '1')
+                         else
+                     '0';
 
-    ------------------------------------------------------------------------
+    -----------------------------------------------------------------------------------------------
     -- Interrupt Enable
-    ------------------------------------------------------------------------
+    -----------------------------------------------------------------------------------------------
     int_ena_proc : process(res_n, clk_sys)
     begin
         if (res_n = '0') then
             int_ena_i <= '0';
 
         elsif rising_edge(clk_sys) then
-          
+
             -- Setting Interrupt Mask
             if (int_ena_set = '1') then
                 int_ena_i <= '1';

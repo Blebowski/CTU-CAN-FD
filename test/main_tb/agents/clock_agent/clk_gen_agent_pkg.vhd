@@ -1,18 +1,18 @@
 --------------------------------------------------------------------------------
--- 
--- CTU CAN FD IP Core 
+--
+-- CTU CAN FD IP Core
 -- Copyright (C) 2021-present Ondrej Ille
--- 
+--
 -- Permission is hereby granted, free of charge, to any person obtaining a copy
 -- of this VHDL component and associated documentation files (the "Component"),
 -- to use, copy, modify, merge, publish, distribute the Component for
 -- educational, research, evaluation, self-interest purposes. Using the
 -- Component for commercial purposes is forbidden unless previously agreed with
 -- Copyright holder.
--- 
+--
 -- The above copyright notice and this permission notice shall be included in
 -- all copies or substantial portions of the Component.
--- 
+--
 -- THE COMPONENT IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 -- IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 -- FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -20,38 +20,38 @@
 -- LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
 -- FROM, OUT OF OR IN CONNECTION WITH THE COMPONENT OR THE USE OR OTHER DEALINGS
 -- IN THE COMPONENT.
--- 
+--
 -- The CAN protocol is developed by Robert Bosch GmbH and protected by patents.
 -- Anybody who wants to implement this IP core on silicon has to obtain a CAN
 -- protocol license from Bosch.
--- 
+--
 -- -------------------------------------------------------------------------------
--- 
--- CTU CAN FD IP Core 
+--
+-- CTU CAN FD IP Core
 -- Copyright (C) 2015-2020 MIT License
--- 
+--
 -- Authors:
 --     Ondrej Ille <ondrej.ille@gmail.com>
 --     Martin Jerabek <martin.jerabek01@gmail.com>
--- 
--- Project advisors: 
+--
+-- Project advisors:
 -- 	Jiri Novak <jnovak@fel.cvut.cz>
 -- 	Pavel Pisa <pisa@cmp.felk.cvut.cz>
--- 
+--
 -- Department of Measurement         (http://meas.fel.cvut.cz/)
 -- Faculty of Electrical Engineering (http://www.fel.cvut.cz)
 -- Czech Technical University        (http://www.cvut.cz/)
--- 
+--
 -- Permission is hereby granted, free of charge, to any person obtaining a copy
 -- of this VHDL component and associated documentation files (the "Component"),
 -- to deal in the Component without restriction, including without limitation
 -- the rights to use, copy, modify, merge, publish, distribute, sublicense,
 -- and/or sell copies of the Component, and to permit persons to whom the
 -- Component is furnished to do so, subject to the following conditions:
--- 
+--
 -- The above copyright notice and this permission notice shall be included in
 -- all copies or substantial portions of the Component.
--- 
+--
 -- THE COMPONENT IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 -- IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 -- FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -59,11 +59,11 @@
 -- LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
 -- FROM, OUT OF OR IN CONNECTION WITH THE COMPONENT OR THE USE OR OTHER DEALINGS
 -- IN THE COMPONENT.
--- 
+--
 -- The CAN protocol is developed by Robert Bosch GmbH and protected by patents.
 -- Anybody who wants to implement this IP core on silicon has to obtain a CAN
 -- protocol license from Bosch.
--- 
+--
 --------------------------------------------------------------------------------
 
 --------------------------------------------------------------------------------
@@ -79,12 +79,13 @@
 Library ctu_can_fd_tb;
 context ctu_can_fd_tb.ieee_context;
 context ctu_can_fd_tb.tb_common_context;
+use ctu_can_fd_tb.tb_shared_vars_pkg.all;
 
 
 package clk_gen_agent_pkg is
 
     ---------------------------------------------------------------------------
-    -- Clock generator component    
+    -- Clock generator component
     ---------------------------------------------------------------------------
     component clk_gen_agent is
     port (
@@ -96,14 +97,14 @@ package clk_gen_agent_pkg is
 
     ---------------------------------------------------------------------------
     ---------------------------------------------------------------------------
-    -- Clock generator agent API    
+    -- Clock generator agent API
     ---------------------------------------------------------------------------
     ---------------------------------------------------------------------------
 
     ---------------------------------------------------------------------------
     -- Start clock generator agent.
     --
-    -- @param channel   Channel on which to send the request 
+    -- @param channel   Channel on which to send the request
     ---------------------------------------------------------------------------
     procedure clk_gen_agent_start(
         signal channel          : inout t_com_channel
@@ -117,7 +118,7 @@ package clk_gen_agent_pkg is
     procedure clk_gen_agent_stop(
         signal channel          : inout t_com_channel
     );
-        
+
     ---------------------------------------------------------------------------
     -- Set clock period of clock generator agent.
     --
@@ -128,7 +129,7 @@ package clk_gen_agent_pkg is
         signal      channel     : inout t_com_channel;
         constant    period      : in    time
     );
-    
+
     ---------------------------------------------------------------------------
     -- Get clock period of clock generator agent.
     --
@@ -139,23 +140,23 @@ package clk_gen_agent_pkg is
         signal      channel     : inout t_com_channel;
         variable    period      : out   time
     );
-    
+
     ---------------------------------------------------------------------------
     -- Set clock generator jitter.
     --
     -- @param channel   Channel on which to send the request
-    -- @param jitter    Jitter to be set.    
+    -- @param jitter    Jitter to be set.
     ---------------------------------------------------------------------------
     procedure clk_agent_set_jitter(
         signal      channel     : inout t_com_channel;
         constant    jitter      : in    time
     );
-    
+
     ---------------------------------------------------------------------------
     -- Get clock generator jitter.
     --
     -- @param channel   Channel on which to send the request
-    -- @param jitter    Obtained jitter.  
+    -- @param jitter    Obtained jitter.
     ---------------------------------------------------------------------------
     procedure clk_agent_get_jitter(
         signal      channel     : inout t_com_channel;
@@ -177,7 +178,7 @@ package clk_gen_agent_pkg is
     -- Get clock generator duty cycle.
     --
     -- @param channel   Channel on which to send the request
-    -- @param duty      Obtained duty cycle.  
+    -- @param duty      Obtained duty cycle.
     ---------------------------------------------------------------------------
     procedure clk_agent_get_duty(
         signal      channel     : inout t_com_channel;
@@ -190,10 +191,10 @@ package clk_gen_agent_pkg is
     -- properly!
     --
     -- During the waiting, communication channel is blocked and shall not be
-    -- used by other processes/agents. 
+    -- used by other processes/agents.
     --
     -- @param channel    Channel on which to send the request
-    -- @param num_cycles Number  
+    -- @param num_cycles Number
     ---------------------------------------------------------------------------
     procedure clk_agent_wait_cycle(
         signal      channel     : inout t_com_channel
@@ -202,7 +203,7 @@ package clk_gen_agent_pkg is
 
     ---------------------------------------------------------------------------
     ---------------------------------------------------------------------------
-    -- Private declarations 
+    -- Private declarations
     ---------------------------------------------------------------------------
     ---------------------------------------------------------------------------
 
@@ -221,13 +222,13 @@ end package;
 
 
 package body clk_gen_agent_pkg is
-    
+
     ---------------------------------------------------------------------------
     ---------------------------------------------------------------------------
     -- Clock generator agent API
     ---------------------------------------------------------------------------
     ---------------------------------------------------------------------------
-    
+
     procedure clk_gen_agent_start(
         signal      channel     : inout t_com_channel
     ) is
@@ -247,7 +248,7 @@ package body clk_gen_agent_pkg is
         debug_m("Clock generator agent stopped");
     end procedure;
 
- 
+
     procedure clk_agent_set_period(
         signal      channel     : inout t_com_channel;
         constant    period      : in    time
@@ -270,8 +271,8 @@ package body clk_gen_agent_pkg is
         period := com_channel_data.get_param;
         debug_m("Clock generator period got");
     end procedure;
- 
- 
+
+
     procedure clk_agent_set_jitter(
         signal      channel     : inout t_com_channel;
         constant    jitter      : in    time
@@ -294,8 +295,8 @@ package body clk_gen_agent_pkg is
         jitter := com_channel_data.get_param;
         debug_m("Clock generator jitter got");
     end procedure;
- 
- 
+
+
     procedure clk_agent_set_duty(
         signal      channel     : inout t_com_channel;
         constant    duty        : in    integer range 0 to 100
@@ -306,8 +307,8 @@ package body clk_gen_agent_pkg is
         send(channel, C_CLOCK_AGENT_ID, CLK_AGNT_CMD_DUTY_SET);
         debug_m("Clock generator period set");
     end procedure;
-    
-    
+
+
     procedure clk_agent_get_duty(
         signal      channel     : inout t_com_channel;
         variable    duty        : out   integer range 0 to 100
@@ -318,8 +319,8 @@ package body clk_gen_agent_pkg is
         duty := com_channel_data.get_param;
         debug_m("Clock generator duty cycle got");
     end procedure;
-    
-    
+
+
     procedure clk_agent_wait_cycle(
         signal      channel     : inout t_com_channel
     ) is
@@ -328,6 +329,6 @@ package body clk_gen_agent_pkg is
         send(channel, C_CLOCK_AGENT_ID, CLK_AGNT_CMD_WAIT_CYCLE);
         debug_m("Waited one clock cycle");
     end procedure;
- 
- 
+
+
 end package body;

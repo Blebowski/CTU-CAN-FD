@@ -1,18 +1,18 @@
 --------------------------------------------------------------------------------
--- 
--- CTU CAN FD IP Core 
+--
+-- CTU CAN FD IP Core
 -- Copyright (C) 2021-present Ondrej Ille
--- 
+--
 -- Permission is hereby granted, free of charge, to any person obtaining a copy
 -- of this VHDL component and associated documentation files (the "Component"),
 -- to use, copy, modify, merge, publish, distribute the Component for
 -- educational, research, evaluation, self-interest purposes. Using the
 -- Component for commercial purposes is forbidden unless previously agreed with
 -- Copyright holder.
--- 
+--
 -- The above copyright notice and this permission notice shall be included in
 -- all copies or substantial portions of the Component.
--- 
+--
 -- THE COMPONENT IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 -- IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 -- FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -20,38 +20,38 @@
 -- LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
 -- FROM, OUT OF OR IN CONNECTION WITH THE COMPONENT OR THE USE OR OTHER DEALINGS
 -- IN THE COMPONENT.
--- 
+--
 -- The CAN protocol is developed by Robert Bosch GmbH and protected by patents.
 -- Anybody who wants to implement this IP core on silicon has to obtain a CAN
 -- protocol license from Bosch.
--- 
+--
 -- -------------------------------------------------------------------------------
--- 
--- CTU CAN FD IP Core 
+--
+-- CTU CAN FD IP Core
 -- Copyright (C) 2015-2020 MIT License
--- 
+--
 -- Authors:
 --     Ondrej Ille <ondrej.ille@gmail.com>
 --     Martin Jerabek <martin.jerabek01@gmail.com>
--- 
--- Project advisors: 
+--
+-- Project advisors:
 -- 	Jiri Novak <jnovak@fel.cvut.cz>
 -- 	Pavel Pisa <pisa@cmp.felk.cvut.cz>
--- 
+--
 -- Department of Measurement         (http://meas.fel.cvut.cz/)
 -- Faculty of Electrical Engineering (http://www.fel.cvut.cz)
 -- Czech Technical University        (http://www.cvut.cz/)
--- 
+--
 -- Permission is hereby granted, free of charge, to any person obtaining a copy
 -- of this VHDL component and associated documentation files (the "Component"),
 -- to deal in the Component without restriction, including without limitation
 -- the rights to use, copy, modify, merge, publish, distribute, sublicense,
 -- and/or sell copies of the Component, and to permit persons to whom the
 -- Component is furnished to do so, subject to the following conditions:
--- 
+--
 -- The above copyright notice and this permission notice shall be included in
 -- all copies or substantial portions of the Component.
--- 
+--
 -- THE COMPONENT IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 -- IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 -- FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -59,11 +59,11 @@
 -- LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
 -- FROM, OUT OF OR IN CONNECTION WITH THE COMPONENT OR THE USE OR OTHER DEALINGS
 -- IN THE COMPONENT.
--- 
+--
 -- The CAN protocol is developed by Robert Bosch GmbH and protected by patents.
 -- Anybody who wants to implement this IP core on silicon has to obtain a CAN
 -- protocol license from Bosch.
--- 
+--
 --------------------------------------------------------------------------------
 
 --------------------------------------------------------------------------------
@@ -79,12 +79,13 @@
 Library ctu_can_fd_tb;
 context ctu_can_fd_tb.ieee_context;
 context ctu_can_fd_tb.tb_common_context;
+use ctu_can_fd_tb.tb_shared_vars_pkg.all;
 
 
 package can_agent_pkg is
 
     ---------------------------------------------------------------------------
-    -- CAN agent component    
+    -- CAN agent component
     ---------------------------------------------------------------------------
     component can_agent is
     generic(
@@ -100,55 +101,55 @@ package can_agent_pkg is
 
     ---------------------------------------------------------------------------
     ---------------------------------------------------------------------------
-    -- CAN agent API    
+    -- CAN agent API
     ---------------------------------------------------------------------------
     ---------------------------------------------------------------------------
-    
-    constant C_MAX_MSG_LENGTH : natural := 100;    
+
+    constant C_MAX_MSG_LENGTH : natural := 100;
     constant C_EMPTY_STRING : string(1 to C_MAX_MSG_LENGTH) := (OTHERS => ' ');
-    
+
     -- Driver FIFO entry
     type t_can_driver_entry is record
-    
+
         -- Value to be driven
         value           :   std_logic;
-        
+
         -- Time for which to drive this value
         drive_time      :   time;
-        
+
         -- Print message when driving of this item starts
         print_msg       :   boolean;
-        
+
         -- Message to print
         msg             :   string(1 to C_MAX_MSG_LENGTH);
     end record;
 
     -- Simple driver entry (no message)
     type t_can_driver_entry_simple is record
-    
+
         -- Value to be driven
         value           :   std_logic;
-        
+
         -- Time for which to drive this value
         drive_time      :   time;
     end record;
 
     -- Monitor FIFO entry
     type t_can_monitor_entry is record
-    
+
         -- Value to be monitored
         value           :   std_logic;
-        
+
         -- Time for which to monitor this value
         monitor_time    :   time;
-        
+
         -- Sample time after which the value is sampled. This must be lower than
         -- monitor time!
         sample_rate     :   time;
-        
+
         -- Print message when monitoring of this item starts
         print_msg       :   boolean;
-        
+
         -- Message which to print
         msg             :   string(1 to C_MAX_MSG_LENGTH);
     end record;
@@ -164,7 +165,7 @@ package can_agent_pkg is
         trig_driver_start,
         trig_driver_stop
     );
-    
+
     -- Current monitor state
     type t_can_monitor_state is(
         mon_disabled,
@@ -173,7 +174,7 @@ package can_agent_pkg is
         mon_passed,
         mon_failed
     );
-    
+
     ---------------------------------------------------------------------------
     -- Start CAN Agent driver.
     --
@@ -181,7 +182,7 @@ package can_agent_pkg is
     ---------------------------------------------------------------------------
     procedure can_agent_driver_start(
         signal channel  : inout t_com_channel
-    ); 
+    );
 
     ---------------------------------------------------------------------------
     -- Stop CAN Agent driver. If driving of an item is in progress, this item
@@ -191,7 +192,7 @@ package can_agent_pkg is
     ---------------------------------------------------------------------------
     procedure can_agent_driver_stop(
         signal channel  : inout t_com_channel
-    ); 
+    );
 
     ---------------------------------------------------------------------------
     -- Flush CAN Agent driver FIFO. All items which remain to be driven will
@@ -201,7 +202,7 @@ package can_agent_pkg is
     ---------------------------------------------------------------------------
     procedure can_agent_driver_flush(
          signal channel  : inout t_com_channel
-    ); 
+    );
 
     ---------------------------------------------------------------------------
     -- Check if driving of items is in progress.
@@ -224,7 +225,7 @@ package can_agent_pkg is
         signal      channel     : inout t_com_channel;
         variable    driven_val  : out   std_logic
     );
-    
+
     ---------------------------------------------------------------------------
     -- Push item into driver FIFO.
     --
@@ -269,7 +270,7 @@ package can_agent_pkg is
         constant    value       : in    std_logic;
         constant    time        : in    time
     );
-    
+
     ---------------------------------------------------------------------------
     -- Push value into driver FIFO.
     --
@@ -285,7 +286,7 @@ package can_agent_pkg is
         constant    time        : in    time;
         constant    msg         : in    string
     );
-    
+
     ---------------------------------------------------------------------------
     -- Drive single item. This producedure will push the item into driver FIFO,
     -- enable the driver and wait until this item is driven. If other items
@@ -298,7 +299,7 @@ package can_agent_pkg is
         signal      channel     : inout t_com_channel;
         variable    item        : in    t_can_driver_entry
     );
-    
+
     ---------------------------------------------------------------------------
     -- Drive all items from driver FIFO. This procedure will enable driver and
     -- wait until all items in driver FIFO are driven.
@@ -336,7 +337,7 @@ package can_agent_pkg is
         constant    value       : in    std_logic;
         constant    time        : in    time
     );
-    
+
     ---------------------------------------------------------------------------
     -- Drive single value. This producedure will push the item into driver FIFO,
     -- enable the driver and wait until this item is driven. If other items
@@ -354,7 +355,7 @@ package can_agent_pkg is
         constant    time        : in    time;
         constant    msg         : in    string
     );
-    
+
     ---------------------------------------------------------------------------
     -- Start Can agent monitor.
     --
@@ -372,7 +373,7 @@ package can_agent_pkg is
     procedure can_agent_monitor_stop(
         signal      channel     : inout t_com_channel
     );
-    
+
     ---------------------------------------------------------------------------
     -- Flush monitor FIFO. All item in Monitor FIFO which were not monitored
     -- will be effectively erased.
@@ -382,7 +383,7 @@ package can_agent_pkg is
     procedure can_agent_monitor_flush(
         signal      channel     : inout t_com_channel
     );
-    
+
     --------------------------------------------------------------------------
     -- Get state of Monitor. Monitor can be in one of following states:
     --  Idle
@@ -455,7 +456,7 @@ package can_agent_pkg is
         signal      channel     : inout t_com_channel;
         constant    item        : in    t_can_monitor_entry
     );
-    
+
     --------------------------------------------------------------------------
     -- Enable monitor (Move it from "Idle" to "Waiting for trigger") and wait
     -- until it monitors all items. If timeout occurs before all items were
@@ -480,7 +481,7 @@ package can_agent_pkg is
     --
     -- @param channel       Channel on which to send the request
     -- @param trigger       Trigger to configure
-    ---------------------------------------------------------------------------    
+    ---------------------------------------------------------------------------
     procedure can_agent_monitor_set_trigger(
         signal      channel     : inout t_com_channel;
         constant    trigger     : in    t_can_monitor_trigger
@@ -491,12 +492,12 @@ package can_agent_pkg is
     --
     -- @param channel       Channel on which to send the request
     -- @param trigger       Trigger to obtain
-    ---------------------------------------------------------------------------    
+    ---------------------------------------------------------------------------
     procedure can_agent_monitor_get_trigger(
         signal      channel     : inout t_com_channel;
         variable    trigger     : out   t_can_monitor_trigger
     );
-    
+
     --------------------------------------------------------------------------
     -- Set sample rate for CAN agent monitor. With this sample rate, monitor
     -- samples can_tx during monitoring of an item from monitor FIFO. Time for
@@ -505,7 +506,7 @@ package can_agent_pkg is
     --
     -- @param channel       Channel on which to send the request
     -- @param sample_rate   Sample rate to set
-    ---------------------------------------------------------------------------    
+    ---------------------------------------------------------------------------
     procedure can_agent_monitor_set_sample_rate(
         signal      channel     : inout t_com_channel;
         constant    sample_rate : in    time
@@ -516,12 +517,12 @@ package can_agent_pkg is
     --
     -- @param channel       Channel on which to send the request
     -- @param sample_rate   Obtained sample rate
-    ---------------------------------------------------------------------------    
+    ---------------------------------------------------------------------------
     procedure can_agent_monitor_get_sample_rate(
         signal      channel     : inout t_com_channel;
         variable    sample_rate : out   time
     );
-    
+
     --------------------------------------------------------------------------
     -- Push value into CAN agent monitor FIFO.
     --
@@ -565,7 +566,7 @@ package can_agent_pkg is
         constant    value       : in    std_logic;
         constant    mon_time    : in    time
     );
-    
+
     ---------------------------------------------------------------------------
     -- Monitor single value by CAN agent monitor. If other values are in
     -- monitor FIFO, these will be monitored first. If timeout elapses, then
@@ -626,7 +627,7 @@ package can_agent_pkg is
 
     ---------------------------------------------------------------------------
     ---------------------------------------------------------------------------
-    -- Private declarations 
+    -- Private declarations
     ---------------------------------------------------------------------------
     ---------------------------------------------------------------------------
 
@@ -641,7 +642,7 @@ package can_agent_pkg is
     constant CAN_AGNT_CMD_DRIVER_WAIT_FINISH            : integer := 7;
     constant CAN_AGNT_CMD_DRIVER_DRIVE_SINGLE_ITEM      : integer := 8;
     constant CAN_AGNT_CMD_DRIVER_DRIVE_ALL_ITEMS        : integer := 9;
-   
+
     constant CAN_AGNT_CMD_MONITOR_START                 : integer := 10;
     constant CAN_AGNT_CMD_MONITOR_STOP                  : integer := 11;
     constant CAN_AGNT_CMD_MONITOR_FLUSH                 : integer := 12;
@@ -652,20 +653,20 @@ package can_agent_pkg is
     constant CAN_AGNT_CMD_MONITOR_WAIT_FINISH           : integer := 17;
     constant CAN_AGNT_CMD_MONITOR_MONITOR_SINGLE_ITEM   : integer := 18;
     constant CAN_AGNT_CMD_MONITOR_MONITOR_ALL_ITEMS     : integer := 19;
-    
+
     constant CAN_AGNT_CMD_MONITOR_SET_TRIGGER           : integer := 20;
     constant CAN_AGNT_CMD_MONITOR_GET_TRIGGER           : integer := 21;
 
     constant CAN_AGNT_CMD_MONITOR_SET_SAMPLE_RATE       : integer := 22;
     constant CAN_AGNT_CMD_MONITOR_GET_SAMPLE_RATE       : integer := 23;
-    
+
     constant CAN_AGNT_CMD_MONITOR_CHECK_RESULT          : integer := 24;
 
     constant CAN_AGNT_CMD_MONITOR_SET_INPUT_DELAY       : integer := 25;
-    
+
     constant CAN_AGNT_CMD_TX_RX_FEEDBACK_ENABLE         : integer := 26;
     constant CAN_AGNT_CMD_TX_RX_FEEDBACK_DISABLE        : integer := 27;
-    
+
     constant CAN_AGNT_CMD_SET_WAIT_FOR_MONITOR          : integer := 28;
 
     -- Tag for messages
@@ -681,7 +682,7 @@ package body can_agent_pkg is
     -- Clock generator agent API implementation
     ---------------------------------------------------------------------------
     ---------------------------------------------------------------------------
-    
+
     procedure can_agent_driver_start(
         signal      channel     : inout t_com_channel
     ) is
@@ -690,8 +691,8 @@ package body can_agent_pkg is
         send(channel, C_CAN_AGENT_ID, CAN_AGNT_CMD_DRIVER_START);
         debug_m(CAN_AGENT_TAG & " Driver started");
     end procedure;
-    
-    
+
+
     procedure can_agent_driver_stop(
         signal      channel     : inout t_com_channel
     ) is
@@ -755,7 +756,7 @@ package body can_agent_pkg is
             com_channel_data.set_param(item.msg);
         end if;
         send(channel, C_CAN_AGENT_ID, CAN_AGNT_CMD_DRIVER_PUSH_ITEM);
-         
+
         debug_m(CAN_AGENT_TAG & "Item pushed into driver FIFO");
     end procedure;
 
@@ -821,7 +822,7 @@ package body can_agent_pkg is
     ) is
     begin
         info_m(CAN_AGENT_TAG & "Driving single item");
-        
+
         com_channel_data.set_param(item.value);
         com_channel_data.set_param(item.drive_time);
         com_channel_data.set_param(item.print_msg);
@@ -829,7 +830,7 @@ package body can_agent_pkg is
             com_channel_data.set_param(item.msg);
         end if;
         send(channel, C_CAN_AGENT_ID, CAN_AGNT_CMD_DRIVER_DRIVE_SINGLE_ITEM);
-        
+
         debug_m(CAN_AGENT_TAG & "Single item driven");
     end procedure;
 
@@ -837,7 +838,7 @@ package body can_agent_pkg is
     procedure can_agent_driver_drive_all_items(
         signal      channel     : inout t_com_channel
     ) is
-    begin    
+    begin
         info_m(CAN_AGENT_TAG & "Driving all items in driver FIFO");
         send(channel, C_CAN_AGENT_ID, CAN_AGNT_CMD_DRIVER_DRIVE_ALL_ITEMS);
         info_m(CAN_AGENT_TAG & "All items driven from driver FIFO driven");
@@ -847,7 +848,7 @@ package body can_agent_pkg is
         signal      channel         : inout t_com_channel;
         constant    wait_for_mon    : in    boolean
     ) is
-    begin    
+    begin
         info_m(CAN_AGENT_TAG & "Setting driver wait for monitor to: " &
              boolean'image(wait_for_mon));
 
@@ -945,8 +946,8 @@ package body can_agent_pkg is
         monitored_val := com_channel_data.get_param;
         debug_m(CAN_AGENT_TAG & " Monitor value got");
     end procedure;
-    
-    
+
+
     procedure can_agent_monitor_push_item(
         signal      channel     : inout t_com_channel;
         constant    item        : in    t_can_monitor_entry
@@ -955,7 +956,7 @@ package body can_agent_pkg is
         debug_m(CAN_AGENT_TAG  & "Pushing item to monitor FIFO (" &
                                 std_logic'image(item.value) & ", " &
                                 time'image(item.monitor_time) & ")");
-        
+
         com_channel_data.set_param(item.value);
         com_channel_data.set_param(item.monitor_time);
         com_channel_data.set_param(item.print_msg);
@@ -964,12 +965,12 @@ package body can_agent_pkg is
         end if;
 
         com_channel_data.set_param2(item.sample_rate);
-        
+
         send(channel, C_CAN_AGENT_ID, CAN_AGNT_CMD_MONITOR_PUSH_ITEM);
         debug_m(CAN_AGENT_TAG & " Monitor item pushed");
     end procedure;
 
-    
+
     procedure can_agent_monitor_set_wait_timeout(
         signal      channel     : inout t_com_channel;
         constant    timeout     : in    time
@@ -981,7 +982,7 @@ package body can_agent_pkg is
         debug_m(CAN_AGENT_TAG & " wait timeout set");
     end procedure;
 
-    
+
     procedure can_agent_monitor_wait_finish(
         signal      channel     : inout t_com_channel
     )is
@@ -998,7 +999,7 @@ package body can_agent_pkg is
     ) is
     begin
         debug_m(CAN_AGENT_TAG  & "Monitoring single item");
-        
+
         com_channel_data.set_param(item.value);
         com_channel_data.set_param(item.monitor_time);
         com_channel_data.set_param(item.print_msg);
@@ -1006,12 +1007,12 @@ package body can_agent_pkg is
             com_channel_data.set_param(item.msg);
         end if;
         com_channel_data.set_param2(item.sample_rate);
-        
+
         send(channel, C_CAN_AGENT_ID, CAN_AGNT_CMD_MONITOR_MONITOR_SINGLE_ITEM);
 
         debug_m(CAN_AGENT_TAG & " Single item monitored");
     end procedure;
-    
+
 
     procedure can_agent_monitor_all_items(
         signal      channel     : inout t_com_channel
@@ -1120,7 +1121,7 @@ package body can_agent_pkg is
         item.print_msg := false;
         can_agent_monitor_single_item(channel, item);
     end procedure;
-    
+
 
     procedure can_agent_monitor_monitor_value(
         signal      channel     : inout t_com_channel;

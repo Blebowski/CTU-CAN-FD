@@ -1,18 +1,18 @@
 --------------------------------------------------------------------------------
--- 
--- CTU CAN FD IP Core 
+--
+-- CTU CAN FD IP Core
 -- Copyright (C) 2021-present Ondrej Ille
--- 
+--
 -- Permission is hereby granted, free of charge, to any person obtaining a copy
 -- of this VHDL component and associated documentation files (the "Component"),
 -- to use, copy, modify, merge, publish, distribute the Component for
 -- educational, research, evaluation, self-interest purposes. Using the
 -- Component for commercial purposes is forbidden unless previously agreed with
 -- Copyright holder.
--- 
+--
 -- The above copyright notice and this permission notice shall be included in
 -- all copies or substantial portions of the Component.
--- 
+--
 -- THE COMPONENT IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 -- IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 -- FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -20,38 +20,38 @@
 -- LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
 -- FROM, OUT OF OR IN CONNECTION WITH THE COMPONENT OR THE USE OR OTHER DEALINGS
 -- IN THE COMPONENT.
--- 
+--
 -- The CAN protocol is developed by Robert Bosch GmbH and protected by patents.
 -- Anybody who wants to implement this IP core on silicon has to obtain a CAN
 -- protocol license from Bosch.
--- 
+--
 -- -------------------------------------------------------------------------------
--- 
--- CTU CAN FD IP Core 
+--
+-- CTU CAN FD IP Core
 -- Copyright (C) 2015-2020 MIT License
--- 
+--
 -- Authors:
 --     Ondrej Ille <ondrej.ille@gmail.com>
 --     Martin Jerabek <martin.jerabek01@gmail.com>
--- 
--- Project advisors: 
+--
+-- Project advisors:
 -- 	Jiri Novak <jnovak@fel.cvut.cz>
 -- 	Pavel Pisa <pisa@cmp.felk.cvut.cz>
--- 
+--
 -- Department of Measurement         (http://meas.fel.cvut.cz/)
 -- Faculty of Electrical Engineering (http://www.fel.cvut.cz)
 -- Czech Technical University        (http://www.cvut.cz/)
--- 
+--
 -- Permission is hereby granted, free of charge, to any person obtaining a copy
 -- of this VHDL component and associated documentation files (the "Component"),
 -- to deal in the Component without restriction, including without limitation
 -- the rights to use, copy, modify, merge, publish, distribute, sublicense,
 -- and/or sell copies of the Component, and to permit persons to whom the
 -- Component is furnished to do so, subject to the following conditions:
--- 
+--
 -- The above copyright notice and this permission notice shall be included in
 -- all copies or substantial portions of the Component.
--- 
+--
 -- THE COMPONENT IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 -- IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 -- FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -59,11 +59,11 @@
 -- LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
 -- FROM, OUT OF OR IN CONNECTION WITH THE COMPONENT OR THE USE OR OTHER DEALINGS
 -- IN THE COMPONENT.
--- 
+--
 -- The CAN protocol is developed by Robert Bosch GmbH and protected by patents.
 -- Anybody who wants to implement this IP core on silicon has to obtain a CAN
 -- protocol license from Bosch.
--- 
+--
 --------------------------------------------------------------------------------
 
 --------------------------------------------------------------------------------
@@ -78,12 +78,13 @@
 Library ctu_can_fd_tb;
 context ctu_can_fd_tb.ieee_context;
 context ctu_can_fd_tb.tb_common_context;
+use ctu_can_fd_tb.tb_shared_vars_pkg.all;
 
 
 package timestamp_agent_pkg is
 
     ---------------------------------------------------------------------------
-    -- Interrupt agent component    
+    -- Interrupt agent component
     ---------------------------------------------------------------------------
     component timestamp_agent is
     port (
@@ -94,7 +95,7 @@ package timestamp_agent_pkg is
 
     ---------------------------------------------------------------------------
     ---------------------------------------------------------------------------
-    -- Timestamp agent API    
+    -- Timestamp agent API
     ---------------------------------------------------------------------------
     ---------------------------------------------------------------------------
 
@@ -137,7 +138,7 @@ package timestamp_agent_pkg is
         signal   channel     : inout t_com_channel;
         constant prescaler   : in    natural
     );
-    
+
     ---------------------------------------------------------------------------
     -- Preset timestamp value of timestamp agent
     --
@@ -148,8 +149,8 @@ package timestamp_agent_pkg is
         signal   channel     : inout t_com_channel;
         constant timestamp   : in    std_logic_vector(63 downto 0)
     );
-   
-    
+
+
     ---------------------------------------------------------------------------
     -- Gets current value of timestamp
     --
@@ -163,7 +164,7 @@ package timestamp_agent_pkg is
 
     ---------------------------------------------------------------------------
     ---------------------------------------------------------------------------
-    -- Private declarations 
+    -- Private declarations
     ---------------------------------------------------------------------------
     ---------------------------------------------------------------------------
 
@@ -174,7 +175,7 @@ package timestamp_agent_pkg is
     constant TIMESTAMP_AGENT_CMD_PRESCALER_SET          : integer := 3;
     constant TIMESTAMP_AGENT_CMD_TIMESTAMP_PRESET       : integer := 4;
     constant TIMESTAMP_AGENT_CMD_GET_TIMESTAMP          : integer := 5;
-    
+
     -- Tag for messages
     constant TIMESTAMP_AGENT_TAG : string := "Timestamp Agent: ";
 
@@ -182,7 +183,7 @@ end package;
 
 
 package body timestamp_agent_pkg is
-    
+
     procedure timestamp_agent_start(
         signal   channel     : inout t_com_channel
     ) is

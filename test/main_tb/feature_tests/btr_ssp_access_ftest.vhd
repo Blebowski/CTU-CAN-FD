@@ -1,18 +1,18 @@
 --------------------------------------------------------------------------------
--- 
--- CTU CAN FD IP Core 
+--
+-- CTU CAN FD IP Core
 -- Copyright (C) 2021-present Ondrej Ille
--- 
+--
 -- Permission is hereby granted, free of charge, to any person obtaining a copy
 -- of this VHDL component and associated documentation files (the "Component"),
 -- to use, copy, modify, merge, publish, distribute the Component for
 -- educational, research, evaluation, self-interest purposes. Using the
 -- Component for commercial purposes is forbidden unless previously agreed with
 -- Copyright holder.
--- 
+--
 -- The above copyright notice and this permission notice shall be included in
 -- all copies or substantial portions of the Component.
--- 
+--
 -- THE COMPONENT IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 -- IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 -- FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -20,38 +20,38 @@
 -- LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
 -- FROM, OUT OF OR IN CONNECTION WITH THE COMPONENT OR THE USE OR OTHER DEALINGS
 -- IN THE COMPONENT.
--- 
+--
 -- The CAN protocol is developed by Robert Bosch GmbH and protected by patents.
 -- Anybody who wants to implement this IP core on silicon has to obtain a CAN
 -- protocol license from Bosch.
--- 
+--
 -- -------------------------------------------------------------------------------
--- 
--- CTU CAN FD IP Core 
+--
+-- CTU CAN FD IP Core
 -- Copyright (C) 2015-2020 MIT License
--- 
+--
 -- Authors:
 --     Ondrej Ille <ondrej.ille@gmail.com>
 --     Martin Jerabek <martin.jerabek01@gmail.com>
--- 
--- Project advisors: 
+--
+-- Project advisors:
 -- 	Jiri Novak <jnovak@fel.cvut.cz>
 -- 	Pavel Pisa <pisa@cmp.felk.cvut.cz>
--- 
+--
 -- Department of Measurement         (http://meas.fel.cvut.cz/)
 -- Faculty of Electrical Engineering (http://www.fel.cvut.cz)
 -- Czech Technical University        (http://www.cvut.cz/)
--- 
+--
 -- Permission is hereby granted, free of charge, to any person obtaining a copy
 -- of this VHDL component and associated documentation files (the "Component"),
 -- to deal in the Component without restriction, including without limitation
 -- the rights to use, copy, modify, merge, publish, distribute, sublicense,
 -- and/or sell copies of the Component, and to permit persons to whom the
 -- Component is furnished to do so, subject to the following conditions:
--- 
+--
 -- The above copyright notice and this permission notice shall be included in
 -- all copies or substantial portions of the Component.
--- 
+--
 -- THE COMPONENT IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 -- IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 -- FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -59,11 +59,11 @@
 -- LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
 -- FROM, OUT OF OR IN CONNECTION WITH THE COMPONENT OR THE USE OR OTHER DEALINGS
 -- IN THE COMPONENT.
--- 
+--
 -- The CAN protocol is developed by Robert Bosch GmbH and protected by patents.
 -- Anybody who wants to implement this IP core on silicon has to obtain a CAN
 -- protocol license from Bosch.
--- 
+--
 --------------------------------------------------------------------------------
 
 --------------------------------------------------------------------------------
@@ -73,8 +73,8 @@
 --  BTR, BTR_FD and SSP_CFG register access feature test.
 --
 -- @Verifies:
---  @1. When node is disabled SETTINGS[ENA]='0', BTR, BTR_FD and SSP_CFG registers
---      are not writable. When node is enabled, they are writable!
+--  @1. When node is enabled SETTINGS[ENA]='1', BTR, BTR_FD and SSP_CFG registers
+--      are not writable. When node is disabled, they are writable!
 --
 -- @Test sequence:
 --  @1. Read values in BTR, BTR_FD and SSP_CFG registers. Try to write them,
@@ -125,7 +125,7 @@ package body btr_ssp_access_ftest is
     begin
 
         ----------------------------------------------------------------------
-        -- @1. Read values in BTR, BTR_FD and SSP_CFG registers. Try to write 
+        -- @1. Read values in BTR, BTR_FD and SSP_CFG registers. Try to write
         --     them, read them back and check that value has not changed!
         --     DUT is enabled!
         ----------------------------------------------------------------------
@@ -143,7 +143,7 @@ package body btr_ssp_access_ftest is
         CAN_write(rand_value, BTR_FD_ADR, DUT_NODE, chn);
         rand_logic_vect_v(rand_value, 0.5);
         CAN_write(rand_value_16, SSP_CFG_ADR, DUT_NODE, chn);
-        
+
         CAN_read(btr_2, BTR_ADR, DUT_NODE, chn);
         CAN_read(btr_fd_2, BTR_FD_ADR, DUT_NODE, chn);
         CAN_read(ssp_cfg_2, SSP_CFG_ADR, DUT_NODE, chn);
@@ -160,12 +160,12 @@ package body btr_ssp_access_ftest is
 
         CAN_turn_controller(false, DUT_NODE, chn);
         CAN_turn_controller(false, TEST_NODE, chn);
-        
+
         rand_logic_vect_v(rand_value, 0.5);
         rand_logic_vect_v(rand_value_16, 0.5);
 
         CAN_write(rand_value, BTR_ADR, DUT_NODE, chn);
-        
+
         CAN_read(btr, BTR_ADR, DUT_NODE, chn);
         check_m(btr = rand_value, "BTR register written!");
 
@@ -174,18 +174,18 @@ package body btr_ssp_access_ftest is
         rand_value(12) := '0';
         rand_value(6) := '0'; -- These bits are not implemented!
         CAN_write(rand_value, BTR_FD_ADR, DUT_NODE, chn);
-        
+
         CAN_read(btr, BTR_FD_ADR, DUT_NODE, chn);
         check_m(btr = rand_value, "BTR FD register written!");
 
         rand_logic_vect_v(rand_value, 0.5);
         rand_value_16(15 downto 10) := (OTHERS => '0');
         CAN_write(rand_value_16, SSP_CFG_ADR, DUT_NODE, chn);
-        
+
         CAN_read(ssp_cfg, SSP_CFG_ADR, DUT_NODE, chn);
-       
+
         check_m(ssp_cfg = rand_value_16, "SSP CFG register written!");
 
   end procedure;
-  
+
 end package body;

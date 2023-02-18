@@ -1,18 +1,18 @@
 --------------------------------------------------------------------------------
--- 
--- CTU CAN FD IP Core 
+--
+-- CTU CAN FD IP Core
 -- Copyright (C) 2021-present Ondrej Ille
--- 
+--
 -- Permission is hereby granted, free of charge, to any person obtaining a copy
 -- of this VHDL component and associated documentation files (the "Component"),
 -- to use, copy, modify, merge, publish, distribute the Component for
 -- educational, research, evaluation, self-interest purposes. Using the
 -- Component for commercial purposes is forbidden unless previously agreed with
 -- Copyright holder.
--- 
+--
 -- The above copyright notice and this permission notice shall be included in
 -- all copies or substantial portions of the Component.
--- 
+--
 -- THE COMPONENT IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 -- IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 -- FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -20,38 +20,38 @@
 -- LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
 -- FROM, OUT OF OR IN CONNECTION WITH THE COMPONENT OR THE USE OR OTHER DEALINGS
 -- IN THE COMPONENT.
--- 
+--
 -- The CAN protocol is developed by Robert Bosch GmbH and protected by patents.
 -- Anybody who wants to implement this IP core on silicon has to obtain a CAN
 -- protocol license from Bosch.
--- 
+--
 -- -------------------------------------------------------------------------------
--- 
--- CTU CAN FD IP Core 
+--
+-- CTU CAN FD IP Core
 -- Copyright (C) 2015-2020 MIT License
--- 
+--
 -- Authors:
 --     Ondrej Ille <ondrej.ille@gmail.com>
 --     Martin Jerabek <martin.jerabek01@gmail.com>
--- 
--- Project advisors: 
+--
+-- Project advisors:
 -- 	Jiri Novak <jnovak@fel.cvut.cz>
 -- 	Pavel Pisa <pisa@cmp.felk.cvut.cz>
--- 
+--
 -- Department of Measurement         (http://meas.fel.cvut.cz/)
 -- Faculty of Electrical Engineering (http://www.fel.cvut.cz)
 -- Czech Technical University        (http://www.cvut.cz/)
--- 
+--
 -- Permission is hereby granted, free of charge, to any person obtaining a copy
 -- of this VHDL component and associated documentation files (the "Component"),
 -- to deal in the Component without restriction, including without limitation
 -- the rights to use, copy, modify, merge, publish, distribute, sublicense,
 -- and/or sell copies of the Component, and to permit persons to whom the
 -- Component is furnished to do so, subject to the following conditions:
--- 
+--
 -- The above copyright notice and this permission notice shall be included in
 -- all copies or substantial portions of the Component.
--- 
+--
 -- THE COMPONENT IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 -- IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 -- FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -59,11 +59,11 @@
 -- LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
 -- FROM, OUT OF OR IN CONNECTION WITH THE COMPONENT OR THE USE OR OTHER DEALINGS
 -- IN THE COMPONENT.
--- 
+--
 -- The CAN protocol is developed by Robert Bosch GmbH and protected by patents.
 -- Anybody who wants to implement this IP core on silicon has to obtain a CAN
 -- protocol license from Bosch.
--- 
+--
 --------------------------------------------------------------------------------
 
 --------------------------------------------------------------------------------
@@ -108,6 +108,7 @@ context ctu_can_fd_tb.ieee_context;
 context ctu_can_fd_tb.tb_common_context;
 
 use ctu_can_fd_tb.mem_bus_agent_pkg.all;
+use ctu_can_fd_tb.tb_shared_vars_pkg.all;
 
 
 entity mem_bus_agent is
@@ -144,30 +145,30 @@ architecture tb of mem_bus_agent is
     ---------------------------------------------------------------------------
     signal mem_bus_agent_ena    :   boolean := false;
     signal is_x_mode            :   boolean := true;
-    
+
     -- Only single setup for all input signals
     signal x_mode_setup         :   time := 2 ns;
     signal x_mode_hold          :   time := 1 ns;
-    
+
     -- Output signal is output data only!
     signal data_out_delay       :   time := 3 ns;
 
     signal period               :   time := 10 ns;
 
     signal read_data_i          :   std_logic_vector(31 downto 0);
-    
+
     signal scs_i                :   std_logic := '0';
-    
+
     -- By default, transactions go to first slave (DUT). This is used in compliance
-    -- tests which only talk to DUT node via Memory bus agent. 
-    signal slave_index          :   natural := 0;      
+    -- tests which only talk to DUT node via Memory bus agent.
+    signal slave_index          :   natural := 0;
 
     signal last_clk_re          :   time := 0 ns;
-    
+
     signal trans_report_en      :   boolean := true;
 
 begin
-    
+
     --------------------------------------------------------------------------
     -- Comunication receiver process
     ---------------------------------------------------------------------------
@@ -179,7 +180,7 @@ begin
         variable tmp_int        : integer;
     begin
         receive_start(default_channel, C_MEM_BUS_AGENT_ID);
-        
+
         -- Command is sent as message type
         cmd := com_channel_data.get_msg_code;
         reply_code := C_REPLY_CODE_OK;
@@ -215,7 +216,7 @@ begin
             wait for 0 ns;
             fifo_wp <= (fifo_wp + 1) mod G_ACCESS_FIFO_DEPTH;
             wait for 0 ns;
-            
+
             wait until (fifo_wp = fifo_rp);
 
         -- Reads are always blocking
@@ -254,7 +255,7 @@ begin
             if (fifo_wp /= fifo_rp) then
                 wait until fifo_wp = fifo_rp;
             end if;
-            
+
         when MEM_BUS_AGNT_CMD_SET_SLAVE_INDEX =>
             slave_index <= com_channel_data.get_param;
             wait for 0 ns;
@@ -282,8 +283,8 @@ begin
         period <= NOW - last_clk_re;
         last_clk_re <= NOW;
     end process;
-    
-    
+
+
     ---------------------------------------------------------------------------
     -- Memory bus access process
     ---------------------------------------------------------------------------
@@ -330,7 +331,7 @@ begin
                     );
             end if;
         end procedure;
-        
+
 
 
         procedure drive_access(
@@ -390,9 +391,9 @@ begin
                     read_data_i <= read_data;
                     wait for 0 ns;
                 end if;
-                
+
                 wait for post_re_time_2;
-                
+
                 if (post_re_time = x_mode_hold) then
                     read_data_i <= read_data;
                 else
@@ -422,7 +423,7 @@ begin
         if (mem_bus_agent_ena) then
             while (true) loop
                 if (not mem_bus_agent_ena) then
-                    exit;            
+                    exit;
                 end if;
 
                 -- There is something in FIFO -> do memory access
@@ -433,7 +434,7 @@ begin
                         print_write_access(curr_access);
                     end if;
                     drive_access(curr_access, read_data_i);
-                    
+
                     wait for 0 ns;
                     curr_access.read_data := read_data_i;
                     if (curr_access.write = false) then
@@ -450,7 +451,7 @@ begin
             wait until mem_bus_agent_ena;
         end if;
     end process;
-    
+
     ---------------------------------------------------------------------------
     -- Propagate chip select to slave which is selected
     ---------------------------------------------------------------------------
@@ -458,5 +459,5 @@ begin
         scs(i) <= scs_i when (slave_index = i) else
                   '0';
     end generate;
-    
+
 end architecture;

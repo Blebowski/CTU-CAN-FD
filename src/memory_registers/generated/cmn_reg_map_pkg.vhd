@@ -1,5 +1,5 @@
 --------------------------------------------------------------------------------
--- 
+--
 -- Register map generation tool
 --
 -- Copyright (C) 2018 Ondrej Ille <ondrej.ille@gmail.com>
@@ -29,7 +29,7 @@
 --   Common package for register map generator. Contains following components:
 --      Address decoder
 --      Data multiplexor
---      Memory register 
+--      Memory register
 --      Access signaller
 --
 --------------------------------------------------------------------------------
@@ -52,8 +52,7 @@ component address_decoder is
         constant address_width         :     natural;
         constant address_entries       :     natural;
         constant addr_vect             :     std_logic_vector;
-        constant registered_out        :     boolean := false;
-        constant reset_polarity        :     std_logic := '0'
+        constant registered_out        :     boolean := false
     );
     port(
         signal clk_sys                :in   std_logic;
@@ -73,15 +72,14 @@ component data_mux is
         constant data_out_width        :     natural := 32;
         constant data_in_width         :     natural := 256;
         constant sel_width             :     natural := 8;
-        constant registered_out        :     boolean := false;
-        constant reset_polarity        :     std_logic := '0'
+        constant registered_out        :     boolean := false
     );
     port(
         signal clk_sys                :in   std_logic;
         signal res_n                  :in   std_logic;
         signal data_selector          :in   std_logic_vector(sel_width - 1 downto 0);
         signal data_in                :in   std_logic_vector(data_in_width - 1 downto 0);
-        signal data_mask_n            :in   std_logic_vector(data_out_width - 1 downto 0);        
+        signal data_mask_n            :in   std_logic_vector(data_out_width - 1 downto 0);
         signal enable                 :in   std_logic;
         signal data_out               :out  std_logic_vector(data_out_width - 1 downto 0)
     );
@@ -94,12 +92,9 @@ end component data_mux;
 --------------------------------------------------------------------------------
 component memory_reg is
     generic(
-        constant data_width           :     natural := 32;
-        constant data_mask            :     std_logic_vector;
-        constant reset_polarity       :     std_logic := '0';
-        constant reset_value          :     std_logic_vector;
-        constant auto_clear           :     std_logic_vector;
-        constant is_lockable          :     boolean     
+        constant data_width                 :     natural := 32;
+        constant reset_value                :     std_logic_vector;
+        constant modified_write_val_clear   :     boolean
     );
     port(
         signal clk_sys                :in   std_logic;
@@ -107,19 +102,32 @@ component memory_reg is
         signal data_in                :in   std_logic_vector(data_width - 1 downto 0);
         signal write                  :in   std_logic;
         signal cs                     :in   std_logic;
-        signal w_be                   :in   std_logic_vector(data_width / 8 - 1 downto 0);
-        signal reg_value              :out  std_logic_vector(data_width - 1 downto 0);
-        signal lock                   :in   std_logic
+        signal reg_value              :out  std_logic_vector(data_width - 1 downto 0)
     );
 end component memory_reg;
 
+component memory_reg_lockable is
+    generic(
+        constant data_width                 :     natural := 32;
+        constant reset_value                :     std_logic_vector;
+        constant modified_write_val_clear   :     boolean
+    );
+    port(
+        signal clk_sys                :in   std_logic;
+        signal res_n                  :in   std_logic;
+        signal data_in                :in   std_logic_vector(data_width - 1 downto 0);
+        signal write                  :in   std_logic;
+        signal cs                     :in   std_logic;
+        signal lock                   :in   std_logic;
+        signal reg_value              :out  std_logic_vector(data_width - 1 downto 0)
+    );
+end component memory_reg_lockable;
 
 --------------------------------------------------------------------------------
 -- Access signaller
 --------------------------------------------------------------------------------
 component access_signaller is
     generic(
-        constant reset_polarity       :     std_logic := '0';
         constant data_width           :     natural := 32;
         constant read_signalling      :     boolean := false;
         constant write_signalling     :     boolean := false;

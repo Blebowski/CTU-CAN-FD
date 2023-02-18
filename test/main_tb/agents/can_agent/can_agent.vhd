@@ -1,18 +1,18 @@
 --------------------------------------------------------------------------------
--- 
--- CTU CAN FD IP Core 
+--
+-- CTU CAN FD IP Core
 -- Copyright (C) 2021-present Ondrej Ille
--- 
+--
 -- Permission is hereby granted, free of charge, to any person obtaining a copy
 -- of this VHDL component and associated documentation files (the "Component"),
 -- to use, copy, modify, merge, publish, distribute the Component for
 -- educational, research, evaluation, self-interest purposes. Using the
 -- Component for commercial purposes is forbidden unless previously agreed with
 -- Copyright holder.
--- 
+--
 -- The above copyright notice and this permission notice shall be included in
 -- all copies or substantial portions of the Component.
--- 
+--
 -- THE COMPONENT IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 -- IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 -- FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -20,38 +20,38 @@
 -- LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
 -- FROM, OUT OF OR IN CONNECTION WITH THE COMPONENT OR THE USE OR OTHER DEALINGS
 -- IN THE COMPONENT.
--- 
+--
 -- The CAN protocol is developed by Robert Bosch GmbH and protected by patents.
 -- Anybody who wants to implement this IP core on silicon has to obtain a CAN
 -- protocol license from Bosch.
--- 
+--
 -- -------------------------------------------------------------------------------
--- 
--- CTU CAN FD IP Core 
+--
+-- CTU CAN FD IP Core
 -- Copyright (C) 2015-2020 MIT License
--- 
+--
 -- Authors:
 --     Ondrej Ille <ondrej.ille@gmail.com>
 --     Martin Jerabek <martin.jerabek01@gmail.com>
--- 
--- Project advisors: 
+--
+-- Project advisors:
 -- 	Jiri Novak <jnovak@fel.cvut.cz>
 -- 	Pavel Pisa <pisa@cmp.felk.cvut.cz>
--- 
+--
 -- Department of Measurement         (http://meas.fel.cvut.cz/)
 -- Faculty of Electrical Engineering (http://www.fel.cvut.cz)
 -- Czech Technical University        (http://www.cvut.cz/)
--- 
+--
 -- Permission is hereby granted, free of charge, to any person obtaining a copy
 -- of this VHDL component and associated documentation files (the "Component"),
 -- to deal in the Component without restriction, including without limitation
 -- the rights to use, copy, modify, merge, publish, distribute, sublicense,
 -- and/or sell copies of the Component, and to permit persons to whom the
 -- Component is furnished to do so, subject to the following conditions:
--- 
+--
 -- The above copyright notice and this permission notice shall be included in
 -- all copies or substantial portions of the Component.
--- 
+--
 -- THE COMPONENT IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 -- IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 -- FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -59,11 +59,11 @@
 -- LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
 -- FROM, OUT OF OR IN CONNECTION WITH THE COMPONENT OR THE USE OR OTHER DEALINGS
 -- IN THE COMPONENT.
--- 
+--
 -- The CAN protocol is developed by Robert Bosch GmbH and protected by patents.
 -- Anybody who wants to implement this IP core on silicon has to obtain a CAN
 -- protocol license from Bosch.
--- 
+--
 --------------------------------------------------------------------------------
 
 --------------------------------------------------------------------------------
@@ -137,7 +137,7 @@
 --  1 TQ! (DUT does not operate on lower granularity than time quanta).
 --
 -------------------------------------------------------------------------------
---    API for work with CAN agent is implemented in "can_agent_pkg" package. 
+--    API for work with CAN agent is implemented in "can_agent_pkg" package.
 --
 --------------------------------------------------------------------------------
 -- Revision History:
@@ -150,7 +150,7 @@ context ctu_can_fd_tb.ieee_context;
 context ctu_can_fd_tb.tb_common_context;
 
 use ctu_can_fd_tb.can_agent_pkg.all;
-
+use ctu_can_fd_tb.tb_shared_vars_pkg.all;
 
 entity can_agent is
     generic(
@@ -187,11 +187,11 @@ architecture tb of can_agent is
     signal monitor_ena              :   boolean := false;
     signal monitor_in_progress      :   boolean := false;
     signal monitor_state            :   t_can_monitor_state := mon_disabled;
-    
+
     ---------------------------------------------------------------------------
     -- Parameters configured over communication library
     ---------------------------------------------------------------------------
-    
+
     -- Driver
     signal driver_wait_timeout      :   time := 3 ms;
     signal driven_item              :   t_can_driver_entry := (
@@ -200,7 +200,7 @@ architecture tb of can_agent is
         print_msg       => false,
         msg             => C_EMPTY_STRING
     );
-    
+
     -- Monitor
     signal monitor_wait_timeout     :   time := 3 ms;
     signal monitored_item           :   t_can_monitor_entry := (
@@ -213,7 +213,7 @@ architecture tb of can_agent is
 
     signal monitor_trigger          :   t_can_monitor_trigger := trig_immediately;
     signal monitor_trig_wait_time   :   time := 100 ns;
-    
+
     -- Debug signal only, shows where can_rx is sampled!
     signal monitor_sample           :   std_logic := '0';
 
@@ -261,7 +261,7 @@ begin
 
     begin
         receive_start(default_channel, C_CAN_AGENT_ID);
-        
+
         -- Command is sent as message type
         cmd := com_channel_data.get_msg_code;
         reply_code := C_REPLY_CODE_OK;
@@ -301,7 +301,7 @@ begin
                 reply_code := C_REPLY_CODE_ERR;
                 error_m(CAN_AGENT_TAG & "Driver FIFO overflow! -> Skipping");
             else
-                driver_fifo_push;             
+                driver_fifo_push;
             end if;
 
         when CAN_AGNT_CMD_DRIVER_SET_WAIT_TIMEOUT =>
@@ -402,7 +402,7 @@ begin
                 push_mon_item.msg := (OTHERS => ' ');
             end if;
             push_mon_item.sample_rate := com_channel_data.get_param2;
-            
+
             monitor_fifo_push;
 
         when CAN_AGNT_CMD_MONITOR_SET_WAIT_TIMEOUT =>
@@ -417,7 +417,7 @@ begin
                 monitor_ena <= true;
                 tmp := true;
             end if;
-            
+
             push_mon_item.value := com_channel_data.get_param;
             push_mon_item.monitor_time := com_channel_data.get_param;
             push_mon_item.print_msg := com_channel_data.get_param;
@@ -432,7 +432,7 @@ begin
                 warning_m(CAN_AGENT_TAG &
                         "Monitor FIFO not empty, other items will be monitored first...");
             end if;
-            
+
             if ((monitor_wp + 1) mod G_MONITOR_FIFO_DEPTH = monitor_rp) then
                 reply_code := C_REPLY_CODE_ERR;
                 error_m(CAN_AGENT_TAG & "Monitor FIFO overflow -> Skipping");
@@ -450,7 +450,7 @@ begin
                 monitor_ena <= false;
             end if;
 
-        when CAN_AGNT_CMD_MONITOR_MONITOR_ALL_ITEMS =>    
+        when CAN_AGNT_CMD_MONITOR_MONITOR_ALL_ITEMS =>
             if (not monitor_ena) then
                 monitor_ena <= true;
                 tmp := true;
@@ -487,7 +487,7 @@ begin
         when CAN_AGNT_CMD_TX_RX_FEEDBACK_ENABLE =>
             tx_to_rx_feedback_enable <= true;
             wait for 0 ns;
-        
+
         when CAN_AGNT_CMD_TX_RX_FEEDBACK_DISABLE =>
             tx_to_rx_feedback_enable <= false;
             wait for 0 ns;
@@ -499,7 +499,7 @@ begin
 
         receive_finish(default_channel, reply_code);
     end process;
-    
+
     ---------------------------------------------------------------------------
     ---------------------------------------------------------------------------
     -- Driver process (reading from Driver FIFO)
@@ -514,7 +514,7 @@ begin
             while (true) loop
                 if (not driver_ena) then
                     driving_in_progress <= false;
-                    exit;            
+                    exit;
                 end if;
 
                 -- There is something in FIFO -> drive it!
@@ -544,7 +544,7 @@ begin
             wait until driver_ena;
         end if;
     end process;
-    
+
     ---------------------------------------------------------------------------
     ---------------------------------------------------------------------------
     -- Monitor process (FSM)
@@ -553,7 +553,7 @@ begin
     monitor_proc : process
         variable mon_count          : integer := 0;
         variable monitored_time     : time := 0 fs;
-        
+
         -----------------------------------------------------------------------
         -- Comparison procedure for monitor. Simple "=" operator is not enough
         -- since GHDL might improprely handle don't care values. Also, compare
@@ -569,7 +569,7 @@ begin
             then
                 return false;
             end if;
-            
+
             if (monitored_item.value = '-' and (can_tx = '1' or can_rx = '0'))
             then
                 return true;
@@ -580,10 +580,10 @@ begin
             elsif (can_tx = '1' and monitored_item.value = '1') then
                 return true;
             end if;
-            
+
             return false;
         end function;
-        
+
     begin
         case monitor_state is
         when mon_disabled =>
@@ -621,7 +621,7 @@ begin
                 --       FIFO is empty so it does not drive anything!
                 when trig_driver_start =>
                     wait until (driver_ena = true) or (monitor_ena = false);
-                    
+
                 when trig_driver_stop =>
                     wait until (driver_ena = false) or (monitor_ena = false);
                 end case;
@@ -630,7 +630,7 @@ begin
                     monitor_state <= mon_disabled;
                 else
                     -- Wait additional monitor delay
-                    wait for mon_input_delay;                    
+                    wait for mon_input_delay;
 
                     monitor_state <= mon_running;
                 end if;
@@ -648,7 +648,7 @@ begin
                 end if;
 
                 if (monitor_wp = monitor_rp) then
-                    
+
                     if (mon_mismatch_ctr = 0) then
                         monitor_state <= mon_passed;
                     else
@@ -665,15 +665,15 @@ begin
                 -- Read value from FIFO and start monitoring it!
                 monitored_item <= monitor_mem(monitor_rp);
                 wait for 0 ns;
-                
-                --debug_m(CAN_AGENT_TAG & 
+
+                --debug_m(CAN_AGENT_TAG &
                 --      "Monitoring: " & std_logic'image(monitored_item.value) &
                 --      " for time: " & time'image(monitored_item.monitor_time));
-                
+
                 --if (monitored_item.print_msg) then
                 --    info_m("Monitoring item: " & monitored_item.msg);
                 --end if;
-                
+
                 mon_count := monitored_item.monitor_time / monitored_item.sample_rate;
                 monitored_time := 0 ns;
                 debug_m("Number of samples: " & integer'image(mon_count));
@@ -696,7 +696,7 @@ begin
 
                         warning_m(CAN_AGENT_TAG &
                                 "Monitor mismatch! Expected: " &
-                                std_logic'image(monitored_item.value) & 
+                                std_logic'image(monitored_item.value) &
                                 " Monitored: " & std_logic'image(can_tx));
                     else
                         monitor_mismatch <= '0';
@@ -726,7 +726,7 @@ begin
             info_m ("*****************************************************");
             monitor_state <= mon_disabled;
             wait for 0 ns;
-            
+
         end case;
     end process;
 

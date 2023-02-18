@@ -1,0 +1,198 @@
+library: ctu_can_fd_tb
+
+source_list:
+
+    ###############################################################################################
+    # Contexts
+    ###############################################################################################
+    - file: main_tb/contexts/ieee_context.vhd
+    - file: main_tb/contexts/rtl_context.vhd
+    - file: main_tb/contexts/tb_agents_context.vhd
+    - file: main_tb/contexts/tb_common_context.vhd
+
+
+    ###############################################################################################
+    # Packages
+    ###############################################################################################
+    - file: main_tb/pkg/tb_prot_types_pkg.vhd
+    - file: main_tb/pkg/tb_shared_vars_pkg.vhd
+
+    - file: main_tb/pkg/tb_report_pkg.vhd
+    #- file: main_tb/pkg/tb_report_pkg_vunit.vhd
+    - file: main_tb/pkg/tb_communication_pkg.vhd
+
+    - file: main_tb/pkg/tb_reg_map_defs_pkg.vhd
+    - file: main_tb/pkg/tb_random_pkg.vhd
+    - file: main_tb/pkg/tb_pli_conversion_pkg.vhd
+
+    - file: main_tb/pkg/can_fd_tb_register_map.vhd
+
+    - file: main_tb/common/signal_delayer.vhd
+
+
+    ###############################################################################################
+    # Packages for agents
+    ###############################################################################################
+    - file: main_tb/agents/test_probe_agent/test_probe_agent_pkg.vhd
+    - file: main_tb/agents/clock_agent/clk_gen_agent_pkg.vhd
+    - file: main_tb/agents/interrupt_agent/interrupt_agent_pkg.vhd
+    - file: main_tb/agents/timestamp_agent/timestamp_agent_pkg.vhd
+    - file: main_tb/agents/memory_bus_agent/mem_bus_agent_pkg.vhd
+    - file: main_tb/agents/reset_agent/reset_agent_pkg.vhd
+    - file: main_tb/agents/can_agent/can_agent_pkg.vhd
+    - file: main_tb/agents/test_controller_agent/test_controller_agent_pkg.vhd
+    - file: main_tb/agents/feature_test_agent/feature_test_agent_pkg.vhd
+    - file: main_tb/agents/reference_test_agent/reference_test_agent_pkg.vhd
+
+
+    ###############################################################################################
+    # Feature tests + their agent
+    ###############################################################################################
+    - file: main_tb/feature_tests/settings_tbfbo_ftest.vhd
+    - file: main_tb/feature_tests/status_eft_ftest.vhd
+    - file: main_tb/feature_tests/fault_state_ftest.vhd
+    - file: main_tb/feature_tests/alc_srr_rtr_2_ftest.vhd
+    - file: main_tb/feature_tests/invalid_frames_ftest.vhd
+    - file: main_tb/feature_tests/mode_rxbam_ftest.vhd
+    - file: main_tb/feature_tests/int_do_ftest.vhd
+    - file: main_tb/feature_tests/err_capt_arb_bit_ftest.vhd
+    - file: main_tb/feature_tests/int_al_ftest.vhd
+    - file: main_tb/feature_tests/err_capt_sof_ftest.vhd
+    - file: main_tb/feature_tests/mode_bus_monitoring_ftest.vhd
+    - file: main_tb/feature_tests/tx_arb_consistency_ftest.vhd
+    - file: main_tb/feature_tests/status_rxs_ftest.vhd
+    - file: main_tb/feature_tests/single_bus_node_ftest.vhd
+    - file: main_tb/feature_tests/ssp_cfg_ftest.vhd
+    - file: main_tb/feature_tests/alc_rtr_ext_id_ftest.vhd
+    - file: main_tb/feature_tests/no_sof_tx_ftest.vhd
+    - file: main_tb/feature_tests/status_rxpe_ftest.vhd
+    - file: main_tb/feature_tests/tst_mem_acc_rx_ftest.vhd
+    - file: main_tb/feature_tests/mode_txbbm_ftest.vhd
+    - file: main_tb/feature_tests/err_norm_fd_ftest.vhd
+    - file: main_tb/feature_tests/btr_ssp_access_ftest.vhd
+    - file: main_tb/feature_tests/txt_buffer_hazard_ftest.vhd
+    - file: main_tb/feature_tests/mode_txbbm_3_ftest.vhd
+    - file: main_tb/feature_tests/ssp_4_bits_flying_ftest.vhd
+    - file: main_tb/feature_tests/glitch_filtering_ftest.vhd
+    - file: main_tb/feature_tests/err_capt_arb_stuff_ftest.vhd
+    - file: main_tb/feature_tests/tx_status_ftest.vhd
+    - file: main_tb/feature_tests/btr_ftest.vhd
+    - file: main_tb/feature_tests/command_frcrst_ftest.vhd
+    - file: main_tb/feature_tests/status_idle_ftest.vhd
+    - file: main_tb/feature_tests/err_capt_ack_ack_ftest.vhd
+    - file: main_tb/feature_tests/message_filter_ftest.vhd
+    - file: main_tb/feature_tests/bus_start_ftest.vhd
+    - file: main_tb/feature_tests/mode_loopback_ftest.vhd
+    - file: main_tb/feature_tests/int_ewl_ftest.vhd
+    - file: main_tb/feature_tests/rec_saturation_ftest.vhd
+    - file: main_tb/feature_tests/status_rxne_ftest.vhd
+    - file: main_tb/feature_tests/byte_enable_ftest.vhd
+    - file: main_tb/feature_tests/rx_status_ftest.vhd
+    - file: main_tb/feature_tests/txt_buffer_byte_access_ftest.vhd
+    - file: main_tb/feature_tests/rx_status_mof_ftest.vhd
+    - file: main_tb/feature_tests/frame_test_ignore_ftest.vhd
+    - file: main_tb/feature_tests/err_capt_ovr_frm_ftest.vhd
+    - file: main_tb/feature_tests/disable_in_tx_ftest.vhd
+    - file: main_tb/feature_tests/int_rx_ftest.vhd
+    - file: main_tb/feature_tests/command_rrb_ftest.vhd
+    - file: main_tb/feature_tests/alc_base_id_ftest.vhd
+    - file: main_tb/feature_tests/one_shot_ftest.vhd
+    - file: main_tb/feature_tests/retr_limit_3_ftest.vhd
+    - file: main_tb/feature_tests/btr_minimal_ftest.vhd
+    - file: main_tb/feature_tests/alc_srr_rtr_ftest.vhd
+    - file: main_tb/feature_tests/err_capt_ctrl_bit_ftest.vhd
+    - file: main_tb/feature_tests/retr_limit_2_ftest.vhd
+    - file: main_tb/feature_tests/int_tx_ftest.vhd
+    - file: main_tb/feature_tests/mode_txbbm_4_ftest.vhd
+    - file: main_tb/feature_tests/mode_fd_enable_ftest.vhd
+    - file: main_tb/feature_tests/int_fcs_ftest.vhd
+    - file: main_tb/feature_tests/timestamp_low_high_ftest.vhd
+    - file: main_tb/feature_tests/rx_settings_rtsop_ftest.vhd
+    - file: main_tb/feature_tests/tx_cmd_set_ready_ftest.vhd
+    - file: main_tb/feature_tests/tx_arb_time_tran_ftest.vhd
+    - file: main_tb/feature_tests/alc_ide_ftest.vhd
+    - file: main_tb/feature_tests/err_capt_data_bit_ftest.vhd
+    - file: main_tb/feature_tests/command_ercrst_ftest.vhd
+    - file: main_tb/feature_tests/btr_maximal_ftest.vhd
+    - file: main_tb/feature_tests/overload_ftest.vhd
+    - file: main_tb/feature_tests/mode_fdrf_ftest.vhd
+    - file: main_tb/feature_tests/tx_priority_change_ftest.vhd
+    - file: main_tb/feature_tests/mode_frame_filters_ftest.vhd
+    - file: main_tb/feature_tests/frame_test_sdlc_ftest.vhd
+    - file: main_tb/feature_tests/btr_fd_ftest.vhd
+    - file: main_tb/feature_tests/device_id_ftest.vhd
+    - file: main_tb/feature_tests/dlc_can20_8_64_bytes_ftest.vhd
+    - file: main_tb/feature_tests/mode_self_test_ftest.vhd
+    - file: main_tb/feature_tests/tx_cmd_set_abort_ftest.vhd
+    - file: main_tb/feature_tests/command_cdo_ftest.vhd
+    - file: main_tb/feature_tests/mode_rst_ftest.vhd
+    - file: main_tb/feature_tests/err_capt_err_frm_ftest.vhd
+    - file: main_tb/feature_tests/rx_buf_empty_read_ftest.vhd
+    - file: main_tb/feature_tests/trv_delay_ftest.vhd
+    - file: main_tb/feature_tests/tx_cmd_set_empty_ftest.vhd
+    - file: main_tb/feature_tests/int_be_ftest.vhd
+    - file: main_tb/feature_tests/frame_test_fcrc_ftest.vhd
+    - file: main_tb/feature_tests/tx_from_intermission_ftest.vhd
+    - file: main_tb/feature_tests/alc_id_extension_ftest.vhd
+    - file: main_tb/feature_tests/mode_txbbm_5_ftest.vhd
+    - file: main_tb/feature_tests/status_ewl_ftest.vhd
+    - file: main_tb/feature_tests/err_capt_ctrl_form_ftest.vhd
+    - file: main_tb/feature_tests/tx_priority_ftest.vhd
+    - file: main_tb/feature_tests/tst_mem_acc_txt_ftest.vhd
+    - file: main_tb/feature_tests/err_capt_crc_bit_ftest.vhd
+    - file: main_tb/feature_tests/err_capt_eof_ftest.vhd
+    - file: main_tb/feature_tests/mode_pex_ftest.vhd
+    - file: main_tb/feature_tests/alc_rtr_r0_ftest.vhd
+    - file: main_tb/feature_tests/retr_limit_ftest.vhd
+    - file: main_tb/feature_tests/status_txs_ftest.vhd
+    - file: main_tb/feature_tests/mode_test_ftest.vhd
+    - file: main_tb/feature_tests/stuff_in_data_ftest.vhd
+    - file: main_tb/feature_tests/scan_mode_ftest.vhd
+    - file: main_tb/feature_tests/mode_txbbm_2_ftest.vhd
+    - file: main_tb/feature_tests/tx_counter_ftest.vhd
+    - file: main_tb/feature_tests/mode_restr_op_ftest.vhd
+    - file: main_tb/feature_tests/err_capt_crc_err_ftest.vhd
+    - file: main_tb/feature_tests/rx_counter_ftest.vhd
+    - file: main_tb/feature_tests/int_of_ftest.vhd
+    - file: main_tb/feature_tests/status_txnf_ftest.vhd
+    - file: main_tb/feature_tests/status_txpe_ftest.vhd
+    - file: main_tb/feature_tests/frame_test_fstc_ftest.vhd
+    - file: main_tb/agents/feature_test_agent/feature_test_list_pkg.vhd
+
+    - file: main_tb/agents/feature_test_agent/feature_test_agent.vhd
+
+
+    ###############################################################################################
+    # Reference tests
+    ###############################################################################################
+
+    - file: main_tb/reference_test_data_sets/reference_data_set_1.vhd
+    - file: main_tb/reference_test_data_sets/reference_data_set_2.vhd
+    - file: main_tb/reference_test_data_sets/reference_data_set_3.vhd
+    - file: main_tb/reference_test_data_sets/reference_data_set_4.vhd
+    - file: main_tb/reference_test_data_sets/reference_data_set_5.vhd
+    - file: main_tb/reference_test_data_sets/reference_data_set_6.vhd
+    - file: main_tb/reference_test_data_sets/reference_data_set_7.vhd
+    - file: main_tb/reference_test_data_sets/reference_data_set_8.vhd
+    - file: main_tb/reference_test_data_sets/reference_data_set_9.vhd
+    - file: main_tb/reference_test_data_sets/reference_data_set_10.vhd
+
+
+    ###############################################################################################
+    # Common Agents
+    ###############################################################################################
+
+    - file: main_tb/agents/test_probe_agent/test_probe_agent.vhd
+    - file: main_tb/agents/clock_agent/clk_gen_agent.vhd
+    - file: main_tb/agents/interrupt_agent/interrupt_agent.vhd
+    - file: main_tb/agents/timestamp_agent/timestamp_agent.vhd
+    - file: main_tb/agents/memory_bus_agent/mem_bus_agent.vhd
+    - file: main_tb/agents/reset_agent/reset_agent.vhd
+    - file: main_tb/agents/can_agent/can_agent.vhd
+    - file: main_tb/agents/test_controller_agent/test_controller_agent.vhd
+    - file: main_tb/agents/reference_test_agent/reference_test_agent.vhd
+
+    #- file: main_tb/tb_top_gates_ctu_can_fd.vhd
+    - file: main_tb/ctu_can_fd_vip.vhd
+#
+    #- file: main_tb/tb_top_ctu_can_fd.vhd

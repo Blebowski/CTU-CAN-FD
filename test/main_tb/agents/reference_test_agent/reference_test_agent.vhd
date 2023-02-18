@@ -1,18 +1,18 @@
 --------------------------------------------------------------------------------
--- 
--- CTU CAN FD IP Core 
+--
+-- CTU CAN FD IP Core
 -- Copyright (C) 2021-present Ondrej Ille
--- 
+--
 -- Permission is hereby granted, free of charge, to any person obtaining a copy
 -- of this VHDL component and associated documentation files (the "Component"),
 -- to use, copy, modify, merge, publish, distribute the Component for
 -- educational, research, evaluation, self-interest purposes. Using the
 -- Component for commercial purposes is forbidden unless previously agreed with
 -- Copyright holder.
--- 
+--
 -- The above copyright notice and this permission notice shall be included in
 -- all copies or substantial portions of the Component.
--- 
+--
 -- THE COMPONENT IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 -- IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 -- FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -20,38 +20,38 @@
 -- LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
 -- FROM, OUT OF OR IN CONNECTION WITH THE COMPONENT OR THE USE OR OTHER DEALINGS
 -- IN THE COMPONENT.
--- 
+--
 -- The CAN protocol is developed by Robert Bosch GmbH and protected by patents.
 -- Anybody who wants to implement this IP core on silicon has to obtain a CAN
 -- protocol license from Bosch.
--- 
+--
 -- -------------------------------------------------------------------------------
--- 
--- CTU CAN FD IP Core 
+--
+-- CTU CAN FD IP Core
 -- Copyright (C) 2015-2020 MIT License
--- 
+--
 -- Authors:
 --     Ondrej Ille <ondrej.ille@gmail.com>
 --     Martin Jerabek <martin.jerabek01@gmail.com>
--- 
--- Project advisors: 
+--
+-- Project advisors:
 -- 	Jiri Novak <jnovak@fel.cvut.cz>
 -- 	Pavel Pisa <pisa@cmp.felk.cvut.cz>
--- 
+--
 -- Department of Measurement         (http://meas.fel.cvut.cz/)
 -- Faculty of Electrical Engineering (http://www.fel.cvut.cz)
 -- Czech Technical University        (http://www.cvut.cz/)
--- 
+--
 -- Permission is hereby granted, free of charge, to any person obtaining a copy
 -- of this VHDL component and associated documentation files (the "Component"),
 -- to deal in the Component without restriction, including without limitation
 -- the rights to use, copy, modify, merge, publish, distribute, sublicense,
 -- and/or sell copies of the Component, and to permit persons to whom the
 -- Component is furnished to do so, subject to the following conditions:
--- 
+--
 -- The above copyright notice and this permission notice shall be included in
 -- all copies or substantial portions of the Component.
--- 
+--
 -- THE COMPONENT IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 -- IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 -- FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -59,11 +59,11 @@
 -- LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
 -- FROM, OUT OF OR IN CONNECTION WITH THE COMPONENT OR THE USE OR OTHER DEALINGS
 -- IN THE COMPONENT.
--- 
+--
 -- The CAN protocol is developed by Robert Bosch GmbH and protected by patents.
 -- Anybody who wants to implement this IP core on silicon has to obtain a CAN
 -- protocol license from Bosch.
--- 
+--
 --------------------------------------------------------------------------------
 
 --------------------------------------------------------------------------------
@@ -102,6 +102,7 @@ use ctu_can_fd_tb.reference_data_set_8.all;
 use ctu_can_fd_tb.reference_data_set_9.all;
 use ctu_can_fd_tb.reference_data_set_10.all;
 
+use ctu_can_fd_tb.tb_shared_vars_pkg.all;
 
 entity reference_test_agent is
     generic(
@@ -117,7 +118,7 @@ end entity;
 architecture tb of reference_test_agent is
 
 begin
-    
+
     ---------------------------------------------------------------------------
     ---------------------------------------------------------------------------
     -- Test control process
@@ -127,7 +128,7 @@ begin
     ---------------------------------------------------------------------------
     test_process : process
         -- 2 Mbit / 500 Kbit, 80 % sample point
-        variable bus_timing     : bit_time_config_type := 
+        variable bus_timing     : bit_time_config_type :=
             (2, 1, 40, 39, 20, 10, 20, 14, 15, 10);
         variable data_set : t_reference_data_set;
         variable driver_item : t_can_driver_entry :=
@@ -147,7 +148,7 @@ begin
         -- Enable CAN controllers
         CAN_turn_controller(true, DUT_NODE, default_channel);
         info_m("DUT is ON");
-        
+
         -- Wait till integration is over in both nodes
         CAN_wait_bus_on(DUT_NODE, default_channel);
         info_m("Bus integration finished");
@@ -182,14 +183,14 @@ begin
         rand_int_v(899, reference_offset);
 
         for frame_index in reference_offset to reference_offset + reference_iterations loop
-            
+
             info_m("Testing frame nr: " & integer'image(frame_index - reference_offset));
             info_m("Frame position in dataset: " & integer'image(frame_index));
 
             info_m("Pushing frame to CAN agent...");
             can_agent_driver_flush(default_channel);
             for seq_ind in 1 to data_set(frame_index).seq_len loop
-                
+
                 driver_item.value := data_set(frame_index).seq(seq_ind).value;
                 driver_item.drive_time := data_set(frame_index).seq(seq_ind).drive_time;
                 can_agent_driver_push_item(default_channel, driver_item);
@@ -201,14 +202,14 @@ begin
 
             info_m("Reading out CAN frame...");
             CAN_read_frame(rx_frame, DUT_NODE, default_channel);
-            
+
             info_m("Comparing received vs golden frame...");
             -- Pre-calculate RWCNT of TX frame
             decode_dlc_rx_buff(data_set(frame_index).frame.dlc, data_set(frame_index).frame.rwcnt);
             CAN_compare_frames(rx_frame, data_set(frame_index).frame, false, result);
-            
+
             check_m(result, "Frames equal");
-        end loop; 
+        end loop;
 
         -- Signal test is done.
         reference_result <= ctu_vip_test_result.get_result;
