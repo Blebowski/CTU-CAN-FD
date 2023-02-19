@@ -147,7 +147,7 @@ architecture rtl of bit_time_counters is
     signal tq_edge_i          : std_logic;
 
     constant C_TQ_RUN_TH      : unsigned(G_BRP_WIDTH - 1 downto 0) := to_unsigned(1, G_BRP_WIDTH);
-    constant C_TQ_EXPIRED     : unsigned(G_BRP_WIDTH - 1 downto 0) := to_unsigned(1, G_BRP_WIDTH);
+    constant C_TQ_RST_VAL     : unsigned(G_BRP_WIDTH - 1 downto 0) := to_unsigned(1, G_BRP_WIDTH);
 
     -- Bit Time counter
     signal segm_counter_d     : std_logic_vector(G_BT_WIDTH - 1 downto 0);
@@ -169,25 +169,25 @@ begin
                          else
                      '0';
 
-    tq_counter_expired <= '1' when (unsigned(tq_counter_q) = C_TQ_EXPIRED)
+    tq_counter_expired <= '1' when (unsigned(tq_counter_q) = unsigned(brp))
                               else
                           '0';
 
     -------------------------------------------------------------------------------------------
     -- Time quanta counter next value:
-    --  1. Preload when reaching value of prescaler.
-    --  2. Preload when re-started.
-    --  3. Subtract 1 ohterwise!
+    --  1. Erase when reaching value of prescaler.
+    --  2. Erase when re-started.
+    --  3. Add 1 ohterwise!
     -------------------------------------------------------------------------------------------
     tq_counter_d <=
-        std_logic_vector(unsigned(brp)) when (tq_counter_expired = '1' or tq_reset = '1')
-                                        else
-        std_logic_vector(unsigned(tq_counter_q) - 1);
+           C_TQ_RST_VAL when (tq_counter_expired = '1' or tq_reset = '1')
+                        else
+        std_logic_vector(unsigned(tq_counter_q) + 1);
 
     tq_proc : process(clk_sys, res_n)
     begin
         if (res_n = '0') then
-            tq_counter_q <= C_TQ_EXPIRED;
+            tq_counter_q <= C_TQ_RST_VAL;
         elsif (rising_edge(clk_sys)) then
             if (tq_counter_ce = '1') then
                 tq_counter_q <= tq_counter_d;
