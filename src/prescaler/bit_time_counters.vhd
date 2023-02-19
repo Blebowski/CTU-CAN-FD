@@ -138,24 +138,22 @@ end entity;
 architecture rtl of bit_time_counters is
 
     -- Time Quanta Counter
-    signal tq_counter_d         : std_logic_vector(G_BRP_WIDTH - 1 downto 0);
-    signal tq_counter_q         : std_logic_vector(G_BRP_WIDTH - 1 downto 0);
-    signal tq_cunter_plus_one   : std_logic_vector(G_BRP_WIDTH - 1 downto 0);
-    signal tq_counter_ce        : std_logic;
-    signal tq_counter_expired   : std_logic;
-    signal tq_counter_to_expire : std_logic;
+    signal tq_counter_d       : std_logic_vector(G_BRP_WIDTH - 1 downto 0);
+    signal tq_counter_q       : std_logic_vector(G_BRP_WIDTH - 1 downto 0);
+    signal tq_counter_ce      : std_logic;
+    signal tq_counter_expired : std_logic;
 
-    signal tq_counter_allow     : std_logic;
-    signal tq_edge_i            : std_logic;
+    signal tq_counter_allow   : std_logic;
+    signal tq_edge_i          : std_logic;
 
-    constant C_TQ_RUN_TH        : unsigned(G_BRP_WIDTH - 1 downto 0) := to_unsigned(1, G_BRP_WIDTH);
+    constant C_TQ_RUN_TH      : unsigned(G_BRP_WIDTH - 1 downto 0) := to_unsigned(1, G_BRP_WIDTH);
 
     -- Bit Time counter
-    signal segm_counter_d       : std_logic_vector(G_BT_WIDTH - 1 downto 0);
-    signal segm_counter_q       : std_logic_vector(G_BT_WIDTH - 1 downto 0);
-    signal segm_counter_ce      : std_logic;
+    signal segm_counter_d     : std_logic_vector(G_BT_WIDTH - 1 downto 0);
+    signal segm_counter_q     : std_logic_vector(G_BT_WIDTH - 1 downto 0);
+    signal segm_counter_ce    : std_logic;
 
-    constant C_BT_ZEROES        : std_logic_vector(G_BT_WIDTH - 1 downto 0) := (others => '0');
+    constant C_BT_ZEROES      : std_logic_vector(G_BT_WIDTH - 1 downto 0) := (others => '0');
 
 begin
 
@@ -170,20 +168,9 @@ begin
                          else
                      '0';
 
-    tq_cunter_plus_one <= std_logic_vector(unsigned(tq_counter_q) + 1);
-
     tq_counter_expired <= '1' when (unsigned(tq_counter_q) = unsigned(brp) - 1)
                               else
                           '0';
-
-
-    -- Derived from next value of Q of the counter to break timing path through "tq_reset"
-    -- This is OK since it is used to set "tq_edge" only. Cases:
-    --  brp = 1 -> "tq_edge" set always anyway due to "tq_counter_allow = 0"
-    --  brp > 1 -> OK, since "tq_edge" set at the same cycle when "tq_counter_expired = 1".
-    tq_counter_to_expire <= '1' when (unsigned(tq_cunter_plus_one) = (unsigned(brp) - 1))
-                                else
-                            '0';
 
     -------------------------------------------------------------------------------------------
     -- Time quanta counter next value:
@@ -194,7 +181,7 @@ begin
     tq_counter_d <=
         (others => '0') when (tq_counter_expired = '1' or tq_reset = '1')
                         else
-        tq_cunter_plus_one;
+        std_logic_vector(unsigned(tq_counter_q) + 1);
 
     tq_proc : process(clk_sys, res_n)
     begin
@@ -210,18 +197,9 @@ begin
     -------------------------------------------------------------------------------------------
     -- Time quanta edge
     -------------------------------------------------------------------------------------------
-    tq_edge_proc : process(clk_sys, res_n)
-    begin
-        if (res_n = '0') then
-            tq_edge_i <= '0';
-        elsif (rising_edge(clk_sys)) then
-            if (tq_counter_allow = '0' or tq_counter_to_expire = '1') then
-                tq_edge_i <= '1';
-            else
-                tq_edge_i <= '0';
-            end if;
-        end if;
-    end process;
+    tq_edge_i <= '1' when (tq_counter_allow = '0' or tq_counter_expired = '1')
+                     else
+                 '0';
 
     -------------------------------------------------------------------------------------------
     -- Segment counter
