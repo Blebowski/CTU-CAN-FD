@@ -147,7 +147,6 @@ architecture rtl of bit_time_counters is
     signal tq_edge_i          : std_logic;
 
     constant C_TQ_RUN_TH      : unsigned(G_BRP_WIDTH - 1 downto 0) := to_unsigned(1, G_BRP_WIDTH);
-    constant C_TQ_RST_VAL     : unsigned(G_BRP_WIDTH - 1 downto 0) := to_unsigned(1, G_BRP_WIDTH);
 
     -- Bit Time counter
     signal segm_counter_d     : std_logic_vector(G_BT_WIDTH - 1 downto 0);
@@ -169,7 +168,7 @@ begin
                          else
                      '0';
 
-    tq_counter_expired <= '1' when (unsigned(tq_counter_q) = unsigned(brp))
+    tq_counter_expired <= '1' when (unsigned(tq_counter_q) = unsigned(brp) - 1)
                               else
                           '0';
 
@@ -180,14 +179,14 @@ begin
     --  3. Add 1 ohterwise!
     -------------------------------------------------------------------------------------------
     tq_counter_d <=
-        std_logic_vector(C_TQ_RST_VAL) when (tq_counter_expired = '1' or tq_reset = '1')
-                                       else
+        (others => '0') when (tq_counter_expired = '1' or tq_reset = '1')
+                        else
         std_logic_vector(unsigned(tq_counter_q) + 1);
 
     tq_proc : process(clk_sys, res_n)
     begin
         if (res_n = '0') then
-            tq_counter_q <= std_logic_vector(C_TQ_RST_VAL);
+            tq_counter_q <= (others => '0');
         elsif (rising_edge(clk_sys)) then
             if (tq_counter_ce = '1') then
                 tq_counter_q <= tq_counter_d;
