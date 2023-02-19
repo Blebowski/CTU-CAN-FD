@@ -243,11 +243,10 @@ begin
 
     -- Decoder frame_type&ident_type to one-hot
     with int_data_ctrl select int_data_type <=
-        "0001" when "00", --CAN Basic
-        "0010" when "01", --CAN Extended
-        "0100" when "10", --CAN FD Basic
-        "1000" when "11", --CAN Fd Extended
-        "0000" when others;
+        "0001" when "00",       --CAN Basic
+        "0010" when "01",       --CAN Extended
+        "0100" when "10",       --CAN FD Basic
+        "1000" when others;     --CAN Fd Extended
 
     -- Filter is enabled when at least one Frame type/Identifier type is matching
     -- the configured value

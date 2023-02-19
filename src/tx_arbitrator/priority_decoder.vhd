@@ -197,7 +197,7 @@ begin
     -- Level 1 comparators
     -----------------------------------------------------------------------------------------------
     l1_prio_dec_proc : process(l0_valid, l0_prio)
-        variable tmp : level1_comp_valid_type := (others => (others => '0'));
+        variable tmp : level1_comp_valid_type;
     begin
         tmp := (others => (others => '0'));
         for i in 0 to 3 loop
@@ -237,7 +237,7 @@ begin
     -- Level 2 comparators
     -----------------------------------------------------------------------------------------------
     l2_prio_dec_proc : process(l1_valid, l1_prio)
-        variable tmp : level2_comp_valid_type := (others => (others => '0'));
+        variable tmp : level2_comp_valid_type;
     begin
         tmp := (others => (others => '0'));
         for i in 0 to 1 loop
