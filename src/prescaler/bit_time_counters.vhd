@@ -180,14 +180,14 @@ begin
     --  3. Add 1 ohterwise!
     -------------------------------------------------------------------------------------------
     tq_counter_d <=
-           C_TQ_RST_VAL when (tq_counter_expired = '1' or tq_reset = '1')
-                        else
+        std_logic_vector(C_TQ_RST_VAL) when (tq_counter_expired = '1' or tq_reset = '1')
+                                       else
         std_logic_vector(unsigned(tq_counter_q) + 1);
 
     tq_proc : process(clk_sys, res_n)
     begin
         if (res_n = '0') then
-            tq_counter_q <= C_TQ_RST_VAL;
+            tq_counter_q <= std_logic_vector(C_TQ_RST_VAL);
         elsif (rising_edge(clk_sys)) then
             if (tq_counter_ce = '1') then
                 tq_counter_q <= tq_counter_d;
