@@ -230,8 +230,8 @@ begin
     -----------------------------------------------------------------------------------------------
     -- Next state process
     -----------------------------------------------------------------------------------------------
-    tx_buf_fsm_next_state_proc : process(curr_state, mr_tx_command_txca_q, mr_tx_command_txce_q,
-        mr_tx_command_txcr_q, mr_tx_command_txbi, txtb_hw_cmd, hw_cbs, abort_applied, go_to_failed,
+    tx_buf_fsm_next_state_proc : process(curr_state, mr_tx_command_txce_q, mr_tx_command_txcr_q,
+        mr_tx_command_txbi, txtb_hw_cmd, hw_cbs, abort_applied, go_to_failed,
         txtb_parity_error_valid, buffer_skipped)
     begin
         next_state <= curr_state;
