@@ -140,13 +140,9 @@ architecture rtl of bit_time_counters is
     -- Time Quanta Counter
     signal tq_counter_d       : std_logic_vector(G_BRP_WIDTH - 1 downto 0);
     signal tq_counter_q       : std_logic_vector(G_BRP_WIDTH - 1 downto 0);
-    signal tq_counter_ce      : std_logic;
     signal tq_counter_expired : std_logic;
 
-    signal tq_counter_allow   : std_logic;
     signal tq_edge_i          : std_logic;
-
-    constant C_TQ_RUN_TH      : unsigned(G_BRP_WIDTH - 1 downto 0) := to_unsigned(1, G_BRP_WIDTH);
 
     -- Bit Time counter
     signal segm_counter_d     : std_logic_vector(G_BT_WIDTH - 1 downto 0);
@@ -156,17 +152,6 @@ architecture rtl of bit_time_counters is
     constant C_BT_ZEROES      : std_logic_vector(G_BT_WIDTH - 1 downto 0) := (others => '0');
 
 begin
-
-    -------------------------------------------------------------------------------------------
-    -- If prescaler is defined as 0 or 1, there is no need to run the counter! Run it only when
-    -- Prescaler is higher than 1!
-    -------------------------------------------------------------------------------------------
-    tq_counter_allow <= '1' when (unsigned(brp) > C_TQ_RUN_TH) else
-                        '0';
-
-    tq_counter_ce <= '1' when (tq_counter_allow = '1' and ctrs_en = '1')
-                         else
-                     '0';
 
     tq_counter_expired <= '1' when (unsigned(tq_counter_q) = unsigned(brp) - 1)
                               else
@@ -188,7 +173,7 @@ begin
         if (res_n = '0') then
             tq_counter_q <= (others => '0');
         elsif (rising_edge(clk_sys)) then
-            if (tq_counter_ce = '1') then
+            if (ctrs_en = '1') then
                 tq_counter_q <= tq_counter_d;
             end if;
         end if;
@@ -197,9 +182,7 @@ begin
     -------------------------------------------------------------------------------------------
     -- Time quanta edge
     -------------------------------------------------------------------------------------------
-    tq_edge_i <= '1' when (tq_counter_allow = '0' or tq_counter_expired = '1')
-                     else
-                 '0';
+    tq_edge_i <= tq_counter_expired;
 
     -------------------------------------------------------------------------------------------
     -- Segment counter
