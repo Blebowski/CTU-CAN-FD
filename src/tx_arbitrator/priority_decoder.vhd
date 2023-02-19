@@ -188,8 +188,8 @@ begin
 
 
     fill_zeroes_gen : if (G_TXT_BUFFER_COUNT < 8) generate
-        l0_prio(7 downto G_TXT_BUFFER_COUNT)  <= (OTHERS => (OTHERS => '0'));
-        l0_valid(7 downto G_TXT_BUFFER_COUNT) <= (OTHERS => '0');
+        l0_prio(7 downto G_TXT_BUFFER_COUNT)  <= (others => (others => '0'));
+        l0_valid(7 downto G_TXT_BUFFER_COUNT) <= (others => '0');
     end generate;
 
 
@@ -197,8 +197,9 @@ begin
     -- Level 1 comparators
     -----------------------------------------------------------------------------------------------
     l1_prio_dec_proc : process(l0_valid, l0_prio)
-        variable tmp : level1_comp_valid_type := (OTHERS => (OTHERS => '0'));
+        variable tmp : level1_comp_valid_type;
     begin
+        tmp := (others => (others => '0'));
         for i in 0 to 3 loop
             tmp(i) := l0_valid(2 * i + 1 downto 2 * i);
             case tmp(i) is
@@ -222,11 +223,6 @@ begin
                 end if;
                 l1_valid(i)     <= '1';
 
-            when "00" =>
-                l1_valid(i)     <= '0';
-                l1_prio(i)      <= l0_prio(2 * i + 1);
-                l1_winner(i)    <= UPPER_TREE;
-
             when others =>
                 l1_valid(i)     <= '0';
                 l1_prio(i)      <= l0_prio(2 * i + 1);
@@ -241,8 +237,9 @@ begin
     -- Level 2 comparators
     -----------------------------------------------------------------------------------------------
     l2_prio_dec_proc : process(l1_valid, l1_prio)
-        variable tmp : level2_comp_valid_type := (OTHERS => (OTHERS => '0'));
+        variable tmp : level2_comp_valid_type;
     begin
+        tmp := (others => (others => '0'));
         for i in 0 to 1 loop
             tmp(i) := l1_valid(2 * i + 1 downto 2 * i);
 
@@ -266,11 +263,6 @@ begin
                     l2_winner(i)  <= LOWER_TREE;
                 end if;
                 l2_valid(i)     <= '1';
-
-            when "00" =>
-                l2_valid(i)     <= '0';
-                l2_prio(i)      <= l1_prio(2 * i + 1);
-                l2_winner(i)    <= UPPER_TREE;
 
             when others =>
                 l2_valid(i)     <= '0';

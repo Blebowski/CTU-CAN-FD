@@ -136,11 +136,13 @@ begin
     ---------------------------------------------------------------------------
     -- Check that input vector length is correct.
     ---------------------------------------------------------------------------
+    -- pragma translate_off
     assert (addr_vect'length = address_width * address_entries)
         report "Invalid length of address vector: " &
                 integer'image(addr_vect'length) &
                " Length should be: " &
                 integer'image(address_width * address_entries)
         severity failure;
+    -- pragma translate_on
 
 end architecture;

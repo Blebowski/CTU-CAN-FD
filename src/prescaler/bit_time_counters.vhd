@@ -140,12 +140,11 @@ architecture rtl of bit_time_counters is
     -- Time Quanta Counter
     signal tq_counter_d       : std_logic_vector(G_BRP_WIDTH - 1 downto 0);
     signal tq_counter_q       : std_logic_vector(G_BRP_WIDTH - 1 downto 0);
-    signal tq_counter_ce      : std_logic;
+    signal tq_counter_expired : std_logic;
 
-    signal tq_counter_allow   : std_logic;
+    constant C_TQ_RST         : unsigned(G_BRP_WIDTH - 1 downto 0) := to_unsigned(1, G_BRP_WIDTH);
+
     signal tq_edge_i          : std_logic;
-
-    constant C_TQ_RUN_TH      : unsigned(G_BRP_WIDTH - 1 downto 0) := to_unsigned(1, G_BRP_WIDTH);
 
     -- Bit Time counter
     signal segm_counter_d     : std_logic_vector(G_BT_WIDTH - 1 downto 0);
@@ -156,16 +155,9 @@ architecture rtl of bit_time_counters is
 
 begin
 
-    -------------------------------------------------------------------------------------------
-    -- If prescaler is defined as 0 or 1, there is no need to run the counter! Run it only when
-    -- Prescaler is higher than 1!
-    -------------------------------------------------------------------------------------------
-    tq_counter_allow <= '1' when (unsigned(brp) > C_TQ_RUN_TH) else
-                        '0';
-
-    tq_counter_ce <= '1' when (tq_counter_allow = '1' and ctrs_en = '1')
-                         else
-                     '0';
+    tq_counter_expired <= '1' when (unsigned(tq_counter_q) = unsigned(brp))
+                              else
+                          '0';
 
     -------------------------------------------------------------------------------------------
     -- Time quanta counter next value:
@@ -174,18 +166,16 @@ begin
     --  3. Add 1 ohterwise!
     -------------------------------------------------------------------------------------------
     tq_counter_d <=
-        (others => '0') when (unsigned(tq_counter_q) = unsigned(brp) - 1)
-                        else
-        (others => '0') when (tq_reset = '1')
-                        else
+        std_logic_vector(C_TQ_RST) when (tq_counter_expired = '1' or tq_reset = '1')
+                                   else
         std_logic_vector(unsigned(tq_counter_q) + 1);
 
     tq_proc : process(clk_sys, res_n)
     begin
         if (res_n = '0') then
-            tq_counter_q <= (others => '0');
+            tq_counter_q <= std_logic_vector(C_TQ_RST);
         elsif (rising_edge(clk_sys)) then
-            if (tq_counter_ce = '1') then
+            if (ctrs_en = '1') then
                 tq_counter_q <= tq_counter_d;
             end if;
         end if;
@@ -194,10 +184,7 @@ begin
     -------------------------------------------------------------------------------------------
     -- Time quanta edge
     -------------------------------------------------------------------------------------------
-    tq_edge_i <= '1' when (tq_counter_allow = '0' or
-                           unsigned(tq_counter_q) = unsigned(brp) - 1)
-                     else
-                 '0';
+    tq_edge_i <= tq_counter_expired;
 
     -------------------------------------------------------------------------------------------
     -- Segment counter
@@ -205,9 +192,7 @@ begin
     segm_counter_d <= C_BT_ZEROES when (bt_reset = '1') else
                       std_logic_vector(unsigned(segm_counter_q) + 1);
 
-    segm_counter_ce <= '1' when (bt_reset = '1')
-                           else
-                       '1' when (tq_edge_i = '1' and ctrs_en = '1')
+    segm_counter_ce <= '1' when (bt_reset = '1') or (tq_edge_i = '1' and ctrs_en = '1')
                            else
                        '0';
 

@@ -255,7 +255,6 @@ begin
 
     -- Stuff counter grey coding
     with bst_ctr select bst_ctr_grey <=
-        "000" when "000",
         "001" when "001",
         "011" when "010",
         "010" when "011",

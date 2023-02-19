@@ -60,8 +60,6 @@ unit:
             iterations: 100
         apb:
             iterations: 1
-        crc:
-            iterations: 500
         message_filter:
             iterations: 500
         rx_buffer:

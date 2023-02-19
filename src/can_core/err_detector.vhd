@@ -294,7 +294,6 @@ begin
     -- De-Stuff counter grey-coding + parity
     -----------------------------------------------------------------------------------------------
     with dst_ctr select dst_ctr_grey <=
-        "000" when "000",
         "001" when "001",
         "011" when "010",
         "010" when "011",
