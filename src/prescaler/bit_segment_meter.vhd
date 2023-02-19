@@ -351,10 +351,9 @@ begin
     -- Re-synchronisation data-path
     -----------------------------------------------------------------------------------------------
     -----------------------------------------------------------------------------------------------
-    sel_tseg1 <= '1' when (h_sync_valid = '1' or start_edge = '1' or
-                           shorten_tseg1_after_tseg2 = '1') else
-                 '1' when (segm_end = '1' and is_tseg2 = '1') else
-                 '1' when (segm_end = '0' and is_tseg1 = '1') else
+    sel_tseg1 <= '1' when (h_sync_valid = '1' or start_edge = '1' or shorten_tseg1_after_tseg2 = '1') or
+                          (segm_end = '1' and is_tseg2 = '1') or
+                          (segm_end = '0' and is_tseg1 = '1') else
                  '0';
 
     basic_segm_length <=
@@ -385,9 +384,8 @@ begin
     --     take TSEG1 - 1 which is calculated in synced segment length! This also applies when there
     --     is negative resync. due to Phase error <= SJW.
     -----------------------------------------------------------------------------------------------
-    use_basic_segm_length <= '1' when (start_edge = '1')
-                                 else
-                             '1' when (segm_end = '1' and h_sync_valid = '0' and
+    use_basic_segm_length <= '1' when (start_edge = '1') or
+                                      (segm_end = '1' and h_sync_valid = '0' and
                                        shorten_tseg1_after_tseg2 = '0')
                                  else
                              '0';
@@ -509,8 +507,9 @@ begin
     --  2. PH2, regular segment exit.
     --  3. PROP or PH1 regular segment exit.
     -----------------------------------------------------------------------------------------------
-    exit_segm_req <= '1' when (exit_ph2_immediate = '1') else
-                     '1' when (exit_segm_regular_tseg1 = '1' or exit_segm_regular_tseg2 = '1') else
+    exit_segm_req <= '1' when (exit_ph2_immediate = '1') or
+                              (exit_segm_regular_tseg1 = '1' or exit_segm_regular_tseg2 = '1')
+                         else
                      '0';
 
     -- <RELEASE_OFF>
