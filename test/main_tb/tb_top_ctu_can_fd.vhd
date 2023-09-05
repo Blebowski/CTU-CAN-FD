@@ -198,7 +198,7 @@ architecture tb of tb_top_ctu_can_fd is
          
        -- DUT interface
        clk_sys             : inout std_logic;
-       res_n               : out   std_logic;
+       res_n               : inout std_logic;
 
        scan_enable         : out   std_logic;
 
