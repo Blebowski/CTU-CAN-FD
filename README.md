@@ -12,7 +12,7 @@ TB is implemented with VHDL 2008.
 
 ## License
 
-CTU CAN FD RTL and TB are published under following license :  
+CTU CAN FD RTL and TB are published under following license :
 [![License](https://img.shields.io/badge/License--black.svg)]( https://gitlab.fel.cvut.cz/canbus/ctucanfd_ip_core/blob/master/LICENSE)
 
 Commercial usage of RTL and TB requires authors consent.
@@ -31,20 +31,19 @@ RTL design of CTU CAN FD is independent from vendor specific libraries or macros
 FPGA / ASIC target can be selected by top level generic. ASIC target implements clock gating for memories to achieve low dynamic power consumption. Additionally, clock enables are used frequently to allow inferred clock gating on ASIC. Last but not least, RTL is DFT insertion ready and contains
 additional support for manufacturing testability.
 
-Architecture of CTU CAN FD is described in:  
+Architecture of CTU CAN FD is described in:
 [![System architecture](https://img.shields.io/badge/System_architecture--blue.svg)]( http://canbus.pages.fel.cvut.cz/ctucanfd_ip_core/doc/System_Architecture.pdf)
 
-Functional description of CTU CAN FD is described in:  
+Functional description of CTU CAN FD is described in:
 [![Datasheet](https://img.shields.io/badge/Datasheet--blue.svg)]( http://canbus.pages.fel.cvut.cz/ctucanfd_ip_core/doc/Datasheet.pdf)
 
 
 ## Test-bench
 
-CTU CAN FD has itw own Test-bench and VIP (verification IP) with ISO 16845-1 2016 compliance sequence, which is easy
-to integrate to other system level test-bench. In addition to ISO 11898-1 compliance, all other features of
-CTU CAN FD are verified.
+CTU CAN FD has its own test-bench and VIP (verification IP) with ISO 16845-1 2016 compliance sequence.
+In addition to ISO 11898-1 compliance, all other features of CTU CAN FD are verified.
 
-There are 3 types of tests available in CTU CAN FD testbench:
+There are 3 types of tests available in CTU CAN FD test-bench:
 - Feature tests (open-source, VHDL)
 - Reference tests (open-source, VHDL)
 - Compliance tests (open-source, C++ library linked to simulation, [ISO16845 Compliance library](https://gitlab.com/Ondrej_Ille/iso-16845-compliance-tests)).
@@ -52,18 +51,15 @@ There are 3 types of tests available in CTU CAN FD testbench:
 TB has extensive PSL functional coverage, see regression coverage in:
 [![Functional coverage](https://img.shields.io/badge/functional%20coverage--orange.svg)](http://canbus.pages.fel.cvut.cz/ctucanfd_ip_core/regression_results/functional_coverage/functional_coverage_report.html)
 
-GCov is used to collect (rudimentary) code coverage. See regression coverage in:  
-[![Code coverage](https://gitlab.fel.cvut.cz/canbus/ctucanfd_ip_core/badges/master/coverage.svg)](http://canbus.pages.fel.cvut.cz/ctucanfd_ip_core/regression_results/coverage/)
-
-Detailed description of test-bench and CTU CAN FD VIP is in:  
+Description of test-bench and CTU CAN FD VIP is in:
 [![Testbench architecture](https://img.shields.io/badge/Testbench--blue.svg)]( http://canbus.pages.fel.cvut.cz/ctucanfd_ip_core/doc/Testbench.pdf)
 
-CTU CAN FD is also simulated on post-synthesis gate-level netlist with UNISIM library (unit delay simulation).
+CTU CAN FD is simulated as RTL and as post-synthesis gate-level netlist with Xilinx UNISIM library (unit delay simulation).
 
 
 ## Regressions (Continuous integration)
 
-All tests are automated into several regression runs:  
+All tests are automated into several regression runs:
 - Fast ASIC - No randomization (DUT configuration for ASIC)
 - Fast FPGA - No randomization (DUT configuration for FPGA)
 - Compliance short - Runs majority of ISO 11845-1 compliance test sequence
@@ -75,7 +71,7 @@ All tests are automated into several regression runs:
 - Gate level simple - Runs most of feature tests on gate level netlist as DUT
 - Gate level compliance - Runs most of ISO 11845-1 tests on gate level netlist as DUT.
 
-Short summary of results from last regression (including all test types) can be downloaded from:  
+Short summary of results from last regression (including all test types) can be downloaded from:
 [Regression summary](http://canbus.pages.fel.cvut.cz/ctucanfd_ip_core/regression_results/regression_summary.gz)
 
 Detailed logs are available in zipped format in "Delivery package" at: [![Delivery package](https://img.shields.io/badge/Delivery-package--blue.svg)]( https://gitlab.fel.cvut.cz/canbus/ctucanfd_ip_core/-/jobs/artifacts/master/browse?job=pages).
@@ -92,20 +88,20 @@ device configurations:
 
 #### Minimal:
 
-2 TXT Buffers, 32 word RX Buffer, no frame filters  
-Results: [Area](http://canbus.pages.fel.cvut.cz/ctucanfd_ip_core/synthesis/minimal_design_config/utilization.rpt) 
+2 TXT Buffers, 32 word RX Buffer, no frame filters
+Results: [Area](http://canbus.pages.fel.cvut.cz/ctucanfd_ip_core/synthesis/minimal_design_config/utilization.rpt)
 [Timing](http://canbus.pages.fel.cvut.cz/ctucanfd_ip_core/synthesis/minimal_design_config/timing_summary.rpt)
 
 #### Typical:
 
-4 TXT Buffers, 128 word RX Buffer, only one bit filter  
-Results: [Area](http://canbus.pages.fel.cvut.cz/ctucanfd_ip_core/synthesis/typical_design_config/utilization.rpt) 
+4 TXT Buffers, 128 word RX Buffer, only one bit filter
+Results: [Area](http://canbus.pages.fel.cvut.cz/ctucanfd_ip_core/synthesis/typical_design_config/utilization.rpt)
 [Timing](http://canbus.pages.fel.cvut.cz/ctucanfd_ip_core/synthesis/typical_design_config/timing_summary.rpt)
 
 #### Maximal:
 
-8 TXT Buffers, 1024 word RX Buffer, all frame filters  
-Results: [Area](http://canbus.pages.fel.cvut.cz/ctucanfd_ip_core/synthesis/maximal_design_config/utilization.rpt) 
+8 TXT Buffers, 1024 word RX Buffer, all frame filters
+Results: [Area](http://canbus.pages.fel.cvut.cz/ctucanfd_ip_core/synthesis/maximal_design_config/utilization.rpt)
 [Timing](http://canbus.pages.fel.cvut.cz/ctucanfd_ip_core/synthesis/maximal_design_config/timing_summary.rpt)
 
 Note that design is constrained to 100 MHz with no timing violations, combinatorial loops
@@ -117,7 +113,7 @@ gate level simulations (see "Test-bench" above), provide good indicator of high-
 
 Download delivery package ("public" directory) from: [![Delivery package](https://img.shields.io/badge/Delivery-package--blue.svg)]( https://gitlab.fel.cvut.cz/canbus/ctucanfd_ip_core/-/jobs/artifacts/master/browse?job=pages). Package is created by daily regression on master branch.
 
-Delivery package contains:  
+Delivery package contains:
 - RTL design
 - Tesbench (VIP + Feature and Reference Tests)
 - Binary of compliance test library.
@@ -139,27 +135,27 @@ respect the license, and dont use the design in your commercial device without a
 
 To simulate CTU CAN FD, following tools are used:
 
-GHDL, VHDL simulator:  
+GHDL, VHDL simulator:
 [GHDL](https://github.com/Blebowski/ghdl).
 
-GTKWave, Waveform viewer:  
+GTKWave, Waveform viewer:
 [GTKWave](http://gtkwave.sourceforge.net/)
 
-Vunit, VHDL unit test framework, with modifications allowing to start GTKWave interactively when simulation run starts:  
+Vunit, VHDL unit test framework, with modifications allowing to start GTKWave interactively when simulation run starts:
 [Vunit](https://github.com/mjerabek/vunit).
 
 Python 3 and following modules: pyvcd attrs jinja2 parsy pyyaml click yattag json2html
 
-There is a docker image which contains all dependencies needed available at:  
+There is a docker image which contains all dependencies needed available at:
 [Simulation docker](https://gitlab.com/canfd/server-tools/container_registry).
 
 
 ## Linux driver
 
-CTU CAN FD has SocketCAN Linux driver which is described in:  
+CTU CAN FD has SocketCAN Linux driver which is described in:
 [![Linux driver](https://img.shields.io/badge/Linux_driver--blue.svg)](http://canbus.pages.fel.cvut.cz/ctucanfd_ip_core/doc/linux_driver/build/ctucanfd-driver.html)
 
-Driver consists from 3 parts:  
+Driver consists from 3 parts:
 - Network
 - Platform
 - PCI
@@ -188,7 +184,7 @@ The CTU CAN FD IP core functional model is part of QEMU mainline. QEMU CAN docum
 
 ## Roadmap
 
-There are several options for further development:  
+There are several options for further development:
 - Linux driver testing (QEMU + VPCIE)
 - Splitting design into two clock domains
 - Support of TTCAN protocol
