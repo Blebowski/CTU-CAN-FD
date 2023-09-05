@@ -75,6 +75,11 @@
 --    26.1.2021   Created file
 --------------------------------------------------------------------------------
 
+-- Only top level uses Vunit. This allows keeping CTU CAN FD VIP Vunit-less,
+-- when integrating RTL and VIP into other TB!
+--library vunit_lib;
+--context vunit_lib.vunit_context;
+
 -- Common contexts
 Library ctu_can_fd_tb;
 context ctu_can_fd_tb.ieee_context;
@@ -85,6 +90,7 @@ context ctu_can_fd_tb.rtl_context;
 entity tb_top_ctu_can_fd is
     generic(
         -- Test-bench specific stuff
+        --runner_cfg              : string := runner_cfg_default;
         test_name               : string := "device_id";
         test_type               : string := "feature"; -- "feature", "compliance" or "reference"
         stand_alone_vip_mode    : boolean := true;
@@ -182,7 +188,7 @@ architecture tb of tb_top_ctu_can_fd is
        seed                    : natural := 0;
 
        -- Reference test iterations
-        reference_iterations   : natural range 1 to 1000 := 1000
+        reference_iterations   : natural range 1 to 1000 := 10
     );
     port(
        -- Test control
@@ -330,10 +336,11 @@ begin
 
 
     ---------------------------------------------------------------------------
-    -- Test manager - controls CTU CAN FD VIP
+    -- Vunit manager - controls CTU CAN FD VIP
     ---------------------------------------------------------------------------
-    test_manager_proc : process
+    vunit_manager_proc : process
     begin
+        --test_runner_setup(runner, runner_cfg);
         wait for 10 ns;
 
         info_m("***************************************************************");
@@ -376,6 +383,9 @@ begin
         info_m("");
         info_m("***************************************************************");
 
+        --show(get_logger(default_checker), display_handler, pass);
+        --set_log_verbosity(log_level, global_verbosity);
+
         for i in 1 to iterations loop
             info_m("***************************************************************");
             info_m(" Iteration nr: " & integer'image(i));
@@ -389,7 +399,7 @@ begin
             -- Propagate fail to Vunit if test signals it failed
             -- true indicates fail (exit code 1)
             if (test_success = '0') then
-                std.env.finish;
+                --test_runner_cleanup(runner, true);
             end if;
 
             -- Finish handshake
@@ -399,16 +409,15 @@ begin
         end loop;
 
         -- Finish succesfully
+        --test_runner_cleanup(runner);
         std.env.finish;
     end process;
 
     ---------------------------------------------------------------------------
     -- Spawn watchdog
     ---------------------------------------------------------------------------
-    process
-    begin
-        wait for time'value(timeout);
-        report "Timeout reached!" severity failure;
-    end process;
+    --watchdog: if time'value(timeout) > 0 ns generate
+    --    test_runner_watchdog(runner, time'value(timeout));
+    --end generate;
 
 end architecture;

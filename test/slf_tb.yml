@@ -195,4 +195,4 @@ source_list:
     #- file: main_tb/tb_top_gates_ctu_can_fd.vhd
     - file: main_tb/ctu_can_fd_vip.vhd
 #
-    #- file: main_tb/tb_top_ctu_can_fd.vhd
+    - file: main_tb/tb_top_ctu_can_fd.vhd
