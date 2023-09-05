@@ -11,7 +11,7 @@ primetime S-2021.06-SP5
 #
 # Tropic flow tools
 ts-latex-lib development
-ts-hw-scripts v0.23
+ts-hw-scripts v0.29
 ts-synthesis-flow v1.3
 ts-sta-flow v0.2
 ts-common-blocks v0.18
@@ -20,7 +20,7 @@ tropic01-csp development
 #
 # PDK
 # For now UMC55 PDK MUST be below ts-synthesis flow to override value of TS_PDK_ROOT!!!
-umc55-pdk 0v1
+umc55-pdk 0v2
 #
 # Python environment packages
 ts-python-env 0.2

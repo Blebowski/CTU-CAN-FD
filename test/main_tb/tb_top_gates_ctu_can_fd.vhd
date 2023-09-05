@@ -1,18 +1,18 @@
 --------------------------------------------------------------------------------
--- 
--- CTU CAN FD IP Core 
+--
+-- CTU CAN FD IP Core
 -- Copyright (C) 2021-present Ondrej Ille
--- 
+--
 -- Permission is hereby granted, free of charge, to any person obtaining a copy
 -- of this VHDL component and associated documentation files (the "Component"),
 -- to use, copy, modify, merge, publish, distribute the Component for
 -- educational, research, evaluation, self-interest purposes. Using the
 -- Component for commercial purposes is forbidden unless previously agreed with
 -- Copyright holder.
--- 
+--
 -- The above copyright notice and this permission notice shall be included in
 -- all copies or substantial portions of the Component.
--- 
+--
 -- THE COMPONENT IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 -- IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 -- FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -20,38 +20,38 @@
 -- LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
 -- FROM, OUT OF OR IN CONNECTION WITH THE COMPONENT OR THE USE OR OTHER DEALINGS
 -- IN THE COMPONENT.
--- 
+--
 -- The CAN protocol is developed by Robert Bosch GmbH and protected by patents.
 -- Anybody who wants to implement this IP core on silicon has to obtain a CAN
 -- protocol license from Bosch.
--- 
+--
 -- -------------------------------------------------------------------------------
--- 
--- CTU CAN FD IP Core 
+--
+-- CTU CAN FD IP Core
 -- Copyright (C) 2015-2020 MIT License
--- 
+--
 -- Authors:
 --     Ondrej Ille <ondrej.ille@gmail.com>
 --     Martin Jerabek <martin.jerabek01@gmail.com>
--- 
--- Project advisors: 
+--
+-- Project advisors:
 -- 	Jiri Novak <jnovak@fel.cvut.cz>
 -- 	Pavel Pisa <pisa@cmp.felk.cvut.cz>
--- 
+--
 -- Department of Measurement         (http://meas.fel.cvut.cz/)
 -- Faculty of Electrical Engineering (http://www.fel.cvut.cz)
 -- Czech Technical University        (http://www.cvut.cz/)
--- 
+--
 -- Permission is hereby granted, free of charge, to any person obtaining a copy
 -- of this VHDL component and associated documentation files (the "Component"),
 -- to deal in the Component without restriction, including without limitation
 -- the rights to use, copy, modify, merge, publish, distribute, sublicense,
 -- and/or sell copies of the Component, and to permit persons to whom the
 -- Component is furnished to do so, subject to the following conditions:
--- 
+--
 -- The above copyright notice and this permission notice shall be included in
 -- all copies or substantial portions of the Component.
--- 
+--
 -- THE COMPONENT IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 -- IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 -- FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -59,17 +59,17 @@
 -- LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
 -- FROM, OUT OF OR IN CONNECTION WITH THE COMPONENT OR THE USE OR OTHER DEALINGS
 -- IN THE COMPONENT.
--- 
+--
 -- The CAN protocol is developed by Robert Bosch GmbH and protected by patents.
 -- Anybody who wants to implement this IP core on silicon has to obtain a CAN
 -- protocol license from Bosch.
--- 
+--
 --------------------------------------------------------------------------------
 
 --------------------------------------------------------------------------------
 --  @Purpose:
 --    CTU CAN FD main testbench top - Gate level variant!
---  
+--
 --------------------------------------------------------------------------------
 -- Revision History:
 --    20.5.2021   Created file
@@ -93,22 +93,22 @@ entity tb_top_ctu_can_fd is
     generic(
         -- Test-bench specific stuff
         runner_cfg              : string := runner_cfg_default;
-        test_name               : string := "demo";
-        test_type               : string := "compliance"; -- "feature", "compliance" or "reference"
-        stand_alone_vip_mode    : boolean := true; 
+        test_name               : string := "device_id";
+        test_type               : string := "feature"; -- "feature", "compliance" or "reference"
+        stand_alone_vip_mode    : boolean := true;
         log_level               : t_log_verbosity := verbosity_info;
 
         iterations              : natural := 1;
         timeout                 : string := "10 ms";
 
         -- Reference test iterations
-        reference_iterations    : natural range 1 to 1000 := 1000;
-        
+        reference_iterations    : natural range 1 to 1000 := 10;
+
         -- Clock configuration of DUT
         cfg_sys_clk_period      : string := "10 ns";
-        
+
         -- Bit timing config of DUT on CAN bus (used by compliance tests)
-        cfg_brp                 : natural := 4;  
+        cfg_brp                 : natural := 4;
         cfg_prop                : natural := 0;
         cfg_ph_1                : natural := 1;
         cfg_ph_2                : natural := 1;
@@ -118,7 +118,7 @@ entity tb_top_ctu_can_fd is
         cfg_ph_1_fd             : natural := 1;
         cfg_ph_2_fd             : natural := 2;
         cfg_sjw_fd              : natural := 2;
-        
+
         -- DUT configuration
         rx_buffer_size          : natural := 64;
         txt_buffer_count        : natural range 2 to 8 := 4;
@@ -136,11 +136,11 @@ entity tb_top_ctu_can_fd is
 end entity;
 
 architecture tb of tb_top_ctu_can_fd is
-   
+
    -- DUT interface
    signal clk_sys       : std_logic;
    signal res_n         : std_logic;
-   
+
    signal write_data    : std_logic_vector(31 DOWNTO 0);
    signal read_data     : std_logic_vector(31 DOWNTO 0);
    signal address       : std_logic_vector(15 DOWNTO 0);
@@ -148,9 +148,9 @@ architecture tb of tb_top_ctu_can_fd is
    signal swr           : std_logic;
    signal srd           : std_logic;
    signal sbe           : std_logic_vector(3 DOWNTO 0);
-   
+
    signal int           : std_logic;
-   
+
    signal can_tx        : std_logic;
    signal can_rx        : std_logic;
 
@@ -162,7 +162,7 @@ architecture tb of tb_top_ctu_can_fd is
    -- Test control
    signal test_start    : std_logic := '0';
    signal test_done     : std_logic := '0';
-   signal test_success  : std_logic := '0'; -- 0 fail / 1 success  
+   signal test_success  : std_logic := '0'; -- 0 fail / 1 success
 
    component ctu_can_fd_vip is
    generic(
@@ -173,7 +173,7 @@ architecture tb of tb_top_ctu_can_fd is
 
        -- DUT Clock period
        cfg_sys_clk_period      : string;
-       
+
        -- Bit timing cofnig used in; compliance tests
        cfg_brp                 : natural;
        cfg_prop                : natural;
@@ -185,10 +185,10 @@ architecture tb of tb_top_ctu_can_fd is
        cfg_ph_1_fd             : natural;
        cfg_ph_2_fd             : natural;
        cfg_sjw_fd              : natural;
-       
+
        -- Seed
        seed                    : natural := 0;
-       
+
        -- Reference test iterations
         reference_iterations   : natural range 1 to 1000 := 1000
     );
@@ -197,7 +197,7 @@ architecture tb of tb_top_ctu_can_fd is
        test_start          : in  std_logic;
        test_done           : out std_logic := '0';
        test_success        : out std_logic := '0';
-         
+
        -- DUT interface
        clk_sys             : inout std_logic;
        res_n               : out   std_logic;
@@ -215,10 +215,10 @@ architecture tb of tb_top_ctu_can_fd is
        int                 : in    std_logic;
 
        can_tx              : in    std_logic;
-       can_rx              : out   std_logic;          
+       can_rx              : out   std_logic;
 
        test_probe          : in    t_ctu_can_fd_test_probe;
-       timestamp           : out   std_logic_vector(63 DOWNTO 0) 
+       timestamp           : out   std_logic_vector(63 DOWNTO 0)
     );
     end component;
 
@@ -256,12 +256,12 @@ begin
         \test_probe[rx_trigger_nbs]\    => test_probe.rx_trigger_nbs,
         \test_probe[rx_trigger_wbs]\    => test_probe.rx_trigger_wbs,
         \test_probe[tx_trigger]\        => test_probe.tx_trigger,
-    
+
         -- Timestamp for time based transmission / reception
         timestamp   => timestamp
     );
-   
-    
+
+
     ---------------------------------------------------------------------------
     -- CTU CAN FD VIP
     ---------------------------------------------------------------------------
@@ -272,7 +272,7 @@ begin
         stand_alone_vip_mode    => stand_alone_vip_mode,
 
         cfg_sys_clk_period      => cfg_sys_clk_period,
-        
+
         cfg_brp                 => cfg_brp,
         cfg_prop                => cfg_prop,
         cfg_ph_1                => cfg_ph_1,
@@ -283,7 +283,7 @@ begin
         cfg_ph_1_fd             => cfg_ph_1_fd,
         cfg_ph_2_fd             => cfg_ph_2_fd,
         cfg_sjw_fd              => cfg_sjw_fd,
-        
+
         seed                    => seed,
         reference_iterations    => reference_iterations
     )
@@ -292,18 +292,18 @@ begin
         test_start         => test_start,
         test_done          => test_done,
         test_success       => test_success,
-        
+
         -----------------------------------------------------------------------
         -- DUT interface
         -----------------------------------------------------------------------
-        
+
         -- Clock, reset
         clk_sys     => clk_sys,
         res_n       => res_n,
-        
+
         -- DFT support
         scan_enable => scan_enable,
-        
+
         -- Memory bus
         write_data  => write_data,
         read_data   => read_data,
@@ -322,9 +322,9 @@ begin
 
         -- Test interface
         test_probe  => test_probe,
-        
+
         -- Timestamp
-        timestamp   => timestamp 
+        timestamp   => timestamp
     );
 
 
@@ -394,7 +394,7 @@ begin
             if (test_success = '0') then
                 test_runner_cleanup(runner, true);
             end if;
-            
+
             -- Finish handshake
             test_start <= '0';
             wait until test_done = '0';
