@@ -4,9 +4,9 @@
  * CTU CAN FD IP Core
  *
  * Copyright (C) 2015-2018 Ondrej Ille <ondrej.ille@gmail.com> FEE CTU
- * Copyright (C) 2018-2020 Ondrej Ille <ondrej.ille@gmail.com> self-funded
+ * Copyright (C) 2018-2021 Ondrej Ille <ondrej.ille@gmail.com> self-funded
  * Copyright (C) 2018-2019 Martin Jerabek <martin.jerabek01@gmail.com> FEE CTU
- * Copyright (C) 2018-2020 Pavel Pisa <pisa@cmp.felk.cvut.cz> FEE CTU/self-funded
+ * Copyright (C) 2018-2022 Pavel Pisa <pisa@cmp.felk.cvut.cz> FEE CTU/self-funded
  *
  * Project advisors:
  *     Jiri Novak <jnovak@fel.cvut.cz>
@@ -32,6 +32,7 @@
 #include <linux/of.h>
 #include <linux/platform_device.h>
 #include <linux/pm_runtime.h>
+#include <linux/version.h>
 
 #include "ctucanfd.h"
 
@@ -57,7 +58,9 @@ static void ctucan_platform_set_drvdata(struct device *dev,
  */
 static int ctucan_platform_probe(struct platform_device *pdev)
 {
+#if LINUX_VERSION_CODE < KERNEL_VERSION(5, 1, 0)
 	struct resource *res; /* IO mem resources */
+#endif /* < 5.1.0 */
 	struct device	*dev = &pdev->dev;
 	void __iomem *addr;
 	int ret;
@@ -65,8 +68,12 @@ static int ctucan_platform_probe(struct platform_device *pdev)
 	int irq;
 
 	/* Get the virtual base address for the device */
+#if LINUX_VERSION_CODE >= KERNEL_VERSION(5, 1, 0)
+	addr = devm_platform_ioremap_resource(pdev, 0);
+#else /* < 5.1.0 */
 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
 	addr = devm_ioremap_resource(dev, res);
+#endif /* < 5.1.0 */
 	if (IS_ERR(addr)) {
 		dev_err(dev, "Cannot remap address.\n");
 		ret = PTR_ERR(addr);
