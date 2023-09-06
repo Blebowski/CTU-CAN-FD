@@ -4,9 +4,9 @@
  * CTU CAN FD IP Core
  *
  * Copyright (C) 2015-2018 Ondrej Ille <ondrej.ille@gmail.com> FEE CTU
- * Copyright (C) 2018-2020 Ondrej Ille <ondrej.ille@gmail.com> self-funded
+ * Copyright (C) 2018-2021 Ondrej Ille <ondrej.ille@gmail.com> self-funded
  * Copyright (C) 2018-2019 Martin Jerabek <martin.jerabek01@gmail.com> FEE CTU
- * Copyright (C) 2018-2020 Pavel Pisa <pisa@cmp.felk.cvut.cz> FEE CTU/self-funded
+ * Copyright (C) 2018-2021 Pavel Pisa <pisa@cmp.felk.cvut.cz> FEE CTU/self-funded
  *
  * Project advisors:
  *     Jiri Novak <jnovak@fel.cvut.cz>
@@ -41,7 +41,7 @@ struct ctucan_priv {
 
 	void __iomem *mem_base;
 	u32 (*read_reg)(struct ctucan_priv *priv,
-				 enum ctu_can_fd_can_registers reg);
+			enum ctu_can_fd_can_registers reg);
 	void (*write_reg)(struct ctucan_priv *priv,
 			  enum ctu_can_fd_can_registers reg, u32 val);
 

@@ -4,9 +4,9 @@
  * CTU CAN FD IP Core
  *
  * Copyright (C) 2015-2018 Ondrej Ille <ondrej.ille@gmail.com> FEE CTU
- * Copyright (C) 2018-2020 Ondrej Ille <ondrej.ille@gmail.com> self-funded
+ * Copyright (C) 2018-2021 Ondrej Ille <ondrej.ille@gmail.com> self-funded
  * Copyright (C) 2018-2019 Martin Jerabek <martin.jerabek01@gmail.com> FEE CTU
- * Copyright (C) 2018-2020 Pavel Pisa <pisa@cmp.felk.cvut.cz> FEE CTU/self-funded
+ * Copyright (C) 2018-2022 Pavel Pisa <pisa@cmp.felk.cvut.cz> FEE CTU/self-funded
  *
  * Project advisors:
  *     Jiri Novak <jnovak@fel.cvut.cz>
@@ -29,6 +29,7 @@
 
 #include <linux/clk.h>
 #include <linux/errno.h>
+#include <linux/ethtool.h>
 #include <linux/init.h>
 #include <linux/bitfield.h>
 #include <linux/interrupt.h>
@@ -39,7 +40,9 @@
 #include <linux/string.h>
 #include <linux/types.h>
 #include <linux/can/error.h>
+#ifdef CONFIG_CAN_LEDS
 #include <linux/can/led.h>
+#endif
 #include <linux/pm_runtime.h>
 #include <linux/version.h>
 
@@ -58,6 +61,10 @@
 
 #if LINUX_VERSION_CODE < KERNEL_VERSION(5, 11, 0)
 #define can_fd_len2dlc can_len2dlc
+#endif
+
+#ifndef CAN_ERR_CNT
+#define CAN_ERR_CNT 0
 #endif
 
 #define CTUCANFD_ID 0xCAFD
@@ -92,7 +99,7 @@ enum ctucan_txtb_command {
 	TXT_CMD_SET_ABORT   = 0x04
 };
 
-const struct can_bittiming_const ctu_can_fd_bit_timing_max = {
+static const struct can_bittiming_const ctu_can_fd_bit_timing_max = {
 	.name = "ctu_can_fd",
 	.tseg1_min = 2,
 	.tseg1_max = 190,
@@ -104,7 +111,7 @@ const struct can_bittiming_const ctu_can_fd_bit_timing_max = {
 	.brp_inc = 1,
 };
 
-const struct can_bittiming_const ctu_can_fd_bit_timing_data_max = {
+static const struct can_bittiming_const ctu_can_fd_bit_timing_data_max = {
 	.name = "ctu_can_fd",
 	.tseg1_min = 2,
 	.tseg1_max = 94,
@@ -126,36 +133,35 @@ static const char * const ctucan_state_strings[CAN_STATE_MAX] = {
 };
 
 static void ctucan_write32_le(struct ctucan_priv *priv,
-		       enum ctu_can_fd_can_registers reg, u32 val)
+			      enum ctu_can_fd_can_registers reg, u32 val)
 {
 	iowrite32(val, priv->mem_base + reg);
 }
 
 static void ctucan_write32_be(struct ctucan_priv *priv,
-			  enum ctu_can_fd_can_registers reg, u32 val)
+			      enum ctu_can_fd_can_registers reg, u32 val)
 {
 	iowrite32be(val, priv->mem_base + reg);
 }
 
 static u32 ctucan_read32_le(struct ctucan_priv *priv,
-		     enum ctu_can_fd_can_registers reg)
+			    enum ctu_can_fd_can_registers reg)
 {
 	return ioread32(priv->mem_base + reg);
 }
 
 static u32 ctucan_read32_be(struct ctucan_priv *priv,
-			enum ctu_can_fd_can_registers reg)
+			    enum ctu_can_fd_can_registers reg)
 {
 	return ioread32be(priv->mem_base + reg);
 }
 
-static inline void ctucan_write32(struct ctucan_priv *priv, enum ctu_can_fd_can_registers reg,
-				  u32 val)
+static void ctucan_write32(struct ctucan_priv *priv, enum ctu_can_fd_can_registers reg, u32 val)
 {
 	priv->write_reg(priv, reg, val);
 }
 
-static inline u32 ctucan_read32(struct ctucan_priv *priv, enum ctu_can_fd_can_registers reg)
+static u32 ctucan_read32(struct ctucan_priv *priv, enum ctu_can_fd_can_registers reg)
 {
 	return priv->read_reg(priv, reg);
 }
@@ -201,7 +207,8 @@ static int ctucan_reset(struct net_device *ndev)
 	clear_bit(CTUCANFD_FLAG_RX_FFW_BUFFERED, &priv->drv_flags);
 
 	do {
-		u16 device_id = FIELD_GET(REG_DEVICE_ID_DEVICE_ID, ctucan_read32(priv, CTUCANFD_DEVICE_ID));
+		u16 device_id = FIELD_GET(REG_DEVICE_ID_DEVICE_ID,
+					  ctucan_read32(priv, CTUCANFD_DEVICE_ID));
 
 		if (device_id == 0xCAFD)
 			return 0;
@@ -326,7 +333,6 @@ static int ctucan_set_secondary_sample_point(struct net_device *ndev)
 
 	/* Use SSP for bit-rates above 1 Mbits/s */
 	if (dbt->bitrate > 1000000) {
-
 		/* Calculate SSP in minimal time quanta */
 		ssp_offset = (priv->can.clock.freq / 1000) * dbt->sample_point / dbt->bitrate;
 
@@ -502,7 +508,7 @@ static int ctucan_do_set_mode(struct net_device *ndev, enum can_mode mode)
  *
  * Return: Status of TXT buffer
  */
-static inline enum ctucan_txtb_status ctucan_get_tx_status(struct ctucan_priv *priv, u8 buf)
+static enum ctucan_txtb_status ctucan_get_tx_status(struct ctucan_priv *priv, u8 buf)
 {
 	u32 tx_status = ctucan_read32(priv, CTUCANFD_TX_STATUS);
 	enum ctucan_txtb_status status = (tx_status >> (buf * 4)) & 0x7;
@@ -540,7 +546,7 @@ static bool ctucan_is_txt_buf_writable(struct ctucan_priv *priv, u8 buf)
  *	   False - Frame was not inserted due to one of:
  *			1. TXT Buffer is not writable (it is in wrong state)
  *			2. Invalid TXT buffer index
- *			3. Invalid frame lenght
+ *			3. Invalid frame length
  */
 static bool ctucan_insert_frame(struct ctucan_priv *priv, const struct canfd_frame *cf, u8 buf,
 				bool isfdf)
@@ -625,13 +631,16 @@ static void ctucan_give_txtb_cmd(struct ctucan_priv *priv, enum ctucan_txtb_comm
 static netdev_tx_t ctucan_start_xmit(struct sk_buff *skb, struct net_device *ndev)
 {
 	struct ctucan_priv *priv = netdev_priv(ndev);
-	struct net_device_stats *stats = &ndev->stats;
 	struct canfd_frame *cf = (struct canfd_frame *)skb->data;
 	u32 txtb_id;
 	bool ok;
 	unsigned long flags;
 
+#if LINUX_VERSION_CODE >= KERNEL_VERSION(6, 0, 9)
+	if (can_dev_dropped_skb(ndev, skb))
+#else /* < 6.0.9 */
 	if (can_dropped_invalid_skb(ndev, skb))
+#endif /* < 6.0.9 */
 		return NETDEV_TX_OK;
 
 	if (unlikely(!CTU_CAN_FD_TXTNF(priv))) {
@@ -656,9 +665,6 @@ static netdev_tx_t ctucan_start_xmit(struct sk_buff *skb, struct net_device *nde
 #else /* < 5.12.0 */
 	can_put_echo_skb(skb, ndev, txtb_id);
 #endif /* < 5.12.0 */
-
-	if (!(cf->can_id & CAN_RTR_FLAG))
-		stats->tx_bytes += cf->len;
 
 	spin_lock_irqsave(&priv->tx_lock, flags);
 	ctucan_give_txtb_cmd(priv, TXT_CMD_SET_READY, txtb_id);
@@ -828,7 +834,6 @@ static void ctucan_get_rec_tec(struct ctucan_priv *priv, struct can_berr_counter
 	bec->txerr = FIELD_GET(REG_REC_TEC_VAL, err_ctrs);
 }
 
-
 /**
  * ctucan_err_interrupt() - Error frame ISR
  * @ndev:	net_device pointer
@@ -854,11 +859,11 @@ static void ctucan_err_interrupt(struct net_device *ndev, u32 isr)
 
 	if (dologerr)
 		netdev_info(ndev, "%s: ISR = 0x%08x, rxerr %d, txerr %d, error type %lu, pos %lu, ALC id_field %lu, bit %lu\n",
-			__func__, isr, bec.rxerr, bec.txerr,
-			FIELD_GET(REG_ERR_CAPT_ERR_TYPE, err_capt_alc),
-			FIELD_GET(REG_ERR_CAPT_ERR_POS, err_capt_alc),
-			FIELD_GET(REG_ERR_CAPT_ALC_ID_FIELD, err_capt_alc),
-			FIELD_GET(REG_ERR_CAPT_ALC_BIT, err_capt_alc));
+			    __func__, isr, bec.rxerr, bec.txerr,
+			    FIELD_GET(REG_ERR_CAPT_ERR_TYPE, err_capt_alc),
+			    FIELD_GET(REG_ERR_CAPT_ERR_POS, err_capt_alc),
+			    FIELD_GET(REG_ERR_CAPT_ALC_ID_FIELD, err_capt_alc),
+			    FIELD_GET(REG_ERR_CAPT_ALC_BIT, err_capt_alc));
 
 	skb = alloc_can_err_skb(ndev, &cf);
 
@@ -887,7 +892,7 @@ static void ctucan_err_interrupt(struct net_device *ndev, u32 isr)
 		case CAN_STATE_ERROR_PASSIVE:
 			priv->can.can_stats.error_passive++;
 			if (skb) {
-				cf->can_id |= CAN_ERR_CRTL;
+				cf->can_id |= CAN_ERR_CRTL | CAN_ERR_CNT;
 				cf->data[1] = (bec.rxerr > 127) ?
 						CAN_ERR_CRTL_RX_PASSIVE :
 						CAN_ERR_CRTL_TX_PASSIVE;
@@ -898,7 +903,7 @@ static void ctucan_err_interrupt(struct net_device *ndev, u32 isr)
 		case CAN_STATE_ERROR_WARNING:
 			priv->can.can_stats.error_warning++;
 			if (skb) {
-				cf->can_id |= CAN_ERR_CRTL;
+				cf->can_id |= CAN_ERR_CRTL | CAN_ERR_CNT;
 				cf->data[1] |= (bec.txerr > bec.rxerr) ?
 					CAN_ERR_CRTL_TX_WARNING :
 					CAN_ERR_CRTL_RX_WARNING;
@@ -907,6 +912,7 @@ static void ctucan_err_interrupt(struct net_device *ndev, u32 isr)
 			}
 			break;
 		case CAN_STATE_ERROR_ACTIVE:
+			cf->can_id |= CAN_ERR_CNT;
 			cf->data[1] = CAN_ERR_CRTL_ACTIVE;
 			cf->data[6] = bec.txerr;
 			cf->data[7] = bec.rxerr;
@@ -996,8 +1002,10 @@ static int ctucan_rx_poll(struct napi_struct *napi, int quota)
 		ctucan_write32(priv, CTUCANFD_COMMAND, REG_COMMAND_CDO);
 	}
 
+#ifdef CONFIG_CAN_LEDS
 	if (work_done)
 		can_led_event(ndev, CAN_LED_EVENT_RX);
+#endif
 
 	if (!framecnt && res != 0) {
 		if (napi_complete_done(napi, work_done)) {
@@ -1061,9 +1069,9 @@ static void ctucan_tx_interrupt(struct net_device *ndev)
 			case TXT_TOK:
 				ctucan_netdev_dbg(ndev, "TXT_OK\n");
 #if LINUX_VERSION_CODE >= KERNEL_VERSION(5, 12, 0)
-				can_get_echo_skb(ndev, txtb_id, NULL);
+				stats->tx_bytes += can_get_echo_skb(ndev, txtb_id, NULL);
 #else /* < 5.12.0 */
-				can_get_echo_skb(ndev, txtb_id);
+				stats->tx_bytes += can_get_echo_skb(ndev, txtb_id);
 #endif /* < 5.12.0 */
 				stats->tx_packets++;
 				break;
@@ -1130,7 +1138,9 @@ clear:
 		}
 	} while (some_buffers_processed);
 
+#ifdef CONFIG_CAN_LEDS
 	can_led_event(ndev, CAN_LED_EVENT_TX);
+#endif
 
 	spin_lock_irqsave(&priv->tx_lock, flags);
 
@@ -1144,7 +1154,7 @@ clear:
 /**
  * ctucan_interrupt() - CAN Isr
  * @irq:	irq number
- * @dev_id:	device id poniter
+ * @dev_id:	device id pointer
  *
  * This is the CTU CAN FD ISR. It checks for the type of interrupt
  * and invokes the corresponding ISR.
@@ -1293,7 +1303,9 @@ static int ctucan_open(struct net_device *ndev)
 	}
 
 	netdev_info(ndev, "ctu_can_fd device registered\n");
+#ifdef CONFIG_CAN_LEDS
 	can_led_event(ndev, CAN_LED_EVENT_OPEN);
+#endif
 	napi_enable(&priv->napi);
 	netif_start_queue(ndev);
 
@@ -1328,7 +1340,9 @@ static int ctucan_close(struct net_device *ndev)
 	free_irq(ndev->irq, ndev);
 	close_candev(ndev);
 
+#ifdef CONFIG_CAN_LEDS
 	can_led_event(ndev, CAN_LED_EVENT_STOP);
+#endif
 	pm_runtime_put(priv->dev);
 
 	return 0;
@@ -1491,7 +1505,11 @@ int ctucan_probe_common(struct device *dev, void __iomem *addr, int irq, unsigne
 
 	priv->can.clock.freq = can_clk_rate;
 
+#if LINUX_VERSION_CODE < KERNEL_VERSION(5, 19, 0)
 	netif_napi_add(ndev, &priv->napi, ctucan_rx_poll, NAPI_POLL_WEIGHT);
+#else /* 5.19+ */
+	netif_napi_add(ndev, &priv->napi, ctucan_rx_poll);
+#endif /* 5.19+ */
 
 	ret = register_candev(ndev);
 	if (ret) {
@@ -1499,7 +1517,9 @@ int ctucan_probe_common(struct device *dev, void __iomem *addr, int irq, unsigne
 		goto err_deviceoff;
 	}
 
+#ifdef CONFIG_CAN_LEDS
 	devm_can_led_init(ndev);
+#endif
 
 	pm_runtime_put(dev);
 
