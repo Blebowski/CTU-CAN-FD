@@ -235,8 +235,8 @@ test_nightly:
             - test/build/code_coverage_tests_nightly
             - test/build/functional_coverage
             - test/build/vunit_out/preprocessed
-            - test/rtl_lst.txt
-            - test/tb_lst.txt
+            - rtl/slf_*.yml
+            - test/slf_*.yml
 
     # Nightly tests might fail due to randomization. It is not preffered to
     # kill whole follow-up coverage processing due to this failure!
@@ -268,7 +268,7 @@ test_compliance_short:
 
     # For now not all compliance tests are debugged, allow failure...
     allow_failure: true
-    
+
 test_compliance_full_typ:
     stage: test_rtl
     tags:
@@ -431,13 +431,13 @@ pages:
         - cp src/*.vhd public/rtl/
         - cp src/**/*.vhd public/rtl/
         - cp src/**/**/*.vhd public/rtl/
-        - cp test/rtl_lst.txt public/
+        - cp rtl/slf_*.yml public/
 
         # Copy TB
         - cp test/main_tb/*.vhd public/tb/
         - cp test/main_tb/**/*.vhd public/tb/
         - cp test/main_tb/**/**/*.vhd public/tb/
-        - cp test/tb_lst.txt public/
+        - cp test/slf_*.yml public/
 
         # Copy test list
         - cp test/test_list.txt public/
@@ -449,10 +449,10 @@ pages:
         - cp test/tests_*.gz public/regression_results/
         - cp test/*_summary public/regression_results/
         - tar -czvf public/regression_results/regression_summary.gz public/regression_results/*_summary
-        
+
         # Coverage collection temporarily disabled!
         #- mv test/code_html public/regression_results/coverage || true
-        
+
         # Measure total simulation time
         - cat test/*.sim_time | paste -sd+ | bc > total.sim_time
         - echo "Total simulation time is `cat total.sim_time` fs."
@@ -481,7 +481,7 @@ pages:
         # Check size, compress, check again
         - echo "Size of artifacts:"
         - du -skh public/*
-        
+
     only:
         - master
     artifacts:
