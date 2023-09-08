@@ -1,6 +1,13 @@
 simulator: vcs
-test_list_file: test/tlf_dummy.yml
 simulation_resolution: ps
+
+check_elab_log: true
+
+test_name_strategy: generic_parameter
+test_name_generic: test_name
+
+elab_options:
+    vcs: "+warn=noDUP_PARM_ASSGN"
 
 targets:
 
@@ -16,6 +23,61 @@ targets:
             - test/slf_tb_dependencies_simple.yml
             - test/slf_tb_common.yml
             - test/slf_tb_top_simple.yml
+
+
+    ###############################################################################################
+    # Fast ASIC configuration
+    ###############################################################################################
+    tb_rtl_test_fast_asic:
+        top_entity: ctu_can_fd_tb.tb_top_ctu_can_fd
+        test_list_file: test/tlf_fast_asic.yml
+        generics:
+            # Test-bench configuration
+            #log_level: info
+            #randomize: false
+            #seed: 0
+            #debug: false
+            test_type: feature
+            iterations: 1
+            timeout: 100 ms
+
+            # DUT generics
+            rx_buffer_size: 64
+            txt_buffer_count: 8
+            sup_filtA: true
+            sup_filtB: true
+            sup_filtC: true
+            sup_range: true
+            sup_traffic_ctrs: true
+            sup_parity: true
+
+            # C_TECH_ASIC
+            target_technology: 0
+
+            # DUT Bit timing settings
+            # (Applies for compliance tests and feature tests!)
+            cfg_brp: 2
+            cfg_prop: 5
+            cfg_ph_1: 7
+            cfg_ph_2: 7
+            cfg_sjw: 5
+
+            cfg_brp_fd: 1
+            cfg_prop_fd: 5
+            cfg_ph_1_fd: 7
+            cfg_ph_2_fd: 7
+            cfg_sjw_fd: 5
+
+            # Clock configuration
+            # (Applies for compliance tests and feature tests!)
+            cfg_sys_clk_period: 10 ns
+
+            # Number of frames used from each dataset, 1000 means whole dataset
+            # These take really long time, so we run only few frames here!
+            reference_iterations: 10
+
+        source_list_files:
+            - tb_ctu_can_fd_rtl
 
 check_severity: error
 
