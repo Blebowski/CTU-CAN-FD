@@ -1,0 +1,4 @@
+library: ctu_can_fd_tb
+
+source_list:
+    - file: main_tb/tb_top_gates_ctu_can_fd.vhd

@@ -10,6 +10,7 @@ import random
 from typing import List, Tuple
 import copy
 import re
+import yaml
 
 __all__ = ['add_sources', 'add_rtl_sources', 'add_tb_sources',
            'dict_merge', 'vhdl_serialize', 'dump_sim_options',
@@ -152,7 +153,6 @@ def add_psl_cov_sim_opt(name, cfg, build) -> OptionsDict:
 
     return OptionsDict({"ghdl.sim_flags": sim_flags})
 
-
 def add_sources(lib, patterns) -> None:
     """
     Adds source files to Vunits lib which are matching pattern (recursively).
@@ -164,9 +164,18 @@ def add_sources(lib, patterns) -> None:
             if f != "tb_wrappers.vhd":
                 lib.add_source_file(str(f))
 
+def add_sources_from_slf(lib, slf_path, prefix) -> None:
+    """
+    Adds sources from source list file
+    """
+    with open(slf_path, 'r') as file:
+        slf = yaml.safe_load(file)
+
+    for source in slf['source_list']:
+        lib.add_source_file("{}{}".format(prefix, source['file']))
 
 def add_rtl_sources(lib) -> None:
-    add_sources(lib, ['../src/**/*.vhd'])
+    add_sources_from_slf(lib, "../../src/slf_rtl.yml", "../../src/")
 
 def add_post_syn_netlist(lib) -> None:
     add_sources(lib, ['../synthesis/Vivado/ci_benchmark/maximal_design_config/can_top_level.vhd'])
@@ -214,56 +223,64 @@ def unit_configure(lib, config, build):
 def add_main_tb_sources(lib, config) -> None:
     sources = []
 
-    sources.append('main_tb/contexts/*.vhd')
+#    sources.append('main_tb/contexts/*.vhd')
+#
+#    sources.append('main_tb/pkg/tb_prot_types_pkg.vhd')
+#    sources.append('main_tb/pkg/tb_shared_vars_pkg.vhd')
+#
+#    # Packages named explicitly to allow later switching between own and
+#    # Vunit implementation of report_pkg
+#    if (config['_default']['vunit_report_pkg'] == False):
+#        sources.append('main_tb/pkg/tb_report_pkg.vhd')
+#    else:
+#        sources.append('main_tb/pkg/tb_report_pkg_vunit.vhd')
+#
+#    sources.append('main_tb/pkg/tb_communication_pkg.vhd')
+#    sources.append('main_tb/pkg/tb_reg_map_defs_pkg.vhd')
+#    sources.append('main_tb/pkg/tb_random_pkg.vhd')
+#    sources.append('main_tb/pkg/tb_pli_conversion_pkg.vhd')
+#
+#    sources.append('main_tb/pkg/can_fd_tb_register_map.vhd')
+#
+#    sources.append('main_tb/common/*.vhd')
+#
+#    # Common Agents
+#    sources.append('main_tb/agents/reset_agent/*.vhd');
+#    sources.append('main_tb/agents/clock_agent/*.vhd');
+#    sources.append('main_tb/agents/memory_bus_agent/*.vhd');
+#    sources.append('main_tb/agents/timestamp_agent/*.vhd');
+#    sources.append('main_tb/agents/interrupt_agent/*.vhd');
+#    sources.append('main_tb/agents/can_agent/*.vhd');
+#    sources.append('main_tb/agents/test_probe_agent/*.vhd');
+#    sources.append('main_tb/agents/test_controller_agent/*.vhd');
+#
+#    # Test specific agents
+#    sources.append('main_tb/agents/feature_test_agent/*.vhd');
+#    sources.append('main_tb/agents/compliance_test_agent/*.vhd');
+#    sources.append('main_tb/agents/reference_test_agent/*.vhd');
+#
+#    # Feature test implementations
+#    sources.append('main_tb/feature_tests/*.vhd');
+#
+#    # Reference tests
+#    sources.append('main_tb/reference_test_data_sets/*.vhd');
+#
+#    # VIP top and TB top
+#    sources.append('main_tb/ctu_can_fd_vip.vhd');
+#    #sources.append('main_tb/vunit_manager.vhd');
+#
+#    if (config['_default']['gate_level'] == False):
+#        sources.append('main_tb/tb_top_ctu_can_fd.vhd');
+#    else:
+#        sources.append('main_tb/tb_top_gates_ctu_can_fd.vhd');
 
-    sources.append('main_tb/pkg/tb_prot_types_pkg.vhd')
-    sources.append('main_tb/pkg/tb_shared_vars_pkg.vhd')
-
-    # Packages named explicitly to allow later switching between own and
-    # Vunit implementation of report_pkg
-    if (config['_default']['vunit_report_pkg'] == False):
-        sources.append('main_tb/pkg/tb_report_pkg.vhd')
-    else:
-        sources.append('main_tb/pkg/tb_report_pkg_vunit.vhd')
-
-    sources.append('main_tb/pkg/tb_communication_pkg.vhd')
-    sources.append('main_tb/pkg/tb_reg_map_defs_pkg.vhd')
-    sources.append('main_tb/pkg/tb_random_pkg.vhd')
-    sources.append('main_tb/pkg/tb_pli_conversion_pkg.vhd')
-
-    sources.append('main_tb/pkg/can_fd_tb_register_map.vhd')
-
-    sources.append('main_tb/common/*.vhd')
-
-    # Common Agents
-    sources.append('main_tb/agents/reset_agent/*.vhd');
-    sources.append('main_tb/agents/clock_agent/*.vhd');
-    sources.append('main_tb/agents/memory_bus_agent/*.vhd');
-    sources.append('main_tb/agents/timestamp_agent/*.vhd');
-    sources.append('main_tb/agents/interrupt_agent/*.vhd');
-    sources.append('main_tb/agents/can_agent/*.vhd');
-    sources.append('main_tb/agents/test_probe_agent/*.vhd');
-    sources.append('main_tb/agents/test_controller_agent/*.vhd');
-
-    # Test specific agents
-    sources.append('main_tb/agents/feature_test_agent/*.vhd');
-    sources.append('main_tb/agents/compliance_test_agent/*.vhd');
-    sources.append('main_tb/agents/reference_test_agent/*.vhd');
-
-    # Feature test implementations
-    sources.append('main_tb/feature_tests/*.vhd');
-
-    # Reference tests
-    sources.append('main_tb/reference_test_data_sets/*.vhd');
-
-    # VIP top and TB top
-    sources.append('main_tb/ctu_can_fd_vip.vhd');
-    #sources.append('main_tb/vunit_manager.vhd');
+    add_sources_from_slf(lib, "../slf_tb_dependencies_vunit.yml", "../")
+    add_sources_from_slf(lib, "../slf_tb_common.yml", "../")
 
     if (config['_default']['gate_level'] == False):
-        sources.append('main_tb/tb_top_ctu_can_fd.vhd');
+        add_sources_from_slf(lib, "../slf_tb_top_vunit.yml", "../")
     else:
-        sources.append('main_tb/tb_top_gates_ctu_can_fd.vhd');
+        add_sources_from_slf(lib, "../slf_tb_top_gates.yml", "../")
 
     add_sources(lib, sources)
 

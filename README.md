@@ -111,7 +111,7 @@ gate level simulations (see "Test-bench" above), provide good indicator of high-
 
 ## How to use it ?
 
-Download delivery package ("public" directory) from: [![Delivery package](https://img.shields.io/badge/Delivery-package--blue.svg)]( https://gitlab.fel.cvut.cz/canbus/ctucanfd_ip_core/-/jobs/artifacts/master/browse?job=pages). Package is created by daily regression on master branch.
+Download delivery package ("public" directory) from: [![Delivery package](https://img.shields.io/badge/Delivery-package--blue.svg)]( https://gitlab.fel.cvut.cz/canbus/ctucanfd_ip_core/-/jobs/artifacts/master/browse?job=pages). Package is created by CI run on master branch.
 
 Delivery package contains:
 - RTL design
@@ -120,11 +120,36 @@ Delivery package contains:
 - Documentation (Datasheet, System Architecture, Testbench)
 - Regression results (with Compliance test results)
 - Functional coverage results from regression
-- Synthesis constraints + results of Synthesis benchmarks.
+- Synthesis constraints + results of Synthesis benchmarks on Xilinx FPGA
 
-RTL CAN be easily integrated with help of [![System architecture](https://img.shields.io/badge/System_architecture--blue.svg)]( http://canbus.pages.fel.cvut.cz/ctucanfd_ip_core/doc/System_Architecture.pdf) document.
+RTL CAN be integrated with help of [![System architecture](https://img.shields.io/badge/System_architecture--blue.svg)]( http://canbus.pages.fel.cvut.cz/ctucanfd_ip_core/doc/System_Architecture.pdf) document.
 
-VIP can be easily integrated into other test-bench with help of [![Testbench architecture](https://img.shields.io/badge/Testbench--blue.svg)]( http://canbus.pages.fel.cvut.cz/ctucanfd_ip_core/doc/Testbench.pdf) document.
+VIP can be integrated into other test-bench with help of [![Testbench architecture](https://img.shields.io/badge/Testbench--blue.svg)]( http://canbus.pages.fel.cvut.cz/ctucanfd_ip_core/doc/Testbench.pdf) document.
+
+To compile RTL, compile files from `slf_rtl.yml` into `ctu_can_fd_rtl` library.
+RTL always needs to be compiled first (before TB is compiled).
+
+Note that the files must be compiled in the order that is given in the `slf_*` files.
+
+To compile TB, there are two ways:
+1. Without Vunit.
+2. With Vunit.
+
+
+### Without VUnit
+
+1. Compile files from `slf_tb_dependencies_simple.yml`
+2. Compile files from `slf_tb_common.yml`
+3. If running the TB stand-alone (no integration into other TB), compile files from `slf_tb_top_simple.yml`.
+   (This gives you TB top for stand-alone run of the TB).
+
+
+### With VUnit
+
+1. Compile files from `slf_tb_dependencies_vunit.yml`.
+2. Compile files from `slf_tb_common.yml`.
+3. Compile files from `slf_tb_top_vunit.yml`.
+
 
 If you like the design, and would like to use-it, let us know. We are looking for co-operation,
 especially on ISO certification which is a big step which we would need partners for. Please,

@@ -77,8 +77,8 @@
 
 -- Only top level uses Vunit. This allows keeping CTU CAN FD VIP Vunit-less,
 -- when integrating RTL and VIP into other TB!
---library vunit_lib;
---context vunit_lib.vunit_context;
+library vunit_lib;
+context vunit_lib.vunit_context;
 
 -- Common contexts
 Library ctu_can_fd_tb;
@@ -90,7 +90,7 @@ context ctu_can_fd_tb.rtl_context;
 entity tb_top_ctu_can_fd is
     generic(
         -- Test-bench specific stuff
-        --runner_cfg              : string := runner_cfg_default;
+        runner_cfg              : string := runner_cfg_default;
         test_name               : string := "device_id";
         test_type               : string := "feature"; -- "feature", "compliance" or "reference"
         stand_alone_vip_mode    : boolean := true;
@@ -340,7 +340,7 @@ begin
     ---------------------------------------------------------------------------
     vunit_manager_proc : process
     begin
-        --test_runner_setup(runner, runner_cfg);
+        test_runner_setup(runner, runner_cfg);
         wait for 10 ns;
 
         info_m("***************************************************************");
@@ -383,8 +383,8 @@ begin
         info_m("");
         info_m("***************************************************************");
 
-        --show(get_logger(default_checker), display_handler, pass);
-        --set_log_verbosity(log_level, global_verbosity);
+        show(get_logger(default_checker), display_handler, pass);
+        set_log_verbosity(log_level, global_verbosity);
 
         for i in 1 to iterations loop
             info_m("***************************************************************");
@@ -399,7 +399,7 @@ begin
             -- Propagate fail to Vunit if test signals it failed
             -- true indicates fail (exit code 1)
             if (test_success = '0') then
-                --test_runner_cleanup(runner, true);
+                test_runner_cleanup(runner, true);
             end if;
 
             -- Finish handshake
@@ -409,15 +409,15 @@ begin
         end loop;
 
         -- Finish succesfully
-        --test_runner_cleanup(runner);
+        test_runner_cleanup(runner);
         std.env.finish;
     end process;
 
     ---------------------------------------------------------------------------
     -- Spawn watchdog
     ---------------------------------------------------------------------------
-    --watchdog: if time'value(timeout) > 0 ns generate
-    --    test_runner_watchdog(runner, time'value(timeout));
-    --end generate;
+    watchdog: if time'value(timeout) > 0 ns generate
+        test_runner_watchdog(runner, time'value(timeout));
+    end generate;
 
 end architecture;

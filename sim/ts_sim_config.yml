@@ -13,7 +13,9 @@ targets:
         top_entity: ctu_can_fd_tb.tb_top_ctu_can_fd
         source_list_files:
             - rtl_ctu_can_fd
-            - test/slf_tb.yml
+            - test/slf_tb_dependencies_simple.yml
+            - test/slf_tb_common.yml
+            - test/slf_tb_top_simple.yml
 
 check_severity: error
 
