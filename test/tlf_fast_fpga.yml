@@ -5,7 +5,7 @@ tests:
     - name: alc_id_extension
     - name: alc_rtr_ext_id
     - name: alc_rtr_r0
-    - name: alc_srr_rt
+    - name: alc_srr_rtr
     - name: alc_srr_rtr_2
 
     - name: btr

@@ -462,9 +462,9 @@ package body feature_test_list_pkg is
             txt_buffer_byte_access_ftest_exec(channel);
         elsif (test_name = "txt_buffer_hazard") then
             txt_buffer_hazard_ftest_exec(channel);
-            
+
         else
-            error_m("TODO: Implement calling feature test function based on test name!!");
+            error_m("Unknown feature test name: " & test_name);
         end if;
     end procedure;
 
