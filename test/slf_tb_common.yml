@@ -3,34 +3,6 @@ library: ctu_can_fd_tb
 source_list:
 
     ###############################################################################################
-    # Contexts
-    ###############################################################################################
-    - file: main_tb/contexts/ieee_context.vhd
-    - file: main_tb/contexts/rtl_context.vhd
-    - file: main_tb/contexts/tb_agents_context.vhd
-    - file: main_tb/contexts/tb_common_context.vhd
-
-
-    ###############################################################################################
-    # Packages
-    ###############################################################################################
-    - file: main_tb/pkg/tb_prot_types_pkg.vhd
-    - file: main_tb/pkg/tb_shared_vars_pkg.vhd
-
-    - file: main_tb/pkg/tb_report_pkg.vhd
-    #- file: main_tb/pkg/tb_report_pkg_vunit.vhd
-    - file: main_tb/pkg/tb_communication_pkg.vhd
-
-    - file: main_tb/pkg/tb_reg_map_defs_pkg.vhd
-    - file: main_tb/pkg/tb_random_pkg.vhd
-    - file: main_tb/pkg/tb_pli_conversion_pkg.vhd
-
-    - file: main_tb/pkg/can_fd_tb_register_map.vhd
-
-    - file: main_tb/common/signal_delayer.vhd
-
-
-    ###############################################################################################
     # Packages for agents
     ###############################################################################################
     - file: main_tb/agents/test_probe_agent/test_probe_agent_pkg.vhd
@@ -192,7 +164,5 @@ source_list:
     - file: main_tb/agents/test_controller_agent/test_controller_agent.vhd
     - file: main_tb/agents/reference_test_agent/reference_test_agent.vhd
 
-    #- file: main_tb/tb_top_gates_ctu_can_fd.vhd
     - file: main_tb/ctu_can_fd_vip.vhd
-#
-    #- file: main_tb/tb_top_ctu_can_fd.vhd
+

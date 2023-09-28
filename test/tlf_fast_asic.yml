@@ -1,0 +1,174 @@
+
+tests:
+    - name: alc_base_id
+
+    - name: alc_ide
+    - name: alc_id_extension
+    - name: alc_rtr_ext_id
+    - name: alc_rtr_r0
+    - name: alc_srr_rtr
+    - name: alc_srr_rtr_2
+
+    - name: btr
+    - name: btr_fd
+    # Do not run to decrease duration of fast regression!
+    #- name: #btr_maximal:
+    - name: btr_minimal
+    - name: btr_ssp_access
+    - name: bus_start
+    - name: byte_enable
+
+    - name: command_cdo
+    - name: command_ercrst
+    - name: command_frcrst
+    - name: command_rrb
+
+    - name: device_id
+    - name: disable_in_tx
+    - name: dlc_can20_8_64_bytes
+
+    - name: err_capt_ack_ack
+    - name: err_capt_arb_bit
+    - name: err_capt_arb_stuff
+    - name: err_capt_crc_bit
+    - name: err_capt_crc_err
+    - name: err_capt_ctrl_bit
+    - name: err_capt_ctrl_form
+    - name: err_capt_data_bit
+    - name: err_capt_eof
+    - name: err_capt_err_frm
+    - name: err_capt_ovr_frm
+    - name: err_capt_sof
+    - name: err_norm_fd
+
+    - name: fault_state
+
+    - name: frame_test_fstc
+    - name: frame_test_fcrc
+    - name: frame_test_sdlc
+    - name: frame_test_ignore
+
+    - name: glitch_filtering
+
+    - name: invalid_frames
+    - name: int_al
+    - name: int_be
+    - name: int_do
+    - name: int_ewl
+    - name: int_fcs
+    - name: int_rx
+    - name: int_tx
+    - name: int_of
+
+    - name: message_filter
+    - name: mode_bus_monitoring
+    - name: mode_loopback
+    - name: mode_fd_enable
+    - name: mode_fdrf
+    - name: mode_pex
+    - name: mode_rst
+    - name: mode_restr_op
+    - name: mode_rxbam
+    - name: mode_self_test
+    - name: mode_test
+    - name: mode_txbbm
+    - name: mode_txbbm_2
+    - name: mode_txbbm_3
+    - name: mode_txbbm_4
+    - name: mode_txbbm_5
+
+    - name: mode_frame_filters
+      generics:
+        iterations: 6
+    - name: no_sof_tx
+    - name: one_shot
+    - name: overload
+
+    - name: rec_saturation
+    - name: retr_limit
+    - name: retr_limit_2
+    - name: retr_limit_3
+    - name: rx_buf_empty_read
+    - name: rx_counter
+    - name: rx_settings_rtsop
+    - name: rx_status
+    - name: rx_status_mof
+
+    - name: scan_mode
+    - name: settings_tbfbo
+    - name: single_bus_node
+    - name: ssp_cfg
+      generics:
+        iterations: 5
+    - name: ssp_4_bits_flying
+    - name: status_eft
+      generics:
+        iterations: 5
+
+    - name: status_ewl
+    - name: status_idle
+    - name: status_rxne
+    - name: status_rxs
+    - name: status_txnf
+    - name: status_txs
+    - name: status_rxpe
+    - name: status_txpe
+    - name: stuff_in_data
+
+    - name: trv_delay
+    - name: tst_mem_acc_rx
+    - name: tst_mem_acc_txt
+    - name: tx_arb_consistency
+    - name: tx_arb_time_tran
+    - name: tx_cmd_set_abort
+      generics:
+        iterations: 5
+    - name: tx_cmd_set_empty
+      generics:
+        iterations: 5
+    - name: tx_cmd_set_ready
+      generics:
+        iterations: 5
+    - name: tx_counter
+    - name: tx_from_intermission
+    - name: tx_priority_change
+      generics:
+        iterations: 1
+    - name: tx_priority
+    - name: tx_status
+    - name: timestamp_low_high
+    - name: txt_buffer_byte_access
+    - name: txt_buffer_hazard
+
+    # Reference tests
+    - name: data_set_1
+      generics:
+        test_type: reference
+    - name: data_set_2
+      generics:
+        test_type: reference
+    - name: data_set_3
+      generics:
+        test_type: reference
+    - name: data_set_4
+      generics:
+        test_type: reference
+    - name: data_set_5
+      generics:
+        test_type: reference
+    - name: data_set_6
+      generics:
+        test_type: reference
+    - name: data_set_7
+      generics:
+        test_type: reference
+    - name: data_set_8
+      generics:
+        test_type: reference
+    - name: data_set_9
+      generics:
+        test_type: reference
+    - name: data_set_10
+      generics:
+        test_type: reference
+

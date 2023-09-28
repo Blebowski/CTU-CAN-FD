@@ -1,0 +1,488 @@
+
+tests:
+    - name: alc_base_id
+    - name: alc_ide
+    - name: alc_id_extension
+    - name: alc_rtr_ext_id
+    - name: alc_rtr_r0
+    - name: alc_srr_rtr
+    - name: alc_srr_rtr_2
+
+    - name: btr
+      generics:
+        timeout: 200 ms
+        iterations: 1
+
+    - name: btr_fd
+      generics:
+        timeout: 200 ms
+        iterations: 1
+
+    - name: btr_maximal
+      generics:
+        timeout: 200 ms
+        iterations: 1
+
+    - name: btr_minimal
+    - name: btr_ssp_access
+    - name: bus_start
+    - name: byte_enable
+
+    - name: command_cdo
+    - name: command_ercrst
+    - name: command_frcrst
+    - name: command_rrb
+      generics:
+        iterations: 20
+
+    - name: device_id
+    - name: disable_in_tx
+    - name: dlc_can20_8_64_bytes
+
+    - name: err_capt_ack_ack
+    - name: err_capt_arb_bit
+    - name: err_capt_arb_stuff
+    - name: err_capt_crc_bit
+
+    # Do not run this test because it cannot handle properly
+    # corrupting CRC at each randomization! CRC error detection
+    # is intensively tested in compliance tests! Purpose of this
+    # test is only to verify that ERR_CAPT shows CRC error. This
+    # is enoguh in "fast" test run without randomization!
+    - name: err_capt_crc_err
+
+    - name: err_capt_ctrl_bit
+    - name: err_capt_ctrl_form
+    - name: err_capt_data_bit
+    - name: err_capt_eof
+    - name: err_capt_err_frm
+    - name: err_capt_ovr_frm
+    - name: err_capt_sof
+    - name: err_norm_fd
+      generics:
+        iterations: 5
+        timeout: 5 ms
+
+    - name: fault_state
+
+    - name: frame_test_fstc
+      generics:
+        iterations: 10
+
+    - name: frame_test_fcrc
+      generics:
+        iterations: 10
+
+    - name: frame_test_sdlc
+      generics:
+        iterations: 10
+
+    - name: frame_test_ignore
+      generics:
+        iterations: 10
+
+    - name: glitch_filtering
+
+    - name: invalid_frames
+      generics:
+        iterations: 5
+
+    - name: int_al
+    - name: int_be
+    - name: int_do
+    - name: int_ewl
+    - name: int_fcs
+    - name: int_rx
+    - name: int_tx
+    - name: int_of
+
+    - name: message_filter
+    - name: mode_bus_monitoring
+
+    - name: mode_loopback
+      generics:
+        iterations: 10
+
+    - name: mode_fd_enable
+      generics:
+        iterations: 2
+
+    - name: mode_fdrf
+
+    - name: mode_pex
+      generics:
+        iterations: 5
+
+    - name: mode_restr_op
+      generics:
+        iterations: 5
+
+    - name: mode_rst
+    - name: mode_rxbam
+    - name: mode_self_test
+    - name: mode_test
+
+    - name: mode_txbbm
+    - name: mode_txbbm_2
+    - name: mode_txbbm_3
+    - name: mode_txbbm_4
+    - name: mode_txbbm_5
+
+    - name: mode_txbbm_2_2_txt_bufs
+      generics:
+        test_name: mode_txbbm
+        txt_buffer_count: 2
+
+    - name: mode_txbbm_3_2_txt_bufs
+      generics:
+        test_name: mode_txbbm_3
+        txt_buffer_count: 2
+
+    - name: mode_txbbm_4_2_txt_bufs
+      generics:
+        test_name: mode_txbbm_4
+        txt_buffer_count: 2
+
+    - name: mode_txbbm_5_2_txt_bufs
+      generics:
+        test_name: mode_txbbm_5
+        txt_buffer_count: 2
+
+
+    - name: mode_txbbm_4_txt_bufs
+      generics:
+        test_name: mode_txbbm
+        txt_buffer_count: 4
+
+    - name: mode_txbbm_2_4_txt_bufs
+      generics:
+        test_name: mode_txbbm_2
+        txt_buffer_count: 4
+
+    - name: mode_txbbm_3_4_txt_bufs
+      generics:
+        test_name: mode_txbbm_3
+        txt_buffer_count: 4
+
+    - name: mode_txbbm_4_4_txt_bufs
+      generics:
+        test_name: mode_txbbm_4
+        txt_buffer_count: 4
+
+    - name: mode_txbbm_5_4_txt_bufs
+      generics:
+        test_name: mode_txbbm_5
+        txt_buffer_count: 4
+
+
+    - name: mode_txbbm_6_txt_bufs
+      generics:
+        test_name: mode_txbbm
+        txt_buffer_count: 6
+
+    - name: mode_txbbm_2_6_txt_bufs
+      generics:
+        test_name: mode_txbbm_2
+        txt_buffer_count: 6
+
+    - name: mode_txbbm_3_6_txt_bufs
+      generics:
+        test_name: mode_txbbm_3
+        txt_buffer_count: 6
+
+    - name: mode_txbbm_4_6_txt_bufs
+      generics:
+        test_name: mode_txbbm_4
+        txt_buffer_count: 6
+
+    - name: mode_txbbm_5_6_txt_bufs
+      generics:
+        test_name: mode_txbbm_5
+        txt_buffer_count: 6
+
+    - name: mode_frame_filters
+      generics:
+        iterations: 15
+
+    - name: no_sof_tx
+    - name: one_shot
+    - name: overload
+
+    - name: rec_saturation
+    - name: retr_limit
+    - name: retr_limit_2
+    - name: retr_limit_3
+    - name: rx_buf_empty_read
+    - name: rx_counter
+    - name: rx_settings_rtsop
+
+    - name: rx_status
+      generics:
+        rx_buffer_size: 64
+
+    - name: rx_status_rx_buffer_size_128
+      generics:
+        test_name: rx_status
+        rx_buffer_size: 128
+
+    - name: rx_status_rx_buffer_size_4096
+      generics:
+        test_name: rx_status
+        rx_buffer_size: 4096
+        timeout: 200 ms
+
+    - name: rx_status_mof
+
+    - name: scan_mode
+    - name: settings_tbfbo
+    - name: single_bus_node
+    - name: ssp_cfg
+      generics:
+        iterations: 5
+
+    - name: ssp_4_bits_flying
+    - name: status_eft
+      generics:
+        iterations: 5
+
+    - name: status_ewl
+    - name: status_idle
+    - name: status_rxne
+    - name: status_rxs
+
+    - name: status_txnf_2_txt_bufs
+      generics:
+        test_name: status_txnf
+        txt_buffer_count: 2
+
+    - name: status_txnf_4_txt_bufs
+      generics:
+        test_name: status_txnf
+        txt_buffer_count: 4
+
+    - name: status_txnf_6_txt_bufs
+      generics:
+        test_name: status_txnf
+        txt_buffer_count: 6
+
+    - name: status_txnf_8_txt_bufs
+      generics:
+        test_name: status_txnf
+        txt_buffer_count: 8
+
+    - name: status_txs
+    - name: status_rxpe
+    - name: status_txpe
+      generics:
+        timeout: 1 ms
+    - name: stuff_in_data
+
+    - name: trv_delay
+
+    - name: tst_mem_acc_rx_rxb_size_32
+      generics:
+        test_name: tst_mem_acc_rx
+        rx_buffer_size: 32
+
+    - name: tst_mem_acc_rx_rxb_size_64
+      generics:
+        test_name: tst_mem_acc_rx
+        rx_buffer_size: 64
+
+    - name: tst_mem_acc_rx_rxb_size_128
+      generics:
+        test_name: tst_mem_acc_rx
+        rx_buffer_size: 128
+
+    - name: tst_mem_acc_rx_rxb_size_512
+      generics:
+        test_name: tst_mem_acc_rx
+        rx_buffer_size: 512
+
+    - name: tst_mem_acc_rx_rxb_size_4096
+      generics:
+        test_name: tst_mem_acc_rx
+        rx_buffer_size: 4096
+
+
+    - name: tst_mem_acc_txt_2_txt_bufs
+      generics:
+        test_name: tst_mem_acc_txt
+        txt_buffer_count: 2
+
+    - name: tst_mem_acc_txt_3_txt_bufs
+      generics:
+        test_name: tst_mem_acc_txt
+        txt_buffer_count: 3
+
+    - name: tst_mem_acc_txt_4_txt_bufs
+      generics:
+        test_name: tst_mem_acc_txt
+        txt_buffer_count: 4
+
+    - name: tst_mem_acc_txt_5_txt_bufs
+      generics:
+        test_name: tst_mem_acc_txt
+        txt_buffer_count: 6
+
+    - name: tst_mem_acc_txt_8_txt_bufs
+      generics:
+        test_name: tst_mem_acc_txt
+        txt_buffer_count: 8
+
+
+    - name: tx_arb_consistency_2_txt_bufs
+      generics:
+        test_name: tx_arb_consistency
+        txt_buffer_count: 2
+        iterations: 10
+
+    - name: tx_arb_consistency_4_txt_bufs
+      generics:
+        test_name: tx_arb_consistency
+        txt_buffer_count: 4
+        iterations: 10
+
+    - name: tx_arb_consistency_8_txt_bufs
+      generics:
+        test_name: tx_arb_consistency
+        txt_buffer_count: 8
+        iterations: 10
+
+    - name: tx_arb_time_tran
+      generics:
+        test_name: tx_arb_time_tran
+        txt_buffer_count: 2
+
+    - name: tx_arb_time_tran_4_txt_bufs
+      generics:
+        test_name: tx_arb_time_tran
+        txt_buffer_count: 4
+
+    - name: tx_arb_time_tran_8_txt_bufs
+      generics:
+        test_name: tx_arb_time_tran
+        txt_buffer_count: 8
+
+    - name: tx_cmd_set_abort
+      generics:
+        iterations: 5
+    - name: tx_cmd_set_empty
+      generics:
+        iterations: 5
+    - name: tx_cmd_set_ready
+      generics:
+        iterations: 5
+
+    - name: tx_counter
+    - name: tx_from_intermission
+    - name: tx_priority_change
+      generics:
+        iterations: 1
+
+    - name: tx_priority_2_txt_bufs
+      generics:
+        txt_buffer_count: 2
+        iterations: 15
+        test_name: tx_priority
+
+    - name: tx_priority_3_txt_bufs
+      generics:
+        txt_buffer_count: 3
+        iterations: 15
+        test_name: tx_priority
+
+    - name: tx_priority_4_txt_bufs
+      generics:
+        txt_buffer_count: 4
+        iterations: 15
+        test_name: tx_priority
+
+    - name: tx_priority_5_txt_bufs
+      generics:
+        txt_buffer_count: 5
+        iterations: 15
+        test_name: tx_priority
+
+    - name: tx_priority_6_txt_bufs
+      generics:
+        txt_buffer_count: 6
+        iterations: 15
+        test_name: tx_priority
+
+    - name: tx_priority_8_txt_bufs
+      generics:
+        txt_buffer_count: 8
+        iterations: 15
+        test_name: tx_priority
+
+
+    - name: tx_status_2_txt_bufs
+      generics:
+        txt_buffer_count: 2
+        iterations: 5
+        test_name: tx_status
+
+    - name: tx_status_4_txt_bufs
+      generics:
+        txt_buffer_count: 4
+        iterations: 5
+        test_name: tx_status
+
+    - name: tx_status_6_txt_bufs
+      generics:
+        txt_buffer_count: 6
+        iterations: 5
+        test_name: tx_status
+
+    - name: tx_status_8_txt_bufs
+      generics:
+        txt_buffer_count: 8
+        iterations: 5
+        test_name: tx_status
+
+    - name: timestamp_low_high
+    - name: txt_buffer_byte_access
+    - name: txt_buffer_hazard
+
+    # Reference tests
+    - name: data_set_1
+      generics:
+        timeout: 200 ms
+        test_type: reference
+    - name: data_set_2
+      generics:
+        timeout: 200 ms
+        test_type: reference
+    - name: data_set_3
+      generics:
+        timeout: 200 ms
+        test_type: reference
+    - name: data_set_4
+      generics:
+        timeout: 200 ms
+        test_type: reference
+    - name: data_set_5
+      generics:
+        timeout: 200 ms
+        test_type: reference
+    - name: data_set_6
+      generics:
+        timeout: 200 ms
+        test_type: reference
+    - name: data_set_7
+      generics:
+        timeout: 200 ms
+        test_type: reference
+    - name: data_set_8
+      generics:
+        timeout: 200 ms
+        test_type: reference
+    - name: data_set_9
+      generics:
+        timeout: 200 ms
+        test_type: reference
+    - name: data_set_10
+      generics:
+        timeout: 200 ms
+        test_type: reference

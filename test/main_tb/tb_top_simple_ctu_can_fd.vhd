@@ -68,17 +68,12 @@
 
 --------------------------------------------------------------------------------
 --  @Purpose:
---    CTU CAN FD main testbench top - Gate level variant!
+--    CTU CAN FD main testbench top
 --
 --------------------------------------------------------------------------------
 -- Revision History:
---    20.5.2021   Created file
+--    26.1.2021   Created file
 --------------------------------------------------------------------------------
-
--- Only top level uses Vunit. This allows keeping CTU CAN FD VIP Vunit-less,
--- when integrating RTL and VIP into other TB!
-library vunit_lib;
-context vunit_lib.vunit_context;
 
 -- Common contexts
 Library ctu_can_fd_tb;
@@ -87,12 +82,9 @@ context ctu_can_fd_tb.tb_common_context;
 context ctu_can_fd_tb.tb_agents_context;
 context ctu_can_fd_tb.rtl_context;
 
-library ctu_can_fd_gates;
-
 entity tb_top_ctu_can_fd is
     generic(
         -- Test-bench specific stuff
-        runner_cfg              : string := runner_cfg_default;
         test_name               : string := "device_id";
         test_type               : string := "feature"; -- "feature", "compliance" or "reference"
         stand_alone_vip_mode    : boolean := true;
@@ -121,7 +113,7 @@ entity tb_top_ctu_can_fd is
 
         -- DUT configuration
         rx_buffer_size          : natural := 64;
-        txt_buffer_count        : natural range 2 to 8 := 4;
+        txt_buffer_count        : natural range 2 to 8 := 8;
         sup_filtA               : boolean := true;
         sup_filtB               : boolean := true;
         sup_filtC               : boolean := true;
@@ -157,12 +149,12 @@ architecture tb of tb_top_ctu_can_fd is
    signal timestamp     : std_logic_vector(63 DOWNTO 0);
    signal test_probe    : t_ctu_can_fd_test_probe;
 
-   signal scan_enable   : std_logic;
-
    -- Test control
    signal test_start    : std_logic := '0';
    signal test_done     : std_logic := '0';
    signal test_success  : std_logic := '0'; -- 0 fail / 1 success
+
+   signal scan_enable   : std_logic;
 
    component ctu_can_fd_vip is
    generic(
@@ -200,7 +192,7 @@ architecture tb of tb_top_ctu_can_fd is
 
        -- DUT interface
        clk_sys             : inout std_logic;
-       res_n               : out   std_logic;
+       res_n               : inout std_logic;
 
        scan_enable         : out   std_logic;
 
@@ -227,7 +219,18 @@ begin
     ---------------------------------------------------------------------------
     -- DUT (Use RAM-like memory bus)
     ---------------------------------------------------------------------------
-    dut : entity ctu_can_fd_gates.can_top_level
+    dut : entity ctu_can_fd_rtl.can_top_level
+    generic map(
+        rx_buffer_size      => rx_buffer_size,
+        txt_buffer_count    => txt_buffer_count,
+        sup_filtA           => sup_filtA,
+        sup_filtB           => sup_filtB,
+        sup_filtC           => sup_filtC,
+        sup_range           => sup_range,
+        sup_traffic_ctrs    => sup_traffic_ctrs,
+        sup_parity          => sup_parity,
+        target_technology   => target_technology
+    )
     port map(
         -- Clock and Asynchronous reset
         clk_sys     => clk_sys,
@@ -253,9 +256,7 @@ begin
         can_rx      => can_rx,
 
         -- Test probe
-        \test_probe[rx_trigger_nbs]\    => test_probe.rx_trigger_nbs,
-        \test_probe[rx_trigger_wbs]\    => test_probe.rx_trigger_wbs,
-        \test_probe[tx_trigger]\        => test_probe.tx_trigger,
+        test_probe  => test_probe,
 
         -- Timestamp for time based transmission / reception
         timestamp   => timestamp
@@ -329,60 +330,56 @@ begin
 
 
     ---------------------------------------------------------------------------
-    -- Vunit manager - controls CTU CAN FD VIP
+    -- Test manager - controls CTU CAN FD VIP
     ---------------------------------------------------------------------------
-    vunit_manager_proc : process
+    test_manager_proc : process
     begin
-        test_runner_setup(runner, runner_cfg);
         wait for 10 ns;
 
-        info("***************************************************************");
-        info("CTU CAN FD main testbench");
-        info("");
-        info("Test configuration:");
-        info("  Test type: " & test_type);
-        info("  Test name: " & test_name);
-        info("  No. of iterations: " & integer'image(iterations));
-        info("  Stand-alone VIP: " & boolean'image(stand_alone_vip_mode));
-        info("  System clock period: " & cfg_sys_clk_period);
-        info("  Log level: " & t_log_verbosity'image(log_level));
-        info("  Seed: " & integer'image(seed));
-        info("  Reference test iterations: " & integer'image(reference_iterations));
-        info("  Timeout: " & timeout);
-        info("");
-        info("DUT configuration:");
-        info("  RX buffer size: " & integer'image(rx_buffer_size));
-        info("  TXT Buffer count: " & integer'image(txt_buffer_count));
-        info("  Filter A: " & boolean'image(sup_filtA));
-        info("  Filter B: " & boolean'image(sup_filtB));
-        info("  Filter C: " & boolean'image(sup_filtC));
-        info("  Range filter: " & boolean'image(sup_range));
-        info("  Traffic counters: " & boolean'image(sup_traffic_ctrs));
-        info("  Target technology: " & integer'image(target_technology));
-        info("");
-        info("Bit timing settings (Nominal):");
-        info("  BRP: " & integer'image(cfg_brp));
-        info("  PH1: " & integer'image(cfg_ph_1));
-        info("  PROP: " & integer'image(cfg_prop));
-        info("  PH2: " & integer'image(cfg_ph_2));
-        info("  SJW: " & integer'image(cfg_sjw));
-        info("");
-        info("Bit timing settings (Data):");
-        info("  BRP: " & integer'image(cfg_brp));
-        info("  PH1: " & integer'image(cfg_ph_1));
-        info("  PROP: " & integer'image(cfg_prop));
-        info("  PH2: " & integer'image(cfg_ph_2));
-        info("  SJW: " & integer'image(cfg_sjw));
-        info("");
-        info("***************************************************************");
-
-        show(get_logger(default_checker), display_handler, pass);
-        set_log_verbosity(log_level, global_verbosity);
+        info_m("***************************************************************");
+        info_m("CTU CAN FD main testbench");
+        info_m("");
+        info_m("Test configuration:");
+        info_m("  Test type: " & test_type);
+        info_m("  Test name: " & test_name);
+        info_m("  No. of iterations: " & integer'image(iterations));
+        info_m("  Stand-alone VIP: " & boolean'image(stand_alone_vip_mode));
+        info_m("  System clock period: " & cfg_sys_clk_period);
+        info_m("  Log level: " & t_log_verbosity'image(log_level));
+        info_m("  Seed: " & integer'image(seed));
+        info_m("  Reference test iterations: " & integer'image(reference_iterations));
+        info_m("  Timeout: " & timeout);
+        info_m("");
+        info_m("DUT configuration:");
+        info_m("  RX buffer size: " & integer'image(rx_buffer_size));
+        info_m("  TXT Buffer count: " & integer'image(txt_buffer_count));
+        info_m("  Filter A: " & boolean'image(sup_filtA));
+        info_m("  Filter B: " & boolean'image(sup_filtB));
+        info_m("  Filter C: " & boolean'image(sup_filtC));
+        info_m("  Range filter: " & boolean'image(sup_range));
+        info_m("  Traffic counters: " & boolean'image(sup_traffic_ctrs));
+        info_m("  Target technology: " & integer'image(target_technology));
+        info_m("");
+        info_m("Bit timing settings (Nominal):");
+        info_m("  BRP: " & integer'image(cfg_brp));
+        info_m("  PH1: " & integer'image(cfg_ph_1));
+        info_m("  PROP: " & integer'image(cfg_prop));
+        info_m("  PH2: " & integer'image(cfg_ph_2));
+        info_m("  SJW: " & integer'image(cfg_sjw));
+        info_m("");
+        info_m("Bit timing settings (Data):");
+        info_m("  BRP: " & integer'image(cfg_brp));
+        info_m("  PH1: " & integer'image(cfg_ph_1));
+        info_m("  PROP: " & integer'image(cfg_prop));
+        info_m("  PH2: " & integer'image(cfg_ph_2));
+        info_m("  SJW: " & integer'image(cfg_sjw));
+        info_m("");
+        info_m("***************************************************************");
 
         for i in 1 to iterations loop
-            info("***************************************************************");
-            info(" Iteration nr: " & integer'image(i));
-            info("***************************************************************");
+            info_m("***************************************************************");
+            info_m(" Iteration nr: " & integer'image(i));
+            info_m("***************************************************************");
 
             -- Execute test
             test_start <= '1';
@@ -392,7 +389,7 @@ begin
             -- Propagate fail to Vunit if test signals it failed
             -- true indicates fail (exit code 1)
             if (test_success = '0') then
-                test_runner_cleanup(runner, true);
+                std.env.finish;
             end if;
 
             -- Finish handshake
@@ -402,14 +399,16 @@ begin
         end loop;
 
         -- Finish succesfully
-        test_runner_cleanup(runner);
+        std.env.finish;
     end process;
 
     ---------------------------------------------------------------------------
     -- Spawn watchdog
     ---------------------------------------------------------------------------
-    watchdog: if time'value(timeout) > 0 ns generate
-        test_runner_watchdog(runner, time'value(timeout));
-    end generate;
+    process
+    begin
+        wait for time'value(timeout);
+        report "Timeout reached!" severity failure;
+    end process;
 
 end architecture;

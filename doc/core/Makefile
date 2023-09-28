@@ -29,7 +29,7 @@ tb_architecture: version.tex
 	xelatex $@
 
 version.tex: FORCE
-	desc=$$(git describe --always); \
+	desc=$$(git describe --always --tags); \
 	date="$$(git show -s --format=%cd --date=format:%Y-%m-%d)"; \
 	echo "Datasheet $$desc, $$date" >$@
 
