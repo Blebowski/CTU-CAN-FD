@@ -431,7 +431,7 @@ pages:
         - cp src/*.vhd public/rtl/
         - cp src/**/*.vhd public/rtl/
         - cp src/**/**/*.vhd public/rtl/
-        - cp rtl/slf_*.yml public/
+        - cp src/slf_*.yml public/
 
         # Copy TB
         - cp test/main_tb/*.vhd public/tb/
