@@ -3,29 +3,30 @@ XUNIT ?= 0
 BUILD_DIR = build
 TESTFW_DIR = testfw
 
-TEST_FLAGS = -p`nproc`
+TEST_FLAGS = -p`nproc` --clean
 TEST_OPTS_test_debug := --no-strict
 
 all: test coverage functional_coverage
 
 elaborate:
-	$(PYTHON) run.py test tests_fast_asic.yml -- --elaborate $(TEST_FLAGS)
-	#$(PYTHON) run.py test tests_fast_fpga.yml -- --elaborate $(TEST_FLAGS)
+	$(PYTHON) run.py tb_rtl_test_fast_asic --elaborate $(TEST_FLAGS)
+	#$(PYTHON) run.py tb_rtl_test_fast_fpga --elaborate $(TEST_FLAGS)
 
 # Run test config
-tests_%: tests_%.yml FORCE
-	$(PYTHON) run.py test $(TEST_OPTS_$@) $< -- $(TEST_FLAGS)
-	
+%:
+	$(PYTHON) run.py $@ $(TEST_OPTS_$@) $< $(TEST_FLAGS)
+
+
 # Convert results to HTML, pack and publish textual summary
 %_logs:
 
 # Process reports
-	junit2html --report-matrix $*.html $*.xml 
+	junit2html --report-matrix $*.html $*.xml
 	tar -czvf $*.gz $*.html $*.xml.html
 	junit2html --summary-matrix $*.xml > $*_summary
 
 # Sum simulation time from all tests
-	cat build/vunit_out/test_output/*/output.txt | \
+	cat vunit_out/test_output/*/output.txt | \
 		grep "simulation stopped" | \
 		grep -Eo "[0-9]+(us|ns|ps)" | \
 		sed 's/ps/000/g' | \

@@ -1,0 +1,287 @@
+###############################################################################
+##
+## This test-case list contains all ISO16845-1 2016 tests in typical scenario
+## (typical bit-rate).
+##
+## This test-case list is randomized and coverage is collected on it.
+##
+## Parameters:
+##   System clock: 40 MHz
+##   Nominal bit-rate: 0.5 Mbit/s (65 % sample point)
+##   Data bit-rate: 2 Mbit/s (70 % sample point)
+##
+###############################################################################
+tests:
+    - name: demo
+    - name: iso_7_1_1
+    - name: iso_7_1_2
+    - name: iso_7_1_3
+    - name: iso_7_1_4
+    - name: iso_7_1_5
+    - name: iso_7_1_6
+    - name: iso_7_1_7
+    - name: iso_7_1_8
+    - name: iso_7_1_9
+    - name: iso_7_1_10
+    - name: iso_7_1_11
+    - name: iso_7_1_12
+
+    - name: iso_7_2_1
+    - name: iso_7_2_2
+    - name: iso_7_2_3
+    - name: iso_7_2_4
+      generics:
+        timeout: 300 ms
+    - name: iso_7_2_5
+    - name: iso_7_2_6
+    - name: iso_7_2_7
+    - name: iso_7_2_8
+    - name: iso_7_2_9
+    - name: iso_7_2_10
+    - name: iso_7_2_11
+
+    - name: iso_7_3_1
+    - name: iso_7_3_2
+    - name: iso_7_3_3
+    - name: iso_7_3_4
+
+    - name: iso_7_4_1
+    - name: iso_7_4_2
+    - name: iso_7_4_3
+    - name: iso_7_4_4
+    - name: iso_7_4_5
+    - name: iso_7_4_6
+    - name: iso_7_4_7
+
+    - name: iso_7_5_1
+    - name: iso_7_5_2
+    - name: iso_7_5_3
+    - name: iso_7_5_4
+    - name: iso_7_5_5
+    - name: iso_7_5_6
+    - name: iso_7_5_7
+
+    - name: iso_7_6_1
+    - name: iso_7_6_2
+    - name: iso_7_6_3
+    - name: iso_7_6_4
+    - name: iso_7_6_5
+    - name: iso_7_6_6
+    - name: iso_7_6_7
+    - name: iso_7_6_8
+    - name: iso_7_6_9
+    - name: iso_7_6_10
+    - name: iso_7_6_11
+    - name: iso_7_6_12
+    - name: iso_7_6_13
+    - name: iso_7_6_14
+    - name: iso_7_6_15
+    - name: iso_7_6_16
+    - name: iso_7_6_17
+    - name: iso_7_6_18
+    - name: iso_7_6_19
+    - name: iso_7_6_20
+    - name: iso_7_6_21
+    - name: iso_7_6_22
+    - name: iso_7_6_23
+
+    - name: iso_7_7_1
+    - name: iso_7_7_2
+    - name: iso_7_7_3
+    - name: iso_7_7_4
+    - name: iso_7_7_5
+    - name: iso_7_7_6
+    - name: iso_7_7_7
+    - name: iso_7_7_8
+    - name: iso_7_7_9_1
+    - name: iso_7_7_9_2
+    - name: iso_7_7_10
+    - name: iso_7_7_11
+      generics:
+        # In this test, BRP must be equal to or higher than 2! This is due to
+        # input delay of CTU CAN FD.
+        cfg_brp: 2
+    - name: iso_7_8_1_1
+    - name: iso_7_8_1_2
+    - name: iso_7_8_1_3
+    - name: iso_7_8_2_1
+    - name: iso_7_8_2_2
+      generics:
+        # In this test, BRP must be equal to or higher than 3. This is due
+        # to Hard synchronization in EDL (it is pipelined), therefore it
+        # reacts only two cycles after sample point. This might be a problem!
+        cfg_brp: 3
+    - name: iso_7_8_3_1
+      generics:
+        # In this test, BRP must be equal to BRP_FD! It is necessary since
+        # huge time quanta difference will cause mismatch during first
+        # resynchronisation (in ESI bit) during Data bit phase!
+        cfg_brp: 2
+        cfg_brp_fd: 2
+    - name: iso_7_8_3_2
+    - name: iso_7_8_3_3
+    - name: iso_7_8_4_1
+      generics:
+        # In this test, BRP must be equal to BRP_FD! It is necessary since
+        # huge time quanta difference will cause mismatch during first
+        # resynchronisation (in ESI bit) during Data bit phase!
+        cfg_brp: 2
+        cfg_brp_fd: 2
+    - name: iso_7_8_4_2
+    - name: iso_7_8_4_3
+    - name: iso_7_8_5_1
+    - name: iso_7_8_5_2
+    - name: iso_7_8_5_3
+    - name: iso_7_8_6_1
+      generics:
+        # SJW is decremented so that more than 1 elementary test is ran
+        cfg_sjw_fd: 2
+    - name: iso_7_8_6_2
+      generics:
+        # SJW is decremented so that more than 1 elementary test is ran
+        cfg_sjw_fd: 2
+    - name: iso_7_8_6_3
+    - name: iso_7_8_7_1
+    - name: iso_7_8_7_2
+    - name: iso_7_8_7_3
+    - name: iso_7_8_8_1
+    - name: iso_7_8_8_2
+    - name: iso_7_8_8_3
+    - name: iso_7_8_9_1
+    - name: iso_7_8_9_2
+    - name: iso_7_8_9_3
+
+    - name: iso_8_1_1
+    - name: iso_8_1_2
+    - name: iso_8_1_3
+    - name: iso_8_1_4
+    - name: iso_8_1_5
+    - name: iso_8_1_6
+    - name: iso_8_1_7
+    - name: iso_8_1_8
+
+    - name: iso_8_2_1
+    - name: iso_8_2_2
+    - name: iso_8_2_3
+    - name: iso_8_2_4
+    - name: iso_8_2_5
+    - name: iso_8_2_6
+    - name: iso_8_2_7
+    - name: iso_8_2_8
+      generics:
+        timeout: 300 ms
+
+    - name: iso_8_3_1
+    - name: iso_8_3_2
+    - name: iso_8_3_3
+    - name: iso_8_3_4
+
+    - name: iso_8_4_1
+    - name: iso_8_4_2
+    - name: iso_8_4_3
+    - name: iso_8_4_4
+    - name: iso_8_4_5
+
+    - name: iso_8_5_1
+    - name: iso_8_5_2
+    - name: iso_8_5_3
+    - name: iso_8_5_4
+    - name: iso_8_5_5
+    - name: iso_8_5_6
+    - name: iso_8_5_7
+    - name: iso_8_5_8
+    - name: iso_8_5_9
+    - name: iso_8_5_10
+    - name: iso_8_5_11
+    - name: iso_8_5_12
+    - name: iso_8_5_13
+    - name: iso_8_5_14
+    - name: iso_8_5_15
+
+    - name: iso_8_6_1
+    - name: iso_8_6_2
+    - name: iso_8_6_3
+    - name: iso_8_6_4
+    - name: iso_8_6_5
+    - name: iso_8_6_6
+    - name: iso_8_6_7
+    - name: iso_8_6_8
+    - name: iso_8_6_9
+    - name: iso_8_6_10
+    - name: iso_8_6_11
+    - name: iso_8_6_12
+    - name: iso_8_6_13
+    - name: iso_8_6_14
+    - name: iso_8_6_15
+    - name: iso_8_6_16
+    - name: iso_8_6_17
+    - name: iso_8_6_18
+    - name: iso_8_6_19
+    - name: iso_8_6_20
+    - name: iso_8_6_21
+
+    - name: iso_8_7_1
+      generics:
+        cfg_brp: 2
+
+    # Temporary disabled since latest compliance model has memory leak in this test!
+    # TODO: Fix it!
+    #- name: iso_8_7_2
+    #  generics:
+    #    cfg_brp: 3
+
+    - name: iso_8_7_3
+    - name: iso_8_7_4
+      generics:
+        cfg_brp: 3
+    - name: iso_8_7_5
+      generics:
+        cfg_brp: 3
+    - name: iso_8_7_6
+      generics:
+        cfg_brp: 3
+    - name: iso_8_7_7
+    - name: iso_8_7_8
+    - name: iso_8_7_9
+      generics:
+        cfg_brp: 3
+
+    - name: iso_8_8_1_1
+    - name: iso_8_8_1_2
+      generics:
+        cfg_brp: 3
+    - name: iso_8_8_1_3
+      generics:
+        cfg_brp_fd: 3
+    - name: iso_8_8_1_4
+      generics:
+        cfg_brp_fd: 3
+    - name: iso_8_8_2_1
+
+    # Temporary disabled since latest compliance model has memory leak in this test!
+    # TODO: Fix it!
+    #- name: iso_8_8_2_2
+
+    - name: iso_8_8_2_3
+      generics:
+        cfg_brp_fd: 3
+    - name: iso_8_8_2_4
+      generics:
+        cfg_brp_fd: 3
+    - name: iso_8_8_3_1
+      generics:
+        cfg_brp_fd: 3
+    - name: iso_8_8_3_2
+      generics:
+        cfg_brp_fd: 3
+    - name: iso_8_8_4_1
+      generics:
+        cfg_brp_fd: 3
+    - name: iso_8_8_4_2
+      generics:
+        cfg_brp_fd: 3
+    - name: iso_8_8_5_1
+    - name: iso_8_8_5_2
+
+    - name: iso_9_6_1
+    - name: iso_9_6_2
