@@ -100,13 +100,16 @@ def load_tgt_tlf(vu, tgt, tgt_name):
         tlf = yaml.safe_load(f)
 
     for test in tlf["tests"]:
-        generics = copy.deepcopy(tgt["generics"])
+        generics = {}
+
+        # Propagate seed
+        generics["seed"] = get_seed()
 
         # Propagate test name
         generics[SIM_CFG["test_name_generic"]] = test["name"]
 
-        # Propagate seed
-        generics["seed"] = get_seed()
+        # Target generics
+        generics.update(tgt["generics"])
 
         # Test specific generics
         if "generics" in test:
