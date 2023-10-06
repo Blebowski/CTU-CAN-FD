@@ -10,7 +10,7 @@ from json2html import *
 TPslPoint = NewType('TPslPoint', Dict[str, Any])
 
 test_dir = Path(__file__).parent.parent.absolute()
-build_dir = test_dir.absolute() / "build"
+build_dir = test_dir.absolute() / "vunit_out"
 func_cov_dir = build_dir / "functional_coverage"
 psl_dir = func_cov_dir / "coverage_data"
 html_dir = func_cov_dir / "html"
