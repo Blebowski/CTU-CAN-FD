@@ -174,6 +174,7 @@ test_fast_asic:
         paths:
             - test/tb_rtl_test_fast_asic.xml
             - test/tb_rtl_test_fast_asic_summary
+            - test/tb_rtl_test_fast_asic.sim_time
         reports:
             junit: test/tb_rtl_test_fast_asic.xml
 
@@ -191,6 +192,7 @@ test_fast_fpga:
         paths:
             - test/tb_rtl_test_fast_fpga.xml
             - test/tb_rtl_test_fast_fpga_summary
+            - test/tb_rtl_test_fast_fpga.sim_time
         reports:
             junit: test/tb_rtl_test_fast_fpga.xml
 
@@ -209,6 +211,7 @@ test_nightly:
         paths:
             - test/tb_rtl_test_nightly.xml
             - test/tb_rtl_test_nightly_summary
+            - test/tb_rtl_test_nightly.sim_time
             - test/vunit_out/functional_coverage
         reports:
             junit: test/tb_rtl_test_nightly.xml
@@ -237,6 +240,7 @@ test_compliance_short:
         paths:
             - test/tb_rtl_test_compliance_short.xml
             - test/tb_rtl_test_compliance_short_summary
+            - test/tb_rtl_test_compliance_short.sim_time
         reports:
             junit: test/tb_rtl_test_compliance_short.xml
 
@@ -259,6 +263,7 @@ test_compliance_full_typ:
         paths:
             - test/tb_rtl_test_compliance_full_typ.xml
             - test/tb_rtl_test_compliance_full_typ_summary
+            - test/tb_rtl_test_compliance_full_typ.sim_time
             - test/vunit_out/functional_coverage
         reports:
             junit: test/tb_rtl_test_compliance_full_typ.xml
@@ -282,6 +287,7 @@ test_compliance_full_max:
         paths:
             - test/tb_rtl_test_compliance_full_max.xml
             - test/tb_rtl_test_compliance_full_max_summary
+            - test/tb_rtl_test_compliance_full_max.sim_time
             - test/vunit_out/functional_coverage
         reports:
             junit: test/tb_rtl_test_compliance_full_max.xml
@@ -313,6 +319,7 @@ test_gates_simple:
         paths:
             - test/tb_gate_xilinx_test_simple.xml
             - test/tb_gate_xilinx_test_simple_summary
+            - test/tb_gate_xilinx_test_simple.sim_time
         reports:
             junit: test/tb_gate_xilinx_test_simple.xml
 
@@ -336,6 +343,7 @@ test_gates_compliance:
         paths:
             - test/tb_gate_xilinx_test_compliance.xml
             - test/tb_gate_xilinx_test_compliance_summary
+            - test/tb_gate_xilinx_test_compliance.sim_time
         reports:
             junit: test/tb_gate_xilinx_test_compliance.xml
 
