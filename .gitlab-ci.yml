@@ -4,6 +4,8 @@ before_script:
     - export LC_ALL=C.UTF-8
     - export LANG=C.UTF-8
     - export PYTHONUNBUFFERED=1
+    - export CTU_TB_TOP_TARGET="tb_ctu_can_fd_rtl_vunit"
+
 
 stages:
     - precheck
