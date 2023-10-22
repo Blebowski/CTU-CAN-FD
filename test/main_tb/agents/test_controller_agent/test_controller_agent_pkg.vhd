@@ -433,7 +433,7 @@ package body test_controller_agent_pkg is
             data_32 := pli_data_in(31 downto 0);
             address := to_integer(unsigned(pli_data_in(47 downto 32)));
 
-            -- Blocking tag enconded in bit 50
+            -- Blocking tag encoded in bit 50
             if (pli_data_in(50) = '1') then
                 blocking := true;
             else
@@ -742,7 +742,7 @@ package body test_controller_agent_pkg is
             test_result <= pli_data_in(0);
 
         when PLI_TEST_AGNT_GET_CFG =>
-            -- VPI message string encodes desired configuration parameter
+            -- PLI message string encodes desired configuration parameter
             pli_logic_vector_to_str(pli_str_buf_in, param_name);
             pli_data_out(pli_data_out'length - 1 downto 0) <= (OTHERS => '0');
 
@@ -755,38 +755,38 @@ package body test_controller_agent_pkg is
             end loop;
             info_m("SW test queries parameter: " & param_name(1 to 64));
 
-            if (param_name(45 to 64) = "CFG_DUT_CLOCK_PERIOD") then
+            if (param_name(1 to 20) = "CFG_DUT_CLOCK_PERIOD") then
                 pli_time_to_logic_vector(cfg_sys_clk_period_i, pli_data_out_i);
                 pli_data_out <= pli_data_out_i;
 
-            elsif (param_name(54 to 64) = "CFG_DUT_BRP") then
+            elsif (param_name(1 to 11) = "CFG_DUT_BRP") then
                 pli_data_out <= std_logic_vector(to_unsigned(cfg_brp_i, pli_data_out'length));
 
-            elsif (param_name(53 to 64) = "CFG_DUT_PROP") then
+            elsif (param_name(1 to 12) = "CFG_DUT_PROP") then
                 pli_data_out <= std_logic_vector(to_unsigned(cfg_prop_i, pli_data_out'length));
 
-            elsif (param_name(54 to 64) = "CFG_DUT_PH1") then
+            elsif (param_name(1 to 11) = "CFG_DUT_PH1") then
                 pli_data_out <= std_logic_vector(to_unsigned(cfg_ph_1_i, pli_data_out'length));
 
-            elsif (param_name(54 to 64) = "CFG_DUT_PH2") then
+            elsif (param_name(1 to 11) = "CFG_DUT_PH2") then
                 pli_data_out <= std_logic_vector(to_unsigned(cfg_ph_2_i, pli_data_out'length));
 
-            elsif (param_name(54 to 64) = "CFG_DUT_SJW") then
+            elsif (param_name(1 to 11) = "CFG_DUT_SJW") then
                 pli_data_out <= std_logic_vector(to_unsigned(cfg_sjw_i, pli_data_out'length));
 
-            elsif (param_name(51 to 64) = "CFG_DUT_BRP_FD") then
+            elsif (param_name(1 to 15) = "CFG_DUT_BRP_FD") then
                 pli_data_out <= std_logic_vector(to_unsigned(cfg_brp_fd_i, pli_data_out'length));
 
-            elsif (param_name(50 to 64) = "CFG_DUT_PROP_FD") then
+            elsif (param_name(1 to 16) = "CFG_DUT_PROP_FD") then
                 pli_data_out <= std_logic_vector(to_unsigned(cfg_prop_fd_i, pli_data_out'length));
 
-            elsif (param_name(51 to 64) = "CFG_DUT_PH1_FD") then
+            elsif (param_name(1 to 15) = "CFG_DUT_PH1_FD") then
                 pli_data_out <= std_logic_vector(to_unsigned(cfg_ph_1_fd_i, pli_data_out'length));
 
-            elsif (param_name(51 to 64) = "CFG_DUT_PH2_FD") then
+            elsif (param_name(1 to 15) = "CFG_DUT_PH2_FD") then
                 pli_data_out <= std_logic_vector(to_unsigned(cfg_ph_2_fd_i, pli_data_out'length));
 
-            elsif (param_name(51 to 64) = "CFG_DUT_SJW_FD") then
+            elsif (param_name(1 to 15) = "CFG_DUT_SJW_FD") then
                 pli_data_out <= std_logic_vector(to_unsigned(cfg_sjw_fd_i, pli_data_out'length));
 
             else

@@ -1,10 +1,14 @@
 simulator: vcs
-simulation_resolution: ps
+simulation_resolution: fs
 
 check_elab_log: true
 
 test_name_strategy: generic_parameter
 test_name_generic: test_name
+
+compile_debug: false
+
+coverage: true
 
 comp_options:
     ghdl: "-fpsl -frelaxed-rules --ieee=synopsys"
@@ -25,7 +29,7 @@ targets:
 
     # RTL DUT + Vunit TB
     tb_ctu_can_fd_rtl_vunit:
-        top_entity: ctu_can_fd_tb.tb_top_ctu_can_fd
+        top_entity: ctu_can_fd_tb.TB_TOP_CTU_CAN_FD
         source_list_files:
             - rtl_ctu_can_fd
             - test/slf_tb_dependencies_vunit.yml
@@ -34,7 +38,7 @@ targets:
 
     # RTL DUT + Simple TB (no VUnit)
     tb_ctu_can_fd_rtl_simple:
-        top_entity: ctu_can_fd_tb.tb_top_ctu_can_fd
+        top_entity: ctu_can_fd_tb.TB_TOP_CTU_CAN_FD
         source_list_files:
             - rtl_ctu_can_fd
             - test/slf_tb_dependencies_simple.yml
@@ -43,7 +47,7 @@ targets:
 
     # Xilinx Gate DUT + Vunit TB
     tb_ctu_can_fd_gate_vunit:
-        top_entity: ctu_can_fd_tb.tb_top_ctu_can_fd
+        top_entity: ctu_can_fd_tb.TB_TOP_CTU_CAN_FD
         source_list_files:
             # RTL is needed for gates to due to packages!! Netlist is compiled to different
             # library to avoid conflicts
@@ -58,7 +62,7 @@ targets:
     # Fast ASIC configuration
     ###############################################################################################
     tb_rtl_test_fast_asic:
-        top_entity: ctu_can_fd_tb.tb_top_ctu_can_fd
+        top_entity: ctu_can_fd_tb.TB_TOP_CTU_CAN_FD
         test_list_file: test/tlf_fast_asic.yml
         generics:
             # Test-bench configuration
@@ -112,7 +116,7 @@ targets:
     # Fast FPGA configuration
     ###############################################################################################
     tb_rtl_test_fast_fpga:
-        top_entity: ctu_can_fd_tb.tb_top_ctu_can_fd
+        top_entity: ctu_can_fd_tb.TB_TOP_CTU_CAN_FD
         test_list_file: test/tlf_fast_fpga.yml
         generics:
             #log_level: info
@@ -166,7 +170,7 @@ targets:
     # Nightly configuration
     ###############################################################################################
     tb_rtl_test_nightly:
-        top_entity: ctu_can_fd_tb.tb_top_ctu_can_fd
+        top_entity: ctu_can_fd_tb.TB_TOP_CTU_CAN_FD
         test_list_file: test/tlf_nightly.yml
         generics:
             # Test-bench configuration
@@ -219,7 +223,7 @@ targets:
     # Compliance tests - Short run
     ###############################################################################################
     tb_rtl_test_compliance_short:
-        top_entity: ctu_can_fd_tb.tb_top_ctu_can_fd
+        top_entity: ctu_can_fd_tb.TB_TOP_CTU_CAN_FD
         test_list_file: test/tlf_compliance_short.yml
         generics:
             #log_level: info
@@ -259,7 +263,8 @@ targets:
             cfg_sys_clk_period: 25 ns
 
         sim_options:
-            ghdl: "--vpi=main_tb/iso-16845-compliance-tests/build/Release/src/simulator_interface/libSIMULATOR_INTERFACE_LIB.so"
+            ghdl: "--vpi=main_tb/iso-16845-compliance-tests/build/Debug/src/cosimulation/libGHDL_VPI_COSIM_LIB.so"
+            vcs: "-vhpi VCS_VHPI_COSIM_LIB:handle_register"
 
         source_list_files:
             - $CTU_TB_TOP_TARGET
@@ -268,7 +273,7 @@ targets:
     # Compliance tests - Typical bit-rate
     ###############################################################################################
     tb_rtl_test_compliance_full_typ:
-        top_entity: ctu_can_fd_tb.tb_top_ctu_can_fd
+        top_entity: ctu_can_fd_tb.TB_TOP_CTU_CAN_FD
         test_list_file: test/tlf_compliance_full_typ.yml
         generics:
             #log_level: info
@@ -307,7 +312,8 @@ targets:
             cfg_sys_clk_period: 25 ns
 
         sim_options:
-            ghdl: "--vpi=main_tb/iso-16845-compliance-tests/build/Release/src/simulator_interface/libSIMULATOR_INTERFACE_LIB.so"
+            ghdl: "--vpi=main_tb/iso-16845-compliance-tests/build/Debug/src/cosimulation/libGHDL_VPI_COSIM_LIB.so"
+            vcs: "-vhpi VCS_VHPI_COSIM_LIB:handle_register"
 
         source_list_files:
             - $CTU_TB_TOP_TARGET
@@ -316,7 +322,7 @@ targets:
     # Compliance tests - Minimal bit-rate
     ###############################################################################################
     tb_rtl_test_compliance_full_min:
-        top_entity: ctu_can_fd_tb.tb_top_ctu_can_fd
+        top_entity: ctu_can_fd_tb.TB_TOP_CTU_CAN_FD
         test_list_file: test/tlf_compliance_full_min.yml
         generics:
             # Test-bench configuration
@@ -356,7 +362,8 @@ targets:
             cfg_sys_clk_period: 5 ns
 
         sim_options:
-            ghdl: "--vpi=main_tb/iso-16845-compliance-tests/build/Release/src/simulator_interface/libSIMULATOR_INTERFACE_LIB.so"
+            ghdl: "--vpi=main_tb/iso-16845-compliance-tests/build/Debug/src/cosimulation/libGHDL_VPI_COSIM_LIB.so"
+            vcs: "-vhpi VCS_VHPI_COSIM_LIB:handle_register"
 
         source_list_files:
             - $CTU_TB_TOP_TARGET
@@ -365,7 +372,7 @@ targets:
     # Compliance tests - Maximal bit-rate
     ###############################################################################################
     tb_rtl_test_compliance_full_max:
-        top_entity: ctu_can_fd_tb.tb_top_ctu_can_fd
+        top_entity: ctu_can_fd_tb.TB_TOP_CTU_CAN_FD
         test_list_file: test/tlf_compliance_full_max.yml
         generics:
             #log_level: info
@@ -404,7 +411,8 @@ targets:
             cfg_sys_clk_period: 25 ns
 
         sim_options:
-            ghdl: "--vpi=main_tb/iso-16845-compliance-tests/build/Release/src/simulator_interface/libSIMULATOR_INTERFACE_LIB.so"
+            ghdl: "--vpi=main_tb/iso-16845-compliance-tests/build/Debug/src/cosimulation/libGHDL_VPI_COSIM_LIB.so"
+            vcs: "-vhpi VCS_VHPI_COSIM_LIB:handle_register"
 
         source_list_files:
             - $CTU_TB_TOP_TARGET
@@ -414,7 +422,7 @@ targets:
     # Xilinx Unisim Gates - Simple feature tests - Vunit ONLY!
     ###############################################################################################
     tb_gate_xilinx_test_simple:
-        top_entity: ctu_can_fd_tb.tb_top_ctu_can_fd
+        top_entity: ctu_can_fd_tb.TB_TOP_CTU_CAN_FD
         test_list_file: test/tlf_gates_xilinx_simple.yml
         generics:
             #log_level: info
@@ -465,7 +473,7 @@ targets:
     # Xilinx Unisim Gates - Simple compliance tests - Vunit ONLY!
     ###############################################################################################
     tb_gate_xilinx_test_compliance:
-        top_entity: ctu_can_fd_tb.tb_top_ctu_can_fd
+        top_entity: ctu_can_fd_tb.TB_TOP_CTU_CAN_FD
         test_list_file: test/tlf_gates_xilinx_compliance.yml
         generics:
             #log_level: info

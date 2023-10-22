@@ -180,6 +180,7 @@ package body tb_pli_conversion_pkg is
         --  performing needed modulo operation.
         low := input / 1 fs;
 
+        output := (others => '0');
         output(30 downto 0) := std_logic_vector(to_unsigned(low, 31));
         output(61 downto 31) := std_logic_vector(to_unsigned(high, 31));
         
