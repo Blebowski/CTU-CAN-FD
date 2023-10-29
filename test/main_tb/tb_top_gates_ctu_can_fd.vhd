@@ -107,6 +107,9 @@ entity tb_top_ctu_can_fd is
         -- Clock configuration of DUT
         cfg_sys_clk_period      : string := "10 ns";
 
+        -- Finish on report Error
+        finish_on_error         : natural := 0;
+
         -- Bit timing config of DUT on CAN bus (used by compliance tests)
         cfg_brp                 : natural := 4;
         cfg_prop                : natural := 0;
@@ -173,6 +176,7 @@ architecture tb of tb_top_ctu_can_fd is
 
        -- DUT Clock period
        cfg_sys_clk_period      : string;
+       finish_on_error         : natural;
 
        -- Bit timing cofnig used in; compliance tests
        cfg_brp                 : natural;
@@ -272,6 +276,7 @@ begin
         stand_alone_vip_mode    => stand_alone_vip_mode,
 
         cfg_sys_clk_period      => cfg_sys_clk_period,
+        finish_on_error         => finish_on_error,
 
         cfg_brp                 => cfg_brp,
         cfg_prop                => cfg_prop,
@@ -349,6 +354,7 @@ begin
         info("  Seed: " & integer'image(seed));
         info("  Reference test iterations: " & integer'image(reference_iterations));
         info("  Timeout: " & timeout);
+        info("  Finish on error: " & integer'image(finish_on_error));
         info("");
         info("DUT configuration:");
         info("  RX buffer size: " & integer'image(rx_buffer_size));
@@ -368,11 +374,11 @@ begin
         info("  SJW: " & integer'image(cfg_sjw));
         info("");
         info("Bit timing settings (Data):");
-        info("  BRP: " & integer'image(cfg_brp));
-        info("  PH1: " & integer'image(cfg_ph_1));
-        info("  PROP: " & integer'image(cfg_prop));
-        info("  PH2: " & integer'image(cfg_ph_2));
-        info("  SJW: " & integer'image(cfg_sjw));
+        info("  BRP: " & integer'image(cfg_brp_fd));
+        info("  PH1: " & integer'image(cfg_ph_1_fd));
+        info("  PROP: " & integer'image(cfg_prop_fd));
+        info("  PH2: " & integer'image(cfg_ph_2_fd));
+        info("  SJW: " & integer'image(cfg_sjw_fd));
         info("");
         info("***************************************************************");
 
