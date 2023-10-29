@@ -156,7 +156,7 @@ package body command_ercrst_ftest is
 
         for i in 1 to 127 loop
             info_m ("11 recessive bits nr: " & integer'image(i));
-            for i in 1 to 11 loop
+            for j in 1 to 11 loop
                 CAN_wait_sample_point(DUT_NODE, chn);
             end loop;
         end loop;
