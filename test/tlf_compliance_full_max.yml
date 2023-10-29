@@ -283,7 +283,11 @@ tests:
       generics:
         cfg_brp_fd: 3
     - name: iso_8_8_5_1
+      generics:
+        cfg_brp_fd: 3
     - name: iso_8_8_5_2
+      generics:
+        cfg_brp_fd: 3
 
     - name: iso_9_6_1
     - name: iso_9_6_2
