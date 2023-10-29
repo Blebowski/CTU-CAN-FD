@@ -10,6 +10,16 @@ compile_debug: false
 
 coverage: true
 
+# VCS has a bug. When toggle coverage on VHDL design is collected,
+# and `-exitcode` switch is used, the simulation will return non-zero
+# exit code even if no assertions has failed! Simply disabling coverage
+# will make the exit code zero. We want to collect coverage, and still
+# don't want the exit code bug to corrupt our test result! CTU CAN FD
+# testbench reports all errors with "report" with error severity. These
+# are caught by the flow even without exit code check! Thus it is safe
+# to disable its check
+check_exit_code: false
+
 comp_options:
     ghdl: "-fpsl -frelaxed-rules --ieee=synopsys"
 
@@ -19,6 +29,9 @@ elab_options:
 
 sim_options:
     ghdl: "--ieee-asserts=disable"
+
+generics:
+    finish_on_error: 0
 
 targets:
 
@@ -280,7 +293,7 @@ targets:
             #error_tolerance: 0
             #debug: false
             iterations: 1
-            timeout: 100 ms
+            timeout: 200 ms
             test_type: compliance
 
             # DUT generics
@@ -296,7 +309,7 @@ targets:
 
             # DUT Bit timing settings
             # Applies for compliance tests and feature tests!
-            cfg_brp: 1
+            cfg_brp: 4
             cfg_prop: 5
             cfg_ph_1: 7
             cfg_ph_2: 7
