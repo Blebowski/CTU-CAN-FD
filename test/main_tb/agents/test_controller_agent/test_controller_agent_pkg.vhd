@@ -759,6 +759,24 @@ package body test_controller_agent_pkg is
                 pli_time_to_logic_vector(cfg_sys_clk_period_i, pli_data_out_i);
                 pli_data_out <= pli_data_out_i;
 
+            -- Data bit time
+            -- MUST BE BEFORE the Nominal Bit time!!!
+            elsif (param_name(1 to 14) = "CFG_DUT_BRP_FD") then
+                pli_data_out <= std_logic_vector(to_unsigned(cfg_brp_fd_i, pli_data_out'length));
+
+            elsif (param_name(1 to 15) = "CFG_DUT_PROP_FD") then
+                pli_data_out <= std_logic_vector(to_unsigned(cfg_prop_fd_i, pli_data_out'length));
+
+            elsif (param_name(1 to 14) = "CFG_DUT_PH1_FD") then
+                pli_data_out <= std_logic_vector(to_unsigned(cfg_ph_1_fd_i, pli_data_out'length));
+
+            elsif (param_name(1 to 14) = "CFG_DUT_PH2_FD") then
+                pli_data_out <= std_logic_vector(to_unsigned(cfg_ph_2_fd_i, pli_data_out'length));
+
+            elsif (param_name(1 to 14) = "CFG_DUT_SJW_FD") then
+                pli_data_out <= std_logic_vector(to_unsigned(cfg_sjw_fd_i, pli_data_out'length));
+
+            -- Nominal bit time
             elsif (param_name(1 to 11) = "CFG_DUT_BRP") then
                 pli_data_out <= std_logic_vector(to_unsigned(cfg_brp_i, pli_data_out'length));
 
@@ -773,21 +791,6 @@ package body test_controller_agent_pkg is
 
             elsif (param_name(1 to 11) = "CFG_DUT_SJW") then
                 pli_data_out <= std_logic_vector(to_unsigned(cfg_sjw_i, pli_data_out'length));
-
-            elsif (param_name(1 to 15) = "CFG_DUT_BRP_FD") then
-                pli_data_out <= std_logic_vector(to_unsigned(cfg_brp_fd_i, pli_data_out'length));
-
-            elsif (param_name(1 to 16) = "CFG_DUT_PROP_FD") then
-                pli_data_out <= std_logic_vector(to_unsigned(cfg_prop_fd_i, pli_data_out'length));
-
-            elsif (param_name(1 to 15) = "CFG_DUT_PH1_FD") then
-                pli_data_out <= std_logic_vector(to_unsigned(cfg_ph_1_fd_i, pli_data_out'length));
-
-            elsif (param_name(1 to 15) = "CFG_DUT_PH2_FD") then
-                pli_data_out <= std_logic_vector(to_unsigned(cfg_ph_2_fd_i, pli_data_out'length));
-
-            elsif (param_name(1 to 15) = "CFG_DUT_SJW_FD") then
-                pli_data_out <= std_logic_vector(to_unsigned(cfg_sjw_fd_i, pli_data_out'length));
 
             else
                 error_m("Unsupported configuration parameter name: " & param_name);
