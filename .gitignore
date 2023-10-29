@@ -23,5 +23,6 @@ synthesis/Vivado/ci_benchmark/typical_design_config/**
 synthesis/Vivado/ci_benchmark/maximal_design_config/**
 syn/R*
 sim/build/**
+sim/coverage_output/*
 **.jou
 **.log
