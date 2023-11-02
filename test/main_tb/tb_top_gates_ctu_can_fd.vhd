@@ -132,6 +132,7 @@ entity tb_top_ctu_can_fd is
         sup_traffic_ctrs        : boolean := true;
         sup_parity              : boolean := true;
         target_technology       : natural := C_TECH_ASIC;
+        reset_buffer_rams       : boolean := false;
 
         -- Seed
         seed                    : natural := 0
@@ -365,6 +366,7 @@ begin
         info("  Range filter: " & boolean'image(sup_range));
         info("  Traffic counters: " & boolean'image(sup_traffic_ctrs));
         info("  Target technology: " & integer'image(target_technology));
+        info("  Reset Buffer RAMS: " & boolean'image(reset_buffer_rams));
         info("");
         info("Bit timing settings (Nominal):");
         info("  BRP: " & integer'image(cfg_brp));

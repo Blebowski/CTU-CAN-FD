@@ -98,6 +98,7 @@ targets:
             sup_range: true
             sup_traffic_ctrs: true
             sup_parity: true
+            reset_buffer_rams: false
 
             # C_TECH_ASIC
             target_technology: 0
@@ -152,6 +153,7 @@ targets:
             sup_range: true
             sup_traffic_ctrs: true
             sup_parity: true
+            reset_buffer_rams: true
 
             # C_TECH_FPGA
             target_technology: 1
@@ -207,6 +209,7 @@ targets:
             sup_traffic_ctrs: true
             sup_parity: true
             target_technology: 0 # C_TECH_ASIC
+            reset_buffer_rams: false
 
             # DUT Bit timing settings
             # Applies for compliance tests and feature tests!
@@ -260,6 +263,7 @@ targets:
             sup_traffic_ctrs: false
             sup_parity: false
             target_technology: 0 # C_TECH_ASIC
+            reset_buffer_rams: false
 
             # DUT Bit timing settings
             # Applies for compliance tests and feature tests!
@@ -309,6 +313,7 @@ targets:
             sup_traffic_ctrs: false
             sup_parity: false
             target_technology: 0 # C_TECH_ASIC
+            reset_buffer_rams: false
 
             # DUT Bit timing settings
             # Applies for compliance tests and feature tests!
@@ -359,6 +364,7 @@ targets:
             sup_traffic_ctrs: false
             sup_parity: false
             target_technology: 0 # C_TECH_ASIC
+            reset_buffer_rams: false
 
             # DUT Bit timing settings
             # Applies for compliance tests and feature tests!

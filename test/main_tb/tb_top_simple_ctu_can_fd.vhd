@@ -124,6 +124,7 @@ entity tb_top_ctu_can_fd is
         sup_traffic_ctrs        : boolean := true;
         sup_parity              : boolean := true;
         target_technology       : natural := C_TECH_ASIC;
+        reset_buffer_rams       : boolean := false;
 
         -- Seed
         seed                    : natural := 0
@@ -233,7 +234,8 @@ begin
         sup_range           => sup_range,
         sup_traffic_ctrs    => sup_traffic_ctrs,
         sup_parity          => sup_parity,
-        target_technology   => target_technology
+        target_technology   => target_technology,
+        reset_buffer_rams   => reset_buffer_rams
     )
     port map(
         -- Clock and Asynchronous reset
@@ -365,6 +367,7 @@ begin
         info_m("  Range filter: " & boolean'image(sup_range));
         info_m("  Traffic counters: " & boolean'image(sup_traffic_ctrs));
         info_m("  Target technology: " & integer'image(target_technology));
+        info_m("  Reset Buffer RAMS: " & boolean'image(reset_buffer_rams));
         info_m("");
         info_m("Bit timing settings (Nominal):");
         info_m("  BRP: " & integer'image(cfg_brp));
