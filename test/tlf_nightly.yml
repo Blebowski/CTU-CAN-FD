@@ -1,5 +1,13 @@
 
 tests:
+    # We purposely run this test first with maximal possible configs of DUT.
+    # This is to get coverage DB from first data to contain absolutely full
+    # hierarchy and not to drop any coverage items. VCS does not support
+    # correct merging of DBs with different hierarchies.
+    - name: device_id
+      generics:
+        rx_buffer_size: 4096
+
     - name: alc_base_id
     - name: alc_ide
     - name: alc_id_extension
@@ -35,7 +43,6 @@ tests:
       generics:
         iterations: 20
 
-    - name: device_id
     - name: disable_in_tx
     - name: dlc_can20_8_64_bytes
 
@@ -235,6 +242,7 @@ tests:
 
     - name: scan_mode
     - name: settings_tbfbo
+    - name: settings_nisofd
     - name: single_bus_node
     - name: ssp_cfg
       generics:
@@ -323,7 +331,7 @@ tests:
     - name: tst_mem_acc_txt_5_txt_bufs
       generics:
         test_name: tst_mem_acc_txt
-        txt_buffer_count: 6
+        txt_buffer_count: 5
 
     - name: tst_mem_acc_txt_8_txt_bufs
       generics:

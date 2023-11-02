@@ -96,6 +96,7 @@ tests:
 
     - name: scan_mode
     - name: settings_tbfbo
+    - name: settings_nisofd
     - name: single_bus_node
 
     - name: ssp_cfg

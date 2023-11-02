@@ -21,6 +21,7 @@ source_list:
     # Feature tests + their agent
     ###############################################################################################
     - file: main_tb/feature_tests/settings_tbfbo_ftest.vhd
+    - file: main_tb/feature_tests/settings_nisofd_ftest.vhd
     - file: main_tb/feature_tests/status_eft_ftest.vhd
     - file: main_tb/feature_tests/fault_state_ftest.vhd
     - file: main_tb/feature_tests/alc_srr_rtr_2_ftest.vhd
