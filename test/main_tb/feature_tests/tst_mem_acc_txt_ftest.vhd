@@ -1,18 +1,18 @@
 --------------------------------------------------------------------------------
--- 
--- CTU CAN FD IP Core 
+--
+-- CTU CAN FD IP Core
 -- Copyright (C) 2021-present Ondrej Ille
--- 
+--
 -- Permission is hereby granted, free of charge, to any person obtaining a copy
 -- of this VHDL component and associated documentation files (the "Component"),
 -- to use, copy, modify, merge, publish, distribute the Component for
 -- educational, research, evaluation, self-interest purposes. Using the
 -- Component for commercial purposes is forbidden unless previously agreed with
 -- Copyright holder.
--- 
+--
 -- The above copyright notice and this permission notice shall be included in
 -- all copies or substantial portions of the Component.
--- 
+--
 -- THE COMPONENT IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 -- IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 -- FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -20,38 +20,38 @@
 -- LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
 -- FROM, OUT OF OR IN CONNECTION WITH THE COMPONENT OR THE USE OR OTHER DEALINGS
 -- IN THE COMPONENT.
--- 
+--
 -- The CAN protocol is developed by Robert Bosch GmbH and protected by patents.
 -- Anybody who wants to implement this IP core on silicon has to obtain a CAN
 -- protocol license from Bosch.
--- 
+--
 -- -------------------------------------------------------------------------------
--- 
--- CTU CAN FD IP Core 
+--
+-- CTU CAN FD IP Core
 -- Copyright (C) 2015-2020 MIT License
--- 
+--
 -- Authors:
 --     Ondrej Ille <ondrej.ille@gmail.com>
 --     Martin Jerabek <martin.jerabek01@gmail.com>
--- 
--- Project advisors: 
+--
+-- Project advisors:
 -- 	Jiri Novak <jnovak@fel.cvut.cz>
 -- 	Pavel Pisa <pisa@cmp.felk.cvut.cz>
--- 
+--
 -- Department of Measurement         (http://meas.fel.cvut.cz/)
 -- Faculty of Electrical Engineering (http://www.fel.cvut.cz)
 -- Czech Technical University        (http://www.cvut.cz/)
--- 
+--
 -- Permission is hereby granted, free of charge, to any person obtaining a copy
 -- of this VHDL component and associated documentation files (the "Component"),
 -- to deal in the Component without restriction, including without limitation
 -- the rights to use, copy, modify, merge, publish, distribute, sublicense,
 -- and/or sell copies of the Component, and to permit persons to whom the
 -- Component is furnished to do so, subject to the following conditions:
--- 
+--
 -- The above copyright notice and this permission notice shall be included in
 -- all copies or substantial portions of the Component.
--- 
+--
 -- THE COMPONENT IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 -- IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 -- FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -59,11 +59,11 @@
 -- LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
 -- FROM, OUT OF OR IN CONNECTION WITH THE COMPONENT OR THE USE OR OTHER DEALINGS
 -- IN THE COMPONENT.
--- 
+--
 -- The CAN protocol is developed by Robert Bosch GmbH and protected by patents.
 -- Anybody who wants to implement this IP core on silicon has to obtain a CAN
 -- protocol license from Bosch.
--- 
+--
 --------------------------------------------------------------------------------
 
 --------------------------------------------------------------------------------
@@ -76,13 +76,15 @@
 --  @1. TXT buffer RAM can be written and read via Test registers.
 --  @2. Write to one TXT buffer RAM does not affect write to other TXT buffer
 --      RAMs.
+--  @3. TXT buffer RAM cannot be written via Test registers when MODE[TSTM]=0.
 --
 -- @Test sequence:
---  @1. Read number of TXT buffers in DUT. Choose random TXT buffer. Enable Test
---      Mode and Test access in DUT. Disable DUT (since memory testability shall
---      be used when DUT is disabled).
+--  @1. Read number of TXT buffers in DUT. Choose random TXT buffer. Randomly
+--      Enable Test Mode and Test access in DUT. Disable DUT (since memory
+--      testability shall be used when DUT is disabled).
 --  @2. Generate random content and write it to TXT Buffer RAM.
---  @3. Read whole TXT buffer RAM back and compare read values with written ones.
+--  @3. Read whole TXT buffer RAM back and compare read values with written ones
+--      if test mode was enabled. Otherwise, check its all zeroes.
 --      Read TXT buffer RAM of other buffers, and check there are all zeroes.
 --
 -- @TestInfoEnd
@@ -113,17 +115,19 @@ package body tst_mem_acc_txt_ftest is
     ) is
         variable r_data  : std_logic_vector(31 downto 0) := (OTHERS => '0');
         variable rx_info : SW_RX_Buffer_info;
-        
+
         type t_test_mem is
             array (0 to 19) of std_logic_vector(31 downto 0);
         variable w_content : t_test_mem := (OTHERS => (OTHERS => '0'));
-        
+
         variable mode      : SW_mode    := SW_mode_rst_val;
-        
+
         variable num_txt_bufs : natural;
         variable used_txt_buf : natural;
-        
+
         variable tgt_mtm : t_tgt_test_mem;
+
+        variable rnd : integer;
     begin
 
         -----------------------------------------------------------------------
@@ -139,9 +143,16 @@ package body tst_mem_acc_txt_ftest is
         info_m("Picked TXT buffer: " & integer'image(used_txt_buf));
 
         get_rx_buf_state(rx_info, DUT_NODE, chn);
-        mode.test := true;
+
+        rand_int_v(10, rnd);
+        if ((rnd mod 2) = 0) then
+            mode.test := true;
+        else
+            mode.test := false;
+        end if;
+
         set_core_mode(mode, DUT_NODE, chn);
-        
+
         -- First we must disable DUT
         CAN_turn_controller(false, DUT_NODE, chn);
         set_test_mem_access(true, DUT_NODE, chn);
@@ -155,7 +166,7 @@ package body tst_mem_acc_txt_ftest is
             rand_logic_vect_v(w_content(i), 0.5);
             wait for 1 ps; -- To avoid timeout due to max delta cycles
         end loop;
-        
+
         case used_txt_buf is
         when 1 => tgt_mtm := TST_TGT_TXT_BUF_1;
         when 2 => tgt_mtm := TST_TGT_TXT_BUF_2;
@@ -192,11 +203,12 @@ package body tst_mem_acc_txt_ftest is
             when 7 => tgt_mtm := TST_TGT_TXT_BUF_7;
             when 8 => tgt_mtm := TST_TGT_TXT_BUF_8;
             end case;
-            
+
             for addr in 0 to 19 loop
                 test_mem_read(r_data, addr, tgt_mtm, DUT_NODE, chn);
 
-                if (buf_ind = used_txt_buf) then
+                -- Only check in test mode!
+                if (buf_ind = used_txt_buf and mode.test) then
                     check_m(r_data = w_content(addr),
                         "TXT Buffer " & integer'image(buf_ind) &
                         " RAM data at address: " & integer'image(addr) &

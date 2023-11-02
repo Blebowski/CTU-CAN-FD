@@ -4212,7 +4212,6 @@ package body feature_test_agent_pkg is
     begin
         -- Check test mode is set, throw error otherwise
         get_core_mode(mode, node, channel);
-        check_m(mode.test, "Test mode must be set when enabling Test memory access");
 
         -- Enable access
         if (enable) then
