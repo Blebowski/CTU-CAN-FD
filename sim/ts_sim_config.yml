@@ -20,6 +20,9 @@ coverage: true
 # to disable its check
 check_exit_code: false
 
+# This is to propagate seed to the TB
+seed_generic: seed
+
 comp_options:
     ghdl: "-fpsl -frelaxed-rules --ieee=synopsys"
 
@@ -332,18 +335,18 @@ targets:
             - $CTU_TB_TOP_TARGET
 
     ###############################################################################################
-    # Compliance tests - Minimal bit-rate
+    # Compliance tests - Minimal bit-rate with maximal phase lengths
     ###############################################################################################
-    tb_rtl_test_compliance_full_min:
+    tb_rtl_test_compliance_full_min_phases:
         top_entity: ctu_can_fd_tb.TB_TOP_CTU_CAN_FD
-        test_list_file: test/tlf_compliance_full_min.yml
+        test_list_file: test/tlf_compliance_full_min_phases.yml
         generics:
             # Test-bench configuration
             #log_level: info
             #error_tolerance: 0
             #debug: false
             iterations: 1
-            timeout: 800 ms
+            timeout: 500 ms
             test_type: compliance
 
             # DUT generics
@@ -359,17 +362,68 @@ targets:
 
             # DUT Bit timing settings
             # Applies for compliance tests and feature tests!
-            cfg_brp: 32
-            cfg_prop: 48
-            cfg_ph_1: 16
-            cfg_ph_2: 16
-            cfg_sjw: 16
+            cfg_brp: 4
+            cfg_prop: 63
+            cfg_ph_1: 63
+            cfg_ph_2: 63
+            cfg_sjw: 31
 
-            cfg_brp_fd: 32
-            cfg_prop_fd: 8
-            cfg_ph_1_fd: 8
-            cfg_ph_2_fd: 8
-            cfg_sjw_fd: 8
+            cfg_brp_fd: 4
+            cfg_prop_fd: 63
+            cfg_ph_1_fd: 31
+            cfg_ph_2_fd: 31
+            cfg_sjw_fd: 31
+
+            # Clock configuration
+            cfg_sys_clk_period: 5 ns
+
+        sim_options:
+            ghdl: "--vpi=main_tb/iso-16845-compliance-tests/build/Debug/src/cosimulation/libGHDL_VPI_COSIM_LIB.so"
+            vcs: "-vhpi VCS_VHPI_COSIM_LIB:handle_register"
+
+        source_list_files:
+            - $CTU_TB_TOP_TARGET
+
+
+    ###############################################################################################
+    # Compliance tests - Minimal bit-rate with maximal prescaler
+    ###############################################################################################
+    tb_rtl_test_compliance_full_min_prescaler:
+        top_entity: ctu_can_fd_tb.TB_TOP_CTU_CAN_FD
+        test_list_file: test/tlf_compliance_full_min_prescaler.yml
+        generics:
+            # Test-bench configuration
+            #log_level: info
+            #error_tolerance: 0
+            #debug: false
+            iterations: 1
+            timeout: 500 ms
+            test_type: compliance
+
+            # DUT generics
+            rx_buffer_size: 64
+            txt_buffer_count: 2
+            sup_filtA: false
+            sup_filtB: false
+            sup_filtC: false
+            sup_range: false
+            sup_traffic_ctrs: false
+            sup_parity: false
+            target_technology: 0 # C_TECH_ASIC
+
+            # DUT Bit timing settings
+            # Applies for compliance tests and feature tests!
+            cfg_brp: 255
+            cfg_prop: 1
+            cfg_ph_1: 2
+            cfg_ph_2: 2
+            cfg_sjw: 2
+
+            cfg_brp_fd: 255
+            cfg_prop_fd: 1
+            cfg_ph_1_fd: 2
+            cfg_ph_2_fd: 2
+            cfg_sjw_fd: 2
 
             # Clock configuration
             cfg_sys_clk_period: 5 ns
