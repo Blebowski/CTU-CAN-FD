@@ -373,14 +373,8 @@ tests:
         txt_buffer_count: 8
 
     - name: tx_cmd_set_abort
-      generics:
-        iterations: 5
     - name: tx_cmd_set_empty
-      generics:
-        iterations: 5
     - name: tx_cmd_set_ready
-      generics:
-        iterations: 5
 
     - name: tx_counter
     - name: tx_from_intermission
@@ -428,25 +422,21 @@ tests:
     - name: tx_status_2_txt_bufs
       generics:
         txt_buffer_count: 2
-        iterations: 5
         test_name: tx_status
 
     - name: tx_status_4_txt_bufs
       generics:
         txt_buffer_count: 4
-        iterations: 5
         test_name: tx_status
 
     - name: tx_status_6_txt_bufs
       generics:
         txt_buffer_count: 6
-        iterations: 5
         test_name: tx_status
 
     - name: tx_status_8_txt_bufs
       generics:
         txt_buffer_count: 8
-        iterations: 5
         test_name: tx_status
 
     - name: timestamp_low_high
