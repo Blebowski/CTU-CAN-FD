@@ -305,7 +305,10 @@ targets:
 
             # DUT generics
             rx_buffer_size: 64
-            txt_buffer_count: 2
+
+            # Use 8 TXT Buffers to get good toggle coverage on internals of all
+            # TXT Buffer memories!
+            txt_buffer_count: 8
             sup_filtA: false
             sup_filtB: false
             sup_filtC: false
@@ -356,7 +359,9 @@ targets:
 
             # DUT generics
             rx_buffer_size: 64
-            txt_buffer_count: 2
+            # Use 8 TXT Buffers to get good toggle coverage on internals of all
+            # TXT Buffer memories!
+            txt_buffer_count: 8
             sup_filtA: false
             sup_filtB: false
             sup_filtC: false
@@ -408,7 +413,9 @@ targets:
 
             # DUT generics
             rx_buffer_size: 64
-            txt_buffer_count: 2
+            # Use 8 TXT Buffers to get good toggle coverage on internals of all
+            # TXT Buffer memories!
+            txt_buffer_count: 8
             sup_filtA: false
             sup_filtB: false
             sup_filtC: false
@@ -457,7 +464,9 @@ targets:
 
             # DUT generics
             rx_buffer_size: 64
-            txt_buffer_count: 2
+            # Use 8 TXT Buffers to get good toggle coverage on internals of all
+            # TXT Buffer memories!
+            txt_buffer_count: 8
             sup_filtA: false
             sup_filtB: false
             sup_filtC: false
