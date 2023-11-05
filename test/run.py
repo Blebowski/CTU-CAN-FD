@@ -130,8 +130,14 @@ def load_tgt_tlf(vu, tgt, tgt_name):
         psl_path = "vunit_out/functional_coverage/coverage_data/psl_cov_{}_{}.json".format(tgt_name, name)
         opts.extend(["--psl-report={}".format(psl_path)])
 
+        # Remove hierarchy prefixes
+        filtered_generics = {}
+        for key, value in generics.items():
+            new_key = key.split("/")[-1]
+            filtered_generics[new_key] = value
+
         # Create the test
-        tb.add_config(test["name"], generics=generics, sim_options={"ghdl.sim_flags": opts})
+        tb.add_config(test["name"], generics=filtered_generics, sim_options={"ghdl.sim_flags": opts})
 
 
 if __name__ == '__main__':

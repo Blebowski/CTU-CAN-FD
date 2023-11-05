@@ -4,7 +4,7 @@ simulation_resolution: fs
 check_elab_log: true
 
 test_name_strategy: generic_parameter
-test_name_generic: test_name
+test_name_generic: /TB_TOP_CTU_CAN_FD/test_name
 
 compile_debug: false
 
@@ -84,46 +84,46 @@ targets:
             # Test-bench configuration
             #log_level: info
             #debug: false
-            test_type: feature
-            iterations: 1
-            timeout: 100 ms
-            seed: 0 # No randomization
+            /TB_TOP_CTU_CAN_FD/test_type: feature
+            /TB_TOP_CTU_CAN_FD/iterations: 1
+            /TB_TOP_CTU_CAN_FD/timeout: 100 ms
+            /TB_TOP_CTU_CAN_FD/seed: 0 # No randomization
 
             # DUT generics
-            rx_buffer_size: 64
-            txt_buffer_count: 8
-            sup_filtA: true
-            sup_filtB: true
-            sup_filtC: true
-            sup_range: true
-            sup_traffic_ctrs: true
-            sup_parity: true
-            reset_buffer_rams: false
+            /TB_TOP_CTU_CAN_FD/rx_buffer_size: 64
+            /TB_TOP_CTU_CAN_FD/txt_buffer_count: 8
+            /TB_TOP_CTU_CAN_FD/sup_filtA: true
+            /TB_TOP_CTU_CAN_FD/sup_filtB: true
+            /TB_TOP_CTU_CAN_FD/sup_filtC: true
+            /TB_TOP_CTU_CAN_FD/sup_range: true
+            /TB_TOP_CTU_CAN_FD/sup_traffic_ctrs: true
+            /TB_TOP_CTU_CAN_FD/sup_parity: true
+            /TB_TOP_CTU_CAN_FD/reset_buffer_rams: false
 
             # C_TECH_ASIC
-            target_technology: 0
+            /TB_TOP_CTU_CAN_FD/target_technology: 0
 
             # DUT Bit timing settings
             # (Applies for compliance tests and feature tests!)
-            cfg_brp: 2
-            cfg_prop: 5
-            cfg_ph_1: 7
-            cfg_ph_2: 7
-            cfg_sjw: 5
+            /TB_TOP_CTU_CAN_FD/cfg_brp: 2
+            /TB_TOP_CTU_CAN_FD/cfg_prop: 5
+            /TB_TOP_CTU_CAN_FD/cfg_ph_1: 7
+            /TB_TOP_CTU_CAN_FD/cfg_ph_2: 7
+            /TB_TOP_CTU_CAN_FD/cfg_sjw: 5
 
-            cfg_brp_fd: 1
-            cfg_prop_fd: 5
-            cfg_ph_1_fd: 7
-            cfg_ph_2_fd: 7
-            cfg_sjw_fd: 5
+            /TB_TOP_CTU_CAN_FD/cfg_brp_fd: 1
+            /TB_TOP_CTU_CAN_FD/cfg_prop_fd: 5
+            /TB_TOP_CTU_CAN_FD/cfg_ph_1_fd: 7
+            /TB_TOP_CTU_CAN_FD/cfg_ph_2_fd: 7
+            /TB_TOP_CTU_CAN_FD/cfg_sjw_fd: 5
 
             # Clock configuration
             # (Applies for compliance tests and feature tests!)
-            cfg_sys_clk_period: 10 ns
+            /TB_TOP_CTU_CAN_FD/cfg_sys_clk_period: 10 ns
 
             # Number of frames used from each dataset, 1000 means whole dataset
             # These take really long time, so we run only few frames here!
-            reference_iterations: 10
+            /TB_TOP_CTU_CAN_FD/reference_iterations: 10
 
         source_list_files:
             - $CTU_TB_TOP_TARGET
@@ -139,46 +139,46 @@ targets:
             #log_level: info
             #error_tolerance: 0
             #debug: false
-            test_type: feature
-            iterations: 1
-            timeout: 100 ms
-            seed: 0 # No randomization
+            /TB_TOP_CTU_CAN_FD/test_type: feature
+            /TB_TOP_CTU_CAN_FD/iterations: 1
+            /TB_TOP_CTU_CAN_FD/timeout: 100 ms
+            /TB_TOP_CTU_CAN_FD/seed: 0 # No randomization
 
             # DUT generics
-            rx_buffer_size: 64
-            txt_buffer_count: 8
-            sup_filtA: true
-            sup_filtB: true
-            sup_filtC: true
-            sup_range: true
-            sup_traffic_ctrs: true
-            sup_parity: true
-            reset_buffer_rams: true
+            /TB_TOP_CTU_CAN_FD/rx_buffer_size: 64
+            /TB_TOP_CTU_CAN_FD/txt_buffer_count: 8
+            /TB_TOP_CTU_CAN_FD/sup_filtA: true
+            /TB_TOP_CTU_CAN_FD/sup_filtB: true
+            /TB_TOP_CTU_CAN_FD/sup_filtC: true
+            /TB_TOP_CTU_CAN_FD/sup_range: true
+            /TB_TOP_CTU_CAN_FD/sup_traffic_ctrs: true
+            /TB_TOP_CTU_CAN_FD/sup_parity: true
+            /TB_TOP_CTU_CAN_FD/reset_buffer_rams: true
 
             # C_TECH_FPGA
-            target_technology: 1
+            /TB_TOP_CTU_CAN_FD/target_technology: 1
 
             # DUT Bit timing settings
             # (Applies for compliance tests and feature tests!)
-            cfg_brp: 2
-            cfg_prop: 5
-            cfg_ph_1: 7
-            cfg_ph_2: 7
-            cfg_sjw: 5
+            /TB_TOP_CTU_CAN_FD/cfg_brp: 2
+            /TB_TOP_CTU_CAN_FD/cfg_prop: 5
+            /TB_TOP_CTU_CAN_FD/cfg_ph_1: 7
+            /TB_TOP_CTU_CAN_FD/cfg_ph_2: 7
+            /TB_TOP_CTU_CAN_FD/cfg_sjw: 5
 
-            cfg_brp_fd: 1
-            cfg_prop_fd: 5
-            cfg_ph_1_fd: 7
-            cfg_ph_2_fd: 7
-            cfg_sjw_fd: 5
+            /TB_TOP_CTU_CAN_FD/cfg_brp_fd: 1
+            /TB_TOP_CTU_CAN_FD/cfg_prop_fd: 5
+            /TB_TOP_CTU_CAN_FD/cfg_ph_1_fd: 7
+            /TB_TOP_CTU_CAN_FD/cfg_ph_2_fd: 7
+            /TB_TOP_CTU_CAN_FD/cfg_sjw_fd: 5
 
             # Clock configuration
             # (Applies for compliance tests and feature tests!)
-            cfg_sys_clk_period: 10 ns
+            /TB_TOP_CTU_CAN_FD/cfg_sys_clk_period: 10 ns
 
             # Number of frames used from each dataset, 1000 means whole dataset
             # These take really long time, so we run only few frames here!
-            reference_iterations: 10
+            /TB_TOP_CTU_CAN_FD/reference_iterations: 10
 
         source_list_files:
             - $CTU_TB_TOP_TARGET
@@ -195,45 +195,45 @@ targets:
             #log_level: info
             #error_tolerance: 0
             #debug: true
-            iterations: 1
-            timeout: 100 ms
-            test_type: feature
+            /TB_TOP_CTU_CAN_FD/iterations: 1
+            /TB_TOP_CTU_CAN_FD/timeout: 100 ms
+            /TB_TOP_CTU_CAN_FD/test_type: feature
 
             # DUT generics
-            rx_buffer_size: 64
-            txt_buffer_count: 8
-            sup_filtA: true
-            sup_filtB: true
-            sup_filtC: true
-            sup_range: true
-            sup_traffic_ctrs: true
-            sup_parity: true
-            target_technology: 0 # C_TECH_ASIC
-            reset_buffer_rams: false
+            /TB_TOP_CTU_CAN_FD/rx_buffer_size: 64
+            /TB_TOP_CTU_CAN_FD/txt_buffer_count: 8
+            /TB_TOP_CTU_CAN_FD/sup_filtA: true
+            /TB_TOP_CTU_CAN_FD/sup_filtB: true
+            /TB_TOP_CTU_CAN_FD/sup_filtC: true
+            /TB_TOP_CTU_CAN_FD/sup_range: true
+            /TB_TOP_CTU_CAN_FD/sup_traffic_ctrs: true
+            /TB_TOP_CTU_CAN_FD/sup_parity: true
+            /TB_TOP_CTU_CAN_FD/target_technology: 0 # C_TECH_ASIC
+            /TB_TOP_CTU_CAN_FD/reset_buffer_rams: false
 
             # DUT Bit timing settings
             # Applies for compliance tests and feature tests!
-            cfg_brp: 2
-            cfg_prop: 5
-            cfg_ph_1: 7
-            cfg_ph_2: 7
-            cfg_sjw: 5
+            /TB_TOP_CTU_CAN_FD/cfg_brp: 2
+            /TB_TOP_CTU_CAN_FD/cfg_prop: 5
+            /TB_TOP_CTU_CAN_FD/cfg_ph_1: 7
+            /TB_TOP_CTU_CAN_FD/cfg_ph_2: 7
+            /TB_TOP_CTU_CAN_FD/cfg_sjw: 5
 
-            cfg_brp_fd: 1
-            cfg_prop_fd: 5
-            cfg_ph_1_fd: 5
-            cfg_ph_2_fd: 5
-            cfg_sjw_fd: 3
+            /TB_TOP_CTU_CAN_FD/cfg_brp_fd: 1
+            /TB_TOP_CTU_CAN_FD/cfg_prop_fd: 5
+            /TB_TOP_CTU_CAN_FD/cfg_ph_1_fd: 5
+            /TB_TOP_CTU_CAN_FD/cfg_ph_2_fd: 5
+            /TB_TOP_CTU_CAN_FD/cfg_sjw_fd: 3
 
             # Clock configuration
-            cfg_sys_clk_period: 10 ns
+            /TB_TOP_CTU_CAN_FD/cfg_sys_clk_period: 10 ns
 
             # Number of frames used from each dataset, 1000 means whole dataset
             # With unified TB architecture, these run quite long! Therefore we
             # run only sub-set. Then agent will randomize starting position within
             # the data-set, so all-together we pick random:
             #   50 * 10 = 500 (out of 10000) frames
-            reference_iterations: 50
+            /TB_TOP_CTU_CAN_FD/reference_iterations: 50
 
         source_list_files:
             - $CTU_TB_TOP_TARGET
@@ -248,39 +248,39 @@ targets:
             #log_level: info
             #error_tolerance: 0
             #debug: false
-            iterations: 1
-            timeout: 100 ms
-            test_type: compliance
-            seed: 0 # No randomization
+            /TB_TOP_CTU_CAN_FD/iterations: 1
+            /TB_TOP_CTU_CAN_FD/timeout: 100 ms
+            /TB_TOP_CTU_CAN_FD/test_type: compliance
+            /TB_TOP_CTU_CAN_FD/seed: 0 # No randomization
 
             # DUT generics
-            rx_buffer_size: 64
-            txt_buffer_count: 2
-            sup_filtA: false
-            sup_filtB: false
-            sup_filtC: false
-            sup_range: false
-            sup_traffic_ctrs: false
-            sup_parity: false
-            target_technology: 0 # C_TECH_ASIC
-            reset_buffer_rams: false
+            /TB_TOP_CTU_CAN_FD/rx_buffer_size: 64
+            /TB_TOP_CTU_CAN_FD/txt_buffer_count: 2
+            /TB_TOP_CTU_CAN_FD/sup_filtA: false
+            /TB_TOP_CTU_CAN_FD/sup_filtB: false
+            /TB_TOP_CTU_CAN_FD/sup_filtC: false
+            /TB_TOP_CTU_CAN_FD/sup_range: false
+            /TB_TOP_CTU_CAN_FD/sup_traffic_ctrs: false
+            /TB_TOP_CTU_CAN_FD/sup_parity: false
+            /TB_TOP_CTU_CAN_FD/target_technology: 0 # C_TECH_ASIC
+            /TB_TOP_CTU_CAN_FD/reset_buffer_rams: false
 
             # DUT Bit timing settings
             # Applies for compliance tests and feature tests!
-            cfg_brp: 1
-            cfg_prop: 5
-            cfg_ph_1: 7
-            cfg_ph_2: 7
-            cfg_sjw: 4
+            /TB_TOP_CTU_CAN_FD/cfg_brp: 1
+            /TB_TOP_CTU_CAN_FD/cfg_prop: 5
+            /TB_TOP_CTU_CAN_FD/cfg_ph_1: 7
+            /TB_TOP_CTU_CAN_FD/cfg_ph_2: 7
+            /TB_TOP_CTU_CAN_FD/cfg_sjw: 4
 
-            cfg_brp_fd: 1
-            cfg_prop_fd: 3
-            cfg_ph_1_fd: 3
-            cfg_ph_2_fd: 3
-            cfg_sjw_fd: 2
+            /TB_TOP_CTU_CAN_FD/cfg_brp_fd: 1
+            /TB_TOP_CTU_CAN_FD/cfg_prop_fd: 3
+            /TB_TOP_CTU_CAN_FD/cfg_ph_1_fd: 3
+            /TB_TOP_CTU_CAN_FD/cfg_ph_2_fd: 3
+            /TB_TOP_CTU_CAN_FD/cfg_sjw_fd: 2
 
             # Clock configuration
-            cfg_sys_clk_period: 25 ns
+            /TB_TOP_CTU_CAN_FD/cfg_sys_clk_period: 25 ns
 
         sim_options:
             ghdl: "--vpi=main_tb/iso-16845-compliance-tests/build/Debug/src/cosimulation/libGHDL_VPI_COSIM_LIB.so"
@@ -299,41 +299,41 @@ targets:
             #log_level: info
             #error_tolerance: 0
             #debug: false
-            iterations: 1
-            timeout: 200 ms
-            test_type: compliance
+            /TB_TOP_CTU_CAN_FD/iterations: 1
+            /TB_TOP_CTU_CAN_FD/timeout: 200 ms
+            /TB_TOP_CTU_CAN_FD/test_type: compliance
 
             # DUT generics
             rx_buffer_size: 64
 
             # Use 8 TXT Buffers to get good toggle coverage on internals of all
             # TXT Buffer memories!
-            txt_buffer_count: 8
-            sup_filtA: false
-            sup_filtB: false
-            sup_filtC: false
-            sup_range: false
-            sup_traffic_ctrs: false
-            sup_parity: false
-            target_technology: 0 # C_TECH_ASIC
-            reset_buffer_rams: false
+            /TB_TOP_CTU_CAN_FD/txt_buffer_count: 8
+            /TB_TOP_CTU_CAN_FD/sup_filtA: false
+            /TB_TOP_CTU_CAN_FD/sup_filtB: false
+            /TB_TOP_CTU_CAN_FD/sup_filtC: false
+            /TB_TOP_CTU_CAN_FD/sup_range: false
+            /TB_TOP_CTU_CAN_FD/sup_traffic_ctrs: false
+            /TB_TOP_CTU_CAN_FD/sup_parity: false
+            /TB_TOP_CTU_CAN_FD/target_technology: 0 # C_TECH_ASIC
+            /TB_TOP_CTU_CAN_FD/reset_buffer_rams: false
 
             # DUT Bit timing settings
             # Applies for compliance tests and feature tests!
-            cfg_brp: 4
-            cfg_prop: 5
-            cfg_ph_1: 7
-            cfg_ph_2: 7
-            cfg_sjw: 5
+            /TB_TOP_CTU_CAN_FD/cfg_brp: 4
+            /TB_TOP_CTU_CAN_FD/cfg_prop: 5
+            /TB_TOP_CTU_CAN_FD/cfg_ph_1: 7
+            /TB_TOP_CTU_CAN_FD/cfg_ph_2: 7
+            /TB_TOP_CTU_CAN_FD/cfg_sjw: 5
 
-            cfg_brp_fd: 1
-            cfg_prop_fd: 5
-            cfg_ph_1_fd: 7
-            cfg_ph_2_fd: 7
-            cfg_sjw_fd: 5
+            /TB_TOP_CTU_CAN_FD/cfg_brp_fd: 1
+            /TB_TOP_CTU_CAN_FD/cfg_prop_fd: 5
+            /TB_TOP_CTU_CAN_FD/cfg_ph_1_fd: 7
+            /TB_TOP_CTU_CAN_FD/cfg_ph_2_fd: 7
+            /TB_TOP_CTU_CAN_FD/cfg_sjw_fd: 5
 
             # Clock configuration
-            cfg_sys_clk_period: 25 ns
+            /TB_TOP_CTU_CAN_FD/cfg_sys_clk_period: 25 ns
 
         sim_options:
             ghdl: "--vpi=main_tb/iso-16845-compliance-tests/build/Debug/src/cosimulation/libGHDL_VPI_COSIM_LIB.so"
@@ -353,40 +353,40 @@ targets:
             #log_level: info
             #error_tolerance: 0
             #debug: false
-            iterations: 1
-            timeout: 500 ms
-            test_type: compliance
+            /TB_TOP_CTU_CAN_FD/iterations: 1
+            /TB_TOP_CTU_CAN_FD/timeout: 500 ms
+            /TB_TOP_CTU_CAN_FD/test_type: compliance
 
             # DUT generics
-            rx_buffer_size: 64
+            /TB_TOP_CTU_CAN_FD/rx_buffer_size: 64
             # Use 8 TXT Buffers to get good toggle coverage on internals of all
             # TXT Buffer memories!
-            txt_buffer_count: 8
-            sup_filtA: false
-            sup_filtB: false
-            sup_filtC: false
-            sup_range: false
-            sup_traffic_ctrs: false
-            sup_parity: false
-            target_technology: 0 # C_TECH_ASIC
-            reset_buffer_rams: false
+            /TB_TOP_CTU_CAN_FD/txt_buffer_count: 8
+            /TB_TOP_CTU_CAN_FD/sup_filtA: false
+            /TB_TOP_CTU_CAN_FD/sup_filtB: false
+            /TB_TOP_CTU_CAN_FD/sup_filtC: false
+            /TB_TOP_CTU_CAN_FD/sup_range: false
+            /TB_TOP_CTU_CAN_FD/sup_traffic_ctrs: false
+            /TB_TOP_CTU_CAN_FD/sup_parity: false
+            /TB_TOP_CTU_CAN_FD/target_technology: 0 # C_TECH_ASIC
+            /TB_TOP_CTU_CAN_FD/reset_buffer_rams: false
 
             # DUT Bit timing settings
             # Applies for compliance tests and feature tests!
-            cfg_brp: 4
-            cfg_prop: 63
-            cfg_ph_1: 63
-            cfg_ph_2: 63
-            cfg_sjw: 31
+            /TB_TOP_CTU_CAN_FD/cfg_brp: 4
+            /TB_TOP_CTU_CAN_FD/cfg_prop: 63
+            /TB_TOP_CTU_CAN_FD/cfg_ph_1: 63
+            /TB_TOP_CTU_CAN_FD/cfg_ph_2: 63
+            /TB_TOP_CTU_CAN_FD/cfg_sjw: 31
 
-            cfg_brp_fd: 4
-            cfg_prop_fd: 63
-            cfg_ph_1_fd: 31
-            cfg_ph_2_fd: 31
-            cfg_sjw_fd: 31
+            /TB_TOP_CTU_CAN_FD/cfg_brp_fd: 4
+            /TB_TOP_CTU_CAN_FD/cfg_prop_fd: 63
+            /TB_TOP_CTU_CAN_FD/cfg_ph_1_fd: 31
+            /TB_TOP_CTU_CAN_FD/cfg_ph_2_fd: 31
+            /TB_TOP_CTU_CAN_FD/cfg_sjw_fd: 31
 
             # Clock configuration
-            cfg_sys_clk_period: 5 ns
+            /TB_TOP_CTU_CAN_FD/cfg_sys_clk_period: 5 ns
 
         sim_options:
             ghdl: "--vpi=main_tb/iso-16845-compliance-tests/build/Debug/src/cosimulation/libGHDL_VPI_COSIM_LIB.so"
@@ -407,39 +407,39 @@ targets:
             #log_level: info
             #error_tolerance: 0
             #debug: false
-            iterations: 1
-            timeout: 500 ms
-            test_type: compliance
+            /TB_TOP_CTU_CAN_FD/iterations: 1
+            /TB_TOP_CTU_CAN_FD/timeout: 500 ms
+            /TB_TOP_CTU_CAN_FD/test_type: compliance
 
             # DUT generics
-            rx_buffer_size: 64
+            /TB_TOP_CTU_CAN_FD/rx_buffer_size: 64
             # Use 8 TXT Buffers to get good toggle coverage on internals of all
             # TXT Buffer memories!
-            txt_buffer_count: 8
-            sup_filtA: false
-            sup_filtB: false
-            sup_filtC: false
-            sup_range: false
-            sup_traffic_ctrs: false
-            sup_parity: false
-            target_technology: 0 # C_TECH_ASIC
+            /TB_TOP_CTU_CAN_FD/txt_buffer_count: 8
+            /TB_TOP_CTU_CAN_FD/sup_filtA: false
+            /TB_TOP_CTU_CAN_FD/sup_filtB: false
+            /TB_TOP_CTU_CAN_FD/sup_filtC: false
+            /TB_TOP_CTU_CAN_FD/sup_range: false
+            /TB_TOP_CTU_CAN_FD/sup_traffic_ctrs: false
+            /TB_TOP_CTU_CAN_FD/sup_parity: false
+            /TB_TOP_CTU_CAN_FD/target_technology: 0 # C_TECH_ASIC
 
             # DUT Bit timing settings
             # Applies for compliance tests and feature tests!
-            cfg_brp: 255
-            cfg_prop: 1
-            cfg_ph_1: 2
-            cfg_ph_2: 2
-            cfg_sjw: 2
+            /TB_TOP_CTU_CAN_FD/cfg_brp: 255
+            /TB_TOP_CTU_CAN_FD/cfg_prop: 1
+            /TB_TOP_CTU_CAN_FD/cfg_ph_1: 2
+            /TB_TOP_CTU_CAN_FD/cfg_ph_2: 2
+            /TB_TOP_CTU_CAN_FD/cfg_sjw: 2
 
-            cfg_brp_fd: 255
-            cfg_prop_fd: 1
-            cfg_ph_1_fd: 2
-            cfg_ph_2_fd: 2
-            cfg_sjw_fd: 2
+            /TB_TOP_CTU_CAN_FD/cfg_brp_fd: 255
+            /TB_TOP_CTU_CAN_FD/cfg_prop_fd: 1
+            /TB_TOP_CTU_CAN_FD/cfg_ph_1_fd: 2
+            /TB_TOP_CTU_CAN_FD/cfg_ph_2_fd: 2
+            /TB_TOP_CTU_CAN_FD/cfg_sjw_fd: 2
 
             # Clock configuration
-            cfg_sys_clk_period: 5 ns
+            /TB_TOP_CTU_CAN_FD/cfg_sys_clk_period: 5 ns
 
         sim_options:
             ghdl: "--vpi=main_tb/iso-16845-compliance-tests/build/Debug/src/cosimulation/libGHDL_VPI_COSIM_LIB.so"
@@ -458,39 +458,39 @@ targets:
             #log_level: info
             #error_tolerance: 0
             #debug: false
-            iterations: 1
-            timeout: 100 ms
-            test_type: compliance
+            /TB_TOP_CTU_CAN_FD/iterations: 1
+            /TB_TOP_CTU_CAN_FD/timeout: 100 ms
+            /TB_TOP_CTU_CAN_FD/test_type: compliance
 
             # DUT generics
-            rx_buffer_size: 64
+            /TB_TOP_CTU_CAN_FD/rx_buffer_size: 64
             # Use 8 TXT Buffers to get good toggle coverage on internals of all
             # TXT Buffer memories!
             txt_buffer_count: 8
-            sup_filtA: false
-            sup_filtB: false
-            sup_filtC: false
-            sup_range: false
-            sup_traffic_ctrs: false
-            sup_parity: false
-            target_technology: 0 # C_TECH_ASIC
+            /TB_TOP_CTU_CAN_FD/sup_filtA: false
+            /TB_TOP_CTU_CAN_FD/sup_filtB: false
+            /TB_TOP_CTU_CAN_FD/sup_filtC: false
+            /TB_TOP_CTU_CAN_FD/sup_range: false
+            /TB_TOP_CTU_CAN_FD/sup_traffic_ctrs: false
+            /TB_TOP_CTU_CAN_FD/sup_parity: false
+            /TB_TOP_CTU_CAN_FD/target_technology: 0 # C_TECH_ASIC
 
             # DUT Bit timing settings
             # Applies for compliance tests and feature tests!
-            cfg_brp: 1
-            cfg_prop: 1
-            cfg_ph_1: 3
-            cfg_ph_2: 3
-            cfg_sjw: 3
+            /TB_TOP_CTU_CAN_FD/cfg_brp: 1
+            /TB_TOP_CTU_CAN_FD/cfg_prop: 1
+            /TB_TOP_CTU_CAN_FD/cfg_ph_1: 3
+            /TB_TOP_CTU_CAN_FD/cfg_ph_2: 3
+            /TB_TOP_CTU_CAN_FD/cfg_sjw: 3
 
-            cfg_brp_fd: 1
-            cfg_prop_fd: 0
-            cfg_ph_1_fd: 2
-            cfg_ph_2_fd: 2
-            cfg_sjw_fd: 2
+            /TB_TOP_CTU_CAN_FD/cfg_brp_fd: 1
+            /TB_TOP_CTU_CAN_FD/cfg_prop_fd: 0
+            /TB_TOP_CTU_CAN_FD/cfg_ph_1_fd: 2
+            /TB_TOP_CTU_CAN_FD/cfg_ph_2_fd: 2
+            /TB_TOP_CTU_CAN_FD/cfg_sjw_fd: 2
 
             # Clock configuration
-            cfg_sys_clk_period: 25 ns
+            /TB_TOP_CTU_CAN_FD/cfg_sys_clk_period: 25 ns
 
         sim_options:
             ghdl: "--vpi=main_tb/iso-16845-compliance-tests/build/Debug/src/cosimulation/libGHDL_VPI_COSIM_LIB.so"
@@ -510,43 +510,43 @@ targets:
             #log_level: info
             #error_tolerance: 0
             #debug: false
-            iterations: 1
-            timeout: 100 ms
+            /TB_TOP_CTU_CAN_FD/iterations: 1
+            /TB_TOP_CTU_CAN_FD/timeout: 100 ms
 
             # DUT generics
-            rx_buffer_size: 128
-            txt_buffer_count: 4
-            sup_filtA: true
-            sup_filtB: false
-            sup_filtC: false
-            sup_range: false
-            sup_traffic_ctrs: true
-            sup_parity: true
+            /TB_TOP_CTU_CAN_FD/rx_buffer_size: 128
+            /TB_TOP_CTU_CAN_FD/txt_buffer_count: 4
+            /TB_TOP_CTU_CAN_FD/sup_filtA: true
+            /TB_TOP_CTU_CAN_FD/sup_filtB: false
+            /TB_TOP_CTU_CAN_FD/sup_filtC: false
+            /TB_TOP_CTU_CAN_FD/sup_range: false
+            /TB_TOP_CTU_CAN_FD/sup_traffic_ctrs: true
+            /TB_TOP_CTU_CAN_FD/sup_parity: true
 
             # Target technology is don't care is Gate config
             #target_technology: 0
 
             # DUT Bit timing settings
             # (Applies for compliance tests and feature tests!)
-            cfg_brp: 2
-            cfg_prop: 5
-            cfg_ph_1: 7
-            cfg_ph_2: 7
-            cfg_sjw: 5
+            /TB_TOP_CTU_CAN_FD/cfg_brp: 2
+            /TB_TOP_CTU_CAN_FD/cfg_prop: 5
+            /TB_TOP_CTU_CAN_FD/cfg_ph_1: 7
+            /TB_TOP_CTU_CAN_FD/cfg_ph_2: 7
+            /TB_TOP_CTU_CAN_FD/cfg_sjw: 5
 
-            cfg_brp_fd: 1
-            cfg_prop_fd: 5
-            cfg_ph_1_fd: 7
-            cfg_ph_2_fd: 7
-            cfg_sjw_fd: 5
+            /TB_TOP_CTU_CAN_FD/cfg_brp_fd: 1
+            /TB_TOP_CTU_CAN_FD/cfg_prop_fd: 5
+            /TB_TOP_CTU_CAN_FD/cfg_ph_1_fd: 7
+            /TB_TOP_CTU_CAN_FD/cfg_ph_2_fd: 7
+            /TB_TOP_CTU_CAN_FD/cfg_sjw_fd: 5
 
             # Clock configuration
             # (Applies for compliance tests and feature tests!)
-            cfg_sys_clk_period: 10 ns
+            /TB_TOP_CTU_CAN_FD/cfg_sys_clk_period: 10 ns
 
             # Number of frames used from each dataset, 1000 means whole dataset
             # These take really long time, so we run only few frames here!
-            reference_iterations: 10
+            /TB_TOP_CTU_CAN_FD/reference_iterations: 10
 
         source_list_files:
             - tb_ctu_can_fd_gate_vunit
@@ -561,36 +561,36 @@ targets:
             #log_level: info
             #error_tolerance: 0
             #debug: false
-            iterations: 1
-            timeout: 100 ms
-            test_type: compliance
+            /TB_TOP_CTU_CAN_FD/iterations: 1
+            /TB_TOP_CTU_CAN_FD/timeout: 100 ms
+            /TB_TOP_CTU_CAN_FD/test_type: compliance
 
             # DUT generics
-            rx_buffer_size: 128
-            txt_buffer_count: 4
-            sup_filtA: true
-            sup_filtB: false
-            sup_filtC: false
-            sup_range: false
-            sup_traffic_ctrs: true
-            sup_parity: false
+            /TB_TOP_CTU_CAN_FD/rx_buffer_size: 128
+            /TB_TOP_CTU_CAN_FD/txt_buffer_count: 4
+            /TB_TOP_CTU_CAN_FD/sup_filtA: true
+            /TB_TOP_CTU_CAN_FD/sup_filtB: false
+            /TB_TOP_CTU_CAN_FD/sup_filtC: false
+            /TB_TOP_CTU_CAN_FD/sup_range: false
+            /TB_TOP_CTU_CAN_FD/sup_traffic_ctrs: true
+            /TB_TOP_CTU_CAN_FD/sup_parity: false
 
             # DUT Bit timing settings
             # Applies for compliance tests and feature tests!
-            cfg_brp: 1
-            cfg_prop: 5
-            cfg_ph_1: 7
-            cfg_ph_2: 7
-            cfg_sjw: 4
+            /TB_TOP_CTU_CAN_FD/cfg_brp: 1
+            /TB_TOP_CTU_CAN_FD/cfg_prop: 5
+            /TB_TOP_CTU_CAN_FD/cfg_ph_1: 7
+            /TB_TOP_CTU_CAN_FD/cfg_ph_2: 7
+            /TB_TOP_CTU_CAN_FD/cfg_sjw: 4
 
-            cfg_brp_fd: 1
-            cfg_prop_fd: 3
-            cfg_ph_1_fd: 3
-            cfg_ph_2_fd: 3
-            cfg_sjw_fd: 2
+            /TB_TOP_CTU_CAN_FD/cfg_brp_fd: 1
+            /TB_TOP_CTU_CAN_FD/cfg_prop_fd: 3
+            /TB_TOP_CTU_CAN_FD/cfg_ph_1_fd: 3
+            /TB_TOP_CTU_CAN_FD/cfg_ph_2_fd: 3
+            /TB_TOP_CTU_CAN_FD/cfg_sjw_fd: 2
 
             # Clock configuration
-            cfg_sys_clk_period: 25 ns
+            /TB_TOP_CTU_CAN_FD/cfg_sys_clk_period: 25 ns
 
         sim_options:
             ghdl: "--vpi=main_tb/iso-16845-compliance-tests/build/Release/src/simulator_interface/libSIMULATOR_INTERFACE_LIB.so"

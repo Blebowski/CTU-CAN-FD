@@ -79,7 +79,7 @@ tests:
 
     - name: mode_frame_filters
       generics:
-        iterations: 6
+        /TB_TOP_CTU_CAN_FD/iterations: 6
     - name: no_sof_tx
     - name: one_shot
     - name: overload
@@ -100,11 +100,11 @@ tests:
     - name: single_bus_node
     - name: ssp_cfg
       generics:
-        iterations: 5
+        /TB_TOP_CTU_CAN_FD/iterations: 5
     - name: ssp_4_bits_flying
     - name: status_eft
       generics:
-        iterations: 5
+        /TB_TOP_CTU_CAN_FD/iterations: 5
 
     - name: status_ewl
     - name: status_idle
@@ -123,18 +123,18 @@ tests:
     - name: tx_arb_time_tran
     - name: tx_cmd_set_abort
       generics:
-        iterations: 5
+        /TB_TOP_CTU_CAN_FD/iterations: 5
     - name: tx_cmd_set_empty
       generics:
-        iterations: 5
+        /TB_TOP_CTU_CAN_FD/iterations: 5
     - name: tx_cmd_set_ready
       generics:
-        iterations: 5
+        /TB_TOP_CTU_CAN_FD/iterations: 5
     - name: tx_counter
     - name: tx_from_intermission
     - name: tx_priority_change
       generics:
-        iterations: 1
+        /TB_TOP_CTU_CAN_FD/iterations: 1
     - name: tx_priority
     - name: tx_status
     - name: timestamp_low_high
@@ -146,32 +146,32 @@ tests:
     # Reference tests
     - name: data_set_1
       generics:
-        test_type: reference
+        /TB_TOP_CTU_CAN_FD/test_type: reference
     - name: data_set_2
       generics:
-        test_type: reference
+        /TB_TOP_CTU_CAN_FD/test_type: reference
     - name: data_set_3
       generics:
-        test_type: reference
+        /TB_TOP_CTU_CAN_FD/test_type: reference
     - name: data_set_4
       generics:
-        test_type: reference
+        /TB_TOP_CTU_CAN_FD/test_type: reference
     - name: data_set_5
       generics:
-        test_type: reference
+        /TB_TOP_CTU_CAN_FD/test_type: reference
     - name: data_set_6
       generics:
-        test_type: reference
+        /TB_TOP_CTU_CAN_FD/test_type: reference
     - name: data_set_7
       generics:
-        test_type: reference
+        /TB_TOP_CTU_CAN_FD/test_type: reference
     - name: data_set_8
       generics:
-        test_type: reference
+        /TB_TOP_CTU_CAN_FD/test_type: reference
     - name: data_set_9
       generics:
-        test_type: reference
+        /TB_TOP_CTU_CAN_FD/test_type: reference
     - name: data_set_10
       generics:
-        test_type: reference
+        /TB_TOP_CTU_CAN_FD/test_type: reference
 

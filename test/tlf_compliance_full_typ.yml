@@ -20,8 +20,8 @@ tests:
         # In this test, BRP must be equal to BRP_FD! It is necessary since
         # huge time quanta difference will cause mismatch during first
         # resynchronisation (in ESI bit) during Data bit phase!
-        cfg_brp: 2
-        cfg_brp_fd: 2
+        /TB_TOP_CTU_CAN_FD/cfg_brp: 2
+        /TB_TOP_CTU_CAN_FD/cfg_brp_fd: 2
     - name: iso_7_1_4
     - name: iso_7_1_5
     - name: iso_7_1_6
@@ -37,7 +37,7 @@ tests:
     - name: iso_7_2_3
     - name: iso_7_2_4
       generics:
-        timeout: 1000 ms
+        /TB_TOP_CTU_CAN_FD/timeout: 1000 ms
     - name: iso_7_2_5
     - name: iso_7_2_6
     - name: iso_7_2_7
@@ -113,8 +113,8 @@ tests:
         # In this test, BRP must be equal to BRP_FD! It is necessary since
         # huge time quanta difference will cause mismatch during first
         # resynchronisation (in ESI bit) during Data bit phase!
-        cfg_brp: 2
-        cfg_brp_fd: 2
+        /TB_TOP_CTU_CAN_FD/cfg_brp: 2
+        /TB_TOP_CTU_CAN_FD/cfg_brp_fd: 2
     - name: iso_7_8_3_2
     - name: iso_7_8_3_3
     - name: iso_7_8_4_1
@@ -122,8 +122,8 @@ tests:
         # In this test, BRP must be equal to BRP_FD! It is necessary since
         # huge time quanta difference will cause mismatch during first
         # resynchronisation (in ESI bit) during Data bit phase!
-        cfg_brp: 2
-        cfg_brp_fd: 2
+        /TB_TOP_CTU_CAN_FD/cfg_brp: 2
+        /TB_TOP_CTU_CAN_FD/cfg_brp_fd: 2
     - name: iso_7_8_4_2
     - name: iso_7_8_4_3
     - name: iso_7_8_5_1
@@ -132,11 +132,11 @@ tests:
     - name: iso_7_8_6_1
       generics:
         # SJW is decremented so that more than 1 elementary test is ran
-        cfg_sjw_fd: 2
+        /TB_TOP_CTU_CAN_FD/cfg_sjw_fd: 2
     - name: iso_7_8_6_2
       generics:
         # SJW is decremented so that more than 1 elementary test is ran
-        cfg_sjw_fd: 2
+        /TB_TOP_CTU_CAN_FD/cfg_sjw_fd: 2
     - name: iso_7_8_6_3
     - name: iso_7_8_7_1
     - name: iso_7_8_7_2
@@ -162,13 +162,13 @@ tests:
     - name: iso_8_2_3
     - name: iso_8_2_4
       generics:
-        timeout: 1000 ms
+        /TB_TOP_CTU_CAN_FD/timeout: 1000 ms
     - name: iso_8_2_5
     - name: iso_8_2_6
     - name: iso_8_2_7
     - name: iso_8_2_8
       generics:
-        timeout: 1000 ms
+        /TB_TOP_CTU_CAN_FD/timeout: 1000 ms
 
     - name: iso_8_3_1
     - name: iso_8_3_2
@@ -184,8 +184,8 @@ tests:
     - name: iso_8_5_1
     - name: iso_8_5_2
       generics:
-        cfg_brp: 2
-        cfg_brp_fd: 2
+        /TB_TOP_CTU_CAN_FD/cfg_brp: 2
+        /TB_TOP_CTU_CAN_FD/cfg_brp_fd: 2
     - name: iso_8_5_3
     - name: iso_8_5_4
     - name: iso_8_5_5
@@ -236,31 +236,31 @@ tests:
     - name: iso_8_8_1_2
     - name: iso_8_8_1_3
       generics:
-        cfg_brp_fd: 3
+        /TB_TOP_CTU_CAN_FD/cfg_brp_fd: 3
     - name: iso_8_8_1_4
       generics:
-        cfg_brp_fd: 3
+        /TB_TOP_CTU_CAN_FD/cfg_brp_fd: 3
 
     - name: iso_8_8_2_1
     - name: iso_8_8_2_2
     - name: iso_8_8_2_3
       generics:
-        cfg_brp: 11
-        cfg_brp_fd: 3
+        /TB_TOP_CTU_CAN_FD/cfg_brp: 11
+        /TB_TOP_CTU_CAN_FD/cfg_brp_fd: 3
     - name: iso_8_8_2_4
 
     - name: iso_8_8_3_1
       generics:
-        cfg_brp_fd: 3
+        /TB_TOP_CTU_CAN_FD/cfg_brp_fd: 3
     - name: iso_8_8_3_2
       generics:
-        cfg_brp_fd: 3
+        /TB_TOP_CTU_CAN_FD/cfg_brp_fd: 3
     - name: iso_8_8_4_1
       generics:
-        cfg_brp_fd: 3
+        /TB_TOP_CTU_CAN_FD/cfg_brp_fd: 3
     - name: iso_8_8_4_2
       generics:
-        cfg_brp_fd: 3
+        /TB_TOP_CTU_CAN_FD/cfg_brp_fd: 3
     - name: iso_8_8_5_1
     - name: iso_8_8_5_2
 
