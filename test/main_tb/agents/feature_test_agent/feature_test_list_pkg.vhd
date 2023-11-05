@@ -214,6 +214,7 @@ use ctu_can_fd_tb.timestamp_low_high_ftest.all;
 use ctu_can_fd_tb.txt_buffer_byte_access_ftest.all;
 use ctu_can_fd_tb.txt_buffer_hazard_ftest.all;
 use ctu_can_fd_tb.txt_buffer_transitions_ftest.all;
+use ctu_can_fd_tb.txt_buffer_transitions_2_ftest.all;
 
 
 package feature_test_list_pkg is
@@ -471,6 +472,8 @@ package body feature_test_list_pkg is
             txt_buffer_hazard_ftest_exec(channel);
         elsif (test_name = "txt_buffer_transitions") then
             txt_buffer_transitions_ftest_exec(channel);
+        elsif (test_name = "txt_buffer_transitions_2") then
+            txt_buffer_transitions_2_ftest_exec(channel);
 
         else
             error_m("Unknown feature test name: " & test_name);

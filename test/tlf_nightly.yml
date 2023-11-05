@@ -444,6 +444,7 @@ tests:
     - name: txt_buffer_byte_access
     - name: txt_buffer_hazard
     - name: txt_buffer_transitions
+    - name: txt_buffer_transitions_2
 
     # Reference tests
     - name: data_set_1
