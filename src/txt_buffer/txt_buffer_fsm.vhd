@@ -217,9 +217,7 @@ begin
                           else
                       '0';
 
-    go_to_failed <= '1' when (transient_state = '1') and
-                             ((is_bus_off = '1' and mr_settings_tbfbo =
-                               TXTBUF_FAILED_BUS_OFF_ENABLED) or
+    go_to_failed <= '1' when ((is_bus_off = '1' and mr_settings_tbfbo = TXTBUF_FAILED_BUS_OFF_ENABLED) or
                               mr_mode_bmm = BMM_ENABLED or
                               mr_mode_rom = ROM_ENABLED)
                         else
@@ -253,8 +251,12 @@ begin
         -------------------------------------------------------------------------------------------
         when s_txt_ready =>
 
+            -- Node became bus-off
+            if (go_to_failed = '1') then
+                next_state <= s_txt_failed;
+
             -- Parity Error occured
-            if (txtb_parity_error_valid = '1') then
+            elsif (txtb_parity_error_valid = '1') then
                 next_state <= s_txt_parity_err;
 
             -- Locking for transmission
@@ -277,8 +279,12 @@ begin
         -------------------------------------------------------------------------------------------
         when s_txt_tx_prog =>
 
+            -- Node became bus-off
+            if (go_to_failed = '1') then
+                next_state <= s_txt_failed;
+
             -- Parity Error occured
-            if (txtb_parity_error_valid = '1') then
+            elsif (txtb_parity_error_valid = '1') then
                 next_state <= s_txt_parity_err;
 
             -- Unlock the buffer
@@ -309,8 +315,12 @@ begin
         -------------------------------------------------------------------------------------------
         when s_txt_ab_prog =>
 
+            -- Node became bus-off
+            if (go_to_failed = '1') then
+                next_state <= s_txt_failed;
+
             -- Parity Error occured
-            if (txtb_parity_error_valid = '1') then
+            elsif (txtb_parity_error_valid = '1') then
                 next_state <= s_txt_parity_err;
 
             -- Unlock the buffer
@@ -389,13 +399,6 @@ begin
 
         end case;
 
-        -------------------------------------------------------------------------------------------
-        -- If Core is bus-off, TXT Buffer goes to failed from any transient state.
-        -------------------------------------------------------------------------------------------
-        if (go_to_failed = '1') then
-            next_state <= s_txt_failed;
-        end if;
-
     end process;
 
     -----------------------------------------------------------------------------------------------
@@ -438,7 +441,7 @@ begin
                                                     (curr_state = s_txt_ready)))
                            else
                        '1' when (is_bus_off = '1' and next_state = s_txt_failed and
-                                transient_state = '1')
+                                 transient_state = '1')
                            else
                        '0';
 
