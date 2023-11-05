@@ -72,6 +72,7 @@ source_list:
     - file: main_tb/feature_tests/int_rx_ftest.vhd
     - file: main_tb/feature_tests/int_rxf_ftest.vhd
     - file: main_tb/feature_tests/int_bs_ftest.vhd
+    - file: main_tb/feature_tests/int_rxne_ftest.vhd
     - file: main_tb/feature_tests/command_rrb_ftest.vhd
     - file: main_tb/feature_tests/alc_base_id_ftest.vhd
     - file: main_tb/feature_tests/one_shot_ftest.vhd

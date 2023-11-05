@@ -147,6 +147,7 @@ use ctu_can_fd_tb.int_rxf_ftest.all;
 use ctu_can_fd_tb.int_tx_ftest.all;
 use ctu_can_fd_tb.int_of_ftest.all;
 use ctu_can_fd_tb.int_bs_ftest.all;
+use ctu_can_fd_tb.int_rxne_ftest.all;
 
 use ctu_can_fd_tb.message_filter_ftest.all;
 use ctu_can_fd_tb.mode_bus_monitoring_ftest.all;
@@ -346,6 +347,8 @@ package body feature_test_list_pkg is
             int_of_ftest_exec(channel);
         elsif (test_name = "int_bs") then
             int_bs_ftest_exec(channel);
+        elsif (test_name = "int_rxne") then
+            int_rxne_ftest_exec(channel);
 
         elsif (test_name = "message_filter") then
             message_filter_ftest_exec(channel);

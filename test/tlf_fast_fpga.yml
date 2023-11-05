@@ -60,6 +60,7 @@ tests:
     - name: int_of
     - name: int_rxf
     - name: int_bs
+    - name: int_rxne
 
     - name: message_filter
     - name: mode_bus_monitoring
