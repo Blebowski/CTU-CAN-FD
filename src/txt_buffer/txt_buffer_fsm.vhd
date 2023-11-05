@@ -514,8 +514,14 @@ begin
     --  {txtb_hw_cmd.unlock = '1' and hw_cbs = '1' and abort_applied = '1' and
     --   curr_state = s_txt_tx_prog};
     --
+
+    -- Corner-case transitions of FSM
+    --
     -- psl txtb_ready_to_abt_in_progress_cov : cover
     --  {curr_state = s_txt_ready and next_state = s_txt_ab_prog and txt_fsm_ce = '1'};
+    --
+    -- psl txtb_abt_in_progress_to_parity_error_cov : cover
+    --  {curr_state = s_txt_ab_prog and next_state = s_txt_parity_err and txt_fsm_ce = '1'};
 
     -----------------------------------------------------------------------------------------------
     -- Assertions
