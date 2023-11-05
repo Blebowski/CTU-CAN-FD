@@ -124,7 +124,6 @@ package body tx_status_ftest is
         variable frame_sent         :       boolean := false;
         variable bus_timing         :       bit_time_config_type;
         variable txt_state          :       SW_TXT_Buffer_state_type;
-        variable txt_buf_num        :       natural;
         variable num_buffers        :       natural;
     begin
 

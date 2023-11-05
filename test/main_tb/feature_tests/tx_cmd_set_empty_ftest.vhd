@@ -115,7 +115,6 @@ package body tx_cmd_set_empty_ftest is
         variable CAN_frame          :       SW_CAN_frame_type;
         variable frame_sent         :       boolean := false;
         variable txt_state          :       SW_TXT_Buffer_state_type;
-        variable buf_nr             :       natural;
         variable mode_2             :       SW_mode := SW_mode_rst_val;
         variable num_buffers        :       natural;
     begin

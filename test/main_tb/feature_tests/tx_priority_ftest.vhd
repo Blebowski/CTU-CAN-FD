@@ -1,18 +1,18 @@
 --------------------------------------------------------------------------------
--- 
--- CTU CAN FD IP Core 
+--
+-- CTU CAN FD IP Core
 -- Copyright (C) 2021-present Ondrej Ille
--- 
+--
 -- Permission is hereby granted, free of charge, to any person obtaining a copy
 -- of this VHDL component and associated documentation files (the "Component"),
 -- to use, copy, modify, merge, publish, distribute the Component for
 -- educational, research, evaluation, self-interest purposes. Using the
 -- Component for commercial purposes is forbidden unless previously agreed with
 -- Copyright holder.
--- 
+--
 -- The above copyright notice and this permission notice shall be included in
 -- all copies or substantial portions of the Component.
--- 
+--
 -- THE COMPONENT IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 -- IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 -- FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -20,38 +20,38 @@
 -- LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
 -- FROM, OUT OF OR IN CONNECTION WITH THE COMPONENT OR THE USE OR OTHER DEALINGS
 -- IN THE COMPONENT.
--- 
+--
 -- The CAN protocol is developed by Robert Bosch GmbH and protected by patents.
 -- Anybody who wants to implement this IP core on silicon has to obtain a CAN
 -- protocol license from Bosch.
--- 
+--
 -- -------------------------------------------------------------------------------
--- 
--- CTU CAN FD IP Core 
+--
+-- CTU CAN FD IP Core
 -- Copyright (C) 2015-2020 MIT License
--- 
+--
 -- Authors:
 --     Ondrej Ille <ondrej.ille@gmail.com>
 --     Martin Jerabek <martin.jerabek01@gmail.com>
--- 
--- Project advisors: 
+--
+-- Project advisors:
 -- 	Jiri Novak <jnovak@fel.cvut.cz>
 -- 	Pavel Pisa <pisa@cmp.felk.cvut.cz>
--- 
+--
 -- Department of Measurement         (http://meas.fel.cvut.cz/)
 -- Faculty of Electrical Engineering (http://www.fel.cvut.cz)
 -- Czech Technical University        (http://www.cvut.cz/)
--- 
+--
 -- Permission is hereby granted, free of charge, to any person obtaining a copy
 -- of this VHDL component and associated documentation files (the "Component"),
 -- to deal in the Component without restriction, including without limitation
 -- the rights to use, copy, modify, merge, publish, distribute, sublicense,
 -- and/or sell copies of the Component, and to permit persons to whom the
 -- Component is furnished to do so, subject to the following conditions:
--- 
+--
 -- The above copyright notice and this permission notice shall be included in
 -- all copies or substantial portions of the Component.
--- 
+--
 -- THE COMPONENT IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 -- IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 -- FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -59,11 +59,11 @@
 -- LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
 -- FROM, OUT OF OR IN CONNECTION WITH THE COMPONENT OR THE USE OR OTHER DEALINGS
 -- IN THE COMPONENT.
--- 
+--
 -- The CAN protocol is developed by Robert Bosch GmbH and protected by patents.
 -- Anybody who wants to implement this IP core on silicon has to obtain a CAN
 -- protocol license from Bosch.
--- 
+--
 --------------------------------------------------------------------------------
 
 --------------------------------------------------------------------------------
@@ -118,7 +118,7 @@ package body tx_priority_ftest is
     procedure tx_priority_ftest_exec(
         signal      chn             : inout  t_com_channel
     ) is
-        type CAN_frame_array_type is array (1 to 8) of SW_CAN_frame_type; 
+        type CAN_frame_array_type is array (1 to 8) of SW_CAN_frame_type;
 
         type t_txt_buf_priority_pair is record
             priority        :       natural range 0 to 7;
@@ -128,14 +128,14 @@ package body tx_priority_ftest is
 
         type t_txt_bufs_array is array (1 to 8) of t_txt_buf_priority_pair;
 
-        variable txt_buf_priorities        :       t_txt_bufs_array;      
+        variable txt_buf_priorities        :       t_txt_bufs_array;
         variable tmp_buff                  :       t_txt_buf_priority_pair;
 
-        variable CAN_frame_array_tx :       CAN_frame_array_type;   
-        
+        variable CAN_frame_array_tx :       CAN_frame_array_type;
+
         variable CAN_frame_rx       :       SW_CAN_frame_type;
-        
-        variable max_priority_val   :       natural range 0 to 7;	
+
+        variable max_priority_val   :       natural range 0 to 7;
         variable max_priority_index :       natural range 0 to 8;
 
         variable frame_equal        :       boolean := false;
@@ -143,7 +143,7 @@ package body tx_priority_ftest is
 
         variable txt_buf_mask       :       std_logic_vector(7 downto 0) := "00000000";
         variable buffers_used       :       natural := 0;
-        
+
         variable num_txt_bufs       :       natural;
     begin
 
@@ -162,7 +162,7 @@ package body tx_priority_ftest is
             rand_int_v(7, tmp_int);
             txt_buf_priorities(j).priority := tmp_int;
             txt_buf_priorities(j).index := j;
-            
+
             -- Generate whether buffer will be used!
             rand_int_v(4, tmp_int);
             if (tmp_int < 4) then
@@ -223,7 +223,7 @@ package body tx_priority_ftest is
                 then
                     tmp_buff := txt_buf_priorities(i);
                     txt_buf_priorities(i) := txt_buf_priorities(j);
-                    txt_buf_priorities(j) := tmp_buff;      
+                    txt_buf_priorities(j) := tmp_buff;
                 end if;
             end loop;
         end loop;
@@ -234,7 +234,7 @@ package body tx_priority_ftest is
             CAN_insert_TX_frame(CAN_frame_array_tx(i), txt_buf_priorities(i).index,
                                 DUT_NODE, chn);
         end loop;
-        
+
         info_m("Number of used buffers: " & integer'image(buffers_used));
         info_m("TXT Buffer configuration (highest priority first):");
         for i in 1 to num_txt_bufs loop
@@ -242,8 +242,8 @@ package body tx_priority_ftest is
                  " Priority: " & integer'image(txt_buf_priorities(i).priority) &
                  " Used: " & boolean'image(txt_buf_priorities(i).buffer_used) &
                  " CAN ID: " & to_hstring(std_logic_vector(to_unsigned(CAN_frame_array_tx(i).identifier, 32))));
-        
-            if (txt_buf_priorities(i).buffer_used) then         
+
+            if (txt_buf_priorities(i).buffer_used) then
                 txt_buf_mask(txt_buf_priorities(i).index - 1) := '1';
             end if;
         end loop;
@@ -255,7 +255,7 @@ package body tx_priority_ftest is
         info_m("Step 2");
 
         info_m("TXT Buffer mask: " & to_hstring(txt_buf_mask));
-        
+
         send_TXT_buf_cmd(buf_set_ready, txt_buf_mask, DUT_NODE, chn);
 
         for i in 1 to buffers_used loop
@@ -268,23 +268,23 @@ package body tx_priority_ftest is
         info_m("Step 3");
 
         for i in 1 to num_txt_bufs loop
-            
+
             -- Skip Buffer if it should not have been used
             if (not txt_buf_priorities(i).buffer_used) then
                 next;
             end if;
-            
+
             info_m("Reading out frame number: " & integer'image(i));
 
             CAN_read_frame(CAN_frame_rx, TEST_NODE, chn);
             CAN_compare_frames(CAN_frame_rx, CAN_frame_array_tx(i), false, frame_equal);
-        
-            if(frame_equal = false) then
+
+            if (frame_equal = false) then
                 info_m("FRAMES NOT EQUAL:");
                 info_m("Received frame:");
                 CAN_print_frame_simple(CAN_frame_rx);
                 info_m("Expected frame:");
-                CAN_print_frame_simple(CAN_frame_array_tx(i));         
+                CAN_print_frame_simple(CAN_frame_array_tx(i));
                 error_m("Error!");
                 exit;
             end if;

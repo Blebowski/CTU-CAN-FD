@@ -114,7 +114,6 @@ package body tx_cmd_set_abort_ftest is
     ) is
         variable CAN_frame          :       SW_CAN_frame_type;
         variable txt_state          :       SW_TXT_Buffer_state_type;
-        variable buf_nr             :       natural;
         variable num_buffers        :       natural;
     begin
 

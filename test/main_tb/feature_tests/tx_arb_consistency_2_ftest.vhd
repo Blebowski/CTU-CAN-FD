@@ -121,7 +121,6 @@ package body tx_arb_consistency_2_ftest is
         variable frame_equal        :       boolean := false;
         variable tmp_int            :       natural := 0;
 
-        variable wait_cycles        :       natural := 0;
         variable bus_timing         :       bit_time_config_type;
 
         variable frames_equal_1     :       boolean;
