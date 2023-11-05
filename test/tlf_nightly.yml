@@ -102,6 +102,7 @@ tests:
     - name: int_rx
     - name: int_tx
     - name: int_of
+    - name: int_rxf
 
     - name: message_filter
     - name: mode_bus_monitoring

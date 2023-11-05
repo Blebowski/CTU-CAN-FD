@@ -143,6 +143,7 @@ use ctu_can_fd_tb.int_do_ftest.all;
 use ctu_can_fd_tb.int_ewl_ftest.all;
 use ctu_can_fd_tb.int_fcs_ftest.all;
 use ctu_can_fd_tb.int_rx_ftest.all;
+use ctu_can_fd_tb.int_rxf_ftest.all;
 use ctu_can_fd_tb.int_tx_ftest.all;
 use ctu_can_fd_tb.int_of_ftest.all;
 
@@ -336,6 +337,8 @@ package body feature_test_list_pkg is
             int_fcs_ftest_exec(channel);
         elsif (test_name = "int_rx") then
             int_rx_ftest_exec(channel);
+        elsif (test_name = "int_rxf") then
+            int_rxf_ftest_exec(channel);
         elsif (test_name = "int_tx") then
             int_tx_ftest_exec(channel);
         elsif (test_name = "int_of") then
