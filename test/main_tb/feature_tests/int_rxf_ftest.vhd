@@ -157,6 +157,9 @@ package body int_rxf_ftest is
                 --      Check that when Interrupt is Enabled, it causes interrupt
                 --      to propagate to output
                 ---------------------------------------------------------------
+                info_m("Step 2.1 with:" &
+                              "MASK: "  & boolean'image(mask) &
+                              "ENABLE:" & boolean'image(ena));
 
                 int_mask.rx_buffer_full_int := mask;
                 int_ena.rx_buffer_full_int := ena;
