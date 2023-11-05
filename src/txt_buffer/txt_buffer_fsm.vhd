@@ -513,6 +513,9 @@ begin
     -- psl txtb_hw_sw_cmd_txt_tx_prog_hazard_cov : cover
     --  {txtb_hw_cmd.unlock = '1' and hw_cbs = '1' and abort_applied = '1' and
     --   curr_state = s_txt_tx_prog};
+    --
+    -- psl txtb_ready_to_abt_in_progress_cov : cover
+    --  {curr_state = s_txt_ready and next_state = s_txt_ab_prog and txt_fsm_ce = '1'};
 
     -----------------------------------------------------------------------------------------------
     -- Assertions
