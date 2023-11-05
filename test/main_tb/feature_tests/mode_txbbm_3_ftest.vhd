@@ -85,11 +85,11 @@
 --      @2.2 Enable test access to buffer RAMs. Generate random word index
 --           (within first 4 words of TXT Buffer), and flip such bit.
 --           Disable test access.
---      @2.2 Send set ready command to selected original TXT Buffer. Wait until
+--      @2.3 Send set ready command to selected original TXT Buffer. Wait until
 --           DUT starts transmission, and check that "original" TXT Buffer is in
 --           "Parity error" and "backup" TXT Buffer is in "TX in progress" state.
 --           Check that STATUS[TXPE] is set in DUT.
---      @2.3 Wait until transmission ends and bus is idle. Check that "original"
+--      @2.4 Wait until transmission ends and bus is idle. Check that "original"
 --           TXT Buffer is in "Parity Error" state and "backup" TXT buffer ended in
 --           "TX OK" state. Issue Set Empty to original TXT Buffer, and check
 --           it moves to Empty!
@@ -212,10 +212,10 @@ package body mode_txbbm_3_ftest is
                 set_test_mem_access(false, DUT_NODE, chn);
 
                 -----------------------------------------------------------------------
-                -- @2.3 Send set ready command to selected original TXT Buffer. Wait
-                --      until DUT starts transmission, and check that "original" TXT
-                --      Buffer is in TX in Progress and "backup" TXT Buffer is in
-                --      "ready" state.
+                -- @2.3 Send set ready command to selected original TXT Buffer. Wait until
+                --      DUT starts transmission, and check that "original" TXT Buffer is in
+                --      "Parity error" and "backup" TXT Buffer is in "TX in progress" state.
+                --      Check that STATUS[TXPE] is set in DUT.
                 -----------------------------------------------------------------------
                 info_m("Step 2.3");
 
