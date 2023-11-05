@@ -70,7 +70,7 @@
 -- Module:
 --  Register which is used to drive asynchronous reset of another flip-flop.
 --
---  Output is gated into inactive value in scan mode.
+--  Output is driven by input reset in scan mode
 --------------------------------------------------------------------------------
 
 Library ieee;
@@ -107,8 +107,6 @@ architecture rtl of rst_reg is
 
     signal q_i : std_logic;
 
-    constant C_NOT_RESET_POLARITY : std_logic := not G_RESET_POLARITY;
-
 begin
 
     rx_shift_res_reg_inst : entity ctu_can_fd_rtl.dff_arst
@@ -130,7 +128,7 @@ begin
     mux2_res_tst_inst : entity ctu_can_fd_rtl.mux2
     port map (
         a                  => q_i,
-        b                  => C_NOT_RESET_POLARITY,
+        b                  => arst,
         sel                => scan_enable,
 
         -- Output
