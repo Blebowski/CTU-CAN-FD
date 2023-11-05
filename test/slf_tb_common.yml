@@ -45,6 +45,7 @@ source_list:
     - file: main_tb/feature_tests/err_norm_fd_ftest.vhd
     - file: main_tb/feature_tests/btr_ssp_access_ftest.vhd
     - file: main_tb/feature_tests/txt_buffer_hazard_ftest.vhd
+    - file: main_tb/feature_tests/txt_buffer_transitions_ftest.vhd
     - file: main_tb/feature_tests/mode_txbbm_3_ftest.vhd
     - file: main_tb/feature_tests/ssp_4_bits_flying_ftest.vhd
     - file: main_tb/feature_tests/glitch_filtering_ftest.vhd
