@@ -88,13 +88,12 @@ end component data_mux;
 
 
 --------------------------------------------------------------------------------
--- Memory register
+-- RW Memory register
 --------------------------------------------------------------------------------
-component memory_reg is
+component memory_reg_rw is
     generic(
         constant data_width                 :     natural := 32;
-        constant reset_value                :     std_logic_vector;
-        constant modified_write_val_clear   :     boolean
+        constant reset_value                :     std_logic_vector
     );
     port(
         signal clk_sys                :in   std_logic;
@@ -104,13 +103,33 @@ component memory_reg is
         signal cs                     :in   std_logic;
         signal reg_value              :out  std_logic_vector(data_width - 1 downto 0)
     );
-end component memory_reg;
+end component memory_reg_rw;
 
-component memory_reg_lockable is
+--------------------------------------------------------------------------------
+-- One Shot Memory register
+--------------------------------------------------------------------------------
+component memory_reg_os is
     generic(
         constant data_width                 :     natural := 32;
-        constant reset_value                :     std_logic_vector;
-        constant modified_write_val_clear   :     boolean
+        constant reset_value                :     std_logic_vector
+    );
+    port(
+        signal clk_sys                :in   std_logic;
+        signal res_n                  :in   std_logic;
+        signal data_in                :in   std_logic_vector(data_width - 1 downto 0);
+        signal write                  :in   std_logic;
+        signal cs                     :in   std_logic;
+        signal reg_value              :out  std_logic_vector(data_width - 1 downto 0)
+    );
+end component memory_reg_os;
+
+--------------------------------------------------------------------------------
+-- RW Memory register with lock support
+--------------------------------------------------------------------------------
+component memory_reg_rw_lock is
+    generic(
+        constant data_width                 :     natural := 32;
+        constant reset_value                :     std_logic_vector
     );
     port(
         signal clk_sys                :in   std_logic;
@@ -121,7 +140,26 @@ component memory_reg_lockable is
         signal lock                   :in   std_logic;
         signal reg_value              :out  std_logic_vector(data_width - 1 downto 0)
     );
-end component memory_reg_lockable;
+end component memory_reg_rw_lock;
+
+--------------------------------------------------------------------------------
+-- One Shot Memory register with lock support
+--------------------------------------------------------------------------------
+component memory_reg_os_lock is
+    generic(
+        constant data_width                 :     natural := 32;
+        constant reset_value                :     std_logic_vector
+    );
+    port(
+        signal clk_sys                :in   std_logic;
+        signal res_n                  :in   std_logic;
+        signal data_in                :in   std_logic_vector(data_width - 1 downto 0);
+        signal write                  :in   std_logic;
+        signal cs                     :in   std_logic;
+        signal lock                   :in   std_logic;
+        signal reg_value              :out  std_logic_vector(data_width - 1 downto 0)
+    );
+end component memory_reg_os_lock;
 
 --------------------------------------------------------------------------------
 -- Access signaller

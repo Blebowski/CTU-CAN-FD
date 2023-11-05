@@ -80,11 +80,13 @@ source_list:
     - file: memory_registers/generated/data_mux.vhd
     - file: memory_registers/generated/memory_bus.vhd
     - file: memory_registers/generated/address_decoder.vhd
-    - file: memory_registers/generated/memory_reg_lockable.vhd
+    - file: memory_registers/generated/memory_reg_rw.vhd
+    - file: memory_registers/generated/memory_reg_rw_lock.vhd
+    - file: memory_registers/generated/memory_reg_os.vhd
+    - file: memory_registers/generated/memory_reg_os_lock.vhd
     - file: memory_registers/generated/can_registers_pkg.vhd
     - file: memory_registers/generated/access_signaler.vhd
     - file: memory_registers/generated/cmn_reg_map_pkg.vhd
-    - file: memory_registers/generated/memory_reg.vhd
     - file: memory_registers/generated/control_registers_reg_map.vhd
     - file: memory_registers/generated/test_registers_reg_map.vhd
     - file: memory_registers/memory_registers.vhd
