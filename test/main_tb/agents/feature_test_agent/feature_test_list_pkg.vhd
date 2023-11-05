@@ -200,6 +200,7 @@ use ctu_can_fd_tb.trv_delay_ftest.all;
 use ctu_can_fd_tb.tst_mem_acc_rx_ftest.all;
 use ctu_can_fd_tb.tst_mem_acc_txt_ftest.all;
 use ctu_can_fd_tb.tx_arb_consistency_ftest.all;
+use ctu_can_fd_tb.tx_arb_consistency_2_ftest.all;
 use ctu_can_fd_tb.tx_arb_time_tran_ftest.all;
 use ctu_can_fd_tb.tx_cmd_set_abort_ftest.all;
 use ctu_can_fd_tb.tx_cmd_set_empty_ftest.all;
@@ -441,6 +442,8 @@ package body feature_test_list_pkg is
             tst_mem_acc_txt_ftest_exec(channel);
         elsif (test_name = "tx_arb_consistency") then
             tx_arb_consistency_ftest_exec(channel);
+        elsif (test_name = "tx_arb_consistency_2") then
+            tx_arb_consistency_2_ftest_exec(channel);
         elsif (test_name = "tx_arb_time_tran") then
             tx_arb_time_tran_ftest_exec(channel);
         elsif (test_name = "tx_cmd_set_abort") then

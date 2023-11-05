@@ -33,6 +33,7 @@ source_list:
     - file: main_tb/feature_tests/err_capt_sof_ftest.vhd
     - file: main_tb/feature_tests/mode_bus_monitoring_ftest.vhd
     - file: main_tb/feature_tests/tx_arb_consistency_ftest.vhd
+    - file: main_tb/feature_tests/tx_arb_consistency_2_ftest.vhd
     - file: main_tb/feature_tests/status_rxs_ftest.vhd
     - file: main_tb/feature_tests/single_bus_node_ftest.vhd
     - file: main_tb/feature_tests/ssp_cfg_ftest.vhd

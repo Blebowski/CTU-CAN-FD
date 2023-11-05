@@ -356,6 +356,7 @@ tests:
         test_name: tx_arb_consistency
         txt_buffer_count: 8
         iterations: 10
+    - name: tx_arb_consistency_2
 
     - name: tx_arb_time_tran
       generics:

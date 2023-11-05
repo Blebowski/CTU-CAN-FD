@@ -120,22 +120,19 @@ tests:
     - name: stuff_in_data
 
     - name: trv_delay
-    - name: tst_mem_acc_rx
-    - name: tst_mem_acc_txt
+
+    # These two are needless in FPGA configuration. They test manufacturing testability
+    # in ASIC case!
+    #- name: tst_mem_acc_rx
+    #- name: tst_mem_acc_txt
+
     - name: tx_arb_consistency
+    - name: tx_arb_consistency_2
     - name: tx_arb_time_tran
 
     - name: tx_cmd_set_abort
-      generics:
-        iterations: 5
-
     - name: tx_cmd_set_empty
-      generics:
-        iterations: 5
-
     - name: tx_cmd_set_ready
-      generics:
-        iterations: 5
 
     - name: tx_counter
     - name: tx_from_intermission
