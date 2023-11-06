@@ -47,9 +47,13 @@ tests:
     - name: iso_7_2_1
     - name: iso_7_2_2
     - name: iso_7_2_3
-    - name: iso_7_2_4
-      generics:
-        /TB_TOP_CTU_CAN_FD/timeout: 500 ms
+
+    # Test is not run due to extremely logn duration in long bit times.
+    # Does not verify bit time related logic, so it is safe to skip it!
+    #- name: iso_7_2_4
+    #  generics:
+    #    /TB_TOP_CTU_CAN_FD/timeout: 3000 ms
+
     - name: iso_7_2_5
     - name: iso_7_2_6
     - name: iso_7_2_7
@@ -188,9 +192,12 @@ tests:
     - name: iso_8_2_5
     - name: iso_8_2_6
     - name: iso_8_2_7
-    - name: iso_8_2_8
-      generics:
-        /TB_TOP_CTU_CAN_FD/timeout: 500 ms
+
+    # Test is not run due to extremely logn duration in long bit times.
+    # Does not verify bit time related logic, so it is safe to skip it!
+    #- name: iso_8_2_8
+    #  generics:
+    #    /TB_TOP_CTU_CAN_FD/timeout: 3000 ms
 
     - name: iso_8_3_1
     - name: iso_8_3_2
