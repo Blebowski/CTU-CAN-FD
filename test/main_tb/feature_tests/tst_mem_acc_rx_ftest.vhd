@@ -136,6 +136,8 @@ package body tst_mem_acc_rx_ftest is
         CAN_turn_controller(false, DUT_NODE, chn);
         set_test_mem_access(true, DUT_NODE, chn);
 
+        info_m("Size of RX Buffer RAM: " & integer'image(rx_info.rx_mem_free));
+
         -----------------------------------------------------------------------
         -- @2. Generate random content for whole RAM.
         -----------------------------------------------------------------------
