@@ -522,6 +522,9 @@ begin
     --
     -- psl txtb_abt_in_progress_to_parity_error_cov : cover
     --  {curr_state = s_txt_ab_prog and next_state = s_txt_parity_err and txt_fsm_ce = '1'};
+    --
+    -- psl txtb_tx_in_progress_to_aborted_cov : cover
+    --  {curr_state = s_txt_tx_prog and next_state = s_txt_aborted and txt_fsm_ce = '1'};
 
     -----------------------------------------------------------------------------------------------
     -- Assertions
