@@ -1560,7 +1560,8 @@ package feature_test_agent_pkg is
         constant address        : in    natural;
         constant tgt_mem        : in    t_tgt_test_mem;
         constant node           : in    t_feature_node;
-        signal   channel        : inout t_com_channel
+        signal   channel        : inout t_com_channel;
+        constant tmaen          : in    boolean := true
     );
 
     ----------------------------------------------------------------------------
@@ -4272,7 +4273,8 @@ package body feature_test_agent_pkg is
         constant address        : in    natural;
         constant tgt_mem        : in    t_tgt_test_mem;
         constant node           : in    t_feature_node;
-        signal   channel        : inout t_com_channel
+        signal   channel        : inout t_com_channel;
+        constant tmaen          : in    boolean := true
     ) is
         variable data_i : std_logic_vector(31 downto 0) := (OTHERS => '0');
     begin
@@ -4288,7 +4290,11 @@ package body feature_test_agent_pkg is
 
         -- Execute write
         data_i := (OTHERS => '0');
-        data_i(TMAENA_IND) := '1';
+        if (tmaen) then
+            data_i(TMAENA_IND) := '1';
+        else
+            data_i(TMAENA_IND) := '0';
+        end if;
         data_i(TWRSTB_IND) := '1';
         CAN_write(data_i, TST_CONTROL_ADR, node, channel);
     end procedure;
