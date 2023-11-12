@@ -165,7 +165,7 @@ package body tst_mem_acc_txt_ftest is
                                 "MODE[TSTM]: "       & boolean'image(mode_tstm_ena) &
                                 "Test value:"        & to_hstring(w_values(i)));
 
-                        -- Configure test mode and enable test memory access
+                        -- Configure test mode
                         mode.test := mode_tstm_ena;
                         set_core_mode(mode, DUT_NODE, chn);
 
