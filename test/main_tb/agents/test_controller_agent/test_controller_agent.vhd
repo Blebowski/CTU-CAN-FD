@@ -282,7 +282,7 @@ begin
         if (test_success_i = '1') then
             info_m("CTU CAN FD VIP: Test PASSED");
         else
-            info_m("CTU CAN FD VIP: Test FAILED");
+            error_m("CTU CAN FD VIP: Test FAILED");
         end if;
         info_m("******************************************");
 
