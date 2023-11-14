@@ -73,8 +73,8 @@
 --  TXT Buffer FSMs corner-case transitions 3
 --
 -- @Verifies:
---  @1. When Unlock with
---  @2.
+--  @1. When Unlock from Protocol control arrives simultaneously as Set Abort
+--      from SW, TXT Buffer will go to TX Aborted immediately.
 --
 -- @Test sequence:
 --  @1. Loop for all TXT Buffers and incrementing wait times within a bit:
@@ -130,7 +130,7 @@ package body txt_buffer_transitions_3_ftest is
         -------------------------------------------------------------------------------------------
         -- @1. Loop for all TXT Buffers and incrementing wait times within a bit:
         -------------------------------------------------------------------------------------------
-        info_m("Step 2");
+        info_m("Step 1");
         get_tx_buf_count(num_txt_bufs, DUT_NODE, chn);
 
         -- Configure test mode to allow clearing error counters between iterations so that
