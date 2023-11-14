@@ -225,6 +225,8 @@ tests:
     - name: retr_limit_3
     - name: rx_buf_empty_read
     - name: rx_counter
+      generics:
+        /TB_TOP_CTU_CAN_FD/iterations: 15
     - name: rx_settings_rtsop
 
     - name: rx_status
@@ -382,6 +384,8 @@ tests:
     - name: tx_cmd_set_ready
 
     - name: tx_counter
+      generics:
+        /TB_TOP_CTU_CAN_FD/iterations: 15
     - name: tx_from_intermission
     - name: tx_priority_change
       generics:

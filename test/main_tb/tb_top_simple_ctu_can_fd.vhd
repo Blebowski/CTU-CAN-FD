@@ -340,6 +340,7 @@ begin
     -- Test manager - controls CTU CAN FD VIP
     ---------------------------------------------------------------------------
     test_manager_proc : process
+        variable rnd_vect : std_logic_vector(31 downto 0);
     begin
         wait for 10 ns;
 
@@ -389,6 +390,17 @@ begin
             info_m("***************************************************************");
             info_m(" Iteration nr: " & integer'image(i));
             info_m("***************************************************************");
+
+            -- Special deposit for traffic counters code coverage!
+            if (test_name = "rx_counter" or test_name = "tx_counter") then
+                rand_logic_vect_v(rnd_vect, 0.5);
+                info_m("Depositing TX frame counter and RX frame counter to: " & to_hstring(rnd_vect));
+                <<signal .TB_TOP_CTU_CAN_FD.DUT.CAN_CORE_INST.BUS_TRAFFIC_CTRS_GEN.BUS_TRAFFIC_COUNTERS_INST.tx_frame_ctr_i  : std_logic_vector(31 downto 0) >> <= force out rnd_vect;
+                <<signal .TB_TOP_CTU_CAN_FD.DUT.CAN_CORE_INST.BUS_TRAFFIC_CTRS_GEN.BUS_TRAFFIC_COUNTERS_INST.rx_frame_ctr_i  : std_logic_vector(31 downto 0) >> <= force out rnd_vect;
+                wait for 1 ns;
+                <<signal .TB_TOP_CTU_CAN_FD.DUT.CAN_CORE_INST.BUS_TRAFFIC_CTRS_GEN.BUS_TRAFFIC_COUNTERS_INST.tx_frame_ctr_i  : std_logic_vector(31 downto 0) >> <= release out;
+                <<signal .TB_TOP_CTU_CAN_FD.DUT.CAN_CORE_INST.BUS_TRAFFIC_CTRS_GEN.BUS_TRAFFIC_COUNTERS_INST.rx_frame_ctr_i  : std_logic_vector(31 downto 0) >> <= release out;
+            end if;
 
             -- Execute test
             test_start <= '1';
