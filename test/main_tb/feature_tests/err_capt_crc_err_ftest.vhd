@@ -1,18 +1,18 @@
 --------------------------------------------------------------------------------
--- 
--- CTU CAN FD IP Core 
+--
+-- CTU CAN FD IP Core
 -- Copyright (C) 2021-present Ondrej Ille
--- 
+--
 -- Permission is hereby granted, free of charge, to any person obtaining a copy
 -- of this VHDL component and associated documentation files (the "Component"),
 -- to use, copy, modify, merge, publish, distribute the Component for
 -- educational, research, evaluation, self-interest purposes. Using the
 -- Component for commercial purposes is forbidden unless previously agreed with
 -- Copyright holder.
--- 
+--
 -- The above copyright notice and this permission notice shall be included in
 -- all copies or substantial portions of the Component.
--- 
+--
 -- THE COMPONENT IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 -- IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 -- FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -20,38 +20,38 @@
 -- LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
 -- FROM, OUT OF OR IN CONNECTION WITH THE COMPONENT OR THE USE OR OTHER DEALINGS
 -- IN THE COMPONENT.
--- 
+--
 -- The CAN protocol is developed by Robert Bosch GmbH and protected by patents.
 -- Anybody who wants to implement this IP core on silicon has to obtain a CAN
 -- protocol license from Bosch.
--- 
+--
 -- -------------------------------------------------------------------------------
--- 
--- CTU CAN FD IP Core 
+--
+-- CTU CAN FD IP Core
 -- Copyright (C) 2015-2020 MIT License
--- 
+--
 -- Authors:
 --     Ondrej Ille <ondrej.ille@gmail.com>
 --     Martin Jerabek <martin.jerabek01@gmail.com>
--- 
--- Project advisors: 
+--
+-- Project advisors:
 -- 	Jiri Novak <jnovak@fel.cvut.cz>
 -- 	Pavel Pisa <pisa@cmp.felk.cvut.cz>
--- 
+--
 -- Department of Measurement         (http://meas.fel.cvut.cz/)
 -- Faculty of Electrical Engineering (http://www.fel.cvut.cz)
 -- Czech Technical University        (http://www.cvut.cz/)
--- 
+--
 -- Permission is hereby granted, free of charge, to any person obtaining a copy
 -- of this VHDL component and associated documentation files (the "Component"),
 -- to deal in the Component without restriction, including without limitation
 -- the rights to use, copy, modify, merge, publish, distribute, sublicense,
 -- and/or sell copies of the Component, and to permit persons to whom the
 -- Component is furnished to do so, subject to the following conditions:
--- 
+--
 -- The above copyright notice and this permission notice shall be included in
 -- all copies or substantial portions of the Component.
--- 
+--
 -- THE COMPONENT IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 -- IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 -- FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -59,18 +59,18 @@
 -- LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
 -- FROM, OUT OF OR IN CONNECTION WITH THE COMPONENT OR THE USE OR OTHER DEALINGS
 -- IN THE COMPONENT.
--- 
+--
 -- The CAN protocol is developed by Robert Bosch GmbH and protected by patents.
 -- Anybody who wants to implement this IP core on silicon has to obtain a CAN
 -- protocol license from Bosch.
--- 
+--
 --------------------------------------------------------------------------------
 
 --------------------------------------------------------------------------------
 -- @TestInfoStart
 --
 -- @Purpose:
---  ERR_CAPT CRC error feature test. 
+--  ERR_CAPT CRC error feature test.
 --
 -- @Verifies:
 --  @1. Detection of CRC error when calculated CRC is not equal to received
@@ -110,7 +110,7 @@ end package;
 package body err_capt_crc_err_ftest is
     procedure err_capt_crc_err_ftest_exec(
         signal      chn             : inout  t_com_channel
-    ) is        
+    ) is
         -- Generated frames
         variable frame_1            :     SW_CAN_frame_type;
 
@@ -118,10 +118,10 @@ package body err_capt_crc_err_ftest is
         variable stat_1             :     SW_status;
         variable stat_2             :     SW_status;
 
-        variable pc_dbg             :     SW_PC_Debug;    
+        variable pc_dbg             :     SW_PC_Debug;
 
         variable frame_sent         :     boolean;
-        
+
         variable err_capt           :     SW_error_capture;
         variable mode_2             :     SW_mode := SW_mode_rst_val;
         variable wait_time          :     natural;
@@ -132,11 +132,11 @@ package body err_capt_crc_err_ftest is
         -- @1. Check that ERR_CAPT contains no error (post reset).
         -----------------------------------------------------------------------
         info_m("Step 1");
-        
+
         CAN_read_error_code_capture(err_capt, TEST_NODE, chn);
         check_m(err_capt.err_pos = err_pos_other, "Reset of ERR_CAPT!");
-        
-        -----------------------------------------------------------------------        
+
+        -----------------------------------------------------------------------
         -- @2. Generate CAN frame and send it by Test Node. Wait until CRC field
         --     in DUT and wait for random number of bits. Force CAN_RX of
         --     DUT for duration of 1 bit to opposite value (to mess up
@@ -147,14 +147,19 @@ package body err_capt_crc_err_ftest is
         --     Check that ERR_CAPT contains CRC Error.
         -----------------------------------------------------------------------
         info_m("Step 2");
-        
+
         CAN_generate_frame(frame_1);
-        frame_1.frame_format := NORMAL_CAN; --Use CAN 2.0 to have sinle bit ACK
+        frame_1.frame_format := NORMAL_CAN; --Use CAN 2.0 to have single bit ACK
+        frame_1.identifier := 67;
+        frame_1.dlc := "0001";
+        frame_1.data_length := 1;
+        frame_1.data(0) :=  x"55";
+        frame_1.rtr := NO_RTR_FRAME;
         CAN_send_frame(frame_1, 1, TEST_NODE, chn, frame_sent);
-        
+
         CAN_wait_pc_state(pc_deb_crc, DUT_NODE, chn);
         rand_int_v(13, wait_time);
-        
+
         info_m("waiting for:" & integer'image(wait_time) & " bits!");
         wait_time := wait_time + 1;
         for i in 1 to wait_time loop
@@ -165,7 +170,7 @@ package body err_capt_crc_err_ftest is
         -- Force can_rx of Test node to oposite value!
         -- TODO: There is a drawback here that test might fail when we flip
         --       stuff bit! If we do so, then error frame will come sooner!
-        get_can_rx(DUT_NODE, can_rx_val, chn);        
+        get_can_rx(DUT_NODE, can_rx_val, chn);
         force_can_rx(not can_rx_val, DUT_NODE, chn);
         CAN_wait_sample_point(DUT_NODE, chn);
         wait for 20 ns;

@@ -50,12 +50,6 @@ tests:
     - name: err_capt_arb_bit
     - name: err_capt_arb_stuff
     - name: err_capt_crc_bit
-
-    # Do not run this test because it cannot handle properly
-    # corrupting CRC at each randomization! CRC error detection
-    # is intensively tested in compliance tests! Purpose of this
-    # test is only to verify that ERR_CAPT shows CRC error. This
-    # is enoguh in "fast" test run without randomization!
     - name: err_capt_crc_err
 
     - name: err_capt_ctrl_bit
