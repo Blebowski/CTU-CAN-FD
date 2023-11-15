@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # First run for clean-up
-#ts_sim_run.py --recompile --clear --clear-logs --no-sim-out tb_rtl_test_nightly \*
+ts_sim_run.py --recompile --no-sim-out tb_rtl_test_nightly \*
 
 ts_sim_run.py --recompile --no-sim-out tb_rtl_test_fast_asic \*
 ts_sim_run.py --recompile --no-sim-out tb_rtl_test_fast_fpga \*

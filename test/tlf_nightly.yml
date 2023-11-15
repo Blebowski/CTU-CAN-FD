@@ -87,6 +87,7 @@ tests:
     - name: frame_test_ignore
       generics:
         /TB_TOP_CTU_CAN_FD/iterations: 10
+    - name: frame_filters_mask
 
     - name: glitch_filtering
 

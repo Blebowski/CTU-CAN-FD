@@ -47,6 +47,7 @@ tests:
     - name: frame_test_fcrc
     - name: frame_test_sdlc
     - name: frame_test_ignore
+    - name: frame_filters_mask
 
     - name: glitch_filtering
 
