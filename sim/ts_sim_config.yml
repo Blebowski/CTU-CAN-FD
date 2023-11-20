@@ -260,7 +260,7 @@ targets:
             /TB_TOP_CTU_CAN_FD/sup_filtB: false
             /TB_TOP_CTU_CAN_FD/sup_filtC: false
             /TB_TOP_CTU_CAN_FD/sup_range: false
-            /TB_TOP_CTU_CAN_FD/sup_traffic_ctrs: false
+            /TB_TOP_CTU_CAN_FD/sup_traffic_ctrs: true
             /TB_TOP_CTU_CAN_FD/sup_parity: false
             /TB_TOP_CTU_CAN_FD/target_technology: 0 # C_TECH_ASIC
             /TB_TOP_CTU_CAN_FD/reset_buffer_rams: false
@@ -313,7 +313,7 @@ targets:
             /TB_TOP_CTU_CAN_FD/sup_filtB: false
             /TB_TOP_CTU_CAN_FD/sup_filtC: false
             /TB_TOP_CTU_CAN_FD/sup_range: false
-            /TB_TOP_CTU_CAN_FD/sup_traffic_ctrs: false
+            /TB_TOP_CTU_CAN_FD/sup_traffic_ctrs: true
             /TB_TOP_CTU_CAN_FD/sup_parity: false
             /TB_TOP_CTU_CAN_FD/target_technology: 0 # C_TECH_ASIC
             /TB_TOP_CTU_CAN_FD/reset_buffer_rams: false
@@ -366,7 +366,7 @@ targets:
             /TB_TOP_CTU_CAN_FD/sup_filtB: false
             /TB_TOP_CTU_CAN_FD/sup_filtC: false
             /TB_TOP_CTU_CAN_FD/sup_range: false
-            /TB_TOP_CTU_CAN_FD/sup_traffic_ctrs: false
+            /TB_TOP_CTU_CAN_FD/sup_traffic_ctrs: true
             /TB_TOP_CTU_CAN_FD/sup_parity: false
             /TB_TOP_CTU_CAN_FD/target_technology: 0 # C_TECH_ASIC
             /TB_TOP_CTU_CAN_FD/reset_buffer_rams: false
@@ -420,7 +420,7 @@ targets:
             /TB_TOP_CTU_CAN_FD/sup_filtB: false
             /TB_TOP_CTU_CAN_FD/sup_filtC: false
             /TB_TOP_CTU_CAN_FD/sup_range: false
-            /TB_TOP_CTU_CAN_FD/sup_traffic_ctrs: false
+            /TB_TOP_CTU_CAN_FD/sup_traffic_ctrs: true
             /TB_TOP_CTU_CAN_FD/sup_parity: false
             /TB_TOP_CTU_CAN_FD/target_technology: 0 # C_TECH_ASIC
 
@@ -471,7 +471,7 @@ targets:
             /TB_TOP_CTU_CAN_FD/sup_filtB: false
             /TB_TOP_CTU_CAN_FD/sup_filtC: false
             /TB_TOP_CTU_CAN_FD/sup_range: false
-            /TB_TOP_CTU_CAN_FD/sup_traffic_ctrs: false
+            /TB_TOP_CTU_CAN_FD/sup_traffic_ctrs: true
             /TB_TOP_CTU_CAN_FD/sup_parity: false
             /TB_TOP_CTU_CAN_FD/target_technology: 0 # C_TECH_ASIC
 
