@@ -363,6 +363,7 @@ tests:
       generics:
         /TB_TOP_CTU_CAN_FD/test_name: tx_arb_time_tran
         /TB_TOP_CTU_CAN_FD/txt_buffer_count: 2
+        /TB_TOP_CTU_CAN_FD/iterations: 5
 
     - name: tx_arb_time_tran_4_txt_bufs
       generics:
