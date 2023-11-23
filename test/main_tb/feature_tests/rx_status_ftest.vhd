@@ -1,18 +1,18 @@
 --------------------------------------------------------------------------------
--- 
--- CTU CAN FD IP Core 
+--
+-- CTU CAN FD IP Core
 -- Copyright (C) 2021-present Ondrej Ille
--- 
+--
 -- Permission is hereby granted, free of charge, to any person obtaining a copy
 -- of this VHDL component and associated documentation files (the "Component"),
 -- to use, copy, modify, merge, publish, distribute the Component for
 -- educational, research, evaluation, self-interest purposes. Using the
 -- Component for commercial purposes is forbidden unless previously agreed with
 -- Copyright holder.
--- 
+--
 -- The above copyright notice and this permission notice shall be included in
 -- all copies or substantial portions of the Component.
--- 
+--
 -- THE COMPONENT IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 -- IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 -- FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -20,38 +20,38 @@
 -- LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
 -- FROM, OUT OF OR IN CONNECTION WITH THE COMPONENT OR THE USE OR OTHER DEALINGS
 -- IN THE COMPONENT.
--- 
+--
 -- The CAN protocol is developed by Robert Bosch GmbH and protected by patents.
 -- Anybody who wants to implement this IP core on silicon has to obtain a CAN
 -- protocol license from Bosch.
--- 
+--
 -- -------------------------------------------------------------------------------
--- 
--- CTU CAN FD IP Core 
+--
+-- CTU CAN FD IP Core
 -- Copyright (C) 2015-2020 MIT License
--- 
+--
 -- Authors:
 --     Ondrej Ille <ondrej.ille@gmail.com>
 --     Martin Jerabek <martin.jerabek01@gmail.com>
--- 
--- Project advisors: 
+--
+-- Project advisors:
 -- 	Jiri Novak <jnovak@fel.cvut.cz>
 -- 	Pavel Pisa <pisa@cmp.felk.cvut.cz>
--- 
+--
 -- Department of Measurement         (http://meas.fel.cvut.cz/)
 -- Faculty of Electrical Engineering (http://www.fel.cvut.cz)
 -- Czech Technical University        (http://www.cvut.cz/)
--- 
+--
 -- Permission is hereby granted, free of charge, to any person obtaining a copy
 -- of this VHDL component and associated documentation files (the "Component"),
 -- to deal in the Component without restriction, including without limitation
 -- the rights to use, copy, modify, merge, publish, distribute, sublicense,
 -- and/or sell copies of the Component, and to permit persons to whom the
 -- Component is furnished to do so, subject to the following conditions:
--- 
+--
 -- The above copyright notice and this permission notice shall be included in
 -- all copies or substantial portions of the Component.
--- 
+--
 -- THE COMPONENT IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 -- IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 -- FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -59,11 +59,11 @@
 -- LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
 -- FROM, OUT OF OR IN CONNECTION WITH THE COMPONENT OR THE USE OR OTHER DEALINGS
 -- IN THE COMPONENT.
--- 
+--
 -- The CAN protocol is developed by Robert Bosch GmbH and protected by patents.
 -- Anybody who wants to implement this IP core on silicon has to obtain a CAN
 -- protocol license from Bosch.
--- 
+--
 --------------------------------------------------------------------------------
 
 --------------------------------------------------------------------------------
@@ -80,6 +80,7 @@
 --       value.
 --   @5. When buffer is filled Data overrun flag is checked and cleared.
 --   @6. After clearing Overrun flag, it is checked it was really cleared.
+--   @7. Read whole RX Buffer
 --
 -- @TestInfoEnd
 --------------------------------------------------------------------------------
@@ -119,7 +120,7 @@ package body rx_status_ftest is
         variable command            :       SW_command := SW_command_rst_val;
         variable status             :       SW_status;
         variable frame_counter      :       natural;
-        
+
         variable big_rx_buffer      :       boolean;
     begin
 
@@ -210,7 +211,7 @@ package body rx_status_ftest is
 
             CAN_send_frame(CAN_frame, 1, TEST_NODE, chn, frame_sent);
             CAN_wait_frame_sent(DUT_NODE, chn);
-            
+
             CAN_wait_bus_idle(DUT_NODE, chn);
             CAN_wait_bus_idle(TEST_NODE, chn);
 
@@ -225,7 +226,7 @@ package body rx_status_ftest is
             get_rx_buf_state(buf_info, DUT_NODE, chn);
             check_m((number_frms_sent = buf_info.rx_frame_count) or (not send_more),
                     "Number of frames in RX Buffer not incremented");
-                  
+
             check_m((buf_info.rx_mem_free + in_RX_buf) = buf_info.rx_buff_size or
                     (not send_more),
                     "RX Buffer free memory + Number of stored words does " &
@@ -244,13 +245,24 @@ package body rx_status_ftest is
         -- @6. After clearing Overrun flag, it is checked it was really cleared.
         ------------------------------------------------------------------------
         info_m("Step 6");
-        
+
         command.clear_data_overrun := true;
         give_controller_command(command, DUT_NODE, chn);
         command.clear_data_overrun := false;
 
         get_controller_status(status, DUT_NODE, chn);
         check_false_m(status.data_overrun, "Data Overrun flag not cleared!");
+
+        ------------------------------------------------------------------------
+        -- @7. Read whole RX Buffer
+        ------------------------------------------------------------------------
+        info_m("Step 7");
+
+        loop
+            get_rx_buf_state(buf_info, DUT_NODE, chn);
+            exit when (buf_info.rx_frame_count = 0);
+            CAN_read_frame(CAN_frame, DUT_NODE, chn);
+        end loop;
 
     end procedure;
 
