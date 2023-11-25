@@ -1,18 +1,18 @@
 --------------------------------------------------------------------------------
--- 
--- CTU CAN FD IP Core 
+--
+-- CTU CAN FD IP Core
 -- Copyright (C) 2021-present Ondrej Ille
--- 
+--
 -- Permission is hereby granted, free of charge, to any person obtaining a copy
 -- of this VHDL component and associated documentation files (the "Component"),
 -- to use, copy, modify, merge, publish, distribute the Component for
 -- educational, research, evaluation, self-interest purposes. Using the
 -- Component for commercial purposes is forbidden unless previously agreed with
 -- Copyright holder.
--- 
+--
 -- The above copyright notice and this permission notice shall be included in
 -- all copies or substantial portions of the Component.
--- 
+--
 -- THE COMPONENT IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 -- IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 -- FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -20,38 +20,38 @@
 -- LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
 -- FROM, OUT OF OR IN CONNECTION WITH THE COMPONENT OR THE USE OR OTHER DEALINGS
 -- IN THE COMPONENT.
--- 
+--
 -- The CAN protocol is developed by Robert Bosch GmbH and protected by patents.
 -- Anybody who wants to implement this IP core on silicon has to obtain a CAN
 -- protocol license from Bosch.
--- 
+--
 -- -------------------------------------------------------------------------------
--- 
--- CTU CAN FD IP Core 
+--
+-- CTU CAN FD IP Core
 -- Copyright (C) 2015-2020 MIT License
--- 
+--
 -- Authors:
 --     Ondrej Ille <ondrej.ille@gmail.com>
 --     Martin Jerabek <martin.jerabek01@gmail.com>
--- 
--- Project advisors: 
+--
+-- Project advisors:
 -- 	Jiri Novak <jnovak@fel.cvut.cz>
 -- 	Pavel Pisa <pisa@cmp.felk.cvut.cz>
--- 
+--
 -- Department of Measurement         (http://meas.fel.cvut.cz/)
 -- Faculty of Electrical Engineering (http://www.fel.cvut.cz)
 -- Czech Technical University        (http://www.cvut.cz/)
--- 
+--
 -- Permission is hereby granted, free of charge, to any person obtaining a copy
 -- of this VHDL component and associated documentation files (the "Component"),
 -- to deal in the Component without restriction, including without limitation
 -- the rights to use, copy, modify, merge, publish, distribute, sublicense,
 -- and/or sell copies of the Component, and to permit persons to whom the
 -- Component is furnished to do so, subject to the following conditions:
--- 
+--
 -- The above copyright notice and this permission notice shall be included in
 -- all copies or substantial portions of the Component.
--- 
+--
 -- THE COMPONENT IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 -- IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 -- FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -59,11 +59,11 @@
 -- LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
 -- FROM, OUT OF OR IN CONNECTION WITH THE COMPONENT OR THE USE OR OTHER DEALINGS
 -- IN THE COMPONENT.
--- 
+--
 -- The CAN protocol is developed by Robert Bosch GmbH and protected by patents.
 -- Anybody who wants to implement this IP core on silicon has to obtain a CAN
 -- protocol license from Bosch.
--- 
+--
 --------------------------------------------------------------------------------
 
 --------------------------------------------------------------------------------
@@ -152,7 +152,7 @@ package body status_rxpe_ftest is
             info_m("Loop nr.: " & integer'image(i));
 
             -------------------------------------------------------------------
-            -- @2.1 
+            -- @2.1
             -------------------------------------------------------------------
             info_m("Step 2.1");
 
@@ -165,7 +165,7 @@ package body status_rxpe_ftest is
             set_core_mode(mode_1, DUT_NODE, chn);
 
             -------------------------------------------------------------------
-            -- @2.2. Generate random CAN Frame, and send it by Test node. Wait 
+            -- @2.2. Generate random CAN Frame, and send it by Test node. Wait
             --       until frame is received by DUT.
             -------------------------------------------------------------------
             info_m("Step 2.2");
@@ -173,7 +173,7 @@ package body status_rxpe_ftest is
             CAN_generate_frame(frame_1);
             CAN_send_frame(frame_1, 1, TEST_NODE, chn, frame_sent);
             CAN_wait_frame_sent(DUT_NODE, chn);
-            
+
             -- Disable due to many transfers when reading whole RX Buffer RAM!
             mem_bus_agent_disable_transaction_reporting(chn);
 
@@ -196,16 +196,16 @@ package body status_rxpe_ftest is
                 test_mem_read(r_data, rptr_pos + j, TST_TGT_RX_BUF, DUT_NODE, chn);
                 rx_frame_buffer(j) := r_data;
             end loop;
-            
+
             -- Choose if to corrupt a bit or not
             -- Choose random word (but less than RWCNT) and bit between 0 and 31
             rand_logic_v(corrupt_insert, 0.7);
             rand_int_v(rwcnt, corrupt_wrd_index);
-            rand_int_v(32, corrupt_bit_index);
+            rand_int_v(31, corrupt_bit_index);
 
             -- Flip selected bit
             if (corrupt_insert = '1') then
-                rx_frame_buffer(corrupt_wrd_index)(corrupt_bit_index) := 
+                rx_frame_buffer(corrupt_wrd_index)(corrupt_bit_index) :=
                     not rx_frame_buffer(corrupt_wrd_index)(corrupt_bit_index);
             end if;
 
@@ -213,7 +213,7 @@ package body status_rxpe_ftest is
             for j in 0 to rwcnt loop
                 test_mem_write(rx_frame_buffer(j), rptr_pos + j, TST_TGT_RX_BUF, DUT_NODE, chn);
             end loop;
-            
+
             -- We must read once again from FRAME_FORMAT_W position to get RX Buffer RAM
             -- register output at FRAME_FORMAT_W position.
             test_mem_read(r_data, rptr_pos, TST_TGT_RX_BUF, DUT_NODE, chn);
@@ -279,7 +279,7 @@ package body status_rxpe_ftest is
             -- RX_STATUS[MOF] and RX_STATUS[RXE] sooner than at the end of
             -- frame. This is because "read_counter" inside RX Buffer depends on
             -- RWCNT read from RX Buffer. If empty, is set too soon due to such
-            -- parity error, R/W pointers will get inconsistent in the HW, and 
+            -- parity error, R/W pointers will get inconsistent in the HW, and
             -- not allow read pointer to reach value of write pointer!
             --
             -- Due to this reason, RXPE handling procedure applies RX Buffer
