@@ -1,0 +1,4 @@
+tests:
+    - name: simple_test
+      generics:
+        /RX_BUFFER_TB/test_name: simple_test

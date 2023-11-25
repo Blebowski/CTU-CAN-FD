@@ -448,6 +448,26 @@ targets:
 
 
     ###############################################################################################
+    # RX Buffer unit test - VCS only
+    ###############################################################################################
+    tb_rtl_rx_buffer_unit:
+        top_entity: ctu_can_fd_tb_unit.RX_BUFFER_TB
+        test_list_file: test/unit/tlf_tb_unit_tests.yml
+        generics:
+            #log_level: info
+            #error_tolerance: 0
+            #debug: false
+            /RX_BUFFER_TB/iterations: 100
+            /RX_BUFFER_TB/timeout: 20 ms
+
+        source_list_files:
+            - rtl_ctu_can_fd
+            - test/slf_tb_dependencies_simple.yml
+            - test/slf_tb_common.yml
+            - test/unit/slf_tb_unit_tests.yml
+
+
+    ###############################################################################################
     # Xilinx Unisim Gates - Simple feature tests - Vunit ONLY!
     ###############################################################################################
     tb_gate_xilinx_test_simple:
