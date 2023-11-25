@@ -193,7 +193,7 @@ architecture tb of can_agent is
     ---------------------------------------------------------------------------
 
     -- Driver
-    signal driver_wait_timeout      :   time := 3 ms;
+    signal driver_wait_timeout      :   time := 10 ms;
     signal driven_item              :   t_can_driver_entry := (
         value           => 'Z',
         drive_time      => 0 ns,
@@ -202,7 +202,7 @@ architecture tb of can_agent is
     );
 
     -- Monitor
-    signal monitor_wait_timeout     :   time := 3 ms;
+    signal monitor_wait_timeout     :   time := 10 ms;
     signal monitored_item           :   t_can_monitor_entry := (
         value           => 'Z',
         monitor_time    => 0 ns,
@@ -410,7 +410,9 @@ begin
 
         when CAN_AGNT_CMD_MONITOR_WAIT_FINISH =>
             wait for 0 ns;
-            wait until (monitor_in_progress = false) for monitor_wait_timeout;
+            if (monitor_in_progress) then
+                wait until (monitor_in_progress = false) for monitor_wait_timeout;
+            end if;
 
         when CAN_AGNT_CMD_MONITOR_MONITOR_SINGLE_ITEM =>
             if (not monitor_ena) then
