@@ -343,11 +343,11 @@ targets:
             - $CTU_TB_TOP_TARGET
 
     ###############################################################################################
-    # Compliance tests - Minimal bit-rate with maximal phase lengths
+    # Compliance tests - Minimal bit-rate with minimal timing (maximal phase lengths)
     ###############################################################################################
-    tb_rtl_test_compliance_full_min_phases:
+    tb_rtl_test_compliance_full_min:
         top_entity: ctu_can_fd_tb.TB_TOP_CTU_CAN_FD
-        test_list_file: test/tlf_compliance_full_min_phases.yml
+        test_list_file: test/tlf_compliance_full_min.yml
         generics:
             # Test-bench configuration
             #log_level: info
@@ -384,59 +384,6 @@ targets:
             /TB_TOP_CTU_CAN_FD/cfg_ph_1_fd: 31
             /TB_TOP_CTU_CAN_FD/cfg_ph_2_fd: 31
             /TB_TOP_CTU_CAN_FD/cfg_sjw_fd: 31
-
-            # Clock configuration
-            /TB_TOP_CTU_CAN_FD/cfg_sys_clk_period: 5 ns
-
-        sim_options:
-            ghdl: "--vpi=main_tb/iso-16845-compliance-tests/build/Debug/src/cosimulation/libGHDL_VPI_COSIM_LIB.so"
-            vcs: "-vhpi VCS_VHPI_COSIM_LIB:handle_register"
-
-        source_list_files:
-            - $CTU_TB_TOP_TARGET
-
-
-    ###############################################################################################
-    # Compliance tests - Minimal bit-rate with maximal prescaler
-    ###############################################################################################
-    tb_rtl_test_compliance_full_min_prescaler:
-        top_entity: ctu_can_fd_tb.TB_TOP_CTU_CAN_FD
-        test_list_file: test/tlf_compliance_full_min_prescaler.yml
-        generics:
-            # Test-bench configuration
-            #log_level: info
-            #error_tolerance: 0
-            #debug: false
-            /TB_TOP_CTU_CAN_FD/iterations: 1
-            /TB_TOP_CTU_CAN_FD/timeout: 500 ms
-            /TB_TOP_CTU_CAN_FD/test_type: compliance
-
-            # DUT generics
-            /TB_TOP_CTU_CAN_FD/rx_buffer_size: 64
-            # Use 8 TXT Buffers to get good toggle coverage on internals of all
-            # TXT Buffer memories!
-            /TB_TOP_CTU_CAN_FD/txt_buffer_count: 8
-            /TB_TOP_CTU_CAN_FD/sup_filtA: false
-            /TB_TOP_CTU_CAN_FD/sup_filtB: false
-            /TB_TOP_CTU_CAN_FD/sup_filtC: false
-            /TB_TOP_CTU_CAN_FD/sup_range: false
-            /TB_TOP_CTU_CAN_FD/sup_traffic_ctrs: true
-            /TB_TOP_CTU_CAN_FD/sup_parity: false
-            /TB_TOP_CTU_CAN_FD/target_technology: 0 # C_TECH_ASIC
-
-            # DUT Bit timing settings
-            # Applies for compliance tests and feature tests!
-            /TB_TOP_CTU_CAN_FD/cfg_brp: 255
-            /TB_TOP_CTU_CAN_FD/cfg_prop: 1
-            /TB_TOP_CTU_CAN_FD/cfg_ph_1: 2
-            /TB_TOP_CTU_CAN_FD/cfg_ph_2: 2
-            /TB_TOP_CTU_CAN_FD/cfg_sjw: 2
-
-            /TB_TOP_CTU_CAN_FD/cfg_brp_fd: 255
-            /TB_TOP_CTU_CAN_FD/cfg_prop_fd: 1
-            /TB_TOP_CTU_CAN_FD/cfg_ph_1_fd: 2
-            /TB_TOP_CTU_CAN_FD/cfg_ph_2_fd: 2
-            /TB_TOP_CTU_CAN_FD/cfg_sjw_fd: 2
 
             # Clock configuration
             /TB_TOP_CTU_CAN_FD/cfg_sys_clk_period: 5 ns
