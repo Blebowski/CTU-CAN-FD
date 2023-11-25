@@ -400,6 +400,15 @@ begin
                 wait for 1 ns;
                 <<signal .TB_TOP_CTU_CAN_FD.DUT.CAN_CORE_INST.BUS_TRAFFIC_CTRS_GEN.BUS_TRAFFIC_COUNTERS_INST.tx_frame_ctr_i  : std_logic_vector(31 downto 0) >> <= release out;
                 <<signal .TB_TOP_CTU_CAN_FD.DUT.CAN_CORE_INST.BUS_TRAFFIC_CTRS_GEN.BUS_TRAFFIC_COUNTERS_INST.rx_frame_ctr_i  : std_logic_vector(31 downto 0) >> <= release out;
+            elsif (test_name = "err_norm_fd") then
+                rand_logic_vect_v(rnd_vect, 0.5);
+                info_m("Depositing ERR NORM counters to: " & integer'image(to_integer(unsigned(rnd_vect(15 downto 0 )))));
+                info_m("Depositing ERR FD counters to: "   & integer'image(to_integer(unsigned(rnd_vect(31 downto 16)))));
+                <<signal .TB_TOP_CTU_CAN_FD.DUT.CAN_CORE_INST.FAULT_CONFINEMENT_INST.ERR_COUNTERS_INST.norm_err_ctr  : std_logic_vector(15 downto 0) >> <= force out rnd_vect(15 downto 0);
+                <<signal .TB_TOP_CTU_CAN_FD.DUT.CAN_CORE_INST.FAULT_CONFINEMENT_INST.ERR_COUNTERS_INST.data_err_ctr  : std_logic_vector(15 downto 0) >> <= force out rnd_vect(31 downto 16);
+                wait for 1 ns;
+                <<signal .TB_TOP_CTU_CAN_FD.DUT.CAN_CORE_INST.FAULT_CONFINEMENT_INST.ERR_COUNTERS_INST.norm_err_ctr  : std_logic_vector(15 downto 0) >> <= release out;
+                <<signal .TB_TOP_CTU_CAN_FD.DUT.CAN_CORE_INST.FAULT_CONFINEMENT_INST.ERR_COUNTERS_INST.data_err_ctr  : std_logic_vector(15 downto 0) >> <= release out;
             end if;
 
             -- Execute test
