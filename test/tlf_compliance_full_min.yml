@@ -53,6 +53,9 @@ tests:
     #- name: iso_7_2_4
     #  generics:
     #    /TB_TOP_CTU_CAN_FD/timeout: 3000 ms
+    #name: iso_7_2_4_1
+    # generics:
+    #   /TB_TOP_CTU_CAN_FD/timeout: 3000 ms
 
     - name: iso_7_2_5
     - name: iso_7_2_6
