@@ -70,22 +70,19 @@
 -- @TestInfoStart
 --
 -- @Purpose:
---  TXT Buffer FSMs corner-case transitions 3
+--  TXT Buffer FSMs corner-case transitions 4
 --
 -- @Verifies:
---  @1. When Unlock from Protocol control arrives simultaneously as Set Abort
---      from SW, TXT Buffer will go to TX Aborted immediately.
+--  @1. When TXT Buffer is in Abortin Progress, and parity error occurs, it
+--      moves to Parity Error state
 --
 -- @Test sequence:
---  @1. Loop for all TXT Buffers and incrementing wait times within a bit:
---      @1.1. Generate frame and send it from a TXT Buffer. Wait until it
---            starts being transmitted! Wait until dominant bit is being
---            transmitted. Now we are shortly after SYNC segment of dominant
---            transmitted bit.
---      @1.2. Force the bit to be recessive. Wait until some time before
---            Sample point. Wait small incremental delay. Send Set Abort Command.
---      @1.3. Wait until Sample point and release the bus value.
---      @1.4. Wait until bus is Idle.
+--  @1. Loop for all TXT Buffers:
+--      @1.1. Insert a CAN frame into to a TXT Buffer. Insert a bit-flip
+--            into a data word inside TXT Buffer.
+--      @1.2. Send Set Ready Command. Wait until DUT starts transmitting the
+--            frame, and then send Set Abort Command.
+--      @1.3. Wait until bus is idle. Check TXT Buffer ended in Parity Error.
 --
 -- @TestInfoEnd
 --------------------------------------------------------------------------------
@@ -101,23 +98,23 @@ context ctu_can_fd_tb.tb_common_context;
 use ctu_can_fd_tb.feature_test_agent_pkg.all;
 use ctu_can_fd_tb.clk_gen_agent_pkg.all;
 
-package txt_buffer_transitions_3_ftest is
-    procedure txt_buffer_transitions_3_ftest_exec(
+package txt_buffer_transitions_4_ftest is
+    procedure txt_buffer_transitions_4_ftest_exec(
         signal      chn             : inout  t_com_channel
     );
 end package;
 
 
-package body txt_buffer_transitions_3_ftest is
+package body txt_buffer_transitions_4_ftest is
 
-    procedure txt_buffer_transitions_3_ftest_exec(
+    procedure txt_buffer_transitions_4_ftest_exec(
         signal      chn             : inout  t_com_channel
     ) is
         variable CAN_frame          :       SW_CAN_frame_type;
         variable command            :       SW_command := SW_command_rst_val;
         variable status             :       SW_status;
 	    variable txt_buf_state	    :	    SW_TXT_Buffer_state_type;
-        variable mode               :       SW_mode;
+        variable mode               :       SW_mode := SW_mode_rst_val;
         variable num_txt_bufs       :       natural;
         variable frame_sent         :       boolean;
         variable err_counters       :       SW_error_counters;
@@ -125,6 +122,11 @@ package body txt_buffer_transitions_3_ftest is
         variable can_tx_val         :       std_logic;
         variable bus_timing         :       bit_time_config_type;
         variable tseg1              :       natural;
+
+        variable tst_mem            :       t_tgt_test_mem;
+        variable corrupt_wrd_index  :       natural;
+        variable corrupt_bit_index  :       natural;
+        variable r_data             :       std_logic_vector(31 downto 0);
     begin
 
         -------------------------------------------------------------------------------------------
@@ -133,93 +135,66 @@ package body txt_buffer_transitions_3_ftest is
         info_m("Step 1");
         get_tx_buf_count(num_txt_bufs, DUT_NODE, chn);
 
-        -- Configure test mode to allow clearing error counters between iterations so that
-        -- we dont get to bus off!
+        -- Configure test mode to allow bit-flips via test channel in TXT Buffer Memory.
         mode.test := true;
+        mode.parity_check := true;
         set_core_mode(mode, DUT_NODE, chn);
-
-        -- Query the bus timing
-        CAN_read_timing_v(bus_timing, DUT_NODE, chn);
-        tseg1 := bus_timing.tq_nbt * (1 + bus_timing.prop_nbt + bus_timing.ph1_nbt);
 
         -- Generate single common frame
         CAN_generate_frame(CAN_frame);
-        CAN_frame.frame_format := NORMAL_CAN;
+        CAN_frame.frame_format := FD_CAN;
+        CAN_frame.data_length := 16;
+        CAN_frame.rtr := NO_RTR_FRAME;
+        decode_length(CAN_frame.data_length, CAN_frame.dlc);
 
         for txt_buf_index in 1 to num_txt_bufs loop
-            for wait_cycles in 0 to 20 loop
 
-                -----------------------------------------------------------------------------------
-                -- @1.1. Generate frame and send it from a TXT Buffer. Wait until it starts being
-                --       transmitted! Wait until dominant bit is being transmitted. Now we are
-                --       shortly after SYNC segment of dominant transmitted bit.
-                -----------------------------------------------------------------------------------
-                info_m("Step 1.1 with wait cycles: " & integer'image(wait_cycles));
+            -----------------------------------------------------------------------------------
+            -- @1.1. Insert a frame into a TXT Buffer. Insert a bit-flip into a data word
+            --       inside TXT Buffer.
+            -----------------------------------------------------------------------------------
+            info_m("Step 1.1");
 
-                CAN_insert_TX_frame(CAN_frame, txt_buf_index, DUT_NODE, chn);
-                send_TXT_buf_cmd(buf_set_ready, txt_buf_index, DUT_NODE, chn);
+            CAN_insert_TX_frame(CAN_frame, txt_buf_index, DUT_NODE, chn);
 
-                CAN_wait_tx_rx_start(true, false, DUT_NODE, chn);
-                wait for 1000 ns;
+            set_test_mem_access(true, DUT_NODE, chn);
 
-                while (true) loop
-                    get_can_tx(DUT_NODE, can_tx_val, chn);
-                    if (can_tx_val = RECESSIVE) then
-                        exit;
-                    end if;
-                    wait for 10 ns;
-                end loop;
+            tst_mem := txt_buf_to_test_mem_tgt(txt_buf_index);
 
-                while (true) loop
-                    get_can_tx(DUT_NODE, can_tx_val, chn);
-                    if (can_tx_val = DOMINANT) then
-                        exit;
-                    end if;
-                    wait for 10 ns;
-                end loop;
+            -- Read, flip, and write back
+            corrupt_wrd_index := 5;             -- Flip bit in data bytes 5-8
+            rand_int_v(31, corrupt_bit_index);
+            test_mem_read(r_data, corrupt_wrd_index, tst_mem, DUT_NODE, chn);
+            r_data(corrupt_bit_index) := not r_data(corrupt_bit_index);
+            test_mem_write(r_data, corrupt_wrd_index, tst_mem, DUT_NODE, chn);
 
-                -----------------------------------------------------------------------------------
-                -- @1.2. Force the bit to be recessive. Wait until some time before Sample point.
-                --       Wait small incremental delay.
-                -----------------------------------------------------------------------------------
-                info_m("Step 1.2 with wait cycles: " & integer'image(wait_cycles));
+            -- Disable test mem access
+            set_test_mem_access(false, DUT_NODE, chn);
 
-                force_bus_level(RECESSIVE, chn);
+            ---------------------------------------------------------------------------------------
+            -- @1.2. Send Set Ready Command. Wait until DUT starts transmitting the frame, and then
+            --       send Set Abort Command.
+            ---------------------------------------------------------------------------------------
+            info_m("Step 1.2");
 
-                -- Wait till somewhere before Sample point
-                for i in 1 to tseg1 - 10 loop
-                    clk_agent_wait_cycle(chn);
-                end loop;
+            send_TXT_buf_cmd(buf_set_ready, txt_buf_index, DUT_NODE, chn);
+            CAN_wait_tx_rx_start(true, false, DUT_NODE, chn);
+            wait for 1000 ns;
 
-                -- Wait incrementally and try hit the point where Protocol Engine unlocks the TXT
-                -- Buffer due to an Error.
-                for i in 0 to wait_cycles loop
-                    clk_agent_wait_cycle(chn);
-                end loop;
+            send_TXT_buf_cmd(buf_set_abort, txt_buf_index, DUT_NODE, chn);
 
-                send_TXT_buf_cmd(buf_set_abort, txt_buf_index, DUT_NODE, chn);
+            ---------------------------------------------------------------------------------------
+            -- @1.3. Wait until bus is idle. Check TXT Buffer ended in Parity Error.
+            ---------------------------------------------------------------------------------------
+            info_m("Step 1.3");
 
-                -----------------------------------------------------------------------------------
-                -- @1.3. Wait until Sample point and release the bus value.
-                -----------------------------------------------------------------------------------
-                info_m("Step 1.3 with wait cycles: " & integer'image(wait_cycles));
+            CAN_wait_bus_idle(DUT_NODE, chn);
+            CAN_wait_bus_idle(TEST_NODE, chn);
 
-                CAN_wait_sample_point(DUT_NODE, chn);
-                wait for 50 ns;
+            get_tx_buf_state(txt_buf_index, txt_buf_state, DUT_NODE, chn);
 
-                release_bus_level(chn);
+            check_m(txt_buf_state = buf_parity_err, "TXT Buffer in parity error state");
 
-                -----------------------------------------------------------------------------------
-                -- @1.4. Wait until bus is Idle and clear TX Error counter.
-                -----------------------------------------------------------------------------------
-                info_m("Step 1.4 with wait cycles: " & integer'image(wait_cycles));
-
-                CAN_wait_bus_idle(DUT_NODE, chn);
-                err_counters.tx_counter := 0;
-                set_error_counters(err_counters, DUT_NODE, chn);
-
-                wait for 100 ns;
-            end loop;
         end loop;
 
   end procedure;
