@@ -410,9 +410,7 @@ begin
 
         when CAN_AGNT_CMD_MONITOR_WAIT_FINISH =>
             wait for 0 ns;
-            if (monitor_in_progress) then
-                wait until (monitor_in_progress = false) for monitor_wait_timeout;
-            end if;
+            wait until (monitor_in_progress = false) for monitor_wait_timeout;
 
         when CAN_AGNT_CMD_MONITOR_MONITOR_SINGLE_ITEM =>
             if (not monitor_ena) then
