@@ -1925,16 +1925,9 @@ begin
                     tx_dominant <= '1';
                 end if;
 
-                if (rx_trigger = '1') then
-                    if (is_transmitter = '1') then
-                        if (tran_brs = BR_SHIFT) then
-                            sp_control_switch_data <= '1';
-                            br_shifted_i <= '1';
-                        end if;
-                    elsif (rx_data_nbs = RECESSIVE) then
-                        sp_control_switch_data <= '1';
-                        br_shifted_i <= '1';
-                    end if;
+                if (rx_data_nbs = RECESSIVE and rx_trigger = '1') then
+                    sp_control_switch_data <= '1';
+                    br_shifted_i <= '1';
                 end if;
 
             ---------------------------------------------------------------------------------------
