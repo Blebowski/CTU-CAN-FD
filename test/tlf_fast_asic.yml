@@ -10,7 +10,15 @@ tests:
     - name: alc_srr_rtr_2
 
     - name: btr
+      generics:
+        /TB_TOP_CTU_CAN_FD/timeout: 200 ms
+        /TB_TOP_CTU_CAN_FD/iterations: 1
+
     - name: btr_fd
+      generics:
+        /TB_TOP_CTU_CAN_FD/timeout: 200 ms
+        /TB_TOP_CTU_CAN_FD/iterations: 1
+
     # Do not run to decrease duration of fast regression!
     #- name: #btr_maximal:
     - name: btr_minimal
