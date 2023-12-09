@@ -157,22 +157,22 @@ for given target.
 
 To run with VCS, you will need Tropic Square HW simulation flow, to get it do following:
 
-1. `git clone TODO`
-2. Make sure you have all Python dependencies required to run `ts-hw-scripts`. See README of `ts-hw-scripts`.
-3. `export PATH=`pwd`/ts-hw-scripts/scripts:$PATH`
+1. ``git clone TODO``
+2. ``export PATH=`pwd`/ts-hw-scripts/scripts:$PATH``
+3. Make sure you have all Python dependencies required to run `ts-hw-scripts`. See README of `ts-hw-scripts`.
 
 Then, you need `cmake` (version 3.5 or higher) and a C compiler with C++17 support
 (e.g. GCC 7.2.0 or higher).
 
 Then in CTU CAN FD repository build compliance tests:
-1. `export TS_REPO_ROOT=``pwd`` ` - Sets an important environment variable for simulation flow.
-2. `cd test/main_tb/iso-16845-compliance-tests`
-3. `./build.sh` - This builds compliance tests library
-4. `export LD_LIBRARY_PATH=``pwd``/build/Debug/src/cosimulation` - Makes compliance library visible for VCS
-5. `cd $TS_REPO_ROOT`
-6. `ts_sim_run.py --recompile --clear <TARGET_NAME> /*`
+1. ``export TS_REPO_ROOT=`pwd` `` - Sets an important environment variable for simulation flow.
+2. ``cd test/main_tb/iso-16845-compliance-tests``
+3. ``./build.sh`` - This builds compliance tests library
+4. ``export LD_LIBRARY_PATH=`pwd`/build/Debug/src/cosimulation`` - Makes compliance library visible for VCS
+5. ``cd $TS_REPO_ROOT``
+6. ``ts_sim_run.py --recompile --clear <TARGET_NAME> /*``
 
-If you run `ts_sim_run.py --recompile --clear <TARGET_NAME> --list-tests` you will get list
+If you run ``ts_sim_run.py --recompile --clear <TARGET_NAME> --list-tests``` you will get list
 of available tests for given target.
 
 
