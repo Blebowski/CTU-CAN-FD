@@ -308,7 +308,11 @@ tests:
       generics:
         /TB_TOP_CTU_CAN_FD/cfg_brp_fd: 3
     - name: iso_8_8_5_1
+      generics:
+        /TB_TOP_CTU_CAN_FD/cfg_brp_fd: 3
     - name: iso_8_8_5_2
+      generics:
+        /TB_TOP_CTU_CAN_FD/cfg_brp_fd: 3
 
     - name: iso_9_6_1
     - name: iso_9_6_2
