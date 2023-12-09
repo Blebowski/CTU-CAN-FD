@@ -58,8 +58,10 @@ build_compliance_lib:
         - source ./build.sh
     artifacts:
         paths:
-            - test/main_tb/iso-16845-compliance-tests/build/Release/src/simulator_interface/libSIMULATOR_INTERFACE_LIB.so
-            - test/main_tb/iso-16845-compliance-tests/build/Debug/src/simulator_interface/libSIMULATOR_INTERFACE_LIB.so
+            - test/main_tb/iso-16845-compliance-tests/build/Debug/src/cosimulation/libGHDL_VPI_COSIM_LIB.so
+            - test/main_tb/iso-16845-compliance-tests/build/Debug/src/cosimulation/libVCS_VHPI_COSIM_LIB.so
+            - test/main_tb/iso-16845-compliance-tests/build/Release/src/cosimulation/libGHDL_VPI_COSIM_LIB.so
+            - test/main_tb/iso-16845-compliance-tests/build/Release/src/cosimulation/libVCS_VHPI_COSIM_LIB.so
     only: *only
 
 
