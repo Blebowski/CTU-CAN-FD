@@ -159,7 +159,7 @@ To run with VCS, you will need Tropic Square HW simulation flow, to get it do fo
 
 1. `git clone TODO`
 2. Make sure you have all Python dependencies required to run `ts-hw-scripts`. See README of `ts-hw-scripts`.
-3. `export PATH=``pwd``/ts-hw-scripts/scripts:$PATH`
+3. `export PATH=`pwd`/ts-hw-scripts/scripts:$PATH`
 
 Then, you need `cmake` (version 3.5 or higher) and a C compiler with C++17 support
 (e.g. GCC 7.2.0 or higher).
