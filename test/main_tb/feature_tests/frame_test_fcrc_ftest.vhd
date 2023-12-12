@@ -199,7 +199,6 @@ package body frame_test_fcrc_ftest is
 
             CAN_insert_TX_frame(CAN_TX_frame, txt_buf_index, DUT_NODE, chn);
 
-            rand_int_v(, );
             CAN_set_frame_test(txt_buf_index, bit_to_flip, false, true, false,
                             DUT_NODE, chn);
 
