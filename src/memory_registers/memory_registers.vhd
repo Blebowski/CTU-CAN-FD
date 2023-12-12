@@ -340,10 +340,6 @@ architecture rtl of memory_registers is
     signal clk_control_regs             : std_logic;
     signal clk_test_regs                : std_logic;
 
-    -- RX buffer control signals
-
-    signal ctr_pres_sel_q               : std_logic_vector(3 downto 0);
-
 begin
 
     -----------------------------------------------------------------------------------------------
