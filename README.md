@@ -157,7 +157,7 @@ for given target.
 
 To run with VCS, you will need Tropic Square HW simulation flow, to get it do following:
 
-1. ``git clone TODO``
+1. ``git clone https://github.com/tropicsquare/ts-hw-scripts``
 2. ``export PATH=`pwd`/ts-hw-scripts/scripts:$PATH``
 3. Make sure you have all Python dependencies required to run `ts-hw-scripts`. See README of `ts-hw-scripts`.
 
