@@ -235,11 +235,16 @@ tests:
 
     - name: rx_status_rx_buffer_size_4096
       generics:
+        /TB_TOP_CTU_CAN_FD/iterations: 2
         /TB_TOP_CTU_CAN_FD/test_name: rx_status
         /TB_TOP_CTU_CAN_FD/rx_buffer_size: 4096
         /TB_TOP_CTU_CAN_FD/timeout: 200 ms
 
     - name: rx_status_mof
+    - name: rx_status_rxfrc
+      generics:
+        /TB_TOP_CTU_CAN_FD/rx_buffer_size: 4096
+        /TB_TOP_CTU_CAN_FD/timeout: 200 ms
 
     - name: scan_mode
     - name: settings_tbfbo

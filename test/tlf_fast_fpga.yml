@@ -106,6 +106,7 @@ tests:
     - name: rx_settings_rtsop
     - name: rx_status
     - name: rx_status_mof
+    - name: rx_status_rxfrc
 
     - name: scan_mode
     - name: settings_tbfbo

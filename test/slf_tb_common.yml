@@ -66,8 +66,9 @@ source_list:
     - file: main_tb/feature_tests/status_rxne_ftest.vhd
     - file: main_tb/feature_tests/byte_enable_ftest.vhd
     - file: main_tb/feature_tests/rx_status_ftest.vhd
-    - file: main_tb/feature_tests/txt_buffer_byte_access_ftest.vhd
+    - file: main_tb/feature_tests/rx_status_rxfrc_ftest.vhd
     - file: main_tb/feature_tests/rx_status_mof_ftest.vhd
+    - file: main_tb/feature_tests/txt_buffer_byte_access_ftest.vhd
     - file: main_tb/feature_tests/frame_test_ignore_ftest.vhd
     - file: main_tb/feature_tests/err_capt_ovr_frm_ftest.vhd
     - file: main_tb/feature_tests/disable_in_tx_ftest.vhd
