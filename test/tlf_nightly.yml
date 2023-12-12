@@ -61,8 +61,8 @@ tests:
     - name: err_capt_sof
     - name: err_norm_fd
       generics:
-        /TB_TOP_CTU_CAN_FD/iterations: 5
-        /TB_TOP_CTU_CAN_FD/timeout: 5 ms
+        /TB_TOP_CTU_CAN_FD/iterations: 20
+        /TB_TOP_CTU_CAN_FD/timeout: 20 ms
 
     - name: fault_state
 
