@@ -65,6 +65,9 @@ tests:
         /TB_TOP_CTU_CAN_FD/timeout: 20 ms
 
     - name: fault_state
+      generics:
+        /TB_TOP_CTU_CAN_FD/iterations: 20
+        /TB_TOP_CTU_CAN_FD/timeout: 200 ms
 
     - name: frame_test_fstc
       generics:
@@ -260,6 +263,9 @@ tests:
         /TB_TOP_CTU_CAN_FD/iterations: 5
 
     - name: status_ewl
+      generics:
+        /TB_TOP_CTU_CAN_FD/iterations: 20
+
     - name: status_idle
     - name: status_rxne
     - name: status_rxs
