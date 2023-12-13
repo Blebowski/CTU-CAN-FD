@@ -456,6 +456,9 @@ tests:
         /TB_TOP_CTU_CAN_FD/test_name: tx_status
 
     - name: timestamp_low_high
+      generics:
+        /TB_TOP_CTU_CAN_FD/iterations: 15
+
     - name: txt_buffer_byte_access
     - name: txt_buffer_hazard
     - name: txt_buffer_transitions
