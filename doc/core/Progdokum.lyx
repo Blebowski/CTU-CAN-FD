@@ -1186,7 +1186,7 @@ Add chapter about memory testability.
 \begin_inset Text
 
 \begin_layout Plain Layout
-Add STATUS[STCNT] and STATUS[STRGS] bits.
+Add STATUfS[STCNT] and STATUS[STRGS] bits.
 \end_layout
 
 \end_inset
@@ -6878,7 +6878,7 @@ backup
 
  TXT buffer (e.g.
  if SW gives command to TXT Buffer 1 (TX_COMMAND[TXB1] = 1), CTU CAN FD
- automatically applies it to TXT Buffer 2, and TX_COMMAND[TXB2] has no effect).
+ automatically applies it also to TXT Buffer 2).
 \end_layout
 
 \begin_layout Standard
