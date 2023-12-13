@@ -181,6 +181,7 @@ use ctu_can_fd_tb.rx_buf_empty_read_ftest.all;
 use ctu_can_fd_tb.rx_counter_ftest.all;
 use ctu_can_fd_tb.rx_settings_rtsop_ftest.all;
 use ctu_can_fd_tb.rx_status_ftest.all;
+use ctu_can_fd_tb.rx_status_rxfrc_ftest.all;
 use ctu_can_fd_tb.rx_status_mof_ftest.all;
 
 use ctu_can_fd_tb.scan_mode_ftest.all;
@@ -415,6 +416,8 @@ package body feature_test_list_pkg is
             rx_settings_rtsop_ftest_exec(channel);
         elsif (test_name = "rx_status") then
             rx_status_ftest_exec(channel);
+        elsif (test_name = "rx_status_rxfrc") then
+            rx_status_rxfrc_ftest_exec(channel);
         elsif (test_name = "rx_status_mof") then
             rx_status_mof_ftest_exec(channel);
 
