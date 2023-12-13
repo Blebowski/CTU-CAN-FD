@@ -185,6 +185,10 @@ architecture rtl of txt_buffer_fsm is
     signal mr_tx_command_txcr_q : std_logic;
     signal mr_tx_command_txca_q : std_logic;
 
+    -- Auxiliarly signals
+    signal tx_command_txce_valid : std_logic;
+    signal tx_command_txcr_valid : std_logic;
+
 begin
 
     sw_command_reg_proc : process(res_n, clk_sys)
@@ -200,6 +204,12 @@ begin
         end if;
     end process;
 
+    tx_command_txce_valid <= '1' when (mr_tx_command_txce_q = '1' and mr_tx_command_txbi = '1')
+                                 else
+                             '0';
+    tx_command_txcr_valid <= '1' when (mr_tx_command_txcr_q = '1' and mr_tx_command_txbi = '1')
+                                 else
+                             '0';
 
     abort_applied <= '1' when (mr_tx_command_txca_q = '1' and mr_tx_command_txbi = '1')
                          else
@@ -228,9 +238,8 @@ begin
     -----------------------------------------------------------------------------------------------
     -- Next state process
     -----------------------------------------------------------------------------------------------
-    tx_buf_fsm_next_state_proc : process(curr_state, mr_tx_command_txce_q, mr_tx_command_txcr_q,
-        mr_tx_command_txbi, txtb_hw_cmd, hw_cbs, abort_applied, go_to_failed,
-        txtb_parity_error_valid, buffer_skipped)
+    tx_buf_fsm_next_state_proc : process(curr_state, tx_command_txce_valid, tx_command_txcr_valid,
+        txtb_hw_cmd, hw_cbs, abort_applied, go_to_failed, txtb_parity_error_valid, buffer_skipped)
     begin
         next_state <= curr_state;
 
@@ -242,7 +251,7 @@ begin
         when s_txt_empty =>
 
             -- "Set_ready"
-            if (mr_tx_command_txcr_q = '1' and mr_tx_command_txbi = '1') then
+            if (tx_command_txcr_valid = '1') then
                 next_state       <= s_txt_ready;
             end if;
 
@@ -343,12 +352,12 @@ begin
         when s_txt_failed =>
 
             -- "Set_ready"
-            if (mr_tx_command_txcr_q = '1' and mr_tx_command_txbi = '1') then
+            if (tx_command_txcr_valid = '1') then
                 next_state       <= s_txt_ready;
             end if;
 
             -- "Set_empty"
-            if (mr_tx_command_txce_q = '1' and mr_tx_command_txbi = '1') then
+            if (tx_command_txce_valid = '1') then
                 next_state       <= s_txt_empty;
             end if;
 
@@ -358,12 +367,12 @@ begin
         when s_txt_aborted =>
 
             -- "Set_ready"
-            if (mr_tx_command_txcr_q = '1' and mr_tx_command_txbi = '1') then
+            if (tx_command_txcr_valid = '1') then
                 next_state       <= s_txt_ready;
             end if;
 
             -- "Set_empty"
-            if (mr_tx_command_txce_q = '1' and mr_tx_command_txbi = '1') then
+            if (tx_command_txce_valid = '1') then
                 next_state       <= s_txt_empty;
             end if;
 
@@ -373,12 +382,12 @@ begin
         when s_txt_ok =>
 
             -- "Set_ready"
-            if (mr_tx_command_txcr_q = '1' and mr_tx_command_txbi = '1') then
+            if (tx_command_txcr_valid = '1') then
                 next_state       <= s_txt_ready;
             end if;
 
             -- "Set_empty"
-            if (mr_tx_command_txce_q = '1' and mr_tx_command_txbi = '1') then
+            if (tx_command_txce_valid = '1') then
                 next_state       <= s_txt_empty;
             end if;
 
@@ -388,12 +397,12 @@ begin
         when s_txt_parity_err =>
 
             -- "Set_ready"
-            if (mr_tx_command_txcr_q = '1' and mr_tx_command_txbi = '1') then
+            if (tx_command_txcr_valid = '1') then
                 next_state       <= s_txt_ready;
             end if;
 
             -- "Set_empty"
-            if (mr_tx_command_txce_q = '1' and mr_tx_command_txbi = '1') then
+            if (tx_command_txce_valid = '1') then
                 next_state       <= s_txt_empty;
             end if;
 
