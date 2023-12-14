@@ -173,6 +173,8 @@ use ctu_can_fd_tb.no_sof_tx_ftest.all;
 use ctu_can_fd_tb.one_shot_ftest.all;
 use ctu_can_fd_tb.overload_ftest.all;
 
+use ctu_can_fd_tb.pc_fsm_transitions_ftest.all;
+
 use ctu_can_fd_tb.rec_saturation_ftest.all;
 use ctu_can_fd_tb.retr_limit_ftest.all;
 use ctu_can_fd_tb.retr_limit_2_ftest.all;
@@ -399,6 +401,9 @@ package body feature_test_list_pkg is
             one_shot_ftest_exec(channel);
         elsif (test_name = "overload") then
             overload_ftest_exec(channel);
+
+        elsif (test_name = "pc_fsm_transitions") then
+            pc_fsm_transitions_ftest_exec(channel);
 
         elsif (test_name = "rec_saturation") then
             rec_saturation_ftest_exec(channel);
