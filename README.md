@@ -169,8 +169,9 @@ Then in CTU CAN FD repository build compliance tests:
 2. ``cd test/main_tb/iso-16845-compliance-tests``
 3. ``./build.sh`` - This builds compliance tests library
 4. ``export LD_LIBRARY_PATH=`pwd`/build/Debug/src/cosimulation`` - Makes compliance library visible for VCS
-5. ``cd $TS_REPO_ROOT``
-6. ``ts_sim_run.py --recompile --clear <TARGET_NAME> /*``
+5. ``export CTU_TB_TOP_TARGET="tb_ctu_can_fd_rtl_simple"`` - Pass top target to simulation flow
+6. ``cd $TS_REPO_ROOT``
+7. ``ts_sim_run.py --recompile --clear <TARGET_NAME> /*``
 
 If you run ``ts_sim_run.py --recompile --clear <TARGET_NAME> --list-tests``` you will get list
 of available tests for given target.
