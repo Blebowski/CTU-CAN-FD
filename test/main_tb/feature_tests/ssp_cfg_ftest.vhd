@@ -344,7 +344,7 @@ package body ssp_cfg_ftest is
             -- It should be enough to lengthen it by two clock cycles (input delay of
             -- CTU CAN FD) + one cycle reserve for truncation of non-multiple of 10
             -- divided by 10!
-            if (to_integer(unsigned(ssp_offset_var)) <= rand_trv_delay/10) then
+            if (to_integer(unsigned(ssp_offset_var)) - 2 <= rand_trv_delay/10) then
                 ssp_offset_var := std_logic_vector(to_unsigned(rand_trv_delay/10, 8) + 3);
             end if;
 
@@ -381,6 +381,10 @@ package body ssp_cfg_ftest is
         CAN_generate_frame(frame_1);
         frame_1.frame_format := FD_CAN;
         frame_1.brs := BR_SHIFT;
+        if (frame_1.data_length = 0) then
+            frame_1.data_length := 1;
+            decode_length(frame_1.data_length, frame_1.dlc);
+        end if;
 
         CAN_send_frame(frame_1, 1, DUT_NODE, chn, frame_sent);
         CAN_wait_pc_state(pc_deb_control, DUT_NODE, chn);
