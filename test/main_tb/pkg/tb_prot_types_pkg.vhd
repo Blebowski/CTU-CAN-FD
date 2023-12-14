@@ -158,6 +158,14 @@ package tb_prot_types_pkg is
         impure function get_result return std_logic;
     end protected;
 
+    -----------------------------------------------------------------------
+    --
+    -----------------------------------------------------------------------
+    type t_prot_boolean is protected
+        procedure set(new_val : boolean);
+        impure function get return boolean;
+    end protected;
+
 end package;
 
 
@@ -348,5 +356,22 @@ package body tb_prot_types_pkg is
 
     end protected body;
 
+    -----------------------------------------------------------------------
+    --
+    -----------------------------------------------------------------------
+    type t_prot_boolean is protected body
+        variable val : boolean;
+
+        procedure set(new_val : boolean) is
+        begin
+            val := new_val;
+        end procedure;
+
+        impure function get return boolean is
+        begin
+            return val;
+        end function;
+
+    end protected body;
 
 end package body;

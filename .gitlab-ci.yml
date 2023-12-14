@@ -4,6 +4,8 @@ before_script:
     - export LC_ALL=C.UTF-8
     - export LANG=C.UTF-8
     - export PYTHONUNBUFFERED=1
+    - export CTU_TB_TOP_TARGET="tb_ctu_can_fd_rtl_vunit"
+
 
 stages:
     - precheck
@@ -37,15 +39,9 @@ build_ip_and_tests:
     stage: build
     tags:
         - simulation
-    artifacts:
-        paths: &vunit_build_paths
-            - test/build
-        expire_in: 12 hrs
     script:
         - cd test
         - make elaborate
-        # Do not include the huge binaries in artifacts.
-        - rm -R build/vunit_out/test_output
     only: &only
         - master     # Run on all changes to master branch
         - tags       # Run on all tags
@@ -62,8 +58,10 @@ build_compliance_lib:
         - source ./build.sh
     artifacts:
         paths:
-            - test/main_tb/iso-16845-compliance-tests/build/Release/src/simulator_interface/libSIMULATOR_INTERFACE_LIB.so
-            - test/main_tb/iso-16845-compliance-tests/build/Debug/src/simulator_interface/libSIMULATOR_INTERFACE_LIB.so
+            - test/main_tb/iso-16845-compliance-tests/build/Debug/src/cosimulation/libGHDL_VPI_COSIM_LIB.so
+            - test/main_tb/iso-16845-compliance-tests/build/Debug/src/cosimulation/libVCS_VHPI_COSIM_LIB.so
+            - test/main_tb/iso-16845-compliance-tests/build/Release/src/cosimulation/libGHDL_VPI_COSIM_LIB.so
+            - test/main_tb/iso-16845-compliance-tests/build/Release/src/cosimulation/libVCS_VHPI_COSIM_LIB.so
     only: *only
 
 
@@ -107,17 +105,6 @@ build_linux_driver:
     artifacts:
         paths:
             - driver/linux/ctucanfd.ko
-
-export_available_tests:
-    stage: build
-    only:
-        - master
-    script:
-        - cd scripts
-        - python3 export_test_names.py
-    artifacts:
-        paths:
-            - test/test_list.txt
 
 run_synthesis:
     stage: build
@@ -180,63 +167,56 @@ test_fast_asic:
     tags:
         - simulation
     only: *only
-    dependencies: [build_ip_and_tests]
     script:
         - cd test
-        - make tests_fast_asic
-    after_script:
-        - cd test
-        - make tests_fast_asic_logs
+        - make tb_rtl_test_fast_asic
+        - make tb_rtl_test_fast_asic_logs
     artifacts:
         when: always
         paths:
-            - test/tests_fast_asic.sim_time
-            - test/tests_fast_asic.gz
-            - test/tests_fast_asic_summary
+            - test/tb_rtl_test_fast_asic.xml
+            - test/tb_rtl_test_fast_asic_summary
+            - test/tb_rtl_test_fast_asic.sim_time
+        reports:
+            junit: test/tb_rtl_test_fast_asic.xml
 
 test_fast_fpga:
     stage: test_rtl
     tags:
         - simulation
     only: *only
-    dependencies: [build_ip_and_tests]
     script:
         - cd test
-        - make tests_fast_fpga
-    after_script:
-        - cd test
-        - make tests_fast_fpga_logs
+        - make tb_rtl_test_fast_fpga
+        - make tb_rtl_test_fast_fpga_logs
     artifacts:
         when: always
         paths:
-            - test/tests_fast_fpga.sim_time
-            - test/tests_fast_fpga.gz
-            - test/tests_fast_fpga_summary
+            - test/tb_rtl_test_fast_fpga.xml
+            - test/tb_rtl_test_fast_fpga_summary
+            - test/tb_rtl_test_fast_fpga.sim_time
+        reports:
+            junit: test/tb_rtl_test_fast_fpga.xml
 
 test_nightly:
     stage: test_rtl
     tags:
         - simulation
-    dependencies: [build_ip_and_tests]
     only:
         - master
     script:
         - cd test
-        - make tests_nightly
-    after_script:
-        - cd test
-        - make tests_nightly_logs
+        - make tb_rtl_test_nightly
+        - make tb_rtl_test_nightly_logs
     artifacts:
         when: always
         paths:
-            - test/tests_nightly.sim_time
-            - test/tests_nightly.gz
-            - test/tests_nightly_summary
-            - test/build/code_coverage_tests_nightly
-            - test/build/functional_coverage
-            - test/build/vunit_out/preprocessed
-            - rtl/slf_*.yml
-            - test/slf_*.yml
+            - test/tb_rtl_test_nightly.xml
+            - test/tb_rtl_test_nightly_summary
+            - test/tb_rtl_test_nightly.sim_time
+            - test/vunit_out/functional_coverage
+        reports:
+            junit: test/tb_rtl_test_nightly.xml
 
     # Nightly tests might fail due to randomization. It is not preffered to
     # kill whole follow-up coverage processing due to this failure!
@@ -251,20 +231,20 @@ test_compliance_short:
     stage: test_rtl
     tags:
         - simulation
-    dependencies: [build_ip_and_tests, build_compliance_lib]
+    dependencies: [build_compliance_lib]
     only: *only
     script:
         - cd test
-        - make tests_compliance_short
-    after_script:
-        - cd test
-        - make tests_compliance_short_logs
+        - make tb_rtl_test_compliance_short
+        - make tb_rtl_test_compliance_short_logs
     artifacts:
         when: always
         paths:
-            - test/tests_compliance_short.sim_time
-            - test/tests_compliance_short.gz
-            - test/tests_compliance_short_summary
+            - test/tb_rtl_test_compliance_short.xml
+            - test/tb_rtl_test_compliance_short_summary
+            - test/tb_rtl_test_compliance_short.sim_time
+        reports:
+            junit: test/tb_rtl_test_compliance_short.xml
 
     # For now not all compliance tests are debugged, allow failure...
     allow_failure: true
@@ -273,24 +253,22 @@ test_compliance_full_typ:
     stage: test_rtl
     tags:
         - simulation
-    dependencies: [build_ip_and_tests, build_compliance_lib]
+    dependencies: [build_compliance_lib]
     only:
         - master
     script:
         - cd test
-        - make tests_compliance_full_typ
-    after_script:
-        - cd test
-        - make tests_compliance_full_typ_logs
+        - make tb_rtl_test_compliance_full_typ
+        - make tb_rtl_test_compliance_full_typ_logs
     artifacts:
         when: always
         paths:
-            - test/tests_compliance_full_typ.sim_time
-            - test/tests_compliance_full_typ.gz
-            - test/tests_compliance_full_typ_summary
-            - test/build/code_coverage_tests_compliance_full_typ
-            - test/build/functional_coverage
-            - test/build/vunit_out/preprocessed
+            - test/tb_rtl_test_compliance_full_typ.xml
+            - test/tb_rtl_test_compliance_full_typ_summary
+            - test/tb_rtl_test_compliance_full_typ.sim_time
+            - test/vunit_out/functional_coverage
+        reports:
+            junit: test/tb_rtl_test_compliance_full_typ.xml
 
     # For now not all compliance tests are debugged, allow failure...
     allow_failure: true
@@ -299,21 +277,22 @@ test_compliance_full_max:
     stage: test_rtl
     tags:
         - simulation
-    dependencies: [build_ip_and_tests, build_compliance_lib]
+    dependencies: [build_compliance_lib]
     only:
         - master
     script:
         - cd test
-        - make tests_compliance_full_max
-    after_script:
-        - cd test
-        - make tests_compliance_full_max_logs
+        - make tb_rtl_test_compliance_full_max
+        - make tb_rtl_test_compliance_full_max_logs
     artifacts:
         when: always
         paths:
-            - test/tests_compliance_full_max.sim_time
-            - test/tests_compliance_full_max.gz
-            - test/tests_compliance_full_max_summary
+            - test/tb_rtl_test_compliance_full_max.xml
+            - test/tb_rtl_test_compliance_full_max_summary
+            - test/tb_rtl_test_compliance_full_max.sim_time
+            - test/vunit_out/functional_coverage
+        reports:
+            junit: test/tb_rtl_test_compliance_full_max.xml
 
     # For now not all compliance tests are debugged, allow failure...
     allow_failure: true
@@ -329,22 +308,22 @@ test_gates_simple:
     stage: test_gates
     tags:
         - simulation
-    dependencies: [build_ip_and_tests, run_synthesis]
+    dependencies: [run_synthesis]
     timeout: 6h
     only:
         - master
     script:
         - cd test
-        - make tests_gates_simple
-    after_script:
-        - cd test
-        - make tests_gates_simple_logs
+        - make tb_gate_xilinx_test_simple
+        - make tb_gate_xilinx_test_simple_logs
     artifacts:
         when: always
         paths:
-            - test/tests_gates_simple.sim_time
-            - test/tests_gates_simple.gz
-            - test/tests_gates_simple_summary
+            - test/tb_gate_xilinx_test_simple.xml
+            - test/tb_gate_xilinx_test_simple_summary
+            - test/tb_gate_xilinx_test_simple.sim_time
+        reports:
+            junit: test/tb_gate_xilinx_test_simple.xml
 
     # Some gates might fail, TODO: Debug
     allow_failure: true
@@ -353,24 +332,24 @@ test_gates_compliance:
     stage: test_gates
     tags:
         - simulation
-    dependencies: [build_ip_and_tests, run_synthesis, build_compliance_lib]
+    dependencies: [run_synthesis, build_compliance_lib]
     timeout: 6h
     only:
         - master
     script:
         - cd test
-        - make tests_gates_compliance
-    after_script:
-        - cd test
-        - make tests_gates_compliance_logs
+        - make tb_gate_xilinx_test_compliance
+        - make tb_gate_xilinx_test_compliance_logs
     artifacts:
         when: always
         paths:
-            - test/tests_gates_compliance.sim_time
-            - test/tests_gates_compliance.gz
-            - test/tests_gates_compliance_summary
+            - test/tb_gate_xilinx_test_compliance.xml
+            - test/tb_gate_xilinx_test_compliance_summary
+            - test/tb_gate_xilinx_test_compliance.sim_time
+        reports:
+            junit: test/tb_gate_xilinx_test_compliance.xml
 
-    # Still some compliance tests are not yet fully debugged!
+    # TODO: Still some compliance tests are not yet fully debugged!
     allow_failure: true
 
 
@@ -383,22 +362,15 @@ process_coverage:
     stage: coverage
     tags:
         - simulation
-    dependencies: [build_ip_and_tests, test_compliance_full_typ, test_nightly]
+    dependencies: [test_compliance_full_typ, test_nightly]
     only:
         - master
     script:
-        # Merge code coverage outputs from nightly and compliance stages, process code coverage
-        - cd test/build
-
-        # Coverage collection temporarily disabled, gcov-tool merge NOT WORKING!
-        #
-        #- gcov-tool merge -o code_coverage_merged code_coverage_tests_nightly code_coverage_tests_compliance_full_typ
-        #- mv code_coverage_tests_nightly/*.gcno code_coverage_merged
-        - cd ..
-
-        #- make coverage_merged
+        # Process functional coverage
+        - cd test
         - make functional_coverage
 
+        # Generate VRM
         - cd ../scripts
         - chmod +x gen_vrm
         - ./gen_vrm
@@ -407,8 +379,8 @@ process_coverage:
     artifacts:
         when: always
         paths:
-            - test/code_html
-            - test/build/functional_coverage
+            - test/vunit_out/functional_coverage/functional_coverage_report.html
+            - test/vunit_out/functional_coverage/html
             - scripts/VRM.html
 
 pages:
@@ -439,19 +411,15 @@ pages:
         - cp test/main_tb/**/**/*.vhd public/tb/
         - cp test/slf_*.yml public/
 
-        # Copy test list
-        - cp test/test_list.txt public/
+        # Copy test list files
+        - cp test/tlf_* public/
 
         # Compliance test library
         - cp test/main_tb/iso-16845-compliance-tests/build/Release/src/simulator_interface/libSIMULATOR_INTERFACE_LIB.so public/
 
         # Copy regression results and code coverage
-        - cp test/tests_*.gz public/regression_results/
+        - cp test/*.xml public/regression_results/
         - cp test/*_summary public/regression_results/
-        - tar -czvf public/regression_results/regression_summary.gz public/regression_results/*_summary
-
-        # Coverage collection temporarily disabled!
-        #- mv test/code_html public/regression_results/coverage || true
 
         # Measure total simulation time
         - cat test/*.sim_time | paste -sd+ | bc > total.sim_time

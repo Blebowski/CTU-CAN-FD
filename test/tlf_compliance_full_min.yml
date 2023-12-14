@@ -1,0 +1,300 @@
+###############################################################################
+##
+## This test-case list contains all ISO16845-1 2016 tests in minimal scenario
+## (minimal bit-rate, maximal length of all bit phases).
+##
+## Note that bit-time of CTU CAN FD can be configured up to:
+##   255 * (63 + 63 + 127 + 1) = 64770 clock cycles!
+##
+## It is not feasible trying to simulate whole compliance test suite at such
+## long bits (small bit-rates), it would take weeks! Therefore, we choose
+## maximal possible lengths of each bit segment with reasonable Prescaler:
+##
+##   Nominal bit-rate:
+##      Prescaler: 4
+##      PROP: 127 TQ
+##      PH1: 63 TQ
+##      PH2: 63 TQ
+##      SJW: 31 TQ
+##   Data bit-rate:
+##      Prescaler: 4
+##      PROP: 63 TQ
+##      PH1: 31 TQ
+##      PH2: 31 TQ
+##      SJW: 31 TQ
+##
+## Parameters:
+##   System clock: 200 MHz (to try to run simulation fast)
+##   Nominal bit-rate: 196.850 KBit/s (1016 cycles at 5 ns)
+##   Data bit-rate: 1587.301 MBit/s (630 cycles at 5 ns)
+##
+###############################################################################
+tests:
+    - name: demo
+    - name: iso_7_1_1
+    - name: iso_7_1_2
+    - name: iso_7_1_3
+    - name: iso_7_1_4
+    - name: iso_7_1_5
+    - name: iso_7_1_6
+    - name: iso_7_1_7
+    - name: iso_7_1_8
+    - name: iso_7_1_9
+    - name: iso_7_1_10
+    - name: iso_7_1_11
+    - name: iso_7_1_12
+
+    - name: iso_7_2_1
+    - name: iso_7_2_2
+    - name: iso_7_2_3
+
+    # Test is not run due to extremely logn duration in long bit times.
+    # Does not verify bit time related logic, so it is safe to skip it!
+    #- name: iso_7_2_4
+    #  generics:
+    #    /TB_TOP_CTU_CAN_FD/timeout: 3000 ms
+    #name: iso_7_2_4_1
+    # generics:
+    #   /TB_TOP_CTU_CAN_FD/timeout: 3000 ms
+
+    - name: iso_7_2_5
+    - name: iso_7_2_6
+    - name: iso_7_2_7
+    - name: iso_7_2_8
+    - name: iso_7_2_9
+    - name: iso_7_2_10
+    - name: iso_7_2_11
+
+    - name: iso_7_3_1
+    - name: iso_7_3_2
+    - name: iso_7_3_3
+    - name: iso_7_3_4
+
+    - name: iso_7_4_1
+    - name: iso_7_4_2
+    - name: iso_7_4_3
+    - name: iso_7_4_4
+    - name: iso_7_4_5
+    - name: iso_7_4_6
+    - name: iso_7_4_7
+
+    - name: iso_7_5_1
+    - name: iso_7_5_2
+    - name: iso_7_5_3
+    - name: iso_7_5_4
+    - name: iso_7_5_5
+    - name: iso_7_5_6
+    - name: iso_7_5_7
+
+    - name: iso_7_6_1
+    - name: iso_7_6_2
+    - name: iso_7_6_3
+    - name: iso_7_6_4
+    - name: iso_7_6_5
+    - name: iso_7_6_6
+    - name: iso_7_6_7
+    - name: iso_7_6_8
+    - name: iso_7_6_9
+    - name: iso_7_6_10
+    - name: iso_7_6_11
+    - name: iso_7_6_12
+    - name: iso_7_6_13
+    - name: iso_7_6_14
+    - name: iso_7_6_15
+    - name: iso_7_6_16
+    - name: iso_7_6_17
+    - name: iso_7_6_18
+    - name: iso_7_6_19
+    - name: iso_7_6_20
+    - name: iso_7_6_21
+    - name: iso_7_6_22
+    - name: iso_7_6_23
+
+    - name: iso_7_7_1
+    - name: iso_7_7_2
+    - name: iso_7_7_3
+    - name: iso_7_7_4
+    - name: iso_7_7_5
+    - name: iso_7_7_6
+    - name: iso_7_7_7
+    - name: iso_7_7_8
+    - name: iso_7_7_9_1
+    - name: iso_7_7_9_2
+    - name: iso_7_7_10
+    - name: iso_7_7_11
+      #generics:
+        # In this test, BRP must be equal to or higher than 2! This is due to
+        # input delay of CTU CAN FD.
+        #/TB_TOP_CTU_CAN_FD/cfg_brp: 2
+
+    - name: iso_7_8_1_1
+    - name: iso_7_8_1_2
+    - name: iso_7_8_1_3
+    - name: iso_7_8_2_1
+    - name: iso_7_8_2_2
+      #generics:
+        # In this test, BRP must be equal to or higher than 3. This is due
+        # to Hard synchronization in EDL (it is pipelined), therefore it
+        # reacts only two cycles after sample point. This might be a problem!
+        #/TB_TOP_CTU_CAN_FD/cfg_brp: 3
+
+    - name: iso_7_8_3_1
+      generics:
+        # In this test, BRP must be equal to BRP_FD! It is necessary since
+        # huge time quanta difference will cause mismatch during first
+        # resynchronisation (in ESI bit) during Data bit phase!
+        /TB_TOP_CTU_CAN_FD/cfg_brp: 2
+        /TB_TOP_CTU_CAN_FD/cfg_brp_fd: 2
+
+    - name: iso_7_8_3_2
+    - name: iso_7_8_3_3
+    - name: iso_7_8_4_1
+      generics:
+        # In this test, BRP must be equal to BRP_FD! It is necessary since
+        # huge time quanta difference will cause mismatch during first
+        # resynchronisation (in ESI bit) during Data bit phase!
+        /TB_TOP_CTU_CAN_FD/cfg_brp: 2
+        /TB_TOP_CTU_CAN_FD/cfg_brp_fd: 2
+    - name: iso_7_8_4_2
+    - name: iso_7_8_4_3
+    - name: iso_7_8_5_1
+    - name: iso_7_8_5_2
+    - name: iso_7_8_5_3
+    - name: iso_7_8_6_1
+      generics:
+        # SJW is decremented so that more than 1 elementary test is ran
+        /TB_TOP_CTU_CAN_FD/cfg_sjw_fd: 2
+    - name: iso_7_8_6_2
+      generics:
+        # SJW is decremented so that more than 1 elementary test is ran
+        /TB_TOP_CTU_CAN_FD/cfg_sjw_fd: 2
+    - name: iso_7_8_6_3
+    - name: iso_7_8_7_1
+    - name: iso_7_8_7_2
+    - name: iso_7_8_7_3
+    - name: iso_7_8_8_1
+    - name: iso_7_8_8_2
+    - name: iso_7_8_8_3
+    - name: iso_7_8_9_1
+    - name: iso_7_8_9_2
+    - name: iso_7_8_9_3
+
+    - name: iso_8_1_1
+    - name: iso_8_1_2
+    - name: iso_8_1_3
+    - name: iso_8_1_4
+    - name: iso_8_1_5
+    - name: iso_8_1_6
+    - name: iso_8_1_7
+    - name: iso_8_1_8
+
+    - name: iso_8_2_1
+    - name: iso_8_2_2
+    - name: iso_8_2_3
+    - name: iso_8_2_4
+    - name: iso_8_2_5
+    - name: iso_8_2_6
+    - name: iso_8_2_7
+
+    # Test is not run due to extremely logn duration in long bit times.
+    # Does not verify bit time related logic, so it is safe to skip it!
+    #- name: iso_8_2_8
+    #  generics:
+    #    /TB_TOP_CTU_CAN_FD/timeout: 3000 ms
+
+    - name: iso_8_3_1
+    - name: iso_8_3_2
+    - name: iso_8_3_3
+    - name: iso_8_3_4
+
+    - name: iso_8_4_1
+    - name: iso_8_4_2
+    - name: iso_8_4_3
+    - name: iso_8_4_4
+    - name: iso_8_4_5
+
+    - name: iso_8_5_1
+    - name: iso_8_5_2
+    - name: iso_8_5_3
+    - name: iso_8_5_4
+    - name: iso_8_5_5
+    - name: iso_8_5_6
+    - name: iso_8_5_7
+    - name: iso_8_5_8
+    - name: iso_8_5_9
+    - name: iso_8_5_10
+    - name: iso_8_5_11
+    - name: iso_8_5_12
+    - name: iso_8_5_13
+    - name: iso_8_5_14
+    - name: iso_8_5_15
+
+    - name: iso_8_6_1
+    - name: iso_8_6_2
+    - name: iso_8_6_3
+    - name: iso_8_6_4
+    - name: iso_8_6_5
+    - name: iso_8_6_6
+    - name: iso_8_6_7
+    - name: iso_8_6_8
+    - name: iso_8_6_9
+    - name: iso_8_6_10
+    - name: iso_8_6_11
+    - name: iso_8_6_12
+    - name: iso_8_6_13
+    - name: iso_8_6_14
+    - name: iso_8_6_15
+    - name: iso_8_6_16
+    - name: iso_8_6_17
+    - name: iso_8_6_18
+    - name: iso_8_6_19
+    - name: iso_8_6_20
+    - name: iso_8_6_21
+
+    - name: iso_8_7_1
+    - name: iso_8_7_2
+    - name: iso_8_7_3
+    - name: iso_8_7_4
+    - name: iso_8_7_5
+    - name: iso_8_7_6
+    - name: iso_8_7_7
+    - name: iso_8_7_8
+    - name: iso_8_7_9
+      generics:
+        /TB_TOP_CTU_CAN_FD/cfg_brp: 3
+
+    - name: iso_8_8_1_1
+    - name: iso_8_8_1_2
+      generics:
+        /TB_TOP_CTU_CAN_FD/cfg_brp: 3
+    - name: iso_8_8_1_3
+      generics:
+        /TB_TOP_CTU_CAN_FD/cfg_brp_fd: 3
+    - name: iso_8_8_1_4
+      generics:
+        /TB_TOP_CTU_CAN_FD/cfg_brp_fd: 3
+    - name: iso_8_8_2_1
+    - name: iso_8_8_2_2
+    - name: iso_8_8_2_3
+      generics:
+        /TB_TOP_CTU_CAN_FD/cfg_brp_fd: 3
+    - name: iso_8_8_2_4
+      generics:
+        /TB_TOP_CTU_CAN_FD/cfg_brp_fd: 3
+    - name: iso_8_8_3_1
+      generics:
+        /TB_TOP_CTU_CAN_FD/cfg_brp_fd: 3
+    - name: iso_8_8_3_2
+      generics:
+        /TB_TOP_CTU_CAN_FD/cfg_brp_fd: 3
+    - name: iso_8_8_4_1
+      generics:
+        /TB_TOP_CTU_CAN_FD/cfg_brp_fd: 3
+    - name: iso_8_8_4_2
+      generics:
+        /TB_TOP_CTU_CAN_FD/cfg_brp_fd: 3
+    - name: iso_8_8_5_1
+    - name: iso_8_8_5_2
+
+    - name: iso_9_6_1
+    - name: iso_9_6_2

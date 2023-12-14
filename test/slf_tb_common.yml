@@ -21,6 +21,7 @@ source_list:
     # Feature tests + their agent
     ###############################################################################################
     - file: main_tb/feature_tests/settings_tbfbo_ftest.vhd
+    - file: main_tb/feature_tests/settings_nisofd_ftest.vhd
     - file: main_tb/feature_tests/status_eft_ftest.vhd
     - file: main_tb/feature_tests/fault_state_ftest.vhd
     - file: main_tb/feature_tests/alc_srr_rtr_2_ftest.vhd
@@ -32,6 +33,7 @@ source_list:
     - file: main_tb/feature_tests/err_capt_sof_ftest.vhd
     - file: main_tb/feature_tests/mode_bus_monitoring_ftest.vhd
     - file: main_tb/feature_tests/tx_arb_consistency_ftest.vhd
+    - file: main_tb/feature_tests/tx_arb_consistency_2_ftest.vhd
     - file: main_tb/feature_tests/status_rxs_ftest.vhd
     - file: main_tb/feature_tests/single_bus_node_ftest.vhd
     - file: main_tb/feature_tests/ssp_cfg_ftest.vhd
@@ -43,6 +45,10 @@ source_list:
     - file: main_tb/feature_tests/err_norm_fd_ftest.vhd
     - file: main_tb/feature_tests/btr_ssp_access_ftest.vhd
     - file: main_tb/feature_tests/txt_buffer_hazard_ftest.vhd
+    - file: main_tb/feature_tests/txt_buffer_transitions_ftest.vhd
+    - file: main_tb/feature_tests/txt_buffer_transitions_2_ftest.vhd
+    - file: main_tb/feature_tests/txt_buffer_transitions_3_ftest.vhd
+    - file: main_tb/feature_tests/txt_buffer_transitions_4_ftest.vhd
     - file: main_tb/feature_tests/mode_txbbm_3_ftest.vhd
     - file: main_tb/feature_tests/ssp_4_bits_flying_ftest.vhd
     - file: main_tb/feature_tests/glitch_filtering_ftest.vhd
@@ -60,12 +66,17 @@ source_list:
     - file: main_tb/feature_tests/status_rxne_ftest.vhd
     - file: main_tb/feature_tests/byte_enable_ftest.vhd
     - file: main_tb/feature_tests/rx_status_ftest.vhd
-    - file: main_tb/feature_tests/txt_buffer_byte_access_ftest.vhd
+    - file: main_tb/feature_tests/rx_status_rxfrc_ftest.vhd
     - file: main_tb/feature_tests/rx_status_mof_ftest.vhd
+    - file: main_tb/feature_tests/txt_buffer_byte_access_ftest.vhd
     - file: main_tb/feature_tests/frame_test_ignore_ftest.vhd
     - file: main_tb/feature_tests/err_capt_ovr_frm_ftest.vhd
     - file: main_tb/feature_tests/disable_in_tx_ftest.vhd
     - file: main_tb/feature_tests/int_rx_ftest.vhd
+    - file: main_tb/feature_tests/int_rxf_ftest.vhd
+    - file: main_tb/feature_tests/int_bs_ftest.vhd
+    - file: main_tb/feature_tests/int_rxne_ftest.vhd
+    - file: main_tb/feature_tests/int_txbhci_ftest.vhd
     - file: main_tb/feature_tests/command_rrb_ftest.vhd
     - file: main_tb/feature_tests/alc_base_id_ftest.vhd
     - file: main_tb/feature_tests/one_shot_ftest.vhd
@@ -129,6 +140,8 @@ source_list:
     - file: main_tb/feature_tests/status_txnf_ftest.vhd
     - file: main_tb/feature_tests/status_txpe_ftest.vhd
     - file: main_tb/feature_tests/frame_test_fstc_ftest.vhd
+    - file: main_tb/feature_tests/frame_filters_mask_ftest.vhd
+    - file: main_tb/feature_tests/pc_fsm_transitions_ftest.vhd
     - file: main_tb/agents/feature_test_agent/feature_test_list_pkg.vhd
 
     - file: main_tb/agents/feature_test_agent/feature_test_agent.vhd

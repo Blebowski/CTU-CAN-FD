@@ -1,18 +1,18 @@
 --------------------------------------------------------------------------------
--- 
--- CTU CAN FD IP Core 
+--
+-- CTU CAN FD IP Core
 -- Copyright (C) 2021-present Ondrej Ille
--- 
+--
 -- Permission is hereby granted, free of charge, to any person obtaining a copy
 -- of this VHDL component and associated documentation files (the "Component"),
 -- to use, copy, modify, merge, publish, distribute the Component for
 -- educational, research, evaluation, self-interest purposes. Using the
 -- Component for commercial purposes is forbidden unless previously agreed with
 -- Copyright holder.
--- 
+--
 -- The above copyright notice and this permission notice shall be included in
 -- all copies or substantial portions of the Component.
--- 
+--
 -- THE COMPONENT IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 -- IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 -- FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -20,38 +20,38 @@
 -- LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
 -- FROM, OUT OF OR IN CONNECTION WITH THE COMPONENT OR THE USE OR OTHER DEALINGS
 -- IN THE COMPONENT.
--- 
+--
 -- The CAN protocol is developed by Robert Bosch GmbH and protected by patents.
 -- Anybody who wants to implement this IP core on silicon has to obtain a CAN
 -- protocol license from Bosch.
--- 
+--
 -- -------------------------------------------------------------------------------
--- 
--- CTU CAN FD IP Core 
+--
+-- CTU CAN FD IP Core
 -- Copyright (C) 2015-2020 MIT License
--- 
+--
 -- Authors:
 --     Ondrej Ille <ondrej.ille@gmail.com>
 --     Martin Jerabek <martin.jerabek01@gmail.com>
--- 
--- Project advisors: 
+--
+-- Project advisors:
 -- 	Jiri Novak <jnovak@fel.cvut.cz>
 -- 	Pavel Pisa <pisa@cmp.felk.cvut.cz>
--- 
+--
 -- Department of Measurement         (http://meas.fel.cvut.cz/)
 -- Faculty of Electrical Engineering (http://www.fel.cvut.cz)
 -- Czech Technical University        (http://www.cvut.cz/)
--- 
+--
 -- Permission is hereby granted, free of charge, to any person obtaining a copy
 -- of this VHDL component and associated documentation files (the "Component"),
 -- to deal in the Component without restriction, including without limitation
 -- the rights to use, copy, modify, merge, publish, distribute, sublicense,
 -- and/or sell copies of the Component, and to permit persons to whom the
 -- Component is furnished to do so, subject to the following conditions:
--- 
+--
 -- The above copyright notice and this permission notice shall be included in
 -- all copies or substantial portions of the Component.
--- 
+--
 -- THE COMPONENT IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 -- IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 -- FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -59,11 +59,11 @@
 -- LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
 -- FROM, OUT OF OR IN CONNECTION WITH THE COMPONENT OR THE USE OR OTHER DEALINGS
 -- IN THE COMPONENT.
--- 
+--
 -- The CAN protocol is developed by Robert Bosch GmbH and protected by patents.
 -- Anybody who wants to implement this IP core on silicon has to obtain a CAN
 -- protocol license from Bosch.
--- 
+--
 --------------------------------------------------------------------------------
 
 --------------------------------------------------------------------------------
@@ -122,7 +122,7 @@ package ssp_cfg_ftest is
     procedure ssp_cfg_ftest_exec(
         signal      chn             : inout  t_com_channel
     );
-    
+
     procedure correct_ssp_offset(
        ssp_offset_generated         : in    std_logic_vector(7 downto 0);
        bus_timing                   : in    bit_time_config_type;
@@ -141,7 +141,7 @@ package body ssp_cfg_ftest is
     -- we will never sample correct value, because we just sample next bit
     -- already! So we need to constrain configured SSP_OFFSET to less than
     -- data bit time!
-    --------------------------------------------------------------------------- 
+    ---------------------------------------------------------------------------
     procedure correct_ssp_offset(
        ssp_offset_generated         : in    std_logic_vector(7 downto 0);
        bus_timing                   : in    bit_time_config_type;
@@ -172,12 +172,12 @@ package body ssp_cfg_ftest is
 
         -- Node status
         variable stat_1             :     SW_status;
-    
-        variable frame_sent         :     boolean;        
-        
+
+        variable frame_sent         :     boolean;
+
         variable rand_trv_delay     :     natural;
         variable tmp                :     natural;
-        
+
         variable ssp_source         :     SSP_set_command_type;
         variable ssp_offset_var     :     std_logic_vector(7 downto 0);
         variable ssp_pos            :     natural;
@@ -210,38 +210,42 @@ package body ssp_cfg_ftest is
         rand_int_v(63, bus_timing.prop_dbt);
         rand_int_v(31, bus_timing.ph1_dbt);
         rand_int_v(31, bus_timing.ph2_dbt);
-        
+
         -- Constrain time quanta to something realistinc for data phase so
         -- that we don't have too long run times!
         rand_int_v(4, bus_timing.tq_dbt);
         rand_int_v(33, bus_timing.sjw_dbt);
-        
+
         -- Minimal time quanta
         if (bus_timing.tq_dbt = 0) then
             bus_timing.tq_dbt := 1;
         end if;
-        
+
         cycles_per_bit := bus_timing.tq_dbt * (1 + bus_timing.prop_dbt +
                             bus_timing.ph1_dbt + bus_timing.ph2_dbt);
-        
+
         -- Constrain minimal bit times
         if (cycles_per_bit < 7) then
             bus_timing.prop_dbt := 7;
         end if;
 
+        if (bus_timing.ph2_dbt = 0) then
+            bus_timing.ph2_dbt := 1;
+        end if;
+
         if (bus_timing.tq_dbt = 1 and bus_timing.ph2_dbt = 1) then
             bus_timing.ph2_dbt := 2;
         end if;
-        
+
         cycles_per_bit := bus_timing.tq_dbt * (1 + bus_timing.prop_dbt +
                             bus_timing.ph1_dbt + bus_timing.ph2_dbt);
         info_m("Cycles per bit:" & integer'image(cycles_per_bit));
 
         info_m("Generated data bit time bit-rate:");
-        info_m("TQ: " & integer'image(bus_timing.tq_dbt));
+        info_m("TQ: "   & integer'image(bus_timing.tq_dbt));
         info_m("PROP: " & integer'image(bus_timing.prop_dbt));
-        info_m("PH1: " & integer'image(bus_timing.ph1_dbt));
-        info_m("PH2: " & integer'image(bus_timing.ph2_dbt));
+        info_m("PH1: "  & integer'image(bus_timing.ph1_dbt));
+        info_m("PH2: "  & integer'image(bus_timing.ph2_dbt));
         bit_rate := 100000000.0 / (real(cycles_per_bit));
         info_m("Data bit rate: " & real'image(bit_rate/1000000.0) & " Mbit/s");
 
@@ -290,20 +294,25 @@ package body ssp_cfg_ftest is
             ssp_source := ssp_meas_n_offset;
             rand_logic_vect_v (ssp_offset_var, 0.3);
             info_m("Generated SSP offset: " & integer'image(to_integer(unsigned(ssp_offset_var))));
-            
+
             correct_ssp_offset(ssp_offset_var, bus_timing, ssp_offset_var);
-            
+
+            -- Need to have non-zero offset to avoid races
+            if (ssp_offset_var = "00000000") then
+                ssp_offset_var := "00000001";
+            end if;
+
             -- SSP position is offset + delay
             info_m("Post correction SSP offset: " & integer'image(to_integer(unsigned(ssp_offset_var))));
             info_m("Trv delay div: " & integer'image(rand_trv_delay / 10));
-            
+
             ssp_pos := to_integer(unsigned(ssp_offset_var)) + rand_trv_delay / 10;
             if (ssp_pos > 255) then
                 ssp_pos := 255;
             end if;
-            
+
             -- This is to compensate input delay of CTU CAN FD! See Datasheet.
-            -- section 2.5.3. This applies only for case without Datasheet
+            -- section 2.5.3.
             ssp_pos := ssp_pos + 2;
 
         elsif (tmp = 1) then
@@ -313,13 +322,16 @@ package body ssp_cfg_ftest is
             CAN_read_timing_v(bus_timing, DUT_NODE, chn);
             ssp_pos := bus_timing.tq_dbt *
                         (bus_timing.prop_dbt + bus_timing.ph1_dbt + 1);
-                        
-                        
+
+
             -- In case of no SSP, we sample by regular sample point. Due to this,
             -- we need to shorten trvdelay to less than delay of regular sample
             -- point! SP in data sample here is in 20 + 10 + 1 = 31 System clocks.
             -- Consider 2 clock cycle input delay and 1 cycle reserve!
             rand_int_v(280, rand_trv_delay);
+            if ((rand_trv_delay / 10) > (ssp_pos - 3)) then
+                rand_trv_delay := (ssp_pos - 3) * 10;
+            end if;
             if (rand_trv_delay mod 10 = 0) then
                 rand_trv_delay := rand_trv_delay + 1;
             end if;
@@ -327,19 +339,19 @@ package body ssp_cfg_ftest is
             info_m("Offset only");
             ssp_source := ssp_offset;
             rand_logic_vect_v (ssp_offset_var, 0.3);
-            
+
             correct_ssp_offset(ssp_offset_var, bus_timing, ssp_offset_var);
-            
+
             info_m("Post correction SSP offset: " & integer'image(to_integer(unsigned(ssp_offset_var))));
 
             -- Here lengthen the SSP offset so that we are sufficiently over TRV_DELAY!
             -- It should be enough to lengthen it by two clock cycles (input delay of
             -- CTU CAN FD) + one cycle reserve for truncation of non-multiple of 10
             -- divided by 10!
-            if (to_integer(unsigned(ssp_offset_var)) <= rand_trv_delay/10) then
+            if (to_integer(unsigned(ssp_offset_var)) - 2 <= rand_trv_delay/10) then
                 ssp_offset_var := std_logic_vector(to_unsigned(rand_trv_delay/10, 8) + 3);
             end if;
-            
+
             -- SSP position is offset only!
             ssp_pos := to_integer(unsigned(ssp_offset_var));
             if (ssp_pos > 255) then
@@ -353,10 +365,10 @@ package body ssp_cfg_ftest is
         info_m("SSP position: " & integer'image(ssp_pos));
         CAN_configure_ssp(ssp_source, ssp_offset_var, DUT_NODE, chn);
         CAN_configure_ssp(ssp_source, ssp_offset_var, TEST_NODE, chn);
-        
+
         CAN_turn_controller(true, DUT_NODE, chn);
         CAN_turn_controller(true, TEST_NODE, chn);
-        
+
         -- Wait till integration is over!
         CAN_wait_bus_on(DUT_NODE, chn);
         CAN_wait_bus_on(TEST_NODE, chn);
@@ -373,14 +385,17 @@ package body ssp_cfg_ftest is
         CAN_generate_frame(frame_1);
         frame_1.frame_format := FD_CAN;
         frame_1.brs := BR_SHIFT;
+        if (frame_1.data_length = 0) then
+            frame_1.data_length := 1;
+            decode_length(frame_1.data_length, frame_1.dlc);
+        end if;
 
         CAN_send_frame(frame_1, 1, DUT_NODE, chn, frame_sent);
         CAN_wait_pc_state(pc_deb_control, DUT_NODE, chn);
-        
+
         CAN_wait_not_pc_state(pc_deb_control, DUT_NODE, chn);
 
-        -- +10 is to cover some part of CRC
-        num_bit_waits_max := frame_1.data_length * 8 + 10 ;
+        num_bit_waits_max := frame_1.data_length * 8;
         rand_int_v(num_bit_waits_max, num_bit_waits);
 
         info_m("Frame data length: " & integer'image(frame_1.data_length * 8) &
@@ -389,7 +404,7 @@ package body ssp_cfg_ftest is
         for i in 0 to num_bit_waits - 1 loop
             CAN_wait_sample_point(DUT_NODE, chn, false);
         end loop;
-        
+
         -- Wait until SYNC segment. This is 1 clock cycle after start of bit.
         CAN_wait_sync_seg(DUT_NODE, chn);
         wait for (ssp_pos - 2) * 10 ns;
@@ -399,11 +414,11 @@ package body ssp_cfg_ftest is
         --     to opposite value than was sent.
         -----------------------------------------------------------------------
         info_m("Step 4");
-        force_bus_level(not tx_val, chn);        
+        force_bus_level(not tx_val, chn);
 
         -- Now we should be in the cycle where SSP is active!!
         wait for 21 ns;
-        
+
         -----------------------------------------------------------------------
         -- @5. Wait for one clock cycle and if SSP_CFG[SSP_SRC] = SSP_SRC_NO_SSP,
         --     error frame is being transmitted (regular sample point should be

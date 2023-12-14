@@ -336,7 +336,7 @@ begin
 
         procedure drive_access(
             variable mem_access    : inout t_mem_bus_access_item;
-            signal   read_data_i   : out   std_logic_vector(31 downto 0)
+            signal   read_data_in  : out   std_logic_vector(31 downto 0)
         ) is
             variable post_re_time, post_re_time_2   : time;
         begin
@@ -388,14 +388,14 @@ begin
                     sbe <= "XXXX";
                     address <= (OTHERS => 'X');
                 else
-                    read_data_i <= read_data;
+                    read_data_in <= read_data;
                     wait for 0 ns;
                 end if;
 
                 wait for post_re_time_2;
 
                 if (post_re_time = x_mode_hold) then
-                    read_data_i <= read_data;
+                    read_data_in <= read_data;
                 else
                     scs_i <= '0';
                     swr <= 'X';
@@ -408,7 +408,7 @@ begin
             -- Sample data without waiting, it should be available immediately!
             else
                 wait for 1 ps; -- To avoid possible delta cycles
-                read_data_i <= read_data;
+                read_data_in <= read_data;
                 wait for (period / 2) - 2 ps; -- This will end up just before next falling edge!
                 swr <= '0';
                 srd <= '0';

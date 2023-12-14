@@ -1,0 +1,8 @@
+library: ctu_can_fd_tb_unit
+
+source_list:
+
+    - file: lib/random_unit_pkg.vhd
+    - file: lib/can_unit_test_pkg.vhd
+
+    - file: rx_buffer/rx_buffer_tb.vhd

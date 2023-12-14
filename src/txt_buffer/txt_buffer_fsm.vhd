@@ -185,6 +185,10 @@ architecture rtl of txt_buffer_fsm is
     signal mr_tx_command_txcr_q : std_logic;
     signal mr_tx_command_txca_q : std_logic;
 
+    -- Auxiliarly signals
+    signal tx_command_txce_valid : std_logic;
+    signal tx_command_txcr_valid : std_logic;
+
 begin
 
     sw_command_reg_proc : process(res_n, clk_sys)
@@ -200,6 +204,12 @@ begin
         end if;
     end process;
 
+    tx_command_txce_valid <= '1' when (mr_tx_command_txce_q = '1' and mr_tx_command_txbi = '1')
+                                 else
+                             '0';
+    tx_command_txcr_valid <= '1' when (mr_tx_command_txcr_q = '1' and mr_tx_command_txbi = '1')
+                                 else
+                             '0';
 
     abort_applied <= '1' when (mr_tx_command_txca_q = '1' and mr_tx_command_txbi = '1')
                          else
@@ -217,9 +227,7 @@ begin
                           else
                       '0';
 
-    go_to_failed <= '1' when (transient_state = '1') and
-                             ((is_bus_off = '1' and mr_settings_tbfbo =
-                               TXTBUF_FAILED_BUS_OFF_ENABLED) or
+    go_to_failed <= '1' when ((is_bus_off = '1' and mr_settings_tbfbo = TXTBUF_FAILED_BUS_OFF_ENABLED) or
                               mr_mode_bmm = BMM_ENABLED or
                               mr_mode_rom = ROM_ENABLED)
                         else
@@ -230,9 +238,8 @@ begin
     -----------------------------------------------------------------------------------------------
     -- Next state process
     -----------------------------------------------------------------------------------------------
-    tx_buf_fsm_next_state_proc : process(curr_state, mr_tx_command_txce_q, mr_tx_command_txcr_q,
-        mr_tx_command_txbi, txtb_hw_cmd, hw_cbs, abort_applied, go_to_failed,
-        txtb_parity_error_valid, buffer_skipped)
+    tx_buf_fsm_next_state_proc : process(curr_state, tx_command_txce_valid, tx_command_txcr_valid,
+        txtb_hw_cmd, hw_cbs, abort_applied, go_to_failed, txtb_parity_error_valid, buffer_skipped)
     begin
         next_state <= curr_state;
 
@@ -244,7 +251,7 @@ begin
         when s_txt_empty =>
 
             -- "Set_ready"
-            if (mr_tx_command_txcr_q = '1' and mr_tx_command_txbi = '1') then
+            if (tx_command_txcr_valid = '1') then
                 next_state       <= s_txt_ready;
             end if;
 
@@ -253,8 +260,12 @@ begin
         -------------------------------------------------------------------------------------------
         when s_txt_ready =>
 
+            -- Node became bus-off
+            if (go_to_failed = '1') then
+                next_state <= s_txt_failed;
+
             -- Parity Error occured
-            if (txtb_parity_error_valid = '1') then
+            elsif (txtb_parity_error_valid = '1') then
                 next_state <= s_txt_parity_err;
 
             -- Locking for transmission
@@ -277,8 +288,12 @@ begin
         -------------------------------------------------------------------------------------------
         when s_txt_tx_prog =>
 
+            -- Node became bus-off
+            if (go_to_failed = '1') then
+                next_state <= s_txt_failed;
+
             -- Parity Error occured
-            if (txtb_parity_error_valid = '1') then
+            elsif (txtb_parity_error_valid = '1') then
                 next_state <= s_txt_parity_err;
 
             -- Unlock the buffer
@@ -309,8 +324,12 @@ begin
         -------------------------------------------------------------------------------------------
         when s_txt_ab_prog =>
 
+            -- Node became bus-off
+            if (go_to_failed = '1') then
+                next_state <= s_txt_failed;
+
             -- Parity Error occured
-            if (txtb_parity_error_valid = '1') then
+            elsif (txtb_parity_error_valid = '1') then
                 next_state <= s_txt_parity_err;
 
             -- Unlock the buffer
@@ -333,12 +352,12 @@ begin
         when s_txt_failed =>
 
             -- "Set_ready"
-            if (mr_tx_command_txcr_q = '1' and mr_tx_command_txbi = '1') then
+            if (tx_command_txcr_valid = '1') then
                 next_state       <= s_txt_ready;
             end if;
 
             -- "Set_empty"
-            if (mr_tx_command_txce_q = '1' and mr_tx_command_txbi = '1') then
+            if (tx_command_txce_valid = '1') then
                 next_state       <= s_txt_empty;
             end if;
 
@@ -348,12 +367,12 @@ begin
         when s_txt_aborted =>
 
             -- "Set_ready"
-            if (mr_tx_command_txcr_q = '1' and mr_tx_command_txbi = '1') then
+            if (tx_command_txcr_valid = '1') then
                 next_state       <= s_txt_ready;
             end if;
 
             -- "Set_empty"
-            if (mr_tx_command_txce_q = '1' and mr_tx_command_txbi = '1') then
+            if (tx_command_txce_valid = '1') then
                 next_state       <= s_txt_empty;
             end if;
 
@@ -363,12 +382,12 @@ begin
         when s_txt_ok =>
 
             -- "Set_ready"
-            if (mr_tx_command_txcr_q = '1' and mr_tx_command_txbi = '1') then
+            if (tx_command_txcr_valid = '1') then
                 next_state       <= s_txt_ready;
             end if;
 
             -- "Set_empty"
-            if (mr_tx_command_txce_q = '1' and mr_tx_command_txbi = '1') then
+            if (tx_command_txce_valid = '1') then
                 next_state       <= s_txt_empty;
             end if;
 
@@ -378,23 +397,16 @@ begin
         when s_txt_parity_err =>
 
             -- "Set_ready"
-            if (mr_tx_command_txcr_q = '1' and mr_tx_command_txbi = '1') then
+            if (tx_command_txcr_valid = '1') then
                 next_state       <= s_txt_ready;
             end if;
 
             -- "Set_empty"
-            if (mr_tx_command_txce_q = '1' and mr_tx_command_txbi = '1') then
+            if (tx_command_txce_valid = '1') then
                 next_state       <= s_txt_empty;
             end if;
 
         end case;
-
-        -------------------------------------------------------------------------------------------
-        -- If Core is bus-off, TXT Buffer goes to failed from any transient state.
-        -------------------------------------------------------------------------------------------
-        if (go_to_failed = '1') then
-            next_state <= s_txt_failed;
-        end if;
 
     end process;
 
@@ -438,7 +450,7 @@ begin
                                                     (curr_state = s_txt_ready)))
                            else
                        '1' when (is_bus_off = '1' and next_state = s_txt_failed and
-                                transient_state = '1')
+                                 transient_state = '1')
                            else
                        '0';
 
@@ -510,6 +522,18 @@ begin
     -- psl txtb_hw_sw_cmd_txt_tx_prog_hazard_cov : cover
     --  {txtb_hw_cmd.unlock = '1' and hw_cbs = '1' and abort_applied = '1' and
     --   curr_state = s_txt_tx_prog};
+    --
+
+    -- Corner-case transitions of FSM
+    --
+    -- psl txtb_ready_to_abt_in_progress_cov : cover
+    --  {curr_state = s_txt_ready and next_state = s_txt_ab_prog and txt_fsm_ce = '1'};
+    --
+    -- psl txtb_abt_in_progress_to_parity_error_cov : cover
+    --  {curr_state = s_txt_ab_prog and next_state = s_txt_parity_err and txt_fsm_ce = '1'};
+    --
+    -- psl txtb_tx_in_progress_to_aborted_cov : cover
+    --  {curr_state = s_txt_tx_prog and next_state = s_txt_aborted and txt_fsm_ce = '1'};
 
     -----------------------------------------------------------------------------------------------
     -- Assertions

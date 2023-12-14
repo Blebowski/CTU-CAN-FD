@@ -124,8 +124,8 @@ use ctu_can_fd_rtl.CAN_FD_frame_format.all;
 library ctu_can_fd_tb_unit;
 use ctu_can_fd_tb_unit.random_unit_pkg.all;
 
-library vunit_lib;
-context vunit_lib.vunit_context;
+library ctu_can_fd_tb;
+use ctu_can_fd_tb.tb_report_pkg.all;
 
 
 package can_unit_test_pkg is
@@ -440,38 +440,6 @@ package can_unit_test_pkg is
 
 
     ----------------------------------------------------------------------------
-    -- Set highest loglevel that should be shown.
-    -- Log levels are connected to CAN_test as input signals and driven by
-    -- VUnit from configuration.
-    --
-    -- Log levels are bound to Vunit Logging library:
-    --  debug_l   - All logs are shown (even pass and trace)
-    --  info_l    - info(), warning(), error(), failure() are shown
-    --  warning_l - warning(), error(), failure() are shown
-    --  error_l   - error(), failure() are shown
-    --
-    -- Default VUnit logger is used.
-    --
-    -- Arguments:
-    --  log_level        Severity level which is set in current test.
-    ----------------------------------------------------------------------------
-    procedure set_log_level(
-          constant log_level      : in    log_lvl_type
-    );
-
-
-    ---------------------------------------------------------------------------
-    -- Configure error behaviour (Quit / Go On) of Vunit.
-    --
-    -- Arguments:
-    --  log_level        Severity level which is set in current test.
-    ----------------------------------------------------------------------------
-    procedure set_error_beh(
-          constant error_beh      : in    err_beh_type
-    );
-
-
-    ----------------------------------------------------------------------------
     -- Generates clock signal for the test with custom period, duty cycle and
     -- clock jitter.
     --
@@ -590,7 +558,6 @@ package can_unit_test_pkg is
     ----------------------------------------------------------------------------
     procedure print_test_info(
         constant iterations     : in    natural;
-        constant log_level      : in    log_lvl_type;
         constant error_beh      : in    err_beh_type;
         constant error_tol      : in    natural
     );
@@ -876,12 +843,12 @@ package body can_unit_test_pkg is
         -- Evaluate the test result
         if (errors < error_th or errors = error_th) then
             status    <= passed;
-            info("Test result: SUCCES");
+            info_m("Test result: SUCCES");
             wait for 200 ns;
             --std.env.stop(0);
         else
             status    <= failed;
-            error("Test result: FAILURE");
+            error_m("Test result: FAILURE");
             wait for 200 ns;
             --std.env.stop(1);
         end if;
@@ -1033,66 +1000,22 @@ package body can_unit_test_pkg is
         wait for 0 ns;
     end procedure;
 
-
-    procedure set_log_level(
-         constant log_level      : in    log_lvl_type
-    ) is
-    begin
-        show_all(display_handler);
-        if log_level >= debug_l then
-            null;
-        end if;
-
-        if log_level >= info_l then
-            hide(display_handler, pass);
-            hide(display_handler, trace);
-            null;
-        end if;
-
-        if log_level >= warning_l then
-            hide(display_handler, debug);
-            hide(display_handler, info);
-        end if;
-
-        if log_level >= error_l then
-            hide(display_handler, warning);
-        end if;
-    end procedure;
-
-
-    procedure set_error_beh(
-          constant error_beh      : in    err_beh_type
-    ) is
-    begin
-        if (error_beh = quit) then
-            set_stop_level(error);
-        else
-            set_stop_level(failure);
-        end if;
-    end procedure;
-
-
     procedure print_test_info(
         constant iterations     : in    natural;
-        constant log_level      : in    log_lvl_type;
         constant error_beh      : in    err_beh_type;
         constant error_tol      : in    natural
     )is
     begin
-        info("Test info:");
-        info("Number of iterations: " & integer'image(iterations));
-
-        info("Log level: " & log_lvl_type'image(log_level));
-        set_log_level(log_level);
+        info_m("Test info:");
+        info_m("Number of iterations: " & integer'image(iterations));
 
         if (error_beh = go_on) then
-            info("When error is detected test runs on");
+            info_m("When error is detected test runs on");
         else
-            info("When error is detected test quits");
+            info_m("When error is detected test quits");
         end if;
-        set_error_beh(error_beh);
 
-        info("Error tolerance: " & integer'image(error_tol));
+        info_m("Error tolerance: " & integer'image(error_tol));
     end;
 
 
@@ -1103,7 +1026,7 @@ package body can_unit_test_pkg is
         variable tmp             :      natural;
     begin
         tmp := seed + offset;
-        info("Random initialized with seed " & natural'image(seed));
+        info_m("Random initialized with seed " & natural'image(seed));
         return tmp mod RAND_POOL_SIZE;
     end function;
 
@@ -1142,7 +1065,7 @@ package body can_unit_test_pkg is
         when 48 => dlc := "1110";
         when 64 => dlc := "1111";
         when others =>
-			error("Invalid data length");
+			error_m("Invalid data length");
 			dlc := "0000";
         end case;
 	end procedure;
@@ -1258,7 +1181,7 @@ package body can_unit_test_pkg is
         variable id_vect        :       std_logic_vector(28 downto 0);
     begin
         if (id_type = EXTENDED) then
-            check(id_in < 536870912,
+            check_m(id_in < 536870912,
                   "Extended Identifier: " & integer'image(id_in) &
                   " Exceeds the maximal value!");
             id_vect := std_logic_vector(to_unsigned(id_in, 29));
@@ -1268,7 +1191,7 @@ package body can_unit_test_pkg is
             id_out(IDENTIFIER_EXT_H downto IDENTIFIER_EXT_L) :=
                 id_vect(17 downto 0);
         else
-            check(id_in < 2048,
+            check_m(id_in < 2048,
                   "Base Identifier: " & integer'image(id_in) &
                   " Exceeds the maximal value!");
             id_vect := "000000000000000000" &
@@ -1376,7 +1299,7 @@ package body can_unit_test_pkg is
                 cfg(3) := '0';
             end if;
         else
-            error("Unsupported CAN frame type");
+            error_m("Unsupported CAN frame type");
         end if;
     end procedure;
 
@@ -1389,33 +1312,33 @@ package body can_unit_test_pkg is
         variable str_len        :       natural := 0;
     begin
 
-        info("*************************************************************");
+        info_m("*************************************************************");
 
         -- Identifier
-        info("ID : 0x" &
+        info_m("ID : 0x" &
             to_hstring(std_logic_vector(to_unsigned(frame.identifier, 32))));
 
         -- Metadata
-        info("DLC: " & to_hstring(frame.dlc) & ", Data length:" &
+        info_m("DLC: " & to_hstring(frame.dlc) & ", Data length:" &
               to_string(frame.data_length));
 
         if (frame.rtr = RTR_FRAME) then
-            info("RTR Frame");
+            info_m("RTR Frame");
         end if;
 
         if (frame.ident_type = BASE) then
-            info("BASE identifier");
+            info_m("BASE identifier");
         else
-            info("EXTENDED identifier");
+            info_m("EXTENDED identifier");
         end if;
 
         if (frame.frame_format = NORMAL_CAN) then
-            info("CAN 2.0 frame");
+            info_m("CAN 2.0 frame");
         else
-            info("CAN FD frame");
+            info_m("CAN FD frame");
         end if;
 
-        info("RWCNT (read word count): " &
+        info_m("RWCNT (read word count): " &
             to_string(std_logic_vector(to_unsigned(frame.rwcnt, 10))));
 
         -- Data words
@@ -1427,10 +1350,10 @@ package body can_unit_test_pkg is
                 str_msg(7 + i * 5 to 11 + i * 5) :=
                     "0x" & to_hstring(frame.data(i)) & " ";
             end loop;
-            info(str_msg(1 to str_len));
+            info_m(str_msg(1 to str_len));
         end if;
 
-        info("*************************************************************");
+        info_m("*************************************************************");
     end procedure;
 
       procedure CAN_print_frame_simple(
@@ -1448,7 +1371,7 @@ package body can_unit_test_pkg is
             to_hstring(std_logic_vector(to_unsigned(frame.identifier, 32)));
 
 
-        info(str_msg);
+        info_m(str_msg);
     end procedure;
 
 
@@ -1473,12 +1396,12 @@ package body can_unit_test_pkg is
 
         -- Identifier
         if (frame.ident_type = BASE and frame.identifier > 2047) then
-            error("Incorrect BASE Identifier length");
+            error_m("Incorrect BASE Identifier length");
 
         elsif (frame.ident_type = EXTENDED and
                frame.identifier > 536870911)
         then
-            error("Incorrect EXTENDED Identifier length");
+            error_m("Incorrect EXTENDED Identifier length");
         end if;
 
         ident_vect := std_logic_vector(to_unsigned(frame.identifier, 29));
@@ -1497,7 +1420,7 @@ package body can_unit_test_pkg is
             memory(pointer + 1)(IDENTIFIER_BASE_H downto IDENTIFIER_BASE_L) <=
                                     ident_vect(28 downto 18);
         else
-            error("Unsupported Identifier type");
+            error_m("Unsupported Identifier type");
         end if;
 
         -- Timestamp
@@ -1640,7 +1563,7 @@ package body can_unit_test_pkg is
                                memory(pointer)
                                 (IDENTIFIER_EXT_H downto IDENTIFIER_EXT_L);
         else
-            error("Unsupported Identifier type");
+            error_m("Unsupported Identifier type");
         end if;
 
         frame.identifier  := to_integer(unsigned(aux_vect));
@@ -1732,7 +1655,7 @@ package body can_unit_test_pkg is
     impure function strtolen(n : natural; src : string) return string is
         variable s : string(1 to n) := (others => ' ');
     begin
-        check(src'length <= n, "String too long.");
+        check_m(src'length <= n, "String too long.");
         s(src'range) := src;
         return s;
     end function strtolen;
@@ -1743,9 +1666,6 @@ end package body;
 library ctu_can_fd_tb_unit;
 use ctu_can_fd_tb_unit.can_unit_test_pkg.all;
 use ctu_can_fd_tb_unit.random_unit_pkg.all;
-
-library vunit_lib;
-context vunit_lib.vunit_context;
 
 
 --------------------------------------------------------------------------------

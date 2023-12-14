@@ -178,6 +178,7 @@ begin
     ---------------------------------------------------------------------------
     main_test_proc : process
         variable test_success_i : std_logic := '0';
+        variable init_timestamp : std_logic_vector(63 downto 0);
     begin
         wait for 1 ns;
         wait until test_start = '1';
@@ -212,6 +213,12 @@ begin
         timestamp_agent_set_prescaler(default_channel, 1);
         timestamp_agent_timestamp_preset(default_channel, x"0000000000000000");
         timestamp_agent_start(default_channel);
+
+        -----------------------------------------------------------------------
+        -- Randomize starting timestamp for better toggle coverage
+        -----------------------------------------------------------------------
+        rand_logic_vect_v(init_timestamp, 0.5);
+        timestamp_agent_timestamp_preset(default_channel, init_timestamp);
 
         -----------------------------------------------------------------------
         -- Configure Reset agent and Exectue reset
@@ -282,7 +289,7 @@ begin
         if (test_success_i = '1') then
             info_m("CTU CAN FD VIP: Test PASSED");
         else
-            info_m("CTU CAN FD VIP: Test FAILED");
+            error_m("CTU CAN FD VIP: Test FAILED");
         end if;
         info_m("******************************************");
 

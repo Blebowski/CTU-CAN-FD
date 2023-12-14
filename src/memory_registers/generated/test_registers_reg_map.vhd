@@ -138,11 +138,10 @@ begin
     -- TST_CONTROL[TMAENA]
     ----------------------------------------------------------------------------
 
-    tst_control_tmaena_reg_comp : memory_reg_lockable
+    tst_control_tmaena_reg_comp : memory_reg_rw_lock
     generic map(
         data_width                      => 1 ,
-        reset_value                     => "0" ,
-        modified_write_val_clear        => false 
+        reset_value                     => "0" 
     )
     port map(
         clk_sys                         => clk_sys ,-- in
@@ -158,11 +157,10 @@ begin
     -- TST_CONTROL[TWRSTB]
     ----------------------------------------------------------------------------
 
-    tst_control_twrstb_reg_comp : memory_reg_lockable
+    tst_control_twrstb_reg_comp : memory_reg_os_lock
     generic map(
         data_width                      => 1 ,
-        reset_value                     => "0" ,
-        modified_write_val_clear        => true 
+        reset_value                     => "0" 
     )
     port map(
         clk_sys                         => clk_sys ,-- in
@@ -178,11 +176,10 @@ begin
     -- TST_DEST[TST_ADDR_SLICE_1]
     ----------------------------------------------------------------------------
 
-    tst_dest_tst_addr_slice_1_reg_comp : memory_reg_lockable
+    tst_dest_tst_addr_slice_1_reg_comp : memory_reg_rw_lock
     generic map(
         data_width                      => 8 ,
-        reset_value                     => "00000000" ,
-        modified_write_val_clear        => false 
+        reset_value                     => "00000000" 
     )
     port map(
         clk_sys                         => clk_sys ,-- in
@@ -198,11 +195,10 @@ begin
     -- TST_DEST[TST_ADDR_SLICE_2]
     ----------------------------------------------------------------------------
 
-    tst_dest_tst_addr_slice_2_reg_comp : memory_reg_lockable
+    tst_dest_tst_addr_slice_2_reg_comp : memory_reg_rw_lock
     generic map(
         data_width                      => 8 ,
-        reset_value                     => "00000000" ,
-        modified_write_val_clear        => false 
+        reset_value                     => "00000000" 
     )
     port map(
         clk_sys                         => clk_sys ,-- in
@@ -218,11 +214,10 @@ begin
     -- TST_DEST[TST_MTGT]
     ----------------------------------------------------------------------------
 
-    tst_dest_tst_mtgt_reg_comp : memory_reg_lockable
+    tst_dest_tst_mtgt_reg_comp : memory_reg_rw_lock
     generic map(
         data_width                      => 4 ,
-        reset_value                     => "0000" ,
-        modified_write_val_clear        => false 
+        reset_value                     => "0000" 
     )
     port map(
         clk_sys                         => clk_sys ,-- in
@@ -238,11 +233,10 @@ begin
     -- TST_WDATA[TST_WDATA_SLICE_1]
     ----------------------------------------------------------------------------
 
-    tst_wdata_tst_wdata_slice_1_reg_comp : memory_reg_lockable
+    tst_wdata_tst_wdata_slice_1_reg_comp : memory_reg_rw_lock
     generic map(
         data_width                      => 8 ,
-        reset_value                     => "00000000" ,
-        modified_write_val_clear        => false 
+        reset_value                     => "00000000" 
     )
     port map(
         clk_sys                         => clk_sys ,-- in
@@ -258,11 +252,10 @@ begin
     -- TST_WDATA[TST_WDATA_SLICE_2]
     ----------------------------------------------------------------------------
 
-    tst_wdata_tst_wdata_slice_2_reg_comp : memory_reg_lockable
+    tst_wdata_tst_wdata_slice_2_reg_comp : memory_reg_rw_lock
     generic map(
         data_width                      => 8 ,
-        reset_value                     => "00000000" ,
-        modified_write_val_clear        => false 
+        reset_value                     => "00000000" 
     )
     port map(
         clk_sys                         => clk_sys ,-- in
@@ -278,11 +271,10 @@ begin
     -- TST_WDATA[TST_WDATA_SLICE_3]
     ----------------------------------------------------------------------------
 
-    tst_wdata_tst_wdata_slice_3_reg_comp : memory_reg_lockable
+    tst_wdata_tst_wdata_slice_3_reg_comp : memory_reg_rw_lock
     generic map(
         data_width                      => 8 ,
-        reset_value                     => "00000000" ,
-        modified_write_val_clear        => false 
+        reset_value                     => "00000000" 
     )
     port map(
         clk_sys                         => clk_sys ,-- in
@@ -298,11 +290,10 @@ begin
     -- TST_WDATA[TST_WDATA_SLICE_4]
     ----------------------------------------------------------------------------
 
-    tst_wdata_tst_wdata_slice_4_reg_comp : memory_reg_lockable
+    tst_wdata_tst_wdata_slice_4_reg_comp : memory_reg_rw_lock
     generic map(
         data_width                      => 8 ,
-        reset_value                     => "00000000" ,
-        modified_write_val_clear        => false 
+        reset_value                     => "00000000" 
     )
     port map(
         clk_sys                         => clk_sys ,-- in

@@ -1,18 +1,18 @@
 --------------------------------------------------------------------------------
--- 
--- CTU CAN FD IP Core 
+--
+-- CTU CAN FD IP Core
 -- Copyright (C) 2021-present Ondrej Ille
--- 
+--
 -- Permission is hereby granted, free of charge, to any person obtaining a copy
 -- of this VHDL component and associated documentation files (the "Component"),
 -- to use, copy, modify, merge, publish, distribute the Component for
 -- educational, research, evaluation, self-interest purposes. Using the
 -- Component for commercial purposes is forbidden unless previously agreed with
 -- Copyright holder.
--- 
+--
 -- The above copyright notice and this permission notice shall be included in
 -- all copies or substantial portions of the Component.
--- 
+--
 -- THE COMPONENT IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 -- IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 -- FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -20,38 +20,38 @@
 -- LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
 -- FROM, OUT OF OR IN CONNECTION WITH THE COMPONENT OR THE USE OR OTHER DEALINGS
 -- IN THE COMPONENT.
--- 
+--
 -- The CAN protocol is developed by Robert Bosch GmbH and protected by patents.
 -- Anybody who wants to implement this IP core on silicon has to obtain a CAN
 -- protocol license from Bosch.
--- 
+--
 -- -------------------------------------------------------------------------------
--- 
--- CTU CAN FD IP Core 
+--
+-- CTU CAN FD IP Core
 -- Copyright (C) 2015-2020 MIT License
--- 
+--
 -- Authors:
 --     Ondrej Ille <ondrej.ille@gmail.com>
 --     Martin Jerabek <martin.jerabek01@gmail.com>
--- 
--- Project advisors: 
+--
+-- Project advisors:
 -- 	Jiri Novak <jnovak@fel.cvut.cz>
 -- 	Pavel Pisa <pisa@cmp.felk.cvut.cz>
--- 
+--
 -- Department of Measurement         (http://meas.fel.cvut.cz/)
 -- Faculty of Electrical Engineering (http://www.fel.cvut.cz)
 -- Czech Technical University        (http://www.cvut.cz/)
--- 
+--
 -- Permission is hereby granted, free of charge, to any person obtaining a copy
 -- of this VHDL component and associated documentation files (the "Component"),
 -- to deal in the Component without restriction, including without limitation
 -- the rights to use, copy, modify, merge, publish, distribute, sublicense,
 -- and/or sell copies of the Component, and to permit persons to whom the
 -- Component is furnished to do so, subject to the following conditions:
--- 
+--
 -- The above copyright notice and this permission notice shall be included in
 -- all copies or substantial portions of the Component.
--- 
+--
 -- THE COMPONENT IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 -- IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 -- FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -59,18 +59,18 @@
 -- LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
 -- FROM, OUT OF OR IN CONNECTION WITH THE COMPONENT OR THE USE OR OTHER DEALINGS
 -- IN THE COMPONENT.
--- 
+--
 -- The CAN protocol is developed by Robert Bosch GmbH and protected by patents.
 -- Anybody who wants to implement this IP core on silicon has to obtain a CAN
 -- protocol license from Bosch.
--- 
+--
 --------------------------------------------------------------------------------
 
 --------------------------------------------------------------------------------
 --  @Purpose:
 --    CTU CAN FD VIP - Main verification component, encapsulates all test
 --    functionality.
---  
+--
 --------------------------------------------------------------------------------
 -- Revision History:
 --    26.1.2021   Created file
@@ -82,6 +82,7 @@ context ctu_can_fd_tb.tb_common_context;
 context ctu_can_fd_tb.tb_agents_context;
 context ctu_can_fd_tb.rtl_context;
 
+use ctu_can_fd_tb.tb_shared_vars_pkg.all;
 
 entity ctu_can_fd_vip is
     generic(
@@ -92,6 +93,9 @@ entity ctu_can_fd_vip is
 
         -- DUT Clock period
         cfg_sys_clk_period      : string;
+
+        -- Finish on report Error
+        finish_on_error         : natural;
 
         -- Bit timing cofnig used in; compliance tests
         cfg_brp                 : natural;
@@ -104,10 +108,10 @@ entity ctu_can_fd_vip is
         cfg_ph_1_fd             : natural;
         cfg_ph_2_fd             : natural;
         cfg_sjw_fd              : natural;
-        
+
         -- Seed
         seed                    : natural := 0;
-        
+
         -- Reference test iterations
         reference_iterations    : natural range 1 to 1000 := 1000
     );
@@ -116,14 +120,14 @@ entity ctu_can_fd_vip is
         test_start          : in  std_logic;
         test_done           : out std_logic := '0';
         test_success        : out std_logic := '0';
-         
+
         -- DUT interface
         clk_sys             : inout std_logic;
         res_n               : inout std_logic;
-        
+
         -- DFT support
         scan_enable         : out   std_logic;
-        
+
         write_data          : out   std_logic_vector(31 DOWNTO 0);
         read_data           : in    std_logic_vector(31 DOWNTO 0);
         adress              : out   std_logic_vector(15 DOWNTO 0);
@@ -135,16 +139,16 @@ entity ctu_can_fd_vip is
         int                 : in    std_logic;
 
         can_tx              : in    std_logic;
-        can_rx              : out   std_logic;          
+        can_rx              : out   std_logic;
 
         test_probe          : in    t_ctu_can_fd_test_probe;
-        timestamp           : out   std_logic_vector(63 DOWNTO 0) 
+        timestamp           : out   std_logic_vector(63 DOWNTO 0)
     );
 end entity;
 
 
 architecture behav of ctu_can_fd_vip is
-    
+
     signal clk_sys_i            : std_logic;
     signal clk_sys_clock_agent  : std_logic;
 
@@ -152,7 +156,7 @@ architecture behav of ctu_can_fd_vip is
     -- TX signal is unique (driven by DUT)
     signal can_rx_compliance_agent  : std_logic := '1';
     signal can_rx_feature_agent     : std_logic := '1';
-    
+
     ---------------------------------------------------------------------------
     -- Internal chip selects:
     --  0 - DUT - out of VIP
@@ -160,13 +164,13 @@ architecture behav of ctu_can_fd_vip is
     ---------------------------------------------------------------------------
     signal scs_i                    : std_logic_vector(1 downto 0);
     signal scs_i_reg                : std_logic_vector(1 downto 0);
-    
+
     signal read_data_test_node      : std_logic_vector(31 downto 0);
     signal read_data_muxed          : std_logic_vector(31 downto 0);
-    
+
     signal res_n_i                  : std_logic;
-    
-    
+
+
     -- PLI interface for communication with compliance test library
     signal pli_clk                 : std_logic;
     signal pli_req                 : std_logic;
@@ -192,7 +196,7 @@ architecture behav of ctu_can_fd_vip is
     signal test_node_scan_enable   : std_logic;
 
 begin
-    
+
     ---------------------------------------------------------------------------
     -- Reset agent - Asserts reset
     ---------------------------------------------------------------------------
@@ -200,7 +204,7 @@ begin
     port map (
         reset   => res_n_i
     );
-    
+
     ---------------------------------------------------------------------------
     -- Clock agent - Generates clock
     ---------------------------------------------------------------------------
@@ -236,7 +240,7 @@ begin
     port map(
         int   => int
     );
-    
+
     ---------------------------------------------------------------------------
     -- Timestamp agent - generates timestamp for DUT
     ---------------------------------------------------------------------------
@@ -245,7 +249,7 @@ begin
         clk_sys         => clk_sys_i,
         timestamp       => timestamp
     );
-    
+
     ---------------------------------------------------------------------------
     -- Test probe agent - allows peeking signals brought to test-probe.
     ---------------------------------------------------------------------------
@@ -253,11 +257,11 @@ begin
     port map(
         dut_test_probe       => test_probe,
         test_node_test_probe => test_node_test_probe,
-        
+
         dut_scan_enable      => scan_enable,
         test_node_scan_enable=> test_node_scan_enable
     );
-    
+
     ---------------------------------------------------------------------------
     -- Test controller agent - controls simulation
     ---------------------------------------------------------------------------
@@ -267,7 +271,7 @@ begin
         test_type               => test_type,
         stand_alone_vip_mode    => stand_alone_vip_mode,
         seed                    => seed,
-        
+
         -- DUT configuration
         cfg_sys_clk_period      => cfg_sys_clk_period,
         cfg_brp                 => cfg_brp,
@@ -286,7 +290,7 @@ begin
         test_start              => test_start,
         test_done               => test_done,
         test_success            => test_success,
-        
+
         -- PLI communication interface
         pli_clk                 => pli_clk,
         pli_req                 => pli_req,
@@ -303,7 +307,7 @@ begin
         pli_control_gnt         => pli_control_gnt
     );
 
-    
+
     ---------------------------------------------------------------------------
     ---------------------------------------------------------------------------
     -- Test type specific agents
@@ -326,7 +330,7 @@ begin
             can_rx   => can_rx_compliance_agent
         );
     end generate;
-    
+
     ---------------------------------------------------------------------------
     -- Feature test agent. Used only by feature tests.
     ---------------------------------------------------------------------------
@@ -337,10 +341,10 @@ begin
             test_name           => test_name,
             test_type           => test_type,
             stand_alone_vip_mode => stand_alone_vip_mode,
-        
+
             -- DUT configuration
             cfg_sys_clk_period  => cfg_sys_clk_period,
-           
+
             cfg_brp             => cfg_brp,
             cfg_prop            => cfg_prop,
             cfg_ph_1            => cfg_ph_1,
@@ -356,7 +360,7 @@ begin
             -- Test node connections
             clk_sys             => clk_sys_i,
             res_n               => res_n_i,
-            
+
             write_data          => write_data,
             read_data           => read_data_test_node,
             adress              => adress,
@@ -364,16 +368,16 @@ begin
             srd                 => srd,
             swr                 => swr,
             sbe                 => sbe,
-            
+
             -- CAN bus from/to DUT
             dut_can_tx          => can_tx,
             dut_can_rx          => can_rx_feature_agent,
-            
+
             test_node_test_probe  => test_node_test_probe,
             test_node_scan_enable => test_node_scan_enable
         );
     end generate;
-    
+
     ---------------------------------------------------------------------------
     -- Reference test agent
     ---------------------------------------------------------------------------
@@ -386,13 +390,13 @@ begin
     );
 
 
-    
+
     ---------------------------------------------------------------------------
     ---------------------------------------------------------------------------
     -- Other common stuff
     ---------------------------------------------------------------------------
     ---------------------------------------------------------------------------
-    
+
     ---------------------------------------------------------------------------
     -- In stand-alone mode clock agent drives clock, in non-stand-alone, it
     -- receives clock from outside and clock agent is disconnected!
@@ -410,28 +414,28 @@ begin
 
     ---------------------------------------------------------------------------
     -- CAN bus connection
-    -- 
+    --
     -- Realize wired-AND by multiple agents. If agents are not active, they
     -- drive high, therfore they dont affect the bus!
     ---------------------------------------------------------------------------
     can_rx <= can_rx_compliance_agent AND can_rx_feature_agent;
-    
+
     ---------------------------------------------------------------------------
     -- DUT Memory bus routing
     ---------------------------------------------------------------------------
     scs <= scs_i(0);
-    
+
     scs_reg_proc : process(ALL)
     begin
         if (rising_edge(clk_sys_i)) then
             scs_i_reg <= scs_i;
         end if;
     end process;
-    
+
     read_data_muxed <= read_data when (scs_i_reg(0) = '1') else
                        read_data_test_node when (scs_i_reg(1) = '1') else
                        (OTHERS => '0');
-    
+
     ---------------------------------------------------------------------------
     -- Write test name from generic to PLI interface signal
     ---------------------------------------------------------------------------
@@ -440,12 +444,25 @@ begin
         pli_str_to_logic_vector(test_name, pli_test_name_array);
         wait;
     end process;
-    
+
+    ---------------------------------------------------------------------------
+    -- Propagate finish config
+    ---------------------------------------------------------------------------
+    finish_on_error_proc : process
+    begin
+        if (finish_on_error > 0) then
+            finish_on_error_i.set(true);
+        else
+            finish_on_error_i.set(false);
+        end if;
+        wait;
+    end process;
+
     ---------------------------------------------------------------------------
     -- Checks
     ---------------------------------------------------------------------------
     assert test_type = "feature" or test_type = "compliance" or test_type = "reference"
     report "Unsupported test type: " & test_type & ", choose one of: feature, compliance, reference"
-    severity failure; 
+    severity failure;
 
 end architecture;

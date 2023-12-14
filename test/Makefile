@@ -9,23 +9,24 @@ TEST_OPTS_test_debug := --no-strict
 all: test coverage functional_coverage
 
 elaborate:
-	$(PYTHON) run.py test tests_fast_asic.yml -- --elaborate $(TEST_FLAGS)
-	#$(PYTHON) run.py test tests_fast_fpga.yml -- --elaborate $(TEST_FLAGS)
+	$(PYTHON) run.py tb_rtl_test_fast_asic --elaborate $(TEST_FLAGS)
+	#$(PYTHON) run.py tb_rtl_test_fast_fpga --elaborate $(TEST_FLAGS)
 
 # Run test config
-tests_%: tests_%.yml FORCE
-	$(PYTHON) run.py test $(TEST_OPTS_$@) $< -- $(TEST_FLAGS)
-	
+%:
+	$(PYTHON) run.py $@ $(TEST_OPTS_$@) $< $(TEST_FLAGS) --xunit-xml $@.xml
+
+
 # Convert results to HTML, pack and publish textual summary
 %_logs:
 
 # Process reports
-	junit2html --report-matrix $*.html $*.xml 
-	tar -czvf $*.gz $*.html $*.xml.html
+#	junit2html --report-matrix $*.html $*.xml
+#	tar -czvf $*.gz $*.html $*.xml.html
 	junit2html --summary-matrix $*.xml > $*_summary
 
 # Sum simulation time from all tests
-	cat build/vunit_out/test_output/*/output.txt | \
+	cat vunit_out/test_output/*/output.txt | \
 		grep "simulation stopped" | \
 		grep -Eo "[0-9]+(us|ns|ps)" | \
 		sed 's/ps/000/g' | \
@@ -35,39 +36,20 @@ tests_%: tests_%.yml FORCE
 	echo "Total simulated time is `cat $*.sim_time` fs"
 
 # Cleanup
-	rm -f $*.html
-	rm -f $*.xml.html
-	rm -f $*.xml
-
-
-######################################################################################
-# For debugging purposes of pipelines only
-######################################################################################
-test_compliance_demo: tests_compliance.yml FORCE
-	$(PYTHON) run.py test tests_compliance.yml -- ctu_can_fd_tb.can_compliance_tb.demo
-test_nightly_demo: tests_nightly.yml FORCE
-	$(PYTHON) run.py test tests_nightly.yml -- ctu_can_fd_tb.tb_feature.device_id
+#	rm -f $*.html
+#	rm -f $*.xml.html
+#	rm -f $*.xml
 
 
 ######################################################################################
 # Coverage processing
 ######################################################################################
-coverage:
-	lcov --capture --gcov-tool=/opt/ghdl/bin/gcov --directory $(BUILD_DIR) --output-file code_coverage.info
-	genhtml code_coverage.info --output-directory code_html
-
-coverage_merged:
-	lcov --capture --gcov-tool=/opt/ghdl/bin/gcov --directory $(BUILD_DIR)/code_coverage_merged --output-file code_coverage.info
-	genhtml code_coverage.info --output-directory code_html
-
 functional_coverage:
+	mkdir -P vunit_out/functional_coverage/html
 	$(PYTHON) $(TESTFW_DIR)/test_parse_psl_coverage.py
 
-delete_vunit_out:
-	rm -Rf build/vunit_out
-
 clean:
-	-rm -Rf build
+	rm -Rf vunit_out
 
 FORCE:
 

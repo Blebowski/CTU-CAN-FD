@@ -26,9 +26,7 @@
 
 --------------------------------------------------------------------------------
 -- Purpose:
---   Definition of a single memory register. Supports optional auto-clear
---   of register in the next cycle. Supports implementation of only some
---   bits within a register.
+--   Read Write register with lock support
 --------------------------------------------------------------------------------
 -- Revision History:
 --    14.10.2018   Created file
@@ -38,19 +36,14 @@ Library ieee;
 USE IEEE.std_logic_1164.all;
 USE IEEE.numeric_std.ALL;
 
-entity memory_reg is
+entity memory_reg_rw_lock is
     generic(
 
         -- Width of register data
         constant data_width                 :     natural := 32;
 
         -- Reset value of register
-        constant reset_value                :     std_logic_vector;
-
-        -- If given bit of the register should be cleared automatically after
-        -- writing. In this case no DFF is inserted, output value is decoded
-        -- only combinatorially and lasts as long as chip selec is active!
-        constant modified_write_val_clear   :     boolean
+        constant reset_value                :     std_logic_vector
     );
     port(
         ------------------------------------------------------------------------
@@ -67,15 +60,20 @@ entity memory_reg is
         signal cs                     :in   std_logic;
 
         ------------------------------------------------------------------------
+        -- Lock control
+        ------------------------------------------------------------------------
+        signal lock                   :in   std_logic;
+
+        ------------------------------------------------------------------------
         -- Register outputs
         ------------------------------------------------------------------------
         signal reg_value              :out  std_logic_vector(data_width - 1 downto 0)
     );
 
-end entity memory_reg;
+end entity memory_reg_rw_lock;
 
 
-architecture rtl of memory_reg is
+architecture rtl of memory_reg_rw_lock is
 
     ---------------------------------------------------------------------------
     -- Create new constants for reset value, implemented etc.
@@ -95,51 +93,30 @@ architecture rtl of memory_reg is
     signal reg_value_r          :   std_logic_vector(data_width - 1 downto 0);
 
     -- Write enable
-    signal wr_en               :   std_logic;
+    signal wr_en                :   std_logic;
 
 begin
 
     ----------------------------------------------------------------------------
-    -- Write enable
+    -- -- Write enable
     ----------------------------------------------------------------------------
-    wr_en <= write and cs;
+    wr_en <= write and cs and (not lock);
 
     ----------------------------------------------------------------------------
     -- Register instance
     ----------------------------------------------------------------------------
     bit_gen : for i in 0 to data_width - 1 generate
 
-        --------------------------------------------------------------------
-        -- Regular register (DFF)
-        --------------------------------------------------------------------
-        reg_regular_gen : if (not modified_write_val_clear) generate
-
-            reg_access_proc : process(clk_sys, res_n)
-            begin
-                if (res_n = '0') then
-                    reg_value_r(i)  <= reset_value_i(i);
-                elsif (rising_edge(clk_sys)) then
-                    if (wr_en = '1') then
-                        reg_value_r(i)  <= data_in(i);
-                    end if;
+        reg_access_proc : process(clk_sys, res_n)
+        begin
+            if (res_n = '0') then
+                reg_value_r(i)  <= reset_value_i(i);
+            elsif (rising_edge(clk_sys)) then
+                if (wr_en = '1') then
+                    reg_value_r(i)  <= data_in(i);
                 end if;
-            end process;
-
-        end generate reg_regular_gen;
-
-
-        --------------------------------------------------------------------
-        -- Clear register (no DFF - combinatorial only). When access
-        -- is made, put data to output, reset value otherwise.
-        --------------------------------------------------------------------
-        reg_autoclear_gen : if (modified_write_val_clear) generate
-
-            reg_value_r(i) <= data_in(i) when (wr_en = '1')
-                                         else
-                              reset_value_i(i);
-
-        end generate reg_autoclear_gen;
-
+            end if;
+        end process;
 
     end generate bit_gen;
 

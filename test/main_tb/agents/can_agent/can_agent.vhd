@@ -193,7 +193,7 @@ architecture tb of can_agent is
     ---------------------------------------------------------------------------
 
     -- Driver
-    signal driver_wait_timeout      :   time := 3 ms;
+    signal driver_wait_timeout      :   time := 10 ms;
     signal driven_item              :   t_can_driver_entry := (
         value           => 'Z',
         drive_time      => 0 ns,
@@ -202,7 +202,7 @@ architecture tb of can_agent is
     );
 
     -- Monitor
-    signal monitor_wait_timeout     :   time := 3 ms;
+    signal monitor_wait_timeout     :   time := 10 ms;
     signal monitored_item           :   t_can_monitor_entry := (
         value           => 'Z',
         monitor_time    => 0 ns,

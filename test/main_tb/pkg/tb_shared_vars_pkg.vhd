@@ -88,6 +88,9 @@ package tb_shared_vars_pkg is
     -- Test result
     shared variable ctu_vip_test_result : t_ctu_test_result;
 
+    -- Finish on error
+    shared variable finish_on_error_i : t_prot_boolean;
+
 end package;
 
 

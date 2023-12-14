@@ -99,6 +99,9 @@ entity tb_top_ctu_can_fd is
         -- Clock configuration of DUT
         cfg_sys_clk_period      : string := "10 ns";
 
+        -- Finish on report Error
+        finish_on_error         : natural := 0;
+
         -- Bit timing config of DUT on CAN bus (used by compliance tests)
         cfg_brp                 : natural := 4;
         cfg_prop                : natural := 0;
@@ -121,6 +124,7 @@ entity tb_top_ctu_can_fd is
         sup_traffic_ctrs        : boolean := true;
         sup_parity              : boolean := true;
         target_technology       : natural := C_TECH_ASIC;
+        reset_buffer_rams       : boolean := false;
 
         -- Seed
         seed                    : natural := 0
@@ -165,6 +169,7 @@ architecture tb of tb_top_ctu_can_fd is
 
        -- DUT Clock period
        cfg_sys_clk_period      : string;
+       finish_on_error         : natural;
 
        -- Bit timing cofnig used in; compliance tests
        cfg_brp                 : natural;
@@ -229,7 +234,8 @@ begin
         sup_range           => sup_range,
         sup_traffic_ctrs    => sup_traffic_ctrs,
         sup_parity          => sup_parity,
-        target_technology   => target_technology
+        target_technology   => target_technology,
+        reset_buffer_rams   => reset_buffer_rams
     )
     port map(
         -- Clock and Asynchronous reset
@@ -273,6 +279,7 @@ begin
         stand_alone_vip_mode    => stand_alone_vip_mode,
 
         cfg_sys_clk_period      => cfg_sys_clk_period,
+        finish_on_error         => finish_on_error,
 
         cfg_brp                 => cfg_brp,
         cfg_prop                => cfg_prop,
@@ -333,6 +340,7 @@ begin
     -- Test manager - controls CTU CAN FD VIP
     ---------------------------------------------------------------------------
     test_manager_proc : process
+        variable rnd_vect : std_logic_vector(31 downto 0);
     begin
         wait for 10 ns;
 
@@ -349,6 +357,7 @@ begin
         info_m("  Seed: " & integer'image(seed));
         info_m("  Reference test iterations: " & integer'image(reference_iterations));
         info_m("  Timeout: " & timeout);
+        info_m("  Finish on error: " & integer'image(finish_on_error));
         info_m("");
         info_m("DUT configuration:");
         info_m("  RX buffer size: " & integer'image(rx_buffer_size));
@@ -359,6 +368,7 @@ begin
         info_m("  Range filter: " & boolean'image(sup_range));
         info_m("  Traffic counters: " & boolean'image(sup_traffic_ctrs));
         info_m("  Target technology: " & integer'image(target_technology));
+        info_m("  Reset Buffer RAMS: " & boolean'image(reset_buffer_rams));
         info_m("");
         info_m("Bit timing settings (Nominal):");
         info_m("  BRP: " & integer'image(cfg_brp));
@@ -368,11 +378,11 @@ begin
         info_m("  SJW: " & integer'image(cfg_sjw));
         info_m("");
         info_m("Bit timing settings (Data):");
-        info_m("  BRP: " & integer'image(cfg_brp));
-        info_m("  PH1: " & integer'image(cfg_ph_1));
-        info_m("  PROP: " & integer'image(cfg_prop));
-        info_m("  PH2: " & integer'image(cfg_ph_2));
-        info_m("  SJW: " & integer'image(cfg_sjw));
+        info_m("  BRP: " & integer'image(cfg_brp_fd));
+        info_m("  PH1: " & integer'image(cfg_ph_1_fd));
+        info_m("  PROP: " & integer'image(cfg_prop_fd));
+        info_m("  PH2: " & integer'image(cfg_ph_2_fd));
+        info_m("  SJW: " & integer'image(cfg_sjw_fd));
         info_m("");
         info_m("***************************************************************");
 
@@ -380,6 +390,26 @@ begin
             info_m("***************************************************************");
             info_m(" Iteration nr: " & integer'image(i));
             info_m("***************************************************************");
+
+            -- Special deposit for traffic counters code coverage!
+            if (test_name = "rx_counter" or test_name = "tx_counter") then
+                rand_logic_vect_v(rnd_vect, 0.5);
+                info_m("Depositing TX frame counter and RX frame counter to: " & to_hstring(rnd_vect));
+                <<signal .TB_TOP_CTU_CAN_FD.DUT.CAN_CORE_INST.BUS_TRAFFIC_CTRS_GEN.BUS_TRAFFIC_COUNTERS_INST.tx_frame_ctr_i  : std_logic_vector(31 downto 0) >> <= force out rnd_vect;
+                <<signal .TB_TOP_CTU_CAN_FD.DUT.CAN_CORE_INST.BUS_TRAFFIC_CTRS_GEN.BUS_TRAFFIC_COUNTERS_INST.rx_frame_ctr_i  : std_logic_vector(31 downto 0) >> <= force out rnd_vect;
+                wait for 1 ns;
+                <<signal .TB_TOP_CTU_CAN_FD.DUT.CAN_CORE_INST.BUS_TRAFFIC_CTRS_GEN.BUS_TRAFFIC_COUNTERS_INST.tx_frame_ctr_i  : std_logic_vector(31 downto 0) >> <= release out;
+                <<signal .TB_TOP_CTU_CAN_FD.DUT.CAN_CORE_INST.BUS_TRAFFIC_CTRS_GEN.BUS_TRAFFIC_COUNTERS_INST.rx_frame_ctr_i  : std_logic_vector(31 downto 0) >> <= release out;
+            elsif (test_name = "err_norm_fd") then
+                rand_logic_vect_v(rnd_vect, 0.5);
+                info_m("Depositing ERR NORM counters to: " & integer'image(to_integer(unsigned(rnd_vect(15 downto 0 )))));
+                info_m("Depositing ERR FD counters to: "   & integer'image(to_integer(unsigned(rnd_vect(31 downto 16)))));
+                <<signal .TB_TOP_CTU_CAN_FD.DUT.CAN_CORE_INST.FAULT_CONFINEMENT_INST.ERR_COUNTERS_INST.norm_err_ctr  : std_logic_vector(15 downto 0) >> <= force out rnd_vect(15 downto 0);
+                <<signal .TB_TOP_CTU_CAN_FD.DUT.CAN_CORE_INST.FAULT_CONFINEMENT_INST.ERR_COUNTERS_INST.data_err_ctr  : std_logic_vector(15 downto 0) >> <= force out rnd_vect(31 downto 16);
+                wait for 1 ns;
+                <<signal .TB_TOP_CTU_CAN_FD.DUT.CAN_CORE_INST.FAULT_CONFINEMENT_INST.ERR_COUNTERS_INST.norm_err_ctr  : std_logic_vector(15 downto 0) >> <= release out;
+                <<signal .TB_TOP_CTU_CAN_FD.DUT.CAN_CORE_INST.FAULT_CONFINEMENT_INST.ERR_COUNTERS_INST.data_err_ctr  : std_logic_vector(15 downto 0) >> <= release out;
+            end if;
 
             -- Execute test
             test_start <= '1';

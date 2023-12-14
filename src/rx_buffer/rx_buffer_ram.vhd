@@ -158,6 +158,8 @@ architecture rtl of rx_buffer_ram is
     signal rxb_port_b_address_i     : std_logic_vector(11 downto 0);
     signal rxb_port_b_data_out_i    : std_logic_vector(31 downto 0);
 
+    signal mr_tst_dest_tst_addr_pad : std_logic_vector(15 downto 0);
+
     signal tst_ena                  : std_logic;
 
     signal parity_word              : std_logic_vector(G_RX_BUFF_SIZE - 1 downto 0);
@@ -281,6 +283,12 @@ begin
     -- When memory test is enabled, control by Test registers.
     -----------------------------------------------------------------------------------------------
     -----------------------------------------------------------------------------------------------
+    process (mr_tst_dest_tst_addr)
+    begin
+        mr_tst_dest_tst_addr_pad <=
+            std_logic_vector(unsigned(mr_tst_dest_tst_addr) mod G_RX_BUFF_SIZE);
+    end process;
+
     tst_ena <= '1' when (mr_tst_control_tmaena = '1') and (mr_tst_dest_tst_mtgt = TMTGT_RXBUF)
                    else
                '0';
@@ -288,20 +296,20 @@ begin
     -- Write port
     rxb_port_a_address_i <= rxb_port_a_address when (tst_ena = '0')
                                                else
-                        mr_tst_dest_tst_addr(11 downto 0);
+                            mr_tst_dest_tst_addr_pad(11 downto 0);
 
     rxb_port_a_write_i <= rxb_port_a_write when (tst_ena = '0')
                                            else
-                      mr_tst_control_twrstb;
+                          mr_tst_control_twrstb;
 
     rxb_port_a_data_in_i <= rxb_port_a_data_in when (tst_ena = '0')
                                                else
-                        mr_tst_wdata_tst_wdata;
+                            mr_tst_wdata_tst_wdata;
 
     -- Read port
     rxb_port_b_address_i <= rxb_port_b_address when (tst_ena = '0')
                                                else
-                        mr_tst_dest_tst_addr(11 downto 0);
+                            mr_tst_dest_tst_addr_pad(11 downto 0);
 
     mr_tst_rdata_tst_rdata <= rxb_port_b_data_out_i when (tst_ena = '1')
                                                     else

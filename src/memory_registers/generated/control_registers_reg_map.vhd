@@ -143,11 +143,10 @@ begin
     -- MODE[RST]
     ----------------------------------------------------------------------------
 
-    mode_rst_reg_comp : memory_reg
+    mode_rst_reg_comp : memory_reg_os
     generic map(
         data_width                      => 1 ,
-        reset_value                     => "0" ,
-        modified_write_val_clear        => true 
+        reset_value                     => "0" 
     )
     port map(
         clk_sys                         => clk_sys ,-- in
@@ -162,11 +161,10 @@ begin
     -- MODE[BMM]
     ----------------------------------------------------------------------------
 
-    mode_bmm_reg_comp : memory_reg
+    mode_bmm_reg_comp : memory_reg_rw
     generic map(
         data_width                      => 1 ,
-        reset_value                     => "0" ,
-        modified_write_val_clear        => false 
+        reset_value                     => "0" 
     )
     port map(
         clk_sys                         => clk_sys ,-- in
@@ -181,11 +179,10 @@ begin
     -- MODE[STM]
     ----------------------------------------------------------------------------
 
-    mode_stm_reg_comp : memory_reg
+    mode_stm_reg_comp : memory_reg_rw
     generic map(
         data_width                      => 1 ,
-        reset_value                     => "0" ,
-        modified_write_val_clear        => false 
+        reset_value                     => "0" 
     )
     port map(
         clk_sys                         => clk_sys ,-- in
@@ -200,11 +197,10 @@ begin
     -- MODE[AFM]
     ----------------------------------------------------------------------------
 
-    mode_afm_reg_comp : memory_reg
+    mode_afm_reg_comp : memory_reg_rw
     generic map(
         data_width                      => 1 ,
-        reset_value                     => "0" ,
-        modified_write_val_clear        => false 
+        reset_value                     => "0" 
     )
     port map(
         clk_sys                         => clk_sys ,-- in
@@ -219,11 +215,10 @@ begin
     -- MODE[FDE]
     ----------------------------------------------------------------------------
 
-    mode_fde_reg_comp : memory_reg
+    mode_fde_reg_comp : memory_reg_rw
     generic map(
         data_width                      => 1 ,
-        reset_value                     => "1" ,
-        modified_write_val_clear        => false 
+        reset_value                     => "1" 
     )
     port map(
         clk_sys                         => clk_sys ,-- in
@@ -238,11 +233,10 @@ begin
     -- MODE[TTTM]
     ----------------------------------------------------------------------------
 
-    mode_tttm_reg_comp : memory_reg
+    mode_tttm_reg_comp : memory_reg_rw
     generic map(
         data_width                      => 1 ,
-        reset_value                     => "0" ,
-        modified_write_val_clear        => false 
+        reset_value                     => "0" 
     )
     port map(
         clk_sys                         => clk_sys ,-- in
@@ -257,11 +251,10 @@ begin
     -- MODE[ROM]
     ----------------------------------------------------------------------------
 
-    mode_rom_reg_comp : memory_reg
+    mode_rom_reg_comp : memory_reg_rw
     generic map(
         data_width                      => 1 ,
-        reset_value                     => "0" ,
-        modified_write_val_clear        => false 
+        reset_value                     => "0" 
     )
     port map(
         clk_sys                         => clk_sys ,-- in
@@ -276,11 +269,10 @@ begin
     -- MODE[ACF]
     ----------------------------------------------------------------------------
 
-    mode_acf_reg_comp : memory_reg
+    mode_acf_reg_comp : memory_reg_rw
     generic map(
         data_width                      => 1 ,
-        reset_value                     => "0" ,
-        modified_write_val_clear        => false 
+        reset_value                     => "0" 
     )
     port map(
         clk_sys                         => clk_sys ,-- in
@@ -295,11 +287,10 @@ begin
     -- MODE[TSTM]
     ----------------------------------------------------------------------------
 
-    mode_tstm_reg_comp : memory_reg
+    mode_tstm_reg_comp : memory_reg_rw
     generic map(
         data_width                      => 1 ,
-        reset_value                     => "0" ,
-        modified_write_val_clear        => false 
+        reset_value                     => "0" 
     )
     port map(
         clk_sys                         => clk_sys ,-- in
@@ -314,11 +305,10 @@ begin
     -- MODE[RXBAM]
     ----------------------------------------------------------------------------
 
-    mode_rxbam_reg_comp : memory_reg
+    mode_rxbam_reg_comp : memory_reg_rw
     generic map(
         data_width                      => 1 ,
-        reset_value                     => "1" ,
-        modified_write_val_clear        => false 
+        reset_value                     => "1" 
     )
     port map(
         clk_sys                         => clk_sys ,-- in
@@ -333,11 +323,10 @@ begin
     -- MODE[TXBBM]
     ----------------------------------------------------------------------------
 
-    mode_txbbm_reg_comp : memory_reg
+    mode_txbbm_reg_comp : memory_reg_rw
     generic map(
         data_width                      => 1 ,
-        reset_value                     => "0" ,
-        modified_write_val_clear        => false 
+        reset_value                     => "0" 
     )
     port map(
         clk_sys                         => clk_sys ,-- in
@@ -352,11 +341,10 @@ begin
     -- MODE[SAM]
     ----------------------------------------------------------------------------
 
-    mode_sam_reg_comp : memory_reg
+    mode_sam_reg_comp : memory_reg_rw
     generic map(
         data_width                      => 1 ,
-        reset_value                     => "0" ,
-        modified_write_val_clear        => false 
+        reset_value                     => "0" 
     )
     port map(
         clk_sys                         => clk_sys ,-- in
@@ -371,11 +359,10 @@ begin
     -- SETTINGS[RTRLE]
     ----------------------------------------------------------------------------
 
-    settings_rtrle_reg_comp : memory_reg
+    settings_rtrle_reg_comp : memory_reg_rw
     generic map(
         data_width                      => 1 ,
-        reset_value                     => "0" ,
-        modified_write_val_clear        => false 
+        reset_value                     => "0" 
     )
     port map(
         clk_sys                         => clk_sys ,-- in
@@ -390,11 +377,10 @@ begin
     -- SETTINGS[RTRTH]
     ----------------------------------------------------------------------------
 
-    settings_rtrth_reg_comp : memory_reg
+    settings_rtrth_reg_comp : memory_reg_rw
     generic map(
         data_width                      => 4 ,
-        reset_value                     => "0000" ,
-        modified_write_val_clear        => false 
+        reset_value                     => "0000" 
     )
     port map(
         clk_sys                         => clk_sys ,-- in
@@ -409,11 +395,10 @@ begin
     -- SETTINGS[ILBP]
     ----------------------------------------------------------------------------
 
-    settings_ilbp_reg_comp : memory_reg
+    settings_ilbp_reg_comp : memory_reg_rw
     generic map(
         data_width                      => 1 ,
-        reset_value                     => "0" ,
-        modified_write_val_clear        => false 
+        reset_value                     => "0" 
     )
     port map(
         clk_sys                         => clk_sys ,-- in
@@ -428,11 +413,10 @@ begin
     -- SETTINGS[ENA]
     ----------------------------------------------------------------------------
 
-    settings_ena_reg_comp : memory_reg
+    settings_ena_reg_comp : memory_reg_rw
     generic map(
         data_width                      => 1 ,
-        reset_value                     => "0" ,
-        modified_write_val_clear        => false 
+        reset_value                     => "0" 
     )
     port map(
         clk_sys                         => clk_sys ,-- in
@@ -447,11 +431,10 @@ begin
     -- SETTINGS[NISOFD]
     ----------------------------------------------------------------------------
 
-    settings_nisofd_reg_comp : memory_reg
+    settings_nisofd_reg_comp : memory_reg_rw
     generic map(
         data_width                      => 1 ,
-        reset_value                     => "0" ,
-        modified_write_val_clear        => false 
+        reset_value                     => "0" 
     )
     port map(
         clk_sys                         => clk_sys ,-- in
@@ -466,11 +449,10 @@ begin
     -- SETTINGS[PEX]
     ----------------------------------------------------------------------------
 
-    settings_pex_reg_comp : memory_reg
+    settings_pex_reg_comp : memory_reg_rw
     generic map(
         data_width                      => 1 ,
-        reset_value                     => "0" ,
-        modified_write_val_clear        => false 
+        reset_value                     => "0" 
     )
     port map(
         clk_sys                         => clk_sys ,-- in
@@ -485,11 +467,10 @@ begin
     -- SETTINGS[TBFBO]
     ----------------------------------------------------------------------------
 
-    settings_tbfbo_reg_comp : memory_reg
+    settings_tbfbo_reg_comp : memory_reg_rw
     generic map(
         data_width                      => 1 ,
-        reset_value                     => "1" ,
-        modified_write_val_clear        => false 
+        reset_value                     => "1" 
     )
     port map(
         clk_sys                         => clk_sys ,-- in
@@ -504,11 +485,10 @@ begin
     -- SETTINGS[FDRF]
     ----------------------------------------------------------------------------
 
-    settings_fdrf_reg_comp : memory_reg
+    settings_fdrf_reg_comp : memory_reg_rw
     generic map(
         data_width                      => 1 ,
-        reset_value                     => "0" ,
-        modified_write_val_clear        => false 
+        reset_value                     => "0" 
     )
     port map(
         clk_sys                         => clk_sys ,-- in
@@ -523,11 +503,10 @@ begin
     -- SETTINGS[PCHKE]
     ----------------------------------------------------------------------------
 
-    settings_pchke_reg_comp : memory_reg
+    settings_pchke_reg_comp : memory_reg_rw
     generic map(
         data_width                      => 1 ,
-        reset_value                     => "0" ,
-        modified_write_val_clear        => false 
+        reset_value                     => "0" 
     )
     port map(
         clk_sys                         => clk_sys ,-- in
@@ -542,11 +521,10 @@ begin
     -- COMMAND[RXRPMV]
     ----------------------------------------------------------------------------
 
-    command_rxrpmv_reg_comp : memory_reg
+    command_rxrpmv_reg_comp : memory_reg_os
     generic map(
         data_width                      => 1 ,
-        reset_value                     => "0" ,
-        modified_write_val_clear        => true 
+        reset_value                     => "0" 
     )
     port map(
         clk_sys                         => clk_sys ,-- in
@@ -561,11 +539,10 @@ begin
     -- COMMAND[RRB]
     ----------------------------------------------------------------------------
 
-    command_rrb_reg_comp : memory_reg
+    command_rrb_reg_comp : memory_reg_os
     generic map(
         data_width                      => 1 ,
-        reset_value                     => "0" ,
-        modified_write_val_clear        => true 
+        reset_value                     => "0" 
     )
     port map(
         clk_sys                         => clk_sys ,-- in
@@ -580,11 +557,10 @@ begin
     -- COMMAND[CDO]
     ----------------------------------------------------------------------------
 
-    command_cdo_reg_comp : memory_reg
+    command_cdo_reg_comp : memory_reg_os
     generic map(
         data_width                      => 1 ,
-        reset_value                     => "0" ,
-        modified_write_val_clear        => true 
+        reset_value                     => "0" 
     )
     port map(
         clk_sys                         => clk_sys ,-- in
@@ -599,11 +575,10 @@ begin
     -- COMMAND[ERCRST]
     ----------------------------------------------------------------------------
 
-    command_ercrst_reg_comp : memory_reg
+    command_ercrst_reg_comp : memory_reg_os
     generic map(
         data_width                      => 1 ,
-        reset_value                     => "0" ,
-        modified_write_val_clear        => true 
+        reset_value                     => "0" 
     )
     port map(
         clk_sys                         => clk_sys ,-- in
@@ -618,11 +593,10 @@ begin
     -- COMMAND[RXFCRST]
     ----------------------------------------------------------------------------
 
-    command_rxfcrst_reg_comp : memory_reg
+    command_rxfcrst_reg_comp : memory_reg_os
     generic map(
         data_width                      => 1 ,
-        reset_value                     => "0" ,
-        modified_write_val_clear        => true 
+        reset_value                     => "0" 
     )
     port map(
         clk_sys                         => clk_sys ,-- in
@@ -637,11 +611,10 @@ begin
     -- COMMAND[TXFCRST]
     ----------------------------------------------------------------------------
 
-    command_txfcrst_reg_comp : memory_reg
+    command_txfcrst_reg_comp : memory_reg_os
     generic map(
         data_width                      => 1 ,
-        reset_value                     => "0" ,
-        modified_write_val_clear        => true 
+        reset_value                     => "0" 
     )
     port map(
         clk_sys                         => clk_sys ,-- in
@@ -656,11 +629,10 @@ begin
     -- COMMAND[CPEXS]
     ----------------------------------------------------------------------------
 
-    command_cpexs_reg_comp : memory_reg
+    command_cpexs_reg_comp : memory_reg_os
     generic map(
         data_width                      => 1 ,
-        reset_value                     => "0" ,
-        modified_write_val_clear        => true 
+        reset_value                     => "0" 
     )
     port map(
         clk_sys                         => clk_sys ,-- in
@@ -675,11 +647,10 @@ begin
     -- COMMAND[CRXPE]
     ----------------------------------------------------------------------------
 
-    command_crxpe_reg_comp : memory_reg
+    command_crxpe_reg_comp : memory_reg_os
     generic map(
         data_width                      => 1 ,
-        reset_value                     => "0" ,
-        modified_write_val_clear        => true 
+        reset_value                     => "0" 
     )
     port map(
         clk_sys                         => clk_sys ,-- in
@@ -694,11 +665,10 @@ begin
     -- COMMAND[CTXPE]
     ----------------------------------------------------------------------------
 
-    command_ctxpe_reg_comp : memory_reg
+    command_ctxpe_reg_comp : memory_reg_os
     generic map(
         data_width                      => 1 ,
-        reset_value                     => "0" ,
-        modified_write_val_clear        => true 
+        reset_value                     => "0" 
     )
     port map(
         clk_sys                         => clk_sys ,-- in
@@ -713,11 +683,10 @@ begin
     -- COMMAND[CTXDPE]
     ----------------------------------------------------------------------------
 
-    command_ctxdpe_reg_comp : memory_reg
+    command_ctxdpe_reg_comp : memory_reg_os
     generic map(
         data_width                      => 1 ,
-        reset_value                     => "0" ,
-        modified_write_val_clear        => true 
+        reset_value                     => "0" 
     )
     port map(
         clk_sys                         => clk_sys ,-- in
@@ -732,11 +701,10 @@ begin
     -- INT_STAT[RXI]
     ----------------------------------------------------------------------------
 
-    int_stat_rxi_reg_comp : memory_reg
+    int_stat_rxi_reg_comp : memory_reg_os
     generic map(
         data_width                      => 1 ,
-        reset_value                     => "0" ,
-        modified_write_val_clear        => true 
+        reset_value                     => "0" 
     )
     port map(
         clk_sys                         => clk_sys ,-- in
@@ -751,11 +719,10 @@ begin
     -- INT_STAT[TXI]
     ----------------------------------------------------------------------------
 
-    int_stat_txi_reg_comp : memory_reg
+    int_stat_txi_reg_comp : memory_reg_os
     generic map(
         data_width                      => 1 ,
-        reset_value                     => "0" ,
-        modified_write_val_clear        => true 
+        reset_value                     => "0" 
     )
     port map(
         clk_sys                         => clk_sys ,-- in
@@ -770,11 +737,10 @@ begin
     -- INT_STAT[EWLI]
     ----------------------------------------------------------------------------
 
-    int_stat_ewli_reg_comp : memory_reg
+    int_stat_ewli_reg_comp : memory_reg_os
     generic map(
         data_width                      => 1 ,
-        reset_value                     => "0" ,
-        modified_write_val_clear        => true 
+        reset_value                     => "0" 
     )
     port map(
         clk_sys                         => clk_sys ,-- in
@@ -789,11 +755,10 @@ begin
     -- INT_STAT[DOI]
     ----------------------------------------------------------------------------
 
-    int_stat_doi_reg_comp : memory_reg
+    int_stat_doi_reg_comp : memory_reg_os
     generic map(
         data_width                      => 1 ,
-        reset_value                     => "0" ,
-        modified_write_val_clear        => true 
+        reset_value                     => "0" 
     )
     port map(
         clk_sys                         => clk_sys ,-- in
@@ -808,11 +773,10 @@ begin
     -- INT_STAT[FCSI]
     ----------------------------------------------------------------------------
 
-    int_stat_fcsi_reg_comp : memory_reg
+    int_stat_fcsi_reg_comp : memory_reg_os
     generic map(
         data_width                      => 1 ,
-        reset_value                     => "0" ,
-        modified_write_val_clear        => true 
+        reset_value                     => "0" 
     )
     port map(
         clk_sys                         => clk_sys ,-- in
@@ -827,11 +791,10 @@ begin
     -- INT_STAT[ALI]
     ----------------------------------------------------------------------------
 
-    int_stat_ali_reg_comp : memory_reg
+    int_stat_ali_reg_comp : memory_reg_os
     generic map(
         data_width                      => 1 ,
-        reset_value                     => "0" ,
-        modified_write_val_clear        => true 
+        reset_value                     => "0" 
     )
     port map(
         clk_sys                         => clk_sys ,-- in
@@ -846,11 +809,10 @@ begin
     -- INT_STAT[BEI]
     ----------------------------------------------------------------------------
 
-    int_stat_bei_reg_comp : memory_reg
+    int_stat_bei_reg_comp : memory_reg_os
     generic map(
         data_width                      => 1 ,
-        reset_value                     => "0" ,
-        modified_write_val_clear        => true 
+        reset_value                     => "0" 
     )
     port map(
         clk_sys                         => clk_sys ,-- in
@@ -865,11 +827,10 @@ begin
     -- INT_STAT[OFI]
     ----------------------------------------------------------------------------
 
-    int_stat_ofi_reg_comp : memory_reg
+    int_stat_ofi_reg_comp : memory_reg_os
     generic map(
         data_width                      => 1 ,
-        reset_value                     => "0" ,
-        modified_write_val_clear        => true 
+        reset_value                     => "0" 
     )
     port map(
         clk_sys                         => clk_sys ,-- in
@@ -884,11 +845,10 @@ begin
     -- INT_STAT[RXFI]
     ----------------------------------------------------------------------------
 
-    int_stat_rxfi_reg_comp : memory_reg
+    int_stat_rxfi_reg_comp : memory_reg_os
     generic map(
         data_width                      => 1 ,
-        reset_value                     => "0" ,
-        modified_write_val_clear        => true 
+        reset_value                     => "0" 
     )
     port map(
         clk_sys                         => clk_sys ,-- in
@@ -903,11 +863,10 @@ begin
     -- INT_STAT[BSI]
     ----------------------------------------------------------------------------
 
-    int_stat_bsi_reg_comp : memory_reg
+    int_stat_bsi_reg_comp : memory_reg_os
     generic map(
         data_width                      => 1 ,
-        reset_value                     => "0" ,
-        modified_write_val_clear        => true 
+        reset_value                     => "0" 
     )
     port map(
         clk_sys                         => clk_sys ,-- in
@@ -922,11 +881,10 @@ begin
     -- INT_STAT[RBNEI]
     ----------------------------------------------------------------------------
 
-    int_stat_rbnei_reg_comp : memory_reg
+    int_stat_rbnei_reg_comp : memory_reg_os
     generic map(
         data_width                      => 1 ,
-        reset_value                     => "0" ,
-        modified_write_val_clear        => true 
+        reset_value                     => "0" 
     )
     port map(
         clk_sys                         => clk_sys ,-- in
@@ -941,11 +899,10 @@ begin
     -- INT_STAT[TXBHCI]
     ----------------------------------------------------------------------------
 
-    int_stat_txbhci_reg_comp : memory_reg
+    int_stat_txbhci_reg_comp : memory_reg_os
     generic map(
         data_width                      => 1 ,
-        reset_value                     => "0" ,
-        modified_write_val_clear        => true 
+        reset_value                     => "0" 
     )
     port map(
         clk_sys                         => clk_sys ,-- in
@@ -960,11 +917,10 @@ begin
     -- INT_ENA_SET[INT_ENA_SET_SLICE_1]
     ----------------------------------------------------------------------------
 
-    int_ena_set_int_ena_set_slice_1_reg_comp : memory_reg
+    int_ena_set_int_ena_set_slice_1_reg_comp : memory_reg_os
     generic map(
         data_width                      => 8 ,
-        reset_value                     => "00000000" ,
-        modified_write_val_clear        => true 
+        reset_value                     => "00000000" 
     )
     port map(
         clk_sys                         => clk_sys ,-- in
@@ -979,11 +935,10 @@ begin
     -- INT_ENA_SET[INT_ENA_SET_SLICE_2]
     ----------------------------------------------------------------------------
 
-    int_ena_set_int_ena_set_slice_2_reg_comp : memory_reg
+    int_ena_set_int_ena_set_slice_2_reg_comp : memory_reg_os
     generic map(
         data_width                      => 4 ,
-        reset_value                     => "0000" ,
-        modified_write_val_clear        => true 
+        reset_value                     => "0000" 
     )
     port map(
         clk_sys                         => clk_sys ,-- in
@@ -998,11 +953,10 @@ begin
     -- INT_ENA_CLR[INT_ENA_CLR_SLICE_1]
     ----------------------------------------------------------------------------
 
-    int_ena_clr_int_ena_clr_slice_1_reg_comp : memory_reg
+    int_ena_clr_int_ena_clr_slice_1_reg_comp : memory_reg_os
     generic map(
         data_width                      => 8 ,
-        reset_value                     => "00000000" ,
-        modified_write_val_clear        => true 
+        reset_value                     => "00000000" 
     )
     port map(
         clk_sys                         => clk_sys ,-- in
@@ -1017,11 +971,10 @@ begin
     -- INT_ENA_CLR[INT_ENA_CLR_SLICE_2]
     ----------------------------------------------------------------------------
 
-    int_ena_clr_int_ena_clr_slice_2_reg_comp : memory_reg
+    int_ena_clr_int_ena_clr_slice_2_reg_comp : memory_reg_os
     generic map(
         data_width                      => 4 ,
-        reset_value                     => "0000" ,
-        modified_write_val_clear        => true 
+        reset_value                     => "0000" 
     )
     port map(
         clk_sys                         => clk_sys ,-- in
@@ -1036,11 +989,10 @@ begin
     -- INT_MASK_SET[INT_MASK_SET_SLICE_1]
     ----------------------------------------------------------------------------
 
-    int_mask_set_int_mask_set_slice_1_reg_comp : memory_reg
+    int_mask_set_int_mask_set_slice_1_reg_comp : memory_reg_os
     generic map(
         data_width                      => 8 ,
-        reset_value                     => "00000000" ,
-        modified_write_val_clear        => true 
+        reset_value                     => "00000000" 
     )
     port map(
         clk_sys                         => clk_sys ,-- in
@@ -1055,11 +1007,10 @@ begin
     -- INT_MASK_SET[INT_MASK_SET_SLICE_2]
     ----------------------------------------------------------------------------
 
-    int_mask_set_int_mask_set_slice_2_reg_comp : memory_reg
+    int_mask_set_int_mask_set_slice_2_reg_comp : memory_reg_os
     generic map(
         data_width                      => 4 ,
-        reset_value                     => "0000" ,
-        modified_write_val_clear        => true 
+        reset_value                     => "0000" 
     )
     port map(
         clk_sys                         => clk_sys ,-- in
@@ -1074,11 +1025,10 @@ begin
     -- INT_MASK_CLR[INT_MASK_CLR_SLICE_1]
     ----------------------------------------------------------------------------
 
-    int_mask_clr_int_mask_clr_slice_1_reg_comp : memory_reg
+    int_mask_clr_int_mask_clr_slice_1_reg_comp : memory_reg_os
     generic map(
         data_width                      => 8 ,
-        reset_value                     => "00000000" ,
-        modified_write_val_clear        => true 
+        reset_value                     => "00000000" 
     )
     port map(
         clk_sys                         => clk_sys ,-- in
@@ -1093,11 +1043,10 @@ begin
     -- INT_MASK_CLR[INT_MASK_CLR_SLICE_2]
     ----------------------------------------------------------------------------
 
-    int_mask_clr_int_mask_clr_slice_2_reg_comp : memory_reg
+    int_mask_clr_int_mask_clr_slice_2_reg_comp : memory_reg_os
     generic map(
         data_width                      => 4 ,
-        reset_value                     => "0000" ,
-        modified_write_val_clear        => true 
+        reset_value                     => "0000" 
     )
     port map(
         clk_sys                         => clk_sys ,-- in
@@ -1112,11 +1061,10 @@ begin
     -- BTR[PROP]
     ----------------------------------------------------------------------------
 
-    btr_prop_reg_comp : memory_reg_lockable
+    btr_prop_reg_comp : memory_reg_rw_lock
     generic map(
         data_width                      => 7 ,
-        reset_value                     => "0000101" ,
-        modified_write_val_clear        => false 
+        reset_value                     => "0000101" 
     )
     port map(
         clk_sys                         => clk_sys ,-- in
@@ -1132,11 +1080,10 @@ begin
     -- BTR[PH1_SLICE_1]
     ----------------------------------------------------------------------------
 
-    btr_ph1_slice_1_reg_comp : memory_reg_lockable
+    btr_ph1_slice_1_reg_comp : memory_reg_rw_lock
     generic map(
         data_width                      => 1 ,
-        reset_value                     => "1" ,
-        modified_write_val_clear        => false 
+        reset_value                     => "1" 
     )
     port map(
         clk_sys                         => clk_sys ,-- in
@@ -1152,11 +1099,10 @@ begin
     -- BTR[PH1_SLICE_2]
     ----------------------------------------------------------------------------
 
-    btr_ph1_slice_2_reg_comp : memory_reg_lockable
+    btr_ph1_slice_2_reg_comp : memory_reg_rw_lock
     generic map(
         data_width                      => 5 ,
-        reset_value                     => "00001" ,
-        modified_write_val_clear        => false 
+        reset_value                     => "00001" 
     )
     port map(
         clk_sys                         => clk_sys ,-- in
@@ -1172,11 +1118,10 @@ begin
     -- BTR[PH2_SLICE_1]
     ----------------------------------------------------------------------------
 
-    btr_ph2_slice_1_reg_comp : memory_reg_lockable
+    btr_ph2_slice_1_reg_comp : memory_reg_rw_lock
     generic map(
         data_width                      => 3 ,
-        reset_value                     => "101" ,
-        modified_write_val_clear        => false 
+        reset_value                     => "101" 
     )
     port map(
         clk_sys                         => clk_sys ,-- in
@@ -1192,11 +1137,10 @@ begin
     -- BTR[PH2_SLICE_2]
     ----------------------------------------------------------------------------
 
-    btr_ph2_slice_2_reg_comp : memory_reg_lockable
+    btr_ph2_slice_2_reg_comp : memory_reg_rw_lock
     generic map(
         data_width                      => 3 ,
-        reset_value                     => "000" ,
-        modified_write_val_clear        => false 
+        reset_value                     => "000" 
     )
     port map(
         clk_sys                         => clk_sys ,-- in
@@ -1212,11 +1156,10 @@ begin
     -- BTR[BRP_SLICE_1]
     ----------------------------------------------------------------------------
 
-    btr_brp_slice_1_reg_comp : memory_reg_lockable
+    btr_brp_slice_1_reg_comp : memory_reg_rw_lock
     generic map(
         data_width                      => 5 ,
-        reset_value                     => "01010" ,
-        modified_write_val_clear        => false 
+        reset_value                     => "01010" 
     )
     port map(
         clk_sys                         => clk_sys ,-- in
@@ -1232,11 +1175,10 @@ begin
     -- BTR[BRP_SLICE_2]
     ----------------------------------------------------------------------------
 
-    btr_brp_slice_2_reg_comp : memory_reg_lockable
+    btr_brp_slice_2_reg_comp : memory_reg_rw_lock
     generic map(
         data_width                      => 3 ,
-        reset_value                     => "000" ,
-        modified_write_val_clear        => false 
+        reset_value                     => "000" 
     )
     port map(
         clk_sys                         => clk_sys ,-- in
@@ -1252,11 +1194,10 @@ begin
     -- BTR[SJW]
     ----------------------------------------------------------------------------
 
-    btr_sjw_reg_comp : memory_reg_lockable
+    btr_sjw_reg_comp : memory_reg_rw_lock
     generic map(
         data_width                      => 5 ,
-        reset_value                     => "00010" ,
-        modified_write_val_clear        => false 
+        reset_value                     => "00010" 
     )
     port map(
         clk_sys                         => clk_sys ,-- in
@@ -1272,11 +1213,10 @@ begin
     -- BTR_FD[PROP_FD]
     ----------------------------------------------------------------------------
 
-    btr_fd_prop_fd_reg_comp : memory_reg_lockable
+    btr_fd_prop_fd_reg_comp : memory_reg_rw_lock
     generic map(
         data_width                      => 6 ,
-        reset_value                     => "000011" ,
-        modified_write_val_clear        => false 
+        reset_value                     => "000011" 
     )
     port map(
         clk_sys                         => clk_sys ,-- in
@@ -1292,11 +1232,10 @@ begin
     -- BTR_FD[PH1_FD_SLICE_1]
     ----------------------------------------------------------------------------
 
-    btr_fd_ph1_fd_slice_1_reg_comp : memory_reg_lockable
+    btr_fd_ph1_fd_slice_1_reg_comp : memory_reg_rw_lock
     generic map(
         data_width                      => 1 ,
-        reset_value                     => "1" ,
-        modified_write_val_clear        => false 
+        reset_value                     => "1" 
     )
     port map(
         clk_sys                         => clk_sys ,-- in
@@ -1312,11 +1251,10 @@ begin
     -- BTR_FD[PH1_FD_SLICE_2]
     ----------------------------------------------------------------------------
 
-    btr_fd_ph1_fd_slice_2_reg_comp : memory_reg_lockable
+    btr_fd_ph1_fd_slice_2_reg_comp : memory_reg_rw_lock
     generic map(
         data_width                      => 4 ,
-        reset_value                     => "0001" ,
-        modified_write_val_clear        => false 
+        reset_value                     => "0001" 
     )
     port map(
         clk_sys                         => clk_sys ,-- in
@@ -1332,11 +1270,10 @@ begin
     -- BTR_FD[PH2_FD_SLICE_1]
     ----------------------------------------------------------------------------
 
-    btr_fd_ph2_fd_slice_1_reg_comp : memory_reg_lockable
+    btr_fd_ph2_fd_slice_1_reg_comp : memory_reg_rw_lock
     generic map(
         data_width                      => 3 ,
-        reset_value                     => "011" ,
-        modified_write_val_clear        => false 
+        reset_value                     => "011" 
     )
     port map(
         clk_sys                         => clk_sys ,-- in
@@ -1352,11 +1289,10 @@ begin
     -- BTR_FD[PH2_FD_SLICE_2]
     ----------------------------------------------------------------------------
 
-    btr_fd_ph2_fd_slice_2_reg_comp : memory_reg_lockable
+    btr_fd_ph2_fd_slice_2_reg_comp : memory_reg_rw_lock
     generic map(
         data_width                      => 2 ,
-        reset_value                     => "00" ,
-        modified_write_val_clear        => false 
+        reset_value                     => "00" 
     )
     port map(
         clk_sys                         => clk_sys ,-- in
@@ -1372,11 +1308,10 @@ begin
     -- BTR_FD[BRP_FD_SLICE_1]
     ----------------------------------------------------------------------------
 
-    btr_fd_brp_fd_slice_1_reg_comp : memory_reg_lockable
+    btr_fd_brp_fd_slice_1_reg_comp : memory_reg_rw_lock
     generic map(
         data_width                      => 5 ,
-        reset_value                     => "00100" ,
-        modified_write_val_clear        => false 
+        reset_value                     => "00100" 
     )
     port map(
         clk_sys                         => clk_sys ,-- in
@@ -1392,11 +1327,10 @@ begin
     -- BTR_FD[BRP_FD_SLICE_2]
     ----------------------------------------------------------------------------
 
-    btr_fd_brp_fd_slice_2_reg_comp : memory_reg_lockable
+    btr_fd_brp_fd_slice_2_reg_comp : memory_reg_rw_lock
     generic map(
         data_width                      => 3 ,
-        reset_value                     => "000" ,
-        modified_write_val_clear        => false 
+        reset_value                     => "000" 
     )
     port map(
         clk_sys                         => clk_sys ,-- in
@@ -1412,11 +1346,10 @@ begin
     -- BTR_FD[SJW_FD]
     ----------------------------------------------------------------------------
 
-    btr_fd_sjw_fd_reg_comp : memory_reg_lockable
+    btr_fd_sjw_fd_reg_comp : memory_reg_rw_lock
     generic map(
         data_width                      => 5 ,
-        reset_value                     => "00010" ,
-        modified_write_val_clear        => false 
+        reset_value                     => "00010" 
     )
     port map(
         clk_sys                         => clk_sys ,-- in
@@ -1432,11 +1365,10 @@ begin
     -- EWL[EW_LIMIT]
     ----------------------------------------------------------------------------
 
-    ewl_ew_limit_reg_comp : memory_reg_lockable
+    ewl_ew_limit_reg_comp : memory_reg_rw_lock
     generic map(
         data_width                      => 8 ,
-        reset_value                     => "01100000" ,
-        modified_write_val_clear        => false 
+        reset_value                     => "01100000" 
     )
     port map(
         clk_sys                         => clk_sys ,-- in
@@ -1452,11 +1384,10 @@ begin
     -- ERP[ERP_LIMIT]
     ----------------------------------------------------------------------------
 
-    erp_erp_limit_reg_comp : memory_reg_lockable
+    erp_erp_limit_reg_comp : memory_reg_rw_lock
     generic map(
         data_width                      => 8 ,
-        reset_value                     => "10000000" ,
-        modified_write_val_clear        => false 
+        reset_value                     => "10000000" 
     )
     port map(
         clk_sys                         => clk_sys ,-- in
@@ -1472,11 +1403,10 @@ begin
     -- CTR_PRES[CTPV_SLICE_1]
     ----------------------------------------------------------------------------
 
-    ctr_pres_ctpv_slice_1_reg_comp : memory_reg_lockable
+    ctr_pres_ctpv_slice_1_reg_comp : memory_reg_rw_lock
     generic map(
         data_width                      => 8 ,
-        reset_value                     => "00000000" ,
-        modified_write_val_clear        => false 
+        reset_value                     => "00000000" 
     )
     port map(
         clk_sys                         => clk_sys ,-- in
@@ -1492,11 +1422,10 @@ begin
     -- CTR_PRES[CTPV_SLICE_2]
     ----------------------------------------------------------------------------
 
-    ctr_pres_ctpv_slice_2_reg_comp : memory_reg_lockable
+    ctr_pres_ctpv_slice_2_reg_comp : memory_reg_rw_lock
     generic map(
         data_width                      => 1 ,
-        reset_value                     => "0" ,
-        modified_write_val_clear        => false 
+        reset_value                     => "0" 
     )
     port map(
         clk_sys                         => clk_sys ,-- in
@@ -1512,11 +1441,10 @@ begin
     -- CTR_PRES[PTX]
     ----------------------------------------------------------------------------
 
-    ctr_pres_ptx_reg_comp : memory_reg_lockable
+    ctr_pres_ptx_reg_comp : memory_reg_os_lock
     generic map(
         data_width                      => 1 ,
-        reset_value                     => "0" ,
-        modified_write_val_clear        => true 
+        reset_value                     => "0" 
     )
     port map(
         clk_sys                         => clk_sys ,-- in
@@ -1532,11 +1460,10 @@ begin
     -- CTR_PRES[PRX]
     ----------------------------------------------------------------------------
 
-    ctr_pres_prx_reg_comp : memory_reg_lockable
+    ctr_pres_prx_reg_comp : memory_reg_os_lock
     generic map(
         data_width                      => 1 ,
-        reset_value                     => "0" ,
-        modified_write_val_clear        => true 
+        reset_value                     => "0" 
     )
     port map(
         clk_sys                         => clk_sys ,-- in
@@ -1552,11 +1479,10 @@ begin
     -- CTR_PRES[ENORM]
     ----------------------------------------------------------------------------
 
-    ctr_pres_enorm_reg_comp : memory_reg_lockable
+    ctr_pres_enorm_reg_comp : memory_reg_os_lock
     generic map(
         data_width                      => 1 ,
-        reset_value                     => "0" ,
-        modified_write_val_clear        => true 
+        reset_value                     => "0" 
     )
     port map(
         clk_sys                         => clk_sys ,-- in
@@ -1572,11 +1498,10 @@ begin
     -- CTR_PRES[EFD]
     ----------------------------------------------------------------------------
 
-    ctr_pres_efd_reg_comp : memory_reg_lockable
+    ctr_pres_efd_reg_comp : memory_reg_os_lock
     generic map(
         data_width                      => 1 ,
-        reset_value                     => "0" ,
-        modified_write_val_clear        => true 
+        reset_value                     => "0" 
     )
     port map(
         clk_sys                         => clk_sys ,-- in
@@ -1593,11 +1518,10 @@ begin
     -- FILTER_A_MASK[BIT_MASK_A_VAL_SLICE_1]
     ----------------------------------------------------------------------------
 
-    filter_a_mask_bit_mask_a_val_slice_1_reg_comp : memory_reg
+    filter_a_mask_bit_mask_a_val_slice_1_reg_comp : memory_reg_rw
     generic map(
         data_width                      => 8 ,
-        reset_value                     => "00000000" ,
-        modified_write_val_clear        => false 
+        reset_value                     => "00000000" 
     )
     port map(
         clk_sys                         => clk_sys ,-- in
@@ -1612,11 +1536,10 @@ begin
     -- FILTER_A_MASK[BIT_MASK_A_VAL_SLICE_2]
     ----------------------------------------------------------------------------
 
-    filter_a_mask_bit_mask_a_val_slice_2_reg_comp : memory_reg
+    filter_a_mask_bit_mask_a_val_slice_2_reg_comp : memory_reg_rw
     generic map(
         data_width                      => 8 ,
-        reset_value                     => "00000000" ,
-        modified_write_val_clear        => false 
+        reset_value                     => "00000000" 
     )
     port map(
         clk_sys                         => clk_sys ,-- in
@@ -1631,11 +1554,10 @@ begin
     -- FILTER_A_MASK[BIT_MASK_A_VAL_SLICE_3]
     ----------------------------------------------------------------------------
 
-    filter_a_mask_bit_mask_a_val_slice_3_reg_comp : memory_reg
+    filter_a_mask_bit_mask_a_val_slice_3_reg_comp : memory_reg_rw
     generic map(
         data_width                      => 8 ,
-        reset_value                     => "00000000" ,
-        modified_write_val_clear        => false 
+        reset_value                     => "00000000" 
     )
     port map(
         clk_sys                         => clk_sys ,-- in
@@ -1650,11 +1572,10 @@ begin
     -- FILTER_A_MASK[BIT_MASK_A_VAL_SLICE_4]
     ----------------------------------------------------------------------------
 
-    filter_a_mask_bit_mask_a_val_slice_4_reg_comp : memory_reg
+    filter_a_mask_bit_mask_a_val_slice_4_reg_comp : memory_reg_rw
     generic map(
         data_width                      => 5 ,
-        reset_value                     => "00000" ,
-        modified_write_val_clear        => false 
+        reset_value                     => "00000" 
     )
     port map(
         clk_sys                         => clk_sys ,-- in
@@ -1676,11 +1597,10 @@ begin
     -- FILTER_A_VAL[BIT_VAL_A_VAL_SLICE_1]
     ----------------------------------------------------------------------------
 
-    filter_a_val_bit_val_a_val_slice_1_reg_comp : memory_reg
+    filter_a_val_bit_val_a_val_slice_1_reg_comp : memory_reg_rw
     generic map(
         data_width                      => 8 ,
-        reset_value                     => "00000000" ,
-        modified_write_val_clear        => false 
+        reset_value                     => "00000000" 
     )
     port map(
         clk_sys                         => clk_sys ,-- in
@@ -1695,11 +1615,10 @@ begin
     -- FILTER_A_VAL[BIT_VAL_A_VAL_SLICE_2]
     ----------------------------------------------------------------------------
 
-    filter_a_val_bit_val_a_val_slice_2_reg_comp : memory_reg
+    filter_a_val_bit_val_a_val_slice_2_reg_comp : memory_reg_rw
     generic map(
         data_width                      => 8 ,
-        reset_value                     => "00000000" ,
-        modified_write_val_clear        => false 
+        reset_value                     => "00000000" 
     )
     port map(
         clk_sys                         => clk_sys ,-- in
@@ -1714,11 +1633,10 @@ begin
     -- FILTER_A_VAL[BIT_VAL_A_VAL_SLICE_3]
     ----------------------------------------------------------------------------
 
-    filter_a_val_bit_val_a_val_slice_3_reg_comp : memory_reg
+    filter_a_val_bit_val_a_val_slice_3_reg_comp : memory_reg_rw
     generic map(
         data_width                      => 8 ,
-        reset_value                     => "00000000" ,
-        modified_write_val_clear        => false 
+        reset_value                     => "00000000" 
     )
     port map(
         clk_sys                         => clk_sys ,-- in
@@ -1733,11 +1651,10 @@ begin
     -- FILTER_A_VAL[BIT_VAL_A_VAL_SLICE_4]
     ----------------------------------------------------------------------------
 
-    filter_a_val_bit_val_a_val_slice_4_reg_comp : memory_reg
+    filter_a_val_bit_val_a_val_slice_4_reg_comp : memory_reg_rw
     generic map(
         data_width                      => 5 ,
-        reset_value                     => "00000" ,
-        modified_write_val_clear        => false 
+        reset_value                     => "00000" 
     )
     port map(
         clk_sys                         => clk_sys ,-- in
@@ -1759,11 +1676,10 @@ begin
     -- FILTER_B_MASK[BIT_MASK_B_VAL_SLICE_1]
     ----------------------------------------------------------------------------
 
-    filter_b_mask_bit_mask_b_val_slice_1_reg_comp : memory_reg
+    filter_b_mask_bit_mask_b_val_slice_1_reg_comp : memory_reg_rw
     generic map(
         data_width                      => 8 ,
-        reset_value                     => "00000000" ,
-        modified_write_val_clear        => false 
+        reset_value                     => "00000000" 
     )
     port map(
         clk_sys                         => clk_sys ,-- in
@@ -1778,11 +1694,10 @@ begin
     -- FILTER_B_MASK[BIT_MASK_B_VAL_SLICE_2]
     ----------------------------------------------------------------------------
 
-    filter_b_mask_bit_mask_b_val_slice_2_reg_comp : memory_reg
+    filter_b_mask_bit_mask_b_val_slice_2_reg_comp : memory_reg_rw
     generic map(
         data_width                      => 8 ,
-        reset_value                     => "00000000" ,
-        modified_write_val_clear        => false 
+        reset_value                     => "00000000" 
     )
     port map(
         clk_sys                         => clk_sys ,-- in
@@ -1797,11 +1712,10 @@ begin
     -- FILTER_B_MASK[BIT_MASK_B_VAL_SLICE_3]
     ----------------------------------------------------------------------------
 
-    filter_b_mask_bit_mask_b_val_slice_3_reg_comp : memory_reg
+    filter_b_mask_bit_mask_b_val_slice_3_reg_comp : memory_reg_rw
     generic map(
         data_width                      => 8 ,
-        reset_value                     => "00000000" ,
-        modified_write_val_clear        => false 
+        reset_value                     => "00000000" 
     )
     port map(
         clk_sys                         => clk_sys ,-- in
@@ -1816,11 +1730,10 @@ begin
     -- FILTER_B_MASK[BIT_MASK_B_VAL_SLICE_4]
     ----------------------------------------------------------------------------
 
-    filter_b_mask_bit_mask_b_val_slice_4_reg_comp : memory_reg
+    filter_b_mask_bit_mask_b_val_slice_4_reg_comp : memory_reg_rw
     generic map(
         data_width                      => 5 ,
-        reset_value                     => "00000" ,
-        modified_write_val_clear        => false 
+        reset_value                     => "00000" 
     )
     port map(
         clk_sys                         => clk_sys ,-- in
@@ -1842,11 +1755,10 @@ begin
     -- FILTER_B_VAL[BIT_VAL_B_VAL_SLICE_1]
     ----------------------------------------------------------------------------
 
-    filter_b_val_bit_val_b_val_slice_1_reg_comp : memory_reg
+    filter_b_val_bit_val_b_val_slice_1_reg_comp : memory_reg_rw
     generic map(
         data_width                      => 8 ,
-        reset_value                     => "00000000" ,
-        modified_write_val_clear        => false 
+        reset_value                     => "00000000" 
     )
     port map(
         clk_sys                         => clk_sys ,-- in
@@ -1861,11 +1773,10 @@ begin
     -- FILTER_B_VAL[BIT_VAL_B_VAL_SLICE_2]
     ----------------------------------------------------------------------------
 
-    filter_b_val_bit_val_b_val_slice_2_reg_comp : memory_reg
+    filter_b_val_bit_val_b_val_slice_2_reg_comp : memory_reg_rw
     generic map(
         data_width                      => 8 ,
-        reset_value                     => "00000000" ,
-        modified_write_val_clear        => false 
+        reset_value                     => "00000000" 
     )
     port map(
         clk_sys                         => clk_sys ,-- in
@@ -1880,11 +1791,10 @@ begin
     -- FILTER_B_VAL[BIT_VAL_B_VAL_SLICE_3]
     ----------------------------------------------------------------------------
 
-    filter_b_val_bit_val_b_val_slice_3_reg_comp : memory_reg
+    filter_b_val_bit_val_b_val_slice_3_reg_comp : memory_reg_rw
     generic map(
         data_width                      => 8 ,
-        reset_value                     => "00000000" ,
-        modified_write_val_clear        => false 
+        reset_value                     => "00000000" 
     )
     port map(
         clk_sys                         => clk_sys ,-- in
@@ -1899,11 +1809,10 @@ begin
     -- FILTER_B_VAL[BIT_VAL_B_VAL_SLICE_4]
     ----------------------------------------------------------------------------
 
-    filter_b_val_bit_val_b_val_slice_4_reg_comp : memory_reg
+    filter_b_val_bit_val_b_val_slice_4_reg_comp : memory_reg_rw
     generic map(
         data_width                      => 5 ,
-        reset_value                     => "00000" ,
-        modified_write_val_clear        => false 
+        reset_value                     => "00000" 
     )
     port map(
         clk_sys                         => clk_sys ,-- in
@@ -1925,11 +1834,10 @@ begin
     -- FILTER_C_MASK[BIT_MASK_C_VAL_SLICE_1]
     ----------------------------------------------------------------------------
 
-    filter_c_mask_bit_mask_c_val_slice_1_reg_comp : memory_reg
+    filter_c_mask_bit_mask_c_val_slice_1_reg_comp : memory_reg_rw
     generic map(
         data_width                      => 8 ,
-        reset_value                     => "00000000" ,
-        modified_write_val_clear        => false 
+        reset_value                     => "00000000" 
     )
     port map(
         clk_sys                         => clk_sys ,-- in
@@ -1944,11 +1852,10 @@ begin
     -- FILTER_C_MASK[BIT_MASK_C_VAL_SLICE_2]
     ----------------------------------------------------------------------------
 
-    filter_c_mask_bit_mask_c_val_slice_2_reg_comp : memory_reg
+    filter_c_mask_bit_mask_c_val_slice_2_reg_comp : memory_reg_rw
     generic map(
         data_width                      => 8 ,
-        reset_value                     => "00000000" ,
-        modified_write_val_clear        => false 
+        reset_value                     => "00000000" 
     )
     port map(
         clk_sys                         => clk_sys ,-- in
@@ -1963,11 +1870,10 @@ begin
     -- FILTER_C_MASK[BIT_MASK_C_VAL_SLICE_3]
     ----------------------------------------------------------------------------
 
-    filter_c_mask_bit_mask_c_val_slice_3_reg_comp : memory_reg
+    filter_c_mask_bit_mask_c_val_slice_3_reg_comp : memory_reg_rw
     generic map(
         data_width                      => 8 ,
-        reset_value                     => "00000000" ,
-        modified_write_val_clear        => false 
+        reset_value                     => "00000000" 
     )
     port map(
         clk_sys                         => clk_sys ,-- in
@@ -1982,11 +1888,10 @@ begin
     -- FILTER_C_MASK[BIT_MASK_C_VAL_SLICE_4]
     ----------------------------------------------------------------------------
 
-    filter_c_mask_bit_mask_c_val_slice_4_reg_comp : memory_reg
+    filter_c_mask_bit_mask_c_val_slice_4_reg_comp : memory_reg_rw
     generic map(
         data_width                      => 5 ,
-        reset_value                     => "00000" ,
-        modified_write_val_clear        => false 
+        reset_value                     => "00000" 
     )
     port map(
         clk_sys                         => clk_sys ,-- in
@@ -2008,11 +1913,10 @@ begin
     -- FILTER_C_VAL[BIT_VAL_C_VAL_SLICE_1]
     ----------------------------------------------------------------------------
 
-    filter_c_val_bit_val_c_val_slice_1_reg_comp : memory_reg
+    filter_c_val_bit_val_c_val_slice_1_reg_comp : memory_reg_rw
     generic map(
         data_width                      => 8 ,
-        reset_value                     => "00000000" ,
-        modified_write_val_clear        => false 
+        reset_value                     => "00000000" 
     )
     port map(
         clk_sys                         => clk_sys ,-- in
@@ -2027,11 +1931,10 @@ begin
     -- FILTER_C_VAL[BIT_VAL_C_VAL_SLICE_2]
     ----------------------------------------------------------------------------
 
-    filter_c_val_bit_val_c_val_slice_2_reg_comp : memory_reg
+    filter_c_val_bit_val_c_val_slice_2_reg_comp : memory_reg_rw
     generic map(
         data_width                      => 8 ,
-        reset_value                     => "00000000" ,
-        modified_write_val_clear        => false 
+        reset_value                     => "00000000" 
     )
     port map(
         clk_sys                         => clk_sys ,-- in
@@ -2046,11 +1949,10 @@ begin
     -- FILTER_C_VAL[BIT_VAL_C_VAL_SLICE_3]
     ----------------------------------------------------------------------------
 
-    filter_c_val_bit_val_c_val_slice_3_reg_comp : memory_reg
+    filter_c_val_bit_val_c_val_slice_3_reg_comp : memory_reg_rw
     generic map(
         data_width                      => 8 ,
-        reset_value                     => "00000000" ,
-        modified_write_val_clear        => false 
+        reset_value                     => "00000000" 
     )
     port map(
         clk_sys                         => clk_sys ,-- in
@@ -2065,11 +1967,10 @@ begin
     -- FILTER_C_VAL[BIT_VAL_C_VAL_SLICE_4]
     ----------------------------------------------------------------------------
 
-    filter_c_val_bit_val_c_val_slice_4_reg_comp : memory_reg
+    filter_c_val_bit_val_c_val_slice_4_reg_comp : memory_reg_rw
     generic map(
         data_width                      => 5 ,
-        reset_value                     => "00000" ,
-        modified_write_val_clear        => false 
+        reset_value                     => "00000" 
     )
     port map(
         clk_sys                         => clk_sys ,-- in
@@ -2091,11 +1992,10 @@ begin
     -- FILTER_RAN_LOW[BIT_RAN_LOW_VAL_SLICE_1]
     ----------------------------------------------------------------------------
 
-    filter_ran_low_bit_ran_low_val_slice_1_reg_comp : memory_reg
+    filter_ran_low_bit_ran_low_val_slice_1_reg_comp : memory_reg_rw
     generic map(
         data_width                      => 8 ,
-        reset_value                     => "00000000" ,
-        modified_write_val_clear        => false 
+        reset_value                     => "00000000" 
     )
     port map(
         clk_sys                         => clk_sys ,-- in
@@ -2110,11 +2010,10 @@ begin
     -- FILTER_RAN_LOW[BIT_RAN_LOW_VAL_SLICE_2]
     ----------------------------------------------------------------------------
 
-    filter_ran_low_bit_ran_low_val_slice_2_reg_comp : memory_reg
+    filter_ran_low_bit_ran_low_val_slice_2_reg_comp : memory_reg_rw
     generic map(
         data_width                      => 8 ,
-        reset_value                     => "00000000" ,
-        modified_write_val_clear        => false 
+        reset_value                     => "00000000" 
     )
     port map(
         clk_sys                         => clk_sys ,-- in
@@ -2129,11 +2028,10 @@ begin
     -- FILTER_RAN_LOW[BIT_RAN_LOW_VAL_SLICE_3]
     ----------------------------------------------------------------------------
 
-    filter_ran_low_bit_ran_low_val_slice_3_reg_comp : memory_reg
+    filter_ran_low_bit_ran_low_val_slice_3_reg_comp : memory_reg_rw
     generic map(
         data_width                      => 8 ,
-        reset_value                     => "00000000" ,
-        modified_write_val_clear        => false 
+        reset_value                     => "00000000" 
     )
     port map(
         clk_sys                         => clk_sys ,-- in
@@ -2148,11 +2046,10 @@ begin
     -- FILTER_RAN_LOW[BIT_RAN_LOW_VAL_SLICE_4]
     ----------------------------------------------------------------------------
 
-    filter_ran_low_bit_ran_low_val_slice_4_reg_comp : memory_reg
+    filter_ran_low_bit_ran_low_val_slice_4_reg_comp : memory_reg_rw
     generic map(
         data_width                      => 5 ,
-        reset_value                     => "00000" ,
-        modified_write_val_clear        => false 
+        reset_value                     => "00000" 
     )
     port map(
         clk_sys                         => clk_sys ,-- in
@@ -2174,11 +2071,10 @@ begin
     -- FILTER_RAN_HIGH[BIT_RAN_HIGH_VAL_SLICE_1]
     ----------------------------------------------------------------------------
 
-    filter_ran_high_bit_ran_high_val_slice_1_reg_comp : memory_reg
+    filter_ran_high_bit_ran_high_val_slice_1_reg_comp : memory_reg_rw
     generic map(
         data_width                      => 8 ,
-        reset_value                     => "00000000" ,
-        modified_write_val_clear        => false 
+        reset_value                     => "00000000" 
     )
     port map(
         clk_sys                         => clk_sys ,-- in
@@ -2193,11 +2089,10 @@ begin
     -- FILTER_RAN_HIGH[BIT_RAN_HIGH_VAL_SLICE_2]
     ----------------------------------------------------------------------------
 
-    filter_ran_high_bit_ran_high_val_slice_2_reg_comp : memory_reg
+    filter_ran_high_bit_ran_high_val_slice_2_reg_comp : memory_reg_rw
     generic map(
         data_width                      => 8 ,
-        reset_value                     => "00000000" ,
-        modified_write_val_clear        => false 
+        reset_value                     => "00000000" 
     )
     port map(
         clk_sys                         => clk_sys ,-- in
@@ -2212,11 +2107,10 @@ begin
     -- FILTER_RAN_HIGH[BIT_RAN_HIGH_VAL_SLICE_3]
     ----------------------------------------------------------------------------
 
-    filter_ran_high_bit_ran_high_val_slice_3_reg_comp : memory_reg
+    filter_ran_high_bit_ran_high_val_slice_3_reg_comp : memory_reg_rw
     generic map(
         data_width                      => 8 ,
-        reset_value                     => "00000000" ,
-        modified_write_val_clear        => false 
+        reset_value                     => "00000000" 
     )
     port map(
         clk_sys                         => clk_sys ,-- in
@@ -2231,11 +2125,10 @@ begin
     -- FILTER_RAN_HIGH[BIT_RAN_HIGH_VAL_SLICE_4]
     ----------------------------------------------------------------------------
 
-    filter_ran_high_bit_ran_high_val_slice_4_reg_comp : memory_reg
+    filter_ran_high_bit_ran_high_val_slice_4_reg_comp : memory_reg_rw
     generic map(
         data_width                      => 5 ,
-        reset_value                     => "00000" ,
-        modified_write_val_clear        => false 
+        reset_value                     => "00000" 
     )
     port map(
         clk_sys                         => clk_sys ,-- in
@@ -2256,11 +2149,10 @@ begin
     -- FILTER_CONTROL[FANB]
     ----------------------------------------------------------------------------
 
-    filter_control_fanb_reg_comp : memory_reg
+    filter_control_fanb_reg_comp : memory_reg_rw
     generic map(
         data_width                      => 1 ,
-        reset_value                     => "1" ,
-        modified_write_val_clear        => false 
+        reset_value                     => "1" 
     )
     port map(
         clk_sys                         => clk_sys ,-- in
@@ -2275,11 +2167,10 @@ begin
     -- FILTER_CONTROL[FANE]
     ----------------------------------------------------------------------------
 
-    filter_control_fane_reg_comp : memory_reg
+    filter_control_fane_reg_comp : memory_reg_rw
     generic map(
         data_width                      => 1 ,
-        reset_value                     => "1" ,
-        modified_write_val_clear        => false 
+        reset_value                     => "1" 
     )
     port map(
         clk_sys                         => clk_sys ,-- in
@@ -2294,11 +2185,10 @@ begin
     -- FILTER_CONTROL[FAFB]
     ----------------------------------------------------------------------------
 
-    filter_control_fafb_reg_comp : memory_reg
+    filter_control_fafb_reg_comp : memory_reg_rw
     generic map(
         data_width                      => 1 ,
-        reset_value                     => "1" ,
-        modified_write_val_clear        => false 
+        reset_value                     => "1" 
     )
     port map(
         clk_sys                         => clk_sys ,-- in
@@ -2313,11 +2203,10 @@ begin
     -- FILTER_CONTROL[FAFE]
     ----------------------------------------------------------------------------
 
-    filter_control_fafe_reg_comp : memory_reg
+    filter_control_fafe_reg_comp : memory_reg_rw
     generic map(
         data_width                      => 1 ,
-        reset_value                     => "1" ,
-        modified_write_val_clear        => false 
+        reset_value                     => "1" 
     )
     port map(
         clk_sys                         => clk_sys ,-- in
@@ -2332,11 +2221,10 @@ begin
     -- FILTER_CONTROL[FBNB]
     ----------------------------------------------------------------------------
 
-    filter_control_fbnb_reg_comp : memory_reg
+    filter_control_fbnb_reg_comp : memory_reg_rw
     generic map(
         data_width                      => 1 ,
-        reset_value                     => "0" ,
-        modified_write_val_clear        => false 
+        reset_value                     => "0" 
     )
     port map(
         clk_sys                         => clk_sys ,-- in
@@ -2351,11 +2239,10 @@ begin
     -- FILTER_CONTROL[FBNE]
     ----------------------------------------------------------------------------
 
-    filter_control_fbne_reg_comp : memory_reg
+    filter_control_fbne_reg_comp : memory_reg_rw
     generic map(
         data_width                      => 1 ,
-        reset_value                     => "0" ,
-        modified_write_val_clear        => false 
+        reset_value                     => "0" 
     )
     port map(
         clk_sys                         => clk_sys ,-- in
@@ -2370,11 +2257,10 @@ begin
     -- FILTER_CONTROL[FBFB]
     ----------------------------------------------------------------------------
 
-    filter_control_fbfb_reg_comp : memory_reg
+    filter_control_fbfb_reg_comp : memory_reg_rw
     generic map(
         data_width                      => 1 ,
-        reset_value                     => "0" ,
-        modified_write_val_clear        => false 
+        reset_value                     => "0" 
     )
     port map(
         clk_sys                         => clk_sys ,-- in
@@ -2389,11 +2275,10 @@ begin
     -- FILTER_CONTROL[FBFE]
     ----------------------------------------------------------------------------
 
-    filter_control_fbfe_reg_comp : memory_reg
+    filter_control_fbfe_reg_comp : memory_reg_rw
     generic map(
         data_width                      => 1 ,
-        reset_value                     => "0" ,
-        modified_write_val_clear        => false 
+        reset_value                     => "0" 
     )
     port map(
         clk_sys                         => clk_sys ,-- in
@@ -2408,11 +2293,10 @@ begin
     -- FILTER_CONTROL[FCNB]
     ----------------------------------------------------------------------------
 
-    filter_control_fcnb_reg_comp : memory_reg
+    filter_control_fcnb_reg_comp : memory_reg_rw
     generic map(
         data_width                      => 1 ,
-        reset_value                     => "0" ,
-        modified_write_val_clear        => false 
+        reset_value                     => "0" 
     )
     port map(
         clk_sys                         => clk_sys ,-- in
@@ -2427,11 +2311,10 @@ begin
     -- FILTER_CONTROL[FCNE]
     ----------------------------------------------------------------------------
 
-    filter_control_fcne_reg_comp : memory_reg
+    filter_control_fcne_reg_comp : memory_reg_rw
     generic map(
         data_width                      => 1 ,
-        reset_value                     => "0" ,
-        modified_write_val_clear        => false 
+        reset_value                     => "0" 
     )
     port map(
         clk_sys                         => clk_sys ,-- in
@@ -2446,11 +2329,10 @@ begin
     -- FILTER_CONTROL[FCFB]
     ----------------------------------------------------------------------------
 
-    filter_control_fcfb_reg_comp : memory_reg
+    filter_control_fcfb_reg_comp : memory_reg_rw
     generic map(
         data_width                      => 1 ,
-        reset_value                     => "0" ,
-        modified_write_val_clear        => false 
+        reset_value                     => "0" 
     )
     port map(
         clk_sys                         => clk_sys ,-- in
@@ -2465,11 +2347,10 @@ begin
     -- FILTER_CONTROL[FCFE]
     ----------------------------------------------------------------------------
 
-    filter_control_fcfe_reg_comp : memory_reg
+    filter_control_fcfe_reg_comp : memory_reg_rw
     generic map(
         data_width                      => 1 ,
-        reset_value                     => "0" ,
-        modified_write_val_clear        => false 
+        reset_value                     => "0" 
     )
     port map(
         clk_sys                         => clk_sys ,-- in
@@ -2484,11 +2365,10 @@ begin
     -- FILTER_CONTROL[FRNB]
     ----------------------------------------------------------------------------
 
-    filter_control_frnb_reg_comp : memory_reg
+    filter_control_frnb_reg_comp : memory_reg_rw
     generic map(
         data_width                      => 1 ,
-        reset_value                     => "0" ,
-        modified_write_val_clear        => false 
+        reset_value                     => "0" 
     )
     port map(
         clk_sys                         => clk_sys ,-- in
@@ -2503,11 +2383,10 @@ begin
     -- FILTER_CONTROL[FRNE]
     ----------------------------------------------------------------------------
 
-    filter_control_frne_reg_comp : memory_reg
+    filter_control_frne_reg_comp : memory_reg_rw
     generic map(
         data_width                      => 1 ,
-        reset_value                     => "0" ,
-        modified_write_val_clear        => false 
+        reset_value                     => "0" 
     )
     port map(
         clk_sys                         => clk_sys ,-- in
@@ -2522,11 +2401,10 @@ begin
     -- FILTER_CONTROL[FRFB]
     ----------------------------------------------------------------------------
 
-    filter_control_frfb_reg_comp : memory_reg
+    filter_control_frfb_reg_comp : memory_reg_rw
     generic map(
         data_width                      => 1 ,
-        reset_value                     => "0" ,
-        modified_write_val_clear        => false 
+        reset_value                     => "0" 
     )
     port map(
         clk_sys                         => clk_sys ,-- in
@@ -2541,11 +2419,10 @@ begin
     -- FILTER_CONTROL[FRFE]
     ----------------------------------------------------------------------------
 
-    filter_control_frfe_reg_comp : memory_reg
+    filter_control_frfe_reg_comp : memory_reg_rw
     generic map(
         data_width                      => 1 ,
-        reset_value                     => "0" ,
-        modified_write_val_clear        => false 
+        reset_value                     => "0" 
     )
     port map(
         clk_sys                         => clk_sys ,-- in
@@ -2560,11 +2437,10 @@ begin
     -- RX_SETTINGS[RTSOP]
     ----------------------------------------------------------------------------
 
-    rx_settings_rtsop_reg_comp : memory_reg
+    rx_settings_rtsop_reg_comp : memory_reg_rw
     generic map(
         data_width                      => 1 ,
-        reset_value                     => "0" ,
-        modified_write_val_clear        => false 
+        reset_value                     => "0" 
     )
     port map(
         clk_sys                         => clk_sys ,-- in
@@ -2602,11 +2478,10 @@ begin
     -- TX_COMMAND[TXCE]
     ----------------------------------------------------------------------------
 
-    tx_command_txce_reg_comp : memory_reg
+    tx_command_txce_reg_comp : memory_reg_os
     generic map(
         data_width                      => 1 ,
-        reset_value                     => "0" ,
-        modified_write_val_clear        => true 
+        reset_value                     => "0" 
     )
     port map(
         clk_sys                         => clk_sys ,-- in
@@ -2621,11 +2496,10 @@ begin
     -- TX_COMMAND[TXCR]
     ----------------------------------------------------------------------------
 
-    tx_command_txcr_reg_comp : memory_reg
+    tx_command_txcr_reg_comp : memory_reg_os
     generic map(
         data_width                      => 1 ,
-        reset_value                     => "0" ,
-        modified_write_val_clear        => true 
+        reset_value                     => "0" 
     )
     port map(
         clk_sys                         => clk_sys ,-- in
@@ -2640,11 +2514,10 @@ begin
     -- TX_COMMAND[TXCA]
     ----------------------------------------------------------------------------
 
-    tx_command_txca_reg_comp : memory_reg
+    tx_command_txca_reg_comp : memory_reg_os
     generic map(
         data_width                      => 1 ,
-        reset_value                     => "0" ,
-        modified_write_val_clear        => true 
+        reset_value                     => "0" 
     )
     port map(
         clk_sys                         => clk_sys ,-- in
@@ -2659,11 +2532,10 @@ begin
     -- TX_COMMAND[TXB1]
     ----------------------------------------------------------------------------
 
-    tx_command_txb1_reg_comp : memory_reg
+    tx_command_txb1_reg_comp : memory_reg_rw
     generic map(
         data_width                      => 1 ,
-        reset_value                     => "0" ,
-        modified_write_val_clear        => false 
+        reset_value                     => "0" 
     )
     port map(
         clk_sys                         => clk_sys ,-- in
@@ -2678,11 +2550,10 @@ begin
     -- TX_COMMAND[TXB2]
     ----------------------------------------------------------------------------
 
-    tx_command_txb2_reg_comp : memory_reg
+    tx_command_txb2_reg_comp : memory_reg_rw
     generic map(
         data_width                      => 1 ,
-        reset_value                     => "0" ,
-        modified_write_val_clear        => false 
+        reset_value                     => "0" 
     )
     port map(
         clk_sys                         => clk_sys ,-- in
@@ -2697,11 +2568,10 @@ begin
     -- TX_COMMAND[TXB3]
     ----------------------------------------------------------------------------
 
-    tx_command_txb3_reg_comp : memory_reg
+    tx_command_txb3_reg_comp : memory_reg_rw
     generic map(
         data_width                      => 1 ,
-        reset_value                     => "0" ,
-        modified_write_val_clear        => false 
+        reset_value                     => "0" 
     )
     port map(
         clk_sys                         => clk_sys ,-- in
@@ -2716,11 +2586,10 @@ begin
     -- TX_COMMAND[TXB4]
     ----------------------------------------------------------------------------
 
-    tx_command_txb4_reg_comp : memory_reg
+    tx_command_txb4_reg_comp : memory_reg_rw
     generic map(
         data_width                      => 1 ,
-        reset_value                     => "0" ,
-        modified_write_val_clear        => false 
+        reset_value                     => "0" 
     )
     port map(
         clk_sys                         => clk_sys ,-- in
@@ -2735,11 +2604,10 @@ begin
     -- TX_COMMAND[TXB5]
     ----------------------------------------------------------------------------
 
-    tx_command_txb5_reg_comp : memory_reg
+    tx_command_txb5_reg_comp : memory_reg_rw
     generic map(
         data_width                      => 1 ,
-        reset_value                     => "0" ,
-        modified_write_val_clear        => false 
+        reset_value                     => "0" 
     )
     port map(
         clk_sys                         => clk_sys ,-- in
@@ -2754,11 +2622,10 @@ begin
     -- TX_COMMAND[TXB6]
     ----------------------------------------------------------------------------
 
-    tx_command_txb6_reg_comp : memory_reg
+    tx_command_txb6_reg_comp : memory_reg_rw
     generic map(
         data_width                      => 1 ,
-        reset_value                     => "0" ,
-        modified_write_val_clear        => false 
+        reset_value                     => "0" 
     )
     port map(
         clk_sys                         => clk_sys ,-- in
@@ -2773,11 +2640,10 @@ begin
     -- TX_COMMAND[TXB7]
     ----------------------------------------------------------------------------
 
-    tx_command_txb7_reg_comp : memory_reg
+    tx_command_txb7_reg_comp : memory_reg_rw
     generic map(
         data_width                      => 1 ,
-        reset_value                     => "0" ,
-        modified_write_val_clear        => false 
+        reset_value                     => "0" 
     )
     port map(
         clk_sys                         => clk_sys ,-- in
@@ -2792,11 +2658,10 @@ begin
     -- TX_COMMAND[TXB8]
     ----------------------------------------------------------------------------
 
-    tx_command_txb8_reg_comp : memory_reg
+    tx_command_txb8_reg_comp : memory_reg_rw
     generic map(
         data_width                      => 1 ,
-        reset_value                     => "0" ,
-        modified_write_val_clear        => false 
+        reset_value                     => "0" 
     )
     port map(
         clk_sys                         => clk_sys ,-- in
@@ -2811,11 +2676,10 @@ begin
     -- TX_PRIORITY[TXT1P]
     ----------------------------------------------------------------------------
 
-    tx_priority_txt1p_reg_comp : memory_reg
+    tx_priority_txt1p_reg_comp : memory_reg_rw
     generic map(
         data_width                      => 3 ,
-        reset_value                     => "001" ,
-        modified_write_val_clear        => false 
+        reset_value                     => "001" 
     )
     port map(
         clk_sys                         => clk_sys ,-- in
@@ -2830,11 +2694,10 @@ begin
     -- TX_PRIORITY[TXT2P]
     ----------------------------------------------------------------------------
 
-    tx_priority_txt2p_reg_comp : memory_reg
+    tx_priority_txt2p_reg_comp : memory_reg_rw
     generic map(
         data_width                      => 3 ,
-        reset_value                     => "000" ,
-        modified_write_val_clear        => false 
+        reset_value                     => "000" 
     )
     port map(
         clk_sys                         => clk_sys ,-- in
@@ -2849,11 +2712,10 @@ begin
     -- TX_PRIORITY[TXT3P]
     ----------------------------------------------------------------------------
 
-    tx_priority_txt3p_reg_comp : memory_reg
+    tx_priority_txt3p_reg_comp : memory_reg_rw
     generic map(
         data_width                      => 3 ,
-        reset_value                     => "000" ,
-        modified_write_val_clear        => false 
+        reset_value                     => "000" 
     )
     port map(
         clk_sys                         => clk_sys ,-- in
@@ -2868,11 +2730,10 @@ begin
     -- TX_PRIORITY[TXT4P]
     ----------------------------------------------------------------------------
 
-    tx_priority_txt4p_reg_comp : memory_reg
+    tx_priority_txt4p_reg_comp : memory_reg_rw
     generic map(
         data_width                      => 3 ,
-        reset_value                     => "000" ,
-        modified_write_val_clear        => false 
+        reset_value                     => "000" 
     )
     port map(
         clk_sys                         => clk_sys ,-- in
@@ -2887,11 +2748,10 @@ begin
     -- TX_PRIORITY[TXT5P]
     ----------------------------------------------------------------------------
 
-    tx_priority_txt5p_reg_comp : memory_reg
+    tx_priority_txt5p_reg_comp : memory_reg_rw
     generic map(
         data_width                      => 3 ,
-        reset_value                     => "000" ,
-        modified_write_val_clear        => false 
+        reset_value                     => "000" 
     )
     port map(
         clk_sys                         => clk_sys ,-- in
@@ -2906,11 +2766,10 @@ begin
     -- TX_PRIORITY[TXT6P]
     ----------------------------------------------------------------------------
 
-    tx_priority_txt6p_reg_comp : memory_reg
+    tx_priority_txt6p_reg_comp : memory_reg_rw
     generic map(
         data_width                      => 3 ,
-        reset_value                     => "000" ,
-        modified_write_val_clear        => false 
+        reset_value                     => "000" 
     )
     port map(
         clk_sys                         => clk_sys ,-- in
@@ -2925,11 +2784,10 @@ begin
     -- TX_PRIORITY[TXT7P]
     ----------------------------------------------------------------------------
 
-    tx_priority_txt7p_reg_comp : memory_reg
+    tx_priority_txt7p_reg_comp : memory_reg_rw
     generic map(
         data_width                      => 3 ,
-        reset_value                     => "000" ,
-        modified_write_val_clear        => false 
+        reset_value                     => "000" 
     )
     port map(
         clk_sys                         => clk_sys ,-- in
@@ -2944,11 +2802,10 @@ begin
     -- TX_PRIORITY[TXT8P]
     ----------------------------------------------------------------------------
 
-    tx_priority_txt8p_reg_comp : memory_reg
+    tx_priority_txt8p_reg_comp : memory_reg_rw
     generic map(
         data_width                      => 3 ,
-        reset_value                     => "000" ,
-        modified_write_val_clear        => false 
+        reset_value                     => "000" 
     )
     port map(
         clk_sys                         => clk_sys ,-- in
@@ -2963,11 +2820,10 @@ begin
     -- SSP_CFG[SSP_OFFSET]
     ----------------------------------------------------------------------------
 
-    ssp_cfg_ssp_offset_reg_comp : memory_reg_lockable
+    ssp_cfg_ssp_offset_reg_comp : memory_reg_rw_lock
     generic map(
         data_width                      => 8 ,
-        reset_value                     => "00001010" ,
-        modified_write_val_clear        => false 
+        reset_value                     => "00001010" 
     )
     port map(
         clk_sys                         => clk_sys ,-- in
@@ -2983,11 +2839,10 @@ begin
     -- SSP_CFG[SSP_SRC]
     ----------------------------------------------------------------------------
 
-    ssp_cfg_ssp_src_reg_comp : memory_reg_lockable
+    ssp_cfg_ssp_src_reg_comp : memory_reg_rw_lock
     generic map(
         data_width                      => 2 ,
-        reset_value                     => "00" ,
-        modified_write_val_clear        => false 
+        reset_value                     => "00" 
     )
     port map(
         clk_sys                         => clk_sys ,-- in

@@ -1,18 +1,18 @@
 --------------------------------------------------------------------------------
--- 
--- CTU CAN FD IP Core 
+--
+-- CTU CAN FD IP Core
 -- Copyright (C) 2021-present Ondrej Ille
--- 
+--
 -- Permission is hereby granted, free of charge, to any person obtaining a copy
 -- of this VHDL component and associated documentation files (the "Component"),
 -- to use, copy, modify, merge, publish, distribute the Component for
 -- educational, research, evaluation, self-interest purposes. Using the
 -- Component for commercial purposes is forbidden unless previously agreed with
 -- Copyright holder.
--- 
+--
 -- The above copyright notice and this permission notice shall be included in
 -- all copies or substantial portions of the Component.
--- 
+--
 -- THE COMPONENT IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 -- IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 -- FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -20,38 +20,38 @@
 -- LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
 -- FROM, OUT OF OR IN CONNECTION WITH THE COMPONENT OR THE USE OR OTHER DEALINGS
 -- IN THE COMPONENT.
--- 
+--
 -- The CAN protocol is developed by Robert Bosch GmbH and protected by patents.
 -- Anybody who wants to implement this IP core on silicon has to obtain a CAN
 -- protocol license from Bosch.
--- 
+--
 -- -------------------------------------------------------------------------------
--- 
--- CTU CAN FD IP Core 
+--
+-- CTU CAN FD IP Core
 -- Copyright (C) 2015-2020 MIT License
--- 
+--
 -- Authors:
 --     Ondrej Ille <ondrej.ille@gmail.com>
 --     Martin Jerabek <martin.jerabek01@gmail.com>
--- 
--- Project advisors: 
+--
+-- Project advisors:
 -- 	Jiri Novak <jnovak@fel.cvut.cz>
 -- 	Pavel Pisa <pisa@cmp.felk.cvut.cz>
--- 
+--
 -- Department of Measurement         (http://meas.fel.cvut.cz/)
 -- Faculty of Electrical Engineering (http://www.fel.cvut.cz)
 -- Czech Technical University        (http://www.cvut.cz/)
--- 
+--
 -- Permission is hereby granted, free of charge, to any person obtaining a copy
 -- of this VHDL component and associated documentation files (the "Component"),
 -- to deal in the Component without restriction, including without limitation
 -- the rights to use, copy, modify, merge, publish, distribute, sublicense,
 -- and/or sell copies of the Component, and to permit persons to whom the
 -- Component is furnished to do so, subject to the following conditions:
--- 
+--
 -- The above copyright notice and this permission notice shall be included in
 -- all copies or substantial portions of the Component.
--- 
+--
 -- THE COMPONENT IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 -- IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 -- FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -59,11 +59,11 @@
 -- LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
 -- FROM, OUT OF OR IN CONNECTION WITH THE COMPONENT OR THE USE OR OTHER DEALINGS
 -- IN THE COMPONENT.
--- 
+--
 -- The CAN protocol is developed by Robert Bosch GmbH and protected by patents.
 -- Anybody who wants to implement this IP core on silicon has to obtain a CAN
 -- protocol license from Bosch.
--- 
+--
 --------------------------------------------------------------------------------
 
 --------------------------------------------------------------------------------
@@ -143,8 +143,12 @@ use ctu_can_fd_tb.int_do_ftest.all;
 use ctu_can_fd_tb.int_ewl_ftest.all;
 use ctu_can_fd_tb.int_fcs_ftest.all;
 use ctu_can_fd_tb.int_rx_ftest.all;
+use ctu_can_fd_tb.int_rxf_ftest.all;
 use ctu_can_fd_tb.int_tx_ftest.all;
 use ctu_can_fd_tb.int_of_ftest.all;
+use ctu_can_fd_tb.int_bs_ftest.all;
+use ctu_can_fd_tb.int_rxne_ftest.all;
+use ctu_can_fd_tb.int_txbhci_ftest.all;
 
 use ctu_can_fd_tb.message_filter_ftest.all;
 use ctu_can_fd_tb.mode_bus_monitoring_ftest.all;
@@ -169,6 +173,8 @@ use ctu_can_fd_tb.no_sof_tx_ftest.all;
 use ctu_can_fd_tb.one_shot_ftest.all;
 use ctu_can_fd_tb.overload_ftest.all;
 
+use ctu_can_fd_tb.pc_fsm_transitions_ftest.all;
+
 use ctu_can_fd_tb.rec_saturation_ftest.all;
 use ctu_can_fd_tb.retr_limit_ftest.all;
 use ctu_can_fd_tb.retr_limit_2_ftest.all;
@@ -177,10 +183,12 @@ use ctu_can_fd_tb.rx_buf_empty_read_ftest.all;
 use ctu_can_fd_tb.rx_counter_ftest.all;
 use ctu_can_fd_tb.rx_settings_rtsop_ftest.all;
 use ctu_can_fd_tb.rx_status_ftest.all;
+use ctu_can_fd_tb.rx_status_rxfrc_ftest.all;
 use ctu_can_fd_tb.rx_status_mof_ftest.all;
 
 use ctu_can_fd_tb.scan_mode_ftest.all;
 use ctu_can_fd_tb.settings_tbfbo_ftest.all;
+use ctu_can_fd_tb.settings_nisofd_ftest.all;
 use ctu_can_fd_tb.single_bus_node_ftest.all;
 use ctu_can_fd_tb.ssp_cfg_ftest.all;
 use ctu_can_fd_tb.ssp_4_bits_flying_ftest.all;
@@ -199,6 +207,7 @@ use ctu_can_fd_tb.trv_delay_ftest.all;
 use ctu_can_fd_tb.tst_mem_acc_rx_ftest.all;
 use ctu_can_fd_tb.tst_mem_acc_txt_ftest.all;
 use ctu_can_fd_tb.tx_arb_consistency_ftest.all;
+use ctu_can_fd_tb.tx_arb_consistency_2_ftest.all;
 use ctu_can_fd_tb.tx_arb_time_tran_ftest.all;
 use ctu_can_fd_tb.tx_cmd_set_abort_ftest.all;
 use ctu_can_fd_tb.tx_cmd_set_empty_ftest.all;
@@ -211,10 +220,15 @@ use ctu_can_fd_tb.tx_status_ftest.all;
 use ctu_can_fd_tb.timestamp_low_high_ftest.all;
 use ctu_can_fd_tb.txt_buffer_byte_access_ftest.all;
 use ctu_can_fd_tb.txt_buffer_hazard_ftest.all;
+use ctu_can_fd_tb.txt_buffer_transitions_ftest.all;
+use ctu_can_fd_tb.txt_buffer_transitions_2_ftest.all;
+use ctu_can_fd_tb.txt_buffer_transitions_3_ftest.all;
+use ctu_can_fd_tb.txt_buffer_transitions_4_ftest.all;
+use ctu_can_fd_tb.frame_filters_mask_ftest.all;
 
 
 package feature_test_list_pkg is
-    
+
     procedure exec_feature_test(
         constant test_name    : in     string;
         signal   channel      : inout  t_com_channel
@@ -246,7 +260,7 @@ package body feature_test_list_pkg is
             alc_srr_rtr_2_ftest_exec(channel);
 
         elsif (test_name = "btr") then
-            btr_ftest_exec(channel);        
+            btr_ftest_exec(channel);
         elsif (test_name = "btr_fd") then
             btr_fd_ftest_exec(channel);
         elsif (test_name = "btr_maximal") then
@@ -259,7 +273,7 @@ package body feature_test_list_pkg is
             bus_start_ftest_exec(channel);
         elsif (test_name = "byte_enable") then
             byte_enable_ftest_exec(channel);
-        
+
         elsif (test_name = "command_cdo") then
             command_cdo_ftest_exec(channel);
         elsif (test_name = "command_ercrst") then
@@ -268,7 +282,7 @@ package body feature_test_list_pkg is
             command_frcrst_ftest_exec(channel);
         elsif (test_name = "command_rrb") then
             command_rrb_ftest_exec(channel);
-             
+
         elsif (test_name = "device_id") then
             device_id_ftest_exec(channel);
         elsif (test_name = "disable_in_tx") then
@@ -277,7 +291,7 @@ package body feature_test_list_pkg is
             dlc_can20_8_64_bytes_ftest_exec(channel);
 
         elsif (test_name = "err_capt_ack_ack") then
-            err_capt_ack_ack_ftest_exec(channel);            
+            err_capt_ack_ack_ftest_exec(channel);
         elsif (test_name = "err_capt_arb_bit") then
             err_capt_arb_bit_ftest_exec(channel);
         elsif (test_name = "err_capt_arb_stuff") then
@@ -302,7 +316,7 @@ package body feature_test_list_pkg is
             err_capt_sof_ftest_exec(channel);
         elsif (test_name = "err_norm_fd") then
             err_norm_fd_ftest_exec(channel);
-                                                      
+
         elsif (test_name = "fault_state") then
             fault_state_ftest_exec(channel);
 
@@ -314,10 +328,10 @@ package body feature_test_list_pkg is
             frame_test_sdlc_ftest_exec(channel);
         elsif (test_name = "frame_test_ignore") then
             frame_test_ignore_ftest_exec(channel);
-            
+
         elsif (test_name = "glitch_filtering") then
             glitch_filtering_ftest_exec(channel);
-            
+
         elsif (test_name = "invalid_frames") then
             invalid_frames_ftest_exec(channel);
         elsif (test_name = "int_al") then
@@ -332,10 +346,18 @@ package body feature_test_list_pkg is
             int_fcs_ftest_exec(channel);
         elsif (test_name = "int_rx") then
             int_rx_ftest_exec(channel);
+        elsif (test_name = "int_rxf") then
+            int_rxf_ftest_exec(channel);
         elsif (test_name = "int_tx") then
             int_tx_ftest_exec(channel);
         elsif (test_name = "int_of") then
             int_of_ftest_exec(channel);
+        elsif (test_name = "int_bs") then
+            int_bs_ftest_exec(channel);
+        elsif (test_name = "int_rxne") then
+            int_rxne_ftest_exec(channel);
+        elsif (test_name = "int_txbhci") then
+            int_txbhci_ftest_exec(channel);
 
         elsif (test_name = "message_filter") then
             message_filter_ftest_exec(channel);
@@ -379,7 +401,10 @@ package body feature_test_list_pkg is
             one_shot_ftest_exec(channel);
         elsif (test_name = "overload") then
             overload_ftest_exec(channel);
-            
+
+        elsif (test_name = "pc_fsm_transitions") then
+            pc_fsm_transitions_ftest_exec(channel);
+
         elsif (test_name = "rec_saturation") then
             rec_saturation_ftest_exec(channel);
         elsif (test_name = "retr_limit") then
@@ -396,6 +421,8 @@ package body feature_test_list_pkg is
             rx_settings_rtsop_ftest_exec(channel);
         elsif (test_name = "rx_status") then
             rx_status_ftest_exec(channel);
+        elsif (test_name = "rx_status_rxfrc") then
+            rx_status_rxfrc_ftest_exec(channel);
         elsif (test_name = "rx_status_mof") then
             rx_status_mof_ftest_exec(channel);
 
@@ -403,6 +430,8 @@ package body feature_test_list_pkg is
             scan_mode_ftest_exec(channel);
         elsif (test_name = "settings_tbfbo") then
             settings_tbfbo_ftest_exec(channel);
+        elsif (test_name = "settings_nisofd") then
+            settings_nisofd_ftest_exec(channel);
         elsif (test_name = "single_bus_node") then
             single_bus_node_ftest_exec(channel);
         elsif (test_name = "ssp_cfg") then
@@ -438,6 +467,8 @@ package body feature_test_list_pkg is
             tst_mem_acc_txt_ftest_exec(channel);
         elsif (test_name = "tx_arb_consistency") then
             tx_arb_consistency_ftest_exec(channel);
+        elsif (test_name = "tx_arb_consistency_2") then
+            tx_arb_consistency_2_ftest_exec(channel);
         elsif (test_name = "tx_arb_time_tran") then
             tx_arb_time_tran_ftest_exec(channel);
         elsif (test_name = "tx_cmd_set_abort") then
@@ -462,6 +493,17 @@ package body feature_test_list_pkg is
             txt_buffer_byte_access_ftest_exec(channel);
         elsif (test_name = "txt_buffer_hazard") then
             txt_buffer_hazard_ftest_exec(channel);
+        elsif (test_name = "txt_buffer_transitions") then
+            txt_buffer_transitions_ftest_exec(channel);
+        elsif (test_name = "txt_buffer_transitions_2") then
+            txt_buffer_transitions_2_ftest_exec(channel);
+        elsif (test_name = "txt_buffer_transitions_3") then
+            txt_buffer_transitions_3_ftest_exec(channel);
+        elsif (test_name = "txt_buffer_transitions_4") then
+            txt_buffer_transitions_4_ftest_exec(channel);
+
+        elsif (test_name = "frame_filters_mask") then
+            frame_filters_mask_ftest_exec(channel);
 
         else
             error_m("Unknown feature test name: " & test_name);

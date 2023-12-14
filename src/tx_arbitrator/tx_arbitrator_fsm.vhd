@@ -590,22 +590,22 @@ begin
   -- TXT Buffer index change during TXT Buffer validation
 
   -- psl txtb_changed_arb_sel_low_cov : cover
-  --  {curr_state = s_arb_sel_low_ts and select_index_changed = '0'};
+  --  {curr_state = s_arb_sel_low_ts and select_index_changed = '1'};
   --
   -- psl txtb_changed_arb_sel_upp_cov : cover
-  --  {curr_state = s_arb_sel_upp_ts and select_index_changed = '0'};
+  --  {curr_state = s_arb_sel_upp_ts and select_index_changed = '1'};
   --
   -- psl txtb_changed_arb_sel_ffw_cov : cover
-  --  {curr_state = s_arb_sel_ffw and select_index_changed = '0'};
+  --  {curr_state = s_arb_sel_ffw and select_index_changed = '1'};
   --
   -- psl txtb_changed_arb_sel_ftw_cov : cover
-  --  {curr_state = s_arb_sel_ffw and select_index_changed = '0'};
+  --  {curr_state = s_arb_sel_ffw and select_index_changed = '1'};
   --
   -- psl txtb_changed_arb_sel_idw_cov : cover
-  --  {curr_state = s_arb_sel_idw and select_index_changed = '0'};
+  --  {curr_state = s_arb_sel_idw and select_index_changed = '1'};
   --
   -- psl txtb_changed_arb_validated_cov : cover
-  --  {curr_state = s_arb_validated and select_index_changed = '0'};
+  --  {curr_state = s_arb_validated and select_index_changed = '1'};
 
 
   -- Parity errors
