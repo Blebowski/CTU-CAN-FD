@@ -229,6 +229,10 @@ package body ssp_cfg_ftest is
             bus_timing.prop_dbt := 7;
         end if;
 
+        if (bus_timing.ph2_dbt = 0) then
+            bus_timing.ph2_dbt := 1;
+        end if;
+
         if (bus_timing.tq_dbt = 1 and bus_timing.ph2_dbt = 1) then
             bus_timing.ph2_dbt := 2;
         end if;
@@ -238,10 +242,10 @@ package body ssp_cfg_ftest is
         info_m("Cycles per bit:" & integer'image(cycles_per_bit));
 
         info_m("Generated data bit time bit-rate:");
-        info_m("TQ: " & integer'image(bus_timing.tq_dbt));
+        info_m("TQ: "   & integer'image(bus_timing.tq_dbt));
         info_m("PROP: " & integer'image(bus_timing.prop_dbt));
-        info_m("PH1: " & integer'image(bus_timing.ph1_dbt));
-        info_m("PH2: " & integer'image(bus_timing.ph2_dbt));
+        info_m("PH1: "  & integer'image(bus_timing.ph1_dbt));
+        info_m("PH2: "  & integer'image(bus_timing.ph2_dbt));
         bit_rate := 100000000.0 / (real(cycles_per_bit));
         info_m("Data bit rate: " & real'image(bit_rate/1000000.0) & " Mbit/s");
 
