@@ -419,7 +419,9 @@ pages:
         - cp test/main_tb/iso-16845-compliance-tests/build/Release/src/cosimulation/libVCS_VHPI_COSIM_LIB.so public/
 
         # Copy regression results and code coverage
-        - cp test/*.xml public/regression_results/ || true
+
+        # DO NOT pack the complete regression results they include all log files and that overflows pages artifacts!
+        #- cp test/*.xml public/regression_results/ || true
         - cp test/*_summary public/regression_results/ || true
 
         # Measure total simulation time
@@ -434,8 +436,8 @@ pages:
 
         # Copy functional coverage HTML reports
         - mkdir public/regression_results/functional_coverage
-        - cp test/build/functional_coverage/*.html public/regression_results/functional_coverage || true
-        - cp -R test/build/functional_coverage/html public/regression_results/functional_coverage || true
+        - cp test/vunit_out/functional_coverage/*.html public/regression_results/functional_coverage || true
+        - cp -R test/vunit_out/functional_coverage/html public/regression_results/functional_coverage || true
 
         # Copy synthesis results + constraints
         - cp -R synthesis/Vivado/ci_benchmark/*_design_config public/synthesis
