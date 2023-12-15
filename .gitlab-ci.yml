@@ -415,7 +415,8 @@ pages:
         - cp test/tlf_* public/
 
         # Compliance test library
-        - cp test/main_tb/iso-16845-compliance-tests/build/Release/src/simulator_interface/libSIMULATOR_INTERFACE_LIB.so public/
+        - cp test/main_tb/iso-16845-compliance-tests/build/Release/src/cosimulation/libGHDL_VPI_COSIM_LIB.so public/
+        - cp test/main_tb/iso-16845-compliance-tests/build/Release/src/cosimulation/libVCS_VHPI_COSIM_LIB.so public/
 
         # Copy regression results and code coverage
         - cp test/*.xml public/regression_results/
