@@ -298,8 +298,8 @@ test_compliance_full_max:
     allow_failure: true
 
 
-# TODO: Add min run if we find reasonable compromise for run time
-
+# MIN run is not feasible with GHDL. Min run with VCS on fast machine takes 6-8
+# hours -> TODO: Add min run once we flip to NVC.
 
 ###############################################################################
 # Test gates (Gate level simulation on post synthesis netlist)
@@ -419,8 +419,8 @@ pages:
         - cp test/main_tb/iso-16845-compliance-tests/build/Release/src/cosimulation/libVCS_VHPI_COSIM_LIB.so public/
 
         # Copy regression results and code coverage
-        - cp test/*.xml public/regression_results/
-        - cp test/*_summary public/regression_results/
+        - cp test/*.xml public/regression_results/ || true
+        - cp test/*_summary public/regression_results/ || true
 
         # Measure total simulation time
         - cat test/*.sim_time | paste -sd+ | bc > total.sim_time
