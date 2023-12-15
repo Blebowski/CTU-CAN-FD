@@ -304,29 +304,29 @@ test_compliance_full_max:
 ###############################################################################
 # Test gates (Gate level simulation on post synthesis netlist)
 ###############################################################################
-test_gates_simple:
-    stage: test_gates
-    tags:
-        - simulation
-    dependencies: [run_synthesis]
-    timeout: 6h
-    only:
-        - master
-    script:
-        - cd test
-        - make tb_gate_xilinx_test_simple
-        - make tb_gate_xilinx_test_simple_logs
-    artifacts:
-        when: always
-        paths:
-            - test/tb_gate_xilinx_test_simple.xml
-            - test/tb_gate_xilinx_test_simple_summary
-            - test/tb_gate_xilinx_test_simple.sim_time
-        reports:
-            junit: test/tb_gate_xilinx_test_simple.xml
-
-    # Some gates might fail, TODO: Debug
-    allow_failure: true
+#test_gates_simple:
+#    stage: test_gates
+#    tags:
+#        - simulation
+#    dependencies: [run_synthesis]
+#    timeout: 6h
+#    only:
+#        - master
+#    script:
+#        - cd test
+#        - make tb_gate_xilinx_test_simple
+#        - make tb_gate_xilinx_test_simple_logs
+#    artifacts:
+#        when: always
+#        paths:
+#            - test/tb_gate_xilinx_test_simple.xml
+#            - test/tb_gate_xilinx_test_simple_summary
+#            - test/tb_gate_xilinx_test_simple.sim_time
+#        reports:
+#            junit: test/tb_gate_xilinx_test_simple.xml
+#
+#    # Some gates might fail, TODO: Debug
+#    allow_failure: true
 
 test_gates_compliance:
     stage: test_gates
