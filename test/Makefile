@@ -45,7 +45,7 @@ elaborate:
 # Coverage processing
 ######################################################################################
 functional_coverage:
-	mkdir -P vunit_out/functional_coverage/html
+	mkdir -p vunit_out/functional_coverage/html
 	$(PYTHON) $(TESTFW_DIR)/test_parse_psl_coverage.py
 
 clean:
