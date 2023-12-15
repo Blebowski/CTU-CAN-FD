@@ -1,12 +1,12 @@
-################################################################################                                                     
-## 
-##   CAN with Flexible Data-Rate IP Core 
-##   
+################################################################################
+##
+##   CAN with Flexible Data-Rate IP Core
+##
 ##   Copyright (C) 2017 Ondrej Ille <ondrej.ille@gmail.com>
-##   
+##
 ##   Script for generation of VRM. What has been verified is extracted from
 ##   common headers
-##   
+##
 ##   Arguments:
 ##		configPath  - Path to test config (the same as for test run)
 ##
@@ -32,10 +32,10 @@ from pathlib import Path
 
 def parse_args():
 	parser = argparse.ArgumentParser(
-				description="""Script for generation of VRM. What has been 
+				description="""Script for generation of VRM. What has been
                                verified is extracted from common headers""")
 
-	parser.add_argument('--configPath', dest='configPath', help="""Path to 
+	parser.add_argument('--configPath', dest='configPath', help="""Path to
                                 test config (the same as for test run)""")
 
 	return parser.parse_args();
@@ -56,20 +56,15 @@ def read_config(configPath):
 	ref_dir = test_dir / "reference"
 	fileList = []
 
-	if ("feature" in cfg):
-		ftr = cfg['feature']
-		for ftr_tst in ftr['tests'].items():
-			print("Processing feature test: {}".format(ftr_tst[0]));
-			fileList.append(ftr_dir / "{}_ftest.vhd".format(ftr_tst[0]))
+	for test in cfg["tests"]:
+		if "generics" in test:
+			if "/TB_TOP_CTU_CAN_FD/test_type" in test["generics"]:
+				if test["generics"]["/TB_TOP_CTU_CAN_FD/test_type"] == "reference":
+					print("Skipping test: {} because it is reference test".format(test["name"]))
+					continue
 
-	if ("unit" in cfg):
-		uni = cfg['unit']
-		for unit_tst in uni['tests'].items():
-			t_dict = list(unit_tst)[1]
-			test_name = list(unit_tst)[0]
-			print("Processing unit test {}".format(test_name))
-			tst_name = unit_dir / test_name / "{}_tb.vhd".format(str(test_name).split("/")[-1])
-			fileList.append(tst_name)
+		print("Processing feature test: {}".format(test["name"]))
+		fileList.append(ftr_dir / "{}_ftest.vhd".format(test["name"]))
 
 #	if ("reference" in cfg):
 #		fileList.append(ref_dir / "tb_reference.vhd")
@@ -98,4 +93,4 @@ if __name__ == '__main__':
 	print( 80 * "*")
 	print("**  Finished")
 	print(80 * "*")
-	
+
