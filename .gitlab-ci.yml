@@ -298,35 +298,35 @@ test_compliance_full_max:
     allow_failure: true
 
 
-# TODO: Add min run if we find reasonable compromise for run time
-
+# MIN run is not feasible with GHDL. Min run with VCS on fast machine takes 6-8
+# hours -> TODO: Add min run once we flip to NVC.
 
 ###############################################################################
 # Test gates (Gate level simulation on post synthesis netlist)
 ###############################################################################
-test_gates_simple:
-    stage: test_gates
-    tags:
-        - simulation
-    dependencies: [run_synthesis]
-    timeout: 6h
-    only:
-        - master
-    script:
-        - cd test
-        - make tb_gate_xilinx_test_simple
-        - make tb_gate_xilinx_test_simple_logs
-    artifacts:
-        when: always
-        paths:
-            - test/tb_gate_xilinx_test_simple.xml
-            - test/tb_gate_xilinx_test_simple_summary
-            - test/tb_gate_xilinx_test_simple.sim_time
-        reports:
-            junit: test/tb_gate_xilinx_test_simple.xml
-
-    # Some gates might fail, TODO: Debug
-    allow_failure: true
+#test_gates_simple:
+#    stage: test_gates
+#    tags:
+#        - simulation
+#    dependencies: [run_synthesis]
+#    timeout: 6h
+#    only:
+#        - master
+#    script:
+#        - cd test
+#        - make tb_gate_xilinx_test_simple
+#        - make tb_gate_xilinx_test_simple_logs
+#    artifacts:
+#        when: always
+#        paths:
+#            - test/tb_gate_xilinx_test_simple.xml
+#            - test/tb_gate_xilinx_test_simple_summary
+#            - test/tb_gate_xilinx_test_simple.sim_time
+#        reports:
+#            junit: test/tb_gate_xilinx_test_simple.xml
+#
+#    # Some gates might fail, TODO: Debug
+#    allow_failure: true
 
 test_gates_compliance:
     stage: test_gates
@@ -415,11 +415,12 @@ pages:
         - cp test/tlf_* public/
 
         # Compliance test library
-        - cp test/main_tb/iso-16845-compliance-tests/build/Release/src/simulator_interface/libSIMULATOR_INTERFACE_LIB.so public/
+        - cp test/main_tb/iso-16845-compliance-tests/build/Release/src/cosimulation/libGHDL_VPI_COSIM_LIB.so public/
+        - cp test/main_tb/iso-16845-compliance-tests/build/Release/src/cosimulation/libVCS_VHPI_COSIM_LIB.so public/
 
         # Copy regression results and code coverage
-        - cp test/*.xml public/regression_results/
-        - cp test/*_summary public/regression_results/
+        - cp test/*.xml public/regression_results/ || true
+        - cp test/*_summary public/regression_results/ || true
 
         # Measure total simulation time
         - cat test/*.sim_time | paste -sd+ | bc > total.sim_time

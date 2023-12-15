@@ -560,7 +560,7 @@ targets:
             /TB_TOP_CTU_CAN_FD/cfg_sys_clk_period: 25 ns
 
         sim_options:
-            ghdl: "--vpi=main_tb/iso-16845-compliance-tests/build/Release/src/simulator_interface/libSIMULATOR_INTERFACE_LIB.so"
+            ghdl: "--vpi=main_tb/iso-16845-compliance-tests/build/Debug/src/cosimulation/libGHDL_VPI_COSIM_LIB.so"
 
         source_list_files:
             - tb_ctu_can_fd_gate_vunit
