@@ -1534,6 +1534,8 @@ begin
                     else
                         ctrl_ctr_pload_val <= C_FIRST_INTEGRATION_DURATION;
                     end if;
+                else
+                    nbt_ctrs_en <= '0';
                 end if;
 
             ---------------------------------------------------------------------------------------
