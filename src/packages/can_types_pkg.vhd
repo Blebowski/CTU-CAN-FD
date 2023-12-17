@@ -220,7 +220,6 @@ package can_types_pkg is
     -- HW commands
     type t_txtb_hw_cmd is record
         lock      : std_logic;
-        unlock    : std_logic;
         valid     : std_logic;
         err       : std_logic;
         arbl      : std_logic;

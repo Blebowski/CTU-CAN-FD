@@ -332,6 +332,9 @@ architecture rtl of tx_arbitrator is
     signal txtb_parity_mismatch_vld   : std_logic;
     signal txtb_parity_mismatch_tx    : std_logic;
 
+    -- Unlocking TXT Buffers at the end of transmission
+    signal txtb_hw_cmd_unlock         : std_logic;
+
     -----------------------------------------------------------------------------------------------
     -- Comparing procedure for two 64 bit std logic vectors
     -----------------------------------------------------------------------------------------------
@@ -378,7 +381,8 @@ begin
         select_buf_avail            => select_buf_avail,            -- IN
         select_index_changed        => select_index_changed,        -- IN
         timestamp_valid             => timestamp_valid,             -- IN
-        txtb_hw_cmd                 => txtb_hw_cmd,                 -- IN
+        txtb_hw_cmd_lock            => txtb_hw_cmd.lock,            -- IN
+        txtb_hw_cmd_unlock          => txtb_hw_cmd_unlock,          -- IN
         txtb_parity_mismatch_vld    => txtb_parity_mismatch_vld,    -- IN
 
         load_ts_lw_addr             => load_ts_lw_addr,             -- OUT
@@ -737,6 +741,14 @@ begin
         end if;
     end process;
 
+    -----------------------------------------------------------------------------------------------
+    -- TXT Buffer unlock - When PC FSM ends transmission from a TXT Buffer
+    -----------------------------------------------------------------------------------------------
+    txtb_hw_cmd_unlock <= '1' when (txtb_hw_cmd.valid  = '1' or txtb_hw_cmd.err    = '1' or
+                                    txtb_hw_cmd.arbl   = '1' or txtb_hw_cmd.failed = '1')
+                              else
+                          '0';
+
 
     -- <RELEASE_OFF>
     -----------------------------------------------------------------------------------------------
@@ -748,7 +760,7 @@ begin
     --    {txtb_hw_cmd.lock = '1'};
     --
     -- psl txt_unlock_cov : cover
-    --    {txtb_hw_cmd.unlock = '1'};
+    --    {txtb_hw_cmd_unlock = '1'};
     --
     --
     -- Lock Commands
@@ -773,21 +785,21 @@ begin
     -- Unlock Commands
     --
     -- psl txt_unlock_buf_1_cov : cover
-    --    {txtb_hw_cmd_index = 0 and txtb_hw_cmd.unlock = '1'};
+    --    {txtb_hw_cmd_index = 0 and txtb_hw_cmd_unlock = '1'};
     -- psl txt_unlock_buf_2_cov : cover
-    --    {txtb_hw_cmd_index = 1 and txtb_hw_cmd.unlock = '1'};
+    --    {txtb_hw_cmd_index = 1 and txtb_hw_cmd_unlock = '1'};
     -- psl txt_unlock_buf_3_cov : cover
-    --    {txtb_hw_cmd_index = 2 and txtb_hw_cmd.unlock = '1'};
+    --    {txtb_hw_cmd_index = 2 and txtb_hw_cmd_unlock = '1'};
     -- psl txt_unlock_buf_4_cov : cover
-    --    {txtb_hw_cmd_index = 3 and txtb_hw_cmd.unlock = '1'};
+    --    {txtb_hw_cmd_index = 3 and txtb_hw_cmd_unlock = '1'};
     -- psl txt_unlock_buf_5_cov : cover
-    --    {txtb_hw_cmd_index = 4 and txtb_hw_cmd.unlock = '1'};
+    --    {txtb_hw_cmd_index = 4 and txtb_hw_cmd_unlock = '1'};
     -- psl txt_unlock_buf_6_cov : cover
-    --    {txtb_hw_cmd_index = 5 and txtb_hw_cmd.unlock = '1'};
+    --    {txtb_hw_cmd_index = 5 and txtb_hw_cmd_unlock = '1'};
     -- psl txt_unlock_buf_7_cov : cover
-    --    {txtb_hw_cmd_index = 6 and txtb_hw_cmd.unlock = '1'};
+    --    {txtb_hw_cmd_index = 6 and txtb_hw_cmd_unlock = '1'};
     -- psl txt_unlock_buf_8_cov : cover
-    --    {txtb_hw_cmd_index = 7 and txtb_hw_cmd.unlock = '1'};
+    --    {txtb_hw_cmd_index = 7 and txtb_hw_cmd_unlock = '1'};
 
     -- Modes
     -- Note: We use gating by tran_frame_valid to avoid falsly covered scenarios,

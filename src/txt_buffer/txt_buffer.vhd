@@ -407,7 +407,6 @@ begin
 
     -- HW Commands
     -- psl txtb_hw_lock     : cover {txtb_hw_cmd.lock = '1'     and hw_cbs = '1'};
-    -- psl txtb_hw_unlock   : cover {txtb_hw_cmd.unlock = '1'   and hw_cbs = '1'};
     -- psl txtb_hw_valid    : cover {txtb_hw_cmd.valid = '1'    and hw_cbs = '1'};
     -- psl txtb_hw_err      : cover {txtb_hw_cmd.err = '1'      and hw_cbs = '1'};
     -- psl txtb_hw_arbl     : cover {txtb_hw_cmd.arbl = '1'     and hw_cbs = '1'};

@@ -120,7 +120,8 @@ entity tx_arbitrator_fsm is
         -- CAN Core Interface
         -------------------------------------------------------------------------------------------
         -- HW Commands from CAN Core for manipulation with TXT Buffers
-        txtb_hw_cmd                 : in  t_txtb_hw_cmd;
+        txtb_hw_cmd_lock            : in  std_logic;
+        txtb_hw_cmd_unlock          : in  std_logic;
 
         -------------------------------------------------------------------------------------------
         -- Parity mismatch on currently validated TXT Buffer
@@ -201,8 +202,8 @@ begin
     -----------------------------------------------------------------------------------------------
     -- Next state process
     -----------------------------------------------------------------------------------------------
-    tx_arb_fsm_proc : process(curr_state, txtb_hw_cmd, select_buf_avail, select_index_changed,
-        timestamp_valid, fsm_wait_state_q, parity_error_vld)
+    tx_arb_fsm_proc : process(curr_state, select_buf_avail, select_index_changed,
+        timestamp_valid, fsm_wait_state_q, parity_error_vld, txtb_hw_cmd_unlock, txtb_hw_cmd_lock)
     begin
         -- Keeping signals values to avoid latch inference
         next_state <= curr_state;
@@ -221,7 +222,7 @@ begin
         -- Read Low timestamp word of Selected TXT buffer.
         -------------------------------------------------------------------------------------------
         when s_arb_sel_low_ts =>
-            if (txtb_hw_cmd.lock = '1') then
+            if (txtb_hw_cmd_lock = '1') then
                 next_state         <= s_arb_locked;
             elsif (select_buf_avail = '0' or parity_error_vld = '1') then
                 next_state         <= s_arb_idle;
@@ -236,7 +237,7 @@ begin
         -- word is in capture register). When Timestamp elapses -> proceed with validation!
         -------------------------------------------------------------------------------------------
         when s_arb_sel_upp_ts =>
-            if (txtb_hw_cmd.lock = '1') then
+            if (txtb_hw_cmd_lock = '1') then
                 next_state         <= s_arb_locked;
             elsif (select_buf_avail = '0' or parity_error_vld = '1') then
                 next_state         <= s_arb_idle;
@@ -252,7 +253,7 @@ begin
         -- Read FRAME_TEST_W from Selected TXT Buffer.
         -------------------------------------------------------------------------------------------
         when s_arb_sel_ftw =>
-            if (txtb_hw_cmd.lock = '1') then
+            if (txtb_hw_cmd_lock = '1') then
                 next_state         <= s_arb_locked;
 
             -- Note: Parity error is not detected in FRAME_FORMAT_W
@@ -268,7 +269,7 @@ begin
         -- Read Frame format word.
         -------------------------------------------------------------------------------------------
         when s_arb_sel_ffw =>
-             if (txtb_hw_cmd.lock = '1') then
+             if (txtb_hw_cmd_lock = '1') then
                 next_state         <= s_arb_locked;
             elsif (select_buf_avail = '0' or parity_error_vld = '1') then
                 next_state         <= s_arb_idle;
@@ -282,7 +283,7 @@ begin
         -- Read identifier word.
         -------------------------------------------------------------------------------------------
         when s_arb_sel_idw =>
-             if (txtb_hw_cmd.lock = '1') then
+             if (txtb_hw_cmd_lock = '1') then
                 next_state         <= s_arb_locked;
             elsif (select_buf_avail = '0' or parity_error_vld = '1') then
                 next_state         <= s_arb_idle;
@@ -296,7 +297,7 @@ begin
         -- TXT Buffer is validated!
         -------------------------------------------------------------------------------------------
         when s_arb_validated =>
-             if (txtb_hw_cmd.lock = '1') then
+             if (txtb_hw_cmd_lock = '1') then
                 next_state         <= s_arb_locked;
             elsif (select_buf_avail = '0') then
                 next_state         <= s_arb_idle;
@@ -308,7 +309,7 @@ begin
         -- Finishing the transmission = unlocking the buffer
         -------------------------------------------------------------------------------------------
         when s_arb_locked =>
-            if (txtb_hw_cmd.unlock = '1') then
+            if (txtb_hw_cmd_unlock = '1') then
                 next_state         <= s_arb_idle;
             end if;
 
@@ -319,8 +320,8 @@ begin
     -----------------------------------------------------------------------------------------------
     -- TX Arbitrator FSM outputs
     -----------------------------------------------------------------------------------------------
-    tx_arb_fsm_out_proc : process(curr_state, fsm_wait_state_q, timestamp_valid,
-        select_index_changed, select_buf_avail, txtb_hw_cmd, parity_error_vld)
+    tx_arb_fsm_out_proc : process(curr_state, fsm_wait_state_q, timestamp_valid, txtb_hw_cmd_lock,
+        select_index_changed, select_buf_avail, parity_error_vld, txtb_hw_cmd_unlock)
     begin
 
         -- By default all outputs are inactive
@@ -364,7 +365,7 @@ begin
         when s_arb_sel_low_ts =>
             txtb_meta_clk_en <= '1';
 
-            if (txtb_hw_cmd.lock = '1') then
+            if (txtb_hw_cmd_lock = '1') then
                 store_last_txtb_index <= '1';
 
             elsif (select_buf_avail = '0') then
@@ -388,7 +389,7 @@ begin
         when s_arb_sel_upp_ts =>
             txtb_meta_clk_en <= '1';
 
-            if (txtb_hw_cmd.lock = '1') then
+            if (txtb_hw_cmd_lock = '1') then
                 store_last_txtb_index <= '1';
 
             elsif (select_buf_avail = '0') then
@@ -412,7 +413,7 @@ begin
         when s_arb_sel_ftw =>
             txtb_meta_clk_en <= '1';
 
-            if (txtb_hw_cmd.lock = '1') then
+            if (txtb_hw_cmd_lock = '1') then
                 store_last_txtb_index <= '1';
 
             elsif (select_buf_avail = '0') then
@@ -434,7 +435,7 @@ begin
         when s_arb_sel_ffw =>
             txtb_meta_clk_en <= '1';
 
-            if (txtb_hw_cmd.lock = '1') then
+            if (txtb_hw_cmd_lock = '1') then
                 store_last_txtb_index <= '1';
 
             elsif (select_buf_avail = '0') then
@@ -457,7 +458,7 @@ begin
         when s_arb_sel_idw =>
             txtb_meta_clk_en <= '1';
 
-            if (txtb_hw_cmd.lock = '1') then
+            if (txtb_hw_cmd_lock = '1') then
                 store_last_txtb_index <= '1';
 
             elsif (select_buf_avail = '0') then
@@ -480,7 +481,7 @@ begin
         -- TXT Buffer is validated!
         -------------------------------------------------------------------------------------------
         when s_arb_validated =>
-            if (txtb_hw_cmd.lock = '1') then
+            if (txtb_hw_cmd_lock = '1') then
                 store_last_txtb_index <= '1';
 
             elsif (select_buf_avail = '0') then
@@ -497,7 +498,7 @@ begin
         when s_arb_locked =>
             tx_arb_locked <= '1';
 
-            if (txtb_hw_cmd.unlock = '1') then
+            if (txtb_hw_cmd_unlock = '1') then
                 frame_valid_com_clear <= '1';
             end if;
 
@@ -547,22 +548,22 @@ begin
   -- LOCK commands in various parts of TXT Buffer validation
 
   -- psl txtb_lock_arb_sel_low_cov : cover
-  --  {curr_state = s_arb_sel_low_ts and txtb_hw_cmd.lock = '1'};
+  --  {curr_state = s_arb_sel_low_ts and txtb_hw_cmd_lock = '1'};
   --
   -- psl txtb_lock_arb_sel_hi_cov : cover
-  --  {curr_state = s_arb_sel_upp_ts and txtb_hw_cmd.lock = '1'};
+  --  {curr_state = s_arb_sel_upp_ts and txtb_hw_cmd_lock = '1'};
   --
   -- psl txtb_lock_arb_sel_ftw_cov : cover
-  --  {curr_state = s_arb_sel_ftw and txtb_hw_cmd.lock = '1'};
+  --  {curr_state = s_arb_sel_ftw and txtb_hw_cmd_lock = '1'};
   --
   -- psl txtb_lock_arb_sel_ffw_cov : cover
-  --  {curr_state = s_arb_sel_ffw and txtb_hw_cmd.lock = '1'};
+  --  {curr_state = s_arb_sel_ffw and txtb_hw_cmd_lock = '1'};
   --
   -- psl txtb_lock_arb_sel_idw_cov : cover
-  --  {curr_state = s_arb_sel_idw and txtb_hw_cmd.lock = '1'};
+  --  {curr_state = s_arb_sel_idw and txtb_hw_cmd_lock = '1'};
   --
   -- psl txtb_lock_arb_sel_validated_cov : cover
-  --  {curr_state = s_arb_validated and txtb_hw_cmd.lock = '1'};
+  --  {curr_state = s_arb_validated and txtb_hw_cmd_lock = '1'};
 
 
 
@@ -633,10 +634,10 @@ begin
   -----------------------------------------------------------------------------------------------
 
   -- psl tx_arb_no_lock_when_idle_asrt : assert never
-  --    (curr_state = s_arb_idle and txtb_hw_cmd.lock = '1');
+  --    (curr_state = s_arb_idle and txtb_hw_cmd_lock = '1');
 
   -- psl tx_arb_no_lock_when_locked_asrt : assert never
-  --    (curr_state = s_arb_locked and txtb_hw_cmd.lock = '1');
+  --    (curr_state = s_arb_locked and txtb_hw_cmd_lock = '1');
 
   -- <RELEASE_ON>
 end architecture;
