@@ -144,15 +144,14 @@ architecture rtl of ssp_generator is
     signal btmc_meas_running_q  : std_logic;
 
     -- SSP counter
-    signal sspc_d               : std_logic_vector(G_SSP_CTRS_WIDTH - 1 downto 0);
-    signal sspc_q               : std_logic_vector(G_SSP_CTRS_WIDTH - 1 downto 0);
+    signal sspc_d               : unsigned(G_SSP_CTRS_WIDTH - 1 downto 0);
+    signal sspc_q               : unsigned(G_SSP_CTRS_WIDTH - 1 downto 0);
     signal sspc_ce              : std_logic;
     signal sspc_expired         : std_logic;
-    signal sspc_threshold       : std_logic_vector(G_SSP_CTRS_WIDTH - 1 downto 0);
-    signal sspc_add             : std_logic_vector(G_SSP_CTRS_WIDTH - 1 downto 0);
+    signal sspc_threshold       : unsigned(G_SSP_CTRS_WIDTH - 1 downto 0);
+    signal sspc_add             : unsigned(G_SSP_CTRS_WIDTH - 1 downto 0);
 
-    constant C_SSPC_RST_VAL     : std_logic_vector(G_SSP_CTRS_WIDTH - 1 downto 0)
-        := std_logic_vector(to_unsigned(1, G_SSP_CTRS_WIDTH));
+    constant C_SSPC_RST_VAL     : unsigned(G_SSP_CTRS_WIDTH - 1 downto 0) := to_unsigned(1, G_SSP_CTRS_WIDTH);
 
     -- First SSP flag
     signal first_ssp_d          : std_logic;
@@ -161,9 +160,6 @@ architecture rtl of ssp_generator is
     -- SSP running flag
     signal sspc_ena_d           : std_logic;
     signal sspc_ena_q           : std_logic;
-
-    -- Padded SSP delay
-    signal ssp_delay_padded     : std_logic_vector(G_SSP_CTRS_WIDTH - 1 downto 0);
 
 begin
 
@@ -256,22 +252,19 @@ begin
     -------------------------------------------------------------------------------------------
     -------------------------------------------------------------------------------------------
 
-    -- Pad SSP delay to size of SSP counters
-    ssp_delay_padded(ssp_delay'high downto 0) <= ssp_delay;
-    ssp_delay_padded(G_SSP_CTRS_WIDTH - 1 downto ssp_delay'high + 1) <= (others => '0');
-
     -------------------------------------------------------------------------------------------
     -- SSP measurement threshold:
     --  1. Count till SSP offset in first SSP.
     --  2. Count till bit time length in further SSPs (measured by BTMC)
     -------------------------------------------------------------------------------------------
-    sspc_threshold <= ssp_delay_padded when (first_ssp_q = '1') else
-                      btmc_q;
+    sspc_threshold <= resize(unsigned(ssp_delay), G_SSP_CTRS_WIDTH) when (first_ssp_q = '1')
+                                                                    else
+                      unsigned(btmc_q);
 
-    sspc_expired <= '1' when (unsigned(sspc_q) >= unsigned(sspc_threshold)) else
+    sspc_expired <= '1' when (sspc_q >= sspc_threshold) else
                     '0';
 
-    sspc_add <= std_logic_vector(unsigned(sspc_q) + 1);
+    sspc_add <= sspc_q + 1;
 
     -------------------------------------------------------------------------------------------
     -- SSP counter:
