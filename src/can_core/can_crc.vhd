@@ -180,9 +180,8 @@ end entity;
 architecture rtl of can_crc is
 
     -- Initialization vectors
-    signal init_vect_15         :     std_logic_vector(14 downto 0);
-    signal init_vect_17         :     std_logic_vector(16 downto 0);
-    signal init_vect_21         :     std_logic_vector(20 downto 0);
+    signal init_vect_msb_17     :     std_logic;
+    signal init_vect_msb_21     :     std_logic;
 
     -------------------------------------------------------------------------------------------
     -- Immediate outputs of CRC circuits
@@ -206,25 +205,18 @@ architecture rtl of can_crc is
 
 begin
 
-    -- For CRC 15 Init vector is constant zeroes
-    init_vect_15 <= (others => '0');
-
     -----------------------------------------------------------------------------------------------
-    -- For CRC 17 and 21, init vector depends on ISO/NON-ISO type:
+    -- For CRC 17 and 21, init vector MSB depends on ISO/NON-ISO type:
     --  ISO - Highest bit 1
     --  NON-ISO - All zeroes
     -----------------------------------------------------------------------------------------------
-    init_vect_17(16) <= '1' when (mr_settings_nisofd = ISO_FD)
+    init_vect_msb_17 <= '1' when (mr_settings_nisofd = ISO_FD)
                             else
                         '0';
 
-    init_vect_17(15 downto 0) <= (others => '0');
-
-    init_vect_21(20) <= '1' when (mr_settings_nisofd = ISO_FD)
+    init_vect_msb_21 <= '1' when (mr_settings_nisofd = ISO_FD)
                             else
                         '0';
-
-    init_vect_21(19 downto 0) <= (others => '0');
 
     -----------------------------------------------------------------------------------------------
     -- Muxes for CRC 17,21. For Receiver choose crc from RX Stream, for Transmitter use CRC from
@@ -284,7 +276,7 @@ begin
         data_in             => crc_15_data_in,      -- IN
         trig                => crc_15_trigger,      -- IN
         enable              => crc_ena_15,          -- IN
-        init_vect           => init_vect_15,        -- IN
+        init_vect_msb       => '0',                 -- IN
         load_init_vect      => load_init_vect,      -- IN
 
         crc                 => crc_15               -- OUT
@@ -305,7 +297,7 @@ begin
         data_in             => crc_17_21_data_in,   -- IN
         trig                => crc_17_21_trigger,   -- IN
         enable              => crc_ena_17_21,       -- IN
-        init_vect           => init_vect_17,        -- IN
+        init_vect_msb       => init_vect_msb_17,    -- IN
         load_init_vect      => load_init_vect,      -- IN
 
         crc                 => crc_17               -- OUT
@@ -327,7 +319,7 @@ begin
         data_in             => crc_17_21_data_in,   -- IN
         trig                => crc_17_21_trigger,   -- IN
         enable              => crc_ena_17_21,       -- IN
-        init_vect           => init_vect_21,        -- IN
+        init_vect_msb       => init_vect_msb_21,    -- IN
         load_init_vect      => load_init_vect,      -- IN
 
         crc                 => crc_21               -- OUT
