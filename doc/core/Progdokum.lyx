@@ -485,7 +485,7 @@ CTU CAN FD IP Core - Datasheet
 \begin_inset Text
 
 \begin_layout Plain Layout
-Version 2.5, Commit:
+Version 2.5.1, Commit:
 \begin_inset CommandInset include
 LatexCommand input
 filename "version.tex"
@@ -509,7 +509,7 @@ filename "version.tex"
 \noindent
 \align center
 \begin_inset Tabular
-<lyxtabular version="3" rows="32" columns="3">
+<lyxtabular version="3" rows="33" columns="3">
 <features tabularvalignment="middle">
 <column alignment="center" valignment="top" width="1.5cm">
 <column alignment="center" valignment="top" width="2cm">
@@ -1450,7 +1450,7 @@ Add SETTINGS[PCHKE] bit to control enable / disable of parity checking.
 </cell>
 </row>
 <row>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -1459,7 +1459,7 @@ Add SETTINGS[PCHKE] bit to control enable / disable of parity checking.
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -1468,12 +1468,41 @@ Add SETTINGS[PCHKE] bit to control enable / disable of parity checking.
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
 Move to new release of CTU CAN FD.
  Bump document version accordingly.
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+2.5.1
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+8-5-2024
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Add note about 
 \end_layout
 
 \end_inset
@@ -6176,7 +6205,7 @@ Aborted
 \begin_inset Quotes erd
 \end_inset
 
- or 
+, 
 \begin_inset Quotes eld
 \end_inset
 
@@ -6184,7 +6213,41 @@ TX failed
 \begin_inset Quotes erd
 \end_inset
 
+ or 
+\begin_inset Quotes eld
+\end_inset
+
+Parity Err
+\begin_inset Quotes erd
+\end_inset
+
  states TXT buffer HW change interrupt is generated (INT_STAT[TXBHCI]).
+\end_layout
+
+\begin_layout Description
+Note The generation of INT_STAT[TXBHCI] has a special case.
+ When a TXT Buffer is in 
+\begin_inset Quotes eld
+\end_inset
+
+Ready
+\begin_inset Quotes erd
+\end_inset
+
+ state and moves to 
+\begin_inset Quotes eld
+\end_inset
+
+Aborted
+\begin_inset Quotes erd
+\end_inset
+
+ (due to SW writing TX_COMMAND[TXCA]=1), the INT_STAT[TXBHCI] is not set.
+ The meaning of INT_STAT[TXBHCI] is following: The INT_STAT[TXBHCI] is set
+ when TXT Buffer changed its state due to a CAN protocol core event (error
+ frame occured on the bus, frame transmission finished, etc...).
+ Since writing TX_COMMAND[TXCA]=1 is not a CAN protocol core event (it is
+ an event occuring due to SW action), the INT_STAT[TXBHCI] is not set.
 \end_layout
 
 \begin_layout Subsection
