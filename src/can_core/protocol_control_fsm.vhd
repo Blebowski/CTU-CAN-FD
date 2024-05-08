@@ -1358,7 +1358,6 @@ begin
 
         -- TXT Buffer HW Commands
         txtb_hw_cmd_d.lock      <= '0';
-        txtb_hw_cmd_d.unlock    <= '0';
         txtb_hw_cmd_d.valid     <= '0';
         txtb_hw_cmd_d.err       <= '0';
         txtb_hw_cmd_d.arbl      <= '0';
@@ -1504,7 +1503,6 @@ begin
             end if;
 
             if (is_transmitter = '1' and block_txtb_unlock = '0') then
-                txtb_hw_cmd_d.unlock <= '1';
                 if (tx_failed = '1') then
                     txtb_hw_cmd_d.failed  <= '1';
                 else
@@ -1536,6 +1534,8 @@ begin
                     else
                         ctrl_ctr_pload_val <= C_FIRST_INTEGRATION_DURATION;
                     end if;
+                else
+                    nbt_ctrs_en <= '0';
                 end if;
 
             ---------------------------------------------------------------------------------------
@@ -1620,7 +1620,6 @@ begin
                 arbitration_part <= ALC_BASE_ID;
 
                 if (arbitration_lost_condition = '1') then
-                    txtb_hw_cmd_d.unlock <= '1';
                     arbitration_lost_i <= '1';
                     stuff_enable_clear <= '1';
                     if (tx_failed = '1') then
@@ -1652,7 +1651,6 @@ begin
                 arbitration_part <= ALC_SRR_RTR;
 
                 if (arbitration_lost_condition = '1') then
-                    txtb_hw_cmd_d.unlock <= '1';
                     arbitration_lost_i <= '1';
                     stuff_enable_clear <= '1';
                     if (tx_failed = '1') then
@@ -1688,7 +1686,6 @@ begin
                 end if;
 
                 if (ide_is_arbitration = '1' and arbitration_lost_condition = '1') then
-                    txtb_hw_cmd_d.unlock <= '1';
                     arbitration_lost_i <= '1';
                     stuff_enable_clear <= '1';
                     if (tx_failed = '1') then
@@ -1733,7 +1730,6 @@ begin
                 arbitration_part <= ALC_EXTENSION;
 
                 if (arbitration_lost_condition = '1') then
-                    txtb_hw_cmd_d.unlock <= '1';
                     arbitration_lost_i <= '1';
                     stuff_enable_clear <= '1';
                     if (tx_failed = '1') then
@@ -1765,7 +1761,6 @@ begin
                 arbitration_part <= ALC_RTR;
 
                 if (arbitration_lost_condition = '1') then
-                    txtb_hw_cmd_d.unlock <= '1';
                     arbitration_lost_i <= '1';
                     stuff_enable_clear <= '1';
                     if (tx_failed = '1') then
@@ -2235,7 +2230,6 @@ begin
 
                         -- No Error until the end of EOF means frame is valid for transmitter!
                         if (is_transmitter = '1') then
-                            txtb_hw_cmd_d.unlock <= '1';
                             txtb_hw_cmd_d.valid  <= '1';
                         end if;
 
@@ -2775,7 +2769,6 @@ begin
     begin
         if (res_n = '0') then
             txtb_hw_cmd_q.lock    <= '0';
-            txtb_hw_cmd_q.unlock  <= '0';
             txtb_hw_cmd_q.valid   <= '0';
             txtb_hw_cmd_q.err     <= '0';
             txtb_hw_cmd_q.arbl    <= '0';
@@ -2784,7 +2777,7 @@ begin
             if (ctrl_signal_upd = '1') then
                 txtb_hw_cmd_q <= txtb_hw_cmd_d;
             else
-                txtb_hw_cmd_q <= ('0', '0', '0', '0', '0', '0');
+                txtb_hw_cmd_q <= ('0', '0', '0', '0', '0');
             end if;
         end if;
     end process;

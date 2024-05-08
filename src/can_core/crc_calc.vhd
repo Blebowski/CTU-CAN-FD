@@ -118,8 +118,8 @@ entity crc_calc is
         -- CRC calculation enabled
         enable              : in  std_logic;
 
-        -- Initialization vector for CRC calculation
-        init_vect           : in  std_logic_vector(G_CRC_WIDTH - 1 downto 0);
+        -- MSB of Initialization vector for CRC calculation
+        init_vect_msb       : in  std_logic;
 
         -- Load CRC Initialization vector
         load_init_vect      : in  std_logic;
@@ -162,9 +162,17 @@ begin
 
     crc_shift_n_xor <= crc_shift xor G_POLYNOMIAL(G_CRC_WIDTH - 1 downto 0);
 
-    crc_d           <=       init_vect when (load_init_vect = '1') else
-                       crc_shift_n_xor when (crc_nxt = '1') else
-                            crc_shift;
+    crc_d_decoder : process(init_vect_msb, load_init_vect, crc_nxt, crc_shift, crc_shift_n_xor)
+    begin
+        if (load_init_vect = '1') then
+            crc_d <= (others => '0');
+            crc_d(G_CRC_WIDTH - 1) <= init_vect_msb;
+        elsif (crc_nxt = '1') then
+            crc_d <= crc_shift_n_xor;
+        else
+            crc_d <= crc_shift;
+        end if;
+    end process;
 
     crc_ce <= '1' when (load_init_vect = '1') else
               '1' when (enable = '1' and trig = '1') else

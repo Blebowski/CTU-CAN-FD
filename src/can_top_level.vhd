@@ -210,6 +210,21 @@ architecture rtl of can_top_level is
 
     -----------------------------------------------------------------------------------------------
     -----------------------------------------------------------------------------------------------
+    ---- Internal constants
+    -----------------------------------------------------------------------------------------------
+    -----------------------------------------------------------------------------------------------
+    -- Width of RX Buffer pointers
+    constant C_RX_BUFF_PTR_WIDTH        :   natural range 5 to 12 :=
+        integer(ceil(log2(real(rx_buffer_size))));
+
+    -- Width of RX Buffer frame counter
+    -- Minimal sized frame is 4 words. At e.g. rx_buffer_size = 256 (8 bits for pointers),
+    -- we get maximum 64 frames stored in RX Buffer (inclusive) -> 7 bits for frame counter.
+    constant C_RX_BUF_FRAME_CNT_WIDTH   :   natural range 3 to 11 :=
+        integer(ceil(log2(real(rx_buffer_size)))) - 1;
+
+    -----------------------------------------------------------------------------------------------
+    -----------------------------------------------------------------------------------------------
     ---- Internal signals
     -----------------------------------------------------------------------------------------------
     -----------------------------------------------------------------------------------------------
@@ -240,16 +255,16 @@ architecture rtl of can_top_level is
     signal rx_empty                     :    std_logic;
 
     -- Number of frames stored in recieve buffer
-    signal rx_frame_count               :    std_logic_vector(10 downto 0);
+    signal rx_frame_count               :    std_logic_vector(C_RX_BUF_FRAME_CNT_WIDTH - 1 downto 0);
 
     -- Number of free 32 bit wide words
-    signal rx_mem_free                  :    std_logic_vector(12 downto 0);
+    signal rx_mem_free                  :    std_logic_vector(C_RX_BUFF_PTR_WIDTH downto 0);
 
     -- Position of read pointer
-    signal rx_read_pointer              :    std_logic_vector(11 downto 0);
+    signal rx_read_pointer              :    std_logic_vector(C_RX_BUFF_PTR_WIDTH - 1 downto 0);
 
     -- Position of write pointer
-    signal rx_write_pointer             :    std_logic_vector(11 downto 0);
+    signal rx_write_pointer             :    std_logic_vector(C_RX_BUFF_PTR_WIDTH - 1 downto 0);
 
     -- Overrun occurred, data were discarded!
     -- (This is a flag and persists until it is cleared by SW)!
@@ -606,6 +621,8 @@ begin
         G_SUP_PARITY                    => sup_parity,
         G_TXT_BUFFER_COUNT              => txt_buffer_count,
         G_RX_BUFF_SIZE                  => rx_buffer_size,
+        G_RX_BUF_FRAME_CNT_WIDTH        => C_RX_BUF_FRAME_CNT_WIDTH,
+        G_RX_BUFF_PTR_WIDTH             => C_RX_BUFF_PTR_WIDTH,
         G_INT_COUNT                     => C_INT_COUNT,
         G_TRV_CTR_WIDTH                 => C_TRV_CTR_WIDTH,
         G_TS_BITS                       => active_timestamp_bits,
@@ -693,6 +710,8 @@ begin
     rx_buffer_inst : entity ctu_can_fd_rtl.rx_buffer
     generic map (
         G_RX_BUFF_SIZE                  => rx_buffer_size,
+        G_RX_BUFF_PTR_WIDTH             => C_RX_BUFF_PTR_WIDTH,
+        G_RX_BUF_FRAME_CNT_WIDTH        => C_RX_BUF_FRAME_CNT_WIDTH,
         G_SUP_PARITY                    => sup_parity,
         G_RESET_RX_BUF_RAM              => reset_buffer_rams,
         G_TECHNOLOGY                    => target_technology

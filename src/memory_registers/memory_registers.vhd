@@ -96,52 +96,58 @@ use ctu_can_fd_rtl.can_registers_pkg.all;
 entity memory_registers is
     generic (
         -- Support Filter A
-        G_SUP_FILTA             : boolean;
+        G_SUP_FILTA                 : boolean;
 
         -- Support Filter B
-        G_SUP_FILTB             : boolean;
+        G_SUP_FILTB                 : boolean;
 
         -- Support Filter C
-        G_SUP_FILTC             : boolean;
+        G_SUP_FILTC                 : boolean;
 
         -- Support Range Fi
-        G_SUP_RANGE             : boolean;
+        G_SUP_RANGE                 : boolean;
 
         -- Support Test registers
-        G_SUP_TEST_REGISTERS    : boolean;
+        G_SUP_TEST_REGISTERS        : boolean;
 
         -- Support Traffic counters
-        G_SUP_TRAFFIC_CTRS      : boolean;
+        G_SUP_TRAFFIC_CTRS          : boolean;
 
         -- Support Parity
-        G_SUP_PARITY            : boolean;
+        G_SUP_PARITY                : boolean;
 
         -- Number of TXT Buffers
-        G_TXT_BUFFER_COUNT      : natural range 2 to 8;
+        G_TXT_BUFFER_COUNT          : natural range 2 to 8;
 
         -- Size of RX Buffer
-        G_RX_BUFF_SIZE          : natural;
+        G_RX_BUFF_SIZE              : natural;
+
+        -- Width of RX Buffer frame counter
+        G_RX_BUF_FRAME_CNT_WIDTH    : natural range 3 to 11;
+
+        -- Width of RX Buffer pointers
+        G_RX_BUFF_PTR_WIDTH         : natural range 5 to 12;
 
         -- Number of Interrupts
-        G_INT_COUNT             : natural;
+        G_INT_COUNT                 : natural;
 
         -- Width (number of bits) in transceiver delay measurement counter
-        G_TRV_CTR_WIDTH         : natural;
+        G_TRV_CTR_WIDTH             : natural;
 
         -- Number of active timestamp bits
-        G_TS_BITS               : natural range 0 to 63;
+        G_TS_BITS                   : natural range 0 to 63;
 
         -- DEVICE_ID (read from register)
-        G_DEVICE_ID             : std_logic_vector(15 downto 0);
+        G_DEVICE_ID                 : std_logic_vector(15 downto 0);
 
         -- MINOR Design version
-        G_VERSION_MINOR         : std_logic_vector(7 downto 0);
+        G_VERSION_MINOR             : std_logic_vector(7 downto 0);
 
         -- MAJOR Design version
-        G_VERSION_MAJOR         : std_logic_vector(7 downto 0);
+        G_VERSION_MAJOR             : std_logic_vector(7 downto 0);
 
         -- Technology type
-        G_TECHNOLOGY            : natural
+        G_TECHNOLOGY                : natural
     );
     port (
         -------------------------------------------------------------------------------------------
@@ -219,16 +225,16 @@ entity memory_registers is
         rx_empty                        : in std_logic;
 
         -- Number of frames in RX buffer
-        rx_frame_count                  : in std_logic_vector(10 downto 0);
+        rx_frame_count                  : in std_logic_vector(G_RX_BUF_FRAME_CNT_WIDTH - 1 downto 0);
 
         -- Number of free 32 bit words
-        rx_mem_free                     : in std_logic_vector(12 downto 0);
+        rx_mem_free                     : in std_logic_vector(G_RX_BUFF_PTR_WIDTH downto 0);
 
         -- Position of read pointer
-        rx_read_pointer                 : in std_logic_vector(11 downto 0);
+        rx_read_pointer                 : in std_logic_vector(G_RX_BUFF_PTR_WIDTH - 1 downto 0);
 
         -- Position of write pointer
-        rx_write_pointer                : in std_logic_vector(11 downto 0);
+        rx_write_pointer                : in std_logic_vector(G_RX_BUFF_PTR_WIDTH - 1 downto 0);
 
         -- Data overrun Flag
         rx_data_overrun                 : in std_logic;
@@ -798,17 +804,36 @@ begin
 
     -- RX_MEM_INFO
     mr_ctrl_in.rx_mem_info_rx_buff_size <= std_logic_vector(to_unsigned(G_RX_BUFF_SIZE, 13));
-    mr_ctrl_in.rx_mem_info_rx_mem_free  <= rx_mem_free;
+
+    rx_mem_free_assign_proc : process (rx_mem_free)
+    begin
+        mr_ctrl_in.rx_mem_info_rx_mem_free <= (others => '0');
+        mr_ctrl_in.rx_mem_info_rx_mem_free(G_RX_BUFF_PTR_WIDTH downto 0) <= rx_mem_free;
+    end process;
 
     -- RX_POINTERS
-    mr_ctrl_in.rx_pointers_rx_wpp <= rx_write_pointer;
-    mr_ctrl_in.rx_pointers_rx_rpp <= rx_read_pointer;
+    rx_write_pointer_assign_proc : process (rx_write_pointer)
+    begin
+        mr_ctrl_in.rx_pointers_rx_wpp <= (others => '0');
+        mr_ctrl_in.rx_pointers_rx_wpp(G_RX_BUFF_PTR_WIDTH - 1 downto 0) <= rx_write_pointer;
+    end process;
+
+    rx_read_pointer_assign_proc : process (rx_read_pointer)
+    begin
+        mr_ctrl_in.rx_pointers_rx_rpp <= (others => '0');
+        mr_ctrl_in.rx_pointers_rx_rpp(G_RX_BUFF_PTR_WIDTH - 1 downto 0) <= rx_read_pointer;
+    end process;
 
     -- RX_STATUS register
     mr_ctrl_in.rx_status_rxe   <= rx_empty;
     mr_ctrl_in.rx_status_rxf   <= rx_full;
     mr_ctrl_in.rx_status_rxmof <= rx_mof;
-    mr_ctrl_in.rx_status_rxfrc <= rx_frame_count;
+
+    rxfrc_assign_proc : process (rx_frame_count)
+    begin
+        mr_ctrl_in.rx_status_rxfrc <= (others => '0');
+        mr_ctrl_in.rx_status_rxfrc(G_RX_BUF_FRAME_CNT_WIDTH - 1 downto 0) <= rx_frame_count;
+    end process;
 
     -- RX_DATA register - Read data word from RX Buffer FIFO.
     mr_ctrl_in.rx_data_rx_data <= rxb_port_b_data_out;

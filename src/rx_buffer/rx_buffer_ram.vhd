@@ -106,6 +106,9 @@ entity rx_buffer_ram is
         -- RX Buffer size
         G_RX_BUFF_SIZE          :       natural range 32 to 4096;
 
+        -- Width of RX Buffer pointers
+        G_RX_BUFF_PTR_WIDTH     :       natural range 5 to 12;
+
         -- Add parity to RX Buffer RAM
         G_SUP_PARITY            :       boolean;
 
@@ -133,14 +136,14 @@ entity rx_buffer_ram is
         -------------------------------------------------------------------------------------------
         -- Port A - Write (from CAN Core)
         -------------------------------------------------------------------------------------------
-        rxb_port_a_address      : in  std_logic_vector(11 downto 0);
+        rxb_port_a_address      : in  std_logic_vector(G_RX_BUFF_PTR_WIDTH - 1 downto 0);
         rxb_port_a_data_in      : in  std_logic_vector(31 downto 0);
         rxb_port_a_write        : in  std_logic;
 
         -------------------------------------------------------------------------------------------
         -- Port B - Read (from Memory registers)
         -------------------------------------------------------------------------------------------
-        rxb_port_b_address      : in  std_logic_vector(11 downto 0);
+        rxb_port_b_address      : in  std_logic_vector(G_RX_BUFF_PTR_WIDTH - 1 downto 0);
         rxb_port_b_data_out     : out std_logic_vector(31 downto 0);
 
         -------------------------------------------------------------------------------------------
@@ -152,10 +155,10 @@ end entity;
 
 architecture rtl of rx_buffer_ram is
 
-    signal rxb_port_a_address_i     : std_logic_vector(11 downto 0);
+    signal rxb_port_a_address_i     : std_logic_vector(G_RX_BUFF_PTR_WIDTH - 1 downto 0);
     signal rxb_port_a_write_i       : std_logic;
     signal rxb_port_a_data_in_i     : std_logic_vector(31 downto 0);
-    signal rxb_port_b_address_i     : std_logic_vector(11 downto 0);
+    signal rxb_port_b_address_i     : std_logic_vector(G_RX_BUFF_PTR_WIDTH - 1 downto 0);
     signal rxb_port_b_data_out_i    : std_logic_vector(31 downto 0);
 
     signal mr_tst_dest_tst_addr_pad : std_logic_vector(15 downto 0);
@@ -178,7 +181,7 @@ begin
     generic map (
         G_WORD_WIDTH            => 32,
         G_DEPTH                 => G_RX_BUFF_SIZE,
-        G_ADDRESS_WIDTH         => rxb_port_a_address'length,
+        G_ADDRESS_WIDTH         => G_RX_BUFF_PTR_WIDTH,
         G_SYNC_READ             => true,
         G_RESETABLE             => G_RESET_RX_BUF_RAM
     )
@@ -296,7 +299,7 @@ begin
     -- Write port
     rxb_port_a_address_i <= rxb_port_a_address when (tst_ena = '0')
                                                else
-                            mr_tst_dest_tst_addr_pad(11 downto 0);
+                            mr_tst_dest_tst_addr_pad(G_RX_BUFF_PTR_WIDTH - 1 downto 0);
 
     rxb_port_a_write_i <= rxb_port_a_write when (tst_ena = '0')
                                            else
@@ -309,7 +312,7 @@ begin
     -- Read port
     rxb_port_b_address_i <= rxb_port_b_address when (tst_ena = '0')
                                                else
-                            mr_tst_dest_tst_addr_pad(11 downto 0);
+                            mr_tst_dest_tst_addr_pad(G_RX_BUFF_PTR_WIDTH - 1 downto 0);
 
     mr_tst_rdata_tst_rdata <= rxb_port_b_data_out_i when (tst_ena = '1')
                                                     else

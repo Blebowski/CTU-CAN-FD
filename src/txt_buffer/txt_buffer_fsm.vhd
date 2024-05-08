@@ -189,6 +189,12 @@ architecture rtl of txt_buffer_fsm is
     signal tx_command_txce_valid : std_logic;
     signal tx_command_txcr_valid : std_logic;
 
+    -- Internal HW Command, filtered by HW chip select for this Buffer
+    signal txtb_hw_cmd_i         : t_txtb_hw_cmd;
+
+    -- Arbitration lost or error valid fro current TXT Buffer
+    signal arbl_or_err           : std_logic;
+
 begin
 
     sw_command_reg_proc : process(res_n, clk_sys)
@@ -215,9 +221,8 @@ begin
                          else
                      '0';
 
-    buffer_skipped <= '1' when (txtb_hw_cmd.unlock = '1' and
-                               (txtb_hw_cmd.failed = '1' or txtb_hw_cmd.valid = '1') and
-                               (txtb_is_bb = '1'))
+    buffer_skipped <= '1' when ((txtb_hw_cmd.failed = '1' or txtb_hw_cmd.valid = '1') and
+                                (txtb_is_bb = '1'))
                           else
                       '0';
 
@@ -233,13 +238,21 @@ begin
                         else
                     '0';
 
+    txtb_hw_cmd_i <= txtb_hw_cmd when (hw_cbs = '1')
+                                 else
+                     (others => '0');
+
+    arbl_or_err <= '1' when (txtb_hw_cmd_i.err = '1' or txtb_hw_cmd_i.arbl = '1') else
+                   '0';
+
     txtb_allow_bb <= transient_state;
 
     -----------------------------------------------------------------------------------------------
     -- Next state process
     -----------------------------------------------------------------------------------------------
     tx_buf_fsm_next_state_proc : process(curr_state, tx_command_txce_valid, tx_command_txcr_valid,
-        txtb_hw_cmd, hw_cbs, abort_applied, go_to_failed, txtb_parity_error_valid, buffer_skipped)
+        txtb_hw_cmd_i, hw_cbs, abort_applied, go_to_failed, txtb_parity_error_valid, buffer_skipped,
+        arbl_or_err)
     begin
         next_state <= curr_state;
 
@@ -252,7 +265,7 @@ begin
 
             -- "Set_ready"
             if (tx_command_txcr_valid = '1') then
-                next_state       <= s_txt_ready;
+                next_state <= s_txt_ready;
             end if;
 
         -------------------------------------------------------------------------------------------
@@ -269,18 +282,18 @@ begin
                 next_state <= s_txt_parity_err;
 
             -- Locking for transmission
-            elsif (txtb_hw_cmd.lock = '1' and hw_cbs = '1') then
+            elsif (txtb_hw_cmd_i.lock = '1') then
 
                 -- Simultaneous "lock" and abort -> transmit, but with abort pending
                 if (abort_applied = '1') then
-                    next_state     <= s_txt_ab_prog;
+                    next_state <= s_txt_ab_prog;
                 else
-                    next_state     <= s_txt_tx_prog;
+                    next_state <= s_txt_tx_prog;
                 end if;
 
             -- Abort the ready buffer or Skip the original TXT Buffer getting "failed" or "OK".
             elsif (abort_applied = '1' or buffer_skipped = '1') then
-                next_state       <= s_txt_aborted;
+                next_state <= s_txt_aborted;
             end if;
 
         -------------------------------------------------------------------------------------------
@@ -296,27 +309,25 @@ begin
             elsif (txtb_parity_error_valid = '1') then
                 next_state <= s_txt_parity_err;
 
-            -- Unlock the buffer
-            elsif (txtb_hw_cmd.unlock = '1' and hw_cbs = '1') then
+            -- Retransmitt reached, do not try again
+            elsif (txtb_hw_cmd_i.failed = '1') then
+                next_state <= s_txt_failed;
 
-                -- Retransmitt reached, transmitt OK, or try again...
-                if (txtb_hw_cmd.failed         = '1') then
-                    next_state     <= s_txt_failed;
-                elsif (txtb_hw_cmd.valid       = '1') then
-                    next_state     <= s_txt_ok;
-                elsif (txtb_hw_cmd.err         = '1' or
-                       txtb_hw_cmd.arbl        = '1')
-                then
-                    if (abort_applied = '1') then
-                        next_state     <= s_txt_aborted;
-                    else
-                        next_state     <= s_txt_ready;
-                    end if;
+            -- Transmission OK
+            elsif (txtb_hw_cmd_i.valid = '1') then
+                next_state <= s_txt_ok;
+
+            -- Error or arbitration lost
+            elsif (arbl_or_err = '1') then
+                if (abort_applied = '1') then
+                    next_state <= s_txt_aborted;
+                else
+                    next_state <= s_txt_ready;
                 end if;
 
             -- Request abort during transmission
             elsif (abort_applied = '1') then
-                next_state         <= s_txt_ab_prog;
+                next_state <= s_txt_ab_prog;
             end if;
 
         -------------------------------------------------------------------------------------------
@@ -332,18 +343,17 @@ begin
             elsif (txtb_parity_error_valid = '1') then
                 next_state <= s_txt_parity_err;
 
-            -- Unlock the buffer
-            elsif (txtb_hw_cmd.unlock = '1' and hw_cbs = '1') then
+            -- Retransmitt reached, do not try again
+            elsif (txtb_hw_cmd_i.failed = '1') then
+                next_state <= s_txt_failed;
 
-                -- Retransmitt reached, transmitt OK, or try again...
-                if (txtb_hw_cmd.failed         = '1') then
-                    next_state     <= s_txt_failed;
-                elsif (txtb_hw_cmd.valid       = '1') then
-                    next_state     <= s_txt_ok;
-                elsif (txtb_hw_cmd.err         = '1' or
-                       txtb_hw_cmd.arbl        = '1') then
-                    next_state     <= s_txt_aborted;
-                end if;
+            -- Transmission OK
+            elsif (txtb_hw_cmd_i.valid = '1') then
+                next_state <= s_txt_ok;
+
+            -- Error or arbitration lost
+            elsif (arbl_or_err = '1') then
+                next_state <= s_txt_aborted;
             end if;
 
         -------------------------------------------------------------------------------------------
@@ -353,12 +363,11 @@ begin
 
             -- "Set_ready"
             if (tx_command_txcr_valid = '1') then
-                next_state       <= s_txt_ready;
-            end if;
+                next_state <= s_txt_ready;
 
             -- "Set_empty"
-            if (tx_command_txce_valid = '1') then
-                next_state       <= s_txt_empty;
+            elsif (tx_command_txce_valid = '1') then
+                next_state <= s_txt_empty;
             end if;
 
         -------------------------------------------------------------------------------------------
@@ -368,12 +377,11 @@ begin
 
             -- "Set_ready"
             if (tx_command_txcr_valid = '1') then
-                next_state       <= s_txt_ready;
-            end if;
+                next_state <= s_txt_ready;
 
             -- "Set_empty"
-            if (tx_command_txce_valid = '1') then
-                next_state       <= s_txt_empty;
+            elsif (tx_command_txce_valid = '1') then
+                next_state <= s_txt_empty;
             end if;
 
         -------------------------------------------------------------------------------------------
@@ -383,12 +391,11 @@ begin
 
             -- "Set_ready"
             if (tx_command_txcr_valid = '1') then
-                next_state       <= s_txt_ready;
-            end if;
+                next_state <= s_txt_ready;
 
             -- "Set_empty"
-            if (tx_command_txce_valid = '1') then
-                next_state       <= s_txt_empty;
+            elsif (tx_command_txce_valid = '1') then
+                next_state <= s_txt_empty;
             end if;
 
         -------------------------------------------------------------------------------------------
@@ -398,12 +405,11 @@ begin
 
             -- "Set_ready"
             if (tx_command_txcr_valid = '1') then
-                next_state       <= s_txt_ready;
-            end if;
+                next_state <= s_txt_ready;
 
             -- "Set_empty"
-            if (tx_command_txce_valid = '1') then
-                next_state       <= s_txt_empty;
+            elsif (tx_command_txce_valid = '1') then
+                next_state <= s_txt_empty;
             end if;
 
         end case;
@@ -441,13 +447,13 @@ begin
                             '1';
 
     -- TXT Buffer HW Command generates interrupt upon transition to Failed, Done and Aborted states!
-    txtb_hw_cmd_int <= '1' when (hw_cbs = '1') and ((txtb_hw_cmd.failed = '1') or
-                                                   (txtb_hw_cmd.valid = '1') or
-                                                   ((txtb_hw_cmd.unlock = '1') and
-                                                    (curr_state = s_txt_ab_prog)) or
-                                                   ((mr_tx_command_txca_q = '1') and
-                                                    (mr_tx_command_txbi = '1') and
-                                                    (curr_state = s_txt_ready)))
+    txtb_hw_cmd_int <= '1' when (txtb_hw_cmd_i.failed = '1') or  -- Fail transition completely
+                                (txtb_hw_cmd_i.valid = '1') or   -- Finish transition OK
+                                ((txtb_hw_cmd_i.arbl = '1' or
+                                  txtb_hw_cmd_i.err = '1') and
+                                 (curr_state = s_txt_ab_prog))   -- Not failed completely, but already in
+                                                                 -- abort in progress -> No further transmissions
+                                                                 -- will continue -> Indicate to user
                            else
                        '1' when (is_bus_off = '1' and next_state = s_txt_failed and
                                  transient_state = '1')
@@ -520,9 +526,9 @@ begin
     --   curr_state = s_txt_ready};
     --
     -- psl txtb_hw_sw_cmd_txt_tx_prog_hazard_cov : cover
-    --  {txtb_hw_cmd.unlock = '1' and hw_cbs = '1' and abort_applied = '1' and
-    --   curr_state = s_txt_tx_prog};
-    --
+    --  {((txtb_hw_cmd_i.valid = '1' or txtb_hw_cmd_i.err = '1' or
+    --     txtb_hw_cmd_i.arbl = '1' or txtb_hw_cmd_i.failed = '1') and
+    --    abort_applied = '1' and curr_state = s_txt_tx_prog)};
 
     -- Corner-case transitions of FSM
     --
@@ -549,7 +555,7 @@ begin
     -- progress.
     --
     -- psl txtb_unlock_only_in_tx_prog_asrt : assert always
-    --  ((txtb_hw_cmd.unlock = '1' and hw_cbs = '1') ->
+    --  ((txtb_hw_cmd_i.valid = '1' or txtb_hw_cmd_i.err = '1' or txtb_hw_cmd_i.arbl = '1' or txtb_hw_cmd_i.failed = '1') ->
     --   (curr_state = s_txt_tx_prog or curr_state = s_txt_ab_prog or curr_state = s_txt_parity_err))
     --  report "TXT Buffer not TX in progress, Abort in progress or Parity Error when unlock received!";
     -----------------------------------------------------------------------------------------------
