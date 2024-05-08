@@ -7071,7 +7071,7 @@ cellcolor{cyan}
 RXNE RX buffer not empty.  This bit is 1 when least one frame is stored in RX buffer.
 \end_layout
 \begin_layout Description
-DOR Data Overrun flag. This bit is set when frame was dropped due to lack of space in RX buffer. This bit can be cleared by COMMAND[RRB].
+DOR Data Overrun flag. This bit is set when frame was dropped due to lack of space in RX buffer. This bit can be cleared by COMMAND[RRB] or COMMAND[CDO].
 \end_layout
 \begin_layout Description
 TXNF TXT buffers status. This bit is set if at least one  TXT buffer is in "Empty" state.
