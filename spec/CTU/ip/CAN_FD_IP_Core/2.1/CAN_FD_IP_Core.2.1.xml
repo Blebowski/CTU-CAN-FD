@@ -508,7 +508,7 @@
 					<ipxact:field>
 						<ipxact:name>DOR</ipxact:name>
 						<ipxact:displayName>DOR</ipxact:displayName>
-						<ipxact:description>Data Overrun flag. This bit is set when frame was dropped due to lack of space in RX buffer. This bit can be cleared by COMMAND[RRB].</ipxact:description>
+						<ipxact:description>Data Overrun flag. This bit is set when frame was dropped due to lack of space in RX buffer. This bit can be cleared by COMMAND[RRB] or COMMAND[CDO].</ipxact:description>
 						<ipxact:bitOffset>1</ipxact:bitOffset>
 						<ipxact:resets>
 							<ipxact:reset>
