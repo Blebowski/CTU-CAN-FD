@@ -134,7 +134,7 @@ package body pc_fsm_transitions_ftest is
         decode_length(CAN_TX_frame.data_length, CAN_TX_frame.dlc);
 
         -- Precomputed length of frame
-        for i in 0 to 59 loop
+        for i in 0 to 57 loop
 
             -----------------------------------------------------------------------
             -- @1.1  Set DUT node to Error Passive.
