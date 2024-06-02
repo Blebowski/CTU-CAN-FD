@@ -274,13 +274,35 @@ tests:
       generics:
         /TB_TOP_CTU_CAN_FD/cfg_brp_fd: 3
     - name: iso_8_8_2_1
+      generics:
+        /TB_TOP_CTU_CAN_FD/cfg_brp: 4
+        /TB_TOP_CTU_CAN_FD/cfg_prop: 25
+        /TB_TOP_CTU_CAN_FD/cfg_ph_1: 25
+        /TB_TOP_CTU_CAN_FD/cfg_ph_2: 20
+        /TB_TOP_CTU_CAN_FD/cfg_sjw: 5
+
+        /TB_TOP_CTU_CAN_FD/cfg_brp_fd: 3
+        /TB_TOP_CTU_CAN_FD/cfg_prop_fd: 7
+        /TB_TOP_CTU_CAN_FD/cfg_ph_1_fd: 10
+        /TB_TOP_CTU_CAN_FD/cfg_ph_2_fd: 10
     - name: iso_8_8_2_2
+      generics:
+        /TB_TOP_CTU_CAN_FD/cfg_brp_fd: 3
+        /TB_TOP_CTU_CAN_FD/cfg_prop_fd: 7
+        /TB_TOP_CTU_CAN_FD/cfg_ph_1_fd: 10
+        /TB_TOP_CTU_CAN_FD/cfg_ph_2_fd: 10
     - name: iso_8_8_2_3
       generics:
         /TB_TOP_CTU_CAN_FD/cfg_brp_fd: 3
+        /TB_TOP_CTU_CAN_FD/cfg_prop_fd: 5
+        /TB_TOP_CTU_CAN_FD/cfg_ph_1_fd: 5
+        /TB_TOP_CTU_CAN_FD/cfg_ph_2_fd: 9
     - name: iso_8_8_2_4
       generics:
         /TB_TOP_CTU_CAN_FD/cfg_brp_fd: 3
+        /TB_TOP_CTU_CAN_FD/cfg_prop_fd: 7
+        /TB_TOP_CTU_CAN_FD/cfg_ph_1_fd: 10
+        /TB_TOP_CTU_CAN_FD/cfg_ph_2_fd: 10
     - name: iso_8_8_3_1
       generics:
         /TB_TOP_CTU_CAN_FD/cfg_brp_fd: 3
