@@ -127,9 +127,6 @@ entity bit_destuffing is
         -- Bit destuffing type (0-Normal, 1-Fixed)
         fixed_stuff         : in  std_logic;
 
-        -- Length of Bit De-Stuffing rule
-        destuff_length      : in  std_logic_vector(2 downto 0);
-
         -------------------------------------------------------------------------------------------
         -- Status Outpus
         -------------------------------------------------------------------------------------------
@@ -221,9 +218,11 @@ begin
     --     already included in counting next consecutive bits of equal value (recursive behaviour).
     --  2. Fixed bit stuffing, number of same bits is equal to one more than rule length, since
     --     stuff bit is not included then!
+    --
+    -- In both cases the "same_bits_q" is equal to 5, since for fixed stuffing the length of
+    -- stuff rule (4) compensates for recursivity of regular bit stuffing!
     -----------------------------------------------------------------------------------------------
-    stuff_lvl_reached <= '1' when (same_bits_q = unsigned(destuff_length) and fixed_stuff = '0') or
-                                  (same_bits_q = unsigned(destuff_length) + 1 and fixed_stuff = '1')
+    stuff_lvl_reached <= '1' when (same_bits_q = "101")
                              else
                          '0';
 
@@ -456,10 +455,6 @@ begin
     -------------------------------------------------------------------------------------------
 
     -- psl default clock is rising_edge(clk_sys);
-
-    -- psl valid_stuff_length_setting_asrt : assert never
-    --   ((destuff_length = "000" or destuff_length = "001") and (destuff_enable = '1'))
-    -- report "0 and 1 bit stuffing length is invalid!";
 
     -- psl bds_non_fix_to_fixed_change_cov : cover
     --  {bds_trigger = '1' and non_fix_to_fix_chng = '1'};

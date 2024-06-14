@@ -380,9 +380,6 @@ entity protocol_control_fsm is
         -- Bit De-stuffing is enabled
         destuff_enable          : out  std_logic;
 
-        -- Length of Bit stuffing rule
-        stuff_length            : out  std_logic_vector(2 downto 0);
-
         -- Fixed Bit stuffing method
         fixed_stuff             : out  std_logic;
 
@@ -1431,7 +1428,6 @@ begin
         br_shifted_i            <= '0';
 
         -- Bit Stuffing/Destuffing control
-        stuff_length            <= std_logic_vector(to_unsigned(5, 3));
         fixed_stuff             <= '0';
         stuff_enable_set        <= '0';
         stuff_enable_clear      <= '0';
@@ -2070,7 +2066,6 @@ begin
                 end if;
 
                 if (is_fd_frame = '1') then
-                    stuff_length <= std_logic_vector(to_unsigned(4, 3));
                     fixed_stuff <= '1';
                 end if;
 
@@ -2090,7 +2085,6 @@ begin
                 end if;
 
                 if (is_fd_frame = '1') then
-                    stuff_length <= std_logic_vector(to_unsigned(4, 3));
                     fixed_stuff <= '1';
                 end if;
 
