@@ -123,10 +123,9 @@ package ssp_cfg_ftest is
         signal      chn             : inout  t_com_channel
     );
 
-    procedure correct_ssp_offset(
-       ssp_offset_generated         : in    std_logic_vector(7 downto 0);
+    procedure generate_ssp_offset(
        bus_timing                   : in    bit_time_config_type;
-       ssp_offset_corrected         : out   std_logic_vector(7 downto 0)
+       ssp_offset                   : inout std_logic_vector(7 downto 0)
     );
 
 end package;
@@ -135,59 +134,120 @@ end package;
 package body ssp_cfg_ftest is
 
     ---------------------------------------------------------------------------
-    -- Data bit time is generated random. Also SSP_OFFSET is generated random.
-    -- We set real delay from CAN_TX to CAN_RX in TB also to random generated
-    -- value. If generated SSP_OFFSET is higher than duration of bit, then
-    -- we will never sample correct value, because we just sample next bit
-    -- already! So we need to constrain configured SSP_OFFSET to less than
-    -- data bit time!
-    ---------------------------------------------------------------------------
-    procedure correct_ssp_offset(
-       ssp_offset_generated         : in    std_logic_vector(7 downto 0);
-       bus_timing                   : in    bit_time_config_type;
-       ssp_offset_corrected         : out   std_logic_vector(7 downto 0)
+    -- Generated TRV_DELAY must meet some criteria:
+    --
+    -- 1. TRV_DELAY < TSEG_1 (MBT)
+    --    This is to make sure that in Nominal bit-rate, the regular sampling
+    --    will work OK!
+    --
+    -- 2. TRV_DELAY > 0
+    --    To avoid races!
+    --
+    -- 3. Bit Time DBT * 8 < TRV_DELAY
+    --    This is to meet maximal size of TX Data cache!
+    --
+    -- 4. TRV_DELAY MOD 10 != 0
+    --    When delay is e.g. 120 ns, then value will arrive at CAN RX when
+    --    rising_edge is active. Therefore sampled value might, or might not
+    --    be processed by clock based on which delta cycle was processed
+    --    first (Since signal delayer does not work with system clocks, it
+    --    might not be processed the same way as e.g. shift register!)
+    --    This would cause occasional test failures based on which process
+    --    was executed first (either rising_edge sampling the data, or data
+    --    delayed by signal delayer).
+    -----------------------------------------------------------------------
+    procedure generate_trv_delay(
+        variable trv_delay              : inout    natural;
+        variable bit_timing             : inout    bit_time_config_type
     ) is
-        variable bit_time_length    :       natural;
+        -- Length of TSEG1 in ns, assumes 10 ns clock period!
+        variable tseg_1_nbt             : natural :=
+                    bit_timing.tq_nbt * (1 + bit_timing.prop_nbt + bit_timing.ph1_nbt) * 10;
+
+        -- Length of Bit timing DBT, assumes 10 ns clock period
+        variable bit_len_dbt            : natural :=
+                    bit_timing.tq_dbt * (1 + bit_timing.prop_dbt + bit_timing.ph1_dbt + bit_timing.ph2_dbt);
     begin
-        bit_time_length := bus_timing.tq_dbt * (1 + bus_timing.prop_dbt +
-            bus_timing.ph1_dbt + bus_timing.ph2_dbt);
-
-        if (to_integer(unsigned(ssp_offset_generated)) >= bit_time_length) then
-            ssp_offset_corrected := std_logic_vector(to_unsigned(bit_time_length - 1, 8));
-            info_m("Correcting SSP offset. Bit time length: " &
-                  integer'image(bit_time_length) & " cycles. New SSP offset value:" &
-                  integer'image(to_integer(unsigned(ssp_offset_corrected))));
-        else
-            ssp_offset_corrected := ssp_offset_generated;
-        end if;
-
+        rand_int_v(5000, trv_delay);
+        while (
+            (trv_delay > tseg_1_nbt - 50)           or -- Account for 50ns margin!
+            (trv_delay = 0)                         or
+            (trv_delay > (bit_len_dbt * 8) - 50)    or -- Account for 50 ns margin!
+            ((trv_delay mod 10) = 0)
+        ) loop
+            -- Currently maximal measurable value of TRV_DELAY is 127.
+            -- Account +3 for CTU CAN FD input delay (delay is 2, one cycle reserve for alignment issues.)
+            rand_int_v(1240, trv_delay);
+        end loop;
     end procedure;
 
+
+    ---------------------------------------------------------------------------
+    -- There are following criterias generated SSP offset needs to meet:
+    --  1. SSP_OFFSET < Bit Time (DBT)
+    --
+    --     If generated SSP_OFFSET is higher than duration of bit, then
+    --     we will never sample correct value, because we just sample next bit
+    --     already! So we need to constrain configured SSP_OFFSET to less than
+    --     data bit time!
+    --
+    --  2. SSP_OFFSET > 0
+    --
+    --     To avoid races.
+    --
+    --  3. SSP_OFFSET < 240
+    --
+    --     Maximal sample point position is 255 cycles. Subtracting 2 for CTU CAN FD
+    --     input delay gives 253. We keep 13 cycles reserve, since the actual
+    --     sample point can include TRV_DELAY! This-way during TRV_DELAY adjustement,
+    --     we always can adjust it to fit within DUT specification.
+    ---------------------------------------------------------------------------
+    procedure generate_ssp_offset(
+       bus_timing                   : in    bit_time_config_type;
+       ssp_offset                   : inout std_logic_vector(7 downto 0)
+    ) is
+        variable bit_time_length    :       natural :=
+            bus_timing.tq_dbt *
+                (1 + bus_timing.prop_dbt + bus_timing.ph1_dbt + bus_timing.ph2_dbt);
+    begin
+        rand_logic_vect_v (ssp_offset, 0.3);
+        while (
+            (to_integer(unsigned(ssp_offset)) >= bit_time_length - 3)  or -- Account for 3 cycles margin
+            (ssp_offset = "00000000")                                  or
+            (to_integer(unsigned(ssp_offset)) > 240)
+        ) loop
+            rand_logic_vect_v (ssp_offset, 0.3);
+        end loop;
+    end procedure;
+
+
     procedure ssp_cfg_ftest_exec(
-        signal      chn             : inout  t_com_channel
+        signal      chn                     : inout  t_com_channel
     ) is
 
         -- Generated frames
-        variable frame_1            :     SW_CAN_frame_type;
+        variable frame_1                    :     SW_CAN_frame_type;
 
         -- Node status
-        variable stat_1             :     SW_status;
+        variable stat_1                     :     SW_status;
 
-        variable frame_sent         :     boolean;
+        variable frame_sent                 :     boolean;
 
-        variable rand_trv_delay     :     natural;
-        variable tmp                :     natural;
+        variable rand_trv_delay             :     natural;
+        variable tmp                        :     natural;
 
-        variable ssp_source         :     SSP_set_command_type;
-        variable ssp_offset_var     :     std_logic_vector(7 downto 0);
-        variable ssp_pos            :     natural;
+        variable ssp_source                 :     SSP_set_command_type;
+        variable ssp_offset_var             :     std_logic_vector(7 downto 0);
+        variable ssp_pos                    :     natural;
 
-        variable bus_timing         :     bit_time_config_type;
-        variable num_bit_waits      :     natural;
-        variable num_bit_waits_max  :     natural;
-        variable tx_val             :     std_logic;
-        variable bit_rate           :     real;
-        variable cycles_per_bit     :     integer;
+        variable nominal_bus_timing         :     bit_time_config_type;
+        variable bus_timing                 :     bit_time_config_type;
+        variable num_bit_waits              :     natural;
+        variable num_bit_waits_max          :     natural;
+        variable tx_val                     :     std_logic;
+        variable bit_rate                   :     real;
+        variable nominal_cycles_per_bit     :     integer;
+        variable data_cycles_per_bit        :     integer;
     begin
 
         -----------------------------------------------------------------------
@@ -211,8 +271,7 @@ package body ssp_cfg_ftest is
         rand_int_v(31, bus_timing.ph1_dbt);
         rand_int_v(31, bus_timing.ph2_dbt);
 
-        -- Constrain time quanta to something realistinc for data phase so
-        -- that we don't have too long run times!
+        -- Constrain time quanta to small value for data phase so that we don't have long run times!
         rand_int_v(4, bus_timing.tq_dbt);
         rand_int_v(33, bus_timing.sjw_dbt);
 
@@ -221,11 +280,11 @@ package body ssp_cfg_ftest is
             bus_timing.tq_dbt := 1;
         end if;
 
-        cycles_per_bit := bus_timing.tq_dbt * (1 + bus_timing.prop_dbt +
-                            bus_timing.ph1_dbt + bus_timing.ph2_dbt);
+        data_cycles_per_bit := bus_timing.tq_dbt *
+                                (1 + bus_timing.prop_dbt + bus_timing.ph1_dbt + bus_timing.ph2_dbt);
 
         -- Constrain minimal bit times
-        if (cycles_per_bit < 7) then
+        if (data_cycles_per_bit < 7) then
             bus_timing.prop_dbt := 7;
         end if;
 
@@ -233,20 +292,26 @@ package body ssp_cfg_ftest is
             bus_timing.ph2_dbt := 1;
         end if;
 
+        if (bus_timing.tq_dbt = 1 and (bus_timing.ph1_dbt + bus_timing.prop_dbt < 2)) then
+            bus_timing.ph1_dbt := 1;
+            bus_timing.prop_dbt := 1;
+        end if;
+
         if (bus_timing.tq_dbt = 1 and bus_timing.ph2_dbt = 1) then
             bus_timing.ph2_dbt := 2;
         end if;
 
-        cycles_per_bit := bus_timing.tq_dbt * (1 + bus_timing.prop_dbt +
-                            bus_timing.ph1_dbt + bus_timing.ph2_dbt);
-        info_m("Cycles per bit:" & integer'image(cycles_per_bit));
+        data_cycles_per_bit := bus_timing.tq_dbt *
+                                (1 + bus_timing.prop_dbt + bus_timing.ph1_dbt + bus_timing.ph2_dbt);
+
+        info_m("Data Cycles per bit:" & integer'image(data_cycles_per_bit));
 
         info_m("Generated data bit time bit-rate:");
         info_m("TQ: "   & integer'image(bus_timing.tq_dbt));
         info_m("PROP: " & integer'image(bus_timing.prop_dbt));
         info_m("PH1: "  & integer'image(bus_timing.ph1_dbt));
         info_m("PH2: "  & integer'image(bus_timing.ph2_dbt));
-        bit_rate := 100000000.0 / (real(cycles_per_bit));
+        bit_rate := 100000000.0 / (real(data_cycles_per_bit));
         info_m("Data bit rate: " & real'image(bit_rate/1000000.0) & " Mbit/s");
 
         -- We configure Nominal bit-rate to 500 Kbit/s so that generated
@@ -254,25 +319,8 @@ package body ssp_cfg_ftest is
         CAN_configure_timing(bus_timing, DUT_NODE, chn);
         CAN_configure_timing(bus_timing, TEST_NODE, chn);
 
-        rand_int_v(1259, rand_trv_delay);
-        if (rand_trv_delay = 0) then
-            rand_trv_delay := 1;
-        end if;
-
-        -----------------------------------------------------------------------
-        -- Here we avoid explicit multiples of 10 ns! The reason is following:
-        --  When delay is e.g. 120 ns, then value will arrive at CAN RX when
-        --  rising_edge is active. Therefore sampled value might, or might not
-        --  be processed by clock based on which delta cycle was processed
-        --  first (Since signal delayer does not work with system clocks, it
-        --  might not be processed the same way as e.g. shift register!)
-        --  This would cause occasional test failures based on which process
-        --  was executed first (either rising_edge sampling the data, or data
-        --  delayed by signal delayer).
-        -----------------------------------------------------------------------
-        if (rand_trv_delay mod 10 = 0) then
-            rand_trv_delay := rand_trv_delay + 1;
-        end if;
+        -- Generate random transceiver delay
+        generate_trv_delay(rand_trv_delay, bus_timing);
 
         -----------------------------------------------------------------------
         -- @2. Generate random SSP_CFG[SSP_SRC]. If it is offset only, generate
@@ -289,31 +337,29 @@ package body ssp_cfg_ftest is
 
         info_m("SSP source:");
         rand_int_v(2, tmp);
+
+        generate_ssp_offset(bus_timing, ssp_offset_var);
+
         if (tmp = 0) then
             info_m("TRV_DELAY + Offset");
             ssp_source := ssp_meas_n_offset;
-            rand_logic_vect_v (ssp_offset_var, 0.3);
-            info_m("Generated SSP offset: " & integer'image(to_integer(unsigned(ssp_offset_var))));
 
-            correct_ssp_offset(ssp_offset_var, bus_timing, ssp_offset_var);
+            -- Total SSP position needs to be smaller than maximal SSP positon!
+            -- Subtract TRV_DELAY until we get there. Generated SSP leaves us
+            -- margin, so this is always feasible.
+            ssp_pos := to_integer(unsigned(ssp_offset_var)) + rand_trv_delay / 10;
+            while (ssp_pos > 252) loop
+                rand_trv_delay := rand_trv_delay - 10;
+                ssp_pos := to_integer(unsigned(ssp_offset_var)) + rand_trv_delay / 10;
+            end loop;
 
-            -- Need to have non-zero offset to avoid races
-            if (ssp_offset_var = "00000000") then
-                ssp_offset_var := "00000001";
-            end if;
+            -- This is to compensate input delay of CTU CAN FD. Actual delay will be
+            -- +2 higher! See Datasheet section 2.5.3.
+            ssp_pos := ssp_pos + 2;
 
             -- SSP position is offset + delay
-            info_m("Post correction SSP offset: " & integer'image(to_integer(unsigned(ssp_offset_var))));
-            info_m("Trv delay div: " & integer'image(rand_trv_delay / 10));
-
-            ssp_pos := to_integer(unsigned(ssp_offset_var)) + rand_trv_delay / 10;
-            if (ssp_pos > 255) then
-                ssp_pos := 255;
-            end if;
-
-            -- This is to compensate input delay of CTU CAN FD! See Datasheet.
-            -- section 2.5.3.
-            ssp_pos := ssp_pos + 2;
+            info_m("Post correction SSP offset: " &
+                    integer'image(to_integer(unsigned(ssp_offset_var))));
 
         elsif (tmp = 1) then
             info_m("NO SSP");
@@ -323,9 +369,8 @@ package body ssp_cfg_ftest is
             ssp_pos := bus_timing.tq_dbt *
                         (bus_timing.prop_dbt + bus_timing.ph1_dbt + 1);
 
-
             -- In case of no SSP, we sample by regular sample point. Due to this,
-            -- we need to shorten trvdelay to less than delay of regular sample
+            -- we need to shorten trv_delay less than delay of regular sample
             -- point! SP in data sample here is in 20 + 10 + 1 = 31 System clocks.
             -- Consider 2 clock cycle input delay and 1 cycle reserve!
             rand_int_v(280, rand_trv_delay);
@@ -335,28 +380,32 @@ package body ssp_cfg_ftest is
             if (rand_trv_delay mod 10 = 0) then
                 rand_trv_delay := rand_trv_delay + 1;
             end if;
+
         else
             info_m("Offset only");
             ssp_source := ssp_offset;
-            rand_logic_vect_v (ssp_offset_var, 0.3);
 
-            correct_ssp_offset(ssp_offset_var, bus_timing, ssp_offset_var);
-
-            info_m("Post correction SSP offset: " & integer'image(to_integer(unsigned(ssp_offset_var))));
-
-            -- Here lengthen the SSP offset so that we are sufficiently over TRV_DELAY!
-            -- It should be enough to lengthen it by two clock cycles (input delay of
-            -- CTU CAN FD) + one cycle reserve for truncation of non-multiple of 10
-            -- divided by 10!
-            if (to_integer(unsigned(ssp_offset_var)) - 2 <= rand_trv_delay/10) then
-                ssp_offset_var := std_logic_vector(to_unsigned(rand_trv_delay/10, 8) + 3);
-            end if;
-
-            -- SSP position is offset only!
+            -- Total SSP position needs to be smaller than maximal SSP positon!
             ssp_pos := to_integer(unsigned(ssp_offset_var));
-            if (ssp_pos > 255) then
-                ssp_pos := 255;
+            while (ssp_pos > 252) loop
+                ssp_offset_var := std_logic_vector(to_unsigned( to_integer(unsigned(ssp_offset_var)) - 1, 8));
+                ssp_pos := to_integer(unsigned(ssp_offset_var));
+            end loop;
+
+            -- If we are offset only, we need  to compensate for CTU CAN FD input delay!
+            if (ssp_pos < 4) then
+                ssp_offset_var := "00000100";
+                ssp_pos := to_integer(unsigned(ssp_offset_var));
             end if;
+
+            -- Here trunacte the TRV_DELAY so that the Offset only is larger than the delay!
+            -- Otherwise with offset only, we are not able to sample the point!
+            while (to_integer(unsigned(ssp_offset_var)) - 3 <= rand_trv_delay / 10) loop
+                rand_trv_delay := rand_trv_delay - 10;
+            end loop;
+
+            info_m("Post correction SSP offset: " &
+                    integer'image(to_integer(unsigned(ssp_offset_var))));
         end if;
 
         info_m("Random TRV_DELAY is: " & integer'image(rand_trv_delay) & " ns");
