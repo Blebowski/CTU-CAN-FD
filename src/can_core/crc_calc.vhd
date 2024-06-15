@@ -139,12 +139,6 @@ architecture rtl of crc_calc is
     -- Signal if next value of CRC should be shifted and XORed or only shifted!
     signal crc_nxt          : std_logic;
 
-    -- Shifted value of CRC register. Insert 0 from left
-    signal crc_shift        : std_logic_vector(G_CRC_WIDTH - 1 downto 0);
-
-    -- XORed value
-    signal crc_shift_n_xor  : std_logic_vector(G_CRC_WIDTH - 1 downto 0);
-
     -- Combinational value of next CRC value
     signal crc_d            : std_logic_vector(G_CRC_WIDTH - 1 downto 0);
 
@@ -158,19 +152,16 @@ begin
     -----------------------------------------------------------------------------------------------
     crc_nxt         <= data_in xor crc_q(G_CRC_WIDTH - 1);
 
-    crc_shift       <= crc_q(G_CRC_WIDTH - 2 downto 0) & '0';
-
-    crc_shift_n_xor <= crc_shift xor G_POLYNOMIAL(G_CRC_WIDTH - 1 downto 0);
-
-    crc_d_decoder : process(init_vect_msb, load_init_vect, crc_nxt, crc_shift, crc_shift_n_xor)
+    crc_d_decoder : process(init_vect_msb, load_init_vect, crc_nxt, crc_q)
     begin
         if (load_init_vect = '1') then
             crc_d <= (others => '0');
             crc_d(G_CRC_WIDTH - 1) <= init_vect_msb;
         elsif (crc_nxt = '1') then
-            crc_d <= crc_shift_n_xor;
+            crc_d <= (crc_q(G_CRC_WIDTH - 2 downto 0) & '0') xor
+                      G_POLYNOMIAL(G_CRC_WIDTH - 1 downto 0);
         else
-            crc_d <= crc_shift;
+            crc_d <= (crc_q(G_CRC_WIDTH - 2 downto 0) & '0');
         end if;
     end process;
 
