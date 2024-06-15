@@ -107,7 +107,6 @@ entity fault_confinement is
         -- Memory registers interface
         -------------------------------------------------------------------------------------------
         mr_mode_rom             : in  std_logic;
-        mr_settings_ena         : in  std_logic;
         mr_ewl_ew_limit         : in  std_logic_vector(7 downto 0);
         mr_erp_erp_limit        : in  std_logic_vector(7 downto 0);
         mr_ctr_pres_ctpv        : in  std_logic_vector(8 downto 0);
@@ -220,7 +219,6 @@ begin
 
         mr_ewl_ew_limit         => mr_ewl_ew_limit,          -- IN
         mr_erp_erp_limit        => mr_erp_erp_limit,         -- IN
-        mr_settings_ena         => mr_settings_ena,          -- IN
         mr_status_ewl           => mr_status_ewl,            -- OUT
 
         set_err_active          => set_err_active,           -- IN

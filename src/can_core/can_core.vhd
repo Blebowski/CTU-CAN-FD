@@ -676,7 +676,6 @@ begin
         scan_enable             => scan_enable,                 -- IN
 
         mr_mode_rom             => mr_mode_rom,                 -- IN
-        mr_settings_ena         => mr_settings_ena,             -- IN
         mr_ewl_ew_limit         => mr_ewl_ew_limit,             -- IN
         mr_erp_erp_limit        => mr_erp_erp_limit,            -- IN
         mr_ctr_pres_ctpv        => mr_ctr_pres_ctpv,            -- IN
