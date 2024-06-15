@@ -331,7 +331,6 @@ begin
         preload              => tx_sr_pload,                -- IN
         preload_val          => tx_sr_pload_val,            -- IN
         enable               => tx_sr_ce,                   -- IN
-        input                => '0',                        -- IN
 
         reg_stat             => open,                       -- OUT
         reg_output           => tx_sr_output                -- OUT
