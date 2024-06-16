@@ -168,7 +168,7 @@ package body ssp_cfg_ftest is
         variable bit_len_dbt            : natural :=
                     bit_timing.tq_dbt * (1 + bit_timing.prop_dbt + bit_timing.ph1_dbt + bit_timing.ph2_dbt);
     begin
-        rand_int_v(5000, trv_delay);
+        rand_int_v(1240, trv_delay);
         while (
             (trv_delay > tseg_1_nbt - 50)           or -- Account for 50ns margin!
             (trv_delay = 0)                         or
