@@ -149,7 +149,7 @@ architecture rtl of bit_stuffing is
     signal same_bits_q          : unsigned(2 downto 0);
     signal same_bits_add        : unsigned(2 downto 0);
     signal same_bits_d          : unsigned(2 downto 0);
-    signal tx_no_sof_val        : unsigned(2 downto 0);
+    signal tx_no_sof_val        : unsigned(1 downto 0);
 
     -- Halt for CAN Core
     signal data_halt_q          : std_logic;
@@ -321,8 +321,8 @@ begin
     --  1. If we transmitt dominant, we put two, this accounts for SOF + first bit of ID.
     --  2. If we transmitt recessive, we put one, this accounts only for first bit of ID.
     -----------------------------------------------------------------------------------------------
-    tx_no_sof_val <= "010" when (data_in = DOMINANT) else
-                     "001";
+    tx_no_sof_val <= "10" when (data_in = DOMINANT) else
+                     "01";
 
     -----------------------------------------------------------------------------------------------
     -- Next value for counter of equal consecutive bits:
@@ -331,10 +331,10 @@ begin
     --  3. Increment if not reset when processing bit.
     --  4. Keep original value otherwise.
     -----------------------------------------------------------------------------------------------
-    same_bits_d <= tx_no_sof_val when (tx_frame_no_sof = '1') else
-                           "001" when (same_bits_rst = '1') else
-                   same_bits_add when (bst_trigger = '1') else
-                     same_bits_q;
+    same_bits_d <= ('0' & tx_no_sof_val) when (tx_frame_no_sof = '1') else
+                                   "001" when (same_bits_rst = '1') else
+                           same_bits_add when (bst_trigger = '1') else
+                             same_bits_q;
 
     -----------------------------------------------------------------------------------------------
     -- Number of stuff bits is reached when:
