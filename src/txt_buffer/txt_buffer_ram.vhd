@@ -119,6 +119,11 @@ entity txt_buffer_ram is
         res_n                   : in  std_logic;
 
         -------------------------------------------------------------------------------------------
+        -- Parity configuration
+        -------------------------------------------------------------------------------------------
+        mr_settings_pchke       : in  std_logic;
+
+        -------------------------------------------------------------------------------------------
         -- Memory Testability
         -------------------------------------------------------------------------------------------
         mr_tst_control_tmaena   : in  std_logic;
@@ -253,7 +258,7 @@ begin
             end if;
         end process;
 
-        parity_mismatch <= '1' when (parity_read_real /= parity_read_exp)
+        parity_mismatch <= '1' when (parity_read_real /= parity_read_exp) and (mr_settings_pchke = '1')
                                else
                            '0';
 
