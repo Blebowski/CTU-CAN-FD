@@ -179,9 +179,6 @@ architecture rtl of err_counters is
     signal modif_tx_ctr         : std_logic;
     signal modif_rx_ctr         : std_logic;
 
-    -- Error counters increment
-    signal err_ctr_inc          : unsigned(8 downto 0);
-
     -- TX/RX Error counter decremented value
     signal tx_err_ctr_dec       : unsigned(8 downto 0);
     signal rx_err_ctr_dec       : unsigned(8 downto 0);
@@ -238,10 +235,6 @@ begin
     modif_rx_ctr <= '1' when (inc_one = '1' or inc_eight = '1' or dec_one = '1')
                         else
                     '0';
-
-    -- Increment by 1 or 8
-    err_ctr_inc <= "000000001" when (inc_one = '1') else
-                   "000001000";
 
     -----------------------------------------------------------------------------------------------
     -- TX Error counter, next value calculation
@@ -310,7 +303,8 @@ begin
 
 
     -- Inrement RX counter
-    rx_err_ctr_inc <= rx_err_ctr_q + err_ctr_inc;
+    rx_err_ctr_inc <= rx_err_ctr_q + 1 when (inc_one = '1') else
+                      rx_err_ctr_q + 8;
 
     -- Saturate RX counter when overflow would occur according to 12.1.4.3 of CAN FD ISO spec
     rx_err_ctr_sat <= (others => '1') when (rx_err_ctr_inc < rx_err_ctr_q) else
