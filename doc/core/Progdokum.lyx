@@ -1535,7 +1535,7 @@ Add LBPF bit to RX frame.
  Add MODE[ERFM].
  Add FRAME_FORMAT_W[ERF], FRAME_FORMAT_W[ERR_*].
  Add Error frame reception to RX buffer.
- 
+ Add ERR_CAPT[ERR_STATE] bit.
 \end_layout
 
 \end_inset
@@ -5467,6 +5467,11 @@ Note When CTU CAN FD operates in Restricted operation mode (MODE[ROM]=1),
  Error frames are not stored to RX buffer since error condition on the bus
  causes CTU CAN FD to move to Bus Integration state, and not transmit the
  Error frame.
+\end_layout
+
+\begin_layout Description
+Note All rules related to setting of ERR_CAPT (Error type priorities, etc...)
+ apply also to Error frames stored in RX buffer.
 \end_layout
 
 \begin_layout Subsection

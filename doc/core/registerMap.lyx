@@ -40964,15 +40964,15 @@ ERR_TYPE\end_layout
 
 \end_inset
 </cell>
-<cell alignment="center" leftline="true" multicolumn="1" rightline="true" topline="true" usebox="none" valignment="top">
+<cell alignment="center" leftline="true" multicolumn="1" topline="true" usebox="none" valignment="top">
 \begin_inset Text
 
 \begin_layout Plain Layout
-ERR_POS\end_layout
+ERR_STATE\end_layout
 
 \end_inset
 </cell>
-<cell alignment="center" leftline="true" multicolumn="2" topline="true" usebox="none" valignment="top">
+<cell alignment="center" leftline="true" multicolumn="1" rightline="true" topline="true" usebox="none" valignment="top">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -41049,7 +41049,7 @@ cellcolor{cyan}
 \begin_inset Text
 
 \begin_layout Plain Layout
-1\end_layout
+X\end_layout
 
 \end_inset
 </cell>
@@ -41094,16 +41094,21 @@ cellcolor{cyan}
 \end_layout
 \begin_layout Description
 ERR_POS Position of last error.\begin_inset Newline newline\end_inset
-		0b00000  - ERC_POS_SOF - Error in Start of Frame\begin_inset Newline newline\end_inset
-		0b00001  - ERC_POS_ARB - Error in Arbitration Filed\begin_inset Newline newline\end_inset
-		0b00010  - ERC_POS_CTRL - Error in Control field\begin_inset Newline newline\end_inset
-		0b00011  - ERC_POS_DATA - Error in Data Field\begin_inset Newline newline\end_inset
-		0b00100  - ERC_POS_CRC - Error in CRC Field\begin_inset Newline newline\end_inset
-		0b00101  - ERC_POS_ACK - Error in CRC delimiter, ACK field or ACK delimiter\begin_inset Newline newline\end_inset
-		0b00110  - ERC_POS_EOF - Error in End of frame field\begin_inset Newline newline\end_inset
-		0b00111  - ERC_POS_ERR - Error during Error frame\begin_inset Newline newline\end_inset
-		0b01000  - ERC_POS_OVRL - Error in Overload frame\begin_inset Newline newline\end_inset
-		0b11111  - ERC_POS_OTHER - Other position of error
+		0b0000  - ERC_POS_SOF - Error in Start of Frame\begin_inset Newline newline\end_inset
+		0b0001  - ERC_POS_ARB - Error in Arbitration Filed\begin_inset Newline newline\end_inset
+		0b0010  - ERC_POS_CTRL - Error in Control field\begin_inset Newline newline\end_inset
+		0b0011  - ERC_POS_DATA - Error in Data Field\begin_inset Newline newline\end_inset
+		0b0100  - ERC_POS_CRC - Error in CRC Field\begin_inset Newline newline\end_inset
+		0b0101  - ERC_POS_ACK - Error in CRC delimiter, ACK field or ACK delimiter\begin_inset Newline newline\end_inset
+		0b0110  - ERC_POS_EOF - Error in End of frame field\begin_inset Newline newline\end_inset
+		0b0111  - ERC_POS_ERR - Error during Error frame\begin_inset Newline newline\end_inset
+		0b1000  - ERC_POS_OVRL - Error in Overload frame\begin_inset Newline newline\end_inset
+		0b1111  - ERC_POS_OTHER - Other position of error
+\end_layout
+\begin_layout Description
+ERR_STATE Fault Confinement state at the time when last error was detected.\begin_inset Newline newline\end_inset
+		0b0  - ERR_STATE_ACTIVE - CTU CAN FD was error passive when it detected the error condition.\begin_inset Newline newline\end_inset
+		0b1  - ERR_STATE_PASSIVE - CTU CAN FD was error active when it detected the error condition.
 \end_layout
 \begin_layout Description
 ERR_TYPE Type of last error.\begin_inset Newline newline\end_inset

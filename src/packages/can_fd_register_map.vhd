@@ -1170,21 +1170,22 @@ package can_fd_register_map is
   -- t error was detected.
   ------------------------------------------------------------------------------
   constant ERR_POS_L              : natural := 0;
-  constant ERR_POS_H              : natural := 4;
+  constant ERR_POS_H              : natural := 3;
+  constant ERR_STATE_IND          : natural := 4;
   constant ERR_TYPE_L             : natural := 5;
   constant ERR_TYPE_H             : natural := 7;
 
   -- "ERR_POS" field enumerated values
-  constant ERC_POS_SOF : std_logic_vector(4 downto 0) := "00000";
-  constant ERC_POS_ARB : std_logic_vector(4 downto 0) := "00001";
-  constant ERC_POS_CTRL : std_logic_vector(4 downto 0) := "00010";
-  constant ERC_POS_DATA : std_logic_vector(4 downto 0) := "00011";
-  constant ERC_POS_CRC : std_logic_vector(4 downto 0) := "00100";
-  constant ERC_POS_ACK : std_logic_vector(4 downto 0) := "00101";
-  constant ERC_POS_EOF : std_logic_vector(4 downto 0) := "00110";
-  constant ERC_POS_ERR : std_logic_vector(4 downto 0) := "00111";
-  constant ERC_POS_OVRL : std_logic_vector(4 downto 0) := "01000";
-  constant ERC_POS_OTHER : std_logic_vector(4 downto 0) := "11111";
+  constant ERC_POS_SOF : std_logic_vector(3 downto 0) := x"0";
+  constant ERC_POS_ARB : std_logic_vector(3 downto 0) := x"1";
+  constant ERC_POS_CTRL : std_logic_vector(3 downto 0) := x"2";
+  constant ERC_POS_DATA : std_logic_vector(3 downto 0) := x"3";
+  constant ERC_POS_CRC : std_logic_vector(3 downto 0) := x"4";
+  constant ERC_POS_ACK : std_logic_vector(3 downto 0) := x"5";
+  constant ERC_POS_EOF : std_logic_vector(3 downto 0) := x"6";
+  constant ERC_POS_ERR : std_logic_vector(3 downto 0) := x"7";
+  constant ERC_POS_OVRL : std_logic_vector(3 downto 0) := x"8";
+  constant ERC_POS_OTHER : std_logic_vector(3 downto 0) := x"F";
 
   -- "ERR_TYPE" field enumerated values
   constant ERC_BIT_ERR : std_logic_vector(2 downto 0) := "000";
@@ -1194,8 +1195,12 @@ package can_fd_register_map is
   constant ERC_STUF_ERR : std_logic_vector(2 downto 0) := "100";
   constant ERC_PRT_ERR : std_logic_vector(2 downto 0) := "101";
 
+  -- "ERR_STATE" field enumerated values
+  constant ERR_STATE_ACTIVE   : std_logic := '0';
+  constant ERR_STATE_PASSIVE  : std_logic := '1';
+
   -- ERR_CAPT register reset values
-  constant ERR_POS_RSTVAL : std_logic_vector(4 downto 0) := "11111";
+  constant ERR_POS_RSTVAL : std_logic_vector(3 downto 0) := x"1F";
   constant ERR_TYPE_RSTVAL : std_logic_vector(2 downto 0) := "000";
 
   ------------------------------------------------------------------------------

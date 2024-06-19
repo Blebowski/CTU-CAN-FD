@@ -2189,7 +2189,7 @@
 								<ipxact:value>'h1F</ipxact:value>
 							</ipxact:reset>
 						</ipxact:resets>
-						<ipxact:bitWidth>5</ipxact:bitWidth>
+						<ipxact:bitWidth>4</ipxact:bitWidth>
 						<ipxact:enumeratedValues>
 							<ipxact:enumeratedValue>
 								<ipxact:name>ERC_POS_SOF</ipxact:name>
@@ -2225,7 +2225,7 @@
 								<ipxact:name>ERC_POS_OTHER</ipxact:name>
 								<ipxact:displayName>ERC_POS_OTHER</ipxact:displayName>
 								<ipxact:description>Other position of error</ipxact:description>
-								<ipxact:value>'h1F</ipxact:value>
+								<ipxact:value>'hF</ipxact:value>
 							</ipxact:enumeratedValue>
 							<ipxact:enumeratedValue>
 								<ipxact:name>ERC_POS_DATA</ipxact:name>
@@ -2300,6 +2300,27 @@
 								<ipxact:displayName>ERC_PRT_ERR</ipxact:displayName>
 								<ipxact:description>Parity Error in TXT Buffer RAM DATA_1_4_W ... DATA_61_64_W words.</ipxact:description>
 								<ipxact:value>5</ipxact:value>
+							</ipxact:enumeratedValue>
+						</ipxact:enumeratedValues>
+					</ipxact:field>
+					<ipxact:field>
+						<ipxact:name>ERR_STATE</ipxact:name>
+						<ipxact:displayName>ERR_STATE</ipxact:displayName>
+						<ipxact:description>Fault Confinement state at the time when last error was detected.</ipxact:description>
+						<ipxact:bitOffset>4</ipxact:bitOffset>
+						<ipxact:bitWidth>1</ipxact:bitWidth>
+						<ipxact:enumeratedValues>
+							<ipxact:enumeratedValue>
+								<ipxact:name>ERR_STATE_PASSIVE</ipxact:name>
+								<ipxact:displayName>ERR_STATE_PASSIVE</ipxact:displayName>
+								<ipxact:description>CTU CAN FD was error active when it detected the error condition.</ipxact:description>
+								<ipxact:value>1</ipxact:value>
+							</ipxact:enumeratedValue>
+							<ipxact:enumeratedValue>
+								<ipxact:name>ERR_STATE_ACTIVE</ipxact:name>
+								<ipxact:displayName>ERR_STATE_ACTIVE</ipxact:displayName>
+								<ipxact:description>CTU CAN FD was error passive when it detected the error condition.</ipxact:description>
+								<ipxact:value>0</ipxact:value>
 							</ipxact:enumeratedValue>
 						</ipxact:enumeratedValues>
 					</ipxact:field>
@@ -5321,7 +5342,7 @@ TXT Buffers.</ipxact:description>
 						<ipxact:displayName>ERR_POS</ipxact:displayName>
 						<ipxact:description>Error Frame position of Error Frame recorder in RX Buffer. This bit has no meaning in TXT Buffers. The encoding of this field is equal to ERR_CAPT[ERR_POS] register.</ipxact:description>
 						<ipxact:bitOffset>16</ipxact:bitOffset>
-						<ipxact:bitWidth>5</ipxact:bitWidth>
+						<ipxact:bitWidth>4</ipxact:bitWidth>
 					</ipxact:field>
 					<ipxact:field>
 						<ipxact:name>ERR_TYPE</ipxact:name>
@@ -5329,6 +5350,13 @@ TXT Buffers.</ipxact:description>
 						<ipxact:description>Error frame type of Error Frame recorder in RX Buffer. This bit has no meaning in TXT Buffers. The encoding of this field is equal to ERR_CAPT[ERR_TYPE] register.</ipxact:description>
 						<ipxact:bitOffset>21</ipxact:bitOffset>
 						<ipxact:bitWidth>3</ipxact:bitWidth>
+					</ipxact:field>
+					<ipxact:field>
+						<ipxact:name>ERR_STATE</ipxact:name>
+						<ipxact:displayName>ERR_STATE</ipxact:displayName>
+						<ipxact:description>Fault confinement state at the time when the error was detected and stored to RX Buffer. This bit has no meaning in TXT Buffers. The encoding of this field is equal to ERR_CAPT[ERR_STATE] register.</ipxact:description>
+						<ipxact:bitOffset>20</ipxact:bitOffset>
+						<ipxact:bitWidth>1</ipxact:bitWidth>
 					</ipxact:field>
 				</ipxact:register>
 				<ipxact:register>

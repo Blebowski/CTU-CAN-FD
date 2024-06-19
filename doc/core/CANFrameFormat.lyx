@@ -2138,15 +2138,15 @@ ERR_TYPE\end_layout
 
 \end_inset
 </cell>
-<cell alignment="center" leftline="true" multicolumn="1" rightline="true" topline="true" usebox="none" valignment="top">
+<cell alignment="center" leftline="true" multicolumn="1" topline="true" usebox="none" valignment="top">
 \begin_inset Text
 
 \begin_layout Plain Layout
-ERR_POS\end_layout
+ERR_STATE\end_layout
 
 \end_inset
 </cell>
-<cell alignment="center" leftline="true" multicolumn="2" topline="true" usebox="none" valignment="top">
+<cell alignment="center" leftline="true" multicolumn="1" rightline="true" topline="true" usebox="none" valignment="top">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -2952,6 +2952,9 @@ RWCNT Size of CAN frame in RX buffer without FRAME_FORMAT WORD. (E.g RTR frame R
 \end_layout
 \begin_layout Description
 ERR_POS Error Frame position of Error Frame recorder in RX Buffer. This bit has no meaning in TXT Buffers. The encoding of this field is equal to ERR_CAPT[ERR_POS] register.
+\end_layout
+\begin_layout Description
+ERR_STATE Fault confinement state at the time when the error was detected and stored to RX Buffer. This bit has no meaning in TXT Buffers. The encoding of this field is equal to ERR_CAPT[ERR_STATE] register.
 \end_layout
 \begin_layout Description
 ERR_TYPE Error frame type of Error Frame recorder in RX Buffer. This bit has no meaning in TXT Buffers. The encoding of this field is equal to ERR_CAPT[ERR_TYPE] register.

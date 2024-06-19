@@ -2974,6 +2974,7 @@ begin
 	'0'	&
 	control_registers_in.retr_ctr_retr_ctr_val	&
 	control_registers_in.err_capt_err_type	&
+	control_registers_in.err_capt_err_state	&
 	control_registers_in.err_capt_err_pos	&
 
     -- Adress:120
