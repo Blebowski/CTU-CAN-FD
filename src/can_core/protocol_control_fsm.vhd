@@ -1996,9 +1996,9 @@ begin
                     end if;
 
                     if (is_transmitter = '1' and mr_settings_ilbp = '1') then
-                        rec_lbpf_d <= '1';
+                        rec_lbpf_d <= LBPF_LOCAL;
                     else
-                        rec_lbpf_d <= '0';
+                        rec_lbpf_d <= LBPF_FOREIGN;
                     end if;
 
                     store_metadata_d <= '1';
