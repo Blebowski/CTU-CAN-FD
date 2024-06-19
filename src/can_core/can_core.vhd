@@ -233,6 +233,9 @@ entity can_core is
         -- RX frame type (0-CAN 2.0, 1- CAN FD)
         rec_frame_type          : out std_logic;
 
+        -- Received Loopback frame
+        rec_lbpf                : out std_logic;
+
         -- RX Remote transmission request Flag
         rec_is_rtr              : out std_logic;
 
@@ -360,6 +363,7 @@ architecture rtl of can_core is
     signal rec_dlc_i                : std_logic_vector(3 downto 0);
     signal rec_ident_type_i         : std_logic;
     signal rec_frame_type_i         : std_logic;
+    signal rec_lbpf_i               : std_logic;
     signal rec_is_rtr_i             : std_logic;
     signal rec_brs_i                : std_logic;
     signal rec_esi_i                : std_logic;
@@ -556,6 +560,7 @@ begin
         rec_is_rtr              => rec_is_rtr_i,                -- OUT
         rec_ident_type          => rec_ident_type_i,            -- OUT
         rec_frame_type          => rec_frame_type_i,            -- OUT
+        rec_lbpf                => rec_lbpf_i,                  -- OUT
         rec_brs                 => rec_brs_i,                   -- OUT
         rec_esi                 => rec_esi_i,                   -- OUT
         store_metadata          => store_metadata,              -- OUT
@@ -965,6 +970,7 @@ begin
     rec_dlc                 <= rec_dlc_i;
     rec_ident_type          <= rec_ident_type_i;
     rec_frame_type          <= rec_frame_type_i;
+    rec_lbpf                <= rec_lbpf_i;
     rec_is_rtr              <= rec_is_rtr_i;
     rec_brs                 <= rec_brs_i;
     rec_esi                 <= rec_esi_i;

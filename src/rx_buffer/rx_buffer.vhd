@@ -142,6 +142,9 @@ entity rx_buffer is
         -- Recieved frame type (0-Normal CAN, 1- CAN FD)
         rec_frame_type          : in  std_logic;
 
+        -- Received Loopback frame
+        rec_lbpf                : in  std_logic;
+
         -- Recieved frame is RTR Frame(0-No, 1-Yes)
         rec_is_rtr              : in  std_logic;
 
@@ -581,7 +584,7 @@ begin
     frame_form_w(RTR_IND)                 <= rec_is_rtr;
     frame_form_w(IDE_IND)                 <= rec_ident_type;
     frame_form_w(FDF_IND)                 <= rec_frame_type;
-    frame_form_w(8)                       <= '1'; -- Reserved
+    frame_form_w(LBPF_IND)                <= rec_lbpf;
     frame_form_w(BRS_IND)                 <= rec_brs;
     frame_form_w(ESI_RSV_IND)             <= rec_esi;
 
@@ -1067,6 +1070,9 @@ begin
     --
     -- psl rx_parity_err_clr_cov :
     --      cover {rx_parity_error = '1' and mr_command_crxpe = '1'};
+    --
+    -- psl rx_lbpf_cov :
+    --      cover {rec_lbpf = '1'};
 
     -----------------------------------------------------------------------------------------------
     -- "reset_overrun_flag = '1'" only in "s_rxb_idle" state. Therefore we can

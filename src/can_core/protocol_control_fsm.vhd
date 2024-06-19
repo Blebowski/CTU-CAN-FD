@@ -284,6 +284,9 @@ entity protocol_control_fsm is
         -- RX frame type (0-CAN 2.0, 1- CAN FD)
         rec_frame_type          : in  std_logic;
 
+        -- RX Frame Loopback
+        rec_lbpf                : out std_logic;
+
         -------------------------------------------------------------------------------------------
         -- Control counter interface
         -------------------------------------------------------------------------------------------
@@ -735,6 +738,10 @@ architecture rtl of protocol_control_fsm is
     -- the TXT Buffer memory since this might cause spurious false-positive parity errors
     signal txtb_num_words_gate          : natural range 0 to 19;
     signal txtb_gate_mem_read           : std_logic;
+
+    -- RX Frame loopback
+    signal rec_lbpf_d                   : std_logic;
+    signal rec_lbpf_q                   : std_logic;
 
 begin
 
@@ -1476,9 +1483,11 @@ begin
 
         pexs_set                <= '0';
 
+        rec_lbpf_d              <= rec_lbpf_q;
+
         if (err_frm_req = '1') then
             tick_state_reg <= '1';
-            ctrl_ctr_pload_i   <= '1';
+            ctrl_ctr_pload_i <= '1';
             if (mr_mode_rom = ROM_DISABLED) then
                 ctrl_ctr_pload_val <= C_ERR_FLG_DURATION;
             else
@@ -1984,6 +1993,12 @@ begin
                     else
                         ctrl_ctr_pload_val <= data_length_bits_c;
                         tx_load_data_word_i <= '1';
+                    end if;
+
+                    if (is_transmitter = '1' and mr_settings_ilbp = '1') then
+                        rec_lbpf_d <= '1';
+                    else
+                        rec_lbpf_d <= '0';
                     end if;
 
                     store_metadata_d <= '1';
@@ -2757,6 +2772,18 @@ begin
                        '0';
 
     -----------------------------------------------------------------------------------------------
+    -- Register Loopback frame flag
+    -----------------------------------------------------------------------------------------------
+    rex_lbpc_reg_proc : process (clk_sys, res_n)
+    begin
+        if (res_n = '0') then
+            rec_lbpf_q <= '0';
+        elsif (rising_edge(clk_sys)) then
+            rec_lbpf_q <= rec_lbpf_d;
+        end if;
+    end process;
+
+    -----------------------------------------------------------------------------------------------
     -- TXT Buffer HW commands pipeline
     -----------------------------------------------------------------------------------------------
     txtb_hw_cmd_proc : process(clk_sys, res_n)
@@ -3159,6 +3186,7 @@ begin
     tx_frame_no_sof <= tx_frame_no_sof_q;
     txtb_clk_en <= txtb_clk_en_q;
     pc_dbg.is_arbitration  <= is_arbitration_i;
+    rec_lbpf <= rec_lbpf_q;
 
     -- <RELEASE_OFF>
     -----------------------------------------------------------------------------------------------

@@ -115,6 +115,7 @@ package can_fd_frame_format is
   constant RTR_IND                : natural := 5;
   constant IDE_IND                : natural := 6;
   constant FDF_IND                : natural := 7;
+  constant LBPF_IND               : natural := 8;
   constant BRS_IND                : natural := 9;
   constant ESI_RSV_IND           : natural := 10;
   constant RWCNT_L               : natural := 11;
@@ -139,6 +140,10 @@ package can_fd_frame_format is
   -- "ESI_RSV" field enumerated values
   constant ESI_ERR_ACTIVE     : std_logic := '0';
   constant ESI_ERR_PASIVE     : std_logic := '1';
+
+  -- "LBPF" field enumerated values
+  constant LBPF_REMOTE        : std_logic := '0';
+  constant LBPF_LOCAL         : std_logic := '1';
 
   -- FRAME_FORMAT_W register reset values
 

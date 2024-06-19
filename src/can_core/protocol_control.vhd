@@ -216,6 +216,9 @@ entity protocol_control is
         -- RX frame type (0-CAN 2.0, 1- CAN FD)
         rec_frame_type          : out std_logic;
 
+        -- Received Loopback frame
+        rec_lbpf                : out std_logic;
+
         -- RX Bit rate shift Flag
         rec_brs                 : out std_logic;
 
@@ -485,6 +488,9 @@ architecture rtl of protocol_control is
     -- RX frame type (0-CAN 2.0, 1- CAN FD)
     signal rec_frame_type_i        :     std_logic;
 
+    -- Received Loopback frame
+    signal rec_lbpf_i              :     std_logic;
+
     -- Preload control counter
     signal ctrl_ctr_pload          :      std_logic;
 
@@ -677,6 +683,7 @@ begin
         rec_dlc_d               => rec_dlc_d,               -- IN
         rec_dlc_q               => rec_dlc_q,               -- IN
         rec_frame_type          => rec_frame_type_i,        -- IN
+        rec_lbpf                => rec_lbpf_i,              -- OUT
 
         -- Control counter interface
         ctrl_ctr_pload          => ctrl_ctr_pload,          -- OUT
@@ -974,6 +981,7 @@ begin
     -----------------------------------------------------------------------------------------------
     tx_data_nbs <= tx_data_nbs_i;
     rec_frame_type <= rec_frame_type_i;
+    rec_lbpf <= rec_lbpf_i;
     rec_is_rtr <= rec_is_rtr_i;
     rec_dlc <= rec_dlc_q;
     form_err <= form_err_i;

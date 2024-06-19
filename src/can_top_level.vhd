@@ -316,6 +316,9 @@ architecture rtl of can_top_level is
     -- Recieved frame type (0-Normal CAN, 1- CAN FD)
     signal rec_frame_type               :    std_logic;
 
+    -- Received Loopback frame
+    signal rec_lbpf                     :    std_logic;
+
     -- Recieved frame is RTR Frame(0-No, 1-Yes)
     signal rec_is_rtr                   :    std_logic;
 
@@ -729,6 +732,7 @@ begin
         rec_dlc                         => rec_dlc,                         -- IN
         rec_ident_type                  => rec_ident_type,                  -- IN
         rec_frame_type                  => rec_frame_type,                  -- IN
+        rec_lbpf                        => rec_lbpf,                        -- IN
         rec_is_rtr                      => rec_is_rtr,                      -- IN
         rec_brs                         => rec_brs,                         -- IN
         rec_esi                         => rec_esi,                         -- IN
@@ -1132,6 +1136,7 @@ begin
         rec_dlc                         => rec_dlc,                                 -- OUT
         rec_ident_type                  => rec_ident_type,                          -- OUT
         rec_frame_type                  => rec_frame_type,                          -- OUT
+        rec_lbpf                        => rec_lbpf,                                -- OUT
         rec_is_rtr                      => rec_is_rtr,                              -- OUT
         rec_brs                         => rec_brs,                                 -- OUT
         rec_esi                         => rec_esi,                                 -- OUT
