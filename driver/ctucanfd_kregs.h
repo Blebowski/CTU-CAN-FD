@@ -483,7 +483,7 @@ enum ctu_can_fd_can_registers {
 
 /*  ERR_CAPT RETR_CTR ALC TS_INFO registers */
 #define REG_ERR_CAPT_ERR_POS GENMASK(3, 0)
-#define REG_ERR_CAPT_ERR_STATE BIT(4)
+#define REG_ERR_CAPT_ERR_ERP BIT(4)
 #define REG_ERR_CAPT_ERR_TYPE GENMASK(7, 5)
 #define REG_ERR_CAPT_RETR_CTR_VAL GENMASK(11, 8)
 #define REG_ERR_CAPT_ALC_BIT GENMASK(20, 16)

@@ -1094,7 +1094,7 @@ union ctu_can_fd_err_capt_retr_ctr_alc_ts_info {
 #ifdef __LITTLE_ENDIAN_BITFIELD
   /* ERR_CAPT */
 		uint32_t err_pos                 : 4;
-		uint32_t err_state               : 1;
+		uint32_t err_erp                 : 1;
 		uint32_t err_type                : 3;
   /* RETR_CTR */
 		uint32_t retr_ctr_val            : 4;
@@ -1113,7 +1113,7 @@ union ctu_can_fd_err_capt_retr_ctr_alc_ts_info {
 		uint32_t reserved_15_12          : 4;
 		uint32_t retr_ctr_val            : 4;
 		uint32_t err_type                : 3;
-		uint32_t err_state               : 1;
+		uint32_t err_erp                 : 1;
 		uint32_t err_pos                 : 4;
 #endif
 	} s;
@@ -1132,9 +1132,9 @@ enum ctu_can_fd_err_capt_err_pos {
 	ERC_POS_OTHER       = 0xf,
 };
 
-enum ctu_can_fd_err_capt_err_state {
-	ERR_STATE_ACTIVE        = 0x0,
-	ERR_STATE_PASSIVE       = 0x1,
+enum ctu_can_fd_err_capt_err_erp {
+	ERR_ERP_ACTIVE        = 0x0,
+	ERR_ERP_PASSIVE       = 0x1,
 };
 
 enum ctu_can_fd_err_capt_err_type {

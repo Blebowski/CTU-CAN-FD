@@ -40968,7 +40968,7 @@ ERR_TYPE\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-ERR_STATE\end_layout
+ERR_ERP\end_layout
 
 \end_inset
 </cell>
@@ -41106,9 +41106,9 @@ ERR_POS Position of last error.\begin_inset Newline newline\end_inset
 		0b1111  - ERC_POS_OTHER - Other position of error
 \end_layout
 \begin_layout Description
-ERR_STATE Fault Confinement state at the time when last error was detected.\begin_inset Newline newline\end_inset
-		0b0  - ERR_STATE_ACTIVE - CTU CAN FD was error passive when it detected the error condition.\begin_inset Newline newline\end_inset
-		0b1  - ERR_STATE_PASSIVE - CTU CAN FD was error active when it detected the error condition.
+ERR_ERP CTU CAN FD was error passive the time when last error was detected.\begin_inset Newline newline\end_inset
+		0b0  - ERR_ERP_ACTIVE - CTU CAN FD was error passive when it detected the error condition.\begin_inset Newline newline\end_inset
+		0b1  - ERR_ERP_PASSIVE - CTU CAN FD was error active when it detected the error condition.
 \end_layout
 \begin_layout Description
 ERR_TYPE Type of last error.\begin_inset Newline newline\end_inset

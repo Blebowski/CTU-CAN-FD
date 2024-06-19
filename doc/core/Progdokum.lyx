@@ -1535,7 +1535,7 @@ Add LBPF bit to RX frame.
  Add MODE[ERFM].
  Add FRAME_FORMAT_W[ERF], FRAME_FORMAT_W[ERR_*].
  Add Error frame reception to RX buffer.
- Add ERR_CAPT[ERR_STATE] bit.
+ Add ERR_CAPT[ERR_ERP] bit.
 \end_layout
 
 \end_inset

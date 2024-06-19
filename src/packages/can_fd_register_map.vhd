@@ -1171,7 +1171,7 @@ package can_fd_register_map is
   ------------------------------------------------------------------------------
   constant ERR_POS_L              : natural := 0;
   constant ERR_POS_H              : natural := 3;
-  constant ERR_STATE_IND          : natural := 4;
+  constant ERR_ERP_IND            : natural := 4;
   constant ERR_TYPE_L             : natural := 5;
   constant ERR_TYPE_H             : natural := 7;
 
@@ -1195,9 +1195,9 @@ package can_fd_register_map is
   constant ERC_STUF_ERR : std_logic_vector(2 downto 0) := "100";
   constant ERC_PRT_ERR : std_logic_vector(2 downto 0) := "101";
 
-  -- "ERR_STATE" field enumerated values
-  constant ERR_STATE_ACTIVE   : std_logic := '0';
-  constant ERR_STATE_PASSIVE  : std_logic := '1';
+  -- "ERR_ERP" field enumerated values
+  constant ERR_ERP_ACTIVE     : std_logic := '0';
+  constant ERR_ERP_PASSIVE    : std_logic := '1';
 
   -- ERR_CAPT register reset values
   constant ERR_POS_RSTVAL : std_logic_vector(3 downto 0) := x"1F";

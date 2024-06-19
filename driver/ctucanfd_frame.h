@@ -74,13 +74,13 @@ union ctu_can_fd_frame_format_w {
 		uint32_t esi_rsv                 : 1;
 		uint32_t rwcnt                   : 5;
 		uint32_t err_pos                 : 4;
-		uint32_t err_state               : 1;
+		uint32_t err_erp                 : 1;
 		uint32_t err_type                : 3;
 		uint32_t reserved_31_24          : 8;
 #else
 		uint32_t reserved_31_24          : 8;
 		uint32_t err_type                : 3;
-		uint32_t err_state               : 1;
+		uint32_t err_erp                 : 1;
 		uint32_t err_pos                 : 4;
 		uint32_t rwcnt                   : 5;
 		uint32_t esi_rsv                 : 1;

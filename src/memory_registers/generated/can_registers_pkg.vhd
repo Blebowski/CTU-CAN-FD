@@ -255,7 +255,7 @@ package can_registers_pkg is
      tx_status_tx8s              : std_logic_vector(3 downto 0);
      txtb_info_txt_buffer_count  : std_logic_vector(3 downto 0);
      err_capt_err_pos            : std_logic_vector(3 downto 0);
-     err_capt_err_state          : std_logic;
+     err_capt_err_erp            : std_logic;
      err_capt_err_type           : std_logic_vector(2 downto 0);
      retr_ctr_retr_ctr_val       : std_logic_vector(3 downto 0);
      alc_alc_bit                 : std_logic_vector(4 downto 0);
