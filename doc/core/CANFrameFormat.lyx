@@ -2494,7 +2494,7 @@ BRS\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-Reserved\end_layout
+LBPF\end_layout
 
 \end_inset
 </cell>
@@ -2575,7 +2575,7 @@ X\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
--\end_layout
+X\end_layout
 
 \end_inset
 </cell>
@@ -2923,6 +2923,14 @@ IDE Extended Identifier Type. Logic 1 indicates CAN frame with both Base identif
 FDF Flexible Data-rate Format. Distinguishes between CAN 2.0 and CAN FD Frames.\begin_inset Newline newline\end_inset
 		0b0  - NORMAL_CAN - Frame is CAN frame.\begin_inset Newline newline\end_inset
 		0b1  - FD_CAN - Frame is CAN FD frame.
+\end_layout
+\begin_layout Description
+LBPF Loop-Back Frame. When this bit is set, the current frame
+in RX Buffer was a frame transmitted by unit itself due to
+operation in Loopback Mode. This bit has no meaning in
+TXT Buffers.\begin_inset Newline newline\end_inset
+		0b0  - LBPF_REMOTE - The frame was transmitted by other node on the bus.\begin_inset Newline newline\end_inset
+		0b1  - LBPF_LOCAL - The frame was transmitted by the unit itself.
 \end_layout
 \begin_layout Description
 BRS Bit Rate Shift. In case of CAN FD frames indicates whether bit rate is shifted CAN FD frame. This bit has no meaning for CAN frames.\begin_inset Newline newline\end_inset

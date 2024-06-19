@@ -69,7 +69,7 @@ union ctu_can_fd_frame_format_w {
 		uint32_t rtr                     : 1;
 		uint32_t ide                     : 1;
 		uint32_t fdf                     : 1;
-		uint32_t reserved_8              : 1;
+		uint32_t lbpf                    : 1;
 		uint32_t brs                     : 1;
 		uint32_t esi_rsv                 : 1;
 		uint32_t rwcnt                   : 5;
@@ -79,7 +79,7 @@ union ctu_can_fd_frame_format_w {
 		uint32_t rwcnt                   : 5;
 		uint32_t esi_rsv                 : 1;
 		uint32_t brs                     : 1;
-		uint32_t reserved_8              : 1;
+		uint32_t lbpf                    : 1;
 		uint32_t fdf                     : 1;
 		uint32_t ide                     : 1;
 		uint32_t rtr                     : 1;
@@ -102,6 +102,11 @@ enum ctu_can_fd_frame_format_w_ide {
 enum ctu_can_fd_frame_format_w_fdf {
 	NORMAL_CAN       = 0x0,
 	FD_CAN           = 0x1,
+};
+
+enum ctu_can_fd_frame_format_w_lbpf {
+	LBPF_REMOTE       = 0x0,
+	LBPF_LOCAL        = 0x1,
 };
 
 enum ctu_can_fd_frame_format_w_brs {

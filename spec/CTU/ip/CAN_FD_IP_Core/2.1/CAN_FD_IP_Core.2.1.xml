@@ -5248,6 +5248,30 @@
 						<ipxact:bitOffset>11</ipxact:bitOffset>
 						<ipxact:bitWidth>5</ipxact:bitWidth>
 					</ipxact:field>
+					<ipxact:field>
+						<ipxact:name>LBPF</ipxact:name>
+						<ipxact:displayName>LBPF</ipxact:displayName>
+						<ipxact:description>Loop-Back Frame. When this bit is set, the current frame
+in RX Buffer was a frame transmitted by unit itself due to
+operation in Loopback Mode. This bit has no meaning in
+TXT Buffers.</ipxact:description>
+						<ipxact:bitOffset>8</ipxact:bitOffset>
+						<ipxact:bitWidth>1</ipxact:bitWidth>
+						<ipxact:enumeratedValues>
+							<ipxact:enumeratedValue>
+								<ipxact:name>LBPF_LOCAL</ipxact:name>
+								<ipxact:displayName>LBPF_LOCAL</ipxact:displayName>
+								<ipxact:description>The frame was transmitted by the unit itself.</ipxact:description>
+								<ipxact:value>1</ipxact:value>
+							</ipxact:enumeratedValue>
+							<ipxact:enumeratedValue>
+								<ipxact:name>LBPF_REMOTE</ipxact:name>
+								<ipxact:displayName>LBPF_REMOTE</ipxact:displayName>
+								<ipxact:description>The frame was transmitted by other node on the bus.</ipxact:description>
+								<ipxact:value>0</ipxact:value>
+							</ipxact:enumeratedValue>
+						</ipxact:enumeratedValues>
+					</ipxact:field>
 				</ipxact:register>
 				<ipxact:register>
 					<ipxact:name>IDENTIFIER_W</ipxact:name>

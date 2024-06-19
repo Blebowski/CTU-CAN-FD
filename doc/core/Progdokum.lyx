@@ -509,7 +509,7 @@ filename "version.tex"
 \noindent
 \align center
 \begin_inset Tabular
-<lyxtabular version="3" rows="33" columns="3">
+<lyxtabular version="3" rows="34" columns="3">
 <features tabularvalignment="middle">
 <column alignment="center" valignment="top" width="1.5cm">
 <column alignment="center" valignment="top" width="2cm">
@@ -1480,7 +1480,7 @@ Move to new release of CTU CAN FD.
 </cell>
 </row>
 <row>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -1489,7 +1489,7 @@ Move to new release of CTU CAN FD.
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -1498,11 +1498,40 @@ Move to new release of CTU CAN FD.
 
 \end_inset
 </cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Add note about TXBHCI interrupt behavior.
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+2.5.2
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+19-6-2024
+\end_layout
+
+\end_inset
+</cell>
 <cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
-Add note about 
+Add LBPF bit to RX frame.
 \end_layout
 
 \end_inset
@@ -7249,13 +7278,19 @@ Loopback mode
 
 \begin_layout Standard
 In Loopback mode, any CAN frame transmitted by CTU CAN FD from any of TXT
- buffers, will be stored to RX buffer if its transmission is successfull
- (and the frame passes Frame filters).
- Note that altough CTU CAN FD stores its own transmitted frame to RX buffer,
- it still acts as a transmitter, therefore it does not acknowledge its own
- frame! For succesfull transmission, the frame must be acknowledged by other
- node on CAN bus.
- Loopback mode is enabled when SETTINGS[ILBP]=1.
+ buffers, is stored to RX buffer if its transmission is successfull (and
+ the frame passes Frame filters).
+ Altough CTU CAN FD stores its own transmitted frame to RX buffer, CTU CAN
+ FD still acts as a transmitter, therefore it does not acknowledge its own
+ frame.
+ For succesfull transmission in Loopback Mode, the frame must be acknowledged
+ by other node on CAN bus.
+ A frame stored in RX Buffer due to transmission in Loopback mode has FRAME_FORM
+AT_W[LBPF]=1.
+\end_layout
+
+\begin_layout Standard
+Loopback mode is enabled when SETTINGS[ILBP]=1.
  SETTINGS[ILBP] shall be modified only when CTU CAN FD is disabled (SETTINGS[ENA
 ] = 0).
 \end_layout
