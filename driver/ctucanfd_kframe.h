@@ -62,6 +62,7 @@ enum ctu_can_fd_can_frame_format {
 
 /*  FRAME_FORMAT_W registers */
 #define REG_FRAME_FORMAT_W_DLC GENMASK(3, 0)
+#define REG_FRAME_FORMAT_W_ERF BIT(4)
 #define REG_FRAME_FORMAT_W_RTR BIT(5)
 #define REG_FRAME_FORMAT_W_IDE BIT(6)
 #define REG_FRAME_FORMAT_W_FDF BIT(7)
@@ -69,6 +70,8 @@ enum ctu_can_fd_can_frame_format {
 #define REG_FRAME_FORMAT_W_BRS BIT(9)
 #define REG_FRAME_FORMAT_W_ESI_RSV BIT(10)
 #define REG_FRAME_FORMAT_W_RWCNT GENMASK(15, 11)
+#define REG_FRAME_FORMAT_W_ERR_POS GENMASK(20, 16)
+#define REG_FRAME_FORMAT_W_ERR_TYPE GENMASK(23, 21)
 
 /*  IDENTIFIER_W registers */
 #define REG_IDENTIFIER_W_IDENTIFIER_EXT GENMASK(17, 0)

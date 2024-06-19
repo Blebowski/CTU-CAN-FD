@@ -423,6 +423,7 @@ package can_fd_register_map is
   constant RXBAM_IND              : natural := 9;
   constant TXBBM_IND             : natural := 10;
   constant SAM_IND               : natural := 11;
+  constant ERFM_IND              : natural := 12;
 
   -- "FDE" field enumerated values
   constant FDE_DISABLE        : std_logic := '0';
@@ -463,6 +464,10 @@ package can_fd_register_map is
   -- "SAM" field enumerated values
   constant SAM_DISABLE        : std_logic := '0';
   constant SAM_ENABLE         : std_logic := '1';
+
+  -- "ERFM" field enumerated values
+  constant ERFM_DISABLED      : std_logic := '0';
+  constant ERFM_ENABLED       : std_logic := '1';
 
   -- MODE register reset values
   constant RST_RSTVAL         : std_logic := '0';

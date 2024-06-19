@@ -300,7 +300,8 @@ union ctu_can_fd_mode_settings {
 		uint32_t rxbam                   : 1;
 		uint32_t txbbm                   : 1;
 		uint32_t sam                     : 1;
-		uint32_t reserved_15_12          : 4;
+		uint32_t erfm                    : 1;
+		uint32_t reserved_15_13          : 3;
   /* SETTINGS */
 		uint32_t rtrle                   : 1;
 		uint32_t rtrth                   : 4;
@@ -323,7 +324,8 @@ union ctu_can_fd_mode_settings {
 		uint32_t ilbp                    : 1;
 		uint32_t rtrth                   : 4;
 		uint32_t rtrle                   : 1;
-		uint32_t reserved_15_12          : 4;
+		uint32_t reserved_15_13          : 3;
+		uint32_t erfm                    : 1;
 		uint32_t sam                     : 1;
 		uint32_t txbbm                   : 1;
 		uint32_t rxbam                   : 1;
@@ -388,6 +390,11 @@ enum ctu_can_fd_mode_txbbm {
 enum ctu_can_fd_mode_sam {
 	SAM_DISABLE       = 0x0,
 	SAM_ENABLE        = 0x1,
+};
+
+enum ctu_can_fd_mode_erfm {
+	ERFM_DISABLED       = 0x0,
+	ERFM_ENABLED        = 0x1,
 };
 
 enum ctu_can_fd_settings_rtrle {

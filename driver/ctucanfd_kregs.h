@@ -281,6 +281,7 @@ enum ctu_can_fd_can_registers {
 #define REG_MODE_RXBAM BIT(9)
 #define REG_MODE_TXBBM BIT(10)
 #define REG_MODE_SAM BIT(11)
+#define REG_MODE_ERFM BIT(12)
 #define REG_MODE_RTRLE BIT(16)
 #define REG_MODE_RTRTH GENMASK(20, 17)
 #define REG_MODE_ILBP BIT(21)

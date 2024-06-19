@@ -250,10 +250,14 @@
 						<ipxact:enumeratedValues>
 							<ipxact:enumeratedValue>
 								<ipxact:name>TTTM_ENABLED</ipxact:name>
+								<ipxact:displayName>TTTM_ENABLED</ipxact:displayName>
+								<ipxact:description>Time Triggerer transmission is enabled. A frame from highest priority TXT Buffer in Ready state is admitted for transmission when its timestamp lower than CTU CAN FD timebase.</ipxact:description>
 								<ipxact:value>1</ipxact:value>
 							</ipxact:enumeratedValue>
 							<ipxact:enumeratedValue>
 								<ipxact:name>TTTM_DISABLED</ipxact:name>
+								<ipxact:displayName>TTTM_DISABLED</ipxact:displayName>
+								<ipxact:description>Time Triggerer transmission is disabled. A frame from highest priority TXT Buffer in Ready state is admitted for transmission regardless of its timestamp.</ipxact:description>
 								<ipxact:value>0</ipxact:value>
 							</ipxact:enumeratedValue>
 						</ipxact:enumeratedValues>
@@ -333,6 +337,27 @@
 								<ipxact:displayName>SAM_ENABLE</ipxact:displayName>
 								<ipxact:description>Send dominant ACK bit when CTU CAN FD transmits CAN frame.</ipxact:description>
 								<ipxact:value>1</ipxact:value>
+							</ipxact:enumeratedValue>
+						</ipxact:enumeratedValues>
+					</ipxact:field>
+					<ipxact:field>
+						<ipxact:name>ERFM</ipxact:name>
+						<ipxact:displayName>ERFM</ipxact:displayName>
+						<ipxact:description>Error Frame Receive mode. When set, CTU CAN FD receives Error frames on CAN bus into its RX buffer.</ipxact:description>
+						<ipxact:bitOffset>12</ipxact:bitOffset>
+						<ipxact:bitWidth>1</ipxact:bitWidth>
+						<ipxact:enumeratedValues>
+							<ipxact:enumeratedValue>
+								<ipxact:name>ERFM_ENABLED</ipxact:name>
+								<ipxact:displayName>ERFM_ENABLED</ipxact:displayName>
+								<ipxact:description>Error frames are stored to RX buffer.</ipxact:description>
+								<ipxact:value>1</ipxact:value>
+							</ipxact:enumeratedValue>
+							<ipxact:enumeratedValue>
+								<ipxact:name>ERFM_DISABLED</ipxact:name>
+								<ipxact:displayName>ERFM_DISABLED</ipxact:displayName>
+								<ipxact:description>Error frames are not stored to RX Buffer.</ipxact:description>
+								<ipxact:value>0</ipxact:value>
 							</ipxact:enumeratedValue>
 						</ipxact:enumeratedValues>
 					</ipxact:field>
@@ -5272,6 +5297,39 @@ TXT Buffers.</ipxact:description>
 							</ipxact:enumeratedValue>
 						</ipxact:enumeratedValues>
 					</ipxact:field>
+					<ipxact:field>
+						<ipxact:name>ERF</ipxact:name>
+						<ipxact:displayName>ERF</ipxact:displayName>
+						<ipxact:description>Error Frame Flag. When set, the current frame in RX Buffer is an Error frame. This bit has no meaning in TXT buffers.</ipxact:description>
+						<ipxact:bitOffset>4</ipxact:bitOffset>
+						<ipxact:bitWidth>1</ipxact:bitWidth>
+						<ipxact:enumeratedValues>
+							<ipxact:enumeratedValue>
+								<ipxact:name>ERF_CAN_FRAME</ipxact:name>
+								<ipxact:displayName>ERF_CAN_FRAME</ipxact:displayName>
+								<ipxact:value>0</ipxact:value>
+							</ipxact:enumeratedValue>
+							<ipxact:enumeratedValue>
+								<ipxact:name>ERF_ERR_FRAME</ipxact:name>
+								<ipxact:displayName>ERF_ERR_FRAME</ipxact:displayName>
+								<ipxact:value>1</ipxact:value>
+							</ipxact:enumeratedValue>
+						</ipxact:enumeratedValues>
+					</ipxact:field>
+					<ipxact:field>
+						<ipxact:name>ERR_POS</ipxact:name>
+						<ipxact:displayName>ERR_POS</ipxact:displayName>
+						<ipxact:description>Error Frame position of Error Frame recorder in RX Buffer. This bit has no meaning in TXT Buffers. The encoding of this field is equal to ERR_CAPT[ERR_POS] register.</ipxact:description>
+						<ipxact:bitOffset>16</ipxact:bitOffset>
+						<ipxact:bitWidth>5</ipxact:bitWidth>
+					</ipxact:field>
+					<ipxact:field>
+						<ipxact:name>ERR_TYPE</ipxact:name>
+						<ipxact:displayName>ERR_TYPE</ipxact:displayName>
+						<ipxact:description>Error frame type of Error Frame recorder in RX Buffer. This bit has no meaning in TXT Buffers. The encoding of this field is equal to ERR_CAPT[ERR_TYPE] register.</ipxact:description>
+						<ipxact:bitOffset>21</ipxact:bitOffset>
+						<ipxact:bitWidth>3</ipxact:bitWidth>
+					</ipxact:field>
 				</ipxact:register>
 				<ipxact:register>
 					<ipxact:name>IDENTIFIER_W</ipxact:name>
@@ -5948,15 +6006,15 @@ TXT Buffers.</ipxact:description>
 		</kactus2:kts_attributes>
 		<kactus2:license>Proprietary</kactus2:license>
 		<ipxact:regLocks>
-			<ipxact:regLock reg_name="CTR_PRES" description="Register can be only written when MODE[TSTM] = 1, otherwise write has no effect." lock_signal="lock_1"/>
-			<ipxact:regLock reg_name="EWL" description="Register can be only written when MODE[TSTM] = 1, otherwise write has no effect." lock_signal="lock_1"/>
-			<ipxact:regLock reg_name="ERP" description="Register can be only written when MODE[TSTM] = 1, otherwise write has no effect." lock_signal="lock_1"/>
-			<ipxact:regLock reg_name="BTR" description="Register can be only written when SETTINGS[ENA] = 0, otherwise write has no effect." lock_signal="lock_2"/>
-			<ipxact:regLock reg_name="BTR_FD" description="Register can be only written when SETTINGS[ENA] = 0, otherwise write has no effect." lock_signal="lock_2"/>
-			<ipxact:regLock reg_name="SSP_CFG" description="Register can be only written when SETTINGS[ENA] = 0, otherwise write has no effect." lock_signal="lock_2"/>
-			<ipxact:regLock reg_name="TST_CONTROL" description="Register can be only written when MODE[TSTM] = 1, otherwise write has no effect." lock_signal="lock_1"/>
-			<ipxact:regLock reg_name="TST_DEST" description="Register can be only written when MODE[TSTM] = 1, otherwise write has no effect." lock_signal="lock_1"/>
-			<ipxact:regLock reg_name="TST_WDATA" description="Register can be only written when MODE[TSTM] = 1, otherwise write has no effect." lock_signal="lock_1"/>
+			<ipxact:regLock description="Register can be only written when MODE[TSTM] = 1, otherwise write has no effect." lock_signal="lock_1" reg_name="CTR_PRES"/>
+			<ipxact:regLock description="Register can be only written when MODE[TSTM] = 1, otherwise write has no effect." lock_signal="lock_1" reg_name="EWL"/>
+			<ipxact:regLock description="Register can be only written when MODE[TSTM] = 1, otherwise write has no effect." lock_signal="lock_1" reg_name="ERP"/>
+			<ipxact:regLock description="Register can be only written when SETTINGS[ENA] = 0, otherwise write has no effect." lock_signal="lock_2" reg_name="BTR"/>
+			<ipxact:regLock description="Register can be only written when SETTINGS[ENA] = 0, otherwise write has no effect." lock_signal="lock_2" reg_name="BTR_FD"/>
+			<ipxact:regLock description="Register can be only written when SETTINGS[ENA] = 0, otherwise write has no effect." lock_signal="lock_2" reg_name="SSP_CFG"/>
+			<ipxact:regLock description="Register can be only written when MODE[TSTM] = 1, otherwise write has no effect." lock_signal="lock_1" reg_name="TST_CONTROL"/>
+			<ipxact:regLock description="Register can be only written when MODE[TSTM] = 1, otherwise write has no effect." lock_signal="lock_1" reg_name="TST_DEST"/>
+			<ipxact:regLock description="Register can be only written when MODE[TSTM] = 1, otherwise write has no effect." lock_signal="lock_1" reg_name="TST_WDATA"/>
 		</ipxact:regLocks>
 	</ipxact:vendorExtensions>
 </ipxact:component>

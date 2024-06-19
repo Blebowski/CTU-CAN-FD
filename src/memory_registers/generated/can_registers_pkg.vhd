@@ -89,6 +89,7 @@ package can_registers_pkg is
      mode_rxbam                  : std_logic;
      mode_txbbm                  : std_logic;
      mode_sam                    : std_logic;
+     mode_erfm                   : std_logic;
      settings_rtrle              : std_logic;
      settings_rtrth              : std_logic_vector(3 downto 0);
      settings_ilbp               : std_logic;

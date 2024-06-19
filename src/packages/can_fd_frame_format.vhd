@@ -112,6 +112,7 @@ package can_fd_frame_format is
   ------------------------------------------------------------------------------
   constant DLC_L                  : natural := 0;
   constant DLC_H                  : natural := 3;
+  constant ERF_IND                : natural := 4;
   constant RTR_IND                : natural := 5;
   constant IDE_IND                : natural := 6;
   constant FDF_IND                : natural := 7;
@@ -120,6 +121,10 @@ package can_fd_frame_format is
   constant ESI_RSV_IND           : natural := 10;
   constant RWCNT_L               : natural := 11;
   constant RWCNT_H               : natural := 15;
+  constant ERR_POS_L             : natural := 16;
+  constant ERR_POS_H             : natural := 20;
+  constant ERR_TYPE_L            : natural := 21;
+  constant ERR_TYPE_H            : natural := 23;
 
   -- "RTR" field enumerated values
   constant NO_RTR_FRAME       : std_logic := '0';
@@ -144,6 +149,10 @@ package can_fd_frame_format is
   -- "LBPF" field enumerated values
   constant LBPF_FOREIGN       : std_logic := '0';
   constant LBPF_LOCAL         : std_logic := '1';
+
+  -- "ERF" field enumerated values
+  constant ERF_CAN_FRAME      : std_logic := '0';
+  constant ERF_ERR_FRAME      : std_logic := '1';
 
   -- FRAME_FORMAT_W register reset values
 

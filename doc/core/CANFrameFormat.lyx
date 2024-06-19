@@ -2114,11 +2114,35 @@ cellcolor{cyan}
 
 \end_inset
 </cell>
+<cell alignment="center" leftline="true" multicolumn="1" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+ERR_TYPE\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" multicolumn="2" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+ERR_TYPE\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" multicolumn="2" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+ERR_TYPE\end_layout
+
+\end_inset
+</cell>
 <cell alignment="center" leftline="true" multicolumn="1" rightline="true" topline="true" usebox="none" valignment="top">
 \begin_inset Text
 
 \begin_layout Plain Layout
-Reserved\end_layout
+ERR_POS\end_layout
 
 \end_inset
 </cell>
@@ -2126,7 +2150,7 @@ Reserved\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-Reserved\end_layout
+ERR_POS\end_layout
 
 \end_inset
 </cell>
@@ -2134,7 +2158,7 @@ Reserved\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-Reserved\end_layout
+ERR_POS\end_layout
 
 \end_inset
 </cell>
@@ -2142,31 +2166,7 @@ Reserved\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-Reserved\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" leftline="true" multicolumn="2" topline="true" usebox="none" valignment="top">
-\begin_inset Text
-
-\begin_layout Plain Layout
-Reserved\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" leftline="true" multicolumn="2" topline="true" usebox="none" valignment="top">
-\begin_inset Text
-
-\begin_layout Plain Layout
-Reserved\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" leftline="true" multicolumn="2" topline="true" usebox="none" valignment="top">
-\begin_inset Text
-
-\begin_layout Plain Layout
-Reserved\end_layout
+ERR_POS\end_layout
 
 \end_inset
 </cell>
@@ -2174,7 +2174,7 @@ Reserved\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-Reserved\end_layout
+ERR_POS\end_layout
 
 \end_inset
 </cell>
@@ -2199,7 +2199,7 @@ cellcolor{cyan}
 \begin_inset Text
 
 \begin_layout Plain Layout
--\end_layout
+X\end_layout
 
 \end_inset
 </cell>
@@ -2207,7 +2207,7 @@ cellcolor{cyan}
 \begin_inset Text
 
 \begin_layout Plain Layout
--\end_layout
+X\end_layout
 
 \end_inset
 </cell>
@@ -2215,7 +2215,7 @@ cellcolor{cyan}
 \begin_inset Text
 
 \begin_layout Plain Layout
--\end_layout
+X\end_layout
 
 \end_inset
 </cell>
@@ -2223,7 +2223,7 @@ cellcolor{cyan}
 \begin_inset Text
 
 \begin_layout Plain Layout
--\end_layout
+X\end_layout
 
 \end_inset
 </cell>
@@ -2231,7 +2231,7 @@ cellcolor{cyan}
 \begin_inset Text
 
 \begin_layout Plain Layout
--\end_layout
+X\end_layout
 
 \end_inset
 </cell>
@@ -2239,7 +2239,7 @@ cellcolor{cyan}
 \begin_inset Text
 
 \begin_layout Plain Layout
--\end_layout
+X\end_layout
 
 \end_inset
 </cell>
@@ -2247,7 +2247,7 @@ cellcolor{cyan}
 \begin_inset Text
 
 \begin_layout Plain Layout
--\end_layout
+X\end_layout
 
 \end_inset
 </cell>
@@ -2255,7 +2255,7 @@ cellcolor{cyan}
 \begin_inset Text
 
 \begin_layout Plain Layout
--\end_layout
+X\end_layout
 
 \end_inset
 </cell>
@@ -2782,7 +2782,7 @@ RTR\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-Reserved\end_layout
+ERF\end_layout
 
 \end_inset
 </cell>
@@ -2863,7 +2863,7 @@ X\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
--\end_layout
+X\end_layout
 
 \end_inset
 </cell>
@@ -2910,6 +2910,11 @@ X\end_layout
 DLC Data Length Code.
 \end_layout
 \begin_layout Description
+ERF Error Frame Flag. When set, the current frame in RX Buffer is an Error frame. This bit has no meaning in TXT buffers.\begin_inset Newline newline\end_inset
+		0b0  - ERF_CAN_FRAME - \begin_inset Newline newline\end_inset
+		0b1  - ERF_ERR_FRAME - 
+\end_layout
+\begin_layout Description
 RTR Logic 1 indicates Remote frame. Has meaning only for CAN frames. CAN FD does not have RTR frames.\begin_inset Newline newline\end_inset
 		0b0  - NO_RTR_FRAME - CAN frame is not RTR frame.\begin_inset Newline newline\end_inset
 		0b1  - RTR_FRAME - CAN frame is RTR frame.
@@ -2944,6 +2949,12 @@ ESI_RSV Error State Indicator bit for received CAN FD frames. Bit has no meaning
 \end_layout
 \begin_layout Description
 RWCNT Size of CAN frame in RX buffer without FRAME_FORMAT WORD. (E.g RTR frame RWCNT=3, 64 Byte FD frame RWCNT=19). In TXT buffer this field has no meaning.
+\end_layout
+\begin_layout Description
+ERR_POS Error Frame position of Error Frame recorder in RX Buffer. This bit has no meaning in TXT Buffers. The encoding of this field is equal to ERR_CAPT[ERR_POS] register.
+\end_layout
+\begin_layout Description
+ERR_TYPE Error frame type of Error Frame recorder in RX Buffer. This bit has no meaning in TXT Buffers. The encoding of this field is equal to ERR_CAPT[ERR_TYPE] register.
 \end_layout
 \begin_layout Standard
 \begin_inset VSpace bigskip

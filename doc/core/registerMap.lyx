@@ -4550,11 +4550,11 @@ Reserved\end_layout
 
 \end_inset
 </cell>
-<cell alignment="center" leftline="true" multicolumn="2" topline="true" usebox="none" valignment="top">
+<cell alignment="center" leftline="true" multicolumn="1" topline="true" usebox="none" valignment="top">
 \begin_inset Text
 
 \begin_layout Plain Layout
-Reserved\end_layout
+ERFM\end_layout
 
 \end_inset
 </cell>
@@ -4635,7 +4635,7 @@ cellcolor{cyan}
 \begin_inset Text
 
 \begin_layout Plain Layout
--\end_layout
+X\end_layout
 
 \end_inset
 </cell>
@@ -5023,8 +5023,8 @@ FDE Flexible data rate enable. When flexible data rate is enabled CTU CAN FD rec
 \end_layout
 \begin_layout Description
 TTTM Time triggered transmission mode.\begin_inset Newline newline\end_inset
-		0b0  - TTTM_DISABLED - \begin_inset Newline newline\end_inset
-		0b1  - TTTM_ENABLED - 
+		0b0  - TTTM_DISABLED - Time Triggerer transmission is disabled. A frame from highest priority TXT Buffer in Ready state is admitted for transmission regardless of its timestamp.\begin_inset Newline newline\end_inset
+		0b1  - TTTM_ENABLED - Time Triggerer transmission is enabled. A frame from highest priority TXT Buffer in Ready state is admitted for transmission when its timestamp lower than CTU CAN FD timebase.
 \end_layout
 \begin_layout Description
 ROM Restricted operation mode.\begin_inset Newline newline\end_inset
@@ -5053,6 +5053,11 @@ TXBBM TXT Buffer Backup mode.\begin_inset Newline newline\end_inset
 SAM Self-acknowledge mode.\begin_inset Newline newline\end_inset
 		0b0  - SAM_DISABLE - Do not send dominant ACK bit when CTU CAN FD sends Acknowledge bit.\begin_inset Newline newline\end_inset
 		0b1  - SAM_ENABLE - Send dominant ACK bit when CTU CAN FD transmits CAN frame.
+\end_layout
+\begin_layout Description
+ERFM Error Frame Receive mode. When set, CTU CAN FD receives Error frames on CAN bus into its RX buffer.\begin_inset Newline newline\end_inset
+		0b0  - ERFM_DISABLED - Error frames are not stored to RX Buffer.\begin_inset Newline newline\end_inset
+		0b1  - ERFM_ENABLED - Error frames are stored to RX buffer.
 \end_layout
 \begin_layout Standard
 \begin_inset VSpace bigskip

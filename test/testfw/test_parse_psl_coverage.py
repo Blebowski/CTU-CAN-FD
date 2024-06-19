@@ -59,13 +59,9 @@ def collapse_psl_coverage_files(non_collapsed):
     Each cover point which is covered has also appended a testcase name where
     it was covered.
     """
-    log.info("Collapsing PSL points with common hierarchy below: {}".format(dut_top))
+    print("Collapsing PSL points with common hierarchy below: {}".format(dut_top))
     collapsed = []
 
-    # We do stupid quadratic sort because we don't really care if it is gonna
-    # last 10 or 40 seconds... If we ever get to the point that this takes too
-    # long, we know that we have reeealy lot of PSL points and we turned into
-    # Semiconductor monster!
     for psl_in in non_collapsed:
         found = False
         for psl_out in collapsed:
@@ -76,7 +72,9 @@ def collapse_psl_coverage_files(non_collapsed):
             if out_name != in_name:
                 continue
 
-            if not ("colapsed_points" in psl_out):
+            #print("Collapsing point: {}".format(out_name))
+
+            if "colapsed_points" not in psl_out:
                 psl_out["colapsed_name"] = str(dut_top + in_name)
                 psl_out["colapsed_points"] = []
 
@@ -411,9 +409,14 @@ if __name__ == "__main__":
     json_by_file_colapsed = {}
     json_together_colapsed = []
     for filename, psls_for_file in json_by_file.items():
+        print("Collapsing PSL functional coverage for file: {}".format(filename))
         colapsed = collapse_psl_coverage_files(psls_for_file)
         json_by_file_colapsed[filename] = colapsed
         json_together_colapsed += colapsed
+
+    #with open("tmp_by_file_col", "w") as fd:
+    #    text = json.dumps(json_by_file_colapsed, indent=2)
+    #    fd.write(text)
 
     # Create PSL report
     create_psl_report(json_by_file_colapsed, json_together_colapsed)

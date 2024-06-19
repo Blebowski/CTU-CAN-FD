@@ -65,7 +65,7 @@ union ctu_can_fd_frame_format_w {
 #ifdef __LITTLE_ENDIAN_BITFIELD
   /* FRAME_FORMAT_W */
 		uint32_t dlc                     : 4;
-		uint32_t reserved_4              : 1;
+		uint32_t erf                     : 1;
 		uint32_t rtr                     : 1;
 		uint32_t ide                     : 1;
 		uint32_t fdf                     : 1;
@@ -73,9 +73,13 @@ union ctu_can_fd_frame_format_w {
 		uint32_t brs                     : 1;
 		uint32_t esi_rsv                 : 1;
 		uint32_t rwcnt                   : 5;
-		uint32_t reserved_31_16         : 16;
+		uint32_t err_pos                 : 5;
+		uint32_t err_type                : 3;
+		uint32_t reserved_31_24          : 8;
 #else
-		uint32_t reserved_31_16         : 16;
+		uint32_t reserved_31_24          : 8;
+		uint32_t err_type                : 3;
+		uint32_t err_pos                 : 5;
 		uint32_t rwcnt                   : 5;
 		uint32_t esi_rsv                 : 1;
 		uint32_t brs                     : 1;
@@ -83,10 +87,15 @@ union ctu_can_fd_frame_format_w {
 		uint32_t fdf                     : 1;
 		uint32_t ide                     : 1;
 		uint32_t rtr                     : 1;
-		uint32_t reserved_4              : 1;
+		uint32_t erf                     : 1;
 		uint32_t dlc                     : 4;
 #endif
 	} s;
+};
+
+enum ctu_can_fd_frame_format_w_erf {
+	ERF_CAN_FRAME       = 0x0,
+	ERF_ERR_FRAME       = 0x1,
 };
 
 enum ctu_can_fd_frame_format_w_rtr {
