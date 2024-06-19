@@ -91,10 +91,6 @@ use ctu_can_fd_rtl.CAN_FD_register_map.all;
 use ctu_can_fd_rtl.CAN_FD_frame_format.all;
 
 entity txt_buffer_fsm is
-    generic (
-        -- TXT Buffer ID
-        G_ID                    :     natural
-    );
     port (
         -------------------------------------------------------------------------------------------
         -- Clock and Asynchronous reset

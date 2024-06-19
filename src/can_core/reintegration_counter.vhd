@@ -120,8 +120,8 @@ end entity;
 architecture rtl of reintegration_counter is
 
     -- Retransmitt limit counter
-    signal reinteg_ctr_d    : unsigned(8 downto 0);
-    signal reinteg_ctr_q    : unsigned(8 downto 0);
+    signal reinteg_ctr_d    : unsigned(7 downto 0);
+    signal reinteg_ctr_q    : unsigned(7 downto 0);
 
     -- Clock enable
     signal reinteg_ctr_ce   : std_logic;

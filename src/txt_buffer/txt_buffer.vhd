@@ -286,8 +286,7 @@ begin
     -----------------------------------------------------------------------------------------------
     txtb_parity_error_valid_i <= '1' when (parity_mismatch = '1' and
                                            txtb_parity_check_valid = '1' and
-                                           txtb_index_muxed = G_ID and
-                                           mr_settings_pchke = '1')
+                                           txtb_index_muxed = G_ID)
                                      else
                                  '0';
 
@@ -303,6 +302,9 @@ begin
                             '0';
 
 
+    -----------------------------------------------------------------------------------------------
+    -- Clock gater for TXT Buffer RAM
+    -----------------------------------------------------------------------------------------------
     clk_gate_txt_buffer_ram_comp : entity ctu_can_fd_rtl.clk_gate
     generic map (
         G_TECHNOLOGY            => G_TECHNOLOGY
@@ -328,6 +330,9 @@ begin
         -- Clock and Asynchronous reset
         clk_sys                 => clk_ram,                     -- IN
         res_n                   => res_n,                       -- IN
+
+        -- Parity configuration
+        mr_settings_pchke       => mr_settings_pchke,           -- IN
 
         -- Memory testability
         mr_tst_control_tmaena   => mr_tst_control_tmaena,       -- IN
@@ -357,9 +362,6 @@ begin
     -- TXT Buffer FSM
     -----------------------------------------------------------------------------------------------
     txt_buffer_fsm_inst : entity ctu_can_fd_rtl.txt_buffer_fsm
-    generic map (
-        G_ID                    => G_ID
-    )
     port map (
         clk_sys                 => clk_sys,                     -- IN
         res_n                   => res_n,                       -- IN

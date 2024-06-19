@@ -456,9 +456,8 @@ begin
     -----------------------------------------------------------------------------------------------
     -- Parity mismatch during validation of TXT Buffer, must be indexed using "raw" /
     -- "combinatorial" index of buffer which is currently being validated.
-    ------------------------------------------------------------------------------
-    txtb_parity_mismatch_vld <= '1' when (txtb_parity_mismatch(select_buf_index) = '1' and
-                                          mr_settings_pchke = '1')
+    -----------------------------------------------------------------------------------------------
+    txtb_parity_mismatch_vld <= '1' when (txtb_parity_mismatch(select_buf_index) = '1')
                                     else
                                 '0';
 
@@ -468,8 +467,7 @@ begin
     -- to start error frame! Buffer one which parity mismatch is checked, must be selected by
     -- registered index of TXT Buffer which is used for transmission.
     -----------------------------------------------------------------------------------------------
-    txtb_parity_mismatch_tx <= '1' when (txtb_parity_mismatch(int_txtb_index) = '1' and
-                                         mr_settings_pchke = '1')
+    txtb_parity_mismatch_tx <= '1' when (txtb_parity_mismatch(int_txtb_index) = '1')
                                    else
                                '0';
 

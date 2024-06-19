@@ -397,7 +397,6 @@ architecture rtl of can_core is
     signal destuff_enable           : std_logic;
     signal fixed_stuff              : std_logic;
     signal tx_frame_no_sof          : std_logic;
-    signal stuff_length             : std_logic_vector(2 downto 0);
     signal dst_ctr                  : std_logic_vector(2 downto 0);
     signal bst_ctr                  : std_logic_vector(2 downto 0);
     signal stuff_err                : std_logic;
@@ -598,7 +597,6 @@ begin
         destuff_enable          => destuff_enable,              -- OUT
         fixed_stuff             => fixed_stuff,                 -- OUT
         tx_frame_no_sof         => tx_frame_no_sof,             -- OUT
-        stuff_length            => stuff_length,                -- OUT
         dst_ctr                 => dst_ctr,                     -- IN
         bst_ctr                 => bst_ctr,                     -- IN
         stuff_err               => stuff_err,                   -- IN
@@ -678,7 +676,6 @@ begin
         scan_enable             => scan_enable,                 -- IN
 
         mr_mode_rom             => mr_mode_rom,                 -- IN
-        mr_settings_ena         => mr_settings_ena,             -- IN
         mr_ewl_ew_limit         => mr_ewl_ew_limit,             -- IN
         mr_erp_erp_limit        => mr_erp_erp_limit,            -- IN
         mr_ctr_pres_ctpv        => mr_ctr_pres_ctpv,            -- IN
@@ -778,7 +775,6 @@ begin
         bst_trigger             => bst_trigger,                 -- IN
         stuff_enable            => stuff_enable,                -- IN
         fixed_stuff             => fixed_stuff,                 -- IN
-        stuff_length            => stuff_length,                -- IN
         tx_frame_no_sof         => tx_frame_no_sof,             -- IN
 
         -- Status signals
@@ -803,7 +799,6 @@ begin
         bds_trigger             => bds_trigger,                 -- IN
         destuff_enable          => destuff_enable,              -- IN
         fixed_stuff             => fixed_stuff,                 -- IN
-        destuff_length          => stuff_length,                -- IN
 
         -- Status Outpus
         stuff_err               => stuff_err,                   -- OUT

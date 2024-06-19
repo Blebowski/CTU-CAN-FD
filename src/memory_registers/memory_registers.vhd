@@ -626,10 +626,7 @@ begin
     mr_tx_priority(0)       <= mr_ctrl_out_i.tx_priority_txt1p;
     mr_tx_command_txbi(0)   <= mr_ctrl_out_i.tx_command_txb1;
 
-    mr_tx_priority(1)       <= mr_ctrl_out_i.tx_priority_txt2p when (mr_ctrl_out_i.mode_txbbm = '0')
-                                                               else
-                               mr_ctrl_out_i.tx_priority_txt1p;
-
+    mr_tx_priority(1)       <= mr_ctrl_out_i.tx_priority_txt2p;
     mr_tx_command_txbi(1)   <= mr_ctrl_out_i.tx_command_txb2 when (mr_ctrl_out_i.mode_txbbm = '0')
                                                              else
                                mr_ctrl_out_i.tx_command_txb1 or mr_ctrl_out_i.tx_command_txb2;
@@ -640,10 +637,7 @@ begin
     end generate;
 
     mt_3_txt_buffs : if (G_TXT_BUFFER_COUNT > 3) generate
-        mr_tx_priority(3)       <= mr_ctrl_out_i.tx_priority_txt4p when (mr_ctrl_out_i.mode_txbbm = '0')
-                                                                   else
-                                   mr_ctrl_out_i.tx_priority_txt3p;
-
+        mr_tx_priority(3)       <= mr_ctrl_out_i.tx_priority_txt4p;
         mr_tx_command_txbi(3)   <= mr_ctrl_out_i.tx_command_txb4 when (mr_ctrl_out_i.mode_txbbm = '0')
                                                                  else
                                    mr_ctrl_out_i.tx_command_txb3 or mr_ctrl_out_i.tx_command_txb4;
@@ -655,10 +649,7 @@ begin
     end generate;
 
     mt_5_txt_buffs : if (G_TXT_BUFFER_COUNT > 5) generate
-        mr_tx_priority(5)       <= mr_ctrl_out_i.tx_priority_txt6p when (mr_ctrl_out_i.mode_txbbm = '0')
-                                                                   else
-                                   mr_ctrl_out_i.tx_priority_txt5p;
-
+        mr_tx_priority(5)       <= mr_ctrl_out_i.tx_priority_txt6p;
         mr_tx_command_txbi(5)   <= mr_ctrl_out_i.tx_command_txb6 when (mr_ctrl_out_i.mode_txbbm = '0')
                                                                  else
                                    mr_ctrl_out_i.tx_command_txb5 or mr_ctrl_out_i.tx_command_txb6;
@@ -670,10 +661,7 @@ begin
     end generate;
 
     mt_7_txt_buffs : if (G_TXT_BUFFER_COUNT > 7) generate
-        mr_tx_priority(7)       <= mr_ctrl_out_i.tx_priority_txt8p when (mr_ctrl_out_i.mode_txbbm = '0')
-                                                                   else
-                                   mr_ctrl_out_i.tx_priority_txt7p;
-
+        mr_tx_priority(7)       <= mr_ctrl_out_i.tx_priority_txt8p;
         mr_tx_command_txbi(7)   <= mr_ctrl_out_i.tx_command_txb8 when (mr_ctrl_out_i.mode_txbbm = '0')
                                                                  else
                                    mr_ctrl_out_i.tx_command_txb7 or mr_ctrl_out_i.tx_command_txb8;

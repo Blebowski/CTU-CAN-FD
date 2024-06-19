@@ -324,9 +324,6 @@ entity protocol_control is
         -- Frame transmission without SOF started
         tx_frame_no_sof         : out std_logic;
 
-        -- Length of Bit Stuffing rule
-        stuff_length            : out std_logic_vector(2 downto 0);
-
         -- Number of de-stuffed bits modulo 8
         dst_ctr                 : in  std_logic_vector(2 downto 0);
 
@@ -718,7 +715,6 @@ begin
         -- Bit Stuffing/Destuffing control signals
         stuff_enable            => stuff_enable,            -- OUT
         destuff_enable          => destuff_enable,          -- OUT
-        stuff_length            => stuff_length,            -- OUT
         fixed_stuff             => fixed_stuff_i,           -- OUT
         tx_frame_no_sof         => tx_frame_no_sof,         -- OUT
 

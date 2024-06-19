@@ -69,6 +69,7 @@
 --------------------------------------------------------------------------------
 -- Module:
 --  Shift register with asynchronous reset and synchronous pre-load.
+--  Shifts-in always zero.
 --------------------------------------------------------------------------------
 
 Library ieee;
@@ -104,9 +105,6 @@ entity shift_reg_preload is
         -- When enabled, shifted each clock, when  disabled, register maintains its state.
         enable               : in  std_logic;
 
-        -- Input to a shift register
-        input                : in  std_logic;
-
         -------------------------------------------------------------------------------------------
         -- Status signals
         -------------------------------------------------------------------------------------------
@@ -123,15 +121,11 @@ architecture rtl of shift_reg_preload is
     -- Internal shift register DFFs
     signal shift_regs               :  std_logic_vector(G_WIDTH - 1 downto 0);
 
-    -- Combinational next value of shift register
-    signal next_shift_reg_val       :  std_logic_vector(G_WIDTH - 1 downto 0);
-
 begin
 
     -----------------------------------------------------------------------------------------------
     -- Calculation of next shift register value
     -----------------------------------------------------------------------------------------------
-    next_shift_reg_val  <= shift_regs(G_WIDTH - 2 downto 0) & input;
     reg_output          <= shift_regs(G_WIDTH - 1);
 
     -----------------------------------------------------------------------------------------------
@@ -146,7 +140,7 @@ begin
             if (preload = '1') then
                 shift_regs <= preload_val;
             elsif (enable = '1') then
-                shift_regs <= next_shift_reg_val;
+                shift_regs <= shift_regs(G_WIDTH - 2 downto 0) & '0';
             end if;
         end if;
     end process;

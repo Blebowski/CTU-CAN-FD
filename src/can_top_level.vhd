@@ -862,7 +862,7 @@ begin
             txtb_parity_mismatch        => txtb_parity_mismatch(i),                     -- OUT
             txtb_parity_error_valid     => txtb_parity_error_valid(i),                  -- OUT
             txtb_bb_parity_error        => txtb_bb_parity_error(i),                     -- OUT
-            txtb_index_muxed            => txtb_index_muxed                             -- OUT
+            txtb_index_muxed            => txtb_index_muxed                             -- IN
         );
     end generate;
 
