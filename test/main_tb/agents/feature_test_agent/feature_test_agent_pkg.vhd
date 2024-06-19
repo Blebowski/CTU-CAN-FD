@@ -421,8 +421,14 @@ package feature_test_agent_pkg is
         -- Note that this value is valid only for received frames and has
         -- no meaning in TXT Buffer.
         rwcnt                   :   natural;
+
+        -- Loopback frame flag
+        lbpf                    :   std_logic;
     end record;
 
+    constant SW_CAN_Frame_type_rst_val : SW_CAN_frame_type :=
+            (0, (OTHERS => (OTHERS => '0')), "0000", 0,
+             '0', '0', '0', '0', '0', (OTHERS => '0'), 0, '0');
 
     type SW_CAN_mask_filter_type is (
         filter_A,
@@ -2712,6 +2718,10 @@ package body feature_test_agent_pkg is
             end loop;
         end if;
 
+        -- Loop-back frame flag is only set by DUT upon reception,
+        -- no sense to generate!
+        frame.lbpf := '0';
+
     end procedure;
 
 
@@ -2747,6 +2757,12 @@ package body feature_test_agent_pkg is
             info_m("CAN 2.0 frame");
         else
             info_m("CAN FD frame");
+        end if;
+
+        if (frame.lbpf = LBPF_LOCAL) then
+            info_m("Loopback frame");
+        else
+            info_m("Frame from other CAN node");
         end if;
 
         info_m("RWCNT (read word count): " &
@@ -2866,6 +2882,10 @@ package body feature_test_agent_pkg is
                 end loop;
             end if;
         end if;
+
+        -- Purposefuly do NOT compare LBPF flag. The flag is nto set in the generated
+        -- or transmitted frames. It will be set in the received frames though!
+
     end procedure;
 
 
@@ -2951,6 +2971,8 @@ package body feature_test_agent_pkg is
                                   unsigned(DATA_1_4_W_ADR) + i * 4), node, channel);
             end if;
         end loop;
+
+        -- Ignore LBPF, only valid for Received frames!
     end procedure;
 
 
@@ -3103,8 +3125,8 @@ package body feature_test_agent_pkg is
         frame.ident_type    := frm_fmt_word(IDE_IND);
         frame.frame_format  := frm_fmt_word(FDF_IND);
         frame.brs           := frm_fmt_word(BRS_IND);
-        frame.rwcnt         := to_integer(unsigned(
-                               frm_fmt_word(RWCNT_H downto RWCNT_L)));
+        frame.rwcnt         := to_integer(unsigned(frm_fmt_word(RWCNT_H downto RWCNT_L)));
+        frame.lbpf          := frm_fmt_word(LBPF_IND);
         decode_dlc(frame.dlc, frame.data_length);
 
         -- Parse ID
@@ -3114,7 +3136,6 @@ package body feature_test_agent_pkg is
         -- Timestamp
         frame.timestamp(31 downto 0)  := ts_low_word;
         frame.timestamp(63 downto 32) := ts_high_word;
-
 
         -- Now read data frames
         if ((frame.rtr = NO_RTR_FRAME or frame.frame_format = FD_CAN)
