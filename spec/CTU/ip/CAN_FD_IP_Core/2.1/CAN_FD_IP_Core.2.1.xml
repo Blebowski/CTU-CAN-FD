@@ -5265,8 +5265,8 @@ TXT Buffers.</ipxact:description>
 								<ipxact:value>1</ipxact:value>
 							</ipxact:enumeratedValue>
 							<ipxact:enumeratedValue>
-								<ipxact:name>LBPF_REMOTE</ipxact:name>
-								<ipxact:displayName>LBPF_REMOTE</ipxact:displayName>
+								<ipxact:name>LBPF_FOREIGN</ipxact:name>
+								<ipxact:displayName>LBPF_FOREIGN</ipxact:displayName>
 								<ipxact:description>The frame was transmitted by other node on the bus.</ipxact:description>
 								<ipxact:value>0</ipxact:value>
 							</ipxact:enumeratedValue>
