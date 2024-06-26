@@ -54,7 +54,10 @@ def set_comp_options(sf, file):
         opts.extend(file["comp_options"].split())
     # TODO: Add target specific elabo options
     #print(f"Compile options: {opts}")
-    sf.add_compile_option("ghdl.flags", opts)
+    sf.add_compile_option("ghdl.a_flags", opts)
+
+    # For each analysis bump-up memory to 128 M
+    sf.add_compile_option("nvc.global_flags", ['-M', '128M'])
 
 
 def set_elab_options(vu, tgt):
@@ -163,11 +166,16 @@ if __name__ == '__main__':
     # Invoke VUnit
     ###########################################################################
     vu = VUnit.from_argv()
+    vu.add_vhdl_builtins()
 
     load_tgt_slfs(vu, tgt)
     load_tgt_tlf(vu, tgt, tgt_name)
 
     set_elab_options(vu, tgt)
+
+    vu.set_sim_option("nvc.heap_size", '256m', allow_empty=True)
+    vu.set_sim_option("nvc.elab_flags", ['-j'])
+    vu.set_sim_option("nvc.sim_flags", ['--ieee-warnings=off'], allow_empty=True)
 
     # Run
     vu.main()
