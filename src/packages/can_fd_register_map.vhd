@@ -774,8 +774,8 @@ package can_fd_register_map is
 
   -- FAULT_STATE register reset values
   constant ERP_RSTVAL         : std_logic := '0';
-  constant BOF_RSTVAL         : std_logic := '0';
-  constant ERA_RSTVAL         : std_logic := '1';
+  constant BOF_RSTVAL         : std_logic := '1';
+  constant ERA_RSTVAL         : std_logic := '0';
 
   ------------------------------------------------------------------------------
   -- REC register

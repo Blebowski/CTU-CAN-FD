@@ -168,7 +168,7 @@ package can_fd_tb_register_map is
     (address   => FAULT_STATE_ADR,
      size      => 16,
      reg_type  => reg_read_only,
-     reset_val => "00000000000000010000000000000000",
+     reset_val => "00000000000001000000000000000000",
      is_implem => "00000000000000000000000000000000"),
     (address   => REC_ADR,
      size      => 16,

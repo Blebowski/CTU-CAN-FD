@@ -1462,7 +1462,7 @@
 						<ipxact:bitOffset>2</ipxact:bitOffset>
 						<ipxact:resets>
 							<ipxact:reset>
-								<ipxact:value>0</ipxact:value>
+								<ipxact:value>1</ipxact:value>
 							</ipxact:reset>
 						</ipxact:resets>
 						<ipxact:bitWidth>1</ipxact:bitWidth>
@@ -1474,7 +1474,7 @@
 						<ipxact:bitOffset>0</ipxact:bitOffset>
 						<ipxact:resets>
 							<ipxact:reset>
-								<ipxact:value>1</ipxact:value>
+								<ipxact:value>0</ipxact:value>
 							</ipxact:reset>
 						</ipxact:resets>
 						<ipxact:bitWidth>1</ipxact:bitWidth>
@@ -6034,15 +6034,15 @@ TXT Buffers.</ipxact:description>
 		</kactus2:kts_attributes>
 		<kactus2:license>Proprietary</kactus2:license>
 		<ipxact:regLocks>
-			<ipxact:regLock description="Register can be only written when MODE[TSTM] = 1, otherwise write has no effect." lock_signal="lock_1" reg_name="CTR_PRES"/>
-			<ipxact:regLock description="Register can be only written when MODE[TSTM] = 1, otherwise write has no effect." lock_signal="lock_1" reg_name="EWL"/>
-			<ipxact:regLock description="Register can be only written when MODE[TSTM] = 1, otherwise write has no effect." lock_signal="lock_1" reg_name="ERP"/>
-			<ipxact:regLock description="Register can be only written when SETTINGS[ENA] = 0, otherwise write has no effect." lock_signal="lock_2" reg_name="BTR"/>
-			<ipxact:regLock description="Register can be only written when SETTINGS[ENA] = 0, otherwise write has no effect." lock_signal="lock_2" reg_name="BTR_FD"/>
-			<ipxact:regLock description="Register can be only written when SETTINGS[ENA] = 0, otherwise write has no effect." lock_signal="lock_2" reg_name="SSP_CFG"/>
-			<ipxact:regLock description="Register can be only written when MODE[TSTM] = 1, otherwise write has no effect." lock_signal="lock_1" reg_name="TST_CONTROL"/>
-			<ipxact:regLock description="Register can be only written when MODE[TSTM] = 1, otherwise write has no effect." lock_signal="lock_1" reg_name="TST_DEST"/>
-			<ipxact:regLock description="Register can be only written when MODE[TSTM] = 1, otherwise write has no effect." lock_signal="lock_1" reg_name="TST_WDATA"/>
+			<ipxact:regLock lock_signal="lock_1" description="Register can be only written when MODE[TSTM] = 1, otherwise write has no effect." reg_name="CTR_PRES"/>
+			<ipxact:regLock lock_signal="lock_1" description="Register can be only written when MODE[TSTM] = 1, otherwise write has no effect." reg_name="EWL"/>
+			<ipxact:regLock lock_signal="lock_1" description="Register can be only written when MODE[TSTM] = 1, otherwise write has no effect." reg_name="ERP"/>
+			<ipxact:regLock lock_signal="lock_2" description="Register can be only written when SETTINGS[ENA] = 0, otherwise write has no effect." reg_name="BTR"/>
+			<ipxact:regLock lock_signal="lock_2" description="Register can be only written when SETTINGS[ENA] = 0, otherwise write has no effect." reg_name="BTR_FD"/>
+			<ipxact:regLock lock_signal="lock_2" description="Register can be only written when SETTINGS[ENA] = 0, otherwise write has no effect." reg_name="SSP_CFG"/>
+			<ipxact:regLock lock_signal="lock_1" description="Register can be only written when MODE[TSTM] = 1, otherwise write has no effect." reg_name="TST_CONTROL"/>
+			<ipxact:regLock lock_signal="lock_1" description="Register can be only written when MODE[TSTM] = 1, otherwise write has no effect." reg_name="TST_DEST"/>
+			<ipxact:regLock lock_signal="lock_1" description="Register can be only written when MODE[TSTM] = 1, otherwise write has no effect." reg_name="TST_WDATA"/>
 		</ipxact:regLocks>
 	</ipxact:vendorExtensions>
 </ipxact:component>
