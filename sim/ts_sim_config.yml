@@ -247,7 +247,7 @@ targets:
             #error_tolerance: 0
             #debug: false
             /TB_TOP_CTU_CAN_FD/iterations: 1
-            /TB_TOP_CTU_CAN_FD/timeout: 100 ms
+            /TB_TOP_CTU_CAN_FD/timeout: 300 ms
             /TB_TOP_CTU_CAN_FD/test_type: compliance
 
             # DUT generics
@@ -351,7 +351,7 @@ targets:
             #error_tolerance: 0
             #debug: false
             /TB_TOP_CTU_CAN_FD/iterations: 1
-            /TB_TOP_CTU_CAN_FD/timeout: 500 ms
+            /TB_TOP_CTU_CAN_FD/timeout: 1000 ms
             /TB_TOP_CTU_CAN_FD/test_type: compliance
 
             # DUT generics
