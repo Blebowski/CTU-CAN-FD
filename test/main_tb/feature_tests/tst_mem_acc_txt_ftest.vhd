@@ -258,6 +258,8 @@ package body tst_mem_acc_txt_ftest is
                         when 6 => tgt_mtm := TST_TGT_TXT_BUF_6;
                         when 7 => tgt_mtm := TST_TGT_TXT_BUF_7;
                         when 8 => tgt_mtm := TST_TGT_TXT_BUF_8;
+                        when others =>
+                            error_m("Invalid TXT buffer");
                         end case;
 
                         for addr in 0 to 19 loop

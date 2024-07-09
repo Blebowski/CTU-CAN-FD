@@ -9,7 +9,7 @@
 #
 
 if [ -d /build ]; then
-    export PATH=/opt/ghdl/bin:$PATH
+    export PATH=/opt/ghdl/bin:/opt/nvc/bin:$PATH
     export LC_ALL=C.UTF-8
     export LANG=C.UTF-8
     export PYTHONUNBUFFERED=1
@@ -26,7 +26,7 @@ else
     #"
     docker run --rm -ti -e DISPLAY=$DISPLAY -e CTU_TB_TOP_TARGET="tb_ctu_can_fd_rtl_vunit" -v /tmp/.X11-unix:/tmp/.X11-unix \
         -v "$d:/build" --user $(id -u):$(id -g) --memory 10G \
-        registry.gitlab.com/canfd/server-tools/ghdl:gtkwave \
+        registry.gitlab.com/canfd/server-tools/ghdl:latest \
         /build/run-docker-test "$@"
 fi
 
