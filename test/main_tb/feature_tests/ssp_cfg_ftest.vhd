@@ -301,6 +301,11 @@ package body ssp_cfg_ftest is
             bus_timing.ph2_dbt := 2;
         end if;
 
+        if (bus_timing.tq_dbt = 1 and (bus_timing.ph1_dbt + bus_timing.prop_dbt) < 4) then
+            bus_timing.ph1_dbt := 1;
+            bus_timing.prop_dbt := 2;
+        end if;
+
         data_cycles_per_bit := bus_timing.tq_dbt *
                                 (1 + bus_timing.prop_dbt + bus_timing.ph1_dbt + bus_timing.ph2_dbt);
 
