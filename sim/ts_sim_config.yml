@@ -249,7 +249,6 @@ targets:
             /TB_TOP_CTU_CAN_FD/iterations: 1
             /TB_TOP_CTU_CAN_FD/timeout: 100 ms
             /TB_TOP_CTU_CAN_FD/test_type: compliance
-            /TB_TOP_CTU_CAN_FD/seed: 0 # No randomization
 
             # DUT generics
             /TB_TOP_CTU_CAN_FD/rx_buffer_size: 64
