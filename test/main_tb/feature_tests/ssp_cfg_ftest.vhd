@@ -96,8 +96,9 @@
 --      data phase). Wait until edge on CAN TX or CAN RX. Store transmitted value
 --      on CAN TX after the edge. Wait for expected position of Secondary sample
 --      point - 3 clock cycles.
---  @4. Now we are 3 clock cycles before Secondary sampling point. Force bus to
---      opposite value than was sent.
+--  @4. Now we are 3 clock cycles before Secondary sampling point. Flip bus
+--      to opposite value than is currently received.
+--      This will cause bit error to be detected at nearest SSP.
 --  @5. Wait for one clock cycle and if SSP_CFG[SSP_SRC] = SSP_SRC_NO_SSP, error
 --      frame is being transmitted (regular sample point should be used to detect
 --      bit errors). If SSP_CFG[SSP_SRC] /= SSP_SRC_NO_SSP check that Error frame
@@ -244,7 +245,6 @@ package body ssp_cfg_ftest is
         variable bus_timing                 :     bit_time_config_type;
         variable num_bit_waits              :     natural;
         variable num_bit_waits_max          :     natural;
-        variable tx_val                     :     std_logic;
         variable bit_rate                   :     real;
         variable nominal_cycles_per_bit     :     integer;
         variable data_cycles_per_bit        :     integer;
@@ -459,11 +459,13 @@ package body ssp_cfg_ftest is
         wait for (ssp_pos - 2) * 10 ns;
 
         -----------------------------------------------------------------------
-        -- @4. Now we are 3 cycles before Secondary sampling point. Force bus
-        --     to opposite value than was sent.
+        -- @4. Now we are 3 cycles before Secondary sampling point. Flip bus
+        --     to opposite value than is currently received.
+        --     This will cause bit error to be detected at nearest SSP.
         -----------------------------------------------------------------------
         info_m("Step 4");
-        force_bus_level(not tx_val, chn);
+
+        flip_bus_level(chn);
 
         -- Now we should be in the cycle where SSP is active!!
         wait for 21 ns;

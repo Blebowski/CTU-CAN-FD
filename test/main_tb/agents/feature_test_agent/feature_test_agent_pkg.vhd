@@ -139,6 +139,7 @@ package feature_test_agent_pkg is
     constant FEATURE_TEST_AGNT_CHECK_CAN_TX             : integer := 6;
     constant FEATURE_TEST_AGNT_GET_CAN_TX               : integer := 7;
     constant FEATURE_TEST_AGNT_GET_CAN_RX               : integer := 8;
+    constant FEATURE_TEST_AGNT_FLIP_BUS                 : integer := 10;
 
     -- Tag for messages
     constant FEATURE_TEST_AGENT_TAG : string := "Feature test Agent: ";
@@ -573,7 +574,19 @@ package feature_test_agent_pkg is
     );
 
     ---------------------------------------------------------------------------
-    -- Release bus level. Applicable only in feature tests.
+    -- Flip bus level to opposite value than AND of DUT and Test Node CAN TX.
+    -- Applicable only in feature tests!
+    --
+    -- Arguments:
+    --  channel     Communication channel
+    ---------------------------------------------------------------------------
+    procedure flip_bus_level(
+        signal   channel                : inout t_com_channel
+    );
+
+    ---------------------------------------------------------------------------
+    -- Cancels the effect of "force_bus_level" and "flip_bus_level".
+    -- Applicable only in feature tests.
     --
     -- Arguments:
     --  channel     Communication channel
@@ -2094,6 +2107,15 @@ package body feature_test_agent_pkg is
         debug_m("Bus level forced");
     end procedure;
 
+    procedure flip_bus_level(
+        signal   channel                : inout t_com_channel
+    ) is
+    begin
+        info_m(FEATURE_TEST_AGENT_TAG &
+             "Flipping bus level value");
+        send(channel, C_FEATURE_TEST_AGENT_ID, FEATURE_TEST_AGNT_FLIP_BUS);
+        debug_m("Bus level flipped");
+    end procedure;
 
     procedure release_bus_level(
         signal channel                  : inout t_com_channel
