@@ -155,6 +155,9 @@ architecture tb of feature_test_agent is
     signal force_bus_level_i        : boolean := false;
     signal force_bus_level_value    : std_logic := '0';
 
+    -- Inverting bus value compared
+    signal flip_bus_level_i         : boolean := false;
+
     -- Forcing CAN RX of only single node
     signal force_can_rx_dut         : boolean := false;
     signal force_can_rx_test_node   : boolean := false;
@@ -163,6 +166,9 @@ architecture tb of feature_test_agent is
     -- Transceiver delays (on can_tx signal)
     signal can_tx_delay_dut         : time := 1 ns;
     signal can_tx_delay_test_node   : time := 1 ns;
+
+    -- ANDed TX (expected bus level upon regular transmission)
+    signal anded_tx                 : std_logic;
 
 begin
 
@@ -232,6 +238,7 @@ begin
 
         when FEATURE_TEST_AGNT_RELEASE_BUS =>
             force_bus_level_i <= false;
+            flip_bus_level_i <= false;
 
         when FEATURE_TEST_AGNT_FORCE_CAN_RX =>
             tmp := com_channel_data.get_param;
@@ -284,6 +291,9 @@ begin
                 com_channel_data.set_param(test_node_can_rx);
             end if;
 
+        when FEATURE_TEST_AGNT_FLIP_BUS =>
+            flip_bus_level_i <= true;
+
         when others =>
             info_m("Invalid message type: " & integer'image(cmd));
             reply_code := C_REPLY_CODE_ERR;
@@ -332,8 +342,11 @@ begin
     ---------------------------------------------------------------------------
     -- Bus level and RX signal of each node
     ---------------------------------------------------------------------------
+    anded_tx <= dut_can_tx_delayed and test_node_can_tx_delayed;
+
     bus_level <= force_bus_level_value when force_bus_level_i else
-                 dut_can_tx_delayed and test_node_can_tx_delayed;
+                        not (anded_tx) when flip_bus_level_i else
+                             anded_tx;
 
     dut_can_rx <= force_can_rx_value when force_can_rx_dut else
                   bus_level;
