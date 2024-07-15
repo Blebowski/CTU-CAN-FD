@@ -111,6 +111,9 @@
 --      @3.5 Insert CAN frame into the TXT Buffer again.
 --      @3.6 Send Set Ready command. Wait until CAN frame is transmitted. Read
 --           it from Test Node and check that it matches original CAN frame.
+--      @3.7 Disable / Enable DUT. Since we are causing error frames to be
+--           transmitted randomly, DUT can become bus-off due to TEC being
+--           incremented up to 255!
 --
 -- @TestInfoEnd
 --------------------------------------------------------------------------------
@@ -405,6 +408,9 @@ package body status_txpe_ftest is
                     get_tx_buf_state(txt_buf, txt_buf_state, DUT_NODE, chn);
                     check_m(txt_buf_state = buf_parity_err,
                             "Bit flip + SETTINGS[PCHKE] = 1 -> TXT Buffer in parity error state!");
+
+                -- In the case where we did not cause parity error, expect normal frame
+                -- transmission without any error frame!
                 else
                     CAN_wait_frame_sent(DUT_NODE, chn);
                     CAN_wait_bus_idle(DUT_NODE, chn);
@@ -460,6 +466,18 @@ package body status_txpe_ftest is
                 check_m(frames_equal, "Frames are equal.");
 
             end loop;
+
+            ---------------------------------------------------------------------------
+            -- @3.7 Disable / Enable DUT. Since we are causing error frames to be
+            --      transmitted randomly, DUT can become bus-off due to TEC being
+            --      incremented up to 255!
+            ---------------------------------------------------------------------------
+            info_m("Step 3.7");
+
+            CAN_turn_controller(false, DUT_NODE, chn);
+            CAN_turn_controller(true, DUT_NODE, chn);
+            CAN_wait_bus_on(DUT_NODE, chn);
+
         end loop;
 
     end procedure;
