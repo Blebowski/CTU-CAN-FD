@@ -217,7 +217,8 @@ tests:
     - name: one_shot
     - name: overload
 
-    - name: pc_fsm_transitions
+    - name: pc_fsm_transitions_err_pas
+    - name: pc_fsm_transitions_err_act
 
     - name: rec_saturation
     - name: retr_limit
