@@ -34,11 +34,18 @@ tests:
 
     - name: iso_7_2_1
     - name: iso_7_2_2
+    - name: iso_7_2_2_a
+    - name: iso_7_2_2_b
     - name: iso_7_2_3
+    - name: iso_7_2_3_a
+    - name: iso_7_2_3_b
     - name: iso_7_2_4
       generics:
         /TB_TOP_CTU_CAN_FD/timeout: 1000 ms
-    - name: iso_7_2_4_1
+    - name: iso_7_2_4_a
+      generics:
+        /TB_TOP_CTU_CAN_FD/timeout: 1000 ms
+    - name: iso_7_2_4_b
       generics:
         /TB_TOP_CTU_CAN_FD/timeout: 1000 ms
     - name: iso_7_2_5
