@@ -91,6 +91,9 @@ package tb_shared_vars_pkg is
     -- Finish on error
     shared variable finish_on_error_i : t_prot_boolean;
 
+    -- Random deposits to DUT should be attempted
+    shared variable deposit_to_dut_i : t_prot_boolean;
+
 end package;
 
 

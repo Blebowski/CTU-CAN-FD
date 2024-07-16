@@ -83,13 +83,14 @@
 --      during data bit-rate.
 --
 -- @Test sequence:
---  @1. Generate random frame where bit rate is not switched. Insert the frame
+--  @1. Deposit random value of RX frame counter to DUT if enabled.
+--  @2. Generate random frame where bit rate is not switched. Insert the frame
 --      to DUT. Wait until DUT starts transmission. Wait for random time
 --      until DUT transmits Dominant bit. Force the bus-level Recessive for one
 --      bit time! This should invoke bit error in DUT. Wait until bus is idle.
 --      Check that ERR_NORM in DUT and Test Node incremented by 1. Check that ERR_FD
 --      in DUT and Test Node remained the same!
---  @2. Generate random frame where bit rate shall be switched. Wait until data
+--  @3. Generate random frame where bit rate shall be switched. Wait until data
 --      portion of that frame. Wait until Recessive bit is transmitted. Force
 --      bus Dominant for 1 bit time! Wait until bus is idle. Check that ERR_FD
 --      incremented in DUT and Test node by 1. Check that ERR_NORM remained the
@@ -133,10 +134,27 @@ package body err_norm_fd_ftest is
         variable rand_val           :     integer;
         variable can_tx_val         :     std_logic;
         variable wait_time          :     natural;
+        variable deposit_vect       :     std_logic_vector(31 downto 0);
     begin
 
         -----------------------------------------------------------------------
-        -- @1. Generate random frame where bit rate is not switched. Insert the
+        -- @1. Deposit random value of RX frame counter to DUT if enabled.
+        -----------------------------------------------------------------------
+        info_m("Step 1");
+
+        if (deposit_to_dut_i.get) then
+            rand_logic_vect_v(deposit_vect, 0.5);
+            info_m("Depositing ERR NORM counters to: " & integer'image(to_integer(unsigned(deposit_vect(15 downto 0 )))));
+            info_m("Depositing ERR FD counters to: "   & integer'image(to_integer(unsigned(deposit_vect(31 downto 16)))));
+            <<signal .TB_TOP_CTU_CAN_FD.DUT.CAN_CORE_INST.FAULT_CONFINEMENT_INST.ERR_COUNTERS_INST.nom_err_ctr_q   : unsigned(15 downto 0) >> <= force unsigned(deposit_vect(15 downto 0));
+            <<signal .TB_TOP_CTU_CAN_FD.DUT.CAN_CORE_INST.FAULT_CONFINEMENT_INST.ERR_COUNTERS_INST.data_err_ctr_q  : unsigned(15 downto 0) >> <= force unsigned(deposit_vect(31 downto 16));
+            wait for 1 ns;
+            <<signal .TB_TOP_CTU_CAN_FD.DUT.CAN_CORE_INST.FAULT_CONFINEMENT_INST.ERR_COUNTERS_INST.nom_err_ctr_q   : unsigned(15 downto 0) >> <= release;
+            <<signal .TB_TOP_CTU_CAN_FD.DUT.CAN_CORE_INST.FAULT_CONFINEMENT_INST.ERR_COUNTERS_INST.data_err_ctr_q  : unsigned(15 downto 0) >> <= release;
+        end if;
+
+        -----------------------------------------------------------------------
+        -- @2. Generate random frame where bit rate is not switched. Insert the
         --     frame to DUT. Wait until DUT starts transmission. Wait for
         --     random time until DUT transmits Dominant bit. Force the bus-
         --     level Recessive for one bit time! This should invoke bit error in
@@ -144,7 +162,7 @@ package body err_norm_fd_ftest is
         --     2 incremented by 1. Check that ERR_FD in DUT and Test Node
         --     remained the same!
         -----------------------------------------------------------------------
-        info_m("Step 1");
+        info_m("Step 2");
 
         CAN_enable_retr_limit(true, 0, DUT_NODE, chn);
 
@@ -199,13 +217,13 @@ package body err_norm_fd_ftest is
                 "ERR_FD not incremented by 1 in receiver!");
 
         -----------------------------------------------------------------------
-        -- @2. Generate random frame where bit rate shall be switched. Wait
+        -- @3. Generate random frame where bit rate shall be switched. Wait
         --     until data portion of that frame. Wait until Recessive bit is
         --     transmitted. Force bus Dominant for 1 bit time! Wait until bus is
         --     idle. Check that ERR_FD incremented in DUT and Test node by 1.
         --     Check that ERR_NORM remained the same in DUT and Test node.
         -----------------------------------------------------------------------
-        info_m("Step 2");
+        info_m("Step 3");
 
         read_error_counters(err_counters_1_1, DUT_NODE, chn);
         read_error_counters(err_counters_1_2, TEST_NODE, chn);

@@ -89,6 +89,7 @@ entity tb_top_ctu_can_fd is
         test_type               : string := "feature"; -- "feature", "compliance" or "reference"
         stand_alone_vip_mode    : boolean := true;
         log_level               : t_log_verbosity := verbosity_info;
+        deposit_to_dut          : boolean := true;
 
         iterations              : natural := 1;
         timeout                 : string := "10 ms";
@@ -166,6 +167,7 @@ architecture tb of tb_top_ctu_can_fd is
        test_name               : string;
        test_type               : string;
        stand_alone_vip_mode    : boolean;
+       deposit_to_dut          : boolean;
 
        -- DUT Clock period
        cfg_sys_clk_period      : string;
@@ -277,6 +279,7 @@ begin
         test_name               => test_name,
         test_type               => test_type,
         stand_alone_vip_mode    => stand_alone_vip_mode,
+        deposit_to_dut          => deposit_to_dut,
 
         cfg_sys_clk_period      => cfg_sys_clk_period,
         finish_on_error         => finish_on_error,
@@ -358,6 +361,7 @@ begin
         info_m("  Reference test iterations: " & integer'image(reference_iterations));
         info_m("  Timeout: " & timeout);
         info_m("  Finish on error: " & integer'image(finish_on_error));
+        info_m("  Deposit to DUT: " & boolean'image(deposit_to_dut));
         info_m("");
         info_m("DUT configuration:");
         info_m("  RX buffer size: " & integer'image(rx_buffer_size));
@@ -390,26 +394,6 @@ begin
             info_m("***************************************************************");
             info_m(" Iteration nr: " & integer'image(i));
             info_m("***************************************************************");
-
-            -- Special deposit for traffic counters code coverage!
-            if (test_name = "rx_counter" or test_name = "tx_counter") then
-                rand_logic_vect_v(rnd_vect, 0.5);
-                info_m("Depositing TX frame counter and RX frame counter to: " & to_hstring(rnd_vect));
-                <<signal .TB_TOP_CTU_CAN_FD.DUT.CAN_CORE_INST.BUS_TRAFFIC_CTRS_GEN.BUS_TRAFFIC_COUNTERS_INST.tx_frame_ctr_i  : std_logic_vector(31 downto 0) >> <= force out rnd_vect;
-                <<signal .TB_TOP_CTU_CAN_FD.DUT.CAN_CORE_INST.BUS_TRAFFIC_CTRS_GEN.BUS_TRAFFIC_COUNTERS_INST.rx_frame_ctr_i  : std_logic_vector(31 downto 0) >> <= force out rnd_vect;
-                wait for 1 ns;
-                <<signal .TB_TOP_CTU_CAN_FD.DUT.CAN_CORE_INST.BUS_TRAFFIC_CTRS_GEN.BUS_TRAFFIC_COUNTERS_INST.tx_frame_ctr_i  : std_logic_vector(31 downto 0) >> <= release out;
-                <<signal .TB_TOP_CTU_CAN_FD.DUT.CAN_CORE_INST.BUS_TRAFFIC_CTRS_GEN.BUS_TRAFFIC_COUNTERS_INST.rx_frame_ctr_i  : std_logic_vector(31 downto 0) >> <= release out;
-            elsif (test_name = "err_norm_fd") then
-                rand_logic_vect_v(rnd_vect, 0.5);
-                info_m("Depositing ERR NORM counters to: " & integer'image(to_integer(unsigned(rnd_vect(15 downto 0 )))));
-                info_m("Depositing ERR FD counters to: "   & integer'image(to_integer(unsigned(rnd_vect(31 downto 16)))));
-                <<signal .TB_TOP_CTU_CAN_FD.DUT.CAN_CORE_INST.FAULT_CONFINEMENT_INST.ERR_COUNTERS_INST.norm_err_ctr  : std_logic_vector(15 downto 0) >> <= force out rnd_vect(15 downto 0);
-                <<signal .TB_TOP_CTU_CAN_FD.DUT.CAN_CORE_INST.FAULT_CONFINEMENT_INST.ERR_COUNTERS_INST.data_err_ctr  : std_logic_vector(15 downto 0) >> <= force out rnd_vect(31 downto 16);
-                wait for 1 ns;
-                <<signal .TB_TOP_CTU_CAN_FD.DUT.CAN_CORE_INST.FAULT_CONFINEMENT_INST.ERR_COUNTERS_INST.norm_err_ctr  : std_logic_vector(15 downto 0) >> <= release out;
-                <<signal .TB_TOP_CTU_CAN_FD.DUT.CAN_CORE_INST.FAULT_CONFINEMENT_INST.ERR_COUNTERS_INST.data_err_ctr  : std_logic_vector(15 downto 0) >> <= release out;
-            end if;
 
             -- Execute test
             test_start <= '1';

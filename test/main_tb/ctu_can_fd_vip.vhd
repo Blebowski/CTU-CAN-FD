@@ -90,6 +90,7 @@ entity ctu_can_fd_vip is
         test_name               : string;
         test_type               : string;
         stand_alone_vip_mode    : boolean;
+        deposit_to_dut          : boolean;
 
         -- DUT Clock period
         cfg_sys_clk_period      : string;
@@ -442,6 +443,15 @@ begin
     test_proc : process
     begin
         pli_str_to_logic_vector(test_name, pli_test_name_array);
+        wait;
+    end process;
+
+    ---------------------------------------------------------------------------
+    -- Propagate configuration of random deposits
+    ---------------------------------------------------------------------------
+    deposit_proc : process
+    begin
+        deposit_to_dut_i.set(deposit_to_dut);
         wait;
     end process;
 

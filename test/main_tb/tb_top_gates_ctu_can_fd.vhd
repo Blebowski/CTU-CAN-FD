@@ -97,6 +97,7 @@ entity tb_top_ctu_can_fd is
         test_type               : string := "feature"; -- "feature", "compliance" or "reference"
         stand_alone_vip_mode    : boolean := true;
         log_level               : t_log_verbosity := verbosity_info;
+        deposit_to_dut          : boolean := true;
 
         iterations              : natural := 1;
         timeout                 : string := "10 ms";
@@ -174,6 +175,7 @@ architecture tb of tb_top_ctu_can_fd is
        test_name               : string;
        test_type               : string;
        stand_alone_vip_mode    : boolean;
+       deposit_to_dut          : boolean;
 
        -- DUT Clock period
        cfg_sys_clk_period      : string;
@@ -275,6 +277,7 @@ begin
         test_name               => test_name,
         test_type               => test_type,
         stand_alone_vip_mode    => stand_alone_vip_mode,
+        deposit_to_dut          => deposit_to_dut,
 
         cfg_sys_clk_period      => cfg_sys_clk_period,
         finish_on_error         => finish_on_error,
@@ -356,6 +359,7 @@ begin
         info("  Reference test iterations: " & integer'image(reference_iterations));
         info("  Timeout: " & timeout);
         info("  Finish on error: " & integer'image(finish_on_error));
+        info("  Deposit to DUT: " & boolean'image(deposit_to_dut));
         info("");
         info("DUT configuration:");
         info("  RX buffer size: " & integer'image(rx_buffer_size));
