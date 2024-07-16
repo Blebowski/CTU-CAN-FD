@@ -1,18 +1,18 @@
 --------------------------------------------------------------------------------
--- 
--- CTU CAN FD IP Core 
+--
+-- CTU CAN FD IP Core
 -- Copyright (C) 2021-present Ondrej Ille
--- 
+--
 -- Permission is hereby granted, free of charge, to any person obtaining a copy
 -- of this VHDL component and associated documentation files (the "Component"),
 -- to use, copy, modify, merge, publish, distribute the Component for
 -- educational, research, evaluation, self-interest purposes. Using the
 -- Component for commercial purposes is forbidden unless previously agreed with
 -- Copyright holder.
--- 
+--
 -- The above copyright notice and this permission notice shall be included in
 -- all copies or substantial portions of the Component.
--- 
+--
 -- THE COMPONENT IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 -- IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 -- FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -20,38 +20,38 @@
 -- LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
 -- FROM, OUT OF OR IN CONNECTION WITH THE COMPONENT OR THE USE OR OTHER DEALINGS
 -- IN THE COMPONENT.
--- 
+--
 -- The CAN protocol is developed by Robert Bosch GmbH and protected by patents.
 -- Anybody who wants to implement this IP core on silicon has to obtain a CAN
 -- protocol license from Bosch.
--- 
+--
 -- -------------------------------------------------------------------------------
--- 
--- CTU CAN FD IP Core 
+--
+-- CTU CAN FD IP Core
 -- Copyright (C) 2015-2020 MIT License
--- 
+--
 -- Authors:
 --     Ondrej Ille <ondrej.ille@gmail.com>
 --     Martin Jerabek <martin.jerabek01@gmail.com>
--- 
--- Project advisors: 
+--
+-- Project advisors:
 -- 	Jiri Novak <jnovak@fel.cvut.cz>
 -- 	Pavel Pisa <pisa@cmp.felk.cvut.cz>
--- 
+--
 -- Department of Measurement         (http://meas.fel.cvut.cz/)
 -- Faculty of Electrical Engineering (http://www.fel.cvut.cz)
 -- Czech Technical University        (http://www.cvut.cz/)
--- 
+--
 -- Permission is hereby granted, free of charge, to any person obtaining a copy
 -- of this VHDL component and associated documentation files (the "Component"),
 -- to deal in the Component without restriction, including without limitation
 -- the rights to use, copy, modify, merge, publish, distribute, sublicense,
 -- and/or sell copies of the Component, and to permit persons to whom the
 -- Component is furnished to do so, subject to the following conditions:
--- 
+--
 -- The above copyright notice and this permission notice shall be included in
 -- all copies or substantial portions of the Component.
--- 
+--
 -- THE COMPONENT IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 -- IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 -- FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -59,11 +59,11 @@
 -- LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
 -- FROM, OUT OF OR IN CONNECTION WITH THE COMPONENT OR THE USE OR OTHER DEALINGS
 -- IN THE COMPONENT.
--- 
+--
 -- The CAN protocol is developed by Robert Bosch GmbH and protected by patents.
 -- Anybody who wants to implement this IP core on silicon has to obtain a CAN
 -- protocol license from Bosch.
--- 
+--
 --------------------------------------------------------------------------------
 
 --------------------------------------------------------------------------------
@@ -89,7 +89,7 @@
 --  @4. Send Frame from DUT. Wait till ACK field. Corrupt ACK field to be
 --      recessive. Wait till Test node is not in ACK field anymore. Check DUT
 --      is transmitting Error frame.
---  @5. Wait until Test node also starts transmitting error frame. Wait until bus 
+--  @5. Wait until Test node also starts transmitting error frame. Wait until bus
 --      is idle, check that TX Counter was not incremented in DUT.
 --  @6. Send random amount of frames by DUT and wait until they are sent.
 --  @7. Check that TX counter was incremented by N!
@@ -130,51 +130,61 @@ package body tx_counter_ftest is
         variable ctrs_3             :       SW_traffic_counters;
         variable ctrs_4             :       SW_traffic_counters;
         variable ctrs_5             :       SW_traffic_counters;
-        
+
         variable status             :       SW_status;
         variable command            :       SW_command := SW_command_rst_val;
+        variable deposit_vect       :       std_logic_vector(31 downto 0);
     begin
 
         ------------------------------------------------------------------------
         -- @1. Read TX Counter from DUT. Set One-shot mode (no retransmission)
-        --     in Test node.
+        --     in Test node. Deposit random value of RX counter in DUT if
+        --     enabled!
         ------------------------------------------------------------------------
         info_m("Step 1: Read initial counter values.");
-        
+
         read_traffic_counters(ctrs_1, DUT_NODE, chn);
         CAN_enable_retr_limit(true, 0, TEST_NODE, chn);
-        
+
+        if (deposit_to_dut_i.get) then
+            rand_logic_vect_v(deposit_vect, 0.5);
+            info_m("Depositing TX frame counter to: " & to_hstring(deposit_vect));
+            <<signal .TB_TOP_CTU_CAN_FD.DUT.CAN_CORE_INST.BUS_TRAFFIC_CTRS_GEN.BUS_TRAFFIC_COUNTERS_INST.tx_frame_ctr_i  : std_logic_vector(31 downto 0) >> <= force deposit_vect;
+            wait for 1 ns;
+            <<signal .TB_TOP_CTU_CAN_FD.DUT.CAN_CORE_INST.BUS_TRAFFIC_CTRS_GEN.BUS_TRAFFIC_COUNTERS_INST.tx_frame_ctr_i  : std_logic_vector(31 downto 0) >> <= release;
+        end if;
+
         ------------------------------------------------------------------------
         --  @2. Send frame from DUT. Wait until EOF field. Read TX counter and
         --      check it did not change yet.
         ------------------------------------------------------------------------
         info_m("Step 2: Send frame by DUT!");
-        
+
         CAN_generate_frame(CAN_frame);
         CAN_send_frame(CAN_frame, 1, DUT_NODE, chn, frame_sent);
-        
+
         CAN_wait_pc_state(pc_deb_eof, DUT_NODE, chn);
         read_traffic_counters(ctrs_2, DUT_NODE, chn);
-        
+
         check_m(ctrs_1.tx_frames = ctrs_2.tx_frames,
             "TX counter unchanged before EOF!");
         check_m(ctrs_1.rx_frames = ctrs_2.rx_frames,
             "RX counter unchanged before EOF!");
-        
+
         ------------------------------------------------------------------------
-        --  @3. Wait until the end of EOF. Read TX counter and check it was 
-        --     incremented. Read RX counter and check it is not incremented!       
+        --  @3. Wait until the end of EOF. Read TX counter and check it was
+        --     incremented. Read RX counter and check it is not incremented!
         ------------------------------------------------------------------------
         info_m("Step 3: Check TX, RX counters after frame.");
-        
+
         CAN_wait_not_pc_state(pc_deb_eof, DUT_NODE, chn);
         read_traffic_counters(ctrs_3, DUT_NODE, chn);
-        
+
         check_m(ctrs_1.tx_frames + 1 = ctrs_3.tx_frames,
             "TX counter changed after EOF!");
         check_m(ctrs_1.rx_frames = ctrs_3.rx_frames,
             "RX counter unchanged after EOF!");
-        
+
         CAN_wait_bus_idle(DUT_NODE, chn);
 
         ------------------------------------------------------------------------
@@ -183,42 +193,42 @@ package body tx_counter_ftest is
         --     DUT is transmitting Error frame.
         ------------------------------------------------------------------------
         info_m("Step 4: Send frame and force ACK recessive!");
-        
+
         CAN_generate_frame(CAN_frame);
         CAN_frame.frame_format := NORMAL_CAN;
         CAN_send_frame(CAN_frame, 1, DUT_NODE, chn, frame_sent);
-        
+
         CAN_wait_pc_state(pc_deb_ack, DUT_NODE, chn);
         force_bus_level(RECESSIVE, chn);
         CAN_wait_not_pc_state(pc_deb_ack, DUT_NODE, chn);
-        
+
         get_controller_status(status, DUT_NODE, chn);
         check_m(status.error_transmission, "Error frame is being transmitted!");
-        
+
         release_bus_level(chn);
-        
+
         ------------------------------------------------------------------------
         -- @5. Wait until Test node also starts transmitting error frame. Wait until
         --    bus is idle, check that TX Counter was not incremented.
         ------------------------------------------------------------------------
         info_m("Step 5: Wait until error frame!");
-        
-        CAN_wait_error_frame(TEST_NODE, chn);    
+
+        CAN_wait_error_frame(TEST_NODE, chn);
         CAN_wait_bus_idle(DUT_NODE, chn);
-        
+
         read_traffic_counters(ctrs_4, DUT_NODE, chn);
-        
+
         check_m(ctrs_3.tx_frames = ctrs_4.tx_frames,
             "TX counter unchanged after Error frame!");
         check_m(ctrs_3.rx_frames = ctrs_4.rx_frames,
             "RX counter unchanged after Error frame!");
-        
+
         ------------------------------------------------------------------------
         -- @6. Send random amount of frames by DUT and check that TX counter
         --    was incremented by N!
         ------------------------------------------------------------------------
         info_m("Step 6: Send N random frames!");
-        
+
         rand_int_v(6, rand_value);
         for i in 0 to rand_value - 1 loop
             CAN_generate_frame(CAN_frame);
@@ -230,17 +240,17 @@ package body tx_counter_ftest is
         -- @7. Check that TX counter was incremented by N!
         ------------------------------------------------------------------------
         info_m("Step 7: Check TX counter was incremented by N!");
-        
+
         read_traffic_counters(ctrs_5, DUT_NODE, chn);
         check_m(ctrs_4.tx_frames + rand_value = ctrs_5.tx_frames,
               "TX Frames counter incremented by: " & integer'image(rand_value));
 
         ------------------------------------------------------------------------
-        --  @8. Issue COMMAND[RXFRCRST] and check TX counter was NOT cleared in 
+        --  @8. Issue COMMAND[RXFRCRST] and check TX counter was NOT cleared in
         --      DUT.
         ------------------------------------------------------------------------
         info_m("Step 8");
-        
+
         command.rx_frame_ctr_rst := true;
         give_controller_command(command, DUT_NODE, chn);
         read_traffic_counters(ctrs_1, DUT_NODE, chn);
@@ -248,7 +258,7 @@ package body tx_counter_ftest is
               "TX counter not cleared by COMMAND[RXFRCRST]");
 
         ------------------------------------------------------------------------
-        --  @9. Issue COMMAND[TXFRCRST] and check TX counter was cleared in 
+        --  @9. Issue COMMAND[TXFRCRST] and check TX counter was cleared in
         --      DUT.
         ------------------------------------------------------------------------
         info_m("Step 9");
