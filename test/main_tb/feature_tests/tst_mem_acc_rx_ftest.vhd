@@ -78,12 +78,11 @@
 -- @Test sequence:
 --  @1. Read size of RX buffer in DUT. Enable Test Mode and Test access in DUT.
 --      Disable DUT (since memory testability shall be used when DUT is disabled)
---  @2. Generate random content for whole RAM.
---  @3. Write whole RX buffer RAM.
---  @4. Read whole RX buffer RAM back and compare read values with written ones.
---  @5. Toggle all bits of TST_DEST[TST_ADDR] to fill its toggle coverage. Field
---      is bigger than biggest possible memory, thus upper bits do not get
---      toggled during any test access.
+--  @2. Iterate over march patterns 0xAAAA_AAAA and 0x5555_5555, C3C3_C3C3 and
+--      3C3C3C and random value
+--      @2.1 Write March content to whole RAM.
+--      @2.2 Read whole RX buffer RAM back and compare read values with written
+--           ones.
 --
 -- @TestInfoEnd
 --------------------------------------------------------------------------------
@@ -116,6 +115,16 @@ package body tst_mem_acc_rx_ftest is
 
         variable rx_info : SW_RX_Buffer_info;
 
+        type t_test_values is
+            array (0 to 4) of std_logic_vector(31 downto 0);
+        variable patterns       : t_test_values := (
+            x"AAAAAAAA",
+            x"55555555",
+            x"C3C3C3C3",
+            x"3C3C3C3C",
+            x"00000000"          -- Random
+        );
+
         type t_test_mem is
             array (0 to 4095) of std_logic_vector(31 downto 0);
         variable w_content : t_test_mem := (OTHERS => (OTHERS => '0'));
@@ -138,55 +147,52 @@ package body tst_mem_acc_rx_ftest is
 
         info_m("Size of RX Buffer RAM: " & integer'image(rx_info.rx_mem_free));
 
-        -----------------------------------------------------------------------
-        -- @2. Generate random content for whole RAM.
-        -----------------------------------------------------------------------
-        info_m("Step 2");
-        for i in 0 to rx_info.rx_mem_free - 1 loop
-            rand_logic_vect_v(w_content(i), 0.5);
-            wait for 1 ps; -- To avoid timeout due to max delta cycles
+        ------------------------------------------------------------------------
+        -- @2. Iterate over march patterns 0xAAAA_AAAA and 0x5555_5555,
+        --     C3C3_C3C3 and 3C3C3C
+        ------------------------------------------------------------------------
+        for pattern_index in t_test_values'low to t_test_values'high loop
+
+            -----------------------------------------------------------------------
+            -- @2.1 Write March content to whole RAM.
+            -----------------------------------------------------------------------
+            info_m("Step 2.1");
+
+            -- Prepare the data
+            for i in 0 to rx_info.rx_mem_free - 1 loop
+                if (pattern_index = t_test_values'high) then
+                    rand_logic_vect_v(w_content(i), 0.5);
+                else
+                    w_content(i) := patterns(pattern_index);
+                end if;
+                wait for 1 ps; -- To avoid timeout due to max delta cycles
+            end loop;
+
+            -- Disable log reporting reduce log size for biggest RX buffer size.
+            mem_bus_agent_disable_transaction_reporting(chn);
+
+            -- Write the whole RAM
+            for i in 0 to rx_info.rx_mem_free - 1 loop
+                test_mem_write(w_content(i), i, TST_TGT_RX_BUF, DUT_NODE, chn);
+            end loop;
+
+            -----------------------------------------------------------------------
+            -- @2.2 Read whole RX buffer RAM back and compare read values with
+            --      written ones.
+            -----------------------------------------------------------------------
+            info_m("Step 4");
+
+            for i in 0 to rx_info.rx_mem_free - 1 loop
+                test_mem_read(r_data, i, TST_TGT_RX_BUF, DUT_NODE, chn);
+                check_m(r_data = w_content(i), "RX RAM data at address: " &
+                    integer'image(i) & " Expected: 0x" & to_hstring(w_content(i)) &
+                    " Read: 0x" & to_hstring(r_data));
+            end loop;
+
+            -- Enable reporting back again
+            mem_bus_agent_enable_transaction_reporting(chn);
+
         end loop;
-
-        -----------------------------------------------------------------------
-        -- @3. Write whole RX buffer RAM.
-        -----------------------------------------------------------------------
-        info_m("Step 3");
-
-        -- To reduce log size for biggest RX buffer size.
-        mem_bus_agent_disable_transaction_reporting(chn);
-
-        for i in 0 to rx_info.rx_mem_free - 1 loop
-            test_mem_write(w_content(i), i, TST_TGT_RX_BUF, DUT_NODE, chn);
-        end loop;
-
-        -----------------------------------------------------------------------
-        -- @4. Read whole RX buffer RAM back and compare read values with
-        --     written ones.
-        -----------------------------------------------------------------------
-        info_m("Step 4");
-
-        for i in 0 to rx_info.rx_mem_free - 1 loop
-            test_mem_read(r_data, i, TST_TGT_RX_BUF, DUT_NODE, chn);
-            check_m(r_data = w_content(i), "RX RAM data at address: " &
-                integer'image(i) & " Expected: 0x" & to_hstring(w_content(i)) &
-                " Read: 0x" & to_hstring(r_data));
-        end loop;
-
-        mem_bus_agent_enable_transaction_reporting(chn);
-
-        -----------------------------------------------------------------------
-        -- @5. Toggle all bits of TST_DEST[TST_ADDR] to fill its toggle
-        --     coverage. Field is bigger than biggest possible memory, thus
-        --     upper bits do not get toggled during any test access.
-        -----------------------------------------------------------------------
-        info_m("Step 5");
-
-        w_data := (OTHERS => '0');
-        w_data(TST_ADDR_H downto TST_ADDR_L) := x"FFFF";
-        CAN_write(w_data, TST_DEST_ADR, DUT_NODE, chn);
-
-        w_data := (OTHERS => '0');
-        CAN_write(w_data, TST_DEST_ADR, DUT_NODE, chn);
 
   end procedure;
 
