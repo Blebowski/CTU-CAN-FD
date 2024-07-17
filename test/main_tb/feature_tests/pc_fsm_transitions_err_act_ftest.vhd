@@ -146,6 +146,7 @@ package body pc_fsm_transitions_err_act_ftest is
             CAN_TX_frame.ident_type := ident_type;
             CAN_TX_frame.data_length := 1;
             CAN_TX_frame.rtr := NO_RTR_FRAME;
+            CAN_TX_frame.brs := BR_NO_SHIFT;
 
             bit_index := 0;
             bit_iter_loop: loop
