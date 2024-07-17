@@ -1006,13 +1006,8 @@ begin
     --      cover {mr_command_rrb = '1'};
     --
     -- psl rx_buf_commit_and_read_cov :
-    --      cover {read_increment = '1' and commit_rx_frame = '1'};
-    --
-    -- psl rx_buf_commit_after_read_cov :
-    --      cover {read_increment = '1'; commit_rx_frame = '1'};
-    --
-    -- psl rx_buf_read_after_commit_cov :
-    --      cover {commit_rx_frame = '1'; read_increment = '1'};
+    --      cover {read_increment = '1' and read_counter_q = "00001" and commit_rx_frame = '1'}
+    --      report "RX Buffer Commit and Frame read finish - Simultaneous!";
     --
     -- psl rx_buf_write_and_read_cov :
     --      cover {write_raw_intent = '1' and read_increment = '1'};
