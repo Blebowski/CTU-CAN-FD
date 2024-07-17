@@ -77,6 +77,8 @@
 --   @2. Free memory, buffer status and message count is checked.
 --   @3. Send minimal sized frame, and check that with each frame sent,
 --       RX Buffer frame count is incremented by 1.
+--   @4. Read-out each frame and check that with each frame read-out RX Buffer
+--       frame count is decremented by 1.
 --
 -- @TestInfoEnd
 --------------------------------------------------------------------------------
@@ -104,6 +106,7 @@ package body rx_status_rxfrc_ftest is
         signal      chn             : inout  t_com_channel
     ) is
         variable CAN_frame          :       SW_CAN_frame_type;
+        variable RX_CAN_frame       :       SW_CAN_frame_type;
         variable send_more          :       boolean := true;
         variable in_RX_buf          :       natural;
         variable frame_sent         :       boolean := false;
@@ -115,6 +118,7 @@ package body rx_status_rxfrc_ftest is
         variable frame_counter      :       natural;
 
         variable big_rx_buffer      :       boolean;
+        variable frames_match       :       boolean;
     begin
 
         ------------------------------------------------------------------------
@@ -163,6 +167,7 @@ package body rx_status_rxfrc_ftest is
         decode_dlc_rx_buff(CAN_frame.dlc, CAN_frame.rwcnt);
 
         for i in 1 to buf_info.rx_buff_size/4 loop
+            info_m("Sending frame nr: " & integer'image(i));
             CAN_send_frame(CAN_frame, 1, TEST_NODE, chn, frame_sent);
             CAN_wait_frame_sent(DUT_NODE, chn);
 
@@ -170,6 +175,25 @@ package body rx_status_rxfrc_ftest is
 
             check_m(buf_info.rx_frame_count = i,
                     "RX Buffer frame count incremented");
+        end loop;
+
+        ------------------------------------------------------------------------
+        -- @4. Read-out each frame and check that with each frame read-out RX
+        --     Buffer frame count is decremented by 1.
+        ------------------------------------------------------------------------
+        info_m("Step 4");
+
+        for i in 1 to buf_info.rx_buff_size/4 loop
+            info_m("Reading frame nr: " & integer'image(i));
+            CAN_read_frame(RX_CAN_frame, DUT_NODE, chn);
+            CAN_compare_frames(CAN_frame, RX_CAN_frame, false, frames_match);
+
+            check_m(frames_match, "Frame at position: " & integer'image(i) & " matches");
+
+            get_rx_buf_state(buf_info, DUT_NODE, chn);
+
+            check_m(buf_info.rx_frame_count = buf_info.rx_buff_size/4 - i,
+                    "RX Buffer frame count decremented");
         end loop;
 
     end procedure;
