@@ -111,6 +111,7 @@ source_list:
     - file: main_tb/feature_tests/mode_rst_ftest.vhd
     - file: main_tb/feature_tests/err_capt_err_frm_ftest.vhd
     - file: main_tb/feature_tests/rx_buf_empty_read_ftest.vhd
+    - file: main_tb/feature_tests/rx_buf_consistency_ftest.vhd
     - file: main_tb/feature_tests/trv_delay_ftest.vhd
     - file: main_tb/feature_tests/tx_cmd_set_empty_ftest.vhd
     - file: main_tb/feature_tests/int_be_ftest.vhd
