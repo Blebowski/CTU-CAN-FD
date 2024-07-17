@@ -255,6 +255,9 @@ begin
             can_agent_monitor_set_input_delay(default_channel, 20 ns);
         end if;
 
+        -----------------------------------------------------------------------
+        -- Start the test (give command to corresponding test type agent)
+        -----------------------------------------------------------------------
         if (test_type = "compliance") then
             compliance_start <= '1';
             wait until compliance_done = '1';
@@ -273,6 +276,14 @@ begin
         else
             error_m("Unknown test type!");
         end if;
+
+        -----------------------------------------------------------------------
+        -- Reset the DUT to clean-up
+        -----------------------------------------------------------------------
+        rst_agent_assert(default_channel);
+        wait for 10 ns;
+        rst_agent_deassert(default_channel);
+        wait for 100 ns;
 
         -- Stop clock agent (not to generate any further simulation events)
         clk_gen_agent_stop(default_channel);
