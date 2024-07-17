@@ -132,7 +132,7 @@ package body txt_buffer_transitions_2_ftest is
         -------------------------------------------------------------------------------------------
         -- @1. Loop for all TXT Buffers and incrementing wait times within a bit:
         -------------------------------------------------------------------------------------------
-        info_m("Step 2");
+        info_m("Step 1");
         get_tx_buf_count(num_txt_bufs, DUT_NODE, chn);
 
         -- Query the bus timing
