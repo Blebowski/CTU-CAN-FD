@@ -162,6 +162,7 @@ tests:
     - name: txt_buffer_transitions_2
     - name: txt_buffer_transitions_3
     - name: txt_buffer_transitions_4
+    - name: txt_buffer_access_ignore
 
     # Reference tests
     - name: data_set_1
