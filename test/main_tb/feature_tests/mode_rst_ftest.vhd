@@ -77,10 +77,15 @@
 --  @2. MODE[RST] will reset all the memory registers.
 --
 -- @Test sequence:
---  @1. Write all RW registers to random value. Check they were written.
+--  @1. Write all RW registers to extended/concatenated 0xAA.
+--      Check they were written.
 --  @2. Execute SW reset via MODE[RST].
 --  @3. Read all Control registers and check they return their reset value.
---  @4. Check if Test registers are present and test all read write registers
+--  @4. Write all RX registers to extended/concatenated 0x55.
+--      Check they were written.
+--  @5. Execute SW reset via MODE[RST].
+--  @6. Read all Control registers and check they return their reset value.
+--  @7. Check if Test registers are present and test all read write registers
 --      in test registers
 --
 -- @TestInfoEnd
@@ -217,9 +222,9 @@ package body mode_rst_ftest is
 
         variable reg_model      : t_Control_registers_list;
 
-        variable rand_data_8    : std_logic_vector(7 downto 0) := (OTHERS => '0');
-        variable rand_data_16   : std_logic_vector(15 downto 0) := (OTHERS => '0');
-        variable rand_data_32   : std_logic_vector(31 downto 0) := (OTHERS => '0');
+        variable march_data_8   : std_logic_vector(7 downto 0) := (OTHERS => '0');
+        variable march_data_16  : std_logic_vector(15 downto 0) := (OTHERS => '0');
+        variable march_data_32  : std_logic_vector(31 downto 0) := (OTHERS => '0');
 
         variable reg_rst_val_32 : std_logic_vector(31 downto 0) := (OTHERS => '0');
         variable reg_rst_val_16 : std_logic_vector(15 downto 0) := (OTHERS => '0');
@@ -233,36 +238,37 @@ package body mode_rst_ftest is
     begin
 
         -----------------------------------------------------------------------
-        -- @1. Write all RW registers to random value. Check they were written.
+        -- @1. Write all RW registers to extended/concatenated 0xAA.
+        --     Check they were written.
         -----------------------------------------------------------------------
         info_m("Step 1");
         for i in 0 to Control_registers_list'length - 1 loop
             if (Control_registers_list(i).reg_type = reg_read_write) then
 
-                rand_logic_vect_v(rand_data_8, 0.5);
-                rand_logic_vect_v(rand_data_16, 0.5);
-                rand_logic_vect_v(rand_data_32, 0.5);
+                march_data_8  := x"AA";
+                march_data_16 := x"AAAA";
+                march_data_32 := x"AAAAAAAA";
 
                 ---------------------------------------------------------------
                 -- 8 bit register size
                 ---------------------------------------------------------------
                 if (Control_registers_list(i).size = 8) then
                     test_rw_reg(Control_registers_list(i),
-                                rand_data_8, r_data_8, chn);
+                                march_data_8, r_data_8, chn);
 
                 ---------------------------------------------------------------
                 -- 16 bit register size
                 ---------------------------------------------------------------
                 elsif (Control_registers_list(i).size = 16) then
                     test_rw_reg(Control_registers_list(i),
-                                rand_data_16, r_data_16, chn);
+                                march_data_16, r_data_16, chn);
 
                 ---------------------------------------------------------------
                 -- 32 bit register size
                 ---------------------------------------------------------------
                 elsif (Control_registers_list(i).size = 32) then
                     test_rw_reg(Control_registers_list(i),
-                                rand_data_32, r_data_32, chn);
+                                march_data_32, r_data_32, chn);
 
                 else
                     error_m("Unsupported register size: " &
@@ -364,11 +370,145 @@ package body mode_rst_ftest is
 
         end loop;
 
+
         -----------------------------------------------------------------------
-        -- @4. Check if Test registers are present and test all read write
+        -- @4. Write all RX registers to extended/concatenated 0x55.
+        --     Check they were written.
+        -----------------------------------------------------------------------
+        info_m("Step 4");
+        for i in 0 to Control_registers_list'length - 1 loop
+            if (Control_registers_list(i).reg_type = reg_read_write) then
+
+                march_data_8  := x"55";
+                march_data_16 := x"5555";
+                march_data_32 := x"55555555";
+
+                ---------------------------------------------------------------
+                -- 8 bit register size
+                ---------------------------------------------------------------
+                if (Control_registers_list(i).size = 8) then
+                    test_rw_reg(Control_registers_list(i),
+                                march_data_8, r_data_8, chn);
+
+                ---------------------------------------------------------------
+                -- 16 bit register size
+                ---------------------------------------------------------------
+                elsif (Control_registers_list(i).size = 16) then
+                    test_rw_reg(Control_registers_list(i),
+                                march_data_16, r_data_16, chn);
+
+                ---------------------------------------------------------------
+                -- 32 bit register size
+                ---------------------------------------------------------------
+                elsif (Control_registers_list(i).size = 32) then
+                    test_rw_reg(Control_registers_list(i),
+                                march_data_32, r_data_32, chn);
+
+                else
+                    error_m("Unsupported register size: " &
+                                integer'image(Control_registers_list(i).size));
+                end if;
+
+            end if;
+        end loop;
+
+        -----------------------------------------------------------------------
+        -- @5. Execute SW reset via MODE[RST].
+        -----------------------------------------------------------------------
+        info_m("Step 5");
+        exec_SW_reset(DUT_NODE, chn);
+
+        -----------------------------------------------------------------------
+        -- @6. Read all Control registers and check they return their reset
+        --     value.
+        -----------------------------------------------------------------------
+        info_m("Step 6 - Control registers");
+        for i in 0 to Control_registers_list'length - 1 loop
+
+            if (Control_registers_list(i).size = 8) then
+                CAN_read(r_data_8, Control_registers_list(i).address,
+                         DUT_NODE, chn);
+                mask_reg_val(Control_registers_list(i), r_data_8);
+
+                get_reg_rst_val(Control_registers_list(i), reg_rst_val_8);
+                mask_reg_val(Control_registers_list(i), reg_rst_val_8);
+
+                check_m(r_data_8 = reg_rst_val_8, "Address: 0x" &
+                to_hstring(unsigned(Control_registers_list(i).address)) &
+                " Reset value! Expected reset value: 0x" &
+                    to_hstring(unsigned(reg_rst_val_8)) & " Read data: 0x" &
+                    to_hstring(unsigned(r_data_8)));
+
+            elsif (Control_registers_list(i).size = 16) then
+                CAN_read(r_data_16, Control_registers_list(i).address,
+                         DUT_NODE, chn);
+                mask_reg_val(Control_registers_list(i), r_data_16);
+
+                get_reg_rst_val(Control_registers_list(i), reg_rst_val_16);
+                mask_reg_val(Control_registers_list(i), reg_rst_val_16);
+
+                check_m(r_data_16 = reg_rst_val_16, "Address: 0x" &
+                to_hstring(unsigned(Control_registers_list(i).address)) &
+                " Reset value! Expected reset value: 0x" &
+                    to_hstring(unsigned(reg_rst_val_16)) & " Read data: 0x" &
+                    to_hstring(unsigned(r_data_16)));
+
+            elsif (Control_registers_list(i).size = 32) then
+                CAN_read(r_data_32, Control_registers_list(i).address,
+                         DUT_NODE, chn);
+                mask_reg_val(Control_registers_list(i), r_data_32);
+
+                get_reg_rst_val(Control_registers_list(i), reg_rst_val_32);
+                mask_reg_val(Control_registers_list(i), reg_rst_val_32);
+
+                -- RX_MEM_INFO register, all bits generic dependant -> Skip!
+                if (Control_registers_list(i).address = RX_MEM_INFO_ADR) then
+                    next;
+                end if;
+
+                -- TXTB_INFO is generic dependant -> Get number of TXT Buffers
+                if (Control_registers_list(i).address = TX_STATUS_ADR) then
+                    get_tx_buf_count(num_txt_bufs, DUT_NODE, chn);
+                    reg_rst_val_32 := (OTHERS => '0');
+
+                    -- Each buffer should be "EMPTY"
+                    for bi in 0 to num_txt_bufs - 1 loop
+                        reg_rst_val_32((bi + 1) * 4 - 1 downto bi * 4) := "1000";
+                    end loop;
+                end if;
+
+                -- Timestamp High/Low registers reflect current value of external
+                -- input -> skip them!
+                if (Control_registers_list(i).address = TIMESTAMP_LOW_ADR or
+                    Control_registers_list(i).address = TIMESTAMP_HIGH_ADR)
+                then
+                    next;
+                end if;
+
+                -- STATUS register -> Mask STCNT, STRGS and SPRT bits
+                if (Control_registers_list(i).address = STATUS_ADR) then
+                    r_data_32(STCNT_IND) := '0';
+                    r_data_32(STRGS_IND) := '0';
+                    r_data_32(SPRT_IND)  := '0';
+                end if;
+
+                check_m(r_data_32 = reg_rst_val_32, "Address: 0x" &
+                to_hstring(unsigned(Control_registers_list(i).address)) &
+                " Reset value! Expected reset value: 0x" &
+                    to_hstring(unsigned(reg_rst_val_32)) & " Read data: 0x" &
+                    to_hstring(unsigned(r_data_32)));
+            else
+                error_m("Unsupported register size: " &
+                            integer'image(Control_registers_list(i).size));
+            end if;
+
+        end loop;
+
+        -----------------------------------------------------------------------
+        -- @7. Check if Test registers are present and test all read write
         --     registers in test registers.
         -----------------------------------------------------------------------
-        info_m("Step 4 - Test Test registers");
+        info_m("Step 7 - Test Test registers");
 
         CAN_check_test_registers(test_regs_present, DUT_NODE, chn);
 
@@ -381,17 +521,21 @@ package body mode_rst_ftest is
 
             for i in 0 to Test_registers_list'length - 1 loop
                 if (Test_registers_list(i).reg_type = reg_read_write) then
-                    rand_logic_vect_v(rand_data_8, 0.5);
-                    rand_logic_vect_v(rand_data_16, 0.5);
-                    rand_logic_vect_v(rand_data_32, 0.5);
+
+                    -----------------------------------------------------------
+                    -- 0x55 pattern
+                    -----------------------------------------------------------
+                    march_data_8  := x"55";
+                    march_data_16 := x"5555";
+                    march_data_32 := x"55555555";
 
                     -- Do not write Write strobe. It is auto-clear, so it cant
                     -- be read back! Also, disable test mode access, since
                     -- random address which overflows memory boundary can be
                     -- set by this test!
                     if (Test_registers_list(i).address = TST_CONTROL_ADR) then
-                        rand_data_32(TWRSTB_IND) := '0';
-                        rand_data_32(TMAENA_IND) := '0';
+                        march_data_32(TWRSTB_IND) := '0';
+                        march_data_32(TMAENA_IND) := '0';
                     end if;
 
                     -----------------------------------------------------------
@@ -399,26 +543,70 @@ package body mode_rst_ftest is
                     -----------------------------------------------------------
                     if (Test_registers_list(i).size = 8) then
                         test_rw_reg(Test_registers_list(i),
-                                    rand_data_8, r_data_8, chn);
+                                    march_data_8, r_data_8, chn);
 
                     -----------------------------------------------------------
                     -- 16 bit register size
                     -----------------------------------------------------------
                     elsif (Test_registers_list(i).size = 16) then
                         test_rw_reg(Test_registers_list(i),
-                                    rand_data_16, r_data_16, chn);
+                                    march_data_16, r_data_16, chn);
 
                     -----------------------------------------------------------
                     -- 32 bit register size
                     -----------------------------------------------------------
                     elsif (Test_registers_list(i).size = 32) then
                         test_rw_reg(Test_registers_list(i),
-                                    rand_data_32, r_data_32, chn);
+                                    march_data_32, r_data_32, chn);
 
                     else
                         error_m("Unsupported register size: " &
                                     integer'image(Test_registers_list(i).size));
                     end if;
+
+
+                    -----------------------------------------------------------
+                    -- 0xAA pattern
+                    -----------------------------------------------------------
+                    march_data_8  := x"AA";
+                    march_data_16 := x"AAAA";
+                    march_data_32 := x"AAAAAAAA";
+
+                    -- Do not write Write strobe. It is auto-clear, so it cant
+                    -- be read back! Also, disable test mode access, since
+                    -- random address which overflows memory boundary can be
+                    -- set by this test!
+                    if (Test_registers_list(i).address = TST_CONTROL_ADR) then
+                        march_data_32(TWRSTB_IND) := '0';
+                        march_data_32(TMAENA_IND) := '0';
+                    end if;
+
+                    -----------------------------------------------------------
+                    -- 8 bit register size
+                    -----------------------------------------------------------
+                    if (Test_registers_list(i).size = 8) then
+                        test_rw_reg(Test_registers_list(i),
+                                    march_data_8, r_data_8, chn);
+
+                    -----------------------------------------------------------
+                    -- 16 bit register size
+                    -----------------------------------------------------------
+                    elsif (Test_registers_list(i).size = 16) then
+                        test_rw_reg(Test_registers_list(i),
+                                    march_data_16, r_data_16, chn);
+
+                    -----------------------------------------------------------
+                    -- 32 bit register size
+                    -----------------------------------------------------------
+                    elsif (Test_registers_list(i).size = 32) then
+                        test_rw_reg(Test_registers_list(i),
+                                    march_data_32, r_data_32, chn);
+
+                    else
+                        error_m("Unsupported register size: " &
+                                    integer'image(Test_registers_list(i).size));
+                    end if;
+
                 end if;
             end loop;
         end if;
