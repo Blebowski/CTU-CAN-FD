@@ -101,7 +101,10 @@ tests:
     - name: retr_limit
     - name: retr_limit_2
     - name: retr_limit_3
+
     - name: rx_buf_empty_read
+    - name: rx_buf_consistency
+
     - name: rx_counter
     - name: rx_settings_rtsop
     - name: rx_status
