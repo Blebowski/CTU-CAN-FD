@@ -70,28 +70,30 @@
 -- @TestInfoStart
 --
 -- @Purpose:
---  RX Buffer consistency feature test implementation.
+--  RX Buffer consistency 2 feature test implementation.
 --
 -- @Verifies:
---  @1. RX Buffer Frame count is consistent when frame is commited at at the
---      same time as read of previous frame is finished.
+--  @1. RX Buffer Memory capacity indication (RX Mem Free) consistency at the
+--      time when "abort" of currently stored frame occurs (due to error frame)
+--      and a frame is read at the same time.
 --
 -- @Test sequence:
 --   @1. Disable DUT, configure fast Nominal and Data bit-rate (to reduce test
---       length).
+--       length). Enable Test Mode in both DUT and Test Node. Test Mode is
+--       needed to flip CRC bits in the transmitted frame!
+--       Generate two random CAN frames. Second frame will contain a
+--       bit-flip in CRC field.
 --   @2. Iterate with incrementing wait time X.
---       @2.1 Generate two random CAN frames. Send both frames by Test Node.
---       @2.2 Wait until first frame is sent by DUT. Check RX Frame count is
---            1 in DUT.
---       @2.3 Wait until start of End of Frame field in DUT Node.
---            Then wait for X clock cycles.
+--       @2.1 Send both frames by Test Node.
+--       @2.2 Wait until first frame is sent by DUT. Check that RX Mem Free
+--            is equal to RX Buffer size minus size of the first frame.
+--       @2.3 Wait until start of CRC Delimiter in DUT. Wait for X clock cycles.
 --       @2.4 Read out frame from DUT Node. Due to incrementing time X, the
---            test will hit the scenario where frame reading is simultaneously
---            finished, and second received frame is commited!
---       @2.5 Wait until second frame reception is finished in DUT.
---       @2.6 Check RX Frame count is 1 in DUT.
---       @2.7 Read second frame from DUT. Check RX Frame count in DUT is 0.
---            Check both transmitted frames match both received frames.
+--            test will hit the scenario where frame is simultaneously being
+--            read, and second frame is aborted due to Error frame. Error frame
+--            is caused since a CRC bit was flipped, causing CRC Error.
+--       @2.5 Wait until Error frame in DUT. Wait until bus is idle!
+--       @2.6 Check that RX Mem Free of DUT node is eqal to size of RX Buffer.
 --
 -- @TestInfoEnd
 --------------------------------------------------------------------------------
@@ -108,18 +110,18 @@ context ctu_can_fd_tb.tb_common_context;
 use ctu_can_fd_tb.feature_test_agent_pkg.all;
 use ctu_can_fd_tb.clk_gen_agent_pkg.all;
 
-package rx_buf_consistency_ftest is
-    procedure rx_buf_consistency_ftest_exec(
+package rx_buf_consistency_2_ftest is
+    procedure rx_buf_consistency_2_ftest_exec(
         signal      chn             : inout  t_com_channel
     );
 end package;
 
 
-package body rx_buf_consistency_ftest is
-    procedure rx_buf_consistency_ftest_exec(
+package body rx_buf_consistency_2_ftest is
+    procedure rx_buf_consistency_2_ftest_exec(
         signal      chn             : inout  t_com_channel
     ) is
-        variable bus_timing         : bit_time_config_type;
+        variable bus_timing         :       bit_time_config_type;
 
         variable CAN_TX_frame_1     :       SW_CAN_frame_type;
         variable CAN_TX_frame_2     :       SW_CAN_frame_type;
@@ -130,11 +132,18 @@ package body rx_buf_consistency_ftest is
 
         variable frames_match       :       boolean;
         variable frame_sent         :       boolean;
+
+        variable err_counters       :       SW_error_counters;
+
+        variable mode               :       SW_mode := SW_mode_rst_val;
     begin
 
         ------------------------------------------------------------------------
         -- @1. Disable DUT, configure fast Nominal and Data bit-rate (to reduce
-        --     test length).
+        --     test length). Enable Test Mode in both DUT and Test Node. Test
+        --     Mode is needed to flip CRC bits in the transmitted frame!
+        --     Generate two random CAN frames. Second frame will contain a
+        --     bit-flip in CRC field.
         ------------------------------------------------------------------------
         info_m("Step 1");
 
@@ -158,61 +167,88 @@ package body rx_buf_consistency_ftest is
         CAN_configure_ssp(ssp_no_ssp, x"00", DUT_NODE, chn);
         CAN_configure_ssp(ssp_no_ssp, x"00", TEST_NODE, chn);
 
+        mode.test := true;
+        set_core_mode(mode, DUT_NODE, chn);
+        set_core_mode(mode, TEST_NODE, chn);
+
         CAN_turn_controller(true, DUT_NODE, chn);
         CAN_turn_controller(true, TEST_NODE, chn);
 
         CAN_wait_bus_on(DUT_NODE, chn);
         CAN_wait_bus_on(TEST_NODE, chn);
 
-        -- First frame must be always equal so that duration to read it is
-        -- always the same, and thus delaying the frame readout cycle by cycle
-        -- will guarantee to hit the moment when frame is simultaneously
-        -- commited and last word is read!
+        -- First frame - Will always take 4 words in RX Buffer
         CAN_generate_frame(CAN_TX_frame_1);
-
-        -- Restrict to non-CAN FD frames from two reasons:
-        --  - Shorter data fields -> Reduces test length
-        --  - Avoids ambiguity in length of ACK field.
-        CAN_TX_frame_1.frame_format := NORMAL_CAN;
+        CAN_TX_frame_1.data_length := 0;
         decode_length(CAN_TX_frame_1.data_length, CAN_TX_frame_1.dlc);
         decode_dlc_rx_buff(CAN_TX_frame_1.dlc, CAN_TX_frame_1.rwcnt);
+
+        -- Second frame
+        -- Make it fixed so that we don't see spurious fails due to immediate
+        -- frame on flipped stuff-bit!
+        CAN_generate_frame(CAN_TX_frame_2);
+        CAN_TX_frame_2.identifier := 0;
+        CAN_TX_frame_2.ident_type := BASE;
+        CAN_TX_frame_2.frame_format := NORMAL_CAN;
+        CAN_TX_frame_2.rtr := NO_RTR_FRAME;
+        CAN_TX_frame_2.data_length := 0;
+
+        decode_length(CAN_TX_frame_2.data_length, CAN_TX_frame_2.dlc);
+        decode_dlc_rx_buff(CAN_TX_frame_2.dlc, CAN_TX_frame_2.rwcnt);
 
         ------------------------------------------------------------------------
         -- @2. Iterate with incrementing wait time X.
         ------------------------------------------------------------------------
         info_m("Step 2");
 
-        for wait_multiple in 1 to 200 loop
+        for wait_multiple in 1 to 150 loop
 
             --------------------------------------------------------------------
-            -- @2.1 Generate two random CAN frames.
-            --      Send both frames by Test Node.
+            -- @2.1 Send both frames by Test Node. Set Error counters to 0
+            --      in both nodes.
             --------------------------------------------------------------------
             info_m("Step 2.1");
 
-            CAN_generate_frame(CAN_TX_frame_2);
+            err_counters.rx_counter := 0;
+            err_counters.tx_counter := 0;
+            err_counters.err_norm   := 0;
+            err_counters.err_fd     := 0;
 
-            CAN_send_frame(CAN_TX_frame_1, 1, TEST_NODE, chn, frame_sent);
-            wait for 200 ns;
-            CAN_send_frame(CAN_TX_frame_2, 2, TEST_NODE, chn, frame_sent);
+            set_error_counters(err_counters, DUT_NODE, chn);
+            set_error_counters(err_counters, TEST_NODE, chn);
+
+            CAN_insert_TX_frame(CAN_TX_frame_1, 1, TEST_NODE, chn);
+            CAN_insert_TX_frame(CAN_TX_frame_2, 2, TEST_NODE, chn);
+
+            -- Configure bit-flip in CRC bit 12 from frame 2
+            CAN_set_frame_test(2, 12, false, true, false, TEST_NODE, chn);
+
+            send_TXT_buf_cmd(buf_set_ready, 1, TEST_NODE, chn);
+            wait for 100 ns;
+            send_TXT_buf_cmd(buf_set_ready, 2, TEST_NODE, chn);
 
             --------------------------------------------------------------------
-            -- @2.2 Wait until first frame is sent by DUT. Check RX Frame count
-            --      is 1 in DUT.
+            -- @2.2 Wait until first frame is sent by DUT. Check that RX Mem Free
+            --      is equal to RX Buffer size minus size of the first frame.
             --------------------------------------------------------------------
             info_m("Step 2.2");
 
             CAN_wait_frame_sent(DUT_NODE, chn);
+
             get_rx_buf_state(rx_buf_info, DUT_NODE, chn);
-            check_m(rx_buf_info.rx_frame_count = 1, "RX Buffer frame count is 1");
+            check_m(rx_buf_info.rx_mem_free = rx_buf_info.rx_buff_size - 4,
+                     "RX MEM Free = RX Buffer Size - 4");
 
             --------------------------------------------------------------------
-            -- @2.3 Wait until start of End of Frame field in DUT Node. Then
-            --      wait for 5 more bits. Then wait for X clock cycles.
+            -- @2.3 Wait until start of CRC Delimiter in DUT.
+            --      Wait for X clock cycles.
             --------------------------------------------------------------------
             info_m("Step 2.3");
 
-            CAN_wait_pc_state(pc_deb_eof, DUT_NODE, chn);
+            CAN_wait_pc_state(pc_deb_crc, DUT_NODE, chn);
+            for i in 1 to 10 loop
+                CAN_wait_sample_point(DUT_NODE, chn);
+            end loop;
 
             for i in 1 to wait_multiple loop
                 info_m("Waiting for " & integer'image(i) & " clock cycles");
@@ -221,46 +257,35 @@ package body rx_buf_consistency_ftest is
 
             --------------------------------------------------------------------
             -- @2.4 Read out frame from DUT Node. Due to incrementing time X,
-            --      the test will hit the scenario where frame reading is
-            --      simultaneously finished, and second received frame is
-            --      commited!
+            --      the test will hit the scenario where frame is simultaneously
+            --      being read, and second frame is aborted due to Error frame.
+            --      Error frame is caused since a CRC bit was flipped,
+            --      causing CRC Error.
             --------------------------------------------------------------------
             info_m("Step 2.4");
 
             CAN_read_frame(CAN_RX_frame_1, DUT_NODE, chn);
 
             --------------------------------------------------------------------
-            -- @2.5 Wait until second frame reception is finished in DUT.
+            -- @2.5 Wait until Error frame in DUT. Wait until bus is idle!
             --------------------------------------------------------------------
             info_m("Step 2.5");
+
+            -- This will stuck and time-out if error frame is not transmitted!
+            CAN_wait_error_frame(DUT_NODE, chn);
 
             CAN_wait_bus_idle(DUT_NODE, chn);
             CAN_wait_bus_idle(TEST_NODE, chn);
 
             --------------------------------------------------------------------
-            -- @2.6 Check RX Frame count is 1 in DUT.
+            -- @2.6 Check that RX Mem Free of DUT node is equal to
+            --      size of RX Buffer.
             --------------------------------------------------------------------
             info_m("Step 2.6");
 
             get_rx_buf_state(rx_buf_info, DUT_NODE, chn);
-            check_m(rx_buf_info.rx_frame_count = 1, "RX Buffer frame count is 1");
-
-            --------------------------------------------------------------------
-            -- @2.7 Read second frame from DUT. Check RX Frame count in DUT is 0.
-            --      Check both transmitted frames match both received frames.
-            --------------------------------------------------------------------
-            info_m("Step 2.7");
-
-            CAN_read_frame(CAN_RX_frame_2, DUT_NODE, chn);
-
-            get_rx_buf_state(rx_buf_info, DUT_NODE, chn);
-            check_m(rx_buf_info.rx_frame_count = 0, "RX Buffer frame count is 0");
-
-            CAN_compare_frames(CAN_RX_frame_1, CAN_TX_frame_1, false, frames_match);
-            check_m(frames_match, "Frame 1 match");
-
-            CAN_compare_frames(CAN_RX_frame_2, CAN_TX_frame_2, false, frames_match);
-            check_m(frames_match, "Frame 2 match");
+            check_m(rx_buf_info.rx_mem_free = rx_buf_info.rx_buff_size,
+                     "RX MEM Free = RX Buffer Size");
 
         end loop;
 
