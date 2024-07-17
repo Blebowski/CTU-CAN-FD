@@ -49,6 +49,7 @@ source_list:
     - file: main_tb/feature_tests/txt_buffer_transitions_2_ftest.vhd
     - file: main_tb/feature_tests/txt_buffer_transitions_3_ftest.vhd
     - file: main_tb/feature_tests/txt_buffer_transitions_4_ftest.vhd
+    - file: main_tb/feature_tests/txt_buffer_access_ignore_ftest.vhd
     - file: main_tb/feature_tests/mode_txbbm_3_ftest.vhd
     - file: main_tb/feature_tests/ssp_4_bits_flying_ftest.vhd
     - file: main_tb/feature_tests/glitch_filtering_ftest.vhd

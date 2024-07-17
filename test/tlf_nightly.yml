@@ -474,6 +474,23 @@ tests:
     - name: txt_buffer_transitions_3
     - name: txt_buffer_transitions_4
 
+    - name: txt_buffer_access_ignore
+
+    - name: txt_buffer_access_ignore_2_txt_bufs
+      generics:
+        /TB_TOP_CTU_CAN_FD/txt_buffer_count: 2
+        /TB_TOP_CTU_CAN_FD/test_name: txt_buffer_access_ignore
+
+    - name: txt_buffer_access_ignore_4_txt_bufs
+      generics:
+        /TB_TOP_CTU_CAN_FD/txt_buffer_count: 4
+        /TB_TOP_CTU_CAN_FD/test_name: txt_buffer_access_ignore
+
+    - name: txt_buffer_access_ignore_8_txt_bufs
+      generics:
+        /TB_TOP_CTU_CAN_FD/txt_buffer_count: 8
+        /TB_TOP_CTU_CAN_FD/test_name: txt_buffer_access_ignore
+
     # Reference tests
     - name: data_set_1
       generics:

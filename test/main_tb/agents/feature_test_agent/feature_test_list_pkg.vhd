@@ -227,6 +227,7 @@ use ctu_can_fd_tb.txt_buffer_transitions_ftest.all;
 use ctu_can_fd_tb.txt_buffer_transitions_2_ftest.all;
 use ctu_can_fd_tb.txt_buffer_transitions_3_ftest.all;
 use ctu_can_fd_tb.txt_buffer_transitions_4_ftest.all;
+use ctu_can_fd_tb.txt_buffer_access_ignore_ftest.all;
 use ctu_can_fd_tb.frame_filters_mask_ftest.all;
 
 
@@ -510,6 +511,8 @@ package body feature_test_list_pkg is
             txt_buffer_transitions_3_ftest_exec(channel);
         elsif (test_name = "txt_buffer_transitions_4") then
             txt_buffer_transitions_4_ftest_exec(channel);
+        elsif (test_name = "txt_buffer_access_ignore") then
+            txt_buffer_access_ignore_ftest_exec(channel);
 
         elsif (test_name = "frame_filters_mask") then
             frame_filters_mask_ftest_exec(channel);
