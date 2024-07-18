@@ -174,6 +174,9 @@ package body rx_buf_consistency_ftest is
         --  - Shorter data fields -> Reduces test length
         --  - Avoids ambiguity in length of ACK field.
         CAN_TX_frame_1.frame_format := NORMAL_CAN;
+        if (CAN_TX_frame_1.data_length > 8) then
+            CAN_TX_frame_1.data_length := 8;
+        end if;
         decode_length(CAN_TX_frame_1.data_length, CAN_TX_frame_1.dlc);
         decode_dlc_rx_buff(CAN_TX_frame_1.dlc, CAN_TX_frame_1.rwcnt);
 
