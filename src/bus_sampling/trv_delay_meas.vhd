@@ -146,9 +146,6 @@ entity trv_delay_measurement is
         -- Width of SSP position
         G_SSP_POS_WIDTH          :     natural;
 
-        -- Optional usage of saturated value of ssp_delay
-        G_USE_SSP_SATURATION     :     boolean;
-
         -- Saturation level for size of SSP_delay. This is to make sure that if there is smaller
         -- shift register for secondary sampling point we don't address outside of this register.
         G_SSP_SATURATION_LVL     :     natural
@@ -222,6 +219,9 @@ architecture rtl of trv_delay_measurement is
 
     constant C_TRV_DEL_SAT              : std_logic_vector(G_TRV_CTR_WIDTH - 1 downto 0) :=
         std_logic_vector(to_unsigned(127, G_TRV_CTR_WIDTH));
+
+    constant C_SSP_SAT_LVL_VECT         : std_logic_vector(G_SSP_POS_WIDTH - 1 downto 0) :=
+        std_logic_vector(to_unsigned(G_SSP_SATURATION_LVL, G_SSP_POS_WIDTH));
 
     -- Load shadow register to output
     signal ssp_shadow_ce                : std_logic;
@@ -351,27 +351,11 @@ begin
     -------------------------------------------------------------------------------------------
     -- SSP Delay saturation
     -------------------------------------------------------------------------------------------
-    ssp_delay_sat_block : block
-        constant C_SSP_SAT_LVL_VECT : std_logic_vector(G_SSP_POS_WIDTH - 1 downto 0) :=
-            std_logic_vector(to_unsigned(G_SSP_SATURATION_LVL, G_SSP_POS_WIDTH));
-    begin
-        -- Use saturation
-        ssp_sat_true : if (G_USE_SSP_SATURATION) generate
 
-            -- Saturate if highest bit of result is set
-            ssp_delay_saturated <=
-                C_SSP_SAT_LVL_VECT when (ssp_delay_raw(G_SSP_POS_WIDTH) = '1') else
-                ssp_delay_raw(G_SSP_POS_WIDTH - 1 downto 0);
-
-        end generate ssp_sat_true;
-
-        -- Don't use saturation
-        ssp_sat_false : if (not G_USE_SSP_SATURATION) generate
-            ssp_delay_saturated <= ssp_delay_raw(G_SSP_POS_WIDTH - 1 downto 0);
-        end generate ssp_sat_false;
-
-    end block ssp_delay_sat_block;
-
+    -- Saturate if highest bit of result is set
+    ssp_delay_saturated <=
+        C_SSP_SAT_LVL_VECT when (ssp_delay_raw(G_SSP_POS_WIDTH) = '1') else
+        ssp_delay_raw(G_SSP_POS_WIDTH - 1 downto 0);
 
     -------------------------------------------------------------------------------------------
     -- SSP Shadow register. Both values are captured at the end of measurement.

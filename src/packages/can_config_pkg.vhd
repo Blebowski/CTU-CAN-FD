@@ -138,9 +138,6 @@ package can_config_pkg is
     -- Secondary sample point position width
     constant C_SSP_POS_WIDTH        : natural := 8;
 
-    -- Optional usage of saturated value of ssp_delay
-    constant C_USE_SSP_SATURATION   : boolean := true;
-
     -- Width of SSP counters
     constant C_SSP_CTRS_WIDTH       : natural := 15;
 

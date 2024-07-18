@@ -107,9 +107,6 @@ entity bus_sampling is
         -- Width of SSP position
         G_SSP_POS_WIDTH          :    natural;
 
-        -- Optional usage of saturated value of ssp_delay
-        G_USE_SSP_SATURATION    :     boolean;
-
         -- Width of SSP generator counters (BTMC, SSPC)
         G_SSP_CTRS_WIDTH        :     natural
     );
@@ -264,7 +261,6 @@ begin
     generic map (
         G_TRV_CTR_WIDTH             => G_TRV_CTR_WIDTH,
         G_SSP_POS_WIDTH             => G_SSP_POS_WIDTH,
-        G_USE_SSP_SATURATION        => G_USE_SSP_SATURATION,
         G_SSP_SATURATION_LVL        => G_SSP_DELAY_SAT_VAL
     )
     port map (
