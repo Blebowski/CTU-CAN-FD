@@ -37,6 +37,7 @@ source_list:
     - file: main_tb/feature_tests/status_rxs_ftest.vhd
     - file: main_tb/feature_tests/single_bus_node_ftest.vhd
     - file: main_tb/feature_tests/ssp_cfg_ftest.vhd
+    - file: main_tb/feature_tests/ssp_saturation_ftest.vhd
     - file: main_tb/feature_tests/alc_rtr_ext_id_ftest.vhd
     - file: main_tb/feature_tests/no_sof_tx_ftest.vhd
     - file: main_tb/feature_tests/status_rxpe_ftest.vhd

@@ -260,6 +260,7 @@ tests:
     - name: settings_tbfbo
     - name: settings_nisofd
     - name: single_bus_node
+    - name: ssp_saturation
     - name: ssp_cfg
       generics:
         /TB_TOP_CTU_CAN_FD/iterations: 5
