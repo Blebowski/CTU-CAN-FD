@@ -10,6 +10,18 @@ compile_debug: false
 
 coverage: true
 
+# Currently applies only for VCS. Enabled in GHDL!
+# Disabled for code coverage run, because PSL assertions and cover points
+# create spurious uncovered items (e.g. intermediate sub-expressions of
+# PSL statements). Such items should not be covered, often it is impossible
+# to cover them, e.g.:
+#   psl assert never (a = '1' and b = '1');
+# VCS generates uncovered item for condition "a = '1' and b = '1'". Such
+# condition would cause the assertion to fire, and it is desired it
+# never happends (thus it can't be covered). Due to these types of
+# expressions, VCS exclude file bloats!
+psl: false
+
 # VCS has a bug. When toggle coverage on VHDL design is collected,
 # and `-exitcode` switch is used, the simulation will return non-zero
 # exit code even if no assertions has failed! Simply disabling coverage
