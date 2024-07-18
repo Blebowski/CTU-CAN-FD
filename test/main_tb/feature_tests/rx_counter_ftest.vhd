@@ -147,21 +147,12 @@ package body rx_counter_ftest is
 
         ------------------------------------------------------------------------
         -- @1. Read TX Counter from DUT. Set One-shot mode (no retransmission)
-        --     in DUT. Deposit random value of RX frame counter to DUT if
-        --     enabled.
+        --     in DUT.
         ------------------------------------------------------------------------
         info_m("Step 1: Read initial counter values.");
 
         read_traffic_counters(ctrs_1, DUT_NODE, chn);
         CAN_enable_retr_limit(true, 0, TEST_NODE, chn);
-
-        if (deposit_to_dut_i.get) then
-            rand_logic_vect_v(deposit_vect, 0.5);
-            info_m("Depositing RX frame counter to: " & to_hstring(deposit_vect));
-            <<signal .TB_TOP_CTU_CAN_FD.DUT.CAN_CORE_INST.BUS_TRAFFIC_CTRS_GEN.BUS_TRAFFIC_COUNTERS_INST.rx_frame_ctr_i  : std_logic_vector(31 downto 0) >> <= force deposit_vect;
-            wait for 1 ns;
-            <<signal .TB_TOP_CTU_CAN_FD.DUT.CAN_CORE_INST.BUS_TRAFFIC_CTRS_GEN.BUS_TRAFFIC_COUNTERS_INST.rx_frame_ctr_i  : std_logic_vector(31 downto 0) >> <= release;
-        end if;
 
         ------------------------------------------------------------------------
         -- @2. Send frame from Test node. Wait until EOF field. Read RX counter
