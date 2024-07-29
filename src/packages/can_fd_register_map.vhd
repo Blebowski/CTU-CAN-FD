@@ -1200,7 +1200,7 @@ package can_fd_register_map is
   constant ERR_ERP_PASSIVE    : std_logic := '1';
 
   -- ERR_CAPT register reset values
-  constant ERR_POS_RSTVAL : std_logic_vector(3 downto 0) := x"1F";
+  constant ERR_POS_RSTVAL : std_logic_vector(3 downto 0) := x"F";
   constant ERR_TYPE_RSTVAL : std_logic_vector(2 downto 0) := "000";
 
   ------------------------------------------------------------------------------

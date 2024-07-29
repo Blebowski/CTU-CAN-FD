@@ -121,11 +121,11 @@ package can_fd_frame_format is
   constant ESI_RSV_IND           : natural := 10;
   constant RWCNT_L               : natural := 11;
   constant RWCNT_H               : natural := 15;
-  constant ERR_POS_L             : natural := 16;
-  constant ERR_POS_H             : natural := 19;
-  constant ERR_ERP_IND           : natural := 20;
-  constant ERR_TYPE_L            : natural := 21;
-  constant ERR_TYPE_H            : natural := 23;
+  constant ERF_POS_L             : natural := 16;
+  constant ERF_POS_H             : natural := 19;
+  constant ERF_ERP_IND           : natural := 20;
+  constant ERF_TYPE_L            : natural := 21;
+  constant ERF_TYPE_H            : natural := 23;
   constant IVLD_IND              : natural := 24;
   constant LBTBI_L               : natural := 25;
   constant LBTBI_H               : natural := 27;

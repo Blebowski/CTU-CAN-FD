@@ -2186,7 +2186,7 @@
 						<ipxact:bitOffset>0</ipxact:bitOffset>
 						<ipxact:resets>
 							<ipxact:reset>
-								<ipxact:value>'h1F</ipxact:value>
+								<ipxact:value>'hF</ipxact:value>
 							</ipxact:reset>
 						</ipxact:resets>
 						<ipxact:bitWidth>4</ipxact:bitWidth>
@@ -5340,22 +5340,22 @@ TXT Buffers.</ipxact:description>
 						</ipxact:enumeratedValues>
 					</ipxact:field>
 					<ipxact:field>
-						<ipxact:name>ERR_POS</ipxact:name>
-						<ipxact:displayName>ERR_POS</ipxact:displayName>
+						<ipxact:name>ERF_POS</ipxact:name>
+						<ipxact:displayName>ERF_POS</ipxact:displayName>
 						<ipxact:description>Error Frame position of Error Frame recorder in RX Buffer. This bit has no meaning in TXT Buffers. The encoding of this field is equal to ERR_CAPT[ERR_POS] register.</ipxact:description>
 						<ipxact:bitOffset>16</ipxact:bitOffset>
 						<ipxact:bitWidth>4</ipxact:bitWidth>
 					</ipxact:field>
 					<ipxact:field>
-						<ipxact:name>ERR_TYPE</ipxact:name>
-						<ipxact:displayName>ERR_TYPE</ipxact:displayName>
+						<ipxact:name>ERF_TYPE</ipxact:name>
+						<ipxact:displayName>ERF_TYPE</ipxact:displayName>
 						<ipxact:description>Error frame type of Error Frame recorder in RX Buffer. This bit has no meaning in TXT Buffers. The encoding of this field is equal to ERR_CAPT[ERR_TYPE] register.</ipxact:description>
 						<ipxact:bitOffset>21</ipxact:bitOffset>
 						<ipxact:bitWidth>3</ipxact:bitWidth>
 					</ipxact:field>
 					<ipxact:field>
-						<ipxact:name>ERR_ERP</ipxact:name>
-						<ipxact:displayName>ERR_ERP</ipxact:displayName>
+						<ipxact:name>ERF_ERP</ipxact:name>
+						<ipxact:displayName>ERF_ERP</ipxact:displayName>
 						<ipxact:description>CTU CAN FD was Error Passive state at time when the error was detected and stored to the RX Buffer. This bit has no meaning in TXT Buffers. The encoding of this field is equal to ERR_CAPT[ERR_STATE] register.</ipxact:description>
 						<ipxact:bitOffset>20</ipxact:bitOffset>
 						<ipxact:bitWidth>1</ipxact:bitWidth>

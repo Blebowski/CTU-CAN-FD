@@ -2118,7 +2118,7 @@ cellcolor{cyan}
 \begin_inset Text
 
 \begin_layout Plain Layout
-ERR_TYPE\end_layout
+ERF_TYPE\end_layout
 
 \end_inset
 </cell>
@@ -2126,7 +2126,7 @@ ERR_TYPE\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-ERR_TYPE\end_layout
+ERF_TYPE\end_layout
 
 \end_inset
 </cell>
@@ -2134,7 +2134,7 @@ ERR_TYPE\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-ERR_TYPE\end_layout
+ERF_TYPE\end_layout
 
 \end_inset
 </cell>
@@ -2142,7 +2142,7 @@ ERR_TYPE\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-ERR_ERP\end_layout
+ERF_ERP\end_layout
 
 \end_inset
 </cell>
@@ -2150,7 +2150,7 @@ ERR_ERP\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-ERR_POS\end_layout
+ERF_POS\end_layout
 
 \end_inset
 </cell>
@@ -2158,7 +2158,7 @@ ERR_POS\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-ERR_POS\end_layout
+ERF_POS\end_layout
 
 \end_inset
 </cell>
@@ -2166,7 +2166,7 @@ ERR_POS\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-ERR_POS\end_layout
+ERF_POS\end_layout
 
 \end_inset
 </cell>
@@ -2174,7 +2174,7 @@ ERR_POS\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-ERR_POS\end_layout
+ERF_POS\end_layout
 
 \end_inset
 </cell>
@@ -2951,13 +2951,13 @@ ESI_RSV Error State Indicator bit for received CAN FD frames. Bit has no meaning
 RWCNT Size of CAN frame in RX buffer without FRAME_FORMAT WORD. (E.g RTR frame RWCNT=3, 64 Byte FD frame RWCNT=19). In TXT buffer this field has no meaning.
 \end_layout
 \begin_layout Description
-ERR_POS Error Frame position of Error Frame recorder in RX Buffer. This bit has no meaning in TXT Buffers. The encoding of this field is equal to ERR_CAPT[ERR_POS] register.
+ERF_POS Error Frame position of Error Frame recorder in RX Buffer. This bit has no meaning in TXT Buffers. The encoding of this field is equal to ERR_CAPT[ERR_POS] register.
 \end_layout
 \begin_layout Description
-ERR_ERP CTU CAN FD was Error Passive state at time when the error was detected and stored to the RX Buffer. This bit has no meaning in TXT Buffers. The encoding of this field is equal to ERR_CAPT[ERR_STATE] register.
+ERF_ERP CTU CAN FD was Error Passive state at time when the error was detected and stored to the RX Buffer. This bit has no meaning in TXT Buffers. The encoding of this field is equal to ERR_CAPT[ERR_STATE] register.
 \end_layout
 \begin_layout Description
-ERR_TYPE Error frame type of Error Frame recorder in RX Buffer. This bit has no meaning in TXT Buffers. The encoding of this field is equal to ERR_CAPT[ERR_TYPE] register.
+ERF_TYPE Error frame type of Error Frame recorder in RX Buffer. This bit has no meaning in TXT Buffers. The encoding of this field is equal to ERR_CAPT[ERR_TYPE] register.
 \end_layout
 \begin_layout Description
 IVLD IDENTIFIER_W word contains a valid identifier. This field is valid only in RX Buffer, it has no meaning in TXT Buffers.\begin_inset Newline newline\end_inset

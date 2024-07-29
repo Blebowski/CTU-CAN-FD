@@ -1533,7 +1533,7 @@ Add note about TXBHCI interrupt behavior.
 \begin_layout Plain Layout
 Add LBPF bit to RX frame.
  Add MODE[ERFM].
- Add FRAME_FORMAT_W[ERF], FRAME_FORMAT_W[ERR_*].
+ Add FRAME_FORMAT_W[ERF], FRAME_FORMAT_W[ERF_*].
  Add Error frame reception to RX buffer.
  Add ERR_CAPT[ERR_ERP] bit.
  Add FRAME_FORMAT_W[LBTBI] and FRAME_FORMAT_W[IVLD].
@@ -5456,7 +5456,7 @@ The error frames are distinguished from regular CAN frames by FRAME_FORMAT_W[ERF
 
 \begin_layout Itemize
 Only FRAME_FORMAT_W[ERF], FRAME_FORMAT_W[IVLD], FRAME_FORMAT_W[RWCNT], FRAME_FOR
-MAT_W[ERR_POS] and FRAME_FORMAT_W[ERR_TYPE] are valid in FRAME_FORMAT_W.
+MAT_W[ERF_POS] and FRAME_FORMAT_W[ERF_TYPE] are valid in FRAME_FORMAT_W.
  Other fields of FRAME_FORMAT_W are reserved, and shall be ignored by SW
  reading the Error frame from RX buffer.
 \end_layout
