@@ -120,8 +120,8 @@ enum ctu_can_fd_frame_format_w_fdf {
 };
 
 enum ctu_can_fd_frame_format_w_lbpf {
-	LBPF_FOREIGN       = 0x0,
-	LBPF_LOCAL         = 0x1,
+	LBPF_FOREIGN        = 0x0,
+	LBPF_LOOPBACK       = 0x1,
 };
 
 enum ctu_can_fd_frame_format_w_brs {

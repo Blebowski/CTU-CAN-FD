@@ -2759,7 +2759,7 @@ package body feature_test_agent_pkg is
             info_m("CAN FD frame");
         end if;
 
-        if (frame.lbpf = LBPF_LOCAL) then
+        if (frame.lbpf = LBPF_LOOPBACK) then
             info_m("Loopback frame");
         else
             info_m("Frame from other CAN node");

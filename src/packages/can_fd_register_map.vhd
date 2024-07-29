@@ -1,18 +1,18 @@
 --------------------------------------------------------------------------------
---
--- CTU CAN FD IP Core
+-- 
+-- CTU CAN FD IP Core 
 -- Copyright (C) 2021-present Ondrej Ille
---
+-- 
 -- Permission is hereby granted, free of charge, to any person obtaining a copy
 -- of this VHDL component and associated documentation files (the "Component"),
 -- to use, copy, modify, merge, publish, distribute the Component for
 -- educational, research, evaluation, self-interest purposes. Using the
 -- Component for commercial purposes is forbidden unless previously agreed with
 -- Copyright holder.
---
+-- 
 -- The above copyright notice and this permission notice shall be included in
 -- all copies or substantial portions of the Component.
---
+-- 
 -- THE COMPONENT IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 -- IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 -- FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -20,38 +20,38 @@
 -- LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
 -- FROM, OUT OF OR IN CONNECTION WITH THE COMPONENT OR THE USE OR OTHER DEALINGS
 -- IN THE COMPONENT.
---
+-- 
 -- The CAN protocol is developed by Robert Bosch GmbH and protected by patents.
 -- Anybody who wants to implement this IP core on silicon has to obtain a CAN
 -- protocol license from Bosch.
---
+-- 
 -- -------------------------------------------------------------------------------
---
--- CTU CAN FD IP Core
+-- 
+-- CTU CAN FD IP Core 
 -- Copyright (C) 2015-2020 MIT License
---
+-- 
 -- Authors:
 --     Ondrej Ille <ondrej.ille@gmail.com>
 --     Martin Jerabek <martin.jerabek01@gmail.com>
---
--- Project advisors:
+-- 
+-- Project advisors: 
 -- 	Jiri Novak <jnovak@fel.cvut.cz>
 -- 	Pavel Pisa <pisa@cmp.felk.cvut.cz>
---
+-- 
 -- Department of Measurement         (http://meas.fel.cvut.cz/)
 -- Faculty of Electrical Engineering (http://www.fel.cvut.cz)
 -- Czech Technical University        (http://www.cvut.cz/)
---
+-- 
 -- Permission is hereby granted, free of charge, to any person obtaining a copy
 -- of this VHDL component and associated documentation files (the "Component"),
 -- to deal in the Component without restriction, including without limitation
 -- the rights to use, copy, modify, merge, publish, distribute, sublicense,
 -- and/or sell copies of the Component, and to permit persons to whom the
 -- Component is furnished to do so, subject to the following conditions:
---
+-- 
 -- The above copyright notice and this permission notice shall be included in
 -- all copies or substantial portions of the Component.
---
+-- 
 -- THE COMPONENT IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 -- IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 -- FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -59,11 +59,11 @@
 -- LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
 -- FROM, OUT OF OR IN CONNECTION WITH THE COMPONENT OR THE USE OR OTHER DEALINGS
 -- IN THE COMPONENT.
---
+-- 
 -- The CAN protocol is developed by Robert Bosch GmbH and protected by patents.
 -- Anybody who wants to implement this IP core on silicon has to obtain a CAN
 -- protocol license from Bosch.
---
+-- 
 --------------------------------------------------------------------------------
 
 --------------------------------------------------------------------------------
@@ -573,7 +573,7 @@ package can_fd_register_map is
   ------------------------------------------------------------------------------
   -- COMMAND register
   --
-  -- Allows issuing commands to CTU CAN FD. Writing logic 1 to each bit gives a
+  -- Allows issuing commands to CTU CAN FD. Writing logic 1 to each bit gives a 
   -- command to CTU CAN FD. After writing logic 1, logic 0 does not need to be w
   -- ritten.
   ------------------------------------------------------------------------------
@@ -654,7 +654,7 @@ package can_fd_register_map is
   --
   -- Interrupt Enable Clear register. Writing logic 1 disables according interru
   -- pt. Writing logic 0 has no effect. Reading this register has no effect. Dis
-  -- abled interrupt wil not cause interrupt to be raised by CTU CAN FD even if
+  -- abled interrupt wil not cause interrupt to be raised by CTU CAN FD even if 
   -- it is set in Interrupt status register.
   ------------------------------------------------------------------------------
   constant INT_ENA_CLR_L          : natural := 0;
@@ -1088,9 +1088,9 @@ package can_fd_register_map is
   --
   -- Command register for TXT buffers. Command is activated by writing logic 1 t
   -- o TXC(E|R|A) bit. TXT buffer that receives the command is selected by setti
-  -- ng bit TXB[1-8] to logic 1. Command and index can be set by single access,
+  -- ng bit TXB[1-8] to logic 1. Command and index can be set by single access, 
   -- or index can be set in advance. TXC(E|R|A) bits are automatically erased up
-  -- on the command completion. Reffer to description of TXT buffer for meaning
+  -- on the command completion. Reffer to description of TXT buffer for meaning 
   -- of commands. If TXCE and TXCR are applied simultaneously, only TXCE command
   --  is applied. If multiple commands are applied at once, only those which hav
   -- e effect in immediate state of TXT buffer are applied to the buffer.
@@ -1218,7 +1218,7 @@ package can_fd_register_map is
   ------------------------------------------------------------------------------
   -- ALC register
   --
-  -- Arbitration lost capture register. Determines position of last arbitration
+  -- Arbitration lost capture register. Determines position of last arbitration 
   -- loss within CAN frame.
   ------------------------------------------------------------------------------
   constant ALC_BIT_L             : natural := 16;

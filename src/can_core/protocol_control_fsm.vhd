@@ -1997,7 +1997,7 @@ begin
                     end if;
 
                     if (is_transmitter = '1' and mr_settings_ilbp = '1') then
-                        rec_lbpf_d <= LBPF_LOCAL;
+                        rec_lbpf_d <= LBPF_LOOPBACK;
                     else
                         rec_lbpf_d <= LBPF_FOREIGN;
                     end if;

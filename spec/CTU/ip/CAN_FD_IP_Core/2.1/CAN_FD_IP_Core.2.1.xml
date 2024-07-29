@@ -5310,8 +5310,8 @@ TXT Buffers.</ipxact:description>
 						<ipxact:bitWidth>1</ipxact:bitWidth>
 						<ipxact:enumeratedValues>
 							<ipxact:enumeratedValue>
-								<ipxact:name>LBPF_LOCAL</ipxact:name>
-								<ipxact:displayName>LBPF_LOCAL</ipxact:displayName>
+								<ipxact:name>LBPF_LOOPBACK</ipxact:name>
+								<ipxact:displayName>LBPF_LOOPBACK</ipxact:displayName>
 								<ipxact:description>The frame was transmitted by the unit itself.</ipxact:description>
 								<ipxact:value>1</ipxact:value>
 							</ipxact:enumeratedValue>

@@ -152,7 +152,7 @@ package can_fd_frame_format is
 
   -- "LBPF" field enumerated values
   constant LBPF_FOREIGN       : std_logic := '0';
-  constant LBPF_LOCAL         : std_logic := '1';
+  constant LBPF_LOOPBACK      : std_logic := '1';
 
   -- "ERF" field enumerated values
   constant ERF_CAN_FRAME      : std_logic := '0';
