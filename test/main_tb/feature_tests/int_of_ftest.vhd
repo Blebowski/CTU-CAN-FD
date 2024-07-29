@@ -224,6 +224,7 @@ package body int_of_ftest is
         check_false_m(int_stat.overload_frame,
                       "OF Interrupt not set before overload frame");
 
+        CAN_wait_pc_state(pc_deb_intermission, DUT_NODE, chn);
         force_bus_level(DOMINANT, chn);
         CAN_wait_sample_point(DUT_NODE, chn);
         wait for 20 ns;
