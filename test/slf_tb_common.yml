@@ -149,6 +149,7 @@ source_list:
     - file: main_tb/feature_tests/frame_test_fstc_ftest.vhd
     - file: main_tb/feature_tests/frame_filters_mask_ftest.vhd
     - file: main_tb/feature_tests/pc_fsm_transitions_err_pas_ftest.vhd
+    - file: main_tb/feature_tests/pc_fsm_transitions_err_pas_2_ftest.vhd
     - file: main_tb/feature_tests/pc_fsm_transitions_err_act_ftest.vhd
     - file: main_tb/feature_tests/pc_fsm_transitions_integ_ftest.vhd
     - file: main_tb/feature_tests/pc_fsm_transitions_integ_2_ftest.vhd
