@@ -127,13 +127,10 @@ entity tx_arbitrator is
         txtb_port_b_clk_en      : out std_logic;
 
         -- Parity check valid
-        txtb_parity_check_valid : out std_logic;
+        txtb_parity_check_valid : out std_logic_vector(G_TXT_BUFFER_COUNT - 1 downto 0);
 
         -- Parity Mismatch in TXT Buffer
         txtb_parity_mismatch    : in  std_logic_vector(G_TXT_BUFFER_COUNT - 1 downto 0);
-
-        -- TXT Buffer index
-        txtb_index_muxed        : out natural range 0 to G_TXT_BUFFER_COUNT - 1;
 
         -- TXT Buffer is operating as backup buffer
         txtb_is_bb              : out std_logic_vector(G_TXT_BUFFER_COUNT - 1 downto 0);
@@ -233,6 +230,9 @@ architecture rtl of tx_arbitrator is
     -- Metadata words read by TX Arbitrator are valid
     signal tx_arb_parity_check_valid  : std_logic;
 
+    -- Internal parity check valid (from Arbitrator FSM or Protocol control FSM)
+    signal txtb_parity_check_valid_i  : std_logic;
+
     -----------------------------------------------------------------------------------------------
     -- Internal registers
     -----------------------------------------------------------------------------------------------
@@ -251,7 +251,7 @@ architecture rtl of tx_arbitrator is
     signal last_txtb_index            : natural range 0 to G_TXT_BUFFER_COUNT - 1;
 
     -- TXT Buffer index validated or used for transmission
-    signal txtb_index_muxed_i         : natural range 0 to G_TXT_BUFFER_COUNT - 1;
+    signal txtb_index_muxed           : natural range 0 to G_TXT_BUFFER_COUNT - 1;
 
     -- Pointer to TXT Buffer for loading CAN frame metadata and timstamp during the selection of
     -- TXT Buffer.
@@ -479,24 +479,30 @@ begin
     -- Selecting TXT Buffer output word based on TXT Buffer index. During transmission, use last
     -- stored TXT buffer. Otherwise use combinatorially selected TXT buffer (during validation).
     -----------------------------------------------------------------------------------------------
-    txtb_index_muxed_i <= int_txtb_index when (tx_arb_locked = '1')
-                                         else
-                          select_buf_index;
+    txtb_index_muxed <= int_txtb_index when (tx_arb_locked = '1')
+                                       else
+                        select_buf_index;
 
     -- Parity check. When Protocol controller wants to enable clock for TXT Buffer, it reads data
     -- words from it for transmission. When this occurs, data will we available on the output of
     -- TXT Buffer RAM one clock cycle later. At this cycle, TXT Buffer needs to check for parity
     -- error.
-    txtb_parity_check_valid <= txtb_clk_en_q when (tx_arb_locked = '1')
-                                             else
-                               tx_arb_parity_check_valid;
+    txtb_parity_check_valid_i <= txtb_clk_en_q when (tx_arb_locked = '1')
+                                               else
+                                 tx_arb_parity_check_valid;
+
+    -- Demux for each TXT Buffer
+    txtb_parity_demux_proc : process(txtb_index_muxed)
+    begin
+        txtb_parity_check_valid <= (others => '0');
+        txtb_parity_check_valid(txtb_index_muxed) <= '1';
+    end process;
 
     -- Select read data based on index of TXT buffer which should be accessed
-    txtb_selected_input <= txtb_port_b_data_out(txtb_index_muxed_i);
+    txtb_selected_input <= txtb_port_b_data_out(txtb_index_muxed);
 
     -- Transmitted data word taken from TXT Buffer output
     tran_word <= txtb_selected_input;
-    txtb_index_muxed <= txtb_index_muxed_i;
 
     -----------------------------------------------------------------------------------------------
     -- Joined timestamp from TXT Buffer. Note that it is not always valid! Only when the TXT Buffer

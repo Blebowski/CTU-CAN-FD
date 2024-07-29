@@ -197,10 +197,7 @@ entity txt_buffer is
         txtb_parity_error_valid : out std_logic;
 
         -- Parity error in Backup buffer
-        txtb_bb_parity_error    : out std_logic;
-
-        -- Index of TXT Buffer which is being read
-        txtb_index_muxed        : in  natural range 0 to G_TXT_BUFFER_COUNT - 1
+        txtb_bb_parity_error    : out std_logic
     );
 end entity;
 
@@ -284,9 +281,7 @@ begin
     -- Core have really read from the TXT Buffer, otherwise the output might be rubbish (uninited
     -- data, previous value).
     -----------------------------------------------------------------------------------------------
-    txtb_parity_error_valid_i <= '1' when (parity_mismatch = '1' and
-                                           txtb_parity_check_valid = '1' and
-                                           txtb_index_muxed = G_ID)
+    txtb_parity_error_valid_i <= '1' when (parity_mismatch = '1' and txtb_parity_check_valid = '1')
                                      else
                                  '0';
 
