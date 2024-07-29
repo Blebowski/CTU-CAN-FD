@@ -2308,6 +2308,11 @@
 						<ipxact:displayName>ERR_ERP</ipxact:displayName>
 						<ipxact:description>CTU CAN FD was error passive the time when last error was detected.</ipxact:description>
 						<ipxact:bitOffset>4</ipxact:bitOffset>
+						<ipxact:resets>
+							<ipxact:reset>
+								<ipxact:value>0</ipxact:value>
+							</ipxact:reset>
+						</ipxact:resets>
 						<ipxact:bitWidth>1</ipxact:bitWidth>
 						<ipxact:enumeratedValues>
 							<ipxact:enumeratedValue>
