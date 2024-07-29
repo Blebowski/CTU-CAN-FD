@@ -123,7 +123,7 @@ entity txt_buffer_fsm is
         txtb_hw_cmd             : in  t_txtb_hw_cmd;
 
         -- HW Buffer select
-        hw_cbs                  : in  std_logic;
+        txtb_hw_cmd_cs          : in  std_logic;
 
         -- Unit is Bus off
         is_bus_off              : in  std_logic;
@@ -234,7 +234,7 @@ begin
                         else
                     '0';
 
-    txtb_hw_cmd_i <= txtb_hw_cmd when (hw_cbs = '1')
+    txtb_hw_cmd_i <= txtb_hw_cmd when (txtb_hw_cmd_cs = '1')
                                  else
                      (others => '0');
 
@@ -247,7 +247,7 @@ begin
     -- Next state process
     -----------------------------------------------------------------------------------------------
     tx_buf_fsm_next_state_proc : process(curr_state, tx_command_txce_valid, tx_command_txcr_valid,
-        txtb_hw_cmd_i, hw_cbs, abort_applied, go_to_failed, txtb_parity_error_valid, buffer_skipped,
+        txtb_hw_cmd_i, abort_applied, go_to_failed, txtb_parity_error_valid, buffer_skipped,
         arbl_or_err)
     begin
         next_state <= curr_state;
@@ -518,7 +518,7 @@ begin
     -- Simultaneous HW and SW Commands
     --
     -- psl txtb_hw_sw_cmd_txt_ready_hazard_cov : cover
-    --  {txtb_hw_cmd.lock = '1' and hw_cbs = '1' and abort_applied = '1' and
+    --  {txtb_hw_cmd.lock = '1' and txtb_hw_cmd_cs = '1' and abort_applied = '1' and
     --   curr_state = s_txt_ready};
     --
     -- psl txtb_hw_sw_cmd_txt_tx_prog_hazard_cov : cover
@@ -544,7 +544,7 @@ begin
     -- than ready
     --
     -- psl txtb_lock_only_in_rdy_asrt : assert always
-    --  ((txtb_hw_cmd.lock = '1' and hw_cbs = '1') -> curr_state = s_txt_ready)
+    --  ((txtb_hw_cmd.lock = '1' and txtb_hw_cmd_cs = '1') -> curr_state = s_txt_ready)
     --  report "TXT Buffer not READY when LOCK command occurred!";
     -----------------------------------------------------------------------------------------------
     -- HW Unlock command is valid only when Buffer is TX in Progress or Abort in
@@ -558,7 +558,7 @@ begin
     -- HW Lock command should never occur when there was abort in previous cycle!
     --
     -- psl txtb_no_lock_after_abort : assert never
-    --  {abort_applied = '1';txtb_hw_cmd.lock = '1' and hw_cbs = '1'}
+    --  {abort_applied = '1';txtb_hw_cmd.lock = '1' and txtb_hw_cmd_cs = '1'}
     --  report "LOCK command after ABORT was applied!";
     -----------------------------------------------------------------------------------------------
     -- Skipped shall never occur when TXT Buffer backup is not ready. It should

@@ -166,8 +166,8 @@ entity txt_buffer is
         -- HW Commands
         txtb_hw_cmd             : in  t_txtb_hw_cmd;
 
-        -- Index of TXT Buffer for which HW commands is valid
-        txtb_hw_cmd_index       : in  natural range 0 to G_TXT_BUFFER_COUNT - 1;
+        -- HW commands chip select
+        txtb_hw_cmd_cs          : in  std_logic;
 
         -- TXT Buffer RAM data output
         txtb_port_b_data_out    : out std_logic_vector(31 downto 0);
@@ -210,10 +210,6 @@ architecture rtl of txt_buffer is
     -- TXT Buffer memory protection
     signal txtb_user_accessible         : std_logic;
 
-    -- Internal buffer selects for commands. Commands are shared across the buffers so we need
-    -- unique identifier
-    signal hw_cbs                       : std_logic;
-
     -- Unmask TXT Buffer RAM output
     signal txtb_unmask_data_ram         : std_logic;
 
@@ -240,11 +236,6 @@ architecture rtl of txt_buffer is
     signal parity_mismatch              : std_logic;
 
 begin
-
-    -- Command buffer select signals
-    hw_cbs <= '1' when (txtb_hw_cmd_index = G_ID)
-                  else
-              '0';
 
     -- TXT Buffer RAM write signal
     txtb_port_a_write <= '1' when (txtb_port_a_cs = '1' and txtb_user_accessible = '1')
@@ -371,7 +362,7 @@ begin
         mr_tx_command_txbi      => mr_tx_command_txbi,          -- IN
 
         txtb_hw_cmd             => txtb_hw_cmd,                 -- IN
-        hw_cbs                  => hw_cbs,                      -- IN
+        txtb_hw_cmd_cs          => txtb_hw_cmd_cs,              -- IN
         is_bus_off              => is_bus_off,                  -- IN
         txtb_parity_error_valid => txtb_parity_error_valid_i,   -- IN
         txtb_is_bb              => txtb_is_bb,                  -- IN

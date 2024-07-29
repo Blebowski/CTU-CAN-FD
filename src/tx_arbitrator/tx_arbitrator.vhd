@@ -175,7 +175,7 @@ entity tx_arbitrator is
         txtb_changed            : out std_logic;
 
         -- Index of the TXT Buffer for which the actual HW command is valid
-        txtb_hw_cmd_index       : out natural range 0 to G_TXT_BUFFER_COUNT - 1;
+        txtb_hw_cmd_cs          : out std_logic_vector(G_TXT_BUFFER_COUNT - 1 downto 0);
 
         -- Pointer to TXT Buffer given by CAN Core. Used for reading data words.
         txtb_ptr                : in  natural range 0 to 20;
@@ -533,7 +533,11 @@ begin
                                       else
                           txtb_meta_clk_en;
 
-    txtb_hw_cmd_index <= int_txtb_index;
+    txtb_hw_cmd_cs_demux_proc : process(int_txtb_index)
+    begin
+        txtb_hw_cmd_cs <= (others => '0');
+        txtb_hw_cmd_cs(int_txtb_index) <= '1';
+    end process;
 
 
     -----------------------------------------------------------------------------------------------
@@ -770,40 +774,40 @@ begin
     -- Lock Commands
     --
     -- psl txt_lock_buf_1_cov : cover
-    --    {txtb_hw_cmd_index = 0 and txtb_hw_cmd.lock = '1'};
+    --    {int_txtb_index = 0 and txtb_hw_cmd.lock = '1'};
     -- psl txt_lock_buf_2_cov : cover
-    --    {txtb_hw_cmd_index = 1 and txtb_hw_cmd.lock = '1'};
+    --    {int_txtb_index = 1 and txtb_hw_cmd.lock = '1'};
     -- psl txt_lock_buf_3_cov : cover
-    --    {txtb_hw_cmd_index = 2 and txtb_hw_cmd.lock = '1'};
+    --    {int_txtb_index = 2 and txtb_hw_cmd.lock = '1'};
     -- psl txt_lock_buf_4_cov : cover
-    --    {txtb_hw_cmd_index = 3 and txtb_hw_cmd.lock = '1'};
+    --    {int_txtb_index = 3 and txtb_hw_cmd.lock = '1'};
     -- psl txt_lock_buf_5_cov : cover
-    --    {txtb_hw_cmd_index = 4 and txtb_hw_cmd.lock = '1'};
+    --    {int_txtb_index = 4 and txtb_hw_cmd.lock = '1'};
     -- psl txt_lock_buf_6_cov : cover
-    --    {txtb_hw_cmd_index = 5 and txtb_hw_cmd.lock = '1'};
+    --    {int_txtb_index = 5 and txtb_hw_cmd.lock = '1'};
     -- psl txt_lock_buf_7_cov : cover
-    --    {txtb_hw_cmd_index = 6 and txtb_hw_cmd.lock = '1'};
+    --    {int_txtb_index = 6 and txtb_hw_cmd.lock = '1'};
     -- psl txt_lock_buf_8_cov : cover
-    --    {txtb_hw_cmd_index = 7 and txtb_hw_cmd.lock = '1'};
+    --    {int_txtb_index = 7 and txtb_hw_cmd.lock = '1'};
 
     -- Unlock Commands
     --
     -- psl txt_unlock_buf_1_cov : cover
-    --    {txtb_hw_cmd_index = 0 and txtb_hw_cmd_unlock = '1'};
+    --    {int_txtb_index = 0 and txtb_hw_cmd_unlock = '1'};
     -- psl txt_unlock_buf_2_cov : cover
-    --    {txtb_hw_cmd_index = 1 and txtb_hw_cmd_unlock = '1'};
+    --    {int_txtb_index = 1 and txtb_hw_cmd_unlock = '1'};
     -- psl txt_unlock_buf_3_cov : cover
-    --    {txtb_hw_cmd_index = 2 and txtb_hw_cmd_unlock = '1'};
+    --    {int_txtb_index = 2 and txtb_hw_cmd_unlock = '1'};
     -- psl txt_unlock_buf_4_cov : cover
-    --    {txtb_hw_cmd_index = 3 and txtb_hw_cmd_unlock = '1'};
+    --    {int_txtb_index = 3 and txtb_hw_cmd_unlock = '1'};
     -- psl txt_unlock_buf_5_cov : cover
-    --    {txtb_hw_cmd_index = 4 and txtb_hw_cmd_unlock = '1'};
+    --    {int_txtb_index = 4 and txtb_hw_cmd_unlock = '1'};
     -- psl txt_unlock_buf_6_cov : cover
-    --    {txtb_hw_cmd_index = 5 and txtb_hw_cmd_unlock = '1'};
+    --    {int_txtb_index = 5 and txtb_hw_cmd_unlock = '1'};
     -- psl txt_unlock_buf_7_cov : cover
-    --    {txtb_hw_cmd_index = 6 and txtb_hw_cmd_unlock = '1'};
+    --    {int_txtb_index = 6 and txtb_hw_cmd_unlock = '1'};
     -- psl txt_unlock_buf_8_cov : cover
-    --    {txtb_hw_cmd_index = 7 and txtb_hw_cmd_unlock = '1'};
+    --    {int_txtb_index = 7 and txtb_hw_cmd_unlock = '1'};
 
     -- Modes
     -- Note: We use gating by tran_frame_valid to avoid falsly covered scenarios,
