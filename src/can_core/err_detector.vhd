@@ -166,7 +166,7 @@ entity err_detector is
         fixed_stuff             : in  std_logic;
 
         -- Error position field (from Protocol control)
-        err_pos                 : in  std_logic_vector(4 downto 0);
+        err_pos                 : in  std_logic_vector(3 downto 0);
 
         -- Perform CRC Check
         crc_check               : in  std_logic;
@@ -195,7 +195,8 @@ entity err_detector is
         mr_settings_nisofd      : in  std_logic;
 
         err_capt_err_type       : out std_logic_vector(2 downto 0);
-        err_capt_err_pos        : out std_logic_vector(4 downto 0);
+        err_capt_err_pos        : out std_logic_vector(3 downto 0);
+        err_capt_err_erp        : out std_logic;
 
         -------------------------------------------------------------------------------------------
         -- Status output
@@ -222,7 +223,7 @@ architecture rtl of err_detector is
     -- Error capture register
     signal err_capt_err_type_d  : std_logic_vector(2 downto 0);
     signal err_capt_err_type_q  : std_logic_vector(2 downto 0);
-    signal err_capt_err_pos_q   : std_logic_vector(4 downto 0);
+    signal err_capt_err_pos_q   : std_logic_vector(3 downto 0);
 
     -- Internal form error
     signal form_err_i           : std_logic;
@@ -397,12 +398,14 @@ begin
     err_type_reg_proc : process(clk_sys, res_n)
     begin
         if (res_n = '0') then
-            err_capt_err_type_q <= "000";
-            err_capt_err_pos_q <= "11111";
+            err_capt_err_type_q <= ERR_TYPE_RSTVAL;
+            err_capt_err_pos_q <= ERR_POS_RSTVAL;
+            err_capt_err_erp <= ERR_ERP_RSTVAL;
         elsif (rising_edge(clk_sys)) then
             if (err_frm_req_i = '1' or crc_err = '1') then
                 err_capt_err_type_q <= err_capt_err_type_d;
                 err_capt_err_pos_q <= err_pos;
+                err_capt_err_erp <= is_err_passive;
             end if;
         end if;
     end process;

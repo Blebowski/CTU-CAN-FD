@@ -240,7 +240,8 @@ package can_types_pkg is
         norm_err_ctr            : std_logic_vector(15 downto 0);
         data_err_ctr            : std_logic_vector(15 downto 0);
         err_type                : std_logic_vector(2 downto 0);
-        err_pos                 : std_logic_vector(4 downto 0);
+        err_erp                 : std_logic;
+        err_pos                 : std_logic_vector(3 downto 0);
         retr_ctr                : std_logic_vector(3 downto 0);
         alc_bit                 : std_logic_vector(4 downto 0);
         alc_id_field            : std_logic_vector(2 downto 0);

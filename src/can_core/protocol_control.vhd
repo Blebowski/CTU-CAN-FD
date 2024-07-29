@@ -145,7 +145,8 @@ entity protocol_control is
 
         -- ERR_CAPT register
         err_capt_err_type       : out std_logic_vector(2 downto 0);
-        err_capt_err_pos        : out std_logic_vector(4 downto 0);
+        err_capt_err_pos        : out std_logic_vector(3 downto 0);
+        err_capt_err_erp        : out std_logic;
 
         -- Protocol exception status
         mr_status_pexs          : out std_logic;
@@ -561,7 +562,7 @@ architecture rtl of protocol_control is
     signal crc_src                 :      std_logic_vector(1 downto 0);
 
     -- Error position field (for Error capture)
-    signal err_pos                 :      std_logic_vector(4 downto 0);
+    signal err_pos                 :      std_logic_vector(3 downto 0);
 
     -- Bit error detection enabled
     signal bit_err_enable          :      std_logic;
@@ -865,6 +866,7 @@ begin
         mr_settings_nisofd      => mr_settings_nisofd,      -- IN
         err_capt_err_type       => err_capt_err_type,       -- OUT
         err_capt_err_pos        => err_capt_err_pos,        -- OUT
+        err_capt_err_erp        => err_capt_err_erp,        -- OUT
 
         -- CRC comparison data
         rx_crc                  => rx_crc,                  -- IN

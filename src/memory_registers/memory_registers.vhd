@@ -849,6 +849,7 @@ begin
     -- ERR_CAPT
     mr_ctrl_in.err_capt_err_pos  <= cc_stat.err_pos;
     mr_ctrl_in.err_capt_err_type <= cc_stat.err_type;
+    mr_ctrl_in.err_capt_err_erp  <= cc_stat.err_erp;
 
     -- RETR_CTR
     mr_ctrl_in.retr_ctr_retr_ctr_val <= cc_stat.retr_ctr;

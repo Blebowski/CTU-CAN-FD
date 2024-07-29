@@ -374,7 +374,8 @@ architecture rtl of can_core is
 
     -- Error code capture
     signal err_capt_err_type        : std_logic_vector(2 downto 0);
-    signal err_capt_err_pos         : std_logic_vector(4 downto 0);
+    signal err_capt_err_pos         : std_logic_vector(3 downto 0);
+    signal err_capt_err_erp         : std_logic;
 
     -- Operation control interface
     signal is_transmitter           : std_logic;
@@ -532,8 +533,10 @@ begin
 
         alc_alc_bit             => alc_alc_bit,                 -- OUT
         alc_alc_id_field        => alc_alc_id_field,            -- OUT
+
         err_capt_err_type       => err_capt_err_type,           -- OUT
         err_capt_err_pos        => err_capt_err_pos,            -- OUT
+        err_capt_err_erp        => err_capt_err_erp,            -- OUT
 
         pc_dbg                  => pc_dbg,                      -- OUT
         mr_status_pexs          => mr_status_pexs,              -- OUT
@@ -952,6 +955,7 @@ begin
     cc_stat.norm_err_ctr    <= norm_err_ctr;
     cc_stat.data_err_ctr    <= data_err_ctr;
     cc_stat.err_type        <= err_capt_err_type;
+    cc_stat.err_erp         <= err_capt_err_erp;
     cc_stat.err_pos         <= err_capt_err_pos;
     cc_stat.retr_ctr        <= retr_ctr;
     cc_stat.alc_bit         <= alc_alc_bit;

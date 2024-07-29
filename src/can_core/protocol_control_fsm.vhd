@@ -372,7 +372,7 @@ entity protocol_control_fsm is
         crc_src                 : out  std_logic_vector(1 downto 0);
 
         -- Error position field (for Error capture)
-        err_pos                 : out  std_logic_vector(4 downto 0);
+        err_pos                 : out  std_logic_vector(3 downto 0);
 
         -------------------------------------------------------------------------------------------
         -- Bit Stuffing/Destuffing control signals
