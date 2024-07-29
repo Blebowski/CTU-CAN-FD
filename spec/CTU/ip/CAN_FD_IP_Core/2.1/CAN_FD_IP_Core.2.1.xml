@@ -5328,11 +5328,13 @@ TXT Buffers.</ipxact:description>
 							<ipxact:enumeratedValue>
 								<ipxact:name>ERF_CAN_FRAME</ipxact:name>
 								<ipxact:displayName>ERF_CAN_FRAME</ipxact:displayName>
+								<ipxact:description>Frame in RX Buffer is an Error frame.</ipxact:description>
 								<ipxact:value>0</ipxact:value>
 							</ipxact:enumeratedValue>
 							<ipxact:enumeratedValue>
 								<ipxact:name>ERF_ERR_FRAME</ipxact:name>
 								<ipxact:displayName>ERF_ERR_FRAME</ipxact:displayName>
+								<ipxact:description>Frame in RX Buffer is a regular CAN frame</ipxact:description>
 								<ipxact:value>1</ipxact:value>
 							</ipxact:enumeratedValue>
 						</ipxact:enumeratedValues>
@@ -5357,6 +5359,84 @@ TXT Buffers.</ipxact:description>
 						<ipxact:description>CTU CAN FD was Error Passive state at time when the error was detected and stored to the RX Buffer. This bit has no meaning in TXT Buffers. The encoding of this field is equal to ERR_CAPT[ERR_STATE] register.</ipxact:description>
 						<ipxact:bitOffset>20</ipxact:bitOffset>
 						<ipxact:bitWidth>1</ipxact:bitWidth>
+					</ipxact:field>
+					<ipxact:field>
+						<ipxact:name>IVLD</ipxact:name>
+						<ipxact:displayName>IVLD</ipxact:displayName>
+						<ipxact:description>IDENTIFIER_W word contains a valid identifier. This field is valid only in RX Buffer, it has no meaning in TXT Buffers.</ipxact:description>
+						<ipxact:bitOffset>24</ipxact:bitOffset>
+						<ipxact:bitWidth>1</ipxact:bitWidth>
+						<ipxact:enumeratedValues>
+							<ipxact:enumeratedValue>
+								<ipxact:name>IVLD_VALID</ipxact:name>
+								<ipxact:displayName>IVLD_VALID</ipxact:displayName>
+								<ipxact:description>IDENTIFIER_W contains a valid CAN FD identifier.</ipxact:description>
+								<ipxact:value>1</ipxact:value>
+							</ipxact:enumeratedValue>
+							<ipxact:enumeratedValue>
+								<ipxact:name>IVLD_INALID</ipxact:name>
+								<ipxact:displayName>IVLD_INVALID</ipxact:displayName>
+								<ipxact:description>IDENTIFIER_W does not contain a valid CAN FD identifier.</ipxact:description>
+								<ipxact:value>0</ipxact:value>
+							</ipxact:enumeratedValue>
+						</ipxact:enumeratedValues>
+					</ipxact:field>
+					<ipxact:field>
+						<ipxact:name>LBTBI</ipxact:name>
+						<ipxact:displayName>LBTBI</ipxact:displayName>
+						<ipxact:description>Loop-Back TXT Buffer index. This field is only valid in RX Buffer and when FRAME_FORMAT_W[LBTBI]=1. This field has no meaning in TXT Buffers.</ipxact:description>
+						<ipxact:bitOffset>25</ipxact:bitOffset>
+						<ipxact:bitWidth>3</ipxact:bitWidth>
+						<ipxact:enumeratedValues>
+							<ipxact:enumeratedValue>
+								<ipxact:name>TXT_BUF_3</ipxact:name>
+								<ipxact:displayName>TXT_BUF_3</ipxact:displayName>
+								<ipxact:description>TXT Buffer 3</ipxact:description>
+								<ipxact:value>2</ipxact:value>
+							</ipxact:enumeratedValue>
+							<ipxact:enumeratedValue>
+								<ipxact:name>TXT_BUF_2</ipxact:name>
+								<ipxact:displayName>TXT_BUF_2</ipxact:displayName>
+								<ipxact:description>TXT Buffer 2</ipxact:description>
+								<ipxact:value>1</ipxact:value>
+							</ipxact:enumeratedValue>
+							<ipxact:enumeratedValue>
+								<ipxact:name>TXT_BUF_1</ipxact:name>
+								<ipxact:displayName>TXT_BUF_1</ipxact:displayName>
+								<ipxact:description>TXT Buffer 1</ipxact:description>
+								<ipxact:value>0</ipxact:value>
+							</ipxact:enumeratedValue>
+							<ipxact:enumeratedValue>
+								<ipxact:name>TXT_BUF_4</ipxact:name>
+								<ipxact:displayName>TXT_BUF_4</ipxact:displayName>
+								<ipxact:description>TXT Buffer 4</ipxact:description>
+								<ipxact:value>3</ipxact:value>
+							</ipxact:enumeratedValue>
+							<ipxact:enumeratedValue>
+								<ipxact:name>TXT_BUF_5</ipxact:name>
+								<ipxact:displayName>TXT_BUF_5</ipxact:displayName>
+								<ipxact:description>TXT Buffer 5</ipxact:description>
+								<ipxact:value>4</ipxact:value>
+							</ipxact:enumeratedValue>
+							<ipxact:enumeratedValue>
+								<ipxact:name>TXT_BUF_6</ipxact:name>
+								<ipxact:displayName>TXT_BUF_6</ipxact:displayName>
+								<ipxact:description>TXT Buffer 6</ipxact:description>
+								<ipxact:value>5</ipxact:value>
+							</ipxact:enumeratedValue>
+							<ipxact:enumeratedValue>
+								<ipxact:name>TXT_BUF_7</ipxact:name>
+								<ipxact:displayName>TXT_BUF_7</ipxact:displayName>
+								<ipxact:description>TXT Buffer 7</ipxact:description>
+								<ipxact:value>6</ipxact:value>
+							</ipxact:enumeratedValue>
+							<ipxact:enumeratedValue>
+								<ipxact:name>TXT_BUF_8</ipxact:name>
+								<ipxact:displayName>TXT_BUF_8</ipxact:displayName>
+								<ipxact:description>TXT Buffer 8</ipxact:description>
+								<ipxact:value>7</ipxact:value>
+							</ipxact:enumeratedValue>
+						</ipxact:enumeratedValues>
 					</ipxact:field>
 				</ipxact:register>
 				<ipxact:register>
@@ -6034,15 +6114,15 @@ TXT Buffers.</ipxact:description>
 		</kactus2:kts_attributes>
 		<kactus2:license>Proprietary</kactus2:license>
 		<ipxact:regLocks>
-			<ipxact:regLock lock_signal="lock_1" description="Register can be only written when MODE[TSTM] = 1, otherwise write has no effect." reg_name="CTR_PRES"/>
-			<ipxact:regLock lock_signal="lock_1" description="Register can be only written when MODE[TSTM] = 1, otherwise write has no effect." reg_name="EWL"/>
-			<ipxact:regLock lock_signal="lock_1" description="Register can be only written when MODE[TSTM] = 1, otherwise write has no effect." reg_name="ERP"/>
-			<ipxact:regLock lock_signal="lock_2" description="Register can be only written when SETTINGS[ENA] = 0, otherwise write has no effect." reg_name="BTR"/>
-			<ipxact:regLock lock_signal="lock_2" description="Register can be only written when SETTINGS[ENA] = 0, otherwise write has no effect." reg_name="BTR_FD"/>
-			<ipxact:regLock lock_signal="lock_2" description="Register can be only written when SETTINGS[ENA] = 0, otherwise write has no effect." reg_name="SSP_CFG"/>
-			<ipxact:regLock lock_signal="lock_1" description="Register can be only written when MODE[TSTM] = 1, otherwise write has no effect." reg_name="TST_CONTROL"/>
-			<ipxact:regLock lock_signal="lock_1" description="Register can be only written when MODE[TSTM] = 1, otherwise write has no effect." reg_name="TST_DEST"/>
-			<ipxact:regLock lock_signal="lock_1" description="Register can be only written when MODE[TSTM] = 1, otherwise write has no effect." reg_name="TST_WDATA"/>
+			<ipxact:regLock lock_signal="lock_1" reg_name="CTR_PRES" description="Register can be only written when MODE[TSTM] = 1, otherwise write has no effect."/>
+			<ipxact:regLock lock_signal="lock_1" reg_name="EWL" description="Register can be only written when MODE[TSTM] = 1, otherwise write has no effect."/>
+			<ipxact:regLock lock_signal="lock_1" reg_name="ERP" description="Register can be only written when MODE[TSTM] = 1, otherwise write has no effect."/>
+			<ipxact:regLock lock_signal="lock_2" reg_name="BTR" description="Register can be only written when SETTINGS[ENA] = 0, otherwise write has no effect."/>
+			<ipxact:regLock lock_signal="lock_2" reg_name="BTR_FD" description="Register can be only written when SETTINGS[ENA] = 0, otherwise write has no effect."/>
+			<ipxact:regLock lock_signal="lock_2" reg_name="SSP_CFG" description="Register can be only written when SETTINGS[ENA] = 0, otherwise write has no effect."/>
+			<ipxact:regLock lock_signal="lock_1" reg_name="TST_CONTROL" description="Register can be only written when MODE[TSTM] = 1, otherwise write has no effect."/>
+			<ipxact:regLock lock_signal="lock_1" reg_name="TST_DEST" description="Register can be only written when MODE[TSTM] = 1, otherwise write has no effect."/>
+			<ipxact:regLock lock_signal="lock_1" reg_name="TST_WDATA" description="Register can be only written when MODE[TSTM] = 1, otherwise write has no effect."/>
 		</ipxact:regLocks>
 	</ipxact:vendorExtensions>
 </ipxact:component>

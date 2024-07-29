@@ -1536,6 +1536,7 @@ Add LBPF bit to RX frame.
  Add FRAME_FORMAT_W[ERF], FRAME_FORMAT_W[ERR_*].
  Add Error frame reception to RX buffer.
  Add ERR_CAPT[ERR_ERP] bit.
+ Add FRAME_FORMAT_W[LBTBI] and FRAME_FORMAT_W[IVLD].
 \end_layout
 
 \end_inset
@@ -5296,6 +5297,13 @@ Note CTU CAN FD transmitts only reactive Overload frames.
 
 \begin_layout Section
 CAN frame reception
+\begin_inset CommandInset label
+LatexCommand label
+name "sec:CAN-frame-reception"
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
@@ -5430,12 +5438,12 @@ Error frame reception
 
 \begin_layout Standard
 When SW sets MODE[ERFM]=1, CTU CAN FD stores Error frames that occur on
- CAN bus in RX buffer.
+ CAN bus in the RX buffer.
  If MODE[ERFM]=0, only regular CAN frames are stored to RX buffer.
- Each error condition that caused transmission of new Error frame is logged
- as separate Error frame in RX buffer.
- Each Error frame in RX Buffer occupies exactly 4 memory words (FRAME_FORMAT_W,
- IDENTIFIER_W, TIMESTAMP_U_W and TIMESTAMP_L_W).
+ Each error condition that caused transmission of a new Error frame is logged
+ as separate Error frame in the RX buffer.
+ Each Error frame in the RX buffer occupies exactly 4 memory words (FRAME_FORMAT
+_W, IDENTIFIER_W, TIMESTAMP_U_W and TIMESTAMP_L_W).
 \end_layout
 
 \begin_layout Standard
@@ -5447,14 +5455,15 @@ The error frames are distinguished from regular CAN frames by FRAME_FORMAT_W[ERF
 \end_layout
 
 \begin_layout Itemize
-Only FRAME_FORMAT_W[ERF], FRAME_FORMAT_W[RWCNT], FRAME_FORMAT_W[ERR_POS]
- and FRAME_FORMAT_W[ERR_TYPE] are valid in FRAME_FORMAT_W.
+Only FRAME_FORMAT_W[ERF], FRAME_FORMAT_W[IVLD], FRAME_FORMAT_W[RWCNT], FRAME_FOR
+MAT_W[ERR_POS] and FRAME_FORMAT_W[ERR_TYPE] are valid in FRAME_FORMAT_W.
  Other fields of FRAME_FORMAT_W are reserved, and shall be ignored by SW
  reading the Error frame from RX buffer.
 \end_layout
 
 \begin_layout Itemize
-IDENTIFIER_W contains all zeroes instead of CAN frame identifier.
+When FRAME_FORMAT_W[IVLD]=1, IDENTIFIER_W contains valid CAN identifier.
+ Otherwise, IDENTIFIER_W value contains all zeroes.
 \end_layout
 
 \begin_layout Itemize
@@ -5472,6 +5481,22 @@ Note When CTU CAN FD operates in Restricted operation mode (MODE[ROM]=1),
 \begin_layout Description
 Note All rules related to setting of ERR_CAPT (Error type priorities, etc...)
  apply also to Error frames stored in RX buffer.
+\end_layout
+
+\begin_layout Description
+Note In regular CAN frame FRAME_FORMAT_W[IVLD] is always 1.
+ In Error frame FRAME_FORMAT_W[IVLD]=1 if the IDENTIFIER_W contains a valid
+ CAN identifier.
+ If FRAME_FORMAT_W[IVLD] = 1 then IDENTIFIER_W and can be used to track
+ the which CAN frame lead to Error frame.
+\end_layout
+
+\begin_layout Description
+Note The error frames ocurring in CAN frames with Base identifier before
+ IDE bit have FRAME_FORMAT_W[IVLD]=0.
+ The error frames ocurring in CAN frames with Extended identifier before
+ RTR/RRS bit have FRAME_FORMAT_W[IVLD]=0.
+ 
 \end_layout
 
 \begin_layout Subsection
@@ -7356,13 +7381,46 @@ Loopback mode
 In Loopback mode, any CAN frame transmitted by CTU CAN FD from any of TXT
  buffers, is stored to RX buffer if its transmission is successfull (and
  the frame passes Frame filters).
- Altough CTU CAN FD stores its own transmitted frame to RX buffer, CTU CAN
- FD still acts as a transmitter, therefore it does not acknowledge its own
- frame.
- For succesfull transmission in Loopback Mode, the frame must be acknowledged
+ Such frame is called Loopback frame.
+ Altough CTU CAN FD receives Loopback frame to RX buffer, CTU CAN FD still
+ acts as a transmitter, therefore it does not acknowledge the Loopback frame
+ on CAN bus.
+ For succesfull transmission of Loopback frame, the frame must be acknowledged
  by other node on CAN bus.
- A frame stored in RX Buffer due to transmission in Loopback mode has FRAME_FORM
-AT_W[LBPF]=1.
+ A Loopback frame differs from CAN frame received on the CAN bus in:
+\end_layout
+
+\begin_layout Itemize
+FRAME_FORMAT_W[LBPF]=1 - Indicates the frame is a Loopback frame
+\end_layout
+
+\begin_layout Itemize
+FRAME_FORMAT_W[LBTBI] - Indicates index of TXT Buffer used to transmit the
+ Loopback frame.
+ This field is reserved when FRAME_FORMAT_W[LBPF]=0.
+\end_layout
+
+\begin_layout Description
+Note Loopback frame is a 
+\begin_inset Quotes eld
+\end_inset
+
+regular CAN frame
+\begin_inset Quotes erd
+\end_inset
+
+ in context of RX Buffer frame types (see.
+ 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "sec:CAN-frame-reception"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+).
 \end_layout
 
 \begin_layout Standard

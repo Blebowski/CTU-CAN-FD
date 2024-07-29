@@ -76,9 +76,13 @@ union ctu_can_fd_frame_format_w {
 		uint32_t err_pos                 : 4;
 		uint32_t err_erp                 : 1;
 		uint32_t err_type                : 3;
-		uint32_t reserved_31_24          : 8;
+		uint32_t ivld                    : 1;
+		uint32_t lbtbi                   : 3;
+		uint32_t reserved_31_28          : 4;
 #else
-		uint32_t reserved_31_24          : 8;
+		uint32_t reserved_31_28          : 4;
+		uint32_t lbtbi                   : 3;
+		uint32_t ivld                    : 1;
 		uint32_t err_type                : 3;
 		uint32_t err_erp                 : 1;
 		uint32_t err_pos                 : 4;
@@ -128,6 +132,22 @@ enum ctu_can_fd_frame_format_w_brs {
 enum ctu_can_fd_frame_format_w_esi_rsv {
 	ESI_ERR_ACTIVE       = 0x0,
 	ESI_ERR_PASIVE       = 0x1,
+};
+
+enum ctu_can_fd_frame_format_w_ivld {
+	IVLD_INALID       = 0x0,
+	IVLD_VALID        = 0x1,
+};
+
+enum ctu_can_fd_frame_format_w_lbtbi {
+	TXT_BUF_1       = 0x0,
+	TXT_BUF_2       = 0x1,
+	TXT_BUF_3       = 0x2,
+	TXT_BUF_4       = 0x3,
+	TXT_BUF_5       = 0x4,
+	TXT_BUF_6       = 0x5,
+	TXT_BUF_7       = 0x6,
+	TXT_BUF_8       = 0x7,
 };
 
 union ctu_can_fd_identifier_w {

@@ -1794,67 +1794,67 @@ cellcolor{cyan}
 
 \end_inset
 </cell>
+<cell alignment="center" leftline="true" multicolumn="1" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Reserved\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" multicolumn="2" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Reserved\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" multicolumn="2" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Reserved\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" multicolumn="2" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Reserved\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" multicolumn="1" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+LBTBI\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" multicolumn="2" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+LBTBI\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" multicolumn="2" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+LBTBI\end_layout
+
+\end_inset
+</cell>
 <cell alignment="center" leftline="true" multicolumn="1" rightline="true" topline="true" usebox="none" valignment="top">
 \begin_inset Text
 
 \begin_layout Plain Layout
-Reserved\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" leftline="true" multicolumn="2" topline="true" usebox="none" valignment="top">
-\begin_inset Text
-
-\begin_layout Plain Layout
-Reserved\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" leftline="true" multicolumn="2" topline="true" usebox="none" valignment="top">
-\begin_inset Text
-
-\begin_layout Plain Layout
-Reserved\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" leftline="true" multicolumn="2" topline="true" usebox="none" valignment="top">
-\begin_inset Text
-
-\begin_layout Plain Layout
-Reserved\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" leftline="true" multicolumn="2" topline="true" usebox="none" valignment="top">
-\begin_inset Text
-
-\begin_layout Plain Layout
-Reserved\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" leftline="true" multicolumn="2" topline="true" usebox="none" valignment="top">
-\begin_inset Text
-
-\begin_layout Plain Layout
-Reserved\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" leftline="true" multicolumn="2" topline="true" usebox="none" valignment="top">
-\begin_inset Text
-
-\begin_layout Plain Layout
-Reserved\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" leftline="true" multicolumn="2" rightline="true" topline="true" usebox="none" valignment="top">
-\begin_inset Text
-
-\begin_layout Plain Layout
-Reserved\end_layout
+IVLD\end_layout
 
 \end_inset
 </cell>
@@ -1911,7 +1911,7 @@ cellcolor{cyan}
 \begin_inset Text
 
 \begin_layout Plain Layout
--\end_layout
+X\end_layout
 
 \end_inset
 </cell>
@@ -1919,7 +1919,7 @@ cellcolor{cyan}
 \begin_inset Text
 
 \begin_layout Plain Layout
--\end_layout
+X\end_layout
 
 \end_inset
 </cell>
@@ -1927,7 +1927,7 @@ cellcolor{cyan}
 \begin_inset Text
 
 \begin_layout Plain Layout
--\end_layout
+X\end_layout
 
 \end_inset
 </cell>
@@ -1935,7 +1935,7 @@ cellcolor{cyan}
 \begin_inset Text
 
 \begin_layout Plain Layout
--\end_layout
+X\end_layout
 
 \end_inset
 </cell>
@@ -2911,8 +2911,8 @@ DLC Data Length Code.
 \end_layout
 \begin_layout Description
 ERF Error Frame Flag. When set, the current frame in RX Buffer is an Error frame. This bit has no meaning in TXT buffers.\begin_inset Newline newline\end_inset
-		0b0  - ERF_CAN_FRAME - \begin_inset Newline newline\end_inset
-		0b1  - ERF_ERR_FRAME - 
+		0b0  - ERF_CAN_FRAME - Frame in RX Buffer is an Error frame.\begin_inset Newline newline\end_inset
+		0b1  - ERF_ERR_FRAME - Frame in RX Buffer is a regular CAN frame
 \end_layout
 \begin_layout Description
 RTR Logic 1 indicates Remote frame. Has meaning only for CAN frames. CAN FD does not have RTR frames.\begin_inset Newline newline\end_inset
@@ -2958,6 +2958,22 @@ ERR_ERP CTU CAN FD was Error Passive state at time when the error was detected a
 \end_layout
 \begin_layout Description
 ERR_TYPE Error frame type of Error Frame recorder in RX Buffer. This bit has no meaning in TXT Buffers. The encoding of this field is equal to ERR_CAPT[ERR_TYPE] register.
+\end_layout
+\begin_layout Description
+IVLD IDENTIFIER_W word contains a valid identifier. This field is valid only in RX Buffer, it has no meaning in TXT Buffers.\begin_inset Newline newline\end_inset
+		0b0  - IVLD_INALID - IDENTIFIER_W does not contain a valid CAN FD identifier.\begin_inset Newline newline\end_inset
+		0b1  - IVLD_VALID - IDENTIFIER_W contains a valid CAN FD identifier.
+\end_layout
+\begin_layout Description
+LBTBI Loop-Back TXT Buffer index. This field is only valid in RX Buffer and when FRAME_FORMAT_W[LBTBI]=1. This field has no meaning in TXT Buffers.\begin_inset Newline newline\end_inset
+		0b000  - TXT_BUF_1 - TXT Buffer 1\begin_inset Newline newline\end_inset
+		0b001  - TXT_BUF_2 - TXT Buffer 2\begin_inset Newline newline\end_inset
+		0b010  - TXT_BUF_3 - TXT Buffer 3\begin_inset Newline newline\end_inset
+		0b011  - TXT_BUF_4 - TXT Buffer 4\begin_inset Newline newline\end_inset
+		0b100  - TXT_BUF_5 - TXT Buffer 5\begin_inset Newline newline\end_inset
+		0b101  - TXT_BUF_6 - TXT Buffer 6\begin_inset Newline newline\end_inset
+		0b110  - TXT_BUF_7 - TXT Buffer 7\begin_inset Newline newline\end_inset
+		0b111  - TXT_BUF_8 - TXT Buffer 8
 \end_layout
 \begin_layout Standard
 \begin_inset VSpace bigskip

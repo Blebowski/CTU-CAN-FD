@@ -126,6 +126,9 @@ package can_fd_frame_format is
   constant ERR_ERP_IND           : natural := 20;
   constant ERR_TYPE_L            : natural := 21;
   constant ERR_TYPE_H            : natural := 23;
+  constant IVLD_IND              : natural := 24;
+  constant LBTBI_L               : natural := 25;
+  constant LBTBI_H               : natural := 27;
 
   -- "RTR" field enumerated values
   constant NO_RTR_FRAME       : std_logic := '0';
@@ -154,6 +157,20 @@ package can_fd_frame_format is
   -- "ERF" field enumerated values
   constant ERF_CAN_FRAME      : std_logic := '0';
   constant ERF_ERR_FRAME      : std_logic := '1';
+
+  -- "IVLD" field enumerated values
+  constant IVLD_INALID        : std_logic := '0';
+  constant IVLD_VALID         : std_logic := '1';
+
+  -- "LBTBI" field enumerated values
+  constant TXT_BUF_1 : std_logic_vector(2 downto 0) := "000";
+  constant TXT_BUF_2 : std_logic_vector(2 downto 0) := "001";
+  constant TXT_BUF_3 : std_logic_vector(2 downto 0) := "010";
+  constant TXT_BUF_4 : std_logic_vector(2 downto 0) := "011";
+  constant TXT_BUF_5 : std_logic_vector(2 downto 0) := "100";
+  constant TXT_BUF_6 : std_logic_vector(2 downto 0) := "101";
+  constant TXT_BUF_7 : std_logic_vector(2 downto 0) := "110";
+  constant TXT_BUF_8 : std_logic_vector(2 downto 0) := "111";
 
   -- FRAME_FORMAT_W register reset values
 
