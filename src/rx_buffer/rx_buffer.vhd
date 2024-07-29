@@ -221,6 +221,14 @@ entity rx_buffer is
         timestamp               : in  std_logic_vector(63 downto 0);
 
         -------------------------------------------------------------------------------------------
+        -- TX Arbitrator interface
+        -------------------------------------------------------------------------------------------
+        -- TXT Buffer index that is:
+        --   - Currently validated (when no transmission is in progress)
+        --   - Used for transmission (when transmission is in progress)
+        curr_txtb_index         : in std_logic_vector(2 downto 0);
+
+        -------------------------------------------------------------------------------------------
         -- Memory registers interface
         -------------------------------------------------------------------------------------------
         mr_mode_rxbam           : in  std_logic;
@@ -580,14 +588,13 @@ begin
     -- Frame format word assignment
     -----------------------------------------------------------------------------------------------
     frame_form_w(DLC_H downto DLC_L)      <= rec_dlc;
-    frame_form_w(4)                       <= '0';
+    frame_form_w(4)                       <= '0';       -- TODO: Drive "ERF" bit
     frame_form_w(RTR_IND)                 <= rec_is_rtr;
     frame_form_w(IDE_IND)                 <= rec_ident_type;
     frame_form_w(FDF_IND)                 <= rec_frame_type;
     frame_form_w(LBPF_IND)                <= rec_lbpf;
     frame_form_w(BRS_IND)                 <= rec_brs;
     frame_form_w(ESI_RSV_IND)             <= rec_esi;
-
 
     -----------------------------------------------------------------------------------------------
     -- RWCNT (Read word count is calculated like so:
@@ -600,8 +607,14 @@ begin
         "00101" when ((rec_frame_type = NORMAL_CAN) and (rec_dlc(3) = '1')) else
          std_logic_vector(to_unsigned(rwcnt_com, (RWCNT_H - RWCNT_L + 1)));
 
-    frame_form_w(31 downto 16) <= (others => '0');
+    frame_form_w(23 downto 16) <= (others => '0'); -- TODO: Drive ERF_*
+    frame_form_w(24)           <= '0';             -- TODO: Driver IVLD
 
+    frame_form_w(LBTBI_H downto LBTBI_L) <= curr_txtb_index when (rec_lbpf = LBPF_LOOPBACK)
+                                                            else
+                                            (others => '0');
+
+    frame_form_w(31 downto 28) <= (others => '0');
 
     -----------------------------------------------------------------------------------------------
     -- Capturing timestamp. Done at the beginning or end of frame based on SW configuration.

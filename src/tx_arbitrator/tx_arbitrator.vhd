@@ -184,6 +184,15 @@ entity tx_arbitrator is
         txtb_clk_en             : in  std_logic;
 
         -------------------------------------------------------------------------------------------
+        -- RX Buffer interface
+        -------------------------------------------------------------------------------------------
+
+        -- TXT Buffer index that is:
+        --   - Currently validated (when no transmission is in progress)
+        --   - Used for transmission (when transmission is in progress)
+        curr_txtb_index         : out std_logic_vector(2 downto 0);
+
+        -------------------------------------------------------------------------------------------
         -- Memory registers interface
         -------------------------------------------------------------------------------------------
         mr_mode_tttm            : in  std_logic;
@@ -243,10 +252,12 @@ architecture rtl of tx_arbitrator is
     -- Lower timestamp loaded from TXT Buffer
     signal ts_low_internal            : std_logic_vector(31 downto 0);
 
-    -- Internal index of TXT Buffer stored at the time of buffer selection
-    signal int_txtb_index             : natural range 0 to G_TXT_BUFFER_COUNT - 1;
+    -- TXT Buffer index that is:
+    --      - Currently validated (when no transmission is in progress)
+    --      - Used for transmission (when transmission is in progress)
+    signal curr_txtb_index_i          : natural range 0 to G_TXT_BUFFER_COUNT - 1;
 
-    -- TXT Buffer internal index of last buffer that was locked From buffer change, Protocol control
+    -- TXT Buffer internal index of last buffer that was locked from buffer change, Protocol control
     -- can erase retransmitt counter
     signal last_txtb_index            : natural range 0 to G_TXT_BUFFER_COUNT - 1;
 
@@ -422,7 +433,7 @@ begin
                                                          else
                                        mr_tx_priority(i - 1);
 
-            txtb_is_bb(i) <= '1' when (mr_mode_txbbm = '1' and int_txtb_index = i-1 and
+            txtb_is_bb(i) <= '1' when (mr_mode_txbbm = '1' and curr_txtb_index_i = i-1 and
                                        txtb_allow_bb(i - 1) = '1')
                                  else
                              '0';
@@ -444,7 +455,7 @@ begin
     -- During transmission, CAN Core is reading metadata from outputs. Since the frame is valid,
     -- it is logical to also have "tran_frame_valid" active!
     -----------------------------------------------------------------------------------------------
-    validated_buffer <= '1' when (txtb_available(int_txtb_index) = '1') and
+    validated_buffer <= '1' when (txtb_available(curr_txtb_index_i) = '1') and
                                  (tran_frame_valid_com = '1')
                             else
                         '0';
@@ -467,7 +478,7 @@ begin
     -- to start error frame! Buffer one which parity mismatch is checked, must be selected by
     -- registered index of TXT Buffer which is used for transmission.
     -----------------------------------------------------------------------------------------------
-    txtb_parity_mismatch_tx <= '1' when (txtb_parity_mismatch(int_txtb_index) = '1')
+    txtb_parity_mismatch_tx <= '1' when (txtb_parity_mismatch(curr_txtb_index_i) = '1')
                                    else
                                '0';
 
@@ -479,8 +490,8 @@ begin
     -- Selecting TXT Buffer output word based on TXT Buffer index. During transmission, use last
     -- stored TXT buffer. Otherwise use combinatorially selected TXT buffer (during validation).
     -----------------------------------------------------------------------------------------------
-    txtb_index_muxed <= int_txtb_index when (tx_arb_locked = '1')
-                                       else
+    txtb_index_muxed <= curr_txtb_index_i when (tx_arb_locked = '1')
+                                          else
                         select_buf_index;
 
     -- Parity check. When Protocol controller wants to enable clock for TXT Buffer, it reads data
@@ -491,7 +502,7 @@ begin
                                                else
                                  tx_arb_parity_check_valid;
 
-    -- Demux for each TXT Buffer
+    -- Demux for each TXT Buffer parity check validation
     txtb_parity_demux_proc : process(txtb_index_muxed)
     begin
         txtb_parity_check_valid <= (others => '0');
@@ -533,12 +544,11 @@ begin
                                       else
                           txtb_meta_clk_en;
 
-    txtb_hw_cmd_cs_demux_proc : process(int_txtb_index)
+    txtb_hw_cmd_cs_demux_proc : process(curr_txtb_index_i)
     begin
         txtb_hw_cmd_cs <= (others => '0');
-        txtb_hw_cmd_cs(int_txtb_index) <= '1';
+        txtb_hw_cmd_cs(curr_txtb_index_i) <= '1';
     end process;
-
 
     -----------------------------------------------------------------------------------------------
     -- Register for TXT Buffer clock enable
@@ -690,26 +700,27 @@ begin
     begin
         if (res_n = '0') then
             last_txtb_index             <= 0;
-            int_txtb_index              <= 0;
+            curr_txtb_index_i           <= 0;
 
         elsif (rising_edge(clk_sys)) then
             -- At the time of lock, the last index is stored from the last stored index.
             if (store_last_txtb_index = '1') then
-                last_txtb_index         <= int_txtb_index;
+                last_txtb_index         <= curr_txtb_index_i;
             end if;
 
             -- Combinationally selected index (select_buf_index) is stored when metadata are stored.
             if (commit_dbl_bufs = '1') then
-                int_txtb_index          <= select_buf_index;
+                curr_txtb_index_i       <= select_buf_index;
             end if;
 
         end if;
     end process;
 
-    txtb_changed  <= '1' when (last_txtb_index /= int_txtb_index and store_last_txtb_index = '1')
+    txtb_changed  <= '1' when (last_txtb_index /= curr_txtb_index_i and store_last_txtb_index = '1')
                          else
                      '0';
 
+    curr_txtb_index <= std_logic_vector(to_unsigned(curr_txtb_index_i, 3));
 
     -----------------------------------------------------------------------------------------------
     -- Registering value of combinationally selected index by priority decoder to determine change
@@ -774,40 +785,40 @@ begin
     -- Lock Commands
     --
     -- psl txt_lock_buf_1_cov : cover
-    --    {int_txtb_index = 0 and txtb_hw_cmd.lock = '1'};
+    --    {curr_txtb_index_i = 0 and txtb_hw_cmd.lock = '1'};
     -- psl txt_lock_buf_2_cov : cover
-    --    {int_txtb_index = 1 and txtb_hw_cmd.lock = '1'};
+    --    {curr_txtb_index_i = 1 and txtb_hw_cmd.lock = '1'};
     -- psl txt_lock_buf_3_cov : cover
-    --    {int_txtb_index = 2 and txtb_hw_cmd.lock = '1'};
+    --    {curr_txtb_index_i = 2 and txtb_hw_cmd.lock = '1'};
     -- psl txt_lock_buf_4_cov : cover
-    --    {int_txtb_index = 3 and txtb_hw_cmd.lock = '1'};
+    --    {curr_txtb_index_i = 3 and txtb_hw_cmd.lock = '1'};
     -- psl txt_lock_buf_5_cov : cover
-    --    {int_txtb_index = 4 and txtb_hw_cmd.lock = '1'};
+    --    {curr_txtb_index_i = 4 and txtb_hw_cmd.lock = '1'};
     -- psl txt_lock_buf_6_cov : cover
-    --    {int_txtb_index = 5 and txtb_hw_cmd.lock = '1'};
+    --    {curr_txtb_index_i = 5 and txtb_hw_cmd.lock = '1'};
     -- psl txt_lock_buf_7_cov : cover
-    --    {int_txtb_index = 6 and txtb_hw_cmd.lock = '1'};
+    --    {curr_txtb_index_i = 6 and txtb_hw_cmd.lock = '1'};
     -- psl txt_lock_buf_8_cov : cover
-    --    {int_txtb_index = 7 and txtb_hw_cmd.lock = '1'};
+    --    {curr_txtb_index_i = 7 and txtb_hw_cmd.lock = '1'};
 
     -- Unlock Commands
     --
     -- psl txt_unlock_buf_1_cov : cover
-    --    {int_txtb_index = 0 and txtb_hw_cmd_unlock = '1'};
+    --    {curr_txtb_index_i = 0 and txtb_hw_cmd_unlock = '1'};
     -- psl txt_unlock_buf_2_cov : cover
-    --    {int_txtb_index = 1 and txtb_hw_cmd_unlock = '1'};
+    --    {curr_txtb_index_i = 1 and txtb_hw_cmd_unlock = '1'};
     -- psl txt_unlock_buf_3_cov : cover
-    --    {int_txtb_index = 2 and txtb_hw_cmd_unlock = '1'};
+    --    {curr_txtb_index_i = 2 and txtb_hw_cmd_unlock = '1'};
     -- psl txt_unlock_buf_4_cov : cover
-    --    {int_txtb_index = 3 and txtb_hw_cmd_unlock = '1'};
+    --    {curr_txtb_index_i = 3 and txtb_hw_cmd_unlock = '1'};
     -- psl txt_unlock_buf_5_cov : cover
-    --    {int_txtb_index = 4 and txtb_hw_cmd_unlock = '1'};
+    --    {curr_txtb_index_i = 4 and txtb_hw_cmd_unlock = '1'};
     -- psl txt_unlock_buf_6_cov : cover
-    --    {int_txtb_index = 5 and txtb_hw_cmd_unlock = '1'};
+    --    {curr_txtb_index_i = 5 and txtb_hw_cmd_unlock = '1'};
     -- psl txt_unlock_buf_7_cov : cover
-    --    {int_txtb_index = 6 and txtb_hw_cmd_unlock = '1'};
+    --    {curr_txtb_index_i = 6 and txtb_hw_cmd_unlock = '1'};
     -- psl txt_unlock_buf_8_cov : cover
-    --    {int_txtb_index = 7 and txtb_hw_cmd_unlock = '1'};
+    --    {curr_txtb_index_i = 7 and txtb_hw_cmd_unlock = '1'};
 
     -- Modes
     -- Note: We use gating by tran_frame_valid to avoid falsly covered scenarios,

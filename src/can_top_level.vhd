@@ -449,6 +449,15 @@ architecture rtl of can_top_level is
     signal txtb_clk_en                  :   std_logic;
 
     -----------------------------------------------------------------------------------------------
+    -- RX Buffer <-> TX Arbitrator
+    -----------------------------------------------------------------------------------------------
+
+    -- TXT Buffer index that is:
+    --   - Currently validated (when no transmission is in progress)
+    --   - Used for transmission (when transmission is in progress)
+    signal curr_txtb_index              :   std_logic_vector(2 downto 0);
+
+    -----------------------------------------------------------------------------------------------
     -- CAN Core <-> Interrupt manager
     -----------------------------------------------------------------------------------------------
     -- Error appeared
@@ -758,6 +767,9 @@ begin
         -- External timestamp input
         timestamp                       => timestamp,                       -- IN
 
+        -- TX Arbitrator interface
+        curr_txtb_index                 => curr_txtb_index,                 -- IN
+
         -- Memory registers interface
         mr_mode_rxbam                   => mr_ctrl_out.mode_rxbam,          -- IN
         mr_command_cdo                  => mr_ctrl_out.command_cdo,         -- IN
@@ -904,6 +916,9 @@ begin
         txtb_hw_cmd_cs                  => txtb_hw_cmd_cs,                  -- OUT
         txtb_ptr                        => txtb_ptr,                        -- IN
         txtb_clk_en                     => txtb_clk_en,                     -- IN
+
+        -- RX Buffer interface
+        curr_txtb_index                 => curr_txtb_index,                 -- OUT
 
         -- Memory registers interface
         mr_mode_tttm                    => mr_ctrl_out.mode_tttm,           -- IN
