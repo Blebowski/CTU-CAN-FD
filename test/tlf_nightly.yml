@@ -220,6 +220,7 @@ tests:
     - name: overload
 
     - name: pc_fsm_transitions_err_pas
+    - name: pc_fsm_transitions_err_pas_2
     - name: pc_fsm_transitions_err_act
     - name: pc_fsm_transitions_integ
     - name: pc_fsm_transitions_integ_2
