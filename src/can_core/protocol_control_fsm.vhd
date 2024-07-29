@@ -287,6 +287,9 @@ entity protocol_control_fsm is
         -- RX Frame Loopback
         rec_lbpf                : out std_logic;
 
+        -- RX Identifier is valid
+        rec_ivld                : out std_logic;
+
         -------------------------------------------------------------------------------------------
         -- Control counter interface
         -------------------------------------------------------------------------------------------
@@ -742,6 +745,11 @@ architecture rtl of protocol_control_fsm is
     -- RX Frame loopback
     signal rec_lbpf_d                   : std_logic;
     signal rec_lbpf_q                   : std_logic;
+
+    -- RX Frame identifier valid
+    signal rec_ivld_i                   : std_logic;
+    signal rec_ivld_d                   : std_logic;
+    signal rec_ivld_q                   : std_logic;
 
 begin
 
@@ -1485,6 +1493,7 @@ begin
         pexs_set                <= '0';
 
         rec_lbpf_d              <= rec_lbpf_q;
+        rec_ivld_i              <= rec_ivld_q;
 
         if (err_frm_req = '1') then
             tick_state_reg <= '1';
@@ -1595,6 +1604,7 @@ begin
                 ctrl_ctr_pload_val <= C_BASE_ID_DURATION;
                 tx_load_base_id_i <= '1';
                 sof_pulse_i <= '1';
+                rec_ivld_i <= '0';
                 tx_dominant <= '1';
                 err_pos <= ERC_POS_SOF;
                 crc_enable <= '1';
@@ -1689,6 +1699,8 @@ begin
                     ctrl_ctr_pload_i <= '1';
                     ctrl_ctr_pload_val <= C_EXT_ID_DURATION;
                     tx_load_ext_id_i <= '1';
+                else
+                    rec_ivld_i <= '1';
                 end if;
 
                 if (ide_is_arbitration = '1' and arbitration_lost_condition = '1') then
@@ -1765,6 +1777,7 @@ begin
                 rx_store_rtr_i <= '1';
                 err_pos <= ERC_POS_ARB;
                 arbitration_part <= ALC_RTR;
+                rec_ivld_i <= '1';
 
                 if (arbitration_lost_condition = '1') then
                     arbitration_lost_i <= '1';
@@ -2292,11 +2305,12 @@ begin
                     ctrl_ctr_pload_i <= '1';
                     crc_spec_enable_i <= '1';
 
-                    -- Goe to Base ID (sampling of DOMINANT in the third bit of intermission)!
+                    -- Go to Base ID (sampling of DOMINANT in the third bit of intermission)!
                     if (rx_data_nbs = DOMINANT) then
                         ctrl_ctr_pload_val <= C_BASE_ID_DURATION;
                         tx_load_base_id_i <= '1';
                         sof_pulse_i <= '1';
+                        rec_ivld_i <= '0';
 
                     -- Goes to either IDLE, Suspend, or to SOF, when there is sth. to transmitt.
                     -- Preload SUSPEND length in any case, since other states don't care about
@@ -2373,6 +2387,7 @@ begin
                     ctrl_ctr_pload_val <= C_BASE_ID_DURATION;
                     tx_load_base_id_i <= '1';
                     sof_pulse_i <= '1';
+                    rec_ivld_i <= '0';
                     set_receiver_i <= '1';
                     destuff_enable_set <= '1';
                     rx_clear_i <= '1';
@@ -2406,6 +2421,7 @@ begin
                         ctrl_ctr_pload_i <= '1';
                         ctrl_ctr_pload_val <= C_BASE_ID_DURATION;
                         sof_pulse_i <= '1';
+                        rec_ivld_i <= '0';
                         crc_enable <= '1';
                     end if;
 
@@ -2772,15 +2788,21 @@ begin
                            else
                        '0';
 
+    rec_ivld_d <= rec_ivld_i when (rx_trigger = '1')
+                             else
+                  rec_ivld_q;
+
     -----------------------------------------------------------------------------------------------
-    -- Register Loopback frame flag
+    -- Register Loopback frame flag and Identifier valid flag
     -----------------------------------------------------------------------------------------------
     rex_lbpc_reg_proc : process (clk_sys, res_n)
     begin
         if (res_n = '0') then
             rec_lbpf_q <= '0';
+            rec_ivld_q <= '0';
         elsif (rising_edge(clk_sys)) then
             rec_lbpf_q <= rec_lbpf_d;
+            rec_ivld_q <= rec_ivld_d;
         end if;
     end process;
 
@@ -3188,6 +3210,7 @@ begin
     txtb_clk_en <= txtb_clk_en_q;
     pc_dbg.is_arbitration  <= is_arbitration_i;
     rec_lbpf <= rec_lbpf_q;
+    rec_ivld <= rec_ivld_q;
 
     -- <RELEASE_OFF>
     -----------------------------------------------------------------------------------------------

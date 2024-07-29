@@ -245,6 +245,9 @@ entity can_core is
         -- RX Error state indicator
         rec_esi      	        : out std_logic;
 
+        -- RX Identifier is valid
+        rec_ivld                : out std_logic;
+
         -- RX Frame received succesfully, can be commited to RX Buffer.
         rec_valid               : out std_logic;
 
@@ -367,6 +370,7 @@ architecture rtl of can_core is
     signal rec_is_rtr_i             : std_logic;
     signal rec_brs_i                : std_logic;
     signal rec_esi_i                : std_logic;
+    signal rec_ivld_i               : std_logic;
 
     -- Arbitration lost capture
     signal alc_alc_bit              : std_logic_vector(4 downto 0);
@@ -566,6 +570,7 @@ begin
         rec_lbpf                => rec_lbpf_i,                  -- OUT
         rec_brs                 => rec_brs_i,                   -- OUT
         rec_esi                 => rec_esi_i,                   -- OUT
+        rec_ivld                => rec_ivld_i,                  -- OUT
         store_metadata          => store_metadata,              -- OUT
         rec_abort               => rec_abort,                   -- OUT
         store_data              => store_data,                  -- OUT
@@ -978,6 +983,7 @@ begin
     rec_is_rtr              <= rec_is_rtr_i;
     rec_brs                 <= rec_brs_i;
     rec_esi                 <= rec_esi_i;
+    rec_ivld                <= rec_ivld_i;
     rec_valid               <= rec_valid_i;
     arbitration_lost        <= arbitration_lost_i;
     tran_valid              <= tran_valid_i;

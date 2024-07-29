@@ -328,6 +328,9 @@ architecture rtl of can_top_level is
     -- Recieved error state indicator
     signal rec_esi                      :    std_logic;
 
+    -- Received Identifier is valid
+    signal rec_ivld                     :    std_logic;
+
     -- Data word which should be stored when "store_data" is active!
     signal store_data_word              :    std_logic_vector(31 downto 0);
 
@@ -742,6 +745,7 @@ begin
         rec_is_rtr                      => rec_is_rtr,                      -- IN
         rec_brs                         => rec_brs,                         -- IN
         rec_esi                         => rec_esi,                         -- IN
+        rec_ivld                        => rec_ivld,                        -- IN
 
         -- Control signals from CAN Core which control storing of CAN Frame.
         -- Filtered by Frame filters.

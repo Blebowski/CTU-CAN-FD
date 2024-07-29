@@ -154,6 +154,9 @@ entity rx_buffer is
         -- Recieved error state indicator
         rec_esi                 : in  std_logic;
 
+        -- Received identifier is valid
+        rec_ivld                : in  std_logic;
+
         -------------------------------------------------------------------------------------------
         -- Control signals from CAN Core which control storing of CAN Frame. (Filtered by Frame
         -- Filters)
@@ -595,6 +598,7 @@ begin
     frame_form_w(LBPF_IND)                <= rec_lbpf;
     frame_form_w(BRS_IND)                 <= rec_brs;
     frame_form_w(ESI_RSV_IND)             <= rec_esi;
+    frame_form_w(IVLD_IND)                <= rec_ivld;
 
     -----------------------------------------------------------------------------------------------
     -- RWCNT (Read word count is calculated like so:
@@ -608,7 +612,6 @@ begin
          std_logic_vector(to_unsigned(rwcnt_com, (RWCNT_H - RWCNT_L + 1)));
 
     frame_form_w(23 downto 16) <= (others => '0'); -- TODO: Drive ERF_*
-    frame_form_w(24)           <= '0';             -- TODO: Driver IVLD
 
     frame_form_w(LBTBI_H downto LBTBI_L) <= curr_txtb_index when (rec_lbpf = LBPF_LOOPBACK)
                                                             else

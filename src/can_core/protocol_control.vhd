@@ -226,6 +226,9 @@ entity protocol_control is
         -- RX Error state indicator
         rec_esi                 : out std_logic;
 
+        -- RX Identifier is valid
+        rec_ivld                : out std_logic;
+
         -- Store Metadata in RX Buffer
         store_metadata          : out std_logic;
 
@@ -685,6 +688,7 @@ begin
         rec_dlc_q               => rec_dlc_q,               -- IN
         rec_frame_type          => rec_frame_type_i,        -- IN
         rec_lbpf                => rec_lbpf_i,              -- OUT
+        rec_ivld                => rec_ivld,                -- OUT
 
         -- Control counter interface
         ctrl_ctr_pload          => ctrl_ctr_pload,          -- OUT
