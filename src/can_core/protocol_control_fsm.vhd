@@ -626,9 +626,6 @@ architecture rtl of protocol_control_fsm is
     signal sp_control_d                 : std_logic_vector(1 downto 0);
     signal sp_control_q_i               : std_logic_vector(1 downto 0);
 
-    -- Secondary sampling point shift register reset
-    signal ssp_reset_i                  : std_logic;
-
     -- Synchronisation control
     signal sync_control_d               : std_logic_vector(1 downto 0);
     signal sync_control_q               : std_logic_vector(1 downto 0);
@@ -1427,7 +1424,7 @@ begin
         sp_control_switch_nominal   <= '0';
 
         -- Transceiver delay measurement
-        ssp_reset_i             <= '0';
+        ssp_reset               <= '0';
         tran_delay_meas         <= '0';
 
         -- Secondary sampling point control
@@ -1816,7 +1813,7 @@ begin
                     if (tran_frame_type_i = NORMAL_CAN) then
                         tx_dominant <= '1';
                     else
-                        ssp_reset_i <= '1';
+                        ssp_reset <= '1';
                     end if;
                 end if;
 
@@ -1904,7 +1901,7 @@ begin
                 if (is_transmitter = '1' and tran_frame_type_i = NORMAL_CAN) then
                     tx_dominant <= '1';
                 else
-                    ssp_reset_i <= '1';
+                    ssp_reset <= '1';
                 end if;
 
                 -- Sample recessive but CAN FD is disabled -> Form error or
@@ -3197,7 +3194,6 @@ begin
     crc_src <= crc_src_i;
     txtb_hw_cmd <= txtb_hw_cmd_q;
     tran_valid <= txtb_hw_cmd_q.valid;
-    ssp_reset <= ssp_reset_i;
     sync_control <= sync_control_q;
     txtb_ptr <= txtb_ptr_q;
     br_shifted <= br_shifted_i;

@@ -492,9 +492,6 @@ architecture rtl of protocol_control is
     -- RX frame type (0-CAN 2.0, 1- CAN FD)
     signal rec_frame_type_i        :     std_logic;
 
-    -- Received Loopback frame
-    signal rec_lbpf_i              :     std_logic;
-
     -- Preload control counter
     signal ctrl_ctr_pload          :      std_logic;
 
@@ -569,9 +566,6 @@ architecture rtl of protocol_control is
 
     -- Bit error detection enabled
     signal bit_err_enable          :      std_logic;
-
-    -- TX Data internal
-    signal tx_data_nbs_i           :      std_logic;
 
     -- Received CRC (driven from RX Shift register)
     signal rx_crc                  :      std_logic_vector(20 downto 0);
@@ -687,7 +681,7 @@ begin
         rec_dlc_d               => rec_dlc_d,               -- IN
         rec_dlc_q               => rec_dlc_q,               -- IN
         rec_frame_type          => rec_frame_type_i,        -- IN
-        rec_lbpf                => rec_lbpf_i,              -- OUT
+        rec_lbpf                => rec_lbpf,                -- OUT
         rec_ivld                => rec_ivld,                -- OUT
 
         -- Control counter interface
@@ -909,7 +903,7 @@ begin
         mr_mode_tstm            => mr_mode_tstm,            -- IN
 
         tx_trigger              => tx_trigger,              -- IN
-        tx_data_nbs             => tx_data_nbs_i,           -- OUT
+        tx_data_nbs             => tx_data_nbs,             -- OUT
 
         -- Protocol control FSM interface
         tx_load_base_id         => tx_load_base_id,         -- IN
@@ -985,9 +979,7 @@ begin
     -----------------------------------------------------------------------------------------------
     -- Internal signals propagation to output
     -----------------------------------------------------------------------------------------------
-    tx_data_nbs <= tx_data_nbs_i;
     rec_frame_type <= rec_frame_type_i;
-    rec_lbpf <= rec_lbpf_i;
     rec_is_rtr <= rec_is_rtr_i;
     rec_dlc <= rec_dlc_q;
     form_err <= form_err_i;

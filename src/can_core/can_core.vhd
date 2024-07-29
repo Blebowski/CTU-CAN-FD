@@ -358,20 +358,6 @@ architecture rtl of can_core is
     -----------------------------------------------------------------------------------------------
     -----------------------------------------------------------------------------------------------
 
-    -- TXT Buffer control
-    signal txtb_hw_cmd_i            : t_txtb_hw_cmd;
-
-    -- Received frame
-    signal rec_ident_i              : std_logic_vector(28 downto 0);
-    signal rec_dlc_i                : std_logic_vector(3 downto 0);
-    signal rec_ident_type_i         : std_logic;
-    signal rec_frame_type_i         : std_logic;
-    signal rec_lbpf_i               : std_logic;
-    signal rec_is_rtr_i             : std_logic;
-    signal rec_brs_i                : std_logic;
-    signal rec_esi_i                : std_logic;
-    signal rec_ivld_i               : std_logic;
-
     -- Arbitration lost capture
     signal alc_alc_bit              : std_logic_vector(4 downto 0);
     signal alc_alc_id_field         : std_logic_vector(2 downto 0);
@@ -421,16 +407,10 @@ architecture rtl of can_core is
     -- Protocol control - control outputs
     signal sp_control_i             : std_logic_vector(1 downto 0);
     signal sp_control_q             : std_logic_vector(1 downto 0);
-    signal sync_control_i           : std_logic_vector(1 downto 0);
-    signal ssp_reset_i              : std_logic;
-    signal tran_delay_meas_i        : std_logic;
     signal tran_valid_i             : std_logic;
     signal rec_valid_i              : std_logic;
-    signal br_shifted_i             : std_logic;
 
     -- Fault confinement status signals
-    signal fcs_changed_i            : std_logic;
-
     signal tx_err_ctr               : std_logic_vector(8 downto 0);
     signal rx_err_ctr               : std_logic_vector(8 downto 0);
     signal norm_err_ctr             : std_logic_vector(15 downto 0);
@@ -481,9 +461,6 @@ architecture rtl of can_core is
     signal form_err                 : std_logic;
     signal ack_err                  : std_logic;
     signal crc_err                  : std_logic;
-
-    -- Start of frame indication
-    signal sof_pulse_i              : std_logic;
 
     signal load_init_vect           : std_logic;
     signal retr_ctr                 : std_logic_vector(G_RETR_LIM_CTR_WIDTH - 1 downto 0);
@@ -556,26 +533,26 @@ begin
         tran_frame_test         => tran_frame_test,             -- IN
         tran_frame_valid        => tran_frame_valid,            -- IN
         tran_frame_parity_error => tran_frame_parity_error,     -- IN
-        txtb_hw_cmd             => txtb_hw_cmd_i,               -- IN
+        txtb_hw_cmd             => txtb_hw_cmd,                 -- IN
         txtb_ptr                => txtb_ptr,                    -- OUT
         txtb_clk_en             => txtb_clk_en,                 -- OUT
         txtb_changed            => txtb_changed,                -- IN
 
         -- RX Buffer interface
-        rec_ident               => rec_ident_i,                 -- OUT
-        rec_dlc                 => rec_dlc_i,                   -- OUT
-        rec_is_rtr              => rec_is_rtr_i,                -- OUT
-        rec_ident_type          => rec_ident_type_i,            -- OUT
-        rec_frame_type          => rec_frame_type_i,            -- OUT
-        rec_lbpf                => rec_lbpf_i,                  -- OUT
-        rec_brs                 => rec_brs_i,                   -- OUT
-        rec_esi                 => rec_esi_i,                   -- OUT
-        rec_ivld                => rec_ivld_i,                  -- OUT
+        rec_ident               => rec_ident,                   -- OUT
+        rec_dlc                 => rec_dlc,                     -- OUT
+        rec_is_rtr              => rec_is_rtr,                  -- OUT
+        rec_ident_type          => rec_ident_type,              -- OUT
+        rec_frame_type          => rec_frame_type,              -- OUT
+        rec_lbpf                => rec_lbpf,                    -- OUT
+        rec_brs                 => rec_brs,                     -- OUT
+        rec_esi                 => rec_esi,                     -- OUT
+        rec_ivld                => rec_ivld,                    -- OUT
         store_metadata          => store_metadata,              -- OUT
         rec_abort               => rec_abort,                   -- OUT
         store_data              => store_data,                  -- OUT
         store_data_word         => store_data_word,             -- OUT
-        sof_pulse               => sof_pulse_i,                 -- OUT
+        sof_pulse               => sof_pulse,                   -- OUT
 
         -- Operation control FSM Interface
         is_transmitter          => is_transmitter,              -- IN
@@ -635,16 +612,16 @@ begin
         sp_control_q            => sp_control_q,                -- OUT
         nbt_ctrs_en             => nbt_ctrs_en,                 -- OUT
         dbt_ctrs_en             => dbt_ctrs_en,                 -- OUT
-        sync_control            => sync_control_i,              -- OUT
-        ssp_reset               => ssp_reset_i,                 -- OUT
-        tran_delay_meas         => tran_delay_meas_i,           -- OUT
+        sync_control            => sync_control,                -- OUT
+        ssp_reset               => ssp_reset,                   -- OUT
+        tran_delay_meas         => tran_delay_meas,             -- OUT
         tran_valid              => tran_valid_i,                -- OUT
         rec_valid               => rec_valid_i,                 -- OUT
         decrement_rec           => decrement_rec,               -- OUT
         bit_err_after_ack_err   => bit_err_after_ack_err,       -- OUT
 
         -- Status signals
-        br_shifted              => br_shifted_i,                -- OUT
+        br_shifted              => br_shifted,                  -- OUT
         form_err                => form_err,                    -- OUT
         ack_err                 => ack_err,                     -- OUT
         crc_err                 => crc_err,                     -- OUT
@@ -699,7 +676,7 @@ begin
         mr_status_ewl           => mr_status_ewl,               -- OUT
 
         -- Error signalling for interrupts
-        fcs_changed             => fcs_changed_i,               -- OUT
+        fcs_changed             => fcs_changed,                 -- OUT
         err_warning_limit_pulse => err_warning_limit_pulse,     -- OUT
 
         -- Operation control Interface
@@ -974,28 +951,12 @@ begin
     -----------------------------------------------------------------------------------------------
     -- Internal signals to output propagation
     -----------------------------------------------------------------------------------------------
-    txtb_hw_cmd             <= txtb_hw_cmd_i;
-    rec_ident               <= rec_ident_i;
-    rec_dlc                 <= rec_dlc_i;
-    rec_ident_type          <= rec_ident_type_i;
-    rec_frame_type          <= rec_frame_type_i;
-    rec_lbpf                <= rec_lbpf_i;
-    rec_is_rtr              <= rec_is_rtr_i;
-    rec_brs                 <= rec_brs_i;
-    rec_esi                 <= rec_esi_i;
-    rec_ivld                <= rec_ivld_i;
     rec_valid               <= rec_valid_i;
     arbitration_lost        <= arbitration_lost_i;
     tran_valid              <= tran_valid_i;
-    br_shifted              <= br_shifted_i;
     err_detected            <= err_detected_i;
-    fcs_changed             <= fcs_changed_i;
-    sync_control            <= sync_control_i;
     tx_data_wbs             <= tx_data_wbs_i;
     sp_control              <= sp_control_i;
-    ssp_reset               <= ssp_reset_i;
-    tran_delay_meas         <= tran_delay_meas_i;
-    sof_pulse               <= sof_pulse_i;
 
     -- Test signals observation
     pc_rx_trigger           <= pc_rx_trigger_i;
