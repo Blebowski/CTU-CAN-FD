@@ -224,6 +224,7 @@ tests:
 
     - name: pc_fsm_transitions_err_pas
     - name: pc_fsm_transitions_err_act
+    - name: pc_fsm_transitions_integ
 
     - name: rec_saturation
     - name: retr_limit
