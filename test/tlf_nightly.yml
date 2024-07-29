@@ -228,6 +228,7 @@ tests:
     - name: rx_buf_empty_read
     - name: rx_buf_consistency
     - name: rx_buf_consistency_2
+    - name: rx_buf_transitions
 
     - name: rx_counter
       generics:
