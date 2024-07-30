@@ -80,6 +80,7 @@
 --  @2. Generate CAN frame and send it by Test Node. Wait until the frame
 --      is received by DUT.
 --  @3. Read frame from DUT and check highest bits of timestamp are set to 1.
+--  @4. Drive all timestamp to 0.
 --
 -- @TestInfoEnd
 --------------------------------------------------------------------------------
@@ -145,6 +146,13 @@ package body rx_buf_timestamp_toggle_ftest is
         CAN_read_frame(rx_can_frame, DUT_NODE, chn);
         check_m(rx_can_frame.timestamp(63 downto 16) = x"FFFFFFFFFFFF",
                     "Highest RX Buffer timestamp bits all 0xFFF");
+
+        -----------------------------------------------------------------------
+        -- @4. Drive all timestamp to 0.
+        -----------------------------------------------------------------------
+        info_m("Step 4");
+
+        ftr_tb_set_timestamp(x"0000000000000000", chn);
 
     end procedure;
 
