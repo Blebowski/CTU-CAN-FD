@@ -86,8 +86,8 @@ tests:
         /TB_TOP_CTU_CAN_FD/iterations: 10
     - name: frame_filters_mask
       generics:
-        /TB_TOP_CTU_CAN_FD/iterations: 5
-        /TB_TOP_CTU_CAN_FD/timeout: 100 ms
+        /TB_TOP_CTU_CAN_FD/timeout: 200 ms
+        /TB_TOP_CTU_CAN_FD/iterations: 10
 
     - name: glitch_filtering
 
