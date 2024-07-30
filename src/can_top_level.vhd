@@ -755,6 +755,9 @@ begin
         rec_valid_f                     => rec_valid_f,                     -- IN
         rec_abort_f                     => rec_abort_f,                     -- IN
         sof_pulse                       => sof_pulse,                       -- IN
+        err_capt_err_type               => cc_stat.err_type,                -- IN
+        err_capt_err_pos                => cc_stat.err_pos,                 -- IN
+        err_capt_err_erp                => cc_stat.err_erp,                 -- IN
 
         -- Status signals of recieve buffer
         rx_full                         => rx_full,                         -- OUT
@@ -783,6 +786,7 @@ begin
         mr_rx_data_read                 => mr_ctrl_out.rx_data_read,        -- IN
         mr_rx_settings_rtsop            => mr_ctrl_out.rx_settings_rtsop,   -- IN
         mr_settings_pchke               => mr_ctrl_out.settings_pchke,      -- IN
+        mr_mode_erfm                    => mr_ctrl_out.mode_erfm,           -- IN
 
         -- Memory testability
         mr_tst_control_tmaena           => mr_tst_out.tst_control_tmaena,   -- IN

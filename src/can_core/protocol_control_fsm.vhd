@@ -572,7 +572,6 @@ architecture rtl of protocol_control_fsm is
     signal store_metadata_d             : std_logic;
     signal store_data_d                 : std_logic;
     signal rec_valid_d                  : std_logic;
-    signal rec_abort_d                  : std_logic;
 
     -- Internal commands for TXT Buffers
     signal txtb_hw_cmd_d                : t_txtb_hw_cmd;
@@ -750,6 +749,10 @@ architecture rtl of protocol_control_fsm is
 
 begin
 
+    -- TODO: mr_mode_bmm and mr_mode_rom can be removed! It is guaranteed that
+    --       in these modes, TXT Buffers will never be validated, and thus
+    --       tran_frame_valid will not occur. Need to add assertion on mutual
+    --       exclusivity !!!
     tx_frame_ready <= '1' when (tran_frame_valid = '1' and
                                 mr_mode_bmm = BMM_DISABLED and
                                 mr_mode_rom = ROM_DISABLED)
@@ -1361,7 +1364,6 @@ begin
         -- RX Buffer storing protocol
         store_metadata_d        <= '0';
         store_data_d            <= '0';
-        rec_abort_d             <= '0';
         rec_valid_d             <= '0';
 
         sof_pulse_i             <= '0';
@@ -1501,7 +1503,6 @@ begin
                 ctrl_ctr_pload_val <= C_INTEGRATION_DURATION;
                 set_idle_i <= '1';
             end if;
-            rec_abort_d <= '1';
 
             crc_clear_match_flag <= '1';
             destuff_enable_clear <= '1';
@@ -2765,19 +2766,19 @@ begin
 
             -- Frame is stored to RX Buffer when unit is either receiver or loopback mode is
             -- enabled. Each command is active only for one clock cycle!
-            if ((is_receiver = '1' or mr_settings_ilbp = '1') and
-                ((rx_trigger = '1') or (err_frm_req = '1')))
+            if ((is_receiver = '1' or mr_settings_ilbp = '1') and (rx_trigger = '1'))
             then
                 store_metadata     <= store_metadata_d;
                 store_data         <= store_data_d;
                 rec_valid          <= rec_valid_d;
-                rec_abort          <= rec_abort_d;
             else
                 store_metadata     <= '0';
                 store_data         <= '0';
                 rec_valid          <= '0';
-                rec_abort          <= '0';
             end if;
+
+            rec_abort              <= err_frm_req;
+
         end if;
     end process;
 

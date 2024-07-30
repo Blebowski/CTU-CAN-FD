@@ -166,7 +166,11 @@ package can_types_pkg is
         s_rxb_skip_ts_high,
         s_rxb_store_end_ts_low,
         s_rxb_store_end_ts_high,
-        s_rxb_store_data
+        s_rxb_store_data,
+        s_rxb_store_err_frame_format,
+        s_rxb_store_err_identifier,
+        s_rxb_store_err_ts_low,
+        s_rxb_store_err_ts_high
     );
 
     -- TX arbitrator state type
