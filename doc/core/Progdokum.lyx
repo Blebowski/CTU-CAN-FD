@@ -7462,7 +7462,8 @@ Self acknowledge mode
 
 \begin_layout Standard
 When Self acknowledge mode is enabled, CTU CAN FD sends dominant ACK bit
- even when it transmitts CAN frame.
+ even when it transmitts CAN frame and it receives CRC matching to computed
+ CRC.
  Self acknowledge mode is enabled when MODE[SAM] = 1.
  MODE[SAM] shall be modified only when SETTINGS[ENA] = 0.
 \end_layout

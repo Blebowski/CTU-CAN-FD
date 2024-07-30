@@ -1105,6 +1105,7 @@ begin
         mr_mode_fde                     => mr_ctrl_out.mode_fde,                     -- IN
         mr_mode_rom                     => mr_ctrl_out.mode_rom,                     -- IN
         mr_mode_tstm                    => mr_ctrl_out.mode_tstm,                    -- IN
+        mr_mode_sam                     => mr_ctrl_out.mode_sam,                     -- IN
 
         mr_settings_ena                 => mr_ctrl_out.settings_ena,                 -- IN
         mr_settings_nisofd              => mr_ctrl_out.settings_nisofd,              -- IN

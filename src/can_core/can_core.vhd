@@ -143,6 +143,7 @@ entity can_core is
         mr_mode_fde             : in  std_logic;
         mr_mode_rom             : in  std_logic;
         mr_mode_tstm            : in  std_logic;
+        mr_mode_sam             : in  std_logic;
 
         mr_settings_ena         : in  std_logic;
         mr_settings_nisofd      : in  std_logic;
@@ -502,6 +503,7 @@ begin
         mr_mode_fde             => mr_mode_fde,                 -- IN
         mr_mode_rom             => mr_mode_rom,                 -- IN
         mr_mode_tstm            => mr_mode_tstm,                -- IN
+        mr_mode_sam             => mr_mode_sam,                 -- IN
         mr_settings_ena         => mr_settings_ena,             -- IN
         mr_settings_nisofd      => mr_settings_nisofd,          -- IN
         mr_settings_rtrth       => mr_settings_rtrth,           -- IN

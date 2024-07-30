@@ -126,6 +126,7 @@ entity protocol_control is
         mr_mode_fde             : in  std_logic;
         mr_mode_rom             : in  std_logic;
         mr_mode_tstm            : in  std_logic;
+        mr_mode_sam             : in  std_logic;
 
         mr_settings_ena         : in  std_logic;
         mr_settings_nisofd      : in  std_logic;
@@ -627,6 +628,7 @@ begin
         mr_settings_pex         => mr_settings_pex,         -- IN
         mr_command_cpexs        => mr_command_cpexs,        -- IN
         mr_mode_rom             => mr_mode_rom,             -- IN
+        mr_mode_sam             => mr_mode_sam,             -- IN
 
         mr_status_pexs          => mr_status_pexs,          -- OUT
 

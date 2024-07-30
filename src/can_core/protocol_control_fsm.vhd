@@ -132,6 +132,7 @@ entity protocol_control_fsm is
         mr_mode_bmm             : in  std_logic;
         mr_mode_fde             : in  std_logic;
         mr_mode_rom             : in  std_logic;
+        mr_mode_sam             : in  std_logic;
 
         mr_settings_ena         : in  std_logic;
         mr_settings_nisofd      : in  std_logic;
@@ -747,6 +748,9 @@ architecture rtl of protocol_control_fsm is
     signal rec_ivld_d                   : std_logic;
     signal rec_ivld_q                   : std_logic;
 
+    -- Transmit dominant ACK bit
+    signal tx_dominant_ack              : std_logic;
+
 begin
 
     -- TODO: mr_mode_bmm and mr_mode_rom can be removed! It is guaranteed that
@@ -808,6 +812,12 @@ begin
     frame_start <= '1' when (tx_frame_ready = '1' and go_to_suspend = '0') else
                    '1' when (rx_data_nbs = DOMINANT) else
                    '0';
+
+    tx_dominant_ack <= '1' when  (crc_match = '1') and
+                                  ((is_receiver = '1'    and mr_mode_acf = '0') or
+                                   (is_transmitter = '1' and mr_mode_sam = '1'))
+                           else
+                       '0';
 
     -----------------------------------------------------------------------------------------------
     -- Signal is not decoded inside curr_state process, because it is sensitive to this signal!
@@ -1342,11 +1352,11 @@ begin
         ctrl_ctr_zero, arbitration_lost_condition, tx_data_wbs, is_transmitter, tran_ident_type,
         tran_frame_type_i, tran_is_rtr, ide_is_arbitration, mr_mode_fde, tran_brs, rx_trigger,
         is_err_active, no_data_field, ctrl_counted_byte, ctrl_counted_byte_index, is_fd_frame,
-        is_receiver, crc_match, mr_mode_acf, mr_mode_stm, tx_frame_ready, go_to_suspend, frame_start,
+        is_receiver, crc_match, mr_mode_stm, tx_frame_ready, go_to_suspend, frame_start,
         ctrl_ctr_one, mr_command_ercrst_q, reinteg_ctr_expired, first_err_delim_q, go_to_stuff_count,
         ack_err_flag, crc_length_i, data_length_bits_c, ctrl_ctr_mem_index, is_bus_off,
         block_txtb_unlock, mr_settings_pex, rx_data_nbs_prev, sync_edge, mr_mode_rom,
-        mr_settings_ilbp)
+        mr_settings_ilbp, tx_dominant_ack)
     begin
 
         -------------------------------------------------------------------------------------------
@@ -2155,7 +2165,7 @@ begin
                 pc_dbg.is_ack <= '1';
                 dbt_ctrs_en <= '1';
 
-                if (is_receiver = '1' and crc_match = '1' and mr_mode_acf = '0') then
+                if (tx_dominant_ack = '1') then
                     tx_dominant <= '1';
 
                 -- Bit Error still shall be detected when unit sends dominant
@@ -2181,7 +2191,7 @@ begin
                 pc_dbg.is_ack <= '1';
                 dbt_ctrs_en <= '1';
 
-                if (is_receiver = '1' and crc_match = '1' and mr_mode_acf = '0') then
+                if (tx_dominant_ack = '1') then
                     tx_dominant <= '1';
 
                 -- Bit Error still shall be detected when unit sends dominant
