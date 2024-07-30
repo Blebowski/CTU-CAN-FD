@@ -394,11 +394,11 @@ begin
     -- psl txtb_set_abort_cov : cover {mr_tx_command_txca = '1' and mr_tx_command_txbi = '1'};
 
     -- HW Commands
-    -- psl txtb_hw_lock     : cover {txtb_hw_cmd.lock = '1'     and hw_cbs = '1'};
-    -- psl txtb_hw_valid    : cover {txtb_hw_cmd.valid = '1'    and hw_cbs = '1'};
-    -- psl txtb_hw_err      : cover {txtb_hw_cmd.err = '1'      and hw_cbs = '1'};
-    -- psl txtb_hw_arbl     : cover {txtb_hw_cmd.arbl = '1'     and hw_cbs = '1'};
-    -- psl txtb_hw_failed   : cover {txtb_hw_cmd.failed = '1'   and hw_cbs = '1'};
+    -- psl txtb_hw_lock     : cover {txtb_hw_cmd.lock = '1'     and txtb_hw_cmd_cs = '1'};
+    -- psl txtb_hw_valid    : cover {txtb_hw_cmd.valid = '1'    and txtb_hw_cmd_cs = '1'};
+    -- psl txtb_hw_err      : cover {txtb_hw_cmd.err = '1'      and txtb_hw_cmd_cs = '1'};
+    -- psl txtb_hw_arbl     : cover {txtb_hw_cmd.arbl = '1'     and txtb_hw_cmd_cs = '1'};
+    -- psl txtb_hw_failed   : cover {txtb_hw_cmd.failed = '1'   and txtb_hw_cmd_cs = '1'};
 
     -- psl txtb_double_parity_buf_1_cov : cover
     --    {txtb_bb_parity_error = '1'};
