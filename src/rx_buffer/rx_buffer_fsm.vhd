@@ -403,6 +403,13 @@ begin
         --  ((rec_valid_f = '1' or store_data_f = '1') and curr_state /= s_rxb_store_data)
         -- report "RX Buffer: Store data or frame commit commands did not come when RX Buffer is receiving data!";
 
+        -- psl rxb_not_storing_err_frm_when_next_occurs_asrt : assert never
+        --  (curr_state = s_rxb_store_err_frame_format or
+        --   curr_state = s_rxb_store_err_identifier or
+        --   curr_state = s_rxb_store_err_ts_low or
+        --   curr_state = s_rxb_store_err_ts_high) and (rec_abort_f = '1')
+        -- report "Error frame was not yet fully stored when another one occured.";
+
         process (cmd_join)
         begin
             if (now > 0 ps) then
