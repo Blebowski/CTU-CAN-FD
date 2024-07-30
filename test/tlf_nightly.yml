@@ -111,6 +111,8 @@ tests:
     - name: message_filter
     - name: mode_bus_monitoring
 
+    - name: mode_acf
+
     - name: mode_loopback
       generics:
         /TB_TOP_CTU_CAN_FD/iterations: 10
