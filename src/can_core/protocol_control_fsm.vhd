@@ -883,7 +883,6 @@ begin
                       else
                   '0';
 
-
     crc_src_i <= C_CRC21_SRC when (crc_use_21 = '1') else
                  C_CRC17_SRC when (crc_use_17 = '1') else
                  C_CRC15_SRC;
@@ -2089,6 +2088,7 @@ begin
                 crc_enable <= '1';
                 pc_dbg.is_stuff_count <= '1';
                 bit_err_disable_receiver <= '1';
+                fixed_stuff <= '1';
 
                 if (sp_control_q_i /= NOMINAL_SAMPLE) then
                     dbt_ctrs_en <= '1';
@@ -2100,10 +2100,6 @@ begin
                     ctrl_ctr_pload_i <= '1';
                     tx_load_crc_i <= '1';
                     rx_store_stuff_count_i <= '1';
-                end if;
-
-                if (is_fd_frame = '1') then
-                    fixed_stuff <= '1';
                 end if;
 
             ---------------------------------------------------------------------------------------
