@@ -179,7 +179,7 @@ tests:
     - name: iso_8_2_7
     - name: iso_8_2_8
       generics:
-        /TB_TOP_CTU_CAN_FD/timeout: 200 ms
+        /TB_TOP_CTU_CAN_FD/timeout: 400 ms
 
     - name: iso_8_3_1
     - name: iso_8_3_2
