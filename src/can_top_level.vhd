@@ -400,7 +400,7 @@ architecture rtl of can_top_level is
     signal txtb_port_b_clk_en           :   std_logic;
 
     -- Parity check valid
-    signal txtb_parity_check_valid      :   std_logic_vector(txt_buffer_count - 1 downto 0);
+    signal txtb_parity_check_valid      :   std_logic;
 
     -- Parity mismatch
     signal txtb_parity_mismatch         :   std_logic_vector(txt_buffer_count - 1 downto 0);
@@ -410,6 +410,9 @@ architecture rtl of can_top_level is
 
     -- TXT Buffer
     signal txtb_bb_parity_error         :   std_logic_vector(txt_buffer_count - 1 downto 0);
+
+    -- TXT Buffer index selected by TX Arbitrator of CAN Core
+    signal txtb_index_muxed             :   natural range 0 to txt_buffer_count - 1;
 
     -----------------------------------------------------------------------------------------------
     -- CAN Core <-> TX Arbitrator
@@ -879,10 +882,11 @@ begin
             is_bus_off                  => cc_stat.is_bus_off,                          -- IN
             txtb_available              => txtb_available(i),                           -- OUT
             txtb_allow_bb               => txtb_allow_bb(i),                            -- OUT
-            txtb_parity_check_valid     => txtb_parity_check_valid(i),                  -- IN
+            txtb_parity_check_valid     => txtb_parity_check_valid,                     -- IN
             txtb_parity_mismatch        => txtb_parity_mismatch(i),                     -- OUT
             txtb_parity_error_valid     => txtb_parity_error_valid(i),                  -- OUT
-            txtb_bb_parity_error        => txtb_bb_parity_error(i)                      -- OUT
+            txtb_bb_parity_error        => txtb_bb_parity_error(i),                     -- OUT
+            txtb_index_muxed            => txtb_index_muxed                             -- IN
         );
     end generate;
 
@@ -906,6 +910,7 @@ begin
         txtb_port_b_clk_en              => txtb_port_b_clk_en,              -- OUT
         txtb_parity_check_valid         => txtb_parity_check_valid,         -- OUT
         txtb_parity_mismatch            => txtb_parity_mismatch,            -- IN
+        txtb_index_muxed                => txtb_index_muxed,                -- OUT
         txtb_is_bb                      => txtb_is_bb,                      -- OUT
 
         -- CAN Core Interface
