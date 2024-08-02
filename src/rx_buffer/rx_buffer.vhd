@@ -620,7 +620,7 @@ begin
     --  3. Otherwise Number of data bytes is matching Received DLC!
     -----------------------------------------------------------------------------------------------
     frame_form_w(RWCNT_H downto RWCNT_L)  <=
-        "00011" when (rec_is_rtr = RTR_FRAME) else
+        "00011" when (rec_is_rtr = RTR_FRAME or rec_erf = ERFM_ENABLED) else
         "00101" when ((rec_frame_type = NORMAL_CAN) and (rec_dlc(3) = '1')) else
          std_logic_vector(to_unsigned(rwcnt_com, (RWCNT_H - RWCNT_L + 1)));
 
