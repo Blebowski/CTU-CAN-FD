@@ -82,25 +82,29 @@
 --
 -- @Test sequence:
 --  @1. Configure Loopback mode in DUT.
---  @2. Generate random CAN frame and send it by DUT.
---  @3. Wait until frame is received. Check that DUT has 1 frame in RX Buffer.
---  @4. Read CAN frame from DUT. Check it is the same as transmitted frame.
---      Check the frame contains LBPF flag set.
---      Check that there are 0 frames in RX Buffer of DUT.
---      Read the frame from Test node not to leave it hanging there!
---  @5. Generate random frame and send it by Test Node. Wait until the frame
+--  @2. Loop over all TXT Buffers:
+--      @2.1 Generate random CAN frame and send it by DUT.
+--      @2.2 Wait until frame is received. Check that DUT has 1 frame in
+--           RX Buffer.
+--      @2.3 Read CAN frame from DUT. Check it is the same as transmitted frame.
+--           Check the frame contains LBPF flag set to 1.
+--           Check that LBTBI equals to index of TXT Buffer used to send the
+--           frame.
+--           Check that there are 0 frames in RX Buffer of DUT.
+--           Read the frame from Test node not to leave it hanging there!
+--  @3. Generate random frame and send it by Test Node. Wait until the frame
 --      is sent, and recived in DUT. Read the frame from DUT. Check it matches
 --      the transmitted frame. Check it has LBPF flag set to 0.
---  @6. Set Test node to Acknowledge forbidden mode. Set DUT to one shot mode.
---  @7. Generate random CAN frame and send it by DUT.
---  @8. Wait until transmission is over. Check that TXT Buffer used for transmi-
+--  @4. Set Test node to Acknowledge forbidden mode. Set DUT to one shot mode.
+--  @5. Generate random CAN frame and send it by DUT.
+--  @6. Wait until transmission is over. Check that TXT Buffer used for transmi-
 --      ssion is in TX failed. Check that RX Buffer in DUT has no frame.
---  @9. Disable Loopback mode in DUT. Disable Acknowledge forbidden mode in
+--  @7. Disable Loopback mode in DUT. Disable Acknowledge forbidden mode in
 --      Test node.
--- @10. Send CAN frame by DUT. Wait until frame is over.
--- @11. Check that RX Buffer of DUT has no CAN frame received. Check that
+--  @8. Send CAN frame by DUT. Wait until frame is over.
+--  @9. Check that RX Buffer of DUT has no CAN frame received. Check that
 --      RX Buffer of Test node has frame received.
--- @12. Generate random frame and send it by Test Node. Wait until the frame
+-- @10. Generate random frame and send it by Test Node. Wait until the frame
 --      is sent, and recived in DUT. Read the frame from DUT. Check it matches
 --      the transmitted frame. Check it has LBPF flag set to 0.
 --
@@ -137,6 +141,7 @@ package body mode_loopback_ftest is
         variable txt_buf_state      :       SW_TXT_Buffer_state_type;
         variable rx_buf_state       :       SW_RX_Buffer_info;
         variable frames_equal       :       boolean := false;
+        variable num_txt_bufs       :       natural;
     begin
 
         ------------------------------------------------------------------------
@@ -148,41 +153,56 @@ package body mode_loopback_ftest is
         set_core_mode(mode_1, DUT_NODE, chn);
 
         ------------------------------------------------------------------------
-        -- @2. Generate random CAN frame and send it by DUT.
+        -- @2. Loop over all TXT Buffers:
         ------------------------------------------------------------------------
-        info_m("Step 2: Sending frame by DUT");
+        info_m("Step 2: Iterate over all TXT Buffers");
+        get_tx_buf_count(num_txt_bufs, DUT_NODE, chn);
+        info_m("Number of DUT TXT Buffers: " & integer'image(num_txt_bufs));
 
-        CAN_generate_frame(CAN_TX_frame);
-        CAN_send_frame(CAN_TX_frame, 1, DUT_NODE, chn, frame_sent);
+        for txt_buf_index in 1 to num_txt_bufs loop
 
-        ------------------------------------------------------------------------
-        -- @3. Wait until frame is received. Check that DUT has 1 frame in
-        --     RX Buffer.
-        ------------------------------------------------------------------------
-        info_m("Step 3: Waiting until frame is sent");
+            ------------------------------------------------------------------------
+            -- @2.1 Generate random CAN frame and send it by DUT.
+            ------------------------------------------------------------------------
+            info_m("Step 2.1: Sending frame by DUT");
 
-        CAN_wait_frame_sent(DUT_NODE, chn);
-        get_rx_buf_state(rx_buf_state, DUT_NODE, chn);
-        check_m(rx_buf_state.rx_frame_count = 1, "Own frame in Loopback received");
+            CAN_generate_frame(CAN_TX_frame);
+            CAN_send_frame(CAN_TX_frame, txt_buf_index, DUT_NODE, chn, frame_sent);
 
-        ------------------------------------------------------------------------
-        -- @4. Read CAN frame from DUT. Check it is the same as transmitted frame.
-        --      Check the frame contains LBPF flag set.
-        --      Check that there are 0 frames in RX Buffer of DUT.
-        --      Read the frame from Test node not to leave it hanging there!
-        ------------------------------------------------------------------------
-        info_m("Step 4: Read own transmitted frame from RX Buffer");
+            ------------------------------------------------------------------------
+            -- @2.2 Wait until frame is received. Check that DUT has 1 frame in
+            --      RX Buffer.
+            ------------------------------------------------------------------------
+            info_m("Step 2.2: Waiting until frame is sent");
 
-        CAN_read_frame(CAN_RX_frame, DUT_NODE, chn);
-        CAN_compare_frames(CAN_RX_frame, CAN_TX_frame, false, frames_equal);
-        check_m(frames_equal, "Own frame in Loopback is the same as sent!");
+            CAN_wait_frame_sent(DUT_NODE, chn);
+            get_rx_buf_state(rx_buf_state, DUT_NODE, chn);
+            check_m(rx_buf_state.rx_frame_count = 1, "Own frame in Loopback received");
 
-        check_m(CAN_RX_frame.lbpf = '1', "RX Frame has LBPF flag set!");
+            ------------------------------------------------------------------------
+            -- @2.3 Read CAN frame from DUT. Check it is the same as transmitted frame.
+            --      Check the frame contains LBPF flag set.
+            --      Check that LBTBI equals to index of TXT Buffer used to send the
+            --      frame.
+            --      Check that there are 0 frames in RX Buffer of DUT.
+            --      Read the frame from Test node not to leave it hanging there!
+            ------------------------------------------------------------------------
+            info_m("Step 2.3: Read own transmitted frame from RX Buffer");
 
-        get_rx_buf_state(rx_buf_state, DUT_NODE, chn);
-        check_m(rx_buf_state.rx_frame_count = 0, "Own frame read from RX Buffer");
+            CAN_read_frame(CAN_RX_frame, DUT_NODE, chn);
+            CAN_compare_frames(CAN_RX_frame, CAN_TX_frame, false, frames_equal);
+            check_m(frames_equal, "Own frame in Loopback is the same as sent!");
 
-        CAN_read_frame(CAN_RX_frame, TEST_NODE, chn);
+            check_m(CAN_RX_frame.lbpf = '1', "RX Frame has LBPF flag set!");
+            check_m(CAN_RX_frame.lbtbi = txt_buf_index - 1,
+                        "FRAME_FORMAT_W[LBPF] = Index of TXT Buffer used to transmit loopback frame!");
+
+            get_rx_buf_state(rx_buf_state, DUT_NODE, chn);
+            check_m(rx_buf_state.rx_frame_count = 0, "Own frame read from RX Buffer");
+
+            CAN_read_frame(CAN_RX_frame, TEST_NODE, chn);
+
+        end loop;
 
         ------------------------------------------------------------------------
         -- @5. Generate random frame and send it by Test Node. Wait until the
