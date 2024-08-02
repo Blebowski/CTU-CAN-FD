@@ -9,6 +9,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '1', rtr => '0', brs => '1', data_length => 8, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "1000", identifier =>  57010467,
          data => (x"d2", x"44", x"86", x"d5", x"5b", x"9f", x"df", x"d9", OTHERS => x"00")
         ),
@@ -31,6 +32,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '1', rtr => '0', brs => '1', data_length => 2, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0010", identifier => 423236061,
          data => (x"37", x"12", OTHERS => x"00")
         ),
@@ -49,6 +51,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '1', rtr => '1', brs => '0', data_length => 0, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0000", identifier => 305297278,
          data => (OTHERS => x"00")
         ),
@@ -65,6 +68,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '0', rtr => '0', brs => '0', data_length => 16, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "1010", identifier =>      1556,
          data => (x"4b", x"d8", x"9b", x"c3", x"2f", x"12", x"97", x"73", x"18", x"ec", x"ce", x"b8", x"cd", x"a9", x"cd", x"4d", OTHERS => x"00")
         ),
@@ -89,6 +93,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '0', rtr => '1', brs => '0', data_length => 0, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0000", identifier =>      1435,
          data => (OTHERS => x"00")
         ),
@@ -103,6 +108,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '0', rtr => '0', brs => '0', data_length => 5, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0101", identifier =>        90,
          data => (x"ca", x"b0", x"eb", x"55", x"20", OTHERS => x"00")
         ),
@@ -120,6 +126,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '1', rtr => '0', brs => '0', data_length => 6, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0110", identifier => 356692468,
          data => (x"cd", x"92", x"52", x"e6", x"fe", x"21", OTHERS => x"00")
         ),
@@ -139,6 +146,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '0', rtr => '0', brs => '0', data_length => 3, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0011", identifier =>      1737,
          data => (x"cc", x"7e", x"e8", OTHERS => x"00")
         ),
@@ -156,6 +164,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '0', rtr => '0', brs => '1', data_length => 8, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "1000", identifier =>       880,
          data => (x"22", x"5f", x"4d", x"d2", x"4c", x"a3", x"f2", x"82", OTHERS => x"00")
         ),
@@ -176,6 +185,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '0', rtr => '0', brs => '0', data_length => 0, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0000", identifier =>      1931,
          data => (OTHERS => x"00")
         ),
@@ -190,6 +200,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '1', rtr => '0', brs => '0', data_length => 6, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0110", identifier => 212586300,
          data => (x"82", x"5c", x"ed", x"ee", x"76", x"bb", OTHERS => x"00")
         ),
@@ -209,6 +220,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '1', rtr => '0', brs => '1', data_length => 24, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "1100", identifier =>  34507786,
          data => (x"48", x"93", x"e8", x"a7", x"e1", x"bc", x"73", x"05", x"2f", x"f6", x"d6", x"de", x"74", x"86", x"5c", x"05", x"89", x"bf", x"15", x"2d", x"43", x"f0", x"1b", x"b1", OTHERS => x"00")
         ),
@@ -240,6 +252,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '0', rtr => '0', brs => '0', data_length => 7, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0111", identifier =>      1905,
          data => (x"b1", x"0e", x"e0", x"45", x"f7", x"88", x"a6", OTHERS => x"00")
         ),
@@ -259,6 +272,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '0', rtr => '0', brs => '1', data_length => 2, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0010", identifier =>      1461,
          data => (x"81", x"c2", OTHERS => x"00")
         ),
@@ -276,6 +290,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '1', rtr => '1', brs => '0', data_length => 0, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0000", identifier => 482019346,
          data => (OTHERS => x"00")
         ),
@@ -292,6 +307,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '1', rtr => '0', brs => '0', data_length => 12, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "1001", identifier => 362222387,
          data => (x"d9", x"54", x"5a", x"b0", x"f3", x"a1", x"49", x"25", x"b0", x"2a", x"ea", x"28", OTHERS => x"00")
         ),
@@ -317,6 +333,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '1', rtr => '0', brs => '1', data_length => 48, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "1110", identifier => 409399405,
          data => (x"3f", x"22", x"3e", x"02", x"8a", x"c6", x"21", x"f6", x"d8", x"80", x"79", x"97", x"a1", x"eb", x"f1", x"75", x"46", x"a2", x"e9", x"68", x"6b", x"0f", x"98", x"15", x"79", x"40", x"47", x"8b", x"9c", x"f6", x"48", x"db", x"98", x"86", x"5e", x"23", x"cd", x"7f", x"1b", x"26", x"7f", x"14", x"be", x"a1", x"00", x"30", x"17", x"c5", OTHERS => x"00")
         ),
@@ -358,6 +375,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '1', rtr => '0', brs => '1', data_length => 2, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0010", identifier => 399186515,
          data => (x"46", x"d2", OTHERS => x"00")
         ),
@@ -376,6 +394,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '1', rtr => '1', brs => '0', data_length => 0, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0000", identifier => 179991338,
          data => (OTHERS => x"00")
         ),
@@ -392,6 +411,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '0', rtr => '0', brs => '0', data_length => 5, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0101", identifier =>       761,
          data => (x"5d", x"cc", x"32", x"5c", x"67", OTHERS => x"00")
         ),
@@ -409,6 +429,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '0', rtr => '0', brs => '0', data_length => 7, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0111", identifier =>       840,
          data => (x"fa", x"c6", x"15", x"41", x"19", x"96", x"ee", OTHERS => x"00")
         ),
@@ -427,6 +448,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '1', rtr => '0', brs => '0', data_length => 2, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0010", identifier => 164387073,
          data => (x"3c", x"c4", OTHERS => x"00")
         ),
@@ -443,6 +465,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '1', rtr => '0', brs => '0', data_length => 2, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0010", identifier => 534122743,
          data => (x"fe", x"87", OTHERS => x"00")
         ),
@@ -461,6 +484,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '1', rtr => '1', brs => '0', data_length => 0, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0000", identifier => 263720382,
          data => (OTHERS => x"00")
         ),
@@ -476,6 +500,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '0', rtr => '1', brs => '0', data_length => 0, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0000", identifier =>      1348,
          data => (OTHERS => x"00")
         ),
@@ -491,6 +516,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '0', rtr => '0', brs => '0', data_length => 3, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0011", identifier =>      1793,
          data => (x"1d", x"da", x"e1", OTHERS => x"00")
         ),
@@ -507,6 +533,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '1', rtr => '1', brs => '0', data_length => 0, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0000", identifier => 336225226,
          data => (OTHERS => x"00")
         ),
@@ -523,6 +550,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '1', rtr => '0', brs => '1', data_length => 16, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "1010", identifier =>  36738135,
          data => (x"89", x"a4", x"e5", x"44", x"f0", x"a0", x"5c", x"a5", x"33", x"4f", x"d4", x"5c", x"41", x"fe", x"4d", x"c7", OTHERS => x"00")
         ),
@@ -549,6 +577,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '1', rtr => '0', brs => '0', data_length => 1, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0001", identifier =>  27507003,
          data => (x"a8", OTHERS => x"00")
         ),
@@ -565,6 +594,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '1', rtr => '1', brs => '0', data_length => 0, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0000", identifier => 194519632,
          data => (OTHERS => x"00")
         ),
@@ -580,6 +610,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '1', rtr => '0', brs => '0', data_length => 3, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0011", identifier => 102566857,
          data => (x"e0", x"1b", x"1d", OTHERS => x"00")
         ),
@@ -597,6 +628,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '1', rtr => '1', brs => '0', data_length => 0, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0000", identifier => 414831655,
          data => (OTHERS => x"00")
         ),
@@ -612,6 +644,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '1', rtr => '0', brs => '0', data_length => 4, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0100", identifier => 323155455,
          data => (x"97", x"d0", x"36", x"6f", OTHERS => x"00")
         ),
@@ -630,6 +663,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '1', rtr => '0', brs => '1', data_length => 16, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "1010", identifier =>   9958246,
          data => (x"6f", x"7b", x"75", x"85", x"52", x"44", x"41", x"87", x"1c", x"a1", x"22", x"39", x"f3", x"dd", x"32", x"6b", OTHERS => x"00")
         ),
@@ -655,6 +689,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '0', rtr => '1', brs => '0', data_length => 0, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0000", identifier =>       956,
          data => (OTHERS => x"00")
         ),
@@ -669,6 +704,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '1', rtr => '0', brs => '0', data_length => 7, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0111", identifier => 169711965,
          data => (x"8b", x"37", x"48", x"6a", x"09", x"37", x"65", OTHERS => x"00")
         ),
@@ -690,6 +726,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '1', rtr => '0', brs => '1', data_length => 4, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0100", identifier => 173073661,
          data => (x"be", x"5f", x"1f", x"60", OTHERS => x"00")
         ),
@@ -709,6 +746,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '0', rtr => '0', brs => '1', data_length => 5, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0101", identifier =>       332,
          data => (x"8a", x"c5", x"b7", x"a0", x"c9", OTHERS => x"00")
         ),
@@ -728,6 +766,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '1', rtr => '0', brs => '1', data_length => 0, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0000", identifier => 236547449,
          data => (OTHERS => x"00")
         ),
@@ -745,6 +784,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '1', rtr => '0', brs => '0', data_length => 16, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "1010", identifier => 197578325,
          data => (x"6d", x"7b", x"34", x"a9", x"b2", x"77", x"a6", x"f0", x"56", x"45", x"51", x"6e", x"d8", x"10", x"39", x"58", OTHERS => x"00")
         ),
@@ -772,6 +812,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '0', rtr => '1', brs => '0', data_length => 0, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0000", identifier =>      1456,
          data => (OTHERS => x"00")
         ),
@@ -786,6 +827,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '0', rtr => '1', brs => '0', data_length => 0, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0000", identifier =>       291,
          data => (OTHERS => x"00")
         ),
@@ -800,6 +842,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '0', rtr => '1', brs => '0', data_length => 0, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0000", identifier =>       599,
          data => (OTHERS => x"00")
         ),
@@ -814,6 +857,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '0', rtr => '1', brs => '0', data_length => 0, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0000", identifier =>      1188,
          data => (OTHERS => x"00")
         ),
@@ -828,6 +872,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '0', rtr => '0', brs => '0', data_length => 7, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0111", identifier =>       686,
          data => (x"9a", x"13", x"0a", x"2a", x"4c", x"62", x"c3", OTHERS => x"00")
         ),
@@ -847,6 +892,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '1', rtr => '0', brs => '1', data_length => 32, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "1101", identifier => 370332193,
          data => (x"08", x"fd", x"fb", x"7f", x"13", x"e8", x"ad", x"bd", x"0c", x"c8", x"e3", x"63", x"8d", x"bb", x"b1", x"78", x"05", x"56", x"a9", x"9f", x"69", x"b3", x"c9", x"35", x"95", x"0d", x"01", x"07", x"0b", x"95", x"43", x"93", OTHERS => x"00")
         ),
@@ -882,6 +928,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '1', rtr => '0', brs => '0', data_length => 2, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0010", identifier => 114034861,
          data => (x"c1", x"e4", OTHERS => x"00")
         ),
@@ -899,6 +946,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '1', rtr => '0', brs => '1', data_length => 12, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "1001", identifier => 227732109,
          data => (x"05", x"c9", x"90", x"0a", x"20", x"3a", x"29", x"89", x"6d", x"72", x"be", x"03", OTHERS => x"00")
         ),
@@ -923,6 +971,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '1', rtr => '0', brs => '1', data_length => 12, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "1001", identifier => 290147373,
          data => (x"cc", x"9d", x"6a", x"8c", x"b1", x"91", x"35", x"f2", x"f6", x"69", x"7c", x"be", OTHERS => x"00")
         ),
@@ -948,6 +997,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '1', rtr => '1', brs => '0', data_length => 0, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0000", identifier => 107380952,
          data => (OTHERS => x"00")
         ),
@@ -963,6 +1013,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '0', rtr => '0', brs => '0', data_length => 6, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0110", identifier =>       969,
          data => (x"4e", x"e7", x"33", x"51", x"67", x"73", OTHERS => x"00")
         ),
@@ -980,6 +1031,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '1', rtr => '0', brs => '1', data_length => 0, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0000", identifier => 480365828,
          data => (OTHERS => x"00")
         ),
@@ -997,6 +1049,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '1', rtr => '0', brs => '0', data_length => 0, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0000", identifier =>  10989171,
          data => (OTHERS => x"00")
         ),
@@ -1014,6 +1067,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '0', rtr => '0', brs => '1', data_length => 16, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "1010", identifier =>      1223,
          data => (x"55", x"45", x"3f", x"a0", x"ea", x"0c", x"0c", x"cb", x"82", x"80", x"99", x"6a", x"b3", x"6a", x"52", x"a7", OTHERS => x"00")
         ),
@@ -1040,6 +1094,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '0', rtr => '0', brs => '1', data_length => 3, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0011", identifier =>      1313,
          data => (x"a5", x"24", x"95", OTHERS => x"00")
         ),
@@ -1058,6 +1113,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '0', rtr => '0', brs => '0', data_length => 7, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0111", identifier =>       751,
          data => (x"79", x"24", x"38", x"3f", x"63", x"d8", x"2a", OTHERS => x"00")
         ),
@@ -1075,6 +1131,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '1', rtr => '0', brs => '0', data_length => 6, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0110", identifier => 238296899,
          data => (x"0f", x"dc", x"18", x"7a", x"2f", x"bf", OTHERS => x"00")
         ),
@@ -1094,6 +1151,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '1', rtr => '0', brs => '0', data_length => 6, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0110", identifier => 238296899,
          data => (x"0f", x"dc", x"18", x"7a", x"2f", x"bf", OTHERS => x"00")
         ),
@@ -1113,6 +1171,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '1', rtr => '1', brs => '0', data_length => 0, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0000", identifier => 160998377,
          data => (OTHERS => x"00")
         ),
@@ -1128,6 +1187,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '1', rtr => '0', brs => '1', data_length => 32, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "1101", identifier => 465089073,
          data => (x"49", x"54", x"a8", x"f9", x"9b", x"80", x"4e", x"79", x"44", x"31", x"9f", x"30", x"f6", x"bf", x"40", x"f4", x"9f", x"33", x"4b", x"a9", x"15", x"06", x"a8", x"e9", x"25", x"b7", x"9b", x"5c", x"41", x"fb", x"d3", x"8b", OTHERS => x"00")
         ),
@@ -1162,6 +1222,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '1', rtr => '0', brs => '1', data_length => 8, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "1000", identifier => 461160485,
          data => (x"d2", x"65", x"c1", x"04", x"05", x"71", x"7a", x"44", OTHERS => x"00")
         ),
@@ -1183,6 +1244,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '1', rtr => '0', brs => '0', data_length => 12, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "1001", identifier =>  33265063,
          data => (x"8c", x"f9", x"40", x"36", x"e3", x"e4", x"ed", x"00", x"41", x"af", x"7b", x"16", OTHERS => x"00")
         ),
@@ -1205,6 +1267,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '1', rtr => '0', brs => '0', data_length => 6, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0110", identifier =>  85206202,
          data => (x"90", x"12", x"1d", x"d2", x"16", x"22", OTHERS => x"00")
         ),
@@ -1224,6 +1287,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '1', rtr => '0', brs => '0', data_length => 1, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0001", identifier => 129228963,
          data => (x"4a", OTHERS => x"00")
         ),
@@ -1240,6 +1304,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '1', rtr => '1', brs => '0', data_length => 0, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0000", identifier => 443522386,
          data => (OTHERS => x"00")
         ),
@@ -1256,6 +1321,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '0', rtr => '0', brs => '1', data_length => 5, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0101", identifier =>      1326,
          data => (x"9f", x"aa", x"b3", x"35", x"e5", OTHERS => x"00")
         ),
@@ -1275,6 +1341,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '0', rtr => '0', brs => '1', data_length => 24, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "1100", identifier =>      2033,
          data => (x"37", x"d4", x"2c", x"cc", x"76", x"70", x"dc", x"dc", x"66", x"5c", x"a6", x"41", x"95", x"fc", x"15", x"0f", x"8a", x"4d", x"6d", x"85", x"85", x"8c", x"30", x"b9", OTHERS => x"00")
         ),
@@ -1304,6 +1371,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '0', rtr => '0', brs => '0', data_length => 7, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0111", identifier =>      1404,
          data => (x"f1", x"63", x"71", x"46", x"8f", x"3e", x"bd", OTHERS => x"00")
         ),
@@ -1323,6 +1391,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '0', rtr => '0', brs => '0', data_length => 6, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0110", identifier =>       166,
          data => (x"c0", x"a7", x"0c", x"bd", x"3d", x"1b", OTHERS => x"00")
         ),
@@ -1341,6 +1410,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '0', rtr => '0', brs => '0', data_length => 4, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0100", identifier =>       448,
          data => (x"14", x"7d", x"4a", x"56", OTHERS => x"00")
         ),
@@ -1357,6 +1427,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '1', rtr => '0', brs => '0', data_length => 1, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0001", identifier =>  57890535,
          data => (x"44", OTHERS => x"00")
         ),
@@ -1373,6 +1444,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '0', rtr => '1', brs => '0', data_length => 0, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0000", identifier =>      1250,
          data => (OTHERS => x"00")
         ),
@@ -1388,6 +1460,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '1', rtr => '0', brs => '0', data_length => 3, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0011", identifier =>  67349976,
          data => (x"54", x"63", x"99", OTHERS => x"00")
         ),
@@ -1405,6 +1478,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '0', rtr => '0', brs => '1', data_length => 20, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "1011", identifier =>       749,
          data => (x"bb", x"28", x"ba", x"d0", x"a6", x"84", x"a6", x"39", x"88", x"87", x"87", x"fc", x"cc", x"c5", x"b8", x"21", x"43", x"32", x"75", x"d9", OTHERS => x"00")
         ),
@@ -1432,6 +1506,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '1', rtr => '0', brs => '0', data_length => 6, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0110", identifier => 387204196,
          data => (x"02", x"2c", x"34", x"37", x"86", x"5f", OTHERS => x"00")
         ),
@@ -1450,6 +1525,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '0', rtr => '0', brs => '0', data_length => 6, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0110", identifier =>      1533,
          data => (x"9e", x"6a", x"0f", x"a6", x"71", x"16", OTHERS => x"00")
         ),
@@ -1469,6 +1545,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '1', rtr => '1', brs => '0', data_length => 0, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0000", identifier => 395469426,
          data => (OTHERS => x"00")
         ),
@@ -1485,6 +1562,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '0', rtr => '1', brs => '0', data_length => 0, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0000", identifier =>       566,
          data => (OTHERS => x"00")
         ),
@@ -1500,6 +1578,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '0', rtr => '0', brs => '0', data_length => 4, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0100", identifier =>       829,
          data => (x"1a", x"4e", x"1a", x"20", OTHERS => x"00")
         ),
@@ -1517,6 +1596,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '1', rtr => '0', brs => '1', data_length => 7, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0111", identifier =>   3686073,
          data => (x"a4", x"65", x"ba", x"b3", x"8b", x"2d", x"49", OTHERS => x"00")
         ),
@@ -1538,6 +1618,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '1', rtr => '1', brs => '0', data_length => 0, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0000", identifier => 206815433,
          data => (OTHERS => x"00")
         ),
@@ -1554,6 +1635,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '1', rtr => '0', brs => '0', data_length => 3, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0011", identifier => 178310902,
          data => (x"23", x"1e", x"5f", OTHERS => x"00")
         ),
@@ -1571,6 +1653,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '1', rtr => '0', brs => '0', data_length => 4, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0100", identifier => 427377191,
          data => (x"1a", x"38", x"a9", x"e9", OTHERS => x"00")
         ),
@@ -1590,6 +1673,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '1', rtr => '1', brs => '0', data_length => 0, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0000", identifier => 296406602,
          data => (OTHERS => x"00")
         ),
@@ -1606,6 +1690,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '1', rtr => '0', brs => '0', data_length => 4, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0100", identifier => 444324431,
          data => (x"4d", x"31", x"ac", x"17", OTHERS => x"00")
         ),
@@ -1624,6 +1709,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '1', rtr => '0', brs => '0', data_length => 0, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0000", identifier =>  78328184,
          data => (OTHERS => x"00")
         ),
@@ -1639,6 +1725,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '1', rtr => '1', brs => '0', data_length => 0, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0000", identifier => 245875769,
          data => (OTHERS => x"00")
         ),
@@ -1654,6 +1741,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '0', rtr => '0', brs => '0', data_length => 2, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0010", identifier =>      1571,
          data => (x"1a", x"96", OTHERS => x"00")
         ),
@@ -1671,6 +1759,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '0', rtr => '0', brs => '0', data_length => 12, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "1001", identifier =>      1917,
          data => (x"e6", x"ac", x"ab", x"73", x"4c", x"78", x"24", x"79", x"8f", x"1a", x"42", x"44", OTHERS => x"00")
         ),
@@ -1693,6 +1782,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '1', rtr => '0', brs => '0', data_length => 7, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0111", identifier => 255772703,
          data => (x"32", x"f2", x"28", x"52", x"62", x"d4", x"2b", OTHERS => x"00")
         ),
@@ -1714,6 +1804,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '1', rtr => '1', brs => '0', data_length => 0, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0000", identifier => 246036032,
          data => (OTHERS => x"00")
         ),
@@ -1730,6 +1821,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '0', rtr => '0', brs => '0', data_length => 4, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0100", identifier =>      1600,
          data => (x"e9", x"37", x"fd", x"0e", OTHERS => x"00")
         ),
@@ -1746,6 +1838,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '1', rtr => '0', brs => '0', data_length => 0, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0000", identifier => 154026041,
          data => (OTHERS => x"00")
         ),
@@ -1761,6 +1854,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '1', rtr => '0', brs => '0', data_length => 2, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0010", identifier => 270749090,
          data => (x"20", x"08", OTHERS => x"00")
         ),
@@ -1779,6 +1873,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '1', rtr => '0', brs => '0', data_length => 2, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0010", identifier =>  18953096,
          data => (x"e6", x"6a", OTHERS => x"00")
         ),
@@ -1796,6 +1891,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '1', rtr => '1', brs => '0', data_length => 0, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0000", identifier => 376407174,
          data => (OTHERS => x"00")
         ),
@@ -1812,6 +1908,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '1', rtr => '0', brs => '0', data_length => 7, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0111", identifier => 177354254,
          data => (x"53", x"68", x"31", x"60", x"11", x"a3", x"32", OTHERS => x"00")
         ),
@@ -1831,6 +1928,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '1', rtr => '0', brs => '1', data_length => 3, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0011", identifier => 172978889,
          data => (x"bf", x"a3", x"c1", OTHERS => x"00")
         ),
@@ -1850,6 +1948,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '1', rtr => '1', brs => '0', data_length => 0, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0000", identifier => 171272014,
          data => (OTHERS => x"00")
         ),
@@ -1866,6 +1965,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '0', rtr => '0', brs => '0', data_length => 5, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0101", identifier =>      1737,
          data => (x"3d", x"17", x"9c", x"13", x"f1", OTHERS => x"00")
         ),
@@ -1884,6 +1984,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '0', rtr => '0', brs => '1', data_length => 48, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "1110", identifier =>      1652,
          data => (x"6c", x"73", x"79", x"73", x"85", x"19", x"10", x"1c", x"d9", x"b3", x"dd", x"8c", x"c1", x"9e", x"dd", x"b6", x"4a", x"51", x"23", x"70", x"a2", x"60", x"87", x"3f", x"f2", x"79", x"dd", x"d9", x"54", x"2d", x"22", x"40", x"20", x"1b", x"33", x"a6", x"35", x"43", x"c2", x"8e", x"77", x"20", x"9a", x"b8", x"3e", x"79", x"70", x"09", OTHERS => x"00")
         ),
@@ -1924,6 +2025,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '1', rtr => '0', brs => '0', data_length => 8, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "1000", identifier => 473973683,
          data => (x"81", x"ac", x"66", x"7a", x"0a", x"41", x"ce", x"37", OTHERS => x"00")
         ),
@@ -1944,6 +2046,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '0', rtr => '0', brs => '0', data_length => 6, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0110", identifier =>      1484,
          data => (x"7d", x"33", x"06", x"bf", x"41", x"fc", OTHERS => x"00")
         ),
@@ -1961,6 +2064,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '0', rtr => '0', brs => '1', data_length => 12, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "1001", identifier =>       213,
          data => (x"27", x"a7", x"9f", x"3a", x"a0", x"0c", x"2d", x"22", x"b8", x"93", x"9d", x"42", OTHERS => x"00")
         ),
@@ -1983,6 +2087,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '0', rtr => '0', brs => '0', data_length => 6, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0110", identifier =>      1874,
          data => (x"d0", x"36", x"3e", x"cd", x"e8", x"c3", OTHERS => x"00")
         ),
@@ -2002,6 +2107,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '1', rtr => '0', brs => '0', data_length => 4, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0100", identifier => 471922674,
          data => (x"f7", x"0c", x"dc", x"1f", OTHERS => x"00")
         ),
@@ -2020,6 +2126,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '0', rtr => '0', brs => '0', data_length => 7, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0111", identifier =>      1446,
          data => (x"06", x"76", x"41", x"19", x"93", x"83", x"ed", OTHERS => x"00")
         ),
@@ -2039,6 +2146,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '0', rtr => '0', brs => '1', data_length => 16, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "1010", identifier =>       404,
          data => (x"5a", x"b9", x"1c", x"c3", x"fc", x"aa", x"6e", x"3e", x"19", x"75", x"36", x"a4", x"52", x"d4", x"d8", x"4e", OTHERS => x"00")
         ),
@@ -2065,6 +2173,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '1', rtr => '0', brs => '0', data_length => 3, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0011", identifier =>   5990782,
          data => (x"17", x"cc", x"b7", OTHERS => x"00")
         ),
@@ -2083,6 +2192,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '1', rtr => '1', brs => '0', data_length => 0, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0000", identifier =>  15276411,
          data => (OTHERS => x"00")
         ),
@@ -2099,6 +2209,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '1', rtr => '0', brs => '0', data_length => 3, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0011", identifier => 102849376,
          data => (x"7d", x"69", x"2e", OTHERS => x"00")
         ),
@@ -2116,6 +2227,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '1', rtr => '1', brs => '0', data_length => 0, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0000", identifier => 210354981,
          data => (OTHERS => x"00")
         ),
@@ -2132,6 +2244,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '0', rtr => '1', brs => '0', data_length => 0, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0000", identifier =>      1244,
          data => (OTHERS => x"00")
         ),
@@ -2147,6 +2260,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '0', rtr => '0', brs => '0', data_length => 4, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0100", identifier =>       768,
          data => (x"6e", x"62", x"cc", x"89", OTHERS => x"00")
         ),
@@ -2164,6 +2278,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '0', rtr => '0', brs => '0', data_length => 7, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0111", identifier =>      1653,
          data => (x"09", x"34", x"24", x"0c", x"b1", x"0d", x"3a", OTHERS => x"00")
         ),
@@ -2182,6 +2297,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '1', rtr => '0', brs => '1', data_length => 6, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0110", identifier => 256061235,
          data => (x"ec", x"b0", x"49", x"31", x"31", x"aa", OTHERS => x"00")
         ),
@@ -2202,6 +2318,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '0', rtr => '0', brs => '1', data_length => 4, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0100", identifier =>       268,
          data => (x"22", x"84", x"7f", x"bd", OTHERS => x"00")
         ),
@@ -2219,6 +2336,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '1', rtr => '1', brs => '0', data_length => 0, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0000", identifier =>  66856930,
          data => (OTHERS => x"00")
         ),
@@ -2234,6 +2352,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '0', rtr => '0', brs => '0', data_length => 1, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0001", identifier =>      1759,
          data => (x"f0", OTHERS => x"00")
         ),
@@ -2248,6 +2367,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '0', rtr => '0', brs => '0', data_length => 7, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0111", identifier =>       544,
          data => (x"5e", x"eb", x"05", x"10", x"9d", x"af", x"b2", OTHERS => x"00")
         ),
@@ -2267,6 +2387,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '1', rtr => '1', brs => '0', data_length => 0, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0000", identifier => 178413541,
          data => (OTHERS => x"00")
         ),
@@ -2283,6 +2404,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '0', rtr => '0', brs => '1', data_length => 1, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0001", identifier =>       953,
          data => (x"0a", OTHERS => x"00")
         ),
@@ -2299,6 +2421,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '1', rtr => '0', brs => '0', data_length => 6, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0110", identifier => 268625825,
          data => (x"17", x"8d", x"8c", x"d4", x"35", x"7e", OTHERS => x"00")
         ),
@@ -2319,6 +2442,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '1', rtr => '0', brs => '1', data_length => 0, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0000", identifier => 184178107,
          data => (OTHERS => x"00")
         ),
@@ -2336,6 +2460,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '0', rtr => '0', brs => '0', data_length => 5, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0101", identifier =>      1789,
          data => (x"17", x"88", x"5a", x"a8", x"76", OTHERS => x"00")
         ),
@@ -2353,6 +2478,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '1', rtr => '1', brs => '0', data_length => 0, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0000", identifier => 411712070,
          data => (OTHERS => x"00")
         ),
@@ -2369,6 +2495,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '0', rtr => '0', brs => '1', data_length => 3, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0011", identifier =>      1825,
          data => (x"92", x"d0", x"3f", OTHERS => x"00")
         ),
@@ -2386,6 +2513,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '0', rtr => '0', brs => '1', data_length => 20, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "1011", identifier =>      1711,
          data => (x"13", x"e0", x"f7", x"d7", x"e8", x"06", x"7c", x"26", x"5f", x"46", x"ad", x"d9", x"ee", x"26", x"92", x"24", x"fa", x"ac", x"67", x"00", OTHERS => x"00")
         ),
@@ -2413,6 +2541,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '0', rtr => '0', brs => '0', data_length => 4, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0100", identifier =>       998,
          data => (x"a6", x"54", x"25", x"1c", OTHERS => x"00")
         ),
@@ -2430,6 +2559,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '0', rtr => '0', brs => '0', data_length => 7, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0111", identifier =>      1747,
          data => (x"63", x"cc", x"7b", x"96", x"de", x"cb", x"55", OTHERS => x"00")
         ),
@@ -2448,6 +2578,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '1', rtr => '1', brs => '0', data_length => 0, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0000", identifier => 338419243,
          data => (OTHERS => x"00")
         ),
@@ -2464,6 +2595,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '1', rtr => '1', brs => '0', data_length => 0, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0000", identifier => 106744911,
          data => (OTHERS => x"00")
         ),
@@ -2479,6 +2611,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '1', rtr => '1', brs => '0', data_length => 0, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0000", identifier => 106744911,
          data => (OTHERS => x"00")
         ),
@@ -2494,6 +2627,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '1', rtr => '0', brs => '1', data_length => 12, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "1001", identifier => 288306532,
          data => (x"69", x"78", x"7d", x"36", x"f4", x"93", x"94", x"c0", x"68", x"5b", x"92", x"7b", OTHERS => x"00")
         ),
@@ -2518,6 +2652,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '0', rtr => '1', brs => '0', data_length => 0, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0000", identifier =>       538,
          data => (OTHERS => x"00")
         ),
@@ -2532,6 +2667,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '1', rtr => '0', brs => '0', data_length => 3, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0011", identifier => 472472594,
          data => (x"54", x"3d", x"c5", OTHERS => x"00")
         ),
@@ -2551,6 +2687,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '1', rtr => '0', brs => '1', data_length => 24, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "1100", identifier => 191548901,
          data => (x"2c", x"a0", x"a1", x"29", x"d6", x"96", x"3c", x"6b", x"d7", x"a5", x"47", x"e9", x"a0", x"e0", x"46", x"c9", x"ab", x"59", x"a6", x"35", x"37", x"5c", x"c8", x"8b", OTHERS => x"00")
         ),
@@ -2583,6 +2720,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '0', rtr => '1', brs => '0', data_length => 0, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0000", identifier =>       898,
          data => (OTHERS => x"00")
         ),
@@ -2597,6 +2735,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '1', rtr => '1', brs => '0', data_length => 0, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0000", identifier =>  11466472,
          data => (OTHERS => x"00")
         ),
@@ -2612,6 +2751,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '1', rtr => '0', brs => '0', data_length => 1, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0001", identifier => 431510144,
          data => (x"3c", OTHERS => x"00")
         ),
@@ -2630,6 +2770,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '1', rtr => '0', brs => '0', data_length => 6, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0110", identifier => 392334948,
          data => (x"ec", x"c3", x"97", x"c5", x"6a", x"cc", OTHERS => x"00")
         ),
@@ -2649,6 +2790,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '0', rtr => '1', brs => '0', data_length => 0, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0000", identifier =>        88,
          data => (OTHERS => x"00")
         ),
@@ -2663,6 +2805,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '1', rtr => '0', brs => '0', data_length => 7, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0111", identifier => 162914549,
          data => (x"10", x"14", x"19", x"5e", x"8a", x"71", x"44", OTHERS => x"00")
         ),
@@ -2682,6 +2825,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '1', rtr => '1', brs => '0', data_length => 0, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0000", identifier =>  76398416,
          data => (OTHERS => x"00")
         ),
@@ -2698,6 +2842,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '1', rtr => '0', brs => '0', data_length => 0, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0000", identifier => 467415913,
          data => (OTHERS => x"00")
         ),
@@ -2715,6 +2860,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '1', rtr => '0', brs => '0', data_length => 2, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0010", identifier => 352931593,
          data => (x"05", x"a9", OTHERS => x"00")
         ),
@@ -2733,6 +2879,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '0', rtr => '0', brs => '0', data_length => 16, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "1010", identifier =>      1005,
          data => (x"94", x"29", x"59", x"28", x"42", x"b8", x"b2", x"b4", x"fc", x"71", x"6a", x"fc", x"88", x"2d", x"25", x"19", OTHERS => x"00")
         ),
@@ -2758,6 +2905,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '0', rtr => '0', brs => '1', data_length => 20, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "1011", identifier =>      1951,
          data => (x"2c", x"b5", x"e9", x"b0", x"de", x"c9", x"96", x"ad", x"5d", x"df", x"43", x"07", x"b9", x"6b", x"c8", x"f1", x"1f", x"7d", x"6e", x"10", OTHERS => x"00")
         ),
@@ -2784,6 +2932,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '1', rtr => '1', brs => '0', data_length => 0, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0000", identifier => 495543110,
          data => (OTHERS => x"00")
         ),
@@ -2800,6 +2949,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '1', rtr => '0', brs => '0', data_length => 0, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0000", identifier => 304116875,
          data => (OTHERS => x"00")
         ),
@@ -2817,6 +2967,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '1', rtr => '0', brs => '0', data_length => 3, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0011", identifier => 295395470,
          data => (x"a6", x"12", x"13", OTHERS => x"00")
         ),
@@ -2835,6 +2986,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '1', rtr => '0', brs => '0', data_length => 6, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0110", identifier => 332556678,
          data => (x"ab", x"83", x"bf", x"9d", x"a2", x"bc", OTHERS => x"00")
         ),
@@ -2854,6 +3006,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '0', rtr => '0', brs => '1', data_length => 64, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "1111", identifier =>      1530,
          data => (x"3a", x"88", x"fb", x"2b", x"52", x"9a", x"3d", x"30", x"e5", x"84", x"78", x"62", x"aa", x"8a", x"f4", x"7f", x"f8", x"e6", x"97", x"ef", x"93", x"1c", x"af", x"b0", x"3e", x"eb", x"bd", x"71", x"91", x"b5", x"bb", x"cb", x"bd", x"b8", x"76", x"11", x"d2", x"33", x"c0", x"39", x"b7", x"39", x"9b", x"e2", x"43", x"10", x"62", x"3d", x"f6", x"fa", x"ac", x"0a", x"96", x"db", x"bb", x"54", x"c7", x"f8", x"45", x"59", x"2e", x"02", x"a5", x"eb")
         ),
@@ -2904,6 +3057,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '0', rtr => '1', brs => '0', data_length => 0, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0000", identifier =>        16,
          data => (OTHERS => x"00")
         ),
@@ -2918,6 +3072,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '1', rtr => '0', brs => '0', data_length => 8, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "1000", identifier => 291190908,
          data => (x"69", x"ba", x"f0", x"cc", x"77", x"e8", x"47", x"24", OTHERS => x"00")
         ),
@@ -2938,6 +3093,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '0', rtr => '0', brs => '0', data_length => 6, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0110", identifier =>       498,
          data => (x"47", x"a6", x"77", x"21", x"d4", x"f8", OTHERS => x"00")
         ),
@@ -2956,6 +3112,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '1', rtr => '0', brs => '0', data_length => 6, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0110", identifier => 517527566,
          data => (x"bf", x"b0", x"fb", x"86", x"38", x"73", OTHERS => x"00")
         ),
@@ -2975,6 +3132,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '1', rtr => '0', brs => '0', data_length => 8, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "1000", identifier => 410154987,
          data => (x"a5", x"c1", x"35", x"49", x"34", x"12", x"49", x"e2", OTHERS => x"00")
         ),
@@ -2997,6 +3155,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '1', rtr => '0', brs => '0', data_length => 5, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0101", identifier => 214068309,
          data => (x"de", x"34", x"f6", x"a0", x"e6", OTHERS => x"00")
         ),
@@ -3015,6 +3174,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '0', rtr => '0', brs => '0', data_length => 7, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0111", identifier =>       376,
          data => (x"ac", x"c1", x"4e", x"15", x"64", x"7c", x"ed", OTHERS => x"00")
         ),
@@ -3033,6 +3193,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '0', rtr => '0', brs => '0', data_length => 4, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0100", identifier =>      1219,
          data => (x"63", x"99", x"b3", x"46", OTHERS => x"00")
         ),
@@ -3049,6 +3210,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '1', rtr => '0', brs => '0', data_length => 4, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0100", identifier => 484657292,
          data => (x"2f", x"cc", x"6b", x"4f", OTHERS => x"00")
         ),
@@ -3066,6 +3228,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '0', rtr => '1', brs => '0', data_length => 0, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0000", identifier =>       634,
          data => (OTHERS => x"00")
         ),
@@ -3081,6 +3244,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '1', rtr => '1', brs => '0', data_length => 0, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0000", identifier => 327578223,
          data => (OTHERS => x"00")
         ),
@@ -3096,6 +3260,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '0', rtr => '0', brs => '1', data_length => 32, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "1101", identifier =>      1459,
          data => (x"b8", x"4f", x"dd", x"1d", x"e8", x"91", x"e2", x"47", x"55", x"b2", x"60", x"4a", x"61", x"ad", x"b5", x"b0", x"61", x"fa", x"5e", x"bb", x"49", x"e5", x"c3", x"d9", x"3c", x"5f", x"4f", x"8d", x"69", x"96", x"81", x"a1", OTHERS => x"00")
         ),
@@ -3129,6 +3294,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '0', rtr => '0', brs => '1', data_length => 32, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "1101", identifier =>       972,
          data => (x"22", x"95", x"c6", x"d4", x"76", x"90", x"37", x"24", x"c5", x"67", x"85", x"40", x"45", x"c1", x"89", x"ab", x"85", x"64", x"e7", x"64", x"33", x"f4", x"4d", x"c9", x"76", x"ef", x"2f", x"56", x"ae", x"7d", x"47", x"50", OTHERS => x"00")
         ),
@@ -3163,6 +3329,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '0', rtr => '0', brs => '1', data_length => 8, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "1000", identifier =>      1245,
          data => (x"5d", x"2e", x"63", x"44", x"33", x"a4", x"8a", x"f4", OTHERS => x"00")
         ),
@@ -3184,6 +3351,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '1', rtr => '0', brs => '0', data_length => 0, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0000", identifier => 141415666,
          data => (OTHERS => x"00")
         ),
@@ -3199,6 +3367,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '1', rtr => '0', brs => '1', data_length => 1, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0001", identifier =>  67471197,
          data => (x"09", OTHERS => x"00")
         ),
@@ -3216,6 +3385,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '1', rtr => '0', brs => '0', data_length => 16, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "1010", identifier => 216905099,
          data => (x"26", x"9b", x"ce", x"33", x"41", x"d8", x"d0", x"1e", x"86", x"34", x"63", x"b9", x"58", x"6d", x"2f", x"07", OTHERS => x"00")
         ),
@@ -3241,6 +3411,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '1', rtr => '0', brs => '0', data_length => 5, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0101", identifier => 453557893,
          data => (x"dd", x"52", x"34", x"eb", x"5b", OTHERS => x"00")
         ),
@@ -3260,6 +3431,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '0', rtr => '0', brs => '0', data_length => 5, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0101", identifier =>       444,
          data => (x"60", x"37", x"b3", x"93", x"78", OTHERS => x"00")
         ),
@@ -3277,6 +3449,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '0', rtr => '0', brs => '0', data_length => 2, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0010", identifier =>      1236,
          data => (x"7a", x"cb", OTHERS => x"00")
         ),
@@ -3294,6 +3467,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '0', rtr => '1', brs => '0', data_length => 0, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0000", identifier =>       985,
          data => (OTHERS => x"00")
         ),
@@ -3308,6 +3482,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '0', rtr => '0', brs => '0', data_length => 8, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "1000", identifier =>      2033,
          data => (x"1d", x"df", x"59", x"79", x"b0", x"03", x"b3", x"4b", OTHERS => x"00")
         ),
@@ -3328,6 +3503,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '0', rtr => '0', brs => '1', data_length => 20, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "1011", identifier =>      1711,
          data => (x"13", x"e0", x"f7", x"d7", x"e8", x"06", x"7c", x"26", x"5f", x"46", x"ad", x"d9", x"ee", x"26", x"92", x"24", x"fa", x"ac", x"67", x"00", OTHERS => x"00")
         ),
@@ -3355,6 +3531,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '1', rtr => '1', brs => '0', data_length => 0, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0000", identifier => 319536190,
          data => (OTHERS => x"00")
         ),
@@ -3370,6 +3547,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '1', rtr => '0', brs => '0', data_length => 3, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0011", identifier => 143031400,
          data => (x"80", x"8e", x"fd", OTHERS => x"00")
         ),
@@ -3386,6 +3564,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '1', rtr => '0', brs => '1', data_length => 12, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "1001", identifier => 262798486,
          data => (x"e5", x"30", x"e5", x"de", x"e0", x"69", x"93", x"ac", x"d0", x"28", x"ae", x"6c", OTHERS => x"00")
         ),
@@ -3409,6 +3588,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '1', rtr => '0', brs => '0', data_length => 1, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0001", identifier => 336949728,
          data => (x"cc", OTHERS => x"00")
         ),
@@ -3426,6 +3606,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '1', rtr => '1', brs => '0', data_length => 0, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0000", identifier => 529937170,
          data => (OTHERS => x"00")
         ),
@@ -3442,6 +3623,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '0', rtr => '0', brs => '1', data_length => 4, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0100", identifier =>       434,
          data => (x"81", x"c8", x"d1", x"e7", OTHERS => x"00")
         ),
@@ -3459,6 +3641,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '0', rtr => '0', brs => '0', data_length => 7, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0111", identifier =>       834,
          data => (x"5a", x"07", x"71", x"02", x"35", x"dd", x"d2", OTHERS => x"00")
         ),
@@ -3477,6 +3660,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '0', rtr => '0', brs => '0', data_length => 2, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0010", identifier =>      1865,
          data => (x"b1", x"e3", OTHERS => x"00")
         ),
@@ -3493,6 +3677,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '0', rtr => '0', brs => '1', data_length => 7, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0111", identifier =>      1886,
          data => (x"58", x"da", x"36", x"59", x"23", x"87", x"41", OTHERS => x"00")
         ),
@@ -3512,6 +3697,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '0', rtr => '0', brs => '0', data_length => 5, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0101", identifier =>       685,
          data => (x"e2", x"fb", x"d0", x"65", x"32", OTHERS => x"00")
         ),
@@ -3529,6 +3715,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '1', rtr => '0', brs => '0', data_length => 12, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "1001", identifier => 364336325,
          data => (x"ac", x"db", x"98", x"10", x"ea", x"e2", x"af", x"cd", x"d3", x"87", x"28", x"0a", OTHERS => x"00")
         ),
@@ -3553,6 +3740,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '1', rtr => '0', brs => '0', data_length => 16, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "1010", identifier => 221005670,
          data => (x"50", x"ab", x"5c", x"af", x"0e", x"59", x"80", x"73", x"8b", x"ae", x"ab", x"1d", x"cc", x"13", x"c9", x"a8", OTHERS => x"00")
         ),
@@ -3579,6 +3767,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '0', rtr => '0', brs => '0', data_length => 5, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0101", identifier =>      1268,
          data => (x"61", x"e2", x"91", x"0a", x"6d", OTHERS => x"00")
         ),
@@ -3597,6 +3786,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '1', rtr => '0', brs => '0', data_length => 16, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "1010", identifier => 453331473,
          data => (x"ce", x"40", x"98", x"7e", x"4f", x"f1", x"7e", x"c2", x"fc", x"ac", x"ee", x"1a", x"f9", x"02", x"63", x"22", OTHERS => x"00")
         ),
@@ -3622,6 +3812,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '0', rtr => '0', brs => '0', data_length => 5, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0101", identifier =>      1086,
          data => (x"98", x"a0", x"d8", x"a2", x"0e", OTHERS => x"00")
         ),
@@ -3639,6 +3830,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '0', rtr => '1', brs => '0', data_length => 0, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0000", identifier =>      1832,
          data => (OTHERS => x"00")
         ),
@@ -3653,6 +3845,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '1', rtr => '1', brs => '0', data_length => 0, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0000", identifier => 133377543,
          data => (OTHERS => x"00")
         ),
@@ -3668,6 +3861,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '1', rtr => '0', brs => '0', data_length => 12, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "1001", identifier => 132195607,
          data => (x"a1", x"54", x"fe", x"23", x"37", x"22", x"51", x"f5", x"d7", x"0e", x"3d", x"70", OTHERS => x"00")
         ),
@@ -3691,6 +3885,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '0', rtr => '0', brs => '1', data_length => 20, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "1011", identifier =>      1711,
          data => (x"13", x"e0", x"f7", x"d7", x"e8", x"06", x"7c", x"26", x"5f", x"46", x"ad", x"d9", x"ee", x"26", x"92", x"24", x"fa", x"ac", x"67", x"00", OTHERS => x"00")
         ),
@@ -3718,6 +3913,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '0', rtr => '0', brs => '0', data_length => 1, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0001", identifier =>      1155,
          data => (x"07", OTHERS => x"00")
         ),
@@ -3733,6 +3929,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '1', rtr => '0', brs => '0', data_length => 0, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0000", identifier => 326769522,
          data => (OTHERS => x"00")
         ),
@@ -3749,6 +3946,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '0', rtr => '0', brs => '0', data_length => 2, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0010", identifier =>      1926,
          data => (x"d5", x"2b", OTHERS => x"00")
         ),
@@ -3765,6 +3963,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '1', rtr => '0', brs => '0', data_length => 0, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0000", identifier => 382827955,
          data => (OTHERS => x"00")
         ),
@@ -3781,6 +3980,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '1', rtr => '0', brs => '0', data_length => 2, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0010", identifier => 379434224,
          data => (x"20", x"01", OTHERS => x"00")
         ),
@@ -3798,6 +3998,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '0', rtr => '0', brs => '1', data_length => 6, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0110", identifier =>       568,
          data => (x"55", x"b7", x"6f", x"b1", x"e0", x"c3", OTHERS => x"00")
         ),
@@ -3817,6 +4018,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '0', rtr => '0', brs => '0', data_length => 2, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0010", identifier =>      1592,
          data => (x"d0", x"60", OTHERS => x"00")
         ),
@@ -3832,6 +4034,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '1', rtr => '0', brs => '0', data_length => 7, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0111", identifier => 321492912,
          data => (x"00", x"64", x"1c", x"e2", x"c1", x"15", x"03", OTHERS => x"00")
         ),
@@ -3851,6 +4054,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '0', rtr => '0', brs => '1', data_length => 3, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0011", identifier =>       960,
          data => (x"1b", x"97", x"db", OTHERS => x"00")
         ),
@@ -3868,6 +4072,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '0', rtr => '0', brs => '1', data_length => 16, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "1010", identifier =>       725,
          data => (x"69", x"9c", x"61", x"33", x"6d", x"42", x"29", x"7c", x"e8", x"77", x"e0", x"e8", x"5b", x"7c", x"4b", x"9d", OTHERS => x"00")
         ),
@@ -3893,6 +4098,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '0', rtr => '0', brs => '1', data_length => 32, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "1101", identifier =>       792,
          data => (x"23", x"a8", x"94", x"ba", x"85", x"9e", x"04", x"c1", x"6c", x"5b", x"ab", x"88", x"3d", x"5e", x"76", x"7f", x"07", x"72", x"68", x"fe", x"54", x"d0", x"5a", x"50", x"1c", x"f7", x"e2", x"e9", x"58", x"68", x"e3", x"7b", OTHERS => x"00")
         ),
@@ -3926,6 +4132,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '1', rtr => '0', brs => '0', data_length => 2, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0010", identifier => 237047799,
          data => (x"ba", x"d7", OTHERS => x"00")
         ),
@@ -3943,6 +4150,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '0', rtr => '1', brs => '0', data_length => 0, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0000", identifier =>       865,
          data => (OTHERS => x"00")
         ),
@@ -3957,6 +4165,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '0', rtr => '1', brs => '0', data_length => 0, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0000", identifier =>      1007,
          data => (OTHERS => x"00")
         ),
@@ -3971,6 +4180,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '0', rtr => '1', brs => '0', data_length => 0, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0000", identifier =>        94,
          data => (OTHERS => x"00")
         ),
@@ -3985,6 +4195,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '1', rtr => '0', brs => '0', data_length => 6, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0110", identifier => 159767812,
          data => (x"93", x"e3", x"f3", x"8f", x"74", x"eb", OTHERS => x"00")
         ),
@@ -4004,6 +4215,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '1', rtr => '0', brs => '0', data_length => 1, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0001", identifier => 175835061,
          data => (x"04", OTHERS => x"00")
         ),
@@ -4020,6 +4232,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '1', rtr => '1', brs => '0', data_length => 0, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0000", identifier =>  91754712,
          data => (OTHERS => x"00")
         ),
@@ -4035,6 +4248,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '0', rtr => '0', brs => '1', data_length => 7, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0111", identifier =>      1199,
          data => (x"97", x"4c", x"02", x"da", x"64", x"a8", x"95", OTHERS => x"00")
         ),
@@ -4055,6 +4269,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '1', rtr => '0', brs => '0', data_length => 12, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "1001", identifier =>  56668822,
          data => (x"38", x"b8", x"98", x"fd", x"43", x"9a", x"fe", x"a5", x"9e", x"95", x"8a", x"ad", OTHERS => x"00")
         ),
@@ -4079,6 +4294,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '0', rtr => '1', brs => '0', data_length => 0, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0000", identifier =>      1850,
          data => (OTHERS => x"00")
         ),
@@ -4093,6 +4309,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '0', rtr => '0', brs => '1', data_length => 24, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "1100", identifier =>       309,
          data => (x"73", x"72", x"60", x"09", x"53", x"19", x"32", x"17", x"c6", x"e9", x"4f", x"de", x"68", x"92", x"7a", x"67", x"b7", x"98", x"fc", x"42", x"46", x"7d", x"14", x"83", OTHERS => x"00")
         ),
@@ -4122,6 +4339,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '1', rtr => '0', brs => '1', data_length => 6, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0110", identifier => 415456692,
          data => (x"d2", x"27", x"22", x"46", x"07", x"aa", OTHERS => x"00")
         ),
@@ -4142,6 +4360,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '0', rtr => '0', brs => '1', data_length => 16, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "1010", identifier =>      1106,
          data => (x"c7", x"00", x"46", x"30", x"92", x"40", x"17", x"ca", x"59", x"14", x"0d", x"1f", x"12", x"a0", x"a3", x"4d", OTHERS => x"00")
         ),
@@ -4167,6 +4386,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '1', rtr => '0', brs => '1', data_length => 6, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0110", identifier =>  38432927,
          data => (x"64", x"07", x"82", x"eb", x"b1", x"9b", OTHERS => x"00")
         ),
@@ -4187,6 +4407,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '0', rtr => '0', brs => '0', data_length => 1, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0001", identifier =>      1872,
          data => (x"ca", OTHERS => x"00")
         ),
@@ -4204,6 +4425,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '0', rtr => '0', brs => '1', data_length => 20, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "1011", identifier =>      1726,
          data => (x"a8", x"d3", x"b0", x"b5", x"f2", x"c2", x"57", x"96", x"8f", x"0d", x"00", x"4d", x"71", x"3c", x"32", x"f7", x"be", x"1e", x"2a", x"d9", OTHERS => x"00")
         ),
@@ -4230,6 +4452,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '0', rtr => '0', brs => '0', data_length => 4, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0100", identifier =>      1938,
          data => (x"70", x"d7", x"15", x"cd", OTHERS => x"00")
         ),
@@ -4246,6 +4469,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '1', rtr => '0', brs => '0', data_length => 4, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0100", identifier =>  42649103,
          data => (x"ab", x"19", x"26", x"03", OTHERS => x"00")
         ),
@@ -4265,6 +4489,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '0', rtr => '0', brs => '1', data_length => 20, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "1011", identifier =>      1711,
          data => (x"13", x"e0", x"f7", x"d7", x"e8", x"06", x"7c", x"26", x"5f", x"46", x"ad", x"d9", x"ee", x"26", x"92", x"24", x"fa", x"ac", x"67", x"00", OTHERS => x"00")
         ),
@@ -4292,6 +4517,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '0', rtr => '0', brs => '1', data_length => 8, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "1000", identifier =>      1441,
          data => (x"16", x"08", x"04", x"bb", x"8b", x"34", x"72", x"9b", OTHERS => x"00")
         ),
@@ -4312,6 +4538,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '1', rtr => '0', brs => '0', data_length => 6, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0110", identifier => 147222061,
          data => (x"97", x"78", x"7d", x"bb", x"7c", x"fa", OTHERS => x"00")
         ),
@@ -4331,6 +4558,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '0', rtr => '0', brs => '0', data_length => 7, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0111", identifier =>      1172,
          data => (x"09", x"87", x"a2", x"ce", x"3b", x"fe", x"3a", OTHERS => x"00")
         ),
@@ -4348,6 +4576,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '1', rtr => '0', brs => '1', data_length => 20, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "1011", identifier => 108293354,
          data => (x"f1", x"00", x"ad", x"d5", x"f4", x"cb", x"25", x"1f", x"e2", x"9d", x"9c", x"9f", x"99", x"97", x"b8", x"bd", x"ad", x"3f", x"7a", x"b7", OTHERS => x"00")
         ),
@@ -4377,6 +4606,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '0', rtr => '0', brs => '1', data_length => 5, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0101", identifier =>      1279,
          data => (x"40", x"54", x"a2", x"7f", x"e1", OTHERS => x"00")
         ),
@@ -4396,6 +4626,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '1', rtr => '0', brs => '1', data_length => 24, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "1100", identifier => 221768853,
          data => (x"57", x"2e", x"eb", x"77", x"90", x"0a", x"14", x"30", x"23", x"2c", x"69", x"e1", x"d9", x"a8", x"db", x"91", x"6f", x"79", x"98", x"71", x"94", x"d8", x"c5", x"b6", OTHERS => x"00")
         ),
@@ -4427,6 +4658,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '1', rtr => '0', brs => '0', data_length => 5, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0101", identifier => 258885286,
          data => (x"4e", x"10", x"61", x"7c", x"fc", OTHERS => x"00")
         ),
@@ -4446,6 +4678,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '1', rtr => '0', brs => '0', data_length => 4, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0100", identifier => 528833947,
          data => (x"a9", x"19", x"27", x"0b", OTHERS => x"00")
         ),
@@ -4466,6 +4699,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '0', rtr => '1', brs => '0', data_length => 0, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0000", identifier =>      1828,
          data => (OTHERS => x"00")
         ),
@@ -4480,6 +4714,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '1', rtr => '0', brs => '0', data_length => 7, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0111", identifier => 411110129,
          data => (x"76", x"ac", x"4e", x"9e", x"98", x"97", x"29", OTHERS => x"00")
         ),
@@ -4500,6 +4735,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '1', rtr => '1', brs => '0', data_length => 0, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0000", identifier => 388746962,
          data => (OTHERS => x"00")
         ),
@@ -4516,6 +4752,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '0', rtr => '0', brs => '0', data_length => 4, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0100", identifier =>      1576,
          data => (x"54", x"69", x"53", x"5f", OTHERS => x"00")
         ),
@@ -4534,6 +4771,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '0', rtr => '1', brs => '0', data_length => 0, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0000", identifier =>      1331,
          data => (OTHERS => x"00")
         ),
@@ -4548,6 +4786,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '0', rtr => '0', brs => '1', data_length => 32, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "1101", identifier =>       818,
          data => (x"09", x"4a", x"42", x"a8", x"62", x"d9", x"51", x"c8", x"02", x"5c", x"2b", x"a5", x"c0", x"1a", x"d0", x"11", x"47", x"a4", x"fa", x"9a", x"04", x"d7", x"3e", x"cb", x"b9", x"20", x"73", x"38", x"33", x"11", x"ac", x"3c", OTHERS => x"00")
         ),
@@ -4582,6 +4821,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '0', rtr => '0', brs => '0', data_length => 3, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0011", identifier =>      1110,
          data => (x"b6", x"06", x"ca", OTHERS => x"00")
         ),
@@ -4600,6 +4840,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '0', rtr => '0', brs => '1', data_length => 5, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0101", identifier =>       133,
          data => (x"c1", x"e4", x"92", x"66", x"df", OTHERS => x"00")
         ),
@@ -4618,6 +4859,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '1', rtr => '0', brs => '0', data_length => 0, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0000", identifier => 482528935,
          data => (OTHERS => x"00")
         ),
@@ -4633,6 +4875,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '0', rtr => '1', brs => '0', data_length => 0, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0000", identifier =>       359,
          data => (OTHERS => x"00")
         ),
@@ -4647,6 +4890,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '1', rtr => '1', brs => '0', data_length => 0, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0000", identifier => 353205031,
          data => (OTHERS => x"00")
         ),
@@ -4662,6 +4906,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '1', rtr => '0', brs => '0', data_length => 8, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "1000", identifier => 429962921,
          data => (x"59", x"28", x"0b", x"4a", x"fa", x"56", x"8b", x"df", OTHERS => x"00")
         ),
@@ -4684,6 +4929,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '0', rtr => '1', brs => '0', data_length => 0, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0000", identifier =>      1891,
          data => (OTHERS => x"00")
         ),
@@ -4698,6 +4944,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '1', rtr => '0', brs => '0', data_length => 5, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0101", identifier => 458985637,
          data => (x"ba", x"8f", x"4a", x"f5", x"e5", OTHERS => x"00")
         ),
@@ -4717,6 +4964,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '1', rtr => '0', brs => '0', data_length => 6, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0110", identifier => 321905178,
          data => (x"39", x"b8", x"39", x"13", x"e0", x"c4", OTHERS => x"00")
         ),
@@ -4736,6 +4984,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '0', rtr => '1', brs => '0', data_length => 0, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0000", identifier =>      1963,
          data => (OTHERS => x"00")
         ),
@@ -4750,6 +4999,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '0', rtr => '1', brs => '0', data_length => 0, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0000", identifier =>       499,
          data => (OTHERS => x"00")
         ),
@@ -4764,6 +5014,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '0', rtr => '0', brs => '0', data_length => 2, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0010", identifier =>      1775,
          data => (x"04", x"69", OTHERS => x"00")
         ),
@@ -4779,6 +5030,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '0', rtr => '1', brs => '0', data_length => 0, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0000", identifier =>      1385,
          data => (OTHERS => x"00")
         ),
@@ -4793,6 +5045,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '0', rtr => '0', brs => '0', data_length => 4, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0100", identifier =>       949,
          data => (x"1f", x"46", x"f4", x"e3", OTHERS => x"00")
         ),
@@ -4809,6 +5062,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '0', rtr => '0', brs => '1', data_length => 8, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "1000", identifier =>       167,
          data => (x"83", x"68", x"8a", x"9d", x"a0", x"7c", x"38", x"e9", OTHERS => x"00")
         ),
@@ -4828,6 +5082,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '0', rtr => '0', brs => '1', data_length => 5, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0101", identifier =>       643,
          data => (x"68", x"0f", x"0a", x"6e", x"09", OTHERS => x"00")
         ),
@@ -4846,6 +5101,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '1', rtr => '0', brs => '1', data_length => 8, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "1000", identifier =>  27747845,
          data => (x"82", x"6f", x"58", x"a6", x"c1", x"d7", x"b3", x"cf", OTHERS => x"00")
         ),
@@ -4866,6 +5122,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '0', rtr => '0', brs => '0', data_length => 2, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0010", identifier =>       817,
          data => (x"56", x"b1", OTHERS => x"00")
         ),
@@ -4883,6 +5140,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '1', rtr => '0', brs => '0', data_length => 7, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0111", identifier =>  91889422,
          data => (x"65", x"7c", x"7b", x"6f", x"eb", x"85", x"d4", OTHERS => x"00")
         ),
@@ -4902,6 +5160,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '1', rtr => '0', brs => '0', data_length => 2, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0010", identifier => 361886314,
          data => (x"3f", x"8c", OTHERS => x"00")
         ),
@@ -4919,6 +5178,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '1', rtr => '0', brs => '0', data_length => 16, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "1010", identifier => 421220969,
          data => (x"bf", x"bb", x"a9", x"38", x"f8", x"7f", x"e9", x"9f", x"2c", x"fb", x"b4", x"19", x"e0", x"31", x"95", x"d0", OTHERS => x"00")
         ),
@@ -4944,6 +5204,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '1', rtr => '0', brs => '0', data_length => 7, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0111", identifier =>  53107762,
          data => (x"75", x"90", x"20", x"b4", x"1d", x"0b", x"b4", OTHERS => x"00")
         ),
@@ -4963,6 +5224,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '1', rtr => '0', brs => '1', data_length => 16, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "1010", identifier => 385649639,
          data => (x"2e", x"f9", x"60", x"ad", x"64", x"00", x"da", x"df", x"b4", x"73", x"c1", x"66", x"88", x"92", x"03", x"a2", OTHERS => x"00")
         ),
@@ -4989,6 +5251,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '0', rtr => '1', brs => '0', data_length => 0, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0000", identifier =>      1620,
          data => (OTHERS => x"00")
         ),
@@ -5004,6 +5267,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '0', rtr => '0', brs => '0', data_length => 3, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0011", identifier =>       824,
          data => (x"90", x"d4", x"1a", OTHERS => x"00")
         ),
@@ -5020,6 +5284,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '1', rtr => '1', brs => '0', data_length => 0, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0000", identifier => 292866763,
          data => (OTHERS => x"00")
         ),
@@ -5036,6 +5301,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '1', rtr => '0', brs => '0', data_length => 7, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0111", identifier => 274322769,
          data => (x"51", x"c3", x"52", x"37", x"4d", x"64", x"3a", OTHERS => x"00")
         ),
@@ -5056,6 +5322,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '0', rtr => '1', brs => '0', data_length => 0, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0000", identifier =>      1035,
          data => (OTHERS => x"00")
         ),
@@ -5070,6 +5337,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '1', rtr => '0', brs => '0', data_length => 7, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0111", identifier => 407829109,
          data => (x"c1", x"ab", x"8c", x"5c", x"7d", x"48", x"24", OTHERS => x"00")
         ),
@@ -5089,6 +5357,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '0', rtr => '0', brs => '0', data_length => 4, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0100", identifier =>      1069,
          data => (x"6a", x"8c", x"d0", x"2f", OTHERS => x"00")
         ),
@@ -5107,6 +5376,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '1', rtr => '0', brs => '0', data_length => 0, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0000", identifier => 322777664,
          data => (OTHERS => x"00")
         ),
@@ -5124,6 +5394,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '0', rtr => '0', brs => '1', data_length => 16, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "1010", identifier =>       732,
          data => (x"69", x"66", x"d4", x"83", x"9e", x"17", x"ae", x"aa", x"73", x"2d", x"72", x"97", x"f6", x"56", x"32", x"72", OTHERS => x"00")
         ),
@@ -5150,6 +5421,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '0', rtr => '0', brs => '0', data_length => 5, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0101", identifier =>       579,
          data => (x"dc", x"2f", x"47", x"9f", x"f1", OTHERS => x"00")
         ),
@@ -5166,6 +5438,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '0', rtr => '0', brs => '1', data_length => 0, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0000", identifier =>      1282,
          data => (OTHERS => x"00")
         ),
@@ -5182,6 +5455,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '1', rtr => '0', brs => '0', data_length => 1, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0001", identifier =>  47899983,
          data => (x"15", OTHERS => x"00")
         ),
@@ -5200,6 +5474,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '1', rtr => '0', brs => '0', data_length => 4, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0100", identifier => 196307525,
          data => (x"a0", x"8f", x"84", x"d2", OTHERS => x"00")
         ),
@@ -5219,6 +5494,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '0', rtr => '0', brs => '0', data_length => 2, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0010", identifier =>      1745,
          data => (x"bb", x"5d", OTHERS => x"00")
         ),
@@ -5235,6 +5511,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '0', rtr => '0', brs => '0', data_length => 4, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0100", identifier =>       807,
          data => (x"7c", x"73", x"c3", x"a5", OTHERS => x"00")
         ),
@@ -5252,6 +5529,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '1', rtr => '0', brs => '0', data_length => 5, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0101", identifier => 399000964,
          data => (x"b9", x"d3", x"06", x"c2", x"6b", OTHERS => x"00")
         ),
@@ -5271,6 +5549,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '0', rtr => '0', brs => '0', data_length => 16, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "1010", identifier =>      1533,
          data => (x"fc", x"13", x"a4", x"fc", x"15", x"60", x"5b", x"46", x"e3", x"58", x"69", x"1a", x"d4", x"dc", x"dd", x"7b", OTHERS => x"00")
         ),
@@ -5296,6 +5575,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '0', rtr => '0', brs => '1', data_length => 24, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "1100", identifier =>       859,
          data => (x"59", x"c3", x"e4", x"9b", x"af", x"19", x"7e", x"aa", x"51", x"b3", x"28", x"65", x"59", x"25", x"f9", x"39", x"00", x"40", x"1d", x"58", x"a9", x"b7", x"2e", x"07", OTHERS => x"00")
         ),
@@ -5326,6 +5606,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '1', rtr => '0', brs => '0', data_length => 12, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "1001", identifier => 494238236,
          data => (x"7f", x"0a", x"22", x"44", x"6f", x"be", x"f3", x"08", x"3d", x"1e", x"5a", x"f1", OTHERS => x"00")
         ),
@@ -5348,6 +5629,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '1', rtr => '0', brs => '1', data_length => 48, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "1110", identifier =>  50944658,
          data => (x"83", x"eb", x"79", x"a1", x"c4", x"a2", x"d8", x"f2", x"a9", x"ed", x"1c", x"39", x"19", x"e4", x"39", x"24", x"07", x"fc", x"13", x"c5", x"70", x"9a", x"04", x"8e", x"f4", x"75", x"55", x"34", x"bf", x"c0", x"ec", x"43", x"ac", x"e5", x"64", x"f0", x"89", x"3d", x"e3", x"33", x"2c", x"7f", x"ec", x"45", x"64", x"a5", x"e8", x"6c", OTHERS => x"00")
         ),
@@ -5391,6 +5673,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '0', rtr => '1', brs => '0', data_length => 0, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0000", identifier =>      1430,
          data => (OTHERS => x"00")
         ),
@@ -5405,6 +5688,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '1', rtr => '0', brs => '1', data_length => 6, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0110", identifier => 169387342,
          data => (x"40", x"6a", x"37", x"2d", x"ae", x"64", OTHERS => x"00")
         ),
@@ -5426,6 +5710,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '0', rtr => '1', brs => '0', data_length => 0, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0000", identifier =>      1230,
          data => (OTHERS => x"00")
         ),
@@ -5440,6 +5725,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '1', rtr => '1', brs => '0', data_length => 0, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0000", identifier => 211441757,
          data => (OTHERS => x"00")
         ),
@@ -5455,6 +5741,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '0', rtr => '1', brs => '0', data_length => 0, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0000", identifier =>        38,
          data => (OTHERS => x"00")
         ),
@@ -5469,6 +5756,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '1', rtr => '0', brs => '1', data_length => 5, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0101", identifier => 410128705,
          data => (x"f1", x"b9", x"49", x"9c", x"af", OTHERS => x"00")
         ),
@@ -5488,6 +5776,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '1', rtr => '1', brs => '0', data_length => 0, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0000", identifier =>  82511583,
          data => (OTHERS => x"00")
         ),
@@ -5503,6 +5792,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '0', rtr => '0', brs => '1', data_length => 7, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0111", identifier =>      1111,
          data => (x"19", x"59", x"38", x"95", x"13", x"74", x"d7", OTHERS => x"00")
         ),
@@ -5523,6 +5813,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '1', rtr => '0', brs => '0', data_length => 5, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0101", identifier => 486754642,
          data => (x"a8", x"75", x"f3", x"66", x"67", OTHERS => x"00")
         ),
@@ -5543,6 +5834,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '1', rtr => '1', brs => '0', data_length => 0, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0000", identifier => 310237551,
          data => (OTHERS => x"00")
         ),
@@ -5559,6 +5851,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '1', rtr => '0', brs => '0', data_length => 0, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0000", identifier => 267303191,
          data => (OTHERS => x"00")
         ),
@@ -5576,6 +5869,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '0', rtr => '0', brs => '1', data_length => 32, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "1101", identifier =>      2027,
          data => (x"09", x"d9", x"39", x"9b", x"4f", x"11", x"cb", x"26", x"93", x"85", x"02", x"bc", x"fb", x"f5", x"a2", x"e2", x"23", x"d1", x"e6", x"80", x"0b", x"72", x"44", x"f9", x"34", x"d3", x"34", x"be", x"83", x"d6", x"e2", x"8c", OTHERS => x"00")
         ),
@@ -5609,6 +5903,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '1', rtr => '0', brs => '0', data_length => 6, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0110", identifier => 504758871,
          data => (x"74", x"25", x"c0", x"fa", x"a7", x"7d", OTHERS => x"00")
         ),
@@ -5627,6 +5922,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '1', rtr => '0', brs => '0', data_length => 3, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0011", identifier => 519550261,
          data => (x"71", x"c0", x"41", OTHERS => x"00")
         ),
@@ -5645,6 +5941,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '1', rtr => '0', brs => '0', data_length => 3, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0011", identifier => 263602018,
          data => (x"59", x"aa", x"26", OTHERS => x"00")
         ),
@@ -5664,6 +5961,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '1', rtr => '1', brs => '0', data_length => 0, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0000", identifier => 533797638,
          data => (OTHERS => x"00")
         ),
@@ -5680,6 +5978,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '1', rtr => '0', brs => '0', data_length => 16, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "1010", identifier => 395699922,
          data => (x"d6", x"13", x"01", x"7e", x"10", x"77", x"9b", x"b0", x"d0", x"5c", x"22", x"11", x"9d", x"9e", x"c3", x"a3", OTHERS => x"00")
         ),
@@ -5705,6 +6004,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '1', rtr => '0', brs => '1', data_length => 32, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "1101", identifier =>  42216223,
          data => (x"5a", x"c1", x"59", x"c3", x"f3", x"7e", x"d5", x"a4", x"cf", x"db", x"fa", x"e2", x"dd", x"79", x"f3", x"d4", x"95", x"a4", x"a5", x"f1", x"46", x"b6", x"10", x"e4", x"fa", x"b3", x"f9", x"26", x"30", x"ba", x"77", x"0a", OTHERS => x"00")
         ),
@@ -5740,6 +6040,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '1', rtr => '0', brs => '1', data_length => 1, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0001", identifier =>  87387973,
          data => (x"23", OTHERS => x"00")
         ),
@@ -5758,6 +6059,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '1', rtr => '0', brs => '0', data_length => 3, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0011", identifier =>  53836718,
          data => (x"5d", x"89", x"76", OTHERS => x"00")
         ),
@@ -5775,6 +6077,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '1', rtr => '0', brs => '0', data_length => 7, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0111", identifier => 401057483,
          data => (x"e1", x"0f", x"a1", x"46", x"89", x"d4", x"41", OTHERS => x"00")
         ),
@@ -5796,6 +6099,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '0', rtr => '0', brs => '1', data_length => 32, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "1101", identifier =>      1099,
          data => (x"78", x"78", x"dc", x"68", x"48", x"80", x"7c", x"e7", x"00", x"0d", x"6a", x"5d", x"97", x"61", x"0f", x"36", x"fb", x"67", x"c7", x"5d", x"f6", x"e8", x"a4", x"80", x"3d", x"e5", x"b0", x"c2", x"e1", x"58", x"52", x"d9", OTHERS => x"00")
         ),
@@ -5828,6 +6132,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '1', rtr => '0', brs => '0', data_length => 7, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0111", identifier =>  30046027,
          data => (x"3e", x"81", x"ae", x"cb", x"eb", x"8b", x"e2", OTHERS => x"00")
         ),
@@ -5847,6 +6152,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '0', rtr => '1', brs => '0', data_length => 0, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0000", identifier =>      1720,
          data => (OTHERS => x"00")
         ),
@@ -5861,6 +6167,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '0', rtr => '0', brs => '1', data_length => 24, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "1100", identifier =>       769,
          data => (x"fa", x"88", x"b1", x"ab", x"4b", x"13", x"84", x"1d", x"6c", x"56", x"cb", x"2e", x"ef", x"fa", x"ec", x"71", x"29", x"38", x"dc", x"b5", x"1b", x"aa", x"50", x"34", OTHERS => x"00")
         ),
@@ -5891,6 +6198,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '0', rtr => '0', brs => '1', data_length => 7, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0111", identifier =>      1211,
          data => (x"60", x"68", x"47", x"68", x"1a", x"72", x"b3", OTHERS => x"00")
         ),
@@ -5911,6 +6219,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '1', rtr => '0', brs => '0', data_length => 1, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0001", identifier => 528195219,
          data => (x"1c", OTHERS => x"00")
         ),
@@ -5928,6 +6237,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '0', rtr => '0', brs => '0', data_length => 4, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0100", identifier =>      2014,
          data => (x"c0", x"6d", x"0b", x"f5", OTHERS => x"00")
         ),
@@ -5944,6 +6254,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '0', rtr => '0', brs => '0', data_length => 3, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0011", identifier =>      1668,
          data => (x"98", x"52", x"c5", OTHERS => x"00")
         ),
@@ -5960,6 +6271,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '0', rtr => '0', brs => '0', data_length => 4, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0100", identifier =>      1399,
          data => (x"49", x"20", x"4e", x"f6", OTHERS => x"00")
         ),
@@ -5978,6 +6290,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '0', rtr => '0', brs => '0', data_length => 6, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0110", identifier =>       245,
          data => (x"59", x"a0", x"d1", x"8e", x"ce", x"92", OTHERS => x"00")
         ),
@@ -5995,6 +6308,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '0', rtr => '0', brs => '1', data_length => 8, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "1000", identifier =>      1781,
          data => (x"ce", x"41", x"39", x"67", x"93", x"fe", x"4d", x"c5", OTHERS => x"00")
         ),
@@ -6015,6 +6329,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '1', rtr => '0', brs => '1', data_length => 16, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "1010", identifier => 122047966,
          data => (x"2f", x"6d", x"31", x"cd", x"7d", x"95", x"87", x"d7", x"36", x"59", x"e5", x"05", x"eb", x"62", x"de", x"f3", OTHERS => x"00")
         ),
@@ -6040,6 +6355,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '0', rtr => '0', brs => '0', data_length => 0, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0000", identifier =>       491,
          data => (OTHERS => x"00")
         ),
@@ -6054,6 +6370,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '1', rtr => '0', brs => '0', data_length => 1, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0001", identifier => 496126661,
          data => (x"d3", OTHERS => x"00")
         ),
@@ -6072,6 +6389,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '1', rtr => '1', brs => '0', data_length => 0, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0000", identifier => 224802915,
          data => (OTHERS => x"00")
         ),
@@ -6087,6 +6405,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '1', rtr => '0', brs => '0', data_length => 4, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0100", identifier => 187412236,
          data => (x"e4", x"8c", x"88", x"3e", OTHERS => x"00")
         ),
@@ -6106,6 +6425,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '0', rtr => '0', brs => '0', data_length => 4, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0100", identifier =>      1237,
          data => (x"9e", x"3b", x"5b", x"61", OTHERS => x"00")
         ),
@@ -6123,6 +6443,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '1', rtr => '0', brs => '1', data_length => 16, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "1010", identifier => 437621987,
          data => (x"82", x"9d", x"7b", x"73", x"fd", x"c5", x"7e", x"0e", x"fc", x"ba", x"6a", x"b2", x"0d", x"4f", x"3f", x"16", OTHERS => x"00")
         ),
@@ -6149,6 +6470,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '1', rtr => '1', brs => '0', data_length => 0, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0000", identifier => 245082292,
          data => (OTHERS => x"00")
         ),
@@ -6165,6 +6487,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '0', rtr => '1', brs => '0', data_length => 0, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0000", identifier =>      1564,
          data => (OTHERS => x"00")
         ),
@@ -6179,6 +6502,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '0', rtr => '1', brs => '0', data_length => 0, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0000", identifier =>       723,
          data => (OTHERS => x"00")
         ),
@@ -6193,6 +6517,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '0', rtr => '0', brs => '0', data_length => 7, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0111", identifier =>      1993,
          data => (x"d6", x"38", x"6d", x"d4", x"73", x"d7", x"87", OTHERS => x"00")
         ),
@@ -6210,6 +6535,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '0', rtr => '0', brs => '0', data_length => 16, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "1010", identifier =>       878,
          data => (x"f8", x"39", x"6d", x"00", x"4a", x"c3", x"43", x"35", x"fb", x"69", x"a2", x"be", x"2d", x"38", x"05", x"0e", OTHERS => x"00")
         ),
@@ -6234,6 +6560,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '1', rtr => '0', brs => '0', data_length => 8, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "1000", identifier => 481963282,
          data => (x"da", x"f4", x"69", x"33", x"7c", x"6a", x"5a", x"43", OTHERS => x"00")
         ),
@@ -6255,6 +6582,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '1', rtr => '0', brs => '0', data_length => 0, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0000", identifier => 316001447,
          data => (OTHERS => x"00")
         ),
@@ -6271,6 +6599,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '1', rtr => '0', brs => '0', data_length => 8, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "1000", identifier => 433613054,
          data => (x"bb", x"e8", x"dc", x"7b", x"16", x"15", x"00", x"25", OTHERS => x"00")
         ),
@@ -6292,6 +6621,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '0', rtr => '0', brs => '1', data_length => 48, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "1110", identifier =>      1049,
          data => (x"ed", x"74", x"9e", x"a0", x"70", x"09", x"fa", x"33", x"09", x"0a", x"6f", x"43", x"86", x"2c", x"47", x"46", x"ab", x"81", x"82", x"94", x"5e", x"7d", x"ab", x"f2", x"7d", x"50", x"51", x"bb", x"62", x"4f", x"ef", x"cf", x"43", x"8e", x"70", x"34", x"97", x"ea", x"67", x"a1", x"f4", x"d7", x"64", x"fa", x"83", x"ac", x"c1", x"2f", OTHERS => x"00")
         ),
@@ -6334,6 +6664,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '1', rtr => '1', brs => '0', data_length => 0, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0000", identifier =>  37154872,
          data => (OTHERS => x"00")
         ),
@@ -6349,6 +6680,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '1', rtr => '0', brs => '0', data_length => 6, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0110", identifier => 347690571,
          data => (x"7a", x"a1", x"9e", x"6a", x"f0", x"e2", OTHERS => x"00")
         ),
@@ -6368,6 +6700,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '1', rtr => '1', brs => '0', data_length => 0, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0000", identifier => 171361479,
          data => (OTHERS => x"00")
         ),
@@ -6383,6 +6716,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '1', rtr => '1', brs => '0', data_length => 0, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0000", identifier => 477279284,
          data => (OTHERS => x"00")
         ),
@@ -6398,6 +6732,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '1', rtr => '0', brs => '1', data_length => 1, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0001", identifier => 121930616,
          data => (x"f1", OTHERS => x"00")
         ),
@@ -6415,6 +6750,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '0', rtr => '0', brs => '1', data_length => 20, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "1011", identifier =>      1711,
          data => (x"13", x"e0", x"f7", x"d7", x"e8", x"06", x"7c", x"26", x"5f", x"46", x"ad", x"d9", x"ee", x"26", x"92", x"24", x"fa", x"ac", x"67", x"00", OTHERS => x"00")
         ),
@@ -6442,6 +6778,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '1', rtr => '0', brs => '0', data_length => 3, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0011", identifier => 276280640,
          data => (x"1a", x"e9", x"29", OTHERS => x"00")
         ),
@@ -6461,6 +6798,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '1', rtr => '0', brs => '1', data_length => 12, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "1001", identifier => 117414402,
          data => (x"b3", x"ba", x"e1", x"e6", x"7d", x"37", x"fd", x"ba", x"90", x"c1", x"ba", x"97", OTHERS => x"00")
         ),
@@ -6484,6 +6822,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '0', rtr => '0', brs => '0', data_length => 1, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0001", identifier =>       812,
          data => (x"9d", OTHERS => x"00")
         ),
@@ -6498,6 +6837,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '0', rtr => '0', brs => '0', data_length => 5, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0101", identifier =>       946,
          data => (x"b0", x"61", x"ac", x"3b", x"2e", OTHERS => x"00")
         ),
@@ -6516,6 +6856,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '1', rtr => '0', brs => '0', data_length => 1, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0001", identifier => 426257175,
          data => (x"72", OTHERS => x"00")
         ),
@@ -6532,6 +6873,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '0', rtr => '0', brs => '1', data_length => 20, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "1011", identifier =>       848,
          data => (x"3a", x"a8", x"55", x"d1", x"5b", x"d3", x"b5", x"0c", x"d5", x"d2", x"38", x"9b", x"e8", x"af", x"1f", x"99", x"91", x"cb", x"d4", x"bf", OTHERS => x"00")
         ),
@@ -6561,6 +6903,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '0', rtr => '0', brs => '1', data_length => 48, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "1110", identifier =>      1746,
          data => (x"43", x"86", x"42", x"6d", x"ed", x"dd", x"a7", x"16", x"33", x"f8", x"72", x"07", x"2e", x"7e", x"dc", x"01", x"37", x"f8", x"e9", x"66", x"97", x"03", x"f7", x"64", x"58", x"b7", x"7e", x"d5", x"88", x"1c", x"b7", x"cb", x"23", x"79", x"39", x"90", x"57", x"60", x"a6", x"8b", x"d8", x"19", x"12", x"08", x"18", x"ef", x"09", x"ce", OTHERS => x"00")
         ),
@@ -6602,6 +6945,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '1', rtr => '0', brs => '1', data_length => 64, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "1111", identifier => 189263317,
          data => (x"2e", x"e3", x"4e", x"65", x"63", x"25", x"ed", x"fe", x"dc", x"b9", x"a1", x"d5", x"72", x"32", x"2e", x"52", x"d9", x"b9", x"2c", x"72", x"cb", x"b3", x"0a", x"3b", x"3c", x"d8", x"23", x"af", x"0f", x"24", x"a6", x"3d", x"87", x"f4", x"22", x"ea", x"99", x"11", x"6a", x"f5", x"4a", x"8b", x"cc", x"3d", x"be", x"fa", x"8f", x"18", x"34", x"3b", x"0a", x"7f", x"ee", x"15", x"bb", x"2c", x"ed", x"de", x"5b", x"fc", x"82", x"81", x"b9", x"0b")
         ),
@@ -6653,6 +6997,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '1', rtr => '0', brs => '1', data_length => 5, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0101", identifier => 285850009,
          data => (x"df", x"87", x"b7", x"eb", x"d3", OTHERS => x"00")
         ),
@@ -6673,6 +7018,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '0', rtr => '0', brs => '1', data_length => 2, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0010", identifier =>        86,
          data => (x"82", x"40", OTHERS => x"00")
         ),
@@ -6690,6 +7036,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '1', rtr => '1', brs => '0', data_length => 0, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0000", identifier =>  18824830,
          data => (OTHERS => x"00")
         ),
@@ -6705,6 +7052,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '0', rtr => '1', brs => '0', data_length => 0, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0000", identifier =>       115,
          data => (OTHERS => x"00")
         ),
@@ -6719,6 +7067,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '1', rtr => '0', brs => '0', data_length => 7, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0111", identifier => 407202790,
          data => (x"63", x"20", x"40", x"d0", x"7f", x"47", x"88", OTHERS => x"00")
         ),
@@ -6739,6 +7088,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '1', rtr => '0', brs => '1', data_length => 4, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0100", identifier =>  26517172,
          data => (x"03", x"d7", x"6b", x"c2", OTHERS => x"00")
         ),
@@ -6758,6 +7108,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '0', rtr => '0', brs => '1', data_length => 4, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0100", identifier =>       101,
          data => (x"4d", x"55", x"c6", x"04", OTHERS => x"00")
         ),
@@ -6776,6 +7127,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '0', rtr => '0', brs => '0', data_length => 0, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0000", identifier =>      1371,
          data => (OTHERS => x"00")
         ),
@@ -6790,6 +7142,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '0', rtr => '0', brs => '0', data_length => 6, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0110", identifier =>      1319,
          data => (x"b0", x"74", x"e5", x"9b", x"8f", x"63", OTHERS => x"00")
         ),
@@ -6808,6 +7161,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '1', rtr => '1', brs => '0', data_length => 0, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0000", identifier => 397678114,
          data => (OTHERS => x"00")
         ),
@@ -6824,6 +7178,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '0', rtr => '0', brs => '1', data_length => 1, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0001", identifier =>      1000,
          data => (x"fc", OTHERS => x"00")
         ),
@@ -6840,6 +7195,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '1', rtr => '1', brs => '0', data_length => 0, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0000", identifier => 517530768,
          data => (OTHERS => x"00")
         ),
@@ -6855,6 +7211,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '1', rtr => '0', brs => '0', data_length => 3, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0011", identifier => 441106098,
          data => (x"62", x"ea", x"42", OTHERS => x"00")
         ),
@@ -6873,6 +7230,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '0', rtr => '1', brs => '0', data_length => 0, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0000", identifier =>       411,
          data => (OTHERS => x"00")
         ),
@@ -6887,6 +7245,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '1', rtr => '0', brs => '0', data_length => 5, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0101", identifier => 395520954,
          data => (x"72", x"a3", x"1a", x"21", x"f5", OTHERS => x"00")
         ),
@@ -6906,6 +7265,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '1', rtr => '0', brs => '0', data_length => 3, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0011", identifier => 322296093,
          data => (x"b5", x"0b", x"8c", OTHERS => x"00")
         ),
@@ -6925,6 +7285,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '1', rtr => '0', brs => '0', data_length => 4, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0100", identifier =>  22832232,
          data => (x"c5", x"85", x"0d", x"85", OTHERS => x"00")
         ),
@@ -6943,6 +7304,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '0', rtr => '0', brs => '0', data_length => 1, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0001", identifier =>       554,
          data => (x"36", OTHERS => x"00")
         ),
@@ -6959,6 +7321,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '1', rtr => '0', brs => '1', data_length => 48, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "1110", identifier => 409649831,
          data => (x"c0", x"54", x"62", x"75", x"a9", x"d4", x"14", x"0a", x"0a", x"1f", x"16", x"e9", x"54", x"78", x"84", x"9e", x"bd", x"8a", x"ab", x"44", x"ab", x"ef", x"6f", x"83", x"79", x"a5", x"44", x"43", x"4c", x"f6", x"30", x"8c", x"4c", x"12", x"82", x"75", x"e6", x"96", x"fe", x"70", x"b5", x"15", x"da", x"0a", x"8e", x"5f", x"29", x"4c", OTHERS => x"00")
         ),
@@ -7003,6 +7366,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '1', rtr => '0', brs => '0', data_length => 5, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0101", identifier => 311992122,
          data => (x"80", x"18", x"be", x"a5", x"5c", OTHERS => x"00")
         ),
@@ -7021,6 +7385,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '1', rtr => '1', brs => '0', data_length => 0, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0000", identifier => 339354190,
          data => (OTHERS => x"00")
         ),
@@ -7037,6 +7402,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '1', rtr => '0', brs => '1', data_length => 20, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "1011", identifier => 384999488,
          data => (x"97", x"15", x"1a", x"4e", x"2a", x"f4", x"d7", x"38", x"55", x"01", x"05", x"be", x"d6", x"15", x"54", x"1b", x"15", x"6c", x"d9", x"3b", OTHERS => x"00")
         ),
@@ -7067,6 +7433,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '1', rtr => '0', brs => '0', data_length => 5, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0101", identifier => 200648165,
          data => (x"ac", x"bc", x"50", x"ae", x"d1", OTHERS => x"00")
         ),
@@ -7087,6 +7454,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '0', rtr => '0', brs => '0', data_length => 7, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0111", identifier =>      1738,
          data => (x"91", x"89", x"ec", x"49", x"5e", x"6d", x"4e", OTHERS => x"00")
         ),
@@ -7106,6 +7474,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '0', rtr => '1', brs => '0', data_length => 0, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0000", identifier =>       520,
          data => (OTHERS => x"00")
         ),
@@ -7120,6 +7489,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '0', rtr => '0', brs => '0', data_length => 4, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0100", identifier =>      1877,
          data => (x"95", x"e1", x"43", x"22", OTHERS => x"00")
         ),
@@ -7137,6 +7507,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '1', rtr => '0', brs => '0', data_length => 7, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0111", identifier => 274229249,
          data => (x"6c", x"83", x"38", x"81", x"18", x"49", x"8b", OTHERS => x"00")
         ),
@@ -7155,6 +7526,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '0', rtr => '0', brs => '1', data_length => 1, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0001", identifier =>      1470,
          data => (x"87", OTHERS => x"00")
         ),
@@ -7170,6 +7542,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '0', rtr => '0', brs => '1', data_length => 24, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "1100", identifier =>      1288,
          data => (x"d7", x"4f", x"73", x"7e", x"64", x"d5", x"42", x"07", x"e4", x"c1", x"f9", x"22", x"93", x"66", x"25", x"cc", x"68", x"3d", x"16", x"f3", x"c1", x"29", x"5d", x"34", OTHERS => x"00")
         ),
@@ -7199,6 +7572,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '0', rtr => '0', brs => '0', data_length => 0, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0000", identifier =>       826,
          data => (OTHERS => x"00")
         ),
@@ -7214,6 +7588,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '0', rtr => '0', brs => '0', data_length => 2, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0010", identifier =>       160,
          data => (x"b5", x"b4", OTHERS => x"00")
         ),
@@ -7231,6 +7606,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '1', rtr => '0', brs => '1', data_length => 5, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0101", identifier => 339215688,
          data => (x"35", x"e0", x"4e", x"1b", x"85", OTHERS => x"00")
         ),
@@ -7251,6 +7627,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '1', rtr => '0', brs => '0', data_length => 1, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0001", identifier => 221301167,
          data => (x"84", OTHERS => x"00")
         ),
@@ -7268,6 +7645,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '1', rtr => '0', brs => '0', data_length => 4, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0100", identifier => 512589488,
          data => (x"a2", x"37", x"99", x"23", OTHERS => x"00")
         ),
@@ -7287,6 +7665,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '0', rtr => '0', brs => '1', data_length => 2, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0010", identifier =>       311,
          data => (x"a7", x"28", OTHERS => x"00")
         ),
@@ -7304,6 +7683,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '0', rtr => '0', brs => '0', data_length => 7, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0111", identifier =>      1100,
          data => (x"47", x"06", x"33", x"cc", x"a0", x"37", x"8f", OTHERS => x"00")
         ),
@@ -7322,6 +7702,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '0', rtr => '0', brs => '0', data_length => 7, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0111", identifier =>        61,
          data => (x"4d", x"91", x"3d", x"f0", x"48", x"d7", x"93", OTHERS => x"00")
         ),
@@ -7340,6 +7721,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '0', rtr => '0', brs => '0', data_length => 1, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0001", identifier =>      1290,
          data => (x"2e", OTHERS => x"00")
         ),
@@ -7357,6 +7739,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '1', rtr => '1', brs => '0', data_length => 0, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0000", identifier => 472637278,
          data => (OTHERS => x"00")
         ),
@@ -7372,6 +7755,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '1', rtr => '0', brs => '0', data_length => 6, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0110", identifier => 441015425,
          data => (x"8c", x"13", x"90", x"dd", x"40", x"a5", OTHERS => x"00")
         ),
@@ -7393,6 +7777,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '1', rtr => '1', brs => '0', data_length => 0, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0000", identifier => 442412761,
          data => (OTHERS => x"00")
         ),
@@ -7410,6 +7795,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '0', rtr => '1', brs => '0', data_length => 0, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0000", identifier =>      1658,
          data => (OTHERS => x"00")
         ),
@@ -7424,6 +7810,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '0', rtr => '1', brs => '0', data_length => 0, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0000", identifier =>       694,
          data => (OTHERS => x"00")
         ),
@@ -7439,6 +7826,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '0', rtr => '0', brs => '1', data_length => 20, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "1011", identifier =>      1711,
          data => (x"13", x"e0", x"f7", x"d7", x"e8", x"06", x"7c", x"26", x"5f", x"46", x"ad", x"d9", x"ee", x"26", x"92", x"24", x"fa", x"ac", x"67", x"00", OTHERS => x"00")
         ),
@@ -7466,6 +7854,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '1', rtr => '0', brs => '0', data_length => 3, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0011", identifier => 198077168,
          data => (x"8e", x"1c", x"96", OTHERS => x"00")
         ),
@@ -7482,6 +7871,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '1', rtr => '0', brs => '1', data_length => 16, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "1010", identifier =>  34039759,
          data => (x"5b", x"0b", x"24", x"b4", x"03", x"98", x"36", x"02", x"6c", x"67", x"ae", x"47", x"45", x"ec", x"0f", x"0a", OTHERS => x"00")
         ),
@@ -7507,6 +7897,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '0', rtr => '1', brs => '0', data_length => 0, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0000", identifier =>      1153,
          data => (OTHERS => x"00")
         ),
@@ -7521,6 +7912,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '1', rtr => '0', brs => '0', data_length => 4, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0100", identifier => 274965770,
          data => (x"c9", x"b9", x"5d", x"71", OTHERS => x"00")
         ),
@@ -7540,6 +7932,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '1', rtr => '0', brs => '0', data_length => 4, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0100", identifier => 387224079,
          data => (x"fe", x"b6", x"a3", x"01", OTHERS => x"00")
         ),
@@ -7559,6 +7952,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '0', rtr => '0', brs => '1', data_length => 1, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0001", identifier =>      1306,
          data => (x"1d", OTHERS => x"00")
         ),
@@ -7575,6 +7969,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '0', rtr => '0', brs => '1', data_length => 32, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "1101", identifier =>       656,
          data => (x"09", x"8b", x"8d", x"75", x"a1", x"a1", x"78", x"6b", x"db", x"d5", x"dc", x"55", x"0e", x"d9", x"73", x"7b", x"d8", x"2a", x"1f", x"5a", x"4c", x"2a", x"0b", x"b6", x"f9", x"a7", x"2e", x"d4", x"99", x"b1", x"6a", x"22", OTHERS => x"00")
         ),
@@ -7610,6 +8005,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '0', rtr => '0', brs => '0', data_length => 6, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0110", identifier =>      2016,
          data => (x"10", x"4a", x"75", x"65", x"a6", x"ca", OTHERS => x"00")
         ),
@@ -7629,6 +8025,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '0', rtr => '0', brs => '0', data_length => 3, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0011", identifier =>      1466,
          data => (x"e7", x"0d", x"34", OTHERS => x"00")
         ),
@@ -7646,6 +8043,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '1', rtr => '1', brs => '0', data_length => 0, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0000", identifier => 158897179,
          data => (OTHERS => x"00")
         ),
@@ -7661,6 +8059,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '0', rtr => '0', brs => '0', data_length => 3, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0011", identifier =>       536,
          data => (x"ef", x"a1", x"08", OTHERS => x"00")
         ),
@@ -7677,6 +8076,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '0', rtr => '1', brs => '0', data_length => 0, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0000", identifier =>      1519,
          data => (OTHERS => x"00")
         ),
@@ -7691,6 +8091,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '1', rtr => '0', brs => '0', data_length => 4, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0100", identifier =>  57383576,
          data => (x"21", x"d8", x"01", x"0f", OTHERS => x"00")
         ),
@@ -7709,6 +8110,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '0', rtr => '1', brs => '0', data_length => 0, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0000", identifier =>      1233,
          data => (OTHERS => x"00")
         ),
@@ -7723,6 +8125,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '1', rtr => '1', brs => '0', data_length => 0, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0000", identifier => 284943736,
          data => (OTHERS => x"00")
         ),
@@ -7738,6 +8141,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '1', rtr => '0', brs => '0', data_length => 6, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0110", identifier => 134243055,
          data => (x"2c", x"75", x"62", x"e5", x"db", x"64", OTHERS => x"00")
         ),
@@ -7758,6 +8162,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '0', rtr => '0', brs => '0', data_length => 16, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "1010", identifier =>      1000,
          data => (x"1e", x"7d", x"3d", x"9e", x"8c", x"6f", x"86", x"29", x"55", x"a4", x"fc", x"79", x"2c", x"01", x"04", x"cd", OTHERS => x"00")
         ),
@@ -7781,6 +8186,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '0', rtr => '0', brs => '1', data_length => 8, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "1000", identifier =>       626,
          data => (x"31", x"69", x"a1", x"0d", x"4e", x"cf", x"9a", x"a9", OTHERS => x"00")
         ),
@@ -7801,6 +8207,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '0', rtr => '0', brs => '0', data_length => 4, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0100", identifier =>      1229,
          data => (x"65", x"b6", x"2b", x"ec", OTHERS => x"00")
         ),
@@ -7819,6 +8226,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '0', rtr => '1', brs => '0', data_length => 0, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0000", identifier =>       573,
          data => (OTHERS => x"00")
         ),
@@ -7833,6 +8241,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '0', rtr => '0', brs => '1', data_length => 8, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "1000", identifier =>       626,
          data => (x"31", x"69", x"a1", x"0d", x"4e", x"cf", x"9a", x"a9", OTHERS => x"00")
         ),
@@ -7853,6 +8262,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '0', rtr => '0', brs => '0', data_length => 5, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0101", identifier =>       633,
          data => (x"a6", x"05", x"7c", x"02", x"7e", OTHERS => x"00")
         ),
@@ -7870,6 +8280,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '1', rtr => '0', brs => '0', data_length => 0, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0000", identifier => 523982329,
          data => (OTHERS => x"00")
         ),
@@ -7887,6 +8298,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '0', rtr => '0', brs => '0', data_length => 6, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0110", identifier =>      1878,
          data => (x"14", x"3b", x"87", x"3c", x"f5", x"26", OTHERS => x"00")
         ),
@@ -7904,6 +8316,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '1', rtr => '0', brs => '0', data_length => 1, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0001", identifier => 345833116,
          data => (x"9d", OTHERS => x"00")
         ),
@@ -7921,6 +8334,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '1', rtr => '0', brs => '1', data_length => 12, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "1001", identifier => 145598810,
          data => (x"a6", x"8f", x"db", x"a4", x"49", x"3c", x"20", x"0e", x"06", x"a9", x"1a", x"3f", OTHERS => x"00")
         ),
@@ -7945,6 +8359,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '1', rtr => '0', brs => '1', data_length => 32, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "1101", identifier =>  15552390,
          data => (x"10", x"2c", x"4a", x"9e", x"08", x"8d", x"46", x"74", x"aa", x"6e", x"28", x"4c", x"81", x"81", x"f2", x"90", x"5e", x"97", x"5a", x"1a", x"b7", x"68", x"9f", x"e0", x"02", x"de", x"db", x"1e", x"b2", x"12", x"42", x"43", OTHERS => x"00")
         ),
@@ -7980,6 +8395,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '1', rtr => '1', brs => '0', data_length => 0, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0000", identifier => 274656955,
          data => (OTHERS => x"00")
         ),
@@ -7995,6 +8411,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '0', rtr => '0', brs => '0', data_length => 16, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "1010", identifier =>      1283,
          data => (x"10", x"97", x"64", x"82", x"28", x"42", x"1a", x"82", x"5c", x"52", x"6b", x"fb", x"b2", x"6d", x"5b", x"8e", OTHERS => x"00")
         ),
@@ -8020,6 +8437,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '0', rtr => '0', brs => '1', data_length => 32, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "1101", identifier =>       501,
          data => (x"dd", x"da", x"33", x"a3", x"f3", x"5b", x"5e", x"38", x"f1", x"c0", x"48", x"89", x"25", x"cb", x"31", x"e7", x"65", x"b4", x"c3", x"37", x"20", x"40", x"ea", x"0d", x"9b", x"f8", x"19", x"a9", x"1a", x"e7", x"fa", x"f7", OTHERS => x"00")
         ),
@@ -8053,6 +8471,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '0', rtr => '0', brs => '0', data_length => 0, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0000", identifier =>       910,
          data => (OTHERS => x"00")
         ),
@@ -8068,6 +8487,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '1', rtr => '0', brs => '1', data_length => 20, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "1011", identifier => 502842460,
          data => (x"04", x"df", x"03", x"35", x"47", x"e7", x"e9", x"0c", x"20", x"89", x"4c", x"8a", x"97", x"67", x"83", x"30", x"90", x"1d", x"18", x"8b", OTHERS => x"00")
         ),
@@ -8096,6 +8516,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '1', rtr => '0', brs => '1', data_length => 7, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0111", identifier => 252026239,
          data => (x"c2", x"ab", x"7f", x"3d", x"66", x"b6", x"41", OTHERS => x"00")
         ),
@@ -8117,6 +8538,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '0', rtr => '0', brs => '0', data_length => 5, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0101", identifier =>      1348,
          data => (x"e0", x"99", x"c1", x"6b", x"65", OTHERS => x"00")
         ),
@@ -8135,6 +8557,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '1', rtr => '0', brs => '0', data_length => 5, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0101", identifier => 478774089,
          data => (x"5d", x"ec", x"4b", x"69", x"82", OTHERS => x"00")
         ),
@@ -8154,6 +8577,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '0', rtr => '0', brs => '0', data_length => 1, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0001", identifier =>       500,
          data => (x"df", OTHERS => x"00")
         ),
@@ -8168,6 +8592,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '0', rtr => '1', brs => '0', data_length => 0, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0000", identifier =>      1532,
          data => (OTHERS => x"00")
         ),
@@ -8182,6 +8607,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '1', rtr => '0', brs => '0', data_length => 6, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0110", identifier => 273768678,
          data => (x"bd", x"b2", x"0a", x"29", x"18", x"d5", OTHERS => x"00")
         ),
@@ -8201,6 +8627,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '1', rtr => '0', brs => '1', data_length => 5, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0101", identifier => 485539924,
          data => (x"91", x"a9", x"ab", x"14", x"4f", OTHERS => x"00")
         ),
@@ -8221,6 +8648,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '1', rtr => '0', brs => '0', data_length => 5, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0101", identifier =>   1682338,
          data => (x"3d", x"d8", x"6d", x"aa", x"3e", OTHERS => x"00")
         ),
@@ -8239,6 +8667,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '1', rtr => '0', brs => '0', data_length => 1, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0001", identifier => 492835402,
          data => (x"58", OTHERS => x"00")
         ),
@@ -8255,6 +8684,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '0', rtr => '0', brs => '1', data_length => 20, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "1011", identifier =>      1711,
          data => (x"13", x"e0", x"f7", x"d7", x"e8", x"06", x"7c", x"26", x"5f", x"46", x"ad", x"d9", x"ee", x"26", x"92", x"24", x"fa", x"ac", x"67", x"00", OTHERS => x"00")
         ),
@@ -8282,6 +8712,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '0', rtr => '0', brs => '1', data_length => 2, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0010", identifier =>       524,
          data => (x"c4", x"e4", OTHERS => x"00")
         ),
@@ -8298,6 +8729,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '0', rtr => '0', brs => '0', data_length => 3, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0011", identifier =>       682,
          data => (x"3f", x"55", x"7c", OTHERS => x"00")
         ),
@@ -8314,6 +8746,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '0', rtr => '0', brs => '0', data_length => 7, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0111", identifier =>      1071,
          data => (x"4d", x"2e", x"4e", x"92", x"33", x"cd", x"20", OTHERS => x"00")
         ),
@@ -8332,6 +8765,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '1', rtr => '0', brs => '1', data_length => 6, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0110", identifier => 124500831,
          data => (x"f9", x"78", x"d7", x"96", x"3d", x"bc", OTHERS => x"00")
         ),
@@ -8352,6 +8786,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '1', rtr => '1', brs => '0', data_length => 0, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0000", identifier =>  35244346,
          data => (OTHERS => x"00")
         ),
@@ -8367,6 +8802,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '0', rtr => '1', brs => '0', data_length => 0, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0000", identifier =>       289,
          data => (OTHERS => x"00")
         ),
@@ -8381,6 +8817,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '0', rtr => '1', brs => '0', data_length => 0, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0000", identifier =>       609,
          data => (OTHERS => x"00")
         ),
@@ -8395,6 +8832,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '1', rtr => '0', brs => '1', data_length => 6, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0110", identifier => 509626576,
          data => (x"bd", x"67", x"8e", x"c3", x"f4", x"08", OTHERS => x"00")
         ),
@@ -8415,6 +8853,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '0', rtr => '0', brs => '0', data_length => 2, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0010", identifier =>       578,
          data => (x"e5", x"96", OTHERS => x"00")
         ),
@@ -8431,6 +8870,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '0', rtr => '1', brs => '0', data_length => 0, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0000", identifier =>       154,
          data => (OTHERS => x"00")
         ),
@@ -8445,6 +8885,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '1', rtr => '0', brs => '0', data_length => 5, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0101", identifier => 150617378,
          data => (x"2e", x"0f", x"50", x"c6", x"a6", OTHERS => x"00")
         ),
@@ -8463,6 +8904,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '1', rtr => '0', brs => '1', data_length => 8, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "1000", identifier => 482363630,
          data => (x"6c", x"d2", x"89", x"74", x"10", x"d5", x"93", x"0b", OTHERS => x"00")
         ),
@@ -8484,6 +8926,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '1', rtr => '0', brs => '1', data_length => 64, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "1111", identifier =>  75860839,
          data => (x"57", x"20", x"d4", x"29", x"83", x"b8", x"33", x"85", x"e6", x"42", x"d5", x"2d", x"e8", x"27", x"5a", x"c6", x"b5", x"6f", x"34", x"08", x"f8", x"28", x"19", x"4e", x"3b", x"a3", x"ad", x"34", x"44", x"90", x"d1", x"9b", x"30", x"26", x"c4", x"33", x"de", x"77", x"b9", x"c5", x"39", x"8f", x"f2", x"22", x"36", x"cd", x"69", x"eb", x"bc", x"9d", x"f4", x"b5", x"45", x"8d", x"83", x"01", x"b0", x"32", x"35", x"f4", x"c2", x"86", x"11", x"73")
         ),
@@ -8535,6 +8978,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '0', rtr => '0', brs => '1', data_length => 32, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "1101", identifier =>      1643,
          data => (x"60", x"50", x"07", x"70", x"44", x"a9", x"a6", x"91", x"13", x"93", x"4e", x"30", x"08", x"83", x"f4", x"95", x"07", x"f5", x"46", x"39", x"ab", x"3b", x"7c", x"32", x"cb", x"ef", x"5f", x"22", x"16", x"e9", x"ef", x"f6", OTHERS => x"00")
         ),
@@ -8568,6 +9012,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '0', rtr => '0', brs => '0', data_length => 6, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0110", identifier =>       945,
          data => (x"8d", x"90", x"b2", x"21", x"5e", x"e2", OTHERS => x"00")
         ),
@@ -8587,6 +9032,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '1', rtr => '0', brs => '0', data_length => 5, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0101", identifier => 357882772,
          data => (x"3c", x"f7", x"38", x"14", x"ba", OTHERS => x"00")
         ),
@@ -8607,6 +9053,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '1', rtr => '0', brs => '0', data_length => 5, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0101", identifier => 185469322,
          data => (x"0c", x"8e", x"0c", x"2e", x"24", OTHERS => x"00")
         ),
@@ -8626,6 +9073,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '1', rtr => '0', brs => '0', data_length => 5, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0101", identifier => 495259650,
          data => (x"02", x"2f", x"b4", x"90", x"3f", OTHERS => x"00")
         ),
@@ -8644,6 +9092,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '1', rtr => '0', brs => '0', data_length => 5, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0101", identifier =>  43743683,
          data => (x"7f", x"a2", x"19", x"e8", x"f1", OTHERS => x"00")
         ),
@@ -8662,6 +9111,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '0', rtr => '1', brs => '0', data_length => 0, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0000", identifier =>       404,
          data => (OTHERS => x"00")
         ),
@@ -8676,6 +9126,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '1', rtr => '0', brs => '0', data_length => 6, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0110", identifier => 224421986,
          data => (x"5b", x"1a", x"b5", x"77", x"ca", x"4a", OTHERS => x"00")
         ),
@@ -8697,6 +9148,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '0', rtr => '0', brs => '0', data_length => 2, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0010", identifier =>        50,
          data => (x"67", x"bb", OTHERS => x"00")
         ),
@@ -8712,6 +9164,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '1', rtr => '0', brs => '0', data_length => 4, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0100", identifier => 503699736,
          data => (x"af", x"3f", x"c6", x"cd", OTHERS => x"00")
         ),
@@ -8730,6 +9183,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '1', rtr => '0', brs => '0', data_length => 3, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0011", identifier => 333419269,
          data => (x"16", x"aa", x"6f", OTHERS => x"00")
         ),
@@ -8749,6 +9203,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '0', rtr => '0', brs => '1', data_length => 0, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0000", identifier =>       565,
          data => (OTHERS => x"00")
         ),
@@ -8764,6 +9219,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '1', rtr => '0', brs => '1', data_length => 5, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0101", identifier => 107179765,
          data => (x"02", x"88", x"15", x"bd", x"60", OTHERS => x"00")
         ),
@@ -8784,6 +9240,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '0', rtr => '0', brs => '1', data_length => 4, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0100", identifier =>      1875,
          data => (x"77", x"62", x"52", x"42", OTHERS => x"00")
         ),
@@ -8802,6 +9259,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '0', rtr => '1', brs => '0', data_length => 0, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0000", identifier =>      1046,
          data => (OTHERS => x"00")
         ),
@@ -8816,6 +9274,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '1', rtr => '0', brs => '0', data_length => 6, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0110", identifier => 142481850,
          data => (x"25", x"66", x"2f", x"d3", x"dd", x"fd", OTHERS => x"00")
         ),
@@ -8834,6 +9293,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '1', rtr => '1', brs => '0', data_length => 0, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0000", identifier => 376944503,
          data => (OTHERS => x"00")
         ),
@@ -8849,6 +9309,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '0', rtr => '0', brs => '0', data_length => 0, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0000", identifier =>       426,
          data => (OTHERS => x"00")
         ),
@@ -8865,6 +9326,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '0', rtr => '0', brs => '0', data_length => 6, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0110", identifier =>      1159,
          data => (x"70", x"44", x"8e", x"51", x"58", x"ef", OTHERS => x"00")
         ),
@@ -8883,6 +9345,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '0', rtr => '0', brs => '0', data_length => 4, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0100", identifier =>      1956,
          data => (x"bd", x"ab", x"91", x"1b", OTHERS => x"00")
         ),
@@ -8900,6 +9363,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '1', rtr => '0', brs => '0', data_length => 16, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "1010", identifier =>  28756582,
          data => (x"18", x"96", x"07", x"0a", x"b5", x"00", x"fe", x"cc", x"da", x"c5", x"25", x"4c", x"0a", x"b3", x"1d", x"e1", OTHERS => x"00")
         ),
@@ -8926,6 +9390,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '1', rtr => '1', brs => '0', data_length => 0, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0000", identifier => 343990278,
          data => (OTHERS => x"00")
         ),
@@ -8941,6 +9406,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '1', rtr => '1', brs => '0', data_length => 0, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0000", identifier => 346916364,
          data => (OTHERS => x"00")
         ),
@@ -8956,6 +9422,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '0', rtr => '0', brs => '0', data_length => 5, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0101", identifier =>      1310,
          data => (x"e7", x"d6", x"8e", x"71", x"8d", OTHERS => x"00")
         ),
@@ -8973,6 +9440,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '0', rtr => '0', brs => '0', data_length => 3, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0011", identifier =>      1057,
          data => (x"fe", x"34", x"40", OTHERS => x"00")
         ),
@@ -8990,6 +9458,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '0', rtr => '1', brs => '0', data_length => 0, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0000", identifier =>        28,
          data => (OTHERS => x"00")
         ),
@@ -9004,6 +9473,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '0', rtr => '0', brs => '1', data_length => 8, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "1000", identifier =>       405,
          data => (x"34", x"a1", x"5e", x"45", x"7f", x"ad", x"85", x"07", OTHERS => x"00")
         ),
@@ -9024,6 +9494,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '1', rtr => '0', brs => '1', data_length => 16, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "1010", identifier => 117421740,
          data => (x"23", x"f7", x"c3", x"8c", x"2d", x"43", x"c0", x"ec", x"76", x"92", x"0f", x"4c", x"a4", x"2b", x"1e", x"f1", OTHERS => x"00")
         ),
@@ -9049,6 +9520,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '1', rtr => '0', brs => '1', data_length => 7, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0111", identifier =>  19855932,
          data => (x"6b", x"a2", x"35", x"f0", x"a9", x"ca", x"cd", OTHERS => x"00")
         ),
@@ -9069,6 +9541,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '0', rtr => '0', brs => '0', data_length => 16, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "1010", identifier =>      1621,
          data => (x"7b", x"6e", x"77", x"be", x"af", x"e3", x"b4", x"42", x"72", x"01", x"66", x"9e", x"9f", x"58", x"9f", x"48", OTHERS => x"00")
         ),
@@ -9093,6 +9566,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '1', rtr => '0', brs => '0', data_length => 1, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0001", identifier => 365865495,
          data => (x"83", OTHERS => x"00")
         ),
@@ -9109,6 +9583,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '0', rtr => '0', brs => '1', data_length => 16, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "1010", identifier =>      1721,
          data => (x"21", x"e0", x"b1", x"6a", x"db", x"20", x"61", x"9a", x"cf", x"46", x"ce", x"92", x"b8", x"d0", x"f8", x"d6", OTHERS => x"00")
         ),
@@ -9134,6 +9609,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '1', rtr => '1', brs => '0', data_length => 0, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0000", identifier => 143045231,
          data => (OTHERS => x"00")
         ),
@@ -9149,6 +9625,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '1', rtr => '0', brs => '0', data_length => 0, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0000", identifier => 474297620,
          data => (OTHERS => x"00")
         ),
@@ -9166,6 +9643,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '0', rtr => '0', brs => '1', data_length => 2, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0010", identifier =>       101,
          data => (x"79", x"22", OTHERS => x"00")
         ),
@@ -9183,6 +9661,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '0', rtr => '0', brs => '0', data_length => 12, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "1001", identifier =>       516,
          data => (x"19", x"20", x"0c", x"e7", x"32", x"45", x"38", x"aa", x"9b", x"28", x"7c", x"13", OTHERS => x"00")
         ),
@@ -9205,6 +9684,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '0', rtr => '0', brs => '0', data_length => 5, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0101", identifier =>       456,
          data => (x"6d", x"f1", x"9f", x"1d", x"ca", OTHERS => x"00")
         ),
@@ -9223,6 +9703,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '1', rtr => '0', brs => '0', data_length => 8, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "1000", identifier => 245462851,
          data => (x"29", x"00", x"1a", x"ee", x"98", x"b9", x"7b", x"01", OTHERS => x"00")
         ),
@@ -9244,6 +9725,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '1', rtr => '1', brs => '0', data_length => 0, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0000", identifier => 384018234,
          data => (OTHERS => x"00")
         ),
@@ -9260,6 +9742,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '1', rtr => '0', brs => '0', data_length => 1, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0001", identifier => 503734938,
          data => (x"3d", OTHERS => x"00")
         ),
@@ -9276,6 +9759,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '1', rtr => '1', brs => '0', data_length => 0, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0000", identifier => 409637906,
          data => (OTHERS => x"00")
         ),
@@ -9292,6 +9776,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '1', rtr => '0', brs => '1', data_length => 4, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0100", identifier => 352548189,
          data => (x"eb", x"ac", x"54", x"6c", OTHERS => x"00")
         ),
@@ -9313,6 +9798,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '0', rtr => '0', brs => '0', data_length => 0, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0000", identifier =>      1269,
          data => (OTHERS => x"00")
         ),
@@ -9329,6 +9815,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '1', rtr => '0', brs => '1', data_length => 64, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "1111", identifier => 125358641,
          data => (x"5b", x"21", x"18", x"ca", x"e2", x"f8", x"87", x"8c", x"e2", x"b2", x"27", x"eb", x"f9", x"8d", x"56", x"5c", x"38", x"c1", x"09", x"0c", x"2e", x"50", x"cf", x"b3", x"51", x"0e", x"39", x"bd", x"8d", x"78", x"42", x"68", x"19", x"d9", x"33", x"7c", x"52", x"ba", x"09", x"35", x"ed", x"af", x"a0", x"e7", x"3e", x"76", x"c4", x"f5", x"39", x"cd", x"03", x"67", x"9d", x"d2", x"1b", x"ee", x"60", x"d4", x"2d", x"ed", x"4d", x"ee", x"56", x"e6")
         ),
@@ -9379,6 +9866,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '1', rtr => '1', brs => '0', data_length => 0, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0000", identifier => 435727908,
          data => (OTHERS => x"00")
         ),
@@ -9395,6 +9883,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '0', rtr => '0', brs => '1', data_length => 1, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0001", identifier =>      1716,
          data => (x"9a", OTHERS => x"00")
         ),
@@ -9411,6 +9900,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '0', rtr => '0', brs => '0', data_length => 4, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0100", identifier =>       627,
          data => (x"ad", x"d2", x"07", x"4b", OTHERS => x"00")
         ),
@@ -9427,6 +9917,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '0', rtr => '1', brs => '0', data_length => 0, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0000", identifier =>       612,
          data => (OTHERS => x"00")
         ),
@@ -9442,6 +9933,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '0', rtr => '0', brs => '0', data_length => 4, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0100", identifier =>      1671,
          data => (x"2b", x"1f", x"54", x"0e", OTHERS => x"00")
         ),
@@ -9458,6 +9950,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '1', rtr => '0', brs => '0', data_length => 0, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0000", identifier => 319398317,
          data => (OTHERS => x"00")
         ),
@@ -9474,6 +9967,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '0', rtr => '1', brs => '0', data_length => 0, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0000", identifier =>      1298,
          data => (OTHERS => x"00")
         ),
@@ -9489,6 +9983,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '0', rtr => '1', brs => '0', data_length => 0, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0000", identifier =>       846,
          data => (OTHERS => x"00")
         ),
@@ -9503,6 +9998,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '1', rtr => '0', brs => '0', data_length => 12, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "1001", identifier => 501702580,
          data => (x"bc", x"a1", x"e0", x"b0", x"e5", x"37", x"7a", x"91", x"d5", x"4e", x"9f", x"8f", OTHERS => x"00")
         ),
@@ -9526,6 +10022,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '1', rtr => '0', brs => '0', data_length => 2, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0010", identifier =>   9395332,
          data => (x"12", x"98", OTHERS => x"00")
         ),
@@ -9543,6 +10040,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '0', rtr => '0', brs => '0', data_length => 6, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0110", identifier =>      1387,
          data => (x"d1", x"71", x"f9", x"10", x"a8", x"24", OTHERS => x"00")
         ),
@@ -9562,6 +10060,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '0', rtr => '0', brs => '0', data_length => 4, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0100", identifier =>      1876,
          data => (x"aa", x"a2", x"8f", x"3c", OTHERS => x"00")
         ),
@@ -9579,6 +10078,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '0', rtr => '0', brs => '0', data_length => 4, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0100", identifier =>      1952,
          data => (x"77", x"21", x"77", x"a7", OTHERS => x"00")
         ),
@@ -9596,6 +10096,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '0', rtr => '0', brs => '0', data_length => 4, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0100", identifier =>         7,
          data => (x"27", x"18", x"40", x"19", OTHERS => x"00")
         ),
@@ -9613,6 +10114,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '1', rtr => '1', brs => '0', data_length => 0, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0000", identifier => 249545002,
          data => (OTHERS => x"00")
         ),
@@ -9629,6 +10131,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '1', rtr => '1', brs => '0', data_length => 0, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0000", identifier => 136747739,
          data => (OTHERS => x"00")
         ),
@@ -9644,6 +10147,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '0', rtr => '0', brs => '0', data_length => 2, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0010", identifier =>      1803,
          data => (x"be", x"e8", OTHERS => x"00")
         ),
@@ -9659,6 +10163,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '0', rtr => '1', brs => '0', data_length => 0, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0000", identifier =>      1058,
          data => (OTHERS => x"00")
         ),
@@ -9673,6 +10178,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '1', rtr => '0', brs => '0', data_length => 5, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0101", identifier => 192272427,
          data => (x"cc", x"fa", x"a4", x"e5", x"0c", OTHERS => x"00")
         ),
@@ -9691,6 +10197,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '0', rtr => '1', brs => '0', data_length => 0, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0000", identifier =>      1629,
          data => (OTHERS => x"00")
         ),
@@ -9706,6 +10213,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '1', rtr => '0', brs => '0', data_length => 5, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0101", identifier => 325286698,
          data => (x"d4", x"42", x"5c", x"fe", x"01", OTHERS => x"00")
         ),
@@ -9724,6 +10232,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '0', rtr => '1', brs => '0', data_length => 0, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0000", identifier =>       903,
          data => (OTHERS => x"00")
         ),
@@ -9737,6 +10246,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '1', rtr => '1', brs => '0', data_length => 0, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0000", identifier => 420045070,
          data => (OTHERS => x"00")
         ),
@@ -9753,6 +10263,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '0', rtr => '0', brs => '0', data_length => 7, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0111", identifier =>       924,
          data => (x"79", x"47", x"91", x"3a", x"16", x"de", x"f5", OTHERS => x"00")
         ),
@@ -9771,6 +10282,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '1', rtr => '0', brs => '0', data_length => 4, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0100", identifier => 523957072,
          data => (x"98", x"83", x"3c", x"99", OTHERS => x"00")
         ),
@@ -9790,6 +10302,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '0', rtr => '1', brs => '0', data_length => 0, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0000", identifier =>      1579,
          data => (OTHERS => x"00")
         ),
@@ -9804,6 +10317,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '0', rtr => '0', brs => '0', data_length => 8, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "1000", identifier =>       921,
          data => (x"f5", x"22", x"05", x"c8", x"8c", x"7e", x"8f", x"1f", OTHERS => x"00")
         ),
@@ -9823,6 +10337,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '1', rtr => '1', brs => '0', data_length => 0, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0000", identifier => 155681405,
          data => (OTHERS => x"00")
         ),
@@ -9838,6 +10353,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '1', rtr => '1', brs => '0', data_length => 0, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0000", identifier => 103343113,
          data => (OTHERS => x"00")
         ),
@@ -9854,6 +10370,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '1', rtr => '0', brs => '1', data_length => 32, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "1101", identifier => 466478873,
          data => (x"85", x"dc", x"87", x"e8", x"03", x"4e", x"06", x"9b", x"44", x"28", x"a0", x"8c", x"b4", x"9e", x"9b", x"53", x"d6", x"c1", x"d1", x"85", x"13", x"b8", x"09", x"8a", x"dc", x"26", x"05", x"bc", x"5b", x"c8", x"c6", x"61", OTHERS => x"00")
         ),
@@ -9888,6 +10405,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '1', rtr => '1', brs => '0', data_length => 0, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0000", identifier => 440023916,
          data => (OTHERS => x"00")
         ),
@@ -9903,6 +10421,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '1', rtr => '0', brs => '0', data_length => 2, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0010", identifier => 106628700,
          data => (x"eb", x"ad", OTHERS => x"00")
         ),
@@ -9921,6 +10440,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '1', rtr => '1', brs => '0', data_length => 0, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0000", identifier => 354471589,
          data => (OTHERS => x"00")
         ),
@@ -9937,6 +10457,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '1', rtr => '0', brs => '1', data_length => 6, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0110", identifier => 283868590,
          data => (x"e6", x"e7", x"8e", x"6b", x"a4", x"ea", OTHERS => x"00")
         ),
@@ -9957,6 +10478,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '1', rtr => '0', brs => '1', data_length => 2, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0010", identifier =>  63402555,
          data => (x"16", x"80", OTHERS => x"00")
         ),
@@ -9975,6 +10497,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '1', rtr => '0', brs => '0', data_length => 1, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0001", identifier => 488144778,
          data => (x"a8", OTHERS => x"00")
         ),
@@ -9991,6 +10514,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '1', rtr => '0', brs => '0', data_length => 7, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0111", identifier => 472163561,
          data => (x"85", x"f1", x"e1", x"e4", x"4e", x"ed", x"cc", OTHERS => x"00")
         ),
@@ -10011,6 +10535,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '0', rtr => '0', brs => '1', data_length => 4, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0100", identifier =>       713,
          data => (x"c6", x"d3", x"65", x"92", OTHERS => x"00")
         ),
@@ -10029,6 +10554,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '1', rtr => '0', brs => '0', data_length => 5, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0101", identifier => 433303701,
          data => (x"8f", x"71", x"28", x"6f", x"9a", OTHERS => x"00")
         ),
@@ -10047,6 +10573,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '0', rtr => '0', brs => '0', data_length => 0, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0000", identifier =>       253,
          data => (OTHERS => x"00")
         ),
@@ -10061,6 +10588,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '0', rtr => '0', brs => '0', data_length => 5, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0101", identifier =>      1907,
          data => (x"da", x"7d", x"64", x"30", x"59", OTHERS => x"00")
         ),
@@ -10079,6 +10607,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '1', rtr => '0', brs => '0', data_length => 8, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "1000", identifier => 278069006,
          data => (x"b1", x"04", x"af", x"da", x"b1", x"a2", x"e9", x"23", OTHERS => x"00")
         ),
@@ -10100,6 +10629,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '0', rtr => '0', brs => '0', data_length => 5, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0101", identifier =>       601,
          data => (x"83", x"04", x"61", x"4f", x"e6", OTHERS => x"00")
         ),
@@ -10116,6 +10646,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '0', rtr => '0', brs => '0', data_length => 0, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0000", identifier =>      1468,
          data => (OTHERS => x"00")
         ),
@@ -10131,6 +10662,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '0', rtr => '1', brs => '0', data_length => 0, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0000", identifier =>      1927,
          data => (OTHERS => x"00")
         ),
@@ -10145,6 +10677,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '0', rtr => '1', brs => '0', data_length => 0, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0000", identifier =>      1863,
          data => (OTHERS => x"00")
         ),
@@ -10159,6 +10692,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '1', rtr => '0', brs => '0', data_length => 2, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0010", identifier => 452786811,
          data => (x"b0", x"b2", OTHERS => x"00")
         ),
@@ -10177,6 +10711,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '1', rtr => '0', brs => '0', data_length => 16, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "1010", identifier => 316824322,
          data => (x"4b", x"fe", x"c1", x"b1", x"4d", x"42", x"c7", x"77", x"3f", x"c2", x"51", x"95", x"c2", x"55", x"0c", x"9a", OTHERS => x"00")
         ),
@@ -10203,6 +10738,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '0', rtr => '0', brs => '0', data_length => 7, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0111", identifier =>      1017,
          data => (x"83", x"17", x"25", x"34", x"ca", x"ec", x"a1", OTHERS => x"00")
         ),
@@ -10221,6 +10757,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '0', rtr => '1', brs => '0', data_length => 0, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0000", identifier =>       187,
          data => (OTHERS => x"00")
         ),
@@ -10235,6 +10772,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '0', rtr => '0', brs => '1', data_length => 4, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0100", identifier =>       161,
          data => (x"cd", x"57", x"18", x"1f", OTHERS => x"00")
         ),
@@ -10253,6 +10791,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '1', rtr => '0', brs => '1', data_length => 64, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "1111", identifier =>  29153820,
          data => (x"5f", x"ae", x"6b", x"8f", x"66", x"6e", x"a6", x"8c", x"22", x"f0", x"f8", x"c3", x"82", x"82", x"58", x"5d", x"0c", x"ae", x"ea", x"62", x"c6", x"40", x"30", x"9d", x"d7", x"ce", x"0a", x"b3", x"43", x"83", x"28", x"23", x"32", x"93", x"b2", x"19", x"81", x"59", x"25", x"a3", x"4b", x"1e", x"68", x"4d", x"20", x"c0", x"aa", x"ab", x"ee", x"95", x"8d", x"35", x"d5", x"bd", x"d2", x"2e", x"8c", x"5c", x"61", x"50", x"e0", x"89", x"73", x"92")
         ),
@@ -10304,6 +10843,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '0', rtr => '1', brs => '0', data_length => 0, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0000", identifier =>      1442,
          data => (OTHERS => x"00")
         ),
@@ -10318,6 +10858,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '1', rtr => '0', brs => '0', data_length => 8, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "1000", identifier => 454448357,
          data => (x"17", x"0f", x"eb", x"c2", x"3a", x"da", x"58", x"c8", OTHERS => x"00")
         ),
@@ -10339,6 +10880,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '1', rtr => '0', brs => '1', data_length => 7, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0111", identifier => 127186952,
          data => (x"93", x"3e", x"bd", x"63", x"1f", x"47", x"d6", OTHERS => x"00")
         ),
@@ -10359,6 +10901,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '0', rtr => '0', brs => '0', data_length => 12, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "1001", identifier =>      1756,
          data => (x"fb", x"2f", x"c7", x"c6", x"1d", x"f2", x"dd", x"2c", x"de", x"20", x"e6", x"39", OTHERS => x"00")
         ),
@@ -10379,6 +10922,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '0', rtr => '0', brs => '1', data_length => 1, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0001", identifier =>      1452,
          data => (x"2a", OTHERS => x"00")
         ),
@@ -10396,6 +10940,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '1', rtr => '1', brs => '0', data_length => 0, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0000", identifier =>  87778407,
          data => (OTHERS => x"00")
         ),
@@ -10411,6 +10956,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '1', rtr => '1', brs => '0', data_length => 0, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0000", identifier =>  82365874,
          data => (OTHERS => x"00")
         ),
@@ -10427,6 +10973,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '1', rtr => '0', brs => '0', data_length => 6, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0110", identifier => 185067245,
          data => (x"39", x"42", x"e4", x"2c", x"9f", x"90", OTHERS => x"00")
         ),
@@ -10445,6 +10992,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '1', rtr => '0', brs => '0', data_length => 4, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0100", identifier => 492368911,
          data => (x"a6", x"8b", x"e0", x"5d", OTHERS => x"00")
         ),
@@ -10465,6 +11013,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '0', rtr => '0', brs => '0', data_length => 3, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0011", identifier =>       848,
          data => (x"d2", x"25", x"2d", OTHERS => x"00")
         ),
@@ -10483,6 +11032,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '1', rtr => '0', brs => '0', data_length => 2, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0010", identifier => 382511754,
          data => (x"8c", x"51", OTHERS => x"00")
         ),
@@ -10501,6 +11051,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '1', rtr => '0', brs => '0', data_length => 4, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0100", identifier => 372560340,
          data => (x"33", x"35", x"7b", x"73", OTHERS => x"00")
         ),
@@ -10520,6 +11071,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '0', rtr => '0', brs => '0', data_length => 6, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0110", identifier =>       870,
          data => (x"8d", x"31", x"7e", x"71", x"d6", x"9c", OTHERS => x"00")
         ),
@@ -10537,6 +11089,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '1', rtr => '0', brs => '0', data_length => 6, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0110", identifier => 406555680,
          data => (x"a1", x"de", x"d5", x"99", x"eb", x"27", OTHERS => x"00")
         ),
@@ -10556,6 +11109,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '1', rtr => '0', brs => '0', data_length => 4, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0100", identifier => 374529181,
          data => (x"ec", x"32", x"1e", x"61", OTHERS => x"00")
         ),
@@ -10574,6 +11128,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '0', rtr => '0', brs => '0', data_length => 5, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0101", identifier =>       711,
          data => (x"1c", x"e3", x"25", x"0d", x"bb", OTHERS => x"00")
         ),
@@ -10592,6 +11147,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '0', rtr => '1', brs => '0', data_length => 0, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0000", identifier =>       760,
          data => (OTHERS => x"00")
         ),
@@ -10606,6 +11162,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '1', rtr => '0', brs => '0', data_length => 4, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0100", identifier => 464942262,
          data => (x"33", x"61", x"96", x"e4", OTHERS => x"00")
         ),
@@ -10624,6 +11181,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '0', rtr => '1', brs => '0', data_length => 0, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0000", identifier =>       414,
          data => (OTHERS => x"00")
         ),
@@ -10638,6 +11196,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '1', rtr => '0', brs => '0', data_length => 3, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0011", identifier =>  69429033,
          data => (x"d7", x"29", x"93", OTHERS => x"00")
         ),
@@ -10656,6 +11215,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '1', rtr => '1', brs => '0', data_length => 0, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0000", identifier =>  91877694,
          data => (OTHERS => x"00")
         ),
@@ -10671,6 +11231,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '1', rtr => '0', brs => '0', data_length => 7, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0111", identifier =>  50967681,
          data => (x"b5", x"f4", x"fd", x"72", x"a8", x"5f", x"88", OTHERS => x"00")
         ),
@@ -10691,6 +11252,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '1', rtr => '0', brs => '1', data_length => 16, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "1010", identifier => 393179468,
          data => (x"e0", x"ba", x"6e", x"85", x"bd", x"e5", x"dc", x"e6", x"7a", x"18", x"b4", x"1c", x"10", x"43", x"61", x"ec", OTHERS => x"00")
         ),
@@ -10716,6 +11278,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '0', rtr => '0', brs => '0', data_length => 7, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0111", identifier =>       383,
          data => (x"2d", x"7c", x"ac", x"0d", x"05", x"3a", x"88", OTHERS => x"00")
         ),
@@ -10734,6 +11297,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '0', rtr => '0', brs => '0', data_length => 0, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0000", identifier =>       821,
          data => (OTHERS => x"00")
         ),
@@ -10749,6 +11313,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '1', rtr => '0', brs => '1', data_length => 12, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "1001", identifier =>  15156470,
          data => (x"2f", x"da", x"fb", x"63", x"f6", x"8b", x"26", x"58", x"78", x"f9", x"67", x"a7", OTHERS => x"00")
         ),
@@ -10773,6 +11338,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '1', rtr => '0', brs => '0', data_length => 0, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0000", identifier => 344904769,
          data => (OTHERS => x"00")
         ),
@@ -10791,6 +11357,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '0', rtr => '0', brs => '1', data_length => 20, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "1011", identifier =>      1711,
          data => (x"13", x"e0", x"f7", x"d7", x"e8", x"06", x"7c", x"26", x"5f", x"46", x"ad", x"d9", x"ee", x"26", x"92", x"24", x"fa", x"ac", x"67", x"00", OTHERS => x"00")
         ),
@@ -10818,6 +11385,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '0', rtr => '0', brs => '0', data_length => 0, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0000", identifier =>       382,
          data => (OTHERS => x"00")
         ),
@@ -10834,6 +11402,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '1', rtr => '1', brs => '0', data_length => 0, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0000", identifier => 493999169,
          data => (OTHERS => x"00")
         ),
@@ -10850,6 +11419,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '0', rtr => '0', brs => '0', data_length => 3, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0011", identifier =>       353,
          data => (x"ad", x"fc", x"13", OTHERS => x"00")
         ),
@@ -10867,6 +11437,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '1', rtr => '0', brs => '1', data_length => 48, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "1110", identifier => 332084986,
          data => (x"8f", x"2c", x"e9", x"71", x"31", x"bd", x"db", x"d7", x"60", x"52", x"00", x"8e", x"43", x"2f", x"84", x"95", x"42", x"2a", x"42", x"d0", x"b1", x"66", x"6b", x"df", x"e2", x"fd", x"08", x"c7", x"39", x"34", x"97", x"48", x"60", x"81", x"ba", x"11", x"be", x"16", x"68", x"9f", x"e8", x"68", x"2e", x"ab", x"18", x"b2", x"c0", x"d9", OTHERS => x"00")
         ),
@@ -10911,6 +11482,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '0', rtr => '1', brs => '0', data_length => 0, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0000", identifier =>      1415,
          data => (OTHERS => x"00")
         ),
@@ -10925,6 +11497,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '1', rtr => '0', brs => '1', data_length => 6, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0110", identifier => 209537921,
          data => (x"14", x"4e", x"aa", x"ac", x"96", x"8a", OTHERS => x"00")
         ),
@@ -10947,6 +11520,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '0', rtr => '0', brs => '1', data_length => 2, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0010", identifier =>      1285,
          data => (x"84", x"8c", OTHERS => x"00")
         ),
@@ -10964,6 +11538,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '1', rtr => '0', brs => '1', data_length => 3, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0011", identifier => 262985106,
          data => (x"6d", x"3c", x"de", OTHERS => x"00")
         ),
@@ -10983,6 +11558,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '1', rtr => '1', brs => '0', data_length => 0, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0000", identifier =>  63648327,
          data => (OTHERS => x"00")
         ),
@@ -10998,6 +11574,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '0', rtr => '1', brs => '0', data_length => 0, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0000", identifier =>      1791,
          data => (OTHERS => x"00")
         ),
@@ -11012,6 +11589,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '0', rtr => '0', brs => '0', data_length => 2, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0010", identifier =>      1824,
          data => (x"71", x"e3", OTHERS => x"00")
         ),
@@ -11027,6 +11605,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '1', rtr => '1', brs => '0', data_length => 0, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0000", identifier => 252261699,
          data => (OTHERS => x"00")
         ),
@@ -11043,6 +11622,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '0', rtr => '0', brs => '1', data_length => 64, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "1111", identifier =>      1067,
          data => (x"02", x"05", x"d9", x"e0", x"4f", x"98", x"ea", x"a7", x"c1", x"0c", x"6e", x"37", x"c1", x"2b", x"40", x"46", x"92", x"76", x"61", x"04", x"5a", x"4c", x"11", x"2b", x"9f", x"a1", x"88", x"c0", x"9f", x"a0", x"5e", x"a2", x"a5", x"b7", x"03", x"75", x"d0", x"6e", x"1d", x"12", x"7a", x"0c", x"c8", x"bb", x"37", x"09", x"02", x"4a", x"7f", x"e2", x"4e", x"d9", x"30", x"5f", x"05", x"4f", x"02", x"8d", x"8f", x"21", x"ad", x"ee", x"43", x"54")
         ),
@@ -11094,6 +11674,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '1', rtr => '0', brs => '1', data_length => 0, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0000", identifier => 532801101,
          data => (OTHERS => x"00")
         ),
@@ -11111,6 +11692,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '0', rtr => '0', brs => '0', data_length => 7, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0111", identifier =>      1780,
          data => (x"ea", x"a9", x"da", x"6d", x"f3", x"5a", x"50", OTHERS => x"00")
         ),
@@ -11130,6 +11712,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '0', rtr => '1', brs => '0', data_length => 0, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0000", identifier =>      1938,
          data => (OTHERS => x"00")
         ),
@@ -11144,6 +11727,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '1', rtr => '0', brs => '0', data_length => 2, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0010", identifier => 309059494,
          data => (x"f4", x"cd", OTHERS => x"00")
         ),
@@ -11162,6 +11746,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '0', rtr => '0', brs => '0', data_length => 5, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0101", identifier =>      1959,
          data => (x"ea", x"04", x"f8", x"f2", x"33", OTHERS => x"00")
         ),
@@ -11178,6 +11763,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '1', rtr => '0', brs => '0', data_length => 2, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0010", identifier => 485654257,
          data => (x"8a", x"08", OTHERS => x"00")
         ),
@@ -11194,6 +11780,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '1', rtr => '0', brs => '0', data_length => 12, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "1001", identifier => 362211940,
          data => (x"6c", x"68", x"aa", x"8f", x"2f", x"89", x"53", x"24", x"d6", x"5b", x"ed", x"4a", OTHERS => x"00")
         ),
@@ -11219,6 +11806,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '0', rtr => '0', brs => '1', data_length => 24, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "1100", identifier =>      1287,
          data => (x"a8", x"60", x"64", x"ec", x"fe", x"78", x"8c", x"89", x"81", x"06", x"64", x"cb", x"b4", x"c0", x"38", x"9c", x"ea", x"47", x"cb", x"f3", x"9a", x"6f", x"ca", x"76", OTHERS => x"00")
         ),
@@ -11247,6 +11835,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '0', rtr => '0', brs => '1', data_length => 24, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "1100", identifier =>        87,
          data => (x"ce", x"56", x"72", x"2f", x"ba", x"5f", x"ad", x"b3", x"eb", x"b7", x"35", x"71", x"1c", x"01", x"a5", x"5c", x"b8", x"42", x"47", x"7f", x"8d", x"3b", x"1a", x"fd", OTHERS => x"00")
         ),
@@ -11276,6 +11865,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '1', rtr => '0', brs => '0', data_length => 8, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "1000", identifier => 109888219,
          data => (x"b8", x"65", x"00", x"10", x"d7", x"2f", x"4a", x"b6", OTHERS => x"00")
         ),
@@ -11298,6 +11888,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '1', rtr => '0', brs => '0', data_length => 3, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0011", identifier => 399969527,
          data => (x"93", x"31", x"b3", OTHERS => x"00")
         ),
@@ -11315,6 +11906,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '0', rtr => '0', brs => '0', data_length => 2, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0010", identifier =>       959,
          data => (x"6b", x"0a", OTHERS => x"00")
         ),
@@ -11330,6 +11922,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '0', rtr => '0', brs => '0', data_length => 5, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0101", identifier =>       689,
          data => (x"62", x"b1", x"47", x"1c", x"96", OTHERS => x"00")
         ),
@@ -11347,6 +11940,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '1', rtr => '0', brs => '0', data_length => 1, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0001", identifier => 152121483,
          data => (x"a4", OTHERS => x"00")
         ),
@@ -11364,6 +11958,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '0', rtr => '1', brs => '0', data_length => 0, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0000", identifier =>      1739,
          data => (OTHERS => x"00")
         ),
@@ -11379,6 +11974,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '0', rtr => '0', brs => '1', data_length => 4, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0100", identifier =>        49,
          data => (x"48", x"90", x"7f", x"b4", OTHERS => x"00")
         ),
@@ -11397,6 +11993,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '0', rtr => '0', brs => '1', data_length => 4, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0100", identifier =>       544,
          data => (x"d0", x"05", x"59", x"19", OTHERS => x"00")
         ),
@@ -11415,6 +12012,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '0', rtr => '0', brs => '0', data_length => 0, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0000", identifier =>       320,
          data => (OTHERS => x"00")
         ),
@@ -11431,6 +12029,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '0', rtr => '0', brs => '1', data_length => 20, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "1011", identifier =>      1711,
          data => (x"13", x"e0", x"f7", x"d7", x"e8", x"06", x"7c", x"26", x"5f", x"46", x"ad", x"d9", x"ee", x"26", x"92", x"24", x"fa", x"ac", x"67", x"00", OTHERS => x"00")
         ),
@@ -11458,6 +12057,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '1', rtr => '0', brs => '0', data_length => 7, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0111", identifier => 232704570,
          data => (x"3b", x"ba", x"5a", x"83", x"4b", x"59", x"b7", OTHERS => x"00")
         ),
@@ -11478,6 +12078,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '0', rtr => '0', brs => '0', data_length => 1, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0001", identifier =>       672,
          data => (x"c3", OTHERS => x"00")
         ),
@@ -11494,6 +12095,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '1', rtr => '0', brs => '0', data_length => 5, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0101", identifier => 357882772,
          data => (x"3c", x"f7", x"38", x"14", x"ba", OTHERS => x"00")
         ),
@@ -11514,6 +12116,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '1', rtr => '0', brs => '0', data_length => 5, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0101", identifier => 357882772,
          data => (x"3c", x"f7", x"38", x"14", x"ba", OTHERS => x"00")
         ),
@@ -11534,6 +12137,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '0', rtr => '0', brs => '0', data_length => 2, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0010", identifier =>       669,
          data => (x"39", x"a0", OTHERS => x"00")
         ),
@@ -11549,6 +12153,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '1', rtr => '0', brs => '0', data_length => 4, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0100", identifier => 462699278,
          data => (x"59", x"fa", x"15", x"51", OTHERS => x"00")
         ),
@@ -11567,6 +12172,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '1', rtr => '1', brs => '0', data_length => 0, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0000", identifier => 379953452,
          data => (OTHERS => x"00")
         ),
@@ -11583,6 +12189,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '1', rtr => '0', brs => '0', data_length => 0, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0000", identifier => 158896750,
          data => (OTHERS => x"00")
         ),
@@ -11599,6 +12206,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '0', rtr => '0', brs => '1', data_length => 64, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "1111", identifier =>      1668,
          data => (x"bc", x"61", x"ad", x"d4", x"86", x"e6", x"f4", x"3c", x"63", x"22", x"5d", x"3c", x"7b", x"58", x"52", x"4c", x"0b", x"fa", x"d8", x"fa", x"64", x"d5", x"f0", x"a3", x"a2", x"94", x"69", x"fa", x"1e", x"90", x"e1", x"da", x"71", x"90", x"b0", x"77", x"f6", x"a5", x"b4", x"da", x"c7", x"12", x"17", x"c2", x"e9", x"e8", x"10", x"f4", x"e4", x"68", x"ef", x"49", x"3e", x"e1", x"6d", x"60", x"f5", x"d6", x"5c", x"14", x"e6", x"bd", x"6f", x"d8")
         ),
@@ -11648,6 +12256,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '0', rtr => '0', brs => '1', data_length => 7, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0111", identifier =>       530,
          data => (x"05", x"a0", x"8d", x"96", x"37", x"cf", x"00", OTHERS => x"00")
         ),
@@ -11666,6 +12275,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '0', rtr => '0', brs => '0', data_length => 4, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0100", identifier =>      1841,
          data => (x"65", x"4e", x"06", x"c6", OTHERS => x"00")
         ),
@@ -11684,6 +12294,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '1', rtr => '0', brs => '0', data_length => 7, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0111", identifier => 365302580,
          data => (x"51", x"f9", x"01", x"c0", x"52", x"cf", x"60", OTHERS => x"00")
         ),
@@ -11705,6 +12316,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '1', rtr => '0', brs => '0', data_length => 2, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0010", identifier => 457804390,
          data => (x"32", x"3f", OTHERS => x"00")
         ),
@@ -11723,6 +12335,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '0', rtr => '0', brs => '0', data_length => 0, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0000", identifier =>      1021,
          data => (OTHERS => x"00")
         ),
@@ -11737,6 +12350,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '0', rtr => '1', brs => '0', data_length => 0, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0000", identifier =>       327,
          data => (OTHERS => x"00")
         ),
@@ -11751,6 +12365,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '1', rtr => '0', brs => '0', data_length => 1, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0001", identifier => 191502034,
          data => (x"30", OTHERS => x"00")
         ),
@@ -11769,6 +12384,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '0', rtr => '0', brs => '0', data_length => 6, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0110", identifier =>       133,
          data => (x"7c", x"ac", x"8f", x"20", x"c1", x"b4", OTHERS => x"00")
         ),
@@ -11786,6 +12402,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '0', rtr => '0', brs => '0', data_length => 4, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0100", identifier =>       839,
          data => (x"6a", x"c6", x"f0", x"cc", OTHERS => x"00")
         ),
@@ -11804,6 +12421,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '1', rtr => '0', brs => '0', data_length => 0, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0000", identifier => 527437127,
          data => (OTHERS => x"00")
         ),
@@ -11820,6 +12438,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '0', rtr => '0', brs => '0', data_length => 5, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0101", identifier =>      2045,
          data => (x"31", x"1e", x"85", x"db", x"fa", OTHERS => x"00")
         ),
@@ -11838,6 +12457,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '0', rtr => '0', brs => '1', data_length => 1, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0001", identifier =>       223,
          data => (x"e8", OTHERS => x"00")
         ),
@@ -11854,6 +12474,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '1', rtr => '0', brs => '1', data_length => 1, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0001", identifier => 360230731,
          data => (x"c2", OTHERS => x"00")
         ),
@@ -11872,6 +12493,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '1', rtr => '0', brs => '0', data_length => 6, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0110", identifier =>  66177357,
          data => (x"37", x"90", x"23", x"1b", x"b9", x"9a", OTHERS => x"00")
         ),
@@ -11891,6 +12513,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '0', rtr => '0', brs => '0', data_length => 6, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0110", identifier =>      1998,
          data => (x"37", x"2a", x"14", x"ec", x"03", x"bb", OTHERS => x"00")
         ),
@@ -11909,6 +12532,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '1', rtr => '0', brs => '0', data_length => 4, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0100", identifier => 411547621,
          data => (x"04", x"8b", x"07", x"c7", OTHERS => x"00")
         ),
@@ -11927,6 +12551,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '0', rtr => '0', brs => '0', data_length => 5, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0101", identifier =>       698,
          data => (x"32", x"fe", x"c5", x"4e", x"b8", OTHERS => x"00")
         ),
@@ -11946,6 +12571,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '1', rtr => '0', brs => '0', data_length => 5, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0101", identifier => 363302764,
          data => (x"4e", x"c9", x"e3", x"62", x"36", OTHERS => x"00")
         ),
@@ -11965,6 +12591,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '0', rtr => '0', brs => '0', data_length => 12, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "1001", identifier =>      1625,
          data => (x"13", x"a0", x"c7", x"9e", x"27", x"8f", x"f5", x"bd", x"8a", x"64", x"60", x"bd", OTHERS => x"00")
         ),
@@ -11986,6 +12613,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '0', rtr => '0', brs => '1', data_length => 5, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0101", identifier =>       626,
          data => (x"f5", x"cf", x"18", x"af", x"1e", OTHERS => x"00")
         ),
@@ -12004,6 +12632,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '1', rtr => '1', brs => '0', data_length => 0, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0000", identifier => 125168528,
          data => (OTHERS => x"00")
         ),
@@ -12019,6 +12648,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '0', rtr => '1', brs => '0', data_length => 0, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0000", identifier =>      2021,
          data => (OTHERS => x"00")
         ),
@@ -12033,6 +12663,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '1', rtr => '0', brs => '0', data_length => 0, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0000", identifier =>  57286859,
          data => (OTHERS => x"00")
         ),
@@ -12048,6 +12679,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '1', rtr => '1', brs => '0', data_length => 0, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0000", identifier => 331091014,
          data => (OTHERS => x"00")
         ),
@@ -12064,6 +12696,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '0', rtr => '0', brs => '1', data_length => 20, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "1011", identifier =>      1866,
          data => (x"6d", x"83", x"59", x"05", x"b2", x"78", x"66", x"45", x"79", x"fd", x"3f", x"19", x"fd", x"9b", x"7b", x"8f", x"98", x"26", x"40", x"bc", OTHERS => x"00")
         ),
@@ -12090,6 +12723,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '0', rtr => '0', brs => '1', data_length => 12, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "1001", identifier =>       852,
          data => (x"60", x"a6", x"de", x"48", x"34", x"68", x"35", x"b8", x"42", x"3b", x"ea", x"ba", OTHERS => x"00")
         ),
@@ -12112,6 +12746,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '1', rtr => '0', brs => '0', data_length => 0, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0000", identifier => 178730345,
          data => (OTHERS => x"00")
         ),
@@ -12128,6 +12763,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '1', rtr => '0', brs => '1', data_length => 12, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "1001", identifier => 306920531,
          data => (x"a4", x"ed", x"ed", x"e0", x"4e", x"d3", x"fe", x"72", x"c5", x"5f", x"99", x"24", OTHERS => x"00")
         ),
@@ -12152,6 +12788,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '1', rtr => '1', brs => '0', data_length => 0, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0000", identifier => 393425991,
          data => (OTHERS => x"00")
         ),
@@ -12167,6 +12804,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '0', rtr => '0', brs => '1', data_length => 12, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "1001", identifier =>       363,
          data => (x"23", x"3d", x"5a", x"93", x"89", x"f7", x"1f", x"d0", x"a4", x"43", x"bf", x"92", OTHERS => x"00")
         ),
@@ -12189,6 +12827,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '0', rtr => '0', brs => '1', data_length => 8, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "1000", identifier =>        33,
          data => (x"ac", x"82", x"99", x"d0", x"a9", x"e7", x"5d", x"06", OTHERS => x"00")
         ),
@@ -12209,6 +12848,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '1', rtr => '0', brs => '0', data_length => 2, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0010", identifier => 275871198,
          data => (x"d7", x"82", OTHERS => x"00")
         ),
@@ -12227,6 +12867,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '1', rtr => '1', brs => '0', data_length => 0, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0000", identifier => 529128994,
          data => (OTHERS => x"00")
         ),
@@ -12242,6 +12883,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '0', rtr => '0', brs => '1', data_length => 3, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0011", identifier =>      1271,
          data => (x"e1", x"9b", x"9a", OTHERS => x"00")
         ),
@@ -12259,6 +12901,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '0', rtr => '0', brs => '1', data_length => 1, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0001", identifier =>      1926,
          data => (x"34", OTHERS => x"00")
         ),
@@ -12275,6 +12918,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '1', rtr => '1', brs => '0', data_length => 0, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0000", identifier => 293864917,
          data => (OTHERS => x"00")
         ),
@@ -12290,6 +12934,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '0', rtr => '1', brs => '0', data_length => 0, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0000", identifier =>      1109,
          data => (OTHERS => x"00")
         ),
@@ -12304,6 +12949,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '0', rtr => '0', brs => '0', data_length => 4, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0100", identifier =>       840,
          data => (x"f6", x"c1", x"37", x"c4", OTHERS => x"00")
         ),
@@ -12320,6 +12966,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '1', rtr => '0', brs => '0', data_length => 6, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0110", identifier => 238170457,
          data => (x"6c", x"b9", x"0a", x"06", x"ae", x"ca", OTHERS => x"00")
         ),
@@ -12339,6 +12986,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '0', rtr => '0', brs => '0', data_length => 0, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0000", identifier =>       702,
          data => (OTHERS => x"00")
         ),
@@ -12354,6 +13002,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '1', rtr => '0', brs => '0', data_length => 4, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0100", identifier => 389412551,
          data => (x"ee", x"1a", x"b7", x"69", OTHERS => x"00")
         ),
@@ -12372,6 +13021,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '0', rtr => '0', brs => '0', data_length => 3, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0011", identifier =>      1736,
          data => (x"24", x"83", x"a1", OTHERS => x"00")
         ),
@@ -12389,6 +13039,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '1', rtr => '1', brs => '0', data_length => 0, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0000", identifier =>  87306660,
          data => (OTHERS => x"00")
         ),
@@ -12405,6 +13056,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '0', rtr => '0', brs => '0', data_length => 4, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0100", identifier =>      1717,
          data => (x"53", x"f6", x"f8", x"eb", OTHERS => x"00")
         ),
@@ -12422,6 +13074,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '1', rtr => '1', brs => '0', data_length => 0, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0000", identifier => 474684449,
          data => (OTHERS => x"00")
         ),
@@ -12437,6 +13090,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '1', rtr => '0', brs => '1', data_length => 64, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "1111", identifier => 107712761,
          data => (x"17", x"0d", x"10", x"89", x"31", x"13", x"aa", x"27", x"88", x"18", x"88", x"b8", x"0e", x"ef", x"17", x"cf", x"92", x"6a", x"46", x"8c", x"56", x"62", x"e5", x"2a", x"32", x"8b", x"ed", x"1c", x"68", x"1b", x"b7", x"7f", x"28", x"c7", x"89", x"59", x"5b", x"34", x"80", x"e3", x"cb", x"88", x"9c", x"da", x"79", x"b3", x"aa", x"8b", x"1e", x"71", x"97", x"f3", x"d3", x"7e", x"1f", x"86", x"89", x"0d", x"22", x"f1", x"29", x"da", x"f0", x"d0")
         ),
@@ -12488,6 +13142,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '1', rtr => '0', brs => '1', data_length => 12, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "1001", identifier => 353884648,
          data => (x"2b", x"62", x"7a", x"b4", x"fe", x"55", x"ad", x"33", x"80", x"b8", x"51", x"f1", OTHERS => x"00")
         ),
@@ -12512,6 +13167,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '0', rtr => '0', brs => '0', data_length => 7, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0111", identifier =>      1062,
          data => (x"4b", x"59", x"71", x"6e", x"ca", x"1a", x"49", OTHERS => x"00")
         ),
@@ -12530,6 +13186,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '1', rtr => '0', brs => '1', data_length => 7, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0111", identifier => 177599522,
          data => (x"e9", x"65", x"c1", x"cb", x"df", x"76", x"ca", OTHERS => x"00")
         ),
@@ -12551,6 +13208,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '1', rtr => '0', brs => '0', data_length => 0, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0000", identifier => 489448846,
          data => (OTHERS => x"00")
         ),
@@ -12566,6 +13224,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '1', rtr => '0', brs => '0', data_length => 2, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0010", identifier => 360845381,
          data => (x"fd", x"f9", OTHERS => x"00")
         ),
@@ -12584,6 +13243,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '0', rtr => '0', brs => '0', data_length => 0, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0000", identifier =>       723,
          data => (OTHERS => x"00")
         ),
@@ -12600,6 +13260,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '0', rtr => '0', brs => '0', data_length => 3, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0011", identifier =>       533,
          data => (x"14", x"08", x"45", OTHERS => x"00")
         ),
@@ -12616,6 +13277,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '0', rtr => '1', brs => '0', data_length => 0, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0000", identifier =>       474,
          data => (OTHERS => x"00")
         ),
@@ -12630,6 +13292,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '0', rtr => '0', brs => '0', data_length => 4, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0100", identifier =>       633,
          data => (x"c1", x"29", x"6e", x"ef", OTHERS => x"00")
         ),
@@ -12647,6 +13310,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '0', rtr => '0', brs => '1', data_length => 3, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0011", identifier =>       289,
          data => (x"c4", x"24", x"bb", OTHERS => x"00")
         ),
@@ -12664,6 +13328,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '1', rtr => '1', brs => '0', data_length => 0, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0000", identifier => 445858793,
          data => (OTHERS => x"00")
         ),
@@ -12680,6 +13345,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '1', rtr => '0', brs => '0', data_length => 5, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0101", identifier => 279590114,
          data => (x"ec", x"de", x"ab", x"ad", x"ba", OTHERS => x"00")
         ),
@@ -12700,6 +13366,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '1', rtr => '0', brs => '1', data_length => 16, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "1010", identifier =>  73270413,
          data => (x"3e", x"ef", x"c4", x"7c", x"ca", x"b2", x"35", x"df", x"f7", x"d8", x"1b", x"dd", x"82", x"c7", x"22", x"1d", OTHERS => x"00")
         ),
@@ -12725,6 +13392,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '1', rtr => '0', brs => '0', data_length => 12, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "1001", identifier => 473308445,
          data => (x"2c", x"fa", x"78", x"da", x"35", x"b3", x"6d", x"4a", x"b5", x"41", x"88", x"25", OTHERS => x"00")
         ),
@@ -12749,6 +13417,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '1', rtr => '1', brs => '0', data_length => 0, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0000", identifier => 468230101,
          data => (OTHERS => x"00")
         ),
@@ -12765,6 +13434,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '0', rtr => '0', brs => '0', data_length => 4, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0100", identifier =>       490,
          data => (x"94", x"b2", x"b1", x"31", OTHERS => x"00")
         ),
@@ -12783,6 +13453,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '0', rtr => '0', brs => '1', data_length => 48, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "1110", identifier =>      1390,
          data => (x"1e", x"99", x"f0", x"78", x"4e", x"a4", x"e5", x"98", x"d9", x"a6", x"a0", x"7e", x"2d", x"26", x"ed", x"66", x"5f", x"3e", x"17", x"72", x"29", x"a5", x"86", x"5b", x"d6", x"b8", x"dc", x"03", x"29", x"7a", x"7b", x"c6", x"93", x"6c", x"3f", x"e2", x"90", x"a4", x"fa", x"e9", x"4c", x"1c", x"68", x"79", x"c1", x"d6", x"5f", x"21", OTHERS => x"00")
         ),
@@ -12824,6 +13495,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '1', rtr => '1', brs => '0', data_length => 0, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0000", identifier => 168251354,
          data => (OTHERS => x"00")
         ),
@@ -12840,6 +13512,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '1', rtr => '1', brs => '0', data_length => 0, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0000", identifier => 314000455,
          data => (OTHERS => x"00")
         ),
@@ -12855,6 +13528,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '0', rtr => '0', brs => '0', data_length => 2, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0010", identifier =>       215,
          data => (x"04", x"5e", OTHERS => x"00")
         ),
@@ -12870,6 +13544,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '0', rtr => '0', brs => '0', data_length => 1, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0001", identifier =>      1036,
          data => (x"59", OTHERS => x"00")
         ),
@@ -12885,6 +13560,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '0', rtr => '0', brs => '0', data_length => 7, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0111", identifier =>       658,
          data => (x"19", x"4c", x"e0", x"ad", x"42", x"f3", x"6b", OTHERS => x"00")
         ),
@@ -12903,6 +13579,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '1', rtr => '0', brs => '0', data_length => 0, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0000", identifier => 127230274,
          data => (OTHERS => x"00")
         ),
@@ -12918,6 +13595,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '1', rtr => '0', brs => '1', data_length => 64, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "1111", identifier => 320791491,
          data => (x"20", x"6c", x"17", x"a2", x"d2", x"86", x"4a", x"35", x"60", x"bd", x"32", x"22", x"aa", x"72", x"ba", x"76", x"d2", x"68", x"b8", x"c6", x"53", x"96", x"55", x"d6", x"66", x"b5", x"cf", x"2d", x"12", x"b7", x"e5", x"32", x"25", x"fd", x"55", x"f7", x"04", x"1f", x"ac", x"e3", x"dd", x"df", x"06", x"88", x"52", x"c0", x"00", x"a4", x"a8", x"38", x"6b", x"7b", x"4e", x"40", x"d1", x"b5", x"76", x"21", x"62", x"88", x"d9", x"49", x"bb", x"fe")
         ),
@@ -12971,6 +13649,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '1', rtr => '1', brs => '0', data_length => 0, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0000", identifier => 267277054,
          data => (OTHERS => x"00")
         ),
@@ -12987,6 +13666,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '0', rtr => '0', brs => '0', data_length => 7, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0111", identifier =>      1889,
          data => (x"16", x"d5", x"76", x"95", x"7a", x"9e", x"cd", OTHERS => x"00")
         ),
@@ -13006,6 +13686,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '1', rtr => '0', brs => '0', data_length => 12, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "1001", identifier => 310666799,
          data => (x"52", x"9c", x"0e", x"34", x"25", x"e7", x"7d", x"60", x"66", x"c3", x"70", x"dc", OTHERS => x"00")
         ),
@@ -13029,6 +13710,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '0', rtr => '0', brs => '0', data_length => 4, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0100", identifier =>       134,
          data => (x"84", x"f2", x"c3", x"d9", OTHERS => x"00")
         ),
@@ -13045,6 +13727,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '0', rtr => '0', brs => '0', data_length => 4, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0100", identifier =>       592,
          data => (x"3a", x"23", x"44", x"60", OTHERS => x"00")
         ),
@@ -13061,6 +13744,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '0', rtr => '0', brs => '0', data_length => 2, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0010", identifier =>       128,
          data => (x"a1", x"05", OTHERS => x"00")
         ),
@@ -13077,6 +13761,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '1', rtr => '1', brs => '0', data_length => 0, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0000", identifier => 370603727,
          data => (OTHERS => x"00")
         ),
@@ -13093,6 +13778,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '0', rtr => '1', brs => '0', data_length => 0, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0000", identifier =>       766,
          data => (OTHERS => x"00")
         ),
@@ -13108,6 +13794,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '0', rtr => '0', brs => '0', data_length => 7, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0111", identifier =>      1438,
          data => (x"b5", x"df", x"7c", x"3e", x"87", x"b6", x"e0", OTHERS => x"00")
         ),
@@ -13125,6 +13812,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '0', rtr => '0', brs => '0', data_length => 8, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "1000", identifier =>       727,
          data => (x"8d", x"ab", x"34", x"13", x"73", x"b6", x"fd", x"80", OTHERS => x"00")
         ),
@@ -13145,6 +13833,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '1', rtr => '1', brs => '0', data_length => 0, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0000", identifier => 245845261,
          data => (OTHERS => x"00")
         ),
@@ -13160,6 +13849,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '0', rtr => '1', brs => '0', data_length => 0, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0000", identifier =>       510,
          data => (OTHERS => x"00")
         ),
@@ -13174,6 +13864,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '1', rtr => '0', brs => '0', data_length => 2, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0010", identifier =>  26211057,
          data => (x"ed", x"b8", OTHERS => x"00")
         ),
@@ -13190,6 +13881,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '0', rtr => '0', brs => '0', data_length => 2, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0010", identifier =>        67,
          data => (x"e1", x"15", OTHERS => x"00")
         ),
@@ -13205,6 +13897,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '0', rtr => '0', brs => '0', data_length => 3, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0011", identifier =>       860,
          data => (x"a5", x"3b", x"77", OTHERS => x"00")
         ),
@@ -13222,6 +13915,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '1', rtr => '0', brs => '0', data_length => 16, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "1010", identifier => 490235789,
          data => (x"36", x"da", x"8b", x"3d", x"e0", x"03", x"a3", x"e3", x"b8", x"91", x"9c", x"ce", x"ca", x"6c", x"56", x"e5", OTHERS => x"00")
         ),
@@ -13247,6 +13941,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '0', rtr => '0', brs => '0', data_length => 16, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "1010", identifier =>       293,
          data => (x"67", x"32", x"38", x"22", x"a9", x"25", x"f7", x"df", x"a1", x"c2", x"17", x"7c", x"4e", x"d3", x"dd", x"51", OTHERS => x"00")
         ),
@@ -13271,6 +13966,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '1', rtr => '0', brs => '0', data_length => 3, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0011", identifier => 324783999,
          data => (x"d8", x"d4", x"c9", OTHERS => x"00")
         ),
@@ -13289,6 +13985,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '0', rtr => '0', brs => '1', data_length => 64, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "1111", identifier =>      1907,
          data => (x"7c", x"2c", x"4e", x"2e", x"64", x"ef", x"d8", x"0a", x"68", x"38", x"ab", x"2b", x"4f", x"29", x"f8", x"a3", x"86", x"ca", x"9b", x"48", x"54", x"a4", x"a5", x"2d", x"79", x"70", x"db", x"b4", x"88", x"f4", x"9b", x"84", x"21", x"6a", x"b3", x"06", x"d9", x"8c", x"10", x"42", x"44", x"bb", x"ec", x"94", x"64", x"e6", x"b7", x"ea", x"b1", x"53", x"b2", x"85", x"77", x"59", x"33", x"f1", x"49", x"8e", x"26", x"d1", x"84", x"c1", x"56", x"a5")
         ),
@@ -13342,6 +14039,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '1', rtr => '1', brs => '0', data_length => 0, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0000", identifier => 117762241,
          data => (OTHERS => x"00")
         ),
@@ -13357,6 +14055,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '1', rtr => '0', brs => '0', data_length => 6, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0110", identifier => 320793464,
          data => (x"6f", x"db", x"1c", x"a6", x"47", x"4d", OTHERS => x"00")
         ),
@@ -13376,6 +14075,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '1', rtr => '0', brs => '0', data_length => 2, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0010", identifier => 425948002,
          data => (x"06", x"e2", OTHERS => x"00")
         ),
@@ -13392,6 +14092,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '1', rtr => '0', brs => '0', data_length => 2, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0010", identifier =>  46431541,
          data => (x"4b", x"c3", OTHERS => x"00")
         ),
@@ -13408,6 +14109,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '0', rtr => '0', brs => '0', data_length => 7, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0111", identifier =>       894,
          data => (x"e3", x"a6", x"45", x"3f", x"1e", x"fa", x"2e", OTHERS => x"00")
         ),
@@ -13427,6 +14129,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '0', rtr => '0', brs => '0', data_length => 3, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0011", identifier =>       811,
          data => (x"cd", x"ba", x"b6", OTHERS => x"00")
         ),
@@ -13444,6 +14147,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '1', rtr => '1', brs => '0', data_length => 0, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0000", identifier => 236244823,
          data => (OTHERS => x"00")
         ),
@@ -13459,6 +14163,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '1', rtr => '0', brs => '0', data_length => 0, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0000", identifier => 137048178,
          data => (OTHERS => x"00")
         ),
@@ -13474,6 +14179,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '0', rtr => '0', brs => '0', data_length => 2, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0010", identifier =>       590,
          data => (x"69", x"0c", OTHERS => x"00")
         ),
@@ -13489,6 +14195,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '0', rtr => '0', brs => '0', data_length => 4, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0100", identifier =>      1928,
          data => (x"78", x"d4", x"bf", x"cc", OTHERS => x"00")
         ),
@@ -13506,6 +14213,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '0', rtr => '0', brs => '1', data_length => 2, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0010", identifier =>       857,
          data => (x"d9", x"df", OTHERS => x"00")
         ),
@@ -13523,6 +14231,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '0', rtr => '0', brs => '1', data_length => 32, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "1101", identifier =>       225,
          data => (x"9f", x"d4", x"9d", x"7a", x"fe", x"0b", x"23", x"15", x"f3", x"ae", x"51", x"23", x"f9", x"2b", x"4c", x"72", x"80", x"8c", x"bf", x"96", x"2f", x"d9", x"e7", x"89", x"b3", x"47", x"a0", x"af", x"d0", x"0a", x"57", x"70", OTHERS => x"00")
         ),
@@ -13557,6 +14266,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '1', rtr => '0', brs => '0', data_length => 0, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0000", identifier => 326837675,
          data => (OTHERS => x"00")
         ),
@@ -13574,6 +14284,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '0', rtr => '0', brs => '1', data_length => 24, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "1100", identifier =>       561,
          data => (x"96", x"37", x"ee", x"63", x"2a", x"6f", x"6f", x"e9", x"86", x"9e", x"43", x"ed", x"29", x"f7", x"36", x"c9", x"27", x"07", x"54", x"7e", x"77", x"32", x"f2", x"e2", OTHERS => x"00")
         ),
@@ -13603,6 +14314,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '1', rtr => '0', brs => '1', data_length => 4, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0100", identifier => 178745635,
          data => (x"af", x"c5", x"7c", x"66", OTHERS => x"00")
         ),
@@ -13623,6 +14335,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '0', rtr => '0', brs => '1', data_length => 20, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "1011", identifier =>      1711,
          data => (x"13", x"e0", x"f7", x"d7", x"e8", x"06", x"7c", x"26", x"5f", x"46", x"ad", x"d9", x"ee", x"26", x"92", x"24", x"fa", x"ac", x"67", x"00", OTHERS => x"00")
         ),
@@ -13650,6 +14363,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '1', rtr => '1', brs => '0', data_length => 0, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0000", identifier => 178327895,
          data => (OTHERS => x"00")
         ),
@@ -13666,6 +14380,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '1', rtr => '0', brs => '0', data_length => 3, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0011", identifier => 127328657,
          data => (x"77", x"c1", x"a2", OTHERS => x"00")
         ),
@@ -13684,6 +14399,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '0', rtr => '0', brs => '0', data_length => 3, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0011", identifier =>      1706,
          data => (x"39", x"f4", x"05", OTHERS => x"00")
         ),
@@ -13700,6 +14416,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '0', rtr => '0', brs => '0', data_length => 0, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0000", identifier =>       767,
          data => (OTHERS => x"00")
         ),
@@ -13716,6 +14433,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '1', rtr => '0', brs => '0', data_length => 5, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0101", identifier => 428461861,
          data => (x"2c", x"39", x"94", x"02", x"6d", OTHERS => x"00")
         ),
@@ -13735,6 +14453,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '1', rtr => '0', brs => '1', data_length => 7, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0111", identifier => 146777268,
          data => (x"4c", x"01", x"a3", x"c6", x"29", x"76", x"06", OTHERS => x"00")
         ),
@@ -13756,6 +14475,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '0', rtr => '0', brs => '0', data_length => 7, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0111", identifier =>      1871,
          data => (x"95", x"a6", x"3c", x"d8", x"e7", x"bd", x"b6", OTHERS => x"00")
         ),
@@ -13775,6 +14495,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '1', rtr => '0', brs => '0', data_length => 3, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0011", identifier => 396590641,
          data => (x"65", x"e6", x"7a", OTHERS => x"00")
         ),
@@ -13792,6 +14513,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '1', rtr => '1', brs => '0', data_length => 0, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0000", identifier => 509959081,
          data => (OTHERS => x"00")
         ),
@@ -13808,6 +14530,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '1', rtr => '0', brs => '0', data_length => 4, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0100", identifier => 433578524,
          data => (x"d4", x"31", x"fe", x"d0", OTHERS => x"00")
         ),
@@ -13826,6 +14549,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '1', rtr => '0', brs => '1', data_length => 5, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0101", identifier => 240553122,
          data => (x"bf", x"12", x"72", x"f5", x"d2", OTHERS => x"00")
         ),
@@ -13846,6 +14570,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '0', rtr => '0', brs => '1', data_length => 20, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "1011", identifier =>      1527,
          data => (x"b3", x"6d", x"f2", x"ef", x"a6", x"a9", x"f7", x"e1", x"84", x"c6", x"45", x"54", x"9c", x"76", x"d3", x"ec", x"7a", x"cb", x"d3", x"a3", OTHERS => x"00")
         ),
@@ -13873,6 +14598,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '0', rtr => '0', brs => '0', data_length => 16, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "1010", identifier =>      1268,
          data => (x"08", x"d9", x"61", x"d4", x"cb", x"20", x"09", x"b8", x"13", x"78", x"df", x"3d", x"71", x"c1", x"41", x"b7", OTHERS => x"00")
         ),
@@ -13897,6 +14623,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '1', rtr => '0', brs => '0', data_length => 8, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "1000", identifier => 107920312,
          data => (x"42", x"f7", x"b4", x"95", x"1b", x"34", x"a8", x"51", OTHERS => x"00")
         ),
@@ -13918,6 +14645,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '1', rtr => '0', brs => '0', data_length => 2, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0010", identifier => 529755123,
          data => (x"ae", x"cb", OTHERS => x"00")
         ),
@@ -13935,6 +14663,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '0', rtr => '0', brs => '1', data_length => 4, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0100", identifier =>       711,
          data => (x"e3", x"82", x"a0", x"25", OTHERS => x"00")
         ),
@@ -13953,6 +14682,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '1', rtr => '0', brs => '0', data_length => 4, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0100", identifier => 516843002,
          data => (x"2a", x"c2", x"6f", x"a1", OTHERS => x"00")
         ),
@@ -13971,6 +14701,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '1', rtr => '0', brs => '1', data_length => 4, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0100", identifier => 188356209,
          data => (x"8d", x"51", x"dd", x"e7", OTHERS => x"00")
         ),
@@ -13990,6 +14721,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '0', rtr => '0', brs => '0', data_length => 8, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "1000", identifier =>        67,
          data => (x"4d", x"a0", x"e7", x"7c", x"04", x"e9", x"1e", x"2a", OTHERS => x"00")
         ),
@@ -14009,6 +14741,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '1', rtr => '0', brs => '1', data_length => 48, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "1110", identifier => 504590179,
          data => (x"80", x"c9", x"94", x"22", x"c0", x"19", x"5e", x"6c", x"c6", x"ec", x"bd", x"24", x"d4", x"0e", x"15", x"ea", x"aa", x"38", x"b7", x"ca", x"9f", x"34", x"ce", x"8a", x"d1", x"78", x"b7", x"c8", x"ce", x"be", x"6d", x"4f", x"88", x"81", x"71", x"c9", x"9a", x"50", x"36", x"e0", x"3d", x"73", x"06", x"91", x"81", x"9a", x"7c", x"ab", OTHERS => x"00")
         ),
@@ -14052,6 +14785,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '0', rtr => '0', brs => '0', data_length => 3, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0011", identifier =>       659,
          data => (x"c5", x"fc", x"ba", OTHERS => x"00")
         ),
@@ -14068,6 +14802,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '0', rtr => '1', brs => '0', data_length => 0, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0000", identifier =>       373,
          data => (OTHERS => x"00")
         ),
@@ -14082,6 +14817,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '0', rtr => '0', brs => '0', data_length => 7, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0111", identifier =>       625,
          data => (x"46", x"0d", x"9f", x"fb", x"ed", x"dc", x"6f", OTHERS => x"00")
         ),
@@ -14099,6 +14835,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '1', rtr => '1', brs => '0', data_length => 0, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0000", identifier => 374992045,
          data => (OTHERS => x"00")
         ),
@@ -14115,6 +14852,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '1', rtr => '0', brs => '1', data_length => 48, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "1110", identifier => 481601562,
          data => (x"85", x"d9", x"d0", x"bf", x"97", x"06", x"c3", x"a5", x"7a", x"34", x"83", x"76", x"27", x"d2", x"bd", x"b3", x"f1", x"39", x"21", x"4e", x"29", x"95", x"3c", x"1a", x"24", x"a6", x"37", x"05", x"c3", x"ca", x"59", x"49", x"24", x"a9", x"0a", x"bc", x"af", x"cd", x"62", x"a9", x"81", x"e5", x"21", x"28", x"38", x"de", x"db", x"2a", OTHERS => x"00")
         ),
@@ -14160,6 +14898,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '1', rtr => '1', brs => '0', data_length => 0, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0000", identifier => 228056177,
          data => (OTHERS => x"00")
         ),
@@ -14176,6 +14915,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '0', rtr => '1', brs => '0', data_length => 0, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0000", identifier =>       145,
          data => (OTHERS => x"00")
         ),
@@ -14190,6 +14930,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '0', rtr => '0', brs => '1', data_length => 8, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "1000", identifier =>      1885,
          data => (x"02", x"3f", x"72", x"be", x"ee", x"bf", x"a0", x"99", OTHERS => x"00")
         ),
@@ -14209,6 +14950,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '1', rtr => '0', brs => '0', data_length => 2, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0010", identifier => 402473480,
          data => (x"19", x"c5", OTHERS => x"00")
         ),
@@ -14225,6 +14967,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '1', rtr => '0', brs => '0', data_length => 6, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0110", identifier => 283084506,
          data => (x"d5", x"18", x"cb", x"8c", x"f2", x"dd", OTHERS => x"00")
         ),
@@ -14244,6 +14987,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '1', rtr => '0', brs => '1', data_length => 12, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "1001", identifier => 226652728,
          data => (x"3d", x"1d", x"6c", x"7b", x"8c", x"2c", x"1c", x"a5", x"ec", x"23", x"60", x"d6", OTHERS => x"00")
         ),
@@ -14267,6 +15011,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '0', rtr => '0', brs => '0', data_length => 1, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0001", identifier =>      2002,
          data => (x"df", OTHERS => x"00")
         ),
@@ -14281,6 +15026,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '1', rtr => '0', brs => '0', data_length => 6, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0110", identifier => 214331969,
          data => (x"43", x"bb", x"44", x"0c", x"4d", x"7f", OTHERS => x"00")
         ),
@@ -14299,6 +15045,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '1', rtr => '0', brs => '1', data_length => 12, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "1001", identifier => 374433796,
          data => (x"38", x"93", x"df", x"d4", x"39", x"4c", x"f7", x"19", x"a3", x"5b", x"91", x"c0", OTHERS => x"00")
         ),
@@ -14323,6 +15070,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '1', rtr => '0', brs => '1', data_length => 5, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0101", identifier => 490910211,
          data => (x"d6", x"22", x"bb", x"9a", x"dd", OTHERS => x"00")
         ),
@@ -14343,6 +15091,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '1', rtr => '0', brs => '0', data_length => 6, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0110", identifier =>  45019916,
          data => (x"72", x"3d", x"19", x"26", x"75", x"2c", OTHERS => x"00")
         ),
@@ -14363,6 +15112,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '1', rtr => '0', brs => '0', data_length => 7, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0111", identifier =>  90821217,
          data => (x"fe", x"76", x"1e", x"91", x"37", x"48", x"4c", OTHERS => x"00")
         ),
@@ -14382,6 +15132,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '0', rtr => '1', brs => '0', data_length => 0, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0000", identifier =>      1531,
          data => (OTHERS => x"00")
         ),
@@ -14397,6 +15148,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '0', rtr => '1', brs => '0', data_length => 0, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0000", identifier =>      1955,
          data => (OTHERS => x"00")
         ),
@@ -14411,6 +15163,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '1', rtr => '0', brs => '0', data_length => 16, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "1010", identifier =>  62672429,
          data => (x"19", x"66", x"91", x"45", x"ec", x"5b", x"2b", x"bf", x"9d", x"2b", x"36", x"bc", x"3c", x"ec", x"84", x"88", OTHERS => x"00")
         ),
@@ -14437,6 +15190,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '0', rtr => '0', brs => '1', data_length => 0, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0000", identifier =>      1750,
          data => (OTHERS => x"00")
         ),
@@ -14453,6 +15207,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '1', rtr => '1', brs => '0', data_length => 0, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0000", identifier => 316590510,
          data => (OTHERS => x"00")
         ),
@@ -14469,6 +15224,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '1', rtr => '0', brs => '0', data_length => 6, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0110", identifier => 280786173,
          data => (x"c2", x"02", x"70", x"08", x"ee", x"cc", OTHERS => x"00")
         ),
@@ -14487,6 +15243,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '0', rtr => '0', brs => '1', data_length => 20, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "1011", identifier =>      1711,
          data => (x"13", x"e0", x"f7", x"d7", x"e8", x"06", x"7c", x"26", x"5f", x"46", x"ad", x"d9", x"ee", x"26", x"92", x"24", x"fa", x"ac", x"67", x"00", OTHERS => x"00")
         ),
@@ -14514,6 +15271,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '0', rtr => '0', brs => '0', data_length => 16, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "1010", identifier =>      1156,
          data => (x"cc", x"86", x"3c", x"54", x"41", x"c8", x"39", x"ea", x"a3", x"7d", x"94", x"3f", x"5d", x"d6", x"c1", x"cd", OTHERS => x"00")
         ),
@@ -14538,6 +15296,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '0', rtr => '1', brs => '0', data_length => 0, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0000", identifier =>      1832,
          data => (OTHERS => x"00")
         ),
@@ -14552,6 +15311,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '0', rtr => '0', brs => '0', data_length => 4, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0100", identifier =>       449,
          data => (x"15", x"57", x"af", x"2a", OTHERS => x"00")
         ),
@@ -14570,6 +15330,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '0', rtr => '0', brs => '1', data_length => 20, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "1011", identifier =>      1704,
          data => (x"71", x"2e", x"0a", x"db", x"d1", x"08", x"70", x"91", x"65", x"c6", x"d2", x"33", x"a6", x"03", x"4e", x"39", x"e1", x"53", x"ab", x"26", OTHERS => x"00")
         ),
@@ -14597,6 +15358,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '1', rtr => '1', brs => '0', data_length => 0, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0000", identifier => 395769124,
          data => (OTHERS => x"00")
         ),
@@ -14613,6 +15375,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '1', rtr => '1', brs => '0', data_length => 0, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0000", identifier => 359740647,
          data => (OTHERS => x"00")
         ),
@@ -14629,6 +15392,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '1', rtr => '1', brs => '0', data_length => 0, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0000", identifier => 317316839,
          data => (OTHERS => x"00")
         ),
@@ -14645,6 +15409,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '1', rtr => '0', brs => '1', data_length => 8, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "1000", identifier => 263104199,
          data => (x"9a", x"47", x"60", x"c0", x"c9", x"2e", x"7a", x"ac", OTHERS => x"00")
         ),
@@ -14666,6 +15431,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '1', rtr => '0', brs => '0', data_length => 6, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0110", identifier => 384853169,
          data => (x"0d", x"d5", x"c4", x"71", x"54", x"29", OTHERS => x"00")
         ),
@@ -14686,6 +15452,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '0', rtr => '0', brs => '1', data_length => 48, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "1110", identifier =>       889,
          data => (x"1e", x"70", x"2b", x"e4", x"44", x"9f", x"12", x"5e", x"66", x"f1", x"20", x"30", x"20", x"9a", x"dc", x"21", x"40", x"2f", x"a0", x"1d", x"3c", x"76", x"e2", x"ad", x"ca", x"0c", x"34", x"82", x"ea", x"41", x"ca", x"88", x"b1", x"f5", x"6d", x"75", x"15", x"fe", x"d4", x"7b", x"f0", x"f4", x"ab", x"90", x"0f", x"09", x"b1", x"4f", OTHERS => x"00")
         ),
@@ -14727,6 +15494,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '1', rtr => '0', brs => '1', data_length => 0, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0000", identifier => 150054536,
          data => (OTHERS => x"00")
         ),
@@ -14744,6 +15512,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '1', rtr => '0', brs => '0', data_length => 6, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0110", identifier =>  41621409,
          data => (x"17", x"46", x"18", x"e1", x"4e", x"c9", OTHERS => x"00")
         ),
@@ -14762,6 +15531,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '1', rtr => '0', brs => '1', data_length => 32, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "1101", identifier => 391596642,
          data => (x"94", x"67", x"ab", x"89", x"13", x"3d", x"18", x"9b", x"ee", x"67", x"d4", x"c1", x"53", x"49", x"8b", x"23", x"6b", x"a0", x"fd", x"c2", x"37", x"44", x"da", x"98", x"92", x"24", x"ef", x"cd", x"e3", x"5c", x"88", x"f7", OTHERS => x"00")
         ),
@@ -14797,6 +15567,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '0', rtr => '0', brs => '0', data_length => 16, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "1010", identifier =>      1936,
          data => (x"19", x"f2", x"e0", x"80", x"47", x"23", x"54", x"10", x"ae", x"f6", x"7b", x"ce", x"f4", x"bd", x"06", x"b8", OTHERS => x"00")
         ),
@@ -14820,6 +15591,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '0', rtr => '0', brs => '1', data_length => 24, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "1100", identifier =>      2014,
          data => (x"98", x"20", x"e9", x"22", x"19", x"2d", x"d6", x"1a", x"83", x"c8", x"34", x"f5", x"a9", x"34", x"bc", x"4c", x"08", x"cc", x"fa", x"7e", x"c8", x"49", x"73", x"06", OTHERS => x"00")
         ),
@@ -14848,6 +15620,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '0', rtr => '0', brs => '1', data_length => 12, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "1001", identifier =>      1142,
          data => (x"5b", x"fa", x"10", x"7b", x"e4", x"b1", x"94", x"12", x"08", x"2f", x"16", x"d0", OTHERS => x"00")
         ),
@@ -14870,6 +15643,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '0', rtr => '0', brs => '1', data_length => 32, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "1101", identifier =>      1396,
          data => (x"47", x"9f", x"95", x"42", x"1e", x"dd", x"0c", x"12", x"e4", x"da", x"bd", x"83", x"49", x"35", x"de", x"c3", x"c4", x"d9", x"a9", x"f5", x"ee", x"bb", x"7d", x"9d", x"51", x"4e", x"80", x"5e", x"48", x"17", x"27", x"8f", OTHERS => x"00")
         ),
@@ -14903,6 +15677,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '1', rtr => '0', brs => '0', data_length => 0, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0000", identifier => 227760704,
          data => (OTHERS => x"00")
         ),
@@ -14920,6 +15695,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '0', rtr => '1', brs => '0', data_length => 0, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0000", identifier =>        25,
          data => (OTHERS => x"00")
         ),
@@ -14934,6 +15710,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '1', rtr => '1', brs => '0', data_length => 0, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0000", identifier =>  69833446,
          data => (OTHERS => x"00")
         ),
@@ -14950,6 +15727,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '1', rtr => '1', brs => '0', data_length => 0, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0000", identifier => 520376406,
          data => (OTHERS => x"00")
         ),
@@ -14966,6 +15744,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '1', rtr => '0', brs => '0', data_length => 4, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0100", identifier =>  34509403,
          data => (x"c7", x"db", x"a7", x"5f", OTHERS => x"00")
         ),
@@ -14983,6 +15762,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '0', rtr => '0', brs => '1', data_length => 64, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "1111", identifier =>       397,
          data => (x"e9", x"5a", x"67", x"50", x"5a", x"a1", x"f4", x"5d", x"a3", x"4d", x"be", x"e9", x"ea", x"7a", x"5a", x"7d", x"24", x"86", x"0e", x"6c", x"84", x"eb", x"34", x"df", x"13", x"13", x"62", x"ca", x"29", x"a1", x"d3", x"13", x"7c", x"bb", x"e3", x"56", x"5d", x"58", x"34", x"80", x"a5", x"f2", x"6b", x"10", x"ec", x"c5", x"0e", x"12", x"cb", x"1c", x"fd", x"50", x"08", x"b1", x"af", x"1c", x"c5", x"12", x"e6", x"ee", x"34", x"3a", x"81", x"b0")
         ),
@@ -15034,6 +15814,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '1', rtr => '0', brs => '1', data_length => 32, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "1101", identifier => 263874316,
          data => (x"3b", x"54", x"63", x"ae", x"bf", x"73", x"9b", x"05", x"81", x"2d", x"d1", x"9d", x"2b", x"a1", x"26", x"dd", x"52", x"42", x"23", x"e3", x"a8", x"12", x"18", x"62", x"93", x"c8", x"59", x"79", x"d0", x"2c", x"b6", x"8b", OTHERS => x"00")
         ),
@@ -15069,6 +15850,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '1', rtr => '1', brs => '0', data_length => 0, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0000", identifier => 200969084,
          data => (OTHERS => x"00")
         ),
@@ -15085,6 +15867,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '0', rtr => '0', brs => '0', data_length => 4, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0100", identifier =>      1565,
          data => (x"ad", x"ae", x"b7", x"d3", OTHERS => x"00")
         ),
@@ -15102,6 +15885,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '0', rtr => '0', brs => '0', data_length => 6, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0110", identifier =>       361,
          data => (x"bd", x"c0", x"86", x"20", x"54", x"50", OTHERS => x"00")
         ),
@@ -15121,6 +15905,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '1', rtr => '0', brs => '0', data_length => 7, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0111", identifier => 202434942,
          data => (x"ab", x"a5", x"9e", x"66", x"e5", x"ac", x"3c", OTHERS => x"00")
         ),
@@ -15142,6 +15927,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '1', rtr => '0', brs => '0', data_length => 7, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0111", identifier => 234234595,
          data => (x"ec", x"f8", x"bd", x"f8", x"83", x"d2", x"a7", OTHERS => x"00")
         ),
@@ -15162,6 +15948,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '1', rtr => '1', brs => '0', data_length => 0, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0000", identifier => 437130929,
          data => (OTHERS => x"00")
         ),
@@ -15178,6 +15965,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '1', rtr => '0', brs => '1', data_length => 0, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0000", identifier => 339394999,
          data => (OTHERS => x"00")
         ),
@@ -15194,6 +15982,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '0', rtr => '0', brs => '0', data_length => 6, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0110", identifier =>       833,
          data => (x"7a", x"d9", x"5a", x"36", x"84", x"96", OTHERS => x"00")
         ),
@@ -15212,6 +16001,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '0', rtr => '1', brs => '0', data_length => 0, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0000", identifier =>      1873,
          data => (OTHERS => x"00")
         ),
@@ -15227,6 +16017,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '0', rtr => '0', brs => '1', data_length => 3, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0011", identifier =>       208,
          data => (x"b3", x"21", x"eb", OTHERS => x"00")
         ),
@@ -15244,6 +16035,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '0', rtr => '0', brs => '0', data_length => 0, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0000", identifier =>       886,
          data => (OTHERS => x"00")
         ),
@@ -15260,6 +16052,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '1', rtr => '0', brs => '0', data_length => 16, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "1010", identifier => 467492663,
          data => (x"3e", x"70", x"e9", x"19", x"cb", x"9f", x"9d", x"62", x"15", x"e3", x"e3", x"77", x"a2", x"a1", x"52", x"64", OTHERS => x"00")
         ),
@@ -15284,6 +16077,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '0', rtr => '1', brs => '0', data_length => 0, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0000", identifier =>      1736,
          data => (OTHERS => x"00")
         ),
@@ -15298,6 +16092,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '1', rtr => '0', brs => '0', data_length => 5, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0101", identifier => 306861518,
          data => (x"1f", x"13", x"6a", x"62", x"82", OTHERS => x"00")
         ),
@@ -15317,6 +16112,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '1', rtr => '0', brs => '0', data_length => 2, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0010", identifier => 241468933,
          data => (x"8c", x"df", OTHERS => x"00")
         ),
@@ -15335,6 +16131,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '0', rtr => '0', brs => '0', data_length => 4, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0100", identifier =>      1596,
          data => (x"65", x"06", x"6c", x"c9", OTHERS => x"00")
         ),
@@ -15352,6 +16149,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '0', rtr => '0', brs => '0', data_length => 5, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0101", identifier =>       209,
          data => (x"25", x"33", x"ef", x"db", x"d4", OTHERS => x"00")
         ),
@@ -15370,6 +16168,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '1', rtr => '1', brs => '0', data_length => 0, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0000", identifier => 110779253,
          data => (OTHERS => x"00")
         ),
@@ -15386,6 +16185,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '0', rtr => '1', brs => '0', data_length => 0, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0000", identifier =>       179,
          data => (OTHERS => x"00")
         ),
@@ -15400,6 +16200,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '0', rtr => '0', brs => '1', data_length => 2, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0010", identifier =>       453,
          data => (x"c7", x"26", OTHERS => x"00")
         ),
@@ -15417,6 +16218,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '0', rtr => '1', brs => '0', data_length => 0, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0000", identifier =>       712,
          data => (OTHERS => x"00")
         ),
@@ -15432,6 +16234,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '1', rtr => '0', brs => '0', data_length => 4, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0100", identifier => 370088804,
          data => (x"c8", x"c8", x"60", x"1d", OTHERS => x"00")
         ),
@@ -15449,6 +16252,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '0', rtr => '1', brs => '0', data_length => 0, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0000", identifier =>       291,
          data => (OTHERS => x"00")
         ),
@@ -15463,6 +16267,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '0', rtr => '0', brs => '0', data_length => 5, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0101", identifier =>      1992,
          data => (x"0a", x"7a", x"54", x"17", x"49", OTHERS => x"00")
         ),
@@ -15480,6 +16285,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '1', rtr => '0', brs => '0', data_length => 12, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "1001", identifier => 400358750,
          data => (x"7a", x"f1", x"25", x"d9", x"87", x"fe", x"5e", x"cf", x"c7", x"bf", x"ec", x"20", OTHERS => x"00")
         ),
@@ -15502,6 +16308,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '1', rtr => '1', brs => '0', data_length => 0, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0000", identifier => 119034204,
          data => (OTHERS => x"00")
         ),
@@ -15517,6 +16324,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '1', rtr => '0', brs => '0', data_length => 5, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0101", identifier => 208877026,
          data => (x"77", x"3d", x"8f", x"40", x"d9", OTHERS => x"00")
         ),
@@ -15535,6 +16343,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '0', rtr => '1', brs => '0', data_length => 0, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0000", identifier =>      2044,
          data => (OTHERS => x"00")
         ),
@@ -15549,6 +16358,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '0', rtr => '1', brs => '0', data_length => 0, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0000", identifier =>      1892,
          data => (OTHERS => x"00")
         ),
@@ -15563,6 +16373,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '1', rtr => '0', brs => '0', data_length => 2, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0010", identifier => 311349320,
          data => (x"2b", x"3f", OTHERS => x"00")
         ),
@@ -15581,6 +16392,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '1', rtr => '1', brs => '0', data_length => 0, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0000", identifier => 359704733,
          data => (OTHERS => x"00")
         ),
@@ -15598,6 +16410,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '1', rtr => '0', brs => '1', data_length => 5, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0101", identifier => 248624144,
          data => (x"b1", x"83", x"05", x"8b", x"d0", OTHERS => x"00")
         ),
@@ -15617,6 +16430,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '1', rtr => '0', brs => '1', data_length => 32, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "1101", identifier => 445798241,
          data => (x"33", x"8c", x"c3", x"f5", x"fd", x"d0", x"00", x"ae", x"cb", x"aa", x"ed", x"8e", x"3f", x"fb", x"dd", x"4c", x"f7", x"2b", x"c0", x"ec", x"ef", x"72", x"ef", x"74", x"7d", x"c1", x"b6", x"cc", x"b0", x"b1", x"52", x"e3", OTHERS => x"00")
         ),
@@ -15652,6 +16466,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '1', rtr => '0', brs => '0', data_length => 12, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "1001", identifier => 370900631,
          data => (x"59", x"eb", x"b2", x"05", x"59", x"c0", x"44", x"56", x"9e", x"10", x"4e", x"49", OTHERS => x"00")
         ),
@@ -15676,6 +16491,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '1', rtr => '0', brs => '0', data_length => 2, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0010", identifier => 117862127,
          data => (x"2e", x"40", OTHERS => x"00")
         ),
@@ -15692,6 +16508,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '0', rtr => '1', brs => '0', data_length => 0, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0000", identifier =>      1161,
          data => (OTHERS => x"00")
         ),
@@ -15706,6 +16523,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '1', rtr => '0', brs => '0', data_length => 3, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0011", identifier => 381174887,
          data => (x"92", x"5c", x"b3", OTHERS => x"00")
         ),
@@ -15724,6 +16542,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '0', rtr => '0', brs => '0', data_length => 5, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0101", identifier =>      1628,
          data => (x"7d", x"ae", x"ee", x"8d", x"fc", OTHERS => x"00")
         ),
@@ -15741,6 +16560,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '1', rtr => '0', brs => '0', data_length => 12, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "1001", identifier =>  64072003,
          data => (x"e3", x"20", x"e2", x"50", x"05", x"ef", x"ed", x"1c", x"4f", x"ee", x"f1", x"45", OTHERS => x"00")
         ),
@@ -15764,6 +16584,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '1', rtr => '0', brs => '1', data_length => 1, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0001", identifier => 431718095,
          data => (x"31", OTHERS => x"00")
         ),
@@ -15781,6 +16602,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '0', rtr => '0', brs => '0', data_length => 7, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0111", identifier =>       713,
          data => (x"6f", x"41", x"87", x"28", x"20", x"bf", x"1a", OTHERS => x"00")
         ),
@@ -15798,6 +16620,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '1', rtr => '0', brs => '0', data_length => 6, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0110", identifier => 332054485,
          data => (x"be", x"15", x"61", x"5b", x"65", x"cf", OTHERS => x"00")
         ),
@@ -15817,6 +16640,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '0', rtr => '0', brs => '1', data_length => 20, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "1011", identifier =>      1711,
          data => (x"13", x"e0", x"f7", x"d7", x"e8", x"06", x"7c", x"26", x"5f", x"46", x"ad", x"d9", x"ee", x"26", x"92", x"24", x"fa", x"ac", x"67", x"00", OTHERS => x"00")
         ),
@@ -15844,6 +16668,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '0', rtr => '0', brs => '1', data_length => 0, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0000", identifier =>      1929,
          data => (OTHERS => x"00")
         ),
@@ -15859,6 +16684,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '0', rtr => '0', brs => '1', data_length => 7, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0111", identifier =>       552,
          data => (x"c3", x"95", x"e0", x"83", x"2f", x"a3", x"a6", OTHERS => x"00")
         ),
@@ -15878,6 +16704,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '0', rtr => '0', brs => '1', data_length => 20, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "1011", identifier =>      1711,
          data => (x"13", x"e0", x"f7", x"d7", x"e8", x"06", x"7c", x"26", x"5f", x"46", x"ad", x"d9", x"ee", x"26", x"92", x"24", x"fa", x"ac", x"67", x"00", OTHERS => x"00")
         ),
@@ -15905,6 +16732,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '1', rtr => '1', brs => '0', data_length => 0, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0000", identifier => 519654928,
          data => (OTHERS => x"00")
         ),
@@ -15920,6 +16748,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '0', rtr => '0', brs => '0', data_length => 8, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "1000", identifier =>       810,
          data => (x"22", x"85", x"a9", x"38", x"67", x"2d", x"67", x"8a", OTHERS => x"00")
         ),
@@ -15940,6 +16769,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '0', rtr => '0', brs => '0', data_length => 12, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "1001", identifier =>      1212,
          data => (x"b2", x"68", x"fb", x"f5", x"33", x"cb", x"63", x"96", x"6e", x"9c", x"90", x"e6", OTHERS => x"00")
         ),
@@ -15962,6 +16792,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '1', rtr => '0', brs => '1', data_length => 32, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "1101", identifier => 273147962,
          data => (x"77", x"a9", x"21", x"a1", x"e1", x"08", x"ce", x"c8", x"92", x"23", x"19", x"66", x"90", x"91", x"19", x"79", x"8d", x"0f", x"ac", x"5a", x"f1", x"c3", x"48", x"0f", x"d3", x"30", x"e1", x"2a", x"41", x"69", x"44", x"38", OTHERS => x"00")
         ),
@@ -15995,6 +16826,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '0', rtr => '0', brs => '0', data_length => 16, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "1010", identifier =>       772,
          data => (x"29", x"3d", x"80", x"4c", x"d6", x"e6", x"5c", x"68", x"80", x"d5", x"f6", x"0f", x"03", x"d0", x"02", x"c6", OTHERS => x"00")
         ),
@@ -16018,6 +16850,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '0', rtr => '0', brs => '0', data_length => 7, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0111", identifier =>      1660,
          data => (x"44", x"89", x"db", x"88", x"c2", x"ee", x"6e", OTHERS => x"00")
         ),
@@ -16037,6 +16870,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '0', rtr => '0', brs => '0', data_length => 0, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0000", identifier =>      1982,
          data => (OTHERS => x"00")
         ),
@@ -16051,6 +16885,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '1', rtr => '1', brs => '0', data_length => 0, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0000", identifier => 219837459,
          data => (OTHERS => x"00")
         ),
@@ -16066,6 +16901,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '1', rtr => '0', brs => '0', data_length => 0, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0000", identifier => 511251430,
          data => (OTHERS => x"00")
         ),
@@ -16081,6 +16917,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '1', rtr => '1', brs => '0', data_length => 0, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0000", identifier => 299129599,
          data => (OTHERS => x"00")
         ),
@@ -16097,6 +16934,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '0', rtr => '0', brs => '1', data_length => 12, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "1001", identifier =>       752,
          data => (x"13", x"b2", x"75", x"d5", x"a2", x"63", x"f1", x"85", x"3e", x"b7", x"26", x"1a", OTHERS => x"00")
         ),
@@ -16120,6 +16958,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '0', rtr => '0', brs => '0', data_length => 12, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "1001", identifier =>       769,
          data => (x"9f", x"fc", x"d3", x"f0", x"c4", x"7b", x"c4", x"53", x"bb", x"a8", x"7b", x"44", OTHERS => x"00")
         ),
@@ -16141,6 +16980,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '1', rtr => '0', brs => '1', data_length => 6, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0110", identifier => 523119142,
          data => (x"ac", x"d5", x"c0", x"1f", x"da", x"fe", OTHERS => x"00")
         ),
@@ -16161,6 +17001,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '0', rtr => '0', brs => '1', data_length => 4, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0100", identifier =>       168,
          data => (x"75", x"58", x"1c", x"94", OTHERS => x"00")
         ),
@@ -16179,6 +17020,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '0', rtr => '0', brs => '0', data_length => 16, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "1010", identifier =>      1223,
          data => (x"ca", x"ec", x"28", x"73", x"69", x"eb", x"f3", x"d1", x"44", x"27", x"2f", x"f0", x"fc", x"ef", x"10", x"57", OTHERS => x"00")
         ),
@@ -16203,6 +17045,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '1', rtr => '1', brs => '0', data_length => 0, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0000", identifier => 410734181,
          data => (OTHERS => x"00")
         ),
@@ -16218,6 +17061,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '0', rtr => '1', brs => '0', data_length => 0, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0000", identifier =>       488,
          data => (OTHERS => x"00")
         ),
@@ -16232,6 +17076,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '1', rtr => '0', brs => '0', data_length => 4, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0100", identifier => 501281981,
          data => (x"62", x"3c", x"98", x"55", OTHERS => x"00")
         ),
@@ -16250,6 +17095,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '0', rtr => '0', brs => '0', data_length => 4, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0100", identifier =>       148,
          data => (x"70", x"a5", x"b9", x"ec", OTHERS => x"00")
         ),
@@ -16266,6 +17112,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '1', rtr => '0', brs => '1', data_length => 8, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "1000", identifier => 434547493,
          data => (x"9d", x"0b", x"38", x"95", x"88", x"97", x"2a", x"9a", OTHERS => x"00")
         ),
@@ -16288,6 +17135,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '0', rtr => '0', brs => '0', data_length => 7, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0111", identifier =>      1796,
          data => (x"14", x"58", x"38", x"69", x"7d", x"3d", x"b3", OTHERS => x"00")
         ),
@@ -16306,6 +17154,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '0', rtr => '0', brs => '1', data_length => 16, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "1010", identifier =>       686,
          data => (x"91", x"ae", x"8b", x"56", x"32", x"3c", x"f3", x"bd", x"f4", x"0a", x"46", x"8c", x"34", x"60", x"59", x"62", OTHERS => x"00")
         ),
@@ -16331,6 +17180,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '1', rtr => '0', brs => '0', data_length => 5, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0101", identifier => 229469126,
          data => (x"bb", x"8f", x"4a", x"f8", x"43", OTHERS => x"00")
         ),
@@ -16349,6 +17199,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '0', rtr => '0', brs => '0', data_length => 2, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0010", identifier =>       301,
          data => (x"78", x"06", OTHERS => x"00")
         ),
@@ -16365,6 +17216,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '0', rtr => '0', brs => '0', data_length => 0, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0000", identifier =>      1220,
          data => (OTHERS => x"00")
         ),
@@ -16381,6 +17233,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '1', rtr => '0', brs => '0', data_length => 3, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0011", identifier => 500463392,
          data => (x"00", x"1c", x"e2", OTHERS => x"00")
         ),
@@ -16399,6 +17252,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '1', rtr => '1', brs => '0', data_length => 0, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0000", identifier => 400886349,
          data => (OTHERS => x"00")
         ),
@@ -16415,6 +17269,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '1', rtr => '0', brs => '1', data_length => 64, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "1111", identifier => 356529073,
          data => (x"a7", x"ac", x"1a", x"0f", x"04", x"da", x"87", x"0a", x"a6", x"56", x"c1", x"2e", x"99", x"b7", x"2b", x"65", x"f2", x"b4", x"66", x"8f", x"97", x"c9", x"bd", x"6f", x"2f", x"13", x"14", x"d0", x"f7", x"82", x"ea", x"1f", x"2f", x"84", x"2f", x"33", x"5f", x"36", x"bc", x"85", x"0d", x"fd", x"b3", x"26", x"b5", x"de", x"8b", x"a9", x"13", x"f1", x"39", x"aa", x"bb", x"76", x"99", x"6b", x"09", x"ad", x"bb", x"80", x"af", x"a6", x"a0", x"de")
         ),
@@ -16468,6 +17323,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '0', rtr => '1', brs => '0', data_length => 0, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0000", identifier =>       207,
          data => (OTHERS => x"00")
         ),
@@ -16482,6 +17338,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '0', rtr => '0', brs => '1', data_length => 2, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0010", identifier =>      1151,
          data => (x"b8", x"82", OTHERS => x"00")
         ),
@@ -16499,6 +17356,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '1', rtr => '0', brs => '1', data_length => 7, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0111", identifier => 276360289,
          data => (x"64", x"60", x"73", x"5b", x"f9", x"5e", x"64", OTHERS => x"00")
         ),
@@ -16520,6 +17378,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '1', rtr => '0', brs => '0', data_length => 7, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0111", identifier => 179126312,
          data => (x"86", x"37", x"ea", x"d5", x"c8", x"f4", x"da", OTHERS => x"00")
         ),
@@ -16541,6 +17400,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '0', rtr => '0', brs => '1', data_length => 48, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "1110", identifier =>      1876,
          data => (x"27", x"66", x"e7", x"eb", x"92", x"1e", x"a3", x"76", x"fd", x"96", x"d1", x"77", x"f4", x"37", x"9f", x"0f", x"9c", x"f7", x"4f", x"23", x"2f", x"b9", x"78", x"f7", x"2e", x"53", x"8f", x"32", x"41", x"73", x"f7", x"e8", x"5a", x"e0", x"54", x"ec", x"7e", x"f7", x"63", x"fb", x"8e", x"36", x"73", x"83", x"ec", x"14", x"12", x"89", OTHERS => x"00")
         ),
@@ -16581,6 +17441,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '1', rtr => '1', brs => '0', data_length => 0, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0000", identifier =>  18663763,
          data => (OTHERS => x"00")
         ),
@@ -16596,6 +17457,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '0', rtr => '0', brs => '0', data_length => 0, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0000", identifier =>       995,
          data => (OTHERS => x"00")
         ),
@@ -16610,6 +17472,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '0', rtr => '1', brs => '0', data_length => 0, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0000", identifier =>      1481,
          data => (OTHERS => x"00")
         ),
@@ -16625,6 +17488,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '1', rtr => '0', brs => '0', data_length => 1, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0001", identifier => 386068360,
          data => (x"ee", OTHERS => x"00")
         ),
@@ -16642,6 +17506,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '0', rtr => '0', brs => '0', data_length => 4, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0100", identifier =>       792,
          data => (x"81", x"83", x"d4", x"13", OTHERS => x"00")
         ),
@@ -16658,6 +17523,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '1', rtr => '0', brs => '1', data_length => 0, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0000", identifier => 239950501,
          data => (OTHERS => x"00")
         ),
@@ -16675,6 +17541,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '0', rtr => '0', brs => '0', data_length => 7, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0111", identifier =>       950,
          data => (x"91", x"52", x"0d", x"47", x"45", x"ae", x"58", OTHERS => x"00")
         ),
@@ -16693,6 +17560,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '1', rtr => '0', brs => '0', data_length => 5, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0101", identifier => 354050276,
          data => (x"b5", x"37", x"91", x"cc", x"f8", OTHERS => x"00")
         ),
@@ -16711,6 +17579,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '1', rtr => '0', brs => '0', data_length => 2, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0010", identifier => 127580736,
          data => (x"2f", x"1b", OTHERS => x"00")
         ),
@@ -16729,6 +17598,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '0', rtr => '0', brs => '1', data_length => 6, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0110", identifier =>       491,
          data => (x"81", x"c7", x"2b", x"d4", x"54", x"73", OTHERS => x"00")
         ),
@@ -16748,6 +17618,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '0', rtr => '0', brs => '1', data_length => 4, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0100", identifier =>       843,
          data => (x"a0", x"1c", x"3e", x"57", OTHERS => x"00")
         ),
@@ -16766,6 +17637,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '1', rtr => '0', brs => '0', data_length => 8, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "1000", identifier => 315837807,
          data => (x"74", x"9a", x"09", x"d0", x"c9", x"a3", x"67", x"15", OTHERS => x"00")
         ),
@@ -16788,6 +17660,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '1', rtr => '0', brs => '0', data_length => 4, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0100", identifier => 443696654,
          data => (x"5a", x"24", x"76", x"4d", OTHERS => x"00")
         ),
@@ -16806,6 +17679,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '0', rtr => '0', brs => '1', data_length => 2, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0010", identifier =>       270,
          data => (x"b8", x"8c", OTHERS => x"00")
         ),
@@ -16822,6 +17696,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '1', rtr => '1', brs => '0', data_length => 0, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0000", identifier =>   3803727,
          data => (OTHERS => x"00")
         ),
@@ -16837,6 +17712,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '0', rtr => '0', brs => '1', data_length => 64, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "1111", identifier =>       374,
          data => (x"78", x"13", x"3f", x"5f", x"a7", x"0d", x"b9", x"56", x"5c", x"da", x"30", x"80", x"d0", x"fc", x"3d", x"4a", x"15", x"ad", x"ed", x"ce", x"3a", x"ce", x"dd", x"9a", x"80", x"91", x"c7", x"13", x"39", x"8f", x"30", x"32", x"a2", x"ee", x"91", x"4a", x"fb", x"ca", x"21", x"58", x"26", x"d0", x"58", x"f6", x"ce", x"96", x"c1", x"63", x"c3", x"af", x"32", x"fd", x"7f", x"90", x"18", x"7f", x"22", x"5f", x"92", x"db", x"ee", x"42", x"0e", x"12")
         ),
@@ -16887,6 +17763,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '0', rtr => '0', brs => '0', data_length => 3, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0011", identifier =>      1483,
          data => (x"fc", x"87", x"11", OTHERS => x"00")
         ),
@@ -16904,6 +17781,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '0', rtr => '1', brs => '0', data_length => 0, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0000", identifier =>      1274,
          data => (OTHERS => x"00")
         ),
@@ -16918,6 +17796,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '1', rtr => '1', brs => '0', data_length => 0, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0000", identifier => 268619186,
          data => (OTHERS => x"00")
         ),
@@ -16933,6 +17812,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '1', rtr => '0', brs => '1', data_length => 5, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0101", identifier => 349930308,
          data => (x"e4", x"2e", x"0a", x"c0", x"1e", OTHERS => x"00")
         ),
@@ -16952,6 +17832,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '0', rtr => '0', brs => '1', data_length => 8, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "1000", identifier =>       549,
          data => (x"0c", x"ac", x"59", x"89", x"34", x"e9", x"d7", x"94", OTHERS => x"00")
         ),
@@ -16973,6 +17854,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '0', rtr => '0', brs => '1', data_length => 48, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "1110", identifier =>      1901,
          data => (x"c4", x"b4", x"a6", x"7b", x"2d", x"69", x"4b", x"25", x"4f", x"79", x"ae", x"10", x"97", x"7b", x"5f", x"47", x"7a", x"cd", x"54", x"28", x"a6", x"dd", x"db", x"90", x"35", x"70", x"81", x"29", x"fa", x"bc", x"9c", x"bf", x"71", x"c3", x"3b", x"9e", x"2d", x"06", x"43", x"7c", x"80", x"f2", x"0d", x"97", x"6e", x"eb", x"df", x"e9", OTHERS => x"00")
         ),
@@ -17016,6 +17898,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '0', rtr => '1', brs => '0', data_length => 0, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0000", identifier =>        76,
          data => (OTHERS => x"00")
         ),
@@ -17030,6 +17913,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '0', rtr => '0', brs => '1', data_length => 32, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "1101", identifier =>       261,
          data => (x"ee", x"59", x"2f", x"8b", x"98", x"a0", x"ce", x"53", x"40", x"fc", x"5a", x"03", x"f8", x"5a", x"f5", x"85", x"f1", x"65", x"71", x"51", x"ce", x"aa", x"05", x"60", x"8a", x"95", x"4d", x"7a", x"5b", x"ab", x"ec", x"c9", OTHERS => x"00")
         ),
@@ -17065,6 +17949,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '1', rtr => '0', brs => '1', data_length => 7, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0111", identifier =>  19490156,
          data => (x"a4", x"f0", x"fb", x"a1", x"ca", x"00", x"1b", OTHERS => x"00")
         ),
@@ -17086,6 +17971,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '0', rtr => '0', brs => '1', data_length => 7, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0111", identifier =>       857,
          data => (x"13", x"e8", x"29", x"bd", x"6d", x"89", x"c8", OTHERS => x"00")
         ),
@@ -17106,6 +17992,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '1', rtr => '0', brs => '0', data_length => 4, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0100", identifier => 291702312,
          data => (x"af", x"a9", x"08", x"4b", OTHERS => x"00")
         ),
@@ -17124,6 +18011,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '0', rtr => '0', brs => '1', data_length => 0, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0000", identifier =>       168,
          data => (OTHERS => x"00")
         ),
@@ -17139,6 +18027,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '0', rtr => '0', brs => '0', data_length => 6, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0110", identifier =>      1077,
          data => (x"05", x"7a", x"02", x"9c", x"d4", x"15", OTHERS => x"00")
         ),
@@ -17157,6 +18046,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '0', rtr => '0', brs => '0', data_length => 0, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0000", identifier =>       193,
          data => (OTHERS => x"00")
         ),
@@ -17172,6 +18062,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '1', rtr => '0', brs => '1', data_length => 5, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0101", identifier => 148131848,
          data => (x"e2", x"0f", x"fe", x"ea", x"5a", OTHERS => x"00")
         ),
@@ -17192,6 +18083,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '1', rtr => '0', brs => '0', data_length => 0, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0000", identifier => 235579046,
          data => (OTHERS => x"00")
         ),
@@ -17209,6 +18101,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '1', rtr => '0', brs => '0', data_length => 16, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "1010", identifier => 239983028,
          data => (x"0b", x"64", x"cc", x"a7", x"3a", x"61", x"2c", x"39", x"b4", x"1e", x"c0", x"50", x"14", x"21", x"af", x"69", OTHERS => x"00")
         ),
@@ -17234,6 +18127,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '1', rtr => '0', brs => '0', data_length => 1, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0001", identifier => 370082353,
          data => (x"66", OTHERS => x"00")
         ),
@@ -17250,6 +18144,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '0', rtr => '0', brs => '0', data_length => 4, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0100", identifier =>      1207,
          data => (x"f1", x"a9", x"4c", x"3c", OTHERS => x"00")
         ),
@@ -17266,6 +18161,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '0', rtr => '1', brs => '0', data_length => 0, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0000", identifier =>        61,
          data => (OTHERS => x"00")
         ),
@@ -17280,6 +18176,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '0', rtr => '1', brs => '0', data_length => 0, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0000", identifier =>       351,
          data => (OTHERS => x"00")
         ),
@@ -17295,6 +18192,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '0', rtr => '0', brs => '0', data_length => 1, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0001", identifier =>      1539,
          data => (x"a2", OTHERS => x"00")
         ),
@@ -17310,6 +18208,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '0', rtr => '0', brs => '1', data_length => 64, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "1111", identifier =>       122,
          data => (x"70", x"f6", x"71", x"f9", x"99", x"53", x"eb", x"43", x"20", x"a7", x"f6", x"51", x"31", x"d2", x"bc", x"9b", x"d9", x"60", x"ba", x"00", x"45", x"2b", x"b8", x"cb", x"ca", x"db", x"55", x"a8", x"e5", x"4e", x"20", x"57", x"c4", x"91", x"51", x"5e", x"65", x"bc", x"22", x"85", x"e3", x"19", x"d6", x"15", x"6c", x"13", x"30", x"c5", x"73", x"eb", x"45", x"38", x"17", x"fe", x"83", x"62", x"da", x"d9", x"0b", x"40", x"a7", x"aa", x"97", x"eb")
         ),
@@ -17361,6 +18260,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '1', rtr => '0', brs => '0', data_length => 8, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "1000", identifier => 457040489,
          data => (x"eb", x"a7", x"89", x"06", x"fd", x"1e", x"f1", x"11", OTHERS => x"00")
         ),
@@ -17382,6 +18282,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '1', rtr => '1', brs => '0', data_length => 0, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0000", identifier => 513721181,
          data => (OTHERS => x"00")
         ),
@@ -17397,6 +18298,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '0', rtr => '0', brs => '0', data_length => 0, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0000", identifier =>      1559,
          data => (OTHERS => x"00")
         ),
@@ -17411,6 +18313,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '1', rtr => '0', brs => '0', data_length => 7, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0111", identifier => 295969448,
          data => (x"6a", x"af", x"ac", x"27", x"97", x"76", x"49", OTHERS => x"00")
         ),
@@ -17431,6 +18334,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '1', rtr => '0', brs => '1', data_length => 2, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0010", identifier =>  31828981,
          data => (x"6e", x"64", OTHERS => x"00")
         ),
@@ -17449,6 +18353,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '1', rtr => '0', brs => '0', data_length => 7, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0111", identifier => 198548931,
          data => (x"6e", x"8f", x"be", x"41", x"0c", x"7e", x"75", OTHERS => x"00")
         ),
@@ -17468,6 +18373,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '1', rtr => '0', brs => '0', data_length => 7, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0111", identifier =>  74248852,
          data => (x"20", x"2a", x"84", x"c6", x"c1", x"7a", x"11", OTHERS => x"00")
         ),
@@ -17487,6 +18393,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '1', rtr => '0', brs => '0', data_length => 4, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0100", identifier => 325704334,
          data => (x"70", x"2a", x"20", x"ee", OTHERS => x"00")
         ),
@@ -17506,6 +18413,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '1', rtr => '0', brs => '1', data_length => 6, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0110", identifier => 470308105,
          data => (x"b0", x"0e", x"cf", x"2f", x"03", x"b2", OTHERS => x"00")
         ),
@@ -17527,6 +18435,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '1', rtr => '0', brs => '0', data_length => 5, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0101", identifier => 257911869,
          data => (x"57", x"a2", x"1f", x"1a", x"1d", OTHERS => x"00")
         ),
@@ -17545,6 +18454,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '0', rtr => '0', brs => '1', data_length => 64, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "1111", identifier =>       781,
          data => (x"41", x"a1", x"08", x"62", x"10", x"65", x"15", x"02", x"32", x"d7", x"b2", x"bf", x"27", x"61", x"43", x"5a", x"28", x"7b", x"87", x"46", x"53", x"5f", x"e8", x"72", x"f8", x"07", x"a2", x"91", x"02", x"d3", x"6f", x"43", x"75", x"77", x"25", x"85", x"dd", x"3a", x"88", x"8f", x"92", x"ba", x"cf", x"b9", x"1d", x"13", x"93", x"c4", x"0e", x"9b", x"0c", x"61", x"fa", x"74", x"53", x"f3", x"fa", x"75", x"05", x"fc", x"49", x"f4", x"c0", x"be")
         ),
@@ -17595,6 +18505,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '1', rtr => '1', brs => '0', data_length => 0, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0000", identifier => 362480875,
          data => (OTHERS => x"00")
         ),
@@ -17611,6 +18522,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '1', rtr => '0', brs => '1', data_length => 2, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0010", identifier => 242773110,
          data => (x"6c", x"a4", OTHERS => x"00")
         ),
@@ -17629,6 +18541,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '1', rtr => '0', brs => '0', data_length => 0, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0000", identifier => 480213701,
          data => (OTHERS => x"00")
         ),
@@ -17646,6 +18559,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '0', rtr => '0', brs => '0', data_length => 1, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0001", identifier =>      1254,
          data => (x"8a", OTHERS => x"00")
         ),
@@ -17661,6 +18575,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '0', rtr => '0', brs => '0', data_length => 0, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0000", identifier =>      1857,
          data => (OTHERS => x"00")
         ),
@@ -17675,6 +18590,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '0', rtr => '1', brs => '0', data_length => 0, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0000", identifier =>      1547,
          data => (OTHERS => x"00")
         ),
@@ -17689,6 +18605,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '0', rtr => '0', brs => '0', data_length => 1, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0001", identifier =>      1133,
          data => (x"dd", OTHERS => x"00")
         ),
@@ -17704,6 +18621,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '1', rtr => '0', brs => '1', data_length => 16, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "1010", identifier => 296265496,
          data => (x"ca", x"25", x"43", x"66", x"1b", x"ed", x"fc", x"85", x"ec", x"07", x"6b", x"e0", x"96", x"cf", x"1e", x"9a", OTHERS => x"00")
         ),
@@ -17729,6 +18647,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '0', rtr => '0', brs => '0', data_length => 12, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "1001", identifier =>      1829,
          data => (x"c6", x"a7", x"e9", x"da", x"85", x"80", x"99", x"50", x"bb", x"92", x"9a", x"e0", OTHERS => x"00")
         ),
@@ -17752,6 +18671,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '1', rtr => '0', brs => '0', data_length => 1, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0001", identifier =>  56684267,
          data => (x"80", OTHERS => x"00")
         ),
@@ -17768,6 +18688,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '0', rtr => '0', brs => '1', data_length => 7, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0111", identifier =>       243,
          data => (x"bc", x"b0", x"37", x"2f", x"4b", x"43", x"2d", OTHERS => x"00")
         ),
@@ -17787,6 +18708,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '1', rtr => '0', brs => '0', data_length => 3, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0011", identifier => 177867445,
          data => (x"5b", x"12", x"7d", OTHERS => x"00")
         ),
@@ -17806,6 +18728,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '1', rtr => '0', brs => '0', data_length => 12, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "1001", identifier => 166866595,
          data => (x"e7", x"47", x"29", x"ac", x"46", x"aa", x"5e", x"4c", x"97", x"70", x"e8", x"d3", OTHERS => x"00")
         ),
@@ -17829,6 +18752,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '0', rtr => '0', brs => '0', data_length => 4, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0100", identifier =>         6,
          data => (x"30", x"94", x"6c", x"06", OTHERS => x"00")
         ),
@@ -17844,6 +18768,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '0', rtr => '0', brs => '1', data_length => 6, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0110", identifier =>       266,
          data => (x"0c", x"86", x"60", x"51", x"b5", x"48", OTHERS => x"00")
         ),
@@ -17863,6 +18788,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '1', rtr => '0', brs => '0', data_length => 6, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0110", identifier => 203510377,
          data => (x"53", x"ab", x"a0", x"c3", x"14", x"74", OTHERS => x"00")
         ),
@@ -17882,6 +18808,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '0', rtr => '0', brs => '1', data_length => 16, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "1010", identifier =>      1312,
          data => (x"28", x"e5", x"04", x"2e", x"0c", x"55", x"0f", x"45", x"a5", x"9a", x"cc", x"85", x"ec", x"02", x"ce", x"06", OTHERS => x"00")
         ),
@@ -17906,6 +18833,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '0', rtr => '0', brs => '0', data_length => 0, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0000", identifier =>         0,
          data => (OTHERS => x"00")
         ),
@@ -17921,6 +18849,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '0', rtr => '0', brs => '1', data_length => 64, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "1111", identifier =>      1306,
          data => (x"3f", x"d7", x"77", x"90", x"ee", x"1f", x"f5", x"73", x"cd", x"03", x"c8", x"5c", x"c7", x"6e", x"f7", x"14", x"f4", x"64", x"16", x"43", x"e9", x"f6", x"86", x"ce", x"e0", x"1d", x"5f", x"ea", x"f6", x"83", x"e9", x"b6", x"da", x"e0", x"47", x"ca", x"01", x"bd", x"3e", x"ce", x"c0", x"07", x"aa", x"88", x"f5", x"a2", x"1d", x"6a", x"86", x"33", x"ad", x"70", x"a9", x"b3", x"3f", x"0a", x"d0", x"1e", x"75", x"c7", x"21", x"5f", x"7e", x"fc")
         ),
@@ -17970,6 +18899,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '1', rtr => '0', brs => '0', data_length => 7, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0111", identifier => 112012483,
          data => (x"06", x"10", x"44", x"0d", x"ba", x"4c", x"82", OTHERS => x"00")
         ),
@@ -17990,6 +18920,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '1', rtr => '1', brs => '0', data_length => 0, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0000", identifier => 489050727,
          data => (OTHERS => x"00")
         ),
@@ -18005,6 +18936,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '0', rtr => '0', brs => '0', data_length => 4, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0100", identifier =>      1667,
          data => (x"51", x"1e", x"b3", x"c6", OTHERS => x"00")
         ),
@@ -18021,6 +18953,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '1', rtr => '0', brs => '1', data_length => 16, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "1010", identifier => 326009453,
          data => (x"e6", x"aa", x"19", x"28", x"2e", x"1f", x"38", x"f1", x"ac", x"73", x"3f", x"2f", x"51", x"28", x"1d", x"35", OTHERS => x"00")
         ),
@@ -18047,6 +18980,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '1', rtr => '0', brs => '0', data_length => 6, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0110", identifier => 126542831,
          data => (x"20", x"5d", x"a3", x"d3", x"24", x"0a", OTHERS => x"00")
         ),
@@ -18065,6 +18999,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '0', rtr => '0', brs => '0', data_length => 0, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0000", identifier =>       155,
          data => (OTHERS => x"00")
         ),
@@ -18079,6 +19014,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '1', rtr => '0', brs => '1', data_length => 6, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0110", identifier => 499904123,
          data => (x"91", x"3a", x"df", x"05", x"f8", x"0f", OTHERS => x"00")
         ),
@@ -18099,6 +19035,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '0', rtr => '1', brs => '0', data_length => 0, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0000", identifier =>      1265,
          data => (OTHERS => x"00")
         ),
@@ -18113,6 +19050,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '0', rtr => '0', brs => '1', data_length => 5, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0101", identifier =>       209,
          data => (x"50", x"0c", x"0a", x"f3", x"96", OTHERS => x"00")
         ),
@@ -18132,6 +19070,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '0', rtr => '1', brs => '0', data_length => 0, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0000", identifier =>      1455,
          data => (OTHERS => x"00")
         ),
@@ -18146,6 +19085,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '0', rtr => '0', brs => '0', data_length => 2, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0010", identifier =>      1959,
          data => (x"d8", x"a1", OTHERS => x"00")
         ),
@@ -18161,6 +19101,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '0', rtr => '0', brs => '1', data_length => 64, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "1111", identifier =>      1103,
          data => (x"3c", x"0f", x"be", x"a3", x"f1", x"d4", x"17", x"5a", x"0b", x"68", x"66", x"15", x"5c", x"fc", x"c6", x"1a", x"82", x"74", x"09", x"a1", x"35", x"51", x"08", x"29", x"2a", x"29", x"7c", x"88", x"44", x"de", x"3b", x"00", x"6d", x"79", x"a3", x"5f", x"4e", x"3b", x"b9", x"d8", x"23", x"a0", x"ed", x"fe", x"9d", x"b5", x"1a", x"a0", x"a9", x"23", x"c1", x"de", x"f3", x"c9", x"87", x"1f", x"f3", x"04", x"27", x"b7", x"e2", x"e1", x"b7", x"d0")
         ),
@@ -18209,6 +19150,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '0', rtr => '1', brs => '0', data_length => 0, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0000", identifier =>      1499,
          data => (OTHERS => x"00")
         ),
@@ -18223,6 +19165,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '1', rtr => '0', brs => '1', data_length => 2, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0010", identifier => 320772964,
          data => (x"b8", x"28", OTHERS => x"00")
         ),
@@ -18241,6 +19184,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '0', rtr => '0', brs => '0', data_length => 3, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0011", identifier =>       913,
          data => (x"0a", x"ae", x"e9", OTHERS => x"00")
         ),
@@ -18257,6 +19201,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '1', rtr => '0', brs => '1', data_length => 20, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "1011", identifier =>  46907849,
          data => (x"2f", x"7f", x"1d", x"12", x"37", x"6d", x"6d", x"92", x"1d", x"97", x"a9", x"07", x"9a", x"e2", x"91", x"0d", x"9c", x"3a", x"b3", x"6e", OTHERS => x"00")
         ),
@@ -18285,6 +19230,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '1', rtr => '0', brs => '1', data_length => 3, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0011", identifier => 231404518,
          data => (x"ce", x"e0", x"69", OTHERS => x"00")
         ),
@@ -18303,6 +19249,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '0', rtr => '0', brs => '1', data_length => 1, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0001", identifier =>      1868,
          data => (x"bf", OTHERS => x"00")
         ),
@@ -18319,6 +19266,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '1', rtr => '1', brs => '0', data_length => 0, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0000", identifier =>  88437429,
          data => (OTHERS => x"00")
         ),
@@ -18335,6 +19283,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '0', rtr => '0', brs => '0', data_length => 5, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0101", identifier =>      1689,
          data => (x"00", x"64", x"c5", x"1c", x"9e", OTHERS => x"00")
         ),
@@ -18351,6 +19300,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '1', rtr => '0', brs => '1', data_length => 8, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "1000", identifier =>  67017107,
          data => (x"2d", x"b0", x"3e", x"0e", x"1a", x"15", x"b6", x"bc", OTHERS => x"00")
         ),
@@ -18373,6 +19323,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '1', rtr => '0', brs => '1', data_length => 2, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0010", identifier => 467674652,
          data => (x"a9", x"ba", OTHERS => x"00")
         ),
@@ -18391,6 +19342,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '1', rtr => '0', brs => '0', data_length => 5, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0101", identifier => 252298792,
          data => (x"91", x"cb", x"ab", x"d6", x"e7", OTHERS => x"00")
         ),
@@ -18409,6 +19361,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '1', rtr => '1', brs => '0', data_length => 0, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0000", identifier => 139322387,
          data => (OTHERS => x"00")
         ),
@@ -18424,6 +19377,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '0', rtr => '0', brs => '0', data_length => 4, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0100", identifier =>       685,
          data => (x"18", x"b4", x"5d", x"54", OTHERS => x"00")
         ),
@@ -18442,6 +19396,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '0', rtr => '0', brs => '0', data_length => 0, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0000", identifier =>      1684,
          data => (OTHERS => x"00")
         ),
@@ -18456,6 +19411,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '1', rtr => '1', brs => '0', data_length => 0, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0000", identifier => 307094964,
          data => (OTHERS => x"00")
         ),
@@ -18472,6 +19428,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '1', rtr => '0', brs => '1', data_length => 12, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "1001", identifier =>  75878758,
          data => (x"02", x"ab", x"ab", x"d1", x"1e", x"96", x"9e", x"00", x"ae", x"9c", x"9f", x"54", OTHERS => x"00")
         ),
@@ -18497,6 +19454,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '0', rtr => '1', brs => '0', data_length => 0, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0000", identifier =>      1648,
          data => (OTHERS => x"00")
         ),
@@ -18511,6 +19469,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '0', rtr => '1', brs => '0', data_length => 0, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0000", identifier =>       927,
          data => (OTHERS => x"00")
         ),
@@ -18525,6 +19484,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '1', rtr => '1', brs => '0', data_length => 0, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0000", identifier => 344866567,
          data => (OTHERS => x"00")
         ),
@@ -18540,6 +19500,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '0', rtr => '0', brs => '0', data_length => 5, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0101", identifier =>      1878,
          data => (x"77", x"8a", x"06", x"95", x"21", OTHERS => x"00")
         ),
@@ -18557,6 +19518,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '0', rtr => '0', brs => '1', data_length => 32, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "1101", identifier =>       677,
          data => (x"a4", x"f6", x"09", x"55", x"00", x"2e", x"c2", x"d9", x"d9", x"2a", x"30", x"c6", x"3c", x"f5", x"cd", x"c4", x"72", x"00", x"90", x"51", x"34", x"09", x"dc", x"3b", x"1e", x"7d", x"60", x"b3", x"cd", x"a1", x"e7", x"f1", OTHERS => x"00")
         ),
@@ -18589,6 +19551,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '1', rtr => '0', brs => '0', data_length => 2, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0010", identifier =>  19097714,
          data => (x"8a", x"72", OTHERS => x"00")
         ),
@@ -18607,6 +19570,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '1', rtr => '0', brs => '0', data_length => 2, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0010", identifier =>  71057360,
          data => (x"18", x"0e", OTHERS => x"00")
         ),
@@ -18623,6 +19587,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '1', rtr => '1', brs => '0', data_length => 0, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0000", identifier => 405184095,
          data => (OTHERS => x"00")
         ),
@@ -18638,6 +19603,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '0', rtr => '0', brs => '0', data_length => 16, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "1010", identifier =>      1830,
          data => (x"36", x"dd", x"a0", x"04", x"80", x"08", x"75", x"98", x"79", x"bd", x"31", x"98", x"c7", x"a3", x"11", x"7c", OTHERS => x"00")
         ),
@@ -18661,6 +19627,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '1', rtr => '0', brs => '0', data_length => 0, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0000", identifier =>  53809558,
          data => (OTHERS => x"00")
         ),
@@ -18676,6 +19643,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '1', rtr => '1', brs => '0', data_length => 0, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0000", identifier => 325923281,
          data => (OTHERS => x"00")
         ),
@@ -18692,6 +19660,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '1', rtr => '0', brs => '1', data_length => 48, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "1110", identifier => 494516785,
          data => (x"b3", x"8e", x"c2", x"37", x"8e", x"ca", x"ad", x"a7", x"44", x"ea", x"d8", x"5c", x"b2", x"fb", x"ed", x"ae", x"c1", x"3f", x"9b", x"1f", x"1f", x"bc", x"06", x"8d", x"a3", x"ca", x"c0", x"d8", x"c6", x"f0", x"7b", x"7a", x"7f", x"3e", x"32", x"8e", x"0a", x"df", x"36", x"cd", x"ca", x"0f", x"2b", x"7d", x"8a", x"19", x"2c", x"4c", OTHERS => x"00")
         ),
@@ -18734,6 +19703,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '1', rtr => '0', brs => '0', data_length => 7, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0111", identifier =>   6953184,
          data => (x"70", x"05", x"a6", x"3b", x"45", x"80", x"82", OTHERS => x"00")
         ),
@@ -18753,6 +19723,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '1', rtr => '0', brs => '0', data_length => 12, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "1001", identifier => 411353404,
          data => (x"ae", x"c4", x"44", x"8e", x"7a", x"12", x"59", x"89", x"bc", x"56", x"14", x"55", OTHERS => x"00")
         ),
@@ -18776,6 +19747,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '1', rtr => '0', brs => '0', data_length => 5, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0101", identifier => 113361503,
          data => (x"25", x"4c", x"ba", x"a9", x"f3", OTHERS => x"00")
         ),
@@ -18796,6 +19768,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '1', rtr => '1', brs => '0', data_length => 0, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0000", identifier => 393770527,
          data => (OTHERS => x"00")
         ),
@@ -18812,6 +19785,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '0', rtr => '1', brs => '0', data_length => 0, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0000", identifier =>        36,
          data => (OTHERS => x"00")
         ),
@@ -18826,6 +19800,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '0', rtr => '0', brs => '1', data_length => 48, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "1110", identifier =>      1193,
          data => (x"0d", x"23", x"bd", x"63", x"b6", x"93", x"e5", x"16", x"41", x"ae", x"df", x"e5", x"fb", x"9b", x"0f", x"ef", x"91", x"7e", x"e3", x"0a", x"a4", x"d3", x"fe", x"7f", x"fe", x"23", x"9f", x"6d", x"d6", x"b9", x"6e", x"e3", x"5d", x"ac", x"c6", x"14", x"40", x"ac", x"2b", x"01", x"db", x"8a", x"66", x"d7", x"26", x"75", x"c7", x"37", OTHERS => x"00")
         ),
@@ -18868,6 +19843,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '0', rtr => '1', brs => '0', data_length => 0, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0000", identifier =>      1637,
          data => (OTHERS => x"00")
         ),
@@ -18882,6 +19858,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '0', rtr => '0', brs => '1', data_length => 16, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "1010", identifier =>      1480,
          data => (x"6b", x"b9", x"72", x"59", x"9d", x"cf", x"85", x"e4", x"63", x"45", x"11", x"0e", x"46", x"ec", x"99", x"ac", OTHERS => x"00")
         ),
@@ -18906,6 +19883,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '0', rtr => '1', brs => '0', data_length => 0, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0000", identifier =>      1796,
          data => (OTHERS => x"00")
         ),
@@ -18920,6 +19898,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '1', rtr => '0', brs => '1', data_length => 4, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0100", identifier => 350230569,
          data => (x"77", x"49", x"33", x"5b", OTHERS => x"00")
         ),
@@ -18940,6 +19919,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '0', rtr => '0', brs => '0', data_length => 4, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0100", identifier =>       345,
          data => (x"33", x"43", x"fd", x"18", OTHERS => x"00")
         ),
@@ -18958,6 +19938,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '0', rtr => '1', brs => '0', data_length => 0, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0000", identifier =>       963,
          data => (OTHERS => x"00")
         ),
@@ -18972,6 +19953,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '1', rtr => '0', brs => '0', data_length => 7, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0111", identifier => 137382538,
          data => (x"d9", x"e7", x"04", x"71", x"9e", x"3c", x"22", OTHERS => x"00")
         ),
@@ -18990,6 +19972,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '1', rtr => '0', brs => '1', data_length => 8, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "1000", identifier => 171824497,
          data => (x"6c", x"27", x"a4", x"60", x"1f", x"d7", x"a3", x"9d", OTHERS => x"00")
         ),
@@ -19011,6 +19994,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '1', rtr => '1', brs => '0', data_length => 0, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0000", identifier =>  86652219,
          data => (OTHERS => x"00")
         ),
@@ -19027,6 +20011,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '0', rtr => '0', brs => '1', data_length => 8, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "1000", identifier =>      1621,
          data => (x"da", x"7b", x"f1", x"df", x"ec", x"10", x"9b", x"8e", OTHERS => x"00")
         ),
@@ -19047,6 +20032,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '0', rtr => '0', brs => '1', data_length => 48, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "1110", identifier =>       811,
          data => (x"e6", x"94", x"03", x"48", x"b4", x"da", x"6b", x"d1", x"4a", x"36", x"b2", x"62", x"b5", x"9d", x"91", x"83", x"40", x"1c", x"5f", x"3b", x"8d", x"be", x"29", x"9d", x"5a", x"b7", x"03", x"29", x"b1", x"f0", x"87", x"19", x"86", x"8a", x"e0", x"ba", x"e4", x"4c", x"0c", x"ae", x"83", x"be", x"91", x"b8", x"db", x"23", x"3d", x"9b", OTHERS => x"00")
         ),
@@ -19089,6 +20075,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '0', rtr => '0', brs => '1', data_length => 24, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "1100", identifier =>       630,
          data => (x"80", x"e9", x"35", x"b7", x"6d", x"dd", x"6a", x"5e", x"66", x"83", x"64", x"70", x"64", x"9e", x"56", x"30", x"2a", x"84", x"b3", x"68", x"16", x"ec", x"45", x"39", OTHERS => x"00")
         ),
@@ -19118,6 +20105,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '0', rtr => '0', brs => '0', data_length => 3, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0011", identifier =>       646,
          data => (x"c3", x"a0", x"b7", OTHERS => x"00")
         ),
@@ -19134,6 +20122,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '1', rtr => '0', brs => '0', data_length => 4, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0100", identifier => 289171995,
          data => (x"da", x"f9", x"19", x"dd", OTHERS => x"00")
         ),
@@ -19152,6 +20141,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '1', rtr => '0', brs => '0', data_length => 4, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0100", identifier => 294789244,
          data => (x"72", x"28", x"e4", x"a6", OTHERS => x"00")
         ),
@@ -19170,6 +20160,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '0', rtr => '1', brs => '0', data_length => 0, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0000", identifier =>      1876,
          data => (OTHERS => x"00")
         ),
@@ -19185,6 +20176,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '1', rtr => '0', brs => '1', data_length => 6, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0110", identifier => 448923561,
          data => (x"70", x"23", x"26", x"9e", x"78", x"96", OTHERS => x"00")
         ),
@@ -19205,6 +20197,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '0', rtr => '0', brs => '0', data_length => 2, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0010", identifier =>       217,
          data => (x"ce", x"13", OTHERS => x"00")
         ),
@@ -19220,6 +20213,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '1', rtr => '0', brs => '1', data_length => 12, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "1001", identifier => 277452912,
          data => (x"b7", x"14", x"29", x"49", x"8f", x"3c", x"1e", x"c4", x"79", x"54", x"f1", x"fb", OTHERS => x"00")
         ),
@@ -19243,6 +20237,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '1', rtr => '0', brs => '0', data_length => 12, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "1001", identifier => 287600508,
          data => (x"17", x"7f", x"3b", x"43", x"70", x"6f", x"08", x"3f", x"82", x"d6", x"cf", x"13", OTHERS => x"00")
         ),
@@ -19265,6 +20260,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '1', rtr => '0', brs => '1', data_length => 3, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0011", identifier => 291794169,
          data => (x"14", x"2a", x"38", OTHERS => x"00")
         ),
@@ -19283,6 +20279,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '1', rtr => '0', brs => '1', data_length => 24, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "1100", identifier => 291480045,
          data => (x"ad", x"c9", x"c1", x"cd", x"b2", x"c2", x"64", x"b1", x"fe", x"27", x"a1", x"6e", x"ae", x"60", x"71", x"85", x"af", x"84", x"0b", x"03", x"4f", x"25", x"7e", x"e3", OTHERS => x"00")
         ),
@@ -19313,6 +20310,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '0', rtr => '1', brs => '0', data_length => 0, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0000", identifier =>       729,
          data => (OTHERS => x"00")
         ),
@@ -19327,6 +20325,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '0', ident_type => '1', rtr => '0', brs => '0', data_length => 1, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "0001", identifier => 490515704,
          data => (x"e3", OTHERS => x"00")
         ),
@@ -19343,6 +20342,7 @@ constant C_reference_data_set_3 : t_reference_data_set := (
    (
     frame =>
         (frame_format => '1', ident_type => '0', rtr => '0', brs => '1', data_length => 20, esi => '0', lbpf => '0',
+         ivld => '0', lbtbi => 0, erf => '0', erf_pos => "0000", erf_erp => '0', erf_type => "000",
          timestamp => x"0000000000000000", rwcnt => 0, dlc => "1011", identifier =>      1536,
          data => (x"70", x"ed", x"8f", x"1f", x"4f", x"80", x"25", x"fe", x"05", x"af", x"81", x"d4", x"d4", x"7f", x"38", x"a3", x"b6", x"4e", x"e0", x"9e", OTHERS => x"00")
         ),

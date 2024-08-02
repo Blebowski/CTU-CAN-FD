@@ -412,6 +412,9 @@ package feature_test_agent_pkg is
         -- ESI Flag (Error state indicator)
         esi                     :   std_logic;
 
+        -- Identifier valid flag
+        ivld                    :   std_logic;
+
         -- Timestamp (as defined in TIMESTAMP_U_W and TIMESTAMP_L_W)
         timestamp               :   std_logic_vector(63 downto 0);
 
@@ -424,11 +427,39 @@ package feature_test_agent_pkg is
 
         -- Loopback frame flag
         lbpf                    :   std_logic;
+
+        -- Index of TXT Buffer used to send the frame
+        lbtbi                   :   natural;
+
+        -- Error frame flag
+        erf                     :   std_logic;
+
+        -- Error frame type
+        erf_pos                 :   std_logic_vector(3 downto 0);
+        erf_erp                 :   std_logic;
+        erf_type                :   std_logic_vector(2 downto 0);
     end record;
 
     constant SW_CAN_Frame_type_rst_val : SW_CAN_frame_type :=
-            (0, (OTHERS => (OTHERS => '0')), "0000", 0,
-             '0', '0', '0', '0', '0', (OTHERS => '0'), 0, '0');
+            (0,                                 -- Identifier
+             (OTHERS => (OTHERS => '0')),       -- Data
+             "0000",                            -- DLC
+             0,                                 -- Data length
+             '0',                               -- Identifier type
+             '0',                               -- Frame format
+             '0',                               -- RTR
+             '0',                               -- BRS
+             '0',                               -- ESI
+             '0',                               -- IVLD
+             (OTHERS => '0'),                   -- Timestamp
+             0,                                 -- RWCNT
+             '0',                               -- LBPF
+             0,                                 -- LBTBI
+             '0',                               -- ERF
+             "0000",                            -- ERF_POS
+             '0',                               -- ERF_ERP
+             "000"                              -- ERF_TYPE
+            );
 
     type SW_CAN_mask_filter_type is (
         filter_A,
@@ -3127,7 +3158,45 @@ package body feature_test_agent_pkg is
         frame.brs           := frm_fmt_word(BRS_IND);
         frame.rwcnt         := to_integer(unsigned(frm_fmt_word(RWCNT_H downto RWCNT_L)));
         frame.lbpf          := frm_fmt_word(LBPF_IND);
+        frame.lbtbi         := to_integer(unsigned(frm_fmt_word(LBTBI_H downto LBTBI_L)));
+        frame.ivld          := frm_fmt_word(IVLD_IND);
+        frame.erf           := frm_fmt_word(ERF_IND);
+        frame.erf_erp       := frm_fmt_word(ERF_ERP_IND);
+        frame.erf_type      := frm_fmt_word(ERF_TYPE_H downto ERF_TYPE_L);
+        frame.erf_pos       := frm_fmt_word(ERF_POS_H downto ERF_POS_L);
+
         decode_dlc(frame.dlc, frame.data_length);
+
+        -- Check that "regular" CAN frames do have IVLD and no ERF_*
+        if (frame.erf /= '1') then
+            if (frame.ivld /= '1') then
+                error_m("When FRAME_FORMAT_W[ERF]=0, FRAME_FORMAT_W[IVLD] must be 1. It is: 0x" &
+                        std_logic'image(frame.ivld));
+            end if;
+
+            if (frame.erf_pos /= "0000") then
+                error_m("When FRAME_FORMAT_W[ERF]=0, FRAME_FORMAT_W[ERF_POS] must be 0. It is: 0x" &
+                    to_hstring(frame.erf_pos));
+            end if;
+
+            if (frame.erf_type /= "000") then
+                error_m("When FRAME_FORMAT_W[ERF]=0, FRAME_FORMAT_W[ERF_TYPE] must be 0, It is: 0x" &
+                    to_hstring(frame.erf_type));
+            end if;
+
+            if (frame.erf_erp /= '0') then
+                error_m("When FRAME_FORMAT_W[ERF]=0, FRAME_FORMAT_W[ERF_ERP] must be 0. It is: 0x" &
+                    std_logic'image(frame.erf_erp));
+            end if;
+        end if;
+
+        -- Check that "regular" CAN frames do have LBTBI=0
+        if (frame.lbpf /= '1') then
+            if (frame.lbtbi /= 0) then
+                error_m("When FRAME_FORMAT_W[ILBP]=0, FRAME_FORMAT_W[LBTBI] must be 0. It is: " &
+                        integer'image(frame.lbtbi));
+            end if;
+        end if;
 
         -- Parse ID
         aux_vect := ident_word(28 downto 0);
