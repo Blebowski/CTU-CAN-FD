@@ -1165,6 +1165,7 @@ begin
         rec_brs                         => rec_brs,                                 -- OUT
         rec_esi                         => rec_esi,                                 -- OUT
         rec_valid                       => rec_valid,                               -- OUT
+        rec_ivld                        => rec_ivld,                                -- OUT
         store_metadata                  => store_metadata,                          -- OUT
         store_data                      => store_data,                              -- OUT
         store_data_word                 => store_data_word,                         -- OUT
