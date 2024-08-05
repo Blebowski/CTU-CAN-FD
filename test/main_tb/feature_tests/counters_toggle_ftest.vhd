@@ -67,39 +67,69 @@
 --------------------------------------------------------------------------------
 
 --------------------------------------------------------------------------------
---  @Purpose:
---    Package with Shared variables globally accessible
+-- @TestInfoStart
 --
+-- @Purpose:
+--  Test to achieve full toggle coverage on ERR_NORM, ERR_FD, RX_FR_CTR and
+--  TX_FR_CTR register.
+--
+-- @Verifies:
+--  @1. Full width of ERR_NORM, ERR_FD, RX_FR_CTR and TX_FR_CTR can be accessed
+--      from register map.
+--
+-- @Test sequence:
+--  @1. Read expected value of ERR_NORM, ERR_FD, RX_FR_CTR and TX_FR_CTR
+--      from DUT and check it matches value forced to DUT. Value forced to
+--      DUT obtained from TB scratchpad (placed there by TB).
+--
+-- @TestInfoEnd
 --------------------------------------------------------------------------------
 -- Revision History:
---    15.2.2023   Created file
+--    18.10.2019   Created file
 --------------------------------------------------------------------------------
 
 Library ctu_can_fd_tb;
 context ctu_can_fd_tb.ieee_context;
+context ctu_can_fd_tb.rtl_context;
+context ctu_can_fd_tb.tb_common_context;
 
-use ctu_can_fd_tb.tb_prot_types_pkg.all;
+use ctu_can_fd_tb.feature_test_agent_pkg.all;
 
-package tb_shared_vars_pkg is
-
-    -- Data shared over communication channel
-    shared variable com_channel_data : t_com_channel_data;
-
-    -- Test result
-    shared variable ctu_vip_test_result : t_ctu_test_result;
-
-    -- Finish on error
-    shared variable finish_on_error_i : t_prot_boolean;
-
-    -- Random deposits to DUT should be attempted
-    shared variable deposit_to_dut_i : t_prot_boolean;
-
-    -- Force values
-    shared variable force_values : t_prot_force_values;
-
+package counters_toggle_ftest is
+    procedure counters_toggle_ftest_exec(
+        signal      chn             : inout  t_com_channel
+    );
 end package;
 
 
-package body tb_shared_vars_pkg is
+package body counters_toggle_ftest is
+
+    procedure counters_toggle_ftest_exec(
+        signal      chn             : inout  t_com_channel
+    ) is
+        variable r_data : std_logic_vector(31 downto 0) := (OTHERS => '0');
+    begin
+
+        -----------------------------------------------------------------------
+        -- @1. Read expected value of ERR_NORM, ERR_FD, RX_FR_CTR and
+        --     TX_FR_CTR from DUT and check it matches value forced to DUT.
+        --     Value forced to DUT obtained from TB scratchpad
+        --     (placed there by TB).
+        -----------------------------------------------------------------------
+        info_m("Step 1: Check ERR_NORM, ERR_FD, RX_FR_CTR and TX_FR_CTR");
+
+        CAN_read(r_data, ERR_NORM_ADR, DUT_NODE, chn);
+        check_m(r_data(ERR_NORM_VAL_H downto ERR_NORM_VAL_L) = force_values.get_err_norm,
+                "ERR_NORM is OK");
+        check_m(r_data(ERR_FD_VAL_H downto ERR_FD_VAL_L) = force_values.get_err_fd,
+                "ERR_FD is OK");
+
+        CAN_read(r_data, RX_FR_CTR_ADR, DUT_NODE, chn);
+        check_m(r_data = force_values.get_rx_counter, "RX_FR_CTR is OK");
+
+        CAN_read(r_data, RX_FR_CTR_ADR, DUT_NODE, chn);
+        check_m(r_data = force_values.get_rx_counter, "RX_FR_CTR is OK");
+
+  end procedure;
 
 end package body;
