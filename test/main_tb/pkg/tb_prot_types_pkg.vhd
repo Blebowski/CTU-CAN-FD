@@ -166,6 +166,21 @@ package tb_prot_types_pkg is
         impure function get return boolean;
     end protected;
 
+    -----------------------------------------------------------------------
+    -- Values forced to DUT ingter
+    -----------------------------------------------------------------------
+    type t_prot_force_values is protected
+        procedure set_tx_counter(val : std_logic_vector(31 downto 0));
+        procedure set_rx_counter(val : std_logic_vector(31 downto 0));
+        procedure set_err_norm(val : std_logic_vector(15 downto 0));
+        procedure set_err_fd(val : std_logic_vector(15 downto 0));
+
+        impure function get_tx_counter return std_logic_vector;
+        impure function get_rx_counter return std_logic_vector;
+        impure function get_err_norm return std_logic_vector;
+        impure function get_err_fd return std_logic_vector;
+    end protected;
+
 end package;
 
 
@@ -373,5 +388,58 @@ package body tb_prot_types_pkg is
         end function;
 
     end protected body;
+
+
+    type t_prot_force_values is protected body
+
+        variable tx_counter : std_logic_vector(31 downto 0);
+        variable rx_counter : std_logic_vector(31 downto 0);
+
+        variable err_norm   : std_logic_vector(15 downto 0);
+        variable err_fd     : std_logic_vector(15 downto 0);
+
+        procedure set_tx_counter(val : std_logic_vector(31 downto 0)) is
+        begin
+            tx_counter := val;
+        end procedure;
+
+        procedure set_rx_counter(val : std_logic_vector(31 downto 0)) is
+        begin
+            rx_counter := val;
+        end procedure;
+
+        procedure set_err_norm(val : std_logic_vector(15 downto 0)) is
+        begin
+            err_norm := val;
+        end procedure;
+
+        procedure set_err_fd(val : std_logic_vector(15 downto 0)) is
+        begin
+            err_fd := val;
+        end procedure;
+
+        impure function get_tx_counter return std_logic_vector is
+        begin
+            return tx_counter;
+        end;
+
+        impure function get_rx_counter return std_logic_vector is
+        begin
+            return rx_counter;
+        end;
+
+        impure function get_err_norm return std_logic_vector is
+        begin
+            return err_norm;
+        end;
+
+        impure function get_err_fd return std_logic_vector is
+        begin
+            return err_fd;
+        end;
+
+    end protected body;
+
+
 
 end package body;

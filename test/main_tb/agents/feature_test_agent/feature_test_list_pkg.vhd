@@ -108,6 +108,7 @@ use ctu_can_fd_tb.command_cdo_ftest.all;
 use ctu_can_fd_tb.command_ercrst_ftest.all;
 use ctu_can_fd_tb.command_frcrst_ftest.all;
 use ctu_can_fd_tb.command_rrb_ftest.all;
+use ctu_can_fd_tb.counters_toggle_ftest.all;
 
 use ctu_can_fd_tb.device_id_ftest.all;
 use ctu_can_fd_tb.disable_in_tx_ftest.all;
@@ -294,6 +295,8 @@ package body feature_test_list_pkg is
             command_frcrst_ftest_exec(channel);
         elsif (test_name = "command_rrb") then
             command_rrb_ftest_exec(channel);
+        elsif (test_name = "counters_toggle") then
+            counters_toggle_ftest_exec(channel);
 
         elsif (test_name = "device_id") then
             device_id_ftest_exec(channel);

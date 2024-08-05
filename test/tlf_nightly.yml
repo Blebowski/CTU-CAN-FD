@@ -42,6 +42,9 @@ tests:
     - name: command_rrb
       generics:
         /TB_TOP_CTU_CAN_FD/iterations: 20
+    - name: counters_toggle
+      generics:
+        /TB_TOP_CTU_CAN_FD/iterations: 50
 
     - name: disable_in_tx
     - name: dlc_can20_8_64_bytes
