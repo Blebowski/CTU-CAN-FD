@@ -198,6 +198,7 @@ use ctu_can_fd_tb.rx_status_rxfrc_ftest.all;
 use ctu_can_fd_tb.rx_status_mof_ftest.all;
 
 use ctu_can_fd_tb.rx_err_log_ftest.all;
+use ctu_can_fd_tb.rx_err_log_2_ftest.all;
 
 use ctu_can_fd_tb.scan_mode_ftest.all;
 use ctu_can_fd_tb.settings_tbfbo_ftest.all;
@@ -465,6 +466,8 @@ package body feature_test_list_pkg is
             rx_status_mof_ftest_exec(channel);
         elsif (test_name = "rx_err_log") then
             rx_err_log_ftest_exec(channel);
+        elsif (test_name = "rx_err_log_2") then
+            rx_err_log_2_ftest_exec(channel);
 
         elsif (test_name = "scan_mode") then
             scan_mode_ftest_exec(channel);

@@ -273,6 +273,7 @@ tests:
         /TB_TOP_CTU_CAN_FD/timeout: 200 ms
 
     - name: rx_err_log
+    - name: rx_err_log_2
 
     - name: scan_mode
     - name: settings_tbfbo
