@@ -177,11 +177,12 @@ package feature_test_agent_pkg is
         time_triggered_transm   :   boolean;
         tx_buf_backup           :   boolean;
         parity_check            :   boolean;
+        error_logging           :   boolean;
     end record;
 
     constant SW_mode_rst_val : SW_mode := (false, false, false, false, false,
         true, false, false, false, true, false, false, false, true, true,
-        false, false, false);
+        false, false, false, false);
 
     -- Controller commands
     type SW_command is record
@@ -3686,6 +3687,10 @@ package body feature_test_agent_pkg is
             data(TXBBM_IND mod 16)     := '1';
         end if;
 
+        if (mode.error_logging) then
+            data(ERFM_IND mod 16)      := '1';
+        end if;
+
         CAN_write(data, MODE_ADR, node, channel);
 
         -- Following modes are stored in SETTINGS register
@@ -3754,6 +3759,7 @@ package body feature_test_agent_pkg is
         mode.time_triggered_transm      := false;
         mode.tx_buf_backup              := false;
         mode.parity_check               := false;
+        mode.error_logging              := false;
 
         if (data(RST_IND) = '1') then
             mode.reset                  := true;
@@ -3799,6 +3805,9 @@ package body feature_test_agent_pkg is
             mode.tx_buf_backup          := true;
         end if;
 
+        if (data(ERFM_IND) = '1') then
+            mode.error_logging          := true;
+        end if;
 
         -- SETTINGs part of read data
 
