@@ -393,7 +393,7 @@ architecture rtl of rx_buffer is
     signal rwcnt_com                    : natural range 0 to 31;
 
     -- Combinational decoded frame format word from metadata.
-    signal frame_form_w                 : std_logic_vector(28 downto 0);
+    signal frame_form_w                 : std_logic_vector(27 downto 0);
 
     -- Internal timestamp captured for storing. Captured either in the beginning or end of frame.
     signal timestamp_capture            : std_logic_vector(63 downto 0);
@@ -518,7 +518,7 @@ begin
     -- Memory data which are written depend on state of the FSM
     -----------------------------------------------------------------------------------------------
     with data_selector select rxb_port_a_data_in <=
-        "000" & frame_form_w             when "00001",
+        "0000" & frame_form_w            when "00001",
         "000" & rec_ident                when "00010",
         store_data_word                  when "00100",
         timestamp_capture(31 downto 0)   when "01000",
