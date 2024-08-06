@@ -75,6 +75,7 @@ tests:
     - name: message_filter
     - name: mode_bus_monitoring
     - name: mode_acf
+    - name: mode_erfm
     - name: mode_loopback
     - name: mode_fd_enable
     - name: mode_fdrf
