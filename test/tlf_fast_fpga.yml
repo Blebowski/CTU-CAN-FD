@@ -116,6 +116,8 @@ tests:
     - name: rx_status_mof
     - name: rx_status_rxfrc
 
+    - name: rx_err_log
+
     - name: scan_mode
     - name: settings_tbfbo
     - name: settings_nisofd

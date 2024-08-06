@@ -272,6 +272,8 @@ tests:
         /TB_TOP_CTU_CAN_FD/rx_buffer_size: 4096
         /TB_TOP_CTU_CAN_FD/timeout: 200 ms
 
+    - name: rx_err_log
+
     - name: scan_mode
     - name: settings_tbfbo
     - name: settings_nisofd
