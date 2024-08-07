@@ -3166,6 +3166,7 @@ package body feature_test_agent_pkg is
         frame.erf_type      := frm_fmt_word(ERF_TYPE_H downto ERF_TYPE_L);
         frame.erf_pos       := frm_fmt_word(ERF_POS_H downto ERF_POS_L);
 
+        info_m("READ FRAME_FORMAT_W: " & to_hstring(frm_fmt_word));
         decode_dlc(frame.dlc, frame.data_length);
 
         -- Check that "regular" CAN frames do have IVLD and no ERF_*
@@ -3207,23 +3208,21 @@ package body feature_test_agent_pkg is
         frame.timestamp(31 downto 0)  := ts_low_word;
         frame.timestamp(63 downto 32) := ts_high_word;
 
-        -- Now read data frames
-        if ((frame.rtr = NO_RTR_FRAME or frame.frame_format = FD_CAN)
-             and frame.data_length /= 0)
-        then
-            for i in 0 to (frame.data_length - 1) / 4 loop
-                if (automatic_mode) then
-                    CAN_read(r_data, RX_DATA_ADR, node, channel);
-                else
-                    CAN_read_by_byte(r_data, RX_DATA_ADR, node, channel);
-                    give_controller_command(command, node, channel);
-                end if;
-                frame.data(i * 4)       := r_data(7 downto 0);
-                frame.data((i * 4) + 1) := r_data(15 downto 8);
-                frame.data((i * 4) + 2) := r_data(23 downto 16);
-                frame.data((i * 4) + 3) := r_data(31 downto 24);
-            end loop;
-        end if;
+        -- Now read data bytes based on RWCNT
+        --  IDENTIFIER_W, TIMESTAMP_L,W and TIMESTAMP_U_W are alredy stored
+        for i in 0 to frame.rwcnt - 4 loop
+            if (automatic_mode) then
+                CAN_read(r_data, RX_DATA_ADR, node, channel);
+            else
+                CAN_read_by_byte(r_data, RX_DATA_ADR, node, channel);
+                give_controller_command(command, node, channel);
+            end if;
+            frame.data(i * 4)       := r_data(7 downto 0);
+            frame.data((i * 4) + 1) := r_data(15 downto 8);
+            frame.data((i * 4) + 2) := r_data(23 downto 16);
+            frame.data((i * 4) + 3) := r_data(31 downto 24);
+        end loop;
+
     end procedure;
 
 
