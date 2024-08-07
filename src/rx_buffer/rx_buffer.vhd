@@ -615,7 +615,7 @@ begin
 
     -----------------------------------------------------------------------------------------------
     -- RWCNT (Read word count is calculated like so:
-    --  1. For RTR Frames -> 3 (Only ID + 2 Timestamp words)
+    --  1. For RTR Frames or Error Frames -> 3 (Only ID + 2 Timestamp words)
     --  2. For Normal CAN Frames with DLC > 8 max. 8 bytes -> RWCNT = 5
     --  3. Otherwise Number of data bytes is matching Received DLC!
     -----------------------------------------------------------------------------------------------
