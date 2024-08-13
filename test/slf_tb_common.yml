@@ -158,6 +158,7 @@ source_list:
     - file: main_tb/feature_tests/counters_toggle_ftest.vhd
     - file: main_tb/feature_tests/rx_err_log_ftest.vhd
     - file: main_tb/feature_tests/rx_err_log_2_ftest.vhd
+    - file: main_tb/feature_tests/rx_err_log_3_ftest.vhd
     - file: main_tb/feature_tests/rx_err_log_back_to_back_ftest.vhd
     - file: main_tb/agents/feature_test_agent/feature_test_list_pkg.vhd
 

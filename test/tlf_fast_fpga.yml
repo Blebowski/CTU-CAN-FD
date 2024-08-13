@@ -118,6 +118,7 @@ tests:
 
     - name: rx_err_log
     - name: rx_err_log_2
+    - name: rx_err_log_3
 
     - name: scan_mode
     - name: settings_tbfbo
