@@ -275,6 +275,7 @@ tests:
     - name: rx_err_log
     - name: rx_err_log_2
     - name: rx_err_log_3
+    - name: rx_err_log_4
     - name: rx_err_log_back_to_back
       generics:
         /TB_TOP_CTU_CAN_FD/rx_buffer_size: 128
