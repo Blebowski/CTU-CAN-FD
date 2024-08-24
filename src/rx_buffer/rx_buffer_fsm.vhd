@@ -172,10 +172,7 @@ begin
         -- Idle, waiting for "store_metada" to start storing first 4 words.
         -------------------------------------------------------------------------------------------
         when s_rxb_idle =>
-            -- TODO: Rec_abort_f can be removed it is in fact unreachable. Rec_abort_f will be
-            --       always one cycle after store_metadata_f!
-            --       Need to add assertion on mutual exclusivity too!
-            if (store_metadata_f = '1' and rec_abort_f = '0') then
+            if (store_metadata_f = '1') then
                 next_state <= s_rxb_store_frame_format;
             elsif (mr_mode_erfm = ERFM_ENABLED and rec_abort_f = '1') then
                 next_state <= s_rxb_store_err_frame_format;
@@ -431,6 +428,10 @@ begin
         --   curr_state = s_rxb_skip_ts_high or curr_state = s_rxb_store_end_ts_low or
         --   curr_state = s_rxb_store_end_ts_high)
         --  report "RX Buffer abort not supported storing of Identifier and Timestamp";
+
+        -- psl rx_never_abort_and_store_in_idle : assert never
+        --  (curr_state = s_rxb_idle and store_metadata_f = '1' and rec_abort_f = '1')
+        --  report "When RX Buffer FSM is s_rxb_idle, store_metadata_f and rec_abort_f can't be simultaneous!";
 
         -- psl store_metadata_and_rec_abort_back_to_back_cov : cover
         --  {mr_mode_erfm = ERFM_ENABLED and rec_abort_f = '1' and curr_state = s_rxb_store_frame_format}
