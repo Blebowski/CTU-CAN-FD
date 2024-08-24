@@ -73,18 +73,20 @@
 --  RX Error logging feature test 6
 --
 -- @Verifies:
---  @1. RX Error being logged with following ERF_TYPE values:
---      @1.1 ERC_PRT_ERR
+--  @1. RX Error frame is logged correctly in RX Buffer when Error frame occurs
+--      right after Metadata word is stored.
 --
 -- @Test sequence:
---  @1. Configure DUT to MODE[ERFM] = 1 and enable Test mode DUT Node.
---  @2. Generate CAN frame, and insert it to DUTs TXT Buffer. Use Test Registers
---      to flip a bit in the TXT Buffer word containing first 4 bytes of CAN
---      Data field.
---  @3. Give DUTs TXT Buffer a "Set Ready" Command. Wait until Error frame
---      occurs in DUT Node. Check DUTs RX Buffer has a single frame in its RX
---      Buffer. Wait until bus is idle. Read the frame, and check it is an
---      Error frame and it has ERF_TYPE = ERC_PRT_ERR.
+--  @1. Configure DUT to MODE[ERFM] = 1, and enable Loopback mode in DUT.
+--  @2. Generate CAN frame and send it byt Test Node. Wait until frame is sent.
+--  @3. Generate CAN frame and send it by DUT Node. Wait until last bit of
+--      DLC and flip bus value.
+--  @4. Wait until error frame in DUT Node, release bus value. Check DUTs RX
+--      Buffer contains a two RX frames. Wait until bus is idle.
+--  @5. Generate CAN frame and send it byt Test Node. Wait until frame is sent.
+--  @6. Read all 3 frames from DUTs RX Buffer, and check that first and third
+--      frames are CAN frames matching first and third transmitted frame. Check
+--      that secodn frame is an Error frame.
 --
 -- @TestInfoEnd
 --------------------------------------------------------------------------------
