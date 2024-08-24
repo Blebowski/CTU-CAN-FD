@@ -425,12 +425,16 @@ begin
             end if;
         end process;
 
-        -- psl rx_no_abort_after_metadata : assert never
+        -- psl rx_no_abort_after_metadata_cov : assert never
         --  (rec_abort_f = '1') and
         --  (curr_state = s_rxb_store_identifier or curr_state = s_rxb_skip_ts_low or
         --   curr_state = s_rxb_skip_ts_high or curr_state = s_rxb_store_end_ts_low or
         --   curr_state = s_rxb_store_end_ts_high)
         --  report "RX Buffer abort not supported storing of Identifier and Timestamp";
+
+        -- psl store_metadata_and_rec_abort_back_to_back_cov : cover
+        --  {curr_state = s_rxb_store_frame_format and rec_abort_f = '1'}
+        --  report "Store metadata and rec_abort back to back!";
 
     end block assertions_block;
 
