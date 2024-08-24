@@ -433,8 +433,16 @@ begin
         --  report "RX Buffer abort not supported storing of Identifier and Timestamp";
 
         -- psl store_metadata_and_rec_abort_back_to_back_cov : cover
-        --  {curr_state = s_rxb_store_frame_format and rec_abort_f = '1'}
-        --  report "Store metadata and rec_abort back to back!";
+        --  {mr_mode_erfm = ERFM_ENABLED and rec_abort_f = '1' and curr_state = s_rxb_store_frame_format}
+        --  report "rec_abort_f = 1 and curr_state = s_rxb_store_frame_format";
+
+        -- psl rec_abort_in_idle_cov : cover
+        --  {mr_mode_erfm = ERFM_ENABLED and rec_abort_f = '1' and curr_state = s_rxb_idle}
+        --  report "rec_abort_f = 1 and curr_state = s_rxb_idle";
+
+        -- psl rec_abort_in_store_data_cov : cover
+        --  {mr_mode_erfm = ERFM_ENABLED and rec_abort_f = '1' and curr_state = s_rxb_store_data}
+        --  report "rec_abort_f = 1 and curr_state = s_rxb_store_data";
 
     end block assertions_block;
 
