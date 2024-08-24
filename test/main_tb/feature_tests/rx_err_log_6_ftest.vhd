@@ -92,7 +92,7 @@
 -- @TestInfoEnd
 --------------------------------------------------------------------------------
 -- Revision History:
---    15.8.2024   Created file
+--    24.8.2024   Created file
 --------------------------------------------------------------------------------
 
 Library ctu_can_fd_tb;
@@ -128,13 +128,6 @@ package body rx_err_log_6_ftest is
         variable frame_sent         : boolean;
 
         variable rx_buf_info        : SW_RX_Buffer_info;
-
-        --variable status             : SW_status;
-        --variable frame_sent         : boolean;
-
-        --variable err_frame          : SW_CAN_frame_type;
-
-        --variable can_rx             : std_logic;
     begin
 
         -------------------------------------------------------------------------------------------
