@@ -276,7 +276,7 @@ begin
     -----------------------------------------------------------------------------------------------
     -- Current State process (outputs)
     -----------------------------------------------------------------------------------------------
-    curr_state_proc : process(curr_state, store_data_f)
+    curr_state_proc : process(curr_state, store_data_f, rec_abort_f)
     begin
         write_raw_intent <= '0';
         select_ts_wptr <= '0';
@@ -292,7 +292,9 @@ begin
             reset_overrun_flag <= '1';
 
         when s_rxb_store_frame_format =>
-            write_raw_intent <= '1';
+            if (rec_abort_f = '0') then
+                write_raw_intent <= '1';
+            end if;
             data_selector <= "00001";
 
         when s_rxb_store_identifier =>
