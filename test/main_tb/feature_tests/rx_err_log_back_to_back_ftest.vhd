@@ -190,7 +190,9 @@ package body rx_err_log_back_to_back_ftest is
         -------------------------------------------------------------------------------------------
         info_m("Step 3");
 
-        CAN_wait_sample_point(DUT_NODE, chn);
+        CAN_wait_sample_point(DUT_NODE, chn, false);
+
+        wait for 20 ns;
 
         get_controller_status(status, DUT_NODE, chn);
         check_m(status.error_transmission, "Error frame is being transmitted!");
@@ -204,9 +206,16 @@ package body rx_err_log_back_to_back_ftest is
 
         for i in 1 to 16 loop
             CAN_wait_sample_point(DUT_NODE, chn);
+
+            -- After first error frame there will be 1 error frame. When we wait right till
+            -- next sample point (first error in the Error frame), the DUT starts storing its
+            -- next error frame. At the same time readout RX Buffer status and check previous
+            -- state. This works since readout of RX status is shorter than storing of new
+            -- frame!
+
             get_rx_buf_state(rx_buf_info, DUT_NODE, chn);
-            check_m(rx_buf_info.rx_frame_count = i + 1,
-                    "Exptected frames in RX Buffer: " & integer'image(i + 1) &
+            check_m(rx_buf_info.rx_frame_count = i,
+                    "Exptected frames in RX Buffer: " & integer'image(i) &
                     " Real frames in RX Buffer: " & integer'image(rx_buf_info.rx_frame_count));
         end loop;
 
@@ -228,7 +237,11 @@ package body rx_err_log_back_to_back_ftest is
             check_m(err_frame.ivld = '1',                   "FRAME_FORMAT_W[IVLD] = 1");
 
             if (i = 1) then
-                check_m(err_frame.erf_type = ERC_FRM_ERR,   "FRAME_FORMAT_W[ERR_TYPE] = ERC_FRM_ERR");
+                -- For CAN FD frame, a fixed stuff error shall be reported as Form Error by CAN standard!
+                check_m(err_frame.erf_type = ERC_FRM_ERR or
+                        err_frame.erf_type = ERC_BIT_ERR ,
+                        "FRAME_FORMAT_W[ERR_TYPE] = ERC_FRM_ERR or " &
+                        "FRAME_FORMAT_W[ERR_TYPE] = ERC_BIT_ERR");
                 check_m(err_frame.erf_pos = ERC_POS_CRC,    "FRAME_FORMAT_W[ERF_POS] = ERC_POS_CRC");
             else
                 check_m(err_frame.erf_type = ERC_BIT_ERR,   "FRAME_FORMAT_W[ERR_TYPE] = ERC_BIT_ERR");
