@@ -706,9 +706,9 @@ begin
     mr_ctrl_in.status_rxpe <= rx_parity_error;
 
     -- TXT Buffer parity error and double parity error
-    txpe_flag_proc : process(res_n, clk_sys)
+    txpe_flag_proc : process(soft_res_q_n, clk_sys)
     begin
-        if (res_n = '0') then
+        if (soft_res_q_n = '0') then
             mr_ctrl_in.status_txpe <= '0';
             mr_ctrl_in.status_txdpe <= '0';
         elsif rising_edge(clk_sys) then
