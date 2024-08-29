@@ -319,6 +319,7 @@ tests:
     - name: status_txpe
       generics:
         /TB_TOP_CTU_CAN_FD/timeout: 10 ms
+    - name: status_txpe_txdpe_reset
     - name: stuff_in_data
 
     - name: trv_delay

@@ -146,6 +146,7 @@ source_list:
     - file: main_tb/feature_tests/int_of_ftest.vhd
     - file: main_tb/feature_tests/status_txnf_ftest.vhd
     - file: main_tb/feature_tests/status_txpe_ftest.vhd
+    - file: main_tb/feature_tests/status_txpe_txdpe_reset_ftest.vhd
     - file: main_tb/feature_tests/frame_test_fstc_ftest.vhd
     - file: main_tb/feature_tests/frame_filters_mask_ftest.vhd
     - file: main_tb/feature_tests/pc_fsm_transitions_err_pas_ftest.vhd

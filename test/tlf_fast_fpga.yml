@@ -139,6 +139,7 @@ tests:
     - name: status_txs
     - name: status_rxpe
     - name: status_txpe
+    - name: status_txpe_txdpe_reset
     - name: stuff_in_data
 
     - name: trv_delay
