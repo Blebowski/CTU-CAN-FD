@@ -74,24 +74,23 @@
 --
 -- @Verifies:
 --  @1. When bit error occurs in the last bit of CRC in Data phase and CTU CAN
---      FD uses Secondary sampling point, CTU CAN FD is able to detect error
---      when SSP for the errornous last CRC bit occurs before regular sample
---      point of CRC Delimiter (before switch to nominal bit rate and cut-off
---      of Secondary Sample point sequence).
+--      FD uses Secondary sampling point, CTU CAN FD ignores such error when
+--      secondary sample point for the last bit of CRC is at the regular
+--      sample point of CRC delimiter. See Figure 25 in ISO11898-1 2015.
 --
 -- @Test sequence:
 --  @1. Set DUT to Test mode (to be able to modify REC and TEC). Set DUT TX
---      to RX delay to 1 ns. Configure DUT Node to have SSP enabled with
---      "Measured + offset". Configure the offset in such way that it is
+--      to RX delay to one data bit time. Configure DUT Node to have SSP enabled
+--      with "Measured + offset". Configure the offset in such way that it is
 --      equal to regular sample point. Thus DUT is configured to sample at
 --      the sample place, only with "secondary" sample point.
---  @2. Generate CAN FD frame with bit-rate shift. Loop through all bits of a frame:
---      @2.1 Set DUT node to Error Active.
---      @2.2 Send a Frame by DUT node. Wait for incrementing number of bits
---      @2.3 Flip a bit on DUT CAN RX.
---      @2.4 Check that DUT is either transmitting an error frame, or it has
---             lost arbitration.
---      @2.5 Wait until bus is idle.
+--  @2. Generate CAN FD frame with bit-rate shift. Send a Frame by DUT node.
+--  @3. Wait until CRC delimiter and flip bus level. At this time, the DUT Node
+--      shall be received last bit of CRC due to 1 bit transmitter delay.
+--      Wait until start of next bit and release bus level!
+--  @4. Check that DUT Node is not transmitting an error frame
+--      (Local disturbance to be sampled in the moment of bit-rate switch was
+--       ignored). Wait until bus is idle.
 --
 -- @TestInfoEnd
 --------------------------------------------------------------------------------
@@ -106,16 +105,16 @@ context ctu_can_fd_tb.tb_common_context;
 
 use ctu_can_fd_tb.feature_test_agent_pkg.all;
 
-package ssp_last_crc_bit_error_ftest is
-    procedure ssp_last_crc_bit_error_ftest_exec(
+package ssp_last_crc_bit_error_2_ftest is
+    procedure ssp_last_crc_bit_error_2_ftest_exec(
         signal      chn             : inout  t_com_channel
     );
 end package;
 
 
-package body ssp_last_crc_bit_error_ftest is
+package body ssp_last_crc_bit_error_2_ftest is
 
-    procedure ssp_last_crc_bit_error_ftest_exec(
+    procedure ssp_last_crc_bit_error_2_ftest_exec(
         signal      chn             : inout  t_com_channel
     ) is
         variable r_data             :       std_logic_vector(31 downto 0) := (OTHERS => '0');
@@ -131,8 +130,9 @@ package body ssp_last_crc_bit_error_ftest is
     begin
 
         -------------------------------------------------------------------------------------------
-        -- @1. Set DUT to Test mode (to be able to modify REC and TEC). Set DUT TX
-        --     to RX delay to 1 ns. Configure DUT Node to have SSP enabled with
+        -- @1. Set DUT to Test mode (to be able to modify REC and TEC).
+        --     Set DUT TX
+        --     to RX delay to one data bit time. Configure DUT Node to have SSP enabled with
         --     "Measured + offset". Configure the offset in such way that it is
         --     equal to regular sample point. Thus DUT is configured to sample at
         --     the sample place, only with "secondary" sample point.
@@ -141,7 +141,8 @@ package body ssp_last_crc_bit_error_ftest is
         mode.test := true;
         set_core_mode(mode, DUT_NODE, chn);
 
-        ftr_tb_set_tran_delay(1 ns, DUT_NODE, chn);
+        -- (1 + 3 + 3 + 3) * 4 = 40 * 10 ns = 400 ns
+        ftr_tb_set_tran_delay(400 ns, DUT_NODE, chn);
 
         -- Reconfigure bit-rate and SSP so that we are sure that SSP position is configured on the
         -- sample place as regular sample point position!
@@ -166,10 +167,10 @@ package body ssp_last_crc_bit_error_ftest is
         CAN_configure_timing(bit_timing, TEST_NODE, chn);
 
         -- Configure SSP with measured and offset.
-        -- The SSP delay of 10 corresponds to 7 regular SP delay + synchronization
-        -- of CAN RX input
-        CAN_configure_ssp(ssp_meas_n_offset, x"0A", DUT_NODE, chn);
-        CAN_configure_ssp(ssp_meas_n_offset, x"0A", TEST_NODE, chn);
+        -- 0x1B = 27 = (1 + 3 + 3) * 4 - 1
+        -- -1 is to align with "regular" sample point based on simulation!
+        CAN_configure_ssp(ssp_meas_n_offset, x"1B", DUT_NODE, chn);
+        CAN_configure_ssp(ssp_meas_n_offset, x"1B", TEST_NODE, chn);
 
         CAN_turn_controller(true, DUT_NODE, chn);
         CAN_turn_controller(true, TEST_NODE, chn);
@@ -177,9 +178,8 @@ package body ssp_last_crc_bit_error_ftest is
         CAN_wait_bus_on(DUT_NODE, chn);
         CAN_wait_bus_on(TEST_NODE, chn);
 
-
         -------------------------------------------------------------------------------------------
-        -- @2. Generate CAN FD frame with bit-rate shift. Loop through all bits of a frame:
+        -- @2. Generate CAN FD frame with bit-rate shift. Send a Frame by DUT node.
         -------------------------------------------------------------------------------------------
         info_m("Step 2");
 
@@ -189,75 +189,34 @@ package body ssp_last_crc_bit_error_ftest is
         CAN_TX_frame.data_length := 1;
         CAN_TX_frame.brs := BR_SHIFT;
 
-        bit_index := 0;
-        bit_iter_loop: loop
+        CAN_insert_TX_frame(CAN_TX_frame, 1, DUT_NODE, chn);
+        send_TXT_buf_cmd(buf_set_ready, 1, DUT_NODE, chn);
 
-            ---------------------------------------------------------------------------------------
-            -- @2.1 Set DUT node to Error Active.
-            ---------------------------------------------------------------------------------------
-            info_m("Step 2.1: Set DUT node to Error Active.");
+        -------------------------------------------------------------------------------------------
+        -- @3. Wait until CRC delimiter and flip bus level. At this time, the DUT Node
+        --     shall be received last bit of CRC due to 1 bit transmitter delay.
+        --     Wait until start of next bit and release bus level!
+        -------------------------------------------------------------------------------------------
+        info_m("Step 3");
 
-            err_counters.rx_counter := 0;
-            set_error_counters(err_counters, DUT_NODE, chn);
+        CAN_wait_pc_state(pc_deb_crc_delim, DUT_NODE, chn);
+        CAN_wait_sync_seg(DUT_NODE, chn);
 
-            ---------------------------------------------------------------------------------------
-            -- @2.2 Send a Frame by DUT node. Wait for incrementing number of bits
-            ---------------------------------------------------------------------------------------
-            info_m("Step 2.2: Send a Frame by DUT node. Wait for incrementing number of bits");
+        flip_bus_level(chn);
+        CAN_wait_sync_seg(DUT_NODE, chn);
+        release_bus_level(chn);
 
-            CAN_insert_TX_frame(CAN_TX_frame, 1, DUT_NODE, chn);
-            send_TXT_buf_cmd(buf_set_ready, 1, DUT_NODE, chn);
+        -------------------------------------------------------------------------------------------
+        -- @4. Check that DUT Node is not transmitting an error frame
+        --     (Local disturbance to be sampled in the moment of bit-rate switch was ignored).
+        --      Wait until bus is idle.
+        -------------------------------------------------------------------------------------------
+        info_m("Step 4");
 
-            CAN_wait_tx_rx_start(true, false, DUT_NODE, chn);
+        get_controller_status(status, DUT_NODE, chn);
 
-            info_m("Waiting for " & integer'image(bit_index) & " bits!");
-            for j in 0 to bit_index loop
-                CAN_wait_sync_seg(DUT_NODE, chn);
-            end loop;
-
-            wait for 20 ns;
-
-            -- If we get up to CRC Delim, we finish, flipping CRC Delimt will not
-            -- result in Error frame.
-            CAN_read_pc_debug_m(pc_dbg, DUT_NODE, chn);
-            if (pc_dbg = pc_deb_crc_delim) then
-                CAN_wait_bus_idle(DUT_NODE, chn);
-                CAN_wait_bus_idle(TEST_NODE, chn);
-                exit bit_iter_loop;
-            end if;
-
-            -----------------------------------------------------------------------
-            -- @2.3 Flip a bit on DUT CAN RX.
-            -----------------------------------------------------------------------
-            info_m("Step 2.3 Flip a bit on DUT CAN RX.");
-
-            flip_bus_level(chn);
-            CAN_wait_sync_seg(DUT_NODE, chn);
-            release_bus_level(chn);
-
-            CAN_wait_sync_seg(DUT_NODE, chn);
-
-            -----------------------------------------------------------------------
-            -- @2.4 Check that DUT is either transmitting an error frame, or it
-            --      has lost arbitration.
-            -----------------------------------------------------------------------
-            info_m("Step 2.4 Check error frame or arbitration lost");
-
-            get_controller_status(status, DUT_NODE, chn);
-
-            check_m(status.receiver or status.error_transmission,
-                    "DUT either lost arbitration or is transmitting error frame");
-
-            -----------------------------------------------------------------------
-            -- @2.5 Wait until bus is idle.
-            -----------------------------------------------------------------------
-            info_m("Step 2.5 Wait until bus is idle.");
-
-            CAN_wait_bus_idle(DUT_NODE, chn);
-
-            bit_index := bit_index + 1;
-
-        end loop;
+        check_false_m(status.error_transmission, "DUT is NOT transmitting error frame");
+        CAN_wait_bus_idle(DUT_NODE, chn);
 
   end procedure;
 

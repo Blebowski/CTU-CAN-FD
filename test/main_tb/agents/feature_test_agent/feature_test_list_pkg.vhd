@@ -251,6 +251,7 @@ use ctu_can_fd_tb.txt_buffer_access_ignore_ftest.all;
 use ctu_can_fd_tb.frame_filters_mask_ftest.all;
 
 use ctu_can_fd_tb.ssp_last_crc_bit_error_ftest.all;
+use ctu_can_fd_tb.ssp_last_crc_bit_error_2_ftest.all;
 
 
 package feature_test_list_pkg is
@@ -579,6 +580,8 @@ package body feature_test_list_pkg is
 
         elsif (test_name = "ssp_last_crc_bit_error") then
             ssp_last_crc_bit_error_ftest_exec(channel);
+        elsif (test_name = "ssp_last_crc_bit_error_2") then
+            ssp_last_crc_bit_error_2_ftest_exec(channel);
 
         else
             error_m("Unknown feature test name: " & test_name);
