@@ -127,6 +127,7 @@ tests:
 
     - name: ssp_4_bits_flying
     - name: ssp_last_crc_bit_error
+    - name: ssp_last_crc_bit_error_2
 
     - name: status_eft
       generics:
