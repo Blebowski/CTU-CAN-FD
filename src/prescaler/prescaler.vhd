@@ -191,18 +191,6 @@ end entity;
 
 architecture rtl of prescaler is
 
-    function max(
-        a : natural;
-        b : natural)
-    return natural is
-    begin
-        if (a > b) then
-            return a;
-        else
-            return b;
-        end if;
-    end function max;
-
     -----------------------------------------------------------------------------------------------
     -- Segment lengths
     -----------------------------------------------------------------------------------------------
@@ -235,8 +223,11 @@ architecture rtl of prescaler is
     signal h_sync_edge_valid    : std_logic;
 
     -- Size of internal Bit time counters.
-    constant C_BT_NBT_WIDTH     : natural := max(G_TSEG1_NBT_WIDTH, G_TSEG2_NBT_WIDTH) + 1;
-    constant C_BT_DBT_WIDTH     : natural := max(G_TSEG1_DBT_WIDTH, G_TSEG2_DBT_WIDTH) + 1;
+    -- Should cover largest segment that can be counted in the given bit-rate also with synchronisation!
+    --  Nominal:  SYNC (1) + PROP_NBT (127) + PH1_NBT (63) + SJW_NBT (31) = 222 -> Fits into 8 bits
+    --  Data:     SYNC (1) + PROP_DBT (63)  + PH1_DBT (31) + SJW_DBT (31) = 126 -> Fits into 7 bits
+    constant C_BT_NBT_WIDTH     : natural := 8;
+    constant C_BT_DBT_WIDTH     : natural := 7;
 
     -- Bit time counter values.
     signal segm_counter_nbt     : std_logic_vector(C_BT_NBT_WIDTH - 1 downto 0);

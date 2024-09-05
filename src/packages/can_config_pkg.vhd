@@ -103,24 +103,31 @@ package can_config_pkg is
     constant C_ERR_VALID_PIPELINE   : boolean := true;
 
     -- TSEG1 Width - Nominal Bit Time
+    -- SYNC (1) + PROP_NBT (127) + PH1_NBT (63) = 191 -> Fits into 8 bits
     constant C_TSEG1_NBT_WIDTH      : natural := 8;
 
     -- TSEG2 Width - Nominal Bit Time
-    constant C_TSEG2_NBT_WIDTH      : natural := 8;
+    -- PH2_NBT (63) -> Fits into 6 bits
+    constant C_TSEG2_NBT_WIDTH      : natural := 6;
 
     -- Baud rate prescaler Width - Nominal Bit Time
+    -- BRP_NBT (255) -> Fits into 8 bits
     constant C_BRP_NBT_WIDTH        : natural := 8;
 
     -- Synchronisation Jump width Width - Nominal Bit Time
+    -- SJW_NBT (31) -> Fits into 5 bits
     constant C_SJW_NBT_WIDTH        : natural := 5;
 
     -- TSEG1 Width - Data Bit Time
-    constant C_TSEG1_DBT_WIDTH      : natural := 8;
+    -- SYNC (1) + PROP_DBT (63) + PH1_DBT (31) = 95 -> Fits into 7 bits
+    constant C_TSEG1_DBT_WIDTH      : natural := 7;
 
     -- TSEG2 Width - Data Bit Time
-    constant C_TSEG2_DBT_WIDTH      : natural := 8;
+    -- PH2_DBT (31) -> Fits into 5 bits
+    constant C_TSEG2_DBT_WIDTH      : natural := 5;
 
     -- Baud rate prescaler width - Data Bit Time
+    -- BRP_DBT (255) -> Fits into 8 bits
     constant C_BRP_DBT_WIDTH        : natural := 8;
 
     -- Synchronisation Jump Width width - Data Bit Time
