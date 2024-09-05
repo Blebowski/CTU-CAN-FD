@@ -545,6 +545,9 @@ architecture rtl of can_top_level is
     -- Synchronisation edge (aligned with time quanta)
     signal sync_edge                    :   std_logic;
 
+    -- Bit error enable
+    signal bit_err_enable               :   std_logic;
+
     -----------------------------------------------------------------------------------------------
     -- Bit time FSM outputs
     -----------------------------------------------------------------------------------------------
@@ -1201,6 +1204,7 @@ begin
         dbt_measure_start               => dbt_measure_start,                       -- OUT
         gen_first_ssp                   => gen_first_ssp,                           -- OUT
         sync_edge                       => sync_edge,                               -- IN
+        bit_err_enable                  => bit_err_enable,                          -- OUT
         pc_rx_trigger                   => pc_rx_trigger                            -- OUT
     );
 
@@ -1302,7 +1306,8 @@ begin
         bit_err                         => bit_err,                                 -- OUT
         btmc_reset                      => btmc_reset,                              -- IN
         dbt_measure_start               => dbt_measure_start,                       -- IN
-        gen_first_ssp                   => gen_first_ssp                            -- IN
+        gen_first_ssp                   => gen_first_ssp,                           -- IN
+        bit_err_enable                  => bit_err_enable                           -- OUT
     );
 
     -- <RELEASE_OFF>

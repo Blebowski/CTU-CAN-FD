@@ -2132,8 +2132,8 @@ begin
                 tick_state_reg <= '1';
                 err_pos <= ERC_POS_ACK;
                 pc_dbg.is_crc_delim  <= '1';
-                dbt_ctrs_en <= '1';
                 bit_err_disable <= '1';
+                dbt_ctrs_en <= '1';
                 destuff_enable_clear <= '1';
                 stuff_enable_clear <= '1';
 

@@ -346,6 +346,9 @@ entity can_core is
         -- Synchronization edge
         sync_edge               : in  std_logic;
 
+        -- Bit error enable
+        bit_err_enable          : out std_logic;
+
         -- RX Trigger of Protocol control FSM (sample point)
         pc_rx_trigger           : out std_logic
     );
@@ -599,6 +602,7 @@ begin
         dbt_measure_start       => dbt_measure_start,           -- OUT
         gen_first_ssp           => gen_first_ssp,               -- OUT
         sync_edge               => sync_edge,                   -- IN
+        bit_err_enable          => bit_err_enable,              -- OUT
 
         -- CRC Interface
         crc_enable              => crc_enable,                  -- OUT

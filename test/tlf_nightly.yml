@@ -294,6 +294,7 @@ tests:
         /TB_TOP_CTU_CAN_FD/timeout: 200 ms
 
     - name: ssp_4_bits_flying
+    - name: ssp_last_crc_bit_error
     - name: status_eft
       generics:
         /TB_TOP_CTU_CAN_FD/iterations: 5
