@@ -115,6 +115,7 @@ tests:
     - name: mode_bus_monitoring
 
     - name: mode_acf
+    - name: mode_erfm
 
     - name: mode_loopback
       generics:
@@ -271,6 +272,17 @@ tests:
         /TB_TOP_CTU_CAN_FD/rx_buffer_size: 4096
         /TB_TOP_CTU_CAN_FD/timeout: 200 ms
 
+    - name: rx_err_log
+    - name: rx_err_log_2
+    - name: rx_err_log_3
+    - name: rx_err_log_4
+    - name: rx_err_log_5
+    - name: rx_err_log_6
+    - name: rx_err_log_7
+    - name: rx_err_log_back_to_back
+      generics:
+        /TB_TOP_CTU_CAN_FD/rx_buffer_size: 128
+
     - name: scan_mode
     - name: settings_tbfbo
     - name: settings_nisofd
@@ -282,6 +294,8 @@ tests:
         /TB_TOP_CTU_CAN_FD/timeout: 200 ms
 
     - name: ssp_4_bits_flying
+    - name: ssp_last_crc_bit_error
+    - name: ssp_last_crc_bit_error_2
     - name: status_eft
       generics:
         /TB_TOP_CTU_CAN_FD/iterations: 5
@@ -319,6 +333,7 @@ tests:
     - name: status_txpe
       generics:
         /TB_TOP_CTU_CAN_FD/timeout: 10 ms
+    - name: status_txpe_txdpe_reset
     - name: stuff_in_data
 
     - name: trv_delay

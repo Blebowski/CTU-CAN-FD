@@ -169,6 +169,7 @@ use ctu_can_fd_tb.mode_txbbm_3_ftest.all;
 use ctu_can_fd_tb.mode_txbbm_4_ftest.all;
 use ctu_can_fd_tb.mode_txbbm_5_ftest.all;
 use ctu_can_fd_tb.mode_acf_ftest.all;
+use ctu_can_fd_tb.mode_erfm_ftest.all;
 
 use ctu_can_fd_tb.no_sof_tx_ftest.all;
 
@@ -196,6 +197,15 @@ use ctu_can_fd_tb.rx_status_ftest.all;
 use ctu_can_fd_tb.rx_status_rxfrc_ftest.all;
 use ctu_can_fd_tb.rx_status_mof_ftest.all;
 
+use ctu_can_fd_tb.rx_err_log_ftest.all;
+use ctu_can_fd_tb.rx_err_log_2_ftest.all;
+use ctu_can_fd_tb.rx_err_log_3_ftest.all;
+use ctu_can_fd_tb.rx_err_log_4_ftest.all;
+use ctu_can_fd_tb.rx_err_log_5_ftest.all;
+use ctu_can_fd_tb.rx_err_log_6_ftest.all;
+use ctu_can_fd_tb.rx_err_log_7_ftest.all;
+use ctu_can_fd_tb.rx_err_log_back_to_back_ftest.all;
+
 use ctu_can_fd_tb.scan_mode_ftest.all;
 use ctu_can_fd_tb.settings_tbfbo_ftest.all;
 use ctu_can_fd_tb.settings_nisofd_ftest.all;
@@ -212,6 +222,7 @@ use ctu_can_fd_tb.status_txnf_ftest.all;
 use ctu_can_fd_tb.status_txs_ftest.all;
 use ctu_can_fd_tb.status_rxpe_ftest.all;
 use ctu_can_fd_tb.status_txpe_ftest.all;
+use ctu_can_fd_tb.status_txpe_txdpe_reset_ftest.all;
 use ctu_can_fd_tb.stuff_in_data_ftest.all;
 
 use ctu_can_fd_tb.trv_delay_ftest.all;
@@ -238,6 +249,9 @@ use ctu_can_fd_tb.txt_buffer_transitions_4_ftest.all;
 use ctu_can_fd_tb.txt_buffer_transitions_5_ftest.all;
 use ctu_can_fd_tb.txt_buffer_access_ignore_ftest.all;
 use ctu_can_fd_tb.frame_filters_mask_ftest.all;
+
+use ctu_can_fd_tb.ssp_last_crc_bit_error_ftest.all;
+use ctu_can_fd_tb.ssp_last_crc_bit_error_2_ftest.all;
 
 
 package feature_test_list_pkg is
@@ -410,6 +424,8 @@ package body feature_test_list_pkg is
             mode_txbbm_5_ftest_exec(channel);
         elsif (test_name = "mode_acf") then
             mode_acf_ftest_exec(channel);
+        elsif (test_name = "mode_erfm") then
+            mode_erfm_ftest_exec(channel);
 
         elsif (test_name = "no_sof_tx") then
             no_sof_tx_ftest_exec(channel);
@@ -458,6 +474,22 @@ package body feature_test_list_pkg is
             rx_status_rxfrc_ftest_exec(channel);
         elsif (test_name = "rx_status_mof") then
             rx_status_mof_ftest_exec(channel);
+        elsif (test_name = "rx_err_log") then
+            rx_err_log_ftest_exec(channel);
+        elsif (test_name = "rx_err_log_2") then
+            rx_err_log_2_ftest_exec(channel);
+        elsif (test_name = "rx_err_log_3") then
+            rx_err_log_3_ftest_exec(channel);
+        elsif (test_name = "rx_err_log_4") then
+            rx_err_log_4_ftest_exec(channel);
+        elsif (test_name = "rx_err_log_5") then
+            rx_err_log_5_ftest_exec(channel);
+        elsif (test_name = "rx_err_log_6") then
+            rx_err_log_6_ftest_exec(channel);
+        elsif (test_name = "rx_err_log_7") then
+            rx_err_log_7_ftest_exec(channel);
+        elsif (test_name = "rx_err_log_back_to_back") then
+            rx_err_log_back_to_back_ftest_exec(channel);
 
         elsif (test_name = "scan_mode") then
             scan_mode_ftest_exec(channel);
@@ -491,6 +523,8 @@ package body feature_test_list_pkg is
             status_rxpe_ftest_exec(channel);
         elsif (test_name = "status_txpe") then
             status_txpe_ftest_exec(channel);
+        elsif (test_name = "status_txpe_txdpe_reset") then
+            status_txpe_txdpe_reset_ftest_exec(channel);
         elsif (test_name = "stuff_in_data") then
             stuff_in_data_ftest_exec(channel);
 
@@ -543,6 +577,11 @@ package body feature_test_list_pkg is
 
         elsif (test_name = "frame_filters_mask") then
             frame_filters_mask_ftest_exec(channel);
+
+        elsif (test_name = "ssp_last_crc_bit_error") then
+            ssp_last_crc_bit_error_ftest_exec(channel);
+        elsif (test_name = "ssp_last_crc_bit_error_2") then
+            ssp_last_crc_bit_error_2_ftest_exec(channel);
 
         else
             error_m("Unknown feature test name: " & test_name);

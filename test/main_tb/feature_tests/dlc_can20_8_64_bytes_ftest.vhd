@@ -1,18 +1,18 @@
 --------------------------------------------------------------------------------
--- 
--- CTU CAN FD IP Core 
+--
+-- CTU CAN FD IP Core
 -- Copyright (C) 2021-present Ondrej Ille
--- 
+--
 -- Permission is hereby granted, free of charge, to any person obtaining a copy
 -- of this VHDL component and associated documentation files (the "Component"),
 -- to use, copy, modify, merge, publish, distribute the Component for
 -- educational, research, evaluation, self-interest purposes. Using the
 -- Component for commercial purposes is forbidden unless previously agreed with
 -- Copyright holder.
--- 
+--
 -- The above copyright notice and this permission notice shall be included in
 -- all copies or substantial portions of the Component.
--- 
+--
 -- THE COMPONENT IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 -- IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 -- FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -20,38 +20,38 @@
 -- LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
 -- FROM, OUT OF OR IN CONNECTION WITH THE COMPONENT OR THE USE OR OTHER DEALINGS
 -- IN THE COMPONENT.
--- 
+--
 -- The CAN protocol is developed by Robert Bosch GmbH and protected by patents.
 -- Anybody who wants to implement this IP core on silicon has to obtain a CAN
 -- protocol license from Bosch.
--- 
+--
 -- -------------------------------------------------------------------------------
--- 
--- CTU CAN FD IP Core 
+--
+-- CTU CAN FD IP Core
 -- Copyright (C) 2015-2020 MIT License
--- 
+--
 -- Authors:
 --     Ondrej Ille <ondrej.ille@gmail.com>
 --     Martin Jerabek <martin.jerabek01@gmail.com>
--- 
--- Project advisors: 
+--
+-- Project advisors:
 -- 	Jiri Novak <jnovak@fel.cvut.cz>
 -- 	Pavel Pisa <pisa@cmp.felk.cvut.cz>
--- 
+--
 -- Department of Measurement         (http://meas.fel.cvut.cz/)
 -- Faculty of Electrical Engineering (http://www.fel.cvut.cz)
 -- Czech Technical University        (http://www.cvut.cz/)
--- 
+--
 -- Permission is hereby granted, free of charge, to any person obtaining a copy
 -- of this VHDL component and associated documentation files (the "Component"),
 -- to deal in the Component without restriction, including without limitation
 -- the rights to use, copy, modify, merge, publish, distribute, sublicense,
 -- and/or sell copies of the Component, and to permit persons to whom the
 -- Component is furnished to do so, subject to the following conditions:
--- 
+--
 -- The above copyright notice and this permission notice shall be included in
 -- all copies or substantial portions of the Component.
--- 
+--
 -- THE COMPONENT IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 -- IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 -- FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -59,11 +59,11 @@
 -- LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
 -- FROM, OUT OF OR IN CONNECTION WITH THE COMPONENT OR THE USE OR OTHER DEALINGS
 -- IN THE COMPONENT.
--- 
+--
 -- The CAN protocol is developed by Robert Bosch GmbH and protected by patents.
 -- Anybody who wants to implement this IP core on silicon has to obtain a CAN
 -- protocol license from Bosch.
--- 
+--
 --------------------------------------------------------------------------------
 
 --------------------------------------------------------------------------------
@@ -74,7 +74,7 @@
 --
 -- @Verifies:
 --  @1. When transmission of CAN 2.0 frame with DLC higher than 8 is requested,
---      only 8 bytes are transmitted! 
+--      only 8 bytes are transmitted!
 --
 -- @Test sequence:
 --   @1. Generate CAN 2.0 Frame and set DLC higher than 8. Set higher data
@@ -110,9 +110,7 @@ package body dlc_can20_8_64_bytes_ftest is
         signal      chn             : inout  t_com_channel
     ) is
         variable CAN_frame          :        SW_CAN_frame_type;
-        variable CAN_frame_2        :        SW_CAN_frame_type  := 
-                    (0, (OTHERS => (OTHERS => '0')), "0000", 0, '0', '0',
-                     '0', '0', '0', (OTHERS => '0'), 0);
+        variable CAN_frame_2        :        SW_CAN_frame_type  := SW_CAN_Frame_type_rst_val;
         variable frame_sent         :        boolean;
         variable pc_dbg             :        SW_PC_Debug;
     begin
@@ -146,9 +144,9 @@ package body dlc_can20_8_64_bytes_ftest is
         for i in 0 to 63 loop
             CAN_wait_sample_point(DUT_NODE, chn);
             wait for 11 ns; -- for DFF to flip
-            
+
             CAN_read_pc_debug_m(pc_dbg, DUT_NODE, chn);
-            
+
             if (i = 63) then
                 check_false_m(pc_dbg = pc_deb_data,
                     "After 64 bytes data field ended!");
@@ -170,7 +168,7 @@ package body dlc_can20_8_64_bytes_ftest is
         CAN_read_frame(CAN_frame_2, TEST_NODE, chn);
         check_m(CAN_frame_2.dlc = CAN_frame.dlc, "Invalid DLC received!");
         check_m(CAN_frame_2.rwcnt = 5, "Invalid DLC received!");
-          
+
         for i in 8 to 63 loop
             check_m(CAN_frame_2.data(i) = "00000000",
                     "Byte index " & integer'image(i) & " not zero!");

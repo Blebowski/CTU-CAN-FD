@@ -22,7 +22,6 @@
 					<ipxact:name>DEVICE_ID</ipxact:name>
 					<ipxact:displayName>DEVICE ID</ipxact:displayName>
 					<ipxact:description>Identifer of CTU CAN FD. Can be used to check if CTU CAN FD is accessible correctly on its base address.</ipxact:description>
-					<ipxact:dim>0</ipxact:dim>
 					<ipxact:addressOffset>'h0</ipxact:addressOffset>
 					<ipxact:size>16</ipxact:size>
 					<ipxact:volatile>true</ipxact:volatile>
@@ -52,7 +51,6 @@
 				<ipxact:register>
 					<ipxact:name>MODE</ipxact:name>
 					<ipxact:displayName>MODE</ipxact:displayName>
-					<ipxact:dim>0</ipxact:dim>
 					<ipxact:addressOffset>'h4</ipxact:addressOffset>
 					<ipxact:size>16</ipxact:size>
 					<ipxact:volatile>true</ipxact:volatile>
@@ -252,10 +250,14 @@
 						<ipxact:enumeratedValues>
 							<ipxact:enumeratedValue>
 								<ipxact:name>TTTM_ENABLED</ipxact:name>
+								<ipxact:displayName>TTTM_ENABLED</ipxact:displayName>
+								<ipxact:description>Time Triggerer transmission is enabled. A frame from highest priority TXT Buffer in Ready state is admitted for transmission when its timestamp lower than CTU CAN FD timebase.</ipxact:description>
 								<ipxact:value>1</ipxact:value>
 							</ipxact:enumeratedValue>
 							<ipxact:enumeratedValue>
 								<ipxact:name>TTTM_DISABLED</ipxact:name>
+								<ipxact:displayName>TTTM_DISABLED</ipxact:displayName>
+								<ipxact:description>Time Triggerer transmission is disabled. A frame from highest priority TXT Buffer in Ready state is admitted for transmission regardless of its timestamp.</ipxact:description>
 								<ipxact:value>0</ipxact:value>
 							</ipxact:enumeratedValue>
 						</ipxact:enumeratedValues>
@@ -338,12 +340,32 @@
 							</ipxact:enumeratedValue>
 						</ipxact:enumeratedValues>
 					</ipxact:field>
+					<ipxact:field>
+						<ipxact:name>ERFM</ipxact:name>
+						<ipxact:displayName>ERFM</ipxact:displayName>
+						<ipxact:description>Error Frame Receive mode. When set, CTU CAN FD receives Error frames on CAN bus into its RX buffer.</ipxact:description>
+						<ipxact:bitOffset>12</ipxact:bitOffset>
+						<ipxact:bitWidth>1</ipxact:bitWidth>
+						<ipxact:enumeratedValues>
+							<ipxact:enumeratedValue>
+								<ipxact:name>ERFM_ENABLED</ipxact:name>
+								<ipxact:displayName>ERFM_ENABLED</ipxact:displayName>
+								<ipxact:description>Error frames are stored to RX buffer.</ipxact:description>
+								<ipxact:value>1</ipxact:value>
+							</ipxact:enumeratedValue>
+							<ipxact:enumeratedValue>
+								<ipxact:name>ERFM_DISABLED</ipxact:name>
+								<ipxact:displayName>ERFM_DISABLED</ipxact:displayName>
+								<ipxact:description>Error frames are not stored to RX Buffer.</ipxact:description>
+								<ipxact:value>0</ipxact:value>
+							</ipxact:enumeratedValue>
+						</ipxact:enumeratedValues>
+					</ipxact:field>
 				</ipxact:register>
 				<ipxact:register>
 					<ipxact:name>COMMAND</ipxact:name>
 					<ipxact:displayName>COMMAND</ipxact:displayName>
 					<ipxact:description>Allows issuing commands to CTU CAN FD. Writing logic 1 to each bit gives a command to CTU CAN FD. After writing logic 1, logic 0 does not need to be written.</ipxact:description>
-					<ipxact:dim>0</ipxact:dim>
 					<ipxact:addressOffset>'hC</ipxact:addressOffset>
 					<ipxact:size>32</ipxact:size>
 					<ipxact:volatile>true</ipxact:volatile>
@@ -476,7 +498,6 @@
 				<ipxact:register>
 					<ipxact:name>STATUS</ipxact:name>
 					<ipxact:displayName>STATUS</ipxact:displayName>
-					<ipxact:dim>0</ipxact:dim>
 					<ipxact:addressOffset>'h8</ipxact:addressOffset>
 					<ipxact:size>32</ipxact:size>
 					<ipxact:volatile>true</ipxact:volatile>
@@ -650,7 +671,6 @@
 				<ipxact:register>
 					<ipxact:name>SETTINGS</ipxact:name>
 					<ipxact:displayName>SETTINGS</ipxact:displayName>
-					<ipxact:dim>0</ipxact:dim>
 					<ipxact:addressOffset>'h6</ipxact:addressOffset>
 					<ipxact:size>16</ipxact:size>
 					<ipxact:volatile>true</ipxact:volatile>
@@ -861,7 +881,6 @@
 					<ipxact:name>INT_STAT</ipxact:name>
 					<ipxact:displayName>INT_STAT</ipxact:displayName>
 					<ipxact:description>Interrupt Status register. Reading this register returns logic 1 for each interrupt which ocurred. Writing logic 1 to any bit clears according interrupt status. Writing logic 0 has no effect.</ipxact:description>
-					<ipxact:dim>0</ipxact:dim>
 					<ipxact:addressOffset>'h10</ipxact:addressOffset>
 					<ipxact:size>16</ipxact:size>
 					<ipxact:volatile>true</ipxact:volatile>
@@ -1027,7 +1046,6 @@
 					<ipxact:name>RX_SETTINGS</ipxact:name>
 					<ipxact:displayName>RX_SETTINGS</ipxact:displayName>
 					<ipxact:description>Settings of RX buffer FIFO.</ipxact:description>
-					<ipxact:dim>0</ipxact:dim>
 					<ipxact:addressOffset>'h6A</ipxact:addressOffset>
 					<ipxact:size>8</ipxact:size>
 					<ipxact:volatile>true</ipxact:volatile>
@@ -1063,7 +1081,6 @@
 					<ipxact:name>INT_ENA_CLR</ipxact:name>
 					<ipxact:displayName>INT_ENA_CLR</ipxact:displayName>
 					<ipxact:description>Interrupt Enable Clear register. Writing logic 1 disables according interrupt. Writing logic 0 has no effect. Reading this register has no effect. Disabled interrupt wil not cause interrupt to be raised by CTU CAN FD even if it is set in Interrupt status register.</ipxact:description>
-					<ipxact:dim>0</ipxact:dim>
 					<ipxact:addressOffset>'h18</ipxact:addressOffset>
 					<ipxact:size>16</ipxact:size>
 					<ipxact:volatile>true</ipxact:volatile>
@@ -1086,7 +1103,6 @@
 					<ipxact:name>INT_MASK_CLR</ipxact:name>
 					<ipxact:displayName>INT_MASK_CLR</ipxact:displayName>
 					<ipxact:description>Interrupt Mask clear register. Writing logic 1 un-masks according interrupt. Writing logic 0 has no effect. Reading this register has no effect. If particular interrupt is un-masked, it will be captured in INT_STAT register when internal conditions for this interrupt are met (e.g RX buffer is not empty for RXNEI).</ipxact:description>
-					<ipxact:dim>0</ipxact:dim>
 					<ipxact:addressOffset>'h20</ipxact:addressOffset>
 					<ipxact:size>16</ipxact:size>
 					<ipxact:volatile>true</ipxact:volatile>
@@ -1109,7 +1125,6 @@
 					<ipxact:name>INT_MASK_SET</ipxact:name>
 					<ipxact:displayName>INT_MASK_SET</ipxact:displayName>
 					<ipxact:description>Interrupt Mask set. Writing logic 1 masks according interrupt. Writing logic 0 has no effect. Reading this register returns logic 1 for each masked interrupt. If particular interrupt is masked, it won't be captured in INT_STAT register when internal conditions for this interrupt are met (e.g RX buffer is not empty for RXNEI).</ipxact:description>
-					<ipxact:dim>0</ipxact:dim>
 					<ipxact:addressOffset>'h1C</ipxact:addressOffset>
 					<ipxact:size>16</ipxact:size>
 					<ipxact:volatile>true</ipxact:volatile>
@@ -1132,7 +1147,6 @@
 					<ipxact:name>INT_ENA_SET</ipxact:name>
 					<ipxact:displayName>INT_ENA_SET</ipxact:displayName>
 					<ipxact:description>Interrupt Enable Set. Writing logic 1 to a bit enables according interrupt. Writing logic 0 has no effect. Reading this register returns logic 1 for each enabled interrupt. If interrupt is captured in INT_STAT, enabled interrupt will cause CTU CAN FD to raise interrupt. Interrupts are level-based, it remains active until Interrupt status is cleared or interrupt is disabled.</ipxact:description>
-					<ipxact:dim>0</ipxact:dim>
 					<ipxact:addressOffset>'h14</ipxact:addressOffset>
 					<ipxact:size>16</ipxact:size>
 					<ipxact:volatile>true</ipxact:volatile>
@@ -1155,7 +1169,6 @@
 					<ipxact:name>BTR_FD</ipxact:name>
 					<ipxact:displayName>BTR_FD</ipxact:displayName>
 					<ipxact:description>Bit timing register for data bit rate.</ipxact:description>
-					<ipxact:dim>0</ipxact:dim>
 					<ipxact:addressOffset>'h28</ipxact:addressOffset>
 					<ipxact:size>32</ipxact:size>
 					<ipxact:volatile>true</ipxact:volatile>
@@ -1223,7 +1236,6 @@
 					<ipxact:name>VERSION</ipxact:name>
 					<ipxact:displayName>VERSION</ipxact:displayName>
 					<ipxact:description>Version register. Returns version of CTU CAN FD.</ipxact:description>
-					<ipxact:dim>0</ipxact:dim>
 					<ipxact:addressOffset>'h2</ipxact:addressOffset>
 					<ipxact:size>16</ipxact:size>
 					<ipxact:volatile>true</ipxact:volatile>
@@ -1247,7 +1259,6 @@
 					<ipxact:name>BTR</ipxact:name>
 					<ipxact:displayName>BTR</ipxact:displayName>
 					<ipxact:description>Bit timing register for nominal bit rate.</ipxact:description>
-					<ipxact:dim>0</ipxact:dim>
 					<ipxact:addressOffset>'h24</ipxact:addressOffset>
 					<ipxact:size>32</ipxact:size>
 					<ipxact:volatile>true</ipxact:volatile>
@@ -1315,7 +1326,6 @@
 					<ipxact:name>ALC</ipxact:name>
 					<ipxact:displayName>ALC</ipxact:displayName>
 					<ipxact:description>Arbitration lost capture register. Determines position of last arbitration loss within CAN frame.</ipxact:description>
-					<ipxact:dim>0</ipxact:dim>
 					<ipxact:addressOffset>'h7E</ipxact:addressOffset>
 					<ipxact:size>8</ipxact:size>
 					<ipxact:volatile>true</ipxact:volatile>
@@ -1387,7 +1397,6 @@
 					<ipxact:name>EWL</ipxact:name>
 					<ipxact:displayName>EWL</ipxact:displayName>
 					<ipxact:description>Error warning limit register. This register shall be modified only when SETTINGS[ENA]=0.</ipxact:description>
-					<ipxact:dim>0</ipxact:dim>
 					<ipxact:addressOffset>'h2C</ipxact:addressOffset>
 					<ipxact:size>8</ipxact:size>
 					<ipxact:volatile>true</ipxact:volatile>
@@ -1409,7 +1418,6 @@
 					<ipxact:name>ERP</ipxact:name>
 					<ipxact:displayName>ERP</ipxact:displayName>
 					<ipxact:description>Error passive limit register. This register shall be modified only when SETTINGS[ENA]=0.</ipxact:description>
-					<ipxact:dim>0</ipxact:dim>
 					<ipxact:addressOffset>'h2D</ipxact:addressOffset>
 					<ipxact:size>8</ipxact:size>
 					<ipxact:volatile>true</ipxact:volatile>
@@ -1431,7 +1439,6 @@
 					<ipxact:name>FAULT_STATE</ipxact:name>
 					<ipxact:displayName>FAULT_STATE</ipxact:displayName>
 					<ipxact:description>Fault Confinement state of the CTU CAN FD.</ipxact:description>
-					<ipxact:dim>0</ipxact:dim>
 					<ipxact:addressOffset>'h2E</ipxact:addressOffset>
 					<ipxact:size>16</ipxact:size>
 					<ipxact:volatile>true</ipxact:volatile>
@@ -1455,7 +1462,7 @@
 						<ipxact:bitOffset>2</ipxact:bitOffset>
 						<ipxact:resets>
 							<ipxact:reset>
-								<ipxact:value>0</ipxact:value>
+								<ipxact:value>1</ipxact:value>
 							</ipxact:reset>
 						</ipxact:resets>
 						<ipxact:bitWidth>1</ipxact:bitWidth>
@@ -1467,7 +1474,7 @@
 						<ipxact:bitOffset>0</ipxact:bitOffset>
 						<ipxact:resets>
 							<ipxact:reset>
-								<ipxact:value>1</ipxact:value>
+								<ipxact:value>0</ipxact:value>
 							</ipxact:reset>
 						</ipxact:resets>
 						<ipxact:bitWidth>1</ipxact:bitWidth>
@@ -1477,7 +1484,6 @@
 					<ipxact:name>FILTER_A_VAL</ipxact:name>
 					<ipxact:displayName>FILTER_A_VAL</ipxact:displayName>
 					<ipxact:isPresent>uuid_09846e1a_b03a_4f0b_99b5_c1981400ea9e</ipxact:isPresent>
-					<ipxact:dim>0</ipxact:dim>
 					<ipxact:addressOffset>'h40</ipxact:addressOffset>
 					<ipxact:size>32</ipxact:size>
 					<ipxact:volatile>true</ipxact:volatile>
@@ -1500,7 +1506,6 @@
 					<ipxact:name>FILTER_STATUS</ipxact:name>
 					<ipxact:displayName>FILTER_STATUS</ipxact:displayName>
 					<ipxact:description>Filter status indicates if frame filters are available in CTU CAN FD.</ipxact:description>
-					<ipxact:dim>0</ipxact:dim>
 					<ipxact:addressOffset>'h5E</ipxact:addressOffset>
 					<ipxact:size>16</ipxact:size>
 					<ipxact:volatile>true</ipxact:volatile>
@@ -1538,7 +1543,6 @@
 					<ipxact:name>TX_PRIORITY</ipxact:name>
 					<ipxact:displayName>TX_PRIORITY</ipxact:displayName>
 					<ipxact:description>Priority of TXT buffers. Highest priority TXT buffer in &quot;Ready&quot; state is selected for transmission.</ipxact:description>
-					<ipxact:dim>0</ipxact:dim>
 					<ipxact:addressOffset>'h78</ipxact:addressOffset>
 					<ipxact:size>32</ipxact:size>
 					<ipxact:volatile>true</ipxact:volatile>
@@ -1650,7 +1654,6 @@
 					<ipxact:name>TX_COMMAND</ipxact:name>
 					<ipxact:displayName>TX_COMMAND</ipxact:displayName>
 					<ipxact:description>Command register for TXT buffers. Command is activated by writing logic 1 to TXC(E|R|A) bit. TXT buffer that receives the command is selected by setting bit TXB[1-8] to logic 1. Command and index can be set by single access, or index can be set in advance. TXC(E|R|A) bits are automatically erased upon the command completion. Reffer to description of TXT buffer for meaning of commands. If TXCE and TXCR are applied simultaneously, only TXCE command is applied. If multiple commands are applied at once, only those which have effect in immediate state of TXT buffer are applied to the buffer.</ipxact:description>
-					<ipxact:dim>0</ipxact:dim>
 					<ipxact:addressOffset>'h74</ipxact:addressOffset>
 					<ipxact:size>16</ipxact:size>
 					<ipxact:volatile>true</ipxact:volatile>
@@ -1801,7 +1804,6 @@
 					<ipxact:name>TIMESTAMP_HIGH</ipxact:name>
 					<ipxact:displayName>TIMESTAMP_HIGH</ipxact:displayName>
 					<ipxact:description>Register with current value of CTU CAN FD time base. No shadowing is implemented on TIMESTAMP_LOW/HIGH registers and user has to take care of proper read from both registers, since overflow of TIMESTAMP_LOW might occur between read of TIMESTAMP_LOW and TIMESTAMP_HIGH.</ipxact:description>
-					<ipxact:dim>0</ipxact:dim>
 					<ipxact:addressOffset>'h98</ipxact:addressOffset>
 					<ipxact:size>32</ipxact:size>
 					<ipxact:volatile>true</ipxact:volatile>
@@ -1819,7 +1821,6 @@
 					<ipxact:name>TS_INFO</ipxact:name>
 					<ipxact:displayName>TS_INFO</ipxact:displayName>
 					<ipxact:description>Timestamp integration information</ipxact:description>
-					<ipxact:dim>0</ipxact:dim>
 					<ipxact:addressOffset>'h7F</ipxact:addressOffset>
 					<ipxact:size>8</ipxact:size>
 					<ipxact:volatile>true</ipxact:volatile>
@@ -1836,7 +1837,6 @@
 					<ipxact:name>TXTB_INFO</ipxact:name>
 					<ipxact:displayName>TXTB_INFO</ipxact:displayName>
 					<ipxact:description>Register with information about supported features of TXT buffers.</ipxact:description>
-					<ipxact:dim>0</ipxact:dim>
 					<ipxact:addressOffset>'h76</ipxact:addressOffset>
 					<ipxact:size>16</ipxact:size>
 					<ipxact:volatile>true</ipxact:volatile>
@@ -1853,7 +1853,6 @@
 					<ipxact:name>TIMESTAMP_LOW</ipxact:name>
 					<ipxact:displayName>TIMESTAMP_LOW</ipxact:displayName>
 					<ipxact:description>Register with current value of CTU CAN FD time base. No shadowing is implemented on TIMESTAMP_LOW/HIGH registers and user has to take care of proper read from both registers, since overflow of TIMESTAMP_LOW might occur between read of TIMESTAMP_LOW and TIMESTAMP_HIGH.</ipxact:description>
-					<ipxact:dim>0</ipxact:dim>
 					<ipxact:addressOffset>'h94</ipxact:addressOffset>
 					<ipxact:size>32</ipxact:size>
 					<ipxact:volatile>true</ipxact:volatile>
@@ -1871,7 +1870,6 @@
 					<ipxact:name>YOLO_REG</ipxact:name>
 					<ipxact:displayName>YOLO_REG</ipxact:displayName>
 					<ipxact:description>Register for fun :)</ipxact:description>
-					<ipxact:dim>0</ipxact:dim>
 					<ipxact:addressOffset>'h90</ipxact:addressOffset>
 					<ipxact:size>32</ipxact:size>
 					<ipxact:volatile>true</ipxact:volatile>
@@ -1893,7 +1891,6 @@
 					<ipxact:name>SSP_CFG</ipxact:name>
 					<ipxact:displayName>SSP_CFG</ipxact:displayName>
 					<ipxact:description>Secondary sampling point configuration register. Used by transmitter in data bit rate for calculation of Secondary sampling point.</ipxact:description>
-					<ipxact:dim>0</ipxact:dim>
 					<ipxact:addressOffset>'h82</ipxact:addressOffset>
 					<ipxact:size>16</ipxact:size>
 					<ipxact:volatile>true</ipxact:volatile>
@@ -1947,7 +1944,6 @@
 					<ipxact:name>DEBUG_REGISTER</ipxact:name>
 					<ipxact:displayName>DEBUG_REGISTER</ipxact:displayName>
 					<ipxact:description>Register for reading state of the controller. This register is only for debugging purposes!</ipxact:description>
-					<ipxact:dim>0</ipxact:dim>
 					<ipxact:addressOffset>'h8C</ipxact:addressOffset>
 					<ipxact:size>32</ipxact:size>
 					<ipxact:volatile>true</ipxact:volatile>
@@ -2137,7 +2133,6 @@
 					<ipxact:name>TX_FR_CTR</ipxact:name>
 					<ipxact:displayName>TX_FR_CTR</ipxact:displayName>
 					<ipxact:isPresent>uuid_db903261_61eb_4f15_8155_5b14164c20b0</ipxact:isPresent>
-					<ipxact:dim>0</ipxact:dim>
 					<ipxact:addressOffset>'h88</ipxact:addressOffset>
 					<ipxact:size>32</ipxact:size>
 					<ipxact:volatile>true</ipxact:volatile>
@@ -2159,7 +2154,6 @@
 					<ipxact:name>RX_FR_CTR</ipxact:name>
 					<ipxact:displayName>RX_FR_CTR</ipxact:displayName>
 					<ipxact:isPresent>uuid_db903261_61eb_4f15_8155_5b14164c20b0</ipxact:isPresent>
-					<ipxact:dim>0</ipxact:dim>
 					<ipxact:addressOffset>'h84</ipxact:addressOffset>
 					<ipxact:size>32</ipxact:size>
 					<ipxact:volatile>true</ipxact:volatile>
@@ -2181,7 +2175,6 @@
 					<ipxact:name>ERR_CAPT</ipxact:name>
 					<ipxact:displayName>ERR_CAPT</ipxact:displayName>
 					<ipxact:description>Error code capture register. Determines position within CAN frame where last error was detected.</ipxact:description>
-					<ipxact:dim>0</ipxact:dim>
 					<ipxact:addressOffset>'h7C</ipxact:addressOffset>
 					<ipxact:size>8</ipxact:size>
 					<ipxact:volatile>true</ipxact:volatile>
@@ -2193,10 +2186,10 @@
 						<ipxact:bitOffset>0</ipxact:bitOffset>
 						<ipxact:resets>
 							<ipxact:reset>
-								<ipxact:value>'h1F</ipxact:value>
+								<ipxact:value>'hF</ipxact:value>
 							</ipxact:reset>
 						</ipxact:resets>
-						<ipxact:bitWidth>5</ipxact:bitWidth>
+						<ipxact:bitWidth>4</ipxact:bitWidth>
 						<ipxact:enumeratedValues>
 							<ipxact:enumeratedValue>
 								<ipxact:name>ERC_POS_SOF</ipxact:name>
@@ -2232,7 +2225,7 @@
 								<ipxact:name>ERC_POS_OTHER</ipxact:name>
 								<ipxact:displayName>ERC_POS_OTHER</ipxact:displayName>
 								<ipxact:description>Other position of error</ipxact:description>
-								<ipxact:value>'h1F</ipxact:value>
+								<ipxact:value>'hF</ipxact:value>
 							</ipxact:enumeratedValue>
 							<ipxact:enumeratedValue>
 								<ipxact:name>ERC_POS_DATA</ipxact:name>
@@ -2310,11 +2303,36 @@
 							</ipxact:enumeratedValue>
 						</ipxact:enumeratedValues>
 					</ipxact:field>
+					<ipxact:field>
+						<ipxact:name>ERR_ERP</ipxact:name>
+						<ipxact:displayName>ERR_ERP</ipxact:displayName>
+						<ipxact:description>CTU CAN FD was error passive the time when last error was detected.</ipxact:description>
+						<ipxact:bitOffset>4</ipxact:bitOffset>
+						<ipxact:resets>
+							<ipxact:reset>
+								<ipxact:value>0</ipxact:value>
+							</ipxact:reset>
+						</ipxact:resets>
+						<ipxact:bitWidth>1</ipxact:bitWidth>
+						<ipxact:enumeratedValues>
+							<ipxact:enumeratedValue>
+								<ipxact:name>ERR_ERP_PASSIVE</ipxact:name>
+								<ipxact:displayName>ERR_ERP_PASSIVE</ipxact:displayName>
+								<ipxact:description>CTU CAN FD was error active when it detected the error condition.</ipxact:description>
+								<ipxact:value>1</ipxact:value>
+							</ipxact:enumeratedValue>
+							<ipxact:enumeratedValue>
+								<ipxact:name>ERR_ERP_ACTIVE</ipxact:name>
+								<ipxact:displayName>ERR_ERP_ACTIVE</ipxact:displayName>
+								<ipxact:description>CTU CAN FD was error passive when it detected the error condition.</ipxact:description>
+								<ipxact:value>0</ipxact:value>
+							</ipxact:enumeratedValue>
+						</ipxact:enumeratedValues>
+					</ipxact:field>
 				</ipxact:register>
 				<ipxact:register>
 					<ipxact:name>TX_STATUS</ipxact:name>
 					<ipxact:displayName>TX_STATUS</ipxact:displayName>
-					<ipxact:dim>0</ipxact:dim>
 					<ipxact:addressOffset>'h70</ipxact:addressOffset>
 					<ipxact:size>32</ipxact:size>
 					<ipxact:volatile>true</ipxact:volatile>
@@ -2482,7 +2500,6 @@
 					<ipxact:name>TRV_DELAY</ipxact:name>
 					<ipxact:displayName>TRV_DELAY</ipxact:displayName>
 					<ipxact:description>Transmitter delay register. When transmitting CAN FD Frame, Transmitter delay is measured. After the measurement (after FDF bit), it can be read out from this register. The value in this register is valid since first transmission of CAN FD frame. After each next measurement the value is updated.</ipxact:description>
-					<ipxact:dim>0</ipxact:dim>
 					<ipxact:addressOffset>'h80</ipxact:addressOffset>
 					<ipxact:size>16</ipxact:size>
 					<ipxact:volatile>true</ipxact:volatile>
@@ -2503,7 +2520,6 @@
 				<ipxact:register>
 					<ipxact:name>RX_DATA</ipxact:name>
 					<ipxact:displayName>RX_DATA</ipxact:displayName>
-					<ipxact:dim>0</ipxact:dim>
 					<ipxact:addressOffset>'h6C</ipxact:addressOffset>
 					<ipxact:size>32</ipxact:size>
 					<ipxact:volatile>true</ipxact:volatile>
@@ -2525,7 +2541,6 @@
 				<ipxact:register>
 					<ipxact:name>RX_POINTERS</ipxact:name>
 					<ipxact:displayName>RX_POINTERS</ipxact:displayName>
-					<ipxact:dim>0</ipxact:dim>
 					<ipxact:addressOffset>'h64</ipxact:addressOffset>
 					<ipxact:size>32</ipxact:size>
 					<ipxact:volatile>true</ipxact:volatile>
@@ -2558,7 +2573,6 @@
 				<ipxact:register>
 					<ipxact:name>RX_MEM_INFO</ipxact:name>
 					<ipxact:displayName>RX_MEM_INFO</ipxact:displayName>
-					<ipxact:dim>0</ipxact:dim>
 					<ipxact:addressOffset>'h60</ipxact:addressOffset>
 					<ipxact:size>32</ipxact:size>
 					<ipxact:volatile>true</ipxact:volatile>
@@ -2581,7 +2595,6 @@
 				<ipxact:register>
 					<ipxact:name>RX_STATUS</ipxact:name>
 					<ipxact:displayName>RX_STATUS</ipxact:displayName>
-					<ipxact:dim>0</ipxact:dim>
 					<ipxact:addressOffset>'h68</ipxact:addressOffset>
 					<ipxact:size>16</ipxact:size>
 					<ipxact:volatile>true</ipxact:volatile>
@@ -2639,7 +2652,6 @@
 					<ipxact:name>FILTER_CONTROL</ipxact:name>
 					<ipxact:displayName>FILTER_CONTROL</ipxact:displayName>
 					<ipxact:description>Filter control register. Configures Frame filters to accept only selected frame types. Every bit is active in logic 1.</ipxact:description>
-					<ipxact:dim>0</ipxact:dim>
 					<ipxact:addressOffset>'h5C</ipxact:addressOffset>
 					<ipxact:size>16</ipxact:size>
 					<ipxact:volatile>true</ipxact:volatile>
@@ -2841,7 +2853,6 @@
 					<ipxact:name>FILTER_RAN_HIGH</ipxact:name>
 					<ipxact:displayName>FILTER_RAN_HIGH</ipxact:displayName>
 					<ipxact:isPresent>uuid_41f98f04_041f_4ab6_b60d_c6226cd54eb6</ipxact:isPresent>
-					<ipxact:dim>0</ipxact:dim>
 					<ipxact:addressOffset>'h58</ipxact:addressOffset>
 					<ipxact:size>32</ipxact:size>
 					<ipxact:volatile>true</ipxact:volatile>
@@ -2863,7 +2874,6 @@
 					<ipxact:name>FILTER_RAN_LOW</ipxact:name>
 					<ipxact:displayName>FILTER_RAN_LOW</ipxact:displayName>
 					<ipxact:isPresent>uuid_41f98f04_041f_4ab6_b60d_c6226cd54eb6</ipxact:isPresent>
-					<ipxact:dim>0</ipxact:dim>
 					<ipxact:addressOffset>'h54</ipxact:addressOffset>
 					<ipxact:size>32</ipxact:size>
 					<ipxact:volatile>true</ipxact:volatile>
@@ -2885,7 +2895,6 @@
 					<ipxact:name>FILTER_C_VAL</ipxact:name>
 					<ipxact:displayName>FILTER_C_VAL</ipxact:displayName>
 					<ipxact:isPresent>uuid_d4ccabd1_3f50_49b0_ae1e_45cf5fdb460e</ipxact:isPresent>
-					<ipxact:dim>0</ipxact:dim>
 					<ipxact:addressOffset>'h50</ipxact:addressOffset>
 					<ipxact:size>32</ipxact:size>
 					<ipxact:volatile>true</ipxact:volatile>
@@ -2908,7 +2917,6 @@
 					<ipxact:name>FILTER_C_MASK</ipxact:name>
 					<ipxact:displayName>FILTER_C_MASK</ipxact:displayName>
 					<ipxact:isPresent>uuid_d4ccabd1_3f50_49b0_ae1e_45cf5fdb460e</ipxact:isPresent>
-					<ipxact:dim>0</ipxact:dim>
 					<ipxact:addressOffset>'h4C</ipxact:addressOffset>
 					<ipxact:size>32</ipxact:size>
 					<ipxact:volatile>true</ipxact:volatile>
@@ -2931,7 +2939,6 @@
 					<ipxact:name>FILTER_B_VAL</ipxact:name>
 					<ipxact:displayName>FILTER_B_VAL</ipxact:displayName>
 					<ipxact:isPresent>uuid_ee0c8305_bed6_412e_8743_8e3657e8b866</ipxact:isPresent>
-					<ipxact:dim>0</ipxact:dim>
 					<ipxact:addressOffset>'h48</ipxact:addressOffset>
 					<ipxact:size>32</ipxact:size>
 					<ipxact:volatile>true</ipxact:volatile>
@@ -2954,7 +2961,6 @@
 					<ipxact:name>FILTER_B_MASK</ipxact:name>
 					<ipxact:displayName>FILTER_B_MASK</ipxact:displayName>
 					<ipxact:isPresent>uuid_ee0c8305_bed6_412e_8743_8e3657e8b866</ipxact:isPresent>
-					<ipxact:dim>0</ipxact:dim>
 					<ipxact:addressOffset>'h44</ipxact:addressOffset>
 					<ipxact:size>32</ipxact:size>
 					<ipxact:volatile>true</ipxact:volatile>
@@ -2977,7 +2983,6 @@
 					<ipxact:name>FILTER_A_MASK</ipxact:name>
 					<ipxact:displayName>FILTER_A_MASK</ipxact:displayName>
 					<ipxact:isPresent>uuid_09846e1a_b03a_4f0b_99b5_c1981400ea9e</ipxact:isPresent>
-					<ipxact:dim>0</ipxact:dim>
 					<ipxact:addressOffset>'h3C</ipxact:addressOffset>
 					<ipxact:size>32</ipxact:size>
 					<ipxact:volatile>true</ipxact:volatile>
@@ -3000,7 +3005,6 @@
 					<ipxact:name>CTR_PRES</ipxact:name>
 					<ipxact:displayName>CTR_PRES</ipxact:displayName>
 					<ipxact:description>Counter preset register. Error counters can be modified via this register.</ipxact:description>
-					<ipxact:dim>0</ipxact:dim>
 					<ipxact:addressOffset>'h38</ipxact:addressOffset>
 					<ipxact:size>32</ipxact:size>
 					<ipxact:volatile>true</ipxact:volatile>
@@ -3073,7 +3077,6 @@
 				<ipxact:register>
 					<ipxact:name>ERR_FD</ipxact:name>
 					<ipxact:displayName>ERR_FD</ipxact:displayName>
-					<ipxact:dim>0</ipxact:dim>
 					<ipxact:addressOffset>'h36</ipxact:addressOffset>
 					<ipxact:size>16</ipxact:size>
 					<ipxact:volatile>true</ipxact:volatile>
@@ -3094,7 +3097,6 @@
 				<ipxact:register>
 					<ipxact:name>ERR_NORM</ipxact:name>
 					<ipxact:displayName>ERR_NORM</ipxact:displayName>
-					<ipxact:dim>0</ipxact:dim>
 					<ipxact:addressOffset>'h34</ipxact:addressOffset>
 					<ipxact:size>16</ipxact:size>
 					<ipxact:volatile>true</ipxact:volatile>
@@ -3115,7 +3117,6 @@
 				<ipxact:register>
 					<ipxact:name>TEC</ipxact:name>
 					<ipxact:displayName>TEC</ipxact:displayName>
-					<ipxact:dim>0</ipxact:dim>
 					<ipxact:addressOffset>'h32</ipxact:addressOffset>
 					<ipxact:size>16</ipxact:size>
 					<ipxact:volatile>true</ipxact:volatile>
@@ -3136,7 +3137,6 @@
 				<ipxact:register>
 					<ipxact:name>REC</ipxact:name>
 					<ipxact:displayName>REC</ipxact:displayName>
-					<ipxact:dim>0</ipxact:dim>
 					<ipxact:addressOffset>'h30</ipxact:addressOffset>
 					<ipxact:size>16</ipxact:size>
 					<ipxact:volatile>true</ipxact:volatile>
@@ -3159,7 +3159,6 @@
 					<ipxact:name>RETR_CTR</ipxact:name>
 					<ipxact:displayName>RETR_CTR</ipxact:displayName>
 					<ipxact:description>Current value of Retransmit counter.</ipxact:description>
-					<ipxact:dim>0</ipxact:dim>
 					<ipxact:addressOffset>'h7D</ipxact:addressOffset>
 					<ipxact:size>8</ipxact:size>
 					<ipxact:volatile>true</ipxact:volatile>
@@ -3192,7 +3191,6 @@
 					<ipxact:name>TXTB1_DATA_1</ipxact:name>
 					<ipxact:displayName>TXTB1_DATA_1</ipxact:displayName>
 					<ipxact:description>This adress word corresponds to FRAME_FORM word</ipxact:description>
-					<ipxact:dim>0</ipxact:dim>
 					<ipxact:addressOffset>'h0</ipxact:addressOffset>
 					<ipxact:size>32</ipxact:size>
 					<ipxact:field>
@@ -3205,7 +3203,6 @@
 					<ipxact:name>TXTB1_DATA_2</ipxact:name>
 					<ipxact:displayName>TXTB1_DATA_2</ipxact:displayName>
 					<ipxact:description>This adress word corresponds to IDENTIFIER word.</ipxact:description>
-					<ipxact:dim>0</ipxact:dim>
 					<ipxact:addressOffset>'h4</ipxact:addressOffset>
 					<ipxact:size>32</ipxact:size>
 					<ipxact:field>
@@ -3217,7 +3214,6 @@
 				<ipxact:register>
 					<ipxact:name>TXTB1_DATA_18</ipxact:name>
 					<ipxact:displayName>TXTB1_DATA_18</ipxact:displayName>
-					<ipxact:dim>0</ipxact:dim>
 					<ipxact:addressOffset>'h44</ipxact:addressOffset>
 					<ipxact:size>32</ipxact:size>
 					<ipxact:field>
@@ -3230,7 +3226,6 @@
 					<ipxact:name>TXTB1_DATA_20</ipxact:name>
 					<ipxact:displayName>TXTB1_DATA_20</ipxact:displayName>
 					<ipxact:description>This adress word corresponds to DATA_61_64 word.</ipxact:description>
-					<ipxact:dim>0</ipxact:dim>
 					<ipxact:addressOffset>'h4C</ipxact:addressOffset>
 					<ipxact:size>32</ipxact:size>
 					<ipxact:field>
@@ -3243,7 +3238,6 @@
 				<ipxact:register>
 					<ipxact:name>TXTB1_DATA_21</ipxact:name>
 					<ipxact:displayName>TXTB1_DATA_21</ipxact:displayName>
-					<ipxact:dim>0</ipxact:dim>
 					<ipxact:addressOffset>'h50</ipxact:addressOffset>
 					<ipxact:size>32</ipxact:size>
 					<ipxact:field>
@@ -3255,7 +3249,6 @@
 				<ipxact:register>
 					<ipxact:name>TXTB1_DATA_19</ipxact:name>
 					<ipxact:displayName>TXTB1_DATA_19</ipxact:displayName>
-					<ipxact:dim>0</ipxact:dim>
 					<ipxact:addressOffset>'h48</ipxact:addressOffset>
 					<ipxact:size>32</ipxact:size>
 					<ipxact:field>
@@ -3267,7 +3260,6 @@
 				<ipxact:register>
 					<ipxact:name>TXTB1_DATA_17</ipxact:name>
 					<ipxact:displayName>TXTB1_DATA_17</ipxact:displayName>
-					<ipxact:dim>0</ipxact:dim>
 					<ipxact:addressOffset>'h40</ipxact:addressOffset>
 					<ipxact:size>32</ipxact:size>
 					<ipxact:field>
@@ -3279,7 +3271,6 @@
 				<ipxact:register>
 					<ipxact:name>TXTB1_DATA_3</ipxact:name>
 					<ipxact:displayName>TXTB1_DATA_3</ipxact:displayName>
-					<ipxact:dim>0</ipxact:dim>
 					<ipxact:addressOffset>'h8</ipxact:addressOffset>
 					<ipxact:size>32</ipxact:size>
 					<ipxact:field>
@@ -3291,7 +3282,6 @@
 				<ipxact:register>
 					<ipxact:name>TXTB1_DATA_4</ipxact:name>
 					<ipxact:displayName>TXTB1_DATA_4</ipxact:displayName>
-					<ipxact:dim>0</ipxact:dim>
 					<ipxact:addressOffset>'hC</ipxact:addressOffset>
 					<ipxact:size>32</ipxact:size>
 					<ipxact:field>
@@ -3303,7 +3293,6 @@
 				<ipxact:register>
 					<ipxact:name>TXTB1_DATA_7</ipxact:name>
 					<ipxact:displayName>TXTB1_DATA_7</ipxact:displayName>
-					<ipxact:dim>0</ipxact:dim>
 					<ipxact:addressOffset>'h18</ipxact:addressOffset>
 					<ipxact:size>32</ipxact:size>
 					<ipxact:field>
@@ -3315,7 +3304,6 @@
 				<ipxact:register>
 					<ipxact:name>TXTB1_DATA_5</ipxact:name>
 					<ipxact:displayName>TXTB1_DATA_5</ipxact:displayName>
-					<ipxact:dim>0</ipxact:dim>
 					<ipxact:addressOffset>'h10</ipxact:addressOffset>
 					<ipxact:size>32</ipxact:size>
 					<ipxact:field>
@@ -3327,7 +3315,6 @@
 				<ipxact:register>
 					<ipxact:name>TXTB1_DATA_6</ipxact:name>
 					<ipxact:displayName>TXTB1_DATA_6</ipxact:displayName>
-					<ipxact:dim>0</ipxact:dim>
 					<ipxact:addressOffset>'h14</ipxact:addressOffset>
 					<ipxact:size>32</ipxact:size>
 					<ipxact:field>
@@ -3339,7 +3326,6 @@
 				<ipxact:register>
 					<ipxact:name>TXTB1_DATA_8</ipxact:name>
 					<ipxact:displayName>TXTB1_DATA_8</ipxact:displayName>
-					<ipxact:dim>0</ipxact:dim>
 					<ipxact:addressOffset>'h1C</ipxact:addressOffset>
 					<ipxact:size>32</ipxact:size>
 					<ipxact:field>
@@ -3351,7 +3337,6 @@
 				<ipxact:register>
 					<ipxact:name>TXTB1_DATA_9</ipxact:name>
 					<ipxact:displayName>TXTB1_DATA_9</ipxact:displayName>
-					<ipxact:dim>0</ipxact:dim>
 					<ipxact:addressOffset>'h20</ipxact:addressOffset>
 					<ipxact:size>32</ipxact:size>
 					<ipxact:field>
@@ -3363,7 +3348,6 @@
 				<ipxact:register>
 					<ipxact:name>TXTB1_DATA_10</ipxact:name>
 					<ipxact:displayName>TXTB1_DATA_10</ipxact:displayName>
-					<ipxact:dim>0</ipxact:dim>
 					<ipxact:addressOffset>'h24</ipxact:addressOffset>
 					<ipxact:size>32</ipxact:size>
 					<ipxact:field>
@@ -3375,7 +3359,6 @@
 				<ipxact:register>
 					<ipxact:name>TXTB1_DATA_11</ipxact:name>
 					<ipxact:displayName>TXTB1_DATA_11</ipxact:displayName>
-					<ipxact:dim>0</ipxact:dim>
 					<ipxact:addressOffset>'h28</ipxact:addressOffset>
 					<ipxact:size>32</ipxact:size>
 					<ipxact:field>
@@ -3387,7 +3370,6 @@
 				<ipxact:register>
 					<ipxact:name>TXTB1_DATA_12</ipxact:name>
 					<ipxact:displayName>TXTB1_DATA_12</ipxact:displayName>
-					<ipxact:dim>0</ipxact:dim>
 					<ipxact:addressOffset>'h2C</ipxact:addressOffset>
 					<ipxact:size>32</ipxact:size>
 					<ipxact:field>
@@ -3399,7 +3381,6 @@
 				<ipxact:register>
 					<ipxact:name>TXTB1_DATA_13</ipxact:name>
 					<ipxact:displayName>TXTB1_DATA_13</ipxact:displayName>
-					<ipxact:dim>0</ipxact:dim>
 					<ipxact:addressOffset>'h30</ipxact:addressOffset>
 					<ipxact:size>32</ipxact:size>
 					<ipxact:field>
@@ -3411,7 +3392,6 @@
 				<ipxact:register>
 					<ipxact:name>TXTB1_DATA_14</ipxact:name>
 					<ipxact:displayName>TXTB1_DATA_14</ipxact:displayName>
-					<ipxact:dim>0</ipxact:dim>
 					<ipxact:addressOffset>'h34</ipxact:addressOffset>
 					<ipxact:size>32</ipxact:size>
 					<ipxact:field>
@@ -3423,7 +3403,6 @@
 				<ipxact:register>
 					<ipxact:name>TXTB1_DATA_15</ipxact:name>
 					<ipxact:displayName>TXTB1_DATA_15</ipxact:displayName>
-					<ipxact:dim>0</ipxact:dim>
 					<ipxact:addressOffset>'h38</ipxact:addressOffset>
 					<ipxact:size>32</ipxact:size>
 					<ipxact:field>
@@ -3435,7 +3414,6 @@
 				<ipxact:register>
 					<ipxact:name>TXTB1_DATA_16</ipxact:name>
 					<ipxact:displayName>TXTB1_DATA_16</ipxact:displayName>
-					<ipxact:dim>0</ipxact:dim>
 					<ipxact:addressOffset>'h3C</ipxact:addressOffset>
 					<ipxact:size>32</ipxact:size>
 					<ipxact:field>
@@ -3458,7 +3436,6 @@
 					<ipxact:name>TXTB2_DATA_1</ipxact:name>
 					<ipxact:displayName>TXTB2_DATA_1</ipxact:displayName>
 					<ipxact:description>This adress word corresponds to FRAME_FORM word</ipxact:description>
-					<ipxact:dim>0</ipxact:dim>
 					<ipxact:addressOffset>'h0</ipxact:addressOffset>
 					<ipxact:size>32</ipxact:size>
 					<ipxact:field>
@@ -3471,7 +3448,6 @@
 					<ipxact:name>TXTB2_DATA_2</ipxact:name>
 					<ipxact:displayName>TXTB2_DATA_2</ipxact:displayName>
 					<ipxact:description>This adress word corresponds to IDENTIFIER word.</ipxact:description>
-					<ipxact:dim>0</ipxact:dim>
 					<ipxact:addressOffset>'h4</ipxact:addressOffset>
 					<ipxact:size>32</ipxact:size>
 					<ipxact:field>
@@ -3483,7 +3459,6 @@
 				<ipxact:register>
 					<ipxact:name>TXTB2_DATA_19</ipxact:name>
 					<ipxact:displayName>TXTB2_DATA_19</ipxact:displayName>
-					<ipxact:dim>0</ipxact:dim>
 					<ipxact:addressOffset>'h48</ipxact:addressOffset>
 					<ipxact:size>32</ipxact:size>
 					<ipxact:field>
@@ -3496,7 +3471,6 @@
 					<ipxact:name>TXTB2_DATA_20</ipxact:name>
 					<ipxact:displayName>TXTB2_DATA_20</ipxact:displayName>
 					<ipxact:description>This adress word corresponds to DATA_61_64 word.</ipxact:description>
-					<ipxact:dim>0</ipxact:dim>
 					<ipxact:addressOffset>'h4C</ipxact:addressOffset>
 					<ipxact:size>32</ipxact:size>
 					<ipxact:field>
@@ -3508,7 +3482,6 @@
 				<ipxact:register>
 					<ipxact:name>TXTB2_DATA_21</ipxact:name>
 					<ipxact:displayName>TXTB2_DATA_21</ipxact:displayName>
-					<ipxact:dim>0</ipxact:dim>
 					<ipxact:addressOffset>'h50</ipxact:addressOffset>
 					<ipxact:size>32</ipxact:size>
 					<ipxact:field>
@@ -3520,7 +3493,6 @@
 				<ipxact:register>
 					<ipxact:name>TXTB2_DATA_18</ipxact:name>
 					<ipxact:displayName>TXTB2_DATA_18</ipxact:displayName>
-					<ipxact:dim>0</ipxact:dim>
 					<ipxact:addressOffset>'h44</ipxact:addressOffset>
 					<ipxact:size>32</ipxact:size>
 					<ipxact:field>
@@ -3532,7 +3504,6 @@
 				<ipxact:register>
 					<ipxact:name>TXTB2_DATA_3</ipxact:name>
 					<ipxact:displayName>TXTB2_DATA_3</ipxact:displayName>
-					<ipxact:dim>0</ipxact:dim>
 					<ipxact:addressOffset>'h8</ipxact:addressOffset>
 					<ipxact:size>32</ipxact:size>
 					<ipxact:field>
@@ -3544,7 +3515,6 @@
 				<ipxact:register>
 					<ipxact:name>TXTB2_DATA_4</ipxact:name>
 					<ipxact:displayName>TXTB2_DATA_4</ipxact:displayName>
-					<ipxact:dim>0</ipxact:dim>
 					<ipxact:addressOffset>'hC</ipxact:addressOffset>
 					<ipxact:size>32</ipxact:size>
 					<ipxact:field>
@@ -3556,7 +3526,6 @@
 				<ipxact:register>
 					<ipxact:name>TXTB2_DATA_5</ipxact:name>
 					<ipxact:displayName>TXTB2_DATA_5</ipxact:displayName>
-					<ipxact:dim>0</ipxact:dim>
 					<ipxact:addressOffset>'h10</ipxact:addressOffset>
 					<ipxact:size>32</ipxact:size>
 					<ipxact:field>
@@ -3568,7 +3537,6 @@
 				<ipxact:register>
 					<ipxact:name>TXTB2_DATA_6</ipxact:name>
 					<ipxact:displayName>TXTB2_DATA_6</ipxact:displayName>
-					<ipxact:dim>0</ipxact:dim>
 					<ipxact:addressOffset>'h14</ipxact:addressOffset>
 					<ipxact:size>32</ipxact:size>
 					<ipxact:field>
@@ -3580,7 +3548,6 @@
 				<ipxact:register>
 					<ipxact:name>TXTB2_DATA_7</ipxact:name>
 					<ipxact:displayName>TXTB2_DATA_7</ipxact:displayName>
-					<ipxact:dim>0</ipxact:dim>
 					<ipxact:addressOffset>'h18</ipxact:addressOffset>
 					<ipxact:size>32</ipxact:size>
 					<ipxact:field>
@@ -3592,7 +3559,6 @@
 				<ipxact:register>
 					<ipxact:name>TXTB2_DATA_8</ipxact:name>
 					<ipxact:displayName>TXTB2_DATA_8</ipxact:displayName>
-					<ipxact:dim>0</ipxact:dim>
 					<ipxact:addressOffset>'h1C</ipxact:addressOffset>
 					<ipxact:size>32</ipxact:size>
 					<ipxact:field>
@@ -3604,7 +3570,6 @@
 				<ipxact:register>
 					<ipxact:name>TXTB2_DATA_9</ipxact:name>
 					<ipxact:displayName>TXTB2_DATA_9</ipxact:displayName>
-					<ipxact:dim>0</ipxact:dim>
 					<ipxact:addressOffset>'h20</ipxact:addressOffset>
 					<ipxact:size>32</ipxact:size>
 					<ipxact:field>
@@ -3616,7 +3581,6 @@
 				<ipxact:register>
 					<ipxact:name>TXTB2_DATA_10</ipxact:name>
 					<ipxact:displayName>TXTB2_DATA_10</ipxact:displayName>
-					<ipxact:dim>0</ipxact:dim>
 					<ipxact:addressOffset>'h24</ipxact:addressOffset>
 					<ipxact:size>32</ipxact:size>
 					<ipxact:field>
@@ -3628,7 +3592,6 @@
 				<ipxact:register>
 					<ipxact:name>TXTB2_DATA_11</ipxact:name>
 					<ipxact:displayName>TXTB2_DATA_11</ipxact:displayName>
-					<ipxact:dim>0</ipxact:dim>
 					<ipxact:addressOffset>'h28</ipxact:addressOffset>
 					<ipxact:size>32</ipxact:size>
 					<ipxact:field>
@@ -3640,7 +3603,6 @@
 				<ipxact:register>
 					<ipxact:name>TXTB2_DATA_17</ipxact:name>
 					<ipxact:displayName>TXTB2_DATA_17</ipxact:displayName>
-					<ipxact:dim>0</ipxact:dim>
 					<ipxact:addressOffset>'h40</ipxact:addressOffset>
 					<ipxact:size>32</ipxact:size>
 					<ipxact:field>
@@ -3652,7 +3614,6 @@
 				<ipxact:register>
 					<ipxact:name>TXTB2_DATA_12</ipxact:name>
 					<ipxact:displayName>TXTB2_DATA_12</ipxact:displayName>
-					<ipxact:dim>0</ipxact:dim>
 					<ipxact:addressOffset>'h2C</ipxact:addressOffset>
 					<ipxact:size>32</ipxact:size>
 					<ipxact:field>
@@ -3664,7 +3625,6 @@
 				<ipxact:register>
 					<ipxact:name>TXTB2_DATA_13</ipxact:name>
 					<ipxact:displayName>TXTB2_DATA_13</ipxact:displayName>
-					<ipxact:dim>0</ipxact:dim>
 					<ipxact:addressOffset>'h30</ipxact:addressOffset>
 					<ipxact:size>32</ipxact:size>
 					<ipxact:field>
@@ -3676,7 +3636,6 @@
 				<ipxact:register>
 					<ipxact:name>TXTB2_DATA_14</ipxact:name>
 					<ipxact:displayName>TXTB2_DATA_14</ipxact:displayName>
-					<ipxact:dim>0</ipxact:dim>
 					<ipxact:addressOffset>'h34</ipxact:addressOffset>
 					<ipxact:size>32</ipxact:size>
 					<ipxact:field>
@@ -3688,7 +3647,6 @@
 				<ipxact:register>
 					<ipxact:name>TXTB2_DATA_15</ipxact:name>
 					<ipxact:displayName>TXTB2_DATA_15</ipxact:displayName>
-					<ipxact:dim>0</ipxact:dim>
 					<ipxact:addressOffset>'h38</ipxact:addressOffset>
 					<ipxact:size>32</ipxact:size>
 					<ipxact:field>
@@ -3700,7 +3658,6 @@
 				<ipxact:register>
 					<ipxact:name>TXTB2_DATA_16</ipxact:name>
 					<ipxact:displayName>TXTB2_DATA_16</ipxact:displayName>
-					<ipxact:dim>0</ipxact:dim>
 					<ipxact:addressOffset>'h3C</ipxact:addressOffset>
 					<ipxact:size>32</ipxact:size>
 					<ipxact:field>
@@ -3724,7 +3681,6 @@
 					<ipxact:name>TXTB3_DATA_1</ipxact:name>
 					<ipxact:displayName>TXTB3_DATA_1</ipxact:displayName>
 					<ipxact:description>This adress word corresponds to FRAME_FORM word</ipxact:description>
-					<ipxact:dim>0</ipxact:dim>
 					<ipxact:addressOffset>'h0</ipxact:addressOffset>
 					<ipxact:size>32</ipxact:size>
 					<ipxact:field>
@@ -3737,7 +3693,6 @@
 					<ipxact:name>TXTB3_DATA_2</ipxact:name>
 					<ipxact:displayName>TXTB3_DATA_2</ipxact:displayName>
 					<ipxact:description>This adress word corresponds to IDENTIFIER word.</ipxact:description>
-					<ipxact:dim>0</ipxact:dim>
 					<ipxact:addressOffset>'h4</ipxact:addressOffset>
 					<ipxact:size>32</ipxact:size>
 					<ipxact:field>
@@ -3750,7 +3705,6 @@
 					<ipxact:name>TXTB3_DATA_20</ipxact:name>
 					<ipxact:displayName>TXTB3_DATA_20</ipxact:displayName>
 					<ipxact:description>This adress word corresponds to DATA_61_64 word.</ipxact:description>
-					<ipxact:dim>0</ipxact:dim>
 					<ipxact:addressOffset>'h4C</ipxact:addressOffset>
 					<ipxact:size>32</ipxact:size>
 					<ipxact:field>
@@ -3762,7 +3716,6 @@
 				<ipxact:register>
 					<ipxact:name>TXTB3_DATA_21</ipxact:name>
 					<ipxact:displayName>TXTB3_DATA_21</ipxact:displayName>
-					<ipxact:dim>0</ipxact:dim>
 					<ipxact:addressOffset>'h50</ipxact:addressOffset>
 					<ipxact:size>32</ipxact:size>
 					<ipxact:field>
@@ -3773,7 +3726,6 @@
 				</ipxact:register>
 				<ipxact:register>
 					<ipxact:name>TXTB3_DATA_3</ipxact:name>
-					<ipxact:dim>0</ipxact:dim>
 					<ipxact:addressOffset>'h8</ipxact:addressOffset>
 					<ipxact:size>32</ipxact:size>
 					<ipxact:field>
@@ -3784,7 +3736,6 @@
 				</ipxact:register>
 				<ipxact:register>
 					<ipxact:name>TXTB3_DATA_4</ipxact:name>
-					<ipxact:dim>0</ipxact:dim>
 					<ipxact:addressOffset>'hC</ipxact:addressOffset>
 					<ipxact:size>32</ipxact:size>
 					<ipxact:field>
@@ -3795,7 +3746,6 @@
 				</ipxact:register>
 				<ipxact:register>
 					<ipxact:name>TXTB3_DATA_5</ipxact:name>
-					<ipxact:dim>0</ipxact:dim>
 					<ipxact:addressOffset>'h10</ipxact:addressOffset>
 					<ipxact:size>32</ipxact:size>
 					<ipxact:field>
@@ -3806,7 +3756,6 @@
 				</ipxact:register>
 				<ipxact:register>
 					<ipxact:name>TXTB3_DATA_6</ipxact:name>
-					<ipxact:dim>0</ipxact:dim>
 					<ipxact:addressOffset>'h14</ipxact:addressOffset>
 					<ipxact:size>32</ipxact:size>
 					<ipxact:field>
@@ -3817,7 +3766,6 @@
 				</ipxact:register>
 				<ipxact:register>
 					<ipxact:name>TXTB3_DATA_7</ipxact:name>
-					<ipxact:dim>0</ipxact:dim>
 					<ipxact:addressOffset>'h18</ipxact:addressOffset>
 					<ipxact:size>32</ipxact:size>
 					<ipxact:field>
@@ -3828,7 +3776,6 @@
 				</ipxact:register>
 				<ipxact:register>
 					<ipxact:name>TXTB3_DATA_8</ipxact:name>
-					<ipxact:dim>0</ipxact:dim>
 					<ipxact:addressOffset>'h1C</ipxact:addressOffset>
 					<ipxact:size>32</ipxact:size>
 					<ipxact:field>
@@ -3839,7 +3786,6 @@
 				</ipxact:register>
 				<ipxact:register>
 					<ipxact:name>TXTB3_DATA_9</ipxact:name>
-					<ipxact:dim>0</ipxact:dim>
 					<ipxact:addressOffset>'h20</ipxact:addressOffset>
 					<ipxact:size>32</ipxact:size>
 					<ipxact:field>
@@ -3850,7 +3796,6 @@
 				</ipxact:register>
 				<ipxact:register>
 					<ipxact:name>TXTB3_DATA_10</ipxact:name>
-					<ipxact:dim>0</ipxact:dim>
 					<ipxact:addressOffset>'h24</ipxact:addressOffset>
 					<ipxact:size>32</ipxact:size>
 					<ipxact:field>
@@ -3861,7 +3806,6 @@
 				</ipxact:register>
 				<ipxact:register>
 					<ipxact:name>TXTB3_DATA_11</ipxact:name>
-					<ipxact:dim>0</ipxact:dim>
 					<ipxact:addressOffset>'h28</ipxact:addressOffset>
 					<ipxact:size>32</ipxact:size>
 					<ipxact:field>
@@ -3872,7 +3816,6 @@
 				</ipxact:register>
 				<ipxact:register>
 					<ipxact:name>TXTB3_DATA_12</ipxact:name>
-					<ipxact:dim>0</ipxact:dim>
 					<ipxact:addressOffset>'h2C</ipxact:addressOffset>
 					<ipxact:size>32</ipxact:size>
 					<ipxact:field>
@@ -3883,7 +3826,6 @@
 				</ipxact:register>
 				<ipxact:register>
 					<ipxact:name>TXTB3_DATA_13</ipxact:name>
-					<ipxact:dim>0</ipxact:dim>
 					<ipxact:addressOffset>'h30</ipxact:addressOffset>
 					<ipxact:size>32</ipxact:size>
 					<ipxact:field>
@@ -3894,7 +3836,6 @@
 				</ipxact:register>
 				<ipxact:register>
 					<ipxact:name>TXTB3_DATA_19</ipxact:name>
-					<ipxact:dim>0</ipxact:dim>
 					<ipxact:addressOffset>'h48</ipxact:addressOffset>
 					<ipxact:size>32</ipxact:size>
 					<ipxact:field>
@@ -3905,7 +3846,6 @@
 				</ipxact:register>
 				<ipxact:register>
 					<ipxact:name>TXTB3_DATA_17</ipxact:name>
-					<ipxact:dim>0</ipxact:dim>
 					<ipxact:addressOffset>'h40</ipxact:addressOffset>
 					<ipxact:size>32</ipxact:size>
 					<ipxact:field>
@@ -3916,7 +3856,6 @@
 				</ipxact:register>
 				<ipxact:register>
 					<ipxact:name>TXTB3_DATA_16</ipxact:name>
-					<ipxact:dim>0</ipxact:dim>
 					<ipxact:addressOffset>'h3C</ipxact:addressOffset>
 					<ipxact:size>32</ipxact:size>
 					<ipxact:field>
@@ -3927,7 +3866,6 @@
 				</ipxact:register>
 				<ipxact:register>
 					<ipxact:name>TXTB3_DATA_14</ipxact:name>
-					<ipxact:dim>0</ipxact:dim>
 					<ipxact:addressOffset>'h34</ipxact:addressOffset>
 					<ipxact:size>32</ipxact:size>
 					<ipxact:field>
@@ -3938,7 +3876,6 @@
 				</ipxact:register>
 				<ipxact:register>
 					<ipxact:name>TXTB3_DATA_18</ipxact:name>
-					<ipxact:dim>0</ipxact:dim>
 					<ipxact:addressOffset>'h44</ipxact:addressOffset>
 					<ipxact:size>32</ipxact:size>
 					<ipxact:field>
@@ -3949,7 +3886,6 @@
 				</ipxact:register>
 				<ipxact:register>
 					<ipxact:name>TXTB3_DATA_15</ipxact:name>
-					<ipxact:dim>0</ipxact:dim>
 					<ipxact:addressOffset>'h38</ipxact:addressOffset>
 					<ipxact:size>32</ipxact:size>
 					<ipxact:field>
@@ -3973,7 +3909,6 @@
 					<ipxact:name>TXTB4_DATA_1</ipxact:name>
 					<ipxact:displayName>TXTB4_DATA_1</ipxact:displayName>
 					<ipxact:description>This adress word corresponds to FRAME_FORM word</ipxact:description>
-					<ipxact:dim>0</ipxact:dim>
 					<ipxact:addressOffset>'h0</ipxact:addressOffset>
 					<ipxact:size>32</ipxact:size>
 					<ipxact:field>
@@ -3985,7 +3920,6 @@
 				<ipxact:register>
 					<ipxact:name>TXTB4_DATA_4</ipxact:name>
 					<ipxact:displayName>TXTB4_DATA_4</ipxact:displayName>
-					<ipxact:dim>0</ipxact:dim>
 					<ipxact:addressOffset>'hC</ipxact:addressOffset>
 					<ipxact:size>32</ipxact:size>
 					<ipxact:field>
@@ -3998,7 +3932,6 @@
 					<ipxact:name>TXTB4_DATA_2</ipxact:name>
 					<ipxact:displayName>TXTB4_DATA_2</ipxact:displayName>
 					<ipxact:description>This adress word corresponds to IDENTIFIER word.</ipxact:description>
-					<ipxact:dim>0</ipxact:dim>
 					<ipxact:addressOffset>'h4</ipxact:addressOffset>
 					<ipxact:size>32</ipxact:size>
 					<ipxact:field>
@@ -4010,7 +3943,6 @@
 				<ipxact:register>
 					<ipxact:name>TXTB4_DATA_3</ipxact:name>
 					<ipxact:displayName>TXTB4_DATA_3</ipxact:displayName>
-					<ipxact:dim>0</ipxact:dim>
 					<ipxact:addressOffset>'h8</ipxact:addressOffset>
 					<ipxact:size>32</ipxact:size>
 					<ipxact:field>
@@ -4022,7 +3954,6 @@
 				<ipxact:register>
 					<ipxact:name>TXTB4_DATA_20</ipxact:name>
 					<ipxact:description>This adress word corresponds to DATA_61_64 word.</ipxact:description>
-					<ipxact:dim>0</ipxact:dim>
 					<ipxact:addressOffset>'h4C</ipxact:addressOffset>
 					<ipxact:size>32</ipxact:size>
 					<ipxact:field>
@@ -4033,7 +3964,6 @@
 				</ipxact:register>
 				<ipxact:register>
 					<ipxact:name>TXTB4_DATA_21</ipxact:name>
-					<ipxact:dim>0</ipxact:dim>
 					<ipxact:addressOffset>'h50</ipxact:addressOffset>
 					<ipxact:size>32</ipxact:size>
 					<ipxact:field>
@@ -4044,7 +3974,6 @@
 				</ipxact:register>
 				<ipxact:register>
 					<ipxact:name>TXTB4_DATA_18</ipxact:name>
-					<ipxact:dim>0</ipxact:dim>
 					<ipxact:addressOffset>'h44</ipxact:addressOffset>
 					<ipxact:size>32</ipxact:size>
 					<ipxact:field>
@@ -4055,7 +3984,6 @@
 				</ipxact:register>
 				<ipxact:register>
 					<ipxact:name>TXTB4_DATA_19</ipxact:name>
-					<ipxact:dim>0</ipxact:dim>
 					<ipxact:addressOffset>'h48</ipxact:addressOffset>
 					<ipxact:size>32</ipxact:size>
 					<ipxact:field>
@@ -4066,7 +3994,6 @@
 				</ipxact:register>
 				<ipxact:register>
 					<ipxact:name>TXTB4_DATA_5</ipxact:name>
-					<ipxact:dim>0</ipxact:dim>
 					<ipxact:addressOffset>'h10</ipxact:addressOffset>
 					<ipxact:size>32</ipxact:size>
 					<ipxact:field>
@@ -4077,7 +4004,6 @@
 				</ipxact:register>
 				<ipxact:register>
 					<ipxact:name>TXTB4_DATA_6</ipxact:name>
-					<ipxact:dim>0</ipxact:dim>
 					<ipxact:addressOffset>'h14</ipxact:addressOffset>
 					<ipxact:size>32</ipxact:size>
 					<ipxact:field>
@@ -4088,7 +4014,6 @@
 				</ipxact:register>
 				<ipxact:register>
 					<ipxact:name>TXTB4_DATA_7</ipxact:name>
-					<ipxact:dim>0</ipxact:dim>
 					<ipxact:addressOffset>'h18</ipxact:addressOffset>
 					<ipxact:size>32</ipxact:size>
 					<ipxact:field>
@@ -4099,7 +4024,6 @@
 				</ipxact:register>
 				<ipxact:register>
 					<ipxact:name>TXTB4_DATA_8</ipxact:name>
-					<ipxact:dim>0</ipxact:dim>
 					<ipxact:addressOffset>'h1C</ipxact:addressOffset>
 					<ipxact:size>32</ipxact:size>
 					<ipxact:field>
@@ -4110,7 +4034,6 @@
 				</ipxact:register>
 				<ipxact:register>
 					<ipxact:name>TXTB4_DATA_9</ipxact:name>
-					<ipxact:dim>0</ipxact:dim>
 					<ipxact:addressOffset>'h20</ipxact:addressOffset>
 					<ipxact:size>32</ipxact:size>
 					<ipxact:field>
@@ -4121,7 +4044,6 @@
 				</ipxact:register>
 				<ipxact:register>
 					<ipxact:name>TXTB4_DATA_10</ipxact:name>
-					<ipxact:dim>0</ipxact:dim>
 					<ipxact:addressOffset>'h24</ipxact:addressOffset>
 					<ipxact:size>32</ipxact:size>
 					<ipxact:field>
@@ -4132,7 +4054,6 @@
 				</ipxact:register>
 				<ipxact:register>
 					<ipxact:name>TXTB4_DATA_11</ipxact:name>
-					<ipxact:dim>0</ipxact:dim>
 					<ipxact:addressOffset>'h28</ipxact:addressOffset>
 					<ipxact:size>32</ipxact:size>
 					<ipxact:field>
@@ -4143,7 +4064,6 @@
 				</ipxact:register>
 				<ipxact:register>
 					<ipxact:name>TXTB4_DATA_12</ipxact:name>
-					<ipxact:dim>0</ipxact:dim>
 					<ipxact:addressOffset>'h2C</ipxact:addressOffset>
 					<ipxact:size>32</ipxact:size>
 					<ipxact:field>
@@ -4154,7 +4074,6 @@
 				</ipxact:register>
 				<ipxact:register>
 					<ipxact:name>TXTB4_DATA_17</ipxact:name>
-					<ipxact:dim>0</ipxact:dim>
 					<ipxact:addressOffset>'h40</ipxact:addressOffset>
 					<ipxact:size>32</ipxact:size>
 					<ipxact:field>
@@ -4165,7 +4084,6 @@
 				</ipxact:register>
 				<ipxact:register>
 					<ipxact:name>TXTB4_DATA_15</ipxact:name>
-					<ipxact:dim>0</ipxact:dim>
 					<ipxact:addressOffset>'h38</ipxact:addressOffset>
 					<ipxact:size>32</ipxact:size>
 					<ipxact:field>
@@ -4176,7 +4094,6 @@
 				</ipxact:register>
 				<ipxact:register>
 					<ipxact:name>TXTB4_DATA_13</ipxact:name>
-					<ipxact:dim>0</ipxact:dim>
 					<ipxact:addressOffset>'h30</ipxact:addressOffset>
 					<ipxact:size>32</ipxact:size>
 					<ipxact:field>
@@ -4187,7 +4104,6 @@
 				</ipxact:register>
 				<ipxact:register>
 					<ipxact:name>TXTB4_DATA_16</ipxact:name>
-					<ipxact:dim>0</ipxact:dim>
 					<ipxact:addressOffset>'h3C</ipxact:addressOffset>
 					<ipxact:size>32</ipxact:size>
 					<ipxact:field>
@@ -4198,7 +4114,6 @@
 				</ipxact:register>
 				<ipxact:register>
 					<ipxact:name>TXTB4_DATA_14</ipxact:name>
-					<ipxact:dim>0</ipxact:dim>
 					<ipxact:addressOffset>'h34</ipxact:addressOffset>
 					<ipxact:size>32</ipxact:size>
 					<ipxact:field>
@@ -4220,7 +4135,6 @@
 				<ipxact:volatile>true</ipxact:volatile>
 				<ipxact:register>
 					<ipxact:name>TXTB5_DATA_20</ipxact:name>
-					<ipxact:dim>0</ipxact:dim>
 					<ipxact:addressOffset>'h4C</ipxact:addressOffset>
 					<ipxact:size>32</ipxact:size>
 					<ipxact:field>
@@ -4232,7 +4146,6 @@
 				<ipxact:register>
 					<ipxact:name>TXTB5_DATA_21</ipxact:name>
 					<ipxact:displayName>TXTB5_DATA_21</ipxact:displayName>
-					<ipxact:dim>0</ipxact:dim>
 					<ipxact:addressOffset>'h50</ipxact:addressOffset>
 					<ipxact:size>32</ipxact:size>
 					<ipxact:field>
@@ -4243,7 +4156,6 @@
 				</ipxact:register>
 				<ipxact:register>
 					<ipxact:name>TXTB5_DATA_18</ipxact:name>
-					<ipxact:dim>0</ipxact:dim>
 					<ipxact:addressOffset>'h44</ipxact:addressOffset>
 					<ipxact:size>32</ipxact:size>
 					<ipxact:field>
@@ -4255,7 +4167,6 @@
 				<ipxact:register>
 					<ipxact:name>TXTB5_DATA_16</ipxact:name>
 					<ipxact:description>This adress word corresponds to DATA_61_64 word.</ipxact:description>
-					<ipxact:dim>0</ipxact:dim>
 					<ipxact:addressOffset>'h3C</ipxact:addressOffset>
 					<ipxact:size>32</ipxact:size>
 					<ipxact:field>
@@ -4266,7 +4177,6 @@
 				</ipxact:register>
 				<ipxact:register>
 					<ipxact:name>TXTB5_DATA_19</ipxact:name>
-					<ipxact:dim>0</ipxact:dim>
 					<ipxact:addressOffset>'h48</ipxact:addressOffset>
 					<ipxact:size>32</ipxact:size>
 					<ipxact:field>
@@ -4277,7 +4187,6 @@
 				</ipxact:register>
 				<ipxact:register>
 					<ipxact:name>TXTB5_DATA_17</ipxact:name>
-					<ipxact:dim>0</ipxact:dim>
 					<ipxact:addressOffset>'h40</ipxact:addressOffset>
 					<ipxact:size>32</ipxact:size>
 					<ipxact:field>
@@ -4290,7 +4199,6 @@
 					<ipxact:name>TXTB5_DATA_1</ipxact:name>
 					<ipxact:displayName>TXTB5_DATA_1</ipxact:displayName>
 					<ipxact:description>This adress word corresponds to FRAME_FORM word</ipxact:description>
-					<ipxact:dim>0</ipxact:dim>
 					<ipxact:addressOffset>'h0</ipxact:addressOffset>
 					<ipxact:size>32</ipxact:size>
 					<ipxact:field>
@@ -4303,7 +4211,6 @@
 					<ipxact:name>TXTB5_DATA_2</ipxact:name>
 					<ipxact:displayName>TXTB5_DATA_2</ipxact:displayName>
 					<ipxact:description>This adress word corresponds to IDENTIFIER word.</ipxact:description>
-					<ipxact:dim>0</ipxact:dim>
 					<ipxact:addressOffset>'h4</ipxact:addressOffset>
 					<ipxact:size>32</ipxact:size>
 					<ipxact:field>
@@ -4315,7 +4222,6 @@
 				<ipxact:register>
 					<ipxact:name>TXTB5_DATA_3</ipxact:name>
 					<ipxact:displayName>TXTB5_DATA_3</ipxact:displayName>
-					<ipxact:dim>0</ipxact:dim>
 					<ipxact:addressOffset>'h8</ipxact:addressOffset>
 					<ipxact:size>32</ipxact:size>
 					<ipxact:field>
@@ -4326,7 +4232,6 @@
 				</ipxact:register>
 				<ipxact:register>
 					<ipxact:name>TXTB5_DATA_4</ipxact:name>
-					<ipxact:dim>0</ipxact:dim>
 					<ipxact:addressOffset>'hC</ipxact:addressOffset>
 					<ipxact:size>32</ipxact:size>
 					<ipxact:field>
@@ -4337,7 +4242,6 @@
 				</ipxact:register>
 				<ipxact:register>
 					<ipxact:name>TXTB5_DATA_5</ipxact:name>
-					<ipxact:dim>0</ipxact:dim>
 					<ipxact:addressOffset>'h10</ipxact:addressOffset>
 					<ipxact:size>32</ipxact:size>
 					<ipxact:field>
@@ -4348,7 +4252,6 @@
 				</ipxact:register>
 				<ipxact:register>
 					<ipxact:name>TXTB5_DATA_6</ipxact:name>
-					<ipxact:dim>0</ipxact:dim>
 					<ipxact:addressOffset>'h14</ipxact:addressOffset>
 					<ipxact:size>32</ipxact:size>
 					<ipxact:field>
@@ -4359,7 +4262,6 @@
 				</ipxact:register>
 				<ipxact:register>
 					<ipxact:name>TXTB5_DATA_7</ipxact:name>
-					<ipxact:dim>0</ipxact:dim>
 					<ipxact:addressOffset>'h18</ipxact:addressOffset>
 					<ipxact:size>32</ipxact:size>
 					<ipxact:field>
@@ -4370,7 +4272,6 @@
 				</ipxact:register>
 				<ipxact:register>
 					<ipxact:name>TXTB5_DATA_8</ipxact:name>
-					<ipxact:dim>0</ipxact:dim>
 					<ipxact:addressOffset>'h1C</ipxact:addressOffset>
 					<ipxact:size>32</ipxact:size>
 					<ipxact:field>
@@ -4381,7 +4282,6 @@
 				</ipxact:register>
 				<ipxact:register>
 					<ipxact:name>TXTB5_DATA_9</ipxact:name>
-					<ipxact:dim>0</ipxact:dim>
 					<ipxact:addressOffset>'h20</ipxact:addressOffset>
 					<ipxact:size>32</ipxact:size>
 					<ipxact:field>
@@ -4392,7 +4292,6 @@
 				</ipxact:register>
 				<ipxact:register>
 					<ipxact:name>TXTB5_DATA_12</ipxact:name>
-					<ipxact:dim>0</ipxact:dim>
 					<ipxact:addressOffset>'h2C</ipxact:addressOffset>
 					<ipxact:size>32</ipxact:size>
 					<ipxact:field>
@@ -4403,7 +4302,6 @@
 				</ipxact:register>
 				<ipxact:register>
 					<ipxact:name>TXTB5_DATA_10</ipxact:name>
-					<ipxact:dim>0</ipxact:dim>
 					<ipxact:addressOffset>'h24</ipxact:addressOffset>
 					<ipxact:size>32</ipxact:size>
 					<ipxact:field>
@@ -4414,7 +4312,6 @@
 				</ipxact:register>
 				<ipxact:register>
 					<ipxact:name>TXTB5_DATA_11</ipxact:name>
-					<ipxact:dim>0</ipxact:dim>
 					<ipxact:addressOffset>'h28</ipxact:addressOffset>
 					<ipxact:size>32</ipxact:size>
 					<ipxact:field>
@@ -4425,7 +4322,6 @@
 				</ipxact:register>
 				<ipxact:register>
 					<ipxact:name>TXTB5_DATA_15</ipxact:name>
-					<ipxact:dim>0</ipxact:dim>
 					<ipxact:addressOffset>'h38</ipxact:addressOffset>
 					<ipxact:size>32</ipxact:size>
 					<ipxact:field>
@@ -4436,7 +4332,6 @@
 				</ipxact:register>
 				<ipxact:register>
 					<ipxact:name>TXTB5_DATA_13</ipxact:name>
-					<ipxact:dim>0</ipxact:dim>
 					<ipxact:addressOffset>'h30</ipxact:addressOffset>
 					<ipxact:size>32</ipxact:size>
 					<ipxact:field>
@@ -4447,7 +4342,6 @@
 				</ipxact:register>
 				<ipxact:register>
 					<ipxact:name>TXTB5_DATA_14</ipxact:name>
-					<ipxact:dim>0</ipxact:dim>
 					<ipxact:addressOffset>'h34</ipxact:addressOffset>
 					<ipxact:size>32</ipxact:size>
 					<ipxact:field>
@@ -5284,7 +5178,6 @@
 					<ipxact:name>FRAME_FORMAT_W</ipxact:name>
 					<ipxact:displayName>FRAME_FORM_W</ipxact:displayName>
 					<ipxact:description>Frame format word with CAN frame metadata.</ipxact:description>
-					<ipxact:dim>0</ipxact:dim>
 					<ipxact:addressOffset>'h0</ipxact:addressOffset>
 					<ipxact:size>32</ipxact:size>
 					<ipxact:field>
@@ -5406,12 +5299,155 @@
 						<ipxact:bitOffset>11</ipxact:bitOffset>
 						<ipxact:bitWidth>5</ipxact:bitWidth>
 					</ipxact:field>
+					<ipxact:field>
+						<ipxact:name>LBPF</ipxact:name>
+						<ipxact:displayName>LBPF</ipxact:displayName>
+						<ipxact:description>Loop-Back Frame. When this bit is set, the current frame
+in RX Buffer was a frame transmitted by unit itself due to
+operation in Loopback Mode. This bit has no meaning in
+TXT Buffers.</ipxact:description>
+						<ipxact:bitOffset>8</ipxact:bitOffset>
+						<ipxact:bitWidth>1</ipxact:bitWidth>
+						<ipxact:enumeratedValues>
+							<ipxact:enumeratedValue>
+								<ipxact:name>LBPF_LOOPBACK</ipxact:name>
+								<ipxact:displayName>LBPF_LOOPBACK</ipxact:displayName>
+								<ipxact:description>The frame was transmitted by the unit itself.</ipxact:description>
+								<ipxact:value>1</ipxact:value>
+							</ipxact:enumeratedValue>
+							<ipxact:enumeratedValue>
+								<ipxact:name>LBPF_FOREIGN</ipxact:name>
+								<ipxact:displayName>LBPF_FOREIGN</ipxact:displayName>
+								<ipxact:description>The frame was transmitted by other node on the bus.</ipxact:description>
+								<ipxact:value>0</ipxact:value>
+							</ipxact:enumeratedValue>
+						</ipxact:enumeratedValues>
+					</ipxact:field>
+					<ipxact:field>
+						<ipxact:name>ERF</ipxact:name>
+						<ipxact:displayName>ERF</ipxact:displayName>
+						<ipxact:description>Error Frame Flag. When set, the current frame in RX Buffer is an Error frame. This bit has no meaning in TXT buffers.</ipxact:description>
+						<ipxact:bitOffset>4</ipxact:bitOffset>
+						<ipxact:bitWidth>1</ipxact:bitWidth>
+						<ipxact:enumeratedValues>
+							<ipxact:enumeratedValue>
+								<ipxact:name>ERF_CAN_FRAME</ipxact:name>
+								<ipxact:displayName>ERF_CAN_FRAME</ipxact:displayName>
+								<ipxact:description>Frame in RX Buffer is an Error frame.</ipxact:description>
+								<ipxact:value>0</ipxact:value>
+							</ipxact:enumeratedValue>
+							<ipxact:enumeratedValue>
+								<ipxact:name>ERF_ERR_FRAME</ipxact:name>
+								<ipxact:displayName>ERF_ERR_FRAME</ipxact:displayName>
+								<ipxact:description>Frame in RX Buffer is a regular CAN frame</ipxact:description>
+								<ipxact:value>1</ipxact:value>
+							</ipxact:enumeratedValue>
+						</ipxact:enumeratedValues>
+					</ipxact:field>
+					<ipxact:field>
+						<ipxact:name>ERF_POS</ipxact:name>
+						<ipxact:displayName>ERF_POS</ipxact:displayName>
+						<ipxact:description>Error Frame position of Error Frame recorder in RX Buffer. This bit has no meaning in TXT Buffers. The encoding of this field is equal to ERR_CAPT[ERR_POS] register.</ipxact:description>
+						<ipxact:bitOffset>16</ipxact:bitOffset>
+						<ipxact:bitWidth>4</ipxact:bitWidth>
+					</ipxact:field>
+					<ipxact:field>
+						<ipxact:name>ERF_TYPE</ipxact:name>
+						<ipxact:displayName>ERF_TYPE</ipxact:displayName>
+						<ipxact:description>Error frame type of Error Frame recorder in RX Buffer. This bit has no meaning in TXT Buffers. The encoding of this field is equal to ERR_CAPT[ERR_TYPE] register.</ipxact:description>
+						<ipxact:bitOffset>21</ipxact:bitOffset>
+						<ipxact:bitWidth>3</ipxact:bitWidth>
+					</ipxact:field>
+					<ipxact:field>
+						<ipxact:name>ERF_ERP</ipxact:name>
+						<ipxact:displayName>ERF_ERP</ipxact:displayName>
+						<ipxact:description>CTU CAN FD was Error Passive state at time when the error was detected and stored to the RX Buffer. This bit has no meaning in TXT Buffers. The encoding of this field is equal to ERR_CAPT[ERR_STATE] register.</ipxact:description>
+						<ipxact:bitOffset>20</ipxact:bitOffset>
+						<ipxact:bitWidth>1</ipxact:bitWidth>
+					</ipxact:field>
+					<ipxact:field>
+						<ipxact:name>IVLD</ipxact:name>
+						<ipxact:displayName>IVLD</ipxact:displayName>
+						<ipxact:description>IDENTIFIER_W word contains a valid identifier. This field is valid only in RX Buffer, it has no meaning in TXT Buffers.</ipxact:description>
+						<ipxact:bitOffset>24</ipxact:bitOffset>
+						<ipxact:bitWidth>1</ipxact:bitWidth>
+						<ipxact:enumeratedValues>
+							<ipxact:enumeratedValue>
+								<ipxact:name>IVLD_VALID</ipxact:name>
+								<ipxact:displayName>IVLD_VALID</ipxact:displayName>
+								<ipxact:description>IDENTIFIER_W contains a valid CAN FD identifier.</ipxact:description>
+								<ipxact:value>1</ipxact:value>
+							</ipxact:enumeratedValue>
+							<ipxact:enumeratedValue>
+								<ipxact:name>IVLD_INALID</ipxact:name>
+								<ipxact:displayName>IVLD_INVALID</ipxact:displayName>
+								<ipxact:description>IDENTIFIER_W does not contain a valid CAN FD identifier.</ipxact:description>
+								<ipxact:value>0</ipxact:value>
+							</ipxact:enumeratedValue>
+						</ipxact:enumeratedValues>
+					</ipxact:field>
+					<ipxact:field>
+						<ipxact:name>LBTBI</ipxact:name>
+						<ipxact:displayName>LBTBI</ipxact:displayName>
+						<ipxact:description>Loop-Back TXT Buffer index. This field is only valid in RX Buffer and when FRAME_FORMAT_W[LBTBI]=1. This field has no meaning in TXT Buffers.</ipxact:description>
+						<ipxact:bitOffset>25</ipxact:bitOffset>
+						<ipxact:bitWidth>3</ipxact:bitWidth>
+						<ipxact:enumeratedValues>
+							<ipxact:enumeratedValue>
+								<ipxact:name>TXT_BUF_3</ipxact:name>
+								<ipxact:displayName>TXT_BUF_3</ipxact:displayName>
+								<ipxact:description>TXT Buffer 3</ipxact:description>
+								<ipxact:value>2</ipxact:value>
+							</ipxact:enumeratedValue>
+							<ipxact:enumeratedValue>
+								<ipxact:name>TXT_BUF_2</ipxact:name>
+								<ipxact:displayName>TXT_BUF_2</ipxact:displayName>
+								<ipxact:description>TXT Buffer 2</ipxact:description>
+								<ipxact:value>1</ipxact:value>
+							</ipxact:enumeratedValue>
+							<ipxact:enumeratedValue>
+								<ipxact:name>TXT_BUF_1</ipxact:name>
+								<ipxact:displayName>TXT_BUF_1</ipxact:displayName>
+								<ipxact:description>TXT Buffer 1</ipxact:description>
+								<ipxact:value>0</ipxact:value>
+							</ipxact:enumeratedValue>
+							<ipxact:enumeratedValue>
+								<ipxact:name>TXT_BUF_4</ipxact:name>
+								<ipxact:displayName>TXT_BUF_4</ipxact:displayName>
+								<ipxact:description>TXT Buffer 4</ipxact:description>
+								<ipxact:value>3</ipxact:value>
+							</ipxact:enumeratedValue>
+							<ipxact:enumeratedValue>
+								<ipxact:name>TXT_BUF_5</ipxact:name>
+								<ipxact:displayName>TXT_BUF_5</ipxact:displayName>
+								<ipxact:description>TXT Buffer 5</ipxact:description>
+								<ipxact:value>4</ipxact:value>
+							</ipxact:enumeratedValue>
+							<ipxact:enumeratedValue>
+								<ipxact:name>TXT_BUF_6</ipxact:name>
+								<ipxact:displayName>TXT_BUF_6</ipxact:displayName>
+								<ipxact:description>TXT Buffer 6</ipxact:description>
+								<ipxact:value>5</ipxact:value>
+							</ipxact:enumeratedValue>
+							<ipxact:enumeratedValue>
+								<ipxact:name>TXT_BUF_7</ipxact:name>
+								<ipxact:displayName>TXT_BUF_7</ipxact:displayName>
+								<ipxact:description>TXT Buffer 7</ipxact:description>
+								<ipxact:value>6</ipxact:value>
+							</ipxact:enumeratedValue>
+							<ipxact:enumeratedValue>
+								<ipxact:name>TXT_BUF_8</ipxact:name>
+								<ipxact:displayName>TXT_BUF_8</ipxact:displayName>
+								<ipxact:description>TXT Buffer 8</ipxact:description>
+								<ipxact:value>7</ipxact:value>
+							</ipxact:enumeratedValue>
+						</ipxact:enumeratedValues>
+					</ipxact:field>
 				</ipxact:register>
 				<ipxact:register>
 					<ipxact:name>IDENTIFIER_W</ipxact:name>
 					<ipxact:displayName>IDENTIFIER_W</ipxact:displayName>
 					<ipxact:description>CAN Identifier.</ipxact:description>
-					<ipxact:dim>0</ipxact:dim>
 					<ipxact:addressOffset>'h4</ipxact:addressOffset>
 					<ipxact:size>32</ipxact:size>
 					<ipxact:field>
@@ -5430,7 +5466,6 @@
 				<ipxact:register>
 					<ipxact:name>TIMESTAMP_L_W</ipxact:name>
 					<ipxact:displayName>TIMESTAMP_L_W</ipxact:displayName>
-					<ipxact:dim>0</ipxact:dim>
 					<ipxact:addressOffset>'h8</ipxact:addressOffset>
 					<ipxact:size>32</ipxact:size>
 					<ipxact:field>
@@ -5444,7 +5479,6 @@
 				<ipxact:register>
 					<ipxact:name>TIMESTAMP_U_W</ipxact:name>
 					<ipxact:displayName>TIMESTAMP_U_W</ipxact:displayName>
-					<ipxact:dim>0</ipxact:dim>
 					<ipxact:addressOffset>'hC</ipxact:addressOffset>
 					<ipxact:size>32</ipxact:size>
 					<ipxact:field>
@@ -5458,7 +5492,6 @@
 				<ipxact:register>
 					<ipxact:name>DATA_1_4_W</ipxact:name>
 					<ipxact:displayName>DATA_1_4_W</ipxact:displayName>
-					<ipxact:dim>0</ipxact:dim>
 					<ipxact:addressOffset>'h10</ipxact:addressOffset>
 					<ipxact:size>32</ipxact:size>
 					<ipxact:field>
@@ -5493,7 +5526,6 @@
 				<ipxact:register>
 					<ipxact:name>DATA_57_60_W</ipxact:name>
 					<ipxact:displayName>DATA_57_60_W</ipxact:displayName>
-					<ipxact:dim>0</ipxact:dim>
 					<ipxact:addressOffset>'h48</ipxact:addressOffset>
 					<ipxact:size>32</ipxact:size>
 					<ipxact:field>
@@ -5528,7 +5560,6 @@
 				<ipxact:register>
 					<ipxact:name>DATA_61_64_W</ipxact:name>
 					<ipxact:displayName>DATA_61_64_W</ipxact:displayName>
-					<ipxact:dim>0</ipxact:dim>
 					<ipxact:addressOffset>'h4C</ipxact:addressOffset>
 					<ipxact:size>32</ipxact:size>
 					<ipxact:field>
@@ -5563,7 +5594,6 @@
 				<ipxact:register>
 					<ipxact:name>FRAME_TEST_W</ipxact:name>
 					<ipxact:displayName>FRAME_TEST_W</ipxact:displayName>
-					<ipxact:dim>0</ipxact:dim>
 					<ipxact:addressOffset>'h50</ipxact:addressOffset>
 					<ipxact:size>32</ipxact:size>
 					<ipxact:field>
@@ -5598,7 +5628,6 @@
 				<ipxact:register>
 					<ipxact:name>DATA_49_52_W</ipxact:name>
 					<ipxact:displayName>DATA_49_52_W</ipxact:displayName>
-					<ipxact:dim>0</ipxact:dim>
 					<ipxact:addressOffset>'h40</ipxact:addressOffset>
 					<ipxact:size>32</ipxact:size>
 					<ipxact:field>
@@ -5633,7 +5662,6 @@
 				<ipxact:register>
 					<ipxact:name>DATA_53_56_W</ipxact:name>
 					<ipxact:displayName>DATA_53_56_W</ipxact:displayName>
-					<ipxact:dim>0</ipxact:dim>
 					<ipxact:addressOffset>'h44</ipxact:addressOffset>
 					<ipxact:size>32</ipxact:size>
 					<ipxact:field>
@@ -5668,7 +5696,6 @@
 				<ipxact:register>
 					<ipxact:name>DATA_5_8_W</ipxact:name>
 					<ipxact:displayName>DATA_5_8_W</ipxact:displayName>
-					<ipxact:dim>0</ipxact:dim>
 					<ipxact:addressOffset>'h14</ipxact:addressOffset>
 					<ipxact:size>32</ipxact:size>
 					<ipxact:field>
@@ -5703,7 +5730,6 @@
 				<ipxact:register>
 					<ipxact:name>DATA_9_12_W</ipxact:name>
 					<ipxact:displayName>DATA_9_12_W</ipxact:displayName>
-					<ipxact:dim>0</ipxact:dim>
 					<ipxact:addressOffset>'h18</ipxact:addressOffset>
 					<ipxact:size>32</ipxact:size>
 					<ipxact:field>
@@ -5738,7 +5764,6 @@
 				<ipxact:register>
 					<ipxact:name>DATA_13_16_W</ipxact:name>
 					<ipxact:displayName>DATA_13_16_W</ipxact:displayName>
-					<ipxact:dim>0</ipxact:dim>
 					<ipxact:addressOffset>'h1C</ipxact:addressOffset>
 					<ipxact:size>32</ipxact:size>
 					<ipxact:field>
@@ -5773,7 +5798,6 @@
 				<ipxact:register>
 					<ipxact:name>DATA_17_20_W</ipxact:name>
 					<ipxact:displayName>DATA_17_20_W</ipxact:displayName>
-					<ipxact:dim>0</ipxact:dim>
 					<ipxact:addressOffset>'h20</ipxact:addressOffset>
 					<ipxact:size>32</ipxact:size>
 					<ipxact:field>
@@ -5808,7 +5832,6 @@
 				<ipxact:register>
 					<ipxact:name>DATA_21_24_W</ipxact:name>
 					<ipxact:displayName>DATA_21_24_W</ipxact:displayName>
-					<ipxact:dim>0</ipxact:dim>
 					<ipxact:addressOffset>'h24</ipxact:addressOffset>
 					<ipxact:size>32</ipxact:size>
 					<ipxact:field>
@@ -5843,7 +5866,6 @@
 				<ipxact:register>
 					<ipxact:name>DATA_25_28_W</ipxact:name>
 					<ipxact:displayName>DATA_25_28_W</ipxact:displayName>
-					<ipxact:dim>0</ipxact:dim>
 					<ipxact:addressOffset>'h28</ipxact:addressOffset>
 					<ipxact:size>32</ipxact:size>
 					<ipxact:field>
@@ -5878,7 +5900,6 @@
 				<ipxact:register>
 					<ipxact:name>DATA_37_40_W</ipxact:name>
 					<ipxact:displayName>DATA_37_40_W</ipxact:displayName>
-					<ipxact:dim>0</ipxact:dim>
 					<ipxact:addressOffset>'h34</ipxact:addressOffset>
 					<ipxact:size>32</ipxact:size>
 					<ipxact:field>
@@ -5913,7 +5934,6 @@
 				<ipxact:register>
 					<ipxact:name>DATA_29_32_W</ipxact:name>
 					<ipxact:displayName>DATA_29_32_W</ipxact:displayName>
-					<ipxact:dim>0</ipxact:dim>
 					<ipxact:addressOffset>'h2C</ipxact:addressOffset>
 					<ipxact:size>32</ipxact:size>
 					<ipxact:field>
@@ -5948,7 +5968,6 @@
 				<ipxact:register>
 					<ipxact:name>DATA_33_36_W</ipxact:name>
 					<ipxact:displayName>DATA_33_36_W</ipxact:displayName>
-					<ipxact:dim>0</ipxact:dim>
 					<ipxact:addressOffset>'h30</ipxact:addressOffset>
 					<ipxact:size>32</ipxact:size>
 					<ipxact:field>
@@ -5983,7 +6002,6 @@
 				<ipxact:register>
 					<ipxact:name>DATA_41_44_W</ipxact:name>
 					<ipxact:displayName>DATA_41_44_W</ipxact:displayName>
-					<ipxact:dim>0</ipxact:dim>
 					<ipxact:addressOffset>'h38</ipxact:addressOffset>
 					<ipxact:size>32</ipxact:size>
 					<ipxact:field>
@@ -6018,7 +6036,6 @@
 				<ipxact:register>
 					<ipxact:name>DATA_45_48_W</ipxact:name>
 					<ipxact:displayName>DATA_45_48_W</ipxact:displayName>
-					<ipxact:dim>0</ipxact:dim>
 					<ipxact:addressOffset>'h3C</ipxact:addressOffset>
 					<ipxact:size>32</ipxact:size>
 					<ipxact:field>
@@ -6100,17 +6117,17 @@
 			<kactus2:kts_implementation>HW</kactus2:kts_implementation>
 			<kactus2:kts_firmness>Mutable</kactus2:kts_firmness>
 		</kactus2:kts_attributes>
-		<ipxact:regLocks>
-			<ipxact:regLock description="Register can be only written when MODE[TSTM] = 1, otherwise write has no effect." reg_name="CTR_PRES" lock_signal="lock_1"/>
-			<ipxact:regLock description="Register can be only written when MODE[TSTM] = 1, otherwise write has no effect." reg_name="EWL" lock_signal="lock_1"/>
-			<ipxact:regLock description="Register can be only written when MODE[TSTM] = 1, otherwise write has no effect." reg_name="ERP" lock_signal="lock_1"/>
-			<ipxact:regLock description="Register can be only written when SETTINGS[ENA] = 0, otherwise write has no effect." reg_name="BTR" lock_signal="lock_2"/>
-			<ipxact:regLock description="Register can be only written when SETTINGS[ENA] = 0, otherwise write has no effect." reg_name="BTR_FD" lock_signal="lock_2"/>
-			<ipxact:regLock description="Register can be only written when SETTINGS[ENA] = 0, otherwise write has no effect." reg_name="SSP_CFG" lock_signal="lock_2"/>
-			<ipxact:regLock description="Register can be only written when MODE[TSTM] = 1, otherwise write has no effect." reg_name="TST_CONTROL" lock_signal="lock_1"/>
-			<ipxact:regLock description="Register can be only written when MODE[TSTM] = 1, otherwise write has no effect." reg_name="TST_DEST" lock_signal="lock_1"/>
-			<ipxact:regLock description="Register can be only written when MODE[TSTM] = 1, otherwise write has no effect." reg_name="TST_WDATA" lock_signal="lock_1"/>
-		</ipxact:regLocks>
 		<kactus2:license>Proprietary</kactus2:license>
+		<ipxact:regLocks>
+			<ipxact:regLock lock_signal="lock_1" reg_name="CTR_PRES" description="Register can be only written when MODE[TSTM] = 1, otherwise write has no effect."/>
+			<ipxact:regLock lock_signal="lock_1" reg_name="EWL" description="Register can be only written when MODE[TSTM] = 1, otherwise write has no effect."/>
+			<ipxact:regLock lock_signal="lock_1" reg_name="ERP" description="Register can be only written when MODE[TSTM] = 1, otherwise write has no effect."/>
+			<ipxact:regLock lock_signal="lock_2" reg_name="BTR" description="Register can be only written when SETTINGS[ENA] = 0, otherwise write has no effect."/>
+			<ipxact:regLock lock_signal="lock_2" reg_name="BTR_FD" description="Register can be only written when SETTINGS[ENA] = 0, otherwise write has no effect."/>
+			<ipxact:regLock lock_signal="lock_2" reg_name="SSP_CFG" description="Register can be only written when SETTINGS[ENA] = 0, otherwise write has no effect."/>
+			<ipxact:regLock lock_signal="lock_1" reg_name="TST_CONTROL" description="Register can be only written when MODE[TSTM] = 1, otherwise write has no effect."/>
+			<ipxact:regLock lock_signal="lock_1" reg_name="TST_DEST" description="Register can be only written when MODE[TSTM] = 1, otherwise write has no effect."/>
+			<ipxact:regLock lock_signal="lock_1" reg_name="TST_WDATA" description="Register can be only written when MODE[TSTM] = 1, otherwise write has no effect."/>
+		</ipxact:regLocks>
 	</ipxact:vendorExtensions>
 </ipxact:component>

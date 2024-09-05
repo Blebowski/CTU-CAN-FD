@@ -300,7 +300,8 @@ union ctu_can_fd_mode_settings {
 		uint32_t rxbam                   : 1;
 		uint32_t txbbm                   : 1;
 		uint32_t sam                     : 1;
-		uint32_t reserved_15_12          : 4;
+		uint32_t erfm                    : 1;
+		uint32_t reserved_15_13          : 3;
   /* SETTINGS */
 		uint32_t rtrle                   : 1;
 		uint32_t rtrth                   : 4;
@@ -323,7 +324,8 @@ union ctu_can_fd_mode_settings {
 		uint32_t ilbp                    : 1;
 		uint32_t rtrth                   : 4;
 		uint32_t rtrle                   : 1;
-		uint32_t reserved_15_12          : 4;
+		uint32_t reserved_15_13          : 3;
+		uint32_t erfm                    : 1;
 		uint32_t sam                     : 1;
 		uint32_t txbbm                   : 1;
 		uint32_t rxbam                   : 1;
@@ -388,6 +390,11 @@ enum ctu_can_fd_mode_txbbm {
 enum ctu_can_fd_mode_sam {
 	SAM_DISABLE       = 0x0,
 	SAM_ENABLE        = 0x1,
+};
+
+enum ctu_can_fd_mode_erfm {
+	ERFM_DISABLED       = 0x0,
+	ERFM_ENABLED        = 0x1,
 };
 
 enum ctu_can_fd_settings_rtrle {
@@ -1086,7 +1093,8 @@ union ctu_can_fd_err_capt_retr_ctr_alc_ts_info {
 	struct ctu_can_fd_err_capt_retr_ctr_alc_ts_info_s {
 #ifdef __LITTLE_ENDIAN_BITFIELD
   /* ERR_CAPT */
-		uint32_t err_pos                 : 5;
+		uint32_t err_pos                 : 4;
+		uint32_t err_erp                 : 1;
 		uint32_t err_type                : 3;
   /* RETR_CTR */
 		uint32_t retr_ctr_val            : 4;
@@ -1105,7 +1113,8 @@ union ctu_can_fd_err_capt_retr_ctr_alc_ts_info {
 		uint32_t reserved_15_12          : 4;
 		uint32_t retr_ctr_val            : 4;
 		uint32_t err_type                : 3;
-		uint32_t err_pos                 : 5;
+		uint32_t err_erp                 : 1;
+		uint32_t err_pos                 : 4;
 #endif
 	} s;
 };
@@ -1120,7 +1129,12 @@ enum ctu_can_fd_err_capt_err_pos {
 	ERC_POS_EOF         = 0x6,
 	ERC_POS_ERR         = 0x7,
 	ERC_POS_OVRL        = 0x8,
-	ERC_POS_OTHER      = 0x1f,
+	ERC_POS_OTHER       = 0xf,
+};
+
+enum ctu_can_fd_err_capt_err_erp {
+	ERR_ERP_ACTIVE        = 0x0,
+	ERR_ERP_PASSIVE       = 0x1,
 };
 
 enum ctu_can_fd_err_capt_err_type {

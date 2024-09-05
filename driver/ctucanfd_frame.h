@@ -65,28 +65,43 @@ union ctu_can_fd_frame_format_w {
 #ifdef __LITTLE_ENDIAN_BITFIELD
   /* FRAME_FORMAT_W */
 		uint32_t dlc                     : 4;
-		uint32_t reserved_4              : 1;
+		uint32_t erf                     : 1;
 		uint32_t rtr                     : 1;
 		uint32_t ide                     : 1;
 		uint32_t fdf                     : 1;
-		uint32_t reserved_8              : 1;
+		uint32_t lbpf                    : 1;
 		uint32_t brs                     : 1;
 		uint32_t esi_rsv                 : 1;
 		uint32_t rwcnt                   : 5;
-		uint32_t reserved_31_16         : 16;
+		uint32_t erf_pos                 : 4;
+		uint32_t erf_erp                 : 1;
+		uint32_t erf_type                : 3;
+		uint32_t ivld                    : 1;
+		uint32_t lbtbi                   : 3;
+		uint32_t reserved_31_28          : 4;
 #else
-		uint32_t reserved_31_16         : 16;
+		uint32_t reserved_31_28          : 4;
+		uint32_t lbtbi                   : 3;
+		uint32_t ivld                    : 1;
+		uint32_t erf_type                : 3;
+		uint32_t erf_erp                 : 1;
+		uint32_t erf_pos                 : 4;
 		uint32_t rwcnt                   : 5;
 		uint32_t esi_rsv                 : 1;
 		uint32_t brs                     : 1;
-		uint32_t reserved_8              : 1;
+		uint32_t lbpf                    : 1;
 		uint32_t fdf                     : 1;
 		uint32_t ide                     : 1;
 		uint32_t rtr                     : 1;
-		uint32_t reserved_4              : 1;
+		uint32_t erf                     : 1;
 		uint32_t dlc                     : 4;
 #endif
 	} s;
+};
+
+enum ctu_can_fd_frame_format_w_erf {
+	ERF_CAN_FRAME       = 0x0,
+	ERF_ERR_FRAME       = 0x1,
 };
 
 enum ctu_can_fd_frame_format_w_rtr {
@@ -104,6 +119,11 @@ enum ctu_can_fd_frame_format_w_fdf {
 	FD_CAN           = 0x1,
 };
 
+enum ctu_can_fd_frame_format_w_lbpf {
+	LBPF_FOREIGN        = 0x0,
+	LBPF_LOOPBACK       = 0x1,
+};
+
 enum ctu_can_fd_frame_format_w_brs {
 	BR_NO_SHIFT       = 0x0,
 	BR_SHIFT          = 0x1,
@@ -112,6 +132,22 @@ enum ctu_can_fd_frame_format_w_brs {
 enum ctu_can_fd_frame_format_w_esi_rsv {
 	ESI_ERR_ACTIVE       = 0x0,
 	ESI_ERR_PASIVE       = 0x1,
+};
+
+enum ctu_can_fd_frame_format_w_ivld {
+	IVLD_INALID       = 0x0,
+	IVLD_VALID        = 0x1,
+};
+
+enum ctu_can_fd_frame_format_w_lbtbi {
+	TXT_BUF_1       = 0x0,
+	TXT_BUF_2       = 0x1,
+	TXT_BUF_3       = 0x2,
+	TXT_BUF_4       = 0x3,
+	TXT_BUF_5       = 0x4,
+	TXT_BUF_6       = 0x5,
+	TXT_BUF_7       = 0x6,
+	TXT_BUF_8       = 0x7,
 };
 
 union ctu_can_fd_identifier_w {

@@ -99,6 +99,11 @@ entity rx_buffer_fsm is
         res_n                   : in  std_logic;
 
         -------------------------------------------------------------------------------------------
+        -- Memory registers interface
+        -------------------------------------------------------------------------------------------
+        mr_mode_erfm            : in  std_logic;
+
+        -------------------------------------------------------------------------------------------
         -- Control signals from CAN Core (Filtered by Frame filters)
         -------------------------------------------------------------------------------------------
         -- Start Storing of Metadata to RX Buffer (first 4 words of frame)
@@ -119,11 +124,11 @@ entity rx_buffer_fsm is
         -- Intent to write to RX Buffer RAM
         write_raw_intent        : out std_logic;
 
-        -- Write Timestamp to RX Buffer RAM memory
-        write_ts                : out std_logic;
+        -- Select Timestamp write pointer
+        select_ts_wptr          : out std_logic;
 
-        -- Storing of Timestamp has ended.
-        stored_ts               : out std_logic;
+        -- Intend to comit frame to RX Buffer
+        commit_intent           : out std_logic;
 
         -- Data selector for selection of memory word to be stored in RX Buffer
         -- RAM (one hot coded)
@@ -134,6 +139,9 @@ entity rx_buffer_fsm is
 
         -- Increment timestamp write pointer by 1
         inc_ts_wr_ptr           : out std_logic;
+
+        -- Error frame type
+        rec_erf                 : out std_logic;
 
         -- Reset internal overrun flag
         reset_overrun_flag      : out std_logic
@@ -154,7 +162,7 @@ begin
     -----------------------------------------------------------------------------------------------
     -- Next State process
     -----------------------------------------------------------------------------------------------
-    next_state_proc : process(curr_state, store_metadata_f, rec_abort_f, rec_valid_f)
+    next_state_proc : process(curr_state, store_metadata_f, rec_abort_f, rec_valid_f, mr_mode_erfm)
     begin
         next_state <= curr_state;
 
@@ -164,8 +172,10 @@ begin
         -- Idle, waiting for "store_metada" to start storing first 4 words.
         -------------------------------------------------------------------------------------------
         when s_rxb_idle =>
-            if (store_metadata_f = '1' and rec_abort_f = '0') then
+            if (store_metadata_f = '1') then
                 next_state <= s_rxb_store_frame_format;
+            elsif (mr_mode_erfm = ERFM_ENABLED and rec_abort_f = '1') then
+                next_state <= s_rxb_store_err_frame_format;
             end if;
 
         -------------------------------------------------------------------------------------------
@@ -173,7 +183,11 @@ begin
         -------------------------------------------------------------------------------------------
         when s_rxb_store_frame_format =>
             if (rec_abort_f = '1') then
-                next_state <= s_rxb_idle;
+                if (mr_mode_erfm = ERFM_ENABLED) then
+                    next_state <= s_rxb_store_err_frame_format;
+                else
+                    next_state <= s_rxb_idle;
+                end if;
             else
                 next_state <= s_rxb_store_identifier;
             end if;
@@ -206,7 +220,12 @@ begin
          -------------------------------------------------------------------------------------------
         when s_rxb_store_data =>
             if (rec_abort_f = '1') then
-                next_state <= s_rxb_idle;
+                if (mr_mode_erfm = ERFM_ENABLED) then
+                    next_state <= s_rxb_store_err_frame_format;
+                else
+                    next_state <= s_rxb_idle;
+                end if;
+
             elsif (rec_valid_f = '1') then
                 next_state <= s_rxb_store_end_ts_low;
             end if;
@@ -223,6 +242,30 @@ begin
         when s_rxb_store_end_ts_high =>
             next_state <= s_rxb_idle;
 
+        -------------------------------------------------------------------------------------------
+        -- Store FRAME_FORMAT_W of an Error frame
+        -------------------------------------------------------------------------------------------
+        when s_rxb_store_err_frame_format =>
+            next_state <= s_rxb_store_err_identifier;
+
+        -------------------------------------------------------------------------------------------
+        -- Store IDENTIFIER_W of an Error frame
+        -------------------------------------------------------------------------------------------
+        when s_rxb_store_err_identifier =>
+            next_state <= s_rxb_store_err_ts_low;
+
+        -------------------------------------------------------------------------------------------
+        -- Store TIMESTAMP_L_W of an Error frame
+        -------------------------------------------------------------------------------------------
+        when s_rxb_store_err_ts_low =>
+            next_state <= s_rxb_store_err_ts_high;
+
+        -------------------------------------------------------------------------------------------
+        -- Store TIMESTAMP_U_W of an Error frame
+        -------------------------------------------------------------------------------------------
+        when s_rxb_store_err_ts_high =>
+            next_state <= s_rxb_idle;
+
         end case;
     end process;
 
@@ -230,27 +273,30 @@ begin
     -----------------------------------------------------------------------------------------------
     -- Current State process (outputs)
     -----------------------------------------------------------------------------------------------
-    curr_state_proc : process(curr_state, store_data_f)
+    curr_state_proc : process(curr_state, store_data_f, rec_abort_f)
     begin
         write_raw_intent <= '0';
-        write_ts <= '0';
+        select_ts_wptr <= '0';
         data_selector <= (others => '0');
-        stored_ts <= '0';
+        commit_intent <= '0';
         store_ts_wr_ptr <= '0';
         inc_ts_wr_ptr <= '0';
         reset_overrun_flag <= '0';
+        rec_erf <= '0';
 
         case curr_state is
         when s_rxb_idle =>
             reset_overrun_flag <= '1';
 
         when s_rxb_store_frame_format =>
-            write_raw_intent <= '1';
-            data_selector    <= "00001";
+            if (rec_abort_f = '0') then
+                write_raw_intent <= '1';
+            end if;
+            data_selector <= "00001";
 
         when s_rxb_store_identifier =>
             write_raw_intent <= '1';
-            data_selector    <= "00010";
+            data_selector <= "00010";
 
         when s_rxb_skip_ts_low =>
             write_raw_intent <= '1';
@@ -263,31 +309,54 @@ begin
             write_raw_intent <= '1';
 
         when s_rxb_store_data =>
-            data_selector    <= "00100";
+            data_selector <= "00100";
 
             if (store_data_f = '1') then
                 write_raw_intent <= '1';
             end if;
 
         when s_rxb_store_end_ts_low =>
-            data_selector    <= "01000";
+            data_selector <= "01000";
+
+            -- Raw write pointer points to the last data frame word
+            -- when timestamp is stored at the end of frame. Need to
+            -- use backed-up timestamp write pointer.
+            select_ts_wptr <= '1';
 
             -- Timestamp write pointer is incremented once more when lower
             -- timestamp word was stored, to point to higher timestamp word.
             inc_ts_wr_ptr <= '1';
 
-            -- Signalling that timestamp is stored to memory.
-            write_ts   <= '1';
-
         when s_rxb_store_end_ts_high =>
-            data_selector    <= "10000";
+            data_selector <= "10000";
 
-            -- Storing of timestamp is ending and frame can be committed.
-            stored_ts <= '1';
+            -- Raw write pointer points to the last data frame word
+            -- when timestamp is stored at the end of frame. Need to
+            -- use backed-up timestamp write pointer.
+            select_ts_wptr <= '1';
 
-            -- Signalling that timestamp is stored to memory.
-            write_ts   <= '1';
+            commit_intent <= '1';
+
+        when s_rxb_store_err_frame_format =>
+            write_raw_intent <= '1';
+            data_selector <= "00001";
+            rec_erf <= '1';
+
+        when s_rxb_store_err_identifier =>
+            write_raw_intent <= '1';
+            data_selector <= "00010";
+
+        when s_rxb_store_err_ts_low =>
+            write_raw_intent <= '1';
+            data_selector <= "01000";
+
+        when s_rxb_store_err_ts_high =>
+            write_raw_intent <= '1';
+            data_selector <= "10000";
+
+            commit_intent <= '1';
         end case;
+
     end process;
 
 
@@ -333,6 +402,13 @@ begin
         --  ((rec_valid_f = '1' or store_data_f = '1') and curr_state /= s_rxb_store_data)
         -- report "RX Buffer: Store data or frame commit commands did not come when RX Buffer is receiving data!";
 
+        -- psl rxb_not_storing_err_frm_when_next_occurs_asrt : assert never
+        --  (curr_state = s_rxb_store_err_frame_format or
+        --   curr_state = s_rxb_store_err_identifier or
+        --   curr_state = s_rxb_store_err_ts_low or
+        --   curr_state = s_rxb_store_err_ts_high) and (rec_abort_f = '1')
+        -- report "Error frame was not yet fully stored when another one occured.";
+
         process (cmd_join)
         begin
             if (now > 0 ps) then
@@ -346,12 +422,28 @@ begin
             end if;
         end process;
 
-        -- psl rx_no_abort_after_metadata : assert never
+        -- psl rx_no_abort_after_metadata_cov : assert never
         --  (rec_abort_f = '1') and
         --  (curr_state = s_rxb_store_identifier or curr_state = s_rxb_skip_ts_low or
         --   curr_state = s_rxb_skip_ts_high or curr_state = s_rxb_store_end_ts_low or
         --   curr_state = s_rxb_store_end_ts_high)
         --  report "RX Buffer abort not supported storing of Identifier and Timestamp";
+
+        -- psl rx_never_abort_and_store_in_idle : assert never
+        --  (curr_state = s_rxb_idle and store_metadata_f = '1' and rec_abort_f = '1')
+        --  report "When RX Buffer FSM is s_rxb_idle, store_metadata_f and rec_abort_f can't be simultaneous!";
+
+        -- psl store_metadata_and_rec_abort_back_to_back_cov : cover
+        --  {mr_mode_erfm = ERFM_ENABLED and rec_abort_f = '1' and curr_state = s_rxb_store_frame_format}
+        --  report "rec_abort_f = 1 and curr_state = s_rxb_store_frame_format";
+
+        -- psl rec_abort_in_idle_cov : cover
+        --  {mr_mode_erfm = ERFM_ENABLED and rec_abort_f = '1' and curr_state = s_rxb_idle}
+        --  report "rec_abort_f = 1 and curr_state = s_rxb_idle";
+
+        -- psl rec_abort_in_store_data_cov : cover
+        --  {mr_mode_erfm = ERFM_ENABLED and rec_abort_f = '1' and curr_state = s_rxb_store_data}
+        --  report "rec_abort_f = 1 and curr_state = s_rxb_store_data";
 
     end block assertions_block;
 

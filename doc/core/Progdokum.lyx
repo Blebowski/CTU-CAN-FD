@@ -509,11 +509,11 @@ filename "version.tex"
 \noindent
 \align center
 \begin_inset Tabular
-<lyxtabular version="3" rows="33" columns="3">
+<lyxtabular version="3" rows="34" columns="3">
 <features tabularvalignment="middle">
 <column alignment="center" valignment="top" width="1.5cm">
 <column alignment="center" valignment="top" width="2cm">
-<column alignment="center" valignment="top" width="12cm">
+<column alignment="center" valignment="top" width="12.5cm">
 <row>
 <cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
 \begin_inset Text
@@ -1480,7 +1480,7 @@ Move to new release of CTU CAN FD.
 </cell>
 </row>
 <row>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -1489,7 +1489,7 @@ Move to new release of CTU CAN FD.
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -1498,11 +1498,45 @@ Move to new release of CTU CAN FD.
 
 \end_inset
 </cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Add note about TXBHCI interrupt behavior.
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+2.5.2
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+19-6-2024
+\end_layout
+
+\end_inset
+</cell>
 <cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
-Add note about 
+Add LBPF bit to RX frame.
+ Add MODE[ERFM].
+ Add FRAME_FORMAT_W[ERF], FRAME_FORMAT_W[ERF_*].
+ Add Error frame reception to RX buffer.
+ Add ERR_CAPT[ERR_ERP] bit.
+ Add FRAME_FORMAT_W[LBTBI] and FRAME_FORMAT_W[IVLD].
 \end_layout
 
 \end_inset
@@ -4021,7 +4055,7 @@ Sync_Seg + Prop_Seg + Phase_Seg1 > 2 minimal time quanta.
 \end_layout
 
 \begin_layout Standard
-With these conditions, it is possible to reach bit lenght of 5 time quanta.
+With these conditions, it is possible to reach bit length of 5 time quanta.
  Note that for nominal bit rate this is possible, however, at least 8 time
  quantas per bit time are recommended (see 
 \begin_inset CommandInset ref
@@ -5263,31 +5297,52 @@ Note CTU CAN FD transmitts only reactive Overload frames.
 
 \begin_layout Section
 CAN frame reception
+\begin_inset CommandInset label
+LatexCommand label
+name "sec:CAN-frame-reception"
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
-CTU CAN FD contains single RX buffer to which received CAN frames are stored.
- Size of RX buffer is multiple of 32-bit words, and it can be read from
- RX_MEM_INFO register.
- RX buffer is organized like FIFO.
- CAN frame is stored to RX buffer when it is received successfully on CAN
- bus (no error frames occurred).
- CAN frame is read by SW from RX buffer by consecutive reads from RX_DATA
- register.
+CTU CAN FD contains single RX buffer that stores received CAN frames.
+ Size of the RX buffer is multiple of 32-bit words.
+ SW can read the size of RX buffer from RX_MEM_INFO register.
+ RX buffer is organized like a FIFO.
+ RX buffer can store two types of CAN frames:
+\end_layout
+
+\begin_layout Itemize
+Regular frame - CTU CAN FD stores regular CAN frame to RX buffer when a
+ CAN frame is received without error frames on CAN bus.
+ Regular CAN frames contain all the data exchanged in the CAN communication.
+ 
+\end_layout
+
+\begin_layout Itemize
+Error frame - CTU CAN FD can store error frame that occured on CAN bus to
+ the RX buffer.
+\end_layout
+
+\begin_layout Standard
+CAN frames (regular or error) are read by SW from RX buffer by consecutive
+ reads from RX_DATA register.
  Single read from RX_DATA register reads one word from RX buffer.
  RX buffer can operate in one of two modes:
 \end_layout
 
 \begin_layout Itemize
 Automatic mode - When RX_DATA register is read, read pointer of RX buffer
- FIFO is automatically incremented.
+ FIFO is automatically incremented (read has side-effect).
  This mode shall be used only when RX_DATA is read by 32-bit accesses.
  Writes to COMMAND[RXRPMV] = 1 have no effect in this mode.
 \end_layout
 
 \begin_layout Itemize
 Manual mode - When RX_DATA register is read, read pointer of RX buffer FIFO
- is NOT incremented.
+ is NOT incremented (read has no side-effect).
  To increment read pointer, SW shall write COMMAND[RXRPMV] = 1.
  This mode can be used when RX buffer is read via 8/16/32-bit accesses,
  since it allows reading single RX buffer memory word via 4x8 bit or 2x16
@@ -5315,7 +5370,7 @@ noprefix "false"
 \begin_layout Standard
 \noindent
 \align center
-Size of RX frame in words = 4 + ceil(Data field lenght / 4)
+Size of RX frame in words = 4 + ceil(Data field length / 4)
 \end_layout
 
 \begin_layout Standard
@@ -5367,10 +5422,81 @@ Frame count
 \end_layout
 
 \begin_layout Standard
-RX buffer contains counter of CAN frames within the buffer.
- This counter can be read from RX_STATUS[RXFRCE] register.
+CTU CAN FD contains counter of CAN frames within the RX buffer.
+ The counter value can be read from RX_STATUS[RXFRCE] register.
  Counter is incremented when frame is stored to RX buffer and decremented
  when last word of CAN frame is read from RX buffer.
+\end_layout
+
+\begin_layout Description
+Note The frame counter counts regular CAN frames as well as Error frames.
+\end_layout
+
+\begin_layout Subsection
+Error frame reception
+\end_layout
+
+\begin_layout Standard
+When SW sets MODE[ERFM]=1, CTU CAN FD stores Error frames that occur on
+ CAN bus in the RX buffer.
+ If MODE[ERFM]=0, only regular CAN frames are stored to RX buffer.
+ Each error condition that caused transmission of a new Error frame is logged
+ as separate Error frame in the RX buffer.
+ Each Error frame in the RX buffer occupies exactly 4 memory words (FRAME_FORMAT
+_W, IDENTIFIER_W, TIMESTAMP_U_W and TIMESTAMP_L_W).
+\end_layout
+
+\begin_layout Standard
+The error frames are distinguished from regular CAN frames by FRAME_FORMAT_W[ERF
+] bit.
+ In Error frames FRAME_FORMAT_W[ERF] = ERF_ERR_FRAME, while in regular CAN
+ frames FRAME_FORMAT_W[ERF] = ERF_CAN_FRAME.
+ The error frames have following differences compared to regular CAN frames:
+\end_layout
+
+\begin_layout Itemize
+Only FRAME_FORMAT_W[ERF], FRAME_FORMAT_W[IVLD], FRAME_FORMAT_W[RWCNT], FRAME_FOR
+MAT_W[ERF_POS] and FRAME_FORMAT_W[ERF_TYPE] are valid in FRAME_FORMAT_W.
+ Other fields of FRAME_FORMAT_W are reserved, and shall be ignored by SW
+ reading the Error frame from RX buffer.
+\end_layout
+
+\begin_layout Itemize
+When FRAME_FORMAT_W[IVLD]=1, IDENTIFIER_W contains valid CAN identifier.
+ Otherwise, IDENTIFIER_W value contains all zeroes.
+\end_layout
+
+\begin_layout Itemize
+TIMESTAMP_U_W and TIMESTAMP_L_W contain CTU CAN FD timebase value at the
+ moment when when error condition causing the Error frame transmission occured.
+\end_layout
+
+\begin_layout Description
+Note When CTU CAN FD operates in Restricted operation mode (MODE[ROM]=1),
+ Error frames are not stored to RX buffer since error condition on the bus
+ causes CTU CAN FD to move to Bus Integration state, and not transmit the
+ Error frame.
+\end_layout
+
+\begin_layout Description
+Note All rules related to setting of ERR_CAPT (Error type priorities, etc...)
+ apply also to Error frames stored in RX buffer.
+\end_layout
+
+\begin_layout Description
+Note In regular CAN frame FRAME_FORMAT_W[IVLD] is always 1.
+ In Error frame FRAME_FORMAT_W[IVLD]=1 if the IDENTIFIER_W contains a valid
+ CAN identifier.
+ If FRAME_FORMAT_W[IVLD] = 1 then IDENTIFIER_W and can be used to track
+ the which CAN frame lead to Error frame.
+\end_layout
+
+\begin_layout Description
+Note The error frames ocurring in CAN frames with Base identifier before
+ IDE bit have FRAME_FORMAT_W[IVLD]=0.
+ The error frames ocurring in CAN frames with Extended identifier before
+ RTR/RRS bit have FRAME_FORMAT_W[IVLD]=0.
+ 
 \end_layout
 
 \begin_layout Subsection
@@ -5402,9 +5528,13 @@ RX buffer with no stored CAN frames is empty.
  In such state RX_STATUS[RXE]=1.
  RX buffer which has all its memory words occupied by CAN frames is full.
  In such state RX_STATUS[RXF]=1.
- Note that if RX buffer has e.g.
- 2 free memory words it is not full, however even smallest CAN frame would
- not fit into the buffer.
+ 
+\end_layout
+
+\begin_layout Description
+Note If RX buffer has e.g.
+ 2 free memory words it is not full, however even smallest CAN frame does
+ not fit into the RX buffer (smallest CAN frame takes 4 memory words).
 \end_layout
 
 \begin_layout Subsection
@@ -5412,10 +5542,10 @@ Overrun
 \end_layout
 
 \begin_layout Standard
-If during reception of CAN frame there is not enough free space in RX buffer
- to store currently received CAN frame, Overrun occurs and this frame is
- droped (RX buffer FIFO has overflown).
- In this situation Overrun flag is set.
+If there is not enough free space in RX buffer during reception of CAN frame,
+ Overrun occurs and currently received frame is droped (RX buffer FIFO has
+ overflown).
+ In such situation Overrun flag is set.
  Overrun flag is sticky (it remains set until it is cleared) and can be
  read from STATUS[DOR].
  Overrun flag is cleared by COMMAND[CDO]=1.
@@ -7249,13 +7379,52 @@ Loopback mode
 
 \begin_layout Standard
 In Loopback mode, any CAN frame transmitted by CTU CAN FD from any of TXT
- buffers, will be stored to RX buffer if its transmission is successfull
- (and the frame passes Frame filters).
- Note that altough CTU CAN FD stores its own transmitted frame to RX buffer,
- it still acts as a transmitter, therefore it does not acknowledge its own
- frame! For succesfull transmission, the frame must be acknowledged by other
- node on CAN bus.
- Loopback mode is enabled when SETTINGS[ILBP]=1.
+ buffers, is stored to RX buffer if its transmission is successfull (and
+ the frame passes Frame filters).
+ Such frame is called Loopback frame.
+ Altough CTU CAN FD receives Loopback frame to RX buffer, CTU CAN FD still
+ acts as a transmitter, therefore it does not acknowledge the Loopback frame
+ on CAN bus.
+ For succesfull transmission of Loopback frame, the frame must be acknowledged
+ by other node on CAN bus.
+ A Loopback frame differs from CAN frame received on the CAN bus in:
+\end_layout
+
+\begin_layout Itemize
+FRAME_FORMAT_W[LBPF]=1 - Indicates the frame is a Loopback frame
+\end_layout
+
+\begin_layout Itemize
+FRAME_FORMAT_W[LBTBI] - Indicates index of TXT Buffer used to transmit the
+ Loopback frame.
+ This field is reserved when FRAME_FORMAT_W[LBPF]=0.
+\end_layout
+
+\begin_layout Description
+Note Loopback frame is a 
+\begin_inset Quotes eld
+\end_inset
+
+regular CAN frame
+\begin_inset Quotes erd
+\end_inset
+
+ in context of RX Buffer frame types (see.
+ 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "sec:CAN-frame-reception"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+).
+\end_layout
+
+\begin_layout Standard
+Loopback mode is enabled when SETTINGS[ILBP]=1.
  SETTINGS[ILBP] shall be modified only when CTU CAN FD is disabled (SETTINGS[ENA
 ] = 0).
 \end_layout
@@ -7293,7 +7462,8 @@ Self acknowledge mode
 
 \begin_layout Standard
 When Self acknowledge mode is enabled, CTU CAN FD sends dominant ACK bit
- even when it transmitts CAN frame.
+ even when it transmitts CAN frame and it receives CRC matching to computed
+ CRC.
  Self acknowledge mode is enabled when MODE[SAM] = 1.
  MODE[SAM] shall be modified only when SETTINGS[ENA] = 0.
 \end_layout
@@ -7521,7 +7691,7 @@ When FRAME_TEST_W[SDLC] = 1, FRAME_TEST_W[CPRM][3:0] bits are transmitted
 \begin_inset Newline newline
 \end_inset
 
-FRAME_TEST_W[DLC] in Data Lenght Code field of CAN frame.
+FRAME_TEST_W[DLC] in Data Length Code field of CAN frame.
  Number of data bytes transmitted is still derived from FRAME_TEST_W[DLC]
  field.
 \end_layout

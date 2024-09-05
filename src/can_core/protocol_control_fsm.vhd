@@ -129,9 +129,9 @@ entity protocol_control_fsm is
         -- Configuration values
         mr_mode_acf             : in  std_logic;
         mr_mode_stm             : in  std_logic;
-        mr_mode_bmm             : in  std_logic;
         mr_mode_fde             : in  std_logic;
         mr_mode_rom             : in  std_logic;
+        mr_mode_sam             : in  std_logic;
 
         mr_settings_ena         : in  std_logic;
         mr_settings_nisofd      : in  std_logic;
@@ -284,6 +284,12 @@ entity protocol_control_fsm is
         -- RX frame type (0-CAN 2.0, 1- CAN FD)
         rec_frame_type          : in  std_logic;
 
+        -- RX Frame Loopback
+        rec_lbpf                : out std_logic;
+
+        -- RX Identifier is valid
+        rec_ivld                : out std_logic;
+
         -------------------------------------------------------------------------------------------
         -- Control counter interface
         -------------------------------------------------------------------------------------------
@@ -369,7 +375,7 @@ entity protocol_control_fsm is
         crc_src                 : out  std_logic_vector(1 downto 0);
 
         -- Error position field (for Error capture)
-        err_pos                 : out  std_logic_vector(4 downto 0);
+        err_pos                 : out  std_logic_vector(3 downto 0);
 
         -------------------------------------------------------------------------------------------
         -- Bit Stuffing/Destuffing control signals
@@ -546,9 +552,6 @@ architecture rtl of protocol_control_fsm is
     -- Frame transmission/reception can be started from idle or intermission!
     signal frame_start                  : std_logic;
 
-    -- There is TX Frame ready for transmission
-    signal tx_frame_ready               : std_logic;
-
     -- IDE bit is part of arbitration
     signal ide_is_arbitration           : std_logic;
 
@@ -566,7 +569,6 @@ architecture rtl of protocol_control_fsm is
     signal store_metadata_d             : std_logic;
     signal store_data_d                 : std_logic;
     signal rec_valid_d                  : std_logic;
-    signal rec_abort_d                  : std_logic;
 
     -- Internal commands for TXT Buffers
     signal txtb_hw_cmd_d                : t_txtb_hw_cmd;
@@ -619,9 +621,6 @@ architecture rtl of protocol_control_fsm is
     signal sp_control_ce                : std_logic;
     signal sp_control_d                 : std_logic_vector(1 downto 0);
     signal sp_control_q_i               : std_logic_vector(1 downto 0);
-
-    -- Secondary sampling point shift register reset
-    signal ssp_reset_i                  : std_logic;
 
     -- Synchronisation control
     signal sync_control_d               : std_logic_vector(1 downto 0);
@@ -736,13 +735,19 @@ architecture rtl of protocol_control_fsm is
     signal txtb_num_words_gate          : natural range 0 to 19;
     signal txtb_gate_mem_read           : std_logic;
 
-begin
+    -- RX Frame loopback
+    signal rec_lbpf_d                   : std_logic;
+    signal rec_lbpf_q                   : std_logic;
 
-    tx_frame_ready <= '1' when (tran_frame_valid = '1' and
-                                mr_mode_bmm = BMM_DISABLED and
-                                mr_mode_rom = ROM_DISABLED)
-                          else
-                      '0';
+    -- RX Frame identifier valid
+    signal rec_ivld_i                   : std_logic;
+    signal rec_ivld_d                   : std_logic;
+    signal rec_ivld_q                   : std_logic;
+
+    -- Transmit dominant ACK bit
+    signal tx_dominant_ack              : std_logic;
+
+begin
 
     tran_frame_type_i <= FD_CAN when (tran_frame_type = FD_CAN and mr_mode_fde = '1')
                                 else
@@ -790,9 +795,15 @@ begin
                              else
                          '0';
 
-    frame_start <= '1' when (tx_frame_ready = '1' and go_to_suspend = '0') else
+    frame_start <= '1' when (tran_frame_valid = '1' and go_to_suspend = '0') else
                    '1' when (rx_data_nbs = DOMINANT) else
                    '0';
+
+    tx_dominant_ack <= '1' when  (crc_match = '1') and
+                                  ((is_receiver = '1'    and mr_mode_acf = '0') or
+                                   (is_transmitter = '1' and mr_mode_sam = '1'))
+                           else
+                       '0';
 
     -----------------------------------------------------------------------------------------------
     -- Signal is not decoded inside curr_state process, because it is sensitive to this signal!
@@ -857,7 +868,6 @@ begin
                             crc_use_21 = '0')
                       else
                   '0';
-
 
     crc_src_i <= C_CRC21_SRC when (crc_use_21 = '1') else
                  C_CRC17_SRC when (crc_use_17 = '1') else
@@ -930,7 +940,7 @@ begin
     -----------------------------------------------------------------------------------------------
     next_state_proc : process(
         curr_state, err_frm_req, ctrl_ctr_zero, no_data_field, is_receiver, is_fd_frame,
-        is_bus_off, go_to_suspend, tx_frame_ready, mr_command_ercrst_q, reinteg_ctr_expired,
+        is_bus_off, go_to_suspend, tran_frame_valid, mr_command_ercrst_q, reinteg_ctr_expired,
         rx_data_nbs, is_err_active, go_to_stuff_count, pex_on_fdf_enable, pex_on_res_enable,
         mr_mode_rom)
     begin
@@ -1173,7 +1183,7 @@ begin
                         next_state <= s_pc_base_id;
                     elsif (go_to_suspend = '1') then
                         next_state <= s_pc_suspend;
-                    elsif (tx_frame_ready = '1') then
+                    elsif (tran_frame_valid = '1') then
                         next_state <= s_pc_sof;
                     else
                         next_state <= s_pc_idle;
@@ -1197,7 +1207,7 @@ begin
                 elsif (ctrl_ctr_zero = '1') then
                     -- Start transmission after suspend if we have what to
                     -- transmitt!
-                    if (tx_frame_ready = '1') then
+                    if (tran_frame_valid = '1') then
                         next_state <= s_pc_sof;
                     else
                         next_state <= s_pc_idle;
@@ -1212,7 +1222,7 @@ begin
                    next_state <= s_pc_reintegrating_wait;
                elsif (rx_data_nbs = DOMINANT) then
                    next_state <= s_pc_base_id;
-               elsif (tx_frame_ready = '1') then
+               elsif (tran_frame_valid = '1') then
                    next_state <= s_pc_sof;
                end if;
 
@@ -1327,10 +1337,11 @@ begin
         ctrl_ctr_zero, arbitration_lost_condition, tx_data_wbs, is_transmitter, tran_ident_type,
         tran_frame_type_i, tran_is_rtr, ide_is_arbitration, mr_mode_fde, tran_brs, rx_trigger,
         is_err_active, no_data_field, ctrl_counted_byte, ctrl_counted_byte_index, is_fd_frame,
-        is_receiver, crc_match, mr_mode_acf, mr_mode_stm, tx_frame_ready, go_to_suspend, frame_start,
+        is_receiver, crc_match, mr_mode_stm, tran_frame_valid, go_to_suspend, frame_start,
         ctrl_ctr_one, mr_command_ercrst_q, reinteg_ctr_expired, first_err_delim_q, go_to_stuff_count,
         ack_err_flag, crc_length_i, data_length_bits_c, ctrl_ctr_mem_index, is_bus_off,
-        block_txtb_unlock, mr_settings_pex, rx_data_nbs_prev, sync_edge, mr_mode_rom)
+        block_txtb_unlock, mr_settings_pex, rx_data_nbs_prev, sync_edge, mr_mode_rom,
+        mr_settings_ilbp, tx_dominant_ack)
     begin
 
         -------------------------------------------------------------------------------------------
@@ -1348,7 +1359,6 @@ begin
         -- RX Buffer storing protocol
         store_metadata_d        <= '0';
         store_data_d            <= '0';
-        rec_abort_d             <= '0';
         rec_valid_d             <= '0';
 
         sof_pulse_i             <= '0';
@@ -1411,7 +1421,7 @@ begin
         sp_control_switch_nominal   <= '0';
 
         -- Transceiver delay measurement
-        ssp_reset_i             <= '0';
+        ssp_reset               <= '0';
         tran_delay_meas         <= '0';
 
         -- Secondary sampling point control
@@ -1476,16 +1486,18 @@ begin
 
         pexs_set                <= '0';
 
+        rec_lbpf_d              <= rec_lbpf_q;
+        rec_ivld_i              <= rec_ivld_q;
+
         if (err_frm_req = '1') then
             tick_state_reg <= '1';
-            ctrl_ctr_pload_i   <= '1';
+            ctrl_ctr_pload_i <= '1';
             if (mr_mode_rom = ROM_DISABLED) then
                 ctrl_ctr_pload_val <= C_ERR_FLG_DURATION;
             else
                 ctrl_ctr_pload_val <= C_INTEGRATION_DURATION;
                 set_idle_i <= '1';
             end if;
-            rec_abort_d <= '1';
 
             crc_clear_match_flag <= '1';
             destuff_enable_clear <= '1';
@@ -1585,6 +1597,7 @@ begin
                 ctrl_ctr_pload_val <= C_BASE_ID_DURATION;
                 tx_load_base_id_i <= '1';
                 sof_pulse_i <= '1';
+                rec_ivld_i <= '0';
                 tx_dominant <= '1';
                 err_pos <= ERC_POS_SOF;
                 crc_enable <= '1';
@@ -1679,6 +1692,8 @@ begin
                     ctrl_ctr_pload_i <= '1';
                     ctrl_ctr_pload_val <= C_EXT_ID_DURATION;
                     tx_load_ext_id_i <= '1';
+                else
+                    rec_ivld_i <= '1';
                 end if;
 
                 if (ide_is_arbitration = '1' and arbitration_lost_condition = '1') then
@@ -1755,6 +1770,7 @@ begin
                 rx_store_rtr_i <= '1';
                 err_pos <= ERC_POS_ARB;
                 arbitration_part <= ALC_RTR;
+                rec_ivld_i <= '1';
 
                 if (arbitration_lost_condition = '1') then
                     arbitration_lost_i <= '1';
@@ -1793,7 +1809,7 @@ begin
                     if (tran_frame_type_i = NORMAL_CAN) then
                         tx_dominant <= '1';
                     else
-                        ssp_reset_i <= '1';
+                        ssp_reset <= '1';
                     end if;
                 end if;
 
@@ -1881,7 +1897,7 @@ begin
                 if (is_transmitter = '1' and tran_frame_type_i = NORMAL_CAN) then
                     tx_dominant <= '1';
                 else
-                    ssp_reset_i <= '1';
+                    ssp_reset <= '1';
                 end if;
 
                 -- Sample recessive but CAN FD is disabled -> Form error or
@@ -1986,6 +2002,12 @@ begin
                         tx_load_data_word_i <= '1';
                     end if;
 
+                    if (is_transmitter = '1' and mr_settings_ilbp = '1') then
+                        rec_lbpf_d <= LBPF_LOOPBACK;
+                    else
+                        rec_lbpf_d <= LBPF_FOREIGN;
+                    end if;
+
                     store_metadata_d <= '1';
                     rx_store_dlc_i <= '1';
                 end if;
@@ -2052,6 +2074,7 @@ begin
                 crc_enable <= '1';
                 pc_dbg.is_stuff_count <= '1';
                 bit_err_disable_receiver <= '1';
+                fixed_stuff <= '1';
 
                 if (sp_control_q_i /= NOMINAL_SAMPLE) then
                     dbt_ctrs_en <= '1';
@@ -2063,10 +2086,6 @@ begin
                     ctrl_ctr_pload_i <= '1';
                     tx_load_crc_i <= '1';
                     rx_store_stuff_count_i <= '1';
-                end if;
-
-                if (is_fd_frame = '1') then
-                    fixed_stuff <= '1';
                 end if;
 
             ---------------------------------------------------------------------------------------
@@ -2099,8 +2118,33 @@ begin
                 tick_state_reg <= '1';
                 err_pos <= ERC_POS_ACK;
                 pc_dbg.is_crc_delim  <= '1';
-                dbt_ctrs_en <= '1';
+
+                -- Bit Error detection must be enabled for SSP
+                -- Special enable used only in CRC delimiter when SSP is enabled and
+                -- a SSP that reaches into TSEG1 of CRC delimiter shall detect error
+                -- from a previous bit !
+                -- In the moment of sample point, this must be already disabled though!
+                -- So use rx_trigger to gate this. Do not gate by sp_control_d to avoid
+                -- potential combo loop.
+                --if (sp_control_q_i /= SECONDARY_SAMPLE and rx_trigger = '0') then
+                --    bit_err_disable <= '1';
+                --end if;
+
+                -- Theoretically, we should enable bit error detection here when in SECONDARY_SAMPLE.
+                -- (see commented code above). This would allow us to detect e.g. bit error of last bit
+                -- of last CRC bit whose sample point is TSEG1 of CRC delimiter. This-way a bit error
+                -- detected by SSP right in the SP of CRC delimiter would be ignored, but any earlier
+                -- SSP (e.g. just one cycle before regular SP of CRC delimiter) would be recognized as
+                -- bit error. ISO compliance test 8.8.2.4 tests that a "correct value" pulse around
+                -- CRC Delimiter regular sample point will not cause error frame. There is no ISO test
+                -- that tests if a SSP of a e.g. last CRC bit is placed in middle of CRC delimiters
+                -- TSEG1 and detects bit error. We choose less "strict" various and opt not to detect
+                -- bit error in this case as that may affect compliance test result! This corresponds
+                -- to 2v5 behavior if SSP occurs anywhere within CRC delimiter. Possibly can be adjusted
+                -- based on certification results.
                 bit_err_disable <= '1';
+
+                dbt_ctrs_en <= '1';
                 destuff_enable_clear <= '1';
                 stuff_enable_clear <= '1';
 
@@ -2128,7 +2172,7 @@ begin
                 pc_dbg.is_ack <= '1';
                 dbt_ctrs_en <= '1';
 
-                if (is_receiver = '1' and crc_match = '1' and mr_mode_acf = '0') then
+                if (tx_dominant_ack = '1') then
                     tx_dominant <= '1';
 
                 -- Bit Error still shall be detected when unit sends dominant
@@ -2154,7 +2198,7 @@ begin
                 pc_dbg.is_ack <= '1';
                 dbt_ctrs_en <= '1';
 
-                if (is_receiver = '1' and crc_match = '1' and mr_mode_acf = '0') then
+                if (tx_dominant_ack = '1') then
                     tx_dominant <= '1';
 
                 -- Bit Error still shall be detected when unit sends dominant
@@ -2276,11 +2320,12 @@ begin
                     ctrl_ctr_pload_i <= '1';
                     crc_spec_enable_i <= '1';
 
-                    -- Goe to Base ID (sampling of DOMINANT in the third bit of intermission)!
+                    -- Go to Base ID (sampling of DOMINANT in the third bit of intermission)!
                     if (rx_data_nbs = DOMINANT) then
                         ctrl_ctr_pload_val <= C_BASE_ID_DURATION;
                         tx_load_base_id_i <= '1';
                         sof_pulse_i <= '1';
+                        rec_ivld_i <= '0';
 
                     -- Goes to either IDLE, Suspend, or to SOF, when there is sth. to transmitt.
                     -- Preload SUSPEND length in any case, since other states don't care about
@@ -2291,7 +2336,7 @@ begin
 
                     -- Lock TXT Buffer when there is what to transmitt, and no suspend! Unit becomes
                     -- transmitter! If not, and DOMINANT is received, become receiver!
-                    if (tx_frame_ready = '1' and go_to_suspend = '0') then
+                    if (tran_frame_valid = '1' and go_to_suspend = '0') then
                         txtb_hw_cmd_d.lock <= '1';
                         set_transmitter_i <= '1';
                         stuff_enable_set <= '1';
@@ -2313,7 +2358,7 @@ begin
 
                     -- If we dont sample dominant, nor we have sth ready for transmission, we go to
                     -- Idle! Don't become idle when we go to suspend!
-                    if (rx_data_nbs = RECESSIVE and tx_frame_ready = '0' and
+                    if (rx_data_nbs = RECESSIVE and tran_frame_valid = '0' and
                         go_to_suspend = '0')
                     then
                         set_idle_i <= '1';
@@ -2357,6 +2402,7 @@ begin
                     ctrl_ctr_pload_val <= C_BASE_ID_DURATION;
                     tx_load_base_id_i <= '1';
                     sof_pulse_i <= '1';
+                    rec_ivld_i <= '0';
                     set_receiver_i <= '1';
                     destuff_enable_set <= '1';
                     rx_clear_i <= '1';
@@ -2365,7 +2411,7 @@ begin
                 -- it goes to SOF and transmitts
                 elsif (ctrl_ctr_zero = '1') then
                     tick_state_reg <= '1';
-                    if (tx_frame_ready = '1') then
+                    if (tran_frame_valid = '1') then
                         set_transmitter_i <= '1';
                         txtb_hw_cmd_d.lock <= '1';
                         rx_clear_i <= '1';
@@ -2390,10 +2436,11 @@ begin
                         ctrl_ctr_pload_i <= '1';
                         ctrl_ctr_pload_val <= C_BASE_ID_DURATION;
                         sof_pulse_i <= '1';
+                        rec_ivld_i <= '0';
                         crc_enable <= '1';
                     end if;
 
-                    if (tx_frame_ready = '1') then
+                    if (tran_frame_valid = '1') then
                         tick_state_reg <= '1';
                         txtb_hw_cmd_d.lock <= '1';
                         set_transmitter_i <= '1';
@@ -2736,25 +2783,43 @@ begin
 
             -- Frame is stored to RX Buffer when unit is either receiver or loopback mode is
             -- enabled. Each command is active only for one clock cycle!
-            if ((is_receiver = '1' or mr_settings_ilbp = '1') and
-                ((rx_trigger = '1') or (err_frm_req = '1')))
+            if ((is_receiver = '1' or mr_settings_ilbp = '1') and (rx_trigger = '1'))
             then
                 store_metadata     <= store_metadata_d;
                 store_data         <= store_data_d;
                 rec_valid          <= rec_valid_d;
-                rec_abort          <= rec_abort_d;
             else
                 store_metadata     <= '0';
                 store_data         <= '0';
                 rec_valid          <= '0';
-                rec_abort          <= '0';
             end if;
+
+            rec_abort              <= err_frm_req;
+
         end if;
     end process;
 
     ctrl_signal_upd <= '1' when (rx_trigger = '1' or err_frm_req = '1')
                            else
                        '0';
+
+    rec_ivld_d <= rec_ivld_i when (rx_trigger = '1')
+                             else
+                  rec_ivld_q;
+
+    -----------------------------------------------------------------------------------------------
+    -- Register Loopback frame flag and Identifier valid flag
+    -----------------------------------------------------------------------------------------------
+    rex_lbpc_reg_proc : process (clk_sys, res_n)
+    begin
+        if (res_n = '0') then
+            rec_lbpf_q <= '0';
+            rec_ivld_q <= '0';
+        elsif (rising_edge(clk_sys)) then
+            rec_lbpf_q <= rec_lbpf_d;
+            rec_ivld_q <= rec_ivld_d;
+        end if;
+    end process;
 
     -----------------------------------------------------------------------------------------------
     -- TXT Buffer HW commands pipeline
@@ -3147,7 +3212,6 @@ begin
     crc_src <= crc_src_i;
     txtb_hw_cmd <= txtb_hw_cmd_q;
     tran_valid <= txtb_hw_cmd_q.valid;
-    ssp_reset <= ssp_reset_i;
     sync_control <= sync_control_q;
     txtb_ptr <= txtb_ptr_q;
     br_shifted <= br_shifted_i;
@@ -3159,6 +3223,8 @@ begin
     tx_frame_no_sof <= tx_frame_no_sof_q;
     txtb_clk_en <= txtb_clk_en_q;
     pc_dbg.is_arbitration  <= is_arbitration_i;
+    rec_lbpf <= rec_lbpf_q;
+    rec_ivld <= rec_ivld_q;
 
     -- <RELEASE_OFF>
     -----------------------------------------------------------------------------------------------

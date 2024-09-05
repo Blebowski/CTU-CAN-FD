@@ -143,6 +143,7 @@ entity can_core is
         mr_mode_fde             : in  std_logic;
         mr_mode_rom             : in  std_logic;
         mr_mode_tstm            : in  std_logic;
+        mr_mode_sam             : in  std_logic;
 
         mr_settings_ena         : in  std_logic;
         mr_settings_nisofd      : in  std_logic;
@@ -233,6 +234,9 @@ entity can_core is
         -- RX frame type (0-CAN 2.0, 1- CAN FD)
         rec_frame_type          : out std_logic;
 
+        -- Received Loopback frame
+        rec_lbpf                : out std_logic;
+
         -- RX Remote transmission request Flag
         rec_is_rtr              : out std_logic;
 
@@ -241,6 +245,9 @@ entity can_core is
 
         -- RX Error state indicator
         rec_esi      	        : out std_logic;
+
+        -- RX Identifier is valid
+        rec_ivld                : out std_logic;
 
         -- RX Frame received succesfully, can be commited to RX Buffer.
         rec_valid               : out std_logic;
@@ -339,6 +346,9 @@ entity can_core is
         -- Synchronization edge
         sync_edge               : in  std_logic;
 
+        -- Bit error enable
+        bit_err_enable          : out std_logic;
+
         -- RX Trigger of Protocol control FSM (sample point)
         pc_rx_trigger           : out std_logic
     );
@@ -352,25 +362,14 @@ architecture rtl of can_core is
     -----------------------------------------------------------------------------------------------
     -----------------------------------------------------------------------------------------------
 
-    -- TXT Buffer control
-    signal txtb_hw_cmd_i            : t_txtb_hw_cmd;
-
-    -- Received frame
-    signal rec_ident_i              : std_logic_vector(28 downto 0);
-    signal rec_dlc_i                : std_logic_vector(3 downto 0);
-    signal rec_ident_type_i         : std_logic;
-    signal rec_frame_type_i         : std_logic;
-    signal rec_is_rtr_i             : std_logic;
-    signal rec_brs_i                : std_logic;
-    signal rec_esi_i                : std_logic;
-
     -- Arbitration lost capture
     signal alc_alc_bit              : std_logic_vector(4 downto 0);
     signal alc_alc_id_field         : std_logic_vector(2 downto 0);
 
     -- Error code capture
     signal err_capt_err_type        : std_logic_vector(2 downto 0);
-    signal err_capt_err_pos         : std_logic_vector(4 downto 0);
+    signal err_capt_err_pos         : std_logic_vector(3 downto 0);
+    signal err_capt_err_erp         : std_logic;
 
     -- Operation control interface
     signal is_transmitter           : std_logic;
@@ -412,16 +411,10 @@ architecture rtl of can_core is
     -- Protocol control - control outputs
     signal sp_control_i             : std_logic_vector(1 downto 0);
     signal sp_control_q             : std_logic_vector(1 downto 0);
-    signal sync_control_i           : std_logic_vector(1 downto 0);
-    signal ssp_reset_i              : std_logic;
-    signal tran_delay_meas_i        : std_logic;
     signal tran_valid_i             : std_logic;
     signal rec_valid_i              : std_logic;
-    signal br_shifted_i             : std_logic;
 
     -- Fault confinement status signals
-    signal fcs_changed_i            : std_logic;
-
     signal tx_err_ctr               : std_logic_vector(8 downto 0);
     signal rx_err_ctr               : std_logic_vector(8 downto 0);
     signal norm_err_ctr             : std_logic_vector(15 downto 0);
@@ -473,9 +466,6 @@ architecture rtl of can_core is
     signal ack_err                  : std_logic;
     signal crc_err                  : std_logic;
 
-    -- Start of frame indication
-    signal sof_pulse_i              : std_logic;
-
     signal load_init_vect           : std_logic;
     signal retr_ctr                 : std_logic_vector(G_RETR_LIM_CTR_WIDTH - 1 downto 0);
 
@@ -512,10 +502,10 @@ begin
         -- Memory registers interface
         mr_mode_acf             => mr_mode_acf,                 -- IN
         mr_mode_stm             => mr_mode_stm,                 -- IN
-        mr_mode_bmm             => mr_mode_bmm,                 -- IN
         mr_mode_fde             => mr_mode_fde,                 -- IN
         mr_mode_rom             => mr_mode_rom,                 -- IN
         mr_mode_tstm            => mr_mode_tstm,                -- IN
+        mr_mode_sam             => mr_mode_sam,                 -- IN
         mr_settings_ena         => mr_settings_ena,             -- IN
         mr_settings_nisofd      => mr_settings_nisofd,          -- IN
         mr_settings_rtrth       => mr_settings_rtrth,           -- IN
@@ -528,8 +518,10 @@ begin
 
         alc_alc_bit             => alc_alc_bit,                 -- OUT
         alc_alc_id_field        => alc_alc_id_field,            -- OUT
+
         err_capt_err_type       => err_capt_err_type,           -- OUT
         err_capt_err_pos        => err_capt_err_pos,            -- OUT
+        err_capt_err_erp        => err_capt_err_erp,            -- OUT
 
         pc_dbg                  => pc_dbg,                      -- OUT
         mr_status_pexs          => mr_status_pexs,              -- OUT
@@ -545,24 +537,26 @@ begin
         tran_frame_test         => tran_frame_test,             -- IN
         tran_frame_valid        => tran_frame_valid,            -- IN
         tran_frame_parity_error => tran_frame_parity_error,     -- IN
-        txtb_hw_cmd             => txtb_hw_cmd_i,               -- IN
+        txtb_hw_cmd             => txtb_hw_cmd,                 -- IN
         txtb_ptr                => txtb_ptr,                    -- OUT
         txtb_clk_en             => txtb_clk_en,                 -- OUT
         txtb_changed            => txtb_changed,                -- IN
 
         -- RX Buffer interface
-        rec_ident               => rec_ident_i,                 -- OUT
-        rec_dlc                 => rec_dlc_i,                   -- OUT
-        rec_is_rtr              => rec_is_rtr_i,                -- OUT
-        rec_ident_type          => rec_ident_type_i,            -- OUT
-        rec_frame_type          => rec_frame_type_i,            -- OUT
-        rec_brs                 => rec_brs_i,                   -- OUT
-        rec_esi                 => rec_esi_i,                   -- OUT
+        rec_ident               => rec_ident,                   -- OUT
+        rec_dlc                 => rec_dlc,                     -- OUT
+        rec_is_rtr              => rec_is_rtr,                  -- OUT
+        rec_ident_type          => rec_ident_type,              -- OUT
+        rec_frame_type          => rec_frame_type,              -- OUT
+        rec_lbpf                => rec_lbpf,                    -- OUT
+        rec_brs                 => rec_brs,                     -- OUT
+        rec_esi                 => rec_esi,                     -- OUT
+        rec_ivld                => rec_ivld,                    -- OUT
         store_metadata          => store_metadata,              -- OUT
         rec_abort               => rec_abort,                   -- OUT
         store_data              => store_data,                  -- OUT
         store_data_word         => store_data_word,             -- OUT
-        sof_pulse               => sof_pulse_i,                 -- OUT
+        sof_pulse               => sof_pulse,                   -- OUT
 
         -- Operation control FSM Interface
         is_transmitter          => is_transmitter,              -- IN
@@ -607,6 +601,7 @@ begin
         dbt_measure_start       => dbt_measure_start,           -- OUT
         gen_first_ssp           => gen_first_ssp,               -- OUT
         sync_edge               => sync_edge,                   -- IN
+        bit_err_enable          => bit_err_enable,              -- OUT
 
         -- CRC Interface
         crc_enable              => crc_enable,                  -- OUT
@@ -622,16 +617,16 @@ begin
         sp_control_q            => sp_control_q,                -- OUT
         nbt_ctrs_en             => nbt_ctrs_en,                 -- OUT
         dbt_ctrs_en             => dbt_ctrs_en,                 -- OUT
-        sync_control            => sync_control_i,              -- OUT
-        ssp_reset               => ssp_reset_i,                 -- OUT
-        tran_delay_meas         => tran_delay_meas_i,           -- OUT
+        sync_control            => sync_control,                -- OUT
+        ssp_reset               => ssp_reset,                   -- OUT
+        tran_delay_meas         => tran_delay_meas,             -- OUT
         tran_valid              => tran_valid_i,                -- OUT
         rec_valid               => rec_valid_i,                 -- OUT
         decrement_rec           => decrement_rec,               -- OUT
         bit_err_after_ack_err   => bit_err_after_ack_err,       -- OUT
 
         -- Status signals
-        br_shifted              => br_shifted_i,                -- OUT
+        br_shifted              => br_shifted,                  -- OUT
         form_err                => form_err,                    -- OUT
         ack_err                 => ack_err,                     -- OUT
         crc_err                 => crc_err,                     -- OUT
@@ -686,7 +681,7 @@ begin
         mr_status_ewl           => mr_status_ewl,               -- OUT
 
         -- Error signalling for interrupts
-        fcs_changed             => fcs_changed_i,               -- OUT
+        fcs_changed             => fcs_changed,                 -- OUT
         err_warning_limit_pulse => err_warning_limit_pulse,     -- OUT
 
         -- Operation control Interface
@@ -947,6 +942,7 @@ begin
     cc_stat.norm_err_ctr    <= norm_err_ctr;
     cc_stat.data_err_ctr    <= data_err_ctr;
     cc_stat.err_type        <= err_capt_err_type;
+    cc_stat.err_erp         <= err_capt_err_erp;
     cc_stat.err_pos         <= err_capt_err_pos;
     cc_stat.retr_ctr        <= retr_ctr;
     cc_stat.alc_bit         <= alc_alc_bit;
@@ -960,26 +956,12 @@ begin
     -----------------------------------------------------------------------------------------------
     -- Internal signals to output propagation
     -----------------------------------------------------------------------------------------------
-    txtb_hw_cmd             <= txtb_hw_cmd_i;
-    rec_ident               <= rec_ident_i;
-    rec_dlc                 <= rec_dlc_i;
-    rec_ident_type          <= rec_ident_type_i;
-    rec_frame_type          <= rec_frame_type_i;
-    rec_is_rtr              <= rec_is_rtr_i;
-    rec_brs                 <= rec_brs_i;
-    rec_esi                 <= rec_esi_i;
     rec_valid               <= rec_valid_i;
     arbitration_lost        <= arbitration_lost_i;
     tran_valid              <= tran_valid_i;
-    br_shifted              <= br_shifted_i;
     err_detected            <= err_detected_i;
-    fcs_changed             <= fcs_changed_i;
-    sync_control            <= sync_control_i;
     tx_data_wbs             <= tx_data_wbs_i;
     sp_control              <= sp_control_i;
-    ssp_reset               <= ssp_reset_i;
-    tran_delay_meas         <= tran_delay_meas_i;
-    sof_pulse               <= sof_pulse_i;
 
     -- Test signals observation
     pc_rx_trigger           <= pc_rx_trigger_i;
@@ -1020,6 +1002,10 @@ begin
     -- psl no_stuff_bit_in_idle_asrt : assert never
     --  ((destuffed = '1' or data_halt = '1') and is_idle = '1' and mr_mode_rom = '0')
     --  report "Stuff bits not allowed in Bus idle!";
+
+    -- psl no_tran_frame_valid_in_rom_or_bmm_asrt : assert never
+    --  (tran_frame_valid = '1' and (mr_mode_bmm = '1' or mr_mode_rom = '1'))
+    --  report "TX frame shall not be ready in MODE[ROM] or MODE[BMM]!";
 
     -----------------------------------------------------------------------------------------------
     -----------------------------------------------------------------------------------------------

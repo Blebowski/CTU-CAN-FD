@@ -281,6 +281,7 @@ enum ctu_can_fd_can_registers {
 #define REG_MODE_RXBAM BIT(9)
 #define REG_MODE_TXBBM BIT(10)
 #define REG_MODE_SAM BIT(11)
+#define REG_MODE_ERFM BIT(12)
 #define REG_MODE_RTRLE BIT(16)
 #define REG_MODE_RTRTH GENMASK(20, 17)
 #define REG_MODE_ILBP BIT(21)
@@ -481,7 +482,8 @@ enum ctu_can_fd_can_registers {
 #define REG_TX_PRIORITY_TXT8P GENMASK(30, 28)
 
 /*  ERR_CAPT RETR_CTR ALC TS_INFO registers */
-#define REG_ERR_CAPT_ERR_POS GENMASK(4, 0)
+#define REG_ERR_CAPT_ERR_POS GENMASK(3, 0)
+#define REG_ERR_CAPT_ERR_ERP BIT(4)
 #define REG_ERR_CAPT_ERR_TYPE GENMASK(7, 5)
 #define REG_ERR_CAPT_RETR_CTR_VAL GENMASK(11, 8)
 #define REG_ERR_CAPT_ALC_BIT GENMASK(20, 16)

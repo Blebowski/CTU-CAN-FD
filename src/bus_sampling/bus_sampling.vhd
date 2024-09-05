@@ -184,7 +184,10 @@ entity bus_sampling is
         dbt_measure_start       :in    std_logic;
 
         -- First SSP generated (in ESI bit)
-        gen_first_ssp           :in    std_logic
+        gen_first_ssp           :in    std_logic;
+
+        -- Bit error detection is enabled
+        bit_err_enable          :in    std_logic
     );
 end entity;
 
@@ -410,6 +413,7 @@ begin
         sp_control                  => sp_control,              -- IN
         rx_trigger                  => rx_trigger,              -- IN
         sample_sec                  => sample_sec,              -- IN
+        bit_err_enable              => bit_err_enable,          -- IN
         data_tx                     => tx_data_wbs,             -- IN
         data_tx_delayed             => data_tx_delayed,         -- IN
         data_rx_synced              => data_rx_synced,          -- IN

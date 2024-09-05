@@ -76,6 +76,7 @@ tests:
     - name: message_filter
     - name: mode_bus_monitoring
     - name: mode_acf
+    - name: mode_erfm
     - name: mode_loopback
     - name: mode_fd_enable
     - name: mode_fdrf
@@ -115,6 +116,14 @@ tests:
     - name: rx_status_mof
     - name: rx_status_rxfrc
 
+    - name: rx_err_log
+    - name: rx_err_log_2
+    - name: rx_err_log_3
+    - name: rx_err_log_4
+    - name: rx_err_log_5
+    - name: rx_err_log_6
+    - name: rx_err_log_7
+
     - name: scan_mode
     - name: settings_tbfbo
     - name: settings_nisofd
@@ -124,6 +133,8 @@ tests:
       generics:
         /TB_TOP_CTU_CAN_FD/iterations: 5
     - name: ssp_4_bits_flying
+    - name: ssp_last_crc_bit_error
+    - name: ssp_last_crc_bit_error_2
     - name: status_eft
       generics:
         /TB_TOP_CTU_CAN_FD/iterations: 5
@@ -136,6 +147,7 @@ tests:
     - name: status_txs
     - name: status_rxpe
     - name: status_txpe
+    - name: status_txpe_txdpe_reset
     - name: stuff_in_data
 
     - name: trv_delay

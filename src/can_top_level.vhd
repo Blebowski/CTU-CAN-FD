@@ -316,6 +316,9 @@ architecture rtl of can_top_level is
     -- Recieved frame type (0-Normal CAN, 1- CAN FD)
     signal rec_frame_type               :    std_logic;
 
+    -- Received Loopback frame
+    signal rec_lbpf                     :    std_logic;
+
     -- Recieved frame is RTR Frame(0-No, 1-Yes)
     signal rec_is_rtr                   :    std_logic;
 
@@ -324,6 +327,9 @@ architecture rtl of can_top_level is
 
     -- Recieved error state indicator
     signal rec_esi                      :    std_logic;
+
+    -- Received Identifier is valid
+    signal rec_ivld                     :    std_logic;
 
     -- Data word which should be stored when "store_data" is active!
     signal store_data_word              :    std_logic_vector(31 downto 0);
@@ -373,7 +379,7 @@ architecture rtl of can_top_level is
     -- TXT Buffers <-> TX Arbitrator
     -----------------------------------------------------------------------------------------------
     -- Index of TXT Buffer for which HW commands is valid
-    signal txtb_hw_cmd_index            :   natural range 0 to txt_buffer_count - 1;
+    signal txtb_hw_cmd_cs               :   std_logic_vector(txt_buffer_count - 1 downto 0);
 
     -- TXT Buffers are available, can be selected by TX Arbitrator
     signal txtb_available               :   std_logic_vector(txt_buffer_count - 1 downto 0);
@@ -447,6 +453,15 @@ architecture rtl of can_top_level is
 
     -- TXT Buffer clock enable
     signal txtb_clk_en                  :   std_logic;
+
+    -----------------------------------------------------------------------------------------------
+    -- RX Buffer <-> TX Arbitrator
+    -----------------------------------------------------------------------------------------------
+
+    -- TXT Buffer index that is:
+    --   - Currently validated (when no transmission is in progress)
+    --   - Used for transmission (when transmission is in progress)
+    signal curr_txtb_index              :   std_logic_vector(2 downto 0);
 
     -----------------------------------------------------------------------------------------------
     -- CAN Core <-> Interrupt manager
@@ -529,6 +544,9 @@ architecture rtl of can_top_level is
     -----------------------------------------------------------------------------------------------
     -- Synchronisation edge (aligned with time quanta)
     signal sync_edge                    :   std_logic;
+
+    -- Bit error enable
+    signal bit_err_enable               :   std_logic;
 
     -----------------------------------------------------------------------------------------------
     -- Bit time FSM outputs
@@ -729,9 +747,11 @@ begin
         rec_dlc                         => rec_dlc,                         -- IN
         rec_ident_type                  => rec_ident_type,                  -- IN
         rec_frame_type                  => rec_frame_type,                  -- IN
+        rec_lbpf                        => rec_lbpf,                        -- IN
         rec_is_rtr                      => rec_is_rtr,                      -- IN
         rec_brs                         => rec_brs,                         -- IN
         rec_esi                         => rec_esi,                         -- IN
+        rec_ivld                        => rec_ivld,                        -- IN
 
         -- Control signals from CAN Core which control storing of CAN Frame.
         -- Filtered by Frame filters.
@@ -741,6 +761,9 @@ begin
         rec_valid_f                     => rec_valid_f,                     -- IN
         rec_abort_f                     => rec_abort_f,                     -- IN
         sof_pulse                       => sof_pulse,                       -- IN
+        err_capt_err_type               => cc_stat.err_type,                -- IN
+        err_capt_err_pos                => cc_stat.err_pos,                 -- IN
+        err_capt_err_erp                => cc_stat.err_erp,                 -- IN
 
         -- Status signals of recieve buffer
         rx_full                         => rx_full,                         -- OUT
@@ -757,6 +780,9 @@ begin
         -- External timestamp input
         timestamp                       => timestamp,                       -- IN
 
+        -- TX Arbitrator interface
+        curr_txtb_index                 => curr_txtb_index,                 -- IN
+
         -- Memory registers interface
         mr_mode_rxbam                   => mr_ctrl_out.mode_rxbam,          -- IN
         mr_command_cdo                  => mr_ctrl_out.command_cdo,         -- IN
@@ -766,6 +792,7 @@ begin
         mr_rx_data_read                 => mr_ctrl_out.rx_data_read,        -- IN
         mr_rx_settings_rtsop            => mr_ctrl_out.rx_settings_rtsop,   -- IN
         mr_settings_pchke               => mr_ctrl_out.settings_pchke,      -- IN
+        mr_mode_erfm                    => mr_ctrl_out.mode_erfm,           -- IN
 
         -- Memory testability
         mr_tst_control_tmaena           => mr_tst_out.tst_control_tmaena,   -- IN
@@ -851,7 +878,7 @@ begin
 
             -- CAN Core and TX Arbitrator Interface
             txtb_hw_cmd                 => txtb_hw_cmd,                                 -- IN
-            txtb_hw_cmd_index           => txtb_hw_cmd_index,                           -- IN
+            txtb_hw_cmd_cs              => txtb_hw_cmd_cs(i),                           -- IN
             txtb_port_b_data_out        => txtb_port_b_data_out(i),                     -- OUT
             txtb_port_b_address         => txtb_port_b_address,                         -- IN
             txtb_port_b_clk_en          => txtb_port_b_clk_en,                          -- IN
@@ -902,9 +929,12 @@ begin
         tran_frame_parity_error         => tran_frame_parity_error,         -- OUT
         txtb_hw_cmd                     => txtb_hw_cmd,                     -- IN
         txtb_changed                    => txtb_changed,                    -- OUT
-        txtb_hw_cmd_index               => txtb_hw_cmd_index,               -- IN
+        txtb_hw_cmd_cs                  => txtb_hw_cmd_cs,                  -- OUT
         txtb_ptr                        => txtb_ptr,                        -- IN
         txtb_clk_en                     => txtb_clk_en,                     -- IN
+
+        -- RX Buffer interface
+        curr_txtb_index                 => curr_txtb_index,                 -- OUT
 
         -- Memory registers interface
         mr_mode_tttm                    => mr_ctrl_out.mode_tttm,           -- IN
@@ -1083,6 +1113,7 @@ begin
         mr_mode_fde                     => mr_ctrl_out.mode_fde,                     -- IN
         mr_mode_rom                     => mr_ctrl_out.mode_rom,                     -- IN
         mr_mode_tstm                    => mr_ctrl_out.mode_tstm,                    -- IN
+        mr_mode_sam                     => mr_ctrl_out.mode_sam,                     -- IN
 
         mr_settings_ena                 => mr_ctrl_out.settings_ena,                 -- IN
         mr_settings_nisofd              => mr_ctrl_out.settings_nisofd,              -- IN
@@ -1132,10 +1163,12 @@ begin
         rec_dlc                         => rec_dlc,                                 -- OUT
         rec_ident_type                  => rec_ident_type,                          -- OUT
         rec_frame_type                  => rec_frame_type,                          -- OUT
+        rec_lbpf                        => rec_lbpf,                                -- OUT
         rec_is_rtr                      => rec_is_rtr,                              -- OUT
         rec_brs                         => rec_brs,                                 -- OUT
         rec_esi                         => rec_esi,                                 -- OUT
         rec_valid                       => rec_valid,                               -- OUT
+        rec_ivld                        => rec_ivld,                                -- OUT
         store_metadata                  => store_metadata,                          -- OUT
         store_data                      => store_data,                              -- OUT
         store_data_word                 => store_data_word,                         -- OUT
@@ -1171,6 +1204,7 @@ begin
         dbt_measure_start               => dbt_measure_start,                       -- OUT
         gen_first_ssp                   => gen_first_ssp,                           -- OUT
         sync_edge                       => sync_edge,                               -- IN
+        bit_err_enable                  => bit_err_enable,                          -- OUT
         pc_rx_trigger                   => pc_rx_trigger                            -- OUT
     );
 
@@ -1272,7 +1306,8 @@ begin
         bit_err                         => bit_err,                                 -- OUT
         btmc_reset                      => btmc_reset,                              -- IN
         dbt_measure_start               => dbt_measure_start,                       -- IN
-        gen_first_ssp                   => gen_first_ssp                            -- IN
+        gen_first_ssp                   => gen_first_ssp,                           -- IN
+        bit_err_enable                  => bit_err_enable                           -- OUT
     );
 
     -- <RELEASE_OFF>

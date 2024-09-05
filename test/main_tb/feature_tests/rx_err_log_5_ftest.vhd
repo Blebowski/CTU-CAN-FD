@@ -70,22 +70,27 @@
 -- @TestInfoStart
 --
 -- @Purpose:
---  RX Buffer empty - read feature test
+--  RX Error logging feature test 5
 --
 -- @Verifies:
---  @1. Verifies that when reading from empty RX Buffer, RX pointer is not
---      incremented!
+--  @1. RX Error being logged with following ERF_TYPE values:
+--      @1.1 ERC_PRT_ERR
 --
 -- @Test sequence:
---  @1. Read pointers from RX Buffer, check pointers are 0 (DUT is post reset).
---  @2. Try to read CAN frame from RX Buffer. This should generate at least 4
---      reads from RX DATA register.
---  @3. Read pointers from RX Buffer, check pointers are still 0.
+--  @1. Configure DUT to MODE[ERFM] = 1 and enable Test mode and Parity in DUT
+--      Node.
+--  @2. Generate CAN frame, and insert it to DUTs TXT Buffer. Use Test Registers
+--      to flip a bit in the TXT Buffer word containing first 4 bytes of CAN
+--      Data field.
+--  @3. Give DUTs TXT Buffer a "Set Ready" Command. Wait until Error frame
+--      occurs in DUT Node. Check DUTs RX Buffer has a single frame in its RX
+--      Buffer. Wait until bus is idle. Read the frame, and check it is an
+--      Error frame and it has ERF_TYPE = ERC_PRT_ERR.
 --
 -- @TestInfoEnd
 --------------------------------------------------------------------------------
 -- Revision History:
---    18.10.2019   Created file
+--    24.8.2024   Created file
 --------------------------------------------------------------------------------
 
 Library ctu_can_fd_tb;
@@ -95,53 +100,84 @@ context ctu_can_fd_tb.tb_common_context;
 
 use ctu_can_fd_tb.feature_test_agent_pkg.all;
 
-package rx_buf_empty_read_ftest is
-    procedure rx_buf_empty_read_ftest_exec(
+package rx_err_log_5_ftest is
+    procedure rx_err_log_5_ftest_exec(
         signal      chn             : inout  t_com_channel
     );
 end package;
 
 
-package body rx_buf_empty_read_ftest is
-    procedure rx_buf_empty_read_ftest_exec(
+package body rx_err_log_5_ftest is
+
+    procedure rx_err_log_5_ftest_exec(
         signal      chn             : inout  t_com_channel
     ) is
-        -- Generated frames
-        variable frame_rx           :     SW_CAN_frame_type;
-        variable rx_buf_info        :     SW_RX_Buffer_info;
-        variable rx_data            :     std_logic_vector(31 downto 0);
+        variable mode_1             : SW_mode := SW_mode_rst_val;
+        variable CAN_frame          : SW_CAN_frame_type;
+        variable err_frame          : SW_CAN_frame_type;
+        variable corrupt_bit_index  : integer;
+        variable rx_buf_info        : SW_RX_Buffer_info;
+        variable r_data             : std_logic_vector(31 downto 0);
     begin
 
-        -----------------------------------------------------------------------
-        -- @1. Read pointers from RX Buffer, check pointers are 0 (DUT is post
-        --     reset).
-        -----------------------------------------------------------------------
-        info_m("Step 1: Reading RX buffer pointers for first time");
+        -------------------------------------------------------------------------------------------
+        --  @1. Configure DUT to MODE[ERFM] = 1, enable Test mode and Parity in DUT Node.
+        -------------------------------------------------------------------------------------------
+        info_m("Step 1");
+
+        mode_1.error_logging := true;
+        mode_1.test := true;
+        mode_1.parity_check := true;
+        set_core_mode(mode_1, DUT_NODE, chn);
+
+        -------------------------------------------------------------------------------------------
+        -- @2. Generate CAN frame, and insert it to DUTs TXT Buffer. Use Test Registers
+        --     to flip a bit in the TXT Buffer word containing first 4 bytes of CAN Data field.
+        -------------------------------------------------------------------------------------------
+        info_m("Step 2");
+
+        CAN_generate_frame(CAN_frame);
+        CAN_frame.data_length := 8;
+        CAN_frame.rtr := NO_RTR_FRAME;
+        decode_length(CAN_frame.data_length, CAN_frame.dlc);
+
+        CAN_insert_TX_frame(CAN_frame, 1, DUT_NODE, chn);
+
+        -- Enable test access
+        set_test_mem_access(true, DUT_NODE, chn);
+
+        -- Read, flip, and write back
+        rand_int_v(31, corrupt_bit_index);
+        test_mem_read(r_data, 5, txt_buf_to_test_mem_tgt(1), DUT_NODE, chn);
+        r_data(corrupt_bit_index) := not r_data(corrupt_bit_index);
+        test_mem_write(r_data, 5, txt_buf_to_test_mem_tgt(1), DUT_NODE, chn);
+
+        -- Disable test mem access
+        set_test_mem_access(false, DUT_NODE, chn);
+
+        -------------------------------------------------------------------------------------------
+        -- @3. Give DUTs TXT Buffer a "Set Ready" Command. Wait until Error frame occurs in DUT
+        --     Node. Check DUTs RX Buffer has a single frame in its RX Buffer. Wait until bus is
+        --     idle. Read the frame, and check it is an Error frame and it has
+        --     ERF_TYPE = ERC_PRT_ERR.
+        -------------------------------------------------------------------------------------------
+        info_m("Step 3");
+
+        send_TXT_buf_cmd(buf_set_ready, 1, DUT_NODE, chn);
+        CAN_wait_error_frame(DUT_NODE, chn);
+
+        wait for 100 ns;
 
         get_rx_buf_state(rx_buf_info, DUT_NODE, chn);
-        check_m(rx_buf_info.rx_read_pointer = 0, "Read pointer 0!");
-        check_m(rx_buf_info.rx_write_pointer = 0, "Write pointer 0!");
+        check_m(rx_buf_info.rx_frame_count = 1, "Single Error frame in RX Buffer!");
 
-        -----------------------------------------------------------------------
-        -- @2. Try to read CAN frame from RX Buffer. This should generate at
-        --     least 4 reads from RX DATA register.
-        -----------------------------------------------------------------------
-        info_m("Step 2: Try to read frame from empty RX Buffer!");
+        CAN_read_frame(err_frame, DUT_NODE, chn);
+        check_m(err_frame.erf = '1', "FRAME_FORMAT_W[ERF] = 1");
+        check_m(err_frame.erf_type = ERC_PRT_ERR, "FRAME_FORMAT_W[ERF_TYPE] = ERC_PRT_ERR");
+        check_m(err_frame.ivld = '1', "FRAME_FORMAT_W[IVLD] = 1");
 
-        -- Use purposefully "raw" reads instead of CAN_Read_frame
-        CAN_read(rx_data, RX_DATA_ADR, DUT_NODE, chn);
-        CAN_read(rx_data, RX_DATA_ADR, DUT_NODE, chn);
-        CAN_read(rx_data, RX_DATA_ADR, DUT_NODE, chn);
-        CAN_read(rx_data, RX_DATA_ADR, DUT_NODE, chn);
+        CAN_wait_bus_idle(DUT_NODE, chn);
 
-        ------------------------------------------------------------------------
-        -- @3. Read pointers from RX Buffer, check pointers are still 0.
-        ------------------------------------------------------------------------
-        info_m("Step 3: Read RX Buffer pointers again!");
-        get_rx_buf_state(rx_buf_info, DUT_NODE, chn);
-        check_m(rx_buf_info.rx_read_pointer = 0, "Read pointer 0!");
-        check_m(rx_buf_info.rx_write_pointer = 0, "Write pointer 0!");
-
-  end procedure;
+    end procedure;
 
 end package body;

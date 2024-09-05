@@ -259,7 +259,7 @@ begin
             -- This is to make assertions which check valid bit time config
             -- happy, no impact on functionality!
             tseg1_nbt <= std_logic_vector(to_unsigned(9, G_TSEG1_NBT_WIDTH));
-            tseg1_dbt <= std_logic_vector(to_unsigned(7, G_TSEG1_NBT_WIDTH));
+            tseg1_dbt <= std_logic_vector(to_unsigned(7, G_TSEG1_DBT_WIDTH));
         elsif (rising_edge(clk_sys)) then
             if (capture = '1') then
                 tseg1_nbt <= tseg1_nbt_d;

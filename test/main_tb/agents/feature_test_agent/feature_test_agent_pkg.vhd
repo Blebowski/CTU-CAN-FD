@@ -177,11 +177,12 @@ package feature_test_agent_pkg is
         time_triggered_transm   :   boolean;
         tx_buf_backup           :   boolean;
         parity_check            :   boolean;
+        error_logging           :   boolean;
     end record;
 
     constant SW_mode_rst_val : SW_mode := (false, false, false, false, false,
         true, false, false, false, true, false, false, false, true, true,
-        false, false, false);
+        false, false, false, false);
 
     -- Controller commands
     type SW_command is record
@@ -412,6 +413,9 @@ package feature_test_agent_pkg is
         -- ESI Flag (Error state indicator)
         esi                     :   std_logic;
 
+        -- Identifier valid flag
+        ivld                    :   std_logic;
+
         -- Timestamp (as defined in TIMESTAMP_U_W and TIMESTAMP_L_W)
         timestamp               :   std_logic_vector(63 downto 0);
 
@@ -421,8 +425,42 @@ package feature_test_agent_pkg is
         -- Note that this value is valid only for received frames and has
         -- no meaning in TXT Buffer.
         rwcnt                   :   natural;
+
+        -- Loopback frame flag
+        lbpf                    :   std_logic;
+
+        -- Index of TXT Buffer used to send the frame
+        lbtbi                   :   natural;
+
+        -- Error frame flag
+        erf                     :   std_logic;
+
+        -- Error frame type
+        erf_pos                 :   std_logic_vector(3 downto 0);
+        erf_erp                 :   std_logic;
+        erf_type                :   std_logic_vector(2 downto 0);
     end record;
 
+    constant SW_CAN_Frame_type_rst_val : SW_CAN_frame_type :=
+            (0,                                 -- Identifier
+             (OTHERS => (OTHERS => '0')),       -- Data
+             "0000",                            -- DLC
+             0,                                 -- Data length
+             '0',                               -- Identifier type
+             '0',                               -- Frame format
+             '0',                               -- RTR
+             '0',                               -- BRS
+             '0',                               -- ESI
+             '0',                               -- IVLD
+             (OTHERS => '0'),                   -- Timestamp
+             0,                                 -- RWCNT
+             '0',                               -- LBPF
+             0,                                 -- LBTBI
+             '0',                               -- ERF
+             "0000",                            -- ERF_POS
+             '0',                               -- ERF_ERP
+             "000"                              -- ERF_TYPE
+            );
 
     type SW_CAN_mask_filter_type is (
         filter_A,
@@ -2712,6 +2750,10 @@ package body feature_test_agent_pkg is
             end loop;
         end if;
 
+        -- Loop-back frame flag is only set by DUT upon reception,
+        -- no sense to generate!
+        frame.lbpf := '0';
+
     end procedure;
 
 
@@ -2747,6 +2789,12 @@ package body feature_test_agent_pkg is
             info_m("CAN 2.0 frame");
         else
             info_m("CAN FD frame");
+        end if;
+
+        if (frame.lbpf = LBPF_LOOPBACK) then
+            info_m("Loopback frame");
+        else
+            info_m("Frame from other CAN node");
         end if;
 
         info_m("RWCNT (read word count): " &
@@ -2866,6 +2914,10 @@ package body feature_test_agent_pkg is
                 end loop;
             end if;
         end if;
+
+        -- Purposefuly do NOT compare LBPF flag. The flag is nto set in the generated
+        -- or transmitted frames. It will be set in the received frames though!
+
     end procedure;
 
 
@@ -2951,6 +3003,8 @@ package body feature_test_agent_pkg is
                                   unsigned(DATA_1_4_W_ADR) + i * 4), node, channel);
             end if;
         end loop;
+
+        -- Ignore LBPF, only valid for Received frames!
     end procedure;
 
 
@@ -3103,9 +3157,48 @@ package body feature_test_agent_pkg is
         frame.ident_type    := frm_fmt_word(IDE_IND);
         frame.frame_format  := frm_fmt_word(FDF_IND);
         frame.brs           := frm_fmt_word(BRS_IND);
-        frame.rwcnt         := to_integer(unsigned(
-                               frm_fmt_word(RWCNT_H downto RWCNT_L)));
+        frame.rwcnt         := to_integer(unsigned(frm_fmt_word(RWCNT_H downto RWCNT_L)));
+        frame.lbpf          := frm_fmt_word(LBPF_IND);
+        frame.lbtbi         := to_integer(unsigned(frm_fmt_word(LBTBI_H downto LBTBI_L)));
+        frame.ivld          := frm_fmt_word(IVLD_IND);
+        frame.erf           := frm_fmt_word(ERF_IND);
+        frame.erf_erp       := frm_fmt_word(ERF_ERP_IND);
+        frame.erf_type      := frm_fmt_word(ERF_TYPE_H downto ERF_TYPE_L);
+        frame.erf_pos       := frm_fmt_word(ERF_POS_H downto ERF_POS_L);
+
+        info_m("READ FRAME_FORMAT_W: " & to_hstring(frm_fmt_word));
         decode_dlc(frame.dlc, frame.data_length);
+
+        -- Check that "regular" CAN frames do have IVLD and no ERF_*
+        if (frame.erf /= '1') then
+            if (frame.ivld /= '1') then
+                error_m("When FRAME_FORMAT_W[ERF]=0, FRAME_FORMAT_W[IVLD] must be 1. It is: 0x" &
+                        std_logic'image(frame.ivld));
+            end if;
+
+            if (frame.erf_pos /= "0000") then
+                error_m("When FRAME_FORMAT_W[ERF]=0, FRAME_FORMAT_W[ERF_POS] must be 0. It is: 0x" &
+                    to_hstring(frame.erf_pos));
+            end if;
+
+            if (frame.erf_type /= "000") then
+                error_m("When FRAME_FORMAT_W[ERF]=0, FRAME_FORMAT_W[ERF_TYPE] must be 0, It is: 0x" &
+                    to_hstring(frame.erf_type));
+            end if;
+
+            if (frame.erf_erp /= '0') then
+                error_m("When FRAME_FORMAT_W[ERF]=0, FRAME_FORMAT_W[ERF_ERP] must be 0. It is: 0x" &
+                    std_logic'image(frame.erf_erp));
+            end if;
+        end if;
+
+        -- Check that "regular" CAN frames do have LBTBI=0
+        if (frame.lbpf /= '1') then
+            if (frame.lbtbi /= 0) then
+                error_m("When FRAME_FORMAT_W[ILBP]=0, FRAME_FORMAT_W[LBTBI] must be 0. It is: " &
+                        integer'image(frame.lbtbi));
+            end if;
+        end if;
 
         -- Parse ID
         aux_vect := ident_word(28 downto 0);
@@ -3115,24 +3208,21 @@ package body feature_test_agent_pkg is
         frame.timestamp(31 downto 0)  := ts_low_word;
         frame.timestamp(63 downto 32) := ts_high_word;
 
+        -- Now read data bytes based on RWCNT
+        --  IDENTIFIER_W, TIMESTAMP_L,W and TIMESTAMP_U_W are alredy stored
+        for i in 0 to frame.rwcnt - 4 loop
+            if (automatic_mode) then
+                CAN_read(r_data, RX_DATA_ADR, node, channel);
+            else
+                CAN_read_by_byte(r_data, RX_DATA_ADR, node, channel);
+                give_controller_command(command, node, channel);
+            end if;
+            frame.data(i * 4)       := r_data(7 downto 0);
+            frame.data((i * 4) + 1) := r_data(15 downto 8);
+            frame.data((i * 4) + 2) := r_data(23 downto 16);
+            frame.data((i * 4) + 3) := r_data(31 downto 24);
+        end loop;
 
-        -- Now read data frames
-        if ((frame.rtr = NO_RTR_FRAME or frame.frame_format = FD_CAN)
-             and frame.data_length /= 0)
-        then
-            for i in 0 to (frame.data_length - 1) / 4 loop
-                if (automatic_mode) then
-                    CAN_read(r_data, RX_DATA_ADR, node, channel);
-                else
-                    CAN_read_by_byte(r_data, RX_DATA_ADR, node, channel);
-                    give_controller_command(command, node, channel);
-                end if;
-                frame.data(i * 4)       := r_data(7 downto 0);
-                frame.data((i * 4) + 1) := r_data(15 downto 8);
-                frame.data((i * 4) + 2) := r_data(23 downto 16);
-                frame.data((i * 4) + 3) := r_data(31 downto 24);
-            end loop;
-        end if;
     end procedure;
 
 
@@ -3596,6 +3686,10 @@ package body feature_test_agent_pkg is
             data(TXBBM_IND mod 16)     := '1';
         end if;
 
+        if (mode.error_logging) then
+            data(ERFM_IND mod 16)      := '1';
+        end if;
+
         CAN_write(data, MODE_ADR, node, channel);
 
         -- Following modes are stored in SETTINGS register
@@ -3664,6 +3758,7 @@ package body feature_test_agent_pkg is
         mode.time_triggered_transm      := false;
         mode.tx_buf_backup              := false;
         mode.parity_check               := false;
+        mode.error_logging              := false;
 
         if (data(RST_IND) = '1') then
             mode.reset                  := true;
@@ -3709,6 +3804,9 @@ package body feature_test_agent_pkg is
             mode.tx_buf_backup          := true;
         end if;
 
+        if (data(ERFM_IND) = '1') then
+            mode.error_logging          := true;
+        end if;
 
         -- SETTINGs part of read data
 

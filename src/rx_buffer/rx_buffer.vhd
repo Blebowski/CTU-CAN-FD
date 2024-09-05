@@ -142,6 +142,9 @@ entity rx_buffer is
         -- Recieved frame type (0-Normal CAN, 1- CAN FD)
         rec_frame_type          : in  std_logic;
 
+        -- Received Loopback frame
+        rec_lbpf                : in  std_logic;
+
         -- Recieved frame is RTR Frame(0-No, 1-Yes)
         rec_is_rtr              : in  std_logic;
 
@@ -150,6 +153,9 @@ entity rx_buffer is
 
         -- Recieved error state indicator
         rec_esi                 : in  std_logic;
+
+        -- Received identifier is valid
+        rec_ivld                : in  std_logic;
 
         -------------------------------------------------------------------------------------------
         -- Control signals from CAN Core which control storing of CAN Frame. (Filtered by Frame
@@ -176,6 +182,11 @@ entity rx_buffer is
         -- Signals start of frame. If timestamp on RX frame should be captured in the beginning of
         -- the frame, this pulse captures the timestamp!
         sof_pulse               : in  std_logic;
+
+        -- Error code capture registers
+        err_capt_err_type       : in  std_logic_vector(2 downto 0);
+        err_capt_err_pos        : in  std_logic_vector(3 downto 0);
+        err_capt_err_erp        : in  std_logic;
 
         -------------------------------------------------------------------------------------------
         -- Status signals of RX buffer
@@ -218,6 +229,14 @@ entity rx_buffer is
         timestamp               : in  std_logic_vector(63 downto 0);
 
         -------------------------------------------------------------------------------------------
+        -- TX Arbitrator interface
+        -------------------------------------------------------------------------------------------
+        -- TXT Buffer index that is:
+        --   - Currently validated (when no transmission is in progress)
+        --   - Used for transmission (when transmission is in progress)
+        curr_txtb_index         : in std_logic_vector(2 downto 0);
+
+        -------------------------------------------------------------------------------------------
         -- Memory registers interface
         -------------------------------------------------------------------------------------------
         mr_mode_rxbam           : in  std_logic;
@@ -228,6 +247,7 @@ entity rx_buffer is
         mr_rx_data_read         : in  std_logic;
         mr_rx_settings_rtsop    : in  std_logic;
         mr_settings_pchke       : in  std_logic;
+        mr_mode_erfm            : in  std_logic;
 
         -- Memory testability
         mr_tst_control_tmaena   : in  std_logic;
@@ -341,10 +361,10 @@ architecture rtl of rx_buffer is
     signal write_raw_intent             : std_logic;
 
     -- Indicates that FSM is in one of states for writing timestamp
-    signal write_ts                     : std_logic;
+    signal select_ts_wptr               : std_logic;
 
-    -- Storing of timestamp is at the end.
-    signal stored_ts                    : std_logic;
+    -- Intend to commit RX frame
+    signal commit_intent                : std_logic;
 
     -- Data write selector
     signal data_selector                : std_logic_vector(4 downto 0);
@@ -361,6 +381,9 @@ architecture rtl of rx_buffer is
     -- Trying to read from RX Buffer FIFO
     signal read_attempt                 : std_logic;
 
+    -- Error frame being logged
+    signal rec_erf                      : std_logic;
+
     -----------------------------------------------------------------------------------------------
     -- RX FSM, Timestamp capturing, combinationally decoded words
     -----------------------------------------------------------------------------------------------
@@ -370,7 +393,7 @@ architecture rtl of rx_buffer is
     signal rwcnt_com                    : natural range 0 to 31;
 
     -- Combinational decoded frame format word from metadata.
-    signal frame_form_w                 : std_logic_vector(31 downto 0);
+    signal frame_form_w                 : std_logic_vector(27 downto 0);
 
     -- Internal timestamp captured for storing. Captured either in the beginning or end of frame.
     signal timestamp_capture            : std_logic_vector(63 downto 0);
@@ -444,14 +467,18 @@ begin
     port map (
         clk_sys                 => clk_sys,                 -- IN
         res_n                   => res_n,                   -- IN
+
+        mr_mode_erfm            => mr_mode_erfm,            -- IN
+
         store_metadata_f        => store_metadata_f,        -- IN
         store_data_f            => store_data_f,            -- IN
         rec_valid_f             => rec_valid_f,             -- IN
         rec_abort_f             => rec_abort_f,             -- IN
+        rec_erf                 => rec_erf,                 -- IN
 
         write_raw_intent        => write_raw_intent,        -- OUT
-        write_ts                => write_ts,                -- OUT
-        stored_ts               => stored_ts,               -- OUT
+        select_ts_wptr          => select_ts_wptr,          -- OUT
+        commit_intent           => commit_intent,           -- OUT
         data_selector           => data_selector,           -- OUT
         store_ts_wr_ptr         => store_ts_wr_ptr,         -- OUT
         inc_ts_wr_ptr           => inc_ts_wr_ptr,           -- OUT
@@ -491,7 +518,7 @@ begin
     -- Memory data which are written depend on state of the FSM
     -----------------------------------------------------------------------------------------------
     with data_selector select rxb_port_a_data_in <=
-        frame_form_w                     when "00001",
+        "0000" & frame_form_w            when "00001",
         "000" & rec_ident                when "00010",
         store_data_word                  when "00100",
         timestamp_capture(31 downto 0)   when "01000",
@@ -577,35 +604,55 @@ begin
     -- Frame format word assignment
     -----------------------------------------------------------------------------------------------
     frame_form_w(DLC_H downto DLC_L)      <= rec_dlc;
-    frame_form_w(4)                       <= '0';
+    frame_form_w(ERF_IND)                 <= rec_erf;
     frame_form_w(RTR_IND)                 <= rec_is_rtr;
     frame_form_w(IDE_IND)                 <= rec_ident_type;
     frame_form_w(FDF_IND)                 <= rec_frame_type;
-    frame_form_w(8)                       <= '1'; -- Reserved
+    frame_form_w(LBPF_IND)                <= rec_lbpf;
     frame_form_w(BRS_IND)                 <= rec_brs;
     frame_form_w(ESI_RSV_IND)             <= rec_esi;
-
+    frame_form_w(IVLD_IND)                <= rec_ivld;
 
     -----------------------------------------------------------------------------------------------
     -- RWCNT (Read word count is calculated like so:
-    --  1. For RTR Frames -> 3 (Only ID + 2 Timestamp words)
+    --  1. For RTR Frames or Error Frames -> 3 (Only ID + 2 Timestamp words)
     --  2. For Normal CAN Frames with DLC > 8 max. 8 bytes -> RWCNT = 5
     --  3. Otherwise Number of data bytes is matching Received DLC!
     -----------------------------------------------------------------------------------------------
     frame_form_w(RWCNT_H downto RWCNT_L)  <=
-        "00011" when (rec_is_rtr = RTR_FRAME) else
+        "00011" when (rec_is_rtr = RTR_FRAME or rec_erf = ERFM_ENABLED) else
         "00101" when ((rec_frame_type = NORMAL_CAN) and (rec_dlc(3) = '1')) else
          std_logic_vector(to_unsigned(rwcnt_com, (RWCNT_H - RWCNT_L + 1)));
 
-    frame_form_w(31 downto 16) <= (others => '0');
+    -- Store Error code capture when this is Error frame
+    frame_form_w(ERF_POS_H downto ERF_POS_L) <= err_capt_err_pos when (rec_erf = '1')
+                                                                 else
+                                                (others => '0');
 
+    frame_form_w(ERF_TYPE_H downto ERF_TYPE_L) <= err_capt_err_type when (rec_erf = '1')
+                                                                    else
+                                                  (others => '0');
+
+    frame_form_w(ERF_ERP_IND) <= err_capt_err_erp when (rec_erf = '1')
+                                                  else
+                                              '0';
+
+    -- Store TXT Buffer index when this is Loopback frame
+    frame_form_w(LBTBI_H downto LBTBI_L) <= curr_txtb_index when (rec_lbpf = LBPF_LOOPBACK)
+                                                            else
+                                            (others => '0');
 
     -----------------------------------------------------------------------------------------------
-    -- Capturing timestamp. Done at the beginning or end of frame based on SW configuration.
+    -- Capturing timestamp:
+    --   1. At the beginning of frame (based on SW configuration)
+    --   2. At the end of frame (based on SW configuration)
+    --   3. When error frame occurs, and it shall be logged in RX Buffer.
     -----------------------------------------------------------------------------------------------
     timestamp_capture_ce <= '1' when (mr_rx_settings_rtsop = RTS_END and rec_valid_f = '1')
                                 else
                             '1' when (mr_rx_settings_rtsop = RTS_BEG and sof_pulse = '1')
+                                else
+                            '1' when (mr_mode_erfm = ERFM_ENABLED and rec_abort_f = '1')
                                 else
                             '0';
 
@@ -688,7 +735,7 @@ begin
 
         elsif (rising_edge(clk_sys)) then
 
-            if (stored_ts = '1') then
+            if (commit_intent = '1') then
                 if (data_overrun_i = '0') then
                     commit_rx_frame <= '1';
                 else
@@ -818,7 +865,7 @@ begin
 
     -- Memory written either on regular write or timestamp write
     rxb_port_a_write  <= '1' when (write_raw_OK = '1' or
-                                  (write_ts = '1' and data_overrun_i = '0' and
+                                  (select_ts_wptr = '1' and data_overrun_i = '0' and
                                    overrun_condition = '0'))
                              else
                          '0';
@@ -827,7 +874,7 @@ begin
     -- Memory write address is multiplexed between "write_pointer_raw" for regular writes and
     -- "write_pointer_ts" for writes of timestamp!
     -----------------------------------------------------------------------------------------------
-    rxb_port_a_address   <= write_pointer_ts when (write_ts = '1')
+    rxb_port_a_address   <= write_pointer_ts when (select_ts_wptr = '1')
                                              else
                            write_pointer_raw;
 
@@ -999,8 +1046,8 @@ begin
     -- psl rx_buf_overrun_clear_cov :
     --      cover {mr_command_cdo = '1'};
     --
-    -- psl rx_buf_write_ts_cov :
-    --      cover {write_ts = '1'};
+    -- psl rx_buf_select_ts_wptr_cov :
+    --      cover {select_ts_wptr = '1'};
     --
     -- psl rx_buf_release_receive_buffer_cov :
     --      cover {mr_command_rrb = '1'};
@@ -1067,6 +1114,9 @@ begin
     --
     -- psl rx_parity_err_clr_cov :
     --      cover {rx_parity_error = '1' and mr_command_crxpe = '1'};
+    --
+    -- psl rx_lbpf_cov :
+    --      cover {rec_lbpf = '1'};
 
     -----------------------------------------------------------------------------------------------
     -- "reset_overrun_flag = '1'" only in "s_rxb_idle" state. Therefore we can

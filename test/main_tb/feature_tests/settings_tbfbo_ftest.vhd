@@ -136,7 +136,6 @@ package body settings_tbfbo_ftest is
         variable fault_state        :       SW_fault_state;
 
         variable err_counters       :       SW_error_counters;
-        variable buf_index          :       natural;
 
         variable command            :       SW_command := SW_command_rst_val;
         variable num_buffers        :       natural;

@@ -279,7 +279,7 @@ begin
     -----------------------------------------------------------------------------------------------
     write_pointer_ts_d <= write_pointer_raw_i when (store_ts_wr_ptr = '1')
                                               else
-                       write_pointer_ts_i + 1;
+                          write_pointer_ts_i + 1;
 
     -- Tick only when it should be incremented or stored
     write_pointer_ts_ce <= '1' when (store_ts_wr_ptr = '1') else

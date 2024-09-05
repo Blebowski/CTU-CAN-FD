@@ -96,7 +96,7 @@
 --      @2.6 Insert the frame again, send Set Ready command.
 --      @2.7 Wait until frame is transmitted. Read frame from Test Node and
 --           check it is equal to transmitted frame.
---  @3. Loop 10 times for each TX Buffer:
+--  @3. Loop 10 times for each TXT Buffer:
 --      @3.1 Generate random CAN frame and make sure it has some data words.
 --           Insert it into random TXT Buffer. Set random value of
 --           SETTINGS[PCHKE] = 1.

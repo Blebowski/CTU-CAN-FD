@@ -112,13 +112,23 @@ package can_fd_frame_format is
   ------------------------------------------------------------------------------
   constant DLC_L                  : natural := 0;
   constant DLC_H                  : natural := 3;
+  constant ERF_IND                : natural := 4;
   constant RTR_IND                : natural := 5;
   constant IDE_IND                : natural := 6;
   constant FDF_IND                : natural := 7;
+  constant LBPF_IND               : natural := 8;
   constant BRS_IND                : natural := 9;
   constant ESI_RSV_IND           : natural := 10;
   constant RWCNT_L               : natural := 11;
   constant RWCNT_H               : natural := 15;
+  constant ERF_POS_L             : natural := 16;
+  constant ERF_POS_H             : natural := 19;
+  constant ERF_ERP_IND           : natural := 20;
+  constant ERF_TYPE_L            : natural := 21;
+  constant ERF_TYPE_H            : natural := 23;
+  constant IVLD_IND              : natural := 24;
+  constant LBTBI_L               : natural := 25;
+  constant LBTBI_H               : natural := 27;
 
   -- "RTR" field enumerated values
   constant NO_RTR_FRAME       : std_logic := '0';
@@ -139,6 +149,28 @@ package can_fd_frame_format is
   -- "ESI_RSV" field enumerated values
   constant ESI_ERR_ACTIVE     : std_logic := '0';
   constant ESI_ERR_PASIVE     : std_logic := '1';
+
+  -- "LBPF" field enumerated values
+  constant LBPF_FOREIGN       : std_logic := '0';
+  constant LBPF_LOOPBACK      : std_logic := '1';
+
+  -- "ERF" field enumerated values
+  constant ERF_CAN_FRAME      : std_logic := '0';
+  constant ERF_ERR_FRAME      : std_logic := '1';
+
+  -- "IVLD" field enumerated values
+  constant IVLD_INALID        : std_logic := '0';
+  constant IVLD_VALID         : std_logic := '1';
+
+  -- "LBTBI" field enumerated values
+  constant TXT_BUF_1 : std_logic_vector(2 downto 0) := "000";
+  constant TXT_BUF_2 : std_logic_vector(2 downto 0) := "001";
+  constant TXT_BUF_3 : std_logic_vector(2 downto 0) := "010";
+  constant TXT_BUF_4 : std_logic_vector(2 downto 0) := "011";
+  constant TXT_BUF_5 : std_logic_vector(2 downto 0) := "100";
+  constant TXT_BUF_6 : std_logic_vector(2 downto 0) := "101";
+  constant TXT_BUF_7 : std_logic_vector(2 downto 0) := "110";
+  constant TXT_BUF_8 : std_logic_vector(2 downto 0) := "111";
 
   -- FRAME_FORMAT_W register reset values
 

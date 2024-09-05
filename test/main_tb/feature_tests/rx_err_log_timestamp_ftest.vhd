@@ -67,93 +67,57 @@
 --------------------------------------------------------------------------------
 
 --------------------------------------------------------------------------------
--- Package:
---  CAN Configuration
+-- @TestInfoStart
 --
--- Purpose:
---  Package with Configuration of CTU CAN FD. Contains all contstants which
---  drive top level generics.
+-- @Purpose:
+--  RX Error logging feature test - Timestamp test.
+--
+-- @Verifies:
+--  @1. Timestamp is recorded in Error frames logged to RX Buffer.
+--
+-- @Test sequence:
+--  @1. Configure DUT to MODE[ERFM] = 1. Disable SSP in DUT. Generate random
+--      bit timing.
+--  @2. Generate random CAN frame without bit-rate shift and insert it to DUT
+--      for transmission. Wait until DUTs sample point and issue Set ready
+--      Command to a TXT buffer containing the CAN frame.
+--  @3. Wait for random number of DUT bits with dominant bit being sent.
+--      Count number of bits waited. Flip bus value, and wait until sample
+--      point. Wait until Error frame is transmitted and release bus level.
+--      Wait until bus is idle.
+--  @4. Pre-compute expected value of Logged RX Error frame timestamp based on
+--      number of cycles in the nominal bit-rate and number of elapsed bits
+--      before invoking the error. Check the read timestamp of logged Error
+--      frame matches the expected timestamp of Error frame.
+--
+-- @TestInfoEnd
+--------------------------------------------------------------------------------
+-- Revision History:
+--    5.8.2024   Created file
 --------------------------------------------------------------------------------
 
-Library ieee;
-use ieee.std_logic_1164.all;
+Library ctu_can_fd_tb;
+context ctu_can_fd_tb.ieee_context;
+context ctu_can_fd_tb.rtl_context;
+context ctu_can_fd_tb.tb_common_context;
 
-package can_config_pkg is
+use ctu_can_fd_tb.feature_test_agent_pkg.all;
 
-    -- IP Core version
-    constant C_CTU_CAN_FD_VERSION_MINOR : std_logic_vector(7 downto 0) := x"05";
-    constant C_CTU_CAN_FD_VERSION_MAJOR : std_logic_vector(7 downto 0) := x"02";
-
-    -- Number of TXT Buffers
-    constant C_TXT_BUFFER_COUNT     : natural := 4;
-
-    -- Number of Interrupts
-    constant C_INT_COUNT            : natural := 12;
-
-    -- Number of Sample Triggers
-    constant C_SAMPLE_TRIGGER_COUNT : natural range 2 to 8 := 2;
-
-    -- Width of control counter
-    constant C_CTRL_CTR_WIDTH       : natural := 9;
-
-    -- Width of retransmitt counter
-    constant C_RETR_LIM_CTR_WIDTH   : natural := 4;
-
-    -- Insert pipeline on Error valid signal
-    constant C_ERR_VALID_PIPELINE   : boolean := true;
-
-    -- TSEG1 Width - Nominal Bit Time
-    -- SYNC (1) + PROP_NBT (127) + PH1_NBT (63) = 191 -> Fits into 8 bits
-    constant C_TSEG1_NBT_WIDTH      : natural := 8;
-
-    -- TSEG2 Width - Nominal Bit Time
-    -- PH2_NBT (63) -> Fits into 6 bits
-    constant C_TSEG2_NBT_WIDTH      : natural := 6;
-
-    -- Baud rate prescaler Width - Nominal Bit Time
-    -- BRP_NBT (255) -> Fits into 8 bits
-    constant C_BRP_NBT_WIDTH        : natural := 8;
-
-    -- Synchronisation Jump width Width - Nominal Bit Time
-    -- SJW_NBT (31) -> Fits into 5 bits
-    constant C_SJW_NBT_WIDTH        : natural := 5;
-
-    -- TSEG1 Width - Data Bit Time
-    -- SYNC (1) + PROP_DBT (63) + PH1_DBT (31) = 95 -> Fits into 7 bits
-    constant C_TSEG1_DBT_WIDTH      : natural := 7;
-
-    -- TSEG2 Width - Data Bit Time
-    -- PH2_DBT (31) -> Fits into 5 bits
-    constant C_TSEG2_DBT_WIDTH      : natural := 5;
-
-    -- Baud rate prescaler width - Data Bit Time
-    -- BRP_DBT (255) -> Fits into 8 bits
-    constant C_BRP_DBT_WIDTH        : natural := 8;
-
-    -- Synchronisation Jump Width width - Data Bit Time
-    constant C_SJW_DBT_WIDTH        : natural := 5;
-
-    -- Secondary sampling point Shift registers length
-    constant C_SSP_DELAY_SAT_VAL    : natural := 255;
-
-    -- Depth of FIFO Cache for TX Data
-    constant C_TX_CACHE_DEPTH       : natural := 8;
-
-    -- Width (number of bits) in transceiver delay measurement counter
-    constant C_TRV_CTR_WIDTH        : natural := 7;
-
-    -- Secondary sample point position width
-    constant C_SSP_POS_WIDTH        : natural := 8;
-
-    -- Width of SSP counters
-    constant C_SSP_CTRS_WIDTH       : natural := 15;
-
-    -- CRC polynomials
-    constant C_CRC15_POL            : std_logic_vector(15 downto 0) := x"C599";
-    constant C_CRC17_POL            : std_logic_vector(19 downto 0) := x"3685B";
-    constant C_CRC21_POL            : std_logic_vector(23 downto 0) := x"302899";
-
-    -- Device ID
-    constant C_CAN_DEVICE_ID        : std_logic_vector(15 downto 0) := x"CAFD";
-
+package rx_err_log_timestamp_ftest is
+    procedure rx_err_log_timestamp_ftest_exec(
+        signal      chn             : inout  t_com_channel
+    );
 end package;
+
+
+package body rx_err_log_timestamp_ftest is
+
+    procedure rx_err_log_timestamp_ftest_exec(
+        signal      chn             : inout  t_com_channel
+    ) is
+    begin
+
+
+    end procedure;
+
+end package body;

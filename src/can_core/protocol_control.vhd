@@ -122,10 +122,10 @@ entity protocol_control is
         -------------------------------------------------------------------------------------------
         mr_mode_acf             : in  std_logic;
         mr_mode_stm             : in  std_logic;
-        mr_mode_bmm             : in  std_logic;
         mr_mode_fde             : in  std_logic;
         mr_mode_rom             : in  std_logic;
         mr_mode_tstm            : in  std_logic;
+        mr_mode_sam             : in  std_logic;
 
         mr_settings_ena         : in  std_logic;
         mr_settings_nisofd      : in  std_logic;
@@ -145,7 +145,8 @@ entity protocol_control is
 
         -- ERR_CAPT register
         err_capt_err_type       : out std_logic_vector(2 downto 0);
-        err_capt_err_pos        : out std_logic_vector(4 downto 0);
+        err_capt_err_pos        : out std_logic_vector(3 downto 0);
+        err_capt_err_erp        : out std_logic;
 
         -- Protocol exception status
         mr_status_pexs          : out std_logic;
@@ -216,11 +217,17 @@ entity protocol_control is
         -- RX frame type (0-CAN 2.0, 1- CAN FD)
         rec_frame_type          : out std_logic;
 
+        -- Received Loopback frame
+        rec_lbpf                : out std_logic;
+
         -- RX Bit rate shift Flag
         rec_brs                 : out std_logic;
 
         -- RX Error state indicator
         rec_esi                 : out std_logic;
+
+        -- RX Identifier is valid
+        rec_ivld                : out std_logic;
 
         -- Store Metadata in RX Buffer
         store_metadata          : out std_logic;
@@ -350,6 +357,9 @@ entity protocol_control is
 
         -- Synchronization edge
         sync_edge               : in  std_logic;
+
+        -- Bit error detection enabled
+        bit_err_enable          : out std_logic;
 
         -------------------------------------------------------------------------------------------
         -- CRC Interface
@@ -555,13 +565,7 @@ architecture rtl of protocol_control is
     signal crc_src                 :      std_logic_vector(1 downto 0);
 
     -- Error position field (for Error capture)
-    signal err_pos                 :      std_logic_vector(4 downto 0);
-
-    -- Bit error detection enabled
-    signal bit_err_enable          :      std_logic;
-
-    -- TX Data internal
-    signal tx_data_nbs_i           :      std_logic;
+    signal err_pos                 :      std_logic_vector(3 downto 0);
 
     -- Received CRC (driven from RX Shift register)
     signal rx_crc                  :      std_logic_vector(20 downto 0);
@@ -615,7 +619,6 @@ begin
         mr_command_ercrst       => mr_command_ercrst,       -- IN
         mr_mode_acf             => mr_mode_acf,             -- IN
         mr_mode_stm             => mr_mode_stm,             -- IN
-        mr_mode_bmm             => mr_mode_bmm,             -- IN
         mr_settings_rtrle       => mr_settings_rtrle,       -- IN
         mr_settings_ilbp        => mr_settings_ilbp,        -- IN
         mr_mode_fde             => mr_mode_fde,             -- IN
@@ -623,6 +626,7 @@ begin
         mr_settings_pex         => mr_settings_pex,         -- IN
         mr_command_cpexs        => mr_command_cpexs,        -- IN
         mr_mode_rom             => mr_mode_rom,             -- IN
+        mr_mode_sam             => mr_mode_sam,             -- IN
 
         mr_status_pexs          => mr_status_pexs,          -- OUT
 
@@ -677,6 +681,8 @@ begin
         rec_dlc_d               => rec_dlc_d,               -- IN
         rec_dlc_q               => rec_dlc_q,               -- IN
         rec_frame_type          => rec_frame_type_i,        -- IN
+        rec_lbpf                => rec_lbpf,                -- OUT
+        rec_ivld                => rec_ivld,                -- OUT
 
         -- Control counter interface
         ctrl_ctr_pload          => ctrl_ctr_pload,          -- OUT
@@ -858,6 +864,7 @@ begin
         mr_settings_nisofd      => mr_settings_nisofd,      -- IN
         err_capt_err_type       => err_capt_err_type,       -- OUT
         err_capt_err_pos        => err_capt_err_pos,        -- OUT
+        err_capt_err_erp        => err_capt_err_erp,        -- OUT
 
         -- CRC comparison data
         rx_crc                  => rx_crc,                  -- IN
@@ -868,7 +875,6 @@ begin
         dst_ctr                 => dst_ctr,                 -- IN
 
         -- Control signals
-        bit_err_enable          => bit_err_enable,          -- IN
         fixed_stuff             => fixed_stuff_i,           -- IN
         err_pos                 => err_pos,                 -- IN
         crc_check               => crc_check,               -- IN
@@ -896,7 +902,7 @@ begin
         mr_mode_tstm            => mr_mode_tstm,            -- IN
 
         tx_trigger              => tx_trigger,              -- IN
-        tx_data_nbs             => tx_data_nbs_i,           -- OUT
+        tx_data_nbs             => tx_data_nbs,             -- OUT
 
         -- Protocol control FSM interface
         tx_load_base_id         => tx_load_base_id,         -- IN
@@ -972,7 +978,6 @@ begin
     -----------------------------------------------------------------------------------------------
     -- Internal signals propagation to output
     -----------------------------------------------------------------------------------------------
-    tx_data_nbs <= tx_data_nbs_i;
     rec_frame_type <= rec_frame_type_i;
     rec_is_rtr <= rec_is_rtr_i;
     rec_dlc <= rec_dlc_q;

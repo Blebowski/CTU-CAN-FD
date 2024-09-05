@@ -4550,11 +4550,11 @@ Reserved\end_layout
 
 \end_inset
 </cell>
-<cell alignment="center" leftline="true" multicolumn="2" topline="true" usebox="none" valignment="top">
+<cell alignment="center" leftline="true" multicolumn="1" topline="true" usebox="none" valignment="top">
 \begin_inset Text
 
 \begin_layout Plain Layout
-Reserved\end_layout
+ERFM\end_layout
 
 \end_inset
 </cell>
@@ -4635,7 +4635,7 @@ cellcolor{cyan}
 \begin_inset Text
 
 \begin_layout Plain Layout
--\end_layout
+X\end_layout
 
 \end_inset
 </cell>
@@ -5023,8 +5023,8 @@ FDE Flexible data rate enable. When flexible data rate is enabled CTU CAN FD rec
 \end_layout
 \begin_layout Description
 TTTM Time triggered transmission mode.\begin_inset Newline newline\end_inset
-		0b0  - TTTM_DISABLED - \begin_inset Newline newline\end_inset
-		0b1  - TTTM_ENABLED - 
+		0b0  - TTTM_DISABLED - Time Triggerer transmission is disabled. A frame from highest priority TXT Buffer in Ready state is admitted for transmission regardless of its timestamp.\begin_inset Newline newline\end_inset
+		0b1  - TTTM_ENABLED - Time Triggerer transmission is enabled. A frame from highest priority TXT Buffer in Ready state is admitted for transmission when its timestamp lower than CTU CAN FD timebase.
 \end_layout
 \begin_layout Description
 ROM Restricted operation mode.\begin_inset Newline newline\end_inset
@@ -5053,6 +5053,11 @@ TXBBM TXT Buffer Backup mode.\begin_inset Newline newline\end_inset
 SAM Self-acknowledge mode.\begin_inset Newline newline\end_inset
 		0b0  - SAM_DISABLE - Do not send dominant ACK bit when CTU CAN FD sends Acknowledge bit.\begin_inset Newline newline\end_inset
 		0b1  - SAM_ENABLE - Send dominant ACK bit when CTU CAN FD transmits CAN frame.
+\end_layout
+\begin_layout Description
+ERFM Error Frame Receive mode. When set, CTU CAN FD receives Error frames on CAN bus into its RX buffer.\begin_inset Newline newline\end_inset
+		0b0  - ERFM_DISABLED - Error frames are not stored to RX Buffer.\begin_inset Newline newline\end_inset
+		0b1  - ERFM_ENABLED - Error frames are stored to RX buffer.
 \end_layout
 \begin_layout Standard
 \begin_inset VSpace bigskip
@@ -15813,7 +15818,7 @@ cellcolor{cyan}
 \begin_inset Text
 
 \begin_layout Plain Layout
-0\end_layout
+1\end_layout
 
 \end_inset
 </cell>
@@ -15829,7 +15834,7 @@ cellcolor{cyan}
 \begin_inset Text
 
 \begin_layout Plain Layout
-1\end_layout
+0\end_layout
 
 \end_inset
 </cell>
@@ -40959,15 +40964,15 @@ ERR_TYPE\end_layout
 
 \end_inset
 </cell>
-<cell alignment="center" leftline="true" multicolumn="1" rightline="true" topline="true" usebox="none" valignment="top">
+<cell alignment="center" leftline="true" multicolumn="1" topline="true" usebox="none" valignment="top">
 \begin_inset Text
 
 \begin_layout Plain Layout
-ERR_POS\end_layout
+ERR_ERP\end_layout
 
 \end_inset
 </cell>
-<cell alignment="center" leftline="true" multicolumn="2" topline="true" usebox="none" valignment="top">
+<cell alignment="center" leftline="true" multicolumn="1" rightline="true" topline="true" usebox="none" valignment="top">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -41044,7 +41049,7 @@ cellcolor{cyan}
 \begin_inset Text
 
 \begin_layout Plain Layout
-1\end_layout
+0\end_layout
 
 \end_inset
 </cell>
@@ -41089,16 +41094,21 @@ cellcolor{cyan}
 \end_layout
 \begin_layout Description
 ERR_POS Position of last error.\begin_inset Newline newline\end_inset
-		0b00000  - ERC_POS_SOF - Error in Start of Frame\begin_inset Newline newline\end_inset
-		0b00001  - ERC_POS_ARB - Error in Arbitration Filed\begin_inset Newline newline\end_inset
-		0b00010  - ERC_POS_CTRL - Error in Control field\begin_inset Newline newline\end_inset
-		0b00011  - ERC_POS_DATA - Error in Data Field\begin_inset Newline newline\end_inset
-		0b00100  - ERC_POS_CRC - Error in CRC Field\begin_inset Newline newline\end_inset
-		0b00101  - ERC_POS_ACK - Error in CRC delimiter, ACK field or ACK delimiter\begin_inset Newline newline\end_inset
-		0b00110  - ERC_POS_EOF - Error in End of frame field\begin_inset Newline newline\end_inset
-		0b00111  - ERC_POS_ERR - Error during Error frame\begin_inset Newline newline\end_inset
-		0b01000  - ERC_POS_OVRL - Error in Overload frame\begin_inset Newline newline\end_inset
-		0b11111  - ERC_POS_OTHER - Other position of error
+		0b0000  - ERC_POS_SOF - Error in Start of Frame\begin_inset Newline newline\end_inset
+		0b0001  - ERC_POS_ARB - Error in Arbitration Filed\begin_inset Newline newline\end_inset
+		0b0010  - ERC_POS_CTRL - Error in Control field\begin_inset Newline newline\end_inset
+		0b0011  - ERC_POS_DATA - Error in Data Field\begin_inset Newline newline\end_inset
+		0b0100  - ERC_POS_CRC - Error in CRC Field\begin_inset Newline newline\end_inset
+		0b0101  - ERC_POS_ACK - Error in CRC delimiter, ACK field or ACK delimiter\begin_inset Newline newline\end_inset
+		0b0110  - ERC_POS_EOF - Error in End of frame field\begin_inset Newline newline\end_inset
+		0b0111  - ERC_POS_ERR - Error during Error frame\begin_inset Newline newline\end_inset
+		0b1000  - ERC_POS_OVRL - Error in Overload frame\begin_inset Newline newline\end_inset
+		0b1111  - ERC_POS_OTHER - Other position of error
+\end_layout
+\begin_layout Description
+ERR_ERP CTU CAN FD was error passive the time when last error was detected.\begin_inset Newline newline\end_inset
+		0b0  - ERR_ERP_ACTIVE - CTU CAN FD was error passive when it detected the error condition.\begin_inset Newline newline\end_inset
+		0b1  - ERR_ERP_PASSIVE - CTU CAN FD was error active when it detected the error condition.
 \end_layout
 \begin_layout Description
 ERR_TYPE Type of last error.\begin_inset Newline newline\end_inset

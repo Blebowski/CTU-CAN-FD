@@ -89,6 +89,7 @@ package can_registers_pkg is
      mode_rxbam                  : std_logic;
      mode_txbbm                  : std_logic;
      mode_sam                    : std_logic;
+     mode_erfm                   : std_logic;
      settings_rtrle              : std_logic;
      settings_rtrth              : std_logic_vector(3 downto 0);
      settings_ilbp               : std_logic;
@@ -253,7 +254,8 @@ package can_registers_pkg is
      tx_status_tx7s              : std_logic_vector(3 downto 0);
      tx_status_tx8s              : std_logic_vector(3 downto 0);
      txtb_info_txt_buffer_count  : std_logic_vector(3 downto 0);
-     err_capt_err_pos            : std_logic_vector(4 downto 0);
+     err_capt_err_pos            : std_logic_vector(3 downto 0);
+     err_capt_err_erp            : std_logic;
      err_capt_err_type           : std_logic_vector(2 downto 0);
      retr_ctr_retr_ctr_val       : std_logic_vector(3 downto 0);
      alc_alc_bit                 : std_logic_vector(4 downto 0);

@@ -356,6 +356,24 @@ begin
     );
 
     ----------------------------------------------------------------------------
+    -- MODE[ERFM]
+    ----------------------------------------------------------------------------
+
+    mode_erfm_reg_comp : memory_reg_rw
+    generic map(
+        data_width                      => 1 ,
+        reset_value                     => "0" 
+    )
+    port map(
+        clk_sys                         => clk_sys ,-- in
+        res_n                           => res_n ,-- in
+        data_in                         => w_data(12 downto 12) ,-- in
+        write                           => write_en(1) ,-- in
+        cs                              => reg_sel(1) ,-- in
+        reg_value(0)                    => control_registers_out_i.mode_erfm -- out
+    );
+
+    ----------------------------------------------------------------------------
     -- SETTINGS[RTRLE]
     ----------------------------------------------------------------------------
 
@@ -2956,6 +2974,7 @@ begin
 	'0'	&
 	control_registers_in.retr_ctr_retr_ctr_val	&
 	control_registers_in.err_capt_err_type	&
+	control_registers_in.err_capt_err_erp	&
 	control_registers_in.err_capt_err_pos	&
 
     -- Adress:120
@@ -3474,7 +3493,7 @@ begin
 	'0'	&
 	'0'	&
 	'0'	&
-	'0'	&
+	control_registers_out_i.mode_erfm	&
 	control_registers_out_i.mode_sam	&
 	control_registers_out_i.mode_txbbm	&
 	control_registers_out_i.mode_rxbam	&

@@ -52,7 +52,7 @@ def set_comp_options(sf, file):
     opts = SIM_CFG["comp_options"]["ghdl"].split()
     if "comp_options" in file:
         opts.extend(file["comp_options"].split())
-    # TODO: Add target specific elabo options
+    # TODO: Add target specific elaboration options
     #print(f"Compile options: {opts}")
     sf.add_compile_option("ghdl.a_flags", opts)
 
