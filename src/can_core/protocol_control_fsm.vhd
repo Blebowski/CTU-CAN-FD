@@ -2132,7 +2132,32 @@ begin
                 tick_state_reg <= '1';
                 err_pos <= ERC_POS_ACK;
                 pc_dbg.is_crc_delim  <= '1';
+
+                -- Bit Error detection must be enabled for SSP
+                -- Special enable used only in CRC delimiter when SSP is enabled and
+                -- a SSP that reaches into TSEG1 of CRC delimiter shall detect error
+                -- from a previous bit !
+                -- In the moment of sample point, this must be already disabled though!
+                -- So use rx_trigger to gate this. Do not gate by sp_control_d to avoid
+                -- potential combo loop.
+                --if (sp_control_q_i /= SECONDARY_SAMPLE and rx_trigger = '0') then
+                --    bit_err_disable <= '1';
+                --end if;
+
+                -- Theoretically, we should enable bit error detection here when in SECONDARY_SAMPLE.
+                -- (see commented code above). This would allow us to detect e.g. bit error of last bit
+                -- of last CRC bit whose sample point is TSEG1 of CRC delimiter. This-way a bit error
+                -- detected by SSP right in the SP of CRC delimiter would be ignored, but any earlier
+                -- SSP (e.g. just one cycle before regular SP of CRC delimiter) would be recognized as
+                -- bit error. ISO compliance test 8.8.2.4 tests that a "correct value" pulse around
+                -- CRC Delimiter regular sample point will not cause error frame. There is no ISO test
+                -- that tests if a SSP of a e.g. last CRC bit is placed in middle of CRC delimiters
+                -- TSEG1 and detects bit error. We choose less "strict" various and opt not to detect
+                -- bit error in this case as that may affect compliance test result! This corresponds
+                -- to 2v5 behavior if SSP occurs anywhere within CRC delimiter. Possibly can be adjusted
+                -- based on certification results.
                 bit_err_disable <= '1';
+
                 dbt_ctrs_en <= '1';
                 destuff_enable_clear <= '1';
                 stuff_enable_clear <= '1';
