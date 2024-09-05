@@ -129,7 +129,6 @@ entity protocol_control_fsm is
         -- Configuration values
         mr_mode_acf             : in  std_logic;
         mr_mode_stm             : in  std_logic;
-        mr_mode_bmm             : in  std_logic;
         mr_mode_fde             : in  std_logic;
         mr_mode_rom             : in  std_logic;
         mr_mode_sam             : in  std_logic;
@@ -553,9 +552,6 @@ architecture rtl of protocol_control_fsm is
     -- Frame transmission/reception can be started from idle or intermission!
     signal frame_start                  : std_logic;
 
-    -- There is TX Frame ready for transmission
-    signal tx_frame_ready               : std_logic;
-
     -- IDE bit is part of arbitration
     signal ide_is_arbitration           : std_logic;
 
@@ -753,16 +749,6 @@ architecture rtl of protocol_control_fsm is
 
 begin
 
-    -- TODO: mr_mode_bmm and mr_mode_rom can be removed! It is guaranteed that
-    --       in these modes, TXT Buffers will never be validated, and thus
-    --       tran_frame_valid will not occur. Need to add assertion on mutual
-    --       exclusivity !!!
-    tx_frame_ready <= '1' when (tran_frame_valid = '1' and
-                                mr_mode_bmm = BMM_DISABLED and
-                                mr_mode_rom = ROM_DISABLED)
-                          else
-                      '0';
-
     tran_frame_type_i <= FD_CAN when (tran_frame_type = FD_CAN and mr_mode_fde = '1')
                                 else
                          NORMAL_CAN;
@@ -809,7 +795,7 @@ begin
                              else
                          '0';
 
-    frame_start <= '1' when (tx_frame_ready = '1' and go_to_suspend = '0') else
+    frame_start <= '1' when (tran_frame_valid = '1' and go_to_suspend = '0') else
                    '1' when (rx_data_nbs = DOMINANT) else
                    '0';
 
@@ -954,7 +940,7 @@ begin
     -----------------------------------------------------------------------------------------------
     next_state_proc : process(
         curr_state, err_frm_req, ctrl_ctr_zero, no_data_field, is_receiver, is_fd_frame,
-        is_bus_off, go_to_suspend, tx_frame_ready, mr_command_ercrst_q, reinteg_ctr_expired,
+        is_bus_off, go_to_suspend, tran_frame_valid, mr_command_ercrst_q, reinteg_ctr_expired,
         rx_data_nbs, is_err_active, go_to_stuff_count, pex_on_fdf_enable, pex_on_res_enable,
         mr_mode_rom)
     begin
@@ -1197,7 +1183,7 @@ begin
                         next_state <= s_pc_base_id;
                     elsif (go_to_suspend = '1') then
                         next_state <= s_pc_suspend;
-                    elsif (tx_frame_ready = '1') then
+                    elsif (tran_frame_valid = '1') then
                         next_state <= s_pc_sof;
                     else
                         next_state <= s_pc_idle;
@@ -1221,7 +1207,7 @@ begin
                 elsif (ctrl_ctr_zero = '1') then
                     -- Start transmission after suspend if we have what to
                     -- transmitt!
-                    if (tx_frame_ready = '1') then
+                    if (tran_frame_valid = '1') then
                         next_state <= s_pc_sof;
                     else
                         next_state <= s_pc_idle;
@@ -1236,7 +1222,7 @@ begin
                    next_state <= s_pc_reintegrating_wait;
                elsif (rx_data_nbs = DOMINANT) then
                    next_state <= s_pc_base_id;
-               elsif (tx_frame_ready = '1') then
+               elsif (tran_frame_valid = '1') then
                    next_state <= s_pc_sof;
                end if;
 
@@ -1351,7 +1337,7 @@ begin
         ctrl_ctr_zero, arbitration_lost_condition, tx_data_wbs, is_transmitter, tran_ident_type,
         tran_frame_type_i, tran_is_rtr, ide_is_arbitration, mr_mode_fde, tran_brs, rx_trigger,
         is_err_active, no_data_field, ctrl_counted_byte, ctrl_counted_byte_index, is_fd_frame,
-        is_receiver, crc_match, mr_mode_stm, tx_frame_ready, go_to_suspend, frame_start,
+        is_receiver, crc_match, mr_mode_stm, tran_frame_valid, go_to_suspend, frame_start,
         ctrl_ctr_one, mr_command_ercrst_q, reinteg_ctr_expired, first_err_delim_q, go_to_stuff_count,
         ack_err_flag, crc_length_i, data_length_bits_c, ctrl_ctr_mem_index, is_bus_off,
         block_txtb_unlock, mr_settings_pex, rx_data_nbs_prev, sync_edge, mr_mode_rom,
@@ -2350,7 +2336,7 @@ begin
 
                     -- Lock TXT Buffer when there is what to transmitt, and no suspend! Unit becomes
                     -- transmitter! If not, and DOMINANT is received, become receiver!
-                    if (tx_frame_ready = '1' and go_to_suspend = '0') then
+                    if (tran_frame_valid = '1' and go_to_suspend = '0') then
                         txtb_hw_cmd_d.lock <= '1';
                         set_transmitter_i <= '1';
                         stuff_enable_set <= '1';
@@ -2372,7 +2358,7 @@ begin
 
                     -- If we dont sample dominant, nor we have sth ready for transmission, we go to
                     -- Idle! Don't become idle when we go to suspend!
-                    if (rx_data_nbs = RECESSIVE and tx_frame_ready = '0' and
+                    if (rx_data_nbs = RECESSIVE and tran_frame_valid = '0' and
                         go_to_suspend = '0')
                     then
                         set_idle_i <= '1';
@@ -2425,7 +2411,7 @@ begin
                 -- it goes to SOF and transmitts
                 elsif (ctrl_ctr_zero = '1') then
                     tick_state_reg <= '1';
-                    if (tx_frame_ready = '1') then
+                    if (tran_frame_valid = '1') then
                         set_transmitter_i <= '1';
                         txtb_hw_cmd_d.lock <= '1';
                         rx_clear_i <= '1';
@@ -2454,7 +2440,7 @@ begin
                         crc_enable <= '1';
                     end if;
 
-                    if (tx_frame_ready = '1') then
+                    if (tran_frame_valid = '1') then
                         tick_state_reg <= '1';
                         txtb_hw_cmd_d.lock <= '1';
                         set_transmitter_i <= '1';

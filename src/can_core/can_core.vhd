@@ -502,7 +502,6 @@ begin
         -- Memory registers interface
         mr_mode_acf             => mr_mode_acf,                 -- IN
         mr_mode_stm             => mr_mode_stm,                 -- IN
-        mr_mode_bmm             => mr_mode_bmm,                 -- IN
         mr_mode_fde             => mr_mode_fde,                 -- IN
         mr_mode_rom             => mr_mode_rom,                 -- IN
         mr_mode_tstm            => mr_mode_tstm,                -- IN
@@ -1003,6 +1002,10 @@ begin
     -- psl no_stuff_bit_in_idle_asrt : assert never
     --  ((destuffed = '1' or data_halt = '1') and is_idle = '1' and mr_mode_rom = '0')
     --  report "Stuff bits not allowed in Bus idle!";
+
+    -- psl no_tran_frame_valid_in_rom_or_bmm_asrt : assert never
+    --  (tran_frame_valid = '1' and (mr_mode_bmm = '1' or mr_mode_rom = '1'))
+    --  report "TX frame shall not be ready in MODE[ROM] or MODE[BMM]!";
 
     -----------------------------------------------------------------------------------------------
     -----------------------------------------------------------------------------------------------
