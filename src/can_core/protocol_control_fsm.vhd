@@ -1341,7 +1341,7 @@ begin
         ctrl_ctr_one, mr_command_ercrst_q, reinteg_ctr_expired, first_err_delim_q, go_to_stuff_count,
         ack_err_flag, crc_length_i, data_length_bits_c, ctrl_ctr_mem_index, is_bus_off,
         block_txtb_unlock, mr_settings_pex, rx_data_nbs_prev, sync_edge, mr_mode_rom,
-        mr_settings_ilbp, tx_dominant_ack)
+        mr_settings_ilbp, tx_dominant_ack, rec_lbpf_q, rec_ivld_q)
     begin
 
         -------------------------------------------------------------------------------------------
