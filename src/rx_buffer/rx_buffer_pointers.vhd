@@ -207,7 +207,13 @@ architecture rtl of rx_buffer_pointers is
     -- by 1.
     signal rx_mem_free_i_inc_1      : unsigned(C_FREE_MEM_WIDTH - 1 downto 0);
 
+    -----------------------------------------------------------------------------------------------
+    -- Auxiliarly signals
+    -----------------------------------------------------------------------------------------------
+    signal abort_applied            : std_logic;
+
 begin
+
     read_pointer        <= std_logic_vector(read_pointer_i);
     read_pointer_inc_1  <= std_logic_vector(read_pointer_inc_1_i);
     write_pointer       <= std_logic_vector(write_pointer_i);
@@ -215,6 +221,9 @@ begin
     write_pointer_ts    <= std_logic_vector(write_pointer_ts_i);
     rx_mem_free_i       <= std_logic_vector(rx_mem_free_i_i);
 
+    abort_applied <= '1' when (rec_abort_f = '1' or commit_overrun_abort = '1')
+                         else
+                     '0';
 
     -----------------------------------------------------------------------------------------------
     -- Read pointer, incremented during read from RX Buffer FIFO. Moving to next word by reading
@@ -316,7 +325,7 @@ begin
 
                 -- Read of memory word, and abort at the same time. Revert last commited value of
                 -- read pointer incremented by 1.
-                if (rec_abort_f = '1' or commit_overrun_abort = '1') then
+                if (abort_applied = '1') then
                     rx_mem_free_raw <= rx_mem_free_i_inc_1;
 
                 -- Read of memory word and no write of memory word. Load raw value incremented by 1.
@@ -330,7 +339,7 @@ begin
             else
 
                 -- Abort, or abort was previously flaged -> Revert last commited value.
-                if (rec_abort_f = '1' or commit_overrun_abort = '1') then
+                if (abort_applied = '1') then
                     rx_mem_free_raw <= rx_mem_free_i_i;
 
                 -- No read, write only, decrement by 1.
