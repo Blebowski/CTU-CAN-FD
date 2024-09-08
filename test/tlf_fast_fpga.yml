@@ -124,6 +124,7 @@ tests:
     - name: rx_err_log_6
     - name: rx_err_log_7
     - name: rx_err_log_8
+    - name: rx_err_log_timestamp
 
     - name: scan_mode
     - name: settings_tbfbo
