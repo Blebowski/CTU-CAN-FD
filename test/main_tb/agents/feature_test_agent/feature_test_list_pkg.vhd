@@ -204,6 +204,7 @@ use ctu_can_fd_tb.rx_err_log_4_ftest.all;
 use ctu_can_fd_tb.rx_err_log_5_ftest.all;
 use ctu_can_fd_tb.rx_err_log_6_ftest.all;
 use ctu_can_fd_tb.rx_err_log_7_ftest.all;
+use ctu_can_fd_tb.rx_err_log_8_ftest.all;
 use ctu_can_fd_tb.rx_err_log_back_to_back_ftest.all;
 
 use ctu_can_fd_tb.scan_mode_ftest.all;
@@ -488,6 +489,8 @@ package body feature_test_list_pkg is
             rx_err_log_6_ftest_exec(channel);
         elsif (test_name = "rx_err_log_7") then
             rx_err_log_7_ftest_exec(channel);
+        elsif (test_name = "rx_err_log_8") then
+            rx_err_log_8_ftest_exec(channel);
         elsif (test_name = "rx_err_log_back_to_back") then
             rx_err_log_back_to_back_ftest_exec(channel);
 
