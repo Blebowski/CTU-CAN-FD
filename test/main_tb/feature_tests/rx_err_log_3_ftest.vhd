@@ -174,7 +174,7 @@ package body rx_err_log_3_ftest is
 
         flip_bus_level(chn);
 
-        CAN_wait_sample_point(DUT_NODE, chn);
+        CAN_wait_sample_point(DUT_NODE, chn, false);
         wait for 20 ns;
 
         release_bus_level(chn);
@@ -319,7 +319,7 @@ package body rx_err_log_3_ftest is
         wait for 20 ns;
         flip_bus_level(chn);
 
-        CAN_wait_sample_point(DUT_NODE, chn);
+        CAN_wait_sample_point(DUT_NODE, chn, false);
         wait for 20 ns;
 
         release_bus_level(chn);

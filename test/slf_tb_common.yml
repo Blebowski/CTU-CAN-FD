@@ -110,6 +110,7 @@ source_list:
     - file: main_tb/feature_tests/device_id_ftest.vhd
     - file: main_tb/feature_tests/dlc_can20_8_64_bytes_ftest.vhd
     - file: main_tb/feature_tests/mode_self_test_ftest.vhd
+    - file: main_tb/feature_tests/mode_self_acknowledge_ftest.vhd
     - file: main_tb/feature_tests/tx_cmd_set_abort_ftest.vhd
     - file: main_tb/feature_tests/command_cdo_ftest.vhd
     - file: main_tb/feature_tests/mode_rst_ftest.vhd
@@ -164,6 +165,8 @@ source_list:
     - file: main_tb/feature_tests/rx_err_log_5_ftest.vhd
     - file: main_tb/feature_tests/rx_err_log_6_ftest.vhd
     - file: main_tb/feature_tests/rx_err_log_7_ftest.vhd
+    - file: main_tb/feature_tests/rx_err_log_8_ftest.vhd
+    - file: main_tb/feature_tests/rx_err_log_timestamp_ftest.vhd
     - file: main_tb/feature_tests/rx_err_log_back_to_back_ftest.vhd
     - file: main_tb/feature_tests/ssp_last_crc_bit_error_ftest.vhd
     - file: main_tb/feature_tests/ssp_last_crc_bit_error_2_ftest.vhd

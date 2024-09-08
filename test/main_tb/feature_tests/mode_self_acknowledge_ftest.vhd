@@ -67,70 +67,89 @@
 --------------------------------------------------------------------------------
 
 --------------------------------------------------------------------------------
--- Module:
---  Clock gate - Latch + AND based clock gate
+-- @TestInfoStart
 --
---  If ASIC technology is chosen, gate clocks. Otherwise, do not gate. Latch is
---  without reset since ICGs do not usually have reset.
+-- @Purpose:
+--  Self acknowledge mode test
+--
+-- @Verifies:
+--  @1. When MODE[SAM] = 1 and CTU CAN FD transmits a frame, then it will
+--      send dominant ACK bit.
+--
+-- @Test sequence:
+--  @1. Configure Self acknowledge mode in DUT Node.
+--  @2. Send frame by DUT. Wait till ACK field in DUT Node.
+--  @3. Check that DUT Node is transmitting Dominant value. Wait until bus
+--      is idle.
+--
+-- @TestInfoEnd
+--------------------------------------------------------------------------------
+-- Revision History:
+--    8.9.2024   Created file
 --------------------------------------------------------------------------------
 
-Library ieee;
-use ieee.std_logic_1164.all;
+Library ctu_can_fd_tb;
+context ctu_can_fd_tb.ieee_context;
+context ctu_can_fd_tb.rtl_context;
+context ctu_can_fd_tb.tb_common_context;
 
-Library ctu_can_fd_rtl;
-use ctu_can_fd_rtl.can_constants_pkg.all;
+use ctu_can_fd_tb.feature_test_agent_pkg.all;
 
-entity clk_gate is
-    generic (
-        G_TECHNOLOGY        :       natural
+package mode_self_acknowledge_ftest is
+    procedure mode_self_acknowledge_ftest_exec(
+        signal      chn             : inout  t_com_channel
     );
-    port (
-        -- Clock input
-        clk_in              : in    std_logic;
-
-        -- Clock Enable
-        clk_en              : in    std_logic;
-
-        -- Scan Enable
-        scan_enable         : in    std_logic;
-
-        -- Gated clocks
-        clk_out             : out   std_logic
-    );
-end clk_gate;
-
-architecture rtl of clk_gate is
-
-    signal clk_en_q        : std_logic;
-
-begin
-
-    g_tech_asic : if (G_TECHNOLOGY = C_TECH_ASIC) generate
-
-        -- Latching enable - transparent in zero since we use AND gating
-        clk_en_latch_proc : process(clk_in, clk_en, scan_enable)
-        begin
-            if (clk_in = '0') then
-                clk_en_q <= clk_en or scan_enable;
-            end if;
-        end process;
-
-        -- Gating
-        clk_out <= clk_in AND clk_en_q;
-
-    end generate g_tech_asic;
+end package;
 
 
-    g_tech_fpga : if (G_TECHNOLOGY = C_TECH_FPGA) generate
+package body mode_self_acknowledge_ftest is
+    procedure mode_self_acknowledge_ftest_exec(
+        signal      chn             : inout  t_com_channel
+    ) is
+        variable CAN_TX_frame       :       SW_CAN_frame_type;
+        variable CAN_RX_frame       :       SW_CAN_frame_type;
+        variable frame_sent         :       boolean := false;
+        variable mode_1             :       SW_mode := SW_mode_rst_val;
+        variable mode_2             :       SW_mode := SW_mode_rst_val;
 
-        -- Connect directly (always enabled, no gating)
-        clk_out <= clk_in;
+        variable txt_buf_state      :       SW_TXT_Buffer_state_type;
+        variable rx_buf_state       :       SW_RX_Buffer_info;
+        variable status             :       SW_status;
+        variable frames_equal       :       boolean := false;
+        variable pc_dbg             :       SW_PC_Debug;
 
-        -- Drive just to avoid un-driven signals warning by Synplify
-        clk_en_q <= '1';
+        variable can_tx             :       std_logic;
+    begin
 
-    end generate g_tech_fpga;
+        ------------------------------------------------------------------------
+        -- @1. Configures Self Acknowledge mode in DUT.
+        ------------------------------------------------------------------------
+        info_m("Step 1");
 
-    assert (G_TECHNOLOGY = C_TECH_ASIC or G_TECHNOLOGY = C_TECH_FPGA);
+        mode_1.self_acknowledge := true;
+        set_core_mode(mode_1, DUT_NODE, chn);
 
-end rtl;
+        ------------------------------------------------------------------------
+        -- @2. Send frame by DUT. Wait till ACK field in DUT Node.
+        ------------------------------------------------------------------------
+        info_m("Step 2");
+
+        CAN_generate_frame(CAN_TX_frame);
+        CAN_send_frame(CAN_TX_frame, 1, DUT_NODE, chn, frame_sent);
+        CAN_wait_pc_state(pc_deb_ack, DUT_NODE, chn);
+        CAN_wait_sync_seg(DUT_NODE, chn);
+        wait for 20 ns;
+
+        ------------------------------------------------------------------------
+        -- @3. Check that DUT Node is transmitting Dominant value.
+        --     Wait until bus is idle.
+        ------------------------------------------------------------------------
+        info_m("Step 3");
+
+        get_can_tx(DUT_NODE, can_tx, chn);
+        check_m(can_tx = DOMINANT, "DUT transmits dominant ACK when MODE[SAM]=1");
+        CAN_wait_bus_idle(DUT_NODE, chn);
+
+  end procedure;
+
+end package body;

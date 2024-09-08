@@ -162,6 +162,9 @@ package body rx_err_log_7_ftest is
         CAN_generate_frame(tx_frame_2);
         tx_frame_2.rtr := NO_RTR_FRAME;
         tx_frame_2.data_length := 8;
+        -- To avoid SSP. If error is detected in SSP, DUT Node does not react immediately, but
+        -- delays until next regular sample point!
+        tx_frame_2.brs := BR_NO_SHIFT;
         decode_length(tx_frame_2.data_length, tx_frame_2.dlc);
 
         CAN_send_frame(tx_frame_2, 1, DUT_NODE, chn, frame_sent);
@@ -175,7 +178,7 @@ package body rx_err_log_7_ftest is
 
         CAN_wait_sync_seg(DUT_NODE, chn);
         flip_bus_level(chn);
-        CAN_wait_sample_point(DUT_NODE, chn);
+        CAN_wait_sample_point(DUT_NODE, chn, false);
         wait for 20 ns;
         release_bus_level(chn);
 

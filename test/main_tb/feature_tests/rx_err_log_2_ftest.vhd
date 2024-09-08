@@ -164,7 +164,7 @@ package body rx_err_log_2_ftest is
         CAN_wait_pc_state(pc_deb_crc_delim, DUT_NODE, chn);
         wait for 20 ns;
         flip_bus_level(chn);
-        CAN_wait_sample_point(DUT_NODE, chn);
+        CAN_wait_sample_point(DUT_NODE, chn, false);
         wait for 20 ns;
         release_bus_level(chn);
 
@@ -188,7 +188,11 @@ package body rx_err_log_2_ftest is
         check_m(err_frame.erf = '1', "FRAME_FORMAT_W[ERF] = 1");
         check_m(err_frame.ivld = '1', "FRAME_FORMAT_W[IVLD] = 1");
         check_m(err_frame.erf_pos = ERC_POS_ACK, "FRAME_FORMAT_W[ERF_POS] = ERC_POS_ACK");
-        check_m(err_frame.erf_type = ERC_FRM_ERR, "FRAME_FORMAT_W[ERF_TYPE] = ERC_FRM_ERR");
+
+        -- When we manage to flip just the stuff bit due to randomization, it will be stuff error
+        -- not from error!
+        check_m(err_frame.erf_type = ERC_FRM_ERR or err_frame.erf_type = ERC_STUF_ERR,
+                "FRAME_FORMAT_W[ERF_TYPE] = ERC_FRM_ERR or FRAME_FORMAT_W[ERF_TYPE] = ERC_STUF_ERR");
 
         CAN_wait_bus_idle(DUT_NODE, chn);
 

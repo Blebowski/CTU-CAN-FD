@@ -474,7 +474,7 @@ begin
         store_data_f            => store_data_f,            -- IN
         rec_valid_f             => rec_valid_f,             -- IN
         rec_abort_f             => rec_abort_f,             -- IN
-        rec_erf                 => rec_erf,                 -- IN
+        rec_erf                 => rec_erf,                 -- OUT
 
         write_raw_intent        => write_raw_intent,        -- OUT
         select_ts_wptr          => select_ts_wptr,          -- OUT

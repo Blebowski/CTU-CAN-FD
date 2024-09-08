@@ -84,6 +84,7 @@ tests:
     - name: mode_restr_op
     - name: mode_rxbam
     - name: mode_self_test
+    - name: mode_self_acknowledge
     - name: mode_test
     - name: mode_txbbm
     - name: mode_txbbm_2
@@ -123,6 +124,8 @@ tests:
     - name: rx_err_log_5
     - name: rx_err_log_6
     - name: rx_err_log_7
+    - name: rx_err_log_8
+    - name: rx_err_log_timestamp
 
     - name: scan_mode
     - name: settings_tbfbo
