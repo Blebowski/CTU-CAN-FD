@@ -174,7 +174,7 @@ package body rx_err_log_6_ftest is
 
         CAN_wait_sync_seg(DUT_NODE, chn);
         flip_bus_level(chn);
-        CAN_wait_sample_point(DUT_NODE, chn);
+        CAN_wait_sample_point(DUT_NODE, chn, false);
         wait for 20 ns;
         release_bus_level(chn);
 
