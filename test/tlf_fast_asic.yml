@@ -85,6 +85,7 @@ tests:
     - name: mode_restr_op
     - name: mode_rxbam
     - name: mode_self_test
+    - name: mode_self_acknowledge
     - name: mode_test
     - name: mode_txbbm
     - name: mode_txbbm_2

@@ -160,6 +160,7 @@ use ctu_can_fd_tb.mode_pex_ftest.all;
 use ctu_can_fd_tb.mode_restr_op_ftest.all;
 use ctu_can_fd_tb.mode_test_ftest.all;
 use ctu_can_fd_tb.mode_self_test_ftest.all;
+use ctu_can_fd_tb.mode_self_acknowledge_ftest.all;
 use ctu_can_fd_tb.mode_frame_filters_ftest.all;
 use ctu_can_fd_tb.mode_rst_ftest.all;
 use ctu_can_fd_tb.mode_rxbam_ftest.all;
@@ -408,6 +409,8 @@ package body feature_test_list_pkg is
             mode_test_ftest_exec(channel);
         elsif (test_name = "mode_self_test") then
             mode_self_test_ftest_exec(channel);
+        elsif (test_name = "mode_self_acknowledge") then
+            mode_self_acknowledge_ftest_exec(channel);
         elsif (test_name = "mode_frame_filters") then
             mode_frame_filters_ftest_exec(channel);
         elsif (test_name = "mode_rst") then

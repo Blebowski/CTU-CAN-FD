@@ -138,6 +138,9 @@ tests:
     - name: mode_rst
     - name: mode_rxbam
     - name: mode_self_test
+    - name: mode_self_acknowledge
+      generics:
+        /TB_TOP_CTU_CAN_FD/iterations: 10
     - name: mode_test
       generics:
         /TB_TOP_CTU_CAN_FD/iterations: 10

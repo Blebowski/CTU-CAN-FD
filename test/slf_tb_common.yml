@@ -110,6 +110,7 @@ source_list:
     - file: main_tb/feature_tests/device_id_ftest.vhd
     - file: main_tb/feature_tests/dlc_can20_8_64_bytes_ftest.vhd
     - file: main_tb/feature_tests/mode_self_test_ftest.vhd
+    - file: main_tb/feature_tests/mode_self_acknowledge_ftest.vhd
     - file: main_tb/feature_tests/tx_cmd_set_abort_ftest.vhd
     - file: main_tb/feature_tests/command_cdo_ftest.vhd
     - file: main_tb/feature_tests/mode_rst_ftest.vhd
