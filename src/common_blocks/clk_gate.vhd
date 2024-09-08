@@ -108,7 +108,7 @@ begin
     g_tech_asic : if (G_TECHNOLOGY = C_TECH_ASIC) generate
 
         -- Latching enable - transparent in zero since we use AND gating
-        clk_en_latch_proc : process(clk_in, clk_en)
+        clk_en_latch_proc : process(clk_in, clk_en, scan_enable)
         begin
             if (clk_in = '0') then
                 clk_en_q <= clk_en or scan_enable;
