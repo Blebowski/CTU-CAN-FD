@@ -2149,9 +2149,7 @@ begin
                 stuff_enable_clear <= '1';
 
                 if (rx_trigger = '1') then
-                    if (is_receiver = '1') then
-                        crc_check <= '1';
-                    end if;
+                    crc_check <= '1';
 
                     if (rx_data_nbs = DOMINANT) then
                         form_err_i <= '1';
