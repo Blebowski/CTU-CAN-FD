@@ -3814,7 +3814,7 @@ package body feature_test_agent_pkg is
             mode.error_logging          := true;
         end if;
 
-        if (data(SAM_IND mod 16) = '1') then
+        if (data(SAM_IND) = '1') then
             mode.self_acknowledge       := true;
         end if;
 
