@@ -84,6 +84,8 @@
 --      bus level.
 --  @3. Wait until error frame is sent by DUT Node. Wait until bus is idle.
 --      Check RX Buffer pointers were correctly reset due to frame abort.
+--  @4. Send a RTR frame by Test Node. Wait until the frame is sent,
+--      and check that DUTs RX Buffer write pointer is 4.
 --
 -- @TestInfoEnd
 --------------------------------------------------------------------------------
@@ -164,6 +166,27 @@ package body rx_buf_transitions_ftest is
                     "RX MEM Free = RX Buffer Size");
         check_m(rx_buf_info.rx_write_pointer = 0,
                     "RX Buffer write pointer 0");
+        check_m(rx_buf_info.rx_read_pointer = 0,
+                    "RX Buffer read pointer 0");
+
+        -----------------------------------------------------------------------
+        --  @4. Send a RTR frame by DUT Node. Wait until the frame is sent,
+        --      and check that DUTs RX Buffer write pointer is 4.
+        -----------------------------------------------------------------------
+        info_m("Step 4: Wait till Error frame");
+
+        CAN_generate_frame(can_frame);
+        CAN_frame.frame_format := NORMAL_CAN;
+        CAN_frame.rtr := RTR_FRAME;
+
+        CAN_send_frame(can_frame, 1, DUT_NODE, chn, frame_sent);
+        CAN_wait_pc_state(pc_deb_control, DUT_NODE, chn);
+
+        CAN_wait_bus_idle(DUT_NODE, chn);
+
+        get_rx_buf_state(rx_buf_info, DUT_NODE, chn);
+        check_m(rx_buf_info.rx_write_pointer = 4,
+                    "RX Buffer write pointer 4");
         check_m(rx_buf_info.rx_read_pointer = 0,
                     "RX Buffer read pointer 0");
 
