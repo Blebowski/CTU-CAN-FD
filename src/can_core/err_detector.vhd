@@ -159,9 +159,6 @@ entity err_detector is
         -------------------------------------------------------------------------------------------
         -- Control signals
         -------------------------------------------------------------------------------------------
-        -- Bit error enable
-        bit_err_enable          : in  std_logic;
-
         -- Fixed Bit stuffing method
         fixed_stuff             : in  std_logic;
 
@@ -259,7 +256,7 @@ begin
 
     -- Error frame request for any type of error which causes transition to Error frame in the
     -- next bit.
-    err_frm_req_i <= '1' when (bit_err = '1' and bit_err_enable = '1') else
+    err_frm_req_i <= '1' when (bit_err = '1') else
                      '1' when (stuff_err = '1') else
                      '1' when (form_err = '1' or ack_err = '1') else
                      '1' when (crc_err = '1') else
@@ -383,7 +380,7 @@ begin
     -- Error code, next value
     -----------------------------------------------------------------------------------------------
     err_capt_err_type_d <= ERC_FRM_ERR when (form_err_i = '1') else
-                           ERC_BIT_ERR when (bit_err = '1' and bit_err_enable = '1') else
+                           ERC_BIT_ERR when (bit_err = '1') else
                            ERC_BIT_ERR when (bit_err_arb = '1') else
                            ERC_CRC_ERR when (crc_err = '1') else
                            ERC_ACK_ERR when (ack_err = '1') else

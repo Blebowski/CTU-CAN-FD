@@ -111,6 +111,9 @@ entity bit_err_detector is
         -- RX Trigger - Secondary Sample
         sample_sec               :in   std_logic;
 
+        -- Bit error enable
+        bit_err_enable           :in   std_logic;
+
         -------------------------------------------------------------------------------------------
         -- Memory registers interface
         -------------------------------------------------------------------------------------------
@@ -159,7 +162,9 @@ begin
     -- Condition for SSP bit error is valid when TX Data cache output is not equal to CAN RX
     -- in the moment of SSP!
     -------------------------------------------------------------------------------------------
-    bit_err_ssp_condition <= '1' when (data_tx_delayed /= data_rx_synced and sample_sec = '1')
+    bit_err_ssp_condition <= '1' when (data_tx_delayed /= data_rx_synced and
+                                       sample_sec = '1' and
+                                       bit_err_enable = '1')
                                  else
                              '0';
 
@@ -193,7 +198,8 @@ begin
 
     bit_err_norm_valid <= '1' when (sp_control /= SECONDARY_SAMPLE and
                                     data_rx_synced /= data_tx and
-                                    rx_trigger = '1')
+                                    rx_trigger = '1' and
+                                    bit_err_enable = '1')
                               else
                           '0';
 

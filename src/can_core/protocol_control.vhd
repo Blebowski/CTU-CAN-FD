@@ -354,6 +354,9 @@ entity protocol_control is
         -- Synchronization edge
         sync_edge               : in  std_logic;
 
+        -- Bit error detection enabled
+        bit_err_enable          : out std_logic;
+
         -------------------------------------------------------------------------------------------
         -- CRC Interface
         -------------------------------------------------------------------------------------------
@@ -559,9 +562,6 @@ architecture rtl of protocol_control is
 
     -- Error position field (for Error capture)
     signal err_pos                 :      std_logic_vector(4 downto 0);
-
-    -- Bit error detection enabled
-    signal bit_err_enable          :      std_logic;
 
     -- TX Data internal
     signal tx_data_nbs_i           :      std_logic;
@@ -872,7 +872,6 @@ begin
         dst_ctr                 => dst_ctr,                 -- IN
 
         -- Control signals
-        bit_err_enable          => bit_err_enable,          -- IN
         fixed_stuff             => fixed_stuff_i,           -- IN
         err_pos                 => err_pos,                 -- IN
         crc_check               => crc_check,               -- IN
