@@ -146,7 +146,7 @@ package body pc_fsm_transitions_err_act_ftest is
             CAN_TX_frame.ident_type := ident_type;
             CAN_TX_frame.data_length := 1;
             CAN_TX_frame.rtr := NO_RTR_FRAME;
-            CAN_TX_frame.brs := BR_NO_SHIFT;
+            CAN_TX_frame.brs := BR_SHIFT;
 
             bit_index := 0;
             bit_iter_loop: loop
@@ -182,7 +182,7 @@ package body pc_fsm_transitions_err_act_ftest is
                 -- If we get up to ACK, we finish, flipping ACK will not result in
                 -- immediate Error frame!
                 CAN_read_pc_debug_m(pc_dbg, DUT_NODE, chn);
-                if (pc_dbg = pc_deb_ack) then
+                if (pc_dbg = pc_deb_crc_delim) then
                     CAN_wait_bus_idle(DUT_NODE, chn);
                     CAN_wait_bus_idle(TEST_NODE, chn);
                     exit bit_iter_loop;
