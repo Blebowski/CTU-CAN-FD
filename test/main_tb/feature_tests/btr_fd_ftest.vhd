@@ -185,8 +185,14 @@ package body btr_fd_ftest is
         CAN_configure_timing(bus_timing, TEST_NODE, chn);
 
         -- Configure SSP so that it samples in Data-bit rate and in 50 % of
-        -- expected received bit! We need it only for DUT!
-        ssp_pos := std_logic_vector(to_unsigned(clock_per_bit/2, 8));
+        -- expected received bit! We need it only for DUT.
+        -- Account for arbitrarily long data bit times and saturate if SSP_POS
+        -- would overflow.
+        if (clock_per_bit > 511) then
+            ssp_pos := x"FF";
+        else
+            ssp_pos := std_logic_vector(to_unsigned(clock_per_bit/2, 8));
+        end if;
         CAN_configure_ssp(ssp_meas_n_offset, ssp_pos, DUT_NODE, chn);
 
         -----------------------------------------------------------------------
