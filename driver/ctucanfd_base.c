@@ -322,7 +322,7 @@ static int ctucan_set_secondary_sample_point(struct net_device *ndev)
 	struct ctucan_priv *priv = netdev_priv(ndev);
 	struct can_bittiming *dbt = &priv->can.data_bittiming;
 	int ssp_offset = 0;
-	u32 ssp_cfg = 0; /* No SSP by default */
+	u32 ssp_cfg = 0x01000000; /* No SSP by default */
 
 	ctucan_netdev_dbg(ndev, "%s\n", __func__);
 
@@ -334,7 +334,7 @@ static int ctucan_set_secondary_sample_point(struct net_device *ndev)
 	/* Use SSP for bit-rates above 1 Mbits/s */
 	if (dbt->bitrate > 1000000) {
 		/* Calculate SSP in minimal time quanta */
-		ssp_offset = (priv->can.clock.freq / 1000) * dbt->sample_point / dbt->bitrate;
+		ssp_offset = priv->can.clock.freq / dbt->bitrate / 2;/*for use with TRV_DELAY*/
 
 		if (ssp_offset > 127) {
 			netdev_warn(ndev, "SSP offset saturated to 127\n");
@@ -342,7 +342,7 @@ static int ctucan_set_secondary_sample_point(struct net_device *ndev)
 		}
 
 		ssp_cfg = FIELD_PREP(REG_TRV_DELAY_SSP_OFFSET, ssp_offset);
-		ssp_cfg |= FIELD_PREP(REG_TRV_DELAY_SSP_SRC, 0x1);
+		ssp_cfg |= FIELD_PREP(REG_TRV_DELAY_SSP_SRC, 0x0);
 	}
 
 	ctucan_write32(priv, CTUCANFD_TRV_DELAY, ssp_cfg);
