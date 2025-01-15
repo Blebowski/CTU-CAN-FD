@@ -165,17 +165,17 @@ package body err_capt_data_bit_ftest is
 
         get_can_tx(DUT_NODE, tx_bus_level, chn);
         force_bus_level(not tx_bus_level, chn);
-        CAN_wait_sample_point(DUT_NODE, chn);
+        CAN_wait_sample_point(DUT_NODE, chn, false);
         wait for 20 ns; -- To be sure that opposite bit is sampled!
         release_bus_level(chn);
-        
+
         get_controller_status(stat_1, DUT_NODE, chn);
         check_m(stat_1.error_transmission, "Error frame is being transmitted!");
-        
+
         CAN_read_error_code_capture(err_capt, DUT_NODE, chn);
         check_m(err_capt.err_type = can_err_bit, "Bit error detected!");
         check_m(err_capt.err_pos = err_pos_data, "Error detected in Data field!");
-        
+
         CAN_wait_bus_idle(DUT_NODE, chn);
 
   end procedure;
