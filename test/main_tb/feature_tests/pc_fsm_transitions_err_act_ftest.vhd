@@ -219,6 +219,19 @@ package body pc_fsm_transitions_err_act_ftest is
 
                 bit_index := bit_index + 1;
 
+                -- Wait for couple more bits. The Test Node will become error passive,
+                -- and it may thus desynchronize with DUT node sending error frame
+                -- due to bit error at the end of DUTs CRC field. In such case, the
+                -- Test Node would cause problems in the follow-up frame, potentially
+                -- sending an overload frame and mitigating effect of inserting bit
+                -- error in the next frame, eventually causing non-detection of bit
+                -- error and test failure.
+                CAN_wait_sync_seg(DUT_NODE, chn);
+                CAN_wait_sync_seg(DUT_NODE, chn);
+                CAN_wait_sync_seg(DUT_NODE, chn);
+                CAN_wait_sync_seg(DUT_NODE, chn);
+                CAN_wait_sync_seg(DUT_NODE, chn);
+                CAN_wait_sync_seg(DUT_NODE, chn);
             end loop;
 
         end loop;
