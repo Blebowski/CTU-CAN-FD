@@ -159,6 +159,8 @@ def load_tgt_tlf(vu, tgt, tgt_name):
         nvc_opts.append("--cover=all,include-mems,exclude-unreachable")
         nvc_opts.append("--cover-file={}.ncdb".format(covdb_path))
         nvc_opts.append("--cover-spec=nvc_cover_spec")
+        nvc_opts.append("--no-collapse")
+        nvc_opts.append("--jit")
 
         # Create the test
         tb.add_config(test["name"], generics=filtered_generics,
