@@ -170,6 +170,7 @@ begin
     l0_gen : for i in 0 to G_TXT_BUFFER_COUNT - 1 generate
 
         -- pragma translate_off
+        -- coverage off
 
         -- Since we cover "00" as inactive value, instead of active values
         -- "01", "10" or "11", rather make sure that input values are defined
@@ -179,6 +180,8 @@ begin
                 report "Input values not exactly defined" severity error;
             end if;
         end process;
+
+        -- coverage on
         -- pragma translate_on
 
         l0_prio(i)  <= prio(i);

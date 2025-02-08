@@ -160,7 +160,9 @@ begin
     -----------------------------------------------------------------------------------------------
     -- Assertion for correct length of reset value
     -----------------------------------------------------------------------------------------------
+    -- coverage off
     assert (G_RESET_VALUE'length = G_WIDTH)
         report "Invalid length of shift register reset value!" severity error;
+    -- coverage on
 
 end rtl;
