@@ -918,6 +918,7 @@ begin
     --  (mr_ctrl_out_i.settings_pchke = '0' and mr_ctrl_in.status_txdpe = '1')
     --  report "TX Double parity error generated when SETTINGS[PCHKE] is disabled.";
 
+    -- coverage off
     txtb_func_cov_gen : for i in 0 to G_TXT_BUFFER_COUNT - 1 generate
     begin
 
@@ -930,6 +931,7 @@ begin
         end process;
 
     end generate;
+    -- coverage on
 
     -- psl rx_buf_automatic_mode_cov : cover
     --   {mr_ctrl_out_i.mode_rxbam = RXBAM_ENABLED};
