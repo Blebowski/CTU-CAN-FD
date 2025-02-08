@@ -305,25 +305,9 @@ begin
     -- Assertions and functional coverage
     -----------------------------------------------------------------------------------------------
 
-    -- TODO: Make these assertions valid only for current block.
-
     -- psl default clock is rising_edge(clk_sys);
 
     -- psl txt_ram_0_test_cov : cover
-    --   {tst_ena = '0' and mr_tst_control_twrstb = '1' and G_ID = 0};
-    -- psl txt_ram_1_test_cov : cover
-    --   {tst_ena = '0' and mr_tst_control_twrstb = '1' and G_ID = 1};
-    -- psl txt_ram_2_test_cov : cover
-    --   {tst_ena = '0' and mr_tst_control_twrstb = '1' and G_ID = 2};
-    -- psl txt_ram_3_test_cov : cover
-    --   {tst_ena = '0' and mr_tst_control_twrstb = '1' and G_ID = 3};
-    -- psl txt_ram_4_test_cov : cover
-    --   {tst_ena = '0' and mr_tst_control_twrstb = '1' and G_ID = 4};
-    -- psl txt_ram_5_test_cov : cover
-    --   {tst_ena = '0' and mr_tst_control_twrstb = '1' and G_ID = 5};
-    -- psl txt_ram_6_test_cov : cover
-    --   {tst_ena = '0' and mr_tst_control_twrstb = '1' and G_ID = 6};
-    -- psl txt_ram_7_test_cov : cover
-    --   {tst_ena = '0' and mr_tst_control_twrstb = '1' and G_ID = 7};
+    --   {tst_ena = '0' and mr_tst_control_twrstb = '1'};
 
 end architecture;
