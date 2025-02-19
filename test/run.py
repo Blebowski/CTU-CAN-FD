@@ -137,12 +137,6 @@ def load_tgt_tlf(vu, tgt, tgt_name):
 
         # TODO: Add test specific sim options
 
-        # Add sim options for PSL functional coverage
-        name = re.sub(r'[^a-zA-Z0-9_-]', '_', test["name"])
-        os.system("mkdir -p vunit_out/functional_coverage/coverage_data")
-        psl_path = "vunit_out/functional_coverage/coverage_data/psl_cov_{}_{}.json".format(tgt_name, name)
-        opts.extend(["--psl-report={}".format(psl_path)])
-
         # Remove hierarchy prefixes
         filtered_generics = {}
         for key, value in generics.items():
