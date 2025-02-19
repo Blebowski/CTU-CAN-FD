@@ -9,12 +9,11 @@ TEST_OPTS_test_debug := --no-strict
 all: test coverage functional_coverage
 
 elaborate:
-	$(PYTHON) run.py tb_rtl_test_fast_asic --elaborate $(TEST_FLAGS)
-	#$(PYTHON) run.py tb_rtl_test_fast_fpga --elaborate $(TEST_FLAGS)
+	VUNIT_SIMULATOR=nvc $(PYTHON) run.py tb_rtl_test_fast_asic --elaborate $(TEST_FLAGS) -v
 
 # Run test config
 %:
-	$(PYTHON) run.py $@ $(TEST_OPTS_$@) $< $(TEST_FLAGS) --xunit-xml $@.xml
+	VUNIT_SIMULATOR=nvc $(PYTHON) run.py $@ $(TEST_OPTS_$@) $< --xunit-xml $@.xml
 
 
 # Convert results to HTML, pack and publish textual summary
