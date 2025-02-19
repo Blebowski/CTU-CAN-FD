@@ -177,6 +177,7 @@ test_fast_asic:
             - test/tb_rtl_test_fast_asic.xml
             - test/tb_rtl_test_fast_asic_summary
             - test/tb_rtl_test_fast_asic.sim_time
+            - test/vunit_out/code_coverage
         reports:
             junit: test/tb_rtl_test_fast_asic.xml
 
@@ -195,6 +196,7 @@ test_fast_fpga:
             - test/tb_rtl_test_fast_fpga.xml
             - test/tb_rtl_test_fast_fpga_summary
             - test/tb_rtl_test_fast_fpga.sim_time
+            - test/vunit_out/code_coverage
         reports:
             junit: test/tb_rtl_test_fast_fpga.xml
 
@@ -214,7 +216,7 @@ test_nightly:
             - test/tb_rtl_test_nightly.xml
             - test/tb_rtl_test_nightly_summary
             - test/tb_rtl_test_nightly.sim_time
-            - test/vunit_out/functional_coverage
+            - test/vunit_out/code_coverage
         reports:
             junit: test/tb_rtl_test_nightly.xml
 
@@ -243,6 +245,7 @@ test_compliance_short:
             - test/tb_rtl_test_compliance_short.xml
             - test/tb_rtl_test_compliance_short_summary
             - test/tb_rtl_test_compliance_short.sim_time
+            - test/vunit_out/code_coverage
         reports:
             junit: test/tb_rtl_test_compliance_short.xml
 
@@ -266,7 +269,7 @@ test_compliance_full_typ:
             - test/tb_rtl_test_compliance_full_typ.xml
             - test/tb_rtl_test_compliance_full_typ_summary
             - test/tb_rtl_test_compliance_full_typ.sim_time
-            - test/vunit_out/functional_coverage
+            - test/vunit_out/code_coverage
         reports:
             junit: test/tb_rtl_test_compliance_full_typ.xml
 
@@ -290,7 +293,7 @@ test_compliance_full_max:
             - test/tb_rtl_test_compliance_full_max.xml
             - test/tb_rtl_test_compliance_full_max_summary
             - test/tb_rtl_test_compliance_full_max.sim_time
-            - test/vunit_out/functional_coverage
+            - test/vunit_out/code_coverage
         reports:
             junit: test/tb_rtl_test_compliance_full_max.xml
 
@@ -322,6 +325,7 @@ test_compliance_full_max:
 #            - test/tb_gate_xilinx_test_simple.xml
 #            - test/tb_gate_xilinx_test_simple_summary
 #            - test/tb_gate_xilinx_test_simple.sim_time
+#            - test/vunit_out/code_coverage
 #        reports:
 #            junit: test/tb_gate_xilinx_test_simple.xml
 #
@@ -362,13 +366,22 @@ process_coverage:
     stage: coverage
     tags:
         - simulation
-    dependencies: [test_compliance_full_typ, test_nightly]
+    dependencies:
+        - test_fast_fpga
+        - test_fast_asic
+        - test_nightly
+        - test_compliance_short
+        - test_compliance_full_typ
+        - test_compliance_full_max
     only:
         - master
     script:
-        # Process functional coverage
+        # Merge code coverage and generate report
         - cd test
-        - make functional_coverage
+        - echo "Merging code coverage results from:"
+        - ls vunit_out/code_coverage/tb_rtl_*.ncdb
+        - nvc --cover-merge -o merged.covb vunit_out/code_coverage/tb_rtl_*.ncdb
+        - nvc --cover-report -o code_coverage_report merged.covdb
 
         # Generate VRM
         - cd ../scripts
@@ -379,9 +392,9 @@ process_coverage:
     artifacts:
         when: always
         paths:
-            - test/vunit_out/functional_coverage/functional_coverage_report.html
-            - test/vunit_out/functional_coverage/html
             - scripts/VRM.html
+            - merged.covdb
+            - test/code_coverage_report
 
 pages:
     stage: deploy
@@ -398,6 +411,7 @@ pages:
         - mkdir -p public/regression_results
         - mkdir -p public/synthesis
         - mkdir -p public/vivado_component
+        - mkdir -p public/code_coverage_report
 
         # Copy RTL
         - cp src/*.vhd public/rtl/
@@ -423,6 +437,7 @@ pages:
         # DO NOT pack the complete regression results they include all log files and that overflows pages artifacts!
         #- cp test/*.xml public/regression_results/ || true
         - cp test/*_summary public/regression_results/ || true
+        - cp -r test/code_coverage_report/* public/code_coverage_report || true
 
         # Measure total simulation time
         - cat test/*.sim_time | paste -sd+ | bc > total.sim_time
@@ -433,11 +448,6 @@ pages:
         - cp doc/core/ctu_can_fd_architecture.pdf public/doc/System_Architecture.pdf || true
         - cp doc/core/tb_architecture.pdf public/doc/Testbench.pdf || true
         - cp -R doc/driver/build public/doc/linux_driver || true
-
-        # Copy functional coverage HTML reports
-        - mkdir public/regression_results/functional_coverage
-        - cp test/vunit_out/functional_coverage/*.html public/regression_results/functional_coverage || true
-        - cp -R test/vunit_out/functional_coverage/html public/regression_results/functional_coverage || true
 
         # Copy synthesis results + constraints
         - cp -R synthesis/Vivado/ci_benchmark/*_design_config public/synthesis
