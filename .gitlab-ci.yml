@@ -373,8 +373,8 @@ process_coverage:
         - test_compliance_short
         - test_compliance_full_typ
         - test_compliance_full_max
-    only:
-        - master
+    #only:
+    #    - master
     script:
         # Merge code coverage and generate report
         - cd test
