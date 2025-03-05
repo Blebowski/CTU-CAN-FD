@@ -8,9 +8,6 @@ TEST_OPTS_test_debug := --no-strict
 
 all: test coverage functional_coverage
 
-elaborate:
-	VUNIT_SIMULATOR=nvc $(PYTHON) run.py tb_rtl_test_fast_asic --elaborate $(TEST_FLAGS) -v
-
 # Run test config
 %:
 	VUNIT_SIMULATOR=nvc $(PYTHON) run.py $@ $(TEST_OPTS_$@) $< --xunit-xml $@.xml
