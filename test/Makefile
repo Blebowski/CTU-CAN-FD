@@ -10,7 +10,7 @@ all: test coverage functional_coverage
 
 # Run test config
 %:
-	VUNIT_SIMULATOR=nvc $(PYTHON) run.py $@ $(TEST_OPTS_$@) $< --xunit-xml $@.xml
+	VUNIT_SIMULATOR=nvc $(PYTHON) run.py $@ $(TEST_OPTS_$@) $(TEST_FLAGS) $< --xunit-xml $@.xml
 
 
 # Convert results to HTML, pack and publish textual summary
