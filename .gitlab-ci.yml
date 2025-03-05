@@ -41,6 +41,7 @@ build_ip_and_tests:
         - simulation
     script:
         - cd test
+        - nvc --version
         - make elaborate
     only: &only
         - master     # Run on all changes to master branch
