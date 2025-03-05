@@ -115,23 +115,24 @@ run_synthesis:
     tags:
         - vps
     script:
-        - source /opt/xilinx/vivado-2018.2/settings.sh
-        - cd synthesis/Vivado/ci_benchmark
-        - echo "Running minimal configuration..."
-        - vivado -mode tcl -source vivado_benchmark_minimal.tcl
-        - echo "Running typical configuration..."
-        - vivado -mode tcl -source vivado_benchmark_typical.tcl
-        - echo "Running maximal configuration..."
-        - vivado -mode tcl -source vivado_benchmark_maximal.tcl
-
-        # Remove reference to UNISIM library, all cell models are included in netlist!
-        - sed -i 's\library UNISIM;\\g' maximal_design_config/can_top_level.vhd
-        - sed -i 's\library UNISIM;\\g' typical_design_config/can_top_level.vhd
-        - sed -i 's\library UNISIM;\\g' minimal_design_config/can_top_level.vhd
-    artifacts:
-        paths:
-            - synthesis/Vivado/ci_benchmark/*_design_config
-        expire_in: 12 hrs
+        - ls
+        #- source /opt/xilinx/vivado-2018.2/settings.sh
+        #- cd synthesis/Vivado/ci_benchmark
+        #- echo "Running minimal configuration..."
+        #- vivado -mode tcl -source vivado_benchmark_minimal.tcl
+        #- echo "Running typical configuration..."
+        #- vivado -mode tcl -source vivado_benchmark_typical.tcl
+        #- echo "Running maximal configuration..."
+        #- vivado -mode tcl -source vivado_benchmark_maximal.tcl
+#
+        ## Remove reference to UNISIM library, all cell models are included in netlist!
+        #- sed -i 's\library UNISIM;\\g' maximal_design_config/can_top_level.vhd
+        #- sed -i 's\library UNISIM;\\g' typical_design_config/can_top_level.vhd
+        #- sed -i 's\library UNISIM;\\g' minimal_design_config/can_top_level.vhd
+    #artifacts:
+    #    paths:
+    #        - synthesis/Vivado/ci_benchmark/*_design_config
+    #    expire_in: 12 hrs
 
 
 ###############################################################################
