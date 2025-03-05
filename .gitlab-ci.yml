@@ -45,9 +45,9 @@ build_compliance_lib:
     artifacts:
         paths:
             - test/main_tb/iso-16845-compliance-tests/build/Debug/src/cosimulation/libGHDL_VPI_COSIM_LIB.so
-            - test/main_tb/iso-16845-compliance-tests/build/Debug/src/cosimulation/libVCS_VHPI_COSIM_LIB.so
+            - test/main_tb/iso-16845-compliance-tests/build/Debug/src/cosimulation/libNVC_VHPI_COSIM_LIB.so
             - test/main_tb/iso-16845-compliance-tests/build/Release/src/cosimulation/libGHDL_VPI_COSIM_LIB.so
-            - test/main_tb/iso-16845-compliance-tests/build/Release/src/cosimulation/libVCS_VHPI_COSIM_LIB.so
+            - test/main_tb/iso-16845-compliance-tests/build/Release/src/cosimulation/libNVC_VHPI_COSIM_LIB.so
     only: &only
         - master     # Run on all changes to master branch
         - tags       # Run on all tags
