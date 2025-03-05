@@ -1,6 +1,6 @@
 image: registry.gitlab.com/canfd/server-tools/ghdl:latest
 before_script:
-    - "export PATH=/opt/ghdl/bin:$PATH"
+    - "export PATH=/opt/ghdl/bin:/opt/nvc/bin:$PATH"
     - export LC_ALL=C.UTF-8
     - export LANG=C.UTF-8
     - export PYTHONUNBUFFERED=1
