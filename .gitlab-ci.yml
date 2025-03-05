@@ -35,21 +35,6 @@ check_component:
 # Build stage
 ###############################################################################
 
-build_ip_and_tests:
-    stage: build
-    tags:
-        - simulation
-    script:
-        - cd test
-        - nvc --version
-        - make elaborate
-    only: &only
-        - master     # Run on all changes to master branch
-        - tags       # Run on all tags
-        - triggers   # Run by trigger (on merge request)
-        - web        # Run by manual request from web UI
-
-
 build_compliance_lib:
     stage: build
     tags:
@@ -63,6 +48,21 @@ build_compliance_lib:
             - test/main_tb/iso-16845-compliance-tests/build/Debug/src/cosimulation/libVCS_VHPI_COSIM_LIB.so
             - test/main_tb/iso-16845-compliance-tests/build/Release/src/cosimulation/libGHDL_VPI_COSIM_LIB.so
             - test/main_tb/iso-16845-compliance-tests/build/Release/src/cosimulation/libVCS_VHPI_COSIM_LIB.so
+    only: &only
+        - master     # Run on all changes to master branch
+        - tags       # Run on all tags
+        - triggers   # Run by trigger (on merge request)
+        - web        # Run by manual request from web UI
+
+build_ip_and_tests:
+    stage: build
+    dependencies: [build_compliance_lib]
+    tags:
+        - simulation
+    script:
+        - cd test
+        - nvc --version
+        - make elaborate
     only: *only
 
 
