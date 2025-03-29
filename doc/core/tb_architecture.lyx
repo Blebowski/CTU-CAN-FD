@@ -485,7 +485,7 @@ CTU CAN FD IP Core - Testbench
 \begin_inset Text
 
 \begin_layout Plain Layout
-Version 0.1, Commit:
+Version 0.2, Commit:
 \begin_inset CommandInset include
 LatexCommand input
 filename "version.tex"
@@ -509,7 +509,7 @@ filename "version.tex"
 \noindent
 \align center
 \begin_inset Tabular
-<lyxtabular version="3" rows="2" columns="4">
+<lyxtabular version="3" rows="3" columns="4">
 <features tabularvalignment="middle">
 <column alignment="center" valignment="top" width="1.5cm">
 <column alignment="center" valignment="top" width="2cm">
@@ -554,11 +554,49 @@ Change description
 </cell>
 </row>
 <row>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
 0.1
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Ondrej Ille
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+04-2021
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Initial version
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+0.2
 \end_layout
 
 \end_inset
@@ -576,7 +614,7 @@ Ondrej Ille
 \begin_inset Text
 
 \begin_layout Plain Layout
-04-2021
+03-2025
 \end_layout
 
 \end_inset
@@ -585,7 +623,7 @@ Ondrej Ille
 \begin_inset Text
 
 \begin_layout Plain Layout
-Initial version
+Replace GHDL with NVC
 \end_layout
 
 \end_inset
@@ -666,12 +704,7 @@ Compliance tests - Verifies compliance of CTU CAN FD to ISO11868-1 2015.
  All tests from ISO 16845-1 2016 are implemented.
  To run these tests, you need Compliance test library compiled and linked
  to simulation via PLI.
- This library is part of open-source CTU CAN FD repository only in form
- of compiled binary (works only with GHDL simulator in CTU CAN FD Gitlab
- environment).
- To compile this library and link it to TB in other simulator, access to
- its source code is needed.
- This library can be provided based on commercial agreement.
+ This library is a submodule of CTU CAN FD repository.
 \end_layout
 
 \begin_layout Itemize
@@ -747,7 +780,7 @@ CTU CAN FD development uses following dependecies/tools:
 \end_layout
 
 \begin_layout Itemize
-GHDL - VHDL simulator
+NVC - VHDL simulator
 \end_layout
 
 \begin_layout Itemize
@@ -3349,6 +3382,7 @@ name "subsec:PLI-Interface"
 \begin_layout Standard
 As PLI interface, VIP supports VPI (GHDL specific) and VHPI interface (IEEE
  1076 standardized).
+ There are two variants of the VHPI: One for NVC and one for VCS.
  PLI interface itself consists of set of signals over which communication
  is performed.
  These signals are listed in Table 
@@ -5109,7 +5143,7 @@ VPI interface - GHDL specific, as it is not standardized for VHDL.
 
 \begin_layout Itemize
 VHPI interface - Interface standardized by IEEE 1076.
- Can be linked to any simulator supporting this interface.
+ There are two variants of VHPI support: VCS simulator and NVC simulator.
 \end_layout
 
 \begin_layout Standard

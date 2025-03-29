@@ -409,6 +409,7 @@ begin
         --   curr_state = s_rxb_store_err_ts_high) and (rec_abort_f = '1')
         -- report "Error frame was not yet fully stored when another one occured.";
 
+        -- coverage off
         process (cmd_join)
         begin
             if (now > 0 ps) then
@@ -421,6 +422,7 @@ begin
                 end if;
             end if;
         end process;
+        -- coverage on
 
         -- psl rx_no_abort_after_metadata_cov : assert never
         --  (rec_abort_f = '1') and

@@ -1332,6 +1332,7 @@ begin
     -- transmitting overload frame! This-way we can be sure that no we can
     -- block unlock command in Protocol control FSM in overload frames!
 
+    -- coverage off
     txtb_asr_gen : for i in 0 to txt_buffer_count - 1 generate
     begin
 
@@ -1345,6 +1346,7 @@ begin
         end process;
 
     end generate;
+    -- coverage on
 
     -- pragma translate_on
     -- <RELEASE_ON>

@@ -180,7 +180,8 @@ begin
         -----------------------------------------------------------------------
         -- Test sequence itself
         -----------------------------------------------------------------------
-        rand_int_v(899, reference_offset);
+        rand_int_v(898, reference_offset);
+        reference_offset := reference_offset + 1;
 
         for frame_index in reference_offset to reference_offset + reference_iterations loop
 

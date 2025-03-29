@@ -387,9 +387,11 @@ begin
 
     -- <RELEASE_OFF>
 
+    -- coverage off
     assert (G_TRV_CTR_WIDTH <= G_SSP_POS_WIDTH)
         report "SSP Position width must be higher or equal to trv counter width!"
         severity error;
+    -- coverage on
 
     -------------------------------------------------------------------------------------------
     -- Assertions and Functional coverge

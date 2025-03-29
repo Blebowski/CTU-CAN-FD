@@ -57,7 +57,12 @@ def set_comp_options(sf, file):
     sf.add_compile_option("ghdl.a_flags", opts)
 
     # For each analysis bump-up memory to 128 M
-    sf.add_compile_option("nvc.global_flags", ['-M', '128M'])
+    nvc_glob_flags = []
+    nvc_glob_flags.append('-M')
+    nvc_glob_flags.append('256M')
+    sf.add_compile_option("nvc.global_flags", nvc_glob_flags)
+
+    sf.add_compile_option("nvc.a_flags", ['--psl'])
 
 
 def set_elab_options(vu, tgt):
@@ -70,6 +75,11 @@ def set_elab_options(vu, tgt):
     #print(f"Adding elab flags: {opts}")
     vu.set_sim_option("ghdl.elab_flags", opts)
 
+    nvc_glob_flags = []
+    nvc_glob_flags.append('-M')
+    nvc_glob_flags.append('256M')
+    nvc_glob_flags.append('--load=main_tb/iso-16845-compliance-tests/build/Debug/src/cosimulation/libNVC_VHPI_COSIM_LIB.so')
+    vu.set_sim_option("nvc.global_flags", nvc_glob_flags)
 
 
 def load_slf(vu, curr_path, slf_path):
@@ -127,20 +137,29 @@ def load_tgt_tlf(vu, tgt, tgt_name):
 
         # TODO: Add test specific sim options
 
-        # Add sim options for PSL functional coverage
-        name = re.sub(r'[^a-zA-Z0-9_-]', '_', test["name"])
-        os.system("mkdir -p vunit_out/functional_coverage/coverage_data")
-        psl_path = "vunit_out/functional_coverage/coverage_data/psl_cov_{}_{}.json".format(tgt_name, name)
-        opts.extend(["--psl-report={}".format(psl_path)])
-
         # Remove hierarchy prefixes
         filtered_generics = {}
         for key, value in generics.items():
             new_key = key.split("/")[-1]
             filtered_generics[new_key] = value
 
+        # Generate coverage per test
+        os.system("mkdir -p vunit_out/code_coverage")
+        name = re.sub(r'[^a-zA-Z0-9_-]', '_', test["name"])
+        covdb_path = "vunit_out/code_coverage/{}_{}".format(tgt_name, name)
+
+        nvc_opts = []
+        nvc_opts.append("-V")
+        nvc_opts.append("--cover=all,include-mems,exclude-unreachable")
+        nvc_opts.append("--cover-file={}.ncdb".format(covdb_path))
+        nvc_opts.append("--cover-spec=nvc_cover_spec")
+        nvc_opts.append("--no-collapse")
+        nvc_opts.append("--jit")
+
         # Create the test
-        tb.add_config(test["name"], generics=filtered_generics, sim_options={"ghdl.sim_flags": opts})
+        tb.add_config(test["name"], generics=filtered_generics,
+                                    sim_options={"ghdl.sim_flags": opts,
+                                                 "nvc.elab_flags": nvc_opts})
 
 
 if __name__ == '__main__':
@@ -174,8 +193,8 @@ if __name__ == '__main__':
     set_elab_options(vu, tgt)
 
     vu.set_sim_option("nvc.heap_size", '256m', allow_empty=True)
-    vu.set_sim_option("nvc.elab_flags", ['-j'])
     vu.set_sim_option("nvc.sim_flags", ['--ieee-warnings=off'], allow_empty=True)
+
 
     # Run
     vu.main()

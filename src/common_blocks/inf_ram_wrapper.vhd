@@ -209,6 +209,7 @@ begin
     -----------------------------------------------------------------------------------------------
     -- Assertions on size
     -----------------------------------------------------------------------------------------------
+    -- coverage off
     assert ((G_WORD_WIDTH = 8) or
             (G_WORD_WIDTH = 16) or
             (G_WORD_WIDTH = 32) or
@@ -217,5 +218,6 @@ begin
     report "Unsupported inferred RAM word width! " &
            "Only 8, 16, 32, 64 and 128 are allowed!"
         severity failure;
+    -- coverage on
 
 end architecture;

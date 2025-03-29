@@ -946,6 +946,7 @@ begin
     -- RX Buffer size can be only powers of 2. Since modulo arithmetics is used on memory pointers,
     -- using non power of 2 value would result in increased logic usage!
     -----------------------------------------------------------------------------------------------
+    -- coverage off
     assert ((G_RX_BUFF_SIZE = 32) or
             (G_RX_BUFF_SIZE = 64) or
             (G_RX_BUFF_SIZE = 128) or
@@ -956,6 +957,7 @@ begin
             (G_RX_BUFF_SIZE = 4096))
     report "Unsupported RX Buffer size! RX Buffer must be power of 2!"
         severity failure;
+    -- coverage on
 
     -- <RELEASE_OFF>
 
@@ -971,6 +973,7 @@ begin
     --  This verifies consistency of storing protocol by CAN Core, as well as RWCNT field!
     -----------------------------------------------------------------------------------------------
     -- pragma translate_off
+    -- coverage off
     rwcnt_assert_proc : process(clk_sys)
         variable exp_data_stores    : natural := 0;
         variable act_data_stores   : natural := 0;
@@ -1005,6 +1008,7 @@ begin
             end if;
         end if;
     end process;
+    -- coverage on
     -- pragma translate_on
 
 

@@ -1,15 +1,17 @@
-image: registry.gitlab.com/canfd/server-tools/ghdl
+image: registry.gitlab.com/canfd/server-tools/ghdl:latest
+
+variables:
+    GIT_SUBMODULE_STRATEGY: recursive
+
 before_script:
-    - "export PATH=/opt/ghdl/bin:$PATH"
+    - "export PATH=/opt/ghdl/bin:/opt/nvc/bin:$PATH"
     - export LC_ALL=C.UTF-8
     - export LANG=C.UTF-8
     - export PYTHONUNBUFFERED=1
     - export CTU_TB_TOP_TARGET="tb_ctu_can_fd_rtl_vunit"
 
-
 stages:
     - precheck
-    #- test_driver
     - build
     - test_rtl
     - test_gates
@@ -35,20 +37,6 @@ check_component:
 # Build stage
 ###############################################################################
 
-build_ip_and_tests:
-    stage: build
-    tags:
-        - simulation
-    script:
-        - cd test
-        - make elaborate
-    only: &only
-        - master     # Run on all changes to master branch
-        - tags       # Run on all tags
-        - triggers   # Run by trigger (on merge request)
-        - web        # Run by manual request from web UI
-
-
 build_compliance_lib:
     stage: build
     tags:
@@ -59,11 +47,14 @@ build_compliance_lib:
     artifacts:
         paths:
             - test/main_tb/iso-16845-compliance-tests/build/Debug/src/cosimulation/libGHDL_VPI_COSIM_LIB.so
-            - test/main_tb/iso-16845-compliance-tests/build/Debug/src/cosimulation/libVCS_VHPI_COSIM_LIB.so
+            - test/main_tb/iso-16845-compliance-tests/build/Debug/src/cosimulation/libNVC_VHPI_COSIM_LIB.so
             - test/main_tb/iso-16845-compliance-tests/build/Release/src/cosimulation/libGHDL_VPI_COSIM_LIB.so
-            - test/main_tb/iso-16845-compliance-tests/build/Release/src/cosimulation/libVCS_VHPI_COSIM_LIB.so
-    only: *only
-
+            - test/main_tb/iso-16845-compliance-tests/build/Release/src/cosimulation/libNVC_VHPI_COSIM_LIB.so
+    only: &only
+        - master     # Run on all changes to master branch
+        - tags       # Run on all tags
+        - triggers   # Run by trigger (on merge request)
+        - web        # Run by manual request from web UI
 
 build_driver:
     stage: build
@@ -111,9 +102,8 @@ run_synthesis:
     tags:
         - synthesis
     only: *only
-    tags:
-        - vps
     script:
+        - ls
         - source /opt/xilinx/vivado-2018.2/settings.sh
         - cd synthesis/Vivado/ci_benchmark
         - echo "Running minimal configuration..."
@@ -134,32 +124,6 @@ run_synthesis:
 
 
 ###############################################################################
-# Run emulator tests (on ZynQ MZ_APO board)
-###############################################################################
-
-# Disable for now. Multi-project pipelines are available only in Premium Gitlab
-# Edition!
-
-#run_emulator_tests:
-#    stage: test_driver
-#    only:
-#        - master
-#
-    # Trigger pipeline in MZ_APO Zynq top repo. This will:
-    #   1. Update sub-modules (CTU CAN FDs latest master is taken in Zynq build).
-    #   2. Build Vivado design with CTU CAN FD, SJA1000, Zlogan etc...
-    #   3. Build CTU CAN FD driver (from latest CTU CAN FD master)
-    #   3. Run test on MZ_APO board which:
-    #       1. Loads driver
-    #       2. Sends frames over SocketCAN between CTU CAN FD and SJA100 in various
-    #          combinations. This is sort-of driver sanity check, not its full
-    #          verification!
-    #trigger:
-    #    project: canbus/zynq/zynq-can-sja1000-top
-    #    strategy: depend
-
-
-###############################################################################
 # Test RTL stage (fast + nightly)
 ###############################################################################
 test_fast_asic:
@@ -177,6 +141,7 @@ test_fast_asic:
             - test/tb_rtl_test_fast_asic.xml
             - test/tb_rtl_test_fast_asic_summary
             - test/tb_rtl_test_fast_asic.sim_time
+            - test/vunit_out/code_coverage
         reports:
             junit: test/tb_rtl_test_fast_asic.xml
 
@@ -195,6 +160,7 @@ test_fast_fpga:
             - test/tb_rtl_test_fast_fpga.xml
             - test/tb_rtl_test_fast_fpga_summary
             - test/tb_rtl_test_fast_fpga.sim_time
+            - test/vunit_out/code_coverage
         reports:
             junit: test/tb_rtl_test_fast_fpga.xml
 
@@ -214,7 +180,7 @@ test_nightly:
             - test/tb_rtl_test_nightly.xml
             - test/tb_rtl_test_nightly_summary
             - test/tb_rtl_test_nightly.sim_time
-            - test/vunit_out/functional_coverage
+            - test/vunit_out/code_coverage
         reports:
             junit: test/tb_rtl_test_nightly.xml
 
@@ -243,11 +209,13 @@ test_compliance_short:
             - test/tb_rtl_test_compliance_short.xml
             - test/tb_rtl_test_compliance_short_summary
             - test/tb_rtl_test_compliance_short.sim_time
+            - test/vunit_out/code_coverage
         reports:
             junit: test/tb_rtl_test_compliance_short.xml
 
     # For now not all compliance tests are debugged, allow failure...
     allow_failure: true
+
 
 test_compliance_full_typ:
     stage: test_rtl
@@ -266,7 +234,7 @@ test_compliance_full_typ:
             - test/tb_rtl_test_compliance_full_typ.xml
             - test/tb_rtl_test_compliance_full_typ_summary
             - test/tb_rtl_test_compliance_full_typ.sim_time
-            - test/vunit_out/functional_coverage
+            - test/vunit_out/code_coverage
         reports:
             junit: test/tb_rtl_test_compliance_full_typ.xml
 
@@ -290,7 +258,7 @@ test_compliance_full_max:
             - test/tb_rtl_test_compliance_full_max.xml
             - test/tb_rtl_test_compliance_full_max_summary
             - test/tb_rtl_test_compliance_full_max.sim_time
-            - test/vunit_out/functional_coverage
+            - test/vunit_out/code_coverage
         reports:
             junit: test/tb_rtl_test_compliance_full_max.xml
 
@@ -301,32 +269,34 @@ test_compliance_full_max:
 # MIN run is not feasible with GHDL. Min run with VCS on fast machine takes 6-8
 # hours -> TODO: Add min run once we flip to NVC.
 
+
 ###############################################################################
 # Test gates (Gate level simulation on post synthesis netlist)
 ###############################################################################
-#test_gates_simple:
-#    stage: test_gates
-#    tags:
-#        - simulation
-#    dependencies: [run_synthesis]
-#    timeout: 6h
-#    only:
-#        - master
-#    script:
-#        - cd test
-#        - make tb_gate_xilinx_test_simple
-#        - make tb_gate_xilinx_test_simple_logs
-#    artifacts:
-#        when: always
-#        paths:
-#            - test/tb_gate_xilinx_test_simple.xml
-#            - test/tb_gate_xilinx_test_simple_summary
-#            - test/tb_gate_xilinx_test_simple.sim_time
-#        reports:
-#            junit: test/tb_gate_xilinx_test_simple.xml
-#
-#    # Some gates might fail, TODO: Debug
-#    allow_failure: true
+test_gates_simple:
+    stage: test_gates
+    tags:
+        - simulation
+    dependencies: [run_synthesis]
+    timeout: 6h
+    only:
+        - master
+    script:
+        - cd test
+        - make tb_gate_xilinx_test_simple
+        - make tb_gate_xilinx_test_simple_logs
+    artifacts:
+        when: always
+        paths:
+            - test/tb_gate_xilinx_test_simple.xml
+            - test/tb_gate_xilinx_test_simple_summary
+            - test/tb_gate_xilinx_test_simple.sim_time
+            - test/vunit_out/code_coverage
+        reports:
+            junit: test/tb_gate_xilinx_test_simple.xml
+
+    # Some gates might fail, TODO: Debug
+    allow_failure: true
 
 test_gates_compliance:
     stage: test_gates
@@ -362,13 +332,22 @@ process_coverage:
     stage: coverage
     tags:
         - simulation
-    dependencies: [test_compliance_full_typ, test_nightly]
-    only:
-        - master
+    dependencies:
+        - test_fast_fpga
+        - test_fast_asic
+        - test_nightly
+        - test_compliance_short
+        - test_compliance_full_typ
+        - test_compliance_full_max
+    only: *only
     script:
-        # Process functional coverage
+        # Merge code coverage and generate report
         - cd test
-        - make functional_coverage
+        - echo "Merging code coverage results from:"
+        - ls vunit_out/code_coverage/tb_rtl_*.ncdb
+
+        - nvc --cover-merge -V --output=merged.covdb vunit_out/code_coverage/tb_rtl_*.ncdb
+        - nvc --cover-report --output=code_coverage_report merged.covdb
 
         # Generate VRM
         - cd ../scripts
@@ -379,9 +358,9 @@ process_coverage:
     artifacts:
         when: always
         paths:
-            - test/vunit_out/functional_coverage/functional_coverage_report.html
-            - test/vunit_out/functional_coverage/html
             - scripts/VRM.html
+            - test/merged.covdb
+            - test/code_coverage_report
 
 pages:
     stage: deploy
@@ -398,6 +377,7 @@ pages:
         - mkdir -p public/regression_results
         - mkdir -p public/synthesis
         - mkdir -p public/vivado_component
+        - mkdir -p public/code_coverage_report
 
         # Copy RTL
         - cp src/*.vhd public/rtl/
@@ -423,6 +403,7 @@ pages:
         # DO NOT pack the complete regression results they include all log files and that overflows pages artifacts!
         #- cp test/*.xml public/regression_results/ || true
         - cp test/*_summary public/regression_results/ || true
+        - cp -r test/code_coverage_report/* public/code_coverage_report || true
 
         # Measure total simulation time
         - cat test/*.sim_time | paste -sd+ | bc > total.sim_time
@@ -433,11 +414,6 @@ pages:
         - cp doc/core/ctu_can_fd_architecture.pdf public/doc/System_Architecture.pdf || true
         - cp doc/core/tb_architecture.pdf public/doc/Testbench.pdf || true
         - cp -R doc/driver/build public/doc/linux_driver || true
-
-        # Copy functional coverage HTML reports
-        - mkdir public/regression_results/functional_coverage
-        - cp test/vunit_out/functional_coverage/*.html public/regression_results/functional_coverage || true
-        - cp -R test/vunit_out/functional_coverage/html public/regression_results/functional_coverage || true
 
         # Copy synthesis results + constraints
         - cp -R synthesis/Vivado/ci_benchmark/*_design_config public/synthesis
@@ -458,6 +434,3 @@ pages:
     artifacts:
         paths:
             - public
-
-variables:
-    GIT_SUBMODULE_STRATEGY: recursive
