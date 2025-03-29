@@ -3,7 +3,7 @@ XUNIT ?= 0
 BUILD_DIR = build
 TESTFW_DIR = testfw
 
-TEST_FLAGS = -p`nproc`
+TEST_FLAGS = -p10
 TEST_OPTS_test_debug := --no-strict
 
 all: test coverage functional_coverage
