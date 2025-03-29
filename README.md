@@ -127,7 +127,7 @@ in the order files are present in `src/slf_rtl.yml`.
 ## How to run CTU CAN FD testbench ?
 
 There are two options to run CTU CAN FD regression:
-1. With VUnit + GHDL
+1. With VUnit + NVC
 2. With Synopsys VCS
 
 Each regression run corresponds to a target from `sim/ts_sim_config.yml` file. There are
@@ -140,15 +140,15 @@ following targets available:
    - tb_rtl_test_compliance_full_min
    - tb_rtl_test_compliance_full_max
 
-### Running with GHDL
+### Running with NVC
 
 In CTU CAN FD repository root:
 
-1. `./run-docker-test` - This will pull and launch docker image with GHDL, Vunit, CMake and C Compiler.
+1. `./run-docker-test` - This will pull and launch docker image with NVC, Vunit, CMake and C Compiler.
 2. `cd main_tb/iso-16845-compliance-tests`
 3. `./build.sh` - This builds compliance tests library
 4. `cd ../..`
-5. `./run.py <TARGET_NAME>` To run all tests from `<TARGET_NAME>` target.
+5. `VUNIT_SIMULATOR=nvc ./run.py <TARGET_NAME>` To run all tests from `<TARGET_NAME>` target.
 
 If you run `./run.py <TARGET_NAME> --list` you will get list of all available tests
 for given target.
@@ -206,8 +206,8 @@ respect the license, and dont use the RTL and TB in your commercial device witho
 
 To simulate CTU CAN FD, following tools are used:
 
-GHDL, VHDL simulator:
-[GHDL](https://github.com/Blebowski/ghdl).
+NVC, a VHDL simulator:
+[NVC](https://github.com/nickg/nvc).
 
 GTKWave, Waveform viewer:
 [GTKWave](http://gtkwave.sourceforge.net/)
@@ -245,7 +245,7 @@ Linux driver was debugged and tested manually against Kvaser devices, CANoe and 
 and handling of Error states were debugged manually. Automated test for latest IP core version version is run daily at CTU FEE. It pulls latest CTU CAN FD RTL and integrates them into respective Xilinx Zynq FPGA project, compiles latest SocketCAN driver and runs CAN/CAN FD communication (500 Kbit/s Nominal bit rate, 4 Mbit Data bit rate) with randomly generated frames between CTU CAN FDs and FD tolerant SJA1000. Results can be found at:..
 [![FPGA Emulator tests](https://img.shields.io/badge/FPGA_Emulator_Tests--cyan.svg)](https://gitlab.fel.cvut.cz/canbus/zynq/zynq-can-sja1000-top/pipelines)
 
-However, there are no written tests for the driver itself (apart from compiling it without error and passing Linux kernels checkpatch which is required for pipeline to pass). In future QEMU + VPCIE + GHDL cosimulation is planned.
+However, there are no written tests for the driver itself (apart from compiling it without error and passing Linux kernels checkpatch which is required for pipeline to pass).
 
 
 ## QEMU emulation
