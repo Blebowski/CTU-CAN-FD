@@ -3,9 +3,9 @@
 CTU CAN FD is soft IP-Core written in VHDL which supports ISO and NON-ISO versions
 of CAN FD protocol.
 
-CTU CAN FD is not a prototype. RTL is compliant with ISO 1198-1:2015.
-CTU CAN FD is tested by ISO 16845-1 2016 sequence in regression run on
-every merged request.
+CTU CAN FD is compliant with ISO 1198-1:2015. CTU CAN FD is tested by ISO 16845-1 2016
+sequence in digital simulation and it has been used in dozens of FPGA and
+ASIC applications.
 
 RTL is implemented in VHDL-93, synthesizable with most FPGA and ASIC flows.
 TB is implemented with VHDL 2008.
@@ -16,14 +16,17 @@ TB is implemented with VHDL 2008.
 CTU CAN FD RTL and TB are published under following license :
 [![License](https://img.shields.io/badge/License--black.svg)]( https://gitlab.fel.cvut.cz/canbus/ctucanfd_ip_core/blob/master/LICENSE)
 
-Commercial usage of RTL and TB requires authors consent.
+Commercial usage of RTL and TB requires License agreement which is provided
+for a license fee. For further details please reach out to ondrej.ille@gmail.com.
 
 Linux driver for CTU CAN FD is published under GPLv2 license.
 
 The CAN protocol is developed by Robert Bosch GmbH and protected by patents.
 Anybody who wants to implement this IP core on silicon or FPGA for commercial
-purposes has to obtain CAN protocol license from Bosch.
+purposes has to obtain CAN protocol license from Bosch. For further details,
+on Bosch License fee, reffer to:
 
+[Bosch CAN protocol license1](https://www.bosch-semiconductors.com/products/ip-modules/can-protocol-license/)
 
 ## Design
 
@@ -34,7 +37,7 @@ FPGA / ASIC target can be selected by top level generic. ASIC target implements
 clock gating for memories to achieve low dynamic power consumption. Additionally,
 clock enables are used frequently to allow inferred clock gating on ASIC.
 Last but not least, RTL is DFT insertion ready and contains additional support
-for manufacturing testability.
+for manufacturing testability by a functional test.
 
 Architecture of CTU CAN FD is described in:
 [![System architecture](https://img.shields.io/badge/System_architecture--blue.svg)]( http://canbus.pages.fel.cvut.cz/ctucanfd_ip_core/doc/System_Architecture.pdf)
@@ -54,13 +57,21 @@ There are 3 types of tests available in CTU CAN FD test-bench:
 - Reference tests (open-source, VHDL)
 - Compliance tests (open-source, C++ library linked to simulation, [ISO16845 Compliance library](https://gitlab.com/Ondrej_Ille/iso-16845-compliance-tests)).
 
-TB has extensive PSL functional coverage, see regression coverage in:
-[![Functional coverage](https://img.shields.io/badge/functional%20coverage--orange.svg)](http://canbus.pages.fel.cvut.cz/ctucanfd_ip_core/regression_results/functional_coverage/functional_coverage_report.html)
+Alltogether, there is more than 300 different tests that run in
+multiple testbench variants. The testbench reaches high statement,
+toggle, branch and expression coverage of the DUT.
+Functional coverage is implemented by PSL assertions.
+
+The code and functional coverage can be seen in:
+[![Coverage](https://img.shields.io/badge/functional%20coverage--orange.svg)](http://canbus.pages.fel.cvut.cz/ctucanfd_ip_core/code_coverage_report/index.html)
 
 Description of test-bench and CTU CAN FD VIP is in:
 [![Testbench architecture](https://img.shields.io/badge/Testbench--blue.svg)]( http://canbus.pages.fel.cvut.cz/ctucanfd_ip_core/doc/Testbench.pdf)
 
-CTU CAN FD is simulated as RTL and as post-synthesis gate-level
+Documentation of all the tests with mapping to a feature being verified:
+[![Verification Requirement Matrix](https://img.shields.io/badge/Testbench--blue.svg)]( http://canbus.pages.fel.cvut.cz/ctucanfd_ip_core/regression_results/VRM.html )
+
+CTU CAN FD is simulated as RTL, and as post-synthesis gate-level
 netlist with Xilinx UNISIM library (unit delay simulation).
 
 See the instructions below in "How to run CTU CAN FD testbench" subsection.
@@ -68,7 +79,7 @@ See the instructions below in "How to run CTU CAN FD testbench" subsection.
 
 ## Regressions (Continuous integration)
 
-All tests are automated into several regression runs:
+The tests are executed in several regression runs:
 - Fast ASIC - DUT configuration for ASIC, short run
 - Fast FPGA - DUT configuration for FPGA, short run
 - Compliance short - Runs majority of ISO 11845-1 compliance test sequence
@@ -78,7 +89,7 @@ All tests are automated into several regression runs:
 - Compliance max - Runs all ISO 11845-1 tests with "maximal" bit-rate on CAN bus.
 - Compliance min - Runs all ISO 11845-1 tests with "minimal" bit-rate on CAN bus.
 
-- Gate level simple - Runs most of feature tests on gate level netlist as DUT
+- Gate level simple - Runs most of feature tests on gate level netlist as DUT.
 - Gate level compliance - Runs most of ISO 11845-1 tests on gate level netlist as DUT.
 
 Short summary of results from last regression (including all test types) can be downloaded from:
@@ -119,19 +130,19 @@ gate level simulations (see "Test-bench" above), provide good indicator of high-
 
 ## How to integrate CTU CAN FD RTL ?
 
-1. Compile files from `src/slf_rtl.yml` YAML file into `ctu_can_fd_rtl` VHDL library
-in the order files are present in `src/slf_rtl.yml`.
+1. Compile files from `src/slf_rtl.yml` YAML file into `ctu_can_fd_rtl` VHDL library.
+   Compile the files in order they are listed in `src/slf_rtl.yml`.
 2. Integrate `can_top_level` entity in your design. See [![System architecture](https://img.shields.io/badge/System_architecture--blue.svg)]( http://canbus.pages.fel.cvut.cz/ctucanfd_ip_core/doc/System_Architecture.pdf) for details of CTU CAN FD interface.
 
 
 ## How to run CTU CAN FD testbench ?
 
-There are two options to run CTU CAN FD regression:
+There are two options how to run CTU CAN FD regression:
 1. With VUnit + NVC
 2. With Synopsys VCS
 
-Each regression run corresponds to a target from `sim/ts_sim_config.yml` file. There are
-following targets available:
+Each regression run corresponds to a target from `sim/ts_sim_config.yml` file.
+There are following targets available:
    - tb_rtl_test_fast_asic
    - tb_rtl_test_fast_fpga
    - tb_rtl_test_nightly
@@ -157,7 +168,7 @@ for given target.
 
 To run with VCS, you will need Tropic Square HW simulation flow, to get it do following:
 
-1. ``git clone https://github.com/tropicsquare/ts-hw-scripts``
+1. ``git clone https://github.com/Blebowski/ts-hw-scripts``
 2. ``export PATH=`pwd`/ts-hw-scripts/scripts:$PATH``
 3. Make sure you have all Python dependencies required to run `ts-hw-scripts`. See README of `ts-hw-scripts`.
 
@@ -182,8 +193,8 @@ of available tests for given target.
 CTU CAN FD testbench is a stand-alone testbench with `ctu_can_fd_tb_top` as top level
 simulated entity. All testing/verification functionality is however implemented in
 CTU CAN FD VIP (`ctu_can_fd_vip` entity). It is possible to integrate CTU CAN FD
-VIP also to your custom testbench if you connect the VIP to DUT via VHDL hierarchical
-references (this is similar to binding System Verilog interfaces in UVM TB).
+VIP also to your custom testbench if you connect the VIP to DUT via VHDL external names
+(similar to binding System Verilog interfaces in UVM TB).
 
 VIP can be integrated into other test-bench with help of [![Testbench architecture](https://img.shields.io/badge/Testbench--blue.svg)]( http://canbus.pages.fel.cvut.cz/ctucanfd_ip_core/doc/Testbench.pdf) document.
 
@@ -193,13 +204,6 @@ To compile the VIP / TB in such scenario, you first need to compile RTL
 1. Compile files from `test/slf_tb_dependencies_simple.yml`
 2. Compile files from `test/slf_tb_common.yml`
 3. Integrate `ctu_can_fd_vip` into your TB, and connect its interface to CTU CAN FD in design.
-
-
-## License disclaimer
-
-If you like the design, and would like to use-it, let us know. We are looking for co-operation,
-especially on ISO certification which is a big step that CTU CAN FD would like to take. Please,
-respect the license, and dont use the RTL and TB in your commercial device without a license contract.
 
 
 ## Development tools
@@ -212,8 +216,8 @@ NVC, a VHDL simulator:
 GTKWave, Waveform viewer:
 [GTKWave](http://gtkwave.sourceforge.net/)
 
-Vunit, VHDL unit test framework, with modifications allowing to start GTKWave interactively when simulation run starts:
-[Vunit](https://github.com/mjerabek/vunit).
+Vunit, VHDL unit test framework:
+[Vunit](https://github.com/VUnit/vunit).
 
 Python 3 and following modules: pyvcd attrs jinja2 parsy pyyaml click yattag json2html
 
@@ -241,11 +245,16 @@ Operation up to 5 Mbits was tested (depending on physical layer transceiver type
 
 ## Linux driver tests
 
-Linux driver was debugged and tested manually against Kvaser devices, CANoe and other CAN FD controllers. Regular communication
-and handling of Error states were debugged manually. Automated test for latest IP core version version is run daily at CTU FEE. It pulls latest CTU CAN FD RTL and integrates them into respective Xilinx Zynq FPGA project, compiles latest SocketCAN driver and runs CAN/CAN FD communication (500 Kbit/s Nominal bit rate, 4 Mbit Data bit rate) with randomly generated frames between CTU CAN FDs and FD tolerant SJA1000. Results can be found at:..
+Linux driver was debugged and tested manually against Kvaser devices, CANoe and other CAN FD controllers.
+Regular communication and handling of Error states were debugged manually. Automated test for latest IP
+core version version is run daily at CTU FEE. It pulls latest CTU CAN FD RTL and integrates them into
+respective Xilinx Zynq FPGA project, compiles latest SocketCAN driver and runs CAN/CAN FD communication
+(500 Kbit/s Nominal bit rate, 4 Mbit Data bit rate) with randomly generated frames between CTU CAN FDs
+and FD tolerant SJA1000. Results can be found at:..
 [![FPGA Emulator tests](https://img.shields.io/badge/FPGA_Emulator_Tests--cyan.svg)](https://gitlab.fel.cvut.cz/canbus/zynq/zynq-can-sja1000-top/pipelines)
 
-However, there are no written tests for the driver itself (apart from compiling it without error and passing Linux kernels checkpatch which is required for pipeline to pass).
+However, there are no written tests for the driver itself (apart from compiling it without error
+and passing Linux kernels checkpatch which is required for pipeline to pass).
 
 
 ## QEMU emulation
@@ -258,8 +267,8 @@ includes section about CTU CAN FD emulation setup.
 ## Roadmap
 
 There are several options for further development:
-- Linux driver testing (QEMU + VPCIE)
-- Splitting design into two clock domains
+- Adding DMA support
+- Splitting the design into two clock domains
 - Support of TTCAN protocol
 - Support of CAN XL protocol
 - Other features
