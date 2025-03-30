@@ -62,8 +62,8 @@ multiple testbench variants. The testbench reaches high statement,
 toggle, branch and expression coverage of the DUT.
 Functional coverage is implemented by PSL assertions.
 
-The code and functional coverage can be seen in:
-[![Coverage](https://img.shields.io/badge/functional%20coverage--orange.svg)](http://canbus.pages.fel.cvut.cz/ctucanfd_ip_core/code_coverage_report/index.html)
+The code coverage and functional coverage can be seen in:
+[![Coverage](https://img.shields.io/badge/code%20coverage--orange.svg)](http://canbus.pages.fel.cvut.cz/ctucanfd_ip_core/code_coverage_report/index.html)
 
 Description of test-bench and CTU CAN FD VIP is in:
 [![Testbench architecture](https://img.shields.io/badge/Testbench--blue.svg)]( http://canbus.pages.fel.cvut.cz/ctucanfd_ip_core/doc/Testbench.pdf)
