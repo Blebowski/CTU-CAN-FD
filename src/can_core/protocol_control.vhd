@@ -122,6 +122,7 @@ entity protocol_control is
         -------------------------------------------------------------------------------------------
         mr_mode_acf             : in  std_logic;
         mr_mode_stm             : in  std_logic;
+        mr_mode_bmm             : in  std_logic;
         mr_mode_fde             : in  std_logic;
         mr_mode_rom             : in  std_logic;
         mr_mode_tstm            : in  std_logic;
@@ -619,6 +620,7 @@ begin
         mr_command_ercrst       => mr_command_ercrst,       -- IN
         mr_mode_acf             => mr_mode_acf,             -- IN
         mr_mode_stm             => mr_mode_stm,             -- IN
+        mr_mode_bmm             => mr_mode_bmm,             -- IN
         mr_settings_rtrle       => mr_settings_rtrle,       -- IN
         mr_settings_ilbp        => mr_settings_ilbp,        -- IN
         mr_mode_fde             => mr_mode_fde,             -- IN

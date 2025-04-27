@@ -502,6 +502,7 @@ begin
         -- Memory registers interface
         mr_mode_acf             => mr_mode_acf,                 -- IN
         mr_mode_stm             => mr_mode_stm,                 -- IN
+        mr_mode_bmm             => mr_mode_bmm,                 -- IN
         mr_mode_fde             => mr_mode_fde,                 -- IN
         mr_mode_rom             => mr_mode_rom,                 -- IN
         mr_mode_tstm            => mr_mode_tstm,                -- IN
