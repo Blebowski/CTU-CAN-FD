@@ -129,6 +129,7 @@ entity protocol_control_fsm is
         -- Configuration values
         mr_mode_acf             : in  std_logic;
         mr_mode_stm             : in  std_logic;
+        mr_mode_bmm             : in  std_logic;
         mr_mode_fde             : in  std_logic;
         mr_mode_rom             : in  std_logic;
         mr_mode_sam             : in  std_logic;
@@ -747,6 +748,9 @@ architecture rtl of protocol_control_fsm is
     -- Transmit dominant ACK bit
     signal tx_dominant_ack              : std_logic;
 
+    -- Allow ACK bit to have other value being received as being transmitted
+    signal allow_flipped_ack            : std_logic;
+
 begin
 
     tran_frame_type_i <= FD_CAN when (tran_frame_type = FD_CAN and mr_mode_fde = '1')
@@ -804,6 +808,14 @@ begin
                                    (is_transmitter = '1' and mr_mode_sam = '1'))
                            else
                        '0';
+
+    -- ACK may receive different value that transmitted when:
+    --  1. Unit sends recessive (may receive dominant ACK from other nodes)
+    --  2. In bus monitoring. The value does not propagate to the bus, but ACK
+    --     from another node may arrive.
+    allow_flipped_ack <= '1' when (tx_dominant_ack = '0' or mr_mode_bmm = '1')
+                             else
+                         '0';
 
     -----------------------------------------------------------------------------------------------
     -- Signal is not decoded inside curr_state process, because it is sensitive to this signal!
@@ -1341,7 +1353,7 @@ begin
         ctrl_ctr_one, mr_command_ercrst_q, reinteg_ctr_expired, first_err_delim_q, go_to_stuff_count,
         ack_err_flag, crc_length_i, data_length_bits_c, ctrl_ctr_mem_index, is_bus_off,
         block_txtb_unlock, mr_settings_pex, rx_data_nbs_prev, sync_edge, mr_mode_rom,
-        mr_settings_ilbp, tx_dominant_ack, rec_lbpf_q, rec_ivld_q)
+        mr_settings_ilbp, tx_dominant_ack, rec_lbpf_q, rec_ivld_q, allow_flipped_ack)
     begin
 
         -------------------------------------------------------------------------------------------
@@ -2172,10 +2184,9 @@ begin
 
                 if (tx_dominant_ack = '1') then
                     tx_dominant <= '1';
+                end if;
 
-                -- Bit Error still shall be detected when unit sends dominant
-                -- (receiver) and receives recessive!
-                else
+                if (allow_flipped_ack = '1') then
                     bit_err_disable <= '1';
                 end if;
 
@@ -2198,10 +2209,9 @@ begin
 
                 if (tx_dominant_ack = '1') then
                     tx_dominant <= '1';
+                end if;
 
-                -- Bit Error still shall be detected when unit sends dominant
-                -- (receiver) and receives recessive!
-                else
+                if (allow_flipped_ack = '1') then
                     bit_err_disable <= '1';
                 end if;
 
