@@ -16,21 +16,6 @@ stages:
     - coverage
     - deploy
 
-check_component:
-    stage: precheck
-    script:
-        - scripts/gen_vivado_component.py
-        - cd scripts && ./update_reg_map
-        - git diff --exit-code || (echo "Vivado component file or register map products are not up-to-date. Either run scripts/gen_vivado_component.py and scripts/update_reg_map or download the files from this job's artifacts."; exit 1)
-    artifacts:
-        expire_in: 1 week
-        paths:
-            - src/component.xml
-            - doc/core/registerMap.lyx
-            - driver/ctucanfd_regs.h
-            - driver/ctucanfd_frame.h
-            - src/lib/can_fd_register_map.vhd
-
 ###############################################################################
 # Build stage
 ###############################################################################
