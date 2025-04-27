@@ -578,15 +578,6 @@ Added Issue 5 - MODE[BMM].
 \end_layout
 
 \begin_layout Standard
-\begin_inset CommandInset toc
-LatexCommand tableofcontents
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Standard
 \begin_inset ERT
 status open
 
@@ -718,6 +709,30 @@ The v2.5 GIT tag was used to create a 2v5-lts GIT branch to maintain 2v5
  section can be applied.
 \end_layout
 
+\begin_layout Description
+Git
+\begin_inset space ~
+\end_inset
+
+Tag: v2.5.1
+\end_layout
+
+\begin_layout Description
+Git
+\begin_inset space ~
+\end_inset
+
+Hash: 27efaafa
+\end_layout
+
+\begin_layout Standard
+The v2.5.1 GIT tag was used to 2v5-lts branch.
+ This tag contains fixes of Issue 2, Issue 3 and Issue 4.
+ This tag still contains Issue 1 and Issue 5.
+ Issue 1 is resolved in the 2v5-lts branch after the v2.5.1 commit.
+ Issue 5 is not yet resolved.
+\end_layout
+
 \begin_layout Standard
 \begin_inset Newpage newpage
 \end_inset
@@ -812,7 +827,19 @@ Fixed
 \begin_inset space ~
 \end_inset
 
-in: Not yet
+in: 
+\begin_inset Flex URL
+status open
+
+\begin_layout Plain Layout
+
+https://gitlab.fel.cvut.cz/canbus/ctucanfd_ip_core/-/commit/a4809536e83cac2f56e4328
+99d807096fcf7f43b
+\end_layout
+
+\end_inset
+
+ - A build PDF of Datasheet is commited.
 \end_layout
 
 \begin_layout Standard
@@ -1295,6 +1322,7 @@ Description: When CTU CAN FD operates in MODE[BMM] = 1 (Bus Monitoring Mode),
 Consequence: Bus Monitoring Mode is not working properly.
  The use-case of recording what is happening on the CAN bus without affecting
  it is compromised.
+ The bug does not affect CAN Compliance certication
 \end_layout
 
 \begin_layout Description
@@ -1346,8 +1374,9 @@ Next
 \begin_inset space ~
 \end_inset
 
-steps: Can be ported to 2v5-lts and tagged with `v2.5.2`.
- 
+steps: Can be ported to 2v5-lts and tagged with v2.5.2.
+ An ECO can be made from v2.5.2.
+ Alternatively, MODE[BMM] can be removed from the documentation.
 \end_layout
 
 \begin_layout Description
