@@ -63,7 +63,7 @@ build_doc:
     stage: build
     tags:
         - simulation
-    only: *only
+    #only: *only
     image: registry.gitlab.com/canfd/server-tools/lyx
     script:
         - export LC_ALL=en_US.UTF-8
