@@ -1,0 +1,1384 @@
+#LyX 2.3 created this file. For more info see http://www.lyx.org/
+\lyxformat 544
+\begin_document
+\begin_header
+\save_transient_properties true
+\origin unavailable
+\textclass book
+\begin_preamble
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+\usepackage{colortbl}
+\definecolor{gray}{RGB}{230,230, 230}
+\usepackage{subcaption}
+\usepackage{cprotect}
+\end_preamble
+\use_default_options true
+\begin_modules
+customHeadersFooters
+\end_modules
+\maintain_unincluded_children false
+\language english
+\language_package default
+\inputencoding auto
+\fontencoding global
+\font_roman "default" "default"
+\font_sans "default" "default"
+\font_typewriter "lmtt" "default"
+\font_math "auto" "auto"
+\font_default_family sfdefault
+\use_non_tex_fonts false
+\font_sc false
+\font_osf false
+\font_sf_scale 100 100
+\font_tt_scale 100 100
+\use_microtype false
+\use_dash_ligatures false
+\graphics default
+\default_output_format default
+\output_sync 0
+\bibtex_command default
+\index_command default
+\paperfontsize default
+\spacing other 1.1
+\use_hyperref true
+\pdf_author "Ille Ondrej"
+\pdf_subject "CAN FD IP function"
+\pdf_keywords "CAN, Flexible data rate,"
+\pdf_bookmarks true
+\pdf_bookmarksnumbered true
+\pdf_bookmarksopen false
+\pdf_bookmarksopenlevel 1
+\pdf_breaklinks false
+\pdf_pdfborder true
+\pdf_colorlinks false
+\pdf_backref false
+\pdf_pdfusetitle true
+\papersize default
+\use_geometry true
+\use_package amsmath 1
+\use_package amssymb 1
+\use_package cancel 1
+\use_package esint 1
+\use_package mathdots 1
+\use_package mathtools 1
+\use_package mhchem 1
+\use_package stackrel 1
+\use_package stmaryrd 1
+\use_package undertilde 1
+\cite_engine basic
+\cite_engine_type default
+\biblio_style plain
+\use_bibtopic false
+\use_indices false
+\paperorientation portrait
+\suppress_date false
+\justification true
+\use_refstyle 1
+\use_minted 0
+\index Index
+\shortcut idx
+\color #008000
+\end_index
+\leftmargin 2cm
+\topmargin 3cm
+\rightmargin 2cm
+\bottommargin 3cm
+\headheight 2cm
+\secnumdepth 2
+\tocdepth 5
+\paragraph_separation skip
+\defskip smallskip
+\is_math_indent 0
+\math_numbering_side default
+\quotes_style english
+\dynamic_quotes 0
+\papercolumns 1
+\papersides 1
+\paperpagestyle headings
+\tracking_changes false
+\output_changes true
+\html_math_output 0
+\html_css_as_file 0
+\html_be_strict false
+\end_header
+
+\begin_body
+
+\begin_layout Standard
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+% number the pages at the beginning in roman
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+frontmatter
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+% Number chapters as 
+\begin_inset Quotes eld
+\end_inset
+
+1.
+ xxx
+\begin_inset Quotes erd
+\end_inset
+
+ instead of 
+\begin_inset Quotes eld
+\end_inset
+
+Chapter 1
+\backslash
+nxxx
+\begin_inset Quotes erd
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+makeatletter
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+def
+\backslash
+@makechapterhead#1{%
+\end_layout
+
+\begin_layout Plain Layout
+
+  
+\backslash
+vspace*{50
+\backslash
+p@}%
+\end_layout
+
+\begin_layout Plain Layout
+
+  {
+\backslash
+parindent 
+\backslash
+z@ 
+\backslash
+raggedright 
+\backslash
+normalfont
+\end_layout
+
+\begin_layout Plain Layout
+
+    
+\backslash
+ifnum 
+\backslash
+c@secnumdepth >
+\backslash
+m@ne
+\end_layout
+
+\begin_layout Plain Layout
+
+      
+\backslash
+if@mainmatter
+\end_layout
+
+\begin_layout Plain Layout
+
+        %
+\backslash
+huge
+\backslash
+bfseries 
+\backslash
+@chapapp
+\backslash
+space 
+\backslash
+thechapter
+\end_layout
+
+\begin_layout Plain Layout
+
+        
+\backslash
+Huge
+\backslash
+bfseries 
+\backslash
+@chapapp{} 
+\backslash
+thechapter.
+\backslash
+space%
+\end_layout
+
+\begin_layout Plain Layout
+
+        %
+\backslash
+par
+\backslash
+nobreak
+\end_layout
+
+\begin_layout Plain Layout
+
+        %
+\backslash
+vskip 20
+\backslash
+p@
+\end_layout
+
+\begin_layout Plain Layout
+
+      
+\backslash
+fi
+\end_layout
+
+\begin_layout Plain Layout
+
+    
+\backslash
+fi
+\end_layout
+
+\begin_layout Plain Layout
+
+    
+\backslash
+interlinepenalty
+\backslash
+@M
+\end_layout
+
+\begin_layout Plain Layout
+
+    
+\backslash
+Huge 
+\backslash
+bfseries #1
+\backslash
+par
+\backslash
+nobreak
+\end_layout
+
+\begin_layout Plain Layout
+
+    
+\backslash
+vskip 40
+\backslash
+p@
+\end_layout
+
+\begin_layout Plain Layout
+
+  }}
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+def
+\backslash
+chaptername{}
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+makeatother
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Title
+
+\series bold
+\size giant
+\color black
+CTU CAN
+\noun on
+ FD
+\noun default
+\color inherit
+ 
+\series default
+\size default
+
+\begin_inset Newline newline
+\end_inset
+
+
+\series bold
+\size larger
+\color black
+
+\begin_inset VSpace bigskip
+\end_inset
+
+
+\size default
+\noun on
+Errata
+\end_layout
+
+\begin_layout Author
+\begin_inset VSpace defskip
+\end_inset
+
+
+\begin_inset Newline newline
+\end_inset
+
+
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset Newline newline
+\end_inset
+
+
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset Newline newline
+\end_inset
+
+
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset Newline newline
+\end_inset
+
+
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset Newline newline
+\end_inset
+
+
+\begin_inset Newline newline
+\end_inset
+
+
+\end_layout
+
+\begin_layout Left Header
+
+\size larger
+\begin_inset Tabular
+<lyxtabular version="3" rows="2" columns="2">
+<features tabularvalignment="top">
+<column alignment="left" valignment="top" width="0pt">
+<column alignment="left" valignment="top" width="0pt">
+<row>
+<cell multirow="3" alignment="left" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Graphics
+	filename ../pics/LEV.bmp
+	lyxscale 20
+	scale 9
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size larger
+CTU CAN FD IP Core - Errata
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell multirow="4" alignment="left" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Version 0.1, Commit:
+\begin_inset CommandInset include
+LatexCommand input
+filename "version.tex"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+</lyxtabular>
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\noindent
+\align center
+\begin_inset Tabular
+<lyxtabular version="3" rows="3" columns="3">
+<features tabularvalignment="middle">
+<column alignment="center" valignment="top" width="1.5cm">
+<column alignment="center" valignment="top" width="2cm">
+<column alignment="center" valignment="top" width="12.5cm">
+<row>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Document Version
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Date
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Change description
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+0.1
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+27-8-2024
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Initial version describing errata for release 2.5
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+0.2
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+27-2-2025
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Added Issue 5 - MODE[BMM].
+ Added Notes on what has been fixed.
+\end_layout
+
+\end_inset
+</cell>
+</row>
+</lyxtabular>
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset CommandInset toc
+LatexCommand tableofcontents
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+% classis page numbering
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+mainmatter
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Chapter*
+Introduction
+\end_layout
+
+\begin_layout Standard
+This document describes issues found in CTU CAN FD design.
+\end_layout
+
+\begin_layout Standard
+At the time of writing this document, CTU CAN FD is primarily revisioned
+ on CTU FEE Giltlab:
+\end_layout
+
+\begin_layout Standard
+\begin_inset Flex URL
+status open
+
+\begin_layout Plain Layout
+
+https://gitlab.fel.cvut.cz/canbus/ctucanfd_ip_core
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Second mirror repository is on Github:
+\end_layout
+
+\begin_layout Standard
+\begin_inset Flex URL
+status open
+
+\begin_layout Plain Layout
+
+https://github.com/Blebowski/CTU-CAN-FD/tree/2v5-lts
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+The document classifies the issues into several severities:
+\end_layout
+
+\begin_layout Itemize
+Very low - Do not affect FW, integrated system, communication on CAN bus
+ with other nodes nor CAN Compliance tests result.
+\end_layout
+
+\begin_layout Itemize
+Low - Potential impact on FW and system is minimal.
+ Has no impact on communication on CAN bus with other nodes.
+ Has no impact on CAN Compliance tests result.
+\end_layout
+
+\begin_layout Itemize
+Medium - May require a FW workaround.
+ Has no impact on CAN bus communication with other nodes.
+ May affect CAN Compliance test result.
+\end_layout
+
+\begin_layout Itemize
+High - Likely will require FW workaround to operate correctly.
+ May have impact on CAN bus communication with other nodes.
+ Affects CAN Compliance test result.
+\end_layout
+
+\begin_layout Itemize
+Very High - Either requires FW workaround, or no such FW workaround is possible.
+ Affects CAN bus communcication (may result in undefined behavior), and
+ definitely will affect CAN Compliance test result.
+\end_layout
+
+\begin_layout Chapter*
+Version 2.5
+\end_layout
+
+\begin_layout Standard
+This section describes issues found in the CTU CAN FD version 2.5.
+\end_layout
+
+\begin_layout Description
+Git
+\begin_inset space ~
+\end_inset
+
+Tag: v2.5
+\end_layout
+
+\begin_layout Description
+Git
+\begin_inset space ~
+\end_inset
+
+Hash: 859a1495
+\end_layout
+
+\begin_layout Standard
+The v2.5 GIT tag was used to create a 2v5-lts GIT branch to maintain 2v5
+ release.
+ 2v5-lts branch contains equal HW design as v2.5 GIT tag, but with testbench
+ improvements to achieve higher code coverage in CTU CAN FD verification.
+ 2v5-lts is a branch where potential ECO fixes for issues described in this
+ section can be applied.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Newpage newpage
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section*
+Issue 1
+\end_layout
+
+\begin_layout Description
+Type: Documentation inconsistency
+\end_layout
+
+\begin_layout Description
+Severity: Very low
+\end_layout
+
+\begin_layout Description
+Description: MODE[SAM] (self-acknowledge mode) is present in the datasheet
+ in 2v5-lts branch, but this mode is not implemented in CTU CAN FD HW.
+\end_layout
+
+\begin_layout Description
+Consequence: None
+\end_layout
+
+\begin_layout Description
+Fixed
+\begin_inset space ~
+\end_inset
+
+in
+\begin_inset space ~
+\end_inset
+
+later
+\begin_inset space ~
+\end_inset
+
+development: Currently, the Self-acknowledge mode is implemented in 
+\begin_inset Quotes eld
+\end_inset
+
+451-add-loopback-flag-to-frame-in-rx-buffer-2
+\begin_inset Quotes erd
+\end_inset
+
+ branch towards 2.6 release in GIT commit: 
+\begin_inset Flex URL
+status open
+
+\begin_layout Plain Layout
+
+https://gitlab.fel.cvut.cz/canbus/ctucanfd_ip_core/-/commit/0075b8e1a2cdefb5ce89eb8
+25525ab218e26fa94
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Description
+Workaround: None needed.
+ MODE[SAM] behaves as a R/W bit with no effect.
+ It is enough to make it reserved and remove the Datasheet section with
+ Self-acknowledge mode.
+ Simply, Self-acknowledge mode is not implemented in 2.5
+\end_layout
+
+\begin_layout Description
+ECO
+\begin_inset space ~
+\end_inset
+
+fixable: Not applicable
+\end_layout
+
+\begin_layout Description
+Next
+\begin_inset space ~
+\end_inset
+
+steps: Will push a fix in 2v5-lts branch that makes the datasheet documentation
+ constistent with real HW.
+\end_layout
+
+\begin_layout Description
+Fixed
+\begin_inset space ~
+\end_inset
+
+in: Not yet
+\end_layout
+
+\begin_layout Standard
+\begin_inset Newpage newpage
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section*
+Issue 2
+\end_layout
+
+\begin_layout Description
+Type: Bug
+\end_layout
+
+\begin_layout Description
+Severity: Low
+\end_layout
+
+\begin_layout Description
+Description: An incorrect reset source is used for registers holding STATUS[TXPE
+] and STATUS[TXDPE] bits.
+\end_layout
+
+\begin_layout Description
+Consequence: When either of STATUS[TXPE], STATUS[TXDPE] bits is set as a
+ result of parity error in TXT Buffers, then issuing Soft reset (writing
+ MODE[RST] = 1) will not clear these flags.
+ The correct behavior is, that issuing Soft reset shall clear all bits of
+ Register map into their reset value.
+\end_layout
+
+\begin_layout Description
+Fixed
+\begin_inset space ~
+\end_inset
+
+in
+\begin_inset space ~
+\end_inset
+
+later
+\begin_inset space ~
+\end_inset
+
+development: Not yet, planned for v2.6 release.
+\end_layout
+
+\begin_layout Description
+Workaround: None should be needed in FW.
+\end_layout
+
+\begin_layout Description
+ECO_fixable: Definitely yes
+\end_layout
+
+\begin_layout Description
+Next
+\begin_inset space ~
+\end_inset
+
+steps: Will fix in the 2.6.
+ If needed, RTL change can be pushed into 2v5-lts for ECO.
+\end_layout
+
+\begin_layout Description
+Fixed
+\begin_inset space ~
+\end_inset
+
+in: 2.5.1 
+\end_layout
+
+\begin_layout Standard
+\begin_inset Newpage newpage
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section*
+Issue 3
+\end_layout
+
+\begin_layout Description
+Type: Bug
+\end_layout
+
+\begin_layout Description
+Severity: Medium
+\end_layout
+
+\begin_layout Description
+Description: CTU CAN FD does not detect bit error when bit error occurs
+ during last bit of CRC of CAN FD frame with Secondary sampling point enabled,
+ and configured to be between regular sampling point and end of the last
+ CRC bit.
+ According to section 11.3.3 of 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "key-1"
+literal "false"
+
+\end_inset
+
+, if a bit error is detected with secondary sampling point, the IUT shall
+ react to this bit error in the follow-up regular sample point.
+ When such bit error occurs in the last bit of CRC, and the Secondary sample
+ point is configured to be 
+\begin_inset Quotes eld
+\end_inset
+
+later
+\begin_inset Quotes erd
+\end_inset
+
+ than regular sample point (the SSP for last CRC bit occurs from SP of last
+ bit of CRC until SP of CRC delimiter), then CTU CAN FD will not detect
+ this bit error, and will continue with regular transmission.
+\end_layout
+
+\begin_layout Description
+Consequence: Consequence on real bus operation is minimal.
+ It is a single bit where CTU CAN FD does not detect local disturbance,
+ thus the error detection capabilites are only negligibly worsened.
+ Further, 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "key-1"
+literal "false"
+
+\end_inset
+
+ defines, that from Sample point of CRC delimiter, the IUT may optionally
+ decide to 
+\begin_inset Quotes eld
+\end_inset
+
+cut-off
+\begin_inset Quotes erd
+\end_inset
+
+ secondary sample points for previous bits that are still 
+\begin_inset Quotes eld
+\end_inset
+
+on-the-fly
+\begin_inset Quotes erd
+\end_inset
+
+.
+ The CTU CAN FD bug only extends this period by one more bit.
+ 
+\begin_inset Newline newline
+\end_inset
+
+No FW workaround is needed, and communication with other nodes on CAN bus
+ is not affected beyond negligible reduction in error detection capabilites.
+ 
+\begin_inset Newline newline
+\end_inset
+
+Compliance tests defined in 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "key-3"
+literal "false"
+
+\end_inset
+
+ have a test that is close to the scenario above.
+ The test is 8.8.2.4.
+ This test invokes bit error in last bit of CRC and delays the received
+ bit sequence by 1 or 2 Data bit times (
+\series bold
+\shape italic
+d
+\series default
+\shape default
+).
+ The IUT is configured to have SSP offset similar to 
+\begin_inset Quotes eld
+\end_inset
+
+regular
+\begin_inset Quotes erd
+\end_inset
+
+ data sample point (see test 8.8.2.4).
+ Together with measured Transmitter delay, the overall position of SSP from
+ start of CRC delimiter bit will be:
+\begin_inset Newline newline
+\end_inset
+
+SSP pos = 
+\series bold
+\shape italic
+d
+\series default
+\shape default
+ + SSP offset 
+\begin_inset Newline newline
+\end_inset
+
+Then the sample point detecting the bit error will occur in the sample point
+ of BRS (at the moment of switching bit-rate back to nominal).
+ 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "key-1"
+literal "false"
+
+\end_inset
+
+ defines that bit errors that are detected by SSP of previous bits beyond
+ this moment, shall be ignored (only optionally can be reacted to), see
+ figures 25 and 26 in 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "key-1"
+literal "false"
+
+\end_inset
+
+.
+ The 8.8.2.4 test verifies this scenario, and it expects that IUT shall ignore
+ such bit error, not transmit any error frame.
+ CTU CAN FD passes this test, and does not transmit any error frame.
+\begin_inset Newline newline
+\end_inset
+
+The issue with CTU CAN FD is when transmitter delay (
+\series bold
+\shape italic
+d
+\series default
+\shape default
+) would be small (e.g.
+ just 1 Data time quanta), and SSP offset would be configured similar to
+ regular sample point.
+ Then, if the Secondary sampling point is enabled (SSP_CFG=SSP_SRC_MEAS_N_OFFSET
+), and bit error occurs in the last bit of CRC, CTU CAN FD will not recognize
+ bit error in the sample point of last CRC bit (since SSP offset is configured
+ equal to regular sample point).
+ The CTU CAN FD shall recognize such error in the next regular sample point
+ (sample point of CRC delimiter), and react with error frame from start
+ of ACK bit.
+ CTU CAN FD does not detect such error, nor transitts the error frame.
+ This is a bug.
+\begin_inset Newline newline
+\end_inset
+
+Compliance tests do not verify such scenario, and thus the bug was not discovere
+d.
+ If Certification does only execute tests according to 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "key-3"
+literal "false"
+
+\end_inset
+
+, then the bug will possibly not result in CAN Compliance certification
+ failing.
+ If the Certification authority does 
+\begin_inset Quotes eld
+\end_inset
+
+extra tests
+\begin_inset Quotes erd
+\end_inset
+
+ to verify such functionality, this issue can affect CAN Compliance certificatio
+n results.
+ Other compliance tests do not verify Secondary sample point in the last
+ bit of CRC.
+\end_layout
+
+\begin_layout Description
+Fixed
+\begin_inset space ~
+\end_inset
+
+in
+\begin_inset space ~
+\end_inset
+
+later
+\begin_inset space ~
+\end_inset
+
+development: Not yet, planned for v2.6 release.
+\end_layout
+
+\begin_layout Description
+Workaround: None is possible on FW level.
+ The issue does not occur when SSP is disabled (SSP_CFG=NO_SSP), but such
+ setting may be too limiting since CAN FD nodes are required to implement
+ secondary sample point.
+\end_layout
+
+\begin_layout Description
+ECO
+\begin_inset space ~
+\end_inset
+
+fixable: Likely yes, the change should be couple of gates in output decoder
+ of Protocol control FSM.
+ I estimate incremental synthesis will be able to do ECO.
+ Plausibility depends on spare gates used in the design (amount, location,
+ etc...).
+\end_layout
+
+\begin_layout Description
+Next
+\begin_inset space ~
+\end_inset
+
+steps: Will be fixed in 2.6.
+ If needed, RTL change can be pushed into 2v5-lts for ECO.
+\end_layout
+
+\begin_layout Description
+Fixed
+\begin_inset space ~
+\end_inset
+
+in: 2.5.1
+\end_layout
+
+\begin_layout Standard
+\begin_inset Newpage newpage
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section*
+Issue 4
+\end_layout
+
+\begin_layout Description
+Type: Bug
+\end_layout
+
+\begin_layout Description
+Severity: Medium
+\end_layout
+
+\begin_layout Description
+Description: When CTU CAN FD operates in Loopback mode (SETTINGS[ILBP] =
+ 1) and a bit error occurs during last bit of DLC when CTU CAN FD is transmittin
+g a CAN Frame, then CTU CAN FD will not revert the write pointer in RX Buffer
+ FIFO, and result in inconsistent RX Buffer FIFO write pointer.
+\end_layout
+
+\begin_layout Description
+Consequence: In this scenario, the write pointer of RX Buffer FIFO will
+ get corrupted, and will require RX Buffer FIFO Flush to become consistent
+ again.
+ The bug does not affect communication on CAN bus with other nodes.
+ The bug does not affect CAN Compliance certification.
+\end_layout
+
+\begin_layout Description
+Fixed
+\begin_inset space ~
+\end_inset
+
+in
+\begin_inset space ~
+\end_inset
+
+later
+\begin_inset space ~
+\end_inset
+
+development: Fixed in 
+\begin_inset Quotes eld
+\end_inset
+
+451-add-loopback-flag-to-frame-in-rx-buffer-2
+\begin_inset Quotes erd
+\end_inset
+
+ branch towards 2.6 release in GIT commit: 
+\begin_inset Flex URL
+status open
+
+\begin_layout Plain Layout
+
+https://gitlab.fel.cvut.cz/canbus/ctucanfd_ip_core/-/commit/46cffe5b1ff77c299bc0067
+c3fb2f92c74f63a98
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Description
+Workaround: There are several possible options on FW level (mutually exclusive):
+\end_layout
+
+\begin_layout Enumerate
+Not use Loopback mode (keep SETTINGS[ILBP] = 0).
+\end_layout
+
+\begin_layout Enumerate
+If using Loopback mode (SETTINGS[ILBP] = 1), then upon any error frame that
+ occurs in Contrrol field, issue RX Buffer Flush (writing COMMAND[RRB]=1).
+ Error frame occurence can be recognized by BEI interrupt.
+ If Interrupt service routine of detects such interrupt, it can read ERR_CAPT
+ register to determine type and position of Error.
+ If it detects Bit Error during Control field (see description of ERR_CAPT
+ register), it may issue Flush.
+ If CAN frames are properly read by FW, this work-around will probably not
+ cause any CAN frames to be dropped.
+\end_layout
+
+\begin_layout Description
+ECO
+\begin_inset space ~
+\end_inset
+
+fixable: Likely yes, the change should be coupl of gates in output decoder
+ of RX Buffer FSM.
+ I estimate incremental synthesis will be able to do ECO.
+ Plausibility depends on spare gates used in the design (amount, location,
+ etc...) .
+\end_layout
+
+\begin_layout Description
+Next
+\begin_inset space ~
+\end_inset
+
+steps: Will be fixed in 2.6.
+ If needed, RTL change can be pushed into 2v5-lts for ECO.
+\end_layout
+
+\begin_layout Description
+Fixed
+\begin_inset space ~
+\end_inset
+
+in: 2.5.1
+\end_layout
+
+\begin_layout Standard
+\begin_inset Newpage newpage
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section*
+Issue 5
+\end_layout
+
+\begin_layout Description
+Type: Bug
+\end_layout
+
+\begin_layout Description
+Severity: Medium
+\end_layout
+
+\begin_layout Description
+Description: When CTU CAN FD operates in MODE[BMM] = 1 (Bus Monitoring Mode),
+ it will fail to receive frames when there are multiple nodes on the bus
+ that are sending ACKs to each other.
+ CTU CAN FD will be able to receive the frame only if there is only one
+ other node sending the CAN Frame.
+\end_layout
+
+\begin_layout Description
+Consequence: Bus Monitoring Mode is not working properly.
+ The use-case of recording what is happening on the CAN bus without affecting
+ it is compromised.
+\end_layout
+
+\begin_layout Description
+Fixed
+\begin_inset space ~
+\end_inset
+
+in
+\begin_inset space ~
+\end_inset
+
+later
+\begin_inset space ~
+\end_inset
+
+development: Fixed in master branch towards 2.7 release in GIT commit: 
+\begin_inset Flex URL
+status open
+
+\begin_layout Plain Layout
+
+https://gitlab.fel.cvut.cz/canbus/ctucanfd_ip_core/-/commit/386337e8dcbb2eddfcbd48b
+84ebabb4310ff2e1c
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Description
+Workaround: Alternative is to use Listen-only mode in the PHY (physical
+ transceiver), and combine it with MODE[STM]=1.
+ In such setup, CTU CAN FD an record the frames on the bus without affecting
+ the bus in any way.
+\end_layout
+
+\begin_layout Description
+ECO
+\begin_inset space ~
+\end_inset
+
+fixable: Likely yes.
+ It is just a couple of gates.
+\end_layout
+
+\begin_layout Description
+Next
+\begin_inset space ~
+\end_inset
+
+steps: Can be ported to 2v5-lts and tagged with `v2.5.2`.
+ 
+\end_layout
+
+\begin_layout Description
+Fixed
+\begin_inset space ~
+\end_inset
+
+in: Not yet
+\end_layout
+
+\begin_layout Bibliography
+\begin_inset CommandInset bibitem
+LatexCommand bibitem
+key "key-1"
+
+\end_inset
+
+ISO 11898-1, 2015, Road vehicles — Controller area network (CAN) — Part
+ 1: Data link layer and physical signalling
+\end_layout
+
+\begin_layout Bibliography
+\begin_inset CommandInset bibitem
+LatexCommand bibitem
+key "key-3"
+
+\end_inset
+
+ISO 16845-1, 2016, Road vehicles — Controller area network (CAN) conformance
+ test plan — Part 1: Data link layer and physical signalling
+\end_layout
+
+\end_body
+\end_document
