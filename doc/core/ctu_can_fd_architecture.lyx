@@ -495,7 +495,7 @@ filename "version.tex"
 \noindent
 \align center
 \begin_inset Tabular
-<lyxtabular version="3" rows="22" columns="4">
+<lyxtabular version="3" rows="23" columns="4">
 <features tabularvalignment="middle">
 <column alignment="center" valignment="top" width="1.5cm">
 <column alignment="center" valignment="top" width="3cm">
@@ -1342,11 +1342,49 @@ Clean-up.
 </cell>
 </row>
 <row>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
 0.21
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+2.7
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+4-1-2026
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Move to new release of CTU CAN FD
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+0.22
 \end_layout
 
 \end_inset
@@ -1364,7 +1402,7 @@ Clean-up.
 \begin_inset Text
 
 \begin_layout Plain Layout
-4-1-2026
+20-3-2026
 \end_layout
 
 \end_inset
@@ -1373,7 +1411,7 @@ Clean-up.
 \begin_inset Text
 
 \begin_layout Plain Layout
-Move to new release of CTU CAN FD
+Update repository link
 \end_layout
 
 \end_inset
@@ -1857,8 +1895,7 @@ Source code access
 \end_layout
 
 \begin_layout Standard
-CTU CAN FD IP Core source code is available in CTU FEE GitLab repository
- at:
+CTU CAN FD IP Core source code is available at Github repository:
 \end_layout
 
 \begin_layout Standard
@@ -1868,8 +1905,8 @@ CTU CAN FD IP Core source code is available in CTU FEE GitLab repository
 
 \begin_inset CommandInset href
 LatexCommand href
-name "https://gitlab.fel.cvut.cz/canbus/ctucanfd_ip_core"
-target "https://gitlab.fel.cvut.cz/canbus/ctucanfd_ip_core"
+name "https://github.com/Logic-Design-Services/CTU-CAN-FD"
+target "https://github.com/Logic-Design-Services/CTU-CAN-FD"
 literal "false"
 
 \end_inset
