@@ -5,7 +5,7 @@ of CAN FD protocol.
 
 CTU CAN FD is compliant with ISO 11898-1:2015. CTU CAN FD is tested by ISO 16845-1 2016
 sequence in digital simulation, and it has been used in dozens of FPGA applications.
-The core is also silicon proven in mass production.
+The core is silicon proven in mass production.
 
 RTL is implemented in VHDL-93, synthesizable with most FPGA and ASIC flows.
 TB is implemented with VHDL 2008.
@@ -55,26 +55,26 @@ Maximal reachable frequency is around 100 MHz on Cyclone V/IV and Xilinx Zynq de
 
 CTU CAN FD has been synthesized into several ASIC PDKs using commercial flows.
 
-Daily CI pipeline executes example synthesis on Xilinx Zynq device with 3 different
-device configurations:
+Daily CI pipeline executes example synthesis on Xilinx FPGA device with 3 different
+configurations:
 
 #### Small:
 
 2 TXT Buffers, 32 word RX Buffer, no frame filters
-Results: [Area](http://canbus.pages.fel.cvut.cz/ctucanfd_ip_core/synthesis/minimal_design_config/utilization.rpt)
-[Timing](http://canbus.pages.fel.cvut.cz/ctucanfd_ip_core/synthesis/minimal_design_config/timing_summary.rpt)
+Results: [Area](https://logic-design-services.github.io/ctu-can-regression/synthesis/minimal_design_config/utilization.rpt)
+[Timing](https://logic-design-services.github.io/ctu-can-regression/synthesis/minimal_design_config/timing_summary.rpt)
 
 #### Medium:
 
 4 TXT Buffers, 128 word RX Buffer, only one bit filter
-Results: [Area](http://canbus.pages.fel.cvut.cz/ctucanfd_ip_core/synthesis/typical_design_config/utilization.rpt)
-[Timing](http://canbus.pages.fel.cvut.cz/ctucanfd_ip_core/synthesis/typical_design_config/timing_summary.rpt)
+Results: [Area](https://logic-design-services.github.io/ctu-can-regression/synthesis/medium_design_config/utilization.rpt)
+[Timing](https://logic-design-services.github.io/ctu-can-regression/synthesis/medium_design_config/timing_summary.rpt)
 
 #### Big:
 
 8 TXT Buffers, 1024 word RX Buffer, all frame filters
-Results: [Area](http://canbus.pages.fel.cvut.cz/ctucanfd_ip_core/synthesis/maximal_design_config/utilization.rpt)
-[Timing](http://canbus.pages.fel.cvut.cz/ctucanfd_ip_core/synthesis/maximal_design_config/timing_summary.rpt)
+Results: [Area](https://logic-design-services.github.io/ctu-can-regression/synthesis/big_design_config/utilization.rpt)
+[Timing](https://logic-design-services.github.io/ctu-can-regression/synthesis/big_design_config/timing_summary.rpt)
 
 Note that design is constrained to 100 MHz with no timing violations, combinatorial loops
 or latches inferred (FPGA config without clock gate is used). These results together with
@@ -107,15 +107,22 @@ as measured by NVC and VCS simulators.
 Functional coverage is implemented by PSL assertions.
 
 The code coverage and functional coverage can be seen in:
-[![Coverage](https://img.shields.io/badge/code%20coverage--orange.svg)](http://canbus.pages.fel.cvut.cz/ctucanfd_ip_core/code_coverage_report/index.html)
+[![Coverage](https://img.shields.io/badge/Code%20Coverage--orange.svg)](https://logic-design-services.github.io/ctu-can-regression/code_coverage_report/index.html)
 
 Description of test-bench and CTU CAN FD VIP is in:
 [![Testbench documentation](https://img.shields.io/badge/Testbench--blue.svg)]( https://logic-design-services.github.io/CTU-CAN-FD/ctu_can_fd_testbench.pdf)
 
 Documentation of all the tests with mapping to a feature being verified:
-[![Verification Requirement Matrix](https://img.shields.io/badge/Verification-Requirement-Matrix--orange.svg)]( http://canbus.pages.fel.cvut.cz/ctucanfd_ip_core/regression_results/VRM.html )
+[![Verification Requirement Matrix](https://img.shields.io/badge/Verification%20Requirement%20Matrix--orange.svg)]( https://logic-design-services.github.io/ctu-can-regression/regression_results/VRM.html )
 
 CTU CAN FD is simulated as RTL, and as post-synthesis gate-level netlist with Xilinx UNISIM library.
+
+You can see artifacts from the latest regresision run at:
+[![Regression artifacts](https://img.shields.io/badge/Regression%20Artifacts--orange.svg)]( https://logic-design-services.github.io/ctu-can-regression/ )
+
+You can find the regression CI jobs at:
+[![Regression CI](https://img.shields.io/badge/Regression%20CI--orange.svg)]( https://github.com/Logic-Design-Services/ctu-can-regression/actions/workflows/ctu_can_fd_regression.yml )
+
 
 See the instructions below in "How to run CTU CAN FD testbench" subsection.
 
@@ -228,7 +235,7 @@ Vunit, VHDL unit test framework:
 Python 3 and following modules: pyvcd attrs jinja2 parsy pyyaml click yattag json2html
 
 There is a docker image which contains all dependencies needed available at:
-[Simulation docker](https://gitlab.com/canfd/server-tools/container_registry).
+[Simulation docker](https://github.com/orgs/Logic-Design-Services/packages/container/package/digital-simulation).
 
 
 ## Linux driver
