@@ -18,6 +18,4 @@ set cfg_name [dict get $cfg name]
 run_synth $cfg_name
 write_outputs $cfg_name
 
-
-
-
+exit

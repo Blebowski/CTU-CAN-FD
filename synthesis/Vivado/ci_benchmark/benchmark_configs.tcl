@@ -2,7 +2,7 @@
 ## Configuration
 ###################################################################################################
 
-set PART xc7z020clg400-3
+set PART xc7k70tfbv676-1
 set PROJECT_NAME CTU_CAN_FD_BENCHMARK
 set PROJ_ROOT ../../..
 set TOP can_top_level
