@@ -1452,7 +1452,7 @@ targets:
     ###############################################################################################
     tb_gate_xilinx_medium_fpga_max_feature:
         top_entity: ctu_can_fd_tb.TB_TOP_CTU_CAN_FD
-        test_list_file: test/tlf_feature_and_reference.yml
+        test_list_file: test/tlf_feature_and_reference_gates.yml
         generics:
             #log_level: info
             #error_tolerance: 0
@@ -1510,7 +1510,7 @@ targets:
     ###############################################################################################
     tb_gate_xilinx_small_fpga_max_compliance:
         top_entity: ctu_can_fd_tb.TB_TOP_CTU_CAN_FD
-        test_list_file: test/tlf_compliance_full_max.yml
+        test_list_file: test/tlf_compliance_full_max_gates.yml
         generics:
             #log_level: info
             #error_tolerance: 0
@@ -1564,7 +1564,7 @@ targets:
     ###############################################################################################
     tb_gate_xilinx_small_fpga_typ_compliance:
         top_entity: ctu_can_fd_tb.TB_TOP_CTU_CAN_FD
-        test_list_file: test/tlf_compliance_full_max.yml
+        test_list_file: test/tlf_compliance_full_typ_gates.yml
         generics:
             #log_level: info
             #error_tolerance: 0
@@ -1622,7 +1622,7 @@ targets:
     ###############################################################################################
     tb_gate_xilinx_small_fpga_min_compliance:
         top_entity: ctu_can_fd_tb.TB_TOP_CTU_CAN_FD
-        test_list_file: test/tlf_compliance_full_max.yml
+        test_list_file: test/tlf_compliance_full_min.yml
         generics:
             #log_level: info
             #error_tolerance: 0

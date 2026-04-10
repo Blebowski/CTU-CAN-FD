@@ -1,0 +1,328 @@
+# Feature tests with some tests commented out to reduce regression run-time!
+
+tests:
+    - name: device_id
+
+    ###########################################################################
+    # The following tests take long time in various configurations,
+    # Therefore, we put them to the beginning to avoid waiting for them
+    # at the end of parallel runs, and therefore reduce duration of parallel runs!
+    ###########################################################################
+    #- name: ssp_last_crc_bit_error
+    #- name: rx_buf_consistency
+    #- name: rx_buf_consistency_3
+    - name: prescaler_maximal
+
+    - name: frame_filters_mask
+      generics:
+        /TB_TOP_CTU_CAN_FD/iterations: 1
+
+    - name: frame_test_fcrc
+      generics:
+        /TB_TOP_CTU_CAN_FD/iterations: 10
+
+    - name: pc_fsm_transitions_err_pas
+    - name: pc_fsm_transitions_err_pas_2
+    - name: pc_fsm_transitions_err_act
+    - name: pc_fsm_transitions_integ
+    - name: pc_fsm_transitions_integ_2
+
+    - name: txt_buffer_hazard
+    - name: tx_arb_consistency
+
+    ###########################################################################
+    # The following tests are ordered albhabetically
+    ###########################################################################
+
+    - name: alc_base_id
+    - name: alc_ide
+    - name: alc_id_extension
+    - name: alc_rtr_ext_id
+    - name: alc_rtr_r0
+    - name: alc_srr_rtr
+    - name: alc_srr_rtr_2
+
+    - name: btr
+    - name: btr_fd
+    - name: btr_minimal
+    - name: btr_ssp_access
+    - name: bus_start
+    - name: byte_enable
+
+    - name: command_cdo
+    - name: command_ercrst
+    - name: command_frcrst
+    - name: command_rrb
+      generics:
+        /TB_TOP_CTU_CAN_FD/iterations: 20
+
+    - name: counters_toggle
+      generics:
+        /TB_TOP_CTU_CAN_FD/iterations: 50
+
+    - name: disable_in_tx
+    - name: dlc_can20_8_64_bytes
+    #- name: dbt_maximal
+
+    - name: err_capt_ack_ack
+    - name: err_capt_arb_bit
+    - name: err_capt_arb_stuff
+    - name: err_capt_crc_bit
+    - name: err_capt_crc_err
+
+    - name: err_capt_ctrl_bit
+    - name: err_capt_ctrl_form
+    - name: err_capt_data_bit
+    - name: err_capt_eof
+    - name: err_capt_err_frm
+    - name: err_capt_ovr_frm
+    - name: err_capt_sof
+    - name: err_norm_fd
+      generics:
+        /TB_TOP_CTU_CAN_FD/iterations: 20
+
+    - name: fault_state
+      generics:
+        /TB_TOP_CTU_CAN_FD/iterations: 20
+
+    - name: frame_test_fstc
+      generics:
+        /TB_TOP_CTU_CAN_FD/iterations: 10
+
+    - name: frame_test_sdlc
+      generics:
+        /TB_TOP_CTU_CAN_FD/iterations: 10
+
+    - name: frame_test_ignore
+      generics:
+        /TB_TOP_CTU_CAN_FD/iterations: 10
+
+    - name: frame_filters_abort
+
+    - name: glitch_filtering
+    - name: glitch_filtering_2
+
+    - name: invalid_frames
+      generics:
+        /TB_TOP_CTU_CAN_FD/iterations: 5
+
+    - name: int_al
+    - name: int_be
+    - name: int_do
+    - name: int_ewl
+    - name: int_fcs
+    - name: int_rx
+    - name: int_tx
+    - name: int_of
+    - name: int_rxf
+    - name: int_bs
+    - name: int_rxne
+    - name: int_txbhci
+
+    - name: message_filter
+    - name: mode_bus_monitoring
+
+    - name: mode_acf
+    - name: mode_erfm
+
+    - name: mode_loopback
+      generics:
+        /TB_TOP_CTU_CAN_FD/iterations: 10
+
+    - name: mode_fd_enable
+      generics:
+        /TB_TOP_CTU_CAN_FD/iterations: 2
+
+    - name: mode_fdrf
+
+    - name: mode_pex
+      generics:
+        /TB_TOP_CTU_CAN_FD/iterations: 5
+
+    - name: mode_restr_op
+      generics:
+        /TB_TOP_CTU_CAN_FD/iterations: 5
+
+    - name: mode_rst
+    - name: mode_rxbam
+    - name: mode_self_test
+    - name: mode_self_acknowledge
+      generics:
+        /TB_TOP_CTU_CAN_FD/iterations: 10
+
+    - name: mode_test
+      generics:
+        /TB_TOP_CTU_CAN_FD/iterations: 10
+
+    - name: mode_txbbm
+    - name: mode_txbbm_2
+    - name: mode_txbbm_3
+    - name: mode_txbbm_4
+    - name: mode_txbbm_5
+
+    - name: mode_frame_filters
+      generics:
+        /TB_TOP_CTU_CAN_FD/iterations: 15
+
+    - name: one_shot
+
+    - name: rec_saturation
+    - name: retr_limit
+    - name: retr_limit_2
+    - name: retr_limit_3
+
+    - name: rx_buf_empty_read
+    #- name: rx_buf_consistency_2
+    - name: rx_buf_transitions
+    - name: rx_buf_timestamp_toggle
+
+    - name: rx_counter
+      generics:
+        /TB_TOP_CTU_CAN_FD/iterations: 15
+
+    - name: rx_settings_rtsop
+    - name: rx_status
+    - name: rx_status_mof
+    - name: rx_status_rxfrc
+    - name: rx_err_log
+    - name: rx_err_log_2
+    - name: rx_err_log_3
+    - name: rx_err_log_4
+    - name: rx_err_log_5
+    - name: rx_err_log_6
+    - name: rx_err_log_7
+    - name: rx_err_log_8
+    - name: rx_err_log_timestamp
+      generics:
+        /TB_TOP_CTU_CAN_FD/iterations: 20
+
+    - name: rx_err_log_back_to_back
+
+    - name: scan_mode
+    - name: settings_tbfbo
+    - name: settings_nisofd
+    - name: settings_pex
+    - name: single_bus_node
+    - name: ssp_saturation
+    - name: ssp_cfg
+      generics:
+        /TB_TOP_CTU_CAN_FD/iterations: 1
+
+    - name: ssp_7_bits_flying
+    - name: ssp_last_crc_bit_error_2
+    - name: status_eft
+      generics:
+        /TB_TOP_CTU_CAN_FD/iterations: 5
+
+    - name: status_ewl
+      generics:
+        /TB_TOP_CTU_CAN_FD/iterations: 20
+
+    - name: status_idle
+    - name: status_rxne
+    - name: status_rxs
+
+    - name: status_txnf
+    - name: status_txs
+    - name: status_rxpe
+    - name: status_txpe
+      generics:
+        /TB_TOP_CTU_CAN_FD/timeout: 10 ms
+
+    - name: status_txpe_txdpe_reset
+    - name: stuff_in_data
+
+    - name: trv_delay
+    - name: tst_mem_acc_rx
+    - name: tst_mem_acc_txt
+    - name: tx_arb_consistency_2
+
+    - name: tx_arb_time_tran
+      generics:
+        /TB_TOP_CTU_CAN_FD/iterations: 10
+
+    - name: tx_cmd_set_abort
+    - name: tx_cmd_set_empty
+    - name: tx_cmd_set_ready
+
+    - name: tx_counter
+      generics:
+        /TB_TOP_CTU_CAN_FD/iterations: 15
+
+    - name: tx_from_intermission
+    - name: tx_priority_change
+    - name: tx_priority
+      generics:
+        /TB_TOP_CTU_CAN_FD/iterations: 15
+
+    - name: tx_status
+    - name: tx_no_sof_from_idle
+
+    - name: timestamp_low_high
+      generics:
+        /TB_TOP_CTU_CAN_FD/iterations: 15
+
+    - name: txt_buffer_byte_access
+    - name: txt_buffer_transitions
+    - name: txt_buffer_transitions_2
+    - name: txt_buffer_transitions_3
+    - name: txt_buffer_transitions_4
+    - name: txt_buffer_transitions_5
+
+    - name: txt_buffer_access_ignore
+
+    - name: txt_buffer_read_access
+
+    ###############################################################################################
+    # Reference tests
+    ###############################################################################################
+    - name: data_set_1
+      generics:
+        /TB_TOP_CTU_CAN_FD/timeout: 50 ms
+        /TB_TOP_CTU_CAN_FD/test_type: reference
+        /TB_TOP_CTU_CAN_FD/reference_iterations: 10
+    - name: data_set_2
+      generics:
+        /TB_TOP_CTU_CAN_FD/timeout: 50 ms
+        /TB_TOP_CTU_CAN_FD/test_type: reference
+        /TB_TOP_CTU_CAN_FD/reference_iterations: 10
+    - name: data_set_3
+      generics:
+        /TB_TOP_CTU_CAN_FD/timeout: 50 ms
+        /TB_TOP_CTU_CAN_FD/test_type: reference
+        /TB_TOP_CTU_CAN_FD/reference_iterations: 10
+    - name: data_set_4
+      generics:
+        /TB_TOP_CTU_CAN_FD/timeout: 50 ms
+        /TB_TOP_CTU_CAN_FD/test_type: reference
+        /TB_TOP_CTU_CAN_FD/reference_iterations: 10
+    - name: data_set_5
+      generics:
+        /TB_TOP_CTU_CAN_FD/timeout: 50 ms
+        /TB_TOP_CTU_CAN_FD/test_type: reference
+        /TB_TOP_CTU_CAN_FD/reference_iterations: 10
+    - name: data_set_6
+      generics:
+        /TB_TOP_CTU_CAN_FD/timeout: 50 ms
+        /TB_TOP_CTU_CAN_FD/test_type: reference
+        /TB_TOP_CTU_CAN_FD/reference_iterations: 10
+    - name: data_set_7
+      generics:
+        /TB_TOP_CTU_CAN_FD/timeout: 50 ms
+        /TB_TOP_CTU_CAN_FD/test_type: reference
+        /TB_TOP_CTU_CAN_FD/reference_iterations: 10
+    - name: data_set_8
+      generics:
+        /TB_TOP_CTU_CAN_FD/timeout: 50 ms
+        /TB_TOP_CTU_CAN_FD/test_type: reference
+        /TB_TOP_CTU_CAN_FD/reference_iterations: 10
+    - name: data_set_9
+      generics:
+        /TB_TOP_CTU_CAN_FD/timeout: 50 ms
+        /TB_TOP_CTU_CAN_FD/test_type: reference
+        /TB_TOP_CTU_CAN_FD/reference_iterations: 10
+    - name: data_set_10
+      generics:
+        /TB_TOP_CTU_CAN_FD/timeout: 50 ms
+        /TB_TOP_CTU_CAN_FD/test_type: reference
+        /TB_TOP_CTU_CAN_FD/reference_iterations: 10
