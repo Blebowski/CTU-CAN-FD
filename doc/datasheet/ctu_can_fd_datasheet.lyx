@@ -1971,7 +1971,7 @@ status open
 \noindent
 \align center
 \begin_inset Graphics
-	filename ../pics/Visio_generated/BD_datasheet.pdf
+	filename img/BD_datasheet.pdf
 	lyxscale 20
 	scale 65
 
@@ -3050,7 +3050,7 @@ status open
 \noindent
 \align center
 \begin_inset Graphics
-	filename ../pics/Visio_generated/FSM_main_modes.pdf
+	filename img/FSM_main_modes.pdf
 	lyxscale 20
 
 \end_inset
@@ -3391,7 +3391,7 @@ status open
 \noindent
 \align center
 \begin_inset Graphics
-	filename ../pics/Visio_generated/Bit_time.pdf
+	filename img/Bit_time.pdf
 	lyxscale 20
 	scale 75
 
@@ -3565,7 +3565,7 @@ status open
 \noindent
 \align center
 \begin_inset Graphics
-	filename ../pics/Visio_generated/Transmitter_delay.pdf
+	filename img/Transmitter_delay.pdf
 	lyxscale 20
 	scale 90
 
@@ -3609,7 +3609,7 @@ status open
 \noindent
 \align center
 \begin_inset Graphics
-	filename ../pics/Visio_generated/Transmitter_delay_measurement.pdf
+	filename img/Transmitter_delay_measurement.pdf
 	lyxscale 20
 	scale 90
 
@@ -3698,7 +3698,7 @@ status open
 \noindent
 \align center
 \begin_inset Graphics
-	filename ../pics/Visio_generated/SSP_logic.pdf
+	filename img/SSP_logic.pdf
 	lyxscale 20
 	scale 90
 
@@ -3742,7 +3742,7 @@ status open
 \noindent
 \align center
 \begin_inset Graphics
-	filename ../pics/Visio_generated/SSP_timing.pdf
+	filename img/SSP_timing.pdf
 	lyxscale 20
 	scale 90
 
@@ -4424,7 +4424,7 @@ status open
 \noindent
 \align center
 \begin_inset Graphics
-	filename ../pics/Visio_generated/FSM_TXT_Buffer_user.pdf
+	filename img/FSM_TXT_Buffer_user.pdf
 	lyxscale 20
 
 \end_inset
@@ -4637,7 +4637,7 @@ status open
 \noindent
 \align center
 \begin_inset Graphics
-	filename ../pics/Visio_generated/TXT_Buffer_validation.pdf
+	filename img/TXT_Buffer_validation.pdf
 	lyxscale 20
 	scale 80
 
@@ -4747,7 +4747,7 @@ status open
 \noindent
 \align center
 \begin_inset Graphics
-	filename ../pics/Visio_generated/TX_Time.pdf
+	filename img/TX_Time.pdf
 	lyxscale 20
 
 \end_inset
@@ -4859,7 +4859,7 @@ status open
 \noindent
 \align center
 \begin_inset Graphics
-	filename ../pics/Visio_generated/TX_frame_flow.pdf
+	filename img/TX_frame_flow.pdf
 	lyxscale 20
 	scale 80
 
@@ -5556,7 +5556,7 @@ status open
 \noindent
 \align center
 \begin_inset Graphics
-	filename ../pics/Visio_generated/RX_Buffer_layout.pdf
+	filename img/RX_Buffer_layout.pdf
 	lyxscale 20
 	scale 60
 
@@ -5896,7 +5896,7 @@ status open
 \noindent
 \align center
 \begin_inset Graphics
-	filename ../pics/Visio_generated/Frame_filters_flow.pdf
+	filename img/Frame_filters_flow.pdf
 	lyxscale 20
 	scale 70
 
@@ -6362,7 +6362,7 @@ status open
 \noindent
 \align center
 \begin_inset Graphics
-	filename ../pics/Visio_generated/FSM_fault_confinement.pdf
+	filename img/FSM_fault_confinement.pdf
 	lyxscale 20
 
 \end_inset
@@ -6457,7 +6457,7 @@ status open
 \noindent
 \align center
 \begin_inset Graphics
-	filename ../pics/Visio_generated/Interrupt_single.pdf
+	filename img/Interrupt_single.pdf
 	lyxscale 20
 	scale 85
 
@@ -7109,7 +7109,7 @@ status open
 \noindent
 \align center
 \begin_inset Graphics
-	filename ../pics/Visio_generated/TXT_buffer_pairs.pdf
+	filename img/TXT_buffer_pairs.pdf
 	lyxscale 20
 	scale 90
 
@@ -7343,7 +7343,7 @@ status open
 \noindent
 \align center
 \begin_inset Graphics
-	filename ../pics/Visio_generated/TXT_Buffer_Backup_mode.pdf
+	filename img/TXT_Buffer_Backup_mode.pdf
 	lyxscale 20
 	scale 70
 
@@ -8214,7 +8214,7 @@ literal "false"
 \begin_layout Standard
 \begin_inset CommandInset include
 LatexCommand include
-filename "registerMap.lyx"
+filename "ctu_can_fd_register_map.lyx"
 
 \end_inset
 
@@ -8224,7 +8224,7 @@ filename "registerMap.lyx"
 \begin_layout Standard
 \begin_inset CommandInset include
 LatexCommand include
-filename "CANFrameFormat.lyx"
+filename "ctu_can_fd_frame_format.lyx"
 
 \end_inset
 
