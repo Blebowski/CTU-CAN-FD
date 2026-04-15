@@ -2,15 +2,14 @@ SRCS := ctucanfd_hw.c  ctucanfd_linux_defs.c  userspace_utils.cpp
 OBJS := $(addsuffix .o,$(SRCS))
 DEPS := $(wildcard *.d)
 
-P := arm-linux-gnueabihf-
+P ?= arm-linux-gnueabihf-
 
 CC := $(P)gcc
 CXX := $(P)g++
-#CC := clang -target armv7a-pc-linux-gnueabi -march=armv7 -mthumb
-XFLAGS := -Wall -Wextra -O2 -D__LITTLE_ENDIAN_BITFIELD -mthumb
+
+XFLAGS := -Wall -Wextra -O2 -D__LITTLE_ENDIAN_BITFIELD
 CFLAGS := $(XFLAGS) -Werror=implicit-function-declaration
 CXXFLAGS := $(XFLAGS)
-#LDFLAGS := -fuse-ld=gold
 
 all: test regtest
 ifeq ($(shell hostname),hathi)
