@@ -303,8 +303,12 @@ static int ctucan_set_bittiming(struct net_device *ndev)
 static int ctucan_set_data_bittiming(struct net_device *ndev)
 {
 	struct ctucan_priv *priv = netdev_priv(ndev);
-	struct can_bittiming *dbt = &priv->can.data_bittiming;
 
+#if LINUX_VERSION_CODE < KERNEL_VERSION(6, 16, 0)
+	struct can_bittiming *dbt = &priv->can.data_bittiming;
+#else
+	struct can_bittiming *dbt = &priv->can.fd.data_bittiming;
+#endif
 	ctucan_netdev_dbg(ndev, "%s\n", __func__);
 
 	/* Note that dbt may be modified here */
@@ -320,7 +324,11 @@ static int ctucan_set_data_bittiming(struct net_device *ndev)
 static int ctucan_set_secondary_sample_point(struct net_device *ndev)
 {
 	struct ctucan_priv *priv = netdev_priv(ndev);
+#if LINUX_VERSION_CODE < KERNEL_VERSION(6, 16, 0)
 	struct can_bittiming *dbt = &priv->can.data_bittiming;
+#else
+	struct can_bittiming *dbt = &priv->can.fd.data_bittiming;
+#endif
 	int ssp_offset = 0;
 	u32 ssp_cfg = 0; /* No SSP by default */
 
@@ -1438,12 +1446,20 @@ int ctucan_probe_common(struct device *dev, void __iomem *addr, int irq, unsigne
 	priv->ntxbufs = ntxbufs;
 	priv->dev = dev;
 	priv->can.bittiming_const = &ctu_can_fd_bit_timing_max;
+#if LINUX_VERSION_CODE < KERNEL_VERSION(6, 16, 0)
 	priv->can.data_bittiming_const = &ctu_can_fd_bit_timing_data_max;
+#else
+	priv->can.fd.data_bittiming_const = &ctu_can_fd_bit_timing_data_max;
+#endif
 	priv->can.do_set_mode = ctucan_do_set_mode;
 
 	/* Needed for timing adjustment to be performed as soon as possible */
 	priv->can.do_set_bittiming = ctucan_set_bittiming;
+#if LINUX_VERSION_CODE < KERNEL_VERSION(6, 16, 0)
 	priv->can.do_set_data_bittiming = ctucan_set_data_bittiming;
+#else
+	priv->can.fd.do_set_data_bittiming = ctucan_set_data_bittiming;
+#endif
 
 	priv->can.do_get_berr_counter = ctucan_get_berr_counter;
 	priv->can.ctrlmode_supported = CAN_CTRLMODE_LOOPBACK

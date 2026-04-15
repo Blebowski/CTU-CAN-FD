@@ -24,11 +24,9 @@ jobs:
           cd driver
           P= make -j`nproc`
 
-      - name: "Check driver"
-        run: |
-          grep "CONFIG_CAN_FD" /lib/modules/$(uname -r)/build/.config || echo "CAN FD is DISABLED in this kernel"
-
       - name: "Build Linux driver"
         run: |
           cd driver/linux
-          make -C /lib/modules/$(uname -r)/build M=$PWD EXTRA_CFLAGS="-DCONFIG_CAN_FD -I/usr/src/linux-headers-$(uname -r)/include"
+          make -j`nproc`
+
+# make -C /lib/modules/$(uname -r)/build M=$PWD EXTRA_CFLAGS="-DCONFIG_CAN_FD -I/usr/src/linux-headers-$(uname -r)/include"
