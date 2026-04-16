@@ -22,24 +22,36 @@ jobs:
         with:
           fetch-depth: 1
 
-      - name: "Build HW documentation"
+      - name: "Build Datasheet"
         run: |
           export LC_ALL=en_US.UTF-8
           export LANG=en_US.UTF-8
-          make -C doc/core
           rm -rf pages
           mkdir pages
-          mv doc/core/Progdokum.pdf pages/ctu_can_fd_datasheet.pdf
-          mv doc/core/ctu_can_fd_architecture.pdf pages/ctu_can_fd_architecture.pdf
-          mv doc/core/tb_architecture.pdf pages/ctu_can_fd_testbench.pdf
+          make -C doc/datasheet
+          mv doc/datasheet/ctu_can_fd_datasheet.pdf pages
+
+      - name: "Build System Architecture"
+        run: |
+          export LC_ALL=en_US.UTF-8
+          export LANG=en_US.UTF-8
+          make -C doc/system_architecture
+          mv doc/system_architecture/ctu_can_fd_architecture.pdf pages/ctu_can_fd_architecture.pdf
+
+      - name: "Build Testbench documentation"
+        run: |
+          export LC_ALL=en_US.UTF-8
+          export LANG=en_US.UTF-8
+          make -C doc/testbench
+          mv doc/testbench/ctu_can_fd_testbench.pdf pages/ctu_can_fd_testbench.pdf
 
       - name: "Build Linux Driver documentation"
         run: |
           export LC_ALL=en_US.UTF-8
           export LANG=en_US.UTF-8
-          make -C doc/driver
           rm -rf pages/linux_driver
           mkdir pages/linux_driver
+          make -C doc/driver
           mv doc/driver/build/* pages/linux_driver
 
       - name: Upload Artifacts
