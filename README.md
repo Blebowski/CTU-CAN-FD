@@ -10,7 +10,8 @@ The core is silicon proven in mass production.
 RTL is implemented in VHDL-93, synthesizable with most FPGA and ASIC flows.
 TB is implemented with VHDL 2008.
 
-The latest released version is 2.7.
+The latest released version is 2.7. Significant changes are marked in
+[CHANGES.md](CHANGES.ms)
 
 
 ## License

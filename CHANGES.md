@@ -1,6 +1,8 @@
 ## Unreleased changes
 - CI: Migrated the repository and regression to Github
 - Change license owner to Logic Design Services
+- Clean `doc` folder, remove legacy unused images
+- Make linux driver compile with 6.17 kernel and newer
 
 ## Version 2.7 - 7.1.2026
 - RTL: Optimized to remove dead-code and unreachable code
