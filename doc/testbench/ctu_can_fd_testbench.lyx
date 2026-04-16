@@ -1,0 +1,3778 @@
+#LyX 2.3 created this file. For more info see http://www.lyx.org/
+\lyxformat 544
+\begin_document
+\begin_header
+\save_transient_properties true
+\origin unavailable
+\textclass book
+\begin_preamble
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+\usepackage{colortbl}
+\definecolor{gray}{RGB}{230,230, 230}
+\usepackage{subcaption}
+\usepackage{cprotect}
+\end_preamble
+\use_default_options true
+\begin_modules
+customHeadersFooters
+\end_modules
+\maintain_unincluded_children false
+\language english
+\language_package default
+\inputencoding auto
+\fontencoding global
+\font_roman "default" "default"
+\font_sans "default" "default"
+\font_typewriter "lmtt" "default"
+\font_math "auto" "auto"
+\font_default_family sfdefault
+\use_non_tex_fonts false
+\font_sc false
+\font_osf false
+\font_sf_scale 100 100
+\font_tt_scale 100 100
+\use_microtype false
+\use_dash_ligatures false
+\graphics default
+\default_output_format default
+\output_sync 0
+\bibtex_command default
+\index_command default
+\paperfontsize default
+\spacing other 1.1
+\use_hyperref true
+\pdf_author "Ille Ondrej"
+\pdf_subject "CAN FD IP function"
+\pdf_keywords "CAN, Flexible data rate,"
+\pdf_bookmarks true
+\pdf_bookmarksnumbered true
+\pdf_bookmarksopen false
+\pdf_bookmarksopenlevel 1
+\pdf_breaklinks false
+\pdf_pdfborder true
+\pdf_colorlinks false
+\pdf_backref false
+\pdf_pdfusetitle true
+\papersize default
+\use_geometry true
+\use_package amsmath 1
+\use_package amssymb 1
+\use_package cancel 1
+\use_package esint 1
+\use_package mathdots 1
+\use_package mathtools 1
+\use_package mhchem 1
+\use_package stackrel 1
+\use_package stmaryrd 1
+\use_package undertilde 1
+\cite_engine basic
+\cite_engine_type default
+\biblio_style plain
+\use_bibtopic false
+\use_indices false
+\paperorientation portrait
+\suppress_date false
+\justification true
+\use_refstyle 1
+\use_minted 0
+\index Index
+\shortcut idx
+\color #008000
+\end_index
+\leftmargin 2cm
+\topmargin 3cm
+\rightmargin 2cm
+\bottommargin 3cm
+\headheight 2cm
+\secnumdepth 2
+\tocdepth 5
+\paragraph_separation skip
+\defskip smallskip
+\is_math_indent 0
+\math_numbering_side default
+\quotes_style english
+\dynamic_quotes 0
+\papercolumns 1
+\papersides 1
+\paperpagestyle headings
+\tracking_changes false
+\output_changes false
+\html_math_output 0
+\html_css_as_file 0
+\html_be_strict false
+\end_header
+
+\begin_body
+
+\begin_layout Standard
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+% number the pages at the beginning in roman
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+frontmatter
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+% Number chapters as 
+\begin_inset Quotes eld
+\end_inset
+
+1.
+ xxx
+\begin_inset Quotes erd
+\end_inset
+
+ instead of 
+\begin_inset Quotes eld
+\end_inset
+
+Chapter 1
+\backslash
+nxxx
+\begin_inset Quotes erd
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+makeatletter
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+def
+\backslash
+@makechapterhead#1{%
+\end_layout
+
+\begin_layout Plain Layout
+
+  
+\backslash
+vspace*{50
+\backslash
+p@}%
+\end_layout
+
+\begin_layout Plain Layout
+
+  {
+\backslash
+parindent 
+\backslash
+z@ 
+\backslash
+raggedright 
+\backslash
+normalfont
+\end_layout
+
+\begin_layout Plain Layout
+
+    
+\backslash
+ifnum 
+\backslash
+c@secnumdepth >
+\backslash
+m@ne
+\end_layout
+
+\begin_layout Plain Layout
+
+      
+\backslash
+if@mainmatter
+\end_layout
+
+\begin_layout Plain Layout
+
+        %
+\backslash
+huge
+\backslash
+bfseries 
+\backslash
+@chapapp
+\backslash
+space 
+\backslash
+thechapter
+\end_layout
+
+\begin_layout Plain Layout
+
+        
+\backslash
+Huge
+\backslash
+bfseries 
+\backslash
+@chapapp{} 
+\backslash
+thechapter.
+\backslash
+space%
+\end_layout
+
+\begin_layout Plain Layout
+
+        %
+\backslash
+par
+\backslash
+nobreak
+\end_layout
+
+\begin_layout Plain Layout
+
+        %
+\backslash
+vskip 20
+\backslash
+p@
+\end_layout
+
+\begin_layout Plain Layout
+
+      
+\backslash
+fi
+\end_layout
+
+\begin_layout Plain Layout
+
+    
+\backslash
+fi
+\end_layout
+
+\begin_layout Plain Layout
+
+    
+\backslash
+interlinepenalty
+\backslash
+@M
+\end_layout
+
+\begin_layout Plain Layout
+
+    
+\backslash
+Huge 
+\backslash
+bfseries #1
+\backslash
+par
+\backslash
+nobreak
+\end_layout
+
+\begin_layout Plain Layout
+
+    
+\backslash
+vskip 40
+\backslash
+p@
+\end_layout
+
+\begin_layout Plain Layout
+
+  }}
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+def
+\backslash
+chaptername{}
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+makeatother
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Title
+
+\series bold
+\size giant
+\color black
+CTU CAN
+\noun on
+ FD 
+\begin_inset Newline newline
+\end_inset
+
+IP CORE
+\noun default
+\color inherit
+ 
+\series default
+\size default
+
+\begin_inset Newline newline
+\end_inset
+
+
+\series bold
+\size larger
+\color black
+
+\begin_inset VSpace bigskip
+\end_inset
+
+
+\size default
+\noun on
+Testbench Architecture
+\end_layout
+
+\begin_layout Author
+\begin_inset VSpace defskip
+\end_inset
+
+LOGIC DESIGN SERVICES l.t.d.
+\begin_inset Newline newline
+\end_inset
+
+
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset Newline newline
+\end_inset
+
+
+\begin_inset Newline newline
+\end_inset
+
+
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset Newline newline
+\end_inset
+
+
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset Newline newline
+\end_inset
+
+
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset Newline newline
+\end_inset
+
+
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset Newline newline
+\end_inset
+
+
+\begin_inset Newline newline
+\end_inset
+
+
+\end_layout
+
+\begin_layout Left Header
+
+\size larger
+\begin_inset Tabular
+<lyxtabular version="3" rows="2" columns="2">
+<features tabularvalignment="top">
+<column alignment="left" valignment="top" width="0pt">
+<column alignment="left" valignment="top" width="0pt">
+<row>
+<cell multirow="3" alignment="left" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size larger
+CTU CAN FD IP Core - Testbench
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell multirow="4" alignment="left" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Version 0.3, Commit:
+\begin_inset CommandInset include
+LatexCommand input
+filename "version.tex"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+</lyxtabular>
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\noindent
+\align center
+\begin_inset Tabular
+<lyxtabular version="3" rows="4" columns="4">
+<features tabularvalignment="middle">
+<column alignment="center" valignment="top" width="1.5cm">
+<column alignment="center" valignment="top" width="2cm">
+<column alignment="center" valignment="top" width="2cm">
+<column alignment="center" valignment="top" width="10cm">
+<row>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Document Version
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Author
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Date
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Change description
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+0.1
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Ondrej Ille
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+04-2021
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Initial version
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+0.2
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Ondrej Ille
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+03-2025
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Replace GHDL with NVC
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+0.3
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Ondrej Ille
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+06-2025
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Proof-read, add compilation guide.
+ Update figures and add 
+\begin_inset Quotes eld
+\end_inset
+
+Functional coverage agent
+\begin_inset Quotes erd
+\end_inset
+
+.
+ Remove 
+\begin_inset Quotes eld
+\end_inset
+
+integrated
+\begin_inset Quotes erd
+\end_inset
+
+ VIP mode as experimental.
+\end_layout
+
+\end_inset
+</cell>
+</row>
+</lyxtabular>
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset CommandInset toc
+LatexCommand tableofcontents
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+% classis page numbering
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+mainmatter
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Chapter
+Introduction
+\end_layout
+
+\begin_layout Standard
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+ 
+\backslash
+thispagestyle{fancy}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+This document describes test-bench of CTU CAN FD.
+ It provides guide to integrate main CTU CAN FD test-bench into other (e.g.
+ SoC level) test-bench, and it explains types of tests available.
+ CTU CAN FD contains following tests / test-benches:
+\end_layout
+
+\begin_layout Enumerate
+Main test-bench with following types of tests:
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+Compliance tests - Verify compliance of CTU CAN FD to ISO11868-1 2015.
+ Contains all tests from ISO 16845-1 2016.
+ To run these tests, you need Compliance test library compiled and linked
+ to simulation via PLI.
+ This library is a submodule of CTU CAN FD repository.
+\end_layout
+
+\begin_layout Itemize
+Feature tests - Verify features of CTU CAN FD thah are not directly related
+ to compliance with ISO11898-1 2015 (e.g.
+ TX/RX buffers, Interrupts, special modes, frame filtering, etc.).
+\end_layout
+
+\begin_layout Itemize
+Reference tests - Each test applies stimulus recorded from reference implementat
+ion of CAN protocol, checks that CTU CAN FD can receive such sequence, and
+ accepts frame correctly (black-box testing of cooperability).
+ 
+\end_layout
+
+\end_deeper
+\begin_layout Enumerate
+RX buffer unit test - RX buffer has its own block-level test-bench.
+ It is used to verify corner-cases of RX Buffer FIFO.
+\end_layout
+
+\begin_layout Standard
+This document focuses on main CTU CAN FD test-bench, and further reffers
+ to it only as test-bench.
+ It has following features:
+\end_layout
+
+\begin_layout Itemize
+Testbench is written in VHDL, compliant with VHDL 2008.
+ 
+\end_layout
+
+\begin_layout Itemize
+Reference model of CAN bus communication that is used in compliance tests,
+ is written in C++ 17.
+ Reference model is part of Compliance test library.
+ Compliance library is comiled as shared object library (.so), and linked
+ to the simulation.
+ Test-bench communicates with Compliance library via VPI interface (GHDL
+ specific) or VHPI interface (IEEE 1076 standard).
+ There is a separate library for each supported simulator.
+ For compiling Compliance test library, reffer to documentation in commercial
+ delivery of Compliance library.
+ Compilation is required for configuring the path of CTU CAN FD VIP inside
+ TB.
+ 
+\end_layout
+
+\begin_layout Itemize
+All test functionality is abstracted to CTU CAN FD VIP.
+\end_layout
+
+\begin_layout Section
+Test environment
+\end_layout
+
+\begin_layout Standard
+CTU CAN FD development uses following dependecies/tools:
+\end_layout
+
+\begin_layout Itemize
+NVC - VHDL simulator
+\end_layout
+
+\begin_layout Itemize
+GTKWave - waveform viewer.
+\end_layout
+
+\begin_layout Itemize
+Vunit - Unit test framework for VHDL.
+\end_layout
+
+\begin_layout Standard
+Reffer to CTU CAN FD repository for ready-made docker image with all the
+ dependencies installed.
+\end_layout
+
+\begin_layout Section
+Supported simulators
+\end_layout
+
+\begin_layout Standard
+CTU CAN FD test-bench currently supports following simulators:
+\end_layout
+
+\begin_layout Itemize
+NVC - Use at least version 1.16.2
+\end_layout
+
+\begin_layout Itemize
+VCS - Use at least version V2023-12
+\end_layout
+
+\begin_layout Chapter
+Testbench architecture
+\end_layout
+
+\begin_layout Standard
+Test-bench consists of following parts:
+\end_layout
+
+\begin_layout Itemize
+CTU CAN FD VIP - contains all test code, test sequences, libraries, packages
+ and agents.
+ CTU CAN FD VIP communicates with Compliance test library via a PLI interface.
+\end_layout
+
+\begin_layout Itemize
+CTU CAN FD (DUT) - contains RTL.
+\end_layout
+
+\begin_layout Standard
+Further in this document, CTU CAN FD VIP is reffered to only as VIP.
+ CTU CAN FD design is reffered to as DUT.
+ Block diagram of CTU CAN FD test-bench is shown in Figure 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:Test-bench-block-diagram"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+placement h
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\noindent
+\align center
+\begin_inset Graphics
+	filename img/tb_top_diagram.pdf
+	scale 25
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Test-bench block diagram
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:Test-bench-block-diagram"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section
+Compiling the testbench
+\end_layout
+
+\begin_layout Standard
+To compile the design and testbench execute following steps:
+\end_layout
+
+\begin_layout Enumerate
+Compile all 
+\begin_inset Quotes eld
+\end_inset
+
+.vhd
+\begin_inset Quotes erd
+\end_inset
+
+ files from 
+\begin_inset Quotes eld
+\end_inset
+
+rtl/slf_rtl.yml
+\begin_inset Quotes erd
+\end_inset
+
+ source list file into a 
+\begin_inset Quotes eld
+\end_inset
+
+ctu_can_fd_rtl
+\begin_inset Quotes erd
+\end_inset
+
+ library.
+\end_layout
+
+\begin_layout Enumerate
+Build the compliance test library.
+ See 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "key-2"
+literal "false"
+
+\end_inset
+
+ for details.
+\end_layout
+
+\begin_layout Enumerate
+Choose which 
+\begin_inset Quotes eld
+\end_inset
+
+tb_top
+\begin_inset Quotes erd
+\end_inset
+
+ wrapper you will be running.
+ There are following wrappers available:
+\end_layout
+
+\begin_deeper
+\begin_layout Enumerate
+Vunit - Choose if you will be running with VUnit
+\end_layout
+
+\begin_layout Enumerate
+Simple - If you will be running without Vunit
+\end_layout
+
+\end_deeper
+\begin_layout Enumerate
+Compile all 
+\begin_inset Quotes eld
+\end_inset
+
+.vhd
+\begin_inset Quotes erd
+\end_inset
+
+ files from 
+\begin_inset Quotes eld
+\end_inset
+
+test/slf_tb_dependencies_<tb_type>.yml
+\begin_inset Quotes erd
+\end_inset
+
+ source list file to 
+\begin_inset Quotes eld
+\end_inset
+
+ctu_can_fd_tb
+\begin_inset Quotes erd
+\end_inset
+
+ library.
+ <tb_type> is either 
+\begin_inset Quotes eld
+\end_inset
+
+vunit
+\begin_inset Quotes erd
+\end_inset
+
+ or 
+\begin_inset Quotes eld
+\end_inset
+
+simple
+\begin_inset Quotes erd
+\end_inset
+
+ based on previous step.
+\end_layout
+
+\begin_layout Enumerate
+Compile all files from 
+\begin_inset Quotes eld
+\end_inset
+
+test/slf_tb_common.yml
+\begin_inset Quotes erd
+\end_inset
+
+ to 
+\begin_inset Quotes eld
+\end_inset
+
+ctu_can_fd_tb
+\begin_inset Quotes erd
+\end_inset
+
+ library.
+\end_layout
+
+\begin_layout Enumerate
+Compile all files from 
+\begin_inset Quotes eld
+\end_inset
+
+test/slf_tb_top_<tb_type>.yml
+\begin_inset Quotes erd
+\end_inset
+
+ to 
+\begin_inset Quotes eld
+\end_inset
+
+ctu_can_fd_tb
+\begin_inset Quotes erd
+\end_inset
+
+ library.
+\end_layout
+
+\begin_layout Section
+VIP Interface
+\end_layout
+
+\begin_layout Standard
+CTU CAN FD VIP is connected to DUT via interfaces shown in Table 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "tab: vip-interface-signals"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float table
+placement H
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\noindent
+\align center
+\begin_inset Tabular
+<lyxtabular version="3" rows="19" columns="4">
+<features tabularvalignment="middle">
+<column alignment="left" valignment="middle" width="2cm">
+<column alignment="left" valignment="top" width="2cm">
+<column alignment="left" valignment="middle" width="4cm">
+<column alignment="left" valignment="middle" width="7.5cm">
+<row>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Interface
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+cellcolor{gray}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Signals
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+cellcolor{gray}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Connected to
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+cellcolor{gray}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Description
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+cellcolor{gray}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Reset
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\series bold
+\shape italic
+res_n
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Reset agent
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Control of asynchronous reset of DUT.
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+System clock
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\series bold
+\shape italic
+clk_sys
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Clock agent
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Control of DUTs clock.
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+DFT support
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+scan_enable
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Test port agent
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Control of DUTs scan mode.
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell multirow="3" alignment="left" valignment="middle" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+CAN bus
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\series bold
+\shape italic
+can_tx
+\end_layout
+
+\end_inset
+</cell>
+<cell multirow="3" alignment="left" valignment="middle" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Compliance , Reference, Feature test agents
+\end_layout
+
+\end_inset
+</cell>
+<cell multirow="3" alignment="left" valignment="middle" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Connection to CAN bus (driving CAN RX and monitoring CAN TX of DUT).
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell multirow="4" alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\series bold
+\shape italic
+can_rx
+\end_layout
+
+\end_inset
+</cell>
+<cell multirow="4" alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell multirow="4" alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell multirow="3" alignment="left" valignment="middle" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Memory bus
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\series bold
+\shape italic
+scs
+\end_layout
+
+\end_inset
+</cell>
+<cell multirow="3" alignment="left" valignment="middle" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Memory bus agent
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Chip select
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell multirow="4" alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\series bold
+\shape italic
+swr
+\end_layout
+
+\end_inset
+</cell>
+<cell multirow="4" alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Write enable
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell multirow="4" alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\series bold
+\shape italic
+srd
+\end_layout
+
+\end_inset
+</cell>
+<cell multirow="4" alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Read enable
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell multirow="4" alignment="left" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\series bold
+\shape italic
+sbe
+\end_layout
+
+\end_inset
+</cell>
+<cell multirow="4" alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Byte enables
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell multirow="4" alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\series bold
+\shape italic
+write_data
+\end_layout
+
+\end_inset
+</cell>
+<cell multirow="4" alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Write data to DUT.
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell multirow="4" alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\series bold
+\shape italic
+read_data
+\end_layout
+
+\end_inset
+</cell>
+<cell multirow="4" alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Read data from DUT.
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell multirow="4" alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\series bold
+\shape italic
+address
+\end_layout
+
+\end_inset
+</cell>
+<cell multirow="4" alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Memory/Register address.
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Interrupt
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\series bold
+\shape italic
+int
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Interrupt agent
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Monitoring of DUTs interrupt output.
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Test probe
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\series bold
+\shape italic
+test_probe
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Feature test agent
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Monitoring of DUT 
+\begin_inset Quotes eld
+\end_inset
+
+test port
+\begin_inset Quotes erd
+\end_inset
+
+ for various test features.
+ Required only for feature tests.
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Timestamp
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\series bold
+\shape italic
+timestamp
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Timestamp agent
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Control of DUTs timestamp input.
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell multirow="3" alignment="left" valignment="middle" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+VIP control
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\series bold
+\shape italic
+test_start
+\end_layout
+
+\end_inset
+</cell>
+<cell multirow="3" alignment="left" valignment="middle" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Test Controller agent
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Request to start test.
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell multirow="4" alignment="left" valignment="middle" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\series bold
+\shape italic
+test_done
+\end_layout
+
+\end_inset
+</cell>
+<cell multirow="4" alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Indication test has finished.
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell multirow="4" alignment="left" valignment="middle" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\series bold
+\shape italic
+test_success
+\end_layout
+
+\end_inset
+</cell>
+<cell multirow="4" alignment="left" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Test result (1 - passed, 0 - failed).
+\end_layout
+
+\end_inset
+</cell>
+</row>
+</lyxtabular>
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+CTU CAN FD VIP interface signals
+\begin_inset CommandInset label
+LatexCommand label
+name "tab: vip-interface-signals"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+The behavior of VIP is following:
+\end_layout
+
+\begin_layout Itemize
+VIP drives 
+\series bold
+\shape italic
+res_n
+\series default
+\shape default
+ of DUT.
+\end_layout
+
+\begin_layout Itemize
+VIP generates clock signal for DUT (period is given by 
+\series bold
+\shape italic
+cfg_sys_clk_period
+\series default
+\shape default
+ generic of VIP).
+\end_layout
+
+\begin_layout Itemize
+VIP monitors 
+\series bold
+\shape italic
+can_tx
+\series default
+\shape default
+ pin of DUT and drives 
+\series bold
+\shape italic
+can_rx
+\series default
+\shape default
+ pin of DUT (generates and monitors CAN frames).
+\end_layout
+
+\begin_layout Itemize
+VIP generates memory transactions on its Memory bus to access registers
+ of DUT.
+\end_layout
+
+\begin_layout Itemize
+VIP monitors 
+\series bold
+\shape italic
+int
+\series default
+\shape default
+ pin of DUT.
+\end_layout
+
+\begin_layout Itemize
+VIP monitors 
+\series bold
+\shape italic
+test_probe
+\series default
+\shape default
+ pin of DUT.
+\end_layout
+
+\begin_layout Itemize
+VIP drives 
+\series bold
+\shape italic
+scan_enable
+\series default
+\shape default
+ pin of DUT.
+\end_layout
+
+\begin_layout Itemize
+VIP is integrated in TB as on Figure 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:Test-bench-block-diagram"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+ and simulation is controlled by Vunit manager (See tb_top_ctu_can_fd.vhd)
+\end_layout
+
+\begin_layout Section
+Test execution flow
+\end_layout
+
+\begin_layout Standard
+Control of VIP by test-bench is following:
+\end_layout
+
+\begin_layout Enumerate
+Testbench sets 
+\series bold
+\shape italic
+test_start
+\series default
+\shape default
+ = '1'.
+\end_layout
+
+\begin_layout Enumerate
+Testbench waits until 
+\series bold
+\shape italic
+test_done
+\series default
+\shape default
+ = '1'.
+\end_layout
+
+\begin_layout Enumerate
+Testbench checks 
+\series bold
+\shape italic
+test_success
+\series default
+\shape default
+.
+ If 
+\series bold
+\shape italic
+test_success
+\series default
+\shape default
+ = '1', the test passed, otherwise test failed.
+\end_layout
+
+\begin_layout Standard
+All tests follow basic test sequence:
+\series bold
+\shape italic
+ test_start
+\series default
+\shape default
+ = '1' is interpreted by Test controller agent.
+ Test controller agent invokes different agents based on type of test:
+\end_layout
+
+\begin_layout Enumerate
+Compliance tests - Control over TB is handed over PLI to Compliance test
+ library (shared object library linked to simulation).
+ Compliance test library forks its own test thread, and executes test sequence
+ in this thread.
+ Thread communicates with rest of the test-bench via PLI (see 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "subsec:PLI-Interface"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+), and controls Clock agent, Memory bus agent and Compliance test agent
+ (CAN agent).
+ When test sequence ends, it signals this back to Test controller agent
+ that passes the result of test back to 
+\series bold
+\shape italic
+test_done
+\series default
+\shape default
+ and 
+\series bold
+\shape italic
+test_success
+\series default
+\shape default
+.
+\end_layout
+
+\begin_layout Enumerate
+Feature tests - Test controller agent requests Feature test agent to start
+ running the test.
+ Feature test agent uses all the other agents connected to DUT, and executes
+ test sequence.
+ After the test sequence, feature test agent gives control back to Test
+ controller agent that passes the result back to 
+\series bold
+\shape italic
+test_done
+\series default
+\shape default
+ and 
+\series bold
+\shape italic
+test_success
+\series default
+\shape default
+.
+\end_layout
+
+\begin_layout Enumerate
+Reference tests - Test controller agent requests running the test from Reference
+ test agent.
+ Reference test agent applies reference test sequences to DUT via Compliance
+ test agents driver.
+ When Reference test agent sequence ends, it gives control back to Test
+ controller agent that passes the result back to 
+\series bold
+\shape italic
+test_done
+\series default
+\shape default
+ and 
+\series bold
+\shape italic
+test_success
+\series default
+\shape default
+.
+\end_layout
+
+\begin_layout Section
+Communication mechanisms
+\end_layout
+
+\begin_layout Standard
+Agents in VIP communicate together via communication channel implemented
+ in 
+\begin_inset Quotes eld
+\end_inset
+
+tb_communication_pkg.vhd
+\begin_inset Quotes erd
+\end_inset
+
+.
+ Communication channel provides message passing mechanism (
+\begin_inset Quotes eld
+\end_inset
+
+send
+\begin_inset Quotes erd
+\end_inset
+
+ function).
+ Each agent implements single 
+\begin_inset Quotes eld
+\end_inset
+
+receiver
+\begin_inset Quotes erd
+\end_inset
+
+ of messages (
+\begin_inset Quotes eld
+\end_inset
+
+receive_start
+\begin_inset Quotes erd
+\end_inset
+
+ and 
+\begin_inset Quotes eld
+\end_inset
+
+receive_finish
+\begin_inset Quotes erd
+\end_inset
+
+ functions).
+ Messages can be sent by any process at any time, however only one message
+ can be sent at a time (it is not possible to send multiple messages at
+ the same time), over single channel.
+ Destination agent is selected with each message being sent.
+ Communication is synchronous (
+\begin_inset Quotes eld
+\end_inset
+
+send
+\begin_inset Quotes erd
+\end_inset
+
+ function returns after the message has been received by destination agent).
+ CTU CAN FD VIP uses single channel (
+\begin_inset Quotes eld
+\end_inset
+
+default_channel
+\begin_inset Quotes erd
+\end_inset
+
+ signal) for communication.
+\end_layout
+
+\begin_layout Section
+Report mechanisms
+\end_layout
+
+\begin_layout Standard
+Test-bench contains package (tb_report_pkg.vhd) that is used to report, and
+ execute checks in the implemented tests.
+ Any call to 
+\begin_inset Quotes eld
+\end_inset
+
+error_m
+\begin_inset Quotes erd
+\end_inset
+
+, 
+\begin_inset Quotes eld
+\end_inset
+
+check(false,...)
+\begin_inset Quotes erd
+\end_inset
+
+ or 
+\begin_inset Quotes eld
+\end_inset
+
+check_false(true,...)
+\begin_inset Quotes erd
+\end_inset
+
+ will make any test fail (
+\series bold
+\shape italic
+test_success
+\series default
+\shape default
+ will stay 0 when 
+\series bold
+\shape italic
+test_done
+\series default
+\shape default
+ goes high at the end of test).
+\end_layout
+
+\begin_layout Standard
+VIP contains own log verbosity mechanism.
+ There are 4 verbosity levels:
+\end_layout
+
+\begin_layout Description
+verbosity_debug All logs are shown, including 
+\begin_inset Quotes eld
+\end_inset
+
+debug_m
+\begin_inset Quotes erd
+\end_inset
+
+ calls.
+\end_layout
+
+\begin_layout Description
+verbosity_info Only 
+\begin_inset Quotes eld
+\end_inset
+
+info_m
+\begin_inset Quotes erd
+\end_inset
+
+, 
+\begin_inset Quotes eld
+\end_inset
+
+warning_m
+\begin_inset Quotes erd
+\end_inset
+
+, and 
+\begin_inset Quotes eld
+\end_inset
+
+error_m
+\begin_inset Quotes erd
+\end_inset
+
+ calls are logged.
+ Calls to 
+\begin_inset Quotes eld
+\end_inset
+
+check(true,...)
+\begin_inset Quotes erd
+\end_inset
+
+/
+\begin_inset Quotes erd
+\end_inset
+
+check_false(false,...)
+\begin_inset Quotes erd
+\end_inset
+
+ are also logged.
+\end_layout
+
+\begin_layout Description
+verbosity_warning Only 
+\begin_inset Quotes eld
+\end_inset
+
+warning_m
+\begin_inset Quotes erd
+\end_inset
+
+ and 
+\begin_inset Quotes eld
+\end_inset
+
+error_m
+\begin_inset Quotes erd
+\end_inset
+
+ calls are logged.
+\end_layout
+
+\begin_layout Description
+verbosity_error Only 
+\begin_inset Quotes eld
+\end_inset
+
+error_m
+\begin_inset Quotes erd
+\end_inset
+
+ calls are logged.
+\end_layout
+
+\begin_layout Standard
+With any verbosity level, calls to 
+\begin_inset Quotes eld
+\end_inset
+
+check(false,...)
+\begin_inset Quotes erd
+\end_inset
+
+/
+\begin_inset Quotes erd
+\end_inset
+
+check_false(true,...)
+\begin_inset Quotes erd
+\end_inset
+
+ are always logged, since this means a test fail condition occured.
+ Verbosity level used by VIP can be configured by a call to 
+\begin_inset Quotes eld
+\end_inset
+
+set_log_verbosity
+\begin_inset Quotes erd
+\end_inset
+
+ function.
+\end_layout
+
+\begin_layout Section
+Random number generation
+\end_layout
+
+\begin_layout Standard
+VIP contains pseudo-random number generator in 
+\begin_inset Quotes eld
+\end_inset
+
+tb_random_pkg.vhd
+\begin_inset Quotes erd
+\end_inset
+
+.
+ VIP initializes random number generator in any test based on 
+\series bold
+\shape italic
+seed
+\series default
+\shape default
+ generic of VIP.
+ The Vunit framework used to run CTU CAN FD development generates random
+ value for 
+\series bold
+\shape italic
+seed
+\series default
+\shape default
+ generic.
+ Randomization is applied in majority of feature tests, and compliance tests.
+ CAN frame fields which have predefined value in ISO16845-1 2016 for each
+ test, are not randomized (to meet conditions of ISO 16845-1 2016).
+\end_layout
+
+\begin_layout Section
+Agents
+\end_layout
+
+\begin_layout Subsection
+Clock agent
+\end_layout
+
+\begin_layout Standard
+Clock agent generates 
+\series bold
+\shape italic
+clk_sys
+\series default
+\shape default
+ clock.
+ Period, jitter and duty cycle of generated clock can be configured.
+ Clock agent provides option to wait for one clock cycle.
+ Clock agent is used by all test types.
+ The clocks generated by clock agent are used to clock the DUT.
+\end_layout
+
+\begin_layout Subsection
+Reset agent
+\end_layout
+
+\begin_layout Standard
+Reset agent generates DUTs reset (
+\series bold
+\shape italic
+res_n
+\series default
+\shape default
+).
+ DUT is reset in beginning of each test.
+ Polarity of a reset can be configured.
+\end_layout
+
+\begin_layout Subsection
+Memory bus agent
+\end_layout
+
+\begin_layout Standard
+Memory bus agent generates memory transactions compatible with DUTs RAM-like
+ interface (see 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "key-1"
+literal "false"
+
+\end_inset
+
+).
+ An example of transfers on this interface is shown in Figure 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:RAM-like-example"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+.
+ This interface is compatible with Avalon interface.
+ 8, 16 and 32 bit accesses are supported.
+ Read and Write accesses are supported.
+ Read accesses are always blocking (see access functions in 
+\begin_inset Quotes eld
+\end_inset
+
+mem_bus_agent_pkg.vhd
+\begin_inset Quotes erd
+\end_inset
+
+).
+ Write accesses can be blocking or non-blocking.
+ Memory bus agent supports burst accesses.
+ Memory bus agent contains FIFO where accesses can be posted, and then executed
+ in bulk.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+placement h
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\noindent
+\align center
+\begin_inset Graphics
+	filename timing_diagrams/ram_like.pdf
+	scale 75
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Memory bus agent transactions
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:RAM-like-example"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsection
+CAN agent
+\end_layout
+
+\begin_layout Standard
+CAN agent is used by two test types: compliance tests and reference tests.
+ CAN agent drives DUTs 
+\series bold
+\shape italic
+can_rx
+\series default
+\shape default
+ and monitors/checks whether DUTs 
+\series bold
+\shape italic
+can_tx
+\series default
+\shape default
+ signals are as expected.
+ Sequences which are driven/monitored by CAN agent, are produced by either
+ of:
+\end_layout
+
+\begin_layout Itemize
+Compliance test library
+\end_layout
+
+\begin_layout Itemize
+Reference test agent (the data are defined by reference data sets).
+\end_layout
+
+\begin_layout Standard
+CAN agent consists of two parts:
+\end_layout
+
+\begin_layout Description
+Driver Drives sequences to 
+\series bold
+\shape italic
+can_rx
+\series default
+\shape default
+ of DUT.
+\end_layout
+
+\begin_layout Description
+Monitor Monitors sequences on 
+\series bold
+\shape italic
+can_tx
+\series default
+\shape default
+ of DUT.
+\end_layout
+
+\begin_layout Standard
+Driver and monitor each contain FIFO which hold items to be driven and monitored.
+ If there are multiple items in FIFO, they are driven/monitored one after
+ another, therefore creating sequence of bits (similar to UVM sequence,
+ and sequence item).
+ Such sequence represents CAN frames.
+ Each driven item consists of:
+\end_layout
+
+\begin_layout Description
+value Logic value which is put on 
+\series bold
+\shape italic
+can_rx
+\series default
+\shape default
+ when this item is being driven.
+\end_layout
+
+\begin_layout Description
+time Duration for which this item is driven.
+\end_layout
+
+\begin_layout Standard
+Each monitored item consist of:
+\end_layout
+
+\begin_layout Description
+value Logic value which is checked on 
+\series bold
+\shape italic
+can_tx
+\series default
+\shape default
+ during monitoring of this item.
+\end_layout
+
+\begin_layout Description
+time Duration for which this item is monitored.
+ Value should be multiple of sample_rate.
+\end_layout
+
+\begin_layout Description
+sample_rate Sampling rate used to monitor this item.
+ Monitored item is not checked permanently, but in discrete moments separated
+ by sampling rate.
+ If 
+\series bold
+\shape italic
+can_tx
+\series default
+\shape default
+ does not match value of currently monitored item in the moment of sampling,
+ mismatch counter is incremented and test fails.
+\end_layout
+
+\begin_layout Standard
+ISO 11898-1 2015 model in compliance test library translates CAN frames
+ to sequences of driver and monitor items.
+ To send CAN frame to DUT, compliance test library translates bits of the
+ frame into sequence of driver items, and drives them via CAN agents driver.
+ Similarly, to check transmitted frame, compliance test library translates
+ the expected CAN frame to sequence of items monitored by CAN agents monitor.
+ Typically, compliance test library translates single bit on CAN bus to
+ single driven/monitored item.
+ Sampling rate of monitored items is equal to single time quanta (since
+ ISO 16845 defines that time quanta should be used as granularity of checking
+ 
+\series bold
+\shape italic
+can_tx
+\series default
+\shape default
+ value).
+\end_layout
+
+\begin_layout Standard
+Driver and monitor typically operate simultaneously.
+ An example scenario is:
+\end_layout
+
+\begin_layout Itemize
+Transmit frame to DUT, and check that DUT issues dominant acknowledge at
+ correct time.
+ 
+\end_layout
+
+\begin_layout Standard
+If both driver and monitor contain the same CAN frame (monitored frame was
+ converted to all Recessive bits with ACK bit dominant), then the example
+ above is achieved.
+ Alternatively, monitor can be delayed from driver by configurable time.
+ This feature allows compensating input delay of DUT.
+\end_layout
+
+\begin_layout Standard
+Typical operation of CAN agent is following:
+\end_layout
+
+\begin_layout Enumerate
+Flush driver and monitor FIFOs (to be sure there are no remaining items).
+\end_layout
+
+\begin_layout Enumerate
+Insert sequences to driver and monitor FIFOs.
+\end_layout
+
+\begin_layout Enumerate
+Configure monitor delay.
+\end_layout
+
+\begin_layout Enumerate
+Start driver and monitor.
+\end_layout
+
+\begin_layout Enumerate
+Wait until driver and monitor are finished (during this time, communication
+ channel is blocked).
+\end_layout
+
+\begin_layout Enumerate
+Issue 
+\begin_inset Quotes eld
+\end_inset
+
+check result
+\begin_inset Quotes erd
+\end_inset
+
+ command to monitor.
+ This will print error into simulator log, if any mismatches occured in
+ monitored sequence (causing test to fail).
+\end_layout
+
+\begin_layout Standard
+An example of CAN agent operation in which Driver transmits a frame to DUT
+ and monitor checks that DUT issues ACK in correct moment is shown in Figure
+ 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:CAN-agent-example"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+placement h
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\noindent
+\align center
+\begin_inset Graphics
+	filename img/CAN_agent_example.png
+	scale 32
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+CAN agent example
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:CAN-agent-example"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsection
+Timestamp agent
+\end_layout
+
+\begin_layout Standard
+Timestamp agent drivers 
+\series bold
+\shape italic
+timestamp
+\series default
+\shape default
+ signal of VIP.
+ Timestamp agent generates up-counting sequence of values, synchronous to
+ 
+\series bold
+\shape italic
+clk_sys
+\series default
+\shape default
+.
+ Counting step, and number of cycles needed to advance to next value (prescaler)
+ can be configured.
+ Timestamp agent is used by feature tests which verify timestamping of RX
+ frames or time triggered transmission.
+\end_layout
+
+\begin_layout Subsection
+Interrupt agent
+\end_layout
+
+\begin_layout Standard
+Interrupt agent monitors 
+\series bold
+\shape italic
+int
+\series default
+\shape default
+ input of VIP.
+ It is used to check whether DUTs interrupt is asserted or de-asserted.
+ Polarity of interrupt is configurable.
+\end_layout
+
+\begin_layout Subsection
+Test probe agent
+\end_layout
+
+\begin_layout Standard
+Test probe agent watches DUTs 
+\series bold
+\shape italic
+test_probe
+\series default
+\shape default
+ output.
+ This agent uses 
+\series bold
+\shape italic
+test_probe
+\series default
+\shape default
+ to observe CTU CAN FDs signals indicating sample point and start of bit.
+ Test-probe agent provides functions for synchronizing with DUTs start of
+ bit or sample point.
+ Test probe agent is used by feature tests.
+ Test probe agent also drives 
+\series bold
+\shape italic
+scan_enable
+\series default
+\shape default
+ input of DUT.
+\end_layout
+
+\begin_layout Subsection
+Feature test agent
+\end_layout
+
+\begin_layout Standard
+Feature test agent is active only in feature tests.
+ When testbench invokes features test agent, the agent calls test specific
+ sequence (
+\begin_inset Quotes eld
+\end_inset
+
+*_ftest.vhd
+\begin_inset Quotes erd
+\end_inset
+
+ files contain test sequences), based on name of the test (
+\series bold
+test_name
+\series default
+ generic).
+ Feature test agent has following capabilities:
+\end_layout
+
+\begin_layout Itemize
+Contains another instance of CTU CAN FD.
+ This instance is reffered to as Test node, and DUT communicates with this
+ node as part of feature tests.
+\end_layout
+
+\begin_layout Itemize
+Signal delayers allowing to configure arbitrary 
+\series bold
+\shape italic
+can_tx
+\series default
+\shape default
+ -> 
+\series bold
+\shape italic
+can_rx
+\series default
+\shape default
+ delay for each node (DUT and Test Node).
+\end_layout
+
+\begin_layout Itemize
+Ability to force bus level (value received by both nodes on CAN bus).
+\end_layout
+
+\begin_layout Itemize
+Ability to force 
+\series bold
+\shape italic
+can_rx
+\series default
+\shape default
+ of single node (either DUT or Test Node).
+\end_layout
+
+\begin_layout Itemize
+Ability to check value of 
+\series bold
+\shape italic
+can_tx
+\series default
+\shape default
+ of each node.
+\end_layout
+
+\begin_layout Standard
+These capabilities are used by feature test sequence to verify functionality
+ of DUT.
+ Feature tests use higher level API (higher than direct register access),
+ to access functionality of DUT (see 
+\begin_inset Quotes eld
+\end_inset
+
+feature_test_agent_pkg.vhd
+\begin_inset Quotes erd
+\end_inset
+
+).
+\end_layout
+
+\begin_layout Subsection
+Reference test agent
+\end_layout
+
+\begin_layout Standard
+Reference test agent is used by reference tests.
+ It executes test sequence from dedicated reference data set (reference_data_set
+_*_pkg.vhd).
+ Each reference data set contains 1000 frames which were transmitted by
+ a reference CAN implementation and recorded.
+\end_layout
+
+\begin_layout Subsection
+Functional coverage agent
+\end_layout
+
+\begin_layout Standard
+Functional coverage agent contains Functional Cover points in PSL language.
+ Functional coverage agent measures functional coverage of the test-bench.
+ Functional coverage agent peeks into the design via VHDLs external names.
+ 
+\end_layout
+
+\begin_layout Section
+Test types
+\end_layout
+
+\begin_layout Subsection
+Compliance tests
+\end_layout
+
+\begin_layout Standard
+Functional diagram of the test-bench during compliance tests is shown in
+ Figure 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:test-bench-compliance"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+.
+ Compliance tests execute all tests from ISO 16845-1 2016.
+ Therefere, compliance tests provide claims of CTU CAN FD compliance towards
+ ISO 11898-1 2015.
+ CAN bus bit rate used by these tests is configured via VIPs generics.
+ Several compliance tests have limitations with regards to allowed bit rate.
+ To see these limitations, reffer to test list files in 
+\begin_inset Quotes eld
+\end_inset
+
+test/tlf_compliance_*.yml
+\begin_inset Quotes erd
+\end_inset
+
+).
+ These limitations are given by architecture of CTU CAN FD compliance testing
+ solution.
+ It is intetion to remove these limitations in the next development of CTU
+ CAN FD.
+ Several tests override the default bit rate to meet conditions of the test
+ given by ISO11898-1 2015 (e.g.
+ test 7.6.23 calculates new bit rate from configured one, since test requires
+ it to use certain bit rate ratios).
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+placement h
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\noindent
+\align center
+\begin_inset Graphics
+	filename img/tb_top_compliance.pdf
+	scale 25
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Compliance test
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:test-bench-compliance"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+When a compliance test is started, testbench gives control to compliance
+ test library via PLI interface.
+ Compliance test library forks a thread where the test runs.
+ Therefore, there are two contexts in compliance tests:
+\end_layout
+
+\begin_layout Itemize
+Simulator context - Simulation is executed in this context, events are scheduled
+, and PLI callbacks are executed.
+\end_layout
+
+\begin_layout Itemize
+Test context - Test sequence from compliance test library is executed in
+ this context.
+\end_layout
+
+\begin_layout Standard
+Test sequence running in test context communicates with the simulation via
+ shared memory interface.
+ The shared memory interface guarantees that PLI handles will only be accessed
+ from simulator context.
+ Thus, the PLI handles will not be corrupted.
+\end_layout
+
+\begin_layout Standard
+Compliance test library contains model of ISO11898-1 2015.
+ The model is a golden reference used to generate test sequences that are
+ executed by CAN agent inside digital simulator.
+ Reference model has following features:
+\end_layout
+
+\begin_layout Itemize
+Full support of ISO 11898-1 2015 (all three variants: CAN FD enabled, CAN
+ FD tolerant, Classical CAN)
+\end_layout
+
+\begin_layout Itemize
+Cycle accurate representation of CAN frame.
+ 
+\end_layout
+
+\begin_layout Itemize
+Can lenght / shorten bits to verify DUTs synchronization.
+\end_layout
+
+\begin_layout Itemize
+Error insertion (all error types and positions can be modelled) and glitch
+ insertion.
+\end_layout
+
+\begin_layout Standard
+For more detailed architecture of compliance test library, reffer to 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "key-2"
+literal "false"
+
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Subsubsection
+PLI Interface
+\begin_inset CommandInset label
+LatexCommand label
+name "subsec:PLI-Interface"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+As PLI interface, VIP supports VHPI interface (IEEE 1076 standardized).
+ There are two variants of VHPI: One for NVC, and one for VCS.
+ PLI interface consists of signals that are used to communicate between
+ testbench and compliance library.
+ Table 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "tab: pli-interface-signals"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+ lists these signals.
+ Compliance test library, acts as master on this interface.
+ It pushes transactions to a shared memory location (inside Compliance test
+ library), and simulator side of this interface 
+\begin_inset Quotes eld
+\end_inset
+
+picks-up
+\begin_inset Quotes erd
+\end_inset
+
+ these request with VPI/VHPI callback on 
+\series bold
+\shape italic
+pli_clk
+\series default
+\shape default
+.
+ Simulator then drives them to PLI signals in VIP.
+ Test controller agent then interprets these signals, and sends commands
+ to target agent via standard communication channel.
+ This approach guarantees that internal structures of digital simulator
+ are modified only from simulator context.
+ PLI interface provides means for accessing functionality of agents within
+ TB.
+ Compliance library can therefore control clock/reset generation, transactions
+ to DUT, CAN agent, etc.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float table
+placement H
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\noindent
+\align center
+\begin_inset Tabular
+<lyxtabular version="3" rows="12" columns="2">
+<features tabularvalignment="middle">
+<column alignment="left" valignment="top" width="3cm">
+<column alignment="left" valignment="top" width="10.5cm">
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Signal
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+cellcolor{gray}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Description
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+cellcolor{gray}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\series bold
+\shape italic
+pli_control_req
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+TB is requesting run of compliance test from compliance library.
+ Set by VIP in early in compliance test run.
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\series bold
+\shape italic
+pli_control_ack
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Compliance test library acknowledge for 
+\series bold
+\shape italic
+pli_control_req
+\series default
+\shape default
+.
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\series bold
+\shape italic
+pli_req
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Transaction request from compliance library
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\series bold
+\shape italic
+pli_ack
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Transaction acknowledge to compliance library.
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\series bold
+\shape italic
+pli_cmd
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Type of command/transaction being sent.
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\series bold
+\shape italic
+pli_dest
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Transaction destination agent
+\shape italic
+.
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\series bold
+\shape italic
+pli_data_in
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Transaction data input.
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\series bold
+\shape italic
+pli_data_in_2
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Transaction data input 2.
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\series bold
+\shape italic
+pli_str_buf_in
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Transaction string buffer input.
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\series bold
+\shape italic
+pli_data_out
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Transaction data output.
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\series bold
+\shape italic
+pli_clk
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+PLI clock.
+\end_layout
+
+\end_inset
+</cell>
+</row>
+</lyxtabular>
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+PLI interface signals
+\begin_inset CommandInset label
+LatexCommand label
+name "tab: pli-interface-signals"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsection
+Reference tests
+\end_layout
+
+\begin_layout Standard
+Reference tests use CAN agent to apply a bit-sequent to DUTs 
+\series bold
+can_rx
+\series default
+.
+ This sequence was recorded from reference CAN controller implementation
+ upon transmission of random frame.
+ After this sequence is applied, test reads received CAN frame from DUT,
+ and checks it matches CAN frame which was supposed to be received.
+ This approach provides 
+\begin_inset Quotes eld
+\end_inset
+
+black-box
+\begin_inset Quotes erd
+\end_inset
+
+ like testing functionality.
+ Reference tests contain 10 data sets, each with 1000 pre-recorded CAN frames.
+ Data set is chosen by 
+\begin_inset Quotes eld
+\end_inset
+
+test_name
+\begin_inset Quotes erd
+\end_inset
+
+ generic of VIP.
+ Each frame from data-set is applied by following sequence:
+\end_layout
+
+\begin_layout Enumerate
+Store bit sequence from data set to CAN agents driver.
+\end_layout
+
+\begin_layout Enumerate
+Start CAN agent driver.
+\end_layout
+
+\begin_layout Enumerate
+Wait till driver finishes.
+\end_layout
+
+\begin_layout Enumerate
+Read CAN frame received by DUT and compare it with reference frame from
+ data-set.
+ This frame corresponds to bit sequence from point 1.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Newpage pagebreak
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsection
+Feature tests
+\end_layout
+
+\begin_layout Standard
+Feature tests verify various 
+\begin_inset Quotes eld
+\end_inset
+
+features
+\begin_inset Quotes erd
+\end_inset
+
+ of CTU CAN FD as: Interrupts, register map, special modes, TX/RX buffers,
+ etc.
+ These features are usually not directly related to ISO11898-1 2015, and
+ they are specific to CTU CAN FD.
+ Functional diagram of TB during feature tests is shown in 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:test-bench-feature"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Standard
+In feature tests, DUT communicates on CAN bus with another instance of CTU
+ CAN FD located inside Feature test agent (Test node).
+ This setup allows invoking various situations in DUT.
+ An example of such test sequence is following:
+\end_layout
+
+\begin_layout Itemize
+Test reads size of DUTs RX buffer.
+\end_layout
+
+\begin_layout Itemize
+Test invokes transmission of CAN frames by Test Node.
+ Amount of frames transmitted is selected to achieve overflow of RX buffer
+ in DUT.
+\end_layout
+
+\begin_layout Itemize
+During transmission of frames, test monitors that RX buffer overflow occurs
+ upon reception of frame which should fill RX buffer memory (not before),
+ therefore veryfing that overflow occurs properly.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+placement h
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\noindent
+\align center
+\begin_inset Graphics
+	filename img/tb_top_feature.pdf
+	scale 25
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Feature test
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:test-bench-feature"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Bibliography
+\begin_inset CommandInset bibitem
+LatexCommand bibitem
+key "key-1"
+
+\end_inset
+
+CTU CAN FD - System architecture
+\end_layout
+
+\begin_layout Bibliography
+\begin_inset CommandInset bibitem
+LatexCommand bibitem
+key "key-4"
+
+\end_inset
+
+CTU CAN FD - Datasheet
+\end_layout
+
+\begin_layout Bibliography
+\begin_inset CommandInset bibitem
+LatexCommand bibitem
+key "key-2"
+
+\end_inset
+
+ISO 16845 Compliance test library - 
+\begin_inset Flex URL
+status open
+
+\begin_layout Plain Layout
+
+https://github.com/Blebowski/iso-16845-compliance-tests
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_body
+\end_document

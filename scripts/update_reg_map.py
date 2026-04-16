@@ -1,12 +1,12 @@
-################################################################################                                                     
-## 
-##   CAN with Flexible Data-Rate IP Core 
-##   
+################################################################################
+##
+##   CAN with Flexible Data-Rate IP Core
+##
 ##   Copyright (C) 2017 Ondrej Ille <ondrej.ille@gmail.com>
-##   
-##   Script for complete update of register map. This script generates C header, 
+##
+##   Script for complete update of register map. This script generates C header,
 ##   VHDL packages and Lyx documentation.
-##   
+##
 ##   Arguments:
 ##		xactSpec    - Path to a IP-XACT specification file with register maps
 ##		updVHDL		- Whether VHDL constant definitions should be generated
@@ -14,8 +14,8 @@
 ##		updHeader	- Whether C header file should be generated
 ##						(../driver)
 ##		updDocs		- Whether Lyx doocumentation should be generated.
-##						(../doc/core)
-##      updRegMap   - Whether register map VHDL RTL should be generated. 
+##						(../doc/datasheet)
+##      updRegMap   - Whether register map VHDL RTL should be generated.
 ##                      (../src/Registers_Memory_Interface)
 ##      useKernStyle - If Kernel Style should be used for C header
 ##
@@ -47,14 +47,14 @@ GPL2_LICENSE_PATH = "../lic/gpl_v2.txt"
 
 def parse_args():
 	parser = argparse.ArgumentParser(
-				description="""Script for complete update of register map. 
-								This script generates C header, 
+				description="""Script for complete update of register map.
+								This script generates C header,
 								VHDL packages and Lyx documentation.""")
 
 	parser.add_argument('--xactSpec', dest='xactSpec', help="""Path to a IP-XACT
 							specification file with register maps""")
 
-	parser.add_argument('--updVHDLPackage', dest='updVHDLPackage', help=""" Whether VHDL 
+	parser.add_argument('--updVHDLPackage', dest='updVHDLPackage', help=""" Whether VHDL
 										constant definitions should be generated
 										(../src/Libraries)""")
 
@@ -62,11 +62,11 @@ def parse_args():
 										header file should be generated
 										(../driver)""")
 
-	parser.add_argument('--updLyxDocs', dest='updLyxDocs', help="""Whether Lyx 
+	parser.add_argument('--updLyxDocs', dest='updLyxDocs', help="""Whether Lyx
 										doocumentation should be generated.
-										(../doc/core)""")
+										(../doc/datasheet)""")
 
-	parser.add_argument('--updRTLRegMap', dest='updRTLRegMap', help="""Whether VHDL 
+	parser.add_argument('--updRTLRegMap', dest='updRTLRegMap', help="""Whether VHDL
 										RTL register map should be generated.
 										(../src/Registers_Memory_Interface/generated)""")
 
@@ -145,7 +145,7 @@ def ctu_can_update_vhdl_rtl(specPath, licensePath, memMap, wordWidthBit, outDir)
 	vhdlRTLGeneratorWrapper.do_update()
 
 
-def ctu_can_update_vhdl_tb_package(specPath, licensePath, memMap, 
+def ctu_can_update_vhdl_tb_package(specPath, licensePath, memMap,
 								wordWidthBit, outPath, packName):
 	"""
 	Update VHDL Testbench packages of CTU CAN FD register maps.
@@ -199,7 +199,7 @@ if __name__ == '__main__':
 
 	###########################################################################
 	# Generate C Header File
-	###########################################################################	
+	###########################################################################
 	if (str_arg_to_bool(args.updHeaderFile)):
 
 		print("Generating CAN FD memory registers Header file (bit-field style) ...\n")
@@ -243,7 +243,7 @@ if __name__ == '__main__':
 
 	###########################################################################
 	# Generate Lyx documentation files
-	###########################################################################	
+	###########################################################################
 	if (str_arg_to_bool(args.updLyxDocs)):
 
 		print("Generating CAN FD memory registers Documentation...\n")
@@ -251,19 +251,19 @@ if __name__ == '__main__':
 		ctu_can_update_lyx_docu(specPath=args.xactSpec,
 								memMap="CAN_Registers",
 								wordWidthBit=32,
-								outPath="../doc/core/registerMap.lyx",
+								outPath="../doc/datasheet/ctu_can_fd_register_map.lyx",
 								genRegions=True,
 								genFiDesc=True,
-								lyxTemplate="../doc/core/template.lyx",
+								lyxTemplate="../doc/template.lyx",
 								configPath="reg_map_lyx_cfg.yml")
 
 		ctu_can_update_lyx_docu(specPath=args.xactSpec,
 								memMap="CAN_Frame_format",
 								wordWidthBit=32,
-								outPath="../doc/core/CANFrameFormat.lyx",
+								outPath="../doc/datasheet/ctu_can_fd_frame_format.lyx",
 								genRegions=False,
 								genFiDesc=True,
-								lyxTemplate="../doc/core/template.lyx",
+								lyxTemplate="../doc/template.lyx",
 								configPath="reg_map_lyx_cfg.yml")
 
 		print("\nDone\n")
@@ -302,9 +302,9 @@ if __name__ == '__main__':
 									   outPath="../test/main_tb/pkg/can_fd_tb_register_map.vhd",
 									   packName="can_fd_tb_register_map")
 		print("\nDone\n")
-		
+
 
 	print( 80 * "*")
 	print("**  Finished")
 	print(80 * "*")
-	
+

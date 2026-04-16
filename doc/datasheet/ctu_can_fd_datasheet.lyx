@@ -1,0 +1,8238 @@
+#LyX 2.3 created this file. For more info see http://www.lyx.org/
+\lyxformat 544
+\begin_document
+\begin_header
+\save_transient_properties true
+\origin unavailable
+\textclass book
+\begin_preamble
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+\usepackage{colortbl}
+\definecolor{gray}{RGB}{230,230, 230}
+\usepackage{subcaption}
+\usepackage{cprotect}
+\end_preamble
+\use_default_options true
+\begin_modules
+customHeadersFooters
+\end_modules
+\maintain_unincluded_children false
+\language english
+\language_package default
+\inputencoding auto
+\fontencoding global
+\font_roman "default" "default"
+\font_sans "default" "default"
+\font_typewriter "lmtt" "default"
+\font_math "auto" "auto"
+\font_default_family sfdefault
+\use_non_tex_fonts false
+\font_sc false
+\font_osf false
+\font_sf_scale 100 100
+\font_tt_scale 100 100
+\use_microtype false
+\use_dash_ligatures false
+\graphics default
+\default_output_format default
+\output_sync 0
+\bibtex_command default
+\index_command default
+\paperfontsize default
+\spacing other 1.1
+\use_hyperref true
+\pdf_author "Ille Ondrej"
+\pdf_subject "CAN FD IP function"
+\pdf_keywords "CAN, Flexible data rate,"
+\pdf_bookmarks true
+\pdf_bookmarksnumbered true
+\pdf_bookmarksopen false
+\pdf_bookmarksopenlevel 1
+\pdf_breaklinks false
+\pdf_pdfborder true
+\pdf_colorlinks false
+\pdf_backref false
+\pdf_pdfusetitle true
+\papersize default
+\use_geometry true
+\use_package amsmath 1
+\use_package amssymb 1
+\use_package cancel 1
+\use_package esint 1
+\use_package mathdots 1
+\use_package mathtools 1
+\use_package mhchem 1
+\use_package stackrel 1
+\use_package stmaryrd 1
+\use_package undertilde 1
+\cite_engine basic
+\cite_engine_type default
+\biblio_style plain
+\use_bibtopic false
+\use_indices false
+\paperorientation portrait
+\suppress_date false
+\justification true
+\use_refstyle 1
+\use_minted 0
+\index Index
+\shortcut idx
+\color #008000
+\end_index
+\leftmargin 2cm
+\topmargin 3cm
+\rightmargin 2cm
+\bottommargin 3cm
+\headheight 2cm
+\secnumdepth 2
+\tocdepth 5
+\paragraph_separation skip
+\defskip smallskip
+\is_math_indent 0
+\math_numbering_side default
+\quotes_style english
+\dynamic_quotes 0
+\papercolumns 1
+\papersides 1
+\paperpagestyle headings
+\tracking_changes false
+\output_changes true
+\html_math_output 0
+\html_css_as_file 0
+\html_be_strict false
+\end_header
+
+\begin_body
+
+\begin_layout Standard
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+% number the pages at the beginning in roman
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+frontmatter
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+% Number chapters as 
+\begin_inset Quotes eld
+\end_inset
+
+1.
+ xxx
+\begin_inset Quotes erd
+\end_inset
+
+ instead of 
+\begin_inset Quotes eld
+\end_inset
+
+Chapter 1
+\backslash
+nxxx
+\begin_inset Quotes erd
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+makeatletter
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+def
+\backslash
+@makechapterhead#1{%
+\end_layout
+
+\begin_layout Plain Layout
+
+  
+\backslash
+vspace*{50
+\backslash
+p@}%
+\end_layout
+
+\begin_layout Plain Layout
+
+  {
+\backslash
+parindent 
+\backslash
+z@ 
+\backslash
+raggedright 
+\backslash
+normalfont
+\end_layout
+
+\begin_layout Plain Layout
+
+    
+\backslash
+ifnum 
+\backslash
+c@secnumdepth >
+\backslash
+m@ne
+\end_layout
+
+\begin_layout Plain Layout
+
+      
+\backslash
+if@mainmatter
+\end_layout
+
+\begin_layout Plain Layout
+
+        %
+\backslash
+huge
+\backslash
+bfseries 
+\backslash
+@chapapp
+\backslash
+space 
+\backslash
+thechapter
+\end_layout
+
+\begin_layout Plain Layout
+
+        
+\backslash
+Huge
+\backslash
+bfseries 
+\backslash
+@chapapp{} 
+\backslash
+thechapter.
+\backslash
+space%
+\end_layout
+
+\begin_layout Plain Layout
+
+        %
+\backslash
+par
+\backslash
+nobreak
+\end_layout
+
+\begin_layout Plain Layout
+
+        %
+\backslash
+vskip 20
+\backslash
+p@
+\end_layout
+
+\begin_layout Plain Layout
+
+      
+\backslash
+fi
+\end_layout
+
+\begin_layout Plain Layout
+
+    
+\backslash
+fi
+\end_layout
+
+\begin_layout Plain Layout
+
+    
+\backslash
+interlinepenalty
+\backslash
+@M
+\end_layout
+
+\begin_layout Plain Layout
+
+    
+\backslash
+Huge 
+\backslash
+bfseries #1
+\backslash
+par
+\backslash
+nobreak
+\end_layout
+
+\begin_layout Plain Layout
+
+    
+\backslash
+vskip 40
+\backslash
+p@
+\end_layout
+
+\begin_layout Plain Layout
+
+  }}
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+def
+\backslash
+chaptername{}
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+makeatother
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Title
+
+\series bold
+\size giant
+\color black
+CTU CAN
+\noun on
+ FD 
+\begin_inset Newline newline
+\end_inset
+
+IP CORE
+\noun default
+\color inherit
+ 
+\series default
+\size default
+
+\begin_inset Newline newline
+\end_inset
+
+
+\series bold
+\size larger
+\color black
+
+\begin_inset VSpace bigskip
+\end_inset
+
+
+\size default
+\noun on
+Datasheet
+\end_layout
+
+\begin_layout Author
+\begin_inset VSpace defskip
+\end_inset
+
+LOGIC DESIGN SERVICES l.t.d.
+\begin_inset Newline newline
+\end_inset
+
+
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset Newline newline
+\end_inset
+
+
+\begin_inset Newline newline
+\end_inset
+
+
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset Newline newline
+\end_inset
+
+
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset Newline newline
+\end_inset
+
+
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset Newline newline
+\end_inset
+
+
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset Newline newline
+\end_inset
+
+
+\begin_inset Newline newline
+\end_inset
+
+
+\end_layout
+
+\begin_layout Left Header
+
+\size larger
+\begin_inset Tabular
+<lyxtabular version="3" rows="2" columns="2">
+<features tabularvalignment="top">
+<column alignment="left" valignment="top" width="0pt">
+<column alignment="left" valignment="top" width="0pt">
+<row>
+<cell multirow="3" alignment="left" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size larger
+CTU CAN FD IP Core - Datasheet
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell multirow="4" alignment="left" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Version 2.7.0, Commit:
+\begin_inset CommandInset include
+LatexCommand input
+filename "version.tex"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+</lyxtabular>
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\noindent
+\align center
+\begin_inset Tabular
+<lyxtabular version="3" rows="40" columns="3">
+<features islongtable="true" longtabularalignment="center">
+<column alignment="center" valignment="top" width="1.5cm">
+<column alignment="center" valignment="top" width="2cm">
+<column alignment="center" valignment="top" width="12.5cm">
+<row>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Document Version
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Date
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Change description
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+1.0
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+07-2015
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Initial version describing release 1.0
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+2.0
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+09-2016
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Added test framework description.
+ Updated document to cover latest description of CAN Core.
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+07-2018
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Updated register map description, external references to generated maps.
+ Updated block diagrams.
+ Updated test framework description.
+ Updated Synthesis table.
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+2.1
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+10-2018
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Added Linux driver description
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+12-2018
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Added Register map block diagram after re-implementation of registers via
+ Register map generator.
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+12-2018
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Added CRC Wrapper.
+ Extended CRC description.
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+01-2019
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Added TIMESTAMP_LOW, TIMESTAMP_HIGH registers.
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+03-2019
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Re-worked Prescaler.
+ Removed 0x3 in bits 23:20 of address.
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+2.2
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+26-09-2019
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Split functional descripion and register map from original document.
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+21-10-2019
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Clarify TXT buffer behaviour when node goes bus-off.
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+31-10-2019
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Clarify Bus-off behaviour aftet Start-up.
+ Clarify that frame must be inserted to TXT Buffer before sending.
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+18-11-2019
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Clarify behaviour of Transmitter delay measurement.
+ Add notes on RX frame timestamping.
+ Extend SSP position to 255.
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+13-12-2019
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Clarify that only TEC above 255 will cause node to go Bus off.
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+30-4-2020
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Add SETTING[PEX] and Protocol exception support.
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+28-10-2020
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Add frame filters examples, add TBFBO and FDRF bits in SETTINGS registers,
+ minor refactoring.
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+05-11-2020
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Add general overview and TX frame type description.
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+4-2-2021
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Change license
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+2.3
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+4-2-2021
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Added MODE[ROM] - Restricted operation mode.
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+23-2-2021
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Add TXTB_INFO and mention generic number of TXT buffers.
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+9-4-2021
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Add RETR_CTR register.
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+26-4-2021
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Add chapter about memory testability.
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+17-05-2021
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Add STATUfS[STCNT] and STATUS[STRGS] bits.
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+26-05-2021
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Reduce maximal number of bits on the fly during secondary sampling to 4.
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+29-05-2021
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Add detailed description of disabling node by SETTINGS[ENA].
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+11-06-2021
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Add MODE[RXBAM] and COMMAND[RXRPMV] bits, describe RX buffer modes.
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+18-06-2021
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Add MODE[TTTM] bit to enable time-triggered transmission.
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+2.4
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+28-08-2021
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Move to new release of CTU CAN FD.
+ Bump document version accordingly.
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+1-4-2022
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Add MODE[TXBBM], MODE[SAM], STATUS[RXPE], STATUS[TXPE], COMMAND [CTPXE]
+ and COMMAND[CRPXE].
+ Add FRAME_FORMAT_W bits which allow flipping of CRC or Stuff count.
+ Add section on parity mechanism testing.
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+-
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+27-6-2022
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+SW commands on TXT Buffers in MODE[TXBBM] are automatically applied to 
+\begin_inset Quotes eld
+\end_inset
+
+backup
+\begin_inset Quotes erd
+\end_inset
+
+ TXT Buffers.
+ Add 
+\series bold
+\shape italic
+reset_buffer_rams
+\series default
+\shape default
+ and 
+\series bold
+\shape italic
+active_timestamp_bits
+\series default
+\shape default
+ configuration parameters.
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+5-7-2022
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Add SETTINGS[PCHKE] bit to control enable / disable of parity checking.
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+2.5
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+9-12-2023
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Move to new release of CTU CAN FD.
+ Bump document version accordingly.
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+8-5-2024
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Add note about TXBHCI interrupt behavior.
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+19-6-2024
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Add LBPF bit to RX frame.
+ Add MODE[ERFM].
+ Add FRAME_FORMAT_W[ERF], FRAME_FORMAT_W[ERF_*].
+ Add Error frame reception to RX buffer.
+ Add ERR_CAPT[ERR_ERP] bit.
+ Add FRAME_FORMAT_W[LBTBI] and FRAME_FORMAT_W[IVLD].
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+2.6
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+19-6-2025
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Move to new relase of CTU CAN FD.
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+15-9-2025
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Fix code samples to readout RWCNT - 3 words.
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+17-12-2025
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Clarify Frame filters behavior in case of logged error frames.
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+21-12-2025
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Extend TRV_DELAY to 8 bits (max 255).
+ Extend SSP position capacity to 511, remove SSP saturation since it is
+ un-needed now.
+ Extend max bits in flight to 7.
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+2.7
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+04-1-2026
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Move to new relase of CTU CAN FD.
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+20-3-2026
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Update link to point to GIhtub
+\end_layout
+
+\end_inset
+</cell>
+</row>
+</lyxtabular>
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset CommandInset toc
+LatexCommand tableofcontents
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+% classis page numbering
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+mainmatter
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Chapter*
+Format
+\end_layout
+
+\begin_layout Standard
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+addcontentsline{toc}{chapter}{Format}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Throughout this datasheet following notation is kept:
+\end_layout
+
+\begin_layout Itemize
+Common text is written with this font.
+\end_layout
+
+\begin_layout Itemize
+Memory registers are described with capital letters: 
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+e.g.
+ REGISTER to describe a register 
+\end_layout
+
+\begin_layout Itemize
+REGISTER [BIT_FIELD] to describe a bit field within a register.
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+Explicit terms are written in apostrophe like so: 
+\begin_inset Quotes eld
+\end_inset
+
+TX Failed
+\begin_inset Quotes erd
+\end_inset
+
+.
+\end_layout
+
+\begin_layout LyX-Code
+Source code examples are written by this font
+\end_layout
+
+\begin_layout Chapter
+Introduction
+\end_layout
+
+\begin_layout Standard
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+ 
+\backslash
+thispagestyle{fancy}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+This document provides functional description of CTU CAN FD, programmers
+ model, and parameters of CTU CAN FD.
+ It is intended to be used as a reference for SW driver developers.
+ Internal architecture of CTU CAN FD is described in 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "key-1"
+literal "false"
+
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Section
+General overview
+\end_layout
+
+\begin_layout Standard
+CTU CAN FD is a soft IP-core written in VHDL with no vendor-specific libraries
+ needed.
+ It implements CAN FD protocol as specified by ISO11898-1.
+\end_layout
+
+\begin_layout Section
+Features
+\end_layout
+
+\begin_layout Itemize
+Compliant with ISO11898-1 2015
+\end_layout
+
+\begin_layout Itemize
+RX buffer FIFO with 32 - 4096 words (1-204 CAN FD frames with 64 byte of
+ data)
+\end_layout
+
+\begin_layout Itemize
+2-8 TXT buffers (1 CAN FD frame in each TXT buffer)
+\end_layout
+
+\begin_layout Itemize
+32 bit slave memory interface (APB, AHB, RAM-like interface)
+\end_layout
+
+\begin_layout Itemize
+Support of ISO and non-ISO CAN FD protocol
+\end_layout
+
+\begin_layout Itemize
+Timestamping and Time triggered transmission
+\end_layout
+
+\begin_layout Itemize
+Interrupts
+\end_layout
+
+\begin_layout Itemize
+Loopback mode, Bus monitoring mode, ACK forbidden mode, Self-test mode,
+ Restricted operation mode
+\end_layout
+
+\begin_layout Section
+License
+\end_layout
+
+\begin_layout Standard
+RTL and testbench of CTU CAN FD IP core are published under following license:
+\end_layout
+
+\begin_layout Quote
+Permission is hereby granted, free of charge, to any person obtaining a
+ copy of this VHDL component and associated documentation files (the "Component"
+), to use, copy, modify, merge, publish, distribute the Component for educationa
+l, research, evaluation, self-interest purposes.
+ Using the Component for commercial purposes is forbidden unless previously
+ agreed with Copyright holder.
+\end_layout
+
+\begin_layout Quote
+The above copyright notice and this permission notice shall be included
+ in all copies or substantial portions of the Component.
+\end_layout
+
+\begin_layout Quote
+THE COMPONENT IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
+ OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
+ IN NO EVENT SHALL THE AUTHORS OR COPYRIGHTHOLDERS BE LIABLE FOR ANY CLAIM,
+ DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE
+, ARISING FROM, OUT OF OR IN CONNECTION WITH THE COMPONENT OR THE USE OR
+ OTHER DEALINGS IN THE COMPONENT.
+\end_layout
+
+\begin_layout Standard
+Linux driver and low level driver are published under GPL v 2.0:
+\end_layout
+
+\begin_layout Quote
+This program is free software; you can redistribute it and/or * modify it
+ under the terms of the GNU General Public License as published by the Free
+ Software Foundation; either version 2 of the License, or (at your option)
+ any later version.
+ This program is distributed in the hope that it will be useful, but WITHOUT
+ ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ FOR A PARTICULAR PURPOSE.
+ See the GNU General Public License for more details.
+ You should have received a copy of the GNU General Public License along
+ with this program; if not, write to the Free Software Foundation, Inc.,
+ 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+\end_layout
+
+\begin_layout Section
+Source code access
+\end_layout
+
+\begin_layout Standard
+CTU CAN FD source code is available in Github repository:
+\end_layout
+
+\begin_layout Standard
+\begin_inset space \qquad{}
+\end_inset
+
+
+\begin_inset CommandInset href
+LatexCommand href
+name "https://github.com/Logic-Design-Services/CTU-CAN-FD"
+target "https://github.com/Logic-Design-Services/CTU-CAN-FD"
+literal "false"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section
+Block diagram
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+placement h
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\noindent
+\align center
+\begin_inset Graphics
+	filename img/BD_datasheet.pdf
+	lyxscale 20
+	scale 65
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+CTU CAN FD block diagram
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:block-diagram"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section
+Implementation parameters
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float table
+placement H
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\noindent
+\align center
+\begin_inset Tabular
+<lyxtabular version="3" rows="9" columns="3">
+<features tabularvalignment="middle">
+<column alignment="left" valignment="top" width="10cm">
+<column alignment="left" valignment="top" width="3cm">
+<column alignment="left" valignment="top" width="3cm">
+<row>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Parameter name
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+cellcolor{gray}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Value
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+cellcolor{gray}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Units
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+cellcolor{gray}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Minimum nominal time quanta
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+1
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+-
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Minimum data time quanta
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+1
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+-
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Information processing time
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+2
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Minimum time quanta
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Input delay (
+\begin_inset Formula $t_{input}$
+\end_inset
+
+)
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+2
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+System clock periods (see 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "sec:Clock"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+)
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Nominal bit rate prescaler range (BTR[BRP] register)
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+1 - 255
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Data bit rate prescaler range (BTR_FD[BRP_FD] register)
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+1 - 255
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Minimal nominal bit time length
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+8
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Time quanta
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Minimal data bit time length
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+5
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Time quanta
+\end_layout
+
+\end_inset
+</cell>
+</row>
+</lyxtabular>
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Implementation parameters
+\begin_inset CommandInset label
+LatexCommand label
+name "tab: implementation-parameters"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section
+Configuration parameters
+\end_layout
+
+\begin_layout Standard
+CTU CAN FD can be used with different options when implemented on ASIC or
+ FPGA.
+ These parameters are then readable by SW.
+ Related parameters are described in 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "tab: configuration-parameters"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float table
+placement H
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\noindent
+\align center
+\begin_inset Tabular
+<lyxtabular version="3" rows="12" columns="3">
+<features tabularvalignment="middle">
+<column alignment="left" valignment="top" width="3.1cm">
+<column alignment="left" valignment="top" width="2.4cm">
+<column alignment="left" valignment="top" width="10.5cm">
+<row>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Parameter name
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+cellcolor{gray}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Value
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+cellcolor{gray}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Description
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+cellcolor{gray}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\series bold
+\shape italic
+rx_buffer_size
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+32 - 4096
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Size of RX buffer (number of 32bit words it can store).
+ SW can read this value from RX_MEM_INFO[RX_BUFF_SIZE].
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\series bold
+\shape italic
+sup_filt_A
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+true/false
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Filter A is / is not present.
+ If present, FILTER_STATUS[SFA] = 1.
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\series bold
+\shape italic
+sup_filt_B
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+true/false
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Filter B is / is not present.
+ If present, FILTER_STATUS[SFB] = 1.
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\series bold
+\shape italic
+sup_filt_C
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+true/false
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Filter C is / is not present.
+ If present, FILTER_STATUS[SFC] = 1.
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\series bold
+\shape italic
+sup_range
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+true/false
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Range fitler is / is not present.
+ If present, FILTER_STATUS[SFR] = 1.
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\series bold
+\shape italic
+sup_traffic_ctrs
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+true/false
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Traffic counters are / are not present.
+ If present, STATUS[STCNT] = 1.
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\series bold
+\shape italic
+txt_buffer_count
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+2-8
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Number of TXT buffers available.
+ Can be read from TXTB_INFO register.
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\series bold
+\shape italic
+sup_test_registers
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+true/false
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Test registers for memory testability (Test Registers memory region) are
+ / are not present .
+ If present, STATUS[STRCNT] = 1.
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\series bold
+\shape italic
+sup_parity
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+true/false
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Add parity bits to each word of TXT Buffer and RX buffer RAMs.
+ If Parity protection is present, STATUS[SPRT] = 1.
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\series bold
+\shape italic
+reset_buffer_rams
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+true/false
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+When true, TXT Buffer and RX buffer RAMs are resettable by HW reset.
+ 
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\series bold
+\shape italic
+active_timestamp_bits
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+integer
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Number of active bits of CTU CAN FD timebase - 1.
+\end_layout
+
+\end_inset
+</cell>
+</row>
+</lyxtabular>
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Configuration parameters
+\begin_inset CommandInset label
+LatexCommand label
+name "tab: configuration-parameters"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Chapter
+Functional description
+\end_layout
+
+\begin_layout Standard
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+ 
+\backslash
+thispagestyle{fancy}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section
+Clock
+\begin_inset CommandInset label
+LatexCommand label
+name "sec:Clock"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+CTU CAN FD operates with a single clock called System clock.
+ Every other timing parameter is derived from System clock.
+ System clock frequency depends on the system that is integrating CTU CAN
+ FD.
+ System clock frequency corresponds to frequency of clock signal of CTU
+ CAN FD.
+\end_layout
+
+\begin_layout Section
+Reset
+\end_layout
+
+\begin_layout Standard
+After power-up CTU CAN FD shall be reset either by HW reset (see 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "key-1"
+literal "false"
+
+\end_inset
+
+), or by Soft reset.
+ Soft reset is executed by writing MODE[RST] = 1.
+ If HW reset was issued to CTU CAN FD , CTU CAN FD shall not be accessed
+ for two clock periods of System clock.
+ For example, if CTU CAN FD System clock is 100 MHz, SW shall wait 20 ns
+ after HW reset was released.
+ If Soft reset was issued, no waiting is required.
+ Both, HW Reset and Soft reset have the same effect.
+ By applying any reset, CTU CAN FD is put to following state:
+\end_layout
+
+\begin_layout Itemize
+CTU CAN FD is disabled, it is not communicating on CAN bus (bus-off state).
+\end_layout
+
+\begin_layout Itemize
+All memory registers of CTU CAN FD have reset value.
+\end_layout
+
+\begin_layout Itemize
+Memories in CTU CAN FD (TXT buffer and RX buffer) are not reset.
+\end_layout
+
+\begin_layout Section
+Memory organization
+\end_layout
+
+\begin_layout Standard
+CTU CAN FD memory map is organized as little-endian (e.g.
+ EWL register is at address 0x2C, ERP register at address 0x2D, and FAULT_STATE
+ register at address 0x2E).
+ CTU CAN FD is a 32-bit peripheral, but all functionality of CTU CAN FD
+ can be used by accessing the core by 8/16 bit accesses (with proper configurati
+on, see settings MODE[RXBAM] - RX buffer Automatic Mode).
+\end_layout
+
+\begin_layout Section
+Time base
+\begin_inset CommandInset label
+LatexCommand label
+name "sec:Time-base"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+CTU CAN FD can have a time base available for Time triggered transmission
+ or Timestamping of received CAN frames.
+ Availability of such time base depends on integration of CTU CAN FD into
+ a system.
+ If such time base is available, its immediate value can be read from TIMESTAMP_
+H and TIMESTAMP_L registers.
+ Time base is up-counting unsigned counter which measures flow of a time
+ within the system where CTU CAN FD is integrated.
+ Width of the time base may range from 1 to 64 bits, and it is defined by
+ the system integrating CTU CAN FD.
+ Number of active bits of time base is available in TS_INFO register.
+\end_layout
+
+\begin_layout Section
+Operating modes
+\begin_inset CommandInset label
+LatexCommand label
+name "sec:Operating-modes"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+After reset, CTU CAN FD is disabled, and it does not communicate on CAN
+ bus (no transmission, reception, monitoring).
+ Before CTU CAN FD is enabled, it shall be configured as is explained in
+ 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "sec:CAN-bus-configuration"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+.
+ Once configured, CTU CAN FD can be enabled by writing SETTINGS[ENA] = 1.
+ When SETTINGS[ENA] = 1 is set, CTU CAN FD starts bus integration, and joins
+ CAN bus communication after receiving 11 consecutive recessive bits.
+ When CTU CAN FD joins CAN bus communication, it becomes error-active.
+ During bus integration CTU CAN FD is bus-off.
+ Once CTU CAN FD becomes error active, it starts communicating on CAN bus.
+ The moment when CTU CAN FD joined CAN bus communication can be determined
+ by FCS interrupt, and subsequent probing of FAULT_STATE register (see 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "sec:Interrupts"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+).
+ Basic operating modes of CTU CAN FD are shown in Figure 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:CTU-CAN-FD-operating-modes"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+placement h
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\noindent
+\align center
+\begin_inset Graphics
+	filename img/FSM_main_modes.pdf
+	lyxscale 20
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Operating modes
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:CTU-CAN-FD-operating-modes"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+When CTU CAN FD is error-active, it takes part in CAN bus communication.
+ If CTU CAN FD becomes error-passive, and later bus-off, it stops communicating
+ on CAN bus.
+ CTU CAN FD starts reintegrating to the bus when it receives Error counter
+ reset command (writing COMMAND[ERCRST] = 1).
+ Reintegration lasts until CTU CAN FD detects 129 sequences of 11 consecutive
+ recessive bits.
+ After 129 such sequences, CTU CAN FD becomes error-active again.
+\end_layout
+
+\begin_layout Standard
+CTU CAN FD can be disabled at any time by writing logic 0 to SETTINGS[ENA]
+ register.
+ In such case:
+\end_layout
+
+\begin_layout Itemize
+CTU CAN FD immediately stops communication on CAN bus, and transmits only
+ recessive bits.
+\end_layout
+
+\begin_layout Itemize
+TEC/REC counters are reset to 0, CTU CAN FD becomes bus-off.
+\end_layout
+
+\begin_layout Itemize
+All TXT buffers move to 
+\begin_inset Quotes eld
+\end_inset
+
+Empty
+\begin_inset Quotes erd
+\end_inset
+
+ state (see 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:txt-buffer-user"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+), content of TXT buffer RAMs remains valid (memories are not reset).
+\end_layout
+
+\begin_layout Itemize
+RX buffer is flushed (see 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "subsec:Flush"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+).
+\end_layout
+
+\begin_layout Standard
+It is recommended for CTU CAN FD not to be transmitting any frame when it
+ is disabled by writing SETTINGS[ENA] = 0, as this would result in transmission
+ of error frame by other nodes on CAN bus.
+ SW driver operating on CTU CAN FD shall ensure that none of TXT buffers
+ in CTU CAN FD is in 
+\begin_inset Quotes eld
+\end_inset
+
+Ready
+\begin_inset Quotes erd
+\end_inset
+
+, 
+\begin_inset Quotes eld
+\end_inset
+
+TX in progress
+\begin_inset Quotes erd
+\end_inset
+
+ or 
+\begin_inset Quotes eld
+\end_inset
+
+Abort in progress
+\begin_inset Quotes erd
+\end_inset
+
+ states (see 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "sec:CAN-frame-transmission"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+).
+\end_layout
+
+\begin_layout Description
+Note COMMAND[ERCRST] is 
+\begin_inset Quotes eld
+\end_inset
+
+sticky
+\begin_inset Quotes erd
+\end_inset
+
+.
+ If CTU CAN FD is not yet bus-off, and this command is issued, it will be
+ remembered by CTU CAN FD, and it will automatically start reintegration
+ upon nearest transition to bus-off.
+ The reason is, that command can be issued in advance (during regular communicat
+ion), and CTU CAN FD will re-integrate as quickly as possible after becoming
+ bus-off (without SW additional delay caused by interaction with SW driver).
+\end_layout
+
+\begin_layout Section
+Initialization sequence
+\end_layout
+
+\begin_layout Standard
+CTU CAN FD initialization sequence shall consist of following steps:
+\end_layout
+
+\begin_layout Enumerate
+Reset (Either HW reset or Soft reset)
+\end_layout
+
+\begin_layout Enumerate
+Configuration of CTU CAN FD:
+\end_layout
+
+\begin_deeper
+\begin_layout Enumerate
+Configure interrupts as in 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "sec:Interrupts"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Enumerate
+Configure bit rate as in 
+\begin_inset CommandInset ref
+LatexCommand vpageref
+reference "subsec:Bit-rate"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Enumerate
+Configure other features (filters, special modes, etc...)
+\end_layout
+
+\end_deeper
+\begin_layout Enumerate
+Enable CTU CAN FD by writing SETTINGS[ENA] = 1.
+\end_layout
+
+\begin_layout Enumerate
+Poll on FAULT_STATE register, or wait on Fault confinement state changed
+ interrupt (INT_STAT[FCSI]).
+ Integration is finished when FAULT_STATE[ERA]=1 (CTU CAN FD becomes error-activ
+e).
+\end_layout
+
+\begin_layout Enumerate
+Initialization is finished, SW driver can send and receive frames.
+\end_layout
+
+\begin_layout Section
+De-initialization sequence
+\end_layout
+
+\begin_layout Standard
+CTU CAN FD de-initialization sequence shall consist of following steps:
+\end_layout
+
+\begin_layout Enumerate
+Ensure that no TXT buffer is in any of 
+\begin_inset Quotes eld
+\end_inset
+
+Ready
+\begin_inset Quotes erd
+\end_inset
+
+, 
+\begin_inset Quotes eld
+\end_inset
+
+TX in progress
+\begin_inset Quotes erd
+\end_inset
+
+ or 
+\begin_inset Quotes eld
+\end_inset
+
+Abort in progress
+\begin_inset Quotes erd
+\end_inset
+
+ states.
+ To do this SW issues 
+\series bold
+Set abort
+\series default
+ command (see 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "sec:CAN-frame-transmission"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+) to TXT buffers, and does not insert next frames for transmission into
+ TXT Buffers.
+\end_layout
+
+\begin_layout Enumerate
+Write SETTINGS[ENA]=0.
+\end_layout
+
+\begin_layout Section
+CAN bus configuration
+\begin_inset CommandInset label
+LatexCommand label
+name "sec:CAN-bus-configuration"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsection
+Bit rate
+\begin_inset CommandInset label
+LatexCommand label
+name "subsec:Bit-rate"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Bit rate on CAN bus is derived from System clock (see 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "sec:Clock"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+).
+ Basic unit of time on CAN bus is time quanta.
+ Time quanta is derived from System clock by dividing its frequency by bit
+ rate prescaler.
+ CTU CAN FD has separate prescaler for nominal bit rate (BTR[BRP] register),
+ and data bit rate (BTR_FD[BRP_FD] register).
+ Bit rate on CTU CAN FD is configured by specifying Prop_Seg, Phase_Seg1
+ and Phase_Seg2 durations (as shown in Figure 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:bit-time"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+).
+ These are specified in BTR (nominal bit rate) and BTR_FD (data bit rate)
+ registers.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+placement h
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\noindent
+\align center
+\begin_inset Graphics
+	filename img/Bit_time.pdf
+	lyxscale 20
+	scale 75
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Bit time
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:bit-time"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsubsection
+500 Kbit / 2 Mbit example
+\end_layout
+
+\begin_layout Standard
+Common configuration of bit rate on CAN bus within automotive industry is
+ 500 Kbit in nominal bit rate, and 2 Mbit in data bit rate.
+ Following snippet shows example configuration assuming 100 MHz System clock
+ frequency with sample point in 80% of bit:
+\end_layout
+
+\begin_layout LyX-Code
+#define CTU_CAN_FD_BASE 0x12000000
+\end_layout
+
+\begin_layout LyX-Code
+#define BTR_ADDR CTU_CAN_FD_BASE+0x24
+\end_layout
+
+\begin_layout LyX-Code
+#define BTR_FD_ADDR CTU_CAN_FD_BASE+0x28
+\end_layout
+
+\begin_layout Standard
+\begin_inset Separator plain
+\end_inset
+
+
+\end_layout
+
+\begin_layout LyX-Code
+uint32 btr;
+\end_layout
+
+\begin_layout LyX-Code
+btr = (4 << 19);     // Time Quanta: 4
+\end_layout
+
+\begin_layout LyX-Code
+btr |= 29;           // Prop: 29
+\end_layout
+
+\begin_layout LyX-Code
+btr |= (10 << 7);    // Phase 1: 10
+\end_layout
+
+\begin_layout LyX-Code
+btr |= (10 << 13);   // Phase 2: 10
+\end_layout
+
+\begin_layout LyX-Code
+btr |= (3 << 27);    // SJW: 3
+\end_layout
+
+\begin_layout LyX-Code
+can_write_32(BTR_ADDR, btr); // (29+10+10+1)*4=200*10ns=2us=500Kbit
+\end_layout
+
+\begin_layout Standard
+\begin_inset Separator plain
+\end_inset
+
+
+\end_layout
+
+\begin_layout LyX-Code
+uint32 btr_fd;
+\end_layout
+
+\begin_layout LyX-Code
+btr_fd = (1 << 19);     // Time Quanta: 1
+\end_layout
+
+\begin_layout LyX-Code
+btr_fd |= 29;           // Prop: 29
+\end_layout
+
+\begin_layout LyX-Code
+btr_fd |= (10 << 7);    // Phase 1: 10
+\end_layout
+
+\begin_layout LyX-Code
+btr_fd |= (10 << 13);   // Phase 2: 10
+\end_layout
+
+\begin_layout LyX-Code
+btr_fd |= (3 << 27);    // SJW: 3
+\end_layout
+
+\begin_layout LyX-Code
+can_write_32(BTR_FD_ADDR, btr_fd); // (29+10+10+1)*1=50*10ns=0.5us=2Mbit
+\end_layout
+
+\begin_layout Subsection
+Transmitter delay
+\end_layout
+
+\begin_layout Standard
+Transmitter delay is a propagation delay of signal transmited by CTU CAN
+ FD on CAN_TX output, back to CAN_RX input as is visualized in Figure 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:transmitter-delay"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+.
+ This delay involves propagation of signal to a physical layer transceiver,
+ delay of transceiver itself, and delay from transceiver to CAN_RX input
+ of CTU CAN FD.
+ CTU CAN FD measures its own transmitter delay when it transmitts CAN FD
+ frame (regardles of the fact if bit rate is switched in the frame) on recessive
+ to dominant edge between FDF (EDL), and r0 bits as is shown in Figure 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:transmitter-delay-measurement"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+.
+ Transmitter delay is readable after its measurement from TRV_DELAY register.
+ Transmitter delay is measured in multiples of System clock period.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+placement h
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\noindent
+\align center
+\begin_inset Graphics
+	filename img/Transmitter_delay.pdf
+	lyxscale 20
+	scale 90
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Transmitter delay
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:transmitter-delay"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+placement H
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\noindent
+\align center
+\begin_inset Graphics
+	filename img/Transmitter_delay_measurement.pdf
+	lyxscale 20
+	scale 90
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Transmitter delay measurement
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:transmitter-delay-measurement"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Description
+Note Measured transmitter delay includes input delay of CTU CAN FD (which
+ is 2 clock periods of System clock).
+ Therefore, measured transmitter delay will be always higher by two than
+ actual delay from CAN_TX to CAN_RX (e.g.
+ if signal propagation from CAN_TX to CAN_RX takes 110 ns (11 System clock
+ periods at 100 MHz), measured transmitter delay will be 13).
+\end_layout
+
+\begin_layout Description
+Note Transmitter delay measurement is saturated to 255 System clock periods.
+ If delay between CAN_TX and CAN_RX is higher than 253 System clock periods,
+ only 255 will be measured.
+ With 100 MHz System clock frequency, the maximal measurable transciver
+ delay is 2,53 us.
+ This is more than most of CAN transceivers need.
+\end_layout
+
+\begin_layout Subsection
+Secondary sampling point
+\end_layout
+
+\begin_layout Standard
+Secondary sampling point can be used by CTU CAN FD during data bit rate
+ to detect bit errors.
+ Its position is configured as a delay from start of bit (Sync_Seg) in multiples
+ of System clock (not time quanta!).
+ Secondary sampling point position can be fixed (SSP_CFG[SSP_OFFSET] only),
+ derived from Transmitter delay (SSP_CFG[SSP_OFFSET] + TRV_DELAY), or it
+ can be disabled (No SSP) as is shown in Figure 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:secondary-sampling-point"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+.
+ When Secondary sampling point is disabled, regular sampling point as configured
+ by BRP_FD register is used by CTU CAN FD when transmitting in data bit
+ rate.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+placement h
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\noindent
+\align center
+\begin_inset Graphics
+	filename img/SSP_logic.pdf
+	lyxscale 20
+	scale 90
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Secondary sampling point
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:secondary-sampling-point"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+placement h
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\noindent
+\align center
+\begin_inset Graphics
+	filename img/SSP_timing.pdf
+	lyxscale 20
+	scale 90
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Secondary sampling point 2
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:secondary-sampling-point-2"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Description
+Note Secondary sampling point offset (SSP_CFG[SSP_OFFSET]) is configurable
+ between 0 - 255.
+ Internal range of secondary sampling point position is 0 - 510 System clock
+ periods.
+\end_layout
+
+\begin_layout Description
+Note Since CTU CAN FD input delay is 2 System clock periods (minimum time
+ quanta), position of Secondary sampling point shall be configured to at
+ least 2 to compensate its own input delay (if SSP_CFG[SSP_OFFSET] < 3 and
+ SSP_CFG[SSP_SRC] = SSP_SRC_OFFSET], it is impossible to transmit CAN FD
+ frames without detecting bit error in CTU CAN FDs own transmitted frame).
+\end_layout
+
+\begin_layout Description
+Note CTU CAN FD can handle at most 7 
+\begin_inset Quotes eld
+\end_inset
+
+bits in flight
+\begin_inset Quotes erd
+\end_inset
+
+ between CAN_TX and CAN_RX pins when using secondary sampling point.
+ E.g.
+ if System clock is 100 MHz, and Data bit rate = 5 Mbit/s, then one data
+ bit time is 20 System clock periods.
+ Then, latest possible position of Secondary sampling point is 20 * 7 =
+ 140 System clock periods.
+ This limitation applies to final position of secondary sampling point (with
+ SSP_CFG[SSP_OFFSET] / TRV_DELAY included).
+ User shall not configure secondary sample point position later than 6 data
+ bit times.
+\end_layout
+
+\begin_layout Subsection
+CAN FD support
+\end_layout
+
+\begin_layout Standard
+CTU CAN FD supports both ISO, and non-ISO versions of CAN FD protocol.
+ When ISO protocol version is chosen, CTU CAN FD is compliant to ISO11898-1
+ 2015.
+ When NON ISO version is chosen, CTU CAN FD is compliant to CAN FD specification
+ 1.0.
+ To choose between ISO and non-ISO variants, configure SETTINGS[NISOFD]
+ bit.
+ SETTINGS[NISOFD] shall be modified only when CTU CAN FD is disabled (SETTINGS[E
+NA] = 0).
+\end_layout
+
+\begin_layout Subsection
+Protocol exception handling
+\end_layout
+
+\begin_layout Standard
+CTU CAN FD supports Protocol exception detection.
+ Protocol exception is enabled by MODE[PEX] = 1.
+ MODE[PEX] shall be changed only when CTU CAN FD is disabled (SETTINGS[ENA]=0).
+ Protocol exception behavior differs for various CAN implementation types
+ (see 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "tab:can-implementation-type"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+).
+ If MODE[PEX] = 1 and CTU CAN FD detects Protocol exception, CTU CAN FD
+ enters bus integration state, and waits for 11 consecutive recessive bits
+ to be monitored on CAN_RX signal.
+ REC/TEC counters are not changed upon Protocol exception, nor is Fault
+ confinement state of CTU CAN FD.
+ When Protocol exception occurs, STATUS[PEXS] flag is set.
+ To clear STATUS[PEXS], SW shall write COMMAND[CPEXS] = 1.
+ If MODE[PEX] = 0, and conditions for Protocol exception are valid, CTU
+ CAN FD transmits error frame instead.
+\end_layout
+
+\begin_layout Subsection
+Implementation type
+\end_layout
+
+\begin_layout Standard
+ISO11898-1 2015 defines three implementation types of CAN protocol: Classical
+ CAN, CAN FD tolerant and CAN FD enabled.
+ CTU CAN FD supports all three implementation types, Compliance to each
+ implementation type can be changed via MODE[FDE] and SETTINGS[PEX] bits.
+ Both of these bits shall be modified only when CTU CAN FD is disabled (SETTINGS
+[ENA] = 0).
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float table
+placement h
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\noindent
+\align center
+\begin_inset Tabular
+<lyxtabular version="3" rows="5" columns="4">
+<features tabularvalignment="middle">
+<column alignment="left" valignment="top" width="17text%">
+<column alignment="left" valignment="top" width="10text%">
+<column alignment="left" valignment="top" width="10text%">
+<column alignment="left" valignment="top" width="52text%">
+<row>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Implementation type
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+cellcolor{gray}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+MODE[FDE]
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+cellcolor{gray}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+SETTING [PEX]
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+cellcolor{gray}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Behavior
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+cellcolor{gray}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Classical CAN
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+0
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+0
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+When CTU CAN FD detects recessive FDF bit (bit after IDE in Base frame,
+ bit after RTR/r1 in Extended frame), it responds with error frame.
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+CAN FD tolerant
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+0
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+1
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+When CTU CAN FD detects recessive FDF bit, it detects Protocol exception
+ and enters bus integration state.
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+CAN FD enabled
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+1
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+0
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+CTU CAN FD is able to receive / transmit CAN FD frames.
+ When CTU CAN FD detects recessive value on position of 
+\begin_inset Quotes eld
+\end_inset
+
+res
+\begin_inset Quotes erd
+\end_inset
+
+ bit (one bit after FDF bit), it responds with error frame.
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+CAN FD enabled - with protocol exception
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+1
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+1
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+CTU CAN FD is able to receive / transmit CAN FD frames.
+ When CTU CAN FD detects recessive value on position of 
+\begin_inset Quotes eld
+\end_inset
+
+res
+\begin_inset Quotes erd
+\end_inset
+
+ bit (one bit after FDF bit), it detects Protocol exception and enters bus
+ integration state.
+ This configuration tolerates future extensions of CAN FD protocol (e.g.
+ CAN XL).
+\end_layout
+
+\end_inset
+</cell>
+</row>
+</lyxtabular>
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\noindent
+\align center
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+CAN implementation type
+\begin_inset CommandInset label
+LatexCommand label
+name "tab:can-implementation-type"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Description
+Note When CTU CAN FD is configured as Classical CAN / CAN FD tolerant node
+ (MODE[FDE] = 0), and user attempts to send CAN FD frame (FRAME_FORMAT_W[FDF_BIT
+] = 1 in TXT buffer), CTU CAN FD will ignore frame type in TXT buffer ,
+ and send CAN 2.0 frame.
+\end_layout
+
+\begin_layout Description
+Note When CTU CAN FD is configured as Classical CAN / CAN FD tolerant node,
+ SETTINGS[NISOFD] bit has no effect.
+\end_layout
+
+\begin_layout Description
+Note According to 10.9.10 of ISO11898-1 2015, CAN FD Enabled implementation
+ shall not be set to a mode where it behaves as CAN FD tolerant implementation.
+ It is therefore users responsibility to use this option only for evaluation
+ / debugging purposes.
+\end_layout
+
+\begin_layout Description
+Note According to CAN 2.0 specification, R0 and R1 bits of any value shall
+ be accepted by receivers, however ISO119898-1 2015 states (Table A.1) that
+ Error frames shall be sent by Classical CAN implementation upon such event.
+ CTU CAN FD resolves this inconsisency in CAN specifications in favor of
+ ISO11898-1 2015.
+\end_layout
+
+\begin_layout Subsection
+Minimum bit time / Maximal bit rate
+\end_layout
+
+\begin_layout Standard
+System clock period is equal to minimal time quanta, therefore it affects
+ minimum bit rate achievable on CAN bus.
+ CTU CAN FD has following limitations:
+\end_layout
+
+\begin_layout Itemize
+Phase_Seg2 >= 2 minimal time quanta.
+ This is valid for both nominal and data bit rate.
+\end_layout
+
+\begin_layout Itemize
+Sync_Seg + Prop_Seg + Phase_Seg1 > 2 minimal time quanta.
+ This is valid for both nominal and data bit rate.
+\end_layout
+
+\begin_layout Standard
+With these conditions, it is possible to reach bit length of 5 time quanta.
+ Note that for nominal bit rate this is possible, however, at least 8 time
+ quantas per bit time are recommended (see 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "tab: implementation-parameters"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+).
+ For data bit rate, 5 time quantas per bit time can be used.
+\end_layout
+
+\begin_layout Standard
+As an example, when nominal bit rate is 250 Kbit/s, data bit rate is 1 Mbit/s,
+ minimal possible System clock frequency is 5 MHz.
+ Note that this is absolute maximum bit-rate, and gives very little margin
+ in sample point position.
+ Therefore it is recommended to use at least 10 MHz System clock in such
+ case.
+\end_layout
+
+\begin_layout Section
+CAN frame transmission
+\begin_inset CommandInset label
+LatexCommand label
+name "sec:CAN-frame-transmission"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+CTU CAN FD transmits CAN frames from TXT buffers.
+ CTU CAN FD contains 2-8 TXT buffers (number of TXT buffers is selected
+ at synthesis time).
+ To get actual number of TXT Buffers, SW can read TXTB_INFO register.
+ If 
+\begin_inset Quotes eld
+\end_inset
+
+N
+\begin_inset Quotes erd
+\end_inset
+
+ TXT buffers are present, then its always buffers 1 - 
+\begin_inset Quotes eld
+\end_inset
+
+N
+\begin_inset Quotes erd
+\end_inset
+
+.
+ Each TXT buffer can be in one of states as described in Figure 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:txt-buffer-user"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+.
+ TX_STATUS register reflects state of TXT Buffers.
+ To control TXT buffer state, SW issues commands to TX_COMMAND register.
+ There are three types of commands:
+\end_layout
+
+\begin_layout Description
+Set
+\begin_inset space ~
+\end_inset
+
+ready requests TXT buffer to move to 
+\begin_inset Quotes eld
+\end_inset
+
+Ready
+\begin_inset Quotes erd
+\end_inset
+
+ state.
+\end_layout
+
+\begin_layout Description
+Set
+\begin_inset space ~
+\end_inset
+
+abort requests TXT buffer to move to 
+\begin_inset Quotes eld
+\end_inset
+
+Aborted
+\begin_inset Quotes erd
+\end_inset
+
+ or 
+\begin_inset Quotes eld
+\end_inset
+
+Abort in progress
+\begin_inset Quotes erd
+\end_inset
+
+ state.
+\end_layout
+
+\begin_layout Description
+Set
+\begin_inset space ~
+\end_inset
+
+empty requests TXT buffer to move to 
+\begin_inset Quotes eld
+\end_inset
+
+Empty
+\begin_inset Quotes erd
+\end_inset
+
+ state.
+\end_layout
+
+\begin_layout Standard
+Each TXT buffer stores single CAN frame.
+ A 64 byte CAN FD frame fits to single TXT buffer.
+ TXT buffer is write only (CAN frame can't be read back).
+ TXT buffer is accessible only when the buffer is in 
+\begin_inset Quotes eld
+\end_inset
+
+Empty
+\begin_inset Quotes erd
+\end_inset
+
+, 
+\begin_inset Quotes eld
+\end_inset
+
+TX OK
+\begin_inset Quotes erd
+\end_inset
+
+, 
+\begin_inset Quotes eld
+\end_inset
+
+TX failed
+\begin_inset Quotes erd
+\end_inset
+
+, 
+\begin_inset Quotes eld
+\end_inset
+
+Aborted
+\begin_inset Quotes erd
+\end_inset
+
+ or 
+\begin_inset Quotes eld
+\end_inset
+
+Parity Error
+\begin_inset Quotes erd
+\end_inset
+
+ states.
+ To store CAN frame to a TXT buffer, SW writes to TXT Buffer 1 - TXT Buffer
+ 8 memory regions described in Section 3.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+placement h
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\noindent
+\align center
+\begin_inset Graphics
+	filename img/FSM_TXT_Buffer_user.pdf
+	lyxscale 20
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+TXT buffer states
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:txt-buffer-user"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+First SW driver stores CAN frame to a TXT buffer, and then issues 
+\series bold
+Set ready
+\series default
+ command to the TXT buffer to request transmission of CAN frame.
+ TXT buffer moves to 
+\begin_inset Quotes eld
+\end_inset
+
+Ready
+\begin_inset Quotes erd
+\end_inset
+
+ state, and CTU CAN FD can transmit frame from this TXT buffer.
+ When CTU CAN FD starts transmission, the TXT buffer moves to 
+\begin_inset Quotes eld
+\end_inset
+
+TX in progress
+\begin_inset Quotes erd
+\end_inset
+
+ state.
+ CTU CAN FD starts transmission from TXT buffer in 
+\begin_inset Quotes eld
+\end_inset
+
+Ready
+\begin_inset Quotes erd
+\end_inset
+
+ state if it sampled dominant bit during third bit of intermission, or as
+ soon as CAN bus is idle.
+ Note that in Time triggered transmission mode, the behavior differs (see
+ 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "subsec:Time-triggered-transmission"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+).
+\end_layout
+
+\begin_layout Standard
+When CTU CAN FD is error-passive, and it was transmitter of previous frame,
+ it suspend consecutive transmission for 8 bit times.
+ When CTU CAN FD transmitted CAN frame succesfully (no arbitration lost,
+ no error frame), TXT buffer moves to 
+\begin_inset Quotes eld
+\end_inset
+
+TX OK
+\begin_inset Quotes erd
+\end_inset
+
+ state.
+ If an error frame occurs, or arbitration is lost, TXT buffer moves to 
+\begin_inset Quotes eld
+\end_inset
+
+Ready
+\begin_inset Quotes erd
+\end_inset
+
+ state and CTU CAN FD attempts to transmitt again in nearest intermission
+ or bus idle\SpecialChar endofsentence
+
+\end_layout
+
+\begin_layout Description
+Note When CTU CAN FD operates in Bus monitoring mode (MODE[BMM] = 1), or
+ Restricted operation mode (MODE[ROM] = 1) it always ends up in 
+\begin_inset Quotes eld
+\end_inset
+
+TX failed
+\begin_inset Quotes erd
+\end_inset
+
+ state when 
+\series bold
+Set ready
+\series default
+ command is issued, without any attempt to transmit the frame.
+\end_layout
+
+\begin_layout Subsection
+TXT buffer selection
+\end_layout
+
+\begin_layout Standard
+When multiple TXT buffers are in 
+\begin_inset Quotes eld
+\end_inset
+
+Ready
+\begin_inset Quotes erd
+\end_inset
+
+ state, CTU CAN FD selects highest priority TXT buffer in 
+\begin_inset Quotes eld
+\end_inset
+
+Ready
+\begin_inset Quotes erd
+\end_inset
+
+ state, and transmitts CAN frame from this TXT buffer.
+ SW configures priority of TXT buffers in TX_PRIORITY register.
+ If two TXT buffers have equal priority, TXT buffer with lower index has
+ precedence.
+ The overall flow of transmission is shown in Figure 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:txt-buffer-selection"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Description
+Note Higher value of TX_PRIORITY[TX*P] means TXT Buffer * has higher priority
+ (e.g.
+ if TX_PRIORITY[TX1P] = 2 and TX_PRIORITY[TX2P]=5, then TXT Buffer 2 has
+ priority 5, and TXT Buffer 1 has priority 2.
+ When both TXT Buffers are in ready state, CTU CAN FD will pick TXT Buffer
+ 2 before TXT Buffer 1).
+\end_layout
+
+\begin_layout Description
+Note Priority of 
+\begin_inset Quotes eld
+\end_inset
+
+backup
+\begin_inset Quotes erd
+\end_inset
+
+ TXT Buffers when MODE[TXBBM] = 1 is not configurable by a TX_PRIORITY[TX*P]
+ corresponding to them, but it is configured by a bit corresponding to 
+\begin_inset Quotes eld
+\end_inset
+
+original
+\begin_inset Quotes erd
+\end_inset
+
+ TXT Buffer.
+ See 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "subsec:TXT-Buffer-Backup"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+placement h
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\noindent
+\align center
+\begin_inset Graphics
+	filename img/TXT_Buffer_validation.pdf
+	lyxscale 20
+	scale 80
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+TXT Buffer selection
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:txt-buffer-selection"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsection
+Time triggered transmission mode
+\begin_inset CommandInset label
+LatexCommand label
+name "subsec:Time-triggered-transmission"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+CTU CAN FD supports time-triggered transmission mode.
+ To enable this mode, set MODE[TTTM] = 1.
+ In time-triggered transmission mode, CTU CAN FD will attempt to transmitt
+ frame from highest priority TXT buffer only when value of Time-Base (see
+ 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "sec:Time-base"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+) reaches Timestamp stored in TIMESTAMP_L_W and TIMESTAMP_U_W words of this
+ TXT Buffer.
+ CTU CAN FD assumes that Time base is an up-counting unsigned counter.
+ When Time base reaches value stored in TIMESTAMP_L_W and TIMESTAMP_U_W,
+ frame stored in TXT buffer is allowed for transmission (assuming that it
+ is in highest priority TXT buffer in 
+\begin_inset Quotes eld
+\end_inset
+
+Ready
+\begin_inset Quotes erd
+\end_inset
+
+ state), as is visualized in Figure 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:time-triggered-transmission"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+.
+ CTU CAN FD will not transmit the frame immediately, it will transmit the
+ frame when the CAN bus is free.
+ If TXT buffer is in 
+\begin_inset Quotes eld
+\end_inset
+
+Ready
+\begin_inset Quotes erd
+\end_inset
+
+ state, and Time base counter did not reach moment of transmission yet,
+ CTU CAN FD waits until this condition is satisfied.
+ If during this time another node on CAN bus starts transmitting a frame,
+ CTU CAN FD becomes receiver of such frame.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+placement h
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\noindent
+\align center
+\begin_inset Graphics
+	filename img/TX_Time.pdf
+	lyxscale 20
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Time triggered transmission
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:time-triggered-transmission"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+To transmitt CAN frame as soon as possible (no time triggered transmission),
+ SW driver shall store 0x00000000 to TIMESTAMP_L_W, TIMESTAMP_U_W words.
+ Note that time triggered transmission is always considered only from highest
+ priority TXT buffer in 
+\begin_inset Quotes eld
+\end_inset
+
+Ready
+\begin_inset Quotes erd
+\end_inset
+
+ state.
+ TXT buffer priority is always evaluated first before time triggered transmissio
+n.
+ The behavior of the TXT buffer priority and time triggered transmission
+ is following:
+\end_layout
+
+\begin_layout Itemize
+If TXT buffer A has higher priority than TXT buffer B, CTU CAN FD will pick
+ frame from TXT buffer A even if its time of transmission is higher (transmissio
+n should start later) than the one from TXT Buffer B.
+\end_layout
+
+\begin_layout Itemize
+If priority of TXT buffers changes (and highest priority TXT buffer in 
+\begin_inset Quotes eld
+\end_inset
+
+Ready
+\begin_inset Quotes erd
+\end_inset
+
+ state changes), then CTU CAN FD picks frame from new highest priority TXT
+ buffer in 
+\begin_inset Quotes eld
+\end_inset
+
+Ready
+\begin_inset Quotes erd
+\end_inset
+
+ state.
+ This is valid as long as frame from previously selected TXT buffer is waiting
+ for Time base to reach its time of transmission.
+ When frame transmission already starts, TXT buffer priority is not considered
+ anymore (no frame swapping).
+\end_layout
+
+\begin_layout Subsection
+Type of transmitted CAN frame
+\end_layout
+
+\begin_layout Standard
+SW chooses type of transmitted CAN frame by setting the value of FRAME_FORMAT_W
+ in TXT buffer, and settings of CTU CAN FD as show in Figure 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:tx-frame-type"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+placement h
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\noindent
+\align center
+\begin_inset Graphics
+	filename img/TX_frame_flow.pdf
+	lyxscale 20
+	scale 80
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+TX frame type
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:tx-frame-type"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Description
+Note When FRAME_FORMAT_W[FDF] = FD_CAN and MODE[FDE] = 0, CTU CAN FD transmits
+ CAN 2.0 frame.
+ If in such case TXT buffer contains CAN FD frame with more than 8 bytes
+ of data payload, bytes above 8-th byte will not be sent.
+\end_layout
+
+\begin_layout Description
+Note When FRAME_FORMAT_W[RTR] = RTR_FRAME and FRAME_FORMAT_W[FDF] = FD_CAN,
+ CTU CAN FD ignores RTR flag and transmits CAN FD data frame (there are
+ no remote frames in CAN FD protocol).
+\end_layout
+
+\begin_layout Subsection
+Retransmitt limitation
+\end_layout
+
+\begin_layout Standard
+CTU CAN FD can limit number of retransmissions from single TXT buffer.
+ Retransmitt limitation is enabled when SETTINGS[RTRLE] = 1.
+ Number of retransmissions is configured in SETTINGS[RTRTH].
+ First attempt to transmitt CAN frame does not count as retransmission.
+ Possible configuration options are shown in Table 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "tab:retransmitt-counter-configurations"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float table
+placement H
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\noindent
+\align center
+\begin_inset Tabular
+<lyxtabular version="3" rows="4" columns="3">
+<features tabularvalignment="middle">
+<column alignment="left" valignment="top" width="15text%">
+<column alignment="left" valignment="top" width="17text%">
+<column alignment="left" valignment="top" width="60text%">
+<row>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+SETTINGS [RTRTH]
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+cellcolor{gray}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+SETTINGS [RTRLE]
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+cellcolor{gray}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Behaviour
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+cellcolor{gray}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+-
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+0
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Frame transmission is attempted without any limitation (until it is succesfull
+ or unit turns bus-off).
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+0
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+1
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Frame transmission is attempted only once, there are no retransmission attempts
+ after first failed transmission (so called one shot mode).
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="left" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+1 - 15
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+1
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Frame transmission is attempted SETTINGS[RTRTH] + 1 times (initial transmission
+ + SETTINGS[RTRTH] retransmissions).
+\end_layout
+
+\end_inset
+</cell>
+</row>
+</lyxtabular>
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\noindent
+\align center
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Retransmitt limitation configuration
+\begin_inset CommandInset label
+LatexCommand label
+name "tab:retransmitt-counter-configurations"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+If SETTINGS[RTRTH] consecutive retransmission are not succesfful (error
+ frame occured or arbitration was lost) from single TXT buffer, this TXT
+ buffer moves to 
+\begin_inset Quotes eld
+\end_inset
+
+TX failed
+\begin_inset Quotes erd
+\end_inset
+
+ state.
+ If TXT buffer used for transmission changed between two transmissions (e.g
+ it was picked due to higher priority), internal counter of retransmissions
+ is erased, and new frame (from new TXT buffer) has again SETTINGS[RTRTH]+1
+ transmission attempts.
+ If CTU CAN FD returns to transmission from original TXT buffer, it does
+ not remember previous number of transmission attempts and again attempts
+ to transmitt CAN frame SETTINGS[RTRTH]+1 times.
+ Current number of transmission attempts of a single frame is held in an
+ internal counter which is readable via RETR_CTR register.
+\end_layout
+
+\begin_layout Subsection
+Abort
+\end_layout
+
+\begin_layout Standard
+If SW driver previously requested transmission of CAN frame by 
+\series bold
+Set ready
+\series default
+ command, it can request abort of transmission by 
+\series bold
+Set abort
+\series default
+ command.
+ If TXT buffer is still in 
+\begin_inset Quotes eld
+\end_inset
+
+Ready
+\begin_inset Quotes erd
+\end_inset
+
+ state when it receives 
+\series bold
+Set abort
+\series default
+ command (transmission did not start yet), it moves to 
+\begin_inset Quotes eld
+\end_inset
+
+Aborted
+\begin_inset Quotes erd
+\end_inset
+
+ state immediately.
+ If TXT buffer is in 
+\begin_inset Quotes eld
+\end_inset
+
+TX in progress
+\begin_inset Quotes erd
+\end_inset
+
+ state (transmission has already started), it moves to 
+\begin_inset Quotes eld
+\end_inset
+
+Abort in progress
+\begin_inset Quotes erd
+\end_inset
+
+ state.
+ Then the TXT Buffer will move to 
+\begin_inset Quotes eld
+\end_inset
+
+Aborted
+\begin_inset Quotes erd
+\end_inset
+
+ state upon nearest error frame or arbitration lost.
+ Note that when TXT buffer is in 
+\begin_inset Quotes eld
+\end_inset
+
+Abort in progress
+\begin_inset Quotes erd
+\end_inset
+
+ state, it can move to TX OK state if current transmission succeeds, or
+ to 
+\begin_inset Quotes eld
+\end_inset
+
+TX failed state
+\begin_inset Quotes erd
+\end_inset
+
+ if retransmitt limit was reached.
+\end_layout
+
+\begin_layout Subsection
+TXT buffer - Bus-off behavior
+\end_layout
+
+\begin_layout Standard
+When CTU CAN FD becomes bus-off due to TEC > 255, TXT buffers can react
+ to this event in two ways:
+\end_layout
+
+\begin_layout Enumerate
+All TXT buffers which are in 
+\begin_inset Quotes eld
+\end_inset
+
+Ready
+\begin_inset Quotes erd
+\end_inset
+
+, 
+\begin_inset Quotes eld
+\end_inset
+
+TX in Progress
+\begin_inset Quotes erd
+\end_inset
+
+ or 
+\begin_inset Quotes eld
+\end_inset
+
+Abort in Progress
+\begin_inset Quotes erd
+\end_inset
+
+ immediately go to 
+\begin_inset Quotes eld
+\end_inset
+
+TX failed
+\begin_inset Quotes erd
+\end_inset
+
+ state.
+ This option is enabled by setting SETTINGS[TBFBO] = 1, and it is default
+ configuration of TXT buffers.
+\end_layout
+
+\begin_layout Enumerate
+TXT buffer which was used for transmission at time when CTU CAN FD became
+ bus-off, will behave as if any other error frame was transmitted.
+ This option is enabled by setting SETTINGS[TBFBO] = 0.
+ If no 
+\begin_inset Quotes eld
+\end_inset
+
+Set abort
+\begin_inset Quotes erd
+\end_inset
+
+ command was issued to this buffer, nor retransmitt limit was reached, the
+ buffer will become 
+\begin_inset Quotes eld
+\end_inset
+
+Ready
+\begin_inset Quotes erd
+\end_inset
+
+.
+ When CTU CAN FD finishes reintegration (see 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "sec:Operating-modes"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+), transmission from this TXT buffer will begin as per regular TXT buffer
+ selection by priority.
+ This option allows going bus-off and re-integrating without the need of
+ SW interaction with TXT buffers.
+\end_layout
+
+\begin_layout Subsection
+Sample code
+\end_layout
+
+\begin_layout LyX-Code
+#define CTU_CAN_FD_BASE 0x12000000
+\end_layout
+
+\begin_layout LyX-Code
+#define TX_COMMAND_ADDR (CTU_CAN_FD_BASE + 0x74)
+\end_layout
+
+\begin_layout LyX-Code
+#define TXT_BUFFER_1_BASE (CTU_CAN_FD_BASE + 0x100)
+\end_layout
+
+\begin_layout Standard
+\begin_inset Separator plain
+\end_inset
+
+
+\end_layout
+
+\begin_layout LyX-Code
+/* Insert CAN frame to TXT buffer 1 */
+\end_layout
+
+\begin_layout LyX-Code
+uint32_t frame_format_word = 0;
+\end_layout
+
+\begin_layout LyX-Code
+frame_format_word |= 4;                               // DLC = 4
+\end_layout
+
+\begin_layout LyX-Code
+frame_format_word |= (1 << 7);                        // CAN FD Frame
+\end_layout
+
+\begin_layout LyX-Code
+frame_format_word |= (1 << 9);                        // Switch bit-rate
+\end_layout
+
+\begin_layout LyX-Code
+can_write_32(TXT_BUFFER_1_BASE, frame_format_word);   // Store frame format
+ word
+\end_layout
+
+\begin_layout Standard
+\begin_inset Separator plain
+\end_inset
+
+
+\end_layout
+
+\begin_layout LyX-Code
+uint32_t id_word = (55 << 18);                        // Identifier: 55
+\end_layout
+
+\begin_layout LyX-Code
+can_write_32(TXT_BUFFER_1_BASE + 0x4, id_word);         // Store identifier
+ word
+\end_layout
+
+\begin_layout LyX-Code
+can_write_32(TXT_BUFFER_1_BASE + 0x8, 1000);
+\end_layout
+
+\begin_layout LyX-Code
+can_write_32(TXT_BUFFER_1_BASE + 0xC, 0);               // Transmitt at
+ time 1000
+\end_layout
+
+\begin_layout LyX-Code
+can_write_32(TXT_BUFFER_1_BASE + 0x10, 0xAABBCCDD);     // Data: 0xAA 0xBB
+ 0xCC 0xDD
+\end_layout
+
+\begin_layout Standard
+\begin_inset Separator plain
+\end_inset
+
+
+\end_layout
+
+\begin_layout LyX-Code
+/* Issue Set ready command */
+\end_layout
+
+\begin_layout LyX-Code
+uint32_t command = 0;
+\end_layout
+
+\begin_layout LyX-Code
+command |= 0x2;                                       // Set Ready command
+\end_layout
+
+\begin_layout LyX-Code
+command |= (1 << 8);                                  // Choose TXT Buffer
+ 1
+\end_layout
+
+\begin_layout LyX-Code
+can_write_32(TX_COMMAND_ADDR, command);               // Issue the command
+\end_layout
+
+\begin_layout Description
+Note When CTU CAN FD is enabled by writing SETTINGS[ENA] = 1, it is still
+ bus-off during integration to the CAN bus.
+ If during this time 
+\series bold
+Set ready
+\series default
+ command is issued to TXT buffer, TXT buffer immediately moves to 
+\begin_inset Quotes eld
+\end_inset
+
+Aborted
+\begin_inset Quotes erd
+\end_inset
+
+ state when SETTINGS[TBFBO] = 1.
+ SW shall wait until node is Error active (either polling FAULT_STATE or
+ via FCS Interrupt) before issuing 
+\series bold
+Set ready
+\series default
+ command to any TXT buffer.
+\end_layout
+
+\begin_layout Description
+Note TXT buffers are not initialized, nor reset.
+ Therefore, before issuing 
+\series bold
+Set ready
+\series default
+ command, SW shall fill according TXT buffer with valid CAN frame for transmissi
+on.
+\end_layout
+
+\begin_layout Description
+Note CTU CAN FD transmitts only reactive Overload frames.
+ There are no internal conditions of CTU CAN FD which would cause transmission
+ of Overload frame without detecting overload condition.
+\end_layout
+
+\begin_layout Section
+CAN frame reception
+\begin_inset CommandInset label
+LatexCommand label
+name "sec:CAN-frame-reception"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+CTU CAN FD contains single FIFO-like RX buffer for received CAN frames.
+ Size of the RX buffer is multiple of 32-bit words.
+ SW can read the size of RX buffer from RX_MEM_INFO register.
+ RX buffer stores two types of CAN frames:
+\end_layout
+
+\begin_layout Itemize
+Regular frame - CTU CAN FD stores regular CAN frame to RX buffer when a
+ CAN frame is received without error frames on CAN bus.
+ Regular CAN frames contain all the data exchanged in the CAN communication.
+ Regular frames include Remote Transmission Request frames.
+ 
+\end_layout
+
+\begin_layout Itemize
+Error frame - CTU CAN FD stores error frame that occured on CAN bus to the
+ RX buffer.
+\end_layout
+
+\begin_layout Standard
+CAN frames (regular or error) are read by SW from RX buffer by consecutive
+ reads from RX_DATA register.
+ Single read from RX_DATA register reads one word from RX buffer.
+ RX buffer can operate in one of two modes:
+\end_layout
+
+\begin_layout Itemize
+Automatic mode - When SW reads RX_DATA register, CTU CAN FD automatically
+ increments read pointer of RX buffer FIFO.
+ Use this mode only when RX_DATA is read by 32-bit accesses.
+ Writes to COMMAND[RXRPMV] = 1 have no effect in this mode.
+\end_layout
+
+\begin_layout Itemize
+Manual mode - When SW reads RX_DATA register, CTU CAN FD does not increment
+ read pointer of RX buffer FIFO.
+ To increment read pointer, SW shall write COMMAND[RXRPMV] = 1.
+ Use this mode when CTU CAN FD is mapped to a memory space where only 8/16
+ bit accesses are possible.
+\end_layout
+
+\begin_layout Standard
+Mode of RX buffer is configured by MODE[RXBAM] bit.
+ Section 3 describes CAN frame format in RX buffer and Figure 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:rx-buffer-frame-visualization"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+ shows this format.
+ CAN frame in RX buffer spans from 4 to 20 memory words.
+ Its size is given as:
+\end_layout
+
+\begin_layout Standard
+\noindent
+\align center
+Size of RX frame in words = 4 + ceil(Data field length / 4)
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+placement h
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\noindent
+\align center
+\begin_inset Graphics
+	filename img/RX_Buffer_layout.pdf
+	lyxscale 20
+	scale 60
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+RX buffer
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:rx-buffer-frame-visualization"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsection
+Frame count
+\end_layout
+
+\begin_layout Standard
+CTU CAN FD contains a counter of CAN frames within the RX buffer.
+ To get value of this counter, SW shall read RX_STATUS[RXFRCE] register.
+ CTU CAN FD:
+\end_layout
+
+\begin_layout Itemize
+Increments the counter when it stores a frame to RX buffer (regular or error
+ frame)
+\end_layout
+
+\begin_layout Itemize
+Decremented the counter when SW reads a last word of CAN frame from RX buffer.
+\end_layout
+
+\begin_layout Subsection
+Error frame reception
+\end_layout
+
+\begin_layout Standard
+When SW sets MODE[ERFM]=1, CTU CAN FD stores Error frames that occur on
+ CAN bus in the RX buffer.
+ If MODE[ERFM]=0, only regular CAN frames are stored to RX buffer.
+ Each error condition that caused transmission of a new Error frame is logged
+ as separate Error frame in the RX buffer.
+ Each Error frame in the RX buffer occupies exactly 4 memory words (FRAME_FORMAT
+_W, IDENTIFIER_W, TIMESTAMP_U_W and TIMESTAMP_L_W).
+\end_layout
+
+\begin_layout Standard
+The error frames are distinguished from regular CAN frames by FRAME_FORMAT_W[ERF
+] bit.
+ In Error frames, FRAME_FORMAT_W[ERF] = ERF_ERR_FRAME, while in regular
+ CAN frames FRAME_FORMAT_W[ERF] = ERF_CAN_FRAME.
+ The error frames have following differences from regular CAN frames:
+\end_layout
+
+\begin_layout Itemize
+Only FRAME_FORMAT_W[ERF], FRAME_FORMAT_W[IVLD], FRAME_FORMAT_W[RWCNT],
+\begin_inset Newline newline
+\end_inset
+
+ FRAME_FORMAT_W[ERF_POS] and FRAME_FORMAT_W[ERF_TYPE] are valid in FRAME_FORMAT_
+W.
+ Other fields of FRAME_FORMAT_W are reserved, and shall be ignored by SW
+ reading the Error frame from RX buffer.
+\end_layout
+
+\begin_layout Itemize
+When FRAME_FORMAT_W[IVLD]=1, IDENTIFIER_W contains valid CAN identifier.
+ Otherwise, IDENTIFIER_W value contains all zeroes.
+\end_layout
+
+\begin_layout Itemize
+TIMESTAMP_U_W and TIMESTAMP_L_W contain CTU CAN FD timebase value at the
+ moment when when error condition causing the Error frame transmission occured.
+\end_layout
+
+\begin_layout Description
+Note When CTU CAN FD operates in Restricted operation mode (MODE[ROM]=1),
+ Error frames are not stored to RX buffer since error condition on the bus
+ causes CTU CAN FD to move to Bus Integration state, and not transmit the
+ Error frame.
+\end_layout
+
+\begin_layout Description
+Note Rules related to setting of ERR_CAPT (Error type priorities, etc...) apply
+ also to Error frames stored in RX buffer.
+\end_layout
+
+\begin_layout Description
+Note In regular CAN frame, FRAME_FORMAT_W[IVLD] is always 1.
+ If FRAME_FORMAT_W[IVLD]=1 in Error frame, then the IDENTIFIER_W contains
+ a valid CAN identifier.
+ When FRAME_FORMAT_W[IVLD] = 1, then IDENTIFIER_W can be used to track the
+ CAN frame that lead to Error frame.
+\end_layout
+
+\begin_layout Description
+Note The error frames ocurring in CAN frames with Base identifier before
+ IDE bit have FRAME_FORMAT_W[IVLD]=0.
+ The error frames ocurring in CAN frames with Extended identifier before
+ RTR/RRS bit have FRAME_FORMAT_W[IVLD]=0.
+\end_layout
+
+\begin_layout Description
+Note When CTU CAN FD stores error frame with FRAME_FORMAT_W[IVLD]=0 to RX
+ Buffer, every such error frame is stored regardless of frame filters configurat
+ion.
+ Therefore, invalid identifiers are not subject to frame filtration.
+\end_layout
+
+\begin_layout Subsection
+RX buffer memory
+\end_layout
+
+\begin_layout Standard
+RX buffer memory provides following status information:
+\end_layout
+
+\begin_layout Itemize
+Number of free memory words in RX_MEM_INFO[RX_MEM_FREE].
+\end_layout
+
+\begin_layout Itemize
+Write pointer position in RX_POINTERS[RX_WPP].
+\end_layout
+
+\begin_layout Itemize
+Read pointer position in RX_POINTERS[RX_RPP].
+\end_layout
+
+\begin_layout Subsection
+RX buffer status
+\end_layout
+
+\begin_layout Standard
+RX buffer with no stored CAN frames is empty.
+ When RX buffer is empty, then RX_STATUS[RXE]=1.
+ RX buffer with all memory words occupied by CAN frames is full.
+ When RX buffer is full, RX_STATUS[RXF]=1.
+ 
+\end_layout
+
+\begin_layout Description
+Note If RX buffer has e.g.
+ 2 free memory words it is not full, however even smallest CAN frame does
+ not fit into the RX buffer (smallest CAN frame takes 4 memory words).
+\end_layout
+
+\begin_layout Subsection
+Overrun
+\end_layout
+
+\begin_layout Standard
+Overrun occurs when there is not enough free space in RX buffer during reception
+ of CAN frame.
+ Upon overrun, CTU CAN FD drops currently received frame (RX buffer FIFO
+ overflows), and sets Overrun flag.
+ Overrun flag is sticky (it remains set until SW clears it).
+ SW reads Overrun flag from STATUS[DOR].
+ SW clears Overrun flag by writing COMMAND[CDO]=1.
+\end_layout
+
+\begin_layout Subsection
+Flush
+\begin_inset CommandInset label
+LatexCommand label
+name "subsec:Flush"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+To flush RX buffer, SW shall write COMMAND[RRB]=1.
+ The flush of RX buffer has following effect:
+\end_layout
+
+\begin_layout Itemize
+Content of RX buffer is kept (memory is not erased)
+\end_layout
+
+\begin_layout Itemize
+Read and write pointers become 0
+\end_layout
+
+\begin_layout Itemize
+Frame counter becomes 0.
+ 
+\end_layout
+
+\begin_layout Standard
+After flush RX buffer is as-if there are no frames in it.
+ If SW issues flush during CAN frame reception, currently received frame
+ is also droped.
+\end_layout
+
+\begin_layout Subsection
+Inconsistency protection
+\end_layout
+
+\begin_layout Standard
+Reading CAN frame from RX buffer involves multiple reads of RX_DATA register.
+ Each read increments read pointer inside RX buffer (read operation with
+ side effect).
+ If an error occurs (e.g.
+ bus error, ECC error) during read from RX_DATA register, then read data
+ could be lost.
+ SW driver now has two problems:
+\end_layout
+
+\begin_layout Itemize
+CTU CAN FD incremented RX buffer read pointer.
+ SW driver lost the word, therefore it can't read the frame correctly.
+\end_layout
+
+\begin_layout Itemize
+SW driver may have lost track on what part of the frame was read from RX
+ buffer.
+ E.g.
+ if an error ocurred during read of FRAME_FORMAT_W, the SW driver does not
+ know how many words does the remaining CAN frame contains.
+\end_layout
+
+\begin_layout Standard
+SW driver can read RX_STATUS[RXMOF] to recover from such state.
+ When next read from RX_DATA register is about to return FRAME_FORMAT_W
+ (beginning of new frame), RX_STATUS[RXMOF] = 0.
+ Otherwise RX_STATUS[RXMOF] = 1 (RX buffer read pointer points to middle
+ of frame).
+ If SW driver gets into inconsistent state during readout of frame, it shall
+ repetitively read from RX_DATA until RX_STATUS[RX_MOF] = 0.
+ Upon such condition, RX_DATA points to FRAME_FORMAT_W word of new frame,
+ or RX buffer is empty (if the error occured during readout of only frame
+ in RX buffer).
+\end_layout
+
+\begin_layout Subsection
+Timestamping
+\end_layout
+
+\begin_layout Standard
+When CTU CAN FD receives CAN frame, it stores its timestamp in TIMESTAMP_L_W,
+ TIMESTAMP_U_W words within RX buffer.
+ CTU CAN FD samples thevalue of external Time Base to obtain the timestamp
+ of CAN frame.
+ CTU CAN FD samples the Timestamp of received frame in:
+\end_layout
+
+\begin_layout Itemize
+Sample point of Start of Frame bit.
+ This mode is configured by RX_SETTINGS[RTSOP]=1
+\end_layout
+
+\begin_layout Itemize
+6th bit of End of Frame (moment when received CAN frame is considered valid
+ according to ISO11898-1 2015).
+ This mode is configured by RX_SETTINGS[RTSOP]=0.
+\end_layout
+
+\begin_layout Subsection
+Frame filtering
+\end_layout
+
+\begin_layout Standard
+CTU CAN FD filters received CAN frames by HW filters.
+ There are two types of filters in CTU CAN FD: Bit filter and Range filter.
+ There are three instances of Bit filter (A,B,C) and one instance of Range
+ filter.
+ If received CAN frame passes at least one filter, CTU CAN FD stores the
+ frame to RX buffer.
+ CTU CAN FD filters the received frames only if Acceptance filter mode is
+ enabled (MODE[AFM] = 1).
+ SW shall modify MODE[AFM] only when CTU CAN FD is disabled (SETTINGS[ENA]
+ = 0).
+ When Acceptance filter mode is disabled, CTU CAN FD stores every received
+ CAN frame to RX buffer.
+\end_layout
+
+\begin_layout Standard
+SW can configure each filter to accept only certain types of:
+\end_layout
+
+\begin_layout Itemize
+CAN frame types (CAN 2.0 frame / CAN FD frame)
+\end_layout
+
+\begin_layout Itemize
+Identifier types (frame with Base identifier only, frame with Base + Extended
+ identifier).
+ 
+\end_layout
+
+\begin_layout Standard
+SW can configure this behavior in FILTER_CONTROL register.
+ SW disables filter by setting all bits in FILTER_CONTROL register belonging
+ to this filter to 0.
+ Figure 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:frame-filters-operation"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+ describes Frame filters operation.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+placement h
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\noindent
+\align center
+\begin_inset Graphics
+	filename img/Frame_filters_flow.pdf
+	lyxscale 20
+	scale 70
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Frame filters operation (* stands for A/B/C/R based on filter type)
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:frame-filters-operation"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Newpage pagebreak
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsubsection
+Bit filter
+\end_layout
+
+\begin_layout Standard
+Bit filter checks if received CAN frame identifier is equal to predefined
+ identifier in FILTER_X_VALUE register (X=A,B,C based on filter instance).
+ Only bits given by filter mask in FILTER_X_MASK register are compared.
+\end_layout
+
+\begin_layout Description
+Note When using Bit filter to filter frames with Base identifiers only,
+ set FILTER_X_MASK[17:0] = 0b000000000000000000.
+\end_layout
+
+\begin_layout Subsubsection
+Range filter
+\end_layout
+
+\begin_layout Standard
+Range filter checks if received CAN frame identifier is within FILTER_RAN_LOW
+ to FILTER_RAN_HIGH decimal range.
+\end_layout
+
+\begin_layout Description
+Note When using Range filter to filter frames with Base identifiers only,
+ set FILTER_RAN_LOW[17:0] = 0b000000000000000000 and FILTER_RAN_HIGH[17:0]
+ = 0b111111111111111111.
+\end_layout
+
+\begin_layout Subsection
+Sample code 1 - Frame reception in automatic mode (32-bit access)
+\end_layout
+
+\begin_layout LyX-Code
+#define CTU_CAN_FD_BASE 0x12000000
+\end_layout
+
+\begin_layout LyX-Code
+#define RX_DATA_ADDR (CTU_CAN_FD_BASE + 0x6C)
+\end_layout
+
+\begin_layout LyX-Code
+#define RX_STATUS_ADDR (CTU_CAN_FD_BASE + 0x68)
+\end_layout
+
+\begin_layout Standard
+\begin_inset Separator plain
+\end_inset
+
+
+\end_layout
+
+\begin_layout LyX-Code
+/* Poll on RX buffer until there is a frame in it */
+\end_layout
+
+\begin_layout LyX-Code
+uint32_t rx_status;
+\end_layout
+
+\begin_layout LyX-Code
+do {
+\end_layout
+
+\begin_layout LyX-Code
+    rx_status = can_read_32(RX_STATUS_ADDR);
+\end_layout
+
+\begin_layout LyX-Code
+} while ((rx_status & 0x1) == 0)
+\end_layout
+
+\begin_layout Standard
+\begin_inset Separator plain
+\end_inset
+
+
+\end_layout
+
+\begin_layout LyX-Code
+/* Read frame from RX buffer */
+\end_layout
+
+\begin_layout LyX-Code
+uint8_t data[64];
+\end_layout
+
+\begin_layout LyX-Code
+uint32_t tmp;
+\end_layout
+
+\begin_layout LyX-Code
+uint32_t ffw = can_read_32(RX_DATA_ADDR);
+\end_layout
+
+\begin_layout LyX-Code
+uint32_t id = can_read_32(RX_DATA_ADDR);
+\end_layout
+
+\begin_layout LyX-Code
+uint32_t ts_l = can_read_32(RX_DATA_ADDR);
+\end_layout
+
+\begin_layout LyX-Code
+uint32_t ts_h = can_read_32(RX_DATA_ADDR);
+\end_layout
+
+\begin_layout Standard
+\begin_inset Separator plain
+\end_inset
+
+
+\end_layout
+
+\begin_layout LyX-Code
+uint32_t rwcnt = (ffw >> 11) & 0x1F;
+\end_layout
+
+\begin_layout LyX-Code
+for(int i = 0; i < rwcnt - 3; i++){
+\end_layout
+
+\begin_layout LyX-Code
+    tmp = can_read_32(RX_DATA_ADDR);
+\end_layout
+
+\begin_layout LyX-Code
+    data[i*4] = tmp & 0xFF;
+\end_layout
+
+\begin_layout LyX-Code
+    data[i*4+1] = (tmp >> 8) & 0xFF;
+\end_layout
+
+\begin_layout LyX-Code
+    data[i*4+2] = (tmp >> 16) & 0xFF;
+\end_layout
+
+\begin_layout LyX-Code
+    data[i*4+3] = (tmp >> 24) & 0xFF;
+\end_layout
+
+\begin_layout LyX-Code
+}
+\end_layout
+
+\begin_layout Subsection
+Sample code 2 - Frame reception in manual mode (8-bit access)
+\end_layout
+
+\begin_layout LyX-Code
+#define CTU_CAN_FD_BASE 0x12000000
+\end_layout
+
+\begin_layout LyX-Code
+#define RX_DATA_ADDR (CTU_CAN_FD_BASE + 0x6C)
+\end_layout
+
+\begin_layout LyX-Code
+#define RX_STATUS_ADDR (CTU_CAN_FD_BASE + 0x68)
+\end_layout
+
+\begin_layout LyX-Code
+#define COMMAND_ADDR (CTU_CAN_FD_BASE + 0xC)
+\end_layout
+
+\begin_layout LyX-Code
+#define MOVE_RX_BUF_READ_PTR() can_write_8(COMMAND_ADDR, 1 << 2)
+\end_layout
+
+\begin_layout Standard
+\begin_inset Separator plain
+\end_inset
+
+
+\end_layout
+
+\begin_layout LyX-Code
+/* Poll on RX buffer until there is a frame in it */
+\end_layout
+
+\begin_layout LyX-Code
+uint8_t rx_status;
+\end_layout
+
+\begin_layout LyX-Code
+do {
+\end_layout
+
+\begin_layout LyX-Code
+    rx_status = can_read_8(RX_STATUS_ADDR);
+\end_layout
+
+\begin_layout LyX-Code
+} while ((rx_status & 0x1) == 0)
+\end_layout
+
+\begin_layout Standard
+\begin_inset Separator plain
+\end_inset
+
+
+\end_layout
+
+\begin_layout LyX-Code
+/* Read frame format word and move to RX pointer */
+\end_layout
+
+\begin_layout LyX-Code
+uint8_t data[64];
+\end_layout
+
+\begin_layout LyX-Code
+uint16_t ffw = (uint16_t)can_read_8(RX_DATA_ADDR);
+\end_layout
+
+\begin_layout LyX-Code
+ffw |= (((uint16_t)can_read_8(RX_DATA_ADDR + 0x1)) << 8);
+\end_layout
+
+\begin_layout LyX-Code
+MOVE_RX_BUF_READ_PTR();
+\end_layout
+
+\begin_layout Standard
+\begin_inset Separator plain
+\end_inset
+
+
+\end_layout
+
+\begin_layout LyX-Code
+/* Read CAN identifier and move RX pointer up to first data word */
+\end_layout
+
+\begin_layout LyX-Code
+uint32_t id = (uint32_t)can_read_8(RX_DATA_ADDR);
+\end_layout
+
+\begin_layout LyX-Code
+id |= ((uint32_t)can_read_8(RX_DATA_ADDR + 0x1)) << 8;
+\end_layout
+
+\begin_layout LyX-Code
+id |= ((uint32_t)can_read_8(RX_DATA_ADDR + 0x2)) << 16;
+\end_layout
+
+\begin_layout LyX-Code
+id |= ((uint32_t)can_read_8(RX_DATA_ADDR + 0x3)) << 24;
+\end_layout
+
+\begin_layout LyX-Code
+for (int i = 0; i < 3; i++)
+\end_layout
+
+\begin_layout LyX-Code
+    MOVE_RX_BUF_READ_PTR();
+\end_layout
+
+\begin_layout Standard
+\begin_inset Separator plain
+\end_inset
+
+
+\end_layout
+
+\begin_layout LyX-Code
+/* Read data bytes */
+\end_layout
+
+\begin_layout LyX-Code
+uint16_t rwcnt = (ffw >> 11) & 0x1F;
+\end_layout
+
+\begin_layout LyX-Code
+for(int i = 0; i < rwcnt - 3; i++){
+\end_layout
+
+\begin_layout LyX-Code
+    data[i*4] = can_read_8(RX_DATA_ADDR);
+\end_layout
+
+\begin_layout LyX-Code
+    data[i*4+1] = can_read_8(RX_DATA_ADDR + 0x1);
+\end_layout
+
+\begin_layout LyX-Code
+    data[i*4+2] = can_read_8(RX_DATA_ADDR + 0x2);
+\end_layout
+
+\begin_layout LyX-Code
+    data[i*4+3] = can_read_8(RX_DATA_ADDR + 0x3);
+\end_layout
+
+\begin_layout LyX-Code
+    MOVE_RX_BUF_READ_PTR();
+\end_layout
+
+\begin_layout LyX-Code
+}
+\end_layout
+
+\begin_layout Subsection
+Sample code 3 - Bit filter configuration
+\end_layout
+
+\begin_layout LyX-Code
+#define CTU_CAN_FD_BASE 0x12000000
+\end_layout
+
+\begin_layout LyX-Code
+#define FILTER_CONTROL_ADDR (CTU_CAN_FD_BASE + 0x5C)
+\end_layout
+
+\begin_layout LyX-Code
+#define FILTER_A_VAL_ADDR (CTU_CAN_FD_BASE + 0x40)
+\end_layout
+
+\begin_layout LyX-Code
+#define FILTER_A_MASK_ADDR (CTU_CAN_FD_BASE + 0x3C)
+\end_layout
+
+\begin_layout Standard
+\begin_inset Separator plain
+\end_inset
+
+
+\end_layout
+
+\begin_layout LyX-Code
+uint32_t filter_mask = 0xF << 18; // Compare 4 LSBs of Base ID
+\end_layout
+
+\begin_layout LyX-Code
+uint32_t filter_val = 0x2 << 18; // Must be equal to 0x2 (0010)
+\end_layout
+
+\begin_layout Standard
+\begin_inset Separator plain
+\end_inset
+
+
+\end_layout
+
+\begin_layout LyX-Code
+/* Configure filter A */
+\end_layout
+
+\begin_layout LyX-Code
+can_write_32(FILTER_A_VAL_ADDR, filter_val);
+\end_layout
+
+\begin_layout LyX-Code
+can_write_32(FILTER_A_MASK_ADDR, filter_mask);
+\end_layout
+
+\begin_layout Standard
+\begin_inset Separator plain
+\end_inset
+
+
+\end_layout
+
+\begin_layout LyX-Code
+/* Enable reception of CAN 2.0 and CAN FD frames with Base identifiers only
+ */
+\end_layout
+
+\begin_layout LyX-Code
+uint32_t filter_control = 0x5; // FANB, FAFB
+\end_layout
+
+\begin_layout LyX-Code
+can_write_32(FILTER_CONTROL_ADDR, filter_control);
+\end_layout
+
+\begin_layout Section
+Fault confinement
+\end_layout
+
+\begin_layout Standard
+SW can read Fault confinement state of CTU CAN FD from FAULT_STATE register.
+ Figure 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:fault-confinement"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+ shows the Fault confinement state transition diagram.
+ CTU CAN FD shows Fault confinement counters in REC and TEC registers.
+ These counters correspond to transmitt error counter, and receive error
+ counter as defined in ISO11898-1.
+ CTU CAN FD additionally contains counters distigushing between errors detected
+ in nominal bit rate, and errors detected in data bit rate.
+ To read Nominal bit rate error counter, SW shall read ERR_NORM register.
+ To read Data bit rate error counter, SW shall read ERR_FD register.
+ CTU CAN FD increments each error counters by 1 when it detects error in
+ the respective bit rate.
+\end_layout
+
+\begin_layout Standard
+When CTU CAN FD is in test mode (MODE[TSTM] = 1), SW can change all four
+ counters (REC, TEC, ERR_NORM, ERR_FD).
+ SW can set these counters via CTR_PRES register.
+ Thresholds for Error warning limit, and transition to error passive are
+ in EWL and ERP registers.
+ By default, EWL and ERP corresponds to ISO11898-1.
+ In test mode (MODE[TSTM] = 1), SW can change EWL and ERP registers.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+placement H
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\noindent
+\align center
+\begin_inset Graphics
+	filename img/FSM_fault_confinement.pdf
+	lyxscale 20
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Fault confinement
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:fault-confinement"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section
+Interrupts
+\begin_inset CommandInset label
+LatexCommand label
+name "sec:Interrupts"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+CTU CAN FD generates interrupts upon various events.
+ Each interrupt source has three parameters:
+\end_layout
+
+\begin_layout Itemize
+Interrupt mask - Set by INT_MASK_SET, cleared by INT_MASK_CLR.
+\end_layout
+
+\begin_layout Itemize
+Interrupt enable - Set by INT_ENA_SET, cleared by INT_ENA_CLR.
+\end_layout
+
+\begin_layout Itemize
+Interrupt status - Set by HW upon event occurence, cleared by writing to
+ INT_STAT.
+\end_layout
+
+\begin_layout Standard
+Figure 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:interrupts"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+ shows the relationship between interrupt parameters.
+ CTU CAN FD sets Interrupt status when a certain condition.
+ To set the Interrupt status, its corresponding bit of Interrupt mask must
+ be 0 (interrupt is unmasked).
+ If Interrupt status is set, and corresponding interrupt is enabled, Interrupt
+ is generated.
+ Interrupt status can be read from CTU CAN FD via INT_STAT register.
+ Note that when interrupt status is about to be set by HW at the same moment
+ as it is being cleared by SW, interrupt remains set (set has priority over
+ clear).
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+placement H
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\noindent
+\align center
+\begin_inset Graphics
+	filename img/Interrupt_single.pdf
+	lyxscale 20
+	scale 85
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Interrupts
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:interrupts"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsection
+Frame transmission and reception
+\end_layout
+
+\begin_layout Standard
+When CTU CAN FD transmitts CAN frame succesfully (no error frame until the
+ end of EOF), it generates TX interrupt (INT_STAT[TXI]).
+ When CTU CAN FD receives CAN frame successfully (no error frame until one
+ bit before the end of EOF), it generates RX interrupt (INT_STAT[RXI]).
+\end_layout
+
+\begin_layout Subsection
+Fault confinement
+\end_layout
+
+\begin_layout Standard
+When Transmitt error counter (TEC), or Receive error counter (REC) reach
+ value in EWL register, CTU CAN FD generates Error warning limit interrupt
+ (INT_STAT[EWLI]).
+ When Fault confinement state changes, CTU CAN FD generates Fault confinement
+ state interrupt (INT_STAT[FCSI]).
+ CTU CAN FD sets INT_STAT[FCSI] upon any Fault confinement state change
+ (even bus-off to error-active).
+\end_layout
+
+\begin_layout Subsection
+TXT buffers and RX buffer
+\end_layout
+
+\begin_layout Standard
+When Overrun occurs on RX buffer, CTU CAN FD generates data overrun interrupt
+ (INT_STAT[DOI]).
+ When RX buffer is full, CTU CAN FD generates RX buffer full interrupt (INT_STAT
+[RXFI]).
+ If RX buffer is still full after INT_STAT[RXFI] was cleared, CTU CAN FD
+ generates the interrupt again.
+ When there is at least one CAN frame stored in RX buffer, CTU CAN FD generates
+ RX buffer not empty interrupt (INT_STAT[RBNEI]).
+ When any TXT buffer moves from 
+\begin_inset Quotes eld
+\end_inset
+
+Ready
+\begin_inset Quotes erd
+\end_inset
+
+, 
+\begin_inset Quotes eld
+\end_inset
+
+TX in progress
+\begin_inset Quotes erd
+\end_inset
+
+ or 
+\begin_inset Quotes eld
+\end_inset
+
+Abort in progress
+\begin_inset Quotes erd
+\end_inset
+
+ states to any of 
+\begin_inset Quotes eld
+\end_inset
+
+TX OK
+\begin_inset Quotes erd
+\end_inset
+
+, 
+\begin_inset Quotes eld
+\end_inset
+
+Aborted
+\begin_inset Quotes erd
+\end_inset
+
+, 
+\begin_inset Quotes eld
+\end_inset
+
+TX failed
+\begin_inset Quotes erd
+\end_inset
+
+ or 
+\begin_inset Quotes eld
+\end_inset
+
+Parity Err
+\begin_inset Quotes erd
+\end_inset
+
+ states, CTU CAN FD generates TXT buffer HW change interrupt (INT_STAT[TXBHCI]).
+\end_layout
+
+\begin_layout Description
+Note The INT_STAT[TXBHCI] has a corner-case.
+ When a TXT Buffer is in 
+\begin_inset Quotes eld
+\end_inset
+
+Ready
+\begin_inset Quotes erd
+\end_inset
+
+ state, and moves to 
+\begin_inset Quotes eld
+\end_inset
+
+Aborted
+\begin_inset Quotes erd
+\end_inset
+
+ (due to SW writing TX_COMMAND[TXCA]=1), CTU CAN FD does not set INT_STAT[TXBHCI
+].
+ The meaning of INT_STAT[TXBHCI] is following: CTU CAN FD sets INT_STAT[TXBHCI]
+ when TXT Buffer changed its state due to a CAN protocol core event (error
+ frame occured on the bus, frame transmission finished, etc...).
+ Since writing TX_COMMAND[TXCA]=1 is not a CAN protocol core event (it is
+ an event caused by SW action), the INT_STAT[TXBHCI] is not set.
+\end_layout
+
+\begin_layout Subsection
+Error and Overload frame
+\end_layout
+
+\begin_layout Standard
+When CTU CAN FD starts Error frame transmission, it generates Bus error
+ interrupt (INT_STAT[BEI]).
+ When CTU CAN FD transmits overload frame, it generates Overload frame interrupt
+ (INT_STAT[OFI]).
+\end_layout
+
+\begin_layout Subsection
+Other
+\end_layout
+
+\begin_layout Standard
+When CTU CAN FD switches bit rate on CAN bus, it generates Bit rate switch
+ interrupt (INT_STAT[BSI]).
+ When CTU CAN FD looses arbitration, it generates Arbitration lost interrupt
+ (INT_STAT[ALI]).
+\end_layout
+
+\begin_layout Standard
+\begin_inset Newpage pagebreak
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section
+Fault Tolerance
+\end_layout
+
+\begin_layout Standard
+CTU CAN FD implements following fault tolerance mechanisms:
+\end_layout
+
+\begin_layout Itemize
+Parity protection on RX buffer RAM
+\end_layout
+
+\begin_layout Itemize
+Parity protection on TXT Buffer RAMs
+\end_layout
+
+\begin_layout Itemize
+TXT Buffer Backup Mode (MODE[TXBBM]).
+\end_layout
+
+\begin_layout Standard
+Following conditions must be met for these mechanisms to operate:
+\end_layout
+
+\begin_layout Itemize
+CTU CAN FD must contain support for parity protection (STATUS[SPRT]=1).
+ If STATUS[SPRT]=0, CTU CAN FD contains no parity protection (since it was
+ not synthesized with it), and this section is not applicable.
+\end_layout
+
+\begin_layout Itemize
+SW drivers sets SETTINGS[PCHKE] = 1.
+ This bit enables parity error detection.
+ SW shall modify SETTINGS[PCHKE] only when SETTINGS[ENA] = 0.
+\end_layout
+
+\begin_layout Subsection
+Parity protection on RX buffer RAM
+\end_layout
+
+\begin_layout Standard
+When CTU CAN FD stores CAN frame to RX buffer RAM, it adds single parity
+ bit to each word of RX buffer RAM.
+ When SW driver reads the frame from RX buffer RAM, it can check if parity
+ error occured in the frame by reading STATUS[RXPRE] bit.
+ If parity bit in the word read from RX buffer RAM is not equal to calculated
+ parity bit, CTU CAN FD sets STATUS[RXPRE].
+ CTU CAN FD sets STATUS[RXPRE] upon each read from RX_DATA register with
+ parity error.
+\end_layout
+
+\begin_layout Standard
+A single-event upset (SEU) in RX buffer RAM can potentially modify FRAME_FORMAT_
+W[DLC] word of a frame in RX buffer RAM.
+ Therefore SEU may hamper the length of the RX frame as seen by SW driver,
+ and thus get RX buffer into inconsistent state where SW driver has read
+ only part of a received frame.
+ In this situation, all further frames read from RX buffer would be corrupted.
+ To avoid this situation, SW driver shall use following procedure when reading
+ RX frames from RX buffer:
+\end_layout
+
+\begin_layout LyX-Code
+#define CTU_CAN_FD_BASE 0x12000000
+\end_layout
+
+\begin_layout LyX-Code
+#define STATUS_ADDR (CTU_CAN_FD_BASE + 0x8)
+\end_layout
+
+\begin_layout LyX-Code
+#define COMMAND_ADDR (CTU_CAN_FD_BASE + 0xC)
+\end_layout
+
+\begin_layout LyX-Code
+#define RX_STATUS_ADDR (CTU_CAN_FD_BASE + 0x68)
+\end_layout
+
+\begin_layout LyX-Code
+#define RX_DATA_ADDR (CTU_CAN_FD_BASE + 0x6C)
+\end_layout
+
+\begin_layout Standard
+\begin_inset Separator plain
+\end_inset
+
+
+\end_layout
+
+\begin_layout LyX-Code
+/* Read frame from RX buffer RAM, and check parity error.*/
+\end_layout
+
+\begin_layout LyX-Code
+uint8_t data[64];
+\end_layout
+
+\begin_layout LyX-Code
+uint32_t tmp;
+\end_layout
+
+\begin_layout LyX-Code
+uint32_t ffw = can_read_32(RX_DATA_ADDR);
+\end_layout
+
+\begin_layout LyX-Code
+uint32_t id = can_read_32(RX_DATA_ADDR);
+\end_layout
+
+\begin_layout LyX-Code
+uint32_t ts_l = can_read_32(RX_DATA_ADDR);
+\end_layout
+
+\begin_layout LyX-Code
+uint32_t ts_h = can_read_32(RX_DATA_ADDR);
+\end_layout
+
+\begin_layout LyX-Code
+
+\end_layout
+
+\begin_layout LyX-Code
+/* If Parity error is in FRAME_FORMAT_W, RWCNT might be unreliable.
+ */
+\end_layout
+
+\begin_layout LyX-Code
+if (can_read_32(STATUS_ADDR) >> 10) & 0x1)
+\end_layout
+
+\begin_deeper
+\begin_layout LyX-Code
+goto rx_buffer_flush;
+\end_layout
+
+\end_deeper
+\begin_layout Standard
+\begin_inset Separator plain
+\end_inset
+
+
+\end_layout
+
+\begin_layout LyX-Code
+uint32_t rwcnt = (ffw >> 11) & 0x1F;
+\end_layout
+
+\begin_layout LyX-Code
+for(int i = 0; i < rwcnt - 3; i++){
+\end_layout
+
+\begin_layout LyX-Code
+    tmp = can_read_32(RX_DATA_ADDR);
+\end_layout
+
+\begin_layout LyX-Code
+    data[i*4] = tmp & 0xFF;
+\end_layout
+
+\begin_layout LyX-Code
+    data[i*4+1] = (tmp >> 8) & 0xFF;
+\end_layout
+
+\begin_layout LyX-Code
+    data[i*4+2] = (tmp >> 16) & 0xFF;
+\end_layout
+
+\begin_layout LyX-Code
+    data[i*4+3] = (tmp >> 24) & 0xFF;
+\end_layout
+
+\begin_deeper
+\begin_layout LyX-Code
+if (can_read_32(STATUS_ADDR) >> 10) & 0x1)
+\end_layout
+
+\begin_deeper
+\begin_layout LyX-Code
+goto parity_err_handler;
+\end_layout
+
+\end_deeper
+\end_deeper
+\begin_layout LyX-Code
+}
+\end_layout
+
+\begin_layout LyX-Code
+
+\end_layout
+
+\begin_layout LyX-Code
+return RX_FRAME_READ_OK;
+\end_layout
+
+\begin_layout Standard
+\begin_inset Separator plain
+\end_inset
+
+
+\end_layout
+
+\begin_layout LyX-Code
+/* Read out corrupted RX frame until start of new frame.
+ */
+\end_layout
+
+\begin_layout LyX-Code
+parity_err_handler:
+\end_layout
+
+\begin_deeper
+\begin_layout LyX-Code
+int i=0;
+\end_layout
+
+\begin_layout LyX-Code
+while (i < 16) {
+\end_layout
+
+\begin_deeper
+\begin_layout LyX-Code
+if (((can_read_32(RX_STATUS_ADDR) >> 2) & 0x1) == 0){
+\end_layout
+
+\begin_deeper
+\begin_layout LyX-Code
+can_write_32(COMMAND_ADDR, 0x200);
+\end_layout
+
+\begin_layout LyX-Code
+return RX_FRAME_DROPPED;
+\end_layout
+
+\end_deeper
+\begin_layout LyX-Code
+}
+\end_layout
+
+\begin_layout LyX-Code
+i++;
+\end_layout
+
+\begin_layout LyX-Code
+can_read_32(RX_DATA_ADDR);
+\end_layout
+
+\end_deeper
+\begin_layout LyX-Code
+}
+\end_layout
+
+\end_deeper
+\begin_layout LyX-Code
+/* If we get here, there is a danger that RX buffer is not in consistent
+ state.
+ */
+\end_layout
+
+\begin_layout LyX-Code
+rx_buffer_flush:
+\end_layout
+
+\begin_deeper
+\begin_layout LyX-Code
+
+\end_layout
+
+\begin_layout LyX-Code
+can_write_32(COMMAND_ADDR, 0x202);
+\end_layout
+
+\begin_layout LyX-Code
+return RX_BUFFER_RESET;
+\end_layout
+
+\end_deeper
+\begin_layout Description
+Note The example above assumes that RX buffer is read in Automatic mode
+ (MODE[RXBAM]=1).
+ However, if single word from RX buffer is read via e.g.
+ 4 x 8-bit accesses in MODE[RXBAM]=0, CTU CAN FD sets STATUS[RXPE] upon
+ each read from a RX_DATA which contains parity error.
+\end_layout
+
+\begin_layout Description
+Note Writing COMMAND[CRXPE]=1 by SW clears STATUS[RXPE] bit.
+\end_layout
+
+\begin_layout Description
+Note When SETTINGS[PCHKE] = 0, CTU CAN FD ignores parity error detected
+ in RX buffer (STATUS[RXPE] is not set, and COMMAND[CRXPE] has no effect).
+\end_layout
+
+\begin_layout Description
+Note When writing RX buffer RAM via Test Registers (see 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "subsec:Memory-testability"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+), parity bit of corresponding word of RX buffer RAM is not updated.
+ See 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "subsec:Parity-protection-testing"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsection
+Parity protection on TXT Buffer RAMs
+\begin_inset CommandInset label
+LatexCommand label
+name "subsec:Parity-protection-on"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+When SW stores a CAN frame to TXT Buffer, CTU CAN FD appends a parity bit
+ to each word in the TXT Buffer RAM.
+ When CTU CAN FD attempts to transmit a frame from TXT Buffer where the
+ frame contains a bit flip, CTU CAN FD behaves like so:
+\end_layout
+
+\begin_layout Enumerate
+If CTU CAN FD detects parity error in FRAME_FORMAT_W, IDENTIFIER_W, TIMESTAMP_U_
+W or TIMESTAMP_L_W it does not attempt to transmit the CAN Frame.
+\end_layout
+
+\begin_layout Enumerate
+If CTU CAN FD does not detect parity error in any of TXT Buffer words mentioned
+ in previous point, it attempts to transmit the CAN Frame.
+\end_layout
+
+\begin_layout Enumerate
+If CTU CAN FD detects parity error in any of DATA_1_4_W - DATA_61_64_W words
+ during transmission of CAN frame, CTU CAN FD starts transmitting an error
+ frame.
+\end_layout
+
+\begin_layout Standard
+If CTU CAN FD detects a parity error in TXT Buffer RAM as described in Steps
+ 1 or 3, the TXT Buffer moves to 
+\begin_inset Quotes eld
+\end_inset
+
+Parity Error
+\begin_inset Quotes erd
+\end_inset
+
+ state as shown in 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:txt-buffer-user"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+, and CTU CAN FD sets STATUS[TXPE] bit.
+\end_layout
+
+\begin_layout Description
+Note If CTU CAN FD detects a parity error in TXT Buffer, SW shall write
+ the whole CAN frame to TXT Buffer again before it attempts to use it for
+ further transmissions.
+\end_layout
+
+\begin_layout Description
+Note To clear STATUS[TXPE] bit, SW shall write COMMAND[CTXPE]=1.
+\end_layout
+
+\begin_layout Description
+Note When SETTINGS[PCHKE]=0, CTU CAN FD ignores parity errors detected in
+ TXT buffers (STATUS[TXPE] is not set, COMMAND[CTXPE] has no effect, and
+ TXT Buffers never move to Parity Error state).
+ 
+\end_layout
+
+\begin_layout Description
+Note When SW writes TXT Buffer RAM via Test Registers (see 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "subsec:Memory-testability"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+), parity bit of corresponding word in TXT Buffer RAM is not updated.
+ See 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "subsec:Parity-protection-testing"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Description
+Note CTU CAN FD does not detect parity errors in FRAME_TEST_W.
+ Purpose of FRAME_TEST_W is to intentionally corrupt transmitted frame (e.g.
+ for testing of error scenarios on CAN bus).
+ Such feature is most likely not usefull in applications which require parity
+ protection (high reliability application which aim for fault tolerance).
+\end_layout
+
+\begin_layout Subsection
+TXT Buffer Backup mode
+\begin_inset CommandInset label
+LatexCommand label
+name "subsec:TXT-Buffer-Backup"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+When MODE[TXBBM]=1, CTU CAN FD operates in TXT Buffer Backup mode.
+ In TXT Buffer Backup mode, TXT Buffers with adjacent indices form pairs
+ (e.g.
+ if TXTB_INFO[TXT_BUFFER_COUNT]=8 (CTU CAN FD contains 8 TXT Buffers) there
+ are 4 TXT Buffer pairs: 1-2, 3-4, 5-6, 7-8) as is shown in Figure 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:txt-buffer-pairs"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+placement H
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\noindent
+\align center
+\begin_inset Graphics
+	filename img/TXT_buffer_pairs.pdf
+	lyxscale 20
+	scale 90
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+TXT Buffer pairs
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:txt-buffer-pairs"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Operation of CTU CAN FD in TXT Buffer Backup mode provides additional fault
+ tolerance since TXT Buffer with higher index within TXT Buffer pair serves
+ as 
+\begin_inset Quotes eld
+\end_inset
+
+backup
+\begin_inset Quotes erd
+\end_inset
+
+ in case of parity error in 
+\begin_inset Quotes eld
+\end_inset
+
+original
+\begin_inset Quotes erd
+\end_inset
+
+ TXT Buffer.
+ The operation of CTU CAN FD in TXT Buffer Backup mode is shown in Figure
+ 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:txt-buffer-backup-mode"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+ and explained in this section.
+\end_layout
+
+\begin_layout Standard
+When MODE[TXBBM]=1, and CTU CAN FD detects a parity error in 
+\begin_inset Quotes eld
+\end_inset
+
+original
+\begin_inset Quotes erd
+\end_inset
+
+ TXT Buffer RAM, such TXT Buffer moves to 
+\begin_inset Quotes eld
+\end_inset
+
+Parity Error
+\begin_inset Quotes erd
+\end_inset
+
+ state, and CTU CAN FD attempts to transmit frame from its 
+\begin_inset Quotes eld
+\end_inset
+
+backup
+\begin_inset Quotes erd
+\end_inset
+
+ TXT Buffer (e.g.
+ if CTU CAN FD detects parity error in TXT Buffer 3, it attempts to transmit
+ a frame from TXT Buffer 4).
+ If CTU CAN FD succesfully transmits a frame from 
+\begin_inset Quotes eld
+\end_inset
+
+original
+\begin_inset Quotes erd
+\end_inset
+
+ TXT Buffer, its 
+\begin_inset Quotes eld
+\end_inset
+
+backup
+\begin_inset Quotes erd
+\end_inset
+
+ Buffer moves to 
+\begin_inset Quotes eld
+\end_inset
+
+Aborted
+\begin_inset Quotes erd
+\end_inset
+
+ state (CTU CAN FD does not transmit frame in the 
+\begin_inset Quotes eld
+\end_inset
+
+backup
+\begin_inset Quotes erd
+\end_inset
+
+ TXT Buffer).
+\end_layout
+
+\begin_layout Standard
+When CTU CAN FD is transmitting a frame from a 
+\begin_inset Quotes eld
+\end_inset
+
+backup
+\begin_inset Quotes erd
+\end_inset
+
+ TXT Buffer due to parity error in 
+\begin_inset Quotes eld
+\end_inset
+
+original
+\begin_inset Quotes erd
+\end_inset
+
+ TXT Buffer, and it detects parity error also in 
+\begin_inset Quotes eld
+\end_inset
+
+backup
+\begin_inset Quotes erd
+\end_inset
+
+ TXT Buffer RAM, CTU CAN FD sets STATUS[TXDPE] bit (Double parity error).
+\end_layout
+
+\begin_layout Standard
+When CTU CAN FD operates in TXT Buffer Backup mode, SW control of TXT Buffers
+ has following differences compared to MODE[TXBBM]=0 scenario:
+\end_layout
+
+\begin_layout Itemize
+Priorities of both TXT Buffers within TXT Buffer pair are equal, and they
+ are given by TX_PRIORITY[TX*P] of 
+\begin_inset Quotes eld
+\end_inset
+
+original
+\begin_inset Quotes erd
+\end_inset
+
+ TXT Buffer (e.g.
+ priority of TXT Buffers 1 and 2 is given by TX_PRIORITY[TX1P], and TX_PRIORITY[
+TX2P] has no effect).
+\end_layout
+
+\begin_layout Itemize
+CTU CAN FD automatically applies commands issued by SW to each 
+\begin_inset Quotes eld
+\end_inset
+
+original
+\begin_inset Quotes erd
+\end_inset
+
+ TXT Buffer also to its corresponding 
+\begin_inset Quotes eld
+\end_inset
+
+backup
+\begin_inset Quotes erd
+\end_inset
+
+ TXT buffer (e.g.
+ if SW gives command to TXT Buffer 1 (TX_COMMAND[TXB1] = 1), CTU CAN FD
+ automatically applies it also to TXT Buffer 2).
+\end_layout
+
+\begin_layout Standard
+It is assumed that SW stores equal CAN frames to both TXT Buffers from TXT
+ Buffer pair when attempting to send CAN frame.
+ In such case, the effect of TXT Buffer Backup mode is following: If parity
+ error occurs in 
+\begin_inset Quotes eld
+\end_inset
+
+original
+\begin_inset Quotes erd
+\end_inset
+
+ TXT Buffer RAM, the same frame is transmitted from 
+\begin_inset Quotes eld
+\end_inset
+
+backup
+\begin_inset Quotes erd
+\end_inset
+
+ TXT buffer.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+placement H
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\noindent
+\align center
+\begin_inset Graphics
+	filename img/TXT_Buffer_Backup_mode.pdf
+	lyxscale 20
+	scale 70
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Operation in TXT Buffer Backup Mode
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:txt-buffer-backup-mode"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Description
+Note Storing equal frames to both TXT Buffers by separate memory accesses
+ is intended by design.
+ CTU CAN FD does not automatically store this frame to both TXT Buffers
+ to avoid effect of potential SEU in the moment of storing the frame to
+ TXT Buffer.
+ If such SEU occured, it could happend that frame is stored to both TXT
+ Buffers with parity error already in it.
+\end_layout
+
+\begin_layout Description
+Note SW does not necessarily need to store equal frames to both TXT Buffers
+ from a TXT Buffer pair.
+ It may simply store any frame which shall be transmitted if parity error
+ occurs in 
+\begin_inset Quotes eld
+\end_inset
+
+original
+\begin_inset Quotes erd
+\end_inset
+
+ TXT Buffer to 
+\begin_inset Quotes eld
+\end_inset
+
+backup
+\begin_inset Quotes erd
+\end_inset
+
+ TXT Buffer.
+\end_layout
+
+\begin_layout Description
+Note SW shall set MODE[TXBBM] = 1 together with SETTINGS[PCHKE] = 1.
+ If MODE[TXBBM] = 1 together with SETTINGS[PCHKE] = 0, CTU CAN FD ignores
+ parity errors in 
+\begin_inset Quotes eld
+\end_inset
+
+original
+\begin_inset Quotes erd
+\end_inset
+
+ TXT Buffers and never transmits frame from 
+\begin_inset Quotes eld
+\end_inset
+
+backup
+\begin_inset Quotes erd
+\end_inset
+
+ TXT Buffers.
+\end_layout
+
+\begin_layout Description
+Note If CTU CAN FD detects parity error in 
+\begin_inset Quotes eld
+\end_inset
+
+original
+\begin_inset Quotes erd
+\end_inset
+
+ TXT Buffer during CAN frame transmission, and another TXT Buffer with Higher
+ priority than currently selected TXT buffer pair moved to Ready state (due
+ to SW issuing Set Ready command), CTU CAN FD will attempt to transmit frame
+ from higher priority TXT Buffer during next transmission (ignoring 
+\begin_inset Quotes eld
+\end_inset
+
+backup
+\begin_inset Quotes erd
+\end_inset
+
+ TXT Buffer).
+\end_layout
+
+\begin_layout Description
+Note TXT Buffer Backup mode is supported only when CTU CAN FD contains even
+ number of TXT Buffers.
+ If CTU CAN FD contains odd number of TXT Buffers, there exists one TXT
+ Buffer which has no 
+\begin_inset Quotes eld
+\end_inset
+
+backup
+\begin_inset Quotes erd
+\end_inset
+
+ buffer.
+ In such case SW shall not use this spare 
+\begin_inset Quotes eld
+\end_inset
+
+original
+\begin_inset Quotes erd
+\end_inset
+
+ TXT Buffer when MODE[TXBBM] = 1.
+ If this TXT Buffer is available used when MODE[TXBBM], behavior of CTU
+ CAN FD is undefined.
+\end_layout
+
+\begin_layout Subsection
+Parity protection testing
+\begin_inset CommandInset label
+LatexCommand label
+name "subsec:Parity-protection-testing"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+When Test registers memory region (see Section 3) is present in CTU CAN
+ FD (STATUS[STRGS] = 1), write to TXT Buffer / RX buffer RAMs via this memory
+ region does not update parity bit value stored in each memory word of TXT
+ Buffer / RX buffer RAMs.
+ This allows on-chip verification of parity detection capabilites on both
+ TXT Buffer / RX buffer RAMs.
+ Following sequence checks parity detection capabilities on RX buffer RAM:
+\end_layout
+
+\begin_layout Enumerate
+CTU CAN FD receives CAN frame to RX buffer RAM.
+\end_layout
+
+\begin_layout Enumerate
+SW reads RX buffer RAM memory via Test Registers memory region (reffer to
+ 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "key-1"
+literal "false"
+
+\end_inset
+
+ for details of such procedure).
+\end_layout
+
+\begin_layout Enumerate
+SW modifies a bit in a memory word of CAN frame read in previous step, and
+ stores such modified frame back to RX buffer RAM via Test Registers memory
+ region.
+\end_layout
+
+\begin_layout Enumerate
+SW reads a frame from RX buffer via RX_DATA register, and then reads STATUS[RXPE
+].
+ If STATUS[RXPE] = 1, then parity error detection mechanism on RX buffer
+ RAM works correctly.
+\end_layout
+
+\begin_layout Standard
+Following sequence checks parity detection capabilities of TXT Buffer RAM:
+\end_layout
+
+\begin_layout Enumerate
+SW inserts CAN frame to TXT Buffer.
+\end_layout
+
+\begin_layout Enumerate
+SW reads the frame via Test Registers memory region, modifies a bit in random
+ word, and stores back such word via Test Registers memory region.
+\end_layout
+
+\begin_layout Enumerate
+SW sends 
+\series bold
+Set ready
+\series default
+ (via TX_COMMAND register) command to a TXT Buffer where CAN frame was stored
+ in previous two steps.
+\end_layout
+
+\begin_layout Enumerate
+CTU CAN FD attempts to transmit a frame from this TXT Buffer (assuming no
+ other TXT Buffer is in 
+\begin_inset Quotes eld
+\end_inset
+
+Ready
+\begin_inset Quotes erd
+\end_inset
+
+ state).
+ When reading a memory word which contains bit-flip, CTU CAN FD sends error
+ frame, and sets STATUS[TXPE]=1.
+\end_layout
+
+\begin_layout Enumerate
+SW reads STATUS[TXPE].
+ If yes STATUS[TXPE]=1, parity detection mechanism on TXT Buffer RAM works
+ correctly.
+\end_layout
+
+\begin_layout Description
+Note When SW flips a random bit in TXT Buffer RAM, it must flip a bit in
+ memory words which will be read by CTU CAN FD when it attempts to transmit
+ the frame.
+ E.g.
+ if SW flips a bit in DATA_61_64_W, but inserted CAN frame only contains
+ 8 data bytes (FRAME_FORMAT_W[DLC]=1000), CTU CAN FD will not attempt to
+ read DATA_61_64_W word from TXT Buffer RAM (it will only read DATA_1_4_W
+ and DATA_5_8_W), and therefore it will not set STATUS[TXPE] bit.
+\end_layout
+
+\begin_layout Description
+Note When accessing RX buffer / TXT Buffer RAMs via Test Registers Memory
+ region, TSTCTRL[TMENA] (test access enable bit) must be set only when the
+ access is executed, not during operation of the core.
+ Typically, such access consists of:
+\end_layout
+
+\begin_layout Enumerate
+Set TSTCTRL[TMENA]=1.
+\end_layout
+
+\begin_layout Enumerate
+Read / Write RX buffer / TXT Buffer RAM via TST_DEST, TST_WDATA, TSTCTRL,
+ TST_RDATA registers.
+\end_layout
+
+\begin_layout Enumerate
+Set TSTCTRL[TMENA]=0.
+\end_layout
+
+\begin_layout Section
+Special modes
+\end_layout
+
+\begin_layout Subsection
+Loopback mode
+\end_layout
+
+\begin_layout Standard
+In Loopback mode, CTU CAN FD stores every transmitted CAN frame to RX buffer.
+ Such frame is called Loopback frame.
+ Altough CTU CAN FD receives Loopback frame to RX buffer, CTU CAN FD still
+ acts as a transmitter, therefore it does not acknowledge the Loopback frame
+ on CAN bus.
+ To sucesfully transmit Loopback frame, at least one of conditions shall
+ be valid:
+\end_layout
+
+\begin_layout Itemize
+The frame shall be acknowledged by other node on CAN bus.
+\end_layout
+
+\begin_layout Itemize
+CTU CAN FD shall operate in Self-Acknowledge mode (MODE[SAM]=1).
+\end_layout
+
+\begin_layout Standard
+A Loopback frame differs from CAN frame received on the CAN bus in:
+\end_layout
+
+\begin_layout Itemize
+FRAME_FORMAT_W[LBPF]=1 - Indicates the frame is a Loopback frame
+\end_layout
+
+\begin_layout Itemize
+FRAME_FORMAT_W[LBTBI] - Contains index of TXT Buffer used to transmit the
+ Loopback frame.
+ This field is reserved when FRAME_FORMAT_W[LBPF]=0.
+\end_layout
+
+\begin_layout Description
+Note Loopback frame is a 
+\begin_inset Quotes eld
+\end_inset
+
+regular CAN frame
+\begin_inset Quotes erd
+\end_inset
+
+ in context of RX buffer frame types (see.
+ 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "sec:CAN-frame-reception"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+).
+\end_layout
+
+\begin_layout Description
+Note The frame filtering applies also on loopback frames.
+\end_layout
+
+\begin_layout Standard
+Loopback mode is enabled when SETTINGS[ILBP]=1.
+ SW shall modify SETTINGS[ILBP] only when CTU CAN FD is disabled (SETTINGS[ENA]
+ = 0).
+\end_layout
+
+\begin_layout Subsection
+Self test mode
+\end_layout
+
+\begin_layout Standard
+In Self test mode, CTU CAN FD considers transmitted frame valid even if
+ does not receive dominant bit during ACK slot.
+ SW can use this mode together with Loopback mode to verify operation of
+ CTU CAN FD when it is a single node on a bus.
+ SW enables Self test mode by setting MODE[STM]=1.
+ SW shall modify MODE[STM] only when CTU CAN FD is disabled (SETTINGS[ENA]
+ = 0).
+\end_layout
+
+\begin_layout Subsection
+Acknowledge forbidden mode
+\end_layout
+
+\begin_layout Standard
+When Acknowledge forbidden mode is enabled, CTU CAN FD receiving CAN frame
+ does not transmitt dominant bit during ACK slot even if received CRC matches
+ calculated CRC.
+ SW can enable Acknowledge forbidden mode by setting MODE[ACF] = 1.
+ SW shall modify MODE[ACF] only when CTU CAN FD is disabled (SETTINGS[ENA]
+ = 0).
+\end_layout
+
+\begin_layout Subsection
+Self acknowledge mode
+\end_layout
+
+\begin_layout Standard
+When Self acknowledge mode is enabled, CTU CAN FD sends dominant ACK bit
+ even when it transmitts CAN frame and it receives CRC matching to computed
+ CRC.
+ Self acknowledge mode is enabled when MODE[SAM] = 1.
+ MODE[SAM] shall be modified only when SETTINGS[ENA] = 0.
+\end_layout
+
+\begin_layout Subsection
+Bus monitoring mode
+\end_layout
+
+\begin_layout Standard
+In Bus monitoring mode, CTU CAN FD does not transmit any frames, it only
+ receives CAN frames.
+ If SW inserted CAN frame to a TXT buffer and issued 
+\series bold
+Set ready
+\series default
+, CTU CAN FD will not transmitt the frame, and TXT buffer will immediately
+ move to 
+\begin_inset Quotes eld
+\end_inset
+
+TX failed
+\begin_inset Quotes erd
+\end_inset
+
+ state.
+ In Bus monitoring mode, CTU CAN FD does not transmit any dominant bit to
+ the bus.
+ If dominant bit is about to be transmitted to the bus (e.g.
+ ACK or error frame), it is re-routed internally so that CTU CAN FD receives
+ this bit, but other nodes on CAN bus do not see this dominant bit.
+ To enable Bus monitoring mode, SW shall write MODE[BMM] = 1.
+ SW shall modify MODE[BMM] only when CTU CAN FD is disabled (SETTINGS[ENA]
+ = 0).
+\end_layout
+
+\begin_layout Subsection
+Restricted operation mode
+\end_layout
+
+\begin_layout Standard
+In Restricted operation mode, CTU CAN FD is able to receive frames on CAN
+ bus, but it does not transmit any frames.
+ If SW inserts CAN frame to a TXT buffer and issyes 
+\series bold
+Set ready
+\series default
+ command, CTU CAN FD will not transmitt the frame, and TXT buffer will immediate
+ly move to 
+\begin_inset Quotes eld
+\end_inset
+
+TX failed
+\begin_inset Quotes erd
+\end_inset
+
+ state.
+ In Restricted operation mode, CTU CAN FD gives ACK to valid frames, but
+ it does not send Error frames nor Overload frames.
+ If CTU CAN FD detects Error or Overload condition, it enters bus integration
+ state, and waits until it monitors 11 consecutive recessive bits on the
+ bus.
+ CTU CAN FD does not modify REC and TEC counters in Restricted operation
+ mode, therefore CTU CAN FD will always stay Error active.
+ SW can enable Restricted operation mode by setting MODE[ROM] = 1.
+ SW shall modify MODE[ROM] only when CTU CAN FD is disabled (SETTINGS[ENA]
+ = 0).
+\end_layout
+
+\begin_layout Subsection
+Test mode
+\end_layout
+
+\begin_layout Standard
+To enable a Test mode, SW shall write MODE[TSTM] = 1.
+ In Test mode, CTU CAN FD has the following features:
+\end_layout
+
+\begin_layout Itemize
+ERP register is writable, therefore threshold for transition from error-active
+ to error-passive state is configurable.
+\end_layout
+
+\begin_layout Itemize
+EWL register is writable, therefore threshold for generating Error warning
+ limit interrupt (INT[EWLI]) is configurable.
+\end_layout
+
+\begin_layout Itemize
+CTR_PRES register is writable, therefore all error counters can be modified
+ by SW driver.
+\end_layout
+
+\begin_layout Itemize
+CTU CAN FD corrupts transmitted CAN frame baesd on FRAME_TEST_W value from
+ TXT buffer.
+ 
+\end_layout
+
+\begin_layout Description
+Note Test mode shall be used for debugging / development purpose only (e.g.
+ testing of higher layers behavior during error-passive state).
+ SW shall not use Test Mode during regular operation of CTU CAN FD.
+\end_layout
+
+\begin_layout Section
+Corrupting transmitted CAN frames
+\end_layout
+
+\begin_layout Standard
+CTU CAN FD provides following means for corrupting/modifying transmitted
+ CAN frame:
+\end_layout
+
+\begin_layout Itemize
+Invert a bit of CRC field.
+\end_layout
+
+\begin_layout Itemize
+Invert a bit of Stuff count field or Stuff Parity field.
+\end_layout
+
+\begin_layout Itemize
+Replace DLC with arbitrary value.
+\end_layout
+
+\begin_layout Standard
+All features for corrupting transmitted CAN frames are configured per each
+ transmitted frame in FRAME_TEST_W memory word in TXT Buffer, details are
+ explained in following subsections.
+ These features are available only in Test mode (MODE[TSTM]=1).
+ If MODE[TSTM]=0 , CTU CAN FD ignores this configuration, and transmitts
+ uncorrupted frames.
+ If CTU CAN FD is a receiver of a frame, it does not corrupt the frame.
+ Therefore CTU CAN FD does not corrupt frames transmitted by other CAN nodes
+ on the network.
+\end_layout
+
+\begin_layout Description
+Note Corrupting a bit, or replacing a bit field with alternative value applies
+ before bit-stuffing, therefore effect of flipping the bit may alternate
+ length of the frame due to additional/removed stuff bit.
+\end_layout
+
+\begin_layout Description
+Note To repeat transmission of a frame multiple times with corrupted bit,
+ use standard 
+\begin_inset Quotes eld
+\end_inset
+
+Retransmit limitation
+\begin_inset Quotes erd
+\end_inset
+
+ mechanism, reffer to 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "tab:retransmitt-counter-configurations"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Description
+Note FRAME_TEST_W word of CAN frame is present only in TXT Buffers, it does
+ not exist in RX buffer (longest CAN frame in RX buffer still has 20 words,
+ not 21).
+\end_layout
+
+\begin_layout Subsection
+Flip a bit of CRC field
+\end_layout
+
+\begin_layout Standard
+When FRAME_TEST_W[FCRC] = 1, CTU CAN FD transmitts inverted bit at CRC field
+ bit position given by FRAME_TEST_W[TPRM].
+ E.g.
+ :
+\end_layout
+
+\begin_layout Itemize
+FRAME_TEST_W[TPRM] = 0x0 -> Bit at position 0 in CRC field (first bit of
+ CRC field) is transmitted with opposite value.
+\end_layout
+
+\begin_layout Itemize
+FRAME_TEST_W[TPRM] = 0xE -> Bit at position 14 in CRC field (15-th bit of
+ CRC filed) is transmitted with opposite value.
+\end_layout
+
+\begin_layout Description
+Note If FRAME_TEST_W[FIND] is bigger than length of CRC field, no bit is
+ flipped.
+\end_layout
+
+\begin_layout Subsection
+Flip a bit of Stuff count field
+\end_layout
+
+\begin_layout Standard
+When FRAME_TEST_W[FSTC] = 1, CTU CAN FD transmitts inverted bit at Stuf
+ count field bit position given by FRAME_TEST_W[TPRM].
+ E.g.
+ :
+\end_layout
+
+\begin_layout Itemize
+FRAME_FORMAT_W[TPRM] = 0x0 -> First bit of Stuff count field is transmitted
+ with opposite value.
+\end_layout
+
+\begin_layout Itemize
+FRAME_FORMAT_W[TPRM] = 0x2 -> Third bit of Stuff count field is transmitted
+ with opposite value.
+\end_layout
+
+\begin_layout Itemize
+FRAME_FORMAT_W[TPRM] = 0x3 -> Stuff Parity bit is transmitted with opposite
+ value.
+\end_layout
+
+\begin_layout Subsection
+Replace DLC with arbitrary value
+\end_layout
+
+\begin_layout Standard
+When FRAME_TEST_W[SDLC] = 1, CTU CAN FD transmitts FRAME_TEST_W[CPRM][3:0]
+ bits instead of 
+\begin_inset Newline newline
+\end_inset
+
+FRAME_TEST_W[DLC] in Data Length Code field of CAN frame.
+ Number of data bytes transmitted is still derived from FRAME_TEST_W[DLC]
+ field.
+\end_layout
+
+\begin_layout Description
+Note CRC transmitted is calculated from FRAME_TEST_W[TPRM] (swapped value).
+\end_layout
+
+\begin_layout Section
+Other features
+\end_layout
+
+\begin_layout Subsection
+Error code capture
+\end_layout
+
+\begin_layout Standard
+An Error code capture register stores type, and position of last error on
+ CAN bus which caused transmission of an error frame.
+ CTU CAN FD updates Error code capture in sample point of a bit where it
+ detected the error.
+ SW can read Error code capture from ERR_CAPT.
+ CAN FD standard does not define types of errors as mutually exclusive.
+ For example, a bit error and stuff error may occur at the same time when
+ transmitted stuff bit value is corrupted to opposite value.
+ In such case, Error code capture stores only one type of error with highest
+ priority.
+ Priorities of error types are defined as (Form error having the highest
+ priority):
+\end_layout
+
+\begin_layout Standard
+\noindent
+\align center
+\begin_inset Tabular
+<lyxtabular version="3" rows="2" columns="6">
+<features tabularvalignment="middle">
+<column alignment="center" valignment="top">
+<column alignment="center" valignment="top">
+<column alignment="center" valignment="top">
+<column alignment="center" valignment="top">
+<column alignment="center" valignment="top">
+<column alignment="center" valignment="top" width="0pt">
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Priority 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+cellcolor{gray}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+1
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+2
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+3
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+4
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+5
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Error type 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+cellcolor{gray}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Form error
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Bit error
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+CRC error
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+ACK error
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Stuff error
+\end_layout
+
+\end_inset
+</cell>
+</row>
+</lyxtabular>
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Description
+Note CTU CAN FD reports Stuff error which occured during fixed bit stuffing
+ method of CAN FD frame as Form error in Error code capture register.
+\end_layout
+
+\begin_layout Description
+Note There is an exception to above mentioned error priority order.
+ If CTU CAN FD sends dominant stuff bit during arbitration field, and samples
+ recessive value, then Error code capture register stores Stuff error, not
+ Bit error.
+\end_layout
+
+\begin_layout Subsection
+Arbitration lost capture
+\end_layout
+
+\begin_layout Standard
+Arbitration lost capture register (ALC) stores bit position within CAN arbitrati
+on field where CTU CAN FD last time lost arbitration.
+\end_layout
+
+\begin_layout Subsection
+Traffic counters
+\end_layout
+
+\begin_layout Standard
+CTU CAN FD can measure number of CAN frames transmitted/received on CAN
+ bus.
+ Upon every succesfully transmitted CAN frame, CTU CAN FD increments TX_COUNTER
+ register by 1.
+ Upon every successfully received CAN frame, CTU CAN FD increments RX_COUNTER
+ register by 1.
+ To clear the TX_COUNTER register, SW shall write COMMAND[TXFCRST]=1.
+ To clear the RX_COUNTER register, SW shall write COMMAND[RXFCRST]=1.
+ When CTU CAN FD is in Loopback mode, and it stores own transmitted frame
+ to RX buffer, CTU CAN FD also increments RX_COUNTER.
+ Traffic counters are optional in CTU CAN FD.
+ To check if traffic counters are available, SW shall read STATUS[STCNT]
+ bit.
+\end_layout
+
+\begin_layout Subsection
+Debug register
+\end_layout
+
+\begin_layout Standard
+CTU CAN FD contains a debug register (DEBUG_REGISTER) that directly reflects
+ part/field of CAN frame which is currently being transmitted / received.
+\end_layout
+
+\begin_layout Subsection
+Memory testability
+\begin_inset CommandInset label
+LatexCommand label
+name "subsec:Memory-testability"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+CTU CAN FD supports manufacturing testability of its internal memories (TXT
+ buffer RAMs and RX buffer RAM) via Test Registers memory region.
+ For details on memory testing reffer to 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "key-1"
+literal "false"
+
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Standard
+\begin_inset CommandInset include
+LatexCommand include
+filename "ctu_can_fd_register_map.lyx"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset CommandInset include
+LatexCommand include
+filename "ctu_can_fd_frame_format.lyx"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Bibliography
+\begin_inset CommandInset bibitem
+LatexCommand bibitem
+key "key-1"
+
+\end_inset
+
+CTU CAN FD, System architecture.
+\end_layout
+
+\end_body
+\end_document

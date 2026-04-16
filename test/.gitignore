@@ -1,8 +1,4 @@
-*.gcda
-*.gcno
-/build
-/code_html
-code_coverage.info
-/work
+/vunit_out
+/wave_files
 test*.xml
 callgrind.out.*

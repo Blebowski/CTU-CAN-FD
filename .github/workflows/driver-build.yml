@@ -1,0 +1,32 @@
+name: Driver Build
+
+on: [pull_request]
+
+jobs:
+
+  Sanity_test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: "Checkout repository"
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+          submodules: 'recursive'
+
+      - name: Install Kernel Headers on Runner
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y linux-headers-$(uname -r) build-essential
+
+      - name: "Build Basic driver"
+        run: |
+          cd driver
+          P= make -j`nproc`
+
+      - name: "Build Linux driver"
+        run: |
+          cd driver/linux
+          make -j`nproc`
+
+# make -C /lib/modules/$(uname -r)/build M=$PWD EXTRA_CFLAGS="-DCONFIG_CAN_FD -I/usr/src/linux-headers-$(uname -r)/include"
