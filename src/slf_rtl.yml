@@ -18,7 +18,6 @@ source_list:
     - file: common_blocks/shift_reg_preload.vhd
     - file: common_blocks/sig_sync.vhd
     - file: common_blocks/dlc_decoder.vhd
-    - file: common_blocks/endian_swapper.vhd
     - file: common_blocks/dff_arst_ce.vhd
     - file: common_blocks/parity_calculator.vhd
     - file: common_blocks/rst_sync.vhd

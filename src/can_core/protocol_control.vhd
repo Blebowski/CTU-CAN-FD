@@ -441,9 +441,6 @@ end entity;
 
 architecture rtl of protocol_control is
 
-    -- TXT Buffer word (endianity swapped)
-    signal tran_word_swapped        :     std_logic_vector(31 downto 0);
-
     -- Error frame request
     signal err_frm_req              :     std_logic;
 
@@ -584,20 +581,6 @@ architecture rtl of protocol_control is
     signal pc_dbg_i                :      t_protocol_control_dbg;
 
 begin
-
-    -----------------------------------------------------------------------------------------------
-    -- TX Data word endian swapper
-    -----------------------------------------------------------------------------------------------
-    endian_swapper_tx_inst : entity ctu_can_fd_rtl.endian_swapper
-    generic map(
-        G_SWAP_GEN              => true,
-        G_WORD_SIZE             => 4,                       -- Number of Groups
-        G_GROUP_SIZE            => 8                        -- Group size (bits)
-    )
-    port map(
-        input                   => tran_word,               -- IN
-        output                  => tran_word_swapped        -- OUT
-    );
 
     -----------------------------------------------------------------------------------------------
     -- Protocol control FSM
@@ -924,7 +907,7 @@ begin
         bst_ctr                 => bst_ctr,                 -- IN
         tran_identifier         => tran_identifier,         -- IN
         tran_frame_test         => tran_frame_test,         -- IN
-        tran_word_swapped       => tran_word_swapped,       -- IN
+        tran_word               => tran_word,               -- IN
         tran_dlc                => tran_dlc                 -- IN
     );
 

@@ -901,7 +901,7 @@ begin
         if (res_n = '0') then
             rx_parity_error <= '0';
         elsif (rising_edge(clk_sys)) then
-            if (read_attempt = '1' and rx_parity_mismatch_comb = '1' and mr_settings_pchke = '1')
+            if (mr_rx_data_read = '1' and rx_parity_mismatch_comb = '1' and mr_settings_pchke = '1')
             then
                 rx_parity_error <= '1';
             elsif (mr_command_crxpe = '1') then
