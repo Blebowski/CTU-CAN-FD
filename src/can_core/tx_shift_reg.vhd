@@ -182,8 +182,8 @@ entity tx_shift_reg is
         -- TX Frame test
         tran_frame_test         : in  t_frame_test_w;
 
-        -- TXT Buffer RAM word (byte endianity swapped)
-        tran_word_swapped       : in  std_logic_vector(31 downto 0);
+        -- TXT Buffer RAM word
+        tran_word               : in  std_logic_vector(31 downto 0);
 
         -- TX Data length code
         tran_dlc                : in  std_logic_vector(3 downto 0)
@@ -228,6 +228,9 @@ architecture rtl of tx_shift_reg is
     -- TX DLC swapped with FRAME_TEST_W[TPRM]
     signal tran_dlc_swapped         : std_logic_vector(3 downto 0);
 
+    -- Transmitted word with endianity swapped
+    signal tran_word_swapped        : std_logic_vector(31 downto 0);
+
 begin
 
     -- Tick shift register in Sync (TX Trigger)!
@@ -268,6 +271,9 @@ begin
     -- Choosing Base and Ext IDs from TXT Buffer RAM memory words!
     tx_base_id <= tran_identifier(IDENTIFIER_BASE_H downto IDENTIFIER_BASE_L);
     tx_ext_id <= tran_identifier(IDENTIFIER_EXT_H downto IDENTIFIER_EXT_L);
+
+    tran_word_swapped <= tran_word(7 downto 0)   & tran_word(15 downto 8) &
+                         tran_word(23 downto 16) & tran_word(31 downto 24);
 
     -----------------------------------------------------------------------------------------------
     -- Corruption features for transmitted frames
