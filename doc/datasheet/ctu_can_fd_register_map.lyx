@@ -19951,7 +19951,7 @@ Offset: 0x3C
 Size: 4 bytes
 \end_layout
 \begin_layout Description
-Note: Register is present only when sup_filt_A = true. Otherwise this address is reserved.
+Note: Register is present only when G_FILT_A_EN = true. Otherwise this address is reserved.
 \end_layout
 \begin_layout Standard
 
@@ -21264,7 +21264,7 @@ Offset: 0x40
 Size: 4 bytes
 \end_layout
 \begin_layout Description
-Note: Register is present only when sup_filt_A = true. Otherwise this address is reserved.
+Note: Register is present only when G_FILT_A_EN = true. Otherwise this address is reserved.
 \end_layout
 \begin_layout Standard
 
@@ -22577,7 +22577,7 @@ Offset: 0x44
 Size: 4 bytes
 \end_layout
 \begin_layout Description
-Note: Register is present only when sup_filt_B = true. Otherwise this address is reserved.
+Note: Register is present only when G_FILT_B_EN = true. Otherwise this address is reserved.
 \end_layout
 \begin_layout Standard
 
@@ -23890,7 +23890,7 @@ Offset: 0x48
 Size: 4 bytes
 \end_layout
 \begin_layout Description
-Note: Register is present only when sup_filt_B = true. Otherwise this address is reserved.
+Note: Register is present only when G_FILT_B_EN = true. Otherwise this address is reserved.
 \end_layout
 \begin_layout Standard
 
@@ -25203,7 +25203,7 @@ Offset: 0x4C
 Size: 4 bytes
 \end_layout
 \begin_layout Description
-Note: Register is present only when sup_filt_C = true. Otherwise this address is reserved.
+Note: Register is present only when G_FILT_C_EN = true. Otherwise this address is reserved.
 \end_layout
 \begin_layout Standard
 
@@ -26516,7 +26516,7 @@ Offset: 0x50
 Size: 4 bytes
 \end_layout
 \begin_layout Description
-Note: Register is present only when sup_filt_C = true. Otherwise this address is reserved.
+Note: Register is present only when G_FILT_C_EN = true. Otherwise this address is reserved.
 \end_layout
 \begin_layout Standard
 
@@ -27829,7 +27829,7 @@ Offset: 0x54
 Size: 4 bytes
 \end_layout
 \begin_layout Description
-Note: Register is present only when sup_range = true. Otherwise this address is reserved.
+Note: Register is present only when G_FILT_RANGE_EN = true. Otherwise this address is reserved.
 \end_layout
 \begin_layout Standard
 
@@ -29141,7 +29141,7 @@ Offset: 0x58
 Size: 4 bytes
 \end_layout
 \begin_layout Description
-Note: Register is present only when sup_range = true. Otherwise this address is reserved.
+Note: Register is present only when G_FILT_RANGE_EN = true. Otherwise this address is reserved.
 \end_layout
 \begin_layout Standard
 
@@ -43695,7 +43695,7 @@ Offset: 0x84
 Size: 4 bytes
 \end_layout
 \begin_layout Description
-Note: Register is present only when sup_traffic_ctrs = true. Otherwise this address is reserved.
+Note: Register is present only when G_TRAFFIC_CTRS_EN = true. Otherwise this address is reserved.
 \end_layout
 \begin_layout Standard
 
@@ -45007,7 +45007,7 @@ Offset: 0x88
 Size: 4 bytes
 \end_layout
 \begin_layout Description
-Note: Register is present only when sup_traffic_ctrs = true. Otherwise this address is reserved.
+Note: Register is present only when G_TRAFFIC_CTRS_EN = true. Otherwise this address is reserved.
 \end_layout
 \begin_layout Standard
 

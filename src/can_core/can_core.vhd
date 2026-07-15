@@ -117,7 +117,7 @@ entity can_core is
         G_CRC21_POL             :     std_logic_vector(23 downto 0);
 
         -- Support traffic counters
-        G_SUP_TRAFFIC_CTRS      :     boolean
+        G_TRAFFIC_CTRS_EN       :     boolean
     );
     port (
         -------------------------------------------------------------------------------------------
@@ -803,7 +803,7 @@ begin
     -----------------------------------------------------------------------------------------------
     -- Bus traffic counters
     -----------------------------------------------------------------------------------------------
-    g_bus_traffic_ctrs : if (G_SUP_TRAFFIC_CTRS = true) generate
+    g_bus_traffic_ctrs : if (G_TRAFFIC_CTRS_EN = true) generate
 
         i_bus_traffic_counters : entity ctu_can_fd_rtl.bus_traffic_counters
         port map (
@@ -825,7 +825,7 @@ begin
 
     end generate g_bus_traffic_ctrs;
 
-    g_no_bus_traffic_ctrs : if (G_SUP_TRAFFIC_CTRS = false) generate
+    g_no_bus_traffic_ctrs : if (G_TRAFFIC_CTRS_EN = false) generate
         tx_frame_ctr <= (others => '0');
         rx_frame_ctr <= (others => '0');
     end generate;

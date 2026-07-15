@@ -95,16 +95,16 @@ use ctu_can_fd_rtl.can_registers_pkg.all;
 entity rx_buffer is
     generic (
         -- RX Buffer size
-        G_RX_BUFF_SIZE              :     natural range 32 to 4096;
+        G_RX_BUF_SIZE               :     natural range 32 to 4096;
 
         -- Width of RX Buffer pointers
-        G_RX_BUFF_PTR_WIDTH         :     natural range 5 to 12;
+        G_RX_BUF_PTR_WIDTH          :     natural range 5 to 12;
 
         -- Width of RX Buffer frame counter
         G_RX_BUF_FRAME_CNT_WIDTH    :     natural range 3 to 11;
 
         -- Add parity to RX Buffer RAM
-        G_SUP_PARITY                :     boolean;
+        G_PARITY_EN                 :     boolean;
 
         -- Reset RX Buffer RAM
         G_RESET_RX_BUF_RAM          :     boolean;
@@ -198,13 +198,13 @@ entity rx_buffer is
         rx_frame_count          : out std_logic_vector(G_RX_BUF_FRAME_CNT_WIDTH - 1 downto 0);
 
         -- Number of free 32 bit wide words
-        rx_mem_free             : out std_logic_vector(G_RX_BUFF_PTR_WIDTH downto 0);
+        rx_mem_free             : out std_logic_vector(G_RX_BUF_PTR_WIDTH downto 0);
 
         -- Position of read pointer
-        rx_read_pointer         : out std_logic_vector(G_RX_BUFF_PTR_WIDTH - 1 downto 0);
+        rx_read_pointer         : out std_logic_vector(G_RX_BUF_PTR_WIDTH - 1 downto 0);
 
         -- Position of write pointer
-        rx_write_pointer        : out std_logic_vector(G_RX_BUFF_PTR_WIDTH - 1 downto 0);
+        rx_write_pointer        : out std_logic_vector(G_RX_BUF_PTR_WIDTH - 1 downto 0);
 
         -- Overrun occurred, data were discarded!
         -- (This is a flag and persists until it is cleared by SW).
@@ -264,30 +264,30 @@ architecture rtl of rx_buffer is
     -----------------------------------------------------------------------------------------------
 
     -- Read Pointer (access from SW)
-    signal read_pointer                 : std_logic_vector(G_RX_BUFF_PTR_WIDTH - 1 downto 0);
+    signal read_pointer                 : std_logic_vector(G_RX_BUF_PTR_WIDTH - 1 downto 0);
 
     -- Read pointer incremented by 1 (combinationally)
-    signal read_pointer_inc_1           : std_logic_vector(G_RX_BUFF_PTR_WIDTH - 1 downto 0);
+    signal read_pointer_inc_1           : std_logic_vector(G_RX_BUF_PTR_WIDTH - 1 downto 0);
 
     -- Write pointer (committed, available to SW, after frame was stored)
-    signal write_pointer                : std_logic_vector(G_RX_BUFF_PTR_WIDTH - 1 downto 0);
+    signal write_pointer                : std_logic_vector(G_RX_BUF_PTR_WIDTH - 1 downto 0);
 
     -- Write pointer RAW. Changing during frame, as frame is continously stored
     -- to the buffer. When frame is sucesfully received, it is updated to
     -- write pointer!
-    signal write_pointer_raw            : std_logic_vector(G_RX_BUFF_PTR_WIDTH - 1 downto 0);
+    signal write_pointer_raw            : std_logic_vector(G_RX_BUF_PTR_WIDTH - 1 downto 0);
 
     -- Timestamp write pointer which is used for storing timestamp at the end of
     -- data frame!
-    signal write_pointer_ts             : std_logic_vector(G_RX_BUFF_PTR_WIDTH - 1 downto 0);
+    signal write_pointer_ts             : std_logic_vector(G_RX_BUF_PTR_WIDTH - 1 downto 0);
 
     -- Number of free memory words available to SW after frame was committed.
-    signal rx_mem_free_i                : std_logic_vector(G_RX_BUFF_PTR_WIDTH downto 0);
+    signal rx_mem_free_i                : std_logic_vector(G_RX_BUF_PTR_WIDTH downto 0);
 
     -- RX Buffer mem free
-    constant C_RX_BUF_MEM_FREE_ZEROES   : std_logic_vector(G_RX_BUFF_PTR_WIDTH downto 0) :=
+    constant C_RX_BUF_MEM_FREE_ZEROES   : std_logic_vector(G_RX_BUF_PTR_WIDTH downto 0) :=
         (others => '0');
-    constant C_RX_BUF_PTR_ZEROES        : std_logic_vector(G_RX_BUFF_PTR_WIDTH - 1 downto 0) :=
+    constant C_RX_BUF_PTR_ZEROES        : std_logic_vector(G_RX_BUF_PTR_WIDTH - 1 downto 0) :=
         (others => '0');
 
     -----------------------------------------------------------------------------------------------
@@ -315,7 +315,7 @@ architecture rtl of rx_buffer is
 
     -- Number of frames currently stored in RX Buffer. Smallest frame length stored is 4
     -- (FRAME_FORMAT +  IDENTIFIER + 2 * TIMESTAMP). Since we need to store 0 and also
-    -- G_RX_BUFF_SIZE / 4 values we need one value more than can fit into G_RX_BUFF_SIZE / 4 width
+    -- G_RX_BUF_SIZE / 4 values we need one value more than can fit into G_RX_BUF_SIZE / 4 width
     -- counter. Use one bit wider counter.
     signal frame_count                  : unsigned(G_RX_BUF_FRAME_CNT_WIDTH - 1 downto 0);
 
@@ -403,10 +403,10 @@ architecture rtl of rx_buffer is
     -- RAM wrapper signals
     -----------------------------------------------------------------------------------------------
     signal rxb_port_a_write             : std_logic;
-    signal rxb_port_a_address           : std_logic_vector(G_RX_BUFF_PTR_WIDTH - 1 downto 0);
+    signal rxb_port_a_address           : std_logic_vector(G_RX_BUF_PTR_WIDTH - 1 downto 0);
     signal rxb_port_a_data_in           : std_logic_vector(31 downto 0);
 
-    signal rxb_port_b_address           : std_logic_vector(G_RX_BUFF_PTR_WIDTH - 1 downto 0);
+    signal rxb_port_b_address           : std_logic_vector(G_RX_BUF_PTR_WIDTH - 1 downto 0);
     signal rxb_port_b_data_out_i        : std_logic_vector(31 downto 0);
 
     -----------------------------------------------------------------------------------------------
@@ -488,8 +488,8 @@ begin
     -----------------------------------------------------------------------------------------------
     i_rx_buffer_pointers : entity ctu_can_fd_rtl.rx_buffer_pointers
     generic map (
-        G_RX_BUFF_SIZE          => G_RX_BUFF_SIZE,
-        G_RX_BUFF_PTR_WIDTH     => G_RX_BUFF_PTR_WIDTH
+        G_RX_BUF_SIZE          => G_RX_BUF_SIZE,
+        G_RX_BUF_PTR_WIDTH     => G_RX_BUF_PTR_WIDTH
     )
     port map (
         clk_sys                 => clk_sys,                 -- IN
@@ -828,9 +828,9 @@ begin
     -----------------------------------------------------------------------------------------------
     i_rx_buffer_ram : entity ctu_can_fd_rtl.rx_buffer_ram
     generic map(
-        G_RX_BUFF_SIZE          => G_RX_BUFF_SIZE,
-        G_RX_BUFF_PTR_WIDTH     => G_RX_BUFF_PTR_WIDTH,
-        G_SUP_PARITY            => G_SUP_PARITY,
+        G_RX_BUF_SIZE           => G_RX_BUF_SIZE,
+        G_RX_BUF_PTR_WIDTH      => G_RX_BUF_PTR_WIDTH,
+        G_PARITY_EN             => G_PARITY_EN,
         G_RESET_RX_BUF_RAM      => G_RESET_RX_BUF_RAM
     )
     port map(
@@ -945,14 +945,14 @@ begin
     -----------------------------------------------------------------------------------------------
 
     -- coverage off
-    assert ((G_RX_BUFF_SIZE = 32) or
-            (G_RX_BUFF_SIZE = 64) or
-            (G_RX_BUFF_SIZE = 128) or
-            (G_RX_BUFF_SIZE = 256) or
-            (G_RX_BUFF_SIZE = 512) or
-            (G_RX_BUFF_SIZE = 1024) or
-            (G_RX_BUFF_SIZE = 2048) or
-            (G_RX_BUFF_SIZE = 4096))
+    assert ((G_RX_BUF_SIZE = 32) or
+            (G_RX_BUF_SIZE = 64) or
+            (G_RX_BUF_SIZE = 128) or
+            (G_RX_BUF_SIZE = 256) or
+            (G_RX_BUF_SIZE = 512) or
+            (G_RX_BUF_SIZE = 1024) or
+            (G_RX_BUF_SIZE = 2048) or
+            (G_RX_BUF_SIZE = 4096))
     report "Unsupported RX Buffer size! RX Buffer must be power of 2!"
         severity failure;
     -- coverage on

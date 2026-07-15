@@ -97,16 +97,16 @@ use ctu_can_fd_rtl.CAN_FD_frame_format.all;
 entity frame_filters is
     generic (
         -- Support filter A
-        G_SUP_FILTA                         : boolean := true;
+        G_FILT_A_EN                         : boolean := true;
 
         -- Support filter B
-        G_SUP_FILTB                         : boolean := true;
+        G_FILT_B_EN                         : boolean := true;
 
         -- Support filter C
-        G_SUP_FILTC                         : boolean := true;
+        G_FILT_C_EN                         : boolean := true;
 
         -- Support range filter
-        G_SUP_RANGE                         : boolean := true
+        G_FILT_RANGE_EN                     : boolean := true
     );
     port (
         -------------------------------------------------------------------------------------------
@@ -285,7 +285,7 @@ begin
     i_bit_filter_a : entity ctu_can_fd_rtl.bit_filter
     generic map (
         G_WIDTH         => 29,
-        G_IS_PRESENT    => G_SUP_FILTA
+        G_IS_PRESENT    => G_FILT_A_EN
     )
     port map (
         filter_mask     => mr_filter_a_mask_bit_mask_a_val,         -- IN
@@ -299,7 +299,7 @@ begin
     i_bit_filter_b : entity ctu_can_fd_rtl.bit_filter
     generic map (
         G_WIDTH         => 29,
-        G_IS_PRESENT    => G_SUP_FILTB
+        G_IS_PRESENT    => G_FILT_B_EN
     )
     port map (
         filter_mask     => mr_filter_b_mask_bit_mask_b_val,         -- IN
@@ -313,7 +313,7 @@ begin
     i_bit_filter_c : entity ctu_can_fd_rtl.bit_filter
     generic map (
         G_WIDTH         => 29,
-        G_IS_PRESENT    => G_SUP_FILTC
+        G_IS_PRESENT    => G_FILT_C_EN
     )
     port map (
         filter_mask     => mr_filter_c_mask_bit_mask_c_val,         -- IN
@@ -327,7 +327,7 @@ begin
     i_range_filter : entity ctu_can_fd_rtl.range_filter
     generic map (
         G_WIDTH         => 29,
-        G_IS_PRESENT    => G_SUP_RANGE
+        G_IS_PRESENT    => G_FILT_RANGE_EN
     )
     port map (
         filter_upp_th   => mr_filter_ran_high_bit_ran_high_val,     -- IN
@@ -344,19 +344,18 @@ begin
     -- Core is not synthesized, turning filters on should not affect the acceptance! Everyhting
     -- should be affected!
     -----------------------------------------------------------------------------------------------
-    g_filt_sup_false : if (G_SUP_FILTA = false and G_SUP_FILTB = false and
-                             G_SUP_FILTC = false and G_SUP_RANGE = false) generate
+    g_filt_sup_false : if (G_FILT_A_EN = false and G_FILT_B_EN = false and
+                           G_FILT_C_EN = false and G_FILT_RANGE_EN = false) generate
         ident_valid_d <= '1';
         filter_result <= '0';
         drop_rtr_frame <= '0';
     end generate;
 
 
-    g_filt_sup_true : if (G_SUP_FILTA = true or G_SUP_FILTB = true or
-                            G_SUP_FILTC = true or G_SUP_RANGE = true) generate
+    g_filt_sup_true : if (G_FILT_A_EN = true or G_FILT_B_EN = true or
+                          G_FILT_C_EN = true or G_FILT_RANGE_EN = true) generate
 
-        drop_rtr_frame <= '1' when (mr_settings_fdrf = DROP_RF_ENABLED
-                                    and rec_is_rtr = RTR_FRAME)
+        drop_rtr_frame <= '1' when (mr_settings_fdrf = DROP_RF_ENABLED and rec_is_rtr = RTR_FRAME)
                               else
                           '0';
 

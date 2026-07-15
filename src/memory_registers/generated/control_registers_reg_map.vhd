@@ -84,11 +84,12 @@ generic (
     constant ADDRESS_WIDTH       : natural := 8;
     constant REGISTERED_READ     : boolean := true;
     constant CLEAR_READ_DATA     : boolean := true;
-    constant SUP_FILT_A          : boolean := true;
-    constant SUP_TRAFFIC_CTRS    : boolean := true;
-    constant SUP_RANGE           : boolean := true;
-    constant SUP_FILT_C          : boolean := true;
-    constant SUP_FILT_B          : boolean := true
+    constant G_FILT_A_EN         : boolean := true;
+    constant G_FILT_RANGE_EN     : boolean := true;
+    constant G_FILT_C_EN         : boolean := true;
+    constant G_FILT_B_EN         : boolean := true;
+    constant G_TRAFFIC_CTRS_EN   : boolean := true;
+    constant G_TXT_BUF_COUNT     : integer := 0
 );
 port (
     signal clk_sys               :in std_logic;
@@ -124,7 +125,7 @@ begin
     -- Write address to One-hot decoder
     ----------------------------------------------------------------------------
 
-    address_decoder_control_registers_comp : address_decoder
+    i_address_decoder_control_registers : address_decoder
     generic map(
         address_width                   => 6 ,
         address_entries                 => 39 ,
@@ -143,7 +144,7 @@ begin
     -- MODE[RST]
     ----------------------------------------------------------------------------
 
-    mode_rst_reg_comp : memory_reg_os
+    i_mode_rst_reg : memory_reg_os
     generic map(
         data_width                      => 1 ,
         reset_value                     => "0" 
@@ -161,7 +162,7 @@ begin
     -- MODE[BMM]
     ----------------------------------------------------------------------------
 
-    mode_bmm_reg_comp : memory_reg_rw
+    i_mode_bmm_reg : memory_reg_rw
     generic map(
         data_width                      => 1 ,
         reset_value                     => "0" 
@@ -179,7 +180,7 @@ begin
     -- MODE[STM]
     ----------------------------------------------------------------------------
 
-    mode_stm_reg_comp : memory_reg_rw
+    i_mode_stm_reg : memory_reg_rw
     generic map(
         data_width                      => 1 ,
         reset_value                     => "0" 
@@ -197,7 +198,7 @@ begin
     -- MODE[AFM]
     ----------------------------------------------------------------------------
 
-    mode_afm_reg_comp : memory_reg_rw
+    i_mode_afm_reg : memory_reg_rw
     generic map(
         data_width                      => 1 ,
         reset_value                     => "0" 
@@ -215,7 +216,7 @@ begin
     -- MODE[FDE]
     ----------------------------------------------------------------------------
 
-    mode_fde_reg_comp : memory_reg_rw
+    i_mode_fde_reg : memory_reg_rw
     generic map(
         data_width                      => 1 ,
         reset_value                     => "1" 
@@ -233,7 +234,7 @@ begin
     -- MODE[TTTM]
     ----------------------------------------------------------------------------
 
-    mode_tttm_reg_comp : memory_reg_rw
+    i_mode_tttm_reg : memory_reg_rw
     generic map(
         data_width                      => 1 ,
         reset_value                     => "0" 
@@ -251,7 +252,7 @@ begin
     -- MODE[ROM]
     ----------------------------------------------------------------------------
 
-    mode_rom_reg_comp : memory_reg_rw
+    i_mode_rom_reg : memory_reg_rw
     generic map(
         data_width                      => 1 ,
         reset_value                     => "0" 
@@ -269,7 +270,7 @@ begin
     -- MODE[ACF]
     ----------------------------------------------------------------------------
 
-    mode_acf_reg_comp : memory_reg_rw
+    i_mode_acf_reg : memory_reg_rw
     generic map(
         data_width                      => 1 ,
         reset_value                     => "0" 
@@ -287,7 +288,7 @@ begin
     -- MODE[TSTM]
     ----------------------------------------------------------------------------
 
-    mode_tstm_reg_comp : memory_reg_rw
+    i_mode_tstm_reg : memory_reg_rw
     generic map(
         data_width                      => 1 ,
         reset_value                     => "0" 
@@ -305,7 +306,7 @@ begin
     -- MODE[RXBAM]
     ----------------------------------------------------------------------------
 
-    mode_rxbam_reg_comp : memory_reg_rw
+    i_mode_rxbam_reg : memory_reg_rw
     generic map(
         data_width                      => 1 ,
         reset_value                     => "1" 
@@ -323,7 +324,7 @@ begin
     -- MODE[TXBBM]
     ----------------------------------------------------------------------------
 
-    mode_txbbm_reg_comp : memory_reg_rw
+    i_mode_txbbm_reg : memory_reg_rw
     generic map(
         data_width                      => 1 ,
         reset_value                     => "0" 
@@ -341,7 +342,7 @@ begin
     -- MODE[SAM]
     ----------------------------------------------------------------------------
 
-    mode_sam_reg_comp : memory_reg_rw
+    i_mode_sam_reg : memory_reg_rw
     generic map(
         data_width                      => 1 ,
         reset_value                     => "0" 
@@ -359,7 +360,7 @@ begin
     -- MODE[ERFM]
     ----------------------------------------------------------------------------
 
-    mode_erfm_reg_comp : memory_reg_rw
+    i_mode_erfm_reg : memory_reg_rw
     generic map(
         data_width                      => 1 ,
         reset_value                     => "0" 
@@ -377,7 +378,7 @@ begin
     -- SETTINGS[RTRLE]
     ----------------------------------------------------------------------------
 
-    settings_rtrle_reg_comp : memory_reg_rw
+    i_settings_rtrle_reg : memory_reg_rw
     generic map(
         data_width                      => 1 ,
         reset_value                     => "0" 
@@ -395,7 +396,7 @@ begin
     -- SETTINGS[RTRTH]
     ----------------------------------------------------------------------------
 
-    settings_rtrth_reg_comp : memory_reg_rw
+    i_settings_rtrth_reg : memory_reg_rw
     generic map(
         data_width                      => 4 ,
         reset_value                     => "0000" 
@@ -413,7 +414,7 @@ begin
     -- SETTINGS[ILBP]
     ----------------------------------------------------------------------------
 
-    settings_ilbp_reg_comp : memory_reg_rw
+    i_settings_ilbp_reg : memory_reg_rw
     generic map(
         data_width                      => 1 ,
         reset_value                     => "0" 
@@ -431,7 +432,7 @@ begin
     -- SETTINGS[ENA]
     ----------------------------------------------------------------------------
 
-    settings_ena_reg_comp : memory_reg_rw
+    i_settings_ena_reg : memory_reg_rw
     generic map(
         data_width                      => 1 ,
         reset_value                     => "0" 
@@ -449,7 +450,7 @@ begin
     -- SETTINGS[NISOFD]
     ----------------------------------------------------------------------------
 
-    settings_nisofd_reg_comp : memory_reg_rw
+    i_settings_nisofd_reg : memory_reg_rw
     generic map(
         data_width                      => 1 ,
         reset_value                     => "0" 
@@ -467,7 +468,7 @@ begin
     -- SETTINGS[PEX]
     ----------------------------------------------------------------------------
 
-    settings_pex_reg_comp : memory_reg_rw
+    i_settings_pex_reg : memory_reg_rw
     generic map(
         data_width                      => 1 ,
         reset_value                     => "0" 
@@ -485,7 +486,7 @@ begin
     -- SETTINGS[TBFBO]
     ----------------------------------------------------------------------------
 
-    settings_tbfbo_reg_comp : memory_reg_rw
+    i_settings_tbfbo_reg : memory_reg_rw
     generic map(
         data_width                      => 1 ,
         reset_value                     => "1" 
@@ -503,7 +504,7 @@ begin
     -- SETTINGS[FDRF]
     ----------------------------------------------------------------------------
 
-    settings_fdrf_reg_comp : memory_reg_rw
+    i_settings_fdrf_reg : memory_reg_rw
     generic map(
         data_width                      => 1 ,
         reset_value                     => "0" 
@@ -521,7 +522,7 @@ begin
     -- SETTINGS[PCHKE]
     ----------------------------------------------------------------------------
 
-    settings_pchke_reg_comp : memory_reg_rw
+    i_settings_pchke_reg : memory_reg_rw
     generic map(
         data_width                      => 1 ,
         reset_value                     => "0" 
@@ -539,7 +540,7 @@ begin
     -- COMMAND[RXRPMV]
     ----------------------------------------------------------------------------
 
-    command_rxrpmv_reg_comp : memory_reg_os
+    i_command_rxrpmv_reg : memory_reg_os
     generic map(
         data_width                      => 1 ,
         reset_value                     => "0" 
@@ -557,7 +558,7 @@ begin
     -- COMMAND[RRB]
     ----------------------------------------------------------------------------
 
-    command_rrb_reg_comp : memory_reg_os
+    i_command_rrb_reg : memory_reg_os
     generic map(
         data_width                      => 1 ,
         reset_value                     => "0" 
@@ -575,7 +576,7 @@ begin
     -- COMMAND[CDO]
     ----------------------------------------------------------------------------
 
-    command_cdo_reg_comp : memory_reg_os
+    i_command_cdo_reg : memory_reg_os
     generic map(
         data_width                      => 1 ,
         reset_value                     => "0" 
@@ -593,7 +594,7 @@ begin
     -- COMMAND[ERCRST]
     ----------------------------------------------------------------------------
 
-    command_ercrst_reg_comp : memory_reg_os
+    i_command_ercrst_reg : memory_reg_os
     generic map(
         data_width                      => 1 ,
         reset_value                     => "0" 
@@ -611,7 +612,7 @@ begin
     -- COMMAND[RXFCRST]
     ----------------------------------------------------------------------------
 
-    command_rxfcrst_reg_comp : memory_reg_os
+    i_command_rxfcrst_reg : memory_reg_os
     generic map(
         data_width                      => 1 ,
         reset_value                     => "0" 
@@ -629,7 +630,7 @@ begin
     -- COMMAND[TXFCRST]
     ----------------------------------------------------------------------------
 
-    command_txfcrst_reg_comp : memory_reg_os
+    i_command_txfcrst_reg : memory_reg_os
     generic map(
         data_width                      => 1 ,
         reset_value                     => "0" 
@@ -647,7 +648,7 @@ begin
     -- COMMAND[CPEXS]
     ----------------------------------------------------------------------------
 
-    command_cpexs_reg_comp : memory_reg_os
+    i_command_cpexs_reg : memory_reg_os
     generic map(
         data_width                      => 1 ,
         reset_value                     => "0" 
@@ -665,7 +666,7 @@ begin
     -- COMMAND[CRXPE]
     ----------------------------------------------------------------------------
 
-    command_crxpe_reg_comp : memory_reg_os
+    i_command_crxpe_reg : memory_reg_os
     generic map(
         data_width                      => 1 ,
         reset_value                     => "0" 
@@ -683,7 +684,7 @@ begin
     -- COMMAND[CTXPE]
     ----------------------------------------------------------------------------
 
-    command_ctxpe_reg_comp : memory_reg_os
+    i_command_ctxpe_reg : memory_reg_os
     generic map(
         data_width                      => 1 ,
         reset_value                     => "0" 
@@ -701,7 +702,7 @@ begin
     -- COMMAND[CTXDPE]
     ----------------------------------------------------------------------------
 
-    command_ctxdpe_reg_comp : memory_reg_os
+    i_command_ctxdpe_reg : memory_reg_os
     generic map(
         data_width                      => 1 ,
         reset_value                     => "0" 
@@ -719,7 +720,7 @@ begin
     -- INT_STAT[RXI]
     ----------------------------------------------------------------------------
 
-    int_stat_rxi_reg_comp : memory_reg_os
+    i_int_stat_rxi_reg : memory_reg_os
     generic map(
         data_width                      => 1 ,
         reset_value                     => "0" 
@@ -737,7 +738,7 @@ begin
     -- INT_STAT[TXI]
     ----------------------------------------------------------------------------
 
-    int_stat_txi_reg_comp : memory_reg_os
+    i_int_stat_txi_reg : memory_reg_os
     generic map(
         data_width                      => 1 ,
         reset_value                     => "0" 
@@ -755,7 +756,7 @@ begin
     -- INT_STAT[EWLI]
     ----------------------------------------------------------------------------
 
-    int_stat_ewli_reg_comp : memory_reg_os
+    i_int_stat_ewli_reg : memory_reg_os
     generic map(
         data_width                      => 1 ,
         reset_value                     => "0" 
@@ -773,7 +774,7 @@ begin
     -- INT_STAT[DOI]
     ----------------------------------------------------------------------------
 
-    int_stat_doi_reg_comp : memory_reg_os
+    i_int_stat_doi_reg : memory_reg_os
     generic map(
         data_width                      => 1 ,
         reset_value                     => "0" 
@@ -791,7 +792,7 @@ begin
     -- INT_STAT[FCSI]
     ----------------------------------------------------------------------------
 
-    int_stat_fcsi_reg_comp : memory_reg_os
+    i_int_stat_fcsi_reg : memory_reg_os
     generic map(
         data_width                      => 1 ,
         reset_value                     => "0" 
@@ -809,7 +810,7 @@ begin
     -- INT_STAT[ALI]
     ----------------------------------------------------------------------------
 
-    int_stat_ali_reg_comp : memory_reg_os
+    i_int_stat_ali_reg : memory_reg_os
     generic map(
         data_width                      => 1 ,
         reset_value                     => "0" 
@@ -827,7 +828,7 @@ begin
     -- INT_STAT[BEI]
     ----------------------------------------------------------------------------
 
-    int_stat_bei_reg_comp : memory_reg_os
+    i_int_stat_bei_reg : memory_reg_os
     generic map(
         data_width                      => 1 ,
         reset_value                     => "0" 
@@ -845,7 +846,7 @@ begin
     -- INT_STAT[OFI]
     ----------------------------------------------------------------------------
 
-    int_stat_ofi_reg_comp : memory_reg_os
+    i_int_stat_ofi_reg : memory_reg_os
     generic map(
         data_width                      => 1 ,
         reset_value                     => "0" 
@@ -863,7 +864,7 @@ begin
     -- INT_STAT[RXFI]
     ----------------------------------------------------------------------------
 
-    int_stat_rxfi_reg_comp : memory_reg_os
+    i_int_stat_rxfi_reg : memory_reg_os
     generic map(
         data_width                      => 1 ,
         reset_value                     => "0" 
@@ -881,7 +882,7 @@ begin
     -- INT_STAT[BSI]
     ----------------------------------------------------------------------------
 
-    int_stat_bsi_reg_comp : memory_reg_os
+    i_int_stat_bsi_reg : memory_reg_os
     generic map(
         data_width                      => 1 ,
         reset_value                     => "0" 
@@ -899,7 +900,7 @@ begin
     -- INT_STAT[RBNEI]
     ----------------------------------------------------------------------------
 
-    int_stat_rbnei_reg_comp : memory_reg_os
+    i_int_stat_rbnei_reg : memory_reg_os
     generic map(
         data_width                      => 1 ,
         reset_value                     => "0" 
@@ -917,7 +918,7 @@ begin
     -- INT_STAT[TXBHCI]
     ----------------------------------------------------------------------------
 
-    int_stat_txbhci_reg_comp : memory_reg_os
+    i_int_stat_txbhci_reg : memory_reg_os
     generic map(
         data_width                      => 1 ,
         reset_value                     => "0" 
@@ -935,7 +936,7 @@ begin
     -- INT_ENA_SET[INT_ENA_SET_SLICE_1]
     ----------------------------------------------------------------------------
 
-    int_ena_set_int_ena_set_slice_1_reg_comp : memory_reg_os
+    i_int_ena_set_int_ena_set_slice_1_reg : memory_reg_os
     generic map(
         data_width                      => 8 ,
         reset_value                     => "00000000" 
@@ -953,7 +954,7 @@ begin
     -- INT_ENA_SET[INT_ENA_SET_SLICE_2]
     ----------------------------------------------------------------------------
 
-    int_ena_set_int_ena_set_slice_2_reg_comp : memory_reg_os
+    i_int_ena_set_int_ena_set_slice_2_reg : memory_reg_os
     generic map(
         data_width                      => 4 ,
         reset_value                     => "0000" 
@@ -971,7 +972,7 @@ begin
     -- INT_ENA_CLR[INT_ENA_CLR_SLICE_1]
     ----------------------------------------------------------------------------
 
-    int_ena_clr_int_ena_clr_slice_1_reg_comp : memory_reg_os
+    i_int_ena_clr_int_ena_clr_slice_1_reg : memory_reg_os
     generic map(
         data_width                      => 8 ,
         reset_value                     => "00000000" 
@@ -989,7 +990,7 @@ begin
     -- INT_ENA_CLR[INT_ENA_CLR_SLICE_2]
     ----------------------------------------------------------------------------
 
-    int_ena_clr_int_ena_clr_slice_2_reg_comp : memory_reg_os
+    i_int_ena_clr_int_ena_clr_slice_2_reg : memory_reg_os
     generic map(
         data_width                      => 4 ,
         reset_value                     => "0000" 
@@ -1007,7 +1008,7 @@ begin
     -- INT_MASK_SET[INT_MASK_SET_SLICE_1]
     ----------------------------------------------------------------------------
 
-    int_mask_set_int_mask_set_slice_1_reg_comp : memory_reg_os
+    i_int_mask_set_int_mask_set_slice_1_reg : memory_reg_os
     generic map(
         data_width                      => 8 ,
         reset_value                     => "00000000" 
@@ -1025,7 +1026,7 @@ begin
     -- INT_MASK_SET[INT_MASK_SET_SLICE_2]
     ----------------------------------------------------------------------------
 
-    int_mask_set_int_mask_set_slice_2_reg_comp : memory_reg_os
+    i_int_mask_set_int_mask_set_slice_2_reg : memory_reg_os
     generic map(
         data_width                      => 4 ,
         reset_value                     => "0000" 
@@ -1043,7 +1044,7 @@ begin
     -- INT_MASK_CLR[INT_MASK_CLR_SLICE_1]
     ----------------------------------------------------------------------------
 
-    int_mask_clr_int_mask_clr_slice_1_reg_comp : memory_reg_os
+    i_int_mask_clr_int_mask_clr_slice_1_reg : memory_reg_os
     generic map(
         data_width                      => 8 ,
         reset_value                     => "00000000" 
@@ -1061,7 +1062,7 @@ begin
     -- INT_MASK_CLR[INT_MASK_CLR_SLICE_2]
     ----------------------------------------------------------------------------
 
-    int_mask_clr_int_mask_clr_slice_2_reg_comp : memory_reg_os
+    i_int_mask_clr_int_mask_clr_slice_2_reg : memory_reg_os
     generic map(
         data_width                      => 4 ,
         reset_value                     => "0000" 
@@ -1079,7 +1080,7 @@ begin
     -- BTR[PROP]
     ----------------------------------------------------------------------------
 
-    btr_prop_reg_comp : memory_reg_rw_lock
+    i_btr_prop_reg : memory_reg_rw_lock
     generic map(
         data_width                      => 7 ,
         reset_value                     => "0000101" 
@@ -1098,7 +1099,7 @@ begin
     -- BTR[PH1_SLICE_1]
     ----------------------------------------------------------------------------
 
-    btr_ph1_slice_1_reg_comp : memory_reg_rw_lock
+    i_btr_ph1_slice_1_reg : memory_reg_rw_lock
     generic map(
         data_width                      => 1 ,
         reset_value                     => "1" 
@@ -1117,7 +1118,7 @@ begin
     -- BTR[PH1_SLICE_2]
     ----------------------------------------------------------------------------
 
-    btr_ph1_slice_2_reg_comp : memory_reg_rw_lock
+    i_btr_ph1_slice_2_reg : memory_reg_rw_lock
     generic map(
         data_width                      => 5 ,
         reset_value                     => "00001" 
@@ -1136,7 +1137,7 @@ begin
     -- BTR[PH2_SLICE_1]
     ----------------------------------------------------------------------------
 
-    btr_ph2_slice_1_reg_comp : memory_reg_rw_lock
+    i_btr_ph2_slice_1_reg : memory_reg_rw_lock
     generic map(
         data_width                      => 3 ,
         reset_value                     => "101" 
@@ -1155,7 +1156,7 @@ begin
     -- BTR[PH2_SLICE_2]
     ----------------------------------------------------------------------------
 
-    btr_ph2_slice_2_reg_comp : memory_reg_rw_lock
+    i_btr_ph2_slice_2_reg : memory_reg_rw_lock
     generic map(
         data_width                      => 3 ,
         reset_value                     => "000" 
@@ -1174,7 +1175,7 @@ begin
     -- BTR[BRP_SLICE_1]
     ----------------------------------------------------------------------------
 
-    btr_brp_slice_1_reg_comp : memory_reg_rw_lock
+    i_btr_brp_slice_1_reg : memory_reg_rw_lock
     generic map(
         data_width                      => 5 ,
         reset_value                     => "01010" 
@@ -1193,7 +1194,7 @@ begin
     -- BTR[BRP_SLICE_2]
     ----------------------------------------------------------------------------
 
-    btr_brp_slice_2_reg_comp : memory_reg_rw_lock
+    i_btr_brp_slice_2_reg : memory_reg_rw_lock
     generic map(
         data_width                      => 3 ,
         reset_value                     => "000" 
@@ -1212,7 +1213,7 @@ begin
     -- BTR[SJW]
     ----------------------------------------------------------------------------
 
-    btr_sjw_reg_comp : memory_reg_rw_lock
+    i_btr_sjw_reg : memory_reg_rw_lock
     generic map(
         data_width                      => 5 ,
         reset_value                     => "00010" 
@@ -1231,7 +1232,7 @@ begin
     -- BTR_FD[PROP_FD]
     ----------------------------------------------------------------------------
 
-    btr_fd_prop_fd_reg_comp : memory_reg_rw_lock
+    i_btr_fd_prop_fd_reg : memory_reg_rw_lock
     generic map(
         data_width                      => 6 ,
         reset_value                     => "000011" 
@@ -1250,7 +1251,7 @@ begin
     -- BTR_FD[PH1_FD_SLICE_1]
     ----------------------------------------------------------------------------
 
-    btr_fd_ph1_fd_slice_1_reg_comp : memory_reg_rw_lock
+    i_btr_fd_ph1_fd_slice_1_reg : memory_reg_rw_lock
     generic map(
         data_width                      => 1 ,
         reset_value                     => "1" 
@@ -1269,7 +1270,7 @@ begin
     -- BTR_FD[PH1_FD_SLICE_2]
     ----------------------------------------------------------------------------
 
-    btr_fd_ph1_fd_slice_2_reg_comp : memory_reg_rw_lock
+    i_btr_fd_ph1_fd_slice_2_reg : memory_reg_rw_lock
     generic map(
         data_width                      => 4 ,
         reset_value                     => "0001" 
@@ -1288,7 +1289,7 @@ begin
     -- BTR_FD[PH2_FD_SLICE_1]
     ----------------------------------------------------------------------------
 
-    btr_fd_ph2_fd_slice_1_reg_comp : memory_reg_rw_lock
+    i_btr_fd_ph2_fd_slice_1_reg : memory_reg_rw_lock
     generic map(
         data_width                      => 3 ,
         reset_value                     => "011" 
@@ -1307,7 +1308,7 @@ begin
     -- BTR_FD[PH2_FD_SLICE_2]
     ----------------------------------------------------------------------------
 
-    btr_fd_ph2_fd_slice_2_reg_comp : memory_reg_rw_lock
+    i_btr_fd_ph2_fd_slice_2_reg : memory_reg_rw_lock
     generic map(
         data_width                      => 2 ,
         reset_value                     => "00" 
@@ -1326,7 +1327,7 @@ begin
     -- BTR_FD[BRP_FD_SLICE_1]
     ----------------------------------------------------------------------------
 
-    btr_fd_brp_fd_slice_1_reg_comp : memory_reg_rw_lock
+    i_btr_fd_brp_fd_slice_1_reg : memory_reg_rw_lock
     generic map(
         data_width                      => 5 ,
         reset_value                     => "00100" 
@@ -1345,7 +1346,7 @@ begin
     -- BTR_FD[BRP_FD_SLICE_2]
     ----------------------------------------------------------------------------
 
-    btr_fd_brp_fd_slice_2_reg_comp : memory_reg_rw_lock
+    i_btr_fd_brp_fd_slice_2_reg : memory_reg_rw_lock
     generic map(
         data_width                      => 3 ,
         reset_value                     => "000" 
@@ -1364,7 +1365,7 @@ begin
     -- BTR_FD[SJW_FD]
     ----------------------------------------------------------------------------
 
-    btr_fd_sjw_fd_reg_comp : memory_reg_rw_lock
+    i_btr_fd_sjw_fd_reg : memory_reg_rw_lock
     generic map(
         data_width                      => 5 ,
         reset_value                     => "00010" 
@@ -1383,7 +1384,7 @@ begin
     -- EWL[EW_LIMIT]
     ----------------------------------------------------------------------------
 
-    ewl_ew_limit_reg_comp : memory_reg_rw_lock
+    i_ewl_ew_limit_reg : memory_reg_rw_lock
     generic map(
         data_width                      => 8 ,
         reset_value                     => "01100000" 
@@ -1402,7 +1403,7 @@ begin
     -- ERP[ERP_LIMIT]
     ----------------------------------------------------------------------------
 
-    erp_erp_limit_reg_comp : memory_reg_rw_lock
+    i_erp_erp_limit_reg : memory_reg_rw_lock
     generic map(
         data_width                      => 8 ,
         reset_value                     => "10000000" 
@@ -1421,7 +1422,7 @@ begin
     -- CTR_PRES[CTPV_SLICE_1]
     ----------------------------------------------------------------------------
 
-    ctr_pres_ctpv_slice_1_reg_comp : memory_reg_rw_lock
+    i_ctr_pres_ctpv_slice_1_reg : memory_reg_rw_lock
     generic map(
         data_width                      => 8 ,
         reset_value                     => "00000000" 
@@ -1440,7 +1441,7 @@ begin
     -- CTR_PRES[CTPV_SLICE_2]
     ----------------------------------------------------------------------------
 
-    ctr_pres_ctpv_slice_2_reg_comp : memory_reg_rw_lock
+    i_ctr_pres_ctpv_slice_2_reg : memory_reg_rw_lock
     generic map(
         data_width                      => 1 ,
         reset_value                     => "0" 
@@ -1459,7 +1460,7 @@ begin
     -- CTR_PRES[PTX]
     ----------------------------------------------------------------------------
 
-    ctr_pres_ptx_reg_comp : memory_reg_os_lock
+    i_ctr_pres_ptx_reg : memory_reg_os_lock
     generic map(
         data_width                      => 1 ,
         reset_value                     => "0" 
@@ -1478,7 +1479,7 @@ begin
     -- CTR_PRES[PRX]
     ----------------------------------------------------------------------------
 
-    ctr_pres_prx_reg_comp : memory_reg_os_lock
+    i_ctr_pres_prx_reg : memory_reg_os_lock
     generic map(
         data_width                      => 1 ,
         reset_value                     => "0" 
@@ -1497,7 +1498,7 @@ begin
     -- CTR_PRES[ENORM]
     ----------------------------------------------------------------------------
 
-    ctr_pres_enorm_reg_comp : memory_reg_os_lock
+    i_ctr_pres_enorm_reg : memory_reg_os_lock
     generic map(
         data_width                      => 1 ,
         reset_value                     => "0" 
@@ -1516,7 +1517,7 @@ begin
     -- CTR_PRES[EFD]
     ----------------------------------------------------------------------------
 
-    ctr_pres_efd_reg_comp : memory_reg_os_lock
+    i_ctr_pres_efd_reg : memory_reg_os_lock
     generic map(
         data_width                      => 1 ,
         reset_value                     => "0" 
@@ -1531,12 +1532,12 @@ begin
         reg_value(0)                    => control_registers_out_i.ctr_pres_efd -- out
     );
 
-    g_FILTER_A_MASK_present_t : if (SUP_FILT_A = true) generate
     ----------------------------------------------------------------------------
     -- FILTER_A_MASK[BIT_MASK_A_VAL_SLICE_1]
     ----------------------------------------------------------------------------
+    g_filter_a_mask_bit_mask_a_val_slice_1_t : if (G_FILT_A_EN) generate
 
-    filter_a_mask_bit_mask_a_val_slice_1_reg_comp : memory_reg_rw
+    i_filter_a_mask_bit_mask_a_val_slice_1_reg : memory_reg_rw
     generic map(
         data_width                      => 8 ,
         reset_value                     => "00000000" 
@@ -1550,11 +1551,18 @@ begin
         reg_value                       => control_registers_out_i.filter_a_mask_bit_mask_a_val(7 downto 0) -- out
     );
 
+    end generate g_filter_a_mask_bit_mask_a_val_slice_1_t;
+
+    g_filter_a_mask_bit_mask_a_val_slice_1_f : if (not(G_FILT_A_EN)) generate
+        control_registers_out_i.filter_a_mask_bit_mask_a_val(7 downto 0) <= (others => '0');
+    end generate g_filter_a_mask_bit_mask_a_val_slice_1_f;
+
     ----------------------------------------------------------------------------
     -- FILTER_A_MASK[BIT_MASK_A_VAL_SLICE_2]
     ----------------------------------------------------------------------------
+    g_filter_a_mask_bit_mask_a_val_slice_2_t : if (G_FILT_A_EN) generate
 
-    filter_a_mask_bit_mask_a_val_slice_2_reg_comp : memory_reg_rw
+    i_filter_a_mask_bit_mask_a_val_slice_2_reg : memory_reg_rw
     generic map(
         data_width                      => 8 ,
         reset_value                     => "00000000" 
@@ -1568,11 +1576,18 @@ begin
         reg_value                       => control_registers_out_i.filter_a_mask_bit_mask_a_val(15 downto 8) -- out
     );
 
+    end generate g_filter_a_mask_bit_mask_a_val_slice_2_t;
+
+    g_filter_a_mask_bit_mask_a_val_slice_2_f : if (not(G_FILT_A_EN)) generate
+        control_registers_out_i.filter_a_mask_bit_mask_a_val(15 downto 8) <= (others => '0');
+    end generate g_filter_a_mask_bit_mask_a_val_slice_2_f;
+
     ----------------------------------------------------------------------------
     -- FILTER_A_MASK[BIT_MASK_A_VAL_SLICE_3]
     ----------------------------------------------------------------------------
+    g_filter_a_mask_bit_mask_a_val_slice_3_t : if (G_FILT_A_EN) generate
 
-    filter_a_mask_bit_mask_a_val_slice_3_reg_comp : memory_reg_rw
+    i_filter_a_mask_bit_mask_a_val_slice_3_reg : memory_reg_rw
     generic map(
         data_width                      => 8 ,
         reset_value                     => "00000000" 
@@ -1586,11 +1601,18 @@ begin
         reg_value                       => control_registers_out_i.filter_a_mask_bit_mask_a_val(23 downto 16) -- out
     );
 
+    end generate g_filter_a_mask_bit_mask_a_val_slice_3_t;
+
+    g_filter_a_mask_bit_mask_a_val_slice_3_f : if (not(G_FILT_A_EN)) generate
+        control_registers_out_i.filter_a_mask_bit_mask_a_val(23 downto 16) <= (others => '0');
+    end generate g_filter_a_mask_bit_mask_a_val_slice_3_f;
+
     ----------------------------------------------------------------------------
     -- FILTER_A_MASK[BIT_MASK_A_VAL_SLICE_4]
     ----------------------------------------------------------------------------
+    g_filter_a_mask_bit_mask_a_val_slice_4_t : if (G_FILT_A_EN) generate
 
-    filter_a_mask_bit_mask_a_val_slice_4_reg_comp : memory_reg_rw
+    i_filter_a_mask_bit_mask_a_val_slice_4_reg : memory_reg_rw
     generic map(
         data_width                      => 5 ,
         reset_value                     => "00000" 
@@ -1604,18 +1626,18 @@ begin
         reg_value                       => control_registers_out_i.filter_a_mask_bit_mask_a_val(28 downto 24) -- out
     );
 
-    end generate g_FILTER_A_MASK_present_t;
+    end generate g_filter_a_mask_bit_mask_a_val_slice_4_t;
 
-    g_FILTER_A_MASK_present_f : if (SUP_FILT_A = false) generate
-        control_registers_out_i.filter_a_mask_bit_mask_a_val <= (others => '0');
-    end generate g_FILTER_A_MASK_present_f;
+    g_filter_a_mask_bit_mask_a_val_slice_4_f : if (not(G_FILT_A_EN)) generate
+        control_registers_out_i.filter_a_mask_bit_mask_a_val(28 downto 24) <= (others => '0');
+    end generate g_filter_a_mask_bit_mask_a_val_slice_4_f;
 
-    g_FILTER_A_VAL_present_t : if (SUP_FILT_A = true) generate
     ----------------------------------------------------------------------------
     -- FILTER_A_VAL[BIT_VAL_A_VAL_SLICE_1]
     ----------------------------------------------------------------------------
+    g_filter_a_val_bit_val_a_val_slice_1_t : if (G_FILT_A_EN) generate
 
-    filter_a_val_bit_val_a_val_slice_1_reg_comp : memory_reg_rw
+    i_filter_a_val_bit_val_a_val_slice_1_reg : memory_reg_rw
     generic map(
         data_width                      => 8 ,
         reset_value                     => "00000000" 
@@ -1629,11 +1651,18 @@ begin
         reg_value                       => control_registers_out_i.filter_a_val_bit_val_a_val(7 downto 0) -- out
     );
 
+    end generate g_filter_a_val_bit_val_a_val_slice_1_t;
+
+    g_filter_a_val_bit_val_a_val_slice_1_f : if (not(G_FILT_A_EN)) generate
+        control_registers_out_i.filter_a_val_bit_val_a_val(7 downto 0) <= (others => '0');
+    end generate g_filter_a_val_bit_val_a_val_slice_1_f;
+
     ----------------------------------------------------------------------------
     -- FILTER_A_VAL[BIT_VAL_A_VAL_SLICE_2]
     ----------------------------------------------------------------------------
+    g_filter_a_val_bit_val_a_val_slice_2_t : if (G_FILT_A_EN) generate
 
-    filter_a_val_bit_val_a_val_slice_2_reg_comp : memory_reg_rw
+    i_filter_a_val_bit_val_a_val_slice_2_reg : memory_reg_rw
     generic map(
         data_width                      => 8 ,
         reset_value                     => "00000000" 
@@ -1647,11 +1676,18 @@ begin
         reg_value                       => control_registers_out_i.filter_a_val_bit_val_a_val(15 downto 8) -- out
     );
 
+    end generate g_filter_a_val_bit_val_a_val_slice_2_t;
+
+    g_filter_a_val_bit_val_a_val_slice_2_f : if (not(G_FILT_A_EN)) generate
+        control_registers_out_i.filter_a_val_bit_val_a_val(15 downto 8) <= (others => '0');
+    end generate g_filter_a_val_bit_val_a_val_slice_2_f;
+
     ----------------------------------------------------------------------------
     -- FILTER_A_VAL[BIT_VAL_A_VAL_SLICE_3]
     ----------------------------------------------------------------------------
+    g_filter_a_val_bit_val_a_val_slice_3_t : if (G_FILT_A_EN) generate
 
-    filter_a_val_bit_val_a_val_slice_3_reg_comp : memory_reg_rw
+    i_filter_a_val_bit_val_a_val_slice_3_reg : memory_reg_rw
     generic map(
         data_width                      => 8 ,
         reset_value                     => "00000000" 
@@ -1665,11 +1701,18 @@ begin
         reg_value                       => control_registers_out_i.filter_a_val_bit_val_a_val(23 downto 16) -- out
     );
 
+    end generate g_filter_a_val_bit_val_a_val_slice_3_t;
+
+    g_filter_a_val_bit_val_a_val_slice_3_f : if (not(G_FILT_A_EN)) generate
+        control_registers_out_i.filter_a_val_bit_val_a_val(23 downto 16) <= (others => '0');
+    end generate g_filter_a_val_bit_val_a_val_slice_3_f;
+
     ----------------------------------------------------------------------------
     -- FILTER_A_VAL[BIT_VAL_A_VAL_SLICE_4]
     ----------------------------------------------------------------------------
+    g_filter_a_val_bit_val_a_val_slice_4_t : if (G_FILT_A_EN) generate
 
-    filter_a_val_bit_val_a_val_slice_4_reg_comp : memory_reg_rw
+    i_filter_a_val_bit_val_a_val_slice_4_reg : memory_reg_rw
     generic map(
         data_width                      => 5 ,
         reset_value                     => "00000" 
@@ -1683,18 +1726,18 @@ begin
         reg_value                       => control_registers_out_i.filter_a_val_bit_val_a_val(28 downto 24) -- out
     );
 
-    end generate g_FILTER_A_VAL_present_t;
+    end generate g_filter_a_val_bit_val_a_val_slice_4_t;
 
-    g_FILTER_A_VAL_present_f : if (SUP_FILT_A = false) generate
-        control_registers_out_i.filter_a_val_bit_val_a_val <= (others => '0');
-    end generate g_FILTER_A_VAL_present_f;
+    g_filter_a_val_bit_val_a_val_slice_4_f : if (not(G_FILT_A_EN)) generate
+        control_registers_out_i.filter_a_val_bit_val_a_val(28 downto 24) <= (others => '0');
+    end generate g_filter_a_val_bit_val_a_val_slice_4_f;
 
-    g_FILTER_B_MASK_present_t : if (SUP_FILT_B = true) generate
     ----------------------------------------------------------------------------
     -- FILTER_B_MASK[BIT_MASK_B_VAL_SLICE_1]
     ----------------------------------------------------------------------------
+    g_filter_b_mask_bit_mask_b_val_slice_1_t : if (G_FILT_B_EN) generate
 
-    filter_b_mask_bit_mask_b_val_slice_1_reg_comp : memory_reg_rw
+    i_filter_b_mask_bit_mask_b_val_slice_1_reg : memory_reg_rw
     generic map(
         data_width                      => 8 ,
         reset_value                     => "00000000" 
@@ -1708,11 +1751,18 @@ begin
         reg_value                       => control_registers_out_i.filter_b_mask_bit_mask_b_val(7 downto 0) -- out
     );
 
+    end generate g_filter_b_mask_bit_mask_b_val_slice_1_t;
+
+    g_filter_b_mask_bit_mask_b_val_slice_1_f : if (not(G_FILT_B_EN)) generate
+        control_registers_out_i.filter_b_mask_bit_mask_b_val(7 downto 0) <= (others => '0');
+    end generate g_filter_b_mask_bit_mask_b_val_slice_1_f;
+
     ----------------------------------------------------------------------------
     -- FILTER_B_MASK[BIT_MASK_B_VAL_SLICE_2]
     ----------------------------------------------------------------------------
+    g_filter_b_mask_bit_mask_b_val_slice_2_t : if (G_FILT_B_EN) generate
 
-    filter_b_mask_bit_mask_b_val_slice_2_reg_comp : memory_reg_rw
+    i_filter_b_mask_bit_mask_b_val_slice_2_reg : memory_reg_rw
     generic map(
         data_width                      => 8 ,
         reset_value                     => "00000000" 
@@ -1726,11 +1776,18 @@ begin
         reg_value                       => control_registers_out_i.filter_b_mask_bit_mask_b_val(15 downto 8) -- out
     );
 
+    end generate g_filter_b_mask_bit_mask_b_val_slice_2_t;
+
+    g_filter_b_mask_bit_mask_b_val_slice_2_f : if (not(G_FILT_B_EN)) generate
+        control_registers_out_i.filter_b_mask_bit_mask_b_val(15 downto 8) <= (others => '0');
+    end generate g_filter_b_mask_bit_mask_b_val_slice_2_f;
+
     ----------------------------------------------------------------------------
     -- FILTER_B_MASK[BIT_MASK_B_VAL_SLICE_3]
     ----------------------------------------------------------------------------
+    g_filter_b_mask_bit_mask_b_val_slice_3_t : if (G_FILT_B_EN) generate
 
-    filter_b_mask_bit_mask_b_val_slice_3_reg_comp : memory_reg_rw
+    i_filter_b_mask_bit_mask_b_val_slice_3_reg : memory_reg_rw
     generic map(
         data_width                      => 8 ,
         reset_value                     => "00000000" 
@@ -1744,11 +1801,18 @@ begin
         reg_value                       => control_registers_out_i.filter_b_mask_bit_mask_b_val(23 downto 16) -- out
     );
 
+    end generate g_filter_b_mask_bit_mask_b_val_slice_3_t;
+
+    g_filter_b_mask_bit_mask_b_val_slice_3_f : if (not(G_FILT_B_EN)) generate
+        control_registers_out_i.filter_b_mask_bit_mask_b_val(23 downto 16) <= (others => '0');
+    end generate g_filter_b_mask_bit_mask_b_val_slice_3_f;
+
     ----------------------------------------------------------------------------
     -- FILTER_B_MASK[BIT_MASK_B_VAL_SLICE_4]
     ----------------------------------------------------------------------------
+    g_filter_b_mask_bit_mask_b_val_slice_4_t : if (G_FILT_B_EN) generate
 
-    filter_b_mask_bit_mask_b_val_slice_4_reg_comp : memory_reg_rw
+    i_filter_b_mask_bit_mask_b_val_slice_4_reg : memory_reg_rw
     generic map(
         data_width                      => 5 ,
         reset_value                     => "00000" 
@@ -1762,18 +1826,18 @@ begin
         reg_value                       => control_registers_out_i.filter_b_mask_bit_mask_b_val(28 downto 24) -- out
     );
 
-    end generate g_FILTER_B_MASK_present_t;
+    end generate g_filter_b_mask_bit_mask_b_val_slice_4_t;
 
-    g_FILTER_B_MASK_present_f : if (SUP_FILT_B = false) generate
-        control_registers_out_i.filter_b_mask_bit_mask_b_val <= (others => '0');
-    end generate g_FILTER_B_MASK_present_f;
+    g_filter_b_mask_bit_mask_b_val_slice_4_f : if (not(G_FILT_B_EN)) generate
+        control_registers_out_i.filter_b_mask_bit_mask_b_val(28 downto 24) <= (others => '0');
+    end generate g_filter_b_mask_bit_mask_b_val_slice_4_f;
 
-    g_FILTER_B_VAL_present_t : if (SUP_FILT_B = true) generate
     ----------------------------------------------------------------------------
     -- FILTER_B_VAL[BIT_VAL_B_VAL_SLICE_1]
     ----------------------------------------------------------------------------
+    g_filter_b_val_bit_val_b_val_slice_1_t : if (G_FILT_B_EN) generate
 
-    filter_b_val_bit_val_b_val_slice_1_reg_comp : memory_reg_rw
+    i_filter_b_val_bit_val_b_val_slice_1_reg : memory_reg_rw
     generic map(
         data_width                      => 8 ,
         reset_value                     => "00000000" 
@@ -1787,11 +1851,18 @@ begin
         reg_value                       => control_registers_out_i.filter_b_val_bit_val_b_val(7 downto 0) -- out
     );
 
+    end generate g_filter_b_val_bit_val_b_val_slice_1_t;
+
+    g_filter_b_val_bit_val_b_val_slice_1_f : if (not(G_FILT_B_EN)) generate
+        control_registers_out_i.filter_b_val_bit_val_b_val(7 downto 0) <= (others => '0');
+    end generate g_filter_b_val_bit_val_b_val_slice_1_f;
+
     ----------------------------------------------------------------------------
     -- FILTER_B_VAL[BIT_VAL_B_VAL_SLICE_2]
     ----------------------------------------------------------------------------
+    g_filter_b_val_bit_val_b_val_slice_2_t : if (G_FILT_B_EN) generate
 
-    filter_b_val_bit_val_b_val_slice_2_reg_comp : memory_reg_rw
+    i_filter_b_val_bit_val_b_val_slice_2_reg : memory_reg_rw
     generic map(
         data_width                      => 8 ,
         reset_value                     => "00000000" 
@@ -1805,11 +1876,18 @@ begin
         reg_value                       => control_registers_out_i.filter_b_val_bit_val_b_val(15 downto 8) -- out
     );
 
+    end generate g_filter_b_val_bit_val_b_val_slice_2_t;
+
+    g_filter_b_val_bit_val_b_val_slice_2_f : if (not(G_FILT_B_EN)) generate
+        control_registers_out_i.filter_b_val_bit_val_b_val(15 downto 8) <= (others => '0');
+    end generate g_filter_b_val_bit_val_b_val_slice_2_f;
+
     ----------------------------------------------------------------------------
     -- FILTER_B_VAL[BIT_VAL_B_VAL_SLICE_3]
     ----------------------------------------------------------------------------
+    g_filter_b_val_bit_val_b_val_slice_3_t : if (G_FILT_B_EN) generate
 
-    filter_b_val_bit_val_b_val_slice_3_reg_comp : memory_reg_rw
+    i_filter_b_val_bit_val_b_val_slice_3_reg : memory_reg_rw
     generic map(
         data_width                      => 8 ,
         reset_value                     => "00000000" 
@@ -1823,11 +1901,18 @@ begin
         reg_value                       => control_registers_out_i.filter_b_val_bit_val_b_val(23 downto 16) -- out
     );
 
+    end generate g_filter_b_val_bit_val_b_val_slice_3_t;
+
+    g_filter_b_val_bit_val_b_val_slice_3_f : if (not(G_FILT_B_EN)) generate
+        control_registers_out_i.filter_b_val_bit_val_b_val(23 downto 16) <= (others => '0');
+    end generate g_filter_b_val_bit_val_b_val_slice_3_f;
+
     ----------------------------------------------------------------------------
     -- FILTER_B_VAL[BIT_VAL_B_VAL_SLICE_4]
     ----------------------------------------------------------------------------
+    g_filter_b_val_bit_val_b_val_slice_4_t : if (G_FILT_B_EN) generate
 
-    filter_b_val_bit_val_b_val_slice_4_reg_comp : memory_reg_rw
+    i_filter_b_val_bit_val_b_val_slice_4_reg : memory_reg_rw
     generic map(
         data_width                      => 5 ,
         reset_value                     => "00000" 
@@ -1841,18 +1926,18 @@ begin
         reg_value                       => control_registers_out_i.filter_b_val_bit_val_b_val(28 downto 24) -- out
     );
 
-    end generate g_FILTER_B_VAL_present_t;
+    end generate g_filter_b_val_bit_val_b_val_slice_4_t;
 
-    g_FILTER_B_VAL_present_f : if (SUP_FILT_B = false) generate
-        control_registers_out_i.filter_b_val_bit_val_b_val <= (others => '0');
-    end generate g_FILTER_B_VAL_present_f;
+    g_filter_b_val_bit_val_b_val_slice_4_f : if (not(G_FILT_B_EN)) generate
+        control_registers_out_i.filter_b_val_bit_val_b_val(28 downto 24) <= (others => '0');
+    end generate g_filter_b_val_bit_val_b_val_slice_4_f;
 
-    g_FILTER_C_MASK_present_t : if (SUP_FILT_C = true) generate
     ----------------------------------------------------------------------------
     -- FILTER_C_MASK[BIT_MASK_C_VAL_SLICE_1]
     ----------------------------------------------------------------------------
+    g_filter_c_mask_bit_mask_c_val_slice_1_t : if (G_FILT_C_EN) generate
 
-    filter_c_mask_bit_mask_c_val_slice_1_reg_comp : memory_reg_rw
+    i_filter_c_mask_bit_mask_c_val_slice_1_reg : memory_reg_rw
     generic map(
         data_width                      => 8 ,
         reset_value                     => "00000000" 
@@ -1866,11 +1951,18 @@ begin
         reg_value                       => control_registers_out_i.filter_c_mask_bit_mask_c_val(7 downto 0) -- out
     );
 
+    end generate g_filter_c_mask_bit_mask_c_val_slice_1_t;
+
+    g_filter_c_mask_bit_mask_c_val_slice_1_f : if (not(G_FILT_C_EN)) generate
+        control_registers_out_i.filter_c_mask_bit_mask_c_val(7 downto 0) <= (others => '0');
+    end generate g_filter_c_mask_bit_mask_c_val_slice_1_f;
+
     ----------------------------------------------------------------------------
     -- FILTER_C_MASK[BIT_MASK_C_VAL_SLICE_2]
     ----------------------------------------------------------------------------
+    g_filter_c_mask_bit_mask_c_val_slice_2_t : if (G_FILT_C_EN) generate
 
-    filter_c_mask_bit_mask_c_val_slice_2_reg_comp : memory_reg_rw
+    i_filter_c_mask_bit_mask_c_val_slice_2_reg : memory_reg_rw
     generic map(
         data_width                      => 8 ,
         reset_value                     => "00000000" 
@@ -1884,11 +1976,18 @@ begin
         reg_value                       => control_registers_out_i.filter_c_mask_bit_mask_c_val(15 downto 8) -- out
     );
 
+    end generate g_filter_c_mask_bit_mask_c_val_slice_2_t;
+
+    g_filter_c_mask_bit_mask_c_val_slice_2_f : if (not(G_FILT_C_EN)) generate
+        control_registers_out_i.filter_c_mask_bit_mask_c_val(15 downto 8) <= (others => '0');
+    end generate g_filter_c_mask_bit_mask_c_val_slice_2_f;
+
     ----------------------------------------------------------------------------
     -- FILTER_C_MASK[BIT_MASK_C_VAL_SLICE_3]
     ----------------------------------------------------------------------------
+    g_filter_c_mask_bit_mask_c_val_slice_3_t : if (G_FILT_C_EN) generate
 
-    filter_c_mask_bit_mask_c_val_slice_3_reg_comp : memory_reg_rw
+    i_filter_c_mask_bit_mask_c_val_slice_3_reg : memory_reg_rw
     generic map(
         data_width                      => 8 ,
         reset_value                     => "00000000" 
@@ -1902,11 +2001,18 @@ begin
         reg_value                       => control_registers_out_i.filter_c_mask_bit_mask_c_val(23 downto 16) -- out
     );
 
+    end generate g_filter_c_mask_bit_mask_c_val_slice_3_t;
+
+    g_filter_c_mask_bit_mask_c_val_slice_3_f : if (not(G_FILT_C_EN)) generate
+        control_registers_out_i.filter_c_mask_bit_mask_c_val(23 downto 16) <= (others => '0');
+    end generate g_filter_c_mask_bit_mask_c_val_slice_3_f;
+
     ----------------------------------------------------------------------------
     -- FILTER_C_MASK[BIT_MASK_C_VAL_SLICE_4]
     ----------------------------------------------------------------------------
+    g_filter_c_mask_bit_mask_c_val_slice_4_t : if (G_FILT_C_EN) generate
 
-    filter_c_mask_bit_mask_c_val_slice_4_reg_comp : memory_reg_rw
+    i_filter_c_mask_bit_mask_c_val_slice_4_reg : memory_reg_rw
     generic map(
         data_width                      => 5 ,
         reset_value                     => "00000" 
@@ -1920,18 +2026,18 @@ begin
         reg_value                       => control_registers_out_i.filter_c_mask_bit_mask_c_val(28 downto 24) -- out
     );
 
-    end generate g_FILTER_C_MASK_present_t;
+    end generate g_filter_c_mask_bit_mask_c_val_slice_4_t;
 
-    g_FILTER_C_MASK_present_f : if (SUP_FILT_C = false) generate
-        control_registers_out_i.filter_c_mask_bit_mask_c_val <= (others => '0');
-    end generate g_FILTER_C_MASK_present_f;
+    g_filter_c_mask_bit_mask_c_val_slice_4_f : if (not(G_FILT_C_EN)) generate
+        control_registers_out_i.filter_c_mask_bit_mask_c_val(28 downto 24) <= (others => '0');
+    end generate g_filter_c_mask_bit_mask_c_val_slice_4_f;
 
-    g_FILTER_C_VAL_present_t : if (SUP_FILT_C = true) generate
     ----------------------------------------------------------------------------
     -- FILTER_C_VAL[BIT_VAL_C_VAL_SLICE_1]
     ----------------------------------------------------------------------------
+    g_filter_c_val_bit_val_c_val_slice_1_t : if (G_FILT_C_EN) generate
 
-    filter_c_val_bit_val_c_val_slice_1_reg_comp : memory_reg_rw
+    i_filter_c_val_bit_val_c_val_slice_1_reg : memory_reg_rw
     generic map(
         data_width                      => 8 ,
         reset_value                     => "00000000" 
@@ -1945,11 +2051,18 @@ begin
         reg_value                       => control_registers_out_i.filter_c_val_bit_val_c_val(7 downto 0) -- out
     );
 
+    end generate g_filter_c_val_bit_val_c_val_slice_1_t;
+
+    g_filter_c_val_bit_val_c_val_slice_1_f : if (not(G_FILT_C_EN)) generate
+        control_registers_out_i.filter_c_val_bit_val_c_val(7 downto 0) <= (others => '0');
+    end generate g_filter_c_val_bit_val_c_val_slice_1_f;
+
     ----------------------------------------------------------------------------
     -- FILTER_C_VAL[BIT_VAL_C_VAL_SLICE_2]
     ----------------------------------------------------------------------------
+    g_filter_c_val_bit_val_c_val_slice_2_t : if (G_FILT_C_EN) generate
 
-    filter_c_val_bit_val_c_val_slice_2_reg_comp : memory_reg_rw
+    i_filter_c_val_bit_val_c_val_slice_2_reg : memory_reg_rw
     generic map(
         data_width                      => 8 ,
         reset_value                     => "00000000" 
@@ -1963,11 +2076,18 @@ begin
         reg_value                       => control_registers_out_i.filter_c_val_bit_val_c_val(15 downto 8) -- out
     );
 
+    end generate g_filter_c_val_bit_val_c_val_slice_2_t;
+
+    g_filter_c_val_bit_val_c_val_slice_2_f : if (not(G_FILT_C_EN)) generate
+        control_registers_out_i.filter_c_val_bit_val_c_val(15 downto 8) <= (others => '0');
+    end generate g_filter_c_val_bit_val_c_val_slice_2_f;
+
     ----------------------------------------------------------------------------
     -- FILTER_C_VAL[BIT_VAL_C_VAL_SLICE_3]
     ----------------------------------------------------------------------------
+    g_filter_c_val_bit_val_c_val_slice_3_t : if (G_FILT_C_EN) generate
 
-    filter_c_val_bit_val_c_val_slice_3_reg_comp : memory_reg_rw
+    i_filter_c_val_bit_val_c_val_slice_3_reg : memory_reg_rw
     generic map(
         data_width                      => 8 ,
         reset_value                     => "00000000" 
@@ -1981,11 +2101,18 @@ begin
         reg_value                       => control_registers_out_i.filter_c_val_bit_val_c_val(23 downto 16) -- out
     );
 
+    end generate g_filter_c_val_bit_val_c_val_slice_3_t;
+
+    g_filter_c_val_bit_val_c_val_slice_3_f : if (not(G_FILT_C_EN)) generate
+        control_registers_out_i.filter_c_val_bit_val_c_val(23 downto 16) <= (others => '0');
+    end generate g_filter_c_val_bit_val_c_val_slice_3_f;
+
     ----------------------------------------------------------------------------
     -- FILTER_C_VAL[BIT_VAL_C_VAL_SLICE_4]
     ----------------------------------------------------------------------------
+    g_filter_c_val_bit_val_c_val_slice_4_t : if (G_FILT_C_EN) generate
 
-    filter_c_val_bit_val_c_val_slice_4_reg_comp : memory_reg_rw
+    i_filter_c_val_bit_val_c_val_slice_4_reg : memory_reg_rw
     generic map(
         data_width                      => 5 ,
         reset_value                     => "00000" 
@@ -1999,18 +2126,18 @@ begin
         reg_value                       => control_registers_out_i.filter_c_val_bit_val_c_val(28 downto 24) -- out
     );
 
-    end generate g_FILTER_C_VAL_present_t;
+    end generate g_filter_c_val_bit_val_c_val_slice_4_t;
 
-    g_FILTER_C_VAL_present_f : if (SUP_FILT_C = false) generate
-        control_registers_out_i.filter_c_val_bit_val_c_val <= (others => '0');
-    end generate g_FILTER_C_VAL_present_f;
+    g_filter_c_val_bit_val_c_val_slice_4_f : if (not(G_FILT_C_EN)) generate
+        control_registers_out_i.filter_c_val_bit_val_c_val(28 downto 24) <= (others => '0');
+    end generate g_filter_c_val_bit_val_c_val_slice_4_f;
 
-    g_FILTER_RAN_LOW_present_t : if (SUP_RANGE = true) generate
     ----------------------------------------------------------------------------
     -- FILTER_RAN_LOW[BIT_RAN_LOW_VAL_SLICE_1]
     ----------------------------------------------------------------------------
+    g_filter_ran_low_bit_ran_low_val_slice_1_t : if (G_FILT_RANGE_EN) generate
 
-    filter_ran_low_bit_ran_low_val_slice_1_reg_comp : memory_reg_rw
+    i_filter_ran_low_bit_ran_low_val_slice_1_reg : memory_reg_rw
     generic map(
         data_width                      => 8 ,
         reset_value                     => "00000000" 
@@ -2024,11 +2151,18 @@ begin
         reg_value                       => control_registers_out_i.filter_ran_low_bit_ran_low_val(7 downto 0) -- out
     );
 
+    end generate g_filter_ran_low_bit_ran_low_val_slice_1_t;
+
+    g_filter_ran_low_bit_ran_low_val_slice_1_f : if (not(G_FILT_RANGE_EN)) generate
+        control_registers_out_i.filter_ran_low_bit_ran_low_val(7 downto 0) <= (others => '0');
+    end generate g_filter_ran_low_bit_ran_low_val_slice_1_f;
+
     ----------------------------------------------------------------------------
     -- FILTER_RAN_LOW[BIT_RAN_LOW_VAL_SLICE_2]
     ----------------------------------------------------------------------------
+    g_filter_ran_low_bit_ran_low_val_slice_2_t : if (G_FILT_RANGE_EN) generate
 
-    filter_ran_low_bit_ran_low_val_slice_2_reg_comp : memory_reg_rw
+    i_filter_ran_low_bit_ran_low_val_slice_2_reg : memory_reg_rw
     generic map(
         data_width                      => 8 ,
         reset_value                     => "00000000" 
@@ -2042,11 +2176,18 @@ begin
         reg_value                       => control_registers_out_i.filter_ran_low_bit_ran_low_val(15 downto 8) -- out
     );
 
+    end generate g_filter_ran_low_bit_ran_low_val_slice_2_t;
+
+    g_filter_ran_low_bit_ran_low_val_slice_2_f : if (not(G_FILT_RANGE_EN)) generate
+        control_registers_out_i.filter_ran_low_bit_ran_low_val(15 downto 8) <= (others => '0');
+    end generate g_filter_ran_low_bit_ran_low_val_slice_2_f;
+
     ----------------------------------------------------------------------------
     -- FILTER_RAN_LOW[BIT_RAN_LOW_VAL_SLICE_3]
     ----------------------------------------------------------------------------
+    g_filter_ran_low_bit_ran_low_val_slice_3_t : if (G_FILT_RANGE_EN) generate
 
-    filter_ran_low_bit_ran_low_val_slice_3_reg_comp : memory_reg_rw
+    i_filter_ran_low_bit_ran_low_val_slice_3_reg : memory_reg_rw
     generic map(
         data_width                      => 8 ,
         reset_value                     => "00000000" 
@@ -2060,11 +2201,18 @@ begin
         reg_value                       => control_registers_out_i.filter_ran_low_bit_ran_low_val(23 downto 16) -- out
     );
 
+    end generate g_filter_ran_low_bit_ran_low_val_slice_3_t;
+
+    g_filter_ran_low_bit_ran_low_val_slice_3_f : if (not(G_FILT_RANGE_EN)) generate
+        control_registers_out_i.filter_ran_low_bit_ran_low_val(23 downto 16) <= (others => '0');
+    end generate g_filter_ran_low_bit_ran_low_val_slice_3_f;
+
     ----------------------------------------------------------------------------
     -- FILTER_RAN_LOW[BIT_RAN_LOW_VAL_SLICE_4]
     ----------------------------------------------------------------------------
+    g_filter_ran_low_bit_ran_low_val_slice_4_t : if (G_FILT_RANGE_EN) generate
 
-    filter_ran_low_bit_ran_low_val_slice_4_reg_comp : memory_reg_rw
+    i_filter_ran_low_bit_ran_low_val_slice_4_reg : memory_reg_rw
     generic map(
         data_width                      => 5 ,
         reset_value                     => "00000" 
@@ -2078,18 +2226,18 @@ begin
         reg_value                       => control_registers_out_i.filter_ran_low_bit_ran_low_val(28 downto 24) -- out
     );
 
-    end generate g_FILTER_RAN_LOW_present_t;
+    end generate g_filter_ran_low_bit_ran_low_val_slice_4_t;
 
-    g_FILTER_RAN_LOW_present_f : if (SUP_RANGE = false) generate
-        control_registers_out_i.filter_ran_low_bit_ran_low_val <= (others => '0');
-    end generate g_FILTER_RAN_LOW_present_f;
+    g_filter_ran_low_bit_ran_low_val_slice_4_f : if (not(G_FILT_RANGE_EN)) generate
+        control_registers_out_i.filter_ran_low_bit_ran_low_val(28 downto 24) <= (others => '0');
+    end generate g_filter_ran_low_bit_ran_low_val_slice_4_f;
 
-    g_FILTER_RAN_HIGH_present_t : if (SUP_RANGE = true) generate
     ----------------------------------------------------------------------------
     -- FILTER_RAN_HIGH[BIT_RAN_HIGH_VAL_SLICE_1]
     ----------------------------------------------------------------------------
+    g_filter_ran_high_bit_ran_high_val_slice_1_t : if (G_FILT_RANGE_EN) generate
 
-    filter_ran_high_bit_ran_high_val_slice_1_reg_comp : memory_reg_rw
+    i_filter_ran_high_bit_ran_high_val_slice_1_reg : memory_reg_rw
     generic map(
         data_width                      => 8 ,
         reset_value                     => "00000000" 
@@ -2103,11 +2251,18 @@ begin
         reg_value                       => control_registers_out_i.filter_ran_high_bit_ran_high_val(7 downto 0) -- out
     );
 
+    end generate g_filter_ran_high_bit_ran_high_val_slice_1_t;
+
+    g_filter_ran_high_bit_ran_high_val_slice_1_f : if (not(G_FILT_RANGE_EN)) generate
+        control_registers_out_i.filter_ran_high_bit_ran_high_val(7 downto 0) <= (others => '0');
+    end generate g_filter_ran_high_bit_ran_high_val_slice_1_f;
+
     ----------------------------------------------------------------------------
     -- FILTER_RAN_HIGH[BIT_RAN_HIGH_VAL_SLICE_2]
     ----------------------------------------------------------------------------
+    g_filter_ran_high_bit_ran_high_val_slice_2_t : if (G_FILT_RANGE_EN) generate
 
-    filter_ran_high_bit_ran_high_val_slice_2_reg_comp : memory_reg_rw
+    i_filter_ran_high_bit_ran_high_val_slice_2_reg : memory_reg_rw
     generic map(
         data_width                      => 8 ,
         reset_value                     => "00000000" 
@@ -2121,11 +2276,18 @@ begin
         reg_value                       => control_registers_out_i.filter_ran_high_bit_ran_high_val(15 downto 8) -- out
     );
 
+    end generate g_filter_ran_high_bit_ran_high_val_slice_2_t;
+
+    g_filter_ran_high_bit_ran_high_val_slice_2_f : if (not(G_FILT_RANGE_EN)) generate
+        control_registers_out_i.filter_ran_high_bit_ran_high_val(15 downto 8) <= (others => '0');
+    end generate g_filter_ran_high_bit_ran_high_val_slice_2_f;
+
     ----------------------------------------------------------------------------
     -- FILTER_RAN_HIGH[BIT_RAN_HIGH_VAL_SLICE_3]
     ----------------------------------------------------------------------------
+    g_filter_ran_high_bit_ran_high_val_slice_3_t : if (G_FILT_RANGE_EN) generate
 
-    filter_ran_high_bit_ran_high_val_slice_3_reg_comp : memory_reg_rw
+    i_filter_ran_high_bit_ran_high_val_slice_3_reg : memory_reg_rw
     generic map(
         data_width                      => 8 ,
         reset_value                     => "00000000" 
@@ -2139,11 +2301,18 @@ begin
         reg_value                       => control_registers_out_i.filter_ran_high_bit_ran_high_val(23 downto 16) -- out
     );
 
+    end generate g_filter_ran_high_bit_ran_high_val_slice_3_t;
+
+    g_filter_ran_high_bit_ran_high_val_slice_3_f : if (not(G_FILT_RANGE_EN)) generate
+        control_registers_out_i.filter_ran_high_bit_ran_high_val(23 downto 16) <= (others => '0');
+    end generate g_filter_ran_high_bit_ran_high_val_slice_3_f;
+
     ----------------------------------------------------------------------------
     -- FILTER_RAN_HIGH[BIT_RAN_HIGH_VAL_SLICE_4]
     ----------------------------------------------------------------------------
+    g_filter_ran_high_bit_ran_high_val_slice_4_t : if (G_FILT_RANGE_EN) generate
 
-    filter_ran_high_bit_ran_high_val_slice_4_reg_comp : memory_reg_rw
+    i_filter_ran_high_bit_ran_high_val_slice_4_reg : memory_reg_rw
     generic map(
         data_width                      => 5 ,
         reset_value                     => "00000" 
@@ -2157,17 +2326,17 @@ begin
         reg_value                       => control_registers_out_i.filter_ran_high_bit_ran_high_val(28 downto 24) -- out
     );
 
-    end generate g_FILTER_RAN_HIGH_present_t;
+    end generate g_filter_ran_high_bit_ran_high_val_slice_4_t;
 
-    g_FILTER_RAN_HIGH_present_f : if (SUP_RANGE = false) generate
-        control_registers_out_i.filter_ran_high_bit_ran_high_val <= (others => '0');
-    end generate g_FILTER_RAN_HIGH_present_f;
+    g_filter_ran_high_bit_ran_high_val_slice_4_f : if (not(G_FILT_RANGE_EN)) generate
+        control_registers_out_i.filter_ran_high_bit_ran_high_val(28 downto 24) <= (others => '0');
+    end generate g_filter_ran_high_bit_ran_high_val_slice_4_f;
 
     ----------------------------------------------------------------------------
     -- FILTER_CONTROL[FANB]
     ----------------------------------------------------------------------------
 
-    filter_control_fanb_reg_comp : memory_reg_rw
+    i_filter_control_fanb_reg : memory_reg_rw
     generic map(
         data_width                      => 1 ,
         reset_value                     => "1" 
@@ -2185,7 +2354,7 @@ begin
     -- FILTER_CONTROL[FANE]
     ----------------------------------------------------------------------------
 
-    filter_control_fane_reg_comp : memory_reg_rw
+    i_filter_control_fane_reg : memory_reg_rw
     generic map(
         data_width                      => 1 ,
         reset_value                     => "1" 
@@ -2203,7 +2372,7 @@ begin
     -- FILTER_CONTROL[FAFB]
     ----------------------------------------------------------------------------
 
-    filter_control_fafb_reg_comp : memory_reg_rw
+    i_filter_control_fafb_reg : memory_reg_rw
     generic map(
         data_width                      => 1 ,
         reset_value                     => "1" 
@@ -2221,7 +2390,7 @@ begin
     -- FILTER_CONTROL[FAFE]
     ----------------------------------------------------------------------------
 
-    filter_control_fafe_reg_comp : memory_reg_rw
+    i_filter_control_fafe_reg : memory_reg_rw
     generic map(
         data_width                      => 1 ,
         reset_value                     => "1" 
@@ -2239,7 +2408,7 @@ begin
     -- FILTER_CONTROL[FBNB]
     ----------------------------------------------------------------------------
 
-    filter_control_fbnb_reg_comp : memory_reg_rw
+    i_filter_control_fbnb_reg : memory_reg_rw
     generic map(
         data_width                      => 1 ,
         reset_value                     => "0" 
@@ -2257,7 +2426,7 @@ begin
     -- FILTER_CONTROL[FBNE]
     ----------------------------------------------------------------------------
 
-    filter_control_fbne_reg_comp : memory_reg_rw
+    i_filter_control_fbne_reg : memory_reg_rw
     generic map(
         data_width                      => 1 ,
         reset_value                     => "0" 
@@ -2275,7 +2444,7 @@ begin
     -- FILTER_CONTROL[FBFB]
     ----------------------------------------------------------------------------
 
-    filter_control_fbfb_reg_comp : memory_reg_rw
+    i_filter_control_fbfb_reg : memory_reg_rw
     generic map(
         data_width                      => 1 ,
         reset_value                     => "0" 
@@ -2293,7 +2462,7 @@ begin
     -- FILTER_CONTROL[FBFE]
     ----------------------------------------------------------------------------
 
-    filter_control_fbfe_reg_comp : memory_reg_rw
+    i_filter_control_fbfe_reg : memory_reg_rw
     generic map(
         data_width                      => 1 ,
         reset_value                     => "0" 
@@ -2311,7 +2480,7 @@ begin
     -- FILTER_CONTROL[FCNB]
     ----------------------------------------------------------------------------
 
-    filter_control_fcnb_reg_comp : memory_reg_rw
+    i_filter_control_fcnb_reg : memory_reg_rw
     generic map(
         data_width                      => 1 ,
         reset_value                     => "0" 
@@ -2329,7 +2498,7 @@ begin
     -- FILTER_CONTROL[FCNE]
     ----------------------------------------------------------------------------
 
-    filter_control_fcne_reg_comp : memory_reg_rw
+    i_filter_control_fcne_reg : memory_reg_rw
     generic map(
         data_width                      => 1 ,
         reset_value                     => "0" 
@@ -2347,7 +2516,7 @@ begin
     -- FILTER_CONTROL[FCFB]
     ----------------------------------------------------------------------------
 
-    filter_control_fcfb_reg_comp : memory_reg_rw
+    i_filter_control_fcfb_reg : memory_reg_rw
     generic map(
         data_width                      => 1 ,
         reset_value                     => "0" 
@@ -2365,7 +2534,7 @@ begin
     -- FILTER_CONTROL[FCFE]
     ----------------------------------------------------------------------------
 
-    filter_control_fcfe_reg_comp : memory_reg_rw
+    i_filter_control_fcfe_reg : memory_reg_rw
     generic map(
         data_width                      => 1 ,
         reset_value                     => "0" 
@@ -2383,7 +2552,7 @@ begin
     -- FILTER_CONTROL[FRNB]
     ----------------------------------------------------------------------------
 
-    filter_control_frnb_reg_comp : memory_reg_rw
+    i_filter_control_frnb_reg : memory_reg_rw
     generic map(
         data_width                      => 1 ,
         reset_value                     => "0" 
@@ -2401,7 +2570,7 @@ begin
     -- FILTER_CONTROL[FRNE]
     ----------------------------------------------------------------------------
 
-    filter_control_frne_reg_comp : memory_reg_rw
+    i_filter_control_frne_reg : memory_reg_rw
     generic map(
         data_width                      => 1 ,
         reset_value                     => "0" 
@@ -2419,7 +2588,7 @@ begin
     -- FILTER_CONTROL[FRFB]
     ----------------------------------------------------------------------------
 
-    filter_control_frfb_reg_comp : memory_reg_rw
+    i_filter_control_frfb_reg : memory_reg_rw
     generic map(
         data_width                      => 1 ,
         reset_value                     => "0" 
@@ -2437,7 +2606,7 @@ begin
     -- FILTER_CONTROL[FRFE]
     ----------------------------------------------------------------------------
 
-    filter_control_frfe_reg_comp : memory_reg_rw
+    i_filter_control_frfe_reg : memory_reg_rw
     generic map(
         data_width                      => 1 ,
         reset_value                     => "0" 
@@ -2455,7 +2624,7 @@ begin
     -- RX_SETTINGS[RTSOP]
     ----------------------------------------------------------------------------
 
-    rx_settings_rtsop_reg_comp : memory_reg_rw
+    i_rx_settings_rtsop_reg : memory_reg_rw
     generic map(
         data_width                      => 1 ,
         reset_value                     => "0" 
@@ -2473,7 +2642,7 @@ begin
     -- RX_DATA access signallization
     ----------------------------------------------------------------------------
 
-    rx_data_access_signaller_comp : read_access_signaller
+    i_rx_data_access_signaller : read_access_signaller
     generic map(
         data_width                      => 32 
     )
@@ -2490,7 +2659,7 @@ begin
     -- TX_COMMAND[TXCE]
     ----------------------------------------------------------------------------
 
-    tx_command_txce_reg_comp : memory_reg_os
+    i_tx_command_txce_reg : memory_reg_os
     generic map(
         data_width                      => 1 ,
         reset_value                     => "0" 
@@ -2508,7 +2677,7 @@ begin
     -- TX_COMMAND[TXCR]
     ----------------------------------------------------------------------------
 
-    tx_command_txcr_reg_comp : memory_reg_os
+    i_tx_command_txcr_reg : memory_reg_os
     generic map(
         data_width                      => 1 ,
         reset_value                     => "0" 
@@ -2526,7 +2695,7 @@ begin
     -- TX_COMMAND[TXCA]
     ----------------------------------------------------------------------------
 
-    tx_command_txca_reg_comp : memory_reg_os
+    i_tx_command_txca_reg : memory_reg_os
     generic map(
         data_width                      => 1 ,
         reset_value                     => "0" 
@@ -2544,7 +2713,7 @@ begin
     -- TX_COMMAND[TXB1]
     ----------------------------------------------------------------------------
 
-    tx_command_txb1_reg_comp : memory_reg_rw
+    i_tx_command_txb1_reg : memory_reg_rw
     generic map(
         data_width                      => 1 ,
         reset_value                     => "0" 
@@ -2562,7 +2731,7 @@ begin
     -- TX_COMMAND[TXB2]
     ----------------------------------------------------------------------------
 
-    tx_command_txb2_reg_comp : memory_reg_rw
+    i_tx_command_txb2_reg : memory_reg_rw
     generic map(
         data_width                      => 1 ,
         reset_value                     => "0" 
@@ -2579,8 +2748,9 @@ begin
     ----------------------------------------------------------------------------
     -- TX_COMMAND[TXB3]
     ----------------------------------------------------------------------------
+    g_tx_command_txb3_t : if (G_TXT_BUF_COUNT > 2) generate
 
-    tx_command_txb3_reg_comp : memory_reg_rw
+    i_tx_command_txb3_reg : memory_reg_rw
     generic map(
         data_width                      => 1 ,
         reset_value                     => "0" 
@@ -2594,11 +2764,18 @@ begin
         reg_value(0)                    => control_registers_out_i.tx_command_txb3 -- out
     );
 
+    end generate g_tx_command_txb3_t;
+
+    g_tx_command_txb3_f : if (not(G_TXT_BUF_COUNT > 2)) generate
+        control_registers_out_i.tx_command_txb3 <= '0';
+    end generate g_tx_command_txb3_f;
+
     ----------------------------------------------------------------------------
     -- TX_COMMAND[TXB4]
     ----------------------------------------------------------------------------
+    g_tx_command_txb4_t : if (G_TXT_BUF_COUNT > 3) generate
 
-    tx_command_txb4_reg_comp : memory_reg_rw
+    i_tx_command_txb4_reg : memory_reg_rw
     generic map(
         data_width                      => 1 ,
         reset_value                     => "0" 
@@ -2612,11 +2789,18 @@ begin
         reg_value(0)                    => control_registers_out_i.tx_command_txb4 -- out
     );
 
+    end generate g_tx_command_txb4_t;
+
+    g_tx_command_txb4_f : if (not(G_TXT_BUF_COUNT > 3)) generate
+        control_registers_out_i.tx_command_txb4 <= '0';
+    end generate g_tx_command_txb4_f;
+
     ----------------------------------------------------------------------------
     -- TX_COMMAND[TXB5]
     ----------------------------------------------------------------------------
+    g_tx_command_txb5_t : if (G_TXT_BUF_COUNT > 4) generate
 
-    tx_command_txb5_reg_comp : memory_reg_rw
+    i_tx_command_txb5_reg : memory_reg_rw
     generic map(
         data_width                      => 1 ,
         reset_value                     => "0" 
@@ -2630,11 +2814,18 @@ begin
         reg_value(0)                    => control_registers_out_i.tx_command_txb5 -- out
     );
 
+    end generate g_tx_command_txb5_t;
+
+    g_tx_command_txb5_f : if (not(G_TXT_BUF_COUNT > 4)) generate
+        control_registers_out_i.tx_command_txb5 <= '0';
+    end generate g_tx_command_txb5_f;
+
     ----------------------------------------------------------------------------
     -- TX_COMMAND[TXB6]
     ----------------------------------------------------------------------------
+    g_tx_command_txb6_t : if (G_TXT_BUF_COUNT > 5) generate
 
-    tx_command_txb6_reg_comp : memory_reg_rw
+    i_tx_command_txb6_reg : memory_reg_rw
     generic map(
         data_width                      => 1 ,
         reset_value                     => "0" 
@@ -2648,11 +2839,18 @@ begin
         reg_value(0)                    => control_registers_out_i.tx_command_txb6 -- out
     );
 
+    end generate g_tx_command_txb6_t;
+
+    g_tx_command_txb6_f : if (not(G_TXT_BUF_COUNT > 5)) generate
+        control_registers_out_i.tx_command_txb6 <= '0';
+    end generate g_tx_command_txb6_f;
+
     ----------------------------------------------------------------------------
     -- TX_COMMAND[TXB7]
     ----------------------------------------------------------------------------
+    g_tx_command_txb7_t : if (G_TXT_BUF_COUNT > 6) generate
 
-    tx_command_txb7_reg_comp : memory_reg_rw
+    i_tx_command_txb7_reg : memory_reg_rw
     generic map(
         data_width                      => 1 ,
         reset_value                     => "0" 
@@ -2666,11 +2864,18 @@ begin
         reg_value(0)                    => control_registers_out_i.tx_command_txb7 -- out
     );
 
+    end generate g_tx_command_txb7_t;
+
+    g_tx_command_txb7_f : if (not(G_TXT_BUF_COUNT > 6)) generate
+        control_registers_out_i.tx_command_txb7 <= '0';
+    end generate g_tx_command_txb7_f;
+
     ----------------------------------------------------------------------------
     -- TX_COMMAND[TXB8]
     ----------------------------------------------------------------------------
+    g_tx_command_txb8_t : if (G_TXT_BUF_COUNT > 7) generate
 
-    tx_command_txb8_reg_comp : memory_reg_rw
+    i_tx_command_txb8_reg : memory_reg_rw
     generic map(
         data_width                      => 1 ,
         reset_value                     => "0" 
@@ -2684,11 +2889,17 @@ begin
         reg_value(0)                    => control_registers_out_i.tx_command_txb8 -- out
     );
 
+    end generate g_tx_command_txb8_t;
+
+    g_tx_command_txb8_f : if (not(G_TXT_BUF_COUNT > 7)) generate
+        control_registers_out_i.tx_command_txb8 <= '0';
+    end generate g_tx_command_txb8_f;
+
     ----------------------------------------------------------------------------
     -- TX_PRIORITY[TXT1P]
     ----------------------------------------------------------------------------
 
-    tx_priority_txt1p_reg_comp : memory_reg_rw
+    i_tx_priority_txt1p_reg : memory_reg_rw
     generic map(
         data_width                      => 3 ,
         reset_value                     => "001" 
@@ -2706,7 +2917,7 @@ begin
     -- TX_PRIORITY[TXT2P]
     ----------------------------------------------------------------------------
 
-    tx_priority_txt2p_reg_comp : memory_reg_rw
+    i_tx_priority_txt2p_reg : memory_reg_rw
     generic map(
         data_width                      => 3 ,
         reset_value                     => "000" 
@@ -2723,8 +2934,9 @@ begin
     ----------------------------------------------------------------------------
     -- TX_PRIORITY[TXT3P]
     ----------------------------------------------------------------------------
+    g_tx_priority_txt3p_t : if (G_TXT_BUF_COUNT > 2) generate
 
-    tx_priority_txt3p_reg_comp : memory_reg_rw
+    i_tx_priority_txt3p_reg : memory_reg_rw
     generic map(
         data_width                      => 3 ,
         reset_value                     => "000" 
@@ -2738,11 +2950,18 @@ begin
         reg_value                       => control_registers_out_i.tx_priority_txt3p -- out
     );
 
+    end generate g_tx_priority_txt3p_t;
+
+    g_tx_priority_txt3p_f : if (not(G_TXT_BUF_COUNT > 2)) generate
+        control_registers_out_i.tx_priority_txt3p <= (others => '0');
+    end generate g_tx_priority_txt3p_f;
+
     ----------------------------------------------------------------------------
     -- TX_PRIORITY[TXT4P]
     ----------------------------------------------------------------------------
+    g_tx_priority_txt4p_t : if (G_TXT_BUF_COUNT > 3) generate
 
-    tx_priority_txt4p_reg_comp : memory_reg_rw
+    i_tx_priority_txt4p_reg : memory_reg_rw
     generic map(
         data_width                      => 3 ,
         reset_value                     => "000" 
@@ -2756,11 +2975,18 @@ begin
         reg_value                       => control_registers_out_i.tx_priority_txt4p -- out
     );
 
+    end generate g_tx_priority_txt4p_t;
+
+    g_tx_priority_txt4p_f : if (not(G_TXT_BUF_COUNT > 3)) generate
+        control_registers_out_i.tx_priority_txt4p <= (others => '0');
+    end generate g_tx_priority_txt4p_f;
+
     ----------------------------------------------------------------------------
     -- TX_PRIORITY[TXT5P]
     ----------------------------------------------------------------------------
+    g_tx_priority_txt5p_t : if (G_TXT_BUF_COUNT > 4) generate
 
-    tx_priority_txt5p_reg_comp : memory_reg_rw
+    i_tx_priority_txt5p_reg : memory_reg_rw
     generic map(
         data_width                      => 3 ,
         reset_value                     => "000" 
@@ -2774,11 +3000,18 @@ begin
         reg_value                       => control_registers_out_i.tx_priority_txt5p -- out
     );
 
+    end generate g_tx_priority_txt5p_t;
+
+    g_tx_priority_txt5p_f : if (not(G_TXT_BUF_COUNT > 4)) generate
+        control_registers_out_i.tx_priority_txt5p <= (others => '0');
+    end generate g_tx_priority_txt5p_f;
+
     ----------------------------------------------------------------------------
     -- TX_PRIORITY[TXT6P]
     ----------------------------------------------------------------------------
+    g_tx_priority_txt6p_t : if (G_TXT_BUF_COUNT > 5) generate
 
-    tx_priority_txt6p_reg_comp : memory_reg_rw
+    i_tx_priority_txt6p_reg : memory_reg_rw
     generic map(
         data_width                      => 3 ,
         reset_value                     => "000" 
@@ -2792,11 +3025,18 @@ begin
         reg_value                       => control_registers_out_i.tx_priority_txt6p -- out
     );
 
+    end generate g_tx_priority_txt6p_t;
+
+    g_tx_priority_txt6p_f : if (not(G_TXT_BUF_COUNT > 5)) generate
+        control_registers_out_i.tx_priority_txt6p <= (others => '0');
+    end generate g_tx_priority_txt6p_f;
+
     ----------------------------------------------------------------------------
     -- TX_PRIORITY[TXT7P]
     ----------------------------------------------------------------------------
+    g_tx_priority_txt7p_t : if (G_TXT_BUF_COUNT > 6) generate
 
-    tx_priority_txt7p_reg_comp : memory_reg_rw
+    i_tx_priority_txt7p_reg : memory_reg_rw
     generic map(
         data_width                      => 3 ,
         reset_value                     => "000" 
@@ -2810,11 +3050,18 @@ begin
         reg_value                       => control_registers_out_i.tx_priority_txt7p -- out
     );
 
+    end generate g_tx_priority_txt7p_t;
+
+    g_tx_priority_txt7p_f : if (not(G_TXT_BUF_COUNT > 6)) generate
+        control_registers_out_i.tx_priority_txt7p <= (others => '0');
+    end generate g_tx_priority_txt7p_f;
+
     ----------------------------------------------------------------------------
     -- TX_PRIORITY[TXT8P]
     ----------------------------------------------------------------------------
+    g_tx_priority_txt8p_t : if (G_TXT_BUF_COUNT > 7) generate
 
-    tx_priority_txt8p_reg_comp : memory_reg_rw
+    i_tx_priority_txt8p_reg : memory_reg_rw
     generic map(
         data_width                      => 3 ,
         reset_value                     => "000" 
@@ -2828,11 +3075,17 @@ begin
         reg_value                       => control_registers_out_i.tx_priority_txt8p -- out
     );
 
+    end generate g_tx_priority_txt8p_t;
+
+    g_tx_priority_txt8p_f : if (not(G_TXT_BUF_COUNT > 7)) generate
+        control_registers_out_i.tx_priority_txt8p <= (others => '0');
+    end generate g_tx_priority_txt8p_f;
+
     ----------------------------------------------------------------------------
     -- SSP_CFG[SSP_OFFSET]
     ----------------------------------------------------------------------------
 
-    ssp_cfg_ssp_offset_reg_comp : memory_reg_rw_lock
+    i_ssp_cfg_ssp_offset_reg : memory_reg_rw_lock
     generic map(
         data_width                      => 8 ,
         reset_value                     => "00001010" 
@@ -2851,7 +3104,7 @@ begin
     -- SSP_CFG[SSP_SRC]
     ----------------------------------------------------------------------------
 
-    ssp_cfg_ssp_src_reg_comp : memory_reg_rw_lock
+    i_ssp_cfg_ssp_src_reg : memory_reg_rw_lock
     generic map(
         data_width                      => 2 ,
         reset_value                     => "00" 

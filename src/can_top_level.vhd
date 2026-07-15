@@ -100,40 +100,40 @@ use ctu_can_fd_rtl.can_registers_pkg.all;
 entity can_top_level is
     generic (
         -- RX Buffer RAM size (32 bit words)
-        rx_buffer_size          : natural range 32 to 4096  := 32;
+        G_RX_BUF_SIZE           : natural range 32 to 4096  := 32;
 
         -- Number of supported TXT buffers
-        txt_buffer_count        : natural range 2 to 8      := C_TXT_BUFFER_COUNT;
+        G_TXT_BUF_COUNT         : natural range 2 to 8      := C_TXT_BUFFER_COUNT;
 
         -- Synthesize Filter A
-        sup_filtA               : boolean                   := false;
+        G_FILT_A_EN             : boolean                   := false;
 
         -- Synthesize Filter B
-        sup_filtB               : boolean                   := false;
+        G_FILT_B_EN             : boolean                   := false;
 
         -- Synthesize Filter C
-        sup_filtC               : boolean                   := false;
+        G_FILT_C_EN             : boolean                   := false;
 
         -- Synthesize Range Filter
-        sup_range               : boolean                   := false;
+        G_FILT_RANGE_EN         : boolean                   := false;
 
         -- Synthesize Test registers
-        sup_test_registers      : boolean                   := true;
+        G_TEST_REGS_EN          : boolean                   := true;
 
         -- Insert Traffic counters
-        sup_traffic_ctrs        : boolean                   := false;
+        G_TRAFFIC_CTRS_EN       : boolean                   := false;
 
         -- Add parity bit to TXT Buffer and RX Buffer RAMs
-        sup_parity              : boolean                   := false;
+        G_PARITY_EN             : boolean                   := false;
 
         -- Number of active timestamp bits
-        active_timestamp_bits   : natural range 0 to 63     := 63;
+        G_ACTIVE_TS_BITS        : natural range 0 to 63     := 63;
 
         -- Reset TXT / RX Buffer RAMs
-        reset_buffer_rams       : boolean                   := false;
+        G_RESET_BUF_RAMS        : boolean                   := false;
 
         -- Target technology (ASIC or FPGA)
-        target_technology       : natural                   := C_TECH_FPGA
+        G_TECHNOLOGY            : natural                   := C_TECH_FPGA
     );
     port(
         -----------------------------------------------------------------------
@@ -212,14 +212,14 @@ architecture rtl of can_top_level is
     -----------------------------------------------------------------------------------------------
     -----------------------------------------------------------------------------------------------
     -- Width of RX Buffer pointers
-    constant C_RX_BUFF_PTR_WIDTH        :   natural range 5 to 12 :=
-        integer(ceil(log2(real(rx_buffer_size))));
+    constant C_RX_BUF_PTR_WIDTH            :   natural range 5 to 12 :=
+        integer(ceil(log2(real(G_RX_BUF_SIZE))));
 
     -- Width of RX Buffer frame counter
-    -- Minimal sized frame is 4 words. At e.g. rx_buffer_size = 256 (8 bits for pointers),
+    -- Minimal sized frame is 4 words. At e.g. G_RX_BUF_SIZE = 256 (8 bits for pointers),
     -- we get maximum 64 frames stored in RX Buffer (inclusive) -> 7 bits for frame counter.
-    constant C_RX_BUF_FRAME_CNT_WIDTH   :   natural range 3 to 11 :=
-        integer(ceil(log2(real(rx_buffer_size)))) - 1;
+    constant C_RX_BUF_FRAME_CNT_WIDTH       :   natural range 3 to 11 :=
+        integer(ceil(log2(real(G_RX_BUF_SIZE)))) - 1;
 
     -----------------------------------------------------------------------------------------------
     -----------------------------------------------------------------------------------------------
@@ -232,225 +232,225 @@ architecture rtl of can_top_level is
     -----------------------------------------------------------------------------------------------
 
     -- Synchronised reset
-    signal res_n_sync                   :    std_logic;
+    signal res_n_sync                       :    std_logic;
 
     -- Core reset (Synchronised reset + Soft Reset + Active when disabled)
-    signal res_core_n                   :    std_logic;
+    signal res_core_n                       :    std_logic;
 
     -- Soft reset ((Synchronised reset + Soft Reset)
-    signal res_soft_n                   :    std_logic;
+    signal res_soft_n                       :    std_logic;
 
     -- Sample control (Nominal, Data, Secondary)
-    signal sp_control                   :    std_logic_vector(1 downto 0);
+    signal sp_control                       :    std_logic_vector(1 downto 0);
 
     -----------------------------------------------------------------------------------------------
     -- RX Buffer <-> Memory registers Interface
     -----------------------------------------------------------------------------------------------
     -- Signal whenever buffer is full (no free memory words)
-    signal rx_full                      :    std_logic;
+    signal rx_full                          :    std_logic;
 
     -- Signal whenever buffer is empty (no frame (message) is stored)
-    signal rx_empty                     :    std_logic;
+    signal rx_empty                         :    std_logic;
 
     -- Number of frames stored in recieve buffer
-    signal rx_frame_count               :    std_logic_vector(C_RX_BUF_FRAME_CNT_WIDTH - 1 downto 0);
+    signal rx_frame_count                   :    std_logic_vector(C_RX_BUF_FRAME_CNT_WIDTH - 1 downto 0);
 
     -- Number of free 32 bit wide words
-    signal rx_mem_free                  :    std_logic_vector(C_RX_BUFF_PTR_WIDTH downto 0);
+    signal rx_mem_free                      :    std_logic_vector(C_RX_BUF_PTR_WIDTH downto 0);
 
     -- Position of read pointer
-    signal rx_read_pointer              :    std_logic_vector(C_RX_BUFF_PTR_WIDTH - 1 downto 0);
+    signal rx_read_pointer                  :    std_logic_vector(C_RX_BUF_PTR_WIDTH - 1 downto 0);
 
     -- Position of write pointer
-    signal rx_write_pointer             :    std_logic_vector(C_RX_BUFF_PTR_WIDTH - 1 downto 0);
+    signal rx_write_pointer                 :    std_logic_vector(C_RX_BUF_PTR_WIDTH - 1 downto 0);
 
     -- Overrun occurred, data were discarded!
     -- (This is a flag and persists until it is cleared by SW)!
-    signal rx_data_overrun              :    std_logic;
+    signal rx_data_overrun                  :    std_logic;
 
     -- RX buffer middle of frame
-    signal rx_mof                       :    std_logic;
+    signal rx_mof                           :    std_logic;
 
     -- RX Buffer parity error flag
-    signal rx_parity_error              :    std_logic;
+    signal rx_parity_error                  :    std_logic;
 
     -----------------------------------------------------------------------------------------------
     -- TXT Buffer <-> Memory registers Interface
     -----------------------------------------------------------------------------------------------
 
     -- TXT Buffer RAM - Data input
-    signal txtb_port_a_data_in          :    std_logic_vector(31 downto 0);
+    signal txtb_port_a_data_in              :    std_logic_vector(31 downto 0);
 
     -- TXT Buffer RAM - Parity input
-    signal txtb_port_a_parity           :    std_logic;
+    signal txtb_port_a_parity               :    std_logic;
 
     -- TXT Buffer RAM - Address
-    signal txtb_port_a_address          :    std_logic_vector(4 downto 0);
+    signal txtb_port_a_address              :    std_logic_vector(4 downto 0);
 
     -- TXT Buffer chip select
-    signal txtb_port_a_cs               :    std_logic_vector(txt_buffer_count - 1 downto 0);
+    signal txtb_port_a_cs                   :    std_logic_vector(G_TXT_BUF_COUNT - 1 downto 0);
 
     -- TXT Buffer Port A byte enable
-    signal txtb_port_a_be               :    std_logic_vector(3 downto 0);
+    signal txtb_port_a_be                   :    std_logic_vector(3 downto 0);
 
     -- TXT Buffer status
-    signal txtb_state                   :    t_txt_bufs_state(txt_buffer_count - 1 downto 0);
+    signal txtb_state                       :    t_txt_bufs_state(G_TXT_BUF_COUNT - 1 downto 0);
 
     -- TXT Buffer is operating in Backup buffer
-    signal txtb_is_bb                   :    std_logic_vector(txt_buffer_count / 2 - 1 downto 0);
+    signal txtb_is_bb                       :    std_logic_vector(G_TXT_BUF_COUNT / 2 - 1 downto 0);
 
     -----------------------------------------------------------------------------------------------
     -- RX Buffer <-> CAN Core Interface
     -----------------------------------------------------------------------------------------------
     -- Frame Identifier
-    signal rec_ident                    :    std_logic_vector(28 downto 0);
+    signal rec_ident                        :    std_logic_vector(28 downto 0);
 
     -- Data length code
-    signal rec_dlc                      :    std_logic_vector(3 downto 0);
+    signal rec_dlc                          :    std_logic_vector(3 downto 0);
 
     -- Recieved identifier type (0-BASE Format, 1-Extended Format);
-    signal rec_ident_type               :    std_logic;
+    signal rec_ident_type                   :    std_logic;
 
     -- Recieved frame type (0-Normal CAN, 1- CAN FD)
-    signal rec_frame_type               :    std_logic;
+    signal rec_frame_type                   :    std_logic;
 
     -- Received Loopback frame
-    signal rec_lbpf                     :    std_logic;
+    signal rec_lbpf                         :    std_logic;
 
     -- Recieved frame is RTR Frame(0-No, 1-Yes)
-    signal rec_is_rtr                   :    std_logic;
+    signal rec_is_rtr                       :    std_logic;
 
     -- Whenever frame was recieved with BIT Rate shift
-    signal rec_brs                      :    std_logic;
+    signal rec_brs                          :    std_logic;
 
     -- Recieved error state indicator
-    signal rec_esi                      :    std_logic;
+    signal rec_esi                          :    std_logic;
 
     -- Received Identifier is valid
-    signal rec_ivld                     :    std_logic;
+    signal rec_ivld                         :    std_logic;
 
     -- Data word which should be stored when "store_data" is active!
-    signal store_data_word              :    std_logic_vector(31 downto 0);
+    signal store_data_word                  :    std_logic_vector(31 downto 0);
 
     -- Signals start of frame. If timestamp on RX frame should be captured
     -- in the beginning of the frame, this pulse captures the timestamp!
-    signal sof_pulse                    :    std_logic;
+    signal sof_pulse                        :    std_logic;
 
     -----------------------------------------------------------------------------------------------
     -- Frame filters <-> CAN Core Interface (Commands for RX Buffer)
     -----------------------------------------------------------------------------------------------
     -- After control field of CAN frame, metadata are valid and can be stored.
     -- This command starts the RX FSM for storing.
-    signal store_metadata               :    std_logic;
+    signal store_metadata                   :    std_logic;
 
     -- Signal that one word of data can be stored (TX_DATA_X_W). This signal
     -- is active when 4 bytes were received or data reception has finished
     -- on 4 byte unaligned number of frames! (Thus allowing to store also
     -- data which are not 4 byte aligned!
-    signal store_data                   :    std_logic;
+    signal store_data                       :    std_logic;
 
     -- Received frame valid (commit RX Frame)
-    signal rec_valid                    :    std_logic;
+    signal rec_valid                        :    std_logic;
 
     -- Abort storing of RX Frame to RX Buffer.
-    signal rec_abort                    :    std_logic;
+    signal rec_abort                        :    std_logic;
 
     -- Filtered version of RX Buffer commands
-    signal store_metadata_f             :    std_logic;
-    signal store_data_f                 :    std_logic;
-    signal rec_valid_f                  :    std_logic;
-    signal rec_abort_f                  :    std_logic;
+    signal store_metadata_f                 :    std_logic;
+    signal store_data_f                     :    std_logic;
+    signal rec_valid_f                      :    std_logic;
+    signal rec_abort_f                      :    std_logic;
 
     -----------------------------------------------------------------------------------------------
     -- TXT Buffers <-> Interrrupt Manager Interface
     -----------------------------------------------------------------------------------------------
     -- TXT HW Commands Applied Interrupt
-    signal txtb_hw_cmd_int              :    std_logic_vector(txt_buffer_count - 1 downto 0);
+    signal txtb_hw_cmd_int                  :    std_logic_vector(G_TXT_BUF_COUNT - 1 downto 0);
 
     -----------------------------------------------------------------------------------------------
     -- TXT Buffers <-> CAN Core Interface
     -----------------------------------------------------------------------------------------------
     -- HW Commands
-    signal txtb_hw_cmd                  :    t_txtb_hw_cmd;
+    signal txtb_hw_cmd                      :    t_txtb_hw_cmd;
 
     -----------------------------------------------------------------------------------------------
     -- TXT Buffers <-> TX Arbitrator
     -----------------------------------------------------------------------------------------------
     -- Index of TXT Buffer for which HW commands is valid
-    signal txtb_hw_cmd_cs               :   std_logic_vector(txt_buffer_count - 1 downto 0);
+    signal txtb_hw_cmd_cs                   :   std_logic_vector(G_TXT_BUF_COUNT - 1 downto 0);
 
     -- TXT Buffers are available, can be selected by TX Arbitrator
-    signal txtb_available               :   std_logic_vector(txt_buffer_count - 1 downto 0);
+    signal txtb_available                   :   std_logic_vector(G_TXT_BUF_COUNT - 1 downto 0);
 
     -- TXT Buffer is in state for which its backup buffer can be used
-    signal txtb_allow_bb                :   std_logic_vector(txt_buffer_count - 1 downto 0);
+    signal txtb_allow_bb                    :   std_logic_vector(G_TXT_BUF_COUNT - 1 downto 0);
 
     -- Pointer to TXT Buffer
-    signal txtb_ptr                     :   natural range 0 to 20;
+    signal txtb_ptr                         :   natural range 0 to 20;
 
     -- TXT Buffer RAM data outputs
-    signal txtb_port_b_data_out         :   t_txt_bufs_output(txt_buffer_count - 1 downto 0);
+    signal txtb_port_b_data_out             :   t_txt_bufs_output(G_TXT_BUF_COUNT - 1 downto 0);
 
     -- TXT Buffer RAM address
-    signal txtb_port_b_address          :   std_logic_vector(4 downto 0);
+    signal txtb_port_b_address              :   std_logic_vector(4 downto 0);
 
     -- Clock enable to TXT Buffer port B
-    signal txtb_port_b_clk_en           :   std_logic;
+    signal txtb_port_b_clk_en               :   std_logic;
 
     -- Parity check valid
-    signal txtb_parity_check_valid      :   std_logic;
+    signal txtb_parity_check_valid          :   std_logic;
 
     -- Parity mismatch
-    signal txtb_parity_mismatch         :   std_logic_vector(txt_buffer_count - 1 downto 0);
+    signal txtb_parity_mismatch             :   std_logic_vector(G_TXT_BUF_COUNT - 1 downto 0);
 
     -- Parity error valid
-    signal txtb_parity_error_valid      :   std_logic_vector(txt_buffer_count - 1 downto 0);
+    signal txtb_parity_error_valid          :   std_logic_vector(G_TXT_BUF_COUNT - 1 downto 0);
 
     -- TXT Buffer
-    signal txtb_bb_parity_error         :   std_logic_vector(txt_buffer_count / 2 - 1 downto 0);
+    signal txtb_bb_parity_error             :   std_logic_vector(G_TXT_BUF_COUNT / 2 - 1 downto 0);
 
     -- TXT Buffer index selected by TX Arbitrator of CAN Core
-    signal txtb_index_muxed             :   natural range 0 to txt_buffer_count - 1;
+    signal txtb_index_muxed                 :   natural range 0 to G_TXT_BUF_COUNT - 1;
 
     -----------------------------------------------------------------------------------------------
     -- CAN Core <-> TX Arbitrator
     -----------------------------------------------------------------------------------------------
     -- TX Data length code
-    signal tran_dlc                     :   std_logic_vector(3 downto 0);
+    signal tran_dlc                         :   std_logic_vector(3 downto 0);
 
     -- TX Remote transmission request flag
-    signal tran_is_rtr                  :   std_logic;
+    signal tran_is_rtr                      :   std_logic;
 
     -- TX Identifier type (0-Basic,1-Extended);
-    signal tran_ident_type              :   std_logic;
+    signal tran_ident_type                  :   std_logic;
 
     -- TX Frame type (0-CAN 2.0, 1-CAN FD)
-    signal tran_frame_type              :   std_logic;
+    signal tran_frame_type                  :   std_logic;
 
     -- TX Frame Bit rate shift Flag
-    signal tran_brs                     :   std_logic;
+    signal tran_brs                         :   std_logic;
 
     -- TX Identifier
-    signal tran_identifier              :   std_logic_vector(28 downto 0);
+    signal tran_identifier                  :   std_logic_vector(28 downto 0);
 
     -- TX Frame test word
-    signal tran_frame_test              :   t_frame_test_w;
+    signal tran_frame_test                  :   t_frame_test_w;
 
     -- Word from TXT Buffer RAM selected by TX Arbitrator
-    signal tran_word                    :   std_logic_vector(31 downto 0);
+    signal tran_word                        :   std_logic_vector(31 downto 0);
 
     -- Valid frame is selected from transmission on output of TX Arbitrator.
     -- CAN Core may lock TXT Buffer for transmission!
-    signal tran_frame_valid             :   std_logic;
+    signal tran_frame_valid                 :   std_logic;
 
     -- Parity error occured in TXT Buffer RAM during transmission of data words.
-    signal tran_frame_parity_error      :   std_logic;
+    signal tran_frame_parity_error          :   std_logic;
 
     -- Selected TXT Buffer index changed
-    signal txtb_changed                 :   std_logic;
+    signal txtb_changed                     :   std_logic;
 
     -- TXT Buffer clock enable
-    signal txtb_clk_en                  :   std_logic;
+    signal txtb_clk_en                      :   std_logic;
 
     -----------------------------------------------------------------------------------------------
     -- RX Buffer <-> TX Arbitrator
@@ -459,98 +459,98 @@ architecture rtl of can_top_level is
     -- TXT Buffer index that is:
     --   - Currently validated (when no transmission is in progress)
     --   - Used for transmission (when transmission is in progress)
-    signal curr_txtb_index              :   std_logic_vector(2 downto 0);
+    signal curr_txtb_index                  :   std_logic_vector(2 downto 0);
 
     -----------------------------------------------------------------------------------------------
     -- CAN Core <-> Interrupt manager
     -----------------------------------------------------------------------------------------------
     -- Error appeared
-    signal err_detected                 :   std_logic;
+    signal err_detected                     :   std_logic;
 
     -- Fault confinement state functionality changed
-    signal fcs_changed                  :   std_logic;
+    signal fcs_changed                      :   std_logic;
 
     -- Error warning limit reached
-    signal err_warning_limit_pulse      :   std_logic;
+    signal err_warning_limit_pulse          :   std_logic;
 
     -- Arbitration was lost input
-    signal arbitration_lost             :   std_logic;
+    signal arbitration_lost                 :   std_logic;
 
     -- Transmitted frame is valid
-    signal tran_valid                   :   std_logic;
+    signal tran_valid                       :   std_logic;
 
     -- Bit Rate Was Shifted
-    signal br_shifted                   :   std_logic;
+    signal br_shifted                       :   std_logic;
 
     -----------------------------------------------------------------------------------------------
     -- CAN Core <-> Prescaler Interface
     -----------------------------------------------------------------------------------------------
     -- RX Triggers (Sample)
-    signal rx_triggers                  :   std_logic_vector(C_SAMPLE_TRIGGER_COUNT - 1 downto 0);
+    signal rx_triggers                      :   std_logic_vector(C_SAMPLE_TRIGGER_COUNT - 1 downto 0);
 
     -- TX Trigger (Sync)
-    signal tx_trigger                   :   std_logic;
+    signal tx_trigger                       :   std_logic;
 
     -- Synchronisation control (No synchronisation, Hard Synchronisation,
     -- Resynchronisation
-    signal sync_control                 :   std_logic_vector(1 downto 0);
+    signal sync_control                     :   std_logic_vector(1 downto 0);
 
     -- No positive resynchronisation
-    signal no_pos_resync                :   std_logic;
+    signal no_pos_resync                    :   std_logic;
 
     -- Enable Nominal Bit time counters.
-    signal nbt_ctrs_en                  :   std_logic;
+    signal nbt_ctrs_en                      :   std_logic;
 
     -- Enable Data Bit time counters.
-    signal dbt_ctrs_en                  :   std_logic;
+    signal dbt_ctrs_en                      :   std_logic;
 
     -----------------------------------------------------------------------------------------------
     -- Bus Sampling <-> Memory Registers Interface
     -----------------------------------------------------------------------------------------------
     -- Measured Transceiver delay
-    signal trv_delay                    :   std_logic_vector(C_TRV_CTR_WIDTH - 1 downto 0);
+    signal trv_delay                        :   std_logic_vector(C_TRV_CTR_WIDTH - 1 downto 0);
 
     -----------------------------------------------------------------------------------------------
     -- Bus Sampling <-> CAN Core Interface
     -----------------------------------------------------------------------------------------------
     -- RX Data With Bit Stuffing
-    signal rx_data_wbs                  :   std_logic;
+    signal rx_data_wbs                      :   std_logic;
 
     -- TX Data With Bit Stuffing
-    signal tx_data_wbs                  :   std_logic;
+    signal tx_data_wbs                      :   std_logic;
 
     -- Secondary sample point reset
-    signal ssp_reset                    :   std_logic;
+    signal ssp_reset                        :   std_logic;
 
     -- Enable measurement of Transmitter delay
-    signal tran_delay_meas              :   std_logic;
+    signal tran_delay_meas                  :   std_logic;
 
     -- Bit Error detected
-    signal bit_err                      :   std_logic;
+    signal bit_err                          :   std_logic;
 
     -- Reset Bit time measurement counter
-    signal btmc_reset                   :   std_logic;
+    signal btmc_reset                       :   std_logic;
 
     -- Start Measurement of data bit time (in TX Trigger)
-    signal dbt_measure_start            :   std_logic;
+    signal dbt_measure_start                :   std_logic;
 
     -- First SSP generated (in ESI bit)
-    signal gen_first_ssp                :   std_logic;
+    signal gen_first_ssp                    :   std_logic;
 
     -----------------------------------------------------------------------------------------------
     -- Bus Sampling <-> Prescaler Interface
     -----------------------------------------------------------------------------------------------
     -- Synchronisation edge (aligned with time quanta)
-    signal sync_edge                    :   std_logic;
+    signal sync_edge                        :   std_logic;
 
     -- Bit error enable
-    signal bit_err_enable               :   std_logic;
+    signal bit_err_enable                   :   std_logic;
 
     -----------------------------------------------------------------------------------------------
     -- Bit time FSM outputs
     -----------------------------------------------------------------------------------------------
     -- Time quanta edge
-    signal tq_edge                      :   std_logic;
+    signal tq_edge                          :   std_logic;
 
     -----------------------------------------------------------------------------------------------
     -- Memory registers
@@ -593,14 +593,14 @@ architecture rtl of can_top_level is
     signal mr_tst_rdata_tst_rdata_rxb       :   std_logic_vector(31 downto 0);
 
     -- TXT buffers test data input
-    signal mr_tst_rdata_tst_rdata_txb       :   t_txt_bufs_output(txt_buffer_count - 1 downto 0);
+    signal mr_tst_rdata_tst_rdata_txb       :   t_txt_bufs_output(G_TXT_BUF_COUNT - 1 downto 0);
 
     signal rxb_port_b_data_out              :   std_logic_vector(31 downto 0);
 
     signal pc_rx_trigger                    :   std_logic;
 
-    signal mr_tx_command_txbi               :   std_logic_vector(txt_buffer_count - 1 downto 0);
-    signal mr_tx_priority                   :   t_txt_bufs_priorities(txt_buffer_count - 1 downto 0);
+    signal mr_tx_command_txbi               :   std_logic_vector(G_TXT_BUF_COUNT - 1 downto 0);
+    signal mr_tx_priority                   :   t_txt_bufs_priorities(G_TXT_BUF_COUNT - 1 downto 0);
 
 begin
 
@@ -628,24 +628,24 @@ begin
     -----------------------------------------------------------------------------------------------
     i_memory_registers : entity ctu_can_fd_rtl.memory_registers
     generic map (
-        G_SUP_FILTA                     => sup_filtA,
-        G_SUP_FILTB                     => sup_filtB,
-        G_SUP_FILTC                     => sup_filtC,
-        G_SUP_RANGE                     => sup_range,
-        G_SUP_TEST_REGISTERS            => sup_test_registers,
-        G_SUP_TRAFFIC_CTRS              => sup_traffic_ctrs,
-        G_SUP_PARITY                    => sup_parity,
-        G_TXT_BUFFER_COUNT              => txt_buffer_count,
-        G_RX_BUFF_SIZE                  => rx_buffer_size,
+        G_FILT_A_EN                     => G_FILT_A_EN,
+        G_FILT_B_EN                     => G_FILT_B_EN,
+        G_FILT_C_EN                     => G_FILT_C_EN,
+        G_FILT_RANGE_EN                 => G_FILT_RANGE_EN,
+        G_TEST_REGS_EN                  => G_TEST_REGS_EN,
+        G_TRAFFIC_CTRS_EN               => G_TRAFFIC_CTRS_EN,
+        G_PARITY_EN                     => G_PARITY_EN,
+        G_TXT_BUF_COUNT                 => G_TXT_BUF_COUNT,
+        G_RX_BUF_SIZE                   => G_RX_BUF_SIZE,
         G_RX_BUF_FRAME_CNT_WIDTH        => C_RX_BUF_FRAME_CNT_WIDTH,
-        G_RX_BUFF_PTR_WIDTH             => C_RX_BUFF_PTR_WIDTH,
+        G_RX_BUF_PTR_WIDTH              => C_RX_BUF_PTR_WIDTH,
         G_INT_COUNT                     => C_INT_COUNT,
         G_TRV_CTR_WIDTH                 => C_TRV_CTR_WIDTH,
-        G_TS_BITS                       => active_timestamp_bits,
+        G_TS_BITS                       => G_ACTIVE_TS_BITS,
         G_DEVICE_ID                     => C_CAN_DEVICE_ID,
         G_VERSION_MINOR                 => C_CTU_CAN_FD_VERSION_MINOR,
         G_VERSION_MAJOR                 => C_CTU_CAN_FD_VERSION_MAJOR,
-        G_TECHNOLOGY                    => target_technology
+        G_TECHNOLOGY                    => G_TECHNOLOGY
     )
     port map (
         clk_sys                         => clk_sys,                         -- IN
@@ -725,12 +725,12 @@ begin
     -----------------------------------------------------------------------------------------------
     i_rx_buffer : entity ctu_can_fd_rtl.rx_buffer
     generic map (
-        G_RX_BUFF_SIZE                  => rx_buffer_size,
-        G_RX_BUFF_PTR_WIDTH             => C_RX_BUFF_PTR_WIDTH,
+        G_RX_BUF_SIZE                   => G_RX_BUF_SIZE,
+        G_RX_BUF_PTR_WIDTH              => C_RX_BUF_PTR_WIDTH,
         G_RX_BUF_FRAME_CNT_WIDTH        => C_RX_BUF_FRAME_CNT_WIDTH,
-        G_SUP_PARITY                    => sup_parity,
-        G_RESET_RX_BUF_RAM              => reset_buffer_rams,
-        G_TECHNOLOGY                    => target_technology
+        G_PARITY_EN                     => G_PARITY_EN,
+        G_RESET_RX_BUF_RAM              => G_RESET_BUF_RAMS,
+        G_TECHNOLOGY                    => G_TECHNOLOGY
     )
     port map (
         -- Clocks and Asynchronous reset
@@ -805,7 +805,7 @@ begin
     -----------------------------------------------------------------------------------------------
     -- TXT Buffer port A parity encoding
     -----------------------------------------------------------------------------------------------
-    g_txtb_parity_true : if (sup_parity) generate
+    g_txtb_parity_true : if (G_PARITY_EN) generate
         i_txtb_port_a_parity_calculator : entity ctu_can_fd_rtl.parity_calculator
         generic map (
             G_WIDTH         => 32,
@@ -817,7 +817,7 @@ begin
         );
     end generate;
 
-    g_txtb_parity_false : if (not sup_parity) generate
+    g_txtb_parity_false : if (not G_PARITY_EN) generate
         txtb_port_a_parity <= '0';
     end generate;
 
@@ -826,17 +826,17 @@ begin
     -- TXT Buffers
     -----------------------------------------------------------------------------------------------
 
-    g_txt_buf_comp : for i in 0 to txt_buffer_count - 1 generate
+    g_txt_buf_comp : for i in 0 to G_TXT_BUF_COUNT - 1 generate
     begin
 
         g_txt_buf_even : if ((i mod 2) = 0) generate
             i_txt_buffer_even : entity ctu_can_fd_rtl.txt_buffer_even
             generic map (
-                G_TXT_BUFFER_COUNT          => txt_buffer_count,
+                G_TXT_BUF_COUNT             => G_TXT_BUF_COUNT,
                 G_ID                        => i,
-                G_TECHNOLOGY                => target_technology,
-                G_SUP_PARITY                => sup_parity,
-                G_RESET_TXT_BUF_RAM         => reset_buffer_rams
+                G_TECHNOLOGY                => G_TECHNOLOGY,
+                G_PARITY_EN                 => G_PARITY_EN,
+                G_RESET_TXT_BUF_RAM         => G_RESET_BUF_RAMS
             )
             port map (
                 -- Clock and Asynchronous reset
@@ -894,11 +894,11 @@ begin
         g_txt_buf_odd : if ((i mod 2) = 1) generate
             i_txt_buffer_odd : entity ctu_can_fd_rtl.txt_buffer_odd
             generic map (
-                G_TXT_BUFFER_COUNT          => txt_buffer_count,
+                G_TXT_BUF_COUNT             => G_TXT_BUF_COUNT,
                 G_ID                        => i,
-                G_TECHNOLOGY                => target_technology,
-                G_SUP_PARITY                => sup_parity,
-                G_RESET_TXT_BUF_RAM         => reset_buffer_rams
+                G_TECHNOLOGY                => G_TECHNOLOGY,
+                G_PARITY_EN                 => G_PARITY_EN,
+                G_RESET_TXT_BUF_RAM         => G_RESET_BUF_RAMS
             )
             port map (
                 -- Clock and Asynchronous reset
@@ -962,7 +962,7 @@ begin
     -----------------------------------------------------------------------------------------------
     i_tx_arbitrator : entity ctu_can_fd_rtl.tx_arbitrator
     generic map (
-        G_TXT_BUFFER_COUNT              => txt_buffer_count
+        G_TXT_BUF_COUNT                 => G_TXT_BUF_COUNT
     )
     port map (
         -- Clock and Asynchronous reset
@@ -1015,10 +1015,10 @@ begin
     -----------------------------------------------------------------------------------------------
     i_frame_filters : entity ctu_can_fd_rtl.frame_filters
     generic map(
-        G_SUP_FILTA                     => sup_filtA,
-        G_SUP_FILTB                     => sup_filtB,
-        G_SUP_FILTC                     => sup_filtC,
-        G_SUP_RANGE                     => sup_range
+        G_FILT_A_EN                     => G_FILT_A_EN,
+        G_FILT_B_EN                     => G_FILT_B_EN,
+        G_FILT_C_EN                     => G_FILT_C_EN,
+        G_FILT_RANGE_EN                 => G_FILT_RANGE_EN
     )
     port map(
         -- Clock an Asynchronous reset
@@ -1082,7 +1082,7 @@ begin
     i_int_manager : entity ctu_can_fd_rtl.int_manager
     generic map(
         G_INT_COUNT                     => C_INT_COUNT,
-        G_TXT_BUFFER_COUNT              => txt_buffer_count
+        G_TXT_BUF_COUNT                 => G_TXT_BUF_COUNT
     )
     port map(
         -- Clock and Asynchronous reset
@@ -1161,7 +1161,7 @@ begin
         G_CRC15_POL                     => C_CRC15_POL,
         G_CRC17_POL                     => C_CRC17_POL,
         G_CRC21_POL                     => C_CRC21_POL,
-        G_SUP_TRAFFIC_CTRS              => sup_traffic_ctrs
+        G_TRAFFIC_CTRS_EN               => G_TRAFFIC_CTRS_EN
     )
     port map (
         -- Clock and Asynchronous reset
@@ -1400,7 +1400,7 @@ begin
     -- block unlock command in Protocol control FSM in overload frames!
 
     -- coverage off
-    g_txtb_asr : for i in 0 to txt_buffer_count - 1 generate
+    g_txtb_asr : for i in 0 to G_TXT_BUF_COUNT - 1 generate
     begin
 
         p_txtb_unlock_on_ovr_chk : process (txtb_state, pc_dbg.is_overload)

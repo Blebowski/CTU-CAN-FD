@@ -96,7 +96,7 @@ use ctu_can_fd_rtl.CAN_FD_frame_format.all;
 entity tx_arbitrator is
     generic (
         -- Number of TXT Buffers
-        G_TXT_BUFFER_COUNT      : natural range 1 to 8
+        G_TXT_BUF_COUNT         : natural range 1 to 8
     );
     port (
         -------------------------------------------------------------------------------------------
@@ -109,13 +109,13 @@ entity tx_arbitrator is
         -- TXT Buffers interface
         -------------------------------------------------------------------------------------------
         -- Data words from TXT Buffers RAM memories
-        txtb_port_b_data_out    : in  t_txt_bufs_output(G_TXT_BUFFER_COUNT - 1 downto 0);
+        txtb_port_b_data_out    : in  t_txt_bufs_output(G_TXT_BUF_COUNT - 1 downto 0);
 
         -- TXT Buffers are available, can be selected by TX Arbitrator
-        txtb_available          : in  std_logic_vector(G_TXT_BUFFER_COUNT - 1 downto 0);
+        txtb_available          : in  std_logic_vector(G_TXT_BUF_COUNT - 1 downto 0);
 
         -- TXT Buffer is in state in which it can have backup buffer
-        txtb_allow_bb           : in  std_logic_vector(G_TXT_BUFFER_COUNT - 1 downto 0);
+        txtb_allow_bb           : in  std_logic_vector(G_TXT_BUF_COUNT - 1 downto 0);
 
         -- Pointer to TXT Buffer
         txtb_port_b_address     : out std_logic_vector(4 downto 0);
@@ -127,13 +127,13 @@ entity tx_arbitrator is
         txtb_parity_check_valid : out std_logic;
 
         -- Parity Mismatch in TXT Buffer
-        txtb_parity_mismatch    : in  std_logic_vector(G_TXT_BUFFER_COUNT - 1 downto 0);
+        txtb_parity_mismatch    : in  std_logic_vector(G_TXT_BUF_COUNT - 1 downto 0);
 
         -- TXT Buffer index
-        txtb_index_muxed        : out natural range 0 to G_TXT_BUFFER_COUNT - 1;
+        txtb_index_muxed        : out natural range 0 to G_TXT_BUF_COUNT - 1;
 
         -- TXT Buffer is operating as backup buffer
-        txtb_is_bb              : out std_logic_vector(G_TXT_BUFFER_COUNT / 2 - 1 downto 0);
+        txtb_is_bb              : out std_logic_vector(G_TXT_BUF_COUNT / 2 - 1 downto 0);
 
         -------------------------------------------------------------------------------------------
         -- CAN Core Interface
@@ -175,7 +175,7 @@ entity tx_arbitrator is
         txtb_changed            : out std_logic;
 
         -- Index of the TXT Buffer for which the actual HW command is valid
-        txtb_hw_cmd_cs          : out std_logic_vector(G_TXT_BUFFER_COUNT - 1 downto 0);
+        txtb_hw_cmd_cs          : out std_logic_vector(G_TXT_BUF_COUNT - 1 downto 0);
 
         -- Pointer to TXT Buffer given by CAN Core. Used for reading data words.
         txtb_ptr                : in  natural range 0 to 20;
@@ -198,7 +198,7 @@ entity tx_arbitrator is
         mr_mode_tttm            : in  std_logic;
         mr_mode_txbbm           : in  std_logic;
         mr_settings_pchke       : in  std_logic;
-        mr_tx_priority          : in  t_txt_bufs_priorities(G_TXT_BUFFER_COUNT - 1 downto 0);
+        mr_tx_priority          : in  t_txt_bufs_priorities(G_TXT_BUF_COUNT - 1 downto 0);
 
         -------------------------------------------------------------------------------------------
         -- Timestamp
@@ -215,7 +215,7 @@ architecture rtl of tx_arbitrator is
 
     -- Indicates the highest selected buffer and its validity from combinational priority decoder
     signal select_buf_avail           : std_logic;
-    signal select_buf_index           : natural range 0 to G_TXT_BUFFER_COUNT - 1;
+    signal select_buf_index           : natural range 0 to G_TXT_BUF_COUNT - 1;
 
     -- Input word from TXT Buffer !!!
     signal txtb_selected_input        : std_logic_vector(31 downto 0);
@@ -244,7 +244,7 @@ architecture rtl of tx_arbitrator is
     -----------------------------------------------------------------------------------------------
 
     -- Registered values for detection of change
-    signal select_buf_index_reg       : natural range 0 to G_TXT_BUFFER_COUNT - 1;
+    signal select_buf_index_reg       : natural range 0 to G_TXT_BUF_COUNT - 1;
 
     -- Lower timestamp loaded from TXT Buffer
     signal ts_low_internal            : std_logic_vector(31 downto 0);
@@ -252,14 +252,14 @@ architecture rtl of tx_arbitrator is
     -- TXT Buffer index that is:
     --      - Currently validated (when no transmission is in progress)
     --      - Used for transmission (when transmission is in progress)
-    signal curr_txtb_index_i          : natural range 0 to G_TXT_BUFFER_COUNT - 1;
+    signal curr_txtb_index_i          : natural range 0 to G_TXT_BUF_COUNT - 1;
 
     -- TXT Buffer internal index of last buffer that was locked from buffer change, Protocol control
     -- can erase retransmitt counter
-    signal last_txtb_index            : natural range 0 to G_TXT_BUFFER_COUNT - 1;
+    signal last_txtb_index            : natural range 0 to G_TXT_BUF_COUNT - 1;
 
     -- TXT Buffer index validated or used for transmission
-    signal txtb_index_muxed_i         : natural range 0 to G_TXT_BUFFER_COUNT - 1;
+    signal txtb_index_muxed_i         : natural range 0 to G_TXT_BUF_COUNT - 1;
 
     -- Pointer to TXT Buffer for loading CAN frame metadata and timstamp during the selection of
     -- TXT Buffer.
@@ -332,7 +332,7 @@ architecture rtl of tx_arbitrator is
     signal txtb_meta_clk_en           : std_logic;
 
     -- TXT Buffer Backup mode enable
-    signal mr_tx_priority_txbbm       : t_txt_bufs_priorities(G_TXT_BUFFER_COUNT - 1 downto 0);
+    signal mr_tx_priority_txbbm       : t_txt_bufs_priorities(G_TXT_BUF_COUNT - 1 downto 0);
 
     -- Parity mismatches in TXT Buffers:
     --  1. Mismatch during TXT Buffer validation
@@ -367,7 +367,7 @@ begin
     -----------------------------------------------------------------------------------------------
     i_priority_decoder : entity ctu_can_fd_rtl.priority_decoder
     generic map (
-        G_TXT_BUFFER_COUNT    => G_TXT_BUFFER_COUNT
+        G_TXT_BUF_COUNT    => G_TXT_BUF_COUNT
     )
     port map (
         prio                       => mr_tx_priority_txbbm,        -- IN
@@ -415,7 +415,7 @@ begin
     -- TXT Buffer differences fo Shuffle priorites of TXT Buffers, in TXT Buffer Backup mode,
     -- replace priority of "Backup" buffer with priority of "original" buffer
     -----------------------------------------------------------------------------------------------
-    g_txtb_priority : for i in 0 to G_TXT_BUFFER_COUNT - 1 generate
+    g_txtb_priority : for i in 0 to G_TXT_BUF_COUNT - 1 generate
 
         -- Original Buffers
         g_txtb_priority_even : if ((i mod 2) = 0) generate

@@ -119,7 +119,7 @@ begin
     -- Write address to One-hot decoder
     ----------------------------------------------------------------------------
 
-    address_decoder_test_registers_comp : address_decoder
+    i_address_decoder_test_registers : address_decoder
     generic map(
         address_width                   => 6 ,
         address_entries                 => 4 ,
@@ -138,7 +138,7 @@ begin
     -- TST_CONTROL[TMAENA]
     ----------------------------------------------------------------------------
 
-    tst_control_tmaena_reg_comp : memory_reg_rw_lock
+    i_tst_control_tmaena_reg : memory_reg_rw_lock
     generic map(
         data_width                      => 1 ,
         reset_value                     => "0" 
@@ -157,7 +157,7 @@ begin
     -- TST_CONTROL[TWRSTB]
     ----------------------------------------------------------------------------
 
-    tst_control_twrstb_reg_comp : memory_reg_os_lock
+    i_tst_control_twrstb_reg : memory_reg_os_lock
     generic map(
         data_width                      => 1 ,
         reset_value                     => "0" 
@@ -176,7 +176,7 @@ begin
     -- TST_DEST[TST_ADDR_SLICE_1]
     ----------------------------------------------------------------------------
 
-    tst_dest_tst_addr_slice_1_reg_comp : memory_reg_rw_lock
+    i_tst_dest_tst_addr_slice_1_reg : memory_reg_rw_lock
     generic map(
         data_width                      => 8 ,
         reset_value                     => "00000000" 
@@ -195,7 +195,7 @@ begin
     -- TST_DEST[TST_ADDR_SLICE_2]
     ----------------------------------------------------------------------------
 
-    tst_dest_tst_addr_slice_2_reg_comp : memory_reg_rw_lock
+    i_tst_dest_tst_addr_slice_2_reg : memory_reg_rw_lock
     generic map(
         data_width                      => 8 ,
         reset_value                     => "00000000" 
@@ -214,7 +214,7 @@ begin
     -- TST_DEST[TST_MTGT]
     ----------------------------------------------------------------------------
 
-    tst_dest_tst_mtgt_reg_comp : memory_reg_rw_lock
+    i_tst_dest_tst_mtgt_reg : memory_reg_rw_lock
     generic map(
         data_width                      => 4 ,
         reset_value                     => "0000" 
@@ -233,7 +233,7 @@ begin
     -- TST_WDATA[TST_WDATA_SLICE_1]
     ----------------------------------------------------------------------------
 
-    tst_wdata_tst_wdata_slice_1_reg_comp : memory_reg_rw_lock
+    i_tst_wdata_tst_wdata_slice_1_reg : memory_reg_rw_lock
     generic map(
         data_width                      => 8 ,
         reset_value                     => "00000000" 
@@ -252,7 +252,7 @@ begin
     -- TST_WDATA[TST_WDATA_SLICE_2]
     ----------------------------------------------------------------------------
 
-    tst_wdata_tst_wdata_slice_2_reg_comp : memory_reg_rw_lock
+    i_tst_wdata_tst_wdata_slice_2_reg : memory_reg_rw_lock
     generic map(
         data_width                      => 8 ,
         reset_value                     => "00000000" 
@@ -271,7 +271,7 @@ begin
     -- TST_WDATA[TST_WDATA_SLICE_3]
     ----------------------------------------------------------------------------
 
-    tst_wdata_tst_wdata_slice_3_reg_comp : memory_reg_rw_lock
+    i_tst_wdata_tst_wdata_slice_3_reg : memory_reg_rw_lock
     generic map(
         data_width                      => 8 ,
         reset_value                     => "00000000" 
@@ -290,7 +290,7 @@ begin
     -- TST_WDATA[TST_WDATA_SLICE_4]
     ----------------------------------------------------------------------------
 
-    tst_wdata_tst_wdata_slice_4_reg_comp : memory_reg_rw_lock
+    i_tst_wdata_tst_wdata_slice_4_reg : memory_reg_rw_lock
     generic map(
         data_width                      => 8 ,
         reset_value                     => "00000000" 

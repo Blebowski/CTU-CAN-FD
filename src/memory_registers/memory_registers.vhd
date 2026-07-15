@@ -93,37 +93,37 @@ use ctu_can_fd_rtl.can_registers_pkg.all;
 entity memory_registers is
     generic (
         -- Support Filter A
-        G_SUP_FILTA                 : boolean;
+        G_FILT_A_EN                 : boolean;
 
         -- Support Filter B
-        G_SUP_FILTB                 : boolean;
+        G_FILT_B_EN                 : boolean;
 
         -- Support Filter C
-        G_SUP_FILTC                 : boolean;
+        G_FILT_C_EN                 : boolean;
 
         -- Support Range Fi
-        G_SUP_RANGE                 : boolean;
+        G_FILT_RANGE_EN             : boolean;
 
         -- Support Test registers
-        G_SUP_TEST_REGISTERS        : boolean;
+        G_TEST_REGS_EN              : boolean;
 
         -- Support Traffic counters
-        G_SUP_TRAFFIC_CTRS          : boolean;
+        G_TRAFFIC_CTRS_EN           : boolean;
 
         -- Support Parity
-        G_SUP_PARITY                : boolean;
+        G_PARITY_EN                 : boolean;
 
         -- Number of TXT Buffers
-        G_TXT_BUFFER_COUNT          : natural range 2 to 8;
+        G_TXT_BUF_COUNT             : natural range 2 to 8;
 
         -- Size of RX Buffer
-        G_RX_BUFF_SIZE              : natural;
+        G_RX_BUF_SIZE               : natural;
 
         -- Width of RX Buffer frame counter
         G_RX_BUF_FRAME_CNT_WIDTH    : natural range 3 to 11;
 
         -- Width of RX Buffer pointers
-        G_RX_BUFF_PTR_WIDTH         : natural range 5 to 12;
+        G_RX_BUF_PTR_WIDTH          : natural range 5 to 12;
 
         -- Number of Interrupts
         G_INT_COUNT                 : natural;
@@ -210,7 +210,7 @@ entity memory_registers is
         mr_tst_rdata_tst_rdata_rxb      : in  std_logic_vector(31 downto 0);
 
         -- TXT buffers test data input
-        mr_tst_rdata_tst_rdata_txb      : in  t_txt_bufs_output(G_TXT_BUFFER_COUNT - 1 downto 0);
+        mr_tst_rdata_tst_rdata_txb      : in  t_txt_bufs_output(G_TXT_BUF_COUNT - 1 downto 0);
 
         -------------------------------------------------------------------------------------------
         -- RX Buffer Interface
@@ -225,13 +225,13 @@ entity memory_registers is
         rx_frame_count                  : in std_logic_vector(G_RX_BUF_FRAME_CNT_WIDTH - 1 downto 0);
 
         -- Number of free 32 bit words
-        rx_mem_free                     : in std_logic_vector(G_RX_BUFF_PTR_WIDTH downto 0);
+        rx_mem_free                     : in std_logic_vector(G_RX_BUF_PTR_WIDTH downto 0);
 
         -- Position of read pointer
-        rx_read_pointer                 : in std_logic_vector(G_RX_BUFF_PTR_WIDTH - 1 downto 0);
+        rx_read_pointer                 : in std_logic_vector(G_RX_BUF_PTR_WIDTH - 1 downto 0);
 
         -- Position of write pointer
-        rx_write_pointer                : in std_logic_vector(G_RX_BUFF_PTR_WIDTH - 1 downto 0);
+        rx_write_pointer                : in std_logic_vector(G_RX_BUF_PTR_WIDTH - 1 downto 0);
 
         -- Data overrun Flag
         rx_data_overrun                 : in std_logic;
@@ -251,23 +251,23 @@ entity memory_registers is
         -- TXT Buffer RAM Port A - Write port
         txtb_port_a_data_in             : out std_logic_vector(31 downto 0);
         txtb_port_a_address             : out std_logic_vector(4 downto 0);
-        txtb_port_a_cs                  : out std_logic_vector(G_TXT_BUFFER_COUNT - 1 downto 0);
+        txtb_port_a_cs                  : out std_logic_vector(G_TXT_BUF_COUNT - 1 downto 0);
         txtb_port_a_be                  : out std_logic_vector(3 downto 0);
 
         -- Prioriy of buffers
-        mr_tx_priority                  : out t_txt_bufs_priorities(G_TXT_BUFFER_COUNT - 1 downto 0);
+        mr_tx_priority                  : out t_txt_bufs_priorities(G_TXT_BUF_COUNT - 1 downto 0);
 
         -- Command indices (chip selects)
-        mr_tx_command_txbi              : out std_logic_vector(G_TXT_BUFFER_COUNT - 1 downto 0);
+        mr_tx_command_txbi              : out std_logic_vector(G_TXT_BUF_COUNT - 1 downto 0);
 
         -- TXT Buffer status
-        txtb_state                      : in t_txt_bufs_state(G_TXT_BUFFER_COUNT - 1 downto 0);
+        txtb_state                      : in t_txt_bufs_state(G_TXT_BUF_COUNT - 1 downto 0);
 
         -- TXT Buffer Parity Error
-        txtb_parity_error_valid         : in std_logic_vector(G_TXT_BUFFER_COUNT - 1 downto 0);
+        txtb_parity_error_valid         : in std_logic_vector(G_TXT_BUF_COUNT - 1 downto 0);
 
         -- Parity Error in Backup buffer during TXT Buffer backup mode
-        txtb_bb_parity_error            : in std_logic_vector(G_TXT_BUFFER_COUNT / 2 - 1 downto 0);
+        txtb_bb_parity_error            : in std_logic_vector(G_TXT_BUF_COUNT / 2 - 1 downto 0);
 
         -------------------------------------------------------------------------------------------
         -- Bus synchroniser interface
@@ -362,7 +362,7 @@ begin
     scs_and_swr <= '1' when (scs = '1' and swr = '1') else
                    '0';
 
-    g_txtb_port_a_cs : for i in 0 to G_TXT_BUFFER_COUNT - 1 generate
+    g_txtb_port_a_cs : for i in 0 to G_TXT_BUF_COUNT - 1 generate
         type tx_buff_addr_type is array (0 to 7) of
             std_logic_vector(3 downto 0);
         constant buf_addr : tx_buff_addr_type := (
@@ -457,15 +457,17 @@ begin
     -----------------------------------------------------------------------------------------------
     i_control_registers_reg_map_comp : entity ctu_can_fd_rtl.control_registers_reg_map
     generic map(
-        DATA_WIDTH            => 32,
-        ADDRESS_WIDTH         => 8,
-        REGISTERED_READ       => true,
-        CLEAR_READ_DATA       => false,
-        SUP_FILT_A            => G_SUP_FILTA,
-        SUP_RANGE             => G_SUP_RANGE,
-        SUP_FILT_C            => G_SUP_FILTC,
-        SUP_FILT_B            => G_SUP_FILTB,
-        SUP_TRAFFIC_CTRS      => G_SUP_TRAFFIC_CTRS
+        DATA_WIDTH              => 32,
+        ADDRESS_WIDTH           => 8,
+        REGISTERED_READ         => true,
+        CLEAR_READ_DATA         => false,
+
+        G_FILT_A_EN             => G_FILT_A_EN,
+        G_FILT_B_EN             => G_FILT_B_EN,
+        G_FILT_C_EN             => G_FILT_C_EN,
+        G_FILT_RANGE_EN         => G_FILT_RANGE_EN,
+        G_TRAFFIC_CTRS_EN       => G_TRAFFIC_CTRS_EN,
+        G_TXT_BUF_COUNT         => G_TXT_BUF_COUNT
     )
     port map(
         clk_sys               => clk_control_regs,              -- IN
@@ -487,7 +489,7 @@ begin
     -----------------------------------------------------------------------------------------------
     -- Test registers instance
     -----------------------------------------------------------------------------------------------
-    g_test_registers_true : if (G_SUP_TEST_REGISTERS) generate
+    g_test_registers_true : if (G_TEST_REGS_EN) generate
         i_test_registers_reg_map_comp : entity ctu_can_fd_rtl.test_registers_reg_map
         generic map (
             DATA_WIDTH          => 32,
@@ -514,11 +516,11 @@ begin
         -- Padding to full width of possible TXT Buffers
         g_txt_buf_test_data_padding : for i in 0 to 7 generate
 
-            g_txt_buf_padding_index_true : if (i < G_TXT_BUFFER_COUNT) generate
+            g_txt_buf_padding_index_true : if (i < G_TXT_BUF_COUNT) generate
                 mr_tst_rdata_tst_rdata_txb_i(i) <= mr_tst_rdata_tst_rdata_txb(i);
             end generate g_txt_buf_padding_index_true;
 
-            g_txt_buf_padding_index_false : if (i >= G_TXT_BUFFER_COUNT) generate
+            g_txt_buf_padding_index_false : if (i >= G_TXT_BUF_COUNT) generate
                 mr_tst_rdata_tst_rdata_txb_i(i) <= (others => '0');
             end generate g_txt_buf_padding_index_false;
 
@@ -539,7 +541,7 @@ begin
 
     end generate g_test_registers_true;
 
-    g_test_registers_false : if (not G_SUP_TEST_REGISTERS) generate
+    g_test_registers_false : if (not G_TEST_REGS_EN) generate
         test_registers_rdata <= (others => '0');
         mr_tst_in.tst_rdata_tst_rdata <= (others => '0');
         mr_tst_out_i <= ('0', '0', (others => '0'), (others => '0'), (others => '0'));
@@ -627,36 +629,36 @@ begin
                                                              else
                                mr_ctrl_out_i.tx_command_txb1 or mr_ctrl_out_i.tx_command_txb2;
 
-    g_mt_2_txt_buffs : if (G_TXT_BUFFER_COUNT > 2) generate
+    g_mt_2_txt_buffs : if (G_TXT_BUF_COUNT > 2) generate
         mr_tx_priority(2)       <= mr_ctrl_out_i.tx_priority_txt3p;
         mr_tx_command_txbi(2)   <= mr_ctrl_out_i.tx_command_txb3;
     end generate;
 
-    g_mt_3_txt_buffs : if (G_TXT_BUFFER_COUNT > 3) generate
+    g_mt_3_txt_buffs : if (G_TXT_BUF_COUNT > 3) generate
         mr_tx_priority(3)       <= mr_ctrl_out_i.tx_priority_txt4p;
         mr_tx_command_txbi(3)   <= mr_ctrl_out_i.tx_command_txb4 when (mr_ctrl_out_i.mode_txbbm = '0')
                                                                  else
                                    mr_ctrl_out_i.tx_command_txb3 or mr_ctrl_out_i.tx_command_txb4;
     end generate;
 
-    g_mt_4_txt_buffs : if (G_TXT_BUFFER_COUNT > 4) generate
+    g_mt_4_txt_buffs : if (G_TXT_BUF_COUNT > 4) generate
         mr_tx_priority(4)       <= mr_ctrl_out_i.tx_priority_txt5p;
         mr_tx_command_txbi(4)   <= mr_ctrl_out_i.tx_command_txb5;
     end generate;
 
-    g_mt_5_txt_buffs : if (G_TXT_BUFFER_COUNT > 5) generate
+    g_mt_5_txt_buffs : if (G_TXT_BUF_COUNT > 5) generate
         mr_tx_priority(5)       <= mr_ctrl_out_i.tx_priority_txt6p;
         mr_tx_command_txbi(5)   <= mr_ctrl_out_i.tx_command_txb6 when (mr_ctrl_out_i.mode_txbbm = '0')
                                                                  else
                                    mr_ctrl_out_i.tx_command_txb5 or mr_ctrl_out_i.tx_command_txb6;
     end generate;
 
-    g_mt_6_txt_buffs : if (G_TXT_BUFFER_COUNT > 6) generate
+    g_mt_6_txt_buffs : if (G_TXT_BUF_COUNT > 6) generate
         mr_tx_priority(6)       <= mr_ctrl_out_i.tx_priority_txt7p;
         mr_tx_command_txbi(6)   <= mr_ctrl_out_i.tx_command_txb7;
     end generate;
 
-    g_mt_7_txt_buffs : if (G_TXT_BUFFER_COUNT > 7) generate
+    g_mt_7_txt_buffs : if (G_TXT_BUF_COUNT > 7) generate
         mr_tx_priority(7)       <= mr_ctrl_out_i.tx_priority_txt8p;
         mr_tx_command_txbi(7)   <= mr_ctrl_out_i.tx_command_txb8 when (mr_ctrl_out_i.mode_txbbm = '0')
                                                                  else
@@ -688,7 +690,7 @@ begin
     p_txnf_calc : process(txtb_state)
     begin
         mr_ctrl_in.status_txnf <= '0';
-        for i in 0 to G_TXT_BUFFER_COUNT - 1 loop
+        for i in 0 to G_TXT_BUF_COUNT - 1 loop
             if (txtb_state(i) = TXT_ETY) then
                 mr_ctrl_in.status_txnf <= '1';
             end if;
@@ -708,7 +710,7 @@ begin
             mr_ctrl_in.status_txpe <= '0';
             mr_ctrl_in.status_txdpe <= '0';
         elsif rising_edge(clk_sys) then
-            for i in 0 to G_TXT_BUFFER_COUNT - 1 loop
+            for i in 0 to G_TXT_BUF_COUNT - 1 loop
                 if (txtb_parity_error_valid(i) = '1') then
                     mr_ctrl_in.status_txpe <= '1';
                 end if;
@@ -728,13 +730,13 @@ begin
         end if;
     end process;
 
-    mr_ctrl_in.status_stcnt <= '1' when G_SUP_TRAFFIC_CTRS
+    mr_ctrl_in.status_stcnt <= '1' when G_TRAFFIC_CTRS_EN
                                    else
                                '0';
-    mr_ctrl_in.status_sprt <= '1' when G_SUP_PARITY
+    mr_ctrl_in.status_sprt <= '1' when G_PARITY_EN
                                   else
                               '0';
-    mr_ctrl_in.status_strgs <= '1' when G_SUP_TEST_REGISTERS
+    mr_ctrl_in.status_strgs <= '1' when G_TEST_REGS_EN
                                    else
                                '0';
 
@@ -774,38 +776,38 @@ begin
     mr_ctrl_in.err_fd_err_fd_val     <= cc_stat.data_err_ctr;
 
     -- FILTER_STATUS
-    mr_ctrl_in.filter_status_sfa <= '1' when G_SUP_FILTA else
+    mr_ctrl_in.filter_status_sfa <= '1' when G_FILT_A_EN else
                                     '0';
 
-    mr_ctrl_in.filter_status_sfb <= '1' when G_SUP_FILTB else
+    mr_ctrl_in.filter_status_sfb <= '1' when G_FILT_B_EN else
                                     '0';
 
-    mr_ctrl_in.filter_status_sfc <= '1' when G_SUP_FILTC else
+    mr_ctrl_in.filter_status_sfc <= '1' when G_FILT_C_EN else
                                     '0';
 
-    mr_ctrl_in.filter_status_sfr <= '1' when G_SUP_RANGE else
+    mr_ctrl_in.filter_status_sfr <= '1' when G_FILT_RANGE_EN else
                                     '0';
 
     -- RX_MEM_INFO
-    mr_ctrl_in.rx_mem_info_rx_buff_size <= std_logic_vector(to_unsigned(G_RX_BUFF_SIZE, 13));
+    mr_ctrl_in.rx_mem_info_rx_buff_size <= std_logic_vector(to_unsigned(G_RX_BUF_SIZE, 13));
 
     p_rx_mem_free_assign : process (rx_mem_free)
     begin
         mr_ctrl_in.rx_mem_info_rx_mem_free <= (others => '0');
-        mr_ctrl_in.rx_mem_info_rx_mem_free(G_RX_BUFF_PTR_WIDTH downto 0) <= rx_mem_free;
+        mr_ctrl_in.rx_mem_info_rx_mem_free(G_RX_BUF_PTR_WIDTH downto 0) <= rx_mem_free;
     end process;
 
     -- RX_POINTERS
     p_rx_write_pointer_assign : process (rx_write_pointer)
     begin
         mr_ctrl_in.rx_pointers_rx_wpp <= (others => '0');
-        mr_ctrl_in.rx_pointers_rx_wpp(G_RX_BUFF_PTR_WIDTH - 1 downto 0) <= rx_write_pointer;
+        mr_ctrl_in.rx_pointers_rx_wpp(G_RX_BUF_PTR_WIDTH - 1 downto 0) <= rx_write_pointer;
     end process;
 
     p_rx_read_pointer_assign : process (rx_read_pointer)
     begin
         mr_ctrl_in.rx_pointers_rx_rpp <= (others => '0');
-        mr_ctrl_in.rx_pointers_rx_rpp(G_RX_BUFF_PTR_WIDTH - 1 downto 0) <= rx_read_pointer;
+        mr_ctrl_in.rx_pointers_rx_rpp(G_RX_BUF_PTR_WIDTH - 1 downto 0) <= rx_read_pointer;
     end process;
 
     -- RX_STATUS register
@@ -827,7 +829,7 @@ begin
         variable txtb_state_padded : t_txt_bufs_state(7 downto 0);
     begin
         txtb_state_padded := (others => (others => '0'));
-        txtb_state_padded(G_TXT_BUFFER_COUNT - 1 downto 0) := txtb_state;
+        txtb_state_padded(G_TXT_BUF_COUNT - 1 downto 0) := txtb_state;
 
         mr_ctrl_in.tx_status_tx1s <= txtb_state_padded(0);
         mr_ctrl_in.tx_status_tx2s <= txtb_state_padded(1);
@@ -840,7 +842,7 @@ begin
     end process;
 
     -- TXTB_INFO
-    mr_ctrl_in.txtb_info_txt_buffer_count <= std_logic_vector(to_unsigned(G_TXT_BUFFER_COUNT, 4));
+    mr_ctrl_in.txtb_info_txt_buffer_count <= std_logic_vector(to_unsigned(G_TXT_BUF_COUNT, 4));
 
     -- ERR_CAPT
     mr_ctrl_in.err_capt_err_pos  <= cc_stat.err_pos;
@@ -914,7 +916,7 @@ begin
 
     -- coverage off
     -- pragma translate_off
-    g_txtb_func_cov : for i in 0 to G_TXT_BUFFER_COUNT - 1 generate
+    g_txtb_func_cov : for i in 0 to G_TXT_BUF_COUNT - 1 generate
     begin
 
         p_txtb_per_state_chk : process (txtb_state, mr_ctrl_out_i.settings_pchke)

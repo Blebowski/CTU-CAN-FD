@@ -465,19 +465,19 @@ begin
         if (tb_force.something_to_force) then
 
             if (tb_force.is_forced_tx_counter) then
-                <<signal .TB_TOP_CTU_CAN_FD.DUT.CAN_CORE_INST.BUS_TRAFFIC_CTRS_GEN.BUS_TRAFFIC_COUNTERS_INST.tx_frame_ctr_i  : std_logic_vector(31 downto 0) >> <= force tb_force.get_tx_counter_force_val;
+                <<signal .TB_TOP_CTU_CAN_FD.DUT.I_CAN_CORE.G_BUS_TRAFFIC_CTRS.I_BUS_TRAFFIC_COUNTERS.tx_frame_ctr_i  : std_logic_vector(31 downto 0) >> <= force tb_force.get_tx_counter_force_val;
             end if;
 
             if (tb_force.is_forced_rx_counter) then
-                <<signal .TB_TOP_CTU_CAN_FD.DUT.CAN_CORE_INST.BUS_TRAFFIC_CTRS_GEN.BUS_TRAFFIC_COUNTERS_INST.rx_frame_ctr_i  : std_logic_vector(31 downto 0) >> <= force tb_force.get_rx_counter_force_val;
+                <<signal .TB_TOP_CTU_CAN_FD.DUT.I_CAN_CORE.G_BUS_TRAFFIC_CTRS.I_BUS_TRAFFIC_COUNTERS.rx_frame_ctr_i  : std_logic_vector(31 downto 0) >> <= force tb_force.get_rx_counter_force_val;
             end if;
 
             if (tb_force.is_forced_err_norm) then
-                <<signal .TB_TOP_CTU_CAN_FD.DUT.CAN_CORE_INST.FAULT_CONFINEMENT_INST.ERR_COUNTERS_INST.nom_err_ctr_q   : unsigned(15 downto 0) >> <= force unsigned(tb_force.get_err_norm_force_val);
+                <<signal .TB_TOP_CTU_CAN_FD.DUT.I_CAN_CORE.I_FAULT_CONFINEMENT.I_ERR_COUNTERS.nom_err_ctr_q   : unsigned(15 downto 0) >> <= force unsigned(tb_force.get_err_norm_force_val);
             end if;
 
             if (tb_force.is_forced_err_fd) then
-                <<signal .TB_TOP_CTU_CAN_FD.DUT.CAN_CORE_INST.FAULT_CONFINEMENT_INST.ERR_COUNTERS_INST.data_err_ctr_q  : unsigned(15 downto 0) >> <= force unsigned(tb_force.get_err_fd_force_val);
+                <<signal .TB_TOP_CTU_CAN_FD.DUT.I_CAN_CORE.I_FAULT_CONFINEMENT.I_ERR_COUNTERS.data_err_ctr_q  : unsigned(15 downto 0) >> <= force unsigned(tb_force.get_err_fd_force_val);
             end if;
 
         end if;
@@ -485,19 +485,19 @@ begin
         if (tb_force.something_to_release) then
 
             if (tb_force.is_released_tx_counter) then
-                <<signal .TB_TOP_CTU_CAN_FD.DUT.CAN_CORE_INST.BUS_TRAFFIC_CTRS_GEN.BUS_TRAFFIC_COUNTERS_INST.tx_frame_ctr_i  : std_logic_vector(31 downto 0) >> <= release;
+                <<signal .TB_TOP_CTU_CAN_FD.DUT.I_CAN_CORE.G_BUS_TRAFFIC_CTRS.I_BUS_TRAFFIC_COUNTERS.tx_frame_ctr_i  : std_logic_vector(31 downto 0) >> <= release;
             end if;
 
             if (tb_force.is_released_rx_counter) then
-                <<signal .TB_TOP_CTU_CAN_FD.DUT.CAN_CORE_INST.BUS_TRAFFIC_CTRS_GEN.BUS_TRAFFIC_COUNTERS_INST.rx_frame_ctr_i  : std_logic_vector(31 downto 0) >> <= release;
+                <<signal .TB_TOP_CTU_CAN_FD.DUT.I_CAN_CORE.G_BUS_TRAFFIC_CTRS.I_BUS_TRAFFIC_COUNTERS.rx_frame_ctr_i  : std_logic_vector(31 downto 0) >> <= release;
             end if;
 
             if (tb_force.is_released_err_norm) then
-                <<signal .TB_TOP_CTU_CAN_FD.DUT.CAN_CORE_INST.FAULT_CONFINEMENT_INST.ERR_COUNTERS_INST.nom_err_ctr_q   : unsigned(15 downto 0) >> <= release;
+                <<signal .TB_TOP_CTU_CAN_FD.DUT.I_CAN_CORE.I_FAULT_CONFINEMENT.I_ERR_COUNTERS.nom_err_ctr_q   : unsigned(15 downto 0) >> <= release;
             end if;
 
             if (tb_force.is_released_err_fd) then
-                <<signal .TB_TOP_CTU_CAN_FD.DUT.CAN_CORE_INST.FAULT_CONFINEMENT_INST.ERR_COUNTERS_INST.data_err_ctr_q  : unsigned(15 downto 0) >> <= release;
+                <<signal .TB_TOP_CTU_CAN_FD.DUT.I_CAN_CORE.I_FAULT_CONFINEMENT.I_ERR_COUNTERS.data_err_ctr_q  : unsigned(15 downto 0) >> <= release;
             end if;
 
         end if;

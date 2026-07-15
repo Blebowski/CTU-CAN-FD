@@ -103,7 +103,7 @@ entity txt_buffer_ram is
         G_ID                    :     natural;
 
         -- TXT Buffer parity
-        G_SUP_PARITY            :     boolean;
+        G_PARITY_EN             :     boolean;
 
         -- TXT Buffer RAM is resettable
         G_RESET_TXT_BUF_RAM     :     boolean
@@ -215,7 +215,7 @@ begin
     -- Parity protection
     -----------------------------------------------------------------------------------------------
     -----------------------------------------------------------------------------------------------
-    g_parity_true : if (G_SUP_PARITY) generate
+    g_parity_true : if (G_PARITY_EN) generate
 
         -------------------------------------------------------------------------------------------
         -- Storing Parity word
@@ -264,7 +264,7 @@ begin
 
     end generate;
 
-    g_parity_false : if (not G_SUP_PARITY) generate
+    g_parity_false : if (not G_PARITY_EN) generate
         parity_mismatch <= '0';
         parity_read_exp <= '0';
         parity_read_real <= '0';

@@ -6,6 +6,9 @@
 - *STATUS[RXPE]* with *MODE[RXBAM]=0* now detects parity
   error upon the *RX_DATA* read instead of detecting upon
   moving the RX Buffer read pointer.
+- **BREAKING CHANGE**: IP top level generics has been renamed to
+  comply with generic naming style. Look at the System Architecture
+  document for the new names.
 
 ## Version 2.7 - 7.1.2026
 - RTL: Optimized to remove dead-code and unreachable code

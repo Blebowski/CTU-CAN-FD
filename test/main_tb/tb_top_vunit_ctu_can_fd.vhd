@@ -246,16 +246,16 @@ begin
     ---------------------------------------------------------------------------
     dut : entity ctu_can_fd_rtl.can_top_level
     generic map(
-        rx_buffer_size      => rx_buffer_size,
-        txt_buffer_count    => txt_buffer_count,
-        sup_filtA           => sup_filtA,
-        sup_filtB           => sup_filtB,
-        sup_filtC           => sup_filtC,
-        sup_range           => sup_range,
-        sup_traffic_ctrs    => sup_traffic_ctrs,
-        sup_parity          => sup_parity,
-        target_technology   => target_technology,
-        reset_buffer_rams   => reset_buffer_rams
+        G_RX_BUF_SIZE        => rx_buffer_size,
+        G_TXT_BUF_COUNT      => txt_buffer_count,
+        G_FILT_A_EN          => sup_filtA,
+        G_FILT_B_EN          => sup_filtB,
+        G_FILT_C_EN          => sup_filtC,
+        G_FILT_RANGE_EN      => sup_range,
+        G_TRAFFIC_CTRS_EN    => sup_traffic_ctrs,
+        G_PARITY_EN          => sup_parity,
+        G_TECHNOLOGY         => target_technology,
+        G_RESET_BUF_RAMS     => reset_buffer_rams
     )
     port map(
         -- Clock and Asynchronous reset

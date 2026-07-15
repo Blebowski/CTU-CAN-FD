@@ -488,7 +488,7 @@ filename "version.tex"
 \noindent
 \align center
 \begin_inset Tabular
-<lyxtabular version="3" rows="23" columns="4">
+<lyxtabular version="3" rows="24" columns="4">
 <features tabularvalignment="middle">
 <column alignment="center" valignment="top" width="1.5cm">
 <column alignment="center" valignment="top" width="3cm">
@@ -1120,7 +1120,7 @@ Add Parity Check use-case in TXT buffer.
  Add 
 \series bold
 \shape italic
-sup_parity
+G_PARITY_EN
 \series default
 \shape default
  generic.
@@ -1164,13 +1164,13 @@ sup_parity
 Add 
 \series bold
 \shape italic
-reset_buffer_rams
+G_RESET_BUF_RAMS
 \series default
 \shape default
  and 
 \series bold
 \shape italic
-active_timestamp_bits
+G_ACTIVE_TS_BITS
 \series default
 \shape default
  generic.
@@ -1373,7 +1373,7 @@ Move to new release of CTU CAN FD
 </cell>
 </row>
 <row>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -1382,16 +1382,16 @@ Move to new release of CTU CAN FD
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
-2.7
+
 \end_layout
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -1400,11 +1400,49 @@ Move to new release of CTU CAN FD
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
 Update repository link
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+0.23
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+15-7-2026
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Changed name of top level generics
 \end_layout
 
 \end_inset
@@ -2276,7 +2314,7 @@ The MAC sub-layer shall store the whole message to be transmitted in a temporary
  buffer and RX buffer if 
 \series bold
 \shape italic
-sup_parity
+G_PARITY_EN
 \series default
 \shape default
 =true.
@@ -5651,7 +5689,7 @@ timestamp
  Integrating system shall also set 
 \series bold
 \shape italic
-active_timestamp_bits 
+G_ACTIVE_TS_BITS 
 \series default
 \shape default
 to width of such counter - 1 (e.g.
@@ -5664,7 +5702,7 @@ timestamp[31:0]
  and 
 \series bold
 \shape italic
-active_timestamp_bits=
+G_ACTIVE_TS_BITS=
 \series default
 \shape default
 31).
@@ -6049,7 +6087,7 @@ s.
  If CTU CAN FD is used in FPGA (
 \series bold
 \shape italic
-target_technology
+G_TECHNOLOGY
 \series default
 \shape default
  = 1), 
@@ -6225,7 +6263,7 @@ cellcolor{gray}
 
 \series bold
 \shape italic
-rx_buf_size
+G_RX_BUF_SIZE
 \end_layout
 
 \end_inset
@@ -6286,7 +6324,7 @@ noprefix "false"
 
 \series bold
 \shape italic
-txt_buffer_count
+G_TXT_BUF_COUNT
 \end_layout
 
 \end_inset
@@ -6347,7 +6385,7 @@ noprefix "false"
 
 \series bold
 \shape italic
-sup_filt_A
+G_FILT_A_EN
 \end_layout
 
 \end_inset
@@ -6408,7 +6446,7 @@ noprefix "false"
 
 \series bold
 \shape italic
-sup_filt_B
+G_FILT_B_EN
 \end_layout
 
 \end_inset
@@ -6469,7 +6507,7 @@ noprefix "false"
 
 \series bold
 \shape italic
-sup_filt_C
+G_FILT_C_EN
 \end_layout
 
 \end_inset
@@ -6530,7 +6568,7 @@ noprefix "false"
 
 \series bold
 \shape italic
-sup_range
+G_FILT_RANGE_EN
 \end_layout
 
 \end_inset
@@ -6591,7 +6629,7 @@ noprefix "false"
 
 \series bold
 \shape italic
-sup_traffic_counters
+G_TRAFFIC_CTRS_EN
 \end_layout
 
 \end_inset
@@ -6652,7 +6690,7 @@ noprefix "false"
 
 \series bold
 \shape italic
-target_technology
+G_TECHNOLOGY
 \end_layout
 
 \end_inset
@@ -6702,7 +6740,7 @@ Target technology (set 0 for ASIC, set 1 for FPGA).
 
 \series bold
 \shape italic
-sup_test_registers
+G_TEST_REGS_EN
 \end_layout
 
 \end_inset
@@ -6752,7 +6790,7 @@ Synthesize test registers.
 
 \series bold
 \shape italic
-sup_parity
+G_PARITY_EN
 \end_layout
 
 \end_inset
@@ -6802,7 +6840,7 @@ Add parity protection to TXT buffers / RX buffer.
 
 \series bold
 \shape italic
-reset_buffer_rams
+G_RESET_BUF_RAMS
 \end_layout
 
 \end_inset
@@ -6858,7 +6896,7 @@ res_n
 
 \series bold
 \shape italic
-active_timestamp_bits
+G_ACTIVE_TS_BITS
 \end_layout
 
 \end_inset
@@ -7470,7 +7508,7 @@ clock gating
 If 
 \series bold
 \shape italic
-target_technology
+G_TECHNOLOGY
 \series default
 \shape default
  = 0 (ASIC), hand-written clock gating is implemented for Memory registers,
@@ -7478,7 +7516,7 @@ target_technology
  If 
 \series bold
 \shape italic
-target_technology
+G_TECHNOLOGY
 \series default
 \shape default
  = 1 (FPGA), no hand-written clock gating is implemented, clocks for memory
@@ -7497,7 +7535,7 @@ The manually used clock gating cell (clk_gate.vhd) has Latch + AND type.
 If 
 \series bold
 \shape italic
-target_technology
+G_TECHNOLOGY
 \series default
 \shape default
  = 1 (FPGA), then clk_gate.vhd does not gate clocks, but only connects input
@@ -7531,7 +7569,7 @@ Memory testability - Allows direct read/write access to TXT buffer RAMs
 d (
 \series bold
 \shape italic
-sup_test_registers
+G_TEST_REGS_EN
 \series default
 \shape default
  = true).
@@ -7539,7 +7577,7 @@ sup_test_registers
  (
 \series bold
 \shape italic
-target_technology
+G_TECHNOLOGY
 \series default
 \shape default
  = 0).
@@ -8183,7 +8221,7 @@ noprefix "false"
 If 
 \series bold
 \shape italic
-reset_buffer_rams
+G_RESET_BUF_RAMS
 \series default
 \shape default
  = false, TXT buffer RAMs and RX buffer RAM are not reset.
@@ -8212,7 +8250,7 @@ ASIC fault-coverage can be achieved by functional test via Test Registers.
 If 
 \series bold
 \shape italic
-reset_buffer_rams
+G_RESET_BUF_RAMS
 \series default
 \shape default
  = true, TXT buffer RAMs and RX buffer RAM are reset.
@@ -10925,7 +10963,7 @@ Test registers are writable, therefore it is possible to directly read/write
  This feature is available only when 
 \series bold
 \shape italic
-sup_test_registers
+G_TEST_REGS_EN
 \series default
 \shape default
  = true.
@@ -23398,7 +23436,7 @@ Both counters can be erased by SW via COMMAND[TXFRCRST] and COMMAND[RXFRCRST]
  Bus traffic counters are instantiated only when 
 \series bold
 \shape italic
-sup_traffic_counters
+G_TRAFFIC_CTRS_EN
 \series default
 \shape default
 =
@@ -25022,7 +25060,7 @@ RX buffer Parity
 If enabled at synthesis time by 
 \series bold
 \shape italic
-sup_parity
+G_PARITY_EN
 \series default
 \shape default
  , each RX buffer memory word has additional parity bit.
@@ -25579,7 +25617,7 @@ name "subsec:rx-buffer-RAM"
 If 
 \series bold
 \shape italic
-target_technology
+G_TECHNOLOGY
 \series default
 \shape default
  = 0 (ASIC), clock for RX buffer RAM are gated if RX buffer RAM is not written
@@ -25631,13 +25669,13 @@ Frame filters implement two types of filters: Bit filter and Range filter.
  Each instance is selectively synthesizable by 
 \series bold
 \shape italic
-sup_filt_A/B/C
+G_FILT_A_EN/B/C
 \series default
 \shape default
  or 
 \series bold
 \shape italic
-sup_range
+G_FILT_RANGE_EN
 \series default
 \shape default
  generics.
@@ -26511,7 +26549,7 @@ Number of TXT buffers in CTU CAN FD is configurable at synthesis time by
  
 \series bold
 \shape italic
-txt_buffer_count
+G_TXT_BUF_COUNT
 \series default
 \shape default
 .
@@ -27544,7 +27582,7 @@ TXT buffer Parity
 If enabled at synthesis time by 
 \series bold
 \shape italic
-sup_parity
+G_PARITY_EN
 \series default
 \shape default
  , each memory word of TXT buffer has additional parity bit.
@@ -30814,7 +30852,7 @@ Priority decoder supports up to 8 input TXT buffers.
  If less than 8 TXT buffers are configured (see 
 \series bold
 \shape italic
-txt_buffer_count
+G_TXT_BUF_COUNT
 \series default
 \shape default
 ), unused inputs are tied to zeroes.
@@ -31608,7 +31646,7 @@ TXT buffer RAM access
 TXT buffer RAM has clock gating implemented if 
 \series bold
 \shape italic
-target_technology 
+G_TECHNOLOGY 
 \series default
 \shape default
 = 0 (ASIC).

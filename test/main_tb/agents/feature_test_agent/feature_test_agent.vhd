@@ -181,14 +181,16 @@ begin
     test_node_inst : entity ctu_can_fd_rtl.can_top_level
     generic map(
         -- Keep config hard-coded, it is enough that DUT is configurable!
-        rx_buffer_size      => 256, -- Size to receive 8 frames is needed
-        txt_buffer_count    => 4,
-        sup_filtA           => false,
-        sup_filtB           => false,
-        sup_filtC           => false,
-        sup_range           => false,
-        sup_traffic_ctrs    => true,
-        target_technology   => C_TECH_ASIC
+        -- Everything is tested at the "DUT" instance!
+        G_RX_BUF_SIZE        => 256,
+        G_TXT_BUF_COUNT      => 4,
+        G_FILT_A_EN          => false,
+        G_FILT_B_EN          => false,
+        G_FILT_C_EN          => false,
+        G_FILT_RANGE_EN      => false,
+        G_TRAFFIC_CTRS_EN    => true,
+        G_PARITY_EN          => false,
+        G_TECHNOLOGY         => C_TECH_ASIC
     )
     port map(
         -- Clock and Asynchronous reset

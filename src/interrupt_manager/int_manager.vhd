@@ -96,7 +96,7 @@ entity int_manager is
         G_INT_COUNT                     :     natural;
 
         -- Number of TXT Buffers
-        G_TXT_BUFFER_COUNT              :     natural
+        G_TXT_BUF_COUNT                 :     natural
     );
     port (
         -------------------------------------------------------------------------------------------
@@ -139,7 +139,7 @@ entity int_manager is
         rx_empty                        : in  std_logic;
 
         -- HW command on TXT Buffers interrupt
-        txtb_hw_cmd_int                 : in  std_logic_vector(G_TXT_BUFFER_COUNT - 1 downto 0);
+        txtb_hw_cmd_int                 : in  std_logic_vector(G_TXT_BUF_COUNT - 1 downto 0);
 
         -- Overload frame is being transmitted
         is_overload                     : in  std_logic;

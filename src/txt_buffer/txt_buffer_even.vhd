@@ -92,7 +92,7 @@ use ctu_can_fd_rtl.can_registers_pkg.all;
 entity txt_buffer_even is
     generic (
         -- Number of TXT Buffers
-        G_TXT_BUFFER_COUNT      :     natural range 2 to 8;
+        G_TXT_BUF_COUNT         :     natural range 2 to 8;
 
         -- TXT Buffer ID
         G_ID                    :     natural;
@@ -101,7 +101,7 @@ entity txt_buffer_even is
         G_TECHNOLOGY            :     natural;
 
         -- Support Parity Error
-        G_SUP_PARITY            :     boolean;
+        G_PARITY_EN             :     boolean;
 
         -- TXT Buffer RAMs are resetable
         G_RESET_TXT_BUF_RAM     :     boolean
@@ -191,7 +191,7 @@ entity txt_buffer_even is
         txtb_parity_error_valid : out std_logic;
 
         -- Index of TXT Buffer which is being read
-        txtb_index_muxed        : in  natural range 0 to G_TXT_BUFFER_COUNT - 1
+        txtb_index_muxed        : in  natural range 0 to G_TXT_BUF_COUNT - 1
     );
 end entity;
 
@@ -337,7 +337,7 @@ begin
     i_txt_buffer_ram : entity ctu_can_fd_rtl.txt_buffer_ram
     generic map (
         G_ID                    => G_ID,
-        G_SUP_PARITY            => G_SUP_PARITY,
+        G_PARITY_EN            => G_PARITY_EN,
         G_RESET_TXT_BUF_RAM     => G_RESET_TXT_BUF_RAM
     )
     port map (

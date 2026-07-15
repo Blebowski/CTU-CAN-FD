@@ -97,10 +97,10 @@ use ctu_can_fd_rtl.CAN_FD_frame_format.all;
 entity rx_buffer_pointers is
     generic (
         -- RX Buffer size
-        G_RX_BUFF_SIZE          :       natural range 32 to 4096;
+        G_RX_BUF_SIZE           :       natural range 32 to 4096;
 
         -- Width of RX Buffer pointers
-        G_RX_BUFF_PTR_WIDTH     :       natural range 5 to 12
+        G_RX_BUF_PTR_WIDTH      :       natural range 5 to 12
     );
     port (
         -------------------------------------------------------------------------------------------
@@ -141,24 +141,24 @@ entity rx_buffer_pointers is
         -- Status outputs
         -------------------------------------------------------------------------------------------
         -- Read Pointer (access from SW)
-        read_pointer            : out std_logic_vector(G_RX_BUFF_PTR_WIDTH - 1 downto 0);
+        read_pointer            : out std_logic_vector(G_RX_BUF_PTR_WIDTH - 1 downto 0);
 
         -- Read pointer incremented by 1 (combinationally)
-        read_pointer_inc_1      : out std_logic_vector(G_RX_BUFF_PTR_WIDTH - 1 downto 0);
+        read_pointer_inc_1      : out std_logic_vector(G_RX_BUF_PTR_WIDTH - 1 downto 0);
 
         -- Write pointer (committed, available to SW, after frame was stored)
-        write_pointer           : out std_logic_vector(G_RX_BUFF_PTR_WIDTH - 1 downto 0);
+        write_pointer           : out std_logic_vector(G_RX_BUF_PTR_WIDTH - 1 downto 0);
 
         -- Write pointer RAW. Changing during frame, as frame is continously stored
         -- to the buffer. When frame is sucesfully received, it is updated to
         -- write pointer!
-        write_pointer_raw       : out std_logic_vector(G_RX_BUFF_PTR_WIDTH - 1 downto 0);
+        write_pointer_raw       : out std_logic_vector(G_RX_BUF_PTR_WIDTH - 1 downto 0);
 
         -- Timestamp write pointer
-        write_pointer_ts        : out std_logic_vector(G_RX_BUFF_PTR_WIDTH - 1 downto 0);
+        write_pointer_ts        : out std_logic_vector(G_RX_BUF_PTR_WIDTH - 1 downto 0);
 
         -- Number of free memory words available for user
-        rx_mem_free_i           : out std_logic_vector(G_RX_BUFF_PTR_WIDTH downto 0)
+        rx_mem_free_i           : out std_logic_vector(G_RX_BUF_PTR_WIDTH downto 0)
     );
 end entity;
 
@@ -168,16 +168,16 @@ architecture rtl of rx_buffer_pointers is
     -- Memory pointers
     -----------------------------------------------------------------------------------------------
 
-    signal read_pointer_i           : unsigned(G_RX_BUFF_PTR_WIDTH - 1 downto 0);
-    signal read_pointer_inc_1_i     : unsigned(G_RX_BUFF_PTR_WIDTH - 1 downto 0);
-    signal write_pointer_i          : unsigned(G_RX_BUFF_PTR_WIDTH - 1 downto 0);
+    signal read_pointer_i           : unsigned(G_RX_BUF_PTR_WIDTH - 1 downto 0);
+    signal read_pointer_inc_1_i     : unsigned(G_RX_BUF_PTR_WIDTH - 1 downto 0);
+    signal write_pointer_i          : unsigned(G_RX_BUF_PTR_WIDTH - 1 downto 0);
 
-    signal write_pointer_raw_i      : unsigned(G_RX_BUFF_PTR_WIDTH - 1 downto 0);
-    signal write_pointer_raw_d      : unsigned(G_RX_BUFF_PTR_WIDTH - 1 downto 0);
+    signal write_pointer_raw_i      : unsigned(G_RX_BUF_PTR_WIDTH - 1 downto 0);
+    signal write_pointer_raw_d      : unsigned(G_RX_BUF_PTR_WIDTH - 1 downto 0);
     signal write_pointer_raw_ce     : std_logic;
 
-    signal write_pointer_ts_i       : unsigned(G_RX_BUFF_PTR_WIDTH - 1 downto 0);
-    signal write_pointer_ts_d       : unsigned(G_RX_BUFF_PTR_WIDTH - 1 downto 0);
+    signal write_pointer_ts_i       : unsigned(G_RX_BUF_PTR_WIDTH - 1 downto 0);
+    signal write_pointer_ts_d       : unsigned(G_RX_BUF_PTR_WIDTH - 1 downto 0);
     signal write_pointer_ts_ce      : std_logic;
 
     -----------------------------------------------------------------------------------------------
@@ -185,7 +185,7 @@ architecture rtl of rx_buffer_pointers is
     -----------------------------------------------------------------------------------------------
 
     -- Width of free memory
-    constant C_FREE_MEM_WIDTH       : natural := G_RX_BUFF_PTR_WIDTH + 1;
+    constant C_FREE_MEM_WIDTH       : natural := G_RX_BUF_PTR_WIDTH + 1;
 
     signal rx_mem_free_i_i          : unsigned(C_FREE_MEM_WIDTH - 1 downto 0);
 
@@ -310,8 +310,8 @@ begin
     p_mem_free : process(clk_sys, rx_buf_res_n_q_scan)
     begin
         if (rx_buf_res_n_q_scan = '0') then
-            rx_mem_free_i_i <= to_unsigned(G_RX_BUFF_SIZE, C_FREE_MEM_WIDTH);
-            rx_mem_free_raw <= to_unsigned(G_RX_BUFF_SIZE, C_FREE_MEM_WIDTH);
+            rx_mem_free_i_i <= to_unsigned(G_RX_BUF_SIZE, C_FREE_MEM_WIDTH);
+            rx_mem_free_raw <= to_unsigned(G_RX_BUF_SIZE, C_FREE_MEM_WIDTH);
 
         elsif (rising_edge(clk_sys)) then
 

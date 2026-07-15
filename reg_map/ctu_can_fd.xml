@@ -2,8 +2,8 @@
 <ipxact:component xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ipxact="http://www.accellera.org/XMLSchema/IPXACT/1685-2014" xmlns:kactus2="http://kactus2.cs.tut.fi" xmlns:ctuCAN="https://gitlab.fel.cvut.cz/canbus/ctucanfd_ip_core" xsi:schemaLocation="http://www.accellera.org/XMLSchema/IPXACT/1685-2014 http://www.accellera.org/XMLSchema/IPXACT/1685-2014/index.xsd">
 	<ipxact:vendor>CTU</ipxact:vendor>
 	<ipxact:library>ip</ipxact:library>
-	<ipxact:name>CAN_FD_IP_Core</ipxact:name>
-	<ipxact:version>2.1</ipxact:version>
+	<ipxact:name>CTU_CAN_FD</ipxact:name>
+	<ipxact:version>3.0</ipxact:version>
 	<ipxact:memoryMaps>
 		<ipxact:memoryMap>
 			<ipxact:name>CAN_Registers</ipxact:name>
@@ -6071,41 +6071,41 @@ TXT Buffers.</ipxact:description>
 			<ipxact:addressUnitBits>8</ipxact:addressUnitBits>
 		</ipxact:memoryMap>
 	</ipxact:memoryMaps>
-	<ipxact:description>CAN FD IP Core from Ondrej Ille written at Czech Technical University, department of Measurement.</ipxact:description>
+	<ipxact:description>CAN FD IP Core</ipxact:description>
 	<ipxact:parameters>
 		<ipxact:parameter kactus2:usageCount="2" parameterId="uuid_09846e1a_b03a_4f0b_99b5_c1981400ea9e" type="bit">
-			<ipxact:name>sup_filt_A</ipxact:name>
-			<ipxact:displayName>sup_filt_A</ipxact:displayName>
+			<ipxact:name>G_FILT_A_EN</ipxact:name>
+			<ipxact:displayName>G_FILT_A_EN</ipxact:displayName>
 			<ipxact:value>1</ipxact:value>
 		</ipxact:parameter>
 		<ipxact:parameter kactus2:usageCount="2" parameterId="uuid_41f98f04_041f_4ab6_b60d_c6226cd54eb6" type="bit">
-			<ipxact:name>sup_range</ipxact:name>
-			<ipxact:displayName>sup_range</ipxact:displayName>
+			<ipxact:name>G_FILT_RANGE_EN</ipxact:name>
+			<ipxact:displayName>G_FILT_RANGE_EN</ipxact:displayName>
 			<ipxact:value>1</ipxact:value>
 		</ipxact:parameter>
 		<ipxact:parameter kactus2:usageCount="2" parameterId="uuid_d4ccabd1_3f50_49b0_ae1e_45cf5fdb460e" type="bit">
-			<ipxact:name>sup_filt_C</ipxact:name>
-			<ipxact:displayName>sup_filt_C</ipxact:displayName>
+			<ipxact:name>G_FILT_C_EN</ipxact:name>
+			<ipxact:displayName>G_FILT_C_EN</ipxact:displayName>
 			<ipxact:value>1</ipxact:value>
 		</ipxact:parameter>
 		<ipxact:parameter kactus2:usageCount="2" parameterId="uuid_ee0c8305_bed6_412e_8743_8e3657e8b866" type="bit">
-			<ipxact:name>sup_filt_B</ipxact:name>
-			<ipxact:displayName>sup_filt_B</ipxact:displayName>
+			<ipxact:name>G_FILT_B_EN</ipxact:name>
+			<ipxact:displayName>G_FILT_B_EN</ipxact:displayName>
 			<ipxact:value>1</ipxact:value>
 		</ipxact:parameter>
 		<ipxact:parameter kactus2:usageCount="2" parameterId="uuid_db903261_61eb_4f15_8155_5b14164c20b0" type="bit">
-			<ipxact:name>sup_traffic_ctrs</ipxact:name>
-			<ipxact:displayName>sup_traffic_ctrs</ipxact:displayName>
+			<ipxact:name>G_TRAFFIC_CTRS_EN</ipxact:name>
+			<ipxact:displayName>G_TRAFFIC_CTRS_EN</ipxact:displayName>
 			<ipxact:value>1</ipxact:value>
 		</ipxact:parameter>
 		<ipxact:parameter kactus2:usageCount="25" maximum="8" minimum="2" parameterId="uuid_64debd51_3bf7_42e3_a590_0a22e668b9af" type="int">
-			<ipxact:name>txt_buffer_count</ipxact:name>
-			<ipxact:displayName>txt_buffer_count</ipxact:displayName>
+			<ipxact:name>G_TXT_BUF_COUNT</ipxact:name>
+			<ipxact:displayName>G_TXT_BUF_COUNT</ipxact:displayName>
 			<ipxact:value>4</ipxact:value>
 		</ipxact:parameter>
 		<ipxact:parameter kactus2:usageCount="1" parameterId="uuid_2e48bf3e_bb4b_4bc7_90b5_6938b1203f7e" type="bit">
-			<ipxact:name>sup_test_registers</ipxact:name>
-			<ipxact:displayName>sup_test_registers</ipxact:displayName>
+			<ipxact:name>G_TEST_REGS_EN</ipxact:name>
+			<ipxact:displayName>G_TEST_REGS_EN</ipxact:displayName>
 			<ipxact:value>1</ipxact:value>
 		</ipxact:parameter>
 	</ipxact:parameters>

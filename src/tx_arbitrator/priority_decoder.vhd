@@ -92,17 +92,17 @@ use ctu_can_fd_rtl.CAN_FD_frame_format.all;
 entity priority_decoder is
     generic (
         -- Number of TXT Buffers
-        G_TXT_BUFFER_COUNT     : natural range 2 to 8
+        G_TXT_BUF_COUNT         : natural range 2 to 8
     );
     port (
         -------------------------------------------------------------------------------------------
         -- TXT Buffer information
         -------------------------------------------------------------------------------------------
         -- TXT Buffer priority
-        prio             : in  t_txt_bufs_priorities(G_TXT_BUFFER_COUNT - 1 downto 0);
+        prio             : in  t_txt_bufs_priorities(G_TXT_BUF_COUNT - 1 downto 0);
 
         -- TXT Buffer is valid for selection
-        prio_valid       : in  std_logic_vector(G_TXT_BUFFER_COUNT - 1 downto 0);
+        prio_valid       : in  std_logic_vector(G_TXT_BUF_COUNT - 1 downto 0);
 
         -------------------------------------------------------------------------------------------
         -- Output interface
@@ -111,7 +111,7 @@ entity priority_decoder is
         output_valid     : out  std_logic;
 
         -- Index of highest priority buffer which is non-empty and allowed for transmission
-        output_index     : out  natural range 0 to G_TXT_BUFFER_COUNT - 1
+        output_index     : out  natural range 0 to G_TXT_BUF_COUNT - 1
     );
 end entity;
 
@@ -164,7 +164,7 @@ begin
     -----------------------------------------------------------------------------------------------
     -- Level 0 - aliases
     -----------------------------------------------------------------------------------------------
-    g_l0 : for i in 0 to G_TXT_BUFFER_COUNT - 1 generate
+    g_l0 : for i in 0 to G_TXT_BUF_COUNT - 1 generate
 
         -- pragma translate_off
         -- coverage off
@@ -187,9 +187,9 @@ begin
     end generate;
 
 
-    g_fill_zeroes : if (G_TXT_BUFFER_COUNT < 8) generate
-        l0_prio(7 downto G_TXT_BUFFER_COUNT)  <= (others => (others => '0'));
-        l0_valid(7 downto G_TXT_BUFFER_COUNT) <= (others => '0');
+    g_fill_zeroes : if (G_TXT_BUF_COUNT < 8) generate
+        l0_prio(7 downto G_TXT_BUF_COUNT)  <= (others => (others => '0'));
+        l0_valid(7 downto G_TXT_BUF_COUNT) <= (others => '0');
     end generate;
 
 
@@ -316,23 +316,23 @@ begin
                 end if;
             else
                 if (l1_winner(1) = LOWER_TREE) then
-                    output_index <= 2 mod G_TXT_BUFFER_COUNT;
+                    output_index <= 2 mod G_TXT_BUF_COUNT;
                 else
-                    output_index <= 3 mod G_TXT_BUFFER_COUNT;
+                    output_index <= 3 mod G_TXT_BUF_COUNT;
                 end if;
             end if;
         else
             if (l2_winner(1) = LOWER_TREE) then
                 if (l1_winner(2) = LOWER_TREE) then
-                    output_index <= 4 mod G_TXT_BUFFER_COUNT;
+                    output_index <= 4 mod G_TXT_BUF_COUNT;
                 else
-                    output_index <= 5 mod G_TXT_BUFFER_COUNT;
+                    output_index <= 5 mod G_TXT_BUF_COUNT;
                 end if;
             else
                 if (l1_winner(3) = LOWER_TREE) then
-                    output_index <= 6 mod G_TXT_BUFFER_COUNT;
+                    output_index <= 6 mod G_TXT_BUF_COUNT;
                 else
-                    output_index <= 7 mod G_TXT_BUFFER_COUNT;
+                    output_index <= 7 mod G_TXT_BUF_COUNT;
                 end if;
             end if;
         end if;

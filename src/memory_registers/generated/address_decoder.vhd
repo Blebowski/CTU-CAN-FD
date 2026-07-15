@@ -157,7 +157,7 @@ begin
     ---------------------------------------------------------------------------
     -- Registering / Not-registering output
     ---------------------------------------------------------------------------
-    g_addr_dec_reg_true : if (registered_out) generate
+    g_addr_dec_reg_t : if (registered_out) generate
         p_addr_dec_reg : process(res_n, clk_sys)
         begin
             if (res_n = '0') then
@@ -168,11 +168,11 @@ begin
 
             end if;
         end process;
-    end generate g_addr_dec_reg_true;
+    end generate g_addr_dec_reg_t;
 
-    g_addr_dec_reg_false : if (not registered_out) generate
+    g_addr_dec_reg_f : if (not registered_out) generate
         addr_dec <= addr_dec_enabled_i;
-    end generate g_addr_dec_reg_false;
+    end generate g_addr_dec_reg_f;
 
 
     ---------------------------------------------------------------------------

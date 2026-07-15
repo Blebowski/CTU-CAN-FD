@@ -75,7 +75,7 @@
 --  only.
 --
 -- Memory parameters:
---  Depth: G_RX_BUFF_SIZE
+--  Depth: G_RX_BUF_SIZE
 --  Word size: 32 bits
 --  Read: Synchronous
 --  Write: Synchronous
@@ -101,13 +101,13 @@ use ctu_can_fd_rtl.can_registers_pkg.all;
 entity rx_buffer_ram is
     generic (
         -- RX Buffer size
-        G_RX_BUFF_SIZE          :       natural range 32 to 4096;
+        G_RX_BUF_SIZE           :       natural range 32 to 4096;
 
         -- Width of RX Buffer pointers
-        G_RX_BUFF_PTR_WIDTH     :       natural range 5 to 12;
+        G_RX_BUF_PTR_WIDTH      :       natural range 5 to 12;
 
         -- Add parity to RX Buffer RAM
-        G_SUP_PARITY            :       boolean;
+        G_PARITY_EN             :       boolean;
 
         -- Reset RX Buffer RAM
         G_RESET_RX_BUF_RAM      :       boolean
@@ -133,14 +133,14 @@ entity rx_buffer_ram is
         -------------------------------------------------------------------------------------------
         -- Port A - Write (from CAN Core)
         -------------------------------------------------------------------------------------------
-        rxb_port_a_address      : in  std_logic_vector(G_RX_BUFF_PTR_WIDTH - 1 downto 0);
+        rxb_port_a_address      : in  std_logic_vector(G_RX_BUF_PTR_WIDTH - 1 downto 0);
         rxb_port_a_data_in      : in  std_logic_vector(31 downto 0);
         rxb_port_a_write        : in  std_logic;
 
         -------------------------------------------------------------------------------------------
         -- Port B - Read (from Memory registers)
         -------------------------------------------------------------------------------------------
-        rxb_port_b_address      : in  std_logic_vector(G_RX_BUFF_PTR_WIDTH - 1 downto 0);
+        rxb_port_b_address      : in  std_logic_vector(G_RX_BUF_PTR_WIDTH - 1 downto 0);
         rxb_port_b_data_out     : out std_logic_vector(31 downto 0);
 
         -------------------------------------------------------------------------------------------
@@ -152,17 +152,17 @@ end entity;
 
 architecture rtl of rx_buffer_ram is
 
-    signal rxb_port_a_address_i     : std_logic_vector(G_RX_BUFF_PTR_WIDTH - 1 downto 0);
+    signal rxb_port_a_address_i     : std_logic_vector(G_RX_BUF_PTR_WIDTH - 1 downto 0);
     signal rxb_port_a_write_i       : std_logic;
     signal rxb_port_a_data_in_i     : std_logic_vector(31 downto 0);
-    signal rxb_port_b_address_i     : std_logic_vector(G_RX_BUFF_PTR_WIDTH - 1 downto 0);
+    signal rxb_port_b_address_i     : std_logic_vector(G_RX_BUF_PTR_WIDTH - 1 downto 0);
     signal rxb_port_b_data_out_i    : std_logic_vector(31 downto 0);
 
     signal mr_tst_dest_tst_addr_pad : std_logic_vector(15 downto 0);
 
     signal tst_ena                  : std_logic;
 
-    signal parity_word              : std_logic_vector(G_RX_BUFF_SIZE - 1 downto 0);
+    signal parity_word              : std_logic_vector(G_RX_BUF_SIZE - 1 downto 0);
     signal parity_write             : std_logic;
     signal parity_read_real         : std_logic;
     signal parity_read_exp          : std_logic;
@@ -177,8 +177,8 @@ begin
     i_dp_inf_ram : entity ctu_can_fd_rtl.dp_inf_ram
     generic map (
         G_WORD_WIDTH            => 32,
-        G_DEPTH                 => G_RX_BUFF_SIZE,
-        G_ADDRESS_WIDTH         => G_RX_BUFF_PTR_WIDTH,
+        G_DEPTH                 => G_RX_BUF_SIZE,
+        G_ADDRESS_WIDTH         => G_RX_BUF_PTR_WIDTH,
         G_SYNC_READ             => true,
         G_RESETABLE             => G_RESET_RX_BUF_RAM
     )
@@ -203,7 +203,7 @@ begin
     -- Parity protection
     -----------------------------------------------------------------------------------------------
     -----------------------------------------------------------------------------------------------
-    g_parity_true : if (G_SUP_PARITY) generate
+    g_parity_true : if (G_PARITY_EN) generate
     begin
 
         -------------------------------------------------------------------------------------------
@@ -266,7 +266,7 @@ begin
 
     end generate g_parity_true;
 
-    g_parity_false : if (not G_SUP_PARITY) generate
+    g_parity_false : if (not G_PARITY_EN) generate
         parity_mismatch <= '0';
         parity_read_real <= '0';
         parity_read_exp <= '0';
@@ -285,7 +285,7 @@ begin
     p_tst_addr_pad : process (mr_tst_dest_tst_addr)
     begin
         mr_tst_dest_tst_addr_pad <=
-            std_logic_vector(unsigned(mr_tst_dest_tst_addr) mod G_RX_BUFF_SIZE);
+            std_logic_vector(unsigned(mr_tst_dest_tst_addr) mod G_RX_BUF_SIZE);
     end process;
 
     tst_ena <= '1' when (mr_tst_control_tmaena = '1') and (mr_tst_dest_tst_mtgt = TMTGT_RXBUF)
@@ -295,7 +295,7 @@ begin
     -- Write port
     rxb_port_a_address_i <= rxb_port_a_address when (tst_ena = '0')
                                                else
-                            mr_tst_dest_tst_addr_pad(G_RX_BUFF_PTR_WIDTH - 1 downto 0);
+                            mr_tst_dest_tst_addr_pad(G_RX_BUF_PTR_WIDTH - 1 downto 0);
 
     rxb_port_a_write_i <= rxb_port_a_write when (tst_ena = '0')
                                            else
@@ -308,7 +308,7 @@ begin
     -- Read port
     rxb_port_b_address_i <= rxb_port_b_address when (tst_ena = '0')
                                                else
-                            mr_tst_dest_tst_addr_pad(G_RX_BUFF_PTR_WIDTH - 1 downto 0);
+                            mr_tst_dest_tst_addr_pad(G_RX_BUF_PTR_WIDTH - 1 downto 0);
 
     mr_tst_rdata_tst_rdata <= rxb_port_b_data_out_i when (tst_ena = '1')
                                                     else
@@ -324,11 +324,11 @@ begin
     -- psl default clock is rising_edge(clk_sys);
     --
     -- psl rx_ram_port_a_no_addr_overflow : assert never
-    --  to_integer(unsigned(rxb_port_a_address)) >= G_RX_BUFF_SIZE
+    --  to_integer(unsigned(rxb_port_a_address)) >= G_RX_BUF_SIZE
     --  report "RX Buffer RAM - Port A address overflow";
     --
     -- psl rx_ram_port_b_no_addr_overflow : assert never
-    --  to_integer(unsigned(rxb_port_b_address)) >= G_RX_BUFF_SIZE
+    --  to_integer(unsigned(rxb_port_b_address)) >= G_RX_BUF_SIZE
     --  report "RX Buffer RAM - Port B address overflow";
 
 end architecture;
