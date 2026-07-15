@@ -145,7 +145,7 @@ begin
     ID_reg_to_decimal(filter_low_th, lower_th_dec);
 
     -- Filter implementation
-    gen_filt_pos : if (G_IS_PRESENT = true) generate
+    g_filt_pos : if (G_IS_PRESENT = true) generate
         valid  <= '1' when ((value_dec <= upper_th_dec) and
                             (value_dec >= lower_th_dec) and
                             (enable = '1'))
@@ -153,7 +153,7 @@ begin
                   '0';
     end generate;
 
-    gen_filtRan_neg : if (G_IS_PRESENT = false) generate
+    g_filt_neg : if (G_IS_PRESENT = false) generate
         valid <= '0';
     end generate;
 

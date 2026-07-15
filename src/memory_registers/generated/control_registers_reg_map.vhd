@@ -1531,7 +1531,7 @@ begin
         reg_value(0)                    => control_registers_out_i.ctr_pres_efd -- out
     );
 
-    FILTER_A_MASK_present_gen_t : if (SUP_FILT_A = true) generate
+    g_FILTER_A_MASK_present_t : if (SUP_FILT_A = true) generate
     ----------------------------------------------------------------------------
     -- FILTER_A_MASK[BIT_MASK_A_VAL_SLICE_1]
     ----------------------------------------------------------------------------
@@ -1604,13 +1604,13 @@ begin
         reg_value                       => control_registers_out_i.filter_a_mask_bit_mask_a_val(28 downto 24) -- out
     );
 
-    end generate FILTER_A_MASK_present_gen_t;
+    end generate g_FILTER_A_MASK_present_t;
 
-    FILTER_A_MASK_present_gen_f : if (SUP_FILT_A = false) generate
+    g_FILTER_A_MASK_present_f : if (SUP_FILT_A = false) generate
         control_registers_out_i.filter_a_mask_bit_mask_a_val <= (others => '0');
-    end generate FILTER_A_MASK_present_gen_f;
+    end generate g_FILTER_A_MASK_present_f;
 
-    FILTER_A_VAL_present_gen_t : if (SUP_FILT_A = true) generate
+    g_FILTER_A_VAL_present_t : if (SUP_FILT_A = true) generate
     ----------------------------------------------------------------------------
     -- FILTER_A_VAL[BIT_VAL_A_VAL_SLICE_1]
     ----------------------------------------------------------------------------
@@ -1683,13 +1683,13 @@ begin
         reg_value                       => control_registers_out_i.filter_a_val_bit_val_a_val(28 downto 24) -- out
     );
 
-    end generate FILTER_A_VAL_present_gen_t;
+    end generate g_FILTER_A_VAL_present_t;
 
-    FILTER_A_VAL_present_gen_f : if (SUP_FILT_A = false) generate
+    g_FILTER_A_VAL_present_f : if (SUP_FILT_A = false) generate
         control_registers_out_i.filter_a_val_bit_val_a_val <= (others => '0');
-    end generate FILTER_A_VAL_present_gen_f;
+    end generate g_FILTER_A_VAL_present_f;
 
-    FILTER_B_MASK_present_gen_t : if (SUP_FILT_B = true) generate
+    g_FILTER_B_MASK_present_t : if (SUP_FILT_B = true) generate
     ----------------------------------------------------------------------------
     -- FILTER_B_MASK[BIT_MASK_B_VAL_SLICE_1]
     ----------------------------------------------------------------------------
@@ -1762,13 +1762,13 @@ begin
         reg_value                       => control_registers_out_i.filter_b_mask_bit_mask_b_val(28 downto 24) -- out
     );
 
-    end generate FILTER_B_MASK_present_gen_t;
+    end generate g_FILTER_B_MASK_present_t;
 
-    FILTER_B_MASK_present_gen_f : if (SUP_FILT_B = false) generate
+    g_FILTER_B_MASK_present_f : if (SUP_FILT_B = false) generate
         control_registers_out_i.filter_b_mask_bit_mask_b_val <= (others => '0');
-    end generate FILTER_B_MASK_present_gen_f;
+    end generate g_FILTER_B_MASK_present_f;
 
-    FILTER_B_VAL_present_gen_t : if (SUP_FILT_B = true) generate
+    g_FILTER_B_VAL_present_t : if (SUP_FILT_B = true) generate
     ----------------------------------------------------------------------------
     -- FILTER_B_VAL[BIT_VAL_B_VAL_SLICE_1]
     ----------------------------------------------------------------------------
@@ -1841,13 +1841,13 @@ begin
         reg_value                       => control_registers_out_i.filter_b_val_bit_val_b_val(28 downto 24) -- out
     );
 
-    end generate FILTER_B_VAL_present_gen_t;
+    end generate g_FILTER_B_VAL_present_t;
 
-    FILTER_B_VAL_present_gen_f : if (SUP_FILT_B = false) generate
+    g_FILTER_B_VAL_present_f : if (SUP_FILT_B = false) generate
         control_registers_out_i.filter_b_val_bit_val_b_val <= (others => '0');
-    end generate FILTER_B_VAL_present_gen_f;
+    end generate g_FILTER_B_VAL_present_f;
 
-    FILTER_C_MASK_present_gen_t : if (SUP_FILT_C = true) generate
+    g_FILTER_C_MASK_present_t : if (SUP_FILT_C = true) generate
     ----------------------------------------------------------------------------
     -- FILTER_C_MASK[BIT_MASK_C_VAL_SLICE_1]
     ----------------------------------------------------------------------------
@@ -1920,13 +1920,13 @@ begin
         reg_value                       => control_registers_out_i.filter_c_mask_bit_mask_c_val(28 downto 24) -- out
     );
 
-    end generate FILTER_C_MASK_present_gen_t;
+    end generate g_FILTER_C_MASK_present_t;
 
-    FILTER_C_MASK_present_gen_f : if (SUP_FILT_C = false) generate
+    g_FILTER_C_MASK_present_f : if (SUP_FILT_C = false) generate
         control_registers_out_i.filter_c_mask_bit_mask_c_val <= (others => '0');
-    end generate FILTER_C_MASK_present_gen_f;
+    end generate g_FILTER_C_MASK_present_f;
 
-    FILTER_C_VAL_present_gen_t : if (SUP_FILT_C = true) generate
+    g_FILTER_C_VAL_present_t : if (SUP_FILT_C = true) generate
     ----------------------------------------------------------------------------
     -- FILTER_C_VAL[BIT_VAL_C_VAL_SLICE_1]
     ----------------------------------------------------------------------------
@@ -1999,13 +1999,13 @@ begin
         reg_value                       => control_registers_out_i.filter_c_val_bit_val_c_val(28 downto 24) -- out
     );
 
-    end generate FILTER_C_VAL_present_gen_t;
+    end generate g_FILTER_C_VAL_present_t;
 
-    FILTER_C_VAL_present_gen_f : if (SUP_FILT_C = false) generate
+    g_FILTER_C_VAL_present_f : if (SUP_FILT_C = false) generate
         control_registers_out_i.filter_c_val_bit_val_c_val <= (others => '0');
-    end generate FILTER_C_VAL_present_gen_f;
+    end generate g_FILTER_C_VAL_present_f;
 
-    FILTER_RAN_LOW_present_gen_t : if (SUP_RANGE = true) generate
+    g_FILTER_RAN_LOW_present_t : if (SUP_RANGE = true) generate
     ----------------------------------------------------------------------------
     -- FILTER_RAN_LOW[BIT_RAN_LOW_VAL_SLICE_1]
     ----------------------------------------------------------------------------
@@ -2078,13 +2078,13 @@ begin
         reg_value                       => control_registers_out_i.filter_ran_low_bit_ran_low_val(28 downto 24) -- out
     );
 
-    end generate FILTER_RAN_LOW_present_gen_t;
+    end generate g_FILTER_RAN_LOW_present_t;
 
-    FILTER_RAN_LOW_present_gen_f : if (SUP_RANGE = false) generate
+    g_FILTER_RAN_LOW_present_f : if (SUP_RANGE = false) generate
         control_registers_out_i.filter_ran_low_bit_ran_low_val <= (others => '0');
-    end generate FILTER_RAN_LOW_present_gen_f;
+    end generate g_FILTER_RAN_LOW_present_f;
 
-    FILTER_RAN_HIGH_present_gen_t : if (SUP_RANGE = true) generate
+    g_FILTER_RAN_HIGH_present_t : if (SUP_RANGE = true) generate
     ----------------------------------------------------------------------------
     -- FILTER_RAN_HIGH[BIT_RAN_HIGH_VAL_SLICE_1]
     ----------------------------------------------------------------------------
@@ -2157,11 +2157,11 @@ begin
         reg_value                       => control_registers_out_i.filter_ran_high_bit_ran_high_val(28 downto 24) -- out
     );
 
-    end generate FILTER_RAN_HIGH_present_gen_t;
+    end generate g_FILTER_RAN_HIGH_present_t;
 
-    FILTER_RAN_HIGH_present_gen_f : if (SUP_RANGE = false) generate
+    g_FILTER_RAN_HIGH_present_f : if (SUP_RANGE = false) generate
         control_registers_out_i.filter_ran_high_bit_ran_high_val <= (others => '0');
-    end generate FILTER_RAN_HIGH_present_gen_f;
+    end generate g_FILTER_RAN_HIGH_present_f;
 
     ----------------------------------------------------------------------------
     -- FILTER_CONTROL[FANB]

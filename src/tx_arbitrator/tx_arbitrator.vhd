@@ -415,15 +415,15 @@ begin
     -- TXT Buffer differences fo Shuffle priorites of TXT Buffers, in TXT Buffer Backup mode,
     -- replace priority of "Backup" buffer with priority of "original" buffer
     -----------------------------------------------------------------------------------------------
-    txtb_priority_gen : for i in 0 to G_TXT_BUFFER_COUNT - 1 generate
+    g_txtb_priority : for i in 0 to G_TXT_BUFFER_COUNT - 1 generate
 
         -- Original Buffers
-        txtb_priority_even_gen : if ((i mod 2) = 0) generate
+        g_txtb_priority_even : if ((i mod 2) = 0) generate
             mr_tx_priority_txbbm(i) <= mr_tx_priority(i);
         end generate;
 
         -- Backup buffers
-        txtb_priority_odd_gen : if ((i mod 2) = 1) generate
+        g_txtb_priority_odd : if ((i mod 2) = 1) generate
 
             mr_tx_priority_txbbm(i) <= mr_tx_priority(i) when (mr_mode_txbbm = '0')
                                                          else

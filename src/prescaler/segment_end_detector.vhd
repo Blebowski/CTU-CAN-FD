@@ -191,7 +191,7 @@ begin
     segm_end_req_capt_clr(1) <= segment_end_i;
     segm_end_req_capt_clr(2) <= segment_end_i;
 
-    segm_end_req_capture : for i in 1 to 2 generate
+    g_segm_end_req_capture : for i in 1 to 2 generate
     begin
 
         -- Clear the flag upon real end of segment!

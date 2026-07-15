@@ -99,43 +99,43 @@ architecture tb of func_cov_txt_buffer_even is
     -- Aliases to "txt_buffer" top
     -----------------------------------------------------------------------------------------------
     alias mr_tx_command_txcr is
-        << signal .tb_top_ctu_can_fd.dut.txt_buf_comp_gen(G_TXT_BUFFER_INDEX).txt_buf_even_gen.i_txt_buffer_even.mr_tx_command_txcr : std_logic >>;
+        << signal .tb_top_ctu_can_fd.dut.g_txt_buf_comp(G_TXT_BUFFER_INDEX).g_txt_buf_even.i_txt_buffer_even.mr_tx_command_txcr : std_logic >>;
 
     alias mr_tx_command_txce is
-        << signal .tb_top_ctu_can_fd.dut.txt_buf_comp_gen(G_TXT_BUFFER_INDEX).txt_buf_even_gen.i_txt_buffer_even.mr_tx_command_txce : std_logic >>;
+        << signal .tb_top_ctu_can_fd.dut.g_txt_buf_comp(G_TXT_BUFFER_INDEX).g_txt_buf_even.i_txt_buffer_even.mr_tx_command_txce : std_logic >>;
 
     alias mr_tx_command_txca is
-        << signal .tb_top_ctu_can_fd.dut.txt_buf_comp_gen(G_TXT_BUFFER_INDEX).txt_buf_even_gen.i_txt_buffer_even.mr_tx_command_txca : std_logic >>;
+        << signal .tb_top_ctu_can_fd.dut.g_txt_buf_comp(G_TXT_BUFFER_INDEX).g_txt_buf_even.i_txt_buffer_even.mr_tx_command_txca : std_logic >>;
 
     alias mr_tx_command_txbi is
-        << signal .tb_top_ctu_can_fd.dut.txt_buf_comp_gen(G_TXT_BUFFER_INDEX).txt_buf_even_gen.i_txt_buffer_even.mr_tx_command_txbi : std_logic >>;
+        << signal .tb_top_ctu_can_fd.dut.g_txt_buf_comp(G_TXT_BUFFER_INDEX).g_txt_buf_even.i_txt_buffer_even.mr_tx_command_txbi : std_logic >>;
 
     alias txtb_hw_cmd is
-        << signal .tb_top_ctu_can_fd.dut.txt_buf_comp_gen(G_TXT_BUFFER_INDEX).txt_buf_even_gen.i_txt_buffer_even.txtb_hw_cmd : t_txtb_hw_cmd >>;
+        << signal .tb_top_ctu_can_fd.dut.g_txt_buf_comp(G_TXT_BUFFER_INDEX).g_txt_buf_even.i_txt_buffer_even.txtb_hw_cmd : t_txtb_hw_cmd >>;
 
     alias txtb_hw_cmd_cs is
-        << signal .tb_top_ctu_can_fd.dut.txt_buf_comp_gen(G_TXT_BUFFER_INDEX).txt_buf_even_gen.i_txt_buffer_even.txtb_hw_cmd_cs : std_logic >>;
+        << signal .tb_top_ctu_can_fd.dut.g_txt_buf_comp(G_TXT_BUFFER_INDEX).g_txt_buf_even.i_txt_buffer_even.txtb_hw_cmd_cs : std_logic >>;
 
     -----------------------------------------------------------------------------------------------
     -- Aliases to "txt_buffer_fsm"
     -----------------------------------------------------------------------------------------------
     alias curr_state is
-        << signal .tb_top_ctu_can_fd.dut.txt_buf_comp_gen(G_TXT_BUFFER_INDEX).txt_buf_even_gen.i_txt_buffer_even.i_txt_buffer_fsm.curr_state : t_txt_buf_state >>;
+        << signal .tb_top_ctu_can_fd.dut.g_txt_buf_comp(G_TXT_BUFFER_INDEX).g_txt_buf_even.i_txt_buffer_even.i_txt_buffer_fsm.curr_state : t_txt_buf_state >>;
 
     alias next_state is
-        << signal .tb_top_ctu_can_fd.dut.txt_buf_comp_gen(G_TXT_BUFFER_INDEX).txt_buf_even_gen.i_txt_buffer_even.i_txt_buffer_fsm.next_state : t_txt_buf_state >>;
+        << signal .tb_top_ctu_can_fd.dut.g_txt_buf_comp(G_TXT_BUFFER_INDEX).g_txt_buf_even.i_txt_buffer_even.i_txt_buffer_fsm.next_state : t_txt_buf_state >>;
 
     alias txtb_parity_error_valid is
-        << signal .tb_top_ctu_can_fd.dut.txt_buf_comp_gen(G_TXT_BUFFER_INDEX).txt_buf_even_gen.i_txt_buffer_even.i_txt_buffer_fsm.txtb_parity_error_valid : std_logic >>;
+        << signal .tb_top_ctu_can_fd.dut.g_txt_buf_comp(G_TXT_BUFFER_INDEX).g_txt_buf_even.i_txt_buffer_even.i_txt_buffer_fsm.txtb_parity_error_valid : std_logic >>;
 
     alias abort_applied is
-        << signal .tb_top_ctu_can_fd.dut.txt_buf_comp_gen(G_TXT_BUFFER_INDEX).txt_buf_even_gen.i_txt_buffer_even.abort_applied : std_logic >>;
+        << signal .tb_top_ctu_can_fd.dut.g_txt_buf_comp(G_TXT_BUFFER_INDEX).g_txt_buf_even.i_txt_buffer_even.abort_applied : std_logic >>;
 
     alias txt_fsm_ce is
-        << signal .tb_top_ctu_can_fd.dut.txt_buf_comp_gen(G_TXT_BUFFER_INDEX).txt_buf_even_gen.i_txt_buffer_even.i_txt_buffer_fsm.txt_fsm_ce : std_logic >>;
+        << signal .tb_top_ctu_can_fd.dut.g_txt_buf_comp(G_TXT_BUFFER_INDEX).g_txt_buf_even.i_txt_buffer_even.i_txt_buffer_fsm.txt_fsm_ce : std_logic >>;
 
     alias txtb_hw_cmd_i is
-        << signal .tb_top_ctu_can_fd.dut.txt_buf_comp_gen(G_TXT_BUFFER_INDEX).txt_buf_even_gen.i_txt_buffer_even.i_txt_buffer_fsm.txtb_hw_cmd : t_txtb_hw_cmd >>;
+        << signal .tb_top_ctu_can_fd.dut.g_txt_buf_comp(G_TXT_BUFFER_INDEX).g_txt_buf_even.i_txt_buffer_even.i_txt_buffer_fsm.txtb_hw_cmd : t_txtb_hw_cmd >>;
 
 begin
 

@@ -803,7 +803,7 @@ begin
     -----------------------------------------------------------------------------------------------
     -- Bus traffic counters
     -----------------------------------------------------------------------------------------------
-    bus_traffic_ctrs_gen : if (G_SUP_TRAFFIC_CTRS = true) generate
+    g_bus_traffic_ctrs : if (G_SUP_TRAFFIC_CTRS = true) generate
 
         i_bus_traffic_counters : entity ctu_can_fd_rtl.bus_traffic_counters
         port map (
@@ -823,9 +823,9 @@ begin
             rx_frame_ctr        => rx_frame_ctr                 -- OUT
         );
 
-    end generate bus_traffic_ctrs_gen;
+    end generate g_bus_traffic_ctrs;
 
-    no_bus_traffic_ctrs_gen : if (G_SUP_TRAFFIC_CTRS = false) generate
+    g_no_bus_traffic_ctrs : if (G_SUP_TRAFFIC_CTRS = false) generate
         tx_frame_ctr <= (others => '0');
         rx_frame_ctr <= (others => '0');
     end generate;

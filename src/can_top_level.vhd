@@ -805,7 +805,7 @@ begin
     -----------------------------------------------------------------------------------------------
     -- TXT Buffer port A parity encoding
     -----------------------------------------------------------------------------------------------
-    txtb_parity_true_gen : if (sup_parity) generate
+    g_txtb_parity_true : if (sup_parity) generate
         i_txtb_port_a_parity_calculator : entity ctu_can_fd_rtl.parity_calculator
         generic map (
             G_WIDTH         => 32,
@@ -817,7 +817,7 @@ begin
         );
     end generate;
 
-    txtb_parity_false_gen : if (not sup_parity) generate
+    g_txtb_parity_false : if (not sup_parity) generate
         txtb_port_a_parity <= '0';
     end generate;
 
@@ -826,10 +826,10 @@ begin
     -- TXT Buffers
     -----------------------------------------------------------------------------------------------
 
-    txt_buf_comp_gen : for i in 0 to txt_buffer_count - 1 generate
+    g_txt_buf_comp : for i in 0 to txt_buffer_count - 1 generate
     begin
 
-        txt_buf_even_gen : if ((i mod 2) = 0) generate
+        g_txt_buf_even : if ((i mod 2) = 0) generate
             i_txt_buffer_even : entity ctu_can_fd_rtl.txt_buffer_even
             generic map (
                 G_TXT_BUFFER_COUNT          => txt_buffer_count,
@@ -891,7 +891,7 @@ begin
             );
         end generate;
 
-        txt_buf_odd_gen : if ((i mod 2) = 1) generate
+        g_txt_buf_odd : if ((i mod 2) = 1) generate
             i_txt_buffer_odd : entity ctu_can_fd_rtl.txt_buffer_odd
             generic map (
                 G_TXT_BUFFER_COUNT          => txt_buffer_count,
@@ -1400,7 +1400,7 @@ begin
     -- block unlock command in Protocol control FSM in overload frames!
 
     -- coverage off
-    txtb_asr_gen : for i in 0 to txt_buffer_count - 1 generate
+    g_txtb_asr : for i in 0 to txt_buffer_count - 1 generate
     begin
 
         p_txtb_unlock_on_ovr_chk : process (txtb_state, pc_dbg.is_overload)

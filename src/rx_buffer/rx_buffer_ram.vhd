@@ -203,7 +203,7 @@ begin
     -- Parity protection
     -----------------------------------------------------------------------------------------------
     -----------------------------------------------------------------------------------------------
-    parity_true_gen : if (G_SUP_PARITY) generate
+    g_parity_true : if (G_SUP_PARITY) generate
     begin
 
         -------------------------------------------------------------------------------------------
@@ -264,9 +264,9 @@ begin
                                else
                            '0';
 
-    end generate parity_true_gen;
+    end generate g_parity_true;
 
-    parity_false_gen : if (not G_SUP_PARITY) generate
+    g_parity_false : if (not G_SUP_PARITY) generate
         parity_mismatch <= '0';
         parity_read_real <= '0';
         parity_read_exp <= '0';

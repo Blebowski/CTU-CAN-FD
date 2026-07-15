@@ -247,11 +247,11 @@ begin
     -- Shift the register when it is enabled and RX Trigger is active! Protocol control keeps the
     -- register disabled when e.g Bus is idle to save power!
     -----------------------------------------------------------------------------------------------
-    rx_shift_cmd_gen : for i in 0 to 3 generate
+    g_rx_shift_cmd : for i in 0 to 3 generate
         rx_shift_cmd(i) <= '1' when (rx_trigger = '1' and rx_shift_ena(i) = '1')
                                else
                            '0';
-    end generate rx_shift_cmd_gen;
+    end generate g_rx_shift_cmd;
 
     -----------------------------------------------------------------------------------------------
     -- D input of received DLC is needed by Protocol control FSM in the last bit of DLC. Thus it is

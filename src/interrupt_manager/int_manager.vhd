@@ -272,7 +272,7 @@ begin
     -----------------------------------------------------------------------------------------------
     -- Interrupt module instances
     -----------------------------------------------------------------------------------------------
-    int_module_gen : for i in 0 to G_INT_COUNT - 1 generate
+    g_int_module : for i in 0 to G_INT_COUNT - 1 generate
 
         i_int_module : entity ctu_can_fd_rtl.int_module
         port map (
@@ -293,7 +293,7 @@ begin
             int_ena             => mr_int_ena_set_int_ena_set_o_i(i)         -- OUT
         );
 
-    end generate int_module_gen;
+    end generate g_int_module;
 
     -----------------------------------------------------------------------------------------------
     -- Output interrupt DFF to make sure that interrupt output will be glitch free!

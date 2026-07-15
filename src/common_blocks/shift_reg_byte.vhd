@@ -131,15 +131,15 @@ architecture rtl of shift_reg_byte is
 
 begin
 
-    byte_shift_reg_gen : for i in 0 to G_NUM_BYTES - 1 generate
+    g_byte_shift_reg : for i in 0 to G_NUM_BYTES - 1 generate
     begin
 
-        first_byte_gen : if (i = 0) generate
+        g_first_byte : if (i = 0) generate
             shift_reg_in(i) <= input;
         end generate;
 
         -- Shift register input mux
-        next_bytes_gen : if (i > 0) generate
+        g_next_bytes : if (i > 0) generate
             shift_reg_in(i) <= shift_reg_q(i - 1)(7) when (byte_input_sel(i) = '0')
                                                      else
                                                input;

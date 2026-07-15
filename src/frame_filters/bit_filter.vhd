@@ -122,13 +122,13 @@ begin
     masked_value <= filter_value and filter_mask;
 
     -- Filter A input frame type filtering
-    gen_filt_pos : if (G_IS_PRESENT = true) generate
+    g_filt_pos : if (G_IS_PRESENT = true) generate
         valid <= '1' when (masked_input = masked_value) and (enable = '1')
                      else
                  '0';
     end generate;
 
-    gen_filt_neg : if (G_IS_PRESENT = false) generate
+    g_filt_neg : if (G_IS_PRESENT = false) generate
         valid <= '0';
     end generate;
 

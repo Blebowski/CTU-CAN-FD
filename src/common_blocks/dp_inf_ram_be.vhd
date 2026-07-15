@@ -139,7 +139,7 @@ begin
     -----------------------------------------------------------------------------------------------
     -- Memory Write access process - per byte
     -----------------------------------------------------------------------------------------------
-    byte_gen : for i in 0 to G_WORD_WIDTH/8 - 1 generate
+    g_byte : for i in 0 to G_WORD_WIDTH/8 - 1 generate
         byte_we(i) <= '1' when (write = '1' and be(i) = '1')
                           else
                       '0';
@@ -148,7 +148,7 @@ begin
     -----------------------------------------------------------------------------------------------
     -- RAM memory (non-resetable version)
     -----------------------------------------------------------------------------------------------
-    ram_rst_false_gen : if (not G_RESETABLE) generate
+    g_ram_rst_false : if (not G_RESETABLE) generate
 
         p_ram_write : process(clk_sys)
         begin
@@ -167,7 +167,7 @@ begin
     -----------------------------------------------------------------------------------------------
     -- RAM memory (resetable version)
     -----------------------------------------------------------------------------------------------
-    ram_rst_true_gen : if (G_RESETABLE) generate
+    g_ram_rst_true : if (G_RESETABLE) generate
 
         p_ram_write : process(clk_sys, res_n)
         begin
@@ -191,7 +191,7 @@ begin
     int_read_data <= ram_memory(to_integer(unsigned(addr_B)));
 
     -- Synchronous read
-    sync_read_gen : if (G_SYNC_READ) generate
+    g_sync : if (G_SYNC_READ) generate
         p_ram_read : process(clk_sys)
         begin
             if (rising_edge(clk_sys)) then
@@ -201,7 +201,7 @@ begin
     end generate;
 
     -- Asynchronous read
-    async_read_gen : if (not G_SYNC_READ) generate
+    g_async : if (not G_SYNC_READ) generate
         data_out <= int_read_data;
     end generate;
 

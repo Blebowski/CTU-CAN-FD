@@ -362,7 +362,7 @@ begin
     scs_and_swr <= '1' when (scs = '1' and swr = '1') else
                    '0';
 
-    txtb_port_a_cs_gen : for i in 0 to G_TXT_BUFFER_COUNT - 1 generate
+    g_txtb_port_a_cs : for i in 0 to G_TXT_BUFFER_COUNT - 1 generate
         type tx_buff_addr_type is array (0 to 7) of
             std_logic_vector(3 downto 0);
         constant buf_addr : tx_buff_addr_type := (
@@ -376,7 +376,7 @@ begin
         txtb_port_a_cs(i) <= '1' when (adress(11 downto 8) = buf_addr(i) and scs_and_swr = '1')
                                  else
                              '0';
-    end generate txtb_port_a_cs_gen;
+    end generate g_txtb_port_a_cs;
 
     txtb_port_a_be <= sbe;
 
@@ -487,7 +487,7 @@ begin
     -----------------------------------------------------------------------------------------------
     -- Test registers instance
     -----------------------------------------------------------------------------------------------
-    test_registers_gen_true : if (G_SUP_TEST_REGISTERS) generate
+    g_test_registers_true : if (G_SUP_TEST_REGISTERS) generate
         i_test_registers_reg_map_comp : entity ctu_can_fd_rtl.test_registers_reg_map
         generic map (
             DATA_WIDTH          => 32,
@@ -512,15 +512,15 @@ begin
         );
 
         -- Padding to full width of possible TXT Buffers
-        txt_buf_test_data_padding_gen : for i in 0 to 7 generate
+        g_txt_buf_test_data_padding : for i in 0 to 7 generate
 
-            txt_buf_padding_index_gen_true : if (i < G_TXT_BUFFER_COUNT) generate
+            g_txt_buf_padding_index_true : if (i < G_TXT_BUFFER_COUNT) generate
                 mr_tst_rdata_tst_rdata_txb_i(i) <= mr_tst_rdata_tst_rdata_txb(i);
-            end generate txt_buf_padding_index_gen_true;
+            end generate g_txt_buf_padding_index_true;
 
-            txt_buf_padding_index_gen_false : if (i >= G_TXT_BUFFER_COUNT) generate
+            g_txt_buf_padding_index_false : if (i >= G_TXT_BUFFER_COUNT) generate
                 mr_tst_rdata_tst_rdata_txb_i(i) <= (others => '0');
-            end generate txt_buf_padding_index_gen_false;
+            end generate g_txt_buf_padding_index_false;
 
         end generate;
 
@@ -537,9 +537,9 @@ begin
             mr_tst_rdata_tst_rdata_txb_i(7) when TMTGT_TXTBUF8,
                             (others => '0') when others;
 
-    end generate test_registers_gen_true;
+    end generate g_test_registers_true;
 
-    test_registers_gen_false : if (not G_SUP_TEST_REGISTERS) generate
+    g_test_registers_false : if (not G_SUP_TEST_REGISTERS) generate
         test_registers_rdata <= (others => '0');
         mr_tst_in.tst_rdata_tst_rdata <= (others => '0');
         mr_tst_out_i <= ('0', '0', (others => '0'), (others => '0'), (others => '0'));
@@ -627,36 +627,36 @@ begin
                                                              else
                                mr_ctrl_out_i.tx_command_txb1 or mr_ctrl_out_i.tx_command_txb2;
 
-    mt_2_txt_buffs : if (G_TXT_BUFFER_COUNT > 2) generate
+    g_mt_2_txt_buffs : if (G_TXT_BUFFER_COUNT > 2) generate
         mr_tx_priority(2)       <= mr_ctrl_out_i.tx_priority_txt3p;
         mr_tx_command_txbi(2)   <= mr_ctrl_out_i.tx_command_txb3;
     end generate;
 
-    mt_3_txt_buffs : if (G_TXT_BUFFER_COUNT > 3) generate
+    g_mt_3_txt_buffs : if (G_TXT_BUFFER_COUNT > 3) generate
         mr_tx_priority(3)       <= mr_ctrl_out_i.tx_priority_txt4p;
         mr_tx_command_txbi(3)   <= mr_ctrl_out_i.tx_command_txb4 when (mr_ctrl_out_i.mode_txbbm = '0')
                                                                  else
                                    mr_ctrl_out_i.tx_command_txb3 or mr_ctrl_out_i.tx_command_txb4;
     end generate;
 
-    mt_4_txt_buffs : if (G_TXT_BUFFER_COUNT > 4) generate
+    g_mt_4_txt_buffs : if (G_TXT_BUFFER_COUNT > 4) generate
         mr_tx_priority(4)       <= mr_ctrl_out_i.tx_priority_txt5p;
         mr_tx_command_txbi(4)   <= mr_ctrl_out_i.tx_command_txb5;
     end generate;
 
-    mt_5_txt_buffs : if (G_TXT_BUFFER_COUNT > 5) generate
+    g_mt_5_txt_buffs : if (G_TXT_BUFFER_COUNT > 5) generate
         mr_tx_priority(5)       <= mr_ctrl_out_i.tx_priority_txt6p;
         mr_tx_command_txbi(5)   <= mr_ctrl_out_i.tx_command_txb6 when (mr_ctrl_out_i.mode_txbbm = '0')
                                                                  else
                                    mr_ctrl_out_i.tx_command_txb5 or mr_ctrl_out_i.tx_command_txb6;
     end generate;
 
-    mt_6_txt_buffs : if (G_TXT_BUFFER_COUNT > 6) generate
+    g_mt_6_txt_buffs : if (G_TXT_BUFFER_COUNT > 6) generate
         mr_tx_priority(6)       <= mr_ctrl_out_i.tx_priority_txt7p;
         mr_tx_command_txbi(6)   <= mr_ctrl_out_i.tx_command_txb7;
     end generate;
 
-    mt_7_txt_buffs : if (G_TXT_BUFFER_COUNT > 7) generate
+    g_mt_7_txt_buffs : if (G_TXT_BUFFER_COUNT > 7) generate
         mr_tx_priority(7)       <= mr_ctrl_out_i.tx_priority_txt8p;
         mr_tx_command_txbi(7)   <= mr_ctrl_out_i.tx_command_txb8 when (mr_ctrl_out_i.mode_txbbm = '0')
                                                                  else
@@ -914,7 +914,7 @@ begin
 
     -- coverage off
     -- pragma translate_off
-    txtb_func_cov_gen : for i in 0 to G_TXT_BUFFER_COUNT - 1 generate
+    g_txtb_func_cov : for i in 0 to G_TXT_BUFFER_COUNT - 1 generate
     begin
 
         p_txtb_per_state_chk : process (txtb_state, mr_ctrl_out_i.settings_pchke)

@@ -344,7 +344,7 @@ begin
     -- Core is not synthesized, turning filters on should not affect the acceptance! Everyhting
     -- should be affected!
     -----------------------------------------------------------------------------------------------
-    filt_sup_gen_false : if (G_SUP_FILTA = false and G_SUP_FILTB = false and
+    g_filt_sup_false : if (G_SUP_FILTA = false and G_SUP_FILTB = false and
                              G_SUP_FILTC = false and G_SUP_RANGE = false) generate
         ident_valid_d <= '1';
         filter_result <= '0';
@@ -352,7 +352,7 @@ begin
     end generate;
 
 
-    filt_sup_gen_true : if (G_SUP_FILTA = true or G_SUP_FILTB = true or
+    g_filt_sup_true : if (G_SUP_FILTA = true or G_SUP_FILTB = true or
                             G_SUP_FILTC = true or G_SUP_RANGE = true) generate
 
         drop_rtr_frame <= '1' when (mr_settings_fdrf = DROP_RF_ENABLED

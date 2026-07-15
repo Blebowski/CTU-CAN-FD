@@ -267,7 +267,7 @@ begin
                   '1' when (stuff_err = '1' and fixed_stuff = '1') else
                   '0';
 
-    err_pipeline_true_gen : if (G_ERR_VALID_PIPELINE) generate
+    g_err_pipeline_true : if (G_ERR_VALID_PIPELINE) generate
     begin
         p_err_valid_reg : process(res_n, clk_sys)
         begin
@@ -277,12 +277,12 @@ begin
                 err_frm_req <= err_frm_req_i;
             end if;
         end process;
-    end generate err_pipeline_true_gen;
+    end generate g_err_pipeline_true;
 
-    err_pipeline_false_gen : if (not G_ERR_VALID_PIPELINE) generate
+    g_err_pipeline_false : if (not G_ERR_VALID_PIPELINE) generate
     begin
         err_frm_req <= err_frm_req_i;
-    end generate err_pipeline_false_gen;
+    end generate g_err_pipeline_false;
 
 
     -----------------------------------------------------------------------------------------------

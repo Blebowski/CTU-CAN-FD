@@ -164,7 +164,7 @@ begin
     -----------------------------------------------------------------------------------------------
     -- Level 0 - aliases
     -----------------------------------------------------------------------------------------------
-    l0_gen : for i in 0 to G_TXT_BUFFER_COUNT - 1 generate
+    g_l0 : for i in 0 to G_TXT_BUFFER_COUNT - 1 generate
 
         -- pragma translate_off
         -- coverage off
@@ -187,7 +187,7 @@ begin
     end generate;
 
 
-    fill_zeroes_gen : if (G_TXT_BUFFER_COUNT < 8) generate
+    g_fill_zeroes : if (G_TXT_BUFFER_COUNT < 8) generate
         l0_prio(7 downto G_TXT_BUFFER_COUNT)  <= (others => (others => '0'));
         l0_valid(7 downto G_TXT_BUFFER_COUNT) <= (others => '0');
     end generate;

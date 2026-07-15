@@ -147,7 +147,7 @@ begin
     ----------------------------------------------------------------------------
     -- Register instance
     ----------------------------------------------------------------------------
-    bit_gen : for i in 0 to data_width - 1 generate
+    g_bit : for i in 0 to data_width - 1 generate
 
         p_reg_access : process(clk_sys, res_n)
         begin
@@ -160,7 +160,7 @@ begin
             end if;
         end process;
 
-    end generate bit_gen;
+    end generate g_bit;
 
     ----------------------------------------------------------------------------
     -- Register to output propagation

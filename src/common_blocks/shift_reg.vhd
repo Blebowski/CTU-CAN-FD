@@ -128,20 +128,20 @@ begin
     -----------------------------------------------------------------------------------------------
     -- Calculation of next shift register value
     -----------------------------------------------------------------------------------------------
-    shift_down_gen : if (G_SHIFT_DOWN) generate
+    g_down : if (G_SHIFT_DOWN) generate
         next_shift_reg_val  <= input & shift_regs(G_WIDTH - 1 downto 1);
         reg_output          <= shift_regs(0);
-    end generate shift_down_gen;
+    end generate g_down;
 
-    shift_up_gen : if (not G_SHIFT_DOWN) generate
+    g_up : if (not G_SHIFT_DOWN) generate
         next_shift_reg_val  <= shift_regs(G_WIDTH - 2 downto 0) & input;
         reg_output          <= shift_regs(G_WIDTH - 1);
-    end generate shift_up_gen;
+    end generate g_up;
 
     -----------------------------------------------------------------------------------------------
     -- Implementation of a shift register
     -----------------------------------------------------------------------------------------------
-    p_shift_down : process (clk, res_n)
+    p_shift : process (clk, res_n)
     begin
         if (res_n = G_RESET_POLARITY) then
             shift_regs <= G_RESET_VALUE;
