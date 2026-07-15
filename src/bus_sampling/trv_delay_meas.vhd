@@ -160,7 +160,7 @@ entity trv_delay_measurement is
         -------------------------------------------------------------------------------------------
         -- DFT support
         -------------------------------------------------------------------------------------------
-        scan_enable             :in   std_logic;
+        scan_mode               :in   std_logic;
 
         -------------------------------------------------------------------------------------------
         -- Transceiver Delay measurement control
@@ -287,7 +287,7 @@ begin
         q                   => trv_delay_ctr_rst_q_scan,        -- OUT
 
         -- Scan mode control
-        scan_enable         => scan_enable                      -- IN
+        scan_mode           => scan_mode                        -- IN
     );
 
     -------------------------------------------------------------------------------------------

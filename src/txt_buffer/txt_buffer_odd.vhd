@@ -116,7 +116,7 @@ entity txt_buffer_odd is
         -------------------------------------------------------------------------------------------
         -- DFT support
         -------------------------------------------------------------------------------------------
-        scan_enable             : in  std_logic;
+        scan_mode               : in  std_logic;
 
         -------------------------------------------------------------------------------------------
         -- Memory Registers Interface
@@ -344,7 +344,7 @@ begin
     port map (
         clk_in                  => clk_sys,                     -- IN
         clk_en                  => txtb_ram_clk_en,             -- IN
-        scan_enable             => scan_enable,                 -- IN
+        scan_mode               => scan_mode,                   -- IN
 
         clk_out                 => clk_ram                      -- OUT
     );

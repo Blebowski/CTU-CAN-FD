@@ -129,7 +129,7 @@ entity can_core is
         -------------------------------------------------------------------------------------------
         -- DFT support
         -------------------------------------------------------------------------------------------
-        scan_enable             : in  std_logic;
+        scan_mode               : in  std_logic;
 
         -------------------------------------------------------------------------------------------
         -- Memory registers interface
@@ -494,7 +494,7 @@ begin
         res_n                   => res_n,                       -- IN
 
         -- DFT support
-        scan_enable             => scan_enable,                 -- IN
+        scan_mode               => scan_mode,                   -- IN
 
         -- Memory registers interface
         mr_mode_acf             => mr_mode_acf,                 -- IN
@@ -666,7 +666,7 @@ begin
         res_n                   => res_n,                       -- IN
 
         -- DFT support
-        scan_enable             => scan_enable,                 -- IN
+        scan_mode             => scan_mode,                 -- IN
 
         mr_mode_rom             => mr_mode_rom,                 -- IN
         mr_ewl_ew_limit         => mr_ewl_ew_limit,             -- IN
@@ -809,7 +809,7 @@ begin
         port map (
             clk_sys             => clk_sys,                     -- IN
             res_n               => res_n,                       -- IN
-            scan_enable         => scan_enable,                 -- IN
+            scan_mode         => scan_mode,                 -- IN
 
             -- Memory registers interface
             mr_command_rxfcrst  => mr_command_rxfcrst,          -- IN

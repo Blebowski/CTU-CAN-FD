@@ -99,7 +99,7 @@ entity rst_reg is
         -------------------------------------------------------------------------------------------
         -- Scan mode control
         -------------------------------------------------------------------------------------------
-        scan_enable         : in  std_logic
+        scan_mode           : in  std_logic
     );
 end rst_reg;
 
@@ -129,7 +129,7 @@ begin
     port map (
         a                  => q_i,
         b                  => arst,
-        sel                => scan_enable,
+        sel                => scan_mode,
 
         -- Output
         z                  => q

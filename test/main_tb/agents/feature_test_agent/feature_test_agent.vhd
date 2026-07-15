@@ -198,7 +198,7 @@ begin
         res_n       => res_n,
 
         -- DFT support
-        scan_enable => test_node_scan_enable,
+        scan_mode   => test_node_scan_enable,
 
         -- Memory interface
         data_in     => write_data,

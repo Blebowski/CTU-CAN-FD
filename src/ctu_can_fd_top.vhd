@@ -151,7 +151,7 @@ entity ctu_can_fd_top is
         -----------------------------------------------------------------------
         -- DFT support
         -----------------------------------------------------------------------
-        scan_enable : in std_logic;
+        scan_mode   : in std_logic;
 
         -----------------------------------------------------------------------
         -- Memory interface
@@ -656,7 +656,7 @@ begin
         res_soft_n                      => res_soft_n,                      -- OUT
 
         -- DFT support
-        scan_enable                     => scan_enable,                     -- IN
+        scan_mode                     => scan_mode,                     -- IN
 
         -- Memory Interface
         data_in                         => data_in,                         -- IN
@@ -738,7 +738,7 @@ begin
         res_n                           => res_core_n,                      -- IN
 
         -- DFT support
-        scan_enable                     => scan_enable,                     -- IN
+        scan_mode                     => scan_mode,                     -- IN
 
         -- Metadata from CAN Core
         rec_ident                       => rec_ident,                       -- IN
@@ -844,7 +844,7 @@ begin
                 res_n                       => res_core_n,                                  -- IN
 
                 -- DFT support
-                scan_enable                 => scan_enable,                                 -- IN
+                scan_mode                 => scan_mode,                                 -- IN
 
                 -- Memory Registers Interface
                 mr_mode_bmm                 => mr_ctrl_out.mode_bmm,                        -- IN
@@ -906,7 +906,7 @@ begin
                 res_n                       => res_core_n,                                  -- IN
 
                 -- DFT support
-                scan_enable                 => scan_enable,                                 -- IN
+                scan_mode                 => scan_mode,                                 -- IN
 
                 -- Memory Registers Interface
                 mr_mode_bmm                 => mr_ctrl_out.mode_bmm,                        -- IN
@@ -1169,7 +1169,7 @@ begin
         res_n                           => res_core_n,                              -- IN
 
         -- DFT support
-        scan_enable                     => scan_enable,                             -- IN
+        scan_mode                     => scan_mode,                             -- IN
 
         -- Memory registers interface
         mr_mode_acf                     => mr_ctrl_out.mode_acf,                     -- IN
@@ -1345,7 +1345,7 @@ begin
         res_n                           => res_core_n,                              -- IN
 
         -- DFT support
-        scan_enable                     => scan_enable,                             -- IN
+        scan_mode                     => scan_mode,                             -- IN
 
         -- Physical layer interface
         can_rx                          => can_rx,                                  -- IN

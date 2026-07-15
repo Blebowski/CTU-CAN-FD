@@ -162,7 +162,7 @@ entity memory_registers is
         -------------------------------------------------------------------------------------------
         -- DFT support
         -------------------------------------------------------------------------------------------
-        scan_enable                     : in std_logic;
+        scan_mode                       : in std_logic;
 
         -------------------------------------------------------------------------------------------
         -- Main memory bus interface
@@ -435,7 +435,7 @@ begin
     port map(
         clk_in             => clk_sys,                          -- IN
         clk_en             => control_regs_clk_en,              -- IN
-        scan_enable        => scan_enable,                      -- IN
+        scan_mode           => scan_mode,                       -- IN
 
         clk_out            => clk_control_regs                  -- OUT
     );
@@ -447,7 +447,7 @@ begin
     port map(
         clk_in             => clk_sys,                          -- IN
         clk_en             => test_regs_clk_en,                 -- IN
-        scan_enable        => scan_enable,                      -- IN
+        scan_mode          => scan_mode,                        -- IN
 
         clk_out            => clk_test_regs                     -- OUT
     );
@@ -584,7 +584,7 @@ begin
         q                   => soft_res_q_n,                    -- OUT
 
         -- Scan mode control
-        scan_enable         => scan_enable                      -- IN
+        scan_mode           => scan_mode                        -- IN
     );
 
     -- Reset of the rest of core is the same as soft reset, but it is also active when
@@ -607,7 +607,7 @@ begin
         q                   => res_core_n,                      -- OUT
 
         -- Scan mode control
-        scan_enable         => scan_enable                      -- IN
+        scan_mode           => scan_mode                        -- IN
     );
 
     -----------------------------------------------------------------------------------------------

@@ -124,7 +124,7 @@ entity bus_sampling is
         -------------------------------------------------------------------------------------------
         -- DFT support
         -------------------------------------------------------------------------------------------
-        scan_enable             :in   std_logic;
+        scan_mode             :in   std_logic;
 
         -------------------------------------------------------------------------------------------
         -- Physical layer interface
@@ -275,7 +275,7 @@ begin
         clk_sys                     => clk_sys,                  -- IN
         res_n                       => res_n,                    -- IN
 
-        scan_enable                 => scan_enable,              -- IN
+        scan_mode                   => scan_mode,               -- IN
 
         edge_tx_valid               => edge_tx_valid,            -- IN
         edge_rx_valid               => edge_rx_valid,            -- IN
@@ -330,7 +330,7 @@ begin
         q                           => shift_regs_res_q_scan,   -- OUT
 
         -- Scan mode control
-        scan_enable                 => scan_enable              -- IN
+        scan_mode                   => scan_mode                -- IN
     );
 
     -------------------------------------------------------------------------------------------

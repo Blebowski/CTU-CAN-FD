@@ -12,6 +12,7 @@
 - **BREAKING CHANGE**: Top level entity names have changed to
   `ctu_can_fd_top` (RAM-like), `ctu_can_fd_top_ahb` (AHB interface),
   `ctu_can_fd_top_apb` (APB interface).
+- **BREAKING CHANGE**: `scan_enable` signal was renamed to `scan_mode`.
 - Added new Avalon top level interface (`ctu_can_fd_top_avalon`).
 
 ## Version 2.7 - 7.1.2026

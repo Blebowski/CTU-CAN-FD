@@ -98,7 +98,7 @@ entity fault_confinement is
         -------------------------------------------------------------------------------------------
         -- DFT support
         -------------------------------------------------------------------------------------------
-        scan_enable            : in   std_logic;
+        scan_mode               : in   std_logic;
 
         -------------------------------------------------------------------------------------------
         -- Memory registers interface
@@ -238,7 +238,7 @@ begin
     port map(
         clk_sys                 => clk_sys,                  -- IN
         res_n                   => res_n,                    -- IN
-        scan_enable             => scan_enable,              -- IN
+        scan_mode               => scan_mode,                -- IN
 
         sp_control              => sp_control,               -- IN
         inc_one                 => inc_one,                  -- IN

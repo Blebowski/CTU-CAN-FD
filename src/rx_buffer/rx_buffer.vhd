@@ -122,7 +122,7 @@ entity rx_buffer is
         -------------------------------------------------------------------------------------------
         -- DFT support
         -------------------------------------------------------------------------------------------
-        scan_enable             : in  std_logic;
+        scan_mode               : in  std_logic;
 
         -------------------------------------------------------------------------------------------
         -- Metadata from CAN Core
@@ -454,7 +454,7 @@ begin
         q                       => rx_buf_res_n_q_scan,     -- OUT
 
         -- Scan mode control
-        scan_enable             => scan_enable              -- IN
+        scan_mode             => scan_mode              -- IN
     );
 
     -----------------------------------------------------------------------------------------------
@@ -818,7 +818,7 @@ begin
     port map(
         clk_in                  => clk_sys,                 -- IN
         clk_en                  => rx_buf_ram_clk_en,       -- IN
-        scan_enable             => scan_enable,             -- IN
+        scan_mode             => scan_mode,             -- IN
 
         clk_out                 => clk_ram                  -- OUT
     );

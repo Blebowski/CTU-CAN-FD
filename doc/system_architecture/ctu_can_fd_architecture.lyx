@@ -1445,6 +1445,19 @@ Update repository link
 Changed name of top level generics.
  Separated Avalon wrapper from RAM-like.
  Changed name of top-level entities.
+ 
+\series bold
+\shape italic
+scan_enable
+\series default
+\shape default
+ was renamed to 
+\series bold
+\shape italic
+scan_mode
+\series default
+\shape default
+ to better fit standard DFT terminology.
 \end_layout
 
 \end_inset
@@ -5985,7 +5998,7 @@ CTU CAN FD design is DFT insertion friendly.
  When 
 \series bold
 \shape italic
-scan_enable
+scan_mode
 \series default
 \shape default
  = 1, CTU CAN FD is in scan mode.
@@ -6006,7 +6019,7 @@ All resets which depend on value of other flip-flops are gated (to avoid
 
 \series bold
 \shape italic
-scan_enable
+scan_mode
 \series default
 \shape default
  input shall be controlled by SoC level DFT controller, and it shall be
@@ -6021,14 +6034,14 @@ G_TECHNOLOGY
  = 1), 
 \series bold
 \shape italic
-scan_enable
+scan_mode
 \series default
 \shape default
  shall be tied low.
  
 \series bold
 \shape italic
-scan_enable
+scan_mode
 \series default
 \shape default
  signal shall be driven synchronous to System clock.
@@ -7518,7 +7531,7 @@ G_TECHNOLOGY
 Scan mode (via 
 \series bold
 \shape italic
-scan_enable
+scan_mode
 \series default
 \shape default
  input) - In scan mode, all clock gates are enabled, and all reset signals

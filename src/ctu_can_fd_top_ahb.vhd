@@ -161,7 +161,7 @@ entity ctu_can_fd_top_ahb is
         -----------------------------------------------------------------------
         -- DFT support
         -----------------------------------------------------------------------
-        scan_enable      : in  std_logic;
+        scan_mode        : in  std_logic;
 
         -----------------------------------------------------------------------
         -- Interrupt
@@ -205,7 +205,7 @@ begin
         res_n           => hresetn,
         res_n_out       => res_n_out_i,
 
-        scan_enable     => scan_enable,
+        scan_mode     => scan_mode,
 
         data_in         => ctu_can_data_in,
         data_out        => ctu_can_data_out,

@@ -112,7 +112,7 @@ entity protocol_control is
         -------------------------------------------------------------------------------------------
         -- DFT support
         -------------------------------------------------------------------------------------------
-        scan_enable             : in  std_logic;
+        scan_mode               : in  std_logic;
 
         -------------------------------------------------------------------------------------------
         -- Memory registers interface
@@ -920,7 +920,7 @@ begin
         res_n                   => res_n,                   -- IN
 
         -- DFT support
-        scan_enable             => scan_enable,             -- IN
+        scan_mode             => scan_mode,             -- IN
 
         rx_trigger              => rx_trigger,              -- IN
 

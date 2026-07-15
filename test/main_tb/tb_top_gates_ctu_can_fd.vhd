@@ -253,7 +253,7 @@ begin
         res_n       => res_n,
 
         -- DFT support
-        scan_enable => scan_enable,
+        scan_mode   => scan_enable,
 
         -- Memory interface
         data_in     => write_data,

@@ -96,7 +96,7 @@ entity bus_traffic_counters is
         -------------------------------------------------------------------------------------------
         -- DFT support
         -------------------------------------------------------------------------------------------
-        scan_enable             : in  std_logic;
+        scan_mode               : in  std_logic;
 
         -------------------------------------------------------------------------------------------
         -- Control signals
@@ -106,7 +106,7 @@ entity bus_traffic_counters is
         tran_valid              : in  std_logic;
 
         -- Frame reception valid
-        rec_valid              : in  std_logic;
+        rec_valid               : in  std_logic;
 
         -------------------------------------------------------------------------------------------
         -- Memory registers interface
@@ -201,7 +201,7 @@ begin
         q                   => tx_ctr_rst_n_q_scan,             -- OUT
 
         -- Scan mode control
-        scan_enable         => scan_enable                      -- IN
+        scan_mode           => scan_mode                        -- IN
     );
 
     i_rx_ctr_reg_rst : entity ctu_can_fd_rtl.rst_reg
@@ -218,7 +218,7 @@ begin
         q                   => rx_ctr_rst_n_q_scan,             -- OUT
 
         -- Scan mode control
-        scan_enable         => scan_enable                      -- IN
+        scan_mode           => scan_mode                        -- IN
     );
 
     -----------------------------------------------------------------------------------------------

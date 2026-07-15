@@ -128,7 +128,7 @@ entity ctu_can_fd_top_avalon is
         reset_n             : in  std_logic;
 
         -- DFT
-        scan_enable         : in  std_logic;
+        scan_mode         : in  std_logic;
 
         -- Interrupt
         irq                 : out std_logic;
@@ -179,7 +179,7 @@ begin
         res_n_out               => open,
 
         -- DFT support
-        scan_enable             => scan_enable,
+        scan_mode               => scan_mode,
 
         -- Memory interface
         data_in                 => writedata,
