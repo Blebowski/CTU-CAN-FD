@@ -103,7 +103,7 @@ entity int_manager is
         -- Clock and Asynchronous reset
         -------------------------------------------------------------------------------------------
         clk_sys                         : in  std_logic;
-        res_n                           : in  std_logic;
+        rst_n                           : in  std_logic;
 
         -------------------------------------------------------------------------------------------
         -- Interrupt sources
@@ -277,7 +277,7 @@ begin
         i_int_module : entity ctu_can_fd_rtl.int_module
         port map (
             clk_sys             => clk_sys,                                  -- IN
-            res_n               => res_n,                                    -- IN
+            rst_n               => rst_n,                                    -- IN
 
             int_status_set      => int_input_active(i),                      -- IN
             int_status_clear    => int_status_clr_i(i),                      -- IN
@@ -304,7 +304,7 @@ begin
         G_RST_VAL               => '0'
     )
     port map(
-        arst                    => res_n,                                   -- IN
+        arst                    => rst_n,                                   -- IN
         clk                     => clk_sys,                                 -- IN
         reg_d                   => int_i,                                   -- IN
 

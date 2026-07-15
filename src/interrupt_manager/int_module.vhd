@@ -102,7 +102,7 @@ entity int_module is
         -- Clock and Asynchronous reset
         -------------------------------------------------------------------------------------------
         clk_sys                :in   std_logic;
-        res_n                  :in   std_logic;
+        rst_n                  :in   std_logic;
 
         -------------------------------------------------------------------------------------------
         -- Control control signals
@@ -154,9 +154,9 @@ begin
     -----------------------------------------------------------------------------------------------
     -- Interrupt status - Set priority
     -----------------------------------------------------------------------------------------------
-    p_int_stat : process(res_n, clk_sys)
+    p_int_stat : process(rst_n, clk_sys)
     begin
-        if (res_n = '0') then
+        if (rst_n = '0') then
             int_status <= '0';
 
         elsif rising_edge(clk_sys) then
@@ -178,9 +178,9 @@ begin
     -- Interrupt mask
     -----------------------------------------------------------------------------------------------
 
-    p_int_mask : process(res_n, clk_sys)
+    p_int_mask : process(rst_n, clk_sys)
     begin
-        if (res_n = '0') then
+        if (rst_n = '0') then
             int_mask_i <= '0';
 
         elsif rising_edge(clk_sys) then
@@ -201,9 +201,9 @@ begin
     -----------------------------------------------------------------------------------------------
     -- Interrupt Enable
     -----------------------------------------------------------------------------------------------
-    p_int_ena : process(res_n, clk_sys)
+    p_int_ena : process(rst_n, clk_sys)
     begin
-        if (res_n = '0') then
+        if (rst_n = '0') then
             int_ena_i <= '0';
 
         elsif rising_edge(clk_sys) then

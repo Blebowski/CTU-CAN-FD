@@ -97,7 +97,7 @@ entity rx_shift_reg is
         -- Clock and Asynchronous Reset
         -------------------------------------------------------------------------------------------
         clk_sys                 : in  std_logic;
-        res_n                   : in  std_logic;
+        rst_n                   : in  std_logic;
 
         -------------------------------------------------------------------------------------------
         -- DFT support
@@ -201,8 +201,8 @@ end entity;
 architecture rtl of rx_shift_reg is
 
     -- Internal reset
-    signal res_n_i_d                : std_logic;
-    signal res_n_i_q_scan           : std_logic;
+    signal rst_n_i_d                : std_logic;
+    signal rst_n_i_q_scan           : std_logic;
 
     -- Shift register status
     signal rx_shift_reg_q           : std_logic_vector(31 downto 0);
@@ -219,7 +219,7 @@ architecture rtl of rx_shift_reg is
 begin
 
      -- Internal reset: Async reset + reset by design!
-    res_n_i_d <= '0' when (rx_clear = '1' or res_n = '0')
+    rst_n_i_d <= '0' when (rx_clear = '1' or rst_n = '0')
                      else
                  '1';
 
@@ -233,11 +233,11 @@ begin
     port map (
         -- Clock and Reset
         clk                 => clk_sys,                     -- IN
-        arst                => res_n,                       -- IN
+        arst                => rst_n,                       -- IN
 
         -- Flip flop input / output
-        d                   => res_n_i_d,                   -- IN
-        q                   => res_n_i_q_scan,              -- OUT
+        d                   => rst_n_i_d,                   -- IN
+        q                   => rst_n_i_q_scan,              -- OUT
 
         -- Scan mode control
         scan_mode         => scan_mode                  -- IN
@@ -273,7 +273,7 @@ begin
     )
     port map (
         clk                  => clk_sys,                    -- IN
-        res_n                => res_n_i_q_scan,             -- IN
+        rst_n                => rst_n_i_q_scan,             -- IN
         input                => rx_data_nbs,                -- IN
         byte_clock_ena       => rx_shift_cmd,               -- IN
         byte_input_sel       => rx_shift_in_sel_demuxed,    -- IN
@@ -284,9 +284,9 @@ begin
     -----------------------------------------------------------------------------------------------
     -- Store Identifier
     -----------------------------------------------------------------------------------------------
-    p_id_store : process(clk_sys, res_n_i_q_scan)
+    p_id_store : process(clk_sys, rst_n_i_q_scan)
     begin
-        if (res_n_i_q_scan = '0') then
+        if (rst_n_i_q_scan = '0') then
             rec_ident <= (others => '0');
         elsif (rising_edge(clk_sys)) then
             if (rx_store_base_id = '1') then
@@ -304,9 +304,9 @@ begin
     -----------------------------------------------------------------------------------------------
     -- Store IDE bit (Identifier type)
     -----------------------------------------------------------------------------------------------
-    p_ide_store : process(clk_sys, res_n_i_q_scan)
+    p_ide_store : process(clk_sys, rst_n_i_q_scan)
     begin
-        if (res_n_i_q_scan = '0') then
+        if (rst_n_i_q_scan = '0') then
             rec_ident_type <= '0';
         elsif (rising_edge(clk_sys)) then
             if (rx_store_ide = '1') then
@@ -318,9 +318,9 @@ begin
     -----------------------------------------------------------------------------------------------
     -- RX Store RTR bit (Remote transmission request bit)
     -----------------------------------------------------------------------------------------------
-    p_rx_store : process(clk_sys, res_n_i_q_scan)
+    p_rx_store : process(clk_sys, rst_n_i_q_scan)
     begin
-        if (res_n_i_q_scan = '0') then
+        if (rst_n_i_q_scan = '0') then
             rec_is_rtr_i <= '0';
         elsif (rising_edge(clk_sys)) then
             if (rx_store_rtr = '1') then
@@ -337,9 +337,9 @@ begin
     -----------------------------------------------------------------------------------------------
     -- Store EDL/FDF bit (Extended data length or Flexible data-rate format)
     -----------------------------------------------------------------------------------------------
-    p_edl_store : process(clk_sys, res_n_i_q_scan)
+    p_edl_store : process(clk_sys, rst_n_i_q_scan)
     begin
-        if (res_n_i_q_scan = '0') then
+        if (rst_n_i_q_scan = '0') then
             rec_frame_type_i <= '0';
         elsif (rising_edge(clk_sys)) then
             if (rx_store_edl = '1') then
@@ -354,9 +354,9 @@ begin
     -----------------------------------------------------------------------------------------------
     -- Store ESI bit (Error state indicator)
     -----------------------------------------------------------------------------------------------
-    p_esi_store : process(clk_sys, res_n_i_q_scan)
+    p_esi_store : process(clk_sys, rst_n_i_q_scan)
     begin
-        if (res_n_i_q_scan = '0') then
+        if (rst_n_i_q_scan = '0') then
             rec_esi <= '0';
         elsif (rising_edge(clk_sys)) then
             if (rx_store_esi = '1') then
@@ -368,9 +368,9 @@ begin
     -----------------------------------------------------------------------------------------------
     -- Store BRS bit (Bit rate shift)
     -----------------------------------------------------------------------------------------------
-    p_brs_store : process(clk_sys, res_n_i_q_scan)
+    p_brs_store : process(clk_sys, rst_n_i_q_scan)
     begin
-        if (res_n_i_q_scan = '0') then
+        if (rst_n_i_q_scan = '0') then
             rec_brs <= '0';
         elsif (rising_edge(clk_sys)) then
             if (rx_store_brs = '1') then
@@ -382,9 +382,9 @@ begin
     -----------------------------------------------------------------------------------------------
     -- Store DLC (Data length code)
     -----------------------------------------------------------------------------------------------
-    p_dlc_store : process(clk_sys, res_n_i_q_scan)
+    p_dlc_store : process(clk_sys, rst_n_i_q_scan)
     begin
-        if (res_n_i_q_scan = '0') then
+        if (rst_n_i_q_scan = '0') then
             rec_dlc <= (others => '0');
         elsif (rising_edge(clk_sys)) then
             if (rx_store_dlc = '1') then
@@ -396,9 +396,9 @@ begin
     -----------------------------------------------------------------------------------------------
     -- Store RX Stuff Count
     -----------------------------------------------------------------------------------------------
-    p_stuff_count_store : process(clk_sys, res_n_i_q_scan)
+    p_stuff_count_store : process(clk_sys, rst_n_i_q_scan)
     begin
-        if (res_n_i_q_scan = '0') then
+        if (rst_n_i_q_scan = '0') then
             rx_stuff_count <= (others => '0');
         elsif (rising_edge(clk_sys)) then
             if (rx_store_stuff_count = '1') then
@@ -438,7 +438,7 @@ begin
     --  report "RX Shift register should be configured as Byte shift register only during DATA phase of CAN frame";
 
     -- psl no_simul_capture_and_clear : assert never
-    --  (res_n_i_q_scan = '0') and
+    --  (rst_n_i_q_scan = '0') and
     --  (rx_store_base_id = '1' or rx_store_ext_id = '1' or
     --   rx_store_ide = '1' or rx_store_rtr = '1' or rx_store_edl = '1' or
     --   rx_store_dlc = '1' or rx_store_esi = '1' or rx_store_brs = '1' or

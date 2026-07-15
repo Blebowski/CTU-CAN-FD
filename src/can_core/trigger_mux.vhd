@@ -111,7 +111,7 @@ entity trigger_mux is
         -- Clock and Asynchronous reset
         -------------------------------------------------------------------------------------------
         clk_sys                :in   std_logic;
-        res_n                  :in   std_logic;
+        rst_n                  :in   std_logic;
 
         -------------------------------------------------------------------------------------------
         -- Input triggers
@@ -233,7 +233,7 @@ begin
         G_RST_VAL          => '0'
     )
     port map(
-        arst               => res_n,            -- IN
+        arst               => rst_n,            -- IN
         clk                => clk_sys,          -- IN
         reg_d              => tx_trigger,       -- IN
 
@@ -256,7 +256,7 @@ begin
         G_RST_VAL          => '0'
     )
     port map(
-        arst               => res_n,            -- IN
+        arst               => rst_n,            -- IN
         clk                => clk_sys,          -- IN
         reg_d              => bds_data_in,      -- IN
         ce                 => rx_triggers(1),   -- IN

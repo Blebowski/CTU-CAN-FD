@@ -101,7 +101,7 @@ entity address_decoder is
         -- Clock and reset
         ------------------------------------------------------------------------
         signal clk_sys                :in   std_logic;
-        signal res_n                  :in   std_logic;
+        signal rst_n                  :in   std_logic;
 
         ------------------------------------------------------------------------
         -- Address input
@@ -158,9 +158,9 @@ begin
     -- Registering / Not-registering output
     ---------------------------------------------------------------------------
     g_addr_dec_reg_t : if (registered_out) generate
-        p_addr_dec_reg : process(res_n, clk_sys)
+        p_addr_dec_reg : process(rst_n, clk_sys)
         begin
-            if (res_n = '0') then
+            if (rst_n = '0') then
                 addr_dec <= (OTHERS => '0');
 
             elsif (rising_edge(clk_sys)) then

@@ -97,7 +97,7 @@ entity tx_arbitrator_fsm is
         -- Clock and Asynchronous reset
         -------------------------------------------------------------------------------------------
         clk_sys                     : in  std_logic;
-        res_n                       : in  std_logic;
+        rst_n                       : in  std_logic;
 
         -------------------------------------------------------------------------------------------
         -- Priority decoder interface
@@ -506,9 +506,9 @@ begin
     -----------------------------------------------------------------------------------------------
     -- State register
     -----------------------------------------------------------------------------------------------
-    p_tx_arb_fsm_state_reg : process(clk_sys, res_n)
+    p_tx_arb_fsm_state_reg : process(clk_sys, rst_n)
     begin
-        if (res_n = '0') then
+        if (rst_n = '0') then
             curr_state <= s_arb_idle;
         elsif (rising_edge(clk_sys)) then
             if (tx_arb_fsm_ce = '1') then
@@ -525,9 +525,9 @@ begin
     -----------------------------------------------------------------------------------------------
     -- Wait state DFF. Wait state inserted when next state must last two clock cycles!
     -----------------------------------------------------------------------------------------------
-    p_fsm_wait_state : process(clk_sys, res_n)
+    p_fsm_wait_state : process(clk_sys, rst_n)
     begin
-        if (res_n = '0') then
+        if (rst_n = '0') then
             fsm_wait_state_q <= '1';
         elsif (rising_edge(clk_sys)) then
             fsm_wait_state_q <= fsm_wait_state_d;

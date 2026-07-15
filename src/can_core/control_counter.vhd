@@ -100,7 +100,7 @@ entity control_counter is
         -- Clock and Asynchronous Reset
         -------------------------------------------------------------------------------------------
         clk_sys                 : in  std_logic;
-        res_n                   : in  std_logic;
+        rst_n                   : in  std_logic;
 
         -------------------------------------------------------------------------------------------
         -- Control signals
@@ -195,9 +195,9 @@ begin
     -----------------------------------------------------------------------------------------------
     -- Control Counter register
     -----------------------------------------------------------------------------------------------
-    p_retr_ctr_reg : process(clk_sys, res_n)
+    p_retr_ctr_reg : process(clk_sys, rst_n)
     begin
-        if (res_n = '0') then
+        if (rst_n = '0') then
             ctrl_ctr_q <= (others => '0');
         elsif (rising_edge(clk_sys)) then
             if (ctrl_ctr_ce = '1') then
@@ -222,9 +222,9 @@ begin
                     '1' when (compl_ctr_ena = '1') else
                     '0';
 
-    p_compl_reg : process(clk_sys, res_n)
+    p_compl_reg : process(clk_sys, rst_n)
     begin
-        if (res_n = '0') then
+        if (rst_n = '0') then
             compl_ctr_q <= (others => '0');
         elsif (rising_edge(clk_sys)) then
             if (compl_ctr_ce = '1') then
@@ -270,9 +270,9 @@ begin
     -----------------------------------------------------------------------------------------------
     -- Arbitration lost capture register
     -----------------------------------------------------------------------------------------------
-    p_alc_capt_reg : process(res_n, clk_sys)
+    p_alc_capt_reg : process(rst_n, clk_sys)
     begin
-        if (res_n = '0') then
+        if (rst_n = '0') then
             alc_alc_bit <= (others => '0');
             alc_alc_id_field <= (others => '0');
         elsif (rising_edge(clk_sys)) then

@@ -96,7 +96,7 @@ entity dp_inf_ram is
         -- Synchronous read
         G_SYNC_READ            :     boolean := true;
 
-        -- If true, res_n causes RAM to be reset
+        -- If true, rst_n causes RAM to be reset
         G_RESETABLE            :     boolean := false
     );
   port (
@@ -104,7 +104,7 @@ entity dp_inf_ram is
         -- Clock and Reset
         -------------------------------------------------------------------------------------------
         clk_sys     : in  std_logic;
-        res_n       : in  std_logic;
+        rst_n       : in  std_logic;
 
         -------------------------------------------------------------------------------------------
         -- Port A - Data input
@@ -155,9 +155,9 @@ begin
     -----------------------------------------------------------------------------------------------
     g_ram_rst_true : if (G_RESETABLE) generate
 
-        p_ram_write : process(clk_sys, res_n)
+        p_ram_write : process(clk_sys, rst_n)
         begin
-            if (res_n = '0') then
+            if (rst_n = '0') then
                 ram_memory <= (others => (others => '0'));
             elsif (rising_edge(clk_sys)) then
                 if (write = '1') then

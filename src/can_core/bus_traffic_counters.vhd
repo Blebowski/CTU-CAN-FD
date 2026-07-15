@@ -91,7 +91,7 @@ entity bus_traffic_counters is
         -- System clock and Asynchronous Reset
         -------------------------------------------------------------------------------------------
         clk_sys                 : in  std_logic;
-        res_n                   : in  std_logic;
+        rst_n                   : in  std_logic;
 
         -------------------------------------------------------------------------------------------
         -- DFT support
@@ -151,9 +151,9 @@ begin
     -----------------------------------------------------------------------------------------------
     -- Register increment command (to relax timing through the counter!)
     -----------------------------------------------------------------------------------------------
-    p_increment_reg : process(clk_sys, res_n)
+    p_increment_reg : process(clk_sys, rst_n)
     begin
-        if (res_n = '0') then
+        if (rst_n = '0') then
             tran_valid_q <= '0';
             rec_valid_q <= '0';
         elsif rising_edge(clk_sys) then
@@ -194,7 +194,7 @@ begin
     port map(
         -- Clock and Reset
         clk                 => clk_sys,                         -- IN
-        arst                => res_n,                           -- IN
+        arst                => rst_n,                           -- IN
 
         -- Flip flop input / output
         d                   => tx_ctr_rst_n_d,                  -- IN
@@ -211,7 +211,7 @@ begin
     port map(
         -- Clock and Reset
         clk                 => clk_sys,                         -- IN
-        arst                => res_n,                           -- IN
+        arst                => rst_n,                           -- IN
 
         -- Flip flop input / output
         d                   => rx_ctr_rst_n_d,                  -- IN

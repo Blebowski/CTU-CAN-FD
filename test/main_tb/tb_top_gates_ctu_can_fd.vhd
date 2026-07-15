@@ -325,7 +325,7 @@ begin
 
         -- Clock, reset
         clk_sys     => clk_sys,
-        res_n       => res_n,
+        rst_n       => res_n,
 
         -- DFT support
         scan_enable => scan_enable,

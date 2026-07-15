@@ -103,7 +103,7 @@ entity tx_data_cache is
         -- Clock and Asynchronous reset
         -------------------------------------------------------------------------------------------
         clk_sys         :in   std_logic;
-        res_n           :in   std_logic;
+        rst_n           :in   std_logic;
 
         -------------------------------------------------------------------------------------------
         -- Control signals
@@ -150,9 +150,9 @@ begin
     -------------------------------------------------------------------------------------------
     -- Incrementing the pointers upon read or write.
     -------------------------------------------------------------------------------------------
-    p_write_ptr : process(clk_sys, res_n)
+    p_write_ptr : process(clk_sys, rst_n)
     begin
-        if (res_n = '0') then
+        if (rst_n = '0') then
             write_pointer_q        <= (others => '0');
         elsif (rising_edge(clk_sys)) then
             if (write = '1') then
@@ -162,9 +162,9 @@ begin
     end process;
 
 
-    p_read_ptr : process(clk_sys, res_n)
+    p_read_ptr : process(clk_sys, rst_n)
     begin
-        if (res_n = '0') then
+        if (rst_n = '0') then
             read_pointer_q         <= (others => '0');
         elsif (rising_edge(clk_sys)) then
             if (read = '1') then
@@ -177,9 +177,9 @@ begin
     -------------------------------------------------------------------------------------------
     -- Storing data to FIFO.
     -------------------------------------------------------------------------------------------
-    p_tx_cache_mem : process(clk_sys, res_n)
+    p_tx_cache_mem : process(clk_sys, rst_n)
     begin
-        if (res_n = '0') then
+        if (rst_n = '0') then
             tx_cache_mem <= (others => G_TX_CACHE_RST_VAL);
         elsif (rising_edge(clk_sys)) then
             if (write = '1') then

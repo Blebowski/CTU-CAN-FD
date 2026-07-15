@@ -99,7 +99,7 @@ entity bit_stuffing is
         -- Clock and Asynchronous reset
         -------------------------------------------------------------------------------------------
         clk_sys             : in  std_logic;
-        res_n               : in  std_logic;
+        rst_n               : in  std_logic;
 
         -------------------------------------------------------------------------------------------
         -- Data-path
@@ -213,7 +213,7 @@ begin
         G_RST_VAL          => '0'
     )
     port map (
-        arst               => res_n,            -- IN
+        arst               => rst_n,            -- IN
         clk                => clk_sys,          -- IN
         reg_d              => stuff_enable,     -- IN
 
@@ -247,7 +247,7 @@ begin
         G_RST_VAL          => '0'
     )
     port map (
-        arst               => res_n,            -- IN
+        arst               => rst_n,            -- IN
         clk                => clk_sys,          -- IN
         reg_d              => fixed_reg_d,      -- IN
         ce                 => stuff_enable,     -- IN
@@ -274,9 +274,9 @@ begin
     -----------------------------------------------------------------------------------------------
     -- Counter of stuffed bits (for CRC of ISO FD).
     -----------------------------------------------------------------------------------------------
-    p_stuff_ctr : process(res_n, clk_sys)
+    p_stuff_ctr : process(rst_n, clk_sys)
     begin
-        if (res_n = '0') then
+        if (rst_n = '0') then
             bst_ctr_q <= (others => '0');
         elsif rising_edge(clk_sys) then
             if (stuff_enable = '1') then
@@ -350,9 +350,9 @@ begin
     -----------------------------------------------------------------------------------------------
     -- Counter of equal consecutive bits on input
     -----------------------------------------------------------------------------------------------
-    p_same_bits_ctr : process(res_n, clk_sys)
+    p_same_bits_ctr : process(rst_n, clk_sys)
     begin
-        if (res_n = '0') then
+        if (rst_n = '0') then
             same_bits_q <= "001";
         elsif rising_edge(clk_sys) then
             if (stuff_enable = '1') then
@@ -400,7 +400,7 @@ begin
         G_RST_VAL          => RECESSIVE
     )
     port map (
-        arst               => res_n,            -- IN
+        arst               => rst_n,            -- IN
         clk                => clk_sys,          -- IN
         reg_d              => data_out_d,       -- IN
         ce                 => data_out_ce,      -- IN
@@ -441,7 +441,7 @@ begin
         G_RST_VAL          => '0'
     )
     port map (
-        arst               => res_n,            -- IN
+        arst               => rst_n,            -- IN
         clk                => clk_sys,          -- IN
         reg_d              => data_halt_d,      -- IN
 

@@ -93,7 +93,7 @@ entity rx_buffer_fsm is
         -- Clocks and reset
         -------------------------------------------------------------------------------------------
         clk_sys                 : in  std_logic;
-        res_n                   : in  std_logic;
+        rst_n                   : in  std_logic;
 
         -------------------------------------------------------------------------------------------
         -- Memory registers interface
@@ -360,9 +360,9 @@ begin
     -----------------------------------------------------------------------------------------------
     -- State register process
     -----------------------------------------------------------------------------------------------
-    p_state_reg : process(clk_sys, res_n)
+    p_state_reg : process(clk_sys, rst_n)
     begin
-        if (res_n = '0') then
+        if (rst_n = '0') then
             curr_state <= s_rxb_idle;
         elsif (rising_edge(clk_sys)) then
             if (rx_fsm_ce = '1') then

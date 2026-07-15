@@ -95,7 +95,7 @@ entity bit_err_detector is
         -- Clock and Async reset
         -------------------------------------------------------------------------------------------
         clk_sys                  :in   std_logic;
-        res_n                    :in   std_logic;
+        rst_n                    :in   std_logic;
 
         -------------------------------------------------------------------------------------------
         -- Control signals from CAN core
@@ -175,9 +175,9 @@ begin
                           '1' when (bit_err_ssp_condition = '1') else
           bit_err_ssp_capt_q;
 
-    p_bit_error_ssp_capt_reg : process(clk_sys, res_n)
+    p_bit_error_ssp_capt_reg : process(clk_sys, rst_n)
     begin
-        if (res_n = '0') then
+        if (rst_n = '0') then
             bit_err_ssp_capt_q <= '0';
         elsif (rising_edge(clk_sys)) then
             bit_err_ssp_capt_q <= bit_err_ssp_capt_d;
@@ -212,9 +212,9 @@ begin
     -------------------------------------------------------------------------------------------
     -- Bit error register
     -------------------------------------------------------------------------------------------
-    p_bit_err_reg : process(clk_sys, res_n)
+    p_bit_err_reg : process(clk_sys, rst_n)
     begin
-        if (res_n = '0') then
+        if (rst_n = '0') then
             bit_err_q <= '0';
         elsif (rising_edge(clk_sys)) then
             bit_err_q <= bit_err_d;

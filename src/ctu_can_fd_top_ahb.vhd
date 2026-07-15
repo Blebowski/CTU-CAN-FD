@@ -145,7 +145,7 @@ entity ctu_can_fd_top_ahb is
         -----------------------------------------------------------------------
         -- Synchronized reset
         -----------------------------------------------------------------------
-        res_n_out        : out std_logic;
+        rst_n_out        : out std_logic;
 
         -----------------------------------------------------------------------
         -- CAN Bus
@@ -181,7 +181,7 @@ architecture rtl of ctu_can_fd_top_ahb is
     signal ctu_can_swr       : std_logic;
     signal ctu_can_sbe       : std_logic_vector(3 downto 0);
 
-    signal res_n_out_i       : std_logic;
+    signal rst_n_out_i       : std_logic;
 
 begin
 
@@ -202,10 +202,10 @@ begin
     )
     port map (
         clk_sys         => hclk,
-        res_n           => hresetn,
-        res_n_out       => res_n_out_i,
+        rst_n           => hresetn,
+        rst_n_out       => rst_n_out_i,
 
-        scan_mode     => scan_mode,
+        scan_mode       => scan_mode,
 
         data_in         => ctu_can_data_in,
         data_out        => ctu_can_data_out,
@@ -235,7 +235,7 @@ begin
         srd              => ctu_can_srd,
 
         -- AHB interface
-        hresetn          => res_n_out_i,
+        hresetn          => rst_n_out_i,
         hclk             => hclk,
         haddr            => haddr,
         hwdata           => hwdata,
@@ -252,6 +252,6 @@ begin
         hrdata           => hrdata
     );
 
-    res_n_out <= res_n_out_i;
+    rst_n_out <= rst_n_out_i;
 
 end architecture rtl;

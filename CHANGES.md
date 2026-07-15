@@ -6,13 +6,14 @@
 - *STATUS[RXPE]* with *MODE[RXBAM]=0* now detects parity
   error upon the *RX_DATA* read instead of detecting upon
   moving the RX Buffer read pointer.
-- **BREAKING CHANGE**: IP top level generics has been renamed to
+- **BREAKING CHANGE**: RTL: IP top level generics has been renamed to
   comply with generic naming style. Look at the System Architecture
   document for the new names.
-- **BREAKING CHANGE**: Top level entity names have changed to
+- **BREAKING CHANGE**: RTL: Top level entity names have changed to
   `ctu_can_fd_top` (RAM-like), `ctu_can_fd_top_ahb` (AHB interface),
   `ctu_can_fd_top_apb` (APB interface).
-- **BREAKING CHANGE**: `scan_enable` signal was renamed to `scan_mode`.
+- **BREAKING CHANGE**: RTL: `scan_enable` port was renamed to `scan_mode`.
+- **BREAKING CHANGE**: RTL: `res_n` port was renamed to `rst_n`.
 - Added new Avalon top level interface (`ctu_can_fd_top_avalon`).
 
 ## Version 2.7 - 7.1.2026
@@ -70,7 +71,6 @@
 
 ## Version 2.1 - 5.10.2018
 - Significantly reworked and lowered resource usage on FPGAs
-
 
 ## Version 2.0 - 23.11.2017
 - Initial public release under MIT license

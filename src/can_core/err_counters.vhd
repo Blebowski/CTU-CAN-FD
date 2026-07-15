@@ -99,7 +99,7 @@ entity err_counters is
         -- System clock and Asynchronous Reset
         -------------------------------------------------------------------------------------------
         clk_sys                 : in  std_logic;
-        res_n                   : in  std_logic;
+        rst_n                   : in  std_logic;
 
         -------------------------------------------------------------------------------------------
         -- DFT support
@@ -210,9 +210,9 @@ begin
     -- Counter preset mask - must be registered, since value is also registered! This allows
     -- setting both by a single access!
     -----------------------------------------------------------------------------------------------
-    p_ctr_pres_reg : process(res_n, clk_sys)
+    p_ctr_pres_reg : process(rst_n, clk_sys)
     begin
-        if (res_n = '0') then
+        if (rst_n = '0') then
             mr_ctr_pres_ptx_q   <= '0';
             mr_ctr_pres_prx_q   <= '0';
             mr_ctr_pres_enorm_q <= '0';
@@ -255,7 +255,7 @@ begin
     -----------------------------------------------------------------------------------------------
     -- Registering counter reset (to avoid glitches)
     -----------------------------------------------------------------------------------------------
-    res_err_ctrs_d <= '0' when (res_n = '0' or set_err_active = '1')
+    res_err_ctrs_d <= '0' when (rst_n = '0' or set_err_active = '1')
                           else
                       '1';
 
@@ -266,7 +266,7 @@ begin
     port map(
         -- Clock and Reset
         clk                 => clk_sys,                     -- IN
-        arst                => res_n,                       -- IN
+        arst                => rst_n,                       -- IN
 
         -- Flip flop input / output
         d                   => res_err_ctrs_d,              -- IN

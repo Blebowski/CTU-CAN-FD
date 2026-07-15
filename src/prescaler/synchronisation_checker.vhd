@@ -93,7 +93,7 @@ entity synchronisation_checker is
         -- Clock and Asynchronous reset
         -------------------------------------------------------------------------------------------
         clk_sys             : in  std_logic;
-        res_n               : in  std_logic;
+        rst_n               : in  std_logic;
 
         -------------------------------------------------------------------------------------------
         -- Control interface
@@ -168,9 +168,9 @@ begin
     sync_flag_nxt <= '1' when (h_or_re_sync_edge = '1') else
                      '0';
 
-    p_sync_flag : process(res_n, clk_sys)
+    p_sync_flag : process(rst_n, clk_sys)
     begin
-        if (res_n = '0') then
+        if (rst_n = '0') then
             sync_flag <= '0';
         elsif (rising_edge(clk_sys)) then
             if (sync_flag_ce = '1') then

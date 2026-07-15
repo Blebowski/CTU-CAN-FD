@@ -93,7 +93,7 @@ entity fault_confinement is
         -- Clock and Asynchronous Reset
         -------------------------------------------------------------------------------------------
         clk_sys                 : in  std_logic;
-        res_n                   : in  std_logic;
+        rst_n                   : in  std_logic;
 
         -------------------------------------------------------------------------------------------
         -- DFT support
@@ -211,7 +211,7 @@ begin
     -----------------------------------------------------------------------------------------------
     i_fault_confinement_fsm : entity ctu_can_fd_rtl.fault_confinement_fsm
     port map(
-        res_n                   => res_n,                    -- IN
+        rst_n                   => rst_n,                    -- IN
         clk_sys                 => clk_sys,                  -- IN
 
         mr_ewl_ew_limit         => mr_ewl_ew_limit,          -- IN
@@ -237,7 +237,7 @@ begin
     i_err_counters : entity ctu_can_fd_rtl.err_counters
     port map(
         clk_sys                 => clk_sys,                  -- IN
-        res_n                   => res_n,                    -- IN
+        rst_n                   => rst_n,                    -- IN
         scan_mode               => scan_mode,                -- IN
 
         sp_control              => sp_control,               -- IN

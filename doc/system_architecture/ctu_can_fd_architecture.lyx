@@ -1037,7 +1037,7 @@ Keep NBTM counter enabled always even in data bit rate.
 Add 
 \series bold
 \shape italic
-res_n_out
+rst_n_out
 \series default
 \shape default
  synchronized reset output.
@@ -1458,6 +1458,16 @@ scan_mode
 \series default
 \shape default
  to better fit standard DFT terminology.
+ 
+\series bold
+\shape italic
+res_n 
+\series default
+\shape default
+was renamed to 
+\series bold
+\shape italic
+rst_n
 \end_layout
 
 \end_inset
@@ -5711,13 +5721,13 @@ hclk
  
 \series bold
 \shape italic
-res_n_out
+rst_n_out
 \series default
 \shape default
  signal output contains synchronized version of 
 \series bold
 \shape italic
-res_n
+rst_n
 \series default
 \shape default
 /
@@ -5844,7 +5854,7 @@ sys_clk
 
 \series bold
 \shape italic
-res_n
+rst_n
 \end_layout
 
 \end_inset
@@ -6820,7 +6830,7 @@ true/false
 When true, TXT buffer and RX buffer RAMs are reset by 
 \series bold
 \shape italic
-res_n
+rst_n
 \series default
 \shape default
 .
@@ -7138,7 +7148,7 @@ RAM like interface:
 \begin_inset Newline newline
 \end_inset
 
-res_n
+rst_n
 \series default
 \shape default
  = 0.
@@ -7157,7 +7167,7 @@ To be used by HW reset structure integrating CTU CAN FD (e.g.
  reset was de-asserted (or until 
 \series bold
 \shape italic
-res_n_out
+rst_n_out
 \series default
 \shape default
  = 1).

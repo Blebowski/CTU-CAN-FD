@@ -117,7 +117,7 @@ entity rx_buffer is
         -- Clocks and Asynchronous reset
         -------------------------------------------------------------------------------------------
         clk_sys                 : in  std_logic;
-        res_n                   : in  std_logic;
+        rst_n                   : in  std_logic;
 
         -------------------------------------------------------------------------------------------
         -- DFT support
@@ -412,8 +412,8 @@ architecture rtl of rx_buffer is
     -----------------------------------------------------------------------------------------------
     -- Common reset signal
     -----------------------------------------------------------------------------------------------
-    signal rx_buf_res_n_d               : std_logic;
-    signal rx_buf_res_n_q_scan          : std_logic;
+    signal rx_buf_rst_n_d               : std_logic;
+    signal rx_buf_rst_n_q_scan          : std_logic;
 
     -----------------------------------------------------------------------------------------------
     -- Clock gating for memory
@@ -430,10 +430,10 @@ begin
 
     -----------------------------------------------------------------------------------------------
     -- Common reset signal. Whole buffer can be reset by two ways:
-    --  1. Asynchronous reset - res_n
+    --  1. Asynchronous reset - rst_n
     --  2. Release Receive Buffer command.
     -----------------------------------------------------------------------------------------------
-    rx_buf_res_n_d <= '0' when (mr_command_rrb = '1' or res_n = '0')
+    rx_buf_rst_n_d <= '0' when (mr_command_rrb = '1' or rst_n = '0')
                           else
                       '1';
 
@@ -447,11 +447,11 @@ begin
     port map (
         -- Clock and Reset
         clk                     => clk_sys,                 -- IN
-        arst                    => res_n,                   -- IN
+        arst                    => rst_n,                   -- IN
 
         -- Flip flop input / output
-        d                       => rx_buf_res_n_d,          -- IN
-        q                       => rx_buf_res_n_q_scan,     -- OUT
+        d                       => rx_buf_rst_n_d,          -- IN
+        q                       => rx_buf_rst_n_q_scan,     -- OUT
 
         -- Scan mode control
         scan_mode             => scan_mode              -- IN
@@ -463,7 +463,7 @@ begin
     i_rx_buffer_fsm : entity ctu_can_fd_rtl.rx_buffer_fsm
     port map (
         clk_sys                 => clk_sys,                 -- IN
-        res_n                   => res_n,                   -- IN
+        rst_n                   => rst_n,                   -- IN
 
         mr_mode_erfm            => mr_mode_erfm,            -- IN
 
@@ -493,7 +493,7 @@ begin
     )
     port map (
         clk_sys                 => clk_sys,                 -- IN
-        rx_buf_res_n_q_scan     => rx_buf_res_n_q_scan,     -- IN
+        rx_buf_rst_n_q_scan     => rx_buf_rst_n_q_scan,     -- IN
 
         rec_abort_f             => rec_abort_f,             -- IN
         commit_rx_frame         => commit_rx_frame,         -- IN
@@ -653,9 +653,9 @@ begin
                                 else
                             '0';
 
-    p_capt_ts : process(clk_sys, res_n)
+    p_capt_ts : process(clk_sys, rst_n)
     begin
-        if (res_n = '0') then
+        if (rst_n = '0') then
             timestamp_capture <= (others => '0');
         elsif (rising_edge(clk_sys)) then
             if (timestamp_capture_ce = '1') then
@@ -680,9 +680,9 @@ begin
                                          else
                       unsigned(rxb_port_b_data_out_i(RWCNT_H downto RWCNT_L));
 
-    p_read_frame : process(clk_sys, rx_buf_res_n_q_scan)
+    p_read_frame : process(clk_sys, rx_buf_rst_n_q_scan)
     begin
-        if (rx_buf_res_n_q_scan = '0') then
+        if (rx_buf_rst_n_q_scan = '0') then
             read_counter_q <= (others => '0');
         elsif (rising_edge(clk_sys)) then
             -- Reading frame by user when there is active read and there is
@@ -699,9 +699,9 @@ begin
     -- read_increment), "frame_count" is decreased, when new frame is committed, message count is
     -- increased. If both at the same time, no change since one frame is added, next is removed!
     -----------------------------------------------------------------------------------------------
-    p_frame_count_ctr : process(clk_sys, rx_buf_res_n_q_scan)
+    p_frame_count_ctr : process(clk_sys, rx_buf_rst_n_q_scan)
     begin
-        if (rx_buf_res_n_q_scan = '0') then
+        if (rx_buf_rst_n_q_scan = '0') then
             frame_count <= (others => '0');
         elsif (rising_edge(clk_sys)) then
 
@@ -724,9 +724,9 @@ begin
     -- Commit RX Frame when last word was written and overrun did not occur! This can be either
     -- from "rxb_store_data" state or "rxb_store_end_ts_high"
     -----------------------------------------------------------------------------------------------
-    p_commit : process(clk_sys, rx_buf_res_n_q_scan)
+    p_commit : process(clk_sys, rx_buf_rst_n_q_scan)
     begin
-        if (rx_buf_res_n_q_scan = '0') then
+        if (rx_buf_rst_n_q_scan = '0') then
             commit_rx_frame       <= '0';
             commit_overrun_abort  <= '0';
 
@@ -752,9 +752,9 @@ begin
     -- there is not enough free space, data overrun flag will be set, and no further writes will
     -- be executed. Data Overrun flag can be cleared from Memory registers.
     -----------------------------------------------------------------------------------------------
-    p_sw_dor : process(clk_sys, rx_buf_res_n_q_scan)
+    p_sw_dor : process(clk_sys, rx_buf_rst_n_q_scan)
     begin
-        if (rx_buf_res_n_q_scan = '0') then
+        if (rx_buf_rst_n_q_scan = '0') then
             data_overrun_flg <= '0';
         elsif (rising_edge(clk_sys)) then
 
@@ -782,11 +782,11 @@ begin
     --     because it was erased).
     --
     -- Cleared at the end of frame storing! Note that this register can't be reset by RRB, only
-    -- by res_n!
+    -- by rst_n!
     -----------------------------------------------------------------------------------------------
-    p_internal_dor : process(clk_sys, res_n)
+    p_internal_dor : process(clk_sys, rst_n)
     begin
-        if (res_n = '0') then
+        if (rst_n = '0') then
             data_overrun_i <= '0';
         elsif (rising_edge(clk_sys)) then
             if (overrun_condition = '1' or mr_command_rrb = '1') then
@@ -836,7 +836,7 @@ begin
     port map(
         -- Clocks and Asynchronous reset
         clk_sys                 => clk_ram,                 -- IN
-        res_n                   => res_n,                   -- IN
+        rst_n                   => rst_n,                   -- IN
 
         -- Memory testability
         mr_tst_control_tmaena   => mr_tst_control_tmaena,   -- IN
@@ -896,9 +896,9 @@ begin
     -- Set when reading RX Buffer RAM. When read is in porgress is set, then RX Buffer RAM already
     -- has read data available on output, therefore, RX parity error detection is valid!
     -----------------------------------------------------------------------------------------------
-    p_parity_flag : process(res_n, clk_sys)
+    p_parity_flag : process(rst_n, clk_sys)
     begin
-        if (res_n = '0') then
+        if (rst_n = '0') then
             rx_parity_error <= '0';
         elsif (rising_edge(clk_sys)) then
             if (mr_rx_data_read = '1' and rx_parity_mismatch_comb = '1' and mr_settings_pchke = '1')

@@ -104,7 +104,7 @@ entity bit_time_counters is
         -- Clock and reset
         -------------------------------------------------------------------------------------------
         clk_sys          : in  std_logic;
-        res_n            : in  std_logic;
+        rst_n            : in  std_logic;
 
         -------------------------------------------------------------------------------------------
         -- Control signals
@@ -167,9 +167,9 @@ begin
                                    else
         std_logic_vector(unsigned(tq_counter_q) + 1);
 
-    p_tq : process(clk_sys, res_n)
+    p_tq : process(clk_sys, rst_n)
     begin
-        if (res_n = '0') then
+        if (rst_n = '0') then
             tq_counter_q <= std_logic_vector(C_TQ_RST);
         elsif (rising_edge(clk_sys)) then
             if (ctrs_en = '1') then
@@ -193,9 +193,9 @@ begin
                            else
                        '0';
 
-    p_segm_counter : process(clk_sys, res_n)
+    p_segm_counter : process(clk_sys, rst_n)
     begin
-        if (res_n = '0') then
+        if (rst_n = '0') then
             segm_counter_q <= (others => '0');
         elsif (rising_edge(clk_sys)) then
             if (segm_counter_ce = '1') then

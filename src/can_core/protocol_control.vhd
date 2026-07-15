@@ -107,7 +107,7 @@ entity protocol_control is
         -- Clock and Asynchronous Reset
         -------------------------------------------------------------------------------------------
         clk_sys                 : in  std_logic;
-        res_n                   : in  std_logic;
+        rst_n                   : in  std_logic;
 
         -------------------------------------------------------------------------------------------
         -- DFT support
@@ -588,7 +588,7 @@ begin
     i_protocol_control_fsm : entity ctu_can_fd_rtl.protocol_control_fsm
     port map(
         clk_sys                 => clk_sys,                 -- IN
-        res_n                   => res_n,                   -- IN
+        rst_n                   => rst_n,                   -- IN
 
         -- Signals which cause state change
         rx_trigger              => rx_trigger,              -- IN
@@ -754,7 +754,7 @@ begin
     )
     port map(
         clk_sys                 => clk_sys,                 -- IN
-        res_n                   => res_n,                   -- IN
+        rst_n                   => rst_n,                   -- IN
 
         -- Control signals
         rx_trigger              => rx_trigger,              -- IN
@@ -783,7 +783,7 @@ begin
     i_reintegration_counter : entity ctu_can_fd_rtl.reintegration_counter
     port map(
         clk_sys                 => clk_sys,                 -- IN
-        res_n                   => res_n,                   -- IN
+        rst_n                   => rst_n,                   -- IN
 
         -- Control signals
         reinteg_ctr_clr         => reinteg_ctr_clr,         -- IN
@@ -803,7 +803,7 @@ begin
     )
     port map(
         clk_sys                 => clk_sys,                 -- IN
-        res_n                   => res_n,                   -- IN
+        rst_n                   => rst_n,                   -- IN
 
         -- Control signals
         txtb_changed            => txtb_changed,            -- IN
@@ -827,7 +827,7 @@ begin
     )
     port map(
         clk_sys                 => clk_sys,                 -- IN
-        res_n                   => res_n,                   -- IN
+        rst_n                   => rst_n,                   -- IN
 
         -- Data-path interface
         tx_data                 => tx_data_wbs,             -- IN
@@ -879,7 +879,7 @@ begin
     i_tx_shift_reg : entity ctu_can_fd_rtl.tx_shift_reg
     port map(
         clk_sys                 => clk_sys,                 -- IN
-        res_n                   => res_n,                   -- IN
+        rst_n                   => rst_n,                   -- IN
 
         mr_mode_tstm            => mr_mode_tstm,            -- IN
 
@@ -917,7 +917,7 @@ begin
     i_rx_shift_reg : entity ctu_can_fd_rtl.rx_shift_reg
     port map(
         clk_sys                 => clk_sys,                 -- IN
-        res_n                   => res_n,                   -- IN
+        rst_n                   => rst_n,                   -- IN
 
         -- DFT support
         scan_mode             => scan_mode,             -- IN

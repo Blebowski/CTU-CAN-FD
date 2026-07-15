@@ -175,8 +175,8 @@ begin
     port map (
         -- Clock and Asynchronous reset
         clk_sys                 => clk,
-        res_n                   => reset_n,
-        res_n_out               => open,
+        rst_n                   => reset_n,
+        rst_n_out               => open,
 
         -- DFT support
         scan_mode               => scan_mode,

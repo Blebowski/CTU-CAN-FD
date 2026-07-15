@@ -23,7 +23,7 @@
       <spirit:parameters>
         <spirit:parameter>
           <spirit:name>ASSOCIATED_RESET</spirit:name>
-          <spirit:value spirit:id="BUSIFPARAM_VALUE.ACLK.ASSOCIATED_RESET">arstn:res_n_out</spirit:value>
+          <spirit:value spirit:id="BUSIFPARAM_VALUE.ACLK.ASSOCIATED_RESET">arstn:rst_n_out</spirit:value>
         </spirit:parameter>
       </spirit:parameters>
     </spirit:busInterface>
@@ -72,7 +72,7 @@
       </spirit:parameters>
     </spirit:busInterface>
     <spirit:busInterface>
-      <spirit:name>res_n_out</spirit:name>
+      <spirit:name>rst_n_out</spirit:name>
       <spirit:busType spirit:vendor="xilinx.com" spirit:library="signal" spirit:name="reset" spirit:version="1.0"/>
       <spirit:abstractionType spirit:vendor="xilinx.com" spirit:library="signal" spirit:name="reset_rtl" spirit:version="1.0"/>
       <spirit:master/>
@@ -82,7 +82,7 @@
             <spirit:name>RST</spirit:name>
           </spirit:logicalPort>
           <spirit:physicalPort>
-            <spirit:name>res_n_out</spirit:name>
+            <spirit:name>rst_n_out</spirit:name>
           </spirit:physicalPort>
         </spirit:portMap>
       </spirit:portMaps>
@@ -253,7 +253,7 @@
         </spirit:wire>
       </spirit:port>
       <spirit:port>
-        <spirit:name>scan_enable</spirit:name>
+        <spirit:name>scan_mode</spirit:name>
         <spirit:wire>
           <spirit:direction>in</spirit:direction>
           <spirit:wireTypeDefs>
@@ -266,7 +266,7 @@
         </spirit:wire>
       </spirit:port>
       <spirit:port>
-        <spirit:name>res_n_out</spirit:name>
+        <spirit:name>rst_n_out</spirit:name>
         <spirit:wire>
           <spirit:direction>out</spirit:direction>
           <spirit:wireTypeDefs>

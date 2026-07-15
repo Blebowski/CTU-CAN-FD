@@ -103,7 +103,7 @@ entity tx_arbitrator is
         -- Clock and Asynchronous reset
         -------------------------------------------------------------------------------------------
         clk_sys                 : in  std_logic;
-        res_n                   : in  std_logic;
+        rst_n                   : in  std_logic;
 
         -------------------------------------------------------------------------------------------
         -- TXT Buffers interface
@@ -384,7 +384,7 @@ begin
     i_tx_arbitrator_fsm : entity ctu_can_fd_rtl.tx_arbitrator_fsm
     port map (
         clk_sys                     => clk_sys,                     -- IN
-        res_n                       => res_n,                       -- IN
+        rst_n                       => rst_n,                       -- IN
 
         select_buf_avail            => select_buf_avail,            -- IN
         select_index_changed        => select_index_changed,        -- IN
@@ -543,9 +543,9 @@ begin
     -----------------------------------------------------------------------------------------------
     -- Register for TXT Buffer clock enable
     -----------------------------------------------------------------------------------------------
-    p_txtb_clk_en_reg : process(clk_sys, res_n)
+    p_txtb_clk_en_reg : process(clk_sys, rst_n)
     begin
-        if (res_n = '0') then
+        if (rst_n = '0') then
             txtb_clk_en_q <= '0';
         elsif (rising_edge(clk_sys)) then
             txtb_clk_en_q <= txtb_clk_en;
@@ -556,9 +556,9 @@ begin
     -----------------------------------------------------------------------------------------------
     -- Register for loading lower 32 bits of CAN Frame timestamp
     -----------------------------------------------------------------------------------------------
-    p_low_ts_reg : process(res_n, clk_sys)
+    p_low_ts_reg : process(rst_n, clk_sys)
     begin
-        if (res_n = '0') then
+        if (rst_n = '0') then
             ts_low_internal <= (others => '0');
         elsif (rising_edge(clk_sys)) then
             if (store_ts_l_w = '1') then
@@ -570,9 +570,9 @@ begin
     -----------------------------------------------------------------------------------------------
     -- Double buffer registers for Metadata.
     -----------------------------------------------------------------------------------------------
-    p_dbl_buf_reg_ffmt : process(clk_sys, res_n)
+    p_dbl_buf_reg_ffmt : process(clk_sys, rst_n)
     begin
-        if (res_n = '0') then
+        if (rst_n = '0') then
             tran_dlc_dbl_buf           <= (others => '0');
             tran_is_rtr_dbl_buf        <= '0';
             tran_ident_type_dbl_buf    <= '0';
@@ -592,9 +592,9 @@ begin
     -----------------------------------------------------------------------------------------------
     -- Double buffer registers for Frame test word
     -----------------------------------------------------------------------------------------------
-    p_dbl_buf_reg_ftw : process(clk_sys, res_n)
+    p_dbl_buf_reg_ftw : process(clk_sys, rst_n)
     begin
-        if (res_n = '0') then
+        if (rst_n = '0') then
             tran_frame_test_dbl_buf.fstc <= '0';
             tran_frame_test_dbl_buf.fcrc <= '0';
             tran_frame_test_dbl_buf.sdlc <= '0';
@@ -614,9 +614,9 @@ begin
     -- Capture registers for metadata commited to output of TX Arbitrator. Takenfrom double buffer
     -- register.
     -----------------------------------------------------------------------------------------------
-    p_meta_data_reg : process(clk_sys, res_n)
+    p_meta_data_reg : process(clk_sys, rst_n)
     begin
-        if (res_n = '0') then
+        if (rst_n = '0') then
             tran_dlc_com         <= (others => '0');
             tran_is_rtr_com      <= '0';
             tran_ident_type_com  <= '0';
@@ -636,9 +636,9 @@ begin
     -----------------------------------------------------------------------------------------------
     -- Capture registers for Identifier commited to output of TX Arbitrator.
     -----------------------------------------------------------------------------------------------
-    p_identifier_reg : process(clk_sys, res_n)
+    p_identifier_reg : process(clk_sys, rst_n)
     begin
-        if (res_n = '0') then
+        if (rst_n = '0') then
             tran_identifier_com <= (others => '0');
         elsif (rising_edge(clk_sys)) then
             if (commit_dbl_bufs = '1') then
@@ -650,9 +650,9 @@ begin
     -----------------------------------------------------------------------------------------------
     -- Capture registers for Frame test word commited to output of TX Arbitrator.
     -----------------------------------------------------------------------------------------------
-    p_frame_test_w_reg : process(clk_sys, res_n)
+    p_frame_test_w_reg : process(clk_sys, rst_n)
     begin
-        if (res_n = '0') then
+        if (rst_n = '0') then
             tran_frame_test.fstc <= '0';
             tran_frame_test.fcrc <= '0';
             tran_frame_test.sdlc <= '0';
@@ -667,9 +667,9 @@ begin
     -----------------------------------------------------------------------------------------------
     -- Register for "committed" valid frame output for CAN Core
     -----------------------------------------------------------------------------------------------
-    p_tran_frame_valid_com : process(clk_sys, res_n)
+    p_tran_frame_valid_com : process(clk_sys, rst_n)
     begin
-        if (res_n = '0') then
+        if (rst_n = '0') then
             tran_frame_valid_com        <= '0';
         elsif (rising_edge(clk_sys)) then
             if (frame_valid_com_set = '1') then
@@ -686,9 +686,9 @@ begin
     -- at the time of LOCK from CAN Core. Two values are needed to determine change of selected TXT
     -- Buffer for CAN Core. CAN Core needs this information for erasing retransmitt limit counter.
     -----------------------------------------------------------------------------------------------
-    p_store_indices : process(clk_sys, res_n)
+    p_store_indices : process(clk_sys, rst_n)
     begin
-        if (res_n = '0') then
+        if (rst_n = '0') then
             last_txtb_index             <= 0;
             curr_txtb_index_i           <= 0;
 
@@ -716,9 +716,9 @@ begin
     -- Registering value of combinationally selected index by priority decoder to determine change
     -- and signal restarting selection process to TX Arbitrator FSM.
     -----------------------------------------------------------------------------------------------
-    p_sel_index_change : process(clk_sys, res_n)
+    p_sel_index_change : process(clk_sys, rst_n)
     begin
-        if (res_n = '0') then
+        if (rst_n = '0') then
             select_buf_index_reg  <= 0;
         elsif (rising_edge(clk_sys)) then
             select_buf_index_reg <= select_buf_index;
@@ -741,9 +741,9 @@ begin
         to_integer(unsigned(FRAME_TEST_W_ADR(11 downto 2))) when (load_frame_test_w_addr = '1') else
         txtb_pointer_meta_q;
 
-    p_store_meta_data_ptr : process(clk_sys, res_n)
+    p_store_meta_data_ptr : process(clk_sys, rst_n)
     begin
-        if (res_n = '0') then
+        if (rst_n = '0') then
             txtb_pointer_meta_q <= to_integer(unsigned(TIMESTAMP_L_W_ADR(11 downto 2)));
         elsif (rising_edge(clk_sys)) then
             txtb_pointer_meta_q <= txtb_pointer_meta_d;

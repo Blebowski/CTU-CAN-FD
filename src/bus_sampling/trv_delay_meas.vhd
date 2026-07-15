@@ -155,7 +155,7 @@ entity trv_delay_measurement is
         -- Clock and Asynchronous reset
         -------------------------------------------------------------------------------------------
         clk_sys                 :in   std_logic;
-        res_n                   :in   std_logic;
+        rst_n                   :in   std_logic;
 
         -------------------------------------------------------------------------------------------
         -- DFT support
@@ -252,9 +252,9 @@ begin
     -------------------------------------------------------------------------------------------
     -- Register for transceiver delay measurement progress flag.
     -------------------------------------------------------------------------------------------
-    p_trv_delay_prog : process(res_n, clk_sys)
+    p_trv_delay_prog : process(rst_n, clk_sys)
     begin
-        if (res_n = '0') then
+        if (rst_n = '0') then
             trv_meas_progress_q     <= '0';
             trv_meas_progress_del   <= '0';
         elsif (rising_edge(clk_sys)) then
@@ -280,7 +280,7 @@ begin
     port map(
         -- Clock and Reset
         clk                 => clk_sys,                         -- IN
-        arst                => res_n,                           -- IN
+        arst                => rst_n,                           -- IN
 
         -- Flip flop input / output
         d                   => trv_delay_ctr_rst_d,             -- IN
@@ -340,9 +340,9 @@ begin
     --  1. Transceiver Delay - Only measured value
     --  2. SSP Offset - Selected between measured, measured + offset, offset.
     -------------------------------------------------------------------------------------------
-    p_ssp_shadow_reg : process(res_n, clk_sys)
+    p_ssp_shadow_reg : process(rst_n, clk_sys)
     begin
-        if (res_n = '0') then
+        if (rst_n = '0') then
             ssp_delay_shadowed <= (others => '0');
             trv_delay_shadowed <= (others => '0');
 

@@ -93,7 +93,7 @@ entity txt_buffer_fsm is
         -- Clock and Asynchronous reset
         -------------------------------------------------------------------------------------------
         clk_sys                 : in  std_logic;
-        res_n                   : in  std_logic;
+        rst_n                   : in  std_logic;
 
         -------------------------------------------------------------------------------------------
         -- Memory registers interface
@@ -371,9 +371,9 @@ begin
     -----------------------------------------------------------------------------------------------
     -- State register
     -----------------------------------------------------------------------------------------------
-    p_tx_buf_fsm_state_reg : process(res_n, clk_sys)
+    p_tx_buf_fsm_state_reg : process(rst_n, clk_sys)
     begin
-        if (res_n = '0') then
+        if (rst_n = '0') then
             curr_state <= s_txt_empty;
         elsif (rising_edge(clk_sys)) then
             if (txt_fsm_ce = '1') then

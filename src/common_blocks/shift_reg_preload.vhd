@@ -91,7 +91,7 @@ entity shift_reg_preload is
         -- Clock and reset
         -------------------------------------------------------------------------------------------
         clk                  : in  std_logic;
-        res_n                : in  std_logic;
+        rst_n                : in  std_logic;
 
         -------------------------------------------------------------------------------------------
         -- Control signals
@@ -131,9 +131,9 @@ begin
     -----------------------------------------------------------------------------------------------
     -- Implementation of a shift register
     -----------------------------------------------------------------------------------------------
-    p_shift_down : process (res_n, clk)
+    p_shift_down : process (rst_n, clk)
     begin
-        if (res_n = G_RESET_POLARITY) then
+        if (rst_n = G_RESET_POLARITY) then
             shift_regs <= G_RESET_VALUE;
 
         elsif (rising_edge(clk)) then

@@ -195,7 +195,7 @@ begin
     port map(
         -- Clock and Asynchronous reset
         clk_sys     => clk_sys,
-        res_n       => res_n,
+        rst_n       => res_n,
 
         -- DFT support
         scan_mode   => test_node_scan_enable,

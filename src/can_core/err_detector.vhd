@@ -100,7 +100,7 @@ entity err_detector is
         -- Clock and Asynchronous Reset
         -------------------------------------------------------------------------------------------
         clk_sys                 : in  std_logic;
-        res_n                   : in  std_logic;
+        rst_n                   : in  std_logic;
 
         -------------------------------------------------------------------------------------------
         -- Data-path interface
@@ -269,9 +269,9 @@ begin
 
     g_err_pipeline_true : if (G_ERR_VALID_PIPELINE) generate
     begin
-        p_err_valid_reg : process(res_n, clk_sys)
+        p_err_valid_reg : process(rst_n, clk_sys)
         begin
-            if (res_n = '0') then
+            if (rst_n = '0') then
                 err_frm_req <= '0';
             elsif (rising_edge(clk_sys)) then
                 err_frm_req <= err_frm_req_i;
@@ -346,9 +346,9 @@ begin
                    crc_match_c when (crc_check = '1') else
                    crc_match_q;
 
-    p_crc_err_reg : process(clk_sys, res_n)
+    p_crc_err_reg : process(clk_sys, rst_n)
     begin
-        if (res_n = '0') then
+        if (rst_n = '0') then
             crc_match_q <= '0';
         elsif (rising_edge(clk_sys)) then
             crc_match_q <= crc_match_d;
@@ -391,9 +391,9 @@ begin
     -----------------------------------------------------------------------------------------------
     -- Error type register
     -----------------------------------------------------------------------------------------------
-    p_err_type_reg : process(clk_sys, res_n)
+    p_err_type_reg : process(clk_sys, rst_n)
     begin
-        if (res_n = '0') then
+        if (rst_n = '0') then
             err_capt_err_type_q <= ERR_TYPE_RSTVAL;
             err_capt_err_pos_q <= ERR_POS_RSTVAL;
             err_capt_err_erp <= ERR_ERP_RSTVAL;

@@ -94,7 +94,7 @@ entity bit_time_fsm is
         -- Clock and Asynchronous reset
         -------------------------------------------------------------------------------------------
         clk_sys             : in  std_logic;
-        res_n               : in  std_logic;
+        rst_n               : in  std_logic;
 
         -------------------------------------------------------------------------------------------
         -- Memory registers interface
@@ -195,9 +195,9 @@ begin
     -------------------------------------------------------------------------------------------
     -- State register assignment
     -------------------------------------------------------------------------------------------
-    p_state_reg : process(clk_sys, res_n)
+    p_state_reg : process(clk_sys, rst_n)
     begin
-        if (res_n = '0') then
+        if (rst_n = '0') then
             current_state <= s_bt_reset;
         elsif (rising_edge(clk_sys)) then
             if (bt_fsm_ce = '1') then

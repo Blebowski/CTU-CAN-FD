@@ -116,7 +116,7 @@ entity rx_buffer_ram is
         -------------------------------------------------------------------------------------------
         -- Clocks and Asynchronous reset
         -------------------------------------------------------------------------------------------
-        res_n                   : in  std_logic;
+        rst_n                   : in  std_logic;
         clk_sys                 : in  std_logic;
 
         -------------------------------------------------------------------------------------------
@@ -184,7 +184,7 @@ begin
     )
     port map(
         clk_sys                 => clk_sys,                 -- IN
-        res_n                   => res_n,                   -- IN
+        rst_n                   => rst_n,                   -- IN
 
         addr_A                  => rxb_port_a_address_i,    -- IN
         write                   => rxb_port_a_write_i,      -- IN
@@ -222,9 +222,9 @@ begin
         -------------------------------------------------------------------------------------------
         -- Parity memory (vector with per word bit of RAM)
         -------------------------------------------------------------------------------------------
-        p_parity_mem : process(clk_sys, res_n)
+        p_parity_mem : process(clk_sys, rst_n)
         begin
-            if (res_n = '0') then
+            if (rst_n = '0') then
                 parity_word <= (others => '0');
             elsif (rising_edge(clk_sys)) then
                 if (rxb_port_a_write = '1') then
@@ -251,9 +251,9 @@ begin
         --
         -- When reading from RX Buffer RAM, read data are obtained one clock cycle later!
         -------------------------------------------------------------------------------------------
-        p_parity_check : process(clk_sys, res_n)
+        p_parity_check : process(clk_sys, rst_n)
         begin
-            if (res_n = '0') then
+            if (rst_n = '0') then
                 parity_read_exp <= '0';
             elsif (rising_edge(clk_sys)) then
                 parity_read_exp <= parity_word(to_integer(unsigned(rxb_port_b_address)));

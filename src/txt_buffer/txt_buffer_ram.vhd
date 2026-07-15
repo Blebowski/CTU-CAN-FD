@@ -113,7 +113,7 @@ entity txt_buffer_ram is
         -- Clock and Asynchronous reset
         -------------------------------------------------------------------------------------------
         clk_sys                 : in  std_logic;
-        res_n                   : in  std_logic;
+        rst_n                   : in  std_logic;
 
         -------------------------------------------------------------------------------------------
         -- Parity configuration
@@ -195,7 +195,7 @@ begin
     )
     port map(
         clk_sys                 => clk_sys,                             -- IN
-        res_n                   => res_n,                               -- IN
+        rst_n                   => rst_n,                               -- IN
 
         addr_a                  => txtb_port_a_address_i,               -- IN
         write                   => txtb_port_a_write_i,                 -- IN
@@ -220,9 +220,9 @@ begin
         -------------------------------------------------------------------------------------------
         -- Storing Parity word
         -------------------------------------------------------------------------------------------
-        p_parity_word : process(res_n, clk_sys)
+        p_parity_word : process(rst_n, clk_sys)
         begin
-            if (res_n = '0') then
+            if (rst_n = '0') then
                 parity_word <= (others => '0');
             elsif rising_edge(clk_sys) then
                 if (txtb_port_a_write = '1') then
@@ -249,9 +249,9 @@ begin
         --
         -- When reading from TXT Buffer RAM, read data are obtained one clock cycle later!
         -------------------------------------------------------------------------------------------
-        p_parity_check : process(clk_sys, res_n)
+        p_parity_check : process(clk_sys, rst_n)
         begin
-            if (res_n = '0') then
+            if (rst_n = '0') then
                 parity_read_exp <= '0';
             elsif (rising_edge(clk_sys)) then
                 parity_read_exp <= parity_word(to_integer(unsigned(txtb_port_b_address)));

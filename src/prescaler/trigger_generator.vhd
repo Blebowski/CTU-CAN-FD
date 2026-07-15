@@ -125,7 +125,7 @@ entity trigger_generator is
         -- Clock and Asynchronous reset
         -------------------------------------------------------------------------------------------
         clk_sys             : in  std_logic;
-        res_n               : in  std_logic;
+        rst_n               : in  std_logic;
 
         -------------------------------------------------------------------------------------------
         -- Control signal
@@ -169,9 +169,9 @@ begin
                           '0' when (rx_trig_req_q = '0') else
                           tx_trig_req_flag_q;
 
-    p_tx_trig_req_flag : process(clk_sys, res_n)
+    p_tx_trig_req_flag : process(clk_sys, rst_n)
     begin
-        if (res_n = '0') then
+        if (rst_n = '0') then
             tx_trig_req_flag_q <= '0';
         elsif (rising_edge(clk_sys)) then
             tx_trig_req_flag_q <= tx_trig_req_flag_d;
@@ -183,9 +183,9 @@ begin
     -----------------------------------------------------------------------------------------------
     -- Register to create delayed version of RX Trigger (for processing by Protocol Control)
     -----------------------------------------------------------------------------------------------
-    p_rx_trig_reg : process(clk_sys, res_n)
+    p_rx_trig_reg : process(clk_sys, rst_n)
     begin
-        if (res_n = '0') then
+        if (rst_n = '0') then
             rx_trig_req_q <= '0';
         elsif (rising_edge(clk_sys)) then
             rx_trig_req_q <= rx_trig_req;

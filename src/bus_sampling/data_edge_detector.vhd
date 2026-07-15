@@ -108,7 +108,7 @@ entity data_edge_detector is
         -- Clock and Asynchronous reset
         -------------------------------------------------------------------------------------------
         clk_sys                  :in   std_logic;
-        res_n                    :in   std_logic;
+        rst_n                    :in   std_logic;
 
         -------------------------------------------------------------------------------------------
         -- Inputs
@@ -156,9 +156,9 @@ begin
     -------------------------------------------------------------------------------------------
     -- Registering previous value of rx_data, tx_data to detect edge in the data stream
     -------------------------------------------------------------------------------------------
-    p_data_reg : process(clk_sys, res_n)
+    p_data_reg : process(clk_sys, rst_n)
     begin
-        if (res_n = '0') then
+        if (rst_n = '0') then
             rx_data_prev        <= RECESSIVE;
             tx_data_prev        <= RECESSIVE;
             rx_data_sync_prev   <= RECESSIVE;

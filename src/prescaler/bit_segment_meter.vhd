@@ -208,7 +208,7 @@ entity bit_segment_meter is
         -- Clock and Asynchronous reset
         -------------------------------------------------------------------------------------------
         clk_sys                     : in  std_logic;
-        res_n                       : in  std_logic;
+        rst_n                       : in  std_logic;
 
         -------------------------------------------------------------------------------------------
         -- Control interface
@@ -402,9 +402,9 @@ begin
                              else
                          '0';
 
-    p_exp_seg_length : process(res_n, clk_sys)
+    p_exp_seg_length : process(rst_n, clk_sys)
     begin
-        if (res_n = '0') then
+        if (rst_n = '0') then
             exp_seg_length_q <= (others => '1');
         elsif (rising_edge(clk_sys)) then
             if (exp_seg_length_ce = '1') then

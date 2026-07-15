@@ -127,7 +127,7 @@ entity prescaler is
         -- Clock and Asynchronous reset
         -------------------------------------------------------------------------------------------
         clk_sys                 : in  std_logic;
-        res_n                   : in  std_logic;
+        rst_n                   : in  std_logic;
 
         -------------------------------------------------------------------------------------------
         -- Memory registers interface
@@ -272,7 +272,7 @@ begin
     )
     port map (
         clk_sys                 => clk_sys,             -- IN
-        res_n                   => res_n,               -- IN
+        rst_n                   => rst_n,               -- IN
 
         -- Direct configuration from Memory registers
         mr_settings_ena         => mr_settings_ena,     -- IN
@@ -305,7 +305,7 @@ begin
     i_synchronisation_checker : entity ctu_can_fd_rtl.synchronisation_checker
     port map (
         clk_sys                 => clk_sys,             -- IN
-        res_n                   => res_n,               -- IN
+        rst_n                   => rst_n,               -- IN
         sync_control            => sync_control,        -- IN
         sync_edge               => sync_edge,           -- IN
         no_pos_resync           => no_pos_resync,       -- IN
@@ -330,7 +330,7 @@ begin
     )
     port map (
         clk_sys                 => clk_sys,             -- IN
-        res_n                   => res_n,               -- IN
+        rst_n                   => rst_n,               -- IN
         resync_edge_valid       => resync_edge_valid,   -- IN
         is_tseg1                => is_tseg1,            -- IN
         is_tseg2                => is_tseg2,            -- IN
@@ -356,7 +356,7 @@ begin
     )
     port map (
         clk_sys                 => clk_sys,             -- IN
-        res_n                   => res_n,               -- IN
+        rst_n                   => rst_n,               -- IN
         brp                     => brp_nbt,             -- IN
         tq_reset                => bt_ctr_clear,        -- IN
         bt_reset                => bt_ctr_clear,        -- IN
@@ -379,7 +379,7 @@ begin
     )
     port map (
         clk_sys                 => clk_sys,             -- IN
-        res_n                   => res_n,               -- IN
+        rst_n                   => rst_n,               -- IN
         resync_edge_valid       => resync_edge_valid,   -- IN
         is_tseg1                => is_tseg1,            -- IN
         is_tseg2                => is_tseg2,            -- IN
@@ -405,7 +405,7 @@ begin
     )
     port map (
         clk_sys                 => clk_sys,             -- IN
-        res_n                   => res_n,               -- IN
+        rst_n                   => rst_n,               -- IN
         brp                     => brp_dbt,             -- IN
         tq_reset                => bt_ctr_clear,        -- IN
         bt_reset                => bt_ctr_clear,        -- IN
@@ -421,7 +421,7 @@ begin
     i_segment_end_detector : entity ctu_can_fd_rtl.segment_end_detector
     port map (
         clk_sys                 => clk_sys,             -- IN
-        res_n                   => res_n,               -- IN
+        rst_n                   => rst_n,               -- IN
         sp_control              => sp_control,          -- IN
         h_sync_edge_valid       => h_sync_edge_valid,   -- IN
         exit_segm_req_nbt       => exit_segm_req_nbt,   -- IN
@@ -443,7 +443,7 @@ begin
     i_bit_time_fsm : entity ctu_can_fd_rtl.bit_time_fsm
     port map (
         clk_sys                 => clk_sys,             -- IN
-        res_n                   => res_n,               -- IN
+        rst_n                   => rst_n,               -- IN
         segm_end                => segment_end,         -- IN
         mr_settings_ena         => mr_settings_ena,     -- IN
 
@@ -463,7 +463,7 @@ begin
     )
     port map (
         clk_sys                 => clk_sys,             -- IN
-        res_n                   => res_n,               -- IN
+        rst_n                   => rst_n,               -- IN
         rx_trig_req             => rx_trig_req,         -- IN
         tx_trig_req             => tx_trig_req,         -- IN
 

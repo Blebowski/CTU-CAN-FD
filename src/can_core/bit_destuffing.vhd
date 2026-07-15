@@ -101,7 +101,7 @@ entity bit_destuffing is
         -- Clock and Asynchronous reset
         -------------------------------------------------------------------------------------------
         clk_sys             : in  std_logic;
-        res_n               : in  std_logic;
+        rst_n               : in  std_logic;
 
         -------------------------------------------------------------------------------------------
         -- Data-path
@@ -194,7 +194,7 @@ begin
         G_RST_VAL          => '0'
     )
     port map (
-        arst               => res_n,            -- IN
+        arst               => rst_n,            -- IN
         clk                => clk_sys,          -- IN
         reg_d              => destuff_enable,   -- IN
 
@@ -262,7 +262,7 @@ begin
         G_RST_VAL          => '0'
     )
     port map (
-        arst               => res_n,            -- IN
+        arst               => rst_n,            -- IN
         clk                => clk_sys,          -- IN
         reg_d              => fixed_prev_d,     -- IN
         ce                 => destuff_enable,   -- IN
@@ -291,9 +291,9 @@ begin
     -----------------------------------------------------------------------------------------------
     -- Counter with number of de-stuffed bits - register assignment
     -----------------------------------------------------------------------------------------------
-    p_dst_ctr : process(clk_sys, res_n)
+    p_dst_ctr : process(clk_sys, rst_n)
     begin
-        if (res_n = '0') then
+        if (rst_n = '0') then
             dst_ctr_q <= (others => '0');
         elsif (rising_edge(clk_sys)) then
             if (destuff_enable = '1') then
@@ -332,9 +332,9 @@ begin
     -----------------------------------------------------------------------------------------------
     -- Counter of equal consecutive bits - register assignment.
     -----------------------------------------------------------------------------------------------
-    p_same_bits_ctr : process(clk_sys, res_n)
+    p_same_bits_ctr : process(clk_sys, rst_n)
     begin
-        if (res_n = '0') then
+        if (rst_n = '0') then
             same_bits_q <= "001";
         elsif (rising_edge(clk_sys)) then
             same_bits_q <= same_bits_d;
@@ -362,7 +362,7 @@ begin
         G_RST_VAL          => '0'
     )
     port map (
-        arst               => res_n,            -- IN
+        arst               => rst_n,            -- IN
         clk                => clk_sys,          -- IN
         reg_d              => destuffed_d,      -- IN
 
@@ -386,7 +386,7 @@ begin
         G_RST_VAL          => '0'
     )
     port map (
-        arst               => res_n,            -- IN
+        arst               => rst_n,            -- IN
         clk                => clk_sys,          -- IN
         reg_d              => stuff_err_d,      -- IN
 
@@ -411,7 +411,7 @@ begin
         G_RST_VAL          => RECESSIVE
     )
     port map (
-        arst               => res_n,            -- IN
+        arst               => rst_n,            -- IN
         clk                => clk_sys,          -- IN
         reg_d              => prev_val_d,       -- IN
 
@@ -429,7 +429,7 @@ begin
         G_RST_VAL          => RECESSIVE
     )
     port map (
-        arst               => res_n,
+        arst               => rst_n,
         clk                => clk_sys,
 
         reg_d              => data_in,

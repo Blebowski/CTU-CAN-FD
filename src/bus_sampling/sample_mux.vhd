@@ -92,7 +92,7 @@ entity sample_mux is
         -- Clock and Async reset
         -------------------------------------------------------------------------------------------
         clk_sys              :in   std_logic;
-        res_n                :in   std_logic;
+        rst_n                :in   std_logic;
 
         -------------------------------------------------------------------------------------------
         -- Control signals
@@ -145,9 +145,9 @@ begin
     prev_sample_d <= data_rx_synced when (sample = '1') else
                      prev_sample_q;
 
-    p_sample_prev_req : process(clk_sys, res_n)
+    p_sample_prev_req : process(clk_sys, rst_n)
     begin
-        if (res_n = '0') then
+        if (rst_n = '0') then
             prev_sample_q <= RECESSIVE;
         elsif (rising_edge(clk_sys)) then
             if (mr_settings_ena = '1') then

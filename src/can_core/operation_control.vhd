@@ -92,7 +92,7 @@ entity operation_control is
         -- Clock and Asynchronous reset
         -------------------------------------------------------------------------------------------
         clk_sys              : in  std_logic;
-        res_n                : in  std_logic;
+        rst_n                : in  std_logic;
 
         -------------------------------------------------------------------------------------------
         -- Prescaler Interface
@@ -217,9 +217,9 @@ begin
     -----------------------------------------------------------------------------------------------
     -- State register
     -----------------------------------------------------------------------------------------------
-    p_state_reg : process(clk_sys, res_n)
+    p_state_reg : process(clk_sys, rst_n)
     begin
-        if (res_n = '0') then
+        if (rst_n = '0') then
             curr_state <= s_oc_off;
         elsif (rising_edge(clk_sys)) then
             curr_state <= next_state;

@@ -93,7 +93,7 @@ entity shift_reg is
         -- Clock and reset
         -------------------------------------------------------------------------------------------
         clk                  : in  std_logic;
-        res_n                : in  std_logic;
+        rst_n                : in  std_logic;
 
         -------------------------------------------------------------------------------------------
         -- Control signals
@@ -141,9 +141,9 @@ begin
     -----------------------------------------------------------------------------------------------
     -- Implementation of a shift register
     -----------------------------------------------------------------------------------------------
-    p_shift : process (clk, res_n)
+    p_shift : process (clk, rst_n)
     begin
-        if (res_n = G_RESET_POLARITY) then
+        if (rst_n = G_RESET_POLARITY) then
             shift_regs <= G_RESET_VALUE;
         elsif (rising_edge(clk)) then
             if (enable = '1') then

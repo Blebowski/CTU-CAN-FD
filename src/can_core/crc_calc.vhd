@@ -101,7 +101,7 @@ entity crc_calc is
         -- System clock and Asynchronous Reset
         -------------------------------------------------------------------------------------------
         clk_sys             : in  std_logic;
-        res_n               : in  std_logic;
+        rst_n               : in  std_logic;
 
         -------------------------------------------------------------------------------------------
         -- CRC Calculation control
@@ -169,9 +169,9 @@ begin
     -----------------------------------------------------------------------------------------------
     -- CRC register
     -----------------------------------------------------------------------------------------------
-    p_crc_reg : process(res_n, clk_sys)
+    p_crc_reg : process(rst_n, clk_sys)
     begin
-        if (res_n = '0') then
+        if (rst_n = '0') then
             crc_q             <= (others => '0');
         elsif rising_edge(clk_sys) then
             if (crc_ce = '1') then

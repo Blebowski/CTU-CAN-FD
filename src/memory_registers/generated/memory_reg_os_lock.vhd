@@ -92,7 +92,7 @@ entity memory_reg_os_lock is
         -- Clock and reset
         ------------------------------------------------------------------------
         signal clk_sys                :in   std_logic;
-        signal res_n                  :in   std_logic;
+        signal rst_n                  :in   std_logic;
 
         ------------------------------------------------------------------------
         -- Address bus

@@ -111,7 +111,7 @@ entity txt_buffer_even is
         -- Clock and Asynchronous reset
         -------------------------------------------------------------------------------------------
         clk_sys                 : in  std_logic;
-        res_n                   : in  std_logic;
+        rst_n                   : in  std_logic;
 
         -------------------------------------------------------------------------------------------
         -- DFT support
@@ -289,9 +289,9 @@ begin
     -----------------------------------------------------------------------------------------------
     -- Register the TXT Buffer commands -> Breaks paths from memory bus
     -----------------------------------------------------------------------------------------------
-    p_sw_command_reg : process(res_n, clk_sys)
+    p_sw_command_reg : process(rst_n, clk_sys)
     begin
-        if (res_n = '0') then
+        if (rst_n = '0') then
             mr_tx_command_txce_q <= '0';
             mr_tx_command_txcr_q <= '0';
             mr_tx_command_txca_q <= '0';
@@ -343,7 +343,7 @@ begin
     port map (
         -- Clock and Asynchronous reset
         clk_sys                 => clk_ram,                     -- IN
-        res_n                   => res_n,                       -- IN
+        rst_n                   => rst_n,                       -- IN
 
         -- Parity configuration
         mr_settings_pchke       => mr_settings_pchke,           -- IN
@@ -378,7 +378,7 @@ begin
     i_txt_buffer_fsm : entity ctu_can_fd_rtl.txt_buffer_fsm
     port map (
         clk_sys                 => clk_sys,                     -- IN
-        res_n                   => res_n,                       -- IN
+        rst_n                   => rst_n,                       -- IN
 
         mr_mode_bmm             => mr_mode_bmm,                 -- IN
         mr_mode_rom             => mr_mode_rom,                 -- IN

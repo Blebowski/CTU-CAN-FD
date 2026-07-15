@@ -95,7 +95,7 @@ entity fault_confinement_fsm is
         -- Clock and Asynchronous Reset
         -------------------------------------------------------------------------------------------
         clk_sys                 : in  std_logic;
-        res_n                   : in  std_logic;
+        rst_n                   : in  std_logic;
 
         -------------------------------------------------------------------------------------------
         -- Control signals
@@ -197,9 +197,9 @@ begin
     -----------------------------------------------------------------------------------------------
     -- Error warning limit register
     -----------------------------------------------------------------------------------------------
-    p_ewl_reg : process(res_n, clk_sys)
+    p_ewl_reg : process(rst_n, clk_sys)
     begin
-        if (res_n = '0') then
+        if (rst_n = '0') then
             err_warning_limit_q <= '0';
         elsif (rising_edge(clk_sys)) then
             err_warning_limit_q <= err_warning_limit_d;
@@ -244,9 +244,9 @@ begin
     -----------------------------------------------------------------------------------------------
     -- State register
     -----------------------------------------------------------------------------------------------
-    p_fault_conf_state_reg : process(clk_sys, res_n)
+    p_fault_conf_state_reg : process(clk_sys, rst_n)
     begin
-        if (res_n = '0') then
+        if (rst_n = '0') then
             curr_state <= s_fc_bus_off;
         elsif (rising_edge(clk_sys)) then
             curr_state <= next_state;

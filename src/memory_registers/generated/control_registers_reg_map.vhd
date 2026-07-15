@@ -93,7 +93,7 @@ generic (
 );
 port (
     signal clk_sys               :in std_logic;
-    signal res_n                 :in std_logic;
+    signal rst_n                 :in std_logic;
     signal address               :in std_logic_vector(address_width - 1 downto 0);
     signal w_data                :in std_logic_vector(data_width - 1 downto 0);
     signal r_data                :out std_logic_vector(data_width - 1 downto 0);
@@ -134,7 +134,7 @@ begin
     )
     port map(
         clk_sys                         => clk_sys ,-- in
-        res_n                           => res_n ,-- in
+        rst_n                           => rst_n ,-- in
         address                         => address(7 downto 2) ,-- in
         enable                          => cs ,-- in
         addr_dec                        => reg_sel -- out
@@ -151,7 +151,7 @@ begin
     )
     port map(
         clk_sys                         => clk_sys ,-- in
-        res_n                           => res_n ,-- in
+        rst_n                           => rst_n ,-- in
         data_in                         => w_data(0 downto 0) ,-- in
         write                           => write_en(0) ,-- in
         cs                              => reg_sel(1) ,-- in
@@ -169,7 +169,7 @@ begin
     )
     port map(
         clk_sys                         => clk_sys ,-- in
-        res_n                           => res_n ,-- in
+        rst_n                           => rst_n ,-- in
         data_in                         => w_data(1 downto 1) ,-- in
         write                           => write_en(0) ,-- in
         cs                              => reg_sel(1) ,-- in
@@ -187,7 +187,7 @@ begin
     )
     port map(
         clk_sys                         => clk_sys ,-- in
-        res_n                           => res_n ,-- in
+        rst_n                           => rst_n ,-- in
         data_in                         => w_data(2 downto 2) ,-- in
         write                           => write_en(0) ,-- in
         cs                              => reg_sel(1) ,-- in
@@ -205,7 +205,7 @@ begin
     )
     port map(
         clk_sys                         => clk_sys ,-- in
-        res_n                           => res_n ,-- in
+        rst_n                           => rst_n ,-- in
         data_in                         => w_data(3 downto 3) ,-- in
         write                           => write_en(0) ,-- in
         cs                              => reg_sel(1) ,-- in
@@ -223,7 +223,7 @@ begin
     )
     port map(
         clk_sys                         => clk_sys ,-- in
-        res_n                           => res_n ,-- in
+        rst_n                           => rst_n ,-- in
         data_in                         => w_data(4 downto 4) ,-- in
         write                           => write_en(0) ,-- in
         cs                              => reg_sel(1) ,-- in
@@ -241,7 +241,7 @@ begin
     )
     port map(
         clk_sys                         => clk_sys ,-- in
-        res_n                           => res_n ,-- in
+        rst_n                           => rst_n ,-- in
         data_in                         => w_data(5 downto 5) ,-- in
         write                           => write_en(0) ,-- in
         cs                              => reg_sel(1) ,-- in
@@ -259,7 +259,7 @@ begin
     )
     port map(
         clk_sys                         => clk_sys ,-- in
-        res_n                           => res_n ,-- in
+        rst_n                           => rst_n ,-- in
         data_in                         => w_data(6 downto 6) ,-- in
         write                           => write_en(0) ,-- in
         cs                              => reg_sel(1) ,-- in
@@ -277,7 +277,7 @@ begin
     )
     port map(
         clk_sys                         => clk_sys ,-- in
-        res_n                           => res_n ,-- in
+        rst_n                           => rst_n ,-- in
         data_in                         => w_data(7 downto 7) ,-- in
         write                           => write_en(0) ,-- in
         cs                              => reg_sel(1) ,-- in
@@ -295,7 +295,7 @@ begin
     )
     port map(
         clk_sys                         => clk_sys ,-- in
-        res_n                           => res_n ,-- in
+        rst_n                           => rst_n ,-- in
         data_in                         => w_data(8 downto 8) ,-- in
         write                           => write_en(1) ,-- in
         cs                              => reg_sel(1) ,-- in
@@ -313,7 +313,7 @@ begin
     )
     port map(
         clk_sys                         => clk_sys ,-- in
-        res_n                           => res_n ,-- in
+        rst_n                           => rst_n ,-- in
         data_in                         => w_data(9 downto 9) ,-- in
         write                           => write_en(1) ,-- in
         cs                              => reg_sel(1) ,-- in
@@ -331,7 +331,7 @@ begin
     )
     port map(
         clk_sys                         => clk_sys ,-- in
-        res_n                           => res_n ,-- in
+        rst_n                           => rst_n ,-- in
         data_in                         => w_data(10 downto 10) ,-- in
         write                           => write_en(1) ,-- in
         cs                              => reg_sel(1) ,-- in
@@ -349,7 +349,7 @@ begin
     )
     port map(
         clk_sys                         => clk_sys ,-- in
-        res_n                           => res_n ,-- in
+        rst_n                           => rst_n ,-- in
         data_in                         => w_data(11 downto 11) ,-- in
         write                           => write_en(1) ,-- in
         cs                              => reg_sel(1) ,-- in
@@ -367,7 +367,7 @@ begin
     )
     port map(
         clk_sys                         => clk_sys ,-- in
-        res_n                           => res_n ,-- in
+        rst_n                           => rst_n ,-- in
         data_in                         => w_data(12 downto 12) ,-- in
         write                           => write_en(1) ,-- in
         cs                              => reg_sel(1) ,-- in
@@ -385,7 +385,7 @@ begin
     )
     port map(
         clk_sys                         => clk_sys ,-- in
-        res_n                           => res_n ,-- in
+        rst_n                           => rst_n ,-- in
         data_in                         => w_data(16 downto 16) ,-- in
         write                           => write_en(2) ,-- in
         cs                              => reg_sel(1) ,-- in
@@ -403,7 +403,7 @@ begin
     )
     port map(
         clk_sys                         => clk_sys ,-- in
-        res_n                           => res_n ,-- in
+        rst_n                           => rst_n ,-- in
         data_in                         => w_data(20 downto 17) ,-- in
         write                           => write_en(2) ,-- in
         cs                              => reg_sel(1) ,-- in
@@ -421,7 +421,7 @@ begin
     )
     port map(
         clk_sys                         => clk_sys ,-- in
-        res_n                           => res_n ,-- in
+        rst_n                           => rst_n ,-- in
         data_in                         => w_data(21 downto 21) ,-- in
         write                           => write_en(2) ,-- in
         cs                              => reg_sel(1) ,-- in
@@ -439,7 +439,7 @@ begin
     )
     port map(
         clk_sys                         => clk_sys ,-- in
-        res_n                           => res_n ,-- in
+        rst_n                           => rst_n ,-- in
         data_in                         => w_data(22 downto 22) ,-- in
         write                           => write_en(2) ,-- in
         cs                              => reg_sel(1) ,-- in
@@ -457,7 +457,7 @@ begin
     )
     port map(
         clk_sys                         => clk_sys ,-- in
-        res_n                           => res_n ,-- in
+        rst_n                           => rst_n ,-- in
         data_in                         => w_data(23 downto 23) ,-- in
         write                           => write_en(2) ,-- in
         cs                              => reg_sel(1) ,-- in
@@ -475,7 +475,7 @@ begin
     )
     port map(
         clk_sys                         => clk_sys ,-- in
-        res_n                           => res_n ,-- in
+        rst_n                           => rst_n ,-- in
         data_in                         => w_data(24 downto 24) ,-- in
         write                           => write_en(3) ,-- in
         cs                              => reg_sel(1) ,-- in
@@ -493,7 +493,7 @@ begin
     )
     port map(
         clk_sys                         => clk_sys ,-- in
-        res_n                           => res_n ,-- in
+        rst_n                           => rst_n ,-- in
         data_in                         => w_data(25 downto 25) ,-- in
         write                           => write_en(3) ,-- in
         cs                              => reg_sel(1) ,-- in
@@ -511,7 +511,7 @@ begin
     )
     port map(
         clk_sys                         => clk_sys ,-- in
-        res_n                           => res_n ,-- in
+        rst_n                           => rst_n ,-- in
         data_in                         => w_data(26 downto 26) ,-- in
         write                           => write_en(3) ,-- in
         cs                              => reg_sel(1) ,-- in
@@ -529,7 +529,7 @@ begin
     )
     port map(
         clk_sys                         => clk_sys ,-- in
-        res_n                           => res_n ,-- in
+        rst_n                           => rst_n ,-- in
         data_in                         => w_data(27 downto 27) ,-- in
         write                           => write_en(3) ,-- in
         cs                              => reg_sel(1) ,-- in
@@ -547,7 +547,7 @@ begin
     )
     port map(
         clk_sys                         => clk_sys ,-- in
-        res_n                           => res_n ,-- in
+        rst_n                           => rst_n ,-- in
         data_in                         => w_data(1 downto 1) ,-- in
         write                           => write_en(0) ,-- in
         cs                              => reg_sel(3) ,-- in
@@ -565,7 +565,7 @@ begin
     )
     port map(
         clk_sys                         => clk_sys ,-- in
-        res_n                           => res_n ,-- in
+        rst_n                           => rst_n ,-- in
         data_in                         => w_data(2 downto 2) ,-- in
         write                           => write_en(0) ,-- in
         cs                              => reg_sel(3) ,-- in
@@ -583,7 +583,7 @@ begin
     )
     port map(
         clk_sys                         => clk_sys ,-- in
-        res_n                           => res_n ,-- in
+        rst_n                           => rst_n ,-- in
         data_in                         => w_data(3 downto 3) ,-- in
         write                           => write_en(0) ,-- in
         cs                              => reg_sel(3) ,-- in
@@ -601,7 +601,7 @@ begin
     )
     port map(
         clk_sys                         => clk_sys ,-- in
-        res_n                           => res_n ,-- in
+        rst_n                           => rst_n ,-- in
         data_in                         => w_data(4 downto 4) ,-- in
         write                           => write_en(0) ,-- in
         cs                              => reg_sel(3) ,-- in
@@ -619,7 +619,7 @@ begin
     )
     port map(
         clk_sys                         => clk_sys ,-- in
-        res_n                           => res_n ,-- in
+        rst_n                           => rst_n ,-- in
         data_in                         => w_data(5 downto 5) ,-- in
         write                           => write_en(0) ,-- in
         cs                              => reg_sel(3) ,-- in
@@ -637,7 +637,7 @@ begin
     )
     port map(
         clk_sys                         => clk_sys ,-- in
-        res_n                           => res_n ,-- in
+        rst_n                           => rst_n ,-- in
         data_in                         => w_data(6 downto 6) ,-- in
         write                           => write_en(0) ,-- in
         cs                              => reg_sel(3) ,-- in
@@ -655,7 +655,7 @@ begin
     )
     port map(
         clk_sys                         => clk_sys ,-- in
-        res_n                           => res_n ,-- in
+        rst_n                           => rst_n ,-- in
         data_in                         => w_data(7 downto 7) ,-- in
         write                           => write_en(0) ,-- in
         cs                              => reg_sel(3) ,-- in
@@ -673,7 +673,7 @@ begin
     )
     port map(
         clk_sys                         => clk_sys ,-- in
-        res_n                           => res_n ,-- in
+        rst_n                           => rst_n ,-- in
         data_in                         => w_data(8 downto 8) ,-- in
         write                           => write_en(1) ,-- in
         cs                              => reg_sel(3) ,-- in
@@ -691,7 +691,7 @@ begin
     )
     port map(
         clk_sys                         => clk_sys ,-- in
-        res_n                           => res_n ,-- in
+        rst_n                           => rst_n ,-- in
         data_in                         => w_data(9 downto 9) ,-- in
         write                           => write_en(1) ,-- in
         cs                              => reg_sel(3) ,-- in
@@ -709,7 +709,7 @@ begin
     )
     port map(
         clk_sys                         => clk_sys ,-- in
-        res_n                           => res_n ,-- in
+        rst_n                           => rst_n ,-- in
         data_in                         => w_data(10 downto 10) ,-- in
         write                           => write_en(1) ,-- in
         cs                              => reg_sel(3) ,-- in
@@ -727,7 +727,7 @@ begin
     )
     port map(
         clk_sys                         => clk_sys ,-- in
-        res_n                           => res_n ,-- in
+        rst_n                           => rst_n ,-- in
         data_in                         => w_data(0 downto 0) ,-- in
         write                           => write_en(0) ,-- in
         cs                              => reg_sel(4) ,-- in
@@ -745,7 +745,7 @@ begin
     )
     port map(
         clk_sys                         => clk_sys ,-- in
-        res_n                           => res_n ,-- in
+        rst_n                           => rst_n ,-- in
         data_in                         => w_data(1 downto 1) ,-- in
         write                           => write_en(0) ,-- in
         cs                              => reg_sel(4) ,-- in
@@ -763,7 +763,7 @@ begin
     )
     port map(
         clk_sys                         => clk_sys ,-- in
-        res_n                           => res_n ,-- in
+        rst_n                           => rst_n ,-- in
         data_in                         => w_data(2 downto 2) ,-- in
         write                           => write_en(0) ,-- in
         cs                              => reg_sel(4) ,-- in
@@ -781,7 +781,7 @@ begin
     )
     port map(
         clk_sys                         => clk_sys ,-- in
-        res_n                           => res_n ,-- in
+        rst_n                           => rst_n ,-- in
         data_in                         => w_data(3 downto 3) ,-- in
         write                           => write_en(0) ,-- in
         cs                              => reg_sel(4) ,-- in
@@ -799,7 +799,7 @@ begin
     )
     port map(
         clk_sys                         => clk_sys ,-- in
-        res_n                           => res_n ,-- in
+        rst_n                           => rst_n ,-- in
         data_in                         => w_data(4 downto 4) ,-- in
         write                           => write_en(0) ,-- in
         cs                              => reg_sel(4) ,-- in
@@ -817,7 +817,7 @@ begin
     )
     port map(
         clk_sys                         => clk_sys ,-- in
-        res_n                           => res_n ,-- in
+        rst_n                           => rst_n ,-- in
         data_in                         => w_data(5 downto 5) ,-- in
         write                           => write_en(0) ,-- in
         cs                              => reg_sel(4) ,-- in
@@ -835,7 +835,7 @@ begin
     )
     port map(
         clk_sys                         => clk_sys ,-- in
-        res_n                           => res_n ,-- in
+        rst_n                           => rst_n ,-- in
         data_in                         => w_data(6 downto 6) ,-- in
         write                           => write_en(0) ,-- in
         cs                              => reg_sel(4) ,-- in
@@ -853,7 +853,7 @@ begin
     )
     port map(
         clk_sys                         => clk_sys ,-- in
-        res_n                           => res_n ,-- in
+        rst_n                           => rst_n ,-- in
         data_in                         => w_data(7 downto 7) ,-- in
         write                           => write_en(0) ,-- in
         cs                              => reg_sel(4) ,-- in
@@ -871,7 +871,7 @@ begin
     )
     port map(
         clk_sys                         => clk_sys ,-- in
-        res_n                           => res_n ,-- in
+        rst_n                           => rst_n ,-- in
         data_in                         => w_data(8 downto 8) ,-- in
         write                           => write_en(1) ,-- in
         cs                              => reg_sel(4) ,-- in
@@ -889,7 +889,7 @@ begin
     )
     port map(
         clk_sys                         => clk_sys ,-- in
-        res_n                           => res_n ,-- in
+        rst_n                           => rst_n ,-- in
         data_in                         => w_data(9 downto 9) ,-- in
         write                           => write_en(1) ,-- in
         cs                              => reg_sel(4) ,-- in
@@ -907,7 +907,7 @@ begin
     )
     port map(
         clk_sys                         => clk_sys ,-- in
-        res_n                           => res_n ,-- in
+        rst_n                           => rst_n ,-- in
         data_in                         => w_data(10 downto 10) ,-- in
         write                           => write_en(1) ,-- in
         cs                              => reg_sel(4) ,-- in
@@ -925,7 +925,7 @@ begin
     )
     port map(
         clk_sys                         => clk_sys ,-- in
-        res_n                           => res_n ,-- in
+        rst_n                           => rst_n ,-- in
         data_in                         => w_data(11 downto 11) ,-- in
         write                           => write_en(1) ,-- in
         cs                              => reg_sel(4) ,-- in
@@ -943,7 +943,7 @@ begin
     )
     port map(
         clk_sys                         => clk_sys ,-- in
-        res_n                           => res_n ,-- in
+        rst_n                           => rst_n ,-- in
         data_in                         => w_data(7 downto 0) ,-- in
         write                           => write_en(0) ,-- in
         cs                              => reg_sel(5) ,-- in
@@ -961,7 +961,7 @@ begin
     )
     port map(
         clk_sys                         => clk_sys ,-- in
-        res_n                           => res_n ,-- in
+        rst_n                           => rst_n ,-- in
         data_in                         => w_data(11 downto 8) ,-- in
         write                           => write_en(1) ,-- in
         cs                              => reg_sel(5) ,-- in
@@ -979,7 +979,7 @@ begin
     )
     port map(
         clk_sys                         => clk_sys ,-- in
-        res_n                           => res_n ,-- in
+        rst_n                           => rst_n ,-- in
         data_in                         => w_data(7 downto 0) ,-- in
         write                           => write_en(0) ,-- in
         cs                              => reg_sel(6) ,-- in
@@ -997,7 +997,7 @@ begin
     )
     port map(
         clk_sys                         => clk_sys ,-- in
-        res_n                           => res_n ,-- in
+        rst_n                           => rst_n ,-- in
         data_in                         => w_data(11 downto 8) ,-- in
         write                           => write_en(1) ,-- in
         cs                              => reg_sel(6) ,-- in
@@ -1015,7 +1015,7 @@ begin
     )
     port map(
         clk_sys                         => clk_sys ,-- in
-        res_n                           => res_n ,-- in
+        rst_n                           => rst_n ,-- in
         data_in                         => w_data(7 downto 0) ,-- in
         write                           => write_en(0) ,-- in
         cs                              => reg_sel(7) ,-- in
@@ -1033,7 +1033,7 @@ begin
     )
     port map(
         clk_sys                         => clk_sys ,-- in
-        res_n                           => res_n ,-- in
+        rst_n                           => rst_n ,-- in
         data_in                         => w_data(11 downto 8) ,-- in
         write                           => write_en(1) ,-- in
         cs                              => reg_sel(7) ,-- in
@@ -1051,7 +1051,7 @@ begin
     )
     port map(
         clk_sys                         => clk_sys ,-- in
-        res_n                           => res_n ,-- in
+        rst_n                           => rst_n ,-- in
         data_in                         => w_data(7 downto 0) ,-- in
         write                           => write_en(0) ,-- in
         cs                              => reg_sel(8) ,-- in
@@ -1069,7 +1069,7 @@ begin
     )
     port map(
         clk_sys                         => clk_sys ,-- in
-        res_n                           => res_n ,-- in
+        rst_n                           => rst_n ,-- in
         data_in                         => w_data(11 downto 8) ,-- in
         write                           => write_en(1) ,-- in
         cs                              => reg_sel(8) ,-- in
@@ -1087,7 +1087,7 @@ begin
     )
     port map(
         clk_sys                         => clk_sys ,-- in
-        res_n                           => res_n ,-- in
+        rst_n                           => rst_n ,-- in
         data_in                         => w_data(6 downto 0) ,-- in
         write                           => write_en(0) ,-- in
         cs                              => reg_sel(9) ,-- in
@@ -1106,7 +1106,7 @@ begin
     )
     port map(
         clk_sys                         => clk_sys ,-- in
-        res_n                           => res_n ,-- in
+        rst_n                           => rst_n ,-- in
         data_in                         => w_data(7 downto 7) ,-- in
         write                           => write_en(0) ,-- in
         cs                              => reg_sel(9) ,-- in
@@ -1125,7 +1125,7 @@ begin
     )
     port map(
         clk_sys                         => clk_sys ,-- in
-        res_n                           => res_n ,-- in
+        rst_n                           => rst_n ,-- in
         data_in                         => w_data(12 downto 8) ,-- in
         write                           => write_en(1) ,-- in
         cs                              => reg_sel(9) ,-- in
@@ -1144,7 +1144,7 @@ begin
     )
     port map(
         clk_sys                         => clk_sys ,-- in
-        res_n                           => res_n ,-- in
+        rst_n                           => rst_n ,-- in
         data_in                         => w_data(15 downto 13) ,-- in
         write                           => write_en(1) ,-- in
         cs                              => reg_sel(9) ,-- in
@@ -1163,7 +1163,7 @@ begin
     )
     port map(
         clk_sys                         => clk_sys ,-- in
-        res_n                           => res_n ,-- in
+        rst_n                           => rst_n ,-- in
         data_in                         => w_data(18 downto 16) ,-- in
         write                           => write_en(2) ,-- in
         cs                              => reg_sel(9) ,-- in
@@ -1182,7 +1182,7 @@ begin
     )
     port map(
         clk_sys                         => clk_sys ,-- in
-        res_n                           => res_n ,-- in
+        rst_n                           => rst_n ,-- in
         data_in                         => w_data(23 downto 19) ,-- in
         write                           => write_en(2) ,-- in
         cs                              => reg_sel(9) ,-- in
@@ -1201,7 +1201,7 @@ begin
     )
     port map(
         clk_sys                         => clk_sys ,-- in
-        res_n                           => res_n ,-- in
+        rst_n                           => rst_n ,-- in
         data_in                         => w_data(26 downto 24) ,-- in
         write                           => write_en(3) ,-- in
         cs                              => reg_sel(9) ,-- in
@@ -1220,7 +1220,7 @@ begin
     )
     port map(
         clk_sys                         => clk_sys ,-- in
-        res_n                           => res_n ,-- in
+        rst_n                           => rst_n ,-- in
         data_in                         => w_data(31 downto 27) ,-- in
         write                           => write_en(3) ,-- in
         cs                              => reg_sel(9) ,-- in
@@ -1239,7 +1239,7 @@ begin
     )
     port map(
         clk_sys                         => clk_sys ,-- in
-        res_n                           => res_n ,-- in
+        rst_n                           => rst_n ,-- in
         data_in                         => w_data(5 downto 0) ,-- in
         write                           => write_en(0) ,-- in
         cs                              => reg_sel(10) ,-- in
@@ -1258,7 +1258,7 @@ begin
     )
     port map(
         clk_sys                         => clk_sys ,-- in
-        res_n                           => res_n ,-- in
+        rst_n                           => rst_n ,-- in
         data_in                         => w_data(7 downto 7) ,-- in
         write                           => write_en(0) ,-- in
         cs                              => reg_sel(10) ,-- in
@@ -1277,7 +1277,7 @@ begin
     )
     port map(
         clk_sys                         => clk_sys ,-- in
-        res_n                           => res_n ,-- in
+        rst_n                           => rst_n ,-- in
         data_in                         => w_data(11 downto 8) ,-- in
         write                           => write_en(1) ,-- in
         cs                              => reg_sel(10) ,-- in
@@ -1296,7 +1296,7 @@ begin
     )
     port map(
         clk_sys                         => clk_sys ,-- in
-        res_n                           => res_n ,-- in
+        rst_n                           => rst_n ,-- in
         data_in                         => w_data(15 downto 13) ,-- in
         write                           => write_en(1) ,-- in
         cs                              => reg_sel(10) ,-- in
@@ -1315,7 +1315,7 @@ begin
     )
     port map(
         clk_sys                         => clk_sys ,-- in
-        res_n                           => res_n ,-- in
+        rst_n                           => rst_n ,-- in
         data_in                         => w_data(17 downto 16) ,-- in
         write                           => write_en(2) ,-- in
         cs                              => reg_sel(10) ,-- in
@@ -1334,7 +1334,7 @@ begin
     )
     port map(
         clk_sys                         => clk_sys ,-- in
-        res_n                           => res_n ,-- in
+        rst_n                           => rst_n ,-- in
         data_in                         => w_data(23 downto 19) ,-- in
         write                           => write_en(2) ,-- in
         cs                              => reg_sel(10) ,-- in
@@ -1353,7 +1353,7 @@ begin
     )
     port map(
         clk_sys                         => clk_sys ,-- in
-        res_n                           => res_n ,-- in
+        rst_n                           => rst_n ,-- in
         data_in                         => w_data(26 downto 24) ,-- in
         write                           => write_en(3) ,-- in
         cs                              => reg_sel(10) ,-- in
@@ -1372,7 +1372,7 @@ begin
     )
     port map(
         clk_sys                         => clk_sys ,-- in
-        res_n                           => res_n ,-- in
+        rst_n                           => rst_n ,-- in
         data_in                         => w_data(31 downto 27) ,-- in
         write                           => write_en(3) ,-- in
         cs                              => reg_sel(10) ,-- in
@@ -1391,7 +1391,7 @@ begin
     )
     port map(
         clk_sys                         => clk_sys ,-- in
-        res_n                           => res_n ,-- in
+        rst_n                           => rst_n ,-- in
         data_in                         => w_data(7 downto 0) ,-- in
         write                           => write_en(0) ,-- in
         cs                              => reg_sel(11) ,-- in
@@ -1410,7 +1410,7 @@ begin
     )
     port map(
         clk_sys                         => clk_sys ,-- in
-        res_n                           => res_n ,-- in
+        rst_n                           => rst_n ,-- in
         data_in                         => w_data(15 downto 8) ,-- in
         write                           => write_en(1) ,-- in
         cs                              => reg_sel(11) ,-- in
@@ -1429,7 +1429,7 @@ begin
     )
     port map(
         clk_sys                         => clk_sys ,-- in
-        res_n                           => res_n ,-- in
+        rst_n                           => rst_n ,-- in
         data_in                         => w_data(7 downto 0) ,-- in
         write                           => write_en(0) ,-- in
         cs                              => reg_sel(14) ,-- in
@@ -1448,7 +1448,7 @@ begin
     )
     port map(
         clk_sys                         => clk_sys ,-- in
-        res_n                           => res_n ,-- in
+        rst_n                           => rst_n ,-- in
         data_in                         => w_data(8 downto 8) ,-- in
         write                           => write_en(1) ,-- in
         cs                              => reg_sel(14) ,-- in
@@ -1467,7 +1467,7 @@ begin
     )
     port map(
         clk_sys                         => clk_sys ,-- in
-        res_n                           => res_n ,-- in
+        rst_n                           => rst_n ,-- in
         data_in                         => w_data(9 downto 9) ,-- in
         write                           => write_en(1) ,-- in
         cs                              => reg_sel(14) ,-- in
@@ -1486,7 +1486,7 @@ begin
     )
     port map(
         clk_sys                         => clk_sys ,-- in
-        res_n                           => res_n ,-- in
+        rst_n                           => rst_n ,-- in
         data_in                         => w_data(10 downto 10) ,-- in
         write                           => write_en(1) ,-- in
         cs                              => reg_sel(14) ,-- in
@@ -1505,7 +1505,7 @@ begin
     )
     port map(
         clk_sys                         => clk_sys ,-- in
-        res_n                           => res_n ,-- in
+        rst_n                           => rst_n ,-- in
         data_in                         => w_data(11 downto 11) ,-- in
         write                           => write_en(1) ,-- in
         cs                              => reg_sel(14) ,-- in
@@ -1524,7 +1524,7 @@ begin
     )
     port map(
         clk_sys                         => clk_sys ,-- in
-        res_n                           => res_n ,-- in
+        rst_n                           => rst_n ,-- in
         data_in                         => w_data(12 downto 12) ,-- in
         write                           => write_en(1) ,-- in
         cs                              => reg_sel(14) ,-- in
@@ -1544,7 +1544,7 @@ begin
     )
     port map(
         clk_sys                         => clk_sys ,-- in
-        res_n                           => res_n ,-- in
+        rst_n                           => rst_n ,-- in
         data_in                         => w_data(7 downto 0) ,-- in
         write                           => write_en(0) ,-- in
         cs                              => reg_sel(15) ,-- in
@@ -1569,7 +1569,7 @@ begin
     )
     port map(
         clk_sys                         => clk_sys ,-- in
-        res_n                           => res_n ,-- in
+        rst_n                           => rst_n ,-- in
         data_in                         => w_data(15 downto 8) ,-- in
         write                           => write_en(1) ,-- in
         cs                              => reg_sel(15) ,-- in
@@ -1594,7 +1594,7 @@ begin
     )
     port map(
         clk_sys                         => clk_sys ,-- in
-        res_n                           => res_n ,-- in
+        rst_n                           => rst_n ,-- in
         data_in                         => w_data(23 downto 16) ,-- in
         write                           => write_en(2) ,-- in
         cs                              => reg_sel(15) ,-- in
@@ -1619,7 +1619,7 @@ begin
     )
     port map(
         clk_sys                         => clk_sys ,-- in
-        res_n                           => res_n ,-- in
+        rst_n                           => rst_n ,-- in
         data_in                         => w_data(28 downto 24) ,-- in
         write                           => write_en(3) ,-- in
         cs                              => reg_sel(15) ,-- in
@@ -1644,7 +1644,7 @@ begin
     )
     port map(
         clk_sys                         => clk_sys ,-- in
-        res_n                           => res_n ,-- in
+        rst_n                           => rst_n ,-- in
         data_in                         => w_data(7 downto 0) ,-- in
         write                           => write_en(0) ,-- in
         cs                              => reg_sel(16) ,-- in
@@ -1669,7 +1669,7 @@ begin
     )
     port map(
         clk_sys                         => clk_sys ,-- in
-        res_n                           => res_n ,-- in
+        rst_n                           => rst_n ,-- in
         data_in                         => w_data(15 downto 8) ,-- in
         write                           => write_en(1) ,-- in
         cs                              => reg_sel(16) ,-- in
@@ -1694,7 +1694,7 @@ begin
     )
     port map(
         clk_sys                         => clk_sys ,-- in
-        res_n                           => res_n ,-- in
+        rst_n                           => rst_n ,-- in
         data_in                         => w_data(23 downto 16) ,-- in
         write                           => write_en(2) ,-- in
         cs                              => reg_sel(16) ,-- in
@@ -1719,7 +1719,7 @@ begin
     )
     port map(
         clk_sys                         => clk_sys ,-- in
-        res_n                           => res_n ,-- in
+        rst_n                           => rst_n ,-- in
         data_in                         => w_data(28 downto 24) ,-- in
         write                           => write_en(3) ,-- in
         cs                              => reg_sel(16) ,-- in
@@ -1744,7 +1744,7 @@ begin
     )
     port map(
         clk_sys                         => clk_sys ,-- in
-        res_n                           => res_n ,-- in
+        rst_n                           => rst_n ,-- in
         data_in                         => w_data(7 downto 0) ,-- in
         write                           => write_en(0) ,-- in
         cs                              => reg_sel(17) ,-- in
@@ -1769,7 +1769,7 @@ begin
     )
     port map(
         clk_sys                         => clk_sys ,-- in
-        res_n                           => res_n ,-- in
+        rst_n                           => rst_n ,-- in
         data_in                         => w_data(15 downto 8) ,-- in
         write                           => write_en(1) ,-- in
         cs                              => reg_sel(17) ,-- in
@@ -1794,7 +1794,7 @@ begin
     )
     port map(
         clk_sys                         => clk_sys ,-- in
-        res_n                           => res_n ,-- in
+        rst_n                           => rst_n ,-- in
         data_in                         => w_data(23 downto 16) ,-- in
         write                           => write_en(2) ,-- in
         cs                              => reg_sel(17) ,-- in
@@ -1819,7 +1819,7 @@ begin
     )
     port map(
         clk_sys                         => clk_sys ,-- in
-        res_n                           => res_n ,-- in
+        rst_n                           => rst_n ,-- in
         data_in                         => w_data(28 downto 24) ,-- in
         write                           => write_en(3) ,-- in
         cs                              => reg_sel(17) ,-- in
@@ -1844,7 +1844,7 @@ begin
     )
     port map(
         clk_sys                         => clk_sys ,-- in
-        res_n                           => res_n ,-- in
+        rst_n                           => rst_n ,-- in
         data_in                         => w_data(7 downto 0) ,-- in
         write                           => write_en(0) ,-- in
         cs                              => reg_sel(18) ,-- in
@@ -1869,7 +1869,7 @@ begin
     )
     port map(
         clk_sys                         => clk_sys ,-- in
-        res_n                           => res_n ,-- in
+        rst_n                           => rst_n ,-- in
         data_in                         => w_data(15 downto 8) ,-- in
         write                           => write_en(1) ,-- in
         cs                              => reg_sel(18) ,-- in
@@ -1894,7 +1894,7 @@ begin
     )
     port map(
         clk_sys                         => clk_sys ,-- in
-        res_n                           => res_n ,-- in
+        rst_n                           => rst_n ,-- in
         data_in                         => w_data(23 downto 16) ,-- in
         write                           => write_en(2) ,-- in
         cs                              => reg_sel(18) ,-- in
@@ -1919,7 +1919,7 @@ begin
     )
     port map(
         clk_sys                         => clk_sys ,-- in
-        res_n                           => res_n ,-- in
+        rst_n                           => rst_n ,-- in
         data_in                         => w_data(28 downto 24) ,-- in
         write                           => write_en(3) ,-- in
         cs                              => reg_sel(18) ,-- in
@@ -1944,7 +1944,7 @@ begin
     )
     port map(
         clk_sys                         => clk_sys ,-- in
-        res_n                           => res_n ,-- in
+        rst_n                           => rst_n ,-- in
         data_in                         => w_data(7 downto 0) ,-- in
         write                           => write_en(0) ,-- in
         cs                              => reg_sel(19) ,-- in
@@ -1969,7 +1969,7 @@ begin
     )
     port map(
         clk_sys                         => clk_sys ,-- in
-        res_n                           => res_n ,-- in
+        rst_n                           => rst_n ,-- in
         data_in                         => w_data(15 downto 8) ,-- in
         write                           => write_en(1) ,-- in
         cs                              => reg_sel(19) ,-- in
@@ -1994,7 +1994,7 @@ begin
     )
     port map(
         clk_sys                         => clk_sys ,-- in
-        res_n                           => res_n ,-- in
+        rst_n                           => rst_n ,-- in
         data_in                         => w_data(23 downto 16) ,-- in
         write                           => write_en(2) ,-- in
         cs                              => reg_sel(19) ,-- in
@@ -2019,7 +2019,7 @@ begin
     )
     port map(
         clk_sys                         => clk_sys ,-- in
-        res_n                           => res_n ,-- in
+        rst_n                           => rst_n ,-- in
         data_in                         => w_data(28 downto 24) ,-- in
         write                           => write_en(3) ,-- in
         cs                              => reg_sel(19) ,-- in
@@ -2044,7 +2044,7 @@ begin
     )
     port map(
         clk_sys                         => clk_sys ,-- in
-        res_n                           => res_n ,-- in
+        rst_n                           => rst_n ,-- in
         data_in                         => w_data(7 downto 0) ,-- in
         write                           => write_en(0) ,-- in
         cs                              => reg_sel(20) ,-- in
@@ -2069,7 +2069,7 @@ begin
     )
     port map(
         clk_sys                         => clk_sys ,-- in
-        res_n                           => res_n ,-- in
+        rst_n                           => rst_n ,-- in
         data_in                         => w_data(15 downto 8) ,-- in
         write                           => write_en(1) ,-- in
         cs                              => reg_sel(20) ,-- in
@@ -2094,7 +2094,7 @@ begin
     )
     port map(
         clk_sys                         => clk_sys ,-- in
-        res_n                           => res_n ,-- in
+        rst_n                           => rst_n ,-- in
         data_in                         => w_data(23 downto 16) ,-- in
         write                           => write_en(2) ,-- in
         cs                              => reg_sel(20) ,-- in
@@ -2119,7 +2119,7 @@ begin
     )
     port map(
         clk_sys                         => clk_sys ,-- in
-        res_n                           => res_n ,-- in
+        rst_n                           => rst_n ,-- in
         data_in                         => w_data(28 downto 24) ,-- in
         write                           => write_en(3) ,-- in
         cs                              => reg_sel(20) ,-- in
@@ -2144,7 +2144,7 @@ begin
     )
     port map(
         clk_sys                         => clk_sys ,-- in
-        res_n                           => res_n ,-- in
+        rst_n                           => rst_n ,-- in
         data_in                         => w_data(7 downto 0) ,-- in
         write                           => write_en(0) ,-- in
         cs                              => reg_sel(21) ,-- in
@@ -2169,7 +2169,7 @@ begin
     )
     port map(
         clk_sys                         => clk_sys ,-- in
-        res_n                           => res_n ,-- in
+        rst_n                           => rst_n ,-- in
         data_in                         => w_data(15 downto 8) ,-- in
         write                           => write_en(1) ,-- in
         cs                              => reg_sel(21) ,-- in
@@ -2194,7 +2194,7 @@ begin
     )
     port map(
         clk_sys                         => clk_sys ,-- in
-        res_n                           => res_n ,-- in
+        rst_n                           => rst_n ,-- in
         data_in                         => w_data(23 downto 16) ,-- in
         write                           => write_en(2) ,-- in
         cs                              => reg_sel(21) ,-- in
@@ -2219,7 +2219,7 @@ begin
     )
     port map(
         clk_sys                         => clk_sys ,-- in
-        res_n                           => res_n ,-- in
+        rst_n                           => rst_n ,-- in
         data_in                         => w_data(28 downto 24) ,-- in
         write                           => write_en(3) ,-- in
         cs                              => reg_sel(21) ,-- in
@@ -2244,7 +2244,7 @@ begin
     )
     port map(
         clk_sys                         => clk_sys ,-- in
-        res_n                           => res_n ,-- in
+        rst_n                           => rst_n ,-- in
         data_in                         => w_data(7 downto 0) ,-- in
         write                           => write_en(0) ,-- in
         cs                              => reg_sel(22) ,-- in
@@ -2269,7 +2269,7 @@ begin
     )
     port map(
         clk_sys                         => clk_sys ,-- in
-        res_n                           => res_n ,-- in
+        rst_n                           => rst_n ,-- in
         data_in                         => w_data(15 downto 8) ,-- in
         write                           => write_en(1) ,-- in
         cs                              => reg_sel(22) ,-- in
@@ -2294,7 +2294,7 @@ begin
     )
     port map(
         clk_sys                         => clk_sys ,-- in
-        res_n                           => res_n ,-- in
+        rst_n                           => rst_n ,-- in
         data_in                         => w_data(23 downto 16) ,-- in
         write                           => write_en(2) ,-- in
         cs                              => reg_sel(22) ,-- in
@@ -2319,7 +2319,7 @@ begin
     )
     port map(
         clk_sys                         => clk_sys ,-- in
-        res_n                           => res_n ,-- in
+        rst_n                           => rst_n ,-- in
         data_in                         => w_data(28 downto 24) ,-- in
         write                           => write_en(3) ,-- in
         cs                              => reg_sel(22) ,-- in
@@ -2343,7 +2343,7 @@ begin
     )
     port map(
         clk_sys                         => clk_sys ,-- in
-        res_n                           => res_n ,-- in
+        rst_n                           => rst_n ,-- in
         data_in                         => w_data(0 downto 0) ,-- in
         write                           => write_en(0) ,-- in
         cs                              => reg_sel(23) ,-- in
@@ -2361,7 +2361,7 @@ begin
     )
     port map(
         clk_sys                         => clk_sys ,-- in
-        res_n                           => res_n ,-- in
+        rst_n                           => rst_n ,-- in
         data_in                         => w_data(1 downto 1) ,-- in
         write                           => write_en(0) ,-- in
         cs                              => reg_sel(23) ,-- in
@@ -2379,7 +2379,7 @@ begin
     )
     port map(
         clk_sys                         => clk_sys ,-- in
-        res_n                           => res_n ,-- in
+        rst_n                           => rst_n ,-- in
         data_in                         => w_data(2 downto 2) ,-- in
         write                           => write_en(0) ,-- in
         cs                              => reg_sel(23) ,-- in
@@ -2397,7 +2397,7 @@ begin
     )
     port map(
         clk_sys                         => clk_sys ,-- in
-        res_n                           => res_n ,-- in
+        rst_n                           => rst_n ,-- in
         data_in                         => w_data(3 downto 3) ,-- in
         write                           => write_en(0) ,-- in
         cs                              => reg_sel(23) ,-- in
@@ -2415,7 +2415,7 @@ begin
     )
     port map(
         clk_sys                         => clk_sys ,-- in
-        res_n                           => res_n ,-- in
+        rst_n                           => rst_n ,-- in
         data_in                         => w_data(4 downto 4) ,-- in
         write                           => write_en(0) ,-- in
         cs                              => reg_sel(23) ,-- in
@@ -2433,7 +2433,7 @@ begin
     )
     port map(
         clk_sys                         => clk_sys ,-- in
-        res_n                           => res_n ,-- in
+        rst_n                           => rst_n ,-- in
         data_in                         => w_data(5 downto 5) ,-- in
         write                           => write_en(0) ,-- in
         cs                              => reg_sel(23) ,-- in
@@ -2451,7 +2451,7 @@ begin
     )
     port map(
         clk_sys                         => clk_sys ,-- in
-        res_n                           => res_n ,-- in
+        rst_n                           => rst_n ,-- in
         data_in                         => w_data(6 downto 6) ,-- in
         write                           => write_en(0) ,-- in
         cs                              => reg_sel(23) ,-- in
@@ -2469,7 +2469,7 @@ begin
     )
     port map(
         clk_sys                         => clk_sys ,-- in
-        res_n                           => res_n ,-- in
+        rst_n                           => rst_n ,-- in
         data_in                         => w_data(7 downto 7) ,-- in
         write                           => write_en(0) ,-- in
         cs                              => reg_sel(23) ,-- in
@@ -2487,7 +2487,7 @@ begin
     )
     port map(
         clk_sys                         => clk_sys ,-- in
-        res_n                           => res_n ,-- in
+        rst_n                           => rst_n ,-- in
         data_in                         => w_data(8 downto 8) ,-- in
         write                           => write_en(1) ,-- in
         cs                              => reg_sel(23) ,-- in
@@ -2505,7 +2505,7 @@ begin
     )
     port map(
         clk_sys                         => clk_sys ,-- in
-        res_n                           => res_n ,-- in
+        rst_n                           => rst_n ,-- in
         data_in                         => w_data(9 downto 9) ,-- in
         write                           => write_en(1) ,-- in
         cs                              => reg_sel(23) ,-- in
@@ -2523,7 +2523,7 @@ begin
     )
     port map(
         clk_sys                         => clk_sys ,-- in
-        res_n                           => res_n ,-- in
+        rst_n                           => rst_n ,-- in
         data_in                         => w_data(10 downto 10) ,-- in
         write                           => write_en(1) ,-- in
         cs                              => reg_sel(23) ,-- in
@@ -2541,7 +2541,7 @@ begin
     )
     port map(
         clk_sys                         => clk_sys ,-- in
-        res_n                           => res_n ,-- in
+        rst_n                           => rst_n ,-- in
         data_in                         => w_data(11 downto 11) ,-- in
         write                           => write_en(1) ,-- in
         cs                              => reg_sel(23) ,-- in
@@ -2559,7 +2559,7 @@ begin
     )
     port map(
         clk_sys                         => clk_sys ,-- in
-        res_n                           => res_n ,-- in
+        rst_n                           => rst_n ,-- in
         data_in                         => w_data(12 downto 12) ,-- in
         write                           => write_en(1) ,-- in
         cs                              => reg_sel(23) ,-- in
@@ -2577,7 +2577,7 @@ begin
     )
     port map(
         clk_sys                         => clk_sys ,-- in
-        res_n                           => res_n ,-- in
+        rst_n                           => rst_n ,-- in
         data_in                         => w_data(13 downto 13) ,-- in
         write                           => write_en(1) ,-- in
         cs                              => reg_sel(23) ,-- in
@@ -2595,7 +2595,7 @@ begin
     )
     port map(
         clk_sys                         => clk_sys ,-- in
-        res_n                           => res_n ,-- in
+        rst_n                           => rst_n ,-- in
         data_in                         => w_data(14 downto 14) ,-- in
         write                           => write_en(1) ,-- in
         cs                              => reg_sel(23) ,-- in
@@ -2613,7 +2613,7 @@ begin
     )
     port map(
         clk_sys                         => clk_sys ,-- in
-        res_n                           => res_n ,-- in
+        rst_n                           => rst_n ,-- in
         data_in                         => w_data(15 downto 15) ,-- in
         write                           => write_en(1) ,-- in
         cs                              => reg_sel(23) ,-- in
@@ -2631,7 +2631,7 @@ begin
     )
     port map(
         clk_sys                         => clk_sys ,-- in
-        res_n                           => res_n ,-- in
+        rst_n                           => rst_n ,-- in
         data_in                         => w_data(16 downto 16) ,-- in
         write                           => write_en(2) ,-- in
         cs                              => reg_sel(26) ,-- in
@@ -2648,7 +2648,7 @@ begin
     )
     port map(
         clk_sys                         => clk_sys ,-- in
-        res_n                           => res_n ,-- in
+        rst_n                           => rst_n ,-- in
         cs                              => reg_sel(27) ,-- in
         read                            => read ,-- in
         be                              => be(3 downto 0) ,-- in
@@ -2666,7 +2666,7 @@ begin
     )
     port map(
         clk_sys                         => clk_sys ,-- in
-        res_n                           => res_n ,-- in
+        rst_n                           => rst_n ,-- in
         data_in                         => w_data(0 downto 0) ,-- in
         write                           => write_en(0) ,-- in
         cs                              => reg_sel(29) ,-- in
@@ -2684,7 +2684,7 @@ begin
     )
     port map(
         clk_sys                         => clk_sys ,-- in
-        res_n                           => res_n ,-- in
+        rst_n                           => rst_n ,-- in
         data_in                         => w_data(1 downto 1) ,-- in
         write                           => write_en(0) ,-- in
         cs                              => reg_sel(29) ,-- in
@@ -2702,7 +2702,7 @@ begin
     )
     port map(
         clk_sys                         => clk_sys ,-- in
-        res_n                           => res_n ,-- in
+        rst_n                           => rst_n ,-- in
         data_in                         => w_data(2 downto 2) ,-- in
         write                           => write_en(0) ,-- in
         cs                              => reg_sel(29) ,-- in
@@ -2720,7 +2720,7 @@ begin
     )
     port map(
         clk_sys                         => clk_sys ,-- in
-        res_n                           => res_n ,-- in
+        rst_n                           => rst_n ,-- in
         data_in                         => w_data(8 downto 8) ,-- in
         write                           => write_en(1) ,-- in
         cs                              => reg_sel(29) ,-- in
@@ -2738,7 +2738,7 @@ begin
     )
     port map(
         clk_sys                         => clk_sys ,-- in
-        res_n                           => res_n ,-- in
+        rst_n                           => rst_n ,-- in
         data_in                         => w_data(9 downto 9) ,-- in
         write                           => write_en(1) ,-- in
         cs                              => reg_sel(29) ,-- in
@@ -2757,7 +2757,7 @@ begin
     )
     port map(
         clk_sys                         => clk_sys ,-- in
-        res_n                           => res_n ,-- in
+        rst_n                           => rst_n ,-- in
         data_in                         => w_data(10 downto 10) ,-- in
         write                           => write_en(1) ,-- in
         cs                              => reg_sel(29) ,-- in
@@ -2782,7 +2782,7 @@ begin
     )
     port map(
         clk_sys                         => clk_sys ,-- in
-        res_n                           => res_n ,-- in
+        rst_n                           => rst_n ,-- in
         data_in                         => w_data(11 downto 11) ,-- in
         write                           => write_en(1) ,-- in
         cs                              => reg_sel(29) ,-- in
@@ -2807,7 +2807,7 @@ begin
     )
     port map(
         clk_sys                         => clk_sys ,-- in
-        res_n                           => res_n ,-- in
+        rst_n                           => rst_n ,-- in
         data_in                         => w_data(12 downto 12) ,-- in
         write                           => write_en(1) ,-- in
         cs                              => reg_sel(29) ,-- in
@@ -2832,7 +2832,7 @@ begin
     )
     port map(
         clk_sys                         => clk_sys ,-- in
-        res_n                           => res_n ,-- in
+        rst_n                           => rst_n ,-- in
         data_in                         => w_data(13 downto 13) ,-- in
         write                           => write_en(1) ,-- in
         cs                              => reg_sel(29) ,-- in
@@ -2857,7 +2857,7 @@ begin
     )
     port map(
         clk_sys                         => clk_sys ,-- in
-        res_n                           => res_n ,-- in
+        rst_n                           => rst_n ,-- in
         data_in                         => w_data(14 downto 14) ,-- in
         write                           => write_en(1) ,-- in
         cs                              => reg_sel(29) ,-- in
@@ -2882,7 +2882,7 @@ begin
     )
     port map(
         clk_sys                         => clk_sys ,-- in
-        res_n                           => res_n ,-- in
+        rst_n                           => rst_n ,-- in
         data_in                         => w_data(15 downto 15) ,-- in
         write                           => write_en(1) ,-- in
         cs                              => reg_sel(29) ,-- in
@@ -2906,7 +2906,7 @@ begin
     )
     port map(
         clk_sys                         => clk_sys ,-- in
-        res_n                           => res_n ,-- in
+        rst_n                           => rst_n ,-- in
         data_in                         => w_data(2 downto 0) ,-- in
         write                           => write_en(0) ,-- in
         cs                              => reg_sel(30) ,-- in
@@ -2924,7 +2924,7 @@ begin
     )
     port map(
         clk_sys                         => clk_sys ,-- in
-        res_n                           => res_n ,-- in
+        rst_n                           => rst_n ,-- in
         data_in                         => w_data(6 downto 4) ,-- in
         write                           => write_en(0) ,-- in
         cs                              => reg_sel(30) ,-- in
@@ -2943,7 +2943,7 @@ begin
     )
     port map(
         clk_sys                         => clk_sys ,-- in
-        res_n                           => res_n ,-- in
+        rst_n                           => rst_n ,-- in
         data_in                         => w_data(10 downto 8) ,-- in
         write                           => write_en(1) ,-- in
         cs                              => reg_sel(30) ,-- in
@@ -2968,7 +2968,7 @@ begin
     )
     port map(
         clk_sys                         => clk_sys ,-- in
-        res_n                           => res_n ,-- in
+        rst_n                           => rst_n ,-- in
         data_in                         => w_data(14 downto 12) ,-- in
         write                           => write_en(1) ,-- in
         cs                              => reg_sel(30) ,-- in
@@ -2993,7 +2993,7 @@ begin
     )
     port map(
         clk_sys                         => clk_sys ,-- in
-        res_n                           => res_n ,-- in
+        rst_n                           => rst_n ,-- in
         data_in                         => w_data(18 downto 16) ,-- in
         write                           => write_en(2) ,-- in
         cs                              => reg_sel(30) ,-- in
@@ -3018,7 +3018,7 @@ begin
     )
     port map(
         clk_sys                         => clk_sys ,-- in
-        res_n                           => res_n ,-- in
+        rst_n                           => rst_n ,-- in
         data_in                         => w_data(22 downto 20) ,-- in
         write                           => write_en(2) ,-- in
         cs                              => reg_sel(30) ,-- in
@@ -3043,7 +3043,7 @@ begin
     )
     port map(
         clk_sys                         => clk_sys ,-- in
-        res_n                           => res_n ,-- in
+        rst_n                           => rst_n ,-- in
         data_in                         => w_data(26 downto 24) ,-- in
         write                           => write_en(3) ,-- in
         cs                              => reg_sel(30) ,-- in
@@ -3068,7 +3068,7 @@ begin
     )
     port map(
         clk_sys                         => clk_sys ,-- in
-        res_n                           => res_n ,-- in
+        rst_n                           => rst_n ,-- in
         data_in                         => w_data(30 downto 28) ,-- in
         write                           => write_en(3) ,-- in
         cs                              => reg_sel(30) ,-- in
@@ -3092,7 +3092,7 @@ begin
     )
     port map(
         clk_sys                         => clk_sys ,-- in
-        res_n                           => res_n ,-- in
+        rst_n                           => rst_n ,-- in
         data_in                         => w_data(23 downto 16) ,-- in
         write                           => write_en(2) ,-- in
         cs                              => reg_sel(32) ,-- in
@@ -3111,7 +3111,7 @@ begin
     )
     port map(
         clk_sys                         => clk_sys ,-- in
-        res_n                           => res_n ,-- in
+        rst_n                           => rst_n ,-- in
         data_in                         => w_data(25 downto 24) ,-- in
         write                           => write_en(3) ,-- in
         cs                              => reg_sel(32) ,-- in
@@ -3334,9 +3334,9 @@ begin
     ----------------------------------------------------------------------------
     -- Output register
     ----------------------------------------------------------------------------
-    p_read_data_reg : process(res_n, clk_sys)
+    p_read_data_reg : process(rst_n, clk_sys)
     begin
-        if (res_n = '0') then
+        if (rst_n = '0') then
             r_data <= (others => '0');
         elsif (rising_edge(clk_sys)) then
             if (cs = '1' and read = '1') then

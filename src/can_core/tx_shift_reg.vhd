@@ -94,7 +94,7 @@ entity tx_shift_reg is
         -- Clock and Asynchronous Reset
         -------------------------------------------------------------------------------------------
         clk_sys                 : in  std_logic;
-        res_n                   : in  std_logic;
+        rst_n                   : in  std_logic;
 
         -------------------------------------------------------------------------------------------
         -- Memory registers interface
@@ -330,7 +330,7 @@ begin
     )
     port map (
         clk                  => clk_sys,                    -- IN
-        res_n                => res_n,                      -- IN
+        rst_n                => rst_n,                      -- IN
         preload              => tx_sr_pload,                -- IN
         preload_val          => tx_sr_pload_val,            -- IN
         enable               => tx_sr_ce,                   -- IN

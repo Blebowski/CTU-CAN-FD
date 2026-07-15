@@ -124,7 +124,7 @@ entity can_core is
         -- Clock and Asynchronous reset
         -------------------------------------------------------------------------------------------
         clk_sys                 : in  std_logic;
-        res_n                   : in  std_logic;
+        rst_n                   : in  std_logic;
 
         -------------------------------------------------------------------------------------------
         -- DFT support
@@ -491,7 +491,7 @@ begin
     )
     port map (
         clk_sys                 => clk_sys,                     -- IN
-        res_n                   => res_n,                       -- IN
+        rst_n                   => rst_n,                       -- IN
 
         -- DFT support
         scan_mode               => scan_mode,                   -- IN
@@ -638,7 +638,7 @@ begin
     i_operation_control : entity ctu_can_fd_rtl.operation_control
     port map (
         clk_sys                 => clk_sys,                     -- IN
-        res_n                   => res_n,                       -- IN
+        rst_n                   => rst_n,                       -- IN
 
         -- Prescaler Interface
         rx_trigger              => pc_rx_trigger_i,             -- IN
@@ -663,7 +663,7 @@ begin
     i_fault_confinement : entity ctu_can_fd_rtl.fault_confinement
     port map (
         clk_sys                 => clk_sys,                     -- IN
-        res_n                   => res_n,                       -- IN
+        rst_n                   => rst_n,                       -- IN
 
         -- DFT support
         scan_mode             => scan_mode,                 -- IN
@@ -722,7 +722,7 @@ begin
     )
     port map (
         clk_sys                 => clk_sys,                     -- IN
-        res_n                   => res_n,                       -- IN
+        rst_n                   => rst_n,                       -- IN
 
         -- Memory registers interface
         mr_settings_nisofd      => mr_settings_nisofd,          -- IN
@@ -758,7 +758,7 @@ begin
     i_bit_stuffing : entity ctu_can_fd_rtl.bit_stuffing
     port map (
         clk_sys                 => clk_sys,                     -- IN
-        res_n                   => res_n,                       -- IN
+        rst_n                   => rst_n,                       -- IN
 
         -- Data-path
         data_in                 => bst_data_in,                 -- IN
@@ -782,7 +782,7 @@ begin
     i_bit_destuffing : entity ctu_can_fd_rtl.bit_destuffing
     port map (
         clk_sys                 => clk_sys,                     -- IN
-        res_n                   => res_n,                       -- IN
+        rst_n                   => rst_n,                       -- IN
 
         -- Data-path
         data_in                 => bds_data_in,                 -- IN
@@ -808,7 +808,7 @@ begin
         i_bus_traffic_counters : entity ctu_can_fd_rtl.bus_traffic_counters
         port map (
             clk_sys             => clk_sys,                     -- IN
-            res_n               => res_n,                       -- IN
+            rst_n               => rst_n,                       -- IN
             scan_mode         => scan_mode,                 -- IN
 
             -- Memory registers interface
@@ -840,7 +840,7 @@ begin
     port map (
         -- Clock and Asynchronous reset
         clk_sys                => clk_sys,                      -- IN
-        res_n                  => res_n,                        -- IN
+        rst_n                  => rst_n,                        -- IN
 
         -- Input triggers
         rx_triggers            => rx_triggers,                  -- IN

@@ -151,7 +151,7 @@ entity memory_registers is
         -- Clock and Reset
         -------------------------------------------------------------------------------------------
         clk_sys                         : in std_logic;
-        res_n                           : in std_logic;
+        rst_n                           : in std_logic;
 
         -- Soft reset (Input reset + Software Reset)
         res_soft_n                      : out std_logic;
@@ -396,9 +396,9 @@ begin
     -----------------------------------------------------------------------------------------------
     -- Registering control registers chip select
     -----------------------------------------------------------------------------------------------
-    p_chip_sel_reg : process(res_n, clk_sys)
+    p_chip_sel_reg : process(rst_n, clk_sys)
     begin
-        if (res_n = '0') then
+        if (rst_n = '0') then
             control_registers_cs_reg  <= '0';
             test_registers_cs_reg <= '0';
         elsif (rising_edge(clk_sys)) then
@@ -471,7 +471,7 @@ begin
     )
     port map(
         clk_sys               => clk_control_regs,              -- IN
-        res_n                 => soft_res_q_n,                  -- IN
+        rst_n                 => soft_res_q_n,                  -- IN
         address               => adress(7 downto 0),            -- IN
         w_data                => data_in,                       -- IN
         r_data                => control_registers_rdata,       -- OUT
@@ -499,7 +499,7 @@ begin
         )
         port map(
             clk_sys             => clk_test_regs,               -- IN
-            res_n               => soft_res_q_n,                -- IN
+            rst_n               => soft_res_q_n,                -- IN
             address             => adress(7 downto 0),          -- IN
             w_data              => data_in,                     -- IN
             r_data              => test_registers_rdata,        -- OUT
@@ -577,7 +577,7 @@ begin
     port map(
         -- Clock and Reset
         clk                 => clk_sys,                         -- IN
-        arst                => res_n,                           -- IN
+        arst                => rst_n,                           -- IN
 
         -- Flip flop input / output
         d                   => soft_res_d_n,                    -- IN
@@ -600,7 +600,7 @@ begin
     port map(
         -- Clock and Reset
         clk                 => clk_sys,                         -- IN
-        arst                => res_n,                           -- IN
+        arst                => rst_n,                           -- IN
 
         -- Flip flop input / output
         d                   => res_core_d_n,                    -- IN

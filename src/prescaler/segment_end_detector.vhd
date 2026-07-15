@@ -95,7 +95,7 @@ entity segment_end_detector is
         -- Clock and Asynchronous reset
         -------------------------------------------------------------------------------------------
         clk_sys            : in    std_logic;
-        res_n              : in    std_logic;
+        rst_n              : in    std_logic;
 
         -------------------------------------------------------------------------------------------
         -- Control interface
@@ -202,9 +202,9 @@ begin
             '1' when (segm_end_req_capt_clr(i) = '1' or req_input(i) = '1') else
             '0';
 
-        p_end_of_segm_req : process(clk_sys, res_n)
+        p_end_of_segm_req : process(clk_sys, rst_n)
         begin
-            if (res_n = '0') then
+            if (rst_n = '0') then
                 segm_end_req_capt_q(i) <= '0';
             elsif (rising_edge(clk_sys)) then
                 if (segm_end_req_capt_ce(i) = '1') then

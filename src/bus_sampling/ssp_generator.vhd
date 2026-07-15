@@ -100,7 +100,7 @@ entity ssp_generator is
         -- Clock and Async reset
         -------------------------------------------------------------------------------------------
         clk_sys              :in   std_logic;
-        res_n                :in   std_logic;
+        rst_n                :in   std_logic;
 
         -------------------------------------------------------------------------------------------
         -- Control signals
@@ -174,9 +174,9 @@ begin
                            '0' when (tx_trigger = '1') else
                            btmc_meas_running_q;
 
-    p_btmc_meas_flag : process(clk_sys, res_n)
+    p_btmc_meas_flag : process(clk_sys, rst_n)
     begin
-        if (res_n = '0') then
+        if (rst_n = '0') then
             btmc_meas_running_q <= '0';
         elsif (rising_edge(clk_sys)) then
             btmc_meas_running_q <= btmc_meas_running_d;
@@ -198,9 +198,9 @@ begin
     btmc_ce <= '1' when (btmc_d /= btmc_q) else
                '0';
 
-    p_btmc : process(clk_sys, res_n)
+    p_btmc : process(clk_sys, rst_n)
     begin
-        if (res_n = '0') then
+        if (rst_n = '0') then
             btmc_q <= (others => '0');
         elsif (rising_edge(clk_sys)) then
             if (btmc_ce = '1') then
@@ -218,9 +218,9 @@ begin
                    '0' when (sspc_expired = '1') else
                    first_ssp_q;
 
-    p_first_ssp_flag : process(clk_sys, res_n)
+    p_first_ssp_flag : process(clk_sys, rst_n)
     begin
-        if (res_n = '0') then
+        if (rst_n = '0') then
             first_ssp_q <= '0';
         elsif (rising_edge(clk_sys)) then
             first_ssp_q <= first_ssp_d;
@@ -237,9 +237,9 @@ begin
                   '0' when (ssp_enable = '0') else
                   sspc_ena_q;
 
-    p_sspc_run_flag : process(clk_sys, res_n)
+    p_sspc_run_flag : process(clk_sys, rst_n)
     begin
-        if (res_n = '0') then
+        if (rst_n = '0') then
             sspc_ena_q <= '0';
         elsif (rising_edge(clk_sys)) then
             sspc_ena_q <= sspc_ena_d;
@@ -278,9 +278,9 @@ begin
     sspc_ce <= '1' when (sspc_d /= sspc_q) else
                '0';
 
-    p_sspc : process(clk_sys, res_n)
+    p_sspc : process(clk_sys, rst_n)
     begin
-        if (res_n = '0') then
+        if (rst_n = '0') then
             sspc_q <= C_SSPC_RST_VAL;
         elsif (rising_edge(clk_sys)) then
             if (sspc_ce = '1') then

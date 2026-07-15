@@ -143,10 +143,10 @@ entity ctu_can_fd_top is
         clk_sys     : in std_logic;
 
         -- Asynchronous reset
-        res_n       : in std_logic;
+        rst_n       : in std_logic;
 
         -- Synchronized reset
-        res_n_out   : out std_logic;
+        rst_n_out   : out std_logic;
 
         -----------------------------------------------------------------------
         -- DFT support
@@ -232,7 +232,7 @@ architecture rtl of ctu_can_fd_top is
     -----------------------------------------------------------------------------------------------
 
     -- Synchronised reset
-    signal res_n_sync                       :    std_logic;
+    signal rst_n_sync                       :    std_logic;
 
     -- Core reset (Synchronised reset + Soft Reset + Active when disabled)
     signal res_core_n                       :    std_logic;
@@ -618,10 +618,10 @@ begin
     )
     port map (
         clk             => clk_sys,
-        arst            => res_n,
-        rst             => res_n_sync
+        arst            => rst_n,
+        rst             => rst_n_sync
     );
-    res_n_out <= res_n_sync;
+    rst_n_out <= rst_n_sync;
 
     -----------------------------------------------------------------------------------------------
     -- Memory registers
@@ -649,7 +649,7 @@ begin
     )
     port map (
         clk_sys                         => clk_sys,                         -- IN
-        res_n                           => res_n_sync,                      -- IN
+        rst_n                           => rst_n_sync,                      -- IN
 
         -- Generated resets
         res_core_n                      => res_core_n,                      -- OUT
@@ -735,7 +735,7 @@ begin
     port map (
         -- Clocks and Asynchronous reset
         clk_sys                         => clk_sys,                         -- IN
-        res_n                           => res_core_n,                      -- IN
+        rst_n                           => res_core_n,                      -- IN
 
         -- DFT support
         scan_mode                     => scan_mode,                     -- IN
@@ -841,7 +841,7 @@ begin
             port map (
                 -- Clock and Asynchronous reset
                 clk_sys                     => clk_sys,                                     -- IN
-                res_n                       => res_core_n,                                  -- IN
+                rst_n                       => res_core_n,                                  -- IN
 
                 -- DFT support
                 scan_mode                 => scan_mode,                                 -- IN
@@ -903,7 +903,7 @@ begin
             port map (
                 -- Clock and Asynchronous reset
                 clk_sys                     => clk_sys,                                     -- IN
-                res_n                       => res_core_n,                                  -- IN
+                rst_n                       => res_core_n,                                  -- IN
 
                 -- DFT support
                 scan_mode                 => scan_mode,                                 -- IN
@@ -967,7 +967,7 @@ begin
     port map (
         -- Clock and Asynchronous reset
         clk_sys                         => clk_sys,                         -- IN
-        res_n                           => res_core_n,                      -- IN
+        rst_n                           => res_core_n,                      -- IN
 
         -- TXT Buffers interface
         txtb_port_b_data_out            => txtb_port_b_data_out,            -- IN
@@ -1023,7 +1023,7 @@ begin
     port map(
         -- Clock an Asynchronous reset
         clk_sys                         => clk_sys,                 -- IN
-        res_n                           => res_core_n,              -- IN
+        rst_n                           => res_core_n,              -- IN
 
         -- Memory registers interface
         mr_filter_control_fafe          => mr_ctrl_out.filter_control_fafe,  -- IN
@@ -1093,7 +1093,7 @@ begin
         --      reset since it holds the actual values of Interrupt Enable
         --      and Interrupt Mask. These are considered as registers and
         --      they must be settable when the core is disabled!
-        res_n                           => res_soft_n,                              -- IN
+        rst_n                           => res_soft_n,                              -- IN
 
         -- Interrupt sources
         err_detected                    => err_detected,                            -- IN
@@ -1166,7 +1166,7 @@ begin
     port map (
         -- Clock and Asynchronous reset
         clk_sys                         => clk_sys,                                 -- IN
-        res_n                           => res_core_n,                              -- IN
+        rst_n                           => res_core_n,                              -- IN
 
         -- DFT support
         scan_mode                     => scan_mode,                             -- IN
@@ -1292,7 +1292,7 @@ begin
     port map (
         -- Clock and Asynchronous reset
         clk_sys                         => clk_sys,                                 -- IN
-        res_n                           => res_core_n,                              -- IN
+        rst_n                           => res_core_n,                              -- IN
 
         -- Memory registers interface
         mr_settings_ena                 => mr_ctrl_out.settings_ena,                -- IN
@@ -1342,7 +1342,7 @@ begin
     port map(
         -- Clock and Async reset
         clk_sys                         => clk_sys,                                 -- IN
-        res_n                           => res_core_n,                              -- IN
+        rst_n                           => res_core_n,                              -- IN
 
         -- DFT support
         scan_mode                     => scan_mode,                             -- IN

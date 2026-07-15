@@ -113,7 +113,7 @@ entity can_crc is
         -- System clock and Asynchronous Reset
         -------------------------------------------------------------------------------------------
         clk_sys             : in  std_logic;
-        res_n               : in  std_logic;
+        rst_n               : in  std_logic;
 
         -------------------------------------------------------------------------------------------
         -- Memory registers interface
@@ -267,7 +267,7 @@ begin
         G_POLYNOMIAL        => G_CRC15_POL
     )
     port map (
-        res_n               => res_n,               -- IN
+        rst_n               => rst_n,               -- IN
         clk_sys             => clk_sys,             -- IN
 
         data_in             => crc_15_data_in,      -- IN
@@ -288,7 +288,7 @@ begin
         G_POLYNOMIAL        => G_CRC17_POL
     )
     port map(
-        res_n               => res_n,               -- IN
+        rst_n               => rst_n,               -- IN
         clk_sys             => clk_sys,             -- IN
 
         data_in             => crc_17_21_data_in,   -- IN
@@ -310,7 +310,7 @@ begin
         G_POLYNOMIAL        => G_CRC21_POL
     )
     port map(
-        res_n               => res_n,               -- IN
+        rst_n               => rst_n,               -- IN
         clk_sys             => clk_sys,             -- IN
 
         data_in             => crc_17_21_data_in,   -- IN

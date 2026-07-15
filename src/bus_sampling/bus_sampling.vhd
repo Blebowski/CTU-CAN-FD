@@ -119,7 +119,7 @@ entity bus_sampling is
         -- Clock and Async reset
         -------------------------------------------------------------------------------------------
         clk_sys                 :in   std_logic;
-        res_n                   :in   std_logic;
+        rst_n                   :in   std_logic;
 
         -------------------------------------------------------------------------------------------
         -- DFT support
@@ -254,7 +254,7 @@ begin
         G_RESET_VALUE               => RECESSIVE
     )
     port map(
-        arst                        => res_n,                   -- IN
+        arst                        => rst_n,                   -- IN
         clk                         => clk_sys,                 -- IN
         async                       => can_rx,                  -- IN
 
@@ -273,7 +273,7 @@ begin
     )
     port map (
         clk_sys                     => clk_sys,                  -- IN
-        res_n                       => res_n,                    -- IN
+        rst_n                       => rst_n,                    -- IN
 
         scan_mode                   => scan_mode,               -- IN
 
@@ -295,7 +295,7 @@ begin
     i_data_edge_detector : entity ctu_can_fd_rtl.data_edge_detector
     port map (
         clk_sys                     => clk_sys,                 -- IN
-        res_n                       => res_n,                   -- IN
+        rst_n                       => rst_n,                   -- IN
         tx_data                     => tx_data_wbs,             -- IN
         rx_data                     => data_rx_synced,          -- IN
         prev_rx_sample              => prev_sample,             -- IN
@@ -323,7 +323,7 @@ begin
     port map (
         -- Clock and Reset
         clk                         => clk_sys,                 -- IN
-        arst                        => res_n,                   -- IN
+        arst                        => rst_n,                   -- IN
 
         -- Flip flop input / output
         d                           => shift_regs_res_d,        -- IN
@@ -342,7 +342,7 @@ begin
         G_RST_VAL                   => '0'
     )
     port map (
-        arst                        => res_n,                   -- IN
+        arst                        => rst_n,                   -- IN
         clk                         => clk_sys,                 -- IN
         reg_d                       => tx_trigger,              -- IN
 
@@ -360,7 +360,7 @@ begin
     port map (
         -- Clock and Async reset
         clk_sys                     => clk_sys,                 -- (IN)
-        res_n                       => res_n,                   -- (IN)
+        rst_n                       => rst_n,                   -- (IN)
 
         -- Control signals
         btmc_reset                  => btmc_reset,              -- (IN)
@@ -400,7 +400,7 @@ begin
     )
     port map (
         clk_sys                     => clk_sys,                 -- IN
-        res_n                       => shift_regs_res_q_scan,   -- IN
+        rst_n                       => shift_regs_res_q_scan,   -- IN
         write                       => tx_trigger_ssp,          -- IN
         read                        => sample_sec,              -- IN
         data_in                     => tx_data_wbs,             -- IN
@@ -415,7 +415,7 @@ begin
     i_bit_err_detector : entity ctu_can_fd_rtl.bit_err_detector
     port map (
         clk_sys                     => clk_sys,                 -- IN
-        res_n                       => res_n,                   -- IN
+        rst_n                       => rst_n,                   -- IN
         mr_settings_ena             => mr_settings_ena,         -- IN
         sp_control                  => sp_control,              -- IN
         rx_trigger                  => rx_trigger,              -- IN
@@ -434,7 +434,7 @@ begin
     i_sample_mux : entity ctu_can_fd_rtl.sample_mux
     port map (
         clk_sys                     => clk_sys,                 -- IN
-        res_n                       => res_n,                   -- IN
+        rst_n                       => rst_n,                   -- IN
         mr_settings_ena             => mr_settings_ena,         -- IN
         sp_control                  => sp_control,              -- IN
         rx_trigger                  => rx_trigger,              -- IN

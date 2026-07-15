@@ -107,7 +107,7 @@ entity rx_buffer_pointers is
         -- Clocks and Asynchronous reset
         -------------------------------------------------------------------------------------------
         clk_sys                 : in  std_logic;
-        rx_buf_res_n_q_scan     : in  std_logic;
+        rx_buf_rst_n_q_scan     : in  std_logic;
 
         -------------------------------------------------------------------------------------------
         -- Control signals
@@ -226,9 +226,9 @@ begin
     -- Read pointer, incremented during read from RX Buffer FIFO. Moving to next word by reading
     -- (if there is sth to read).
     -----------------------------------------------------------------------------------------------
-    p_read_pointer : process(clk_sys, rx_buf_res_n_q_scan)
+    p_read_pointer : process(clk_sys, rx_buf_rst_n_q_scan)
     begin
-        if (rx_buf_res_n_q_scan = '0') then
+        if (rx_buf_rst_n_q_scan = '0') then
             read_pointer_i <= (others => '0');
         elsif (rising_edge(clk_sys)) then
             if (read_increment = '1') then
@@ -241,9 +241,9 @@ begin
     -- Write pointers available to the user manipulation. Loading "write_pointer_raw_int" to
     -- "write_pointer_int" when frame is committed.
     -----------------------------------------------------------------------------------------------
-    p_write_pointer : process(clk_sys, rx_buf_res_n_q_scan)
+    p_write_pointer : process(clk_sys, rx_buf_rst_n_q_scan)
     begin
-        if (rx_buf_res_n_q_scan = '0') then
+        if (rx_buf_rst_n_q_scan = '0') then
             write_pointer_i <= (others => '0');
         elsif (rising_edge(clk_sys)) then
             if (commit_rx_frame = '1') then
@@ -268,9 +268,9 @@ begin
                             '1' when (commit_overrun_abort = '1') else
                             '0';
 
-    p_write_pointer_raw : process(clk_sys, rx_buf_res_n_q_scan)
+    p_write_pointer_raw : process(clk_sys, rx_buf_rst_n_q_scan)
     begin
-        if (rx_buf_res_n_q_scan = '0') then
+        if (rx_buf_rst_n_q_scan = '0') then
            write_pointer_raw_i <= (others => '0');
         elsif (rising_edge(clk_sys)) then
             if (write_pointer_raw_ce = '1') then
@@ -292,9 +292,9 @@ begin
                            '1' when (inc_ts_wr_ptr = '1') else
                            '0';
 
-    p_timestamp_write_ptr : process(clk_sys, rx_buf_res_n_q_scan)
+    p_timestamp_write_ptr : process(clk_sys, rx_buf_rst_n_q_scan)
     begin
-        if (rx_buf_res_n_q_scan = '0') then
+        if (rx_buf_rst_n_q_scan = '0') then
             write_pointer_ts_i  <= (others => '0');
         elsif (rising_edge(clk_sys)) then
             if (write_pointer_ts_ce = '1') then
@@ -307,9 +307,9 @@ begin
     -----------------------------------------------------------------------------------------------
     -- Calculating amount of free memory.
     -----------------------------------------------------------------------------------------------
-    p_mem_free : process(clk_sys, rx_buf_res_n_q_scan)
+    p_mem_free : process(clk_sys, rx_buf_rst_n_q_scan)
     begin
-        if (rx_buf_res_n_q_scan = '0') then
+        if (rx_buf_rst_n_q_scan = '0') then
             rx_mem_free_i_i <= to_unsigned(G_RX_BUF_SIZE, C_FREE_MEM_WIDTH);
             rx_mem_free_raw <= to_unsigned(G_RX_BUF_SIZE, C_FREE_MEM_WIDTH);
 

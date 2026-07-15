@@ -120,7 +120,7 @@ entity bit_time_cfg_capture is
         -- Clock and Asynchronous reset
         -------------------------------------------------------------------------------------------
         clk_sys             : in  std_logic;
-        res_n               : in  std_logic;
+        rst_n               : in  std_logic;
 
         -------------------------------------------------------------------------------------------
         -- Memory Registers interface
@@ -195,9 +195,9 @@ begin
     -----------------------------------------------------------------------------------------------
     -- SETTINGS[ENA] edge detection
     -----------------------------------------------------------------------------------------------
-    p_settings_ena_reg : process(res_n, clk_sys)
+    p_settings_ena_reg : process(rst_n, clk_sys)
     begin
-        if (res_n = '0') then
+        if (rst_n = '0') then
             mr_settings_ena_reg     <= '0';
             mr_settings_ena_reg_2   <= '0';
         elsif (rising_edge(clk_sys)) then
@@ -249,9 +249,9 @@ begin
     -----------------------------------------------------------------------------------------------
     -- Capture registers for TSEG1
     -----------------------------------------------------------------------------------------------
-    p_brp_capt : process(res_n, clk_sys)
+    p_brp_capt : process(rst_n, clk_sys)
     begin
-        if (res_n = '0') then
+        if (rst_n = '0') then
             -- Matching reset values to what is in Memory registers.
             -- This is to make assertions which check valid bit time config
             -- happy, no impact on functionality!

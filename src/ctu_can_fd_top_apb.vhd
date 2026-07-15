@@ -126,7 +126,7 @@ entity ctu_can_fd_top_apb is
         aclk             : in  std_logic;
         arstn            : in  std_logic;
         scan_mode        : in  std_logic;
-        res_n_out        : out std_logic;
+        rst_n_out        : out std_logic;
 
         irq              : out std_logic;
         can_tx           : out std_logic;
@@ -175,9 +175,9 @@ begin
     )
     port map (
         clk_sys         => aclk,
-        res_n           => arstn,
-        res_n_out       => res_n_out,
-        scan_mode     => scan_mode,
+        rst_n           => arstn,
+        rst_n_out       => rst_n_out,
+        scan_mode       => scan_mode,
 
         data_in         => reg_data_in,
         data_out        => reg_data_out,
