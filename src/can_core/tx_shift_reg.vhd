@@ -322,7 +322,7 @@ begin
     -----------------------------------------------------------------------------------------------
     -- TX Shift register instance
     -----------------------------------------------------------------------------------------------
-    tx_shift_reg_inst : entity ctu_can_fd_rtl.shift_reg_preload
+    i_tx_shift_reg : entity ctu_can_fd_rtl.shift_reg_preload
     generic map (
         G_RESET_POLARITY     => '0',
         G_RESET_VALUE        => C_RX_SHIFT_REG_RST_VAL,

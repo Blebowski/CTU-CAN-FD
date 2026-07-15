@@ -187,7 +187,7 @@ begin
     -----------------------------------------------------------------------------------------------
     -- Reset pipeline registers
     -----------------------------------------------------------------------------------------------
-    tx_ctr_reg_rst_inst : entity ctu_can_fd_rtl.rst_reg
+    i_tx_ctr_reg_rst : entity ctu_can_fd_rtl.rst_reg
     generic map (
         G_RESET_POLARITY    => '0'
     )
@@ -204,7 +204,7 @@ begin
         scan_enable         => scan_enable                      -- IN
     );
 
-    rx_ctr_reg_rst_inst : entity ctu_can_fd_rtl.rst_reg
+    i_rx_ctr_reg_rst : entity ctu_can_fd_rtl.rst_reg
     generic map (
         G_RESET_POLARITY    => '0'
     )

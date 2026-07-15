@@ -585,7 +585,7 @@ begin
     -----------------------------------------------------------------------------------------------
     -- Protocol control FSM
     -----------------------------------------------------------------------------------------------
-    protocol_control_fsm_inst : entity ctu_can_fd_rtl.protocol_control_fsm
+    i_protocol_control_fsm : entity ctu_can_fd_rtl.protocol_control_fsm
     port map(
         clk_sys                 => clk_sys,                 -- IN
         res_n                   => res_n,                   -- IN
@@ -748,7 +748,7 @@ begin
     -----------------------------------------------------------------------------------------------
     -- Control counter
     -----------------------------------------------------------------------------------------------
-    control_counter_inst : entity ctu_can_fd_rtl.control_counter
+    i_control_counter : entity ctu_can_fd_rtl.control_counter
     generic map(
         G_CTRL_CTR_WIDTH        => G_CTRL_CTR_WIDTH
     )
@@ -780,7 +780,7 @@ begin
     -----------------------------------------------------------------------------------------------
     -- Reintegration counter
     -----------------------------------------------------------------------------------------------
-    reintegration_counter_inst : entity ctu_can_fd_rtl.reintegration_counter
+    i_reintegration_counter : entity ctu_can_fd_rtl.reintegration_counter
     port map(
         clk_sys                 => clk_sys,                 -- IN
         res_n                   => res_n,                   -- IN
@@ -797,7 +797,7 @@ begin
     -----------------------------------------------------------------------------------------------
     -- Retransmitt counter
     -----------------------------------------------------------------------------------------------
-    retransmitt_counter_inst : entity ctu_can_fd_rtl.retransmitt_counter
+    i_retransmitt_counter : entity ctu_can_fd_rtl.retransmitt_counter
     generic map(
         G_RETR_LIM_CTR_WIDTH    => G_RETR_LIM_CTR_WIDTH
     )
@@ -821,7 +821,7 @@ begin
     -----------------------------------------------------------------------------------------------
     -- Error detector
     -----------------------------------------------------------------------------------------------
-    err_detector_inst : entity ctu_can_fd_rtl.err_detector
+    i_err_detector : entity ctu_can_fd_rtl.err_detector
     generic map(
         G_ERR_VALID_PIPELINE    => G_ERR_VALID_PIPELINE
     )
@@ -876,7 +876,7 @@ begin
     -----------------------------------------------------------------------------------------------
     -- TX Shift register
     -----------------------------------------------------------------------------------------------
-    tx_shift_reg_inst : entity ctu_can_fd_rtl.tx_shift_reg
+    i_tx_shift_reg : entity ctu_can_fd_rtl.tx_shift_reg
     port map(
         clk_sys                 => clk_sys,                 -- IN
         res_n                   => res_n,                   -- IN
@@ -914,7 +914,7 @@ begin
     -----------------------------------------------------------------------------------------------
     -- RX Shift register
     -----------------------------------------------------------------------------------------------
-    rx_shift_reg_inst : entity ctu_can_fd_rtl.rx_shift_reg
+    i_rx_shift_reg : entity ctu_can_fd_rtl.rx_shift_reg
     port map(
         clk_sys                 => clk_sys,                 -- IN
         res_n                   => res_n,                   -- IN

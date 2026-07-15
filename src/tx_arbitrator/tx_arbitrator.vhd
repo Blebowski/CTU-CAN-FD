@@ -365,7 +365,7 @@ begin
     -----------------------------------------------------------------------------------------------
     -- Priority decoder on TXT Buffers
     -----------------------------------------------------------------------------------------------
-    priority_decoder_inst : entity ctu_can_fd_rtl.priority_decoder
+    i_priority_decoder : entity ctu_can_fd_rtl.priority_decoder
     generic map (
         G_TXT_BUFFER_COUNT    => G_TXT_BUFFER_COUNT
     )
@@ -381,7 +381,7 @@ begin
     -----------------------------------------------------------------------------------------------
     -- TX Arbitrator FSM
     -----------------------------------------------------------------------------------------------
-    tx_arbitrator_fsm_inst : entity ctu_can_fd_rtl.tx_arbitrator_fsm
+    i_tx_arbitrator_fsm : entity ctu_can_fd_rtl.tx_arbitrator_fsm
     port map (
         clk_sys                     => clk_sys,                     -- IN
         res_n                       => res_n,                       -- IN

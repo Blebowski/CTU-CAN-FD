@@ -259,7 +259,7 @@ begin
                           else
                       '1';
 
-    rst_reg_inst : entity ctu_can_fd_rtl.rst_reg
+    i_rst_reg : entity ctu_can_fd_rtl.rst_reg
     generic map (
         G_RESET_POLARITY    => '0'
     )

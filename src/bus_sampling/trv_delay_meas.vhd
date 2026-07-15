@@ -273,7 +273,7 @@ begin
     -------------------------------------------------------------------------------------------
     -- Pipeline reset for shift registers to avoid glitches!
     -------------------------------------------------------------------------------------------
-    trv_delay_rst_reg_inst : entity ctu_can_fd_rtl.rst_reg
+    i_trv_delay_rst_reg : entity ctu_can_fd_rtl.rst_reg
     generic map (
         G_RESET_POLARITY    => '0'
     )

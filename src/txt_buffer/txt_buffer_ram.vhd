@@ -185,7 +185,7 @@ begin
     -- some FPGA families does not provide inferred RAM for asynchronously read data (in the same
     -- clock cycle).
     -----------------------------------------------------------------------------------------------
-    dp_inf_ram_be_inst : entity ctu_can_fd_rtl.dp_inf_ram_be
+    i_dp_inf_ram_be : entity ctu_can_fd_rtl.dp_inf_ram_be
     generic map (
         G_WORD_WIDTH            => 32,
         G_DEPTH                 => C_TXT_BUF_DEPTH,
@@ -234,7 +234,7 @@ begin
         -------------------------------------------------------------------------------------------
         -- Parity decoding
         -------------------------------------------------------------------------------------------
-        parity_calculator_read_inst : entity ctu_can_fd_rtl.parity_calculator
+        i_parity_calculator_read : entity ctu_can_fd_rtl.parity_calculator
         generic map (
             G_WIDTH         => 32,
             G_PARITY_TYPE   => C_PARITY_TYPE

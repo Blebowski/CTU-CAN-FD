@@ -158,7 +158,7 @@ architecture rtl of can_top_apb is
 
 begin
 
-    can_inst: entity ctu_can_fd_rtl.can_top_level
+    i_can: entity ctu_can_fd_rtl.can_top_level
         generic map (
             rx_buffer_size          => rx_buffer_size,
             txt_buffer_count        => txt_buffer_count,
@@ -195,7 +195,7 @@ begin
             timestamp       => timestamp
         );
 
-    apb_inst : entity ctu_can_fd_rtl.apb_ifc
+    i_apb : entity ctu_can_fd_rtl.apb_ifc
         port map (
             aclk           => aclk,
 

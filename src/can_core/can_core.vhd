@@ -483,7 +483,7 @@ begin
     -----------------------------------------------------------------------------------------------
     -- Protocol control
     -----------------------------------------------------------------------------------------------
-    protocol_control_inst : entity ctu_can_fd_rtl.protocol_control
+    i_protocol_control : entity ctu_can_fd_rtl.protocol_control
     generic map (
         G_CTRL_CTR_WIDTH        => G_CTRL_CTR_WIDTH,
         G_RETR_LIM_CTR_WIDTH    => G_RETR_LIM_CTR_WIDTH,
@@ -635,7 +635,7 @@ begin
     -----------------------------------------------------------------------------------------------
     -- Operation control FSM
     -----------------------------------------------------------------------------------------------
-    operation_control_inst : entity ctu_can_fd_rtl.operation_control
+    i_operation_control : entity ctu_can_fd_rtl.operation_control
     port map (
         clk_sys                 => clk_sys,                     -- IN
         res_n                   => res_n,                       -- IN
@@ -660,7 +660,7 @@ begin
     -----------------------------------------------------------------------------------------------
     -- Fault confinement
     -----------------------------------------------------------------------------------------------
-    fault_confinement_inst : entity ctu_can_fd_rtl.fault_confinement
+    i_fault_confinement : entity ctu_can_fd_rtl.fault_confinement
     port map (
         clk_sys                 => clk_sys,                     -- IN
         res_n                   => res_n,                       -- IN
@@ -714,7 +714,7 @@ begin
     -----------------------------------------------------------------------------------------------
     -- CAN CRC
     -----------------------------------------------------------------------------------------------
-    can_crc_inst : entity ctu_can_fd_rtl.can_crc
+    i_can_crc : entity ctu_can_fd_rtl.can_crc
     generic map (
         G_CRC15_POL             => G_CRC15_POL,
         G_CRC17_POL             => G_CRC17_POL,
@@ -755,7 +755,7 @@ begin
     -----------------------------------------------------------------------------------------------
     -- Bit Stuffing
     -----------------------------------------------------------------------------------------------
-    bit_stuffing_inst : entity ctu_can_fd_rtl.bit_stuffing
+    i_bit_stuffing : entity ctu_can_fd_rtl.bit_stuffing
     port map (
         clk_sys                 => clk_sys,                     -- IN
         res_n                   => res_n,                       -- IN
@@ -779,7 +779,7 @@ begin
     -----------------------------------------------------------------------------------------------
     -- Bit Destuffing
     -----------------------------------------------------------------------------------------------
-    bit_destuffing_inst : entity ctu_can_fd_rtl.bit_destuffing
+    i_bit_destuffing : entity ctu_can_fd_rtl.bit_destuffing
     port map (
         clk_sys                 => clk_sys,                     -- IN
         res_n                   => res_n,                       -- IN
@@ -805,7 +805,7 @@ begin
     -----------------------------------------------------------------------------------------------
     bus_traffic_ctrs_gen : if (G_SUP_TRAFFIC_CTRS = true) generate
 
-        bus_traffic_counters_inst : entity ctu_can_fd_rtl.bus_traffic_counters
+        i_bus_traffic_counters : entity ctu_can_fd_rtl.bus_traffic_counters
         port map (
             clk_sys             => clk_sys,                     -- IN
             res_n               => res_n,                       -- IN
@@ -833,7 +833,7 @@ begin
     -----------------------------------------------------------------------------------------------
     -- Trigger multiplexor
     -----------------------------------------------------------------------------------------------
-    trigger_mux_inst : entity ctu_can_fd_rtl.trigger_mux
+    i_trigger_mux : entity ctu_can_fd_rtl.trigger_mux
     generic map (
         G_SAMPLE_TRIGGER_COUNT  => G_SAMPLE_TRIGGER_COUNT
     )

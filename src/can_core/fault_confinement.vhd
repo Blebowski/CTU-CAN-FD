@@ -209,7 +209,7 @@ begin
     -----------------------------------------------------------------------------------------------
     -- Fault confinement FSM
     -----------------------------------------------------------------------------------------------
-    fault_confinement_fsm_inst : entity ctu_can_fd_rtl.fault_confinement_fsm
+    i_fault_confinement_fsm : entity ctu_can_fd_rtl.fault_confinement_fsm
     port map(
         res_n                   => res_n,                    -- IN
         clk_sys                 => clk_sys,                  -- IN
@@ -234,7 +234,7 @@ begin
     -----------------------------------------------------------------------------------------------
     -- Error counters
     -----------------------------------------------------------------------------------------------
-    err_counters_inst : entity ctu_can_fd_rtl.err_counters
+    i_err_counters : entity ctu_can_fd_rtl.err_counters
     port map(
         clk_sys                 => clk_sys,                  -- IN
         res_n                   => res_n,                    -- IN
@@ -263,7 +263,7 @@ begin
     -----------------------------------------------------------------------------------------------
     -- Fault confinement rules
     -----------------------------------------------------------------------------------------------
-    fault_confinement_rules_inst : entity ctu_can_fd_rtl.fault_confinement_rules
+    i_fault_confinement_rules : entity ctu_can_fd_rtl.fault_confinement_rules
     port map(
         clk_sys                 => clk_sys,                  -- IN
 

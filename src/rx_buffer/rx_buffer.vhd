@@ -440,7 +440,7 @@ begin
     -----------------------------------------------------------------------------------------------
     -- Register reset to avoid glitches
     -----------------------------------------------------------------------------------------------
-    rst_reg_inst : entity ctu_can_fd_rtl.rst_reg
+    i_rst_reg : entity ctu_can_fd_rtl.rst_reg
     generic map (
         G_RESET_POLARITY        => '0'
     )
@@ -460,7 +460,7 @@ begin
     -----------------------------------------------------------------------------------------------
     -- RX Buffer FSM component
     -----------------------------------------------------------------------------------------------
-    rx_buffer_fsm_inst : entity ctu_can_fd_rtl.rx_buffer_fsm
+    i_rx_buffer_fsm : entity ctu_can_fd_rtl.rx_buffer_fsm
     port map (
         clk_sys                 => clk_sys,                 -- IN
         res_n                   => res_n,                   -- IN
@@ -486,7 +486,7 @@ begin
     -----------------------------------------------------------------------------------------------
     -- RX Buffer Memory pointers
     -----------------------------------------------------------------------------------------------
-    rx_buffer_pointers_inst : entity ctu_can_fd_rtl.rx_buffer_pointers
+    i_rx_buffer_pointers : entity ctu_can_fd_rtl.rx_buffer_pointers
     generic map (
         G_RX_BUFF_SIZE          => G_RX_BUFF_SIZE,
         G_RX_BUFF_PTR_WIDTH     => G_RX_BUFF_PTR_WIDTH
@@ -811,7 +811,7 @@ begin
                              else
                          '0';
 
-    clk_gate_rx_buffer_ram_comp : entity ctu_can_fd_rtl.clk_gate
+    i_clk_gate_rx_buffer_ram_comp : entity ctu_can_fd_rtl.clk_gate
     generic map(
         G_TECHNOLOGY            => G_TECHNOLOGY
     )
@@ -826,7 +826,7 @@ begin
     -----------------------------------------------------------------------------------------------
     -- RAM Memory of RX Buffer
     -----------------------------------------------------------------------------------------------
-    rx_buffer_ram_inst : entity ctu_can_fd_rtl.rx_buffer_ram
+    i_rx_buffer_ram : entity ctu_can_fd_rtl.rx_buffer_ram
     generic map(
         G_RX_BUFF_SIZE          => G_RX_BUFF_SIZE,
         G_RX_BUFF_PTR_WIDTH     => G_RX_BUFF_PTR_WIDTH,

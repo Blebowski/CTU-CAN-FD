@@ -428,7 +428,7 @@ begin
                             else
                         '0';
 
-    clk_gate_control_regs_comp : entity ctu_can_fd_rtl.clk_gate
+    i_clk_gate_control_regs_comp : entity ctu_can_fd_rtl.clk_gate
     generic map(
         G_TECHNOLOGY       => G_TECHNOLOGY
     )
@@ -440,7 +440,7 @@ begin
         clk_out            => clk_control_regs                  -- OUT
     );
 
-    clk_gate_test_regs_comp : entity ctu_can_fd_rtl.clk_gate
+    i_clk_gate_test_regs_comp : entity ctu_can_fd_rtl.clk_gate
     generic map(
         G_TECHNOLOGY       => G_TECHNOLOGY
     )
@@ -455,7 +455,7 @@ begin
     -----------------------------------------------------------------------------------------------
     -- Control registers instance
     -----------------------------------------------------------------------------------------------
-    control_registers_reg_map_comp : entity ctu_can_fd_rtl.control_registers_reg_map
+    i_control_registers_reg_map_comp : entity ctu_can_fd_rtl.control_registers_reg_map
     generic map(
         DATA_WIDTH            => 32,
         ADDRESS_WIDTH         => 8,
@@ -488,7 +488,7 @@ begin
     -- Test registers instance
     -----------------------------------------------------------------------------------------------
     test_registers_gen_true : if (G_SUP_TEST_REGISTERS) generate
-        test_registers_reg_map_comp : entity ctu_can_fd_rtl.test_registers_reg_map
+        i_test_registers_reg_map_comp : entity ctu_can_fd_rtl.test_registers_reg_map
         generic map (
             DATA_WIDTH          => 32,
             ADDRESS_WIDTH       => 8,
@@ -568,7 +568,7 @@ begin
     -- Writing MODE[RST] = 1 causes Soft Reset
     soft_res_d_n <= not mr_ctrl_out_i.mode_rst;
 
-    soft_rst_rst_reg_inst : entity ctu_can_fd_rtl.rst_reg
+    i_soft_rst_rst_reg : entity ctu_can_fd_rtl.rst_reg
     generic map (
         G_RESET_POLARITY    => '0'
     )
@@ -591,7 +591,7 @@ begin
                         else
                     '1';
 
-    global_rst_rst_reg_inst : entity ctu_can_fd_rtl.rst_reg
+    i_global_rst_rst_reg : entity ctu_can_fd_rtl.rst_reg
     generic map (
         G_RESET_POLARITY    => '0'
     )

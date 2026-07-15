@@ -274,7 +274,7 @@ begin
     -----------------------------------------------------------------------------------------------
     int_module_gen : for i in 0 to G_INT_COUNT - 1 generate
 
-        int_module_inst : entity ctu_can_fd_rtl.int_module
+        i_int_module : entity ctu_can_fd_rtl.int_module
         port map (
             clk_sys             => clk_sys,                                  -- IN
             res_n               => res_n,                                    -- IN
@@ -298,7 +298,7 @@ begin
     -----------------------------------------------------------------------------------------------
     -- Output interrupt DFF to make sure that interrupt output will be glitch free!
     -----------------------------------------------------------------------------------------------
-    dff_int_output_reg : entity ctu_can_fd_rtl.dff_arst
+    i_dff_int_output_reg : entity ctu_can_fd_rtl.dff_arst
     generic map(
         G_RESET_POLARITY        => '0',
         G_RST_VAL               => '0'

@@ -261,7 +261,7 @@ begin
     -----------------------------------------------------------------------------------------------
     -- CRC 15 (from RX Data, no Bit Stuffing)
     -----------------------------------------------------------------------------------------------
-    crc_calc_15_inst : entity ctu_can_fd_rtl.crc_calc
+    i_crc_calc_15 : entity ctu_can_fd_rtl.crc_calc
     generic map (
         G_CRC_WIDTH         => 15,
         G_POLYNOMIAL        => G_CRC15_POL
@@ -282,7 +282,7 @@ begin
     -----------------------------------------------------------------------------------------------
     -- CRC 17 (from TX or RX Data, with Bit Stuffing)
     -----------------------------------------------------------------------------------------------
-    crc_calc_17_rx_inst : entity ctu_can_fd_rtl.crc_calc
+    i_crc_calc_17_rx : entity ctu_can_fd_rtl.crc_calc
     generic map(
         G_CRC_WIDTH         => 17,
         G_POLYNOMIAL        => G_CRC17_POL
@@ -304,7 +304,7 @@ begin
     -----------------------------------------------------------------------------------------------
     -- CRC 21 (from TX or RX Data, with Bit Stuffing)
     -----------------------------------------------------------------------------------------------
-    crc_calc_21_rx_inst : entity ctu_can_fd_rtl.crc_calc
+    i_crc_calc_21_rx : entity ctu_can_fd_rtl.crc_calc
     generic map(
         G_CRC_WIDTH         => 21,
         G_POLYNOMIAL        => G_CRC21_POL

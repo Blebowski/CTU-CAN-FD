@@ -612,7 +612,7 @@ begin
     -----------------------------------------------------------------------------------------------
     -- Reset synchroniser
     -----------------------------------------------------------------------------------------------
-    rst_sync_inst : entity ctu_can_fd_rtl.rst_sync
+    i_rst_sync : entity ctu_can_fd_rtl.rst_sync
     generic map (
         G_RESET_POLARITY  => '0'
     )
@@ -626,7 +626,7 @@ begin
     -----------------------------------------------------------------------------------------------
     -- Memory registers
     -----------------------------------------------------------------------------------------------
-    memory_registers_inst : entity ctu_can_fd_rtl.memory_registers
+    i_memory_registers : entity ctu_can_fd_rtl.memory_registers
     generic map (
         G_SUP_FILTA                     => sup_filtA,
         G_SUP_FILTB                     => sup_filtB,
@@ -723,7 +723,7 @@ begin
     -----------------------------------------------------------------------------------------------
     -- RX Buffer
     -----------------------------------------------------------------------------------------------
-    rx_buffer_inst : entity ctu_can_fd_rtl.rx_buffer
+    i_rx_buffer : entity ctu_can_fd_rtl.rx_buffer
     generic map (
         G_RX_BUFF_SIZE                  => rx_buffer_size,
         G_RX_BUFF_PTR_WIDTH             => C_RX_BUFF_PTR_WIDTH,
@@ -806,7 +806,7 @@ begin
     -- TXT Buffer port A parity encoding
     -----------------------------------------------------------------------------------------------
     txtb_parity_true_gen : if (sup_parity) generate
-        txtb_port_a_parity_calculator_inst : entity ctu_can_fd_rtl.parity_calculator
+        i_txtb_port_a_parity_calculator : entity ctu_can_fd_rtl.parity_calculator
         generic map (
             G_WIDTH         => 32,
             G_PARITY_TYPE   => C_PARITY_TYPE
@@ -830,7 +830,7 @@ begin
     begin
 
         txt_buf_even_gen : if ((i mod 2) = 0) generate
-            txt_buffer_even_inst : entity ctu_can_fd_rtl.txt_buffer_even
+            i_txt_buffer_even : entity ctu_can_fd_rtl.txt_buffer_even
             generic map (
                 G_TXT_BUFFER_COUNT          => txt_buffer_count,
                 G_ID                        => i,
@@ -892,7 +892,7 @@ begin
         end generate;
 
         txt_buf_odd_gen : if ((i mod 2) = 1) generate
-            txt_buffer_odd_inst : entity ctu_can_fd_rtl.txt_buffer_odd
+            i_txt_buffer_odd : entity ctu_can_fd_rtl.txt_buffer_odd
             generic map (
                 G_TXT_BUFFER_COUNT          => txt_buffer_count,
                 G_ID                        => i,
@@ -960,7 +960,7 @@ begin
     -----------------------------------------------------------------------------------------------
     -- TX Arbitrator
     -----------------------------------------------------------------------------------------------
-    tx_arbitrator_inst : entity ctu_can_fd_rtl.tx_arbitrator
+    i_tx_arbitrator : entity ctu_can_fd_rtl.tx_arbitrator
     generic map (
         G_TXT_BUFFER_COUNT              => txt_buffer_count
     )
@@ -1013,7 +1013,7 @@ begin
     -----------------------------------------------------------------------------------------------
     -- Frame Filters
     -----------------------------------------------------------------------------------------------
-    frame_filters_inst : entity ctu_can_fd_rtl.frame_filters
+    i_frame_filters : entity ctu_can_fd_rtl.frame_filters
     generic map(
         G_SUP_FILTA                     => sup_filtA,
         G_SUP_FILTB                     => sup_filtB,
@@ -1079,7 +1079,7 @@ begin
     -----------------------------------------------------------------------------------------------
     -- Interrrupt Manager
     -----------------------------------------------------------------------------------------------
-    int_manager_inst : entity ctu_can_fd_rtl.int_manager
+    i_int_manager : entity ctu_can_fd_rtl.int_manager
     generic map(
         G_INT_COUNT                     => C_INT_COUNT,
         G_TXT_BUFFER_COUNT              => txt_buffer_count
@@ -1152,7 +1152,7 @@ begin
     -----------------------------------------------------------------------------------------------
     -- CAN Core
     -----------------------------------------------------------------------------------------------
-    can_core_inst : entity ctu_can_fd_rtl.can_core
+    i_can_core : entity ctu_can_fd_rtl.can_core
     generic map (
         G_SAMPLE_TRIGGER_COUNT          => C_SAMPLE_TRIGGER_COUNT,
         G_CTRL_CTR_WIDTH                => C_CTRL_CTR_WIDTH,
@@ -1277,7 +1277,7 @@ begin
     -----------------------------------------------------------------------------------------------
     -- Prescaler
     -----------------------------------------------------------------------------------------------
-    prescaler_inst : entity ctu_can_fd_rtl.prescaler
+    i_prescaler : entity ctu_can_fd_rtl.prescaler
     generic map (
         G_TSEG1_NBT_WIDTH               => C_TSEG1_NBT_WIDTH,
         G_TSEG2_NBT_WIDTH               => C_TSEG2_NBT_WIDTH,
@@ -1329,7 +1329,7 @@ begin
     -----------------------------------------------------------------------------------------------
     -- Bus Sampling
     -----------------------------------------------------------------------------------------------
-    bus_sampling_inst : entity ctu_can_fd_rtl.bus_sampling
+    i_bus_sampling : entity ctu_can_fd_rtl.bus_sampling
     generic map(
         G_SSP_DELAY_SAT_VAL             => C_SSP_DELAY_SAT_VAL,
         G_TX_CACHE_DEPTH                => C_TX_CACHE_DEPTH,

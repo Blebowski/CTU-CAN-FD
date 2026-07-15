@@ -248,7 +248,7 @@ begin
     -------------------------------------------------------------------------------------------
     -- Synchronisation chain for input signal
     -------------------------------------------------------------------------------------------
-    can_rx_sig_sync_inst : entity ctu_can_fd_rtl.sig_sync
+    i_can_rx_sig_sync : entity ctu_can_fd_rtl.sig_sync
     generic map (
         G_RESET_POLARITY            => '0',
         G_RESET_VALUE               => RECESSIVE
@@ -264,7 +264,7 @@ begin
     -------------------------------------------------------------------------------------------
     -- Unit for measurement of transceiver delay and calculation of secondary sampling point.
     -------------------------------------------------------------------------------------------
-    trv_delay_measurement_inst : entity ctu_can_fd_rtl.trv_delay_measurement
+    i_trv_delay_measurement : entity ctu_can_fd_rtl.trv_delay_measurement
     generic map (
         G_TRV_CTR_WIDTH             => G_TRV_CTR_WIDTH,
         G_SSP_POS_WIDTH             => G_SSP_POS_WIDTH,
@@ -292,7 +292,7 @@ begin
     -------------------------------------------------------------------------------------------
     -- Edge detector on TX, RX Data
     -------------------------------------------------------------------------------------------
-    data_edge_detector_inst : entity ctu_can_fd_rtl.data_edge_detector
+    i_data_edge_detector : entity ctu_can_fd_rtl.data_edge_detector
     port map (
         clk_sys                     => clk_sys,                 -- IN
         res_n                       => res_n,                   -- IN
@@ -316,7 +316,7 @@ begin
     -------------------------------------------------------------------------------------------
     -- Pipeline reset for shift registers to avoid glitches!
     -------------------------------------------------------------------------------------------
-    shift_regs_rst_reg_inst : entity ctu_can_fd_rtl.rst_reg
+    i_shift_regs_rst_reg : entity ctu_can_fd_rtl.rst_reg
     generic map (
         G_RESET_POLARITY            => '0'
     )
@@ -336,7 +336,7 @@ begin
     -------------------------------------------------------------------------------------------
     -- Create delayed TX Trigger one clock cycle after Stuff pipeline stage.
     -------------------------------------------------------------------------------------------
-    tx_trigger_reg_inst : entity ctu_can_fd_rtl.dff_arst
+    i_tx_trigger_reg : entity ctu_can_fd_rtl.dff_arst
     generic map (
         G_RESET_POLARITY            => '0',
         G_RST_VAL                   => '0'
@@ -352,7 +352,7 @@ begin
     -------------------------------------------------------------------------------------------
     -- Generator of secondary sampling point
     -------------------------------------------------------------------------------------------
-    ssp_generator_inst : entity ctu_can_fd_rtl.ssp_generator
+    i_ssp_generator : entity ctu_can_fd_rtl.ssp_generator
     generic map (
         G_SSP_CTRS_WIDTH            => G_SSP_CTRS_WIDTH,
         G_SSP_POS_WIDTH             => G_SSP_POS_WIDTH
@@ -392,7 +392,7 @@ begin
     -- data when Sample point steps out of shift register. This gets the TX data which
     -- correspond to the RX Bit in Secondary sampling point.
     -------------------------------------------------------------------------------------------
-    tx_data_cache_inst : entity ctu_can_fd_rtl.tx_data_cache
+    i_tx_data_cache : entity ctu_can_fd_rtl.tx_data_cache
     generic map (
         G_TX_CACHE_DEPTH            => G_TX_CACHE_DEPTH,
         G_TX_CACHE_RST_VAL          => RECESSIVE,
@@ -412,7 +412,7 @@ begin
     -------------------------------------------------------------------------------------------
     -- Bit error detector
     -------------------------------------------------------------------------------------------
-    bit_err_detector_inst : entity ctu_can_fd_rtl.bit_err_detector
+    i_bit_err_detector : entity ctu_can_fd_rtl.bit_err_detector
     port map (
         clk_sys                     => clk_sys,                 -- IN
         res_n                       => res_n,                   -- IN
@@ -431,7 +431,7 @@ begin
     -------------------------------------------------------------------------------------------
     -- Sampling of bus value
     -------------------------------------------------------------------------------------------
-    sample_mux_inst : entity ctu_can_fd_rtl.sample_mux
+    i_sample_mux : entity ctu_can_fd_rtl.sample_mux
     port map (
         clk_sys                     => clk_sys,                 -- IN
         res_n                       => res_n,                   -- IN

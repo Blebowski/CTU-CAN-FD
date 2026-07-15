@@ -227,7 +227,7 @@ begin
     --  2. CRC RX WBS - Trigger for CRC17, CRC21 from RX Data with bit stuffing. Fixed stuff bits
     --     must be left out! Active in Process pipeline stage. (see next comment).
     -----------------------------------------------------------------------------------------------
-    crc_trig_tx_wbs_reg : entity ctu_can_fd_rtl.dff_arst
+    i_crc_trig_tx_wbs_reg : entity ctu_can_fd_rtl.dff_arst
     generic map(
         G_RESET_POLARITY   => '0',
         G_RST_VAL          => '0'
@@ -250,7 +250,7 @@ begin
     -- stage. We sample the data (Bit Destuffing input) to avoid possible change, and calculate the
     -- CRC with rx_trigger(0) (in Process pipeline stage).
     -----------------------------------------------------------------------------------------------
-    crc_data_rx_wbs_reg : entity ctu_can_fd_rtl.dff_arst_ce
+    i_crc_data_rx_wbs_reg : entity ctu_can_fd_rtl.dff_arst_ce
     generic map(
         G_RESET_POLARITY   => '0',
         G_RST_VAL          => '0'

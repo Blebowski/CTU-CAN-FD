@@ -903,7 +903,7 @@ begin
     -----------------------------------------------------------------------------------------------
     -- DLC to Data length decoders
     -----------------------------------------------------------------------------------------------
-    dlc_decoder_tx_inst : entity ctu_can_fd_rtl.dlc_decoder
+    i_dlc_decoder_tx : entity ctu_can_fd_rtl.dlc_decoder
     port map (
         dlc           => tran_dlc,                          -- IN
         frame_type    => tran_frame_type_i,                 -- IN
@@ -911,7 +911,7 @@ begin
         data_length   => tran_data_length                   -- OUT
     );
 
-    dlc_decoder_rx_inst : entity ctu_can_fd_rtl.dlc_decoder
+    i_dlc_decoder_rx : entity ctu_can_fd_rtl.dlc_decoder
     port map (
         dlc           => rec_dlc_q,                         -- IN
         frame_type    => rec_frame_type,                    -- IN
@@ -919,7 +919,7 @@ begin
         data_length   => rec_data_length                    -- OUT
     );
 
-    dlc_decoder_rx_inst_comb : entity ctu_can_fd_rtl.dlc_decoder
+    i_dlc_decoder_rx_inst_comb : entity ctu_can_fd_rtl.dlc_decoder
     port map (
         dlc           => rec_dlc_d,                         -- IN
         frame_type    => rec_frame_type,                    -- IN

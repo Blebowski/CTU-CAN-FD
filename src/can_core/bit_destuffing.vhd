@@ -188,7 +188,7 @@ begin
     -----------------------------------------------------------------------------------------------
     -- Registering previous value of enable input to detect 0->1 transition.
     -----------------------------------------------------------------------------------------------
-    dff_ena_reg : entity ctu_can_fd_rtl.dff_arst
+    i_dff_ena_reg : entity ctu_can_fd_rtl.dff_arst
     generic map (
         G_RESET_POLARITY   => '0',
         G_RST_VAL          => '0'
@@ -256,7 +256,7 @@ begin
     -- Registering previous value of fixed bit stuffing to detect first fixed stuff bit and insert
     -- stuff bit in the beginning of CRC for CAN FD automatically!
     -----------------------------------------------------------------------------------------------
-    dff_fixed_stuff_reg : entity ctu_can_fd_rtl.dff_arst_ce
+    i_dff_fixed_stuff_reg : entity ctu_can_fd_rtl.dff_arst_ce
     generic map (
         G_RESET_POLARITY   => '0',
         G_RST_VAL          => '0'
@@ -356,7 +356,7 @@ begin
     -----------------------------------------------------------------------------------------------
     -- Destuffed flag - register assignment
     -----------------------------------------------------------------------------------------------
-    dff_destuffed_flag_reg : entity ctu_can_fd_rtl.dff_arst
+    i_dff_destuffed_flag_reg : entity ctu_can_fd_rtl.dff_arst
     generic map (
         G_RESET_POLARITY   => '0',
         G_RST_VAL          => '0'
@@ -380,7 +380,7 @@ begin
     -----------------------------------------------------------------------------------------------
     -- Error register - register assignment
     -----------------------------------------------------------------------------------------------
-    dff_err_reg : entity ctu_can_fd_rtl.dff_arst
+    i_dff_err_reg : entity ctu_can_fd_rtl.dff_arst
     generic map (
         G_RESET_POLARITY   => '0',
         G_RST_VAL          => '0'
@@ -405,7 +405,7 @@ begin
     -----------------------------------------------------------------------------------------------
     -- Previously processed value - register assignment
     -----------------------------------------------------------------------------------------------
-    dff_prev_val_reg : entity ctu_can_fd_rtl.dff_arst
+    i_dff_prev_val_reg : entity ctu_can_fd_rtl.dff_arst
     generic map (
         G_RESET_POLARITY   => '0',
         G_RST_VAL          => RECESSIVE
@@ -423,7 +423,7 @@ begin
     -- Sampling of data value to output during operation. One clock cycle of delay is inserted so
     -- that next pipeline stage always processes the same data!
     -----------------------------------------------------------------------------------------------
-    dff_data_out_val_reg : entity ctu_can_fd_rtl.dff_arst_ce
+    i_dff_data_out_val_reg : entity ctu_can_fd_rtl.dff_arst_ce
     generic map (
         G_RESET_POLARITY   => '0',
         G_RST_VAL          => RECESSIVE

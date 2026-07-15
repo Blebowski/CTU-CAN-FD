@@ -93,37 +93,37 @@ end entity;
 architecture tb of func_cov_prescaler_dbt is
 
     alias is_tseg1 is
-        << signal .tb_top_ctu_can_fd.dut.prescaler_inst.bit_segment_meter_nbt_inst.is_tseg1 : std_logic >>;
+        << signal .tb_top_ctu_can_fd.dut.i_prescaler.i_bit_segment_meter_nbt.is_tseg1 : std_logic >>;
 
     alias is_tseg2 is
-        << signal .tb_top_ctu_can_fd.dut.prescaler_inst.bit_segment_meter_nbt_inst.is_tseg2 : std_logic >>;
+        << signal .tb_top_ctu_can_fd.dut.i_prescaler.i_bit_segment_meter_nbt.is_tseg2 : std_logic >>;
 
     alias exp_seg_length_ce is
-        << signal .tb_top_ctu_can_fd.dut.prescaler_inst.bit_segment_meter_dbt_inst.exp_seg_length_ce : std_logic >>;
+        << signal .tb_top_ctu_can_fd.dut.i_prescaler.i_bit_segment_meter_dbt.exp_seg_length_ce : std_logic >>;
 
     alias use_basic_segm_length is
-        << signal .tb_top_ctu_can_fd.dut.prescaler_inst.bit_segment_meter_dbt_inst.use_basic_segm_length : std_logic >>;
+        << signal .tb_top_ctu_can_fd.dut.i_prescaler.i_bit_segment_meter_dbt.use_basic_segm_length : std_logic >>;
 
     alias phase_err is
-        << signal .tb_top_ctu_can_fd.dut.prescaler_inst.bit_segment_meter_dbt_inst.phase_err : unsigned(6 downto 0) >>;
+        << signal .tb_top_ctu_can_fd.dut.i_prescaler.i_bit_segment_meter_dbt.phase_err : unsigned(6 downto 0) >>;
 
     alias sjw is
-        << signal .tb_top_ctu_can_fd.dut.prescaler_inst.bit_segment_meter_dbt_inst.sjw : std_logic_vector(4 downto 0) >>;
+        << signal .tb_top_ctu_can_fd.dut.i_prescaler.i_bit_segment_meter_dbt.sjw : std_logic_vector(4 downto 0) >>;
 
     alias exit_segm_req is
-        << signal .tb_top_ctu_can_fd.dut.prescaler_inst.bit_segment_meter_dbt_inst.exit_segm_req : std_logic >>;
+        << signal .tb_top_ctu_can_fd.dut.i_prescaler.i_bit_segment_meter_dbt.exit_segm_req : std_logic >>;
 
     alias exit_ph2_immediate is
-        << signal .tb_top_ctu_can_fd.dut.prescaler_inst.bit_segment_meter_dbt_inst.exit_ph2_immediate : std_logic >>;
+        << signal .tb_top_ctu_can_fd.dut.i_prescaler.i_bit_segment_meter_dbt.exit_ph2_immediate : std_logic >>;
 
     alias exit_segm_regular_tseg1 is
-        << signal .tb_top_ctu_can_fd.dut.prescaler_inst.bit_segment_meter_dbt_inst.exit_segm_regular_tseg1 : std_logic >>;
+        << signal .tb_top_ctu_can_fd.dut.i_prescaler.i_bit_segment_meter_dbt.exit_segm_regular_tseg1 : std_logic >>;
 
     alias exit_segm_regular_tseg2 is
-        << signal .tb_top_ctu_can_fd.dut.prescaler_inst.bit_segment_meter_dbt_inst.exit_segm_regular_tseg2 : std_logic >>;
+        << signal .tb_top_ctu_can_fd.dut.i_prescaler.i_bit_segment_meter_dbt.exit_segm_regular_tseg2 : std_logic >>;
 
     alias resync_edge_valid is
-        << signal .tb_top_ctu_can_fd.dut.prescaler_inst.resync_edge_valid : std_logic >>;
+        << signal .tb_top_ctu_can_fd.dut.i_prescaler.resync_edge_valid : std_logic >>;
 begin
 
     -- psl default clock is rising_edge(clk);

@@ -226,7 +226,7 @@ begin
     -----------------------------------------------------------------------------------------------
     -- Registering reset to avoid glitches
     -----------------------------------------------------------------------------------------------
-    rx_shift_res_reg_inst : entity ctu_can_fd_rtl.rst_reg
+    i_rx_shift_res_reg : entity ctu_can_fd_rtl.rst_reg
     generic map (
         G_RESET_POLARITY    => '0'
     )
@@ -265,7 +265,7 @@ begin
     -----------------------------------------------------------------------------------------------
     -- RX Shift register
     -----------------------------------------------------------------------------------------------
-    shift_reg_byte_inst : entity ctu_can_fd_rtl.shift_reg_byte
+    i_shift_reg_byte : entity ctu_can_fd_rtl.shift_reg_byte
     generic map (
         G_RESET_POLARITY     => '0',
         G_RESET_VALUE        => x"00000000",

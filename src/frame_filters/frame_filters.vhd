@@ -282,7 +282,7 @@ begin
     -----------------------------------------------------------------------------------------------
     -- Filter instances
     -----------------------------------------------------------------------------------------------
-    bit_filter_a_inst : entity ctu_can_fd_rtl.bit_filter
+    i_bit_filter_a : entity ctu_can_fd_rtl.bit_filter
     generic map (
         G_WIDTH         => 29,
         G_IS_PRESENT    => G_SUP_FILTA
@@ -296,7 +296,7 @@ begin
         valid           => int_filter_a_valid                       -- OUT
     );
 
-    bit_filter_b_inst : entity ctu_can_fd_rtl.bit_filter
+    i_bit_filter_b : entity ctu_can_fd_rtl.bit_filter
     generic map (
         G_WIDTH         => 29,
         G_IS_PRESENT    => G_SUP_FILTB
@@ -310,7 +310,7 @@ begin
         valid           => int_filter_b_valid                       -- OUT
     );
 
-    bit_filter_c_inst : entity ctu_can_fd_rtl.bit_filter
+    i_bit_filter_c : entity ctu_can_fd_rtl.bit_filter
     generic map (
         G_WIDTH         => 29,
         G_IS_PRESENT    => G_SUP_FILTC
@@ -324,7 +324,7 @@ begin
         valid           => int_filter_c_valid                       -- OUT
     );
 
-    range_filter_inst : entity ctu_can_fd_rtl.range_filter
+    i_range_filter : entity ctu_can_fd_rtl.range_filter
     generic map (
         G_WIDTH         => 29,
         G_IS_PRESENT    => G_SUP_RANGE

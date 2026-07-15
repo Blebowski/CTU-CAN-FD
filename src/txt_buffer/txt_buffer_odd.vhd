@@ -337,7 +337,7 @@ begin
     -----------------------------------------------------------------------------------------------
     -- Clock gater for TXT Buffer RAM
     -----------------------------------------------------------------------------------------------
-    clk_gate_txt_buffer_ram_comp : entity ctu_can_fd_rtl.clk_gate
+    i_clk_gate_txt_buffer_ram_comp : entity ctu_can_fd_rtl.clk_gate
     generic map (
         G_TECHNOLOGY            => G_TECHNOLOGY
     )
@@ -352,7 +352,7 @@ begin
     -----------------------------------------------------------------------------------------------
     -- RAM Memory of TXT Buffer
     -----------------------------------------------------------------------------------------------
-    txt_buffer_ram_inst : entity ctu_can_fd_rtl.txt_buffer_ram
+    i_txt_buffer_ram : entity ctu_can_fd_rtl.txt_buffer_ram
     generic map (
         G_ID                    => G_ID,
         G_SUP_PARITY            => G_SUP_PARITY,
@@ -393,7 +393,7 @@ begin
     -----------------------------------------------------------------------------------------------
     -- TXT Buffer FSM
     -----------------------------------------------------------------------------------------------
-    txt_buffer_fsm_inst : entity ctu_can_fd_rtl.txt_buffer_fsm
+    i_txt_buffer_fsm : entity ctu_can_fd_rtl.txt_buffer_fsm
     port map (
         clk_sys                 => clk_sys,                     -- IN
         res_n                   => res_n,                       -- IN

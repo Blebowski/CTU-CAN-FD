@@ -97,59 +97,59 @@ architecture tb of func_cov_prescaler is
     -----------------------------------------------------------------------------------------------
 
     alias sp_control is
-        << signal .tb_top_ctu_can_fd.dut.prescaler_inst.sp_control : std_logic_vector(1 downto 0) >>;
+        << signal .tb_top_ctu_can_fd.dut.i_prescaler.sp_control : std_logic_vector(1 downto 0) >>;
 
     alias tseg1_nbt is
-        << signal .tb_top_ctu_can_fd.dut.prescaler_inst.tseg1_nbt : std_logic_vector(7 downto 0) >>;
+        << signal .tb_top_ctu_can_fd.dut.i_prescaler.tseg1_nbt : std_logic_vector(7 downto 0) >>;
 
     alias tseg2_nbt is
-        << signal .tb_top_ctu_can_fd.dut.prescaler_inst.tseg2_nbt : std_logic_vector(5 downto 0) >>;
+        << signal .tb_top_ctu_can_fd.dut.i_prescaler.tseg2_nbt : std_logic_vector(5 downto 0) >>;
 
     alias tseg1_dbt is
-        << signal .tb_top_ctu_can_fd.dut.prescaler_inst.tseg1_dbt : std_logic_vector(6 downto 0) >>;
+        << signal .tb_top_ctu_can_fd.dut.i_prescaler.tseg1_dbt : std_logic_vector(6 downto 0) >>;
 
     alias tseg2_dbt is
-        << signal .tb_top_ctu_can_fd.dut.prescaler_inst.tseg2_dbt : std_logic_vector(4 downto 0) >>;
+        << signal .tb_top_ctu_can_fd.dut.i_prescaler.tseg2_dbt : std_logic_vector(4 downto 0) >>;
 
     alias brp_nbt is
-        << signal .tb_top_ctu_can_fd.dut.prescaler_inst.brp_nbt : std_logic_vector(7 downto 0) >>;
+        << signal .tb_top_ctu_can_fd.dut.i_prescaler.brp_nbt : std_logic_vector(7 downto 0) >>;
 
     alias brp_dbt is
-        << signal .tb_top_ctu_can_fd.dut.prescaler_inst.brp_dbt : std_logic_vector(7 downto 0) >>;
+        << signal .tb_top_ctu_can_fd.dut.i_prescaler.brp_dbt : std_logic_vector(7 downto 0) >>;
 
     alias resync_edge_valid is
-        << signal .tb_top_ctu_can_fd.dut.prescaler_inst.resync_edge_valid : std_logic >>;
+        << signal .tb_top_ctu_can_fd.dut.i_prescaler.resync_edge_valid : std_logic >>;
 
     alias is_tseg1 is
-        << signal .tb_top_ctu_can_fd.dut.prescaler_inst.is_tseg1 : std_logic >>;
+        << signal .tb_top_ctu_can_fd.dut.i_prescaler.is_tseg1 : std_logic >>;
 
     alias is_tseg2 is
-        << signal .tb_top_ctu_can_fd.dut.prescaler_inst.is_tseg2 : std_logic >>;
+        << signal .tb_top_ctu_can_fd.dut.i_prescaler.is_tseg2 : std_logic >>;
 
     -----------------------------------------------------------------------------------------------
     -- Aliases to "synchronisation_checker" top
     -----------------------------------------------------------------------------------------------
     alias sync_flag is
-        << signal .tb_top_ctu_can_fd.dut.prescaler_inst.synchronisation_checker_inst.sync_flag : std_logic >>;
+        << signal .tb_top_ctu_can_fd.dut.i_prescaler.i_synchronisation_checker.sync_flag : std_logic >>;
 
     alias h_sync_edge is
-        << signal .tb_top_ctu_can_fd.dut.prescaler_inst.synchronisation_checker_inst.h_sync_edge : std_logic >>;
+        << signal .tb_top_ctu_can_fd.dut.i_prescaler.i_synchronisation_checker.h_sync_edge : std_logic >>;
 
     alias resync_edge is
-        << signal .tb_top_ctu_can_fd.dut.prescaler_inst.synchronisation_checker_inst.resync_edge : std_logic >>;
+        << signal .tb_top_ctu_can_fd.dut.i_prescaler.i_synchronisation_checker.resync_edge : std_logic >>;
 
     alias h_sync_edge_valid is
-        << signal .tb_top_ctu_can_fd.dut.prescaler_inst.synchronisation_checker_inst.h_sync_edge_valid : std_logic >>;
+        << signal .tb_top_ctu_can_fd.dut.i_prescaler.i_synchronisation_checker.h_sync_edge_valid : std_logic >>;
 
     -----------------------------------------------------------------------------------------------
     -- Aliases to "trigger_generator" top
     -----------------------------------------------------------------------------------------------
 
     alias rx_trig_req_q is
-        << signal .tb_top_ctu_can_fd.dut.prescaler_inst.trigger_generator_inst.rx_trig_req_q : std_logic >>;
+        << signal .tb_top_ctu_can_fd.dut.i_prescaler.i_trigger_generator.rx_trig_req_q : std_logic >>;
 
     alias tx_trig_req is
-        << signal .tb_top_ctu_can_fd.dut.prescaler_inst.trigger_generator_inst.tx_trig_req : std_logic >>;
+        << signal .tb_top_ctu_can_fd.dut.i_prescaler.i_trigger_generator.tx_trig_req : std_logic >>;
 
 begin
 
