@@ -171,7 +171,7 @@ begin
 
         -- Since we cover "00" as inactive value, instead of active values
         -- "01", "10" or "11", rather make sure that input values are defined
-        l0_val_proc : process(prio_valid(i))
+        p_l0_val : process(prio_valid(i))
         begin
             if (prio_valid(i) /= '0' and prio_valid(i) /= '1' and now /= 0 fs) then
                 report "Input values not exactly defined" severity error;
@@ -196,7 +196,7 @@ begin
     -----------------------------------------------------------------------------------------------
     -- Level 1 comparators
     -----------------------------------------------------------------------------------------------
-    l1_prio_dec_proc : process(l0_valid, l0_prio)
+    p_l1_prio_dec : process(l0_valid, l0_prio)
         variable tmp : level1_comp_valid_type;
     begin
         tmp := (others => (others => '0'));
@@ -236,7 +236,7 @@ begin
     -----------------------------------------------------------------------------------------------
     -- Level 2 comparators
     -----------------------------------------------------------------------------------------------
-    l2_prio_dec_proc : process(l1_valid, l1_prio)
+    p_l2_prio_dec : process(l1_valid, l1_prio)
         variable tmp : level2_comp_valid_type;
     begin
         tmp := (others => (others => '0'));
@@ -305,7 +305,7 @@ begin
     -- and valid sinals are set to 0. This leads to the case that "buf_index" will NEVER be
     -- assigned value higher than its available range.
 
-    out_index_proc : process(l3_winner, l2_winner, l1_winner)
+    p_out_index : process(l3_winner, l2_winner, l1_winner)
     begin
         if (l3_winner = LOWER_TREE) then
             if (l2_winner(0) = LOWER_TREE) then

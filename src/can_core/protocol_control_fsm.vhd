@@ -945,7 +945,7 @@ begin
     -- Bus off reset request capture register. Capture when there is write to memory registers,
     -- clear when request is processed (in next Sample Point).
     -----------------------------------------------------------------------------------------------
-    bus_off_req_capt_proc : process(res_n, clk_sys)
+    p_bus_off_req_capt : process(res_n, clk_sys)
     begin
         if (res_n = '0') then
             mr_command_ercrst_q <= '0';
@@ -961,7 +961,7 @@ begin
     -----------------------------------------------------------------------------------------------
     -- Next state process
     -----------------------------------------------------------------------------------------------
-    next_state_proc : process(
+    p_next_state : process(
         curr_state, err_frm_req, ctrl_ctr_zero, no_data_field, is_receiver, is_fd_frame,
         is_bus_off, go_to_suspend, tran_frame_valid, mr_command_ercrst_q, reinteg_ctr_expired,
         rx_data_nbs, is_err_active, go_to_stuff_count, pex_on_fdf_enable, pex_on_res_enable,
@@ -1355,7 +1355,7 @@ begin
     -----------------------------------------------------------------------------------------------
     -- Current state process
     -----------------------------------------------------------------------------------------------
-    curr_state_proc : process(
+    p_curr_state : process(
         curr_state, err_frm_req, sp_control_q_i, tx_failed, mr_settings_ena, rx_data_nbs,
         ctrl_ctr_zero, arbitration_lost_condition, tx_data_wbs, is_transmitter, tran_ident_type,
         tran_frame_type_i, tran_is_rtr, ide_is_arbitration, mr_mode_fde, tran_brs, rx_trigger,
@@ -2755,7 +2755,7 @@ begin
                         else
                     '0';
 
-    fsm_state_reg_proc : process(clk_sys, res_n)
+    p_fsm_state_reg : process(clk_sys, res_n)
     begin
         if (res_n = '0') then
             curr_state <= s_pc_off;
@@ -2785,7 +2785,7 @@ begin
     --     storing of metadata word by one clock cycle!
     --  2. Break possible long combinational paths between RX Buffer and Protocol control FSM!
     -----------------------------------------------------------------------------------------------
-    rx_buf_cmds_proc : process(clk_sys, res_n)
+    p_rx_buf_cmds : process(clk_sys, res_n)
     begin
         if (res_n = '0') then
             store_metadata     <= '0';
@@ -2823,7 +2823,7 @@ begin
     -----------------------------------------------------------------------------------------------
     -- Register Loopback frame flag and Identifier valid flag
     -----------------------------------------------------------------------------------------------
-    rex_lbpc_reg_proc : process (clk_sys, res_n)
+    p_rex_lbpc_reg : process (clk_sys, res_n)
     begin
         if (res_n = '0') then
             rec_lbpf_q <= '0';
@@ -2837,7 +2837,7 @@ begin
     -----------------------------------------------------------------------------------------------
     -- TXT Buffer HW commands pipeline
     -----------------------------------------------------------------------------------------------
-    txtb_hw_cmd_proc : process(clk_sys, res_n)
+    p_txtb_hw_cmd : process(clk_sys, res_n)
     begin
         if (res_n = '0') then
             txtb_hw_cmd_q.lock    <= '0';
@@ -2922,7 +2922,7 @@ begin
                      '1' when (sp_control_switch_data = '1') else
                      '0';
 
-    sp_control_reg_proc : process(clk_sys, res_n)
+    p_sp_control_reg : process(clk_sys, res_n)
     begin
         if (res_n = '0') then
             sp_control_q_i <= NOMINAL_SAMPLE;
@@ -2945,7 +2945,7 @@ begin
                         '1' when (curr_state = s_pc_ovr_flag) else
                         '0';
 
-    first_err_delim_flag_reg : process(clk_sys, res_n)
+    p_first_err_delim_flag_reg : process(clk_sys, res_n)
     begin
         if (res_n = '0') then
             first_err_delim_q <= '0';
@@ -3013,7 +3013,7 @@ begin
     -- single frame. This flag is set upon first Error frame, and it blocks increments upon next
     -- error frames!
     -----------------------------------------------------------------------------------------------
-    retr_ctr_add_block_proc : process(clk_sys, res_n)
+    p_retr_ctr_add_block : process(clk_sys, res_n)
     begin
         if (res_n = '0') then
             retr_ctr_add_block <= '0';
@@ -3086,7 +3086,7 @@ begin
     -----------------------------------------------------------------------------------------------
     -- Bit Stuffing enable
     -----------------------------------------------------------------------------------------------
-    stuff_ena_reg_proc : process(clk_sys, res_n)
+    p_stuff_ena_reg : process(clk_sys, res_n)
     begin
         if (res_n = '0') then
             stuff_enable <= '0';
@@ -3104,7 +3104,7 @@ begin
     -----------------------------------------------------------------------------------------------
     -- Bit DeStuffing enable, Stuff Error
     -----------------------------------------------------------------------------------------------
-    destuff_ena_reg_proc : process(clk_sys, res_n)
+    p_destuff_ena_reg : process(clk_sys, res_n)
     begin
         if (res_n = '0') then
             destuff_enable <= '0';
@@ -3131,7 +3131,7 @@ begin
                               else
                       RE_SYNC;
 
-    sync_control_reg_proc : process(clk_sys, res_n)
+    p_sync_control_reg : process(clk_sys, res_n)
     begin
         if (res_n = '0') then
             sync_control_q <= HARD_SYNC;
@@ -3143,7 +3143,7 @@ begin
     -----------------------------------------------------------------------------------------------
     -- TXT Buffer pointer registering
     -----------------------------------------------------------------------------------------------
-    txtb_ptr_reg_proc : process(clk_sys, res_n)
+    p_txtb_ptr_reg : process(clk_sys, res_n)
     begin
         if (res_n = '0') then
             txtb_ptr_q <= 0;
@@ -3163,7 +3163,7 @@ begin
     -----------------------------------------------------------------------------------------------
     -- Register clock enable! Data need to be loaded from TXT Buffer RAM after address has changed!
     -----------------------------------------------------------------------------------------------
-    txtb_ce_reg_proc : process(clk_sys, res_n)
+    p_txtb_ce_reg : process(clk_sys, res_n)
     begin
         if (res_n = '0') then
             txtb_clk_en_q <= '0';
@@ -3175,7 +3175,7 @@ begin
     -----------------------------------------------------------------------------------------------
     -- Frame transmission (transmitter) started without SOF!
     -----------------------------------------------------------------------------------------------
-    tx_frame_no_sof_proc : process(clk_sys, res_n)
+    p_tx_frame_no_sof : process(clk_sys, res_n)
     begin
         if (res_n = '0') then
             tx_frame_no_sof_q <= '0';
@@ -3189,7 +3189,7 @@ begin
     -----------------------------------------------------------------------------------------------
     -- Registering value from previous bit of CAN_RX signal
     -----------------------------------------------------------------------------------------------
-    prev_rx_data_reg_proc : process(res_n, clk_sys)
+    p_prev_rx_data_reg : process(res_n, clk_sys)
     begin
         if (res_n = '0') then
             rx_data_nbs_prev <= RECESSIVE;
@@ -3203,7 +3203,7 @@ begin
     -----------------------------------------------------------------------------------------------
     -- Remembering ACK error. Needed by transmitter sending passive error frame due to ACK error.
     -----------------------------------------------------------------------------------------------
-    ack_err_flag_proc : process(clk_sys, res_n)
+    p_ack_err_flag : process(clk_sys, res_n)
     begin
         if (res_n = '0') then
             ack_err_flag <= '0';
@@ -3219,7 +3219,7 @@ begin
     -----------------------------------------------------------------------------------------------
     -- Protocol exception status
     -----------------------------------------------------------------------------------------------
-    pexs_proc : process(clk_sys, res_n)
+    p_pexs : process(clk_sys, res_n)
     begin
         if (res_n = '0') then
             mr_status_pexs <= '0';

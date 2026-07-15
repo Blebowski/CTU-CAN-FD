@@ -196,7 +196,7 @@ begin
     -----------------------------------------------------------------------------------------------
     -- Next state process
     -----------------------------------------------------------------------------------------------
-    tx_buf_fsm_next_state_proc : process(curr_state, tx_command_txce_valid, tx_command_txcr_valid,
+    p_tx_buf_fsm_next_state : process(curr_state, tx_command_txce_valid, tx_command_txcr_valid,
         txtb_hw_cmd_i, abort_applied, go_to_failed, txtb_parity_error_valid, abort_or_skipped,
         arbl_or_err)
     begin
@@ -371,7 +371,7 @@ begin
     -----------------------------------------------------------------------------------------------
     -- State register
     -----------------------------------------------------------------------------------------------
-    tx_buf_fsm_state_reg_proc : process(res_n, clk_sys)
+    p_tx_buf_fsm_state_reg : process(res_n, clk_sys)
     begin
         if (res_n = '0') then
             curr_state <= s_txt_empty;

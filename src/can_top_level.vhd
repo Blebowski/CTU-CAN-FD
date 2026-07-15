@@ -1403,7 +1403,7 @@ begin
     txtb_asr_gen : for i in 0 to txt_buffer_count - 1 generate
     begin
 
-        process (txtb_state, pc_dbg.is_overload)
+        p_txtb_unlock_on_ovr_chk : process (txtb_state, pc_dbg.is_overload)
         begin
             if ((((txtb_state(i) = TXT_TRAN) or (txtb_state(i) = TXT_ABTP))) and
                   (pc_dbg.is_overload = '1')) then

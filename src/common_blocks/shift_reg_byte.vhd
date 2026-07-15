@@ -148,7 +148,7 @@ begin
         -------------------------------------------------------------------------------------------
         -- Shift register assignment
         -------------------------------------------------------------------------------------------
-        shift_reg_proc : process(clk, res_n)
+        p_shift_reg : process(clk, res_n)
         begin
             if (res_n = G_RESET_POLARITY) then
                 shift_reg_q(i) <= (others => '0'); -- G_RESET_VALUE(i * 8 + 7 downto i * 8);

@@ -220,7 +220,7 @@ begin
         -------------------------------------------------------------------------------------------
         -- Storing Parity word
         -------------------------------------------------------------------------------------------
-        parity_word_proc : process(res_n, clk_sys)
+        p_parity_word : process(res_n, clk_sys)
         begin
             if (res_n = '0') then
                 parity_word <= (others => '0');
@@ -249,7 +249,7 @@ begin
         --
         -- When reading from TXT Buffer RAM, read data are obtained one clock cycle later!
         -------------------------------------------------------------------------------------------
-        parity_check_proc : process(clk_sys, res_n)
+        p_parity_check : process(clk_sys, res_n)
         begin
             if (res_n = '0') then
                 parity_read_exp <= '0';

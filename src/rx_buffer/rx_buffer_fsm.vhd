@@ -159,7 +159,7 @@ begin
     -----------------------------------------------------------------------------------------------
     -- Next State process
     -----------------------------------------------------------------------------------------------
-    next_state_proc : process(curr_state, store_metadata_f, rec_abort_f, rec_valid_f, mr_mode_erfm)
+    p_next_state : process(curr_state, store_metadata_f, rec_abort_f, rec_valid_f, mr_mode_erfm)
     begin
         next_state <= curr_state;
 
@@ -270,7 +270,7 @@ begin
     -----------------------------------------------------------------------------------------------
     -- Current State process (outputs)
     -----------------------------------------------------------------------------------------------
-    curr_state_proc : process(curr_state, store_data_f, rec_abort_f)
+    p_curr_state : process(curr_state, store_data_f, rec_abort_f)
     begin
         write_raw_intent <= '0';
         select_ts_wptr <= '0';
@@ -360,7 +360,7 @@ begin
     -----------------------------------------------------------------------------------------------
     -- State register process
     -----------------------------------------------------------------------------------------------
-    state_reg_proc : process(clk_sys, res_n)
+    p_state_reg : process(clk_sys, res_n)
     begin
         if (res_n = '0') then
             curr_state <= s_rxb_idle;
@@ -406,7 +406,7 @@ begin
         -- report "Error frame was not yet fully stored when another one occured.";
 
         -- coverage off
-        process (cmd_join)
+        p_cmd_join_onehot_chk : process (cmd_join)
         begin
             if (now > 0 ps) then
                 if (cmd_join /= "0000" and cmd_join /= "0001" and

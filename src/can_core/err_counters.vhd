@@ -210,7 +210,7 @@ begin
     -- Counter preset mask - must be registered, since value is also registered! This allows
     -- setting both by a single access!
     -----------------------------------------------------------------------------------------------
-    ctr_pres_reg_proc : process(res_n, clk_sys)
+    p_ctr_pres_reg : process(res_n, clk_sys)
     begin
         if (res_n = '0') then
             mr_ctr_pres_ptx_q   <= '0';
@@ -279,7 +279,7 @@ begin
     -----------------------------------------------------------------------------------------------
     -- TX Error counter register
     -----------------------------------------------------------------------------------------------
-    tx_err_ctr_reg_proc : process(clk_sys, res_err_ctrs_q_scan)
+    p_tx_err_ctr_reg : process(clk_sys, res_err_ctrs_q_scan)
     begin
         if (res_err_ctrs_q_scan = '0') then
             tx_err_ctr_q <= (others => '0');
@@ -324,7 +324,7 @@ begin
     -----------------------------------------------------------------------------------------------
     -- RX error counter register
     -----------------------------------------------------------------------------------------------
-    rx_err_ctr_reg_proc : process(clk_sys, res_err_ctrs_q_scan)
+    p_rx_err_ctr_reg : process(clk_sys, res_err_ctrs_q_scan)
     begin
         if (res_err_ctrs_q_scan = '0') then
             rx_err_ctr_q <= (others => '0');
@@ -372,7 +372,7 @@ begin
     -----------------------------------------------------------------------------------------------
     -- Nominal / Data Bit rate error counters registers
     -----------------------------------------------------------------------------------------------
-    nom_err_ctr_proc : process(clk_sys, res_err_ctrs_q_scan)
+    p_nom_err_ctr : process(clk_sys, res_err_ctrs_q_scan)
     begin
         if (res_err_ctrs_q_scan = '0') then
             nom_err_ctr_q <= (others => '0');
@@ -383,7 +383,7 @@ begin
         end if;
     end process;
 
-    dat_err_ctr_proc : process(clk_sys, res_err_ctrs_q_scan)
+    p_dat_err_ctr : process(clk_sys, res_err_ctrs_q_scan)
     begin
         if (res_err_ctrs_q_scan = '0') then
             data_err_ctr_q <= (others => '0');

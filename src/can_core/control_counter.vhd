@@ -195,7 +195,7 @@ begin
     -----------------------------------------------------------------------------------------------
     -- Control Counter register
     -----------------------------------------------------------------------------------------------
-    retr_ctr_reg_proc : process(clk_sys, res_n)
+    p_retr_ctr_reg : process(clk_sys, res_n)
     begin
         if (res_n = '0') then
             ctrl_ctr_q <= (others => '0');
@@ -222,7 +222,7 @@ begin
                     '1' when (compl_ctr_ena = '1') else
                     '0';
 
-    compl_reg_proc : process(clk_sys, res_n)
+    p_compl_reg : process(clk_sys, res_n)
     begin
         if (res_n = '0') then
             compl_ctr_q <= (others => '0');
@@ -270,7 +270,7 @@ begin
     -----------------------------------------------------------------------------------------------
     -- Arbitration lost capture register
     -----------------------------------------------------------------------------------------------
-    alc_capt_reg_proc : process(res_n, clk_sys)
+    p_alc_capt_reg : process(res_n, clk_sys)
     begin
         if (res_n = '0') then
             alc_alc_bit <= (others => '0');

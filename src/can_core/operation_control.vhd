@@ -155,7 +155,7 @@ begin
     -----------------------------------------------------------------------------------------------
     -- Next state
     -----------------------------------------------------------------------------------------------
-    next_state_proc : process(curr_state, set_idle, set_transmitter, set_receiver, arbitration_lost,
+    p_next_state : process(curr_state, set_idle, set_transmitter, set_receiver, arbitration_lost,
         go_to_off)
     begin
         next_state <= curr_state;
@@ -197,7 +197,7 @@ begin
     -----------------------------------------------------------------------------------------------
     -- Current state
     -----------------------------------------------------------------------------------------------
-    curr_state_proc : process(curr_state)
+    p_curr_state : process(curr_state)
     begin
         is_idle <= '0';
         is_transmitter <= '0';
@@ -217,7 +217,7 @@ begin
     -----------------------------------------------------------------------------------------------
     -- State register
     -----------------------------------------------------------------------------------------------
-    state_reg_proc : process(clk_sys, res_n)
+    p_state_reg : process(clk_sys, res_n)
     begin
         if (res_n = '0') then
             curr_state <= s_oc_off;

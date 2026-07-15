@@ -269,7 +269,7 @@ begin
 
     err_pipeline_true_gen : if (G_ERR_VALID_PIPELINE) generate
     begin
-        err_valid_reg_proc : process(res_n, clk_sys)
+        p_err_valid_reg : process(res_n, clk_sys)
         begin
             if (res_n = '0') then
                 err_frm_req <= '0';
@@ -346,7 +346,7 @@ begin
                    crc_match_c when (crc_check = '1') else
                    crc_match_q;
 
-    crc_err_reg_proc : process(clk_sys, res_n)
+    p_crc_err_reg : process(clk_sys, res_n)
     begin
         if (res_n = '0') then
             crc_match_q <= '0';
@@ -391,7 +391,7 @@ begin
     -----------------------------------------------------------------------------------------------
     -- Error type register
     -----------------------------------------------------------------------------------------------
-    err_type_reg_proc : process(clk_sys, res_n)
+    p_err_type_reg : process(clk_sys, res_n)
     begin
         if (res_n = '0') then
             err_capt_err_type_q <= ERR_TYPE_RSTVAL;

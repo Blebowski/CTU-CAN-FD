@@ -145,7 +145,7 @@ begin
     prev_sample_d <= data_rx_synced when (sample = '1') else
                      prev_sample_q;
 
-    sample_prev_req_proc : process(clk_sys, res_n)
+    p_sample_prev_req : process(clk_sys, res_n)
     begin
         if (res_n = '0') then
             prev_sample_q <= RECESSIVE;

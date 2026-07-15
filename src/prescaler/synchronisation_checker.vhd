@@ -168,7 +168,7 @@ begin
     sync_flag_nxt <= '1' when (h_or_re_sync_edge = '1') else
                      '0';
 
-    sync_flag_proc : process(res_n, clk_sys)
+    p_sync_flag : process(res_n, clk_sys)
     begin
         if (res_n = '0') then
             sync_flag <= '0';

@@ -138,7 +138,7 @@ begin
     -------------------------------------------------------------------------------------------
     -- Next state process (combinational)
     -------------------------------------------------------------------------------------------
-    next_state_proc : process(current_state, segm_end, mr_settings_ena)
+    p_next_state : process(current_state, segm_end, mr_settings_ena)
     begin
         next_state <= current_state;
 
@@ -163,7 +163,7 @@ begin
     -------------------------------------------------------------------------------------------
     -- Current state process (combinational)
     -------------------------------------------------------------------------------------------
-    curr_state_proc : process(current_state, segm_end, mr_settings_ena)
+    p_curr_state : process(current_state, segm_end, mr_settings_ena)
     begin
         -- Default values
         is_tseg1       <= '0';
@@ -195,7 +195,7 @@ begin
     -------------------------------------------------------------------------------------------
     -- State register assignment
     -------------------------------------------------------------------------------------------
-    state_reg_proc : process(clk_sys, res_n)
+    p_state_reg : process(clk_sys, res_n)
     begin
         if (res_n = '0') then
             current_state <= s_bt_reset;

@@ -174,7 +174,7 @@ begin
                            '0' when (tx_trigger = '1') else
                            btmc_meas_running_q;
 
-    btmc_meas_flag_proc : process(clk_sys, res_n)
+    p_btmc_meas_flag : process(clk_sys, res_n)
     begin
         if (res_n = '0') then
             btmc_meas_running_q <= '0';
@@ -198,7 +198,7 @@ begin
     btmc_ce <= '1' when (btmc_d /= btmc_q) else
                '0';
 
-    btmc_proc : process(clk_sys, res_n)
+    p_btmc : process(clk_sys, res_n)
     begin
         if (res_n = '0') then
             btmc_q <= (others => '0');
@@ -218,7 +218,7 @@ begin
                    '0' when (sspc_expired = '1') else
                    first_ssp_q;
 
-    first_ssp_flag_proc : process(clk_sys, res_n)
+    p_first_ssp_flag : process(clk_sys, res_n)
     begin
         if (res_n = '0') then
             first_ssp_q <= '0';
@@ -237,7 +237,7 @@ begin
                   '0' when (ssp_enable = '0') else
                   sspc_ena_q;
 
-    sspc_run_flag_proc : process(clk_sys, res_n)
+    p_sspc_run_flag : process(clk_sys, res_n)
     begin
         if (res_n = '0') then
             sspc_ena_q <= '0';
@@ -278,7 +278,7 @@ begin
     sspc_ce <= '1' when (sspc_d /= sspc_q) else
                '0';
 
-    sspc_proc : process(clk_sys, res_n)
+    p_sspc : process(clk_sys, res_n)
     begin
         if (res_n = '0') then
             sspc_q <= C_SSPC_RST_VAL;

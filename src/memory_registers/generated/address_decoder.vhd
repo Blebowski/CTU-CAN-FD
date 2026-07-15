@@ -158,7 +158,7 @@ begin
     -- Registering / Not-registering output
     ---------------------------------------------------------------------------
     addr_dec_reg_true_gen : if (registered_out) generate
-        addr_dec_reg_proc : process(res_n, clk_sys)
+        p_addr_dec_reg : process(res_n, clk_sys)
         begin
             if (res_n = '0') then
                 addr_dec <= (OTHERS => '0');

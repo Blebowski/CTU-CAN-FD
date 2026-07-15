@@ -151,7 +151,7 @@ begin
     -----------------------------------------------------------------------------------------------
     -- Register increment command (to relax timing through the counter!)
     -----------------------------------------------------------------------------------------------
-    increment_reg_proc : process(clk_sys, res_n)
+    p_increment_reg : process(clk_sys, res_n)
     begin
         if (res_n = '0') then
             tran_valid_q <= '0';
@@ -224,7 +224,7 @@ begin
     -----------------------------------------------------------------------------------------------
     -- TX Counter register
     -----------------------------------------------------------------------------------------------
-    tx_ctr_proc : process(clk_sys, tx_ctr_rst_n_q_scan)
+    p_tx_ctr : process(clk_sys, tx_ctr_rst_n_q_scan)
     begin
         if (tx_ctr_rst_n_q_scan = '0') then
             tx_frame_ctr_i <= (others => '0');
@@ -238,7 +238,7 @@ begin
     -----------------------------------------------------------------------------------------------
     -- RX Counter register
     -----------------------------------------------------------------------------------------------
-    rx_ctr_proc : process(clk_sys, rx_ctr_rst_n_q_scan)
+    p_rx_ctr : process(clk_sys, rx_ctr_rst_n_q_scan)
     begin
         if (rx_ctr_rst_n_q_scan = '0') then
             rx_frame_ctr_i <= (others => '0');

@@ -195,7 +195,7 @@ begin
     -----------------------------------------------------------------------------------------------
     -- SETTINGS[ENA] edge detection
     -----------------------------------------------------------------------------------------------
-    settings_ena_reg_proc : process(res_n, clk_sys)
+    p_settings_ena_reg : process(res_n, clk_sys)
     begin
         if (res_n = '0') then
             mr_settings_ena_reg     <= '0';
@@ -249,7 +249,7 @@ begin
     -----------------------------------------------------------------------------------------------
     -- Capture registers for TSEG1
     -----------------------------------------------------------------------------------------------
-    brp_capt_proc : process(res_n, clk_sys)
+    p_brp_capt : process(res_n, clk_sys)
     begin
         if (res_n = '0') then
             -- Matching reset values to what is in Memory registers.

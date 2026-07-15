@@ -284,7 +284,7 @@ begin
     -----------------------------------------------------------------------------------------------
     -- Store Identifier
     -----------------------------------------------------------------------------------------------
-    id_store_proc : process(clk_sys, res_n_i_q_scan)
+    p_id_store : process(clk_sys, res_n_i_q_scan)
     begin
         if (res_n_i_q_scan = '0') then
             rec_ident <= (others => '0');
@@ -304,7 +304,7 @@ begin
     -----------------------------------------------------------------------------------------------
     -- Store IDE bit (Identifier type)
     -----------------------------------------------------------------------------------------------
-    ide_store_proc : process(clk_sys, res_n_i_q_scan)
+    p_ide_store : process(clk_sys, res_n_i_q_scan)
     begin
         if (res_n_i_q_scan = '0') then
             rec_ident_type <= '0';
@@ -318,7 +318,7 @@ begin
     -----------------------------------------------------------------------------------------------
     -- RX Store RTR bit (Remote transmission request bit)
     -----------------------------------------------------------------------------------------------
-    rx_store_proc : process(clk_sys, res_n_i_q_scan)
+    p_rx_store : process(clk_sys, res_n_i_q_scan)
     begin
         if (res_n_i_q_scan = '0') then
             rec_is_rtr_i <= '0';
@@ -337,7 +337,7 @@ begin
     -----------------------------------------------------------------------------------------------
     -- Store EDL/FDF bit (Extended data length or Flexible data-rate format)
     -----------------------------------------------------------------------------------------------
-    edl_store_proc : process(clk_sys, res_n_i_q_scan)
+    p_edl_store : process(clk_sys, res_n_i_q_scan)
     begin
         if (res_n_i_q_scan = '0') then
             rec_frame_type_i <= '0';
@@ -354,7 +354,7 @@ begin
     -----------------------------------------------------------------------------------------------
     -- Store ESI bit (Error state indicator)
     -----------------------------------------------------------------------------------------------
-    esi_store_proc : process(clk_sys, res_n_i_q_scan)
+    p_esi_store : process(clk_sys, res_n_i_q_scan)
     begin
         if (res_n_i_q_scan = '0') then
             rec_esi <= '0';
@@ -368,7 +368,7 @@ begin
     -----------------------------------------------------------------------------------------------
     -- Store BRS bit (Bit rate shift)
     -----------------------------------------------------------------------------------------------
-    brs_store_proc : process(clk_sys, res_n_i_q_scan)
+    p_brs_store : process(clk_sys, res_n_i_q_scan)
     begin
         if (res_n_i_q_scan = '0') then
             rec_brs <= '0';
@@ -382,7 +382,7 @@ begin
     -----------------------------------------------------------------------------------------------
     -- Store DLC (Data length code)
     -----------------------------------------------------------------------------------------------
-    dlc_store_proc : process(clk_sys, res_n_i_q_scan)
+    p_dlc_store : process(clk_sys, res_n_i_q_scan)
     begin
         if (res_n_i_q_scan = '0') then
             rec_dlc <= (others => '0');
@@ -396,7 +396,7 @@ begin
     -----------------------------------------------------------------------------------------------
     -- Store RX Stuff Count
     -----------------------------------------------------------------------------------------------
-    stuff_count_store_proc : process(clk_sys, res_n_i_q_scan)
+    p_stuff_count_store : process(clk_sys, res_n_i_q_scan)
     begin
         if (res_n_i_q_scan = '0') then
             rx_stuff_count <= (others => '0');

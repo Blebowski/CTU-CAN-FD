@@ -226,7 +226,7 @@ begin
     -- Read pointer, incremented during read from RX Buffer FIFO. Moving to next word by reading
     -- (if there is sth to read).
     -----------------------------------------------------------------------------------------------
-    read_pointer_proc : process(clk_sys, rx_buf_res_n_q_scan)
+    p_read_pointer : process(clk_sys, rx_buf_res_n_q_scan)
     begin
         if (rx_buf_res_n_q_scan = '0') then
             read_pointer_i <= (others => '0');
@@ -241,7 +241,7 @@ begin
     -- Write pointers available to the user manipulation. Loading "write_pointer_raw_int" to
     -- "write_pointer_int" when frame is committed.
     -----------------------------------------------------------------------------------------------
-    write_pointer_proc : process(clk_sys, rx_buf_res_n_q_scan)
+    p_write_pointer : process(clk_sys, rx_buf_res_n_q_scan)
     begin
         if (rx_buf_res_n_q_scan = '0') then
             write_pointer_i <= (others => '0');
@@ -268,7 +268,7 @@ begin
                             '1' when (commit_overrun_abort = '1') else
                             '0';
 
-    write_pointer_raw_proc : process(clk_sys, rx_buf_res_n_q_scan)
+    p_write_pointer_raw : process(clk_sys, rx_buf_res_n_q_scan)
     begin
         if (rx_buf_res_n_q_scan = '0') then
            write_pointer_raw_i <= (others => '0');
@@ -292,7 +292,7 @@ begin
                            '1' when (inc_ts_wr_ptr = '1') else
                            '0';
 
-    timestamp_write_ptr_proc : process(clk_sys, rx_buf_res_n_q_scan)
+    p_timestamp_write_ptr : process(clk_sys, rx_buf_res_n_q_scan)
     begin
         if (rx_buf_res_n_q_scan = '0') then
             write_pointer_ts_i  <= (others => '0');
@@ -307,7 +307,7 @@ begin
     -----------------------------------------------------------------------------------------------
     -- Calculating amount of free memory.
     -----------------------------------------------------------------------------------------------
-    mem_free_proc : process(clk_sys, rx_buf_res_n_q_scan)
+    p_mem_free : process(clk_sys, rx_buf_res_n_q_scan)
     begin
         if (rx_buf_res_n_q_scan = '0') then
             rx_mem_free_i_i <= to_unsigned(G_RX_BUFF_SIZE, C_FREE_MEM_WIDTH);
@@ -368,7 +368,7 @@ begin
     -----------------------------------------------------------------------------------------------
     -- Calculating incremented value of free memory combinationally
     -----------------------------------------------------------------------------------------------
-    mem_free_arith_proc : process(rx_mem_free_i_i, rx_mem_free_raw)
+    p_mem_free_arith : process(rx_mem_free_i_i, rx_mem_free_raw)
     begin
         rx_mem_free_i_inc_1     <= rx_mem_free_i_i + 1;
         rx_mem_free_raw_inc_1   <= rx_mem_free_raw + 1;
@@ -381,7 +381,7 @@ begin
     --  2. Adressing RX Buffer RAM read side by incremented value to avoid one clock cycle delay on
     --     "read_pointer_int" and thus allow bursts on read from RX_DATA register!
     -----------------------------------------------------------------------------------------------
-    read_pointer_inc_proc : process(read_pointer_i)
+    p_read_pointer_inc : process(read_pointer_i)
     begin
         read_pointer_inc_1_i <= read_pointer_i + 1;
     end process;

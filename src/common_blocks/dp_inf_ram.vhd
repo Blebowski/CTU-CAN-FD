@@ -139,7 +139,7 @@ begin
     -----------------------------------------------------------------------------------------------
     ram_rst_false_gen : if (not G_RESETABLE) generate
 
-        ram_write_process : process(clk_sys)
+        p_ram_write : process(clk_sys)
         begin
             if (rising_edge(clk_sys)) then
                 if (write = '1') then
@@ -155,7 +155,7 @@ begin
     -----------------------------------------------------------------------------------------------
     ram_rst_true_gen : if (G_RESETABLE) generate
 
-        ram_write_process : process(clk_sys, res_n)
+        p_ram_write : process(clk_sys, res_n)
         begin
             if (res_n = '0') then
                 ram_memory <= (others => (others => '0'));
@@ -175,7 +175,7 @@ begin
 
     -- Synchronous read
     sync_read_gen : if (G_SYNC_READ) generate
-        ram_read_process : process(clk_sys)
+        p_ram_read : process(clk_sys)
         begin
             if (rising_edge(clk_sys)) then
                 data_out <= int_read_data;

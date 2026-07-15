@@ -156,7 +156,7 @@ begin
     -------------------------------------------------------------------------------------------
     -- Registering previous value of rx_data, tx_data to detect edge in the data stream
     -------------------------------------------------------------------------------------------
-    data_reg_proc : process(clk_sys, res_n)
+    p_data_reg : process(clk_sys, res_n)
     begin
         if (res_n = '0') then
             rx_data_prev        <= RECESSIVE;

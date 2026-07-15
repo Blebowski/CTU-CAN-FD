@@ -289,7 +289,7 @@ begin
     -----------------------------------------------------------------------------------------------
     -- Register the TXT Buffer commands -> Breaks paths from memory bus
     -----------------------------------------------------------------------------------------------
-    sw_command_reg_proc : process(res_n, clk_sys)
+    p_sw_command_reg : process(res_n, clk_sys)
     begin
         if (res_n = '0') then
             mr_tx_command_txce_q <= '0';

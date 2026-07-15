@@ -197,7 +197,7 @@ begin
     -----------------------------------------------------------------------------------------------
     -- Error warning limit register
     -----------------------------------------------------------------------------------------------
-    ewl_reg_proc : process(res_n, clk_sys)
+    p_ewl_reg : process(res_n, clk_sys)
     begin
         if (res_n = '0') then
             err_warning_limit_q <= '0';
@@ -215,7 +215,7 @@ begin
     -----------------------------------------------------------------------------------------------
     -- Next state process
     -----------------------------------------------------------------------------------------------
-    fc_fsm_next_state_proc : process(curr_state, tx_err_ctr_mt_255,
+    p_fc_fsm_next_state : process(curr_state, tx_err_ctr_mt_255,
         tx_err_ctr_mt_erp, rx_err_ctr_mt_erp, set_err_active)
     begin
         next_state <= curr_state;
@@ -244,7 +244,7 @@ begin
     -----------------------------------------------------------------------------------------------
     -- State register
     -----------------------------------------------------------------------------------------------
-    fault_conf_state_reg : process(clk_sys, res_n)
+    p_fault_conf_state_reg : process(clk_sys, res_n)
     begin
         if (res_n = '0') then
             curr_state <= s_fc_bus_off;
@@ -256,7 +256,7 @@ begin
     -----------------------------------------------------------------------------------------------
     -- Current state
     -----------------------------------------------------------------------------------------------
-    fc_fsm_curr_state_proc : process(curr_state)
+    p_fc_fsm_curr_state : process(curr_state)
     begin
         is_err_active     <= '0';
         is_err_passive    <= '0';

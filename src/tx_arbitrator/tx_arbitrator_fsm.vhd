@@ -199,7 +199,7 @@ begin
     -----------------------------------------------------------------------------------------------
     -- Next state process
     -----------------------------------------------------------------------------------------------
-    tx_arb_fsm_proc : process(curr_state, select_buf_avail, select_index_changed,
+    p_tx_arb_fsm : process(curr_state, select_buf_avail, select_index_changed,
         timestamp_valid, fsm_wait_state_q, parity_error_vld, txtb_hw_cmd_unlock, txtb_hw_cmd_lock)
     begin
         -- Keeping signals values to avoid latch inference
@@ -317,7 +317,7 @@ begin
     -----------------------------------------------------------------------------------------------
     -- TX Arbitrator FSM outputs
     -----------------------------------------------------------------------------------------------
-    tx_arb_fsm_out_proc : process(curr_state, fsm_wait_state_q, timestamp_valid, txtb_hw_cmd_lock,
+    p_tx_arb_fsm_out : process(curr_state, fsm_wait_state_q, timestamp_valid, txtb_hw_cmd_lock,
         select_index_changed, select_buf_avail, parity_error_vld, txtb_hw_cmd_unlock)
     begin
 
@@ -506,7 +506,7 @@ begin
     -----------------------------------------------------------------------------------------------
     -- State register
     -----------------------------------------------------------------------------------------------
-    tx_arb_fsm_state_reg : process(clk_sys, res_n)
+    p_tx_arb_fsm_state_reg : process(clk_sys, res_n)
     begin
         if (res_n = '0') then
             curr_state <= s_arb_idle;
@@ -525,7 +525,7 @@ begin
     -----------------------------------------------------------------------------------------------
     -- Wait state DFF. Wait state inserted when next state must last two clock cycles!
     -----------------------------------------------------------------------------------------------
-    fsm_wait_state_proc : process(clk_sys, res_n)
+    p_fsm_wait_state : process(clk_sys, res_n)
     begin
         if (res_n = '0') then
             fsm_wait_state_q <= '1';

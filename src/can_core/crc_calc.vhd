@@ -149,7 +149,7 @@ begin
     -----------------------------------------------------------------------------------------------
     crc_nxt         <= data_in xor crc_q(G_CRC_WIDTH - 1);
 
-    crc_d_decoder : process(init_vect_msb, load_init_vect, crc_nxt, crc_q)
+    p_crc_d_decoder : process(init_vect_msb, load_init_vect, crc_nxt, crc_q)
     begin
         if (load_init_vect = '1') then
             crc_d <= (others => '0');
@@ -169,7 +169,7 @@ begin
     -----------------------------------------------------------------------------------------------
     -- CRC register
     -----------------------------------------------------------------------------------------------
-    crc_reg_proc : process(res_n, clk_sys)
+    p_crc_reg : process(res_n, clk_sys)
     begin
         if (res_n = '0') then
             crc_q             <= (others => '0');
@@ -178,7 +178,7 @@ begin
                 crc_q <= crc_d;
             end if;
         end if;
-    end process crc_reg_proc;
+    end process p_crc_reg;
 
     -- Register to output propagation.
     crc <= crc_q;

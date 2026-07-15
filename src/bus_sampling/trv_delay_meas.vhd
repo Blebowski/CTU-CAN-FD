@@ -252,7 +252,7 @@ begin
     -------------------------------------------------------------------------------------------
     -- Register for transceiver delay measurement progress flag.
     -------------------------------------------------------------------------------------------
-    trv_delay_prog_proc : process(res_n, clk_sys)
+    p_trv_delay_prog : process(res_n, clk_sys)
     begin
         if (res_n = '0') then
             trv_meas_progress_q     <= '0';
@@ -303,7 +303,7 @@ begin
     -------------------------------------------------------------------------------------------
     -- Register for transceiver delay measurement progress flag.
     -------------------------------------------------------------------------------------------
-    trv_del_ctr_proc : process(clk_sys, trv_delay_ctr_rst_q_scan)
+    p_trv_del_ctr : process(clk_sys, trv_delay_ctr_rst_q_scan)
     begin
         if (trv_delay_ctr_rst_q_scan = '0') then
             trv_delay_ctr_q(0) <= '1';
@@ -340,7 +340,7 @@ begin
     --  1. Transceiver Delay - Only measured value
     --  2. SSP Offset - Selected between measured, measured + offset, offset.
     -------------------------------------------------------------------------------------------
-    ssp_shadow_reg_proc : process(res_n, clk_sys)
+    p_ssp_shadow_reg : process(res_n, clk_sys)
     begin
         if (res_n = '0') then
             ssp_delay_shadowed <= (others => '0');

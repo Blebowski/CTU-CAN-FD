@@ -534,7 +534,7 @@ begin
                                       else
                           txtb_meta_clk_en;
 
-    txtb_hw_cmd_cs_demux_proc : process(curr_txtb_index_i)
+    p_txtb_hw_cmd_cs_demux : process(curr_txtb_index_i)
     begin
         txtb_hw_cmd_cs <= (others => '0');
         txtb_hw_cmd_cs(curr_txtb_index_i) <= '1';
@@ -543,7 +543,7 @@ begin
     -----------------------------------------------------------------------------------------------
     -- Register for TXT Buffer clock enable
     -----------------------------------------------------------------------------------------------
-    txtb_clk_en_reg_proc : process(clk_sys, res_n)
+    p_txtb_clk_en_reg : process(clk_sys, res_n)
     begin
         if (res_n = '0') then
             txtb_clk_en_q <= '0';
@@ -556,7 +556,7 @@ begin
     -----------------------------------------------------------------------------------------------
     -- Register for loading lower 32 bits of CAN Frame timestamp
     -----------------------------------------------------------------------------------------------
-    low_ts_reg_proc : process(res_n, clk_sys)
+    p_low_ts_reg : process(res_n, clk_sys)
     begin
         if (res_n = '0') then
             ts_low_internal <= (others => '0');
@@ -570,7 +570,7 @@ begin
     -----------------------------------------------------------------------------------------------
     -- Double buffer registers for Metadata.
     -----------------------------------------------------------------------------------------------
-    dbl_buf_reg_ffmt_proc : process(clk_sys, res_n)
+    p_dbl_buf_reg_ffmt : process(clk_sys, res_n)
     begin
         if (res_n = '0') then
             tran_dlc_dbl_buf           <= (others => '0');
@@ -592,7 +592,7 @@ begin
     -----------------------------------------------------------------------------------------------
     -- Double buffer registers for Frame test word
     -----------------------------------------------------------------------------------------------
-    dbl_buf_reg_ftw_proc : process(clk_sys, res_n)
+    p_dbl_buf_reg_ftw : process(clk_sys, res_n)
     begin
         if (res_n = '0') then
             tran_frame_test_dbl_buf.fstc <= '0';
@@ -614,7 +614,7 @@ begin
     -- Capture registers for metadata commited to output of TX Arbitrator. Takenfrom double buffer
     -- register.
     -----------------------------------------------------------------------------------------------
-    meta_data_reg_proc : process(clk_sys, res_n)
+    p_meta_data_reg : process(clk_sys, res_n)
     begin
         if (res_n = '0') then
             tran_dlc_com         <= (others => '0');
@@ -636,7 +636,7 @@ begin
     -----------------------------------------------------------------------------------------------
     -- Capture registers for Identifier commited to output of TX Arbitrator.
     -----------------------------------------------------------------------------------------------
-    identifier_reg_proc : process(clk_sys, res_n)
+    p_identifier_reg : process(clk_sys, res_n)
     begin
         if (res_n = '0') then
             tran_identifier_com <= (others => '0');
@@ -650,7 +650,7 @@ begin
     -----------------------------------------------------------------------------------------------
     -- Capture registers for Frame test word commited to output of TX Arbitrator.
     -----------------------------------------------------------------------------------------------
-    frame_test_w_reg_proc : process(clk_sys, res_n)
+    p_frame_test_w_reg : process(clk_sys, res_n)
     begin
         if (res_n = '0') then
             tran_frame_test.fstc <= '0';
@@ -667,7 +667,7 @@ begin
     -----------------------------------------------------------------------------------------------
     -- Register for "committed" valid frame output for CAN Core
     -----------------------------------------------------------------------------------------------
-    tran_frame_valid_com_proc : process(clk_sys, res_n)
+    p_tran_frame_valid_com : process(clk_sys, res_n)
     begin
         if (res_n = '0') then
             tran_frame_valid_com        <= '0';
@@ -686,7 +686,7 @@ begin
     -- at the time of LOCK from CAN Core. Two values are needed to determine change of selected TXT
     -- Buffer for CAN Core. CAN Core needs this information for erasing retransmitt limit counter.
     -----------------------------------------------------------------------------------------------
-    store_indices_proc : process(clk_sys, res_n)
+    p_store_indices : process(clk_sys, res_n)
     begin
         if (res_n = '0') then
             last_txtb_index             <= 0;
@@ -716,7 +716,7 @@ begin
     -- Registering value of combinationally selected index by priority decoder to determine change
     -- and signal restarting selection process to TX Arbitrator FSM.
     -----------------------------------------------------------------------------------------------
-    sel_index_change_proc : process(clk_sys, res_n)
+    p_sel_index_change : process(clk_sys, res_n)
     begin
         if (res_n = '0') then
             select_buf_index_reg  <= 0;
@@ -741,7 +741,7 @@ begin
         to_integer(unsigned(FRAME_TEST_W_ADR(11 downto 2))) when (load_frame_test_w_addr = '1') else
         txtb_pointer_meta_q;
 
-    store_meta_data_ptr_proc : process(clk_sys, res_n)
+    p_store_meta_data_ptr : process(clk_sys, res_n)
     begin
         if (res_n = '0') then
             txtb_pointer_meta_q <= to_integer(unsigned(TIMESTAMP_L_W_ADR(11 downto 2)));

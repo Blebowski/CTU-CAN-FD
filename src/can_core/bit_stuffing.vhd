@@ -274,7 +274,7 @@ begin
     -----------------------------------------------------------------------------------------------
     -- Counter of stuffed bits (for CRC of ISO FD).
     -----------------------------------------------------------------------------------------------
-    stuff_ctr_proc : process(res_n, clk_sys)
+    p_stuff_ctr : process(res_n, clk_sys)
     begin
         if (res_n = '0') then
             bst_ctr_q <= (others => '0');
@@ -350,7 +350,7 @@ begin
     -----------------------------------------------------------------------------------------------
     -- Counter of equal consecutive bits on input
     -----------------------------------------------------------------------------------------------
-    same_bits_ctr_proc : process(res_n, clk_sys)
+    p_same_bits_ctr : process(res_n, clk_sys)
     begin
         if (res_n = '0') then
             same_bits_q <= "001";

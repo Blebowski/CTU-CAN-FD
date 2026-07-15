@@ -175,7 +175,7 @@ begin
                           '1' when (bit_err_ssp_condition = '1') else
           bit_err_ssp_capt_q;
 
-    bit_error_ssp_capt_reg_proc : process(clk_sys, res_n)
+    p_bit_error_ssp_capt_reg : process(clk_sys, res_n)
     begin
         if (res_n = '0') then
             bit_err_ssp_capt_q <= '0';
@@ -212,7 +212,7 @@ begin
     -------------------------------------------------------------------------------------------
     -- Bit error register
     -------------------------------------------------------------------------------------------
-    bit_err_reg_proc : process(clk_sys, res_n)
+    p_bit_err_reg : process(clk_sys, res_n)
     begin
         if (res_n = '0') then
             bit_err_q <= '0';

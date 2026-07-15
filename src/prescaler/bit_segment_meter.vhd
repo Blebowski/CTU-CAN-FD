@@ -402,7 +402,7 @@ begin
                              else
                          '0';
 
-    exp_seg_length_proc : process(res_n, clk_sys)
+    p_exp_seg_length : process(res_n, clk_sys)
     begin
         if (res_n = '0') then
             exp_seg_length_q <= (others => '1');

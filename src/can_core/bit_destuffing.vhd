@@ -291,7 +291,7 @@ begin
     -----------------------------------------------------------------------------------------------
     -- Counter with number of de-stuffed bits - register assignment
     -----------------------------------------------------------------------------------------------
-    dst_ctr_proc : process(clk_sys, res_n)
+    p_dst_ctr : process(clk_sys, res_n)
     begin
         if (res_n = '0') then
             dst_ctr_q <= (others => '0');
@@ -332,7 +332,7 @@ begin
     -----------------------------------------------------------------------------------------------
     -- Counter of equal consecutive bits - register assignment.
     -----------------------------------------------------------------------------------------------
-    same_bits_ctr_proc : process(clk_sys, res_n)
+    p_same_bits_ctr : process(clk_sys, res_n)
     begin
         if (res_n = '0') then
             same_bits_q <= "001";

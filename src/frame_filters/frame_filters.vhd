@@ -379,14 +379,14 @@ begin
     -- To avoid long combinational paths, valid filter output is pipelined. This is OK since
     -- received frame is valid on input for many clock cycles!
     -----------------------------------------------------------------------------------------------
-    valid_reg_proc : process(res_n, clk_sys)
+    p_valid_reg : process(res_n, clk_sys)
     begin
         if (res_n = '0') then
             ident_valid_q <= '0';
         elsif rising_edge(clk_sys) then
             ident_valid_q <= ident_valid_d;
         end if;
-    end process valid_reg_proc;
+    end process p_valid_reg;
 
     -----------------------------------------------------------------------------------------------
     -- Filtering RX Buffer commands

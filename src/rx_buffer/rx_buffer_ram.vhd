@@ -222,7 +222,7 @@ begin
         -------------------------------------------------------------------------------------------
         -- Parity memory (vector with per word bit of RAM)
         -------------------------------------------------------------------------------------------
-        parity_mem_proc : process(clk_sys, res_n)
+        p_parity_mem : process(clk_sys, res_n)
         begin
             if (res_n = '0') then
                 parity_word <= (others => '0');
@@ -251,7 +251,7 @@ begin
         --
         -- When reading from RX Buffer RAM, read data are obtained one clock cycle later!
         -------------------------------------------------------------------------------------------
-        parity_check_proc : process(clk_sys, res_n)
+        p_parity_check : process(clk_sys, res_n)
         begin
             if (res_n = '0') then
                 parity_read_exp <= '0';
@@ -282,7 +282,7 @@ begin
     -- When memory test is enabled, control by Test registers.
     -----------------------------------------------------------------------------------------------
     -----------------------------------------------------------------------------------------------
-    process (mr_tst_dest_tst_addr)
+    p_tst_addr_pad : process (mr_tst_dest_tst_addr)
     begin
         mr_tst_dest_tst_addr_pad <=
             std_logic_vector(unsigned(mr_tst_dest_tst_addr) mod G_RX_BUFF_SIZE);

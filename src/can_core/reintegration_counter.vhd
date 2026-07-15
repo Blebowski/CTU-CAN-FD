@@ -144,7 +144,7 @@ begin
     -----------------------------------------------------------------------------------------------
     -- Counter register
     -----------------------------------------------------------------------------------------------
-    retr_ctr_reg_proc : process(clk_sys, res_n)
+    p_retr_ctr_reg : process(clk_sys, res_n)
     begin
         if (res_n = '0') then
             reinteg_ctr_q <= (others => '0');

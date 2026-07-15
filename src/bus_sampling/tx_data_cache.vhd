@@ -150,7 +150,7 @@ begin
     -------------------------------------------------------------------------------------------
     -- Incrementing the pointers upon read or write.
     -------------------------------------------------------------------------------------------
-    write_ptr_proc : process(clk_sys, res_n)
+    p_write_ptr : process(clk_sys, res_n)
     begin
         if (res_n = '0') then
             write_pointer_q        <= (others => '0');
@@ -162,7 +162,7 @@ begin
     end process;
 
 
-    read_ptr_proc : process(clk_sys, res_n)
+    p_read_ptr : process(clk_sys, res_n)
     begin
         if (res_n = '0') then
             read_pointer_q         <= (others => '0');
@@ -177,7 +177,7 @@ begin
     -------------------------------------------------------------------------------------------
     -- Storing data to FIFO.
     -------------------------------------------------------------------------------------------
-    tx_cache_mem_proc : process(clk_sys, res_n)
+    p_tx_cache_mem : process(clk_sys, res_n)
     begin
         if (res_n = '0') then
             tx_cache_mem <= (others => G_TX_CACHE_RST_VAL);

@@ -396,7 +396,7 @@ begin
     -----------------------------------------------------------------------------------------------
     -- Registering control registers chip select
     -----------------------------------------------------------------------------------------------
-    chip_sel_reg_proc : process(res_n, clk_sys)
+    p_chip_sel_reg : process(res_n, clk_sys)
     begin
         if (res_n = '0') then
             control_registers_cs_reg  <= '0';
@@ -685,7 +685,7 @@ begin
     mr_ctrl_in.status_rxs <= cc_stat.is_receiver;
 
     -- Go through TXT Buffers and check at least one is empty
-    txnf_calc_proc : process(txtb_state)
+    p_txnf_calc : process(txtb_state)
     begin
         mr_ctrl_in.status_txnf <= '0';
         for i in 0 to G_TXT_BUFFER_COUNT - 1 loop
@@ -702,7 +702,7 @@ begin
     mr_ctrl_in.status_rxpe <= rx_parity_error;
 
     -- TXT Buffer parity error and double parity error
-    txpe_flag_proc : process(soft_res_q_n, clk_sys)
+    p_txpe_flag : process(soft_res_q_n, clk_sys)
     begin
         if (soft_res_q_n = '0') then
             mr_ctrl_in.status_txpe <= '0';
@@ -789,20 +789,20 @@ begin
     -- RX_MEM_INFO
     mr_ctrl_in.rx_mem_info_rx_buff_size <= std_logic_vector(to_unsigned(G_RX_BUFF_SIZE, 13));
 
-    rx_mem_free_assign_proc : process (rx_mem_free)
+    p_rx_mem_free_assign : process (rx_mem_free)
     begin
         mr_ctrl_in.rx_mem_info_rx_mem_free <= (others => '0');
         mr_ctrl_in.rx_mem_info_rx_mem_free(G_RX_BUFF_PTR_WIDTH downto 0) <= rx_mem_free;
     end process;
 
     -- RX_POINTERS
-    rx_write_pointer_assign_proc : process (rx_write_pointer)
+    p_rx_write_pointer_assign : process (rx_write_pointer)
     begin
         mr_ctrl_in.rx_pointers_rx_wpp <= (others => '0');
         mr_ctrl_in.rx_pointers_rx_wpp(G_RX_BUFF_PTR_WIDTH - 1 downto 0) <= rx_write_pointer;
     end process;
 
-    rx_read_pointer_assign_proc : process (rx_read_pointer)
+    p_rx_read_pointer_assign : process (rx_read_pointer)
     begin
         mr_ctrl_in.rx_pointers_rx_rpp <= (others => '0');
         mr_ctrl_in.rx_pointers_rx_rpp(G_RX_BUFF_PTR_WIDTH - 1 downto 0) <= rx_read_pointer;
@@ -813,7 +813,7 @@ begin
     mr_ctrl_in.rx_status_rxf   <= rx_full;
     mr_ctrl_in.rx_status_rxmof <= rx_mof;
 
-    rxfrc_assign_proc : process (rx_frame_count)
+    p_rxfrc_assign : process (rx_frame_count)
     begin
         mr_ctrl_in.rx_status_rxfrc <= (others => '0');
         mr_ctrl_in.rx_status_rxfrc(G_RX_BUF_FRAME_CNT_WIDTH - 1 downto 0) <= rx_frame_count;
@@ -823,7 +823,7 @@ begin
     mr_ctrl_in.rx_data_rx_data <= rxb_port_b_data_out;
 
     -- TX_STATUS register
-    tx_status_proc : process(txtb_state)
+    p_tx_status : process(txtb_state)
         variable txtb_state_padded : t_txt_bufs_state(7 downto 0);
     begin
         txtb_state_padded := (others => (others => '0'));
@@ -917,7 +917,7 @@ begin
     txtb_func_cov_gen : for i in 0 to G_TXT_BUFFER_COUNT - 1 generate
     begin
 
-        process (txtb_state, mr_ctrl_out_i.settings_pchke)
+        p_txtb_per_state_chk : process (txtb_state, mr_ctrl_out_i.settings_pchke)
         begin
             if (mr_ctrl_out_i.settings_pchke = '0' and txtb_state(i) = TXT_PER) then
                 report "TXT Buffer in 'Parity error' state when SETTINGS[PCHKE] is disabled."

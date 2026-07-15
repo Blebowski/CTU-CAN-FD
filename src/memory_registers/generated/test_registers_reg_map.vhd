@@ -322,7 +322,7 @@ begin
     ----------------------------------------------------------------------------
     -- Output register
     ----------------------------------------------------------------------------
-    read_data_reg_proc : process(res_n, clk_sys)
+    p_read_data_reg : process(res_n, clk_sys)
     begin
         if (res_n = '0') then
             r_data <= (others => '0');

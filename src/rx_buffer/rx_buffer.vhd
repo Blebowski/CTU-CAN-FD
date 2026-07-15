@@ -653,7 +653,7 @@ begin
                                 else
                             '0';
 
-    capt_ts_proc : process(clk_sys, res_n)
+    p_capt_ts : process(clk_sys, res_n)
     begin
         if (res_n = '0') then
             timestamp_capture <= (others => '0');
@@ -680,7 +680,7 @@ begin
                                          else
                       unsigned(rxb_port_b_data_out_i(RWCNT_H downto RWCNT_L));
 
-    read_frame_proc : process(clk_sys, rx_buf_res_n_q_scan)
+    p_read_frame : process(clk_sys, rx_buf_res_n_q_scan)
     begin
         if (rx_buf_res_n_q_scan = '0') then
             read_counter_q <= (others => '0');
@@ -699,7 +699,7 @@ begin
     -- read_increment), "frame_count" is decreased, when new frame is committed, message count is
     -- increased. If both at the same time, no change since one frame is added, next is removed!
     -----------------------------------------------------------------------------------------------
-    frame_count_ctr_proc : process(clk_sys, rx_buf_res_n_q_scan)
+    p_frame_count_ctr : process(clk_sys, rx_buf_res_n_q_scan)
     begin
         if (rx_buf_res_n_q_scan = '0') then
             frame_count <= (others => '0');
@@ -724,7 +724,7 @@ begin
     -- Commit RX Frame when last word was written and overrun did not occur! This can be either
     -- from "rxb_store_data" state or "rxb_store_end_ts_high"
     -----------------------------------------------------------------------------------------------
-    commit_proc : process(clk_sys, rx_buf_res_n_q_scan)
+    p_commit : process(clk_sys, rx_buf_res_n_q_scan)
     begin
         if (rx_buf_res_n_q_scan = '0') then
             commit_rx_frame       <= '0';
@@ -752,7 +752,7 @@ begin
     -- there is not enough free space, data overrun flag will be set, and no further writes will
     -- be executed. Data Overrun flag can be cleared from Memory registers.
     -----------------------------------------------------------------------------------------------
-    sw_dor_proc : process(clk_sys, rx_buf_res_n_q_scan)
+    p_sw_dor : process(clk_sys, rx_buf_res_n_q_scan)
     begin
         if (rx_buf_res_n_q_scan = '0') then
             data_overrun_flg <= '0';
@@ -784,7 +784,7 @@ begin
     -- Cleared at the end of frame storing! Note that this register can't be reset by RRB, only
     -- by res_n!
     -----------------------------------------------------------------------------------------------
-    internal_dor_proc : process(clk_sys, res_n)
+    p_internal_dor : process(clk_sys, res_n)
     begin
         if (res_n = '0') then
             data_overrun_i <= '0';
@@ -896,7 +896,7 @@ begin
     -- Set when reading RX Buffer RAM. When read is in porgress is set, then RX Buffer RAM already
     -- has read data available on output, therefore, RX parity error detection is valid!
     -----------------------------------------------------------------------------------------------
-    parity_flag_proc : process(res_n, clk_sys)
+    p_parity_flag : process(res_n, clk_sys)
     begin
         if (res_n = '0') then
             rx_parity_error <= '0';
@@ -970,7 +970,7 @@ begin
     --  This verifies consistency of storing protocol by CAN Core, as well as RWCNT field!
     -----------------------------------------------------------------------------------------------
     -- coverage off
-    rwcnt_assert_proc : process(clk_sys)
+    p_rwcnt_assert : process(clk_sys)
         variable exp_data_stores    : natural := 0;
         variable act_data_stores   : natural := 0;
     begin

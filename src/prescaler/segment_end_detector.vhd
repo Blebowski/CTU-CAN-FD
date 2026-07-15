@@ -202,7 +202,7 @@ begin
             '1' when (segm_end_req_capt_clr(i) = '1' or req_input(i) = '1') else
             '0';
 
-        end_of_segm_req_proc : process(clk_sys, res_n)
+        p_end_of_segm_req : process(clk_sys, res_n)
         begin
             if (res_n = '0') then
                 segm_end_req_capt_q(i) <= '0';

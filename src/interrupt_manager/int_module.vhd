@@ -154,7 +154,7 @@ begin
     -----------------------------------------------------------------------------------------------
     -- Interrupt status - Set priority
     -----------------------------------------------------------------------------------------------
-    int_stat_proc : process(res_n, clk_sys)
+    p_int_stat : process(res_n, clk_sys)
     begin
         if (res_n = '0') then
             int_status <= '0';
@@ -178,7 +178,7 @@ begin
     -- Interrupt mask
     -----------------------------------------------------------------------------------------------
 
-    int_mask_proc : process(res_n, clk_sys)
+    p_int_mask : process(res_n, clk_sys)
     begin
         if (res_n = '0') then
             int_mask_i <= '0';
@@ -201,7 +201,7 @@ begin
     -----------------------------------------------------------------------------------------------
     -- Interrupt Enable
     -----------------------------------------------------------------------------------------------
-    int_ena_proc : process(res_n, clk_sys)
+    p_int_ena : process(res_n, clk_sys)
     begin
         if (res_n = '0') then
             int_ena_i <= '0';

@@ -169,7 +169,7 @@ begin
                           '0' when (rx_trig_req_q = '0') else
                           tx_trig_req_flag_q;
 
-    tx_trig_req_flag_proc : process(clk_sys, res_n)
+    p_tx_trig_req_flag : process(clk_sys, res_n)
     begin
         if (res_n = '0') then
             tx_trig_req_flag_q <= '0';
@@ -183,7 +183,7 @@ begin
     -----------------------------------------------------------------------------------------------
     -- Register to create delayed version of RX Trigger (for processing by Protocol Control)
     -----------------------------------------------------------------------------------------------
-    rx_trig_reg_proc : process(clk_sys, res_n)
+    p_rx_trig_reg : process(clk_sys, res_n)
     begin
         if (res_n = '0') then
             rx_trig_req_q <= '0';

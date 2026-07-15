@@ -157,7 +157,7 @@ begin
                        else
                    write_acc_q;
 
-    write_acc_reg_proc : process(hclk, hresetn)
+    p_write_acc_reg : process(hclk, hresetn)
     begin
         if (hresetn = '0') then
             write_acc_q <= '0';
@@ -166,7 +166,7 @@ begin
         end if;
     end process;
 
-    haddr_reg_proc : process(hclk, hresetn)
+    p_haddr_reg : process(hclk, hresetn)
     begin
         if (hresetn = '0') then
             haddr_q <= (OTHERS => '0');
@@ -192,7 +192,7 @@ begin
     -----------------------------------------------------------------------------------------------
     -- Decoding HSIZE to Byte enables
     -----------------------------------------------------------------------------------------------
-    h_size_dec_proc : process(hsize)
+    p_h_size_dec : process(hsize)
     begin
         sbe_d <= "0000";
         case (hsize) is
