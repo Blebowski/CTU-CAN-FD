@@ -178,7 +178,7 @@ begin
     ---------------------------------------------------------------------------
     -- Test node
     ---------------------------------------------------------------------------
-    test_node_inst : entity ctu_can_fd_rtl.ctu_can_fd_top
+    i_test_node : entity ctu_can_fd_rtl.ctu_can_fd_top
     generic map(
         -- Keep config hard-coded, it is enough that DUT is configurable!
         -- Everything is tested at the "DUT" instance!
@@ -224,7 +224,7 @@ begin
     ---------------------------------------------------------------------------
     -- Comunication receiver process
     ---------------------------------------------------------------------------
-    receiver_proc : process
+    p_receiver : process
         variable cmd : integer;
         variable reply_code : integer;
         variable tmp : integer;
@@ -366,7 +366,7 @@ begin
     -- Waits on start request from Test controller agent and runs a test.
     ---------------------------------------------------------------------------
     ---------------------------------------------------------------------------
-    test_process : process
+    p_test : process
         variable bus_timing     :    t_ctu_bit_time_cfg :=(
             tq_nbt      => cfg_brp,
             tq_dbt      => cfg_brp_fd,

@@ -238,7 +238,7 @@ begin
     ---------------------------------------------------------------------------
     -- DUT (Use RAM-like memory bus)
     ---------------------------------------------------------------------------
-    dut : entity ctu_can_fd_rtl.ctu_can_fd_top
+    i_dut : entity ctu_can_fd_rtl.ctu_can_fd_top
     generic map(
         G_RX_BUF_SIZE          => rx_buffer_size,
         G_TXT_BUF_COUNT        => txt_buffer_count,
@@ -286,7 +286,7 @@ begin
     ---------------------------------------------------------------------------
     -- CTU CAN FD VIP
     ---------------------------------------------------------------------------
-    ctu_can_fd_vip_inst : ctu_can_fd_vip
+    i_ctu_can_fd_vip : ctu_can_fd_vip
     generic map(
         test_name               => test_name,
         test_type               => test_type,
@@ -359,7 +359,7 @@ begin
     ---------------------------------------------------------------------------
     -- Test manager - controls CTU CAN FD VIP
     ---------------------------------------------------------------------------
-    test_manager_proc : process
+    p_test_manager : process
     begin
         wait for 10 ns;
 

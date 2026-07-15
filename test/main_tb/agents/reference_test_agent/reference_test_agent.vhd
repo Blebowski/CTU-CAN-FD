@@ -125,7 +125,7 @@ begin
     -- Waits on start request from Test controller agent and runs a test.
     ---------------------------------------------------------------------------
     ---------------------------------------------------------------------------
-    test_process : process
+    p_test : process
         -- 2 Mbit / 500 Kbit, 80 % sample point
         variable bus_timing     : t_ctu_bit_time_cfg :=
             (2, 1, 40, 39, 20, 10, 20, 14, 15, 10);

@@ -237,7 +237,7 @@ begin
     ---------------------------------------------------------------------------
     -- Comunication receiver process
     ---------------------------------------------------------------------------
-    receiver_proc : process
+    p_receiver : process
         variable cmd            : integer;
         variable reply_code     : integer;
         variable push_item      : t_can_driver_entry;
@@ -505,7 +505,7 @@ begin
     -- Driver process (reading from Driver FIFO)
     ---------------------------------------------------------------------------
     ---------------------------------------------------------------------------
-    driver_proc : process
+    p_driver : process
     begin
         if (driver_ena) then
             if (driver_wait_for_monitor = true) then
@@ -550,7 +550,7 @@ begin
     -- Monitor process (FSM)
     ---------------------------------------------------------------------------
     ---------------------------------------------------------------------------
-    monitor_proc : process
+    p_monitor : process
         variable mon_count          : integer := 0;
         variable monitored_time     : time := 0 fs;
 

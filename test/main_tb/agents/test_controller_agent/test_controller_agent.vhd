@@ -175,7 +175,7 @@ begin
     --   library (test control over PLI).
     ---------------------------------------------------------------------------
     ---------------------------------------------------------------------------
-    main_test_proc : process
+    p_main_test : process
         variable test_success_i : std_logic := '0';
         variable init_timestamp : std_logic_vector(63 downto 0);
     begin
@@ -312,7 +312,7 @@ begin
     -- Compliance test specific part
     ---------------------------------------------------------------------------
     ---------------------------------------------------------------------------
-    compliance_tests_gen : if (test_type = "compliance") generate
+    g_compliance_tests : if (test_type = "compliance") generate
 
         ---------------------------------------------------------------------------
         -- Compliance test handling process
@@ -320,7 +320,7 @@ begin
         -- Passes control to Compliance test library linked to simulator.
         -- Communication with this library is done via PLI interface.
         ---------------------------------------------------------------------------
-        compliance_test_proc : process
+        p_compliance_test : process
         begin
             wait until compliance_start = '1';
 
@@ -355,7 +355,7 @@ begin
         -----------------------------------------------------------------------
         -- Listen on PLI commands and send them to individual agents!
         -----------------------------------------------------------------------
-        pli_listener_process : process
+        p_pli_listener : process
         begin
 
             -------------------------------------------------------------------
@@ -420,7 +420,7 @@ begin
         -- compliance test library passes all messages to TB via shared memory,
         -- which is read synchronously with PLI callbacks!
         -----------------------------------------------------------------------
-        pli_clk_gen_proc : process
+        p_pli_clk_gen : process
         begin
             pli_clk <= '1';
             wait for 5 ns;

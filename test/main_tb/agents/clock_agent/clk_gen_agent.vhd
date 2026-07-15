@@ -146,7 +146,7 @@ begin
     ---------------------------------------------------------------------------
     -- Comunication receiver process
     ---------------------------------------------------------------------------
-    receiver_proc : process
+    p_receiver : process
         variable cmd : integer;
         variable reply_code : integer;
     begin
@@ -197,7 +197,7 @@ begin
     ---------------------------------------------------------------------------
     -- Clock generation process
     ---------------------------------------------------------------------------
-    clk_gen_proc : process
+    p_clk_gen : process
         variable t_high_with_jitter : time;
         variable t_low_with_jitter : time;
         variable rand_real : real;

@@ -172,7 +172,7 @@ begin
     --------------------------------------------------------------------------
     -- Comunication receiver process
     ---------------------------------------------------------------------------
-    receiver_proc : process
+    p_receiver : process
         variable cmd            : integer;
         variable reply_code     : integer;
         variable transaction    : t_mem_bus_access_item;
@@ -277,7 +277,7 @@ begin
     ---------------------------------------------------------------------------
     -- Measuring period of input clock (for proper calculation in X mode)
     ---------------------------------------------------------------------------
-    clk_period_meas_proc : process
+    p_clk_period_meas : process
     begin
         wait until rising_edge(clk);
         period <= NOW - last_clk_re;
@@ -288,7 +288,7 @@ begin
     ---------------------------------------------------------------------------
     -- Memory bus access process
     ---------------------------------------------------------------------------
-    mem_bus_access_proc : process
+    p_mem_bus_access : process
         variable curr_access   : t_mem_bus_access_item;
 
         procedure print_write_access(
@@ -455,7 +455,7 @@ begin
     ---------------------------------------------------------------------------
     -- Propagate chip select to slave which is selected
     ---------------------------------------------------------------------------
-    cs_gen : for i in 0 to G_NUM_SLAVES - 1 generate
+    g_cs : for i in 0 to G_NUM_SLAVES - 1 generate
         scs(i) <= scs_i when (slave_index = i) else
                   '0';
     end generate;

@@ -159,7 +159,7 @@ architecture apb_unit_test of CAN_test is
     signal arstn : std_logic := '0';
 
 begin
-    can_inst : entity ctu_can_fd_rtl.can_top_apb
+    i_can : entity ctu_can_fd_rtl.can_top_apb
         generic map (
             rx_buffer_size      => 128,
             txt_buffer_count    => 4,
@@ -194,7 +194,7 @@ begin
 
     assert s_apb_pslverr = '0' or arstn = '0' or now = 0 fs report "Slave error!" severity error;
 
-    main_proc : process
+    p_main : process
         procedure apb_write(
             constant addr : std_logic_vector(11 downto 0);
             constant data : std_logic_vector(31 downto 0);

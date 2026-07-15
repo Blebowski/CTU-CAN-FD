@@ -246,7 +246,7 @@ begin
     ---------------------------------------------------------------------------
     -- DUT (Use RAM-like memory bus)
     ---------------------------------------------------------------------------
-    dut : entity ctu_can_fd_gates.ctu_can_fd_top
+    i_dut : entity ctu_can_fd_gates.ctu_can_fd_top
     port map (
         -- Clock and Asynchronous reset
         clk_sys     => clk_sys,
@@ -284,7 +284,7 @@ begin
     ---------------------------------------------------------------------------
     -- CTU CAN FD VIP
     ---------------------------------------------------------------------------
-    ctu_can_fd_vip_inst : ctu_can_fd_vip
+    i_ctu_can_fd_vip : ctu_can_fd_vip
     generic map(
         test_name               => test_name,
         test_type               => test_type,
@@ -357,7 +357,7 @@ begin
     ---------------------------------------------------------------------------
     -- Vunit manager - controls CTU CAN FD VIP
     ---------------------------------------------------------------------------
-    vunit_manager_proc : process
+    p_vunit_manager : process
     begin
         test_runner_setup(runner, runner_cfg);
         wait for 10 ns;
@@ -441,7 +441,7 @@ begin
     ---------------------------------------------------------------------------
     -- Spawn watchdog
     ---------------------------------------------------------------------------
-    watchdog: if time'value(timeout) > 0 ns generate
+    g_watchdog: if time'value(timeout) > 0 ns generate
         test_runner_watchdog(runner, time'value(timeout));
     end generate;
 

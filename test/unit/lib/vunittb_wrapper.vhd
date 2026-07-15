@@ -135,7 +135,7 @@ begin
             status     => t_status,
             run        => t_run
         );
-    main:process
+    p_main:process
     begin
         test_runner_setup(runner, nested_runner_cfg);
         show(get_logger(default_checker), display_handler, pass);
@@ -153,7 +153,7 @@ begin
         test_runner_cleanup(runner, t_errors > error_tol);
     end process;
 
-    watchdog: if time'value(timeout) > 0 ns generate
+    g_watchdog: if time'value(timeout) > 0 ns generate
         test_runner_watchdog(runner, time'value(timeout));
     end generate;
 
