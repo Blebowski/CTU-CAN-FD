@@ -178,7 +178,7 @@ begin
     ---------------------------------------------------------------------------
     -- Test node
     ---------------------------------------------------------------------------
-    test_node_inst : entity ctu_can_fd_rtl.can_top_level
+    test_node_inst : entity ctu_can_fd_rtl.ctu_can_fd_top
     generic map(
         -- Keep config hard-coded, it is enough that DUT is configurable!
         -- Everything is tested at the "DUT" instance!

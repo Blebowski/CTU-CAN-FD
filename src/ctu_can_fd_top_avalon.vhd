@@ -68,7 +68,7 @@
 
 --------------------------------------------------------------------------------
 -- Purpose:
---    Top-level entity using APB4.
+--    Top-level entity using Intel Avalon
 --------------------------------------------------------------------------------
 
 Library ieee;
@@ -81,10 +81,10 @@ use ctu_can_fd_rtl.can_constants_pkg.all;
 use ctu_can_fd_rtl.can_config_pkg.all;
 use ctu_can_fd_rtl.can_types_pkg.all;
 
-use ctu_can_fd_rtl.CAN_FD_register_map.all;
-use ctu_can_fd_rtl.CAN_FD_frame_format.all;
+use ctu_can_fd_rtl.can_fd_register_map.all;
+use ctu_can_fd_rtl.can_fd_frame_format.all;
 
-entity can_top_apb is
+entity ctu_can_fd_top_avalon is
     generic(
         -- RX Buffer RAM size (32 bit words)
         G_RX_BUF_SIZE           : natural range 32 to 4096  := 32;
@@ -123,99 +123,88 @@ entity can_top_apb is
         G_TECHNOLOGY            : natural                   := C_TECH_FPGA
     );
     port(
-        aclk             : in  std_logic;
-        arstn            : in  std_logic;
-        scan_enable      : in  std_logic;
-        res_n_out        : out std_logic;
+        -- Reset and clocking
+        clk                 : in  std_logic;
+        reset_n             : in  std_logic;
 
-        irq              : out std_logic;
-        CAN_tx           : out std_logic;
-        CAN_rx           : in  std_logic;
-        timestamp        : in std_logic_vector(63 downto 0);
+        -- DFT
+        scan_enable         : in  std_logic;
 
-        -- Ports of APB4
-        s_apb_paddr      : in  std_logic_vector(31 downto 0);
-        s_apb_penable    : in  std_logic;
-        s_apb_pprot      : in  std_logic_vector(2 downto 0);
-        s_apb_prdata     : out std_logic_vector(31 downto 0);
-        s_apb_pready     : out std_logic;
-        s_apb_psel       : in  std_logic;
-        s_apb_pslverr    : out std_logic;
-        s_apb_pstrb      : in  std_logic_vector(3 downto 0);
-        s_apb_pwdata     : in  std_logic_vector(31 downto 0);
-        s_apb_pwrite     : in  std_logic
+        -- Interrupt
+        irq                 : out std_logic;
+
+        -- CAN bus
+        can_tx              : out std_logic;
+        can_rx              : in  std_logic;
+
+        -- Systems time-base
+        timestamp           : in  std_logic_vector(63 downto 0);
+
+        -- Avalon signals
+        address             : in  std_logic_vector(15 downto 0);
+        byteenable          : in  std_logic_vector(3 downto 0);
+        read                : in  std_logic;
+        write               : in  std_logic;
+        response            : out std_logic_vector(1 downto 0);
+        readdata            : out std_logic_vector(31 downto 0);
+        writedata           : out std_logic_vector(31 downto 0);
+        waitrequest         : out std_logic;
+        readdatavalid       : out std_logic
   );
-end entity can_top_apb;
+end entity ctu_can_fd_top_avalon;
 
-architecture rtl of can_top_apb is
-
-    signal reg_data_in      : std_logic_vector(31 downto 0);
-    signal reg_data_out     : std_logic_vector(31 downto 0);
-    signal reg_addr         : std_logic_vector(15 downto 0);
-    signal reg_be           : std_logic_vector(3 downto 0);
-    signal reg_rden         : std_logic;
-    signal reg_wren         : std_logic;
+architecture rtl of ctu_can_fd_top_avalon is
 
 begin
 
-    i_can: entity ctu_can_fd_rtl.can_top_level
-        generic map (
-            G_RX_BUF_SIZE           => G_RX_BUF_SIZE,
-            G_TXT_BUF_COUNT         => G_TXT_BUF_COUNT,
-            G_FILT_A_EN             => G_FILT_A_EN,
-            G_FILT_B_EN             => G_FILT_B_EN,
-            G_FILT_C_EN             => G_FILT_C_EN,
-            G_FILT_RANGE_EN         => G_FILT_RANGE_EN,
-            G_TEST_REGS_EN          => G_TEST_REGS_EN,
-            G_TRAFFIC_CTRS_EN       => G_TRAFFIC_CTRS_EN,
-            G_PARITY_EN             => G_PARITY_EN,
-            G_ACTIVE_TS_BITS        => G_ACTIVE_TS_BITS,
-            G_RESET_BUF_RAMS        => G_RESET_BUF_RAMS,
-            G_TECHNOLOGY            => G_TECHNOLOGY
-        )
-        port map (
-            clk_sys         => aclk,
-            res_n           => arstn,
-            res_n_out       => res_n_out,
-            scan_enable     => scan_enable,
+    i_can : entity ctu_can_fd_rtl.ctu_can_fd_top
+    generic map (
+        G_RX_BUF_SIZE           => G_RX_BUF_SIZE,
+        G_TXT_BUF_COUNT         => G_TXT_BUF_COUNT,
+        G_FILT_A_EN             => G_FILT_A_EN,
+        G_FILT_B_EN             => G_FILT_B_EN,
+        G_FILT_C_EN             => G_FILT_C_EN,
+        G_FILT_RANGE_EN         => G_FILT_RANGE_EN,
+        G_TEST_REGS_EN          => G_TEST_REGS_EN,
+        G_TRAFFIC_CTRS_EN       => G_TRAFFIC_CTRS_EN,
+        G_PARITY_EN             => G_PARITY_EN,
+        G_ACTIVE_TS_BITS        => G_ACTIVE_TS_BITS,
+        G_RESET_BUF_RAMS        => G_RESET_BUF_RAMS,
+        G_TECHNOLOGY            => G_TECHNOLOGY
+    )
+    port map (
+        -- Clock and Asynchronous reset
+        clk_sys                 => clk,
+        res_n                   => reset_n,
+        res_n_out               => open,
 
-            data_in         => reg_data_in,
-            data_out        => reg_data_out,
-            adress          => reg_addr,
-            scs             => '1',
-            srd             => reg_rden,
-            swr             => reg_wren,
-            sbe             => reg_be,
+        -- DFT support
+        scan_enable             => scan_enable,
 
-            int             => irq,
+        -- Memory interface
+        data_in                 => writedata,
+        data_out                => readdata,
+        adress                  => address,
+        scs                     => '1',
+        srd                     => read,
+        swr                     => write,
+        sbe                     => byteenable,
 
-            CAN_tx          => CAN_tx,
-            CAN_rx          => CAN_rx,
+        -- Interrupt Interface
+        int                     => irq,
 
-            timestamp       => timestamp
-        );
+        -- CAN Bus Interface
+        can_tx                  => can_tx,
+        can_rx                  => can_rx,
 
-    i_apb : entity ctu_can_fd_rtl.apb_ifc
-        port map (
-            aclk           => aclk,
+        test_probe              => open,
 
-            reg_data_in_o  => reg_data_in,
-            reg_data_out_i => reg_data_out,
-            reg_addr_o     => reg_addr,
-            reg_be_o       => reg_be,
-            reg_rden_o     => reg_rden,
-            reg_wren_o     => reg_wren,
+        -- Timestamp for time based transmission / reception
+        timestamp               => timestamp
+    );
 
-            s_apb_paddr    => s_apb_paddr,
-            s_apb_penable  => s_apb_penable,
-            s_apb_pprot    => s_apb_pprot,
-            s_apb_prdata   => s_apb_prdata,
-            s_apb_pready   => s_apb_pready,
-            s_apb_psel     => s_apb_psel,
-            s_apb_pslverr  => s_apb_pslverr,
-            s_apb_pstrb    => s_apb_pstrb,
-            s_apb_pwdata   => s_apb_pwdata,
-            s_apb_pwrite   => s_apb_pwrite
-        );
+    waitrequest         <= '0';
+    readdatavalid       <= '1';
+    response            <= "00"; -- OKAY
 
 end architecture rtl;

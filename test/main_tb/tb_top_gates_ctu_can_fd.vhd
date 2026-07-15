@@ -246,7 +246,7 @@ begin
     ---------------------------------------------------------------------------
     -- DUT (Use RAM-like memory bus)
     ---------------------------------------------------------------------------
-    dut : entity ctu_can_fd_gates.can_top_level
+    dut : entity ctu_can_fd_gates.ctu_can_fd_top
     port map (
         -- Clock and Asynchronous reset
         clk_sys     => clk_sys,

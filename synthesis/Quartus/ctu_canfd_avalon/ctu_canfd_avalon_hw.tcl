@@ -3,21 +3,21 @@
 # DO NOT MODIFY
 
 
-# 
+#
 # ctu_canfd_avalon "ctu_canfd_avalon" v1.0
 #  2019.11.07.22:49:32
-# 
-# 
+#
+#
 
-# 
+#
 # request TCL package from ACDS 16.1
-# 
+#
 package require -exact qsys 16.1
 
 
-# 
+#
 # module ctu_canfd_avalon
-# 
+#
 set_module_property DESCRIPTION ""
 set_module_property NAME ctu_canfd_avalon
 set_module_property VERSION 1.0
@@ -32,11 +32,11 @@ set_module_property ALLOW_GREYBOX_GENERATION false
 set_module_property REPORT_HIERARCHY false
 
 
-# 
+#
 # file sets
-# 
+#
 add_fileset QUARTUS_SYNTH QUARTUS_SYNTH "" ""
-set_fileset_property QUARTUS_SYNTH TOP_LEVEL can_top_level
+set_fileset_property QUARTUS_SYNTH TOP_LEVEL ctu_can_fd_top
 set_fileset_property QUARTUS_SYNTH ENABLE_RELATIVE_INCLUDE_PATHS false
 set_fileset_property QUARTUS_SYNTH ENABLE_FILE_OVERWRITE_MODE true
 add_fileset_file access_signaler.vhd VHDL PATH src/access_signaler.vhd
@@ -123,9 +123,9 @@ add_fileset_file txt_buffer_fsm.vhd VHDL PATH src/txt_buffer_fsm.vhd
 add_fileset_file txt_buffer_ram.vhd VHDL PATH src/txt_buffer_ram.vhd
 
 
-# 
+#
 # parameters
-# 
+#
 add_parameter rx_buffer_size INTEGER 128
 set_parameter_property rx_buffer_size DEFAULT_VALUE 128
 set_parameter_property rx_buffer_size DISPLAY_NAME rx_buffer_size
@@ -165,14 +165,14 @@ set_parameter_property sup_traffic_ctrs UNITS None
 set_parameter_property sup_traffic_ctrs HDL_PARAMETER true
 
 
-# 
+#
 # display items
-# 
+#
 
 
-# 
+#
 # connection point clock_sink
-# 
+#
 add_interface clock_sink clock end
 set_interface_property clock_sink clockRate 0
 set_interface_property clock_sink ENABLED true
@@ -184,9 +184,9 @@ set_interface_property clock_sink SVD_ADDRESS_GROUP ""
 add_interface_port clock_sink clk_sys clk Input 1
 
 
-# 
+#
 # connection point reset_sink
-# 
+#
 add_interface reset_sink reset end
 set_interface_property reset_sink associatedClock ""
 set_interface_property reset_sink synchronousEdges NONE
@@ -199,9 +199,9 @@ set_interface_property reset_sink SVD_ADDRESS_GROUP ""
 add_interface_port reset_sink res_n reset_n Input 1
 
 
-# 
+#
 # connection point interrupt_sender
-# 
+#
 add_interface interrupt_sender interrupt end
 set_interface_property interrupt_sender associatedAddressablePoint registers
 set_interface_property interrupt_sender associatedClock clock_sink
@@ -217,9 +217,9 @@ set_interface_property interrupt_sender SVD_ADDRESS_GROUP ""
 add_interface_port interrupt_sender int irq Output 1
 
 
-# 
+#
 # connection point timestamp
-# 
+#
 add_interface timestamp conduit end
 set_interface_property timestamp associatedClock clock_sink
 set_interface_property timestamp associatedReset ""
@@ -232,9 +232,9 @@ set_interface_property timestamp SVD_ADDRESS_GROUP ""
 add_interface_port timestamp timestamp timestamp Input 64
 
 
-# 
+#
 # connection point can_interface
-# 
+#
 add_interface can_interface conduit end
 set_interface_property can_interface associatedClock ""
 set_interface_property can_interface associatedReset ""
@@ -248,9 +248,9 @@ add_interface_port can_interface can_rx can_rx Input 1
 add_interface_port can_interface can_tx can_tx Output 1
 
 
-# 
+#
 # connection point registers
-# 
+#
 add_interface registers avalon end
 set_interface_property registers addressUnits SYMBOLS
 set_interface_property registers associatedClock clock_sink

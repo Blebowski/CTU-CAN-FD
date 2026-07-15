@@ -98,9 +98,7 @@ source_list:
     - file: txt_buffer/txt_buffer_even.vhd
     - file: txt_buffer/txt_buffer_odd.vhd
 
-    - file: can_top_level.vhd
-    - file: can_top_ahb.vhd
-    - file: can_top_apb.vhd
-
-
-
+    - file: ctu_can_fd_top.vhd
+    - file: ctu_can_fd_top_avalon.vhd
+    - file: ctu_can_fd_top_ahb.vhd
+    - file: ctu_can_fd_top_apb.vhd

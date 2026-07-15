@@ -9,6 +9,10 @@
 - **BREAKING CHANGE**: IP top level generics has been renamed to
   comply with generic naming style. Look at the System Architecture
   document for the new names.
+- **BREAKING CHANGE**: Top level entity names have changed to
+  `ctu_can_fd_top` (RAM-like), `ctu_can_fd_top_ahb` (AHB interface),
+  `ctu_can_fd_top_apb` (APB interface).
+- Added new Avalon top level interface (`ctu_can_fd_top_avalon`).
 
 ## Version 2.7 - 7.1.2026
 - RTL: Optimized to remove dead-code and unreachable code

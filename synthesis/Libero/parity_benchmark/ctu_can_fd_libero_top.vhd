@@ -149,7 +149,7 @@ architecture rtl of ctu_can_fd_libero_top is
 
 begin
 
-    can_top_level_inst : entity ctu_can_fd_rtl.can_top_level
+    ctu_can_fd_top_inst : entity ctu_can_fd_rtl.ctu_can_fd_top
     generic map (
         -- RX Buffer RAM size (32 bit words)
         rx_buffer_size          => 128,

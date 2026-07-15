@@ -244,7 +244,7 @@ begin
     ---------------------------------------------------------------------------
     -- DUT (Use RAM-like memory bus)
     ---------------------------------------------------------------------------
-    dut : entity ctu_can_fd_rtl.can_top_level
+    dut : entity ctu_can_fd_rtl.ctu_can_fd_top
     generic map(
         G_RX_BUF_SIZE        => rx_buffer_size,
         G_TXT_BUF_COUNT      => txt_buffer_count,

@@ -68,7 +68,7 @@
 
 --------------------------------------------------------------------------------
 -- Purpose:
---    Top-level entity using AHB.
+--    Top-level entity using APB4.
 --------------------------------------------------------------------------------
 
 Library ieee;
@@ -84,7 +84,7 @@ use ctu_can_fd_rtl.can_types_pkg.all;
 use ctu_can_fd_rtl.CAN_FD_register_map.all;
 use ctu_can_fd_rtl.CAN_FD_frame_format.all;
 
-entity can_top_ahb is
+entity ctu_can_fd_top_apb is
     generic(
         -- RX Buffer RAM size (32 bit words)
         G_RX_BUF_SIZE           : natural range 32 to 4096  := 32;
@@ -123,69 +123,42 @@ entity can_top_ahb is
         G_TECHNOLOGY            : natural                   := C_TECH_FPGA
     );
     port(
-        -----------------------------------------------------------------------
-        -- AHB interface
-        -----------------------------------------------------------------------
-        hresetn          : in std_logic;
-        hclk             : in std_logic;
-        haddr            : in std_logic_vector(31 downto 0);
-        hwdata           : in std_logic_vector(31 downto 0);
-        hsel             : in std_logic;
-        hwrite           : in std_logic;
-        hsize            : in std_logic_vector(2 downto 0);
-        hburst           : in std_logic_vector(2 downto 0);
-        hprot            : in std_logic_vector(3 downto 0);
-        htrans           : in std_logic_vector(1 downto 0);
-        hmastlock        : in std_logic;
-        hready           : in std_logic;
-        hreadyout        : out std_logic;
-        hresp            : out std_logic;
-        hrdata           : out std_logic_vector(31 downto 0);
-
-        -----------------------------------------------------------------------
-        -- Synchronized reset
-        -----------------------------------------------------------------------
+        aclk             : in  std_logic;
+        arstn            : in  std_logic;
+        scan_enable      : in  std_logic;
         res_n_out        : out std_logic;
 
-        -----------------------------------------------------------------------
-        -- CAN Bus
-        -----------------------------------------------------------------------
+        irq              : out std_logic;
         can_tx           : out std_logic;
         can_rx           : in  std_logic;
+        timestamp        : in std_logic_vector(63 downto 0);
 
-        -----------------------------------------------------------------------
-        -- Timestamp
-        -----------------------------------------------------------------------
-        timestamp        : in  std_logic_vector(63 downto 0);
+        -- Ports of APB4
+        s_apb_paddr      : in  std_logic_vector(31 downto 0);
+        s_apb_penable    : in  std_logic;
+        s_apb_pprot      : in  std_logic_vector(2 downto 0);
+        s_apb_prdata     : out std_logic_vector(31 downto 0);
+        s_apb_pready     : out std_logic;
+        s_apb_psel       : in  std_logic;
+        s_apb_pslverr    : out std_logic;
+        s_apb_pstrb      : in  std_logic_vector(3 downto 0);
+        s_apb_pwdata     : in  std_logic_vector(31 downto 0);
+        s_apb_pwrite     : in  std_logic
+  );
+end entity ctu_can_fd_top_apb;
 
-        -----------------------------------------------------------------------
-        -- DFT support
-        -----------------------------------------------------------------------
-        scan_enable      : in  std_logic;
+architecture rtl of ctu_can_fd_top_apb is
 
-        -----------------------------------------------------------------------
-        -- Interrupt
-        -----------------------------------------------------------------------
-        int              : out std_logic
-    );
-end entity can_top_ahb;
-
-architecture rtl of can_top_ahb is
-
-    signal ctu_can_data_in   : std_logic_vector(31 downto 0);
-    signal ctu_can_data_out  : std_logic_vector(31 downto 0);
-    signal ctu_can_adress    : std_logic_vector(15 downto 0);
-
-    signal ctu_can_scs       : std_logic;
-    signal ctu_can_srd       : std_logic;
-    signal ctu_can_swr       : std_logic;
-    signal ctu_can_sbe       : std_logic_vector(3 downto 0);
-
-    signal res_n_out_i       : std_logic;
+    signal reg_data_in      : std_logic_vector(31 downto 0);
+    signal reg_data_out     : std_logic_vector(31 downto 0);
+    signal reg_addr         : std_logic_vector(15 downto 0);
+    signal reg_be           : std_logic_vector(3 downto 0);
+    signal reg_rden         : std_logic;
+    signal reg_wren         : std_logic;
 
 begin
 
-    i_can : entity ctu_can_fd_rtl.can_top_level
+    i_can : entity ctu_can_fd_rtl.ctu_can_fd_top
     generic map (
         G_RX_BUF_SIZE           => G_RX_BUF_SIZE,
         G_TXT_BUF_COUNT         => G_TXT_BUF_COUNT,
@@ -201,21 +174,20 @@ begin
         G_TECHNOLOGY            => G_TECHNOLOGY
     )
     port map (
-        clk_sys         => hclk,
-        res_n           => hresetn,
-        res_n_out       => res_n_out_i,
-
+        clk_sys         => aclk,
+        res_n           => arstn,
+        res_n_out       => res_n_out,
         scan_enable     => scan_enable,
 
-        data_in         => ctu_can_data_in,
-        data_out        => ctu_can_data_out,
-        adress          => ctu_can_adress,
-        scs             => ctu_can_scs,
-        srd             => ctu_can_srd,
-        swr             => ctu_can_swr,
-        sbe             => ctu_can_sbe,
+        data_in         => reg_data_in,
+        data_out        => reg_data_out,
+        adress          => reg_addr,
+        scs             => '1',
+        srd             => reg_rden,
+        swr             => reg_wren,
+        sbe             => reg_be,
 
-        int             => int,
+        int             => irq,
 
         CAN_tx          => CAN_tx,
         CAN_rx          => CAN_rx,
@@ -223,35 +195,27 @@ begin
         timestamp       => timestamp
     );
 
-    i_ahb_ifc : entity ctu_can_fd_rtl.ahb_ifc
-    port map(
-        -- CTU CAN FD Interface
-        data_in          => ctu_can_data_in,
-        data_out         => ctu_can_data_out,
-        adress           => ctu_can_adress,
-        sbe              => ctu_can_sbe,
-        scs              => ctu_can_scs,
-        swr              => ctu_can_swr,
-        srd              => ctu_can_srd,
+    i_apb : entity ctu_can_fd_rtl.apb_ifc
+    port map (
+        aclk           => aclk,
 
-        -- AHB interface
-        hresetn          => res_n_out_i,
-        hclk             => hclk,
-        haddr            => haddr,
-        hwdata           => hwdata,
-        hsel             => hsel,
-        hwrite           => hwrite,
-        hsize            => hsize,
-        hburst           => hburst,
-        hprot            => hprot,
-        htrans           => htrans,
-        hmastlock        => hmastlock,
-        hready           => hready,
-        hreadyout        => hreadyout,
-        hresp            => hresp,
-        hrdata           => hrdata
+        reg_data_in_o  => reg_data_in,
+        reg_data_out_i => reg_data_out,
+        reg_addr_o     => reg_addr,
+        reg_be_o       => reg_be,
+        reg_rden_o     => reg_rden,
+        reg_wren_o     => reg_wren,
+
+        s_apb_paddr    => s_apb_paddr,
+        s_apb_penable  => s_apb_penable,
+        s_apb_pprot    => s_apb_pprot,
+        s_apb_prdata   => s_apb_prdata,
+        s_apb_pready   => s_apb_pready,
+        s_apb_psel     => s_apb_psel,
+        s_apb_pslverr  => s_apb_pslverr,
+        s_apb_pstrb    => s_apb_pstrb,
+        s_apb_pwdata   => s_apb_pwdata,
+        s_apb_pwrite   => s_apb_pwrite
     );
-
-    res_n_out <= res_n_out_i;
 
 end architecture rtl;

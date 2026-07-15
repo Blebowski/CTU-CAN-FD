@@ -5,7 +5,7 @@
 set PART xc7k70tfbv676-1
 set PROJECT_NAME CTU_CAN_FD_BENCHMARK
 set PROJ_ROOT ../../..
-set TOP can_top_level
+set TOP ctu_can_fd_top
 
 set DESIGN_CONFIGS [list \
     [ dict create \

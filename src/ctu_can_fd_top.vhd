@@ -97,7 +97,7 @@ use ctu_can_fd_rtl.CAN_FD_frame_format.all;
 
 use ctu_can_fd_rtl.can_registers_pkg.all;
 
-entity can_top_level is
+entity ctu_can_fd_top is
     generic (
         -- RX Buffer RAM size (32 bit words)
         G_RX_BUF_SIZE           : natural range 32 to 4096  := 32;
@@ -202,9 +202,9 @@ entity can_top_level is
         -----------------------------------------------------------------------
         timestamp    : in std_logic_vector(63 downto 0)
     );
-end entity can_top_level;
+end entity ctu_can_fd_top;
 
-architecture rtl of can_top_level is
+architecture rtl of ctu_can_fd_top is
 
     -----------------------------------------------------------------------------------------------
     -----------------------------------------------------------------------------------------------

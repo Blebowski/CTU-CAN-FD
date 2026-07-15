@@ -1442,7 +1442,9 @@ Update repository link
 \begin_inset Text
 
 \begin_layout Plain Layout
-Changed name of top level generics
+Changed name of top level generics.
+ Separated Avalon wrapper from RAM-like.
+ Changed name of top-level entities.
 \end_layout
 
 \end_inset
@@ -1775,10 +1777,12 @@ When CTU CAN FD GIT repository is clonned, register map can be generated
 \end_layout
 
 \begin_layout Verbatim
+
 cd scripts
 \end_layout
 
 \begin_layout Verbatim
+
 ./update_reg_map
 \end_layout
 
@@ -1800,10 +1804,12 @@ src/component.xml
 \end_layout
 
 \begin_layout Verbatim
+
 cd scripts
 \end_layout
 
 \begin_layout Verbatim
+
 python gen_vivado_component.py
 \end_layout
 
@@ -2923,11 +2929,16 @@ Memory Bus
 \end_layout
 
 \begin_layout Standard
-CTU CAN FD is a slave device accessible via one of three memory buses:
+CTU CAN FD is a slave device accessible via one of the following memory
+ buses:
 \end_layout
 
 \begin_layout Itemize
 RAM-like interface
+\end_layout
+
+\begin_layout Itemize
+Avalon
 \end_layout
 
 \begin_layout Itemize
@@ -2939,7 +2950,7 @@ AHB
 \end_layout
 
 \begin_layout Standard
-Each interface can be used via dedicated wrapper.
+Each interface can be used via dedicated VHDL entity.
  SW shall not access CTU CAN FD sooner than two clock cycles after external
  reset was released (due to reset synchronisation) (see Table 
 \begin_inset CommandInset ref
@@ -2972,7 +2983,7 @@ name "subsec:RAM-like-interface"
 \end_layout
 
 \begin_layout Description
-Wrapper can_top_level.vhd
+Entity ctu_can_fd_top
 \end_layout
 
 \begin_layout Standard
@@ -3637,8 +3648,23 @@ name "fig:rx-buffer-burst-read"
 
 \end_layout
 
+\begin_layout Subsection
+Avalon interface
+\begin_inset CommandInset label
+LatexCommand label
+name "subsec:avalon-like-interface"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Description
+Entity ctu_can_fd_top_avalon
+\end_layout
+
 \begin_layout Standard
-RAM-like interface is Avalon compatible (according to 
+Avalon compatible to 
 \begin_inset CommandInset citation
 LatexCommand cite
 key "key-3"
@@ -3646,48 +3672,10 @@ literal "false"
 
 \end_inset
 
-) and mapping of RAM like signals to Avalon Memory-mapped slave signals
- is shown in Table 
-\begin_inset CommandInset ref
-LatexCommand ref
-reference "tab:RAM-like-avalon-mappping"
-plural "false"
-caps "false"
-noprefix "false"
-
-\end_inset
-
 .
  When connected to Avalon MM master, write access to reserved address has
  no effect and read access returns all zeroes instead of responding with
  DECODEERROR response.
- 
-\series bold
-\shape italic
-response
-\series default
-\shape default
- signal shall be connected to 
-\begin_inset Quotes eld
-\end_inset
-
-00
-\begin_inset Quotes erd
-\end_inset
-
-, 
-\series bold
-\shape italic
-writeresponsevalid
-\series default
-\shape default
- and 
-\series bold
-\shape italic
-readdatavalid
-\series default
-\shape default
- shall be connected to '1'.
 \end_layout
 
 \begin_layout Standard
@@ -3701,34 +3689,11 @@ status open
 \noindent
 \align center
 \begin_inset Tabular
-<lyxtabular version="3" rows="8" columns="3">
+<lyxtabular version="3" rows="10" columns="2">
 <features tabularvalignment="middle">
-<column alignment="left" valignment="top" width="15text%">
 <column alignment="left" valignment="top" width="15text%">
 <column alignment="left" valignment="top" width="61.5text%">
 <row>
-<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-RAM-like signal name
-\begin_inset ERT
-status open
-
-\begin_layout Plain Layout
-
-
-\backslash
-cellcolor{gray}
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
-\end_inset
-</cell>
 <cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
 \begin_inset Text
 
@@ -3775,42 +3740,7 @@ cellcolor{gray}
 </cell>
 </row>
 <row>
-<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-
-\series bold
-\shape italic
-data_in
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-
-\series bold
-\shape italic
-write_data
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-Data written to Avalon MM slave.
-\end_layout
-
-\end_inset
-</cell>
-</row>
-<row>
-<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -3822,19 +3752,7 @@ address
 
 \end_inset
 </cell>
-<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-
-\series bold
-\shape italic
-address
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -3845,52 +3763,29 @@ Address for read/write of Avalon MM slave.
 </cell>
 </row>
 <row>
-<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
 
 \series bold
 \shape italic
-scs
+byteenable
 \end_layout
 
 \end_inset
 </cell>
-<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
--
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-Shall correspond to chip select of slave if more than 1 slave is connected
- to given bus.
- If single slave is connected, shall be connected to 1.
+Byte enable, used for both read and write transfers.
 \end_layout
 
 \end_inset
 </cell>
 </row>
 <row>
-<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-
-\series bold
-\shape italic
-srd
-\end_layout
-
-\end_inset
-</cell>
 <cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
 \begin_inset Text
 
@@ -3914,19 +3809,7 @@ Read indication
 </cell>
 </row>
 <row>
-<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-
-\series bold
-\shape italic
-swr
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -3938,7 +3821,7 @@ write
 
 \end_inset
 </cell>
-<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -3956,19 +3839,7 @@ Write indication
 
 \series bold
 \shape italic
-sbe
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-
-\series bold
-\shape italic
-byteenable
+response
 \end_layout
 
 \end_inset
@@ -3977,7 +3848,76 @@ byteenable
 \begin_inset Text
 
 \begin_layout Plain Layout
-Byte enable, used for both read and write transfers.
+Always returns 00 (OKAY).
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\series bold
+\shape italic
+readdata
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Data read from Avalon MM slave.
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\series bold
+\shape italic
+writedata
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Data written to Avalon MM slave.
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\series bold
+\shape italic
+waitrequest
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Always driven by CTU CAN FD to 0.
 \end_layout
 
 \end_inset
@@ -3991,19 +3931,7 @@ Byte enable, used for both read and write transfers.
 
 \series bold
 \shape italic
-data_out
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="left" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-
-\series bold
-\shape italic
-readdata
+readdatavalid
 \end_layout
 
 \end_inset
@@ -4012,7 +3940,7 @@ readdata
 \begin_inset Text
 
 \begin_layout Plain Layout
-Data read from Avalon MM slave.
+Always driven by CTU CAN FD to 1.
 \end_layout
 
 \end_inset
@@ -4056,7 +3984,7 @@ APB
 \end_layout
 
 \begin_layout Description
-Wrapper can_top_apb.vhd
+Entity ctu_can_fd_top_apb
 \end_layout
 
 \begin_layout Standard
@@ -4734,7 +4662,7 @@ AHB
 \end_layout
 
 \begin_layout Description
-Wrapper CAN_top_ahb.vhd
+Entity ctu_can_fd_top_ahb
 \end_layout
 
 \begin_layout Standard

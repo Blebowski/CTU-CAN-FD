@@ -1,36 +1,36 @@
 --------------------------------------------------------------------------------
--- 
--- CAN with Flexible Data-Rate IP Core 
--- 
+--
+-- CAN with Flexible Data-Rate IP Core
+--
 -- Copyright (C) 2017 Ondrej Ille <ondrej.ille@gmail.com>
--- 
+--
 -- Project advisor: Jiri Novak <jnovak@fel.cvut.cz>
 -- Department of Measurement         (http://meas.fel.cvut.cz/)
 -- Faculty of Electrical Engineering (http://www.fel.cvut.cz)
 -- Czech Technical University        (http://www.cvut.cz/)
--- 
--- Permission is hereby granted, free of charge, to any person obtaining a copy 
--- of this VHDL component and associated documentation files (the "Component"), 
--- to deal in the Component without restriction, including without limitation 
--- the rights to use, copy, modify, merge, publish, distribute, sublicense, 
--- and/or sell copies of the Component, and to permit persons to whom the 
+--
+-- Permission is hereby granted, free of charge, to any person obtaining a copy
+-- of this VHDL component and associated documentation files (the "Component"),
+-- to deal in the Component without restriction, including without limitation
+-- the rights to use, copy, modify, merge, publish, distribute, sublicense,
+-- and/or sell copies of the Component, and to permit persons to whom the
 -- Component is furnished to do so, subject to the following conditions:
--- 
--- The above copyright notice and this permission notice shall be included in 
+--
+-- The above copyright notice and this permission notice shall be included in
 -- all copies or substantial portions of the Component.
--- 
--- THE COMPONENT IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR 
--- IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, 
--- FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE 
--- AUTHORS OR COPYRIGHTHOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER 
+--
+-- THE COMPONENT IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+-- IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+-- FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+-- AUTHORS OR COPYRIGHTHOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 -- LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
--- FROM, OUT OF OR IN CONNECTION WITH THE COMPONENT OR THE USE OR OTHER DEALINGS 
+-- FROM, OUT OF OR IN CONNECTION WITH THE COMPONENT OR THE USE OR OTHER DEALINGS
 -- IN THE COMPONENT.
--- 
--- The CAN protocol is developed by Robert Bosch GmbH and protected by patents. 
--- Anybody who wants to implement this IP core on silicon has to obtain a CAN 
+--
+-- The CAN protocol is developed by Robert Bosch GmbH and protected by patents.
+-- Anybody who wants to implement this IP core on silicon has to obtain a CAN
 -- protocol license from Bosch.
--- 
+--
 --------------------------------------------------------------------------------
 
 --------------------------------------------------------------------------------
@@ -49,7 +49,7 @@ USE WORK.can_constants.ALL;
 use work.can_components.ALL;
 
 entity CAN_Wrapper is
-  
+
     generic (
 	  constant rx_buffer_size : natural := 32;
      constant  ID             : natural:= 1;
@@ -69,21 +69,21 @@ entity CAN_Wrapper is
      signal srd      : in  std_logic;    --Serial read
      signal swr      : in  std_logic;    --Serial write
 	  signal sbe      : in  std_logic_vector(3 downto 0); --BE
-     
+
 	  signal int : out std_logic;
 
      signal CAN_tx : out std_logic;
      signal CAN_rx : in  std_logic;
 
-     signal time_quanta_clk : out std_logic;  
+     signal time_quanta_clk : out std_logic;
      signal timestamp : in std_logic_vector(63 downto 0)
-    );  
- 
+    );
+
 end entity CAN_Wrapper;
 
 architecture rtl of CAN_Wrapper is
 
-     
+
 --		--Minimal configuration
 --		(
 --		 use_logger     => false,
@@ -98,7 +98,7 @@ architecture rtl of CAN_Wrapper is
 --       tx_time_sup    => false,
 --       logger_size    => 8
 --		),
---	  
+--
 --	   --Minimal FD configuration
 --		(
 --		 use_logger     => false,
@@ -113,7 +113,7 @@ architecture rtl of CAN_Wrapper is
 --       tx_time_sup    => false,
 --       logger_size    => 8
 --		),
---	  
+--
 --	   --Small FD configuration
 --		(
 --		 use_logger     => false,
@@ -128,7 +128,7 @@ architecture rtl of CAN_Wrapper is
 --       tx_time_sup    => true,
 --       logger_size    => 8
 --		),
---	  
+--
 --	   --Medium FD configuration
 --		(
 --		 use_logger     => false,
@@ -143,7 +143,7 @@ architecture rtl of CAN_Wrapper is
 --       tx_time_sup    => true,
 --       logger_size    => 8
 --		),
---		
+--
 --		--Full FD configuration
 --		(
 --		 use_logger     => false,
@@ -158,7 +158,7 @@ architecture rtl of CAN_Wrapper is
 --       tx_time_sup    => true,
 --       logger_size    => 8
 --		),
---		
+--
 --		--Full FD configuration + Small Logger
 --		(
 --		 use_logger     => true,
@@ -173,7 +173,7 @@ architecture rtl of CAN_Wrapper is
 --       tx_time_sup    => true,
 --       logger_size    => 8
 --		),
---		
+--
 --		--Full FD configuration + Big Logger
 --		(
 --		 use_logger     => true,
@@ -189,13 +189,13 @@ architecture rtl of CAN_Wrapper is
 --       logger_size    => 64
 --		)
 --	 );
-	  
-		
-	  
+
+
+
 
 begin
 
-  CAN_comp:CAN_top_level
+  can_comp : ctu_can_fd_top
   generic map(
      rx_buffer_size => rx_buffer_size,
      ID             => ID,
@@ -219,5 +219,5 @@ begin
      CAN_rx         => CAN_rx,
      timestamp       => timestamp
     );
-  
+
 end architecture;
