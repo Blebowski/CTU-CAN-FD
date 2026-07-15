@@ -117,18 +117,18 @@ targets:
             /TB_TOP_CTU_CAN_FD/timeout: 200 ms
 
             # DUT generics
-            /TB_TOP_CTU_CAN_FD/rx_buffer_size: 32
-            /TB_TOP_CTU_CAN_FD/txt_buffer_count: 2
-            /TB_TOP_CTU_CAN_FD/sup_filtA: false
-            /TB_TOP_CTU_CAN_FD/sup_filtB: false
-            /TB_TOP_CTU_CAN_FD/sup_filtC: false
-            /TB_TOP_CTU_CAN_FD/sup_range: false
-            /TB_TOP_CTU_CAN_FD/sup_traffic_ctrs: false
-            /TB_TOP_CTU_CAN_FD/sup_parity: false
-            /TB_TOP_CTU_CAN_FD/reset_buffer_rams: false
+            /TB_TOP_CTU_CAN_FD/G_RX_BUF_SIZE: 32
+            /TB_TOP_CTU_CAN_FD/G_TXT_BUF_COUNT: 2
+            /TB_TOP_CTU_CAN_FD/G_FILT_A_EN: false
+            /TB_TOP_CTU_CAN_FD/G_FILT_B_EN: false
+            /TB_TOP_CTU_CAN_FD/G_FILT_C_EN: false
+            /TB_TOP_CTU_CAN_FD/G_FILT_RANGE_EN: false
+            /TB_TOP_CTU_CAN_FD/G_TRAFFIC_CTRS_EN: false
+            /TB_TOP_CTU_CAN_FD/G_PARITY_EN: false
+            /TB_TOP_CTU_CAN_FD/G_RESET_BUF_RAMS: false
 
             # C_TECH_ASIC
-            /TB_TOP_CTU_CAN_FD/target_technology: 0
+            /TB_TOP_CTU_CAN_FD/G_TECHNOLOGY: 0
 
             # DUT Bit timing settings - MAX bit-rate
             /TB_TOP_CTU_CAN_FD/cfg_brp: 1
@@ -169,18 +169,18 @@ targets:
             /TB_TOP_CTU_CAN_FD/timeout: 200 ms
 
             # DUT generics
-            /TB_TOP_CTU_CAN_FD/rx_buffer_size: 128
-            /TB_TOP_CTU_CAN_FD/txt_buffer_count: 4
-            /TB_TOP_CTU_CAN_FD/sup_filtA: true
-            /TB_TOP_CTU_CAN_FD/sup_filtB: false
-            /TB_TOP_CTU_CAN_FD/sup_filtC: false
-            /TB_TOP_CTU_CAN_FD/sup_range: false
-            /TB_TOP_CTU_CAN_FD/sup_traffic_ctrs: true
-            /TB_TOP_CTU_CAN_FD/sup_parity: true
-            /TB_TOP_CTU_CAN_FD/reset_buffer_rams: false
+            /TB_TOP_CTU_CAN_FD/G_RX_BUF_SIZE: 128
+            /TB_TOP_CTU_CAN_FD/G_TXT_BUF_COUNT: 4
+            /TB_TOP_CTU_CAN_FD/G_FILT_A_EN: true
+            /TB_TOP_CTU_CAN_FD/G_FILT_B_EN: false
+            /TB_TOP_CTU_CAN_FD/G_FILT_C_EN: false
+            /TB_TOP_CTU_CAN_FD/G_FILT_RANGE_EN: false
+            /TB_TOP_CTU_CAN_FD/G_TRAFFIC_CTRS_EN: true
+            /TB_TOP_CTU_CAN_FD/G_PARITY_EN: true
+            /TB_TOP_CTU_CAN_FD/G_RESET_BUF_RAMS: false
 
             # C_TECH_ASIC
-            /TB_TOP_CTU_CAN_FD/target_technology: 0
+            /TB_TOP_CTU_CAN_FD/G_TECHNOLOGY: 0
 
             # DUT Bit timing settings - MAX bit-rate
             /TB_TOP_CTU_CAN_FD/cfg_brp: 1
@@ -221,18 +221,18 @@ targets:
             /TB_TOP_CTU_CAN_FD/timeout: 200 ms
 
             # DUT generics
-            /TB_TOP_CTU_CAN_FD/rx_buffer_size: 4096
-            /TB_TOP_CTU_CAN_FD/txt_buffer_count: 8
-            /TB_TOP_CTU_CAN_FD/sup_filtA: true
-            /TB_TOP_CTU_CAN_FD/sup_filtB: true
-            /TB_TOP_CTU_CAN_FD/sup_filtC: true
-            /TB_TOP_CTU_CAN_FD/sup_range: true
-            /TB_TOP_CTU_CAN_FD/sup_traffic_ctrs: true
-            /TB_TOP_CTU_CAN_FD/sup_parity: true
-            /TB_TOP_CTU_CAN_FD/reset_buffer_rams: false
+            /TB_TOP_CTU_CAN_FD/G_RX_BUF_SIZE: 4096
+            /TB_TOP_CTU_CAN_FD/G_TXT_BUF_COUNT: 8
+            /TB_TOP_CTU_CAN_FD/G_FILT_A_EN: true
+            /TB_TOP_CTU_CAN_FD/G_FILT_B_EN: true
+            /TB_TOP_CTU_CAN_FD/G_FILT_C_EN: true
+            /TB_TOP_CTU_CAN_FD/G_FILT_RANGE_EN: true
+            /TB_TOP_CTU_CAN_FD/G_TRAFFIC_CTRS_EN: true
+            /TB_TOP_CTU_CAN_FD/G_PARITY_EN: true
+            /TB_TOP_CTU_CAN_FD/G_RESET_BUF_RAMS: false
 
             # C_TECH_ASIC
-            /TB_TOP_CTU_CAN_FD/target_technology: 0
+            /TB_TOP_CTU_CAN_FD/G_TECHNOLOGY: 0
 
             # DUT Bit timing settings
             /TB_TOP_CTU_CAN_FD/cfg_brp: 1
@@ -273,18 +273,18 @@ targets:
             /TB_TOP_CTU_CAN_FD/timeout: 200 ms
 
             # DUT generics
-            /TB_TOP_CTU_CAN_FD/rx_buffer_size: 128
-            /TB_TOP_CTU_CAN_FD/txt_buffer_count: 4
-            /TB_TOP_CTU_CAN_FD/sup_filtA: true
-            /TB_TOP_CTU_CAN_FD/sup_filtB: false
-            /TB_TOP_CTU_CAN_FD/sup_filtC: false
-            /TB_TOP_CTU_CAN_FD/sup_range: false
-            /TB_TOP_CTU_CAN_FD/sup_traffic_ctrs: true
-            /TB_TOP_CTU_CAN_FD/sup_parity: true
-            /TB_TOP_CTU_CAN_FD/reset_buffer_rams: false
+            /TB_TOP_CTU_CAN_FD/G_RX_BUF_SIZE: 128
+            /TB_TOP_CTU_CAN_FD/G_TXT_BUF_COUNT: 4
+            /TB_TOP_CTU_CAN_FD/G_FILT_A_EN: true
+            /TB_TOP_CTU_CAN_FD/G_FILT_B_EN: false
+            /TB_TOP_CTU_CAN_FD/G_FILT_C_EN: false
+            /TB_TOP_CTU_CAN_FD/G_FILT_RANGE_EN: false
+            /TB_TOP_CTU_CAN_FD/G_TRAFFIC_CTRS_EN: true
+            /TB_TOP_CTU_CAN_FD/G_PARITY_EN: true
+            /TB_TOP_CTU_CAN_FD/G_RESET_BUF_RAMS: false
 
             # C_TECH_ASIC
-            /TB_TOP_CTU_CAN_FD/target_technology: 1
+            /TB_TOP_CTU_CAN_FD/G_TECHNOLOGY: 1
 
             # DUT Bit timing settings - MAX bit-rate
             /TB_TOP_CTU_CAN_FD/cfg_brp: 1
@@ -332,18 +332,18 @@ targets:
             /TB_TOP_CTU_CAN_FD/timeout: 400 ms
 
             # DUT generics
-            /TB_TOP_CTU_CAN_FD/rx_buffer_size: 32
-            /TB_TOP_CTU_CAN_FD/txt_buffer_count: 2
-            /TB_TOP_CTU_CAN_FD/sup_filtA: false
-            /TB_TOP_CTU_CAN_FD/sup_filtB: false
-            /TB_TOP_CTU_CAN_FD/sup_filtC: false
-            /TB_TOP_CTU_CAN_FD/sup_range: false
-            /TB_TOP_CTU_CAN_FD/sup_traffic_ctrs: false
-            /TB_TOP_CTU_CAN_FD/sup_parity: false
-            /TB_TOP_CTU_CAN_FD/reset_buffer_rams: false
+            /TB_TOP_CTU_CAN_FD/G_RX_BUF_SIZE: 32
+            /TB_TOP_CTU_CAN_FD/G_TXT_BUF_COUNT: 2
+            /TB_TOP_CTU_CAN_FD/G_FILT_A_EN: false
+            /TB_TOP_CTU_CAN_FD/G_FILT_B_EN: false
+            /TB_TOP_CTU_CAN_FD/G_FILT_C_EN: false
+            /TB_TOP_CTU_CAN_FD/G_FILT_RANGE_EN: false
+            /TB_TOP_CTU_CAN_FD/G_TRAFFIC_CTRS_EN: false
+            /TB_TOP_CTU_CAN_FD/G_PARITY_EN: false
+            /TB_TOP_CTU_CAN_FD/G_RESET_BUF_RAMS: false
 
             # C_TECH_ASIC
-            /TB_TOP_CTU_CAN_FD/target_technology: 0
+            /TB_TOP_CTU_CAN_FD/G_TECHNOLOGY: 0
 
             # DUT Bit timing settings
             /TB_TOP_CTU_CAN_FD/cfg_brp: 4
@@ -384,18 +384,18 @@ targets:
             /TB_TOP_CTU_CAN_FD/timeout: 400 ms
 
             # DUT generics
-            /TB_TOP_CTU_CAN_FD/rx_buffer_size: 128
-            /TB_TOP_CTU_CAN_FD/txt_buffer_count: 4
-            /TB_TOP_CTU_CAN_FD/sup_filtA: true
-            /TB_TOP_CTU_CAN_FD/sup_filtB: false
-            /TB_TOP_CTU_CAN_FD/sup_filtC: false
-            /TB_TOP_CTU_CAN_FD/sup_range: false
-            /TB_TOP_CTU_CAN_FD/sup_traffic_ctrs: true
-            /TB_TOP_CTU_CAN_FD/sup_parity: true
-            /TB_TOP_CTU_CAN_FD/reset_buffer_rams: false
+            /TB_TOP_CTU_CAN_FD/G_RX_BUF_SIZE: 128
+            /TB_TOP_CTU_CAN_FD/G_TXT_BUF_COUNT: 4
+            /TB_TOP_CTU_CAN_FD/G_FILT_A_EN: true
+            /TB_TOP_CTU_CAN_FD/G_FILT_B_EN: false
+            /TB_TOP_CTU_CAN_FD/G_FILT_C_EN: false
+            /TB_TOP_CTU_CAN_FD/G_FILT_RANGE_EN: false
+            /TB_TOP_CTU_CAN_FD/G_TRAFFIC_CTRS_EN: true
+            /TB_TOP_CTU_CAN_FD/G_PARITY_EN: true
+            /TB_TOP_CTU_CAN_FD/G_RESET_BUF_RAMS: false
 
             # C_TECH_ASIC
-            /TB_TOP_CTU_CAN_FD/target_technology: 0
+            /TB_TOP_CTU_CAN_FD/G_TECHNOLOGY: 0
 
             # DUT Bit timing settings
             /TB_TOP_CTU_CAN_FD/cfg_brp: 4
@@ -436,18 +436,18 @@ targets:
             /TB_TOP_CTU_CAN_FD/timeout: 400 ms
 
             # DUT generics
-            /TB_TOP_CTU_CAN_FD/rx_buffer_size: 4096
-            /TB_TOP_CTU_CAN_FD/txt_buffer_count: 8
-            /TB_TOP_CTU_CAN_FD/sup_filtA: true
-            /TB_TOP_CTU_CAN_FD/sup_filtB: true
-            /TB_TOP_CTU_CAN_FD/sup_filtC: true
-            /TB_TOP_CTU_CAN_FD/sup_range: true
-            /TB_TOP_CTU_CAN_FD/sup_traffic_ctrs: true
-            /TB_TOP_CTU_CAN_FD/sup_parity: true
-            /TB_TOP_CTU_CAN_FD/reset_buffer_rams: false
+            /TB_TOP_CTU_CAN_FD/G_RX_BUF_SIZE: 4096
+            /TB_TOP_CTU_CAN_FD/G_TXT_BUF_COUNT: 8
+            /TB_TOP_CTU_CAN_FD/G_FILT_A_EN: true
+            /TB_TOP_CTU_CAN_FD/G_FILT_B_EN: true
+            /TB_TOP_CTU_CAN_FD/G_FILT_C_EN: true
+            /TB_TOP_CTU_CAN_FD/G_FILT_RANGE_EN: true
+            /TB_TOP_CTU_CAN_FD/G_TRAFFIC_CTRS_EN: true
+            /TB_TOP_CTU_CAN_FD/G_PARITY_EN: true
+            /TB_TOP_CTU_CAN_FD/G_RESET_BUF_RAMS: false
 
             # C_TECH_ASIC
-            /TB_TOP_CTU_CAN_FD/target_technology: 0
+            /TB_TOP_CTU_CAN_FD/G_TECHNOLOGY: 0
 
             # DUT Bit timing settings
             /TB_TOP_CTU_CAN_FD/cfg_brp: 4
@@ -488,18 +488,18 @@ targets:
             /TB_TOP_CTU_CAN_FD/timeout: 400 ms
 
             # DUT generics
-            /TB_TOP_CTU_CAN_FD/rx_buffer_size: 128
-            /TB_TOP_CTU_CAN_FD/txt_buffer_count: 4
-            /TB_TOP_CTU_CAN_FD/sup_filtA: true
-            /TB_TOP_CTU_CAN_FD/sup_filtB: false
-            /TB_TOP_CTU_CAN_FD/sup_filtC: false
-            /TB_TOP_CTU_CAN_FD/sup_range: false
-            /TB_TOP_CTU_CAN_FD/sup_traffic_ctrs: true
-            /TB_TOP_CTU_CAN_FD/sup_parity: true
-            /TB_TOP_CTU_CAN_FD/reset_buffer_rams: false
+            /TB_TOP_CTU_CAN_FD/G_RX_BUF_SIZE: 128
+            /TB_TOP_CTU_CAN_FD/G_TXT_BUF_COUNT: 4
+            /TB_TOP_CTU_CAN_FD/G_FILT_A_EN: true
+            /TB_TOP_CTU_CAN_FD/G_FILT_B_EN: false
+            /TB_TOP_CTU_CAN_FD/G_FILT_C_EN: false
+            /TB_TOP_CTU_CAN_FD/G_FILT_RANGE_EN: false
+            /TB_TOP_CTU_CAN_FD/G_TRAFFIC_CTRS_EN: true
+            /TB_TOP_CTU_CAN_FD/G_PARITY_EN: true
+            /TB_TOP_CTU_CAN_FD/G_RESET_BUF_RAMS: false
 
             # C_TECH_FPGA
-            /TB_TOP_CTU_CAN_FD/target_technology: 1
+            /TB_TOP_CTU_CAN_FD/G_TECHNOLOGY: 1
 
             # DUT Bit timing settings
             /TB_TOP_CTU_CAN_FD/cfg_brp: 4
@@ -547,18 +547,18 @@ targets:
             /TB_TOP_CTU_CAN_FD/timeout: 1000 ms
 
             # DUT generics
-            /TB_TOP_CTU_CAN_FD/rx_buffer_size: 32
-            /TB_TOP_CTU_CAN_FD/txt_buffer_count: 2
-            /TB_TOP_CTU_CAN_FD/sup_filtA: false
-            /TB_TOP_CTU_CAN_FD/sup_filtB: false
-            /TB_TOP_CTU_CAN_FD/sup_filtC: false
-            /TB_TOP_CTU_CAN_FD/sup_range: false
-            /TB_TOP_CTU_CAN_FD/sup_traffic_ctrs: false
-            /TB_TOP_CTU_CAN_FD/sup_parity: false
-            /TB_TOP_CTU_CAN_FD/reset_buffer_rams: false
+            /TB_TOP_CTU_CAN_FD/G_RX_BUF_SIZE: 32
+            /TB_TOP_CTU_CAN_FD/G_TXT_BUF_COUNT: 2
+            /TB_TOP_CTU_CAN_FD/G_FILT_A_EN: false
+            /TB_TOP_CTU_CAN_FD/G_FILT_B_EN: false
+            /TB_TOP_CTU_CAN_FD/G_FILT_C_EN: false
+            /TB_TOP_CTU_CAN_FD/G_FILT_RANGE_EN: false
+            /TB_TOP_CTU_CAN_FD/G_TRAFFIC_CTRS_EN: false
+            /TB_TOP_CTU_CAN_FD/G_PARITY_EN: false
+            /TB_TOP_CTU_CAN_FD/G_RESET_BUF_RAMS: false
 
             # C_TECH_ASIC
-            /TB_TOP_CTU_CAN_FD/target_technology: 0
+            /TB_TOP_CTU_CAN_FD/G_TECHNOLOGY: 0
 
             # DUT Bit timing settings
             /TB_TOP_CTU_CAN_FD/cfg_brp: 1
@@ -599,18 +599,18 @@ targets:
             /TB_TOP_CTU_CAN_FD/timeout: 200 ms
 
             # DUT generics
-            /TB_TOP_CTU_CAN_FD/rx_buffer_size: 128
-            /TB_TOP_CTU_CAN_FD/txt_buffer_count: 4
-            /TB_TOP_CTU_CAN_FD/sup_filtA: true
-            /TB_TOP_CTU_CAN_FD/sup_filtB: false
-            /TB_TOP_CTU_CAN_FD/sup_filtC: false
-            /TB_TOP_CTU_CAN_FD/sup_range: false
-            /TB_TOP_CTU_CAN_FD/sup_traffic_ctrs: true
-            /TB_TOP_CTU_CAN_FD/sup_parity: true
-            /TB_TOP_CTU_CAN_FD/reset_buffer_rams: false
+            /TB_TOP_CTU_CAN_FD/G_RX_BUF_SIZE: 128
+            /TB_TOP_CTU_CAN_FD/G_TXT_BUF_COUNT: 4
+            /TB_TOP_CTU_CAN_FD/G_FILT_A_EN: true
+            /TB_TOP_CTU_CAN_FD/G_FILT_B_EN: false
+            /TB_TOP_CTU_CAN_FD/G_FILT_C_EN: false
+            /TB_TOP_CTU_CAN_FD/G_FILT_RANGE_EN: false
+            /TB_TOP_CTU_CAN_FD/G_TRAFFIC_CTRS_EN: true
+            /TB_TOP_CTU_CAN_FD/G_PARITY_EN: true
+            /TB_TOP_CTU_CAN_FD/G_RESET_BUF_RAMS: false
 
             # C_TECH_ASIC
-            /TB_TOP_CTU_CAN_FD/target_technology: 0
+            /TB_TOP_CTU_CAN_FD/G_TECHNOLOGY: 0
 
             # DUT Bit timing settings
             /TB_TOP_CTU_CAN_FD/cfg_brp: 1
@@ -651,18 +651,18 @@ targets:
             /TB_TOP_CTU_CAN_FD/timeout: 1000 ms
 
             # DUT generics
-            /TB_TOP_CTU_CAN_FD/rx_buffer_size: 4096
-            /TB_TOP_CTU_CAN_FD/txt_buffer_count: 8
-            /TB_TOP_CTU_CAN_FD/sup_filtA: true
-            /TB_TOP_CTU_CAN_FD/sup_filtB: true
-            /TB_TOP_CTU_CAN_FD/sup_filtC: true
-            /TB_TOP_CTU_CAN_FD/sup_range: true
-            /TB_TOP_CTU_CAN_FD/sup_traffic_ctrs: true
-            /TB_TOP_CTU_CAN_FD/sup_parity: true
-            /TB_TOP_CTU_CAN_FD/reset_buffer_rams: false
+            /TB_TOP_CTU_CAN_FD/G_RX_BUF_SIZE: 4096
+            /TB_TOP_CTU_CAN_FD/G_TXT_BUF_COUNT: 8
+            /TB_TOP_CTU_CAN_FD/G_FILT_A_EN: true
+            /TB_TOP_CTU_CAN_FD/G_FILT_B_EN: true
+            /TB_TOP_CTU_CAN_FD/G_FILT_C_EN: true
+            /TB_TOP_CTU_CAN_FD/G_FILT_RANGE_EN: true
+            /TB_TOP_CTU_CAN_FD/G_TRAFFIC_CTRS_EN: true
+            /TB_TOP_CTU_CAN_FD/G_PARITY_EN: true
+            /TB_TOP_CTU_CAN_FD/G_RESET_BUF_RAMS: false
 
             # C_TECH_ASIC
-            /TB_TOP_CTU_CAN_FD/target_technology: 0
+            /TB_TOP_CTU_CAN_FD/G_TECHNOLOGY: 0
 
             # DUT Bit timing settings
             /TB_TOP_CTU_CAN_FD/cfg_brp: 1
@@ -703,18 +703,18 @@ targets:
             /TB_TOP_CTU_CAN_FD/timeout: 1000 ms
 
             # DUT generics
-            /TB_TOP_CTU_CAN_FD/rx_buffer_size: 128
-            /TB_TOP_CTU_CAN_FD/txt_buffer_count: 4
-            /TB_TOP_CTU_CAN_FD/sup_filtA: true
-            /TB_TOP_CTU_CAN_FD/sup_filtB: false
-            /TB_TOP_CTU_CAN_FD/sup_filtC: false
-            /TB_TOP_CTU_CAN_FD/sup_range: false
-            /TB_TOP_CTU_CAN_FD/sup_traffic_ctrs: true
-            /TB_TOP_CTU_CAN_FD/sup_parity: true
-            /TB_TOP_CTU_CAN_FD/reset_buffer_rams: false
+            /TB_TOP_CTU_CAN_FD/G_RX_BUF_SIZE: 128
+            /TB_TOP_CTU_CAN_FD/G_TXT_BUF_COUNT: 4
+            /TB_TOP_CTU_CAN_FD/G_FILT_A_EN: true
+            /TB_TOP_CTU_CAN_FD/G_FILT_B_EN: false
+            /TB_TOP_CTU_CAN_FD/G_FILT_C_EN: false
+            /TB_TOP_CTU_CAN_FD/G_FILT_RANGE_EN: false
+            /TB_TOP_CTU_CAN_FD/G_TRAFFIC_CTRS_EN: true
+            /TB_TOP_CTU_CAN_FD/G_PARITY_EN: true
+            /TB_TOP_CTU_CAN_FD/G_RESET_BUF_RAMS: false
 
             # C_TECH_FPGA
-            /TB_TOP_CTU_CAN_FD/target_technology: 1
+            /TB_TOP_CTU_CAN_FD/G_TECHNOLOGY: 1
 
             # DUT Bit timing settings
             /TB_TOP_CTU_CAN_FD/cfg_brp: 4
@@ -775,18 +775,18 @@ targets:
             /TB_TOP_CTU_CAN_FD/timeout: 200 ms
 
             # DUT generics
-            /TB_TOP_CTU_CAN_FD/rx_buffer_size: 32
-            /TB_TOP_CTU_CAN_FD/txt_buffer_count: 2
-            /TB_TOP_CTU_CAN_FD/sup_filtA: false
-            /TB_TOP_CTU_CAN_FD/sup_filtB: false
-            /TB_TOP_CTU_CAN_FD/sup_filtC: false
-            /TB_TOP_CTU_CAN_FD/sup_range: false
-            /TB_TOP_CTU_CAN_FD/sup_traffic_ctrs: false
-            /TB_TOP_CTU_CAN_FD/sup_parity: false
-            /TB_TOP_CTU_CAN_FD/reset_buffer_rams: false
+            /TB_TOP_CTU_CAN_FD/G_RX_BUF_SIZE: 32
+            /TB_TOP_CTU_CAN_FD/G_TXT_BUF_COUNT: 2
+            /TB_TOP_CTU_CAN_FD/G_FILT_A_EN: false
+            /TB_TOP_CTU_CAN_FD/G_FILT_B_EN: false
+            /TB_TOP_CTU_CAN_FD/G_FILT_C_EN: false
+            /TB_TOP_CTU_CAN_FD/G_FILT_RANGE_EN: false
+            /TB_TOP_CTU_CAN_FD/G_TRAFFIC_CTRS_EN: false
+            /TB_TOP_CTU_CAN_FD/G_PARITY_EN: false
+            /TB_TOP_CTU_CAN_FD/G_RESET_BUF_RAMS: false
 
             # C_TECH_ASIC
-            /TB_TOP_CTU_CAN_FD/target_technology: 0
+            /TB_TOP_CTU_CAN_FD/G_TECHNOLOGY: 0
 
             # DUT Bit timing settings
             /TB_TOP_CTU_CAN_FD/cfg_brp: 1
@@ -830,18 +830,18 @@ targets:
             /TB_TOP_CTU_CAN_FD/timeout: 200 ms
 
             # DUT generics
-            /TB_TOP_CTU_CAN_FD/rx_buffer_size: 32
-            /TB_TOP_CTU_CAN_FD/txt_buffer_count: 2
-            /TB_TOP_CTU_CAN_FD/sup_filtA: false
-            /TB_TOP_CTU_CAN_FD/sup_filtB: false
-            /TB_TOP_CTU_CAN_FD/sup_filtC: false
-            /TB_TOP_CTU_CAN_FD/sup_range: false
-            /TB_TOP_CTU_CAN_FD/sup_traffic_ctrs: false
-            /TB_TOP_CTU_CAN_FD/sup_parity: false
-            /TB_TOP_CTU_CAN_FD/reset_buffer_rams: false
+            /TB_TOP_CTU_CAN_FD/G_RX_BUF_SIZE: 32
+            /TB_TOP_CTU_CAN_FD/G_TXT_BUF_COUNT: 2
+            /TB_TOP_CTU_CAN_FD/G_FILT_A_EN: false
+            /TB_TOP_CTU_CAN_FD/G_FILT_B_EN: false
+            /TB_TOP_CTU_CAN_FD/G_FILT_C_EN: false
+            /TB_TOP_CTU_CAN_FD/G_FILT_RANGE_EN: false
+            /TB_TOP_CTU_CAN_FD/G_TRAFFIC_CTRS_EN: false
+            /TB_TOP_CTU_CAN_FD/G_PARITY_EN: false
+            /TB_TOP_CTU_CAN_FD/G_RESET_BUF_RAMS: false
 
             # C_TECH_ASIC
-            /TB_TOP_CTU_CAN_FD/target_technology: 0
+            /TB_TOP_CTU_CAN_FD/G_TECHNOLOGY: 0
 
             # DUT Bit timing settings
             /TB_TOP_CTU_CAN_FD/cfg_brp: 4
@@ -885,18 +885,18 @@ targets:
             /TB_TOP_CTU_CAN_FD/timeout: 1000 ms
 
             # DUT generics
-            /TB_TOP_CTU_CAN_FD/rx_buffer_size: 32
-            /TB_TOP_CTU_CAN_FD/txt_buffer_count: 2
-            /TB_TOP_CTU_CAN_FD/sup_filtA: false
-            /TB_TOP_CTU_CAN_FD/sup_filtB: false
-            /TB_TOP_CTU_CAN_FD/sup_filtC: false
-            /TB_TOP_CTU_CAN_FD/sup_range: false
-            /TB_TOP_CTU_CAN_FD/sup_traffic_ctrs: false
-            /TB_TOP_CTU_CAN_FD/sup_parity: false
-            /TB_TOP_CTU_CAN_FD/reset_buffer_rams: false
+            /TB_TOP_CTU_CAN_FD/G_RX_BUF_SIZE: 32
+            /TB_TOP_CTU_CAN_FD/G_TXT_BUF_COUNT: 2
+            /TB_TOP_CTU_CAN_FD/G_FILT_A_EN: false
+            /TB_TOP_CTU_CAN_FD/G_FILT_B_EN: false
+            /TB_TOP_CTU_CAN_FD/G_FILT_C_EN: false
+            /TB_TOP_CTU_CAN_FD/G_FILT_RANGE_EN: false
+            /TB_TOP_CTU_CAN_FD/G_TRAFFIC_CTRS_EN: false
+            /TB_TOP_CTU_CAN_FD/G_PARITY_EN: false
+            /TB_TOP_CTU_CAN_FD/G_RESET_BUF_RAMS: false
 
             # C_TECH_ASIC
-            /TB_TOP_CTU_CAN_FD/target_technology: 0
+            /TB_TOP_CTU_CAN_FD/G_TECHNOLOGY: 0
 
             # DUT Bit timing settings
             /TB_TOP_CTU_CAN_FD/cfg_brp: 1
@@ -940,18 +940,18 @@ targets:
             /TB_TOP_CTU_CAN_FD/timeout: 200 ms
 
             # DUT generics
-            /TB_TOP_CTU_CAN_FD/rx_buffer_size: 32
-            /TB_TOP_CTU_CAN_FD/txt_buffer_count: 2
-            /TB_TOP_CTU_CAN_FD/sup_filtA: false
-            /TB_TOP_CTU_CAN_FD/sup_filtB: false
-            /TB_TOP_CTU_CAN_FD/sup_filtC: false
-            /TB_TOP_CTU_CAN_FD/sup_range: false
-            /TB_TOP_CTU_CAN_FD/sup_traffic_ctrs: false
-            /TB_TOP_CTU_CAN_FD/sup_parity: false
-            /TB_TOP_CTU_CAN_FD/reset_buffer_rams: false
+            /TB_TOP_CTU_CAN_FD/G_RX_BUF_SIZE: 32
+            /TB_TOP_CTU_CAN_FD/G_TXT_BUF_COUNT: 2
+            /TB_TOP_CTU_CAN_FD/G_FILT_A_EN: false
+            /TB_TOP_CTU_CAN_FD/G_FILT_B_EN: false
+            /TB_TOP_CTU_CAN_FD/G_FILT_C_EN: false
+            /TB_TOP_CTU_CAN_FD/G_FILT_RANGE_EN: false
+            /TB_TOP_CTU_CAN_FD/G_TRAFFIC_CTRS_EN: false
+            /TB_TOP_CTU_CAN_FD/G_PARITY_EN: false
+            /TB_TOP_CTU_CAN_FD/G_RESET_BUF_RAMS: false
 
             # C_TECH_ASIC
-            /TB_TOP_CTU_CAN_FD/target_technology: 0
+            /TB_TOP_CTU_CAN_FD/G_TECHNOLOGY: 0
 
             # DUT Bit timing settings
             /TB_TOP_CTU_CAN_FD/cfg_brp: 4
@@ -1002,18 +1002,18 @@ targets:
             /TB_TOP_CTU_CAN_FD/timeout: 200 ms
 
             # DUT generics
-            /TB_TOP_CTU_CAN_FD/rx_buffer_size: 128
-            /TB_TOP_CTU_CAN_FD/txt_buffer_count: 4
-            /TB_TOP_CTU_CAN_FD/sup_filtA: true
-            /TB_TOP_CTU_CAN_FD/sup_filtB: false
-            /TB_TOP_CTU_CAN_FD/sup_filtC: false
-            /TB_TOP_CTU_CAN_FD/sup_range: false
-            /TB_TOP_CTU_CAN_FD/sup_traffic_ctrs: true
-            /TB_TOP_CTU_CAN_FD/sup_parity: true
-            /TB_TOP_CTU_CAN_FD/reset_buffer_rams: false
+            /TB_TOP_CTU_CAN_FD/G_RX_BUF_SIZE: 128
+            /TB_TOP_CTU_CAN_FD/G_TXT_BUF_COUNT: 4
+            /TB_TOP_CTU_CAN_FD/G_FILT_A_EN: true
+            /TB_TOP_CTU_CAN_FD/G_FILT_B_EN: false
+            /TB_TOP_CTU_CAN_FD/G_FILT_C_EN: false
+            /TB_TOP_CTU_CAN_FD/G_FILT_RANGE_EN: false
+            /TB_TOP_CTU_CAN_FD/G_TRAFFIC_CTRS_EN: true
+            /TB_TOP_CTU_CAN_FD/G_PARITY_EN: true
+            /TB_TOP_CTU_CAN_FD/G_RESET_BUF_RAMS: false
 
             # C_TECH_ASIC
-            /TB_TOP_CTU_CAN_FD/target_technology: 0
+            /TB_TOP_CTU_CAN_FD/G_TECHNOLOGY: 0
 
             # DUT Bit timing settings
             /TB_TOP_CTU_CAN_FD/cfg_brp: 1
@@ -1057,18 +1057,18 @@ targets:
             /TB_TOP_CTU_CAN_FD/timeout: 200 ms
 
             # DUT generics
-            /TB_TOP_CTU_CAN_FD/rx_buffer_size: 128
-            /TB_TOP_CTU_CAN_FD/txt_buffer_count: 4
-            /TB_TOP_CTU_CAN_FD/sup_filtA: true
-            /TB_TOP_CTU_CAN_FD/sup_filtB: false
-            /TB_TOP_CTU_CAN_FD/sup_filtC: false
-            /TB_TOP_CTU_CAN_FD/sup_range: false
-            /TB_TOP_CTU_CAN_FD/sup_traffic_ctrs: true
-            /TB_TOP_CTU_CAN_FD/sup_parity: true
-            /TB_TOP_CTU_CAN_FD/reset_buffer_rams: false
+            /TB_TOP_CTU_CAN_FD/G_RX_BUF_SIZE: 128
+            /TB_TOP_CTU_CAN_FD/G_TXT_BUF_COUNT: 4
+            /TB_TOP_CTU_CAN_FD/G_FILT_A_EN: true
+            /TB_TOP_CTU_CAN_FD/G_FILT_B_EN: false
+            /TB_TOP_CTU_CAN_FD/G_FILT_C_EN: false
+            /TB_TOP_CTU_CAN_FD/G_FILT_RANGE_EN: false
+            /TB_TOP_CTU_CAN_FD/G_TRAFFIC_CTRS_EN: true
+            /TB_TOP_CTU_CAN_FD/G_PARITY_EN: true
+            /TB_TOP_CTU_CAN_FD/G_RESET_BUF_RAMS: false
 
             # C_TECH_ASIC
-            /TB_TOP_CTU_CAN_FD/target_technology: 0
+            /TB_TOP_CTU_CAN_FD/G_TECHNOLOGY: 0
 
             # DUT Bit timing settings
             /TB_TOP_CTU_CAN_FD/cfg_brp: 4
@@ -1112,18 +1112,18 @@ targets:
             /TB_TOP_CTU_CAN_FD/timeout: 1000 ms
 
             # DUT generics
-            /TB_TOP_CTU_CAN_FD/rx_buffer_size: 128
-            /TB_TOP_CTU_CAN_FD/txt_buffer_count: 4
-            /TB_TOP_CTU_CAN_FD/sup_filtA: true
-            /TB_TOP_CTU_CAN_FD/sup_filtB: false
-            /TB_TOP_CTU_CAN_FD/sup_filtC: false
-            /TB_TOP_CTU_CAN_FD/sup_range: false
-            /TB_TOP_CTU_CAN_FD/sup_traffic_ctrs: true
-            /TB_TOP_CTU_CAN_FD/sup_parity: true
-            /TB_TOP_CTU_CAN_FD/reset_buffer_rams: false
+            /TB_TOP_CTU_CAN_FD/G_RX_BUF_SIZE: 128
+            /TB_TOP_CTU_CAN_FD/G_TXT_BUF_COUNT: 4
+            /TB_TOP_CTU_CAN_FD/G_FILT_A_EN: true
+            /TB_TOP_CTU_CAN_FD/G_FILT_B_EN: false
+            /TB_TOP_CTU_CAN_FD/G_FILT_C_EN: false
+            /TB_TOP_CTU_CAN_FD/G_FILT_RANGE_EN: false
+            /TB_TOP_CTU_CAN_FD/G_TRAFFIC_CTRS_EN: true
+            /TB_TOP_CTU_CAN_FD/G_PARITY_EN: true
+            /TB_TOP_CTU_CAN_FD/G_RESET_BUF_RAMS: false
 
             # C_TECH_ASIC
-            /TB_TOP_CTU_CAN_FD/target_technology: 0
+            /TB_TOP_CTU_CAN_FD/G_TECHNOLOGY: 0
 
             # DUT Bit timing settings
             /TB_TOP_CTU_CAN_FD/cfg_brp: 1
@@ -1167,18 +1167,18 @@ targets:
             /TB_TOP_CTU_CAN_FD/timeout: 200 ms
 
             # DUT generics
-            /TB_TOP_CTU_CAN_FD/rx_buffer_size: 128
-            /TB_TOP_CTU_CAN_FD/txt_buffer_count: 4
-            /TB_TOP_CTU_CAN_FD/sup_filtA: true
-            /TB_TOP_CTU_CAN_FD/sup_filtB: false
-            /TB_TOP_CTU_CAN_FD/sup_filtC: false
-            /TB_TOP_CTU_CAN_FD/sup_range: false
-            /TB_TOP_CTU_CAN_FD/sup_traffic_ctrs: true
-            /TB_TOP_CTU_CAN_FD/sup_parity: true
-            /TB_TOP_CTU_CAN_FD/reset_buffer_rams: false
+            /TB_TOP_CTU_CAN_FD/G_RX_BUF_SIZE: 128
+            /TB_TOP_CTU_CAN_FD/G_TXT_BUF_COUNT: 4
+            /TB_TOP_CTU_CAN_FD/G_FILT_A_EN: true
+            /TB_TOP_CTU_CAN_FD/G_FILT_B_EN: false
+            /TB_TOP_CTU_CAN_FD/G_FILT_C_EN: false
+            /TB_TOP_CTU_CAN_FD/G_FILT_RANGE_EN: false
+            /TB_TOP_CTU_CAN_FD/G_TRAFFIC_CTRS_EN: true
+            /TB_TOP_CTU_CAN_FD/G_PARITY_EN: true
+            /TB_TOP_CTU_CAN_FD/G_RESET_BUF_RAMS: false
 
             # C_TECH_ASIC
-            /TB_TOP_CTU_CAN_FD/target_technology: 0
+            /TB_TOP_CTU_CAN_FD/G_TECHNOLOGY: 0
 
             # DUT Bit timing settings
             /TB_TOP_CTU_CAN_FD/cfg_brp: 4
@@ -1229,18 +1229,18 @@ targets:
             /TB_TOP_CTU_CAN_FD/timeout: 200 ms
 
             # DUT generics
-            /TB_TOP_CTU_CAN_FD/rx_buffer_size: 4096
-            /TB_TOP_CTU_CAN_FD/txt_buffer_count: 8
-            /TB_TOP_CTU_CAN_FD/sup_filtA: true
-            /TB_TOP_CTU_CAN_FD/sup_filtB: true
-            /TB_TOP_CTU_CAN_FD/sup_filtC: true
-            /TB_TOP_CTU_CAN_FD/sup_range: true
-            /TB_TOP_CTU_CAN_FD/sup_traffic_ctrs: true
-            /TB_TOP_CTU_CAN_FD/sup_parity: true
-            /TB_TOP_CTU_CAN_FD/reset_buffer_rams: false
+            /TB_TOP_CTU_CAN_FD/G_RX_BUF_SIZE: 4096
+            /TB_TOP_CTU_CAN_FD/G_TXT_BUF_COUNT: 8
+            /TB_TOP_CTU_CAN_FD/G_FILT_A_EN: true
+            /TB_TOP_CTU_CAN_FD/G_FILT_B_EN: true
+            /TB_TOP_CTU_CAN_FD/G_FILT_C_EN: true
+            /TB_TOP_CTU_CAN_FD/G_FILT_RANGE_EN: true
+            /TB_TOP_CTU_CAN_FD/G_TRAFFIC_CTRS_EN: true
+            /TB_TOP_CTU_CAN_FD/G_PARITY_EN: true
+            /TB_TOP_CTU_CAN_FD/G_RESET_BUF_RAMS: false
 
             # C_TECH_ASIC
-            /TB_TOP_CTU_CAN_FD/target_technology: 0
+            /TB_TOP_CTU_CAN_FD/G_TECHNOLOGY: 0
 
             # DUT Bit timing settings
             /TB_TOP_CTU_CAN_FD/cfg_brp: 1
@@ -1284,18 +1284,18 @@ targets:
             /TB_TOP_CTU_CAN_FD/timeout: 200 ms
 
             # DUT generics
-            /TB_TOP_CTU_CAN_FD/rx_buffer_size: 4096
-            /TB_TOP_CTU_CAN_FD/txt_buffer_count: 8
-            /TB_TOP_CTU_CAN_FD/sup_filtA: true
-            /TB_TOP_CTU_CAN_FD/sup_filtB: true
-            /TB_TOP_CTU_CAN_FD/sup_filtC: true
-            /TB_TOP_CTU_CAN_FD/sup_range: true
-            /TB_TOP_CTU_CAN_FD/sup_traffic_ctrs: true
-            /TB_TOP_CTU_CAN_FD/sup_parity: true
-            /TB_TOP_CTU_CAN_FD/reset_buffer_rams: false
+            /TB_TOP_CTU_CAN_FD/G_RX_BUF_SIZE: 4096
+            /TB_TOP_CTU_CAN_FD/G_TXT_BUF_COUNT: 8
+            /TB_TOP_CTU_CAN_FD/G_FILT_A_EN: true
+            /TB_TOP_CTU_CAN_FD/G_FILT_B_EN: true
+            /TB_TOP_CTU_CAN_FD/G_FILT_C_EN: true
+            /TB_TOP_CTU_CAN_FD/G_FILT_RANGE_EN: true
+            /TB_TOP_CTU_CAN_FD/G_TRAFFIC_CTRS_EN: true
+            /TB_TOP_CTU_CAN_FD/G_PARITY_EN: true
+            /TB_TOP_CTU_CAN_FD/G_RESET_BUF_RAMS: false
 
             # C_TECH_ASIC
-            /TB_TOP_CTU_CAN_FD/target_technology: 0
+            /TB_TOP_CTU_CAN_FD/G_TECHNOLOGY: 0
 
             # DUT Bit timing settings
             /TB_TOP_CTU_CAN_FD/cfg_brp: 4
@@ -1339,18 +1339,18 @@ targets:
             /TB_TOP_CTU_CAN_FD/timeout: 1000 ms
 
             # DUT generics
-            /TB_TOP_CTU_CAN_FD/rx_buffer_size: 4096
-            /TB_TOP_CTU_CAN_FD/txt_buffer_count: 8
-            /TB_TOP_CTU_CAN_FD/sup_filtA: true
-            /TB_TOP_CTU_CAN_FD/sup_filtB: true
-            /TB_TOP_CTU_CAN_FD/sup_filtC: true
-            /TB_TOP_CTU_CAN_FD/sup_range: true
-            /TB_TOP_CTU_CAN_FD/sup_traffic_ctrs: true
-            /TB_TOP_CTU_CAN_FD/sup_parity: true
-            /TB_TOP_CTU_CAN_FD/reset_buffer_rams: false
+            /TB_TOP_CTU_CAN_FD/G_RX_BUF_SIZE: 4096
+            /TB_TOP_CTU_CAN_FD/G_TXT_BUF_COUNT: 8
+            /TB_TOP_CTU_CAN_FD/G_FILT_A_EN: true
+            /TB_TOP_CTU_CAN_FD/G_FILT_B_EN: true
+            /TB_TOP_CTU_CAN_FD/G_FILT_C_EN: true
+            /TB_TOP_CTU_CAN_FD/G_FILT_RANGE_EN: true
+            /TB_TOP_CTU_CAN_FD/G_TRAFFIC_CTRS_EN: true
+            /TB_TOP_CTU_CAN_FD/G_PARITY_EN: true
+            /TB_TOP_CTU_CAN_FD/G_RESET_BUF_RAMS: false
 
             # C_TECH_ASIC
-            /TB_TOP_CTU_CAN_FD/target_technology: 0
+            /TB_TOP_CTU_CAN_FD/G_TECHNOLOGY: 0
 
             # DUT Bit timing settings
             /TB_TOP_CTU_CAN_FD/cfg_brp: 1
@@ -1394,18 +1394,18 @@ targets:
             /TB_TOP_CTU_CAN_FD/timeout: 200 ms
 
             # DUT generics
-            /TB_TOP_CTU_CAN_FD/rx_buffer_size: 4096
-            /TB_TOP_CTU_CAN_FD/txt_buffer_count: 8
-            /TB_TOP_CTU_CAN_FD/sup_filtA: true
-            /TB_TOP_CTU_CAN_FD/sup_filtB: true
-            /TB_TOP_CTU_CAN_FD/sup_filtC: true
-            /TB_TOP_CTU_CAN_FD/sup_range: true
-            /TB_TOP_CTU_CAN_FD/sup_traffic_ctrs: true
-            /TB_TOP_CTU_CAN_FD/sup_parity: true
-            /TB_TOP_CTU_CAN_FD/reset_buffer_rams: false
+            /TB_TOP_CTU_CAN_FD/G_RX_BUF_SIZE: 4096
+            /TB_TOP_CTU_CAN_FD/G_TXT_BUF_COUNT: 8
+            /TB_TOP_CTU_CAN_FD/G_FILT_A_EN: true
+            /TB_TOP_CTU_CAN_FD/G_FILT_B_EN: true
+            /TB_TOP_CTU_CAN_FD/G_FILT_C_EN: true
+            /TB_TOP_CTU_CAN_FD/G_FILT_RANGE_EN: true
+            /TB_TOP_CTU_CAN_FD/G_TRAFFIC_CTRS_EN: true
+            /TB_TOP_CTU_CAN_FD/G_PARITY_EN: true
+            /TB_TOP_CTU_CAN_FD/G_RESET_BUF_RAMS: false
 
             # C_TECH_ASIC
-            /TB_TOP_CTU_CAN_FD/target_technology: 0
+            /TB_TOP_CTU_CAN_FD/G_TECHNOLOGY: 0
 
             # DUT Bit timing settings
             /TB_TOP_CTU_CAN_FD/cfg_brp: 4
@@ -1462,18 +1462,18 @@ targets:
             /TB_TOP_CTU_CAN_FD/timeout: 100 ms
 
             # DUT generics
-            /TB_TOP_CTU_CAN_FD/rx_buffer_size: 128
-            /TB_TOP_CTU_CAN_FD/txt_buffer_count: 4
-            /TB_TOP_CTU_CAN_FD/sup_filtA: true
-            /TB_TOP_CTU_CAN_FD/sup_filtB: false
-            /TB_TOP_CTU_CAN_FD/sup_filtC: false
-            /TB_TOP_CTU_CAN_FD/sup_range: false
-            /TB_TOP_CTU_CAN_FD/sup_traffic_ctrs: true
-            /TB_TOP_CTU_CAN_FD/sup_parity: true
-            /TB_TOP_CTU_CAN_FD/reset_buffer_rams: false
+            /TB_TOP_CTU_CAN_FD/G_RX_BUF_SIZE: 128
+            /TB_TOP_CTU_CAN_FD/G_TXT_BUF_COUNT: 4
+            /TB_TOP_CTU_CAN_FD/G_FILT_A_EN: true
+            /TB_TOP_CTU_CAN_FD/G_FILT_B_EN: false
+            /TB_TOP_CTU_CAN_FD/G_FILT_C_EN: false
+            /TB_TOP_CTU_CAN_FD/G_FILT_RANGE_EN: false
+            /TB_TOP_CTU_CAN_FD/G_TRAFFIC_CTRS_EN: true
+            /TB_TOP_CTU_CAN_FD/G_PARITY_EN: true
+            /TB_TOP_CTU_CAN_FD/G_RESET_BUF_RAMS: false
 
             # C_TECH_FPGA
-            /TB_TOP_CTU_CAN_FD/target_technology: 1
+            /TB_TOP_CTU_CAN_FD/G_TECHNOLOGY: 1
 
             # DUT Bit timing settings
             /TB_TOP_CTU_CAN_FD/cfg_brp: 1
@@ -1520,15 +1520,15 @@ targets:
             /TB_TOP_CTU_CAN_FD/test_type: compliance
 
             # DUT generics
-            /TB_TOP_CTU_CAN_FD/rx_buffer_size: 32
-            /TB_TOP_CTU_CAN_FD/txt_buffer_count: 2
-            /TB_TOP_CTU_CAN_FD/sup_filtA: false
-            /TB_TOP_CTU_CAN_FD/sup_filtB: false
-            /TB_TOP_CTU_CAN_FD/sup_filtC: false
-            /TB_TOP_CTU_CAN_FD/sup_range: false
-            /TB_TOP_CTU_CAN_FD/sup_traffic_ctrs: false
-            /TB_TOP_CTU_CAN_FD/sup_parity: false
-            /TB_TOP_CTU_CAN_FD/reset_buffer_rams: false
+            /TB_TOP_CTU_CAN_FD/G_RX_BUF_SIZE: 32
+            /TB_TOP_CTU_CAN_FD/G_TXT_BUF_COUNT: 2
+            /TB_TOP_CTU_CAN_FD/G_FILT_A_EN: false
+            /TB_TOP_CTU_CAN_FD/G_FILT_B_EN: false
+            /TB_TOP_CTU_CAN_FD/G_FILT_C_EN: false
+            /TB_TOP_CTU_CAN_FD/G_FILT_RANGE_EN: false
+            /TB_TOP_CTU_CAN_FD/G_TRAFFIC_CTRS_EN: false
+            /TB_TOP_CTU_CAN_FD/G_PARITY_EN: false
+            /TB_TOP_CTU_CAN_FD/G_RESET_BUF_RAMS: false
 
             # DUT Bit timing settings
             /TB_TOP_CTU_CAN_FD/cfg_brp: 1
@@ -1574,15 +1574,15 @@ targets:
             /TB_TOP_CTU_CAN_FD/test_type: compliance
 
             # DUT generics
-            /TB_TOP_CTU_CAN_FD/rx_buffer_size: 32
-            /TB_TOP_CTU_CAN_FD/txt_buffer_count: 2
-            /TB_TOP_CTU_CAN_FD/sup_filtA: false
-            /TB_TOP_CTU_CAN_FD/sup_filtB: false
-            /TB_TOP_CTU_CAN_FD/sup_filtC: false
-            /TB_TOP_CTU_CAN_FD/sup_range: false
-            /TB_TOP_CTU_CAN_FD/sup_traffic_ctrs: false
-            /TB_TOP_CTU_CAN_FD/sup_parity: false
-            /TB_TOP_CTU_CAN_FD/reset_buffer_rams: false
+            /TB_TOP_CTU_CAN_FD/G_RX_BUF_SIZE: 32
+            /TB_TOP_CTU_CAN_FD/G_TXT_BUF_COUNT: 2
+            /TB_TOP_CTU_CAN_FD/G_FILT_A_EN: false
+            /TB_TOP_CTU_CAN_FD/G_FILT_B_EN: false
+            /TB_TOP_CTU_CAN_FD/G_FILT_C_EN: false
+            /TB_TOP_CTU_CAN_FD/G_FILT_RANGE_EN: false
+            /TB_TOP_CTU_CAN_FD/G_TRAFFIC_CTRS_EN: false
+            /TB_TOP_CTU_CAN_FD/G_PARITY_EN: false
+            /TB_TOP_CTU_CAN_FD/G_RESET_BUF_RAMS: false
 
             # DUT Bit timing settings
             /TB_TOP_CTU_CAN_FD/cfg_brp: 4
@@ -1632,15 +1632,15 @@ targets:
             /TB_TOP_CTU_CAN_FD/test_type: compliance
 
             # DUT generics
-            /TB_TOP_CTU_CAN_FD/rx_buffer_size: 32
-            /TB_TOP_CTU_CAN_FD/txt_buffer_count: 2
-            /TB_TOP_CTU_CAN_FD/sup_filtA: false
-            /TB_TOP_CTU_CAN_FD/sup_filtB: false
-            /TB_TOP_CTU_CAN_FD/sup_filtC: false
-            /TB_TOP_CTU_CAN_FD/sup_range: false
-            /TB_TOP_CTU_CAN_FD/sup_traffic_ctrs: false
-            /TB_TOP_CTU_CAN_FD/sup_parity: false
-            /TB_TOP_CTU_CAN_FD/reset_buffer_rams: false
+            /TB_TOP_CTU_CAN_FD/G_RX_BUF_SIZE: 32
+            /TB_TOP_CTU_CAN_FD/G_TXT_BUF_COUNT: 2
+            /TB_TOP_CTU_CAN_FD/G_FILT_A_EN: false
+            /TB_TOP_CTU_CAN_FD/G_FILT_B_EN: false
+            /TB_TOP_CTU_CAN_FD/G_FILT_C_EN: false
+            /TB_TOP_CTU_CAN_FD/G_FILT_RANGE_EN: false
+            /TB_TOP_CTU_CAN_FD/G_TRAFFIC_CTRS_EN: false
+            /TB_TOP_CTU_CAN_FD/G_PARITY_EN: false
+            /TB_TOP_CTU_CAN_FD/G_RESET_BUF_RAMS: false
 
             # DUT Bit timing settings
             /TB_TOP_CTU_CAN_FD/cfg_brp: 4

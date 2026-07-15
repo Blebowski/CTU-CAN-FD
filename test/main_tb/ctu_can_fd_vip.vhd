@@ -92,8 +92,8 @@ entity ctu_can_fd_vip is
         func_cov_en             : boolean;
 
         -- DUT configuration
-        rx_buffer_size          : natural;
-        txt_buffer_count        : natural range 2 to 8 := 8;
+        G_RX_BUF_SIZE          : natural;
+        G_TXT_BUF_COUNT        : natural range 2 to 8 := 8;
 
         -- DUT Clock period
         cfg_sys_clk_period      : string;
@@ -403,8 +403,8 @@ begin
 
         i_func_cov_agent : func_cov_agent
         generic map (
-            G_RX_BUFF_SIZE      => rx_buffer_size,
-            G_TXT_BUFFER_COUNT  => txt_buffer_count
+            G_RX_BUFF_SIZE      => G_RX_BUF_SIZE,
+            G_TXT_BUFFER_COUNT  => G_TXT_BUF_COUNT
         )
         port map (
             clk                 => clk_sys_i
