@@ -86,7 +86,7 @@ use ctu_can_fd_rtl.can_types_pkg.all;
 use ctu_can_fd_rtl.CAN_FD_register_map.all;
 use ctu_can_fd_rtl.CAN_FD_frame_format.all;
 
-entity operation_control is
+entity mac_operation_control is
     port (
         -------------------------------------------------------------------------------------------
         -- Clock and Asynchronous reset
@@ -132,7 +132,7 @@ entity operation_control is
     );
 end entity;
 
-architecture rtl of operation_control is
+architecture rtl of mac_operation_control is
 
     -- Operation control FSM
     signal curr_state : t_operation_control_state;

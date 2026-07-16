@@ -93,7 +93,7 @@ use ctu_can_fd_rtl.can_types_pkg.all;
 use ctu_can_fd_rtl.CAN_FD_register_map.all;
 use ctu_can_fd_rtl.CAN_FD_frame_format.all;
 
-entity can_core is
+entity mac_top is
     generic (
         -- Number of signals in Sample trigger
         G_SAMPLE_TRIGGER_COUNT  :     natural range 2 to 8;
@@ -351,7 +351,7 @@ entity can_core is
     );
 end entity;
 
-architecture rtl of can_core is
+architecture rtl of mac_top is
 
     -----------------------------------------------------------------------------------------------
     -----------------------------------------------------------------------------------------------
@@ -483,7 +483,7 @@ begin
     -----------------------------------------------------------------------------------------------
     -- Protocol control
     -----------------------------------------------------------------------------------------------
-    i_protocol_control : entity ctu_can_fd_rtl.protocol_control
+    i_mac_pc_top : entity ctu_can_fd_rtl.mac_pc_top
     generic map (
         G_CTRL_CTR_WIDTH        => G_CTRL_CTR_WIDTH,
         G_RETR_LIM_CTR_WIDTH    => G_RETR_LIM_CTR_WIDTH,
@@ -635,7 +635,7 @@ begin
     -----------------------------------------------------------------------------------------------
     -- Operation control FSM
     -----------------------------------------------------------------------------------------------
-    i_operation_control : entity ctu_can_fd_rtl.operation_control
+    i_mac_operation_control : entity ctu_can_fd_rtl.mac_operation_control
     port map (
         clk_sys                 => clk_sys,                     -- IN
         rst_n                   => rst_n,                       -- IN
@@ -660,7 +660,7 @@ begin
     -----------------------------------------------------------------------------------------------
     -- Fault confinement
     -----------------------------------------------------------------------------------------------
-    i_fault_confinement : entity ctu_can_fd_rtl.fault_confinement
+    i_mac_fc_top : entity ctu_can_fd_rtl.mac_fc_top
     port map (
         clk_sys                 => clk_sys,                     -- IN
         rst_n                   => rst_n,                       -- IN
@@ -714,7 +714,7 @@ begin
     -----------------------------------------------------------------------------------------------
     -- CAN CRC
     -----------------------------------------------------------------------------------------------
-    i_can_crc : entity ctu_can_fd_rtl.can_crc
+    i_mac_crc_top : entity ctu_can_fd_rtl.mac_crc_top
     generic map (
         G_CRC15_POL             => G_CRC15_POL,
         G_CRC17_POL             => G_CRC17_POL,
@@ -755,7 +755,7 @@ begin
     -----------------------------------------------------------------------------------------------
     -- Bit Stuffing
     -----------------------------------------------------------------------------------------------
-    i_bit_stuffing : entity ctu_can_fd_rtl.bit_stuffing
+    i_mac_bit_stuffing : entity ctu_can_fd_rtl.mac_bit_stuffing
     port map (
         clk_sys                 => clk_sys,                     -- IN
         rst_n                   => rst_n,                       -- IN
@@ -779,7 +779,7 @@ begin
     -----------------------------------------------------------------------------------------------
     -- Bit Destuffing
     -----------------------------------------------------------------------------------------------
-    i_bit_destuffing : entity ctu_can_fd_rtl.bit_destuffing
+    i_mac_bit_destuffing : entity ctu_can_fd_rtl.mac_bit_destuffing
     port map (
         clk_sys                 => clk_sys,                     -- IN
         rst_n                   => rst_n,                       -- IN
@@ -805,7 +805,7 @@ begin
     -----------------------------------------------------------------------------------------------
     g_bus_traffic_ctrs : if (G_TRAFFIC_CTRS_EN = true) generate
 
-        i_bus_traffic_counters : entity ctu_can_fd_rtl.bus_traffic_counters
+        i_mac_bus_traffic_counters : entity ctu_can_fd_rtl.mac_bus_traffic_counters
         port map (
             clk_sys             => clk_sys,                     -- IN
             rst_n               => rst_n,                       -- IN
@@ -833,7 +833,7 @@ begin
     -----------------------------------------------------------------------------------------------
     -- Trigger multiplexor
     -----------------------------------------------------------------------------------------------
-    i_trigger_mux : entity ctu_can_fd_rtl.trigger_mux
+    i_mac_trigger_mux : entity ctu_can_fd_rtl.mac_trigger_mux
     generic map (
         G_SAMPLE_TRIGGER_COUNT  => G_SAMPLE_TRIGGER_COUNT
     )

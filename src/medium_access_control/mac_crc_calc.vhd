@@ -88,7 +88,7 @@ use ctu_can_fd_rtl.can_types_pkg.all;
 use ctu_can_fd_rtl.CAN_FD_register_map.all;
 use ctu_can_fd_rtl.CAN_FD_frame_format.all;
 
-entity crc_calc is
+entity mac_crc_calc is
     generic (
         -- Width of CRC sequence
         G_CRC_WIDTH         :     natural;
@@ -128,7 +128,7 @@ entity crc_calc is
     );
 end entity;
 
-architecture rtl of crc_calc is
+architecture rtl of mac_crc_calc is
 
     -- CRC register
     signal crc_q            : std_logic_vector(G_CRC_WIDTH - 1 downto 0);

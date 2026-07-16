@@ -1152,7 +1152,7 @@ begin
     -----------------------------------------------------------------------------------------------
     -- CAN Core
     -----------------------------------------------------------------------------------------------
-    i_can_core : entity ctu_can_fd_rtl.can_core
+    i_mac_top : entity ctu_can_fd_rtl.mac_top
     generic map (
         G_SAMPLE_TRIGGER_COUNT          => C_SAMPLE_TRIGGER_COUNT,
         G_CTRL_CTR_WIDTH                => C_CTRL_CTR_WIDTH,

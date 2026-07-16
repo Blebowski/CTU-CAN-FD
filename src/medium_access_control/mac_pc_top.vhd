@@ -91,7 +91,7 @@ use ctu_can_fd_rtl.can_types_pkg.all;
 use ctu_can_fd_rtl.CAN_FD_register_map.all;
 use ctu_can_fd_rtl.CAN_FD_frame_format.all;
 
-entity protocol_control is
+entity mac_pc_top is
     generic (
         -- Control counter width
         G_CTRL_CTR_WIDTH        :     natural;
@@ -439,7 +439,7 @@ entity protocol_control is
     );
 end entity;
 
-architecture rtl of protocol_control is
+architecture rtl of mac_pc_top is
 
     -- Error frame request
     signal err_frm_req              :     std_logic;
@@ -585,7 +585,7 @@ begin
     -----------------------------------------------------------------------------------------------
     -- Protocol control FSM
     -----------------------------------------------------------------------------------------------
-    i_protocol_control_fsm : entity ctu_can_fd_rtl.protocol_control_fsm
+    i_mac_pc_fsm : entity ctu_can_fd_rtl.mac_pc_fsm
     port map(
         clk_sys                 => clk_sys,                 -- IN
         rst_n                   => rst_n,                   -- IN
@@ -748,7 +748,7 @@ begin
     -----------------------------------------------------------------------------------------------
     -- Control counter
     -----------------------------------------------------------------------------------------------
-    i_control_counter : entity ctu_can_fd_rtl.control_counter
+    i_mac_pc_control_counter : entity ctu_can_fd_rtl.mac_pc_control_counter
     generic map(
         G_CTRL_CTR_WIDTH        => G_CTRL_CTR_WIDTH
     )
@@ -780,7 +780,7 @@ begin
     -----------------------------------------------------------------------------------------------
     -- Reintegration counter
     -----------------------------------------------------------------------------------------------
-    i_reintegration_counter : entity ctu_can_fd_rtl.reintegration_counter
+    i_mac_pc_reintegration_counter : entity ctu_can_fd_rtl.mac_pc_reintegration_counter
     port map(
         clk_sys                 => clk_sys,                 -- IN
         rst_n                   => rst_n,                   -- IN
@@ -797,7 +797,7 @@ begin
     -----------------------------------------------------------------------------------------------
     -- Retransmitt counter
     -----------------------------------------------------------------------------------------------
-    i_retransmitt_counter : entity ctu_can_fd_rtl.retransmitt_counter
+    i_mac_pc_retransmitt_counter : entity ctu_can_fd_rtl.mac_pc_retransmitt_counter
     generic map(
         G_RETR_LIM_CTR_WIDTH    => G_RETR_LIM_CTR_WIDTH
     )
@@ -821,7 +821,7 @@ begin
     -----------------------------------------------------------------------------------------------
     -- Error detector
     -----------------------------------------------------------------------------------------------
-    i_err_detector : entity ctu_can_fd_rtl.err_detector
+    i_mac_pc_err_detector : entity ctu_can_fd_rtl.mac_pc_err_detector
     generic map(
         G_ERR_VALID_PIPELINE    => G_ERR_VALID_PIPELINE
     )
@@ -876,7 +876,7 @@ begin
     -----------------------------------------------------------------------------------------------
     -- TX Shift register
     -----------------------------------------------------------------------------------------------
-    i_tx_shift_reg : entity ctu_can_fd_rtl.tx_shift_reg
+    i_mac_pc_tx_shift_reg : entity ctu_can_fd_rtl.mac_pc_tx_shift_reg
     port map(
         clk_sys                 => clk_sys,                 -- IN
         rst_n                   => rst_n,                   -- IN
@@ -914,7 +914,7 @@ begin
     -----------------------------------------------------------------------------------------------
     -- RX Shift register
     -----------------------------------------------------------------------------------------------
-    i_rx_shift_reg : entity ctu_can_fd_rtl.rx_shift_reg
+    i_mac_pc_rx_shift_reg : entity ctu_can_fd_rtl.mac_pc_rx_shift_reg
     port map(
         clk_sys                 => clk_sys,                 -- IN
         rst_n                   => rst_n,                   -- IN

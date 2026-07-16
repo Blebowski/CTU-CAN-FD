@@ -97,7 +97,7 @@ use ctu_can_fd_rtl.can_types_pkg.all;
 use ctu_can_fd_rtl.CAN_FD_register_map.all;
 use ctu_can_fd_rtl.CAN_FD_frame_format.all;
 
-entity can_crc is
+entity mac_crc_top is
     generic (
         -- CRC 15 polynomial
         G_CRC15_POL         :     std_logic_vector(15 downto 0) := x"C599";
@@ -174,7 +174,7 @@ entity can_crc is
     );
 end entity;
 
-architecture rtl of can_crc is
+architecture rtl of mac_crc_top is
 
     -- Initialization vectors
     signal init_vect_msb_17     :     std_logic;
@@ -261,7 +261,7 @@ begin
     -----------------------------------------------------------------------------------------------
     -- CRC 15 (from RX Data, no Bit Stuffing)
     -----------------------------------------------------------------------------------------------
-    i_crc_calc_15 : entity ctu_can_fd_rtl.crc_calc
+    i_mac_crc_calc_15 : entity ctu_can_fd_rtl.mac_crc_calc
     generic map (
         G_CRC_WIDTH         => 15,
         G_POLYNOMIAL        => G_CRC15_POL
@@ -282,7 +282,7 @@ begin
     -----------------------------------------------------------------------------------------------
     -- CRC 17 (from TX or RX Data, with Bit Stuffing)
     -----------------------------------------------------------------------------------------------
-    i_crc_calc_17_rx : entity ctu_can_fd_rtl.crc_calc
+    i_mac_crc_calc_17_rx : entity ctu_can_fd_rtl.mac_crc_calc
     generic map(
         G_CRC_WIDTH         => 17,
         G_POLYNOMIAL        => G_CRC17_POL
@@ -304,7 +304,7 @@ begin
     -----------------------------------------------------------------------------------------------
     -- CRC 21 (from TX or RX Data, with Bit Stuffing)
     -----------------------------------------------------------------------------------------------
-    i_crc_calc_21_rx : entity ctu_can_fd_rtl.crc_calc
+    i_mac_crc_calc_21_rx : entity ctu_can_fd_rtl.mac_crc_calc
     generic map(
         G_CRC_WIDTH         => 21,
         G_POLYNOMIAL        => G_CRC21_POL

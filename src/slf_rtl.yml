@@ -50,26 +50,26 @@ source_list:
     - file: prescaler/bit_time_counters.vhd
     - file: prescaler/prescaler.vhd
 
-    - file: can_core/bus_traffic_counters.vhd
-    - file: can_core/crc_calc.vhd
-    - file: can_core/can_crc.vhd
-    - file: can_core/err_counters.vhd
-    - file: can_core/fault_confinement_rules.vhd
-    - file: can_core/fault_confinement_fsm.vhd
-    - file: can_core/fault_confinement.vhd
-    - file: can_core/operation_control.vhd
-    - file: can_core/bit_destuffing.vhd
-    - file: can_core/bit_stuffing.vhd
-    - file: can_core/rx_shift_reg.vhd
-    - file: can_core/err_detector.vhd
-    - file: can_core/reintegration_counter.vhd
-    - file: can_core/tx_shift_reg.vhd
-    - file: can_core/retransmitt_counter.vhd
-    - file: can_core/control_counter.vhd
-    - file: can_core/trigger_mux.vhd
-    - file: can_core/protocol_control_fsm.vhd
-    - file: can_core/protocol_control.vhd
-    - file: can_core/can_core.vhd
+    - file: medium_access_control/mac_bus_traffic_counters.vhd
+    - file: medium_access_control/mac_crc_calc.vhd
+    - file: medium_access_control/mac_crc_top.vhd
+    - file: medium_access_control/mac_fc_err_counters.vhd
+    - file: medium_access_control/mac_fc_rules.vhd
+    - file: medium_access_control/mac_fc_fsm.vhd
+    - file: medium_access_control/mac_fc_top.vhd
+    - file: medium_access_control/mac_operation_control.vhd
+    - file: medium_access_control/mac_bit_destuffing.vhd
+    - file: medium_access_control/mac_bit_stuffing.vhd
+    - file: medium_access_control/mac_pc_rx_shift_reg.vhd
+    - file: medium_access_control/mac_pc_err_detector.vhd
+    - file: medium_access_control/mac_pc_reintegration_counter.vhd
+    - file: medium_access_control/mac_pc_tx_shift_reg.vhd
+    - file: medium_access_control/mac_pc_retransmitt_counter.vhd
+    - file: medium_access_control/mac_pc_control_counter.vhd
+    - file: medium_access_control/mac_trigger_mux.vhd
+    - file: medium_access_control/mac_pc_fsm.vhd
+    - file: medium_access_control/mac_pc_top.vhd
+    - file: medium_access_control/mac_top.vhd
 
     - file: tx_arbitrator/tx_arbitrator_fsm.vhd
     - file: tx_arbitrator/priority_decoder.vhd

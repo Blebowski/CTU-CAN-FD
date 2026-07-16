@@ -88,7 +88,7 @@ use ctu_can_fd_rtl.can_types_pkg.all;
 use ctu_can_fd_rtl.CAN_FD_register_map.all;
 use ctu_can_fd_rtl.CAN_FD_frame_format.all;
 
-entity retransmitt_counter is
+entity mac_pc_retransmitt_counter is
     generic (
         -- Width of Retransmitt limit counter
         G_RETR_LIM_CTR_WIDTH    :     natural
@@ -128,7 +128,7 @@ entity retransmitt_counter is
     );
 end entity;
 
-architecture rtl of retransmitt_counter is
+architecture rtl of mac_pc_retransmitt_counter is
 
     -- Retransmitt limit counter
     signal retr_ctr_d   : unsigned(G_RETR_LIM_CTR_WIDTH - 1 downto 0);

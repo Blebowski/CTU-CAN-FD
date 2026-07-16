@@ -68,10 +68,12 @@
 
 --------------------------------------------------------------------------------
 -- Module:
---  Bus traffic counters.
+--  Fault confinement rules.
 --
 -- Purpose:
---  Counts number of transmitted and received frames on CAN Bus.
+--  Implement fault confinement rules for incrementing and decrementing Fault
+--  confinement error counters. Controlled by Protocol control via standardized
+--  interface as described in ISO 11898-1 2015.
 --------------------------------------------------------------------------------
 
 Library ieee;
@@ -85,177 +87,118 @@ use ctu_can_fd_rtl.can_types_pkg.all;
 use ctu_can_fd_rtl.CAN_FD_register_map.all;
 use ctu_can_fd_rtl.CAN_FD_frame_format.all;
 
-entity bus_traffic_counters is
+entity mac_fc_rules is
     port (
         -------------------------------------------------------------------------------------------
-        -- System clock and Asynchronous Reset
+        -- Clock
         -------------------------------------------------------------------------------------------
+        -- System clock, only for PSL assertions
         clk_sys                 : in  std_logic;
-        rst_n                   : in  std_logic;
 
         -------------------------------------------------------------------------------------------
-        -- DFT support
+        -- Operation control interface
         -------------------------------------------------------------------------------------------
-        scan_mode               : in  std_logic;
+        -- Unit is transmitter
+        is_transmitter          : in  std_logic;
+
+        -- Unit is receiver
+        is_receiver             : in  std_logic;
 
         -------------------------------------------------------------------------------------------
-        -- Control signals
+        -- Protocol Control interface
         -------------------------------------------------------------------------------------------
+        -- Error is detected
+        err_detected            : in  std_logic;
 
-        -- Frame transmission valid
+        -- Error counter should remain unchanged
+        err_ctrs_unchanged      : in  std_logic;
+
+        -- Primary Error
+        primary_err             : in  std_logic;
+
+        -- Active Error Flag or Overload flag is being tranmsmitted
+        act_err_ovr_flag        : in  std_logic;
+
+        -- Error delimiter too late
+        err_delim_late          : in  std_logic;
+
+        -- Transmission of frame valid
         tran_valid              : in  std_logic;
 
-        -- Frame reception valid
-        rec_valid               : in  std_logic;
+        -- Decrement receive Error counter
+        decrement_rec           : in  std_logic;
+
+        -- Bit Error in passive error flag after ACK error
+        bit_err_after_ack_err   : in  std_logic;
 
         -------------------------------------------------------------------------------------------
         -- Memory registers interface
         -------------------------------------------------------------------------------------------
-        mr_command_rxfcrst      : in  std_logic;
-        mr_command_txfcrst      : in  std_logic;
+        mr_mode_rom             : in  std_logic;
 
         -------------------------------------------------------------------------------------------
-        -- Counter values
+        -- Output signals to error counters
         -------------------------------------------------------------------------------------------
-        -- TX Traffic counter
-        tx_frame_ctr            : out std_logic_vector(31 downto 0);
+        -- Increment Error counter by 1
+        inc_one                 : out std_logic;
 
-        -- RX Traffic counter
-        rx_frame_ctr            : out std_logic_vector(31 downto 0)
+        -- Increment Error counter by 8
+        inc_eight               : out std_logic;
+
+        -- Decrement Error counter by 1
+        dec_one                 : out std_logic
     );
 end entity;
 
-architecture rtl of bus_traffic_counters is
+architecture rtl of mac_fc_rules is
 
-    signal tx_frame_ctr_i       : std_logic_vector(31 downto 0);
-    signal rx_frame_ctr_i       : std_logic_vector(31 downto 0);
-
-    -- Selected value to increment
-    signal sel_value            : unsigned(31 downto 0);
-
-    -- Incremented value by 1
-    signal inc_value            : unsigned(31 downto 0);
-
-    -- Reset signals for counters (registered, to avoid glitches)
-    signal tx_ctr_rst_n_d       : std_logic;
-    signal tx_ctr_rst_n_q_scan  : std_logic;
-
-    signal rx_ctr_rst_n_d       : std_logic;
-    signal rx_ctr_rst_n_q_scan  : std_logic;
-
-    signal tran_valid_q         : std_logic;
-    signal rec_valid_q          : std_logic;
+    signal inc_one_i    : std_logic;
+    signal inc_eight_i  : std_logic;
 
 begin
 
     -----------------------------------------------------------------------------------------------
-    -- Register increment command (to relax timing through the counter!)
+    -- Increment RX Error counter by 1 when Receiver detects an error which is not during Active
+    -- Error flag or Overload flag!
     -----------------------------------------------------------------------------------------------
-    p_increment_reg : process(clk_sys, rst_n)
-    begin
-        if (rst_n = '0') then
-            tran_valid_q <= '0';
-            rec_valid_q <= '0';
-        elsif rising_edge(clk_sys) then
-            tran_valid_q <= tran_valid;
-            rec_valid_q <= rec_valid;
-        end if;
-    end process;
-
-    tx_frame_ctr <= tx_frame_ctr_i;
-    rx_frame_ctr <= rx_frame_ctr_i;
-
-    -- Multiplexor between TX and RX value to increment
-    sel_value <= unsigned(tx_frame_ctr_i) when (tran_valid_q = '1')
-                                          else
-                 unsigned(rx_frame_ctr_i);
-
-    -- Incremented value of either TX or RX counter
-    inc_value <= sel_value + 1;
+    inc_one_i <= '1' when (err_detected = '1' and act_err_ovr_flag = '0' and is_receiver = '1')
+                     else
+                 '0';
 
     -----------------------------------------------------------------------------------------------
-    -- Reset registers
+    -- Increment by 8:
+    --  - Receiver detects DOMINANT bit as first bit after sending and Error flag (rule "b")
+    --  - Transmitter/Receiver detect a bit error while sending Active Error flag or an Overload
+    --    flag! Note that other than bit error can't be signalled in Error Flag on 'err_detected'!
+    --    (rules "d" and "e")
+    --  - Transmitter sends Error flag but non of the exceptions are valid (rule "c")
+    --  - Error delimiter comes too late (more than 14 consecutive bits), (rule "f")
+    --  - ACK Error followed by bit error during passive error frame!
     -----------------------------------------------------------------------------------------------
-    tx_ctr_rst_n_d <= '0' when (mr_command_txfcrst = '1')
-                          else
-                      '1';
-
-    rx_ctr_rst_n_d <= '0' when (mr_command_rxfcrst = '1')
-                          else
-                      '1';
-
-    -----------------------------------------------------------------------------------------------
-    -- Reset pipeline registers
-    -----------------------------------------------------------------------------------------------
-    i_tx_ctr_reg_rst : entity ctu_can_fd_rtl.rst_reg
-    generic map (
-        G_RESET_POLARITY    => '0'
-    )
-    port map(
-        -- Clock and Reset
-        clk                 => clk_sys,                         -- IN
-        arst                => rst_n,                           -- IN
-
-        -- Flip flop input / output
-        d                   => tx_ctr_rst_n_d,                  -- IN
-        q                   => tx_ctr_rst_n_q_scan,             -- OUT
-
-        -- Scan mode control
-        scan_mode           => scan_mode                        -- IN
-    );
-
-    i_rx_ctr_reg_rst : entity ctu_can_fd_rtl.rst_reg
-    generic map (
-        G_RESET_POLARITY    => '0'
-    )
-    port map(
-        -- Clock and Reset
-        clk                 => clk_sys,                         -- IN
-        arst                => rst_n,                           -- IN
-
-        -- Flip flop input / output
-        d                   => rx_ctr_rst_n_d,                  -- IN
-        q                   => rx_ctr_rst_n_q_scan,             -- OUT
-
-        -- Scan mode control
-        scan_mode           => scan_mode                        -- IN
-    );
+    inc_eight_i <= '1' when (primary_err = '1' and is_receiver = '1') else
+                   '1' when (act_err_ovr_flag = '1' and err_detected = '1') else
+                   '1' when (is_transmitter = '1' and
+                             err_detected = '1' and
+                             err_ctrs_unchanged = '0') else
+                   '1' when (err_delim_late = '1' or bit_err_after_ack_err = '1') else
+                   '0';
 
     -----------------------------------------------------------------------------------------------
-    -- TX Counter register
+    -- Decrement by 1 when either transmission or reception is valid
     -----------------------------------------------------------------------------------------------
-    p_tx_ctr : process(clk_sys, tx_ctr_rst_n_q_scan)
-    begin
-        if (tx_ctr_rst_n_q_scan = '0') then
-            tx_frame_ctr_i <= (others => '0');
-        elsif rising_edge(clk_sys) then
-            if (tran_valid_q = '1') then
-                tx_frame_ctr_i <= std_logic_vector(inc_value);
-            end if;
-        end if;
-    end process;
+    dec_one <= '1' when (decrement_rec = '1' or tran_valid = '1')
+                   else
+               '0';
 
     -----------------------------------------------------------------------------------------------
-    -- RX Counter register
+    -- Gating by ROM mode. In ROM mode, Error counters shall not increment.
+    -- Decrement does not need to be gated since the counter will stay at 0!
     -----------------------------------------------------------------------------------------------
-    p_rx_ctr : process(clk_sys, rx_ctr_rst_n_q_scan)
-    begin
-        if (rx_ctr_rst_n_q_scan = '0') then
-            rx_frame_ctr_i <= (others => '0');
-        elsif rising_edge(clk_sys) then
-            if (rec_valid_q = '1') then
-                rx_frame_ctr_i <= std_logic_vector(inc_value);
-            end if;
-        end if;
-    end process;
-
-    -----------------------------------------------------------------------------------------------
-    -- Assertions
-    -----------------------------------------------------------------------------------------------
-    -- psl default clock is rising_edge(clk_sys);
-
-    -- psl no_simul_inc_tx_rx_asrt : assert never
-    -- (tran_valid = '1' and rec_valid = '1')
-    -- report "Simultaneous increment of TX and RX error traffic counter";
+    inc_one <= '1' when (inc_one_i = '1' and mr_mode_rom = ROM_DISABLED)
+                   else
+               '0';
+    inc_eight <= '1' when (inc_eight_i = '1' and mr_mode_rom = ROM_DISABLED)
+                     else
+                 '0';
 
 end architecture;
