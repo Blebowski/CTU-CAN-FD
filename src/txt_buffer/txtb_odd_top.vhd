@@ -89,7 +89,7 @@ use ctu_can_fd_rtl.CAN_FD_frame_format.all;
 
 use ctu_can_fd_rtl.can_registers_pkg.all;
 
-entity txt_buffer_odd is
+entity txtb_odd_top is
     generic (
         -- Number of TXT Buffers
         G_TXT_BUF_COUNT         :     natural range 2 to 8;
@@ -201,7 +201,7 @@ entity txt_buffer_odd is
     );
 end entity;
 
-architecture rtl of txt_buffer_odd is
+architecture rtl of txtb_odd_top is
 
     -----------------------------------------------------------------------------------------------
     -- Internal signals
@@ -337,7 +337,7 @@ begin
     -----------------------------------------------------------------------------------------------
     -- Clock gater for TXT Buffer RAM
     -----------------------------------------------------------------------------------------------
-    i_clk_gate_txt_buffer_ram_comp : entity ctu_can_fd_rtl.clk_gate
+    i_clk_gate_txtb_ram_comp : entity ctu_can_fd_rtl.clk_gate
     generic map (
         G_TECHNOLOGY            => G_TECHNOLOGY
     )
@@ -352,7 +352,7 @@ begin
     -----------------------------------------------------------------------------------------------
     -- RAM Memory of TXT Buffer
     -----------------------------------------------------------------------------------------------
-    i_txt_buffer_ram : entity ctu_can_fd_rtl.txt_buffer_ram
+    i_txtb_ram : entity ctu_can_fd_rtl.txtb_ram
     generic map (
         G_ID                    => G_ID,
         G_PARITY_EN            => G_PARITY_EN,
@@ -393,7 +393,7 @@ begin
     -----------------------------------------------------------------------------------------------
     -- TXT Buffer FSM
     -----------------------------------------------------------------------------------------------
-    i_txt_buffer_fsm : entity ctu_can_fd_rtl.txt_buffer_fsm
+    i_txtb_fsm : entity ctu_can_fd_rtl.txtb_fsm
     port map (
         clk_sys                 => clk_sys,                     -- IN
         rst_n                   => rst_n,                       -- IN

@@ -98,7 +98,7 @@ use ctu_can_fd_rtl.CAN_FD_frame_format.all;
 
 use ctu_can_fd_rtl.can_registers_pkg.all;
 
-entity rx_buffer_ram is
+entity rxb_ram is
     generic (
         -- RX Buffer size
         G_RX_BUF_SIZE           :       natural range 32 to 4096;
@@ -150,7 +150,7 @@ entity rx_buffer_ram is
     );
 end entity;
 
-architecture rtl of rx_buffer_ram is
+architecture rtl of rxb_ram is
 
     signal rxb_port_a_address_i     : std_logic_vector(G_RX_BUF_PTR_WIDTH - 1 downto 0);
     signal rxb_port_a_write_i       : std_logic;

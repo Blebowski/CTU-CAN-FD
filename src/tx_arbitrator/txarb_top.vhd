@@ -93,7 +93,7 @@ use ctu_can_fd_rtl.can_types_pkg.all;
 use ctu_can_fd_rtl.CAN_FD_register_map.all;
 use ctu_can_fd_rtl.CAN_FD_frame_format.all;
 
-entity tx_arbitrator is
+entity txarb_top is
     generic (
         -- Number of TXT Buffers
         G_TXT_BUF_COUNT         : natural range 1 to 8
@@ -207,7 +207,7 @@ entity tx_arbitrator is
   );
 end entity;
 
-architecture rtl of tx_arbitrator is
+architecture rtl of txarb_top is
 
     -----------------------------------------------------------------------------------------------
     -- Internal signals
@@ -365,7 +365,7 @@ begin
     -----------------------------------------------------------------------------------------------
     -- Priority decoder on TXT Buffers
     -----------------------------------------------------------------------------------------------
-    i_priority_decoder : entity ctu_can_fd_rtl.priority_decoder
+    i_txarb_priority_decoder : entity ctu_can_fd_rtl.txarb_priority_decoder
     generic map (
         G_TXT_BUF_COUNT    => G_TXT_BUF_COUNT
     )
@@ -381,7 +381,7 @@ begin
     -----------------------------------------------------------------------------------------------
     -- TX Arbitrator FSM
     -----------------------------------------------------------------------------------------------
-    i_tx_arbitrator_fsm : entity ctu_can_fd_rtl.tx_arbitrator_fsm
+    i_txarb_fsm : entity ctu_can_fd_rtl.txarb_fsm
     port map (
         clk_sys                     => clk_sys,                     -- IN
         rst_n                       => rst_n,                       -- IN

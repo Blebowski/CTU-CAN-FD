@@ -87,7 +87,7 @@ use ctu_can_fd_rtl.can_types_pkg.all;
 use ctu_can_fd_rtl.CAN_FD_register_map.all;
 use ctu_can_fd_rtl.CAN_FD_frame_format.all;
 
-entity txt_buffer_fsm is
+entity txtb_fsm is
     port (
         -------------------------------------------------------------------------------------------
         -- Clock and Asynchronous reset
@@ -151,7 +151,7 @@ entity txt_buffer_fsm is
     );
 end entity;
 
-architecture rtl of txt_buffer_fsm is
+architecture rtl of txtb_fsm is
 
     -- FSM signals
     signal next_state           : t_txt_buf_state;

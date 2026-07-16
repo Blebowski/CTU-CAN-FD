@@ -1009,67 +1009,67 @@
       </spirit:file>
 
       <spirit:file>
-        <spirit:name>rx_buffer/rx_buffer.vhd</spirit:name>
+        <spirit:name>rx_buffer/rxb_top.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
         <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
       </spirit:file>
 
       <spirit:file>
-        <spirit:name>rx_buffer/rx_buffer_fsm.vhd</spirit:name>
+        <spirit:name>rx_buffer/rxb_fsm.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
         <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
       </spirit:file>
 
       <spirit:file>
-        <spirit:name>rx_buffer/rx_buffer_pointers.vhd</spirit:name>
+        <spirit:name>rx_buffer/rxb_pointers.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
         <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
       </spirit:file>
 
       <spirit:file>
-        <spirit:name>rx_buffer/rx_buffer_ram.vhd</spirit:name>
+        <spirit:name>rx_buffer/rxb_ram.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
         <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
       </spirit:file>
 
       <spirit:file>
-        <spirit:name>tx_arbitrator/priority_decoder.vhd</spirit:name>
+        <spirit:name>tx_arbitrator/txarb_priority_decoder.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
         <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
       </spirit:file>
 
       <spirit:file>
-        <spirit:name>tx_arbitrator/tx_arbitrator.vhd</spirit:name>
+        <spirit:name>tx_arbitrator/txarb_top.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
         <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
       </spirit:file>
 
       <spirit:file>
-        <spirit:name>tx_arbitrator/tx_arbitrator_fsm.vhd</spirit:name>
+        <spirit:name>tx_arbitrator/txarb_fsm.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
         <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
       </spirit:file>
 
       <spirit:file>
-        <spirit:name>txt_buffer/txt_buffer_even.vhd</spirit:name>
+        <spirit:name>txt_buffer/txtb_even_top.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
         <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
       </spirit:file>
 
       <spirit:file>
-        <spirit:name>txt_buffer/txt_buffer_fsm.vhd</spirit:name>
+        <spirit:name>txt_buffer/txtb_fsm.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
         <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
       </spirit:file>
 
       <spirit:file>
-        <spirit:name>txt_buffer/txt_buffer_odd.vhd</spirit:name>
+        <spirit:name>txt_buffer/txtb_odd_top.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
         <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
       </spirit:file>
 
       <spirit:file>
-        <spirit:name>txt_buffer/txt_buffer_ram.vhd</spirit:name>
+        <spirit:name>txt_buffer/txtb_ram.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
         <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
       </spirit:file>
@@ -1618,77 +1618,77 @@
       </spirit:file>
 
       <spirit:file>
-        <spirit:name>rx_buffer/rx_buffer.vhd</spirit:name>
+        <spirit:name>rx_buffer/rxb_top.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
         <spirit:userFileType>USED_IN_ipstatic</spirit:userFileType>
         <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
       </spirit:file>
 
       <spirit:file>
-        <spirit:name>rx_buffer/rx_buffer_fsm.vhd</spirit:name>
+        <spirit:name>rx_buffer/rxb_fsm.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
         <spirit:userFileType>USED_IN_ipstatic</spirit:userFileType>
         <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
       </spirit:file>
 
       <spirit:file>
-        <spirit:name>rx_buffer/rx_buffer_pointers.vhd</spirit:name>
+        <spirit:name>rx_buffer/rxb_pointers.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
         <spirit:userFileType>USED_IN_ipstatic</spirit:userFileType>
         <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
       </spirit:file>
 
       <spirit:file>
-        <spirit:name>rx_buffer/rx_buffer_ram.vhd</spirit:name>
+        <spirit:name>rx_buffer/rxb_ram.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
         <spirit:userFileType>USED_IN_ipstatic</spirit:userFileType>
         <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
       </spirit:file>
 
       <spirit:file>
-        <spirit:name>tx_arbitrator/priority_decoder.vhd</spirit:name>
+        <spirit:name>tx_arbitrator/txarb_priority_decoder.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
         <spirit:userFileType>USED_IN_ipstatic</spirit:userFileType>
         <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
       </spirit:file>
 
       <spirit:file>
-        <spirit:name>tx_arbitrator/tx_arbitrator.vhd</spirit:name>
+        <spirit:name>tx_arbitrator/txarb_top.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
         <spirit:userFileType>USED_IN_ipstatic</spirit:userFileType>
         <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
       </spirit:file>
 
       <spirit:file>
-        <spirit:name>tx_arbitrator/tx_arbitrator_fsm.vhd</spirit:name>
+        <spirit:name>tx_arbitrator/txarb_fsm.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
         <spirit:userFileType>USED_IN_ipstatic</spirit:userFileType>
         <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
       </spirit:file>
 
       <spirit:file>
-        <spirit:name>txt_buffer/txt_buffer_even.vhd</spirit:name>
+        <spirit:name>txt_buffer/txtb_even_top.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
         <spirit:userFileType>USED_IN_ipstatic</spirit:userFileType>
         <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
       </spirit:file>
 
       <spirit:file>
-        <spirit:name>txt_buffer/txt_buffer_fsm.vhd</spirit:name>
+        <spirit:name>txt_buffer/txtb_fsm.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
         <spirit:userFileType>USED_IN_ipstatic</spirit:userFileType>
         <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
       </spirit:file>
 
       <spirit:file>
-        <spirit:name>txt_buffer/txt_buffer_odd.vhd</spirit:name>
+        <spirit:name>txt_buffer/txtb_odd_top.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
         <spirit:userFileType>USED_IN_ipstatic</spirit:userFileType>
         <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
       </spirit:file>
 
       <spirit:file>
-        <spirit:name>txt_buffer/txt_buffer_ram.vhd</spirit:name>
+        <spirit:name>txt_buffer/txtb_ram.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
         <spirit:userFileType>USED_IN_ipstatic</spirit:userFileType>
         <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>

@@ -600,7 +600,7 @@ begin
     ----------------------------------------------------------------------------
     -- Buffer component
     ----------------------------------------------------------------------------
-    i_rx_buffer : entity ctu_can_fd_rtl.rx_buffer
+    i_rxb_top : entity ctu_can_fd_rtl.rxb_top
     generic map(
         G_RX_BUFF_SIZE              => C_RX_BUFF_SIZE,
         G_RX_BUFF_PTR_WIDTH         => C_RX_BUFF_PTR_WIDTH,

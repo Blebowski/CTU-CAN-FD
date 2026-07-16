@@ -71,9 +71,9 @@ source_list:
     - file: medium_access_control/mac_pc_top.vhd
     - file: medium_access_control/mac_top.vhd
 
-    - file: tx_arbitrator/tx_arbitrator_fsm.vhd
-    - file: tx_arbitrator/priority_decoder.vhd
-    - file: tx_arbitrator/tx_arbitrator.vhd
+    - file: tx_arbitrator/txarb_fsm.vhd
+    - file: tx_arbitrator/txarb_priority_decoder.vhd
+    - file: tx_arbitrator/txarb_top.vhd
 
     - file: memory_registers/generated/memory_bus.vhd
     - file: memory_registers/generated/address_decoder.vhd
@@ -88,15 +88,15 @@ source_list:
     - file: memory_registers/generated/test_registers_reg_map.vhd
     - file: memory_registers/mr_top.vhd
 
-    - file: rx_buffer/rx_buffer_pointers.vhd
-    - file: rx_buffer/rx_buffer_fsm.vhd
-    - file: rx_buffer/rx_buffer_ram.vhd
-    - file: rx_buffer/rx_buffer.vhd
+    - file: rx_buffer/rxb_pointers.vhd
+    - file: rx_buffer/rxb_fsm.vhd
+    - file: rx_buffer/rxb_ram.vhd
+    - file: rx_buffer/rxb_top.vhd
 
-    - file: txt_buffer/txt_buffer_fsm.vhd
-    - file: txt_buffer/txt_buffer_ram.vhd
-    - file: txt_buffer/txt_buffer_even.vhd
-    - file: txt_buffer/txt_buffer_odd.vhd
+    - file: txt_buffer/txtb_fsm.vhd
+    - file: txt_buffer/txtb_ram.vhd
+    - file: txt_buffer/txtb_even_top.vhd
+    - file: txt_buffer/txtb_odd_top.vhd
 
     - file: ctu_can_fd_top.vhd
     - file: ctu_can_fd_top_avalon.vhd

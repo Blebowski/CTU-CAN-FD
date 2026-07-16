@@ -97,53 +97,53 @@ end entity;
 architecture tb of func_cov_rx_buffer is
 
     -----------------------------------------------------------------------------------------------
-    -- Aliases to "rx_buffer" top
+    -- Aliases to "rxb_top" top
     -----------------------------------------------------------------------------------------------
 
     alias data_overrun_i is
-        << signal .tb_top_ctu_can_fd.i_dut.i_rx_buffer.data_overrun_i : std_logic >>;
+        << signal .tb_top_ctu_can_fd.i_dut.i_rxb_top.data_overrun_i : std_logic >>;
 
     alias data_overrun_flg is
-        << signal .tb_top_ctu_can_fd.i_dut.i_rx_buffer.data_overrun_flg : std_logic >>;
+        << signal .tb_top_ctu_can_fd.i_dut.i_rxb_top.data_overrun_flg : std_logic >>;
 
     alias read_increment is
-        << signal .tb_top_ctu_can_fd.i_dut.i_rx_buffer.read_increment : std_logic >>;
+        << signal .tb_top_ctu_can_fd.i_dut.i_rxb_top.read_increment : std_logic >>;
 
     alias read_counter_q is
-        << signal .tb_top_ctu_can_fd.i_dut.i_rx_buffer.read_counter_q : unsigned(4 downto 0) >>;
+        << signal .tb_top_ctu_can_fd.i_dut.i_rxb_top.read_counter_q : unsigned(4 downto 0) >>;
 
     alias commit_rx_frame is
-        << signal .tb_top_ctu_can_fd.i_dut.i_rx_buffer.commit_rx_frame : std_logic >>;
+        << signal .tb_top_ctu_can_fd.i_dut.i_rxb_top.commit_rx_frame : std_logic >>;
 
     alias write_raw_intent is
-        << signal .tb_top_ctu_can_fd.i_dut.i_rx_buffer.write_raw_intent : std_logic >>;
+        << signal .tb_top_ctu_can_fd.i_dut.i_rxb_top.write_raw_intent : std_logic >>;
 
     alias mr_rx_settings_rtsop is
-        << signal .tb_top_ctu_can_fd.i_dut.i_rx_buffer.mr_rx_settings_rtsop : std_logic >>;
+        << signal .tb_top_ctu_can_fd.i_dut.i_rxb_top.mr_rx_settings_rtsop : std_logic >>;
 
     alias rec_is_rtr is
-        << signal .tb_top_ctu_can_fd.i_dut.i_rx_buffer.rec_is_rtr : std_logic >>;
+        << signal .tb_top_ctu_can_fd.i_dut.i_rxb_top.rec_is_rtr : std_logic >>;
 
     alias rec_dlc is
-        << signal .tb_top_ctu_can_fd.i_dut.i_rx_buffer.rec_dlc : std_logic_vector(3 downto 0) >>;
+        << signal .tb_top_ctu_can_fd.i_dut.i_rxb_top.rec_dlc : std_logic_vector(3 downto 0) >>;
 
     alias rx_parity_error is
-        << signal .tb_top_ctu_can_fd.i_dut.i_rx_buffer.rx_parity_error : std_logic >>;
+        << signal .tb_top_ctu_can_fd.i_dut.i_rxb_top.rx_parity_error : std_logic >>;
 
     alias mr_command_crxpe is
-        << signal .tb_top_ctu_can_fd.i_dut.i_rx_buffer.mr_command_crxpe : std_logic >>;
+        << signal .tb_top_ctu_can_fd.i_dut.i_rxb_top.mr_command_crxpe : std_logic >>;
 
     -----------------------------------------------------------------------------------------------
-    -- Aliases to "rx_buffer_pointers" top
+    -- Aliases to "rxb_pointers" top
     -----------------------------------------------------------------------------------------------
     alias C_FREE_MEM_WIDTH is
-        << constant .tb_top_ctu_can_fd.i_dut.i_rx_buffer.i_rx_buffer_pointers.C_FREE_MEM_WIDTH : natural >>;
+        << constant .tb_top_ctu_can_fd.i_dut.i_rxb_top.i_rxb_pointers.C_FREE_MEM_WIDTH : natural >>;
 
     alias rx_mem_free_raw is
-        << signal .tb_top_ctu_can_fd.i_dut.i_rx_buffer.i_rx_buffer_pointers.rx_mem_free_raw : unsigned(C_FREE_MEM_WIDTH-1 downto 0) >>;
+        << signal .tb_top_ctu_can_fd.i_dut.i_rxb_top.i_rxb_pointers.rx_mem_free_raw : unsigned(C_FREE_MEM_WIDTH-1 downto 0) >>;
 
     alias rx_mem_free_i is
-        << signal .tb_top_ctu_can_fd.i_dut.i_rx_buffer.i_rx_buffer_pointers.rx_mem_free_i : std_logic_vector(C_FREE_MEM_WIDTH-1 downto 0) >>;
+        << signal .tb_top_ctu_can_fd.i_dut.i_rxb_top.i_rxb_pointers.rx_mem_free_i : std_logic_vector(C_FREE_MEM_WIDTH-1 downto 0) >>;
 
 
 begin

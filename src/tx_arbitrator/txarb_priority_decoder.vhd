@@ -89,7 +89,7 @@ use ctu_can_fd_rtl.can_types_pkg.all;
 use ctu_can_fd_rtl.CAN_FD_register_map.all;
 use ctu_can_fd_rtl.CAN_FD_frame_format.all;
 
-entity priority_decoder is
+entity txarb_priority_decoder is
     generic (
         -- Number of TXT Buffers
         G_TXT_BUF_COUNT         : natural range 2 to 8
@@ -115,7 +115,7 @@ entity priority_decoder is
     );
 end entity;
 
-architecture rtl of priority_decoder is
+architecture rtl of txarb_priority_decoder is
 
     -----------------------------------------------------------------------------------------------
     -- Level 0 aliases for input signals to provide variable signal width

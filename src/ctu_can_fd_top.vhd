@@ -723,7 +723,7 @@ begin
     -----------------------------------------------------------------------------------------------
     -- RX Buffer
     -----------------------------------------------------------------------------------------------
-    i_rx_buffer : entity ctu_can_fd_rtl.rx_buffer
+    i_rxb_top : entity ctu_can_fd_rtl.rxb_top
     generic map (
         G_RX_BUF_SIZE                   => G_RX_BUF_SIZE,
         G_RX_BUF_PTR_WIDTH              => C_RX_BUF_PTR_WIDTH,
@@ -830,7 +830,7 @@ begin
     begin
 
         g_txt_buf_even : if ((i mod 2) = 0) generate
-            i_txt_buffer_even : entity ctu_can_fd_rtl.txt_buffer_even
+            i_txtb_even_top : entity ctu_can_fd_rtl.txtb_even_top
             generic map (
                 G_TXT_BUF_COUNT             => G_TXT_BUF_COUNT,
                 G_ID                        => i,
@@ -892,7 +892,7 @@ begin
         end generate;
 
         g_txt_buf_odd : if ((i mod 2) = 1) generate
-            i_txt_buffer_odd : entity ctu_can_fd_rtl.txt_buffer_odd
+            i_txtb_odd_top : entity ctu_can_fd_rtl.txtb_odd_top
             generic map (
                 G_TXT_BUF_COUNT             => G_TXT_BUF_COUNT,
                 G_ID                        => i,
@@ -960,7 +960,7 @@ begin
     -----------------------------------------------------------------------------------------------
     -- TX Arbitrator
     -----------------------------------------------------------------------------------------------
-    i_tx_arbitrator : entity ctu_can_fd_rtl.tx_arbitrator
+    i_txarb_top : entity ctu_can_fd_rtl.txarb_top
     generic map (
         G_TXT_BUF_COUNT                 => G_TXT_BUF_COUNT
     )

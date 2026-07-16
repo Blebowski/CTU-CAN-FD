@@ -97,7 +97,7 @@ use ctu_can_fd_rtl.CAN_FD_frame_format.all;
 
 use ctu_can_fd_rtl.can_registers_pkg.all;
 
-entity txt_buffer_ram is
+entity txtb_ram is
     generic (
         -- TXT buffer ID
         G_ID                    :     natural;
@@ -153,7 +153,7 @@ entity txt_buffer_ram is
     );
 end entity;
 
-architecture rtl of txt_buffer_ram is
+architecture rtl of txtb_ram is
 
     -----------------------------------------------------------------------------------------------
     -- FRAME_FORMAT_W

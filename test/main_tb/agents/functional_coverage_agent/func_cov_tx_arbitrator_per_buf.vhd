@@ -101,19 +101,19 @@ end entity;
 architecture tb of func_cov_tx_arbitrator_per_buf is
 
     alias curr_txtb_index_i is
-        << signal .tb_top_ctu_can_fd.i_dut.i_tx_arbitrator.curr_txtb_index_i : natural range 0 to G_TXT_BUFFER_COUNT - 1 >>;
+        << signal .tb_top_ctu_can_fd.i_dut.i_txarb_top.curr_txtb_index_i : natural range 0 to G_TXT_BUFFER_COUNT - 1 >>;
 
     alias txtb_hw_cmd is
-        << signal .tb_top_ctu_can_fd.i_dut.i_tx_arbitrator.txtb_hw_cmd : t_txtb_hw_cmd >>;
+        << signal .tb_top_ctu_can_fd.i_dut.i_txarb_top.txtb_hw_cmd : t_txtb_hw_cmd >>;
 
     alias txtb_hw_cmd_unlock is
-        << signal .tb_top_ctu_can_fd.i_dut.i_tx_arbitrator.txtb_hw_cmd_unlock : std_logic >>;
+        << signal .tb_top_ctu_can_fd.i_dut.i_txarb_top.txtb_hw_cmd_unlock : std_logic >>;
 
     alias txtb_available is
-        << signal .tb_top_ctu_can_fd.i_dut.i_tx_arbitrator.txtb_available : std_logic_vector(G_TXT_BUFFER_COUNT - 1 downto 0) >>;
+        << signal .tb_top_ctu_can_fd.i_dut.i_txarb_top.txtb_available : std_logic_vector(G_TXT_BUFFER_COUNT - 1 downto 0) >>;
 
     alias select_buf_index is
-        << signal .tb_top_ctu_can_fd.i_dut.i_tx_arbitrator.select_buf_index : natural range 0 to G_TXT_BUFFER_COUNT - 1 >>;
+        << signal .tb_top_ctu_can_fd.i_dut.i_txarb_top.select_buf_index : natural range 0 to G_TXT_BUFFER_COUNT - 1 >>;
 
 begin
 

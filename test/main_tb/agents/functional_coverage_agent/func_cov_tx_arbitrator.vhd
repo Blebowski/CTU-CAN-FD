@@ -96,54 +96,54 @@ end entity;
 architecture tb of func_cov_tx_arbitrator is
 
     -----------------------------------------------------------------------------------------------
-    -- Aliases to "tx_arbitrator" top
+    -- Aliases to "txarb_top" top
     -----------------------------------------------------------------------------------------------
 
     alias txtb_hw_cmd is
-        << signal .tb_top_ctu_can_fd.i_dut.i_tx_arbitrator.txtb_hw_cmd : t_txtb_hw_cmd >>;
+        << signal .tb_top_ctu_can_fd.i_dut.i_txarb_top.txtb_hw_cmd : t_txtb_hw_cmd >>;
 
     alias tran_frame_valid is
-        << signal .tb_top_ctu_can_fd.i_dut.i_tx_arbitrator.tran_frame_valid : std_logic >>;
+        << signal .tb_top_ctu_can_fd.i_dut.i_txarb_top.tran_frame_valid : std_logic >>;
 
     alias mr_mode_txbbm is
-        << signal .tb_top_ctu_can_fd.i_dut.i_tx_arbitrator.mr_mode_txbbm : std_logic >>;
+        << signal .tb_top_ctu_can_fd.i_dut.i_txarb_top.mr_mode_txbbm : std_logic >>;
 
     alias mr_mode_tttm is
-        << signal .tb_top_ctu_can_fd.i_dut.i_tx_arbitrator.mr_mode_tttm : std_logic >>;
+        << signal .tb_top_ctu_can_fd.i_dut.i_txarb_top.mr_mode_tttm : std_logic >>;
 
     alias select_buf_avail is
-        << signal .tb_top_ctu_can_fd.i_dut.i_tx_arbitrator.select_buf_avail : std_logic >>;
+        << signal .tb_top_ctu_can_fd.i_dut.i_txarb_top.select_buf_avail : std_logic >>;
 
     alias select_buf_index is
-        << signal .tb_top_ctu_can_fd.i_dut.i_tx_arbitrator.select_buf_index : natural range 0 to G_TXT_BUFFER_COUNT - 1 >>;
+        << signal .tb_top_ctu_can_fd.i_dut.i_txarb_top.select_buf_index : natural range 0 to G_TXT_BUFFER_COUNT - 1 >>;
 
     alias txtb_available is
-        << signal .tb_top_ctu_can_fd.i_dut.i_tx_arbitrator.txtb_available : std_logic_vector(G_TXT_BUFFER_COUNT - 1 downto 0) >>;
+        << signal .tb_top_ctu_can_fd.i_dut.i_txarb_top.txtb_available : std_logic_vector(G_TXT_BUFFER_COUNT - 1 downto 0) >>;
 
     alias txtb_changed is
-        << signal .tb_top_ctu_can_fd.i_dut.i_tx_arbitrator.txtb_changed : std_logic >>;
+        << signal .tb_top_ctu_can_fd.i_dut.i_txarb_top.txtb_changed : std_logic >>;
 
     alias select_index_changed is
-        << signal .tb_top_ctu_can_fd.i_dut.i_tx_arbitrator.select_index_changed : std_logic >>;
+        << signal .tb_top_ctu_can_fd.i_dut.i_txarb_top.select_index_changed : std_logic >>;
 
     -----------------------------------------------------------------------------------------------
-    -- Aliases to "tx_arbitrator_fsm" top
+    -- Aliases to "txarb_fsm" top
     -----------------------------------------------------------------------------------------------
 
     alias curr_state is
-        << signal .tb_top_ctu_can_fd.i_dut.i_tx_arbitrator.i_tx_arbitrator_fsm.curr_state : t_tx_arb_state >>;
+        << signal .tb_top_ctu_can_fd.i_dut.i_txarb_top.i_txarb_fsm.curr_state : t_tx_arb_state >>;
 
     alias txtb_hw_cmd_lock is
-        << signal .tb_top_ctu_can_fd.i_dut.i_tx_arbitrator.i_tx_arbitrator_fsm.txtb_hw_cmd_lock : std_logic >>;
+        << signal .tb_top_ctu_can_fd.i_dut.i_txarb_top.i_txarb_fsm.txtb_hw_cmd_lock : std_logic >>;
 
     alias parity_error_vld is
-        << signal .tb_top_ctu_can_fd.i_dut.i_tx_arbitrator.i_tx_arbitrator_fsm.parity_error_vld : std_logic >>;
+        << signal .tb_top_ctu_can_fd.i_dut.i_txarb_top.i_txarb_fsm.parity_error_vld : std_logic >>;
 
     alias fsm_wait_state_q is
-        << signal .tb_top_ctu_can_fd.i_dut.i_tx_arbitrator.i_tx_arbitrator_fsm.fsm_wait_state_q : std_logic >>;
+        << signal .tb_top_ctu_can_fd.i_dut.i_txarb_top.i_txarb_fsm.fsm_wait_state_q : std_logic >>;
 
     alias timestamp_valid is
-        << signal .tb_top_ctu_can_fd.i_dut.i_tx_arbitrator.i_tx_arbitrator_fsm.timestamp_valid : std_logic >>;
+        << signal .tb_top_ctu_can_fd.i_dut.i_txarb_top.i_txarb_fsm.timestamp_valid : std_logic >>;
 
 begin
 
