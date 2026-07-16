@@ -3564,7 +3564,8 @@ noprefix "false"
  of CTU CAN FD.
  CTU CAN FD measures its own transmitter delay when it transmitts CAN FD
  frame (regardles of the fact if bit rate is switched in the frame) on recessive
- to dominant edge between FDF (EDL), and r0 bits as is shown in Figure 
+ to dominant edge between FDF (EDL), and res bits as is shown in Figure
+ 
 \begin_inset CommandInset ref
 LatexCommand ref
 reference "fig:transmitter-delay-measurement"
@@ -4597,6 +4598,7 @@ Ready
  SW configures priority of TXT buffers in TX_PRIORITY register.
  If two TXT buffers have equal priority, TXT buffer with lower index has
  precedence.
+ The priority of TXT Buffers can be changed when SETTINGS[ENA]=1.
  The overall flow of transmission is shown in Figure 
 \begin_inset CommandInset ref
 LatexCommand ref
@@ -7695,6 +7697,11 @@ noprefix "false"
 
 \begin_layout Description
 Note The frame filtering applies also on loopback frames.
+\end_layout
+
+\begin_layout Description
+Note When loopback frame is received, the INT_STAT[RXI] interrupt is not
+ set.
 \end_layout
 
 \begin_layout Standard
