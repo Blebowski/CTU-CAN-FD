@@ -96,7 +96,7 @@ use ctu_can_fd_rtl.can_types_pkg.all;
 use ctu_can_fd_rtl.CAN_FD_register_map.all;
 use ctu_can_fd_rtl.CAN_FD_frame_format.all;
 
-entity int_module is
+entity im_channel is
     port (
         -------------------------------------------------------------------------------------------
         -- Clock and Asynchronous reset
@@ -139,7 +139,7 @@ entity int_module is
     );
 end entity;
 
-architecture rtl of int_module is
+architecture rtl of im_channel is
 
     -- Internal values
     signal int_mask_i               : std_logic;

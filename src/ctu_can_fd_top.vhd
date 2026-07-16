@@ -1079,7 +1079,7 @@ begin
     -----------------------------------------------------------------------------------------------
     -- Interrrupt Manager
     -----------------------------------------------------------------------------------------------
-    i_int_manager : entity ctu_can_fd_rtl.int_manager
+    i_im_top : entity ctu_can_fd_rtl.im_top
     generic map(
         G_INT_COUNT                     => C_INT_COUNT,
         G_TXT_BUF_COUNT                 => G_TXT_BUF_COUNT

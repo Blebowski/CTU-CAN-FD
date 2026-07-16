@@ -847,13 +847,13 @@
       </spirit:file>
 
       <spirit:file>
-        <spirit:name>interrupt_manager/int_manager.vhd</spirit:name>
+        <spirit:name>interrupt_manager/im_top.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
         <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
       </spirit:file>
 
       <spirit:file>
-        <spirit:name>interrupt_manager/int_module.vhd</spirit:name>
+        <spirit:name>interrupt_manager/im_channel.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
         <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
       </spirit:file>
@@ -1429,14 +1429,14 @@
       </spirit:file>
 
       <spirit:file>
-        <spirit:name>interrupt_manager/int_manager.vhd</spirit:name>
+        <spirit:name>interrupt_manager/im_top.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
         <spirit:userFileType>USED_IN_ipstatic</spirit:userFileType>
         <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
       </spirit:file>
 
       <spirit:file>
-        <spirit:name>interrupt_manager/int_module.vhd</spirit:name>
+        <spirit:name>interrupt_manager/im_channel.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
         <spirit:userFileType>USED_IN_ipstatic</spirit:userFileType>
         <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>

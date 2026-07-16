@@ -23,8 +23,8 @@ source_list:
     - file: common_blocks/rst_sync.vhd
     - file: common_blocks/shift_reg.vhd
 
-    - file: interrupt_manager/int_module.vhd
-    - file: interrupt_manager/int_manager.vhd
+    - file: interrupt_manager/im_channel.vhd
+    - file: interrupt_manager/im_top.vhd
 
     - file: interface/ahb_ifc.vhd
     - file: interface/apb_ifc.vhd
