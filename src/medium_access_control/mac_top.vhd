@@ -104,9 +104,6 @@ entity mac_top is
         -- Retransmitt limit counter width
         G_RETR_LIM_CTR_WIDTH    :     natural;
 
-        -- Insert pipeline on "error_valid"
-        G_ERR_VALID_PIPELINE    :     boolean;
-
         -- CRC 15 polynomial
         G_CRC15_POL             :     std_logic_vector(15 downto 0);
 
@@ -486,8 +483,7 @@ begin
     i_mac_pc_top : entity ctu_can_fd_rtl.mac_pc_top
     generic map (
         G_CTRL_CTR_WIDTH        => G_CTRL_CTR_WIDTH,
-        G_RETR_LIM_CTR_WIDTH    => G_RETR_LIM_CTR_WIDTH,
-        G_ERR_VALID_PIPELINE    => G_ERR_VALID_PIPELINE
+        G_RETR_LIM_CTR_WIDTH    => G_RETR_LIM_CTR_WIDTH
     )
     port map (
         clk_sys                 => clk_sys,                     -- IN

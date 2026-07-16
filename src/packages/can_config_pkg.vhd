@@ -99,9 +99,6 @@ package can_config_pkg is
     -- Width of retransmitt counter
     constant C_RETR_LIM_CTR_WIDTH   : natural := 4;
 
-    -- Insert pipeline on Error valid signal
-    constant C_ERR_VALID_PIPELINE   : boolean := true;
-
     -- TSEG1 Width - Nominal Bit Time
     -- SYNC (1) + PROP_NBT (127) + PH1_NBT (63) = 191 -> Fits into 8 bits
     constant C_TSEG1_NBT_WIDTH      : natural := 8;

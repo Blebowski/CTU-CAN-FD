@@ -97,10 +97,7 @@ entity mac_pc_top is
         G_CTRL_CTR_WIDTH        :     natural;
 
         -- Retransmitt limit counter width
-        G_RETR_LIM_CTR_WIDTH    :     natural;
-
-        -- Insert pipeline on "error_valid"
-        G_ERR_VALID_PIPELINE    :     boolean
+        G_RETR_LIM_CTR_WIDTH    :     natural
     );
     port (
         -------------------------------------------------------------------------------------------
@@ -822,9 +819,6 @@ begin
     -- Error detector
     -----------------------------------------------------------------------------------------------
     i_mac_pc_err_detector : entity ctu_can_fd_rtl.mac_pc_err_detector
-    generic map(
-        G_ERR_VALID_PIPELINE    => G_ERR_VALID_PIPELINE
-    )
     port map(
         clk_sys                 => clk_sys,                 -- IN
         rst_n                   => rst_n,                   -- IN

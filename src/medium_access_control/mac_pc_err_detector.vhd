@@ -91,10 +91,6 @@ use ctu_can_fd_rtl.CAN_FD_register_map.all;
 use ctu_can_fd_rtl.CAN_FD_frame_format.all;
 
 entity mac_pc_err_detector is
-    generic (
-        -- Pipeline should be inserted on Error signalling
-        G_ERR_VALID_PIPELINE    :     boolean
-    );
     port (
         -------------------------------------------------------------------------------------------
         -- Clock and Asynchronous Reset
@@ -267,23 +263,14 @@ begin
                   '1' when (stuff_err = '1' and fixed_stuff = '1') else
                   '0';
 
-    g_err_pipeline_true : if (G_ERR_VALID_PIPELINE) generate
+    p_err_valid_reg : process(rst_n, clk_sys)
     begin
-        p_err_valid_reg : process(rst_n, clk_sys)
-        begin
-            if (rst_n = '0') then
-                err_frm_req <= '0';
-            elsif (rising_edge(clk_sys)) then
-                err_frm_req <= err_frm_req_i;
-            end if;
-        end process;
-    end generate g_err_pipeline_true;
-
-    g_err_pipeline_false : if (not G_ERR_VALID_PIPELINE) generate
-    begin
-        err_frm_req <= err_frm_req_i;
-    end generate g_err_pipeline_false;
-
+        if (rst_n = '0') then
+            err_frm_req <= '0';
+        elsif (rising_edge(clk_sys)) then
+            err_frm_req <= err_frm_req_i;
+        end if;
+    end process;
 
     -----------------------------------------------------------------------------------------------
     -- De-Stuff counter grey-coding + parity

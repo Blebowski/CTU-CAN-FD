@@ -1157,7 +1157,6 @@ begin
         G_SAMPLE_TRIGGER_COUNT          => C_SAMPLE_TRIGGER_COUNT,
         G_CTRL_CTR_WIDTH                => C_CTRL_CTR_WIDTH,
         G_RETR_LIM_CTR_WIDTH            => C_RETR_LIM_CTR_WIDTH,
-        G_ERR_VALID_PIPELINE            => C_ERR_VALID_PIPELINE,
         G_CRC15_POL                     => C_CRC15_POL,
         G_CRC17_POL                     => C_CRC17_POL,
         G_CRC21_POL                     => C_CRC21_POL,
