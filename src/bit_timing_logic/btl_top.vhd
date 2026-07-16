@@ -93,7 +93,7 @@ use ctu_can_fd_rtl.can_types_pkg.all;
 use ctu_can_fd_rtl.CAN_FD_register_map.all;
 use ctu_can_fd_rtl.CAN_FD_frame_format.all;
 
-entity prescaler is
+entity btl_top is
     generic (
         -- TSEG1 Width - Nominal Bit Time
         G_TSEG1_NBT_WIDTH       :     natural;
@@ -186,7 +186,7 @@ entity prescaler is
     );
 end entity;
 
-architecture rtl of prescaler is
+architecture rtl of btl_top is
 
     -----------------------------------------------------------------------------------------------
     -- Segment lengths
@@ -259,7 +259,7 @@ begin
     -----------------------------------------------------------------------------------------------
     -- Bit time config capture
     -----------------------------------------------------------------------------------------------
-    i_bit_time_cfg_capture : entity ctu_can_fd_rtl.bit_time_cfg_capture
+    i_btl_cfg_capture : entity ctu_can_fd_rtl.btl_cfg_capture
     generic map (
         G_TSEG1_NBT_WIDTH       => G_TSEG1_NBT_WIDTH,
         G_TSEG2_NBT_WIDTH       => G_TSEG2_NBT_WIDTH,
@@ -302,7 +302,7 @@ begin
     -----------------------------------------------------------------------------------------------
     -- Synchronisation checker
     -----------------------------------------------------------------------------------------------
-    i_synchronisation_checker : entity ctu_can_fd_rtl.synchronisation_checker
+    i_btl_synchronisation_checker : entity ctu_can_fd_rtl.btl_synchronisation_checker
     port map (
         clk_sys                 => clk_sys,             -- IN
         rst_n                   => rst_n,               -- IN
@@ -321,7 +321,7 @@ begin
     -----------------------------------------------------------------------------------------------
     -- Bit segment meter (Nominal Bit Time)
     -----------------------------------------------------------------------------------------------
-    i_bit_segment_meter_nbt : entity ctu_can_fd_rtl.bit_segment_meter
+    i_btl_segment_meter_nbt : entity ctu_can_fd_rtl.btl_segment_meter
     generic map (
         G_SJW_WIDTH             => G_SJW_NBT_WIDTH,
         G_TSEG1_WIDTH           => G_TSEG1_NBT_WIDTH,
@@ -349,7 +349,7 @@ begin
     -----------------------------------------------------------------------------------------------
     -- Bit Time counter (Nominal Bit Time)
     -----------------------------------------------------------------------------------------------
-    i_bit_time_counters_nbt : entity ctu_can_fd_rtl.bit_time_counters
+    i_btl_counters_nbt : entity ctu_can_fd_rtl.btl_counters
     generic map (
         G_BT_WIDTH              => C_BT_NBT_WIDTH,
         G_BRP_WIDTH             => G_BRP_NBT_WIDTH
@@ -370,7 +370,7 @@ begin
     -----------------------------------------------------------------------------------------------
     -- Bit segment meter (Data Bit Time)
     -----------------------------------------------------------------------------------------------
-    i_bit_segment_meter_dbt : entity ctu_can_fd_rtl.bit_segment_meter
+    i_btl_segment_meter_dbt : entity ctu_can_fd_rtl.btl_segment_meter
     generic map (
         G_SJW_WIDTH             => G_SJW_DBT_WIDTH,
         G_TSEG1_WIDTH           => G_TSEG1_DBT_WIDTH,
@@ -398,7 +398,7 @@ begin
     -----------------------------------------------------------------------------------------------
     -- Bit Time counter (Data Bit Time)
     -----------------------------------------------------------------------------------------------
-    i_bit_time_counters_dbt : entity ctu_can_fd_rtl.bit_time_counters
+    i_btl_counters_dbt : entity ctu_can_fd_rtl.btl_counters
     generic map (
         G_BT_WIDTH              => C_BT_DBT_WIDTH,
         G_BRP_WIDTH             => G_BRP_DBT_WIDTH
@@ -418,7 +418,7 @@ begin
     -----------------------------------------------------------------------------------------------
     -- End of Segment detector
     -----------------------------------------------------------------------------------------------
-    i_segment_end_detector : entity ctu_can_fd_rtl.segment_end_detector
+    i_btl_segment_end_detector : entity ctu_can_fd_rtl.btl_segment_end_detector
     port map (
         clk_sys                 => clk_sys,             -- IN
         rst_n                   => rst_n,               -- IN
@@ -440,7 +440,7 @@ begin
     -----------------------------------------------------------------------------------------------
     -- Bit time FSM
     -----------------------------------------------------------------------------------------------
-    i_bit_time_fsm : entity ctu_can_fd_rtl.bit_time_fsm
+    i_btl_fsm : entity ctu_can_fd_rtl.btl_fsm
     port map (
         clk_sys                 => clk_sys,             -- IN
         rst_n                   => rst_n,               -- IN
@@ -457,7 +457,7 @@ begin
     -----------------------------------------------------------------------------------------------
     -- Trigger generator
     -----------------------------------------------------------------------------------------------
-    i_trigger_generator : entity ctu_can_fd_rtl.trigger_generator
+    i_btl_trigger_generator : entity ctu_can_fd_rtl.btl_trigger_generator
     generic map (
         G_SAMPLE_TRIGGER_COUNT  => G_SAMPLE_TRIGGER_COUNT
     )

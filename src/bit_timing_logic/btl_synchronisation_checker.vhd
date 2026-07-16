@@ -68,13 +68,12 @@
 
 --------------------------------------------------------------------------------
 -- Module:
---  Bit time FSM.
+--  Synchronisation Checker.
 --
 -- Purpose:
---  Determines segment of a Bit in which unit actually is (TSEG1, TSEG2).
---  Generates trigger requests:
---   TX Trigger request - Last cycle of TSEG2 (end of bit time).
---   RX Trigger request - Last cycle of TSEG1 (sample point).
+--  Holds flag that Re-synchronisation or Hard synchronisation occured.
+--  Valid Hard synchronisation or Re-synchronisation is signalled on the output.
+--  Synchronisation flag is cleared in the end of TSEG1 (Sample point).
 --------------------------------------------------------------------------------
 
 Library ieee;
@@ -88,7 +87,7 @@ use ctu_can_fd_rtl.can_types_pkg.all;
 use ctu_can_fd_rtl.CAN_FD_register_map.all;
 use ctu_can_fd_rtl.CAN_FD_frame_format.all;
 
-entity bit_time_fsm is
+entity btl_synchronisation_checker is
     port (
         -------------------------------------------------------------------------------------------
         -- Clock and Asynchronous reset
@@ -97,116 +96,109 @@ entity bit_time_fsm is
         rst_n               : in  std_logic;
 
         -------------------------------------------------------------------------------------------
-        -- Memory registers interface
-        -------------------------------------------------------------------------------------------
-        mr_settings_ena     : in  std_logic;
-
-        -------------------------------------------------------------------------------------------
         -- Control interface
         -------------------------------------------------------------------------------------------
-        -- Segment end (either due to re-sync, or reaching expected length)
-        segm_end            : in  std_logic;
+        -- Synchronisation control (No synchronisation, Hard Synchronisation, Resynchronisation
+        sync_control        : in  std_logic_vector(1 downto 0);
 
-        -------------------------------------------------------------------------------------------
-        -- Status signals
-        -------------------------------------------------------------------------------------------
+        -- Synchronisation edge (from Bus sampling)
+        sync_edge           : in  std_logic;
+
+        -- No re-synchronisation should be executed due to positive phase
+        -- error
+        no_pos_resync       : in  std_logic;
+
+        -- End of segment
+        segment_end         : in  std_logic;
+
         -- Bit time FSM is in TSEG1
-        is_tseg1            : out std_logic;
+        is_tseg1            : in  std_logic;
 
         -- Bit time FSM is in TSEG2
-        is_tseg2            : out std_logic;
+        is_tseg2            : in  std_logic;
 
-        -- Sample signal request (to sample point generator)
-        rx_trig_req         : out std_logic;
+        -------------------------------------------------------------------------------------------
+        -- Status
+        -------------------------------------------------------------------------------------------
+        -- Resynchronisation edge is valid
+        resync_edge_valid   : out std_logic;
 
-        -- Sync signal request
-        tx_trig_req         : out std_logic
+        -- Hard synchronisation edge is valid
+        h_sync_edge_valid   : out std_logic
     );
 end entity;
 
-architecture rtl of bit_time_fsm is
+architecture rtl of btl_synchronisation_checker is
 
-    -- Bit time FSM
-    signal current_state    : t_bit_time;
-    signal next_state       : t_bit_time;
+    -- Synchronisation edges
+    signal resync_edge          : std_logic;
+    signal h_sync_edge          : std_logic;
+    signal h_or_re_sync_edge    : std_logic;
 
-    -- Bit time FSM clock enable
-    signal bt_fsm_ce        : std_logic;
+    -- Flag that synchronisation has occurred (either hard sync or re-sync)
+    signal sync_flag            : std_logic;
+    signal sync_flag_ce         : std_logic;
+    signal sync_flag_nxt        : std_logic;
 
 begin
 
-    -------------------------------------------------------------------------------------------
-    -- Next state process (combinational)
-    -------------------------------------------------------------------------------------------
-    p_next_state : process(current_state, segm_end, mr_settings_ena)
-    begin
-        next_state <= current_state;
+    -----------------------------------------------------------------------------------------------
+    -- Re-synchronisation, Hard synchronisation is distinguished by Sample control given by
+    -- Protocol Control.
+    -----------------------------------------------------------------------------------------------
+    resync_edge <= '1' when (sync_edge = '1' and sync_control = RE_SYNC) else
+                   '0';
 
-        if (mr_settings_ena = CTU_CAN_DISABLED) then
-            next_state <= s_bt_reset;
-        else
-            case current_state is
-            when s_bt_tseg1 =>
-                if (segm_end = '1') then
-                    next_state <= s_bt_tseg2;
-                end if;
-            when s_bt_tseg2 =>
-                if (segm_end = '1') then
-                    next_state <= s_bt_tseg1;
-                end if;
-            when s_bt_reset =>
-                next_state <= s_bt_tseg1;
-            end case;
-        end if;
-    end process;
+    h_sync_edge <= '1' when (sync_edge = '1' and sync_control = HARD_SYNC) else
+                   '0';
 
-    -------------------------------------------------------------------------------------------
-    -- Current state process (combinational)
-    -------------------------------------------------------------------------------------------
-    p_curr_state : process(current_state, segm_end, mr_settings_ena)
-    begin
-        -- Default values
-        is_tseg1       <= '0';
-        is_tseg2       <= '0';
-        rx_trig_req    <= '0';
-        tx_trig_req    <= '0';
+    h_or_re_sync_edge <= '1' when (resync_edge = '1' or h_sync_edge = '1') else
+                         '0';
 
-        case current_state is
-        when s_bt_reset =>
-            if (mr_settings_ena = CTU_CAN_ENABLED) then
-                tx_trig_req <= '1';
-            end if;
+    -----------------------------------------------------------------------------------------------
+    -- Synchronisation flag register.
+    --  1. Set when Hard-sync or Resync occurs.
+    --  2. Cleared in the end oof PH1 (sample point)
+    -- Takes care of not synchronising twice between two sample points.
+    -----------------------------------------------------------------------------------------------
+    sync_flag_ce <= '1' when (h_or_re_sync_edge = '1') else
+                    '1' when (segment_end = '1' and is_tseg1 = '1') else
+                    '0';
 
-        when s_bt_tseg1 =>
-            is_tseg1 <= '1';
-            if (segm_end = '1') then
-                rx_trig_req <= '1';
-            end if;
+    sync_flag_nxt <= '1' when (h_or_re_sync_edge = '1') else
+                     '0';
 
-        when s_bt_tseg2 =>
-            is_tseg2 <= '1';
-            if (segm_end = '1') then
-                tx_trig_req <= '1';
-            end if;
-
-        end case;
-    end process;
-
-    -------------------------------------------------------------------------------------------
-    -- State register assignment
-    -------------------------------------------------------------------------------------------
-    p_state_reg : process(clk_sys, rst_n)
+    p_sync_flag : process(rst_n, clk_sys)
     begin
         if (rst_n = '0') then
-            current_state <= s_bt_reset;
+            sync_flag <= '0';
         elsif (rising_edge(clk_sys)) then
-            if (bt_fsm_ce = '1') then
-                current_state <= next_state;
+            if (sync_flag_ce = '1') then
+                sync_flag <= sync_flag_nxt;
             end if;
         end if;
     end process;
 
-    bt_fsm_ce <= '1' when (next_state /= current_state) else
-                 '0';
+    -----------------------------------------------------------------------------------------------
+    -- Re-synchronisation is valid when following conditions are met:
+    --  1. There is resynchronisation edge
+    --  2. Synchronisation flag dit not occur yet!
+    -- This has two sub-cases:
+    --  1. TSEG2, any synchronisation
+    --  2. TSEG1, only when 'no_pos_resync' is not set! This takes care of no synchronisation for
+    --     transmitter as result of positive phase error!
+    -----------------------------------------------------------------------------------------------
+    resync_edge_valid <= '1' when (resync_edge = '1' and sync_flag = '0' and
+                                   ((is_tseg2 = '1') or
+                                    (is_tseg1 = '1' and no_pos_resync = '0')))
+                             else
+                         '0';
+
+    -----------------------------------------------------------------------------------------------
+    -- Hard synchronisation is valid at any time, only if there was no synchronisation before!
+    -----------------------------------------------------------------------------------------------
+    h_sync_edge_valid <= '0' when (no_pos_resync = '1' and is_tseg1 = '1') else
+                         '1' when (h_sync_edge = '1' and sync_flag = '0') else
+                         '0';
 
 end architecture rtl;

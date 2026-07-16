@@ -41,14 +41,14 @@ source_list:
     - file: bus_management/bm_sample_mux.vhd
     - file: bus_management/bm_top.vhd
 
-    - file: prescaler/bit_time_fsm.vhd
-    - file: prescaler/segment_end_detector.vhd
-    - file: prescaler/trigger_generator.vhd
-    - file: prescaler/bit_segment_meter.vhd
-    - file: prescaler/synchronisation_checker.vhd
-    - file: prescaler/bit_time_cfg_capture.vhd
-    - file: prescaler/bit_time_counters.vhd
-    - file: prescaler/prescaler.vhd
+    - file: bit_timing_logic/btl_fsm.vhd
+    - file: bit_timing_logic/btl_segment_end_detector.vhd
+    - file: bit_timing_logic/btl_trigger_generator.vhd
+    - file: bit_timing_logic/btl_segment_meter.vhd
+    - file: bit_timing_logic/btl_synchronisation_checker.vhd
+    - file: bit_timing_logic/btl_cfg_capture.vhd
+    - file: bit_timing_logic/btl_counters.vhd
+    - file: bit_timing_logic/btl_top.vhd
 
     - file: medium_access_control/mac_bus_traffic_counters.vhd
     - file: medium_access_control/mac_crc_calc.vhd
@@ -86,7 +86,7 @@ source_list:
     - file: memory_registers/generated/cmn_reg_map_pkg.vhd
     - file: memory_registers/generated/control_registers_reg_map.vhd
     - file: memory_registers/generated/test_registers_reg_map.vhd
-    - file: memory_registers/memory_registers.vhd
+    - file: memory_registers/mr_top.vhd
 
     - file: rx_buffer/rx_buffer_pointers.vhd
     - file: rx_buffer/rx_buffer_fsm.vhd

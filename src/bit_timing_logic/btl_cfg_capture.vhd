@@ -89,7 +89,7 @@ use ctu_can_fd_rtl.can_types_pkg.all;
 use ctu_can_fd_rtl.CAN_FD_register_map.all;
 use ctu_can_fd_rtl.CAN_FD_frame_format.all;
 
-entity bit_time_cfg_capture is
+entity btl_cfg_capture is
     generic (
         -- TSEG1 Width - Nominal Bit Time
         G_TSEG1_NBT_WIDTH   :     natural;
@@ -171,7 +171,7 @@ entity bit_time_cfg_capture is
     );
 end entity;
 
-architecture rtl of bit_time_cfg_capture is
+architecture rtl of btl_cfg_capture is
 
     -----------------------------------------------------------------------------------------------
     -- Next values for configuration.

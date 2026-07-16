@@ -626,7 +626,7 @@ begin
     -----------------------------------------------------------------------------------------------
     -- Memory registers
     -----------------------------------------------------------------------------------------------
-    i_memory_registers : entity ctu_can_fd_rtl.memory_registers
+    i_mr_top : entity ctu_can_fd_rtl.mr_top
     generic map (
         G_FILT_A_EN                     => G_FILT_A_EN,
         G_FILT_B_EN                     => G_FILT_B_EN,
@@ -1277,7 +1277,7 @@ begin
     -----------------------------------------------------------------------------------------------
     -- Prescaler
     -----------------------------------------------------------------------------------------------
-    i_prescaler : entity ctu_can_fd_rtl.prescaler
+    i_btl_top : entity ctu_can_fd_rtl.btl_top
     generic map (
         G_TSEG1_NBT_WIDTH               => C_TSEG1_NBT_WIDTH,
         G_TSEG2_NBT_WIDTH               => C_TSEG2_NBT_WIDTH,

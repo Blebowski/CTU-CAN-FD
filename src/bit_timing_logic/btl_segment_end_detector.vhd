@@ -89,7 +89,7 @@ use ctu_can_fd_rtl.can_types_pkg.all;
 use ctu_can_fd_rtl.CAN_FD_register_map.all;
 use ctu_can_fd_rtl.CAN_FD_frame_format.all;
 
-entity segment_end_detector is
+entity btl_segment_end_detector is
     port (
         -------------------------------------------------------------------------------------------
         -- Clock and Asynchronous reset
@@ -138,7 +138,7 @@ entity segment_end_detector is
     );
 end entity;
 
-architecture rtl of segment_end_detector is
+architecture rtl of btl_segment_end_detector is
 
     -------------------------------------------------------------------------------------------
     -- Registers to capture requests for Hard-sync (0), NBT end of segment (1), DBT end of

@@ -91,7 +91,7 @@ use ctu_can_fd_rtl.can_types_pkg.all;
 use ctu_can_fd_rtl.CAN_FD_register_map.all;
 use ctu_can_fd_rtl.CAN_FD_frame_format.all;
 
-entity bit_time_counters is
+entity btl_counters is
     generic (
         -- Bit Time counter width
         G_BT_WIDTH       :     natural;
@@ -132,7 +132,7 @@ entity bit_time_counters is
     );
 end entity;
 
-architecture rtl of bit_time_counters is
+architecture rtl of btl_counters is
 
     -- Time Quanta Counter
     signal tq_counter_d       : std_logic_vector(G_BRP_WIDTH - 1 downto 0);

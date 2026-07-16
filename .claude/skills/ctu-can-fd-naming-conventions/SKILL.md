@@ -119,10 +119,12 @@ must be updated in lockstep, or simulation breaks silently until elaboration:
 1. **VHDL-2008 external names** (`<< signal .path.to.signal : type >>`) in
    `test/main_tb/agents/functional_coverage_agent/*.vhd` and the whitebox
    force/release paths in `test/main_tb/ctu_can_fd_vip.vhd` hardcode full
-   hierarchical paths (e.g. `.tb_top_ctu_can_fd.dut.i_can_core.g_bus_traffic_ctrs.
-   i_bus_traffic_counters.tx_frame_ctr_i`). These are plain-text paths, not
+   hierarchical paths (e.g. `.tb_top_ctu_can_fd.i_dut.i_mac_top.g_bus_traffic_ctrs.
+   i_mac_bus_traffic_counters.tx_frame_ctr_i`). These are plain-text paths, not
    resolved by the compiler until elaboration/simulation — a stale path fails
-   silently at elaboration, not compile time.
+   silently at elaboration, not compile time. By convention these paths are written
+   **all lower-case** in both locations (VHDL identifiers are case-insensitive, so
+   this is purely a style convention, but keep it consistent when editing/renaming).
 2. **The NVC coverage exclusion file** `test/exclude_files/nvc_exclusions_3v0.txt`
    encodes the same kind of hierarchical paths in upper-case
    (`CTU_CAN_FD_TB.TB_TOP_CTU_CAN_FD.I_DUT.I_CAN_CORE...`) — VHDL identifiers are
@@ -146,5 +148,7 @@ must be updated in lockstep, or simulation breaks silently until elaboration:
    `t_` prefix; for FSM enum literals, check for `s_<module>_` prefix consistency
    within the same state type.
 4. If a rename is warranted, always check `test/main_tb/agents/functional_coverage_agent/`
-   external names and `test/exclude_files/nvc_exclusions_3v0.txt` for the same
-   identifier before considering the rename complete (see hazard section above).
+   external names, `test/main_tb/ctu_can_fd_vip.vhd`'s own whitebox force/release
+   external names (a separate, easy-to-forget hardcoded-path spot — see hazard
+   section above), and `test/exclude_files/nvc_exclusions_3v0.txt` for the same
+   identifier before considering the rename complete.

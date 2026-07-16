@@ -925,7 +925,7 @@
       </spirit:file>
 
       <spirit:file>
-        <spirit:name>memory_registers/memory_registers.vhd</spirit:name>
+        <spirit:name>memory_registers/mr_top.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
         <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
       </spirit:file>
@@ -961,49 +961,49 @@
       </spirit:file>
 
       <spirit:file>
-        <spirit:name>prescaler/bit_segment_meter.vhd</spirit:name>
+        <spirit:name>bit_timing_logic/btl_segment_meter.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
         <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
       </spirit:file>
 
       <spirit:file>
-        <spirit:name>prescaler/bit_time_cfg_capture.vhd</spirit:name>
+        <spirit:name>bit_timing_logic/btl_cfg_capture.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
         <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
       </spirit:file>
 
       <spirit:file>
-        <spirit:name>prescaler/bit_time_counters.vhd</spirit:name>
+        <spirit:name>bit_timing_logic/btl_counters.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
         <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
       </spirit:file>
 
       <spirit:file>
-        <spirit:name>prescaler/bit_time_fsm.vhd</spirit:name>
+        <spirit:name>bit_timing_logic/btl_fsm.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
         <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
       </spirit:file>
 
       <spirit:file>
-        <spirit:name>prescaler/prescaler.vhd</spirit:name>
+        <spirit:name>bit_timing_logic/btl_top.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
         <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
       </spirit:file>
 
       <spirit:file>
-        <spirit:name>prescaler/segment_end_detector.vhd</spirit:name>
+        <spirit:name>bit_timing_logic/btl_segment_end_detector.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
         <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
       </spirit:file>
 
       <spirit:file>
-        <spirit:name>prescaler/synchronisation_checker.vhd</spirit:name>
+        <spirit:name>bit_timing_logic/btl_synchronisation_checker.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
         <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
       </spirit:file>
 
       <spirit:file>
-        <spirit:name>prescaler/trigger_generator.vhd</spirit:name>
+        <spirit:name>bit_timing_logic/btl_trigger_generator.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
         <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
       </spirit:file>
@@ -1520,7 +1520,7 @@
       </spirit:file>
 
       <spirit:file>
-        <spirit:name>memory_registers/memory_registers.vhd</spirit:name>
+        <spirit:name>memory_registers/mr_top.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
         <spirit:userFileType>USED_IN_ipstatic</spirit:userFileType>
         <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
@@ -1562,56 +1562,56 @@
       </spirit:file>
 
       <spirit:file>
-        <spirit:name>prescaler/bit_segment_meter.vhd</spirit:name>
+        <spirit:name>bit_timing_logic/btl_segment_meter.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
         <spirit:userFileType>USED_IN_ipstatic</spirit:userFileType>
         <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
       </spirit:file>
 
       <spirit:file>
-        <spirit:name>prescaler/bit_time_cfg_capture.vhd</spirit:name>
+        <spirit:name>bit_timing_logic/btl_cfg_capture.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
         <spirit:userFileType>USED_IN_ipstatic</spirit:userFileType>
         <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
       </spirit:file>
 
       <spirit:file>
-        <spirit:name>prescaler/bit_time_counters.vhd</spirit:name>
+        <spirit:name>bit_timing_logic/btl_counters.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
         <spirit:userFileType>USED_IN_ipstatic</spirit:userFileType>
         <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
       </spirit:file>
 
       <spirit:file>
-        <spirit:name>prescaler/bit_time_fsm.vhd</spirit:name>
+        <spirit:name>bit_timing_logic/btl_fsm.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
         <spirit:userFileType>USED_IN_ipstatic</spirit:userFileType>
         <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
       </spirit:file>
 
       <spirit:file>
-        <spirit:name>prescaler/prescaler.vhd</spirit:name>
+        <spirit:name>bit_timing_logic/btl_top.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
         <spirit:userFileType>USED_IN_ipstatic</spirit:userFileType>
         <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
       </spirit:file>
 
       <spirit:file>
-        <spirit:name>prescaler/segment_end_detector.vhd</spirit:name>
+        <spirit:name>bit_timing_logic/btl_segment_end_detector.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
         <spirit:userFileType>USED_IN_ipstatic</spirit:userFileType>
         <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
       </spirit:file>
 
       <spirit:file>
-        <spirit:name>prescaler/synchronisation_checker.vhd</spirit:name>
+        <spirit:name>bit_timing_logic/btl_synchronisation_checker.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
         <spirit:userFileType>USED_IN_ipstatic</spirit:userFileType>
         <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
       </spirit:file>
 
       <spirit:file>
-        <spirit:name>prescaler/trigger_generator.vhd</spirit:name>
+        <spirit:name>bit_timing_logic/btl_trigger_generator.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
         <spirit:userFileType>USED_IN_ipstatic</spirit:userFileType>
         <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>

@@ -90,7 +90,7 @@ use ctu_can_fd_rtl.CAN_FD_frame_format.all;
 
 use ctu_can_fd_rtl.can_registers_pkg.all;
 
-entity memory_registers is
+entity mr_top is
     generic (
         -- Support Filter A
         G_FILT_A_EN                 : boolean;
@@ -300,7 +300,7 @@ entity memory_registers is
     );
 end entity;
 
-architecture rtl of memory_registers is
+architecture rtl of mr_top is
 
     -- Generated register maps inputs/outputs
     signal mr_ctrl_out_i                : control_registers_out_t;
