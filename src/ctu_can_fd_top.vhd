@@ -1013,7 +1013,7 @@ begin
     -----------------------------------------------------------------------------------------------
     -- Frame Filters
     -----------------------------------------------------------------------------------------------
-    i_frame_filters : entity ctu_can_fd_rtl.frame_filters
+    i_ff_top : entity ctu_can_fd_rtl.ff_top
     generic map(
         G_FILT_A_EN                     => G_FILT_A_EN,
         G_FILT_B_EN                     => G_FILT_B_EN,

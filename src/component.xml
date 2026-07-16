@@ -817,19 +817,19 @@
       </spirit:file>
 
       <spirit:file>
-        <spirit:name>frame_filters/bit_filter.vhd</spirit:name>
+        <spirit:name>frame_filters/ff_bit_filter.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
         <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
       </spirit:file>
 
       <spirit:file>
-        <spirit:name>frame_filters/frame_filters.vhd</spirit:name>
+        <spirit:name>frame_filters/ff_top.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
         <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
       </spirit:file>
 
       <spirit:file>
-        <spirit:name>frame_filters/range_filter.vhd</spirit:name>
+        <spirit:name>frame_filters/ff_range_filter.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
         <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
       </spirit:file>
@@ -1394,21 +1394,21 @@
       </spirit:file>
 
       <spirit:file>
-        <spirit:name>frame_filters/bit_filter.vhd</spirit:name>
+        <spirit:name>frame_filters/ff_bit_filter.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
         <spirit:userFileType>USED_IN_ipstatic</spirit:userFileType>
         <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
       </spirit:file>
 
       <spirit:file>
-        <spirit:name>frame_filters/frame_filters.vhd</spirit:name>
+        <spirit:name>frame_filters/ff_top.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
         <spirit:userFileType>USED_IN_ipstatic</spirit:userFileType>
         <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
       </spirit:file>
 
       <spirit:file>
-        <spirit:name>frame_filters/range_filter.vhd</spirit:name>
+        <spirit:name>frame_filters/ff_range_filter.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
         <spirit:userFileType>USED_IN_ipstatic</spirit:userFileType>
         <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>

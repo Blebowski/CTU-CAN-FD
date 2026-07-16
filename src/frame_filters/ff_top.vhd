@@ -94,7 +94,7 @@ use ctu_can_fd_rtl.can_types_pkg.all;
 use ctu_can_fd_rtl.CAN_FD_register_map.all;
 use ctu_can_fd_rtl.CAN_FD_frame_format.all;
 
-entity frame_filters is
+entity ff_top is
     generic (
         -- Support filter A
         G_FILT_A_EN                         : boolean := true;
@@ -197,7 +197,7 @@ entity frame_filters is
     );
 end entity;
 
-architecture rtl of frame_filters is
+architecture rtl of ff_top is
 
     -- Outputs of individual filters are valid
     signal int_filter_A_valid       :       std_logic;
@@ -282,7 +282,7 @@ begin
     -----------------------------------------------------------------------------------------------
     -- Filter instances
     -----------------------------------------------------------------------------------------------
-    i_bit_filter_a : entity ctu_can_fd_rtl.bit_filter
+    i_ff_bit_filter_a : entity ctu_can_fd_rtl.ff_bit_filter
     generic map (
         G_WIDTH         => 29,
         G_IS_PRESENT    => G_FILT_A_EN
@@ -296,7 +296,7 @@ begin
         valid           => int_filter_a_valid                       -- OUT
     );
 
-    i_bit_filter_b : entity ctu_can_fd_rtl.bit_filter
+    i_ff_bit_filter_b : entity ctu_can_fd_rtl.ff_bit_filter
     generic map (
         G_WIDTH         => 29,
         G_IS_PRESENT    => G_FILT_B_EN
@@ -310,7 +310,7 @@ begin
         valid           => int_filter_b_valid                       -- OUT
     );
 
-    i_bit_filter_c : entity ctu_can_fd_rtl.bit_filter
+    i_ff_bit_filter_c : entity ctu_can_fd_rtl.ff_bit_filter
     generic map (
         G_WIDTH         => 29,
         G_IS_PRESENT    => G_FILT_C_EN
@@ -324,7 +324,7 @@ begin
         valid           => int_filter_c_valid                       -- OUT
     );
 
-    i_range_filter : entity ctu_can_fd_rtl.range_filter
+    i_ff_range_filter : entity ctu_can_fd_rtl.ff_range_filter
     generic map (
         G_WIDTH         => 29,
         G_IS_PRESENT    => G_FILT_RANGE_EN

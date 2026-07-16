@@ -87,7 +87,7 @@ use ctu_can_fd_rtl.can_types_pkg.all;
 use ctu_can_fd_rtl.CAN_FD_register_map.all;
 use ctu_can_fd_rtl.CAN_FD_frame_format.all;
 
-entity range_filter is
+entity ff_range_filter is
     generic(
         -- Filter width
         G_WIDTH             :   natural;
@@ -113,7 +113,7 @@ entity range_filter is
     );
 end entity;
 
-architecture rtl of range_filter is
+architecture rtl of ff_range_filter is
 
     -- Upper and lower threshold converted to unsigned values
     signal upper_th_dec : natural range 0 to (2 ** G_WIDTH - 1);

@@ -29,9 +29,9 @@ source_list:
     - file: interface/ahb_ifc.vhd
     - file: interface/apb_ifc.vhd
 
-    - file: frame_filters/bit_filter.vhd
-    - file: frame_filters/range_filter.vhd
-    - file: frame_filters/frame_filters.vhd
+    - file: frame_filters/ff_bit_filter.vhd
+    - file: frame_filters/ff_range_filter.vhd
+    - file: frame_filters/ff_top.vhd
 
     - file: bus_management/bm_data_edge_detector.vhd
     - file: bus_management/bm_ssp_generator.vhd

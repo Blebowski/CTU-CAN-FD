@@ -85,7 +85,7 @@ use ctu_can_fd_rtl.can_types_pkg.all;
 use ctu_can_fd_rtl.CAN_FD_register_map.all;
 use ctu_can_fd_rtl.CAN_FD_frame_format.all;
 
-entity bit_filter is
+entity ff_bit_filter is
     generic(
         -- Filter width
         G_WIDTH              :   natural;
@@ -111,7 +111,7 @@ entity bit_filter is
     );
 end entity;
 
-architecture rtl of bit_filter is
+architecture rtl of ff_bit_filter is
 
     signal masked_input : std_logic_vector(G_WIDTH - 1 downto 0);
     signal masked_value : std_logic_vector(G_WIDTH - 1 downto 0);
